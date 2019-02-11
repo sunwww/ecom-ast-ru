@@ -4,16 +4,6 @@ package ru.ecom.expomc.ejb.services.check.checkers.registry;
  * Проверить на наличие дублей в реестре
  */
 
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
-
 import ru.ecom.expomc.ejb.domain.registry.RegistryEntry;
 import ru.ecom.expomc.ejb.services.check.CheckException;
 import ru.ecom.expomc.ejb.services.check.CheckResult;
@@ -22,7 +12,17 @@ import ru.ecom.expomc.ejb.services.check.ICheckContext;
 import ru.ecom.expomc.ejb.services.check.checkers.BadPropertyUtil;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
 @Comment("Проверить на наличие дублей в реестре")
+@Deprecated
 public class CheckDoubleReestr implements ICheck {
 	@PersistenceUnit
 	EntityManagerFactory emf;
@@ -85,7 +85,6 @@ public class CheckDoubleReestr implements ICheck {
 //	        clause = clause + "\' and \"dischargeDate\" = \'" + convertDate(dischargeDate); 
 //	        clause=clause + "\' and \"admissionDate\" = \'" + convertDate(admissionDate) + "\'";
 //	        String queryString = "from RegistryEntry " + clause;
-//			System.out.println(queryString);
 //			EntityManager manager=null;
 //	        List<RegistryEntry> list= manager.createQuery(queryString).getResultList();
 //	        manager.close();

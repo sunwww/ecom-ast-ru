@@ -161,7 +161,7 @@
 
 		if ((shor==null|| shor.equals("")) && typeSearch!=null && (typeSearch.equals("1") || typeSearch.equals("2"))) {
 %>
-	  <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
+	  <ecom:webQuery isReportBase="true"  name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
 	  <msh:section>
 		  <msh:sectionContent>
 			  <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=${param.department}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
@@ -182,7 +182,7 @@
 				  request.setAttribute("tableName", tableName);
 				  request.setAttribute("depProf", depProf);
 %>
-	  <ecom:webQuery name="datelist1" nameFldSql="datelist1_sql" nativeSql="SELECT CAST('' AS varchar(1)) as useless,CAST('${depProf}' AS varchar(50)) as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk
+	  <ecom:webQuery isReportBase="true" name="datelist1" nameFldSql="datelist1_sql" nativeSql="SELECT CAST('' AS varchar(1)) as useless,CAST('${depProf}' AS varchar(50)) as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk
 		,case when count(sls.id)>0 then count(pk.id)*100/ count(sls.id) else 0 end  as persDead
 		,case when count(dc.id)>0 then count(pk.id)*100/ count(dc.id) else 0 end  as persCase
 		from medcase sls
@@ -215,7 +215,7 @@
 	      }
 	  else if ((shor==null|| shor.equals("")) && typeSearch!=null && typeSearch.equals("3")) {
 	  %>
-	  <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
+	  <ecom:webQuery isReportBase="true" name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
 	  <msh:section>
 		  <msh:sectionContent>
 			  <msh:table cellFunction="true" name="datelist" idField="5" noDataMessage="Не найдено"
@@ -279,7 +279,7 @@
 		  request.setAttribute("printFileName", printFileName);
 		  request.setAttribute("dbMother", dbMother);
 	  %>
-	  <ecom:webQuery name="calc_reestr" nameFldSql="calc_reestr_sql" nativeSql="
+	  <ecom:webQuery isReportBase="true" name="calc_reestr" nameFldSql="calc_reestr_sql" nativeSql="
 SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.MM.yyyy') as f1_fio, 'Протокол №'||pk.protocolNumber||' от '||to_char(pk.protocoldate,'dd.MM.yyyy') as protocolField, sts.code
 , to_char(sls.dateFinish,'dd.MM.yyyy') as dateFinish
   FROM medcase sls

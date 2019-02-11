@@ -46,9 +46,7 @@ public class TextField {
 		}
 		field.append("</td>") ;
 		
-		System.out.println("field=") ;
-		System.out.println(field.toString()) ;
-		
+
 		return field;
 	}
 	public static StringBuilder getJavaScript(boolean aViewOnly,String aProperty,String aPropertyNext) {

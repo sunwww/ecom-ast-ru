@@ -4,22 +4,14 @@ package ru.ecom.mis.ejb.domain.birth;
  * Осмотр беременной
  */
 
-import java.math.BigDecimal;
+import ru.ecom.mis.ejb.domain.birth.voc.*;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.ecom.ejb.services.index.annotation.AIndex;
-import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.birth.voc.VocFetusLocation;
-import ru.ecom.mis.ejb.domain.birth.voc.VocFetusPalpitationNature;
-import ru.ecom.mis.ejb.domain.birth.voc.VocFetusPalpitationPlace;
-import ru.ecom.mis.ejb.domain.birth.voc.VocPregnancyActivity;
-import ru.ecom.mis.ejb.domain.birth.voc.VocPreviusPart;
-import ru.ecom.mis.ejb.domain.birth.voc.VocVaginalDischarge;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.math.BigDecimal;
 
 @Entity
 @Comment("Осмотр беременной")

@@ -1,8 +1,12 @@
 package ru.ecom.mis.ejb.service.synclpufond;
 
 
-import java.sql.Date;
-import java.util.List;
+import org.apache.log4j.Logger;
+import ru.ecom.address.ejb.service.ILocalAddressService;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.util.EntityHelper;
+import ru.ecom.mis.ejb.domain.patient.MedPolicyOmc;
+import ru.ecom.mis.ejb.domain.patient.Patient;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -10,17 +14,8 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.address.ejb.service.ILocalAddressService;
-import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.EntityHelper;
-import ru.ecom.expomc.ejb.domain.registry.RegistryEntry;
-import ru.ecom.mis.ejb.domain.patient.MedPolicyOmc;
-import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.nuzmsh.util.format.DateFormat;
+import java.sql.Date;
+import java.util.List;
 
 /**
  * @author  azviagin
@@ -31,8 +26,8 @@ import ru.nuzmsh.util.format.DateFormat;
 //@TransactionManagement(TransactionManagementType.BEAN)
 public class SyncLpuFondServiceBean implements ISyncLpuFondService {
 
-    private final static Logger LOG = Logger.getLogger(SyncLpuFondServiceBean.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(SyncLpuFondServiceBean.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
 
     public Long findPatientId(String aLastname, String aFirstname, String aMiddlename, Date aBirthday) {
@@ -82,7 +77,8 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
     
 
 
-    @SuppressWarnings("unchecked")
+   // @SuppressWarnings("unchecked")
+   /*
 	private <T> T findEntity(Class<T> aEntity, String aCodeField, String aValue) {
         String entityName = theEntityHelper.getEntityName(aEntity);
         List<T> list = theManager.createQuery(
@@ -92,13 +88,14 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
     }
 
 
-
+*/
 
     @SuppressWarnings("unchecked")
 	public void sync(long aMinitorId, long aTimeId) {
+        LOG.error("Не должно испоользоваться!");
 //        testAddress();
 //        if(true) return ;
-        IMonitor monitor = null;
+     /*   IMonitor monitor = null;
 
         try {
 //            theUserTransaction.begin();
@@ -140,7 +137,7 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
         } catch (Exception e) {
             if(monitor!=null) monitor.setText(e+"");
             throw new IllegalStateException(e) ;
-        }
+        }*/
     }
 
 

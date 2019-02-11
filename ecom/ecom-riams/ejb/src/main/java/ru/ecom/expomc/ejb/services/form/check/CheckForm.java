@@ -1,22 +1,16 @@
 package ru.ecom.expomc.ejb.services.form.check;
 
-import javax.persistence.Id;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
-import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.util.FormAfterLoadInterceptor;
 import ru.ecom.expomc.ejb.domain.check.Check;
 import ru.ecom.expomc.ejb.services.form.impdoc.ImportDocumentForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
+
+import javax.persistence.Id;
 
 /**
  * Проверка

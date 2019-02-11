@@ -44,4 +44,17 @@ public class Calculator extends BaseEntity{
 	public String getComment() {return theComment;}
 	public void setComment(String aComment) {theComment = aComment;	}
 	private String theComment;
+
+
+	/** Создавать дневник? */
+	@Comment("Создавать дневник?")
+	public Boolean getCreateDiary() {return theCreateDiary;}
+	public void setCreateDiary(Boolean aCreateDiary) {theCreateDiary = aCreateDiary;	}
+	private Boolean theCreateDiary;
+
+	/** Тэг *.tag */
+	@Comment("Тэг *.tag ")
+	public String getTag() {return theTag;}
+	public void setTag(String aTag) {theTag = aTag;	}
+	private String theTag;
 }

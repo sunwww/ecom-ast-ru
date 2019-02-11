@@ -23,8 +23,8 @@ public class ExtDispPlanServiceBean implements IExtDispPlanService {
     public Boolean addPersonToPlan(Long aPlanId, Long aPersonId) {return addPersonToPlan(theManager.find(ExtDispPlanPopulation.class,aPlanId),aPersonId);}
     public Boolean addPersonToPlan(ExtDispPlanPopulation aPlan, Long aPersonId) {
         //Проверка на наличия пациента в плане
-        if (theManager.createNativeQuery("select id from  extdispplanpopulationrecord where plan_id=:plan and patient_id=:pat")
-                .setParameter("plan",aPlan.getId()).setParameter("pat",aPersonId).getResultList().size()>0) {
+        if (!theManager.createNativeQuery("select id from  extdispplanpopulationrecord where plan_id=:plan and patient_id=:pat")
+                .setParameter("plan",aPlan.getId()).setParameter("pat",aPersonId).getResultList().isEmpty()) {
             log.warn("Пациент с ИД "+aPersonId+" уже находится в плане ИД "+aPlan.getId());
             return false;
         }
@@ -51,9 +51,7 @@ public class ExtDispPlanServiceBean implements IExtDispPlanService {
         return cnt;
     }
 
-    public void fillPlanByCriteria() {}
-
     private @PersistenceContext
     EntityManager theManager;
-    private final static Logger log = Logger.getLogger(ExtDispPlanServiceBean.class);
+    private static final Logger log = Logger.getLogger(ExtDispPlanServiceBean.class);
 }

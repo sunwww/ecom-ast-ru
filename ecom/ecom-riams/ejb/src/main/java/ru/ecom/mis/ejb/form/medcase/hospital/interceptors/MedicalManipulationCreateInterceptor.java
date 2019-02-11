@@ -10,7 +10,6 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.form.medcase.hospital.BandageForm;
-import ru.ecom.mis.ejb.form.medcase.hospital.MedicalManipulationForm;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.persistence.EntityManager;
@@ -26,18 +25,18 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
 
         MedCase parentSSL = manager.find(MedCase.class, aParentId) ;
         BandageForm form=(BandageForm)aForm;
-        MedicalManipulationForm mform=(MedicalManipulationForm)aForm;
-        if (parentSSL!=null && parentSSL instanceof HospitalMedCase) {
+      //  MedicalManipulationForm mform=(MedicalManipulationForm)aForm;
+        if (parentSSL instanceof HospitalMedCase) {
             HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
 
             if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
             if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
-        } else if (parentSSL!=null && parentSSL instanceof DepartmentMedCase){
+        } else if (parentSSL instanceof DepartmentMedCase){
             DepartmentMedCase slo = (DepartmentMedCase) parentSSL ;
 
             if (slo.getDepartment()!=null) form.setDepartment(slo.getDepartment().getId()) ;
             if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
-        } else  if (parentSSL!=null && parentSSL instanceof Visit){
+        } else  if (parentSSL instanceof Visit){
             Visit slo = (Visit) parentSSL ;
             if (slo.getWorkFunctionExecute()!=null) {
                 if (slo.getWorkFunctionExecute() instanceof PersonalWorkFunction) {
@@ -47,8 +46,8 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
                         form.setSurgeon(slo.getWorkFunctionExecute().getId()) ;
                     }
                 }
-                form.setStartDate(DateFormat.formatToDate(slo.getDateStart())); ;
-                form.setStartTime(DateFormat.formatToTime(slo.getTimeExecute())); ;
+                form.setStartDate(DateFormat.formatToDate(slo.getDateStart()));
+                form.setStartTime(DateFormat.formatToTime(slo.getTimeExecute()));
 
             }
             if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
@@ -59,7 +58,7 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
         if (parentSSL.getDepartment()!=null) {
             List<Object[]> l = aContext.getEntityManager().createNativeQuery("select vlaeo.id from mislpu ml left join VocLpuAccessEnterOperation vlaeo on vlaeo.id=ml.AccessEnterOperation_id where ml.id='"
                     +parentSSL.getDepartment().getId()+"' and (vlaeo.code='DENIED_IN_DEPARTMENT' or vlaeo.code='ALL_DEPARTMENT')").getResultList() ;
-            if (l.size()>0) throw new IllegalStateException("Нельзя добавить перевязку по текущему отделению!!!") ;
+            if (!l.isEmpty()) throw new IllegalStateException("Нельзя добавить перевязку по текущему отделению!!!") ;
         }
         if (parentSSL.getLpu()!=null) {
             form.setLpu(parentSSL.getLpu().getId());
@@ -72,7 +71,7 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
                     .setParameter("lpu", form.getDepartment())
                     .setMaxResults(1)
                     .getResultList() ;
-            if (listwf.size()>0) {
+            if (!listwf.isEmpty()) {
                 Object[] wf = listwf.get(0) ;
                 form.setSurgeon(ConvertSql.parseLong(wf[0])) ;
             } else {
@@ -81,7 +80,7 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
 
                         .setMaxResults(1)
                         .getResultList() ;
-                if (listwf.size()>0) {
+                if (!listwf.isEmpty()) {
                     Object[] wf = listwf.get(0) ;
                     form.setSurgeon(ConvertSql.parseLong(wf[0])) ;
                 }

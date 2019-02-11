@@ -4,18 +4,6 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@ page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@ page import="ru.ecom.mis.ejb.domain.contract.ContractAccount"%>
-<%@ page import="java.lang.reflect.Method"%>
-
-<%@ page import="javax.persistence.EntityManager"%>
-<%@ page import="javax.persistence.PersistenceContext"%>
-<%@ page import="javax.persistence.Persistence"%>
-<%@ page import="javax.persistence.EntityManagerFactory"%>
-<%@ page import="javax.persistence.Query"%>
-
-<%@ page import="ru.ecom.ejb.services.query.IWebQueryService"%>
-
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
@@ -34,7 +22,7 @@
 	<%
 
 	
-		Query aQuery;
+		//Query aQuery;
 		//EntityManager aManager = null;
 		
 		//IWebQueryService test = null;

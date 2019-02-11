@@ -1,31 +1,6 @@
 package ru.ecom.expomc.ejb.services.check;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Map.Entry;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
@@ -38,19 +13,30 @@ import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 import ru.ecom.expomc.ejb.domain.message.Message;
-//import ru.ecom.expomc.ejb.domain.message.MessageChange;
-//import ru.ecom.expomc.ejb.domain.message.MessageLog;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.INativeSqlMultipleQueriesSupports;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.INativeSqlSupports;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.ISqlSupports;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.NativeSqlContext;
 import ru.ecom.expomc.ejb.services.check.impl.CheckContext;
-import ru.ecom.expomc.ejb.services.check.result.ResultLog;
 import ru.ecom.expomc.ejb.services.form.check.CheckPropertyForm;
 import ru.ecom.expomc.ejb.services.importservice.ImportServiceBean;
 import ru.ecom.expomc.ejb.services.voc.allvalues.AllowedChecksAllValues;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.PropertyUtil;
+
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.util.*;
+import java.util.Map.Entry;
+
+//import ru.ecom.expomc.ejb.domain.message.MessageChange;
+//import ru.ecom.expomc.ejb.domain.message.MessageLog;
 
 /**
  * Проверка реестра
@@ -60,8 +46,8 @@ import ru.nuzmsh.util.PropertyUtil;
 @Local(ICheckServiceLocal.class) 
 public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
 
-    private final static Logger LOG = Logger.getLogger(CheckServiceBean.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(CheckServiceBean.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     private void clearChecks(ImportTime aTime) {
     	EntityManager manager = theFactory.createEntityManager() ;
@@ -101,11 +87,11 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         	Object entity = entityClass.newInstance() ;
         	ImportServiceBean.copyMapToEntity(fields, aMap, entity) ;
 
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            HashMap<String, Object> map = new HashMap<>();
             copyToMap(entity, map,entityClass);
         	
             // список полей
-            HashSet<String> allowedFields = new HashSet<String>();
+            HashSet<String> allowedFields = new HashSet<>();
             for (Method method : entityClass.getMethods()) {
                 if(method.getAnnotation(Comment.class)!=null) {
                     allowedFields.add(PropertyUtil.getPropertyName(method)) ;
@@ -143,7 +129,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                         	sb.append("</li>") ;
                         }
                     }
-                } catch(Throwable e) {
+                } catch(Exception e) {
                 	LOG.warn(e.getMessage(),e) ;
                 	sb.append("<li>") ;
                 	sb.append(check.getName()).append(": ").append(e.getMessage()) ;
@@ -169,7 +155,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     }
     
     private Collection<CheckPair> createIteratorsChecks(Collection<Check> aChecks, boolean aSqlSupports) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, ParseException {
-    	LinkedList<CheckPair> ret = new LinkedList<CheckPair>() ;
+    	LinkedList<CheckPair> ret = new LinkedList<>() ;
     	for (Check check : aChecks) {
             if(!check.getDisabled()) {
 	            ICheck icheck = (ICheck) findCheckClass(check).newInstance() ;
@@ -197,16 +183,13 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     	if(CAN_DEBUG) LOG.debug("time="+aTime) ;
         try {
             ImportTime time = theManager.find(ImportTime.class, aTime) ;
-            if (CAN_DEBUG)
-				LOG.debug("checkDocumentData: time = " + time); 
+            if (CAN_DEBUG) LOG.debug("checkDocumentData: time = " + time);
 
             ImportDocument document = time.getDocument() ;
-            if (CAN_DEBUG)
-				LOG.debug("checkDocumentData: document = " + document); 
+            if (CAN_DEBUG) LOG.debug("checkDocumentData: document = " + document);
 
             Format format = (Format) time.getFormat() ;
-            if (CAN_DEBUG)
-				LOG.debug("checkDocumentData: format = " + format); 
+            if (CAN_DEBUG) LOG.debug("checkDocumentData: format = " + format);
 
             // перебор всех записей в реестре
 
@@ -231,7 +214,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             monitor.setText("Создание списка полей...") ;
             Class entityClass = ClassLoaderHelper.getInstance().loadClass(document.getEntityClassName());
             // список полей
-            HashSet<String> allowedFields = new HashSet<String>();
+            HashSet<String> allowedFields = new HashSet<>();
             for (Method method : entityClass.getMethods()) {
                 if(method.getAnnotation(Comment.class)!=null) {
                     allowedFields.add(PropertyUtil.getPropertyName(method)) ;
@@ -265,7 +248,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             	}
             	
                 // копируем все в MAP
-                HashMap<String, Object> map = new HashMap<String, Object>();
+                HashMap<String, Object> map = new HashMap<>();
                 copyToMap(entity, map, entityClass);
                 CheckContext ctx = new CheckContext(format, map, allowedFields, time.getActualDateFrom(), theManager,entity);
 
@@ -370,15 +353,15 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
 
         Collection<CheckProperty> properties = check.getProperties() ;
 
-        TreeMap<String, String> values = new TreeMap<String, String>();
-        TreeMap<String, Long> ids = new TreeMap<String, Long>();
+        TreeMap<String, String> values = new TreeMap<>();
+        TreeMap<String, Long> ids = new TreeMap<>();
         for (CheckProperty property : properties) {
             values.put(property.getProperty(), property.getValue()) ;
             ids.put(property.getProperty(), property.getId()) ;
         }
 
         Class clazz = findCheckClass(check) ;
-        LinkedList<CheckPropertyRow> ret = new LinkedList<CheckPropertyRow>();
+        LinkedList<CheckPropertyRow> ret = new LinkedList<>();
         for (Method method : clazz.getMethods()) {
             Comment comment = method.getAnnotation(Comment.class) ;
             if(comment!=null) {

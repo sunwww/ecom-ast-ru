@@ -257,11 +257,46 @@ msh_autocomplete.View = function(aElement, aDiv) {
 }
 
 
+
+
+/*
+* Disable total scrolling
+* */
+function preventDefault(e) {
+    e = e || window.event;
+    if (e.preventDefault)
+        e.preventDefault();
+    e.returnValue = false;
+}
+
+/*function preventDefaultForScrollKeys(e) {
+    if (keys!=null && keys!="" && keys!="undefined" && keys[e.keyCode]) {
+        preventDefault(e);
+        return false;
+    }
+}*/
+
+function disableScroll() {
+    if (window.addEventListener) // older FF
+        window.addEventListener('DOMMouseScroll', preventDefault, false);
+    window.onwheel = preventDefault; // modern standard
+    window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
+    window.ontouchmove  = preventDefault; // mobile
+    //document.onkeydown  = preventDefaultForScrollKeys;
+}
+
+function enableScroll() {
+    if (window.removeEventListener)
+        window.removeEventListener('DOMMouseScroll', preventDefault, false);
+    window.onmousewheel = document.onmousewheel = null;
+    window.onwheel = null;
+    window.ontouchmove = null;
+    document.onkeydown = null;
+}
 /*
 * Реакция на события
 */
 msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, theVocTitle, theParent) {
-
     aElement.onblur = select;
     aElement.onfocus = onFocus ;
 
@@ -280,7 +315,36 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
     var theShowIdInName = false ;
     var theParentId = null ;
     var theCanShow = true ;
+    //Milamesher 13062018 #29 прокрутка списка мышью
+    aElement.parentNode.addEventListener('wheel', function (event) {
+        var doc_table_id;
+        if (aElement.parentNode!=null &&
+            aElement.parentNode.childNodes.length>=3 &&
+            aElement.parentNode.childNodes[2].childNodes.length!=0 &&
+            aElement.parentNode.childNodes[2].childNodes[0]!=null)
+            doc_table_id=aElement.parentNode.childNodes[2].childNodes[0].id;
+        //otma
+        else if (aElement.parentNode!=null &&
+            aElement.parentNode.childNodes.length>=2 &&
+            aElement.parentNode.childNodes[1].childNodes.length>=1 &&
+            aElement.parentNode.childNodes[1].childNodes[0]!=null)
+            doc_table_id=aElement.parentNode.childNodes[1].childNodes[0].id;
+        if (doc_table_id!=null && doc_table_id!="") {  //только если создана таблица
+            disableScroll();
+            var delta;
+            if (event.wheelDelta) {
+                delta = event.wheelDelta;
+            } else {
+                delta = -1 * event.deltaY;
+            }
 
+            if (delta < 0) {
+                findNext();
+            } else if (delta > 0) {
+                findPrevious();
+            }
+        }
+    });
     function onFocus() {
         theCanShow = true ;
     }
@@ -318,6 +382,11 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
         theElement.value = "" ;
         theIdField.value = "" ;
         if(theOnChangeCallback) theOnChangeCallback() ;
+    }
+
+    this.publicFindNext = function() {
+        var query = 'id=' + theView.getLastId()+createParentQuery() ;
+        mshaDoRequest(theUrl, query, onResponse);
     }
 
     ///////////////////////////////////////////////////////
@@ -403,37 +472,103 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
             theLastText = "";
         }
         setBoxShowed(false);
-        theView.hide();
+        theView.hide(); enableScroll();
         if(canSendChangeEvent && theOnChangeCallback) theOnChangeCallback() ;
     }
-
+function searchParentNode(name) {
+        return name.replace("Name","")+"Div";
+    }
     function select() {
-        theCanShow = false ;
-        var canSendChangeEvent = false ;
-        if (isBoxShowed()) {
-            var id = theView.getSelectedId() ;
-            var name = theView.getSelectedName() ;
-            if (name == null) name = "";
-            canSendChangeEvent = theIdField.value!=id ;
-            if(theShowIdInName) {
-                if(id!=null && id!="") {
-                    theElement.value = "("+id+") "+name;
-                } else {
-                    theElement.value = name ;
-                }
-            } else {
-                theElement.value = name;
-            }
-            theIdField.value = id;
-            theLastText = theElement.value;
-
+        var doc_table_id;
+        //просто autocomplete
+        if (aElement.parentNode!=null &&
+            aElement.parentNode.childNodes.length>=3 &&
+            aElement.parentNode.childNodes[2].childNodes.length!=0 &&
+            aElement.parentNode.childNodes[2].childNodes[0]!=null)
+                doc_table_id=aElement.parentNode.childNodes[2].childNodes[0].id;
+        //otma
+        else if (aElement.parentNode!=null &&
+            aElement.parentNode.childNodes.length>=2 &&
+            aElement.parentNode.childNodes[1].childNodes.length>=1 &&
+            aElement.parentNode.childNodes[1].childNodes[0]!=null)
+                doc_table_id=aElement.parentNode.childNodes[1].childNodes[0].id;
+        //cлучай с экспертными картами, например
+        else {  //когда дети внешнего div в любом порядке - ищу просто по Name Div
+            var el = document.getElementById(searchParentNode(aElement.id));
+            if (el!=null && el!==undefined && el.childNodes[0]!=null) doc_table_id=el.childNodes[0].id;
         }
-        setBoxShowed(false);
-        theView.hide();
-        if(canSendChangeEvent && theOnChangeCallback) theOnChangeCallback() ;
+        /*if (doc_table_id===undefined) {
+            setTimeout(function () {
+                aElement.click()
+            }, 10);
+
+        }*/
+        if (doc_table_id!=null) {
+            if (doc_table_id == "doc_table1") {
+                theCanShow = false;
+                var canSendChangeEvent = false;
+                if (isBoxShowed()) {
+                    var id = theView.getSelectedId();
+                    var name = theView.getSelectedName();
+                    if (name == null) name = "";
+                    canSendChangeEvent = theIdField.value != id;
+                    if (theShowIdInName) {
+                        if (id != null && id != "") {
+                            theElement.value = "(" + id + ") " + name;
+                        } else {
+                            theElement.value = name;
+                        }
+                    } else {
+                        theElement.value = name;
+                    }
+                    theIdField.value = id;
+                    theLastText = theElement.value;
+
+                }
+                setBoxShowed(false);
+                theView.hide();
+                enableScroll();
+                if (canSendChangeEvent && theOnChangeCallback) theOnChangeCallback();
+            }
+            else {
+                if (doc_table_id == "doc_table0") findPrevious();
+                else if (doc_table_id == "doc_table2") findNext();
+                setTimeout(function () {
+                    aElement.focus()
+                }, 10);
+            }
+            //это - случай программного фокуса в .jsp
+            if (doc_table_id=="") {
+                setTimeout(function () {
+                    aElement.focus()
+                }, 10);
+                theCanShow = false;
+                var canSendChangeEvent = false;
+                if (isBoxShowed()) {
+                    var id = theView.getSelectedId();
+                    var name = theView.getSelectedName();
+                    if (name == null) name = "";
+                    canSendChangeEvent = theIdField.value != id;
+                    if (theShowIdInName) {
+                        if (id != null && id != "") {
+                            theElement.value = "(" + id + ") " + name;
+                        } else {
+                            theElement.value = name;
+                        }
+                    } else {
+                        theElement.value = name;
+                    }
+                    theIdField.value = id;
+                    theLastText = theElement.value;
+
+                }
+                setBoxShowed(false);
+                theView.hide();
+                enableScroll();
+                if (canSendChangeEvent && theOnChangeCallback) theOnChangeCallback();
+            }
+        }
     }
-
-
 
     function findParentId(aAutocomplete) {
         //alert("auto="+aAutocomplete) ;
@@ -595,7 +730,7 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
             //alert(theMshaHttpRequest.status) ;
 
             theIsSearching = false;
-            if (theMshaHttpRequest.status == 200) {
+            if (theMshaHttpRequest.status == 200/* && theView!=null*/) {
                 if(theCanShow) {
                     theView.showBox(aResponse.responseXML);
     //                alert(aResponse.responseXML) ;

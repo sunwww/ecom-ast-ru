@@ -1,20 +1,6 @@
 package ru.ecom.expomc.ejb.services.exportservice;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
@@ -27,6 +13,14 @@ import ru.nuzmsh.dbf.DbfField;
 import ru.nuzmsh.dbf.DbfWriter;
 import ru.nuzmsh.util.PropertyUtil;
 
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.File;
+import java.util.*;
+
 /**
  *  Экспорт
  */
@@ -34,8 +28,8 @@ import ru.nuzmsh.util.PropertyUtil;
 @Remote(IExportService.class)
 public class ExportServiceBean implements IExportService {
 
-    private final static Logger LOG = Logger.getLogger(ExportServiceBean.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ExportServiceBean.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     
     public void export(long aMonitorId, long aFileId, ExportForm aForm) {
@@ -80,11 +74,10 @@ public class ExportServiceBean implements IExportService {
             boolean notCanceled = true ;
             while (aIterator.hasNext() && notCanceled) {
                 Object entity = aIterator.next();
-                //System.out.println(entity);
                 if(++i % 100 == 0) {
                 	if(aMonitor!=null) aMonitor.advice(100);
                 }
-                HashMap<String, Object> map = new HashMap<String, Object>();
+                HashMap<String, Object> map = new HashMap<>();
                 if(aInterceptor!=null) aInterceptor.beforeSave(entity) ;
                 for (Field field : fields) {
                     Object value = PropertyUtil.getPropertyValue(entity, field.getProperty()) ;
@@ -94,7 +87,6 @@ public class ExportServiceBean implements IExportService {
                 if(aMonitor!=null) {
                 	notCanceled = !aMonitor.isCancelled() ;
                 }
-                //System.out.println("notCancelled="+notCanceled);
             }
         } finally {
             writer.close() ;
@@ -112,7 +104,7 @@ public class ExportServiceBean implements IExportService {
         return ret;
     }
     private static List<DbfField> createDbfField(Format aFormat) {
-        LinkedList<DbfField> fields = new LinkedList<DbfField>();
+        LinkedList<DbfField> fields = new LinkedList<>();
         for (Field field : aFormat.getFields()) {
             DbfField dbfField = new DbfField(field.getName(), getDbfType(field),field.getDbfSize(), field.getDbfDecimal() );
             fields.add(dbfField) ;

@@ -1,13 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.ticket.interceptors;
 
-import java.io.StringWriter;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.json.JSONException;
 import org.json.JSONWriter;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -15,10 +9,13 @@ import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
-import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
+
+import javax.persistence.EntityManager;
+import java.io.StringWriter;
+import java.util.List;
 
 public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 
@@ -69,8 +66,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		sql.append("select mc.medservice_id,ms.code||' '||ms.name,mc.uet,mc.ordernumber,mc.medserviceamount from MedCase mc left join MedService ms on ms.id=mc.medservice_id where mc.parent_id='").append(aForm.getId()).append("' and mc.dtype='ServiceMedCase' order by mc.id") ;
-		//System.out.println(sql) ;
-		List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList(); 
+		List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList();
 		for (Object[] child : list) {
 			res.append(child[0]).append("@").append(child[2]).append("@") ;
 			res.append(child[3]).append("@").append(child[4]).append("@") ;
@@ -92,8 +88,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 
 			StringBuilder sql = new StringBuilder() ;
 			sql.append("select ").append(aFieldChildren).append(" from ").append(aTableName).append(" where ").append(aWhere) ;
-			//System.out.println(sql) ;
-			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList(); 
+			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList();
 			for (Object child : list) {
 				j.object().key("value").value(ConvertSql.parseLong(child));
 				j.endObject();

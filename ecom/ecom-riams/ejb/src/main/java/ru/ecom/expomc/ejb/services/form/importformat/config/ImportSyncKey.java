@@ -4,28 +4,26 @@
  */
 package ru.ecom.expomc.ejb.services.form.importformat.config;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
-
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.ejb.util.EntityNameUtil;
 import ru.nuzmsh.util.PropertyUtil;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class ImportSyncKey extends ImportKey {
 	
-	private final static Logger LOG = Logger.getLogger(ImportSyncKey.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(ImportSyncKey.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
     private String theEntityName;
     private Query theQuery;
@@ -39,7 +37,7 @@ public class ImportSyncKey extends ImportKey {
     private List<ImportKey> getKeys() {
         String[] properties = getProperty().split(";");
         String[] selects = getSelect().split(";");
-        List<ImportKey> list = new ArrayList<ImportKey>();
+        List<ImportKey> list = new ArrayList<>();
         for (int i=0; i<properties.length; i++) {
             ImportKey importKey = new ImportKey();
             importKey.setProperty(properties[i]);
@@ -51,7 +49,7 @@ public class ImportSyncKey extends ImportKey {
 
     private String getWhereClause() {
         String[] properties = getProperty().split(";");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i=0; i<properties.length; i++) {
             if (i > 0) sb.append(" AND ");
             //sb.append("cast("+properties[i]+" as string) = :p"+i);
@@ -67,7 +65,7 @@ public class ImportSyncKey extends ImportKey {
     private String getWhereClause(Element anElement) {
         String[] properties = getProperty().split(";");
         String[] selects = getSelect().split(";");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i=0; i<properties.length; i++) {
             String s = "";
             try {

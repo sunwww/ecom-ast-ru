@@ -131,6 +131,15 @@
 							<li><msh:link  isReport="false" action="allLn_count_report.do" roles="/Policy/Mis/ArchiveCase/Create">
 								Количество ЛН по отделениям
 							</msh:link></li>
+                        <li><msh:link  isReport="false" action="reestrNaOplatyDogovorov.do" roles="/Policy/Mis/Journal/JasperReports/RegistryForPaymentForContracts">
+                            Реестр на оплату для договоров
+                        </msh:link></li>
+						<li><msh:link  isReport="false" action="finPlan.do" roles="/Policy/Mis/Journal/JasperReports/ExecutionOfFinancialPlan">
+							Выполнение финансового плана
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="smo_deniedHospitelByAttach.do" roles="/Policy/Mis/ArchiveCase/Create">
+							Отказы госпитализации по прикрепленным
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>
@@ -185,10 +194,12 @@
 						<li><msh:link isReport="true" action="entityList-extDispPlan_plan.do" roles="/Policy/Mis/ExtDisp/Card/View">
 							Список планов доп. диспансеризации
 						</msh:link></li>
+						<li><msh:link isReport="false" action="exportDispensary.do" roles="/Policy/Mis/Patient/Dispensary/View">
+							Экспорт карт диспансерного учета
+						</msh:link></li>
 						<li><msh:link isReport="true" action="gosuslugi_report.do" roles="/Policy/Mis/MedCase/Visit/Report039">
-	                            Отчет "количество поступивших обращение за получение услуги "Запись на прием к врачу"
+							Отчет "Запись на прием к врачу"
 	                        </msh:link></li>
-	                        
 	                        <li><msh:link isReport="true" action="report_timeexecute.do" roles="/Policy/Mis/TimeExecute/View">
 	                            Отчет "время ожидания мед.помощи"
 	                        </msh:link></li>
@@ -212,6 +223,15 @@
 	                    <li><msh:link isReport="true" action="mis_assessment_risk_report.do" roles="/Policy/Mis/Pregnancy/Report/RiskReport">
 	                            Отчет по рискам
 	                    </msh:link></li>
+						<li><msh:link action="stac_report_BirthTotal.do" roles="/Policy/Mis/Pregnancy/Report/Report32">
+							Анализ работы родового отделения
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_cardiacScreening.do" roles="/Policy/Mis/Pregnancy/CardiacScreening/View">
+							Отчёт о проведении кардиоскрининга новорождённых
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_robson.do" roles="/Policy/Mis/Pregnancy/ChildBirth/View">
+							Отчёт по классификации Робсона
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>			
@@ -329,7 +349,15 @@
 							<li><msh:link  isReport="true" action="report203.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 								Отчет по 203 приказу
 							</msh:link></li>
-	                        
+						<li><msh:link  isReport="true" action="reportBandage.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Отчет по перевязкам
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_svetofor.do?mode=ADMISSION" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Светофор
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_onco.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Отчёт по онкологическим случаям
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>

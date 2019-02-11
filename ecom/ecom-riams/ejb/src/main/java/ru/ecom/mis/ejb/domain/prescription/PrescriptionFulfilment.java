@@ -1,21 +1,14 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.domain.worker.Worker;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.domain.worker.Worker;
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Выполнениe назначения

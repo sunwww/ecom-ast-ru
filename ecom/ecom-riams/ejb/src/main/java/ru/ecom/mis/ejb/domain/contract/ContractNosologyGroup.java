@@ -1,14 +1,15 @@
 package ru.ecom.mis.ejb.domain.contract;
-import java.util.List;
+
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.ejb.services.index.annotation.AIndex;
-import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.contract.NosologyInterval;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.util.List;
 	/**
 	 * Нозологическая группа по договору
 	 */

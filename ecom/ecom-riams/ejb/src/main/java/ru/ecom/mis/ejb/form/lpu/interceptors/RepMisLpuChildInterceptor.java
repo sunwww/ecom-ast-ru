@@ -1,14 +1,13 @@
 package ru.ecom.mis.ejb.form.lpu.interceptors;
 
-import java.util.HashSet;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.rep.RepMisLpuChild;
+
+import javax.persistence.EntityManager;
+import java.util.HashSet;
+import java.util.List;
 
 public class RepMisLpuChildInterceptor implements IFormInterceptor {
 
@@ -48,7 +47,6 @@ public class RepMisLpuChildInterceptor implements IFormInterceptor {
 		rep.setChildLpu(aChild) ;
 		String key = aMain+"_"+aChild ;
 		if(!hash.contains(key)) {
-			System.out.println("    "+aMain.getName()+"  -  "+aChild.getName()) ;
 			rep.setTrailName(aMain.getName()!=null?aMain.getName().substring(0,aMain.getName().length()>100?100:aMain.getName().length()-1):""+"  -  "
 					+aChild.getName()!=null?aChild.getName().substring(0,aChild.getName().length()>100?100:aChild.getName().length()-1):"");
 			rep.setLpuLevel(getLevel(aMain));

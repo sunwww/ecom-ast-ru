@@ -179,7 +179,7 @@
                                         if ($('expertType').value=='Coeur') {
                                             if (tmp[2]!=null) comment=tmp[2]; else comment='';
                                         }
-                                        showYesNoCommentYesNo(comment,aMarkId,ii,$('expertType').value);
+                                        showYesNoCommentYesNo(comment,aMarkId,ii,$('expertType').value,true);
                                     }
                                 }
                                 });
@@ -226,6 +226,26 @@
 	  				$('criterions').value=rez.length>0?rez.substring(1) :"";
                    // alert($F('criterions'));
 	  			}
+	  			//Milamesher просмотр комментария по кнопке 04062018 с сервисбина
+            function showYesNoCommentFromBean(ii) {
+                var aMarkId = $('criterion'+ii).value;
+                if (+aMarkId>0 && voc == "vocQualityEstimationMarkYesNo") {
+                    var total = $('criterion' + ii + 'CommentYesNo').value;
+                    //alert(total);
+                    var tmp = total.split(';');
+                    var comment;
+                    if ($('expertType').value == 'BranchManager') {
+                        if (tmp[0] != null) comment = tmp[0]; else comment = '';
+                    }
+                    if ($('expertType').value == 'Expert') {
+                        if (tmp[1] != null) comment = tmp[1]; else comment = '';
+                    }
+                    if ($('expertType').value == 'Coeur') {
+                        if (tmp[2] != null) comment = tmp[2]; else comment = '';
+                    }
+                    showYesNoCommentYesNo(comment, aMarkId, ii, $('expertType').value,false);
+                }
+            }
   		</script>
 
   		

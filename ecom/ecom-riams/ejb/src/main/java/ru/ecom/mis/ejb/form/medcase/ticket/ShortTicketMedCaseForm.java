@@ -5,14 +5,9 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.form.medcase.ChildMedCaseForm;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.ticket.interceptors.TicketPreCreateInterceptor;
 import ru.ecom.poly.ejb.form.MedcardForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
@@ -95,5 +90,33 @@ public class ShortTicketMedCaseForm extends ChildMedCaseForm {
     /** Тип рабочего места обслуживания */
 	private Long theWorkPlaceType;
 	/** Цель визита */
-	private Long theVisitReason;	
+	private Long theVisitReason;
+
+	@Comment("Планируемое время исполнения")
+	@Persist
+	public Long getTimePlan() {
+		return theTimePlan;
+	}
+	/*** Планируемое время исполнения*/
+	public void setTimePlan(Long aNewProperty) {
+		theTimePlan = aNewProperty;
+	}
+	/*** Планируемое время исполнения*/
+	private Long theTimePlan;
+
+	/** Планируемая дата исполнения */
+	@Comment("Планируемая дата исполнения")
+	@Persist
+	public Long getDatePlan() {return theDatePlan;	}
+	public void setDatePlan(Long aNewProperty) {theDatePlan = aNewProperty;	}
+	private Long theDatePlan;
+
+	/** Планируемая рабочая функция исполнения */
+	@Comment("Планируемая рабочая функция исполнения")
+	@Persist
+	public Long getWorkFunctionPlan() {return theWorkFunctionPlan;}
+	public void setWorkFunctionPlan(Long aNewProperty) {theWorkFunctionPlan = aNewProperty;}
+	/** Планируемая рабочая функция исполнения */
+	private Long theWorkFunctionPlan;
+
 }

@@ -58,24 +58,24 @@ function onCreate(aForm, aEntity, aCtx) {
             aCtx.manager.persist(cams);
         }
     } else {
-        var balSumOld = +aEntity.account.balanceSum;
+     //   var balSumOld = +aEntity.account.balanceSum;
         var balSum = +aEntity.account.balanceSum;
-        var cost = aEntity.cost;
-        if (+aEntity.discost > 0) cost = cost * aEntity.discost / 100;
+        var cost = +aEntity.cost;
+        if (+aForm.discount > 0) {cost = cost-(cost * aForm.discount / 100);};
         balSum = balSum + cost;
         aEntity.account.setBalanceSum(new java.math.BigDecimal(balSum));
         aEntity.account.setReservationSum(new java.math.BigDecimal(balSum));
     }
     setMedCasesPaid(aEntity, aCtx);
 
-    // Отправляем запрос на ККМ
-    if (aCtx.getSessionContext().isCallerInRole("/Policy/Config/KKMWork")) {
-
-		var kkm = new Packages.ru.ecom.mis.ejb.service.contract.ContractServiceBean();
-		var worker = wf.worker.person;
-		var fio = wf.workFunction.name + " " + worker.lastname + " " + worker.firstname.substring(0, 1) + ". " + (worker.middlename != null ? worker.middlename.substring(0, 1) + "." : "");
-		kkm.sendKKMRequest("makePayment", aEntity.getAccount().getId(), aForm.getDiscount(), aEntity.getIsPaymentTerminal() != null ? aEntity.getIsPaymentTerminal() : false, fio, aCtx.manager);
-}
+    //Milamesher #136 если у пользователя настроен ККМ
+    var defaultKkm=wf.getKkmEquipmentDefault();
+    if (aCtx.getSessionContext().isCallerInRole("/Policy/Config/KKMWork") && defaultKkm!=null) {
+        var kkm = new Packages.ru.ecom.mis.ejb.service.contract.ContractServiceBean();
+        var worker = wf.worker.person;
+        var fio = wf.workFunction.name + " " + worker.lastname + " " + worker.firstname.substring(0, 1) + ". " + (worker.middlename != null ? worker.middlename.substring(0, 1) + "." : "");
+        kkm.sendKKMRequest("makePayment", aEntity.getAccount().getId(), aForm.getDiscount(), aEntity.getIsPaymentTerminal() != null ? aEntity.getIsPaymentTerminal() : false, aForm.getCustomerPhone, fio, aCtx.manager,defaultKkm.getUrl());
+    }
     //**** ***//
 }
 function onPreDelete(aId, aCtx) {

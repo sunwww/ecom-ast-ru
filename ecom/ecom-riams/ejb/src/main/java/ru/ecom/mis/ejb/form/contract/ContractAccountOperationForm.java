@@ -1,17 +1,10 @@
 package ru.ecom.mis.ejb.form.contract;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
-import ru.ecom.mis.ejb.domain.contract.voc.VocAccountOperation;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
@@ -27,7 +20,16 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation")
 @Subclasses({OperationAccrualForm.class,OperationReservationForm.class
 	,OperationReturnForm.class,OperationWriteOffForm.class})
-public class ContractAccountOperationForm extends IdEntityForm{
+public class ContractAccountOperationForm extends IdEntityForm {
+
+	/** Номер телефона для чека */
+	@Comment("Номер телефона для чека")
+	@Persist
+	public String getCustomerPhone() {return theCustomerPhone;}
+	public void setCustomerPhone(String aCustomerPhone) {theCustomerPhone = aCustomerPhone;}
+	/** Номер телефона для чека */
+	private String theCustomerPhone ;
+
 	/**
 	 * Тип операции
 	 */

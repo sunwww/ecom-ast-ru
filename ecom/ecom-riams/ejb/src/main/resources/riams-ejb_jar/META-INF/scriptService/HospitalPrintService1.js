@@ -19,22 +19,8 @@ function printStatCards(aCtx, aParams) {
 	var ids = ids1.split(",") ;
 	//infoSmo(aCtx,ids[0]) ;
 	infoPrint(aCtx,ids[0]) ;
-	var ret = new java.lang.StringBuilder () ;
-	//ret.append(ids) ;
-	//var list = new 
-	//throw ids ;
-	
-	
+
 	var ret = new java.util.ArrayList() ;
-	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
-    var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
-    var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
-	//var startDate =  FORMAT_2.parse(obj[0])) ;
-	//var finishDate = FORMAT_1.format( FORMAT_2.parse(obj[1])) ;
-	var current = new java.util.Date() ;
-	var curDate = new java.sql.Date(current.getTime()) ;
-	
-	var curTime = new java.sql.Time(current.getTime()) ;
 	for (var i=0; i < ids.length; i++) {
 		var id1=ids[i] ;
 		var indlast = id1.lastIndexOf("!") ;
@@ -47,7 +33,6 @@ function printStatCards(aCtx, aParams) {
 		//medCase.setPrintDate(curDate) ;
 		//medCase.setPrintTime(curTime) ;
 		//aCtx.manager.persist(medCase) ;
-		//throw "" + medCase + cur
 		var wqr = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		wqr.set1(recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase).getResultList())) ;
 		wqr.set2(recordPatient(medCase,aCtx)) ;
@@ -72,21 +57,18 @@ function printStatCards(aCtx, aParams) {
 		wqr.set9(daysCount) ;//"sls.daysCount", 
 		
 		//7. Доставлен по экстренным показания
-		wqr.set10(medCase.emergency!=null && medCase.emergency==true?"экстренные":"планово") ;
+		wqr.set10(medCase.emergency!=null && medCase.emergency==true ? "экстренные" : "планово") ;
 		// через_________часов после начала заболевания, получения травмы; госпитализирован в плановом порядке
 		wqr.set11(medCase.preAdmissionTime) ;//"sls.preAdmissionTime",
 		//10. Диагноз клинический
 		wqr.set12(getDiagnos(medCase.diagnosClinical)) ;//"sls.diagnosisClinical",
 		
-		wqr.set13(recordSloBySls(aCtx,slsId)) ;//,"listSlo"
-		wqr.set14(recordSurgicalOperationBySls(aCtx,slsId)) ;//,"listOper"
+		wqr.set13(recordSloBySls(aCtx,medCase.id)) ;//,"listSlo"
+		wqr.set14(recordSurgicalOperationBySls(aCtx,medCase.id)) ;//,"listOper"
 		ret.add(wqr) ;
 		
 	}
 	map.put("statCards",ret) ;
-	
-	
-	
 	return map ;
 }
 function recordSurgicalOperationBySls(aCtx,aSlsId) {
@@ -125,7 +107,7 @@ function recordSurgicalOperationBySls(aCtx,aSlsId) {
 	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 	var ret = new java.util.ArrayList() ;
 	
-	if (list.size()>0) {
+	if (!list.isEmpty()) {
 		for (var i=0;i<list.size();i++) {
 			var wq = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 			var obj=list.get(i) ;
@@ -137,8 +119,7 @@ function recordSurgicalOperationBySls(aCtx,aSlsId) {
 		}
 	} else {
 		for (var i=0;i<5;i++) {
-			var parDep = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-			ret.add(parDep) ;
+			ret.add(new Packages.ru.ecom.ejb.services.query.WebQueryResult()) ;
 		}
 	}
 	return ret ;
@@ -233,15 +214,13 @@ function recordPolicy(policies) {
 function getMedServiceNameByProtocol (aCtx, aProtocolId) {
 	var sql ="select mc.code||' '||mc.name "
 		+" from diary d" +
-		" left join MedCase vis on vis.id=d.medcase_id" +
-		" left join medcase servmc on servmc.parent_id=vis.id" +
+		" left join medcase servmc on servmc.id=d.servicemedcase_id" +
 		" left join medservice mc on mc.id=servmc.medservice_id" +
         " left join VocServiceType vst on vst.id=mc.serviceType_id" +
 		" where d.id='"+aProtocolId+"' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE' or vst.code='LABSURVEY') ";
-	//throw ""+sql;
 	var res =aCtx.manager.createNativeQuery(sql).getResultList();
     var ret  ="";
-	if (res.size()>0) {
+	if (!res.isEmpty()) {
 		for (var i=0;i<res.size();i++) {
 			ret+=""+res.get(i)+"\n";
 		}
@@ -254,14 +233,14 @@ function printProtocols(aCtx, aParams) {
 	var ids = ids1.split(",") ;
 	//infoSmo(aCtx,ids[0]) ;
 	infoPrint(aCtx,ids[0]) ;
-	var ret = new java.lang.StringBuilder () ;
+	//var ret = new java.lang.StringBuilder () ;
 	//ret.append(ids) ;
 	//var list = new 
 	//throw ids ;
 	
 	
 	var ret = new java.util.ArrayList() ;
-	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
+//	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
     var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
 	//var startDate =  FORMAT_2.parse(obj[0])) ;
@@ -291,7 +270,7 @@ function printProtocols(aCtx, aParams) {
 		var protType=protocol.type ;
 		if (protType!=null) {
 			mapS.typeInfo=protType.name ;
-			mapS.setTicket(protType.isPrintAdministrator==true?java.lang.Long.valueOf(0):null) ;
+			mapS.setTicket(protType.isPrintAdministrator==true ? java.lang.Long.valueOf(0) : null) ;
 		}
 		mapS.setInfo(protocol.medCase!=null?protocol.medCase.info:"");
 		mapS.setRecord(recordMultiValue(getMedServiceNameByProtocol(aCtx, id)+protocol.record));
@@ -311,9 +290,7 @@ function printBillings(aCtx, aParams)
 	
 	//текущая дата
 	var ret = new java.util.ArrayList() ;
-	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
     var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
-    var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
 	var current = new java.util.Date() ;
 	var curDate = new java.sql.Date(current.getTime()) ;
 	var curTime = new java.sql.Time(current.getTime()) ;
@@ -360,8 +337,7 @@ function printBillings(aCtx, aParams)
 	return map ;
 }
 function recordMultiText(aValue) {
-	var ret = new java.lang.StringBuilder () ;
-	var val = aValue!=null?"" +aValue:"" ;
+	var val = aValue!=null ? "" +aValue : "" ;
 	var n = /\n/ ;
 	var items = val.split(n);
 	var list = new java.util.ArrayList() ;
@@ -501,7 +477,7 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		wqr.set14(lechCode) ;//"sls.ownercode",
 		wqr.set15(lastotd) ;//"sls.lastOtd",
 		wqr.set16(recordZavOtd(aCtx,lastotdId,"dep.zav")) ;//
-		slsId = medCase.id ;
+		var slsId = medCase.id ;
 		//8. Диагноз направившего учреждения
 		//wqr.set17(getDiagnos(medCase.diagnosOrder)) ;//"sls.diagnosisOrder",
 		wqr.set17(recordDiagnosis(aCtx,slsId,"2","0","diagnosis.order.main")) ;
@@ -615,9 +591,6 @@ function printSurOperations(aCtx,aParams) {
 	var ids = ids1.split(",") ;
 	infoPrint(aCtx,ids[0]) ;
 	var ret = new java.util.ArrayList() ;
-	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
-    var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
-    var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
 	var current = new java.util.Date() ;
 	var curDate = new java.sql.Date(current.getTime()) ;
 	var curTime = new java.sql.Time(current.getTime()) ;

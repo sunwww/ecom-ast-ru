@@ -1,9 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.mis.ejb.domain.contract.JuridicalPerson;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;

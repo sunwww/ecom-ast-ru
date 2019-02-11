@@ -169,16 +169,20 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		spo.setStartFunction(workFunction) ;
 		spo.setServiceStream(aEntity.getServiceStream()) ;
 		spo.setNoActuality(false) ;
-		if ((aForm.isCloseSpo!=null && aForm.isCloseSpo)||(aForm.emergency!=null && aForm.emergency)
+		if ((aForm.isCloseSpo!=null && aForm.isCloseSpo==true)||(aForm.emergency!=null && aForm.emergency==true)
 				||(aForm.ambulance!=null && aForm.ambulance>0)) {
 			
 			spo.setDateFinish(aEntity.getDateStart()) ;
 			spo.setFinishFunction(workFunction) ;
 		}
+		spo.setIsDiagnosticSpo(aForm.getIsDiagnosticSpo()); //признак КДО
 		aCtx.manager.persist(spo) ;
 		aEntity.setParent(spo) ;
 		aCtx.manager.persist(aEntity) ;
 	} else {
+		spo=aEntity.parent;
+        spo.setIsDiagnosticSpo(aForm.getIsDiagnosticSpo()); //признак КДО
+        aCtx.manager.persist(spo) ;
 		if (((aForm.isCloseSpo!=null && aForm.isCloseSpo)||(aForm.emergency!=null && aForm.emergency)) && aEntity.parent!=null) {
 			//throw "Закрыть СПО: "+(aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) ;
 			try {

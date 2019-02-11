@@ -1,10 +1,7 @@
 package ru.ecom.expomc.ejb.uc.snils;
 
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import ru.ecom.ejb.services.util.QueryResultUtil;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -12,9 +9,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import ru.ecom.ejb.services.util.QueryResultUtil;
-import ru.nuzmsh.util.StringUtil;
+import java.util.*;
 
 @Stateless
 @Local(IOmcSnilsService.class)
@@ -45,13 +40,6 @@ public class OmcSnilsServiceBean implements IOmcSnilsService {
 		String middlename1 = getFirstLetter(aMiddlename1) ;
 		int birthYear = getYear(aBirthdate) ;
 	
-//		System.out.println("np="+aPolicyNumber
-//				+", sp="+aPolicySeries
-//				+", sk="+aInsuranceCompany
-//				+", f1="+lastname1
-//				+", i1="+firstname1
-//				+", o1="+middlename1
-//				+", y="+birthYear);
 		Query query = theManager.createNamedQuery("OmcSnils.findSnilsByPolicyAndPerson")
 		 .setParameter("policyNumber", aPolicyNumber)
 		 .setParameter("policySeries", aPolicySeries)
@@ -60,7 +48,6 @@ public class OmcSnilsServiceBean implements IOmcSnilsService {
 		 .setParameter("firstname1", firstname1)
 		 .setParameter("middlename1", middlename1)
 		 .setParameter("birthYear", birthYear) ;
-		//System.out.println(query);
 		OmcSnils snils = QueryResultUtil.getSingleResult(OmcSnils.class, query) ;
 		return snils!=null ? snils.getSnils() : null ;
 	}
@@ -91,9 +78,7 @@ public class OmcSnilsServiceBean implements IOmcSnilsService {
 		String firstname1 = getFirstLetter(aFirstname1) ;
 		String middlename1 = getFirstLetter(aMiddlename1) ;
 		int birthYear = getYear(aBirthdate) ;
-		//System.out.println("birthDate="+aBirthdate);
-		//System.out.println("birthYear="+birthYear);
-		List<OmcSnils> ret = new LinkedList<OmcSnils>() ;
+		List<OmcSnils> ret = new LinkedList<>() ;
 		List<OmcSnils> finded  = theManager.createNamedQuery("OmcSnils.findSnilsByPatient")
 		.setParameter("lastname1", lastname1)
 		.setParameter("firstname1", firstname1)
@@ -109,7 +94,7 @@ public class OmcSnilsServiceBean implements IOmcSnilsService {
 		String lastname1 = getFirstLetter(aLastname1) ;
 		String firstname1 = getFirstLetter(aFirstname1) ;
 		String middlename1 = getFirstLetter(aMiddlename1) ;
-		List<OmcSnils> ret = new LinkedList<OmcSnils>() ;
+		List<OmcSnils> ret = new LinkedList<>() ;
 		List<OmcSnils> finded  = theManager.createNamedQuery("OmcSnils.findSnilsByPatientWithoutYear")
 		.setParameter("lastname1", lastname1)
 		.setParameter("firstname1", firstname1)

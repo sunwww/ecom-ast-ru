@@ -1,10 +1,5 @@
 package ru.ecom.mis.ejb.form.psychiatry.interceptor;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
@@ -12,8 +7,11 @@ import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.mis.ejb.form.psychiatry.PsychiatricCareCardForm;
-import ru.ecom.poly.ejb.form.MedcardForm;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.util.Date;
+import java.util.List;
 
 public class CareCardPreCreateInterceptor implements IParentFormInterceptor, IFormInterceptor {
 

@@ -1,17 +1,16 @@
 package ru.ecom.jboss.live;
 
-import java.io.Serializable;
-
 import org.apache.log4j.Logger;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Invocation;
-import org.jboss.security.SecurityAssociation;
+
+import java.io.Serializable;
 
 public class LiveTransactionInterceptor implements Interceptor, Serializable {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(LiveTransactionInterceptor.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public String getName() {
 		return this.getClass().getName() ;

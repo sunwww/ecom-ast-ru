@@ -1,23 +1,15 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
-import java.sql.Date;
-
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Transfusion;
 import ru.ecom.mis.ejb.domain.medcase.TransfusionReagent;
-import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.Required;
+
+import javax.persistence.OneToOne;
 
 @EntityForm
 @EntityFormPersistance(clazz= TransfusionReagent.class)
@@ -28,19 +20,19 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class TransfusionReagentForm extends IdEntityForm {
 	/** Реактив */
 	@Comment("Реактив")
-	@Persist @Required
+	@Persist
 	public Long getReagent() {return theReagent;}
 	public void setReagent(Long aReagent) {theReagent = aReagent;}
 
 	/** Серия */
 	@Comment("Серия")
-	@Persist @Required
+	@Persist
 	public String getSeries() {return theSeries;}
 	public void setSeries(String aSeries) {theSeries = aSeries;}
 
 	/** Срок годности */
 	@Comment("Срок годности")
-	@Persist @Required @DoDateString @DateString
+	@Persist @DoDateString @DateString
 	public String getExpirationDate() {return theExpirationDate;}
 	public void setExpirationDate(String aExpirationDate) {theExpirationDate = aExpirationDate;}
 
@@ -66,3 +58,5 @@ public class TransfusionReagentForm extends IdEntityForm {
 	/** Реактив */
 	private Long theReagent;
 }
+//lastrelease milamesher 30.03.2018 #95
+//no required

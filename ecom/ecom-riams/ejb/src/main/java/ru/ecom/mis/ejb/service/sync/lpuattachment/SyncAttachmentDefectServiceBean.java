@@ -1,10 +1,15 @@
 package ru.ecom.mis.ejb.service.sync.lpuattachment;
 
-import java.io.StringReader;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.input.SAXBuilder;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.util.QueryIteratorUtil;
+import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
+import ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDefect;
+import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -13,18 +18,11 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.jdom.Document;
-import org.jdom.input.SAXBuilder;
-
-
-import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.QueryIteratorUtil;
-import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
-import ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDefect;
-import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
+import java.io.StringReader;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 
@@ -37,6 +35,7 @@ import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
 @Remote(ISyncAttachmentDefectService.class)
 
 public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectService {
+	private static final Logger LOG = Logger.getLogger(SyncAttachmentDefectServiceBean.class);
 	
 	public String changeAttachmentArea (Long aOldAreaId, Long aNewLpuId, Long aNewAreaId) {
 		String sql = "update LpuAttachedByDepartment set area_id="+aNewAreaId+", lpu_id="+aNewLpuId+" where area_id="+aOldAreaId;
@@ -59,7 +58,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 	private @PersistenceContext EntityManager theManager;
 	private @EJB ISyncLpuFondService theSyncService ;
 	private @EJB ILocalMonitorService theMonitorService;
-	IMonitor monitor = null; 
+
 	public String cleanDefect(long aAttachmentId) {
 		try{
 			LpuAttachedByDepartment att = theManager.find(LpuAttachedByDepartment.class, aAttachmentId);
@@ -77,28 +76,24 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 	}
 	public LpuAttachedByDepartment getAttachment (long aPatientId, Date aDate, String aMethod, String aType) {
 		LpuAttachedByDepartment lpu = null;
-		String aDateType = (aType!=null&&aType.equals("2"))?"dateTo":"dateFrom";
+		String aDateType = "2".equals(aType)?"dateTo":"dateFrom";
 		try{
 			String req = "Select id from LpuAttachedByDepartment where patient_id="+aPatientId+" and "+aDateType+" =to_date('"+aDate+"','yyyy-MM-dd') and attachedType_id=(select id from vocattachedtype where code='"+aMethod+"') ";
-		//System.out.println("REQ==="+req);
 			List<Object> list = theManager.createNativeQuery(req).getResultList();
-		if (list.size()>0) {
-			lpu = theManager.find(LpuAttachedByDepartment.class, Long.valueOf(list.get(0).toString()));
-		} 
-					
-		
+			if (!list.isEmpty()) {
+				lpu = theManager.find(LpuAttachedByDepartment.class, Long.valueOf(list.get(0).toString()));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();			
 		}
 		return lpu;
 	}
 	public String importDefectFromXML (String aFileName) {
-		try{
+		try {
 			if (aFileName!=null&&aFileName!="") {
-				System.out.println("in ImportDefect, start. hashcode="+aFileName.hashCode());
+				LOG.info("in ImportDefect, start. hashcode="+aFileName);
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 				SimpleDateFormat formatOutput = new SimpleDateFormat("dd.MM.yyyy");
-			//	SimpleDateFormat format2 = new SimpleDateFormat("MM-yyyy");
 				SAXBuilder saxBuilder = new SAXBuilder();
 				Document xdoc = saxBuilder.build(new StringReader(aFileName));
 				org.jdom.Element rootElement = xdoc.getRootElement();
@@ -110,7 +105,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 					StringBuilder refrSB = new StringBuilder();
 					List<org.jdom.Element> refresions =el.getChildren("REFREASON");	
 					for (org.jdom.Element r: refresions) {
-						if (r.getText().toLowerCase().equals("включен в регистр")){
+						if (r.getText().equalsIgnoreCase("включен в регистр")){
 							refrSB.setLength(0); break;
 						}
 						if (r.getText()==null||r.getText().equals("")||r.getText().equals("3")||r.getText().equals("4")||r.getText().equals("5")||r.getText().equals("6")) {
@@ -120,7 +115,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 						}
 						
 					}
-							String refreason =refrSB.length()>0?refrSB.substring(0,refrSB.length()-1).toString():""; 
+							String refreason =refrSB.length()>0?refrSB.substring(0,refrSB.length()-1):"";
 							String lastname = el.getChildText("FAM");
 							String firstname = el.getChildText("IM");
 							String middlename = el.getChildText("OT");
@@ -129,7 +124,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 							String tPrik= el.getChildText("T_PRIK");
 							String datePrik= el.getChildText("DATE_1");
 							String prikName = "Прикрепление";
-							if (tPrik!=null&&tPrik.equals("2")) { //При дефекте случая, поданного на открепление, не учитываем дефект(МАКС-М - 14 -открепление неправомерно, когда пациент уже откреплен)
+							if ("2".equals(tPrik)) { //При дефекте случая, поданного на открепление, не учитываем дефект(МАКС-М - 14 -открепление неправомерно, когда пациент уже откреплен)
 								refreason="";
 								prikName = "Открепление"; 
 							}
@@ -156,38 +151,37 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 							} else {
 								sb.append("black:"+i+":::Пациент не найден в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
 							}
-							 				
 				}
-				
 				return sb.toString();
 			} else {
 				return "Нет такого файла";
 			}
-			} catch (Exception e) {
-				System.out.println("------------"+aFileName);
-				e.printStackTrace();
-				return "ERROR";
+		} catch (Exception e) {
+			LOG.error("------------"+aFileName);
+			e.printStackTrace();
+			return "ERROR";
 		}
 		
 		
 	}
 	//Работает неправильно, вместо синхронизации использовать импорт дефектов!
 	public void sync(long aMonitorId, long aTimeId) {
+
 		Patient patient;
 		Long patientId;
 		LpuAttachedByDepartment attachment;
 		LpuAttachmentFomcDefect defect;
 		SimpleDateFormat formatOutput = new SimpleDateFormat("dd.MM.yyyy");
-			//Date current_date=new Date(new java.util.Date().getTime()) ;
-			monitor = theMonitorService.startMonitor(aMonitorId, "Импорт дефектов прикрепленного населения", getCount(aTimeId));
-			try{
+		IMonitor monitor = theMonitorService.startMonitor(aMonitorId, "Импорт дефектов прикрепленного населения", getCount(aTimeId));
+		try {
 			Query query = theManager.createQuery("from LpuAttachmentFomcDefect lafd where time = :time").setParameter("time", aTimeId);
 			Iterator<LpuAttachmentFomcDefect> lafd = QueryIteratorUtil.iterate(LpuAttachmentFomcDefect.class, query);
 			int i =0;
 			while (lafd.hasNext()) {
 				i++;
 				if (monitor.isCancelled()) {
-                    throw new IllegalMonitorStateException("Прервано пользователем");
+                    LOG.warn("Прервано пользователем");
+                    return;
                 }
 				defect =  lafd.next();
 				patientId = theSyncService.findPatientId(defect.getLastname(), defect.getFirstname(), defect.getMiddlename(), defect.getBirthday());
@@ -196,7 +190,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 					attachment=getAttachment(patientId, defect.getAttachDate(), defect.getMethodType(), "1");
 					if (attachment!=null) {
 						attachment.setDefectText(defect.getRefreason());
-						attachment.setDefectPeriod(formatOutput.format(new Date(new java.util.Date().getTime()))); // Изменить !!! 
+						attachment.setDefectPeriod(formatOutput.format(new Date(System.currentTimeMillis()))); // Изменить !!!
 						attachment.setEditUsername("fond_base");
 						theManager.persist(attachment);
 						monitor.setText(i+" Запись обновлена, пациент= "+patient.getPatientInfo()+", код дефекта = "+attachment.getDefectText());
@@ -207,15 +201,13 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 			}
 			monitor.finish(""+aTimeId);
 		} catch (Exception e) {
-			
 			monitor.error("Ошибка при импорте открепленных: ", e);
 			monitor.finish(""+aTimeId);
-			throw new IllegalMonitorStateException("Ошибка: "+e);
+			LOG.error(e);
 		}
 	}
 	 private Long getCount(long aTimeId) {
 	    	return (Long) theManager.createQuery("select count(*) from LpuAttachmentFomc where time = :time")
 	    			.setParameter("time", aTimeId).getSingleResult() ;
 	    }
-	
 }

@@ -1,19 +1,17 @@
 package ru.ecom.mis.ejb.service.birth;
 
-import java.util.List;
-
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import ru.ecom.document.ejb.domain.certificate.ConfinementCertificate;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.birth.ConfinedExchangeCard;
 import ru.ecom.mis.ejb.domain.birth.NewBorn;
 import ru.ecom.mis.ejb.domain.birth.PregnanExchangeCard;
 import ru.ecom.mis.ejb.domain.birth.PregnancyHistory;
-import ru.ecom.mis.ejb.domain.patient.Patient;
+
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Stateless
 @Remote(IPregnancyService.class)
@@ -51,7 +49,7 @@ public class PregnancyServiceBean implements IPregnancyService {
 	}
 	public boolean isWomanByPatient(Long aPatient) {
 		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from patient p left join vocsex vs on vs.id=p.sex_id where p.id='"+aPatient+"' and vs.omcCode='2'").setMaxResults(1).getResultList() ;
-		return res.size()>0?true:false ;
+		return res.size()>0 ;
 		//Patient pat = theManager.find(Patient.class, aPatient) ;
 		//return isWomanByPatient(pat) ;
 	}
@@ -63,11 +61,11 @@ public class PregnancyServiceBean implements IPregnancyService {
 		if (aMedCase==null) aMedCase=Long.valueOf(0) ;
 		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from MedCase m left join patient p on p.id=m.patient_id left join vocsex vs on vs.id=p.sex_id where m.id="+aMedCase+" and vs.omcCode='2'").setMaxResults(1).getResultList() ;
 
-		return res.size()>0?true:false ;
+		return res.size()>0 ;
 	}
 
 	private boolean isWomanByPatient(Object aOmcCode) {
-		return (aOmcCode!=null && String.valueOf(aOmcCode).equals("2") )? true :false;
+		return (aOmcCode!=null && String.valueOf(aOmcCode).equals("2") );
 		
 	}
 	public Long calcApgarEstimation(Long aMuscleTone, Long aPalpitation

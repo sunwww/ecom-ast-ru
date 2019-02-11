@@ -4,15 +4,9 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.patient.MedPolicyDmcForeign;
-import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
 import ru.ecom.mis.ejb.form.patient.interceptors.MedPolicyPreCreate;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
  * Полис ДМС иногороднего

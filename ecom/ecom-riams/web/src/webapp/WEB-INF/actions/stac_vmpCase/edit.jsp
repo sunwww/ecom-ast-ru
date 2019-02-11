@@ -1,7 +1,3 @@
-<%@page import="java.util.Collection"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.awt.print.Printable"%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -33,7 +29,7 @@
           <msh:autoComplete property="kind" label="Вид ВМП" fieldColSpan="3" horizontalFill="true" vocName="vocKindHighCare" size="50" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="method" label="Метод ВМП"  horizontalFill="true" fieldColSpan="3" parentAutocomplete="kind" vocName="vocMethodHighCare" size="50"/>
+        	<msh:autoComplete property="method" label="Метод ВМП"  horizontalFill="true" fieldColSpan="3" parentAutocomplete="kind" vocName="vocMethodHighCareByKind" size="50"/>
         </msh:row>
         <msh:row>
           <msh:textField property="stantAmount" label="Количество установленных стентов" />

@@ -1,6 +1,6 @@
-<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -82,6 +82,8 @@
                 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/Create" name="Случай ВМП" action="/entityParentPrepareCreate-stac_vmpCase" params="id" title="Добавить случай ВМП"/>
                 <msh:sideLink action="/javascript:watchThisPatient()" name="Наблюдать пациента на дежурстве" title="Наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
                 <msh:sideLink action="/javascript:notWatchThisPatient()" name="НЕ наблюдать пациента на дежурстве" title="НЕ наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+                <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" name="Кардио-скрининг нов. (I этап)" action="/entityParentPrepareCreate-stac_screeningCardiacFirst" params="id" title="Добавить кардио-скрининг нов. (I этап)"/>
+                <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" name="Кардио-скрининг нов. (II этап)" action="/entityParentPrepareCreate-stac_screeningCardiacSecond" params="id" title="Добавить кардио-скрининг нов. (II этап)"/>
             </msh:sideMenu>
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
                 <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
@@ -117,15 +119,20 @@
                                   title='Медицинские осмотры'/>
                     <tags:QECriteria name="QECriteria" />
                     <msh:sideLink styleId="viewShort" action="/javascript:showQECriteriaCloseDocument(${param.id})" name='Критерии' title="Просмотр критериев" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+                    <!--msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByPatient('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/-->
+                    <tags:CardiacScreening name="CardiacScreening" />
+                    <msh:sideLink styleId="viewShort" action="/javascript:showCardiacScreening(${param.id})" name='Кардиоскрининги новорождённых' title="Кардио-скрининги нов." params="" roles="/Policy/Mis/Pregnancy/CardiacScreening/View" />
                 </msh:sideMenu>
                 <msh:sideMenu title="Печать">
 
                     <tags:stac_documentsPrint name="Docum" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" title="Документов" medCase="${param.id}"/>
                     <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневников по СЛО" action="/printProtocolsBySLO.do?stAll=selected&medcase=${param.id}" params="id"/>
                     <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
+                    <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/View" name="Кардиоскрининг" action="/javascript:window.open('print-cardiacScreeningForm.do?s=PrintNewBornHistoryService&m=printCardiacScreeningForm&id='+${param.id});" params="id"/>
                 </msh:sideMenu>
             </msh:ifNotInRole>
             <msh:sideMenu title="Администрирование">
+                <msh:sideLink name="Ориентировочная цена по ОМС" action=".javascript:getMedcaseCost()" roles="/Policy/E2/Admin"/>
                 <msh:sideLink confirm="Вы точно хотите объединить несколько СЛО?" name="Объединить со след. СЛО" action=".javascript:unionSloWithNextSlo()" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/UnionSlo"/>
                 <tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/ChangeServiceStream" />
             </msh:sideMenu>
@@ -193,7 +200,7 @@
                     <msh:autoComplete parentId="stac_sloForm.lpu" vocName="vocLpuHospOtd" property="department" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
                 </msh:row>
                 <msh:row guid="f2-68fb-4ccc-9982-7b4480cca147">
-                    <msh:autoComplete vocName="serviceStreamByDepAndDate" property="serviceStream" label="Поток обслуживания" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b216c" />
+                    <msh:autoComplete vocName="serviceStreamByDepAndDate" property="serviceStream" label="Поток обслуживания" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b216c"/>
                 </msh:row>
                 <msh:row guid="f2aba5-68fb-4ccc-9982-7b4480cmca147">
                     <msh:autoComplete vocName="bedFundByDepAndStreamAndDate" property="bedFund" label="Профиль коек" fieldColSpan="6" horizontalFill="true" guid="1064-23b2-42c0-ba47-65d90747816c" size="30" />
@@ -559,28 +566,64 @@ left join Patient pat on pat.id=wan.person_id
                 </msh:section>
             </msh:ifInRole>
             <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/View">
-                <ecom:webQuery name="childBirth" nativeSql="select cb.id,cb.birthFinishDate, count(nb.id), list(pat.firstname||' ' ||pat.middlename) from ChildBirth cb
-      	left join newborn nb on nb.childbirth_id=cb.id left join patient pat on pat.id=nb.patient_id where cb.medCase_id='${param.id}' group by cb.id,cb.birthFinishDate"/>
+                <ecom:webQuery name="childBirth" nativeSql="select cb.id,cb.birthFinishDate, count(nb.id), list(pat.firstname||' ' ||pat.middlename),vocr.name,
+                to_char(mb.misbirthdate,'dd.mm.yyyy')||' '||vtmb.name as txt1
+                ,'&chbId='||coalesce(cb.id,0)||'&rbId='||coalesce(rc.id,0)||'&mbId='||coalesce(mb.id,0)||'&mcId='||coalesce(mc.id,0) as txt2
+                from medcase mc
+                left join childbirth cb on cb.medcase_id=mc.id
+                left join newborn nb on nb.childbirth_id=cb.id left join patient pat on pat.id=nb.patient_id
+                left join robsonclass rc on rc.medcase_id=mc.id
+                left join VocRobsonClass vocr on vocr.id=robsontype_id
+                left join misbirth mb on mb.medcase_id=mc.id
+                left join VocTypeMisbirth vtmb on vtmb.id=mb.typemisbirth_id
+                where mc.id='${param.id}'  and (vocr.name is not null or cb.id is not null or mb.misbirthdate is not null) group by cb.id,cb.birthFinishDate,
+                vocr.name,mb.misbirthdate,vtmb.name,rc.id,mb.id,mc.id"/>
                 <msh:section>
                     <msh:sectionTitle>
                         Роды
                         <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_childBirth.do?id=${param.id}">Добавить роды</a>
+                        </msh:ifInRole>
+                        <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_robsonClass.do?id=${param.id}">Классификация Робсона</a>
+                        </msh:ifInRole>
+                        <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_misbirth.do?id=${param.id}">Выкидыш</a>
                         </msh:ifInRole>
                         <msh:ifInRole roles="/Policy/Mis/NewBorn/Create">
                             <a href="entityParentPrepareCreate-preg_neonatalNewBorn.do?id=${param.id}"> Добавить инф. о новорожденному</a>
                         </msh:ifInRole>
                     </msh:sectionTitle>
                     <msh:sectionContent>
-                        <msh:table name="childBirth" action="entityParentView-preg_childBirth.do" idField="1">
+                        <msh:table name="childBirth" action="js-stac_slo-gotoChildBirthOrMisbirthOrRobson.do" cellFunction="true" idField="7" openNewWindow="true">
                             <msh:tableColumn property="sn" columnName="##"/>
-                            <msh:tableColumn property="2" columnName="Дата окончания родов" />
-                            <msh:tableColumn property="3" columnName="Кол-во плодов" />
-                            <msh:tableColumn property="4" columnName="ФИО ребенка (детей)" />
+                            <msh:tableColumn property="2" columnName="Дата окончания родов" addParam="&type=chb"/>
+                            <msh:tableColumn property="3" columnName="Кол-во плодов" addParam="&type=chb"/>
+                            <msh:tableColumn property="4" columnName="ФИО ребенка (детей)" addParam="&type=chb"/>
+                            <msh:tableColumn property="5" columnName="Классификация Робсона" addParam="&type=rb"/>
+                            <msh:tableColumn property="6" columnName="Выкидыш" addParam="&type=mb"/>
                         </msh:table>
                     </msh:sectionContent>
                 </msh:section>
             </msh:ifInRole>
-
+            <msh:ifInRole roles="/Policy/Mis/AssessmentCard/View">
+                <ecom:webQuery name="asCard" nativeSql="  select ac.id, act.name, to_char(ac.startDate,'dd.MM.yyyy') as priemDate
+                  ,ac.ballsum as f4_ballsum
+                  from assessmentCard ac
+                  left join assessmentcardtemplate act on act.id=ac.template
+                  where ac.medcase_id=${param.id}
+                order by ac.startDate desc"/>
+                <msh:section>
+                    <msh:sectionTitle>
+                        Карты оценки рисков
+                        <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard()">Добавить карту оценки</a></msh:ifInRole>
+                    </msh:sectionTitle>
+                    <msh:sectionContent>
+                        <msh:table name="asCard" action="entityParentView-mis_assessmentCard.do" idField="1">
+                            <msh:tableColumn columnName="Название" property="2" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                            <msh:tableColumn columnName="Дата приема" property="3" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                            <msh:tableColumn columnName="Сумма баллов" property="4" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                        </msh:table>
+                    </msh:sectionContent>
+                </msh:section>
+            </msh:ifInRole>
             <msh:ifInRole roles="/Policy/Mis/Calc/Calculation">
                 <ecom:webQuery name="calcs" nativeSql="select cr.id,c.name, cr.result, vmu.name as vmu, cr.resdate
 from calculationsresult cr 
@@ -626,6 +669,19 @@ where m.id ='${param.id}'"/>
         <msh:ifFormTypeIsView formName="stac_sloForm">
             <script type="text/javascript">
                 slo_form_is_view = 1 ;
+
+                function getMedcaseCost() {
+                    Expert2Service.getMedcaseCost(${param.id},{
+                        callback:function(aResult) {
+                            aResult=JSON.parse(aResult);
+                            if (aResult.status=='ok') {
+                                showToastMessage("ПРИМЕРНАЯ стоимость случая по ОМС:<br>КСГ="+aResult.ksg+"<br>Цена="+aResult.price+"<br>Формула расчета: "+aResult.formulaCost);
+                            } else {
+                                showToastMessage("Ошибка расчета цены:"+aResult.errorName);
+                            }
+                        }
+                    })
+                }
             </script>
         </msh:ifFormTypeIsView>
         <tags:CreateDiagnoseCriteria name="CreateDiagnoseCriteria" />
@@ -727,7 +783,13 @@ where m.id ='${param.id}'"/>
                     }
 
                 }
-
+                if (isFunction(window["setDefaultWorkPlaceByDepartment"])) //если ф-я существует (т.е. если создание)
+                    setDefaultWorkPlaceByDepartment($('department').value);  //если отделение уже проставлено
+            }
+            // isFunction
+            function isFunction(functionToCheck)  {
+                var getType = {};
+                return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
             }
             function addDiag(aDiagType,aCheck) {
                 var addRowF="";
@@ -857,7 +919,14 @@ where m.id ='${param.id}'"/>
                     }
                 }
             }
-
+//last release milamesher 06.04.2018 #97
+            function viewAssessmentCardsByPatient(d) {
+                getDefinition("js-mis_assessmentCard-listByPatient.do?short=Short&id="+$('patient').value, null);
+            }
+            function goCreateAssessmentCard() {
+                window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&typeCard=7&slo="+${param.id};
+                $('isPrintInfo').checked='checked' ;
+            }
         </script>
 
         <msh:ifFormTypeIsView formName="stac_sloForm">
@@ -904,6 +973,7 @@ where m.id ='${param.id}'"/>
         </script>
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
         <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+        <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <msh:ifFormTypeIsView formName="stac_sloForm">
             <script type="text/javascript">
                 function unionSloWithNextSlo() {
@@ -1011,6 +1081,24 @@ where m.id ='${param.id}'"/>
                     }) ;
 
             }
+            //Milamesher #101 25.06.2018 проставляется палата по умолчанию
+            function setDefaultWorkPlaceByDepartment(dep) {
+                if (+dep != 0 && window.location.href.indexOf("Create")!=-1) {
+                    HospitalMedCaseService.getDefaultWorkPlaceByDepartment(dep, {
+                        callback: function (aResult) {
+                            if (aResult != '##') {
+                                var roomArr = aResult.split('#');
+                                if (+roomArr[0] != 0 && +roomArr[3] != 0) {
+                                    $('roomNumber').value = roomArr[0];
+                                    if ($('roomNumberName')!=null) $('roomNumberName').value = roomArr[1];
+                                    $('bedNumber').value = roomArr[2];
+                                    if ($('bedNumberName')!=null) $('bedNumberName').value = roomArr[3];
+                                }
+                            }
+                        }
+                    });
+                }
+            }
             </script>
 
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction">
@@ -1018,10 +1106,10 @@ where m.id ='${param.id}'"/>
                     try {
                         //departmentAutocomplete.setParentId($('lpu').value) ;
                         departmentAutocomplete.addOnChangeCallback(function() {
-                            try {
-                                roomNumberAutocomplete.setParentId($('department').value) ;
+                            try {//Milamesher 17072018 ошибка на roomNumberAutocomplete и roomNumberName при ShortEnter
+                                if (typeof(roomNumberAutocomplete)!== 'undefined') roomNumberAutocomplete.setParentId($('department').value) ;
                                 $('roomNumber').value='0' ;
-                                $('roomNumberName').value='' ;
+                                if ($('roomNumberName')!=null) $('roomNumberName').value='' ;
                                 $('ownerFunction').value="0";
                                 $('ownerFunctionName').value="";
 
@@ -1037,6 +1125,7 @@ where m.id ='${param.id}'"/>
                             //		$('kindHighCareName').value = "" ;
                             //		kindHighCareAutocomplete.setParentId(+newid) ;
                             //	}
+                            setDefaultWorkPlaceByDepartment($('department').value);
                         });
                     } catch (e) {
                     }
@@ -1047,10 +1136,11 @@ where m.id ='${param.id}'"/>
                     try {
                         //departmentAutocomplete.setParentId($('lpu').value) ;
                         departmentAutocomplete.addOnChangeCallback(function() {
+                            try { //Milamesher 17072018 ошибка на roomNumberAutocomplete и roomNumberName при ShortEnter
                             updateLpuAndDate() ;
-                            roomNumberAutocomplete.setParentId($('department').value) ;
+                            if (typeof(roomNumberAutocomplete)!== 'undefined') roomNumberAutocomplete.setParentId($('department').value) ;
                             $('roomNumber').value='0' ;
-                            $('roomNumberName').value='' ;
+                            if ($('roomNumberName')!=null) $('roomNumberName').value='' ;
                             ownerFunctionAutocomplete.setParentId($('department').value) ;
                             HospitalMedCaseService.getDefaultInfoBySlo($('parent').value
                                 , $('department').value, $('serviceStream').value
@@ -1073,7 +1163,10 @@ where m.id ='${param.id}'"/>
                                         }
                                     }
                                 })
-                        });
+                            setDefaultWorkPlaceByDepartment($('department').value);
+                        }catch (e) {
+                            }}
+                        );
                     } catch (e) {
                     }
                 </script>

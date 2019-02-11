@@ -227,7 +227,7 @@
     <msh:section>
     <msh:sectionTitle>Свод ${reportInfo}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="report_direct_swod" nativeSql="
+    <ecom:webQuery isReportBase="true" name="report_direct_swod" nativeSql="
 select '&department=${param.department}&serviceStream=${param.serviceStream}&${typeGroupColumn}='||${typeGroupId},coalesce(${typeGroupName},'Без направления (самообращение)'),
 count(distinct sls.id) 
 ,count(distinct case when sls.emergency='1' then sls.id else null end) as cntEmergency
@@ -298,7 +298,7 @@ order by ${typeGroupName}
     <msh:section>
     <msh:sectionTitle>Свод ${reportInfo}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="report_direct_swod" nativeSql="
+    <ecom:webQuery isReportBase="true" name="report_direct_swod" nativeSql="
 select '&department=${param.department}&serviceStream=${param.serviceStream}&${typeGroupColumn}='||${typeGroupId},coalesce(${typeGroupName},'Без направления'),
 count(distinct sls.id) 
 ,count(distinct case when sls.emergency='1' then sls.id else null end) as cntEmergency
@@ -379,7 +379,7 @@ order by ${typeGroupName}
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     select 
 sls.id as slsid
 ,ss.code as sscode

@@ -1,22 +1,20 @@
 package ru.ecom.ejb.print;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.script.IScriptService;
-import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.report.replace.IValueGetter;
 import ru.ecom.report.replace.IValueInit;
 import ru.ecom.report.replace.SetValueException;
 import ru.ecom.report.rtf.RtfPrintServiceHelper;
+
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import java.util.HashMap;
+import java.util.Map;
 
 @Stateless
 @Local(IPrintService.class)
@@ -47,15 +45,13 @@ public class PrintServiceBean implements IPrintService {
             //Long maxLengthLine = ConvertSql.parseLong(config.get("text.line.length.max", "77")) ;
             RtfPrintServiceHelper service = new RtfPrintServiceHelper(aIsTxtFirst);
             String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-            boolean removedTemp =config.get("tomcat.data.dir.removedtemp", "1").equals("1")?true:false;
+            boolean removedTemp =config.get("tomcat.data.dir.removedtemp", "1").equals("1");
             
             service.setWorkDir(config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf"));
             service.setTemplateDir(System.getProperty("jboss.server.data.dir"));
-            //service.set
-            //System.out.println("removedTemp = "+removedTemp) ;
             service.setRemovedTempFile(removedTemp);
             service.setLogin(aLogin) ;
-            return service.print(aKey, new ValueInit(values), new HashMap<String, String>()) ;
+            return service.print(aKey, new ValueInit(values), new HashMap<>()) ;
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -77,7 +73,7 @@ public class PrintServiceBean implements IPrintService {
 
 	
 	private @EJB
-	IJbossGetFileLocalService theJbossGetFileLocalService;
+    IJbossGetFileLocalService theJbossGetFileLocalService;
 
 	//private EjbInjection theInjection = EjbInjection.getInstance();
 }

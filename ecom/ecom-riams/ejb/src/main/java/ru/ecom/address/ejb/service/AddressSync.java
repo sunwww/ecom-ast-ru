@@ -1,21 +1,17 @@
 package ru.ecom.address.ejb.service;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.address.ejb.domain.address.AddressType;
 import ru.ecom.address.ejb.domain.kladr.Kladr;
 import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.expomc.ejb.services.sync.ISync;
 import ru.ecom.expomc.ejb.services.sync.SyncContext;
+
+import javax.persistence.EntityManager;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Синхронизация типов адреса из кладр
@@ -23,16 +19,14 @@ import ru.ecom.expomc.ejb.services.sync.SyncContext;
 
 public class AddressSync implements ISync {
 
-    private final static Logger LOG = Logger.getLogger(AddressSync.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(AddressSync.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
 
     public void sync(SyncContext aContext) throws Exception {
 
-    	//String clause = " where kladrCode like '30%' and time = "+aContext.getImportTime().getId();
         String clause = " where time = "+aContext.getImportTime().getId();
-        String queryString = " from Kladr" + clause;
         String countQueryString = "select count(*) from Kladr " + clause;
 
         theEntityManager = aContext.getEntityManager();
@@ -49,19 +43,17 @@ public class AddressSync implements ISync {
       //  Iterator<Kladr> iterator = QueryIteratorUtil.iterate(Kladr.class, theEntityManager.createQuery(queryString));
         List <Object> kladrs = theEntityManager.createNativeQuery(sql).setMaxResults(5000).getResultList();
         if (kladrs.isEmpty()) {
-        	System.out.println("===Импорт кладров завершен");
+        	LOG.info("===Импорт кладров завершен");
         	break;
         }
-      //  System.out.println("=== Импорт в процессе, размер = "+kladrs.size());
         for (Object kl: kladrs) {
-      //  	System.out.println("=== All is OK"+kl);
         	Long klId = Long.valueOf(""+kl);
         	id = klId;
             Kladr kladr = theEntityManager.find(Kladr.class, klId);
             String kladrCode = kladr.getKladrCode();
             String kladrStatus = kladrCode.substring(kladrCode.length()-2);
         	if (!kladrStatus.equals("00")){
-        		System.out.println("Кладр: "+kladrCode+", Статус: недействующий ("+kladrStatus+")");
+        		LOG.info("Кладр: "+kladrCode+", Статус: недействующий ("+kladrStatus+")");
         		continue;
         	}
             
@@ -131,10 +123,9 @@ public class AddressSync implements ISync {
 
     @SuppressWarnings("unchecked")
 	private Address findAddressByKladr(String aKladrCode) {
-//        System.out.println("aKladrCode = " + aKladrCode);
         List<Address> list = theEntityManager.createQuery("from Address where kladr = :kladr")
                 .setParameter("kladr", aKladrCode).getResultList();
-        return list != null && list.size() > 0 ? list.iterator().next() : null;
+        return list != null && !list.isEmpty() ? list.iterator().next() : null;
     }
 
 
@@ -228,7 +219,7 @@ public class AddressSync implements ISync {
 
     public static String getParentKladrCode(String aKladrCode) {
         if (CAN_TRACE) LOG.debug("    getParentKladrCode: aKladrCode = " + aKladrCode);
-        int domain = (int) getDomainForKladrCode(aKladrCode);
+        int domain = getDomainForKladrCode(aKladrCode);
         String ret;
         switch (domain) {
             case 6:
@@ -264,5 +255,5 @@ public class AddressSync implements ISync {
 
 
     private EntityManager theEntityManager;
-    private HashMap<String, AddressType> theHash = new HashMap<String, AddressType>();
+    private HashMap<String, AddressType> theHash = new HashMap<>();
 }

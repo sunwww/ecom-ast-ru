@@ -245,5 +245,14 @@ public class ClaimForm extends IdEntityForm{
 	public void setCreatorComment(String aCreatorComment) {theCreatorComment = aCreatorComment;}
 	/** Комментарий пользователя */
 	private String theCreatorComment;
-	
+
+
+	/** Имя файла-скриншота */
+	@Comment("Имя файла-скриншота")
+	@Persist
+	public String getScreenFileName() {return theScreenFileName;}
+	public void setScreenFileName(String aScreenFileName) {theScreenFileName= aScreenFileName;}
+	/** Имя файла-скриншота */
+	private String theScreenFileName;
 }
+//lastrealease milamesher 06.03.2018 #77

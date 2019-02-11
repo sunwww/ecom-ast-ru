@@ -13,6 +13,9 @@
       <msh:hidden property="saveType" guid="3e3fb7b5-258e-4194-9dbe-5093382cf627" />
       <msh:hidden property="medcard" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
       <msh:hidden property="patient" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
+      <msh:hidden property="datePlan" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
+      <msh:hidden property="timePlan" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
+      <msh:hidden property="workFunctionPlan" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
 
       <msh:panel>
         <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">
@@ -100,11 +103,33 @@
     <script type="text/javascript">
     var oldaction = document.forms[0].action ;
     document.forms[0].action = 'javascript:isExistTicket(this)';
+    function getFreeTimeForWorkfunction() {
+        var wf = +$("workFunctionExecute").value ;
+        var ds = $("dateFinish").value ;
+        if (wf>0 && ds.length==10) {
+            WorkCalendarService.getFreeCalendarTimeForWorkFunction(wf, ds, {
+                callback:function(ret) {
+                    ret = JSON.parse(ret);
+                    if (ret.status=="ok") {
+                        $('timePlan').value=ret.timeId;
+                        $('datePlan').value=ret.calendarDateId;
+                        $('mainForm').name="smo_directionForm";
+                        $('workFunctionPlan').value=$('workFunctionExecute').value;
+                        oldaction="entitySaveGoView-smo_direction.do";
+                    }
+                    document.forms[0].action = oldaction ;
+                    document.forms[0].submit() ;
+                }
+            });
+        }
+    }
+
     workFunctionExecuteAutocomplete.addOnChangeCallback(function() {
     	getInfoByWorker();
+    //	getFreeTimeForWorkfunction();
 	});
+
     function isExistTicket() {
-    	
 		 if (!$('emergency').checked) {
 			 TicketService.checkPolicyByMedcard($('medcard').value,$('dateFinish').value,$('serviceStream').value
 					 , {
@@ -113,7 +138,6 @@
 							checkDouble();
 				  	  } else {
 				  		  alert('У Вас стоит запрет на запись пациентов по ОМС без полиса!!!');
-				  		  
 				  		  document.forms[0].submitButton.disabled = false ;
 				  	  } 
 					 }
@@ -131,8 +155,8 @@
 	                    if (aResult) {
 					    		showTicketDouble(aResult) ;
 	                     } else {
-	                    	 document.forms[0].action = oldaction ;
-					    	 document.forms[0].submit() ;
+                            getFreeTimeForWorkfunction();
+
 	                     }
 	                 }
 		        	}

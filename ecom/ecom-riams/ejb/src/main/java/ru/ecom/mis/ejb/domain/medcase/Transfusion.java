@@ -182,6 +182,11 @@ public abstract class Transfusion extends BaseEntity{
 	public Boolean getPhenotypee1() {return thePhenotypee1;}
 	public void setPhenotypee1(Boolean aPhenotypee1) {thePhenotypee1 = aPhenotypee1;}
 
+	/** Фенотип не определялся */
+	@Comment("Фенотип не определялся")
+	public Boolean getPhenotypeNone() {return thePhenotypeNone;}
+	public void setPhenotypeNone(Boolean aPhenotypeNone) {thePhenotypeNone = aPhenotypeNone;}
+
 	/** Фенотип E */
 	private Boolean thePhenotypee1;	
 	/** Фенотип e */
@@ -192,6 +197,8 @@ public abstract class Transfusion extends BaseEntity{
 	private Boolean thePhenotypec1;
 	/** Фенотип C */
 	private Boolean thePhenotypeC;
+	/** Фенотип не определялся*/
+	private Boolean thePhenotypeNone;
 	/** Фенотип */
 	private String thePhenotype;
 	
@@ -320,3 +327,4 @@ public abstract class Transfusion extends BaseEntity{
 	private String theCreateUsername;
 	
 }
+//lastrelease milamesher 02.04.2018 #95

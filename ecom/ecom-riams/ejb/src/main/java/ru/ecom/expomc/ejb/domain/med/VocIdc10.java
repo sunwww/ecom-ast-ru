@@ -1,15 +1,16 @@
 package ru.ecom.expomc.ejb.domain.med;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.VocIdCodeName;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.voc.VocSexPermission;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.sql.Date;
 
 @Entity
 @Comment("МКБ 10")
@@ -139,4 +140,25 @@ public class VocIdc10 extends VocIdCodeName {
 	public void setPromedCode(String promedCode) {
 		this.promedCode = promedCode;
 	}
+	
+	/** Разрешено использовать без уточнения */
+	@Comment("Разрешено использовать без уточнения")
+	public Boolean getIsPermitWithoutDot() {return theIsPermitWithoutDot;}
+	public void setIsPermitWithoutDot(Boolean aIsPermitWithoutDot) {theIsPermitWithoutDot = aIsPermitWithoutDot;}
+	/** Разрешено использовать без уточнения */
+	private Boolean theIsPermitWithoutDot ;
+
+	/** Дата начала актуальности */
+	@Comment("Дата начала актуальности")
+	public Date getDateFrom() {return theDateFrom;}
+	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
+	/** Дата начала актуальности */
+	private Date theDateFrom ;
+
+	/** Дата окончания актуальности */
+	@Comment("Дата окончания актуальности")
+	public Date getDateTo() {return theDateTo;}
+	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
+	/** Дата окончания актуальности */
+	private Date theDateTo ;
 }

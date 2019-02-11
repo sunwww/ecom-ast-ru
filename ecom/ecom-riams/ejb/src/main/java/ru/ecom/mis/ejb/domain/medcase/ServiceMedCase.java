@@ -1,13 +1,11 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import java.math.BigDecimal;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Услуга как случай медицинского обслуживания

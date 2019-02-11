@@ -19,7 +19,7 @@
   ,to_char(coalesce(m.datefinish,current_date),'dd.mm.yyyy') as dfinish,m.serviceStream_id as servstream from medcase m where m.id=${param.id}
   "/>
   <%
-  request.setAttribute("priceList", "4");
+  request.setAttribute("priceList", "5");
   request.setAttribute("idsertypebed","11") ;
   List l = (List)request.getAttribute("patinfoQ") ;
   if (l!=null && l.size()>0) {
@@ -333,7 +333,7 @@ select
     left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
       where
       (slo.parent_id='${param.id}' or slo.id='${param.id}')
-      and pp.id is not null
+      and pp.id is not null and (pms.dateto is null or pms.dateto>=so.operationDate)
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" />
@@ -358,7 +358,7 @@ select
       left join medcase slo on slo.id=so.medcase_id
       left join vocservicestream vss on vss.id=so.servicestream_id
       left join medservice ms on ms.id=so.medservice_id
-    left join pricemedservice pms on pms.medservice_id=so.medservice_id
+    left join pricemedservice pms on pms.medservice_id=so.medservice_id and pms.dateto is null or pms.dateto>=so.operationdate
     left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
       where
       (slo.parent_id='${param.id}' or slo.id='${param.id}')

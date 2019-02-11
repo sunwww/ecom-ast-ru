@@ -1,8 +1,8 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -27,10 +27,10 @@
 	String typeView =ActionUtil.updateParameter("Report_CloseSpo","typeView","1", request) ;
 	String typeMode =ActionUtil.updateParameter("journal_denied_without_diagnosis","typeMode","1", request) ;
 	String typeDiag =ActionUtil.updateParameter("journal_denied_without_diagnosis","typeDiag","2", request) ;
-  
+
 
   %>
-    <msh:form action="/stac_journal_denied_without_diagnosis.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_journal_denied_without_diagnosis.do" defaultField="beginDate" disableFormDataConfirm="true" method="POST" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel>
 		<msh:row>
         	<msh:separator label="Выбор режима" colSpan="7" />
@@ -38,7 +38,7 @@
 		<msh:row>
 			<td class="label" title="Режим отображения (typeMode)" colspan="1"><label for="typeModeName" id="typeModeLabel">Режим:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;">
-	        	<input type="radio" name="typeMode" value="1"> по отделению(ям)
+	        	<input type="radio" name="typeMode" value="1333"> по отделению(ям)
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;" colspan="2">
 	        	<input type="radio" name="typeMode" value="2" > по дневникам
@@ -77,7 +77,8 @@
 	        
 		</msh:row>
 		<msh:row>
-			<ecom:oneToManyOneAutocomplete label="Раб.функции для выборки" vocName="vocWorkFunction" property="vocWorkFunctions" colSpan="5"/>
+			<%--<ecom:oneToManyOneAutocomplete label="Раб.функции для выборки" vocName="vocWorkFunction" property="vocWorkFunctions" colSpan="5"/>--%>
+			<msh:autoComplete label="Раб.функция для выборки" vocName="vocWorkFunction" property="vocWorkFunctions" size="100"/>
 		</msh:row>
 		<msh:row>
 			<msh:autoComplete property="vocWorkFunction" horizontalFill="true" vocName="vocWorkFunction" label="Раб.функция для генерации" fieldColSpan="5"/>
@@ -133,7 +134,7 @@
     </msh:form>
     <script type="text/javascript">
     checkFieldUpdate('typeView','${typeView}',1) ;
-    checkFieldUpdate('typeMode','${typeMode}',1) ;
+    checkFieldUpdate('typeMode','${typeMode}',2) ;
     checkFieldUpdate('typeDiag','${typeDiag}',1) ;
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
@@ -182,7 +183,7 @@
     <msh:section>
     <msh:sectionTitle>Список соответствий сотрудников по экстренным пунктам</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="
     select wf.id,vwf.name, wp.lastname, list(case when wfg1.emergency='1' then wfg1.groupname else null end) from workfunction wf
 left join worker w on w.id=wf.worker_id
 left join vocworkfunction vwf on vwf.id=wf.workfunction_id
@@ -205,15 +206,13 @@ group by wf.id,vwf.name,wp.lastname
     </msh:section> 
     <%
     }
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
-    	String finishDate = (String)request.getParameter("dateEnd") ;
-    	if (finishDate==null||finishDate.equals("")) {
-    		request.setAttribute("finishDate", date) ;
-    	} else {
+    	String finishDate = request.getParameter("dateEnd") ;
+    	if (finishDate==null||finishDate.equals("")) {finishDate=date;}
     		request.setAttribute("finishDate", finishDate) ;
-    	}
     	request.setAttribute("beginDate", date) ;
+        request.setAttribute("isReportBase", ActionUtil.isReportBase(date,finishDate,request));
     	/*
     	if (typeView!=null && typeView.equals("1")) {
     		request.setAttribute("additionSpoSql", " and (select count(spo1.id) from medcase spo1 left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id left join Worker ow1 on ow1.id=owf1.worker_id where spo.patient_id=spo1.patient_id and spo1.dtype='PolyclinicMedCase' and owf.workFunction_id=owf1.workFunction_id and spo1.dateFinish between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id)>1") ;
@@ -222,7 +221,7 @@ group by wf.id,vwf.name,wp.lastname
     	} else {
     		
     	}*/
-    	String dep = (String)request.getParameter("department") ;
+    	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.trim().equals("") && !dep.equals("0")) {
     		request.setAttribute("departmentSql", " and sls.department_id="+dep) ;
     		request.setAttribute("department",dep) ;
@@ -236,7 +235,7 @@ group by wf.id,vwf.name,wp.lastname
     	} else {
     		request.setAttribute("workFunction","0") ;
     	}*/
-    	String servStream = (String)request.getParameter("serviceStream") ;
+    	String servStream = request.getParameter("serviceStream") ;
     	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
     		request.setAttribute("serviceStreamSql", " and sls.serviceStream_id="+servStream) ;
     		request.setAttribute("serviceStream", servStream) ;
@@ -305,11 +304,12 @@ group by wf.id,vwf.name,wp.lastname
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
     select ml.id||'&department='||ml.id,ml.name ,count(distinct sls.id) as cntSls,count(distinct case when diag.id is null then sls.id else null end) as notdiag
 	 from MedCase sls
 left join mislpu ml on ml.id=sls.department_id
 left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)
+left join vocidc10 mkb on mkb.id=diag.idc10_id
 where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 and sls.deniedHospitalizating_id is not null
 and sls.medicalAid='1'
@@ -334,12 +334,13 @@ and sls.medicalAid='1'
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
 select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,p.lastname||' '||p.firstname||' '||p.middlename as fiopatient
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
 ,case when mcmp.policies_id is not null then 'Да' else '' end  as policies
+, ml.name as f7_depname
  from MedCase sls
 left join patient p on p.id=sls.patient_id
 left join workfunction wf on wf.id=sls.ownerFunction_id
@@ -347,12 +348,14 @@ left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)
+left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id
 left join workfunction dwf on dwf.id=diag.medicalWorker_id
 left join worker dw on dw.id=dwf.worker_id
 left join patient dwp on dwp.id=dw.person_id
 left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
+left join mislpu ml on ml.id=sls.department_id
 where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 and sls.deniedHospitalizating_id is not null
 and sls.department_id='${department}' and sls.medicalAid='1'
@@ -369,20 +372,18 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Деж. врач" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
+      <msh:tableColumn columnName="Отделение" property="7"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% } %>
-    	
-    	
-    	
-    	
-    <% 
+    <% }
         } else if (typeMode.equals("2")) {
         	StringBuilder paramSql= new StringBuilder() ;
-          	StringBuilder paramHref= new StringBuilder() ;
+       //   	StringBuilder paramHref= new StringBuilder() ;
           	//--old---paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
-          	paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("vocWorkFunctions","vocWorkFunctions", "vwf.id", request)) ;
+          	//paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("vocWorkFunctions","vocWorkFunctions", "vwf.id", request)) ;
+          	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("vocWorkFunctions","vocWorkFunctions", "vwf.id", request)) ;
+
           	//paramSql.append(" ").append(ActionUtil.setParameterFilterSql("vocWorkFunction", "vwf.id", request)) ;
           	paramSql.append(" ").append(ActionUtil.setParameterFilterMkb("filterMkb","filterMkb", "mkb.code", request)) ;
           	 if (typeDiag.equals("1")) {
@@ -391,19 +392,14 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
            		request.setAttribute("diagSql", " and diag.id is null") ;
           		 
           	 }
-          	int type=1 ;
-        	if (request.getAttribute("vocWorkFunctions")!=null) {
-        		type=2 ;
-       		}
-          	//if (request.getParameter("filterMkb")!=null) {
          %>
          
     <%if (typeView.equals("1")) { %>
     <msh:section>
     <msh:sectionTitle>Свод по дневникам</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
-    select ${vocWorkFunctionsSqlId} as vwfid,vwf.name as vwfname
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nameFldSql="datelist_sql" nativeSql="
+    select cast(${vocWorkFunctionsSqlId} as varchar) as vwfid,vwf.name as vwfname
     ,count(distinct sls.id) as cntSls
     ,count(distinct case when diag.id is null then sls.id else null end) as notdiag
     ,count(distinct case when diag.id is not null ${filterMkbSql} then sls.id else null end) as diagFilter
@@ -411,10 +407,11 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
 	 left join diary d on d.medcase_id=sls.id
 left join mislpu ml on ml.id=sls.department_id
 left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)
+left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join workFunction wf on wf.id=d.specialist_id
 left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is not null
+and sls.deniedHospitalizating_id is not null ${filterMkbSql}
 and sls.medicalAid='1'
  ${vocWorkFunctionsSql}
  ${serviceStreamSql}
@@ -429,6 +426,7 @@ and sls.medicalAid='1'
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во отказов" property="3" isCalcAmount="true" />
       <msh:tableColumn columnName="из них без диагноза" property="4" isCalcAmount="true" />
+      <msh:tableColumn columnName="С подходящим диагнозом" property="5" isCalcAmount="true" />
     </msh:table>${datelist_sql}
     </msh:sectionContent>
     </msh:section> 
@@ -438,13 +436,14 @@ and sls.medicalAid='1'
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nameFldSql="datelist_sql" nativeSql="
 select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,p.lastname||' '||p.firstname||' '||p.middlename as fiopatient
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
 ,case when mcmp.policies_id is not null then 'Да' else '' end  as policies
-,case when diag.id is not null ${filterMkbSql} then mkb.code else null end as diag
+,case when diag.id is not null ${filterMkbSql} then mkb.code || ' ' ||dvwf.name||' '||dwp.lastname||' '||dwp.firstname||' '||dwp.middlename else null end as diag
+,ml.name as f8_depName
  from MedCase sls
 left join patient p on p.id=sls.patient_id
 left join diary d on d.medcase_id=sls.id
@@ -459,6 +458,7 @@ left join worker dw on dw.id=dwf.worker_id
 left join patient dwp on dwp.id=dw.person_id
 left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
+left join mislpu ml on ml.id=sls.department_id
 where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 and sls.deniedHospitalizating_id is not null
  and sls.medicalAid='1'
@@ -467,17 +467,18 @@ and sls.deniedHospitalizating_id is not null
 ${diagSql}
 order by sls.dateStart,p.lastname,p.firstname,p.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" 
+    <msh:table name="datelist" printToExcelButton="сохранить в Excel"
     viewUrl="entityParentView-stac_sslAdmission.do?short=Short"
     action="entityParentView-stac_sslAdmission.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Дата обращения" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Деж. врач" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Деж. врач (создал дневник)" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
       <msh:tableColumn columnName="Диагноз" property="7"/>
-    </msh:table>
+		<msh:tableColumn columnName="Отделение" property="8"/>
+    </msh:table>${datelist_sql}
     </msh:sectionContent>
     </msh:section>
     <% } %>         
@@ -519,7 +520,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
             	window.location = 'js-smo_spo-createNewVisitByDenied.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value+"&department="+$('department').value ;
       	   } else {
       		   
-      		 var obj = JSON.parse($('vocWorkFunctions').value) ;
+      		/* var obj = JSON.parse($('vocWorkFunctions').value) ;
       		
       		var sb ="" ;
       		for (var i = 0; i < obj.childs.length; i++) {
@@ -528,11 +529,11 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
       				sb+="," ;
       			}
       			sb += child.value ;
-      		} 
+      		} */
       		//alert(sb) ;
       		 window.location = 'js-smo_spo-createNewVisitByDeniedDiary.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value
       				 +"&vocWorkFunction="+$('vocWorkFunction').value
-      				 +"&vocWorkFunctions="+sb
+      				 +"&vocWorkFunctions="+$('vocWorkFunctions').value
       				 +"&filterMkb="+$('filterMkb').value 
       				 ;
       	   }

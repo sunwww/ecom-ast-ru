@@ -82,7 +82,7 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_medContractForm">
-			<msh:section title="Счета на оплату" createRoles="" createUrl="entityParentPrepareCreate-contract_account_contract.do?id=${param.id}">
+			<msh:section title="Счета на оплату <a href='javascript:void(0)' onclick='showprintLabAnalysisCloseDocument(${param.id })'> Печать лаб. анализов</a>" createRoles="" createUrl="entityParentPrepareCreate-contract_account_contract.do?id=${param.id}">
 			<ecom:webQuery nativeSql="select ca.id as f1_id
 			, CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
 			, sp.dateFrom,sp.dateTo
@@ -275,6 +275,8 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_medContract" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/Edit"/>
 			<msh:sideLink key="ALT+DEL" confirm="Вы точно хотите удалить контракт?" params="id" 
 			action="/entityParentDeleteGoSubclassView-contract_medContract_person" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/Delete"/>
+			<msh:sideLink action="/javascript:showCContractPerson()" name="Изменить обслуживаемую персону по договору"
+						  title="Изменить обслуживаемую персону по договору" roles="/Policy/Mis/Contract/MedContract/Edit"/>
 		</msh:sideMenu>
 		<msh:sideMenu title="Добавить" >
 			<msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-contract_servedPerson" name="Обслуживаемые персоны" title="Обслуживаемые персоны" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Create"/>
@@ -296,6 +298,15 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			<msh:sideLink params="id" action="/entityParentList-contract_contractMedPolicy" name="Медицинские полиса" title="Просмотреть медицинские полиса по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractMedPolicy/View"/>
 			<msh:sideLink params="id" action="/entityParentList-contract_rule" name="Договорные правила" title="Просмотреть договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/View"/>
 		</msh:sideMenu>
-		<tags:contractMenu currentAction="medContract"/>		
+		<tags:contractChangeServedPerson name="C" contract="${param.id}"/>
+		<tags:contractMenu currentAction="medContract"/>
+		<tags:printLabAnalysis name="printLabAnalysis" />
+		<script type='text/javascript' src="ContractService.js" />
+		<script type='text/javascript'>
+            function printLabAnalysis() {
+				showprintLabAnalysisCloseDocument($('id').value);
+            }
+
+		</script>
 	</tiles:put>
 </tiles:insert>

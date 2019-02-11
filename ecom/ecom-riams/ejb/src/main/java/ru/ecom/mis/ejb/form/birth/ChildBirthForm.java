@@ -598,4 +598,40 @@ public class ChildBirthForm extends IdEntityForm {
 
 	/** Показания */
 	private Long theEmergency;
+
+	/** Паритет родов */
+	@Comment("Паритет родов")
+	@Persist @Required
+	public Long getParitet() {return theParitet;}
+	public void setParitet(Long aParitet) {theParitet = aParitet;}
+
+	/** Паритет родов */
+	private Long theParitet;
+
+	/** ЭКО? */
+	@Comment("ЭКО?")
+	@Persist
+	public Boolean getIsECO() {return theIsECO;}
+	public void setIsECO(Boolean aIsECO) {theIsECO = aIsECO;}
+
+	/** ЭКО? */
+	private Boolean theIsECO;
+
+	/** Состояла на учёте в ЖК? */
+	@Comment("Состояла на учёте в ЖК?")
+	@Persist
+	public Boolean getIsRegisteredWithWomenConsultation() {return theIsRegisteredWithWomenConsultation;}
+	public void setIsRegisteredWithWomenConsultation(Boolean aIsRegisteredWithWomenConsultation) {theIsRegisteredWithWomenConsultation = aIsRegisteredWithWomenConsultation;}
+
+	/** Состояла на учёте в ЖК? */
+	private Boolean theIsRegisteredWithWomenConsultation;
+
+	/** Паритет беременностей*/
+	@Comment("Паритет беременностей")
+	@Persist @Required
+	public Long getParitetPregn() {return theParitetPregn;}
+	public void setParitetPregn(Long aParitetPregn) {theParitetPregn = aParitetPregn;}
+
+	/** Паритет беременностей */
+	private Long theParitetPregn;
 }

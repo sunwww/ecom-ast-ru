@@ -1,9 +1,5 @@
 package ru.ecom.mis.ejb.form.contract.interceptor;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.IParentEntityFormService;
@@ -12,9 +8,11 @@ import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.mis.ejb.domain.contract.PriceMedService;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.form.contract.PriceMedServiceForm;
 import ru.ecom.mis.ejb.form.medcase.MedServiceForm;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 public class PriceMedServiceSaveInterceptor  implements IFormInterceptor {
 
@@ -34,15 +32,11 @@ public class PriceMedServiceSaveInterceptor  implements IFormInterceptor {
 				}
 				MedService medService = new MedService() ;
 				List<MedService> list = manager.createQuery("from MedService where code=:code and finishDate is null").setParameter("code", msForm.getCode()).getResultList() ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					medService = list.get(0) ;
 				} else {
-					
-				
-					
 					if (msForm.getName().trim().equals("")) {
-						if (priceMedService.getPricePosition()!=null)
-						msForm.setName(priceMedService.getPricePosition().getName().toUpperCase().trim()) ;
+						if (priceMedService.getPricePosition()!=null) msForm.setName(priceMedService.getPricePosition().getName().toUpperCase().trim()) ;
 					} else {
 						msForm.setName(msForm.getName().toUpperCase().trim()) ;
 					}

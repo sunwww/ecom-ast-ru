@@ -1,22 +1,5 @@
 package ru.ecom.expomc.ejb.uc.findpolicy;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import ru.ecom.expomc.ejb.domain.externalbase.ExternalPersonInfo;
 import ru.ecom.expomc.ejb.domain.message.Message;
 import ru.ecom.expomc.ejb.domain.registry.RegistryEntry;
@@ -24,6 +7,14 @@ import ru.ecom.expomc.ejb.services.externalperson.IExternalPersonInfoService;
 import ru.ecom.expomc.ejb.uc.snils.IOmcSnilsService;
 import ru.ecom.expomc.ejb.uc.snils.OmcSnils;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.*;
+import java.util.*;
 
 @Stateless
 @Remote(IFindPolicyService.class)
@@ -34,7 +25,6 @@ public class FindPolicyServiceBean implements IFindPolicyService {
 		LineNumberReader in = new LineNumberReader(new FileReader("policyReplaced.txt")) ;
 		String line ;
 		while ( (line=in.readLine())!=null) {
-			//System.out.println(line);
 			String p[] = line.split(",") ;
 			int type = Integer.parseInt(p[0]) ;
 			String url = p[1] ;
@@ -109,10 +99,8 @@ public class FindPolicyServiceBean implements IFindPolicyService {
 	}
 	
 	private void print(int aType, String aUrlEdit, long aPolicyId) {
-		try {
-			PrintWriter out = new PrintWriter(new FileWriter("policyReplaced.txt",true)) ;
+		try (PrintWriter out = new PrintWriter(new FileWriter("policyReplaced.txt",true))){
 			out.println(aType+","+aUrlEdit+","+aPolicyId) ;
-			out.close() ;
 		} catch (Exception e) {
 			throw new RuntimeException("Ошибка записи файла",e) ;
 		}

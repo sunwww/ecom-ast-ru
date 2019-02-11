@@ -1,27 +1,25 @@
 package ru.ecom.address.web.dwr;
 
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.util.format.DateFormat;
-import ru.ecom.address.ejb.service.IAddressService;
+import org.apache.log4j.Logger;
 import ru.ecom.address.ejb.service.AddressPointCheck;
 import ru.ecom.address.ejb.service.AddressPointCheckHelper;
-import ru.ecom.web.util.Injection;
+import ru.ecom.address.ejb.service.IAddressService;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.format.DateFormat;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.naming.NamingException;
 import javax.ejb.EJBException;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  */
 public class AddressServiceJs {
-    private final static Log LOG = LogFactory.getLog(AddressServiceJs.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private static final Logger LOG = Logger.getLogger(AddressServiceJs.class) ;
     public String getAddressRayon(Long aAddressId, String aHouse
     		,HttpServletRequest aRequest) throws NamingException {
     	IAddressService service = Injection.find(aRequest).getService(IAddressService.class);
@@ -98,14 +96,11 @@ public class AddressServiceJs {
                 service.checkExists(aLpuAreaId, aLpuAddressTextId, aAddress, null, null, null);
                 return "" ;
             }
+        } catch (EJBException ejbException ) {
+            if(ejbException.getCause()!=null) throw (Exception)ejbException.getCause();
+            else throw ejbException;
         } catch (Exception e) {
-            if(e instanceof EJBException) {
-                EJBException ejbException = (EJBException) e ;
-                if(ejbException.getCause()!=null) throw (Exception)ejbException.getCause();
-                else throw e;
-            } else {
                 throw e ;
-            }
         }
     }
 

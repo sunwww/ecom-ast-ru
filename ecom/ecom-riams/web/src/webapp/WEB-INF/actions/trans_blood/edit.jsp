@@ -27,6 +27,7 @@
       <msh:hidden property="id" />
       <msh:hidden property="medCase" />
       <msh:hidden property="saveType" />
+        <msh:hidden property="reagentPT2"/>
       <msh:panel colsWidth="1%,1%,15%,81%">
         <msh:row>
           <msh:textField property="journalNumber" label="Номер в журнале" />
@@ -53,6 +54,7 @@
         	<msh:checkBox property="phenotypeD" label="D"/>
         	<msh:checkBox property="phenotypeE" label="E"/>
         	<msh:checkBox property="phenotypee1" label="e"/>
+            <msh:checkBox property="phenotypeNone" label="Не опр"/>
         </msh:row>
         </msh:ifFormTypeIsNotView>
         </msh:panel>
@@ -100,7 +102,7 @@
         </msh:row>
         <msh:row>
           <msh:textField property="donor" label="Код донор" horizontalFill="true" size="35"/> 
-          <msh:autoComplete property="preparationBloodGroup" label="Група крови" vocName="vocBloodGroup" guid="c4581345-c5cd-4934-b99d-a4ba4571f4f8" horizontalFill="true" />
+          <msh:autoComplete property="preparationBloodGroup" label="Группа крови" vocName="vocBloodGroup" guid="c4581345-c5cd-4934-b99d-a4ba4571f4f8" horizontalFill="true" />
           <msh:autoComplete property="preparationRhesusFactor" label="Резус-фактор" vocName="vocRhesusFactor" guid="f11b7586-7f17-4dd0-b638-c9ed408cc089" horizontalFill="true" />
         </msh:row>
         </msh:panel>
@@ -109,8 +111,8 @@
           <msh:separator label="Информация о контрольных проверках" colSpan="10" guid="43c6f5c7-a52f-4da5-89ac-02b5a5c35986" />
         </msh:row>
         <msh:row>
-          <msh:autoComplete property="patBloodGroupCheck" label="Група крови реципиента" vocName="vocBloodGroup" horizontalFill="true" />
-          <msh:autoComplete property="prepBloodGroupCheck" label="Група крови донора" vocName="vocBloodGroup" horizontalFill="true" />
+          <msh:autoComplete property="patBloodGroupCheck" label="Группа крови реципиента" vocName="vocBloodGroup" horizontalFill="true" />
+          <msh:autoComplete property="prepBloodGroupCheck" label="Группа крови донора" vocName="vocBloodGroup" horizontalFill="true" />
         </msh:row>
         <msh:row>
           <msh:separator label="Информация о реактивах, использовавшихся при определении показателей" colSpan="10"/>
@@ -132,16 +134,9 @@
         	<msh:autoComplete fieldColSpan="9" horizontalFill="true" vocName="vocTransfusionMethodPT" property="methodPT1" label="1. Метод"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="reagentPT1" label="Реактив"/>
-        	<msh:textField property="reagentSeriesPT1" label="Серия"/>
-        	<msh:textField property="reagentExpDatePT1" label="Срок годности"/>
-        	<msh:autoComplete vocName="vocYesNo" property="resultGoodPT1" label="Совместима?"/>
-        </msh:row>
-        <msh:row>
         	<msh:autoComplete fieldColSpan="9" horizontalFill="true" property="methodPT2" vocName="vocTransfusionMethodPT" label="2. Метод"/>
         </msh:row>
-        <msh:row>
-        	<msh:textField property="reagentPT2" label="Реактив"/>
+        <msh:row guid="1234">
         	<msh:textField property="reagentSeriesPT2" label="Серия"/>
         	<msh:textField property="reagentExpDatePT2" label="Срок годности"/>
         	<msh:autoComplete vocName="vocYesNo" property="resultGoodPT2" label="Совместима?"/>
@@ -151,11 +146,14 @@
         <msh:row>
           <msh:separator label="Биологическая проба" colSpan="10"/>
         </msh:row>
-        <msh:ifFormTypeIsNotView formName="trans_bloodForm">
+        <!--msh:ifFormTypeIsNotView formName="trans_bloodForm"-->
         <msh:row>
         	<msh:checkBox property="isIllPatientsBT" label="Пациент находится под наркозом или в коме" fieldColSpan="9" horizontalFill="true"/>
         </msh:row>
-        <msh:row styleId="row10"><td colspan="10">Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды. </td></msh:row>
+            <msh:row>
+                <msh:autoComplete vocName="vocBloodBioProbProcedure" horizontalFill="true" property="bloodBioProbProcedure" label="Переливание:" fieldColSpan="9"/>
+            </msh:row>
+        <msh:row styleId="row10"><td colspan="10"></td></msh:row>
         <msh:row styleId="row11">
         	<msh:textField property="pulseRateBT" size="4" label="PS"/>
         	<msh:textField property="bloodPressureTopBT" size="4" label="AD сис."/>
@@ -164,14 +162,22 @@
         	<msh:textField property="temperatureBT" size="4" label="t"/>
         </msh:row>
         <msh:row styleId="row12">
-           	<msh:autoComplete size="4" property="stateBT"  vocName="vocYesNo" label="Состояние удовлет." />
+           	<msh:autoComplete size="4" property="stateBT"  vocName="vocYesNo" label="Состояние изменилось?" />
            	<msh:textField property="lamentBT" label="Жалобы" fieldColSpan="9" horizontalFill="true"/>
         </msh:row>
-        <msh:row styleId="row20"><td colspan="10">Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована.</td></msh:row>
-        <msh:row styleId="row21">
-           	<msh:autoComplete fieldColSpan="9" property="serumColorBT" horizontalFill="true" vocName="vocTransfusionTestSerumColor" label="Цвет сыворотки" />
-        </msh:row>
-        </msh:ifFormTypeIsNotView>
+        <!--msh:row styleId="row21">
+           	<!--msh:autoComplete fieldColSpan="9" property="serumColorBT" horizontalFill="true" vocName="vocTransfusionTestSerumColor" label="Цвет сыворотки" />
+        <!--/msh:row>
+        <!--/msh:ifFormTypeIsNotView-->
+            <msh:row styleId="row20">
+                <msh:row styleId="row22"><td colspan="10">Изменилось без видимой причины:</td></msh:row>
+                <msh:row styleId="row23">
+                    <msh:checkBox property="wasBleedingIncreased" label="Кровотечение усилилось"/>
+                    <msh:checkBox property="wasADDecreased" label="АД снизилось"/>
+                    <msh:checkBox property="wasPulseIncreased" label="Пульс участился"/>
+                    <msh:checkBox property="wasUrineColorChanged" label="Цвет мочи изменился"/>
+                </msh:row>
+            </msh:row>
         <msh:ifFormTypeIsView formName="trans_bloodForm">
         <msh:row>
         	<msh:label property="biologicTest" label="Описание" fieldColSpan="9"/>
@@ -204,6 +210,7 @@
         	<msh:textField size="4" property="monitorForm0.pulseRate" label="PS"/>
         	<msh:textField size="4" property="monitorForm0.temperature" label="t"/>
         	<msh:autoComplete size="15" property="monitorForm0.urineColor" horizontalFill="true" vocName="vocUrineColor" label="Цвет мочи"/>
+            <msh:textField size="4" property="monitorForm0.diuresis" label="Диурез"/>
         </msh:row>
         <msh:row>
           <msh:separator label="через 1 час после переливания" colSpan="15"/>
@@ -214,6 +221,7 @@
         	<msh:textField size="4" property="monitorForm1.pulseRate" label="PS"/>
         	<msh:textField size="4" property="monitorForm1.temperature" label="t"/>
         	<msh:autoComplete size="15" property="monitorForm1.urineColor" horizontalFill="true" vocName="vocUrineColor" label="Цвет мочи"/>
+            <msh:textField size="4" property="monitorForm1.diuresis" label="Диурез"/>
         </msh:row>
         <msh:row>
           <msh:separator label="через 2 часа после переливания" colSpan="15"/>
@@ -223,7 +231,8 @@
         	<msh:textField size="4" property="monitorForm2.bloodPressureLower" label="АД дис."/>
         	<msh:textField size="4" property="monitorForm2.pulseRate" label="PS"/>
         	<msh:textField size="4" property="monitorForm2.temperature" label="t"/>
-        	<msh:autoComplete size="15" property="monitorForm2.urineColor" horizontalFill="true" vocName="vocUrineColor" label="Цвет мочи" fieldColSpan="2"/>
+        	<msh:autoComplete size="15" property="monitorForm2.urineColor" horizontalFill="true" vocName="vocUrineColor" label="Цвет мочи" />
+            <msh:textField size="4" property="monitorForm2.diuresis" label="Диурез"/>
         </msh:row>
 
         <msh:row>
@@ -244,9 +253,10 @@
   	eventutil.addEventListener($('phenotypeE'), 'click', phenotype) ;
   	eventutil.addEventListener($('phenotypee1'), 'click', phenotype) ;
   	eventutil.addEventListener($('phenotypeD'), 'click', phenotype) ;
+    eventutil.addEventListener($('phenotypeNone'), 'click', phenotype) ;
   	eventutil.addEventListener($('isIllPatientsBT'), 'click', biologTest) ;
   	function phenotype() {
-  		$('phenotype').value="C"+check("phenotypeC")+"c"+check("phenotypec1")+"D"+check("phenotypeD")+"E"+check("phenotypeE")+"e"+check("phenotypee1") ;
+  		$('phenotype').value="C"+check("phenotypeC")+"c"+check("phenotypec1")+"D"+check("phenotypeD")+"E"+check("phenotypeE")+"e"+check("phenotypee1") + "Не опр"+check("phenotypeNone");
   		$('phenotypeReadOnly').value=$('phenotype').value ;
   	}
   	function check(aField) {
@@ -255,20 +265,78 @@
   	}
   	function biologTest() {
   		if ($("isIllPatientsBT").checked==true) {
-  			try { $("row20").style.display = 'table-row' ;$("row21").style.display = 'table-row' ; 
+  			try { $("row20").style.display = 'table-row' ;$("row22").style.display ='table-row';$("row23").style.display ='table-row' ;
   			$("row10").style.display = 'none' ;$("row11").style.display = 'none' ;$("row12").style.display = 'none' ; 
-  			} catch (e) { $("row20").style.display = 'block' ;$("row21").style.display = 'block' ; $("row10").style.display = 'none'; $("row11").style.display = 'none'; $("row12").style.display = 'none' ;}
+  			} catch (e) { $("row20").style.display = 'block' ; $("row10").style.display = 'none'; $("row11").style.display = 'none'; $("row12").style.display = 'none' ;}
   		} else {
-  			try { $("row10").style.display = 'table-row' ; $("row11").style.display = 'table-row' ; $("row12").style.display = 'table-row' ; 
-  			$("row20").style.display = 'none' ;$("row21").style.display = 'none' ; 
-  			} catch (e) { $("row10").style.display = 'block' ; $("row11").style.display = 'block' ; $("row12").style.display = 'block' ; 
-  			$("row20").style.display = 'none' ;$("row21").style.display = 'none' ;}
+  			try { $("row20").style.display ='none'; $("row22").style.display ='none';$("row23").style.display ='none';$("row10").style.display = 'table-row' ; $("row11").style.display = 'table-row' ; $("row12").style.display = 'table-row' ;
+  			$("row20").style.display = 'none' ;
+  			} catch (e) { $("row10").style.display = 'block' ; $("row11").style.display = 'block' ; $("row12").style.display = 'block' ;
+  			$("row20").style.display ='none'; $("row22").style.display ='none';$("row23").style.display ='none' ;}
+            //alert($("row20").style.display);
   		}
   	}
   	biologTest();
   	phenotype();
   	</script>
   	</msh:ifFormTypeIsNotView>
+      <script type="text/javascript">
+          //Milamesher 08112018 - выпадающий список вместо текстового поля
+          function addReagentCmb() {
+              var row=document.getElementById('reagentSeriesPT2Label').parentNode.parentNode;
+              var div = document.createElement('div'); var tdID = document.createElement('td');
+
+              var new_comboBox = document.createElement('select');
+              var option_0 = document.createElement('option');
+              option_0.setAttribute('value', '');
+              var txt_0 = document.createTextNode("");
+              option_0.appendChild(txt_0);
+
+              var option_1 = document.createElement('option');
+              option_1.setAttribute('value', 'Полиглюкин 33%');
+              var txt_1 = document.createTextNode("Полиглюкин 33%");
+              option_1.appendChild(txt_1);
+
+              var option_2 = document.createElement('option');
+              option_2.setAttribute('value', 'Желатин');
+              var txt_2 = document.createTextNode("Желатин");
+              option_2.appendChild(txt_2);
+
+              var option_3 = document.createElement('option');
+              option_3.setAttribute('value', 'Гелевая карта');
+              var txt_3 = document.createTextNode("Гелевая карта");
+              option_3.appendChild(txt_3);
+
+              new_comboBox.appendChild(option_0);
+              new_comboBox.appendChild(option_1);
+              new_comboBox.appendChild(option_2);
+              new_comboBox.appendChild(option_3);
+              div.appendChild(document.createTextNode("Реактив:"));
+              new_comboBox.id='rg1';
+              onchange = function onchangeCmb() {
+                  $('reagentPT2').value=document.getElementById('rg1').options[document.getElementById('rg1').selectedIndex].text;
+              };
+              <msh:ifFormTypeAreViewOrEdit formName="trans_bloodForm">
+                new_comboBox.value=$('reagentPT2').value;
+              <msh:ifFormTypeIsView formName="trans_bloodForm">
+                new_comboBox.setAttribute('disabled',true);
+              </msh:ifFormTypeIsView>
+            </msh:ifFormTypeAreViewOrEdit>
+              <msh:ifFormTypeIsCreate formName="trans_bloodForm">
+                $('reagentPT2').value='';
+              </msh:ifFormTypeIsCreate>
+              div.appendChild(new_comboBox);tdID.appendChild(div);
+              row.appendChild(tdID);
+              //Перемещение столбца в строке
+              jQuery.moveColumn = function (row, from, to) {
+                  var cols;
+                  cols = jQuery(row).children('th, td');
+                  cols.eq(from).detach().insertBefore(cols.eq(to));
+              };
+              jQuery.moveColumn(document.getElementById('reagentSeriesPT2Label').parentNode.parentNode,6,0);
+          }
+          addReagentCmb();
+      </script>
   </tiles:put>
 </tiles:insert>
 

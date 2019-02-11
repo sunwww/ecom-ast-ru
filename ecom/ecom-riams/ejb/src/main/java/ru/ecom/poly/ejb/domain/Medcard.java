@@ -1,12 +1,5 @@
 package ru.ecom.poly.ejb.domain;
 
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -15,6 +8,12 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.poly.ejb.domain.voc.VocCardIndex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.sql.Date;
 
 // Медицинская карта
 

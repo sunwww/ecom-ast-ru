@@ -94,6 +94,11 @@ public class DocumentCloseAction extends BaseAction {
         } else {
         	aRequest.setAttribute("disReason", "") ;
         }
+		if (form.getDisabilityReason2()!=null && form.getDisabilityReason2()>Long.valueOf(0)) {
+			aRequest.setAttribute("disReason2", " and dd.disabilityReason2_id="+form.getDisabilityReason2()) ;
+		} else {
+			aRequest.setAttribute("disReason2", "") ;
+		}
         
         if (form.getCloseReason()!=null && form.getCloseReason()>Long.valueOf(0)) {
         	aRequest.setAttribute("closeReason", " and dd.closeReason_id="+form.getCloseReason()) ;

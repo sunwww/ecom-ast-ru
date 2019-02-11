@@ -48,4 +48,13 @@ public class VocServiceStream extends VocIdNameOmcCode {
 
 	/** Вычислять договор */
 	private Boolean theIsCalcDogovor;
+
+	private String promedCode;
+	@Comment("Код в промеде")
+	public String getPromedCode() {
+		return promedCode;
+	}
+	public void setPromedCode(String promedCode) {
+		this.promedCode = promedCode;
+	}
 }

@@ -1,29 +1,26 @@
 package ru.ecom.miniejb;
 
+import org.apache.log4j.Logger;
+import ru.ecom.miniejb.impl.EjbHash;
+import ru.nuzmsh.util.StringUtil;
+
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.ecom.miniejb.impl.EjbHash;
-import ru.nuzmsh.util.StringUtil;
-
 /**
  * Регистрация сервисов
  */
 public class ServiceRegister {
 
-    private final static Log LOG = LogFactory.getLog(ServiceRegister.class);
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled();
+    private static final Logger LOG = Logger.getLogger(ServiceRegister.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     public ServiceRegister(String aAppName, InitialContext aContext, IProxyCreator aLocalProxyCreator, IProxyCreator aRemoteProxyCreator) {
@@ -54,15 +51,15 @@ public class ServiceRegister {
         boolean isJndiParentRegistered = false;
 
         try {
-            if (CAN_TRACE) LOG.trace("jndiParent = " + jndiParent);
+            if (CAN_TRACE) LOG.info("jndiParent = " + jndiParent);
             theInitialContext.lookup(jndiParent);
         } catch (Exception e) {
-            if (CAN_TRACE) LOG.trace("Registering subcontext " + jndiParent + " ...");
+            if (CAN_TRACE) LOG.info("Registering subcontext " + jndiParent + " ...");
             theInitialContext.createSubcontext(jndiParent);
             isJndiParentRegistered = true;
         }
         String jndi = createServiceJndi(aServiceClass, aSuffix);
-        if (CAN_TRACE) LOG.trace("Registering " + jndi + " ...");
+        if (CAN_TRACE) LOG.info("Registering " + jndi + " ...");
         Object proxy = aProxyCreator.createProxyService(aServiceClass, aInterfaceClass, theInterfacesHash);
         theInitialContext.bind(jndi, proxy);
 
@@ -114,19 +111,17 @@ public class ServiceRegister {
         String file = "/META-INF/miniejbservices.txt";
         InputStream resourceIn = loader.getResourceAsStream(file);
         if (resourceIn == null) throw new IllegalArgumentException("Нет файла " + file);
-        try {
-            LineNumberReader in = new LineNumberReader(new InputStreamReader(resourceIn));
+        try (LineNumberReader in = new LineNumberReader(new InputStreamReader(resourceIn))){
             String line;
             while ((line = in.readLine()) != null) {
                 if (!StringUtil.isNullOrEmpty(line)) register(loader.loadClass(line));
             }
-            in.close();
         } finally {
             resourceIn.close();
         }
     }
 
-    private final ArrayList<String> theRegisterJndis = new ArrayList<String>();
+    private final ArrayList<String> theRegisterJndis = new ArrayList<>();
     private final InitialContext theInitialContext;
     private final IProxyCreator theLocalProxyCreator;
     private final IProxyCreator theRemoteProxyCreator;

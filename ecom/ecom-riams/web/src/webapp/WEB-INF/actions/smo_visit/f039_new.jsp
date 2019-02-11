@@ -1,16 +1,15 @@
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
-<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -537,7 +536,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
     </msh:sectionTitle>
 
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
          	<msh:tableButton property="1"  buttonFunction="this.style.background='blue';openPatientNewTab" buttonShortName="Н" buttonName="Открыть в НОВОЙ вкладке"/>
             <msh:tableColumn columnName="Дата посещения" property="2"/>            
@@ -676,7 +675,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table cellFunction="true"
+        <msh:table cellFunction="true" printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_f039_list.do?&short=Short&typeReestr=1&typeView=${typeView}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
@@ -870,7 +869,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -1063,7 +1062,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -1204,7 +1203,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -1361,7 +1360,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -1520,7 +1519,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -1608,7 +1607,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
                   <msh:tableNotEmpty>
          	<tr>
@@ -1724,7 +1723,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupName}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Всего посещ." property="3"/>
@@ -1795,7 +1794,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupName}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Всего посещ." property="3"/>

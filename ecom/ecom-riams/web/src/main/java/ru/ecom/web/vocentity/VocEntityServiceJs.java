@@ -1,11 +1,11 @@
 package ru.ecom.web.vocentity;
 
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import ru.ecom.ejb.services.vocentity.IVocEntityService;
 import ru.ecom.ejb.services.vocentity.VocEntityInfo;
 import ru.ecom.web.util.Injection;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 
 public class VocEntityServiceJs {
 
@@ -22,7 +22,6 @@ public class VocEntityServiceJs {
 	public void removeVocEntity(String aClassname, String aId, HttpServletRequest aRequest) throws NamingException {
 		IVocEntityService service = Injection.find(aRequest).getService(IVocEntityService.class) ;
 		service.removeVocEntity(aClassname, aId) ;
-		
 	}
 	
 	public boolean delete(String aClassname, HttpServletRequest aRequest) {

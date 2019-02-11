@@ -50,6 +50,11 @@
 			<input name="add" type='button' onclick="javascript:goTo('drug')" value='Добавить назначение лекарственного препарата'>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<input name="add" type='button' onclick="javascript:goTo('cons')" value='Добавить назначение на консультацию'>
+		</td>
+	</tr>
     <tr>
     	<td>
     		<input name="view" type='button' onclick="javascript:goTo('view')" value='Просмотреть назначения'> 
@@ -84,6 +89,7 @@ var isSLSClosed = true;
     	else if (aValue=='mode') window.location='entityParentPrepareCreate-pres_modePrescription.do?id='+plId;
     	else if (aValue=='func') window.location='entityParentPrepareCreate-pres_diagnosticPrescription.do?id='+plId;
         else if (aValue=="drug") window.location='entityParentPrepareCreate-pres_drugPrescription.do?id='+plId;
+        else if (aValue=="cons") window.location='entityParentPrepareCreate-pres_wfConsultation.do?id='+plId;
     	else if (aValue=='view') window.location=viewWay;
      }
      
@@ -118,6 +124,8 @@ var isSLSClosed = true;
                      if (isMedcaseClosed=='0') {
                          disableButtons();
                          alert ('Пациент выписан, добавление назначений невоможно!');
+                     } else if (isMedcaseClosed=='2') {
+                         alert("В визите можно создавать лист назначений в закрытом СПО текущим числом.");
                      }
                      plId = aPresID.substring(1);
                      PrescriptionService.isPrescriptListCanBeChangedFromSLS('${parentID}', {

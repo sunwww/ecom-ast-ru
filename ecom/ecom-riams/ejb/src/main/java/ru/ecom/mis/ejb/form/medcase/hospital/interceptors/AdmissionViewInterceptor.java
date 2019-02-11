@@ -1,15 +1,16 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.util.List;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-//import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.forms.response.FormMessage;
+
+import java.util.List;
+
+//import IFormInterceptor;
 
 public class AdmissionViewInterceptor implements IFormInterceptor {
 

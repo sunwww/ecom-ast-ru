@@ -1,41 +1,42 @@
 package ru.ecom.expomc.ejb.services.check.checkers.registry;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-
-import javax.naming.NamingException;
-
-import ru.ecom.alg.omc.omcprice.CalcOmcPriceServiceHelper;
-import ru.ecom.alg.omc.omcprice.IOmcPriceRequest;
-import ru.ecom.alg.omc.omcprice.IOmcPriceService;
-import ru.ecom.alg.omc.omcprice.OmcCalcPriceException;
-import ru.ecom.alg.omc.omcprice.OmcPriceCalcResult;
-import ru.ecom.alg.omc.omcprice.impl.OmcPriceRequestImmutable;
-import ru.ecom.ejb.util.injection.EjbInjection;
-import ru.ecom.expomc.ejb.domain.registry.RegistryEntry;
 import ru.ecom.expomc.ejb.services.check.CheckException;
 import ru.ecom.expomc.ejb.services.check.CheckResult;
 import ru.ecom.expomc.ejb.services.check.ICheck;
 import ru.ecom.expomc.ejb.services.check.ICheckContext;
-import ru.ecom.expomc.ejb.services.check.ICheckLog;
 import ru.ecom.expomc.ejb.services.check.checkers.BadPropertyUtil;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.naming.NamingException;
+import java.math.BigDecimal;
+import java.util.Collection;
+
+//import ru.ecom.alg.omc.omcprice.CalcOmcPriceServiceHelper;
+//import ru.ecom.alg.omc.omcprice.IOmcPriceRequest;
+//import ru.ecom.alg.omc.omcprice.IOmcPriceService;
+//import ru.ecom.alg.omc.omcprice.OmcCalcPriceException;
+//import ru.ecom.alg.omc.omcprice.OmcPriceCalcResult;
+//import ru.ecom.alg.omc.omcprice.impl.OmcPriceRequestImmutable;
+//import EjbInjection;
 
 /**
  * Расчет цены с изменением
  */
 @Comment("Расчет цены")
+@Deprecated
 public class ChangeCasePrice implements ICheck {
 
 	public ChangeCasePrice() throws NamingException {
-		IOmcPriceService service = findService() ;
-		theCacheService = service ; //new CacheOmcPriceService(service) ;
+	//	IOmcPriceService service = findService() ;
+	//	theCacheService = service ; //new CacheOmcPriceService(service) ;
 	}
     public CheckResult check(ICheckContext aContext) throws CheckException {
+	    return new CheckResult();
+	    /*
         RegistryEntry entry = (RegistryEntry) aContext.getEntry() ;
         //BigDecimal oldPrice = entry.getCasePrice() ;
         //BigDecimal oldCalcDays = entry.getCalcBedDays() ;
-        OmcPriceCalcResult price = null;
+     //   OmcPriceCalcResult price = null;
         try {
             price = calcPrice(entry, aContext.getLog(), aContext);
         } catch (Exception e) {
@@ -48,10 +49,8 @@ public class ChangeCasePrice implements ICheck {
 //            accepted = oldPrice.equals(price.getCalcPrice()) ;
 //        }
         CheckResult result = CheckResult.createAccepted(false);
-    	System.out.println("Entry.CasePrice = "+entry.getCasePrice()+", Entry.CasePrice = "+price.getCalcPrice()) ; //zav
         if(canChange(entry.getCasePrice(), price.getCalcPrice())) {
         	result.setAccepted(true) ;
-        	//System.out.println("Cena = "+price.getCalcPrice()) ;
         	result.set("casePrice", price.getCalcPrice());
         }
         if(canChange(entry.getTariff(), price.getTariff())){
@@ -70,8 +69,7 @@ public class ChangeCasePrice implements ICheck {
         	result.setAccepted(true) ;
         	result.set("level", price.getLevel()+"") ;
         }
-        System.out.println(result); //zav
-        return result ;
+        return result ;*/
     }
 
     private static boolean canChange(BigDecimal aOld, BigDecimal aNew) {
@@ -86,10 +84,10 @@ public class ChangeCasePrice implements ICheck {
     	return BadPropertyUtil.create("casePrice","tariff","calcBedDays","level") ;
 	}
     
-    public OmcPriceCalcResult calcPrice(RegistryEntry aEntry, ICheckLog aLog, ICheckContext aContext) throws OmcCalcPriceException, NamingException {
+  /*  public OmcPriceCalcResult calcPrice(RegistryEntry aEntry, ICheckLog aLog, ICheckContext aContext) throws OmcCalcPriceException, NamingException {
 
         boolean isPlanovaya = theCheckIsPlanovaya.isAccepted(aEntry, aLog) ;
-        CalcOmcPriceServiceHelper service = new CalcOmcPriceServiceHelper();
+        //CalcOmcPriceServiceHelper service = new CalcOmcPriceServiceHelper();
         IOmcPriceRequest request = new OmcPriceRequestImmutable(
                 aEntry.getBirthDate()
                 , aEntry.getAdmissionDate()
@@ -104,17 +102,18 @@ public class ChangeCasePrice implements ICheck {
                 , false
                 , Integer.parseInt(aEntry.getKodLpu()) //zav
         );
-        OmcPriceCalcResult result = service.calc(request, theCacheService) ;
-        return result ;
+      //  OmcPriceCalcResult result = service.calc(request, theCacheService) ;
+        //return result ;
+        return null ;
 
     }
-
-    private IOmcPriceService findService() throws NamingException {
+*/
+ /*   private IOmcPriceService findService() throws NamingException {
     	return EjbInjection.getInstance().getLocalService(IOmcPriceService.class) ;
-    }
+    }*/
 
     //private final IOmcPriceService theService  ;
-    private final IOmcPriceService theCacheService  ;
+ //   private final IOmcPriceService theCacheService  ;
 //    private final CheckOnko theOnko = new CheckOnko() ;
 //    private final CheckDnevnoyStacionar theDnevnoyStacionar = new CheckDnevnoyStacionar();
 //    private final CheckPoliclinic thePoliclinic = new CheckPoliclinic();

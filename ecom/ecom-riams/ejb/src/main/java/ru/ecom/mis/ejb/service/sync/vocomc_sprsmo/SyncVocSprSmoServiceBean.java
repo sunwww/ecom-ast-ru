@@ -1,7 +1,12 @@
 package ru.ecom.mis.ejb.service.sync.vocomc_sprsmo;
 
-import java.sql.Date;
-import java.util.Iterator;
+import org.apache.log4j.Logger;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.util.QueryIteratorUtil;
+import ru.ecom.expomc.ejb.domain.omcvoc.OmcSprSmo;
+import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
+import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -9,15 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.QueryIteratorUtil;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcSprSmo;
-import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
-import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
+import java.util.Iterator;
 
 /**
  * 
@@ -34,7 +31,7 @@ public class SyncVocSprSmoServiceBean implements ISyncVocSprSmoService {
 	private @EJB ISyncLpuFondService theSyncService ;
 	private @EJB ILocalMonitorService theMonitorService;
 	IMonitor monitor = null; 
-	private final static Logger LOG = Logger.getLogger(SyncVocSprSmoServiceBean.class) ;
+	private static final Logger LOG = Logger.getLogger(SyncVocSprSmoServiceBean.class) ;
 	public void sync(long aMonitorId, long aTimeId) {
 
 		RegInsuranceCompany regInsCompany;
@@ -57,8 +54,7 @@ public class SyncVocSprSmoServiceBean implements ISyncVocSprSmoService {
 					//TODO: где взять краткое наименование?
 					if (regInsCompany.getOgrn().equals(osSmo.getCode())) {
 						LOG.info(i+" Синхронизирован без обновления объект: \tid="+regInsCompany.getId());
-						continue;
-					} else { 
+					} else {
 						regInsCompany.setOgrn(osSmo.getCode());
 						LOG.info(i+" Обновлен объект: \tid="+regInsCompany.getId());
 					}

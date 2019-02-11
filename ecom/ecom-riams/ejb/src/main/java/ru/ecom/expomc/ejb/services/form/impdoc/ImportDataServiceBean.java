@@ -1,19 +1,17 @@
 package ru.ecom.expomc.ejb.services.form.impdoc;
 
-import java.util.Collection;
-
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.ejb.services.util.EntityHelper;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
+
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Collection;
 
 /**
  * Работа с данными
@@ -22,9 +20,9 @@ import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 @Remote(IImportDataService.class)
 public class ImportDataServiceBean implements IImportDataService {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(ImportDataServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
     public Collection<IImportData> listAll(long aTime) {
         ImportTime importTime = theManager.find(ImportTime.class, aTime)  ;
@@ -53,7 +51,7 @@ public class ImportDataServiceBean implements IImportDataService {
 			EntityHelper entityHelper = EntityHelper.getInstance() ;
 			ClassLoaderHelper classLoaderHelper = ClassLoaderHelper.getInstance() ; 
 			String tableName = entityHelper.getTableName(classLoaderHelper.loadClass(doc.getEntityClassName())) ;
-			String entityName = doc.getEntityClassName() ;
+		//	String entityName = doc.getEntityClassName() ;
 			
 			for(int i=1; i<aImportedDataIds.length; i++) {
 				importTime.setComment(importTime.getComment()+" + "

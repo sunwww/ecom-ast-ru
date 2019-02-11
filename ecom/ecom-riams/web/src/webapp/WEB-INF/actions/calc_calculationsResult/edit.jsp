@@ -11,10 +11,15 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
 <!-- Upper -->
+	<%
+		String shortS = request.getParameter("short") ;
+		if (shortS==null) {
+
+	%>
 <tiles:put name="title" type="string">
 <ecom:titleTrail mainMenu="Patient" beginForm="calc_calculationsResultForm"/>
 </tiles:put>
-
+	<% } %>
 
 	<!-- Sider -->
 	<tiles:put name="side" type="string">
@@ -59,7 +64,7 @@
 			<msh:hidden property="calculator" />
 			<msh:panel>
 				<msh:row>
-					<msh:autoComplete vocName="vocCalculator" property="calculator" label="Выбор калькулятора" fieldColSpan="4" size="30" />
+					<msh:autoComplete vocName="vocCalculator" property="calculator" label="Выбор калькулятора" fieldColSpan="4" size="90" />
 				</msh:row>
 			</msh:panel>
 <msh:ifFormTypeIsView formName="calc_calculationsResultForm">
@@ -89,9 +94,9 @@
 					</tr>
 					<tr>
 						<td style="padding-left: 20px; padding-top: 20px;"> 
-						<input id="cancel" type="button" value="Отмена" onclick="goBack()"/> 
-						<input disabled id="calculate" type="button" value="Рассчитать" onclick="calculating()"/> 
-						<input disabled id="calcandsave" type="button" value="Рассчитать и сохранить" onclick="CreateRes()" />
+						<input id="cancel" type="button" value="Закрыть" onclick="goBack()"/>
+						<input id="calculate" type="button" value="Рассчитать" onclick="calculating()"/>
+						<input id="calcandtodiary" type="button" value="Рассчитать и сохранить" onclick="CreateRes(2)" />
 						<td>
 					</tr>
 
@@ -99,6 +104,11 @@
 			</div>
 			
 			</msh:ifFormTypeIsNotView>
+			<tags:calculation name="calculation" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+			<tags:calculation_grace name="calculation_grace" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+            <tags:calculation_caprini name="calculation_caprini" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+			<tags:calculation_imt name="calculation_imt" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+            <tags:calculation_nihss name="calculation_nihss" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 		</msh:form>
 	</tiles:put>
 	<!-- Scripts -->
@@ -112,7 +122,6 @@ var div = document.querySelector('#calculator.calc');
 var global=0;
 var result;
 var resultofcalc;
-
 
 	function GetAndParseJson() {
 		CalculateService.GetSettingsById(calculator.value, {
@@ -135,11 +144,9 @@ var resultofcalc;
 		var table = document.createElement('table');
 
 		calculat = document.querySelector('#calculate');
-		calculatSave = document.querySelector('#calcandsave');
 		
 		if(calculat!=null){
 		calculat.disabled = false;
-		calculatSave.disabled = false;
 		}
 		
 
@@ -151,6 +158,7 @@ var resultofcalc;
 		div.appendChild(table);
 		var formul = "";
 
+		var ifNeedNode = false;  //есть ли примечание
 		for ( var i = 0; i < size; i++) {
 			var tr = document.createElement('tr');
 			tr.id = "id" + global;
@@ -188,8 +196,17 @@ var resultofcalc;
 			}
 			
 			if (result[i].Type_id == 3){
-				tr.innerHTML += "<td class=\"label'\"><label>"+ result[i].Comment + ":</label></td>";
-				tr.innerHTML += "<td><input type=\"checkbox\"/ id=\"id"+global+"\" class=\"Ctxtbox\" value='"+result[i].Value+"'></td>";
+                if (result[i].Note =='') {
+                    tr.innerHTML += "<td class=\"label'\"><label>" + result[i].Comment + ":</label></td>";
+                    tr.innerHTML += "<td><input type=\"checkbox\"/ id=\"id" + global + "\" class=\"Ctxtbox\" value='" + result[i].Value + "'></td>";
+                }
+				else if (result[i].Note !='') {
+                    tr.style="border-bottom: 1px solid black;border-top: 1px solid black";
+                    tr.innerHTML += "<td width=\"20%\" class=\"label'\"><label>" + result[i].Comment + ":</label></td>";
+                    tr.innerHTML += "<td width=\"5%\"><input type=\"checkbox\"/ id=\"id" + global + "\" class=\"Ctxtbox\" value='" + result[i].Value + "'></td>";
+                    tr.innerHTML +="<td width=\"75%\" class=\"label'\"><label>"+ result[i].Note + "</label></td>";
+                    ifNeedNode=true;
+                }
 				global++;
 			}
 		}
@@ -202,8 +219,9 @@ var resultofcalc;
 					
 				
 		tr2.innerHTML += "<td class=\"label'\"><label>Результат:</label></td>";
-		tr2.innerHTML += "<td><input disabled id=\"result\" class=\"result\" size=\"60\" type=\"text\"></td>";
-		
+        if (ifNeedNode) tr2.innerHTML += "<td class=\"label'\"><label></label></td>";
+		tr2.innerHTML += "<td><input disabled id=\"result\" class=\"result\" size=\"160\" type=\"text\"></td>";
+
 		
 		var invisibleResult = document.querySelector('#result');
 		var visibleResult = document.querySelector('#result.result');
@@ -212,34 +230,107 @@ var resultofcalc;
 	
 	//Эвент для выадающего списка. При активации элемента получаем JSON
 	calculatorAutocomplete.addOnChangeCallback(function() {
-		GetAndParseJson();
+	    CalculateService.getCalcTagView(calculator.value, {
+        callback : function(aResult) {
+			if (aResult=='') GetAndParseJson();
+            //если есть вьюшка, вывести её, имена должны совпадать
+			else if (aResult=='calculation')
+                    showcalculationNewCalculation($('departmentMedCase').value,calculator.value, 0);
+                else if (aResult=='calculation_grace')
+                    showcalculation_graceNewCalculation($('departmentMedCase').value,calculator.value, 0);
+            else if (aResult=='calculation_caprini')
+                showcalculation_capriniNewCalculation($('departmentMedCase').value,calculator.value, 0);
+            else if (aResult=='calculation_imt')
+                showcalculation_imtNewCalculation($('departmentMedCase').value, calculator.value, 0);
+            else if (aResult=='calculation_nihss')
+                showcalculation_nihssNewCalculation($('departmentMedCase').value,calculator.value, 0);
+        }
+    	});
 	});
 
 	//Вычисление
-	function calculating() {
-		var T = "";
-		for ( var i = 0; i < global; i++) {
-			
-			if(document.querySelector('#id' + i + '.Ctxtbox')==null)
-				{
-			var inputbox = document.querySelector('#id' + i + '.txtbox');
-			T += "" + inputbox.value;
-			
-				}else{
-					chkbox = document.querySelector('#id' + i + '.Ctxtbox');
-					
-					if(chkbox.checked)
-					{
-						T += "+" + chkbox.value;
-					}
-			}
-		}
+	function calculating(save) {
+        var formStringCheckBox = 'Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
+        var T = "";
+        for (var i = 0; i < global; i++) {
 
-		var res = document.querySelector('#result.result');
-		res.value = eval(T);
-		resultofcalc = eval(T);
-	}
+            if (document.querySelector('#id' + i + '.Ctxtbox') == null) {
+                var inputbox = document.querySelector('#id' + i + '.txtbox');
+                T += "" + inputbox.value;
 
+            } else {
+                chkbox = document.querySelector('#id' + i + '.Ctxtbox');
+                if (document.querySelector('#id' + i + '.Ctxtbox').parentNode != null &&
+                    document.querySelector('#id' + i + '.Ctxtbox').parentNode.parentNode != null &&
+                    document.querySelector('#id' + i + '.Ctxtbox').parentNode.parentNode.childNodes.length > 0)
+                    formStringCheckBox += document.querySelector('#id' + i + '.Ctxtbox').parentNode.parentNode.childNodes[0].innerText;
+                if (chkbox.checked) {
+                    T += "+" + chkbox.value;
+                    formStringCheckBox += "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(" + chkbox.value + ")";
+                }
+                else formStringCheckBox += "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(0)";
+                formStringCheckBox += "\n";
+            }
+        }
+
+        var res = document.querySelector('#result.result');
+        res.value = eval(T);
+        resultofcalc = eval(T);
+        //Добавить интерпретацию результата, если есть
+        //Сохраняется в текущий дневник, если есть. Если нет - отдельным дневником
+        if (!isEmpty()) {
+            CalculateService.getInterpretation(calculator.value, res.value, {
+                    callback: function (aResult) {
+                        if (aResult != '') {
+                            res.value = "Результат " + res.value + " " + aResult;
+                            if (save != null) {
+                                if (res.value.indexOf(aResult) == -1) {
+                                    if (window.parent.document.getElementById('record') != null) {
+                                        CalculateService.getScaleName(calculator.value, {
+                                            callback: function (scaleName) {
+                                                window.parent.document.getElementById('record').value += scaleName + res.value + "\n";
+                                                showToastMessage("Вычисление успешно создано!", null, true);
+                                                goBack();
+                                            }
+                                        });
+                                    }
+                                    else
+                                        CalculateService.SetCalculateResultCreate(DepartmentId.value,
+                                            res.value, calculator.value, formStringCheckBox, {
+                                                callback: function () {
+                                                    showToastMessage("Вычисление успешно создано!", null, true);
+                                                    goBack();
+                                                }
+                                            });
+                                }
+                                else {
+                                    res.value = "Результат " + res.value;
+                                    if (save != null) {
+                                        if (window.parent.document.getElementById('record') != null) {
+                                            CalculateService.getScaleName(calculator.value, {
+                                                callback: function (scaleName) {
+                                                    window.parent.document.getElementById('record').value += scaleName + res.value + "\n";
+                                                    showToastMessage("Вычисление успешно создано!", null, true);
+                                                    goBack();
+                                                }
+                                            });
+                                        }
+                                        else CalculateService.SetCalculateResultCreate(DepartmentId.value,
+                                            res.value, calculator.value, formStringCheckBox, {
+                                                callback: function () {
+                                                    showToastMessage("Вычисление успешно создано!", null, true);
+                                                    goBack();
+                                                }
+                                            });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+        }
+    }
 
 
 	//Получение пола по id случая
@@ -276,27 +367,25 @@ var resultofcalc;
 	}
 
 	//Создание результата
-	function CreateRes() {
-		calculating();
-		var res = document.querySelector('#result.result');
-		if (!isEmpty()) {
-			CalculateService.SetCalculateResultCreate(DepartmentId.value,
-					res.value, calculator.value, {
-						callback : function(aResult) {
-							//alert("Сохранено!");
-							goBack();
-						}
-					});
-		}
-	}
-
+	function CreateRes(way) {
+	    if ($('calculator').value!=null && $('calculator').value!=''  && $('calculator').value!='0') calculating(way);
+	    else alert('Выберите калькулятор!');
+    }
 	//проверка полей на пустоту
 	function isEmpty() {
 		for ( var i = 0; i < global; i++) {
 			var inputbox = document.querySelector('#id' + i + '.txtbox');
-			if (inputbox.value == "") {
-				alert("Заполнены не все поля!");
-				return true;
+			if (typeof inputbox !== 'undefined' && inputbox !=null) {
+                if (inputbox.value == "") {
+                    alert("Заполнены не все поля! Заполните необходимые значения.");
+                    return true;
+                }
+            }
+            else {
+				if (document.getElementById("result").value=='undefined') {
+				    alert("Невозможно вычислить результат, т.к. не введены необходимые значения.");
+				    return true;
+				}
 			}
 		}
 		return false;
@@ -304,15 +393,17 @@ var resultofcalc;
 	
 	 // возврат на родительскую страницу.
 	function goBack() {
+	    for (var i=0; i<100; i++) {
+            if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
+            if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
+		}
 		location.href = "entityParentView-stac_slo.do?id=" + DepartmentId.value;
 	}
 	 
 	
 	 function DelFromForm()
 	 {
-		 var d = document.querySelector('#calcandsave');
-		    d.parentNode.removeChild(d);
-		    d = document.querySelector('#calculate');
+		 var d = document.querySelector('#calculate');
 		    d.parentNode.removeChild(d);
 		    d = document.querySelector('#cancel');
 		    d.parentNode.removeChild(d);

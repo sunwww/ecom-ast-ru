@@ -1,12 +1,10 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -28,7 +26,7 @@
 	String typeEmergency =ActionUtil.updateParameter("Form039Action","typeEmergency","3", request) ;
 	String typeDiag =ActionUtil.updateParameter("Form039Action","typeDiag","1", request) ;
 	String person = request.getParameter("person") ;
-	
+
 	if (person!=null && !person.equals("") && !person.equals("0")) {
 		request.setAttribute("personClear", "<input type='button' name='clearPerson' value='Очистить инф. о сотруднике' onclick=\"$('person').value='';this.style.display='none'\">") ;
 	}
@@ -211,6 +209,7 @@
     		ActionUtil.setParameterFilterSql("medService","ms.id", request) ;
     		ActionUtil.setParameterFilterSql("additionStatus","vas.id", request) ;
     		ActionUtil.setParameterFilterSql("person","wp.id", request) ;
+			request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("beginDate"),request.getParameter("finishDate"),request));
     		if (typeDtype.equals("1")) {
     			request.setAttribute("dtypeSql", "smo.dtype='Visit'") ;
     		} else if (typeDtype.equals("2")) {
@@ -337,7 +336,7 @@
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery maxResult="1500" name="journal_ticket" nativeSql="
+<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nativeSql="
 select smo.id as name
 ,smo.dateStart as nameFld
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -402,7 +401,7 @@ group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,
 
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Дата посещения" property="2"/>            
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
@@ -426,7 +425,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
     
     	%>
     <msh:section>
-<ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+<ecom:webQuery  isReportBase="${isReportBase}" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
 ''||'&medService='||ms.id||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -497,7 +496,7 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
   
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
@@ -543,7 +542,7 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
 
 
     <msh:section>
-<ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
 ''||'&workFunctionGroup='||wfg.id||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -611,7 +610,7 @@ GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
   
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>

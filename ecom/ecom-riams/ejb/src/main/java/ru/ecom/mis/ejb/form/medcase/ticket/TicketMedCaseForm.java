@@ -55,7 +55,13 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AParentEntityFormInterceptor(TicketPreCreateInterceptor.class)
 )
 public class TicketMedCaseForm extends ShortTicketMedCaseForm {
-	
+	/** Признак консультативно-диагностического обращения */
+	@Comment("Признак консультативно-диагностического обращения")
+	@Persist
+	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
+	public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
+	/** Признак консультативно-диагностического обращения */
+	private Boolean theIsDiagnosticSpo ;
 
 	/** Планируемая дата исполнения */
 	@Comment("Планируемая дата исполнения")
@@ -196,6 +202,17 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
     public Long getDispRegistration() {return theDispRegistration;}
     public void setDispRegistration(Long aVocDispanseryRegistration) {theDispRegistration = aVocDispanseryRegistration;}
 
+	/** Дата следующего визита */
+	@Comment("Дата следующего визита")
+	@DateString @DoDateString @Persist
+	public String getNextVisitDate() {
+		return theNextVisitDate;
+	}
+
+	public void setNextVisitDate(String aNextVisitDate) {
+		theNextVisitDate = aNextVisitDate;
+	}
+
     /** Скорая помощь */
 	@Comment("Скорая помощь")
 	@Persist
@@ -213,6 +230,8 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 	@Persist @DateString @DoDateString @MaxDateCurrent @Required
 	public String getDateStart() {return theDateStart;}
 	public void setDateStart(String aNewProperty) {theDateStart = aNewProperty;}
+	/** Дата следующего визита */
+	private String theNextVisitDate;
 	/** Дата начала */
 	private String theDateStart;
 	/** Исход визита */

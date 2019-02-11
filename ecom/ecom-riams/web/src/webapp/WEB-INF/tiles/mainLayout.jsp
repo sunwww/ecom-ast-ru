@@ -1,7 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<%@page import="java.util.Calendar"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.Date"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
@@ -9,6 +7,12 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@page import="java.util.Calendar"%>
+
+<%
+    String username = LoginInfo.find(request.getSession()).getUsername();
+    request.setAttribute("username", username);
+%>
 
 <html:html xhtml="true" locale="true">
  <head>
@@ -25,10 +29,41 @@
 <%@ include file="/WEB-INF/tiles/libscache.jsp" %>
 <!-- Дополнительное определение стиля -->
 <tiles:insert attribute="style" ignore='true'/>
-
+    <style type="text/css">
+     #message {
+         margin-left: 30%;
+         font-size: 30px;
+         margin-bottom: 10px;
+     }
+    </style>
 <!-- Дополнительное определение стиля END -->
 
+     <script type="text/javascript">
+         var ws_socketServerStorageName;
+         jQuery(document).ready(function() {
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'GetMessageFromFile?username=${username}', false);
+             xhr.send();
+             if (xhr.status != 200) {
+                 alert( xhr.status + ': ' + xhr.statusText ); // пример вывода: 404: Not Found
+             } else {
+                 //alert(xhr.responseText); // responseText -- текст ответа.
+                 var t = document.getElementById('message');
+                 t.innerHTML=xhr.responseText
+             }
+         });
 
+
+     </script>
+     <msh:ifInRole roles="/Policy/WebSocket">
+         <script type="text/javascript">
+             ws_socketServerStorageName="ws_server_name";
+             jQuery(document).ready(function(){connectWebSocket();});
+
+         </script>
+         <script type="text/javascript" src="./dwr/interface/VocService.js"></script>
+
+     </msh:ifInRole>
  </head>
     <%
     //Date curDate = new Date() ;
@@ -59,13 +94,8 @@
                  alt='На главное меню' title='Переход на главное меню'/>
         </a>
         <ul id='user'>
-        
-      <!--   <msh:ifInRole roles="/Policy/Mis/Directory/Department">
-            <li><a href='js-riams-phoneTest.do' target='_blank'>Тел.АМОКБ Тест</a></li>
-            </msh:ifInRole> -->
-            
         	<msh:ifInRole roles="/Policy/Mis/CustomMessage/PhoneAmokb">
-            <li><a href='js-riams-phoneTest.do' target='_blank'>Тел.АМОКБ</a></li>
+            <li><a href='js-riams-phoneTest.do' target='_blank'>Телефонный справочник</a></li>
             </msh:ifInRole>
            <li class="separator">|</li>
            <msh:ifInRole roles="/Policy/Mis/Claim/View">
@@ -101,7 +131,7 @@
             <li class="separator">|</li>
             <li><a href='js-secuser-changePassword.do'>Смена пароля</a></li>
             <li class="separator">|</li>
-            <li><a href="javascript:window.location = 'ecom_relogin.do?next='+escape(window.location);">Войти под др. именем</a></li>
+            <li><a href="javascript:ws_exit();window.location = 'ecom_relogin.do?next='+escape(window.location);">Войти под др. именем</a></li>
             <li class="separator">|</li>
             <li><msh:link action="/ecom_loginExit.do">Завершить работу</msh:link></li>
 
@@ -148,7 +178,8 @@
                           roles="/Policy/MainMenu/Expert" title="Экспертиза"/>
 			<msh:sideLink params="" styleId="mainMenuExpert2" action="/entityList-e2_entryList.do" name="Реестры ФОМС"
                           roles="/Policy/MainMenu/Expert2" title="Реестры ФОМС"/>
-
+            <msh:sideLink params="" styleId="mainMenuVoc" action="/pharm_admin" name="Аптека"
+                          roles="/Policy/Mis/Pharmacy/Administration" title="Аптека"/>
             <msh:sideLink params="" styleId="mainMenuConfig" action="/riams_config.do" name="Настройки"
                           roles="/Policy/MainMenu/Config" title="Настройки"/>
 	
@@ -175,6 +206,8 @@
     </div>
 
     <div id="content">
+        <div id="message"></div>
+
         <tiles:insert attribute="title" ignore="true"/>
         <msh:errorMessage/>
         <msh:infoMessage/>
@@ -184,10 +217,23 @@
     <div id="hotkey">
     	<tiles:insert attribute="hotkey" ignore="true"/>
     </div>
+
     <div id="footer">
 
-        <div id='gotoUp'><a class="gotoUP" href="#header">Вверх</a></div>
-        <div id='copyright'>&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
+        <div id='gotoUpDown'><a class="gotoTop" href="#header">Вверх</a><a class="gotoBottom" href="#copyright">Вниз</a></div>
+        <msh:ifInRole roles="/Policy/WebSocket/Queue">
+           <div class='ws_workerDiv'>
+                <p id='ws_windowWorkDiv' title="Нажмите для изменения номера окна" onclick="ws_setNewWindowNumber()"></p><hr/>
+                <p id='ws_finishWorkDiv' title="Нажмите чтобы приступить к работе/прекратить работу в очереди">СТАТУС</p>
+            </div>
+            <div class="ws_ticketDiv">
+                <p id='ws_ticketNumberDiv' title="Текущий талон" onclick="alert('Текущий талон = '+jQuery('#ws_ticketNumberDiv').html())" >---</p><hr/>
+                <p id='ws_nextTicketDiv'   title="Нажмите для перехода к следующему талону" onclick='ws_setNewTicket()'>Перейти к следующему талону</p>
+            </div>
+        </msh:ifInRole>
+        </div>
+
+        <div id='copyright' style="float: right;">&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
         </div>
     </div>
     <div id="divInstantMessage" class="instant_message">&nbsp;</div>
@@ -219,14 +265,19 @@
     </msh:ifInRole>
 
 
+
+
 	<!-- Additional Javascript -->
     <tiles:insert attribute="javascript" ignore='true'/>
     <!-- Additional Javascript END -->
 <msh:ifInRole roles="/Policy/Config/EmergencyMessage">
 <script type="text/javascript">
 theDefaultTimeOut = setTimeout(funcemergencymessage.func,12000) ;
+
+
 </script>
 </msh:ifInRole>
+
 <iframe width=174 height=189 name="gToday:datetime::gfPop1:plugins_time.js" 
 id="gToday:datetime::gfPop1:plugins_time.js" 
 src="/skin/ext/cal/themes/DateTime/ipopeng.htm" 

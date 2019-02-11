@@ -1,8 +1,7 @@
-<%@page import="ru.nuzmsh.util.PropertyUtil"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Collection"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.nuzmsh.util.PropertyUtil"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -38,6 +37,7 @@ div#header{display:none;}
     String typeMarks = ActionUtil.updateParameter("QualityEstimationCard","typeMarks","3", request) ;
     String typeReport = ActionUtil.updateParameter("QualityEstimationCard","typeReport","1", request) ;
     String typeEstimation = ActionUtil.updateParameter("QualityEstimationCard","typeEstimation","3", request) ;
+
    %>
     <msh:form action="quality_card_journal.do" defaultField="estimationKindName"  method="get" >
     <msh:panel>
@@ -54,7 +54,7 @@ div#header{display:none;}
         <msh:autoComplete property="workFunction" vocName="workFunctionByLpu" parentAutocomplete="department" label="Врач" fieldColSpan="30" size="50" />
       </msh:row> 
        <msh:row>
-        <msh:autoComplete property="expert" vocName="workFunction" label="Эксперт" fieldColSpan="30" size="50" />
+        <msh:autoComplete property="expert" vocName="workFunctionAllForExpert" label="Эксперт" fieldColSpan="30" size="50" />
       </msh:row> 
       <msh:row>
         <msh:textField property="dateBegin" />
@@ -168,6 +168,7 @@ div#header{display:none;}
         	
             request.setAttribute("sqlAdd", sqlAdd.toString()) ;
             request.setAttribute("titleInfo", title.toString()) ;
+			request.setAttribute("isReportBase", ActionUtil.isReportBase(dateStart,dateEnd,request));
     		%>
     	<ecom:webQuery name="critList" nativeSql="
     	select id,code,name from vocqualityestimationcrit where kind_id=${param.estimationKind} and parent_id is null order by code
@@ -184,7 +185,7 @@ div#header{display:none;}
         		}
         		request.setAttribute("critSql", sql.toString()) ;
     	%>
-    	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
+    	<ecom:webQuery isReportBase="${isReportBase}" name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select qec.id
 ,to_char(qec.createdate,'dd.MM.yyyy') as f1_createDate
 ,vwf.name ||' '||wpat.lastname ||' ' || wpat.firstname||' '||wpat.middlename ||' '|| 	wml.name as f2_dep_doctor
@@ -287,7 +288,7 @@ order by ${orderBySql}
         		}
 %>
 
-    	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
+    	<ecom:webQuery isReportBase="${isReportBase}" name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select ${nameFldId}
 ,${nameFld} as f2_dep_doctor
 ,count(distinct qe.id) as f3_cntExp
@@ -321,8 +322,9 @@ group by ${groupBy}
 order by ${orderBySql}
 "
     	/>
-    	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2> 
-    	<table border="1px solid">
+    	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2>
+		<input type='button' onclick="mshSaveTableToExcelById('journalExpertTable')" value='Сохранить в excel'>
+    	<table border="1px solid" id="journalExpertTable">
            <tr>
          		<th rowspan="2">#</th>
          		<th rowspan="2">${nameTitle}</th>
@@ -401,7 +403,7 @@ ${sqlAdd}
         		}
 %>
 
-    	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
+    	<ecom:webQuery isReportBase="${isReportBase}" name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select vqec.id as f1_name_id
     	,vqec.code as f2_cntExp
     	,vqec.name as f3_name_crit
@@ -435,8 +437,8 @@ order by vqec.code
     	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2>
     	<h3>Кол-во проведенных экспертиз: ${cntCards_view}</h3>
     	<h3>из них без дефектов: ${cntCards_view_no_def}</h3>
-    	 
-    	<table border="1px solid">
+		<input type='button' onclick="mshSaveTableToExcelById('journalExpertTable2')" value='Сохранить в excel'>
+    	<table border="1px solid" id="journalExpertTable2">
            <tr>
          		<th>Код</th>
          		<th>Наименование дефекта</th>

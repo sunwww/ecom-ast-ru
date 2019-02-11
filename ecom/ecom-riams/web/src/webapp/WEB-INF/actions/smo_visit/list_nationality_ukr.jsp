@@ -1,16 +1,14 @@
-<%@page import="java.util.List"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.Collection"%>
-<%@page import="ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs"%>
 <%@page import="ru.ecom.mis.ejb.service.patient.HospitalLibrary"%>
+<%@page import="ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -245,6 +243,7 @@
         	ActionUtil.setParameterFilterSql("department","departmentWF","we.lpu_id", request) ;
         	ActionUtil.setParameterFilterSql("nationality","p.nationality_id", request) ;
         	ActionUtil.setParameterFilterSql("region","a.region_addressid", request) ;
+            request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("beginDate"),request.getParameter("finishDate"),request));
     		%>
    
     <% 
@@ -259,7 +258,7 @@
   	<msh:section title="Поликлиника">
 
   	
-	    <ecom:webQuery nameFldSql="list_yes_sql" name="list_yes" maxResult="1000" nativeSql="select m.id
+	    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="list_yes_sql" name="list_yes" maxResult="1000" nativeSql="select m.id
 	    
 	    ,to_char(m.dateStart,'DD.MM.YYYY') as dateStart
 
@@ -381,7 +380,7 @@ order by p.lastname,p.firstname,p.middlename"/>
   	<msh:section title="Стационар">
 
   	
-	    <ecom:webQuery nameFldSql="list_stac_sql" name="list_stac" maxResult="1000" nativeSql="select smo.id
+	    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="list_stac_sql" name="list_stac" maxResult="1000" nativeSql="select smo.id
 	    
 	    ,to_char(smo.dateStart,'DD.MM.YYYY') as dateStart
 	    ,to_char(smo.dateFinish,'DD.MM.YYYY') as dateFinish
@@ -497,7 +496,7 @@ order by p.lastname,p.firstname,p.middlename"/>
   	<msh:section title="Отказы от госпитализаций">
 
   	
-	    <ecom:webQuery name="list_stac1" maxResult="1000" nativeSql="select m.id
+	    <ecom:webQuery isReportBase="${isReportBase}" name="list_stac1" maxResult="1000" nativeSql="select m.id
 	    
 	    ,to_char(m.dateStart,'DD.MM.YYYY') as dateStart
 	    ,to_char(m.dateFinish,'DD.MM.YYYY') as dateFinish
@@ -539,7 +538,7 @@ order by p.lastname,p.firstname,p.middlename"/>
       	<msh:section title="Поликлиника">
 
       	
-    	    <ecom:webQuery name="list_yes" maxResult="1000" nativeSql="select 
+    	    <ecom:webQuery isReportBase="${isReportBase}" name="list_yes" maxResult="1000" nativeSql="select
     	    p.id as pid
     	    ,count(distinct m.id)
 
@@ -589,7 +588,7 @@ ${groupSqlAdd}
       	<msh:section title="Стационар">
 
       	
-    	    <ecom:webQuery name="list_stac" maxResult="1000" nativeSql="select
+    	    <ecom:webQuery isReportBase="${isReportBase}" name="list_stac" maxResult="1000" nativeSql="select
     	    p.id as pid
     	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
@@ -634,7 +633,7 @@ ${groupSqlAdd}
       	<msh:section title="Отказы от госпитализаций">
 
       	
-    	    <ecom:webQuery name="list_stac1" maxResult="1000" nativeSql="select p.id
+    	    <ecom:webQuery isReportBase="${isReportBase}" name="list_stac1" maxResult="1000" nativeSql="select p.id
     	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
     	    ,vn.name as vnname
@@ -679,7 +678,7 @@ ${groupSqlAdd}
     	%>
     	
     <msh:section>
-<ecom:webQuery nameFldSql="sql_journal_swod" name="journal_swod" nativeSql="
+<ecom:webQuery isReportBase="${isReportBase}" nameFldSql="sql_journal_swod" name="journal_swod" nativeSql="
 select ${groupId}||${departmentSqlId}||${nationalitySqlId}||${serviceStreamSqlId} as idparam,${groupSql} as vnname
 ,count(*) as cntAll
 ,count(distinct case when (m.dtype='Visit' or m.dtype='ShortMedCase') then m.id else null end) as polic

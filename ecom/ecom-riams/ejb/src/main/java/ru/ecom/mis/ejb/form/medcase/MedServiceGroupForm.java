@@ -5,7 +5,6 @@ import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
-import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.medcase.MedServiceGroup;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceViewInterceptor;

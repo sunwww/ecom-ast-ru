@@ -81,7 +81,6 @@
 				    }
 
 				    request.setAttribute("whereSQL", whereSQL);
-				    System.out.println(whereSQL);
 		%>
 		<input id="getExcel" class="button" name="submit" value="Сохранить в excel" onclick="mshSaveTableToExcelById()" role="button" type="submit">
 		

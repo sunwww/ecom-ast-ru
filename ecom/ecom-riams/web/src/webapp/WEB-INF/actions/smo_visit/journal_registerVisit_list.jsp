@@ -21,6 +21,7 @@
   String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
   String typeIsTalk =ActionUtil.updateParameter("Form039Action","typeIsTalk","3", request) ;
   String typeAge =ActionUtil.updateParameter("Form039Action","typeAge","2", request) ;
+  String typeRep =ActionUtil.updateParameter("Form039Action","typeRep","1", request) ;
   JournalBySpecialistForm form = (JournalBySpecialistForm)request.getSession().getAttribute("poly_journalBySpecForm");
 	//String args =form.getBeginDate()+":"+form.getFinishDate()
 	//+":"+form.getSpecialist()+":"+form.getRayon()
@@ -197,10 +198,21 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeAge" value="2"  >  все
         </td>
-       </msh:row>        
-       <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+       </msh:row>
 
-        
+		<msh:row>
+			<td class="label" title="Тип отчета (typeRep)" colspan="1">
+				<label for="typeRepName" id="typeRepLabel">Тип отчета:</label>
+			</td>
+			<td onclick="this.childNodes[1].checked='checked';">
+				<input type="radio" name="typeRep" value="1"  >  учет посещений
+			</td>
+			<td onclick="this.childNodes[1].checked='checked';">
+				<input type="radio" name="typeRep" value="2"  >  хронометраж
+			</td>
+		</msh:row>
+
+       <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
          <msh:row>
 	        <td class="label" title="База (typeIsTalk)" colspan="1">
 	        <label for="typeDtypeName" id="typeIsTalkLabel">Беседа с родс.:</label></td>
@@ -214,7 +226,7 @@
 	        	<input type="radio" name="typeIsTalk" value="3">  Все
 	        </td>
         </msh:row>
-        </msh:ifInRole>
+	   </msh:ifInRole>
         <msh:row>
         <td colspan="4" class="buttons">
 			<input type="button" value="Отменить" title="Отменить изменения [SHIFT+ESC]" onclick="this.disabled=true; window.history.back()" id="cancelButton">
@@ -227,7 +239,55 @@
     <%
     if (request.getParameter("beginDate")!=null && request.getParameter("finishDate")!=null) {
     	%>
-    
+
+
+	  <% if (typeRep.equals("2")) {%>
+	  <input id="getExcel" class="button" name="submit" value="Сохранить в excel" onclick="mshSaveTableToExcelById()" role="button" type="submit">
+	  <div id="myTemp">
+	  <ecom:webQuery name="chronometr" nativeSql="
+		select
+		p.patientsync as numcard,
+		p.lastname||' '||p.firstname||' '||p.middlename as fio,
+		vwf.name as workfunction,
+		to_char(t.dateStart,'dd.MM.yyyy') as dateofvisit,
+		vs.code as sex,
+		case when date_part('year',age(current_date, p.birthday))=0 then cast('-'||date_part('month',age(current_date, p.birthday)) as text) else cast(date_part('year',age(current_date, p.birthday)) as text) end as years,
+		vh.code as vhcode,
+		vpt.omccode as workplace,
+		1 as typemed,
+		case when (select list (mkb.code) from diagnosis d left join vocidc10 mkb on mkb.id=d.idc10_id where d.medCase_id=t.id) like '%Z%' then '2,1' else '1,1' end,
+		(select list (mkb.code) from diagnosis d left join vocidc10 mkb on mkb.id=d.idc10_id where d.medCase_id=t.id) as diag,
+		to_char(t.dateStart,'dd.MM.yyyy') as datecreate
+	 	from MedCase t
+    	left join patient p on p.id=t.patient_id
+    	${medcardAddJoin}
+		left join vocworkplacetype   vpt on vpt.id = t.workplacetype_id
+		left join workfunction wf on wf.id=t.workFunctionExecute_id left join worker w on w.id=wf.worker_id
+		left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+		left join patient wp on wp.id=w.person_id
+		left join vocsex vs on vs.id=p.sex_id
+		left join vochospitalization vh on vh.id=t.hospitalization_id left join VocServiceStream vss on vss.id=t.serviceStream_id left join MisLpu oml on oml.id=t.orderLpu_id left join VocReason vvr on t.visitReason_id=vvr.id left join vocIdentityCard vic on vic.id=p.passporttype_id
+		${sql}
+		and (t.noActuality is null or t.noActuality='0')
+        "/>
+	  <msh:tableNotEmpty name="chronometr">
+		  <msh:table name="chronometr" action="javascript:void(0)" idField="1">
+			  <msh:tableColumn columnName="Номер карты пациента" property="1"/>
+			  <msh:tableColumn columnName="ФИО пациента" property="2"/>
+			  <msh:tableColumn columnName="Должность врача" property="3"/>
+			  <msh:tableColumn columnName="Дата обращения" property="4"/>
+			  <msh:tableColumn columnName="Пол" property="5"/>
+			  <msh:tableColumn columnName="Возраст" property="6"/>
+			  <msh:tableColumn columnName="Посещение" property="7"/>
+			  <msh:tableColumn columnName="Место посещения" property="8"/>
+			  <msh:tableColumn columnName="Вид оказываемой мед. помощи" property="9"/>
+			  <msh:tableColumn columnName="Цель посещения" property="10"/>
+			  <msh:tableColumn columnName="Код диагноза" property="11"/>
+			  <msh:tableColumn columnName="Дата заполнения" property="12"/>
+		  </msh:table>
+		  </div>
+	  </msh:tableNotEmpty>
+	  <%} else {%>
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}</msh:sectionTitle>
     <msh:sectionContent>
@@ -266,7 +326,6 @@
     	left join vocIdentityCard vic on vic.id=p.passporttype_id
     	${sql} 
 		and (t.noActuality is null or t.noActuality='0') order by ${order}
-    	
     	"/>
     	
     	    <form action="print-journalRegistration.do" method="post" target="_blank">
@@ -282,7 +341,6 @@
      <input type="submit" onclick="this.form.action='print-journalRegistration_2.do'" value="Печать шаблон 3">
      <input type="submit" onclick="this.form.action='print-journalRegistration_2.do'" value="Печать шаблон 4(скор. помощь)">
     </form>
-    	
         <msh:table viewUrl="entitySubclassShortView-mis_medCase.do" 
         name="registger_visit" 
         action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
@@ -326,9 +384,8 @@
         </msh:table>
        </msh:tableNotEmpty>
     </msh:sectionContent>
-
     </msh:section>
-    <%} %>
+    <%}} %>
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
@@ -339,7 +396,8 @@
   	<script type="text/javascript">
     checkFieldUpdate('typeDtype','${typeDtype}',3) ;
     checkFieldUpdate('typeAge','${typeAge}',2) ;
-    
+    checkFieldUpdate('typeRep','${typeRep}',1) ;
+
     function checkFieldUpdate(aField,aValue,aDefault) {
     	eval('var chk =  document.forms[0].'+aField) ;
     	eval('var aMax =  chk.length') ;
@@ -364,6 +422,14 @@
   			args=args+":" +getCheckedRadio(document.forms[0],"typeDtype");
   			$('id').value =args ; 
   		}
+
+    function mshPrintTextToExcelTable (html) {
+        window.location.href='data:application/vnd.ms-excel,'+'\uFEFF'+encodeURIComponent(html);
+    }
+
+    function mshSaveTableToExcelById() {
+        mshPrintTextToExcelTable(document.getElementById("myTemp").outerHTML);
+    }
   	</script>
   </tiles:put>
 </tiles:insert>

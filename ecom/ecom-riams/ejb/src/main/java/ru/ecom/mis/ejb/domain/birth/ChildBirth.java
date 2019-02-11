@@ -1,43 +1,18 @@
 package ru.ecom.mis.ejb.domain.birth;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
-import ru.ecom.ejb.services.util.ColumnConstants;
-import ru.ecom.mis.ejb.domain.birth.voc.VocBirthEntanglement;
-import ru.ecom.mis.ejb.domain.birth.voc.VocBirthEntanglementMultiplicity;
-import ru.ecom.mis.ejb.domain.birth.voc.VocBirthWatesPrematurity;
-import ru.ecom.mis.ejb.domain.birth.voc.VocBirthWhereEntanglement;
-import ru.ecom.mis.ejb.domain.birth.voc.VocChildAnesthesiaMedication;
-import ru.ecom.mis.ejb.domain.birth.voc.VocChildAnesthesiaMedicationEffect;
-import ru.ecom.mis.ejb.domain.birth.voc.VocChildBirth;
-import ru.ecom.mis.ejb.domain.birth.voc.VocChildEmergency;
-import ru.ecom.mis.ejb.domain.birth.voc.VocFetalMembranesIntegrity;
-import ru.ecom.mis.ejb.domain.birth.voc.VocFeverFeature;
-import ru.ecom.mis.ejb.domain.birth.voc.VocHistologyResult;
-import ru.ecom.mis.ejb.domain.birth.voc.VocMembranesBreakPlace;
-import ru.ecom.mis.ejb.domain.birth.voc.VocPlacentaIntegrity;
-import ru.ecom.mis.ejb.domain.birth.voc.VocPlacentaSeparation;
-import ru.ecom.mis.ejb.domain.birth.voc.VocWhereBirthOccurred;
+import ru.ecom.mis.ejb.domain.birth.voc.*;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-import ru.nuzmsh.forms.validator.validators.Required;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Роды
@@ -513,6 +488,39 @@ public class ChildBirth extends BaseEntity{
 
 	/** Показания */
 	private VocChildEmergency theEmergency;
-	
-	
+
+
+	/** Паритет родов */
+	@Comment("Паритет родов")
+	@OneToOne
+	public VocParitet getParitet() {return theParitet;}
+	public void setParitet(VocParitet aParitet) {theParitet = aParitet;}
+
+	/** Паритет родов */
+	private VocParitet theParitet;
+
+	/** ЭКО? */
+	@Comment("ЭКО?")
+	public Boolean getIsECO() {return theIsECO;}
+	public void setIsECO(Boolean aIsECO) {theIsECO = aIsECO;}
+
+	/** ЭКО? */
+	private Boolean theIsECO;
+
+	/** Состояла на учёте в ЖК? */
+	@Comment("Состояла на учёте в ЖК?")
+	public Boolean getIsRegisteredWithWomenConsultation() {return theIsRegisteredWithWomenConsultation;}
+	public void setIsRegisteredWithWomenConsultation(Boolean aIsRegisteredWithWomenConsultation) {theIsRegisteredWithWomenConsultation = aIsRegisteredWithWomenConsultation;}
+
+	/** Состояла на учёте в ЖК? */
+	private Boolean theIsRegisteredWithWomenConsultation;
+
+	/** Паритет беременностей */
+	@Comment("Паритет беременностей")
+	@OneToOne
+	public VocParitet getParitetPregn() {return theParitetPregn;}
+	public void setParitetPregn(VocParitet aParitetPregn) {theParitetPregn = aParitetPregn;}
+
+	/** Паритет беременностей */
+	private VocParitet theParitetPregn;
 }

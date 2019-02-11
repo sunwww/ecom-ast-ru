@@ -1,13 +1,13 @@
-<%@page import="java.util.Iterator"%>
+<%@page import="ru.ecom.diary.ejb.service.protocol.tree.CheckNode"%>
+<%@page import="ru.ecom.diary.web.action.protocol.template.AssessmentCardTemplateEditAction"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.Collection"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-<%@ page import="ru.ecom.diary.web.action.protocol.template.AssessmentCardTemplateEditAction" %>
-<%@ page import="ru.ecom.diary.ejb.service.protocol.tree.CheckNode" %>
+<%@ page import="java.util.Collection" %>
+<%@ page import="java.util.Iterator" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 <tiles:put name="style" type="string">

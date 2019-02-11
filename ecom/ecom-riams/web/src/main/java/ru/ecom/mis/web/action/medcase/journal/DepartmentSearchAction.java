@@ -34,7 +34,7 @@ public class DepartmentSearchAction extends BaseAction {
         } else {
             try {
                 lpu = service.getWorkingLpu() ;
-                System.out.println("lpu="+lpu) ;
+             //   System.out.println("lpu="+lpu) ;
             } catch(Exception e) {
             	System.out.println("lpu not found") ;
             	return aMapping.findForward("successerror");

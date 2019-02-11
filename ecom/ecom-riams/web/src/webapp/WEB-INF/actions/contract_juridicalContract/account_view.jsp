@@ -1,5 +1,3 @@
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -154,7 +152,7 @@ select cams.mainparent,cams.lastname||' '||cams.firstname||' '||cams.middlename
 	</script>
 	</tiles:put>
 	<tiles:put name="title" type="string">
-		<ecom:titleTrail mainMenu="Contract" beginForm="contract_juridiralAccountForm"/>
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_account_contractForm"/>
 	</tiles:put>
 	<tiles:put name="side" type="string">
 	</tiles:put>

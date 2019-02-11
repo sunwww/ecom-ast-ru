@@ -441,7 +441,13 @@ function getPreRecord() {
 		$('surgCalTimeName').value = "";
 		 
 		}
-	
+	function  changeToPolyclinicDoctor() {
+        jQuery('#surgCabinet').val("");
+        jQuery('#surgServices').val("");
+        jQuery('#surgCabinetName').val("");
+        jQuery('#surgServicesName').val("");
+        surgCabinetAutocomplete.setUrl('simpleVocAutocomplete/workFunctionByDirect');
+    }
 				</script>
 			</msh:ifFormTypeIsNotView>
 			
@@ -467,39 +473,42 @@ function getPreRecord() {
     <!-- 
     	  - Назначение медицинской услуги
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_diagnosticPrescription.do" defaultField="id" title="Назначение диагностического исследования/консультации">
+    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_diagnosticPrescription.do" defaultField="surgCabinetName" title="Назначение диагностического исследования/консультации">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
+        <msh:hidden property="comments"  />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" /> <input type="hidden" name="person" id="person"> 
        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
         <msh:hidden property="countDays"/>
       </msh:ifNotInRole>
 		
       <msh:panel guid="panel" colsWidth="3">  
-         <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-          <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
-        </msh:row>
          <msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm">
-      <msh:row>
-    			<msh:autoComplete property="medService" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" viewOnlyField="true" />
+             <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
+                 <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
+             </msh:row>
+             <msh:row>
+    			<msh:autoComplete property="medService" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90"  />
     		 </msh:row>
 			 <msh:row>
-				 <msh:autoComplete property="prescriptCabinet" label="Кабинет"  viewOnlyField="true" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
+				 <msh:autoComplete property="prescriptCabinet" label="Кабинет"  viewOnlyField="true" vocName="funcMedServiceRoom" size='20'  />
 			</msh:row>
 			<msh:row>
-				 <msh:textField property="planStartDate" size="10" fieldColSpan="1" />
+				 <msh:textField property="planStartDate" size="10" fieldColSpan="1" label="Дата назначения"/>
     		</msh:row>
-				 <msh:hidden property="comments"  />
-      
+
     </msh:ifFormTypeIsView>
          <msh:ifFormTypeIsCreate formName="pres_diagnosticPrescriptionForm">
         <msh:panel>
+            <msh:hidden property="prescriptSpecial"/>
         <msh:row>
+        <tr><td> <input type="button" onclick="changeToPolyclinicDoctor()" value="Выбрать из списка врачей поликлиники">
+        </td></tr>
         <tr><td>
         <table id="surgTable">
             <msh:row>
-        	 	<msh:separator label="Функциональные исследования" colSpan="10"/>
+        	 	<msh:separator label="Диагностическое исследование" colSpan="10"/>
         </msh:row>
         <tbody id="addsurgElements">
 			 <msh:row>
@@ -514,12 +523,10 @@ function getPreRecord() {
         <msh:textField property="countDays"  label="Кол-во дней записи" />
         </msh:row>
         </msh:ifInRole>
-        
           <msh:row>
     			<msh:autoComplete parentAutocomplete="surgCabinet" property="surgServicies" label="Исследование" vocName="funcMedService"  horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>
 
-			<msh:hidden property="comments"  />
 			<msh:row>
 				<td colspan="4" align="center">        	
 	            	<input type="button" name="subm" id="subm"  onclick="prepareLabRow('surg');" value="Создать назначение" tabindex="4" />
@@ -561,10 +568,9 @@ function getPreRecord() {
        		 </tbody>
     		</table>
     		</td></tr></msh:row>
-    		 <input type='button' onclick='cancell()' value='Закрыть'>
+            <msh:row><td><input type='button' onclick='cancell()' value='Закрыть'></td></msh:row>
         </msh:panel>
         </msh:ifFormTypeIsCreate>
-        <%-- -- --------------------------------------------------Конец блока "Операции" ------ --%>
         <msh:ifFormTypeAreViewOrEdit formName="pres_diagnosticPrescriptionForm">
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -587,16 +593,14 @@ function getPreRecord() {
         <msh:row><td>
        
         </td></msh:row>              
-        <%--  <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" /> --%> 
       </msh:panel>
     </msh:form>
-  <%--   <tags:enter_date name="2" functionSave="prepare1RowByDate"/> --%>
-   
-    
   </tiles:put>
+
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="StacJournal" beginForm="pres_diagnosticPrescriptionForm" />
   </tiles:put>
+
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
       <msh:sideMenu title="Назначения" guid="eb3f54-b971-441e-9a90-51jhf">

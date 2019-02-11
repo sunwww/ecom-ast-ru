@@ -1,24 +1,26 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
+import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.nuzmsh.util.format.DateConverter;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -42,7 +44,6 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		if (parentSSL.getEmergency()!=null && parentSSL.getEmergency()==Boolean.TRUE) {
     			form.setEmergency(Boolean.TRUE) ;
     		}
-    		//System.out.println("Check working create");
     		if (parentSSL.getDeniedHospitalizating()!=null) {
                 throw new IllegalStateException("При отказе в госпитализации нельзя заводить случай лечения в отделении") ;
                
@@ -66,7 +67,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
         				.setParameter("lpu", form.getDepartment()) 
         				.setMaxResults(1)
         				.getResultList() ;
-        		if (listwf.size()>0) {
+        		if (!listwf.isEmpty()) {
         			Object[] wf = listwf.get(0) ;
         			form.setOwnerFunction(ConvertSql.parseLong(wf[0])) ;
         		}
@@ -75,33 +76,104 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     	} else {
     		throw new IllegalStateException("Невозможно добавить случай лечения. Сначала надо определить  случай стационарного лечения (ССЛ)") ;
     	}
-    	boolean NoCheckPregnancy = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy") ;
-    	if (!NoCheckPregnancy && form.getPrevMedCase()!=null &&!isPregnancyExists(manager, form.getPrevMedCase() )) {
-    		throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не заполнены данные по родам!");
-    	} 
-    }
-    
-    
-    public static boolean isPregnancyExists(EntityManager aManager, Long aMedCaseId) {
-    	if (aMedCaseId==null) {return true;}
-		//System.out.println("===== Проверяем на роды, DEP_MC_CREATE_department_id: <> "+aMedCaseId);
+    	boolean noCheckPregnancy = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy") ;
+
+		if (form.getPrevMedCase()!=null) {
+			DepartmentMedCase prevMedCase = manager.find(DepartmentMedCase.class, form.getPrevMedCase());
+			if (prevMedCase.getDepartment().getIsMaternityWard()!=null && prevMedCase.getDepartment().getIsMaternityWard() ) {
+				//Milamesher #132 Карта оценки риска обязательна всегда
+				//Обазятельны либо роды, либо выкидыш
+				//lastrelease milamesher 10.04.2018 #97
+				if (!isRiskCardBornExists(manager, prevMedCase) && !isDsO82(manager, form.getPrevMedCase())) {
+					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не создана карта оценки риска!");
+				}
+				if (!noCheckPregnancy && !isPregnancyExists(manager, prevMedCase) && !isMisbirthClassExists(manager, form.getPrevMedCase())) {
+					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не заполнены данные по родам либо данные по выкидышу!");
+				}
+				//lastrelease milamesher 10.12.2018 #131
+				if (form.getPrevMedCase()!=null && !isMisbirthClassExists(manager, form.getPrevMedCase()) &&!isRobsonClassExists(manager, prevMedCase )) {
+					throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не создана классификация Робсона!");
+				}
+			}
+		}
+	}
+    //Milamesher не O82 ли диагноз (тогда следующая проверка не нужна)
+	private static boolean isDsO82(EntityManager aManager, Long aMedCaseId) {
+		if (aMedCaseId==null) {return true;}
 		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
 		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
-			String sql = "select count(cb.id) from medcase slo " +
-					" left join medcase slos on slos.parent_id=slo.parent_id and slos.dtype='DepartmentMedCase'" +
-					" left join childBirth cb on cb.medcase_id=slos.id" +
-					" where slo.id="+aMedCaseId+" and cb.pangsStartDate is not null";
-			Object list = aManager.createNativeQuery(sql.toString()).getSingleResult();
-		//	System.out.println("=== РОДЫ, list.size()="+list.toString());
-			if (Long.valueOf(list.toString())>0) {
-				return true;
-			} else {
-				return false;
-			}
+			String sql = "select count(idc.id) from vocidc10 idc\n" +
+					"left join diagnosis ds on ds.idc10_id=idc.id\n" +
+					"left join medcase mc on mc.id=ds.medcase_id\n" +
+					"where idc.code like 'O82%' and mc.id=:medcaseId";
+			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCaseId).getSingleResult();
+			return Long.valueOf(list.toString())>0;
 		} else {
 			return true;
 		}
-			
+	}
+    //Milamesher существует ли карта оценки риска
+    private static boolean isRiskCardBornExists(EntityManager aManager, MedCase aMedCase) {
+			String sql = "select count(ac.id) from assessmentCard ac where medcase_id=:medcaseId and template=7";
+			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
+			return Long.valueOf(list.toString())>0;
+
+	}
+    //Milamesher 10122018 #131 существует ли классификация Робсона
+	private static boolean isRobsonClassExists(EntityManager aManager, DepartmentMedCase aMedCase) {
+		//Milmesher 28122018 классификация необязательная для след. диагнозов
+		Diagnosis diagnosis = aMedCase.getMainDiagnosis();
+		ArrayList<String> withoutChildBirth = getDiagosisWithoutChldBirth();
+		if (diagnosis == null || withoutChildBirth.contains(diagnosis.getIdc10().getCode())) return true;
+		if (aMedCase.getDepartment()!=null && aMedCase.getDepartment().getIsMaternityWard()!=null && aMedCase.getDepartment().getIsMaternityWard()){
+			String sql = "select count(id) from robsonclass where medcase_id= "+aMedCase.getId();
+			Object list = aManager.createNativeQuery(sql).getSingleResult();
+			return Long.valueOf(list.toString())>0;
+		} else {
+			return true;
+		}
+	}
+	//Milamesher 24122018 #132 существует ли выкидыш
+	private static boolean isMisbirthClassExists(EntityManager aManager, Long aMedCaseId) {
+		if (aMedCaseId==null) {return true;}
+		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
+		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
+			String sql = "select count(id) from misbirth where medcase_id=:medcaseId";
+			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCaseId).getSingleResult();
+			return Long.valueOf(list.toString())>0;
+		} else {
+			return true;
+		}
+	}
+	/** Проверяем - заполнены ли данные по родам
+	 * Если диагноз входит в список разрешенных, то разрешаем перевод без заполнения информации о родах*/
+    public static boolean isPregnancyExists(EntityManager aManager, Long aMedCase) {
+    	return isPregnancyExists(aManager,aManager.find(DepartmentMedCase.class,aMedCase));
+	}
+
+	/** Список диагнозов, по которым возможно незаполнение родов*/
+	private static ArrayList<String> getDiagosisWithoutChldBirth() {
+		ArrayList<String> withoutChildBirth = new ArrayList<>();
+		withoutChildBirth.add("O47.0");
+		withoutChildBirth.add("O47.1");
+		withoutChildBirth.add("O42.2");
+		return withoutChildBirth;
+	}
+
+    private static boolean isPregnancyExists(EntityManager aManager, DepartmentMedCase aMedCase) {
+    	if (aMedCase.getDepartment().getIsMaternityWard()!=null && aMedCase.getDepartment().getIsMaternityWard()) {
+			Diagnosis diagnosis = aMedCase.getMainDiagnosis();
+			ArrayList<String> withoutChildBirth = getDiagosisWithoutChldBirth();
+			if (diagnosis == null || withoutChildBirth.contains(diagnosis.getIdc10().getCode())) return true;
+			String sql = "select count(cb.id) from medcase slo " +
+					" left join medcase slos on slos.parent_id=slo.parent_id and slos.dtype='DepartmentMedCase'" +
+					" left join childBirth cb on cb.medcase_id=slos.id" +
+					" where slo.id=:medcaseId and cb.pangsStartDate is not null";
+			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
+			return Long.valueOf(list.toString())>0;
+		} else {
+    		return true;
+		}
 	}
     /**
      * Новый первый случай лечения в отделении
@@ -133,12 +205,11 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
         	aForm.setDepartment(aMedCase.getDepartment().getId());
         	aForm.setServiceStream(aMedCase.getServiceStream()!=null?aMedCase.getServiceStream().getId():null);
         	aForm.addDisabledField("department");
+        	//aForm.addDisabledField("serviceStream");
         	aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCase.getHospType())) ;
         }
         
-        aForm.setlpuAndDate(new StringBuilder().append(aForm.getDepartment()).append(":")
-        		.append(aForm.getDateStart())
-        		.toString()) ;
+        aForm.setlpuAndDate(aForm.getDepartment()+":"+aForm.getDateStart()) ;
     }
     
     /**
@@ -159,7 +230,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		.append(" order by ms.transferDate desc,ms.transferTime desc");
     	List<Object[]> list = aManager.createNativeQuery(sql.toString())
     			.setParameter("parentId", aMedCaseParent.getId()).setMaxResults(3).getResultList() ;
-    	if (list.size()>0) {
+    	if (!list.isEmpty()) {
     		Object[] obj = list.get(0) ;
     		if (obj[0]!=null) {
     			throw new IllegalStateException("Уже есть лечение в отделении с выпиской.") ;
@@ -171,7 +242,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
             aForm.setServiceStream(ConvertSql.parseLong(obj[6])) ;
             if ((obj[2]!=null)&&(obj[4]!=null)&&(obj[3]!=null)) aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCaseParent.getHospType())) ;
             Long idPrev = ConvertSql.parseLong(obj[1]) ; 
-            DiagnosisForm diag = DischargeMedCaseViewInterceptor.getDiagnosis(aManager, idPrev, "4", "1", false) ; ;
+            DiagnosisForm diag = DischargeMedCaseViewInterceptor.getDiagnosis(aManager, idPrev, "4", "1", false) ;
             if (diag!=null){
             	aForm.setClinicalDiagnos(diag.getName());
             	if (diag.getIdc10()!=null) aForm.setClinicalMkb(diag.getIdc10()) ;
@@ -179,16 +250,20 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
             } else {
             	throw new IllegalStateException("Для ПЕРЕВОДА необходимо заполнить данные ДИАГНОЗА <a href='entityParentEdit-stac_slo.do?id="+idPrev+"'>в отделении</a>!!!") ;
             }
-            diag = DischargeMedCaseViewInterceptor.getDiagnosis(aManager, idPrev, "3", "1", false) ; ;
+            diag = DischargeMedCaseViewInterceptor.getDiagnosis(aManager, idPrev, "3", "1", false) ;
             if (diag!=null){
             	aForm.setConcludingDiagnos(diag.getName());
-				if (diag.getIdc10()!=null) aForm.setConcludingMkb(diag.getIdc10()) ;;
+				if (diag.getIdc10()!=null) aForm.setConcludingMkb(diag.getIdc10()) ;
 			}
-            diag = DischargeMedCaseViewInterceptor.getDiagnosis(aManager, idPrev, "4", "3", false) ; ;
+            diag = DischargeMedCaseViewInterceptor.getDiagnosis(aManager, idPrev, "4", "3", false) ;
             if (diag!=null){
             	aForm.setConcomitantDiagnos(diag.getName());
-				if (diag.getIdc10()!=null) aForm.setConcomitantMkb(diag.getIdc10()) ;;
+				if (diag.getIdc10()!=null) aForm.setConcomitantMkb(diag.getIdc10()) ;
 			}
+			/*if (aMedCaseParent.getServiceStream()!=null) {
+            	aForm.setServiceStream(aMedCaseParent.getServiceStream().getId());
+				aForm.addDisabledField("serviceStream");
+			}*/
     		
     	} else {
     		throw new IllegalStateException("Нет случая лечения в отделении оформленного для перевода") ;
@@ -198,7 +273,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     
     
     private Long getBedFund(EntityManager aManager, Long aDepartment, Long aServiceStream, String aDateFrom,VocHospType aHospType) {
-    	String bedSubType = aHospType!=null?(aHospType.getCode().startsWith("DAY")?"2":"1"):"1" ;
+    	String bedSubType = aHospType!=null ? (aHospType.getCode().startsWith("DAY") ? "2" : "1") : "1" ;
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select bf.id,vbst.id from BedFund bf ") ;
 		sql.append(" left join vocBedType vbt on vbt.id=bf.bedType_id left join vocBedSubType vbst on vbst.id=bf.bedSubType_id ") ;
@@ -206,14 +281,8 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 			.append("' and bf.serviceStream_id='").append(aServiceStream!=null?aServiceStream:"0")
 			.append("' and to_date('").append(aDateFrom)
 			.append("','dd.mm.yyyy') between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE)") ;
-		sql.append(" and vbst.code='").append(bedSubType!=null?bedSubType:"1").append("'");
+		sql.append(" and vbst.code='").append(bedSubType).append("' order by bf.amount desc");
 		List<Object[]> idT = aManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-		if (idT.size()==1) {
-			return ConvertSql.parseLong(idT.get(0)[0]) ;
-		}
-		return null ;
-		
+		return idT.isEmpty() ? null : ConvertSql.parseLong(idT.get(0)[0]);
     }
-
-
 }

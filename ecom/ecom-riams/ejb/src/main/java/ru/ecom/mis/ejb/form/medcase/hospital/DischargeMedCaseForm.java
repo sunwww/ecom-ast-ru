@@ -8,19 +8,11 @@ import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
-import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
-import ru.nuzmsh.forms.validator.validators.Mkb;
-import ru.nuzmsh.forms.validator.validators.Required;
-import ru.nuzmsh.forms.validator.validators.TimeString;
+import ru.nuzmsh.forms.validator.validators.*;
 
 @Comment("Случай стационарного лечения. Выписка")
 @EntityForm
@@ -79,7 +71,7 @@ public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 
 	/** Клинический диагноз по МКБ-10 */
 	@Comment("Клинический диагноз по МКБ-10")
-	@Mkb(clazz="VocIdc10",field="code")
+	@Mkb
 	public Long getClinicalMkb() {return theClinicalMkb;}
 	public void setClinicalMkb(Long aClinicalMkb) {theClinicalMkb = aClinicalMkb;}
 
@@ -90,7 +82,7 @@ public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 	
 	/** Патанатомический диагноз по МКБ-10 */
 	@Comment("Патанатомический диагноз по МКБ-10")
-	@Mkb(clazz="VocIdc10",field="code")
+	@Mkb
 	public Long getPathanatomicalMkb() {return thePathanatomicalMkb;}
 	public void setPathanatomicalMkb(Long aPathanatomicalMkb) {thePathanatomicalMkb = aPathanatomicalMkb;}
 
@@ -102,7 +94,7 @@ public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 
 	/** Заключительный диагноз по МКБ-10 */
 	@Comment("Заключительный диагноз по МКБ-10")
-	@Mkb(clazz="VocIdc10",field="code") @Required
+	@Required @Mkb
 	public Long getConcludingMkb() {return theConcludingMkb;}
 	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
 

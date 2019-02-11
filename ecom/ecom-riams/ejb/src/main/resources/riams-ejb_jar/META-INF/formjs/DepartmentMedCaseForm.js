@@ -17,7 +17,7 @@ function onPreCreate(aForm, aContext) {
 		.setParameter("parent",aForm.parent)
 		.getResultList();
 	}
-	if (listDep.size()>0) {
+	if (!listDep.isEmpty()) {
 		var dep = listDep.get(0) ;
 		throw "Уже завели случай в отделелении. <a href='entitySubclassView-mis_medCase.do?id="+dep.id+"'>Перейти к нему</a>"
 		
@@ -208,7 +208,7 @@ function onPreSave(aForm,aEntity, aContext) {
 	if (aForm!=null && prev!=null 
 			&& aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/CantTransferReanimationToReanimation")) { 
 		var lpu = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,aForm.department); 
-		if (lpu.getIsNoOmc() && prev.department.getIsNoOmc())
+		if (true==lpu.getIsNoOmc() && true==prev.department.getIsNoOmc())
 			throw "Нельзя переводить из одной реанимации в другую реанимацию!";
 	}
 }
@@ -270,32 +270,65 @@ function onCreate(aForm, aEntity, aContext) {
 	
 	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 	onSave(aForm, aEntity, aContext) ;
+    transferObservRoomToChild(aForm, aEntity, aContext) ;
+}
+//Milamesher #101 проставить палату матери в обсервац. её новорождённым детям
+function transferObservRoomToChild(aForm, aEntity, aContext) {
+    if (aEntity.prevMedCase!=null && aEntity.department.getIsObservable() && aEntity.roomNumber!=null && aEntity.bedNumber!=null) { //если это перевод в обсервационное
+        //Нужно брать палаты и койки по наименованию, но отделение - новорождённых
+        var list = aContext.manager.createNativeQuery("select wp.id as wpid,wpBed.id as wpbid from workplace wp\n" +
+            "left join mislpu lpu on lpu.id=wp.lpu_id\n" +
+            "left join WorkPlace wp1 on wp1.id=wp.parent_id\n" +
+            "left join WorkPlace wpBed on wpBed.parent_id=wp.id\n" +
+            "where lpu.isnewborn=true and \n" +
+            "wp.name=(select wp.name from workplace wp\n" +
+            "left join mislpu lpu on lpu.id=wp.lpu_id\n" +
+            "left join WorkPlace wp1 on wp1.id=wp.parent_id where wp.id=" + aEntity.roomNumber.id + " and\n" +
+            "wp.dtype='HospitalRoom' and (wp.isnoactuality is null or wp.isnoactuality='0')) and\n" +
+            "wp.dtype='HospitalRoom' and (wp.isnoactuality is null or wp.isnoactuality='0') and\n" +
+            "wpBed.dtype='HospitalBed' and (wpBed.isnoactuality is null or wpBed.isnoactuality='0') and\n" +
+            "wpBed.name = (select name from WorkPlace where id=" + aEntity.bedNumber.id + ") limit 1").getResultList();
+        if (list.size() >0) {
+        	var obj=list.get(0);
+            var rid = obj[0];
+            var bid = obj[1];
+            aContext.manager.createNativeQuery("update medcase mc set roomnumber_id=" + rid + "\n" +
+                ",bednumber_id= " + bid + " \n" +
+                "where id=ANY(select dmc2.id from medcase dmc\n" +
+                "left join ChildBirth chb on chb.medcase_id=dmc.id\n" +
+                "left join newborn nb on nb.childbirth_id=chb.id\n" +
+                "left join patient pat on pat.id=nb.patient_id\n" +
+                "left join medcase hmc on hmc.patient_id=pat.id\n" +
+                "left join medcase dmc2 on dmc2.parent_id=hmc.id\n" +
+                "left join mislpu lpu on lpu.id=mc.department_id\n" +
+                "where hmc.datestart=nb.birthdate and dmc2.id is not null and mc.dtype='DepartmentMedCase'\n" +
+                "and lpu.isnewborn=true and dmc.id= " + aEntity.prevMedCase.id + " )\n").executeUpdate();
+        }
+    }
 }
 function onSave(aForm, aEntity, aContext) {
-	var dat =(new java.util.Date()).getTime() ;
+	//var dat =(new java.util.Date()).getTime() ;
 	//aEntity.setEditTime(new java.sql.Time (dat)) ;
-	
-	var listDep = aContext.manager.createQuery("from MedCase where prevMedCase_id=:prev")
-		.setParameter("prev",aForm.id).getResultList() ;
-	/*if (listDep.size()>0) {
-		var medCase = listDep.get(0) ;
-		medCase.dateStart = aEntity.transferDate ;
-		medCase.entranceTime = aEntity.transferTime ;
-		if (medCase.department != aEntity.transferDepartment) {
-			medCase.department = aEntity.transferDepartment ;
-		}
-		aContext.manager.persist(medCase) ;
-	}*/
+
+	//Оставить след. строку. Если её закомментировать - то всё будет плохо!
+		 aContext.manager.createQuery("from MedCase where prevMedCase_id=:prev").setParameter("prev",aForm.id).getResultList() ;
+    /*    if (listDep.size()>0) {
+            var medCase = listDep.get(0) ;
+            medCase.dateStart = aEntity.transferDate ;
+            medCase.entranceTime = aEntity.transferTime ;
+            if (medCase.department != aEntity.transferDepartment) {
+                medCase.department = aEntity.transferDepartment ;
+            }
+            aContext.manager.persist(medCase) ;
+        }*/
 	if (aEntity.prevMedCase!=null) {
 		aEntity.prevMedCase.transferDate = aEntity.dateStart ;
 		aEntity.prevMedCase.transferTime = aEntity.entranceTime ;
 		aEntity.prevMedCase.transferDepartment = aEntity.department ;
 	}
-	//throw  "--"+aForm.getId() ;
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getComplicationDiags(), "4", "4",null) ;
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getConcomitantDiags(), "4","3",null) ;
-	//throw ""+new java.lang.StringBuilder().append(aForm.getClinicalMkb()).append("@#@ @#@").append(aForm.getClinicalDiagnos()).toString() ;
-	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), new java.lang.StringBuilder().append(aForm.getClinicalMkb()).append("@#@ @#@").append(aForm.getClinicalDiagnos()).toString(), "4", "1",aForm.clinicalActuity,aForm.mkbAdc) ;
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getClinicalMkb()+"@#@ @#@"+aForm.getClinicalDiagnos(), "4", "1",aForm.clinicalActuity,aForm.mkbAdc) ;
 }
 
 // Перед удалением

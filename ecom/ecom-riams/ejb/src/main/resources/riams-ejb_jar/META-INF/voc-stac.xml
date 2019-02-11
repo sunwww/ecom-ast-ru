@@ -1,4 +1,14 @@
 <vocconfig>
+	<voc id="vocLeftRight" type="NativeVocService">
+			<NativeVocService
+			    	from="VocLeftRight as voc"
+			    	nameId="voc.id"
+			    	queryAppend=""
+			    	order=""
+			    	queried=""
+			    	names = "voc.name"
+			/>
+		</voc>
 	<voc id="vocAbortationByProfile" type="NativeVocService">
 			<NativeVocService
 			    	from="Surgicalprofileabortation as spa "
@@ -11,7 +21,7 @@
 			    	names = "va.name"
 			/>
 		</voc>
-	
+
 	<voc id="slsByPregnancy" type="NativeVocService">
 		<NativeVocService
 		    	from=" MedCase as sls "
@@ -71,23 +81,36 @@
 		    	parent=" (vss.id=:parent or vkhc.serviceStreamCode is null or vkhc.serviceStreamCode='') "
 		    	nameId="vkhc.id"
 		    	join=" left join VocServiceStream vss on vss.code=vkhc.serviceStreamCode  "
-		    	queryAppend="vkhc.dateTo is null"
+		    	queryAppend="(vkhc.dateTo is null or vkhc.dateTo >=current_date)"
 		    	order=""
 		    	queried=" (vkhc.name like upper(:query) or vkhc.code like upper(:querId) or replace(vkhc.code,'.','') like upper(:querId))"
 		    	names = "vkhc.code||' '||vkhc.name"
 		/>
 	</voc>
-	<voc id="vocMethodHighCare" type="NativeVocService">
+	<voc id="vocMethodHighCareByKind" type="NativeVocService">
 		<NativeVocService
 		    	from=" VocMethodHighCare as vmhc "
 		    	parent="vkhc.id=:parent"
 		    	nameId="vmhc.id"
 		    	join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare "
-		    	queryAppend="vmhc.dateTo is null"
+		    	queryAppend="(vmhc.dateTo is null or vmhc.dateTo >=current_date)"
 		    	order=""
 		    	queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
 		    	names = "vmhc.code||' '||vmhc.name"
 		    	
+		/>
+	</voc>
+
+	<voc id="vocMethodHighCare" type="NativeVocService">
+		<NativeVocService
+				from=" VocMethodHighCare as vmhc "
+				nameId="vmhc.id"
+				join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare "
+				queryAppend="(vmhc.dateTo is null or vmhc.dateTo >=current_date)"
+				order=""
+				queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
+				names = "vkhc.code||' '||vmhc.code||' '||vmhc.name"
+
 		/>
 	</voc>
 	<voc id="vocChildEmergency" type="NativeVocService">
@@ -103,13 +126,26 @@
 		    	
 		/>
 	</voc>
+	<voc id="vocTypeMisbirth" type="NativeVocService">
+		<NativeVocService
+				from=" VocTypeMisbirth "
+				parent=""
+				nameId=" id "
+				join=""
+				queryAppend=""
+				order=""
+				queried=" name "
+				names = " name "
+
+		/>
+	</voc>
 	<voc id="hospitalRoomByLpu" type="NativeVocService">
 		<NativeVocService
 		    	from=" WorkPlace as wp "
 		    	parent='wp.lpu_id=:parent'
 		    	nameId="wp.id"
 		    	join=" left join WorkPlace wp1 on wp1.id=wp.parent_id"
-		    	queryAppend=" wp.dtype='HospitalRoom'"
+		    	queryAppend=" wp.dtype='HospitalRoom' and (wp.isnoactuality is null or wp.isnoactuality='0')"
 		    	order=""
 		    	queried=" upper(wp.name) like upper(:query) "
 		    	names = "'№'||wp.name||' ('||wp1.name||')'"
@@ -863,6 +899,66 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 				order=""
 				queried="(vd.name like upper(:query))"
 				names = "vd.name"
+		/>
+	</voc>
+	<!-- Справочник причин отмены консультаций -->
+	<voc id='vocWfConsultationCancelReason' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.prescription.voc.VocWfConsultationCancelReason'
+				names   = 'name'
+				queried = 'name'
+		/>
+	</voc>
+	<!-- Справочники ппо кардиологическому скринингу -->
+	<voc id='vocScreeningSkin' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningSkin'
+				names   = 'name'
+				queried = 'id,name'
+		/>
+	</voc>
+	<voc id='vocScreeningArterialPulsation' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningArterialPulsation'
+				names   = 'name'
+				queried = 'id,name'
+		/>
+	</voc>
+	<voc id='vocScreeningCNS' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningCNS'
+				names   = 'name'
+				queried = 'id,name'
+		/>
+	</voc>
+	<voc id='vocScreeningCardiacActivity' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningCardiacActivity'
+				names   = 'name'
+				queried = 'id,name'
+		/>
+	</voc>
+	<voc id='vocScreeningApicalImpulseLocalization' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningLocalization'
+				names   = 'name'
+				queried = 'id,name'
+				queryAppend=" code='1' "
+		/>
+	</voc>
+	<voc id='vocScreeningLiverEdgeLocalLocalization' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningLocalization'
+				names   = 'name'
+				queried = 'id,name'
+				queryAppend=" code='2' "
+		/>
+	</voc>
+	<voc id='vocScreeningDiuresis' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningDiuresis'
+				names   = 'name'
+				queried = 'id,name'
 		/>
 	</voc>
 </vocconfig>    

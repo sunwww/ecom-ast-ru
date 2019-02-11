@@ -1,9 +1,7 @@
-<%@ page import="java.io.Reader" %>
-<%@ page import="java.io.FileReader" %>
-<%@ page import="java.io.LineNumberReader" %>
-<%@ page import="java.util.regex.Pattern" %>
 <%@ page import="ru.ecom.ejb.services.file.IJbossGetFileService" %>
 <%@ page import="ru.ecom.web.util.Injection" %>
+<%@ page import="java.io.FileReader" %>
+<%@ page import="java.io.LineNumberReader" %>
 <%--
   @author ikouzmin 19.03.2007 16:26:01
   
@@ -14,7 +12,7 @@
   <!--a href="javascript:history.back(1)">Назад</a><br/-->
   <%
       //String fileName = (String) session.getAttribute("logfile");
-      IJbossGetFileService fileService = (IJbossGetFileService) Injection.find(request).getService(IJbossGetFileService.class);
+      IJbossGetFileService fileService =  Injection.find(request).getService(IJbossGetFileService.class);
       String fileIdString = request.getParameter("file");
       long fileId = 0;
       try {

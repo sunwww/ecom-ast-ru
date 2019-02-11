@@ -158,4 +158,22 @@
                  queried = 'name'
                  />
      </voc>
+
+    <voc id="vocRegids" type="NativeVocService">
+        <NativeVocService
+                from="vocgoods as vg"
+                nameId="vg.regid"
+                names="vg.drug||'('||vg.form||')'"
+                queriedSplitCount="2"
+                queried ="(cast(vg.regid as varchar(20))= :querInd) or (vg.drug like :quer1 and vg.form like :quer2)" />
+    </voc>
+
+    <voc id="vocPharmnetStorage" type="NativeVocService">
+        <NativeVocService
+                from="pharmnetstorage as ph"
+                nameId="ph.id"
+                names="vb.branch"
+                join=" left join vocbranch vb on vb.branchid =  ph.branchid"
+                queried ="vb.branch" />
+    </voc>
 </vocconfig>

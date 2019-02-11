@@ -1,17 +1,10 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimePattern;
-import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.validators.Required;
 

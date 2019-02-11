@@ -1,8 +1,8 @@
 package ru.ecom.ejb.print;
 
-import java.util.Map;
-
 import ru.ecom.ejb.services.script.IScriptService;
+
+import java.util.Map;
 
 public interface IPrintService {
 	 String print(String aKey, String aServiceName,

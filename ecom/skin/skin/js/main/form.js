@@ -62,8 +62,11 @@ function getDefinition(term,evt,aDiv){
 	
 	return false;
 }
+function goToPageNewWindow(aPage,aId,aTableCell){
+	goToPage(aPage,aId,aTableCell+"##NEW_WINDOW##");
+}
 
-function goToPage(aPage,aId,aTableCell) {
+function goToPage(aPage,aId,aTableCell) { //TODO сделать переход на страницу в другой вкладке
 	//if (aTableCell==null) aTableCell="" ;
     if (aPage.indexOf('javascript:')!=-1) {
     	
@@ -85,7 +88,13 @@ function goToPage(aPage,aId,aTableCell) {
     	if (aTableCell==null) {
             window.location = url ;
     	} else {
-    		getDefinition(url+aTableCell+"&short=Short") ;
+    		if (aTableCell.indexOf('##NEW_WINDOW##')>-1) {
+    			url+=aTableCell.replace("##NEW_WINDOW##","");
+    			window.open(url);
+			} else {
+                getDefinition(url+aTableCell+"&short=Short") ;
+			}
+
     	}
     }
 }
@@ -126,26 +135,45 @@ var funcemergencymessage = {
 		    } ) ;
 		}
 }
+function showToastMessage(aMessage,aJson,aAutoClose,aError) {
+	if (aJson) {
+        jQuery.toast(aJson);
+	} else {
+		jQuery.toast({
+			text:aMessage
+			,hideAfter:aAutoClose&&aAutoClose!=null?true:false
+			,icon:aError&&true==aError?"error":"info"
+
+		});
+	}
+}
 function viewEmergencyUserMessage(aJsonId) {
 	var fldJson = JSON.parse(aJsonId) ;
 	var cnt = fldJson.params.length ;
-	var txt="";var ids = "" ;
 	if (cnt>0) {
 	    for (var ind=0;ind<cnt;ind++) {
 	    	var param = fldJson.params[ind] ;
-	    	txt += param.messageTitle+" "+param.messageText+" от "+param.infoReceipt+".\n" ;
-	    	if (ids!="") ids += "," ; ids+=param.id ;
+	    	jQuery.toast({
+                position: 'bottom-center'
+				,heading:"Cрочное сообщение: "+param.messageTitle
+				,text:param.messageText+(param.messageUrl?"\n<a href='"+param.messageUrl+"' target='_blank'>Перейти</a>":"")
+				,hideAfter: false
+                ,bgColor: '#ff0000'
+				,icon:"warning"
+				,beforeShow: function () {checkEmergencyMessage(param.id);}
+				,stack:cnt
+			});
+	    	//alert("close json id = "+param.id);
 	    }
-	    
-	    VocService.checkEmergencyMessages(ids,txt, {
-	        callback: function(aName) {
-	        	alert(txt) ;
-	        	--theDefaultTimeOutCnt ;
-	        	if (theDefaultTimeOutCnt>0) theDefaultTimeOut = setTimeout(funcemergencymessage.func,180000) ;
-	        }}
-	    ) ;
-	    
 	}
+}
+function checkEmergencyMessage(aId) {
+    VocService.checkEmergencyMessages(aId,'', {
+        callback: function(aName) {
+            --theDefaultTimeOutCnt ;
+            if (theDefaultTimeOutCnt>0) theDefaultTimeOut = setTimeout(funcemergencymessage.func,180000) ;
+        }}
+    ) ;
 }
 function hideUserMessage(aId) {
 	VocService.hiddenMessage(aId, {

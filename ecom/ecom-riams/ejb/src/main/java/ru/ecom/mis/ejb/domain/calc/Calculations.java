@@ -49,5 +49,10 @@ public class Calculations extends BaseEntity{
 	public String getComment() {return theComment;}
 	public void setComment(String aComment) {theComment = aComment;}
 	private String theComment;
-	
+
+    /** Примечание */
+    @Comment("Примечание")
+    public String getNote() {return theNote;}
+    public void setNote(String aNote) {theNote = aNote;}
+    private String theNote;
 }

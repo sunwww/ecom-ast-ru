@@ -27,7 +27,7 @@
   	</msh:ifInRole>
   	<msh:ifNotInRole roles="/Policy/Jaas/SecUser/EditSystem">
   		<ecom:webQuery name="listSort" hql="select id,login,fullname,comment,disable 
-  		from SecUser &#xA;${param.list==&quot;all&quot;? &quot; where (isSystems is null or isSystems='0')&quot; :param.list==&quot;disable&quot; ?&quot;where disable='1' and (isSystems is null or isSystems='0')&quot;:&quot;where (disable is null or disable='0') and (isSystems is null or isSystems='0')&quot;}&#xA; order by login" />
+  		from SecUser &#xA;${param.list==&quot;system&quot;?&quot; where isSystems='1'&quot;:param.list==&quot;all&quot;? &quot; where (isSystems is null or isSystems='0')&quot; :param.list==&quot;disable&quot; ?&quot;where disable='1' and (isSystems is null or isSystems='0')&quot;:&quot;where (disable is null or disable='0') and (isSystems is null or isSystems='0')&quot;}&#xA; order by login" />
   	</msh:ifNotInRole>
     <msh:table name="listSort" action="userView.do" idField="1" guid="cf6b8963-1a46-4142-8503-cc36fce098f7">
       <msh:tableColumn columnName="#" property="sn" guid="597cacc1-1445c8-98b0-5ff0d70752b9" />

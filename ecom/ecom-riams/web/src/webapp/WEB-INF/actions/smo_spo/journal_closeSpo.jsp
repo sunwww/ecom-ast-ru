@@ -1,8 +1,8 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -80,9 +80,9 @@
     </msh:form>
     <%} %>
     <%
-    String date = (String)request.getParameter("beginDate") ;
+    String date = request.getParameter("beginDate") ;
     if (date!=null && !date.equals(""))  {
-    	String finishDate = (String)request.getParameter("finishDate") ;
+    	String finishDate = request.getParameter("finishDate") ;
     	if (finishDate==null||finishDate.equals("")) {
     		request.setAttribute("finishDate", date) ;
     		finishDate = date ;
@@ -90,44 +90,38 @@
     		request.setAttribute("finishDate", finishDate) ;
     	}
     	request.setAttribute("beginDate", date) ;
-    	
-    	if (typeView!=null && typeView.equals("1")) {
+        request.setAttribute("isReportBase", ActionUtil.isReportBase(date,finishDate,request));
+    	if ("1".equals(typeView)) {
     		request.setAttribute("additionJoinSql", " left join medcase spo1 on spo1.patient_id=spo.patient_id and spo1.dtype='PolyclinicMedCase'     				left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id     				left join Worker ow1 on ow1.id=owf1.worker_id ") ;
     		request.setAttribute("additionWhereSql", " and spo1.dateFinish between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and owf.workFunction_id=owf1.workFunction_id  and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id ") ;
-    	} else if (typeView!=null && typeView.equals("2")) {
+    	} else if ("2".equals(typeView)) {
     		request.setAttribute("additionJoinSql", " left join medcase spo1 on spo1.patient_id=spo.patient_id and spo1.dtype='PolyclinicMedCase'     				left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id     				left join Worker ow1 on ow1.id=owf1.worker_id ") ;
     		request.setAttribute("additionWhereSql", " and spo1.dateFinish is null and owf.workFunction_id=owf1.workFunction_id  and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id ") ;
     		request.setAttribute("additionSpoSql", " and (select count(spo1.id) from medcase spo1 left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id left join Worker ow1 on ow1.id=owf1.worker_id where spo.patient_id=spo1.patient_id and spo1.dtype='PolyclinicMedCase' and owf.workFunction_id=owf1.workFunction_id and spo1.dateStart between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and ow.lpu_id=ow1.lpu_id and spo1.dateFinish is null)>1") ;
-    	} else {
-    		
     	}
-    	String dep = (String)request.getParameter("department") ;
+    	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.trim().equals("") && !dep.equals("0")) {
-    		request.setAttribute("departmentSql", " and w.lpu_id="+dep) ;
+    		request.setAttribute("departmentSql", " and ow.lpu_id="+dep) ;
     		request.setAttribute("department",dep) ;
     	} else {
     		request.setAttribute("department","0") ;
+            request.setAttribute("departmentSql", "");
     	}
-    	String spec = (String)request.getParameter("spec") ;
+    	String spec = request.getParameter("spec") ;
     	if (spec!=null && !spec.equals("") && !spec.equals("0")) {
     		request.setAttribute("workFunctionSql", " and vis.workFunctionExecute_id="+spec) ;
     		request.setAttribute("workFunction",spec) ;
     	} else {
     		request.setAttribute("workFunction","0") ;
     	}
-    	String servStream = (String)request.getParameter("serviceStream") ;
+    	String servStream = request.getParameter("serviceStream") ;
     	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
     		request.setAttribute("serviceStreamSql", " and vss.id="+servStream) ;
     		request.setAttribute("serviceStream", servStream) ;
     	} else {
     		request.setAttribute("serviceStream", "0") ;
     	}
-    	%>
-    	
-    	
-    	<%
-        	String login = LoginInfo.find(request.getSession(true)).getUsername() ;
-        	request.setAttribute("login", login) ;
+        request.setAttribute("login", LoginInfo.find(request.getSession(true)).getUsername()) ;
         %>
         <ecom:webQuery name="infoByLogin"
         maxResult="1" nativeSql="
@@ -141,12 +135,11 @@
         <%
         	boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll",request) ;
         	List list= (List)request.getAttribute("infoByLogin");
-	    	WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
+	    	WebQueryResult wqr = list.isEmpty() ? null : (WebQueryResult)list.get(0) ;
 	    	//WebQueryResult wqr = null ;
-        	String department = request.getParameter("department") ;
         	String curator = request.getParameter("specialist") ;
-        	String workFunc = wqr!=null?""+wqr.get1():"0" ;
-        	boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
+        	String workFunc = wqr!=null ? ""+wqr.get1() : "0" ;
+        	boolean isBossDepartment= wqr!=null && wqr.get3()!=null;
         	if (typeCntVisit.equals("1")) {
         		request.setAttribute("typeCntVisitSql", " and (select count(visD.id) from medcase visD where visD.parent_id=spo.id and (visD.dtype='Visit' or visD.dtype='ShortMedCase') and (visD.noActuality='0' or visD.noActuality is null))>1") ;
         	} else if (typeCntVisit.equals("2")){
@@ -160,26 +153,25 @@
         		if (!isViewAllDepartment&&!isBossDepartment&&!curator.equals(workFunc)) {
         			curator=workFunc ;
         		}
-        	} else if (department!=null && !department.equals("0")&& !department.equals("") && (isViewAllDepartment || isBossDepartment)) {
+        	} else if (dep!=null && !dep.equals("0")&& !dep.equals("") && (isViewAllDepartment || isBossDepartment)) {
         		type=2 ;
        		} else if (isViewAllDepartment) {
        			type=1 ;
        		} else if (wqr!=null) {
        			if (isBossDepartment) {
        				type=2 ;
-       				if ((wqr.get2()!=null&&!wqr.get2().equals("0")&&!wqr.get2().equals(""))) {
-       					department=""+wqr.get2() ;
+       				if ((wqr.get2()!=null && !wqr.get2().equals("0") && !wqr.get2().equals(""))) {
+       					dep=""+wqr.get2() ;
        				} else {
-       					department="0" ;
+       					dep="0" ;
        				}
-       				
        			} else {
        				type=3 ;
        				curator=workFunc ;
-       				department=""+wqr.get2() ;
+       				dep=""+wqr.get2() ;
        			}
        		}
-       		request.setAttribute("department", department) ;
+       		request.setAttribute("department", dep) ;
        		request.setAttribute("curator", curator) ;
        	%>
         	    
@@ -187,9 +179,10 @@
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
     select ml.id||'&department='||ml.id,ml.name ,count(distinct spo.patient_id) as cntPat,count(distinct spo.id) as cntSpo  
 	from MedCase spo
+	left join VocServiceStream vss on vss.id=spo.serviceStream_id
 	left join WorkFunction owf on owf.id=spo.ownerFunction_id
 	left join Worker ow on ow.id=owf.worker_id
 	left join MisLpu ml on ow.lpu_id=ml.id 
@@ -211,13 +204,13 @@
     </msh:sectionContent>
     </msh:section> 
     <% 
-    } 
-    if (type==2 )  {	
+    }
+    if (type==2 )  {
     %>
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
     select 
 owf.id||'&department=${department}&specialist='||owf.id as id
 ,ovwf.name as ovwfname,owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
@@ -231,7 +224,7 @@ left join Patient owp on ow.person_id=owp.id
 ${additionJoinSql}
 where spo.dtype='PolyclinicMedCase' 
 and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
- and ow.lpu_id='${department}'
+ ${departmentSql}
  ${additionWhereSql}  ${typeCntVisitSql}
 group by owf.id,ovwf.name,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
@@ -247,12 +240,11 @@ order by owp.lastname,owp.middlename,owp.firstname
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-         <%}%>
-         <%if (type==3 )  {	%>
+         <% } if (type==3 )  {	%>
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
 select spo.id,spo.dateStart,spo.dateFinish
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
     ,pat.birthday  
@@ -278,7 +270,7 @@ select spo.id,spo.dateStart,spo.dateFinish
     where spo.ownerFunction_id='${curator}' 
  and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
      and spo.DTYPE='PolyclinicMedCase' 
-     and   ow.lpu_id='${department}' and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
+     ${departmentSql} and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
  ${additionWhereSql} ${typeCntVisitSql}
     group by  spo.id,spo.dateStart,spo.dateFinish,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday
@@ -303,25 +295,15 @@ select spo.id,spo.dateStart,spo.dateFinish
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% } %>
-    	
-    	
-    	
-    	
-    <% } else { %>
+    <% }
+    } else { %>
     	<i>Выберите параметры и нажмите найти </i>
     <% }   %>
     
     <script type='text/javascript'>
-    //var typePatient = document.forms[0].typePatient ;
-    //var typeDate = document.forms[0].typeDate ;
-    //checkFieldUpdate('typeSwod','${typeSwod}',2,1) ;
-    //checkFieldUpdate('typeDate','${typeDate}',2) ;
     checkFieldUpdate('typeView','${typeView}',3) ;
     checkFieldUpdate('typeCntVisit','${typeCntVisit}',3) ;
-    //checkFieldUpdate('typePatient','${typePatient}',3,3) ;
-    //checkFieldUpdate('typeStatus','${typeStatus}',2,2) ;
-    
+
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
        	var max = chk.length ;
@@ -341,7 +323,6 @@ select spo.id,spo.dateStart,spo.dateFinish
     function print() {
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
-    	//frm.action='stac_groupByBedFundList.do' ;
     }
     </script>
   </tiles:put>

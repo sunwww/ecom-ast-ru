@@ -20,6 +20,10 @@
 						Сформировать файл об оказанной помощи иногородним или иностранцам
 						<div id="miacFileLinkDiv"></div>
 					</msh:link></li>
+					<li><msh:link roles='/Policy/Mis/Patient' action="/javascript:test()">
+						Test
+						<div id="miacFileLinkDiasdv"></div>
+					</msh:link></li>
 					<li><msh:link roles='/Policy/Mis/Disability/Case/Document/ExportDocument' action="/javascript:getLNNumberRange()">
                             Получить номера электронных больничных листов (ЭЛН)
                         </msh:link></li>
@@ -187,7 +191,21 @@
 		 <script type='text/javascript' src='./dwr/interface/ContractService.js'></script>
 		 <script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
 	   <script type="text/javascript">
-
+function test() {
+    for (var i=0;i<4;i++) {
+        jQuery.toast({
+            title: 'My message '+i
+            , text: 'this is text'
+            , beforeShow: function () {
+                msh.effect.FadeEffect.putFade();
+            }
+            , beforeHide: function () {
+                msh.effect.FadeEffect.pushFade();
+            }
+            , hideAfter: false
+    });
+    }
+}
            function getLNNumberRange() {
                var num = prompt("Укажите количество требуемых номеров",20);
                if (+num>0) {
@@ -219,8 +237,6 @@
 
 	   }
 	   function deleteAllTalons () {
-
-
 		   var date = prompt('Введите дату, до которой были выданы талоны','01.01.2016');
 		   if (date!=null&&date!='') {
 			   TicketService.deleteTalons('',date,{

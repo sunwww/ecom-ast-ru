@@ -110,6 +110,9 @@
             <msh:checkBox property="isMobilePolyclinic" label="Мобильная поликлиника"/>
         	<msh:checkBox property="isArchive" label="Не используется (в архиве)"/>
         </msh:row>
+      <msh:row>
+          <msh:checkBox property="isCreateCardiacScreening" label="Создают кардиоскрининги новорожд."/>
+      </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
@@ -325,6 +328,17 @@
   			
         </tr>
       </table>
+        <msh:section>
+        <msh:sectionTitle>Реквизиты для печати по ЛПУ <a href='entityParentPrepareCreate-mis_lpuRequisite.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
+        <msh:sectionContent>
+        <ecom:webQuery name="requisites" nativeSql="select id, name, code, value
+        from MisLpuRequisite where lpu_id=${param.id}" />
+        <msh:table name="requisites" action="entityView-mis_lpuRequisite.do" idField="1">
+            <msh:tableColumn columnName="Название" property="2" />
+            <msh:tableColumn columnName="Код" property="3" />
+            <msh:tableColumn columnName="Значение" property="4" />
+        </msh:table>
+        </msh:sectionContent></msh:section>
     </msh:ifFormTypeIsView>
     <tags:addressTag />
   </tiles:put>
@@ -361,6 +375,7 @@
         <msh:sideLink roles="/Policy/Mis/Report/Birth/View" params="id" action="/entityParentList-mis_birthReportDate" name="Сведения по рождаемости" title="Показать сведения по рождаемости" guid="27fe8bc3-ae8d-4e8b-88f2-d23a337f614b" />
         <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" key="ALT+7" params="id" action="/js-mis_worker-pattern" name="Шаблоны расписания сотрудников" title="Перейти к установке шаблонов календарей по специалистам" />
         <msh:sideLink roles="/Policy/Mis/Equipment/Equipment/View" params="id" action="/js-mis_lpu-showStandard" name="Оснащение по стандарту" title="Шаблоны по стандарту" />
+        <msh:sideLink roles="/Policy/Mis/Equipment/KkmEquipment/View" params="id" action="/entityParentList-mis_kkmequipment" name="Кассовые аппараты" title="Кассовые аппараты" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

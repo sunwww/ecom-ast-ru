@@ -196,7 +196,7 @@
     when mc.dateStart is null and p.cancelDate is null and p.medcase_id is not null and mc.workFunctionExecute_id is not null then 'Ожидается подтверждение врача КДЛ'
     when mc.dateStart is not null and p.cancelDate is null and p.medcase_id is not null and mc.workFunctionExecute_id is not null then 'Выполнено'
     else null
-    end as comment
+    end as f2_comment
     
       , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
     , p.materialId||' ('||coalesce(vsst.code,'---')||')' as f4material
@@ -222,6 +222,7 @@
     else ''
     end as f19_colorcomment
     ,case when p.canceldate is null and (p.medcase_id is null or mc.datestart is null) then p.id else null end as f20_prescriptionLabDoctorButton
+    ,case when p.cancelDate is null then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j21cancelAllTime
     from prescription p
     left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelreason_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
@@ -266,7 +267,7 @@
     <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
     <msh:sectionContent>
 	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" >
-	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак"/>
+	     <msh:tableButton property="21" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак"/>
 	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="checkLabAnalyzed" buttonName="Анализ" buttonShortName="Анализ"/>
 	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Ан.+Рез."/>
 	     <msh:tableButton property="15" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="Ввести результат" buttonShortName="Рез."/>

@@ -37,7 +37,7 @@ function onCreate(aForm, aSurgOper, aCtx) {
 			}
 		}
 	}
-	
+    checkParent(aSurgOper,aCtx); //Находим родителя по дате и времени операции
 }
 function onPreSave(aForm,aEntity, aCtx) {
 	var date = new java.util.Date();
@@ -55,13 +55,18 @@ function onPreCreate(aForm, aCtx) {
 	if (+aForm.isAnesthesia>0) {
 		var ch = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocYesNo,aForm.isAnesthesia) ;
 		if (ch!=null && ch.code.equals("1")) {
-		if (+aForm.anaesthetist>0 && +aForm.anesthesia>0 && +aForm.anesthesiaType>0 && +aForm.anesthesiaDuration>0) {
-			
-		} else {
-			throw "Необходимо заполнить все обязательные поля по анестезии!!!" ;
-		}
+			if (+aForm.anaesthetist>0 && +aForm.anesthesia>0 && +aForm.anesthesiaType>0 && +aForm.anesthesiaDuration>0) {
+
+			} else {
+				throw "Необходимо заполнить все обязательные поля по анестезии!!!" ;
+			}
 		}
 	} else {throw "Необходимо указать была анестезия или нет!!!" ;}
+
+	var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,aForm.medService) ;
+	if (medService.isAbortRequired &&  true==medService.isAbortRequired &&!+aForm.abortion>0) {
+		throw "Для операции "+medService.code+" "+medService.name+" необходимо заполнить тип аборта!";
+	}
 }
 
 
@@ -83,4 +88,11 @@ function checkPeriod(aForm,aCtx) {
 				+aForm.department+"' and (vlaeo.code='NOT_SURGICAL_DEPARTMENT' or vlaeo.code='ALL_DEPARTMENT')").getResultList() ;
 	if (l.size()>0) throw "Запрет в отделение на регистрацию, что в нем проводилась операция!!!"
 	
+}
+function onSave(aForm, aEntity, aCtx) {
+	checkParent(aEntity,aCtx);
+}
+function checkParent(aEntity, aCtx) {
+	//Находим родителя по дате и времени операции
+       var interceptor = new Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor.setParentByOperation(aEntity,aCtx.manager);
 }

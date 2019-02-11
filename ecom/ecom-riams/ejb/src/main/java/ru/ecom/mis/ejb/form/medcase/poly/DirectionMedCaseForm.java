@@ -43,11 +43,18 @@ public class DirectionMedCaseForm extends TicketMedCaseForm {
 	
 	/** Количество записей  */
 	@Comment("Количество записей")
+	@DateString @DoDateString
+	public String getAnyDatePlan() {return theAnyDatePlan; }
+	public void setAnyDatePlan(String aAnyDatePlan) {theAnyDatePlan = aAnyDatePlan;	}
+	
+	private String theAnyDatePlan;
+	/** Количество записей  */
+	@Comment("Количество записей")
 	public Long getCountDays() {return theCountDays; }
 	public void setCountDays(Long aCountDays) {theCountDays = aCountDays;	}
-	
+
 	private Long theCountDays;
-	
+
 	/** Количество выписанных льготных рецептов */
 	@Comment("Количество выписанных льготных рецептов")
 	@Persist

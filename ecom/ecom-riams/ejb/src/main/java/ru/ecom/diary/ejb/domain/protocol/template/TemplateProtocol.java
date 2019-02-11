@@ -1,19 +1,6 @@
 package ru.ecom.diary.ejb.domain.protocol.template;
 
-import java.sql.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
-import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -22,6 +9,10 @@ import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -103,9 +94,7 @@ public class TemplateProtocol extends BaseEntity {
 	@Transient
 	public String getCategoriesInfo() {
 		StringBuilder ret = new StringBuilder() ;
-		System.out.println("categInfo:" + theCategories) ;
 		for (TemplateCategory categ : theCategories) {
-			System.out.println("categ= id:"+categ.getId()+" fullname="+categ.getFullname()) ;
 			ret.append(", ").append(categ.getFullname()).append("<br>") ;
 		}
 		

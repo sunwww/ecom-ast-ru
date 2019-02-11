@@ -7,6 +7,35 @@
 
     <display-name>РИАМС</display-name>
     <description>РИАМС</description>
+    <servlet>
+        <servlet-name>nologin</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>
+                /WEB-INF/config-nologin.xml
+            </param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>nologin</servlet-name>
+        <url-pattern>*.nl</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>nologin</servlet-name>
+        <url-pattern>/kiosk.nl</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GetMessageFromFile</servlet-name>
+        <servlet-class>ru.ecom.web.GetMessageFromFile</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>GetMessageFromFile</servlet-name>
+        <url-pattern>/GetMessageFromFile</url-pattern>
+    </servlet-mapping>
 
     <filter>
         <filter-name>caching</filter-name>
@@ -31,9 +60,9 @@
         <servlet-name>formCustomize</servlet-name>
         <url-pattern>/formCustomizeServletConfig</url-pattern>
     </servlet-mapping>
-    
-    
-    
+
+
+
     <!-- Struts servlet -->
     <servlet>
         <servlet-name>action</servlet-name>
@@ -77,7 +106,7 @@
     <!-- dwr servlet -->
     <servlet>
         <servlet-name>dwr-invoker</servlet-name>
-        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+       <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
         <init-param>
         	<param-name>config-ecom</param-name>
           	<param-value>WEB-INF/dwr-ecom.xml</param-value>

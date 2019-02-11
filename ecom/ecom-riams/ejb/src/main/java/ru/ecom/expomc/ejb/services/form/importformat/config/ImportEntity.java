@@ -1,18 +1,16 @@
 package ru.ecom.expomc.ejb.services.form.importformat.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
-
 import ru.ecom.ejb.util.EntityNameUtil;
 import ru.ecom.expomc.ejb.services.form.importformat.ImportLogger;
+
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ikouzmin 09.03.2007 14:16:31
@@ -41,9 +39,7 @@ import ru.ecom.expomc.ejb.services.form.importformat.ImportLogger;
 
 */
 public class ImportEntity {
-    private final static Logger LOG = Logger.getLogger(ImportEntity.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
-
+    private static final Logger LOG = Logger.getLogger(ImportEntity.class) ;
 
     ImportEntity() {
     }
@@ -60,7 +56,7 @@ public class ImportEntity {
 
 
     List<ImportSyncKey> getKeyQueries(EntityManager aManager) {
-        List<ImportSyncKey> list = new ArrayList<ImportSyncKey>();
+        List<ImportSyncKey> list = new ArrayList<>();
         List<Element> keys ;
         log("Построение запросов синхронизации основной записи");
         inclev();
@@ -75,23 +71,20 @@ public class ImportEntity {
 
                 list.add(importSyncKey);
             }
-        } catch (JDOMException e) {
-        } catch (InvalidFkException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (MissingAttributeException e) {
+        } catch (JDOMException | InvalidFkException | ClassNotFoundException | MissingAttributeException e) {
         } finally{
             declev();
         }
         return list;
     }
 
-    public ImportSyncKeyList getKeyList(EntityManager aManager) throws ClassNotFoundException {
+    public ImportSyncKeyList getKeyList(EntityManager aManager) {
         return new ImportSyncKeyList(this,aManager);
 
     }
 
     public List<ImportMap> getMaps(EntityManager aManager) throws Exception {
-        List<ImportMap> list = new ArrayList<ImportMap>();
+        List<ImportMap> list = new ArrayList<>();
         List<Element> maps = null;
         log("Построение запросов синхронизации внешних ключей");
         inclev();
@@ -152,7 +145,7 @@ public class ImportEntity {
             if (value.equals(""))
                 return Long.MAX_VALUE;
             else
-                return new Long(value).longValue();
+                return Long.parseLong(value);
         }
         return 0;
     }

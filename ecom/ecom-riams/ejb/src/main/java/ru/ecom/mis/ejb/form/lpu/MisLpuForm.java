@@ -1,25 +1,12 @@
 package ru.ecom.mis.ejb.form.lpu;
 
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdNameEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.ADynamicParentSecurityInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.ADynamicSecurityInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.lpu.voc.VocLpuAccessEnterOperation;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliProfile;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
 import ru.ecom.mis.ejb.form.lpu.interceptors.RepMisLpuChildInterceptor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
@@ -627,4 +614,27 @@ public class MisLpuForm extends IdNameEntityForm {
 	/** В архиве */
 	private Boolean theIsArchive;
 
+	/** Обсервационное? */
+	@Comment("Обсервационное?")
+	@Persist
+	public Boolean getIsObservable() {return theIsObservable;}
+	public void setIsObservable(Boolean aIsObservable) {theIsObservable = aIsObservable;}
+	/** Обсервационное? */
+	private Boolean theIsObservable;
+
+	/** Палата новорождённых? */
+	@Comment("Палата новорождённых?")
+	@Persist
+	public Boolean getIsNewBorn() {return theIsNewBorn;}
+	public void setIsNewBorn(Boolean aIsNewBorn) {theIsNewBorn = aIsNewBorn;}
+	/** Палата новорождённых? */
+	private Boolean theIsNewBorn;
+
+	/** Создают ли кадриоскрининг новорождённым? */
+	@Comment("Создают ли кадриоскрининг новорождённым?")
+	@Persist
+	public Boolean getIsCreateCardiacScreening() {return theIsCreateCardiacScreening;}
+	public void setIsCreateCardiacScreening(Boolean aIsCreateCardiacScreening) {theIsCreateCardiacScreening = aIsCreateCardiacScreening;}
+	/** Создают ли кадриоскрининг новорождённым? */
+	private Boolean theIsCreateCardiacScreening;
 }

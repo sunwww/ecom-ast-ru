@@ -1,19 +1,17 @@
 package ru.ecom.jaas.ejb.domain;
 
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import java.sql.Date;
 /**
  * Временный класс для импорта пользователей
  * @author stkacheva
  *
  */
-@Entity
-@Table(schema="SQLUser")
+//@Entity
+//@Table(schema="SQLUser")
+	@Deprecated
 public class ImportUser extends VocBaseEntity{
 	/** Фамилия */
 	@Comment("Фамилия")

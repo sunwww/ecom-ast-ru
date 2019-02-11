@@ -29,6 +29,7 @@ public class CategoryTreeServiceJs {
 //            return "Mkb" ;
         }
     }
+	//lastrelease milamesher 21.03.2018 #31 учитываие prescriptType (aViewButton)
     public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent,int aLevel, int aAddParam,String aViewButton,String aCheckId, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	String table , fldId, fldView, fldParent , fldOrderBy , fldIsChild,join="",whereAdd="" ;
@@ -43,7 +44,7 @@ public class CategoryTreeServiceJs {
     				join=" left join pricemedservice pms on pms.priceposition_id=pp.id left join medservice ms on ms.id=pms.medservice_id";
     				whereAdd=" and (pp.dtype='PriceGroup' or pms.id is not null)" ;
     				isOnceViewFld=" pp.dtype='PriceGroup' and pp.isOnceView='1'" ;
-    				whereAdd=" and pp.priceList_id='"+aAddParam+"'  and pp.dateTo is null and pms.dateto is null and ms.finishDate is null "+whereAdd ;
+    				whereAdd=" and pp.priceList_id='"+aAddParam+"'  and pp.dateTo is null and pms.dateto is null "+whereAdd ;
     				
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id=pp.id)";
     	} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
@@ -52,17 +53,45 @@ public class CategoryTreeServiceJs {
     				//whereAdd=" and pp.dateTo is null "+whereAdd;
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id="+fldId +")";
     	} else if (aTable.toUpperCase().equals("MEDSERVICE")) {
-    		if (aParent!=null&&aParent.equals(aParent.valueOf(0))) {
-    			aParent=4056L;
-    		} //Только лабораторные исследования!
-    		if (aViewButton!=null) {
-    			viewButton = "case when ms.id not in (select mss.id from medservice mss  left join workfunctionservice wfss on wfss.medservice_id=mss.id  left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id  left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= '"+aViewButton+"'   and mss.dtype='MedService'  and vsts.code='LABSURVEY'  ) then null else ms.id end as checkbut";
-    		}
-    		table="MedService ms" ;fldId="ms.id"; 
-			fldView="case when ms.dtype='MedServiceGroup' then '<b>'||ms.code||'</b> '||replace(ms.name,'\"','') else '<b>'||ms.code||'</b> '||' '||replace(ms.name,'\"','') end" 
-			;fldParent="parent_id";fldOrderBy="case when ms.dtype='MedServiceGroup' then 1 else 0 end,ms.code";
-			whereAdd="and (ms.dtype='MedServiceGroup' or ms.parent_id is not null) and ms.finishDate is null " ;
-			fldIsChild = "(select count(*) from "+table+"1 where ms1.parent_id=ms.id)";
+    		if (aViewButton==null) {
+				if (aParent != null && aParent.equals(aParent.valueOf(0))) {
+					aParent = 4056L;
+				} //Только лабораторные исследования!
+				/*if (aViewButton != null) {
+					viewButton = "case when ms.id not in (select mss.id from medservice mss  left join workfunctionservice wfss on wfss.medservice_id=mss.id  left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id  left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= '" + aViewButton + "'   and mss.dtype='MedService'  and vsts.code='LABSURVEY'  ) then null else ms.id end as checkbut";
+				}*/
+				table = "MedService ms";
+				fldId = "ms.id";
+				fldView = "case when ms.dtype='MedServiceGroup' then '<b>'||ms.code||'</b> '||replace(ms.name,'\"','') else '<b>'||ms.code||'</b> '||' '||replace(ms.name,'\"','') end"
+				;
+				fldParent = "parent_id";
+				fldOrderBy = "case when ms.dtype='MedServiceGroup' then 1 else 0 end,ms.code";
+				whereAdd = "and (ms.dtype='MedServiceGroup' or ms.parent_id is not null) and ms.finishDate is null ";
+				fldIsChild = "(select count(*) from " + table + "1 where ms1.parent_id=ms.id)";
+			}
+			else {
+				join=join+"left join workfunctionservice wfss on wfss.medservice_id=ms.id   and ms.dtype='MedService'\n" +
+						" left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id and vpts.id='"+aViewButton+"'\n" +
+						" left join vocservicetype vsts on vsts.id=ms.servicetype_id \n" +
+						" and case when ms.dtype='MedServiceGroup' then vsts.code='LABSURVEY' and ms.dtype='MedService' else 1=1 end\n";
+				if (aParent!=null&&aParent.equals(aParent.valueOf(0))) {
+					aParent=4056L;
+				} //Только лабораторные исследования!
+				//if (aViewButton!=null) {
+				viewButton = "case when ms.id not in (select mss.id from medservice mss  left join workfunctionservice wfss on wfss.medservice_id=mss.id  left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id  left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= '"+aViewButton+"'   and mss.dtype='MedService'  and vsts.code='LABSURVEY'  ) then null else ms.id end as checkbut";
+				//}
+				table="MedService ms" ;fldId="ms.id";
+				fldView="case when ms.dtype='MedServiceGroup' then '<b>'||ms.code||'</b> '||replace(ms.name,'\"','') else '<b>'||ms.code||'</b> '||' '||replace(ms.name,'\"','') end"
+				;fldParent="parent_id";fldOrderBy="case when ms.dtype='MedServiceGroup' then 1 else 0 end,ms.code";
+				whereAdd="and (vsts.code='LABSURVEY' and ms.dtype='MedService' or ms.dtype='MedServiceGroup') and (ms.dtype='MedServiceGroup' or ms.parent_id is not null) and ms.finishDate is null " ;
+				whereAdd+="and (ms.dtype='MedService' and ms.id not in \n" +
+						"(select mss.id from medservice mss  \n" +
+						"left join workfunctionservice wfss on wfss.medservice_id=mss.id \n" +
+						"left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id  \n" +
+						"left join vocservicetype vsts on vsts.id=mss.servicetype_id  \n" +
+						"where mss.dtype='MedService'  and vsts.code='LABSURVEY' and vpts.id='"+aViewButton+"') or ms.dtype='MedServiceGroup')";
+				fldIsChild = "(select count(*) from "+table+"1 where ms1.parent_id=ms.id)";
+			}
 }
     	else {
     		return "" ;

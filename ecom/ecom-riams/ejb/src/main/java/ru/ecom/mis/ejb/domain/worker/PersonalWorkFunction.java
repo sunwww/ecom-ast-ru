@@ -1,11 +1,5 @@
 package ru.ecom.mis.ejb.domain.worker;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.jaas.ejb.domain.SecUser;
@@ -13,6 +7,8 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.persistence.*;
 /**
  * Персональная рабочая функция
  * @author stkacheva,azviagin
@@ -95,7 +91,7 @@ public class PersonalWorkFunction extends WorkFunction {
 	}
 	@Transient
 	public boolean getViewDirect() {
-		return theGroup==null?true :false;
+		return theGroup==null;
 	}
 	
 	/** Групповая рабочая функция */

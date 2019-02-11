@@ -13,8 +13,6 @@
 
 <msh:ifInRole roles="${roles}">
 
-<msh:sideLink name="${title}" action=" javascript:show${name}NewCalculation('.do') " /> 
-
 
 <style type="text/css">
     #${name}NewCalculation {
@@ -60,33 +58,13 @@
 <input class="cancel" id="cancel" value="Отмена" onclick="cancel${name}NewCalculation()" type="button">
 </td>
 <td> 
-<input value="Рассчитать" onclick="calculate();" type="button">
+<input value="Рассчитать" onclick="calculate${name}();" type="button">
 </td>
 <td> 
 <input value="Рассчитать и добавить к дневнику" onclick="save${name}NewCalculation();" type="button">
 </td>
 </tr>  
 </div>
- <!--    
- <div class='rootPane'>
-    <form action="javascript:void(0)">
-    <msh:panel>
-    	<msh:row>
-    		<msh:textField property="${name}TitleCalculation" label="Заголовок" fieldColSpan="5" horizontalFill="true"/>
-    	</msh:row>
-    	<msh:row>
-    		<msh:textArea property="${name}DataCalculation" label="Текст" fieldColSpan="5" />
-    	</msh:row>
-        <msh:row>
-            <td colspan="6">
-                <input type="button" value='OK'  onclick="javascript:save${name}NewCalculation()"/>
-                <input type="button" value='Отменить' onclick='javascript:cancel${name}NewCalculation()'/>
-            </td>
-        </msh:row>
-     </msh:panel> 
-</form>
-</div>
--->
   
 
 
@@ -95,22 +73,26 @@
 <script type="text/javascript">
      var theIs${name}NewCalculationDialogInitialized = false ;
      var the${name}NewCalculationDialog = new msh.widget.Dialog($('${name}NewCalculationDialog')) ;
-    
+     var departmentId${name}=0;
+     var calcId${name}=0;
+
      // инициализация диалогового окна
      function init${name}NewCalculationDialog() {
      	theIs${name}NewCalculationDialogInitialized = true ;
      }
-     
+
      // Показать
-    function show${name}NewCalculation(id,create) {
+    function show${name}NewCalculation(id,calcId,create) {
         if (!theIs${name}NewCalculationDialogInitialized) {
             init${name}NewCalculationDialog() ;
         }
         the${name}NewCalculationDialog.show() ;
+        departmentId${name}=id;
+        calcId${name}=calcId;
         $("age").focus() ;
-        getAge(id);
-        getGender(id);
-        
+        getAge${name}(id);
+        getGender${name}(id);
+
         //
        // if(create==0)
         //	document.getElementById("cancel").style.display = "none";
@@ -134,30 +116,55 @@
      
  	 // Сохранение данных
      function save${name}NewCalculation() {
-         calculate();
+         calculate${name}();
          var result = document.querySelector('#resultReadOnly');
          if(result.value!=''){
              var prop ;
-             if ("${property}"=="") {
-                 prop = "record" ;
-             } else { prop = "${property}" ;}
+             if ("${property}"=="") prop = "record" ;
+             
+             var record = window.parent.document.getElementById(prop);
 
              var temp = $('resultReadOnly').value;
-             $(prop).value +=  "СКФ:";
+             var res = "СКФ:";
              var str = "Требуется коррекция дозы лекарственных средств, которые активно выводятся с мочой. Лечащий врач может принять решение о направлении пациента на консультацию к врачу-клиническому фармакологу";
-             if(temp>90){ $(prop).value += temp+' - стадия 1, нормальная СКФ';}
-             if(temp>=60 && temp<=89){ $(prop).value += temp+' - стадия 2, признаки нефропатии, легкое снижение СКФ';}
-             if(temp>=45 && temp<=59){ $(prop).value += temp+' - стадия 3А, умеренное снижение СКФ';}
-             if(temp>=30 && temp<=44){ $(prop).value += temp+' - стадия 3Б, выраженное снижение СКФ'; alert(str);}
-             if(temp>=15 && temp<=29){ $(prop).value += temp+' - стадия 4, тяжелое снижение СКФ'; alert(str);}
-             if(temp<15){ $(prop).value += temp+' - стадия 5, терминальная хроническая почечная недостаточность'; alert(str);}
-             
+             if (temp > 90) {
+                 res += temp + ' - стадия 1, нормальная СКФ';
+             }
+             if (temp >= 60 && temp <= 89) {
+                 res += temp + ' - стадия 2, признаки нефропатии, легкое снижение СКФ';
+             }
+             if (temp >= 45 && temp <= 59) {
+                 res += temp + ' - стадия 3А, умеренное снижение СКФ';
+             }
+             if (temp >= 30 && temp <= 44) {
+                 res += temp + ' - стадия 3Б, выраженное снижение СКФ';
+                 alert(str);
+             }
+             if (temp >= 15 && temp <= 29) {
+                 res += temp + ' - стадия 4, тяжелое снижение СКФ';
+                 alert(str);
+             }
+             if (temp < 15) {
+                 res += temp + ' - стадия 5, терминальная хроническая почечная недостаточность';
+                 alert(str);
+             }
+             if (record!=null) {
+                 record.value +=res+"\n";
+                 showToastMessage("Добавлено к дневнику!",null,true);
+             }
+             else
+                 CalculateService.SetCalculateResultCreate(departmentId${name},
+                     res, calcId${name}, '', {
+                         callback: function () {showToastMessage("Вычисление успешно создано!",null,true);}
+                     });
+             for (var i=0; i<100; i++)
+                 if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('fadeEffect').hide();
              the${name}NewCalculationDialog.hide();
          }
      }
      
      //вычисение результата
-     function calculate(){
+     function calculate${name}(){
          if(Createnin.value =="" || Mass.value==""){
              formula.innerHTML = '<font color="red"><b>Заполните все поля!</b></font>';
          }else{
@@ -179,7 +186,7 @@
      }
     
      //Получить пол  
-     function getGender(medcaseId) {
+     function getGender${name}(medcaseId) {
 
 		CalculateService.getGender(medcaseId, {
 			callback : function(aResult) {
@@ -201,7 +208,7 @@
 	}
 
   //Получить возраст полных лет   
-  function getAge(medcaseId) {
+  function getAge${name}(medcaseId) {
 		CalculateService.getAge(medcaseId, {
 			callback : function(aResult) {
 				var age = document.querySelector('#age');

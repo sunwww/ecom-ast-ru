@@ -861,7 +861,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink roles="/Policy/Mis/Patient/AttachedByDepartment/Create" params="id" action="/entityParentPrepareCreate-mis_lpuAttachedByDepartment" name="Специальное прикрепление" guid="9fc8edbb-dcbb-4134-b33c-f4e9ca033cfc" />
 		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_assessmentCard" name="Карту оценки"  title="Добавить карту оценки" roles="/Policy/Mis/AssessmentCard/Create" />
 		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_invalidity" name="Инвалидность"  title="Добавить инвалидность" roles="/Policy/Mis/Patient/Invalidity/Create" />
-        <%-- 
+		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_dispensaryCard" name="Карту Д учета"  title="Добавить карту Д учета" roles="/Policy/Mis/Patient/Dispensary/Create" />
+        <%--
         <msh:sideLink params="id" action="/entityParentPrepareCreate-work_award" name="Награду" title="Добавить награду" guid="bbdd4af8-7978-476f-a23c-618d3bbc2b6a" roles="/Policy/Mis/Worker/Award/Create" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_education" name="Образование" title="Добавить образование" guid="ac6aa3fc-47d3-4d9f-a5ce-0e1ff7651f99" roles="/Policy/Mis/Worker/Education/Create" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_qualification" name="Квалификацию" title="Добавить квалификацию" guid="4c1b636f-7338-48d2-9835-26e1f491fd0a" roles="/Policy/Mis/Worker/Qualification/Create" />
@@ -872,6 +873,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
       </msh:sideMenu>
       <msh:sideMenu title="Показать все" guid="9f390953-ddd1-426b-bf16-5198c38f449b">
         
+        <msh:sideLink roles="/Policy/E2/View" params="id" action="/javascript:showAllE2EntriesByPatient()" name="Экономические случаи ОМС" title="Показать все экономические случаи по ОМС"/>
         <msh:sideLink key="SHIFT+1" roles="/Policy/Mis/MedCase/Stac/Ssl/View" params="id" action="/stac_sslList" name="СЛС" title="Показать все случаи лечения в стационаре" guid="ca5196e9-9239-47e3-aec4-9a0336e47144" />
         <msh:sideLink params="id" action="/entityParentList-smo_spo" name="СПО" title="Показать все случаи поликлинического обслуживания" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-extDisp_card-listByPatient.do?id=${param.id}&short=Short')" name="Доп.дисп." title="Показать все случаи дополнительной диспансеризации" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/ExtDisp/Card/View" />
@@ -889,6 +891,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/entityParentList-mis_kinsman" name="Родственников (представителей)"  title="Показать всех родственников (представителей)" roles="/Policy/Mis/Patient/Kinsman/View"/>
         <msh:sideLink params="id" action="/js-mis_assessmentCard-listByPatient" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
         <msh:sideLink params="id" action="/entityParentList-mis_patientExternalServiceAccount" name="Согласие на передачу данных"  title="Согласие на передачу данных" roles="/Policy/Mis/Patient/PatientExternalServiceAccount/View"/>
+        <msh:sideLink params="id" action="/entityParentList-mis_dispensaryCard" name="Карты Д учета"  title="Карты Д учета" roles="/Policy/Mis/Patient/Dispensary/View"/>
         </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="157c0645-4549-461e-acf7-34072c393951">
         <msh:sideLink params="id" action="/print-ambcard.do?s=PatientPrintService&amp;m=printInfo" 
@@ -994,16 +997,17 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     function checkIsAttachedOrDead(isDead, isAttached) {
     	PatientService.checkPatientAttachedOrDead($('id').value,isDead, isAttached, {
     		callback: function (aResult) {
-    			if (aResult){
-    			if (aResult.substring(0,1)=='1') {
+    			if (aResult && aResult!=null){
+    			    aResult = JSON.parse(aResult);
+    			if (aResult.statusCode=='1') {
     				$('syncRow').style.backgroundColor="green";
     				$('syncRow').style.color="white";
-    			} else if (aResult.substring(0,1)=='0'){
+    			} else if (aResult.statusCode=='0'){
     				$('syncRow').style.backgroundColor="yellow";
-    			} else if (aResult.substring(0,1)=='2'){
+    			} else if (aResult.statusCode=='2'){
     				$('syncRow').style.backgroundColor="red";
     			}
-    			$('syncRow').innerHTML="<p>"+aResult.substring(1)+"</p>";
+    			$('syncRow').innerHTML="<p>"+aResult.statusName+"</p>";
     			}
     		}
     	});
@@ -1259,10 +1263,20 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		}
 		//$('attachedByDepartment').style.visibility = 'hidden' ;
 		//$('attachedByDepartmentLabel').style.visibility = 'hidden' ;
-	//]]></script>
+	</script>
     <!-- При просмотре -->
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="b8c4d74b-4db5-433e-982c-e3133e4993ea">
-      <script type="text/javascript">// <![CDATA[//
+      <script type="text/javascript">
+          function showAllE2EntriesByPatient() {
+              var commonNumber = $('commonNumber').value;
+              var href="";
+              if (commonNumber && commonNumber.length==16) {
+                  href="commonnumber:"+commonNumber;
+              } else {
+                  href="lastname:"+$('lastname').value+" "+$('firstname').value+" "+$('middlename').value+" "+$('birthday').value;
+              }
+              window.open("entityList-e2_entry.do?id=0&filter="+href);
+          }
 		$('buttonShowAddress').style.display = 'none';
     	showRow('tableNewOmcPolicy',false) ;
     	showRow('tableNewAttachedByDepartment',false) ;
@@ -1274,23 +1288,20 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         	//alert(!$('attachedByPolicy').checked) ;
         	showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
         	*/
-		//]]>
       </script>
     </msh:ifFormTypeIsView>
     
     <!-- Редактирование  -->
     <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="0ac15607-1ca6-4aa0-b9f0-ff3b31cb5a46">
-        <script type="text/javascript">// <![CDATA[//
+        <script type="text/javascript">
             var isTableNewAttachedByDepartment = null ;                                       
-        //]]>
         </script>
         <msh:ifInRole roles="/Policy/Mis/Patient/AttachedByDepartment/Create" guid="308cce42-ff6f-43a0-a8ae-6e445dfe187a">
-        <script type="text/javascript">// <![CDATA[//
+        <script type="text/javascript">
            isTableNewAttachedByDepartment = 1 ;                                       
-        //]]>
         </script>
     	</msh:ifInRole>
-      <script type="text/javascript">// <![CDATA[//
+      <script type="text/javascript">
         showRow('tableNewOmcPolicy',false) ;
     	if (isTableNewAttachedByDepartment) showRow('tableNewAttachedByDepartment',false) ;
 		
@@ -1484,7 +1495,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			eventutil.addEnterSupport('birthPlace', 'buttonShowAddress') ;
 			eventutil.addEnterSupport('foreignRegistrationAddress', 'buttonShowrealAddressAddress') ;
 			
-    //]]></script>
+   </script>
     </msh:ifFormTypeIsNotView>
 
  

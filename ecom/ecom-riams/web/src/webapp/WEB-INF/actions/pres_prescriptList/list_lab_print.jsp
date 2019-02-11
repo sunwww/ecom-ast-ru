@@ -235,7 +235,9 @@
             }
             </script>
             <%
-            if (request.getParameter("beginDate")!=null ) {
+				String beginDate =request.getParameter("beginDate");
+            if (beginDate!=null ) {
+				String department = request.getParameter("department");
             	 StringBuilder sqlAdd = new StringBuilder() ;
             	
         		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
@@ -255,10 +257,9 @@
         			.append(" ").append(request.getAttribute("prescriptTypeInfo")) 
         			.append(" ").append(request.getAttribute("patientInfo")) ;
         		if (number!=null &&!number.equals("")) {
-            		title.append(" номер назначения: ").append(number).append("") ;
+            		title.append(" номер назначения: ").append(number) ;
             		
             	}
-        		System.out.println("typeDeath="+typeDead);
         		if (typeDead!=null&&typeDead.equals("2")) {
         			title.append(" исход: умершие");
         			sqlAdd.append(" and vhr.omccode='11'");
@@ -274,25 +275,25 @@
         		}
         		if (typeSmo!=null && typeSmo.equals("1")) {
         			title.append(" по дате назначения") ;
-        			request.setAttribute("dateInfo"," p.transferDate = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy')") ;
+        			request.setAttribute("dateInfo"," p.transferDate = to_date('"+beginDate+"','dd.mm.yyyy')") ;
         			sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
             				, "отделение","department","ml.id", request));
-                	if (request.getParameter("department")!=null) ;
+                	if (department!=null) ;
 	       		} else {
 	       			ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
 	        				, "отделение","department","ml.id", request);
-	            	if (request.getParameter("department")!=null&&!request.getParameter("department").equals("") && !request.getParameter("department").equals("0")) {
+	            	if (department!=null&&!department.equals("") && !department.equals("0")) {
 	            		sqlAdd.append(" and coalesce(sloallBySlo.department_id,sloall.department_id)='")
-	            				.append(request.getParameter("department"))
+	            				.append(department)
 	            				.append("'");
 	            	}
         			title.append(" по дате выписки") ;
 //        			request.setAttribute("dateInfo"," (slo.dtype='HospitalMedCase' and slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy') or sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy'))") ;
         			//Дата госпитализации = указаннное число до 4х вечера, либо пред. день после 4х вечера
-					request.setAttribute("dateInfo"," (slo.dtype='HospitalMedCase' and (slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy')-1 and slo.dischargetime >=cast('16:00:00' as time)"+
-        					" or (slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy') and slo.dischargetime <cast('16:00:00' as time))) "+
-        					" or sls.dtype='HospitalMedCase' and (sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy')-1 and sls.dischargetime >=cast('16:00:00' as time) "+
-        					" or sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy') and sls.dischargetime <cast('16:00:00' as time) ))") ;
+					request.setAttribute("dateInfo"," (slo.dtype='HospitalMedCase' and (slo.dateFinish = to_date('"+beginDate+"','dd.mm.yyyy')-1 and slo.dischargetime >=cast('16:00:00' as time)"+
+        					" or (slo.dateFinish = to_date('"+beginDate+"','dd.mm.yyyy') and slo.dischargetime <cast('16:00:00' as time))) "+
+        					" or sls.dtype='HospitalMedCase' and (sls.dateFinish = to_date('"+beginDate+"','dd.mm.yyyy')-1 and sls.dischargetime >=cast('16:00:00' as time) "+
+        					" or sls.dateFinish = to_date('"+beginDate+"','dd.mm.yyyy') and sls.dischargetime <cast('16:00:00' as time) ))") ;
 
         		}
             request.setAttribute("sqlAdd", sqlAdd.toString()) ;
@@ -350,7 +351,7 @@
     order by pat.lastname,pat.firstname,pat.middlename
     
 "/>
-   <msh:table name="listPres" action="javascript:void(0)" idField="1">${listPres_sql}
+   <msh:table name="listPres" action="javascript:void(0)" idField="1">
    <msh:tableButton property="1" addParam="'txt'" buttonFunction="printId" buttonName="Печать в txt" buttonShortName="txt"/>
    <msh:tableButton property="1" addParam="'odt'" buttonFunction="printId" buttonName="Печать в odt" buttonShortName="odt"/>
 	      <msh:tableColumn columnName="#" property="sn"  />

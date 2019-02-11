@@ -1,26 +1,10 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispSocialGroup;
-import ru.ecom.mis.ejb.domain.patient.Kinsman;
-import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.form.extdisp.interceptor.ExtDispCardViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;

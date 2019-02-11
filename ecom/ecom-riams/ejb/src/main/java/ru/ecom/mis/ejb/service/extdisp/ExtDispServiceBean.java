@@ -1,16 +1,17 @@
 package ru.ecom.mis.ejb.service.extdisp;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Random;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
+import ru.ecom.mis.ejb.domain.extdisp.ExtDispExam;
+import ru.ecom.mis.ejb.domain.extdisp.ExtDispService;
+import ru.ecom.mis.ejb.domain.extdisp.ExtDispVisit;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -19,14 +20,18 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-
-import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.mis.ejb.service.addresspoint.AddressPointServiceBean;
 @Stateless
 @Local(IExtDispService.class)
 @Remote(IExtDispService.class)
@@ -39,83 +44,47 @@ import ru.ecom.mis.ejb.service.addresspoint.AddressPointServiceBean;
  *
  */
 public class ExtDispServiceBean implements IExtDispService {
-	StringBuilder badCards =new StringBuilder();
-	String theFinishDate="";
-	String theFileSuffix="";
-//	String theArchiveFileName="";
-	String aFileNames = "";
-	public String getBadCards () {
-		if (badCards.length()>0) return badCards.toString();
-		else return "";
-		
+	private @PersistenceContext EntityManager theManager;
+	private static final Logger LOG = Logger.getLogger(ExtDispServiceBean.class);
+
+	/*Упаковка в архив файлов */
+	private String createArchive(String archiveName, List<String> aFileNames) {
+			if (!aFileNames.isEmpty()) {
+				EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+				String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+				StringBuilder sb = new StringBuilder();
+				sb.append("zip -r -j -9 ").append(workDir).append("/").append(archiveName).append(" ") ;
+				for (String fileName : aFileNames) {
+					sb.append(workDir).append("/").append(fileName).append(" ");
+				}
+				try {
+					Runtime.getRuntime().exec(sb.toString());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+					LOG.error("Нет файлов для архивации");
+			}
+		return archiveName;
 	}
 	
-	public void setIsExported(String aId) {
-		theManager.createNativeQuery("update ExtDispCard set exportDate = current_date where id="+aId).executeUpdate();
-	}
-	public String createArchive(String archiveName) {
-//		System.out.println("DEBUG ----createArchive='"+archiveName+"'");
-		if (aFileNames.length()>0) {
-			aFileNames = aFileNames.substring(0,aFileNames.length()-1);
-		
-		String[] fileNames = aFileNames.split(":");
-		if (fileNames.length>1) {
-			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-	    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-			StringBuilder sb = new StringBuilder();
-			sb.append("zip -r -j -9 ").append(workDir).append("/").append(archiveName).append(" ") ;
-			for (int i=0;i<fileNames.length;i++) {				
-				sb.append(workDir).append("/").append(fileNames[i]).append(" ");
-			//	sb.append(fileNames[i]).append(" ");
-			}
-			//System.out.println("--------dir: "+sb) ;
-	    	try {
-	    //		System.out.println("-------------------EXTDISP_createArchive="+sb.toString());
-	    //		System.out.println(new StringBuilder().append("-------------------EXTDISP_dir=cd ").append(workDir).append("").toString());
-	    //		String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append("").toString(),sb.toString()} ;
-	    		Runtime.getRuntime().exec(sb.toString());//arraCmd);
-	    	//	Runtime.getRuntime().exec(arraCmd);//arraCmd);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	    	aFileNames="";
-			return archiveName;
-			}
-		else {
-				return fileNames[0];
-		}} return "Нет данных";
-	}
-	
-	public String exportOrph(String aStartDate, String aFinishDate,
-			String aFileNameSuffix, String aSqlAdd, String aFizGroup, String aHeight,
-			String aWeight, String aHeadSize, String aAnalysesText,
-			String aZOJReccomend, String aReccomend, String divideNum, String aLpu) throws ParseException,
-			NamingException {
-		try{
-//		System.out.println("DEBUG ------------ExportOrph---------------");
-//		System.out.println("DEBUG ----- aHeadSize='"+aHeadSize+"'");
-//		System.out.println("DEBUG ----- divideNum='"+divideNum+"'");
-		if (aStartDate==null || aStartDate.equals("")||aFinishDate==null || aFinishDate.equals("")) {
+	public String exportOrph(Date aStartDate, Date aFinishDate,String aFileNameSuffix, String aSqlAdd, int aFizGroup, int aHeight,
+			int aWeight, int aHeadSize, String aAnalysesText,String aZOJReccomend, String aReccomend, int divideNum, Long aLpu) {
+		if (aStartDate == null || aFinishDate == null) {
+			LOG.error("Не заполнены дата начала либо дата окончания ДД");
 			return null;
 		}
-		if (divideNum==null ||divideNum.equals("")) {
-			divideNum="0";
-		}
-		  theFileSuffix=aFileNameSuffix;
-		  theFinishDate=aFinishDate;
-		String theArchiveFileName="orph-"+theFileSuffix+theFinishDate;
-		String aLpuSqlAdd = (aLpu!=null&&!aLpu.equals("")&&Long.valueOf(aLpu)>0)?"and edc.lpu_id="+aLpu:"";
-		  aFileNames="";
-	/** Сделано:
-	 * Проверка на пасп. данные, номер полиса.
-	 * Проверка на наличие даты исследования.	
-	 * Проверку на номер полиса (RZ)
-	 * Тип документа должен быть только 3 или 14
-	 * Проверка на 1 группу здоровья и диагноз, отличный от Z**.*
-	*/	
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		String aLpuSqlAdd = (aLpu!=null && aLpu>0) ? "and edc.lpu_id="+aLpu : "";
+		/** Сделано:
+		 * Проверка на пасп. данные, номер полиса.
+		 * Проверка на наличие даты исследования.
+		 * Проверку на номер полиса (RZ)
+		 * Тип документа должен быть только 3 или 14
+		 * Проверка на 1 группу здоровья и диагноз, отличный от Z**.*
+		*/
 		
-	String SQLreq ="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.patientinfo, vs.omccode as sex, p.snils "
+		String sql="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.patientinfo, vs.omccode as sex, replace(p.snils,' ','-') as snils "
 				+", to_char(p.birthday,'dd.mm.yyyy') as birthday "
 				+",to_char(edc.startDate,'dd.mm.yyyy') as edcBeginDate "
 				+",to_char(edc.finishDate,'dd.mm.yyyy') as edcFinishDate "
@@ -159,493 +128,354 @@ public class ExtDispServiceBean implements IExtDispService {
 				+"left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id "
 				+"left join VocIdc10 mkb on mkb.id=edc.idcMain_id "
 				+"left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null "
-				+"where edc.finishDate between to_date('"+aStartDate+"','dd.mm.yyyy') and to_date('"+aFinishDate+"','dd.mm.yyyy') " 
+				+"where edc.finishDate between to_date('"+format.format(aStartDate)+"','dd.mm.yyyy') and to_date('"+format.format(aFinishDate)+"','dd.mm.yyyy') "
 				+aLpuSqlAdd
-				+" and ved.code='CHILD_PROF_1' "  
-	//			+"and vedsg.code ='4' " //Выбираем тип ДД (4-проф, 5 - предварительные, 6 - периодические)
-//				+"and vic.code in ('3','14') " //Только паспорт и свидетельства о рождении!
-//				+"and (p.commonnumber is not null and p.commonnumber!='') " 
+				+" and ved.code='CHILD_PROF_1' "
 				+"and cast(to_char(edc.finishDate,'yyyy')as int)-cast(to_char(p.birthday,'yyyy')as int)+ "
 				+"case when ((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)<0) or "
 				+"((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)=0 "
 				+ "and ((cast(to_char(edc.finishDate,'dd')as int))-cast(to_char(p.birthday,'dd')as int)<0)) then -1 else 0 end <18 " 
-				+aSqlAdd 
-/*				+"group by edc.id,p.lastname,p.firstname, p.middlename "
-				+",p.birthday "
-				+",edc.startDate "
-				+",edc.finishDate "
-				+",edc.dispType_id "
-				+",vedag.name,vedhg.code,vedsg.name "
-				+",edc.isObservation ,edc.isTreatment "
-				+",edc.isDiagnostics ,edc.isSpecializedCare "
-				+",edc.isSanatorium ,mkb.code "
-				+",edc.isServiceIndication "
-				+",p.commonnumber ,p.passportseries ,p.passportnumber "
-				+",p.sex_id, p.snils "
-				+",p.passporttype_id ,mp.company_id "
-				+",p.id "
-				+",pwr.lastname " 
-				+",pwr.firstname "
-				+",pwr.middlename "*/
+				+aSqlAdd
 				+"order by p.lastname,p.firstname,p.middlename ";
 				
-		
-			System.out.println("Поиск записей:");
-			System.out.println("sql_orph="+SQLreq);
-			find_data(SQLreq, aFizGroup, aHeight,
-					aWeight, aHeadSize, aAnalysesText,
-					aZOJReccomend, aReccomend, divideNum);
-			
-			return createArchive(theArchiveFileName+"_"+new Random().nextInt(99999999)+".zip")+"@"+getBadCards();
-		} catch (Exception e) {
+		LOG.info("Выгрузка PRPH, sql="+sql);
+		String fileName="orph-"+aFileNameSuffix+format.format(aFinishDate);
+		try {
+			return findData(sql, aFizGroup, aHeight,aWeight, aHeadSize, aAnalysesText,aZOJReccomend, aReccomend, divideNum,fileName);
+		} catch (NamingException e) {
 			e.printStackTrace();
 			return null;
-			
 		}
-					
-					
-		}
-	
-	private DataSource findDataSource() throws NamingException {
-		return ApplicationDataSourceHelper.getInstance().findDataSource();
 	}
-	
-	public void find_data(String SQLReq,
-			String aFizGroup, String aHeight,
-			String aWeight, String aHeadSize, String aAnalysesText,
-			String aZOJReccomend, String aReccomend, String divideNum) throws ParseException,
-			NamingException {
-		int divideNumber = Integer.valueOf(divideNum);
-		Statement statement = null;
-		Element rootElement = new Element("children"); 
-		badCards.setLength(0);
-		try
-		{
-			DataSource ds = findDataSource();
-			Connection dbh = ds.getConnection();
-			statement = dbh.createStatement();
-			
-			ResultSet rs = statement.executeQuery(SQLReq);
-			int numAll = 0;
+
+		private JSONObject createBadCardObject(String aCardId, String aPatientInfo, String aDiagnosis, String aErrorName) {
+			return new JSONObject().put("cardId",aCardId).put("patientInfo", aPatientInfo).put("diagnosis",aDiagnosis).put("errorName",aErrorName);
+		}
+	private String findData(String aSqlString, int aFizGroup, int aHeight, int aWeight, int aHeadSize, String aAnalysesText,
+			String aZOJReccomend, String aReccomend, int divideNum, String xmlFilename) throws NamingException {
+
+		Element rootElement = new Element("children");
+		JSONArray errorCards = new JSONArray();
+		List<String> xmlFilenames = new ArrayList<>();
+		ExtDispCard extDispCard;
+		DataSource ds = ApplicationDataSourceHelper.getInstance().findDataSource();
+		JSONObject ret = new JSONObject();
+		try (Connection dbh = ds.getConnection();
+			 Statement statement = dbh.createStatement();
+			 ResultSet rs = statement.executeQuery(aSqlString)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			int numRight = 0;
 			// --------------Значения по умолчания для всех записей.
 			 
-			String p_idType="3"; //3 - несовершеннолетний. Если сирота - то "1"
-			String p_idCategory = "4"; //Категория ребенка. 4 - без категории. 1 - сирота, 2 - ТЖС, 3 - опекаемый
-			int card_idType; //1 - ДД сирот, 2-Профосмотры, 3-Предварительные, 4 - Периодические
+			String patIdType="3"; //3 - несовершеннолетний. Если сирота - то "1"
+			String patIdCategory = "4"; //Категория ребенка. 4 - без категории. 1 - сирота, 2 - ТЖС, 3 - опекаемый
+			String cardIdType ="2"; //1 - ДД сирот, 2-Профосмотры, 3-Предварительные, 4 - Периодические
 			
-			String card_height = String.valueOf(aHeight); //"150"; //Рост (в см)
-			String card_weight = String.valueOf(aWeight); //"40"; //Вес (в см)
-			String card_headSize = String.valueOf(aHeadSize); //"30";  //Окружность головы (в см)
-			String card_reccomend = aReccomend; //"_";
-			String card_recommendZOZH = aZOJReccomend; //"Режим дня и отдыха - по возрасту, рациональное питание"
+			String cardReccomend = aReccomend; //"_";
+			String cardRecommendZOZH = aZOJReccomend; //"Режим дня и отдыха - по возрасту, рациональное питание"
 				//	+ ", закаливание, профилактика вредных привычек."; //Рекомендации
-			String fizkult_G = String.valueOf(aFizGroup)!=null?aFizGroup:"1"; //"1"; //Группа здоровья для физкультуры
-			String card_issl_result = aAnalysesText;//"Без патологий"; // Результат анализов
-			int fiveLet = 5;
-			int tenLet = 10;
+			String fizkultG = aFizGroup>0?aFizGroup+"":"1"; //"1"; //Группа здоровья для физкультуры
+			String cardIsslResult = aAnalysesText;//"Без патологий"; // Результат анализов
+			Date currentDate = new Date(System.currentTimeMillis());
+			String astrakhanFias = "83009239-25CB-4561-AF8E-7EE111B1CB73";
+
 			while (rs.next()) {
-				numAll++;
 				String diagnosis = rs.getString("mkbcode");
-				String health_G = rs.getString("vedhgcode");
-				String card_id = rs.getString("did");
-				String passID = rs.getString("passID");
+				String healthG = rs.getString("vedhgcode");
+				String cardId = rs.getString("did");
+				extDispCard = theManager.find(ExtDispCard.class,Long.valueOf(cardId));
+				String passId = rs.getString("passID");
 				String commonNumber = rs.getString("RZ");
 				String patientInfo = rs.getString("patientinfo");
 				String sex = rs.getString("sex");
+				String snils = rs.getString("snils");
 				int smoCode = rs.getInt("smoCode");
 				
-				Element card_basic = new Element("basic");
-				Element card_issled = new Element("issled");
-				Element card_osmotri = new Element("osmotri");
+
+				Element cardOsmotri = new Element("osmotri");
 				
-				String vrach_f=rs.getString("vrach_f"); //ФИО врача
-				String vrach_l=rs.getString("vrach_l");
-				String vrach_m=rs.getString("vrach_m");
-				String pid = rs.getString("pid");
+				String vrachF=rs.getString("vrach_f"); //ФИО врача
+				String vrachL=rs.getString("vrach_l");
+				String vrachM=rs.getString("vrach_m");
 				String lpuName = rs.getString("lpuName");
 				String lpuAddress = rs.getString("lpuAddress");
 				
-				if (commonNumber==null || commonNumber.equals("")) {
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Не заполнено поле RZ").append("#");
+				if (StringUtil.isNullOrEmpty(commonNumber)) {
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"Не заполнено поле RZ"));
 					continue;
 				}
-				if (lpuName==null || lpuName.equals("")) {
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Наименование ЛПУ не указано").append("#");
+				if (StringUtil.isNullOrEmpty(lpuName)) {
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"Наименование ЛПУ не указано"));
 					continue;
 				}
 				
-				if (lpuAddress==null || lpuAddress.equals("")) {
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У ЛПУ не заполнено поле - адрес. ЛПУ - "+lpuName).append("#");
+				if (StringUtil.isNullOrEmpty(lpuAddress)) {
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"У ЛПУ не заполнено поле - адрес. ЛПУ - "+lpuName));
 					continue;
 				}
-				if (passID == null || (!passID.equals("3") && !passID.equals("14"))) {
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Неправильный тип документа УЛ ("+passID+")(должен быть либо паспорт, либо свид. о рождении)").append("#");
+				if (!"3".equals(passId) && !"14".equals(passId)) {
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"Неправильный тип документа УЛ ("+passId+")(должен быть либо паспорт, либо свид. о рождении)"));
 					continue;
 				}
-				if (!diagnosis.startsWith("Z") && health_G.equals("1")) { //Если 1 группа здоровья и диагноз !=Z (система выбросит)
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Расхождение группы здоровья и диагноза").append("#");
+				if (!diagnosis.startsWith("Z") && "1".equals(healthG)) { //Если 1 группа здоровья и диагноз !=Z (система выбросит)
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"Расхождение группы здоровья и диагноза"));
 					continue;
 				}
-				String InsuranceCompany = "0";
+				if (StringUtil.isNullOrEmpty(snils)) {
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"Не указан СНИЛС пациената!"));
+					continue;
+				}
+				String insuranceCompany ;
 				
 				switch (smoCode) {
-	            case 30002:	InsuranceCompany = "115"; //smocode=30002, omccode=15 makc
+	            case 30002:	insuranceCompany = "115"; //smocode=30002, omccode=15 makc
 	            	break;
-	            case 30004:	InsuranceCompany = "103"; //smocode=30004, omccode=7 sogaz
+	            case 30004:	insuranceCompany = "103"; //smocode=30004, omccode=7 sogaz
 	            	break;	            
-	            case 30005:	InsuranceCompany = "3690"; //smocode=30005, omccode=? maksimus
+	            case 30005:	insuranceCompany = "3690"; //smocode=30005, omccode=? maksimus
 	    			break;
-	    			
 	            default:
-	    			break;
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"У пациента нет действующего полиса ОМС, СМО-"+smoCode));
+					continue;
 				}
-				
-				if (InsuranceCompany.equals("0")){
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента нет действующего полиса ОМС, СМО-").append(smoCode).append("#");
+
+				if ("4".equals(rs.getString("socCode"))) { //Определяем тип ДД (socCode: 4-профосмотр, 5-Предварительные, 6-Периодические)
+					cardIdType = "2";//профосмотр
+				} else {
+					LOG.error("с 18 года выгружаются только профосмотры");
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis," выгружаются только профосмотры!!!Ошибка - код_ДД-"+rs.getString("dispType_id")));
+				}
+				numRight++;
+				int monthLet = Integer.parseInt(rs.getString("fullage"));
+				List<ExtDispService> serviceList = extDispCard.getServices();
+				Element cardBasic = new Element("basic");
+				Element cardIssled = new Element("issled");
+				for (ExtDispService service:serviceList) {
+					String orphCode = service.getServiceType().getOrphCode();
+					if (!StringUtil.isNullOrEmpty(orphCode) && service.getServiceDate()!=null) {
+						Element record = new Element("record");
+						record.addContent(new Element("id").addContent(orphCode))
+								.addContent(new Element("date").addContent(format.format(service.getServiceDate())));
+						if (service instanceof ExtDispExam ) {
+									record.addContent(new Element("result").addContent(cardIsslResult));
+							cardBasic.addContent(record);
+						} else if (service instanceof ExtDispVisit) {
+							cardOsmotri.addContent(record);
+						}
+					} else {
+						LOG.warn("Услуга не будет выгружена. Карта №"+cardId+", услуга №"+service.getId());
+					}
+				}
+				if (!cardBasic.getChildren().isEmpty()) {
+					cardIssled.addContent(cardBasic);
+				}
+				if (cardOsmotri.getChildren().isEmpty()) {
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"У пациента нет ни одного осмотра врачом!"));
 					continue;
 				}
 				
-				
-				numRight++;
-				
-				
-				switch (Integer.parseInt(rs.getString("socCode"))) { //Определяем тип ДД (socCode: 4-профосмотр, 5-Предварительные, 6-Периодические)
-		            case 5:  card_idType = 3; //Предварительные
-		            	break;
-		            case 4:  card_idType = 2;//профосмотр
-		             	break;
-		            case 6:  card_idType = 4;//Периодические
-		            	break;
-		            case 9999:  card_idType = 2; //сироты+опекаемые (на всяк. случай)
-		            	break;
-		            default: card_idType = 0;
-			            badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append(" Обратитесь к разработчику!!!Ошибка - код_ДД-").append(rs.getString("dispType_id")).append("#");
-						break;
-				}
-				String s_card_idType = Integer.toString(card_idType);
-				
-				int monthLet = Integer.parseInt(rs.getString("fullage"));
-				
-				
-				statement = dbh.createStatement();
-				
-				
-				//Ищем все исследования
-				
-				String SQLissled = "SELECT distinct edc.servicedate as date "
-						+ ", vedc.orphcode as iss_id "
-						+ "FROM extdispservice edc "
-						+ "left join vocextdispservice vedc on vedc.id=edc.servicetype_id "
-						+ "where edc.card_id = " + card_id + " and edc.dtype='ExtDispExam' "
-						+ "and edc.servicedate is not null and vedc.orphcode is not null "; //Есть ли даты у услуг
-								
-				ResultSet rs_issled = statement.executeQuery(SQLissled);
-					while (rs_issled.next())
-					{	
-					card_basic.addContent(new Element("record")
-						.addContent(new Element("id").addContent(rs_issled.getString("iss_id")))
-							.addContent(new Element("date").addContent(rs_issled.getString("date")))
-							.addContent(new Element("result").addContent(card_issl_result))
-						);
-					}
-				
-				if (!card_basic.getChildren().isEmpty()) {
-					card_issled.addContent(card_basic);
-				}
-				
-					
-				  //Запускаем поиск осмотров специалистами
-					
-				String SQLosmotri = "SELECT distinct edc.servicedate as date "
-					+ ", vedc.orphcode as iss_id "
-					+ "FROM extdispservice edc "
-					+ "left join vocextdispservice vedc on vedc.id=edc.servicetype_id "
-					+ "where edc.card_id = " + card_id + " and edc.dtype='ExtDispVisit' "
-					+ "and edc.servicedate is not null and vedc.orphcode is not null ";
-       			
-				ResultSet rs_osmotri = statement.executeQuery(SQLosmotri);
-					while (rs_osmotri.next()) {
-					card_osmotri.addContent(new Element("record")
-						.addContent(new Element("id").addContent(rs_osmotri.getString("iss_id")))
-							.addContent(new Element("date").addContent(rs_osmotri.getString("date")))
-						);
-					}
-					if (card_osmotri.getChildren().isEmpty()) {
-						badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента нет ни одного осмотра врачом!").append("#");
-						continue;
-					}
-				
 				Element currPat = new Element ("child")
-				.addContent(new Element("idInternal").addContent(rs.getString("pid")))
-				.addContent(new Element("idType").addContent(p_idType)) 
-				.addContent(new Element("name")
+					.addContent(new Element("idInternal").addContent(rs.getString("pid")))
+					.addContent(new Element("idType").addContent(patIdType))
+					.addContent(new Element("name")
 					.addContent(new Element("last").addContent(rs.getString("lastname")))
 					.addContent(new Element("first").addContent(rs.getString("firstname")))
 					.addContent(new Element("middle").addContent(rs.getString("middlename"))))
-				.addContent(new Element("idSex").addContent(sex))
-				.addContent(new Element("dateOfBirth").addContent(toDate(rs.getString("birthday"))))
-				.addContent(new Element("idCategory").addContent(p_idCategory))
-				.addContent(new Element("idDocument").addContent(passID))
-				.addContent(new Element("documentSer").addContent(rs.getString("passSer")))
-				.addContent(new Element("documentNum").addContent(rs.getString("passNum")))
-				//.addContent(new Element("snils").addContent("000-000-000-00"))//rs.getString("snils")))
-				//.addContent(new Element("polisSer").addContent(""))
-				.addContent(new Element("polisNum").addContent(commonNumber))
-				.addContent(new Element("idInsuranceCompany").addContent(InsuranceCompany))
-				.addContent(new Element("medSanName").addContent(lpuName))
-				.addContent(new Element("medSanAddress").addContent(lpuAddress))
-				.addContent(new Element("address"));
-				String fullAddress = rs.getString("fullAddress");
-				if (fullAddress!=null&&!fullAddress.equals("0")&&!fullAddress.equals("")) {
+					.addContent(new Element("idSex").addContent(sex))
+					.addContent(new Element("dateOfBirth").addContent(toDate(rs.getString("birthday"))))
+					.addContent(new Element("idCategory").addContent(patIdCategory))
+					.addContent(new Element("idDocument").addContent(passId))
+					.addContent(new Element("documentSer").addContent(rs.getString("passSer")))
+					.addContent(new Element("documentNum").addContent(rs.getString("passNum")))
+					.addContent(new Element("snils").addContent(snils))
+					.addContent(new Element("polisNum").addContent(commonNumber))
+					.addContent(new Element("idInsuranceCompany").addContent(insuranceCompany))
+					.addContent(new Element("medSanName").addContent(lpuName))
+					.addContent(new Element("medSanAddress").addContent(lpuAddress));
+					//.addContent(new Element("address"));
+				Element address = new Element("address");
+				address.addContent(new Element("regionCode").setText(astrakhanFias));
+				currPat.addContent(address);
+				//String fullAddress = rs.getString("fullAddress");
+				//Element address =currPat.getChild("address");
+				/*
+				if (fullAddress!=null && !fullAddress.equals("0") && !fullAddress.equals("")) {
 					String[] arrAddress = fullAddress.split(":"); //postIndex:kladrNP:kladrStr:house:building:appartment
 					boolean allOk = false;
-					if (arrAddress[0].trim().length()==6&&arrAddress[2].trim().length()==17&&arrAddress[1].trim().length()==13) {allOk=true;}
+					if (arrAddress[0].trim().length()==6 && arrAddress[2].trim().length()==17 && arrAddress[1].trim().length()==13) {allOk=true;}
 					if (allOk) {
-						currPat.getChild("address").addContent(new Element("index").addContent(arrAddress[0].trim()));
-						currPat.getChild("address").addContent(new Element("kladrNP").addContent(arrAddress[1].trim()));
-						currPat.getChild("address").addContent(new Element("kladrStreet").addContent(arrAddress[2].trim())); //Код улицы по KLADR
-						if (arrAddress.length>3&&arrAddress[3]!=null&&!arrAddress[3].trim().equals("")) {
-							currPat.getChild("address").addContent(new Element("house").addContent(arrAddress[3].trim())); //номер дома
+						address.addContent(new Element("index").addContent(arrAddress[0].trim()));
+						address.addContent(new Element("kladrNP").addContent(arrAddress[1].trim()));
+						address.addContent(new Element("kladrStreet").addContent(arrAddress[2].trim())); //Код улицы по KLADR
+						if (arrAddress.length>3 && !StringUtil.isNullOrEmpty(arrAddress[3])) {
+							address.addContent(new Element("house").addContent(arrAddress[3].trim())); //номер дома
 						}
-						if (arrAddress.length>4&&arrAddress[4]!=null&&!arrAddress[4].trim().equals("")) {
-							currPat.getChild("address").addContent(new Element("building").addContent(arrAddress[4].trim())); //Корпус		
+						if (arrAddress.length>4 && !StringUtil.isNullOrEmpty(arrAddress[4])) {
+							address.addContent(new Element("building").addContent(arrAddress[4].trim())); //Корпус
 						}
-						if (arrAddress.length>5&&arrAddress[5]!=null&&!arrAddress[5].trim().equals("")) {
-							currPat.getChild("address").addContent(new Element("appartment").addContent(arrAddress[5].trim())); //Квартира	
+						if (arrAddress.length>5 && StringUtil.isNullOrEmpty(arrAddress[5])) {
+							address.addContent(new Element("appartment").addContent(arrAddress[5].trim())); //Квартира
 						}
-						
 					} else {
-						currPat.getChild("address").addContent(new Element("kladrNP").addContent("3000000100000")); //Код нас. пункта по KLADR (г. Астрахань)
+						address.addContent(new Element("kladrNP").addContent("3000000100000")); //Код нас. пункта по KLADR (г. Астрахань)
 					}
 				} else {
-					currPat.getChild("address").addContent(new Element("kladrNP").addContent("3000000100000")); //Код нас. пункта по KLADR (г. Астрахань)
+					address.addContent(new Element("kladrNP").addContent("3000000100000")); //Код нас. пункта по KLADR (г. Астрахань)
 				}
-				//);
-			//	.addContent(new Element("idEducationOrg").addContent(""))
-			//	.addContent(new Element("idOrphHabitation").addContent("")) //Место текущего нахождения
-			//	.addContent(new Element("dateOrphHabitation")) //Дата поступление в место текущего нахождения - для сироты - расскоментить
-			//	.addContent(new Element("idStacOrg").addContent(""));	//Справочный идентификатор стационарного учреждения	
+
+				*/
 				Element cards = new Element("cards");
 				
 				Element card = new Element("card")
-							.addContent(new Element("idInternal").addContent(card_id))
+							.addContent(new Element("idInternal").addContent(cardId))
 							.addContent(new Element("dateOfObsled").addContent(toDate(rs.getString("edcBeginDate")))) //Дата начала обследования
 						//	.addContent(new Element("ageObsled").addContent("")) //Возраст ребёнка в месяцах на момент проведения обследования (необязательно)
-							.addContent(new Element("idType").addContent(s_card_idType)) 
-							.addContent(new Element("height").addContent(card_height))
-							.addContent(new Element("weight").addContent(card_weight))
-							.addContent(new Element("headSize").addContent(card_headSize));
-//							.addContent(new Element("healthProblems")
-//								.addContent(new Element("problem").addContent(""))
-//								);
-//							
-				if (monthLet<fiveLet)
-						{
-							card.addContent(new Element("pshycDevelopment") //Оценка возраста психического развития для детей от 0 до 4 лет в месяцах (по умолчанию - кол-во месяцев)
-									.addContent(new Element("poznav").addContent(String.valueOf(monthLet*12))) // познавательная функция
-									.addContent(new Element("motor").addContent(String.valueOf(monthLet*12))) //моторная функция
-									.addContent(new Element("emot").addContent(String.valueOf(monthLet*12)))	//эмоциональная и социальная (контакт с окружающим миром) функции		
-									.addContent(new Element("rech").addContent(String.valueOf(monthLet*12))) //предречевое и речевое развитие
-								);
-						}
-					else
-						{
-							card.addContent(new Element("pshycState") //Оценка состояния психического развития для детей от 5 лет (0 - в норме)
-									.addContent(new Element("psihmot").addContent("0")) //Психомоторная сфера
-									.addContent(new Element("intel").addContent("0")) // Интеллект
-									.addContent(new Element("emotveg").addContent("0")) //Эмоционально-вегетативная сфера
-								);
-						}
-					if (monthLet>=tenLet)
-						{
-							if (sex.equals("1"))
-							{
-							card.addContent(new Element("sexFormulaMale")  //Половая формула (муж.) старше 10 лет
-								.addContent(new Element("P").addContent("1"))
-								.addContent(new Element("Ax").addContent("1"))
-								.addContent(new Element("Fa").addContent("1"))
-							);
-							}
-							else 
-							{
-							card.addContent(new Element("sexFormulaFemale") // Половая формула (жен.)
-								.addContent(new Element("P").addContent("1"))
-								.addContent(new Element("Ma").addContent("1"))
-								.addContent(new Element("Ax").addContent("1"))
-								.addContent(new Element("Me").addContent("1"))
-							);
-							card.addContent(new Element("menses") //  Менструальная функция
-								.addContent(new Element("menarhe").addContent("144"))
-								.addContent(new Element("characters")
-									.addContent(new Element("char").addContent("1"))
-								)
-							);
-							}
-						}
-								card.addContent(new Element("healthGroupBefore").addContent(health_G)) //Группа здоровья до проведения обследования (числом)
-								.addContent(new Element("fizkultGroupBefore").addContent(fizkult_G)) // Медицинская группа для занятий физической культурой
-								.addContent(new Element("diagnosisBefore")
-									.addContent(new Element("diagnosis")
-										.addContent(new Element("mkb").addContent(rs.getString("mkbcode")))
-										.addContent(new Element("dispNablud").addContent("3")) //Диспансерное наблюдение (1-ранее, 2 - впервые, 3 - не установлено)
-								//		.addContent(new Element("lechen") //Лечение назначено
-										//	.addContent(new Element("condition").addContent("1")) //условия (1,2,3)1 - амбулаторно
-										//	.addContent(new Element("organ").addContent("2")) //организация (2 - ГБУЗ)
-										//	.addContent(new Element("notDone").addContent("") //Причина невыполнения
-										//		.addContent(new Element("reason").addContent(""))
-										//		.addContent(new Element("reasonOther").addContent(""))
-										//	)
-								//		)
-//										.addContent(new Element("reabil").addContent("") //Лечение назначено
-//											.addContent(new Element("condition").addContent("1")) //условия стационар?(1,2,3)
-//											.addContent(new Element("organ").addContent("2")) //организация (2 - ГБУЗ)
-//											.addContent(new Element("notDone").addContent("") //Причина невыполнения
-//												.addContent(new Element("reason").addContent(""))
-//												.addContent(new Element("reasonOther").addContent(""))
-//											)
-//										)
-										.addContent(new Element("vmp").addContent("0")) //ВМП рекоменд. и оказана (1), рек+не ок(2), не рек(0)
-									));
-									if (health_G.equals("1"))
-									{
-										card.addContent(new Element("healthyMKB").addContent(rs.getString("mkbcode"))); //Код осмотра, если ребёнок здоров (Z00-Z99)
-									}
-									else
-									{
-									card.addContent(new Element("diagnosisAfter").addContent("")
-											.addContent(new Element("diagnosis").addContent("")
-												.addContent(new Element("mkb").addContent(rs.getString("mkbcode")))
-												.addContent(new Element("firstTime").addContent("0")) //выявлен впервые? 1,0
-												.addContent(new Element("dispNablud").addContent("0")) //Диспансерное наблюдение (0 - не установлено, 1 - ранее, 2 - впервые)
-										//		.addContent(new Element("lechen")
-										//			.addContent(new Element("condition").addContent("1")) //условия стационар?(1-амб,2,3)
-										//			.addContent(new Element("organ").addContent("2")) //организация (2 - ГБУЗ)
-										//		)
-//												.addContent(new Element("reabil")
-//													.addContent(new Element("condition").addContent("")) //условия стационар?(1,2,3)
-//													.addContent(new Element("organ").addContent("")) //организация (2 - ГБУЗ)
-//												)
-//												.addContent(new Element("consul") //Дополнительные консультации и исследования назначены
-//													.addContent(new Element("condition").addContent("")) //условия стационар?(1,2,3)
-//													.addContent(new Element("organ").addContent("")) //организация (2 - ГБУЗ)
-//													.addContent(new Element("state").addContent("")) //Консультации выполнены или не выполнены (0,1,2).
-//												)
-												.addContent(new Element("needVMP").addContent("0")) //Рекомендована ВМП (0-1)
-												.addContent(new Element("needSMP").addContent("0")) //Рекомендована СМП (0-1)
-												.addContent(new Element("needSKL").addContent("0")) //Рекомендовано СКЛ (0-1)
-												.addContent(new Element("recommendNext").addContent(card_reccomend)) //Рекомендации по диспансерному наблюдению, лечению, 
-											)
-									);
-									}
-//									.addContent(new Element("invalid").addContent("")
-//											.addContent(new Element("type").addContent("")) //  Вид инвалидности ( с рождения/нет 1-2)
-//											.addContent(new Element("dateFirstDetected").addContent("")) //Дата первого освидетельствования
-//											.addContent(new Element("dateLastConfirmed").addContent("")) //Дата последнего освидетельствования
-//											.addContent(new Element("illnesses").addContent("") // Заболевания, обусловившие возникновение инвалидности
-//													.addContent(new Element("illness").addContent(""))
-//											)
-//											.addContent(new Element("defects").addContent("") // Виды нарушений в состоянии здоровья 1-9
-//													.addContent(new Element("defect").addContent(""))
-//											)
-//									);
-							
-									card.addContent(card_issled);
-									card.addContent(new Element("healthGroup").addContent(health_G));
-									card.addContent(new Element("fizkultGroup").addContent(fizkult_G)); // группа занятия физкультурой
-									card.addContent(new Element("zakluchDate").addContent(toDate(rs.getString("edcFinishDate"))));
-									card.addContent(new Element("zakluchVrachName")
-											.addContent(new Element("last").addContent(vrach_l))
-											.addContent(new Element("first").addContent(vrach_f))
-											.addContent(new Element("middle").addContent(vrach_m))
-									);
-									
-									card.addContent(card_osmotri);
-									cards.addContent(card);
-									currPat.addContent(cards);
-									card.addContent(new Element("recommendZOZH").addContent(card_recommendZOZH));
-//									card.addContent(new Element("reabilitation")
-//											.addContent(new Element("date"))
-//											.addContent(new Element("state"))
-//									);
-									card.addContent(new Element("privivki")
-											.addContent(new Element("state").addContent("1")) // Привит по возрасту
-//											.addContent(new Element("privs")
-//													.addContent(new Element("priv")))
-								);
-									card.addContent(new Element("oms").addContent("0"));
-
-									rootElement.addContent(currPat);
-					if (divideNumber!=0 && numRight%divideNumber==0){ 
-						//System.out.println("-------------------ExtDispServiceBean, Пришло время разделяться!!!");
-						createFile(rootElement);
-						rootElement = new Element("children");
-					}
-					setIsExported(card_id);
+							.addContent(new Element("idType").addContent(cardIdType))
+							.addContent(new Element("height").addContent(String.valueOf(aHeight)))
+							.addContent(new Element("weight").addContent(String.valueOf(aWeight)))
+							.addContent(new Element("headSize").addContent(String.valueOf(aHeadSize)));
+				if (monthLet<5) {
+					String defaultAge = String.valueOf(monthLet*12);
+					card.addContent(new Element("pshycDevelopment") //Оценка возраста психического развития для детей от 0 до 4 лет в месяцах (по умолчанию - кол-во месяцев)
+						.addContent(new Element("poznav").addContent(defaultAge)) // познавательная функция
+						.addContent(new Element("motor").addContent(defaultAge)) //моторная функция
+						.addContent(new Element("emot").addContent(defaultAge))	//эмоциональная и социальная (контакт с окружающим миром) функции
+						.addContent(new Element("rech").addContent(defaultAge)) //предречевое и речевое развитие
+					);
+				} else {
+					card.addContent(new Element("pshycState") //Оценка состояния психического развития для детей от 5 лет (0 - в норме)
+						.addContent(new Element("psihmot").addContent("0")) //Психомоторная сфера
+						.addContent(new Element("intel").addContent("0")) // Интеллект
+						.addContent(new Element("emotveg").addContent("0")) //Эмоционально-вегетативная сфера
+					);
 				}
-			dbh.close();
+				if (monthLet>=10) {
+					if (sex.equals("1")) {
+						card.addContent(new Element("sexFormulaMale")  //Половая формула (муж.) старше 10 лет
+							.addContent(new Element("P").addContent("1"))
+							.addContent(new Element("Ax").addContent("1"))
+							.addContent(new Element("Fa").addContent("1"))
+						);
+					} else {
+						card.addContent(new Element("sexFormulaFemale") // Половая формула (жен.)
+							.addContent(new Element("P").addContent("1"))
+							.addContent(new Element("Ma").addContent("1"))
+							.addContent(new Element("Ax").addContent("1"))
+							.addContent(new Element("Me").addContent("1"))
+						);
+						card.addContent(new Element("menses") //  Менструальная функция
+							.addContent(new Element("menarhe").addContent("144"))
+							.addContent(new Element("characters")
+								.addContent(new Element("char").addContent("1"))
+							)
+						);
+					}
+				}
+				card.addContent(new Element("healthGroupBefore").addContent(healthG)) //Группа здоровья до проведения обследования (числом)
+				.addContent(new Element("fizkultGroupBefore").addContent(fizkultG)) // Медицинская группа для занятий физической культурой
+				.addContent(new Element("diagnosisBefore")
+					.addContent(new Element("diagnosis")
+						.addContent(new Element("mkb").addContent(diagnosis))
+						.addContent(new Element("dispNablud").addContent("3")) //Диспансерное наблюдение (1-ранее, 2 - впервые, 3 - не установлено)
+						.addContent(new Element("vmp").addContent("0")) //ВМП рекоменд. и оказана (1), рек+не ок(2), не рек(0)
+					));
+					if (healthG.equals("1")) {
+						card.addContent(new Element("healthyMKB").addContent(diagnosis)); //Код осмотра, если ребёнок здоров (Z00-Z99)
+					} else {
+						card.addContent(new Element("diagnosisAfter").addContent("")
+							.addContent(new Element("diagnosis").addContent("")
+								.addContent(new Element("mkb").addContent(diagnosis))
+								.addContent(new Element("firstTime").addContent("0")) //выявлен впервые? 1,0
+								.addContent(new Element("dispNablud").addContent("0")) //Диспансерное наблюдение (0 - не установлено, 1 - ранее, 2 - впервые)
+								.addContent(new Element("needVMP").addContent("0")) //Рекомендована ВМП (0-1)
+								.addContent(new Element("needSMP").addContent("0")) //Рекомендована СМП (0-1)
+								.addContent(new Element("needSKL").addContent("0")) //Рекомендовано СКЛ (0-1)
+								.addContent(new Element("recommendNext").addContent(cardReccomend)) //Рекомендации по диспансерному наблюдению, лечению,
+							)
+						);
+					}
+
+					card.addContent(cardIssled);
+					card.addContent(new Element("healthGroup").addContent(healthG));
+					card.addContent(new Element("fizkultGroup").addContent(fizkultG)); // группа занятия физкультурой
+					card.addContent(new Element("zakluchDate").addContent(toDate(rs.getString("edcFinishDate"))));
+					card.addContent(new Element("zakluchVrachName")
+							.addContent(new Element("last").addContent(vrachL))
+							.addContent(new Element("first").addContent(vrachF))
+							.addContent(new Element("middle").addContent(vrachM))
+					);
+					card.addContent(cardOsmotri);
+					cards.addContent(card);
+					currPat.addContent(cards);
+					card.addContent(new Element("recommendZOZH").addContent(cardRecommendZOZH));
+					card.addContent(new Element("privivki")
+							.addContent(new Element("state").addContent("1")) // Привит по возрасту
+				);
+					card.addContent(new Element("oms").addContent("0"));
+
+				rootElement.addContent(currPat);
+				if (divideNum>0 && numRight%divideNum == 0){
+					xmlFilenames.add(createFile(rootElement, xmlFilename));
+					rootElement = new Element("children");
+				}
+				extDispCard.setExportDate(currentDate);
+				theManager.persist(extDispCard);
+			}
 			if (!rootElement.getChildren().isEmpty()) {
-				createFile(rootElement);	
+				xmlFilenames.add(createFile(rootElement, xmlFilename));
 			}
-			//System.out.println("ExtDispExport: Всего записей = " + numAll);
-			//System.out.println("ExtDispExport: Всего записей без ошибок= " + numRight);
-//			System.out.println();
-		//	System.out.println("ExtDispExport: ErrorText= "+badCards.toString());
-	//		return theArchiveFileName;
-			}
-			
-		catch (SQLException e)
-			{
-			if (CAN_DEBUG) LOG.debug("Find data = ERROR");
-	        System.out.println(e.getMessage());
-	        System.out.println(badCards.toString());
-	        rootElement.addContent(new Element("ERROR!!!!"+e.getMessage()));
-			//return rootElement;
-	        }	
-	//		return theArchiveFileName;
+			ret.put("status","ok");
+			ret.put("errorCards",errorCards);
+		} catch (Exception e) {
+			ret.put("status","error");
+			ret.put("errorName",e.getMessage());
+
+			e.printStackTrace();
+	        LOG.error(e);
+	    }
+	    LOG.info("Finished!");
+
+
+	    if (!xmlFilenames.isEmpty()) {
+	    	ret.put("archiveName",createArchive(xmlFilename+"_"+System.currentTimeMillis()+".zip", xmlFilenames));
 		}
-	
-	public void createFile(Element aElement) {
-		
-		try {
-			
-			org.jdom.output.XMLOutputter outputter = new org.jdom.output.XMLOutputter();
-			String fileName="orph-"+theFileSuffix+theFinishDate+"_"+aElement.hashCode()+".xml";
-			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-	    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-			String outputFile=workDir+"/"+fileName;
-			FileWriter fwrt = new FileWriter(outputFile);
+		return ret.toString();
+	}
+
+	/*Создание xml файла */
+	private String createFile(Element aElement, String aFilename) {
+		String fileName=aFilename+"_"+aElement.hashCode()+".xml";
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+		String outputFile=workDir+"/"+fileName;
+		org.jdom.output.XMLOutputter outputter = new org.jdom.output.XMLOutputter();
+		LOG.info(">>>>>"+outputFile);
+		try (FileWriter fwrt = new FileWriter(outputFile)) {
 			Document pat = new Document(aElement);
 			outputter.setFormat(org.jdom.output.Format.getPrettyFormat().setEncoding("UTF-8"));
 			outputter.output(pat, fwrt);
-			fwrt.close();
-			aFileNames+=fileName+":";
+			LOG.info("created file = "+outputFile);
+			return fileName;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			LOG.error(ex.getMessage(),ex);
+			return aFilename;
 		}
-	
-		 catch (Exception ex) {
-			 System.out.println(ex.getMessage());
-			 System.out.println("Someshing happened strange!!!");
-		}	
 	}
-	public static String toDate(String args)throws ParseException
-	{
-		SimpleDateFormat nDate = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat nDate2 = new SimpleDateFormat("dd.MM.yyyy");
-		
-		return nDate.format(nDate2.parse(args)).toString();
-	}
-	
+	private static String toDate(String args) {
+		try {
+			SimpleDateFormat nDate = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat nDate2 = new SimpleDateFormat("dd.MM.yyyy");
 
-	private @PersistenceContext EntityManager theManager;
-    private final static Logger LOG = Logger.getLogger(ExtDispServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
-    public String setOrphCodes() throws NamingException {
-    	DataSource ds = findDataSource();
-    	String SQLReq = "select veds.code, veds.id from vocextdispservice veds ";
-		Statement statement;
-		HashMap <String, String> codeMap = new HashMap<String, String>();
+			return nDate.format(nDate2.parse(args));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+    public String setOrphCodes()  {
+		HashMap <String, String> codeMap = new HashMap<>();
 		codeMap.put("N1_021","1"); //Анализ крови
 		codeMap.put("N1_022","2"); //Анали мочи
 		codeMap.put("N1_025","3"); //анализ кала
@@ -668,7 +498,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		codeMap.put("N1_014","15"); //Аудиологический скрининг
 									//16 = Анализ кала на яйца глистов
 		codeMap.put("N1_033","17"); //Анализ оскиуглерода
-									//18 - УЗИ почек
+		codeMap.put("N1_034","18"); //18 - УЗИ почек
 									//19 - УЗИ печени
 		codeMap.put("N1_001","1"); //Педиатр
 		codeMap.put("N1_002","2"); //Невролог
@@ -683,30 +513,9 @@ public class ExtDispServiceBean implements IExtDispService {
 		codeMap.put("N1_010","10"); //Уролог-андролог
 		codeMap.put("N1_009","11"); //Акушер-гинеколог
 
-		
-		
-		try {
-			Connection dbh = ds.getConnection();
-			statement = dbh.createStatement();
-			Statement statement2 = null;
-			ResultSet rs = statement.executeQuery(SQLReq);
-			
-			while (rs.next()) {
-				if (codeMap.get(rs.getString(1))!=null) {
-				 statement2 = dbh.createStatement();
-					String sqlReq="update vocextdispservice set orphcode='"+codeMap.get(rs.getString(1))+"' where code = '"+rs.getString(1) +"' ";
-//					System.out.println(sqlReq);
-					statement2.executeUpdate(sqlReq);
-				} 
-			}
-			statement.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return "Произошла ошибка";
+		for (Map.Entry<String, String> map: codeMap.entrySet()) {
+			theManager.createNativeQuery("update VocExtDispService set orphCode=:orphCode where code=:code").setParameter("orphCode",map.getValue()).setParameter("code",map.getKey()).executeUpdate();
 		}
 		return "Коды для экспорта успешно добавлены.";
 	}
-
-}	
-		
+}

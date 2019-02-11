@@ -1,41 +1,32 @@
 package ru.ecom.miniejb.ctx;
 
+import org.apache.log4j.Logger;
+import ru.ecom.miniejb.MethodNotImplementedException;
+
+import javax.naming.*;
 import java.util.Hashtable;
 import java.util.TreeSet;
-
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameClassPair;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.ecom.miniejb.MethodNotImplementedException;
 
 /**
  * Перенаправление запроса в стандартный InitialContext
  */
 public class ContextImpl implements Context {
 
-    private final static Log LOG = LogFactory.getLog(ContextImpl.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ContextImpl.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
     private final Hashtable theEnvironment ;
     private final ContextProxyCreator theProxyCreator = new ContextProxyCreator();
 
     public ContextImpl(Hashtable aEnvironment) {
-        if (CAN_TRACE) LOG.trace("ContextImpl()");
+        if (CAN_TRACE) LOG.info("ContextImpl()");
         theEnvironment = aEnvironment ;
     }
 
     public Object lookup(String name) throws NamingException {
-        if (CAN_TRACE) LOG.trace("lookup() [name = " + name+"]");
+        if (CAN_TRACE) LOG.info("lookup() [name = " + name+"]");
         String username = (String)theEnvironment.get(Context.SECURITY_PRINCIPAL) ;
-        TreeSet<String> roles = new TreeSet<String>();
+        TreeSet<String> roles = new TreeSet<>();
         roles.add("/Policy/Exp/Document/View") ;
         roles.add("/Policy/Exp/Format/View") ;
         roles.add("/Policy/Exp/Time/View") ;
@@ -45,7 +36,7 @@ public class ContextImpl implements Context {
     }
 
     public void close() throws NamingException {
-        if (CAN_TRACE) LOG.trace("close()");
+        if (CAN_TRACE) LOG.info("close()");
     }
 
     ///////////// NOT IMPLEMENTED

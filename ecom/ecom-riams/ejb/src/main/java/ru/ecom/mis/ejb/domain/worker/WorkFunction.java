@@ -1,17 +1,9 @@
 package ru.ecom.mis.ejb.domain.worker;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.equipment.KkmEquipment;
 import ru.ecom.mis.ejb.domain.lpu.CopyingEquipment;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.WorkPlace;
@@ -19,12 +11,12 @@ import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.worker.voc.VocAcademicDegree;
 import ru.ecom.mis.ejb.domain.worker.voc.VocCategory;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
+import ru.ecom.queue.domain.voc.VocQueue;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.transforms.DoTimeString;
-import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.TimeString;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Место работы
@@ -57,6 +49,7 @@ abstract public class WorkFunction extends BaseEntity {
 	/** Рабочий календарь */
 	@Comment("Рабочий календарь")
 	@OneToOne
+	@Deprecated
 	public WorkCalendar getWorkCalendar() {
 		return theWorkCalendar;
 	}
@@ -341,4 +334,43 @@ abstract public class WorkFunction extends BaseEntity {
 		this.promedCode_workstaff = promedCode_workstaff;
 	}
 
+	private String promedCode_lpusection;
+	@Comment("Код рабочего места в промеде")
+	public String getPromedCode_lpusection() {
+		return promedCode_lpusection;
+	}
+	public void setPromedCode_lpusection(String promedCode_lpusection) {
+		this.promedCode_lpusection = promedCode_lpusection;
+	}
+	/** Разрешено записывать на дату без указания времени */
+	@Comment("Разрешено записывать на дату без указания времени")
+	@Column(nullable=false, columnDefinition="boolean default false")
+	public Boolean getIsDirectionNoTime() {return theIsDirectionNoTime;}
+	public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {theIsDirectionNoTime = aIsDirectionNoTime;}
+	/** Разрешено записывать на дату без указания времени */
+	private Boolean theIsDirectionNoTime=false ;
+
+	/** Очередь, которую обслуживает раб. функция */
+	@Comment("Очередь, которую обслуживает раб. функция")
+	@OneToOne
+	public VocQueue getQueue() {return theQueue;}
+	public void setQueue(VocQueue aQueue) {theQueue = aQueue;}
+	/** Очередь, которую обслуживает раб. функция */
+	private VocQueue theQueue ;
+
+	/** Номер окна в электронной очереди */
+	@Comment("Номер окна в электронной очереди")
+	public String getWindowNumber() {return theWindowNumber;}
+	public void setWindowNumber(String aWindowNumber) {theWindowNumber = aWindowNumber;}
+	/** Номер окна в электронной очереди */
+	private String theWindowNumber ;
+
+	/** ККМ по умолчанию */
+	@Comment("ККМ по умолчанию")
+	@OneToOne
+	public KkmEquipment getKkmEquipmentDefault() {return theKkmEquipmentDefault;}
+	public void setKkmEquipmentDefault(KkmEquipment aKkmEquipmentDefault) {theKkmEquipmentDefault = aKkmEquipmentDefault;}
+
+	/** ККМ по умолчанию */
+	private KkmEquipment theKkmEquipmentDefault;
 }

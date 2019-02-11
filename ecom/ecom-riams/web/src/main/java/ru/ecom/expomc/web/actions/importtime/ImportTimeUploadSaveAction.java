@@ -1,31 +1,28 @@
 package ru.ecom.expomc.web.actions.importtime;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.expomc.ejb.services.importservice.IImportService;
 import ru.ecom.expomc.ejb.services.importservice.ImportException;
 import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
-import ru.ecom.expomc.ejb.services.importservice.ImportFileResult;
 import ru.ecom.web.util.FileUploadUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
-import ru.nuzmsh.commons.auth.ILoginInfo;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * Сохранения файла и собственно импорт
  */
 public class ImportTimeUploadSaveAction extends BaseAction {
 
-    private final static Log LOG = LogFactory.getLog(ImportTimeUploadSaveAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ImportTimeUploadSaveAction.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -45,13 +42,12 @@ public class ImportTimeUploadSaveAction extends BaseAction {
         timeForm.setComment(form.getComment());
 
         final long monitorId = monitorService.createMonitor() ;
-        if (CAN_TRACE) LOG.trace("monitorId = " + monitorId);
+        if (CAN_TRACE) LOG.info("monitorId = " + monitorId);
         new Thread() {
             public void run() {
                 try {
-                    if (CAN_TRACE) LOG.trace("Importing file " + filename);
-                    ImportFileResult result = service.importFile(
-                    		form.getFile().getFileName(), monitorId, filename, timeForm) ;
+                    if (CAN_TRACE) LOG.info("Importing file " + filename);
+                     service.importFile(form.getFile().getFileName(), monitorId, filename, timeForm) ;
                 } catch (ImportException e) {
                     throw new IllegalStateException(e) ;
                 }

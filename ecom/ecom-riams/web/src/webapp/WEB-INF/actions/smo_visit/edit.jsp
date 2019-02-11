@@ -6,6 +6,8 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
+
+
   <tiles:put name="body" type="string">
     <msh:form action="/entitySaveGoView-smo_visit.do" defaultField="dateStart">
       <msh:hidden guid="hiddenId" property="id" />
@@ -22,6 +24,7 @@
       <msh:hidden property="medserviceAmounts" />
       <msh:hidden property="isPreRecord" />
       <msh:hidden property="guarantee" />
+      <msh:hidden property="isPaid" />
       <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
       <msh:panel guid="panel">
                   	<msh:row>
@@ -243,6 +246,33 @@
       		</msh:table>
       	</msh:section>
       </msh:ifInRole>
+
+        <msh:ifInRole roles="/Policy/Mis/Pharmacy/CreateOutcome">
+            <msh:section title="Списания" createUrl="pharm_outcome.do?id=${param.id}"
+                         createRoles="/Policy/Mis/Pharmacy/CreateOutcome">
+                <ecom:webQuery name="services" nativeSql="select
+               doc.id
+               ,p.lastname||' '||p.firstname||' '||p.middlename||' ('||vwf.name||')' as who
+                ,to_char(doc.dateoperation,'dd.MM.yyyy')||' '||to_char(doc.timeoperation,'HH24:MI:SS') as when
+                ,vg.drug||'('||vg.form||')' as what
+                ,cast(doc.amount as numeric)
+                from internaldocument doc
+                left join workfunction wf on wf.id = doc.workfunctionid
+                left join vocworkfunction vwf on vwf.id = wf.workfunction_id
+                left join worker w on w.id =wf.worker_id
+                left join patient p on p.id = w.person_id
+                left join vocgoods vg on vg.regid = doc.goodid
+                where doc.medcaseid=${param.id}
+      		"/>
+                <msh:table name="services" action="entityParentView-smo_medService.do"
+                           viewUrl="entityShortView-smo_medService.do" idField="1" >
+                    <msh:tableColumn columnName="Кто списал" property="2"/>
+                    <msh:tableColumn columnName="Когда" property="3"/>
+                    <msh:tableColumn columnName="Наименование" property="4"/>
+                    <msh:tableColumn columnName="Кол-во" property="5"/>
+                </msh:table>
+            </msh:section>
+        </msh:ifInRole>
       <%--
       <msh:ifInRole roles="/Policy/Mis/MedCase/PrescriptionBlank/View" guid="5a2a2f8d-9bd8-4443-962c-1bbd5aa6caa9">
         <msh:section title="Рецептурные бланки" guid="4d7584a1-8f31-468c-9185-b3cb98e8368e">
@@ -282,6 +312,7 @@
         />
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-smo_visit" name="Принять пациента" roles="/Policy/Mis/MedCase/Visit/Edit" />
         <msh:sideLink guid="sideLinkEdit" params="id" action="/entityEdit-smo_direction" name="Редактировать направление" roles="/Policy/Mis/MedCase/Direction/Edit" />
+        <tags:mis_change_lpu service="TicketService" name="CSS" title="Изменить ЛПУ направителя" roles="/Policy/Mis/MedCase/Direction/Edit" />
         <msh:sideLink confirm="Вы точно хотите оформить не явку на прием" key="ALT+3" params="id" action="/js-smo_visit-noPatient" name="Оформить не явку на прием" title="Оформить не явку на прием" roles="/Policy/Mis/MedCase/Visit/Edit"/>
         <msh:sideLink params="id" action="/js-smo_visit-closeSpo" name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" guid="d84659f7-7ea9-4400-a11c-c83e7d5c578d" key="ALT+4" roles="/Policy/Mis/MedCase/Spo/Close" />
         
@@ -296,12 +327,13 @@
         <msh:sideLink params="id" action="/entityParentPrepareCreate-vac_vaccination" name="Вакцинацию" title="Добавить вакцинацию" guid="f417958a-1816-4fe0-8592-dfe35ac19dc8" roles="/Policy/Mis/Vaccination/Create" key="ALT+6" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+7" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить предварительную госпитализацию" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e88" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+10" />
-         <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" key="ALT+8" name="Услугу" params="id" 
+        <msh:sideLink params="id" action="/pharm_outcome" name="Списание" title="Добавить Списание" roles="/Policy/Mis/Pharmacy/CreateOutcome"/>
+         <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" key="ALT+8" name="Услугу" params="id"
          	action="/entityParentPrepareCreate-smo_medService" title="Добавить услугу" guid="df23d" />
 <%--         <msh:sideLink params="id" action="/js-smo_visit-addDisabilityByRedirectFromVisit" name="Нетрудоспособность" title="Добавить нетрудоспособность" guid="784c86f1-44e5-4642-ae35-b68c2abd0604" roles="/Policy/Mis/Disability/DisabilityCase/Create" key="ALT+7" /> --%>
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_visitPrescriptionBlank" name="Рецептурный бланк" title="Добавить рецептурный бланк" guid="78d-4642-ae35-b6d04" roles="/Policy/Mis/MedCase/PrescriptionBlank/Create" />
             <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"
-    	name="Направление к план. раб. функции &larr;"   action="/javascript:goNewDirectionMine('.do')"  
+    	name="Направление к себе &larr;"   action="/javascript:goNewDirectionMine('.do')"
     	 title='Направление к план. раб. функции'  />
     	         
             <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"
@@ -314,7 +346,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
 	   	
-	   	<tags:mis_change_lpu service="TicketService" name="CSS" title="Изменить ЛПУ направителя" roles="/Policy/Mis/MedCase/Visit/ChangeOrderLpu" />
+
 	   	<tags:mis_changeServiceStream service="TicketService" name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
       	<tags:mis_choiceSpo method="moveVisitOtherSpo" methodGetPatientByPatient="getOpenSpoBySmo" hiddenNewSpo="0" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Перевести визит в другой СПО" />
       <tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
@@ -331,7 +363,7 @@
     	params="id"  action='/javascript:getDefinition("entityParentList-stac_surOperation.do?short=Short&id=${param.id}", null);'  title='Операции'
     	styleId="viewShort"
     	/>
-    	<msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByPatient('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
+    	<msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByVisit('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
        <msh:sideLink styleId="viewShort" roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/javascript:getDefinition('entityParentList-expert_card.do?short=Short&id=${param.id}',null)"/>
       </msh:sideMenu>
       <msh:tableNotEmpty name="info_print_list">
@@ -375,14 +407,14 @@
   			var wf = +$("workFunctionExecute").value;
     		if (wf=='') {wf=0;}
   			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
-    		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-    		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-	      	 		callback: function(aResult) {
-	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
-	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
+    	//	 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+    	//	 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
+	      //	 		callback: function(aResult) {
+	      	 		//	if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+	      	 		//	if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
 	      	 		  	
-	      	 		}
-	      	 	}) ;
+	    //  	 		}
+	 //     	 	}) ;
   		}
   	}) ;
   	function updateService() {
@@ -468,7 +500,7 @@
   <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
           <script type="text/javascript">//var theBedFund = $('bedFund').value;
           function goCreateAssessmentCard() {
-  	  		window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value ;
+  	  		window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&visit="+${param.id};
   			$('isPrintInfo').checked='checked' ;
       }
           function goNewDirectionMine() {
@@ -528,8 +560,8 @@
   function viewExtMedDocumentByPatient(d) {
 	  getDefinition("js-doc_externalDocument-infoMedShortByPatient.do?short=Short&id="+$('patient').value, null);
   }
-  function viewAssessmentCardsByPatient(d) {
-	  getDefinition("js-mis_assessmentCard-listByPatient.do?short=Short&id="+$('patient').value, null);
+  function viewAssessmentCardsByVisit(d) {
+	  getDefinition("js-mis_assessmentCard-listByVisit.do?short=Short&patient="+$('patient').value+"&id="+${param.id}, null);
   }
   </script>
 

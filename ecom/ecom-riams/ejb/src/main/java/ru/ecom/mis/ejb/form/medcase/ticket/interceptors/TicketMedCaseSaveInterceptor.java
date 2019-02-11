@@ -1,16 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.ticket.interceptors;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
-import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
@@ -22,12 +13,13 @@ import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveIn
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
-import ru.nuzmsh.util.StringUtil;
+
+import javax.persistence.EntityManager;
 
 public class TicketMedCaseSaveInterceptor implements IFormInterceptor {
 	 
-	private final static Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
     public void intercept(IEntityForm aForm, Object aEntity, EntityManager aManager) {
     	TicketMedCaseForm form = (TicketMedCaseForm)aForm ;

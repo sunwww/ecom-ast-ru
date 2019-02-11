@@ -276,6 +276,23 @@ public class WorkFunctionForm extends IdEntityForm{
 	public void setAttorney(Long aAttorney) {theAttorney = aAttorney;}
 	/** Доверенность */
 	private Long theAttorney;
+
+	/** Разрешено записывать на дату без указания времени */
+	@Comment("Разрешено записывать на дату без указания времени")
+	@Persist
+	public Boolean getIsDirectionNoTime() {return theIsDirectionNoTime;}
+	public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {theIsDirectionNoTime = aIsDirectionNoTime;}
+	/** Разрешено записывать на дату без указания времени */
+	private Boolean theIsDirectionNoTime ;
+
+	/** ККМ по умолчанию */
+	@Comment("ККМ по умолчанию")
+	@Persist
+	public Long getKkmEquipmentDefault() {return theKkmEquipmentDefault;}
+	public void setKkmEquipmentDefault(Long aKkmEquipmentDefault) {theKkmEquipmentDefault = aKkmEquipmentDefault;}
+
+	/** ККМ по умолчанию */
+	private Long theKkmEquipmentDefault;
 	
 }
 

@@ -1,5 +1,3 @@
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -8,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-			<msh:section title="Медицинские услуги с групприровкой по пациентам."
+			<msh:section title="Медицинские услуги с группировкой по пациентам."
 			createRoles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/JuridicalMedService/Create" 
 			createUrl="entityParentPrepareCreate-contract_juridicalAccountMedService.do?id=${param.id}"
 			>
@@ -59,7 +57,7 @@ select cams.mainparent,cams.lastname,cams.firstname,cams.middlename
 					<msh:tableColumn columnName="Полис" property="9" />
 					<msh:tableColumn columnName="Общ. кол-во" property="6" />
 					<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="7" />				
-					<msh:tableColumn columnName="Лимит по гарант. письму" isCalcAmount="true" property="8" />				
+					<msh:tableColumn columnName="Лимит по гарант. письму" isCalcAmount="false" property="8" />
 				</msh:table>
 				</msh:sectionContent>
 			</msh:section>

@@ -1,9 +1,4 @@
 package ru.ecom.mis.ejb.domain.contract;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.*;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
@@ -13,6 +8,11 @@ import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.contract.voc.VocAccountOperation;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
 /**
  * Операция договорного счета
  */
@@ -172,4 +172,11 @@ public class ContractAccountOperation extends BaseEntity{
 
 	/** Оплата терминалом */
 	private Boolean theIsPaymentTerminal;
+
+	/** Номер телефона для чека */
+	@Comment("Номер телефона для чека")
+	public String getCustomerPhone() {return theCustomerPhone;}
+	public void setCustomerPhone(String aCustomerPhone) {theCustomerPhone = aCustomerPhone;}
+	/** Номер телефона для чека */
+	private String theCustomerPhone ;
 }

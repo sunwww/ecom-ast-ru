@@ -1,28 +1,6 @@
 package ru.ecom.expomc.ejb.services.importservice;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.util.EntityNameUtil;
@@ -38,6 +16,22 @@ import ru.nuzmsh.dbf.DbfFileReader;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+import ru.nuzmsh.util.zip.ExtractJar;
+
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Импорт
@@ -48,8 +42,8 @@ import ru.nuzmsh.util.format.DateFormat;
 public class ImportServiceBean implements IImportService {
 
 
-     private final static Logger LOG = Logger.getLogger(ImportServiceBean.class) ;
-     private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+     private static final Logger LOG = Logger.getLogger(ImportServiceBean.class) ;
+     private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
      public ImportFileResult importFile(String aOriginalFilename, long aMonitorId, String aFilename, ImportFileForm aImportForm) throws ImportException {
     	 IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
@@ -114,20 +108,12 @@ public class ImportServiceBean implements IImportService {
         DbfFileReader in = null ;
 
         IMonitor monitor = null ;
-        try {
-//            theUserTransaction.begin();
-
-
+        try ( InputStream inFile = new FileInputStream(aFilename)){
             DbfFile dbfFile = new DbfFile();
-            //File file = new File(aFilename) ;
-            InputStream inFile = new FileInputStream(aFilename) ;
-            long count = 0 ;
-            try {
+
+            long count ;
                 dbfFile.load(inFile);
                 count = dbfFile.getRecordsCount() ;
-            } finally {
-                inFile.close();
-            }
             monitor = theMonitorService.startMonitor(aMonitorId, "Импорт файла "+aFilename, count);
 
             Collection<Field> fields = Collections.unmodifiableCollection(format.getFields());
@@ -136,13 +122,9 @@ public class ImportServiceBean implements IImportService {
             final boolean isImportTimeSupport = document.isTimeSupport() ;
 
             //if(!isImportTimeSupport) deleteNotTimeSupports(entityClass, document) ;
-
-            
-
-
             // отркрываем файл DBF и перебираем все записи
             in =  new DbfFileReader(new File(aFilename));
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            HashMap<String, Object> map = new HashMap<>();
             boolean firstPassed = false ;
             ImportFileResult ret = new ImportFileResult(time.getId());
             int i = 0 ;
@@ -376,7 +358,7 @@ public class ImportServiceBean implements IImportService {
      * Находит актуальный формат
      * @param aEntity
      */
-    public Format findActualFormat(ImportDocument aEntity) throws ActualFormatNotFoundException {
+    public Format findActualFormat(ImportDocument aEntity) {
         // todo берется пока первый формат
         return aEntity.getFormats().iterator().next() ;
     }

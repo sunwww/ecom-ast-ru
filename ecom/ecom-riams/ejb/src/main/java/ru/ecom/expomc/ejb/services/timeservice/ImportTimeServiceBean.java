@@ -1,17 +1,16 @@
 package ru.ecom.expomc.ejb.services.timeservice;
 
-import java.sql.Date;
-import java.util.Collection;
-import java.util.List;
+import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
+import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
+import ru.nuzmsh.util.PropertyUtil;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
-import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
-import ru.nuzmsh.util.PropertyUtil;
+import java.sql.Date;
+import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -24,8 +23,7 @@ public class ImportTimeServiceBean implements IImportTimeService {
         Object o = findByCode(aClass, aCode, aActualDate) ;
         if(o!=null) {
             try {
-                String name = (String) PropertyUtil.getPropertyValue(o, "name") ;
-                return name ;
+                return (String) PropertyUtil.getPropertyValue(o, "name") ;
             } catch (Exception e) {
                 throw new IllegalStateException("Ошибка получения наименования по коду",e) ;
             }
@@ -42,7 +40,7 @@ public class ImportTimeServiceBean implements IImportTimeService {
                 .setParameter("code",aCode)
                 .setParameter("time",findTime(aClass, aActualDate))
                 .getResultList();
-        if(finded!=null && finded.size()>0) {
+        if(finded!=null && !finded.isEmpty()) {
             return finded.iterator().next() ;
         } else {
             return null ;

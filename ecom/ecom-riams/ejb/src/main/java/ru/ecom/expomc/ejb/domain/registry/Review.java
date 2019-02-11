@@ -1,16 +1,16 @@
 package ru.ecom.expomc.ejb.domain.registry;
 
-import java.sql.Date;
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.sql.Date;
 
 @Entity
 @Table(schema="SQLUser")
+@Deprecated
 public class Review extends BaseEntity{
 	/** Хозяин экспертизы */
 	@Comment("Хозяин экспертизы")

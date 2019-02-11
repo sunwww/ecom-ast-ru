@@ -6,6 +6,7 @@ import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCard;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -20,7 +21,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityForm
 @EntityFormPersistance(clazz= AssessmentCard.class)
 @Comment("Карта оценки")
-@WebTrail(comment = "Карта оценки", nameProperties= "id", view="entityParentView-mis_assessmentCard.do" ,list = "entityParentList-mis_assessmentCard.do")
+@WebTrail(comment = "Карта оценки", nameProperties= "id", view="entityParentView-mis_assessmentCard.do" ,list = "entityList-mis_assessmentCard.do")
 @Parent(property = "patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/AssessmentCard")
 public class AssessmentCardForm extends IdEntityForm{
@@ -98,4 +99,13 @@ public class AssessmentCardForm extends IdEntityForm{
 	public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
 	/** Дата приема */
 	private String theStartDate;
+
+
+	/** СЛО/визит создания */
+	@Comment("СЛО/визит создания")
+	@Persist
+	public Long getMedcase() {return theMedcase;}
+	public void setMedcase(Long aMedcase) {theMedcase = aMedcase;}
+	/** СЛО/визит создания */
+	private Long theMedcase;
 }

@@ -4,3 +4,6 @@ function getData(aForm, aCtx) {
 function listByPatient(aForm, aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/mis_assessmentCard/list_by_patient.jsp");
 }
+function listByVisit(aForm, aCtx) {
+    return aCtx.createForward("/WEB-INF/actions/mis_assessmentCard/list_by_visit.jsp");
+}

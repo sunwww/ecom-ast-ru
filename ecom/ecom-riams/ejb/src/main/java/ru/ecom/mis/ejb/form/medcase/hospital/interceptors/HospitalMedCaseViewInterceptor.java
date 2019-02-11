@@ -1,24 +1,23 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-//import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.nuzmsh.forms.response.FormMessage;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
+//import IFormInterceptor;
 
 public class HospitalMedCaseViewInterceptor implements IFormInterceptor {
 
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		HospitalMedCaseForm form=(HospitalMedCaseForm)aForm ;
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
-		//System.out.println("form view only ="+form.isViewOnly());
 		form.setDischargeEpicrisis(getDischargeEpicrisis(medCase.getId(), aContext.getEntityManager())) ;
 		if (!form.isViewOnly()) {
 			try {
@@ -78,7 +77,7 @@ public class HospitalMedCaseViewInterceptor implements IFormInterceptor {
 		List<Object[]> l2=aManager.createNativeQuery("select id,DischargeEpicrisis from medcase where id= "+aMedCaseId).getResultList() ;
 		List<Object[]> l1= aManager.createNativeQuery("select d.id,d.record from diary d where d.medcase_id= "+aMedCaseId+" and upper(d.dtype)='DISCHARGEEPICRISIS' order by d.id").getResultList() ;
 		StringBuilder ret = new StringBuilder() ;
-		if (l1.size()>0) {
+		if (!l1.isEmpty()) {
 			for (Object[] obj:l1) {
 				ret.append(obj[1]!=null?obj[1]:"") ;
 			}

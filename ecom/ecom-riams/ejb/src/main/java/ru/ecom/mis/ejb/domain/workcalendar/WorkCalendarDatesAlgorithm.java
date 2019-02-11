@@ -1,13 +1,12 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
-import java.sql.Date;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDayPattern;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.sql.Date;
 
 	/**
 	 * Алгоритм шаблона рабочего календаря по датам

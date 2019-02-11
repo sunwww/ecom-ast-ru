@@ -1,7 +1,7 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.Calendar"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -156,7 +156,7 @@
     <msh:section>
     <msh:sectionTitle>Результаты поиска обращений для формирования адресных листков за период с ${param.dateBegin} по ${param.dateEnd}${dateAddInfo}. ${infoSearch} ${printStatus} </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="select m.id
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="select m.id
     ,m.dateStart,m.dateFinish
     ,m.username
     ,stat.code
@@ -184,7 +184,7 @@
 	${pigeonHole} ${status} ${department} ${serviceStreamSql} ${addAdrSql} ${addDaysSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
-    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" printToExcelButton="Сохранить в excel">
                     <msh:tableNotEmpty>
                                 <msh:toolbar>
                         <msh:row>
@@ -220,7 +220,7 @@
 <msh:section>
     <msh:sectionTitle>Результаты поиска обращений для формирования реестра по иногородним и иностранцам за период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${printStatus} </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="select m.id
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="select m.id
     ,m.dateStart,m.dateFinish
     ,m.username
     ,stat.code
@@ -250,7 +250,7 @@
 	${pigeonHole} ${status} ${serviceStreamSql} ${addDaysSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
-    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" printToExcelButton="Сохранить в excel">
                     <msh:tableNotEmpty>
                                 <msh:toolbar>
                         <msh:row>
@@ -281,7 +281,7 @@
 <msh:section>
     <msh:sectionTitle>Результаты поиска обращений для формирования реестра по иностранцам за период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${printStatus} </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="select m.id
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="select m.id
     ,m.dateStart,m.dateFinish
     ,m.username
     ,stat.code
@@ -313,7 +313,7 @@
 	${pigeonHole} ${status} ${serviceStreamSql} ${addDaysSql}
 	order by pat.lastname
 	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
-    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" printToExcelButton="Сохранить в excel">
                     <msh:tableNotEmpty>
                                 <msh:toolbar>
                         <msh:row>

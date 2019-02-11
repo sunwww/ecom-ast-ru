@@ -6,7 +6,6 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -119,7 +118,7 @@
     	if (request.getParameter("beginDate")!=null && request.getParameter("finishDate")!=null
     	 || request.getParameter("id")!=null && !request.getParameter("id").equals("")
     	) {
-    		
+            request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("beginDate"),request.getParameter("finishDate"),request));
         	if (typeEmergency!=null && typeEmergency.equals("1")) {
         		request.setAttribute("emergencySql", " and m.emergency='1' ") ;
         		request.setAttribute("emergencyInfo", ", поступивших по экстренным показаниям") ;
@@ -203,7 +202,7 @@
   	<msh:section title="Поликлиника">
 
   	
-	    <ecom:webQuery name="list_yes" nameFldSql="list_yes_sql" maxResult="1000" nativeSql="select m.id
+	    <ecom:webQuery isReportBase="${isReportBase}" name="list_yes" nameFldSql="list_yes_sql" maxResult="100000" nativeSql="select m.id
 	    
 	    ,to_char(m.dateStart,'DD.MM.YYYY')||' '||cast(m.timeExecute as varchar(5)) as dateStart
 
@@ -235,7 +234,7 @@ group by m.id,m.dateStart,m.timeExecute
 	    ,p.lastname,p.firstname,p.middlename,p.birthday
 	    ,vwfe.name,pe.lastname,vss.name
 order by p.lastname,p.firstname,p.middlename"/>
-<msh:table viewUrl="entityView-mis_medCase.do?short=Short" name="list_yes" action="entitySubclassView-mis_medCase.do" 
+<msh:table printToExcelButton="Сохранить в excel" viewUrl="entityView-mis_medCase.do?short=Short" name="list_yes" action="entitySubclassView-mis_medCase.do"
 	idField="1">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
@@ -249,7 +248,7 @@ order by p.lastname,p.firstname,p.middlename"/>
   	<msh:section title="Стационар">
 
   	
-	    <ecom:webQuery name="list_stac" maxResult="1000" nativeSql="select smo.id
+	    <ecom:webQuery name="list_stac" maxResult="100000" nativeSql="select smo.id
 	    
 	    ,to_char(smo.dateStart,'DD.MM.YYYY') as dateStart
 	    ,to_char(smo.dateFinish,'DD.MM.YYYY') as dateFinish
@@ -273,7 +272,7 @@ ${emergencySql} ${departmentSql}
 ${serviceStreamSql}
 ${nationalitySql} ${regionSql} ${patientSql}
 order by p.lastname,p.firstname,p.middlename"/>
-<msh:table viewUrl="entityShortView-stac_ssl.do" 
+<msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-stac_ssl.do"
  name="list_stac"
  action="entityView-stac_ssl.do" idField="1" >
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
@@ -288,7 +287,7 @@ order by p.lastname,p.firstname,p.middlename"/>
   	<msh:section title="Отказы от госпитализаций">
 
   	
-	    <ecom:webQuery name="list_stac1" maxResult="1000" nativeSql="select m.id
+	    <ecom:webQuery isReportBase="${isReportBase}" name="list_stac1" maxResult="100000" nativeSql="select m.id
 	    
 	    ,to_char(m.dateStart,'DD.MM.YYYY') as dateStart
 	    ,to_char(m.dateFinish,'DD.MM.YYYY') as dateFinish
@@ -311,7 +310,7 @@ ${emergencySql} ${departmentSql}
 ${serviceStreamSql}
 ${nationalitySql} ${regionSql} ${patientSql}
 order by p.lastname,p.firstname,p.middlename"/>
-<msh:table viewUrl="entityShortView-stac_ssl.do" 
+<msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-stac_ssl.do"
  name="list_stac1"
  action="entityView-stac_ssl.do" idField="1" >
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
@@ -330,7 +329,7 @@ order by p.lastname,p.firstname,p.middlename"/>
       	<msh:section title="Поликлиника">
 
       	
-    	    <ecom:webQuery name="list_yes" maxResult="1000" nativeSql="select 
+    	    <ecom:webQuery isReportBase="${isReportBase}" name="list_yes" maxResult="100000" nativeSql="select
     	    p.id as pid
     	    ,count(distinct m.id)
 
@@ -363,7 +362,7 @@ ${groupSqlAdd}
     group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
     	    ,vwfe.name,pe.lastname , vn.name,a.fullname,vss.name
     order by p.lastname,p.firstname,p.middlename"/>
-    <msh:table name="list_yes" action="entityView-mis_patient.do"
+    <msh:table printToExcelButton="Сохранить в excel" name="list_yes" action="entityView-mis_patient.do"
     	viewUrl="entityShortView-mis_patient.do" 
     	idField="1">
     	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
@@ -380,7 +379,7 @@ ${groupSqlAdd}
       	<msh:section title="Стационар">
 
       	
-    	    <ecom:webQuery name="list_stac" maxResult="1000" nativeSql="select
+    	    <ecom:webQuery isReportBase="${isReportBase}" name="list_stac" maxResult="100000" nativeSql="select
     	    p.id as pid
     	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
@@ -409,7 +408,7 @@ ${groupSqlAdd}
     group by p.id,p.lastname,p.firstname,p.middlename 
     ,p.birthday,vn.name ,a.fullname
     order by p.lastname,p.firstname,p.middlename"/>
-    <msh:table viewUrl="entityShortView-stac_ssl.do" 
+    <msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-stac_ssl.do"
      name="list_stac"
      action="entityView-mis_patient.do" idField="1" >
     	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
@@ -425,7 +424,7 @@ ${groupSqlAdd}
       	<msh:section title="Отказы от госпитализаций">
 
       	
-    	    <ecom:webQuery name="list_stac1" maxResult="1000" nativeSql="select p.id
+    	    <ecom:webQuery isReportBase="${isReportBase}" name="list_stac1" maxResult="100000" nativeSql="select p.id
     	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
     	    ,vn.name as vnname
@@ -451,7 +450,7 @@ ${groupSqlAdd}
     group by p.id,p.lastname,p.firstname,p.middlename
     	    ,p.birthday ,vn.name ,a.fullname
     order by p.lastname,p.firstname,p.middlename"/>
-    <msh:table viewUrl="entityShortView-mis_patient.do" 
+    <msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-mis_patient.do"
      name="list_stac1" 
      action="entityView-mis_patient.do" idField="1" >
     	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
@@ -468,7 +467,7 @@ ${groupSqlAdd}
     	%>
     	
     <msh:section>
-<ecom:webQuery nameFldSql="sql_journal_swod" name="journal_swod" nativeSql="
+<ecom:webQuery isReportBase="${isReportBase}" nameFldSql="sql_journal_swod" name="journal_swod" nativeSql="
 select ${groupId}||${departmentSqlId}||${nationalitySqlId}||${serviceStreamSqlId} as idparam,${groupSql} as vnname
 ,count(*) as cntAll
 ,count(distinct case when (m.dtype='Visit' or m.dtype='ShortMedCase') then m.id else null end) as polic
@@ -546,7 +545,7 @@ group by ${groupSqlId},${groupSql}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_swod" action="journal_nationality_smo.do?beginDate=${param.beginDate}&finishDate=${param.finishDate}&typeView=1&typeGroup=${typeGroup}&typePatient=${typePatient}&typeEmergency=${typeEmergency}" idField="1" noDataMessage="Не найдено">
             <msh:tableNotEmpty>
               <tr>

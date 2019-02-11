@@ -209,10 +209,11 @@ cec.id as f1_id, to_char(expertDate,'dd.mm.yyyy')
 ,veds.name||' '||cec.deviationStandardsText as deviationStandards
 ,cec.defects as defects,cec.resultStep as resultStep
 ,vec.name||' '||coalesce(to_char(cec.conclusionDate,'dd.mm.yyyy'),'')||coalesce('. '||vecs.name,'')||' '||coalesce(cec.additionInfo,'') as conclusion
-,cec.orderHADate as orderHADate,cec.conclusionHA as conlusionHA
-,cec.receiveHADate as receiveHADate,cec.additionInfoHA as addtionInfoHA
+,to_char(cec.orderHADate,'dd.mm.yyyy') as orderHADate,cec.conclusionHA as conlusionHA
+,to_char(cec.receiveHADate,'dd.mm.yyyy') as receiveHADate,cec.additionInfoHA as addtionInfoHA
 ,coalesce(cec.numberinjournal,''||cec.id) as numberInJournal
 ,replace(replace(vecomp.name,' ',''),',',chr(13)) as expertComission
+,cast('' as varchar(2)) as expertsign
 from ClinicExpertCard cec
 left join VocExpertComposition vecomp on vecomp.id=cec.expcomposition_id
 left join MedCase slo on slo.id=cec.medCase_id
@@ -255,7 +256,7 @@ ${lpuSql} ${typeSql}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table name="journal_expert"
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_expert"
     viewUrl="entityParentView-expert_ker.do?short=Short" 
      action="entityParentView-expert_ker.do" idField="1" >
       <msh:tableColumn columnName="#" property="sn" />
@@ -278,6 +279,8 @@ ${lpuSql} ${typeSql}
       <msh:tableColumn columnName="Заключеие МСЭ" property="17" />
       <msh:tableColumn columnName="Дата получения закл. МСЭ" property="18" />
       <msh:tableColumn columnName="Доп. инф. по закл. др. учреж." property="19" />
+      <msh:tableColumn columnName="Основной состав экспертов" property="21" />
+      <msh:tableColumn columnName="Подписи экспертов" property="22" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -319,8 +322,8 @@ ${lpuSql} ${typeSql}
     viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&type=${param.type}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}" 
      action="expert_journal_ker.do?dateBegin=${param.dateBegin}&type=${param.type}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}&typeLpu=${typeLpu}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn columnName="Кол-во направ. на ВК" property="3" />
-      <msh:tableColumn columnName="Кол-во ВК с откл. от станд." property="4" />
+      <msh:tableColumn columnName="Кол-во направ. на ВК" property="3" isCalcAmount="true"/>
+      <msh:tableColumn columnName="Кол-во ВК с откл. от станд." property="4" isCalcAmount="true"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>

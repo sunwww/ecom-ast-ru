@@ -1,12 +1,10 @@
 package ru.ecom.mis.ejb.domain.assessmentcard;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Entity;
-
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import java.sql.Date;
 
 @Entity
 public class AssessmentCardTemplate extends VocBaseEntity{

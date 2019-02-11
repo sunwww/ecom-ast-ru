@@ -23,9 +23,8 @@ public class PrescriptListCreateInterceptor implements IFormInterceptor {
 		ModePrescriptionForm modeForm = form.getModeForm() ;
 		// Сохранение режима
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/Prescription/ModePrescription/Create")
-				&& modeForm!=null && modeForm.getModePrescription()!=null 
-				 && !modeForm.equals(Long.valueOf(0))
-				&& modeForm.getPlanStartDate()!=null 
+				&& modeForm!=null && modeForm.getModePrescription()!=null
+				&& modeForm.getPlanStartDate()!=null
 				&& !modeForm.getPlanStartDate().equals("")
 				) {
 			

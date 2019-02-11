@@ -21,13 +21,17 @@
     
     <msh:sectionContent>
         <ecom:webQuery name="allsvodlist" nativeSql="
-select id,createusername,createdate,comments from prescriptionlist  where medcase_id=ANY(select id from medcase where parent_id=${param.id}) or medcase_id=${param.id}
+            select pl.id,pl.createusername,pl.createdate, dep.name
+            from prescriptionlist pl
+            left join medcase mc on mc.id=pl.medcase_id
+            left join mislpu dep on dep.id=mc.department_id
+            where pl.medcase_id in (select id from medcase where parent_id=${param.id}) or medcase_id=${param.id}
     "/>
 	    <msh:table name="allsvodlist" action="entityParentView-pres_prescriptList.do" idField="1" guid="3c4adc65-cfce-4205-a2dd-91ba8ba87543">
             <msh:tableColumn columnName="#" property="sn"/>
-	      <msh:tableColumn columnName="Назначил" property="2" guid="44482100-2200-4c8b-9df5-4f5cc0e3fe68" />
-	      <msh:tableColumn columnName="Комментарии" property="4" guid="5c893448-9084-4b1a-b301-d7aca8f6307c" />
-	      <msh:tableColumn columnName="Дата создания" property="3" guid="dbe4fc52-03f7-42af-9555-a4bee397a800" />
+	        <msh:tableColumn columnName="Назначил" property="2" guid="44482100-2200-4c8b-9df5-4f5cc0e3fe68" />
+	        <msh:tableColumn columnName="Дата создания" property="3" guid="dbe4fc52-03f7-42af-9555-a4bee397a800" />
+            <msh:tableColumn columnName="Отделение" property="4" guid="5c893448-9084-4b1a-b301-d7aca8f6307c" />
 	    </msh:table>
     </msh:sectionContent>
     </msh:section>

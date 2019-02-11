@@ -1,26 +1,19 @@
 package ru.ecom.ant;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.persistence.Entity;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
 import ru.ecom.ejb.services.util.EntityHelper;
+
+import javax.persistence.Entity;
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PersistenceXmlHelper {
 
@@ -47,7 +40,6 @@ public class PersistenceXmlHelper {
 		try {
 			List<String> classes = listAllEntitiesClassnames(new FileInputStream(aFilenameToAdd)) ;
 			for(String clazz : classes) {
-				System.out.println(clazz) ;
 				theClasses.add(clazz) ;
 			}
 		} catch (Exception e) {
@@ -55,7 +47,7 @@ public class PersistenceXmlHelper {
 		}
 	}
 	
-	private final Set<String> theClasses = new TreeSet<String>() ;
+	private final Set<String> theClasses = new TreeSet<>() ;
 	
 	public void write(String aFilename) {
 		try {
@@ -125,7 +117,7 @@ public class PersistenceXmlHelper {
 
 	public List<String> listAllEntitiesClassnames(InputStream in) {
         try {
-            List<String> list = new LinkedList<String>();
+            List<String> list = new LinkedList<>();
             try {
                 Document doc = new SAXBuilder().build(in);
                 Element rootElement = doc.getRootElement();
@@ -151,8 +143,7 @@ public class PersistenceXmlHelper {
 	private static Document loadDocument(File aFile) throws JDOMException, IOException {
 		if(!aFile.exists()) throw new FileNotFoundException("Файл "+aFile.getAbsolutePath()+" не найден") ;
 		FileInputStream in = new FileInputStream(aFile) ; 
-		Document doc = new SAXBuilder().build(in);
-		return doc ;
+		return new SAXBuilder().build(in);
 	}
 	private final File theTemplateFile ;
 	private final EntityHelper theEntityHelper = EntityHelper.getInstance() ; 

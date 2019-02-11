@@ -7,6 +7,9 @@
 
     <tiles:put name='title' type='string'>
         <msh:title mainMenu="Lpu">ЛПУ</msh:title>
+        <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css">
+        <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css">
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -36,13 +39,14 @@
     	<%
     }
     String id = request.getParameter("id");
-    	if (id!=null||id.equals("-1")) {
+    	if (id==null||id.equals("-1")) {
     		request.setAttribute("idSql", " is null");
     	} else {
     		request.setAttribute("idSql", " ="+id);
     	}
-    
-    %>
+
+
+         %>
  
    
     <ecom:webQuery name="lpus" nameFldSql="lpus_sql" nativeSql="select id, omcCode, name from mislpu where parent_id${idSql}" />
@@ -53,5 +57,34 @@
             <msh:tableColumn columnName="Наименование ЛПУ" property="3" />
         </msh:table>
     </tiles:put>
+
+    <%  //lets try json table
+        //<div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-balham"></div>
+        /*
+        IWebQueryService service =  Injection.find(request,null).getService(IWebQueryService.class) ;
+        String sql = request.getAttribute("lpus_sql").toString();
+        System.out.println("sql=="+sql);
+        String json = service.executeSqlGetJson(sql,null);
+        request.setAttribute("entries_sql_json",json);
+        */
+
+        /*
+        <tiles:put name="javascript" type="string">
+        <script type="text/javascript">
+        function testNewTable() {
+        var colunms = [
+        {headerName:"id", field:"id"},
+        {headerName:"name", field:"name"},
+        {headerName:"omccode", field:"omccode"},
+
+        ];
+        var data = ${entries_sql_json};
+        var eGridDiv = jQuery('#myGrid');
+        new agGrid.Grid(eGridDiv, {columnDefs:colunms,rowData:data});
+        }
+        </script>
+    </tiles:put>
+         */
+    %>
 
 </tiles:insert>

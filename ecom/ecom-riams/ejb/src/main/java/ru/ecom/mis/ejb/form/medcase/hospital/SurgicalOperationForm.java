@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
-import java.sql.Time;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -12,20 +10,12 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocComplication;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoIntegerString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
-import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.IntegerString;
-import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
-import ru.nuzmsh.forms.validator.validators.Required;
-import ru.nuzmsh.forms.validator.validators.TimeString;
+import ru.nuzmsh.forms.validator.validators.*;
 
 @Comment("Хирургическая операция")
 @EntityForm
@@ -487,4 +477,12 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Длительность */
 	private Integer theAnesthesiaDuration;
+
+	/** На какой конечности была сделана операция */
+	@Comment("На какой конечности была сделана операция")
+	@Persist
+	public Long getLeftRight() {return theLeftRight;}
+	public void setLeftRight(Long aLeftRight) {theLeftRight = aLeftRight;}
+	/** На какой конечности была сделана операция */
+	private Long theLeftRight ;
 }

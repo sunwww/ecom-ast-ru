@@ -1,18 +1,12 @@
 package ru.ecom.mis.ejb.domain.medstandard;
 
-import java.sql.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.mis.ejb.domain.equipment.MedicalEquipmentPosition;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.util.List;
 
 @Entity
 @Comment("Стандарт оказания мед. помощи")

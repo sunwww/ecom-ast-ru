@@ -1,9 +1,12 @@
 package ru.ecom.jaas.ejb.service;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeSet;
+import org.apache.log4j.Logger;
+import ru.ecom.ejb.services.entityform.PersistList;
+import ru.ecom.ejb.services.live.domain.journal.ChangeJournal;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.jaas.ejb.domain.SecPolicy;
+import ru.ecom.jaas.ejb.domain.SecRole;
+import ru.ecom.jaas.ejb.form.SecUserForm;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -12,15 +15,10 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.ejb.services.entityform.PersistList;
-import ru.ecom.ejb.services.live.domain.journal.ChangeJournal;
-import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.jaas.ejb.domain.SecPolicy;
-import ru.ecom.jaas.ejb.domain.SecRole;
-import ru.ecom.jaas.ejb.form.SecUserForm;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Роли
@@ -29,16 +27,15 @@ import ru.ecom.jaas.ejb.form.SecUserForm;
 @Remote(ISecRoleService.class)
 public class SecRoleServiceBean implements ISecRoleService {
 
-    private final static Logger LOG = Logger.getLogger(SecRoleServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-    
+    private static final Logger LOG = Logger.getLogger(SecRoleServiceBean.class);
+
     public String getRoleInfo(long aRoleId) {
     	SecRole role = theManager.find(SecRole.class, aRoleId) ;
     	return role!=null? role.getName() : "" ;
     }
 
 	public List<SecUserForm>listUsersByRole(long aRoleId, boolean aIsSystemView) {
-		SecRole role = theManager.find(SecRole.class, aRoleId) ;
+	//	SecRole role = theManager.find(SecRole.class, aRoleId) ;
 		String add="" ;
 		if (!aIsSystemView) add=" and (su.isSystems is null or su.isSystems='0') " ;
         List<Object[]> roles = theManager.createNativeQuery("select su.id,su.fullname,su.login,su.comment from SecUser_SecRole as susr"
@@ -118,7 +115,7 @@ public class SecRoleServiceBean implements ISecRoleService {
 	}
 	
 	private static List<SecUserForm> convert(List<Object[]> aFrom) {
-        LinkedList<SecUserForm> ret = new LinkedList<SecUserForm>();
+        LinkedList<SecUserForm> ret = new LinkedList<>();
         for (Object[] user : aFrom) {
             SecUserForm form = new SecUserForm();
             form.setId(ConvertSql.parseLong(user[0]));
@@ -136,7 +133,7 @@ public class SecRoleServiceBean implements ISecRoleService {
         for (long idPolicy : aAdded) {
             SecPolicy policy = theManager.find(SecPolicy.class, idPolicy) ;
             if(policy!=null && !policies.contains(policy)) {
-                System.out.println("idPolicy = " + idPolicy);
+               LOG.info("idPolicy = " + idPolicy);
                 policies.add(policy) ;
             }
         }
@@ -151,7 +148,7 @@ public class SecRoleServiceBean implements ISecRoleService {
     }
 
     public CheckNode loadPoliciesByRole(long aRoleId) {
-    	TreeSet<Long> policiesSet  = new TreeSet<Long>();
+    	TreeSet<Long> policiesSet  = new TreeSet<>();
     	SecRole role = theManager.find(SecRole.class, aRoleId) ;
     	for (SecPolicy policy : role.getSecPolicies()) {
     		policiesSet.add(policy.getId()) ;
@@ -164,7 +161,7 @@ public class SecRoleServiceBean implements ISecRoleService {
     }
     // Загрузка дерева политик
     public CheckNode loadPolicies() {
-        TreeSet<Long> policiesSet  = new TreeSet<Long>();
+        TreeSet<Long> policiesSet  = new TreeSet<>();
         SecPolicy rootPolicy = findRootPolicy() ;
         CheckNode rootNode = new CheckNode(1, "/", false);
         add(rootPolicy, rootNode, policiesSet);
@@ -173,15 +170,10 @@ public class SecRoleServiceBean implements ISecRoleService {
 
     private SecPolicy findRootPolicy() {
     	try {
-        	SecPolicy policy = (SecPolicy) theManager.createQuery("from SecPolicy where parentSecPolicy is null")
-        		.getSingleResult() ;
-        	return  policy;
-    	} catch(NonUniqueResultException e) {
-    		throw new IllegalStateException("Должна быть одна головная политика (SecPolicy, где parentSecPolicy is null)")   ;
-    	} catch (org.hibernate.NonUniqueResultException e) {
+        	return  (SecPolicy) theManager.createQuery("from SecPolicy where parentSecPolicy is null").getSingleResult() ;
+    	} catch(NonUniqueResultException | org.hibernate.NonUniqueResultException e) {
     		throw new IllegalStateException("Должна быть одна головная политика (SecPolicy, где parentSecPolicy is null)")   ;
     	}
-    	
     }
     private void add(SecPolicy aPolicy, CheckNode aNode, TreeSet<Long> aPoliciesSet) {
     	

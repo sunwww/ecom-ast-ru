@@ -1,19 +1,5 @@
 package ru.ecom.web.tags;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.StringTokenizer;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.ecom.mis.ejb.service.birth.IPregnancyService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -27,10 +13,17 @@ import ru.nuzmsh.web.util.IdeTagHelper;
 import ru.nuzmsh.web.xhtml.Xa;
 import ru.nuzmsh.web.xhtml.Xli;
 
-public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.StringTokenizer;
 
-    private final static Log LOG = LogFactory.getLog(LinkCspTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
 
     /**
      * Устанавливать фокус на элемент

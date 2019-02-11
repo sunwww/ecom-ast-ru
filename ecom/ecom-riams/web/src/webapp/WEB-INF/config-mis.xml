@@ -7,6 +7,8 @@
 	<form-beans>
 		<form-bean name="extDispPlan_recordForm"			type="ru.ecom.mis.ejb.form.extdispplan.ExtDispPlanPopulationRecordForm"/>
 		<form-bean name="extDispPlan_planForm"			type="ru.ecom.mis.ejb.form.extdispplan.ExtDispPlanPopulationForm"/>
+		<form-bean name="mis_dispensaryCardForm"			type="ru.ecom.mis.ejb.form.patient.DispensaryCardForm"/>
+		<form-bean name="mis_dispensaryCardJournalForm"			type="ru.ecom.mis.web.action.patient.DispensaryJournalForm"/>
 
 	<!-- Справочник -->
 	<form-bean name="directory_entryForm"			type="ru.ecom.mis.ejb.form.directory.EntryForm"/>
@@ -19,6 +21,10 @@
         <form-bean name="calc_calculationsForm"			type="ru.ecom.mis.ejb.form.calc.CalculationsForm" />
 		<form-bean name="calc_calculatorForm"			type="ru.ecom.mis.ejb.form.calc.CalculatorForm" />
 		<form-bean name="calc_calculationsResultForm"	type="ru.ecom.mis.ejb.form.calc.CalculationsResultForm" />
+		<form-bean name="calc_interpretationForm"	type="ru.ecom.mis.ejb.form.calc.InterpretationForm" />
+		<form-bean name="calc_riskForm"	type="ru.ecom.mis.ejb.form.calc.CalcRiskForm" />
+		<form-bean name="calc_prescForm"	type="ru.ecom.mis.ejb.form.calc.PrescCalcForm" />
+		<form-bean name="calc_contraForm"	type="ru.ecom.mis.ejb.form.calc.ContraCalcForm" />
 	<!-- /Калькулятор -->
 		<form-bean name="mis_patientExternalServiceAccountForm"			type="ru.ecom.mis.ejb.form.patient.PatientExternalServiceAccountForm" />
 		<form-bean name="work_attorneyForm"			type="ru.ecom.mis.ejb.form.worker.AttorneyForm" />
@@ -113,7 +119,7 @@
 		<form-bean name="contract_accountOperationReturnForm" type="ru.ecom.mis.ejb.form.contract.OperationReturnForm" />
 		<form-bean name="contract_accountOperationAccrualForm" type="ru.ecom.mis.ejb.form.contract.OperationAccrualForm" />
 		<form-bean name="contract_accountOperationForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationForm" />
-		<form-bean name="contract_accountOperationServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationByMedServiceForm" />
+<!--		<form-bean name="contract_accountOperationServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationByMedServiceForm" /> -->
 		<form-bean name="contract_contractAccountRuleForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountRuleForm" />
 		<form-bean name="contract_contractGuaranteeGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeGroupForm" />
 		<form-bean name="contract_contractMedPolicyForm" type="ru.ecom.mis.ejb.form.contract.ContractMedPolicyForm" />
@@ -143,25 +149,17 @@
 		<form-bean name="contract_reportsForm" type="ru.ecom.mis.web.action.contract.ContractReportsForm" />
 		<form-bean name="mis_encodingAccordanceForm" type="ru.ecom.mis.ejb.form.identification.EncodingAccordanceForm"/>
 		<form-bean name="ecom_deleteJournalForm" type="ru.ecom.ejb.form.live.DeleteJournalForm"/>
-		<form-bean name="mis_kinsmanForm"
-			type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>	
+		<form-bean name="mis_kinsmanForm" type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>
+		<form-bean name="mis_lpuForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
+		<form-bean name="mis_lpuRequisiteForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuRequisiteForm" />
+
+		<form-bean name="voc_orgForm" type="ru.ecom.mis.ejb.form.patient.VocOrgForm" />
 			
-	
-		<form-bean name="mis_lpuForm"
-			type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
+		<form-bean name="voc_drugUNForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugUnlicensedNameForm"/>
 			
-		<form-bean name="voc_orgForm"
-			type="ru.ecom.mis.ejb.form.patient.VocOrgForm" />
-			
-		<form-bean name="voc_drugUNForm"
-			type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugUnlicensedNameForm"/>
-			
-		<form-bean name="voc_operationForm"
-			type="ru.ecom.mis.ejb.form.medcase.hospital.VocSurgicalOperationForm"/>
-		<form-bean name="voc_workFunctionForm"
-			type="ru.ecom.mis.ejb.form.worker.VocWorkFunctionForm"/>
-		<form-bean name="voc_postForm"
-			type="ru.ecom.mis.ejb.form.worker.VocPostForm"/>
+		<form-bean name="voc_operationForm" type="ru.ecom.mis.ejb.form.medcase.hospital.VocSurgicalOperationForm"/>
+		<form-bean name="voc_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.VocWorkFunctionForm"/>
+		<form-bean name="voc_postForm" type="ru.ecom.mis.ejb.form.worker.VocPostForm"/>
 
 		<form-bean name="mis_lpuAreaForm"
 			type="ru.ecom.mis.ejb.form.lpu.LpuAreaForm" />
@@ -249,6 +247,7 @@
 		
 
 		<form-bean name="mis_equipmentForm" type="ru.ecom.mis.ejb.form.equipment.EquipmentForm" />
+		<form-bean name="mis_kkmequipmentForm" type="ru.ecom.mis.ejb.form.equipment.KkmEquipmentForm" />
 		<form-bean name="mis_invalidityForm" type="ru.ecom.mis.ejb.form.patient.InvalidityForm" />
 		<form-bean name="mis_privilegeForm" type="ru.ecom.mis.ejb.uc.privilege.form.PrivilegeForm" />
 		<form-bean name="mis_drugNeedForm"  type="ru.ecom.mis.ejb.uc.privilege.form.DrugNeedForm" />
@@ -257,7 +256,7 @@
 		
 		<!-- Описание здания больницы -->
 		<form-bean name="mis_workPlaceForm" type="ru.ecom.mis.ejb.form.lpu.WorkPlaceForm" />
-		<form-bean name="mis_phonePlaceForm" type="ru.ecom.mis.ejb.form.lpu.PhonePlaceForm" />
+	<!--	<form-bean name="mis_phonePlaceForm" type="ru.ecom.mis.ejb.form.lpu.PhonePlaceForm" /> -->
 		<form-bean name="mis_buildingPlaceForm" type="ru.ecom.mis.ejb.form.lpu.BuildingPlaceForm" />
 		<form-bean name="mis_userCompForm" type="ru.ecom.mis.ejb.form.lpu.UserComputerForm" />
 		<form-bean name="mis_floorBuildingForm" type="ru.ecom.mis.ejb.form.lpu.FloorBuildingForm" />
@@ -319,14 +318,44 @@
 		<form-bean name="licence_documentParameterGroupForm" type="ru.ecom.mis.ejb.form.licence.DocumentParameterGroupForm" />
 		 -->
 		<form-bean name="doc_externalMedserviceForm" type="ru.ecom.mis.ejb.form.licence.ExternalMedserviceForm" />
-	
+
+		<!-- Онкологическое лечение -->
+		<form-bean name="oncology_contraForm" type="ru.ecom.oncological.ejb.form.OncologyContraForm"/>
+		<form-bean name="oncology_diagnosticForm" type="ru.ecom.oncological.ejb.form.OncologyDiagnosticForm"/>
+		<form-bean name="oncology_directionForm" type="ru.ecom.oncological.ejb.form.OncologyDirectionForm"/>
+		<form-bean name="oncology_case_reestrForm" type="ru.ecom.oncological.ejb.form.OncologyCaseReestrForm"/>
 	</form-beans>
 
 	<global-forwards></global-forwards>
 
 
 	<action-mappings>
+		<action path='/queueKiosk' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				scope="request"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/riams/queue_kiosk.jsp" />
+		</action>
 
+		<action path='/exportDispensary' type='ru.ecom.web.actions.base.ForwardAction'
+				name="mis_dispensaryCardJournalForm"
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/mis_dispensaryCard/export.jsp" />
+		</action>
+		<action path='/journal_svetofor' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				scope="request"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/riams/kiosk.jsp" />
+		</action>
+		<action path='/kiosk' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				scope="request"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/riams/kiosk.jsp" />
+		</action>
 
 		<action path='/extDispPlanAdd' type='ru.ecom.web.actions.base.ForwardAction'
 				name='mis_attachmentForm'
@@ -446,7 +475,23 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/list_by_period.jsp" />
         </action>
- <action path='/gener_ticket' type='ru.ecom.web.actions.base.ForwardAction'
+		<action path='/journal_robson' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/journal_robson.jsp" />
+		</action>
+
+		<action path='/smo_deniedHospitelByAttach' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session">
+			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_deniedHospitalByAttach.jsp" />
+		</action>
+
+
+		<action path='/gener_ticket' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
                 scope="session"
@@ -1076,6 +1121,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/patientWatch.jsp" />
         </action>
+		<action path='/wfConsultationsAll' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/wfConsultationsAll.jsp" />
+		</action>
 		<action path='/reportIMT' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
@@ -1090,12 +1142,61 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/report203.jsp" />
 		</action>
+		<action path='/journal_onco' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/oncology_case_reestr/reestr.jsp" />
+		</action>
+		<action path='/journal_cardiacScreening' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/journal_cardiacScreening.jsp" />
+		</action>
 		<action path='/reportKDL' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
 				scope="session"
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/reportKDL.jsp" />
+		</action>
+		<action path='/reportBandage' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/reportBandage.jsp" />
+		</action>
+		<!--action path='/jasper' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/jasper.jsp" />
+		</action>
+		<action path='/reportsCharged' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/reportsCharged.jsp" />
+		</action-->
+		<action path='/reestrNaOplatyDogovorov' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/reestrNaOplatyDogovorov.jsp" />
+		</action>
+		<action path='/finPlan' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/finPlan.jsp" />
 		</action>
         <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
                 name='directory_searchForm'
@@ -1104,7 +1205,7 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/list.jsp" />
         </action>
-        
+
 		<action path='/report_timeexecute' type='ru.ecom.web.actions.base.ForwardAction'
 				name='directory_searchForm'
 				validate='false'

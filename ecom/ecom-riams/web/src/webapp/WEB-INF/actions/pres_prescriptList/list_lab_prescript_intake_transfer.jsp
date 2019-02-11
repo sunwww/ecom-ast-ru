@@ -1,7 +1,6 @@
 
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -144,11 +143,13 @@
 		sqlAdd.append(" and p.intakeDate is null ") ;
 	}
     if (typeTransfer!=null && typeTransfer.equals("1")) {
-		sqlAdd.append(" and p.transferDate is not null and p.cancelDate is null") ;
+		sqlAdd.append(" and p.transferDate is not null ") ;
+		//sqlAdd.append(" and p.transferDate is not null and p.cancelDate is null") ;
 	} else if (typeTransfer!=null && (typeTransfer.equals("2")||typeTransfer.equals("4"))) {
 		sqlAdd.append(" and p.transferDate is null and p.cancelDate is null") ;
 	} else if (typeTransfer!=null && typeTransfer.equals("3")) {
-		sqlAdd.append(" and p.transferDate is null and p.cancelDate is not null ") ;
+		sqlAdd.append(" and p.cancelDate is not null ") ;
+		//sqlAdd.append(" and p.transferDate is null and p.cancelDate is not null ") ; //Пока будем выводить все забракованные (лаборатория от 11-05-2018
 	}
     if (typeDate!=null&&typeDate.equals("1")) {
     	request.setAttribute("dateSql", "p.planStartDate") ;
@@ -184,7 +185,7 @@
             	select 
     p.id as pid,
     case 
-    when p.cancelDate is not null then 'ОТМЕНЕНО' 
+    when p.cancelDate is not null then 'ОТМЕНЕНО/БРАК'
     when p.intakeDate is null then 'Назначено'
     when p.transferDate is null then 'Взят биоматериал в отделении'
     when p.prescriptCabinet_id is null then 'Передан биоматериал в лабораторию'
@@ -205,7 +206,7 @@
    ,mc.id as f12mcid
    ,'entityShortView-mis_patient.do?id='||pat.id as f13patid
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f14sls
-   ,ml.name as m15lname
+   ,coalesce(mlIntake.name,ml.name) as m15lname
   ,  case when mc.dateStart is null and p.cancelDate is null then coalesce(mc.id,0)||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
   ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
    , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as drecord
@@ -237,6 +238,7 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
+    left join MisLpu mlIntake on mlIntake.id=p.department_id
     left join vocprescripttype vpt on vpt.id=p.prescripttype_id
     where p.dtype='ServicePrescription'
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
@@ -296,7 +298,7 @@
    ,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
    ,list(distinct iwp.lastname||' '||iwp.firstname||' '||iwp.middlename) as f12intakefioworker
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
-       ,coalesce(wfCab.groupName)||' '||to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f14dttransfer
+       ,coalesce(wfCab.groupName,'')||' '||to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f14dttransfer
        ,to_char(p.cancelDate,'dd.mm.yyyy')||' '||cast(p.cancelTime as varchar(5)) as f15dtcancel
   , case when p.barcodeNumber is not null then 'ШК №'||p.barcodeNumber end as f16_barcode
     from prescription p

@@ -1,42 +1,34 @@
 package ru.ecom.report.excel;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.log4j.Logger;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.StringTokenizer;
-import java.util.Collection;
-import java.util.Iterator;
-
 import jxl.Cell;
 import jxl.CellType;
-import jxl.LabelCell;
-import jxl.NumberCell;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 import jxl.write.Label;
-import jxl.write.Number;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
-
+import org.apache.log4j.Logger;
 import ru.ecom.report.replace.IValueGetter;
 import ru.ecom.report.replace.ReplaceHelper;
 import ru.ecom.report.replace.SetValueException;
 import ru.nuzmsh.util.StringUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
 /**
  * Создание отчета
  */
 public class ReportEngine {
 
-	private final static Logger LOG = Logger.getLogger(ReportEngine.class);
+	private static final Logger LOG = Logger.getLogger(ReportEngine.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	/**
 	 * Создание отчета по шаблону
@@ -60,7 +52,6 @@ public class ReportEngine {
 			WritableSheet sheet = workbook.getSheet(0);
 
 			final int rowCount = 100;
-			int addedRowCount = 0;
 
 			for (int row = 1; row < rowCount; row++) {
 				// log("row = "+row) ;
@@ -72,12 +63,11 @@ public class ReportEngine {
 					String str = label.getString();
 					// System.out.println(row+" row = "+str);
 					if (str != null && str.startsWith("$$FOR")) {
-						System.out.println("for=" + str);
+						LOG.info("for=" + str);
 
 						int adding = iterateFor(workbook, sheet, row, str,
 								aGetter, replaceHelper);
 						row += adding;
-						addedRowCount += adding;
 						skip = true;
 					}
 				}
@@ -101,15 +91,7 @@ public class ReportEngine {
 			workbook.write();
 			workbook.close();
 			// PoiWorkbookUtil.writeWorkbook(wb, aOutputFile);
-		} catch (FileNotFoundException e) {
-			throw new ReportEngineMakeException("Ошибка создание отчета", e);
-		} catch (IOException e) {
-			throw new ReportEngineMakeException("Ошибка создание отчета", e);
-		} catch (SetValueException e) {
-			throw new ReportEngineMakeException("Ошибка создание отчета", e);
-		} catch (BiffException e) {
-			throw new ReportEngineMakeException("Ошибка создание отчета", e);
-		} catch (WriteException e) {
+		} catch (IOException | SetValueException | BiffException | WriteException e) {
 			throw new ReportEngineMakeException("Ошибка создание отчета", e);
 		}
 
@@ -118,7 +100,7 @@ public class ReportEngine {
 	public static String appendRowsToPrintArea(String aPrintArea, int aRows) {
 		if (StringUtil.isNullOrEmpty(aPrintArea))
 			return aPrintArea;
-		int last = aPrintArea.lastIndexOf("$");
+		int last = aPrintArea.lastIndexOf('$');
 		if (last != -1) {
 			String row = aPrintArea.substring(last + 1);
 			int rowInt = Integer.parseInt(row);
@@ -131,8 +113,7 @@ public class ReportEngine {
 
 	private int iterateFor(WritableWorkbook aWorkbook, WritableSheet aSheet,
 			int aRow, String aStr, IValueGetter aGetter,
-			ReplaceHelper aReplaceHelper) throws SetValueException,
-			RowsExceededException, WriteException {
+			ReplaceHelper aReplaceHelper) throws SetValueException, WriteException {
 
 		int forRow = aRow;
 		int valueRow = aRow + 1;
@@ -154,18 +135,18 @@ public class ReportEngine {
 		// 2. массив со стилями для ячеек из нижней строки
 
 		final int MAX_COLS = getMaxCols(valueRow, aSheet);
-		HSSFCellStyle styles[] = new HSSFCellStyle[MAX_COLS];
-		for (short i = 0; i < styles.length; i++) {
-			Cell cell = aSheet.getCell(i, styleRow);
+	//	HSSFCellStyle[] styles = new HSSFCellStyle[MAX_COLS];
+	//	for (short i = 0; i < styles.length; i++) {
+		//	Cell cell = aSheet.getCell(i, styleRow);
 			// FIXME STYLES
 			// if(cell!=null && cell.getCellStyle()!=null) {
 			// styles[i] = cell.getCellStyle() ;
 			// } else {
 			// styles[i] = null ;
 			// }
-		}
+	//	}
 		// 3. масси для expression
-		String expressions[] = new String[MAX_COLS];
+		String[] expressions = new String[MAX_COLS];
 		for (int i = 0; i < expressions.length; i++) {
 			String str = aSheet.getCell(i, valueRow).getContents(); // PoiCellUtil.getString(valueRow,
 																	// i);
@@ -219,10 +200,6 @@ public class ReportEngine {
 	private static int getMaxCols(int aRow, WritableSheet aSheet) {
 		int max = aSheet.getColumns() + 1;
 		return max > 255 ? 255 : max;
-	}
-
-	private static void log(String aLog) {
-		System.out.println(aLog);
 	}
 
 	private static void fillRow(WritableSheet aSheet, int aRow,

@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -43,6 +42,7 @@
     <msh:sideMenu>
     	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/JournalByUsername" name="Учет направлений" action="/smo_journalDirectionByUsername_list.do"/>
     	<msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time/Create" name="Создание дополнительного времени" action="/work_create_timeBySpecialist.do"/>
+    	<msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time/Create" name="Создание времени по специалисту" action="/createNewTime.do"/>
     	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/PreRecord" name="Пред. запись" action="/js-smo_direction-preRecorded.do"/>
     	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/PreRecordMany" name="Пред. запись неск-ко специалистов" action="/js-smo_direction-preRecordedMany.do"/>
     	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/Journal" name="Журнал направленных" action="/visit_journal_direction.do"/>
@@ -58,23 +58,7 @@
   request.setAttribute("remoteAddress" , request.getRemoteAddr()) ;
   request.setAttribute("username" , LoginInfo.find(request.getSession(true)).getUsername()) ;
   %>
-  <ecom:webQuery name="comport_list" nativeSql="
-  select wp.comPort,wp.id from workPlace wp left join SecUser su on su.id=wp.user_id where wp.dtype='UserComputer' and (wp.remoteAddress='${remoteAddress}' or wp.dynamicIp='1' and su.login='${username}')
-  "/>
-  <%
-  ActionUtil.getValueByListDef("comport_list", "port_com","COM3", request) ;
-  %>
-    <msh:ifInRole roles="/Policy/Mis/Patient/FindByBarcode">
-
-	<object id="cadesplugin"  class="hiddenObject" type="application/x-cades">
-    </object>
-    <applet code="CommRead" archive="js-mis_patient-CommRead.do, js-mis_patient-jssc.do, js-mis_patient-barcode.do" width=1 height=1>
-    <param name = "MAYSCRIPT" value = "TRUE">
-    <param name = "comport" value = "${port_com}">
-    <param name = "initial_focus" value = "false">
-    </applet>
-    </msh:ifInRole>
-  <msh:ifNotInRole roles="/Policy/MainMenu/Patient">
+   <msh:ifNotInRole roles="/Policy/MainMenu/Patient">
 	    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View" 
 	    	styleId="stac_findSlsByStatCard"
 	    	action="/stac_findSlsByStatCard" name="Поиск по номеру стат.карты"
@@ -155,7 +139,7 @@
         <msh:table viewUrl="entityShortView-mis_patient.do" name="list_1" 
         action="entityView-mis_patient.do" idField="id" disableKeySupport="true"
         navigationAction="mis_patients.do?${infoparam}"
-        noDataMessage=""
+        noDataMessage="" escapeSymbols="false"
         >
           <msh:tableColumn columnName="Код" property="patientSync" guid="89c74-a164-4c5f-8fa9-5501c300bbf2" />
           <msh:tableColumn columnName="Фамилия" property="lastname" guid="87779c74-a164-4c5f-8fa9-5501c300bbf2" />
@@ -169,7 +153,7 @@
         
         <msh:table viewUrl="entityShortView-mis_patient.do" name="list_2" 
         action="entityView-mis_patient.do" idField="id" disableKeySupport="true"
-        noDataMessage=""
+        noDataMessage=""  escapeSymbols="false"
         >
           <msh:tableColumn columnName="Код" property="patientSync" guid="89c74-a164-4c5f-8fa9-5501c300bbf2" />
           <msh:tableColumn columnName="Фамилия" property="lastname" guid="87779c74-a164-4c5f-8fa9-5501c300bbf2" />
@@ -183,7 +167,7 @@
         
         <msh:table viewUrl="entityShortView-mis_patient.do" name="list_3" 
         action="entityView-mis_patient.do" idField="id" disableKeySupport="true"
-        noDataMessage=""
+        noDataMessage="" escapeSymbols="false"
         >
           <msh:tableColumn columnName="Код" property="patientSync" guid="89c74-a164-4c5f-8fa9-5501c300bbf2" />
           <msh:tableColumn columnName="Фамилия" property="lastname" guid="87779c74-a164-4c5f-8fa9-5501c300bbf2" />

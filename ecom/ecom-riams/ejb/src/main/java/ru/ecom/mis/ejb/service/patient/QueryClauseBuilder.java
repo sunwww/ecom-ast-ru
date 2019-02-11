@@ -1,22 +1,19 @@
 package ru.ecom.mis.ejb.service.patient;
 
-import java.util.LinkedList;
+import org.apache.log4j.Logger;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.alg.common.IsPensioner;
-import ru.nuzmsh.util.StringUtil;
+import java.util.LinkedList;
 
 /**
  *
  */
 public class QueryClauseBuilder {
 
-    private final static Logger LOG = Logger.getLogger(QueryClauseBuilder.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(QueryClauseBuilder.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
 
     public void addLike(String aParameterName, Object aValue) {
@@ -206,6 +203,6 @@ public class QueryClauseBuilder {
         private final boolean isBetween ;
         private final boolean isParam ;
     }
-    LinkedList<QueryParameter> thePameters = new LinkedList<QueryParameter>();
+    LinkedList<QueryParameter> thePameters = new LinkedList<>();
 //    Map<String, Object> theParameters = new TreeMap<String, Object>();
 }

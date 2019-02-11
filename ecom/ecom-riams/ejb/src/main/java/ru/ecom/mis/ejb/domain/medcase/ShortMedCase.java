@@ -1,17 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -27,6 +15,13 @@ import ru.ecom.poly.ejb.domain.voc.VocDispanseryRegistration;
 import ru.ecom.poly.ejb.domain.voc.VocReason;
 import ru.ecom.poly.ejb.domain.voc.VocVisitResult;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Короткий СМО

@@ -37,9 +37,26 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/MedPolicy/Show" name="Полисы" params="id"  
     	action='/stac_policiesEdit'  key='Alt+4' 
     	styleId="stac_policies"
-    	title='Полисы данного случая лечения в стационаре!'/> 
-    	
-   </msh:sideMenu>
+    	title='Полисы данного случая лечения в стационаре!'/>
+
+	<msh:sideLink
+				  params="id"
+				  action="/entityParentPrepareCreate-oncology_case_reestr.do"
+				  name="Создать онкологический случай"
+				  roles="/Policy/Mis/Oncology/Case/Create"/>
+
+	<msh:sideLink key="ALT+6"
+				  params="id"
+				  action="/entityParentPrepareCreate-preg_shortConfCertificate.do"
+				  name="Добавить родовый сертификат"
+				  roles="/Policy/Mis/Pregnancy/ConfinementCertificate"/>
+
+	<msh:sideLink key="ALT+7"
+				  params=""
+				  action=".javascript:setOutOfReceivingDep('${param.id}','.do')"
+				  name="Пациент выбыл из приёмника"
+				  roles="/NOEXTIST/Policy/Mis/MedCase/Stac/Ssl/View"/>
+</msh:sideMenu>
   
    <msh:sideMenu title="Показать">
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
@@ -122,6 +139,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="Изменить рост/вес/ИМТ"
 					 action='/javascript:showIMTCloseDocument()' title='Изменить рост/вес/ИМТ' styleId="stac_slo"
 	   />
+	   <msh:sideLink roles="/Policy/Mis/Journal/JasperReports" name="Справка о стоимости"
+					 action='/javascript:showReferenceFSS()' title='Справка о стоимости' styleId="stac_slo"
+	   />
 </msh:sideMenu>
 
 
@@ -162,18 +182,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
      <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.id}"
      	action='/javascript:initSelectPrinter("print-preghistory.do?s=HospitalPrintService&amp;m=printPregHistoryByMC&id=${param.id}",1)' 
      	name="Истории родов" title="Печать истории родов"/>
-		
 </msh:sideMenu>
-
 <msh:sideMenu>
-    	
-    	
-    	
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit" 
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
     	name="Выписка &larr;"   params="id"  action='/entityParentEdit-stac_sslDischarge'  
     	key='Alt+9' title='Выписка' styleId="stac_sslDischarge" />
-
-    <msh:sideLink roles="/Policy/Stac/ExpOmcService/Show" name="Цена по ОМС"   params="slsId"  action='/viewCalcPriceResultSls' title='Результат определения цены'/>  
 
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-stac_deathCase.do?short=Short&id=${param.id}','.do')" name='Случай смерти' title="Просмотр случая смерти"
         	roles="/Policy/Mis/MedCase/DeathCase/View" />
@@ -182,20 +195,20 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		params="id"  action='/entityParentList-stac_birthCase' title='Просмотр случая рождения'
 		styleId="stac_birthCase"
 		/>
-	<msh:sideLink confirm="Вы действительно желаете удалить данные выписки?"
-			roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
-				  name="Удалить данные выписки"   params="id"  action='/javascript:deleteDischargeIn2Hours()'
-				  title='Удалить данные выписки' styleId="stac_birthCase" />
-<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Delete;/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin" 
+		<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View"  name="Направления на госпитализацию"
+		params="id"  action='/entityParentList-smo_planHospitalByHosp' title='Список направлений на госпитализацию'
+		styleId="smo_planHospitalByHosp"
+		/>
+<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Delete;/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin"
     	name="Удалить"   params="id"  action="/entityParentDeleteGoParentView-stac_ssl"  
     	key='ALT+DEL' title='Удалить' confirm="Удалить?" />
 </msh:sideMenu>
 <msh:sideMenu title="Администрирование"  >
-	<msh:sideLink action=".javascript:deleteDischarge('${param.id}','.do')"
+	<msh:sideLink action=".javascript:deleteDischargeCheck('${param.id}','.do')"
 		name="Удалить данные выписки"
 		title="Удалить данные выписки"
 		confirm="Вы действительно желаете удалить данные выписки?"
-		roles="/Policy/Mis/MedCase/Stac/Ssl/DischargeDelete"
+		roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
 		styleId="deleteDischarge"
 	/>
 	<msh:sideLink action="/entityPrepareCreate-sec_userPermission.do?type=2&ido=${param.id}"
@@ -244,29 +257,41 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	  getDefinition("js-doc_externalMedservice-list.do?short=Short&id=${param.id}", null);
   }
   </script>
-  <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/DischargeDelete">
-		
-		<script type="text/javascript">
-	
-  		function deleteDischarge(aId) {
-  			HospitalMedCaseService.deleteDischarge(
-     		'${param.id}', {
-     			callback: function(aString) {
-     				if ($('dateFinish')) $('dateFinish').value="" ;
-     				if ($('dateFinishReadOnly')) $('dateFinishReadOnly').value="" ;
-     				if ($('dischargeTime')) $('dischargeTime').value="" ;
-     				if ($('dischargeTimeReadOnly')) $('dischargeTimeReadOnly').value="" ;
-     				alert("Данные удалены") ;
-     			}
-     		}
-     	);
-  		}
-  	</script>
-  </msh:ifInRole>
 
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script> 
 <script type="text/javascript">
-
+    function deleteDischargeCheck(aId) {
+        HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess(
+            aId, {
+                callback: function(res) {
+                    if (res==true) {
+                        deleteDischarge(${param.id});
+                    }
+                    else {
+                        HospitalMedCaseService.checkUserIsAdminToDeleteDischarge(
+                            {
+                                callback: function(res) {
+                                    if (res==true) {
+                                        deleteDischarge(${param.id});
+                                    }
+                                    else alert("Невозможно удалить данные! Удалить её может только лечаший врач в течение 1го календарного дня после выписки или администратор системы.");
+                                }}) ;
+                    }
+                }}) ;
+    }
+    function deleteDischarge(aId) {
+        HospitalMedCaseService.deleteDischarge(
+            '${param.id}', {
+                callback: function(aString) {
+                    if ($('dateFinish')) $('dateFinish').value="" ;
+                    if ($('dateFinishReadOnly')) $('dateFinishReadOnly').value="" ;
+                    if ($('dischargeTime')) $('dischargeTime').value="" ;
+                    if ($('dischargeTimeReadOnly')) $('dischargeTimeReadOnly').value="" ;
+                    alert("Данные удалены") ;
+                }
+            }
+        );
+    }
 
 function gotoPregHistory(aMedCase,aUrl) {
  	PregnancyService.getPregHistoryByMedCase(
@@ -324,14 +349,36 @@ function gotoNewBornHistory(aMedCase,aUrl) {
 			  }
 			}) ;
   }
-  function deleteDischargeIn2Hours() {
-      HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess2Hours(
-		  ${param.id}, {
-          callback: function(res) {
-              if (res==true) {
-                  deleteDischarge(${param.id});
-			  }
-			  else alert("Невозможно удалить данные! Выписка должна быть создана не более 2х часов назад. Удалить её может только лечаший врач.");
-          }}) ;
+  function showReferenceFSS() {
+      HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
+          callback: function (res) {
+              var resMas = res.split("#");
+              if (res != "##") {
+                  var stat=$('statCardNumber').value;
+                  var year=$('dateFinish').value.substring(6,11);
+                  window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2FCostCertificate&standAlone=true&decorate=no"
+                      + "&j_username=" + resMas[1] + "&j_password=" + resMas[2]+"&hn="+stat+"&fy="+year+ "&user=" + document.getElementById('current_username_li').innerHTML);
+              }
+              else
+                  alert("Нет настройки адреса сервиса!");
+          }
+      });
   }
+  //Milamesher #118 06092018 - проставить отметку, что пациент выбыл из приёмника
+	function setOutOfReceivingDep(aMedCase) {
+        HospitalMedCaseService.setOutOfReceivingDep(aMedCase, {
+            callback: function (res) {
+                if (res!="##") {
+                    var resMas = res.split("#");
+                    if (resMas[0]!=null && resMas[0]!='' && resMas[1]!=null && resMas[1]!='') {
+                        if ($('transferDate')) $('transferDate').value=resMas[0];
+                        if ($('transferDateReadOnly')) $('transferDateReadOnly').value=resMas[0];
+                        if ($('transferTime')) $('transferTime').value=resMas[1];
+                        if ($('transferTimeReadOnly')) $('transferTimeReadOnly').value=resMas[1];
+                        if (!$('transferDate')) alert("Отмечено: пациент выбыл из приёмника"); //если из СЛС, чтобы видно было
+					}
+				}
+            }
+        });
+	}
 </script>

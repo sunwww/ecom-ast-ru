@@ -1,9 +1,9 @@
 package ru.ecom.diary.ejb.stac.test;
 
+import ru.ecom.diary.ejb.stac.IStacDoctorService;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-
-import ru.ecom.diary.ejb.stac.IStacDoctorService;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,7 +13,7 @@ import ru.ecom.diary.ejb.stac.IStacDoctorService;
  * To change this template use File | Settings | File Templates.
  */
 public class StacDoctorServiceExample implements IStacDoctorService {
-    public String getFio(long aId) throws RemoteException {
+    public String getFio(long aId) {
         switch ((int)aId) {
             case 1:
                 return ""  ;
@@ -37,7 +37,7 @@ public class StacDoctorServiceExample implements IStacDoctorService {
 
 
     public ArrayList<Long> getChild(long aId) throws RemoteException {
-        ArrayList<Long> list = new ArrayList<Long>();
+        ArrayList<Long> list = new ArrayList<>();
         switch ((int)aId) {
             case 0:
                 list.add(Long.valueOf(1)) ;
@@ -58,6 +58,6 @@ public class StacDoctorServiceExample implements IStacDoctorService {
     }
 
     public ArrayList<Long> getDepartment(long aId) throws RemoteException {
-        return new ArrayList<Long>() ;
+        return new ArrayList<>() ;
     }
 }

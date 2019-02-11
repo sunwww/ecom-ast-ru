@@ -1,11 +1,4 @@
 package ru.ecom.mis.ejb.domain.psychiatry;
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -13,16 +6,14 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMarriageStatus;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocFinancialSituation;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychLeftMessage;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychRecommendation;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychSomaticDisease;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychSuicideNature;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocSuicidalActivity;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocSuicidalAttitude;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocSuicidalMotive;
-import ru.ecom.mis.ejb.domain.psychiatry.voc.VocSuicideRegret;
+import ru.ecom.mis.ejb.domain.psychiatry.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.sql.Date;
+import java.sql.Time;
  /**
   * Суицид
   */

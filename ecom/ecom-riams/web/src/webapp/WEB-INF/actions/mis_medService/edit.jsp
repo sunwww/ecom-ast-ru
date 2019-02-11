@@ -8,6 +8,7 @@
 
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="mis_medService" />
+      <tags:medserviceTemplatesCopy name="medserviceTemplatesCopy" />
     <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Медицинская услуга">
       <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="e2054544-85-a21c-3bb9b4569efc">
         <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medService" name="Изменить" roles="/Policy/Mis/MedService/Edit" />
@@ -81,6 +82,9 @@
         	<msh:checkBox property="showInReport" label="Отображать результаты выполнения анализа в журнале состоящих в отделении" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+        	<msh:checkBox property="isAbortRequired" label="Обязательно указывать тип аборта при создании операции" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:separator label="Услуга может оказываться:" colSpan="4"/>
         </msh:row>
         <msh:row>
@@ -143,7 +147,7 @@
     	</msh:section>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Diary/Template/View" guid="3a4d6eb2-8dac-420a-9dcf-4f47584d9d61">
-        <msh:section title="Шаблоны заключений" createRoles="/Policy/Diary/Template/Create" createUrl="entityParentPrepareCreate-diary_template.do?id=${param.id}">
+        <msh:section title="Шаблоны заключений <a href='javascript:void(0)' onclick='showmedserviceTemplatesCopy(${param.id })'> Копировать в услугу</a>" createRoles="/Policy/Diary/Template/Create" createUrl="entityParentPrepareCreate-diary_template.do?id=${param.id}">
           <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm" guid="templates" />
           <msh:table name="templates" action="diary_templateView.do" idField="id" guid="16cdff9b--8997-eebc80ecc49c">
             <msh:tableColumn property="title" columnName="Заголовок" guid="2fd022ea-59b0-4cc9a3ddc91f" />
@@ -156,14 +160,16 @@
 			<msh:section title="Соответствия с прейскурантом">
 			<ecom:webQuery name="pricePosition" 
 			nativeSql="select pms.id as pmsid,pl.name as plname,pg.name as pgname,pp.code as ppcode
-			,pp.name as ppname,pp.cost from PriceMedService pms
+			,pp.name as ppname,pp.cost
+			,case when pms.dateTo is null and pp.dateTo is null then '' else 'color:red' end as f7_style
+			from PriceMedService pms
 			left join PricePosition pp on pp.id=pms.pricePosition_id
 			left join priceposition pg on pg.id=pp.parent_id
 			left join pricelist pl on pl.id=pp.priceList_id
 			where pms.medService_id=${param.id}
 			"
 			/>
-				<msh:table name="pricePosition" 
+				<msh:table name="pricePosition" styleRow="7"
 				viewUrl="entityParentView-contract_priceMedService.do?short=Short"
 				action="entityParentView-contract_priceMedService.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
@@ -230,13 +236,15 @@
 	      	 	update() ;
 	      	 });
 	      	 function update() {
-	      	 	var text ;
-	      	 	text = $('vocMedServiceName').value ;
-	      	 	var cnt = text.indexOf(' ') ;
-	      	 	if (cnt>0) {
-		      	 	$('code').value=text.substring(0,cnt) ;
-		      	 	$('name').value=text.substring(cnt+1);
-	      	 	}
+	      	     if (!$('code').value) {
+                     var text ;
+                     text = $('vocMedServiceName').value ;
+                     var cnt = text.indexOf(' ') ;
+                     if (cnt>0) {
+                         $('code').value=text.substring(0,cnt) ;
+                         $('name').value=text.substring(cnt+1);
+                     }
+                 }
 	      	 }
     	</script>
     </msh:ifFormTypeIsNotView>

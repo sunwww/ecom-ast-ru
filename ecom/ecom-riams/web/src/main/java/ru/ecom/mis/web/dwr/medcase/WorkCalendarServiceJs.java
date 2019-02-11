@@ -1,19 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
 import org.jdom.IllegalDataException;
-
+import org.json.JSONException;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -26,7 +14,140 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
+
 public class WorkCalendarServiceJs {
+
+	public String getActualReserves (HttpServletRequest aRequest) throws NamingException {
+		String sql = "select id, name, code from VocServiceReserveType";
+		return Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSqlGetJSON(new String[]{"id","name","code"},sql,50);
+	}
+
+	/** Возвращаем/создаем первое свободное время по рабочей функции и дню */
+	public String getFreeCalendarTimeForWorkFunction(Long aWorkFunctionId, String aCalendarDay, HttpServletRequest aRequest) throws NamingException, ParseException, JSONException {
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		return Injection.find(aRequest).getService(IWorkCalendarService.class).getFreeCalendarTimeForWorkFunction(aWorkFunctionId,aCalendarDay,username);
+	}
+
+	/** Изменяем тип резерва для времени по его id */
+	public String changeScheduleElementReserve(Long wcdId,Long reserveTypeId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+			service.executeUpdateNativeSql("update workcalendartime set reservetype_id="+(reserveTypeId>0?reserveTypeId+"":"null")+" where id="+wcdId);
+		return "0";
+	}
+
+	/** Помечаем время как удаленное по его id */
+	public String setScheduleElementIsDelete(String wctId,HttpServletRequest aRequest) throws NamingException {
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		int i = service.executeUpdateNativeSql("update workcalendartime set isdeleted=true where id="+wctId);
+		return i+"";
+	}
+
+	/** Помечаем день как удаленный по его id */
+	public String setScheduleDayIsDelete(String wcdId,HttpServletRequest aRequest) throws NamingException {
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update workcalendartime set isdeleted=true where workcalendarday_id="+wcdId);
+		int i = service.executeUpdateNativeSql("update workcalendarday set isdeleted=true where id="+wcdId);
+		return i+"";
+	}
+
+	/** Строим таблицу с расписанием врача по раб.функции на нужную неделю*/
+	public String buildSheduleTable(String workFunctionId,String weekplus,HttpServletRequest aRequest) throws NamingException {
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+
+		String workcalendarId="";
+		Collection<WebQueryResult> list = service.executeNativeSql("select id from workcalendar where workfunction_id="+workFunctionId);
+		if (!list.isEmpty()) {
+			WebQueryResult w = list.iterator().next();
+			workcalendarId = w.get1().toString();
+		}
+
+		int wek = Integer.parseInt(weekplus);
+		String date="", mondey="";
+		list = service.executeNativeSql("select EXTRACT(day  FROM getFirstDay()+"+wek+")||' '||getMonthByDate(getFirstDay()+"+wek+")||" +
+				"' - '|| EXTRACT(day  FROM getFirstDay()+6+"+(wek)+")||' '||getMonthByDate(getFirstDay()+6+"+(wek)+"),getFirstDay()");
+		if (!list.isEmpty()) {
+			WebQueryResult w = list.iterator().next();
+			date = w.get1().toString();
+			mondey = w.get2().toString();
+		}
+//Milamesher 14112018 добавлены чекбоксы для выделения и изменения резерва нескольких времён
+		String sql ="select " +
+				"getWeekbyDate (wcd.calendardate)," +
+				"prettyDate(wcd.calendardate,wcd.id),  " +
+				"wcd.id," +
+				"getList('select ''<td contextmenu=\"cell\" id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" ><input type=\"checkbox\" id=\"ch''||id||''\">''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime " +
+				"where workcalendarday_id = '||wcd.id||' and (isDeleted is null or isDeleted = false) order by timefrom','')\n" +
+				"from workcalendarday  wcd\n" +
+				"where wcd.workcalendar_id  = "+workcalendarId+" and wcd.calendardate between (date'"+mondey+"'+"+wek+") and (date'"+mondey+"'+6+"+(wek) +
+				") and (isdeleted is null or isdeleted = false) \n" +
+				"group by wcd.id,wcd.calendardate \n" +
+				"order by wcd.calendardate \n";
+
+		list = service.executeNativeSql(sql);
+
+		List<String> st = new ArrayList<String>();
+		int i=0;
+		for (WebQueryResult t:list) {
+			st.add(t.get2().toString()+t.get4().toString());
+		}
+
+		String html="<div id=\"head-cont\">" +
+				"<a href=\"#\" id=\"alink\" onClick=\"prevWeek()\" >&#8666; </a>" + date + "<a href=\"#\" id=\"alink\" onClick=\"nextWeek()\"> &#8667;</a></div>" +
+				"<div id=\"body-cont\"><table id=\"table\">" +
+				"<tbody>";
+		for(String ss:st){
+			html+="<tr>"+ss+"</tr>";
+		}
+		return html+"</tbody></table></div>";
+	}
+
+
+	/** Создание дат и времен по заданному количеству визитов или по длительности визита*/
+	//upd. Milamesher 20112018 учитываются дни недели
+	public String createDateTimes(String dateFrom,String dateTo
+			,Long workFunctionId,String timeFrom,String timeTo
+			, String countVis,String type,String reserveType,String evenodd, Boolean all, Boolean mon, Boolean tue, Boolean wed
+								  ,Boolean thu, Boolean fri, Boolean sat, Boolean sun, HttpServletRequest aRequest) throws NamingException {
+
+		if(reserveType.equals("")){
+			reserveType=null;
+		}
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+
+		String workcalendarId="";
+		Collection<WebQueryResult> wc = service.executeNativeSql("select id from workcalendar where workfunction_id="+workFunctionId);
+		if (!wc.isEmpty()) {
+			WebQueryResult w = wc.iterator().next();
+			workcalendarId = w.get1().toString();
+		}
+		//select createSheduleByContinueVis('18.06.2018','20.06.2018',1,'08:00:00','09:00:00','10m')
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		if(type.equals("1")) {
+			service.executeNativeSql("select createSheduleByContinueVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m',"+reserveType+","+evenodd+",'"+username+"',"+all+","+mon+","+
+					tue+","+wed+","+thu+","+fri+","+sat+","+sun+")");
+		}else {
+			service.executeNativeSql("select createSheduleByCountVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "',"+reserveType+","+evenodd+",'"+username+"',"+all+","+mon+","+
+					tue+","+wed+","+thu+","+fri+","+sat+","+sun+")");
+		}
+		return "yep."+dateFrom+">>"+dateTo+">>"+workcalendarId;
+	}
+
 	public String setAutogenerateByWorkCalendar(Long aWcId,Long aVal, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("update WorkCalendar set autoGenerate='"+aVal+"' where id='"+aWcId+"'") ;
@@ -196,7 +317,7 @@ public class WorkCalendarServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		StringBuilder sql = new StringBuilder() ;
-		Collection<WebQueryResult> list =null;
+		Collection<WebQueryResult> list ;
 
 		sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
 		sql.append(" from WorkFunction wf")
@@ -223,7 +344,7 @@ public class WorkCalendarServiceJs {
 			.append(" left join patient wp on wp.id=w1.person_id ")
 			.append("where su.login='").append(username).append("' and wc1.id is not null ") ;
 		Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString());
-		if (list1.isEmpty()) list.addAll(list1) ;
+		if (!list1.isEmpty()) list.addAll(list1) ;
 		if (anyWFadd) {
 			sql = new StringBuilder() ;
 			sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
@@ -264,12 +385,13 @@ public class WorkCalendarServiceJs {
 		Calendar cal = Calendar.getInstance() ;
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
 		sql.append("select wcd.id as wcdid, to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate ") ;
-		sql.append(" from WorkCalendarDay wcd left join WorkCalendar wc on wc.id=wcd.workCalendar_id where wc.workFunction_id='").append(aWorkFunction).append("' and wcd.calendarDate between to_date('")
+		sql.append(" from WorkFunction wf left join WorkCalendar wc on wc.id=coalesce(wf.group_id, wf.id) left join WorkCalendarDay wcd on wcd.workCalendar_id =wc.id where wf.id='").append(aWorkFunction).append("' and wcd.calendarDate between to_date('")
 		.append(format.format(cal.getTime()))
 		.append("','dd.mm.yyyy') and to_date('");
 		cal.add(Calendar.DATE, 14) ;
 		sql.append(format.format(cal.getTime()))
 		.append("','dd.mm.yyyy') order by wcd.calendarDate") ;
+		System.out.printf("sql="+sql);
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		StringBuilder res = new StringBuilder() ;
 		res.append("<ul>") ;
@@ -796,8 +918,9 @@ public class WorkCalendarServiceJs {
 		sql.append(" left join MisLpu m2 on m2.id=w.lpu_id") ; 
 		sql.append(" left join WorkCalendar wc on wc.workFunction_id=wf.id") ;
 		sql.append(" left join WorkCalendarDay wcd on wcd.workCalendar_id=wc.id") ;
- 
-		sql.append(" where wcd.calendarDate>=Current_date");
+		sql.append(" left join WorkCalendarTime wct on wct.workCalendarDay_id=wcd.id") ;
+		sql.append(" where wcd.calendarDate>=Current_date and (wcd.isDeleted is null or wcd.isDeleted='0')");
+		sql.append(" and wct.medcase_id is null and (wct.isDeleted is null or wct.isDeleted='0')");
 		if (remoteUser) sql.append(" and (wf.DTYPE='PersonalWorkFunction' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0')) and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0')") ;
 		sql.append(" group by vwf.id,vwf.code,vwf.name") ;
 		sql.append(" order by vwf.name") ;
@@ -966,7 +1089,7 @@ public class WorkCalendarServiceJs {
 		sql.append(" left join workcalendartime wct on wct.workcalendarday_id=wcd.id");
 		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 		sql.append(" where wc.id='").append(aWorkCalendar).append("'"); 
-		sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and to_char(wcd.calendardate,'mm.yyyy')='")
+		sql.append(" and (wcd.isDeleted is null or wcd.isDeleted='0') and (wct.isDeleted is null or wct.isDeleted='0') and to_char(wcd.calendardate,'mm.yyyy')='")
 			.append(aMonth).append(".").append(aYear).append("'");
 		if (isRemoteUser) sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
 		sql.append(" group by wcd.id,wcd.calendardate");
@@ -1141,6 +1264,11 @@ public class WorkCalendarServiceJs {
 		return res ;
 	}
 	//TODO доделать
+	/*
+	lastrelease: Milamesher 01.03.2018 (#91)
+	Список услуг из medcase в расписании, а не из предварительной записи.
+	В подсказке - ФИО регистратора medcase, дата и время создания.
+	 */
 	public String getTimesByWorkCalendarDay(Long aWorkCalendar,Long aWorkCalendarDay,Long aVocWorkFunction,HttpServletRequest aRequest) throws NamingException, JspException {
 		StringBuilder sql = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -1150,8 +1278,7 @@ public class WorkCalendarServiceJs {
 			.append(" ,wct.medCase_id");
 		sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')") ;
 		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' тел. '||wct.phone,' тел. '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
-		sql.append("") ;
-		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||coalesce(case when ms.shortname='' then null else ms.shortname end,ms.name,'') as f7_fio") ;
+		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||case when wct.service is not null then coalesce(ms.shortname,ms.name) else (select list(coalesce(ms.shortname,ms.name)) from medcase servMc left join medservice ms on ms.id=servMc.medservice_id where servMc.parent_id=vis.id ) end as f7_fio") ;
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
 		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as f12_patid")
@@ -1173,12 +1300,14 @@ public class WorkCalendarServiceJs {
 			sql.append(",cast('-' as varchar(1)) as emp1,cast('-' as varchar(1)) as emp2");
 		}
 
-		sql.append(" ,case when wct.createdateprerecord is not null then wct.createprerecord||' '||to_char(wct.createdateprerecord,'dd.MM.yyyy')||' '||cast(wct.createtimePrerecord as varchar(5)) end as f19_prerecord_info") ;
+		sql.append(" ,case when vis.username is not null then case when wct.createdateprerecord is not null then wct.createprerecord||' '||to_char(wct.createdateprerecord,'dd.MM.yyyy')||' '||cast(wct.createtimePrerecord as varchar(5))||cast(' (предв. зап.)' as char(15)) else '' end") ;
+		sql.append(" ||' '||vis.username||' '||to_char(vis.createdate,'dd.MM.yyyy')||' '||cast(vis.createtime as varchar(5))||cast(' (напр.)' as char(9)) ");
+		sql.append(" else case when wct.createdateprerecord is not null then wct.createprerecord||' '||to_char(wct.createdateprerecord,'dd.MM.yyyy')||' '||cast(wct.createtimePrerecord as varchar(5))||cast(' (предв. зап.)' as char(15)) end end as f19_prerecord_info") ;
 		sql.append(" from WorkCalendarTime wct") ;
 		sql.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id");
-		sql.append(" left join MedService ms on ms.id=wct.service");
-		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
-		sql.append(" left join MedCase vis on vis.id=wct.medCase_id")
+		sql.append(" left join MedCase vis on vis.id=wct.medCase_id");
+		sql.append(" left join MedService ms on wct.service=ms.id");
+		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id")
 			.append(" left join SecUser su on su.login=wct.createPreRecord ") 
 			.append(" left join SecUser su1 on su1.login=vis.username ");
 		sql.append(" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id") ;
@@ -1200,9 +1329,15 @@ public class WorkCalendarServiceJs {
 		if (isRemoteUser) {
 			sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0') ");
 		}
+	//	sql.append(" group by vis.id,wct.id,pat.id,prepat.id,su.id,su1.id,vsrt.id,vss.id");
+
+		/*if (isRemoteUser) {
+			sql.append(",sw.lpu_id,notViewRetomeUser1,notViewRetomeUser2");
+		}*/
 		sql.append(" order by wct.timeFrom");
 		StringBuilder res = new StringBuilder() ;
 
+		//System.out.println(sql.toString());
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		String frmName = "frmTime" ;
 		if (aVocWorkFunction!=null) frmName=frmName+"_"+aVocWorkFunction ;
@@ -1715,4 +1850,58 @@ public class WorkCalendarServiceJs {
 		return service.getDayBySpec(aFuncId);
 		
 	}
+	//Milamesher 12112018 копирование дня
+	public String copyDay(Long aCalendarDay, String date,String date2, HttpServletRequest aRequest) throws Exception {
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Date beginDate = DateFormat.parseSqlDate(date) ;
+		Date endDate = DateFormat.parseSqlDate(date2) ;
+
+		do {
+			String sql="select id from workcalendarday where calendardate=to_date('"+beginDate+"','yyyy-MM-dd') and workcalendar_id=(select workcalendar_id from workcalendarday where id="+aCalendarDay+")";
+			Collection<WebQueryResult> list = service.executeNativeSql(sql);
+			String id = "";
+			if (!list.isEmpty()) for (WebQueryResult wqr : list) id = wqr.get1().toString(); //день уже создан - добавлеяем времена к существующим
+			else { //день ещё не создан - создаём
+				Collection<WebQueryResult> res = service.executeNativeSql("insert into workcalendarday(calendardate,holiday,workcalendar_id,insteadofday_id,isdeleted)\n" +
+						"select to_date('" + new SimpleDateFormat("dd.MM.yyyy").format(beginDate) + "','dd.mm.yyyy'),holiday,workcalendar_id,insteadofday_id,isdeleted from workcalendarday where id=" + aCalendarDay + "  returning id");
+				for (WebQueryResult wqr : res) id = wqr.get1().toString();
+			}
+			//если день был удалён, снимаем отметку
+			service.executeUpdateNativeSql("update workcalendarday set isdeleted=false where id="+id);
+			//добавляем времена, проверка на повторы в триггера на стороне бд
+			service.executeUpdateNativeSql("insert into workcalendartime(timefrom,additional,rest,workcalendarday_id,createprerecord,\n" +
+					"createdateprerecord,createtimeprerecord,reservetype_id,createdate,createtime)\n" +
+					"select timefrom,additional,rest," + id + ",'" + username + "',current_date,current_time,\n" +
+					"reservetype_id,current_date as createdate,current_time\n" +
+					" from workcalendartime where workcalendarday_id=" + aCalendarDay + " and (isdeleted is null or isdeleted='0')");
+
+			if (new SimpleDateFormat("dd.MM.yyyy").format(beginDate).equals(new SimpleDateFormat("dd.MM.yyyy").format(endDate))) break;
+			beginDate = new java.sql.Date(beginDate.getTime() + 24 * 60 * 60 * 1000); //следующий день
+		}
+		while (!new SimpleDateFormat("dd.MM.yyyy").format(beginDate).equals(new SimpleDateFormat("dd.MM.yyyy").format(endDate)));
+		return "Скопировано.";
+	}
+	//Milamesher 14112018 изменение резерва у массива
+    public String changeScheduleArrayReserve(Long[] array,Long reserveTypeId,HttpServletRequest aRequest) throws NamingException {
+        for (int i=0; i<array.length; i++)
+            changeScheduleElementReserve(array[i],reserveTypeId,aRequest);
+	    return "0";
+    }
+    //Milamesher 16112018 добавление времени после
+    public String addTime(Long aTime, String mins, HttpServletRequest aRequest) throws Exception {
+        String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        Collection<WebQueryResult> list = service.executeNativeSql("select timefrom from workcalendartime where id="+aTime);
+        String timefrom="";
+        if (!list.isEmpty()) for (WebQueryResult wqr : list) timefrom = wqr.get1().toString();
+        if (!timefrom.equals("") && timefrom.length()>2) {
+            timefrom=timefrom.substring(0,2)+":"+mins+":00";
+        }
+        service.executeUpdateNativeSql("insert into workcalendartime(timefrom,additional,rest,workcalendarday_id,createprerecord,\n" +
+                "createdateprerecord,createtimeprerecord,reservetype_id,createdate,createtime)\n" +
+                "select to_timestamp('"+timefrom+"','HH24:MI:SS'),additional,rest,workcalendarday_id,'" + username + "',current_date,current_time,\n" +
+                "reservetype_id,current_date,current_time from workcalendartime where id=" + aTime);
+	    return "Добавлено.";
+    }
 }

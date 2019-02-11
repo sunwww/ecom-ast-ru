@@ -1,5 +1,4 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/WEB-INF/tiles/header.jsp" %>
@@ -101,7 +100,7 @@
       ,aslo.department_id,slo.patient_id 
             	order by  d.dateRegistration desc,  d.timeRegistration desc
             	"/>            	
-                <msh:table hideTitle="false" styleRow="6" idField="1" name="protocols" action="javascript:void(0)" guid="d0267-9aec-4ee0-b20a-4f26b37">
+                <msh:table hideTitle="false" styleRow="6" idField="1" name="protocols" action="javascript:void(0)" guid="d0267-9aec-4ee0-b20a-4f26b37" escapeSymbols="false">
                     <msh:tableButton property="8" hideIfEmpty="true" buttonFunction="goToPage" buttonName="Перейти" buttonShortName="Перейти"/>
                     <msh:tableButton property="7" hideIfEmpty="true" buttonFunction="getDefinition" buttonName="Текст" buttonShortName="Текст"/>
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -143,9 +142,9 @@
             	"/>
                 <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
                     <msh:tableButton property="6" hideIfEmpty="true" buttonFunction="getDefinition" buttonName="Динамика исследования" buttonShortName="Дин."/>
-                    <msh:tableColumn columnName="#" property="sn"/>
-                    <msh:tableColumn columnName="Дата и время" property="2"/>
-                    <msh:tableColumn columnName="Услуга" property="5" />
+                    <msh:tableColumn columnName="#" property="sn" width="1"/>
+                    <msh:tableColumn columnName="Дата и время" property="2" width="5"/>
+                    <msh:tableColumn columnName="Услуга" property="5" width="20"/>
                     <msh:tableColumn columnName="Протокол" property="3" cssClass="preCell"/>
                 </msh:table>
  

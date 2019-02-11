@@ -231,7 +231,7 @@
     %>
     <msh:section title="Свод по отделениям без учета отд., которые не входят в ОМС">
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="${isReportBase}"  nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
 	select '&department='||case when d.isNoOmc='1' then pd.id else d.id end as id 
 	,case when d.isnoomc='1' then pd.id else d.id end as f1_lpuId
 	,case when d.isnoomc='1' then pd.name else d.name end  as f2_lpuName
@@ -382,7 +382,7 @@ where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and $
     		%>
  <msh:section title="Свод по срокам смерти с момента госпитализации">
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="${isReportBase}"  nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
 select 
 count (case when (hmc.datestart=hmc.datefinish and (hmc.dischargetime-hmc.entrancetime)<=cast('06:00:00' as time))  or (hmc.datefinish-hmc.datestart=1 and hmc.entrancetime>hmc.dischargetime and ((cast('24:00:00' as time) - hmc.entrancetime))+hmc.dischargetime<=cast('06:00:00' as time) and ((cast('24:00:00' as time) - hmc.entrancetime)<=cast('06:00:00' as time))  ) then 1 else null end) as cnt1_h_0_6 
 ,count (case when (hmc.datestart=hmc.datefinish and (hmc.dischargetime-hmc.entrancetime)>cast('06:00:00' as time))  or (hmc.datefinish-hmc.datestart=1 and hmc.dischargetime<=hmc.entrancetime and (((cast('24:00:00' as time) - hmc.entrancetime))+hmc.dischargetime>cast('06:00:00' as time))or hmc.dischargetime=hmc.entrancetime) then 1 else null end) as cnt2_h_6_24 
@@ -420,7 +420,7 @@ from medcase hmc
     		%>
     		<msh:section title="Свод по возрастным группам">
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="${isReportBase}"  nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
 select 
 
 count (case when (cast(to_char(${dateT},'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
@@ -490,15 +490,15 @@ group by vs.name, vs.id
                <msh:tableColumn columnName="Пол" property="13" addParam=""/>
             <msh:tableColumn columnName="от 0 до 17 лет" property="1" addParam="&addCell=age1" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="7" addParam="" />
-            <msh:tableColumn columnName="18 - 45 лет" property="2" addParam="&addCell=age2"isCalcAmount="true"/>
+            <msh:tableColumn columnName="18 - 45 лет" property="2" addParam="&addCell=age2" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="8" addParam="" />
-            <msh:tableColumn columnName="46 - 60 лет" property="3" addParam="&addCell=age3"isCalcAmount="true"/>
+            <msh:tableColumn columnName="46 - 60 лет" property="3" addParam="&addCell=age3" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="9" addParam="" />
-            <msh:tableColumn columnName="61 - 75 лет" property="4" addParam="&addCell=age4"isCalcAmount="true"/>
+            <msh:tableColumn columnName="61 - 75 лет" property="4" addParam="&addCell=age4" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="10" addParam="" />
-            <msh:tableColumn columnName="76 лет и более" property="5" addParam="&addCell=age5"isCalcAmount="true"/>
+            <msh:tableColumn columnName="76 лет и более" property="5" addParam="&addCell=age5" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="11" addParam="" />
-            <msh:tableColumn columnName="Итого" property="6" addParam=""isCalcAmount="true" addParam="&addCell=allAge"/>
+            <msh:tableColumn columnName="Итого" property="6" isCalcAmount="true" addParam="&addCell=allAge"/>
             
        </msh:table>
     </msh:sectionContent>
@@ -508,7 +508,7 @@ group by vs.name, vs.id
     	%>
     	<msh:section title="Свод по иногородним и иностранным гражданам">
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="${isReportBase}"  nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_list_swod_sql" name="journal_list_swod" nativeSql="
 	select '&department='||case when d.isNoOmc='1' then pd.id else d.id end as id 
 	,case when d.isnoomc='1' then pd.id else d.id end as f2_lpuId
 	,case when d.isnoomc='1' then pd.name else d.name end  as f3_lpuName

@@ -1,9 +1,5 @@
 package ru.ecom.mis.ejb.service.birth;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
@@ -11,6 +7,10 @@ import ru.ecom.mis.ejb.domain.birth.Pregnancy;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Справочник по беременностям
@@ -40,12 +40,10 @@ public class PregnancyByWomanVoc  implements IAllValue {
 		if (aContext.getVocAdditional()!=null  
 				&&aContext.getVocAdditional().getParentId()!=null
 				&&!aContext.getVocAdditional().getParentId().equals("")) {	
-			System.out.println("Поиск по medCaseId="+ aContext.getVocAdditional().getParentId()) ;
 			Long idPatient =ConvertSql.parseLong(aContext.getEntityManager()
 					.createNativeQuery("select patient_id from MedCase where id=:medCase_id")
 					.setParameter("medCase_id", aContext.getVocAdditional().getParentId())
 					.getSingleResult()) ;
-			System.out.println("Поиск по пациенту="+ idPatient) ;
 			//MedCase ms = aContext.getEntityManager().find(MedCase.class, Long.valueOf(aContext.getVocAdditional().getParentId())) ;
 			pregs = aContext.getEntityManager()
 				.createQuery("from Pregnancy where patient_id=:patId order by orderNumber")
@@ -56,7 +54,6 @@ public class PregnancyByWomanVoc  implements IAllValue {
 				.createQuery("from Pregnancy order by patient_id")
 				.getResultList() ;
 		}
-		System.out.println("Поиск завершен. Обработка данных...") ;
 		for (Pregnancy preg:pregs) {
 			VocValue voc = new VocValue(String.valueOf(preg.getId()), preg.getInformation()) ;
 			ret.add(voc) ;

@@ -19,6 +19,7 @@
         <!--<form-bean name="stac_newBornSloForm"              type="ru.ecom.mis.ejb.form.medcase.hospital.NewBornMedCaseForm" />-->
         <form-bean name="stac_sloForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm" />
         <form-bean name="stac_surOperationForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm" />
+        <form-bean name="pres_wfConsultationForm"            type="ru.ecom.mis.ejb.form.prescription.WfConsultationForm" />
 		<form-bean name="stac_diagnosisForm"               type="ru.ecom.mis.ejb.form.medcase.hospital.DiagnosisForm"/>
 		<form-bean name="stac_infectiousMessagesForm"      type="ru.ecom.mis.ejb.form.medcase.hospital.InfectiousPhoneMessageForm"/>
 		<form-bean name="stac_criminalMessagesForm"         type="ru.ecom.mis.ejb.form.medcase.hospital.CriminalPhoneMessageForm"/>
@@ -200,12 +201,19 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report14ds.jsp" />
         </action>
+        <action path='/stac_report_BirthTotal' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+        >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/stac_report_BirthTotal.jsp" />
+        </action>
         <action path='/stac_report_32' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
                 scope="session"
                 >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report32_hosp.jsp" />  
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report32_hosp.jsp" />
        </action>
         <action path='/stac_pregnant_hosp_account' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
@@ -527,6 +535,18 @@
 		    	path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
 		    />
 		</action>
+        <action path='/stac_journalCurrentByUserDepartmentMicroBio'
+                type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
+                name='stac_departmentJournalForm' validate='false' scope='request'
+                input='/WEB-INF/actions/stac_slo/listCurrentByUserDepartmentMicroBio.jsp'
+        >
+            <forward name="success" redirect="false"
+                     path='/WEB-INF/actions/stac_slo/listCurrentByUserDepartmentMicroBio.jsp'
+            />
+            <forward name="successerror" redirect="false"
+                     path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
+            />
+        </action>
 		<action path='/stac_journalDischargeByUserDepartment'
 		    type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
 		    name='stac_departmentJournalForm' validate='false' scope='request'

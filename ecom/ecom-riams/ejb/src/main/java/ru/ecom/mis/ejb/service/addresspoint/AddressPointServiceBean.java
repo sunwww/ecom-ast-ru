@@ -1,29 +1,7 @@
 package ru.ecom.mis.ejb.service.addresspoint;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.address.ejb.service.AddressPointCheck;
 import ru.ecom.address.ejb.service.AddressPointCheckHelper;
@@ -42,6 +20,21 @@ import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.util.*;
+
 /**
  * @author  azviagin
  */
@@ -50,17 +43,10 @@ import ru.nuzmsh.util.format.DateFormat;
 @Remote(IAddressPointService.class)
 public class AddressPointServiceBean implements IAddressPointService {
 
-    private final static Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
-	Collection<WebQueryResult> errList = new ArrayList<WebQueryResult>();
-
-    StringBuilder def = new StringBuilder();
-    WebQueryResult result = new WebQueryResult();
-     /*   public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix, String aAddSql, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr
-				, String aNReestr, String aNPackage, Long aCompany,  String aPacketType) throws ParserConfigurationException, TransformerException {
-			return exportExtDispPlanAll(aAge,aFilenameAddSuffix,aAddSql,aLpu,aArea,aDateFrom,aDateTo,aPeriodByReestr,aNReestr,aNPackage,aCompany,"");
-		}*/
+	Collection<WebQueryResult> errList = new ArrayList<>();
 
     public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, Long aLpu, Long aArea
@@ -148,11 +134,11 @@ public class AddressPointServiceBean implements IAddressPointService {
         	if (aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         //	if (aCompany!=null&&aCompany>0) {sql.append(" mp.company_id=").append(aCompany).append(" and ");}
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
-        	sql.append(" and mp.id is not null and mp.actualdateto is null");
+        	sql.append(" and mp.id is not null and (mp.actualdateto is null or mp.actualdateto >current_date)");
         	sql.append(" ").append(addSql).append(" and lp.dateto is null") ;
         	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
-		System.out.println("SQL FILL DISPPLAN = "+sql);
+	//	System.out.println("SQL FILL DISPPLAN = "+sql);
         	listPat = theManager.createNativeQuery(sql.toString())
         			.setMaxResults(90000).getResultList() ;
         	for (int i=0;i<listPat.size();i++) {
@@ -240,7 +226,7 @@ public class AddressPointServiceBean implements IAddressPointService {
 						}
 					} catch (javax.persistence.NoResultException ee) {
 						// TODO Auto-generated catch block
-						System.out.println("NoResultExceprion: "+att.getPatient().getPatientInfo());
+					LOG.error("NoResultExceprion: "+att.getPatient().getPatientInfo());
 						ee.printStackTrace();
 					}
         		}
@@ -402,11 +388,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
     	StringBuilder filenames = new StringBuilder() ;
     	errList.clear();
-    	if (aLpu!=null&&aLpu>0) {
-    		aLpuCheck=true;
-		} else {
-    		aLpuCheck=false;
-		}
+    	aLpuCheck = aLpu != null && aLpu > 0;
     	if (aAge!=null) {
     		addSql.append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(aAge) ;
     	}
@@ -544,7 +526,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	sql.append(" left join patient wp on wp.id=w.person_id");
         	
         	sql.append(" where ") ;
-        	
+			if (aCompany!=null&&aCompany!=0) sql.append("lp.company_id='").append(aCompany).append("' and ");
         	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
         	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
@@ -578,14 +560,14 @@ public class AddressPointServiceBean implements IAddressPointService {
 
 	public String createArchive(String aWorkDir,String archiveName, String[] aFileNames) {
 
-				EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+			//	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 				StringBuilder sb = new StringBuilder();
 				sb.append("zip -r -j -9 ").append(aWorkDir).append("/").append(archiveName).append(" ") ;
 				for (int i=0;i<aFileNames.length;i++) {
 					sb.append(aWorkDir).append("/").append(aFileNames[i]).append(" ");
 				}
 				try {
-					System.out.println("START EXECUTING = "+sb);
+					LOG.info("START EXECUTING = "+sb);
 					try {
 						Runtime.getRuntime().exec("zip -d " + aWorkDir + "/" + archiveName + " *");//Удаляем архив перед созданием;
 					 } catch (Exception e ) {}//Не удалось очистить архив, т.к. его нету. Ничего страшного)
@@ -600,8 +582,8 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     public void createFondXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat,String[][] aProps) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
-    	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    	SimpleDateFormat format2 = new SimpleDateFormat("yyyy");
+   // 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+   // 	SimpleDateFormat format2 = new SimpleDateFormat("yyyy");
     	
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	File outFile = new File(workDir+"/"+filename+".xml") ;

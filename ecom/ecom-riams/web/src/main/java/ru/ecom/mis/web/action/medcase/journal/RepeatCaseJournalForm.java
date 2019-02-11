@@ -45,4 +45,11 @@ public class RepeatCaseJournalForm extends BaseValidatorForm{
 
 	/** Отделение */
 	private Long theDepartment;
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	/** Поток обслуживания */
+	private Long theServiceStream ;
 }

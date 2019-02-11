@@ -1,10 +1,11 @@
 package ru.ecom.mis.ejb.service.querycontstraint;
 
+import org.jboss.annotation.security.SecurityDomain;
+
 import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import org.jboss.annotation.security.SecurityDomain;
 
 
 @Stateless
@@ -20,13 +21,13 @@ public class QueryConstraintServiceBean implements IQueryConstraintService {
 	}
 	
 	public	Boolean isConstrainted(String aKey) {
-		Boolean result = false;
-		if(aKey.toLowerCase().equals("patient")) {
-            result = theContext.isCallerInRole("/Policy/Mis/DisablePatientAttachedCheck") ? false : true ;
-        } else if (aKey.toLowerCase().equals("mislpu")) {
+		Boolean result ;
+		if(aKey.equalsIgnoreCase("patient")) {
+            result = !theContext.isCallerInRole("/Policy/Mis/DisablePatientAttachedCheck") ;
+        } else if (aKey.equalsIgnoreCase("mislpu")) {
         	result = true;
         	}
-        	else if (aKey.toLowerCase().equals("privilege")) {
+        	else if (aKey.equalsIgnoreCase("privilege")) {
         		result = true;
         		}
         		else result =  false;

@@ -1,21 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import static javax.persistence.CascadeType.ALL;
-
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -23,17 +7,18 @@ import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.birth.Pregnancy;
 import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocKindHighCare;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocMedCaseDefect;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocMethodHighCare;
+import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.poly.ejb.domain.PrescriptionBlank;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 /**
  * Случай медицинского обслуживания
@@ -47,7 +32,33 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     }) 
 @EntityListeners(DeleteListener.class)
 abstract public class MedCase extends BaseEntity {
+
+
+
+	/** Случаи ВМП */
+	@Comment("Случаи ВМП")
+	@OneToMany(mappedBy = "medCase",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<HitechMedicalCase> getHitechMedicalCases() {return theHitechMedicalCases;}
+	public void setHitechMedicalCases(List<HitechMedicalCase> aHitechMedicalCases) {theHitechMedicalCases = aHitechMedicalCases;}
+	/** Случаи ВМП */
+	private List<HitechMedicalCase> theHitechMedicalCases ;
 	
+	/** Диагнозы по случаю */
+	@Comment("Диагнозы по случаю")
+	@OneToMany(mappedBy = "medCase",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<Diagnosis> getDiagnoses() {return theDiagnoses;}
+	public void setDiagnoses(List<Diagnosis> aDiagnoses) {theDiagnoses = aDiagnoses;}
+	/** Диагнозы по случаю */
+	private List<Diagnosis> theDiagnoses ;
+
+
+	/** Признак консультативно-диагностического обращения */
+	@Comment("Признак консультативно-диагностического обращения")
+	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
+	public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
+	/** Признак консультативно-диагностического обращения */
+	private Boolean theIsDiagnosticSpo ;
+
     /** Только принят */
     public static final int STATUS_NULL = 0 ;
     /** ОТКАЗ */
@@ -121,10 +132,10 @@ abstract public class MedCase extends BaseEntity {
 	public void setIntoxication(VocIntoxication aIntoxication) {theIntoxication = aIntoxication;}
 	
 	/** Хирургические операции */
-	//@Comment("Хирургические операции")
-	//@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	//public List<SurgicalOperation> getSurgicalOperations() {return theSurgicalOperations;	}
-	//public void setSurgicalOperations(List<SurgicalOperation> aSurgicalOperations) {theSurgicalOperations = aSurgicalOperations;}
+	@Comment("Хирургические операции")
+	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<SurgicalOperation> getSurgicalOperations() {return theSurgicalOperations;	}
+	public void setSurgicalOperations(List<SurgicalOperation> aSurgicalOperations) {theSurgicalOperations = aSurgicalOperations;}
 	
 	/** Оператор */
 	@Comment("Оператор")
@@ -330,7 +341,7 @@ abstract public class MedCase extends BaseEntity {
 	/**ЛПУ - место исполнения */
 	private MisLpu theLpu;
 	/** Хирургические операции */
-	//private List<SurgicalOperation> theSurgicalOperations;
+	private List<SurgicalOperation> theSurgicalOperations;
 	/** Опьянение */
 	private VocIntoxication theIntoxication;
     /** Вакцинации*/
@@ -449,4 +460,13 @@ abstract public class MedCase extends BaseEntity {
 	public void setGuarantee(ContractGuarantee aGuarantee) {theGuarantee = aGuarantee;}
 	/** Гарантийное письмо */
 	private ContractGuarantee theGuarantee;
+
+	private Boolean isUpload=false;
+	@Comment("Выгружено")
+	public Boolean getUpload() {
+		return isUpload;
+	}
+	public void setUpload(Boolean upload) {
+		isUpload = upload;
+	}
 }

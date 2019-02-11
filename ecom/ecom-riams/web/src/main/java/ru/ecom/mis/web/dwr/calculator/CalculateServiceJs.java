@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.calculator;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 
 /**
@@ -41,23 +43,51 @@ public class CalculateServiceJs {
 	    String type = (String) param.get("type"), 
 		    value = (String) param.get("value"),
 		    comment = (String) param.get("comment"),
-		    orderus = (String) param.get("orderus");
+		    orderus = (String) param.get("orderus"),
+            note = (String) param.get("note");
 
 	    sql = new StringBuilder();
-	    sql.append("insert into calculations (value,comment,orderus,type_id,calculator_id) ");
-	    sql.append("values('" + value + "','" + comment + "','" + orderus+ "','" + type + "','" + Calcid + "')");
+	    sql.append("insert into calculations (value,comment,orderus,type_id,calculator_id,note) ");
+	    sql.append("values('" + value + "','" + comment + "','" + orderus+ "','" + type + "','" + Calcid + "','" + note + "')");
 	    service.executeUpdateNativeSql(sql.toString());
 	}
 
     }
+    //Milamesher 21112018 Создание интерпретаций результата
+	public void SetInterpretationsSettings(String aJson, HttpServletRequest aRequest) throws JSONException, NamingException {
+		JSONObject obj = new JSONObject(aJson);
+		JSONArray params = obj.getJSONArray("params");
+		String Calcid = String.valueOf(obj.get("calculatorId"));
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM interpretation where calculator_id='"+Calcid+"'");
+		service.executeUpdateNativeSql(sql.toString());
+
+		for (int i = 0; i < params.length(); i++) {
+			JSONObject param = (JSONObject) params.get(i);
+
+			String value = (String) param.get("value"),
+					result = (String) param.get("result");
+
+			sql = new StringBuilder();
+			sql.append("insert into interpretation (value,result,calculator_id) ");
+			sql.append("values('" + value + "','" + result + "','" + Calcid + "')");
+			service.executeUpdateNativeSql(sql.toString());
+		}
+
+	}
     
     //Расчет. Получение функционала калькулятора для расчета.
     public String GetSettingsById(String aId, HttpServletRequest aRequest) throws NamingException, JSONException{
 
 	StringBuilder sql = new StringBuilder();
 	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-	
-	sql.append("SELECT cs.value,cs.comment,cs.type_id from calculations cs ");
+
+	if (aId.equals("")) aId="0";
+
+	sql.append("SELECT cs.value,cs.comment,cs.type_id,cs.note from calculations cs ");
 	sql.append("left join calculator c on c.id = cs.calculator_id ");
 	sql.append("where c.id = '"+aId+"' order by orderus ");
 	
@@ -72,6 +102,7 @@ public class CalculateServiceJs {
 	    resultJson.put("Value",new String(wqr.get1().toString()));
 	    resultJson.put("Comment",new String(wqr.get2().toString()));
 	    resultJson.put("Type_id",new String(wqr.get3().toString()));
+		resultJson.put("Note",new String(wqr.get4()!=null? wqr.get4().toString():""));
 
 	    arr.put(resultJson);
 	}
@@ -90,20 +121,44 @@ public class CalculateServiceJs {
     }
     
     // Расчеты. Создать новый расчет.
-    public void SetCalculateResultCreate(String aId, String aResult, String aCalcId, HttpServletRequest aRequest) throws NamingException {
-	
-	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-	StringBuilder sql = new StringBuilder();
-	
-	Date d = new Date();
-        SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy");
-        System.out.println(date.format(d)); //25.02.2013
-        
-	sql.append("INSERT INTO calculationsresult  (result,departmentmedcase_id,calculator_id,resdate)");
-	sql.append("values ('" + aResult + "','" + aId + "','"+aCalcId+"','"+date.format(d).toString()+"')");
-	System.out.println("=== Debug: " + sql.toString());
-	service.executeUpdateNativeSql(sql.toString());
-    }
+    public String SetCalculateResultCreate(String aId, String aResult, String aCalcId, String formString, HttpServletRequest aRequest) throws NamingException {
+		String scaleName="";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+
+		Date d = new Date();
+		SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy");
+		//System.out.println(date.format(d)); //25.02.2013
+
+		sql.append("INSERT INTO calculationsresult  (result,departmentmedcase_id,calculator_id,resdate)");
+		sql.append("values ('" + aResult + "','" + aId + "','" + aCalcId + "','" + date.format(d).toString() + "')");
+		//System.out.println("=== Debug: " + sql.toString());
+		service.executeUpdateNativeSql(sql.toString());
+		//Milamesher 22112018 создание дневника о вычислении
+		sql = new StringBuilder();
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+		Collection<WebQueryResult> res = service.executeNativeSql
+				("select name|| case when comment is not null and comment<>'' then ' ('||comment||')' else '' end, case when creatediary=true then '1' else '0' end from calculator where id=" + aCalcId);
+		String result = "";
+		Boolean checkCreateDiary = false;
+		if (res.size() > 0) {
+			scaleName=(res.iterator().next().get1() != null) ? res.iterator().next().get1().toString(): "\n";
+			result = (res.iterator().next().get1() != null) ? res.iterator().next().get1().toString() + ":\n" + formString + "\n" + aResult
+					: formString + "\n" + aResult;
+			checkCreateDiary = (res.iterator().next().get2().equals("1"));
+		}
+		else result = formString + "\n" + aResult;
+		if (checkCreateDiary) {
+			String workFunction = service.executeNativeSql("select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id " +
+					"where su.login='" + username + "'").iterator().next().get1().toString();
+			sql.append("INSERT INTO diary(dtype,  \"time\", date, record, username, dateregistration, isdischarge, \n" +
+					"timeregistration,medcase_id, specialist_id,journaltext, templateprotocol, disableedit)");
+			sql.append("values ('Protocol', current_time, current_date,'"  + result + "','" + username + "', current_date,false, current_time,"
+					+ aId + "," + workFunction + ", '', 0, false)");
+			service.executeUpdateNativeSql(sql.toString());
+		}
+		return scaleName.equals("")? "":scaleName+":\n";
+	}
     
     
     //Получить пол
@@ -130,7 +185,7 @@ public class CalculateServiceJs {
 	return sb.toString();
 	
     }
-    
+
     //Получить возраст
     public String getAge(Long aId, HttpServletRequest aRequest)
 	    throws NamingException {
@@ -167,5 +222,65 @@ public class CalculateServiceJs {
 	
 	return result.toString();
     }
-    
+
+    //Milamesher #127 получить интепретацию результата
+	public String getInterpretation(Long cId, String val, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql("select result from interpretation where value='"+val+"' and calculator_id='"+cId+"' limit 1");
+		return (res.isEmpty())? "": res.iterator().next().get1().toString();
+	}
+
+	//Milamesher #127 есть ли тэг для калькулятора
+	public String getCalcTagView(Long cId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql("select tag from calculator where id="+cId);
+		return (!res.isEmpty() && res.iterator().next().get1()!=null) ? res.iterator().next().get1().toString() : "";
+	}
+
+	//Milamesher #127 получить всё для ИМТ
+	public String getIMT(Long aId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select st.height,st.weight from statisticstub st ");
+		sql.append(" left join medcase hmc on hmc.id=st.medcase_id ");
+		sql.append(" left join medcase dmc on dmc.parent_id=hmc.id  ");
+		sql.append(" where dmc.id ='"+aId.toString()+"'");
+		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
+		StringBuilder sb = new StringBuilder();
+		for (WebQueryResult wqr : res) {
+			sb.append(wqr.get1()).append("#").append(wqr.get2());
+		}
+		return sb.toString();
+	}
+	//Milamesher #127 получить сущность в json для назначений и противопоказаний
+	public String getInJson(String voc, String name, String[][] args,HttpServletRequest aRequest) throws NamingException,SQLException {
+		IWebQueryService service =  Injection.find(aRequest,null).getService(IWebQueryService.class) ;
+		StringBuilder where = new StringBuilder();
+		where.append(" where ");
+		for (int i=0; i<args.length; i++) {
+			where.append(args[i][0]).append("='").append(args[i][1]).append("' ");
+			if (i<args.length-1) where.append(" and ");
+		}
+		return service.executeSqlGetJson("select id," + name + " from " + voc + where.toString(),null);
+	}
+	//Milamesher #127 получить имя шкалы
+	public String getScaleName(String aCalcId, HttpServletRequest aRequest) throws NamingException {
+		String scaleName="";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql
+				("select name|| case when comment is not null and comment<>'' then ' ('||comment||')' else '' end from calculator where id=" + aCalcId);
+		if (res.size() > 0)
+			scaleName=(res.iterator().next().get1() != null) ? res.iterator().next().get1().toString(): "\n";
+		return scaleName.equals("")? "":scaleName+":\n";
+	}
+	//Milamesher #127 получить риск по баллам
+	public String getRisk(String aCalcId, Long val, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql
+				("select id,riskvalue from calcrisk where "+ val + " between lowscore and upscore and calculator_id=" + aCalcId);
+		StringBuilder r = new StringBuilder();
+		if (res.size() > 0)
+			r.append(res.iterator().next().get1().toString()).append("#").append(res.iterator().next().get2().toString());
+		return r.toString();
+	}
 }

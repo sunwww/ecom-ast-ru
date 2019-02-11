@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -448,7 +447,7 @@
     group by sloa.department_id,ml.name
     order by ml.name
     " />
-        <msh:table name="report14swod"
+        <msh:table printToExcelButton="Сохранить в excel" name="report14swod"
         viewUrl="stac_report_14.do?${paramHref}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}"
          action="stac_report_14.do?${paramHref}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
           <msh:tableColumn columnName="Отделение" property="2" />
@@ -572,7 +571,7 @@
     ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
     ,bf.addCaseDuration,sls.result_id,vho.name
     order by p.lastname,p.firstname,p.middlename " />
-        <msh:table name="journal_surOperation"
+        <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
         viewUrl="entityShortView-stac_ssl.do"
          action="entityView-stac_ssl.do" idField="1">
           <msh:tableColumn columnName="##" property="sn" />
@@ -647,7 +646,7 @@ ${age_sql}
 group by vas.id,vas.name
 order by vas.name
 " />
-    <msh:table name="report14swod" 
+    <msh:table printToExcelButton="Сохранить в excel" name="report14swod"
     viewUrl="stac_report_14.do?${paramHref}${departmentsUrlId}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_14.do?${paramHref}${departmentsUrlId}&typeAge=${typeAge}&typeView=${typeView}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Доп.статус" property="2" />
@@ -739,7 +738,7 @@ group by sls.id
 ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
 ,bf.addCaseDuration,sls.result_id,mkb.code
 order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
     viewUrl="entityShortView-stac_ssl.do" 
      action="entityView-stac_ssl.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />
@@ -814,20 +813,20 @@ case
 end
 ) as sumDays
  from medcase sls
+left join Patient p on p.id=sls.patient_id
+left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
+left join MedCase sloa on sloa.parent_id=sls.id
+left join BedFund bf on bf.id=sloa.bedFund_id
 left join diagnosis diag on sls.id=diag.medcase_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-left join MedCase sloa on sloa.parent_id=sls.id
-left join BedFund bf on bf.id=sloa.bedFund_id
 left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
 left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
-left join Patient p on p.id=sls.patient_id
-left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
-where 
+where
 sls.dtype='HospitalMedCase' ${periodSql}
-and mkb.code between rspt.codefrom and rspt.codeto 
 ${paramSql} ${diagnosisCodeSql}
+and mkb.code between rspt.codefrom and rspt.codeto
  ${outcomeSql}
 ${age_sql} 
  
@@ -848,7 +847,7 @@ order by vrspt.strCode
     </msh:sectionTitle>
     <msh:sectionContent>
 
-    <msh:table name="report14swod" 
+    <msh:table printToExcelButton="Сохранить в excel" name="report14swod"
     viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
@@ -952,7 +951,7 @@ order by p.lastname,p.firstname,p.middlename " />
     </msh:sectionTitle>
     <msh:sectionContent>
     ${isReportBase}
-    <msh:table name="journal_surOperation" 
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
     viewUrl="entityShortView-stac_ssl.do" 
      action="entityView-stac_ssl.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />
@@ -1052,7 +1051,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
 	    </form>     
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table name="report14swod" 
+        <msh:table printToExcelButton="Сохранить в excel" name="report14swod"
         viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
          action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
           <msh:tableColumn columnName="Наименование" property="2" />
@@ -1142,8 +1141,9 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
 left join mislpu pml on pml.id=fpslo.department_id where fslo.parent_id=sls.id and fslo.datefinish is not null 
 and fslo.dtype='DepartmentMedCase' and (pml.isnoomc is null or pml.isnoomc='0'))) as mlname
 ,'№ '||cert.number ||'-'|| cert.series as certofdeath
+     ,dc.isPresenceDoctorAutopsy as isPresenceDoctorAutopsy
      from medcase sls
-     
+
     left join StatisticStub ss on ss.id=sls.statisticStub_id
     left join VocHospitalizationResult vhr on vhr.id=sls.result_id
     left join MedCase sloa on sloa.parent_id=sls.id
@@ -1204,7 +1204,7 @@ and fslo.dtype='DepartmentMedCase' and (pml.isnoomc is null or pml.isnoomc='0'))
         
         </msh:sectionTitle>
         <msh:sectionContent>
-        <msh:table name="journal_surOperation" 
+        <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
         viewUrl="entityShortView-stac_ssl.do" 
          action="entityView-stac_ssl.do" idField="1">
           <msh:tableColumn columnName="##" property="sn" />
@@ -1221,6 +1221,7 @@ and fslo.dtype='DepartmentMedCase' and (pml.isnoomc is null or pml.isnoomc='0'))
           <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
           <msh:tableColumn columnName="Было вскрытие?" property="13"/>
           <msh:tableColumn columnName="Категория расхождений" property="14"/>
+          <msh:tableColumn columnName="Присутствияе врача на вскрытии" property="21"/>
           <msh:tableColumn columnName="Cвидетельство о смерти" property="20"/>
           <msh:tableColumn columnName="Неоформлен случай смерти" property="15"/>
           <msh:tableColumn columnName="Дата суд-мед. эксп" property="16"/>
@@ -1275,6 +1276,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
      
     ${paramSql} and sloa.dateFinish is not null
     and sls.result_id='${result_death}'
+    and (sls.dateStart=sls.dateFinish or sls.dateFinish-sls.dateStart=1 and sls.dischargetime<sls.entrancetime)
     and 
     coalesce(
     (select max(mkb.code) from Diagnosis diag 
@@ -1296,7 +1298,6 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     )
     ) between rspt.codefrom and rspt.codeto
     ${age_sql}  
-    and (sls.dateStart=sls.dateFinish or sls.dateFinish-sls.dateStart=1 and sls.dischargetime<sls.entrancetime)
     group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
     order by vrspt.strCode
     " />
@@ -1311,7 +1312,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
 	    </form>     
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table name="report14swod" 
+        <msh:table printToExcelButton="Сохранить в excel" name="report14swod"
         viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
          action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
           <msh:tableColumn columnName="Наименование" property="2" />
@@ -1394,6 +1395,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     ,dc.postmortemBureauNumber as dcpostmortemBureauNumber
     ,pml.name as mlname
     ,cert.number ||' '|| cert.series as certofdeath
+    ,dc.isPresenceDoctorAutopsy as isPresenceDoctorAutopsy
 	from medcase sls
    
     left join StatisticStub ss on ss.id=sls.statisticStub_id
@@ -1454,7 +1456,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
         
         </msh:sectionTitle>
         <msh:sectionContent>
-        <msh:table name="journal_surOperation" 
+        <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
         viewUrl="entityShortView-stac_ssl.do" 
          action="entityView-stac_ssl.do" idField="1">
           <msh:tableColumn columnName="##" property="sn" />
@@ -1471,6 +1473,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
           <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
           <msh:tableColumn columnName="Было вскрытие?" property="13"/>
           <msh:tableColumn columnName="Категория расхождений" property="14"/>
+            <msh:tableColumn columnName="Присутствияе врача на вскрытии" property="21"/>
           <msh:tableColumn columnName="Cвидетельство о смерти" property="20"/>
           <msh:tableColumn columnName="Неоформлен случай смерти" property="15"/>
           <msh:tableColumn columnName="Дата суд-мед. эксп" property="16"/>
@@ -1530,7 +1533,7 @@ ${age_sql}
 group by ms.id,ms.code,ms.name
 order by ms.code
 " />
-    <msh:table name="report14swod" 
+    <msh:table printToExcelButton="Сохранить в excel" name="report14swod"
     viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="#" property="sn" />
@@ -1599,7 +1602,7 @@ group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
 ,ms.id,ms.code ,ms.name,ms.additioncode
 order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
     viewUrl="entityShortView-stac_surOperation.do" 
      action="entityView-stac_surOperation.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />
@@ -1678,7 +1681,7 @@ order by vrspt.strCode
     </msh:sectionTitle>
     <msh:sectionContent>
     ${isReportBase}
-    <msh:table name="report14swod" 
+    <msh:table printToExcelButton="Сохранить в excel" name="report14swod"
     viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >
       <msh:tableColumn columnName="Наименование" property="2" />
@@ -1714,7 +1717,7 @@ order by vrspt.strCode
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
+    ${isReportBase}<ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     select 
 so.id as soid
 ,list(vrspt1.strCode)
@@ -1751,7 +1754,7 @@ group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
 ,ms.code ,ms.name,ms.additioncode
 order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
     viewUrl="entityShortView-stac_surOperation.do" 
      action="entityView-stac_surOperation.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />

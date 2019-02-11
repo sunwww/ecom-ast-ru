@@ -73,8 +73,9 @@
                     var aResult=all[i].split('#');
                     var tr = document.createElement('tr');
                     var td1 = document.createElement('td');
-                    if (aResult[0]!="null") td1.innerHTML = "<div class=\"radio\"> <label id="+i+"><input type=\"radio\" name=\"optradio\">"+aResult[0]+"</label> </div>";
+                    if (aResult[0]!="null") td1.innerHTML = "<div class=\"radio\"> <label id="+i+"><input type=\"radio\" name=\"optradio\" oninput=\"document.getElementById('text').value=document.getElementById('td"+i+"').innerText\">"+aResult[0]+"</label> </div>";
                     var td2 = document.createElement('td');
+                    td2.id='td'+i;
                     if (aResult[1]!="null") td2.innerHTML = aResult[1];
                     td1.align="center";td2.align="center";
                     tr.appendChild(td1); tr.appendChild(td2);
@@ -102,8 +103,8 @@
         for (var i=0; i<radio.length; i++)
             if (document.getElementById('table1').getElementsByTagName("input")[i].checked==true)
                 code=document.getElementById(i).textContent;
-        if (code=="" || text=="") {
-            alert("Должна быть выбрана причина и написан комментарий!");
+        if (code==""/* || text==""*/) {
+            alert("Должна быть выбрана причина!");
             aButton.disabled=false;
             aButton.value="Аннулировать";
         }

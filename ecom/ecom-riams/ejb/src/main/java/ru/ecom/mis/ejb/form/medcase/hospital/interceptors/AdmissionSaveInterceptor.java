@@ -1,32 +1,25 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
-import org.json.JSONObject;
-import ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
-import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class AdmissionSaveInterceptor implements IFormInterceptor {
 
-    private final static Logger LOG = Logger.getLogger(AdmissionSaveInterceptor.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(AdmissionSaveInterceptor.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		AdmissionMedCaseForm form=(AdmissionMedCaseForm)aForm ;
@@ -50,7 +43,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 					.createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
 				.setParameter("number", statCardNumber).setParameter("year",java.lang.Long.valueOf(year)).getResultList() ;
 			
-			if (list.size()==0) {
+			if (list.isEmpty()) {
 				boolean alwaysCreate = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber") ;
 				if (!alwaysCreate) {
 	    			if (form.getDeniedHospitalizating()!=null && form.getDeniedHospitalizating()>Long.valueOf(0)) {
@@ -77,7 +70,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			List<Object> list = manager.createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist'")
 				//.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year))
 				.getResultList() ;
-			if (list.size()==0) {
+			if (list.isEmpty()) {
 				//if (aForm.deniedHospitalizating==0) {
 					StatisticStubStac.createStacCardNumber(id, statCardNumber, manager, aContext.getSessionContext(),form);
 				//} else {
@@ -98,7 +91,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			VocDiagnosisRegistrationType vocTypeOrder = manager.find(VocDiagnosisRegistrationType.class, Long.valueOf(1));
 			VocDiagnosisRegistrationType vocTypeEnter = manager.find(VocDiagnosisRegistrationType.class, Long.valueOf(2));
 			List<Diagnosis> diagList = manager.createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
-			if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
+			if (diagList==null) diagList = new ArrayList<>();
 			for(Diagnosis diag:diagList){
 				if (!adding1) adding1=setDiagnosisByType(false,diag, vocTypeEnter, form.getOrderDiagnos(), form.getOrderDate(), form.getOrderMkb(), medCase, manager) ;
 				if (!adding2) adding2=setDiagnosisByType(false,diag, vocTypeOrder, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, manager) ;
@@ -119,30 +112,12 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				//medCase.setDiagnosis(diagList);
 			}
 		}
-		List<Object[]> rec = manager.createNativeQuery("select pat.lastname||' '||substring(pat.firstname,1,1)||''||substring(coalesce(pat.middlename,' '),1,1) as f1_name , pr.phonenumber " +
-				" from patientlistrecord pr left join patient pat on pat.id=pr.patient where pr.patient="+medCase.getPatient().getId()+" and pr.phoneNumber is not null").getResultList();
-		if (rec.size()>0) {
-			Object[] r = rec.get(0);
-			try {
-				EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-				String address =config.get("ru.amokb.patientcabinetaddress", null) ;
-				if (address!=null){
-					String method = "SendSms";
-					SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-					String wfName = medCase.getDepartment().getName();
-					String message = "Пациент "+r[0].toString()+" госпитализирован в "+wfName;
-					String phone = r[1].toString();
-					JSONObject json = new JSONObject();
-					json.put("phonenumber",phone);
-					json.put("message",message);
-					TemplateProtocolServiceBean bean = new TemplateProtocolServiceBean();
-					//bean.makePOSTRequest(json.toString(),address,method,null,null,manager);
-				}
 
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if (medCase.getDeniedHospitalizating()==null && medCase.getTransferDate()==null) {
+			//При отказе от госпитализации считаем что пациент выбыл из приемника (сразу направлен в отделение)
+			Long currentDate = new Date().getTime();
+			medCase.setTransferDate(new java.sql.Date(currentDate));
+			medCase.setTransferTime(new java.sql.Time(currentDate));
 		}
 	}
 
@@ -158,7 +133,6 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 					long policyId = EjbInjection.getInstance().getLocalService(IParentEntityFormService.class)
 						.create(polForm);
 					MedPolicyOmc medPolicyOmc = aManager.find(MedPolicyOmc.class, policyId) ;
-					//System.out.println("medPolicyOmc="+medPolicyOmc);
 					patient.setAttachedOmcPolicy(medPolicyOmc);
 					if(patient.getMedPolicies()!=null) {
 						patient.getMedPolicies().add(medPolicyOmc);
@@ -180,8 +154,6 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				throw new IllegalStateException(e);
 			}
 		}*/
-		//System.out.println("save manager = "+aManager);
-		//System.out.println(" address = "+patient.getAddressInfo());
 		//if (CAN_DEBUG)
 		//	LOG.debug("intercept: form.getPolicyOmcForm().getSeries() = " + form.getPolicyOmcForm().getSeries());
 	

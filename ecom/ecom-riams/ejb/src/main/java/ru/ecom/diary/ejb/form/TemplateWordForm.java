@@ -1,11 +1,5 @@
 package ru.ecom.diary.ejb.form;
 
-import java.sql.Date;
-import java.util.List;
-
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateWord;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;

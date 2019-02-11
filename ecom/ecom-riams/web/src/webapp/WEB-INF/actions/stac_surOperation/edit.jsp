@@ -1,6 +1,3 @@
-<%@page import="java.util.Collection"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.awt.print.Printable"%>
 <%@page import="ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -189,6 +186,9 @@
           <msh:autoComplete property="outcome" label="Исход операции" fieldColSpan="3" horizontalFill="true" vocName="vocOperationOutcome" />
         </msh:row>
         </msh:ifNotInRole>
+          <msh:row>
+              <msh:autoComplete property="leftRight" label="Сторона (для парных органов)" fieldColSpan="3" horizontalFill="true" vocName="vocLeftRight" />
+          </msh:row>
                 <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
           <msh:label property="createUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
@@ -325,7 +325,6 @@
 	    		});
     		}
     	}
-    	//]]>
     	</script>
     	
   </msh:ifFormTypeIsNotView>
@@ -402,7 +401,18 @@
   	  		setEndoscopyUse() ;
   	  		});
   	} catch(e) {}
-  	 
+
+      medServiceAutocomplete.addOnChangeCallback(function() {
+        HospitalMedCaseService.isAbortRequiredByOperation($('medService').value, {
+            callback: function(isAbort) {
+                if (true==isAbort) {
+                   jQuery('#abortionName').css('background-color','#FFFFA0');
+                } else {
+                    jQuery('#abortionName').css('background-color','#FFFFFF');
+                }
+            }
+        });
+      });
   	 changeParentMedService() ;
   	</script>
     </msh:ifFormTypeIsNotView>

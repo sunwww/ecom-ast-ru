@@ -1,11 +1,8 @@
 package ru.ecom.poly.ejb.form.interceptors;
 
-import java.util.List;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.VisitProtocolForm;
 import ru.ecom.poly.ejb.domain.protocol.Protocol;
 

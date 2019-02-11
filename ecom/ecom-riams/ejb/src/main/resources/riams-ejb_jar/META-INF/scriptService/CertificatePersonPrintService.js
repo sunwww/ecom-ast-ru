@@ -38,10 +38,27 @@ function issueRefund(aCtx, aId) {
     var kkm =new Packages.ru.ecom.mis.ejb.service.contract.ContractServiceBean();
     var worker = wf.worker.person;
     var fio = wf.workFunction.name+" "+worker.lastname+" "+worker.firstname.substring(0,1)+". "+(worker.middlename!=null?worker.middlename.substring(0,1)+".":"");
-    var res = kkm.sendKKMRequest("makeRefund",operationAccrual.account.id, operationAccrual.discount,operationAccrual.isPaymentTerminal!=null?operationAccrual.isPaymentTerminal:false, fio, aCtx.manager);
+    var res = kkm.sendKKMRequest("makeRefund",operationAccrual.account.id, operationAccrual.discount
+		,operationAccrual.isPaymentTerminal!=null ? operationAccrual.isPaymentTerminal : false,null, fio, aCtx.manager, wf.getKkmEquipmentDefault()!=null ? wf.getKkmEquipmentDefault().getUrl() : "");
 
 }
 
+function printDefaultLpuRequisites(aCtx, aFldName) {
+	var lpu =aCtx.manager.createNativeQuery( "select keyvalue from softconfig  where key = 'DEFAULT_LPU' ").getResultList();
+	if (lpu.size()>0) {
+		printLpuRequisites(aCtx,+lpu.get(0),aFldName);
+	}
+}
+function printLpuRequisites(aCtx, aLpuId, aFldName) {
+	var sql = "select code, value, name from MisLpuRequisite where lpu_id="+aLpuId;
+	var list = aCtx.manager.createNativeQuery(sql).getResultList();
+	for (var i=0;i<list.size();i++) {
+		var obj = list.get(i);
+		map.put(aFldName+"_"+obj[0],""+obj[1]);
+		//throw ""+aFldName+"_"+obj[0]+"<>"+map.get(aFldName+"_"+obj[0]);
+		map.put(aFldName+"_"+obj[0]+"Name",""+obj[2]);
+	}
+}
 function printPriceList(aCtx,aParams) {
 	var priceList = aParams.get("id") ;
 	var mainGroupSql = "select pg.id,pg.code,pg.name from PricePosition pg" 
@@ -66,8 +83,7 @@ function getGroup(aCtx,aPriceList,aParent) {
 	var wqM = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 	var childGroup = new java.util.ArrayList() ;
 	var childPosition = new java.util.ArrayList() ;
-	
-	var groupSql = "select pg.id,pg.code,pg.name,case when trim(pg.comment)='' then null else pg.comment end from PricePosition pg" 
+	var groupSql = "select pg.id,pg.code,pg.name,case when trim(pg.comment)='' then null else pg.comment end from PricePosition pg"
 		+" where pg.priceList_id = '"+aPriceList+"' and pg.dtype='PriceGroup' and pg.parent_id = '"+aParent+"'"
 		+" order by pg.code" ;
 	var list2 = aCtx.manager.createNativeQuery(groupSql).getResultList();
@@ -113,6 +129,7 @@ function getGroup(aCtx,aPriceList,aParent) {
 }
 function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	var pid = aParams.get("id");
+    var lpuId = 0;
 	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService" 
 		+"	,cams.countMedService*cams.cost as sumNoAccraulMedService"
 		+"  ,round((cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as costDisc" 
@@ -215,7 +232,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		map.put("customer.addressRegistration","____________________________________________________________________________________________________________") ;
 		map.put("customer.passportInfo","____________________________________________________________________________________________________________") ;
 	}
-
+    printDefaultLpuRequisites(aCtx,"DefaultLpu");
 	return map;
 }
 function printAttorney (aCtx) {
@@ -254,20 +271,24 @@ function printAttorney (aCtx) {
 }
 function printContractByAccrual(aCtx, aParams) {
 	var pid = aParams.get("id");
-	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService" 
-		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService"
-		+"  ,round((cams.cost*(100-coalesce(cao.discount,0))/100),2) as costDisc" 
-		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as sumNoAccraulMedServiceDisc"
-		+", cao.discount"
-		+"		from MedContract mc "
-		+"		left join ContractAccount ca on ca.contract_id = mc.id"
-		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
-		+"		left join PriceMedService pms on pms.id=cams.medService_id"
-		+"		left join PricePosition pp on pp.id=pms.pricePosition_id"
-		+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
-		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
-		+"		where cao.id='"+pid+"'"
-		+"		group by  cams.id, pp.code, pp.name,pp.printComment , cams.countMedService,cams.cost,cao.discount";
+    var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService \n" +
+        ", cams.countMedService*cams.cost as sumNoAccraulMedService\n" +
+        ",round((cams.cost*(100-coalesce(cao.discount,0))/100),2) as costDisc \n" +
+        ",round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as sumNoAccraulMedServiceDisc\n" +
+        ",ca.discountDefault as cadiscountDefault\n" +
+        ",priv.serialdoc||' '||priv.numberdoc||' ('||vpc.name||')' as privil \n" +
+        ",cams.cost*cams.countMedService as tarif \n" +
+        "from MedContract mc \n" +
+        "left join ContractAccount ca on ca.contract_id = mc.id\n" +
+        "left join ContractAccountMedService cams on cams.account_id=ca.id\n" +
+        "left join PriceMedService pms on pms.id=cams.medService_id\n" +
+        "left join PricePosition pp on pp.id=pms.pricePosition_id\n" +
+        "left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id\n" +
+        "left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'\n" +
+        "left join privilege priv on priv.id = ca.privilege_id \n" +
+        "left join vocprivilegecategory vpc on vpc.id = priv.category_id\n" +
+        "where cao.id="+pid+"\n" +
+        "group by  cams.id, pp.code, pp.name, pp.printComment , cams.countMedService,cams.cost,ca.discountDefault,priv.numberdoc,priv.serialdoc,vpc.name,cao.discount";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
 	
@@ -355,8 +376,8 @@ function printContractByAccrual(aCtx, aParams) {
 		map.put("customer.addressRegistration","____________________________________________________________________________________________________________") ;
 		map.put("customer.pasportInfo","____________________________________________________________________________________________________________") ;
 	}
-	
-	
+
+    printDefaultLpuRequisites(aCtx,"DefaultLpu");
 	return map;
 }
 function parseInt(aValue1,aDiscount,aValue2) {
@@ -398,4 +419,30 @@ function getPassportInfo(aPassportType,aPassportSeries,aPassportNumber,aPassport
 	passport=passport+" " ;
 	if (aPassportWhomIssued!=null) {passport=passport+aPassportWhomIssued ;} else {	passport=passport+"______________________________" ;}
 	return passport ;
+}
+//lastrelease milamesher #98 шаблоны лаб. анализов
+function printLabAnalysisTemplateExtra (aCtx, aParams) {
+    var pid = aParams.get("id");
+    var sqlQuery1 ="select distinct mc.contractnumber, cpp.lastname||' '||cpp.firstname||' '||coalesce(cpp.middlename,'') as cpplastname\n" +
+        ",CAST(EXTRACT(YEAR from (cpp.birthday)) as INTEGER) as ycpp,cpp.id as cppid\n" +
+        "        from MedContract mc \n" +
+        "        left join ContractAccount ca on mc.id=ca.contract_id\n" +
+        "        left join ContractAccountMedService cams on cams.account_id=ca.id\n" +
+        "        left join ServedPerson sp on cams.servedPerson_id = sp.id\n" +
+        "        left join PriceMedService pms on pms.id=cams.medService_id\n" +
+        "        left join PricePosition pp on pp.id=pms.pricePosition_id\n" +
+        "        left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id\n" +
+        "        left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'\n" +
+        "        left join ContractPerson cp on cp.id=sp.person_id left join patient cpp on cpp.id=cp.patient_id\n" +
+        "        where mc.id='"+pid+"'  and cao.id is null and caos.id is null and  CAST(EXTRACT(YEAR from (cpp.birthday)) as INTEGER) is not null group by mc.id,cpp.id" ;
+    var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
+    var obj = list1.size()>0?list1.get(0):null ;
+    if (obj!=null) {
+        map.put("contractNumber", obj[0]);
+        map.put("servedFIO", obj[1]);
+        map.put("servedYear", obj[2]);
+        var servedPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[3])) ;
+        map.put("address",servedPerson.addressRegistration);
+    }
+        return map;
 }

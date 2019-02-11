@@ -1,15 +1,13 @@
 package ru.ecom.report.replace;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import ru.nuzmsh.util.PropertyUtil;
 
 /**
  */
 public class ReplaceHelper {
 
-    private final static Log LOG = LogFactory.getLog(ReplaceHelper.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ReplaceHelper.class) ;
 
     /** Режим RTF */
     public boolean getRtfMode() { return theRtfMode ; }
@@ -22,8 +20,7 @@ public class ReplaceHelper {
         if (aLine.startsWith("${") && aLine.indexOf("${",3)==-1&& aLine.endsWith("}")) {
         	//System.out.println("<--"+aLine) ;
         	try {
-        		Object o = aValueGetter.getValue(aLine.substring(2, aLine.length() - 1)) ;
-        		return o ;
+        		return aValueGetter.getValue(aLine.substring(2, aLine.length() - 1)) ;
         	}catch (Exception e) {
         		//System.out.println(e.getCause()) ;
         		throw new SetValueException(e.getMessage(),e.getCause());

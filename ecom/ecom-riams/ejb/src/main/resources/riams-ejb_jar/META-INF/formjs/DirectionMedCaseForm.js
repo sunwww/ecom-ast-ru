@@ -42,11 +42,11 @@ function createOrSave(aForm, aVisit, aCtx) {
 	//aVisit.orderWorker = findLogginedWorker(aCtx) ;
 	var workFunc = findLogginedWorkFunction(aCtx) ;
 	aVisit.orderWorkFunction =  workFunc;
-	if(aVisit.parent!=null&&aVisit.parent.dateFinish!=null) {
-		aVisit.parent=null ;}
-	if ((aForm.emergency==null || !aForm.emergency)&&
-			aVisit.workFunctionPlan.emergency!=null &&aVisit.workFunctionPlan.emergency) {
-		aVisit.setEmergency(true) ;
+	if(aVisit.parent!=null && aVisit.parent.dateFinish!=null) {
+		aVisit.parent=null ;
+	}
+	if (aForm.emergency==null || aForm.emergency==false) {
+		aVisit.setEmergency(aVisit.workFunctionPlan.emergency) ;
 	}
 	// Медицинские услуги
 	saveArray(aVisit, aCtx.manager,aForm.getMedServices()
@@ -125,7 +125,8 @@ function onCreate(aForm, aVisit, aCtx) {
 function setNotPaid(aForm, aEntity, aCtx) {
 		if (aEntity.serviceStream.isPaidConfirmation&&aEntity.isPaid==null) {
 			aEntity.setIsPaid(false);
-		}
+
+	}
 }
 
 function onPreCreate(aForm, aCtx) {
@@ -176,6 +177,7 @@ function onPreDelete(aId,aCtx) {
 }
 function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 		 aTableSql) {
+	if (aJsonString==null||aJsonString=='') {return;}
 	var obj = new Packages.org.json.JSONObject(aJsonString) ;
 	var ar = obj.getJSONArray("childs");
 	var ids = new Packages.java.lang.StringBuilder() ;
@@ -183,31 +185,56 @@ function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 	for (var j=0;j<aMainCmd.length;j++) {
 		eval(aMainCmd[j]) ;
 	}
-	
-	
-	
+
+
+    //Проверяем -  есть ли открытый СЛС.
+    var sql = "select pl.id as listId, coalesce(slo.id,sls.id) as medcaseId" +
+        " from medcase sls" +
+        " left join medcase slo on slo.parent_id = sls.id and slo.dtype='DepartmentMedCase' and slo.transferdate is null" +
+        " left join prescriptionlist pl on pl.medcase_id = coalesce(slo.id, sls.id)" +
+        " left join vocdeniedhospitalizating vdh on vdh.id = sls.deniedhospitalizating_id" +
+        " where sls.dtype='HospitalMedCase' and sls.patient_id = " + aEntity.patient.id +
+        " and sls.datefinish is null and (sls.deniedhospitalizating_id is null or vdh.code = 'IN_PIGEON_HOLE')" ;
+    var list = aManager.createNativeQuery(sql).getResultList();
+    var hasSls = !list.isEmpty();
+    var presList =null;
+    if (hasSls) {
+    	var sls =list.get(0);
+		if (sls[0]) {
+			presList = aManager.find(Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList, java.lang.Long.valueOf(+sls[0]));
+		} else {
+			presList = new Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList();
+			presList.setMedCase(aManager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase, java.lang.Long.valueOf(+sls[1])));
+		}
+	}
+
+
 	for (var i = 0; i < ar.length(); i++) {
 		var child = ar.get(i);
 		var jsId = java.lang.String.valueOf(child.get("value"));
-		if (jsId!=null && jsId!="" || jsId=="0") {
-			//System.out.println("    id="+jsonId) ;
-			
+		if (jsId!=null && jsId!="" && jsId!="0") {
 			var jsonId=java.lang.Long.valueOf(jsId) ;
 			ids.append(",").append(jsonId) ;
 			var sql ="select count(*) as cnt "+aTableSql+"='"+jsonId+"'" ;
 			var count = aManager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
-			if (count.isEmpty()|| (!count.isEmpty()&&(+count.get(0)<1))) {
-				
+			if (count.isEmpty()|| (!count.isEmpty() && +count.get(0)<1)) {
 				var objS = aManager.find(aClazz,jsonId) ;
-				
 				for (var j=0;j<aAddCmd.length;j++) {
 					eval(aAddCmd[j]) ;
-					//if (j>3)throw ""+aAddCmd[j] ;
 				}
-				//throw ""+objS ;
 				aManager.persist(objNew) ;
-				
-			}
+				if (hasSls) {
+                    var pres = new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription();
+                    pres.setPrescriptionList(presList);
+                    pres.setPlanStartDate(aEntity.timePlan.workCalendarDay.calendarDate);
+                    pres.setPrescriptSpecial(aEntity.orderWorkFunction);
+                    pres.setMedService(objS);
+                    pres.setCreateUsername(aEntity.username);
+                    pres.setPrescriptCabinet(aEntity.workFunctionPlan);
+                    pres.setCalendarTime(aEntity.timePlan);
+                    aManager.persist(pres);
+                }
+            }
 		}
 	}
 	if (ids.length()>0) {

@@ -1,20 +1,5 @@
 package ru.ecom.poly.web.dwr;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
@@ -28,24 +13,30 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 public class TicketServiceJs {
 	
 	public String getDefaultParameter(String aKey, String aDefaultValue, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		Collection <WebQueryResult> res = service.executeNativeSql("select id,keyValue from SoftConfig where upper(key)=upper('"+aKey+"')");
-		if (res.size()>0){
+		if (!res.isEmpty()){
 			return res.iterator().next().get2().toString();
 		} 
 		return aDefaultValue;
 	}
 	public String[] getDiagnosisId (String[] diagnosis, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sb = new StringBuilder();
 		for (int i=0;i<diagnosis.length;i++) {
 			if (i>0) {
 				sb.append(",");
 			}
-			sb.append("'"+diagnosis[i]+"'");
+			sb.append("'").append(diagnosis[i]).append("'");
 		}
 		String sql = "select id from vocidc10 where code in ("+sb.toString()+")";
 		Collection <WebQueryResult> res = service.executeNativeSql(sql);
@@ -56,39 +47,43 @@ public class TicketServiceJs {
 		}
 		return ret.toString().split(",");
 	}
-	public Collection<WebQueryResult> getPatients (String aAgeFrom, String aAgeTo, String aDateTo, String aSexId, String aLpu, int maxResults, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
-		String sexSql = (aSexId!=null&&!aSexId.equals(""))?" and pat.sex_id="+aSexId:"";
-		System.out.println("getPatient, age = "+aAgeTo+" : "+aAgeFrom);
-		if (aDateTo!=null && !aDateTo.equals("")) {
-			aDateTo = "to_date('"+aDateTo+"','dd.MM.yyyy')";
-		} else {
-			aDateTo = "current_date";	
-		}
-		if (aLpu!=null&&!aLpu.equals("")) {
-			sexSql+=" and att.lpu_id="+aLpu+" and att.dateto is null";
-		}
-		String sql = "select pat.id as patId, mc.id as medId from medcard mc" +
+	private Collection<WebQueryResult> getPatients (String aAgeFrom, String aAgeTo, String aDateTo, String aSexId, String aLpu, String ids, int maxResults, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String sql="select pat.id as patId, mc.id as medId from medcard mc" +
 				" left join patient pat on pat.id=mc.person_id" +
 				" left join lpuattachedbydepartment att on att.patient_id=pat.id" +
-				" where  cast(to_char("+aDateTo+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char("+aDateTo+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char("+aDateTo+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between "+aAgeFrom + " and "+aAgeTo
-				+" and pat.deathdate is null and (pat.noactuality is null or pat.noactuality='0')"+sexSql+" order by random()";
-		System.out.println("==Find persons: "+sql);
-		Collection<WebQueryResult> l = service.executeNativeSql(sql,maxResults);
-		return l;
+				" where ";
+		if (ids!=null && !ids.equals("")) {
+			sql+=" pat.id in ("+ids+")";
+		} else {
+			String sexSql = (aSexId!=null&&!aSexId.equals(""))?" and pat.sex_id="+aSexId:"";
+			if (aDateTo!=null && !aDateTo.equals("")) {
+				aDateTo = "to_date('"+aDateTo+"','dd.MM.yyyy')";
+			} else {
+				aDateTo = "current_date";
+			}
+			if (aLpu!=null&&!aLpu.equals("")) {
+				sexSql+=" and att.lpu_id="+aLpu+" and att.dateto is null";
+			}
+			sql += " cast(to_char("+aDateTo+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char("+aDateTo+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char("+aDateTo+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between "+aAgeFrom + " and "+aAgeTo
+					+" and pat.deathdate is null and (pat.noactuality is null or pat.noactuality='0')"+sexSql+" order by random()";
+			//	System.out.println("==Find persons: "+sql);
+		}
+
+		return service.executeNativeSql(sql,maxResults);
 	}
 	
 	public String generateTalons (String aWorkFunctionIds,String aDateFrom, String aDateTo, String times, Long serviceStream, Long workplace
 			, Long visitReason, Long visitResult, String diagnosis, Long concludingActuity
-			, Long recordCount, String aAgeFrom, String aAgeTo, String aSexId, String aLpu, HttpServletRequest aRequest) throws ParseException, NamingException {
+			, Long recordCount, String aAgeFrom, String aAgeTo, String aSexId, String aLpu, String aPatientIds, boolean isProfOsmotr, HttpServletRequest aRequest) throws ParseException, NamingException {
 		Date startDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateFrom);
 		Date finishDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateTo);
 
 		
-		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String username = "ugolovasticov";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		ITicketService ser = (ITicketService)Injection.find((HttpServletRequest)aRequest).getService(ITicketService.class);
+		ITicketService ser = Injection.find(aRequest).getService(ITicketService.class);
 
 		Calendar cal = new GregorianCalendar();
 			cal.setTime(startDate);
@@ -104,8 +99,8 @@ public class TicketServiceJs {
 				if (cal.getTime().after(finishDate)) break;			
 			}
 			if (allDates.length()>0) {}else {return "" ;}
-			System.out.println("DATES = "+allDates);
-			Collection<WebQueryResult> pats = getPatients(aAgeFrom, aAgeTo, aDateTo, aSexId, aLpu, recordCount.intValue(), aRequest);
+			//System.out.println("DATES = "+allDates);
+			Collection<WebQueryResult> pats = getPatients(aAgeFrom, aAgeTo, aDateTo, aSexId, aLpu, aPatientIds, recordCount.intValue(), aRequest);
 			if (pats.isEmpty()) return "";
 			String mainPriority = service.executeNativeSql("select id from vocprioritydiagnosis where code='1'").iterator().next().get1().toString();
 			
@@ -113,72 +108,85 @@ public class TicketServiceJs {
 			String[] workFunctions = aWorkFunctionIds.replace(" ", "").split(",");
 			String[] dates = allDates.toString().split("#"); 
 			String[] diagnos = getDiagnosisId(diagnosis.replace(" ","").split(","), aRequest);
-			String[] time = times.split(",");
+		//	String[] time = times.split(",");
 			StringBuilder ids = new StringBuilder();
 			for (WebQueryResult pat: pats) {
 				String date = dates[rnd.nextInt(dates.length)];
 				String dsId = diagnos[rnd.nextInt(diagnos.length)];
 				String patId = pat.get1().toString();
 				String medcardId = pat.get2().toString();
-				
+				Long spoId=null;
+				if (isProfOsmotr) {
+					spoId = ser.createMedcase("PolyclinicMedCase"); //Если профосмотр - все визиты в рамках одного осмотра
+				}
 				for (int i=0;i<workFunctions.length;i++) {
-				String aWorkFunctionId = workFunctions[i];
-			
-			Long SPO = ser.createMedcase("PolyclinicMedCase");
-			Long ticketId = ser.createMedcase("ShortMedCase");
-			ids.append("Patient=").append(patId).append("&date=").append(date);
-			ids.append("&wf=").append(aWorkFunctionId);
-			String ticketSql = "update medcase set "
-					+ "username='"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), createdate=current_date"
-					+ ", noactuality='0',parent_id="+SPO+", servicestream_id="+serviceStream+", patient_id="+patId
-					+ ",workfunctionexecute_id="+aWorkFunctionId+", visitresult_id="+visitResult+", visitreason_id="+visitReason 
-					+ ", workplacetype_id="+workplace
-					+ ", createtime=cast('12:35' as time(5)), medcard_id="+medcardId+" where id="+ticketId+" and dtype='ShortMedCase'";
-			String polSql = "update medcase set username = '"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), datefinish=to_date('"+date+"','dd.MM.yyyy') , createdate=current_date" +
-					" ,noactuality='0', lpu_id=(select coalesce(wf.lpu_id,w.lpu_id) from workfunction wf left join worker w on w.id=wf.worker_id where wf.id="+aWorkFunctionId+")" +
-					" ,servicestream_id="+serviceStream+", patient_id="+patId+", ownerfunction_id="+aWorkFunctionId+"" +
-					" ,startfunction_id="+aWorkFunctionId+", finishfunction_id="+aWorkFunctionId+", idc10_id="+dsId+" where id = "+SPO+" and dtype='PolyclinicMedCase'";		
-			ids.append("&ticket = "+ticketId);
-			
-			String diagnosisSql = "insert into diagnosis (name, establishdate, priority_id, idc10_id" +
-					", medcase_id, illnesprimary_id, createusername) (select name , to_date('"+date+"','dd.MM.yyyy') " +
-					", "+mainPriority+","+dsId+","+ticketId+","+concludingActuity+",'"+username+"'"+
-					" from vocidc10 where id = "+dsId+")" ;
-					
-			service.executeUpdateNativeSql(polSql); //Формируем СПО
-			service.executeUpdateNativeSql(ticketSql); //Формируем визит			
-			service.executeUpdateNativeSql(diagnosisSql); //Формируем диагноз по визиту
-			ids.append("&ds = "+dsId+"\n");
+					String aWorkFunctionId = workFunctions[i];
+					if (!isProfOsmotr) {
+						spoId = ser.createMedcase("PolyclinicMedCase");
+					}
+					Long ticketId = ser.createMedcase("ShortMedCase");
+					ids.append("Patient=").append(patId).append("&date=").append(date);
+					ids.append("&wf=").append(aWorkFunctionId);
+					String ticketSql = "update medcase set "
+							+ "username='"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), createdate=current_date"
+							+ ", noactuality='0',parent_id="+spoId+", servicestream_id="+serviceStream+", patient_id="+patId
+							+ ",workfunctionexecute_id="+aWorkFunctionId+", visitresult_id="+visitResult+", visitreason_id="+visitReason
+							+ ", workplacetype_id="+workplace
+							+ ", createtime=cast('12:35' as time(5)), medcard_id="+medcardId+" where id="+ticketId+" and dtype='ShortMedCase'";
+					String polSql = "update medcase set username = '"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), datefinish=to_date('"+date+"','dd.MM.yyyy') , createdate=current_date" +
+							" ,noactuality='0', lpu_id=(select coalesce(wf.lpu_id,w.lpu_id) from workfunction wf left join worker w on w.id=wf.worker_id where wf.id="+aWorkFunctionId+")" +
+							" ,servicestream_id="+serviceStream+", patient_id="+patId+", ownerfunction_id="+aWorkFunctionId+"" +
+							" ,startfunction_id="+aWorkFunctionId+", finishfunction_id="+aWorkFunctionId+", idc10_id="+dsId+" where id = "+spoId+" and dtype='PolyclinicMedCase'";
+					ids.append("&ticket = "+ticketId);
+
+					String diagnosisSql = "insert into diagnosis (name, establishdate, priority_id, idc10_id" +
+							", medcase_id, illnesprimary_id, createusername) (select name , to_date('"+date+"','dd.MM.yyyy') " +
+							", "+mainPriority+","+dsId+","+ticketId+","+concludingActuity+",'"+username+"'"+
+							" from vocidc10 where id = "+dsId+")" ;
+
+					service.executeUpdateNativeSql(polSql); //Формируем СПО
+					service.executeUpdateNativeSql(ticketSql); //Формируем визит
+					service.executeUpdateNativeSql(diagnosisSql); //Формируем диагноз по визиту
+					ids.append("&ds = "+dsId+"\n");
+				}
 			}
-			}
-			System.out.print(ids);
+		//	System.out.print(ids);
 		
 		return ids.toString();
 		
 	}
 	
 	public String deleteTalons (String aMedcardId, String aDate, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String sql = "delete from medcase where dtype = 'ShortMedCase' and dateStart is null";
 		if (aMedcardId!=null&&!aMedcardId.equals("")) {
 			sql +=" and medcard_id="+aMedcardId;
-		} if (aDate!=null&&!aDate.equals("")) {
+		}
+		if (aDate!=null&&!aDate.equals("")) {
 			sql +=" and createdate < to_date('"+aDate+"','dd.MM.yyyy')";
 		}
 		
 		return "Успешно удалено " + service.executeUpdateNativeSql(sql) +" талонов";
 	}
-	public String getCrossSPO(String aDate, String aPatientId, String aWorkfuntionId, HttpServletRequest aRequest) throws NamingException {
+
+	/*Перекрестные СПО по пациенту и рабочей функции*/
+	public String getCrossSPO(String aDate, Long aPatientId, Long aWorkfuntionId, HttpServletRequest aRequest) throws NamingException {
 		String result = "";
 		StringBuilder str = new StringBuilder();
-		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService((Class)IWebQueryService.class);
-		str.append("select spo.id, to_char(spo.datestart,'dd.MM.yyyy') as dstart,to_char(spo.datefinish,'dd.MM.yyyy') as dfinish from medcase spo where spo.dtype='PolyclinicMedCase' and spo.datefinish is not null").append(" and spo.patient_id=(select person_id from medcard where id=").append(aPatientId).append(") and spo.ownerfunction_id=").append(aWorkfuntionId).append(" and spo.datestart<=to_date('").append(aDate).append("','dd.MM.yyyy')").append(" and spo.datefinish >=to_date('").append(aDate).append("','dd.MM.yyyy')");
-		Collection res = service.executeNativeSql(str.toString(), Integer.valueOf(1));
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		str.append("select spo.id, to_char(spo.datestart,'dd.MM.yyyy') as dstart,to_char(spo.datefinish,'dd.MM.yyyy') as dfinish " +
+                " from medcase spo " +
+                " left join workfunction wf on wf.id=spo.ownerfunction_id" +
+                " where spo.dtype='PolyclinicMedCase' and spo.datefinish is not null")
+                .append(" and spo.patient_id=").append(aPatientId)
+                .append(" and wf.workfunction_id = (select workfunction_id from workfunction where id=").append(aWorkfuntionId).append(")")
+                .append(" and spo.datestart<=to_date('").append(aDate).append("','dd.MM.yyyy')")
+                .append(" and spo.datefinish >=to_date('").append(aDate).append("','dd.MM.yyyy')");
+		Collection res = service.executeNativeSql(str.toString(), 1);
 		if (!res.isEmpty()) {
 			WebQueryResult r = (WebQueryResult)res.iterator().next();
 			result = r.get1().toString() + ":" + r.get2().toString() + ":" + r.get3().toString();
 		}
-		System.out.println("STRRRRRR" + result);
 		return result;
 	}
 	public String getUetByService(Long aService, HttpServletRequest aRequest) throws NamingException {
@@ -186,21 +194,13 @@ public class TicketServiceJs {
         StringBuilder str = new StringBuilder();
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         str.append("select uet from medservice where id="+aService+" and uet is not null");
-        Collection<WebQueryResult> res = service.executeNativeSql(str.toString(), Integer.valueOf(1));
+        Collection<WebQueryResult> res = service.executeNativeSql(str.toString(), 1);
         if (!res.isEmpty()) {
             WebQueryResult r = res.iterator().next();
             result = r.get1().toString();
         }
         return result;
     }
-	public String isHoliday (String aDate) throws ParseException {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(ru.nuzmsh.util.format.DateFormat.parseDate(aDate));
-		 if (cal.get(java.util.Calendar.DAY_OF_WEEK)==1) {
-			 return "1";
-		 }
-		return "0";
-	}
 	public String getDataByReference(Long aMedCase,String aType, HttpServletRequest aRequest) throws Exception {
 		return HospitalMedCaseServiceJs.getDataByReference(aMedCase, aType, aRequest) ;
 	}
@@ -423,29 +423,28 @@ public class TicketServiceJs {
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.emergency", aEmergency?"1":"0") ;
 		return "Сохранено" ;
 	}
-	public String canICreateTicket(Long aId, Long aMedcard, Long aSpec, String aDate, Long aMedcardId, HttpServletRequest aRequest) throws Exception {
+	public String isHoliday(String aDate, HttpServletRequest aRequest) throws ParseException {
+		return ru.nuzmsh.util.format.DateFormat.isHoliday(aDate) ? "1" :"0";
+	}
+	public String canICreateTicket(Long aId, Long aPatientId, Long aSpec, String aDate, Long aMedcardId, HttpServletRequest aRequest) throws NamingException, ParseException {
 		String ret = "";
-		if (isHoliday(aDate).equals("1")) {
+		if (ru.nuzmsh.util.format.DateFormat.isHoliday(aDate)) {
 			ret = "<br><ol><li>Визит приходится на выходной день, создание визита невозможно</li></ol><br>";
 		} else {
 			//String patientId = 
-			String crossSPO = getCrossSPO(aDate, ""+aMedcardId, ""+aSpec, aRequest) ;
-			if (crossSPO!=null&&!crossSPO.equals("")){
+			String crossSPO = getCrossSPO(aDate, aPatientId, aSpec, aRequest) ;
+			if (!crossSPO.equals("")){
 				ret = crossSPO;
 			} else {
-				crossSPO = findDoubleBySpecAndDate(aId, aMedcard, aSpec, aDate, aRequest);
-				if (crossSPO!=null&&!crossSPO.equals("")) {
+				crossSPO = findDoubleBySpecAndDate(aId, aMedcardId, aSpec, aDate, aRequest);
+				if (!crossSPO.equals("")) {
 					ret = crossSPO; 
 				}
 			}
 		}
-		
-		
 		return ret;
-		
 	}
-	public String findDoubleBySpecAndDate(Long aId, Long aMedcard, Long aSpec, String aDate, HttpServletRequest aRequest) throws NamingException, Exception {
-		//ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
+	public String findDoubleBySpecAndDate(Long aId, Long aMedcard, Long aSpec, String aDate, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	
     	if(StringUtil.isNullOrEmpty(aDate)) {
@@ -469,7 +468,7 @@ public class TicketServiceJs {
         
         
         Collection<WebQueryResult> doubles = service.executeNativeSql(sql.toString()) ;
-        if (doubles.size()>0) {
+        if (!doubles.isEmpty()) {
         	StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;
 			for (WebQueryResult res:doubles) {
@@ -519,7 +518,7 @@ public class TicketServiceJs {
     	return ret.toString() ;
     }
     public Map<String,String> enrusCreate() {
-    	Map <String,String> map = new HashMap<String, String>();
+    	Map <String,String> map = new HashMap<>();
     	map.put("Й", "Q" ) ;
     	map.put("Ц", "W" ) ;
     	map.put("У","E"  ) ;
@@ -568,14 +567,14 @@ public class TicketServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select id,code from VocServiceStream where id='"+aServiceStream+"' and code='OBLIGATORYINSURANCE'" ;
 		Collection<WebQueryResult> list1 = service.executeNativeSql(sql,1) ;
-		if (list1.size()>0) {
+		if (!list1.isEmpty()) {
 			sql = "SELECT mp.id,mp.dtype " 
 	                +"FROM MedPolicy mp left join Medcard mc on mp.patient_id=mc.person_id left join Patient pat on pat.id=mc.person_id where mc.id='"+aMedcardId+"' "
 	                +"AND ((mp.actualDateFrom<=to_date('"+aDatePlan+"','dd.mm.yyyy') and (mp.actualDateTo is null or mp.actualDateTo>=to_date('"+aDatePlan+"','dd.mm.yyyy')) "
 	                +"and mp.DTYPE like 'MedPolicyOmc%') or pat.deathdate<= to_date('"+aDatePlan+"','dd.mm.yyyy'))" ;
 			//System.out.println(sql) ;
 			Collection<WebQueryResult> list = service.executeNativeSql(sql,1) ;
-			if (list.size()==0) return "1" ;
+			if (list.isEmpty()) return "1" ;
 			if (list.size()>1) return "2" ;
 		}
 		return "0" ;
@@ -605,16 +604,14 @@ public class TicketServiceJs {
 		if (aDate!=null && !aDate.equals("")) return service.getMedServiceBySpec(aSpec, aDate);
 		return "" ;
 	}
+	public Long getUserByWorkFunction(HttpServletRequest aRequest) throws NamingException {
+		return getWorkFunction(aRequest);
+	}
 	public Long getWorkFunction(HttpServletRequest aRequest) throws NamingException {
 		IWorkerService servWorker = Injection.find(aRequest).getService(IWorkerService.class) ;
-    	Long doctor = servWorker.getWorkFunction() ;
-		return doctor;
+		return servWorker.getWorkFunction() ;
 	}
-	public Long getUserByWorkFunction(HttpServletRequest aRequest) throws NamingException {
-		IWorkerService servWorker = Injection.find(aRequest).getService(IWorkerService.class) ;
-    	Long doctor = servWorker.getWorkFunction() ;
-		return doctor;
-	}
+
 	public String isEditCheck(Long aIdTicket, Long aDoctor, HttpServletRequest aRequest) throws Exception {
     	IScriptService service = (IScriptService)Injection.find(aRequest).getService("ScriptService") ;
     	IWebQueryService serviceWQ = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -623,7 +620,7 @@ public class TicketServiceJs {
     			"left join Worker w on w.id=wf.worker_id " +
     			"left join SecUser su on su.id=wf.secuser_id where su.login='").append(userCur).append("'") ;
     	Collection<WebQueryResult> workFunctions = serviceWQ.executeNativeSql(sql.toString()) ;
-		boolean isEditUser = !RolesHelper.checkRoles("/Policy/Poly/Ticket/IsDoctorEdit",aRequest) ; ;
+		boolean isEditUser = !RolesHelper.checkRoles("/Policy/Poly/Ticket/IsDoctorEdit",aRequest) ;
 		if (!isEditUser) {
 		for (WebQueryResult work:workFunctions) {
     		isEditUser = checkUser(aIdTicket,aDoctor, ConvertSql.parseLong(work.get1()), aRequest) ;
@@ -634,7 +631,7 @@ public class TicketServiceJs {
 			boolean isClosedPeriod = checkPermission(service, "ShortMedCase", "dateClosePeriod", aIdTicket, aRequest) ;
 			if (isClosedPeriod) {
 				boolean isEditClose = checkPermission(service, "ShortMedCase", "editDataClosePeriod", aIdTicket, aRequest); 
-				System.out.println("isEditClose="+isEditClose) ;
+			//	System.out.println("isEditClose="+isEditClose) ;
 				return  isEditClose?"1":"0#Период закрыт на редактирование";
 			} else {
 				return "1" ;
@@ -644,8 +641,7 @@ public class TicketServiceJs {
 	}
     	
 	public boolean checkCreateDoubleBySpecAndDate(HttpServletRequest aRequest) throws Exception {
-		boolean always = RolesHelper.checkRoles("/Policy/Poly/Ticket/IsNotCreateDoubleTicket",aRequest) ;
-		return always ;
+		return RolesHelper.checkRoles("/Policy/Poly/Ticket/IsNotCreateDoubleTicket",aRequest) ;
 	}
     private boolean checkUser(Long aIdTicket,Long aDoctorExecute, Long aDoctorCur
     		, HttpServletRequest aRequest) throws Exception {
@@ -659,16 +655,14 @@ public class TicketServiceJs {
         }
     	
     }
-    public static boolean checkPermission(IScriptService aService, String aObject, String aPermission,  Long aIdTicket, HttpServletRequest aRequest) throws Exception {
-    	HashMap<String, Comparable> param = new HashMap<String, Comparable>() ;
-    	long res1 ;
+    public static boolean checkPermission(IScriptService aService, String aObject, String aPermission,  Long aIdTicket, HttpServletRequest aRequest) {
+    	HashMap<String, Comparable> param = new HashMap<>() ;
     	Object res ;
     	param.put("obj",aObject) ;
 		param.put("permission" ,aPermission) ;
 		param.put("id", aIdTicket) ;
 		res = aService.invoke("WorkerService", "checkPermission", new Object[]{param});
-		res1 = TemplateProtocolJs.parseLong(res);
-		if (res1>0) {return true ; }
-    	return false ;
+		long res1 = TemplateProtocolJs.parseLong(res);
+		return res1>0;
     }
 }

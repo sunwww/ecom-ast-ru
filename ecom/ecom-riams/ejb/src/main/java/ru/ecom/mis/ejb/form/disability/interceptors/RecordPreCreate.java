@@ -1,16 +1,15 @@
 package ru.ecom.mis.ejb.form.disability.interceptors;
 
-import java.sql.Date;
-import java.util.Calendar;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
 import ru.ecom.mis.ejb.form.disability.DisabilityRecordForm;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.sql.Date;
+import java.util.Calendar;
 
 /**
  * Ограничение записи продления перед созданием формы  
@@ -24,7 +23,7 @@ public class RecordPreCreate implements IParentFormInterceptor{
     	DisabilityDocument doc = manager.find(DisabilityDocument.class, aParentId) ;
     	
     	if (doc!=null) {
-    		if (doc.getIsClose()!=null && doc.getIsClose()==true) {
+    		if (doc.getIsClose()!=null && doc.getIsClose()) {
     			throw new IllegalStateException("Нельзя добавить продление в закрытый документ!!!") ;
     		}
     		
@@ -49,9 +48,6 @@ public class RecordPreCreate implements IParentFormInterceptor{
     				throw new IllegalStateException("Невозможно добавить продление. Сначала нужно завершить все предыдущие продления!!!") ;    				
     			}
     		} 
-    		
-    		
-    		
     	} else {
     		throw new IllegalStateException("Невозможно добавить продление. Сначала надо определить документ нетрудоспособности!!!") ;
     	}

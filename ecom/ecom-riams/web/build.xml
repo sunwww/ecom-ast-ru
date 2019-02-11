@@ -15,12 +15,53 @@
 		<include name="image/imgscalr-lib-3.2.jar"/>
 		<include name="image/jai_codec.jar"/>
 		<include name="axis/axis.jar"/>
-		
+		<include name='jersey/javax.ws.rs-api-2.1.jar' />
+		<include name='javax/javax.websocket-api-1.1.jar' />
+		<include name='jersey/gson-2.6.1.jar' />
 	</fileset>
 
 	<target name='prepare.web'>
 		<copy overwrite="true" todir="target/webapp/WEB-INF/lib">
-			<fileset refid='riams.ejb.jar' />
+		<!--	<fileset refid='riams.ejb.jar' /> -->
+            <!--jersey-->
+			<fileset file='${libdir}/jersey/javax.ws.rs-api-2.1.jar' />
+			<fileset file='${libdir}/jersey/jersey-client.jar' />
+			<fileset file='${libdir}/jersey/jersey-common.jar' />
+			<fileset file='${libdir}/jersey/jersey-container-servlet.jar' />
+			<fileset file='${libdir}/jersey/jersey-container-servlet-core.jar' />
+			<fileset file='${libdir}/jersey/jersey-hk2.jar' />
+			<fileset file='${libdir}/jersey/jersey-media-jaxb.jar' />
+			<fileset file='${libdir}/jersey/jersey-media-json-binding.jar' />
+			<fileset file='${libdir}/jersey/jersey-media-sse.jar' />
+			<fileset file='${libdir}/jersey/jersey-server.jar' />
+			<fileset file='${libdir}/javax/javax.websocket-api-1.1.jar' />
+			<fileset file='${libdir}/jersey/gson-2.6.1.jar' />
+			<fileset file="${libdir}/ecom/riams/ejb/riams-ejb-api.jar" />
+			<!--jersey ext-->
+			<fileset file='${libdir}/jersey/ext/aopalliance-repackaged-2.5.0-b42.jar' />
+			<fileset file='${libdir}/jersey/ext/cdi-api-1.1.jar' />
+			<fileset file='${libdir}/jersey/ext/el-api-2.2.jar' />
+			<fileset file='${libdir}/jersey/ext/hk2-api-2.5.0-b42.jar' />
+			<fileset file='${libdir}/jersey/ext/hk2-locator-2.5.0-b42.jar' />
+			<fileset file='${libdir}/jersey/ext/hk2-utils-2.5.0-b42.jar' />
+			<fileset file='${libdir}/jersey/ext/javassist-3.22.0-CR2.jar' />
+			<fileset file='${libdir}/jersey/ext/javax.annotation-api-1.2.jar' />
+			<fileset file='${libdir}/jersey/ext/javax.inject-1.jar' />
+			<fileset file='${libdir}/jersey/ext/javax.inject-2.5.0-b42.jar' />
+			<fileset file='${libdir}/jersey/ext/javax.json-1.1.jar' />
+			<fileset file='${libdir}/jersey/ext/javax.json-api-1.1.jar' />
+			<fileset file='${libdir}/jersey/ext/javax.json.bind-api-1.0.jar' />
+			<fileset file='${libdir}/jersey/ext/javax.servlet-api-3.0.1.jar' />
+			<fileset file='${libdir}/jersey/ext/jaxb-api-2.2.7.jar' />
+			<fileset file='${libdir}/jersey/ext/jboss-interceptors-api_1.1_spec-1.0.0.Beta1.jar' />
+			<fileset file='${libdir}/jersey/ext/jsr250-api-1.0.jar' />
+			<fileset file='${libdir}/jersey/ext/org.osgi.core-4.2.0.jar' />
+			<fileset file='${libdir}/jersey/ext/osgi-resource-locator-1.0.1.jar' />
+			<fileset file='${libdir}/jersey/ext/persistence-api-1.0.jar' />
+			<fileset file='${libdir}/jersey/ext/validation-api-1.1.0.Final.jar' />
+			<fileset file='${libdir}/jersey/ext/yasson-1.0.jar' />
+
+
 			<fileset file='${libdir}/image/jai_codec.jar' />
 			<fileset file='${libdir}/image/imgscalr-lib-3.2.jar' />
 			<fileset file='${libdir}/image/jai_imageio.jar' />
@@ -30,7 +71,7 @@
 			<fileset file='${libdir}/gwt/gwt-servlet.jar' />
 			<fileset file='${libdir}/axis/axis.jar' />
 			<fileset file='${libdir}/axis/commons-discovery-0.2.jar' />
-			<fileset file='${libdir}/axis/commons-logging-1.0.4.jar' />
+		<!--	<fileset file='${libdir}/axis/commons-logging-1.0.4.jar' /> -->
 		</copy>
 
 		<delete dir='./target/webapp/ru.ecom.gwt.idemode.Main' />
@@ -45,7 +86,11 @@
 		
 		<mkdir dir="./target/webapp/WEB-INF/classes/META-INF" />
 		<copy file="../ejb/src/main/resources/riams-ejb_jar/META-INF/mapforms.xml"
-				todir='./target/webapp/WEB-INF/classes/META-INF' overwrite="true"/>
+				todir='./target/webapp/WEB-INF/classes/META-INF' overwrite="true">
+			<fileset dir="./src/main/resources/META-INF">
+				<include name='*.tld*' />
+			</fileset>
+		</copy>
 	</target>
 
 	<import file="../../ant-support/web-skeleton.xml" />

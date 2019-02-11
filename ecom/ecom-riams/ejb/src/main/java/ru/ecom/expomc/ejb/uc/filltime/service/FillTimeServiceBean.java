@@ -1,32 +1,11 @@
 package ru.ecom.expomc.ejb.uc.filltime.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.NativeJavaObject;
-import org.mozilla.javascript.Script;
-import org.mozilla.javascript.Scriptable;
-
+import org.mozilla.javascript.*;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.monitor.MonitorId;
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
-import ru.ecom.ejb.services.util.JBossConfigUtil;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.ejb.services.util.QueryResultUtil;
 import ru.ecom.ejb.util.RhinoHelper;
@@ -39,13 +18,24 @@ import ru.ecom.expomc.ejb.uc.filltime.domain.FillTime;
 import ru.ecom.expomc.ejb.uc.filltime.domain.FillTimeProperty;
 import ru.nuzmsh.util.PropertyUtil;
 
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 @Stateless
 @Remote(IFillTimeService.class)
 public class FillTimeServiceBean implements IFillTimeService {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(FillTimeServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public long fill(long aFillTime, MonitorId aMonitorId) {
 		IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Запуск заполнения "+aFillTime) ;
@@ -111,7 +101,7 @@ public class FillTimeServiceBean implements IFillTimeService {
 	}
 
 	
-	
+	/*
 	private void loadFile2(Context aContext, Scriptable aScope) {
 		try {
 			File file = JBossConfigUtil.getDataFile("filltime.js");
@@ -125,7 +115,7 @@ public class FillTimeServiceBean implements IFillTimeService {
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
-	}
+	}*/
 	private void addFunctions(List<FillTimeProperty> aProperties, Context aContext, Scriptable aScope) {
 		for(FillTimeProperty prop : aProperties) {
 			addFunction(aContext, aScope, prop.getProperty(), prop.getTransformText());
@@ -204,7 +194,7 @@ public class FillTimeServiceBean implements IFillTimeService {
 	public List<PropertyByFieldRow> listByFormat(long aFillTime) {
 		FillTime fillTime = theManager.find(FillTime.class, aFillTime);
 		if(fillTime.getFormat()!=null) {
-			List<PropertyByFieldRow> list = new LinkedList<PropertyByFieldRow>() ;
+			List<PropertyByFieldRow> list = new LinkedList<>() ;
 			for(Field field : fillTime.getFormat().getFields()) {
 				String propName = field.getProperty();
 				 PropertyByFieldRow row = new PropertyByFieldRow() ;

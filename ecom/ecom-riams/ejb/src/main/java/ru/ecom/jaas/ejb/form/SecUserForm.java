@@ -1,10 +1,6 @@
 package ru.ecom.jaas.ejb.form;
 
-import javax.persistence.Id;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
-import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
-import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -16,6 +12,8 @@ import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
+
+import javax.persistence.Id;
 
 /**
  * Пользователь

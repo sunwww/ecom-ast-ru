@@ -5,24 +5,18 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
-import ru.ecom.mis.ejb.form.patient.interceptors.PatientCreateInterceptor;
-import ru.ecom.mis.ejb.form.patient.interceptors.PatientSaveInterceptor;
 import ru.ecom.mis.ejb.form.prescription.AbstractPrescriptionListForm;
 import ru.ecom.mis.ejb.form.prescription.template.interceptors.PrescriptListCreateInterceptor;
-
-//import ru.ecom.mis.ejb.form.prescription.interceptor.PrescriptListPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
+
+//import ru.ecom.mis.ejb.form.prescription.interceptor.PrescriptListPreCreateInterceptor;
 
 /**
  * Шаблон листа назначения

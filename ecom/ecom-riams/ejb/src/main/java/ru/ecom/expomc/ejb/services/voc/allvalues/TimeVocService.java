@@ -1,21 +1,10 @@
 package ru.ecom.expomc.ejb.services.voc.allvalues;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.ejb.services.util.EntityHelper;
 import ru.ecom.ejb.services.voc.IVocConfigXmlService;
@@ -30,13 +19,22 @@ import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
+import javax.persistence.Query;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 /**
  *
  */
 public class TimeVocService implements IVocContextService, IVocServiceManagement, IVocConfigXmlService {
 
-    private final static Logger LOG = Logger.getLogger(TimeVocService.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(TimeVocService.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     private enum QueryConvertType {NONE, LOWER_CASE, UPPER_CASE}
 
@@ -105,7 +103,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
     private static String[] getArray(Element aParentElement, String aElementName, String[] aDefaultArray) {
         String text = getText(aParentElement,aElementName,createFromArray(aDefaultArray)) ;
         StringTokenizer st = new StringTokenizer(text,", ;:");
-        LinkedList<String> list = new LinkedList<String>();
+        LinkedList<String> list = new LinkedList<>();
         while(st.hasMoreTokens()) {
             String token = st.nextToken() ;
             list.add(token) ;
@@ -278,7 +276,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
         }
     }
 
-    private VocValue createVocValue(Object aEntity) throws RuntimeException {
+    private VocValue createVocValue(Object aEntity) {
         try {
             String id = PropertyUtil.getPropertyValue(aEntity, theCodeField).toString() ;
             String name = getNameFromEntity(aEntity) ; //PropertyUtil.getPropertyValue(aEntity, theNameField).toString() ;
@@ -312,7 +310,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
                 throw new VocServiceException("Ошибка получения идентификатора",e);
             }
         } else {
-            LinkedList<VocValue> values = new LinkedList<VocValue>();
+            LinkedList<VocValue> values = new LinkedList<>();
             values.add(new VocValue("", "Не найдено")) ;
             return values;
         }
@@ -334,7 +332,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
     }
 
     private Collection<VocValue> createValues(List aEntities)  {
-        LinkedList<VocValue> values = new LinkedList<VocValue>();
+        LinkedList<VocValue> values = new LinkedList<>();
         if(aEntities!=null && !aEntities.isEmpty()) {
             for (Object entity : aEntities) {
                 values.add(createVocValue(entity)) ;

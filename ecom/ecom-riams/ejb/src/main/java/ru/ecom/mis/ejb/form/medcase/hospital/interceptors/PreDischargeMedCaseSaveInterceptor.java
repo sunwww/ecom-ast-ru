@@ -1,11 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
@@ -19,10 +14,13 @@ import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.persistence.EntityManager;
+import java.util.List;
+
 public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 	 
-		private final static Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
-	    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+		private static final Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
+	    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 		
 	    public void intercept(IEntityForm aForm, Object aEntity, EntityManager aManager) {
 			HospitalMedCaseForm form=(HospitalMedCaseForm)aForm ;
@@ -33,8 +31,8 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 			boolean adding5is = (!isEmpty(form.getPathanatomicalDiagnos()) || (!isEmpty(form.getPathanatomicalMkb()))) ;	
 			boolean adding3is = (!isEmpty(form.getConcludingDiagnos()) || (!isEmpty(form.getConcludingMkb()))) ;
 			boolean adding1is = (!isEmpty(form.getEntranceDiagnos()) || (!isEmpty(form.getEntranceMkb()))) ;
-			boolean adding6is = (!isEmpty(form.getConcomitantDiagnos()) || (!isEmpty(form.getConcomitantMkb()))) ;
-			boolean adding7is = (!isEmpty(form.getComplicationDiagnos()) || (!isEmpty(form.getComplicationMkb()))) ;
+	//		boolean adding6is = (!isEmpty(form.getConcomitantDiagnos()) || (!isEmpty(form.getConcomitantMkb()))) ;
+	//		boolean adding7is = (!isEmpty(form.getComplicationDiagnos()) || (!isEmpty(form.getComplicationMkb()))) ;
 			
 			if (adding4is|| adding5is||adding3is||adding1is) {
 				boolean adding4 = false ;
@@ -56,8 +54,8 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				VocDiagnosisRegistrationType vocTypeEnter = (VocDiagnosisRegistrationType)getVocByCode(aManager,"VocDiagnosisRegistrationType","1");
 				
 				VocPriorityDiagnosis vocPriorType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","1") ;
-				VocPriorityDiagnosis vocConcomType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","3") ;
-				VocPriorityDiagnosis vocComplicationType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","4") ;
+		//		VocPriorityDiagnosis vocConcomType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","3") ;
+		//		VocPriorityDiagnosis vocComplicationType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","4") ;
 				/*List<VocPriorityDiagnosis> listpr = aManager.createQuery("from VocPriorityDiagnosis where code=1").getResultList() ;
 				if (listpr.size()>0) vocPriorType=listpr.get(0) ;*/
 				
@@ -100,7 +98,7 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 	    
 	    public static Object getVocByCode(EntityManager aManager,String aTable, String aCode) {
 	    	List list = aManager.createQuery("from "+aTable+" where code='"+aCode+"'").getResultList() ;
-	    	return list.size()>0?list.get(0):null ; 
+	    	return list.isEmpty() ? null : list.get(0) ;
 	    }
 
 
@@ -129,7 +127,6 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 					VocIllnesPrimary illnes = aManager.find(VocIllnesPrimary.class, aActuity) ;
 					VocAcuityDiagnosis actuity = illnes.getIllnesType() ;
 					VocPrimaryDiagnosis primary = illnes.getPrimary() ;
-					//System.out.println("      actuity ="+actuity+""); 
 					aDiag.setAcuity(actuity) ;
 					aDiag.setPrimary(primary) ;
 					aDiag.setIllnesPrimary(illnes) ;
@@ -137,7 +134,6 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				aManager.persist(aDiag) ;
 				result = true ;
 			}
-			
 			return result ;
 			
 		}

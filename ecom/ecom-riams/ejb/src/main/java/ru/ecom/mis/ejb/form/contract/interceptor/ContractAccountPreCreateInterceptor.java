@@ -1,16 +1,14 @@
 package ru.ecom.mis.ejb.form.contract.interceptor;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
-import ru.ecom.mis.ejb.domain.contract.ServedPerson;
 import ru.ecom.mis.ejb.form.contract.ContractAccountForm;
-import ru.ecom.mis.ejb.form.contract.ServedPersonForm;
 import ru.nuzmsh.util.format.DateFormat;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ContractAccountPreCreateInterceptor implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {

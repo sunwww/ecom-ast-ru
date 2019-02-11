@@ -1,18 +1,14 @@
 package ru.ecom.mis.ejb.form.licence;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.util.Date;
+import java.util.List;
 
 public class DocumentPrepareCreateInterceptor implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
@@ -56,7 +52,7 @@ public class DocumentPrepareCreateInterceptor implements IParentFormInterceptor 
         		+" left join MedService ms on ms.id=mc.medService_id"
         		+" where mc.parent_id='"+aParentId+"' and mc.dtype='ServiceMedCase' order by ms.code").getResultList() ;
         res = new StringBuilder() ; 
-         isFirst = true ;
+     //    isFirst = true ;
         for (Object[] obj:list) {
         	res.append(obj[0]).append(". ").append(obj[1]).append("\n") ;
         }

@@ -9,11 +9,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceViewInterceptor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
@@ -284,5 +280,13 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** УЕТ */
 	private String theUet;
+
+	/** Указывать тип аборта при создании операции */
+	@Persist
+	@Comment("Указывать тип аборта при создании операции")
+	public Boolean getIsAbortRequired() {return theIsAbortRequired;}
+	public void setIsAbortRequired(Boolean aIsAbortRequired) {theIsAbortRequired = aIsAbortRequired;}
+	/** Указывать тип аборта при создании операции */
+	private Boolean theIsAbortRequired =false;
 
 }

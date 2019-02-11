@@ -9,10 +9,15 @@
 	<import file="../../ant-support/ejb-skeleton.xml" />
 
 	<fileset id='compile.fileset' dir="${libdir}">
-		<include name="msh/util-voc/msh-util-voc.jar" />
-		<include name="ecom/ejbweb/ejb/ecom-ejb-api.jar" />
+		<include name="msh/msh.jar" />
+	<!--	<include name="ecom/ejbweb/ejb/ecom-ejb-api.jar" /> -->
 		<include name="bsh/bsh-2.0b4.jar" />
 		<include name="ldap/riams-ldap.jar" />
+		<include name="apache-commons/commons-codec-1.3.jar" />
+		<include name="gson/gson-2.8.5.jar" />
+		<include name="junit/junit.jar" />
+
+
 	</fileset>
 
 	<target name='persistence.xml'>
@@ -41,6 +46,7 @@
 	<target name='ejb.jar' depends="persistence.xml">
 
 		<jar destfile="./target/${appname}-ejb.jar" compress="false">
+
 			<fileset refid="ecom.lib.fileset" />
 			<fileset refid="package.thirdparty.fileset" />
 			<fileset refid="package.classes" />
@@ -59,10 +65,25 @@
 				<include name='META-INF/persistence.xml'/>
 			</fileset>
 
-			<fileset refid="ejbweb.ejb.services" />
-			<fileset refid="ejbweb.ejb.jar" />
+		<!--	<fileset refid="ejbweb.ejb.services" /> -->
+		<!--	<fileset refid="riams.ejb.jar" /> -->
 
 		</jar>
+	</target>
+
+	<target name="ru.ecom.ejb.sqlUpdater.Run">
+		<delete dir='./target/sqlUpdater'/>
+		<mkdir dir="./target/sqlUpdater"/>
+		<javac destdir="./target/sqlUpdater/" includeantruntime="false">
+			<src path="../ejb/src/main/java/ru/ecom/sql/runBuild"/>
+		</javac>
+		<java classname="ru.ecom.sql.runBuild.SqlUpdateVersion" classpath="target/sqlUpdater"/>
+		<!--<jar destfile="./tarrunBuildtrunBuildtest.jar" basedir="./tarrunBuildtest/">
+        <manifest>
+            <attribute name="Main-Class" valru.ecom.api.sqlUpdater.runBuilduildtest.Test" />
+        </manifest>
+    </jar>
+    <java jar="./tarrunBuildtrunBuildtest.jar"  classpath="Test" fork="true"/>-->
 	</target>
 
 </project>

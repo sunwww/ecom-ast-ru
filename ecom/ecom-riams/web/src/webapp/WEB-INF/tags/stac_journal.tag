@@ -108,7 +108,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
  	        <msh:sideLink 
 		        styleId="stac_journalTrafficByPatient" 
 		        roles="/Policy/Mis/MedCase/Stac/Journal/TrafficByPatient" key="ALT+7" 
-		        action="/stac_journalByCurator" name="Движения больных и коечного фонда" />  
+		        action="/stac_journalByCurator" name="Движения больных и коечного фонда" />
+			<msh:sideLink
+					styleId="stac_journalCurrentByUserDepartmentMicroBio"
+					roles="/Policy/Mis/MedCase/Stac/Journal/CurrentByUserDepartmentMicroBio"
+					action="/stac_journalCurrentByUserDepartmentMicroBio" name="По микробиологическим исследованиям" />
 	    </msh:sideMenu>
 	    <msh:sideMenu title="Журналы">
 	    	<msh:sideLink
@@ -144,6 +148,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 			<msh:sideLink styleId="journal_doc_externalMedService"
 						  roles="/Policy/Mis/MedCase/Stac/Ssl/View"
 						  action="/patientWatch.do" name="Пациенты под наблюдением"
+			/>
+			<msh:sideLink styleId="journal_doc_externalMedService"
+						  roles="/Policy/Mis/MedCase/Stac/Ssl/View"
+						  action="/wfConsultationsAll.do" name="Консультации в стационаре"
 			/>
 	    </msh:sideMenu>
 </msh:sideMenu>

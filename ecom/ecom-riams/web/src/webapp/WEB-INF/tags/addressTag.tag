@@ -208,7 +208,6 @@
         $('flatNumber').value = $('addressFlatNumber1').value ;
         if ($('zipcode')) $('zipcode').value = $('addressZipcode').value ;
 //        $('provincialAreaPk').value = addressProvincialAreaPkAutocomplete.getVocId() ;
-
         AddressService.getAddressString(addressPk, $('addressHouseNumber').value, $('addressHouseBuilding').value
         		, $('addressFlatNumber1').value,$('addressZipcode').value, {
             callback: function(aString) {
@@ -256,8 +255,6 @@
 
 
     function initAddress() {
-
-        var address = document.createElement("p") ;
         var inputLabel = "Ввести" ;
         var val = $('addressField').value ;
 //        alert("'"+val+"'")
@@ -277,7 +274,6 @@
                 
         var zipcode ="";
         if ($('zipcode')) zipcode=$('zipcode').value ;
-
         AddressService.getAddressString($('address').value
                 , $('houseNumber').value, $('houseBuilding').value, $('flatNumber').value, zipcode,{
             callback: function(aString) {

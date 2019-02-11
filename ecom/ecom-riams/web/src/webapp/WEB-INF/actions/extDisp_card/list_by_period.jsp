@@ -1,6 +1,4 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -1240,21 +1238,19 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     		$('expFizGroup').value,$('expHeight').value,$('expWeight').value,
     		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",$('expDivideNum').value,$('lpu').value, {
     	callback: function(aResult) {
-    		
-    	 	if (aResult==null)$('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;
-    		else {
-    			var aData = aResult.split("@");
-    			$('aView').innerHTML="<a href='../rtf/"+aData[0]+"''>"+aData[0]+"</a>" ;
-    			if (aData[1]!="" && aData[1]!="null" && aData[1]!=null) {
-    				$('exportTable').style.display = 'block' ;
-	    			aData[1] = aData[1].substring(0,aData[1].length-1);
-	    			var rows = aData[1].split("#");
-	    			flushTable();
-	    			for (var i=0;i<rows.length;i++) {
-	    				addRow (rows[i]);
-	    			}
-    			}
-    		}
+            if (aResult==null) {
+                $('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;
+                return;
+            }
+    	    aResult = JSON.parse(aResult);
+            $('aView').innerHTML="<a href='../rtf/"+(aResult.archiveName?aResult.archiveName:'noFile')+"'>"+(aResult.archiveName?aResult.archiveName:'Нечего выгружать')+"</a>" ;
+    		if (aResult.errorCards) {
+                $('exportTable').style.display = 'block' ;
+                flushTable();
+    		    for (var i=0;i<aResult.errorCards.length;i++) {
+                    addRow (aResult.errorCards[i]);
+				}
+			}
     	}
     });	 
  
@@ -1262,31 +1258,17 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     }
   
   function flushTable() {
-	  var table = document.getElementById("exportElements");
-	  var aRows = table.childNodes;
-	  if (aRows.length>1) {
-		  var j=aRows.length;
-		  for (var i=1;i<j;i++) {
-			  table.deleteRow(0);
-		  }
-	  }
-	  
+      jQuery('#exportElements').children().remove();
   }
   var firstRow=1;
-  function addRow (aRow) {
-	  var aData = aRow.split(":"); // ID:fullname:Diagnosis:Comment 
- 	
-	  var tbody = document.getElementById('exportElements');
+  function addRow (json) {
+	   // ID:fullname:Diagnosis:Comment
+	var tbody = document.getElementById('exportElements');
     var row = document.createElement("TR");
 	//row.id = type+"Element"+num;
     tbody.appendChild(row);
-    
-    // Создаем ячейки в вышесозданной строке 
-    // и добавляем тх 
     var td1 = document.createElement("TD");
- 
     var td2 = document.createElement("TD");
-    ///td2.colSpan="2";
     var td3 = document.createElement("TD");
     var td4 = document.createElement("TD");
     
@@ -1296,10 +1278,10 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 	 row.appendChild(td4);
    
     // Наполняем ячейки  
-    td1.innerHTML = "<a href='/riams/entityView-extDisp_card.do?id="+aData[0]+"' target='_blank'><span>\t"+aData[0]+"</span></a>";
-    td2.innerHTML = "<span> "+aData[1]+"</span>";
-  	td3.innerHTML = "<span> "+aData[2]+"</span>";
-   	td4.innerHTML = "<span> "+aData[3]+"</span>";
+    td1.innerHTML = "<a href='/riams/entityView-extDisp_card.do?id="+json.cardId+"' target='_blank'><span>\t"+json.cardId+"</span></a>";
+    td2.innerHTML = "<span> "+json.patientInfo+"</span>";
+  	td3.innerHTML = "<span> "+json.diagnosis+"</span>";
+   	td4.innerHTML = "<span> "+json.errorName+"</span>";
    
   }
     function checkFieldUpdate(aField,aValue,aDefault) {

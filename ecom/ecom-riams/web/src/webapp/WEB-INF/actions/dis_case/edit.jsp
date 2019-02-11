@@ -59,7 +59,7 @@
   	,vds.name as vdsname
   	, vddt.name as vddtname
   	,vdp.name as vdpname
-  	, 'сер. '||dd.series||' №'||dd.number as sernumber
+  	,coalesce(dd.series,'')||' №'||dd.number as sernumber
   	, min(dr.datefrom) as mindatefrom
   	, case when 
 count(case when dr.dateto is null then '1' else null end)>0 

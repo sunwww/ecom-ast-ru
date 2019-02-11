@@ -17,7 +17,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property = "parent", parentForm = FloorBuildingForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/WorkPlace/HospitalRoom")
 public class HospitalRoomForm extends WorkPlaceForm {
-	/** Количество коек */
+	/**
+	 * Количество коек
+	 */
 	@Comment("Количество коек")
 	@Persist
 	public Long getBedCapacity() {
@@ -27,8 +29,10 @@ public class HospitalRoomForm extends WorkPlaceForm {
 	public void setBedCapacity(Long aBedCapacity) {
 		theBedCapacity = aBedCapacity;
 	}
-	
-	/** Тип коек */
+
+	/**
+	 * Тип коек
+	 */
 	@Comment("Тип коек")
 	@Persist
 	public Long getRoomType() {
@@ -38,27 +42,55 @@ public class HospitalRoomForm extends WorkPlaceForm {
 	public void setRoomType(Long aRoomType) {
 		theRoomType = aRoomType;
 	}
-	/** Лечебное учреждение */
+
+	/**
+	 * Лечебное учреждение
+	 */
 	@Comment("Лечебное учреждение")
-	@Persist @Required
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
-	/** Лечебное учреждение */
+	@Persist
+	@Required
+	public Long getLpu() {
+		return theLpu;
+	}
+
+	public void setLpu(Long aLpu) {
+		theLpu = aLpu;
+	}
+
+	/**
+	 * Лечебное учреждение
+	 */
 	private Long theLpu;
 
-	/** Пол */
+	/**
+	 * Пол
+	 */
 	@Comment("Пол")
 	@Persist
-	public Long getSex() {return theSex;}
-	public void setSex(Long aSex) {theSex = aSex;}
+	public Long getSex() {
+		return theSex;
+	}
 
-	/** Пол */
+	public void setSex(Long aSex) {
+		theSex = aSex;
+	}
+
+	/**
+	 * Пол
+	 */
 	private Long theSex;
-	/** Тип коек */
+	/**
+	 * Тип коек
+	 */
 	private Long theRoomType;
-	/** Количество коек */
+	/**
+	 * Количество коек
+	 */
 	private Long theBedCapacity;
-	/** Кол-во коек в палате */
+
+	/**
+	 * Кол-во коек в палате
+	 */
 	@Comment("Кол-во коек в палате")
 	@Persist
 	public Long getCountBed() {
@@ -69,6 +101,17 @@ public class HospitalRoomForm extends WorkPlaceForm {
 		theCountBed = aCountBed;
 	}
 
-	/** Кол-во коек в палате */
+	/**
+	 * Кол-во коек в палате
+	 */
 	private Long theCountBed;
+
+	/** Признак палаты по умолчанию (для новорожденных) */
+	@Comment("Признак палаты по умолчанию (для новорожденных)")
+	@Persist
+	public Boolean getDefaultRoom() { return theDefaultRoom; }
+	public void setDefaultRoom(Boolean aDefaultRoom) {theDefaultRoom = aDefaultRoom;}
+
+	/** Признак палаты по умолчанию (для новорожденных) */
+	private Boolean theDefaultRoom;
 }

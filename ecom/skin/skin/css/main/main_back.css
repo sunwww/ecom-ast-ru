@@ -408,7 +408,7 @@ div.autocomplete ul li span.null {
     visibility: hidden ;
 }
 
-
+/* Milamesher 13062018 #29 прокрутка списка мышью */
 div.autocomplete table {
     z-index: 100 ;
     background-color: white ;
@@ -422,6 +422,15 @@ div.autocomplete table {
     border-right: 1px solid #333 ;
     border-top: 1px solid #999 ;
     border-left: 1px solid #999 ;
+    width: 100%;
+}
+
+div.autocomplete table tbody {
+    display:table;
+    height:auto;/*auto;/*180*/
+    overflow-y:auto;
+    overflow-x:hidden;
+    width: 100%;
 }
 
 div.autocomplete table tr td {

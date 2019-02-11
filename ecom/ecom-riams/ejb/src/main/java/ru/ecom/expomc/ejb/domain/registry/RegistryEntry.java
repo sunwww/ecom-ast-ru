@@ -1,19 +1,14 @@
 package ru.ecom.expomc.ejb.domain.registry;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import ru.ecom.ejb.services.index.annotation.AIndex;
-import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
 import ru.ecom.expomc.ejb.domain.impdoc.IUrlEditable;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.math.BigDecimal;
 
 /**
  * Запись в реестре
@@ -54,6 +49,7 @@ import ru.nuzmsh.util.StringUtil;
         })
         */
 @Table(schema="SQLUser")
+@Deprecated
 public class RegistryEntry extends LpuFond implements IImportData, IUrlEditable{
 
 	@Transient

@@ -8,7 +8,11 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	//если не неонатологический случай смерти
-	if (!aEntity.getIsNeonatologic()) {
+    makePersonDead(aEntity,aCtx);
+
+}
+function makePersonDead(aEntity, aCtx) {
+    if (aEntity.getIsNeonatologic()==null || aEntity.getIsNeonatologic()==false) {
         var patient = aEntity.getPatient();
         patient.setDeathDate(aEntity.getDeathDate());
         aCtx.manager.persist(patient);
@@ -22,15 +26,13 @@ function onSave(aForm, aEntity, aCtx) {
 	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	var patient = aEntity.getPatient();
-	patient.setDeathDate(aEntity.getDeathDate());
-	aCtx.manager.persist(patient) ;
-	
+    makePersonDead(aEntity,aCtx);
 }
 function onPreSave(aForm, aEntity, aCtx) {
 	if (aForm.isAutopsy!=null && aForm.isAutopsy.equals(java.lang.Boolean.TRUE)) {
-		var list=aCtx.manager.createNativeQuery("select dc.id from Certificate dc where dc.deathCase_id="+aForm.id+" and dc.dtype='DeathCertificate'").getResultList() ;
-		if (list.size()>0) {throw "У данного пациента оформлено свидетельство о смерти, поэтому не могло быть произведено вскрытие!!!!!!!!!!!" ;}
+		if (!aCtx.manager.createNativeQuery("select dc.id from Certificate dc where dc.deathCase_id="+aForm.id+" and dc.dtype='DeathCertificate'").getResultList().isEmpty()) {
+			throw "У данного пациента оформлено свидетельство о смерти, поэтому не могло быть произведено вскрытие!!!!!!!!!!!" ;
+		}
 	}
 }
 

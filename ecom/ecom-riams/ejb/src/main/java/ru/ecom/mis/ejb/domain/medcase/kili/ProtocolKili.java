@@ -1,19 +1,17 @@
 package ru.ecom.mis.ejb.domain.medcase.kili;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliConclusion;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliConclusion;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliProfile;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 @Entity
 public class ProtocolKili extends BaseEntity{

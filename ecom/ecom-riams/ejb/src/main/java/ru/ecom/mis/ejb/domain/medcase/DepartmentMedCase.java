@@ -1,12 +1,6 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.DurationUtil;
@@ -17,6 +11,8 @@ import ru.ecom.mis.ejb.domain.lpu.HospitalRoom;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
 
 @Comment("Случай лечения в отделении")
 @Entity
@@ -29,9 +25,16 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     ,@AIndex(properties="prevMedCase", table="MedCase")
 }) 
 public class DepartmentMedCase extends HospitalMedCase {
+
+	@Comment("Главный диагноз случая")
+	@Transient
+	public Diagnosis getMainDiagnosis () {
+		for (Diagnosis diagnosis : getDiagnoses()) {
+			if ("1".equals(diagnosis.getPriority().getCode()) && "4".equals(diagnosis.getRegistrationType().getCode())) return diagnosis;
+		}
+		return null;
+	}
 	
-
-
 	/** Отделение перевода */
 	@Comment("Отделение перевода")
 	@OneToOne
@@ -125,7 +128,7 @@ public class DepartmentMedCase extends HospitalMedCase {
 	}
 	@Transient
 	public String getStatCardBySLS() {
-		if (getParent()!=null && getParent() instanceof HospitalMedCase) {
+		if (getParent() instanceof HospitalMedCase) {
 			HospitalMedCase par = (HospitalMedCase) getParent() ;
 			return par.getStatCardNumber() ;
 		}

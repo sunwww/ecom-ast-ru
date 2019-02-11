@@ -5,24 +5,21 @@
  */
 package ru.ecom.expomc.web.actions.importformat;
 
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.nuzmsh.commons.auth.ILoginInfo;
-import ru.ecom.expomc.web.actions.importtime.MonitorActionForward;
-
-import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
-import ru.ecom.expomc.ejb.services.importservice.ImportException;
-import ru.ecom.expomc.ejb.services.form.importformat.IImportFormatService;
-import ru.ecom.web.util.Injection;
-import ru.ecom.web.util.FileUploadUtil;
-import ru.ecom.web.login.LoginInfo;
-import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
-import ru.ecom.ejb.services.file.IJbossGetFileService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
+import ru.ecom.ejb.services.file.IJbossGetFileService;
+import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
+import ru.ecom.expomc.ejb.services.form.importformat.IImportFormatService;
+import ru.ecom.expomc.ejb.services.importservice.ImportException;
+import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
+import ru.ecom.expomc.web.actions.importtime.MonitorActionForward;
+import ru.ecom.web.login.LoginInfo;
+import ru.ecom.web.util.FileUploadUtil;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,8 +27,7 @@ import javax.servlet.http.HttpSession;
 
 public class ImportFormatUploadSaveAction extends BaseAction {
 
-    private final static Log LOG = LogFactory.getLog(ImportFormatUploadSaveAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ImportFormatUploadSaveAction.class) ;
 
 
     public ActionForward myExecute(final ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {

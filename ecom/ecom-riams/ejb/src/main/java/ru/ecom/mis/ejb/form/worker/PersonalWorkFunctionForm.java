@@ -3,11 +3,7 @@ package ru.ecom.mis.ejb.form.worker;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.jaas.ejb.form.SecUserForm;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.validators.Required;
 
@@ -64,6 +60,22 @@ public class PersonalWorkFunctionForm extends WorkFunctionForm {
 	@Persist
 	public Long getDegrees() {return theDegrees;}
 	public void setDegrees(Long aDegrees) {theDegrees = aDegrees;}
+
+	/** Очередь, которую обслуживает раб. функция */
+	@Comment("Очередь, которую обслуживает раб. функция")
+	@Persist
+	public Long getQueue() {return theQueue;}
+	public void setQueue(Long aQueue) {theQueue = aQueue;}
+	/** Очередь, которую обслуживает раб. функция */
+	private Long theQueue ;
+
+	/** Номер окна в электронной очереди */
+	@Comment("Номер окна в электронной очереди")
+	@Persist
+	public String getWindowNumber() {return theWindowNumber;}
+	public void setWindowNumber(String aWindowNumber) {theWindowNumber = aWindowNumber;}
+	/** Номер окна в электронной очереди */
+	private String theWindowNumber ;
 
 	/** Категория специалиста */
 	private Long theDegrees;

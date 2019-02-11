@@ -1,17 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -20,10 +8,16 @@ import ru.ecom.mis.ejb.domain.contract.ContractPerson;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceType;
-//import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.List;
+
+//import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 
 /**
  * Медицинская услуга
@@ -56,8 +50,8 @@ public class MedService extends BaseEntity{
 	private Boolean theIsForLabDoctor;
 	
 	
-	/** Справочная услуга */
-	@Comment("Справочная услуга")
+	/** Медицинская услуга по справочнику V001 */
+	@Comment("Медицинская услуга по справочнику V001")
 	@OneToOne
 	public VocMedService getVocMedService() {return theVocMedService;}
 	public void setVocMedService(VocMedService aVocMedService) {theVocMedService = aVocMedService;}
@@ -272,4 +266,30 @@ public class MedService extends BaseEntity{
 
 	/** УЕТ */
 	private BigDecimal theUet;
+
+	private String promedCode;
+	@Comment("Код в промеде")
+	public String getPromedCode() {
+		return promedCode;
+	}
+	public void setPromedCode(String promedCode) {
+		this.promedCode = promedCode;
+	}
+
+	/** Отображать код услуги при печати в реестре назначений для лаборатории */
+	private Boolean printCodeLabReestr;
+	@Comment("Отображать код услуги при печати в реестре назначений для лаборатории")
+	public Boolean getPrintCodeLabReestr() {
+		return printCodeLabReestr;
+	}
+	public void setPrintCodeLabReestr(Boolean printCodeLabReestr) {
+		this.printCodeLabReestr = printCodeLabReestr;
+	}
+
+	/** Указывать тип аборта при создании операции */
+	@Comment("Указывать тип аборта при создании операции")
+	public Boolean getIsAbortRequired() {return theIsAbortRequired;}
+	public void setIsAbortRequired(Boolean aIsAbortRequired) {theIsAbortRequired = aIsAbortRequired;}
+	/** Указывать тип аборта при создании операции */
+	private Boolean theIsAbortRequired =false;
 }

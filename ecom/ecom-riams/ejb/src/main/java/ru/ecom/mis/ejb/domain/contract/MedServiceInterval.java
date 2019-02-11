@@ -1,17 +1,17 @@
 package ru.ecom.mis.ejb.domain.contract;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.contract.ContractMedServiceGroup;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.forms.validator.validators.Required;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 	/**
 	 * Интервал медицинских услуг (A01.01.001-A01.01.005, A01.001.

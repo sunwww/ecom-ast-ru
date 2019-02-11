@@ -29,7 +29,7 @@
 		 request.setAttribute("dateStart", beginDate);
 		 request.setAttribute("dateFinish", finishDate);
 %>
-     <ecom:webQuery name = "elnList" nativeSql="
+     <ecom:webQuery isReportBase="true" name = "elnList" nativeSql="
 select
 count(distinct dd.id) as count1
 ,count(distinct elec.id) as count2
@@ -56,7 +56,7 @@ and (dd.isclose='1' and vdcr.code='1')
              </msh:table>
          </msh:sectionContent>
      </msh:section>
-     <ecom:webQuery name = "elnList2" nativeSql="
+     <ecom:webQuery isReportBase="true" name = "elnList2" nativeSql="
 select
 distinct dd.id,dd.number
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio

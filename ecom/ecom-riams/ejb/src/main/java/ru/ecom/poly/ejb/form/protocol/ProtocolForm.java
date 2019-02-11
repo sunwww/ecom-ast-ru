@@ -1,21 +1,13 @@
 package ru.ecom.poly.ejb.form.protocol;
 
 
-import javax.persistence.Id;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
-import ru.ecom.poly.ejb.form.TicketForm;
+import ru.ecom.poly.ejb.form.interceptors.ProtocolPreCreateInterceptor;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolSaveInterceptor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
@@ -23,6 +15,8 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
+
+import javax.persistence.Id;
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,6 +36,9 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 )
 @ACreateInterceptors(
         @AEntityFormInterceptor(ProtocolSaveInterceptor.class)
+)
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(ProtocolPreCreateInterceptor.class)
 )
 public class ProtocolForm extends IdEntityForm {
     /** Запрет на ручное редактирование */
@@ -156,4 +153,25 @@ public class ProtocolForm extends IdEntityForm {
 
 	/** Информация для журнала */
 	private String theJournalText;
+
+    /** Время редактирования */
+    @Comment("Время редактирования")
+    @Persist
+    @TimeString @DoTimeString
+    public String getEditTime() {
+        return theEditTime;
+    }
+    public void setEditTime(String  aEditTime) {
+        theEditTime = aEditTime;
+    }
+    /** Время редактирования */
+    private String  theEditTime;
+
+    /** Визит */
+    @Comment("Визит")
+    @Persist
+    public Long getMedCase() {return theMedCase;}
+    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    /** Визит */
+    private Long theMedCase;
 }

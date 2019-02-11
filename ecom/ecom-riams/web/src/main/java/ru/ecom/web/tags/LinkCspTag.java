@@ -1,16 +1,5 @@
 package ru.ecom.web.tags;
 
-import java.io.IOException;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
@@ -21,10 +10,13 @@ import ru.nuzmsh.web.tags.helper.JavaScriptContext;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import ru.nuzmsh.web.util.IdeTagHelper;
 
-public class LinkCspTag extends AbstractGuidSimpleSupportTag {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
 
-    private final static Log LOG = LogFactory.getLog(LinkCspTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+public class LinkCspTag extends AbstractGuidSimpleSupportTag {
 
     /**
      * Устанавливать фокус на элемент
@@ -63,7 +55,7 @@ public class LinkCspTag extends AbstractGuidSimpleSupportTag {
 
     public void doTag() throws JspException, IOException {
     	printIdeStart("link");
-    	System.out.println("----CSP LINK") ;
+    //	System.out.println("----CSP LINK") ;
         JspWriter out = getJspContext().getOut() ;
 
         PageContext pageContext = (PageContext) getJspContext() ;
@@ -77,7 +69,7 @@ public class LinkCspTag extends AbstractGuidSimpleSupportTag {
         if(StringUtil.isNullOrEmpty(theRoles) || RolesHelper.checkRoles(theRoles, request)) {
 	    	try {
 				ISoftConfigService service = Injection.find(request).getService(ISoftConfigService.class) ;
-				System.out.println("contentPath="+request.getContextPath()) ;
+/*				System.out.println("contentPath="+request.getContextPath()) ;
 				System.out.println("request"+request.toString()) ;
 				System.out.println("localAddr="+request.getLocalAddr()) ;
 				System.out.println("remoteAddr="+request.getRemoteAddr()) ;
@@ -89,7 +81,7 @@ public class LinkCspTag extends AbstractGuidSimpleSupportTag {
 				System.out.println("url="+request.getRequestURL());
 				System.out.println("scheme"+request.getScheme()) ;
 				System.out.println("name"+request.getServerName()) ;
-				System.out.println("port"+request.getServerPort()) ;
+				System.out.println("port"+request.getServerPort()) ; */
 				StringBuilder url = new StringBuilder() ;
 				url.append(request.getServerName()) ;
 				if (request.getServerPort()>1000) {
@@ -106,7 +98,7 @@ public class LinkCspTag extends AbstractGuidSimpleSupportTag {
        
         
             //if(isInToolBar()) out.print("<li>") ;
-        	System.out.println("url") ;
+        //	System.out.println("url") ;
             StringBuilder url = new StringBuilder();
             url.append(request.getScheme()).append("://").append(cspurl).append("/") ;
             url.append(theAction.charAt(0)=='/' ? theAction.substring(1) : theAction) ;

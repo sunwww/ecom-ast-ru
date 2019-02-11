@@ -10,7 +10,7 @@
     <form-bean name="smo_diagnosisForm" type="ru.ecom.mis.ejb.form.medcase.DiagnosisForm" />
     <form-bean name="mis_diagnosisForm" type="ru.ecom.mis.ejb.form.patient.DiagnosisForm" />
     <form-bean name="cal_workFunctionForm" type="ru.ecom.ejb.form.hello.HelloForm" />
-    <form-bean name="test_testForm" type="ru.ecom.mis.ejb.form.diet.TestForm" />
+    <!--<form-bean name="test_testForm" type="ru.ecom.mis.ejb.form.diet.TestForm" /> -->
     <form-bean name="des_destinationForm" type="ru.ecom.ejb.form.hello.HelloForm" />
     
     
@@ -46,7 +46,7 @@
     <form-bean name="dis_blanksForm" type="ru.ecom.mis.ejb.form.disability.DisabilityBlanksForm" />
 	
     
-    <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
+
     
     
     
@@ -59,8 +59,8 @@
     <form-bean name="mis_languageSkillForm" type="$$map$$mis_languageSkillForm" />
     <form-bean name="mis_workBookForm" type="$$map$$mis_workBookForm" />
     <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
-    <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
-    
+<!--    <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
+    <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" /> -->
     
     <!-- <form-bean name="work_awardForm" type="$$map$$work_awardForm" />  -->
     <form-bean name="work_staffForm" type="$$map$$work_staffForm" />
@@ -75,6 +75,14 @@
   <global-forwards />
 
   <action-mappings>
+        <action path='/ws_chat' type='ru.ecom.web.actions.base.ForwardAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/riams/ws_test.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/riams/ws_test.jsp" />
+        </action>
         <action path='/dis_documents' type='ru.ecom.mis.web.action.disability.DisabilityDocumentSearchAction'
                 name='mis_searchForm'
                 validate='true'
@@ -135,6 +143,15 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listOpenByDate.jsp" />
         </action>
+
+      <action path='/createNewTime' type='ru.ecom.web.actions.base.ForwardAction'
+              name='work_timeBySpecialistForm'
+              validate='true'
+              scope="request"
+              input='/WEB-INF/actions/smo_direction/createNewTime.jsp'
+      >
+          <forward name="success" redirect="false" path="/WEB-INF/actions/smo_direction/createNewTime.jsp" />
+      </action>
  
   </action-mappings>
 </struts-config>

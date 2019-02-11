@@ -1,25 +1,24 @@
 package ru.ecom.ejb.xml;
 
-import java.io.File;
+import org.jdom.Document;
+import org.jdom.output.XMLOutputter;
+import org.w3c.dom.Element;
+import ru.ecom.report.util.XmlDocument;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Element;
-
-import ru.ecom.report.util.XmlDocument;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 
 public class XmlUtil {
 
 	public static String namePackage(String aPackage) {
 		if (aPackage==null||aPackage.equals("")) return "01" ;
 		if (aPackage.length()==1) return "0"+aPackage ;
-		return aPackage.substring(aPackage.length()-2,aPackage.length());
+		return aPackage.substring(aPackage.length()-2);
 	}
 
 	public static void recordElementInDocumentXml(XmlDocument aXmlDocument, Element aMainNode, String aNameElement,Object aValue, boolean aIsRequired,String aValueDefault){
@@ -47,6 +46,23 @@ public class XmlUtil {
 
 	public static String getStringValue(Object aValue) {
 		return aValue!=null?""+aValue:"" ;
+	}
+
+	/** Создаем файл из документа */
+	public static String createXmlFile(org.jdom.Element aElement, String aFileName) {
+		if (aElement == null) {
+			return null;
+		}
+		try (OutputStreamWriter fwrt = new OutputStreamWriter(new FileOutputStream(aFileName), Charset.forName("windows-1251"))){
+			XMLOutputter outputter = new XMLOutputter();
+			Document pat = new Document(aElement);
+			outputter.setFormat(org.jdom.output.Format.getPrettyFormat().setEncoding("windows-1251"));
+			outputter.output(pat, fwrt);
+			return aFileName;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 }

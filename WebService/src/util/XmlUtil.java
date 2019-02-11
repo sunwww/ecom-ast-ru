@@ -1,20 +1,15 @@
 package util;
 
+import javax.xml.stream.*;
+import javax.xml.stream.events.XMLEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.events.XMLEvent;
+import java.io.IOException;
 
 
 public class XmlUtil {
-	public static void main(String args[]) throws Exception{
+	public static void main(String[] args) throws Exception{
 		String localName;
 		int eventType;
 		String value;
@@ -106,17 +101,13 @@ public class XmlUtil {
 		XMLStreamReader xsr = null;
 		if(aFileName!=null) {
 			XMLInputFactory f = XMLInputFactory.newInstance();
-			FileReader fr;
-			try {
-				fr = new FileReader(aFileName);
-				BufferedReader br = new BufferedReader(fr);
+
+			try (FileReader fr = new FileReader(aFileName);
+				 BufferedReader br = new BufferedReader(fr)) {
 				xsr = f.createXMLStreamReader(br);
-			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			finally{
-				
 			}
 		}
 		return xsr;
@@ -137,7 +128,7 @@ public class XmlUtil {
 		return xsw;
 	}
 
-	public final static String getEventTypeString(int eventType) {
+	public static final String getEventTypeString(int eventType) {
 	    switch (eventType) {
 	        case XMLEvent.START_ELEMENT:
 	            return "START_ELEMENT";

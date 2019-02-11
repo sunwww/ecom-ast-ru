@@ -1,5 +1,3 @@
-<%@page import="java.util.Collection"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -186,14 +184,15 @@
 select lp.id, p.lastname,p.firstname, 
 		case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,
 		to_char(p.birthday,'dd.MM.yyyy') as birthday
-    	 , vat.name as f5_spprik
-    	 ,to_char(lp.dateFrom,'dd.MM.yyyy') as f6_tprik
+    	 , vat.name as f6_spprik
+    	 ,to_char(lp.dateFrom,'dd.MM.yyyy') as f7_tprik
     	 ,coalesce(a.fullname)||' ' || case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end 
     	 ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end  	||case 
-when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end as f7_address
-	, list(' Уч. №'||la.number||' '||vart.name) as f8_area
-	, ml.id as f9_mlId, ml.name as f10_mlname
-	,lp.area_id as f11_laId
+when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end as f8_address
+	, list(' Уч. №'||la.number||' '||vart.name) as f9_area
+	, ml.id as f10_mlId, ml.name as f11_mlname
+	,lp.area_id as f12_laId
+	,list(p.patientSync) as f13_patSync
     	  from LpuAttachedByDepartment lp
     	 left join Patient p on lp.patient_id=p.id
     	 left join vocsex vs on vs.id=p.sex_id
@@ -226,8 +225,9 @@ when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber
     <input type='hidden' name="m" id="m" value="printGroup3NativeQuery">
     <input type="submit" value="Печать по ЛПУ"> 
     </form>
-        <msh:table name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
+        <msh:table printToExcelButton="Сохранить в excel" name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>
+			<msh:tableColumn columnName="Код синхронизации" property="13"/>
 			<msh:tableColumn columnName="Фамилия" property="2"/>
 			<msh:tableColumn columnName="Имя" property="3"/>
 			<msh:tableColumn columnName="Отчетство" property="4"/>
@@ -254,7 +254,7 @@ when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber
    		where (p.noActuality='0' or p.noActuality is null) and p.deathDate is null and lp.dateto is null ${sqlAdd} group by to_char(p.birthday,'yyyy')
     	 order by to_char(p.birthday,'yyyy')  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
    
-        <msh:table name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
+        <msh:table printToExcelButton="Сохранить в excel" name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>
 			<msh:tableColumn  columnName="Год рождения" property="1"/>
 			<msh:tableColumn isCalcAmount="true" columnName="Количество человек" property="2"/>

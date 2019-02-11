@@ -8,11 +8,8 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAppointment;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocKindMedHelp;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocKindSurvey;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.worker.voc.VocOmcDepType;
-import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /** Назначения для диспансеризации */

@@ -6,4 +6,5 @@
     <vocFile>/META-INF/voc-poly.xml</vocFile>
     <vocFile>/META-INF/voc-stac.xml</vocFile>
     <vocFile>/META-INF/voc-psychiatry.xml</vocFile>
+    <vocFile>/META-INF/voc-onko.xml</vocFile>
 </vocconfig>

@@ -4,9 +4,13 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.birth.IPregnancyService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import java.util.Collection;
 
 public class PregnancyServiceJs {
 	public Long getPregnanExchangeCard(Long aPregnancyId, HttpServletRequest aRequest) throws NamingException {
@@ -73,5 +77,24 @@ public class PregnancyServiceJs {
   			, Long aNewBornWeight, Long aMotherInfectiousDiseases, HttpServletRequest aRequest) throws NamingException {
 		IPregnancyService service = Injection.find(aRequest).getService(IPregnancyService.class) ;
 		return  service.calcInfRiskEstimation(aWaterlessDuration, aMotherTemperature, aWaterNature, aApgar, aNewBornWeight, aMotherInfectiousDiseases) ;
+	}
+	//Milamesher #131,#132 есть ли уже классификации Робсона/выкидыш в СЛО
+	public String getIfRobbsonClassOrMisbirthAlreadyExists(Long aSlo, Boolean ifRobson,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		Collection<WebQueryResult> res = service.executeNativeSql(
+				"select id from " + (ifRobson? "robsonclass" : "misbirth") +  " where medcase_id="+aSlo);
+		return (res.isEmpty())? "" : res.iterator().next().get1().toString();
+	}
+	//Milamesher #137 возврат кардиоскринингов
+	public String getAllCardiacScreenings(Long aSlo,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		Collection<WebQueryResult> res = service.executeNativeSql("select id,case when dtype='ScreeningCardiacFirst' then 'I' else 'II' end," +
+				"to_char(createdate,'dd.mm.yyyy')||' '||createusername from screeningcardiac where medcase_id="+aSlo);
+		StringBuilder result = new StringBuilder();
+		for (WebQueryResult wqr : res)
+			result.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("!");
+		return result.toString();
 	}
 }

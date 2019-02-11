@@ -2,7 +2,6 @@ package ru.ecom.mis.ejb.form.patient;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.PatientExternalServiceAccount;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;

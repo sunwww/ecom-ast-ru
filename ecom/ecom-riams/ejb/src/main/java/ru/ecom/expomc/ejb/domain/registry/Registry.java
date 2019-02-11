@@ -1,19 +1,19 @@
 package ru.ecom.expomc.ejb.domain.registry;
 
-import java.util.Collection;
-import java.util.Date;
+import ru.ecom.ejb.domain.simple.BaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
+import java.util.Collection;
+import java.util.Date;
 
 /**
  * Реестр
  */
 @Entity
 @Table(name="EOREGISTRY",schema="SQLUser")
+@Deprecated
 public class Registry extends BaseEntity {
 
 

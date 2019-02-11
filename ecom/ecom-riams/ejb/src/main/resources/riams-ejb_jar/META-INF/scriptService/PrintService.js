@@ -142,7 +142,13 @@ function current_info(aCtx) {
 }
 function printGroupColumnNativeQuery(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
-	var sqlInfo = aParams.get("sqlInfo");
+    //Milamesher #102 услуги на разных строках без запятой
+    sqlText=sqlText.replace("list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as f10medServicies",
+		"replace(list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end),', ','') as f10medServicies");
+    sqlText=sqlText.replace("list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name"
+	//Milamesher #102 определённые услуги должны быть с кодами
+	,"list(case when vst.code='LABSURVEY' then case when ms.printCodeLabReestr=true then ms.code||' ' ||ms.name||'##' else ms.name||'##' end");
+    var sqlInfo = aParams.get("sqlInfo");
 	var printSql = aParams.get("printSql");
 	var printId = +aParams.get("printId") ;
 	var isupdate=false ;
@@ -194,12 +200,20 @@ function printGroupColumnNativeQuery(aCtx,aParams) {
 			aCtx.manager.createNativeQuery(print_id).executeUpdate() ;
 		}
 		for (var j=2;j<=obj.length;j++) {
+            var ss=new java.util.ArrayList() ;
 			var val = obj[j-1] ;
-			eval("par.set"+(j)+"(val==null?'':val);") ;
+			if (j==10 && val!=null) {
+				var tmp=val.split('##');
+				for(var itmp=0; itmp<tmp.length; itmp++) {
+                    ss.add(tmp[itmp]);
+				}
+            }
+            if (j!=10) eval("par.set"+(j)+"(val==null?'':val);") ;
+            else if (ss!=null) eval("par.set"+(j)+"(ss);") ;
 			if (val==null) val=0 ;
-			
+
 			eval("var val1=parAll.get"+j+"()") ;
-			if (val1==null) val1=0 ;
+			if (val1==null || j==10) val1=0 ;
 			var val11 = new java.math.BigDecimal(''+val1) ;
 			var val12=  new java.math.BigDecimal(''+0) ;
 			try {
@@ -208,18 +222,14 @@ function printGroupColumnNativeQuery(aCtx,aParams) {
 				
 			}
 			var val=val12.add(val11) ;
-			
+
 			eval("parAll.set"+(j)+"(val);") ;
-			
 		}
-		
-		
 		if (isColCreate && (iCol)%cntColumn==0) {
 			groupColList.add(parCol) ;
 			parCol = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 			isColCreate = false;
 			iCol=0;
-			//throw "+++" ;
 		} else {
 			//throw "---" ;
 			
@@ -229,7 +239,6 @@ function printGroupColumnNativeQuery(aCtx,aParams) {
 		isColCreate = true ;
 		eval("parCol.set"+iCol+"(par);") ;
 		groupList.add(par) ;
-		
 	}
 	if (idOld!='') {
 		var r = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;

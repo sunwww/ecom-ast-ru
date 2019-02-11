@@ -1,10 +1,9 @@
 package ru.ecom.report.excel;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.Date;
 
@@ -13,8 +12,7 @@ import java.util.Date;
  */
 public class PoiCellUtil {
 
-    private final static Log LOG = LogFactory.getLog(PoiCellUtil.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private static final Logger LOG = Logger.getLogger(PoiCellUtil.class) ;
 
 
     public static Object getCellValue(HSSFCell aCell) {

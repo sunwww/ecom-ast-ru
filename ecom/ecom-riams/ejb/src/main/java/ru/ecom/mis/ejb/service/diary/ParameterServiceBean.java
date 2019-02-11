@@ -1,11 +1,24 @@
 package ru.ecom.mis.ejb.service.diary;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
+import org.jboss.annotation.security.SecurityDomain;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
+import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
+import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterByForm;
+import ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm;
+import ru.ecom.diary.ejb.service.protocol.ParameterPage;
+import ru.ecom.diary.ejb.service.protocol.ParameterType;
+import ru.ecom.diary.ejb.service.protocol.field.*;
+import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -15,36 +28,12 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
-import org.jboss.annotation.security.SecurityDomain;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-
-import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
-import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
-import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterByForm;
-import ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm;
-import ru.ecom.diary.ejb.service.protocol.ParameterPage;
-import ru.ecom.diary.ejb.service.protocol.ParameterType;
-import ru.ecom.diary.ejb.service.protocol.field.AutoCompleteField;
-import ru.ecom.diary.ejb.service.protocol.field.ErrorByField;
-import ru.ecom.diary.ejb.service.protocol.field.LabelField;
-import ru.ecom.diary.ejb.service.protocol.field.RowField;
-import ru.ecom.diary.ejb.service.protocol.field.SeparatorField;
-import ru.ecom.diary.ejb.service.protocol.field.TextField;
-import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
-import ru.ecom.mis.ejb.service.worker.IWorkCalendarService;
-import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
-import ru.nuzmsh.util.StringUtil;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 /**
  * Сервис для работы с параметрами
  * @author stkacheva
@@ -57,11 +46,10 @@ import ru.nuzmsh.util.StringUtil;
 public class ParameterServiceBean implements IParameterService{
 	
 	public String checkOrCreateCode(String aCode, String aId) {
-		String retCode = "";
+		String retCode ;
 		if (aCode==null||aCode.equals("")) { //Генерируем код автоматически
 			List<Object> ll = theManager.createNativeQuery("select max(id) from parameter").getResultList() ;
-			Long maxId = ConvertSql.parseLong(ll.size()>0?ll.get(0):Long.valueOf(0));
-			
+			Long maxId = ConvertSql.parseLong(!ll.isEmpty()?ll.get(0):Long.valueOf(0));
 			if (maxId==null) maxId=Long.valueOf(0) ;
 			maxId++;
 			while (true) {
@@ -92,7 +80,7 @@ public class ParameterServiceBean implements IParameterService{
 		theManager.persist(draft) ;
 		List<ParameterByForm> listParam = theManager.createNativeQuery("from ParameterByForm where template_id="+aTemplate).getResultList() ;
 		//TODO ошибка доделать
-		if (listParam.isEmpty()) {}
+		//if (listParam.isEmpty()) {}
 		for (ParameterByForm pf:listParam) {
 			FormInputProtocol pfnew = new FormInputProtocol() ;
 			pfnew.setParameter(pf.getParameter()) ;
@@ -104,12 +92,8 @@ public class ParameterServiceBean implements IParameterService{
 		return draft.getId() ;
 	}
 	public List<ParameterType> loadParameterType()  {
-		List<ParameterType> list = new LinkedList<ParameterType>()  ;
-		try {
+		List<ParameterType> list = new LinkedList<>()  ;
 			loadFile(theFileDiaryParameter ,list);
-		}catch (Exception e) {
-		}
-
 		return list ;
 	}
 	
@@ -128,11 +112,9 @@ public class ParameterServiceBean implements IParameterService{
 	
 	public String getActionByDocument(Long aId,
 			String aDocument) throws IOException {
-		LOG.info(new StringBuilder().append("Loading ").append(theFileDocumentParameter).append(" ...").toString());
-		InputStream in = null;
-		try {
-			in = getInputStream(theFileDocumentParameter) ;
-			LOG.info(new StringBuilder().append("		file=").append(in).toString());
+	//	LOG.info(new StringBuilder().append("Loading ").append(theFileDocumentParameter).append(" ...").toString());
+		try (InputStream in =getInputStream(theFileDocumentParameter)) {
+		//	LOG.info(new StringBuilder().append("		file=").append(in).toString());
 			Document doc = new SAXBuilder().build(in);
 			Element parConfigElement = doc.getRootElement();
 			for (Object o : parConfigElement.getChildren()) {
@@ -148,23 +130,18 @@ public class ParameterServiceBean implements IParameterService{
 				}
 			}
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
-		} 
-		finally {
-			in.close();
+			LOG.error(e.getMessage());
 		}
-		LOG.info("Done.") ;
+	//	LOG.info("Done.") ;
 		
 		
 		return null ;
 	}
 	private ParameterPage loadParameterFromFile(String aResourceString,Long aId,
 			ParameterForm aParameterForm, ActionErrors aErrors) throws IOException {
-        LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
-        InputStream in = null;
-        try {
-        	in = getInputStream(aResourceString) ;
-                LOG.info(new StringBuilder().append("		file=").append(in).toString());
+     //   LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
+
+        try (InputStream in = getInputStream(aResourceString)){
                	Document doc = new SAXBuilder().build(in);
                 Element parConfigElement = doc.getRootElement();
                 for (Object o : parConfigElement.getChildren()) {
@@ -182,42 +159,26 @@ public class ParameterServiceBean implements IParameterService{
                     }
                 }
             }catch(Exception e) {
-            	System.out.println(e.getMessage());
+            	LOG.error(e.getMessage(),e);
             } 
-            finally {
-                in.close();
-               
-            }
-        LOG.info("Done.") ;
-
-    
 		return null ;
 	}
-	private void loadFile( String aResourceString,List<ParameterType> aList) throws IOException  {
-        LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
-        InputStream in = null;
-        try {
-        	in = getInputStream(aResourceString) ;
-                LOG.info(new StringBuilder().append("		file=").append(in).toString());
-               	Document doc = new SAXBuilder().build(in);
-                Element parConfigElement = doc.getRootElement();
-                for (Object o : parConfigElement.getChildren()) {
-                    Element parElement = (Element) o;
-                    if("parameter".equals(parElement.getName())) {
-                        aList.add(put(parElement));
-                    //} else if("vocFile".equals(vocElement.getName())) {
-                        //loadFile(aHash, vocElement.getTextTrim());
-                    } else {
-                        LOG.warn("Нет поддержки элемента "+parElement.getName());
-                    }
+	private void loadFile( String aResourceString,List<ParameterType> aList) {
+
+        try (InputStream in = getInputStream(aResourceString)){
+            Document doc = new SAXBuilder().build(in);
+            Element parConfigElement = doc.getRootElement();
+            for (Object o : parConfigElement.getChildren()) {
+            	Element parElement = (Element) o;
+                if("parameter".equals(parElement.getName())) {
+                	aList.add(put(parElement));
+                } else {
+                	LOG.warn("Нет поддержки элемента "+parElement.getName());
                 }
-            }catch(Exception e) {
-            	System.out.println(e.getMessage());
-            } 
-            finally {
-                in.close();
             }
-        LOG.info("Done.") ;
+        } catch(Exception e) {
+            	LOG.error(e.getMessage());
+        }
 
     }
 	private ParameterPage loadParameter(Element aElement,ParameterForm aParameterForm, ActionErrors aErrors) {
@@ -252,7 +213,7 @@ public class ParameterServiceBean implements IParameterService{
 		} else {
 			try {
 				value = BeanUtils.getProperty(aParameterForm, property);
-				System.out.println("property="+property+" value="+value) ;
+				LOG.info("property="+property+" value="+value);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -327,7 +288,7 @@ public class ParameterServiceBean implements IParameterService{
 	}
 	
 
-	 private ParameterType put(Element aElement) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+	 private ParameterType put(Element aElement) {
 		String key = aElement.getAttributeValue("id");
 	    if (StringUtil.isNullOrEmpty(key)) {
 	    	throw new IllegalArgumentException("Нет атрибута id");
@@ -338,7 +299,7 @@ public class ParameterServiceBean implements IParameterService{
 	    }
 	    String type = aElement.getAttributeValue("type");
 	    LOG.info(new StringBuilder().append(" Parameter ").append(key)
-	        		.append(" (name = ").append(name).append("")
+	        		.append(" (name = ").append(name)
 	        		.append(" type= ").append(type).append(")")
 	        		.toString());
 	    ParameterType param = new ParameterType() ;
@@ -409,7 +370,7 @@ public class ParameterServiceBean implements IParameterService{
     }
 	private Boolean toBoolean(String aString) {
 		Boolean ret; 
-		if (!StringUtil.isNullOrEmpty(aString) && (aString.equals("1") || aString.toLowerCase().equals("true"))){
+		if (!StringUtil.isNullOrEmpty(aString) && (aString.equals("1") || aString.equalsIgnoreCase("true"))){
 			ret= true;
 		} else {
 			ret=false;
@@ -418,7 +379,7 @@ public class ParameterServiceBean implements IParameterService{
 	}
 	
 	EjbEcomConfig theEcomConfig = EjbEcomConfig.getInstance(); 
-	private final static Logger LOG = Logger.getLogger(ParameterServiceBean.class) ;
+	private static final Logger LOG = Logger.getLogger(ParameterServiceBean.class) ;
 	String theFileDiaryParameter = "/META-INF/diary/parameter-config.xml" ;
 	String theFileDocumentParameter = "/META-INF/diary/document-polic-config.xml" ;
 	@EJB ILocalEntityFormService theEntityFormService ;

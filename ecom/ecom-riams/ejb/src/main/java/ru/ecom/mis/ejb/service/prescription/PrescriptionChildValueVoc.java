@@ -1,9 +1,5 @@
 package ru.ecom.mis.ejb.service.prescription;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
@@ -12,6 +8,10 @@ import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class PrescriptionChildValueVoc implements IAllValue{
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
@@ -36,7 +36,6 @@ public class PrescriptionChildValueVoc implements IAllValue{
 		if (aContext.getVocAdditional()!=null) {
 			parentId = aContext.getVocAdditional().getParentId() ;
 		}
-//		System.out.println("Родитель:"+parentId) ;
 		if (StringUtil.isNullOrEmpty(parentId)) {
 //			templs = aContext.getEntityManager().createQuery("from PrescriptionList where PrescriptionList.DTYPE='PrescriptListTemplate'  order by name").getResultList() ;
 		} else {

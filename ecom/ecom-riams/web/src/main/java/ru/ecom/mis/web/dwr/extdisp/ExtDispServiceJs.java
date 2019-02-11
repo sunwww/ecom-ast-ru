@@ -1,19 +1,18 @@
 package ru.ecom.mis.web.dwr.extdisp;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Collection;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 import ru.ecom.mis.ejb.service.extdispplan.IExtDispPlanService;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.format.DateFormat;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Collection;
 
 
 
@@ -24,17 +23,11 @@ public class ExtDispServiceJs {
     }
 
 	public int fillDispPlanByPersons(String aPersonJson, Long aPlanId, HttpServletRequest aRequest) throws NamingException {
-		try {
-			JSONArray arr = new JSONArray(aPersonJson);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 		return Injection.find(aRequest).getService(IExtDispPlanService.class).fillExtDispPlanByPersons(aPersonJson,aPlanId);
 	}
 
 
 	public String findPerson(Long aLpuId, Long aAreaId, Long aSexId, String aPatientInfo, String aYears, Integer aLimit, String aTypeSort, HttpServletRequest aRequest) throws NamingException {
-	//	System.out.println("Long aLimit = >"+aLimit+"<");
 		StringBuilder sql = new StringBuilder();
 		boolean firstWhere = true;
 		sql.append("select pat.id, pat.patientinfo, la.number||' '||vat.name from");
@@ -91,8 +84,8 @@ public class ExtDispServiceJs {
 			}
 
 		}
+		sql.append(" and att.dateTo is null and pat.deathDate is null and (pat.noActuality='0' or pat.noActuality is null) and (select count(*) from medpolicy where dtype='MedPolicyOmc' and patient_id=pat.id and (actualdateto is null or actualdateto>current_date)>0");
 		sql.append(" order by ").append(aTypeSort!=null&&aTypeSort.equals("2")?" random() ":" pat.patientinfo ");
-		System.out.println("SQL = "+sql.toString());
 		//if (aLimit!=null&&aYear>0) { sql.append(" and to_char(pat.birthday,'yyyy')='").append(aYear).append("'");}
 		IWebQueryService service= Injection.find(aRequest).getService(IWebQueryService.class);
 		String ret =service.executeNativeSqlGetJSON(new String[]{"id", "name","area"},sql.toString(),aLimit);
@@ -100,7 +93,7 @@ public class ExtDispServiceJs {
 	}
 	
 	
-	public String DispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException, ParseException {
+	public String dispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException {
 		if(dispCardId==null||dispCardId.equals(Long.valueOf(0))){
 			return "1";
 		}
@@ -111,8 +104,7 @@ public class ExtDispServiceJs {
 		}
 	}
 	
-	public String checkDisableAgeDoubles (Long aDispCardId, Long aDisptypeId, Long aPatientId, Long aAgeGroup, HttpServletRequest aRequest)throws NamingException 
-	{
+	public String checkDisableAgeDoubles (Long aDispCardId, Long aDisptypeId, Long aPatientId, Long aAgeGroup, HttpServletRequest aRequest) throws NamingException {
 		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		 Long haveDis = Long.valueOf(service.executeNativeSql("select count(edc.id) " +
 		 		" from extdispcard edc " +
@@ -123,59 +115,50 @@ public class ExtDispServiceJs {
 		 		" and (edc.notpaid is null or edc.notpaid='0')"+
 		 		(aDispCardId!=null&&aDispCardId!=0?(" and edc.id!="+aDispCardId):"")+
 		 		" and vedc.disableAgeDoubles='1' ").iterator().next().get1().toString());
-		 
-		 if(haveDis!=null&&haveDis>0)
-		 {
-			 return "1";
-			 
-		 }else return "0";
-		 
+
+		 return haveDis!=null&&haveDis>0?"1":"0";
+
 	}
 	// Проверка услуги ДД на: выходной день, дубль со стационаром, дубль с визитом, входит в период ДД	
 	// 0 - если всё в порядке, 1 - предупреждение, 2 - запрет на создание
-	public String checkDispService (String aDate, Long aDispCardId, Long aPatientId, Long aWorkFunctionId, HttpServletRequest aRequest) throws NamingException, ParseException {
-		if (aPatientId==null||aPatientId==0) {
-			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-			try{
-			aPatientId= Long.valueOf(service.executeNativeSql("select patient_id from extdispcard where id="+aDispCardId).iterator().next().get1().toString());
+	public String checkDispService (String aDate, Long aDispCardId, Long aPatientId, Long aWorkFunctionId, String aStartDate, String aFinishDate, HttpServletRequest aRequest) throws NamingException, ParseException {
+		if (aPatientId==null || aPatientId==0) {
+			try {
+				aPatientId= Long.valueOf(Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSql("select patient_id from extdispcard where id="+aDispCardId).iterator().next().get1().toString());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-		}		
+		}
 		String res = "";
-		
-		
-		if (aDispCardId!=null&& !aDispCardId.equals(Long.valueOf(0))){
-			if (isInDispPeriod(aDate, aDispCardId, aRequest)) {res = "1Дата услуги ("+aDate+") выходит за период диспансеризации";}
-			if (isAfterDispPeriod(aDate, aDispCardId, aRequest)) {res = "2Услуга оказана позже окончания диспансеризации";}
+		Date serviceDate = DateFormat.parseSqlDate(aDate); //дата услуги
+		if (aDispCardId > 0) {
+			Date startDate = DateFormat.parseSqlDate(aStartDate); //дата начала ДД
+			Date finishDate = DateFormat.parseSqlDate(aFinishDate); //Дата окончания ДД
+			if (serviceDate.getTime() > finishDate.getTime() ) {
+				res = "2Услуга оказана позже окончания ДД ("+aFinishDate+")";
+			} else if (startDate.getTime() > serviceDate.getTime() ) {
+				res = "1Дата услуги ("+aDate+") раньше даты начала ДД ("+aStartDate+")";
+			}
 		} else {
-			System.out.println("=== Пришло время проверить полис!");
 			if (!isMedPolicyExists(aPatientId,aDate,aRequest)) {
 				res = "2У пациета отсутствует актуальный полис ОМС, создание карты невозможно!";
 			}
 		}
-		if (isHoliday(aDate)) {res = "2Услуга приходится на выходной день";}
+		if (isHoliday(serviceDate)) {res = "2Услуга приходится на выходной день";}
 		if (aWorkFunctionId!=null && aWorkFunctionId!=0){
 			if (existDoublesVisit(aDate, aPatientId, aWorkFunctionId, aRequest)) {res = "2У пациента есть посещение к данному специалисту за указанную дату ("+aDate+")";}
 		}
 		if (existDoublesStac (aDate, aPatientId, aRequest)) {res="2Пациент находился в стационаре на эту дату ("+aDate+")";}
-		
-		// System.out.println("Res = "+res);
 		return res;
 	}
 	
 	public boolean isMedPolicyExists(Long aPatientId, String aDate, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String sql = "select id from medpolicy where patient_id="+aPatientId+" and dtype='MedPolicyOmc' " +
+		String sql = "select id from medpolicy where patient_id="+aPatientId+" and (dtype='MedPolicyOmc' or dtype='MedPolicyOmcForeign') " +
 				"and (actualdateto is null or to_date('"+aDate+"','dd.MM.yyyy') between actualdatefrom and actualdateto)";
 		Collection <WebQueryResult> wqr = service.executeNativeSql(sql);
-	//	System.out.println("=== Check policy sql = "+sql);
 		if (!wqr.isEmpty()) {
-			//if (Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if (Long.parseLong(wqr.iterator().next().get1().toString())>0) {
 				return true;
-			}
 		} else {
 			sql = "select kinsman_id from kinsman where person_id="+aPatientId;
 			wqr = service.executeNativeSql(sql);
@@ -183,100 +166,65 @@ public class ExtDispServiceJs {
 				aPatientId = Long.valueOf(wqr.iterator().next().get1().toString());
 				return isMedPolicyExists(aPatientId, aDate, aRequest);
 			}
-			
 		}
 		return false;
 	}
-	public boolean isHoliday (String aDate) throws ParseException {
+	private boolean isHoliday (Date aDate) {
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(ru.nuzmsh.util.format.DateFormat.parseDate(aDate));
-		 if (cal.get(java.util.Calendar.DAY_OF_WEEK)==1) {
-	//		 System.out.println("is Holiday = true");
-			 return true;
-		 }
-		// System.out.println("is Holiday = false");
-		return false;
+		cal.setTime(aDate);
+		return cal.get(java.util.Calendar.DAY_OF_WEEK)==1;
 	}
-	
-	public boolean isAfterDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
+
+	@Deprecated //Переделали
+	private boolean isAfterDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		boolean ret = false;
 		String str = "select count(edc.id) from extdispcard edc" +
 				" where edc.id=" +aDispCardId+
 				" and to_date('"+aDate+"','dd.MM.yyyy') > edc.finishdate";
-		//	System.out.println("isInDispPeriod = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		if (!wqr.isEmpty()) {
-			//if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
-				ret = true;
-			}
-		}
-		return ret;		
+		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
 	}
-	public boolean isInDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
+
+	@Deprecated //Переделали
+	private boolean isInDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		boolean ret = true;
 		String str = "select count(edc.id) from extdispcard edc" +
 				" where edc.id=" +aDispCardId+
 				" and to_date('"+aDate+"','dd.MM.yyyy') between edc.startdate and edc.finishdate";
-	//	System.out.println("isInDispPeriod = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		if (!wqr.isEmpty()) {
-			//if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
-				ret = false;
-			}
-		}
-		return ret;		
+		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
 	}
-	public boolean existDoublesStac(String aDate, Long aPatientId, HttpServletRequest aRequest) throws NamingException {
+	private boolean existDoublesStac(String aDate, Long aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		boolean ret = false;
 		String str = "select count(sls.id) from medcase sls" +
 				" where (sls.dtype='HospitalMedCase') and sls.patient_id=" +aPatientId+
 				" and (to_date('"+aDate+"','dd.MM.yyyy') between sls.datestart and sls.datefinish or (to_date('"+aDate+"','dd.MM.yyyy')>=sls.datestart and sls.datefinish is null and sls.deniedhospitalizating_id is null))";
-	//	System.out.println("existDoublesStac = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		if (!wqr.isEmpty()) {
-			//if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
-				ret = true;
-			}
-		}
-		return ret;		
+		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
 	}
-	
-	public boolean existDoublesVisit(String aDate, Long aPatientId, Long aWorkFunctionId, HttpServletRequest aRequest) throws NamingException {
+
+	private boolean existDoublesVisit(String aDate, Long aPatientId, Long aWorkFunctionId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		boolean ret = false;
 		String str = "select count(mc.id) from medcase mc" +
 				" where (mc.dtype='ShortMedCase' or mc.dtype='Visit') and mc.patient_id=" +aPatientId+
 				" and mc.workfunctionexecute_id="+aWorkFunctionId+
 				" and mc.datestart=to_date('"+aDate+"','dd.MM.yyyy')";
-	//	System.out.println("existDoublesVisit = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		if (!wqr.isEmpty()) {
-		//	if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
-				ret = true;
-			}
-		}
-		return ret;		
+		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
 	}
 	
 	public String setOrphCodes(HttpServletRequest aRequest) throws NamingException {
-		IExtDispService service = Injection.find(aRequest).getService(IExtDispService.class) ;
-		return service.setOrphCodes();
+		return Injection.find(aRequest).getService(IExtDispService.class).setOrphCodes();
 	}
+
 	public String exportOrph(String aStartDate, String aFinishDate,
-			String aFileNameSuffix, String aSqlAdd, String aFizGroup, String aHeight,
-			String aWeight, String aHeadSize, String aAnalysesText,
-			String aZOJReccomend, String aReccomend, String aDivideNum, String aLpu, HttpServletRequest aRequest) throws NamingException, ParseException {
+			String aFileNameSuffix, String aSqlAdd, int aFizGroup, int aHeight,
+			int aWeight, int aHeadSize, String aAnalysesText,
+			String aZOJReccomend, String aReccomend, int aDivideNum, Long aLpu, HttpServletRequest aRequest) throws NamingException, ParseException {
 		IExtDispService service = Injection.find(aRequest).getService(IExtDispService.class) ;
-		return service.exportOrph(aStartDate, aFinishDate,
-				aFileNameSuffix, aSqlAdd, aFizGroup, aHeight,
-				aWeight, aHeadSize, aAnalysesText,
-				aZOJReccomend, aReccomend, aDivideNum, aLpu);
+		Date startDate = DateFormat.parseSqlDate(aStartDate);
+		Date finishDate = DateFormat.parseSqlDate(aFinishDate);
+		return service.exportOrph(startDate, finishDate,aFileNameSuffix, aSqlAdd, aFizGroup, aHeight,
+				aWeight, aHeadSize, aAnalysesText,aZOJReccomend, aReccomend, aDivideNum, aLpu);
 	}
 }

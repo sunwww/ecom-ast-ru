@@ -1,7 +1,5 @@
 package ru.ecom.jaas.ejb.form;
 
-import java.sql.Date;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;

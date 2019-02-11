@@ -345,7 +345,7 @@
 	    </form>    
     </msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void()" idField="1">
+	    <msh:table name="list" action="javascript:void()" idField="1" escapeSymbols="false">
 	    <msh:tableColumn columnName="" property="16"/>
 	      <msh:tableButton property="1" buttonFunction="showBiomatIntakeInfo" buttonName="Прием биоматериала осуществлен" buttonShortName="Прием" hideIfEmpty="true"/>
 	      <msh:tableButton property="1" buttonFunction="this.disabled=true;this.value='Подождите...';saveBiomatIntakeCurrent" buttonName="Прием биоматериала осуществлен только что" buttonShortName="Прием ТД" hideIfEmpty="true"/>

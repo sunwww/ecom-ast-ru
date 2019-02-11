@@ -164,7 +164,6 @@
         //$('${houseBuilding}').value = $('${name}addressHouseBuilding').value ;
         //$('${flatNumber}').value = $('${name}addressFlatNumber').value ;
 //        $('provincialAreaPk').value = addressProvincialAreaPkAutocomplete.getVocId() ;
-
         AddressService.getAddressString(addressPk, '', '', '','', {
             callback: function(aString) {
                 $('${name}addressPar').innerHTML = aString ;
@@ -196,7 +195,6 @@
         $('${addressField}').parentNode.innerHTML = "<span id='${name}addressPar'>"+
                                                  "Получение адреса..."
                 +"</span><input id='buttonShow${name}Address' type='button' value='"+inputLabel+"' onclick='show${name}Address()' />" ;
-
         AddressService.getAddressString($('${name}').value
                 , '', '', '','', {
             callback: function(aString) {
@@ -217,9 +215,9 @@
 </script>
 
     <msh:ifFormTypeIsView formName="${form}" guid="b8c4d74b-4db5-433e-982c-e3133e4993ea">
-      <script type="text/javascript">// <![CDATA[//
+      <script type="text/javascript">
       		$('buttonShow${name}Address').style.display = 'none';
-		//]]></script>
+		</script>
     </msh:ifFormTypeIsView>
 
 

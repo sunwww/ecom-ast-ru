@@ -21,4 +21,13 @@ public class VocWorkPlaceType extends VocBaseEntity {
 	public void setOmcCode(String aOmcCode) {theOmcCode = aOmcCode;}
 	/** Код ОМС */
 	private String theOmcCode;
+
+	private String promedCode;
+	@Comment("Код в промеде")
+	public String getPromedCode() {
+		return promedCode;
+	}
+	public void setPromedCode(String promedCode) {
+		this.promedCode = promedCode;
+	}
 }

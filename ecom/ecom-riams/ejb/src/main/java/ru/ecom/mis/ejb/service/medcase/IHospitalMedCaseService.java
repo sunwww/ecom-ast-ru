@@ -1,21 +1,18 @@
 package ru.ecom.mis.ejb.service.medcase;
 
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
-import org.json.JSONException;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
-import ru.ecom.poly.ejb.services.GroupByDate;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.text.ParseException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * User: STkacheva

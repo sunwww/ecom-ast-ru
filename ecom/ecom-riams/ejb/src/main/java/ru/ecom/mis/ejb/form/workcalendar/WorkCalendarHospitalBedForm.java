@@ -244,8 +244,15 @@ public class WorkCalendarHospitalBedForm extends IdEntityForm {
 	@Persist @Required
 	public Long getOrderLpu() {return theOrderLpu;}
 	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
-
 	/** Откуда направление */
 	private Long theOrderLpu;
+
+	/** ЛПУ куда направляется */
+	@Comment("ЛПУ куда направляется")
+	@Persist
+	public Long getDirectLpu() {return theDirectLpu;}
+	public void setDirectLpu(Long aDirectLpu) {theDirectLpu = aDirectLpu;}
+	/** ЛПУ куда направляется */
+	private Long theDirectLpu ;
 
 }

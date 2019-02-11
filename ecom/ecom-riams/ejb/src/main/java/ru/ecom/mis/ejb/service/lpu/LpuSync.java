@@ -1,13 +1,5 @@
 package ru.ecom.mis.ejb.service.lpu;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.address.ejb.service.AddressSync;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.ejb.services.util.QueryResultUtil;
@@ -16,10 +8,11 @@ import ru.ecom.expomc.ejb.services.sync.ISync;
 import ru.ecom.expomc.ejb.services.sync.SyncContext;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 
+import javax.persistence.EntityManager;
+import java.util.Iterator;
+
 public class LpuSync implements ISync {
 
-    private final static Logger LOG = Logger.getLogger(AddressSync.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 
     public void sync(SyncContext aContext) throws Exception {
     	
@@ -31,7 +24,7 @@ public class LpuSync implements ISync {
 
         IMonitor monitor = aContext.getMonitorService().startMonitor(aContext.getMonitorId(), "Синхронизация ", results);
     	
-    	List<OmcLpu> omcLpus = theEntityManager.createQuery("from OmcLpu "+clause).getResultList() ;
+    //	List<OmcLpu> omcLpus = theEntityManager.createQuery("from OmcLpu "+clause).getResultList() ;
     	int i =0;
     	
         Iterator<OmcLpu> iterator = QueryIteratorUtil.iterate(OmcLpu.class, theEntityManager.createQuery(queryString));
@@ -49,7 +42,6 @@ public class LpuSync implements ISync {
             }
             int lenMax= omcLpu.getName().length() ;
             if (lenMax>254) lenMax=254 ;
-            System.out.println("lenMax="+lenMax) ;
             lpu.setName(omcLpu.getName().substring(0,lenMax)) ;
 			lpu.setOmcCode(omcLpu.getCode()) ;
 			lpu.setEmail(omcLpu.getMail()) ;

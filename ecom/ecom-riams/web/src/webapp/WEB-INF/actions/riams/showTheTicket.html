@@ -1,0 +1,91 @@
+
+
+
+
+<html>
+
+    <head>
+    <title>ПЛАТНЫЕ УСЛУГИ</title>
+    </head>
+    <body>
+    <style type="text/css">
+        #patientWaitingTable {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 10px;
+            width:100%;
+        }
+        .queueTable {
+            width: 100%;
+            height: 100%;
+            font-size:500%;
+        }
+        .tr {
+            background-color: red;
+        }
+        #classname{
+            background-color: green;
+        }
+        #taest {
+            background-color: green;
+        }
+        .green {
+            background-color: whitesmoke;
+        }
+        .red {
+            background-color: red;
+        }
+    </style>
+    <input type="hidden" id="current_username_li" value="TV_1">
+
+
+<table id="patientWaitingTable" border="1" style="height: 100%;">
+    <thead style="height: 10%">
+    <th width="50%">Талон</th>
+    <th width="50%">Окно</th>
+    </thead>
+<tbody id="patientWaitingTableBody" name="patientWaitingTableBody" style="height: 90%;"></tbody>
+</table>
+
+<script type="text/javascript" src="http://127.0.0.1:8080/skin/ac.js"></script>
+<script type="text/javascript" src="http://127.0.0.1:8080/skin/engine.js"></script>
+<script type="text/javascript"> //Общие скрипты
+var ws_socketServerStorageName="ws_server_name";
+window.onload = function(){TVONLOAD();};
+
+function QUEUEONLOAD() {
+    connectWebSocketKiosk();
+    getQueueList();
+}
+
+function TVONLOAD(){
+}
+
+</script>
+
+<script type="text/javascript"> //Скрипты для телевизора
+
+    function showTheTicket(t) {
+        var el = jQuery("<tr id='tr_"+t.ticketId+"'><td class='td_"+t.ticketId+"' > "+t.ticketNumber+"</td><td class='td_"+t.ticketId+"'>"+t.window+"</td></tr>");
+
+       el.hide();
+        jQuery('#patientWaitingTableBody').append(el);
+        el.show();
+        el = jQuery('td.td_'+t.ticketId);
+        for (var i=0;i<10;i++) {
+            el.animate({backgroundColor:"#f00"},50);
+            el.animate({backgroundColor:"#00ff1c"},50);
+            el.animate({backgroundColor:"#0010ff"},50);
+        }
+        el.animate({backgroundColor:"#ffffff"},500);
+
+    }
+
+    function hideTheTicket(t) {
+        jQuery('#patientWaitingTableBody').children("#tr_"+t.ticketId).remove();
+    }
+
+</script>
+
+</body>
+</html>

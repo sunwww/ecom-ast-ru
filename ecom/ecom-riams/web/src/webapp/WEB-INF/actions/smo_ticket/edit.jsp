@@ -44,7 +44,8 @@
         </msh:ifInRole>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="kinsman" label="Представитель" viewAction="entityParentView-mis_kinsman.do" 
+        <msh:row>  <msh:checkBox property="isDiagnosticSpo" label="Диагностическое СПО"/></msh:row>
+        	<msh:autoComplete property="kinsman" label="Представитель" viewAction="entityParentView-mis_kinsman.do"
         	parentId="smo_ticketForm.medcard" vocName="kinsmanByTicket" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
 	        <msh:ifNotInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
@@ -94,6 +95,9 @@
           <msh:autoComplete vocName="vocDispanseryRegistration" property="dispRegistration" label="Диспансерный учет" horizontalFill="true" guid="bf850705-5557-438e-b56e-33d59b1618e4" />
           <msh:autoComplete vocName="vocTraumaType" property="concludingTrauma" label="Травма" horizontalFill="true" guid="eedb1042-1861-426e-a0ec-6151c3933dd1" />
         </msh:row>
+          <msh:row>
+        <msh:textField property="nextVisitDate" label="Дата следующего визита"/>
+          </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
 	        <msh:row>
 	        	<msh:textField property="ambulanceCard" fieldColSpan="3" label="№карты СП" horizontalFill="true"/>
@@ -587,7 +591,7 @@
   	</msh:ifFormTypeIsNotView>
   </msh:ifFormTypeAreViewOrEdit>  
   <msh:ifFormTypeIsNotView formName="smo_ticketForm">
-    <script type="text/javascript">// <![CDATA[//
+    <script type="text/javascript">
     	
     	var oldaction = document.forms[0].action ;
     	var oldValue = $('dateStart').value ;
@@ -654,11 +658,6 @@
 		  			var wf = +$("workFunctionExecute").value;
 		    		if (wf=='') {wf=0;}
 		  			 medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value) ;
-		    		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-			      	 		callback: function(aResult) {
-			      	 			//medServiceAutocomplete.setId(aResult) ;
-			      	 		}
-			      	 	}) ;
 		  		}
 		  	}) ;
 		function changeParentMedService() {
@@ -739,7 +738,7 @@
     			}
     		}
     		 medServiceAutocomplete.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
-    	//]]>
+
     	</script>
     	
   </msh:ifFormTypeIsNotView>

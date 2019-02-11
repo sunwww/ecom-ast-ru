@@ -1,33 +1,21 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import java.sql.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
-import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.expomc.ejb.domain.med.VocDiagnosis;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcRoadTrafficInjury;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType;
+import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
 
 
 /**

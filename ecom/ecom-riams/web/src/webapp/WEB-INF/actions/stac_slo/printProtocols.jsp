@@ -1,6 +1,5 @@
-<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/WEB-INF/tiles/header.jsp" %>

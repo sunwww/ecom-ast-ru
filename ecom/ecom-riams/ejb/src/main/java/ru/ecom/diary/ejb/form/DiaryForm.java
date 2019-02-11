@@ -1,16 +1,8 @@
 package ru.ecom.diary.ejb.form;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;

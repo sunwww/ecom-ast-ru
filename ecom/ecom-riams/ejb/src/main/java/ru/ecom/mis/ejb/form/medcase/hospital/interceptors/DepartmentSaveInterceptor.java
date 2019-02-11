@@ -1,16 +1,9 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
@@ -20,14 +13,16 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
-import ru.ecom.mis.ejb.form.medcase.hospital.DischargeMedCaseForm;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.persistence.EntityManager;
+import java.util.List;
+
 public class DepartmentSaveInterceptor  implements IFormInterceptor{
 
-	private final static Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
     
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		DepartmentMedCaseForm form=(DepartmentMedCaseForm)aForm ;
@@ -36,11 +31,11 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		DepartmentMedCase medCase = (DepartmentMedCase)aEntity ;
 		String dateFinish = "null" ;
 		if (medCase.getDateFinish()!=null) {
-			dateFinish = new StringBuilder().append("to_date('").append(DateFormat.formatToDate(medCase.getDateFinish())).append("','dd.mm.yyyy')").toString() ;
+			dateFinish = "to_date('" + DateFormat.formatToDate(medCase.getDateFinish())+"','dd.mm.yyyy')" ;
 		}
 		String timeFinish ="null" ;
 		if (medCase.getDischargeTime()!=null) {
-			timeFinish = new StringBuilder().append("'").append(DateFormat.formatToTime(medCase.getDischargeTime())).append("'").toString() ;
+			timeFinish = "'"+DateFormat.formatToTime(medCase.getDischargeTime())+"'" ;
 		}
 		StringBuilder sqlupdate = new StringBuilder() ;
 		
@@ -48,7 +43,6 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			throw new IllegalStateException ("Данный диагноз запрещен в отделении!");
 		}
 		sqlupdate.append("update MedCase set dateFinish="+dateFinish+", dischargeTime="+timeFinish+" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))") ;
-		
 		manager.createNativeQuery(sqlupdate.toString())
 			.setParameter("parent", form.getId())
 			.executeUpdate() ;
@@ -62,14 +56,15 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		setDiagnosis(aManager, aMedCase, aListDiags, aRegistrationType, aPriority,aIllnesPrimary, null) ;
 	}
     public static void setDiagnosis(EntityManager aManager, Long aMedCase, String aListDiags, String aRegistrationType, String aPriority, Long aIllnesPrimary, String aMkbAdc) {
-    	VocDiagnosisRegistrationType vocDRT= (VocDiagnosisRegistrationType)getVocByCode(aManager,"VocDiagnosisRegistrationType",aRegistrationType);
-		VocPriorityDiagnosis vocPrior = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis",aPriority) ;
-		StringBuilder sql = new StringBuilder() ;
-    	sql.append("select id from Diagnosis where medCase_id=").append(aMedCase)
-    		.append(" and registrationType_id='").append(vocDRT.getId())
-    		.append("' and priority_id='").append(vocPrior.getCode()).append("' order by id") ;
-    	List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList() ;
-    	if (aListDiags!=null&&!aListDiags.equals("")) {
+    	if (aListDiags!=null && !aListDiags.equals("")) {
+			VocDiagnosisRegistrationType vocDRT= (VocDiagnosisRegistrationType)getVocByCode(aManager,"VocDiagnosisRegistrationType",aRegistrationType);
+			VocPriorityDiagnosis vocPrior = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis",aPriority) ;
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("select id from Diagnosis where medCase_id=").append(aMedCase)
+					.append(" and registrationType_id='").append(vocDRT.getId())
+					.append("' and priority_id='").append(vocPrior.getCode()).append("' order by id") ;
+			LOG.info("sql = "+sql);
+			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList() ;
     		String[] otherServs = aListDiags.split("#@#");
     		if (otherServs.length>0) {
     			for (int i=0;i<otherServs.length;i++) {
@@ -78,13 +73,16 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
     					if (list.size()>i) aManager.createNativeQuery("delete from Diagnosis where id="+list.get(i)).executeUpdate() ;
     				} else {
 	    				if (list.size()>i) {
-	    					aManager.createNativeQuery("update Diagnosis set name=:name,idc10_id=:idc10,illnesPrimary_id="+((aIllnesPrimary==null||aIllnesPrimary.intValue()==0)?"null":"'"+aIllnesPrimary+"'")+",mkbAdc=:mkbAdc where id="+list.get(i))
+	    					aManager.createNativeQuery("update Diagnosis set name=:name,idc10_id=:idc10,illnesPrimary_id="+((aIllnesPrimary==null||aIllnesPrimary.intValue()==0)?"null":"'"+aIllnesPrimary+"'")+",mkbAdc=:mkbAdc " +
+									" where id="+list.get(i))
 	    					.setParameter("name", serv.length>2?serv[2]:"") 
 	    					.setParameter("idc10", Long.valueOf(serv[0]))
 	    					.setParameter("mkbAdc", aMkbAdc) 
 	    					.executeUpdate() ;
 	    				} else {
-	    					aManager.createNativeQuery("insert into Diagnosis (name,idc10_id,medCase_id,priority_id,registrationType_id,illnesPrimary_id,mkbAdc) values (:name,'"+serv[0]+"','"+aMedCase+"','"+vocPrior.getId()+"','"+vocDRT.getId()+"',"+((aIllnesPrimary==null||aIllnesPrimary.intValue()==0)?"null":"'"+aIllnesPrimary+"'")+",:mkbAdc)")
+	    					aManager.createNativeQuery("insert into Diagnosis (name,idc10_id,medCase_id,priority_id,registrationType_id,illnesPrimary_id,mkbAdc) " +
+									" values (:name,'"+serv[0]+"','"+aMedCase+"','"+vocPrior.getId()+"','"+vocDRT.getId()+"',"
+									+(aIllnesPrimary==null||aIllnesPrimary.intValue()==0 ? "null" : "'"+aIllnesPrimary+"'")+",:mkbAdc)")
 	    					.setParameter("name", serv.length>2?serv[2]:"") 
 	    					.setParameter("mkbAdc", aMkbAdc) 
 	    						.executeUpdate() ;
@@ -98,14 +96,14 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
     	}
     }
     public static Object getVocByCode(EntityManager aManager,String aTable, String aCode) {
-    	List list = aManager.createQuery(new StringBuilder().append("from ").append(aTable).append(" where code='").append(aCode).append("'").toString()).getResultList() ;
-    	return list.size()>0?list.get(0):null ; 
+    	List list = aManager.createQuery("from "+aTable+" where code=:code").setParameter("code",aCode).getResultList() ;
+    	return list.isEmpty() ? null : list.get(0);
     }
-
+/*
     private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager, VocPriorityDiagnosis aPriorityType, Long aActuity) {
     	return setDiagnosisByType( aNewIs,  aDiag, aType, aName, aDate,  aCode, aMedCase, aManager, aPriorityType, aActuity,null);
     }
-    
+  */
 	private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager, VocPriorityDiagnosis aPriorityType, Long aActuity, String aMkbAdc) {
 		boolean resault = false ;
 		if (!aNewIs) {
@@ -133,12 +131,10 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 				VocIllnesPrimary illnes = aManager.find(VocIllnesPrimary.class, aActuity) ;
 				VocAcuityDiagnosis actuity = illnes.getIllnesType() ;
 				VocPrimaryDiagnosis primary = illnes.getPrimary() ;
-				//System.out.println("      actuity ="+actuity+""); 
 				aDiag.setAcuity(actuity) ;
 				aDiag.setPrimary(primary) ;
 				aDiag.setIllnesPrimary(illnes) ;
 				//VocAcuityDiagnosis actuity = aManager.find(VocAcuityDiagnosis.class, aActuity) ;
-				//System.out.println("      actuity ="+actuity+""); 
 				//aDiag.setAcuity(actuity) ;
 			}
 			resault = true ;
@@ -150,11 +146,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 	private static boolean isEmpty(Long aLong) {
 	    return (aLong == null)||(aLong == 0) ;
 	}
-	private static boolean isEmpty(String aString) {
-	    return (aString == null)||(aString.trim().equals("")) ;
-	}
-	
-	
+
 	
 	public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long aPatient, Long serviceStream, Long diagnosisRegistrationType, Long diagnosisPriority, EntityManager manager) {
 		if (clinicalMkb==null || clinicalMkb.equals(Long.valueOf(0))) return true ;
@@ -174,7 +166,6 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			" left join lpucontractnosologygroup lcng on lcng.lpudiagnosisrule = ldr.id" +
 			" left join contractnosologygroup cng on cng.id=lcng.nosologygroup" +
 			" left join nosologyinterval ni on ni.nosologygroup_id=cng.id" +
-			
 			" where ldr.department = "+department +
 			" and ldr.id is not null" +
 			" and ((ldr.diagnosisregistrationtype is null or ldr.diagnosisregistrationtype=0) or ldr.diagnosisregistrationtype="+diagnosisRegistrationType+")" ;
@@ -183,21 +174,18 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		sql=sql+" and ((ldr.diagnosispriority is null or ldr.diagnosispriority=0) or ldr.diagnosispriority="+diagnosisPriority+")" +
 			" and ((ldr.servicestream is null or ldr.servicestream=0) or ldr.servicestream="+serviceStream+")";
 			
-		//System.out.println("=== DIAG, sql ="+sql);
 			List<Object[]> o = manager.createNativeQuery(sql).getResultList();
-		//	System.out.println("=== DIAG o = "+o.size());
 			if (o==null||o.isEmpty()) {
 				return true;
 			} 
 			boolean first = true;
 			for (Object[] oo: o) {
-			//	System.out.println("=== DIAG_n, o[] = "+oo[0]+":"+oo[1]+":"+oo[2]);
 				if (first){
-					isPermitted = oo[1].toString().equals("1")?true:false;
+					isPermitted = oo[1].toString().equals("1");
 					first = false;
-					ret = isPermitted?false:true;
+					ret = !isPermitted;
 				}
-				boolean isEnter = oo[2].toString().equals("1")?true:false;
+				boolean isEnter = oo[2].toString().equals("1");
 				if (isPermitted) {
 					if (isEnter) {
 						ret =  true;
@@ -213,5 +201,4 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			}
 			return ret;
 	}
-
 }

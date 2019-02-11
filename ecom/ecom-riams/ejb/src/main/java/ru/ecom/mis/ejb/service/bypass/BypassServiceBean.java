@@ -1,16 +1,5 @@
 package ru.ecom.mis.ejb.service.bypass;
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import jxl.Cell;
 import jxl.Workbook;
 import jxl.format.CellFormat;
@@ -18,9 +7,7 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
@@ -29,6 +16,16 @@ import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.util.PropertyUtil;
 
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.io.File;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 /**
  * Печать обходных листов
  */
@@ -36,9 +33,8 @@ import ru.nuzmsh.util.PropertyUtil;
 @Remote(IBypassService.class)
 public class BypassServiceBean implements IBypassService {
 
-    private final static Logger LOG = Logger.getLogger(BypassServiceBean.class) ;
-//    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
-    
+    private static final Logger LOG = Logger.getLogger(BypassServiceBean.class) ;
+
     //[start] asdfasdf
     public void printByAreaAddress(long aMonitorId, long aLpuAreaAddressTextId, long aFileId) {
         printByClause(aMonitorId, aFileId, "lpuAreaAddressText_id="+aLpuAreaAddressTextId);
@@ -77,8 +73,6 @@ public class BypassServiceBean implements IBypassService {
             workbook.write();
             workbook.close() ;
             monitor.finish(aMonitorId+"");
-        } catch(IllegalMonitorStateException e) {
-            throw e ;
         } catch (Exception e) {
             monitor.error("Ошибка экспорта",e);
             throw new IllegalArgumentException(e) ;
@@ -135,7 +129,7 @@ public class BypassServiceBean implements IBypassService {
 
     private QueryResponse createResponse() {
         QueryResponse r = new QueryResponse();
-        LinkedList<QueryResponseProperty> props = new LinkedList<QueryResponseProperty>();
+        LinkedList<QueryResponseProperty> props = new LinkedList<>();
         props.add(new QueryResponseProperty("lastname","Фамилия")) ;
         props.add(new QueryResponseProperty("firstname", "Имя")) ;
         props.add(new QueryResponseProperty("middlename","Отчество")) ;

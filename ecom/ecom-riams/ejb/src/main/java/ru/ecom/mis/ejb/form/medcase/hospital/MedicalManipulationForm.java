@@ -1,12 +1,11 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.medcase.MedicalManipulation;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.MedicalManipulationCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
@@ -16,8 +15,7 @@ import ru.nuzmsh.forms.validator.transforms.DoIntegerString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.*;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.EntityListeners;
 
 /**
  * Created by Milamesher on 31.08.2017.

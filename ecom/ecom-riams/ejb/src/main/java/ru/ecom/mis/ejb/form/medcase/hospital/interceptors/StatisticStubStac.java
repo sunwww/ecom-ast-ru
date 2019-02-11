@@ -1,17 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.live.domain.journal.ChangeJournal;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.StatisticStubExist;
@@ -20,6 +9,14 @@ import ru.ecom.mis.ejb.domain.medcase.StatisticStubRestored;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.ejb.EJBException;
+import javax.ejb.SessionContext;
+import javax.persistence.EntityManager;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Стат карта
@@ -36,14 +33,14 @@ import ru.nuzmsh.util.StringUtil;
  */
 public class StatisticStubStac {
 	
-    private final static Logger LOG = Logger.getLogger(StatisticStubStac.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-    private final static String theDiscargeOnlyCurrentDay = "/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay" ;
+    private static final Logger LOG = Logger.getLogger(StatisticStubStac.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final String theDiscargeOnlyCurrentDay = "/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay" ;
 	public StatisticStubStac(HospitalMedCase aMedCase, SessionContext aContext, EntityManager aManager) {
 		//setRolesAlwaysStatNumber(aRolesAlwaysStatCardNumber);
 		setMedCase(aMedCase);
 		setEntityManager(aManager);
-		VocPigeonHole pigeonHole =aMedCase!=null&&aMedCase.getDepartment()!=null?aMedCase.getDepartment().getPigeonHole():null ;
+		VocPigeonHole pigeonHole =aMedCase!=null && aMedCase.getDepartment()!=null ? aMedCase.getDepartment().getPigeonHole() : null ;
 		setPigeonHole(pigeonHole) ;
 		setContext(aContext);
 		boolean isEmerPlan = false ;
@@ -51,26 +48,25 @@ public class StatisticStubStac {
     		isEmerPlan = true ;
     	}
     	theIsEmergAndPlan=isEmerPlan ;
-    	theIsEmergency=aMedCase.getEmergency()==null?false:aMedCase.getEmergency().booleanValue() ;
+    	theIsEmergency=aMedCase!=null && aMedCase.getEmergency()!=null && aMedCase.getEmergency();
 		if (aMedCase!=null){
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(aMedCase.getDateStart());
-			setYear(Long.valueOf(calendar.get(Calendar.YEAR)));
+			setYear(calendar.get(Calendar.YEAR));
 		} else {
 			setYear(-1);
 		}
-		if (CAN_DEBUG) LOG.debug("Создание StatisticStubStac...");
-		if (CAN_DEBUG) LOG.debug(new StringBuffer().append("theMedCaseId=").append(theMedCase.getId()).toString());
-		if (CAN_DEBUG) LOG.debug(new StringBuffer().append("theYear=").append(theYear).toString());
+		if (CAN_DEBUG) {
+			LOG.debug("Создание StatisticStubStac...");
+			LOG.debug("theMedCaseId="+theMedCase.getId());
+			LOG.debug("theYear="+theYear);
+		}
 	}
 	/**
 	 * Если ли ограничение на выписку
 	 */
 	public static boolean isDischargeOnlyCurrentDay(SessionContext aContext) {
-		if(aContext.isCallerInRole(theDiscargeOnlyCurrentDay)) {
-			return true ;
-		}
-		return false ;
+		return aContext.isCallerInRole(theDiscargeOnlyCurrentDay) ;
 	}
     /** Нужно ли создавать новый номер стат. карты
      */
@@ -84,7 +80,6 @@ public class StatisticStubStac {
     	} else {
     		ret = true;
     	}
-        System.out.println("return isStatCardNumberMustCreate = " + ret);
         return ret ;
     }
     public boolean isStatCardMustDelete() {
@@ -94,7 +89,6 @@ public class StatisticStubStac {
     	} else {
     		ret = false;
     	}
-        System.out.println("return isStatCardNumberMustDelete = " + ret);
         return ret ;
     }
     
@@ -107,7 +101,7 @@ public class StatisticStubStac {
      * @ejb.permission role-name = "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber"
      */
     public static boolean changeStatCardNumber(long aSlsId, String aNewStatCardNumber,
-    		EntityManager aManager, SessionContext aContext) throws EJBException {
+    		EntityManager aManager, SessionContext aContext) {
     	String oldStatCard="" ;
     	String username = aContext.getCallerPrincipal().toString() ;
     	if (aContext.isCallerInRole(ChangeStatCardNumber)) {
@@ -213,10 +207,7 @@ public class StatisticStubStac {
     	List<StatisticStubExist> states = aManager.createQuery("FROM StatisticStub WHERE code = :number AND DTYPE = 'StatisticStubExist' and year = :year")
     			.setParameter("number",aStatCardNumber)
     			.setParameter("year", aYear).setMaxResults(1).getResultList();
-    	boolean ret =(states==null||states.isEmpty())? false:true ; 
-    	LOG.debug(new StringBuffer().append("Exist: ")
-    			.append(aStatCardNumber).append(" =").append(ret));
-    	return ret;
+    	return states!=null && !states.isEmpty();
     	
     }
     
@@ -235,7 +226,7 @@ public class StatisticStubStac {
     	List<StatisticStubExist> states = aManager.createQuery("FROM StatisticStub WHERE year = :year AND code = :number AND DTYPE = 'StatisticStubExist'")
     		.setParameter("number",aStatCardNumber)
     		.setParameter("year", Long.valueOf(aYear)).setMaxResults(1).getResultList();
-        return (states==null||states.isEmpty())? false:true;
+        return states!=null && !states.isEmpty();
     }
 	
     /**
@@ -262,10 +253,7 @@ public class StatisticStubStac {
      * стат карты.
      */
     public static boolean isStacStardMustRemove(SessionContext aContext, HospitalMedCase aMedCase) {
-    	System.out.println((!aContext.isCallerInRole(AlwaysStatCardNumber))) ;
-    	System.out.println(aMedCase.getStatisticStub()) ;
-    	System.out.println(aMedCase.getDeniedHospitalizating()) ;
-        return 
+        return
         		aMedCase.getStatisticStub() != null 
         		&& (!aContext.isCallerInRole(AlwaysStatCardNumber))
         		&& (aMedCase.getDeniedHospitalizating() != null
@@ -283,7 +271,7 @@ public class StatisticStubStac {
      */
     public static void removeStatCardNumber(EntityManager aManager
     		, SessionContext aContext
-    		, HospitalMedCase aMedCase) throws EJBException {
+    		, HospitalMedCase aMedCase)  {
         if (!isStacStardMustRemove(aContext,aMedCase)) {
         	//throw new IllegalArgumentException("не надо удалять") ;
         	return ;
@@ -357,10 +345,10 @@ public class StatisticStubStac {
     * Создание следующего порядкового номера статкарты и сохранение
     * Вызывать после сохранения всех полей
     */
-    public static void createStacCardNumber(long aSlsId, String aStatCardNumberByHand , EntityManager aManager, SessionContext aContext,AdmissionMedCaseForm form) throws EJBException{
+    public static void createStacCardNumber(long aSlsId, String aStatCardNumberByHand , EntityManager aManager, SessionContext aContext,AdmissionMedCaseForm form) {
     	HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aSlsId);
     	VocPigeonHole vph = medCase.getDepartment()!=null?medCase.getDepartment().getPigeonHole():null ;
-    	boolean isEmerPlan = vph!=null && vph.getIsStatStubEmerPlan()!=null && vph.getIsStatStubEmerPlan() ? true:false ;
+    	boolean isEmerPlan = vph!=null && vph.getIsStatStubEmerPlan()!=null && vph.getIsStatStubEmerPlan()  ;
     	boolean emergency = medCase.getEmergency()==null?false:medCase.getEmergency().booleanValue() ;
     	if (medCase.getStatisticStub()!=null) {
     		changeStatCardNumber(aSlsId, aStatCardNumberByHand, aManager, aContext) ;
@@ -402,7 +390,6 @@ public class StatisticStubStac {
 	    	SimpleDateFormat format = new SimpleDateFormat("yyyy") ;
 	        Long year = Long.valueOf(format.format(medCase.getDateStart())) ;
 	        if (medCase.getIsAmbulanseDialis()) {
-	         //   System.out.println(" dialis....") ;
 	            nextStatCardNumber = new StringBuffer().append(medCase.getPatient().getId()).toString();
 	            StatisticStubExist statstub = new StatisticStubExist();
 	            statstub.setCode(nextStatCardNumber);
@@ -410,12 +397,10 @@ public class StatisticStubStac {
 	            statstub.setMedCase(medCase);
 	            medCase.setStatisticStub(statstub);
 	        } else {
-	        	//System.out.println(" начало создание....") ;
 	            //Long year = getYear() ;
 	            StatisticStubRestored restored =null ;
 	            boolean next ;
 	            do {
-	            //	System.out.println(" поиск номера стат карты в восстановленных номерах....") ;
 	            	boolean isRestored = aContext.isCallerInRole(AllowRestoredStatCard) ;
 	            	StatisticStubRestored restoredb = getRestoredStatCard(aManager,vph,isEmerPlan,emergency,year,isRestored) ;
 	            	if (restoredb==null) break ;
@@ -478,7 +463,7 @@ public class StatisticStubStac {
 	            		stubnew = rows.get(0);
 	            		nextId = Long.valueOf(stubnew.getCode()) ;
 	            	} else {
-	            		nextId = Long.valueOf(isEmerPlan?(emergency?1:2):1) ;
+	            		nextId = isEmerPlan ? (emergency ? 1 : 2) : 1 ;
 	            		stubnew = new StatisticStubNew();
 	            		stubnew.setYear(year);
 	            		stubnew.setPigeonHole(vph) ;
@@ -533,7 +518,7 @@ public class StatisticStubStac {
      * Вызывать после сохранения всех полей
      */
     @SuppressWarnings("unchecked")
-	public void createStacCardNumber() throws EJBException {
+	public void createStacCardNumber()  {
     	VocPigeonHole pigeonHole= theMedCase.getDepartment()!=null ? theMedCase.getDepartment().getPigeonHole():null ;
         if (!isStatCardNumberMustCreate()) {
             throw new EJBException("Номер стат. карты создавать не нужно");
@@ -541,7 +526,6 @@ public class StatisticStubStac {
 
         String nextStatCardNumber;
         if (theMedCase.getIsAmbulanseDialis()) {
-         //   System.out.println(" dialis....") ;
             nextStatCardNumber = new StringBuffer().append(theMedCase.getPatient().getId()).toString();
             StatisticStubExist statstub = new StatisticStubExist();
             statstub.setCode(nextStatCardNumber);
@@ -549,12 +533,10 @@ public class StatisticStubStac {
             statstub.setMedCase(theMedCase);
             theMedCase.setStatisticStub(statstub);
         } else {
-        //	System.out.println(" начало создание....") ;
             Long year = getYear() ;
             StatisticStubRestored restored =null ;
             boolean next ;
             do {
-            //	System.out.println(" поиск номера стат карты в восстановленных номерах....") ;
             	StatisticStubRestored restoredb = StatisticStubStac.getRestoredStatCard(theEntityManager
             			,thePigeonHole,theIsEmergAndPlan,theIsEmergency
             			,theYear,theContext.isCallerInRole(AllowRestoredStatCard)) ;
@@ -618,7 +600,7 @@ public class StatisticStubStac {
             		stubnew = rows.get(0);
             		nextId = Long.valueOf(stubnew.getCode()) ;
             	} else {
-            		nextId = Long.valueOf(theIsEmergAndPlan?(theIsEmergency?1:2):1) ;
+            		nextId = theIsEmergAndPlan ? (theIsEmergency ? 1 : 2) : 1 ;
             		stubnew = new StatisticStubNew();
             		stubnew.setYear(year);
             		stubnew.setPigeonHole(thePigeonHole) ;
@@ -703,13 +685,13 @@ public class StatisticStubStac {
 	private SessionContext theContext;
 	/** Случай стационарного лечения */
 	private HospitalMedCase theMedCase;
-	public static String AllowRestoredStatCard = "/Policy/Mis/MedCase/Stac/Ssl/Admission/AllowRestoredStatCard" ;
-	public static String AlwaysStatCardNumber = "/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber" ;
-	public static String CreateStatCardNumberByHand="/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand" ;
-	public static String CreateHour = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateHour" ;
-	public static String EditHour = "/Policy/Mis/MedCase/Stac/Ssl/Admission/EditHour" ;
-	public static String ChangeStatCardNumber = "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber" ;
-	public static String CreateStatCardBeforeDeniedByHand = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardBeforeDeniedByHand" ;
+	public static final String AllowRestoredStatCard = "/Policy/Mis/MedCase/Stac/Ssl/Admission/AllowRestoredStatCard" ;
+	public static final String AlwaysStatCardNumber = "/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber" ;
+	public static final String CreateStatCardNumberByHand="/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand" ;
+	public static final String CreateHour = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateHour" ;
+	public static final String EditHour = "/Policy/Mis/MedCase/Stac/Ssl/Admission/EditHour" ;
+	public static final String ChangeStatCardNumber = "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber" ;
+	public static final String CreateStatCardBeforeDeniedByHand = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardBeforeDeniedByHand" ;
 	
 	/** Экстренная госпитализация */
 	private boolean theIsEmergency;

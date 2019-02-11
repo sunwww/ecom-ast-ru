@@ -1,14 +1,5 @@
 package ru.ecom.mis.ejb.domain.licence;
 
-import java.sql.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.validator.Length;
-
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
@@ -18,11 +9,16 @@ import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentMaterialBiologAnalysis;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentObjectBiologAnalysis;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.poly.ejb.domain.Ticket;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.sql.Date;
 
 @Entity
 @Comment("Внутренние документы")

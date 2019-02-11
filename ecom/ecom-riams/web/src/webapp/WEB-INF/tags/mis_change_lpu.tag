@@ -21,7 +21,7 @@
 </style>
 
 <div id='${name}ChangeLpuDialog' class='dialog'>
-    <h2>Изменить поток обслуживания у СМО</h2>
+    <h2>Изменить ЛПУ направителя у СМО</h2>
     <div class='rootPane'>
     
 <form action="javascript:">
@@ -41,7 +41,7 @@
 </div>
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}ChangeLpuDialogInitialized = false ;
      var the${name}ChangeLpuDialog = new msh.widget.Dialog($('${name}ChangeLpuDialog')) ;
      // Показать

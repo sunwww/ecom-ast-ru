@@ -1,13 +1,13 @@
 package ru.ecom.expomc.ejb.domain.med;
 
-import java.math.BigDecimal;
+import ru.ecom.ejb.domain.simple.VocIdCodeName;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.VocIdCodeName;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.math.BigDecimal;
 
 /**
  *  КСГ 
@@ -16,6 +16,48 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("КСГ")
 @Table(schema="SQLUser")
 public class VocKsg extends VocIdCodeName {
+
+	/** Год КСГ */
+	@Comment("Год КСГ")
+	public Integer getYear() {return theYear;}
+	public void setYear(Integer aYear) {theYear = aYear;}
+	/** Год КСГ */
+	private Integer theYear ;
+
+	/** Сверхдлительный КСГ (45 дней)	*/
+	@Comment("Длительный срок лечения КСГ")
+	public Boolean getLongKsg() {return theLongKsg;}
+	public void setLongKsg(Boolean aLongKsg) {theLongKsg = aLongKsg;}
+	/** Длительный срок лечения КСГ */
+	private Boolean theLongKsg ;
+
+	/** Является операцией */
+	@Comment("Является операцией")
+	public Boolean getIsOperation() {return theIsOperation;}
+	public void setIsOperation(Boolean aIsOperation) {theIsOperation = aIsOperation;}
+	/** Является операцией */
+	private Boolean theIsOperation ;
+
+	/** Оплачивать в полном объеме */
+	@Comment("Оплачивать в полном объеме")
+	public Boolean getIsFullPayment() {return theIsFullPayment;}
+	public void setIsFullPayment(Boolean aIsFullPayment) {theIsFullPayment = aIsFullPayment;}
+	/** Оплачивать в полном объеме */
+	private Boolean theIsFullPayment ;
+
+	/** Коэффициент затрат */
+	@Comment("Коэффициент затрат")
+	public Double getKZ() {return theKZ;}
+	public void setKZ(Double aKZ) {theKZ = aKZ;}
+	/** Коэффициент затрат */
+	private Double theKZ ;
+
+	/** Профиль помощи */
+	@Comment("Профиль помощи")
+	public String getProfile() {return theProfile;}
+	public void setProfile(String aProfile) {theProfile = aProfile;}
+	/** Профиль помощи */
+	private String theProfile ;
 	
 	/** Расширение для МКБ */
 	@Comment("Расширение для МКБ")
@@ -95,4 +137,21 @@ public class VocKsg extends VocIdCodeName {
 
 	/** Уровень оказания для детей */
 	private VocRenderLevel theChildLevel;
+
+	/** Тип коек */
+	@Comment("Тип коек")
+	@OneToOne
+	public VocBedSubType getBedSubType() {return theBedSubType;}
+	public void setBedSubType(VocBedSubType aBedSubType) {theBedSubType = aBedSubType;}
+	/** Тип коек */
+	private VocBedSubType theBedSubType ;
+
+	/** Не учитывать КУСмо */
+	@Comment("Не учитывать КУСмо")
+	public Boolean getDoNotUseCusmo() {return theDoNotUseCusmo;}
+	public void setDoNotUseCusmo(Boolean aDoNotUseCusmo) {theDoNotUseCusmo = aDoNotUseCusmo;}
+	/** Не учитывать КУСмо */
+	private Boolean theDoNotUseCusmo = false;
+
+
 }

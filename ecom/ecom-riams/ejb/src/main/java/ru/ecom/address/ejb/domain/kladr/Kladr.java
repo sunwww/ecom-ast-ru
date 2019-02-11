@@ -1,23 +1,14 @@
 package ru.ecom.address.ejb.domain.kladr;
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.domain.simple.NoLiveBaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.io.Serializable;
 
 
 /**

@@ -1,13 +1,43 @@
 package ru.ecom.mis.ejb.service.patient;
 
-import java.lang.reflect.Method;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
+import org.apache.log4j.Logger;
+import org.jboss.annotation.security.SecurityDomain;
+import org.jdom.Element;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import ru.ecom.address.ejb.domain.address.Address;
+import ru.ecom.ejb.services.entityform.EntityFormException;
+import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.ejb.xml.XmlUtil;
+import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
+import ru.ecom.jaas.ejb.domain.SoftConfig;
+import ru.ecom.jaas.ejb.service.SoftConfigServiceBean;
+import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
+import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
+import ru.ecom.mis.ejb.domain.licence.TemplateExternalDocument;
+import ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType;
+import ru.ecom.mis.ejb.domain.lpu.LpuArea;
+import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
+import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.PatientFond;
+import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
+import ru.ecom.mis.ejb.domain.patient.voc.*;
+import ru.ecom.mis.ejb.form.lpu.interceptors.LpuAreaDynamicSecurity;
+import ru.ecom.mis.ejb.form.patient.MedPolicyOmcForm;
+import ru.ecom.mis.ejb.form.patient.PatientForm;
+import ru.ecom.mis.ejb.form.patient.VocOrgForm;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.date.AgeUtil;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -20,46 +50,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.apache.log4j.Logger;
-import org.jboss.annotation.security.SecurityDomain;
-
-import ru.ecom.address.ejb.domain.address.Address;
-import ru.ecom.alg.common.IsChild;
-import ru.ecom.ejb.services.entityform.EntityFormException;
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
-import ru.ecom.jaas.ejb.domain.SoftConfig;
-import ru.ecom.jaas.ejb.service.SoftConfigServiceBean;
-import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
-import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
-import ru.ecom.mis.ejb.domain.licence.TemplateExternalDocument;
-import ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType;
-import ru.ecom.mis.ejb.domain.lpu.LpuArea;
-import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
-import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
-import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.PatientFond;
-import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
-import ru.ecom.mis.ejb.domain.patient.voc.VocAttachedType;
-import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
-import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
-import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
-import ru.ecom.mis.ejb.form.lpu.interceptors.LpuAreaDynamicSecurity;
-import ru.ecom.mis.ejb.form.patient.MedPolicyOmcForm;
-import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.ecom.mis.ejb.form.patient.VocOrgForm;
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.util.format.DateFormat;
+import java.lang.reflect.Method;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Сервис пациента
@@ -69,7 +67,103 @@ import ru.nuzmsh.util.format.DateFormat;
 @Local(IPatientService.class)
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
-	private  final Logger log = Logger.getLogger(PatientServiceBean.class);
+	
+	private static final Logger LOG = Logger.getLogger(PatientServiceBean.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
+	/**Выгружаем список карт Д наблюдения */
+	public String exportDispensaryCard(java.util.Date aDateFrom, java.util.Date aDateTo, java.util.Date aDateChanged, String aPacketNumber)  {
+		JSONObject ret = new JSONObject();
+		try {
+			StringBuilder sqlWhere = new StringBuilder();
+			if (aDateFrom!=null) {
+				SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
+				sqlWhere.append(" where coalesce(d.finishDate, d.startDate) ");
+				if (aDateTo!=null) {
+					sqlWhere.append(" between '").append(yyyyMMdd.format(aDateFrom)).append("' and '").append(yyyyMMdd.format(aDateTo)).append("'");
+				} else{
+					sqlWhere.append(">='").append(yyyyMMdd.format(aDateFrom)).append("'");
+				}
+				if (aDateChanged!=null) {
+				    sqlWhere.append(" and coalesce(d.editDate, d.createDate)>='").append(yyyyMMdd.format(aDateChanged)).append("'");
+                }
+			}
+			while(aPacketNumber.length()<4) {aPacketNumber="0"+aPacketNumber;}
+			SimpleDateFormat yyddmm = new SimpleDateFormat("yyMMdd");
+			String defaultLpuCode = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE","123456",theManager);
+			String filename ="DNM"+defaultLpuCode+"T30_"+yyddmm.format(aDateTo)+"_"+aPacketNumber;
+			StringBuilder sql = new StringBuilder();
+			String[] flds = {"N_ZAP", "FAM",  "IM", "OT", "DR", "TEL", "IDCASE", "PROFIL", "DS", "D_BEG", "D_END", "END_RES","YEAR"};
+			sql.append("select " +
+					" pat.id as N_ZAP" +
+					" ,pat.lastname as FAM" +
+					" ,pat.firstname AS IM " +
+					" ,pat.middlename AS OT" +
+					" ,to_char(pat.birthday,'yyyy-MM-dd') as DR " +
+					" ,coalesce(pat.phone,'') as TEL" +
+					" ,d.id as IDCASE" +
+					" ,coalesce(profile.profilek,'') as PROFIL" +
+					" ,coalesce(mkb.code,'') as DS" +
+					" ,coalesce(to_char(d.startdate,'yyyy-MM-dd'),'') AS D_BEG" +
+					" ,coalesce(to_char(d.finishdate,'yyyy-MM-dd'),'') AS D_END" +
+					" ,coalesce(vde.code,'') AS END_RES" +
+					" ,to_char(coalesce(d.finishDate, d.startDate),'yyyy') as YEAR" +
+					" from dispensarycard d" +
+					" left join vocdispensaryend vde on vde.id=d.endreason_id" +
+					" left join workfunction wf on wf.id=d.workfunction_id" +
+					" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+					" left join voce2medhelpprofile profile on profile.id=vwf.medhelpprofile_id" +
+					" left join patient pat on pat.id=d.patient_id" +
+					" left join vocidc10 mkb on mkb.id=d.diagnosis_id" +
+					sqlWhere.toString()+
+					" order by pat.id");
+			JSONArray arr = new JSONArray(theWebQueryService.executeNativeSqlGetJSON(flds,sql.toString(),null));
+			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+			Element dn = new Element("DN");
+			dn.addContent(new Element("FNAME").setText(filename));
+			filename+=".xml";
+			if (arr.length()==0) {ret.put("status","error").put("errorCode","Записей не найдено"); return ret.toString();}
+			Element zap= null;
+			String lastPatId = null;
+			for (int i=0;i<arr.length();i++) {
+				JSONObject pat = arr.getJSONObject(i);
+				String patId =pat.getString("N_ZAP");
+
+				if (lastPatId!=null && lastPatId.equals(patId)) { //Создаем несколько карт Д учета одному пациенту.
+					LOG.info("У пациента несколько Д карт, попробуем стримы");
+					//List<Element> list =dn.getChildren("ZAP");
+				//	zap = new Element("ZAP"); //list.stream().filter(z->z.getChildText("N_ZAP").equals(patId)).findFirst().get();
+					LOG.info("Hello, i found element by stream!!!");
+				} else {
+				//	patients.add(patId);
+					zap = new Element("ZAP");
+					zap.addContent(new Element("N_ZAP").setText(patId));
+					zap.addContent(new Element("YEAR").setText(pat.getString("YEAR")));
+					zap.addContent(new Element("FAM").setText(pat.getString("FAM")));
+					zap.addContent(new Element("IM").setText(pat.getString("IM")));
+					zap.addContent(new Element("OT").setText(pat.getString("OT")));
+					zap.addContent(new Element("DR").setText(pat.getString("DR")));
+					zap.addContent(new Element("TEL").setText(pat.getString("TEL")));
+					dn.addContent(zap);
+					lastPatId=patId;
+				}
+				Element zapDn = new Element("DN");
+				zapDn.addContent(new Element("IDCASE").setText(pat.getString("IDCASE")));
+				zapDn.addContent(new Element("PROFIL").setText(pat.getString("PROFIL")));
+				zapDn.addContent(new Element("DS").setText(pat.getString("DS")));
+				zapDn.addContent(new Element("D_BEG").setText(pat.getString("D_BEG")));
+				zapDn.addContent(new Element("D_END").setText(pat.getString("D_END")));
+				zapDn.addContent(new Element("END_RES").setText(pat.getString("END_RES")));
+				zap.addContent(zapDn);
+			}
+			XmlUtil.createXmlFile(dn,workDir+"/"+filename);
+			ret.put("status","ok").put("filename",filename);
+		} catch (JSONException e) {
+			ret.put("status","error").put("errorCode",e.toString());
+			LOG.error(e);
+		}
+		return ret.toString();
+	}
 	public void changeMedPolicyType (Long aPolicyId, Long aNewPolicyTypeId) {
 		theManager.createNativeQuery("update medpolicy set dtype=(select vmp.code from vocmedpolicy vmp" +
 				" where vmp.id="+aNewPolicyTypeId+") where id="+aPolicyId).executeUpdate();
@@ -104,7 +198,6 @@ public class PatientServiceBean implements IPatientService {
 							" and att.attachedtype_id=(select id from vocattachedtype where code='"+aAttachedType+"')" +
 							" and att.dateFrom=to_date('"+aAttachedDate+"','dd.MM.yyyy')and att.dateTo is null" +
 							" and (select max(sc.keyvalue) from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE')='"+aLpuAttached+"')) end";
-							//System.out.println("=========== aSQL = "+aSql);
 					Object a = theManager.createNativeQuery(aSql).getSingleResult();
 					if (a.toString().equals("0")) {isDifference = true;}
 					
@@ -123,18 +216,15 @@ public class PatientServiceBean implements IPatientService {
 				}
 				
 			/*} catch (Exception e) {
-				System.out.println("---------Ошибка - patId:attType:attDate:attLpu:polSer:polNum:polSK = "+aPatientId+" : "+aAttachedType+":"+aAttachedDate+":"+
-						aLpuAttached+":"+aPolicySeries+":"+aPolicyNumber+":"+aCompanyCode);
 				e.printStackTrace();
 			}*/
 			return isDifference;
 	}
 	
 	public boolean needChangeValue (Object aOldValue, Object aNewValue) {
-		if (toStr(aOldValue)==null&&toStr(aNewValue)!=null) {return true;} //Старое значение пустое, новое - нет, обновляем.
+		if (toStr(aOldValue)==null && toStr(aNewValue)!=null) {return true;} //Старое значение пустое, новое - нет, обновляем.
 		if (toStr(aNewValue)==null) {return false;} //На пустое значение не обновляем.
-		if (toStr(aOldValue).equals(toStr(aNewValue))) {return false;} //Если значения равны - не обновляем
-		return true;
+		return !toStr(aOldValue).equals(toStr(aNewValue));
 		
 	}
 	public void insertPatientNotFound(Long aPatientId, Long aCheckTimeId) throws ParseException {
@@ -169,8 +259,7 @@ public class PatientServiceBean implements IPatientService {
 	}
 	public String getImageDir() {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		String workDir =config.get("tomcat.image.dir", "/opt/tomcat/webapps/docmis/");
-		return workDir ;
+		return config.get("tomcat.image.dir", "/opt/tomcat/webapps/docmis/");
 		
 	}
 	public float getImageCompress() {
@@ -207,12 +296,10 @@ public class PatientServiceBean implements IPatientService {
 			doc.setType(type) ;
 		}
 		theManager.persist(doc) ;
-		//System.out.println("==== Загружаем пользовательский документ? тип = "+aObject);
 		if (aObject.equals("Template")) {
 			
 		//	 doc = (TemplateExternalDocument) doc;
 		//	 theManager.persist(doc) ;	 
-			//System.out.println("==== Загружаем пользовательский документ " + doc.getId());
 			//theManager.createNativeQuery("update document set dtype='TemplateExternalDocument' where id =:id").setParameter("id", doc.getId()).executeUpdate();
 		}
 		
@@ -232,7 +319,7 @@ public class PatientServiceBean implements IPatientService {
 		Object ret = theManager.createNativeQuery(sql.toString()).getSingleResult() ;
 		Long cnt = ConvertSql.parseLong(ret) ;
 		
-		return cnt>Long.valueOf(0)?true:false ; 
+		return cnt>0L;
 		
 		
 	}
@@ -254,7 +341,7 @@ public class PatientServiceBean implements IPatientService {
 				,{"М.ЛУКОНИНА ул","Михаила Луконина ул"}
 				};
 			for (int i=0;i<streetList.length;i++) {
-				if (streetList[i][0].toUpperCase().equals(aStreet)) {
+				if (streetList[i][0].equalsIgnoreCase(aStreet)) {
 					aStreet = streetList[i][1].toUpperCase();
 					break;
 				}
@@ -263,58 +350,44 @@ public class PatientServiceBean implements IPatientService {
 		return aStreet;
 	}
 	public String getAddressByOkato (String aOkato, String aStreet) {
-		if (aOkato==null||aOkato.equals("")) return null;
+		if (StringUtil.isNullOrEmpty(aOkato) || StringUtil.isNullOrEmpty(aStreet)) return null;
 		String streetType = "";
-		if (aStreet==null||aStreet.equals("")) return null;
 		if (aOkato.length()<11) {
 			aOkato +="0000000000";
 			aOkato = aOkato.substring(0,11);
 		}
 		aStreet = checkStreet(aStreet.trim());
-		if (aStreet.toUpperCase().endsWith(" УЛ")) {
+		if (aStreet.endsWith(" УЛ") || aStreet.endsWith(" ПЛ")) {
 			streetType = aStreet.substring(aStreet.length()-2);
 			aStreet = aStreet.substring(0,aStreet.length()-2);
-		}
-		else if (aStreet.toUpperCase().endsWith(" ПЛ")) {
-			streetType = aStreet.substring(aStreet.length()-2);
-			aStreet = aStreet.substring(0,aStreet.length()-2);
-		}
-		else if (aStreet.toUpperCase().endsWith(" ПЕР")) {
+		} else if (aStreet.endsWith(" ПЕР") || aStreet.endsWith(" НАБ")) {
 			streetType = aStreet.substring(aStreet.length()-3);
 			aStreet = aStreet.substring(0,aStreet.length()-3);
-		}
-		else if (aStreet.toUpperCase().endsWith(" ПРОЕЗД")) {
+		} else if (aStreet.endsWith(" ПРОЕЗД")) {
 			streetType = aStreet.substring(aStreet.length()-6);
 			aStreet = aStreet.substring(0,aStreet.length()-6);
-		}
-		else if (aStreet.toUpperCase().endsWith(" ПР")) {
+		} else if (aStreet.endsWith(" ПР")) {
 			streetType = "ПРОЕЗД";
 			aStreet = aStreet.substring(0,aStreet.length()-2);
-		}
-		else if (aStreet.toUpperCase().endsWith(" Ш")) {
+		} else if (aStreet.toUpperCase().endsWith(" Ш")) {
 			streetType = aStreet.substring(aStreet.length()-1);
 			aStreet = aStreet.substring(0,aStreet.length()-1);
 		}
-		else if (aStreet.toUpperCase().endsWith(" НАБ")) {
-			streetType = aStreet.substring(aStreet.length()-3);
-			aStreet = aStreet.substring(0,aStreet.length()-3);
-		}
-		aStreet=aStreet.toUpperCase().trim() ;
+		aStreet=aStreet.trim() ;
 		streetType = streetType.toUpperCase().trim();
 		StringBuilder sql = new StringBuilder();
-	//	System.out.println("=== 1 getAddressByOkato "+aOkato+" : "+aStreet);
 		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode" +
 				" left join addresstype atype on atype.id=a.type_id"+
 	" where k.okatd='"+aOkato+"' and upper(a.name) = upper('"+aStreet+"')");
-		if (!streetType.equals("")) {sql.append(" and upper(atype.shortname)=upper('"+streetType+"')");}
-	//	System.out.println("==== 2 finding by okato, sql = "+sql.toString());
+		if (!streetType.equals("")) {
+			sql.append(" and upper(atype.shortname)=upper('").append(streetType).append("')");
+		}
 		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(10).getResultList() ;
-		if (listO.size()>0) {
+		if (!listO.isEmpty()) {
 			if (listO.size()>1) {
-				log.warn("=== 2.5 Найдено несколько подходящих адресов, возвращаем null "+listO.size());
+				LOG.warn("=== 2.5 Найдено несколько подходящих адресов, возвращаем null "+listO.size());
 				return null;
 			}
-		//	System.out.println("==== 3 found by okato, res = "+listO.get(0));
 			return listO.get(0).toString();
 		}
 		return null;
@@ -345,9 +418,9 @@ public class PatientServiceBean implements IPatientService {
 		
 		aCity=aCity.trim().toUpperCase().replaceAll("-", "").replaceAll(" ", "").replaceAll("№", "N") ;
 	
-		if (aOkato!=null&&!aOkato.equals("")) {
+		if (!StringUtil.isNullOrEmpty(aOkato)) {
 			String s = getAddressByOkato(aOkato, aStreet);
-			if (s!=null&&!s.equals("")) { 
+			if (!StringUtil.isNullOrEmpty(s)) {
 				return s;
 			}	
 		}
@@ -355,37 +428,35 @@ public class PatientServiceBean implements IPatientService {
 		sql.append("select addressid,kladr from Address2 where kladr='").append(aKladr).append("'" ) ;
 		StringBuilder res = new StringBuilder() ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			res.append(list.get(0)[0]) ;
 		} else {
 			if (aStreet.startsWith("?")) return res.toString() ;
-			if (aKladr!=null && !aKladr.equals("")) {
-				String lastKl = aKladr.equals("")?aRegion:aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+			if (!StringUtil.isNullOrEmpty(aKladr)) {
+				String lastKl = aKladr.equals("") ? aRegion : aKladr.substring(aKladr.length()-1) ;
 				
 				while (lastKl!=null&&!lastKl.equals("")&&lastKl.equals("0")) {
 					aKladr = aKladr.substring(0,aKladr.length()-1) ;
-					lastKl = aKladr.length()>1?aKladr.substring(aKladr.length()-1, aKladr.length()):null ;
+					lastKl = aKladr.length()>1 ? aKladr.substring(aKladr.length()-1) : null ;
 				}
 				sql = new StringBuilder() ;
 				sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aCity).append("'" ) ;
 				list.clear() ;
 				list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					aKladr = ""+list.get(0)[1] ;
-					lastKl = aKladr.substring(aKladr.length()-1, aKladr.length()) ;
+					lastKl = aKladr.substring(aKladr.length()-1) ;
 					while (lastKl!=null&&lastKl.equals("0")) {
 						aKladr = aKladr.substring(0,aKladr.length()-1) ;
-						lastKl = aKladr.length()>1?aKladr.substring(aKladr.length()-1, aKladr.length()):null ;
+						lastKl = aKladr.length()>1?aKladr.substring(aKladr.length()-1):null ;
 					}
 					sql = new StringBuilder() ;
 					sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and replace(replace(replace(UPPER(name),'-',''),' ',''),'№','N')='").append(aStreet).append("'" ) ;
 					list.clear() ;
 					list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-					if (list.size()>0) {
-						//System.out.println("111") ;
+					if (!list.isEmpty()) {
 						res.append(list.get(0)[0]) ;
 					} else {
-						//System.out.println("222") ;
 						return getKladrByRayon(aRegion, aRayon, aCity, aStreet) ;
 					}
 				} else {
@@ -398,34 +469,34 @@ public class PatientServiceBean implements IPatientService {
 		return res.toString() ;
 	}
 	private String getKladrByRayon(String aRegion, String aRayon, String aCity, String aStreet) {
-		if (aRayon==null||aRayon.equals("")) {return null;}
+		if (StringUtil.isNullOrEmpty(aRayon)) {return null;}
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		sql.append("select id, kladr from VocRayon where code='").append(aRayon).append("'" ) ;
 		List<Object[]> list ;
 		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		String kladr=aRegion;
-		if (list.size()>0) {
-			kladr = ""+(list.get(0)[1]!=null?list.get(0)[1]:aRegion) ;
+		if (!list.isEmpty()) {
+			kladr = ""+(list.get(0)[1]!=null ? list.get(0)[1] : aRegion) ;
 		}
 		sql = new StringBuilder() ;
 		sql.append("select addressid,kladr from Address2 where kladr like '").append(kladr).append("%' and domen<6 and replace(replace(replace(UPPER(name),'-',''),' ',''),'№','N')='").append(aCity).append("'" ) ;
 		list.clear() ;
 		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		
-		if (list.size()>0) {
-			String kladrId=kladr = ""+list.get(0)[0] ; 
+		if (!list.isEmpty()) {
+			String kladrId=kladr = ""+list.get(0)[0] ;
 			kladr = ""+list.get(0)[1] ;
-			String lastKl = kladr.substring(kladr.length()-1, kladr.length()) ;
+			String lastKl = kladr.substring(kladr.length()-1) ;
 			while (lastKl!=null&&lastKl.equals("0")) {
 				kladr = kladr.substring(0,kladr.length()-1) ;
-				lastKl = kladr.length()>1?kladr.substring(kladr.length()-1, kladr.length()):null ;
+				lastKl = kladr.length()>1 ? kladr.substring(kladr.length()-1) : null ;
 			}
 			sql = new StringBuilder() ;
 			sql.append("select addressid,kladr from Address2 where kladr like '").append(kladr).append("%' and replace(replace(replace(UPPER(name),'-',''),' ',''),'№','N')='").append(aStreet).append("'" ) ;
 			list.clear() ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-			if (list.size()>0) {
+			if (!list.isEmpty()) {
 				res.append(list.get(0)[0]) ;
 			} else {
 				res.append(kladrId) ;
@@ -433,91 +504,67 @@ public class PatientServiceBean implements IPatientService {
 		}
 		return res.toString() ;
 	}
+
+	/*Возвращаем json, а не херню*/
 	public String getInfoVocForFond(String aPassportType,String aAddress, String aPolicy) {
 		StringBuilder sql = new StringBuilder() ;
-		StringBuilder res = new StringBuilder() ;
 		List<Object[]> list = null;
-		if (aPassportType!=null && !aPassportType.trim().equals("")) {
+		JSONObject ret = new JSONObject();
+		if (!StringUtil.isNullOrEmpty(aPassportType)) {
 			sql.append("select id,name from VocIdentityCard where omcCode='").append(aPassportType).append("'" ) ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		}
-		if (list!=null && list.size()>0) {
-			res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
-		} else {
-			res.append("##");
+		if (list!=null && !list.isEmpty()) {
+			ret.put("passportType",list.get(0)[0]);
+			ret.put("passportName",list.get(0)[1]);
 		}
-		sql = new StringBuilder() ;
-		if (aAddress!=null && !aAddress.trim().equals("")) {
-			//res = new StringBuilder() ;
+		if (!StringUtil.isNullOrEmpty(aAddress)) {
 			String[] adr = aAddress.split("#") ;
 			String kladr = adr[0] ;
 			String rayon = adr[1].toUpperCase() ;
 			String sity = adr[2].toUpperCase() ;
 			String street = adr[3].toUpperCase() ;
 			String region = adr[4].toUpperCase() ;
-			//System.out.println("000") ;
-			res.append(getAddressByKladr(kladr,region,rayon, sity, street)) ;
-			//System.out.println("333"+rayon) ;
-			res.append("#");
+			String okato = adr.length>5 ? adr[5] : "";
+			ret.put("address",getAddressByKladr(kladr,region,rayon, sity, street, okato));
 			sql = new StringBuilder() ;
-			//res = new StringBuilder() ;
-			
+
 			sql.append("select id,code||' '||name from VocRayon where code='").append(rayon).append("' or upper(name) like '%").append(rayon).append("%'" ) ;
-			//System.out.println(sql.toString()) ;
-			if (list!=null) list.clear() ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-			//System.out.println("444--") ;
-			if (list.size()>0) {
-				res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
-			} else {
-				res.append("##");
-			} 
-			
-		} else {
-			res.append("#") ;
-			res.append("##") ;
+			if (!list.isEmpty()) {
+				ret.put("rayonId",list.get(0)[0]);
+				ret.put("rayonName",list.get(0)[1]);
+			}
 		}
-		//System.out.println("444") ;
 		if (aPolicy!=null &&!aPolicy.equals("")) {
-			String pol[] = aPolicy.split("#") ;
+			String[] pol = aPolicy.split("#") ;
 			sql = new StringBuilder() ;
 			sql.append("select id,omcCode||' '||name from REG_IC where omcCode='").append(pol[0]).append("'" ) ;
-			if (list!=null) list.clear() ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-			if (list.size()>0) {
-				res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
-			} else {
-				res.append("##");
+			if (!list.isEmpty()) {
+				ret.put("companyId",list.get(0)[0]);
+				ret.put("companyName",list.get(0)[1]);
 			}
 			String type=getTypePolicy(pol[1]) ;
 			sql = new StringBuilder() ;
 			sql.append("select id,id||' '||name from VocMedPolicyOmc where code='").append(type).append("'" ) ;
-			if (list!=null) list.clear() ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-			if (list.size()>0) {
-				res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
-			} else {
-				res.append("##");
+			if (!list.isEmpty()) {
+				ret.put("policyId",list.get(0)[0]);
+				ret.put("policyName",list.get(0)[1]);
 			}
-		} else {
-			res.append("##");
-			res.append("##");
 		}
-		return res.toString() ;
+		return ret.toString() ;
 	}
-	public String toStr(Object o) {
-		if (o==null||o.toString().equals("")) {
-			return null;
-			} else {
-				return o.toString();
-			}
+	private String toStr(Object o) {
+		return o==null || o.toString().trim().equals("") ? null : o.toString();
 	}
 	public String prepSql(String aField, String aValue) {
 		return prepSql (aField, aValue,"","");
 	}
 	public String prepSql(String aField, String aValue, String aPrefix, String aPostfix) {
 		if (aValue==null) {aValue="";}
-			return new String(aField+"="+aPrefix+"'"+aValue+"'"+aPostfix);
+			return aField+"="+aPrefix+"'"+aValue+"'"+aPostfix;
 		
 	}
 	public boolean updateDataByFondAutomaticByFIO (String aLastName, String aFirstName, String aMiddleName, String aBirthday, Long aCheckTimeId,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment) {
@@ -564,7 +611,6 @@ public class PatientServiceBean implements IPatientService {
 			String address = getAddressByOkato(aOkato, aStreet);
 			
 			if (needUpdatePatient) {
-		//		System.out.println("++++ UPDATE PATIENT! = "+aLastname + " "+ aFirstname);
 				o=1;
 				if (aSnils!=null&&!aSnils.equals("")) {
 					str.append(prepSql("snils",aSnils));
@@ -575,7 +621,6 @@ public class PatientServiceBean implements IPatientService {
 			} else {patF.setIsPatientUpdate(false);}
 			
 			if (needUpdateDocuments) {
-		//		System.out.println("++++ UPDATE DOCUMENT! = "+aLastname + " "+ aFirstname);
 				if (aDocNumber!=null&&aDocSeries!=null&&aDocType!=null&&aDocDateIssued!=null) {
 					if (o==1) {
 						str.append(",");
@@ -592,17 +637,14 @@ public class PatientServiceBean implements IPatientService {
 			if (o==1) {
 				str.append(" where id=").append(aPatientId);
 								
-	//			System.out.println ("UpdatePatient = "+theManager.createNativeQuery(str.toString()).executeUpdate());
 			}
 			if (needUpdatePolicy) {
-				//System.out.println("++++ UPDATE POLICY! = "+aLastname + " "+ aFirstname);
 				patF.setIsPolicyUpdate(updateOrCreatePolicyByFond(aPatientId, aRz, aLastname, aFirstname, aMiddlename, aBirthday, aCompany
 						, aPolicySeries, aPolicyNumber, aPolicyDateFrom, aPolicyDateTo, aCheckDate));
 				
 				
 			} else {patF.setIsPolicyUpdate(false);}
 			if (needUpdateAttachment) {
-				//System.out.println("++++ UPDATE ATTACHMENT! = "+aLastname + " "+ aFirstname);
 				String s = updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate, doctorSnils,true, false);
 				patF.setIsAttachmentUpdate((s!=null&&s.length()>0)?true:false);
 				
@@ -636,7 +678,7 @@ public class PatientServiceBean implements IPatientService {
 	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate, String aDoctorSnils
 			, boolean ignoreType, boolean updateEditDate) {
 		if (aCompany==null || aCompany.equals("") || aLpu==null || aLpu.equals("")) {
-			log.warn("company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
+			LOG.warn("company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
 			return null;
 		}
 		String updateDate = " editdate=current_date, ";
@@ -644,33 +686,43 @@ public class PatientServiceBean implements IPatientService {
 		//String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
 		StringBuilder ret = new StringBuilder();
 		String lpu = aLpu, attachedType=aAttachedType, attachedDate = aAttachedDate;
-	//	System.out.println("=== === "+aPatientId+ ":"+aCompany+ ":"+aLpu+ ":"+aAttachedDate+ ":"+aAttachedType);
 		RegInsuranceCompany insCompany =null;
 		String sqlAdd = "smoCode"; //smoCode - федеральный 5 значный код
 		if (aCompany.length()<5) { //В некоторых случаях мы получаем местный код (7, 15) в этом случае, и искать мы будем по местному коду
 			sqlAdd="omcCode";
 		}
 		String sqll = "from RegInsuranceCompany where "+sqlAdd+" = :code and (deprecated is null or deprecated='0')";
-		//s("WHERE IS ERROR?? "+sqll);
 		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery(sqll)
 				.setParameter("code", aCompany).getResultList(); 
 		
 		if (!companies.isEmpty()) {
 			insCompany=companies.get(0);
 		} else {
-			log.error("Страх. компания не найдена");
+			LOG.error("Страх. компания не найдена");
 		}
 		
 	if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
 		//s(" ЛПУ наше, создаем прикрепления!!");
-		List<Object> obj =null;
+		List<Object> obj ;
 		Long areaId = null;
 		LpuArea la = null;
-		if (attachedType!=null&&attachedType.equals("1")){
-		//	s("Тип прикрепления - территориальный, ищем участок по адресу регистрации");
+		if (aDoctorSnils!=null && !aDoctorSnils.trim().equals("")){ // ищем участок по СНИЛС врача
+			obj = theManager.createNativeQuery("select la.id " +
+					" from lpuarea la" +
+					" left join workfunction wf on wf.id=la.workfunction_id" +
+					" left join worker w on w.id=wf.worker_id" +
+					" left join patient wpat on wpat.id=w.person_id" +
+					" where wpat.snils='"+aDoctorSnils.trim()+"'").getResultList();
+			if (obj!=null&&obj.size()==1) { //Не найшли участок или нашли больше 1 участка - не проставляем участок!
+				areaId=Long.parseLong(obj.get(0).toString());
+			} else {
+				LOG.error("НЕ Нашли участок по СНИЛС врача");
+			}
+		}
+		if ("1".equals(attachedType)){
+			obj=null;
 			try { 
 				obj = theManager.createNativeQuery("select la.id from patient p" +
-			
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
 					" left join lpuareaaddresstext laat on laat.id=laap.lpuareaaddresstext_id" +
 					" left join lpuarea la on la.id=laat.area_id" +
@@ -679,83 +731,55 @@ public class PatientServiceBean implements IPatientService {
 					" and (laap.housenumber is null or laap.housenumber='' or laap.housenumber=p.housenumber )" +
 					" and (((p.housebuilding is null or p.housebuilding='') and (laap.housebuilding is null or laap.housebuilding='')) or laap.housebuilding=p.housebuilding)" +
 					" and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) <18 then '2' else '1' end ").getResultList();
-				
-			//	System.out.println("==== ATT= laID = "+obj.toString());
 			} catch (NoResultException e) {
-				log.error("Участок по адресу не найден");
+				LOG.error("Участок по адресу не найден");
 			} catch (Exception e) {
 				e.printStackTrace();
-			}		
-			
-			if (obj!=null&&obj.size()>0) {
+			}
+			if (obj!=null&&obj.size()==1) {
 				areaId=Long.parseLong(obj.get(0).toString());
-			//	s("Участок нашли, ИД="+areaId);
-				la = theManager.find(LpuArea.class, areaId);
 			}
 		}
-		if (la==null && aDoctorSnils!=null && !aDoctorSnils.trim().equals("")){ //Если не нашли подходящий участок по адресу, ищем участок по СНИЛС врача
-		//	s("ищем участок по СНИЛС врача. snils = "+aDoctorSnils);
-			obj = theManager.createNativeQuery("select la.id " +
-					" from lpuarea la" +
-					" left join workfunction wf on wf.id=la.workfunction_id" +
-					" left join worker w on w.id=wf.worker_id" +
-					" left join patient wpat on wpat.id=w.person_id" +
-					" where wpat.snils='"+aDoctorSnils.trim()+"'").getResultList();
-			if (obj!=null&&obj.size()>0) {
-				areaId=Long.parseLong(obj.get(0).toString());
-			//	s("Нашли участок по СНИЛС врача. ИД ="+areaId);
-				la = theManager.find(LpuArea.class, areaId);
-				
-			} else {
-				log.error("НЕ Нашли участок по СНИЛС врача");
-			}
-			
-			
-		}
+		if (areaId!=null) {la = theManager.find(LpuArea.class,areaId);}
 		List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
 			.setParameter("pat", aPatientId).getResultList();
-			
-		VocAttachedType attType = (VocAttachedType) (!theManager.createQuery("from VocAttachedType where code=:code")
-			.setParameter("code", attachedType).getResultList().isEmpty()?theManager.createQuery("from VocAttachedType where code=:code")
-			.setParameter("code", attachedType).getResultList().get(0):null);
+			List<VocAttachedType> attachedTypeList = theManager.createQuery("from VocAttachedType where code=:code").setParameter("code", attachedType).getResultList();
 
-		if (attType==null) {
+
+		if (attachedTypeList.isEmpty()) {
 			return "Прикрепление не создано, не распознан тип прикрепления: "+attachedType;
 		}
+		VocAttachedType attType =  attachedTypeList.get(0);
 		if (attachments.isEmpty()) { // Создаем новое 
-			MisLpu lpuAtt = null;
+			MisLpu lpuAtt ;
 			
 			if (la!=null) {
 				lpuAtt = la.getLpu();
 			} else {
 				Long l = Long.valueOf(theManager.createNativeQuery("select keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU'").getResultList().get(0).toString());
-				lpuAtt = (MisLpu) theManager.find(MisLpu.class, l);
+				lpuAtt = theManager.find(MisLpu.class, l);
 			}
 			if (lpuAtt!=null) {
 				LpuAttachedByDepartment att = new LpuAttachedByDepartment();
 				att.setPatient(theManager.find(Patient.class, aPatientId));
 				att.setLpu(lpuAtt);
 				att.setAttachedType(attType);
+					att.setArea(la);
+
 				try {
 					att.setDateFrom(DateFormat.parseSqlDate(attachedDate));
 					att.setCompany(insCompany);
 					att.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
 					att.setCreateUsername("fond_check");
 					
-					if (la!=null) {
-						log.warn("=== участок найден! Patinet = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
-						att.setArea(la);
-					} else {
-						//Debug
-					//	System.out.println("=== Почему же не найден участок? PID = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
-					}
+
 					theManager.persist(att);
 				} catch (ParseException e) {
-					log.error("Дата не распознана "+attachedDate);
+					LOG.error("Дата не распознана "+attachedDate);
 					e.printStackTrace();
 				}
 				ret.append("Создано новое прикрепление. Тип="+att.getAttachedType().getCode() +
-						", дата: "+ DateFormat.formatToDate(att.getDateFrom())+". ");
+						", дата: "+ DateFormat.formatToDate(att.getDateFrom())+", участок =  "+(la!=null?la.getNumber():"Не определен"));
 			} else {
 				ret.append("0ЛПУ с кодом '"+lpu+"' не найдено, прикрепление не создано. ");
 			}
@@ -763,7 +787,10 @@ public class PatientServiceBean implements IPatientService {
 		} else  { // Обновляем существующее 
 			for (LpuAttachedByDepartment a: attachments) {
 				StringBuilder str = new StringBuilder();
-				String areaSql = areaId!=null?(", area_id="+areaId):"";
+				String areaSql =""; //= areaId!=null?(", area_id="+areaId):"";
+				if (la!=null) {
+					areaSql = ", area_id="+la.getId()+", lpu_id="+la.getLpu().getId();
+				}
 				ret.append("Обновлено прикрепление. Старый тип - " +
 					(a.getAttachedType()!=null?a.getAttachedType().getCode():"") +
 					", дата - "+ DateFormat.formatToDate(a.getDateFrom()) +
@@ -786,8 +813,7 @@ public class PatientServiceBean implements IPatientService {
 		
 		if (aFiodr!=null && !aFiodr.equals("")) {
 			fiodr = aFiodr.split("#") ;
-			if ( aIsPatient) {
-				if (aPatientId!=null &&aPatientId>Long.valueOf(0) &&(aIsPolicy||(fiodr.length>6 &&fiodr[6].length()==10))) {
+				if (aIsPatient && aPatientId!=null &&aPatientId>Long.valueOf(0) &&(aIsPolicy||(fiodr.length>6 &&fiodr[6].length()==10))) {
 					StringBuilder sql = new StringBuilder() ;
 					if (!fiodr[0].startsWith("?")) {
 						sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
@@ -819,13 +845,8 @@ public class PatientServiceBean implements IPatientService {
 						}
 						sql.append(" where id='").append(aPatientId).append("'") ;
 						theManager.createNativeQuery(sql.toString()).executeUpdate() ;
-						
 					}
 				}				
-				
-			}
-		
-			
 		}
 		if (aDocument!=null &&!aDocument.equals("") &&aIsDocument) {
 			String[] doc = aDocument.split("#") ;
@@ -866,7 +887,7 @@ public class PatientServiceBean implements IPatientService {
 			
 			sql = new StringBuilder() ;
 			sql.append("update Patient set ") ;
-			if (addressid!=null&&!addressid.equals("")) sql.append(" address_addressid='").append(addressid).append("' , ") ;
+			if (!StringUtil.isNullOrEmpty(addressid)) sql.append(" address_addressid='").append(addressid).append("' , ") ;
 			sql.append(" houseNumber='").append(adr[1]).append("'") ;
 			sql.append(", houseBuilding='").append(adr[2]).append("'") ;
 			sql.append(", flatNumber='").append(adr[3]).append("'") ;
@@ -903,9 +924,6 @@ public class PatientServiceBean implements IPatientService {
 			
 			for (String p:pols) {
 				String[] pol = p.split("#") ;
-			//	System.out.println(pol.length) ;
-			//	System.out.println(p) ;
-				
 				updateOrCreatePolicyByFond(aPatientId, pol[5], fiodr[0], fiodr[1], fiodr[2], fiodr[3], pol[0], pol[1], pol[2],pol[3],pol[4],curDate) ;
 			}
 		}
@@ -976,7 +994,7 @@ public class PatientServiceBean implements IPatientService {
 				sql = new StringBuilder() ;
 				sql = sql.append("select id,code from VocMedPolicyOmc where code='").append(type).append("' order by id desc") ;
 				List<Object[]> idT = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-				if (idS.size()>0 && idT.size()>0) {
+				if (!idS.isEmpty() && !idT.isEmpty()) {
 					sql = new StringBuilder() ;
 					sql.append("insert into MedPolicy (dtype,company_id,actualDateFrom,actualDateTo,commonNumber,patient_id,series,polNumber,type_id,lastname,firstname,middlename,birthday, confirmationDate) values ('MedPolicyOmc'") ;
 					sql.append(", '").append(idS.get(0)[0]).append("'") ;
@@ -1012,7 +1030,7 @@ public class PatientServiceBean implements IPatientService {
 					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOG.error(e);
 				}
 				}
 			} else {
@@ -1136,7 +1154,7 @@ public class PatientServiceBean implements IPatientService {
 			.append(" where p.id='").append(aId).append("' order by mp.actualDateFrom desc");
 		PatientForm frm = new PatientForm() ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			Object[] objs = list.get(0) ;
 			frm.setLastname((String)objs[0]) ;
 			frm.setFirstname((String)objs[1]) ;
@@ -1167,10 +1185,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 		return frm ;
 	}
-	private final static Logger LOG = Logger
-			.getLogger(PatientServiceBean.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	public String getOmcCodeByPassportType(Long aPassportType) {
 		VocIdentityCard vic = theManager.find(VocIdentityCard.class, aPassportType) ;
 		return vic!=null?vic.getOmcCode():"" ;
@@ -1252,9 +1267,8 @@ public class PatientServiceBean implements IPatientService {
 		builder.addLike("oldFondNumber", aOldNumber) ;
 		builder.addLike("fondNumber", aNewNumber) ;
 		builder.addLike("name", aName) ;
-		Query query = builder.build(theManager, "from VocOrg where",
-		" order by name,fondNumber,oldFondNumber");
-		List<VocOrgForm> ret = new LinkedList<VocOrgForm>();
+	//	Query query = builder.build(theManager, "from VocOrg where"," order by name,fondNumber,oldFondNumber");
+		List<VocOrgForm> ret = new LinkedList<>();
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("from VocOrg") ;
 		boolean where = false ;
@@ -1302,19 +1316,16 @@ public class PatientServiceBean implements IPatientService {
 		WebQueryResult wqr = new WebQueryResult() ;
 		String defaultLpu = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE", "-", theManager);
 		boolean isEnableLimitAreas = theSessionContext.isCallerInRole("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
-	//	System.out.print("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
-	//	System.out.print(isEnableLimitAreas) ;
-	//	System.out.print(theSessionContext.getCallerPrincipal().toString()) ;
 		String fiIdprev=null ;
 		if (aIdNext!=null) {
 			List<Object[]> infoNext = theManager.createNativeQuery("select lastname,firstname,middlename from patient where id="+aIdNext).getResultList() ;
-			if (infoNext.size()>0) {
+			if (!infoNext.isEmpty()) {
 				fiIdprev = ""+infoNext.get(0)[0]+"0"+infoNext.get(0)[1]+"0"+infoNext.get(0)[2]+"0"+aIdNext ;
 			}
 		}
-		List<PatientForm> ret1 = new LinkedList<PatientForm>() ;
-		List<PatientForm> ret2 = new LinkedList<PatientForm>() ;
-		List<PatientForm> ret3 = new LinkedList<PatientForm>() ;
+		List<PatientForm> ret1 = new LinkedList<>() ;
+		List<PatientForm> ret2 = new LinkedList<>() ;
+		List<PatientForm> ret3 = new LinkedList<>() ;
 		StringBuilder sqlFld = new StringBuilder() ;
 		sqlFld.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
 		sqlFld.append(" ,p.patientSync,case when p.colorType='1' then cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType ") ;
@@ -1410,7 +1421,7 @@ public class PatientServiceBean implements IPatientService {
 				.append(sql)
 				.append(" and ").append(p2).append(" and (jcp.lastname!=p.lastname or jcp.firstname!=p.firstname or jcp.middlename!=p.middlename)").toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by  p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
 				appendNativeToList(query1, ret1,"Изменены персональные данные",aNext);
-				if (ret1.size()==0 && aIdNext!=null && !aIdNext.equals("")) return findPatient( aLpuId, aLpuAreaId, aLastname, aYear, !aNext, null) ;
+				if (ret1.isEmpty() && aIdNext!=null && !aIdNext.equals("")) return findPatient( aLpuId, aLpuAreaId, aLastname, aYear, !aNext, null) ;
 			}
 		} else {
 			if (CAN_DEBUG) {
@@ -1487,7 +1498,7 @@ public class PatientServiceBean implements IPatientService {
 					.append(p1).toString(),
 					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by  p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
 			appendNativeToList(query, ret1,null,aNext);
-			if (ret1.size()==0 && aIdNext!=null && !aIdNext.equals("")) return findPatient( aLpuId, aLpuAreaId, aLastname, aYear, !aNext, null) ;
+			if (ret1.isEmpty() && aIdNext!=null && !aIdNext.equals("")) return findPatient( aLpuId, aLpuAreaId, aLastname, aYear, !aNext, null) ;
 			Query query1 = builder.buildNative(theManager, new StringBuilder().append(sqlFld1)
 					.append(" from JournalChangePatient jcp ")
 					.append(" left join patient p on jcp.patient_id=p.id ")
@@ -1626,11 +1637,9 @@ public class PatientServiceBean implements IPatientService {
 	@SuppressWarnings("unchecked")
 	private void appendNativeToList(Query aQuery, List<PatientForm> ret, String aAddInfo, boolean aNext) {
 		List<Object[]> list = aQuery.setMaxResults(50).getResultList();
-		System.out.println("next="+aNext) ;
 		for (int i=0; i<list.size(); i++) {
 			int ind=i ;
 			if (!aNext) ind=list.size()-i-1 ;
-			System.out.println("ind="+ind) ;
 			Object[] arr = list.get(ind) ;
 			PatientForm f = new PatientForm();
 			f.setId(((Number) arr[0]).longValue());
@@ -1711,7 +1720,7 @@ public class PatientServiceBean implements IPatientService {
 						.getLpuAreaAddressText().getArea().getId(),
 						new InterceptorContext(theManager, theSessionContext));
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error(e);
 				throw new IllegalStateException(e);
 			}
 			StringBuilder sb = new StringBuilder();
@@ -1737,7 +1746,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 		// ребенок, если < 18 и есть дата рождения
 		boolean isChild = aBirthday!=null
-		    ? theIsChildUtil.isChild(aBirthday, new java.util.Date())
+		    ? AgeUtil.calcAgeYear(aBirthday,new java.util.Date())<18
 		    : false	;
 		EntityManager manager = theManager; // theFactory.createEntityManager();
 		StringBuilder sb = new StringBuilder();
@@ -1816,33 +1825,28 @@ public class PatientServiceBean implements IPatientService {
 		pat.setSocialStatus(statusSocial) ;
 		pat.setSnils(aSnils) ;
 		theManager.persist(pat) ;
-		return new StringBuilder().append(pat.getId()).append("#").append(pat.getLastname())
-			.append(" ").append(pat.getFirstname()).append(" ").append(pat.getMiddlename())
-			.append(" ").append(date).toString() ;
+		return pat.getId()+"#"+pat.getLastname()+" "+pat.getFirstname()+" "+pat.getMiddlename()+" "+date ;
 		
 	}
 	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction) throws ParseException {
+			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction) {
 		return getDoubleByBaseData(aId, aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction, false) ;
 	}
 	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) throws ParseException {
+			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) {
 		StringBuilder sql = new StringBuilder() ;
 		aFirstname = aFirstname.toUpperCase().trim() ;
 		aMiddlename = aMiddlename.toUpperCase().trim() ;
 		aLastname = aLastname.toUpperCase().trim() ;
-		sql.append("")
-			.append(" from Patient p")
+		sql.append(" from Patient p")
 			.append(" where (")
 			.append(" (p.lastname =:lastname and p.firstname = :firstname and p.middlename=:middlename and ");
 		String birthyear ;
 		if (!aIsFullBirthdayCheck) {
 			birthyear= aBirthday.substring(6) ;
-			System.out.println("birthyear="+birthyear) ;
 			sql.append("to_char(p.birthday,'yyyy')=:birthyear)") ;
 		} else {
 			birthyear= aBirthday ;
-			System.out.println("birthyear="+birthyear) ;
 			sql.append("p.birthday=to_date(:birthyear,'dd.mm.yyyy'))") ;
 		}
 		if (aSnils!=null && !aSnils.equals("") && !aSnils.equals("999-999-999 99")) {
@@ -1869,7 +1873,7 @@ public class PatientServiceBean implements IPatientService {
 				.setMaxResults(20)
 				.getResultList() ;
 		
-		if (doubles.size()>0) {
+		if (!doubles.isEmpty()) {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;
 			Object cntdoubles = theManager.createNativeQuery(
@@ -1934,20 +1938,15 @@ public class PatientServiceBean implements IPatientService {
 	}
 
 	private @EJB ILocalEntityFormService theEntityFormService;
-
+private @EJB
+	IWebQueryService theWebQueryService;
 	private @PersistenceContext EntityManager theManager;
 
 	private final LpuAreaDynamicSecurity theLpuAreaDynamicSecurity = new LpuAreaDynamicSecurity();
 
 	private @Resource SessionContext theSessionContext;
-	private final IsChild theIsChildUtil = new IsChild() ;
 	public String getConfigValue(String aConfigName, String aDefaultValue) {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		String res =config.get(aConfigName, aDefaultValue);
-		return res ;
-		
+		return config.get(aConfigName, aDefaultValue);
 	}
-
- 
-
 }

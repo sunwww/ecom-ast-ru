@@ -1,21 +1,19 @@
 package ru.ecom.mis.ejb.service.lpu;
 
-import java.util.List;
-
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.util.QueryResultUtil;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcLpu;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  *
@@ -26,9 +24,8 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 public class LpuServiceBean implements ILpuService {
 
 	
-	private final static Logger LOG = Logger.getLogger(LpuServiceBean.class);
-//	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+	private static final Logger LOG = Logger.getLogger(LpuServiceBean.class);
+
     public boolean canShowAreas(long aLpuId) {
         MisLpu lpu = theManager.find(MisLpu.class, aLpuId) ;
         return lpu.getSubdivisions().isEmpty() ;
@@ -116,7 +113,6 @@ public class LpuServiceBean implements ILpuService {
 		SecPolicy policy = QueryResultUtil.getFirst(SecPolicy.class, theManager.createQuery("from SecPolicy where key=:key")
     			.setParameter("key", lpu.getId()+""));
     	if(role==null) {
-    		LOG.info("policy id = "+policy.getId()) ;
     		if(policy==null) {
     			throw new IllegalStateException("Нужно синхронихва") ;
     			//policy = QueryResultUtil.getFirst(SecPolicy.class, theManager.createQuery("from SecPolicy where key=:key")

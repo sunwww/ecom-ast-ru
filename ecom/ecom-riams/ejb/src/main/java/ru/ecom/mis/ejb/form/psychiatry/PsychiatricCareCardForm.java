@@ -1,20 +1,13 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.psychiatry.PsychiatricCareCard;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.form.psychiatry.interceptor.CareCardPreCreateInterceptor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;

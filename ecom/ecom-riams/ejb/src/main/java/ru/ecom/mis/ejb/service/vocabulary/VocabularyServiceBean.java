@@ -1,11 +1,18 @@
 package ru.ecom.mis.ejb.service.vocabulary;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.w3c.dom.Element;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.util.EntityHelper;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.jaas.ejb.domain.SystemVocabulary;
+import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlan;
+import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlanService;
+import ru.ecom.mis.ejb.domain.extdisp.voc.*;
+import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
+import ru.ecom.report.util.XmlDocument;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -16,32 +23,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
-import org.w3c.dom.Element;
-
-import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.ejb.services.util.EntityHelper;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.jaas.ejb.domain.SecPolicy;
-import ru.ecom.jaas.ejb.domain.SecRole;
-import ru.ecom.jaas.ejb.domain.SystemVocabulary;
-import ru.ecom.jaas.ejb.service.CreateReplaceMapHelper;
-import ru.ecom.jaas.ejb.service.SecUserServiceBean;
-import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlan;
-import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlanService;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDisp;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeGroup;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeReportGroup;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispHealthGroup;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispRisk;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispServiceFunction;
-import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
-import ru.ecom.report.util.XmlDocument;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 
 
@@ -50,7 +36,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 public class VocabularyServiceBean {
 	public Collection<VocEntityInfo> listVocEntities() {
 		Collection<Class> entities = theEntityHelper.listAllEntities() ;
-		ArrayList<VocEntityInfo> ret = new ArrayList<VocEntityInfo>(entities.size()) ; 
+		ArrayList<VocEntityInfo> ret = new ArrayList<>(entities.size()) ;
 		for(Class clazz : entities) {
 			if(theEntityHelper.isVocEntity(clazz) && !clazz.isAnnotationPresent(Deprecated.class)) {
 				//if (theContext.isCallerInRole("/Policy/Voc/"+clazz.getSimpleName())) {
@@ -70,8 +56,8 @@ public class VocabularyServiceBean {
 		Comment comment = (Comment) aVocEntityClass.getAnnotation(Comment.class) ;
 		String commentName = comment!=null?comment.value():aVocEntityClass.getSimpleName();
 		SystemVocabulary systemIs = (SystemVocabulary)aVocEntityClass.getAnnotation(SystemVocabulary.class) ;
-		
-		VocEntityInfo info = new VocEntityInfo(aVocEntityClass.getName(),theEntityHelper.getEntityName(aVocEntityClass), commentName, 0,systemIs!=null?true:false);
+
+		return new VocEntityInfo(aVocEntityClass.getName(),theEntityHelper.getEntityName(aVocEntityClass), commentName, 0,systemIs!=null);
 		/*for(Method m : aVocEntityClass.getMethods()) {
 			if(! m.getName().equals("getId")
 					&& m.getName().startsWith("get")
@@ -84,7 +70,7 @@ public class VocabularyServiceBean {
 				info.getProperties().add(propInfo);
 			}
 		}*/
-		return info ;
+
 	}
 	
 	private int getCount(Class clazz) {
@@ -100,22 +86,21 @@ public class VocabularyServiceBean {
     public void importVocExtDisp(long aMonitorId,boolean aClear, List<WebQueryResult> aService, List<WebQueryResult> aRisks, List<WebQueryResult> aExtDisps) {
     	IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
     	try {
-    		monitor = theMonitorService.startMonitor(aMonitorId, "Импорт типов диспансеризаций", aService.size()+aRisks.size()+aExtDisps.size()) ;
+    		monitor = theMonitorService.startMonitor(aMonitorId, "Импорт типов диспансеризаций", Double.valueOf(aService.size()+aRisks.size()+aExtDisps.size())) ;
     		for(WebQueryResult wqr : aService) {
     			if(monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
     			monitor.advice(1) ;
     			monitor.setText("Импортируется  услуга: "+wqr.get1());
     			String code = wqr.get1()!=null?""+wqr.get1():"" ;
     			List<VocExtDispService> list = theManager.createQuery("from VocExtDispService where code='"+code+"'").getResultList() ;
-    			if (list.size()>0) {
+    			if (!list.isEmpty()) {
     				VocExtDispService service = list.get(0);
     				
     				if (wqr.get1()!=null) service.setCode(""+wqr.get1()) ;
     				if (wqr.get2()!=null) service.setName(""+wqr.get2()) ;
-    				service.setIsVisit(wqr.get3()!=null&&(""+wqr.get3()).equals("1")?true:false) ;
+    				service.setIsVisit(wqr.get3()!=null && (""+wqr.get3()).equals("1") ) ;
     				service.setWorkFunctionCode(""+wqr.get4());
-    				String wfCode = wqr.get4()!=null?""+wqr.get4():null ;
-    				wfCode=wfCode.trim() ;
+    				String wfCode = wqr.get4()!=null?(""+wqr.get4()).trim():null ;
     				if (wfCode!=null &&wfCode.equals("")) wfCode=null ;
     				if (wfCode==null) {
     					theManager.createNativeQuery("delete from VocExtDispServiceFunction where name='"+code.trim()+"'").executeUpdate() ;
@@ -141,7 +126,7 @@ public class VocabularyServiceBean {
     				VocExtDispService service = new VocExtDispService() ;
     				service.setCode(""+wqr.get1()) ;
     				service.setName(""+wqr.get2()) ;
-    				service.setIsVisit(wqr.get3()!=null&&(""+wqr.get3()).equals("1")?true:false) ;
+    				service.setIsVisit(wqr.get3()!=null && (""+wqr.get3()).equals("1")) ;
     				service.setWorkFunctionCode(""+wqr.get4());
     				service.setOrphCode(""+wqr.get5());
     				theManager.persist(service) ;
@@ -153,8 +138,7 @@ public class VocabularyServiceBean {
     			monitor.advice(1) ;
     			monitor.setText("Импортируется  риск: "+wqr.get1());
     			List<VocExtDispService> list = theManager.createQuery("from VocExtDispRisk where code='"+wqr.get1()+"'").getResultList() ;
-    			if (list.size()>0) {
-    			} else {
+    			if (list.isEmpty()) {
     				VocExtDispRisk service = new VocExtDispRisk() ;
     				service.setCode(""+wqr.get1()) ;
     				service.setName(""+wqr.get2()) ;
@@ -166,12 +150,12 @@ public class VocabularyServiceBean {
         		monitor.advice(1) ;
         		monitor.setText("Импортируется  диспансеризация: "+wqr.get1());
         		List<VocExtDisp> list = theManager.createQuery("from VocExtDisp where code='"+wqr.get1()+"'").getResultList() ;
-        		VocExtDisp dispType = null;
+        		VocExtDisp dispType ;
         		ExtDispPlan plan = null;
-        		if (list.size()>0) {
+        		if (!list.isEmpty()) {
         			dispType=list.get(0) ;
         			List<ExtDispPlan> listPlan = theManager.createQuery("from ExtDispPlan where dispType_id='"+dispType.getId()+"'").getResultList() ;
-        			if (listPlan.size()>0) {
+        			if (!listPlan.isEmpty()) {
         				plan = listPlan.get(0) ;
         				if (aClear) {
                 		theManager.createNativeQuery("delete from ExtDispPlanService where plan_id='"+plan.getId()+"'").executeUpdate();	
@@ -193,7 +177,7 @@ public class VocabularyServiceBean {
         		for (WebQueryResult wqrHG:listHealthGroup) {
         			String code =  ""+wqrHG.get1() ;
         			List<VocExtDispHealthGroup> listPlan = theManager.createQuery("from VocExtDispHealthGroup where dispType_id='"+dispType.getId()+"' and code='"+code+"'").getResultList() ;
-        			if (listPlan.size()==0) {
+        			if (listPlan.isEmpty()) {
         				VocExtDispHealthGroup hg = new VocExtDispHealthGroup() ;
         				hg.setDispType(dispType) ;
         				hg.setCode(code) ;
@@ -202,12 +186,12 @@ public class VocabularyServiceBean {
         			}
         		}
         		List<WebQueryResult> listAgeGroupReport = (List<WebQueryResult>)wqr.get4() ;
-        		HashMap<String, VocExtDispAgeReportGroup> hashAgeRepGroup = new HashMap<String, VocExtDispAgeReportGroup>();
-        		HashMap<String, VocExtDispAgeGroup> hashAgeGroup = new HashMap<String, VocExtDispAgeGroup>();
+        		HashMap<String, VocExtDispAgeReportGroup> hashAgeRepGroup = new HashMap<>();
+        		HashMap<String, VocExtDispAgeGroup> hashAgeGroup = new HashMap<>();
         		for (WebQueryResult wqrHG:listAgeGroupReport) {
         			String code = ""+wqrHG.get1() ;
         			List<VocExtDispAgeReportGroup> listPlan = theManager.createQuery("from VocExtDispAgeReportGroup where dispType_id='"+dispType.getId()+"' and code='"+code+"'").getResultList() ;
-        			if (listPlan.size()==0) {
+        			if (listPlan.isEmpty()) {
         				VocExtDispAgeReportGroup hg = new VocExtDispAgeReportGroup() ;
         				hg.setDispType(dispType) ;
         				hg.setCode(code) ;
@@ -229,7 +213,7 @@ public class VocabularyServiceBean {
         		for (WebQueryResult wqrHG:listAgeGroup) {
         			String code=""+wqrHG.get1() ;
         			List<VocExtDispAgeGroup> listPlan = theManager.createQuery("from VocExtDispAgeGroup where dispType_id='"+dispType.getId()+"' and code='"+code+"'").getResultList() ;
-        			if (listPlan.size()==0) {
+        			if (listPlan.isEmpty()) {
         				VocExtDispAgeGroup hg = new VocExtDispAgeGroup() ;
         				hg.setDispType(dispType) ;
         				hg.setCode(code) ;
@@ -262,7 +246,7 @@ public class VocabularyServiceBean {
         							.append(codeSex).append("')").toString())
         					.getResultList() ;
         			
-        			if (listPlan.size()==0) {
+        			if (listPlan.isEmpty()) {
         				VocSex vs = findSex(codeSex) ;
         				ExtDispPlanService edps = new ExtDispPlanService() ;
         				edps.setPlan(plan) ;
@@ -280,10 +264,6 @@ public class VocabularyServiceBean {
     	
     }
 	
-    public String exportProtocolTemplates(long aTemplatesId) {
-    	return "" ;
-    }
-    
 	public String exportVocExtDisp(long[] aVocExpDisps) throws TransformerException, ParserConfigurationException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
@@ -377,7 +357,7 @@ public class VocabularyServiceBean {
 		VocSex vs = theHashSex.get(aCode) ;
 		if (vs==null) {
 			List<VocSex> list = theManager.createQuery("from VocSex where omcCode='"+aCode+"'").getResultList() ;
-			if (list.size()>0) {
+			if (!list.isEmpty()) {
 				vs = list.get(0) ;
 				theHashSex.put(aCode,vs) ; 
 			}
@@ -388,6 +368,6 @@ public class VocabularyServiceBean {
 	private final EntityHelper theEntityHelper = EntityHelper.getInstance();
 	@Resource SessionContext theContext ;
     private @EJB ILocalMonitorService theMonitorService ;
-    private HashMap<String, VocExtDispService> theHashService = new HashMap<String, VocExtDispService>();
-    private HashMap<String, VocSex> theHashSex = new HashMap<String, VocSex>();
+    private HashMap<String, VocExtDispService> theHashService = new HashMap<>();
+    private HashMap<String, VocSex> theHashSex = new HashMap<>();
 }

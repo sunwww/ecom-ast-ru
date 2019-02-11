@@ -1,20 +1,19 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.birth.voc.VocChildBirth;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocFormHelp;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocReasonDischarge;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocResultDischarge;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @AIndexes({

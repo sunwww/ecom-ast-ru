@@ -1,20 +1,6 @@
 package ru.ecom.expomc.ejb.services.check.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
@@ -24,14 +10,20 @@ import ru.ecom.expomc.ejb.services.check.ICheckContext;
 import ru.ecom.expomc.ejb.services.check.ICheckLog;
 import ru.nuzmsh.util.PropertyUtil;
 
+import javax.persistence.EntityManager;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.*;
+
 /**
  * @author esinev Date: 23.08.2006 Time: 9:40:26
  */
 public class CheckContext implements ICheckContext, ICheckLog {
 
-	private final static Logger LOG = Logger.getLogger(CheckContext.class);
-
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(CheckContext.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	public CheckContext(Format aFormat, Map<String, Object> aValues,
 			Set<String> aAllowedFields, Date aActualDate,
@@ -97,11 +89,11 @@ public class CheckContext implements ICheckContext, ICheckLog {
 	}
 
 	public void error(Object... aArgs) {
-		error(aArgs.toString());
+		error(Arrays.toString(aArgs)) ; //.toString());
 	}
 
 	public void info(Object... aArgs) {
-		info(aArgs.toString());
+		info(Arrays.toString(aArgs)) ; //(aArgs.toString());
 	}
 
 	private static Object convertToPropertyObject(Class aClass,
@@ -121,7 +113,7 @@ public class CheckContext implements ICheckContext, ICheckLog {
 	}
 
 	public Object findDomain(long aDocument, String aDocumentCodeProperty,
-			Object aValue) throws CheckException, NoResultException {
+			Object aValue) throws CheckException {
 		if (aValue == null)
 			return null;
 		try {
@@ -150,21 +142,14 @@ public class CheckContext implements ICheckContext, ICheckLog {
 						aDocumentCodeProperty);
 			}
 			return ret;
-		} catch (IllegalAccessException e) {
-			throw new CheckException("Ошибка: " + e, e);
-		} catch (NoSuchMethodException e) {
-			throw new CheckException("Ошибка: " + e, e);
-		} catch (InvocationTargetException e) {
-			throw new CheckException("Ошибка: " + e, e);
-		} catch (ClassNotFoundException e) {
+		} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | ClassNotFoundException e) {
 			throw new CheckException("Ошибка: " + e, e);
 		}
 	}
 
 	private ImportTime findActualTime(ImportDocument aDocument) {
 		Collection<ImportTime> times = aDocument.getTimes();
-		ImportTime time = times.iterator().next();
-		return time;
+		return times.iterator().next();
 	}
 
 	public Object findActual(Class aClass, String aProperty, Object aValue) {
@@ -207,7 +192,7 @@ public class CheckContext implements ICheckContext, ICheckLog {
 
 	private final Format theFormat;
 
-	private final TreeMap<String, Object> theChangedValues = new TreeMap<String, Object>();
+	private final TreeMap<String, Object> theChangedValues = new TreeMap<>();
 
 	private final EntityManager theManager;
 

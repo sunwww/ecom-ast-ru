@@ -1,16 +1,14 @@
 package test.jaas;
 
+import ru.nuzmsh.util.format.DateFormat;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
 //import java.util.Calendar;
-
-import org.apache.tools.ant.taskdefs.Length;
-
-import ru.nuzmsh.util.format.DateFormat;
 
 public class TestSubString {
 	public static void main(String[] args) throws ParseException {
@@ -53,9 +51,9 @@ public class TestSubString {
 		}
 		return isRepBase ;
 	}
-	public final static int DG_POWER=10;
+	public static final int DG_POWER=10;
 	  
-	  private final static String[][] a_power = new String[][]{
+	  private static final String[][] a_power = new String[][]{
 	   {"0", ""            , ""             ,""              },  // 1
 	   {"1", "тысяча "     , "тысячи "      ,"тысяч "        },  // 2
 	   {"0", "миллион "    , "миллиона "    ,"миллионов "    },  // 3
@@ -65,7 +63,7 @@ public class TestSubString {
 	   {"0", "квинтиллион ", "квинтиллиона ","квинтиллионов "},   // 7
 	  };
 
-	  private final static String[][] digit = new String[][] {
+	  private static final String[][] digit = new String[][] {
 	   {""       ,""       , "десять "      , ""            ,""          },
 	   {"один "  ,"одна "  , "одиннадцать " , "десять "     ,"сто "      },
 	   {"два "   ,"две "   , "двенадцать "  , "двадцать "   ,"двести "   },

@@ -1,3 +1,23 @@
+/**Печать произвольных реквизитов для ЛПУ по умолчанию*/
+function printDefaultLpuRequisites(aCtx, aFldName) {
+    var lpu =aCtx.manager.createNativeQuery( "select keyvalue from softconfig  where key = 'DEFAULT_LPU' ").getResultList();
+    if (lpu.size()>0) {
+        printLpuRequisites(aCtx,+lpu.get(0),aFldName);
+    }
+}
+/** Печать произвольных реквизитов по ЛПУ*/
+function printLpuRequisites(aCtx, aLpuId, aFldName) {
+    var sql = "select code, value, name from MisLpuRequisite where lpu_id="+aLpuId;
+    var list = aCtx.manager.createNativeQuery(sql).getResultList();
+    for (var i=0;i<list.size();i++) {
+        var obj = list.get(i);
+        map.put(aFldName+"_"+obj[0],""+obj[1]);
+        //throw ""+aFldName+"_"+obj[0]+"<>"+map.get(aFldName+"_"+obj[0]);
+        map.put(aFldName+"_"+obj[0]+"Name",""+obj[2]);
+    }
+}
+
+
 var map = new java.util.HashMap() ;
 /* Печать протокола КИЛИ */
 function printKiliProtocol (aCtx, aParams) {
@@ -24,6 +44,9 @@ function printKiliProtocol (aCtx, aParams) {
 	",dth.reasoncomplicationtext as f15_, dth.reasonconcomitanttext as f16_, case when dth.commentcategory is null or dth.commentcategory ='' then 'Имеется совпадение диагнозов' else dth.commentcategory end as f17_com" +
 	", pk.protocolNumber as f18_pkNumber, pk.protocolDate as f19_pkDate, case when mlp.isnoomc='1' then depPrev.kiliprofile_id else mlp.kiliprofile_id end as f20_profileId  "+
 	", case when mlp.isnoomc='1' then vkp.name else vkp2.name end as f21_profileName, vkc.name as f22_kiliConclusion "+
+	",case when dth.isneonatologic=true then pk.protocolComment else '' end as protCom23 " +
+	", case when dth.isneonatologic=true then dth.commentreason else '' end as dReas24 " +
+	", case when dth.isneonatologic=true then dth.newbornhistory else '' end as nBHist25 " +
 	" from protocolKili pk "+
 	" left join deathcase dth on dth.id = pk.deathcase_id "+
 	" left join patient pat on pat.id = dth.patient_id "+
@@ -50,7 +73,7 @@ function printKiliProtocol (aCtx, aParams) {
 	" left join vockiliconclusion vkc on vkc.id = pk.conclusion_id "+
 	" where pk.protocolnumber = '"+protocolNumber+"' and pk.protocolDate = to_date('"+protocolDate+"','dd.MM.yyyy') " +
 	" group by pat.lastname||' '||pat.firstname||' '||pat.middlename, pat.birthday, mlp.name, sls.datestart,"+
-	" sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename, dth.commentcategory, mlp.isnoomc,depPrev.name,f9_docFio, depPrev.kiliprofile_id, mlp.kiliprofile_id, vkp.name, vkp2.name, vkc.name" +
+	" sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename, dth.commentcategory, mlp.isnoomc,depPrev.name,f9_docFio, depPrev.kiliprofile_id, mlp.kiliprofile_id, vkp.name, vkp2.name, vkc.name,dth.isneonatologic,dth.commentreason,dth.newbornhistory" +
 	" order by f9_docFio";
 	//throw ""+patList;
 	var resultPatList = aCtx.manager.createNativeQuery(patList).getResultList();
@@ -79,7 +102,11 @@ function printKiliProtocol (aCtx, aParams) {
 			var profileName = p[20];
 			var conclusion = p[21];
 			var rashojdenie = p[16];
-			
+
+            var protCom = (p[22]=="")? '':'Примечание: '+p[22];
+            var dReas = (p[23]=='')? '':'Причина смерти: '+p[23];
+            var nBHist = (p[24]==null || p[24]=='' || p[24]=='undefined')? '': p[24];
+
 			pp.add(fio);//0
 			pp.add(bth);//1
 			pp.add(stat);//2
@@ -93,8 +120,7 @@ function printKiliProtocol (aCtx, aParams) {
 			pp.add(OSLPat);//10
 			pp.add(SOPPat);//11
 			pp.add(docTitul);//12
-			pp.add(docFio);//13			
-			
+			pp.add(docFio);//13
 	//		var conclusionQ = "select vkc.name from protocolkili pk left join vocKiliConclusion vkc on vkc.id = pk.conclusion_id where pk.id =" +pkId;
 	//		var concResult = aCtx.manager.createNativeQuery(conclusionQ).getSingleResult();
 			
@@ -132,6 +158,11 @@ function printKiliProtocol (aCtx, aParams) {
 			pp.add(conclusion); //16
 			pp.add(rashojdenie); //17
 			//pp.add(showDefects);//6
+
+            pp.add(protCom); //18
+            pp.add(dReas); //19
+            pp.add(nBHist); //20
+
 			showPat.add(pp);
 		//	throw ""+pp.get(16);
 			}
@@ -206,7 +237,7 @@ function printCheckList (aCtx, aParams) {
 			
 }
 function unNull (aStr) {
-	return aStr!=null?""+aStr:"";
+	return aStr!=null ? ""+aStr : "";
 }
 function printPrescriptList(aCtx, aParams) {
 	var id = new java.lang.Long(aParams.get("id"));
@@ -214,7 +245,7 @@ function printPrescriptList(aCtx, aParams) {
 	var lastname="";
 	var firstname="";
 	var middlename="";
-	var birthday="";
+//	var birthday="";
 	var doctor="";
 	var date = "";
 	var prescriptions = new java.util.ArrayList();
@@ -224,9 +255,10 @@ function printPrescriptList(aCtx, aParams) {
 				" ,to_char(p.planstarttime,'HH24:MI') as timestart" +
 				" ,to_char(p.canceldate,'dd.MM.yyyy') as canceldate" +
 				" ,case when p.dtype='ServicePrescription' then ms.name" +
-					"  when p.dtype='DietPrescription' then diet.name" +
-					"  when p.dtype='DrugPrescription' then dr.name " +
-					"  when p.dtype='ModePrescription' then vmp.name else '' end as f5_presName" +
+					" when p.dtype='DietPrescription' then 'Диета: '|| diet.name" +
+					" when p.dtype='DrugPrescription' then dr.name " +
+					" when p.dtype='ModePrescription' then 'Режим: '|| vmp.name " +
+					" else '' end as f5_presName" +
 				" ,'Частота: '||p.frequency ||' '||coalesce(vfu.name,'') as f6_vfuname" +
 				" ,p.orderTime ||' '||coalesce(vpot.name,'') as f7_vpotname" +
 				" ,'Дозировка: '||p.amount ||' '||coalesce(vdau.name,'') as f8_vdauname" +
@@ -259,19 +291,20 @@ function printPrescriptList(aCtx, aParams) {
 				if (p[10]!=null) {
 					comments.add(unNull(p[10]));
 				}
-				if (p[1].equals("ServicePrescription")) {
+			/*	if (dtype.equals("ServicePrescription")) {
 					
-				} else if (p[1].equals("DietPrescription")) {
+				} else if (dtype.equals("DietPrescription")) {
 					
-				} else if (p[1].equals("DrugPrescription")) {
+				} else */
+					if (dtype.equals("DrugPrescription")) {
 					for (var j=6;j<10;j++) {
 						if (p[j]!=null) {
 							comments.add(unNull(p[j]));
 						}
 					}
-				} else if (p[1].equals("ModePrescription")) {
+				}/* else if (dtype.equals("ModePrescription")) {
 					
-				}
+				}*/
 				
 				pp.add(name);
 				pp.add(startDate);
@@ -297,13 +330,13 @@ function printPrescriptList(aCtx, aParams) {
 			" left join patient wp on wp.id=w.person_id" +
 			" where pl.id="+id;
 			var arr  = aCtx.manager.createNativeQuery(sql).getResultList();
-	if (arr.size()>0) {
+	if (!arr.isEmpty()) {
 		var data = arr.get(0);
 		sscode = ""+data[0];
 		lastname = ""+data[1];
 		firstname = ""+data[2];
 		middlename = ""+data[3];
-		birthday = ""+data[4];
+	//	birthday = ""+data[4];
 		doctor = ""+data[5];
 		date =""+data[6];
 		
@@ -316,9 +349,7 @@ function printPrescriptList(aCtx, aParams) {
 	map.put("pat.middlename", middlename);
 	map.put("doctorInfo", doctor);
 	map.put("currentDate", date);
-	
 	map.put ("listNumber", id);
-	map.put
 	map.put("prescriptions",prescriptions);
 	return map;
 }
@@ -332,21 +363,24 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 	map.put("pat",patient) ;
 	map.put("statCard",medCase.parent.statisticStub.code) ;
 	//Биологический тест
+	//lastrelease milamesher 02.04.2018 #95
 	var biolTest = new java.lang.StringBuilder() ;
+    var bioprobe = aCtx.manager.createNativeQuery(new java.lang.StringBuilder().append(" select name from vocbloodbioprobprocedure vbp left join transfusion t on t.bloodbioprobprocedure_id=vbp.id where t.id=").append(id)).getResultList().get(0);
+    biolTest.append(bioprobe);
 	if (trans.getIsIllPatientsBT()!=null&&trans.getIsIllPatientsBT().booleanValue()==true) {
-		biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
+		//biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
 		biolTest.append(trans.getSerumColorBT()!=null?trans.getSerumColorBT().getName():"_________") ;
 	} else {
-		biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
+		//biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
 		biolTest.append(" PS: ").append(trans.getPulseRateBT()) ;
 		biolTest.append(", AD: ").append(trans.getBloodPressureTopBT()).append("/").append(trans.getBloodPressureLowerBT()) ;
 		biolTest.append(", PS: ").append(trans.getRespiratoryRateBT()!=null?trans.getRespiratoryRateBT():"____") ;
 		biolTest.append(", t: ").append(trans.getTemperatureBT()!=null?trans.getTemperatureBT():"_______") ;
 		if (trans.getStateBT()!=null) {
-			if (trans.getStateBT().getCode()!=null&&trans.getStateBT().getCode().equals("1")) {
-				biolTest.append(". Состояние удовлетворительное.") ;
+			if (trans.getStateBT().getCode()!=null&&trans.getStateBT().getCode().equals("2")) {
+				biolTest.append(". Состояние не изменилось.") ;
 			} else {
-				biolTest.append(". Состояние неудовлетворительное. Жалобы:").append(trans.getLamentBT()).append(".") ;
+				biolTest.append(". Состояние изменилось. Жалобы:").append(trans.getLamentBT()).append(".") ;
 			}
 		} else {
 			biolTest.append(". Состояние: ____________________________. Жалобы _____________________________") ;
@@ -1571,7 +1605,10 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 			recordDiagnosis(aCtx,slsId,"3","4","diagnosis.clinic.complication") ;
 			map.put("ambtype","СТАЦИОНАРНОГО") ;
 		} else {
-			recordDiagnosis(aCtx,slsId,"1","1","diagnosis.clinic.main") ;
+            //milamesher 1105 если есть клинический, беру его, нет - беру направительный
+			recordDiagnosis(aCtx,slsId,"4","1","diagnosis.clinic.main") ;
+			if (map.get("diagnosis.clinic.main.mkb")==null || map.get("diagnosis.clinic.main.mkb").equals(""))
+                recordDiagnosis(aCtx, slsId, "1", "1", "diagnosis.clinic.main");
 			recordDiagnosis(aCtx,slsId,"1","3","diagnosis.clinic.related") ;
 			recordDiagnosis(aCtx,slsId,"1","4","diagnosis.clinic.complication") ;
 			map.put("ambtype","АМБУЛАТОРНОГО") ;
@@ -1723,7 +1760,10 @@ function printStatCardInfo(aCtx, aParams) {
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 		, new java.lang.Long(slsId)) ;
 	if (+check>0) checkAllDiagnosis (aCtx, slsId) ;
-	
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Discharge/NoPrintDischargeWithoutDischargeTime")
+	 	&& null==medCase.dischargeTime) {
+		throw ("Необходимо заполнить время выписки");
+	}
 	recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase).getResultList()) ;
 	recordPatient(medCase,aCtx) ;
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
@@ -1760,8 +1800,9 @@ function printStatCardInfo(aCtx, aParams) {
 	getDiagnos("sls.diagnosisClinical",medCase.diagnosClinical) ;
 	recordSloBySls(aCtx,slsId,"listSlo") ;
 	recordSurgicalOperationBySls(aCtx,slsId,"listOper") ;
-	
-	return map ;
+    printDefaultLpuRequisites(aCtx,"DefaultLpu");
+
+    return map ;
 }
 function recordDisability(aContext,aSlsId,aField) {
 	var sql="select dc.id,dd.id,dd.number,to_char(min(dr.dateFrom),'dd.mm.yyyy') as dateFrom,to_char(max(dr.dateTo),'dd.mm.yyyy') as dateTo,vddcr.name as vddcrname"
@@ -1978,6 +2019,28 @@ function printBilling(aCtx, aParams)
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
+	//Milamesher #137 вывод кардиоскринингов
+	var listDatesScreening=aCtx.manager.createNativeQuery("select \n" +
+        "case when (scrI.createdate is not null and scrII.createdate is not null) then\n" +
+        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrI.createdate,'dd.mm.yyyy')||' (I этап) и '||to_char(scrII.createdate,'dd.mm.yyyy')||' (II этап). '||coalesce(scrII.conclusion,'')\n" +
+        "else case when scrI.createdate is not null then\n" +
+        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrI.createdate,'dd.mm.yyyy')||' (I этап)'\n" +
+        "else case when scrII.createdate is not null then\n" +
+        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrII.createdate,'dd.mm.yyyy')||' (II этап). '||coalesce(scrII.conclusion,'')\n" +
+        "end end end as s\n" +
+        "from medcase sls\n" +
+        "left join mislpu lpu on lpu.id=sls.department_id\n" +
+        "left join medcase slo on slo.parent_id=sls.id\n" +
+        "left join medcase allslo on allslo.parent_id=sls.id\n" +
+        "left join mislpu lpuslo on lpuslo.id=slo.department_id\n" +
+        "left join screeningcardiac scrI on scrI.medcase_id=slo.id and scrI.dtype='ScreeningCardiacFirst'\n" +
+        "left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
+        "where lpu.IsCreateCardiacScreening=true and lpuslo.IsCreateCardiacScreening=true\n" +
+        "and sls.dtype='HospitalMedCase' and slo.dtype='DepartmentMedCase' and allslo.dtype='DepartmentMedCase'\n" +
+        "group by sls.id,scrI.createdate,scrII.createdate,scrii.conclusion\n" +
+        "having count(distinct allslo.id)=1 and sls.id="+id).getResultList();
+    if (listDatesScreening.size()>0) map.put("cardiascreen",(listDatesScreening.get(0)!=null)? "\n"+listDatesScreening.get(0):"") ;
+    else  map.put("cardiascreen","") ;
 	return map ;
 }
 

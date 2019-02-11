@@ -1,9 +1,4 @@
-<%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.Calendar"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="java.util.Date"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -139,7 +134,7 @@
     <%
     }
     String date = request.getParameter("dateBeginYear") ;
-    
+
     if (date!=null && !date.equals(""))  {
     	String view = (String)request.getAttribute("typeView") ;
     	
@@ -182,13 +177,7 @@
    			}
    			sbDisp.append(" and (lad.id is not null and lad.dateto is null) ");
     	}
-    	if (typeGroup!=null&&typeGroup.equals("1")) {
-    		request.setAttribute("groupBySql", "group by to_char(pat.birthday,'yyyy') order by to_char(pat.birthday,'yyyy') desc ");
-    		request.setAttribute("selectSql", "'&dateBeginYear="+date+"&year='||to_char(pat.birthday,'yyyy') as id,"+date+"-cast(to_char(pat.birthday,'yyyy') as int) as year");
-    	} else {
-    		request.setAttribute("groupBySql", "");
-    		request.setAttribute("selectSql", "cast('&dateBeginYear="+date+"' as varchar) as id,cast('Все возраста' as varchar) as year");
-    	}
+
     	if (typeSex!=null&&typeSex.equals("2")) {
     		sbDisp.append(" and vs.omccode='1'");
     	} else if (typeSex!=null&&typeSex.equals("3")){
@@ -197,7 +186,7 @@
     	//request.setAttribute("rangeSQL", range);
 //</AOI 14.06.2016
     		request.setAttribute("dispSql", sbDisp.toString());
-		    if (typeReestr!=null && typeReestr.equals("1")) {
+    	if (typeReestr!=null && typeReestr.equals("1")) {
     			String year=request.getParameter("year") ; String month=request.getParameter("month" );
     			StringBuilder where = new StringBuilder() ;
     			String dtype="Patient" ;
@@ -211,19 +200,28 @@
     				request.setAttribute("whereSql", where.toString()) ;
     				//request.setAttribute("groupBy", groupBy) ;
     				if (dtype.equals("Patient")) {
+						String defaultLpu = ActionUtil.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE","300026",request);
+    				    String leftJoinSql = "  left join patientfond pf on pf.lastname=pat.lastname and pf.firstname=pat.firstname and pf.middlename=pat.middlename and pf.birthday=pat.birthday and pf.id=(select max(id) from patientfond where lastname=pat.lastname and firstname=pat.firstname and middlename=pat.middlename and birthday=pat.birthday)";
+
+    				    String selectSql = " ,'По состоянию на '||to_char(pf.checkDate,'dd.MM.yyyy')||' пациент прикреплен к ЛПУ '||pf.lpuattached||' от '||to_char(pf.attachedDate,'dd.MM.yyyy')||' способом '||pf.attachedtype as fondAttached" +
+								" ,case when pf.lpuattached!='"+defaultLpu+"' then 'color:red' else 'color:green' end as color";
+						request.setAttribute("leftJoinSql",leftJoinSql);
+						request.setAttribute("selectSql",selectSql);
     			%>
     			
-    <ecom:webQuery name="reestr" nameFldSql="reestr_sql" nativeSql="
+    <ecom:webQuery isReportBase="true" name="reestr" nameFldSql="reestr_sql" nativeSql="
     select distinct pat.id
     ,pat.lastname,pat.firstname,pat.middlename,to_char(pat.birthday,'dd.mm.yyyy') as birthday
     ,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
 	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
 	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
-	,(select list(ved.name||' '||to_char(edc.startDate,'dd.mm.yyyy')||' '||to_char(edc.finishDate,'dd.mm.yyyy')) from ExtDispCard edc left join VocExtDisp ved on ved.id=edc.dispType_id where edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}') as edclist
-     ,la.number
+	,(select list(ved.name||' '||to_char(edc.startDate,'dd.mm.yyyy')||' '||to_char(edc.finishDate,'dd.mm.yyyy')||case when isServiceIndication='1' then ', направлен на 2 этап' else '' end) from ExtDispCard edc left join VocExtDisp ved on ved.id=edc.dispType_id where edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}') as edclist
+     ,la.number as f8_laNumber
          ,coalesce(a2.fullname)||' ' || case when pat.houseNumber is not null and pat.realhouseNumber!='' then ' д.'||pat.realhouseNumber else '' end 
 	 ||case when pat.realhouseBuilding is not null and pat.realhouseBuilding!='' then ' корп.'|| pat.realhouseBuilding else '' end 
-	||case when pat.realflatNumber is not null and pat.realflatNumber!='' then ' кв. '|| pat.realflatNumber else '' end as address_real
+	||case when pat.realflatNumber is not null and pat.realflatNumber!='' then ' кв. '|| pat.realflatNumber else '' end as f9_address_real
+	${selectSql}
+	,pat.patientSync as f12_patSync
      from  Patient pat
      
      left join Address2 a on a.addressid=pat.address_addressid
@@ -232,6 +230,7 @@
      left join lpuattachedbydepartment lad on lad.patient_id=pat.id
      left join lpuarea la on la.id=lad.area_id
      left join vocSex vs on vs.id=pat.sex_id
+	${leftJoinSql}
 	where pat.deathDate is null ${whereSql} ${dispSql} 
 	order by pat.lastname,pat.firstname,pat.middlename
     "/>
@@ -250,9 +249,10 @@
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table action="entityView-mis_patient.do" printToExcelButton="Сохранить в excel"
-    viewUrl="entityShortView-mis_patient.do"
+    viewUrl="entityShortView-mis_patient.do" styleRow="11"
      name="reestr" idField="1">
     	<msh:tableColumn property="sn" columnName="#"/>
+    	<msh:tableColumn property="12" columnName="Код синхр"/>
     	<msh:tableColumn property="2" columnName="Фамилия"/>
     	<msh:tableColumn property="3" columnName="Имя"/>
     	<msh:tableColumn property="4" columnName="Отчество"/>
@@ -261,14 +261,23 @@
     	<msh:tableColumn property="7" columnName="Доп. диспансеризации за ${param.dateBeginYear}"/>
     	<msh:tableColumn property="8" columnName="Номер участка"/>
     	<msh:tableColumn property="9" columnName="Адрес проживания"/>
+    	<msh:tableColumn property="10" columnName="Сведения о прикреплении ФОМС"/>
+
     </msh:table>
     </msh:sectionContent>
    </msh:section> 			
     				    			<%    					
     				}
     				} else {
+						if (typeGroup!=null&&typeGroup.equals("1")) {
+							request.setAttribute("groupBySql", "group by to_char(pat.birthday,'yyyy') order by to_char(pat.birthday,'yyyy') desc ");
+							request.setAttribute("selectSql", "'&dateBeginYear="+date+"&year='||to_char(pat.birthday,'yyyy') as id,"+date+"-cast(to_char(pat.birthday,'yyyy') as int) as year");
+						} else {
+							request.setAttribute("groupBySql", "");
+							request.setAttribute("selectSql", "cast('&dateBeginYear="+date+"' as varchar) as id,cast('Все возраста' as varchar) as year");
+						}
 %>
-<ecom:webQuery name="swod" nameFldSql="swod_sql" nativeSql="
+<ecom:webQuery isReportBase="true" name="swod" nameFldSql="swod_sql" nativeSql="
 select 
 ${selectSql} 
 ,count(distinct case when to_char(pat.birthday,'mm')='01' then pat.id else null end) cnt01

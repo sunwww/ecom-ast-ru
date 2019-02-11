@@ -93,7 +93,6 @@
     		request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("dateBegin"),request.getParameter("dateEnd"),request));
     		
     		StringBuilder sqlAdd = new StringBuilder();
-    		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;		
     		if (typeDate.equals("1")) {
     			request.setAttribute("dateSql", "sls.dateStart") ;
     		} else {
@@ -131,7 +130,7 @@ select sls.id
 ,max(case when (ot.id isnull or ot.voc_code!='К') then to_char(sls.datestart,'dd.mm.yyyy') else null end ) as f6_notSMP
 ,to_char(sls.datefinish,'dd.mm.yyyy') as f7_dateFinish
 ,LIST(mkb.code)
-,case when sls.datefinish is null then (select dep.name from medcase slo left join 
+,case when sls.datefinish is null then (select list(dep.name) from medcase slo left join
 	mislpu dep on dep.id=slo.department_id where slo.dtype='DepartmentMedCase' and slo.parent_id=sls.id and slo.transferdate is null) else '' end as f9_dep 
 ,case when sls.datefinish is null then '+' else '-' end as f10_inHospital
 ,max(case when vhr.code='11' then to_char(sls.datefinish,'dd.mm.yyyy') else null end) as f11_isDead
@@ -175,7 +174,7 @@ order by p.lastname, p.firstname, p.middlename
     </msh:sectionTitle>
 
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="ФИО пациента" property="2"/>            
             <msh:tableColumn columnName="Адрес проживания пациента" property="3"/>

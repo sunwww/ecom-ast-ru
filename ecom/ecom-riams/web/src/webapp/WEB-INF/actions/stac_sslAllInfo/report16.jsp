@@ -1,14 +1,10 @@
-<%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
-<%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.math.BigDecimal"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.Calendar"%>
-<%@page import="java.util.GregorianCalendar"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="java.util.Date"%>
+<%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
+<%@page import="java.math.BigDecimal"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.*"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -204,8 +200,8 @@ if (date!=null && !date.equals("")) {
     cal.add(Calendar.DAY_OF_MONTH, 1) ;
     date1=format.format(cal.getTime()) ;
     request.setAttribute("dateNextEnd", date1) ;
-    
-	
+
+
     String bedFund = request.getParameter("bedFund") ;
 	if (bedFund!=null && !bedFund.equals("") && !bedFund.equals("0")) {
 		%>
@@ -213,7 +209,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>016/у-02 форма. Реестр пациентов</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}"  name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
+	    <ecom:webQuery isReportBase="${isReportBase}"  name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select
 	    slo.id
 	    ,ss.code as sscode
 	    ,pat.lastname||' '||pat.middlename||' '||pat.firstname||' '||to_char(pat.birthday,'dd.mm.yyyy') as patfio
@@ -493,7 +489,7 @@ if (date!=null && !date.equals("")) {
 	and slo.bedfund_id=${param.bedFund} ${bedTypeSql} ${bedSubTypeSql}
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " />
-	    <msh:table  name="journal_priem" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn property="2" columnName="№СК"/>
 	      <msh:tableColumn property="3" columnName="ФИО пациента"/>
@@ -518,7 +514,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn columnName="состоит всего" property="19" />
 	      <msh:tableColumn columnName="состоит матерей" property="20" />
 	      <msh:tableColumn isCalcAmount="true" columnName="к/дней" property="21" />
-	      <msh:tableColumn isCalcAmount="true"columnName="старше труд. возраста" property="25" />
+	      <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста" property="25" />
 	    </msh:table>
 	    </msh:sectionContent>
 	    </msh:section>
@@ -533,7 +529,7 @@ if (date!=null && !date.equals("")) {
 	    
 	    <msh:section>
 	    <msh:sectionTitle>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
+	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select
 	    '&department=${param.department}&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&bedFund='||slo.bedfund_id as vbstid,
 	    vbt.name||' '||vbst.name as vbstname,vss.name as vssname
 	,count(distinct case when 
@@ -888,7 +884,7 @@ if (date!=null && !date.equals("")) {
 
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table name="journal_priem01" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table  printToExcelButton="Сохранить в excel" name="journal_priem01" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -945,7 +941,7 @@ if (date!=null && !date.equals("")) {
 	order by pat.lastname,pat.firstname,pat.middlename
 
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table name="journal_priem02" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem02" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -988,7 +984,7 @@ if (date!=null && !date.equals("")) {
 	and (vht.code is null or vht.code!='ALLTIMEHOSP')
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table name="journal_priem1" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem1" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1026,7 +1022,7 @@ if (date!=null && !date.equals("")) {
 	and slo.prevMedCase_id is not null
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table name="journal_priem1" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem1" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1065,7 +1061,7 @@ if (date!=null && !date.equals("")) {
 	and vht.code='ALLTIMEHOSP'
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table name="journal_priem2" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem2" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1109,7 +1105,7 @@ if (date!=null && !date.equals("")) {
 	and vhr.code!='11'
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table name="journal_priem3" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem3" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1152,7 +1148,7 @@ if (date!=null && !date.equals("")) {
 	
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table name="journal_priem4" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem4" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1195,7 +1191,7 @@ if (date!=null && !date.equals("")) {
 	and vhr.code='11'
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table name="journal_priem4" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem4" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1532,7 +1528,7 @@ if (date!=null && !date.equals("")) {
 	    </form>     
 	    </msh:sectionTitle>	    
 	    <msh:sectionContent>
-	    <msh:table name="journal_priem" 
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem"
 	    viewUrl="stac_report_016.do?short=Short" 
 	    action="stac_report_016.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn" />
@@ -1852,7 +1848,7 @@ if (date!=null && !date.equals("")) {
 	    
 	    16/у-02 форма. ${queryTitle}</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <msh:table name="journal_priem" 
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem"
 	    viewUrl="stac_report_016.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}" 
 	    action="stac_report_016.do?&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn" />
@@ -1919,7 +1915,7 @@ if (date!=null && !date.equals("")) {
 	    		
 	    		request.setAttribute("departmentBFC",departmentBFC);
 	    		%>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
+	    <ecom:webQuery isReportBase="${isReportBase}"  name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select
 	    ${fldId} as vbstid,
 	    ${fldName} as vbstname,cast('' as varchar)
 	,count(distinct case when 
@@ -2191,7 +2187,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Отчет о деятельности отделений стационара</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <msh:table  name="list_newform" action="${typeGroupNext}" idField="19" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="list_newform" action="${typeGroupNext}" idField="19" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      
 	      <msh:tableColumn property="18" columnName="Профиль коек"/>
 	      <msh:tableColumn property="1" columnName="Факт коек"/>

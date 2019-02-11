@@ -14,7 +14,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = Calculator.class)
 @Comment("Форма калькулятора")
 @WebTrail(comment = "Форма калькулятора"
-, nameProperties= "id", list="entityParentList-calculator.do", view="entityParentView-calc_calculator.do")
+, nameProperties= "id", list="entityList-calc_calculator.do", view="entityView-calc_calculator.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculator")
 public class CalculatorForm extends IdEntityForm{
 
@@ -45,4 +45,18 @@ public class CalculatorForm extends IdEntityForm{
 	public Long getValueOfResult() {return theValueOfResult;}
 	public void setValueOfResult(Long aValueOfResult) {theValueOfResult = aValueOfResult;}
 	private Long theValueOfResult;
+
+	/** Создавать дневник? */
+	@Comment("Создавать дневник?")
+	@Persist
+	public Boolean getCreateDiary() {return theCreateDiary;}
+	public void setCreateDiary(Boolean aCreateDiary) {theCreateDiary = aCreateDiary;	}
+	private Boolean theCreateDiary;
+
+	/** Тэг *.tag */
+	@Comment("Тэг *.tag ")
+	@Persist
+	public String getTag() {return theTag;}
+	public void setTag(String aTag) {theTag = aTag;	}
+	private String theTag;
 }

@@ -22,6 +22,22 @@ function onPreDelete(aEntityId, aCtx) {
     }
 
     aCtx.manager.createNativeQuery("delete from forminputprotocol where docprotocol_id=" + aEntityId).executeUpdate();
+    //Milamesher #121 очищение данных в конслультации об этом дневнике: сам diary_id,и кто-когда-во сколько
+    var res = aCtx.manager.createNativeQuery( "select  scg.id from prescription scg\n" +
+        "left join PrescriptionList pl on pl.id=scg.prescriptionList_id\n" +
+        "left join medcase slo on slo.id=pl.medcase_id\n" +
+        "left join workfunction wf on wf.id=scg.prescriptcabinet_id\n" +
+        "where scg.transferdate is not null and scg.diary_id='" + aEntityId + "'").getResultList();
+    if (res.size()>0) {
+        if (res.get(0)!=null) {
+            var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
+            presc.setDiary(null);
+            presc.setIntakeSpecial(null);
+            presc.setIntakeDate(null);
+            presc.setIntakeTime(null);
+            aCtx.manager.persist(presc);
+        }
+    }
 }
 function onPreCreate(aForm, aCtx) {
 
@@ -29,9 +45,10 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	aForm.setTime(new java.sql.Time (date.getTime())) ;
-	if (!aForm.username.equals(aForm.editUsername)) {
+	if (aForm.editUsername!=null && aForm.editUsername!="" && !aForm.username.equals(aForm.editUsername)) {
 		//aCtx.manager.createNativeQuery("insert into ChangeJournal (classname,changedate,changetime,SerializationBefore,objectid) values ('VISITPROTOCOL',current_date,current_time,'"+aForm.username+"- -"+aForm.editUsername+"','"+aForm.medCase+"')").executeUpdate() ;
-		throw "Не удалось сохранить протокол: <br/><pre>"+aForm.record+"</pre><br/> Попробуйте сохранить протокол еще раз. При возникновении данной ошибки повторно, обращайтесь в службу технической поддержки." ;
+		throw "Не удалось сохранить протокол: <br/><pre>"+aForm.record+"</pre><br/> Попробуйте сохранить протокол еще раз. При возникновении данной ошибки повторно, обращайтесь в службу технической поддержки."+
+        "<br><br> Текущий пользователь: "+aForm.username+", протокол был создан пользователем: "+aForm.editUsername ;
 	}
 	var wfe =aCtx.manager.createNativeQuery("select id,workFunctionExecute_id from MedCase where id = :medCase")
 		.setParameter("medCase", aForm.medCase).getResultList() ;
@@ -71,6 +88,7 @@ function onCreate(aForm, aEntity, aCtx) {
     createServiceMedCase(aForm, aEntity, aCtx);
     var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
     bean.sendProtocolToExternalResource(aEntity.getId(),null,null,aCtx.manager);
+    checkPrescription(aForm, aEntity, aCtx,false);
 }
 function createServiceMedCase(aForm, aEntity, aCtx) {
     if (aForm.medService !== null && +aForm.medService > 0) {
@@ -105,7 +123,7 @@ function onPreSave(aForm, aEntity, aCtx) {
     check(aForm, aCtx);
     var date = new java.util.Date();
     aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
-    //aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+    aForm.setEditTime(new java.sql.Time (date.getTime())) ;
     aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
     var protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.id='" + aEntity.id + "' and d.dtype='Protocol'").getResultList();
     if (protocols.isEmpty()) {
@@ -133,6 +151,40 @@ function onSave(aForm, aEntity, aCtx) {
 //	throw ""+text;
     }
     createServiceMedCase(aForm, aEntity, aCtx);
+    checkPrescription(aForm, aEntity, aCtx,true);
+}
+//Milamesher #121 22112018 - и при создании, и при сохранении (например, из черновика делают протокол) если дневник ещё не связан ни с какой консультацией, связать
+function checkPrescription(aForm, aEntity, aCtx, flagIfSave) {
+    //Milamesher #121 19092018 если есть переданные, но не выполненные консультации в этом сло текущего пользователя (с любой раб. ф-ей), то проставить diary_id
+    var sql= "select  scg.id from prescription scg\n" +
+    "left join PrescriptionList pl on pl.id=scg.prescriptionList_id\n" +
+    "left join medcase slo on slo.id=pl.medcase_id\n" +
+    "left join workfunction wf on wf.id=scg.prescriptcabinet_id\n" +
+    "left join vocworkfunction vwf on vwf.id=wf.workfunction_id\n" +
+    "where scg.diary_id is null\n" +
+    "and vwf.id=ANY(select wf.workfunction_id from WorkFunction wf\n" +
+    "left join Worker w on w.id=wf.worker_id\n" +
+    "left join Worker sw on sw.person_id=w.person_id\n" +
+    "left join WorkFunction swf on swf.worker_id=sw.id\n" +
+    "left join SecUser su on su.id=swf.secUser_id\n" +
+    "where su.login='"+ aCtx.getSessionContext().getCallerPrincipal().toString() +
+    "' and wf.group_id=scg.prescriptcabinet_id )" +
+    " and scg.dtype='WfConsultation' and scg.canceldate is null and (slo.id=ANY\n" +
+    "(select id from medcase where dtype='DepartmentMedCase' and parent_id=(select parent_id from medcase where id='"
+    +aForm.getMedCase()+"')) or slo.id="+aForm.getMedCase();
+    sql+= (flagIfSave)? ") and (select count(id) from prescription where diary_id=" + aEntity.id + ")=0 order by scg.id" : ")  order by scg.id";
+    var res = aCtx.manager.createNativeQuery(sql).getResultList();
+    if (res.size()>0) {
+        if (res.get(0)!=null) {
+            var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
+            presc.setDiary(aEntity);
+            presc.setIntakeUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+            presc.setIntakeDate(aEntity.dateRegistration);
+            presc.setIntakeTime(aEntity.timeRegistration);
+            presc.setIntakeSpecial(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction"));
+            aCtx.manager.persist(presc);
+        }
+    }
 }
 function check(aForm, aCtx) {
 //test
@@ -168,6 +220,17 @@ function check(aForm, aCtx) {
             }
             if (dtype == 'HospitalMedCase' && (aForm.journalText == null || aForm.journalText.equals(""))) {
                 throw "Необходимо заполнить поле Принятые меры для журнала. Если их нет, необходимо ставить: -";
+            }
+            //Milamesher 16102018 - создание дневника специалиста приёмного отделения по времени - только ДО создания СЛО
+            if (dtype == 'HospitalMedCase' && aForm.getDateRegistration() != null && aForm.getDateRegistration() != '') {
+                var list = aCtx.manager.createNativeQuery("select case when dmc.id is null then '0' else case when (dmc.dateStart>to_date('"
+                    +aForm.dateRegistration+"','dd.mm.yyyy') or dmc.dateStart=to_date('"+aForm.dateRegistration+"','dd.mm.yyyy') and dmc.entranceTime>'"
+                    +aForm.timeRegistration+"' ) then '0' else '1' end end\n" +
+                    "from medcase hmc \n" +
+                    "left join medcase dmc on hmc.id=dmc.parent_id and dmc.dtype='DepartmentMedCase'\n" +
+                    "where hmc.id="+aForm.medCase+" order by dmc.id limit 1 ").getResultList();
+                if (!list.isEmpty())
+                    if (list.get(0)=='1') throw "Нельзя создавать дневник специалиста приёмного отделения с датой регистрации больше начала СЛО! Нужно изменить дату и время регистрации либо создать дневник в случае лечения в отделении.";
             }
             var isCheck = null;
 
@@ -300,14 +363,10 @@ function checkCreateDiagnosis(aForm, aCtx) {
 
 function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
     l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='" + aParameter + "'").getResultList();
-    if (l.isEmpty()) {
-        return aValueDefault;
-    } else {
-        return l.get(0)[1];
-    }
+    return l.isEmpty() ? aValueDefault : l.get(0)[1];
 }
 function errorThrow(aList, aError) {
-    if (aList.size() > 0) {
+    if (!aList.isEmpty()) {
         var error = ":";
         for (var i = 0; i < aList.size(); i++) {
             var doc = aList.get(i);

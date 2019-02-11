@@ -1,13 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase.hospital;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,7 +8,13 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizatingFond;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.sql.Date;
+import java.sql.Time;
 
 @Comment("Госпитализации данные фонда")
 @Entity
