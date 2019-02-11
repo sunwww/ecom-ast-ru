@@ -1,20 +1,24 @@
-package ru.ecom.api.uploadtopromed;
+package ru.ecom.api.promed;
 
 
-import ru.ecom.api.promed.IApiPolyclinicService;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.web.util.Injection;
 
 import javax.jws.WebParam;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 @Path("/promed")
 public class PolyclinicResource {
-    @POST
+    @GET
     @Path("getPolyclinicCase")
     @Produces(MediaType.APPLICATION_JSON)
     /**
@@ -22,15 +26,16 @@ public class PolyclinicResource {
      *
      * @param aRequest HttpServletRequest
      * @param aToken String
-     * @param dateTo String
+     * @param dateTo String Дата окончания случая в формате yyyy-MM-dd
      * @return JSON in String
      */
     public String getPolyclinicCase(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken
             , @QueryParam("dateTo") String dateTo
-    ) throws NamingException {
+    ) throws NamingException, ParseException {
         if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
         ApiUtil.init(aRequest,aToken);
         IApiPolyclinicService service =Injection.find(aRequest).getService(IApiPolyclinicService.class);
-        return service.getPolyclinicCase(dateTo);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return service.getPolyclinicCase(new java.sql.Date(format.parse(dateTo).getTime()));
     }
 }

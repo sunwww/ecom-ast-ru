@@ -1,10 +1,10 @@
 package ru.ecom.poly.ejb.domain.voc;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdNameOmcCode;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 
 //Справочник Результатов обращений
@@ -32,22 +32,4 @@ public class VocVisitResult extends VocIdNameOmcCode {
 	@Comment("Код фед. ск.помощи")
 	public String getCodefamb() {return theCodefamb;}
 	public void setCodefamb(String aCodefamb) {theCodefamb = aCodefamb;}
-
-	@Comment("Код в промеде1")
-	public String getPromedCode1() {
-		return promedCode1;
-	}
-	public void setPromedCode1(String promedCode1) {
-		this.promedCode1 = promedCode1;
-	}
-
-	private String promedCode2;
-	@Comment("Код в промеде2")
-	public String getPromedCode2() {
-		return promedCode2;
-	}
-	public void setPromedCode2(String promedCode2) {
-		this.promedCode2 = promedCode2;
-	}
-
 }
