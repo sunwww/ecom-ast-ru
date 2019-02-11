@@ -30,7 +30,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 	 * limit - максимальное количество записей для нахождения
 	 * nameArray - имя объекта, куда будет помещен массив
 	 * */
-	public String executeSqlGetJson(String aQuery,Integer limit,String nameArray) throws NamingException, SQLException {
+	public String executeSqlGetJson(String aQuery,Integer limit,String nameArray) throws NamingException {
 
 		//if(limit==null || limit==0 || limit>100 ) limit=100;
 
@@ -63,12 +63,12 @@ public class WebQueryServiceBean implements IWebQueryService {
 		return null;
 	}
 	/** Возвращаем json массив с результатом запроса*/
-	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException, SQLException {
+	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException {
 		return executeSqlGetJson(aQuery,limit,"");
 	}
 
 	/** Возвращаем первый результат запроса в качестве json объекта*/
-	public String executeSqlGetJsonObject(String aQuery) throws NamingException, SQLException {
+	public String executeSqlGetJsonObject(String aQuery) throws NamingException {
 		JSONArray arr = new JSONArray(executeSqlGetJson(aQuery,null,null));
 		if (arr.length()>0) {
 			return arr.getJSONObject(0).toString();
@@ -87,7 +87,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 	public String executeNativeSqlGetJSON(String[] aFieldNames, String aQuery, Integer aMaxResult) {
 		List<Object> list ;
 		Query query = theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
-		if (aMaxResult!=null&&aMaxResult>0) {
+		if (aMaxResult!=null && aMaxResult>0) {
 			list=query.setMaxResults(aMaxResult).getResultList();
 		} else {
 			list=query.getResultList();

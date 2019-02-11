@@ -95,17 +95,12 @@ public class ApiRecordServiceBean implements IApiRecordService {
         Patient patient ;
         if (aPatientGUID!=null) { //Считаем, что записываем из приложения
             patient=getPatientByGuid(aPatientGUID);
-        } else if (aPatientLastname!=null && aPatientFirstname!=null) { //Запись через сайт или другие источники.
+        } else if (!StringUtil.isNullOrEmpty(aPatientLastname) && !StringUtil.isNullOrEmpty(aPatientFirstname)) { //Запись через сайт или другие источники.
             patient = getPatientByFIO(aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday);
         } else {
             return getErrorJson("Необходимо указать ФИО либо GUID пациента","NO_PATIENT");
         }
-        String prePatientInfo;
-        if (patient==null && aPatientLastname!=null && aPatientFirstname!=null){
-            prePatientInfo=aPatientLastname+ " "+aPatientFirstname+" "+(aPatientMiddlename!=null  ? aPatientMiddlename : "")+" "+DateFormat.formatToDate(aPatientBirthday)+(aPhone!=null ? " тел."+aPhone : "");
-        } else {
-            return getErrorJson("При неуказании GUID пациента необходимо указать его ФИО и дату рождения","WRONG_PAR");
-        }
+        String prePatientInfo = patient !=null ? patient.getPatientInfo() : aPatientLastname+ " "+aPatientFirstname+" "+(aPatientMiddlename!=null  ? aPatientMiddlename : "")+" "+DateFormat.formatToDate(aPatientBirthday)+(aPhone!=null ? " тел."+aPhone : "");
 
          if (wct.getPrePatient()!=null
                 || wct.getMedCase()!=null
@@ -143,11 +138,10 @@ public class ApiRecordServiceBean implements IApiRecordService {
             wct.setCreateTimePreRecord(currentTime);
             if (patient!=null) {
                 wct.setPrePatient(patient);
-                recordLogInfo.append(". Пациент ").append(patient.getPatientInfo());
             } else {
                 wct.setPrePatientInfo(prePatientInfo.toUpperCase());
-                recordLogInfo.append(". Пациент ").append(prePatientInfo.toUpperCase());
             }
+            recordLogInfo.append(". Пациент ").append(prePatientInfo.toUpperCase());
             wct.setPatientComment(aComment);
             recordLogInfo.append(".Создана предварительная запись");
             LOG.info("RECORD_MAKE!!!");

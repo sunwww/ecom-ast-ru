@@ -190,7 +190,7 @@ public class ApiRecordResource {
                 list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null) ,patientGUID ,patientComment ,patientPhone ,service);
                 if (list==null) {
                     list=ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD");
-                } else { //Записали успешно, пишем файл
+                } /*else { //Записали успешно, пишем файл
                     JSONObject recordInfo = new JSONObject(list);
                     if (!recordInfo.has("error_code")) {
                         String medcaseID = getJsonField(recordInfo, "medcaseId");
@@ -210,7 +210,7 @@ public class ApiRecordResource {
                             service.saveFile(filename, fileContent);
                         }
                     }
-                }
+                } */
             }
             if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) обработан, вот ответ: "+list); //debug
             return list;

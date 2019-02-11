@@ -363,14 +363,10 @@ function checkCreateDiagnosis(aForm, aCtx) {
 
 function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
     l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='" + aParameter + "'").getResultList();
-    if (l.isEmpty()) {
-        return aValueDefault;
-    } else {
-        return l.get(0)[1];
-    }
+    return l.isEmpty() ? aValueDefault : l.get(0)[1];
 }
 function errorThrow(aList, aError) {
-    if (aList.size() > 0) {
+    if (!aList.isEmpty()) {
         var error = ":";
         for (var i = 0; i < aList.size(); i++) {
             var doc = aList.get(i);
