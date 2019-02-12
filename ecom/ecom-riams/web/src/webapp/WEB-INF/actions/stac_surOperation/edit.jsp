@@ -229,7 +229,7 @@
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
     	<tags:mis_double name='MedService' title='Данная операция оказана:' cmdAdd="document.forms[0].submitButton.disabled = false "/>
-    	<tags:service_change name="ServiceChange" autoCompliteServiceFind="medService"></tags:service_change>
+    	<tags:service_change name="ServiceChange" autoCompliteServiceFind="medService"/>
     </msh:ifFormTypeIsNotView>  
     
     
@@ -375,26 +375,29 @@
   	function changeParentMedService() {
   		
   		
-  		try {if (operationAutocomplete) {
+  		try {
+  		    if (operationAutocomplete) {
   			var oper = $('operation').value ;
   			operationAutocomplete.setParentId($('operationDate').value) ;
   			operationAutocomplete.setVocId(oper) ;
-  		}} catch(e) {
+  		    }
+  		} catch(e) {
   			
   		}
   		var medService = $('medService').value ;
-  		medServiceAutocomplete.setParentId($('operationDate').value+'#'+$('surgeon').value+'#'+$('department').value) ;
-  		medServiceAutocomplete.setVocId(medService) ;
+  		if ($('operationDate').value && $('surgeon').value && $('department').value && $('serviceStream').value) {
+            medServiceAutocomplete.setParentId($('operationDate').value+'#'+$('surgeon').value+'#'+$('department').value+'#'+$('serviceStream').value) ;
+            medServiceAutocomplete.setVocId(medService) ;
+            console.log("parent="+$('operationDate').value+'#'+$('surgeon').value+'#'+$('department').value+'#'+$('serviceStream').value);
+        }
+
   		
   		//$('operationName').value='' ;
   		oldValue = $('operationDate').value ;
-  	} 
-  	 surgeonAutocomplete.addOnChangeCallback(function() {
-  		changeParentMedService() ;
-  		});
-  	 departmentAutocomplete.addOnChangeCallback(function() {
-  		changeParentMedService() ;
-  		});
+  	}
+  	serviceStreamAutocomplete.addOnChangeCallback(function() {changeParentMedService();})
+  	 surgeonAutocomplete.addOnChangeCallback(function() {changeParentMedService() ;});
+  	 departmentAutocomplete.addOnChangeCallback(function() {changeParentMedService() ;});
   	 
   	try {
   		methodAutocomplete.addOnChangeCallback(function() {
@@ -405,11 +408,7 @@
       medServiceAutocomplete.addOnChangeCallback(function() {
         HospitalMedCaseService.isAbortRequiredByOperation($('medService').value, {
             callback: function(isAbort) {
-                if (true==isAbort) {
-                   jQuery('#abortionName').css('background-color','#FFFFA0');
-                } else {
-                    jQuery('#abortionName').css('background-color','#FFFFFF');
-                }
+                jQuery('#abortionName').css('background-color',true==isAbort ? '#FFFFA0': '#FFFFFF');
             }
         });
       });

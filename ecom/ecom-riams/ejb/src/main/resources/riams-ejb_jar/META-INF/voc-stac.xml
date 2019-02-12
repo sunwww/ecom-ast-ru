@@ -363,24 +363,32 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     			queried = "(cast(id as varchar(10)) like :querId or code like :querId or UPPER(name) like UPPER(:query))"
     			 			
     	/>
-    </voc> 
+    </voc>
+	<!-- Дата операции/раб.функция/отделение/поток обслуживания
+	* учитываем поток обслуживания
+	-->
     <voc id='medServiceOperation' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService ms'
     			parent="(ms.startDate is null or to_date(:par1,'dd.mm.yyyy')  >=ms.startDate )
     					 and (ms.finishDate is null or ms.finishDate>=to_date(:par1,'dd.mm.yyyy'))
     					 and wf.id=:par2 and (wfs.lpu_id is null or wfs.lpu_id=:par3)
-    					 and ms.dtype='MedService' and (vst.code='OPERATION' or vst.code='SURVEY')"
+    					 and ms.dtype='MedService' and (vst.code='OPERATION' or vst.code='SURVEY')
+    					 and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par4 and ((vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0')) or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))
+"
     			names = "coalesce(ms.code||' ','')||ms.name"
-    			nameId="ms.id"
+    			nameId="distinct ms.id"
     			queryAppend=""
-    			join=' left join VocServiceType vst on vst.id=ms.serviceType_id
+    			join=" left join VocServiceType vst on vst.id=ms.serviceType_id
     			       left join WorkFunctionService wfs on wfs.medService_id=ms.id
     			       left join WorkFunction wf on wfs.vocWorkFunction_id=wf.workFunction_id
-    			       '
+    			       left join pricemedservice pms on pms.medservice_id=ms.id
+    			       left join priceposition pp on pp.id=pms.priceposition_id
+    			       left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
+    			       "
     			order=''
     			queried = "(cast(ms.id as varchar(10)) like :querId or replace(ms.code,'.','') like :query or ms.code like :querId  or UPPER(ms.name) like UPPER(:query))"
-		    	parentSplitCount="3" />
+		    	parentSplitCount="4" />
     </voc>
 
 	<voc id="medServiceForBandage" type="NativeVocService">
@@ -390,7 +398,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 				order="ms.name, ms.code"
 				groupBy="ms.id, ms.name, ms.code"
 				names="ms.code||' '||ms.name"
-				queryAppend="ms.finishDate is null and code='A16.01.029' or code='A16.01.003' or code like 'A16.01.010.%' or code='A16.01.004' or code='A16.01.004.996'"
+				queryAppend="ms.finishDate is null and (code='A16.01.029' or code='A16.01.003' or code like 'A16.01.010.%' or code='A16.01.004' or code='A16.01.004.996')"
 		/>
 	</voc>
     
