@@ -113,6 +113,17 @@
                 names="voc.omccode||' '||voc.name"
         />
     </voc>
+    <voc id="vocOpenListEntry" type="NativeVocService">
+        <NativeVocService
+                from="e2listentry voc"
+                nameId="voc.id"
+                order="voc.finishDate desc, voc.name"
+                names="voc.name"
+                queried="upper(voc.name) like upper(:query) "
+                queryAppend="(voc.isDeleted is null or voc.isDeleted='0') and (voc.isClosed is null or voc.isClosed='0')"
+
+        />
+    </voc>
     <voc id="vocListEntry" type="NativeVocService">
         <NativeVocService
                 from="e2listentry voc"
