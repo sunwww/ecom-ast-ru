@@ -69,9 +69,10 @@
             	   $('idc10').value=aResult.mkbId ;
             	   $('idc10Name').value=aResult.mkbName ;
             	   if (aResult.medcaseType==='DepartmentMedCase' ||aResult.medcaseType==='HospitaltMedCase' ) {
-                       medServiceAutocomplete.setVocId('medServiceForStac');
+                       medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForStac');
+                       medServiceAutocomplete.setParentId(aResult.serviceStreamId);
                    } else {
-                       medServiceAutocomplete.setVocId('medService');
+                       medServiceAutocomplete.setUrl('simpleVocAutocomplete/medService');
                    }
 
                

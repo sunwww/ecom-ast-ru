@@ -40,6 +40,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
         } else {
         	theSelect = aNameId ;
         }
+        theOrder = aOrder !=null && !"".equals(aOrder) ? aOrder : null;
         theNameId = aNameId ;
         theJoin = aJoin!=null?aJoin:"" ;
         theGroupBy = aGroupBy!=null&&aGroupBy.trim().equals("")?null:aGroupBy ;
@@ -124,7 +125,8 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	    	}
     	    	if (theGroupBy!=null) sql.append(" group by ").append(theGroupBy) ;
     	    	aQuery = aQuery.toUpperCase() ;
-    	    	//LOG.debug("query="+aQuery) ;
+    	    	LOG.info("query="+aQuery) ;
+    	    	LOG.info("query1="+sql) ;
     	    	Query query  = aContext.getEntityManager().createNativeQuery(sql.toString()) ;
     	    	//LOG.debug(aQuery) ;
     	    	if (theSplitQueriedCount!=null && theSplitQueriedCount>0) {
@@ -168,7 +170,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	
     }
 
-    public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
+    public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) {
         // уще не установлен родитель
     	//LOG.info("-------ПРЕДЫДУЩИЙ СПИСОК");
         if(theParentField!=null && StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
@@ -238,7 +240,8 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	//	appendIs = true ;
     	}
     	if (theGroupBy!=null) sql.append(" group by ").append(theGroupBy) ;
-    	sql.append(" order by ").append(theNameId) ;
+
+    	sql.append(" order by ").append( theOrder!=null ? theOrder : theNameId) ;
     //	LOG.info("id="+aId) ;
     	Query query = aContext.getEntityManager().createNativeQuery(sql.toString()) ;
     	/*if (!StringUtil.isNullOrEmpty(aId)){
@@ -249,8 +252,14 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     		query.setParameter("parent",aAdditional.getParentId()) ;
     		LOG.info("parent==="+aAdditional.getParentId());
     	}*/
-    	List<Object[]> list = query.setMaxResults(aCount).getResultList() ;
-    	//LOG.info("query done");
+
+		List<Object[]> list = null;
+		try {
+			list = query.setMaxResults(aCount).getResultList();
+		} catch (Exception e) {
+			LOG.error("Error execute sql: "+sql,e);
+		}
+		//LOG.info("query done");
     	return createValues(list,0) ;
     		// уще не установлен родитель
     	/*
@@ -374,6 +383,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     private final Long theSplitQueriedCount ;
     private final Long theSplitParentCount ;
     private final String theQueryAppend ;
+    private final String theOrder ;
   //  private final String theOrder ;
     private final String theGroupBy ;
     private final String theFrom ;
