@@ -37,18 +37,19 @@
             <h2><label id="ds"/></h2>
             <msh:checkBox property="suspicionOncologist" label="Подозрение на ЗНО:"/><br>
             <div class="borderedDiv" id="oncologyCase">
-
                 <msh:hidden guid="hiddenParent" property="medCase" />
                 <msh:hidden guid="hiddenId" property="id" />
                 <msh:hidden guid="hiddenSaveType" property="saveType" />
                 <msh:hidden guid="vocOncologyReasonTreat" property="vocOncologyReasonTreat" />
                 <msh:hidden guid="histString" property="histString" />
-                <msh:hidden guid="consilium" property="consilium" />
                 <msh:hidden guid="surgTreatment" property="surgTreatment" />
                 <msh:hidden guid="lineDrugTherapy" property="lineDrugTherapy" />
                 <msh:hidden guid="typeTreatment" property="typeTreatment" />
                 <msh:hidden guid="contraString" property="contraString" />
                 <msh:hidden property="isFirst" />
+                <div id="vocOncologyReasonTreatDiv">
+                    <label><b>Повод обращения (4):</b></label><br>
+                </div>
                 <msh:row>
                     <msh:autoComplete  property="stad" label="Стадия заболевания (2)" vocName="vocOncologyN002parent" parentId="C16" size="25"/>
                 </msh:row>
@@ -60,53 +61,50 @@
                 <br><msh:checkBox property="distantMetastasis" label="Наличие отдалённых метастазов (при прогрессировании/рецидиве)"/><br>
                 <div id="firstDiv">
                     <label><b>Заболевание выявлено:</b></label>
+                    <table><tbody>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeFirstOrNot" value="1"> впервые
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="2">
                         <input type="radio" name="typeFirstOrNot" value="2"> ранее
                     </td>
+                    </tbody></table>
                 </div>
-                <div id="vocOncologyReasonTreatDiv">
-                    <label><b>Категория пациента (4):</b></label><br>
+                <label><b>Гистология (5):</b></label>
+                <msh:textField property="dateBiops" label="Дата взятия биопсийного материала" fieldColSpan="3"/><br>
+                <div class="borderedDiv" id="histologyDiv"> </div>
+                <br>
+                <label></label><b>Иммуногистохимия/маркёры (6):</b></label><br>
+                <div class="borderedDiv" id="immunoGistMarkDiv"></div>
+                <div class="borderedDiv" id="vocOncologyConsiliumDiv">
+                    <msh:autoComplete  property="consilium" label="Проведение консилиума (7)" vocName="vocOncologyConsiliumCode" horizontalFill="true" />
+                    <br><msh:textField property="dateCons" label="Дата проведения консилиума" fieldColSpan="3"/><br>
                 </div>
                 <br>
-                <td onclick="this.childNodes[1].checked='checked';" colspan="1">
-                    <input type="checkBox" name="histologyChb" id="histologyChb"> <b>Гистология (5):</b>
-                    <msh:textField property="dateBiops" label="Дата взятия биопсийного материала" fieldColSpan="3"/><br>
-                </td><br>
-                <div class="borderedDiv" id="histologyDiv"> </div>
-                <td onclick="this.childNodes[1].checked='checked';" colspan="1">
-                    <input type="checkBox" name="immunoGistMarkChb" id="immunoGistMarkChb"> <b>Иммуногистохимия/маркёры (6):</b><br>
-                </td><br>
-                <div class="borderedDiv" id="immunoGistMarkDiv"></div>
-                <td onclick="this.childNodes[1].checked='checked';" colspan="1">
-                    <input type="checkBox" name="consiliumChb" id="consiliumChb"> <b>Проведение консилиума (7):</b>
-                    <msh:textField property="dateCons" label="Дата проведения консилиума" fieldColSpan="3"/><br>
-                </td><br>
-                <div class="borderedDiv" id="vocOncologyConsiliumDiv">
-                </div>
-                <td onclick="this.childNodes[1].checked='checked';" colspan="1">
-                    <input type="checkBox" name="treatmentChb" id="treatmentChb"> <b>Проведённое лечение (8):</b><br>
-                </td><br>
+                <label><b>Проведённое лечение (8):</b></label><br>
                 <div class="borderedDiv" id="treatmentDiv"></div>
-                <td onclick="this.childNodes[1].checked='checked';" colspan="1">
-                    <input type="checkBox" name="contraChb" id="contraChb"> <b>Противопоказания и отказы:</b><br>
-                </td><br>
+                <br>
+                <label></label><b>Противопоказания и отказы:</b></label><br>
                 <div class="borderedDiv" id="contraDiv">
-                    <label><b>Медицинские противопоказания к оказанию медицинской помощи и дата регистрации (11):</b></label><br>
-                    <input type="checkBox" name="c1" id="c1" > Противопоказания к проведению хирургического лечения
+                    <label>Медицинские противопоказания к оказанию медицинской помощи и дата регистрации (11):</label><br>
+                    <input type="checkBox" name="c1" id="c1" > <label onclick="document.getElementById('c1').click()">
+                    Противопоказания к проведению хирургического лечения</label>
                     <msh:textField property="date1" label="" /><br>
-                    <input type="checkBox" name="c2" id="c2" > Противопоказания к проведению химиотерапевтического лечения
+                    <input type="checkBox" name="c2" id="c2" > <label onclick="document.getElementById('c2').click()">
+                        Противопоказания к проведению химиотерапевтического лечения</label>
                     <msh:textField property="date2" label="" /><br>
-                    <input type="checkBox" name="c3" id="c3" > Противопоказания к проведению лучевой терапии
+                    <input type="checkBox" name="c3" id="c3" >  <label onclick="document.getElementById('c3').click()">
+                    Противопоказания к проведению лучевой терапии</label>
                     <msh:textField property="date3" label="" /><br>
-                    <label><b>Отказ от проведения лечения и дата регистрации (12):</b></label><br>
-                    <input type="checkBox" name="c4" id="c4" > Отказ от проведения хирургического лечения
+                    <label>Отказ от проведения лечения и дата регистрации (12):</label><br>
+                    <input type="checkBox" name="c4" id="c4" >  <label onclick="document.getElementById('c4').click()">
+                    Отказ от проведения хирургического лечения</label>
                     <msh:textField property="date4" label="" /><br>
-                    <input type="checkBox" name="c5" id="c5" > Отказ от проведения химиотерапевтического лечения
+                    <input type="checkBox" name="c5" id="c5" >  <label onclick="document.getElementById('c5').click()">
+                    Отказ от проведения химиотерапевтического лечения</label>
                     <msh:textField property="date5" label="" /><br>
-                    <input type="checkBox" name="c6" id="c6" > Отказ от проведения лучевой терапии
+                    <input type="checkBox" name="c6" id="c6" >  <label onclick="document.getElementById('c6').click()">
+                    Отказ от проведения лучевой терапии</label>
                     <msh:textField property="date6" label="" /><br>
                 </div>
                 <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
@@ -115,7 +113,7 @@
                         <div id="note" style="display:none;">
                             <b>1</b> Раздел «Направление с целью уточнения диагноза» заполняется при подозрении на злокачественное
                             новообразование.<br>
-                            <b>2,3,4</b> Разделы «Стадия заболевания», «Стадия заболевания по ТNМ»,«Категория пациента» заполняются при
+                            <b>2,3,4</b> Разделы «Стадия заболевания», «Стадия заболевания по ТNМ»,«Повод обращения» заполняются при
                             установленном диагнозе злокачественного новообразования.<br>
                             <b>5</b> Раздел «Гистология» заполняется при установленном диагнозе злокачественного новообразования.<br>
                             Для диагнозов <i>С15, С16, С18, С19, С20, С25, С32, С34, С50, С53, С56, С61, С67</i> указывается, является ли опухоль
@@ -149,6 +147,9 @@
                             противопоказаний.<br>
                             <b>12</b> Указывается в случае оформления отказа от медицинского вмешательства в соответствии со статьёй 20
                             Федерального закона от 21.11.2011 № 323-ФЗ «Об основах охраны здоровья граждан в Российской Федерации».<br>
+                            Если повод обращения выбран {0,1,2,3,4}, то поле "Стадия" обязательно для заполнения, в остальных случаях не заполняется.<br>
+                            Если повод обращения выбран {0}, то поля "Tumor, Nodus, Metastasis" обязательны для заполнения, в остальных случаях  не заполняются.<br>
+                            Атрибут "Наличие отдалённых метастазов (при прогрессировании/рецидиве)" обязателен при Повод обращения = {1,2}, в остальных случаях не заполняется.<br>
                         </div>
                     </div>
                 </msh:ifFormTypeIsNotView>
@@ -167,26 +168,18 @@
     <tiles:put name="javascript" type="string">
         <script type="text/javascript" src="./dwr/interface/OncologyService.js"></script>
         <script type="text/javascript" >
+            //Глобальные массивы
+            var requiredStad = [0,1,2,3,4];  //коды поводов обращения, для которых обязательно указание стадии заболевания
+            var requiredTNM = [0];  //коды поводов обращения, для которых обязательно указание T N M
+            var requiredDistantMts = [1,2];  //коды поводов обращения, для которых обязательно указание Наличие отдалённых метастазов (при прогрессировании/рецидиве)
             //нужные дивы
             var suspicionOncologist = document.getElementById("suspicionOncologist");
             var oncologyDirection = document.getElementById("oncologyDirection");
-            var histologyChb = document.getElementById("histologyChb");
-            var immunoGistMarkChb = document.getElementById("immunoGistMarkChb");
-            var consiliumChb = document.getElementById("consiliumChb");
-            var treatmentChb = document.getElementById("treatmentChb");
             var histologyDiv = document.getElementById("histologyDiv");
             var immunoGistMarkDiv = document.getElementById("immunoGistMarkDiv");
-            var vocOncologyConsiliumDiv = document.getElementById("vocOncologyConsiliumDiv");
             var treatmentDiv = document.getElementById("treatmentDiv");
-            var contraChb = document.getElementById("contraChb");
-            var contraDiv = document.getElementById("contraDiv");
             var disabled=false;
             checkCheckbox();
-            checkCheckboxH();
-            checkCheckboxI();
-            checkCheckboxC();
-            checkCheckboxT();
-            checkCheckboxContra();
             //стили для красоты
             document.getElementById("date1").style="margin-left:51px";
             document.getElementById("date2").style="";
@@ -205,10 +198,14 @@
             //проставить доступность даты отказа/противопоказания в зависимости от чекбокса
             function checkDateContra(chb) {
                 var id=chb.id.replace("c","");
-                if (chb.checked) document.getElementById("date"+id).removeAttribute("disabled");
+                if (chb.checked) {
+                    document.getElementById("date"+id).removeAttribute("disabled");
+                    document.getElementById("date"+id).className += " required";
+                }
                 else {
                     document.getElementById("date"+id).setAttribute("disabled","true");
                     document.getElementById("date"+id).value="";
+                    document.getElementById("date"+id).className=document.getElementById("date"+id).className.replace(new RegExp("required","g"),"");
                 }
             }
             //показать/скрыть примечание
@@ -241,7 +238,7 @@
             OncologyService.getAllDirectionCode(${param.id}, {
                 callback : function(res) {
                     if (res!="##") {
-                        setRowsToContaineroncoT('checkbox','vocOncologyTypeDirection','vocOncologyTypeDirectionDiv','',res.split("#"),disabled,true);
+                        setRowsToContaineroncoT('checkbox','vocOncologyTypeDirection','vocOncologyTypeDirectionDiv','',res.split("#"),disabled,true,true);
                     }
                 }});
             </msh:ifFormTypeAreViewOrEdit>
@@ -249,38 +246,27 @@
            suspicionOncologist.onclick = function() {
                 checkCheckbox();
             };
-            histologyChb.onclick = function() {
-                checkCheckboxH();
-            };
-            immunoGistMarkChb.onclick = function() {
-                checkCheckboxI();
-            };
-            consiliumChb.onclick = function() {
-                checkCheckboxC();
-            };
-            treatmentChb.onclick = function() {
-                checkCheckboxT();
-            };
-            contraChb.onclick = function() {
-                checkCheckboxContra();
-            };
             function load1() {
                 <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
                 if (document.getElementById('vocOncologyTypeDirection1')==null) {
-                    setRowsToContaineroncoT('checkbox', 'vocOncologyTypeDirection', 'vocOncologyTypeDirectionDiv', '', null, false, false);
+                    setRowsToContaineroncoT('checkbox', 'vocOncologyTypeDirection', 'vocOncologyTypeDirectionDiv', '', null, false, false, false);
                     $('date').value = getCurrentDate();
                 }
                 </msh:ifFormTypeIsCreate>
                 }
             function load2() {
+                document.getElementById('vocOncologyReasonTreatDiv').innerHTML='<label><b>Повод обращения (4):</b></label><br>';
+                histologyDiv.innerHTML='';
+                immunoGistMarkDiv.innerHTML='';
+                treatmentDiv.innerHTML='';
                 if (document.getElementById("vocOncologyReasonTreat8")==null) {
-                    setRowsToContaineroncoT('radio', 'vocOncologyReasonTreat', 'vocOncologyReasonTreatDiv', '', null, false, false);
+                    setRowsToContaineroncoT('radio', 'vocOncologyReasonTreat', 'vocOncologyReasonTreatDiv', funcSetStadReauired, null, true, true, true);
                     setHistologyoncoT('vocOncologyN008', 'histologyDiv', null, histologyDiv.innerHTML);
-                    setRowsToContaineroncoT('radio', 'vocOncologyConsilium', 'vocOncologyConsiliumDiv', '', null, false, false);
+
                     OncologyService.getMarkersAndMarks({
                         callback: function (res) {
                             if (res != "##") {
-                                setRowsToConteinerMarkersoncoT(res, 'immunoGistMarkDiv', false, 'vocOncologyN010_11', null);
+                                setRowsToConteinerMarkersoncoT(res, 'immunoGistMarkDiv', 'vocOncologyN010_11', null);
                             }
                         }
                     });
@@ -300,57 +286,33 @@
 
                 }
             }
-            //гистология
-            function checkCheckboxH() {
-                if(histologyChb.checked){
-                    histologyDiv.style.display  = "block";
-                    $('dateBiops').disabled=false;
-                }else {
-                    histologyDiv.style.display  = "none";
-                    $('dateBiops').disabled=true;
-                    $('dateBiops').value="";
-                    cleanHistology();
-                }
-            }
-            //иммуногистихимия
-            function checkCheckboxI() {
-                if(immunoGistMarkChb.checked){
-                    immunoGistMarkDiv.style.display  = "block";
-                }else {
-                    immunoGistMarkDiv.style.display  = "none";
-                    cleanI();
-                }
-            }
+            <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
+            $('dateCons').disabled=true;
+            $('dateBiops').disabled=true;
+            document.getElementById("stadName").disabled=true;
+            document.getElementById("tumorName").disabled=true;
+            document.getElementById("nodusName").disabled=true;
+            document.getElementById("metastasisName").disabled=true;
+            document.getElementById("distantMetastasis").disabled=true;
+            </msh:ifFormTypeIsCreate>
+            <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
+             consiliumAutocomplete.addOnChangeCallback(function() {
+                 checkDateCons();
+            });
+            </msh:ifFormTypeIsNotView>
             //консилиум
-            function checkCheckboxC() {
-                if(consiliumChb.checked){
-                    vocOncologyConsiliumDiv.style.display  = "block";
-                    $('dateCons').disabled=false;
-                }else {
-                    vocOncologyConsiliumDiv.style.display  = "none";
-                    $('dateCons').disabled=true;
-                    $('dateCons').value="";
-                    cleanC();
+            function checkDateCons() {
+                if ($('consiliumName')!=null) {
+                    if ($('consiliumName').value.length > 0 && $('consiliumName').value[0] != '0') {
+                        $('dateCons').disabled = false;
+                        document.getElementById("dateCons").className += " required";
+                    }
+                    else {
+                        $('dateCons').disabled = true;
+                        $('dateCons').value = "";
+                        document.getElementById("dateCons").className = document.getElementById("dateCons").className.replace(new RegExp("required", "g"), "");
+                    }
                 }
-            }
-            //лечение
-            function checkCheckboxT() {
-                if(treatmentChb.checked){
-                    treatmentDiv.style.display  = "block";
-                }else {
-                    treatmentDiv.style.display  = "none";
-                    cleanTreatment();
-                }
-            }
-            //отказы/пр-я
-            function checkCheckboxContra() {
-                if(contraChb.checked){
-                    contraDiv.style.display  = "block";
-                }else {
-                    contraDiv.style.display  = "none";
-                    cleanContra();
-                }
-                for(var i=1; i<=6; i++) checkDateContra(document.getElementById("c"+i));
             }
             //проставить диагноз и ФИО пациента
             <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
@@ -480,23 +442,28 @@
                 ds=ds.substring(0,ds.indexOf(" "));
                 btn.value='Создание...';
                 var patientCategory=getValueVocRadiooncoT('vocOncologyReasonTreat','vocOncologyReasonTreat');
-                if ($('stad').value==null || $('stad').value=='') {
-                    alert("Заполните стадию заболевания!");
+                if (patientCategory==-1) {
+                    alert("Заполните категорию пациента!");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if ($('tumor').value==null || $('tumor').value=='') {
-                    alert("Заполните Tumor!");
+                else if (requiredStad.include(patientCategory) &&  ($('stad').value==null || $('stad').value=='')) {
+                    alert("Заполните стадию заболевания! Для данного повода обращения она обязательна!");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if ($('nodus').value==null || $('nodus').value=='') {
-                    alert("Заполните Nodus!");
+                else if (requiredTNM.include(patientCategory) && ($('tumor').value==null || $('tumor').value=='')) {
+                    alert("Заполните Tumor! Для данного повода обращения обязательно!");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if ($('metastasis').value==null || $('metastasis').value=='') {
-                    alert("Заполните Metastasis!");
+                else if (requiredTNM.include(patientCategory) && ($('nodus').value==null || $('nodus').value=='')) {
+                    alert("Заполните Nodus! Для данного повода обращения обязательно!");
+                    btn.removeAttribute("disabled");
+                    btn.value='Создать';
+                }
+                else if (requiredTNM.include(patientCategory) && ($('metastasis').value==null || $('metastasis').value=='')) {
+                    alert("Заполните Metastasis! Для данного повода обращения обязательно!");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
@@ -505,18 +472,13 @@
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if (patientCategory==-1) {
-                    alert("Заполните категорию пациента!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (histologyChb.checked && $('dateBiops').value=='') {
+                else if ((histologyChb1.checked || histologyChb2.checked || histologyChb3.checked) && $('dateBiops').value=='') {
                     alert("Отмечена гистология, введите дату взятия биопсийного материала!");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if (histologyChb.checked && !histologyChb1.checked && !histologyChb2.checked && !histologyChb3.checked) {
-                    alert("Отмечена гистология, выберите гистологический тип/степени дифференцированности!");
+                else if ($('dateBiops').value!='' && !histologyChb1.checked && !histologyChb2.checked && !histologyChb3.checked) {
+                    alert("Введена дата гистологии, выберите гистологический тип/степени дифференцированности!");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
@@ -643,23 +605,18 @@
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if ($('dateCons').value!='' && getValueVocRadiooncoT('vocOncologyConsilium')==-1) {
-                    alert("Заполнена дата проведения консилиума, выберите, что было выполнено на консилиуме.");
+                else if ($('consilium').value=='') {
+                    alert("Введите данные о консилиуме!");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if (getValueVocRadiooncoT('vocOncologyConsilium')!=-1 && $('dateCons').value=='') {
+                else if ($('consiliumName').value.length>0 && $('consiliumName').value[0]!='0' && $('dateCons').value=='') {
                     alert("Отмечено, что было выполнено на консилиуме. Заполните дату проведения консилиума.");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
                 else if (vocOncologyN013_1.checked && getValueVocRadiooncoT('vocOncologyN014')==-1) {
                     alert("Отмечено хирургическое лечение, выберите подпункт.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (vocOncologyN013_2.checked && getValueVocRadiooncoT('vocOncologyN015')==-1) {
-                    alert("Отмечена лекарственная противоопухолевая терапия, выберите подпункт.");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
@@ -716,17 +673,12 @@
                     //маркёры
                     for (var i=1; i<=12; i++) saveHistString(2,"vocOncologyN010_11"+i,i,"vocOncologyN010_11");
                     $('histString').value=histString;
-                    //консилиум
-                    if (getValueVocRadiooncoT('vocOncologyConsilium')!=-1) $('consilium').value=getValueVocRadiooncoT('vocOncologyConsilium','vocOncologyConsilium');
                     //лечение
                     if (getValueVocRadiooncoT('vocOncologyN014')!=-1) {
                         $('surgTreatment').value=getValueVocRadiooncoT('vocOncologyN014','vocOncologyN014');
                         $('typeTreatment').value=document.getElementById("vocOncologyN013_1").value;
                     }
-                    if (getValueVocRadiooncoT('vocOncologyN015')!=-1) {
-                        $('lineDrugTherapy').value=getValueVocRadiooncoT('vocOncologyN015','vocOncologyN015');
-                        $('typeTreatment').value=document.getElementById("vocOncologyN013_2").value;
-                    }
+                    if (document.getElementById("vocOncologyN013_2").checked) $('typeTreatment').value=document.getElementById("vocOncologyN013_2").value;
                     if (document.getElementById("vocOncologyN013_3").checked) $('typeTreatment').value=document.getElementById("vocOncologyN013_3").value;
                     //отказы и пр-я
                     $('contraString').value="";
@@ -757,35 +709,110 @@
                 var temp = document.getElementById(name);
                 return temp.value;
             }
-            //обязательные поля - проставить стиль
-            if (document.getElementById("stadName")) document.getElementById("stadName").className += " required";
-            if (document.getElementById("tumorName")) document.getElementById("tumorName").className += " required";
-            if (document.getElementById("nodusName")) document.getElementById("nodusName").className += " required";
-            if (document.getElementById("metastasisName")) document.getElementById("metastasisName").className += " required";
-
+            //Если повод обращения выбран {0,1,2,3,4}, то поле "Стадия" обязательно для заполнения, в остальных случаях  не заполняется.
+            function funcSetStadReauired(rb) {
+                if (document.getElementById("stadName")) {
+                    if (requiredStad.include(rb.value)) {
+                        document.getElementById("stadName").className += " required";
+                        document.getElementById("stadName").disabled = false;
+                    }
+                    else {
+                        document.getElementById("stadName").className=document.getElementById("stadName").className.replace(new RegExp("required","g"),"");
+                        $('stadName').value='';
+                        document.getElementById("stadName").disabled=true;
+                    }
+                }
+                funcSetTNMReauired(rb);
+                funcSetOtdMtsEnabled(rb);
+            }
+            //Если повод обращения выбран {0}, то поля "Tumor, Nodus, Metastasis" обязательны для заполнения, в остальных случаях  не заполняются.
+            function funcSetTNMReauired(rb) {
+                if (document.getElementById("tumorName")) {
+                    if (requiredTNM.include(rb.value)) {
+                        document.getElementById("tumorName").className += " required";
+                        document.getElementById("tumorName").disabled = false;
+                    }
+                    else {
+                        document.getElementById("tumorName").className=document.getElementById("tumorName").className.replace(new RegExp("required","g"),"");
+                        $('tumorName').value='';
+                        document.getElementById("tumorName").disabled=true;
+                    }
+                }
+                if (document.getElementById("nodusName")) {
+                    if (requiredTNM.include(rb.value)) {
+                        document.getElementById("nodusName").className += " required";
+                        document.getElementById("nodusName").disabled = false;
+                    }
+                    else {
+                        document.getElementById("nodusName").className = document.getElementById("nodusName").className.replace(new RegExp("required", "g"), "");
+                        $('nodusName').value='';
+                        document.getElementById("nodusName").disabled=true;
+                    }
+                }
+                if (document.getElementById("metastasisName")) {
+                    if (requiredTNM.include(rb.value)) {
+                        document.getElementById("metastasisName").className += " required";
+                        document.getElementById("metastasisName").disabled = false;
+                    }
+                    else {
+                        document.getElementById("metastasisName").className=document.getElementById("metastasisName").className.replace(new RegExp("required","g"),"");
+                        $('metastasisName').value='';
+                        document.getElementById("metastasisName").disabled=true;
+                    }
+                }
+            }
+            document.getElementById("distantMetastasis").setAttribute("disabled",true);
+            if (document.getElementById("consiliumName")) document.getElementById("consiliumName").className += " required";
+            //Атрибут "Наличие отдалённых метастазов (при прогрессировании/рецидиве)" доступен при Повод обращения = {1,2},  в остальных случаях не заполняется.
+            function funcSetOtdMtsEnabled(rb) {
+                if (document.getElementById("distantMetastasis")) {
+                    if (requiredDistantMts.include(rb.value)) {
+                        document.getElementById("distantMetastasis").removeAttribute("disabled");
+                        document.getElementById("distantMetastasis").disabled = false;
+                    }
+                    else {
+                        document.getElementById("distantMetastasis").setAttribute("disabled", true);
+                        document.getElementById("distantMetastasis").checked=false;
+                        document.getElementById("distantMetastasis").disabled=true;
+                    }
+                }
+                funcSetTNMReauired(rb);
+            }
             //Milamesher 02102018
             //type - radio/checkbox; vocname - откуда брать данные; div - название контейнера; ids - массив с id checked, disabled, iscode = code or id from voc
-            function setRowsToContaineroncoT(type,voc,divId,func,ids,disabled,isCodeorId) {
+            function setRowsToContaineroncoT(type,voc,divId,func,ids,isCodeorId,groupByCode) {
                 var txt="";
-                VocService.getAllValueByVocs(voc,isCodeorId,{
+                OncologyService.getVocInJson(voc,isCodeorId,groupByCode,{
                     callback: function(aResult) {
-                        var vocRes=JSON.parse(aResult).vocs[0];
-                        for (var ind1 = 0; ind1 < vocRes.values.length; ind1++) {
-                            var vocVal = vocRes.values[ind1];
-                            txt+="<td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">";
+                        var vocRes=JSON.parse(aResult);
+                        txt+="<table><tbody>";
+                        for (var ind1 = 0; ind1 < vocRes.length; ind1++) {
+                            txt+"<tr>";
+                            var vocVal = vocRes[ind1];
+                            txt+="<td id='td" + voc + vocVal.id + "' colspan=\"1\">";
                             txt+="<input type='"+type+"' name='" + voc + "' id='" + voc + vocVal.id;
-                            if (disabled)   txt += "' disabled="+disabled +  " value='" + vocVal.id + "'";
-                            else txt +="' value='" + vocVal.id + "'";
+                            txt +="' value='" + vocVal.id + "'";
                             if (ids!=null) {
                                 for (var i=0; i<ids.length; i++) {
                                     if (ids[i]==vocVal.id) txt +=" checked ";
                                 }
-                                //if(ids.length==1 && vocVal.id==ids[0])  txt +=" checked ";
                             }
-                            if (func!="") txt += " onclick="+func +"(this)>" + vocVal.name; else txt += ">" + vocVal.name;
-                            txt+="</td><br>";
+                            txt += ">" + vocVal.name;
+                            txt+="</td><tr>";
                         }
+                        txt+="</tbody><table>";
                         document.getElementById(divId).innerHTML+=txt;
+                        if (func!='') {
+                            for (var ind1 = 0; ind1 < vocRes.length; ind1++) {
+                                var id = vocRes[ind1].id;
+                                if (document.getElementById(voc+id)) document.getElementById(voc+id).onclick =  function () {
+                                    func(this);
+                                };
+                                if (document.getElementById('td'+voc+id)) document.getElementById('td'+voc+id).onclick =  function () {
+                                    this.childNodes[0].checked='checked'; func(this.childNodes[0]);
+                                };
+                            }
+                        }
                         transform();
                         <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
                             loadCaseAll(voc);
@@ -801,184 +828,159 @@
                     }
                 }
             }
-            //загрузка всех чекбоксов и рб
-            function loadCaseAll(voc) {
-                if (voc=='vocOncologyReasonTreat') {
-                    if ($('isFirst').value=='true') document.getElementsByName("typeFirstOrNot")[0].checked='checked';
-                    else document.getElementsByName("typeFirstOrNot")[1].checked='checked';
-                    document.getElementById("vocOncologyReasonTreat"+$('vocOncologyReasonTreat').value).checked='checked';
-                    contraChb.checked='checked';
-                    checkCheckboxContra();
-                    OncologyService.getContras($('id').value, {
+            function loadvocOncologyReasonTreat() {
+                if ($('isFirst').value == 'true') document.getElementsByName("typeFirstOrNot")[0].checked = 'checked';
+                else document.getElementsByName("typeFirstOrNot")[1].checked = 'checked';
+                //vocOncologyReasonTreat - по id получить code
+                if ($('vocOncologyReasonTreat').value != '') {
+                    OncologyService.getCodeOncology($('vocOncologyReasonTreat').value, 'vocOncologyReasonTreat', {
                         callback: function (res) {
-                            if (res != "##") {
-                                var row = res.split("!");
-                                for (var i = 0; i < row.length; i++) {
-                                    var vals = row[i].split("#");
-                                    if (vals[0] != null && vals[0] != '' && vals[1] != null && vals[1] != '' && vals[2] != null && vals[2] != '') {
-                                        document.getElementById("c" + vals[0]).checked = 'checked';
-                                        <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-                                        <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
-                                            document.getElementById("date" + vals[0]).value = vals[1];
-                                            document.getElementById("date" + vals[0] + "ReadOnly").value = vals[2];
-                                        </msh:ifFormTypeIsView>
-                                        <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
-                                            document.getElementById("date" + vals[0]).value = vals[2];
-                                        </msh:ifFormTypeIsNotView>
-                                        </msh:ifFormTypeAreViewOrEdit>
-
-                                    }
+                            if (res != '') {
+                                $('vocOncologyReasonTreat').value = res.split('#')[0];
+                                if (document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value)) {
+                                    document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value).checked = 'checked';
+                                    funcSetStadReauired(document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value));
                                 }
                             }
-                            for(var i=1; i<=6; i++) checkDateContra(document.getElementById("c"+i));
-                            transform();
-                        }});
-                    <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
-                    document.getElementsByName("typeFirstOrNot")[0].setAttribute("disabled",true);
-                    document.getElementsByName("typeFirstOrNot")[1].setAttribute("disabled",true);
-                    for (var i=0; i<document.getElementById('vocOncologyReasonTreatDiv').childNodes.length; i++)
-                        document.getElementById('vocOncologyReasonTreatDiv').childNodes[i].disabled=true;
-                    for (var i=0; i<document.getElementById('contraDiv').childNodes.length; i++)
-                        document.getElementById('contraDiv').childNodes[i].disabled=true;
-                    document.getElementById('contraChb').setAttribute("disabled",true);
-                    </msh:ifFormTypeIsView>
-                }
-                else if (voc=='vocOncologyN008') {
-                    histologyChb.checked='checked';
-                    immunoGistMarkChb.checked='checked';
-                    consiliumChb.checked='checked';
-                    checkCheckboxH();
-                    checkCheckboxI();
-                    checkCheckboxC();
-                    <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
-                    document.getElementById('histologyChb').setAttribute("disabled",true);
-                    document.getElementById('immunoGistMarkChb').setAttribute("disabled",true);
-                    document.getElementById('consiliumChb').setAttribute("disabled",true);
-                    document.getElementById('dateBiops').setAttribute("disabled",true);
-                    document.getElementById('histologyChb1').setAttribute("disabled",true);
-                    document.getElementById('histologyChb2').setAttribute("disabled",true);
-                    document.getElementById('histologyChb3').setAttribute("disabled",true);
-                    </msh:ifFormTypeIsView>
-                    OncologyService.getHistology($('id').value,{
-                        callback : function(res) {
-                            if (res!="##") {
-                                var row = res.split("!");
-                                for (var i = 0; i < row.length-1; i++) {
-                                    var vals = row[i].split("#");
-                                    var voc = (vals[0]=="1")? 'vocOncologyN008' : 'vocOncologyN010_11';
-                                    document.getElementById(voc+vals[1]).checked='checked';
-                                }
-                                //checked для групп
-                                if (getValueVocRadiooncoT("epit","vocOncologyN008")!=-1 || getValueVocRadiooncoT("carc","vocOncologyN008")!=-1 ||
-                                    getValueVocRadiooncoT("pochech","vocOncologyN008")!=-1 || getValueVocRadiooncoT("endom","vocOncologyN008")!=-1 ||
-                                    getValueVocRadiooncoT("rad5","vocOncologyN008")!=-1) {
-                                    document.getElementById('histologyChb1').checked='checked';
-                                    <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-                                    <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
-                                    document.getElementById('histologyChb1').removeAttribute("disabled");
-                                    setEnabledH(1);
-                                    </msh:ifFormTypeIsNotView>
-                                    </msh:ifFormTypeAreViewOrEdit>
-                                }
-                                if (getValueVocRadiooncoT("svetloklet","vocOncologyN008")!=-1 || getValueVocRadiooncoT("melkoklet","vocOncologyN008")!=-1 ||
-                                    getValueVocRadiooncoT("bazalklet","vocOncologyN008")!=-1 || getValueVocRadiooncoT("ploskoklet","vocOncologyN008")!=-1) {
-                                    document.getElementById('histologyChb2').checked = 'checked';
-                                    <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-                                    <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
-                                    document.getElementById('histologyChb2').removeAttribute("disabled");
-                                    setEnabledH(2);
-                                    </msh:ifFormTypeIsNotView>
-                                    </msh:ifFormTypeAreViewOrEdit>
-                                }
-                                if (getValueVocRadiooncoT("diff","vocOncologyN008")!=-1) {
-                                    document.getElementById('histologyChb3').checked = 'checked';
-                                    <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-                                    <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
-                                    document.getElementById('histologyChb3').removeAttribute("disabled");
-                                    setEnabledH(3);
-                                    </msh:ifFormTypeIsNotView>
-                                    </msh:ifFormTypeAreViewOrEdit>
-                                }
-                            }
-                            <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-                            <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
-                            for (var i=0; i<document.getElementById('immunoGistMarkDiv').childNodes.length; i++)
-                                document.getElementById('immunoGistMarkDiv').childNodes[i].disabled=true;
-                            //setEnabledH(2);
-                            </msh:ifFormTypeIsView>
-                            </msh:ifFormTypeAreViewOrEdit>
-                            transform();
-                            hideUnChecked();
                         }
                     });
                 }
-                else if (voc=='vocOncologyConsilium') {
-                    if ($('consilium').value!=null && $('consilium').value!=''  && $('consilium').value!='0') document.getElementById("vocOncologyConsilium"+$('consilium').value).checked='checked';
-                    <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
-                    for (var i=0; i<document.getElementById('vocOncologyConsiliumDiv').childNodes.length; i++)
-                        document.getElementById('vocOncologyConsiliumDiv').childNodes[i].disabled=true;
-                    </msh:ifFormTypeIsView>
-                }
-                else if (voc=='vocOncologyN013') {
-                    <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-                    treatmentChb.checked='checked';
-                    </msh:ifFormTypeAreViewOrEdit>
-                    checkCheckboxT();
-                    if ($('typeTreatment').value!=null && $('typeTreatment').value!='' && $('typeTreatment').value!='0') {
-                        var val=findAndSetTypeOfTreatment();
-                        if (val!=-1) {
-                            if (val == '1' && $('surgTreatment').value != null && $('surgTreatment').value != '' && $('surgTreatment').value != '0') {
-                                document.getElementById("vocOncologyN014" + $('surgTreatment').value).checked = 'checked';
-                                for (var i = 0; i < document.getElementsByName("vocOncologyN014").length; i++) (document.getElementsByName("vocOncologyN014")[i]).removeAttribute("disabled");
+            }
+            function loadConsilium() {
+                //voconcologyconsilium
+                if ($('consilium').value!='') {
+                    OncologyService.getCodeOncology($('consilium').value, 'voconcologyconsilium', {
+                        callback: function (res) {
+                            if (res != '')
+                                $('consilium').value = res.split('#')[0];
+                            var name=res.split('#')[0]+' '+res.split('#')[1];
+                            <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
+                            var indexSpace = name.indexOf(' ');
+                            if (indexSpace != -1) name=name.substring(indexSpace+1);
+                            </msh:ifFormTypeIsView>
+                            if ($('consiliumName')!=null) {
+                                $('consiliumName').value = name;
+                                $('dateCons').disabled=false;
+                                document.getElementById("dateCons").className += " required";
                             }
-                            if (val == '2' && $('lineDrugTherapy').value != null && $('lineDrugTherapy').value != '' && $('lineDrugTherapy').value != '0') {
-                                document.getElementById("vocOncologyN015" + $('lineDrugTherapy').value).checked = 'checked';
-                                for (var i = 0; i < document.getElementsByName("vocOncologyN015").length; i++) (document.getElementsByName("vocOncologyN015")[i]).removeAttribute("disabled");
+                            else if (!$('consiliumReadOnly')) {
+                                <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
+                                    document.getElementById('vocOncologyConsiliumDiv').innerHTML = document.getElementById('vocOncologyConsiliumDiv').innerHTML
+                                        .replace(document.getElementById('consiliumLabel').innerHTML + '</span>', document.getElementById('consiliumLabel').innerHTML + '</span>' +
+                                            '<input title="' + name + ' " class="viewOnly" id="consiliumReadOnly" name="consiliumReadOnly" size="75" readonly="readonly" value="' + name + '">');
+                                    var dateConstmp = $('dateCons').value.split("-");
+                                    if ($('dateConsReadOnly') && dateConstmp!='') {
+                                        var d1 = new Date(dateConstmp[0], dateConstmp[1] - 1, dateConstmp[2]);
+                                        $('dateConsReadOnly').value=d1.toLocaleDateString();
+                                }
+                                </msh:ifFormTypeIsView>
                             }
+                            else if ($('consiliumReadOnly')!=null) {
+                                <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
+                                $('consiliumReadOnly').value=name;
+                                </msh:ifFormTypeIsView>
+                            }
+                            checkDateCons();
                         }
-                    }
-                    <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
-                    for (var i=0; i<document.getElementById('treatmentDiv').childNodes.length; i++)
-                        document.getElementById('treatmentDiv').childNodes[i].disabled=true;
-                    document.getElementById('treatmentChb').setAttribute("disabled",true);
-                    </msh:ifFormTypeIsView>
+                    });
                 }
             }
-            //скрыть ненужное при ред-ии/просмотре
-            function hideUnChecked() {
-                //если ред-е/просмотр и нет контейнеров - снимаем галочки
-                <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-                //нет биопсии
-                if (getValueVocRadiooncoT("epit","vocOncologyN008")==-1 && getValueVocRadiooncoT("carc","vocOncologyN008")==-1 &&
-                    getValueVocRadiooncoT("pochech","vocOncologyN008")==-1 && getValueVocRadiooncoT("endom","vocOncologyN008")==-1 &&
-                    getValueVocRadiooncoT("rad5","vocOncologyN008")==-1 && getValueVocRadiooncoT("svetloklet","vocOncologyN008")==-1 &&
-                    getValueVocRadiooncoT("melkoklet","vocOncologyN008")==-1 && getValueVocRadiooncoT("bazalklet","vocOncologyN008")==-1 &&
-                    getValueVocRadiooncoT("ploskoklet","vocOncologyN008")==-1 && getValueVocRadiooncoT("diff","vocOncologyN008")==-1) {
-                    document.getElementById('histologyChb').checked=false;
-                    checkCheckboxH();
+            function loadContras() {
+                OncologyService.getContras($('id').value, {
+                    callback: function (res) {
+                        if (res != "##") {
+                            var row = res.split("!");
+                            for (var i = 0; i < row.length; i++) {
+                                var vals = row[i].split("#");
+                                if (vals[0] != null && vals[0] != '' && vals[1] != null && vals[1] != '' && vals[2] != null && vals[2] != '') {
+                                    document.getElementById("c" + vals[0]).checked = 'checked';
+                                    <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
+                                    <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
+                                    document.getElementById("date" + vals[0]).value = vals[1];
+                                    document.getElementById("date" + vals[0] + "ReadOnly").value = vals[2];
+                                    </msh:ifFormTypeIsView>
+                                    <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
+                                    document.getElementById("date" + vals[0]).value = vals[2];
+                                    </msh:ifFormTypeIsNotView>
+                                    </msh:ifFormTypeAreViewOrEdit>
+
+                                }
+                            }
+                        }
+                        for(var i=1; i<=6; i++) checkDateContra(document.getElementById("c"+i));
+                        transform();
+                        <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
+                        disableAll();
+                        </msh:ifFormTypeIsView>
+                    }});
+            }
+            function loadHist() {
+                OncologyService.getHistology($('id').value,{
+                    callback : function(res) {
+                        if (res!="##") {
+                            var row = res.split("!");
+                            for (var i = 0; i < row.length-1; i++) {
+                                var vals = row[i].split("#");
+                                var voc = (vals[0]=="1")? 'vocOncologyN008' : 'vocOncologyN010_11';
+                                if (document.getElementById(voc+vals[1])) document.getElementById(voc+vals[1]).checked='checked';
+                            }
+                            //checked для групп
+                            if (getValueVocRadiooncoT("epit","vocOncologyN008")!=-1 || getValueVocRadiooncoT("carc","vocOncologyN008")!=-1 ||
+                                getValueVocRadiooncoT("pochech","vocOncologyN008")!=-1 || getValueVocRadiooncoT("endom","vocOncologyN008")!=-1 ||
+                                getValueVocRadiooncoT("rad5","vocOncologyN008")!=-1) {
+                                document.getElementById('histologyChb1').checked='checked';
+                                setEnabledH(1);
+                            }
+                            if (getValueVocRadiooncoT("svetloklet","vocOncologyN008")!=-1 || getValueVocRadiooncoT("melkoklet","vocOncologyN008")!=-1 ||
+                                getValueVocRadiooncoT("bazalklet","vocOncologyN008")!=-1 || getValueVocRadiooncoT("ploskoklet","vocOncologyN008")!=-1) {
+                                document.getElementById('histologyChb2').checked = 'checked';
+                                setEnabledH(2);
+                            }
+
+                            if (getValueVocRadiooncoT("diff","vocOncologyN008")!=-1) {
+                                document.getElementById('histologyChb3').checked = 'checked';
+                                setEnabledH(3);
+                            }
+                        }
+                        transform();
+                        setDateBiopsRequired();
+                        <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
+                        disableAll();
+                        </msh:ifFormTypeIsView>
+                    }
+                });
+            }
+            function loadTreatment() {
+                if ($('typeTreatment').value!=null && $('typeTreatment').value!='' && $('typeTreatment').value!='0') {
+                    var val=findAndSetTypeOfTreatment();
+                    if (val!=-1) {
+                        if (val == '1' && $('surgTreatment').value != null && $('surgTreatment').value != '' && $('surgTreatment').value != '0') {
+                            if (document.getElementById("vocOncologyN014" + $('surgTreatment').value))
+                                document.getElementById("vocOncologyN014" + $('surgTreatment').value).checked = 'checked';
+                            for (var i = 0; i < document.getElementsByName("vocOncologyN014").length; i++) (document.getElementsByName("vocOncologyN014")[i]).removeAttribute("disabled");
+                        }
+                    }
                 }
-                //нет маркёров
-                if (getValueVocRadiooncoT("vocOncologyN010_111","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_1112","vocOncologyN010_11")==-1 &&
-                    getValueVocRadiooncoT("vocOncologyN010_119","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_1110","vocOncologyN010_11")==-1 &&
-                    getValueVocRadiooncoT("vocOncologyN010_118","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_114","vocOncologyN010_11")==-1 &&
-                    getValueVocRadiooncoT("vocOncologyN010_115","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_116","vocOncologyN010_11")==-1 &&
-                    getValueVocRadiooncoT("vocOncologyN010_112","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_113","vocOncologyN010_11")==-1 &&
-                    getValueVocRadiooncoT("vocOncologyN010_117","vocOncologyN010_11")==-1) {
-                    document.getElementById('immunoGistMarkChb').checked = false;
-                    checkCheckboxI();
+            }
+            //загрузка всех чекбоксов и рб
+            function loadCaseAll(voc) {
+                if (voc=='vocOncologyReasonTreat') {
+                    loadvocOncologyReasonTreat();
+                    loadConsilium();
+                    loadContras();
                 }
-                //нет консилиума
-                if (getValueVocRadiooncoT('vocOncologyConsilium')==-1) {
-                    document.getElementById('consiliumChb').checked = false;
-                    checkCheckboxC();
-                }
-                //нет противопоказаний/отказов=
-                if (!document.getElementById("c1").checked && !document.getElementById("c2").checked && !document.getElementById("c3").checked &&
-                    !document.getElementById("c4").checked && !document.getElementById("c5").checked && !document.getElementById("c6").checked) {
-                    document.getElementById('contraChb').checked = false;
-                    checkCheckboxContra();
-                }
-                    </msh:ifFormTypeAreViewOrEdit>
+                else if (voc=='vocOncologyN008') loadHist();
+                else if (voc=='vocOncologyN013') loadTreatment();
+            }
+            //найти правильный чекбокс в лечении (id - это value)
+            function findAndSetTypeOfTreatment() {
+                var ind=-1;
+                var mas=document.getElementsByName("vocOncologyN013");
+                if (mas[0].value==$('typeTreatment').value) ind=1;
+                if (mas[1].value==$('typeTreatment').value) ind=2;
+                if (mas[2].value==$('typeTreatment').value) ind=3;
+                if (ind!=-1 &&  document.getElementById("vocOncologyN013_"+ind)) document.getElementById("vocOncologyN013_"+ind).checked='checked';
+                return ind;
             }
             //проставить доступность у разделов гистологии
             function setEnabledH(t) {
@@ -996,16 +998,6 @@
                     for (var i = 0; i < document.getElementsByName("ploskoklet").length; i++) (document.getElementsByName("ploskoklet")[i]).removeAttribute("disabled");
                 }
                 else if (t=='3') for (var i = 0; i < document.getElementsByName("diff").length; i++) (document.getElementsByName("diff")[i]).removeAttribute("disabled");
-            }
-            //найти правильный чекбокс в лечении (id - это value)
-            function findAndSetTypeOfTreatment() {
-                var ind=-1;
-                var mas=document.getElementsByName("vocOncologyN013");
-                if (mas[0].value==$('typeTreatment').value) ind=1;
-                if (mas[1].value==$('typeTreatment').value) ind=2;
-                if (mas[2].value==$('typeTreatment').value) ind=3;
-                if (ind!=-1) document.getElementById("vocOncologyN013_"+ind).checked='checked';
-                return ind;
             }
             //получить значения группы радиобаттонов
             function getValueVocRadiooncoT(name,voc) {
@@ -1032,9 +1024,9 @@
             * txt - innerHtml
             * */
             function setHistologyoncoT(voc,divId,ids,txt) {
-                VocService.getAllValueByVocs(voc,true, {
+                OncologyService.getVocInJson(voc,true,true, {
                     callback: function (aResult) {
-                        setHistologyTypeoncoT(voc,JSON.parse(aResult).vocs[0],divId,ids,1,false,false,false,txt);
+                        setHistologyTypeoncoT(voc,JSON.parse(aResult),divId,ids,1,false,false,false,txt);
                         <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
                             loadCaseAll(voc);
                         </msh:ifFormTypeAreViewOrEdit>
@@ -1043,85 +1035,118 @@
             }
             //гистология - контейнер
             function setHistologyTypeoncoT(voc,vocRes,divId,ids,type,type1,type2,type3,txt) {
-                for (var ind1 = 0; ind1 < vocRes.values.length; ind1++) {
-                    var vocVal = vocRes.values[ind1];
+                for (var ind1 = 0; ind1 < vocRes.length; ind1++) {
+                    var vocVal = vocRes[ind1];
                     //проверка кодов для типов
                     if (type==1) { //гистологический тип опухоли
                         if (!type1) {
-                            txt+="<br><td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">" +
-                                "                    <input type=\"checkBox\" name=\"histologyChb1\" id=\"histologyChb1\"> <b>Гистологический тип опухоли:</b>\n" +
-                                "                </td><br>";
+                            txt+="<td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">" +
+                                "                    <input type=\"checkBox\" name=\"histologyChb1\" id=\"histologyChb1\"> " +
+                                "<label onclick=\"document.getElementById('histologyChb1').click();\"><b>Гистологический тип опухоли:</b></label>\n" +
+                                "                </td></tr>";
+                            txt+="<table><tbody><tr>";
                             type1=true;
                         }
-                        txt += "<td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">";
+                        var tmpFlag=false; //флаг, что заполнили строку значениями
+                        txt += "#<td onclick=\"if (document.getElementById('histologyChb1').checked) this.childNodes[0].checked='checked';\" colspan=\"1\">#";
                         if (vocVal.id == '1' || vocVal.id == '2') {//Эпит. и не эпит - в одну группу радиобаттонов
                             txt += "<input type='" + 'radio' + "' name='" + 'epit' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            if (vocVal.id == '2') txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            if (vocVal.id == '2') txt +="</tr>";
+                            tmpFlag=true;
                         }
                         if (vocVal.id == '24' || vocVal.id == '25') {//аденокарценома/неаденокарценома
                             txt += "<input type='" + 'radio' + "' name='" + 'carc' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            if (vocVal.id == '25') txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            if (vocVal.id == '25') txt +="</tr>";
+                            tmpFlag=true;
                         }
                         if (vocVal.id == '11' || vocVal.id == '12') {//почечно/непочечно
                             txt += "<input type='" + 'radio' + "' name='" + 'pochech' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            if (vocVal.id == '12') txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            if (vocVal.id == '12') txt +="</tr>";
+                            tmpFlag=true;
                         }
                         if (vocVal.id == '22' || vocVal.id == '23') {//эндометриод/неэндометриод
                             txt += "<input type='" + 'radio' + "' name='" + 'endom' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            if (vocVal.id == '23') txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            if (vocVal.id == '23') txt +="</tr>";
+                            tmpFlag=true;
                         }
                         if (vocVal.id == '13' || vocVal.id == '14' || vocVal.id == '15' || vocVal.id == '16' || vocVal.id == '17') {//5 чекбоксов
                             txt += "<input type='" + 'radio' + "' name='" + 'rad5' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            txt +="</tr>";
+                            tmpFlag=true;
                         }
+                        if (tmpFlag)
+                            txt=txt.replace("#<td onclick","<td onclick").replace("colspan=\"1\">#","colspan=\"1\">");
+                        else
+                            txt=txt.replace("#<td onclick=\"if (document.getElementById('histologyChb1').checked) this.childNodes[0].checked='checked';\" colspan=\"1\">#","");
                     }
                     if (type==2) { //гистологический тип клеток
                         if (!type2) {
-                            txt+="<br><td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">\n" +
-                                "                    <input type=\"checkBox\" name=\"histologyChb2\" id=\"histologyChb2\"> <b>Гистологический тип клеток:</b>\n" +
-                                "                </td><br>";
+                            txt+="</tbody></table>";
+                            txt+="<td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">\n" +
+                                "                    <input type=\"checkBox\" name=\"histologyChb2\" id=\"histologyChb2\"> " +
+                                "<label onclick=\"document.getElementById('histologyChb2').click();\"><b>Гистологический тип клеток:</b></label>\n" +
+                                "                </td></tr>";
+                            txt+="<table><tbody><tr>";
                             type2=true;
                         }
-                        txt += "<td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">";
+                        var tmpFlag=false;
+                        txt += "#<td onclick=\"if (document.getElementById('histologyChb2').checked) this.childNodes[0].checked='checked';\" colspan=\"1\">#";
                         if (vocVal.id == '3' || vocVal.id == '4') {//светлоклет/несветлоклет
                             txt += "<input type='" + 'radio' + "' name='" + 'svetloklet' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            if (vocVal.id == '4') txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            if (vocVal.id == '4') txt +="</tr>";
+                            tmpFlag=true;
                         }
                         if (vocVal.id == '9' || vocVal.id == '10') {//мелкоклет/немелкоклет
                             txt += "<input type='" + 'radio' + "' name='" + 'melkoklet' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            if (vocVal.id == '10') txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            if (vocVal.id == '10') txt +="</tr>";
+                            tmpFlag=true;
                         }
                         if (vocVal.id == '18' || vocVal.id == '19') {//базальноклет/небазальноклет
                             txt += "<input type='" + 'radio' + "' name='" + 'bazalklet' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            if (vocVal.id == '19') txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            if (vocVal.id == '19') txt +="</tr>";
+                            tmpFlag=true;
                         }
                         if (vocVal.id == '20' || vocVal.id == '21') {//плоскоклет/неплоскоклет
                             txt += "<input type='" + 'radio' + "' name='" + 'ploskoklet' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            if (vocVal.id == '21') txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            if (vocVal.id == '21') txt +="</tr>";
+                            tmpFlag=true;
                         }
+                        if (tmpFlag)
+                            txt=txt.replace("#<td onclick","<td onclick").replace("colspan=\"1\">#","colspan=\"1\">");
+                        else
+                            txt=txt.replace("#<td onclick=\"if (document.getElementById('histologyChb2').checked) this.childNodes[0].checked='checked';\" colspan=\"1\">#","");
                     }
                     if (type==3) { //степень дифференцированности ткани опухоли
                         if (!type3) {
-                            txt+="<br><td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">\n" +
-                                "                    <input type=\"checkBox\" name=\"histologyChb3\" id=\"histologyChb3\"> <b>Степень дифференцированности ткани опухоли:</b>\n" +
-                                "                </td><br>";
+                            txt+="</tbody></table>";
+                            txt+="<tr><td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">\n" +
+                                "                    <input type=\"checkBox\" name=\"histologyChb3\" id=\"histologyChb3\">" +
+                                "<label onclick=\"document.getElementById('histologyChb3').click();\"> <b>Степень дифференцированности ткани опухоли:</b></label>\n" +
+                                "                </td></tr>";
+                            txt+="<table><tbody><tr>";
                             type3=true;
                         }
-                        txt += "<td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">";
+                        var tmpFlag=false;
+                        txt += "#<td onclick=\"if (document.getElementById('histologyChb3').checked) this.childNodes[0].checked='checked';\" colspan=\"1\">#";
                         if (vocVal.id == '5' || vocVal.id == '6' || vocVal.id == '7' || vocVal.id == '8') {//низко/умеренно/высоко/не опр
                             txt += "<input type='" + 'radio' + "' name='" + 'diff' + "' id='" + voc + vocVal.id;
-                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name;
-                            txt +="<br>";
+                            txt += "' value='" + vocVal.id + "' style=\"margin:6px;margin-left:12px;\" disabled=true" + "'>" + vocVal.name + "</td>";
+                            txt +="</tr>";
+                            tmpFlag=true;
                         }
+                        if (tmpFlag)
+                            txt=txt.replace("#<td onclick","<td onclick").replace("colspan=\"1\">#","colspan=\"1\">");
+                        else
+                            txt=txt.replace("#<td onclick=\"if (document.getElementById('histologyChb3').checked) this.childNodes[0].checked='checked';\" colspan=\"1\">#","");
                     }
                 }
                 type++;
@@ -1131,21 +1156,34 @@
                             if (ids[i]==vocVal.id) txt +=" checked ";
                         }
                     }
-                    txt+="</td><br>";
+                    txt+="</td><tr>";
                     document.getElementById(divId).innerHTML+=txt;
                     transform();
                     document.getElementById("histologyChb1").onclick= function() {
-                        checkHoncoT(voc,1,"histologyChb1");
+                        checkHoncoT(voc,1,"histologyChb1");setDateBiopsRequired();
                     };
                     document.getElementById("histologyChb2").onclick= function() {
-                        checkHoncoT(voc,2,"histologyChb2");
+                        checkHoncoT(voc,2,"histologyChb2");setDateBiopsRequired();
                     };
                     document.getElementById("histologyChb3").onclick= function() {
-                        checkHoncoT(voc,3,"histologyChb3");
+                        checkHoncoT(voc,3,"histologyChb3");setDateBiopsRequired();
                     };
                     return;
                 }
                 else setHistologyTypeoncoT(voc,vocRes,divId,ids,type,type1,type2,type3,txt);
+            }
+            //Дата биопсии обязательна при выбранной биопсии
+            function setDateBiopsRequired() {
+                if (document.getElementById('histologyChb1').checked || document.getElementById('histologyChb2').checked
+                    || document.getElementById('histologyChb3').checked) {
+                    $('dateBiops').disabled = false;
+                    document.getElementById("dateBiops").className += " required";
+                }
+                else {
+                    $('dateBiops').disabled = true;
+                    $('dateBiops').value = "";
+                    document.getElementById("dateBiops").className = document.getElementById("dateBiops").className.replace(new RegExp("required", "g"), "");
+                }
             }
             //проставить доступность/недоступность группы в контейнере гистологии
             function  checkHoncoT(voc,type,chbid) {
@@ -1184,59 +1222,47 @@
             }
             //enabled/disabled
             function setDisableEnableChb(voc,id,disable) {
-                if (disable) {
-                    document.getElementById(voc + id).setAttribute("disabled", true);
-                    document.getElementById(voc + id).checked = false;
-                }
-                else document.getElementById(voc + id).removeAttribute("disabled");
-            }
-            //enabled/disabled by name
-            /*function setDisableEnableName(name,disable) {
-                if (disable) {
-                    var mas = document.getElementsByName(name);
-                    for (var i=0; i<mas.length; i++) {
-                        document.getElementsByName(name)[i].setAttribute("disabled", true);
-                        document.getElementsByName(name)[i].checked = false;
+                if (document.getElementById(voc + id)) {
+                    if (disable) {
+                        document.getElementById(voc + id).setAttribute("disabled", true);
+                        document.getElementById(voc + id).checked = false;
                     }
+                    else document.getElementById(voc + id).removeAttribute("disabled");
                 }
-                else {
-                    for (var i=0; i<mas.length; i++)
-                        document.getElementsByName(name)[i].removeAttribute("disabled");
-                }
-            }*/
+            }
             //контейнер маркеров
-            function setRowsToConteinerMarkersoncoT(res,divId,disabled,name,ids) {
-                var txt="";
+            function setRowsToConteinerMarkersoncoT(res,divId,name,ids) {
+                var txt="<table><tbody>";
                 var row = res.split("!");
-                //alert(row+ ' ; '+row.length);
                 for(var i=0; i<row.length-1; i++) {
+                    txt+="<tr>";
                     var vals = row[i].split("#");
-                    //alert(vals[0] + " , " + vals[1] + " , " + vals[2] + " , " + vals[3]);
                     var markercode=vals[0]; var markername=vals[1];
                     var markscode=vals[2].split(','); var marksval = vals[3].split(',');
-                    txt+="<label>"+markername+":</label>";
-                    txt+="<td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">";
+                    txt+="<td><label>"+markername+":</label></td>";
                     for (var j=0; j<markscode.length; j++) {
                         var mcode=markscode[j].replace(" ",""); var mval = marksval[j];
-                        txt+="<input type='"+'radio'+"' style=\"margin:4px\" name='" + name + markercode + "' id='" + name + mcode + "'";
-                        if (disabled)   txt += " disabled="+disabled;
-                        txt +=  " value='" + mcode + "'>"+ mval +"</td>";
+                        txt+="<td align='left' onclick=\"this.childNodes[0].checked='checked'\">" +
+                            "<input type='"+'radio'+"' style=\"margin:4px\" name='" + name + markercode + "' id='" + name + mcode + "'";
+                        txt +=  " value='" + mcode + "'>"+ mval;// +"</td>";
                         if (ids!=null) {
                             for (var i=0; i<ids.length; i++) {
                                 if (ids[i]==mcode) txt +=" checked ";
                             }
                         }
+                        txt+="</td>";
                     }
-                    txt+="<br>";
+                    txt+="</tr>";
                 }
-                document.getElementById(divId).innerHTML+=txt;
+                txt+="</tbody></table><br><input type='button' value='Очистить' onclick='cleanI();'/>";
+                document.getElementById(divId).innerHTML=txt;
             }
             //контейнер проведённого лечения
             //назначенные лекарственные препараты не нужно вообще
             //не нужны лучевая и химиолучевая терапии
             //хирургическое лечение
             function setSurgicalTreatmentoncoT(divId,ids,ids2,ids3,disabled) {
-                var txt="";
+                var txt="<table><tbody>";
                 var voc='vocOncologyN013_1',voc2='vocOncologyN014';
                 OncologyService.getTreatment("n13.id as n13c,n13.name as n13n,n14.id as n14c,n14.name as n14n",
                     "VocOncologyN013 n13,VocOncologyN014 n14", "n13.code='1'", "n14.id",{
@@ -1247,126 +1273,73 @@
                             for(var i=0; i<row.length-1; i++) {
                                 var vals = row[i].split("#");
                                 var code,name,id,style;
+                                var outerId='';
                                 if (i==0) {
+                                    txt+="<td id='td"+voc+"' onclick=\"this.childNodes[0].checked='checked'; ch1();\" colspan=\"1\">";
                                     code=vals[0]; name=vals[1]; style="\"margin:3px\"";
                                     txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc.replace('_1','') + "' id='" + voc + "'";
                                     if (disabled)   txt += " disabled="+disabled;
-                                    txt +=  " value='" + code + "'>"+ name +"</td><br>";
+                                    txt +=  " value='" + code + "'>"+ name+"</td></tr>";
                                     code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
                                 }
                                 else {
                                     code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
                                 }
-                                txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc2 + "' id='" + voc2 + code + "'";
+                                txt+="<tr><td onclick=\"if (document.getElementById('vocOncologyN013_1') && document.getElementById('vocOncologyN013_1').checked) this.childNodes[0].checked='checked';\"><input type='"+'radio'+"' style=" + style + " name='" + voc2 + "' id='" + voc2 + code + "'";
                                 txt += " disabled="+true;
-                                txt +=  " value='" + code + "'>"+ name +"</td><br>";
+                                txt +=  " value='" + code + "'>"+ name +"</td></tr>";
                             }
+                            txt+="</tbody></table>";
                             document.getElementById(divId).innerHTML+=txt;
-                            drugAgainstTumoroncoT(divId,ids2,ids3,disabled)
+                            justAnotheroncoT(divId,ids2,ids3,disabled);
                         }
                     }
-                });
+                    });
             }
-            //лекарственная противоопухолевая терапия
-            function drugAgainstTumoroncoT(divId,ids2,ids3,disabled) {
-                var voc="vocOncologyN013_2",voc2='vocOncologyN015';
-                OncologyService.getTreatment("n13.id as n13c,n13.name as n13n,n15.id as n15c,n15.name as n15n",
-                    "VocOncologyN013 n13,VocOncologyN015 n15","n13.code='2'","n15.id",{
-                    callback : function(res) {
-                        if (res!="##") {
-                            var row=res.split("!");
-                            mas2=row;
-                            var txt="";
-                            for(var i=0; i<row.length-1; i++) {
-                                var vals = row[i].split("#");
-                                var code,name,id,style;
-                                if (i==0) {
-                                    code=vals[0]; name=vals[1]; style="\"margin:3px\"";
-                                    txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc.replace('_2','') + "' id='" + voc + "'";
+            //диагностика и неспец. лечение
+            function justAnotheroncoT(divId,ids2,ids3,disabled) {
+                //неспец и диагностика
+                var txt="<tbody><table>";
+                var voc="vocOncologyN013_2";
+                OncologyService.getTreatment("n13.id as n13c,n13.name as n13n","VocOncologyN013 n13",
+                    "n13.code='5' or n13.code='6'","n13.code",{
+                        callback : function(res) {
+                            if (res!="##") {
+                                var row=res.split("!");
+                                for(var i=0; i<row.length-1; i++) {
+                                    txt+="<td onclick=\"this.childNodes[0].checked='checked'; ch1();\" colspan=\"1\">";
+                                    voc=(i==0)? "vocOncologyN013_2":"vocOncologyN013_3";
+                                    var style="\"margin:3px\"";
+                                    var code=res.split("!")[i].split("#")[0], name=res.split("!")[i].split("#")[1];
+                                    txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc.replace('_3','').replace('_2','') + "' id='" + voc + "'";
                                     if (disabled)   txt += " disabled="+disabled;
-                                    txt +=  " value='" + code + "'>"+ name +"</td><br>";
-                                    code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
+                                    txt +=  " value='" + code + "'>"+ name +"</td><tr>";
                                 }
-                                else {
-                                    code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
-                                }
-                                txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc2 + "' id='" + voc2 + code + "'";
-                                txt += " disabled="+true;
-                                txt +=  " value='" + code + "'>"+ name +"</td><br>";
                             }
+                            txt+="</tbody></table>";
                             document.getElementById(divId).innerHTML+=txt;
-                           //неспец
-                            voc="vocOncologyN013_3";
-                            var txt="";
-                            OncologyService.getTreatment("n13.id as n13c,n13.name as n13n","VocOncologyN013 n13",
-                                "n13.code='5'","n13.code='5'",{
-                                callback : function(res) {
-                                    if (res!="##") {
-                                        style="\"margin:3px\"";
-                                        var code=res.split("!")[0].split("#")[0], name=res.split("!")[0].split("#")[1];
-                                        txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc.replace('_3','') + "' id='" + voc + "'";
-                                        if (disabled)   txt += " disabled="+disabled;
-                                        txt +=  " value='" + code + "'>"+ name +"</td><br>";
-                                        document.getElementById(divId).innerHTML+=txt;
-                                    }
-                                    transform();
-                                    loadCaseAll("vocOncologyN013");
-                                    setOnInput();
-                                    document.getElementById('treatmentChb').checked=true;
-                                    checkCheckboxT();
-                                }});
-                        }
-                    }
-                });
-            }
-            //clean
-            //очистить гистологию
-            function cleanHistology() {
-                if (document.getElementById("histologyChb1")) {
-                    document.getElementById("histologyChb1").checked = false;
-                    document.getElementById('histologyChb2').checked = false;
-                    document.getElementById('histologyChb3').checked = false;
-                    checkHoncoT('vocOncologyN008', 1, "histologyChb1");
-                    checkHoncoT('vocOncologyN008', 2, "histologyChb2");
-                    checkHoncoT('vocOncologyN008', 3, "histologyChb3");
-                }
+                            transform();
+                            loadCaseAll("vocOncologyN013");
+                            setOnInput();
+                        }});
             }
             //очистить иммуног. и маркёры
             function cleanI() {
-                for (var i=0; i<immunoGistMarkDiv.childNodes.length; i++) immunoGistMarkDiv.childNodes[i].checked=false;
-            }
-            //очистить консилиум
-            function cleanC() {
-                $('dateCons').value='';
-                for (var i=0; i<vocOncologyConsiliumDiv.childNodes.length; i++) vocOncologyConsiliumDiv.childNodes[i].checked=false;
-            }
-            //очистить лечение
-            function cleanTreatment() {
-                if (document.getElementById('vocOncologyN013_1')) {
-                    document.getElementById('vocOncologyN013_1').checked = false;
-                    document.getElementById('vocOncologyN013_2').checked = false;
-                    document.getElementById('vocOncologyN013_3').checked = false;
-                    ch1();
-                    ch2();
-                }
-            }
-            //очистить противопоказания/отказы
-            function cleanContra() {
-                for (var i=1; i<6; i++) {
-                    document.getElementById("date"+i).value="";
-                    document.getElementById("c"+i).checked=false;
-                }
+                var radios = document.getElementsByTagName('input');
+                for (i = 0; i < radios.length; i++)
+                    if (radios[i].type == 'radio' && radios[i].id.indexOf('vocOncologyN010_11')!=-1)
+                        radios[i].checked=false;
             }
             //set onclick
             function setOnInput() {
                 document.getElementById('vocOncologyN013_1').onclick = function () {
-                    ch1();ch2();
+                    ch1();
                 };
                 document.getElementById("vocOncologyN013_2").onclick = function () {
-                    ch1();ch2();
+                    ch1();
                 };
                 document.getElementById("vocOncologyN013_3").onclick = function () {
-                    ch1();ch2();
+                    ch1();
                 };
             }
             function ch1() {
@@ -1376,12 +1349,10 @@
                     setDisableEnableChb('vocOncologyN014',vals[2],disable);
                 }
             }
-            function ch2() {
-                var disable = (document.getElementById("vocOncologyN013_2").checked) ? false : true;
-                for (var i=0; i<mas2.length-1; i++) {
-                    var vals = mas2[i].split("#");
-                    setDisableEnableChb('vocOncologyN015',vals[2],disable);
-                }
+            //Скрыть див для редактирования
+            function disableAll() {
+                jQuery('#oncologyCase').fadeTo('slow',.6);
+                jQuery('#oncologyCase').append('<div style="position: absolute;bottom:0;left:0;width: 100%;height:98%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
             }
         </script>
     </tiles:put>

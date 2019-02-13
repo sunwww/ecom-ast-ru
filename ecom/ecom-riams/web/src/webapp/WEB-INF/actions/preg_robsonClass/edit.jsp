@@ -67,7 +67,7 @@
             var voc='VocRobsonClass';
             function loadYesNoRobson() {
                 var txt="";
-                VocService.getAllValueByVocs(voc,0,{
+                VocService.getAllValueByVocs(voc,{
                     callback: function(aResult) {
                         var vocRes=JSON.parse(aResult).vocs[0];
                         txt+="<table border='1px'><tbody>";

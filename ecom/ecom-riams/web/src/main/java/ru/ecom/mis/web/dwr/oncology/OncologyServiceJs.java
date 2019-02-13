@@ -10,6 +10,7 @@ import ru.ecom.web.util.Injection;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Collection;
 
@@ -338,6 +339,23 @@ public class OncologyServiceJs {
             for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("!");
         }
         else res.append("##");
+        return res.toString();
+    }
+    //12022019 получить voc в json  с учётом finishdate
+    public String getVocInJson(String voc,Boolean isCode,Boolean groupByCode,HttpServletRequest aRequest) throws NamingException, SQLException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        String sql=(isCode)? "select code as id,name from ":"select id,name from ";
+        String tmpOrder=(groupByCode)? "  order by cast(code as integer)":"";
+        return service.executeSqlGetJson(sql+voc+" where finishdate is null or finishdate < current_date "+tmpOrder,null);
+    }
+    //13022019 получить по id получить code vocOncologyReasonTreat
+    public String getCodeOncology(String rtId, String voc,HttpServletRequest aRequest) throws NamingException, SQLException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        Collection<WebQueryResult> list = service.executeNativeSql("select code,name from " + voc + " where id="+rtId);
+        if (!list.isEmpty()) {
+            for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2());
+        }
         return res.toString();
     }
 }
