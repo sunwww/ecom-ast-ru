@@ -14,8 +14,8 @@ import java.util.List;
 public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
 
 	public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
+		MedCase parent = aContext.getEntityManager().find(MedCase.class, aParentId);
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService")) {
-			MedCase parent = aContext.getEntityManager().find(MedCase.class, aParentId);
 			if (parent instanceof ServiceMedCase) {
 
 			} else {
@@ -31,6 +31,7 @@ public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
 		if (!listwf.isEmpty()) {
 			form.setSpecialist(listwf.get(0).getId());
 		}
+		form.setServiceStream(parent.getServiceStream().getId());
 
 		//Milamesher #137 28012019 - проверка на наличие кардиоскрининга новорождённых в случае если:
 		//это - отделение новорождённых

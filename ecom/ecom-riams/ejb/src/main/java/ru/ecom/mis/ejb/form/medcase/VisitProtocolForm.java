@@ -211,4 +211,11 @@ public class VisitProtocolForm extends ProtocolForm {
 	/** isCreateDiagnosis */
 	private Boolean theIsCreateDiagnosis;
 
+	/** Поток обслуживания случая */
+	@Comment("Поток обслуживания случая")
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	/** Поток обслуживания случая */
+	private Long theServiceStream ;
+
 }

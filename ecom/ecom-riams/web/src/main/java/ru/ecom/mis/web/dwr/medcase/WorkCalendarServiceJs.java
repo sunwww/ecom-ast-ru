@@ -166,39 +166,29 @@ public class WorkCalendarServiceJs {
 		Collection<WebQueryResult> l = service.executeNativeSql(sql.toString()) ;
 		return l.isEmpty()?"0":l.iterator().next().get1().toString();
 	}
-	
-	public static String getChargedServiceStream (HttpServletRequest aRequest) throws NamingException {
-		String res = "";
+
+	/** Платный ли поток обслуживания
+	 * Платный, если не ОМС и не бюджет*/
+	public static Boolean getIsChargedServiceStream (Long aServceStream, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		try{
-		
-			Collection<WebQueryResult> wqr= service.executeNativeSql("select id, name from vocservicestream where code='CHARGED' ");
-			if (!wqr.isEmpty()) {
-				WebQueryResult w = wqr.iterator().next();
-			res = w.get1().toString() + ":" + w.get2().toString();
-			}
-			
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-			res = "0:ERROR";
-		}
-		return res;
+		if (aServceStream == null ) return false;
+		Collection<WebQueryResult> wqr= service.executeNativeSql("select id, name from vocservicestream where id="+aServceStream
+			+" and financesource in ('OBLIGATORY','BUDGET') ");
+		return !wqr.isEmpty();
 	}
 	
 	public static boolean remoteUser(IWebQueryService service,HttpServletRequest aRequest) {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		boolean ret = false ;
 		Collection<WebQueryResult> list = service.executeNativeSql("select case when su.isRemoteUser='1' then 1 else null end as remote,w.lpu_id from secUser su left join WorkFunction wf on wf.secUser_id=su.id left join Worker w on w.id=wf.worker_id where su.login='"+username+"'",1) ;
-		WebQueryResult wqr = list.iterator()!=null?list.iterator().next():null ;
+		WebQueryResult wqr = list.iterator().next() ;
 		if (wqr!=null && wqr.get1()!=null) {
 			theIsRemoteUser=true ;
 			theLpuRemoteUser=ConvertSql.parseLong(wqr.get2()) ;
 			return true ;
 		}
 		theLpuRemoteUser=null ;
-		theIsRemoteUser=ret ;
-		return ret;
+		theIsRemoteUser=false ;
+		return false;
 	}
 	private static boolean theIsRemoteUser ;
 	private static Long theLpuRemoteUser ;
@@ -206,14 +196,14 @@ public class WorkCalendarServiceJs {
 		aDatePlan = aDatePlan.trim() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select id,code from VocServiceStream where id='"+aServiceStream+"' and code='OBLIGATORYINSURANCE'" ;
-		Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString(),1) ;
-		if (list1.size()>0) {
+		Collection<WebQueryResult> list1 = service.executeNativeSql(sql,1) ;
+		if (!list1.isEmpty()) {
 			sql = "SELECT id,dtype " 
 	                +"FROM MedPolicy where patient_id='"+aPatientId+"' "
 	                +"AND actualDateFrom<=to_date('"+aDatePlan+"','dd.mm.yyyy') and (actualDateTo is null or actualDateTo>=to_date('"+aDatePlan+"','dd.mm.yyyy')) "
 	                +"and DTYPE like 'MedPolicyOmc%'" ;
 			Collection<WebQueryResult> list = service.executeNativeSql(sql,1) ;
-			if (list.size()==0) return "1" ;
+			if (list.isEmpty()) return "1" ;
 			if (list.size()>1) return "2" ;
 		}
 		return "0" ;

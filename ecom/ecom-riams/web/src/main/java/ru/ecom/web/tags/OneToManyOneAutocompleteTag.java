@@ -46,14 +46,14 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
 	        //alert(theFieldName.value) ;
 	        for (int i = 0; i < jsonArray.length(); i++) {
 	        	
-	        	JSONObject child = (JSONObject) jsonArray.get(i);
+	        	JSONObject child = jsonArray.getJSONObject(i);
 				String jsonId = String.valueOf(child.get("value"));
 				
 				if (!StringUtil.isNullOrEmpty(jsonId) || "0".equals(jsonId)) {
 					if (i>0) jsonNew.append(",");
 					jsonNew.append("{\"value\":");
 					jsonNew.append(jsonId);
-					String name = null ;
+					String name ;
 			        try {
 						name = VocHelperDelegate.locateVocHelper().getNameById(aCtx, jsonId, aVocName, null);
 			        } catch (VocHelperLocateException e) {

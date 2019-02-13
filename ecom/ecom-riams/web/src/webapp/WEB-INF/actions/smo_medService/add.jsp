@@ -51,7 +51,9 @@
   <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
     
-      	<script type="text/javascript"> 
+      	<script type="text/javascript">
+
+            //medServiceForStac - если медкейс - стационар
       	onload=function(){
       		$('id').value='${param.id}' ;
       		new dateutil.DateField($('dateStart')) ;
@@ -59,11 +61,19 @@
       		HospitalMedCaseService.getServiceStreamAndMkbByMedCase('${param.id}',
      				 {
                callback: function(aResult) {
-            	   var str = aResult.split("@@") ;
-            	   $('serviceStream').value=str[0] ;
-            	   $('serviceStreamName').value=str[1] ;
-            	   $('idc10').value=str[2] ;
-            	   $('idc10Name').value=str[3] ;
+                   aResult = JSON.parse(aResult)
+            	   $('serviceStream').value=aResult.serviceStreamId;
+            	   $('serviceStreamName').value=aResult.serviceStreamName;;
+            	   $('serviceStreamName').disabled=true ;
+
+            	   $('idc10').value=aResult.mkbId ;
+            	   $('idc10Name').value=aResult.mkbName ;
+            	   if (aResult.medcaseType==='DepartmentMedCase' ||aResult.medcaseType==='HospitaltMedCase' ) {
+                       medServiceAutocomplete.setVocId('medServiceForStac');
+                   } else {
+                       medServiceAutocomplete.setVocId('medService');
+                   }
+
                
       		
       		HospitalMedCaseService.getServiceByMedCase('${param.id}',

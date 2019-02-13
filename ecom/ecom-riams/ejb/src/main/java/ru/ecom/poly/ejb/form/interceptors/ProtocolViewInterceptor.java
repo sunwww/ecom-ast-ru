@@ -12,8 +12,8 @@ public class ProtocolViewInterceptor implements IFormInterceptor{
 		Protocol protocol=(Protocol)aEntity;
 		VisitProtocolForm form = (VisitProtocolForm ) aForm;
 		if (protocol.getServiceMedCase()!=null) {
-			
 			form.setMedService(protocol.getServiceMedCase().getMedService().getId());
 		}
+		if (protocol.getMedCase()!=null) form.setServiceStream(protocol.getMedCase().getServiceStream().getId());
 	}
 }

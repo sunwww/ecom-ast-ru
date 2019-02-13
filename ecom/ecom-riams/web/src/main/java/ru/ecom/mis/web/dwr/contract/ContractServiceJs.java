@@ -122,19 +122,6 @@ public class ContractServiceJs {
 			return "Нет прав для работы с ККМ";
 		}
 	}
-	@Deprecated
-	private String getOperatorInfoByUsername(HttpServletRequest aRequest) throws NamingException {
-		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder sql = new StringBuilder().append("select vwf.name||' '||pat.lastname||' '||substring(pat.firstname,1,1)||'.'||substring(pat.middlename,1,1)||'.'  from secuser su")
-				.append(" left join workfunction wf on wf.secuser_id=su.id")
-				.append(" left join worker w on w.id=wf.worker_id")
-				.append(" left join patient pat on pat.id=w.person_id")
-				.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
-				.append(" where su.login='").append(username).append("'");
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
-		return list.isEmpty() ? null : list.iterator().next().get1().toString();
-	}
 
 	/**
 	 * Печать последнего чека (в случае неудачи его первой печати
@@ -148,8 +135,7 @@ public class ContractServiceJs {
 			makeHttpPostRequest(root.toString(), aRequest);
 			return "Чек отправлен на печать";
 		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.error(e);
+			LOG.error(e.getMessage(),e);
 			return "Произошла ошибка: "+e;
 		}
 	}
@@ -818,7 +804,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		String table=aTable ;
 		String addWhereSql = "" ;
 		String addLeftSql="";
-		if (aTable.toUpperCase().trim().equals("MEDSERVICEOPERATION")) {
+		if (aTable.trim().equalsIgnoreCase("MEDSERVICEOPERATION")) {
 			table="MedService" ;
 			addWhereSql = "p.dtype='MedService' and vmt.code in ('OPERATION','SURVEY') and p.finishDate is null and " ;
 			addLeftSql = "left join VocServiceType vmt on vmt.id=p.serviceType_id ";

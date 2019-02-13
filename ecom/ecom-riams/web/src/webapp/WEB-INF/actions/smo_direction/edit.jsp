@@ -255,7 +255,7 @@
     <msh:ifFormTypeIsNotView formName="smo_directionForm" guid="0cfa71af-92f6-432b-b592-483a2c92429d">
         <msh:ifFormTypeAreViewOrEdit formName="smo_directionForm">
             <script type="text/javascript">
-                theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
+                theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value+"#"+$('serviceStream').value) ;
             </script>
         </msh:ifFormTypeAreViewOrEdit>
     <script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
@@ -283,17 +283,20 @@
    	 serviceStreamAutocomplete.addOnChangeCallback(function() {
 	 	updateTime() ;
 	 	checkIfDogovorNeeded() ;
+        setMedserviceAutocompleteParent();
 
 
      });
 
    	 //TODO Доделать выбор справочника исходя от источника финансирования
-   	 function disabled_setMedserviceVoc() { //Пока не используется
-         WorkCalendarService.getChargedServiceStream({
-             callback: function(charged) {
-                 charged=charged.split(":")[0];
-                 if (+charged==+$('serviceStream').value){ // Если поток обслуживания - платно, то указываем только те услуги, которые есть в прейскуранте
-                     theOtmoa_medServices.setVocName('simpleVocAutocomplete/medServiceForSpecCharged');
+   	 function setMedserviceAutocompleteParent() { //Пока не используется
+         WorkCalendarService.getIsChargedServiceStream($('serviceStream').value, {
+             callback: function(isCharged) {
+                 if (true==isCharged){ // Если поток обслуживания - платно, то указываем только те услуги, которые есть в прейскуранте
+                     theOtmoa_medServices.setUrl('simpleVocAutocomplete/medServiceForSpecCharged');
+
+                 } else {
+                     theOtmoa_medServices.setUrl('simpleVocAutocomplete/medServiceForSpec');
 
                  }
              }
@@ -429,7 +432,7 @@
     	  if ($('timePlanName')) {
     		  $('timePlanName').value='';
     		  }
-    	  if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
+    	  if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value+"#"+$('serviceStream').value) ;
   		}) ;
 
     function checkRecord(aId,aValue,aIdService,aService) {
@@ -508,8 +511,8 @@
 				        $('datePlanName').value = "";
 				        getPreRecord();
 	  				}
-  					if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
-  					if (theOtmoa_medServices) theOtmoa_medServices.clearData() ; ;
+  					if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value+"#"+$('serviceStream').value) ;
+  					if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
   				    getWorkFunctionByUsername() ;
 	  			}
   			}

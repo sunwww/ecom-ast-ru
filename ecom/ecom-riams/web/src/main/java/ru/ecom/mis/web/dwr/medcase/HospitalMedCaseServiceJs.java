@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
@@ -107,28 +108,35 @@ public class HospitalMedCaseServiceJs {
 	public String getServiceStreamAndMkbByMedCase(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		StringBuilder res = new StringBuilder() ;
-		sql.append("select smc.serviceStream_id||'@@'||vss.name as vssname, max(case when vpd.code='1' and vdrt.code='3' then mkb.id||'@@'||mkb.code||' '||mkb.name else null end) as mkbname")
-			.append(", max(case when vpd.code='1' and vdrt.code='4' then mkb.id||'@@'||mkb.code||' '||mkb.name else null end) as mkbname1")
+		sql.append("select smc.serviceStream_id as ssId, vss.name as vssname")
+			.append(", max(case when vpd.code='1' and vdrt.code='3' then mkb.id else null end) as mkbId")
+			.append(", max(case when vpd.code='1' and vdrt.code='3' then mkb.code||' '||mkb.name else null end) as mkbname")
+			.append(", max(case when vpd.code='1' and vdrt.code='4' then mkb.id else null end) as mkbid1")
+			.append(", max(case when vpd.code='1' and vdrt.code='4' then mkb.code||' '||mkb.name else null end) as mkbname1")
+			.append(",smc.dtype as dtype")
 			.append(" from medcase smc")
 			.append(" left join Diagnosis d on d.medCase_id=smc.id")
 			.append(" left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id")
 			.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=d.registrationType_id")
 			.append(" left join VocIdc10 mkb on mkb.id=d.idc10_id")
 			.append(" left join VocServiceStream vss on vss.id=smc.serviceStream_id")
-			.append(" where smc.id='").append(aMedCase).append("' group by smc.serviceStream_id,vss.name") ;
+			.append(" where smc.id='").append(aMedCase).append("' group by smc.serviceStream_id,vss.name, smc.dtype") ;
 		List<Object[]> resL = service.executeNativeSqlGetObj(sql.toString()) ;
+		JSONObject ret = new JSONObject();
 		if (!resL.isEmpty()) {
 			Object[] obj = resL.get(0) ;
-			res=new StringBuilder();
-			if (obj[0]!=null) {res.append(obj[0]);} else {res.append("@@");}
-			res.append("@@") ;
-			if (obj[1]!=null) {res.append(obj[1]);} else {if (obj[2]!=null) {res.append(obj[2]);} else {res.append("@@");}}
-			res.append("@@") ;
-		} else {
-			res.append("@@@@@@@@") ;
+			ret.put("medcaseType",obj[6]);
+			if (obj[0]!=null) { //поток обслуживания
+				ret.put("serviceStreamId",obj[0]);
+				ret.put("serviceStreamName",obj[1]);
+			}
+			if (obj[2]!=null || obj[4]!=null) { //диагноз
+				ret.put("mkbId",obj[2]!=null ? obj[2] : obj[4]);
+				ret.put("mkbName",obj[2]!=null ? obj[3] : obj[5]);
+			}
 		}
-		return res.toString() ;
+		System.out.println("ret="+ret);
+		return ret.toString() ;
 	}
 	public String getServiceByMedCase(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -173,14 +181,13 @@ public class HospitalMedCaseServiceJs {
 	public String saveServiceByMedCase(Long aMedCase, String aServices, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		StringBuilder sql ;
-		service.executeUpdateNativeSql("delete from medcase where parent_id="+aMedCase+" and dtype='ServiceMedCase'");
+	//	service.executeUpdateNativeSql("delete from medcase where parent_id="+aMedCase+" and dtype='ServiceMedCase'");
 		if (aServices!=null&&!aServices.equals("")) {
 			String[] otherServs = aServices.split("#@#");
 			if (otherServs.length>0) {
 				for (int i=0;i<otherServs.length;i++) {
 					String[] serv = otherServs[i].split("@#@") ;
-					sql = new StringBuilder() ;
+					StringBuilder sql = new StringBuilder() ;
 					sql.append("insert into medcase (noActuality,dtype,createdate,createtime,username,parent_id")
 						.append(",medservice_id,workfunctionexecute_id,idc10_id")
 						.append(",datestart,medserviceAmount,serviceStream_id) values (") ;

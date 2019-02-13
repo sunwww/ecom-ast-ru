@@ -49,6 +49,7 @@
 			<msh:hidden property="medCase" />
 			<msh:hidden property="params" />
 			<msh:hidden property="specialist" />
+			<msh:hidden property="serviceStream" />
 
 			<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
 				<msh:hidden property="record" />
@@ -417,7 +418,7 @@ horizontalFill="true" />
 	}
 
 	function setMedServiceParent() {
-		medServiceAutocomplete.setParentId($('specialist').value+"#"+$('dateRegistration').value);
+		medServiceAutocomplete.setParentId($('specialist').value+"#"+$('dateRegistration').value+"#"+$('serviceStream').value);
 	}
 	eventutil.addEventListener($('dateRegistration'),"change", function (){setMedServiceParent();});
 	setMedServiceParent();
@@ -447,6 +448,7 @@ horizontalFill="true" />
                             var aResult = res.split('#') ;
                             aDtype=aResult[0];
                             ifCharged=aResult[1];
+							medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
                             if (aDtype != null && aDtype == "HospitalMedCase") {
                                 ishosp = 1;
                                 $('stateName').className = "autocomplete horizontalFill required";
@@ -456,27 +458,13 @@ horizontalFill="true" />
                                 $('diagnosisPriorityName').className = "autocomplete horizontalFill required";
                                 $('diagnosisIdc10Name').className = "autocomplete horizontalFill required";
                                 $('diagnosisIllnessPrimaryName').className = "autocomplete horizontalFill required";
-                                if (ifCharged != null && ifCharged == "CHARGED") {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStacCharged');
-                                }
-                                else {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
-                                }
                             } else if (aDtype != null && aDtype == "DepartmentMedCase") {
                                 ishosp = 1;
                                 $('typeName').className = "autocomplete horizontalFill required";
                                 $('stateName').className = "autocomplete horizontalFill required";
-                                if (ifCharged != null && ifCharged == "CHARGED") {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStacCharged');
-                                }
-                                else  {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
-                                }
-                            } else {
-                                if (ifCharged != null && ifCharged == "CHARGED") {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecCharged');
-                                }
-                            }
+                            } else if (ifCharged != null && ifCharged == "CHARGED") {
+                            	medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecCharged');
+                         	}
                         }
                     });
                 }
