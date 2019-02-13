@@ -180,7 +180,7 @@ public class WorkCalendarServiceJs {
 	public static String getChargedServiceStream (HttpServletRequest aRequest) throws NamingException {
 		String res ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-			Collection<WebQueryResult> wqr= service.executeNativeSql("select id, name from vocservicestream where code='CHARGED' and (deparecated is null or deprecated='0')");
+			Collection<WebQueryResult> wqr= service.executeNativeSql("select id, name from vocservicestream where code='CHARGED' and (deprecated is null or deprecated='0')");
 			if (!wqr.isEmpty()) {
 				WebQueryResult w = wqr.iterator().next();
 				res = w.get1().toString() + ":" + w.get2().toString();
