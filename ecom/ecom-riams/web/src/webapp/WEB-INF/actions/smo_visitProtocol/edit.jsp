@@ -246,7 +246,20 @@ horizontalFill="true" />
 	</tiles:put>
 
 	<tiles:put name='javascript' type='string'>
+<script type="text/javascript">
+	function printProtocol() {
+		HospitalMedCaseService.getPrefixByProtocol(${param.id},
+				{
+					callback: function(prefix) {
+						if (prefix==null) prefix="" ;
+						initSelectPrinter("print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}",1)
+						//window.location.href="print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}" ;
 
+					}
+				}
+		)
+	}
+</script>
 
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 			<script type="text/javascript">
