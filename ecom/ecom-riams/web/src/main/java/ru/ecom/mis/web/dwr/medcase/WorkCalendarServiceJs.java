@@ -176,6 +176,20 @@ public class WorkCalendarServiceJs {
 			+" and financesource in ('OBLIGATORY','BUDGET') ");
 		return !wqr.isEmpty();
 	}
+
+	public static String getChargedServiceStream (HttpServletRequest aRequest) throws NamingException {
+		String res ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			Collection<WebQueryResult> wqr= service.executeNativeSql("select id, name from vocservicestream where code='CHARGED' and (deparecated is null or deprecated='0')");
+			if (!wqr.isEmpty()) {
+				WebQueryResult w = wqr.iterator().next();
+				res = w.get1().toString() + ":" + w.get2().toString();
+			} else {
+				res = "0:ERROR";
+			}
+		return res;
+	}
+
 	
 	public static boolean remoteUser(IWebQueryService service,HttpServletRequest aRequest) {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -375,13 +389,13 @@ public class WorkCalendarServiceJs {
 		Calendar cal = Calendar.getInstance() ;
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
 		sql.append("select wcd.id as wcdid, to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate ") ;
-		sql.append(" from WorkFunction wf left join WorkCalendar wc on wc.id=coalesce(wf.group_id, wf.id) left join WorkCalendarDay wcd on wcd.workCalendar_id =wc.id where wf.id='").append(aWorkFunction).append("' and wcd.calendarDate between to_date('")
+		sql.append(" from WorkFunction wf left join WorkCalendar wc on wc.workfunction_id=coalesce(wf.group_id, wf.id) left join WorkCalendarDay wcd on wcd.workCalendar_id =wc.id where wf.id='").append(aWorkFunction).append("' and wcd.calendarDate between to_date('")
 		.append(format.format(cal.getTime()))
 		.append("','dd.mm.yyyy') and to_date('");
 		cal.add(Calendar.DATE, 14) ;
 		sql.append(format.format(cal.getTime()))
 		.append("','dd.mm.yyyy') order by wcd.calendarDate") ;
-		System.out.printf("sql="+sql);
+		//("sql="+sql);
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		StringBuilder res = new StringBuilder() ;
 		res.append("<ul>") ;
