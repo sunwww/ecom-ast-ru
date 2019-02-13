@@ -1286,7 +1286,7 @@ where wf.dtype='PersonalWorkFunction' -->
     
     </voc>
 
-	<!-- Услуги, доступные для выбора в пол-ке, по ОМС -->
+	<!-- Услуги, доступные для выбора в пол-ке, по ОМС раб. функция/дата услуги -->
     <voc id='medServiceForSpec' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService ms'
@@ -1295,12 +1295,11 @@ where wf.dtype='PersonalWorkFunction' -->
     			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))
 				and (wfs.lpu_id is null or wfs.lpu_id=coalesce(wf.lpu_id,w.lpu_id))
 				and (wfs.workfunction_id is null or wfs.workfunction_id=:par1)
-				and (ms.isNoOmc is null or ms.isNoOmc='0')
 				"
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
-    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
+    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1' and (ms.isNoOmc is null or ms.isNoOmc='0')"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id
     			left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end
     			left join worker w on w.id=wf.worker_id'
@@ -1310,7 +1309,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     	/>
     </voc>
-<!-- Платные услуги в пол-ке -->
+<!-- Платные услуги в пол-ке раб. функция/-->
 	<voc id='medServiceForSpecCharged' type='NativeVocService'>
 		<NativeVocService
 				from = 'priceposition pp'

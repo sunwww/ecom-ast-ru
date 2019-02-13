@@ -113,7 +113,7 @@ public class HospitalMedCaseServiceJs {
 			.append(", max(case when vpd.code='1' and vdrt.code='3' then mkb.code||' '||mkb.name else null end) as mkbname")
 			.append(", max(case when vpd.code='1' and vdrt.code='4' then mkb.id else null end) as mkbid1")
 			.append(", max(case when vpd.code='1' and vdrt.code='4' then mkb.code||' '||mkb.name else null end) as mkbname1")
-			.append(",smc.dtype as dtype")
+			.append(",smc.dtype as dtype , vss.code as vssCode")
 			.append(" from medcase smc")
 			.append(" left join Diagnosis d on d.medCase_id=smc.id")
 			.append(" left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id")
@@ -129,6 +129,7 @@ public class HospitalMedCaseServiceJs {
 			if (obj[0]!=null) { //поток обслуживания
 				ret.put("serviceStreamId",obj[0]);
 				ret.put("serviceStreamName",obj[1]);
+				ret.put("serviceStreamCode",obj[7]);
 			}
 			if (obj[2]!=null || obj[4]!=null) { //диагноз
 				ret.put("mkbId",obj[2]!=null ? obj[2] : obj[4]);

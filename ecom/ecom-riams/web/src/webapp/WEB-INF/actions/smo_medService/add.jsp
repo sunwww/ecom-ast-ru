@@ -73,6 +73,11 @@
                        medServiceAutocomplete.setParentId(aResult.serviceStreamId);
                    } else {
                        medServiceAutocomplete.setUrl('simpleVocAutocomplete/medService');
+            	       /*if (aResult.serviceStreamCode=='OBLIGATORY' || aResult.serviceStreamCode=='BUDGET') {
+
+                       } else {
+
+                       }*/
                    }
 
                
