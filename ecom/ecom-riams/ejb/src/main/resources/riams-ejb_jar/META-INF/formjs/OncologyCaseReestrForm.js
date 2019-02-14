@@ -6,7 +6,9 @@ function onPreDelete(aEntityId,aCtx) {
 function onCreate(aForm, aEntity, aCtx){
     var format = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     if (aForm.getDateBiops()!=null && aForm.getDateBiops()!='') aEntity.setDateBiops(new java.sql.Date(format.parse(aForm.getDateBiops()).getTime()));
+    else aEntity.setDateBiops(null);
     if (aForm.getDateCons()!=null && aForm.getDateCons()!='') aEntity.setDateCons(new java.sql.Date(format.parse(aForm.getDateCons()).getTime()));
+    else aEntity.setDateCons(null);
     //гистология
     var histString=aForm.getHistString();
     if (histString!='') {
@@ -44,6 +46,20 @@ function onCreate(aForm, aEntity, aCtx){
             contra.setOncologyCase(aEntity);
             aCtx.manager.persist(contra);
         }
+    }
+    //vocOncologyReasonTreat - повод обращения
+    var rt = aForm.getVocOncologyReasonTreat();
+    if (rt!=null) {
+        var res = aCtx.manager.createNativeQuery("select id from vocOncologyReasonTreat where code='"+rt+"'").getResultList();
+        if (res.size()>0)
+            aEntity.setVocOncologyReasonTreat(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat, java.lang.Long.valueOf(res.get(0))));
+    }
+    //consilium
+    var consilium = aForm.getConsilium();
+    if (consilium!=null) {
+        var res = aCtx.manager.createNativeQuery("select id from voconcologyconsilium where code='"+consilium+"'").getResultList();
+        if (res.size()>0)
+            aEntity.setConsilium(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium, java.lang.Long.valueOf(res.get(0))));
     }
 }
 function onSave(aForm, aEntity, aCtx){
