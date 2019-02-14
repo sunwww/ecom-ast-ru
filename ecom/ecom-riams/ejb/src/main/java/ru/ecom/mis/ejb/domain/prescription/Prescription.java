@@ -12,6 +12,7 @@ import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptCancelReason;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptFulfilState;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -44,6 +45,12 @@ public abstract class Prescription extends BaseEntity{
 		theCreateDate=new java.sql.Date(currentTime);
 		theCreateTime=new java.sql.Time(currentTime);
 	}
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Transient
+	public VocServiceStream getServiceStream() {return getPrescriptionList().getServiceStream() ;}
+	public void setServiceStream(VocServiceStream aServiceStream) {}
 
 	/** Лист назначений */
 	@Comment("Лист назначений")

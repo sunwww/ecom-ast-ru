@@ -463,15 +463,16 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	public boolean isMedcaseIsDepartment(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aMedcaseId);
-		String dtype = !res.isEmpty()?res.iterator().next().get1().toString():null;
-		if ("DepartmentMedCase".equals(dtype)) {
+		String dtype = !res.isEmpty() ? res.iterator().next().get1().toString() : null;
+		return "DepartmentMedCase".equals(dtype);
+		/*if ("DepartmentMedCase".equals(dtype)) {
 			return true;
 		} else if ("HospitalMedCase".equals(dtype)) {
 			return false;
 		} else {
 			LOG.warn("isMedcaseIsDepartment, STRANGE dtype="+dtype);
 			return false;
-		}
+		} */
 	}
     public String listProtocolsByUsername(String aFunctionTemp, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;

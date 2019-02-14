@@ -44,14 +44,10 @@
         		  the${name}PrescTypesDialog.show() ;
         	  }
           }
-         
-         
-
      }
      
      // Отмена 
      function cancel${name}PrescTypes() {
-    	
         the${name}PrescTypesDialog.hide() ;
      }
     
@@ -81,6 +77,12 @@
 				canChangeDate = true;
 			}
 		}
+		if (document.medServiceAutocomplete) {
+		    alert('make parent for service'+typeID+"#"+$('serviceStream').value);
+            medServiceAutocomplete.setParentId(typeID+"#"+$('serviceStream').value);
+        } else {
+            alert('cant parent for service');
+        }
 		the${name}PrescTypesDialog.hide() ;
 	}
      // инициализация диалогового окна 

@@ -53,7 +53,6 @@
     
       	<script type="text/javascript">
 
-            //medServiceForStac - если медкейс - стационар
       	onload=function(){
       		$('id').value='${param.id}' ;
       		new dateutil.DateField($('dateStart')) ;
@@ -72,6 +71,9 @@
                        medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForStac');
                        medServiceAutocomplete.setParentId(aResult.serviceStreamId);
                    } else {
+            	       //TODO разделить на ОМС/платно. скорее всего это не используется.
+                       alert('Ошибка переполнения пневмобуфферов! Инициализация не пройдена');
+                       //Если где-то используется, мы об этом узнаем
                        medServiceAutocomplete.setUrl('simpleVocAutocomplete/medService');
             	       /*if (aResult.serviceStreamCode=='OBLIGATORY' || aResult.serviceStreamCode=='BUDGET') {
 

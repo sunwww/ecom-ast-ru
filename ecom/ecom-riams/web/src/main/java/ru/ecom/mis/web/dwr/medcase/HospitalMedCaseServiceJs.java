@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -29,6 +30,7 @@ import java.util.List;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+	private static final Logger LOG = Logger.getLogger(HospitalMedCaseServiceJs.class);
 
 	public boolean isAbortRequiredByOperation(Long aMedServiceId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -81,7 +83,7 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		String[] par = aParams.split(":");
-	//	System.out.println("=== == medcase = "+aMedCase+" = " +aParams+" = length "+par.length);
+	//	LOG.info("=== == medcase = "+aMedCase+" = " +aParams+" = length "+par.length);
 		String takingDate = toNull(par[0]);
 		String pulse = toNull(par[6]);
 		String bloodPressureDown = toNull(par[5]);
@@ -101,7 +103,7 @@ public class HospitalMedCaseServiceJs {
 		sql.append("to_date('"+takingDate+"','dd.MM.yyyy'),"+pulse+","+bloodPressureDown+","+bloodPressureUp+","+weight+","+respirationRate);
 		sql.append(", "+degree+", "+illnessDayNumber+", "+dayTime+", "+aMedCase+", "+stool);
 		sql.append(")");
-	//	System.out.println("=== === "+sql);
+	//	LOG.info("=== === "+sql);
 		return "" + service.executeUpdateNativeSql(sql.toString());
 		
 	}
@@ -120,7 +122,7 @@ public class HospitalMedCaseServiceJs {
 			.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=d.registrationType_id")
 			.append(" left join VocIdc10 mkb on mkb.id=d.idc10_id")
 			.append(" left join VocServiceStream vss on vss.id=smc.serviceStream_id")
-			.append(" where smc.id='").append(aMedCase).append("' group by smc.serviceStream_id,vss.name, smc.dtype") ;
+			.append(" where smc.id='").append(aMedCase).append("' group by smc.serviceStream_id,vss.name,vss.code, smc.dtype") ;
 		List<Object[]> resL = service.executeNativeSqlGetObj(sql.toString()) ;
 		JSONObject ret = new JSONObject();
 		if (!resL.isEmpty()) {
@@ -131,12 +133,9 @@ public class HospitalMedCaseServiceJs {
 				ret.put("serviceStreamName",obj[1]);
 				ret.put("serviceStreamCode",obj[7]);
 			}
-			if (obj[2]!=null || obj[4]!=null) { //диагноз
-				ret.put("mkbId",obj[2]!=null ? obj[2] : obj[4]);
-				ret.put("mkbName",obj[2]!=null ? obj[3] : obj[5]);
-			}
+				ret.put("mkbId",obj[2]!=null ? obj[2] : (obj[4]!=null ? obj[4] : ""));
+				ret.put("mkbName",obj[2]!=null ? obj[3] : (obj[4]!=null ? obj[5] : ""));
 		}
-		System.out.println("ret="+ret);
 		return ret.toString() ;
 	}
 	public String getServiceByMedCase(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
@@ -836,7 +835,7 @@ public class HospitalMedCaseServiceJs {
 				url_csp.append("http://").append(cspurl)
 					.append("/getmedcasecost.csp?CacheUserName=_system&tmp=").append(Math.random()).append("&CachePassword=sys&")
 					.append(href_slo) ;
-				//System.out.println(url_csp) ;
+				//LOG.info(url_csp) ;
 				
 				StringBuilder c ;
 				if (aIsUrl) {
@@ -844,7 +843,7 @@ public class HospitalMedCaseServiceJs {
 				} else {
 					String cost = ActionUtil.getContentOfHTTPPage(url_csp.toString().replaceAll(" ", ""),code_page);
 					//String cost = "11#2222" ;
-					//System.out.println("----cost--->"+cost) ;
+					//LOG.info("----cost--->"+cost) ;
 					if (isf) {
 						res.append("&render=") ;
 						isf=false;
@@ -856,7 +855,7 @@ public class HospitalMedCaseServiceJs {
 				}
 				
 				
-				//System.out.println(res.toString()) ;
+				//LOG.info(res.toString()) ;
 				}
 			
 			}
@@ -995,7 +994,7 @@ public class HospitalMedCaseServiceJs {
 				href_vis.append(param("Hts",null)) ;
 				href_vis.append(param("LpuFunction",wqr_vis.get3())) ; //
 				href_vis.append(param("Operations",null)) ;
-				System.out.println("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
+				LOG.info("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
 				String cost = ActionUtil.getContentOfHTTPPage("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&"+href_vis.toString(),code_page);
 				if (isf) {
 					res.append("&render=") ;
@@ -1155,7 +1154,7 @@ public class HospitalMedCaseServiceJs {
 				href_vis.append(param("Hts",null)) ;
 				href_vis.append(param("LpuFunction",wqr_vis.get3())) ; //
 				href_vis.append(param("Operations",null)) ;
-				System.out.println("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
+				LOG.info("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
 				String cost = ActionUtil.getContentOfHTTPPage("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&"+href_vis.toString(),code_page);
 				if (isf) {
 					res.append("&render=") ;
@@ -1315,7 +1314,7 @@ public class HospitalMedCaseServiceJs {
 				href_vis.append(param("Hts",null)) ;
 				href_vis.append(param("LpuFunction",wqr_vis.get3())) ; //
 				href_vis.append(param("Operations",null)) ;
-				//System.out.println("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
+				//LOG.info("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
 				String cost = ActionUtil.getContentOfHTTPPage("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&"+href_vis.toString(),code_page);
 				if (isf) {
 					res.append("&render=") ;
@@ -1547,9 +1546,7 @@ public class HospitalMedCaseServiceJs {
         return service.getChangeStatCardNumber(aMedCase, aNewStatCardNumber,always) ;
     }
     public String getListTemperatureCurve(Long aMedCase, HttpServletRequest aRequest) throws Exception {
-    	System.out.println("Температурная кривая");
     	IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-    	
     	return service.getTemperatureCurve(aMedCase) ;
     }
     
