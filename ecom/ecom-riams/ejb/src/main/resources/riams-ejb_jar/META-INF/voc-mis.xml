@@ -1339,7 +1339,7 @@ where wf.dtype='PersonalWorkFunction' -->
 	<voc id='medServiceForStac' type='NativeVocService'>
 		<NativeVocService
 				from = 'MedService ms'
-				parent=" (ms.startDate is null or ms.startDate <= current_date)
+				parent=" (ms.startDate is null or current_date >= ms.startDate )
 					and (ms.finishDate is null or ms.finishDate>=current_date)
 					and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:parent and (
 					  (vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0'))

@@ -2,6 +2,7 @@ package ru.ecom.mis.web.dwr.medcase;
 
 import org.jdom.IllegalDataException;
 import org.json.JSONException;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -178,16 +179,16 @@ public class WorkCalendarServiceJs {
 	}
 
 	public static String getChargedServiceStream (HttpServletRequest aRequest) throws NamingException {
-		String res ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-			Collection<WebQueryResult> wqr= service.executeNativeSql("select id, name from vocservicestream where code='CHARGED' and (deparecated is null or deprecated='0')");
+			Collection<WebQueryResult> wqr= service.executeNativeSql("select id, name from vocservicestream where code='CHARGED' and (deprecated is null or deprecated='0')");
+		JSONObject ret = new JSONObject();
 			if (!wqr.isEmpty()) {
 				WebQueryResult w = wqr.iterator().next();
-				res = w.get1().toString() + ":" + w.get2().toString();
+				ret.put("id",w.get1().toString()).put("name",w.get2().toString());
 			} else {
-				res = "0:ERROR";
+				ret.put("id","0").put("name","ОШИБКА");
 			}
-		return res;
+		return ret.toString();
 	}
 
 	

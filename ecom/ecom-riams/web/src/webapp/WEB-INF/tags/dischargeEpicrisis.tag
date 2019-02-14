@@ -22,43 +22,46 @@
 		    <msh:panel>
 		    	<msh:ifInRole roles="/Policy/Mis/MedCase/Document/External/Medservice/View">
 					<input type="hidden" name="${name}ExtLabsDep" id="${name}ExtLabsDep" value="0" />
+					<tr onclick='show${name}DiariesDiv()'>
+						<msh:checkBox property="${name}Diaries" label="Протоколы и исследования" fieldColSpan="2" />
+					</tr>
 					<tr onclick="show${name}DiariesDiv()">
-			        	<msh:checkBox property="${name}ExtLabs" label="Лабораторные исследования" fieldColSpan="2"/>
+			        	<msh:checkBox property="${name}ExtLabs" label="Только лабораторные исследования" fieldColSpan="2"/>
 					</tr>
 				<msh:row>
 		            	<td></td>
-				        <td onclick="this.childNodes[1].checked='checked';format${name}Services();">
-				        	<input type="radio" name="${name}ExtLabsReg" value="1"> перевести в ниж.регистр
-				        </td>
-				        <td onclick="this.childNodes[1].checked='checked';format${name}Services();">
-				        	<input type="radio" name="${name}ExtLabsReg" checked="checked" value="2"> оставить без изменений
+				        <td onclick="format${name}Services();">
+				        	<label> <input type="checkbox" id="${name}ExtLabsReg" /> Перевести в ниж.регистр</label>
 				        </td>
 			        </msh:row>
 		            <msh:row>
 		            	<td></td>
-				        <td onclick="this.childNodes[1].checked='checked';format${name}Services();">
-				        	<input type="radio" name="${name}ExtLabsStr" checked="checked" value="1"> Преобразовать в одну строку
-				        </td>
-				        <td onclick="this.childNodes[1].checked='checked';format${name}Services();">
-				        	<input type="radio" name="${name}ExtLabsStr" value="0"> оставить как есть
+				        <td onclick="format${name}Services();">
+							<label><input type="checkbox" name="${name}ExtLabsStr" id="${name}ExtLabsStr" checked="checked" > Преобразовать в одну строку</label>
 				        </td>
 			        </msh:row>
 		            <msh:row>
 		                <td></td>
 				        <td onclick="this.childNodes[1].checked='checked';format${name}Services();">
-				        	<input type="radio" name="${name}ExtLabsCode" value="1"> Показывать код услуги
+				        	<input type="radio" name="${name}ExtLabsCode" value="0"> Показывать код и название услуги
 				        </td>
 				        <td onclick="this.childNodes[1].checked='checked';format${name}Services();">
-				        	<input type="radio" name="${name}ExtLabsCode" checked="checked" value="0"> Не показывать код услуги
+				        	<input type="radio" name="${name}ExtLabsCode" checked="checked" value="1"> Показывать название услуги
+				        </td>
+				        <td onclick="this.childNodes[1].checked='checked';format${name}Services();">
+				        	<input type="radio" name="${name}ExtLabsCode"  value="2"> Не показывать услугу
 				        </td>
 					</msh:row>
 		            <msh:row>
 		                <td></td>
-				        <td onclick="this.childNodes[1].checked='checked';format${name}Services();">
-				        	<input type="radio" name="${name}ExtLabsNoIntake" value="1"> Убрать инф. о заборе
+				        <td onclick=" format${name}Services();">
+				        	<label><input type="checkbox" name="${name}ExtLabsNoIntake" id="${name}ExtLabsNoIntake" checked="checked"> Убрать инф. о заборе</label>
 				        </td>
-				        <td onclick="this.childNodes[1].checked='checked';format${name}Services();">
-				        	<input type="radio" name="${name}ExtLabsNoIntake" checked="checked" value="0"> Не убирать
+					</msh:row>
+		            <msh:row>
+		                <td></td>
+				        <td onclick=" format${name}Services();">
+				        	<label><input type="checkbox" name="${name}ExtLabsDate" id="${name}ExtLabsDate" > Добавить дату выполнения услуги</label>
 				        </td>
 					</msh:row>
 		    	</msh:ifInRole>
@@ -87,10 +90,6 @@
 		        <msh:row>
 		            <msh:checkBox property="${name}Operations" label="Операции" fieldColSpan="2"/>
 		        </msh:row>
-
-		        <tr onclick='show${name}DiariesDiv()'>
-		            <msh:checkBox property="${name}Diaries" label="Протоколы и исследования" fieldColSpan="2" />
-				</tr>
 				<msh:row>
 					<td colspan="6">
 						<input type="button" name="${name}EpicrisisOk" id='${name}EpicrisisOk' value='OK' onclick='save${name}Epicrisis()'/>
@@ -118,12 +117,12 @@
      var the${name}EpicrisisDialog = new msh.widget.Dialog($('${name}EpicrisisDialog')) ;
 	function escapeHtml(aText, lowerCase, oneString, noIntake) {
 	    if (true==lowerCase) aText = aText.toLowerCase();
-	    if (true==noIntake) aText = aText.replace(/[Забор имтелпзвдн:]*\d{2}.\d{2}.\d{4} \d{2}:\d{2}/g,'');
+	    if (true==noIntake) aText = aText.replace(/([Зз]абор)[абор имтелпзвдн:]*\d{2}.\d{2}.\d{4} \d{2}:\d{2}/g,'');
 		aText = aText.replace(/&/g, '&amp;')
             .replace(/>/g, '&gt;')
             .replace(/</g, '&lt;')
             .replace(/"/g, '&quot;');
-		aText = aText.replace(/\n/g,false==oneString ? '<br>' :' ');
+		aText = aText.replace(/[\r\n]/g,false==oneString ? '<br>' :' ');
 		return aText;
 
 	}
@@ -142,16 +141,23 @@
 			var p = '';
 			p+='<table border=\'1\' ><tr> <td></td><td>Дата</td><td>Дневник</td></tr><tbody id=\'diariesTable\'>';
 			//формирование дневников лаборатории
-			var showService = $('${name}ExtLabs').checked && jQuery('[name=${name}ExtLabsCode]:checked').val()=='1';
-			var makeOneString = $('${name}ExtLabs').checked && jQuery('[name=${name}ExtLabsStr]:checked').val()=='1';
-			var lowerCase = $('${name}ExtLabs').checked && jQuery('[name=${name}ExtLabsReg]:checked').val()=='1';
-			var noIntake = $('${name}ExtLabs').checked && jQuery('[name=${name}ExtLabsNoIntake]:checked').val()=='1';
+			var showService = jQuery('[name=${name}ExtLabsCode]:checked').val()=='0';
+			var showServiceName = jQuery('[name=${name}ExtLabsCode]:checked').val()!='2';
+
+			var makeOneString = jQuery('#${name}ExtLabsStr').is(':checked');
+			var lowerCase = jQuery('#${name}ExtLabsReg').is(':checked');
+			var noIntake = jQuery('#${name}ExtLabsNoIntake').is(':checked');
+			var addDate = jQuery('#${name}ExtLabsDate').is(':checked');
+			p+="<tr><td colspan='3'><label><input type='checkbox' onclick='checkAllServices(this.checked)'>Отметить все</label></td></tr>";
 			for (var i=0;i<servicesList.length;i++){
 				var diary = servicesList[i];
 				p+='<tr>';
-				p+='<td><input type=\'checkbox\' name=\'diary'+diary.id+'\'></td>';
+				p+='<td><input type=\'checkbox\' class=\'diary${name}Checkbox\' name=\'diary'+diary.id+'\'></td>';
 				p+='<td>'+diary.recordDate+" "+diary.recordTime+'</td>';
-				p+='<td id='+diary.id+'>'+escapeHtml((true==showService ? diary.serviceCode+" " : "")+diary.serviceName+" "+diary.recordText
+				p+='<td id='+diary.id+'>'+escapeHtml(
+						(true==addDate ? diary.recordDate+" " : "") +
+						(true==showService ? diary.serviceCode+" " : "")
+						+(true==showServiceName ? diary.serviceName : "")+" "+diary.recordText
 						,lowerCase,makeOneString, noIntake)+'</td>';
 				p+='</tr>';
 			}
@@ -161,13 +167,19 @@
 			$('${name}diariesDiv').innerHTML=p;
 		}
 	 }
+	 function checkAllServices(isShow) {
+	 	jQuery('.diary${name}Checkbox').prop('checked',isShow );
+
+	 }
 
      function show${name}DiariesDiv() {
 		 if ($('${name}Diaries').checked || $('${name}ExtLabs').checked ){
 				HospitalMedCaseService.getDiariesByHospital($('id').value, $('${name}ExtLabs').checked ? "LABSURVEY" : null ,{
 					callback: function (aResult) {
 						servicesList = JSON.parse(aResult);
+						the${name}EpicrisisDialog.hide() ;
 							format${name}Services();
+						the${name}EpicrisisDialog.show() ;
 					}});
 			 } else {
 			 	$('${name}diariesDiv').style.display='none';
@@ -234,16 +246,19 @@
 					callback: function(aString) {
 						$('${property}').value += "\n" ;
 						$('${property}').value += aString ;
-						get${name}ExpMedserviceInfo() ;
+						//get${name}ExpMedserviceInfo() ;
+						get${name}DiariesInfo() ;
 					}
 			} ) ;
 		} else {
-			get${name}ExpMedserviceInfo() ;
+			//get${name}ExpMedserviceInfo() ;
+			get${name}DiariesInfo() ;
 		}
      }
 
      function get${name}ExpMedserviceInfo() {
-      	if ($('${name}ExtLabs')&& $('${name}ExtLabs').checked) {
+     	//Отображение внешних мед. лаб. исследований не искольуется
+    /*  	if ($('${name}ExtLabs')&& $('${name}ExtLabs').checked) {
       		var frm = document.forms["${name}EpicrisisParameterForm"]
       		var reg = getCheckedRadio(frm,"${name}ExtLabsReg") ;
       		var str = getCheckedRadio(frm,"${name}ExtLabsStr") ;
@@ -259,7 +274,7 @@
  			} ) ;
  		} else {
  			get${name}DiariesInfo() ;
- 		}
+ 		} */
       }
      
      function get${name}DiariesInfo() {

@@ -234,9 +234,9 @@
 		if ($('infoByPolicy').value.length>0) {
 			WorkCalendarService.getChargedServiceStream({
 				callback: function(a) {
-					var res = a.split(":");
-					$('serviceStream').value=res[0];
-					$('serviceStreamName').value=res[1];
+					a = JSON.parse(a);
+					$('serviceStream').value=a.id;
+					$('serviceStreamName').value=a.name;
 				}
 			});
 			$('medPolicyInformation').innerHTML = $('infoByPolicy').value + " <u>Направление к врачу по потоку обслуживания ОМС создаваться не будет!!!</u>";
