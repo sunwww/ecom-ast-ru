@@ -209,7 +209,7 @@ public class OncologyServiceJs {
         }
         return result;
     }
-    //Milamesher 01102018 получение ФИО пациента для новой формы
+    //Milamesher 01102018 получение ФИО пациента для онкологической формы
     public String getFIODsPatient(Long medcaseId,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
@@ -225,7 +225,10 @@ public class OncologyServiceJs {
                  "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
                  "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
                  "where hmc.dtype='HospitalMedCase' and reg.code='3' and pr.code='1' and hmc.id="+medcaseId);
-         res.append(!list.isEmpty()? list.iterator().next().get1().toString():"");
+         if (!list.isEmpty()) {
+             WebQueryResult wqr = list.iterator().next();
+             res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной выписной)");
+         }
          //Основной клинический последнего СЛО в СЛС
          if (list.isEmpty()) {
              list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds\n" +
@@ -238,8 +241,8 @@ public class OncologyServiceJs {
                      "and dmc.transferdate is null\n" +
                      "and hmc.id="+medcaseId);
              if (!list.isEmpty()) {
-                  WebQueryResult wqr = list.iterator().next();
-                  res.append(wqr.get1() + " " + wqr.get2());
+                 WebQueryResult wqr = list.iterator().next();
+                 res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной клинический последнего СЛО в СЛС)");
              }
          }
          return res.toString();
@@ -356,6 +359,18 @@ public class OncologyServiceJs {
         if (!list.isEmpty()) {
             for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2());
         }
+        return res.toString();
+    }
+    // 26102018 get dateBiops/Cons
+    public String getMethodAndService(String caseId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        Collection<WebQueryResult> list = service.executeNativeSql("select dtr.id as dtrid,ms.id as msid,dtr.name as n1,ms.name as n2 from oncologydirection d" +
+                " left join vocmedservice ms on ms.id=d.medservice_id" +
+                " left join VocOncologyMethodDiagTreat dtr on dtr.id=d.methoddiagtreat_id" +
+                " where d.oncologycase_id="+caseId);
+        if (!list.isEmpty())
+            for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4());
         return res.toString();
     }
 }

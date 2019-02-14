@@ -46,7 +46,10 @@
                 <msh:hidden guid="lineDrugTherapy" property="lineDrugTherapy" />
                 <msh:hidden guid="typeTreatment" property="typeTreatment" />
                 <msh:hidden guid="contraString" property="contraString" />
+                <msh:hidden guid="methodDiagTreat" property="typeTreatment" />
+                <msh:hidden guid="medService" property="contraString" />
                 <msh:hidden property="isFirst" />
+                <msh:hidden property="MKB" />
                 <div id="vocOncologyReasonTreatDiv">
                     <label><b>Повод обращения (4):</b></label><br>
                 </div>
@@ -161,6 +164,8 @@
                     <label>Направление с целью уточнения диагноза (1):</label><br>
                 </div>
                 <br>
+                <msh:autoComplete  property="methodDiagTreat" label="Метод исследования" vocName="vocOncologyMethodDiagTreat" horizontalFill="true"/>
+                <msh:autoComplete  property="medService" label="Медицинская услуга" vocName="vocMedService" horizontalFill="true" />
             </div>
             <msh:submitCancelButtonsRow colSpan="4" functionSubmit="this.disabled=true; if (document.getElementById('suspicionOncologist').checked) saveDirectionReestr(this); else saveCase(this) ;"/>
         </msh:form>
@@ -172,6 +177,7 @@
             var requiredStad = [0,1,2,3,4];  //коды поводов обращения, для которых обязательно указание стадии заболевания
             var requiredTNM = [0];  //коды поводов обращения, для которых обязательно указание T N M
             var requiredDistantMts = [1,2];  //коды поводов обращения, для которых обязательно указание Наличие отдалённых метастазов (при прогрессировании/рецидиве)
+            var furtherTypeDir=3;  //id типа направления, для которого обязательно заполнение доп. полей
             //нужные дивы
             var suspicionOncologist = document.getElementById("suspicionOncologist");
             var oncologyDirection = document.getElementById("oncologyDirection");
@@ -180,6 +186,7 @@
             var treatmentDiv = document.getElementById("treatmentDiv");
             var disabled=false;
             checkCheckbox();
+            checkFurther();
             //стили для красоты
             document.getElementById("date1").style="margin-left:51px";
             document.getElementById("date2").style="";
@@ -241,6 +248,21 @@
                         setRowsToContaineroncoT('checkbox','vocOncologyTypeDirection','vocOncologyTypeDirectionDiv','',res.split("#"),disabled,true,true);
                     }
                 }});
+            //получить метод исследования и услугу
+            OncologyService.getMethodAndService(${param.id}, {
+                callback : function(res) {
+                    if (res!="") {
+                        var mas=res.split('#');
+                        if (mas[0]!='' && mas[1]!='' && mas[3]!='' && mas[4]!='') {
+                            $('methodDiagTreat').value =mas[0];
+                            $('medService').value =mas[1];
+                            if ($('methodDiagTreatName')) $('methodDiagTreatName').value =mas[2];
+                            if ($('medServiceName')) $('medServiceName').value =mas[3];
+                            if ($('methodDiagTreatReadOnly')) $('methodDiagTreatReadOnly').value =mas[2];
+                            if ($('medServiceReadOnly')) $('medServiceReadOnly').value =mas[3];
+                        }
+                    }
+                }});
             </msh:ifFormTypeAreViewOrEdit>
             //проставить видимость дивов в зависимости от чекбоксов
            suspicionOncologist.onclick = function() {
@@ -249,7 +271,7 @@
             function load1() {
                 <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
                 if (document.getElementById('vocOncologyTypeDirection1')==null) {
-                    setRowsToContaineroncoT('checkbox', 'vocOncologyTypeDirection', 'vocOncologyTypeDirectionDiv', '', null, false, false, false);
+                    setRowsToContaineroncoT('checkbox', 'vocOncologyTypeDirection', 'vocOncologyTypeDirectionDiv', '', null, true, false, false);
                     $('date').value = getCurrentDate();
                 }
                 </msh:ifFormTypeIsCreate>
@@ -318,10 +340,11 @@
             <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
                 OncologyService.getFIODsPatient(${param.id}, {
                 callback : function(res) {
-                    if (res!="#") {
-                        var mas=res.split("#");
+                    var mas=res.split("#");
+                    if (mas[0]!='' && mas[1]!=''  && mas[2]!='') {
                         document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
-                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1];
+                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1] + mas[2].replace(mas[1],'');
+                        $('MKB').value=mas[1];
                         if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
                             var ind=mas[1].indexOf(' ');
                             if (ind!=-1) {
@@ -338,15 +361,19 @@
                             }
                         }
                     }
+                    else {
+                        alert('Нет основного выписного диагноза и нет основного клинчиеского диагноза в последнем СЛО! Создание онкологической формы невозможно.');
+                        window.location.href='entityParentView-stac_ssl.do?id='+${param.id};
+                    }
                 }});
             </msh:ifFormTypeIsCreate>
             <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
             OncologyService.getFIODsPatient($('medCase').value, {
                 callback : function(res) {
-                    if (res!="#") {
-                        var mas=res.split("#");
+                    var mas=res.split("#");
+                    if (mas[0]!='' && mas[1]!=''  && mas[2]!='') {
                         document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
-                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1];
+                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1] + mas[2].replace(mas[1],'');
                         if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
                             var ind=mas[1].indexOf(' ');
                             if (ind!=-1) {
@@ -362,6 +389,10 @@
                                 metastasisAutocomplete.setParentId(mas[1]) ;
                             }
                         }
+                    }
+                    else {
+                        alert('Нет основного выписного диагноза и нет основного клинчиеского диагноза в последнем СЛО! Создание онкологической формы невозможно.');
+                        window.location.href='entityParentView-stac_ssl.do?id='+${param.id};
                     }
                 }});
             OncologyService.getDates($('id').value, {
@@ -397,6 +428,18 @@
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
+                else if($('vocOncologyTypeDirection'+furtherTypeDir) && $('vocOncologyTypeDirection'+furtherTypeDir).checked
+                    && $('methodDiagTreat').value=='') {
+                    alert("Заполните метод исследования!");
+                    btn.removeAttribute("disabled");
+                    btn.value='Создать';
+                }
+                else if($('vocOncologyTypeDirection'+furtherTypeDir) && $('vocOncologyTypeDirection'+furtherTypeDir).checked
+                    && $('medService').value=='') {
+                    alert("Заполните медицинскую услугу!");
+                    btn.removeAttribute("disabled");
+                    btn.value='Создать';
+                }
                 else {
                     var mas={
                         list:[]
@@ -404,8 +447,8 @@
                     for (var i=0; i<typeDir.length; i++) {
                         var obj = {
                             typeDirection: typeDir[i],
-                            methodDiagTreat: "",
-                            medService: "",
+                            methodDiagTreat: $('methodDiagTreat').value,
+                            medService: $('medService').value,
                             medCase:getValue("medCase"),
                             date:$('date').value,
                             id:${param.id}
@@ -797,11 +840,27 @@
                                     if (ids[i]==vocVal.id) txt +=" checked ";
                                 }
                             }
-                            txt += ">" + vocVal.name;
+                            txt += ">";
+                            txt+=(voc=='vocOncologyTypeDirection')?
+                                "<label onclick=\"if (document.getElementById('"+voc+vocVal.id+"')) " +
+                                "document.getElementById('"+voc+vocVal.id +"').click(); checkFurther();\" id='lbl"+voc+vocVal.id +"'>" + vocVal.name + "</label>"
+                                : vocVal.name;
                             txt+="</td><tr>";
                         }
                         txt+="</tbody><table>";
                         document.getElementById(divId).innerHTML+=txt;
+                        if (voc=='vocOncologyTypeDirection') {
+                            <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
+                            var inputs = document.getElementsByTagName('input');
+                            for (i = 0; i < inputs.length; i++) {
+                                if (inputs[i].type == 'checkbox' && inputs[i].name=='vocOncologyTypeDirection')
+                                    inputs[i].disabled = true;
+                            }
+                            </msh:ifFormTypeIsView>
+                            document.getElementById(voc+furtherTypeDir).onclick= function() {
+                                 checkFurther();
+                             }
+                        }
                         if (func!='') {
                             for (var ind1 = 0; ind1 < vocRes.length; ind1++) {
                                 var id = vocRes[ind1].id;
@@ -809,15 +868,41 @@
                                     func(this);
                                 };
                                 if (document.getElementById('td'+voc+id)) document.getElementById('td'+voc+id).onclick =  function () {
-                                    this.childNodes[0].checked='checked'; func(this.childNodes[0]);
+                                    this.childNodes[0].checked='checked';
                                 };
                             }
                         }
                         transform();
+                        checkFurther();
                         <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
                             loadCaseAll(voc);
                         </msh:ifFormTypeAreViewOrEdit>
                     }});
+            }
+            //проверка на доп. поля направления
+            function checkFurther() {
+                <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
+                if ($('vocOncologyTypeDirection'+furtherTypeDir) && $('vocOncologyTypeDirection'+furtherTypeDir).checked) {
+                    $('methodDiagTreat').hidden=false;
+                    $('medService').hidden=false;
+                    $('methodDiagTreatName').hidden=false;
+                    $('medServiceName').hidden=false;
+                    $('methodDiagTreatLabel').hidden=false;
+                    $('medServiceLabel').hidden=false;
+                    $('methodDiagTreatName').className += " required";
+                    $('medServiceName').className += " required";
+                }
+                else {
+                    $('methodDiagTreat').hidden=true;
+                    $('medService').hidden=true;
+                    $('methodDiagTreatName').hidden=true;
+                    $('medServiceName').hidden=true;
+                    $('methodDiagTreatLabel').hidden=true;
+                    $('medServiceLabel').hidden=true;
+                    $('methodDiagTreatName').className = document.getElementById("methodDiagTreatName").className.replace(new RegExp("required", "g"), "");
+                    $('medServiceName').className = document.getElementById("medServiceName").className.replace(new RegExp("required", "g"), "");
+                }
+                </msh:ifFormTypeIsNotView>
             }
             //увеличение размеров рб
             function transform() {

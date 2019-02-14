@@ -58,6 +58,8 @@ public class OncologyCase extends BaseEntity {
     private Date dateBiops;
     /** дата проведения консилиума*/
     private Date dateCons;
+    /** диагноз, с которым создана онкологическая форма*/
+    private String theMKB;
 
     @Comment("Подозрение на ЗНО")
     public Boolean getSuspicionOncologist() {
@@ -237,4 +239,13 @@ public class OncologyCase extends BaseEntity {
     public void setDiagnostics(List<OncologyDiagnostic> aDiagnostics) {theDiagnostics = aDiagnostics;}
     /** Диагностические блоки */
     private List<OncologyDiagnostic> theDiagnostics ;
+
+    /** Диагноз, с которым создана онкологическая форма*/
+    @Comment("Диагноз, с которым создана онкологическая форма")
+    public String getMKB() {
+        return theMKB;
+    }
+    public void setMKB(String aMKB) {
+        theMKB = aMKB;
+    }
 }
