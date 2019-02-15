@@ -145,18 +145,14 @@ function findLogginedWorkFunctionList(aCtx) {
 	var list = aCtx.manager.createQuery("from WorkFunction where secUser.login = :login")
 		.setParameter("login", username) 
 		.getResultList() ;
-	if(list.size()==0) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответствия между WorkFunction и SecUser" ;
+	if(list.isEmpty()) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответствия между WorkFunction и SecUser" ;
 	return list ;
 }
 function getGroupByWorkFunction(aCtx,aWorkFunction) {
 	var sql = "select group_id,id from workfunction where id='"+aWorkFunction+"'" ;
 	var list = aCtx.manager.createNativeQuery(sql)
 		.getResultList() ;
-	if (list.size()>0) {
-		var obj = list.get(0) ;
-		return +obj[0]  ;
-	}
-	return 0 ;
+	return list.isEmpty() ? 0 : +list.get(0)[0] ;
 }
 function findLogginedWorkFunctionListByPoliclinic(aCtx,aWorkPlan) {
 	var username = aCtx.sessionContext.callerPrincipal.name ;

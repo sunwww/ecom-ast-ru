@@ -74,9 +74,8 @@ function onCreate(aForm, aEntity, aCtx) {
         var kkm = new Packages.ru.ecom.mis.ejb.service.contract.ContractServiceBean();
         var worker = wf.worker.person;
         var fio = wf.workFunction.name + " " + worker.lastname + " " + worker.firstname.substring(0, 1) + ". " + (worker.middlename != null ? worker.middlename.substring(0, 1) + "." : "");
-        kkm.sendKKMRequest("makePayment", aEntity.getAccount().getId(), aForm.getDiscount(), aEntity.getIsPaymentTerminal() != null ? aEntity.getIsPaymentTerminal() : false, aForm.getCustomerPhone, fio, aCtx.manager,defaultKkm.getUrl());
+        kkm.sendKKMRequest("makePayment", aEntity.getAccount().getId(), aForm.getDiscount(), aEntity.getIsPaymentTerminal() != null ? aEntity.getIsPaymentTerminal() : false, aForm.getCustomerPhone(), fio, aCtx.manager,defaultKkm.getUrl());
     }
-    //**** ***//
 }
 function onPreDelete(aId, aCtx) {
 	aCtx.manager.createNativeQuery("﻿delete from contractaccountoperationbyservice where AccountOperation_id='"+aId+"'").executeUpdate() ;
