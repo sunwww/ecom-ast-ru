@@ -1345,13 +1345,13 @@ where wf.dtype='PersonalWorkFunction' -->
 					  (vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0'))
 					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))"
 				names = "ms.code||' '||ms.name"
-				nameId="distinct ms.id"
+				nameId=" ms.id"
 				queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1')"
 				join=" left join pricemedservice pms on pms.medservice_id=ms.id
 					left join priceposition pp on pp.id=pms.priceposition_id and pp.dateTo is null
             		left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
 					"
-				order=''
+				order='ms.code, ms.name'
 				queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
 				groupBy="ms.id, ms.code, ms.name"
 
@@ -1370,7 +1370,7 @@ where wf.dtype='PersonalWorkFunction' -->
 					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))"
 					parentSplitCount='3'
 					names = "ms.code||' '||ms.name"
-					nameId="distinct ms.id"
+					nameId="ms.id"
 					queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1') and vst.code!='OPERATION'"
 					join=" left join WorkFunctionService wfs on wfs.medService_id=ms.id
 					left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end
@@ -1379,7 +1379,7 @@ where wf.dtype='PersonalWorkFunction' -->
 					left join priceposition pp on pp.id=pms.priceposition_id and pp.dateTo is null
             		left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
 					"
-					order=''
+					order='ms.code, ms.name'
 					queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
 					groupBy="ms.id, ms.code, ms.name"
 
