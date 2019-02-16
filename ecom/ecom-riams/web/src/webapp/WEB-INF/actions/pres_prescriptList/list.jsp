@@ -11,6 +11,10 @@
   <tiles:put name="title" type="string">
     <msh:title mainMenu="Patient" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Лист назначений" />
     <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Лист назначений" guid="29345263-7743-4455-879e-130b73690294" />
+    <script type="text/javascript">
+    function printPrescriptionList(id) {
+    window.document.location='print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id='+id;
+    }</script>
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Показать" guid="a47dfc0b-97d1-4cb5-b904-4ff717e612a7" />
@@ -32,9 +36,14 @@
 	        <msh:tableColumn columnName="Назначил" property="2" guid="44482100-2200-4c8b-9df5-4f5cc0e3fe68" />
 	        <msh:tableColumn columnName="Дата создания" property="3" guid="dbe4fc52-03f7-42af-9555-a4bee397a800" />
             <msh:tableColumn columnName="Отделение" property="4" guid="5c893448-9084-4b1a-b301-d7aca8f6307c" />
+          <msh:tableButton property="1" buttonShortName="Печать ЛН" buttonFunction="printPrescriptionList" />
 	    </msh:table>
     </msh:sectionContent>
     </msh:section>
     <tags:pres_prescriptByListTotal field="sls.id=${param.id}" />
+
   </tiles:put>
+  <script type="text/javascript">
+   alert('123');
+  </script>
 </tiles:insert>

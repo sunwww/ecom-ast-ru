@@ -81,6 +81,6 @@ public class PriceMedService extends BaseEntity{
 	private Date theDateTo;
 	@Transient
 	public String getMedServiceInfo() {
-		return theMedService!=null? theMedService.getName():"" ;
+		return theMedService!=null? theMedService.getCode()+" "+theMedService.getName():"" ;
 	}
 }

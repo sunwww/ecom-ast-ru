@@ -290,7 +290,7 @@
 
    	 //TODO Доделать выбор справочника исходя от источника финансирования
    	 function setMedserviceAutocompleteParent() { //Пока не используется
-         WorkCalendarService.getIsChargedServiceStream($('serviceStream').value, {
+     /*    WorkCalendarService.getIsChargedServiceStream($('serviceStream').value, {
              callback: function(isCharged) {
                  if (true==isCharged){ // Если поток обслуживания - платно, то указываем только те услуги, которые есть в прейскуранте
                      theOtmoa_medServices.setUrl('simpleVocAutocomplete/medServiceForSpecCharged');
@@ -300,7 +300,7 @@
 
                  }
              }
-         });
+         });*/
      }
 
       //new dateutil.DateField($('datePlanName'));

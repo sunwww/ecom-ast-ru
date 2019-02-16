@@ -377,7 +377,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     					 and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par4 and ((vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0')) or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))
 "
     			names = "coalesce(ms.code||' ','')||ms.name"
-    			nameId="distinct ms.id"
+    			nameId="ms.id"
     			queryAppend=""
     			join=" left join VocServiceType vst on vst.id=ms.serviceType_id
     			       left join WorkFunctionService wfs on wfs.medService_id=ms.id
@@ -386,8 +386,9 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     			       left join priceposition pp on pp.id=pms.priceposition_id
     			       left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
     			       "
-    			order=''
+    			order='ms.code, ms.name'
     			queried = "(cast(ms.id as varchar(10)) like :querId or replace(ms.code,'.','') like :query or ms.code like :querId  or UPPER(ms.name) like UPPER(:query))"
+				groupBy="ms.id, ms.code, ms.name"
 		    	parentSplitCount="4" />
     </voc>
 

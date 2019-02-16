@@ -63,25 +63,21 @@
      }
      
 	function setType(typeID, typeName, isOnlyCurrentDate) {
-		if ($('prescriptType').value==typeID) {
-			
-		} else {
+		if ($('prescriptType').value!=typeID) {
 			$('prescriptType').value = typeID;
 			$('prescriptTypeName').value = typeName;
 			$('prescriptTypeName').disabled='true';
 			changePrescriptionType();
 			disableEnableDate(isOnlyCurrentDate);
-			if (isOnlyCurrentDate==1) {
-				
-			} else {
+			if (isOnlyCurrentDate!=1) {
 				canChangeDate = true;
 			}
 		}
-		if (document.medServiceAutocomplete) {
+		try {
 		    alert('make parent for service'+typeID+"#"+$('serviceStream').value);
-            medServiceAutocomplete.setParentId(typeID+"#"+$('serviceStream').value);
-        } else {
-            alert('cant parent for service');
+            labServiciesAutocomplete.setParentId(typeID+"#"+$('serviceStream').value);
+        } catch (e) {
+            alert('cant parent for service '+e);
         }
 		the${name}PrescTypesDialog.hide() ;
 	}

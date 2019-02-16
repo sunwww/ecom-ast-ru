@@ -22,6 +22,13 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property="prescriptionList", parentForm=AbstractPrescriptionListForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription/ServicePrescription")
 public class ServicePrescriptionForm extends PrescriptionForm{
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Persist
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	private Long theServiceStream ;
 	
 	/** Номер штрих-кода */
 	@Comment("Номер штрих-кода")

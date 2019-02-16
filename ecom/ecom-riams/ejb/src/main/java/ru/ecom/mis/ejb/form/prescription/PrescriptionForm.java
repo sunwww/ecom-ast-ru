@@ -26,7 +26,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses({DrugPrescriptionForm.class, DietPrescriptionForm.class
 	, ServicePrescriptionForm.class, ModePrescriptionForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription")
-public class PrescriptionForm extends IdEntityForm{
+public class PrescriptionForm extends IdEntityForm {
 
 
 	/** Поток обслуживания */
@@ -34,7 +34,6 @@ public class PrescriptionForm extends IdEntityForm{
 	@Persist
 	public Long getServiceStream() {return theServiceStream;}
 	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
-	/**  */
 	private Long theServiceStream ;
 
 	/** Лист назначений */

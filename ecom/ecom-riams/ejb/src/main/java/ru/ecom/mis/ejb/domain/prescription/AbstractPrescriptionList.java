@@ -27,6 +27,7 @@ public abstract class AbstractPrescriptionList extends BaseEntity{
 	@Comment("Поток обслуживания")
 	@Transient
 	public VocServiceStream getServiceStream() {
+		System.out.println("PL = "+getMedCase().getServiceStream());
 		return getMedCase()!=null ? getMedCase().getServiceStream(): null;
 	}
 	

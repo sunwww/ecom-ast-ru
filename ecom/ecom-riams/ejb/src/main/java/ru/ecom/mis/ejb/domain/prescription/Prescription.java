@@ -49,8 +49,9 @@ public abstract class Prescription extends BaseEntity{
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Transient
-	public VocServiceStream getServiceStream() {return getPrescriptionList().getServiceStream() ;}
-	public void setServiceStream(VocServiceStream aServiceStream) {}
+	public VocServiceStream getServiceStream() {
+        System.out.println("PR="+getPrescriptionList().getServiceStream() );
+	    return getPrescriptionList().getServiceStream() ;}
 
 	/** Лист назначений */
 	@Comment("Лист назначений")

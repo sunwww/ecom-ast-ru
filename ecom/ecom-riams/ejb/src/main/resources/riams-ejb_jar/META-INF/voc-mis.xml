@@ -1,10 +1,4 @@
 <vocconfig>
-
-<!-- select distinct on (p.lastname) p.lastname||' '||p.firstname||' '||p.middlename from workfunction wf
-left join Worker as w on w.id=wf.worker_id
-left join Patient as p on p.id=w.person_id
-where wf.dtype='PersonalWorkFunction' -->
-
 	<voc id="vocTicketQueue" type="NativeVocService">
 		<NativeVocService
 				from="VocQueue as voc"
@@ -784,15 +778,18 @@ where wf.dtype='PersonalWorkFunction' -->
 	left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= :par1
 	and mss.dtype='MedService'
 	and vsts.code='LABSURVEY'
-	and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
+	) and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
 					  (vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0'))
-					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))
-	)"
+					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null))"
 				nameId=" ms.id"
 				queryAppend="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null"
 				join=" left join workfunctionservice wfs on wfs.medservice_id=ms.id
 				left join vocprescripttype vpt on vpt.id=wfs.prescripttype_id
-				left join vocservicetype vst on vst.id=ms.servicetype_id "
+				left join vocservicetype vst on vst.id=ms.servicetype_id
+				left join priceMedService pms on pms.medservice_id=ms.id
+				left join priceposition pp on pp.id=pms.priceposition_id and pp.dateTo is null
+				left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
+"
 				groupBy="ms.id, ms.name, ms.code"
 				order="ms.name"
 				names="ms.code||' '|| ms.name"
@@ -1326,11 +1323,12 @@ where wf.dtype='PersonalWorkFunction' -->
     			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))
 				and (wfs.lpu_id is null or wfs.lpu_id=coalesce(wf.lpu_id,w.lpu_id))
 				and (wfs.workfunction_id is null or wfs.workfunction_id=:par1)
+				and (ms.isNoOmc is null or ms.isNoOmc='0')
 				"
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
-    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1' and (ms.isNoOmc is null or ms.isNoOmc='0')"
+    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id
     			left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end
     			left join worker w on w.id=wf.worker_id'
