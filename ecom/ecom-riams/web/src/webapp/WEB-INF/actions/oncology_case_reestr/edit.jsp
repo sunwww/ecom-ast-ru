@@ -168,6 +168,10 @@
                 <msh:autoComplete  property="medService" label="Медицинская услуга" vocName="vocMedService" horizontalFill="true" />
             </div>
             <msh:submitCancelButtonsRow colSpan="4" functionSubmit="this.disabled=true; if (document.getElementById('suspicionOncologist').checked) saveDirectionReestr(this); else saveCase(this) ;"/>
+            <%
+                String mkb=request.getParameter("mkb");
+                request.setAttribute("mkb", mkb);
+            %>
         </msh:form>
     </tiles:put>
     <tiles:put name="javascript" type="string">
@@ -338,7 +342,8 @@
             }
             //проставить диагноз и ФИО пациента
             <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
-                OncologyService.getFIODsPatient(${param.id}, {
+            //Если онкологическая форма создаётся по кнопке - '${mkb}' будет пустым, иначе - заполнен пока ещё не созданным осн. вып.
+                OncologyService.getFIODsPatient(${param.id},'${mkb}', {
                 callback : function(res) {
                     var mas=res.split("#");
                     if (mas[0]!='' && mas[1]!=''  && mas[2]!='') {
@@ -368,31 +373,40 @@
                 }});
             </msh:ifFormTypeIsCreate>
             <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-            OncologyService.getFIODsPatient($('medCase').value, {
+            //if ('${mkb}'=='')- простое редактирование формы
+            ////если нет - то актуализация формы, в случае, когда форма создана с другим диагнозом, а в выписке указан новый
+            OncologyService.getDsWithName(${param.id},'${mkb}', {
                 callback : function(res) {
-                    var mas=res.split("#");
-                    if (mas[0]!='' && mas[1]!=''  && mas[2]!='') {
-                        document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
-                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1] + mas[2].replace(mas[1],'');
-                        if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
-                            var ind=mas[1].indexOf(' ');
-                            if (ind!=-1) {
-                                stadAutocomplete.setParentId(mas[1].substring(0,ind)) ;
-                                tumorAutocomplete.setParentId(mas[1].substring(0,ind)) ;
-                                nodusAutocomplete.setParentId(mas[1].substring(0,ind)) ;
-                                metastasisAutocomplete.setParentId(mas[1].substring(0,ind)) ;
+                    var mas = res.split("#");
+                    if (mas[0] != '' && mas[1] != '') {
+                        document.getElementById("fio").innerHTML = "Ф.И.О. пациента " + mas[0];
+                        document.getElementById("ds").innerHTML = "Диагноз (по МКБ-10): " + mas[1];
+                        if (mas[1] != null && mas[1] != '' && typeof stadAutocomplete != 'undefined') {
+                            var ind = mas[1].indexOf(' ');
+                            if (ind != -1) {
+                                stadAutocomplete.setParentId(mas[1].substring(0, ind));
+                                tumorAutocomplete.setParentId(mas[1].substring(0, ind));
+                                nodusAutocomplete.setParentId(mas[1].substring(0, ind));
+                                metastasisAutocomplete.setParentId(mas[1].substring(0, ind));
                             }
                             else {
-                                stadAutocomplete.setParentId(mas[1]) ;
-                                tumorAutocomplete.setParentId(mas[1]) ;
-                                nodusAutocomplete.setParentId(mas[1]) ;
-                                metastasisAutocomplete.setParentId(mas[1]) ;
+                                stadAutocomplete.setParentId(mas[1]);
+                                tumorAutocomplete.setParentId(mas[1]);
+                                nodusAutocomplete.setParentId(mas[1]);
+                                metastasisAutocomplete.setParentId(mas[1]);
+                            }
+                            if ('${mkb}'!='') {
+                                $('stad').value=$('stadName').value='';
+                                $('tumor').value=$('tumorName').value='';
+                                $('nodus').value=$('nodusName').value='';
+                                $('metastasis').value=$('metastasisName').value='';
+                                $('MKB').value='${mkb}';
                             }
                         }
                     }
                     else {
-                        alert('Нет основного выписного диагноза и нет основного клинчиеского диагноза в последнем СЛО! Создание онкологической формы невозможно.');
-                        window.location.href='entityParentView-stac_ssl.do?id='+${param.id};
+                        alert('Нет диагноза, с которым была создана форма!');
+                        window.location.href = 'entityParentView-stac_ssl.do?id=' + $('medCase').value
                     }
                 }});
             OncologyService.getDates($('id').value, {
@@ -754,8 +768,10 @@
             }
             //Если повод обращения выбран {0,1,2,3,4}, то поле "Стадия" обязательно для заполнения, в остальных случаях  не заполняется.
             function funcSetStadReauired(rb) {
+                var checkVal=(rb.id.substring(0,2)!='td')? rb.value:rb.id.replace('tdvocOncologyReasonTreat','');
+                if (rb.id.substring(0,2)=='td')
                 if (document.getElementById("stadName")) {
-                    if (requiredStad.include(rb.value)) {
+                    if (requiredStad.include(checkVal)) {
                         document.getElementById("stadName").className += " required";
                         document.getElementById("stadName").disabled = false;
                     }
@@ -765,13 +781,13 @@
                         document.getElementById("stadName").disabled=true;
                     }
                 }
-                funcSetTNMReauired(rb);
-                funcSetOtdMtsEnabled(rb);
+                funcSetTNMReauired(checkVal);
+                funcSetOtdMtsEnabled(checkVal);
             }
             //Если повод обращения выбран {0}, то поля "Tumor, Nodus, Metastasis" обязательны для заполнения, в остальных случаях  не заполняются.
-            function funcSetTNMReauired(rb) {
+            function funcSetTNMReauired(checkVal) {
                 if (document.getElementById("tumorName")) {
-                    if (requiredTNM.include(rb.value)) {
+                    if (requiredTNM.include(checkVal)) {
                         document.getElementById("tumorName").className += " required";
                         document.getElementById("tumorName").disabled = false;
                     }
@@ -782,7 +798,7 @@
                     }
                 }
                 if (document.getElementById("nodusName")) {
-                    if (requiredTNM.include(rb.value)) {
+                    if (requiredTNM.include(checkVal)) {
                         document.getElementById("nodusName").className += " required";
                         document.getElementById("nodusName").disabled = false;
                     }
@@ -793,7 +809,7 @@
                     }
                 }
                 if (document.getElementById("metastasisName")) {
-                    if (requiredTNM.include(rb.value)) {
+                    if (requiredTNM.include(checkVal)) {
                         document.getElementById("metastasisName").className += " required";
                         document.getElementById("metastasisName").disabled = false;
                     }
@@ -807,9 +823,9 @@
             document.getElementById("distantMetastasis").setAttribute("disabled",true);
             if (document.getElementById("consiliumName")) document.getElementById("consiliumName").className += " required";
             //Атрибут "Наличие отдалённых метастазов (при прогрессировании/рецидиве)" доступен при Повод обращения = {1,2},  в остальных случаях не заполняется.
-            function funcSetOtdMtsEnabled(rb) {
+            function funcSetOtdMtsEnabled(checkVal) {
                 if (document.getElementById("distantMetastasis")) {
-                    if (requiredDistantMts.include(rb.value)) {
+                    if (requiredDistantMts.include(checkVal)) {
                         document.getElementById("distantMetastasis").removeAttribute("disabled");
                         document.getElementById("distantMetastasis").disabled = false;
                     }
@@ -819,7 +835,7 @@
                         document.getElementById("distantMetastasis").disabled=true;
                     }
                 }
-                funcSetTNMReauired(rb);
+                funcSetTNMReauired(checkVal);
             }
             //Milamesher 02102018
             //type - radio/checkbox; vocname - откуда брать данные; div - название контейнера; ids - массив с id checked, disabled, iscode = code or id from voc
@@ -869,6 +885,7 @@
                                 };
                                 if (document.getElementById('td'+voc+id)) document.getElementById('td'+voc+id).onclick =  function () {
                                     this.childNodes[0].checked='checked';
+                                    func(this);
                                 };
                             }
                         }
@@ -925,6 +942,7 @@
                                 if (document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value)) {
                                     document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value).checked = 'checked';
                                     funcSetStadReauired(document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value));
+                                    document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value).click();
                                 }
                             }
                         }

@@ -1,6 +1,5 @@
 package ru.ecom.mis.web.dwr.oncology;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -210,7 +209,7 @@ public class OncologyServiceJs {
         return result;
     }
     //Milamesher 01102018 получение ФИО пациента для онкологической формы
-    public String getFIODsPatient(Long medcaseId,HttpServletRequest aRequest) throws NamingException {
+    public String getFIODsPatient(Long medcaseId,String mkb,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
         //ФИО пациента
@@ -218,33 +217,43 @@ public class OncologyServiceJs {
                 "left join patient pat on pat.id=hmc.patient_id\n" +
                 "where hmc.id=" + medcaseId);
          res.append(!list.isEmpty()? list.iterator().next().get1().toString()+"#" : "#");
-         //Основной выписной диагноз
-         list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds\n" +
-                 "left join vocidc10 idc on idc.id=ds.idc10_id\n" +
-                 "left join medcase hmc on hmc.id=ds.medcase_id\n" +
-                 "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
-                 "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
-                 "where hmc.dtype='HospitalMedCase' and reg.code='3' and pr.code='1' and hmc.id="+medcaseId);
-         if (!list.isEmpty()) {
-             WebQueryResult wqr = list.iterator().next();
-             res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной выписной)");
-         }
-         //Основной клинический последнего СЛО в СЛС
-         if (list.isEmpty()) {
-             list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds\n" +
-                     "left join vocidc10 idc on idc.id=ds.idc10_id\n" +
-                     "left join medcase dmc on dmc.id=ds.medcase_id\n" +
-                     "left join medcase hmc on hmc.id=dmc.parent_id\n" +
-                     "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
-                     "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
-                     "where dmc.dtype='DepartmentMedCase' and reg.code='4' and pr.code='1' \n" +
-                     "and dmc.transferdate is null\n" +
-                     "and hmc.id="+medcaseId);
-             if (!list.isEmpty()) {
-                 WebQueryResult wqr = list.iterator().next();
-                 res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной клинический последнего СЛО в СЛС)");
-             }
-         }
+         //Передаваемый диагноз
+        if (!mkb.equals("")) {
+            list = service.executeNativeSql("select code,name from vocidc10 mkb where code='"+mkb+"'");
+            if (!list.isEmpty()) {
+                WebQueryResult wqr = list.iterator().next();
+                res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной выписной в выписке)");
+            }
+        }
+        else {
+            //Основной выписной диагноз
+            list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds\n" +
+                    "left join vocidc10 idc on idc.id=ds.idc10_id\n" +
+                    "left join medcase hmc on hmc.id=ds.medcase_id\n" +
+                    "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
+                    "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
+                    "where hmc.dtype='HospitalMedCase' and reg.code='3' and pr.code='1' and hmc.id=" + medcaseId);
+            if (!list.isEmpty()) {
+                WebQueryResult wqr = list.iterator().next();
+                res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной выписной)");
+            }
+            //Основной клинический последнего СЛО в СЛС
+            if (list.isEmpty()) {
+                list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds\n" +
+                        "left join vocidc10 idc on idc.id=ds.idc10_id\n" +
+                        "left join medcase dmc on dmc.id=ds.medcase_id\n" +
+                        "left join medcase hmc on hmc.id=dmc.parent_id\n" +
+                        "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
+                        "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
+                        "where dmc.dtype='DepartmentMedCase' and reg.code='4' and pr.code='1' \n" +
+                        "and dmc.transferdate is null\n" +
+                        "and hmc.id=" + medcaseId);
+                if (!list.isEmpty()) {
+                    WebQueryResult wqr = list.iterator().next();
+                    res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной клинический последнего СЛО в СЛС)");
+                }
+            }
+        }
          return res.toString();
     }
     //Milamesher 03102018 получение code всех направлений к подозрению на ЗНО
@@ -361,7 +370,7 @@ public class OncologyServiceJs {
         }
         return res.toString();
     }
-    // 26102018 get dateBiops/Cons
+    // 15022019 get dateBiops/Cons
     public String getMethodAndService(String caseId,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
@@ -371,6 +380,49 @@ public class OncologyServiceJs {
                 " where d.oncologycase_id="+caseId);
         if (!list.isEmpty())
             for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4());
+        return res.toString();
+    }
+    // 18022019 проверка на наличие онкологической формы с основным выписным диагнозом
+    public String checkDiagnosisOnkoForm(String slsId, String concludingMkb, HttpServletRequest aRequest) throws NamingException {
+        //Если есть хотя бы одна форма с основным выписным, то всё ок
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        String res = "";
+        if (concludingMkb.equals("")) return res;
+        //Диагноз онкологической формы
+        Collection<WebQueryResult> list = service.executeNativeSql(
+                "select mkb||' '||mkb.name,c.id from oncologycase c left join vocidc10 mkb on mkb.code=c.mkb where c.medcase_id="+slsId);
+        Boolean flag=false; //что есть такой же мкб - до этого момента уже выполнена проверка на наличие/отсутствие ЗНО
+        String ds="",cId="";
+        for (WebQueryResult wqr : list) {
+            if (wqr.get1()!=null && wqr.get2()!=null) {
+                if (wqr.get1().toString().contains(concludingMkb)) flag = true; //проверяю по всем формам
+                if (ds.equals("")) {
+                    ds=wqr.get1().toString();  //беру диагноз первой созданной формы
+                    cId=wqr.get2().toString();
+                }
+            }
+        }
+        if (!flag) res="Внимание! Онкологическая форма была создана для диагноза " + ds + "! Просьба уточнить диагноз в ЗНО.#"+cId;
+        /*else {
+            if (list.size()>1)
+                res="0";
+        }*/
+        return res;
+    }
+    // 18022019 получение mkb с текстом из формы
+    public String getDsWithName(String caseId, String mkb, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        //ФИО пациента
+        Collection<WebQueryResult> list = service.executeNativeSql("select pat.lastname||' ' ||pat.firstname||' '||pat.middlename from medcase hmc\n" +
+                "left join patient pat on pat.id=hmc.patient_id \n" +
+                "left join oncologycase c on c.medcase_id=hmc.id\n" +
+                "where c.id=" + caseId);
+        res.append(!list.isEmpty()? list.iterator().next().get1().toString()+"#" : "#");
+        list =  mkb.equals("")?
+                service.executeNativeSql("select mkb||' '||mkb.name from oncologycase c left join vocidc10 mkb on mkb.code=c.mkb where c.id="+caseId)
+                : service.executeNativeSql("select code||' '||name from vocidc10 mkb where code='"+mkb +"'");
+        res.append(!list.isEmpty() && list.iterator().next().get1()!=null ? list.iterator().next().get1().toString(): "#");
         return res.toString();
     }
 }

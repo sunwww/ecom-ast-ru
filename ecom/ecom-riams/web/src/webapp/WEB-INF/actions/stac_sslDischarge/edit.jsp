@@ -460,43 +460,67 @@
                 //aert(countOncology);
                 var a= $('concludingMkbName').value;
 
-               /* OncologyService.checkSLO(${param.id},{
+                var concludingMkb=$('concludingMkbName').value;
+                var index=concludingMkb.indexOf(' ');
+                if (index!=-1) concludingMkb=concludingMkb.substring(0,index);
+                if (a.match(/C\d\d/ )==null) concludingMkb='';
+                OncologyService.checkSLO(${param.id},{
                     callback : function(res) {
                         if(res=="0" && a.match(/C\d\d/ )!=null)
                         {
                             alert('Внимание! Для выбранного диагноза нужно заполнить случай ЗНО');
+                            window.open("entityParentPrepareCreate-oncology_case_reestr.do?id="+'${param.id}'+"&mkb="+concludingMkb);
                             try{$('submitPreDischrge2').disabled=false;
                                 $('submitPreDischrge1').disabled=false ;}catch(e){}
                             $('submitButton').disabled=false ;
 
-                        }else {*/
-                            var list_diag = ["complication","concomitant"] ;
-                            var isnext=true ;
-                            try {
-                                $('submitPreDischrge2').disabled=true ;
-                                $('submitPreDischrge1').disabled=true ;}catch(e){}
-                            $('submitButton').disabled=true ;
-                            for (var i=0;i<list_diag.length;i++) {
-                                isnext=addDiag(list_diag[i],1);
-                                if (!isnext) break ;
-                                createOtherDiag(list_diag[i]);
-                            }
-                            if (isnext) {
-                                if (+aPrefix>0) {
-                                    document.forms["mainForm"].action='entityParentSaveGoView-stac_sslDischargePre.do';
-                                } else {
-                                    document.forms["mainForm"].action=old_action ;
+                        }else {
+                            OncologyService.checkDiagnosisOnkoForm(${param.id},concludingMkb, {
+                                callback: function (res) {
+                                    if (res!='' && res!='0' && a.match(/C\d\d/ )!=null) {
+                                        var mas = res.split('#');
+                                        alert(mas[0]);
+                                        try{$('submitPreDischrge2').disabled=false;
+                                            $('submitPreDischrge1').disabled=false ;}catch(e){}
+                                        $('submitButton').disabled=false ;
+                                        window.open("entityEdit-oncology_case_reestr.do?id="+mas[1]+"&mkb="+concludingMkb);
+                                    }
+                                    else {
+                                        //if (res=='0' && a.match(/C\d\d/ )!=null) alert('Есть несколько ЗНО, у одного из них совпадает диагноз с основным выписным.');
+                                        var list_diag = ["complication", "concomitant"];
+                                        var isnext = true;
+                                        try {
+                                            $('submitPreDischrge2').disabled = true;
+                                            $('submitPreDischrge1').disabled = true;
+                                        } catch (e) {
+                                        }
+                                        $('submitButton').disabled = true;
+                                        for (var i = 0; i < list_diag.length; i++) {
+                                            isnext = addDiag(list_diag[i], 1);
+                                            if (!isnext) break;
+                                            createOtherDiag(list_diag[i]);
+                                        }
+                                        if (isnext) {
+                                            if (+aPrefix > 0) {
+                                                document.forms["mainForm"].action = 'entityParentSaveGoView-stac_sslDischargePre.do';
+                                            } else {
+                                                document.forms["mainForm"].action = old_action;
+                                            }
+                                            removeFromStorage();
+                                            document.forms["mainForm"].submit();
+                                        } else {
+                                            try {
+                                                $('submitPreDischrge2').disabled = false;
+                                                $('submitPreDischrge1').disabled = false;
+                                            } catch (e) {
+                                            }
+                                            $('submitButton').disabled = false;
+                                        }
+                                    }
                                 }
-                                removeFromStorage();
-                                document.forms["mainForm"].submit() ;
-                            } else {
-                                try{$('submitPreDischrge2').disabled=false ;
-                                    $('submitPreDischrge1').disabled=false ;}catch(e){}
-                                $('submitButton').disabled=false ;
-                            }
-                       /* }
+                            });
 
-                    }});*/
+                    }}});
 
             }
             onload=function(){
