@@ -65,6 +65,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
     private static final String PATIENT="patient";                      //пациент
     private static final String VISITS="visits";                        //визиты случая
     private static final String CACES="tap";                            //все визиты
+    private static final String DOCTORPROMEDCODE = "promedCode_workstaff"; //ИД врача в промеде
 
     /**
      * Получить cписок закрытых случаев поликлинического обслуживания в JSON.
@@ -159,7 +160,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * @param visitId
      * @return String
      */
-    private String getDiaryVisit(Long visitId) {
+    private String getDiaryInVisit(Long visitId) {
         List<String> diary = theManager.createNativeQuery("select record from Diary where medcase_id=:visitId")
                 .setParameter("visitId",visitId).getResultList();
         return diary.isEmpty() ? "" : diary.get(0);
@@ -173,7 +174,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
     private HashMap<Long, Object[]> doctorMap = new HashMap<>();
     private Object[] getDoctorInfo(Long wfId) {
         if (doctorMap.containsKey(wfId)) return doctorMap.get(wfId); //Не будем каждый раз искать врача в БД
-        List<Object[]> docInfoList =  theManager.createNativeQuery("select vwf.name, wpat.lastname,wpat.firstname,wpat.middlename,wpat.snils" +
+        List<Object[]> docInfoList =  theManager.createNativeQuery("select vwf.name, wpat.lastname,wpat.firstname,wpat.middlename,wpat.snils,wf.promedCode_workstaff as promedCode" +
                 " from Workfunction wf" +
                 " left join Worker w on w.id=wf.worker_id" +
                 " left join VocWorkfunction vwf on vwf.id=wf.workfunction_id" +
@@ -196,7 +197,9 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                         .put(DOCTORLASTNAME,doctorInfo[1])
                         .put(DOCTORFIRSTNAME,doctorInfo[2])
                         .put(DOCTORMIDNAME,doctorInfo[3])
-                        .put(DOCTORSNILS,doctorInfo[4]);
+                        .put(DOCTORSNILS,doctorInfo[4])
+                        .put(DOCTORPROMEDCODE,doctorInfo[5])
+                ;
             }
         return dccInfoJson;
     }
@@ -233,18 +236,18 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
         VocServiceStream vss = visit.getServiceStream();
         VocHospitalization vh = visit.getHospitalization();
         jsonVis.put(DATETIMEVISIT, visit.getDateStart()+""+ (visit.getTimeExecute()==null ? "" : visit.getTimeExecute()))
-                .put(WFLPUSECTIION,  wf.getPromedCode_lpusection())
-                .put(WORKSTAFF, wf.getPromedCode_workstaff())
+                .put(WFLPUSECTIION,  wf.getPromedCodeLpuSection())
+                .put(WORKSTAFF, wf.getPromedCodeWorkstaff())
                 .put(WORKPLACETYPE, vwr.getOmcCode())
                 .put(VISITREASON, vr.getOmcCode())
                 .put(SSTREAM, vss.getCode())
-                .put(MESID, wf.getPromedCode_lpusection())
+                .put(MESID, wf.getPromedCodeLpuSection())
                 .put(DESEASETYPE, vh!=null ? vh.getCode() : "1")
                 .put(MEDCICALCARE, MEDCICALCAREVAL)
                 .put(VISITID, visit.getId())
                 .put(FIRSTVISITID, (visit.getId() == firstResultId) ? "true" : "false")
                 .put(DIAGRES, getPromedCodeFromDiagnosisInVisit(visit.getId()))
-                .put(DIARY,getDiaryVisit(visit.getId()))
+                .put(DIARY,getDiaryInVisit(visit.getId()))
                 .put(WORKSTAFFINFO,getDoctorInfoInJson(wf));
         return jsonVis;
     }

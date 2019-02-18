@@ -161,15 +161,13 @@ public class ApiRecordResource {
         return makeRecordOrAnnul(aRequest,root);
     }
 
+    /**Запись пациента на прием либо аннулирование записи*/
     private String makeRecordOrAnnul(HttpServletRequest aRequest,  JSONObject root) {
         try {
             String requestId = root.has("requestId") ? root.getString("requestId") : null;
             if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) получен :"+root); //debug
             String calendarId = getJsonField(root,"calendarTime_id");
-            if (calendarId==null ||"".equals(calendarId)) {
-                return ApiRecordUtil.getErrorJson("NO_CALENDARTIME","Не указано время записи");
-            }
-            Long calendarTimeId = Long.valueOf(calendarId);
+            Long calendarTimeId = Long.valueOf(calendarId!=null ? calendarId : "0");
             String lastname = getJsonField(root,"lastname");
             String firstname = getJsonField(root,"firstname");
             String middlename = getJsonField(root,"middlename");
@@ -177,20 +175,23 @@ public class ApiRecordResource {
             String patientGUID = getJsonField(root,"patient_uid");
             String patientComment = getJsonField(root,"comment");
             String patientPhone = getJsonField(root,"phone");
-        //    String debug = getJsonField(root,"debug");
             String token = getJsonField(root,"token");
             String annul = getJsonField(root,"annul");
             String list;
 
+            //запись с промеда
+            String doctorPromedCode = getJsonField(root,"doctorPromedId");
+            String calendarDate = getJsonField(root,"recordCalendarDate");
+            String calendarTime = getJsonField(root,"recordCalendarTime");
+
             ApiUtil.init(aRequest,token);
             IApiRecordService service =Injection.find(aRequest).getService(IApiRecordService.class);
-            if (!StringUtil.isNullOrEmpty(annul)) {
-                list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
-            } else {
-                list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null) ,patientGUID ,patientComment ,patientPhone ,service);
-                if (list==null) {
-                    list=ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD");
-                } else { //Записали успешно, пишем файл
+            if (!StringUtil.isNullOrEmpty(annul)) { //Аннулируем запись
+                list = service.annulRecord(calendarTimeId,lastname,firstname,middlename,(birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID);
+            } else if (!StringUtil.isNullOrEmpty(doctorPromedCode)){ //Записываем пациента из промеда
+                list =  service.recordPromedPatient(doctorPromedCode,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null)
+                        ,DateFormat.parseSqlDate(calendarDate,"yyyy-MM-dd"),DateFormat.parseSqlTime(calendarTime),patientPhone);
+                 /*else { //Записали успешно, пишем файл - уберем пока
                     JSONObject recordInfo = new JSONObject(list);
                     if (!recordInfo.has("error_code")) {
                         String medcaseID = getJsonField(recordInfo, "medcaseId");
@@ -210,7 +211,9 @@ public class ApiRecordResource {
                             service.saveFile(filename, fileContent);
                         }
                     }
-                }
+                } */
+            } else { //Запись через сайт и другие источники
+                list =  service.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null) ,patientGUID ,patientComment ,patientPhone);
             }
             if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) обработан, вот ответ: "+list); //debug
             return list;

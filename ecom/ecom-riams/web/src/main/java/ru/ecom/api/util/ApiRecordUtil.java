@@ -4,11 +4,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import ru.ecom.api.record.IApiRecordService;
 import ru.ecom.ejb.services.query.IWebQueryService;
-import ru.nuzmsh.util.date.AgeUtil;
-
-import java.sql.Date;
 
 public class ApiRecordUtil {
     private static final Logger LOG = Logger.getLogger(ApiRecordUtil.class);
@@ -28,7 +24,6 @@ public class ApiRecordUtil {
      * @param aServiceStream
      * @return
      */
-    public String getSpecializations(String aServiceStream, IWebQueryService aService)  {return getSpecializations( aServiceStream, null, aService);}
     public String getSpecializations(String aServiceStream, String aLpuId, IWebQueryService aService)  {
         aServiceStream=getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
@@ -61,7 +56,6 @@ public class ApiRecordUtil {
      * @param aVocWorkfunctionId
      * @return
      */
-    public String getDoctors (String aServiceStream, String aVocWorkfunctionId, IWebQueryService aService) {return getDoctors(aServiceStream,aVocWorkfunctionId,null,aService);}
     public String getDoctors (String aServiceStream, String aVocWorkfunctionId, String aLpuId,  IWebQueryService aService) {
         aServiceStream=getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
@@ -89,9 +83,6 @@ public class ApiRecordUtil {
      * @param aServiceStream
      * @return
      */
-    public String getFreeCalendarDaysByWorkFunction(String aWorkfunctionId,String aVocWorkfunctionId, String aServiceStream, IWebQueryService aService) {
-        return getFreeCalendarDaysByWorkFunction(aWorkfunctionId,aVocWorkfunctionId, aServiceStream,null, aService);
-    }
     public String getFreeCalendarDaysByWorkFunction(String aWorkfunctionId,String aVocWorkfunctionId, String aServiceStream,String aLpuId, IWebQueryService aService) {
         aServiceStream = getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
@@ -123,7 +114,6 @@ public class ApiRecordUtil {
     }
 
 /** Находим свободные времени либо по должности (все неврологи), либо по кокретной рабочей функции (невролог Иванов)*/
-    public String getFreeCalendarTimesByCalendarDate(String aCalendarDayId, String aVocWorkfunctionId, String aCalendarDate, String aServiceStream, IWebQueryService aService) {return getFreeCalendarTimesByCalendarDate(aCalendarDayId, aVocWorkfunctionId,  aCalendarDate, aServiceStream, null,  aService) ;}
     public String getFreeCalendarTimesByCalendarDate(String aCalendarDayId, String aVocWorkfunctionId, String aCalendarDate, String aServiceStream, String aLpuId, IWebQueryService aService) {
         aServiceStream = getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
@@ -149,30 +139,6 @@ public class ApiRecordUtil {
         sqlAdd.append(" and case when wcd.calendardate=current_date and wct.timeFrom>current_time then 1 when wcd.calendardate>current_date then 1 else 0 end =1").append(aServiceStream);
         return getData(selectSql.toString(),sqlAdd.toString(),orderBySql,groupBySql,jsonFields,50,aService);
     }
-
-/**
- *
- String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment);
- String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID);
- * */
-public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment, IApiRecordService apiRecordService) {
-    return recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aPatientGUID,aComment,null,apiRecordService);
-}
-public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment,String aPhone, IApiRecordService apiRecordService) {
-    try {
-        if (AgeUtil.calcAgeYear(aPatientBirthday,new Date(System.currentTimeMillis()))>122) {
-            return getErrorJson("Запись пациента старше 122 лет невозможна","TOO_OLD");
-        }
-    } catch (Exception e) {
-        return getErrorJson("Проверьте дату рождения пациента","TOO_YOUNG");
-    }
-    return apiRecordService.recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aPatientGUID,aComment,aPhone);
-}
-
-    /** Аннулируем направление (соответствие по пациенту и времени*/
-    public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID, IApiRecordService aService){
-            return aService.annulRecord(aCalendarTimeId,aLastname,aFirstname,aMiddlename,aBirthday, aPatientGUID);
-        }
 
     public String getRecordInformation (String aWorkcalendarTimeId, IWebQueryService aService) {
         StringBuilder sql = new StringBuilder();
