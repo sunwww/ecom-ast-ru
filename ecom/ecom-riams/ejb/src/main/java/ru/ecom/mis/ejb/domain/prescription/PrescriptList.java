@@ -21,7 +21,7 @@ public class PrescriptList extends AbstractPrescriptionList {
 
 	@PrePersist
 	void onPrePersist() {
-		Long currentTime = System.currentTimeMillis();
+		long currentTime = System.currentTimeMillis();
 		setCreateDate(new java.sql.Date(currentTime));
 		setCreateTime(new java.sql.Time(currentTime));
 	}

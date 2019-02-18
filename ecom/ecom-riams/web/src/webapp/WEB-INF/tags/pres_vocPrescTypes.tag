@@ -44,14 +44,10 @@
         		  the${name}PrescTypesDialog.show() ;
         	  }
           }
-         
-         
-
      }
      
      // Отмена 
      function cancel${name}PrescTypes() {
-    	
         the${name}PrescTypesDialog.hide() ;
      }
     
@@ -67,20 +63,19 @@
      }
      
 	function setType(typeID, typeName, isOnlyCurrentDate) {
-		if ($('prescriptType').value==typeID) {
-			
-		} else {
+		if ($('prescriptType').value!=typeID) {
 			$('prescriptType').value = typeID;
 			$('prescriptTypeName').value = typeName;
 			$('prescriptTypeName').disabled='true';
 			changePrescriptionType();
 			disableEnableDate(isOnlyCurrentDate);
-			if (isOnlyCurrentDate==1) {
-				
-			} else {
+			if (isOnlyCurrentDate!=1) {
 				canChangeDate = true;
 			}
 		}
+		try {
+            labServiciesAutocomplete.setParentId(typeID+"#"+$('serviceStream').value);
+        } catch (e) {console.log(e);}
 		the${name}PrescTypesDialog.hide() ;
 	}
      // инициализация диалогового окна 

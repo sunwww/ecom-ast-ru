@@ -126,7 +126,7 @@
         </msh:row>
          <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
       <msh:row>
-          <msh:autoComplete  vocName="guaranteeByPatient" parentId="smo_directionForm.patient" property="guarantee" label="Гарантийное письмо" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete  vocName="guaranteeByPatient" parentId="patient" property="guarantee" label="Гарантийное письмо" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
       </msh:ifInRole>
         <msh:row guid="5d9db3cf-010f-463e-a2e6-3bbec49fa646">
@@ -455,18 +455,27 @@
             if (+$('emergency').checked) {
                 $('orderTypeName').className="autocomplete horizontalFill required";
                 $('preAdmissionTimeName').className="autocomplete horizontalFill required";
+                $('height').className=" ";
+                $('weight').className=" ";
             } else {
                 $('orderTypeName').className="autocomplete horizontalFill";
                 $('preAdmissionTimeName').className="autocomplete horizontalFill";
+                $('height').className=" required";
+                $('weight').className=" required";
+
         	}
 
         }) ;
 		 if (+$('emergency').checked) {
              $('orderTypeName').className="autocomplete horizontalFill required";
              $('preAdmissionTimeName').className="autocomplete horizontalFill required";
+             $('height').className=" ";
+             $('weight').className=" ";
          } else {
              $('orderTypeName').className="autocomplete horizontalFill";
              $('preAdmissionTimeName').className="autocomplete horizontalFill";
+             $('height').className=" required";
+             $('weight').className=" required";
      	}
 		if ($('deniedHospitalizatingName')) {
             var ch = function ch() {

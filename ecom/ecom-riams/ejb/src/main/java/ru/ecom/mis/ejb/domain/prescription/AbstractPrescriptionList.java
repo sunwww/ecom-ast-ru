@@ -1,23 +1,17 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 /**
  * Абстрактный лист назначений
@@ -28,6 +22,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(name="PrescriptionList",schema="SQLUser")
 public abstract class AbstractPrescriptionList extends BaseEntity{
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Transient
+	public VocServiceStream getServiceStream() {
+		System.out.println("PL = "+getMedCase().getServiceStream());
+		return getMedCase()!=null ? getMedCase().getServiceStream(): null;
+	}
 	
 	/** Назначения */
 	@Comment("Назначения")

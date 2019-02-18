@@ -17,6 +17,14 @@
 	var textYear =currentDate.getFullYear();
 	var textDate = textDay+'.'+textMonth+'.'+textYear;
 	var canChangeDate = false;
+
+    function fillServiceListVocId() {
+        if ($('medcaseType').value==='POLYCLINIC') {
+            surgServiciesAutocomplete.setUrl('simpleVocAutocomplete/labMedServiceByServiceStreamPol');
+        }
+    }
+    fillServiceListVocId();
+
 	
 	function changeDate(days) {
 		if (canChangeDate){
@@ -24,9 +32,9 @@
 			l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
 			currentDate.setTime (Date.parse(l));
 			currentDate.setDate(currentDate.getDate()+days);
-			var newTextDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
+			var newTextDay = currentDate.getDate()<10 ? '0'+currentDate.getDate() : currentDate.getDate();
 			var newTextMonth = currentDate.getMonth()+1;
-			var newTextMonth = newTextMonth<10?'0'+newTextMonth:newTextMonth;
+			newTextMonth = newTextMonth<10 ? '0'+newTextMonth : newTextMonth;
 			var newTextYear =currentDate.getFullYear();
 			var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
 			if ($('labDate')) $('labDate').value=newTextDate;
@@ -113,7 +121,7 @@
 			callback: function(aResult) {
 				PrescriptionService.isMedcaseIsDepartment(aResult,{
 					callback: function(aResults) {
-						if (aResults==true||aResults=='true') {
+						if (aResults===true) {
 							$('labDepartmentName').style.visibility='hidden';
 							$('labDepartmentLabel').style.visibility='hidden';
 							$('btnChangeDepartment').style.visibility='visible';
@@ -128,10 +136,7 @@
 				}); 
 				startLoad();
 			}
-		
 		});
-		
-		
 	}
 	function startLoad () {
 		var date = new Date();
@@ -571,6 +576,8 @@
     <msh:form guid="formHello" action="/entityParentSaveGoView-pres_servicePrescription.do" defaultField="id" title="Назначение медицинской услуги">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
+      <msh:hidden property="serviceStream" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
+      <msh:hidden property="medcaseType" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <input type="hidden" id="funcDepartment" value="">
@@ -612,7 +619,7 @@
 	</tr>
     		<tr>
    		    <msh:textField property="labDate" label="Дата " size="10"/>
-   		    <msh:autoComplete parentId="pres_servicePrescriptionForm.prescriptType" property="labServicies" label="Лабораторный анализ" vocName="labMedService" horizontalFill="true" size="90"/>
+   		    <msh:autoComplete parentId="pres_servicePrescriptionForm.prescriptType" property="labServicies" label="Лабораторный анализ" vocName="labMedServiceByServiceStreamStac" horizontalFill="true" size="90"/>
    		    
 			</tr>
 			<tr>
