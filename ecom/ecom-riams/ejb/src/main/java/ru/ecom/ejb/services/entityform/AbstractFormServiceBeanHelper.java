@@ -69,9 +69,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 					// throw new IllegalStateException("Нет политики
 					// "+sb.toString()) ;
 					// }
-				} catch (InstantiationException e) {
-					throw new IllegalStateException(e);
-				} catch (IllegalAccessException e) {
+				} catch (InstantiationException | IllegalAccessException e) {
 					throw new IllegalStateException(e);
 				}
 			}
@@ -688,7 +686,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 	 * Тип идентификатора
 	 */
 	private static Class getIdClass(Class aEntityClass)
-			throws IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+			throws SecurityException, NoSuchMethodException {
 		return getIdMethod(aEntityClass).getReturnType() ;
 	}
 
@@ -780,7 +778,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 
 	private void saveOneToManyOneProperty(String aJson, Collection aCollection,
 			Class aType,String aTableName, String aParentProperty, String aValueProperty, Object aId) throws JSONException, ParseException,
-			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+			SecurityException, NoSuchMethodException {
 		//System.out.println(aTableName);
 		//System.out.println(aJson);
 		if (aTableName==null || aTableName.equals("")) {

@@ -1,7 +1,10 @@
 package ru.ecom.mis.ejb.form.prescription;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.prescription.ServicePrescription;
+import ru.ecom.mis.ejb.form.prescription.interceptor.PrescriptionPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -21,7 +24,17 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Назначение на услугу", nameProperties= "medService",list="entityParentList-pres_servicePrescription.do", view="entityParentView-pres_servicePrescription.do")
 @Parent(property="prescriptionList", parentForm=AbstractPrescriptionListForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription/ServicePrescription")
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(PrescriptionPreCreateInterceptor.class)
+)
 public class ServicePrescriptionForm extends PrescriptionForm{
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Persist
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	private Long theServiceStream ;
 	
 	/** Номер штрих-кода */
 	@Comment("Номер штрих-кода")

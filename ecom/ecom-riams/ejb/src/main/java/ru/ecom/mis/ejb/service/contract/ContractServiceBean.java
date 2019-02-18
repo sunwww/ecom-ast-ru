@@ -78,11 +78,11 @@ public class ContractServiceBean implements IContractService {
 				}
 
 				root.put("isTerminalPayment", isTerminalPayment);
+				root.put("pos", arr) ;
 				if (isRefund) {
 					root.put("totalRefundSum", totalSum.setScale(2,RoundingMode.HALF_UP).toString());
 				} else {
 					if (!StringUtil.isNullOrEmpty(aCustomerPhone)) root.put("customerPhone",aCustomerPhone); //Номер телефона или адрес почты для электронного чека
-					root.put("pos", arr) ;
 					root.put("totalPaymentSum", totalSum.setScale(2,RoundingMode.HALF_UP).toString()) ;
 					root.put("totalTaxSum", taxSum.setScale(2, RoundingMode.HALF_UP).toString()) ;
 				}
@@ -143,10 +143,8 @@ public class ContractServiceBean implements IContractService {
 		return "Неизвестный тип отчета";
 	}
 	public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, Boolean isTerminalPayment, String aCustomerPhone,String aKassir,EntityManager aManager, String url)  {
-			if ("makePayment".equals(aFunction)) {
-				return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, isTerminalPayment,aKassir,aCustomerPhone,aManager,url);
-			} else if ("makeRefund".equals(aFunction)) {
-				return makeKKMPaymentOrRefund(aAccountId, aDiscont, true, isTerminalPayment,aKassir,aCustomerPhone, aManager,url);
+			if ("makePayment".equals(aFunction) || "makeRefund".equals(aFunction)) {
+				return makeKKMPaymentOrRefund(aAccountId, aDiscont, "makeRefund".equals(aFunction), isTerminalPayment,aKassir,aCustomerPhone,aManager,url);
 			} else if ("printZReport".equals(aFunction)){
 				return printKKMReport("Z", url);
 			} else if ("printXReport".equals(aFunction)){

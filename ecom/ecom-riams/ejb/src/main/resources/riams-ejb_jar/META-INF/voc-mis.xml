@@ -1,10 +1,4 @@
 <vocconfig>
-
-<!-- select distinct on (p.lastname) p.lastname||' '||p.firstname||' '||p.middlename from workfunction wf
-left join Worker as w on w.id=wf.worker_id
-left join Patient as p on p.id=w.person_id
-where wf.dtype='PersonalWorkFunction' -->
-
 	<voc id="vocTicketQueue" type="NativeVocService">
 		<NativeVocService
 				from="VocQueue as voc"
@@ -709,15 +703,66 @@ where wf.dtype='PersonalWorkFunction' -->
 		queried=" upper(vpt.code) like upper(:query) "
 	/>
 </voc>
+
+	<!-- Функциональная диагностика в стационаре по потоку обслуживания (раб.функция#поток обслуживания-->
+<voc id="funcMedServiceStacByServiceStream" type="NativeVocService">
+	<NativeVocService
+		from="MedService ms"
+		nameId="ms.id"
+		parent=" wf.id = :par1 and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
+					  (vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0'))
+					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))"
+		queryAppend="MS.DTYPE='MedService'  and ms.finishDate is null"
+		join="
+		left join WorkFunctionService wfs on wfs.medservice_id =ms.id
+		left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id
+		left join VocServiceType vst on vst.id=ms.serviceType_id
+		left join priceMedService pms on pms.medservice_id=ms.id
+		left join priceposition pp on pp.id=pms.priceposition_id and pp.dateTo is null
+		left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
+		" order="ms.code"
+		names="ms.code||' '|| ms.name"
+		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+		groupBy=" ms.id , ms.code,ms.name "
+		parentSplitCount="2"
+	/>
+</voc>
+
+	<!-- Функциональная диагностика в поликлинике по потоку обслуживания (раб.функция#поток обслуживания-->
+	<voc id="funcMedServicePolByServiceStream" type="NativeVocService">
+		<NativeVocService
+				from="MedService ms"
+				nameId="ms.id"
+				parent=" wf.id = :par1 and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
+					  (vss.code in ('BUDGET','OBLIGATORYINSURANCE') and (ms.isNoOmc is null or ms.isNoOmc='0'))
+					  or (vss.code not in ('BUDGET','OBLIGATORYINSURANCE') and pl.id is not null)))"
+				queryAppend="MS.DTYPE='MedService'  and ms.finishDate is null"
+				join="
+		left join WorkFunctionService wfs on wfs.medservice_id =ms.id
+		left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id
+		left join VocServiceType vst on vst.id=ms.serviceType_id
+		left join priceMedService pms on pms.medservice_id=ms.id
+		left join priceposition pp on pp.id=pms.priceposition_id and pp.dateTo is null
+		left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
+
+		" order="ms.code"
+				names="ms.code||' '|| ms.name"
+				queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+				groupBy=" ms.id , ms.code,ms.name "
+				parentSplitCount="2"
+		/>
+	</voc>
+
+	<!-- Функциональная диагностика-->
 <voc id="funcMedService" type="NativeVocService">
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
 		parent=" wf.id = :parent "
-		queryAppend="MS.DTYPE='MedService'  and ms.finishDate is null" 
-		join="  
-		left join WorkFunctionService wfs on wfs.medservice_id =ms.id 
-		left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id 
+		queryAppend="MS.DTYPE='MedService'  and ms.finishDate is null"
+		join="
+		left join WorkFunctionService wfs on wfs.medservice_id =ms.id
+		left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id
 		left join VocServiceType vst on vst.id=ms.serviceType_id
 		" order="ms.code"
 		names="ms.code||' '|| ms.name"
@@ -749,10 +794,12 @@ where wf.dtype='PersonalWorkFunction' -->
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 	/>
 </voc>
+
+    <!--Лабораторные исследования по типу назначения -->
 <voc id="labMedService" type="NativeVocService">
 	<NativeVocService
 		from="MedService ms"
-		parent="ms.id not in (select mss.id from medservice mss
+		parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null and ms.id not in (select mss.id from medservice mss
 	left join workfunctionservice wfss on wfss.medservice_id=mss.id
 	left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id
 	left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= :parent 
@@ -760,8 +807,7 @@ where wf.dtype='PersonalWorkFunction' -->
 	and vsts.code='LABSURVEY'
 	)"
 		nameId=" ms.id"
-		queryAppend="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null" 
-		join=" left join workfunctionservice wfs on wfs.medservice_id=ms.id 
+		join=" left join workfunctionservice wfs on wfs.medservice_id=ms.id
 				left join vocprescripttype vpt on vpt.id=wfs.prescripttype_id 
 				left join vocservicetype vst on vst.id=ms.servicetype_id " 
 		groupBy="ms.id, ms.name, ms.code"
@@ -770,6 +816,69 @@ where wf.dtype='PersonalWorkFunction' -->
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 	/>
 </voc>
+
+	<!--Лабораторные исследования в поликлинике по типу назначения и потоку обслуживания тип назначения/поток обслуживания-->
+	<voc id="labMedServiceByServiceStreamPol" type="NativeVocService">
+		<NativeVocService
+				from="MedService ms"
+				parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null
+				and ms.id not in (select mss.id from medservice mss
+	left join workfunctionservice wfss on wfss.medservice_id=mss.id
+	left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id
+	left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= :par1
+	and mss.dtype='MedService'
+	and vsts.code='LABSURVEY'
+	) and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
+					  (vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0'))
+					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))"
+				nameId=" ms.id"
+				join="
+				left join vocservicetype vst on vst.id=ms.servicetype_id
+				left join workfunctionservice wfs on wfs.medservice_id=ms.id
+				left join vocprescripttype vpt on vpt.id=wfs.prescripttype_id
+				left join priceMedService pms on pms.medservice_id=ms.id
+				left join priceposition pp on pp.id=pms.priceposition_id and pp.dateTo is null
+				left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
+"
+				groupBy="ms.id, ms.name, ms.code"
+				order="ms.name"
+				names="ms.code||' '|| ms.name"
+				queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+				parentSplitCount="2"
+		/>
+	</voc>
+
+	<!--Лабораторные исследования в стационаре по типу назначения и потоку обслуживания тип назначения/поток обслуживания-->
+	<voc id="labMedServiceByServiceStreamStac" type="NativeVocService">
+		<NativeVocService
+				from="MedService ms"
+				parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null
+				and ms.id not in (select mss.id from medservice mss
+	left join workfunctionservice wfss on wfss.medservice_id=mss.id
+	left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id
+	left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= :par1
+	and mss.dtype='MedService'
+	and vsts.code='LABSURVEY'
+	) and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
+					  (vss.code in ('BUDGET','OBLIGATORYINSURANCE') and (ms.isNoOmc is null or ms.isNoOmc='0'))
+					  or (vss.code not in ('BUDGET','OBLIGATORYINSURANCE') and pl.id is not null)))"
+				nameId=" ms.id"
+				join="
+				left join vocservicetype vst on vst.id=ms.servicetype_id
+				left join workfunctionservice wfs on wfs.medservice_id=ms.id
+				left join vocprescripttype vpt on vpt.id=wfs.prescripttype_id
+				left join priceMedService pms on pms.medservice_id=ms.id
+				left join priceposition pp on pp.id=pms.priceposition_id and pp.dateTo is null
+				left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
+"
+				groupBy="ms.id, ms.name, ms.code"
+				order="ms.name"
+				names="ms.code||' '|| ms.name"
+				queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+				parentSplitCount="2"
+		/>
+	</voc>
+
 <voc id="vocServiceSubTypeByCode" type="NativeVocService">
 	<NativeVocService
 		from="VocServiceSubType vsst"
@@ -1286,7 +1395,7 @@ where wf.dtype='PersonalWorkFunction' -->
     
     </voc>
 
-	<!-- Услуги, доступные для выбора в пол-ке, по ОМС -->
+	<!-- Услуги, доступные для выбора в пол-ке, по ОМС раб. функция/дата услуги/поток обслуживания -->
     <voc id='medServiceForSpec' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService ms'
@@ -1295,22 +1404,29 @@ where wf.dtype='PersonalWorkFunction' -->
     			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))
 				and (wfs.lpu_id is null or wfs.lpu_id=coalesce(wf.lpu_id,w.lpu_id))
 				and (wfs.workfunction_id is null or wfs.workfunction_id=:par1)
-				and (ms.isNoOmc is null or ms.isNoOmc='0')
+				and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par3 and (
+					  (vss.code in ('BUDGET','OBLIGATORYINSURANCE') and (ms.isNoOmc is null or ms.isNoOmc='0'))
+					  or (vss.code not in ('BUDGET','OBLIGATORYINSURANCE') and pl.id is not null)))
 				"
-    			parentSplitCount='2'
+    			parentSplitCount='3'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
     			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
-    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id
+    			join=" left join WorkFunctionService wfs on wfs.medService_id=ms.id
     			left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end
-    			left join worker w on w.id=wf.worker_id'
+    			left join worker w on w.id=wf.worker_id
+    			left join pricemedservice pms on pms.medservice_id=ms.id
+    			left join priceposition pp on pp.id=pms.priceposition_id
+    			left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
+
+				"
     			order=''
     			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
     			groupBy="ms.id, ms.code, ms.name"
 
     	/>
     </voc>
-<!-- Платные услуги в пол-ке -->
+<!-- Платные услуги в пол-ке раб. функция/дата услуги-->
 	<voc id='medServiceForSpecCharged' type='NativeVocService'>
 		<NativeVocService
 				from = 'priceposition pp'

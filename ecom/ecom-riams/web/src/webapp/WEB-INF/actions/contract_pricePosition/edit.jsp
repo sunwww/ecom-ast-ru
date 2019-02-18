@@ -75,6 +75,7 @@
 			<ecom:parentEntityListAll formName="contract_priceMedServiceForm" attribute="pricePosition" />
 				<msh:table name="pricePosition" action="entityParentView-contract_priceMedService.do" idField="id">
 					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableColumn columnName="Мед. услуга" property="medService.code"/>
 					<msh:tableColumn columnName="Мед. услуга" property="medServiceInfo"/>
 					<msh:tableColumn columnName="Дата начала действия" property="dateFrom"/>
 					<msh:tableColumn columnName="Дата окончания" property="dateTo"/>

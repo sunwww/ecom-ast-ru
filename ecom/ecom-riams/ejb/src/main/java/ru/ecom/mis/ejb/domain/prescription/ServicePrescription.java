@@ -1,13 +1,13 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import ru.ecom.mis.ejb.domain.medcase.MedService;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-
-import ru.ecom.mis.ejb.domain.medcase.MedService;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Назначение на услугу
@@ -19,6 +19,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class ServicePrescription extends Prescription{
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Transient
+	public VocServiceStream getServiceStream() {
+		return getPrescriptionList().getServiceStream() ;}
 	
 	/** Номер штрих-кода */
 	@Comment("Номер штрих-кода")

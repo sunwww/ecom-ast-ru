@@ -26,8 +26,22 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses({DrugPrescriptionForm.class, DietPrescriptionForm.class
 	, ServicePrescriptionForm.class, ModePrescriptionForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription")
-public class PrescriptionForm extends IdEntityForm{
-	
+public class PrescriptionForm extends IdEntityForm {
+
+	/** Тип случая СМО */
+	@Comment("Тип случая СМО")
+	public String getMedcaseType() {return theMedcaseType;}
+	public void setMedcaseType(String aMedcaseType) {theMedcaseType = aMedcaseType;}
+	/**  */
+	private String theMedcaseType ;
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Persist
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	private Long theServiceStream ;
+
 	/** Лист назначений */
 	@Comment("Лист назначений")
 	@Persist
