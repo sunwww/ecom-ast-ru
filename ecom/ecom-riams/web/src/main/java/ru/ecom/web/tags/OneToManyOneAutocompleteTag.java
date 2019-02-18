@@ -95,11 +95,10 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
         try {
         	if(isViewOnly) {
                 out.print("viewOnlyLabel") ;
-            } else {
-            	if(isFieldRequired(form))  out.print("required");
+            } else if(isFieldRequired(form)) {
+        	    out.print("required");
             }
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
         out.print(" label'>");
@@ -144,11 +143,10 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
         sb.append("$('").append(getDivname()).append("')") ;
         sb.append(", $('mainForm')") ;
         sb.append(", '").append(theProperty).append("'") ;
-        sb.append(", '").append("").append("'") ;
+        sb.append(", '").append("'") ;
         sb.append(", '").append(theVocName).append("'") ;
         sb.append(", ").append(isViewOnly) ;
-        String parentId=(theParentId==null)?"":getParentIdValue(ctx) ;
-        sb.append(", '").append(parentId).append("'") ;
+        sb.append(", '").append(theParentId==null ? "" : getParentIdValue(ctx)).append("'") ;
         sb.append(", '").append(theParentAutocomplete).append("'") ;
         sb.append(", '").append(theViewAction).append("'") ;
         sb.append(") ;\n") ;

@@ -263,23 +263,15 @@
       
    	 function updateTime() {
    		if (+$('datePlan').value>0 && +$('serviceStream').value>0) {
-   			WorkCalendarService.getReserveByDateAndService($('datePlan').value,$('serviceStream').value,$('patient').value
-	    			  
-	  		, {
-	                 callback: function(aResult) {
-	                	 //alert(aResult) ;
-	                	 $('divReserve').innerHTML = aResult ;
-	                 }
-		        	}
-		        	); 
-    }
-   		}
-   		 
-       	
-   	 	
-   	 
-   	
-  
+   			WorkCalendarService.getReserveByDateAndService($('datePlan').value,$('serviceStream').value,$('patient').value, {
+                 callback: function(aResult) {
+                     //alert(aResult) ;
+                     $('divReserve').innerHTML = aResult ;
+                 }
+		    });
+        }
+     }
+
    	 serviceStreamAutocomplete.addOnChangeCallback(function() {
 	 	updateTime() ;
 	 	checkIfDogovorNeeded() ;
@@ -289,26 +281,15 @@
      });
 
    	 //TODO Доделать выбор справочника исходя от источника финансирования
-   	 function setMedserviceAutocompleteParent() { //Пока не используется
-     /*    WorkCalendarService.getIsChargedServiceStream($('serviceStream').value, {
-             callback: function(isCharged) {
-                 if (true==isCharged){ // Если поток обслуживания - платно, то указываем только те услуги, которые есть в прейскуранте
-                     theOtmoa_medServices.setUrl('simpleVocAutocomplete/medServiceForSpecCharged');
-
-                 } else {
-                     theOtmoa_medServices.setUrl('simpleVocAutocomplete/medServiceForSpec');
-
-                 }
-             }
-         });*/
+   	 function setMedserviceAutocompleteParent() {
+   	     if (theOtmoa_medServices) {
+   	         theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value+"#"+$('serviceStream').value) ;
+             theOtmoa_medServices.clearData() ;
+         }
      }
 
-      //new dateutil.DateField($('datePlanName'));
-      //new timeutil.TimeField($('timePlanName'));
       var oldaction = document.forms[0].action ;
-   //	 var canRecordAnyDate = false;
       document.forms[0].action = 'javascript:isExistTicket()';
-     // if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
       function isExistTicket() {
  		 if (!$('emergency').checked) {
  			 WorkCalendarService.checkPolicyByPatient($('patient').value,
@@ -432,7 +413,7 @@
     	  if ($('timePlanName')) {
     		  $('timePlanName').value='';
     		  }
-    	  if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value+"#"+$('serviceStream').value) ;
+          setMedserviceAutocompleteParent();
   		}) ;
 
     function checkRecord(aId,aValue,aIdService,aService) {
@@ -511,8 +492,8 @@
 				        $('datePlanName').value = "";
 				        getPreRecord();
 	  				}
-  					if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value+"#"+$('serviceStream').value) ;
-  					if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+                    setMedserviceAutocompleteParent();
+
   				    getWorkFunctionByUsername() ;
 	  			}
   			}
@@ -564,14 +545,11 @@
   	  						$('guarantee').value = arr[0];
   	  						$('guaranteeName').value = arr[1];
   	  					}	 
-  	  				} else {
-  	  				
   	  				}
   	  			$('guaranteeName').disabled=true;
   	  			}
   	  		});
   		}
-  		
   	}
   		</script>
     </msh:ifFormTypeIsNotView>

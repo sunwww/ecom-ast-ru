@@ -17,6 +17,14 @@
 	var textYear =currentDate.getFullYear();
 	var textDate = textDay+'.'+textMonth+'.'+textYear;
 	var canChangeDate = false;
+
+    function fillServiceListVocId() {
+        if ($('medcaseType').value==='POLYCLINIC') {
+            surgServiciesAutocomplete.setUrl('simpleVocAutocomplete/labMedServiceByServiceStreamPol');
+        }
+    }
+    fillServiceListVocId();
+
 	
 	function changeDate(days) {
 		if (canChangeDate){
@@ -24,9 +32,9 @@
 			l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
 			currentDate.setTime (Date.parse(l));
 			currentDate.setDate(currentDate.getDate()+days);
-			var newTextDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
+			var newTextDay = currentDate.getDate()<10 ? '0'+currentDate.getDate() : currentDate.getDate();
 			var newTextMonth = currentDate.getMonth()+1;
-			var newTextMonth = newTextMonth<10?'0'+newTextMonth:newTextMonth;
+			newTextMonth = newTextMonth<10 ? '0'+newTextMonth : newTextMonth;
 			var newTextYear =currentDate.getFullYear();
 			var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
 			if ($('labDate')) $('labDate').value=newTextDate;
@@ -569,6 +577,7 @@
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden property="serviceStream" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
+      <msh:hidden property="medcaseType" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
       <input type="hidden" id="funcDepartment" value="">

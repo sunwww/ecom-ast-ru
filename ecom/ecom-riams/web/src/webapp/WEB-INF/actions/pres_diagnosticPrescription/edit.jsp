@@ -356,6 +356,7 @@ function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId
   	 });
 	surgCabinetAutocomplete.addOnChangeCallback(function(){
 		updateDefaultDate() ;
+		surgServiciesAutocomplete.setParentId($('surgCabinet').value+"#"+$('serviceStream').value);
 	}) ;
 	function getPatientId() {
 	
@@ -369,6 +370,13 @@ function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId
 		});
 	}
 	getPatientId();
+
+	function fillServiceListVocId() {
+	    if ($('medcaseType').value==='POLYCLINIC') {
+	        surgServiciesAutocomplete.setUrl('simpleVocAutocomplete/funcMedServicePolByServiceStream');
+        }
+    }
+    fillServiceListVocId();
 function getPreRecord() {
   		
   		if ($('tdPreRecord')) {
@@ -476,9 +484,12 @@ function getPreRecord() {
     <msh:form guid="formHello" action="/entityParentSaveGoView-pres_diagnosticPrescription.do" defaultField="surgCabinetName" title="Назначение диагностического исследования/консультации">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
+      <msh:hidden property="serviceStream" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
+      <msh:hidden property="medcaseType" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
         <msh:hidden property="comments"  />
-      <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" /> <input type="hidden" name="person" id="person"> 
+      <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+        <input type="hidden" name="person" id="person">
        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
         <msh:hidden property="countDays"/>
       </msh:ifNotInRole>
@@ -524,7 +535,7 @@ function getPreRecord() {
         </msh:row>
         </msh:ifInRole>
           <msh:row>
-    			<msh:autoComplete parentAutocomplete="surgCabinet" property="surgServicies" label="Исследование" vocName="funcMedService"  horizontalFill="true" size="90" fieldColSpan="4" />
+    			<msh:autoComplete property="surgServicies" label="Исследование" vocName="funcMedServiceStacByServiceStream"  horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>
 
 			<msh:row>
@@ -552,19 +563,7 @@ function getPreRecord() {
         </msh:row>
         </msh:ifInRole></table>
         </td></tr></table></td></tr>
-        
-    		<%-- 
-    		<tr>
-    		
-			<msh:textField property="funcDate" label="Дата " size="10"/>
-			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
-			<td>        	
-            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
-            </td>
-			</tr>
-			<tr>
-			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" /></tr>
-       		 --%>
+
        		 </tbody>
     		</table>
     		</td></tr></msh:row>

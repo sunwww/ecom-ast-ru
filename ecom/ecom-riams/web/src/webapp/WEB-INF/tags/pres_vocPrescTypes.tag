@@ -74,11 +74,8 @@
 			}
 		}
 		try {
-		    alert('make parent for service'+typeID+"#"+$('serviceStream').value);
             labServiciesAutocomplete.setParentId(typeID+"#"+$('serviceStream').value);
-        } catch (e) {
-            alert('cant parent for service '+e);
-        }
+        } catch (e) {console.log(e);}
 		the${name}PrescTypesDialog.hide() ;
 	}
      // инициализация диалогового окна 

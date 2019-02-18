@@ -167,16 +167,6 @@ public class WorkCalendarServiceJs {
 		return l.isEmpty()?"0":l.iterator().next().get1().toString();
 	}
 
-	/** Платный ли поток обслуживания
-	 * Платный, если не ОМС и не бюджет*/
-	public static Boolean getIsChargedServiceStream (Long aServceStream, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		if (aServceStream == null ) return false;
-		Collection<WebQueryResult> wqr= service.executeNativeSql("select id, name from vocservicestream where id="+aServceStream
-			+" and financesource in ('OBLIGATORY','BUDGET') ");
-		return !wqr.isEmpty();
-	}
-	
 	public static boolean remoteUser(IWebQueryService service,HttpServletRequest aRequest) {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		Collection<WebQueryResult> list = service.executeNativeSql("select case when su.isRemoteUser='1' then 1 else null end as remote,w.lpu_id from secUser su left join WorkFunction wf on wf.secUser_id=su.id left join Worker w on w.id=wf.worker_id where su.login='"+username+"'",1) ;

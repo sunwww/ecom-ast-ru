@@ -28,6 +28,12 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription")
 public class PrescriptionForm extends IdEntityForm {
 
+	/** Тип случая СМО */
+	@Comment("Тип случая СМО")
+	public String getMedcaseType() {return theMedcaseType;}
+	public void setMedcaseType(String aMedcaseType) {theMedcaseType = aMedcaseType;}
+	/**  */
+	private String theMedcaseType ;
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
