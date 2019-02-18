@@ -41,8 +41,8 @@ function checkPermission(aCtx,  aParam) {
 		// Нет существует ограничение
 		return 0 ;
 	} else {
-		var sql_obj="select vop.id,vop.namePermissionTable,vop.namePermissionDate from VocObjectPermission vop where vop.code='"+obj+"' " ;
-		var vop = aCtx.manager.createNativeQuery(sql_obj).setMaxResults(1).getSingleResult();
+		sql_obj="select vop.id,vop.namePermissionTable,vop.namePermissionDate from VocObjectPermission vop where vop.code='"+obj+"' " ;
+		vop = aCtx.manager.createNativeQuery(sql_obj).setMaxResults(1).getSingleResult();
 	}
 	
 	
@@ -56,8 +56,8 @@ function checkPermission(aCtx,  aParam) {
 		var sql_check = "select to_char("+vop[2]+",'dd.mm.yyyy') from "+vop[1]+" where id="+id+" and "+vop[2]+" is not null" ;
 		//throw sql_check ;
 		
-		lcheck = aCtx.manager.createNativeQuery(sql_check).setMaxResults(1).getResultList();
-		if (lcheck.size()>0) {
+		var lcheck = aCtx.manager.createNativeQuery(sql_check).setMaxResults(1).getResultList();
+		if (!lcheck.isEmpty()) {
 			checkDate="to_date('"+lcheck.get(0)+"','dd.mm.yyyy')" ;
 		} else {
 			checkDate="CURRENT_DATE" ;
@@ -87,20 +87,15 @@ function checkPermission(aCtx,  aParam) {
 	}
 	//throw sql ;
 	var list = aCtx.manager.createNativeQuery(sql).getResultList();
-	
-	if (+list.size()==0) {
-		// Не существует ограничения
-		return 0 ;
-	} else {
-		return 1 ;
-	}
+	return list.isEmpty() ? 0 : 1 ;
+
 }
 function findLogginedSecUserId(aCtx) {
 	var username = aCtx.sessionContext.callerPrincipal.name ;
 	var list = aCtx.manager.createQuery("from SecUser where login = :login")
 		.setParameter("login", username) 
 		.getResultList() ;
-	if(list.size()==0) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между "+username+" и SecUser" ;	
+	if(list.isEmpty()) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответствия между "+username+" и SecUser" ;
 	if(list.size()>1)  throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Больше одного раза встречается имя "+username+ " в SecUser" ;
 	return list.iterator().next().getId();
 }
@@ -120,7 +115,7 @@ function findLogginedWorker(aCtx) {
  */
 function findLogginedWorkFunction(aCtx) {
 	var functions = findLogginedWorkFunctionList(aCtx) ;
-    if(functions.size()==0) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между WorkFunction и SecUser" ;	
+    if(!functions.isEmpty()) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и именем пользователя (WorkFunction и SecUser)" ;
 	if(functions.size()>1) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Больше одной рабочей функции у пользователя" ;	
 	return functions.iterator().next() ;
 }
@@ -130,10 +125,7 @@ function getWorkCalendarDayCalendarDate(aCtx, aCalDayId) {
 			+" where wcd.id='"+aCalDayId+"'")
 			.setMaxResults(1)
 		.getResultList() ;
-	
-	return list.size()>0?list.get(0)[1]:null ;
-	//return aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay
-	//		, new java.lang.Long(aCalDayId)).getCalendarDate() ;
+	return list.isEmpty() ? null : list.get(0)[1];
 }
 
 /**
@@ -145,14 +137,14 @@ function findLogginedWorkFunctionList(aCtx) {
 	var list = aCtx.manager.createQuery("from WorkFunction where secUser.login = :login")
 		.setParameter("login", username) 
 		.getResultList() ;
-	if(list.size()==0) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответствия между WorkFunction и SecUser" ;
+	if(list.isEmpty()) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответствия между рабочей функцией и пользователем (WorkFunction и SecUser)" ;
 	return list ;
 }
 function getGroupByWorkFunction(aCtx,aWorkFunction) {
 	var sql = "select group_id,id from workfunction where id='"+aWorkFunction+"'" ;
 	var list = aCtx.manager.createNativeQuery(sql)
 		.getResultList() ;
-	if (list.size()>0) {
+	if (!list.isEmpty()) {
 		var obj = list.get(0) ;
 		return +obj[0]  ;
 	}
@@ -182,14 +174,14 @@ function findLogginedWorkFunctionListByPoliclinic(aCtx,aWorkPlan) {
 		//.setParameter("login", username) 
 		//.setParameter("plWF",aWorkPlan)
 		.getResultList() ;
-	if(list.size()==0) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между WorkFunction и SecUser" ;
+	if(list.isEmpty()) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и именем пользователя (WorkFunction и SecUser)" ;
 	var obj = list.get(0) ;
 	return obj[1]!=null?obj[1]: (obj[2]!=null?obj[2] : obj[0])  ;
 }
 function getWorkFunctionByCalenDay(aCtx, aCalenDayId) {
 	var list = aCtx.manager.createNativeQuery("select wf.id as wcdid,wc.id as wcid from WorkFunction wf left join WorkCalendar wc on wf.id=wc.workFunction_id left join WorkCalendarDay wcd on wcd.workCalendar_id=wc.id where wcd.id = '"+aCalenDayId+"'")
 		.getResultList() ;
-	if(list.size()==0) {
+	if(!list.isEmpty()) {
 		return "0" ;
 	}
 	var workFunctId = list.get(0)[0] ;
@@ -200,8 +192,5 @@ function getWorkFunctionByCalenDay(aCtx, aCalenDayId) {
 function getWorkFunctionInfo(aCtx,aWorkFunctionId) {
 	var list = aCtx.manager.createNativeQuery("select wf.id as wfid,vwf.name||' '||(case when wf.dtype='GroupWorkFunction' then wf.groupName when wf.dtype='PersonalWorkFunction' then wp.lastname||' '||wp.firstname||' '||coalesce(wp.middlename,'') else '' end) as wfinfo from WorkFunction wf left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id where wf.id = '"+aWorkFunctionId+"'")
 	.getResultList() ;
-	return list.size()>0?list.get(0)[1]:"" ;
-	//var workFunction = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction
-	//	, java.lang.Long.valueOf(""+aWorkFunctionId)) ;
-	//return workFunction!=null?workFunction.workFunctionInfo:"" ;
-} 
+	return list.isEmpty() ? "" :list.get(0)[1] ;
+}
