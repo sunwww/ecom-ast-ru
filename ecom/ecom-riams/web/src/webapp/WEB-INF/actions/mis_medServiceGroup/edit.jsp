@@ -138,7 +138,8 @@
           	 ,case when ms.isNoOmc='1' then '' else 'Да. '||coalesce(vms.code,'НЕТ КОДА!!!!') end as isNoOmc
           	 , ms.additionCode as msadditionCode
           	 ,list(pl.name||'-'||pp.code) as prinfo
-          	 ,ms.id||''','''||ms.code||' '||replace(ms.name,'{kv}','') as msidname 
+          	 ,ms.id||''','''||ms.code||' '||replace(ms.name,'{kv}','') as msidname
+          	 , case when ms.finishDate is not null then 'color: #c0c0c0' else '' end as f13_colorRow
           	 from MedService ms 
           	 left join PriceMedservice pms on pms.medservice_id=ms.id
           	 left join priceposition pp on pp.id=pms.priceposition_id
@@ -151,7 +152,7 @@
           " guid="childMedService" />
   	<msh:table name="childMedService" 
   	action="entityParentView-mis_medService.do" disableKeySupport="true" 
-  	idField="1" >
+  	idField="1" styleRow="13">
             <msh:tableColumn  property="7" columnName="Код"  />
             <msh:tableColumn  property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
             <msh:tableColumn columnName="Прикрепленная услуга" identificator="false" property="3" guid="0c0e08bc-a8af-47b7-ae6d-89e52e73b2e5" />
