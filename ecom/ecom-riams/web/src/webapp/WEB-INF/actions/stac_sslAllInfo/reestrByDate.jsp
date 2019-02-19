@@ -1,9 +1,4 @@
-<%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.Calendar"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="java.util.Date"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -220,7 +215,6 @@
     	request.setAttribute("pigeonHole", pigeonHole) ;
     	request.setAttribute("pigeonHole1", pigeonHole1) ;
     	
-    	String department="" ;
     	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("department", " and "+request.getAttribute("departmentFldIdSql")+"='"+dep+"'") ;

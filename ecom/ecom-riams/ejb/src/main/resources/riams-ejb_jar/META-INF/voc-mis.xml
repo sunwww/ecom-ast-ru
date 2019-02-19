@@ -1436,7 +1436,7 @@
 				parentSplitCount='2'
 				names = "ms.code||' '||ms.name"
 				nameId="ms.id"
-				queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1' and pl.isActual='1' and pp.dateto is null"
+				queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1' and pl.isDefault='1' and pp.dateto is null"
 				join="
 				left join pricelist pl on pl.id=pp.pricelist_id
 				left join pricemedservice pms on pms.priceposition_id=pp.id
