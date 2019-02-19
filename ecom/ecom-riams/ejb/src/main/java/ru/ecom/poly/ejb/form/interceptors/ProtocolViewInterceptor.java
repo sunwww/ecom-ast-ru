@@ -14,6 +14,6 @@ public class ProtocolViewInterceptor implements IFormInterceptor{
 		if (protocol.getServiceMedCase()!=null) {
 			form.setMedService(protocol.getServiceMedCase().getMedService().getId());
 		}
-		if (protocol.getMedCase()!=null) form.setServiceStream(protocol.getMedCase().getServiceStream().getId());
+		if (protocol.getMedCase()!=null && protocol.getMedCase().getServiceStream()!=null) form.setServiceStream(protocol.getMedCase().getServiceStream().getId());
 	}
 }

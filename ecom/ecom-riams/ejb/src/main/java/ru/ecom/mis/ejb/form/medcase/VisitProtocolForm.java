@@ -217,5 +217,4 @@ public class VisitProtocolForm extends ProtocolForm {
 	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
 	/** Поток обслуживания случая */
 	private Long theServiceStream ;
-
 }
