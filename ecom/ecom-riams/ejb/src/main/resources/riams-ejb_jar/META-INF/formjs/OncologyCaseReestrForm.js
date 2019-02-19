@@ -1,6 +1,6 @@
 function onPreDelete(aEntityId,aCtx) {
     //если пациент уже выписан, удалять форму нельзя
-    var isDischarged= aCtx.manager.createNativeQuery("select case when hmc.datefinish is null then '1' else '0' end from medcase hmc\n" +
+    var isDischarged= aCtx.manager.createNativeQuery("select case when (hmc.datefinish is null or hmc.dtype<>'HospitalMedCase') then '1' else '0' end from medcase hmc\n" +
         "left join oncologycase c on c.medcase_id=hmc.id where c.id="+aEntityId).getResultList();
     if (isDischarged.size()>0 && isDischarged.get(0)=='0') throw "Нельзя удалять онкологическую форму уже выписанного пациента!";
     aCtx.manager.createNativeQuery("delete from oncologydirection where oncologycase_id="+aEntityId).executeUpdate() ;

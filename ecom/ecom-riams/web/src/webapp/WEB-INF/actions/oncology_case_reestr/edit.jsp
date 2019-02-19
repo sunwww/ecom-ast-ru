@@ -16,12 +16,6 @@
                 padding-bottom:10px;
                 padding-left:10px;
             }
-            .input[type=radio] {
-                transform: scale(1.5);
-            }
-            .input[type=checkbox] {
-                transform: scale(1.5);
-            }
         </style>
     </tiles:put>
 
@@ -249,7 +243,7 @@
             OncologyService.getAllDirectionCode(${param.id}, {
                 callback : function(res) {
                     if (res!="##") {
-                        setRowsToContaineroncoT('checkbox','vocOncologyTypeDirection','vocOncologyTypeDirectionDiv','',res.split("#"),disabled,true,true);
+                        setRowsToContaineroncoT('checkbox','vocOncologyTypeDirection','vocOncologyTypeDirectionDiv','',res.split("#"),true,true);
                     }
                 }});
             //получить метод исследования и услугу
@@ -257,7 +251,9 @@
                 callback : function(res) {
                     if (res!="") {
                         var mas=res.split('#');
-                        if (mas[0]!='' && mas[1]!='' && mas[3]!='' && mas[4]!='') {
+                        if (mas[0]!=null && mas[1]!=null && mas[3]!=null && mas[4]!=null && mas[2]!=null &&
+                            mas[0]!='' && mas[1]!='' && mas[3]!='' && mas[4]!='' && mas[2]!='' &&
+                            mas[0]!='null' && mas[1]!='null' && mas[3]!='null' && mas[4]!='null' && mas[2]!='null') {
                             $('methodDiagTreat').value =mas[0];
                             $('medService').value =mas[1];
                             if ($('methodDiagTreatName')) $('methodDiagTreatName').value =mas[2];
@@ -275,7 +271,7 @@
             function load1() {
                 <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
                 if (document.getElementById('vocOncologyTypeDirection1')==null) {
-                    setRowsToContaineroncoT('checkbox', 'vocOncologyTypeDirection', 'vocOncologyTypeDirectionDiv', '', null, true, false, false);
+                    setRowsToContaineroncoT('checkbox', 'vocOncologyTypeDirection', 'vocOncologyTypeDirectionDiv', '', null, true, true, false);
                     $('date').value = getCurrentDate();
                 }
                 </msh:ifFormTypeIsCreate>
@@ -472,7 +468,7 @@
                     var json = JSON.stringify(mas);
                     <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
                     <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
-                    OncologyService.editDirectionsByCase(${param.id},json,{
+                    OncologyService.editDirectionsByCase(${param.id},json,$('MKB').value,{
                             callback : function(retId) {
                                 location.href = "entityView-oncology_case_reestr.do?id="+retId;
                             }
@@ -480,7 +476,7 @@
                     </msh:ifFormTypeIsNotView>
                     </msh:ifFormTypeAreViewOrEdit>
                     <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
-                        OncologyService.insertDirection(json,"", {
+                        OncologyService.insertDirection(json,"", $('MKB').value,{
                             callback : function(retId) {
                                 location.href = "entityView-oncology_case_reestr.do?id="+retId;
                             }
@@ -539,7 +535,7 @@
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if((ds.indexOf("C15")!=-1 || ds.indexOf("C16")!=-1 || ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 ||
+                /*else if((ds.indexOf("C15")!=-1 || ds.indexOf("C16")!=-1 || ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 ||
                     ds.indexOf("C20")!=-1 || ds.indexOf("C25")!=-1 || ds.indexOf("C32")!=-1 || ds.indexOf("C34")!=-1 ||
                     ds.indexOf("C50")!=-1 || ds.indexOf("C53")!=-1 || ds.indexOf("C56")!=-1 || ds.indexOf("C61")!=-1 || ds.indexOf("C67")!=-1)
                     && getValueVocRadiooncoT("epit","vocOncologyN008")==-1) {
@@ -661,7 +657,7 @@
                     alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
-                }
+                }*/
                 else if ($('consilium').value=='') {
                     alert("Введите данные о консилиуме!");
                     btn.removeAttribute("disabled");
@@ -910,6 +906,10 @@
                     $('medServiceName').className += " required";
                 }
                 else {
+                    $('methodDiagTreat').value='';
+                    $('medService').value='';
+                    $('methodDiagTreatName').value='';
+                    $('medServiceName').value='';
                     $('methodDiagTreat').hidden=true;
                     $('medService').hidden=true;
                     $('methodDiagTreatName').hidden=true;
