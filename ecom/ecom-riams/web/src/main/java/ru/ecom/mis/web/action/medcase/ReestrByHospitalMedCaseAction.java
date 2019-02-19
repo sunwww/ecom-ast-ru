@@ -1,21 +1,19 @@
 package ru.ecom.mis.web.action.medcase;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import ru.ecom.web.util.ActionUtil;
 import ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm;
+import ru.ecom.web.util.ActionUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.util.query.ReportParamUtil;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ReestrByHospitalMedCaseAction  extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -47,7 +45,7 @@ public class ReestrByHospitalMedCaseAction  extends BaseAction {
 				aRequest.setAttribute("addPat", "") ;
 				aRequest.setAttribute("infoTypePat", "") ;
 			}
-			if (typeDepartment!=null&&typeDepartment.equals("2")) {
+			if ("2".equals(typeDepartment)) {
 				aRequest.setAttribute("departmentFldIdSql","coalesce(slo.department_id,m.department_id)") ;
 				aRequest.setAttribute("departmentFldNameSql","coalesce(sloml.name,ml.name)") ;
 				aRequest.setAttribute("departmentFldAddSql"," and (slo.id is null or slo.dtype='DepartmentMedCase' and slo.id is not null and slo.transferDate is null) ") ;
@@ -62,7 +60,7 @@ public class ReestrByHospitalMedCaseAction  extends BaseAction {
 			String dateI = null ;
 			String timeI = null ;
 			
-			String period ="";
+			String period ;
 			
 			String date = form.getDateBegin() ;
 			Date dat = DateFormat.parseDate(date) ;
@@ -72,18 +70,18 @@ public class ReestrByHospitalMedCaseAction  extends BaseAction {
 		    SimpleDateFormat format=new SimpleDateFormat("dd.MM.yyyy") ;
 		    String date1=format.format(cal.getTime()) ;
 		    String timeSql = null, timeInfo ="";
-		    if (typeHour!=null && typeHour.equals("1")) {
+		    if ("1".equals(typeHour)) {
 				timeSql= "07:00" ;timeInfo="(7 часов)" ;
-		    } else if (typeHour!=null && typeHour.equals("2")) {
+		    } else if ("2".equals(typeHour)) {
 		    	timeSql= "08:00" ;timeInfo="(8 часов)" ;
-	    	} else if (typeHour!=null && typeHour.equals("3")) {
+	    	} else if ("3".equals(typeHour)) {
 	    		timeSql= "09:00" ;timeInfo="(9 часов)" ;
 	    	} 
-		    if (typeDate!=null && typeDate.equals("1")) {
+		    if ("1".equals(typeDate)) {
 	    		//aRequest.setAttribute("dateIs"," and m.dateStart between to_date('"+form.getDateBegin()+"','dd.mm.yyyy') and to_date('"+form.getDateBegin()+"','dd.mm.yyyy') ") ;
 				dateI = "dateStart" ; timeI = "entranceTime" ;
 	    		aRequest.setAttribute("dateInfo","поступившим") ;
-	    	} else if (typeDate!=null && typeDate.equals("2")) {
+	    	} else if ("2".equals(typeDate)) {
 	    		dateI = "dateFinish" ; timeI = "dischargeTime" ;
 	    		aRequest.setAttribute("dateInfo","выписанным") ;
 	    	} else {

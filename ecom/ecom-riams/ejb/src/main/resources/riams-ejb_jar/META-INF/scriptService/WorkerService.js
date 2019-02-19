@@ -5,12 +5,12 @@ function replaceWorkFunction(aCtx,aParam) {
 		var sqluser = "select su.id as suid,w.person_id as pwid from secuser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where login='"+username+"'" ;
 		var listuser = aCtx.manager.createNativeQuery(sqluser).getResultList();
 		//throw username ;
-		if (listuser.size()>0) {
+            if (!listuser.isEmpty()) {
 			var suId=listuser.get(0)[0] ;
 			var wId=listuser.get(0)[1] ;
 			var sqlCheck = "select wf.id,wf.worker_id from workfunction wf  left join worker w on w.id=wf.worker_id where wf.id='"+aParam+"' and w.person_id='"+wId+"'" ;
 			var listCheck = aCtx.manager.createNativeQuery(sqlCheck).getResultList();
-			if (listCheck.size()>0) {
+			if (!listCheck.isEmpty()) {
 				//throw suId+" username="+username ;
 				aCtx.manager.createNativeQuery("update WorkFunction set secuser_id=null where secuser_id='"+suId+"'").executeUpdate() ;
 				aCtx.manager.createNativeQuery("update WorkFunction set secuser_id='"+suId+"' where id='"+aParam+"'").executeUpdate() ;
