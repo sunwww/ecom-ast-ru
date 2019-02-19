@@ -153,5 +153,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 						  roles="/Policy/Mis/MedCase/Stac/Ssl/View"
 						  action="/wfConsultationsAll.do" name="Консультации в стационаре"
 			/>
+			<msh:sideLink styleId="journal_doc_externalMedService"
+						  roles="/Policy/Mis/MedCase/Stac/Ssl/View"
+						  action="/pres_doctor_lab_journal.do" name="Журнал лабораторных назначений"
+			/>
 	    </msh:sideMenu>
 </msh:sideMenu>
