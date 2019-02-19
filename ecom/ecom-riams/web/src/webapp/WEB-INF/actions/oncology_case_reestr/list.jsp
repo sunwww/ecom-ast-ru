@@ -11,7 +11,7 @@
     <tiles:put name="side" type="string">
         <msh:sideMenu>
             <msh:sideLink roles="/Policy/Mis/Oncology/Case/Create" key="ALT+N" action="/entityParentPrepareCreate-oncology_case_reestr.do" params="id" name="Заполнить случай ЗНО" />
-            <msh:sideLink action="/entityParentView-stac_ssl.do" params="id" name="СЛС" />
+            <msh:sideLink action="/javascript:goToMedCase()" name="СЛС/СПО" />
         </msh:sideMenu>
     </tiles:put>
     <tiles:put name="body" type="string">
@@ -49,5 +49,24 @@
             <msh:tableColumn columnName="Вид направления" property="2"/>
             <msh:tableColumn columnName="Дата направления" property="3"/>
         </msh:table>
+    </tiles:put>
+    <tiles:put name="javascript" type="string">
+        <script type="text/javascript" src="./dwr/interface/OncologyService.js"></script>
+        <script type="text/javascript" >
+            function goToMedCase() {
+                OncologyService.getMedCaseDtype(${param.id}, {
+                    callback: function(res) {
+                        var view='entityParentView-';
+                        if (res==0)  view+='stac_ssl';
+                        else if (res==1) view+='smo_spo';
+                        if (res==0 || res==1) {
+                            view+='.do?id='+${param.id};
+                            window.location.href=view;
+                        }
+                        else alert('Не удалось найти СЛС/СПО!');
+                    }
+                });
+            }
+        </script>
     </tiles:put>
 </tiles:insert>

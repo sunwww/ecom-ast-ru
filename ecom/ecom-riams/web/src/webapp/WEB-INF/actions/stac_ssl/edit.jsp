@@ -266,7 +266,8 @@
                     case when n04.name is not null and n04.name!='' then n04.name else n04.noduscode end as nodus,
                     case when n05.name is not null and n05.name!='' then n05.name else n05.metastasiscode end as metastasis,
                     cons.name as consil,
-                    n13.name as typetreat
+                    n13.name as typetreat,
+                    oc.mkb
                     from oncologycase oc
                     left join vocOncologyReasonTreat ort on ort.id = oc.vocOncologyReasonTreat_id
                     left join vocOncologyN002 n02 on n02.id = oc.stad_id
@@ -288,6 +289,7 @@
                         <msh:tableColumn columnName="Metastasis" property="8"/>
                         <msh:tableColumn columnName="Консилиум" property="9"/>
                         <msh:tableColumn columnName="Тип лечения" property="10"/>
+                        <msh:tableColumn columnName="Диагноз" property="11"/>
                     </msh:table>
                 </msh:section>
             </msh:ifInRole>

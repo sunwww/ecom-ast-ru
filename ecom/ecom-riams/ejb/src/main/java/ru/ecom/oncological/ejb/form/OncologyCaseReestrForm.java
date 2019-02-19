@@ -54,6 +54,8 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     private Long cycleDrugTherapy;
     /**Тип лучевой терапии*/
     private Long typeRadTherapy;
+    /** диагноз, с которым создана онкологическая форма*/
+    private String theMKB;
 
     @Persist
     public Long getMedCase() {
@@ -311,5 +313,13 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     }
     public void setContraString(String contraString) {
         this.contraString = contraString;
+    }
+
+    @Persist
+    public String getMKB() {
+        return theMKB;
+    }
+    public void setMKB(String aMKB) {
+        theMKB = aMKB;
     }
 }

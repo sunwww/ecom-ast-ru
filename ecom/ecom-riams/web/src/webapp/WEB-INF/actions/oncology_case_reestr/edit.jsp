@@ -16,12 +16,6 @@
                 padding-bottom:10px;
                 padding-left:10px;
             }
-            .input[type=radio] {
-                transform: scale(1.5);
-            }
-            .input[type=checkbox] {
-                transform: scale(1.5);
-            }
         </style>
     </tiles:put>
 
@@ -46,7 +40,10 @@
                 <msh:hidden guid="lineDrugTherapy" property="lineDrugTherapy" />
                 <msh:hidden guid="typeTreatment" property="typeTreatment" />
                 <msh:hidden guid="contraString" property="contraString" />
+                <msh:hidden guid="methodDiagTreat" property="typeTreatment" />
+                <msh:hidden guid="medService" property="contraString" />
                 <msh:hidden property="isFirst" />
+                <msh:hidden property="MKB" />
                 <div id="vocOncologyReasonTreatDiv">
                     <label><b>Повод обращения (4):</b></label><br>
                 </div>
@@ -161,8 +158,14 @@
                     <label>Направление с целью уточнения диагноза (1):</label><br>
                 </div>
                 <br>
+                <msh:autoComplete  property="methodDiagTreat" label="Метод исследования" vocName="vocOncologyMethodDiagTreat" horizontalFill="true"/>
+                <msh:autoComplete  property="medService" label="Медицинская услуга" vocName="vocMedService" horizontalFill="true" />
             </div>
             <msh:submitCancelButtonsRow colSpan="4" functionSubmit="this.disabled=true; if (document.getElementById('suspicionOncologist').checked) saveDirectionReestr(this); else saveCase(this) ;"/>
+            <%
+                String mkb=request.getParameter("mkb");
+                request.setAttribute("mkb", mkb);
+            %>
         </msh:form>
     </tiles:put>
     <tiles:put name="javascript" type="string">
@@ -172,6 +175,7 @@
             var requiredStad = [0,1,2,3,4];  //коды поводов обращения, для которых обязательно указание стадии заболевания
             var requiredTNM = [0];  //коды поводов обращения, для которых обязательно указание T N M
             var requiredDistantMts = [1,2];  //коды поводов обращения, для которых обязательно указание Наличие отдалённых метастазов (при прогрессировании/рецидиве)
+            var furtherTypeDir=3;  //id типа направления, для которого обязательно заполнение доп. полей
             //нужные дивы
             var suspicionOncologist = document.getElementById("suspicionOncologist");
             var oncologyDirection = document.getElementById("oncologyDirection");
@@ -180,6 +184,7 @@
             var treatmentDiv = document.getElementById("treatmentDiv");
             var disabled=false;
             checkCheckbox();
+            checkFurther();
             //стили для красоты
             document.getElementById("date1").style="margin-left:51px";
             document.getElementById("date2").style="";
@@ -238,7 +243,24 @@
             OncologyService.getAllDirectionCode(${param.id}, {
                 callback : function(res) {
                     if (res!="##") {
-                        setRowsToContaineroncoT('checkbox','vocOncologyTypeDirection','vocOncologyTypeDirectionDiv','',res.split("#"),disabled,true,true);
+                        setRowsToContaineroncoT('checkbox','vocOncologyTypeDirection','vocOncologyTypeDirectionDiv','',res.split("#"),true,true);
+                    }
+                }});
+            //получить метод исследования и услугу
+            OncologyService.getMethodAndService(${param.id}, {
+                callback : function(res) {
+                    if (res!="") {
+                        var mas=res.split('#');
+                        if (mas[0]!=null && mas[1]!=null && mas[3]!=null && mas[4]!=null && mas[2]!=null &&
+                            mas[0]!='' && mas[1]!='' && mas[3]!='' && mas[4]!='' && mas[2]!='' &&
+                            mas[0]!='null' && mas[1]!='null' && mas[3]!='null' && mas[4]!='null' && mas[2]!='null') {
+                            $('methodDiagTreat').value =mas[0];
+                            $('medService').value =mas[1];
+                            if ($('methodDiagTreatName')) $('methodDiagTreatName').value =mas[2];
+                            if ($('medServiceName')) $('medServiceName').value =mas[3];
+                            if ($('methodDiagTreatReadOnly')) $('methodDiagTreatReadOnly').value =mas[2];
+                            if ($('medServiceReadOnly')) $('medServiceReadOnly').value =mas[3];
+                        }
                     }
                 }});
             </msh:ifFormTypeAreViewOrEdit>
@@ -249,7 +271,7 @@
             function load1() {
                 <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
                 if (document.getElementById('vocOncologyTypeDirection1')==null) {
-                    setRowsToContaineroncoT('checkbox', 'vocOncologyTypeDirection', 'vocOncologyTypeDirectionDiv', '', null, false, false, false);
+                    setRowsToContaineroncoT('checkbox', 'vocOncologyTypeDirection', 'vocOncologyTypeDirectionDiv', '', null, true, true, false);
                     $('date').value = getCurrentDate();
                 }
                 </msh:ifFormTypeIsCreate>
@@ -316,12 +338,14 @@
             }
             //проставить диагноз и ФИО пациента
             <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
-                OncologyService.getFIODsPatient(${param.id}, {
+            //Если онкологическая форма создаётся по кнопке - '${mkb}' будет пустым, иначе - заполнен пока ещё не созданным осн. вып.
+                OncologyService.getFIODsPatient(${param.id},'${mkb}', {
                 callback : function(res) {
-                    if (res!="#") {
-                        var mas=res.split("#");
+                    var mas=res.split("#");
+                    if (mas[0]!='' && mas[1]!=''  && mas[2]!='') {
                         document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
-                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1];
+                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1] + mas[2].replace(mas[1],'');
+                        $('MKB').value=mas[1];
                         if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
                             var ind=mas[1].indexOf(' ');
                             if (ind!=-1) {
@@ -338,30 +362,47 @@
                             }
                         }
                     }
+                    else {
+                        alert('Нет основного выписного диагноза и нет основного клинчиеского диагноза в последнем СЛО! Создание онкологической формы невозможно.');
+                        window.location.href='entityParentView-stac_ssl.do?id='+${param.id};
+                    }
                 }});
             </msh:ifFormTypeIsCreate>
             <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-            OncologyService.getFIODsPatient($('medCase').value, {
+            //if ('${mkb}'=='')- простое редактирование формы
+            ////если нет - то актуализация формы, в случае, когда форма создана с другим диагнозом, а в выписке указан новый
+            OncologyService.getDsWithName(${param.id},'${mkb}', {
                 callback : function(res) {
-                    if (res!="#") {
-                        var mas=res.split("#");
-                        document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
-                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1];
-                        if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
-                            var ind=mas[1].indexOf(' ');
-                            if (ind!=-1) {
-                                stadAutocomplete.setParentId(mas[1].substring(0,ind)) ;
-                                tumorAutocomplete.setParentId(mas[1].substring(0,ind)) ;
-                                nodusAutocomplete.setParentId(mas[1].substring(0,ind)) ;
-                                metastasisAutocomplete.setParentId(mas[1].substring(0,ind)) ;
+                    var mas = res.split("#");
+                    if (mas[0] != '' && mas[1] != '') {
+                        document.getElementById("fio").innerHTML = "Ф.И.О. пациента " + mas[0];
+                        document.getElementById("ds").innerHTML = "Диагноз (по МКБ-10): " + mas[1];
+                        if (mas[1] != null && mas[1] != '' && typeof stadAutocomplete != 'undefined') {
+                            var ind = mas[1].indexOf(' ');
+                            if (ind != -1) {
+                                stadAutocomplete.setParentId(mas[1].substring(0, ind));
+                                tumorAutocomplete.setParentId(mas[1].substring(0, ind));
+                                nodusAutocomplete.setParentId(mas[1].substring(0, ind));
+                                metastasisAutocomplete.setParentId(mas[1].substring(0, ind));
                             }
                             else {
-                                stadAutocomplete.setParentId(mas[1]) ;
-                                tumorAutocomplete.setParentId(mas[1]) ;
-                                nodusAutocomplete.setParentId(mas[1]) ;
-                                metastasisAutocomplete.setParentId(mas[1]) ;
+                                stadAutocomplete.setParentId(mas[1]);
+                                tumorAutocomplete.setParentId(mas[1]);
+                                nodusAutocomplete.setParentId(mas[1]);
+                                metastasisAutocomplete.setParentId(mas[1]);
+                            }
+                            if ('${mkb}'!='') {
+                                $('stad').value=$('stadName').value='';
+                                $('tumor').value=$('tumorName').value='';
+                                $('nodus').value=$('nodusName').value='';
+                                $('metastasis').value=$('metastasisName').value='';
+                                $('MKB').value='${mkb}';
                             }
                         }
+                    }
+                    else {
+                        alert('Нет диагноза, с которым была создана форма!');
+                        window.location.href = 'entityParentView-stac_ssl.do?id=' + $('medCase').value
                     }
                 }});
             OncologyService.getDates($('id').value, {
@@ -397,6 +438,18 @@
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
+                else if($('vocOncologyTypeDirection'+furtherTypeDir) && $('vocOncologyTypeDirection'+furtherTypeDir).checked
+                    && $('methodDiagTreat').value=='') {
+                    alert("Заполните метод исследования!");
+                    btn.removeAttribute("disabled");
+                    btn.value='Создать';
+                }
+                else if($('vocOncologyTypeDirection'+furtherTypeDir) && $('vocOncologyTypeDirection'+furtherTypeDir).checked
+                    && $('medService').value=='') {
+                    alert("Заполните медицинскую услугу!");
+                    btn.removeAttribute("disabled");
+                    btn.value='Создать';
+                }
                 else {
                     var mas={
                         list:[]
@@ -404,8 +457,8 @@
                     for (var i=0; i<typeDir.length; i++) {
                         var obj = {
                             typeDirection: typeDir[i],
-                            methodDiagTreat: "",
-                            medService: "",
+                            methodDiagTreat: $('methodDiagTreat').value,
+                            medService: $('medService').value,
                             medCase:getValue("medCase"),
                             date:$('date').value,
                             id:${param.id}
@@ -415,7 +468,7 @@
                     var json = JSON.stringify(mas);
                     <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
                     <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
-                    OncologyService.editDirectionsByCase(${param.id},json,{
+                    OncologyService.editDirectionsByCase(${param.id},json,$('MKB').value,{
                             callback : function(retId) {
                                 location.href = "entityView-oncology_case_reestr.do?id="+retId;
                             }
@@ -423,7 +476,7 @@
                     </msh:ifFormTypeIsNotView>
                     </msh:ifFormTypeAreViewOrEdit>
                     <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
-                        OncologyService.insertDirection(json,"", {
+                        OncologyService.insertDirection(json,"", $('MKB').value,{
                             callback : function(retId) {
                                 location.href = "entityView-oncology_case_reestr.do?id="+retId;
                             }
@@ -482,7 +535,7 @@
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if((ds.indexOf("C15")!=-1 || ds.indexOf("C16")!=-1 || ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 ||
+                /*else if((ds.indexOf("C15")!=-1 || ds.indexOf("C16")!=-1 || ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 ||
                     ds.indexOf("C20")!=-1 || ds.indexOf("C25")!=-1 || ds.indexOf("C32")!=-1 || ds.indexOf("C34")!=-1 ||
                     ds.indexOf("C50")!=-1 || ds.indexOf("C53")!=-1 || ds.indexOf("C56")!=-1 || ds.indexOf("C61")!=-1 || ds.indexOf("C67")!=-1)
                     && getValueVocRadiooncoT("epit","vocOncologyN008")==-1) {
@@ -604,7 +657,7 @@
                     alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
-                }
+                }*/
                 else if ($('consilium').value=='') {
                     alert("Введите данные о консилиуме!");
                     btn.removeAttribute("disabled");
@@ -711,8 +764,10 @@
             }
             //Если повод обращения выбран {0,1,2,3,4}, то поле "Стадия" обязательно для заполнения, в остальных случаях  не заполняется.
             function funcSetStadReauired(rb) {
+                var checkVal=(rb.id.substring(0,2)!='td')? rb.value:rb.id.replace('tdvocOncologyReasonTreat','');
+                if (rb.id.substring(0,2)=='td')
                 if (document.getElementById("stadName")) {
-                    if (requiredStad.include(rb.value)) {
+                    if (requiredStad.include(checkVal)) {
                         document.getElementById("stadName").className += " required";
                         document.getElementById("stadName").disabled = false;
                     }
@@ -722,13 +777,13 @@
                         document.getElementById("stadName").disabled=true;
                     }
                 }
-                funcSetTNMReauired(rb);
-                funcSetOtdMtsEnabled(rb);
+                funcSetTNMReauired(checkVal);
+                funcSetOtdMtsEnabled(checkVal);
             }
             //Если повод обращения выбран {0}, то поля "Tumor, Nodus, Metastasis" обязательны для заполнения, в остальных случаях  не заполняются.
-            function funcSetTNMReauired(rb) {
+            function funcSetTNMReauired(checkVal) {
                 if (document.getElementById("tumorName")) {
-                    if (requiredTNM.include(rb.value)) {
+                    if (requiredTNM.include(checkVal)) {
                         document.getElementById("tumorName").className += " required";
                         document.getElementById("tumorName").disabled = false;
                     }
@@ -739,7 +794,7 @@
                     }
                 }
                 if (document.getElementById("nodusName")) {
-                    if (requiredTNM.include(rb.value)) {
+                    if (requiredTNM.include(checkVal)) {
                         document.getElementById("nodusName").className += " required";
                         document.getElementById("nodusName").disabled = false;
                     }
@@ -750,7 +805,7 @@
                     }
                 }
                 if (document.getElementById("metastasisName")) {
-                    if (requiredTNM.include(rb.value)) {
+                    if (requiredTNM.include(checkVal)) {
                         document.getElementById("metastasisName").className += " required";
                         document.getElementById("metastasisName").disabled = false;
                     }
@@ -764,9 +819,9 @@
             document.getElementById("distantMetastasis").setAttribute("disabled",true);
             if (document.getElementById("consiliumName")) document.getElementById("consiliumName").className += " required";
             //Атрибут "Наличие отдалённых метастазов (при прогрессировании/рецидиве)" доступен при Повод обращения = {1,2},  в остальных случаях не заполняется.
-            function funcSetOtdMtsEnabled(rb) {
+            function funcSetOtdMtsEnabled(checkVal) {
                 if (document.getElementById("distantMetastasis")) {
-                    if (requiredDistantMts.include(rb.value)) {
+                    if (requiredDistantMts.include(checkVal)) {
                         document.getElementById("distantMetastasis").removeAttribute("disabled");
                         document.getElementById("distantMetastasis").disabled = false;
                     }
@@ -776,7 +831,7 @@
                         document.getElementById("distantMetastasis").disabled=true;
                     }
                 }
-                funcSetTNMReauired(rb);
+                funcSetTNMReauired(checkVal);
             }
             //Milamesher 02102018
             //type - radio/checkbox; vocname - откуда брать данные; div - название контейнера; ids - массив с id checked, disabled, iscode = code or id from voc
@@ -797,11 +852,27 @@
                                     if (ids[i]==vocVal.id) txt +=" checked ";
                                 }
                             }
-                            txt += ">" + vocVal.name;
+                            txt += ">";
+                            txt+=(voc=='vocOncologyTypeDirection')?
+                                "<label onclick=\"if (document.getElementById('"+voc+vocVal.id+"')) " +
+                                "document.getElementById('"+voc+vocVal.id +"').click(); checkFurther();\" id='lbl"+voc+vocVal.id +"'>" + vocVal.name + "</label>"
+                                : vocVal.name;
                             txt+="</td><tr>";
                         }
                         txt+="</tbody><table>";
                         document.getElementById(divId).innerHTML+=txt;
+                        if (voc=='vocOncologyTypeDirection') {
+                            <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
+                            var inputs = document.getElementsByTagName('input');
+                            for (i = 0; i < inputs.length; i++) {
+                                if (inputs[i].type == 'checkbox' && inputs[i].name=='vocOncologyTypeDirection')
+                                    inputs[i].disabled = true;
+                            }
+                            </msh:ifFormTypeIsView>
+                            document.getElementById(voc+furtherTypeDir).onclick= function() {
+                                 checkFurther();
+                             }
+                        }
                         if (func!='') {
                             for (var ind1 = 0; ind1 < vocRes.length; ind1++) {
                                 var id = vocRes[ind1].id;
@@ -809,15 +880,46 @@
                                     func(this);
                                 };
                                 if (document.getElementById('td'+voc+id)) document.getElementById('td'+voc+id).onclick =  function () {
-                                    this.childNodes[0].checked='checked'; func(this.childNodes[0]);
+                                    this.childNodes[0].checked='checked';
+                                    func(this);
                                 };
                             }
                         }
                         transform();
+                        checkFurther();
                         <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
                             loadCaseAll(voc);
                         </msh:ifFormTypeAreViewOrEdit>
                     }});
+            }
+            //проверка на доп. поля направления
+            function checkFurther() {
+                <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
+                if ($('vocOncologyTypeDirection'+furtherTypeDir) && $('vocOncologyTypeDirection'+furtherTypeDir).checked) {
+                    $('methodDiagTreat').hidden=false;
+                    $('medService').hidden=false;
+                    $('methodDiagTreatName').hidden=false;
+                    $('medServiceName').hidden=false;
+                    $('methodDiagTreatLabel').hidden=false;
+                    $('medServiceLabel').hidden=false;
+                    $('methodDiagTreatName').className += " required";
+                    $('medServiceName').className += " required";
+                }
+                else {
+                    $('methodDiagTreat').value='';
+                    $('medService').value='';
+                    $('methodDiagTreatName').value='';
+                    $('medServiceName').value='';
+                    $('methodDiagTreat').hidden=true;
+                    $('medService').hidden=true;
+                    $('methodDiagTreatName').hidden=true;
+                    $('medServiceName').hidden=true;
+                    $('methodDiagTreatLabel').hidden=true;
+                    $('medServiceLabel').hidden=true;
+                    $('methodDiagTreatName').className = document.getElementById("methodDiagTreatName").className.replace(new RegExp("required", "g"), "");
+                    $('medServiceName').className = document.getElementById("medServiceName").className.replace(new RegExp("required", "g"), "");
+                }
+                </msh:ifFormTypeIsNotView>
             }
             //увеличение размеров рб
             function transform() {
@@ -840,6 +942,7 @@
                                 if (document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value)) {
                                     document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value).checked = 'checked';
                                     funcSetStadReauired(document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value));
+                                    document.getElementById("vocOncologyReasonTreat" + $('vocOncologyReasonTreat').value).click();
                                 }
                             }
                         }
