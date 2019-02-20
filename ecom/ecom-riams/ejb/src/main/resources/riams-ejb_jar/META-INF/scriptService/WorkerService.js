@@ -115,7 +115,7 @@ function findLogginedWorker(aCtx) {
  */
 function findLogginedWorkFunction(aCtx) {
 	var functions = findLogginedWorkFunctionList(aCtx) ;
-    if(!functions.isEmpty()) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и именем пользователя (WorkFunction и SecUser)" ;
+    if(functions.isEmpty()) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и именем пользователя (WorkFunction и SecUser)" ;
 	if(functions.size()>1) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Больше одной рабочей функции у пользователя" ;	
 	return functions.iterator().next() ;
 }
