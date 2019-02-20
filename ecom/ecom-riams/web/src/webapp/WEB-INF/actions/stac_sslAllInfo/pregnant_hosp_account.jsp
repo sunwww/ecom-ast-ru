@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -84,7 +83,7 @@ select vih.name, count(case when lpu.lpulevel='1' then wchb.id else null end) lv
 count(case when lpu.lpulevel='2' then wchb.id else null end) lvl2,
 count(case when lpu.lpulevel='3' then wchb.id else null end) lvl3
 from vocindicationhospitalization vih 
-left join workcalendarhospitalbed wchb on wchb.indicationtohosp=vih.id
+left join workcalendarhospitalbed wchb on vih.id=coalesce(wchb.indicationtohosp_id,wchb.indicationtohosp)
 left join mislpu dep on dep.id=wchb.department_id
 left join mislpu lpu on lpu.id=dep.parent_id
 where wchb.datefrom is null or wchb.datefrom between 
