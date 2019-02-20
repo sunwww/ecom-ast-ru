@@ -63,30 +63,30 @@
 					val = val.replace(",",".") ;
 					val = val.replace("-",".") ;
 					var v = val.split(".") ;
+					var decimalRegexp=/^(-?\d+(\.?\d+)?|\d+)$/g;
 					var cntdecimal = +par.cntdecimal
 					if (val!="") {
-						if (v.length==2 && v[1].length!=cntdecimal) {
-							errorutil.ShowFieldError($('param'+par.idEnter),"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
-							isError= true ;
-						}
-						
-		  					if (cntdecimal>0 ) {
-		  						if (v.length==1) {
-		  							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
-		  							isError= true ;
-		  						} else if (v.length>1 && !isNaN(v[2])) {
-		 							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
-		 							isError= true ;
-								}
-		  					} else {
-		  						
-		  					}
-						}
+                        if (decimalRegexp.test(val)) {
+                            if (v.length==2 && v[1].length!=cntdecimal) {
+                                errorutil.ShowFieldError($('param'+par.idEnter),"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
+                                isError= true ;
+                            }
+                            if (cntdecimal>0 ) {
+                                if (v.length==1) {
+                                    errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
+                                    isError= true ;
+                                } else if (v.length>1 && !isNaN(v[2])) {
+                                    errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
+                                    isError= true ;
+                                }
+                            }
+                        } else {
+                            errorutil.ShowFieldError($('param' + par.idEnter), "Указанное значение не является числом!");
+                            isError = true;
+                        }
+                    }
 				}
-				
 				par.value = val ;
-				
-				
 			}
 			if (+fldJson.isdoctoredit==0) {
 				if (+$('paramWF').value==0) {
@@ -95,11 +95,11 @@
 				} else {
 					fldJson.workFunction=$('paramWF').value
 				}
-				
 			}
 			var str = JSON.stringify(fldJson);
 			//alert(str) ;
-			if (!isError) { PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, aTemplateId, {
+			if (!isError) {
+			    PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, aTemplateId, {
 				callback: function (aResult) {
 					window.document.location.reload();
 				}}) ;
