@@ -20,7 +20,7 @@
 
     function fillServiceListVocId() {
         if ($('medcaseType').value==='POLYCLINIC') {
-            surgServiciesAutocomplete.setUrl('simpleVocAutocomplete/labMedServiceByServiceStreamPol');
+            labServiciesAutocomplete.setUrl('simpleVocAutocomplete/labMedServiceByServiceStreamPol');
         }
     }
     fillServiceListVocId();
