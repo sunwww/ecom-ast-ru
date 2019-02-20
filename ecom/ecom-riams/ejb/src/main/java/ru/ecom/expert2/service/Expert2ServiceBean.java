@@ -461,7 +461,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 .append(",cast('' as varchar) as empty, list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId") //Не учитываем диагноз *06.08.2018
                 // searchSql.append("select e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1), list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId")
                 .append(" and e2.entryType='POLYCLINIC'")
-                .append(aPatientId!=null&&aPatientId>0?" and e2.externalpatientid="+aPatientId:"")
+                .append(aPatientId!=null && aPatientId>0 ? " and e2.externalpatientid="+aPatientId : "")
                 .append(" and (e2.isDeleted is null or e2.isDeleted='0') and (e2.isUnion is null or e2.isUnion='0') and e2.serviceStream!='COMPLEXCASE'")
                 .append(" and (e2.isMobilePolyclinic is null or e2.isMobilePolyclinic='0') and (e2.isEmergency is null or e2.isEmergency='0')")
                 .append(" and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') ")
@@ -471,7 +471,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 .append(" having count(e2.id)>1").append(isGroupBySpo?"":"and count(case when substring(e2.mainmkb,1,1)='Z'then 1 else null end)<count(e2.id)");
 
         List<Object[]> list = theManager.createNativeQuery(searchSql.toString()).setParameter("listId",aListEntryId).getResultList();
-        LOG.info("sql = "+searchSql+", size = "+list.size());
+     //   LOG.info("sql = "+searchSql+", size = "+list.size());
         for (Object[] spo: list){
             //Создаем новую запись, все существущие помечаем как COMPLEXCASE
             String[] ids = spo[4].toString().split(",");
@@ -479,6 +479,9 @@ public class Expert2ServiceBean implements IExpert2Service {
             for (String idd: ids) {
                 Long id = Long.valueOf(idd.trim());
                 E2Entry entry = theManager.find(E2Entry.class,id);
+                if ("109".equals(entry.getDoctorWorkfunction())) {
+                    theManager.persist(new E2EntryError(entry,"LONG_CHLX","Обращение у врача ЧЛХ"));
+                }
                 if (mainEntry==null) {
                     mainEntry=cloneEntity(entry,null, true);
                     createDiagnosis(mainEntry);
@@ -498,10 +501,10 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**В случае группировки по СПО выполняем проверку на наличие в одном СПО визитов к врачам разных специальностей. Помечаем их как дефекты *26.10.2018 */
     private void checkDefectPolyclinicCrossSpo (Long aListEntryId) {
         LOG.info("Находим неправильные случаи с разными профилями врачей в одном СПО");
-            String sql ="select list(e2.id||''),e2.externalparentid,list(''||e2.parententry_id), count(e2.id) from e2entry e2 \n" +
-                "where e2.listentry_id=258 and (isdeleted is null or isdeleted='0') and e2.servicestream='COMPLEXCASE'\n" +
-                "group by e2.externalparentid\n" +
-                "having count(distinct e2.medhelpprofile_id)>1";
+            String sql ="select list(e2.id||''),e2.externalparentid,list(''||e2.parententry_id), count(e2.id) from e2entry e2" +
+                " where e2.listentry_id=:listEntryId and (isdeleted is null or isdeleted='0') and e2.servicestream='COMPLEXCASE'" +
+                " group by e2.externalparentid" +
+                " having count(distinct e2.medhelpprofile_id)>1";
             //TODO
     }
 
@@ -2098,16 +2101,22 @@ public class Expert2ServiceBean implements IExpert2Service {
     public BigDecimal getActualKsgUprCoefficient(VocKsg aKsg, Date aFinishDate) {
         E2KsgCoefficientHistory coefficientHistory;
         String sql = "select id from E2KsgCoefficientHistory where ksg_id=:ksg and to_date('"+aFinishDate+"','yyyy-MM-dd') between startDate and coalesce(finishDate, current_date)";
-        String key = "KSG#COEFF#"+sql.hashCode();
+        String key = "KSG#"+aKsg.getId()+"#COEFF#"+sql.hashCode();
         if (ksgCoefficientMap.containsKey(key)) {
             coefficientHistory=ksgCoefficientMap.get(key);
         } else {
             List<Long> list = theManager.createQuery(sql).setParameter("ksg",aKsg.getId()).getResultList();
-            if (list.isEmpty() || list.size()>1) {
+            if (list.isEmpty()) {
+                coefficientHistory = new E2KsgCoefficientHistory();
+                coefficientHistory.setValue(BigDecimal.valueOf(1));
+            } else if (list.size()>1) {
                 LOG.error(aKsg.getId()+ " найдено _"+list.size()+"_ коэффициентов КСГ(MORE_1_KSG_COEFFICIENT) "+sql);
                 return null;
+            } else {
+                coefficientHistory = theManager.find(E2KsgCoefficientHistory.class,list.get(0));
             }
-            coefficientHistory = theManager.find(E2KsgCoefficientHistory.class,list.get(0));
+            ksgCoefficientMap.put(key,coefficientHistory);
+
         }
         return coefficientHistory.getValue();
 
@@ -3203,6 +3212,27 @@ public class Expert2ServiceBean implements IExpert2Service {
         difficultyHashMap = new HashMap<>();
         polyclinicCasePrice = new HashMap<>();
         //   resultMap = new HashMap<String, Object>(); //результат госпитализации
+    }
+
+    @Override
+    /**Разбиваем обращение на посещения*/
+    public String splitLongCase(Long aEntryId) {
+        E2Entry entry = theManager.find(E2Entry.class,aEntryId);
+        String serviceStream = entry.getServiceStream();
+        List<E2Entry> entries = theManager.createQuery("from E2Entry where parentEntry=:entry").setParameter("entry",entry).getResultList();
+        int i=0;
+        for (E2Entry child: entries) {
+            child.setServiceStream(serviceStream);
+            child.setParentEntry(null);
+            theManager.persist(child);
+            makeCheckEntry(child,true,true);
+            child.setComment(child.getComment()+"; Случай расклеян из обращения");
+            i++;
+        }
+        entry.setComment(entry.getComment()+";Обращение расклеяно и удалено!");
+        entry.setIsDeleted(true);
+        theManager.persist(entry);
+        return "Расклеено "+i+" записей!";
     }
 
     /**Расчет предварительной цены случая*/

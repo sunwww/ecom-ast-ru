@@ -111,7 +111,7 @@ private Boolean isCheckIsRunning = false;
     private Element addIfNotNull(Element aElement, String aElementName, Object  aValue) {
         if (isNotNull(aValue)) {
             if (aValue instanceof Boolean) {
-                aValue= ((Boolean) aValue)?"1":"0";
+                aValue= ((Boolean) aValue) ? "1" : "0";
             }
             aElement.addContent(new Element(aElementName).setText(aValue.toString()));
         }
@@ -120,10 +120,12 @@ private Boolean isCheckIsRunning = false;
 
     /** Расчет строки с признаком новорожденного */
     private String makeNovorString(E2Entry aEntry) {
-        String ret = "0";
+        String ret ;
         if (isNotNull(aEntry.getKinsmanLastname())) {
             SimpleDateFormat format = new SimpleDateFormat("ddMMyy");
-            ret = aEntry.getSex() + ""+format.format(aEntry.getBirthDate())+"" + (isNotNull(aEntry.getBirthOrder())?aEntry.getBirthOrder():1); //TODO = порядковый номер ребенка
+            ret = aEntry.getSex() + ""+format.format(aEntry.getBirthDate())+"" + (isNotNull(aEntry.getBirthOrder()) ? aEntry.getBirthOrder() : 1);
+        } else {
+            ret ="0";
         }
         return ret;
 
@@ -767,16 +769,16 @@ private Boolean isCheckIsRunning = false;
                     }
                     if (!cancerEntry.getMaybeCancer()) { //Случай ЗНО
                         Element onkSl = new Element("ONK_SL");
-                        onkSl=addIfNotNull(onkSl,"DS1_T",cancerEntry.getOccasion());
-                        if (cancerEntry.getStage()== null
-                                || cancerEntry.getTumor()== null
+                        if (cancerEntry.getOccasion() == null || (cancerEntry.getOccasion().equals("0") && (
+                                cancerEntry.getTumor()== null
                                 || cancerEntry.getNodus()== null
-                                || cancerEntry.getMetastasis()== null
+                                || cancerEntry.getMetastasis()== null ))
                         ) {
                             theManager.persist(new E2EntryError(currentEntry,"NO_CANCERINFO"));
                             return null;
                         }
-                        onkSl=add(onkSl,"STAD",cancerEntry.getStage());
+                        onkSl=add(onkSl,"DS1_T",cancerEntry.getOccasion());
+                        onkSl=addIfNotNull(onkSl,"STAD",cancerEntry.getStage());
                         onkSl=addIfNotNull(onkSl,"ONK_T",cancerEntry.getTumor());
                         onkSl=addIfNotNull(onkSl,"ONK_N",cancerEntry.getNodus());
                         onkSl=addIfNotNull(onkSl,"ONK_M",cancerEntry.getMetastasis());
@@ -1030,7 +1032,7 @@ private Boolean isCheckIsRunning = false;
             zap.addContent(zSl); //Добавляем информацию о случае в запись
             return zap;
         } catch (Exception e) {
-            log.error("EEEE = ",e);
+            log.error("EEEE = "+e.getLocalizedMessage(),e);
             throw new IllegalStateException("some unknown error!");
         }
     }
@@ -1615,8 +1617,8 @@ private Boolean isCheckIsRunning = false;
                 }
                 aElement=add(aElement,"DS2",otherDiagnosis.get(0));
                 if (otherDiagnosis.size()>1) {
-                    for (int i=1;i<otherDiagnosis.size()&&i<4;i++) {
-                        aElement=add(aElement,"DS2_"+i,otherDiagnosis.get(i));
+                    for (int i=1;i<otherDiagnosis.size() && i<4;i++) {
+                        aElement=addIfNotNull(aElement,"DS2_"+i,otherDiagnosis.get(i));
                     }
                 }
             }

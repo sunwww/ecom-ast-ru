@@ -26,6 +26,11 @@ import java.text.SimpleDateFormat;
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
+    public String splitLongCase(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
+        IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
+        return service.splitLongCase(aEntryId);
+    }
+
     /*Меняем кардиологию на сосуды *только для АМОКБ */
     public String changeToSosud(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);

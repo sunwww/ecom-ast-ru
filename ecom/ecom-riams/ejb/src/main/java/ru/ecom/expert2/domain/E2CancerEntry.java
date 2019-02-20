@@ -3,10 +3,7 @@ package ru.ecom.expert2.domain;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
@@ -25,6 +22,7 @@ public class E2CancerEntry extends BaseEntity {
 
   /** Признак подозрения на на ЗО */
   @Comment("Признак подозрения на на ЗО")
+  @Column(nullable=false, columnDefinition="boolean default false")
   public Boolean getMaybeCancer() {return theMaybeCancer;}
   public void setMaybeCancer(Boolean aMaybeCancer) {theMaybeCancer = aMaybeCancer;}
   /** Признак подозрения на на ЗО */
@@ -67,6 +65,7 @@ public class E2CancerEntry extends BaseEntity {
 
   /** Выявлены отдаленные метастазы */
   @Comment("Выявлены отдаленные метастазы")
+  @Column(nullable=false, columnDefinition="boolean default false")
   public Boolean getIsMetastasisFound() {return theIsMetastasisFound;}
   public void setIsMetastasisFound(Boolean aIsMetastasisFound) {theIsMetastasisFound = aIsMetastasisFound;}
   /** Выявлены отдаленные метастазы */
