@@ -68,6 +68,13 @@ public class E2Entry extends BaseEntity {
         return list.get(0);
     }
 
+    /** Комментарии эксперта */
+    @Comment("Комментарии эксперта")
+    public String getComment() {return theComment;}
+    public void setComment(String aComment) {theComment = aComment;}
+    /** Комментарии эксперта */
+    private String theComment ;
+
     /** Онкологические случаи */
     @Comment("Онкологические случаи")
     @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)

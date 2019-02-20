@@ -13,6 +13,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 public interface IExpert2Service {
+    String splitLongCase(Long aEntryId);
     String getMedcaseCost(Long aMedcaseId);
     E2Entry getEntryJson(Long aEntryId);
     String splitForeignOtherBill(Long aListEntryId, String aBillNumber, Date aBillDate, String aTerritories);

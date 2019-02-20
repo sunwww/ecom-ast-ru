@@ -262,6 +262,9 @@
                 <msh:textArea property="fondComment" fieldColSpan="4"/>
                 </msh:row>
             <msh:row>
+                <msh:textArea property="comment" fieldColSpan="4"/>
+            </msh:row>
+            <msh:row>
                 <msh:textField property="reanimationEntry"/>
             </msh:row>
             <msh:row>
@@ -403,6 +406,11 @@ where cancer.entry_id=${param.id}"/>
                         return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
                     }
 
+                    function splitLongCase() {
+                        Expert2Service.splitLongCase(${param.id}, {callback: function (a) {
+                            alert(a);
+                        }});
+                    }
             function getEntryJson () {
                 Expert2Service.getEntryJson(${param.id}, {
                     callback:function(js) {
@@ -543,6 +551,7 @@ where cancer.entry_id=${param.id}"/>
                 <msh:sideLink action="/javascript:gotoMedcase()" name="Перейти к СМО" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:showAllEntriesByPatient()" name="Показать все случаи по пациенту" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:makeSosud()" name="Сделать сосудистым случаем" roles="/Policy/E2" />
+                <msh:sideLink action="/javascript:splitLongCase()" name="Расклеить обращение" roles="/Policy/E2/Admin" />
                 <msh:sideLink action="/javascript:getEntryJson()" name="тест - получить случай json" roles="/Policy/E2/Admin" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>

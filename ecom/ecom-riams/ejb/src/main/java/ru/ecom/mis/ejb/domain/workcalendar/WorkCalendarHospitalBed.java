@@ -13,6 +13,7 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocIndicationHospitalization;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -263,8 +264,9 @@ public class WorkCalendarHospitalBed extends BaseEntity {
 	
 	/** Показания для госпитализации */
 	@Comment("Показания для госпитализации")
-	public Long getIndicationToHosp() {return theIndicationToHosp;}
-	public void setIndicationToHosp(Long aIndicationToHosp) {theIndicationToHosp = aIndicationToHosp;}
+	@OneToOne
+	public VocIndicationHospitalization getIndicationToHosp() {return theIndicationToHosp;}
+	public void setIndicationToHosp(VocIndicationHospitalization aIndicationToHosp) {theIndicationToHosp = aIndicationToHosp;}
 	/** Показания для госпитализации */
-	private Long theIndicationToHosp;
+	private VocIndicationHospitalization theIndicationToHosp;
 }
