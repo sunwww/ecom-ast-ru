@@ -172,7 +172,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		List<ParsedPdfInfoResult> results =parsedPdfInfo.getResults();
 		for(int i=0;i<results.size();i++) {
 			if(i>0){sqlAdd.append(",");}
-			sqlAdd.append("'"+results.get(i).getCode()+"'");
+			sqlAdd.append("'").append(results.get(i).getCode()).append("'");
 		}
 		
 		sql.append("select pres.id as pid, ms.id as msid, max(tp.id) as templateId "+
@@ -446,7 +446,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				// 1-числовой
 				// 4-числовой с плав точкой
 				String value = String.valueOf(param.get("value"));
-				if (type.equals("1")||type.equals("4")) { //TODO при NaN происходит пиздец (создается пустой дневник и невозможно изменить введенный результа), исправить !
+				if (type.equals("1")||type.equals("4")) {
 					if (!StringUtil.isNullOrEmpty(value)) {
 						fip.setValueBD(new BigDecimal(value)) ;
 						if (sb.length()>0) sb.append("\n") ;
@@ -474,7 +474,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					//5-текстовый с ограничением
 				} else if (type.equals("3")||type.equals("5")) {
 					if (!StringUtil.isNullOrEmpty(value)) {
-						fip.setValueText(String.valueOf(value)) ;
+						fip.setValueText(value) ;
 						if (sb.length()>0) sb.append("\n") ;
 						sb.append(param.get("name")).append(": ") ;
 						sb.append(value).append(" ") ;
