@@ -406,7 +406,7 @@
   		if (oldValue!=$('dateStart').value) {
   			var wf = +$("workFunctionExecute").value;
     		if (wf=='') {wf=0;}
-  			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
+  			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value + "#" + $('serviceStream').value) ;
     	//	 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
     	//	 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
 	      //	 		callback: function(aResult) {
@@ -421,7 +421,7 @@
 		var wf = +$("workFunctionExecute").value;
    		if (wf==0) {wf=+$("workFunctionPlan").value;}
    		if (wf=='') {wf=0;}
-  		if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;  		
+  		if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value + "#" + $('serviceStream').value) ;
   	}
   	var frm = document.forms[0] ;
   	frm.action='javascript:checkVisit()' ;
