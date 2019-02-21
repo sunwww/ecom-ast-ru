@@ -77,7 +77,9 @@ function getWorkFunctionId(aCtx) {
 	}
 	return calendarDayId ;
 }
-
+function showPreRecord(aForm, aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_visit/list_predirect_patient.jsp");
+}
 function findPolyAdmissions(aForm, aCtx, aPath) {
 	if (aPath==null || aPath=='') {
 		aPath = "/WEB-INF/actions/smo_visit/listBySelectedDate.jsp" ;
