@@ -296,9 +296,8 @@
      left join Omc_Oksm ok on pat.nationality_id=ok.id
 	 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
 	 left join address2 adr on adr.addressId = pat.address_addressId  
-
-	left join MisLpu as ml on ml.id=m.department_id 
-
+	 left join MisLpu as ml on ml.id=m.department_id
+     left join MedCase slo on slo.parent_id=m.id
 	 left join SecUser su on su.login=m.username
 	left join WorkFunction wf on wf.secUser_id=su.id
 	left join Worker w on w.id=wf.worker_id
