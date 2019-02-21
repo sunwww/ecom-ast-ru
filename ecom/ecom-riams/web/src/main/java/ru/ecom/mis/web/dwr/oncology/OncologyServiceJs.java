@@ -98,35 +98,51 @@ public class OncologyServiceJs {
     /**
      * Проверить госпитализацию на наличие онкологической формы.
      *
-     * @param id_medcase MedCase.id
+     * @param slsId MedCase.id
      * @param aRequest HttpServletRequest
      * @return String есть ли онкологический случай в стацинаре
      * @throws NamingException
      */
-    public String checkSLO(Long id_medcase, HttpServletRequest aRequest) throws NamingException {
+    public String checkSLO(String slsId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> res = service.executeNativeSql("select count(id) from oncologycase where medcase_id=" + id_medcase);
+        if (!checkIsOMC(slsId,aRequest).equals("1")) return "1";
+        Collection<WebQueryResult> res = service.executeNativeSql("select count(id) from oncologycase where medcase_id=" + slsId);
         return !res.isEmpty() ? res.iterator().next().get1().toString() : "0";
     }
-
+    /**
+     * Проверить, ОМС ли.
+     *
+     * @param slsId MedCase.id
+     * @param aRequest HttpServletRequest
+     * @return String ОМС ли
+     * @throws NamingException
+     */
+    public String checkIsOMC(String slsId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> isOmc = service.executeNativeSql("select case when sstr.code='OBLIGATORYINSURANCE' then '1' else '0' end \n" +
+                " from vocservicestream sstr left join medcase mc on mc.servicestream_id=sstr.id\n" +
+                "where mc.id=" + slsId);
+        return isOmc.iterator().next().get1().toString();
+    }
     /**
      * Проверить СПО на необходимость наличия онк. формы.
      *
-     * @param id_medcase MedCase.id
+     * @param slsId MedCase.id
      * @param aRequest HttpServletRequest
      * @return String нужен ли онкологический случай
      * @throws NamingException
      */
-    public String checkSPO(Long id_medcase, HttpServletRequest aRequest) throws NamingException {
+    public String checkSPO(String slsId, HttpServletRequest aRequest) throws NamingException {
 
        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-       Collection<WebQueryResult> res = service.executeNativeSql("select count(id) from oncologycase where medcase_id=" + id_medcase);
+    if (!checkIsOMC(slsId,aRequest).equals("1")) return "false";
+       Collection<WebQueryResult> res = service.executeNativeSql("select count(id) from oncologycase where medcase_id=" + slsId);
        int count = !res.isEmpty() ? Integer.parseInt(res.iterator().next().get1().toString()) : 0;
 
        String result="false";
         if (count == 0) {
 
-            res  = service.executeNativeSql("select dateFinish,idc10_id from medcase  where id=" + id_medcase);
+            res  = service.executeNativeSql("select dateFinish,idc10_id from medcase  where id=" + slsId);
             String finishdate = "";
             String idc10_id = "";
 
@@ -453,6 +469,7 @@ public class OncologyServiceJs {
     public String checkDiagnosisOnkoForm(String slsId, String concludingMkb, HttpServletRequest aRequest) throws NamingException {
         //Если есть хотя бы одна форма с основным выписным, то всё ок
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        if (!checkIsOMC(slsId,aRequest).equals("1")) return "";
         String res = "";
         if (concludingMkb.equals("")) return res;
         //Диагноз онкологической формы
