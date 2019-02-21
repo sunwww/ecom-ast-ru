@@ -860,8 +860,8 @@
 	and mss.dtype='MedService'
 	and vsts.code='LABSURVEY'
 	) and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
-					  (vss.code in ('BUDGET','OBLIGATORYINSURANCE') and (ms.isNoOmc is null or ms.isNoOmc='0'))
-					  or (vss.code not in ('BUDGET','OBLIGATORYINSURANCE') and pl.id is not null)))"
+					  (vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0'))
+					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))"
 				nameId=" ms.id"
 				join="
 				left join vocservicetype vst on vst.id=ms.servicetype_id
