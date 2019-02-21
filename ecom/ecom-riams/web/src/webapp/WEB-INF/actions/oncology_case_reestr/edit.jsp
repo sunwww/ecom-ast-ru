@@ -311,6 +311,7 @@
             <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
             $('dateCons').disabled=true;
             $('dateBiops').disabled=true;
+            document.getElementsByName("typeFirstOrNot")[1].checked=true;
             document.getElementById("stadName").disabled=true;
             document.getElementById("tumorName").disabled=true;
             document.getElementById("nodusName").disabled=true;
