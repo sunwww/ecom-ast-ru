@@ -66,7 +66,7 @@ public class ApiLoginResource {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         JSONArray arr= new JSONArray(service.executeNativeSqlGetJSON(new String[]{"date","male","female"},sql,10));
         StringBuilder ret = new StringBuilder();
-        if (arr!=null&&arr.length()>0) {
+        if (arr.length()>0) {
             for (int i=0;i<arr.length();i++) {
                 JSONObject obj = arr.getJSONObject(i);
                 ret.append("newBornSize=").append(arr.length()).append(";birthDate=").append(obj.getString("date")).append(";birthMale=").append(obj.getString("male")).append(";birthFeMale=").append(obj.getString("female")).append("\n\r");

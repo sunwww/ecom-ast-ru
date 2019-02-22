@@ -1,11 +1,9 @@
-package ru.ecom.api.Onco;
+package ru.ecom.api.onco;
 
 
-import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.web.util.Injection;
 
-import javax.ejb.ApplicationException;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;

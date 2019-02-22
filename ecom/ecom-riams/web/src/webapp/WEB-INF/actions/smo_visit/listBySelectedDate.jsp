@@ -76,9 +76,9 @@ order by wct.timeFrom"/>
 					 where wcd.id='${calenDayId}'
                     and wct.medCase_id is null and (wct.prePatient_id is not null or wct.prePatientInfo is not null and wct.prePatientInfo!='')"/>
      
-		<msh:table name="list_prerecord" action="js-smo_visit-findPolyAdmissions.do" idField="1" hideTitle="false">
-	      <msh:tableColumn columnName="общее кол-во"  identificator="false" property="2" />
-	      <msh:tableColumn property="3" columnName="резерв кол-во"/>
+		<msh:table name="list_prerecord" action="js-smo_visit-showPreRecord.do" cellFunction="true" idField="1" hideTitle="false">
+	      <msh:tableColumn columnName="общее кол-во"  identificator="false" property="2"  addParam="&"/>
+	      <msh:tableColumn property="3" columnName="резерв кол-во" addParam="&"/>
 		</msh:table>
     </msh:section>
   	
