@@ -86,8 +86,8 @@ function onCreate(aForm, aEntity, aCtx) {
         Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(), aEntity, aForm.getParams(), username, aCtx.manager);
     }
     createServiceMedCase(aForm, aEntity, aCtx);
-    var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
-    bean.sendProtocolToExternalResource(aEntity.getId(),null,null,aCtx.manager);
+    //var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean(); //отключено 22-02
+   // bean.sendProtocolToExternalResource(aEntity.getId(),null,null,aCtx.manager);
     checkPrescription(aForm, aEntity, aCtx,false);
 }
 function createServiceMedCase(aForm, aEntity, aCtx) {

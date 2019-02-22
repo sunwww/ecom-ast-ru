@@ -47,7 +47,7 @@ import java.util.*;
 @Stateless
 @Remote(ITemplateProtocolService.class)
 public class TemplateProtocolServiceBean implements ITemplateProtocolService {
-	static final Logger LOG = Logger.getLogger(TemplateProtocolServiceBean.class);
+	private static final Logger LOG = Logger.getLogger(TemplateProtocolServiceBean.class);
 
 	@Deprecated
 	public void sendSms(String aPhone, String aMessage)  {
@@ -224,12 +224,16 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	 * @param aManager - EntityManager
 	 */
 
-	public  void sendProtocolToExternalResource(Long aProtocolId, Long aMedCaseId, String aRecord, EntityManager aManager) {
+	@Deprecated
+	public void sendProtocolToExternalResource(Long aProtocolId, Long aMedCaseId, String aRecord, EntityManager aManager) {
+		LOG.warn("sendProtocolToExternalResource deprecated "+aProtocolId +" "+aMedCaseId);
+		/*
 		if (aManager==null) {aManager=theManager;}
 		Protocol p = aProtocolId!=null?aManager.find(Protocol.class,aProtocolId):null;
 		MedCase mc = p!=null?p.getMedCase():aManager.find(MedCase.class, aMedCaseId);
 		//LOG.info("=== Protocol p = "+p);
 		sendProtocolToExternalResource(p, mc,aRecord, aManager);
+		*/
 	}
 
 	/**
@@ -238,7 +242,10 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	 * @param aManager
 	 * @throws JSONException
 	 */
+	@Deprecated
 	public void sendPatientMedicalHistoryToExternalResource(Long aPatientExternalAccountId, EntityManager aManager) { // Делаем разовую выгрузку всей информации по случаям лечения пациента.
+		LOG.warn("sendPatientMedicalHistoryToExternalResource deprecated");
+		if (1==1) return;
 		if (aManager==null) {aManager=theManager;}
 		String address = getExternalServiceAddress();
 		if (address==null) {return;}
