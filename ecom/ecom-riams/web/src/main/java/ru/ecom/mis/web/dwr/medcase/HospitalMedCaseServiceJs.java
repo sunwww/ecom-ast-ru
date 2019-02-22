@@ -95,7 +95,7 @@ public class HospitalMedCaseServiceJs {
 		String dayTime = toNull(par[3]);
 		String stool = par.length>10 ? toNull(par[10]) : "null";
 		
-		//String hospDayNumber = par[2];
+		//String hospDayNumber = par[2())
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into temperatureCurve (takingDate, pulse, bloodPressureDown, bloodPressureUp, weight, respirationRate, degree")
 		.append(", illnessdaynumber, daytime_id, medcase_id, stool_id) values (");
@@ -1872,51 +1872,50 @@ public class HospitalMedCaseServiceJs {
     }
 
 	/**
-	 * Получить информацию дял 263 приказа.
+	 * Получить информацию для 263 приказа.
 	 *
 	 * @param slsId HospitalMedCase.id
 	 * @param aRequest HttpServletRequest
-	 * @return String c результатом или "##"
+	 * @return String json результат
 	 */
     public String sqlorder263(int slsId,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String query="SELECT hf.id, hf.firstname, hf.lastname, hf.middlename, hf.birthday, hf.phone" +
-				" ,case when hf.sex_id=1 then 'Ж' else 'М' end from hospitaldatafond hf " +
-				"left join vocsex v on v.id=hf.sex_id where hf.hospitalmedcase_id=" + slsId;
-		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
-		StringBuilder res = new StringBuilder() ;
+		Collection<WebQueryResult> list = service.executeNativeSql(
+				"SELECT hf.id as f0, hf.firstname as f1, hf.lastname as f2, hf.middlename as f3, to_char(hf.birthday,'dd.mm.yyyy') as f4," +
+				" hf.phone as f5,case when hf.sex_id=1 then 'Ж' else 'М' end as f6" +
+				" ,hf.typepolicy as f7,hf.seriespolicy as f8, hf.numberpolicy as f9, hf.directmedcase_id as f10, hf.numberfond as f11," +
+				" to_char(hf.directdate,'dd.mm.yyyy') as f12, hf.diagnosis as f13,hf.orderlpucode as f14," +
+				" to_char(hf.prehospdate,'dd.mm.yyyy') as f15,hf.directlpucode as f16, hf.profile as f17, to_char(hf.hospdate,'dd.mm.yyyy') as f18," +
+				" to_char(hf.hospdischargedate,'dd.mm.yyyy') as f19,vdh.name as f20" +
+				" from hospitaldatafond hf" +
+				" left join vocsex v on v.id=hf.sex_id" +
+				" left join vocdeniedhospitalizating vdh on vdh.id=hf.id" +
+				" where hf.hospitalmedcase_id=" + slsId,1);
+		JSONObject res = new JSONObject() ;
 		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("#").append((new SimpleDateFormat("dd.MM.yyyy").format(wqr.get5()))).append("#").append(wqr.get6()).append("#").append(wqr.get7()).append("#") ;
-		} else {
-			res.append("##");
+			WebQueryResult w = list.iterator().next();
+			res.put("idTxt", w.get1())
+					.put("fnameTxt", w.get2())
+					.put("nameTxt", w.get3())
+					.put("lnameTxt", w.get4())
+					.put("birthTxt", w.get5())
+					.put("phoneTxt", w.get6())
+					.put("sexTxt", w.get7())
+					.put("typepoliceTxt", w.get8())
+					.put("serpolTxt", w.get9())
+					.put("numpolTxt", w.get10())
+					.put("numdirectTxt", w.get11())
+					.put("numfondTxt", w.get12())
+					.put("directDateTxt", w.get13())
+					.put("diagnosisTxt", w.get14())
+					.put("orderlpuTxt", w.get15())
+					.put("preDateTxt", w.get16())
+					.put("directlpuTxt", w.get17())
+					.put("profileTxt", w.get18())
+					.put("datehospTxt", w.get19())
+					.put("disDateTxt", w.get20())
+					.put("denied", w.get21());
 		}
-		query="SELECT typepolicy,seriespolicy, numberpolicy, directmedcase_id, numberfond, directdate, diagnosis,orderlpucode from hospitaldatafond hf where hf.hospitalmedcase_id=" + slsId;
-		list = service.executeNativeSql(query,1); 
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			Object date = wqr.get6();
-			if (date!=null) date=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get6());
-			res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("#").append(wqr.get5()).append("#").append(date).append("#").append(wqr.get7()).append("#").append(wqr.get8()).append("#") ;
-		} 
-		query="SELECT prehospdate,directlpucode, profile, hospdate, hospdischargedate from hospitaldatafond hf where hf.hospitalmedcase_id=" + slsId;
-		list = service.executeNativeSql(query,1); 
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			Object date1 = wqr.get1();
-			if (date1!=null) date1=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get1());
-			Object date4 = wqr.get4();
-			if (date4!=null) date4=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get4());
-			Object date5 = wqr.get5();
-			if (date5!=null) date5=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get5());
-			res.append(date1).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(date4).append("#").append(date5).append("#") ;
-		} 
-		query="SELECT name FROM vocdeniedhospitalizating where id=(SELECT deniedhospital FROM hospitaldatafond hf where hf.hospitalmedcase_id=" + slsId + ")";
-		list = service.executeNativeSql(query,1); 
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1()).append("#");
-			}
 		return res.toString();
     }
 
@@ -2369,10 +2368,10 @@ public class HospitalMedCaseServiceJs {
 	/**
 	 * Получить кол-во дней с начала СЛО и СЛС при создании дневника в СЛО #135
 	 * @param aMedcaseId DepartmentMedCase.id
-	 * @return String Кол-во дней
+	 * @return String json Кол-во дней
 	 */
 	public String getSloCountDays(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
+        JSONObject res=new JSONObject();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service.executeNativeSql("select cast(round((EXTRACT(EPOCH FROM current_timestamp)" +
 				"-(SELECT EXTRACT(EPOCH FROM (hmc.datestart + hmc.entrancetime))  from medcase hmc where hmc.id=dmc.parent_id ))/3600/24) as int) as t1\n" +
@@ -2383,9 +2382,9 @@ public class HospitalMedCaseServiceJs {
 				"where dmc.id=" + aMedcaseId) ;
 		if (!list.isEmpty()) {
 			WebQueryResult w = list.iterator().next() ;
-			res.append(w.get1()).append("#").append(w.get2());
+			res.put("hmcCnt",w.get1())
+                    .put("dmcCnt",w.get2());
 		}
-		else res.append("##");
 		return res.toString();
 	}
 }

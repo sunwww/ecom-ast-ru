@@ -340,15 +340,13 @@ public class TemplateProtocolJs {
 	}
 	//Milamesher changed
 	public String getDtypeMedCase(Long aIdMedCase, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res = new StringBuilder();
+		JSONObject res = new JSONObject();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service.executeNativeSql("select ms.dtype,vss.code from MedCase ms,vocservicestream vss where vss.id=ms.servicestream_id and  ms.id="+aIdMedCase) ;
-		if (list.isEmpty()) {
-			res.append("null") ;
-		} else {
-			res.append(list.iterator().next().get1()).toString() ;
-			res.append("#");
-			res.append(list.iterator().next().get2()).toString() ;
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next();
+			res.put("msDtype",wqr.get1());
+			res.put("vssCode",wqr.get2());
 		}
 		return res.toString();
 	}
