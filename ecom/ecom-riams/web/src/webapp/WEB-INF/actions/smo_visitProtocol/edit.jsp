@@ -499,7 +499,7 @@ horizontalFill="true" />
 						}
 						isEditable($('id').value);
 
-                        TemplateProtocolService.isCanEditProtocol($('id').value,$('username').value,
+                        TemplateProtocolService.isCanEditProtocol($('username').value,
                             {
                                 callback: function(aString) {
                                     //alert(aString);

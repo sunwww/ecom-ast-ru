@@ -162,7 +162,7 @@
     	<msh:ifFormTypeAreViewOrEdit formName="smo_draftProtocolForm"><msh:ifFormTypeIsNotView formName="smo_draftProtocolForm">
     		<script type="text/javascript">
 
-    		TemplateProtocolService.isCanEditProtocol($('id').value,$('username').value,
+    		TemplateProtocolService.isCanEditProtocol($('username').value,
     			{
                     callback: function(aString) {
                     	//alert(aString) ;

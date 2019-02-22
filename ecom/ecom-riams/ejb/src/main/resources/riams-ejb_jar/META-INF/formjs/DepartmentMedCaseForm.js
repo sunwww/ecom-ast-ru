@@ -185,23 +185,14 @@ function onPreSave(aForm,aEntity, aContext) {
 				var param = new java.util.HashMap() ;
 				
 				param.put("obj","DischargeMedCase") ;
-				param.put("permission" ,"editAllHospitalMedCase") ;
+				param.put("permission" ,"editAfterDischarge") ;
 				param.put("id", hosp.id) ;
 				var check=aContext.serviceInvoke("WorkerService", "checkPermission", param)+"";
-				
-				if (+check==1) {
-				} else 	{			
-				
-				param.put("obj","DischargeMedCase") ;
-				param.put("permission" ,"backdate") ;
-				param.put("id", hosp.id) ;
-				check=aContext.serviceInvoke("WorkerService", "checkPermission", param)+"";
-				
+
 				if (+check==0) {
 					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение "+cntHour+" часов.";
 					
 				}
-			}
 			}
 	}
 //проверка на перевод из реанимации в реанимацию с галочкой не входит в омс

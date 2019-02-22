@@ -56,20 +56,8 @@ function checkDateStart(aCtx,aExecuteDate,aExecuteTime,aId) {
 				cal1.get(java.util.Calendar.DATE)==cal2.get(java.util.Calendar.DATE) 
 			) {
 			
-			} else{
-				var param = new java.util.HashMap() ;
-				param.put("obj","ServiceMedCase") ;
-				param.put("permission" ,"backdate") ;
-				param.put("id", aId) ;
-				//param.put("username", username) ;
-				//param.put("ServiceMedCase", "backdate", aId, username) ;
-				var check=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
-				
-				//var check=0 ;
-				if (+check==0) {
-					 throw "У Вас стоит ограничение на дату оказания услуги. Вы можете регистрировать оказанную услугу только текущим числом!";
-				}
-		}
+			} else
+                throw "У Вас стоит ограничение на дату оказания услуги. Вы можете регистрировать оказанную услугу только текущим числом!";
 	}
 }
 function onPreDelete(aEntityId, aCtx) {

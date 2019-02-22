@@ -131,7 +131,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 			} else{
 				var param = new java.util.HashMap() ;
 				param.put("obj","DischargeMedCase") ;
-				param.put("permission" ,"backdate") ;
+				param.put("permission" ,"editAfterDischarge") ;
 				param.put("id", aForm.id) ;
 				var check=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
 				
