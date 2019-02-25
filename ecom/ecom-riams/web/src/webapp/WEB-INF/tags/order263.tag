@@ -155,7 +155,7 @@
                      $('denied${name}').value=(typeof aResult.denied=='undefined')? '': aResult.denied;
                      var inputs = document.getElementsByTagName('input');
                      for (var i = 0; i < inputs.length; i++) {
-                         if (inputs[i].type == 'text' && inputs[i].id.indexOf('${name}')) {
+                         if (inputs[i].type == 'text' && inputs[i].id.indexOf('${name}')!=-1) {
                              inputs[i].disabled = true;
                          }
                      }
