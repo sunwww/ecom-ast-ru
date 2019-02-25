@@ -129,7 +129,7 @@
      function show${name}CloseDocument() {
          HospitalMedCaseService.sqlorder263('${param.id}', {
              callback: function(res) {
-                 if (res!=null) {
+                 if (res!=null && res!='{}') {
                      the${name}CloseDisDocumentDialog.show() ;
                      var aResult = JSON.parse(res);
                      $('idTxt${name}').value=(typeof aResult.idTxt==='undefined')? '': aResult.idTxt;
