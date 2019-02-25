@@ -2015,18 +2015,18 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param slsId HospitalMedCase.id
 	 * @param aRequest HttpServletRequest
-	 * @return String c результатом или "##"
+	 * @return String json c результатом
 	 */
 	public String getHWeightIMT(int slsId,HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String query="select height,weight,imt from statisticstub where medcase_id ='"+slsId+"'";
-		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
+		Collection<WebQueryResult> list = service.executeNativeSql("select height,weight,imt from statisticstub where medcase_id ='"+slsId+"'",1);
+		JSONObject res = new JSONObject() ;
 		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#");
+			WebQueryResult w = list.iterator().next() ;
+			res.put("height", w.get1())
+					.put("weight", w.get2())
+					.put("imt", w.get3());
 		}
-		else res.append("##");
 		return res.toString();
 	}
 
@@ -2042,8 +2042,7 @@ public class HospitalMedCaseServiceJs {
 	 */
 	public void setHWeightIMT(int slsId,int height,int weight,double imt,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String query="update statisticstub set height='" + height + "',weight='"+weight+"',imt='"+imt+"' where medcase_id ='"+slsId+"'";
-		service.executeUpdateNativeSql(query);
+		service.executeUpdateNativeSql("update statisticstub set height='" + height + "',weight='"+weight+"',imt='"+imt+"' where medcase_id ='"+slsId+"'");
 	}
 
 	/**
@@ -2113,7 +2112,7 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param dmcId DepartmentMedCase.id
 	 * @param aRequest HttpServletRequest
-	 * @return Boolean - true - можно удалять данные выписки, false - нельзя
+	 * @return String ##
 	 */
 	public String showMBioResResList(int dmcId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
