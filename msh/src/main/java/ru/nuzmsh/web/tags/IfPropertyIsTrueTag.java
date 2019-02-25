@@ -33,15 +33,13 @@ public class IfPropertyIsTrueTag extends AbstractGuidSimpleSupportTag {
             try {
                 value = PropertyUtil.getPropertyValue(entityForm,thePropertyName);
             } catch (Exception e) {
-                System.out.println("ERROR "+e.getMessage());
+                LOG.error("ERROR "+e.getMessage(),e);
                 value = null;
             }
             boolean showTag ;
-            System.out.println("TAG GOOD, property '"+thePropertyName+"' ="+value);
             if (value == null) {
                 showTag = false;
             } else if (value instanceof Boolean) {
-                System.out.println("TAG GOOD!!!");
                  showTag = (boolean) value;
             } else if (value instanceof String) {
                 showTag = !StringUtil.isNullOrEmpty(((String) value));
