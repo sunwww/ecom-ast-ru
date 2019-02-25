@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class WorkCalendarServiceJs {
-
 	public String getActualReserves (HttpServletRequest aRequest) throws NamingException {
 		String sql = "select id, name, code from VocServiceReserveType";
 		return Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSqlGetJSON(new String[]{"id","name","code"},sql,50);
@@ -739,7 +738,6 @@ public class WorkCalendarServiceJs {
 		} else {
 			preInfo.append("%") ;
 		}
-	//	System.out.println(preInfo) ;
 		sql.append("or wct.prePatientInfo like '").append(preInfo).append("') ") ;
 		sql.append(" group by wct.id,wct.prePatient_id, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday,wct.prepatientInfo,su.isremoteuser,su1.isremoteuser") ;
 		sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
@@ -924,9 +922,7 @@ public class WorkCalendarServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		res.append("<form name='frmFunctions' id='frmFunctions' action='javascript:step3()'><ul id='listFunctions'>") ;
 		res.append("<li class='title'>Специалисты</li>");
-		//System.out.print("list="+list.size()) ;
 		for (WebQueryResult wqr:list) {
-		//	System.out.println(wqr.get1()+"---"+wqr.get3()) ;
 			if (aManyIs) {
 				res.append("<li onclick=\"if (this.childNodes[1].checked) {this.childNodes[1].checked=false;}else{this.childNodes[1].checked=true} step3('")
 				.append(wqr.get1()).append("#").append(wqr.get3()).append("')\">") ;
@@ -1140,12 +1136,8 @@ public class WorkCalendarServiceJs {
 		int day = 1 ;
 		int oldday = 0 ;
 		int week = cal.get(Calendar.DAY_OF_WEEK)-1 ;
-		//System.out.println() ;
-		//System.out.println(cal.toString()) ;
 		if (week==0) {
 			week=7;
-		} else{
-			
 		}
 		week-- ;
 		
@@ -1198,7 +1190,6 @@ public class WorkCalendarServiceJs {
 			//res.append("</li>") ;
 		}
 		int max = cal.getActualMaximum(Calendar.DAY_OF_MONTH) ;
-		//System.out.println("act="+cal.getActualMaximum(Calendar.DAY_OF_MONTH)) ;
 		res.append(getFreeDay(day, max+1, true,week)) ;
 		if (oldday>0) {
 			week = (week+max-day)%7 ;
@@ -1332,19 +1323,12 @@ public class WorkCalendarServiceJs {
 		sql.append(" order by wct.timeFrom");
 		StringBuilder res = new StringBuilder() ;
 
-		//System.out.println(sql.toString());
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		String frmName = "frmTime" ;
 		if (aVocWorkFunction!=null) frmName=frmName+"_"+aVocWorkFunction ;
 		res.append("<form name='").append(frmName).append("' id='").append(frmName).append("' action='javascript:step6()'><ul class='listTimes'>") ;
 		int cntLi = 1 ;
-		
-		/*But it is not used!
-		 * int row = list.size()/cntLi ;
-		if (list.size()%cntLi>0) {
-			row ++ ;
-		}
-		System.out.println("row="+row);*/
+
 		int i=0 ;
 		boolean first =false;
 		
@@ -1477,7 +1461,6 @@ public class WorkCalendarServiceJs {
 			,Long aServiceStream,String aPhone, Long aService,HttpServletRequest aRequest
 			) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
-		System.out.println("serve="+aServiceStream) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		service.preRecordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,aServiceStream,
 				aPhone,aService) ;
@@ -1488,12 +1471,10 @@ public class WorkCalendarServiceJs {
 			,HttpServletRequest aRequest
 			) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
-		//System.out.println("patid="+aPatientId) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		return service.preRecordByPatient(username, aTime,aPatInfo,aPatientId) ;
 		//return "Сохранено" ;
 	}
-	//TODO доделать
 	public String deletePreRecord(Long aTime, HttpServletRequest aRequest) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -1545,23 +1526,18 @@ public class WorkCalendarServiceJs {
 			,Long aReserve
 			, Long aSpecialist, String aTimes
 			, HttpServletRequest aRequest) throws NamingException, ParseException {
-		System.out.println("generation add time by days") ;
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
 		if (aDateTo.equals("")) aDateTo=aDateFrom ;
 		java.util.Date dFrom = DateFormat.parseDate(aDateFrom) ;
 		java.util.Date dTo = DateFormat.parseDate(aDateTo) ;
-		System.out.println("date format"+aDateFrom) ;
 		Calendar calFrom = Calendar.getInstance() ;
 		calFrom.setTime(dFrom) ;
-		System.out.println("date format"+aDateTo) ;
 		Calendar calTo = Calendar.getInstance() ;
 		calTo.setTime(dTo) ;
 		calTo.add(Calendar.DAY_OF_MONTH,1);
-		System.out.println(calFrom+"---"+calTo) ;
 		while (calTo.after(calFrom)) {
 			service.getCreateNewTimesBySpecAndDate(new java.sql.Date(calFrom.getTime().getTime()), aSpecialist, aTimes,aReserve) ;
 			calFrom.add(Calendar.DAY_OF_MONTH,1);
-			System.out.println(calFrom) ;
 		}
 		return "Созданы" ;
 	}
@@ -1661,9 +1637,7 @@ public class WorkCalendarServiceJs {
 		IWorkerService service = Injection.find(aRequest).getService(IWorkerService.class) ;
 		Date dateStart = DateFormat.parseSqlDate(aDateStart) ;
 		Date dateFinish = DateFormat.parseSqlDate(aDateFinish) ;
-		//System.out.println("Загрузка данных... VWF = "+aVocWorkFunctionId + " период="+aDateStart+"-"+aDateFinish) ;
 		List<TableTimeBySpecialists> listSpec  = service.getTableByDayAndFunction(dateStart, dateFinish, aVocWorkFunctionId);
-		//System.out.println("Обработка данных... построение таблицы") ;
 		Calendar calnext = Calendar.getInstance() ;
 		calnext.setTime(dateStart) ;
 		Calendar calstop = Calendar.getInstance() ;
