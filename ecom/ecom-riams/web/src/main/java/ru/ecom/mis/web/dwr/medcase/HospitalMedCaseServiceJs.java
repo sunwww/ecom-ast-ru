@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -1924,29 +1925,31 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param patId Patient.id
 	 * @param aRequest HttpServletRequest
-	 * @return String c результатом или "##"
+	 * @return String json c результатом
 	 */
     public String prevPlanHospital(int patId,HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    	String query="select distinct wchb.datefrom,wchb.diagnosis,m.name,p.lastname,p.firstname,p.middlename " +
- "from workcalendarhospitalbed wchb " +
- "left join mislpu m on wchb.department_id=m.id " +
- "left join medcase mc on wchb.patient_id=mc.patient_id  " +
- "left join workfunction wf on wf.id=wchb.workfunction_id " +
- "left join worker w on w.id=wf.worker_id " +
-"left join patient p on p.id=w.person_id " +
- "where wchb.datefrom>=CAST('today' AS DATE) " +
- "and wchb.patient_id=" + patId;
-		Collection<WebQueryResult> list = service.executeNativeSql(query); 
-		StringBuilder res = new StringBuilder() ;
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			Object date = wqr.get1();
-			if (date!=null) date=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get1());
-			String fio = wqr.get4() + " " + wqr.get5() + " " + wqr.get6();
-			res.append(date).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(fio).append("!") ;
-		} 
-		else res.append("##");
+    	String query="select distinct to_char(wchb.datefrom,'dd.mm.yyyy')" +
+				" ,wchb.diagnosis,m.name" +
+				" ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as fiopost" +
+				" from workcalendarhospitalbed wchb" +
+				" left join mislpu m on wchb.department_id=m.id" +
+				" left join medcase mc on wchb.patient_id=mc.patient_id" +
+				" left join workfunction wf on wf.id=wchb.workfunction_id" +
+				" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" +
+				" left join worker w on w.id=wf.worker_id" +
+				" left join patient wp on wp.id=w.person_id" +
+				" where wchb.datefrom>=CAST('today' AS DATE) and wchb.patient_id=" + patId;
+        JSONArray res = new JSONArray() ;
+		Collection<WebQueryResult> list = service.executeNativeSql(query);
+		for (WebQueryResult w :list) {
+			JSONObject o = new JSONObject() ;
+			o.put("date", w.get1())
+					.put("diagnosis", w.get2())
+					.put("lpu", w.get3())
+					.put("fiopost", w.get4());
+			res.put(o);
+		}
 		return res.toString();
     }
 

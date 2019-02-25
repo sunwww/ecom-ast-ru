@@ -136,7 +136,7 @@
         <msh:panel>
         <msh:row>
         	<td colspan="3" align="center">
-        	<input type="button" onclick="infoPlanHospital()" value="Другие предварительные госпитализации"/>
+        	<input type="button" onclick="showinfoPlanHospitalCloseDocument()" value="Другие предварительные госпитализации"/>
         	</td>
         </msh:row>
         <msh:row>
@@ -278,10 +278,6 @@
   			        	); 
   	    }
   	   	}
-  			//Milamesher 19.04.2017 
-  			function infoPlanHospital() {
-  				showinfoPlanHospitalCloseDocument();
-  			}
   	function updateDefaultDate() {
 		WorkCalendarService.getDefaultDate($('surgCabinet').value,
 		{
