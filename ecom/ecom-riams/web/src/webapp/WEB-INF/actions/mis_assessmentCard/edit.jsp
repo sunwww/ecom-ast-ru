@@ -55,7 +55,6 @@
         <div id='dataField'> </div>
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
       <%
-          //lastrelease milamesher 09.04.2018 #97
           String typeCard=request.getParameter("typeCard");
           request.setAttribute("typeCard", typeCard);
           String slo=request.getParameter("slo");
@@ -69,9 +68,9 @@
                     window.onload=function load(){
                         HospitalMedCaseService.getVocAssesmentCardById('${typeCard}',{
                             callback: function(res) {
-                                if (res!='##') {
-                                    ${"template"}.value='${typeCard}';
-                                    ${"templateName"}.value=res;
+                                if (res!='') {
+                                    $('template').value='${typeCard}';
+                                    $('templateName').value=res;
                                     fillDataDiv();
                                 }
                             }});

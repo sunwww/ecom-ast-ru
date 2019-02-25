@@ -1081,18 +1081,18 @@ where m.id ='${param.id}'"/>
                     }) ;
 
             }
-            //Milamesher #101 25.06.2018 проставляется палата по умолчанию
+
             function setDefaultWorkPlaceByDepartment(dep) {
                 if (+dep != 0 && window.location.href.indexOf("Create")!=-1) {
                     HospitalMedCaseService.getDefaultWorkPlaceByDepartment(dep, {
                         callback: function (aResult) {
-                            if (aResult != '##') {
-                                var roomArr = aResult.split('#');
-                                if (+roomArr[0] != 0 && +roomArr[3] != 0) {
-                                    $('roomNumber').value = roomArr[0];
-                                    if ($('roomNumberName')!=null) $('roomNumberName').value = roomArr[1];
-                                    $('bedNumber').value = roomArr[2];
-                                    if ($('bedNumberName')!=null) $('bedNumberName').value = roomArr[3];
+                            if (aResult != null) {
+                                var roomArr = JSON.parse(aResult);
+                                if (typeof(roomArr.wpid)!=='undefined' && +roomArr.wpid != 0 && +roomArr.wp2id != 0) {
+                                    $('roomNumber').value = roomArr.wpid;
+                                    if ($('roomNumberName')!=null) $('roomNumberName').value = roomArr.wpname;
+                                    $('bedNumber').value = roomArr.wp2id;
+                                    if ($('bedNumberName')!=null) $('bedNumberName').value = roomArr.wp2name;
                                 }
                             }
                         }
