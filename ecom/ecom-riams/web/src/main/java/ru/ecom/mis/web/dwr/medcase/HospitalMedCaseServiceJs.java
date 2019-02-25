@@ -2147,20 +2147,14 @@ public class HospitalMedCaseServiceJs {
 	 * @return String результат или "##"
 	 */
 	public String getPatientFIOStat(int dmcId, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename|| ' ' || to_char(pat.birthday,'dd.mm.yyyy')\n" +
-				"from medCase dmc\n" +
-				"left join MedCase as sls on sls.id = dmc.parent_id\n" +
-				"left join Patient pat on dmc.patient_id = pat.id \n" +
-				"where dmc.id=" + dmcId;
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1());
-		}
-		else res.append("##");
-		return res.toString();
+		Collection<WebQueryResult> list = service.executeNativeSql(
+		        "select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename|| ' ' || to_char(pat.birthday,'dd.mm.yyyy')" +
+                " from medCase dmc" +
+                " left join MedCase as sls on sls.id = dmc.parent_id" +
+                " left join Patient pat on dmc.patient_id = pat.id " +
+                " where dmc.id=" + dmcId);
+		return (list.isEmpty())? "":list.iterator().next().get1().toString();
 	}
 
 	/**
@@ -2171,16 +2165,9 @@ public class HospitalMedCaseServiceJs {
 	 * @return String результат или "##"
 	 */
 	public String getSettingsKeyValueByKey(String keyvalue, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select keyvalue from  softconfig where key='" + keyvalue + "'";
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1());
-		}
-		else res.append("##");
-		return res.toString();
+		Collection<WebQueryResult> list = service.executeNativeSql( "select keyvalue from  softconfig where key='" + keyvalue + "'");
+		return (list.isEmpty())? "":list.iterator().next().get1().toString();
 	}
 
 	/**
@@ -2191,16 +2178,9 @@ public class HospitalMedCaseServiceJs {
 	 * @return String результат или "##"
 	 */
 	public String getVocServiceStreamCodeByName(String name, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select code from  vocSstreamE2Entry where name='" + name + "'";
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1());
-		}
-		else res.append("##");
-		return res.toString();
+		Collection<WebQueryResult> list = service.executeNativeSql("select code from  vocSstreamE2Entry where name='" + name + "'");
+		return (list.isEmpty())? "":list.iterator().next().get1().toString();
 	}
 
 	/**

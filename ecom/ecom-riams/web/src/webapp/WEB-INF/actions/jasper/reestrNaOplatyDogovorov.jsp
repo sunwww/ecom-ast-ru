@@ -35,13 +35,15 @@
     </msh:form>
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
         <script type="text/javascript">
+            $('serviceStreamName').className += " required";
+            $('hospTypeName').className += " required";
             function report() {
                 if (document.getElementById("serviceStreamName").value!=null && document.getElementById("serviceStreamName").value!=""
                 && $('dateBegin').value!=null && $('dateBegin').value!="" && $('dateEnd').value!=null && $('dateEnd').value!="") {
                     HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
                         callback: function (res) {
                             var resMas = res.split("#");
-                            if (res != "##") {
+                            if (res != "") {
                                 var sstream=document.getElementById("serviceStreamName").value;
                                 if (sstream[sstream.length-1]==' ') sstream=sstream.substring(0,sstream.length-1);
                                 var billnumtext=($('pigeonHole').value=='')? '':'&billnumtext='+$('pigeonHole').value;
@@ -61,7 +63,7 @@
                     });
                 }
                 else
-                    alert("Необходимо заполнить все поля!");
+                    alert("Необходимо заполнить поток обслуживания и тип помощи!");
             }
         </script>
     </tiles:put>

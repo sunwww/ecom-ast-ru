@@ -353,7 +353,7 @@ function gotoNewBornHistory(aMedCase,aUrl) {
       HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
           callback: function (res) {
               var resMas = res.split("#");
-              if (res != "##") {
+              if (res != "") {
                   var stat=$('statCardNumber').value;
                   var year=$('dateFinish').value.substring(6,11);
                   window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2FCostCertificate&standAlone=true&decorate=no"
