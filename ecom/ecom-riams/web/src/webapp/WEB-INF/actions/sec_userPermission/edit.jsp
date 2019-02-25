@@ -43,7 +43,7 @@
           <msh:textField property="idObject" fieldColSpan="3" label="ИД объекта" guid="ddcbdb90-4d5d-41fa-b450-4d621e4b0e0c" />
         </msh:row>
         <msh:row>
-        	<msh:textField property="editPeriodFrom" label="Период, которые можно редак. с"/>
+        	<msh:textField property="editPeriodFrom" label="Период, который можно редак., с"/>
         	<msh:textField property="editPeriodTo" label="по"/>
         </msh:row>
         <msh:ifFormTypeIsView formName="sec_userPermissionForm" guid="3cadad1c-f7da-4cbf-9a44-f85da5c9db5c">
@@ -69,13 +69,36 @@
     <ecom:titleTrail mainMenu="Config" beginForm="sec_userPermissionForm" guid="6602cbc1-6a25-4fe2-a951-b297a9d9b990" />
   </tiles:put>
   <tiles:put name="javascript" type="string" />
+  <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
   <msh:ifFormTypeIsCreate formName="sec_userPermissionForm">
    <script>
-  window.onload=function load(){  
-	  ${"idObject"}.value='${ido}';
-	  ${"object"}.value='${type}';
-	  if ('${type}'=="1") ${"objectName"}.value="Протокол"; else if ('${type}'=="2") ${"objectName"}.value="Выписка"; 
-  } 
+  window.onload=function (){
+      $('idObject').value='${ido}';
+	  $('object').value='${type}';
+	  if ('${type}'=="1") $('objectName').value="Протокол"; else if ('${type}'=="2") $('objectName').value="Выписка";
+      $('dateFrom').value=$('dateTo').value=getCurrentDate();
+      TemplateProtocolService.getDefaultValueForPermission($('object').value, {
+              callback: function(aResult) {
+                  if (aResult!='{}') {
+                      var perm=JSON.parse(aResult);
+                      $('permission').value=perm.id;
+                      $('permissionName').value=perm.name;
+                  }
+              }
+          });
+      TemplateProtocolService.getPeriodForPermission($('object').value,$('idObject').value, {
+          callback: function(aResult) {
+              if (aResult!='{}') {
+                  var res=JSON.parse(aResult);
+                  $('editPeriodFrom').value=res.dateStart;
+                  $('editPeriodTo').value=res.dateFinish;
+                  $('username').value=res.suId;
+                  $('usernameName').value=res.suLogin;
+              }
+          }
+      });
+      if ('${type}'=="1") $('usernameName').disabled=true;
+  }
   </script>
   </msh:ifFormTypeIsCreate>
 </tiles:insert>

@@ -59,7 +59,7 @@ function onPreCreate(aForm, aCtx) {
       var wf = java.lang.Long.valueOf(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunctionListByPoliclinic"
         , wfeid));
     aForm.setSpecialist(wf);
-    check(aForm, aCtx);
+    check(aForm, aCtx, true);
 
     if (wf != null) {
         var protocols;
@@ -120,7 +120,7 @@ function createServiceMedCase(aForm, aEntity, aCtx) {
     }
 }
 function onPreSave(aForm, aEntity, aCtx) {
-    check(aForm, aCtx);
+    check(aForm, aCtx, false);
     var date = new java.util.Date();
     aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
     aForm.setEditTime(new java.sql.Time (date.getTime())) ;
@@ -136,6 +136,11 @@ function onPreSave(aForm, aEntity, aCtx) {
  */
 function onSave(aForm, aEntity, aCtx) {
     //throw "select d.id,d.record from Diary d where d.id='"+aEntity.id+"' and d.dtype='Protocol'" ;
+    var username = aCtx.getSessionContext().getCallerPrincipal().toString();
+    if (aForm.username!=null && aForm.username!="" && !aForm.username.equals(username)) {
+        throw "У Вас стоит ограничение на редактрование данного протокола!"+
+        "<br><br> Текущий пользователь: "+username+", протокол был создан пользователем: "+aForm.username ;
+    }
     var protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.id='" + aEntity.id + "' and d.dtype='Protocol'").getResultList();
     if (protocols.isEmpty()) {
         //throw "123" ;
@@ -146,7 +151,7 @@ function onSave(aForm, aEntity, aCtx) {
     //throw ""+aForm.getParams();
     if (aForm.getParams() != null && aForm.getParams() != '') {
         //	throw "==="+aForm.getMedCase()+"<>"+aEntity.id+"<>"+aForm.getParams();
-        var username = aCtx.getSessionContext().getCallerPrincipal().toString();
+
         var text = Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(), aEntity, aForm.getParams(), username, aCtx.manager);
 //	throw ""+text;
     }
@@ -186,7 +191,7 @@ function checkPrescription(aForm, aEntity, aCtx, flagIfSave) {
         }
     }
 }
-function check(aForm, aCtx) {
+function check(aForm, aCtx,isCreate) {
 //test
     if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowCreateDiaryFutureTime")) {
         // Дата регистрации дневника не должна быть больше текущей даты
@@ -224,99 +229,48 @@ function check(aForm, aCtx) {
             //Milamesher 16102018 - создание дневника специалиста приёмного отделения по времени - только ДО создания СЛО
             if (dtype == 'HospitalMedCase' && aForm.getDateRegistration() != null && aForm.getDateRegistration() != '') {
                 var list = aCtx.manager.createNativeQuery("select case when dmc.id is null then '0' else case when (dmc.dateStart>to_date('"
-                    +aForm.dateRegistration+"','dd.mm.yyyy') or dmc.dateStart=to_date('"+aForm.dateRegistration+"','dd.mm.yyyy') and dmc.entranceTime>'"
-                    +aForm.timeRegistration+"' ) then '0' else '1' end end\n" +
+                    + aForm.dateRegistration + "','dd.mm.yyyy') or dmc.dateStart=to_date('" + aForm.dateRegistration + "','dd.mm.yyyy') and dmc.entranceTime>'"
+                    + aForm.timeRegistration + "' ) then '0' else '1' end end\n" +
                     "from medcase hmc \n" +
                     "left join medcase dmc on hmc.id=dmc.parent_id and dmc.dtype='DepartmentMedCase'\n" +
-                    "where hmc.id="+aForm.medCase+" order by dmc.id limit 1 ").getResultList();
+                    "where hmc.id=" + aForm.medCase + " order by dmc.id limit 1 ").getResultList();
                 if (!list.isEmpty())
-                    if (list.get(0)=='1') throw "Нельзя создавать дневник специалиста приёмного отделения с датой регистрации больше начала СЛО! Нужно изменить дату и время регистрации либо создать дневник в случае лечения в отделении.";
+                    if (list.get(0) == '1') throw "Нельзя создавать дневник специалиста приёмного отделения с датой регистрации больше начала СЛО! Нужно изменить дату и время регистрации либо создать дневник в случае лечения в отделении.";
             }
-            var isCheck = null;
 
             var param1 = new java.util.HashMap();
 
         }
+        var isCheck = null;
         var ldm = aCtx.manager.createNativeQuery("select dm.id,dm.validitydate from diarymessage dm where dm.diary_id=" + aForm.id + " and (dm.validitydate>current_date or dm.validitydate=current_date and dm.validitytime>=current_time)").getResultList();
         if (ldm.size() > 0) {
             aCtx.manager.createNativeQuery("update diarymessage dm set IsDoctorCheck='1' where dm.diary_id=" + aForm.id + "").executeUpdate();
         }
-        if (dtype == 'HospitalMedCase' || dtype == 'DepartmentMedCase') {
-            if (aForm.getDateRegistration() != null && aForm.getDateRegistration() != '' && isCheck == null) {
-                if (t.get(0)[1] != null) {
-
-                    param1.put("obj", "DischargeMedCase");
-                    param1.put("permission", "editAllHospitalMedCase"); //editAllProtocolsInSLS
-                    param1.put("id", +hmc);
-                    isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
-                    if (+isCheck == 1) {
-
-                    } else {
-                        param1.put("obj", "DischargeMedCase");
-                        param1.put("permission", "editAfterDischarge"); //editAllProtocolsInSLS
-                        param1.put("id", +hmc);
-                        isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
-                        if (+isCheck != 1) throw "У Вас стоит ограничение на редактирование (создание) данных после выписки!!!";
-                    }
-
-                } else {
-                    if (ldm.size() > 0) {
-
-                    } else {
-                        var curDate = java.util.Calendar.getInstance();
-                        var maxVisit = java.util.Calendar.getInstance();
-                        var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(), aForm.getTimeRegistration());
-                        maxVisit.setTime(dateVisit);
-                        var cntHour = +getDefaultParameterByConfig("count_hour_edit_hosp_protocol", 24, aCtx);
-                        maxVisit.add(java.util.Calendar.HOUR, cntHour);
-                        if (curDate.after(maxVisit)) {
-                            var param1 = new java.util.HashMap();
-                            param1.put("obj", "HospitalMedCase");
-                            param1.put("permission", "editAllHospitalMedCase"); //editAllProtocolsInSLS
-                            param1.put("id", +hmc);
-                            isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
-                            if (+isCheck == 1) {
-
-                            } else {
-                                var param1 = new java.util.HashMap();
-                                param1.put("obj", "Protocol");
-                                param1.put("permission", "editAfterCertainHour");
-                                param1.put("id", +aForm.id);
-                                isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
-                                if (+isCheck != 1) {
-                                    if (ldm.size() == 0) {
-                                        throw "У Вас стоит ограничение " + cntHour + " часов на создание (редактирование) протокола госпитализации!!!";
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-        } else {
-            if (aForm.getDateRegistration() != null && aForm.getDateRegistration() != '' && isCheck == null) {
-                var curDate = java.util.Calendar.getInstance();
-                var maxVisit = java.util.Calendar.getInstance();
-                var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(), aForm.getTimeRegistration());
-                maxVisit.setTime(dateVisit);
-                var cntHour = +getDefaultParameterByConfig("count_hour_edit_protocol", 24, aCtx);
-                maxVisit.add(java.util.Calendar.HOUR, cntHour);
-                if (curDate.after(maxVisit)) {
-                    //var param1 = new java.util.HashMap() ;
-                    param1.put("obj", "Protocol");
-                    param1.put("permission", "editAfterCertainHour");
-                    param1.put("id", +aForm.id);
-                    isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
-                    if (+isCheck != 1) {
-                        if (ldm.size() == 0) {
-                            throw "У Вас стоит ограничение " + cntHour + " часов на создание (редактирование) протокола!!!";
-                        }
+        if (aForm.getDateRegistration() != null && aForm.getDateRegistration() != '' /*&& isCheck == null*/ && ldm.size() == 0) {
+            var curDate = java.util.Calendar.getInstance();
+            var maxVisit = java.util.Calendar.getInstance();
+            var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(), aForm.getTimeRegistration());
+            maxVisit.setTime(dateVisit);
+            var config = (dtype == 'HospitalMedCase' || dtype == 'DepartmentMedCase') ? "count_hour_edit_hosp_protocol" : "count_hour_edit_protocol";
+            var cntHour = +getDefaultParameterByConfig(config, 24, aCtx);
+            maxVisit.add(java.util.Calendar.HOUR, cntHour);
+            var param1 = new java.util.HashMap();
+            param1.put("obj", "Protocol");
+            param1.put("permission", "editAfterCertainHour");
+            param1.put("id", +aForm.id);
+            isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
+            if (curDate.after(maxVisit) || t.get(0)[1] != null && !isCreate) {
+                if (+isCheck != 1) {
+                    if (ldm.size() == 0) {
+                        var tmpStr = (dtype == 'HospitalMedCase' || dtype == 'DepartmentMedCase') ? " госпитализации" : "";
+                        if (t.get(0)[1] == null) throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
+                        else throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
                     }
                 }
             }
+            if (t.get(0)[1] != null && isCreate)
+                throw "У Вас стоит ограничение на создание данных после выписки!!!";
         }
-
     }
 }
 function checkCreateDiagnosis(aForm, aCtx) {

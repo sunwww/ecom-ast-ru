@@ -458,9 +458,9 @@ horizontalFill="true" />
                 function getDtype(){
                     TemplateProtocolService.getDtypeMedCase($('medCase').value,{
                         callback: function(res) {
-                            var aResult = res.split('#') ;
-                            aDtype=aResult[0];
-                            ifCharged=aResult[1];
+                            var aResult=JSON.parse(res);
+                            aDtype=aResult.msDtype;
+                            ifCharged=aResult.vssCode;
 							medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
                             if (aDtype != null && aDtype == "HospitalMedCase") {
                                 ishosp = 1;
@@ -499,7 +499,7 @@ horizontalFill="true" />
 						}
 						isEditable($('id').value);
 
-                        TemplateProtocolService.isCanEditProtocol($('id').value,$('username').value,
+                        TemplateProtocolService.isCanEditProtocol($('username').value,
                             {
                                 callback: function(aString) {
                                     //alert(aString);
@@ -548,16 +548,14 @@ horizontalFill="true" />
 							else if (res=="1") {
                                 HospitalMedCaseService.getSloCountDays($('medCase').value, {
                                     callback: function (res) {
-                                        if (res!="##") {
-                                            var cnts=res.split('#');
-                                            if (cnts.length==2) {
-                                                var rescnt1=cnts[0];
-                                                var rescnt2=cnts[1];
-                                                if (rescnt1==0) rescnt1=1;
-                                                if (rescnt2==0) rescnt2=1;
-                                                $('record').value += "С начала СЛС: " + rescnt1 + " сутки\n";
-                                                $('record').value += "С начала СЛО: " + rescnt2 + " сутки\n";
-                                            }
+                                        if (res!=null) {
+                                            var cnts=JSON.parse(res);
+                                            var rescnt1 = cnts.hmcCnt;
+                                            var rescnt2 = cnts.dmcCnt;
+                                            if (rescnt1 == 0) rescnt1 = 1;
+                                            if (rescnt2 == 0) rescnt2 = 1;
+                                            $('record').value += "С начала СЛС: " + rescnt1 + " сутки\n";
+                                            $('record').value += "С начала СЛО: " + rescnt2 + " сутки\n";
                                         }
                                     }});
                             }

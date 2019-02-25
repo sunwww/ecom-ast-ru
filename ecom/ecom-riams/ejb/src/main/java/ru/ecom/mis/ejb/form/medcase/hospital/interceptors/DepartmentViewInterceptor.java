@@ -47,7 +47,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 						) {
 					boolean isOpen;
 					try {
-						isOpen = checkPermission("DischargeMedCase", "backdate", dep.getParent().getId(),aContext);
+						isOpen = checkPermission("DischargeMedCase", "editAfterDischarge", dep.getParent().getId(),aContext);
 						if (!isOpen) {
 							form.getPage();
 							form.setTypeViewOnly() ;

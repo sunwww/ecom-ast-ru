@@ -7,7 +7,6 @@ import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.diary.web.action.protocol.template.TemplateSaveAction;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.web.login.LoginInfo;
@@ -20,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -316,15 +314,13 @@ public class TemplateProtocolJs {
 
 	//Milamesher changed
 	public String getDtypeMedCase(Long aIdMedCase, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res = new StringBuilder();
+		JSONObject res = new JSONObject();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> list = service.executeNativeSql("select ms.dtype||'#'||vss.code from MedCase ms,vocservicestream vss where vss.id=ms.servicestream_id and  ms.id="+aIdMedCase) ;
-		if (list.isEmpty()) {
-			res.append("null") ;
-		} else {
-			res.append(list.iterator().next().get1()).toString() ;
-			res.append("#");
-			res.append(list.iterator().next().get2()).toString() ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select ms.dtype,vss.code from MedCase ms,vocservicestream vss where vss.id=ms.servicestream_id and  ms.id="+aIdMedCase) ;
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next();
+			res.put("msDtype",wqr.get1());
+			res.put("vssCode",wqr.get2());
 		}
 		return res.toString();
 	}
@@ -660,7 +656,7 @@ public class TemplateProtocolJs {
 			name_cat = name_cat+"<input type='text' id='fldSearch"+aFunctionProt+"' name='fldSearch"+aFunctionProt+"' value='"+(aSearchText!=null?aSearchText:"")+"'>" ;
 			name_cat = name_cat+"<input  type='submit' value='Поиск' onclick='"+aFunctionProt+"Search(\""+aType+"\",\""+aParent+"\")'>" ;
 			name_cat = name_cat+"</form>" ;
-			res.append("<h2>Список своих шаблонов").append(name_cat!=null&&!name_cat.equals("")?" КАТЕГОРИИ: "+name_cat:"---").append(" </h2>") ;
+			res.append("<h2>Список своих шаблонов").append(!name_cat.equals("")?" КАТЕГОРИИ: "+name_cat:"---").append(" </h2>") ;
 			res.append("</td>") ;
 			res.append("</tr><tr><td colspan='2' valign='top'>") ;
 			res.append("<ul>");
@@ -830,44 +826,94 @@ public class TemplateProtocolJs {
     	 LoginInfo loginInfo = LoginInfo.find(aRequest.getSession()) ;
     	return loginInfo!=null?loginInfo.getUsername():"" ;
     }
-    public boolean isCanEditProtocol(Long aIdProt, String aUserCreate, HttpServletRequest aRequest) throws NamingException {
-    	if (getUsername(aRequest).equals(aUserCreate)) {
-    		return true ;
-    	}
-    	IScriptService service = (IScriptService)Injection.find(aRequest).getService("ScriptService") ;
-    	
-    	HashMap param = new HashMap() ;
-		param.put("obj","Protocol") ;
-		param.put("permission" ,"editOtherUser") ;
-		param.put("id", aIdProt) ;
-		
-    	Object res = service.invoke("WorkerService", "checkPermission", new Object[]{param});
-    	//System.out.println("res="+res) ;
-    	long res1 =  parseLong(res);
-    	if (res1==0) {
-    		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    		String slsId = wqs.executeNativeSql("select case when mc.dtype='HospitalMedCase' or mc.dtype='PolyclinicMedCase' then mc.id else mc.parent_id end from diary d " +
-    				" left join medcase mc on mc.id=d.medcase_id " +
-    				" where d.id = "+aIdProt).iterator().next().get1().toString();
-
-    		param.put("obj","DischargeMedCase") ;
-    		param.put("permission" ,"editOtherUserAllHosp") ;
-    		param.put("id", slsId) ;
-    	//	System.out.println( "===== sls "+slsId);
-    		 res = service.invoke("WorkerService", "checkPermission", new Object[]{param});
-    		// System.out.println( "===== sls "+slsId+":"+res);
-    		  res1 =  parseLong(res);
- 
-    		if(res1!=0){
-    			return true; 
-    		}
-    		
-			 //return false;
-		} else {
-			return true ;
-		}
-    	return false ;
+	/**
+	 * Проверить, может ли пользователь редактировать протокол (может, если он и есть создатель дневника).
+	 *
+	 * @param aUserCreate Создатель дневника
+	 * @param aRequest HttpServletRequest
+	 * @return boolean true - может, false - не может
+	 */
+    public boolean isCanEditProtocol(String aUserCreate, HttpServletRequest aRequest) {
+    	return (getUsername(aRequest).equals(aUserCreate));
     }
+	/**
+	 * Получает единственное возможное значение разрешения по коду, в случае, если оно - единственное в справочнике
+	 *
+	 * @param objectPermission Объект, на который даётся разрешение
+	 * @param aRequest HttpServletRequest
+	 * @return String Json с результатом или пустой
+	 */
+	public String getDefaultValueForPermission(String objectPermission, HttpServletRequest aRequest) throws NamingException {
+		JSONObject ret = new JSONObject();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select case when \n" +
+				"(select count(distinct vp.id) from vocPermission vp\n" +
+				"left join vocobjectpermission vop on vop.code=vp.objectcode \n" +
+				"where vop.id=vopmain.id)=1\n" +
+				"then vp.id||'#'||vp.name\n" +
+				"end from vocobjectpermission vopmain\n" +
+				"left join vocpermission vp on vopmain.code=vp.objectcode \n" +
+				"where vopmain.id="+objectPermission);
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next();
+			if (wqr.get1()!=null) {
+				String[] vals = wqr.get1().toString().split("#") ;
+				ret.put("id",vals[0]);
+				ret.put("name",vals[1]);
+			}
+		}
+		return ret.toString();
+	}
+
+	/**
+	 * Получает период редактирования по умолчанию. Выписка - период госпитализации, дневник - дата регистрации
+	 *
+	 * @param objectCode Тип объекта (протокол/выписка)
+	 * @param objectPermission Объект, на который даётся разрешение
+	 * @param aRequest HttpServletRequest
+	 * @return String Json с результатом или пустой
+	 */
+	public String getPeriodForPermission(String objectCode,String objectPermission, HttpServletRequest aRequest) throws NamingException {
+		JSONObject ret = new JSONObject();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder();
+		sql.append("select case when vop.code='Protocol' then")
+				.append(" to_char(d.dateRegistration,'dd.mm.yyyy')||'#'||to_char(d.dateRegistration,'dd.mm.yyyy')")
+				.append("||'#'||su.id||'#'||d.username||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
+				.append(" end from Diary d")
+				.append(" left join vocobjectpermission vop on vop.id=").append(objectCode)
+				.append(" left join secuser su on su.login=d.username")
+				.append(" left join workfunction wf on wf.secuser_id=su.id")
+				.append(" left join worker w on w.id = wf.worker_id")
+				.append(" left join patient wp on wp.id=w.person_id")
+				.append(" where d.id=").append(objectPermission);
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		if (list.isEmpty()) {
+			sql = new StringBuilder();
+			sql.append("select case when vop.code='DischargeMedCase' then")
+					.append(" to_char(mc.dateStart,'dd.mm.yyyy')||'#'||to_char(mc.dateFinish,'dd.mm.yyyy')")
+					.append("||'#'||su.id||'#'||mc.editusername||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
+					.append(" end from Medcase mc")
+					.append(" left join vocobjectpermission vop on vop.id=").append(objectCode)
+					.append(" left join secuser su on su.login=mc.editusername")
+					.append(" left join workfunction wf on wf.secuser_id=su.id")
+					.append(" left join worker w on w.id = wf.worker_id")
+					.append(" left join patient wp on wp.id=w.person_id")
+					.append(" where mc.id=").append(objectPermission);
+			list = service.executeNativeSql(sql.toString());
+		}
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next();
+			if (wqr.get1()!=null) {
+				String[] vals = wqr.get1().toString().split("#") ;
+				ret.put("dateStart",vals[0]);
+				ret.put("dateFinish",vals[1]);
+				ret.put("suId",vals[2]);
+				ret.put("suLogin",vals[3]);
+			}
+		}
+		return ret.toString();
+	}
 	public static Long parseLong(Object aValue) {
 		Long ret =null;
 		if (aValue==null) return ret ;
