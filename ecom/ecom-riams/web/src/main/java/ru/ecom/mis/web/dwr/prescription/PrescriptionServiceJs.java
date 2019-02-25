@@ -2,7 +2,6 @@ package ru.ecom.mis.web.dwr.prescription;
 
 import org.apache.log4j.Logger;
 import org.jdom.IllegalDataException;
-import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -1281,14 +1280,14 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		.append(" where id in (").append(aProtocol).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		//Тут делаем вызов функции по передаче лаб. исследования в ЛК
-
+/* отключаем передачу данных в личный кабинет
 		try{
 			ITemplateProtocolService service1 = Injection.find(aRequest).getService(ITemplateProtocolService.class) ;
 			service1.sendProtocolToExternalResource(aProtocol,aSmoId,null,null);
 		} catch (Exception e) {
 			LOG.error("err = ",e);
 		}
-
+*/
 		return "" ;
 	}
 	public String getParameterByTemplate(Long aSmoId, Long aPrescript, Long aServiceId, Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {

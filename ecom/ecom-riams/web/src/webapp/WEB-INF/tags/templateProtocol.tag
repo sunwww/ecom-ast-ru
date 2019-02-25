@@ -252,14 +252,11 @@ var fldJson = null ;
 	} 
     
     function isEditable () {
-    	    	
     	TemplateProtocolService.getTemplateDisableEdit($('templateProtocol').value,{
     		callback: function (a) {
-    			
     			if (+a==1) {
     				eventutil.addEventListener($('record'),eventutil.EVENT_CLICK, 
     	    	  		  	function() {
-    	    			
     	    					$('record').disabled=true;
     	    					if ($('id').value!='') {
     	    						//alert ('Редактирование данного протокола возможно только через форму!'); 
@@ -303,21 +300,25 @@ var fldJson = null ;
 
     				TemplateProtocolService.getParameterAndPersmissionByTemplate($('id').value,aTemplateId,{
     					callback: function (aResults) {
-    						var arr = aResults.split("#");
-    						var aResult = arr[0];
-    						var editable = arr[1];
+    						var editable = true;
     					
     						$('${name}IntakeInfoTitle').innerHTML = "ВВОД ДАННЫХ" ;
-    					      //  $('BioList').value=aSmoId;
-    					      if ($('params')&&$('params').value!=''&&$('templateProtocol').value == aTemplateId) {
+    					      if ($('params') && $('params').value!='' && $('templateProtocol').value == aTemplateId) {
     					    	fldJson = JSON.parse($('params').value);  
     					      }  else {
-    					      fldJson = JSON.parse(aResult) ;
+    					      fldJson = JSON.parse(aResults);
+								  editable = fldJson.disableEditProtocol==="0";
     					      }
     					      $('templateProtocol').value = +aTemplateId;
     					        var cnt = +fldJson.params.length ;
     					    	
-    					        if (cnt<=0) return;
+    					        if (cnt<=0) {
+									the${name}IntakeInfoDialog.hide();
+									if (!editable) {
+										alert("Отсутствую параметры для редактирования и стоит запрет на ручное изменение дневника, снимите запрет в шаблоне для редактирования дневника!");
+									}
+    					        	return;
+								}
     					        var txt = "<form><table id='tblParamProtocol'>" ;
     					        if (+fldJson.isdoctoredit==0) {
     					        	

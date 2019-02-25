@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import org.w3c.dom.Element;
 import ru.ecom.diary.ejb.domain.DischargeEpicrisis;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
-import ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean;
 import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
@@ -1692,13 +1691,13 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			prot.setMedCase(aMedCase) ;
 			aManager.persist(prot);
 		}
-		try {
+/*		try { //отключаем передачу данных в личный кабинет
 			TemplateProtocolServiceBean bean = new TemplateProtocolServiceBean();
 			bean.sendProtocolToExternalResource(null,aMedCase, aDischargeEpicrisis, aManager);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+*/
 		return true ;
 
 	}
