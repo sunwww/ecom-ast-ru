@@ -1,5 +1,4 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="java.text.SimpleDateFormat"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -18,7 +17,6 @@
 
     <tiles:put name="body" type="string">
         <%
-            //String typeDate =request.getParameter("typeDate") ;
             String typeDate=ActionUtil.updateParameter("BloodReport","typeDate","1", request);
             String typeGroup =ActionUtil.updateParameter("BloodReport","typeGroup","2", request) ;
             String typeRemote =ActionUtil.updateParameter("BloodReport","typeRemote","1", request) ;
@@ -42,6 +40,9 @@
                     <msh:autoComplete property="serviceStream" label="Тип резерва" vocName="vocServiceReserveType" horizontalFill="true" size="20"/>
                 </msh:row>
                 <msh:row>
+                    <msh:autoComplete property="department" label="Отделение" vocName="lpu" horizontalFill="true" size="20"/>
+                </msh:row>
+                <msh:row>
                     <td class="label" title="Отображать" colspan="1">
                         <label for="typeSvodName" id="typeSvodLabel">Отобразить:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';checkSvod();" id="tdsvod1">
@@ -49,6 +50,9 @@
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';checkSvod();" id="tdsvod2">
                         <input type="radio" name="typeSvod" value="2" id="svod2">  свод по поликлиникам
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';checkSvod();" >
+                        <input type="radio" name="typeSvod" value="3" >  свод по отделениям
                     </td>
                 </msh:row>
                 <msh:row>
@@ -92,54 +96,68 @@
         <%
             String date = request.getParameter("dateBegin");
             String dateEnd = request.getParameter("dateEnd");
-            if (date!=null
-                    && !date.equals("")
-                    && dateEnd!=null
-                    && !dateEnd.equals("")) {
+            String department = request.getParameter("department");
+            if (date!=null && !date.equals("")
+                    && dateEnd!=null && !dateEnd.equals("")) {
                 request.setAttribute("dateBegin", date);
                 request.setAttribute("dateEnd", dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("dateBegin"),request.getParameter("dateEnd"),request));
+                request.setAttribute("isReportBase", ActionUtil.isReportBase(date,dateEnd,request));
 
-                StringBuilder sqlAdd = new StringBuilder();
-                SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
                 if (typeDate.equals("1") ) {
                     request.setAttribute("dateSql", "wct.createdateprerecord") ;
-                }
-                else if (typeDate.equals("2")){
+                } else if (typeDate.equals("2")){
                     request.setAttribute("dateSql","wcd.calendardate" ) ;
                 }
 
                 StringBuilder sqlAddNew=new StringBuilder();
+                String selectSql ;
+                if ("1".equals(typeSvod)) { //Общий свод
+                    selectSql="";
+                } else if ("3".equals(typeSvod)) { //Группировка по отеделению врача
+                    selectSql="ml.name ";
+                } else { //Скорее всего, по направившем ЛПУ
+                    selectSql="lpu.name";
+                }
                 if (typeRemote!=null) {
-                    if (typeRemote.equals("1") && !typeGroup.equals("1")) sqlAddNew.append(" and su.id is not null");
-                    if (typeRemote.equals("2")) sqlAddNew.append(" and wct.createprerecord='MedVox'"); //su id is null
-                    if (typeRemote.equals("3")) {
+                    if (typeRemote.equals("1") && !typeGroup.equals("1")) {
+                        sqlAddNew.append(" and su.id is not null");
+                    } else if (typeRemote.equals("2")) {
+                        sqlAddNew.append(" and wct.createprerecord='MedVox'"); //su id is null
+                    } else if (typeRemote.equals("3")) {
                         sqlAddNew.append(" and (wct.createprerecord like 'ApiClient%' or wct.createprerecord ='FromSite')");
                         //if (!typeGroup.equals("1"))  sqlAddNew.append("and su.id is not null");
                     }
+                } else if (!typeGroup.equals("1")) {
+                    sqlAddNew.append(" and su.id is not null");
                 }
-                else if (!typeGroup.equals("1")) sqlAddNew.append(" and su.id is not null");
+                if (department!=null && !department.equals("")) {
+                    sqlAddNew.append(" and coalesce(wf.lpu_id,w.lpu_id)=").append(department);
+                }
                 String sstream = request.getParameter("serviceStream");
-                if (sstream!=null && !sstream.equals("")) sqlAddNew.append(" and reservetype_id="+sstream);
-                request.setAttribute ("appendSQL", sqlAdd.toString());
+                if (sstream!=null && !sstream.equals("")) sqlAddNew.append(" and reservetype_id=").append(sstream);
                 request.setAttribute ("sqlAddNew", sqlAddNew.toString());
+                request.setAttribute("selectSql",selectSql);
         %>
-<% if (typeSvod.equals("1")) {%>
-        <%if(typeGroup.equals("1")){ %>
+        <% if (typeSvod.equals("1")) {
+            if (typeGroup.equals("1")){ %>
         <msh:section>
             <ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
-select
+select ${selectSql}
 count (wct.id) as cntAll
 , count (case when wct.medcase_id is not null then 1 else null end) as cntRemote, wct.createprerecord as who
 from workcalendartime wct
 left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
+left join workcalendar wc on wc.id=wcd.workcalendar_id
+left join workfunction wf on wf.id=wc.workfunction_id
+left join worker w on w.id=wf.worker_id
+left join mislpu ml on ml.id=coalesce(wf.lpu_id,w.lpu_id)
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 ${sqlAddNew}
 group by wct.createprerecord
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 
             <msh:sectionTitle>
-            </msh:sectionTitle>
+            </msh:sectionTitle>${journal_ticket_sql}
             <msh:sectionContent>
                 <msh:table
                         name="journal_ticket" action="/javascript:void()" idField="1" noDataMessage="Не найдено">
@@ -149,8 +167,7 @@ group by wct.createprerecord
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
-        <%}%>
-        <%if(typeGroup.equals("2")){ %>
+        <%} else if (typeGroup.equals("2")){ %>
         <msh:section>
             ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
@@ -169,22 +186,20 @@ where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dat
                     <msh:tableColumn columnName="Записано всего" property="1"/>
                     <msh:tableColumn columnName="Записано удаленными пользователями" property="2"/>
                 </msh:table>
-            </msh:sectionContent>
+            </msh:sectionContent>${journal_ticket_sql}
         </msh:section>
-        <%}
-        else {%>
+        <%} else {%>
         <i>Выберите параметры поиска и нажмите "Найти" </i>
         <% }
-        }
-        else if (typeSvod.equals("2")) {%>
+        } else { %>
         <msh:section>
-            ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
-select  1, case when t.lpuname is not null then t.lpuname else '-' end as lpuname,
+            <ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+select t.fldName,
 sum(t.total) as total,
 sum(t.cnt1)||' ('||case when sum(t.total)<>0 then round(sum(t.cnt1)/sum(t.total)*100.0,2)||'%' else '0%' end||')' as promed,
 sum(t.cnt2)||' ('||case when sum(t.total)<>0 then round(sum(t.cnt2)/sum(t.total)*100.0,2)||'%' else '0%' end||')' as robot,
 sum(t.cnt3)||' ('||case when sum(t.total)<>0 then round(sum(t.cnt3)/sum(t.total)*100.0,2)||'%' else '0%' end||')' as site
- from (select lpu.name as lpuname
+ from (select ${selectSql} as fldName
 ,count(wct.id) as total
 ,case when (wct.createprerecord ='IntegrationBot') then count(wct.id) else '0' end as cnt1
 ,case when (wct.createprerecord ='MedVox') then count(wct.id) else '0' end as cnt2
@@ -193,21 +208,23 @@ from workcalendartime wct
 left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
 left join medcase mc on mc.id=wct.medcase_id
 left join mislpu lpu on lpu.id=mc.orderlpu_id
-where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
-group by lpu.name,wct.createprerecord) as t
-group by t.lpuname
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-
+left join workcalendar wc on wc.id=wcd.workcalendar_id
+left join workfunction wf on wf.id=wc.workfunction_id
+left join worker w on w.id=wf.worker_id
+left join mislpu ml on ml.id=coalesce(wf.lpu_id,w.lpu_id)
+where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') ${sqlAddNew}
+group by ${selectSql},wct.createprerecord) as t
+group by t.fldName
+"  />
             <msh:sectionTitle>
-            </msh:sectionTitle>
+            </msh:sectionTitle>${journal_ticket_sql}
             <msh:sectionContent>
-                <msh:table
-                        name="journal_ticket" action="/javascript:void()" idField="1" noDataMessage="Не найдено">
-                    <msh:tableColumn columnName="Поликлиника" property="2"/>
-                    <msh:tableColumn columnName="Записано всего" property="3"/>
-                    <msh:tableColumn columnName="Через промед" property="4"/>
-                    <msh:tableColumn columnName="Через робота" property="5"/>
-                    <msh:tableColumn columnName="Через сайт" property="6"/>
+                <msh:table printToExcelButton="Excel" name="journal_ticket" action="/javascript:void()" idField="2" noDataMessage="Не найдено">
+                    <msh:tableColumn columnName="Поликлиника" property="1"/>
+                    <msh:tableColumn columnName="Записано всего" property="2"/>
+                    <msh:tableColumn columnName="Через промед" property="3"/>
+                    <msh:tableColumn columnName="Через робота" property="4"/>
+                    <msh:tableColumn columnName="Через сайт" property="5"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -227,8 +244,7 @@ group by t.lpuname
                     document.getElementById("robotrb").setAttribute("disabled", true);
                     document.getElementById("siterb").setAttribute("disabled", true);
                     document.getElementById("donotgrouprb").checked = document.getElementById("totalrb").checked = 'checked';
-                }
-                else if (svod1.checked) {
+                } else if (svod1.checked) {
                     document.getElementById("donotgrouprb").removeAttribute("disabled");
                     document.getElementById("totalrb").removeAttribute("disabled");
                     document.getElementById("grouprb").removeAttribute("disabled");
