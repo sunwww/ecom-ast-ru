@@ -373,7 +373,7 @@
                            viewUrl="reportKDL.do"
                            action="entityParentView-stac_slo.do" idField="3" cellFunction="true" >
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Отделение" property="1" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Отделение" property="2" addParam="&nul=nul" />
                     <msh:tableColumn columnName="Пациент" property="1" addParam="&nul=nul"/>
                 </msh:table>
             </msh:sectionContent>
