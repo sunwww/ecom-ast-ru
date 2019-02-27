@@ -720,8 +720,8 @@ group by  dd.id having max(dr.dateto)-min(dr.datefrom)+1=16 and dd.issueDate bet
     group by t.codef
 " />
         <msh:table name="report16_just16" printToExcelButton="Сохранить в excel"
-                   viewUrl="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}"
-                   action="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+                   viewUrl="mis_report_16vn.do?typeView=3&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}"
+                   action="mis_report_16vn.do?typeView=3&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
             <msh:tableColumn columnName="Наименование" property="2" />
             <msh:tableColumn columnName="Длительность" property="18" />
             <msh:tableColumn columnName="Число дней временной нетрудоспособности" property="5"/>
@@ -742,7 +742,7 @@ group by  dd.id having max(dr.dateto)-min(dr.datefrom)+1=16 and dd.issueDate bet
 
     </msh:sectionContent>
     </msh:section>
-    <%} else if (period!=null && !period.equals("") 
+    <%} else if (period!=null && !period.equals("")
     && strcode!=null && !strcode.equals("")) {
     	if (typeView.equals("3")) {
     		request.setAttribute("sqlCntDays"," and (select max(dr.dateto)-min(dr.datefrom)+1 from disabilityrecord dr left join disabilitydocument dd1 on dd1.id=dr.disabilityDocument_id where dd.disabilityCase_id=dd1.disabilityCase_id and (dd1.noActuality='0' or dd1.noActuality is null) and dd1.anotherLpu_id is null and dd1.mainWorkDocumentNumber='') ="+request.getParameter("durat")) ;
