@@ -369,7 +369,7 @@
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table printToExcelButton="Сохранить в excel" name="total"
+                <msh:table printToExcelButton="Сохранить в excel" name="total" openNewWindow="true"
                            viewUrl="reportKDL.do"
                            action="entityParentView-stac_slo.do" idField="3" cellFunction="true" >
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
