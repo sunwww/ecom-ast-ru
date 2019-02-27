@@ -133,10 +133,10 @@
                             if ($('description').value!=null && $('description').value!="") {
                                 ClaimService.getSoftType({
                                     callback: function (res) {
-                                        if (res != null && res != '##') {
-                                            var Result = res.split("#");
-                                            if (Result[0] != null) $('claimType').value = Result[0];
-                                            if (Result[1] != null) $('claimTypeName').value = Result[1];
+                                        if (res != null && res != '{}') {
+                                            var Result = JSON.parse(res);
+                                            if (typeof(Result.id) !=='undefined') $('claimType').value = Result.id;
+                                            if (typeof(Result.name) !=='undefined') $('claimTypeName').value = Result.name;
                                         }
                                     }
                                 });
@@ -192,4 +192,3 @@
         <ecom:titleTrail mainMenu="Patient" beginForm="mis_claimForm" />
     </tiles:put>
 </tiles:insert>
-<!-- lastrealease milamesher 15.03.2018 #77 -->

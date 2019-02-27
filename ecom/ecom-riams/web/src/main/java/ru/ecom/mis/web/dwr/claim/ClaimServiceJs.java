@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.claim;
 
 import org.jdom.IllegalDataException;
+import org.json.JSONObject;
 import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -119,24 +120,31 @@ public class ClaimServiceJs {
 		service.executeUpdateNativeSql(sql);
 		return aId;
 	}
-	//lastrelease milamesher 06.03.2018 #77
-	//Получить текст и id типа заявки soft для скриншотов
+
+	/**
+	 * Получить текст и id типа заявки soft для скриншотов #77.
+	 * @param aRequest HttpServletRequest
+	 */
 	public static String getSoftType (HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res = new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String sql = "select id,name from vocclaimtype where code='SOFT'";
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocclaimtype where code='SOFT'");
+		JSONObject res = new JSONObject();
 		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1()).append("#").append(wqr.get2());
+			WebQueryResult w = list.iterator().next() ;
+			res.put("id", w.get1())
+					.put("name", w.get2());
 		}
-		else res.append("##");
 		return res.toString();
 	}
-	//lastrealease milamesher 07.05.2018 #77:
-	// Сохранение скриншота ошибки
-	// Переименование папки для единообразия всех настроек
-	// Один метод сохранения файла на сервер (по полному пути из настроек), который возвращает его относительный путь
+
+
+	/**
+	 * Сохранить скриншота ошибки #77.
+	 * Переименование папки для единообразия всех настроек
+	 * Один метод сохранения файла на сервер (по полному пути из настроек), который возвращает его относительный путь
+	 * @param aRequest HttpServletRequest
+	 * @return String путь
+	 */
 	public String postRequestWithErrorScrean(String file,String filename,HttpServletRequest aRequest) throws IOException {
 		String base64Image = file.split(",")[1];
 		BufferedImage image ;

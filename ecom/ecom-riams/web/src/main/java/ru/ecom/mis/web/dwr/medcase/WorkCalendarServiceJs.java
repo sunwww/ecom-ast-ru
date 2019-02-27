@@ -85,7 +85,7 @@ public class WorkCalendarServiceJs {
 			date = w.get1().toString();
 			mondey = w.get2().toString();
 		}
-//Milamesher 14112018 добавлены чекбоксы для выделения и изменения резерва нескольких времён
+		//добавлены чекбоксы для выделения и изменения резерва нескольких времён
 		String sql ="select " +
 				"getWeekbyDate (wcd.calendardate)," +
 				"prettyDate(wcd.calendardate,wcd.id),  " +
@@ -117,8 +117,21 @@ public class WorkCalendarServiceJs {
 	}
 
 
-	/** Создание дат и времен по заданному количеству визитов или по длительности визита*/
-	//upd. Milamesher 20112018 учитываются дни недели
+	/**
+	 * Создать даты и времена по заданному количеству визитов или по длительности визита с учётом чётности и дней недели.
+	 * @param dateFrom String - дата с
+	 * @param dateTo String - дата по
+	 * @param workFunctionId Long - рабочая функция
+	 * @param timeFrom String - время с
+	 * @param timeTo String - время по
+	 * @param countVis String  - длительность визитов/кол-во необходимых визитов
+	 * @param type String  - тип (1 - по длительности визитов/2 - по кол-ву визитов)
+	 * @param reserveType String - тип резерва
+	 * @param evenodd String - чётные/нечётные
+	 * Дни недели
+	 * @param aRequest HttpServletRequest
+	 * @return String результат с инфо
+	 */
 	public String createDateTimes(String dateFrom,String dateTo
 			,Long workFunctionId,String timeFrom,String timeTo
 			, String countVis,String type,String reserveType,String evenodd, Boolean all, Boolean mon, Boolean tue, Boolean wed
@@ -1259,11 +1272,6 @@ public class WorkCalendarServiceJs {
 		return res ;
 	}
 	//TODO доделать
-	/*
-	lastrelease: Milamesher 01.03.2018 (#91)
-	Список услуг из medcase в расписании, а не из предварительной записи.
-	В подсказке - ФИО регистратора medcase, дата и время создания.
-	 */
 	public String getTimesByWorkCalendarDay(Long aWorkCalendar,Long aWorkCalendarDay,Long aVocWorkFunction,HttpServletRequest aRequest) throws NamingException, JspException {
 		StringBuilder sql = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -1845,7 +1853,16 @@ public class WorkCalendarServiceJs {
 		return service.getDayBySpec(aFuncId);
 		
 	}
-	//Milamesher 12112018 копирование дня
+
+	/**
+	 * Копировать день.
+	 * @param aCalendarDay Long - день, расписание которого скопировать на преиод:
+	 * @param date String  - дата начала периода
+	 * @param date2 String 0 дата окончания периода
+	 * @param date2 String 0 дата окончания периода
+	 * @param aRequest HttpServletRequest
+	 * @return String сообщение пользователю
+	 */
 	public String copyDay(Long aCalendarDay, String date,String date2, HttpServletRequest aRequest) throws Exception {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -1877,13 +1894,27 @@ public class WorkCalendarServiceJs {
 		while (!new SimpleDateFormat("dd.MM.yyyy").format(beginDate).equals(new SimpleDateFormat("dd.MM.yyyy").format(endDate)));
 		return "Скопировано.";
 	}
-	//Milamesher 14112018 изменение резерва у массива
+
+	/**
+	 * Изменить резерв у массива.
+	 * @param array Long[] - массив
+	 * @param reserveTypeId Long  - новый резерв
+	 * @param aRequest HttpServletRequest
+	 * @return String "0" - всё ок
+	 */
     public String changeScheduleArrayReserve(Long[] array,Long reserveTypeId,HttpServletRequest aRequest) throws NamingException {
         for (int i=0; i<array.length; i++)
             changeScheduleElementReserve(array[i],reserveTypeId,aRequest);
 	    return "0";
     }
-    //Milamesher 16112018 добавление времени после
+
+	/**
+	 * Добавить время после.
+	 * @param aTime Long - время, после которого добавить
+	 * @param mins String  - интервал
+	 * @param aRequest HttpServletRequest
+	 * @return String путь
+	 */
     public String addTime(Long aTime, String mins, HttpServletRequest aRequest) throws Exception {
         String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

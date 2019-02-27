@@ -4,6 +4,8 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.birth.IPregnancyService;
@@ -78,23 +80,38 @@ public class PregnancyServiceJs {
 		IPregnancyService service = Injection.find(aRequest).getService(IPregnancyService.class) ;
 		return  service.calcInfRiskEstimation(aWaterlessDuration, aMotherTemperature, aWaterNature, aApgar, aNewBornWeight, aMotherInfectiousDiseases) ;
 	}
-	//Milamesher #131,#132 есть ли уже классификации Робсона/выкидыш в СЛО
+
+	/**
+	 * Узнать, есть ли уже классификации Робсона/выкидыш в СЛО #131,#132.
+	 * @param aSlo DepartmentMedCase.id
+	 * @param ifRobson true - поиск кл-ии Робсона, false - выкидыша
+	 * @param aRequest HttpServletRequest
+	 * @return String id
+	 */
 	public String getIfRobbsonClassOrMisbirthAlreadyExists(Long aSlo, Boolean ifRobson,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		StringBuilder sql = new StringBuilder();
-		Collection<WebQueryResult> res = service.executeNativeSql(
-				"select id from " + (ifRobson? "robsonclass" : "misbirth") +  " where medcase_id="+aSlo);
-		return (res.isEmpty())? "" : res.iterator().next().get1().toString();
+		Collection<WebQueryResult> res = service.executeNativeSql("select id from " + (ifRobson? "robsonclass" : "misbirth") +  " where medcase_id="+aSlo);
+		return res.isEmpty()? "" : res.iterator().next().get1().toString();
 	}
-	//Milamesher #137 возврат кардиоскринингов
+
+	/**
+	 * Получить кардиоскрининги в СЛО #137.
+	 * @param aSlo DepartmentMedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return String json список кардиоскринингов
+	 */
 	public String getAllCardiacScreenings(Long aSlo,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		StringBuilder sql = new StringBuilder();
-		Collection<WebQueryResult> res = service.executeNativeSql("select id,case when dtype='ScreeningCardiacFirst' then 'I' else 'II' end," +
+		Collection<WebQueryResult> list = service.executeNativeSql("select id,case when dtype='ScreeningCardiacFirst' then 'I' else 'II' end," +
 				"to_char(createdate,'dd.mm.yyyy')||' '||createusername from screeningcardiac where medcase_id="+aSlo);
-		StringBuilder result = new StringBuilder();
-		for (WebQueryResult wqr : res)
-			result.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("!");
-		return result.toString();
+		JSONArray res = new JSONArray() ;
+		for (WebQueryResult w : list) {
+			JSONObject o = new JSONObject() ;
+			o.put("id", w.get1())
+					.put("type", w.get2())
+					.put("date", w.get3());
+			res.put(o);
+		}
+		return res.toString();
 	}
 }
