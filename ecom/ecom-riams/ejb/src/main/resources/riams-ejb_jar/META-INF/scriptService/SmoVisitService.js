@@ -600,6 +600,7 @@ function closeSpo(aContext, aSpoId) {
 			+" where vis.parent_id="+aSpoId
 			+" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
 			+" and vis.dateStart is null"
+			+ "  and (vis.noactuality=null or vis.noactuality=false)" //только актуальные визиты надо проверять
 	).setMaxResults(1).getResultList() ;
 	var listVisLast = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
@@ -682,6 +683,7 @@ function closeSpo(aContext, aSpoId) {
 				+"'"+(mkb!=null?(",idc10_id='"+mkb+"'"):"")+" where id="+aSpoId).executeUpdate() ;
 	} else {
 		if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
+		if (listOpenVis.size()>0) throw "Есть актуальные направления! <a href='entityParentView-smo_visit.do?id="+listOpenVis.get(0)[0]+"'>Перейти к нему</a>"
 	}
 	return aSpoId;
 }
