@@ -99,6 +99,9 @@
     
   </tiles:put>
   <tiles:put name="javascript" type="string">
+    <script type="text/javascript">
+        $('disableEdit').disabled=true;
+    </script>
     <msh:ifFormTypeIsView formName="temp_protocolForm" guid="4a81e464-1352-415f-9286-596451caf264">
     <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
       <script type="text/javascript">
