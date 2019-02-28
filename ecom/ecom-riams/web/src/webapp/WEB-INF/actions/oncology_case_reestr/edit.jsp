@@ -179,6 +179,7 @@
             //нужные дивы
             var suspicionOncologist = document.getElementById("suspicionOncologist");
             var oncologyDirection = document.getElementById("oncologyDirection");
+            var oncologyCase = document.getElementById("oncologyCase");
             var histologyDiv = document.getElementById("histologyDiv");
             var immunoGistMarkDiv = document.getElementById("immunoGistMarkDiv");
             var treatmentDiv = document.getElementById("treatmentDiv");
