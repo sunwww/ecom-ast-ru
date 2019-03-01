@@ -1537,6 +1537,7 @@
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id '
     			order=''
     			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query) or upper(ms.shortname) like UPPER(:query)) "
+				groupBy="ms.id, ms.code, ms.name, ms.shortname"
     			 			
     	/>
     
