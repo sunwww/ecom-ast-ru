@@ -22,7 +22,7 @@
   <tiles:put name="body" type="string">
   <%
 	//String typeView =ActionUtil.updateParameter("Report_hospital_standart","typeView","1", request) ;
-	String typePatient =ActionUtil.updateParameter("Report_hospital_standart","typePatient","4", request) ;
+	String typePatient =ActionUtil.updateParameter("Report_hospital_standart","typePatient","5", request) ;
 	String typeDate =ActionUtil.updateParameter("Report_hospital_standart","typeDate","2", request) ;
 	String typeStandart =ActionUtil.updateParameter("Report_hospital_standart","typeStandart","1", request) ;
 	String typeViewDepartment =ActionUtil.updateParameter("Report_hospital_standart","typeViewDepartment","1", request) ;
@@ -68,13 +68,16 @@
         	<input type="radio" name="typePatient" value="1">  региональные
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="2">  иногородные
+        	<input type="radio" name="typePatient" value="2">  иногородные (МЖ)
+        </td>
+	  <td onclick="this.childNodes[1].checked='checked';">
+		  <input type="radio" name="typePatient" value="3">  иногородные (полис)
+	  </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatient" value="4">  иностранцы
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  иностранцы
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="4">  все
+        	<input type="radio" name="typePatient" value="5">  все
         </td>
       </msh:row>
       <msh:row>
@@ -162,20 +165,24 @@
     	if (typePatient.equals("2")) {
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp","ok")) ;
-			request.setAttribute("infoTypePat", "Поиск по иногородним") ;
+			request.setAttribute("infoTypePat", "Поиск по иногородним (МЖ)") ;
 		} else if (typePatient.equals("1")){
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, false, "m.Datestart", "p", "pvss", "pmp","ok")) ;
 			request.setAttribute("infoTypePat", "Поиск по региональным") ;
-		} else if (typePatient.equals("3")){
+		} else if (typePatient.equals("4")){
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			request.setAttribute("patientSql", HospitalLibrary.getSqlGringo(true, "ok")) ;
 			request.setAttribute("infoTypePat", "Поиск по иностранцам") ;
-		} else {
+		} else if (typePatient.equals("3")){
+			request.setAttribute("patientSql", " and mp.actualDateFrom <=CURRENT_DATE and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE) and (mp.DTYPE='MedPolicyDmcForeign' or mp.DTYPE='MedPolicyOmcForeign')") ;
+			request.setAttribute("infoTypePat", "Поиск по иногородним (полис)") ;
+		}
+		else {
 			request.setAttribute("patientSql", "") ;
 			request.setAttribute("infoTypePat", "Поиск по всем") ;
 		}
-    	
+
     	String dep = (String)request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("departmentSqlId", "'&deparment="+dep+"'") ;
@@ -306,6 +313,9 @@
     left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
     left join mislpu as d on d.id=m.department_id 
     left join patient p on p.id=hmc.patient_id
+    left join MedPolicy mp on mp.patient_id=p.id
+	left join reg_ic as ri on ri.id=mp.company_id
+	left join vocmedpolicyomc vmo on vmo.id=mp.type_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
     left join Omc_Oksm ok on p.nationality_id=ok.id
@@ -403,6 +413,9 @@
     left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
     left join mislpu as d on d.id=m.department_id 
     left join patient p on p.id=hmc.patient_id
+    left join MedPolicy mp on mp.patient_id=p.id
+	left join reg_ic as ri on ri.id=mp.company_id
+	left join vocmedpolicyomc vmo on vmo.id=mp.type_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
     left join Omc_Oksm ok on p.nationality_id=ok.id
@@ -441,7 +454,7 @@
     <script type='text/javascript'>
   //checkFieldUpdate('typeSwod','${typeSwod}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
-    checkFieldUpdate('typePatient','${typePatient}',4) ;
+    checkFieldUpdate('typePatient','${typePatient}',5) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',4) ;
     checkFieldUpdate('typeStandart','${typeStandart}',2) ;
     checkFieldUpdate('typeViewDepartment','${typeViewDepartment}',1) ;
