@@ -1,16 +1,5 @@
 package ru.ecom.expomc.ejb.domain.impdoc;
 
-import java.util.Collection;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -18,6 +7,9 @@ import ru.ecom.expomc.ejb.domain.check.Check;
 import ru.ecom.expomc.ejb.domain.format.ExportFormat;
 import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.format.ImportFormat;
+
+import javax.persistence.*;
+import java.util.Collection;
 
 /**
  * Документ.
@@ -31,10 +23,21 @@ import ru.ecom.expomc.ejb.domain.format.ImportFormat;
 @AIndexes(
 		@AIndex(properties="entityClassName")
 )
-@NamedQueries(
-		@NamedQuery(name="ImportDocument.findByName", query="from ImportDocument where entityClassName = :entityClassName")
-		) 
+@NamedQueries({
+        @NamedQuery(name = "ImportDocument.findByName", query = "from ImportDocument where entityClassName = :entityClassName")
+        , @NamedQuery(name = "ImportDocument.findByKey", query = "from ImportDocument where keyName = :key")
+}
+		)
 public class ImportDocument extends BaseEntity {
+
+    /** Системный формат */
+    @Transient
+    public Format getDefaultFormat() {
+        for (Format format: theFormats) {
+            if (format.getSystemFormat()) return format;
+        }
+    return null;
+    }
 
     /** Клас для сохранения */
     public String getEntityClassName() { return theEntityClassName ; }

@@ -26,6 +26,11 @@ import java.text.SimpleDateFormat;
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
+    public String exportToCentralSegment(Long aListEntryId, String aHistoryNumbers, HttpServletRequest aRequest) throws NamingException {
+        IExpert2XmlService service = Injection.find(aRequest).getService(IExpert2XmlService.class);
+        return service.exportToCentralSegment(aListEntryId,aHistoryNumbers);
+    }
+
     public String splitLongCase(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
         IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
         return service.splitLongCase(aEntryId);
@@ -45,7 +50,7 @@ public class Expert2ServiceJs {
                 return "Профиль - не кардиологический, ничего менять не буду!";
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(),e);
             return "Ошибка: "+e.getMessage();
         }
 

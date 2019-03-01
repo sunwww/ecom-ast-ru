@@ -92,13 +92,12 @@
 
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="e2_entryListForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-        <ecom:webQuery name="isClosedList" nativeSql="select id from e2listentry where id=${param.id} and (isClosed is null or isClosed='0')"/>
             <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_entryList" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink params="id" action="/entityParentList-e2_entry" name="Записи" roles="/Policy/E2/View" />
                 <msh:sideLink params="id" action="/e2_errorsByList" name="Список ошибок" roles="/Policy/E2/View" />
                 <msh:sideLink action="/javascript:showExportPaketHistory" name="Просмотреть выгруженные пакеты" roles="/Policy/E2/View" />
-                <msh:tableNotEmpty name="isClosedList" guid="8fbc57e0-234a-426d-be88-632a2f5e1f69">
+                <msh:ifPropertyIsTrue formName="e2_entryListForm" propertyName="isClosed" invert="true">
                     <msh:sideLink action="/javascript:makeCheck(null,this)" name="Проверить все случаи" roles="/Policy/E2/View" />
                     <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-e2_entryList" name="Удалить" roles="/Policy/E2/Delete" />
                     <msh:sideLink action="/javascript:showImportFileBillDialog()" name="Импортировать ответ фонда" roles="/Policy/E2/Edit" />
@@ -112,7 +111,8 @@
                     <msh:sideLink action="/javascript:refillListEntry()" name="Переформировать заполнение" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:setDirectAndPlanHospDate()" name="Заполнить пустые даты направления и даты пред. госпитализации" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:showSplitForeignOtherBill()" name="Выделить 08,05" roles="/Policy/E2/Admin" />
-                </msh:tableNotEmpty>
+                    <msh:sideLink action="/javascript:exportToCentralSegment()" name="Сделать запрос в ЦС" roles="/Policy/E2/Admin" />
+                </msh:ifPropertyIsTrue>
                 <msh:sideLink action="/javascript:closeListEntry(false)" name="Открыть заполнение" roles="/Policy/E2/Admin" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
@@ -121,6 +121,16 @@
         <msh:ifFormTypeIsView formName="e2_entryListForm">
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
             <script type="text/javascript">
+                function exportToCentralSegment() {
+                    var histories = prompt("Ведите номера историй");
+                    if (histories) {
+                        Expert2Service.exportToCentralSegment(${param.id},histories, {
+                            callback: function (fileName) {
+                                showToastMessage("<a href='/rtf/expert2xml/"+fileName+"'>Скачать файл </a>");
+                            }
+                        });
+                    }
+                }
 
                 function testNewTable() {
                     var colunms = [
@@ -132,10 +142,6 @@
                     var eGridDiv = document.querySelector('#myGrid');
                     new agGrid.Grid(eGridDiv, {colunmDef:colunms,rowData:data});
                 }
-
-
-
-
 
                     var monitor = {};
                     function showSplitForeignOtherBill(){

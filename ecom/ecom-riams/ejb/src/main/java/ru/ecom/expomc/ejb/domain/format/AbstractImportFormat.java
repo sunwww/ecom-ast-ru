@@ -4,20 +4,12 @@
  */
 package ru.ecom.expomc.ejb.domain.format;
 
-import java.sql.Date;
-
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
 
 @SuppressWarnings("serial")
 @Entity
@@ -64,6 +56,7 @@ public class AbstractImportFormat extends BaseEntity {
     
     /** Служебный формат импорта */
 	@Comment("Служебный формат импорта")
+    @Column(nullable=false, columnDefinition="boolean default false")
 	public Boolean getSystemFormat() {return theSystemFormat;}
 	public void setSystemFormat(Boolean aSystemFormat) {theSystemFormat = aSystemFormat;}
 	/** Служебный формат импорта */

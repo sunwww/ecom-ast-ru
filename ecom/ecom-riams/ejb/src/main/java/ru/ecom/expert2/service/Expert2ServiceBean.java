@@ -1637,11 +1637,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                 medPolicy = new JSONArray(aEntry.getPolicyKinsmanString());
             }
 
-            if (medPolicy.isEmpty()) {
+            if (medPolicy.isEmpty() && !StringUtil.isNullOrEmpty(aEntry.getPolicyPatientString())) {
                 medPolicy = new JSONArray(aEntry.getPolicyPatientString());
             }
             if (medPolicy.isEmpty()) {
-                if (serviceStream==null||serviceStream.equals("OBLIGATORYINSURANCE")){
+                if (serviceStream==null || serviceStream.equals("OBLIGATORYINSURANCE")){
                     theManager.persist(new E2EntryError(aEntry,"NO_MED_POLICY"));
                 }
                 return;
@@ -1658,9 +1658,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             aEntry.setMedPolicyNumber(policy.getString("polNumber"));
             theManager.persist(aEntry);
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Не смог получить данные полиса: "+aEntry.getId());
-            LOG.error(e);
+            LOG.error("Не смог получить данные полиса: "+aEntry.getId(),e);
         }
     }
     /** Находим, является ли КСГ политравмой */
@@ -1743,6 +1741,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             String cancerDiagnosisSql = "";
             //Если оказано несколько услуг, ищем по всем услугам
             List<EntryMedService> serviceList1 =  aEntry.getMedServices();
+            boolean findCDiagnosis = false;
             if (serviceList1!=null) {
                 for (EntryMedService ms : serviceList1) {
                     serviceCodes.add(ms.getMedService().getCode());
@@ -1761,18 +1760,27 @@ public class Expert2ServiceBean implements IExpert2Service {
                         sb.append(",");
                     }
                     sb.append("'").append(d).append("'");
-                    if ((d.startsWith("C") && Integer.valueOf(d.substring(1,3))<81) || (d.startsWith("D") && Integer.valueOf(d.substring(1,3))<9)) cancerDiagnosis = d;
-                }
-                if (cancerDiagnosis!=null) { //Костыль по нахождению Д в интервале, TODO переделать на нормальное нахождение диагноза в интервале
-                    if (cancerDiagnosis.startsWith("C")) {
-                        cancerDiagnosisSql = " or gkp.mainMkb='C00-C80' or or gkp.mainmkb='C.'" ;
-                        cancerDiagnosis="C00-C80";
-                    } else {
-                        cancerDiagnosisSql = "or gkp.mainMkb='D00-D08'";
-                        cancerDiagnosis="D00-D08";
+                    if ((d.startsWith("C") && Integer.valueOf(d.substring(1,3))<81) || (d.startsWith("D") && Integer.valueOf(d.substring(1,3))<9))  {
+                        cancerDiagnosis = d;
+                    } else if (d.startsWith("C")) {
+                        findCDiagnosis = true;
                     }
-
                 }
+                if (isCancer) {
+                    if (cancerDiagnosis!=null) { //Костыль по нахождению Д в интервале, TODO переделать на нормальное нахождение диагноза в интервале
+                        if (cancerDiagnosis.startsWith("C")) {
+                            cancerDiagnosisSql = " or gkp.mainMkb='C00-C80' or gkp.mainmkb='C.'" ;
+                            cancerDiagnosis="C00-C80";
+                        } else {
+                            cancerDiagnosisSql = "or gkp.mainMkb='D00-D08'";
+                            cancerDiagnosis="D00-D08";
+                        }
+
+                    } else if (findCDiagnosis) {
+                        cancerDiagnosisSql = " or gkp.mainmkb='C.'" ;
+                    }
+                }
+
                 sql.append(" and ((gkp.mainmkb is null or gkp.mainmkb ='') or gkp.mainmkb in (").append(sb).append(")").append(cancerDiagnosisSql).append(")");
             } else {
                 sql.append(" and (gkp.mainmkb is null or gkp.mainmkb ='')");
@@ -1793,12 +1801,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                 serviceSql.append(" and (gkp.servicecode is null or gkp.servicecode='')");
             }
             sql.append(serviceSql);
-           //    LOG.info("sql for best KSG = "+sql.toString());
+            //   LOG.info("sql for best KSG = "+sql.toString());
             List<BigInteger> results;
             String key = mainDiagnosis.hashCode()+"#SQL#"+sql.toString().hashCode(); //bedType+"#"+aEntry.getMainMkb()+"#"+(dopmkb!=null?dopmkb:"");
             //   LOG.warn("sql for ksg = "+sql.toString());
             if (!ksgMap.containsKey(key)) {
-                //  LOG.info(key+" not found new sql ="+sql);
+             //     LOG.info(key+" not found new sql ="+sql);
                 results = theManager.createNativeQuery(sql.toString()).setParameter("year",2019).getResultList();
                 ksgMap.put(key,results);
                 if (results.isEmpty()) {
@@ -2029,6 +2037,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         return cusmoMap.get(key);
     }
     private BigDecimal calculateCusmo(E2Entry aEntry) {
+        if (aEntry.getKsg()!=null && aEntry.getKsg().getDoNotUseCusmo())return BigDecimal.valueOf(1);
         return calculateCusmo(aEntry.getBedSubType(),aEntry.getDepartmentId(),aEntry.getMedHelpProfile()!=null?aEntry.getMedHelpProfile().getId():null,aEntry.getFinishDate());
     }
 
@@ -2041,7 +2050,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private E2Entry calculateHospitalEntryPrice(E2Entry aEntry) {
         try {
             String key;
-            if (isNotNull(aEntry.getVMPKind()) && aEntry.getCost()==null) { //Если есть ВМП и нет цены - цена случая = цене метода ВМП
+            if (isNotNull(aEntry.getVMPKind())) { //Если есть ВМП и нет цены - цена случая = цене метода ВМП
                 key = "VMP#"+aEntry.getVMPKind();
                 BigDecimal cost;
                 if (!hospitalCostMap.containsKey(key)) {
@@ -2056,7 +2065,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                         theManager.persist(error);
                         return aEntry;
                     }
-                } else {cost=hospitalCostMap.get(key);}
+                } else {
+                    cost=hospitalCostMap.get(key);
+                }
                 aEntry.setCost(cost);
                 aEntry.setBaseTarif(cost);
                 aEntry.setTotalCoefficient(BigDecimal.ONE);
@@ -2069,7 +2080,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 kz = BigDecimal.valueOf(aEntry.getKsg().getKZ());
                 kuksg = getActualKsgUprCoefficient(aKsg,aEntry.getFinishDate());
                 tarif = calculateTariff(aEntry);
-                cusmo = aKsg.getDoNotUseCusmo() ? BigDecimal.ONE : calculateCusmo(aEntry);
+                cusmo = calculateCusmo(aEntry);
                 km = calculateKm();
                 kslp = calculateResultDifficultyCoefficient(aEntry);
                 kpr = calculateNoFullMedCaseCoefficient(aEntry);
