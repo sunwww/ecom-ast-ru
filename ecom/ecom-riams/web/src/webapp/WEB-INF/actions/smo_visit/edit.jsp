@@ -402,22 +402,13 @@
   	var oldValue=$('dateStart').value;
   	
   	updateService() ;
+  	serviceStreamAutocomplete.addOnChangeCallback(function() {updateService();});
   	eventutil.addEventListener($('dateStart'),'blur',function(){
   		if (oldValue!=$('dateStart').value) {
-  			var wf = +$("workFunctionExecute").value;
-    		if (wf=='') {wf=0;}
-  			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value + "#" + $('serviceStream').value) ;
-    	//	 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-    	//	 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-	      //	 		callback: function(aResult) {
-	      	 		//	if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
-	      	 		//	if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
-	      	 		  	
-	    //  	 		}
-	 //     	 	}) ;
-  		}
+            updateService();
+        }
   	}) ;
-  	function updateService() {
+  	function updateService() { //обновляем родителя для справочника услуг
 		var wf = +$("workFunctionExecute").value;
    		if (wf==0) {wf=+$("workFunctionPlan").value;}
    		if (wf=='') {wf=0;}
