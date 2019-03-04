@@ -144,6 +144,8 @@ String defectColumnName = "Дефект";
             <input type="text" name="replaceTo" id="replaceTo" placeholder="Заменить на">
             <input type="button" id="replaceClick" value="Заменить" onclick="replaceValue(this)">
             <input type="checkbox" id="dontShowComplexCase" name="dontShowComplexCase" onclick="dontShow(this)">
+            <br>
+            <input type="button" onclick="exportErrorsNewListEntry()" value="Перенести ошибки в новое заполнение">
 
 
         </msh:panel>
@@ -151,7 +153,7 @@ String defectColumnName = "Дефект";
 select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||to_char(e.birthDate,'dd.MM.yyyy') as f2_fio, e.startDate as f3_startDate, e.finishDate as f4_finishDate
         , e.departmentName as f5_depName
         , list(
-            case when e.entryType='STACKDP' then vdv.name else ksg.code||' '||ksg.name end
+            case when e.entryType='POL_KDP' then vdv.name else ksg.code||' '||ksg.name end
              ) as f6_ksg
         ,e.historyNumber as f7_hisNum, e.cost as f8_cost, vbt.code||' '||vbt.name as f9_bedType
         , list(coalesce(e.mainMkb,mkb.code)) as f10_diagnosis, rslt.code||' '||rslt.name as f11_result
@@ -195,16 +197,26 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
     <tiles:put name="javascript" type="string">
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <script type="text/javascript">
+            var errorCode = '${param.errorCode}';
+            function exportErrorsNewListEntry() {
+                if (errorCode) {
+                    Expert2Service.exportErrorsNewListEntry(${param.id},errorCode, {
+                       callback: function () {
+                           alert('Кажется, перенесены!');
+                       }
+                    });
+                } else {
+                    alert ('Нет ошибки, нельзя так делать!');
+                }
+
+
+            }
+
             function replaceValue(btn) {
                 btn.disabled=true;
-                var errorCode = '${param.errorCode}';
-               // alert (errorCode);
-              //  if (!errorCode) {alert('NOT_ALLOWED TEST');return;}
-
                 var fld = $('replaceSelect').value;
                 if (fld &&$('replaceTo').value) {
-                  //  alert (${param.id}+"$$"+errorCode+"$$"+fld+"$$"+ $('replaceFrom').value+"$$"+ $('replaceTo').value);
-                    Expert2Service.replaceFieldByError(${param.id},errorCode?errorCode:null,fld, $('replaceFrom').value, $('replaceTo').value, {
+                    Expert2Service.replaceFieldByError(${param.id},errorCode ? errorCode : null,fld, $('replaceFrom').value, $('replaceTo').value, {
                         callback: function (a) {
                             alert(a);
                             window.document.location.reload();

@@ -701,6 +701,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, Boolean calcAllListEntry, long aMonitorId, String aVersion) {
         LOG.info("Формирование файла версии "+aVersion);
         try {
+            IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Формирование xml файла. Размер: ",999);
             if (isCheckIsRunning) {
                 LOG.warn("Формирование чего-то уже запущено, выходим_ALREADY_RAN");
                 // return "Формирование чего-то уже запущено, выходим";
@@ -716,11 +717,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 E2ListEntry listEntry = theManager.find(E2ListEntry.class, aEntryListId);
                 periodDate = listEntry.getFinishDate();
                 if (!isNotNull(aBillDate) || !isNotNull(aBillNumber)) {
-                    return "Необходимо указать номер и дату счета!";
+                    monitor.finish("Необходимо указать номер и дату счета!");
+                    return "";
                 }
-                if (listEntry.getCheckDate()==null||listEntry.getCheckTime()==null) {
-                    LOG.error("Необходимо выполнить проверку перед формированием пакета");
-                    return "Необходимо выполнить проверку перед формированием пакета";
+                if (listEntry.getCheckDate()==null || listEntry.getCheckTime()==null) {
+                    monitor.finish("Олег, необходимо выполнить проверку перед формированием пакета");
+                    return "";
 
                 }
             } else { //Сделано для теста.
@@ -762,7 +764,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             int cnt = 0;
             List<Object[]> records;
             String selectSqlAdd ,groupSqlAdd;
-            boolean isHosp=false,isPolic=false;
+            boolean isHosp=false;
+            boolean isPolic=false;
             if (aType.equals(HOSPITALTYPE) || aType.equals(HOSPITALPEREVODTYPE) || aType.equals(VMPTYPE)) {
                 selectSqlAdd =" list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО
              //   selectSqlAdd =" list(''||e.id) as ids, e.externalparentid, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО //1 Z_SL = 1SL
@@ -806,8 +809,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 records = theManager.createNativeQuery(sql).getResultList();
             }
             LOG.info("found " + records.size() + " records");
-            IMonitor monitor ;// = theMonitorService.acceptMonitor(aMonitorId, "Расчет цены случаев в звполнении") ;
-            monitor = theMonitorService.startMonitor(aMonitorId,"Формирование xml файла. Размер: ",records.size());
+
             monitor.advice(1);
 
             int i = 0;

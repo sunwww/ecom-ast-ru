@@ -31,6 +31,7 @@
           <tr valign="top">
           <td style="padding-right: 8px">
       <msh:ifInRole roles="/Policy/Poly/Medcard/View" guid="a7036440-353f-4667-a18e-a0da4885cdaa">
+          <msh:ifPropertyIsTrue guid="123"  formName="mis_patientForm" propertyName="noActuality" invert="true" >
         <msh:section title="Мед.карты" createUrl="entityParentPrepareCreate-poly_medcard.do?id=${param.id}">
 		          <ecom:webQuery name="medcard" 
 		        nativeSql="select m.id,m.number,vci.name as vciname, ml.name as mlname
@@ -44,14 +45,12 @@
 			         name="medcard" action="entityParentView-poly_medcard.do" 
 			         disabledGoFirst="false" disabledGoLast="false" 
 			         >
-		            <msh:tableColumn columnName="Номер" identificator="false" 
-		            	property="2" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
-		            <msh:tableColumn columnName="Картотека" identificator="false" 
-		            	property="3" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
-		            <msh:tableColumn columnName="ЛПУ" identificator="false" 
-		            	property="4" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
+		            <msh:tableColumn columnName="Номер" identificator="false" property="2" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
+		            <msh:tableColumn columnName="Картотека" identificator="false" property="3" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
+		            <msh:tableColumn columnName="ЛПУ" identificator="false" property="4" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
 		          </msh:table>
         </msh:section>
+          </msh:ifPropertyIsTrue>
       </msh:ifInRole>
       </td><td>
       <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry" guid="a7036440-353f-4667-a18e-a0da4885cdaa">

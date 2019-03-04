@@ -84,18 +84,21 @@ public class Patient extends BaseEntity{
 	/** Участок основного прикрепления*/
 	@Comment("Участок основного прикрепления")
 	@OneToOne
+	@Deprecated
 	public LpuArea getLpuArea() { return theLpuArea ; }
 	public void setLpuArea(LpuArea aLpuArea) { theLpuArea = aLpuArea ; }
 
 	/** Адрес участка основного прикрепления */
 	@Comment("Адрес участка основного прикрепления")
 	@OneToOne
+	@Deprecated
 	public LpuAreaAddressText getLpuAreaAddressText() { return theLpuAreaAddressText ; }
 	public void setLpuAreaAddressText(LpuAreaAddressText aLpuAreaAddressText) { theLpuAreaAddressText = aLpuAreaAddressText ; }
 
 	/** ЛПУ основного прикрепления*/
 	@Comment("ЛПУ основного прикрепления")
 	@OneToOne
+	@Deprecated
 	public MisLpu getLpu() { return theLpu ; }
 	public void setLpu(MisLpu aLpu) { theLpu = aLpu ; }
 

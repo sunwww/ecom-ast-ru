@@ -26,6 +26,11 @@ import java.text.SimpleDateFormat;
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
+    public void makeOncologyCase(Long aListEntryId, String aJson, String aDefectCode, HttpServletRequest aRequest) throws NamingException {
+        IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
+        service.makeOncologyCase(aListEntryId, aJson, aDefectCode);
+    }
+
     public String exportToCentralSegment(Long aListEntryId, String aHistoryNumbers, HttpServletRequest aRequest) throws NamingException {
         IExpert2XmlService service = Injection.find(aRequest).getService(IExpert2XmlService.class);
         return service.exportToCentralSegment(aListEntryId,aHistoryNumbers);
@@ -169,9 +174,13 @@ public class Expert2ServiceJs {
         return Injection.find(aRequest).getService(IExpert2Service.class).addDiagnosisAndServiceToEntry(aEntryId, aData);
     }
 
+    public boolean exportErrorsNewListEntry(Long aListEntryId, String aErrorCodes, HttpServletRequest aRequest) throws NamingException {
+        return Injection.find(aRequest).getService(IExpert2Service.class).exportErrorsNewListEntry(aListEntryId,aErrorCodes.split(","));
+    }
+
     /** Выгрузить дефекты в новое заполнение */
     public boolean exportDefectNewListEntry (Long alistEntryId, HttpServletRequest aRequest) throws NamingException {
-       return   Injection.find(aRequest).getService(IExpert2Service.class).exportDefectNewListEntry(alistEntryId);
+       return Injection.find(aRequest).getService(IExpert2Service.class).exportDefectNewListEntry(alistEntryId);
     }
 
     /** Закрыть заполнение */
@@ -231,7 +240,6 @@ public class Expert2ServiceJs {
         new Thread(() -> {
             Date finalDate = null;
             try {finalDate = new Date(format.parse(finalBillDate).getTime());} catch (Exception e) {}
-            LOG.info("start service.makeMPFIle");
                 service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId,aVersion);
         }).start();
 
@@ -243,17 +251,13 @@ public class Expert2ServiceJs {
         final long monitorId = monitorService.createMonitor();
         final IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
         new Thread(()-> {
-                LOG.info("start check new Thread");
                 service.checkListEntry(aListEntryId, forceUpdateKsg, aParams, monitorId);
-                LOG.info("finish checkEntryList ");
 
             }).start();
         return monitorId;
     }
-    public void checkEntry (Long aEntryId, boolean forceUpdateKsg, HttpServletRequest aRequest) throws NamingException {
-        LOG.info("start checkEntry "+aEntryId);
+    public void checkEntry(Long aEntryId, boolean forceUpdateKsg, HttpServletRequest aRequest) throws NamingException {
         Injection.find(aRequest).getService(IExpert2Service.class).makeCheckEntry(aEntryId,forceUpdateKsg);
-        LOG.info("finish checkEntry ");
     }
 
     public void addMedHelpProfileBedType (Long aMedHelpId, Long aBedTypeId, Long aBedSubTypeId, HttpServletRequest aRequest ) throws NamingException {
@@ -290,7 +294,7 @@ public class Expert2ServiceJs {
         return true;
     }
 
-    public  void cleanAllErrorsByList(Long aEntryList, HttpServletRequest aRequest) throws NamingException {
+    public void cleanAllErrorsByList(Long aEntryList, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         service.executeUpdateNativeSql("delete from e2entryerror where listentry_id="+aEntryList);
     }

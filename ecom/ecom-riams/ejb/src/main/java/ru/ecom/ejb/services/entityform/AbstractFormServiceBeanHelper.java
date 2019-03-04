@@ -355,11 +355,10 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 				if (isDeleted!=null&&isDeleted) {
 					throw new IllegalArgumentException("Этот объект был удален");
 				}
-			} catch (NoSuchMethodException |InvocationTargetException | IllegalAccessException e) {
+			} catch (InvocationTargetException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
-
 }
 	/**
 	 * Сохранение

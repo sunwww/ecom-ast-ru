@@ -170,6 +170,41 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
     }
+    @Override
+    /**
+     * Переносим записи с ошибками из одного заполнения в новое*/
+    public boolean exportErrorsNewListEntry(Long aListEntryId, String[] aErrorCodes) {
+        try {
+            E2ListEntry currentListEntry= theManager.find(E2ListEntry.class,aListEntryId);
+            E2ListEntry newListEntry = new E2ListEntry(currentListEntry, "Ошибки_"+currentListEntry.getName());
+            newListEntry.setCheckDate(currentListEntry.getCheckDate());
+            newListEntry.setCheckTime(currentListEntry.getCheckTime());
+            theManager.persist(newListEntry);
+            for (String errorCode : aErrorCodes) {
+                List<BigInteger> list = theManager.createNativeQuery("select err.entry_id from E2EntryError err " +
+                        " where err.listEntry_id=:id and err.errorCode=:errorCode")
+                        .setParameter("id",aListEntryId).setParameter("errorCode",errorCode.trim()).getResultList();
+                LOG.info("creating errors ["+errorCode+"]... defect list size = "+list.size());
+                for (BigInteger entryId: list) {
+                    E2Entry newEntry = theManager.find(E2Entry.class,entryId.longValue());
+                    if (newEntry==null) {continue;}
+                    newEntry.setListEntry(newListEntry);
+                    List<E2Entry> children = theManager.createQuery("from E2Entry where parentEntry=:e").setParameter("e",newEntry).getResultList();
+                    for (E2Entry child: children) {
+                        child.setListEntry(newListEntry);
+                        theManager.persist(child);
+                    }
+                    theManager.persist(newEntry);
+                }
+            }
+
+            LOG.info("Finish create defects!");
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+        return false;
+    }
+
     /** Экспорт дефектов из заполнения в новое заполнение */
     public boolean exportDefectNewListEntry(Long aListEntryId) {
         try {
@@ -1364,20 +1399,20 @@ public class Expert2ServiceBean implements IExpert2Service {
                         cancerEntry.setRefusals(list);
                     }
                     try {
-                        List<OncologyDiagnostic> diags  =oncologyCase.getDiagnostics();
+                        List<OncologyDiagnostic> diags  = oncologyCase.getDiagnostics();
                         if (!diags.isEmpty()) {
                             List<E2CancerDiagnostic> list = new ArrayList<>();
                             for (OncologyDiagnostic diag:diags) {
                                 E2CancerDiagnostic cancerDiagnostic = new E2CancerDiagnostic(cancerEntry);
-                                String diagnosticType = diag.getVocOncologyDiagType()!=null?diag.getVocOncologyDiagType().getCode():null;
+                                String diagnosticType = diag.getVocOncologyDiagType()!=null ? diag.getVocOncologyDiagType().getCode() : null;
                                 if (diagnosticType !=null) {
                                     cancerDiagnostic.setType(diagnosticType);
                                     if (diagnosticType.equals("1")){
                                         cancerDiagnostic.setCode(diag.getHistiology().getCode());
                                         cancerDiagnostic.setResult(diag.getResultHistiology().getCode());
                                     } else if (diagnosticType.equals("2")) {
-                                        cancerDiagnostic.setCode(diag.getMarkers().getCode());
-                                        cancerDiagnostic.setResult(diag.getValueMarkers().getCode());
+                                        cancerDiagnostic.setCode(diag.getMarkers()!=null ? diag.getMarkers().getCode() : "");
+                                        cancerDiagnostic.setResult(diag.getValueMarkers()!=null ? diag.getValueMarkers().getCode() : "");
                                     }
                                     list.add(cancerDiagnostic);
                                 }
@@ -1394,7 +1429,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private HashMap<String, Object > diagnosisMap = new HashMap<>();
-    private List<EntryDiagnosis> getDiagnosis(E2Entry aEntry) {return   aEntry.getDiagnosis()!=null?aEntry.getDiagnosis():new ArrayList<>();}
+    private List<EntryDiagnosis> getDiagnosis(E2Entry aEntry) {return aEntry.getDiagnosis()!=null ? aEntry.getDiagnosis() : new ArrayList<>();}
     /** Создаем список диагнозов из строки с диагнозами +устанавливаем основной диагноз
      *  UPD 18-07-2018 Помечаем случай как раковый
      * */ //делаем разово
@@ -2565,6 +2600,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 deleteCrossSpo(aListEntry);
                 monitor.setText("Закончили проверять поликлинику.");
             } else if (listEntryCode.equals(KDPTYPE))  { //Проверяем КДП (как обращение)
+                replaceKdpServices(aEntryList);
                 findDiagnosticVisits(aEntryList);
             } else if (listEntryCode.equals(EXTDISPTYPE)) { //Пришло время делать ДД
                 LOG.info("Create DD");
@@ -2580,20 +2616,61 @@ public class Expert2ServiceBean implements IExpert2Service {
             long minutes = (System.currentTimeMillis()-startStartDate.getTime())/60000;
             LOG.info("Время выполнения проверки (минут) TOTAL_TIME = "+minutes);
             monitor.finish("Завершено. Время выполнения проверки (минут) TOTAL_TIME = "+minutes);
+            Long currentTime = System.currentTimeMillis();
+            aListEntry.setCheckDate(new java.sql.Date(currentTime));
+            aListEntry.setCheckTime(new java.sql.Time(currentTime));
+            theManager.persist(aListEntry);
         } catch (Exception e) {
             e.printStackTrace();
-           LOG.error(e);
+           LOG.error(e.getMessage(),e);
         }
-        Long currentTime = System.currentTimeMillis();
-        aListEntry.setCheckDate(new java.sql.Date(currentTime));
-        aListEntry.setCheckTime(new java.sql.Time(currentTime));
-        theManager.persist(aListEntry);
+
         isCheckIsRunning=false;
     }
 
     /**Список актуальный на сегодняшний день КДП*/
     private List<VocDiagnosticVisit> getActualKdps() {
         return theManager.createNamedQuery("VocDiagnosticVisit.getActualKdps").getResultList();
+    }
+
+    /**Заменяем услуги на более подходящие*/
+    private void replaceKdpServices(List<E2Entry> aEntryList) {
+        LOG.info("start replaceKdpServices");
+        String[][] serviceList = new String[][] {
+                 {"A09.05.193","A09.05.193.001"}
+                ,{"A06.30.007","A06.21.003"}
+                ,{"A06.03.020","A06.03.057"}
+                ,{"A06.04.004","A06.03.057"}
+                ,{"A06.03.028","A06.03.057"}
+                ,{"A06.03.053","A06.03.057"}
+                ,{"A06.03.005","A06.03.060"}
+                ,{"A06.03.012","A06.03.058"}
+                ,{"A06.09.005","A06.09.008"}
+
+        };
+        HashMap<String, VocMedService> serviceHashMap = new HashMap<>();
+        int i=0;
+        for (E2Entry entry: aEntryList) {
+            List<EntryMedService> medServices = entry.getMedServices();
+            for (EntryMedService medService : medServices) {
+                String code = medService!=null ? medService.getMedService().getCode() : null;
+                for (String[] serviceCode : serviceList) {
+                    if (code.equals(serviceCode[0])) { //Нашли подходящую услугу
+                        i++;
+                        //VocMedService vms= serviceHashMap.computeIfAbsent(serviceCode[1], v->getActualVocByClassName(VocMedService.class,entry.getFinishDate(),"code='"+serviceCode[1]+"'"));
+
+                        if (!serviceHashMap.containsKey(serviceCode[1])) {
+                            serviceHashMap.put(serviceCode[1], getActualVocByClassName(VocMedService.class,entry.getFinishDate(),"code='"+serviceCode[1]+"'"));
+                        }
+                        if (serviceHashMap.get(serviceCode[1])!=null) medService.setMedService(serviceHashMap.get(serviceCode[1]));
+                        LOG.info(entry.getId()+" = "+code+" заменено на "+serviceCode[1]);
+                        theManager.persist(medService);
+                        break;
+                    }
+                }
+            }
+        }
+        LOG.info("Заменено "+i+" услуг");
     }
 
     /** Оставляем в заполнении только КДП*/
@@ -3224,6 +3301,45 @@ public class Expert2ServiceBean implements IExpert2Service {
         polyclinicCasePrice = new HashMap<>();
         //   resultMap = new HashMap<String, Object>(); //результат госпитализации
     }
+
+    @Override
+    /**
+     * Создаем онкослучай по умолчанию */
+    public void makeOncologyCase(Long aListEntryId, String aJsonString, String aDefectCode) {
+        JSONObject aJson = new JSONObject(aJsonString);
+        List<BigInteger> entryList = theManager.createNativeQuery(" select e.id from e2entry e " +
+                " left join e2entrysanction s on s.entry_id=e.id " +
+                "where e.listEntry_id=:listId and s.dopcode=:code")
+                .setParameter("listId",aListEntryId).setParameter("code",aDefectCode.trim())
+                .getResultList();
+        if (!entryList.isEmpty()) {
+            LOG.info("Создаем онкослучаи, найдено "+entryList.size()+" записей");
+            String occasion = getString(aJson,"occasion");
+            String consiliumResult = getString(aJson,"consiliumResult");
+            String directionType = getString(aJson,"directionType");
+            String directionSurveyMethod = getString(aJson,"directionSurveyMethod");
+            for (BigInteger entryId : entryList) {
+                E2Entry entry = theManager.find(E2Entry.class, entryId.longValue());
+                if (!entry.getCancerEntries().isEmpty()) continue;
+                E2CancerEntry cancerEntry = new E2CancerEntry();
+                cancerEntry.setEntry(entry);
+                cancerEntry.setOccasion(occasion);
+                cancerEntry.setConsiliumResult(consiliumResult);
+                theManager.persist(cancerEntry);
+                if (directionType!=null) {
+                    E2CancerDirection direction = new E2CancerDirection(cancerEntry);
+                    direction.setType(directionType);
+                    direction.setDate(entry.getFinishDate());
+                    direction.setSurveyMethod(directionSurveyMethod);
+                    theManager.persist(direction);
+                }
+            }
+        }
+
+    }
+    private String getString(JSONObject aJsonObject, String aFldName) {
+        return aJsonObject.has(aFldName) ? aJsonObject.getString(aFldName) : null;
+     }
 
     @Override
     /**Разбиваем обращение на посещения*/
