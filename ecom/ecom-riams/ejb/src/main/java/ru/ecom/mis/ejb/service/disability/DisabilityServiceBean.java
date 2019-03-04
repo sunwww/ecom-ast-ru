@@ -417,8 +417,8 @@ public class DisabilityServiceBean implements IDisabilityService {
 	",case when ml2.id is not null then ml2.name else ml1.name end as lpu_name "+
 	",case when ml2.id is not null then ml2.printaddress else ml1.printaddress end as lpu_address "+
 	",case when ml2.id is not null then ml2.ogrn else ml1.ogrn end as lpu_ogrn "+
-	",vdr2.code as REASON2 "+
-	",vdr3.code as REASON3 "+
+	",vdr2.codef as REASON2 "+
+	",vdr3.codef as REASON3 "+
 	",dd.sanatoriumogrn as sanatoriumOgrn "+
 	",dd.sanatoriumticketnumber as ticketNumber "+
 	",dd.sanatoriumdatefrom as sanDateFrom "+
