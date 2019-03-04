@@ -92,10 +92,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		        styleId="stac_journalDichargeByUserDepartment" 
 		         roles="/Policy/Mis/MedCase/Stac/Journal/DischargeByUserDepartment" 
 		         action="/stac_journalDischargeByUserDepartment" name="По выписанным пациентам" />
-<!--	        <msh:sideLink 
+	        <!--msh:sideLink
 		        styleId="stac_departmentJournal" 
 		        roles="/Policy/Mis/MedCase/Stac/Journal/ByDoctorOnDuty" key="ALT+5" 
-		        action="/stac_departmentJournal" name="По дежурному врачу" /> -->
+		        action="/stac_departmentJournal" name="По дежурному врачу" /-->
  	        <msh:sideLink 
 		        styleId="stac_journalByCurator" 
 		        roles="/Policy/Mis/MedCase/Stac/Journal/ByCurator" key="ALT+6" 
