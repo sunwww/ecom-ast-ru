@@ -172,8 +172,8 @@
     }
     </script>
     <%
-    String date = (String)request.getParameter("dateBegin") ;
-    String date1 = (String)request.getParameter("dateEnd") ;
+    String date = request.getParameter("dateBegin") ;
+    String date1 = request.getParameter("dateEnd") ;
     
     if (date!=null && !date.equals(""))  {
     	if (date1==null ||date1.equals("")) {
@@ -319,8 +319,8 @@
     		department= " and ml.id="+dep+"" ;
     	}
     	request.setAttribute("department", department) ;
-    	%>
-    	<%if (view!=null && (view.equals("1"))) {%>
+    	if ("1".equals(view)) { //свод по дням
+    %>
     
     <msh:section>
     <ecom:webQuery isReportBase="true" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="
@@ -418,8 +418,9 @@ order by m.${dateI}
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    	<%} 
-    	if (view!=null && (view.equals("2"))) {%>
+    	<%
+    	} else if ("2".equals(view)) { //общий свод госпитализаций
+        %>
     <msh:section>
     <msh:sectionTitle>
     <ecom:webQuery isReportBase="true" name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
@@ -499,12 +500,13 @@ order by dep.name
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    	<%} 
-    	if (view!=null && (view.equals("3"))) {%>
+    	<%
+    	} else if ("3".equals(view)) { // общий свод отказов от госпитализаций
+        %>
     <msh:section>
     <ecom:webQuery isReportBase="true" name="journal_priem_denied" nameFldSql="journal_priem_denied_sql" nativeSql="
     
-    select '&pigeonHole=${param.pigeonHole}&department=${department}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&deniedHospitalizating='
+    select '&pigeonHole=${param.pigeonHole}&department=${param.department}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&deniedHospitalizating='
     ||m.deniedHospitalizating_id 
 ,vdh.name
 ,count(distinct case when (m.emergency is null or m.emergency='0') then m.id else null end) as pl
@@ -549,17 +551,16 @@ order by vdh.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
         <form action="print-stac_journalByHospital_2_3.do" method="post" target="_blank">
-        Отказы от госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
-        <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_denied_sql}"> 
-        <input type='hidden' name="sqlInfo" id="sqlInfo" value="Причина отказа">
-        <input type='hidden' name="sqlColumn" id="sqlColumn" value="Причина отказа">
-        
-        <input type='hidden' name="s" id="s" value="PrintService">
-        <input type='hidden' name="m" id="m" value="printNativeQuery">
-        <input type="submit" value="Печать"> 
-                                </form>
+            Отказы от госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
+            <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_denied_sql}">
+            <input type='hidden' name="sqlInfo" id="sqlInfo" value="Причина отказа">
+            <input type='hidden' name="sqlColumn" id="sqlColumn" value="Причина отказа">
+            <input type='hidden' name="s" id="s" value="PrintService">
+            <input type='hidden' name="m" id="m" value="printNativeQuery">
+            <input type="submit" value="Печать">
+        </form>
 </msh:sectionTitle>
-    <msh:sectionContent >
+    <msh:sectionContent>
     <msh:table name="journal_priem_denied" cellFunction="true"  
     viewUrl="js-stac_sslAllInfo-findDeniedByPeriod.do?short=Short&typeHosp=2"
     action="js-stac_sslAllInfo-findDeniedByPeriod.do?typeHosp=2" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -574,11 +575,11 @@ order by vdh.name
             </msh:tableNotEmpty>    
       <msh:tableColumn columnName="Причина отказа" property="2" />
       <msh:tableColumn columnName="Всего" property="3" addParam="&typeEmergency=2"/>
-      <msh:tableColumn columnName="КСП" property="4"  addParam="&typeEmergency=2&typeFrm=kcp" />
-      <msh:tableColumn columnName="самообращение" property="5"  addParam="&typeEmergency=2&typeFrm=sam" />
-      <msh:tableColumn columnName="Всего" property="6"  addParam="&typeEmergency=1" />
-      <msh:tableColumn columnName="КСП" property="7"  addParam="&typeEmergency=1&typeFrm=kcp" />
-      <msh:tableColumn columnName="самообращение" property="8"  addParam="&typeEmergency=1&typeFrm=sam" />
+      <msh:tableColumn columnName="КСП" property="4" addParam="&typeEmergency=2&typeFrm=kcp" />
+      <msh:tableColumn columnName="самообращение" property="5" addParam="&typeEmergency=2&typeFrm=sam" />
+      <msh:tableColumn columnName="Всего" property="6" addParam="&typeEmergency=1" />
+      <msh:tableColumn columnName="КСП" property="7" addParam="&typeEmergency=1&typeFrm=kcp" />
+      <msh:tableColumn columnName="самообращение" property="8" addParam="&typeEmergency=1&typeFrm=sam" />
       <msh:tableColumn columnName="Всего" identificator="false" property="9" addParam="&typeEmergency=${typeEmergency}" />
       <msh:tableColumn columnName="из них с.ж" property="10" addParam="&typeEmergency=${typeEmergency}&typePatient=vil"/>
       <msh:tableColumn columnName="из них гор." property="11" addParam="&typeEmergency=${typeEmergency}&typePatient=city"/>
@@ -589,9 +590,9 @@ order by vdh.name
     </msh:sectionContent>
     
     </msh:section>
-    <% }
-    	%>
-   	    	<%if (view!=null && (view.equals("4"))) {%>
+    <%
+    	} else if ("4".equals(view)) { //свод по часам заболевания при экст. госпит
+    %>
     <msh:section>
     <msh:sectionTitle>
     <ecom:webQuery isReportBase="true"  name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
@@ -659,13 +660,11 @@ order by dep.name
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    	<%} %>
     	<%
-    } else {%>
+    	}
+    	} else {%>
     	<i>Нет данных </i>
     	<% }   %>
-
-    
   </tiles:put>
 </tiles:insert>
 
