@@ -142,7 +142,7 @@ public class CheckContext implements ICheckContext, ICheckLog {
 						aDocumentCodeProperty);
 			}
 			return ret;
-		} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | ClassNotFoundException e) {
+		} catch (IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
 			throw new CheckException("Ошибка: " + e, e);
 		}
 	}
