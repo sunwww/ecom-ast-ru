@@ -179,6 +179,7 @@
             //нужные дивы
             var suspicionOncologist = document.getElementById("suspicionOncologist");
             var oncologyDirection = document.getElementById("oncologyDirection");
+            var oncologyCase = document.getElementById("oncologyCase");
             var histologyDiv = document.getElementById("histologyDiv");
             var immunoGistMarkDiv = document.getElementById("immunoGistMarkDiv");
             var treatmentDiv = document.getElementById("treatmentDiv");
@@ -347,6 +348,9 @@
                         document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
                         document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1] + mas[2].replace(mas[1],'');
                         $('MKB').value=mas[1];
+                        suspicionOncologist.checked= !($('MKB').value.indexOf('C')!=-1);
+                        if (suspicionOncologist.checked) checkCheckbox();
+                        suspicionOncologist.disabled=true;
                         if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
                             var ind=mas[1].indexOf(' ');
                             if (ind!=-1) {
@@ -399,6 +403,7 @@
                                 $('metastasis').value=$('metastasisName').value='';
                                 $('MKB').value='${mkb}';
                             }
+                            suspicionOncologist.disabled=true;
                         }
                     }
                     else {

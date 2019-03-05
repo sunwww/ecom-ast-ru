@@ -129,33 +129,33 @@
      function show${name}CloseDocument() {
          HospitalMedCaseService.sqlorder263('${param.id}', {
              callback: function(res) {
-                 if (res!=null) {
+                 if (res!=null && res!='{}') {
                      the${name}CloseDisDocumentDialog.show() ;
                      var aResult = JSON.parse(res);
-                     $('idTxt${name}').value=(typeof aResult.idTxt=='undefined')? '': aResult.idTxt;
-                     $('fnameTxt${name}').value=(typeof aResult.fnameTxt=='undefined')? '': aResult.fnameTxt;
-                     $('nameTxt${name}').value=(typeof aResult.nameTxt=='undefined')? '': aResult.nameTxt;
-                     $('lnameTxt${name}').value=(typeof aResult.lnameTxt=='undefined')? '': aResult.lnameTxt;
-                     $('birthTxt${name}').value=(typeof aResult.birthTxt=='undefined')? '': aResult.birthTxt;
-                     $('phoneTxt${name}').value=(typeof aResult.phoneTxt=='undefined')? '': aResult.phoneTxt;
-                     $('sexTxt${name}').value=(typeof aResult.sexTxt=='undefined')? '': aResult.sexTxt;
-                     $('typepoliceTxt${name}').value=(typeof aResult.typepoliceTxt=='undefined')? '': aResult.typepoliceTxt;
-                     $('serpolTxt${name}').value=(typeof aResult.serpolTxt=='undefined')? '': aResult.serpolTxt;
-                     $('numpolTxt${name}').value=(typeof aResult.numpolTxt=='undefined')? '': aResult.numpolTxt;
-                     $('numdirectTxt${name}').value=(typeof aResult.numdirectTxt=='undefined')? '': aResult.numdirectTxt;
-                     $('numfondTxt${name}').value=(typeof aResult.numfondTxt=='undefined')? '': aResult.numfondTxt;
-                     $('directDateTxt${name}').value=(typeof aResult.directDateTxt=='undefined')? '': aResult.directDateTxt;
-                     $('d2Txt${name}').value=$('diagnosisTxt${name}').value=(typeof aResult.diagnosisTxt=='undefined')? '': aResult.diagnosisTxt;
-                     $('orderlpuTxt${name}').value=(typeof aResult.orderlpuTxt=='undefined')? '': aResult.orderlpuTxt;
-                     $('preDateTxt${name}').value=(typeof aResult.preDateTxt=='undefined')? '': aResult.preDateTxt;
-                     $('directlpuTxt${name}').value=(typeof aResult.directlpuTxt=='undefined')? '': aResult.directlpuTxt;
-                     $('profileTxt${name}').value=(typeof aResult.profileTxt=='undefined')? '': aResult.profileTxt;
-                     $('datehospTxt${name}').value=(typeof aResult.datehospTxt=='undefined')? '': aResult.datehospTxt;
-                     $('disDateTxt${name}').value=(typeof aResult.disDateTxt=='undefined')? '': aResult.disDateTxt;
-                     $('denied${name}').value=(typeof aResult.denied=='undefined')? '': aResult.denied;
+                     $('idTxt${name}').value=(typeof aResult.idTxt==='undefined')? '': aResult.idTxt;
+                     $('fnameTxt${name}').value=(typeof aResult.fnameTxt==='undefined')? '': aResult.fnameTxt;
+                     $('nameTxt${name}').value=(typeof aResult.nameTxt==='undefined')? '': aResult.nameTxt;
+                     $('lnameTxt${name}').value=(typeof aResult.lnameTxt==='undefined')? '': aResult.lnameTxt;
+                     $('birthTxt${name}').value=(typeof aResult.birthTxt==='undefined')? '': aResult.birthTxt;
+                     $('phoneTxt${name}').value=(typeof aResult.phoneTxt==='undefined')? '': aResult.phoneTxt;
+                     $('sexTxt${name}').value=(typeof aResult.sexTxt==='undefined')? '': aResult.sexTxt;
+                     $('typepoliceTxt${name}').value=(typeof aResult.typepoliceTxt==='undefined')? '': aResult.typepoliceTxt;
+                     $('serpolTxt${name}').value=(typeof aResult.serpolTxt==='undefined')? '': aResult.serpolTxt;
+                     $('numpolTxt${name}').value=(typeof aResult.numpolTxt==='undefined')? '': aResult.numpolTxt;
+                     $('numdirectTxt${name}').value=(typeof aResult.numdirectTxt==='undefined')? '': aResult.numdirectTxt;
+                     $('numfondTxt${name}').value=(typeof aResult.numfondTxt==='undefined')? '': aResult.numfondTxt;
+                     $('directDateTxt${name}').value=(typeof aResult.directDateTxt==='undefined')? '': aResult.directDateTxt;
+                     $('d2Txt${name}').value=$('diagnosisTxt${name}').value=(typeof aResult.diagnosisTxt==='undefined')? '': aResult.diagnosisTxt;
+                     $('orderlpuTxt${name}').value=(typeof aResult.orderlpuTxt==='undefined')? '': aResult.orderlpuTxt;
+                     $('preDateTxt${name}').value=(typeof aResult.preDateTxt==='undefined')? '': aResult.preDateTxt;
+                     $('directlpuTxt${name}').value=(typeof aResult.directlpuTxt==='undefined')? '': aResult.directlpuTxt;
+                     $('profileTxt${name}').value=(typeof aResult.profileTxt==='undefined')? '': aResult.profileTxt;
+                     $('datehospTxt${name}').value=(typeof aResult.datehospTxt==='undefined')? '': aResult.datehospTxt;
+                     $('disDateTxt${name}').value=(typeof aResult.disDateTxt==='undefined')? '': aResult.disDateTxt;
+                     $('denied${name}').value=(typeof aResult.denied==='undefined')? '': aResult.denied;
                      var inputs = document.getElementsByTagName('input');
                      for (var i = 0; i < inputs.length; i++) {
-                         if (inputs[i].type == 'text' && inputs[i].id.indexOf('${name}')) {
+                         if (inputs[i].type == 'text' && inputs[i].id.indexOf('${name}')!=-1) {
                              inputs[i].disabled = true;
                          }
                      }

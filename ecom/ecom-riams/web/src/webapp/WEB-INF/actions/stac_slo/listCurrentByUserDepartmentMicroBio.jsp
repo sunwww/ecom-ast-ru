@@ -290,6 +290,3 @@ select m.id as mid
     </script>
   </tiles:put>
 </tiles:insert>
-<!--
-lastrelease milamesher 05.03.2018 (#91)
--->

@@ -68,7 +68,7 @@
                     HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
                         callback: function (res) {
                             var resMas = res.split("#");
-                            if (res != "##") {
+                            if (res != "") {
                                 var profilek = ($('filterAdd').value != "") ? "&prname=" + $('filterAdd').value : "";
                                 if (getValue('typeGroup2')==3) {
                                     url="http://" + resMas[0] + "/jasperserver/flow.html?_flowIddepartment=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F"+"polyclinicFinPlan"+"&standAlone=true&decorate=no"

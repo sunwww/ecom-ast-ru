@@ -43,7 +43,4 @@
     <tags:pres_prescriptByListTotal field="sls.id=${param.id}" />
 
   </tiles:put>
-  <script type="text/javascript">
-   alert('123');
-  </script>
 </tiles:insert>

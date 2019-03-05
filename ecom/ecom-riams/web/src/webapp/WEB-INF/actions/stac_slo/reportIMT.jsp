@@ -1,5 +1,3 @@
-<%@page import="java.util.Calendar"%>
-<%@page import="java.util.Date"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -113,7 +111,6 @@
             function checkFieldUpdate(aField,aValue,aDefaultValue) {
                 eval('var chk =  document.forms[0].'+aField) ;
                 var aMax=chk.length ;
-                //alert(aField+" "+aValue+" "+aMax+" "+chk) ;
                 if ((+aValue)==0 || (+aValue)>(+aMax)) {
                     chk[+aDefaultValue-1].checked='checked' ;
                 } else {
@@ -162,9 +159,7 @@ left join MedCase dmc2 on dmc2.parent_id=m2.id
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
     <script type='text/javascript'>
         function setDietVisitIsDoneReportIMT(id) {
-            //alert(id);
-            HospitalMedCaseService.setDietVisitIsDoneReportIMT(
-                id, {
+            HospitalMedCaseService.setDietVisitIsDoneReportIMT(id, {
                     callback: function () {
                         location.reload();
                     }

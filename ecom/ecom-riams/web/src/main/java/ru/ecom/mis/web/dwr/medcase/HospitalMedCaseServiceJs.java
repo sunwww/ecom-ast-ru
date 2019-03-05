@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -1924,29 +1925,31 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param patId Patient.id
 	 * @param aRequest HttpServletRequest
-	 * @return String c результатом или "##"
+	 * @return String json c результатом
 	 */
     public String prevPlanHospital(int patId,HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    	String query="select distinct wchb.datefrom,wchb.diagnosis,m.name,p.lastname,p.firstname,p.middlename " +
- "from workcalendarhospitalbed wchb " +
- "left join mislpu m on wchb.department_id=m.id " +
- "left join medcase mc on wchb.patient_id=mc.patient_id  " +
- "left join workfunction wf on wf.id=wchb.workfunction_id " +
- "left join worker w on w.id=wf.worker_id " +
-"left join patient p on p.id=w.person_id " +
- "where wchb.datefrom>=CAST('today' AS DATE) " +
- "and wchb.patient_id=" + patId;
-		Collection<WebQueryResult> list = service.executeNativeSql(query); 
-		StringBuilder res = new StringBuilder() ;
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			Object date = wqr.get1();
-			if (date!=null) date=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get1());
-			String fio = wqr.get4() + " " + wqr.get5() + " " + wqr.get6();
-			res.append(date).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(fio).append("!") ;
-		} 
-		else res.append("##");
+    	String query="select distinct to_char(wchb.datefrom,'dd.mm.yyyy')" +
+				" ,wchb.diagnosis,m.name" +
+				" ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as fiopost" +
+				" from workcalendarhospitalbed wchb" +
+				" left join mislpu m on wchb.department_id=m.id" +
+				" left join medcase mc on wchb.patient_id=mc.patient_id" +
+				" left join workfunction wf on wf.id=wchb.workfunction_id" +
+				" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" +
+				" left join worker w on w.id=wf.worker_id" +
+				" left join patient wp on wp.id=w.person_id" +
+				" where wchb.datefrom>=CAST('today' AS DATE) and wchb.patient_id=" + patId;
+        JSONArray res = new JSONArray() ;
+		Collection<WebQueryResult> list = service.executeNativeSql(query);
+		for (WebQueryResult w :list) {
+			JSONObject o = new JSONObject() ;
+			o.put("date", w.get1())
+					.put("diagnosis", w.get2())
+					.put("lpu", w.get3())
+					.put("fiopost", w.get4());
+			res.put(o);
+		}
 		return res.toString();
     }
 
@@ -2012,18 +2015,18 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param slsId HospitalMedCase.id
 	 * @param aRequest HttpServletRequest
-	 * @return String c результатом или "##"
+	 * @return String json c результатом
 	 */
 	public String getHWeightIMT(int slsId,HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String query="select height,weight,imt from statisticstub where medcase_id ='"+slsId+"'";
-		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
+		Collection<WebQueryResult> list = service.executeNativeSql("select height,weight,imt from statisticstub where medcase_id ='"+slsId+"'",1);
+		JSONObject res = new JSONObject() ;
 		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#");
+			WebQueryResult w = list.iterator().next() ;
+			res.put("height", w.get1())
+					.put("weight", w.get2())
+					.put("imt", w.get3());
 		}
-		else res.append("##");
 		return res.toString();
 	}
 
@@ -2039,8 +2042,7 @@ public class HospitalMedCaseServiceJs {
 	 */
 	public void setHWeightIMT(int slsId,int height,int weight,double imt,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String query="update statisticstub set height='" + height + "',weight='"+weight+"',imt='"+imt+"' where medcase_id ='"+slsId+"'";
-		service.executeUpdateNativeSql(query);
+		service.executeUpdateNativeSql("update statisticstub set height='" + height + "',weight='"+weight+"',imt='"+imt+"' where medcase_id ='"+slsId+"'");
 	}
 
 	/**
@@ -2106,31 +2108,34 @@ public class HospitalMedCaseServiceJs {
 	}
 
 	/**
-	 * Вывести список микробиологических исследований пациента с положительным результатом.
+	 * Вывести список микробиологических исследований пациента с положительным результатом #91.
 	 *
 	 * @param dmcId DepartmentMedCase.id
 	 * @param aRequest HttpServletRequest
-	 * @return Boolean - true - можно удалять данные выписки, false - нельзя
+	 * @return String json с результатом
 	 */
 	public String showMBioResResList(int dmcId, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select ms.code as name1,ms.name as name3,ms.shortname as shname,to_char(aslo.datestart,'dd.mm.yyyy') as dt\n" +
-				"from diary d\n" +
-				"left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=1092\n" +
-				"left join uservalue uv on uv.id=fipr.valuevoc_id\n" +
-				"left join medcase aslo on d.medcase_id=aslo.id and aslo.dtype='Visit'\n" +
-				"left join medcase dmc on dmc.parent_id=aslo.parent_id\n" +
-				"left join prescriptionlist pl on dmc.id=pl.medcase_id\n" +
-				"left join prescription pr on pr.medcase_id=aslo.id\n" +
-				"left join medservice ms on pr.medservice_id=ms.id\n" +
+		String sql = "select ms.code as name1,ms.name as name3,ms.shortname as shname,to_char(aslo.datestart,'dd.mm.yyyy') as dt" +
+				" from diary d" +
+				" left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=1092" +
+				" left join uservalue uv on uv.id=fipr.valuevoc_id" +
+				" left join medcase aslo on d.medcase_id=aslo.id and aslo.dtype='Visit'" +
+				" left join medcase dmc on dmc.parent_id=aslo.parent_id" +
+				" left join prescriptionlist pl on dmc.id=pl.medcase_id" +
+				" left join prescription pr on pr.medcase_id=aslo.id" +
+				" left join medservice ms on pr.medservice_id=ms.id" +
 				" where d.dtype='Protocol' and dmc.DTYPE='DepartmentMedCase' and uv.cntball=1 and dmc.id=" + dmcId;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (!list.isEmpty()) {
-			for (WebQueryResult w : list) {
-				res.append(w.get1()).append("#").append(w.get2()).append("#").append(w.get3()).append("#").append(w.get4()).append("!");
-			}
-		} else res.append("##");
+        JSONArray res = new JSONArray() ;
+        for (WebQueryResult w : list) {
+            JSONObject o = new JSONObject() ;
+            o.put("name1", w.get1())
+                    .put("name3", w.get2())
+                    .put("shname", w.get3())
+                    .put("dt", w.get4());
+            res.put(o);
+        }
 		return res.toString();
 	}
 
@@ -2139,23 +2144,17 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param dmcId DepartmentMedCase.id
 	 * @param aRequest HttpServletRequest
-	 * @return String результат или "##"
+	 * @return String результат
 	 */
 	public String getPatientFIOStat(int dmcId, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename|| ' ' || to_char(pat.birthday,'dd.mm.yyyy')\n" +
-				"from medCase dmc\n" +
-				"left join MedCase as sls on sls.id = dmc.parent_id\n" +
-				"left join Patient pat on dmc.patient_id = pat.id \n" +
-				"where dmc.id=" + dmcId;
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1());
-		}
-		else res.append("##");
-		return res.toString();
+		Collection<WebQueryResult> list = service.executeNativeSql(
+		        "select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename|| ' ' || to_char(pat.birthday,'dd.mm.yyyy')" +
+                " from medCase dmc" +
+                " left join MedCase as sls on sls.id = dmc.parent_id" +
+                " left join Patient pat on dmc.patient_id = pat.id " +
+                " where dmc.id=" + dmcId);
+		return (list.isEmpty())? "":list.iterator().next().get1().toString();
 	}
 
 	/**
@@ -2163,19 +2162,12 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param keyvalue Ключ
 	 * @param aRequest HttpServletRequest
-	 * @return String результат или "##"
+	 * @return String результат
 	 */
 	public String getSettingsKeyValueByKey(String keyvalue, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select keyvalue from  softconfig where key='" + keyvalue + "'";
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1());
-		}
-		else res.append("##");
-		return res.toString();
+		Collection<WebQueryResult> list = service.executeNativeSql( "select keyvalue from  softconfig where key='" + keyvalue + "'");
+		return (list.isEmpty())? "":list.iterator().next().get1().toString();
 	}
 
 	/**
@@ -2183,39 +2175,25 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param name Поток обслуживания
 	 * @param aRequest HttpServletRequest
-	 * @return String результат или "##"
+	 * @return String результат
 	 */
 	public String getVocServiceStreamCodeByName(String name, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select code from  vocSstreamE2Entry where name='" + name + "'";
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1());
-		}
-		else res.append("##");
-		return res.toString();
+		Collection<WebQueryResult> list = service.executeNativeSql("select code from  vocSstreamE2Entry where name='" + name + "'");
+		return (list.isEmpty())? "":list.iterator().next().get1().toString();
 	}
 
 	/**
-	 * Получить текст шаблона оценки риска по id шаблона aCardTemplId.
+	 * Получить текст шаблона оценки риска по id шаблона aCardTemplId #97.
 	 *
 	 * @param aCardTemplId Поток обслуживания
 	 * @param aRequest HttpServletRequest
-	 * @return String результат или "##"
+	 * @return String результат
 	 */
     public String getVocAssesmentCardById(String aCardTemplId, HttpServletRequest aRequest) throws NamingException {
-        StringBuilder res=new StringBuilder();
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-        String sql = "select name from assessmentCardTemplate where id=" + aCardTemplId;
-        Collection<WebQueryResult> list = service.executeNativeSql(sql);
-        if (!list.isEmpty()) {
-            WebQueryResult wqr = list.iterator().next() ;
-            res.append(wqr.get1());
-        }
-        else res.append("##");
-        return res.toString();
+        Collection<WebQueryResult> list = service.executeNativeSql("select name from assessmentCardTemplate where id=" + aCardTemplId);
+		return (list.isEmpty())? "":list.iterator().next().get1().toString();
     }
 
 	/**
@@ -2223,25 +2201,27 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param slo DepartmentMedCase.id
 	 * @param aRequest HttpServletRequest
-	 * @return String результат или "##"
+	 * @return String json с результатом
 	 */
 	public String getDefaultWorkPlaceByDepartment(String slo, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select wp.id as wpid,'№'||wp.name||' ('||wp1.name||')' as wpname, wp2.id as wp2id,wp2.name as wp2name\n" +
-				"from workplace wp\n" +
-				"left join WorkPlace wp1 on wp1.id=wp.parent_id\n" +
-				"left join workplace wp2 on wp2.parent_id=wp.id \n" +
-				"where wp.dtype='HospitalRoom' and (wp.isnoactuality is null or wp.isnoactuality='0')\n" +
-				"and wp2.dtype='HospitalBed' and (wp2.isnoactuality is null or wp2.isnoactuality='0') \n" +
-				"and wp.defaultroom=true\n" +
-				"and wp.lpu_id=" + slo + " limit 1";
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		Collection<WebQueryResult> list = service.executeNativeSql(
+				"select wp.id as wpid,'№'||wp.name||' ('||wp1.name||')' as wpname, wp2.id as wp2id,wp2.name as wp2name" +
+				" from workplace wp" +
+				" left join WorkPlace wp1 on wp1.id=wp.parent_id" +
+				" left join workplace wp2 on wp2.parent_id=wp.id" +
+				" where wp.dtype='HospitalRoom' and (wp.isnoactuality is null or wp.isnoactuality='0')" +
+				" and wp2.dtype='HospitalBed' and (wp2.isnoactuality is null or wp2.isnoactuality='0')" +
+				" and wp.defaultroom=true" +
+				" and wp.lpu_id=" + slo,1);
+		JSONObject res = new JSONObject();
 		if (!list.isEmpty()) {
 			WebQueryResult w = list.iterator().next() ;
-			res.append(w.get1()).append("#").append(w.get2()).append("#").append(w.get3()).append("#").append(w.get4());
+			res.put("wpid", w.get1())
+					.put("wpname", w.get2())
+					.put("wp2id", w.get3())
+					.put("wp2name", w.get4());
 		}
-		else res.append("##");
 		return res.toString();
 	}
 
@@ -2254,27 +2234,6 @@ public class HospitalMedCaseServiceJs {
 	public Boolean checkUserIsAdminToDeleteDischarge(HttpServletRequest aRequest) throws JspException {
 		return (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/Delete",aRequest)
 				&& RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin",aRequest));
-	}
-
-	/**
-	 * Проставить отметку, что пациент выбыл из приёмника #118 06092018.
-	 *
-	 * @param slsId HospitalMedCase.id
-	 * @param aRequest HttpServletRequest
-	 * @return String результат или "##"
-	 */
-	public String setOutOfReceivingDep(String slsId,HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res = new StringBuilder();
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String sql = "UPDATE medcase mc SET transferDate = CASE WHEN transferDate IS NULL THEN current_date ELSE transferDate END, \n" +
-				"transferTime=CASE WHEN transferTime IS NULL THEN current_time ELSE transferTime END where id=" + slsId;
-		service.executeUpdateNativeSql(sql);
-		Collection<WebQueryResult> list = service.executeNativeSql("select to_char(transferDate,'dd.MM.yyyy') as d,to_char(transferTime,'HH24:MI') as t from medcase where id=" + slsId);
-		if (!list.isEmpty()) {
-			WebQueryResult w = list.iterator().next();
-			res.append(w.get1()).append("#").append(w.get2());
-		} else res.append("##");
-		return res.toString();
 	}
 
 	/**
@@ -2340,14 +2299,12 @@ public class HospitalMedCaseServiceJs {
 	 * @return String (0 - hospital, 1 - dep, 2 - visit, 3 - другое)
 	 */
 	public String getMedcaseDtypeById(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
-		String res="";
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("select case when mc.dtype='HospitalMedCase' then '0'\n" +
 				"else case when mc.dtype='DepartmentMedCase' then '1'\n" +
 				"else case when mc.dtype='Visit' then '2' else '0' end end end\n" +
 				"from medcase mc where mc.id="+aMedcaseId) ;
-		if (!l.isEmpty()) res=l.iterator().next().get1().toString();
-		return res;
+		return l.isEmpty()? "" : l.iterator().next().get1().toString();
 	}
 
 	/**
@@ -2356,13 +2313,11 @@ public class HospitalMedCaseServiceJs {
 	 * @return String Кол-во дней/NULL если есть отказ от госпитализации
 	 */
 	public String getSlsCountDays(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
-		String res="";
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("\n" +
 				"select cast(round((EXTRACT(EPOCH FROM current_timestamp)-(SELECT EXTRACT(EPOCH FROM (mc.datestart + mc.entrancetime))  " +
 				"from medcase mc where id="+aMedcaseId+"  and deniedhospitalizating_id is null))/3600/24) as int)") ;
-		if (!l.isEmpty() && l.iterator().next().get1()!=null) res=l.iterator().next().get1().toString();
-		return res;
+		return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
 	}
 
 	/**
