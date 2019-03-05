@@ -177,7 +177,7 @@ public class PropertyUtil {
         	 return l.intValue() ;
         } else if (aInClass.equals(Integer.class) && aOutClass.equals(Integer.TYPE)) {
 	       	 Integer i = (Integer) aValue ;
-	       	 return i.intValue() ;
+	       	 return i ;
         } else if (aInClass.equals(String.class) && aOutClass.equals(boolean.class)) {
 	       	 return Boolean.parseBoolean((String)aValue) ;
         } else if (aInClass.equals(String.class) && aOutClass.equals(Boolean.class)) {
@@ -185,9 +185,9 @@ public class PropertyUtil {
         } else if (aInClass.equals(Boolean.class) && aOutClass.equals(String.class)) {
 	       	 return String.valueOf(aValue) ;
         } else if (aInClass.equals(Boolean.class) && aOutClass.equals(Boolean.TYPE)) {
-	       	 return ((Boolean)aValue).booleanValue() ;
+	       	 return aValue ;
         } else if (aInClass.equals(Boolean.TYPE) && aOutClass.equals(Boolean.class)) {
-	       	 return (Boolean)aValue ;
+	       	 return aValue ;
         } else if (aInClass.equals(Integer.TYPE) && aOutClass.equals(Integer.class)) {
 	       	 return (Integer)aValue ;
         } else if (aInClass.equals(Long.TYPE) && aOutClass.equals(Long.class)) {
@@ -223,7 +223,7 @@ public class PropertyUtil {
                 propertyName = new StringBuilder().append(Character.toLowerCase(methodName.charAt(2))).append(methodName.substring(3)).toString() ;
                 GET_PROPERTY_NAME_HASH.put(aMethod, propertyName) ;
             } else if(methodName.length()>3 && (methodName.startsWith("get")||methodName.startsWith("set"))) {
-                propertyName = new StringBuilder().append(Character.toLowerCase(methodName.charAt(3))).append(methodName.substring(4)).toString() ;
+                propertyName = Character.toLowerCase(methodName.charAt(3))+methodName.substring(4);
                 GET_PROPERTY_NAME_HASH.put(aMethod, propertyName) ;
             } else {
                 throw new IllegalArgumentException("Метод "+aMethod+" не является методом свойcтва") ;
@@ -238,7 +238,7 @@ public class PropertyUtil {
      * @param aObject
      * @param aPropertyName
      */
-    public static Object getPropertyValue(Object aObject, String aPropertyName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object getPropertyValue(Object aObject, String aPropertyName) throws IllegalAccessException, InvocationTargetException {
     	if(aObject!=null) {
 	    	if(aObject instanceof Object[]) {
 	    		Object[]  arr = (Object[]) aObject ;
@@ -262,11 +262,11 @@ public class PropertyUtil {
         }
     }
 
-    public static Method getMethodFormProperty(Class aClass, String aPropertyName) throws NoSuchMethodException {
+    public static Method getMethodFormProperty(Class aClass, String aPropertyName) {
     	return getGetterMethod(aClass, aPropertyName) ;
     }
 
-    public static Method getGetterMethod(Class aClass, String aPropertyName) throws NoSuchMethodException {
+    public static Method getGetterMethod(Class aClass, String aPropertyName) {
     	try {
 	    	Method m ;
 	    	try {
@@ -307,11 +307,11 @@ public class PropertyUtil {
     
     
     private static String getGetterMethodNameForProperty(String aPropertyName) {
-        return new StringBuilder().append("get").append(Character.toUpperCase(aPropertyName.charAt(0))).append(aPropertyName.substring(1)).toString();
+        return "get"+Character.toUpperCase(aPropertyName.charAt(0))+aPropertyName.substring(1);
     }
 
     private static String getIsMethodNameForProperty(String aPropertyName) {
-        return new StringBuilder().append("is").append(Character.toUpperCase(aPropertyName.charAt(0))).append(aPropertyName.substring(1)).toString();
+        return "is"+Character.toUpperCase(aPropertyName.charAt(0))+aPropertyName.substring(1);
 
     }
     
