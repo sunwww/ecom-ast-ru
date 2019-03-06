@@ -163,6 +163,9 @@
                 </msh:sideMenu>
             </msh:ifFormTypeIsView>
         </tiles:put>
+        <tiles:put name="title" type="string">
+            <ecom:titleTrail mainMenu="StacJournal" beginForm="stac_bandageForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+        </tiles:put>
         <script type="text/javascript">
             var isChangeSizeEpicrisis=1 ;
             function changeSizeEpicrisis() {

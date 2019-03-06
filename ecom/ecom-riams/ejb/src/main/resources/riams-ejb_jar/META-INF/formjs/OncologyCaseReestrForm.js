@@ -72,3 +72,16 @@ function onSave(aForm, aEntity, aCtx){
     aCtx.manager.createNativeQuery("delete from oncologydiagnostic where oncologycase_id="+aEntity.id).executeUpdate() ;
     onCreate(aForm, aEntity, aCtx);
 }
+function getMedCaseType (aId, aCtx) {
+    var list = aCtx.manager.createNativeQuery("select dtype from medcase where id="+aId).getResultList() ;
+    return list.size()>0?""+list.get(0):"";
+}
+function onPreDelete(aEntityId, aCtx) {
+    var zno = aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.OncologyCase,new java.lang.Long(aEntityId));
+    var dtype = getMedCaseType(zno.getMedCase().getId(),aCtx);
+    if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut")
+        && (dtype=='DepartmentMedCase' || dtype=='HospitalMedCase')) {
+        var parent=(dtype=='DepartmentMedCase')? zno.getMedCase().getParent() : zno.getMedCase() ;
+        if (parent.getDateFinish()!=null) throw "Пациент выписан. Нельзя удалять онкологический случай в закрытом СЛС!";
+    }
+}

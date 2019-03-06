@@ -157,3 +157,12 @@ function isDiagnosisAllowed(aForm, aCtx) {
 			,department, patient, serviceStream, diagnosisRegistrationType,diagnosisPriority, aCtx.manager );
 	
 }
+function onPreDelete(aEntityId, aCtx) {
+	var diagnosis = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Diagnosis,new java.lang.Long(aEntityId));
+    var dtype = getMedCaseType(diagnosis.getMedCase().getId(),aCtx);
+    if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut")
+		&& (dtype=='DepartmentMedCase' || dtype=='HospitalMedCase')) {
+        var parent=(dtype=='DepartmentMedCase')? diagnosis.getMedCase().getParent() : diagnosis.getMedCase() ;
+        if (parent.getDateFinish()!=null) throw "Пациент выписан. Нельзя удалять диагноз в закрытом СЛС!";
+	}
+}

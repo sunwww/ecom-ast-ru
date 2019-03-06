@@ -87,6 +87,11 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
             }
 
         }
-        //throw new IllegalStateException("я тут") ;
+        //Запрет на создание в СЛО и СЛС, если случай закрыт. Админ может создавать.
+        if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut") &&
+                (parentSSL instanceof DepartmentMedCase || parentSSL instanceof HospitalMedCase)) {
+            MedCase hmc = (parentSSL instanceof DepartmentMedCase)? parentSSL.getParent() : parentSSL;
+            if (hmc.getDateFinish()!=null) throw new IllegalStateException("Пациент выписан. Нельзя добавлять перевязку в закрытый СЛС!");
+        }
     }
 }
