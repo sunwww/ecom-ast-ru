@@ -1,9 +1,11 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
+import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -46,6 +48,14 @@ public class VocMedService extends VocBaseEntity{
 	@Comment("Дата окончания действия")
 	public Date getFinishDate() {return theFinishDate;}
 	public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
+
+	/** Запрещена для пола */
+	@Comment("Запрещена для пола")
+	@OneToOne
+	public VocSex getNotForSex() {return theNotForSex;}
+	public void setNotForSex(VocSex aNotForSex) {theNotForSex = aNotForSex;}
+	/** Запрещена для пола */
+	private VocSex theNotForSex ;
 
 
 	/** Входит в омс */

@@ -40,6 +40,16 @@ public class E2EntrySanction extends BaseEntity {
     public E2EntrySanction (E2Entry aEntry, VocE2Sanction aSanction, String aDopCode, Boolean aIsMainDefect) {
         theEntry=aEntry;theSanction=aSanction;theDopCode=aDopCode;theIsDeleted=false;theIsMainDefect=aIsMainDefect;
     }
+    public E2EntrySanction (E2Entry aEntry, VocE2Sanction aSanction, String aDopCode, Boolean aIsMainDefect, String aComment) {
+        theEntry=aEntry;theSanction=aSanction;theDopCode=aDopCode;theIsDeleted=false;theIsMainDefect=aIsMainDefect;theComment=aComment;
+    }
+
+    /** Примечание */
+    @Comment("Примечание")
+    public String getComment() {return theComment;}
+    public void setComment(String aComment) {theComment = aComment;}
+    /** Примечание */
+    private String theComment ;
 
     /** Удаленная запись */
     @Comment("Удаленная запись")

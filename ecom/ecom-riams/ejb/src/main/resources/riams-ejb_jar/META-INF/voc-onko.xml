@@ -80,7 +80,10 @@
                 nameId="voc.code"
                 order="voc.name"
                 names="voc.code||' '||voc.name"
-                queryAppend="(finishdate is null or current_date>=finishdate)"
+                queryAppend="(finishdate is null or current_date>=finishdate) "
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+
+
         />
     </voc>
 
@@ -99,6 +102,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -117,6 +121,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -136,6 +141,7 @@
                 nameId= "n005.id"
                 names = "n005.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -146,6 +152,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -165,6 +172,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -183,6 +191,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -201,6 +210,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -219,6 +229,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -237,6 +248,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -255,6 +267,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -273,6 +286,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -291,6 +305,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -309,6 +324,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -327,6 +343,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -363,6 +380,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
     <voc id='vocOncologyReasonTreat' type='EntityVocService'>
@@ -380,6 +398,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -398,6 +417,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
+                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
     <voc id="vocOncologyDiagTypeCode" type="NativeVocService">

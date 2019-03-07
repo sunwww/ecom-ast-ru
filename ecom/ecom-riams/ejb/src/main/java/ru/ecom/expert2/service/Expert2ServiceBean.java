@@ -861,7 +861,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         " left join voce2medhelpprofile v on v.id= mhpbt.profile_id left join vocbedsubtype vbst on vbst.id=mhpbt.subtype_id where vbt.omccode=:code and v.id is not null and (mhpbt.subtype_id is null or vbst.code=:subTypeCode )")
                         .setParameter("code", bedType).setParameter("subTypeCode",bedSubType).getResultList();
                 if (list.isEmpty()) {
-                    theManager.persist(new E2EntryError(aEntry, "NO_PROFILE"));
+                    theManager.persist(new E2EntryError(aEntry, "NO_PROFILE "+key));
                     LOG.error("Не найдено профиля мед. помощи для коек с типом NO_PROFILE_FOR_BED " + key);
                 } else if (list.size() > 1) {
                     theManager.persist(new E2EntryError(aEntry, "TOO_MANY_PROFILE:" +key));
@@ -875,7 +875,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         profile = bedTypes.get(key);
         if (isNotNull(aEntry.getVMPKind())) {
-            if (profile!=null&&profile.getCode().equals("29")) { // TODO Если ВМП в кардиологических койках, меняем профиль коек на 81
+            if (profile!=null && profile.getCode().equals("29")) { // TODO Если ВМП в кардиологических койках, меняем профиль коек на 81
                 key = "VMP#" + profile.getCode();
                 if (!bedTypes.containsKey(key)) {
                     profile = getActualVocByClassName(VocE2MedHelpProfile.class,null,"profilek='81'");
@@ -2994,8 +2994,6 @@ public class Expert2ServiceBean implements IExpert2Service {
      3 – прочие причины (умер, переведён в другое отделение и пр.)
      4 – ранее проведённые услуги в пределах установленных сроков.
      */
-    private static List<String> ksgFullPaymentChildsList = new ArrayList<>();
-
     private BigDecimal calculateNoFullMedCaseCoefficient (E2Entry aEntry) { //Считаем коэффициент Кпр.+    //  LOG.info("start calculateNoFullMedCaseCoefficient");
         String  npl = aEntry.getNotFullPaymentReason();
         BigDecimal ret = new BigDecimal(1); //По умолчанию - полный случай
@@ -3013,10 +3011,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         String otherLpuResult = "102,103,202,203";
         String lpuLikeResult = "108,208";
         String patientLikeResult = "107,207";
-       ksgFullPaymentChildsList.add("st17.001");ksgFullPaymentChildsList.add("st17.002");//при переводе детей в другое ЛПУ не считаем прерванным случаем *30-05-2018
+   //    ksgFullPaymentChildsList.add("st17.001");ksgFullPaymentChildsList.add("st17.002");//при переводе детей в другое ЛПУ не считаем прерванным случаем *30-05-2018
         VocKsg ksg = aEntry.getKsg();
         if (otherLpuResult.indexOf(result) > -1) { //Переведен в другой стационар
-            isPrerSluch = ksg == null || !ksgFullPaymentChildsList.contains(ksg.getCode());
+            isPrerSluch = ksg == null || !ksg.getCode().startsWith("st17");
         } else if (deadResult.indexOf(result) > -1 || patientLikeResult.indexOf(result) > -1 || lpuLikeResult.indexOf(result) > -1) { //выписан по желанию ЛПУ
             isPrerSluch = true;
         }  //Плановая выписка
@@ -3073,9 +3071,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
         if (stacCase) {   //Расчет профиля мед. помощи по профилю коек для стационара
-            if (aEntry.getMedHelpProfile()==null||forceUpdate) {
+            if (aEntry.getMedHelpProfile()==null || forceUpdate) {
                 aEntry.setMedHelpProfile(getProfileByBedType(aEntry));
             }
+            if (aEntry.getBedProfile()==null && aEntry.getMedHelpProfile()!=null) aEntry.setBedProfile(aEntry.getMedHelpProfile().getProfileBed());
         }
         //Расчитывает Специальность лечащего врача/ врача, закрывшего талон (v015) . UPD 18-07-2018 * Специальность врача по справочнику V021
         if (aEntry.getFondDoctorSpecV021() == null || forceUpdate) {
@@ -3326,7 +3325,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 cancerEntry.setOccasion(occasion);
                 cancerEntry.setConsiliumResult(consiliumResult);
                 theManager.persist(cancerEntry);
-                if (directionType!=null) {
+                if (directionType!=null && !directionType.equals("")) {
                     E2CancerDirection direction = new E2CancerDirection(cancerEntry);
                     direction.setType(directionType);
                     direction.setDate(entry.getFinishDate());

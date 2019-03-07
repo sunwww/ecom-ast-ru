@@ -112,7 +112,7 @@
                     <msh:sideLink action="/javascript:refillListEntry()" name="Переформировать заполнение" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:setDirectAndPlanHospDate()" name="Заполнить пустые даты направления и даты пред. госпитализации" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:showSplitForeignOtherBill()" name="Выделить 08,05" roles="/Policy/E2/Admin" />
-                    <msh:sideLink action="/javascript:exportToCentralSegment()" name="Сделать запрос в ЦС" roles="/Policy/E2/Admin" />
+                    <msh:sideLink action="/javascript:exportToCentralSegment()" name="Сделать запрос в ЦС" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:showCancerCancerDialog()" name="Сделать онкослучай" roles="/Policy/E2/Admin" />
                 </msh:ifPropertyIsTrue>
                 <msh:sideLink action="/javascript:closeListEntry(false)" name="Открыть заполнение" roles="/Policy/E2/Admin" />

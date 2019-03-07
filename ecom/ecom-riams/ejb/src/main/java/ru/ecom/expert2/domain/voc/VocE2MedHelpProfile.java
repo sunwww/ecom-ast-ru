@@ -4,6 +4,7 @@ import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV020;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -67,4 +68,12 @@ public class VocE2MedHelpProfile  extends VocBaseEntity{
     public void setProfileBed(VocE2FondV020 aProfileBed) {theProfileBed = aProfileBed;}
     /** Профиль койки V020 */
     private VocE2FondV020 theProfileBed ;
+
+    /** Услуга по профилю для стационар по умолчанию */
+    @Comment("Услуга по профилю для стационар по умолчанию")
+    @OneToOne
+    public VocMedService getDefaultStacMedService() {return theDefaultStacMedService;}
+    public void setDefaultStacMedService(VocMedService aDefaultStacMedService) {theDefaultStacMedService = aDefaultStacMedService;}
+    /** Услуга по профилю для стационар по умолчанию */
+    private VocMedService theDefaultStacMedService ;
 }

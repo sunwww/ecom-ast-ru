@@ -28,6 +28,9 @@
                 <msh:row>
                     <msh:autoComplete label="Профиль койки V020" vocName="vocE2FondV020" property="profileBed" size="100"/>
                 </msh:row>
+                <msh:row>
+                    <msh:autoComplete label="Услуга по умолчанию для стационара" vocName="vocMedServiceActual" property="defaultStacMedService" size="100"/>
+                </msh:row>
 
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
             </msh:panel>

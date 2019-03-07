@@ -3,7 +3,10 @@ package ru.ecom.expert2.form.voc;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
-import ru.nuzmsh.commons.formpersistence.annotation.*;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
@@ -96,4 +99,13 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     public void setProfileBed(Long aProfileBed) {theProfileBed = aProfileBed;}
     /** Профиль койки V020 */
     private Long theProfileBed ;
+
+
+    /** Услуга по профилю для стационар по умолчанию */
+    @Comment("Услуга по профилю для стационар по умолчанию")
+    @Persist
+    public Long getDefaultStacMedService() {return theDefaultStacMedService;}
+    public void setDefaultStacMedService(Long aDefaultStacMedService) {theDefaultStacMedService = aDefaultStacMedService;}
+    /** Услуга по профилю для стационар по умолчанию */
+    private Long theDefaultStacMedService ;
 }

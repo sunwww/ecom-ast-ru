@@ -90,7 +90,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
 
     /*Создаем заполнение из MP файла*/
-    public String createEntryByFondXml(String aMpFilename)  {
+    public String createEntryByFondXml(String aMpFilename) {
         try {
             E2ListEntry le = new E2ListEntry();
             le.setName("IMPORT_"+aMpFilename);
@@ -266,7 +266,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             org.jdom.Element root = doc.getRootElement();
             String ver = root.getChild("ZGLV").getChildText("VERSION");
             if ("3.0".equals(ver)) {
-                return importFondMPAnswerOld(aMpFilename);
+                throw new IllegalStateException("Импорт в старом формате более не поддерживается!");
             }
             List<Element> zaps= root.getChildren("ZAP");
             Element schet = root.getChild("SCHET");
@@ -281,7 +281,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             int i=0;
             LOG.info("Найдено "+zaps.size()+" записей. Обновляем!");
             BigDecimal totalSum = new BigDecimal("0");
-            String slIdElementName = "SL_ID";
 
             for (Element zap:zaps) {
                 i++;
@@ -292,16 +291,14 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 boolean isComplexCase=false;
                 for (Element sl: slList) {
                     if (isComplexCase) break;
-                    Element slId = sl.getChild(slIdElementName);
-                    if (slId == null) { //Для версии 3.1.1
-                        slIdElementName = "SL_IDCASE";
-                        slId = sl.getChild(slIdElementName);
-                        ver="3.1.1";
-                    }
+                    Element slId = sl.getChild("SL_IDCASE");
                     Long entryId = Long.parseLong(slId.getText());
                     E2Entry entry= theManager.find(E2Entry.class,entryId);
                     if (entry==null) {LOG.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
-                    if (entry.getParentEntry()!=null) {entry=entry.getParentEntry();isComplexCase=true;}
+                    if (entry.getParentEntry()!=null) {
+                        entry=entry.getParentEntry();
+                        isComplexCase=true;
+                    }
                     //LOG.info(j+" record id "+entry.getId()+" ");
                     theManager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId",entryId).executeUpdate();
                     entry.setBillNumber(nSchet);
@@ -314,16 +311,32 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     entry.setMedPolicyNumber(pac.getChildText("NPOLIS"));
                     entry.setInsuranceCompanyCode(pac.getChildText("SMO"));
 
+                    //Расчет цены случая ФОМС
+                    Element commentCalc = sl.getChild("D_COMMENT_CALC");
+                    if (commentCalc!=null && commentCalc.getChild("root")!=null) {
+
+                        Element ебаныйРусскийТэг = commentCalc.getChild("root");
+                        List<Element> ерт = ебаныйРусскийТэг.getChildren();
+                        StringBuilder commentError = new StringBuilder();
+                        for (Element еб:ерт) {
+                            commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
+                        }
+                        entry.setFondComment(commentError.toString());
+                    } else {
+                        entry.setFondComment("");
+                    }
+
                     //Добавляем сведения о санкциях
                     if (zsl.getChild("SANK_IT")!=null && !zsl.getChildText("SANK_IT").equals("0.00")) { //
-                        List<Element> sanks =ver.equals("3.1.1") ? zsl.getChildren("SANK") : sl.getChildren("SANK");
+                        List<Element> sanks =zsl.getChildren("SANK") ;
                         for (Element sank: sanks) {
                             String key = sank.getChildText("S_OSN") ;
                             if (!sanctionMap.containsKey(key)) {
                                 sanctionMap.put(key,getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
                             }
-                         //   boolean isMain =  false; // sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true; // 27-08-2018
-                            theManager.persist(new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),false));
+                         String comment = sank.getChildText("S_SL_ID")+" "+ sank.getChildText("S_COM");
+                            //   boolean isMain =  false; // sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true; // 27-08-2018
+                            theManager.persist(new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),false,comment));
                         }
                         entry.setIsDefect(true);
                     } else {
@@ -340,90 +353,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
         }  catch (Exception e) {
             e.printStackTrace();
-        }
-        //Распаковываем mp файл в папку
-
-        return null;
-    }
-    public String importFondMPAnswerOld(String aMpFilename) {
-        //filename вида *.mp *.mpi
-        //String outputDir = unZip(aMpFilename);
-        try {
-            LOG.info("filename = "+aMpFilename);
-            String dir = unZip(aMpFilename);
-            String hFilename = aMpFilename.replace(".MP",".XML");
-            hFilename="H"+hFilename.substring(1);
-            File hFile = new File(dir+"/"+hFilename);
-            //LOG.info(hFile.exists()+"##>>"+dir+"/"+hFilename+"<<");
-
-
-            Document doc = new SAXBuilder().build(hFile);
-         //   XmlDocument xmlDocError = new XmlDocument() ;
-            org.jdom.Element root = doc.getRootElement();
-            List<Element> zaps= root.getChildren("ZAP");
-            String nSchet = root.getChild("SCHET").getChildText("NSCHET");
-            String dSchet = root.getChild("SCHET").getChildText("DSCHET");
-            SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat toFormat = new SimpleDateFormat("dd.MM.yyyy");
-            E2Bill bill = theManager.find(E2Bill.class,theExpertService.getBillIdByDateAndNumber(nSchet,toFormat.format(fromFormat.parse(dSchet))));
-            bill.setStatus(getActualVocByCode(VocE2BillStatus.class,null,"code='PAID'"));
-
-            int i=0;
-            LOG.info("Найдено "+zaps.size()+" записей. Обновляем!");
-            for (Element zap:zaps) {
-                i++;
-                if (i%100==0) {LOG.info("Обработано "+i+" записей");}
-                Long entryId = Long.parseLong(zap.getChildText("N_ZAP"));
-                E2Entry entry= theManager.find(E2Entry.class,entryId);
-                if (entry==null) {LOG.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
-                theManager.createNativeQuery("update E2EntrySanction set isDeleted='1' where entry_id="+entryId).executeUpdate();
-                entry.setBillNumber(nSchet);
-                entry.setBillDate(bill.getBillDate());
-                entry.setBill(bill);
-
-                Element pac = zap.getChild("PACIENT");
-
-                //Проставляем данные о мед. полисе
-                entry.setMedPolicyType(pac.getChildText("VPOLIS"));
-                if (pac.getChild("SPOLIS")!=null) {entry.setMedPolicySeries(pac.getChildText("SPOLIS"));} else {entry.setMedPolicySeries("");}
-                entry.setMedPolicyNumber(pac.getChildText("NPOLIS"));
-                entry.setInsuranceCompanyCode(pac.getChildText("SMO"));
-
-                //Добавляем сведения о санкциях
-                Element sluch = zap.getChild("SLUCH");
-                if (sluch.getChild("SANK_IT")!=null&&!sluch.getChildText("SANK_IT").equalsIgnoreCase("0.00")) { //
-                    List<Element> sanks =sluch.getChildren("SANK");
-                    for (Element sank: sanks) {
-                        String key = sank.getChildText("S_OSN") ;
-                        if (!sanctionMap.containsKey(key)) {
-                            sanctionMap.put(key,(VocE2Sanction)getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
-                        }
-                        boolean isMain = !sank.getChildText("S_SUM").equals("0.00");
-                        E2EntrySanction s = new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),isMain);theManager.persist(s);
-                    }
-                    Element commentCalc = sluch.getChild("COMMENT_CALC");
-                    if (commentCalc!=null&&commentCalc.getChild("root")!=null) {
-
-                        Element ебаныйРусскийТэг = commentCalc.getChild("root");
-                        List<Element> ерт = ебаныйРусскийТэг.getChildren();
-                        StringBuilder commentError = new StringBuilder();
-                        for (Element еб:ерт) {
-                            commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
-                        }
-                        entry.setFondComment(commentError.toString());
-                    }
-                    entry.setIsDefect(true);
-                } else {
-                    entry.setIsDefect(false);
-                    entry.setFondComment(null);
-                }
-                theManager.persist(entry);
-            }
-            theManager.persist(bill);
-            LOG.info("Обновление закончено!");
-
-        } catch (JDOMException | IOException | ParseException e) {
-            LOG.error(e.getLocalizedMessage(),e);
         }
         //Распаковываем mp файл в папку
 

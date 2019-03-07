@@ -165,19 +165,20 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase) {
     //    String startDate = dateToString(aEntry.getHospitalStartDate()), finishDate = dateToString(aEntry.getHospitalFinishDate()!=null?aEntry.getHospitalFinishDate():aEntry.getFinishDate());
         boolean isExtDisp = aEntry.getEntryType().equals(EXTDISPTYPE);
+        String forPom = isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic ? "2" : "1") : "3";
         Element z = new Element("Z_SL");
         z.addContent(new Element("IDCASE").setText(zslIdCase+""));
       // z.addContent(new Element("IDCASE").setText(aEntry.getExternalParentId()+""));
         z.addContent(new Element("VID_SLUCH").setText(aEntry.getVidSluch().getCode()));
         z.addContent(new Element("USL_OK").setText(aEntry.getMedHelpUsl().getCode())); //дневной-круглосуточный-поликлиника
         z.addContent(new Element("VIDPOM").setText(aEntry.getMedHelpKind().getCode()));
-        z.addContent(new Element("FOR_POM").setText(isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic?"2":"1") : "3")); //форма помощи V014
+        z.addContent(new Element("FOR_POM").setText(forPom)); //форма помощи V014
 
         if (!isNotNull(aEntry.getIsEmergency())) z=addIfNotNull(z,"NPR_MO",aEntry.getDirectLpu()); //Направившее ЛПУ
         z=addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()); //Дата направления на лечение ***
         z=addIfNotNull(z,"NPR_N",aEntry.getTicket263Number()); // Номер направления на портале ФОМС
         z=addIfNotNull(z,"NPR_P",aEntry.getPlanHospDate()); // Дата планируемой госпитализации
-        //PRN_MO
+        if ("2".equals(forPom)) add(z,"PRN_MO","300001");
         z.addContent(new Element("LPU").setText("1")); //ЛПУ лечения //TODO = сделать высчитываемым
         z.addContent(new Element("VBR").setText(isNotNull(aEntry.getIsMobilePolyclinic())?"1":"0")); //Признак мобильной бригады
         z.addContent(new Element("DATE_Z_1").setText("_")); //Дата начала случая
@@ -206,7 +207,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      * aEntry - случай госпитализации
      * entriesList - строка с ИД СЛО
      * */
-        private Element createSlElements(E2Entry aEntry, String entriesString, int cnt, String aDefaultStacService) {
+        private Element createSlElements(E2Entry aEntry, String entriesString, int cnt) {
 
             /*
             ZSL, SL = информация об обращении. визиты переносятся в USL
@@ -323,7 +324,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         theManager.persist(new E2EntryError(currentEntry,"NO_FOND_FIELD: Нет профиля койки"));
                         return null;
                     }
-                    sl=add(sl,"PROFIL_K",profile.getProfileBed().getCode()); //Профиль коек/специальностей (V020)
+                    sl=add(sl,"PROFIL_K",currentEntry.getBedProfile()!=null ? currentEntry.getBedProfile().getCode() : profile.getProfileBed().getCode()); //Профиль коек/специальностей (V020)
                 }
                 sl=add(sl,"DET",isChild); //Признак детского возраста
                 if (isPoliclinic) {
@@ -514,7 +515,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             continue;
                         }
                         VocE2FondV021 spec = child.getFondDoctorSpecV021();
-                        prvs = child.getFondDoctorSpecV021()!=null?child.getFondDoctorSpecV021().getCode():childProfile.getMedSpecV021().getCode();
+                        prvs = child.getFondDoctorSpecV021()!=null ? child.getFondDoctorSpecV021().getCode() : childProfile.getMedSpecV021().getCode();
                         Element usl = new Element("USL");
                         usl.addContent(new Element("IDSERV").setText(""+uslCnt));
                         usl.addContent(new Element("LPU_U").setText("300001"));
@@ -527,7 +528,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                 VocMedService vms = isFirst? spec.getDefaultMedService():spec.getRepeatMedService();
                                 usl=add(usl,"VID_VME",vms.getCode());
                             } catch (Exception e) {
-                                usl=add(usl,"VID_VME","A01.20.002");
+                                usl=add(usl,"VID_VME","A02.12.002");
                                 LOG.error(" У врача "+spec.getCode()+" нет услуги по умолчанию");
                             }
                         }
@@ -562,7 +563,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                 usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
                                 usl.addContent(new Element("KOL_USL").setText(ms[1].toString()));
                                 usl.addContent(new Element("SUMV_USL").setText("0"));
-                                usl.addContent(new Element("PRVS_U").setText(prvs));
+                                usl.addContent(new Element("PRVS_U").setText(medService.getCode().startsWith("B") ? ems.getSpeciality().getMedSpecV021().getCode() : prvs));
                                 //usl.addContent(new Element("IDDOKT_U").setText(currentEntry.getDoctorSnils()));
                                 usl.addContent(new Element("IDDOKT_U").setText(isNotNull(ems.getDoctorSnils()) ? ems.getDoctorSnils() : currentEntry.getDoctorSnils())); //Так правильно
                                 usl.addContent(new Element("NPL").setText("0"));
@@ -596,8 +597,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     List<Object[]> list = theManager.createNativeQuery("select vms.code as ms, cast(count(ems.id) as varchar) as cnt, cast(ems.serviceDate as varchar(10)) as serviceDate" +
                             " from EntryMedService ems left join vocMedService vms on vms.id=ems.medService_id where ems.entry_id=:id group by vms.code, ems.servicedate")
                             .setParameter("id",currentEntry.getId()).getResultList();
-                    if (list.isEmpty() && aDefaultStacService!=null) {
-                        list.add(new String[]{aDefaultStacService,"1",null});
+                    if (list.isEmpty() ) {
+                     //   list.add(new String[]{currentEntry.getMedHelpProfile().getDefaultStacMedService()!=null ? currentEntry.getMedHelpProfile().getDefaultStacMedService().getCode() : "A02.12.002","1",null});
+                        list.add(new String[]{"A02.12.002","1",null});
                     }
                     if (!list.isEmpty()) {
                         for (Object[] ms: list) {
@@ -893,10 +895,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
                 Long personId = entry.getExternalPatientId();
                 Element z ;
-                String defaultStacService = getExpertConfigValue("DEFAULT_STAC_SERVICE",null);
                 switch (aVersion) { //При появлении новых форматов файла - добавляем сюда
                     case "3.1.1":
-                        z= createSlElements(entry, sls,cnt+1,defaultStacService);
+                        z= createSlElements(entry, sls,cnt+1);
                         break;
                     case "3.1":
                         throw new IllegalStateException("Создание файла версии 3.1 более не поддерживается!");

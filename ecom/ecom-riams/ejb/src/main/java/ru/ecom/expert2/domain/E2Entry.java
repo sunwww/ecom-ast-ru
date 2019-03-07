@@ -1164,4 +1164,13 @@ public class E2Entry extends BaseEntity {
     /** КДП */
     private VocDiagnosticVisit theKdpVisit ;
 
+    /** Профиль койки */
+    @Comment("Профиль койки")
+    @OneToOne
+    public VocE2FondV020 getBedProfile() {return theBedProfile;}
+    public void setBedProfile(VocE2FondV020 aBedProfile) {theBedProfile = aBedProfile;}
+    /** Профиль койки */
+    private VocE2FondV020 theBedProfile ;
+
+
 }

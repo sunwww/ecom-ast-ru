@@ -237,6 +237,8 @@
                     <msh:autoComplete property="fondDoctorSpec" size="50" vocName="vocE2FondV015"/>
                     <msh:autoComplete property="medHelpProfile" size="50" vocName="vocE2MedHelpProfile"/>
                 </msh:row><msh:row>
+                <msh:autoComplete property="bedProfile" size="50" vocName="vocE2FondV020"/>
+                </msh:row><msh:row>
             </msh:row><msh:row>
                     <msh:autoComplete property="fondDoctorSpecV021" size="50" vocName="vocE2FondV021"/>
 
@@ -245,7 +247,7 @@
                 <msh:autoComplete property="visitPurpose" size="50" vocName="vocE2FondV025"/>
 
                 </msh:row><msh:row>
-                    <msh:autoComplete property="kdpVisit" vocName="vocDiagnosticVisit" />
+                    <msh:autoComplete property="kdpVisit" vocName="vocDiagnosticVisit" size="100" />
             </msh:row>
                 <msh:row>
                     <msh:textField property="entryType" size="50"/>
@@ -366,7 +368,6 @@ where link.entry_id=${param.id}"/>
             <msh:tableColumn columnName="Уровень сложности" property="2"/>
             <msh:tableColumn columnName="Коэффициент" property="3"/>
         </msh:table>
-
             <msh:section title="Случаи онкологического лечения" createUrl="entityParentPrepareCreate-e2_cancerEntry.do?id=${param.id}">
             <ecom:webQuery name="cancerEntry" nativeSql="select cancer.id, cancer.serviceType
 from E2CancerEntry cancer
@@ -378,10 +379,9 @@ where cancer.entry_id=${param.id}"/>
             </msh:table>
             </msh:section>
             <msh:section title="Дефекты оплаты">
-            <ecom:webQuery name="sanctionList" nativeSql="select es.dopcode , vs.osn|| ' '||vs.name
+            <ecom:webQuery name="sanctionList" nativeSql="select es.dopcode , coalesce(es.comment,'')
             , case when es.ismainDefect='1' then 'background-color:red' else '' end as f3_style
   from e2entrysanction es
-  left join voce2sanction  vs on vs.id=es.sanction_id
   where es.entry_id=${param.id} and es.isDeleted='0'"/>
             <msh:tableNotEmpty  name="sanctionList"  >
                 <msh:table  idField="1" name="sanctionList" styleRow="3" action="/javascript:void()" >
