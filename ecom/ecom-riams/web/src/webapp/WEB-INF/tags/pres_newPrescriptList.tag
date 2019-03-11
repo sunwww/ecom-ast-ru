@@ -116,23 +116,23 @@ var isSLSClosed = true;
          PrescriptionService.isPrescriptListExists('${parentID}', {
              callback: function (aPresID) {
                  if (aPresID==null||aPresID=='null') {
-                     alert ('Пациент выписан, назначения отсутствуют, добавление назначений невоможно!');
+                     showToastMessage ('Пациент выписан, назначения отсутствуют, добавление назначений невозможно!',false);
                      cancel${name}PrescriptList();
                      return;
                  } else {
                      var isMedcaseClosed = aPresID.substring(0,1);
                      if (isMedcaseClosed=='0') {
                          disableButtons();
-                         alert ('Пациент выписан, добавление назначений невоможно!');
+                         showToastMessage('Пациент выписан, добавление назначений невоможно! Можно просмотреть назначения в приёмнике и сводный лист назначений.',false);
                      } else if (isMedcaseClosed=='2') {
-                         alert("В визите можно создавать лист назначений в закрытом СПО текущим числом.");
+                         showToastMessage("В визите можно создавать лист назначений в закрытом СПО текущим числом.",false);
                      }
                      plId = aPresID.substring(1);
                      PrescriptionService.isPrescriptListCanBeChangedFromSLS('${parentID}', {
                          callback: function (aRes) {
-                             if (aRes==true) {
+                             if (aRes==true && isMedcaseClosed!='0') {
                                  disableButtons();
-                                 alert ('Пациент уже в отделении, делать назначения из госпитализации запрещено, можно только просмотреть сводный лист назначений');
+                                 showToastMessage('Пациент уже в отделении, делать назначения из госпитализации запрещено! Можно просмотреть назначения в приёмнике и сводный лист назначений.',false);
                              }
                              PrescriptionService.isPrescriptListfromSLO('${parentID}', {
                                  callback: function (aMCaseType) {

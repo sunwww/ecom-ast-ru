@@ -240,6 +240,7 @@ function unNull (aStr) {
 	return aStr!=null ? ""+aStr : "";
 }
 function printPrescriptList(aCtx, aParams) {
+    var mapTmp = new java.util.HashMap() ;
 	var id = new java.lang.Long(aParams.get("id"));
 	var sscode="";
 	var lastname="";
@@ -275,7 +276,7 @@ function printPrescriptList(aCtx, aParams) {
 				" left join vocDurationUnit as vdu on vdu.id=p.durationUnit_id" +
 				" left join diet diet on diet.id=p.diet_id" +
 				" left join vocmodeprescription vmp on vmp.id=p.modeprescription_id" +
-				" where p.prescriptionlist_id="+id+"order by p.planstartdate ";
+				" where p.prescriptionlist_id="+id+" order by p.planstartdate ";
 		var pres = aCtx.manager.createNativeQuery(presSql).getResultList();
 		if (!pres.isEmpty()) {
 			for (var i=0;i<pres.size();i++) {
@@ -342,16 +343,68 @@ function printPrescriptList(aCtx, aParams) {
 		
 	}
 	//map.put("comments",comments);
-	map.put ("sql", sql);
-	map.put("cardNumber", sscode);
-	map.put("pat.lastname", lastname);
-	map.put("pat.firstname", firstname);
-	map.put("pat.middlename", middlename);
-	map.put("doctorInfo", doctor);
-	map.put("currentDate", date);
-	map.put ("listNumber", id);
-	map.put("prescriptions",prescriptions);
+    mapTmp.put ("sql", sql);
+    mapTmp.put("cardNumber", sscode);
+    mapTmp.put("pat.lastname", lastname);
+    mapTmp.put("pat.firstname", firstname);
+    mapTmp.put("pat.middlename", middlename);
+    mapTmp.put("doctorInfo", doctor);
+    mapTmp.put("currentDate", date);
+    mapTmp.put ("listNumber", id);
+    mapTmp.put("prescriptions",prescriptions);
+    if (aParams.get("inner")!='inner') map=mapTmp; else return mapTmp;
 	return map;
+}
+function printPrescriptListTotal(aCtx,aParams) {
+    var id = new java.lang.Long(aParams.get("id"));
+    var sscode="";
+    var lastname="";
+    var firstname="";
+    var middlename="";
+    var birthday="";
+    var currentDate="";
+    var sql = "select ss.code, pat.lastname, pat.firstname, pat.middlename, to_char(pat.birthday,'dd.MM.yyyy')as birthDay " +
+        ", to_char(current_date,'dd.MM.yyyy') as curDate from prescriptionlist pl " +
+        "left join medcase dep on dep.id=pl.medcase_id " +
+        "left join medcase sls on sls.id=dep.parent_id " +
+        "left join statisticstub ss on ss.medcase_id=coalesce(sls.id, dep.id) " +
+        "left join patient pat on pat.id=dep.patient_id " +
+        "where sls.id="+id;
+    var arr  = aCtx.manager.createNativeQuery(sql).getResultList();
+    if (!arr.isEmpty()) {
+        var data = arr.get(0);
+        sscode = ""+data[0];
+        lastname = ""+data[1];
+        firstname = ""+data[2];
+        middlename = ""+data[3];
+        birthday = ""+data[4];
+        currentDate = ""+data[5];
+    }
+    var lnSql = "select pl.id,dep.name " +
+        "from prescriptionlist pl " +
+        "left join medcase mc on mc.id=pl.medcase_id " +
+        "left join mislpu dep on dep.id=mc.department_id " +
+        "where pl.medcase_id in (select id from medcase where parent_id="+id+") or medcase_id="+id;
+    var lns = aCtx.manager.createNativeQuery(lnSql).getResultList();
+	var totalPrescs=new java.util.ArrayList();
+	for (var i = 0; i < lns.size(); i++) {
+		var listNumber = unNull(lns.get(i)[0]);
+		if (listNumber != '') {
+			var pars = new java.util.TreeMap();
+			pars.put("id",listNumber);
+			pars.put("inner",'inner');
+			var prescriptions = printPrescriptList(aCtx,pars);
+			totalPrescs.addAll(prescriptions.get('prescriptions'));
+		}
+	}
+    map.put("cardNumber", sscode);
+    map.put("pat.lastname", lastname);
+    map.put("pat.firstname", firstname);
+    map.put("pat.middlename", middlename);
+    map.put("pat.birthday", birthday);
+    map.put("currentDate", currentDate);
+    map.put("prescriptions",totalPrescs);
+    return map;
 }
 function printBloodTransfusionInfo(aCtx,aParams) {
 	var id = new java.lang.Long(aParams.get("id")) ;
