@@ -19,20 +19,20 @@
     String path_curdate = null ;
     if (month==Calendar.JANUARY) { 
     	if (day<10) {path_curdate="0101";}
-    	if (day==13) {path_curdate="0113";}
+    	else if (day==13) {path_curdate="0113";}
     } else if (month==Calendar.FEBRUARY) {
     	if (day==14) {path_curdate="0214";}
-    	if (day>20 && day<24) {path_curdate="0223";}
+    	else if (day>20 && day<24) {path_curdate="0223";}
     } else if (month==Calendar.MARCH) {
     	if (day==1) {path_curdate="0301";}
-    	if (day==5) {path_curdate="0305";}
-    	if (day>5 && day<9) {path_curdate="0308";}
+    	else if (day==5) {path_curdate="0305";}
+    	else if (day>5 && day<9) {path_curdate="0308";}
     } else if (month==Calendar.APRIL) {
     	if (day==1) {path_curdate="0401";}
-    	if (day==12) {path_curdate="0412";}
+    	else if (day==12) {path_curdate="0412";}
     } else if (month==Calendar.MAY) {
     	if (day==1) {path_curdate="0501";}
-    	if (day>5 && day<10) {path_curdate="0509";}
+    	else if (day>5 && day<10) {path_curdate="0509";}
     } else if (month==Calendar.JUNE) {
     	if (day==1) {path_curdate="0601";}
     	int mc = cal.get(Calendar.DAY_OF_WEEK_IN_MONTH);
