@@ -41,8 +41,7 @@ public class LoginInfo implements ILoginInfo, Serializable {
         return (LoginInfo) aSession.getAttribute(KEY) ;
     }
     public static String getHashPassword(String aUsername, String aPassword) {
-    	String hash = String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
-    	return hash;
+        return String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
     }
 
     /** Имя пользователя для входа */

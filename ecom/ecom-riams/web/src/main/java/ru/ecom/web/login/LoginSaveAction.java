@@ -48,28 +48,20 @@ public class LoginSaveAction extends LoginExitAction {
     }
     public static Long getPasswordAge (String username, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		Long passwordLifetime = null;
-		Long diff = null;
-		Long passwordAge = null;
-		Date passwordStartDate = null;
+		Long diff ;
 		try {
-			passwordLifetime = Long.valueOf(service.executeNativeSql("select sc.KeyValue from SoftConfig sc where sc.key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
-		} catch (Exception e){}
-		try {
-			passwordStartDate  = DateFormat.parseDate(service.executeNativeSql("select case when su.passwordChangedDate is not null then to_char(su.passwordChangedDate,'dd.MM.yyyy') else to_char(coalesce(su.editdate,su.createdate),'dd.MM.yyyy') end as sudate from secuser su where su.login='"+username+"'").iterator().next().get1().toString());
-		} catch (Exception e){}
-		if (passwordStartDate !=null) {
-			passwordAge = ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null);
-		}
-		if (passwordLifetime!=null) {
-			//System.out.println("PasswordAAAA , passLT = "+passwordLifetime+", passAge = "+passwordAge+", passStartdate = "+passwordStartDate);
+			Long passwordLifetime = Long.valueOf(service.executeNativeSql("select sc.KeyValue from SoftConfig sc where sc.key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
+			Date passwordStartDate  = DateFormat.parseDate(service.executeNativeSql("select case when su.passwordChangedDate is not null then to_char(su.passwordChangedDate,'dd.MM.yyyy') else to_char(coalesce(su.editdate,su.createdate),'dd.MM.yyyy') end as sudate from secuser su where su.login='"+username+"'").iterator().next().get1().toString());
+			Long passwordAge = ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null);
+				//System.out.println("PasswordAAAA , passLT = "+passwordLifetime+", passAge = "+passwordAge+", passStartdate = "+passwordStartDate);
 			diff = passwordLifetime - passwordAge;
-			if (diff<=0) {
-				diff = Long.valueOf(0);
-			} 
+			if (diff<0) {
+				diff = 0L;
+			}
+		} catch (Exception e){
+			LOG.error(e.getMessage(),e);
+			diff = null;
 		}
-		
-		
 		return diff;
 	}
 
