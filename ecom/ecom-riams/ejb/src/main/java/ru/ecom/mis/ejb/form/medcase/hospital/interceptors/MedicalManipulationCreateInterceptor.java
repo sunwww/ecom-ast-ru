@@ -26,16 +26,17 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
         MedCase parentSSL = manager.find(MedCase.class, aParentId) ;
         BandageForm form=(BandageForm)aForm;
       //  MedicalManipulationForm mform=(MedicalManipulationForm)aForm;
-        if (parentSSL instanceof HospitalMedCase) {
-            HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
-
-            if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
-            if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
-        } else if (parentSSL instanceof DepartmentMedCase){
+        if (parentSSL instanceof DepartmentMedCase){
             DepartmentMedCase slo = (DepartmentMedCase) parentSSL ;
 
             if (slo.getDepartment()!=null) form.setDepartment(slo.getDepartment().getId()) ;
             if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
+        }
+         else if (parentSSL instanceof HospitalMedCase) {
+            HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
+
+            if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
+            if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
         } else  if (parentSSL instanceof Visit){
             Visit slo = (Visit) parentSSL ;
             if (slo.getWorkFunctionExecute()!=null) {
@@ -89,7 +90,7 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
         }
         //Запрет на создание в СЛО и СЛС, если случай закрыт. Админ может создавать.
         if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut") &&
-                (parentSSL instanceof DepartmentMedCase || parentSSL instanceof HospitalMedCase)) {
+                parentSSL instanceof HospitalMedCase) {
             MedCase hmc = (parentSSL instanceof DepartmentMedCase)? parentSSL.getParent() : parentSSL;
             if (hmc.getDateFinish()!=null) throw new IllegalStateException("Пациент выписан. Нельзя добавлять перевязку в закрытый СЛС!");
         }
