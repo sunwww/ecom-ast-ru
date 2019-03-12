@@ -2,7 +2,6 @@ package ru.ecom.api.record;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
@@ -200,12 +199,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
                     wct.setPrePatient(null);
                 }
                 theManager.persist(wct);
-                try {
-                    return new JSONObject().put("status","ok").put("info","Запись успешно аннулирована").put("calendarTimeId",""+wct.getId()).toString();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return "EXCEPTION";
-                }
+                return new JSONObject().put("status","ok").put("info","Запись успешно аннулирована").put("calendarTimeId",""+wct.getId()).toString();
             }
         } else {
             return getErrorJson("Ошибка аннулирования записи, возможно, пациент не идентифицирован ",ANNUL_ERROR);
