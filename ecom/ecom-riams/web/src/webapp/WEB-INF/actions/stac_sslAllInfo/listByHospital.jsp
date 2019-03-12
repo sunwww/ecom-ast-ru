@@ -418,6 +418,54 @@ order by m.${dateI}
     </msh:table>
     </msh:sectionContent>
     </msh:section>
+
+      <msh:section>
+          <ecom:webQuery isReportBase="true" name="journal_priem_general" nameFldSql="journal_priem_general_sql" nativeSql="
+
+    select
+    '&pigeonHole=${param.pigeonHole}&department=${param.department}&typeDate=${typeDate}&dateI=${dateI}&dateBegin='
+    ||to_char(m.${dateI},'dd.mm.yyyy')||'&dateEnd='||to_char(m.${dateI},'dd.mm.yyyy'),
+    m.${dateI}
+, count(distinct m.id) as all1
+,count(distinct case when m.deniedHospitalizating_id is null then m.id else null end) as obr
+, count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end) as denied
+
+from medcase m
+left join MisLpu as ml on ml.id=m.department_id
+left join Patient p on p.id=m.patient_id
+left join Address2 a on p.address_addressid=a.addressid
+left join Omc_Oksm oo on oo.id=p.nationality_id
+where m.dtype='HospitalMedCase' and m.${dateI}
+between to_date('${param.dateBegin}','dd.mm.yyyy')
+and to_date('${dateEnd}','dd.mm.yyyy')
+and ( m.noActuality is null or m.noActuality='0')
+${period}
+${emerIs} ${pigeonHole} ${department} ${age_sql}
+group by m.${dateI}
+order by m.${dateI}
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+          <msh:sectionTitle>
+              <form action="print-stac_journalByHospital_1_short.do" method="post" target="_blank">
+                  Общий результат поиска обращений за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_general_sql}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_priem_general" cellFunction="true"
+                         viewUrl="js-stac_sslAllInfo-findByDate.do?short=Short"
+                         action="js-stac_sslAllInfo-findByDate.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+                  <msh:tableColumn columnName="Дата" property="2"/>
+                  <msh:tableColumn isCalcAmount="true" columnName="Всего обращений" property="3"/>
+                  <msh:tableColumn isCalcAmount="true" columnName="Всего госпитализированы" property="4" addParam="&typeEmergency=${typeEmergency}&typeHosp=1"/>
+                  <msh:tableColumn isCalcAmount="true" columnName="Всего отказано в госпитализации" property="5" addParam="&typeEmergency=${typeEmergency}&typeHosp=2"/>
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+
     	<%} 
     	if (view!=null && (view.equals("2"))) {%>
     <msh:section>
@@ -587,8 +635,86 @@ order by vdh.name
       <msh:tableColumn columnName="из них другое" property="14" addParam="&typeEmergency=${typeEmergency}&typePatient=other"/>
     </msh:table>
     </msh:sectionContent>
-    
     </msh:section>
+      <msh:section>
+          <ecom:webQuery isReportBase="true" name="journal_priem_otcaz" nameFldSql="journal_priem_otcaz_sql" nativeSql="
+
+    select '&pigeonHole=${param.pigeonHole}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&department='
+    ||m.department_id
+,dep.name
+,count(distinct case when (m.emergency is null or m.emergency='0') then m.id else null end) as pl
+,count(distinct case when (m.emergency is null or m.emergency='0') and of1.voc_code='К' then m.id else null end) as plK
+,count(distinct case when (m.emergency is null or m.emergency='0')  and of1.voc_code='О' then m.id else null end) as plO
+,count(distinct case when m.emergency='1' then m.id else null end) as em
+,count(distinct case when m.emergency='1' and of1.voc_code='К' then m.id else null end) as emK
+,count(distinct case when m.emergency='1'  and of1.voc_code='О' then m.id else null end) as emO
+,count(distinct m.id) as obr
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1'
+then m.id else null end) as obrVil
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1'
+then m.id else null end) as obrCity
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30'
+then m.id else null end) as obrInog
+,count(distinct case when oo.voc_code!='643'  then m.id else null end) as obrInost
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then m.id else null end) as obrOther
+from medcase m
+left join mislpu dep on dep.id=m.department_id
+left join Omc_Frm of1 on of1.id=m.orderType_id
+left join MisLpu as ml on ml.id=m.department_id
+left join Patient p on p.id=m.patient_id
+left join Address2 a on p.address_addressid=a.addressid
+left join Omc_Oksm oo on oo.id=p.nationality_id
+where m.dtype='HospitalMedCase'
+and m.${dateI} between to_date('${param.dateBegin}','dd.mm.yyyy')
+and to_date('${dateEnd}','dd.mm.yyyy')
+and ( m.noActuality is null or m.noActuality='0')
+and m.deniedHospitalizating_id is not null
+${period}
+${emerIs} ${pigeonHole} ${department} ${age_sql}
+group by m.department_id,dep.name
+order by dep.name
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+          <msh:sectionTitle>
+              <form action="print-stac_journalByHospital_2_3.do" method="post" target="_blank">
+                  Отказы от госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_otcaz_sql}">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="Отделение">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+      <msh:sectionContent >
+          <msh:table name="journal_priem_otcaz" cellFunction="true"
+                     viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1&short=Short&otkaz=1"
+                     action="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1&otkaz=1"
+                     idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+              <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+                  <tr>
+                      <th colspan=1></th>
+                      <th colspan=1></th>
+                      <th colspan=3>Плановые</th>
+                      <th colspan=3>Экстренные</th>
+                      <th colspan=6>Общее кол-во</th>
+
+                  </tr>
+              </msh:tableNotEmpty>
+              <msh:tableColumn columnName="Отделение" property="2" />
+              <msh:tableColumn isCalcAmount="true" columnName="Всего" property="3" addParam="&typeEmergency=2" />
+              <msh:tableColumn isCalcAmount="true" columnName="КСП" property="4" addParam="&typeEmergency=2&typeFrm=kcp" />
+              <msh:tableColumn isCalcAmount="true" columnName="самообращение" property="5" addParam="&typeEmergency=2&typeFrm=sam" />
+              <msh:tableColumn isCalcAmount="true" columnName="Всего" property="6" addParam="&typeEmergency=1" />
+              <msh:tableColumn isCalcAmount="true" columnName="КСП" property="7" addParam="&typeEmergency=1&typeFrm=kcp" />
+              <msh:tableColumn isCalcAmount="true" columnName="самообращение" property="8" addParam="&typeEmergency=1&typeFrm=sam" />
+              <msh:tableColumn isCalcAmount="true" columnName="Всего" identificator="false" property="9" addParam="&typeEmergency=${param.typeEmergency}"/>
+              <msh:tableColumn isCalcAmount="true" columnName="из них с.ж" property="10"  addParam="&typeEmergency=${param.typeEmergency}&typePatient=vil"/>
+              <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="11" addParam="&typeEmergency=${param.typeEmergency}&typePatient=city"/>
+              <msh:tableColumn isCalcAmount="true" columnName="из них иног." property="12" addParam="&typeEmergency=${param.typeEmergency}&typePatient=inog"/>
+              <msh:tableColumn isCalcAmount="true" columnName="из них иностр." property="13" addParam="&typeEmergency=${param.typeEmergency}&typePatient=inostr"/>
+              <msh:tableColumn isCalcAmount="true" columnName="из них другое" property="14" addParam="&typeEmergency=${param.typeEmergency}&typePatient=other"/>
+          </msh:table>
+      </msh:sectionContent>
+      </msh:section>
     <% }
     	%>
    	    	<%if (view!=null && (view.equals("4"))) {%>

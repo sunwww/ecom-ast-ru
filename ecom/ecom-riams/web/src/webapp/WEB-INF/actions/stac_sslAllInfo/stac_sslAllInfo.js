@@ -60,6 +60,7 @@ function listRecord(aCtx) {
 	var typeDost = +aCtx.request.getParameter("typeDost") ;
 	var typePatient = aCtx.request.getParameter("typePatient") ;
 	var typeFrm = aCtx.request.getParameter("typeFrm") ;
+    var otkaz = aCtx.request.getParameter("otkaz") ;
 	if (+typeEmergency==1) {
 		aCtx.request.setAttribute("emergency"," and m.emergency='1'") ;
 	} else if (+typeEmergency==2) {
@@ -73,7 +74,10 @@ function listRecord(aCtx) {
 		aCtx.request.setAttribute("dostSql"," and vpat.code='3'") ;
 	}
 	if (+typeHosp==1) {
-		aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is null") ;
+		if (+otkaz!=1)
+			aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is null") ;
+		else
+            aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is not null") ;
 	} else if (+typeHosp==2) {
 		aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is not null") ;
 	}
