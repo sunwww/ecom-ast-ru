@@ -329,6 +329,12 @@
             });
             </msh:ifFormTypeIsView>
             </msh:ifInRole>
+            function printPrescriptionList(id) {
+                window.document.location='print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id='+id;
+            }
+            function printPrescriptionListTotal (id) {
+                window.document.location='print-prescriptListTotal.do?s=HospitalPrintService&m=printPrescriptListTotal&id='+id;
+            }
         </script>
     </tiles:put>
 </tiles:insert>

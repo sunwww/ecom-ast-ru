@@ -3,13 +3,16 @@ package ru.ecom.mis.ejb.form.medcase.hospital;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocComplication;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationViewInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -25,6 +28,9 @@ import ru.nuzmsh.forms.validator.validators.*;
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/SurOper")
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(SurgicalOperationCreateInterceptor.class)
+)
+@AViewInterceptors(
+		@AEntityFormInterceptor(SurgicalOperationViewInterceptor.class)
 )
 public class SurgicalOperationForm extends IdEntityForm{
 	/** Дата операции */

@@ -96,3 +96,16 @@ function checkParent(aEntity, aCtx) {
 	//Находим родителя по дате и времени операции
        var interceptor = new Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor.setParentByOperation(aEntity,aCtx.manager);
 }
+function getMedCaseType (aId, aCtx) {
+    var list = aCtx.manager.createNativeQuery("select dtype from medcase where id="+aId).getResultList() ;
+    return list.size()>0?""+list.get(0):"";
+}
+function onPreDelete(aEntityId, aCtx) {
+    var so = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.SurgicalOperation,new java.lang.Long(aEntityId));
+    var dtype = getMedCaseType(so.getMedCase().getId(),aCtx);
+    if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut")
+        && (dtype=='DepartmentMedCase' || dtype=='HospitalMedCase')) {
+        var parent=(dtype=='DepartmentMedCase')? so.getMedCase().getParent() : so.getMedCase() ;
+        if (parent.getDateFinish()!=null) throw "Пациент выписан. Нельзя удалять операцию в закрытом СЛС!";
+    }
+}

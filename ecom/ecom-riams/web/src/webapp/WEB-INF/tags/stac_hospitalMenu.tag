@@ -87,10 +87,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		styleId="viewShort"
 		
 		/> --%>
-	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" 
+	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Лист назначений"
 		action="/javascript:showCreatePrescriptList('${param.id}','.do')" title='Показать/добавить лист назначений'
 		/>
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"  
+	   <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Сводный лист назначений" params="" action="/javascript:getDefinition('entityParentList-pres_prescriptList.do?short=Short&id=${param.id}')" title="Показать все назначения СЛС" guid="7b0b69ae-3b9c-47d9-ab3c-5055fbe6fa9f" />
+	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"
     	 styleId="viewShort" action="/javascript:getDefinition('entityParentList-stac_surOperation.do?short=Short&id=${param.id}','.do')"  title='Операции'
     	
     	/>

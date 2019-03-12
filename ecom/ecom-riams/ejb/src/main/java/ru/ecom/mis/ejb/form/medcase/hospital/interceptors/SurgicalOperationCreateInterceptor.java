@@ -25,9 +25,9 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
         	DiagnosisForm frm = getDiagnosis(aContext.getEntityManager(), parentSSL.getId(), "4", "1", true) ;
     		HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
     		if (frm!=null) form.setIdc10Before(frm.getIdc10()) ;
-    		if (hosp.getDateFinish()!=null && hosp.getDischargeTime()!=null && !aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateInCloseMedCase")) {
+    		/*if (hosp.getDateFinish()!=null && hosp.getDischargeTime()!=null && !aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateInCloseMedCase")) {
     			throw new IllegalStateException("Нельзя добавить хирургическую операцию в закрытый случай стационарного лечения (ССЛ) !!!") ;
-    		}
+    		}*/
     		
     		if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
     		if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
@@ -86,6 +86,13 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
         		}
     		}
     	}
+		//Запрет на создание в СЛО и СЛС, если случай закрыт. Админ может создавать.
+		if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut") &&
+				!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateInCloseMedCase") &&
+				(parentSSL instanceof DepartmentMedCase || parentSSL instanceof HospitalMedCase)) {
+			MedCase hmc = (parentSSL instanceof DepartmentMedCase)? parentSSL.getParent() : parentSSL;
+			if (hmc.getDateFinish()!=null) throw new IllegalStateException("Пациент выписан. Нельзя добавлять хирургическую операцию в закрытый СЛС!");
+		}
     }
 
     /** находим правильного родителя при создании операции (по дате и времени) */

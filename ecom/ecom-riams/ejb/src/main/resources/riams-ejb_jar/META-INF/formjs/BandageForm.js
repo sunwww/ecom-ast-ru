@@ -86,6 +86,17 @@ function checkPeriod(aForm,aCtx) {
 function onSave(aForm, aCtx) {
 
 }
-function onPreDelete(aEntityId, aContext) {
-    aContext.manager.createNativeQuery("delete from anesthesia where manipulation_id="+aEntityId).executeUpdate() ;
+function getMedCaseType (aId, aCtx) {
+    var list = aCtx.manager.createNativeQuery("select dtype from medcase where id="+aId).getResultList() ;
+    return list.size()>0?""+list.get(0):"";
+}
+function onPreDelete(aEntityId, aCtx) {
+    var b = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Bandage,new java.lang.Long(aEntityId));
+    var dtype = getMedCaseType(b.getMedCase().getId(),aCtx);
+    if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut")
+        && (dtype=='DepartmentMedCase' || dtype=='HospitalMedCase')) {
+        var parent=(dtype=='DepartmentMedCase')? b.getMedCase().getParent() : b.getMedCase() ;
+        if (parent.getDateFinish()!=null) throw "Пациент выписан. Нельзя удалять перевязку в закрытом СЛС!";
+    }
+    aCtx.manager.createNativeQuery("delete from anesthesia where manipulation_id="+aEntityId).executeUpdate() ;
 }

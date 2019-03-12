@@ -14,16 +14,18 @@
     <script type="text/javascript">
     function printPrescriptionList(id) {
     window.document.location='print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id='+id;
-    }</script>
+    }
+    function printPrescriptionListTotal (id) {
+        window.document.location='print-prescriptListTotal.do?s=HospitalPrintService&m=printPrescriptListTotal&id='+id;
+    }
+    </script>
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Показать" guid="a47dfc0b-97d1-4cb5-b904-4ff717e612a7" />
+
   </tiles:put>
   <tiles:put name="body" type="string">
-
-    <msh:section title="Список листов назначений">
-    
-    <msh:sectionContent>
+    <msh:section title="Список листов назначений  <b><u><a href='javascript:void(0)' onclick='printPrescriptionListTotal(${param.id});'> Печать сводного ЛН</a></u></b>">
         <ecom:webQuery name="allsvodlist" nativeSql="
             select pl.id,pl.createusername,pl.createdate, dep.name
             from prescriptionlist pl
@@ -38,9 +40,7 @@
             <msh:tableColumn columnName="Отделение" property="4" guid="5c893448-9084-4b1a-b301-d7aca8f6307c" />
           <msh:tableButton property="1" buttonShortName="Печать ЛН" buttonFunction="printPrescriptionList" />
 	    </msh:table>
-    </msh:sectionContent>
     </msh:section>
     <tags:pres_prescriptByListTotal field="sls.id=${param.id}" />
-
   </tiles:put>
 </tiles:insert>
