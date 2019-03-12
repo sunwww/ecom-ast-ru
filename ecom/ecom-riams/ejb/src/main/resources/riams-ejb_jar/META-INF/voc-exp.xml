@@ -139,7 +139,7 @@
                 from="omc_sprsmo voc"
                 nameId="voc.smocode"
                 order="voc.name"
-                names="voc.smocode, voc.name"
+                names="voc.smocode|| ' '||voc.name"
                 queried="voc.smocode like :querId or upper(voc.name) like upper(:query) "
         />
     </voc>

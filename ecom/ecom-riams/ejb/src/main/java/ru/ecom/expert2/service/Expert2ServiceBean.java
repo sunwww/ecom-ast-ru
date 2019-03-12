@@ -1517,7 +1517,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (servicesList!=null && !servicesList.isEmpty()) {return ;}
         try {
             String operationList = aEntry.getOperationList();
-            JSONArray services;
+            JSONArray services = new JSONArray();
             if (isNotNull(operationList)) {
                 services= new JSONArray(operationList);
                 //Делаем проверку на роды. Если отделение - обсервационное (27-12-2018), диагнозы входят в список, то создаем услуги
@@ -1542,103 +1542,81 @@ public class Expert2ServiceBean implements IExpert2Service {
                         }
                     }
                 }
-                if (!services.isEmpty()) {
-
-                    String dateFrormat ="yyyy-MM-dd";
-                    for (int i=0;i<services.length();i++) {
-                        JSONObject service = services.getJSONObject(i);
-                        if (!service.has("serviceCode")) {continue;}
-
-                        String code = service.getString("serviceCode");
-                        if (services.length()==1) { //Если ТОЛЬКО одна услуга/операция в СЛО, её и считаем главной
-                            aEntry.setMainService(code); theManager.persist(aEntry);
-                        }
-                        //Добавляем услугу, если только она используется в ОМС
-                        VocMedService vms ;
-                        String workfunction = service.has("workfunctionCode") ? service.getString("workfunctionCode") : null;
-                        if (!serviceList.containsKey(code)) {
-                            vms =  getEntityByCode(code, VocMedService.class, false);
-                            if (vms!=null && !isNotNull(vms.getIsOmc())) {vms=null;}
-                            serviceList.put(code,vms);
-                        } else {
-                            vms =serviceList.get(code);
-                        }
-                        if (vms!=null){
-                            EntryMedService ms =new EntryMedService(aEntry,vms);
-                            String serviceDate =service.has("serviceDate") ? service.getString("serviceDate") : null;
-                            if (service.has("workfunctionSnils")) ms.setDoctorSnils(service.getString("workfunctionSnils"));
-                            if (isNotNull(serviceDate)) {ms.setServiceDate(DateFormat.parseSqlDate(serviceDate,dateFrormat));}
-
-                            if (isNotNull(workfunction)) {
-                                VocE2FondV015 doctor = null;
-                                String key = "DOCTOR#"+workfunction;
-                                if (!resultMap.containsKey(key)) {
-                                    StringBuilder sb = new StringBuilder();
-                                    sb.append("select  v015.id from E2FondMedSpecLink link left join VocE2FondV015 v015 on v015.id=link.medSpec_id where link.medosWorkFunction='")
-                                            .append(workfunction).append("'");
-                                    List<BigInteger> list = theManager.createNativeQuery(sb.toString()).getResultList();
-                                    if (!list.isEmpty()) {
-                                        doctor=theManager.find(VocE2FondV015.class,list.get(0).longValue());
-                                    }
-                                } else {
-                                    doctor = (VocE2FondV015)resultMap.get(key);
-                                }
-                                if (doctor!=null) ms.setSpeciality(doctor);
-                            }
-                            theManager.persist(ms);
-                        }
-                    }
+            }
+            JSONArray tmp = new JSONArray(aEntry.getServices());
+            if (tmp.length()>0) {
+                for (int i=0;i<tmp.length();i++) {
+                    services.put(tmp.getJSONObject(i));
                 }
             }
-            services =new JSONArray(aEntry.getServices());  //Данные об услугах добавляем в список операций. нах разнообразие!
+
+           if (isNotNull(aEntry.getPrescriptionList())) {
+               tmp = new JSONArray(aEntry.getPrescriptionList());
+               if (tmp.length()>0) {
+                   for (int i=0;i<tmp.length();i++) {
+                       services.put(tmp.getJSONObject(i));
+                   }
+               }
+           }
             if (!services.isEmpty()) {
                 String dateFrormat ="yyyy-MM-dd";
                 for (int i=0;i<services.length();i++) {
                     JSONObject service = services.getJSONObject(i);
-                    if (!service.has("serviceCode")) continue;
+                    if (!service.has("serviceCode")) {continue;}
+
                     String code = service.getString("serviceCode");
-                    if (StringUtil.isNullOrEmpty(code)) continue;
-                    String workfunction = service.has("workfunctionCode")?service.getString("workfunctionCode"):null;
+                    if (services.length()==1) { //Если ТОЛЬКО одна услуга/операция в СЛО, её и считаем главной
+                        aEntry.setMainService(code); theManager.persist(aEntry);
+                    }
+                    //Добавляем услугу, если только она используется в ОМС
+                    VocMedService vms ;
+                    String workfunction = service.has("workfunctionCode") ? service.getString("workfunctionCode") : null;
                     if ("FINDME_SYSTEM".equals(code)) { //Находим первичный прием по профилю специалиста
                         code = code+"#"+workfunction;
                         serviceList.put(code, findDefaultMedServiceByWorkfunction(workfunction));
                     }
                     if (!serviceList.containsKey(code)) {
-                        serviceList.put(code, (VocMedService) getEntityByCode(code, VocMedService.class, false));
+                        vms =  getEntityByCode(code, VocMedService.class, false);
+                        if (vms!=null && !isNotNull(vms.getIsOmc())) {vms=null;}
+                        serviceList.put(code,vms);
+                    } else {
+                        vms =serviceList.get(code);
                     }
-                    EntryMedService ms = new EntryMedService(aEntry,serviceList.get(code));
-                    if (service.has("workfunctionSnils")) ms.setDoctorSnils(service.getString("workfunctionSnils"));
-                    String serviceDate =service.has("serviceDate")?service.getString("serviceDate"):null;
-                    if (isNotNull(serviceDate)) {ms.setServiceDate(DateFormat.parseSqlDate(serviceDate,dateFrormat));}
-                    if (isNotNull(workfunction)) {
-                        VocE2FondV015 doctor = null;
-                        String key = "DOCTOR#"+workfunction;
-                        if (!resultMap.containsKey(key)) {
-                            List<BigInteger> list = theManager.createNativeQuery("select  v015.id from E2FondMedSpecLink link " +
-                                    " left join VocE2FondV015 v015 on v015.id=link.medSpec_id where link.medosWorkFunction=:workfunction")
-                                    .setParameter("workfunction",workfunction).getResultList(); //Находим исход случая (V015 PRVS)
-                            if (!list.isEmpty()) {
-                                doctor=theManager.find(VocE2FondV015.class,list.get(0).longValue());
+                    if (vms!=null){
+                        EntryMedService ms =new EntryMedService(aEntry,vms);
+                        if (service.has("workfunctionSnils")) ms.setDoctorSnils(service.getString("workfunctionSnils"));
+                        String serviceDate =service.has("serviceDate") ? service.getString("serviceDate") : null;
+                        if (isNotNull(serviceDate)) {ms.setServiceDate(DateFormat.parseSqlDate(serviceDate,dateFrormat));}
+
+                        if (isNotNull(workfunction)) {
+                            VocE2FondV015 doctor = null;
+                            String key = "DOCTOR#"+workfunction;
+                            if (!resultMap.containsKey(key)) {
+                                StringBuilder sb = new StringBuilder();
+                                sb.append("select  v015.id from E2FondMedSpecLink link left join VocE2FondV015 v015 on v015.id=link.medSpec_id where link.medosWorkFunction=:workfunction");
+                                List<BigInteger> list = theManager.createNativeQuery(sb.toString()).setParameter("workfunction",workfunction).getResultList();
+                                if (!list.isEmpty()) {
+                                    doctor=theManager.find(VocE2FondV015.class,list.get(0).longValue());
+                                }
+                            } else {
+                                doctor = (VocE2FondV015)resultMap.get(key);
                             }
-                        } else {
-                            doctor = (VocE2FondV015)resultMap.get(key);
+                            if (doctor!=null) ms.setSpeciality(doctor);
                         }
-                        if (doctor!=null) ms.setSpeciality(doctor);
-                    }
-                    if (service.has("diagnosisCode")) {
-                        String mkb = service.getString("diagnosisCode");
-                        if(isNotNull(mkb)) {ms.setMkb((VocIdc10) getEntityByCode(mkb, VocIdc10.class, false));}
-                    }
-                    if (service.has("extDispServiceCode")) {
-                        String serviceCode =service.getString("extDispServiceCode");
-                        if (isNotNull(serviceCode)) {ms.setExtDispService((VocE2ExtDispService)getEntityByCode(serviceCode,VocE2ExtDispService.class,false));}
-                    }
-                    // workfunctionSnils
-                    theManager.persist(ms);
+                        if (service.has("diagnosisCode")) {
+                            String mkb = service.getString("diagnosisCode");
+                            if(isNotNull(mkb)) {ms.setMkb(getEntityByCode(mkb, VocIdc10.class, false));}
+                        }
+                        /*if (service.has("extDispServiceCode")) {
+                            String serviceCode =service.getString("extDispServiceCode");
+                            if (isNotNull(serviceCode)) {ms.setExtDispService((VocE2ExtDispService)getEntityByCode(serviceCode,VocE2ExtDispService.class,false));}
+                        }*/
+                        theManager.persist(ms);
                     }
                 }
+            }
         } catch (Exception e) {
-            LOG.error("error creating service = "+aEntry.getOperationList()+"<>"+aEntry.getServices(),e);
+            LOG.error("error creating service = "+aEntry.getOperationList()+"<>"+aEntry.getServices()+"<>"+aEntry.getPrescriptionList(),e);
         }
     }
 

@@ -364,10 +364,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             sl.addContent(napr);
                         }
                     }
-                    if (isNotNull(cancerEntry.getConsiliumResult())) { //Консилиум в любом случае если есть ЗНО.
+                    String consiliumResult = cancerEntry.getConsiliumResult();
+                    if (isNotNull(consiliumResult)) { //Консилиум в любом случае если есть ЗНО.
                         Element cons = new Element("CONS");
-                        cons= add(cons, "PR_CONS", cancerEntry.getConsiliumResult());
-                        cons= add(cons, "DT_CONS", cancerEntry.getConsiliumDate());
+                        cons= add(cons, "PR_CONS", consiliumResult);
+                        if (",1,2,3,".contains(consiliumResult)) add(cons, "DT_CONS", cancerEntry.getConsiliumDate());
                         sl.addContent(cons);
                     }
                     if (!cancerEntry.getMaybeCancer()) { //Случай ЗНО
@@ -599,7 +600,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             .setParameter("id",currentEntry.getId()).getResultList();
                     if (list.isEmpty() ) {
                      //   list.add(new String[]{currentEntry.getMedHelpProfile().getDefaultStacMedService()!=null ? currentEntry.getMedHelpProfile().getDefaultStacMedService().getCode() : "A02.12.002","1",null});
-                        list.add(new String[]{"A02.12.002","1",null});
+                     //   list.add(new String[]{"A02.12.002","1",null});
                     }
                     if (!list.isEmpty()) {
                         for (Object[] ms: list) {
@@ -621,6 +622,21 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             sl.addContent(usl);
                         }
                     }
+                    Element usl = new Element("USL");
+                    usl.addContent(new Element("IDSERV").setText(""+uslCnt));
+                    usl.addContent(new Element("LPU_U").setText("300001"));
+                    usl.addContent(new Element("PROFIL_U").setText(profileK));
+                    usl.addContent(new Element("VID_VME").setText(currentEntry.getMedHelpProfile().getDefaultStacMedService()!=null ? currentEntry.getMedHelpProfile().getDefaultStacMedService().getCode() : "AAA"));
+                    usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
+                    usl.addContent(new Element("DATE_1_U").setText(finishDate));
+                    usl.addContent(new Element("DATE_2_U").setText(finishDate));
+                    usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
+                    usl.addContent(new Element("KOL_USL").setText("1"));
+                    usl.addContent(new Element("SUMV_USL").setText("0"));
+                    usl.addContent(new Element("PRVS_U").setText(prvs));
+                    usl.addContent(new Element("IDDOKT_U").setText(currentEntry.getDoctorSnils()));
+                    usl.addContent(new Element("NPL").setText("0"));
+                    sl.addContent(usl);
                 }
                 // USL finish
                 zSl.addContent(indSl,sl);
