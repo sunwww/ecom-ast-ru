@@ -78,19 +78,16 @@ public class ContractServiceBean implements IContractService {
 				}
 
 				root.put("isTerminalPayment", isTerminalPayment);
+				root.put("pos", arr) ;
 				if (isRefund) {
 					root.put("totalRefundSum", totalSum.setScale(2,RoundingMode.HALF_UP).toString());
 				} else {
 					if (!StringUtil.isNullOrEmpty(aCustomerPhone)) root.put("customerPhone",aCustomerPhone); //Номер телефона или адрес почты для электронного чека
-					root.put("pos", arr) ;
 					root.put("totalPaymentSum", totalSum.setScale(2,RoundingMode.HALF_UP).toString()) ;
 					root.put("totalTaxSum", taxSum.setScale(2, RoundingMode.HALF_UP).toString()) ;
 				}
-				//root.put("isTerminalPayment", isTerminalPayment);
 				root.put("FIO", aKassir);
-			//	log.warn("isTermPayment = "+isTerminalPayment);
 				makeHttpPostRequest(root.toString(), url);
-				//log.warn(root.toString());
 				return "Чек отправлен на печать";
 			} else {
 				return "Произошла ошибка, обратитесь к программистам";
