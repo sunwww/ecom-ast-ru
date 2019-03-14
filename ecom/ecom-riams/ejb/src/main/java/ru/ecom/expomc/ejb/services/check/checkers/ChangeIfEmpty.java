@@ -1,8 +1,5 @@
 package ru.ecom.expomc.ejb.services.check.checkers;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
 import ru.ecom.expomc.ejb.services.check.CheckException;
 import ru.ecom.expomc.ejb.services.check.CheckResult;
 import ru.ecom.expomc.ejb.services.check.IChangeCheck;
@@ -14,6 +11,9 @@ import ru.ecom.report.replace.ReplaceHelper;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 /**
  * Установить значение, если поле пустое
  */
@@ -23,7 +23,7 @@ public class ChangeIfEmpty implements IChangeCheck, INativeSqlMultipleQueriesSup
 
 	public Collection<String> getNativeSql(NativeSqlContext aContext) {
 		try {
-			LinkedList<String> ret = new LinkedList<String>() ;
+			LinkedList<String> ret = new LinkedList<>() ;
 			
 			// сообщение 
 			RequiredCheck requiredCheck = new RequiredCheck() ;
@@ -51,7 +51,7 @@ public class ChangeIfEmpty implements IChangeCheck, INativeSqlMultipleQueriesSup
     public CheckResult check(ICheckContext aContext) throws CheckException {
         Object value = aContext.get(theProperty);
         CheckResult ret = new CheckResult();
-        if(value!=null && value instanceof String) {
+        if(value instanceof String) {
             String str = (String) value ;
             if(StringUtil.isNullOrEmpty(str)) {
                 ret.setAccepted(true);

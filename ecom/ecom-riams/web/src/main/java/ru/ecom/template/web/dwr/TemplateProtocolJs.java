@@ -1,18 +1,6 @@
 package ru.ecom.template.web.dwr;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import org.jboss.ejb3.dd.Inject;
 import org.json.JSONException;
-import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.web.tags.helper.RolesHelper;
-import ru.ecom.web.login.LoginInfo;
-import ru.ecom.web.util.Injection;
 import ru.ecom.diary.ejb.service.protocol.IDiaryService;
 import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.diary.web.action.protocol.template.TemplateSaveAction;
@@ -21,11 +9,19 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
-import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
+import ru.ecom.web.login.LoginInfo;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.StringUtil;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.naming.NamingException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -125,7 +121,7 @@ public class TemplateProtocolJs {
 		return service.saveParametersByProtocol(aSmoId,aProtocolId, aParams, username);
 	}*/
 	public String getTemplateDisableEdit (Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
-		if (aTemplateId==null||aTemplateId.equals(Long.valueOf(0))) return "0";
+		if (aTemplateId==null||aTemplateId.equals(0L)) return "0";
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
@@ -135,9 +131,8 @@ public class TemplateProtocolJs {
 	public String changeTypeByParameter(Long aParam, Long aType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("update Parameter set type='").append(aType).append("' where id='").append(aParam).append("'") ;
-		service.executeUpdateNativeSql(sql.toString()) ;
+		String sql = "update Parameter set type='"+aType+"' where id='"+aParam+"'" ;
+		service.executeUpdateNativeSql(sql) ;
 		
 		return "" ;
 	}
@@ -145,16 +140,16 @@ public class TemplateProtocolJs {
 		
 		String parameters = getParameterByTemplate(aProtocolId, aTemplateId, aRequest);
 		String permission = "";
-		if (aTemplateId!=null&&!aTemplateId.equals(Long.valueOf(0))) {
+		if (aTemplateId!=null&&!aTemplateId.equals(0L)) {
 		permission = getTemplateDisableEdit(aTemplateId, aRequest);
 		}
 		return parameters+"#"+permission;
 	}
-	public String getParameterByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
+	public String getParameterByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 		return getParameterByObject(aProtocolId, aTemplateId, "Template", aRequest);
 		
 	}
-	public String getParameterByObject(Long aProtocolId, Long aTemplateId, String aObjectName, HttpServletRequest aRequest) throws NamingException, JspException {
+	public String getParameterByObject(Long aProtocolId, Long aTemplateId, String aObjectName, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		Collection<WebQueryResult> lwqr = null ;
@@ -162,9 +157,9 @@ public class TemplateProtocolJs {
 		 if (aObjectName.equals("AssessmentCard")){
 			fieldName = "pf.assessmentCard";
 		}
-		Long wfId = Long.valueOf(0) ;
+		Long wfId = 0L;
 		String wfName = "" ;
-		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+		if (aProtocolId!=null && !aProtocolId.equals(0L)) {
 			if (aObjectName.equals("Template")) {
 				fieldName = "d.id";
 			} 
@@ -196,7 +191,7 @@ public class TemplateProtocolJs {
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join userValue vv on vv.id=pf.valueVoc_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
-			sql.append(" where "+fieldName+"='").append(aProtocolId).append("'") ;
+			sql.append(" where ").append(fieldName).append("='").append(aProtocolId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
 			
@@ -229,12 +224,10 @@ public class TemplateProtocolJs {
 			sql.append(" left join parametergroup pg on pg.id=p.group_id");
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
-			sql.append(" where "+fieldName+"='").append(aTemplateId).append("'") ;
+			sql.append(" where ").append(fieldName).append("='").append(aTemplateId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
 		} else {
-			sql = new StringBuilder() ;
-			
 			//sql.append("select mc.workFunctionexecute_id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as vwfname from diary d left join medcase mc on mc.id=d.medcase_id left join workfunction wf on wf.id=mc.workfunctionexecute_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id where "+fieldName+"="+aProtocolId+" and mc.workFunctionExecute_id is not null") ;
 			//Collection<WebQueryResult> lwf=service.executeNativeSql(sql.toString()) ;
 			//if (!lwf.isEmpty()) {
@@ -248,8 +241,8 @@ public class TemplateProtocolJs {
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder err = new StringBuilder() ;
 			sb.append("{");
-			sb.append("\"workFunction\":\""+wfId+"\",") ;
-			sb.append("\"workFunctionName\":\""+wfName+"\",") ;
+			sb.append("\"workFunction\":\"").append(wfId).append("\",");
+			sb.append("\"workFunctionName\":\"").append(wfName).append("\",");
 			/*if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
 				sb.append("\"isdoctoredit\":\"1\",") ;
 			} else {
@@ -303,7 +296,7 @@ public class TemplateProtocolJs {
 							if(isFirtMethodVoc) par.append(", ") ;else isFirtMethodVoc=true;
 							par.append("{\"id\":\"").append(str(""+vocVal[0])).append("\"") ;
 							par.append(",\"name\":\"").append(str(""+vocVal[1])).append("\"") ;
-							par.append(",\"checked\":\"").append(valList.indexOf(","+vocVal[0]+",")>-1?"1":"0").append("\"") ;
+							par.append(",\"checked\":\"").append(valList.contains("," + vocVal[0] + ",") ?"1":"0").append("\"") ;
 							par.append("}") ;
 						}
 						par.append("]") ;
@@ -333,7 +326,7 @@ public class TemplateProtocolJs {
 		
 	}
 	private String str(String aValue) {
-    	if (aValue.indexOf("\"")!=-1) {
+    	if (aValue.contains("\"")) {
     		aValue = aValue.replaceAll("\"", "\\\\\"") ;
     	}
     	return aValue ;
@@ -350,9 +343,9 @@ public class TemplateProtocolJs {
 		if (list.isEmpty()) {
 			res.append("null") ;
 		} else {
-			res.append(list.iterator().next().get1()).toString() ;
+			res.append(list.iterator().next().get1()) ;
 			res.append("#");
-			res.append(list.iterator().next().get2()).toString() ;
+			res.append(list.iterator().next().get2()) ;
 		}
 		return res.toString();
 	}
@@ -489,8 +482,7 @@ public class TemplateProtocolJs {
     			.append("' and upper(d.dtype)='PROTOCOL'")
     			.append("    group by d.dateRegistration,d.username having upper(d.username)='").append(login.toUpperCase()).append("'") 
     			.append("  order by d.dateRegistration desc") ;
-    			list=null ;
-    			list = service.executeNativeSql(sql.toString(),30);
+				list = service.executeNativeSql(sql.toString(),30);
         		res.append("<ul>");
         		for (WebQueryResult wqr:list) {
         			res.append("<li class='liTemp' onclick=\"").append(aFunction).append("('").append(aType).append("','")
@@ -514,8 +506,7 @@ public class TemplateProtocolJs {
     			sql.append(" group by vwf.id,vwf.name");
     			sql.append(" order by vwf.name");
     			sql.append(" ") ;
-    			list=null ;
-    			list = service.executeNativeSql(sql.toString(),30);
+				list = service.executeNativeSql(sql.toString(),30);
         		res.append("<ul>");
         		for (WebQueryResult wqr:list) {
         			res.append("<li class='liTemp' onclick=\"").append(aFunction).append("('").append(aType).append("','")
@@ -541,8 +532,7 @@ public class TemplateProtocolJs {
     			sql.append(" group by vwf.id,vwf.name");
     			sql.append(" order by vwf.name");
     			sql.append(" ") ;
-    			list=null;
-    			list = service.executeNativeSql(sql.toString(),30);
+				list = service.executeNativeSql(sql.toString(),30);
         		res.append("<ul>");
         		for (WebQueryResult wqr:list) {
         			res.append("<li class='liTemp' onclick=\"").append(aFunction).append("('").append(aType).append("','")
@@ -564,8 +554,7 @@ public class TemplateProtocolJs {
     			sql.append(" group by ml.id,ml.name");
     			sql.append(" order by ml.name");
     			sql.append(" ") ;
-    			list=null;
-    			list = service.executeNativeSql(sql.toString(),30);
+				list = service.executeNativeSql(sql.toString(),30);
         		res.append("<ul>");
         		for (WebQueryResult wqr:list) {
         			res.append("<li class='liTemp' onclick=\"").append(aFunction).append("('").append(aType).append("','")
@@ -698,7 +687,7 @@ public class TemplateProtocolJs {
 			name_cat = name_cat+"<input type='text' id='fldSearch"+aFunctionProt+"' name='fldSearch"+aFunctionProt+"' value='"+(aSearchText!=null?aSearchText:"")+"'>" ;
 			name_cat = name_cat+"<input  type='submit' value='Поиск' onclick='"+aFunctionProt+"Search(\""+aType+"\",\""+aParent+"\")'>" ;
 			name_cat = name_cat+"</form>" ;
-			res.append("<h2>Список своих шаблонов").append(name_cat!=null&&!name_cat.equals("")?" КАТЕГОРИИ: "+name_cat:"---").append(" </h2>") ;
+			res.append("<h2>Список своих шаблонов").append(!name_cat.equals("") ? " КАТЕГОРИИ: "+name_cat : "---").append(" </h2>") ;
 			res.append("</td>") ;
 			res.append("</tr><tr><td colspan='2' valign='top'>") ;
 			res.append("<ul>");
@@ -739,7 +728,6 @@ public class TemplateProtocolJs {
 						if (aParent.equals("-1")) {sql.append(" is null ");}else{sql.append("=to_date('").append(aParent).append("','dd.mm.yyyy')");}
 					}
 					sql.append(" group by d.id,vwf.name,vwf1.name,m.dtype,m.datestart,m.patient_id,d.dateregistration,d.username having upper(d.username)='").append(login.toUpperCase()).append("'  order by d.dateRegistration desc") ;
-				list=null ;
 				list = service.executeNativeSql(sql.toString(),10);
 				for (WebQueryResult wqr:list) {
 					res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("('")
@@ -768,8 +756,7 @@ public class TemplateProtocolJs {
 					sql.append(" order by d.dateRegistration desc");
 					sql.append(" ") ;
 					res.append("<ul>");
-					list=null ;
-					list = service.executeNativeSql(sql.toString(),10);
+				list = service.executeNativeSql(sql.toString(),10);
 					for (WebQueryResult wqr:list) {
 						res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("('")
 						.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionProt).append("('")
@@ -798,7 +785,6 @@ public class TemplateProtocolJs {
 				sql.append(" order by d.dateRegistration desc");
 				sql.append(" ") ;
 				res.append("<ul>");
-				list=null;
 				list = service.executeNativeSql(sql.toString(),10);
 				for (WebQueryResult wqr:list) {
 					res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("('")
@@ -829,7 +815,6 @@ public class TemplateProtocolJs {
 				sql.append(" order by sls.dateStart desc");
 				sql.append(" ") ;
 				res.append("<ul>");
-				list=null;
 				list = service.executeNativeSql(sql.toString(),10);
 				for (WebQueryResult wqr:list) {
 					res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("Discharge('")
@@ -912,8 +897,7 @@ public class TemplateProtocolJs {
     	return false ;
     }
 	public static Long parseLong(Object aValue) {
-		Long ret =null;
-		if (aValue==null) return ret ;
+		if (aValue==null) return null ;
 		if (aValue instanceof Integer) {
 			
 			return Long.valueOf((Integer) aValue) ;
@@ -921,15 +905,15 @@ public class TemplateProtocolJs {
 		if(aValue instanceof BigInteger) {
 			BigInteger bigint = (BigInteger) aValue ;
 			
-			return bigint!=null?bigint.longValue() : null;
+			return bigint.longValue() ;
 		} 
 		if (aValue instanceof Number) {
 			Number number = (Number) aValue ;
-			return number!=null?number.longValue() : null ;
+			return number.longValue() ;
 		}
 		if (aValue instanceof String) {
 			return Long.valueOf((String) aValue);
 		}
-		return ret ;
+		return null ;
 	}
 }

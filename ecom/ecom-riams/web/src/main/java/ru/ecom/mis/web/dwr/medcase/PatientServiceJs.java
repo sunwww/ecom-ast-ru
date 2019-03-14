@@ -36,12 +36,7 @@ public class PatientServiceJs {
 	public String getPaid(String aPatientId,HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		sql.append("select count(cao.cost) from patient p" +
-				" left join contractperson cp on cp.patient_id= p. id" +
-				" left join medcontract mc on mc.customer_id= cp.id" +
-				" left join contractaccount ca on ca.contract_id= mc.id" +
-				" left join contractaccountoperation cao on cao.account_id= ca.id" +
-				" where p.id ="+aPatientId);
+		sql.append("select count(cao.cost) from patient p" + " left join contractperson cp on cp.patient_id= p. id" + " left join medcontract mc on mc.customer_id= cp.id" + " left join contractaccount ca on ca.contract_id= mc.id" + " left join contractaccountoperation cao on cao.account_id= ca.id" + " where p.id =").append(aPatientId);
 		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 		String str = "";
 		for (WebQueryResult wqr : res) {
@@ -91,8 +86,8 @@ public class PatientServiceJs {
 
 	public String getPatients(String aLastname, String aFirstname, String aMiddlename
 			, String aYear, HttpServletRequest aRequest) throws NamingException {
-		if (new StringBuilder().append(aLastname!=null?aLastname:"").append(aFirstname!=null?aFirstname:"")
-				.append(aMiddlename!=null?aMiddlename:"").length()<4)  return "введите данные для поиска" ;
+		if (aLastname==null || (aLastname +(aFirstname!=null ? aFirstname:"")
+				+(aMiddlename!=null ? aMiddlename : "")).length()<4)  return "введите данные для поиска" ;
 		StringBuilder sql = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		sql.append("select p.id,p.patientSync,p.lastname,p.firstname,p.middlename,to_char(p.birthday,'dd.mm.yyyy') from patient p left join medpolicy mp on mp.patient_id=p.id where p.lastname like '").append(aLastname.toUpperCase()).append("%' ") ;
@@ -111,7 +106,7 @@ public class PatientServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),20);
 		StringBuilder res = new StringBuilder() ;
 		res.append("<ul id='listPatients'>") ;
-		boolean isFirst = false ;
+		boolean isFirst = true ;
 		for (WebQueryResult wqr:list) {
 			
 			StringBuilder s = new StringBuilder().append(wqr.get1()).append("#").append(wqr.get3()).append(" ").append(wqr.get4())
@@ -145,9 +140,9 @@ public class PatientServiceJs {
 		StringBuilder str = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		
-		if (aViewType.equals(Long.valueOf(1))) str.append(" Список документов на отправку по пациенту:") ;
-		else if (aViewType.equals(Long.valueOf(2))) str.append(" Список отправленных документов по пациенту:") ;
-		else if (aViewType.equals(Long.valueOf(3))) str.append(" Список документов по пациенту:") ;
+		if (aViewType.equals(1L)) str.append(" Список документов на отправку по пациенту:") ;
+		else if (aViewType.equals(2L)) str.append(" Список отправленных документов по пациенту:") ;
+		else if (aViewType.equals(3L)) str.append(" Список документов по пациенту:") ;
 		sql.append(" select fd.id as fdid");
 		sql.append(",pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as fio");
 		sql.append(",to_char(fd.createdate,'dd.mm.yyyy') as createdate ,coalesce('ИБ№'||ss.code,'МК№'||mc.number,'') as infodoc");
@@ -163,16 +158,16 @@ public class PatientServiceJs {
 		sql.append("where fd.patient='").append(aPatientId).append("'") ;
 		if (aTypeis!=null && !aTypeis.equals("")) sql.append(" and fd.type_id in (").append(aTypeis).append(")") ;
 		boolean isDelete = false ;
-		if (aViewType.equals(Long.valueOf(1))) {
+		if (aViewType.equals(1L)) {
 			sql.append(" and fd.postedDate is null") ;
 			//System.out.print("----"+isDelete) ;
 			if (RolesHelper.checkRoles("/Policy/Mis/Document/Flow/Delete", aRequest)) {
 				isDelete = true ;
 			}
-		} else if (aViewType.equals(Long.valueOf(2))) sql.append(" and fd.postedDate is not null") ;
-		else if (aViewType.equals(Long.valueOf(3))) sql.append(" ") ;
+		} else if (aViewType.equals(2L)) sql.append(" and fd.postedDate is not null") ;
+		else if (aViewType.equals(3L)) sql.append(" ") ;
 		//System.out.print(isDelete) ;
-		if (aPatientId==null || aPatientId.equals(Long.valueOf(0))) return "НЕ УКАЗАН ПАЦИЕНТ!!!" ;
+		if (aPatientId==null || aPatientId.equals(0L)) return "НЕ УКАЗАН ПАЦИЕНТ!!!" ;
 		sql.append(" order by vfdt.name") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
 		if (list.isEmpty()) {
@@ -229,10 +224,10 @@ public class PatientServiceJs {
 		return "обновлено" ;
 	}
 	public String updatePostedDateByFlowDoc(String aIds, String aDate, String aTime, HttpServletRequest aRequest) throws NamingException {
-		return updateFlowDocumentByPatient(aIds,aDate,aTime,Long.valueOf(1),aRequest) ;
+		return updateFlowDocumentByPatient(aIds,aDate,aTime, 1L,aRequest) ;
 	}
 	public String updateReceitDateByFlowDoc(String aIds, String aDate, String aTime, HttpServletRequest aRequest) throws NamingException {
-		return updateFlowDocumentByPatient(aIds,aDate,aTime,Long.valueOf(2),aRequest) ;
+		return updateFlowDocumentByPatient(aIds,aDate,aTime, 2L,aRequest) ;
 	}
 	public String updateFlowDocumentByPatient(String aIds, String aDate, String aTime, Long aStatusUpdate, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -262,7 +257,7 @@ public class PatientServiceJs {
 			sql = new StringBuilder() ;
 			sqlCheck = new StringBuilder() ;
 			sql1 = new StringBuilder() ;
-			if (aPlaceTo!=null && !aPlaceTo.equals(Long.valueOf(0))) {
+			if (aPlaceTo!=null && !aPlaceTo.equals(0L)) {
 				sql1.append("select case when v.isTracking='1' then '1' else null end as istracking,v.type,case when v.homePlaceCode=(select vfdt.code from VocFlowDocmentPlace vfdt where vfdt.id='").append(aPlaceTo).append("') then null else '1' end as home from VocFlowDocumentType v where v.id=").append(type);
 				List<Object[]> l = service.executeNativeSqlGetObj(sql1.toString()) ;
 				String t = "" ;
@@ -273,8 +268,8 @@ public class PatientServiceJs {
 					if (l.get(0)[0]!=null) {
 						sql1=new StringBuilder() ;
 						sql1.append("update flowdocument set istracking=null where patient='").append(aPatientId).append("' and type_id='").append(type).append("'") ;
-						if (t.equals("HOSP")) { if (aMedCase!=null && !aMedCase.equals(Long.valueOf(0))) {istracksql=true ;sql1.append(" and medcase='").append(aMedCase).append("'");} }
-						if (t.equals("POLYC")) {if (aMedcard!=null && !aMedcard.equals(Long.valueOf(0))) {istracksql=true ;sql1.append(" and medcard='").append(aMedcard).append("'");} }
+						if (t.equals("HOSP")) { if (aMedCase!=null && !aMedCase.equals(0L)) {istracksql=true ;sql1.append(" and medcase='").append(aMedCase).append("'");} }
+						else if (t.equals("POLYC")) {if (aMedcard!=null && !aMedcard.equals(0L)) {istracksql=true ;sql1.append(" and medcard='").append(aMedcard).append("'");} }
 						if (l.get(0)[2]!=null&&istracksql) {istrack=true;}
 					}
 				}
@@ -284,28 +279,25 @@ public class PatientServiceJs {
 				if (t.equals("POLYC")) sql.append(",medcard");
 				sql.append(",type_id,createdate,createtime,createusername) values (");
 				isCreate=true ;
-				if (aPlaceFrom!=null && !aPlaceFrom.equals(Long.valueOf(0))) {
+				if (aPlaceFrom!=null && !aPlaceFrom.equals(0L)) {
 					sql.append("'").append(aPlaceFrom).append("'");
 					sqlCheck.append(" and placeFrom_id='").append(aPlaceFrom).append("'");
 				} else isCreate=false ;
 				
+				sql.append(",'").append(aPlaceTo).append("'");
+				sqlCheck.append(" and placeTo_id='").append(aPlaceTo).append("'");
 				sql.append(",");
-				if (aPlaceTo!=null && !aPlaceTo.equals(Long.valueOf(0))) {
-					sql.append("'").append(aPlaceTo).append("'");
-					sqlCheck.append(" and placeTo_id='").append(aPlaceTo).append("'");
-				} else isCreate=false ;
-				sql.append(",");
-				if (aPatientId!=null && !aPatientId.equals(Long.valueOf(0))) sql.append("'").append(aPatientId).append("'"); else isCreate=false ;
+				if (aPatientId!=null && !aPatientId.equals(0L)) sql.append("'").append(aPatientId).append("'"); else isCreate=false ;
 				sql.append(",");
 				if (istrack) sql.append("'1'"); else sql.append("null") ;
 				if (t.equals("HOSP")) {
-					if (aMedCase!=null && !aMedCase.equals(Long.valueOf(0))) {
+					if (aMedCase!=null && !aMedCase.equals(0L)) {
 					sql.append(",'").append(aMedCase).append("'");
 					sqlCheck.append(" and medCase='").append(aMedCase).append("'");
 					} else sql.append(",null") ;
 				}
 				if (t.equals("POLYC")) {
-					if (aMedcard!=null && !aMedcard.equals(Long.valueOf(0))) {
+					if (aMedcard!=null && !aMedcard.equals(0L)) {
 					sql.append(",'").append(aMedcard).append("'");
 					sqlCheck.append(" and medcard='").append(aMedcard).append("'");
 					} else sql.append(",null") ;
@@ -327,9 +319,9 @@ public class PatientServiceJs {
 			} else {isCreate=false;}
 		}
 		if (isCreate) {
-			return getFlowDocumentByPatient(aPatientId, aMedCase, aMedcard, aTypeis, Long.valueOf(1), aRequest) ;
+			return getFlowDocumentByPatient(aPatientId, aMedCase, aMedcard, aTypeis, 1L, aRequest) ;
 		} else {
-			return "<b>НЕ ЗАПОЛНЕНЫ ВСЕ ОБЯЗАТЕЛЬНЫЕ ПОЛЯ!!!</b><br>"+getFlowDocumentByPatient(aPatientId, aMedCase, aMedcard, aTypeis, Long.valueOf(1), aRequest) ;
+			return "<b>НЕ ЗАПОЛНЕНЫ ВСЕ ОБЯЗАТЕЛЬНЫЕ ПОЛЯ!!!</b><br>"+getFlowDocumentByPatient(aPatientId, aMedCase, aMedcard, aTypeis, 1L, aRequest) ;
 		}
 		 
 	}
@@ -591,12 +583,9 @@ public class PatientServiceJs {
 	}
 	public String getFactorByProfession(Long aProfession,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder sql = new StringBuilder() ;
-		sql.append(" select vdp.id,vdp.factorOfProduction from VocDocumentProfession vdp ")
-		.append(" where ")
-		.append(" vdp.id='").append(aProfession).append("'") ;
-	//	System.out.println(sql) ;
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
+		String sql = " select vdp.id,vdp.factorOfProduction from VocDocumentProfession vdp " +
+				" where  vdp.id='" + aProfession + "'";
+		Collection<WebQueryResult> list = service.executeNativeSql(sql,1);
 		if (!list.isEmpty()) {
 			WebQueryResult wqr = list.iterator().next() ;
 			if (wqr.get2()!=null) {
@@ -693,7 +682,7 @@ public class PatientServiceJs {
 		return FondWebService.checkPatientByDocument(aRequest, getPatientInfo(aPatientId, service),type, aSeries, aNumber) ;
 	}
 	private PatientForm getPatientInfo(Long aPatientId, IPatientService aService) {
-		return (aPatientId!=null &&aPatientId>Long.valueOf(0))?aService.getPatientById(aPatientId):null ;
+		return (aPatientId!=null &&aPatientId> 0L)?aService.getPatientById(aPatientId):null ;
 	}
 	public String getAge(String aDate)  {
 		try {

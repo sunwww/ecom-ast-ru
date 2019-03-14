@@ -49,7 +49,7 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 		//}
 		
 		StringBuilder biolTest = new StringBuilder() ;
-		if (form.getIsIllPatientsBT()!=null&&form.getIsIllPatientsBT().booleanValue()==true) {
+		if (form.getIsIllPatientsBT()!=null && form.getIsIllPatientsBT()) {
 			//biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
 			biolTest.append(entity.getSerumColorBT()!=null?entity.getSerumColorBT().getName():"_________") ;
 		} else {
@@ -71,7 +71,7 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 		if (form.getIsBreakBT()!=null && form.getIsBreakBT()) biolTest.append(" Переливание прекращено.") ;
 		form.setBiologicTest(biolTest.toString()) ;
 		//Осложнения complications
-		List<Object> list = manager.createNativeQuery(new StringBuilder().append(" select list(''||reaction_id) from TransfusionComplication where transfusion_id='").append(id).append("' group by transfusion_id").toString()).getResultList();
+		List<Object> list = manager.createNativeQuery(" select list(''||reaction_id) from TransfusionComplication where transfusion_id='" + id + "' group by transfusion_id").getResultList();
 		if (!list.isEmpty()) {
 			form.setComplications( list.get(0).toString()) ;
 		}

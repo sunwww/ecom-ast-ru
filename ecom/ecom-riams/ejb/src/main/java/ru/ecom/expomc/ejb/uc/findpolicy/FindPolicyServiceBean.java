@@ -18,6 +18,7 @@ import java.util.*;
 
 @Stateless
 @Remote(IFindPolicyService.class)
+@Deprecated
 public class FindPolicyServiceBean implements IFindPolicyService {
 
 	
@@ -25,7 +26,7 @@ public class FindPolicyServiceBean implements IFindPolicyService {
 		LineNumberReader in = new LineNumberReader(new FileReader("policyReplaced.txt")) ;
 		String line ;
 		while ( (line=in.readLine())!=null) {
-			String p[] = line.split(",") ;
+			String[] p = line.split(",") ;
 			int type = Integer.parseInt(p[0]) ;
 			String url = p[1] ;
 			long policyId = Long.parseLong(p[2]) ;
@@ -40,7 +41,7 @@ public class FindPolicyServiceBean implements IFindPolicyService {
 		in.close() ;
 	}
 	public Collection<PolicyRow> findPolicy(String aLastname, String aFirstname, String aMiddlename, Date aBirthDate, String aSnils, long aMessageId) {
-		LinkedList<PolicyRow> ret = new LinkedList<PolicyRow>() ;
+		LinkedList<PolicyRow> ret = new LinkedList<>() ;
 		add("СНИЛС: ФИО и год рождения", theSnilsService.findSnils(aLastname, aFirstname, aMiddlename, aBirthDate), ret, aMessageId) ;
 		//add("СНИЛС: ФИО", theSnilsService.findSnilsByFio(aLastname, aFirstname, aMiddlename), ret) ;
 		adde("ПОЛИСЫ: ФИО", theExternalService.findPersonInfos(aLastname, aFirstname, aMiddlename), ret, aMessageId) ;

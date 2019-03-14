@@ -40,7 +40,7 @@ public abstract class Prescription extends BaseEntity{
 
 	@PrePersist
 	void onPrePersist() {
-		Long currentTime = System.currentTimeMillis();
+		long currentTime = System.currentTimeMillis();
 		theCreateDate=new java.sql.Date(currentTime);
 		theCreateTime=new java.sql.Time(currentTime);
 	}
@@ -154,10 +154,8 @@ public abstract class Prescription extends BaseEntity{
 	@Comment("Описание назначений")
 	@Transient
 	public String getDescriptionInfo() {
-		StringBuilder sb=new StringBuilder();
 		//sb.append(getDescriptionInfo());
-		sb.append("Описание назначения");
-		return sb.toString();
+		return "Описание назначения";
 	}
 	
 	/** Дата и время назначения */

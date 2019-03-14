@@ -50,7 +50,7 @@ public class ParameterServiceBean implements IParameterService{
 		if (aCode==null||aCode.equals("")) { //Генерируем код автоматически
 			List<Object> ll = theManager.createNativeQuery("select max(id) from parameter").getResultList() ;
 			Long maxId = ConvertSql.parseLong(!ll.isEmpty()?ll.get(0):Long.valueOf(0));
-			if (maxId==null) maxId=Long.valueOf(0) ;
+			if (maxId==null) maxId=0L ;
 			maxId++;
 			while (true) {
 				List<Object> l = theManager.createNativeQuery("select id from parameter where code='code_"+maxId+"'").getResultList();
@@ -121,9 +121,6 @@ public class ParameterServiceBean implements IParameterService{
 				Element parElement = (Element) o;
 				if("parameter".equals(parElement.getName())) {
 					Long key = Long.valueOf(parElement.getAttributeValue("id"));
-					if (key==null) {
-						throw new IllegalArgumentException("Нет атрибута id");
-					}
 					if (key.equals(aId)) return parElement.getAttributeValue("action") ;
 				} else {
 					LOG.warn("Нет поддержки элемента "+parElement.getName());
@@ -148,9 +145,6 @@ public class ParameterServiceBean implements IParameterService{
                     Element parElement = (Element) o;
                     if("parameter".equals(parElement.getName())) {
                     	Long key = Long.valueOf(parElement.getAttributeValue("id"));
-                	    if (key==null) {
-                	    	throw new IllegalArgumentException("Нет атрибута id");
-                	    }
                 	    if (key.equals(aId)) return loadParameter(parElement, aParameterForm, aErrors) ;
                     //} else if("vocFile".equals(vocElement.getName())) {
                         //loadFile(aHash, vocElement.getTextTrim());
@@ -222,6 +216,7 @@ public class ParameterServiceBean implements IParameterService{
 		}
 		
 		// поле Row Сделано
+		String label = aField.getAttributeValue("label") ;
 		if (type.equals("row")) {
 			String styleId = aField.getAttributeValue("styleId")  ;
 			boolean openIs = toBoolean(aField.getAttributeValue("open")) ;
@@ -229,10 +224,7 @@ public class ParameterServiceBean implements IParameterService{
 			page.setFormData(data);
 			page.setJavaContext(javaScript);
 			return page ;
-		}
-		String label = aField.getAttributeValue("label") ;
-		// поле separator Сделано
-		if (type.equals("separator")) {
+		} else if (type.equals("separator")) { // поле separator Сделано
 			String colSpan = aField.getAttributeValue("colSpan")  ;
 			data.append(SeparatorField.getField(label,colSpan)) ;
 			page.setFormData(data);
@@ -252,10 +244,8 @@ public class ParameterServiceBean implements IParameterService{
 		String propertyNext="name" ;
 		// поле TextField
 		if (type.equals("textField")) {
-			
 			//Label
 			data.append(LabelField.getField(aParameterForm.isViewOnly(), required, property, label, labelColSpan, hideLabel,errors));
-			
 			//Data
 			data.append(TextField.getField(aParameterForm,property, label, value, fieldColSpan, size
 					, horizontalFill, required, aParameterForm.isViewOnly(),errors ));
@@ -263,9 +253,7 @@ public class ParameterServiceBean implements IParameterService{
 			page.setFormData(data);
 			page.setJavaContext(javaScript);
 			return page ;
-		}
-		// поле AutoComplete TODO несделано
-		if (type.equals("autoComplete")) {
+		} else if (type.equals("autoComplete")) { // поле AutoComplete TODO несделано
 			data.append(LabelField.getField(aParameterForm.isViewOnly(), required, property, label, labelColSpan, hideLabel,errors));
 			String vocName =  aField.getAttributeValue("vocName") ;
 			String parentId =  aField.getAttributeValue("parentId") ;
@@ -277,14 +265,7 @@ public class ParameterServiceBean implements IParameterService{
 			page.setJavaContext(javaScript);
 			return page ;
 		}
-		if (type.equals("separator")) {
-			//<field type='separator' label='Границы допустимых значений' colSpan='4'/>
-			
-			page.setFormData(data);
-			page.setJavaContext(javaScript);
-			return page ;
-		}
-		throw new IllegalArgumentException(new StringBuilder().append("Нет обработчика для типа параметра "+type).toString());
+		throw new IllegalArgumentException("Нет обработчика для типа параметра "+type);
 	}
 	
 
@@ -298,10 +279,9 @@ public class ParameterServiceBean implements IParameterService{
 	    	throw new IllegalArgumentException("Нет атрибута name");
 	    }
 	    String type = aElement.getAttributeValue("type");
-	    LOG.info(new StringBuilder().append(" Parameter ").append(key)
-	        		.append(" (name = ").append(name)
-	        		.append(" type= ").append(type).append(")")
-	        		.toString());
+	    LOG.info(" Parameter " + key +
+				" (name = " + name +
+				" type= " + type + ")");
 	    ParameterType param = new ParameterType() ;
 	    param.setId(Long.valueOf(key)) ;
 	    param.setName(name);
@@ -369,13 +349,7 @@ public class ParameterServiceBean implements IParameterService{
     	return theEcomConfig.getInputStream(aResourceString, "",true);
     }
 	private Boolean toBoolean(String aString) {
-		Boolean ret; 
-		if (!StringUtil.isNullOrEmpty(aString) && (aString.equals("1") || aString.equalsIgnoreCase("true"))){
-			ret= true;
-		} else {
-			ret=false;
-		}
-		return ret ;
+		return !StringUtil.isNullOrEmpty(aString) && (aString.equals("1") || aString.equalsIgnoreCase("true"));
 	}
 	
 	EjbEcomConfig theEcomConfig = EjbEcomConfig.getInstance(); 

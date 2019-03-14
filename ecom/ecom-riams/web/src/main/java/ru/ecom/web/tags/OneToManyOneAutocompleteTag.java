@@ -37,7 +37,7 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
 	public String getJson(Object aParentForm, String aProperty, String aVocName,PageContext aCtx) throws JSONException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         String value = (String) PropertyUtil.getPropertyValue(aParentForm,  aProperty) ;
 
-    	if(value!=null && value!="null" && value!="") {
+    	if(value!=null && !value.equals("null") && !value.equals("")) {
             
 	        JSONObject jsonObjOld = new JSONObject(value) ;
 	        StringBuilder  jsonNew = new StringBuilder("{\"childs\":[");
@@ -136,7 +136,7 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
         out.print("</tr></table></td>");
 
 
-        JavaScriptContext js = JavaScriptContext.getContext((PageContext) getJspContext(), this);
+        JavaScriptContext js = JavaScriptContext.getContext(getJspContext(), this);
         StringBuilder sb = new StringBuilder();
         sb.append("var theOtmoa_") ;
         sb.append(theProperty) ;
@@ -144,7 +144,7 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
         sb.append("$('").append(getDivname()).append("')") ;
         sb.append(", $('mainForm')") ;
         sb.append(", '").append(theProperty).append("'") ;
-        sb.append(", '").append("").append("'") ;
+        sb.append(", '").append("'") ;
         sb.append(", '").append(theVocName).append("'") ;
         sb.append(", ").append(isViewOnly) ;
         String parentId=(theParentId==null)?"":getParentIdValue(ctx) ;

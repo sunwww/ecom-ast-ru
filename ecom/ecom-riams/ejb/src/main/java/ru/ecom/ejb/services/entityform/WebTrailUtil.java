@@ -12,7 +12,7 @@ public class WebTrailUtil {
     public static String getFirstPropertyName(Class aClass) {
         WebTrail trail = findWebTrail(aClass) ;
         String[] names = trail.nameProperties() ;
-        if(names!=null && names.length>0) {
+        if(names.length > 0) {
             return names[0] ;
         } else {
             throw new IllegalStateException("Нет свойства nameProperties у аннотации WebTrail в классе "+aClass) ;
@@ -36,7 +36,7 @@ public class WebTrailUtil {
     
     public static String[] getListStyle(Class aClass) {
     	String[] res = findWebTrail(aClass).listStyle() ;
-    	return res!=null&&res.length>0?res:null ;
+    	return res.length > 0 ? res : null;
     }
 
 }

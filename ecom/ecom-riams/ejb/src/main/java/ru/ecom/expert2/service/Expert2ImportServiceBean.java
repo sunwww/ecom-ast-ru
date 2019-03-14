@@ -396,7 +396,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     for (Element sank: sanks) {
                         String key = sank.getChildText("S_OSN") ;
                         if (!sanctionMap.containsKey(key)) {
-                            sanctionMap.put(key,(VocE2Sanction)getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
+                            sanctionMap.put(key,getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
                         }
                         boolean isMain = !sank.getChildText("S_SUM").equals("0.00");
                         E2EntrySanction s = new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),isMain);theManager.persist(s);

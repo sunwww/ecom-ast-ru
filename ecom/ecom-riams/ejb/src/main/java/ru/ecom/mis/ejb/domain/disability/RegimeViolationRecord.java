@@ -1,19 +1,14 @@
 package ru.ecom.mis.ejb.domain.disability;
 
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.DurationUtil;
 import ru.ecom.mis.ejb.domain.disability.voc.VocRegimeViolationType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
 /**
  * Запись о нарушении режима
  * @author azviagin,stkacheva
@@ -63,10 +58,9 @@ public class RegimeViolationRecord extends BaseEntity {
 	@Comment("Информация о нарушении режима")
 	@Transient
 	public String getInfo() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append(getRegimeViolationTypeInfo()).append(" ")
-			.append(DurationUtil.getDuration(getDateFrom(), getDateTo())) ; 
-		return ret.toString();
+		String ret = getRegimeViolationTypeInfo() + " " +
+				DurationUtil.getDuration(getDateFrom(), getDateTo());
+		return ret;
 	}
 
 	/** Документ нетрудоспособности */

@@ -25,7 +25,7 @@ public class PrintAction extends BaseAction {
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 		String reportKey = aMapping.getParameter() ;
-		String appName = null ;
+		String appName;
 		String ispRepBase = aRequest.getParameter("isReportBase") ;
 		String servJs = aRequest.getParameter("s") ;
 		String methodJs = aRequest.getParameter("m") ;
@@ -38,10 +38,9 @@ public class PrintAction extends BaseAction {
 	        	appName = Injection.getWebName(aRequest, null) ;
 	        }
 		IPrintService service  = Injection.find(aRequest).getService(IPrintService.class);
-	    TreeMap<String, String> map = new TreeMap<String, String>();
+	    TreeMap<String, String> map = new TreeMap<>();
         Enumeration en = aRequest.getParameterNames() ;
-        boolean isMultyId = !(aRequest.getParameter("multy")==null?true:aRequest.getParameter("multy").equals("")) ;
-        //System.out.println("multy="+isMultyId) ;
+        boolean isMultyId = !(aRequest.getParameter("multy") == null || aRequest.getParameter("multy").equals("")) ;
         //aRequest.getParameterValues("id").length ;
         String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
         StringBuilder sql = new StringBuilder() ;
@@ -66,7 +65,7 @@ public class PrintAction extends BaseAction {
         //System.out.println("print="+printMain.get1()) ;
 		if (printMain!=null) {
             sql = new StringBuilder() ;
-            sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from  CopyingEquipment ce where ce.parent_id='"+printMain.get2()+"' and ce.maskFiles = substring('"+reportKey+"',1,length(ce.maskFiles))") ;
+            sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from  CopyingEquipment ce where ce.parent_id='").append(printMain.get2()).append("' and ce.maskFiles = substring('").append(reportKey).append("',1,length(ce.maskFiles))");
             //System.out.println(sql.toString());
             list = service1.executeNativeSql(sql.toString(),1);
             if (list.size()>0) {
@@ -128,7 +127,7 @@ public class PrintAction extends BaseAction {
         }
         
 	}
-	public static String convertToString(String aStr[]) {
+	public static String convertToString(String[] aStr) {
 		StringBuilder ret = new StringBuilder() ;
         for (int i = 0; i < aStr.length; i++) {
             ret.append(aStr[i]);

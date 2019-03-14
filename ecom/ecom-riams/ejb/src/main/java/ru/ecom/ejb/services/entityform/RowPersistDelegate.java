@@ -143,10 +143,9 @@ public class RowPersistDelegate {
 		StringBuilder sb = new StringBuilder(50) ;
 		sb.append("from ") ;
 		sb.append(theEntityHelper.getEntityName(aRowPersist.rowEntityClass())) ;
-		sb.append(" where "+aRowPersist.parentProperty()+"_id =:parent ");
+		sb.append(" where ").append(aRowPersist.parentProperty()).append("_id =:parent ");
 		for(RowPersistMatch match : aRowPersistProperty.matches()) {
-			sb.append(" and "+match.property()+"."+match.matchProperty()+" =:"
-					+ match.property()+match.matchProperty()) ;
+			sb.append(" and ").append(match.property()).append(".").append(match.matchProperty()).append(" =:").append(match.property()).append(match.matchProperty());
 		}
 		if (CAN_DEBUG)	LOG.debug("findRow: query = " + sb);
 		Query query = aManager.createQuery(sb.toString());

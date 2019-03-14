@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.*;
@@ -240,27 +239,17 @@ public class ImportServiceBean implements IImportService {
 
 
     private static void addMessage(int aIndex, ImportFileResult aResult, DbfField aDbfField, Field aField, String aMessage) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(aIndex) ;
-        sb.append(".   DBF: ") ;
-        sb.append(aDbfField.getName()) ;
-        sb.append(" ") ;
-        sb.append((char)aDbfField.getType()) ;
-        sb.append(" ") ;
-        sb.append(aDbfField.getLength()) ;
-        sb.append(".") ;
-        sb.append(aDbfField.getDecimalLength()) ;
-        sb.append(" - формат ") ;
-        sb.append(aField.getName()) ;
-        sb.append(" ") ;
-        sb.append(aField.getDbfType()) ;
-        sb.append(" ") ;
-        sb.append(aField.getDbfSize()) ;
-        sb.append(".") ;
-        sb.append(aField.getDbfDecimal()) ;
-        sb.append(" : ") ;
-        sb.append(aMessage) ;
-        aResult.addMessage(sb.toString());
+        String sb = aIndex +
+                ".   DBF: " + aDbfField.getName() +
+                " " + (char) aDbfField.getType() +
+                " " + aDbfField.getLength() +
+                "." + aDbfField.getDecimalLength() +
+                " - формат " + aField.getName() +
+                " " + aField.getDbfType() +
+                " " + aField.getDbfSize() +
+                "." + aField.getDbfDecimal() +
+                " : " + aMessage;
+        aResult.addMessage(sb);
     }
 
     public IImportEntityFactory getImportEntityFactory() {
@@ -288,7 +277,7 @@ public class ImportServiceBean implements IImportService {
         }
     }
 
-    public static void copyMapToEntity(Collection<Field> aFields, Map<String, Object> aMap, Object aEntity) throws NoSuchMethodException, ParseException, IllegalAccessException, InvocationTargetException {
+    public static void copyMapToEntity(Collection<Field> aFields, Map<String, Object> aMap, Object aEntity) throws NoSuchMethodException {
         Class entityClass = aEntity.getClass();
         for (Field field : aFields) {
 //        for (Field field : aActualFormat.getFields()) {

@@ -53,7 +53,7 @@ public class ImportSyncKey extends ImportKey {
         for (int i=0; i<properties.length; i++) {
             if (i > 0) sb.append(" AND ");
             //sb.append("cast("+properties[i]+" as string) = :p"+i);
-            sb.append(properties[i]+" = :p"+i);
+            sb.append(properties[i]).append(" = :p").append(i);
         }
         return sb.toString();
     }
@@ -74,7 +74,7 @@ public class ImportSyncKey extends ImportKey {
             } catch (JDOMException e) {}
 
             if (i > 0) sb.append(" AND ");
-            sb.append(properties[i]+" = '" + s + "'");
+            sb.append(properties[i]).append(" = '").append(s).append("'");
         }
         return sb.toString();
     }

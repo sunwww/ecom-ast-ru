@@ -1,32 +1,15 @@
 package ru.ecom.mis.web.action.bypassexport;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.upload.FormFile;
-
-import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
-import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.expomc.ejb.services.form.importformat.IImportFormatService;
-import ru.ecom.expomc.ejb.services.importservice.ImportException;
-import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
-import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.web.util.ActionUtil;
-import ru.ecom.web.util.FileUploadUtil;
-import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class AttachmentByLpuBypassAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -38,7 +21,7 @@ public class AttachmentByLpuBypassAction extends BaseAction {
     		String dateFrom =form.getPeriod();
     		String dateTo = form.getPeriodTo();
     		//<AOI 21.10.2016
-    		if((dateTo==null)||(dateTo.equals(""))) {
+    		if(dateTo==null || dateTo.equals("")) {
     			SimpleDateFormat sdf=new SimpleDateFormat("dd.MM.yyyy");
     			dateTo=sdf.format(new Date());
     		}
@@ -55,48 +38,48 @@ public class AttachmentByLpuBypassAction extends BaseAction {
     		String age = null ;
 	    	StringBuilder sqlAdd=new StringBuilder() ;
 	    	if (dateFrom !=null &&!dateFrom.equals("")) {
-	    		if (dateTo!=null&&!dateTo.equals("")) {
-	    			sqlAdd.append(" and lp.datefrom between to_date('"+dateFrom+"','dd.MM.yyyy') and to_date('"+dateTo+"','dd.MM.yyyy')");
+	    		if (!dateTo.equals("")) {
+	    			sqlAdd.append(" and lp.datefrom between to_date('").append(dateFrom).append("','dd.MM.yyyy') and to_date('").append(dateTo).append("','dd.MM.yyyy')");
 	    		} else {
-	    			sqlAdd.append(" and lp.datefrom >= to_date('"+dateFrom+"','dd.MM.yyyy')");
+	    			sqlAdd.append(" and lp.datefrom >= to_date('").append(dateFrom).append("','dd.MM.yyyy')");
 	    		}
 	    	}
 	    	if (typeAge!=null) {
-	    		if (typeAge!=null&&typeAge.equals("1")) {
+	    		if (typeAge.equals("1")) {
 		    		age = "<18" ;
-		    	} else if (typeAge!=null&&typeAge.equals("2")) {
+		    	} else if (typeAge.equals("2")) {
 		    		age = ">=18" ;
 		    	}
 	    		if (typeAge.equals("1")||typeAge.equals("2")) {
 	    			sqlAdd.append(" and cast(to_char(to_date('").append(dateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(dateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(dateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(age) ;
 	    		}
 	    	}
-	        if (typeSex!=null&&(typeSex.equals("1")||typeSex.equals("2"))) {
-	        	sqlAdd.append(" and vs.omccode='"+typeSex+"'");
+	        if (typeSex!=null && (typeSex.equals("1") || typeSex.equals("2"))) {
+	        	sqlAdd.append(" and vs.omccode='").append(typeSex).append("'");
 	        	
 	        } 
 	    	if (typeView!=null && typeView.equals("2")) {
 	        	sqlAdd.append(" and p.address_addressid is null ") ;
 	        }
-	        if (typeAttachment!=null&&typeAttachment.equals("1")) {
+	        if ("1".equals(typeAttachment)) {
 	        	sqlAdd.append(" and (vat.code='1') ") ;
-	        } else if (typeAttachment!=null&&typeAttachment.equals("2")) {
+	        } else if ("2".equals(typeAttachment)) {
 	        	sqlAdd.append(" and vat.code='2'") ;
-	        } else if (typeAttachment!=null&&typeAttachment.equals("4")) {
+	        } else if ("4".equals(typeAttachment)) {
 	        	sqlAdd.append(" and lp.attachedType_id is null") ;
 	        } 
-    		if (typeAreaCheck!=null&&typeAreaCheck.equals("1")) {
+    		if ("1".equals(typeAreaCheck)) {
     			sqlAdd.append(" and lp.area_id is not null ") ;
-    		} else if (typeAreaCheck!=null&&typeAreaCheck.equals("2")) {
+    		} else if ("2".equals(typeAreaCheck)) {
     			sqlAdd.append(" and (lp.area_id is null or lp.lpu_id is null)") ;
     		}
-    		if (typeDefect!=null&&typeDefect.equals("1")) {
+    		if ("1".equals(typeDefect)) {
     			sqlAdd.append(" and lp.defectText!='' and lp.defectText is not null") ;
-    		} else if (typeDefect!=null&&typeDefect.equals("2")) {
+    		} else if ("2".equals(typeDefect)) {
     			sqlAdd.append(" and (lp.defectText='' or lp.defectText is null)") ;
     		}
     		if (form.getCompany()!=null&& form.getCompany()!=0) {
-    			sqlAdd.append(" and lp.company_id='"+form.getCompany()+"' ");
+    			sqlAdd.append(" and lp.company_id='").append(form.getCompany()).append("' ");
     		}
     		if (typeCompany!=null &&typeCompany.equals("1")){
     			sqlAdd.append(" and lp.company_id is not null ");

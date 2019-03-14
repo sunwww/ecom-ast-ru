@@ -58,10 +58,10 @@ public class PregnancyServiceBean implements IPregnancyService {
 		//MedCase medCase = theManager.find(MedCase.class, aMedCase) ;
 		//Patient pat = medCase.getPatient() ;
 		//if (pat==null && medCase.getParent()!=null) pat = medCase.getParent().getPatient() ;
-		if (aMedCase==null) aMedCase=Long.valueOf(0) ;
+		if (aMedCase==null) aMedCase=0L ;
 		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from MedCase m left join patient p on p.id=m.patient_id left join vocsex vs on vs.id=p.sex_id where m.id="+aMedCase+" and vs.omcCode='2'").setMaxResults(1).getResultList() ;
 
-		return res.size()>0 ;
+		return !res.isEmpty();
 	}
 
 	private boolean isWomanByPatient(Object aOmcCode) {
@@ -87,13 +87,13 @@ public class PregnancyServiceBean implements IPregnancyService {
 			.setParameter("muscleTone",aMuscleTone)
 			.setMaxResults(1)
 			.getResultList() ;
-		StringBuilder ret = new StringBuilder() ;
-		Long value = Long.valueOf(0) ;
-		if(row.size()>0) {
+		StringBuilder ret ;
+		Long value = 0L ;
+		if(!row.isEmpty()) {
 			ret = new StringBuilder() ;
 			ret.append(row.get(0)[0]) ;
 			value = ConvertSql.parseLong(row.get(0)[0]) ;
-			if (value==null) value=Long.valueOf(0) ; 
+			if (value==null) value=0L ;
 		} 
 		
 		return value ;
@@ -120,18 +120,16 @@ public class PregnancyServiceBean implements IPregnancyService {
 			.setMaxResults(1)
 			.getResultList() ;
 		
-		Long value = Long.valueOf(0) ;
-		if(row.size()>0) {
+		Long value = 0L ;
+		if(!row.isEmpty()) {
 			value = ConvertSql.parseLong(row.get(0)[0]) ;
 		}
 		StringBuilder ret = new StringBuilder() ;
 		ret.append(value).append("#") ;
-		sql = new StringBuilder() ;
-		sql.append("select id,name,code from VocCommonMask where DTYPE='VocDownesCommonMark' and :valueball between minBall and maxBall");
-		row = theManager.createNativeQuery(sql.toString())
+		row = theManager.createNativeQuery("select id,name,code from VocCommonMask where DTYPE='VocDownesCommonMark' and :valueball between minBall and maxBall")
 			.setParameter("valueball", value)
 			.getResultList() ;
-		if(row.size()>0) {
+		if(!row.isEmpty()) {
 			
 			ret.append(row.get(0)[0]) ;
 			ret.append("#").append(row.get(0)[1]);
@@ -162,8 +160,8 @@ public class PregnancyServiceBean implements IPregnancyService {
 			.setMaxResults(1)
 			.getResultList() ;
 		
-		Long value = Long.valueOf(0) ;
-		if(row.size()>0) {
+		Long value = 0L ;
+		if(!row.isEmpty()) {
 			value = ConvertSql.parseLong(row.get(0)[0]) ;
 		}
 		StringBuilder ret = new StringBuilder() ;

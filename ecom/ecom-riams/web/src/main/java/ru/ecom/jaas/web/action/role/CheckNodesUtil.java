@@ -2,8 +2,8 @@ package ru.ecom.jaas.web.action.role;
 
 import ru.ecom.jaas.ejb.service.CheckNode;
 
-import java.util.LinkedList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,7 +27,7 @@ public class CheckNodesUtil {
         if(aParent!=null && !aNode.getChecked() && aNode.getChilds().isEmpty()) {
             ret = true ;
         } else {
-            LinkedList<CheckNode> removed = new LinkedList<CheckNode>();
+            LinkedList<CheckNode> removed = new LinkedList<>();
             for (CheckNode node : aNode.getChilds()) {
                 if(removeNoChildsAndNotChecked(aNode, node)) {
                     removed.add(node) ;

@@ -1,18 +1,12 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import ru.ecom.mis.ejb.domain.birth.voc.*;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.ecom.mis.ejb.domain.birth.voc.VocCommonMask;
-import ru.ecom.mis.ejb.domain.birth.voc.VocDownesAuscultation;
-import ru.ecom.mis.ejb.domain.birth.voc.VocDownesCommonMark;
-import ru.ecom.mis.ejb.domain.birth.voc.VocDownesCyanosis;
-import ru.ecom.mis.ejb.domain.birth.voc.VocDownesDifExhalation;
-import ru.ecom.mis.ejb.domain.birth.voc.VocDownesIntercostalRet;
-import ru.ecom.mis.ejb.domain.birth.voc.VocDownesRespirationRate;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Оценка респираторного дистресса новорожденного по Downes
@@ -115,8 +109,6 @@ public class DownesEstimation extends Inspection{
 	}
 	@Transient
 	public String getInformation() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("Общая оценка (балл): ").append(theCommonMark!=null?theCommonMark.getCode():"").append(" ").append(theCommonMark!=null?theCommonMark.getName():"") ;
-		return ret.toString() ;
+		return "Общая оценка (балл): " + (theCommonMark != null ? theCommonMark.getCode() : "") + " " + (theCommonMark != null ? theCommonMark.getName() : "");
 	}
 }

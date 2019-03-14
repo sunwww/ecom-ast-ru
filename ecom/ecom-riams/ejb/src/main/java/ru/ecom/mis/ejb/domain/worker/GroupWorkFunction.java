@@ -72,7 +72,7 @@ public class GroupWorkFunction extends WorkFunction {
 	
 	@Transient
 	public String getInfo() {
-		return new StringBuilder().append("ГРУППОВАЯ: ").append(getGroupName()).toString() ;
+		return "ГРУППОВАЯ: " + getGroupName();
 	}
 	/** Рабочие функции входящие в состав группы */
 	private List<PersonalWorkFunction> theFunctions;

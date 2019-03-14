@@ -8,8 +8,6 @@ import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.pharmnetPharmacy.GoodsLeaveEntity;
 import ru.ecom.mis.ejb.domain.pharmnetPharmacy.PharmnetComplectRowEntity;
-import ru.ecom.mis.ejb.domain.pharmnetPharmacy.PharmnetStorageEntity;
-import ru.ecom.mis.ejb.service.pharmacy.IPharmOperationService;
 import ru.ecom.web.util.Injection;
 
 import javax.naming.NamingException;
@@ -30,7 +28,7 @@ public class PharmnetServiceJs {
         JSONObject obj = new JSONObject(aJson);
         JSONArray params = obj.getJSONArray("array");
 
-        StringBuilder sql = new StringBuilder();
+        StringBuilder sql ;
 
         for (int i = 0; i < params.length(); i++) {
             JSONObject param = (JSONObject) params.get(i);
@@ -38,7 +36,7 @@ public class PharmnetServiceJs {
             String count = (String) param.get("count");
             String goodleaveId = (String) param.get("goodleaveId");
             sql = new StringBuilder();
-            sql.append("select PharmnetOutcome ("+goodleaveId+","+medcase+",'"+username+"',"+count+")");
+            sql.append("select PharmnetOutcome (").append(goodleaveId).append(",").append(medcase).append(",'").append(username).append("',").append(count).append(")");
             service.executeNativeSql(sql.toString());
         }
         return 1;
@@ -49,7 +47,7 @@ public class PharmnetServiceJs {
             throws JSONException, NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
         StringBuilder sql = new StringBuilder();
-        sql.append("insert into pharmnetcomplectrow  (regid,complectid_id,count) VALUES  ("+regid+","+complectId+","+count+")");
+        sql.append("insert into pharmnetcomplectrow  (regid,complectid_id,count) VALUES  (").append(regid).append(",").append(complectId).append(",").append(count).append(")");
         //System.out.println(sql.toString());
         service.executeUpdateNativeSql(sql.toString());
         return 1;
@@ -66,7 +64,7 @@ public class PharmnetServiceJs {
                 " and nextstate is null and (isend is null or isend = false)");
 
 
-        List<GoodsLeaveEntity> goodsLeaveEntities = new ArrayList<GoodsLeaveEntity>();
+        List<GoodsLeaveEntity> goodsLeaveEntities = new ArrayList<>();
         for (WebQueryResult wqr: goodsl) {
             GoodsLeaveEntity goodsLeaveEntity = new GoodsLeaveEntity();
             String temp = (String) wqr.get1();
@@ -90,7 +88,7 @@ public class PharmnetServiceJs {
                         "where complectid =(select id from pharmnetcomplect  where medservice_id = "+medserviceId+")");
         StringBuilder sql = new StringBuilder();
 
-        List<GoodsLeaveEntity> goodsOuts = new ArrayList<GoodsLeaveEntity>();
+        List<GoodsLeaveEntity> goodsOuts = new ArrayList<>();
 
         for (WebQueryResult wqr: res) {
             GoodsLeaveEntity goodsOut = new GoodsLeaveEntity();
@@ -118,12 +116,10 @@ public class PharmnetServiceJs {
                     a=true;
                     c=gleave.getQntOst();
                     break;
-                }else {
-                    a=false;
                 }
             }
 
-            if(a) sql.append(c+"</td><td>+");
+            if(a) sql.append(c).append("</td><td>+");
             else sql.append("-</td><td>-");
         }
         sql.append("</td></tr>");
@@ -140,7 +136,7 @@ public class PharmnetServiceJs {
                 .executeNativeSql("select cast(count as text), regid from pharmnetcomplectrow  where complectid =" +
                         "(select id from pharmnetcomplect  where medservice_id = "+medserviceId+")");
 
-        List<PharmnetComplectRowEntity> pharmnetComplectRowEntityList = new ArrayList<PharmnetComplectRowEntity>();
+        List<PharmnetComplectRowEntity> pharmnetComplectRowEntityList = new ArrayList<>();
 
         for (WebQueryResult wqr: res) {
             PharmnetComplectRowEntity pharmnetComplectRowEntity = new PharmnetComplectRowEntity();
@@ -159,7 +155,7 @@ public class PharmnetServiceJs {
                         "        and nextstate is null and (isend is null or isend = false)");
 
 
-        List<GoodsLeaveEntity> goodsLeaveEntities = new ArrayList<GoodsLeaveEntity>();
+        List<GoodsLeaveEntity> goodsLeaveEntities = new ArrayList<>();
 
         for (WebQueryResult wqr: goodsl) {
             GoodsLeaveEntity goodsLeaveEntity = new GoodsLeaveEntity();
@@ -182,7 +178,7 @@ public class PharmnetServiceJs {
                         //result.append(c.get)
                         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
                         StringBuilder sql = new StringBuilder();
-                        sql.append("select PharmnetOutcomebyMedservice ("+g.getId()+","+medcaseId+",'"+username+"',"+countOut+","+medserviceId+")");
+                        sql.append("select PharmnetOutcomebyMedservice (").append(g.getId()).append(",").append(medcaseId).append(",'").append(username).append("',").append(countOut).append(",").append(medserviceId).append(")");
                         service.executeNativeSql(sql.toString());
                     }
                 }
@@ -207,23 +203,11 @@ public class PharmnetServiceJs {
         StringBuilder html = new StringBuilder();
         html.append("<table><tbody>");
         for(WebQueryResult wqr : goodsl){
-            html.append("<input size=\"1\" name=\"department\" value=\""+wqr.get5()+"\" id=\"countinpack\" type=\"hidden\">");
-            html.append("<tr> " +
-                    "<td colspan=\"1\" class=\"label\"> <label> Наименование: </label></td> "+
-                    "<td colspan=\"1\" class=\"label\"> <input class=\"viewOnly\" size=\"50\" value=\""+wqr.get1()+"\" autocomplete=\"off\" readonly=\"readonly\" type=\"text\"></td>" +
-                    "</tr> ");
-            html.append("<tr> " +
-                    "<td colspan=\"1\" class=\"label\"> <label> Форма: </label></td> "+
-                    "<td colspan=\"1\" class=\"label\"> <input class=\"viewOnly\" size=\"50\" value=\""+wqr.get2()+"\" autocomplete=\"off\" readonly=\"readonly\" type=\"text\"></td>" +
-                    "</tr> ");
-            html.append("<tr> " +
-                    "<td colspan=\"1\" class=\"label\"> <label> Количество: </label></td> "+
-                    "<td colspan=\"1\" class=\"label\"> <input id=\"qcount\" size=\"55\" value=\""+wqr.get3()+"\" type=\"text\"></td>" +
-                    "</tr> ");
-            html.append("<tr> " +
-                    "<td colspan=\"1\" class=\"label\"> <label> Количество упаковок: </label></td> "+
-                    "<td colspan=\"1\" class=\"label\"> <input id=\"ucount\" size=\"55\" value=\""+wqr.get4()+"\" type=\"text\"></td>" +
-                    "</tr> ");
+            html.append("<input size=\"1\" name=\"department\" value=\"").append(wqr.get5()).append("\" id=\"countinpack\" type=\"hidden\">");
+            html.append("<tr> " + "<td colspan=\"1\" class=\"label\"> <label> Наименование: </label></td> " + "<td colspan=\"1\" class=\"label\"> <input class=\"viewOnly\" size=\"50\" value=\"").append(wqr.get1()).append("\" autocomplete=\"off\" readonly=\"readonly\" type=\"text\"></td>").append("</tr> ");
+            html.append("<tr> " + "<td colspan=\"1\" class=\"label\"> <label> Форма: </label></td> " + "<td colspan=\"1\" class=\"label\"> <input class=\"viewOnly\" size=\"50\" value=\"").append(wqr.get2()).append("\" autocomplete=\"off\" readonly=\"readonly\" type=\"text\"></td>").append("</tr> ");
+            html.append("<tr> " + "<td colspan=\"1\" class=\"label\"> <label> Количество: </label></td> " + "<td colspan=\"1\" class=\"label\"> <input id=\"qcount\" size=\"55\" value=\"").append(wqr.get3()).append("\" type=\"text\"></td>").append("</tr> ");
+            html.append("<tr> " + "<td colspan=\"1\" class=\"label\"> <label> Количество упаковок: </label></td> " + "<td colspan=\"1\" class=\"label\"> <input id=\"ucount\" size=\"55\" value=\"").append(wqr.get4()).append("\" type=\"text\"></td>").append("</tr> ");
         }
         html.append("</tbody></table>");
         return html.toString();
@@ -236,7 +220,7 @@ public class PharmnetServiceJs {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder sql = new StringBuilder();
-        sql.append("select PharmnetInventorEdit ("+goodleavId+",'"+username+"','"+qcount+"','"+uqount+"')");
+        sql.append("select PharmnetInventorEdit (").append(goodleavId).append(",'").append(username).append("','").append(qcount).append("','").append(uqount).append("')");
 
         System.out.println(sql.toString());
         service.executeNativeSql(sql.toString());
@@ -262,13 +246,13 @@ public class PharmnetServiceJs {
                 "</tr>");
         for (WebQueryResult wqr: goodsl) {
             String tempId = "onclick=\"showMyPharmInventory('"+wqr.get7()+"')\"";
-            sql.append("<tr"+tempId+"><td "+tempId+">");
-            sql.append(wqr.get1()+"</td><td "+tempId+">");
-            sql.append(wqr.get2()+"</td><td "+tempId+">");
-            sql.append(wqr.get3()+"</td><td "+tempId+">");
-            sql.append(wqr.get4()+"</td><td "+tempId+">");
-            sql.append(wqr.get5()+"</td><td "+tempId+">");
-            sql.append(wqr.get6()+"</td>");
+            sql.append("<tr").append(tempId).append("><td ").append(tempId).append(">");
+            sql.append(wqr.get1()).append("</td><td ").append(tempId).append(">");
+            sql.append(wqr.get2()).append("</td><td ").append(tempId).append(">");
+            sql.append(wqr.get3()).append("</td><td ").append(tempId).append(">");
+            sql.append(wqr.get4()).append("</td><td ").append(tempId).append(">");
+            sql.append(wqr.get5()).append("</td><td ").append(tempId).append(">");
+            sql.append(wqr.get6()).append("</td>");
             sql.append("</td></tr>");
         }
 
@@ -298,12 +282,12 @@ public class PharmnetServiceJs {
         for (WebQueryResult wqr: goodsl) {
 
             sql.append("<tr><td>");
-            sql.append(wqr.get1()+"</td><td>");
-            sql.append(wqr.get2()+"</td><td>");
-            sql.append(wqr.get3()+"</td><td>");
-            sql.append(wqr.get4()+"</td><td>");
-            sql.append(wqr.get5()+"</td><td>");
-            sql.append(wqr.get6()+"</td>");
+            sql.append(wqr.get1()).append("</td><td>");
+            sql.append(wqr.get2()).append("</td><td>");
+            sql.append(wqr.get3()).append("</td><td>");
+            sql.append(wqr.get4()).append("</td><td>");
+            sql.append(wqr.get5()).append("</td><td>");
+            sql.append(wqr.get6()).append("</td>");
             sql.append("</td></tr>");
         }
 

@@ -330,6 +330,12 @@
 
 
 	<action-mappings>
+		<action path='/journal_econom_pol' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				scope="request"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/pol_journals/econom_pol.jsp" />
+		</action>
 		<action path='/queueKiosk' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				scope="request"

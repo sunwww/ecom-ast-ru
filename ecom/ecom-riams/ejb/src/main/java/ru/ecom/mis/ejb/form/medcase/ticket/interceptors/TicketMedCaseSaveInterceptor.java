@@ -33,8 +33,8 @@ public class TicketMedCaseSaveInterceptor implements IFormInterceptor {
 		VocIllnesPrimary vip = isEmpty(form.getConcludingActuity())?null:aManager.find(VocIllnesPrimary.class, form.getConcludingActuity()) ;
 		VocTraumaType vtt = isEmpty(form.getConcludingTrauma())?null:aManager.find(VocTraumaType.class, form.getConcludingTrauma()) ;
 		VocIdc10 mkb = isEmpty(form.getConcludingMkb())?null:aManager.find(VocIdc10.class, form.getConcludingMkb()) ;
-		Diagnosis diag = null ;
-		if (frm!=null && frm.getId()>Long.valueOf(0)){
+		Diagnosis diag;
+		if (frm!=null && frm.getId()>0L){
 			diag = aManager.find(Diagnosis.class, frm.getId()) ;
 		} else {
 			diag = new Diagnosis() ;

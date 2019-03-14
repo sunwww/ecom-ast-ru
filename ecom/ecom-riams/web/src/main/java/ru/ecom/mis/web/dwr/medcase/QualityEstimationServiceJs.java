@@ -1,16 +1,5 @@
 package ru.ecom.mis.web.dwr.medcase;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.expert.IQualityEstimationService;
@@ -18,6 +7,15 @@ import ru.ecom.mis.ejb.service.expert.QualityEstimationRow;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class QualityEstimationServiceJs {
@@ -29,7 +27,7 @@ public class QualityEstimationServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(sql) ;
 		for (WebQueryResult r: list){
 			if (ret.length()>0){ ret.append("#");}
-			ret.append(""+r.get1()+":"+r.get2());
+			ret.append(r.get1()).append(":").append(r.get2());
 		}
 		
 		
@@ -112,8 +110,8 @@ public class QualityEstimationServiceJs {
 	public String getInfoBySlo(Long aSmo, Long aSlo, HttpServletRequest aRequest) throws Exception {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		if (aSlo==null||aSlo.equals(Long.valueOf(0))||aSlo.equals(aSmo)){
-			sql.append("select id, id from medcase slo where parent_id="+aSmo+" and dtype='DepartmentMedCase'  order by datestart desc");
+		if (aSlo==null||aSlo.equals(0L)||aSlo.equals(aSmo)){
+			sql.append("select id, id from medcase slo where parent_id=").append(aSmo).append(" and dtype='DepartmentMedCase'  order by datestart desc");
 			List<Object[]> slos = service.executeNativeSqlGetObj(sql.toString()) ;
 			if (slos.size()>0){
 				aSlo = Long.valueOf(slos.get(0)[0].toString());
@@ -124,11 +122,11 @@ public class QualityEstimationServiceJs {
 		
 		sql.append("select upper(smo.dtype),count(*) from medcase smo where smo.id='").append(aSmo).append("' group by smo.dtype") ;
 		List<Object[]> list = service.executeNativeSqlGetObj(sql.toString()) ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			String dtype=list.get(0)[0].toString() ;
 			//Стационар
 			StringBuilder ret = new StringBuilder() ;
-			if (dtype!=null && dtype.equals("HOSPITALMEDCASE")) {
+			if ("HOSPITALMEDCASE".equals(dtype)) {
 				kindCode="1";
 				sql = new StringBuilder() ;
 				sql.append("select wf.id as wfid,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
@@ -151,9 +149,8 @@ public class QualityEstimationServiceJs {
 					.append(" left join patient wp on wp.id=w.person_id")
 					.append(" where smoM.id = '").append(aSmo).append("' and smoD.id='").append(aSlo).append("'")
 					.append(" and vdrt.code='4' and vpd.code='1' ");
-				;
 				list = service.executeNativeSqlGetObj(sql.toString()) ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					
 					Object[] row = list.get(0) ;
 					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null?row[1]:"").append("#") ;
@@ -170,11 +167,11 @@ public class QualityEstimationServiceJs {
 							.append("#").append(row[9]!=null?row[9]:"") ;
 						
 					}
-					ret.append("#").append(row[10]!=null?row[10]:"").append("#").append(row[11]!=null?row[11]:"") ;
+					ret.append("#").append(row[10]!=null ? row[10] : "").append("#").append(row[11]!=null ? row[11] : "") ;
 					
 				}
 				//Случай лечения в отделении
-			} else if (dtype!=null && dtype.equals("DEPARTMENTMEDCASE")){
+			} else if ("DEPARTMENTMEDCASE".equals(dtype)){
 				kindCode="1";
 				sql = new StringBuilder() ;
 				sql.append("select wf.id as wfid,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
@@ -197,14 +194,13 @@ public class QualityEstimationServiceJs {
 					.append(" left join patient wp on wp.id=w.person_id")
 					.append(" where smoD.id='").append(aSlo).append("'")
 					.append(" and vdrt.code='4' and vpd.code='1' ");
-				;
 				list = service.executeNativeSqlGetObj(sql.toString()) ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					Object[] row = list.get(0) ;
-					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null?row[1]:"").append("#") ;
+					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null ? row[1] : "").append("#") ;
 					if (row[2]!=null) {
 						ret.append(row[2])
-							.append("#").append(row[3]!=null?row[3]:"").append(" ")
+							.append("#").append(row[3]!=null ? row[3] : "").append(" ")
 							.append(row[4]!=null?row[4]:"").append("#")
 							.append(row[5]!=null?row[5]:"") ;
 						
@@ -219,14 +215,14 @@ public class QualityEstimationServiceJs {
 					
 				}
 					// Поликлинический случай лечения
-			} else if (dtype!=null && dtype.equals("POLYCLINICMEDCASE")) {
+			} else if ("POLYCLINICMEDCASE".equals(dtype)) {
 				kindCode="2";
 				/**
 				 * TODO 
 				 * Доделать
 				 */
 				ret.append("######");
-			} else if (dtype!=null&& dtype.equals("VISIT")) {
+			} else if ("VISIT".equals(dtype)) {
 				//start
 				kindCode="2";
 				sql = new StringBuilder() ;
@@ -245,9 +241,8 @@ public class QualityEstimationServiceJs {
 					.append(" left join patient wp on wp.id=w.person_id")
 					.append(" where vis.id='").append(aSlo).append("'");
 					//.append(" and vdrt.code='4' and vpd.code='1' "); ;
-				;
 				list = service.executeNativeSqlGetObj(sql.toString()) ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					
 					Object[] row = list.get(0) ;
 					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null?row[1]:"").append("#") ;
@@ -267,15 +262,15 @@ public class QualityEstimationServiceJs {
 			}
 		}
 			sql.setLength(0);
-			sql.append("select id, name, code from vocqualityestimationkind where code='"+kindCode+"'");
+			sql.append("select id, name, code from vocqualityestimationkind where code='").append(kindCode).append("'");
 			list = service.executeNativeSqlGetObj(sql.toString());
-			if (list.size()>0) {
+			if (!list.isEmpty()) {
 				Object[] o = list.get(0);
 				ret.append("#").append(o[0]!=null?o[0]:"").append("#").append(o[1]!=null?o[1]:"");
 			}
 			
-			return ret!=null?ret.toString():null;
-			}
+			return ret.toString();
+		}
 		
 		return null ;
 	}
@@ -304,13 +299,13 @@ public class QualityEstimationServiceJs {
 	public String showCriteriasByDiagnosis(Long id,HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res = new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Long medcase;
+		long medcase;
 		String query="select parent_id from medcase where id=" +id;
 		Collection<WebQueryResult> list0 = service.executeNativeSql(query);
 		if (list0.size()!=0) {
 			medcase = Long.parseLong(list0.iterator().next().get1().toString());
 			String json = getAllServicesByMedCase(medcase, aRequest);
-			List<String> allMatches = new ArrayList<String>();
+			List<String> allMatches = new ArrayList<>();
 			Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
 			while (m.find()) {
 				allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
@@ -337,11 +332,10 @@ public class QualityEstimationServiceJs {
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
 					String mcodes = (w.get3() != null) ? w.get3().toString() : "";
-					Boolean flag = false;
+					boolean flag = false;
 					res.append(w.get1()).append("#").append(w.get2()).append("#");
 					if (allMatches.size() > 0) {
-						for (int i=0; i<allMatches.size(); i++) {
-							String scode = allMatches.get(i);
+						for (String scode : allMatches) {
 							if (mcodes.contains("'" + scode + "'")) flag = true;
 						}
 					}
@@ -411,8 +405,8 @@ public class QualityEstimationServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String res = "";
 		if (type.equals("BranchManager")) {//если оценки проставляет заведующий, может быть разница с автоматическим расчётом
-			Long medcase;
-			String query = "";
+			long medcase;
+			String query;
 			if (createEdit==null) {
 				query = "select m.parent_id from qualityestimationcard qecard\n" +
 						"left join medcase m on m.id=qecard.medcase_id\n" +
@@ -432,7 +426,7 @@ public class QualityEstimationServiceJs {
 			if (list0.size() != 0) {
 				medcase = Long.parseLong(list0.iterator().next().get1().toString());
 				String json = getAllServicesByMedCase(medcase, aRequest);
-				List<String> allMatches = new ArrayList<String>();
+				List<String> allMatches = new ArrayList<>();
 				Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
 				while (m.find()) {
 					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
@@ -444,10 +438,9 @@ public class QualityEstimationServiceJs {
 				WebQueryResult w = service.executeNativeSql(query).iterator().next();
 				String mark = (w.get2() != null) ? w.get2().toString() : "";
 				String mcodes = (w.get1() != null) ? w.get1().toString() : "";
-				Boolean flag = false;
+				boolean flag = false;
 				if (!mcodes.equals("")) {
-					for (int i = 0; i < allMatches.size(); i++) {
-						String scode = allMatches.get(i);
+					for (String scode : allMatches) {
 						if (mcodes.contains("'" + scode + "'")) flag = true;
 						//res+=scode+=" ; ";
 					}
@@ -457,7 +450,7 @@ public class QualityEstimationServiceJs {
 				else res = "false";
 			}
 		} else if (type.equals("Expert")) { //эксперт - пред. этам - зав.
-			String query = "";
+			String query;
 			if (!createEdit) {
 				query = "select qem.name \n" +
 						"from vocqualityestimationmark qem\n" +
@@ -498,7 +491,7 @@ public class QualityEstimationServiceJs {
 		return res.toString();
 	}
 	public Boolean deleteCrit(Long aCritId, HttpServletRequest aRequest) throws NamingException {
-		Boolean flag=false;
+		boolean flag=false;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String query ="select * from qualityestimationcrit where criterion_id=" + aCritId;
 		Collection<WebQueryResult> list = service.executeNativeSql(query,1) ;
@@ -520,7 +513,7 @@ public class QualityEstimationServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String query="select * from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id;
 		Collection<WebQueryResult> list = service.executeNativeSql(query,1) ;
-		Boolean flag=false;
+		boolean flag=false;
 		if (list.size()==0) {
 			service.executeUpdateNativeSql("insert into vocqualityestimationcrit_diagnosis(vocidc10_id, vqecrit_id) VALUES (" + aIdc10Id + "," + aCritId + ")");
 			flag=true;
@@ -564,7 +557,7 @@ public class QualityEstimationServiceJs {
 				res.append(w.get1());
 			}
 		}
-		if (res!=null && !res.toString().equals("")) {
+		if (!res.toString().equals("")) {
 			String ms=res.toString();
 			ms=ms.replace("'"+medServ+"'","");
 			ms=ms.replace(",,",",");
@@ -572,7 +565,7 @@ public class QualityEstimationServiceJs {
 			if (ms.length()>0 && ms.substring(0,1).equals(",")) ms=ms.substring(1);
 			if (ms.endsWith(",")) ms=ms.substring(0,ms.length()-1);
 			ms="'"+ms+"'";
-			if (ms==null || ms.equals("null") || ms.equals("'")) ms="''";
+			if ( ms.equals("null") || ms.equals("'")) ms="''";
 			service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
 			return ms.replace("''","'").replace("''","'");
 		}
@@ -596,7 +589,7 @@ public class QualityEstimationServiceJs {
 				medServ=w.get1().toString();
 			}
 		}
-		if (res!=null && !medServ.equals("")) {
+		if (!medServ.equals("")) {
 			String ms=res.toString();
 			if (!ms.contains(medServ)) {
 				if (res.toString().equals("")) {
@@ -608,7 +601,7 @@ public class QualityEstimationServiceJs {
 					ms=ms.replace("'","''");
 					ms="'"+ms+"'";
 				}
-				if (ms==null || ms.equals("null") || ms.equals("'")) ms="''";
+				if (ms.equals("null") || ms.equals("'")) ms="''";
 				service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
 				return ms.replace("''","'").replace("''","'");
 			}

@@ -65,7 +65,7 @@ public class LoginSaveAction extends LoginExitAction {
 			//System.out.println("PasswordAAAA , passLT = "+passwordLifetime+", passAge = "+passwordAge+", passStartdate = "+passwordStartDate);
 			diff = passwordLifetime - passwordAge;
 			if (diff<=0) {
-				diff = Long.valueOf(0);
+				diff = 0L;
 			} 
 		}
 		
@@ -142,25 +142,24 @@ public class LoginSaveAction extends LoginExitAction {
 
                     String[] paramM=param.split("&") ;
                     StringBuilder res = new StringBuilder() ;
-                    res.append("<form method='post' action='"+path+"'>") ;
+                    res.append("<form method='post' action='").append(path).append("'>");
                     //ArrayList<WebQueryResult> list = new ArrayList<WebQueryResult>() ;
-                    for (int i=0;i<paramM.length;i++) {
-                		String val = paramM[i] ;
-                        String valN  = val.substring(0,val.indexOf('='));
-                        String valV = val.substring(val.indexOf('=')+1) ;
-                        String valV1 = URLDecoder.decode(valV,"utf-8") ;
-                        //WebQueryResult wqr = new WebQueryResult() ;
-                        //wqr.set1(valN) ;
-                        //wqr.set2(valV) ;
-                        //wqr.set3(valV1) ;
-                        res.append("<textarea name='"+valN+"' >") ;
-                        res.append(valV1.trim()) ;
-                        res.append("</textarea>") ;
-                        res.append(""+valN+"=") ;
-                        res.append(valV1) ;
-                        //list.add(wqr) ;
+					for (String val : paramM) {
+						String valN = val.substring(0, val.indexOf('='));
+						String valV = val.substring(val.indexOf('=') + 1);
+						String valV1 = URLDecoder.decode(valV, "utf-8");
+						//WebQueryResult wqr = new WebQueryResult() ;
+						//wqr.set1(valN) ;
+						//wqr.set2(valV) ;
+						//wqr.set3(valV1) ;
+						res.append("<textarea name='").append(valN).append("' >");
+						res.append(valV1.trim());
+						res.append("</textarea>");
+						res.append("").append(valN).append("=");
+						res.append(valV1);
+						//list.add(wqr) ;
 
-                    }
+					}
                     res.append("Загрузка...");
                     //System.out.print(res) ;
                     res.append("</form>");
@@ -496,31 +495,31 @@ public class LoginSaveAction extends LoginExitAction {
     				{"Бракованные назначения", " and p.canceldate is not null","&typeState=1"}
     				,{"Невыполненные назначения"," and p.transferdate is not null and p.canceldate is null and p.medcase_id is null","&typeState=2"}
     				,{"Неподтвержденные назначения"," and p.transferdate is not null and p.canceldate is null and p.medcase_id is not null and mc.datestart is null","&typeState=3"}
-    			}; 
-    		for (int i=0;i<labReports.length;i++) {
-    			String labReportSql = "select 'beginDate='||to_char(current_date-1,'dd.MM.yyyy')||'&endDate='||to_char(current_date,'dd.MM.yyyy')||'&department='||ml.id||'&typeReestr=1&typeGroup=1"+labReports[i][2]+"'" +
-    					",ml.name, count(p.id)" +
-        				" from prescription p" +
-        				" left join WorkFunction wf on wf.id=p.prescriptSpecial_id" +
-        				" left join Worker w on w.id=wf.worker_id" +
-        				" left join MisLpu ml on ml.id=w.lpu_id" +
-        				" left join medcase mc on mc.id=p.medcase_id" +
-        				" left join vocprescripttype vpt on vpt.id=p.prescripttype_id " +
-        				" where p.dtype='ServicePrescription' and p.intakedate between current_date-1  and current_date" +
-        				labReports[i][1] +
-        				" group by ml.id, ml.name" +
-        				" order by ml.name";
-    			
-    			Collection<WebQueryResult> list =service.executeNativeSql(labReportSql) ;
-    			StringBuilder ret = new StringBuilder();
-    			if (!list.isEmpty()) {
-    				for (WebQueryResult wqr: list) {
-    					ret.append(wqr.get2()).append(": <a href='lab_chief_report.do?").append(wqr.get1()).append("'>").append(wqr.get3()).append("</a><br>");
-    				}
-    				Long id = serviceLogin.createSystemMessage(labReports[i][0], ret.toString(), aUsername) ;
-    				UserMessage.addMessage(aRequest,id,labReports[i][0],ret.toString(),"");
-    			}
-    		}
+    			};
+			for (String[] labReport : labReports) {
+				String labReportSql = "select 'beginDate='||to_char(current_date-1,'dd.MM.yyyy')||'&endDate='||to_char(current_date,'dd.MM.yyyy')||'&department='||ml.id||'&typeReestr=1&typeGroup=1" + labReport[2] + "'" +
+						",ml.name, count(p.id)" +
+						" from prescription p" +
+						" left join WorkFunction wf on wf.id=p.prescriptSpecial_id" +
+						" left join Worker w on w.id=wf.worker_id" +
+						" left join MisLpu ml on ml.id=w.lpu_id" +
+						" left join medcase mc on mc.id=p.medcase_id" +
+						" left join vocprescripttype vpt on vpt.id=p.prescripttype_id " +
+						" where p.dtype='ServicePrescription' and p.intakedate between current_date-1  and current_date" +
+						labReport[1] +
+						" group by ml.id, ml.name" +
+						" order by ml.name";
+
+				Collection<WebQueryResult> list = service.executeNativeSql(labReportSql);
+				StringBuilder ret = new StringBuilder();
+				if (!list.isEmpty()) {
+					for (WebQueryResult wqr : list) {
+						ret.append(wqr.get2()).append(": <a href='lab_chief_report.do?").append(wqr.get1()).append("'>").append(wqr.get3()).append("</a><br>");
+					}
+					Long id = serviceLogin.createSystemMessage(labReport[0], ret.toString(), aUsername);
+					UserMessage.addMessage(aRequest, id, labReport[0], ret.toString(), "");
+				}
+			}
     		String labReportSql = " select 'beginDate='||to_char(current_date-1,'dd.MM.yyyy')||'&endDate='||to_char(current_date,'dd.MM.yyyy')||'&prescriptType='||vpt.id||'&typeReestr=1&typeGroup=2' as fldId " +
     				",vpt.name as f2_name" +
     				" ,count (case when p.medcase_id is null then p.id else null end) as cntNotReady " +

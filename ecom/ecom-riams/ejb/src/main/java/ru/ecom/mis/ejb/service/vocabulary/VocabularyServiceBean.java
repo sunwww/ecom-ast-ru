@@ -74,13 +74,13 @@ public class VocabularyServiceBean {
 	}
 	
 	private int getCount(Class clazz) {
-		Long totalCount = (Long)theManager.createQuery(new StringBuilder().append("select count(*) from ").append(
-				theEntityHelper.getEntityName(clazz)).toString()).getSingleResult() ;
+		Long totalCount = (Long)theManager.createQuery("select count(*) from " +
+				theEntityHelper.getEntityName(clazz)).getSingleResult() ;
 		return totalCount.intValue() ;
 	}
 	public int getCount(String clazz) {
-		Long totalCount = (Long)theManager.createQuery(new StringBuilder().append("select count(*) from ").append(
-				clazz).toString()).getSingleResult() ;
+		Long totalCount = (Long)theManager.createQuery("select count(*) from " +
+				clazz).getSingleResult() ;
 		return totalCount.intValue() ;
 	}
     public void importVocExtDisp(long aMonitorId,boolean aClear, List<WebQueryResult> aService, List<WebQueryResult> aRisks, List<WebQueryResult> aExtDisps) {

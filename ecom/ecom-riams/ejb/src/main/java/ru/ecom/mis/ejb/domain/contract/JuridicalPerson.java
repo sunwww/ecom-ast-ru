@@ -1,8 +1,4 @@
 package ru.ecom.mis.ejb.domain.contract;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -15,6 +11,11 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 	/**
 	 * Юридическое лицо
 	 */
@@ -300,7 +301,7 @@ public class JuridicalPerson extends ContractPerson{
 	
 	@Transient
 	public String getInformation() {
-		return new StringBuilder().append("Юрид. лицо: ").append(theName).toString() ;
+		return "Юрид. лицо: " + theName;
 	}
 	/** Страховая компания */
 	@Comment("Страховая компания")
@@ -313,6 +314,7 @@ public class JuridicalPerson extends ContractPerson{
 	
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
+	@OneToOne
 	public VocServiceStream getServiceStream() {return theServiceStream;}
 	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
 

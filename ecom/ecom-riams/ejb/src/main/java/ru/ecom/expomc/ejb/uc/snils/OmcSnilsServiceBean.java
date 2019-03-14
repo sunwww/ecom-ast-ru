@@ -105,9 +105,7 @@ public class OmcSnilsServiceBean implements IOmcSnilsService {
 	}
 	
 	private static void add(List<OmcSnils> aSource, List<OmcSnils> aDest) {
-		for(OmcSnils s:aSource) {
-			aDest.add(s) ;
-		}
+		aDest.addAll(aSource);
 	}
 
 	private @PersistenceContext EntityManager theManager ;

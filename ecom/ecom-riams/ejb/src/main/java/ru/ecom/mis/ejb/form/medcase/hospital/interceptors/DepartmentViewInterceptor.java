@@ -114,9 +114,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 							ScriptServiceContext ctx = new ScriptServiceContext(aManager, aContext, theEjbInjection) ;
 							Object[] args = new Object[aArgs.length+1] ;
 							args[0] = ctx ;
-							for(int i=0; i<aArgs.length; i++) {
-								args[i+1] = aArgs[i];
-							}
+							System.arraycopy(aArgs, 0, args, 1, aArgs.length);
 							Object result = f.call(jsContext, scope, scope, args);
 							
 							Object ret ;

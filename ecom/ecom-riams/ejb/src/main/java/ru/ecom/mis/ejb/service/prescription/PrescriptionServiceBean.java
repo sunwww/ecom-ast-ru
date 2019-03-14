@@ -8,7 +8,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
@@ -293,7 +292,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	        s.append("case");
 	       List<ParsedPdfInfoResult> r = parsedPdfInfo.getResults(); 
 	        for (ParsedPdfInfoResult p: r) {
-	            s.append(" when p.externalcode='").append(p.getCode()).append("' then '"+p.getValue()+"' ");
+	            s.append(" when p.externalcode='").append(p.getCode()).append("' then '").append(p.getValue()).append("' ");
 	        }
 	        s.append(" end");
 	        return s.toString();
@@ -313,7 +312,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		if (p!=null) { //Дублируем лаб. назначение (для бак. лаборатории)
 			WorkFunction workFunction = theManager.find(WorkFunction.class, aWorkFunctionId);
 			MedService medService = theManager.find(MedService.class, aMedServiceId);
-			Long currentDate = new java.util.Date().getTime();
+			long currentDate = new java.util.Date().getTime();
 			ServicePrescription presOld = p;
 			ServicePrescription presNew = new ServicePrescription();
 			presNew.setCreateDate(new java.sql.Date(currentDate));
@@ -354,7 +353,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		} else {
 			vis = new Visit();
 			MedCase mc = pl.getMedCase() ;
-			if (mc instanceof HospitalMedCase|| mc instanceof DepartmentMedCase) {
+			if (mc instanceof HospitalMedCase) {
 				VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
 				vis.setServiceStream(vss);
 			} else {
@@ -581,8 +580,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			Long presId = Long.parseLong(prescriptionId.trim());
 			ServicePrescription p = theManager.find(ServicePrescription.class, presId);
 //			if (p!=null &&p.getMedService().getServiceType().getCode().equals("LABSURVEY")&&aDate!=null&&!aDate.equals("")) {
-			if (p!=null &&aDate!=null&&!aDate.equals("")) {
-				Long aPatientId =p.getPrescriptionList().getMedCase().getPatient().getId(); 
+			if (p != null && !aDate.equals("")) {
+				long aPatientId =p.getPrescriptionList().getMedCase().getPatient().getId();
 				aKey = ""+aPatientId+"#"+aDate;
 				matId = getPatientDateNumber(aLabMap, aKey, aPatientId, aDate, theManager);
 				aLabMap.put(aKey, matId);
@@ -881,18 +880,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			} else {
 				list.setName(template.getName()) ;
 			}
-			
-			if (template.getClass().toString().equals("PrescriptListTemplate")) {
-				 //template = (PrescriptListTemplate) template;
-				List<TemplateCategory> tempCategList = new ArrayList<>() ;
-				PrescriptListTemplate template2 = (PrescriptListTemplate) template;
-				tempCategList.addAll(template2.getCategories());
-			/*	for (TemplateCategory tempCateg:template2.getCategories()) {
-					tempCategList.add(tempCateg) ;
-				}
-				*/
-				//list.setCategories(tempCategList);
-			}
+
 		list.setComments(template.getComments());
 		list.setWorkFunction(wf);
 		theManager.persist(list) ;

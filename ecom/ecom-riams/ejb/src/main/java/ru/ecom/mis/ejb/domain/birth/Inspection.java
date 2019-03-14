@@ -1,21 +1,15 @@
 package ru.ecom.mis.ejb.domain.birth;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Осмотр
@@ -80,7 +74,7 @@ public abstract class Inspection extends BaseEntity{
 
 	@Transient
 	public String getInformation() {
-		return new StringBuilder().append("Осмотр №").append(getId()).toString() ;
+		return "Осмотр №" + getId();
 	}
 	
 	@Transient

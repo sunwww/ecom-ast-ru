@@ -78,12 +78,11 @@ public class CheckResult  {
     }
 
     public String toString() {
-    	StringBuilder sb = new StringBuilder() ;
-    	sb.append("CheckResult [ accepted = ").append(theAccepted) ;
-    	sb.append(", values = ").append(theValues) ;
-    	sb.append(", logs = ").append(theLogs) ;
-    	sb.append(" ]") ;
-    	return sb.toString() ;
+        String sb = "CheckResult [ accepted = " + theAccepted +
+                ", values = " + theValues +
+                ", logs = " + theLogs +
+                " ]";
+        return sb;
     }
     protected Map<String, Object> getChanged() {
         return theValues;

@@ -1,12 +1,11 @@
 package ru.ecom.api;
 
 import ru.ecom.api.Onco.OncoResource;
+import ru.ecom.api.disabilitySign.DisabilitySign;
 import ru.ecom.api.fondCheck.FondCheck;
 import ru.ecom.api.medcaseMedpolicy.MedcaseMedpolicy;
 import ru.ecom.api.queue.HospitalQueueResource;
 import ru.ecom.api.queue.TicketQueueResource;
-
-import ru.ecom.api.disabilitySign.DisabilitySign;
 import ru.ecom.api.scheduler.ScheduleTasks;
 
 import javax.ws.rs.ApplicationPath;
@@ -20,7 +19,7 @@ public class ApiApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses(){
-        Set<Class<?>> set = new HashSet<Class<?>>();
+        Set<Class<?>> set = new HashSet<>();
         set.add(ApiRecordResource.class);
         set.add(ApiLoginResource.class);
         set.add(HospitalQueueResource.class);

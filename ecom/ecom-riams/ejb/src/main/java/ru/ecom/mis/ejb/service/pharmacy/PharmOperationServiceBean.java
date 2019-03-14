@@ -67,7 +67,7 @@ public class PharmOperationServiceBean implements IPharmOperationService {
                "END IF;\n" +
                "END;\n" +
                "' LANGUAGE plpgsql;";
-        theManager.createNativeQuery(sql.toString()).executeUpdate();
+        theManager.createNativeQuery(sql).executeUpdate();
     }
 
     @EJB

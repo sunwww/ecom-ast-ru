@@ -72,7 +72,7 @@
                  comment = "Рабочий календарь">
         <webTrail comment='Рабочий календарь' nameProperties='id' view='entityView-cal_workCalendar.do'/>
         <parent property='workFunction' parentForm='ru.ecom.mis.ejb.form.worker.WorkFunctionForm'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar" ></persist>
+        <persist clazz="ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar" />
     </form>
 
     <form        name = "$$map$$work_workFunctionByWorkerForm"

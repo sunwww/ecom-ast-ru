@@ -31,7 +31,7 @@ public class XmlVocValueLoader {
     }
 
     private void loadFile(Map<String, IVocContextService> aHash, String aResourceString) throws IOException, JDOMException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
+        LOG.info("Loading " + aResourceString + " ...");
         InputStream in = getInputStream(aResourceString) ; 
         try {
             Document doc = new SAXBuilder().build(in);

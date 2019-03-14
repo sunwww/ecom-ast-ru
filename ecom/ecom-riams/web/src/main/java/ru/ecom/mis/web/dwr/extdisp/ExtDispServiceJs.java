@@ -70,10 +70,8 @@ public class ExtDispServiceJs {
 			String[] years =aYears.split(",");
 			if (years.length==1) {
 				sql.append(firstWhere?"":" and ").append(" to_char(pat.birthday,'yyyy')='").append(aYears).append("'");
-				firstWhere=false;
 			} else {
 				sql.append(firstWhere?"":" and ").append(" to_char(pat.birthday,'yyyy') in (");
-				firstWhere=false;
 				boolean firstYear = true;
 				for (String year: years) {
 					if (!firstYear) {sql.append(",");} else {firstYear=false;}
@@ -94,7 +92,7 @@ public class ExtDispServiceJs {
 	
 	
 	public String dispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException {
-		if(dispCardId==null||dispCardId.equals(Long.valueOf(0))){
+		if(dispCardId==null||dispCardId.equals(0L)){
 			return "1";
 		}
 		else {
@@ -116,7 +114,7 @@ public class ExtDispServiceJs {
 		 		(aDispCardId!=null&&aDispCardId!=0?(" and edc.id!="+aDispCardId):"")+
 		 		" and vedc.disableAgeDoubles='1' ").iterator().next().get1().toString());
 
-		 return haveDis!=null&&haveDis>0?"1":"0";
+		 return haveDis>0 ? "1" : "0";
 
 	}
 	// Проверка услуги ДД на: выходной день, дубль со стационаром, дубль с визитом, входит в период ДД	
@@ -172,7 +170,7 @@ public class ExtDispServiceJs {
 	private boolean isHoliday (Date aDate) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(aDate);
-		return cal.get(java.util.Calendar.DAY_OF_WEEK)==1;
+		return cal.get(java.util.Calendar.DAY_OF_WEEK)== Calendar.SUNDAY;
 	}
 
 	@Deprecated //Переделали

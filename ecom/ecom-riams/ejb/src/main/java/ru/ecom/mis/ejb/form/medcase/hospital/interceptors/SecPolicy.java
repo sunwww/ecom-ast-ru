@@ -37,8 +37,8 @@ public class SecPolicy {
                 checkPolicyCreateHour(enteredDate);
         	} catch (Exception e){
                 throw new IllegalStateException(
-                		new StringBuffer().append("Неправильно введенна дата поступления или время. ")
-                		.append(e).toString()) ;
+                        "Неправильно введенна дата поступления или время. " +
+                                e) ;
         	}
         }
     }

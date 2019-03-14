@@ -28,7 +28,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 			if (medCase instanceof ExtHospitalMedCase) {}else{
 			if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/CheckPrintAllProtocol")) {
 				StringBuilder sql = new StringBuilder() ;
-				sql.append("select count(*) from diary p left join medcase m on m.id=p.medcase_id where ((m.id='"+id+"' and m.dtype='HospitalMedCase') or (m.parent_id='"+id+"' and m.dtype='DepartmentMedCase')) and p.printDate is null and p.dtype='Protocol'") ;
+				sql.append("select count(*) from diary p left join medcase m on m.id=p.medcase_id where ((m.id='").append(id).append("' and m.dtype='HospitalMedCase') or (m.parent_id='").append(id).append("' and m.dtype='DepartmentMedCase')) and p.printDate is null and p.dtype='Protocol'");
 				Object obj = manager
 					.createNativeQuery(sql.toString()).getSingleResult() ;
 				Long count = ConvertSql.parseLong(obj) ;
@@ -153,7 +153,6 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 		if (aRegType!=null) sql.append(" and vdrt.code='").append(aRegType).append("'");
 		
 		sql.append(" order by dep.dateStart desc");
-		sql.append("") ;
 		List<Object[]> listDiag = aManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		if (listDiag.size()>0) {
 			Object[] obj = listDiag.get(0) ;

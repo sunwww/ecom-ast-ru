@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 
 @Local(IEntityJsListenerService.class)
 @Stateless
+@Deprecated
 public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 
 	private static final Logger LOG = Logger

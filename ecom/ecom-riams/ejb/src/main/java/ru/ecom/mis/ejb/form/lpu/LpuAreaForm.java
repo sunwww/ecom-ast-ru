@@ -47,7 +47,7 @@ public class LpuAreaForm extends IdNameCommentEntityForm {
 
     @Comment("Название")
     public String getName() {
-        return new StringBuilder().append(theTypeName).append(" № ").append(theNumber).toString() ;
+        return theTypeName + " № " + theNumber;
     }
 
     /** Тип участка */

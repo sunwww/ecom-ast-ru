@@ -98,8 +98,8 @@ public class HospitalMedCaseServiceJs {
 		sql.append("insert into temperatureCurve (takingDate, pulse, bloodPressureDown, bloodPressureUp, weight, respirationRate, degree")
 		.append(", illnessdaynumber, daytime_id, medcase_id, stool_id) values (");
 		
-		sql.append("to_date('"+takingDate+"','dd.MM.yyyy'),"+pulse+","+bloodPressureDown+","+bloodPressureUp+","+weight+","+respirationRate);
-		sql.append(", "+degree+", "+illnessDayNumber+", "+dayTime+", "+aMedCase+", "+stool);
+		sql.append("to_date('").append(takingDate).append("','dd.MM.yyyy'),").append(pulse).append(",").append(bloodPressureDown).append(",").append(bloodPressureUp).append(",").append(weight).append(",").append(respirationRate);
+		sql.append(", ").append(degree).append(", ").append(illnessDayNumber).append(", ").append(dayTime).append(", ").append(aMedCase).append(", ").append(stool);
 		sql.append(")");
 	//	System.out.println("=== === "+sql);
 		return "" + service.executeUpdateNativeSql(sql.toString());
@@ -159,12 +159,12 @@ public class HospitalMedCaseServiceJs {
 			.append(" left join VocServiceStream visSs on visSs.id=vis.serviceStream_id")
 			.append(" where smc.parent_id='").append(aMedCase).append("' and smc.dtype='ServiceMedCase' order by smc.id") ;
 		List<Object[]> resL = service.executeNativeSqlGetObj(sql.toString()) ;
-		for (int i=0;i<resL.size();i++) {
-			for (int j=0;j<10;j++) {
-				res.append(resL.get(i)[j]).append("@#@") ;
+		for (Object[] objects : resL) {
+			for (int j = 0; j < 10; j++) {
+				res.append(objects[j]).append("@#@");
 			}
-			res=new StringBuilder(res.length()>0?res.toString().trim().substring(0,res.length()-3):"");
-			res.append("#@#") ;
+			res = new StringBuilder(res.length() > 0 ? res.toString().trim().substring(0, res.length() - 3) : "");
+			res.append("#@#");
 		}
 		return res.length()>0 ? res.toString().trim().substring(0,res.length()-3) : "" ;
 	}
@@ -185,17 +185,17 @@ public class HospitalMedCaseServiceJs {
 		if (aServices!=null&&!aServices.equals("")) {
 			String[] otherServs = aServices.split("#@#");
 			if (otherServs.length>0) {
-				for (int i=0;i<otherServs.length;i++) {
-					String[] serv = otherServs[i].split("@#@") ;
-					StringBuilder sql = new StringBuilder() ;
+				for (String otherServ : otherServs) {
+					String[] serv = otherServ.split("@#@");
+					StringBuilder sql = new StringBuilder();
 					sql.append("insert into medcase (noActuality,dtype,createdate,createtime,username,parent_id")
-						.append(",medservice_id,workfunctionexecute_id,idc10_id")
-						.append(",datestart,medserviceAmount,serviceStream_id) values (") ;
+							.append(",medservice_id,workfunctionexecute_id,idc10_id")
+							.append(",datestart,medserviceAmount,serviceStream_id) values (");
 					sql.append("'0','ServiceMedCase',current_date,current_time,'").append(login)
-						.append("','").append(aMedCase).append("','").append(serv[0]).append("','").append(serv[1]).append("','").append(serv[2])
-						.append("',to_date('").append(serv[3]).append("','dd.mm.yyyy'),'").append(serv[4]).append("','").append(serv[5])
-						.append("')");
-					service.executeUpdateNativeSql(sql.toString()) ;
+							.append("','").append(aMedCase).append("','").append(serv[0]).append("','").append(serv[1]).append("','").append(serv[2])
+							.append("',to_date('").append(serv[3]).append("','dd.mm.yyyy'),'").append(serv[4]).append("','").append(serv[5])
+							.append("')");
+					service.executeUpdateNativeSql(sql.toString());
 				}
 			}
 		}
@@ -210,7 +210,7 @@ public class HospitalMedCaseServiceJs {
 		if (!list.isEmpty()) {
 			Object[] obj=list.get(0) ;
 			StringBuilder sql = new StringBuilder() ;
-			sql.append("update diary set record='").append(obj[1]).append("',editdate=current_date,edittime=current_time where id="+aDiary) ;
+			sql.append("update diary set record='").append(obj[1]).append("',editdate=current_date,edittime=current_time where id=").append(aDiary);
 			service.executeUpdateNativeSql(sql.toString()) ;
 			service.executeUpdateNativeSql("update diarymessage dm set IsDoctorCheck='1' where dm.diary_id="+aDiary) ;
 		}
@@ -225,8 +225,7 @@ public class HospitalMedCaseServiceJs {
 		req.append("select vdd.id, vdd.name from VocDefectDiary vdd ");
 		req.append("order by vdd.id ");
 		List<Object[]> list = service.executeNativeSqlGetObj(req.toString()) ;
-		for (int i=0;i<list.size();i++) {
-			Object[] obj = list.get(i);
+		for (Object[] obj : list) {
 			res.append(obj[0]).append(":").append(obj[1]).append("#");
 		}
 		
@@ -421,9 +420,9 @@ public class HospitalMedCaseServiceJs {
 			StringBuilder res = new StringBuilder() ;
 			if (o[0]==null) {res.append("###@###") ;}else{res.append(o[0]);}
 			res.append("###@###") ;
-			if (o[1]==null) {}else{res.append(o[1]);}
+			if (o[1]!=null) {res.append(o[1]);}
 			res.append("###@###") ;
-			if (o[2]==null) {}else{res.append(o[2]);}
+			if (o[2]!=null) {res.append(o[2]);}
 			res.append("###@###") ;
 			if (o[3]==null) {res.append("###@###") ;}else{res.append(o[3]);}
 			return res.toString() ;
@@ -573,12 +572,11 @@ public class HospitalMedCaseServiceJs {
 		
 		StringBuilder sql = new StringBuilder() ; 
 		sql.append("select slo.id as sloid,ml.name||' '||to_char(slo.dateStart,'dd.mm.yyyy')||coalesce('-'||to_char(slo.transferDate,'dd.mm.yyyy'),'') as info from medcase sls ")
-			.append(" left join medcase slo on sls.id=slo.parent_id and slo.dtype='DepartmentMedCase'")
-			.append(" left join mislpu ml on ml.id=slo.department_id")
-			.append(" left join diagnosis d on slo.id = d.medcase_id")
-			.append(" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id")
-			.append(" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id")
-			.append(" where sls.id='"+aMedCaseId+"' and (ml.isnoomc is null or ml.isnoomc='0') ")
+				.append(" left join medcase slo on sls.id=slo.parent_id and slo.dtype='DepartmentMedCase'")
+				.append(" left join mislpu ml on ml.id=slo.department_id")
+				.append(" left join diagnosis d on slo.id = d.medcase_id")
+				.append(" left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id")
+				.append(" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id").append(" where sls.id='").append(aMedCaseId).append("' and (ml.isnoomc is null or ml.isnoomc='0') ")
 			.append(" group by sls.id,slo.id,ml.name,slo.dateStart,slo.transferDate	")
 			.append(" having count(case when (vdrt.code='3' or vdrt.code='4') and (vpd.code='1') and d.idc10_id is not null then 1 else null end)=0  ") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
@@ -598,7 +596,7 @@ public class HospitalMedCaseServiceJs {
 	}
 	
 	public String getYesNo(Long aYesNoId, HttpServletRequest aRequest) throws NamingException {
-		if (aYesNoId != null && !aYesNoId.equals(Long.valueOf(0))) {
+		if (aYesNoId != null && !aYesNoId.equals(0L)) {
 			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 			Collection<WebQueryResult> list=service.executeNativeSql("select code from vocyesno where id='"+aYesNoId+"' ",1) ;
 			if (!list.isEmpty()) {
@@ -642,8 +640,8 @@ public class HospitalMedCaseServiceJs {
 		/*if (aRequest.getServerPort()>1000) {
 			//url.append(!csp_port.equals("")?(":"+csp_port):"").append(aRequest.getServerPort()) ;
 		}*/
-		String cspurl = new StringBuilder().append("expert").append(!csp_port.equals("")?(":"+csp_port):"")
-				.append("/csp/").append(getDefaultParameterByConfig("data_base_namespace", "riams", aRequest)).toString() ;
+		String cspurl = "expert"+(!csp_port.equals("")?(":"+csp_port):"")
+				+"/csp/"+getDefaultParameterByConfig("data_base_namespace", "riams", aRequest) ;
 		StringBuilder href = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		res.append(param("address_lpu",address_lpu)) ;
@@ -891,7 +889,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id") ;
 			sql.append(" left join VocServiceStream vss on vss.id=vis.serviceStream_id") ;
 			sql.append(" left join MedPolicy mp on mp.patient_id=pat.id") ;
-			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and mp.actualdatefrom <=coalesce(vis.dateStart,wcd.calendardate,vis.datefinish) and coalesce(mp.actualdateto,vis.datestart,wcd.calendardate,vis.datefinish)>=coalesce(vis.datestart,wcd.calendardate,vis.datefinish) and mp.dtype like 'MedPolicyOm%'") ;
+			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' ").append(aSqlAdd).append(") and mp.actualdatefrom <=coalesce(vis.dateStart,wcd.calendardate,vis.datefinish) and coalesce(mp.actualdateto,vis.datestart,wcd.calendardate,vis.datefinish)>=coalesce(vis.datestart,wcd.calendardate,vis.datefinish) and mp.dtype like 'MedPolicyOm%'");
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString(),1) ;
 			if (l.isEmpty()) throw new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
@@ -1067,7 +1065,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id") ;
 			sql.append(" left join VocServiceStream vss on vss.id=vis.serviceStream_id") ;
 			sql.append(" left join MedPolicy mp on mp.patient_id=pat.id") ;
-			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'") ;
+			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' ").append(aSqlAdd).append(") and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'");
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString(),1) ;
 			if (l.isEmpty()) throw new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
@@ -1359,36 +1357,36 @@ public class HospitalMedCaseServiceJs {
 			href.append(param("Yet",null)) ;*/
 		} else if ("EXTDISP".equals(aType)) {
 			//Дополнительная диспансеризация
-			href.append("AddDisp=").append("") ;
-			href.append("AddDispAge=").append("") ;
-			href.append("AddDispCases=").append("") ;
-			href.append("AddDispHealthGroup=").append("") ;
+			href.append("AddDisp=");
+			href.append("AddDispAge=");
+			href.append("AddDispCases=");
+			href.append("AddDispHealthGroup=");
 			
 	//		Collection<WebQueryResult> l = service.executeNativeSql("select to_char(sls.dateStart,'yyyymmdd') as datestart,to_char(sls.dateFinish,'yyyymmdd') as dateFinish from MedCase sls where sls.id="+aMedCase) ;
 			//WebQueryResult wqr = l.iterator().next() ;
-			href.append("AdmissionDate=").append("") ;
-			href.append("BedDays=").append("") ;
-			href.append("BirthDate=").append("") ;
-			href.append("DepType=").append("") ;
-			href.append("DiagnosisList=").append("") ;
-			href.append("DiagnosisMain=").append("") ;
-			href.append("DiagnosisConcomitant=").append("") ;
-			href.append("DischargeDate=").append("") ;
-			href.append("DoctorPost=").append("") ;
-			href.append("Emergency=").append("") ;
-			href.append("Foreigns=").append("") ;
-			href.append("HotelServices=").append("") ;
-			href.append("Hts=").append("") ;
-			href.append("Lpu=").append("") ;
-			href.append("LpuFunciton=").append("") ; //
-			href.append("Operations=").append("") ;
-			href.append("Reason=").append("") ;
-			href.append("ReasonC=").append("") ;
-			href.append("Render=").append("") ;
-			href.append("Result=").append("") ;
-			href.append("Sex=").append("") ;
-			href.append("VidLpu=").append("") ;
-			href.append("Yet=").append("") ;
+			href.append("AdmissionDate=");
+			href.append("BedDays=");
+			href.append("BirthDate=");
+			href.append("DepType=");
+			href.append("DiagnosisList=");
+			href.append("DiagnosisMain=");
+			href.append("DiagnosisConcomitant=");
+			href.append("DischargeDate=");
+			href.append("DoctorPost=");
+			href.append("Emergency=");
+			href.append("Foreigns=");
+			href.append("HotelServices=");
+			href.append("Hts=");
+			href.append("Lpu=");
+			href.append("LpuFunciton="); //
+			href.append("Operations=");
+			href.append("Reason=");
+			href.append("ReasonC=");
+			href.append("Render=");
+			href.append("Result=");
+			href.append("Sex=");
+			href.append("VidLpu=");
+			href.append("Yet=");
 		}
 		return res.toString() ;
 	}
@@ -1424,7 +1422,7 @@ public class HospitalMedCaseServiceJs {
 	}
 	public void updateDataFromParameterConfig(Long aDepartment, Long aIsLowerCase, String aIds, HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-		service.updateDataFromParameterConfig(aDepartment, aIsLowerCase!=null && aIsLowerCase.equals(Long.valueOf(1)), aIds, false) ;
+		service.updateDataFromParameterConfig(aDepartment, aIsLowerCase!=null && aIsLowerCase.equals(1L), aIds, false) ;
 	}
 	public void removeDataFromParameterConfig(Long aDepartment, String aIds, HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
@@ -1730,7 +1728,6 @@ public class HospitalMedCaseServiceJs {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	StringBuilder sql = new StringBuilder() ;
     	StringBuilder res = new StringBuilder() ;
-    	sql = new StringBuilder() ;
     	sql.append("select vbt.id as vbtid, vbt.name as vbtname,vbst.id as vbstid,vbst.name as vbstname from BedFund bf ") ;
     	sql.append(" left join vocBedType vbt on vbt.id=bf.bedType_id left join vocBedSubType vbst on vbst.id=bf.bedSubType_id ") ;
     	sql.append(" where bf.lpu_id='").append(aDepartment) ;
@@ -1832,7 +1829,7 @@ public class HospitalMedCaseServiceJs {
 			.append("' and bf.serviceStream_id='").append(aServiceStream)
 			.append("' and to_date('").append(aDateFrom)
 			.append("','dd.mm.yyyy') between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE)") ;
-		sql.append(" ").append(bedSubType).append("");
+		sql.append(" ").append(bedSubType);
 		String username=LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		StringBuilder sql1=new StringBuilder();
 		sql1.append("select wf.id as wfid,case when wf.code is null then '' else wf.code||' ' end || vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename from WorkFunction wf")

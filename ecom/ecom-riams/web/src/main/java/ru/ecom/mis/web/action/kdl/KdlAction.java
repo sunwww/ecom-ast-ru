@@ -1,18 +1,16 @@
 package ru.ecom.mis.web.action.kdl;
 
-import java.io.File;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 
 public class KdlAction extends BaseAction {
 
@@ -41,13 +39,12 @@ public class KdlAction extends BaseAction {
 		}
 	public void parseDir(File aDir, Boolean aRootDir){
 
-		File targetDir = null;
+		File targetDir;
 
 		File[] files=aDir.listFiles();
-		if (files == null) {
-		} else {
+		if (files != null) {
 		    for (File file:files) {
-		    	if(file.isDirectory()==false){
+		    	if(!file.isDirectory()){
 		    		//printVariable("\nfile",file.getAbsolutePath()) ;
 		    		targetDir = theWorkArcDir;
 		    		try {
@@ -126,10 +123,10 @@ public class KdlAction extends BaseAction {
 			String message ;
 			message = variable+": "+(value==null?"":value);
 			if (type.equals("D")) {
-				message = message + " ("+((java.util.Date) DateFormat.parseDate(value, "yyyy-MM-dd"))+")";
+				message = message + " ("+ DateFormat.parseDate(value, "yyyy-MM-dd") +")";
 			}
 			if (type.equals("T")) {
-				message = message + " ("+((java.sql.Time) DateFormat.parseSqlTime(value)+")");
+				message = message + " ("+(DateFormat.parseSqlTime(value) +")");
 			}
 
 			println(message);

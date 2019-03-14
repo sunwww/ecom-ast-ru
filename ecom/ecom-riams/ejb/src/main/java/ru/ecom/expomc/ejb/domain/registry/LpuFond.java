@@ -25,21 +25,6 @@ public class LpuFond extends NoLiveBaseEntity {
         if(theTransferDate!=null) return theTransferDate ;
         return null ;
     }
-
-//    /** Реестр */
-//    @ManyToOne
-//    public Registry getRegistry() { return theRegistry ; }
-//    public void setRegistry(Registry aRegistry) { theRegistry = aRegistry ; }
-
-    /** Период */
-//    @ManyToOne
-//    public RegPeriod getPeriod() { return thePeriod ; }
-//    public void setPeriod(RegPeriod aPeriod) { thePeriod = aPeriod ; }
-//
-//    /** Период */
-//    private RegPeriod thePeriod ;
-
-
     /** Код ЛПУ */
     @Comment("Код ЛПУ")
     @AFormatFieldSuggest("KOD_LPU")
@@ -643,8 +628,6 @@ public class LpuFond extends NoLiveBaseEntity {
     /** Код ЛПУ */
     private String theKodLpu ;
 
-//    /** Реестр */
-//    private Registry theRegistry ;
     /** Тип страхования */
     private String theInsureType ;
 

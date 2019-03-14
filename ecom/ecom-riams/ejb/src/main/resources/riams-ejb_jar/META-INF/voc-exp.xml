@@ -372,13 +372,6 @@
         <IAllValue>ru.ecom.expomc.ejb.services.voc.allvalues.CheckTypeAllValues</IAllValue>
     </voc>
 
-    <voc id='omcOrgEntity' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.registry.RegistryEntry'
-                names   = 'lastname,firstname'
-                queried = 'lastname,firstname'
-        />
-    </voc>
 
     <!-- Предприятие: код -> название предприятия + новый код -->
     <voc id='timeOmcOrg' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>

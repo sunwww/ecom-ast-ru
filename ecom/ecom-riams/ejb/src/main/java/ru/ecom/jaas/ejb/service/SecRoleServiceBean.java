@@ -139,7 +139,7 @@ public class SecRoleServiceBean implements ISecRoleService {
         }
         for (long idPolicy : aRemoved) {
             SecPolicy policy = theManager.find(SecPolicy.class, idPolicy) ;
-            if(policy!=null && policies.contains(policy)) {
+            if(policy!=null) {
                 policies.remove(policy) ;
             }
         }
@@ -179,7 +179,7 @@ public class SecRoleServiceBean implements ISecRoleService {
     	
         for (SecPolicy policy : aPolicy.getChildsSecPolicies()) {
             CheckNode node = new CheckNode(policy.getId()
-                    , new StringBuilder().append(policy.getName()).append(" (").append(policy.getKey()).append(")").toString()
+                    , policy.getName() + " (" + policy.getKey() + ")"
                     , aPoliciesSet.contains(policy.getId()));
             aNode.getChilds().add(node) ;
             add(policy, node, aPoliciesSet);

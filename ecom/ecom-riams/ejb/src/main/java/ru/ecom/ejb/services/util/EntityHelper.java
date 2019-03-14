@@ -144,7 +144,7 @@ public class EntityHelper {
 	}
     public boolean isVocEntity(Class aClazz) {
 //    	if(true) return true ;
-    	if(aClazz==null) throw new IllegalArgumentException("Нет параметра "+aClazz) ;
+    	if(aClazz==null) throw new IllegalArgumentException("Нет параметра aClazz") ;
     	if(aClazz.equals(BaseEntity.class)) return false ;
     	if(aClazz.equals(VocBaseEntity.class)) return true ;
     	if(aClazz.equals(VocIdCodeName.class)) return true ;
@@ -220,7 +220,7 @@ public class EntityHelper {
 			AttributeOverride attributeOverride = (AttributeOverride) aClass.getAnnotation(AttributeOverride.class);
 			if (attributeOverride!=null){
 				Column column = attributeOverride.column();
-				if (column!=null) ret=column.name();
+				ret=column.name();
 			}
 		}
 		return ret;

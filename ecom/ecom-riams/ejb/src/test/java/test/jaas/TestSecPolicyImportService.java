@@ -1,21 +1,16 @@
 package test.jaas;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeSet;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
 import ru.nuzmsh.util.filesystem.FileSystemIterate;
 import ru.nuzmsh.util.filesystem.IFileListener;
 import ru.nuzmsh.util.filesystem.SourcesFileFilter;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 
 public class TestSecPolicyImportService {
 
@@ -125,7 +120,7 @@ public class TestSecPolicyImportService {
 				LineNumberReader in = new LineNumberReader(
 						new FileReader(aFile));
 
-				String line = null;
+				String line;
 				while ((line = in.readLine()) != null) {
 					// if(aFile.getName().endsWith("startPriem.jsp")) {
 					// System.out.println("'"+line+"'");

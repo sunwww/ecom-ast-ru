@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class DeleteListener {
 	private static final Logger LOG = Logger.getLogger(DeleteListener.class);
@@ -47,7 +48,7 @@ public class DeleteListener {
 			.setMaxResults(1).getResultList();
 		if (!list.isEmpty()) {
 			DeleteJournal deleteJournal = list.iterator().next();
-			deleteJournal.setStatus(Long.valueOf(1)) ;
+			deleteJournal.setStatus(1L) ;
 			theManager.persist(deleteJournal) ;
 
 		}
@@ -81,7 +82,7 @@ public class DeleteListener {
 							&& !method.isAnnotationPresent(Transient.class)
 							&& !"getClass".equals(name)
 							&& !method.isAnnotationPresent(OneToMany.class)
-							&& (method.getParameterTypes()==null ||  method.getParameterTypes().length==0)) {
+							&& (Objects.equals(method.getParameterTypes(), null) ||  method.getParameterTypes().length==0)) {
 						String value ;
 						try {
 							Object obj = method.invoke(aObject) ;
@@ -138,7 +139,7 @@ public class DeleteListener {
 			
 			dj.setDeleteDate(new java.sql.Date(date.getTime())) ;
 			dj.setDeleteTime(new java.sql.Time(date.getTime())) ;
-			dj.setStatus(Long.valueOf(0)) ;
+			dj.setStatus(0L) ;
 			theManager.persist(dj) ;
 
 		}

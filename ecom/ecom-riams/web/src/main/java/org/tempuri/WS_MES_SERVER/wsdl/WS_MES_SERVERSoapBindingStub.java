@@ -204,7 +204,7 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
          super.cachedEndpoint = endpointURL;
     }
 
-    public WS_MES_SERVERSoapBindingStub(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
+    public WS_MES_SERVERSoapBindingStub(javax.xml.rpc.Service service) {
         if (service == null) {
             super.service = new org.apache.axis.client.Service();
         } else {
@@ -267,9 +267,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -298,9 +298,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -329,9 +329,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -360,9 +360,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -391,9 +391,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -422,9 +422,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -453,9 +453,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -484,9 +484,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -515,9 +515,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -546,9 +546,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -577,9 +577,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -608,9 +608,9 @@ public class WS_MES_SERVERSoapBindingStub extends org.apache.axis.client.Stub im
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.Object) _resp;
+                return _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.Object) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.Object.class);
+                return org.apache.axis.utils.JavaUtils.convert(_resp, Object.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {

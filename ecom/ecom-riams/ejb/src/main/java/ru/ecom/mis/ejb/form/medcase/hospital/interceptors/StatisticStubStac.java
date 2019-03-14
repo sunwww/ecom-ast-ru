@@ -102,7 +102,7 @@ public class StatisticStubStac {
      */
     public static boolean changeStatCardNumber(long aSlsId, String aNewStatCardNumber,
     		EntityManager aManager, SessionContext aContext) {
-    	String oldStatCard="" ;
+    	String oldStatCard;
     	String username = aContext.getCallerPrincipal().toString() ;
     	if (aContext.isCallerInRole(ChangeStatCardNumber)) {
     		
@@ -148,25 +148,25 @@ public class StatisticStubStac {
                         	
                         	StatisticStubExist exist = new StatisticStubExist();
                         	exist.setMedCase(medCase);
-                        	exist.setYear(Long.valueOf(cal.get(Calendar.YEAR)));
+                        	exist.setYear((long) cal.get(Calendar.YEAR));
                         	exist.setCode(aNewStatCardNumber) ;
                         	aManager.persist(exist);
                         	//aManager.refresh(exist);
                         	medCase.setStatisticStub(exist) ;
                         }
-                    	StatisticStubRestored restorednum = isStatCardNumberRestored(aNewStatCardNumber, Long.valueOf(cal.get(Calendar.YEAR)), aManager);
+                    	StatisticStubRestored restorednum = isStatCardNumberRestored(aNewStatCardNumber, (long) cal.get(Calendar.YEAR), aManager);
                     	if (restorednum!=null) aManager.remove(restorednum);
                         medCase.getStatisticStub().setCode(aNewStatCardNumber);
                     }
                     setChangeJournal(aSlsId, oldStatCard, aNewStatCardNumber, username, aManager);
                     return true;
                 } catch (Exception e) {
-                    throw new IllegalStateException(new StringBuffer().append("Ошибка изменения номера стат. карты: ").append(e.getMessage()).toString());
+                    throw new IllegalStateException("Ошибка изменения номера стат. карты: " + e.getMessage());
                 }
             }
         	
     	} else {
-    		throw new IllegalStateException(new StringBuffer().append("Нет прав для изменения номера стат.карты!!!").toString());
+    		throw new IllegalStateException("Нет прав для изменения номера стат.карты!!!");
     	}
     	
     	
@@ -185,7 +185,7 @@ public class StatisticStubStac {
 		
 		jour.setChangeDate(new java.sql.Date(date.getTime())) ;
 		jour.setChangeTime(new java.sql.Time(date.getTime())) ;
-		jour.setStatus(Long.valueOf(0)) ;
+		jour.setStatus(0L) ;
 		aManager.persist(jour) ;
     }
     
@@ -225,7 +225,7 @@ public class StatisticStubStac {
         //private boolean isStatCardNumberExists(String aStatCardNumber, int aYear, boolean aIsPlan) {
     	List<StatisticStubExist> states = aManager.createQuery("FROM StatisticStub WHERE year = :year AND code = :number AND DTYPE = 'StatisticStubExist'")
     		.setParameter("number",aStatCardNumber)
-    		.setParameter("year", Long.valueOf(aYear)).setMaxResults(1).getResultList();
+    		.setParameter("year", (long) aYear).setMaxResults(1).getResultList();
         return states!=null && !states.isEmpty();
     }
 	
@@ -349,7 +349,7 @@ public class StatisticStubStac {
     	HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aSlsId);
     	VocPigeonHole vph = medCase.getDepartment()!=null?medCase.getDepartment().getPigeonHole():null ;
     	boolean isEmerPlan = vph!=null && vph.getIsStatStubEmerPlan()!=null && vph.getIsStatStubEmerPlan()  ;
-    	boolean emergency = medCase.getEmergency()==null?false:medCase.getEmergency().booleanValue() ;
+    	boolean emergency = medCase.getEmergency() != null && medCase.getEmergency();
     	if (medCase.getStatisticStub()!=null) {
     		changeStatCardNumber(aSlsId, aStatCardNumberByHand, aManager, aContext) ;
     		return ;
@@ -358,7 +358,7 @@ public class StatisticStubStac {
     		if (CAN_DEBUG) LOG.debug("  Создание номера стат карты вручную [ номер стат.карты = " + aStatCardNumberByHand + "]");
             Calendar cal = Calendar.getInstance();
             cal.setTime(medCase.getDateStart());
-            Long year = Long.valueOf(cal.get(Calendar.YEAR)) ;
+            Long year = (long) cal.get(Calendar.YEAR);
             if (StatisticStubStac.isStatCardNumberExists(aManager, aStatCardNumberByHand, year)) {
                 throw new IllegalArgumentException("Номер стат. карты " +aStatCardNumberByHand + " уже существует за этот год");
             }
@@ -390,7 +390,7 @@ public class StatisticStubStac {
 	    	SimpleDateFormat format = new SimpleDateFormat("yyyy") ;
 	        Long year = Long.valueOf(format.format(medCase.getDateStart())) ;
 	        if (medCase.getIsAmbulanseDialis()) {
-	            nextStatCardNumber = new StringBuffer().append(medCase.getPatient().getId()).toString();
+	            nextStatCardNumber = String.valueOf(medCase.getPatient().getId());
 	            StatisticStubExist statstub = new StatisticStubExist();
 	            statstub.setCode(nextStatCardNumber);
 	            statstub.setYear(year);
@@ -410,7 +410,6 @@ public class StatisticStubStac {
 	                	aManager.remove(restoredb);
 	                    next =  true;
 	                } else {
-	                	next = false ;
 	                	restored = restoredb ;
 	                }
 	            } while(next); 
@@ -435,8 +434,7 @@ public class StatisticStubStac {
 	                medCase.setStatisticStub(stubexist);
 	            } else {
 	            	//создаем новый номер
-	                if (CAN_DEBUG) LOG.debug("Создание новый номер");
-	            	List<StatisticStubNew> rows = null;
+	            	List<StatisticStubNew> rows;
 	            	
 	            		if (vph!=null) {
 	            			if (isEmerPlan) {
@@ -526,7 +524,7 @@ public class StatisticStubStac {
 
         String nextStatCardNumber;
         if (theMedCase.getIsAmbulanseDialis()) {
-            nextStatCardNumber = new StringBuffer().append(theMedCase.getPatient().getId()).toString();
+            nextStatCardNumber = String.valueOf(theMedCase.getPatient().getId());
             StatisticStubExist statstub = new StatisticStubExist();
             statstub.setCode(nextStatCardNumber);
             statstub.setYear(theYear);
@@ -548,7 +546,6 @@ public class StatisticStubStac {
                     next =  true;
                     
                 } else {
-                	next = false ;
                 	restored = restoredb ;
                 	//break;
                 }
@@ -575,7 +572,7 @@ public class StatisticStubStac {
             } else {
             	//создаем новый номер
                 if (CAN_DEBUG) LOG.debug("Создание новый номер");
-                List<StatisticStubNew> rows = null;
+                List<StatisticStubNew> rows;
             	
         		if (thePigeonHole!=null) {
         			if (theIsEmergAndPlan) {

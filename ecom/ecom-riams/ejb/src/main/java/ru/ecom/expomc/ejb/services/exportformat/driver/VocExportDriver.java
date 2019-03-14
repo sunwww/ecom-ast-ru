@@ -29,7 +29,7 @@ public class VocExportDriver implements IExportFomatDriver {
         values = allValue.listAll(context);
     }
 
-    public void saveXml(StringBuilder s) throws SaveXmlException {
+    public void saveXml(StringBuilder s) {
         s.append("<result>\n");
         for (VocValue vocValue : values) {
             saveVocValue(s,vocValue);
@@ -51,7 +51,7 @@ public class VocExportDriver implements IExportFomatDriver {
     }
 
     public void saveVocValue(StringBuilder s, VocValue vocValue) {
-        s.append("\t<row id='" +vocValue.getId()+"'>");
+        s.append("\t<row id='").append(vocValue.getId()).append("'>");
         s.append(vocValue.getName());
         s.append("</row>\n");
     }

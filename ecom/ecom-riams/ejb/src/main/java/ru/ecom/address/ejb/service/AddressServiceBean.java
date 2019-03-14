@@ -1,6 +1,5 @@
 package ru.ecom.address.ejb.service;
 
-import org.apache.log4j.Logger;
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcQnp;
@@ -22,9 +21,6 @@ import java.util.List;
 @Local(ILocalAddressService.class)
 public class AddressServiceBean implements IAddressService, ILocalAddressService {
 
-	private static final Logger LOG = Logger
-			.getLogger(AddressServiceBean.class);
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
     @SuppressWarnings("unchecked")
 	public Address findAddressByKladr(String aKladrCode) {
@@ -35,15 +31,12 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     	Address adr = theEntityManager.find(Address.class, aAddressId);
     	String rayon =theAstrkhanReginHelper.getOmcRayonNameKey(adr, aHouse, theEntityManager) ;
     	if (rayon!=null) {
-	    	StringBuilder sql = new StringBuilder() ;
-	    	sql.append("select id,code||' '||name from VocRayon where code=:code") ;
+	    	String sql ="select id,code||' '||name from VocRayon where code=:code";
 	    	
-	    	List<Object[]> list = theEntityManager.createNativeQuery(sql.toString()).setParameter("code",rayon).setMaxResults(1).getResultList() ;
+	    	List<Object[]> list = theEntityManager.createNativeQuery(sql).setParameter("code",rayon).setMaxResults(1).getResultList() ;
 	    	if (!list.isEmpty()) {
 	    		Object[] obj = list.get(0) ;
-	    		StringBuilder res = new StringBuilder() ;
-	    		res.append(obj[0]).append("#").append(obj[1]) ;
-	    		return res.toString() ;
+	    		return obj[0]+"#"+obj[1] ;
 	    	}
     	}
     	return "" ;
@@ -53,9 +46,9 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     	Address adr6 = theEntityManager.find(Address.class, aAddress6) ;
     	Address adr5 = theEntityManager.find(Address.class, aAddress6) ;
     	String zipcode ;
-    	zipcode = adr6!=null?adr6.getPostIndex():"" ;
-    	if (zipcode==null || zipcode.equals("")) zipcode = adr5!=null?adr5.getPostIndex():"" ;
-    	return zipcode==null?"":zipcode ;
+    	zipcode = adr6!=null ? adr6.getPostIndex() : "" ;
+    	if (zipcode==null || zipcode.equals("")) zipcode = adr5!=null ? adr5.getPostIndex() : "" ;
+    	return zipcode==null ? "" : zipcode ;
     }
     
     public String getAddressNonresidentString(Long aTerritory, String aRegion
@@ -94,7 +87,6 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     }
 
     public String getAddressString(long aAddressPk, String aHouse, String aCorpus, String aFlat,String aZipCode) {
-    	if (CAN_DEBUG) LOG.debug("getAddressString: aAddressPk = " + aAddressPk);
 
     	String sql = "select a.fullname,a.name,at1.shortName,a.parent_addressid,a.addressid from Address2 a left join AddressType at1 on at1.id=a.type_id  where a.addressid=" ;
     	List<Object[]> list = theEntityManager.createNativeQuery(sql+aAddressPk) 
@@ -124,11 +116,7 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     public Address getAddressForLevel(long aDomain, Address aAddress) {
     	if(aAddress==null) return null ;
     	Long id = getIdForLevel(aDomain, aAddress.getId());
-    	if(id!=null) {
-    		return theEntityManager.find(Address.class, id) ;
-    	} else {
-    		return null ;
-    	}
+    	return id!=null ? theEntityManager.find(Address.class, id) : null ;
     }
 
     public Long getIdForLevel(long aDomain, Long aAddressId) {

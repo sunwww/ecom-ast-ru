@@ -31,9 +31,7 @@ public class RecordPreCreate implements IParentFormInterceptor{
     		//(Новый период нетрудоспособности не должен заводиться если у последнего
     		//не проставлена да окончания)
     		//Новый период нетрудоспособности должен заводиться с датой последняя дата окончания + 1
-    		StringBuilder sql = new StringBuilder() ;
-    		sql.append("select max(dateTo),max(dateFrom) from DisabilityRecord where disabilityDocument_id=:doc") ;
-    		Object[] row =   (Object[]) manager.createNativeQuery(sql.toString()).setParameter("doc", doc.getId()).getSingleResult() ;
+			Object[] row =   (Object[]) manager.createNativeQuery("select max(dateTo),max(dateFrom) from DisabilityRecord where disabilityDocument_id=:doc").setParameter("doc", doc.getId()).getSingleResult() ;
     		Date dateToMax = (Date)row[0] ;
     		Date dateFromMax = (Date)row[1] ;
     		

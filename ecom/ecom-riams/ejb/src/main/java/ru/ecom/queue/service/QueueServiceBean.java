@@ -65,9 +65,9 @@ public class QueueServiceBean implements IQueueService {
                 return null;
             } else {
                 Object[] ret = list.get(0);
-                Long workfunctionId=Long.valueOf(ret[0]!=null?ret[0].toString():null);
+                Long workfunctionId=Long.valueOf(ret[0]!=null ? ret[0].toString() : "0");
                 Long queueId=ret[1]!=null?Long.valueOf(ret[1].toString()):null;
-                if (workfunctionId==null) {
+                if (workfunctionId>0L) {
                     log.error("Нет соответствия между рабочей функцией и именем пользователя");
                     return null;
                 }

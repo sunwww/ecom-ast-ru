@@ -178,7 +178,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 		if (lpuId==null||ogrn==null){
 			return "Не найдено ЛПУ для отправки больничного листа";
 		} else {
-		String method = "";
+		String method;
 		if (textReason != null) {
 			try {
 				textReason = URLEncoder.encode(textReason, "UTF-8");
@@ -192,8 +192,8 @@ public class DisabilityServiceBean implements IDisabilityService {
 
 		}
 		if (address == null ) {
-			LOG.error("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = " + address + ", ЛПУ = " + lpuId);
-			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = " + address + ", ЛПУ = " + lpuId;
+			LOG.error("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = NULL, ЛПУ = " + lpuId);
+			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = NULL, ЛПУ = " + lpuId;
 		}
 		//List<Object[]> list = theManager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = " + lpuId).getResultList();
 
@@ -278,7 +278,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 			DisabilityDocument doc = getDocument(lnCode);
 			if (result.getChildText("STATUS").equals("1")) { //Тоды ошибка
 				Element fault = result.getChild("FAULT");
-				sb.append(i).append(":").append(String.valueOf(doc.getId())).append(":").append(lnCode).append(":Ошибка = ").append(fault.getChildText("ERROR_CODE"))
+				sb.append(i).append(":").append(doc.getId()).append(":").append(lnCode).append(":Ошибка = ").append(fault.getChildText("ERROR_CODE"))
 					.append(":").append(fault.getChildText("ERROR_MESSAGE").replace(":", " "));
 				if (doc!=null) {
 					doc.setExportDate(new java.sql.Date(new java.util.Date().getTime()));
@@ -287,7 +287,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 				}
 				
 			} else if (result.getChildText("STATUS").equals("0")) {
-				sb.append(i).append(":").append(String.valueOf(doc.getId())).append(":").append(lnCode).append(":Принят без замечаний:#");
+				sb.append(i).append(":").append(doc.getId()).append(":").append(lnCode).append(":Принят без замечаний:#");
 				if (doc!=null) {
 					doc.setExportDefect("");
 					doc.setExportDate(new java.sql.Date(new java.util.Date().getTime()));
@@ -472,7 +472,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 		return ApplicationDataSourceHelper.getInstance().findDataSource();
 	}
     public String find_data(String SQLReq, String aSocCode, String aSocPhone, String aSocEmail, String aOgrnCode, String aWorkFunction, String aPacketNumber, MisLpu lpu) throws ParseException, NamingException {
-		Statement statement = null;
+		Statement statement;
 			Pattern lnPattern = Pattern.compile("^[0-9]{12}$");
 			Element rootElement = new Element("LPU");
 			Element rowOperation = new Element("OPERATION");
@@ -1138,7 +1138,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     }
     public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument){
     	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
-    	DisabilityDocument docPrev = aPrevDocument!=null&&!aPrevDocument.equals(Long.valueOf(0))?theManager.find(DisabilityDocument.class, aPrevDocument):null ;
+    	DisabilityDocument docPrev = aPrevDocument!=null&&!aPrevDocument.equals(0L)?theManager.find(DisabilityDocument.class, aPrevDocument):null ;
     	VocCombo newVocComb = theManager.find(VocCombo.class, aVocCombo) ;
 
 		List<Object[]> list = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",aDocId).getResultList();
@@ -1364,7 +1364,7 @@ public class DisabilityServiceBean implements IDisabilityService {
         	aFind = aFind.trim() ;
         	int ind = aFind.indexOf(" ") ;
         	String series = null ;
-        	String number = "" ;
+        	String number;
         	if (ind==-1) {
         		number = aFind ;
         	} else {

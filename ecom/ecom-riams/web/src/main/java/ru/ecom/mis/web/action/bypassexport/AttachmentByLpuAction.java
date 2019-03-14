@@ -1,32 +1,22 @@
 package ru.ecom.mis.web.action.bypassexport;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.upload.FormFile;
-
-import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.expomc.ejb.services.form.importformat.IImportFormatService;
-import ru.ecom.expomc.ejb.services.importservice.ImportException;
-import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.web.util.ActionUtil;
-import ru.ecom.web.util.FileUploadUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
 
 public class AttachmentByLpuAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -66,9 +56,9 @@ public class AttachmentByLpuAction extends BaseAction {
 	    	String prefix="" ;
 	    	StringBuilder sqlAdd=new StringBuilder() ;
 	    	if (typeAge!=null) {
-	    		if (typeAge!=null&&typeAge.equals("1")) {
+	    		if (typeAge.equals("1")) {
 		    		age = "<=18" ;
-		    	} else if (typeAge!=null&&typeAge.equals("2")) {
+		    	} else if (typeAge.equals("2")) {
 		    		age = ">=18" ;
 		    	}
 	    		if (typeAge.equals("1")||typeAge.equals("2")) {
@@ -110,7 +100,7 @@ public class AttachmentByLpuAction extends BaseAction {
     			sqlAdd.append(" and (lp.defectText='' or lp.defectText is null)") ;
     		}
     		if (form.getCompany()!=null&& form.getCompany()!=0) {
-    			sqlAdd.append(" and lp.company_id='"+form.getCompany()+"' ");
+    			sqlAdd.append(" and lp.company_id='").append(form.getCompany()).append("' ");
     		}
     		if (typeCompany!=null &&typeCompany.equals("1")){
     			sqlAdd.append(" and lp.company_id is not null ");
@@ -120,7 +110,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		
     		if (typeRead!=null&&(typeRead.equals("1")||typeRead.equals("3"))) {
 //    			String fs = null;
-    			WebQueryResult fs = new WebQueryResult();
+    			WebQueryResult fs ;
     			boolean bNeedDivide = true;
     			if (typeDivide!=null&&typeDivide.equals("2")) {
     				bNeedDivide = false;
@@ -140,7 +130,7 @@ public class AttachmentByLpuAction extends BaseAction {
 		        	String[] files = fs.get1().toString().split("#") ;
 		        	StringBuilder sb = new StringBuilder() ;
 		        	for (String file:files) {
-		        		sb.append("<a href='../rtf/"+file+"'>"+file+"</a> ") ;
+		        		sb.append("<a href='../rtf/").append(file).append("'>").append(file).append("</a> ");
 		        	}
 		        	form.setFilename(sb.toString()) ;
 		        	if (def!=null&&!def.isEmpty()){

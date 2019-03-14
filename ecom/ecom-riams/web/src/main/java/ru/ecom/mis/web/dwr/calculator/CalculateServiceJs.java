@@ -1,21 +1,19 @@
 package ru.ecom.mis.web.dwr.calculator;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
 
 /**
  * Сервис калькулятора
@@ -34,7 +32,7 @@ public class CalculateServiceJs {
 	
 	
 	StringBuilder sql = new StringBuilder();
-	sql.append("DELETE FROM calculations where calculator_id='"+Calcid+"'");
+	sql.append("DELETE FROM calculations where calculator_id='").append(Calcid).append("'");
 	service.executeUpdateNativeSql(sql.toString());
 	
 	for (int i = 0; i < params.length(); i++) {
@@ -48,7 +46,7 @@ public class CalculateServiceJs {
 
 	    sql = new StringBuilder();
 	    sql.append("insert into calculations (value,comment,orderus,type_id,calculator_id,note) ");
-	    sql.append("values('" + value + "','" + comment + "','" + orderus+ "','" + type + "','" + Calcid + "','" + note + "')");
+	    sql.append("values('").append(value).append("','").append(comment).append("','").append(orderus).append("','").append(type).append("','").append(Calcid).append("','").append(note).append("')");
 	    service.executeUpdateNativeSql(sql.toString());
 	}
 
@@ -62,7 +60,7 @@ public class CalculateServiceJs {
 
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("DELETE FROM interpretation where calculator_id='"+Calcid+"'");
+		sql.append("DELETE FROM interpretation where calculator_id='").append(Calcid).append("'");
 		service.executeUpdateNativeSql(sql.toString());
 
 		for (int i = 0; i < params.length(); i++) {
@@ -73,7 +71,7 @@ public class CalculateServiceJs {
 
 			sql = new StringBuilder();
 			sql.append("insert into interpretation (value,result,calculator_id) ");
-			sql.append("values('" + value + "','" + result + "','" + Calcid + "')");
+			sql.append("values('").append(value).append("','").append(result).append("','").append(Calcid).append("')");
 			service.executeUpdateNativeSql(sql.toString());
 		}
 
@@ -89,20 +87,20 @@ public class CalculateServiceJs {
 
 	sql.append("SELECT cs.value,cs.comment,cs.type_id,cs.note from calculations cs ");
 	sql.append("left join calculator c on c.id = cs.calculator_id ");
-	sql.append("where c.id = '"+aId+"' order by orderus ");
+	sql.append("where c.id = '").append(aId).append("' order by orderus ");
 	
 	Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 	
-	JSONObject resultJson = new JSONObject();
+	JSONObject resultJson ;
 	JSONArray arr = new JSONArray();
 
 	for (WebQueryResult wqr : res) {
 	    
 	    resultJson = new JSONObject();
-	    resultJson.put("Value",new String(wqr.get1().toString()));
-	    resultJson.put("Comment",new String(wqr.get2().toString()));
-	    resultJson.put("Type_id",new String(wqr.get3().toString()));
-		resultJson.put("Note",new String(wqr.get4()!=null? wqr.get4().toString():""));
+	    resultJson.put("Value",wqr.get1().toString());
+	    resultJson.put("Comment",wqr.get2().toString());
+	    resultJson.put("Type_id",wqr.get3().toString());
+		resultJson.put("Note",wqr.get4()!=null ? wqr.get4().toString() : "");
 
 	    arr.put(resultJson);
 	}
@@ -115,7 +113,7 @@ public class CalculateServiceJs {
     {
 	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 	StringBuilder sql = new StringBuilder();
-	sql.append("Update calculationsresult  set result='"+aResult+"' where id='"+aId+"'");
+	sql.append("Update calculationsresult  set result='").append(aResult).append("' where id='").append(aId).append("'");
 	//System.out.println("=== Debug: "+sql.toString());
 	service.executeUpdateNativeSql(sql.toString()) ;
     }
@@ -131,7 +129,7 @@ public class CalculateServiceJs {
 		//System.out.println(date.format(d)); //25.02.2013
 
 		sql.append("INSERT INTO calculationsresult  (result,departmentmedcase_id,calculator_id,resdate)");
-		sql.append("values ('" + aResult + "','" + aId + "','" + aCalcId + "','" + date.format(d).toString() + "')");
+		sql.append("values ('").append(aResult).append("','").append(aId).append("','").append(aCalcId).append("','").append(date.format(d)).append("')");
 		//System.out.println("=== Debug: " + sql.toString());
 		service.executeUpdateNativeSql(sql.toString());
 		//Milamesher 22112018 создание дневника о вычислении
@@ -139,8 +137,8 @@ public class CalculateServiceJs {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
 		Collection<WebQueryResult> res = service.executeNativeSql
 				("select name|| case when comment is not null and comment<>'' then ' ('||comment||')' else '' end, case when creatediary=true then '1' else '0' end from calculator where id=" + aCalcId);
-		String result = "";
-		Boolean checkCreateDiary = false;
+		String result;
+		boolean checkCreateDiary = false;
 		if (res.size() > 0) {
 			scaleName=(res.iterator().next().get1() != null) ? res.iterator().next().get1().toString(): "\n";
 			result = (res.iterator().next().get1() != null) ? res.iterator().next().get1().toString() + ":\n" + formString + "\n" + aResult
@@ -153,11 +151,10 @@ public class CalculateServiceJs {
 					"where su.login='" + username + "'").iterator().next().get1().toString();
 			sql.append("INSERT INTO diary(dtype,  \"time\", date, record, username, dateregistration, isdischarge, \n" +
 					"timeregistration,medcase_id, specialist_id,journaltext, templateprotocol, disableedit)");
-			sql.append("values ('Protocol', current_time, current_date,'"  + result + "','" + username + "', current_date,false, current_time,"
-					+ aId + "," + workFunction + ", '', 0, false)");
+			sql.append("values ('Protocol', current_time, current_date,'").append(result).append("','").append(username).append("', current_date,false, current_time,").append(aId).append(",").append(workFunction).append(", '', 0, false)");
 			service.executeUpdateNativeSql(sql.toString());
 		}
-		return scaleName.equals("")? "":scaleName+":\n";
+		return scaleName.equals("") ? "" : scaleName+":\n";
 	}
     
     
@@ -172,14 +169,14 @@ public class CalculateServiceJs {
 	sql.append(" from medcase smo ");
 	sql.append(" left join patient p on p.id = smo.patient_id  ");
 	sql.append(" left join vocsex vs on p.sex_id = vs.id ");
-	sql.append(" where smo.id ='"+aId.toString()+"'");
+	sql.append(" where smo.id ='").append(aId.toString()).append("'");
 	
 	Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 	
 	
 	StringBuilder sb = new StringBuilder();
 	for (WebQueryResult wqr : res) {
-	    sb.append("" + wqr.get1());
+	    sb.append(wqr.get1());
 	}
 	
 	return sb.toString();
@@ -198,13 +195,13 @@ public class CalculateServiceJs {
 	sql.append("then -1 else 0 end)<0) then -1 else 0 end)) as age ");
 	sql.append("from medcase smo ");
 	sql.append("left join patient p on p.id = smo.patient_id ");
-	sql.append("where smo.id ='" + aId.toString()+"'");
+	sql.append("where smo.id ='").append(aId.toString()).append("'");
 	
 	Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 	
 	StringBuilder sb = new StringBuilder();
 	for (WebQueryResult wqr : res) {
-	    sb.append("" + wqr.get1());
+	    sb.append(wqr.get1());
 	}
 	return sb.toString();
     }
@@ -212,12 +209,12 @@ public class CalculateServiceJs {
     public String getCountDiary(Long aId, HttpServletRequest aRequest) throws NamingException{
 	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 	StringBuilder sql = new StringBuilder();
-	sql.append("select count(id) from diary where medcase_id='"+aId.toString()+"'");
+	sql.append("select count(id) from diary where medcase_id='").append(aId.toString()).append("'");
 	Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 	
 	StringBuilder result = new StringBuilder();
 	for (WebQueryResult wqr : res) {
-	    result.append("" + wqr.get1());
+	    result.append(wqr.get1());
 	}
 	
 	return result.toString();
@@ -244,7 +241,7 @@ public class CalculateServiceJs {
 		sql.append(" select st.height,st.weight from statisticstub st ");
 		sql.append(" left join medcase hmc on hmc.id=st.medcase_id ");
 		sql.append(" left join medcase dmc on dmc.parent_id=hmc.id  ");
-		sql.append(" where dmc.id ='"+aId.toString()+"'");
+		sql.append(" where dmc.id ='").append(aId.toString()).append("'");
 		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 		StringBuilder sb = new StringBuilder();
 		for (WebQueryResult wqr : res) {

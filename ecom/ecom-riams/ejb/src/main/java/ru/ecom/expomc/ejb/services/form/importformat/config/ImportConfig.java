@@ -45,7 +45,7 @@ public class ImportConfig {
 
     public List<ImportEntity> getEntities() {
         List<ImportEntity> ret = new ArrayList<>();
-        List<Element> entities = null;
+        List<Element> entities;
         try {
             LOG.info("ImportDoc:"+theDocument+":");
             //theDocument.getRootElement().get

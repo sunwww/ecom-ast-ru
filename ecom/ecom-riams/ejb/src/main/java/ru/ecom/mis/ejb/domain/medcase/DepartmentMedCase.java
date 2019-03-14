@@ -139,9 +139,7 @@ public class DepartmentMedCase extends HospitalMedCase {
 	private String theMotherWard;
 	@Transient
 	public String getInfo() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("СЛО ").append(getId()).append(" номер стат.карты СЛС ").append(getStatCardBySLS()) ;
-		return ret.toString() ;
+		return "СЛО " + getId() + " номер стат.карты СЛС " + getStatCardBySLS();
 	}
 	/** Стандарт */
 	@Comment("Стандарт")

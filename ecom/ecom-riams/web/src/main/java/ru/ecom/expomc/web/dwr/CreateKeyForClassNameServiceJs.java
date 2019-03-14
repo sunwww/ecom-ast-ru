@@ -18,7 +18,7 @@ public class CreateKeyForClassNameServiceJs {
         } else {
             name = aClassName;
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for(int i=0; i<name.length(); i++) {
             char ch = name.charAt(i) ;
             boolean previousUpperCase = false ;

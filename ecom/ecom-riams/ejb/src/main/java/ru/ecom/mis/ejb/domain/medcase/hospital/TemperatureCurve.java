@@ -204,10 +204,6 @@ public class TemperatureCurve extends BaseEntity {
 	@Comment("АД")
 	@Transient
 	public String getBloodPressureInfo() {
-		StringBuilder sb=new StringBuilder();
-		sb.append(getBloodPressureUp());
-		sb.append("/");
-		sb.append(getBloodPressureDown());
-		return sb.toString();
+		return getBloodPressureUp() + "/" +getBloodPressureDown();
 	}
 }

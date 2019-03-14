@@ -1,19 +1,13 @@
 package ru.ecom.expomc.ejb.services.externalperson;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import ru.ecom.expomc.ejb.domain.externalbase.ExternalPersonInfo;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.expomc.ejb.domain.externalbase.ExternalPersonInfo;
+import java.util.*;
 
 @Remote(IExternalPersonInfoService.class)
 @Local(IExternalPersonInfoService.class)
@@ -28,7 +22,7 @@ public class ExternalPersonInfoServiceBean implements IExternalPersonInfoService
 			.setParameter("middlename", aMiddlename)
 			.setParameter("birthdate", aBirthdate)
 			.getResultList() ;
-		Map<String,Object> ret = null ;
+		Map<String,Object> ret = null;
 		if(list!=null && list.size()==1) {
 			ExternalPersonInfo info = list.iterator().next();
 			ret = acqure(info) ;
@@ -38,7 +32,6 @@ public class ExternalPersonInfoServiceBean implements IExternalPersonInfoService
 			.setParameter("firstname", aFirstname)
 			.setParameter("middlename", aMiddlename)
 			.getResultList() ;
-			ret = null ;
 			if(list!=null && list.size()==1) {
 				ExternalPersonInfo info = list.iterator().next();
 				ret = acqure(info) ;
@@ -56,7 +49,7 @@ public class ExternalPersonInfoServiceBean implements IExternalPersonInfoService
 			.setParameter("firstname", aFirstname)
 			.setParameter("middlename", aMiddlename)
 			.getResultList() ;
-		LinkedList<Map<String,Object>> ret = new LinkedList<Map<String,Object>>() ;
+		LinkedList<Map<String,Object>> ret = new LinkedList<>() ;
 		for(ExternalPersonInfo i:list) {
 			ret.add(acqure(i)) ;
 		}
@@ -64,7 +57,7 @@ public class ExternalPersonInfoServiceBean implements IExternalPersonInfoService
 	}
 	
 	private static  HashMap<String, Object> acqure(ExternalPersonInfo info) {
-		HashMap<String, Object> ret = new HashMap<String, Object>() ;
+		HashMap<String, Object> ret = new HashMap<>() ;
 		ret.put(ID, info.getId() ) ;
 		ret.put(POLICY_SERIES, info.getPolicySeries() ) ;
 		ret.put(POLICY_NUMBER, info.getPolicyNumber() ) ;
