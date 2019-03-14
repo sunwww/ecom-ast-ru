@@ -1592,9 +1592,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                             VocE2FondV015 doctor = null;
                             String key = "DOCTOR#"+workfunction;
                             if (!resultMap.containsKey(key)) {
-                                StringBuilder sb = new StringBuilder();
-                                sb.append("select  v015.id from E2FondMedSpecLink link left join VocE2FondV015 v015 on v015.id=link.medSpec_id where link.medosWorkFunction=:workfunction");
-                                List<BigInteger> list = theManager.createNativeQuery(sb.toString()).setParameter("workfunction",workfunction).getResultList();
+                                List<BigInteger> list = theManager.createNativeQuery("select  v015.id from E2FondMedSpecLink link left join VocE2FondV015 v015 on v015.id=link.medSpec_id where link.medosWorkFunction=:workfunction")
+                                        .setParameter("workfunction",workfunction).getResultList();
                                 if (!list.isEmpty()) {
                                     doctor=theManager.find(VocE2FondV015.class,list.get(0).longValue());
                                 }
