@@ -14,10 +14,7 @@ import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * @jsp.tag
@@ -324,9 +321,7 @@ public class TableTag extends AbstractGuidSupportTag {
         if(attr instanceof Object[]) {
             Object[] arr = (Object[]) attr ;
             ArrayList list = new ArrayList(arr.length) ;
-            for(Object o : arr) {
-                list.add(o);
-            }
+            Collections.addAll(list, arr);
             return list ;
         } else {
             return (Collection) attr ;
