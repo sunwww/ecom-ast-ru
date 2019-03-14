@@ -49,24 +49,15 @@ public class LpuSync implements ISync {
 			lpu.setPhone(omcLpu.getPhone());
 			lpu.setCodef(omcLpu.getCodef()) ;
 			
-			//lpu.setOgrn(Long.valueOf(omcLpu.getOgrn())) ;
-			try {
-    			//lpu.setInn(Long.parseLong(omcLpu.getInn())) ;
-    			//lpu.setOgrn(Long.valueOf(omcLpu.getOgrn())) ;
-			} catch (Exception e) {
-			}
             theEntityManager.persist(lpu);
 
             if (++i % 30 == 0) {
                 monitor.advice(30);
-                StringBuilder sb = new StringBuilder();
-                sb.append(i);
-                sb.append(" ");
-                sb.append(omcLpu != null ? omcLpu.getName() : "");
-                sb.append(" ");
-                sb.append(omcLpu != null ? omcLpu.getCode() : "");
-                
-                monitor.setText(sb.toString());
+
+                String sb = i +
+                        " " + omcLpu.getName() +
+                        " " + omcLpu.getCode() ;
+                monitor.setText(sb);
 //                tx.commit();
 //                tx.begin();
             }

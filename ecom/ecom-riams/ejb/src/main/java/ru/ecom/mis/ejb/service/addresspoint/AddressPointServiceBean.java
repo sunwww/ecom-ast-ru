@@ -61,9 +61,9 @@ public class AddressPointServiceBean implements IAddressPointService {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String filename=null;
+    	String filename;
     	StringBuilder sql = new StringBuilder() ;
-    	List<Object[]> listPat = null;
+    	List<Object[]> listPat;
     	String[][] props  = new String[][] {
     				{"ltrim(to_char(p.birthday,'MM'),'0')","PERIOD","p.birthday","1","Месяц планируемого проведения ДД"}
     		//	,{"case when (cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int) - cast(to_char(p.birthday,'yyyy') as int))%3 = 0 then 'DP' else 'DO' end","TIP_DATA","p.firstname","1","Тип осмотра"}
@@ -104,7 +104,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		
     	}    	 
     		filename = "ND"+aFilenameAddSuffix+aNReestr+"T30_"+aPeriodByReestr.substring(2,4)+aPeriodByReestr.substring(5,7)+XmlUtil.namePackage(aNPackage) ;
-    		filenames.append("#").append(filename+".xml") ;
+    		filenames.append("#").append(filename).append(".xml") ;
     		sql.setLength(0);
     		sql.append("select ").append(fld);
     		sql.append(" ,p.id as pid, lp.id as lpid");
@@ -126,10 +126,10 @@ public class AddressPointServiceBean implements IAddressPointService {
         
         	sql.append(" where ") ;
 		if (aDispPlanType!=null&&aDispPlanType.equals("DISPPLAN")) {
-			sql.append(" plan.year='"+aDateTo.substring(6)+"' and ");
+			sql.append(" plan.year='").append(aDateTo.substring(6)).append("' and ");
 		}
-        	sql.append(" cast(to_char(p.birthday,'MM') as int) between cast(to_char(to_date('"+aDateFrom+"','dd.MM.yyyy'),'MM') as int) and cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'MM') as int) and ");
-        	sql.append(" 0 = (select count(edc.id) from extdispcard edc where edc.patient_id=p.id and cast(to_char(edc.finishdate,'yyyy') as int) = cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int)) and");
+        	sql.append(" cast(to_char(p.birthday,'MM') as int) between cast(to_char(to_date('").append(aDateFrom).append("','dd.MM.yyyy'),'MM') as int) and cast(to_char(to_date('").append(aDateTo).append("','dd.MM.yyyy'),'MM') as int) and ");
+        	sql.append(" 0 = (select count(edc.id) from extdispcard edc where edc.patient_id=p.id and cast(to_char(edc.finishdate,'yyyy') as int) = cast(to_char(to_date('").append(aDateTo).append("','dd.MM.yyyy'),'yyyy') as int)) and");
         	if (aLpu!=null&&aLpu>0) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' ) and ") ;
         	if (aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         //	if (aCompany!=null&&aCompany>0) {sql.append(" mp.company_id=").append(aCompany).append(" and ");}
@@ -174,14 +174,13 @@ public class AddressPointServiceBean implements IAddressPointService {
     //Передаем YES - еще и обновляем поле "Страх. компания"
     public String createAttachmentFromPatient(String needUpdateIns) {
     	try{
-    	StringBuilder sql = new StringBuilder();
-    	sql.append("insert into lpuattachedbydepartment  (lpu_id, area_id, patient_id, datefrom, attachedtype_id,  createusername) "+
-    	"select p.lpu_id, p.lpuarea_id, p.id, to_date('01.01.2013', 'dd.MM.yyyy'),'1','_system' from patient p "+
-    	"where p.lpu_id is not null and not exists (select att.id from lpuattachedbydepartment att where att.patient_id=p.id) ");
-    	if (needUpdateIns!=null && needUpdateIns.equals("YES")) {
+			if (needUpdateIns!=null && needUpdateIns.equals("YES")) {
     		setInsuranceCompany("");
     	}
-    	int i = theManager.createNativeQuery(sql.toString()).executeUpdate();
+			String sql = "insert into lpuattachedbydepartment  (lpu_id, area_id, patient_id, datefrom, attachedtype_id,  createusername) " +
+					"select p.lpu_id, p.lpuarea_id, p.id, to_date('01.01.2013', 'dd.MM.yyyy'),'1','_system' from patient p " +
+					"where p.lpu_id is not null and not exists (select att.id from lpuattachedbydepartment att where att.patient_id=p.id) ";
+			int i = theManager.createNativeQuery(sql).executeUpdate();
     	return "Прикрепления успешно созданы, изменено "+i+" записей";
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -260,10 +259,10 @@ public class AddressPointServiceBean implements IAddressPointService {
     	//Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String filename=null;
+    	String filename;
     	StringBuilder sql = new StringBuilder() ;
     	//	File outFile = null;
-    	List<Object[]> listPat = null;
+    	List<Object[]> listPat;
     	String[][] props = new String[][] {
     			{"pai.lastname","FAM","pai.lastname","1","Фамилия"},				{"pai.firstname","IM","pai.firstname","1","Имя"}
     	    	,		{"case when pai.middlename='' or pai.middlename='Х' or pai.middlename is null then '' else pai.middlename end","OT" ,"pai.middlename",null,"Отчество"} 
@@ -334,7 +333,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		for (Object comp:listComp) {
     			filename = "P"+aFilenameAddSuffix+aNReestr+"S"+(comp==null?"-":comp)
     	        		+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
-    	        filenames.append("#").append(filename+".xml") ;
+    	        filenames.append("#").append(filename).append(".xml");
     	        
     			sql.setLength(0);
     			sql.append("select ").append(fld) ;
@@ -356,7 +355,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		}
     	} else {
     		filename = aFilenameAddSuffix+"_"+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
-    		filenames.append("#").append(filename+".xml") ;
+    		filenames.append("#").append(filename).append(".xml");
     		sql.setLength(0);
     		sql.append("select ").append(fld) ;
     		sql.append(" from PatientAttachedImport pai") ;
@@ -395,9 +394,9 @@ public class AddressPointServiceBean implements IAddressPointService {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String filename=null;
+    	String filename;
     	StringBuilder sql = new StringBuilder() ;
-    	List<Object[]> listPat = null;
+    	List<Object[]> listPat;
     	String[][] props = null;
     	if (xmlFormat!=null&&xmlFormat.equals("0")){ //OLD FORMAT  //Не используем
     		props = new String[][] {
@@ -475,7 +474,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	for (Object[] comp:listComp) {
         	filename = "P"+aFilenameAddSuffix+aNReestr+"S"+(comp[1]==null?"-":comp[1])
         		+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
-        	filenames.append("#").append(filename+".xml") ;
+        	filenames.append("#").append(filename).append(".xml");
         
         	sql.setLength(0);
         	sql.append("select ").append(fld);
@@ -509,7 +508,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	}
     	} else {
     		filename = "P_"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
-    		filenames.append("#").append(filename+".xml") ;
+    		filenames.append("#").append(filename).append(".xml");
     		sql.setLength(0);
     		sql.append("select ").append(fld);
     		sql.append(" ,p.id as pid, lp.id as lpid");
@@ -563,8 +562,8 @@ public class AddressPointServiceBean implements IAddressPointService {
 			//	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 				StringBuilder sb = new StringBuilder();
 				sb.append("zip -r -j -9 ").append(aWorkDir).append("/").append(archiveName).append(" ") ;
-				for (int i=0;i<aFileNames.length;i++) {
-					sb.append(aWorkDir).append("/").append(aFileNames[i]).append(" ");
+				for (String filename : aFileNames) {
+					sb.append(aWorkDir).append("/").append(filename).append(" ");
 				}
 				try {
 					LOG.info("START EXECUTING = "+sb);
@@ -691,7 +690,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     }
     private boolean checkIsRequiedValueIsNotEmpty(Object aValue, String isRequid) {
     	if (isRequid!=null&&isRequid.equals("1")) {
-    		if (aValue==null||aValue.toString().equals("")) return false;
+			return aValue != null && !aValue.toString().equals("");
     	}
     	return true;
     }
@@ -700,8 +699,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     }
 
     public WebQueryResult exportNoAddress(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
-    	StringBuilder addSql = new StringBuilder().append("and p.address_addressid is null") ;
-    	return exportAll(aAge,"_no_addresss",addSql.toString(),aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
+		return exportAll(aAge,"_no_addresss", "and p.address_addressid is null",aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
     }
     public void onRemove(LpuAreaAddressText aLpuAreaAddressText) {
         EntityManager manager = theManager ; //theFactory.createEntityManager() ;

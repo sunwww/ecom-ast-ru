@@ -156,8 +156,8 @@ public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
 	        	String prm = getParams() ;
 	            String action = getAction().substring(1) ;
 	            StringBuffer sb = new StringBuffer(action) ;
-	            if (action.indexOf("javascript")==-1) { 
-	            	if(action.indexOf(".do")>=0) {
+	            if (!action.contains("javascript")) {
+	            	if(action.contains(".do")) {
 		                if(action.indexOf('?')>=0) {
 		                    sb.append("&amp;") ;
 		                }
@@ -208,7 +208,7 @@ public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
 	                if (isSelected()) {
 	                    a.setClass("selected");
 	                }
-	                if (action.indexOf("javascript")==-1) { 
+	                if (!action.contains("javascript")) {
 	                StringBuilder onClickSb = new StringBuilder("return ");
 	                if(!StringUtil.isNullOrEmpty(theConfirm)) {
 	                    onClickSb.append(" confirm(\"")
@@ -299,7 +299,7 @@ public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
     private String theGuid;
     private boolean isSelected() {
         try {
-            return theRequest.getRequestURI().indexOf(getAction()) != -1;
+            return theRequest.getRequestURI().contains(getAction());
         } catch (Exception e) {
             e.printStackTrace();
             return false;

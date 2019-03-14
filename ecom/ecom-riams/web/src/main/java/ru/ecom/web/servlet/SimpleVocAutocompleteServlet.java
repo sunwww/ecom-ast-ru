@@ -69,9 +69,7 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                 if (CAN_TRACE) LOG.info("  hash = " + hash);
 
                 LinkedList<VocValue> ret = new LinkedList<>();
-                for (VocValue value : addVocs) {
-                    ret.add(value);
-                }
+                ret.addAll(addVocs);
                 if (CAN_TRACE) LOG.info("  ret = " + ret);
 //                if (CAN_TRACE) LOG.info("  ret = " + ret);
 //                if (ret.size() > 0) ret.remove(ret.size() - 1);
@@ -108,9 +106,7 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                 Collection<VocValue> addVocs = EntityInjection.find(aRequest).getVocService().findVocValueNext
                         (getVocName(aRequest), aId, aCount - vocs.size(), VocAdditionalUtil.create(aRequest));
                 LinkedList<VocValue> ret = new LinkedList<>();
-                for (VocValue value : vocs) {
-                    ret.add(value);
-                }
+                ret.addAll(vocs);
                 boolean firstPassed = false;
                 for (VocValue value : addVocs) {
                     if (firstPassed) {

@@ -146,7 +146,7 @@ public class DisabilitySign {
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
 
-        String json = service.executeSqlGetJson(sql, 10, "data").toString();
+        String json = service.executeSqlGetJson(sql, 10, "data");
         usename = username;
         return cretePostRequest(getEndpoint(request), "api/sign/getJSON", json, "text/html");
     }
@@ -163,8 +163,8 @@ public class DisabilitySign {
     }
 
     private String get(JsonObject obj, String name) {
-        if (obj.has(name)) {
-            if (obj != null && obj.get(name) != null && !obj.get(name).getAsString().equals("")) {
+        if (obj!=null && obj.has(name)) {
+            if (obj.get(name) != null && !obj.get(name).getAsString().equals("")) {
                 return obj.get(name).getAsString();
             }
         }

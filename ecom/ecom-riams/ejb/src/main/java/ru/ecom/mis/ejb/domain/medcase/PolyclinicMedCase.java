@@ -1,14 +1,10 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import java.util.List;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Случай поликлинического обслуживания
@@ -27,8 +23,6 @@ public class PolyclinicMedCase extends LongMedCase{
 	}
 	@Transient
 	public String getInfo() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("Случай поликлинического обслуживания ").append(getId()) ;
-		return ret.toString() ;
+		return "Случай поликлинического обслуживания " + getId();
 	}
 }

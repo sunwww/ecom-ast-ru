@@ -1,9 +1,9 @@
 package ru.ecom.diary.web.action.protocol.template;
 
+import ru.ecom.diary.ejb.service.protocol.tree.CheckNode;
+
 import java.util.Collection;
 import java.util.LinkedList;
-
-import ru.ecom.diary.ejb.service.protocol.tree.CheckNode;
 
 public class CheckNodesUtil {
     public static void removeUnchecked(CheckNode aNode) {
@@ -19,7 +19,7 @@ public class CheckNodesUtil {
         if(aParent!=null && !aNode.getChecked() && aNode.getChilds().isEmpty()) {
             ret = true ;
         } else {
-            LinkedList<CheckNode> removed = new LinkedList<CheckNode>();
+            LinkedList<CheckNode> removed = new LinkedList<>();
             for (CheckNode node : aNode.getChilds()) {
                 if(removeNoChildsAndNotChecked(aNode, node)) {
                     removed.add(node) ;

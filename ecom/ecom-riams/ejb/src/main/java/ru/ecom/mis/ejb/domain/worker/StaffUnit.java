@@ -1,21 +1,15 @@
 package ru.ecom.mis.ejb.domain.worker;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.worker.voc.VocPost;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Штатная единица
@@ -120,10 +114,10 @@ public class StaffUnit extends BaseEntity{
 	public String getInfo() {
 		StringBuilder sb = new StringBuilder() ;
 		if(getStaff()!=null && getStaff().getLpu()!=null && !StringUtil.isNullOrEmpty(getStaff().getLpu().getName())) {
-			sb.append("ЛПУ: "+getStaff().getLpu().getName()) ;
+			sb.append("ЛПУ: ").append(getStaff().getLpu().getName());
 		}
 		if(getPost()!=null && !StringUtil.isNullOrEmpty(getPost().getName())) {
-			sb.append(", должность: "+getPost().getName()) ;
+			sb.append(", должность: ").append(getPost().getName());
 		}
 		return sb.toString();
 	}

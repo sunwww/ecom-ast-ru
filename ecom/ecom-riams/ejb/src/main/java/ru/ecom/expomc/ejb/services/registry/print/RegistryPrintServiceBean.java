@@ -55,9 +55,7 @@ public class RegistryPrintServiceBean implements IRegistryPrintService {
 		LinkedList<String> ret = new LinkedList<>();
 		List<String> list = theManager.createQuery(sb.toString())
 				.getResultList();
-		for (String row : list) {
-			ret.add(row);
-		}
+		ret.addAll(list);
 		return ret;
 	}
 
@@ -353,24 +351,7 @@ public class RegistryPrintServiceBean implements IRegistryPrintService {
 
 	public void printReestrXls(String aFilename, long aPeriodId)
 			throws RegistryPrintException {
-		//
-		// List<RegistryEntry> entries = theManager.createQuery("from
-		// RegistryEntry").getResultList();
-		// RegPeriod period = theManager.find(RegPeriod.class, aPeriodId) ;
-		// RegistryPrintHolder holder = createPrintHolder(period, entries, );
-		//
-		//
-		// try {
-		// BshValueGetter bshGetter = new BshValueGetter();
-		// bshGetter.set("h", holder);
-		// theReportEngine.make(
-		// new File(JBOSS_SERVER_DATA_DIR+"/xlstemplate/registry.xls")
-		// ,new File(aFilename), bshGetter, 0);
-		// } catch (Exception e) {
-		// throw new RegistryPrintException("Ошибка экспорта в excel",
-		// CopyException.copyException(e));
-		// }
-		//
+
 	}
 
 	private RegistryPrintHolder createPrintHolder(java.sql.Date aDateFrom,
@@ -491,7 +472,7 @@ public class RegistryPrintServiceBean implements IRegistryPrintService {
 	}
 	
 	private String dbfFileName(String aCompany, String aBillNumber, Date aDate) { //zav
-		String name = new String();
+		String name;
         Calendar cal = Calendar.getInstance();
         cal.setTime(aDate);
         int month = cal.get(cal.MONTH)+1;

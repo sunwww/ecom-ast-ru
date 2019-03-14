@@ -234,10 +234,9 @@ public class SurgicalOperation extends BaseEntity {
 		@Comment("Период")
 		@Transient
 		public String getPeriod() {
-			StringBuilder ret = new StringBuilder() ;
-			ret.append(theOperationDate).append(" ").append(theOperationTime).append(" - ")
-				.append(theOperationDateTo).append(" ").append(theOperationTimeTo);
-			return ret.toString() ;
+			String ret = theOperationDate + " " + theOperationTime + " - " +
+					theOperationDateTo + " " + theOperationTimeTo;
+			return ret;
 	}
 		
 		 /** Информация о пациенте */

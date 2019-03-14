@@ -9,7 +9,7 @@ package ru.ecom.jaas.web.action;
  */
 public class JaasUtil {
 
-	public static long[] convertToLongs(String aStr[]) {
+	public static long[] convertToLongs(String[] aStr) {
 		long[] ar = new long[aStr.length] ;
 		for (int i = 0; i < aStr.length; i++) {
 			String s = aStr[i];
@@ -17,11 +17,10 @@ public class JaasUtil {
 		}
 		return ar ;
 	}
-    public static String convertToString(String aStr[]) {
+    public static String convertToString(String[] aStr) {
         StringBuilder ret = new StringBuilder() ;
-        for (int i = 0; i < aStr.length; i++) {
-            String s = aStr[i];
-            ret.append(",").append(s) ;
+        for (String s : aStr) {
+            ret.append(",").append(s);
         }
         return ret.length()>0? ret.substring(1):"" ;
     }

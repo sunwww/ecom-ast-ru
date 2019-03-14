@@ -39,9 +39,9 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 		//TODO
 		//form.getConcomitantDiseases()
 		long aIdEntity = smc.getId() ;
-		if (aIdEntity>Long.valueOf(0)) {
+		if (aIdEntity>0L) {
 			form.setConcomitantDiseases( getArray(manager,"Diagnosis","idc10_id"
-					,new StringBuilder().append("medCase_id='").append(aIdEntity).append("'").append(" and priority_id='").append(vocConcomType.getId()).append("'").toString()
+					, "medCase_id='" + aIdEntity + "'" + " and priority_id='" + vocConcomType.getId() + "'"
 					)) ;
 			/*form.setMedServices(getArray(manager,"MedCase","medService_id"
 					,new StringBuilder().append("parent_id='").append(aIdEntity).append("'").append(" and dtype='ServiceMedCase'").toString()

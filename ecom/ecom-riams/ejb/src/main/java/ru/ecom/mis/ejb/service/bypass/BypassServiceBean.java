@@ -83,7 +83,7 @@ public class BypassServiceBean implements IBypassService {
     private void writeToSheet(IMonitor aMonitor, WritableSheet aSheet, Iterator<Patient> aPatients, QueryResponse aResponse) throws WriteException {
 
         QueryResponse r = createResponse() ;
-        int column = 1 ;
+        int column  ;
 //        for (QueryResponseProperty property : r.getProperties()) {
 //            Label label = new Label(column++, 1, property.getTitle());
 //            aSheet.addCell(label);

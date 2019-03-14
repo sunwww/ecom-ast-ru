@@ -1,13 +1,12 @@
 package ru.ecom.mis.ejb.domain.birth;
 
-import javax.persistence.Column;
+import ru.ecom.mis.ejb.domain.birth.voc.VocInspectionCondition;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.ecom.mis.ejb.domain.birth.voc.VocInspectionCondition;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Осмотр родильницы
@@ -64,11 +63,7 @@ public class ConfinedInspection extends Inspection{
 	
 	@Transient
 	public String getInformation() {
-		StringBuilder ret = new StringBuilder() ;
-		
-		ret.append("Общее состояние: ").append(theCondition) ;
-		//ret.append(". Состояние молочных желез: ").append(theMammariesCondition) ;
-		return ret.toString() ;
+		return "Общее состояние: " + theCondition;
 	}
 	@Transient
 	public String getTypeInformation() {

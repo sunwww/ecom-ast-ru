@@ -49,24 +49,20 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
     private Class findEntityClassByName(String aEntityName) throws IOException, JDOMException, ClassNotFoundException {
 
         Class ret = null ;
-        InputStream in = getClass().getResourceAsStream("/META-INF/persistence.xml");
-        try {
+        try (InputStream in = getClass().getResourceAsStream("/META-INF/persistence.xml")) {
             Document doc = new SAXBuilder().build(in);
             Element rootElement = doc.getRootElement();
-            List<Element> persistenceUnits = rootElement.getChildren("persistence-unit") ;
+            List<Element> persistenceUnits = rootElement.getChildren("persistence-unit");
             for (Element persistenceUnit : persistenceUnits) {
-                List<Element> classes = persistenceUnit.getChildren("class") ;
+                List<Element> classes = persistenceUnit.getChildren("class");
                 for (Element classElement : classes) {
-                    Class clazz = theClassLoaderHelper.loadClass(classElement.getTextTrim()) ;
-                    if(aEntityName.equals(theEntityHelper.getEntityName(clazz))) {
-                        ret = clazz ;
-                        break ;
+                    Class clazz = theClassLoaderHelper.loadClass(classElement.getTextTrim());
+                    if (aEntityName.equals(theEntityHelper.getEntityName(clazz))) {
+                        ret = clazz;
+                        break;
                     }
                 }
             }
-
-        } finally {
-            in.close();
         }
         if(ret==null) throw new IllegalStateException("Не найден класс для Entity "+aEntityName) ;
         return ret ;
@@ -268,7 +264,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
             Query query  = aContext.getEntityManager().createQuery
                     (sb.toString())
                     .setParameter("time", findActualImport(aContext))
-                    .setParameter("query", new StringBuilder().append("%").append(aQuery).append("%").toString()) ;
+                    .setParameter("query", "%" + aQuery + "%") ;
 
             List list = query.setMaxResults(aCount)
                     .getResultList();

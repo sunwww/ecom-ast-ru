@@ -90,7 +90,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 	}
 	public String importDefectFromXML (String aFileName) {
 		try {
-			if (aFileName!=null&&aFileName!="") {
+			if (aFileName!=null && !aFileName.equals("")) {
 				LOG.info("in ImportDefect, start. hashcode="+aFileName);
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 				SimpleDateFormat formatOutput = new SimpleDateFormat("dd.MM.yyyy");
@@ -134,13 +134,13 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 								LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik,tPrik);
 								if (refreason!=null&&!refreason.equals("")) { //Дефект
 					    			if (att!=null) {
-										sb.append("red:"+i+":"+patientId+":"+att.getId()+":"+prikName+" пациента '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'обновлено. Дефект='"+refreason+"'#");
+										sb.append("red:").append(i).append(":").append(patientId).append(":").append(att.getId()).append(":").append(prikName).append(" пациента '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'обновлено. Дефект='").append(refreason).append("'#");
 					    			} else {
-					    				sb.append("blue:"+i+":"+patientId+"::"+prikName+" не найдено в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
+					    				sb.append("blue:").append(i).append(":").append(patientId).append("::").append(prikName).append(" не найдено в базе. Данные пациента= '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'#");
 					    			}									 
 								} else { //Не дефект
 									if (att!=null) {
-										sb.append("green:"+i+":"+patientId+"::"+prikName+" принято без дефектов. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
+										sb.append("green:").append(i).append(":").append(patientId).append("::").append(prikName).append(" принято без дефектов. Данные пациента= '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'#");
 									}								
 								}
 								if (att!=null) {
@@ -149,7 +149,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 									theManager.persist(att);
 								}
 							} else {
-								sb.append("black:"+i+":::Пациент не найден в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
+								sb.append("black:").append(i).append(":::Пациент не найден в базе. Данные пациента= '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'#");
 							}
 				}
 				return sb.toString();

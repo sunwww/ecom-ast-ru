@@ -39,9 +39,7 @@ public class PersistenceXmlHelper {
 		
 		try {
 			List<String> classes = listAllEntitiesClassnames(new FileInputStream(aFilenameToAdd)) ;
-			for(String clazz : classes) {
-				theClasses.add(clazz) ;
-			}
+			theClasses.addAll(classes);
 		} catch (Exception e) {
 			throw new IllegalStateException(e) ;
 		}

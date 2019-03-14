@@ -1,19 +1,16 @@
 package ru.ecom.jaas.web.action.role;
 
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.nuzmsh.web.messages.InfoMessage;
-import ru.ecom.web.util.Injection;
-import ru.ecom.jaas.ejb.service.ISecRoleService;
-import ru.ecom.jaas.ejb.service.CheckNode;
-import ru.ecom.jaas.web.action.service.ServiceExportJbossAction;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import ru.ecom.jaas.ejb.service.ISecRoleService;
+import ru.ecom.jaas.web.action.service.ServiceExportJbossAction;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.messages.InfoMessage;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -36,7 +33,7 @@ public class RolePoliciesSaveAction extends BaseAction {
     }
 
 
-    public static long[] getLongs(String aStr[]) {
+    public static long[] getLongs(String[] aStr) {
     	try {
     		long[] ar = new long[aStr.length];
     		for (int i = 0; i < aStr.length; i++) {
@@ -48,16 +45,15 @@ public class RolePoliciesSaveAction extends BaseAction {
     		return new long[0] ;
     	}
     }
-    public static ArrayList<Long>getLongsArray(String aStr[]) {
+    public static ArrayList<Long>getLongsArray(String[] aStr) {
         try {
-            ArrayList<Long> ar = new ArrayList<Long>();
-            for (int i = 0; i < aStr.length; i++) {
-                String s = aStr[i];
+            ArrayList<Long> ar = new ArrayList<>();
+            for (String s : aStr) {
                 ar.add(Long.parseLong(s));
             }
             return ar;
         } catch (Exception e) {
-            return new ArrayList<Long>() ;
+            return new ArrayList<>() ;
         }
     }
 

@@ -80,7 +80,7 @@ public class ImportMap extends ImportKey {
     }
 
     public Object getValue(HashMap<String, Object> mapValues, EntityManager aManager) {
-        String value = "";
+        String value;
         if (theSyncKey != null) {
             inclev();
             String id = theSyncKey.findId(mapValues);

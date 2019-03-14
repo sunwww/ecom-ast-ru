@@ -1,21 +1,14 @@
 package ru.ecom.mis.ejb.domain.diet;
 
-import java.sql.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.diet.voc.VocMealTime;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.util.List;
 
 /**
  * Меню блюд
@@ -92,7 +85,7 @@ public abstract class MealMenu extends BaseEntity{
 	/** Список блюд */
 	@Transient
 	public String getListDishes() {
-		StringBuffer ret = new StringBuffer() ;
+		StringBuilder ret = new StringBuilder() ;
 		if (getDishes().size()>0) {
 			ret.append("Блюда: ");
 			for (DishMealMenu dish : getDishes() )  {
@@ -104,7 +97,7 @@ public abstract class MealMenu extends BaseEntity{
 		String retst = ret.toString() ;
 		if (retst.length()>6) {
 			retst=retst.substring(0, retst.length()-2);
-			retst = new StringBuffer().append(retst).append(".").toString();
+			retst = retst + ".";
 		}
 		
 		return retst;

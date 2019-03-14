@@ -45,9 +45,7 @@ public class ScheduleTaskListener  implements ServletContextListener {
                     break;
                 }
             }}
-        }catch (NamingException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        }catch (NamingException | JSONException e) {
             e.printStackTrace();
         }
     }

@@ -89,7 +89,7 @@ public class TicketServiceJs {
 			cal.setTime(startDate);
 			StringBuilder allDates = new StringBuilder();
 			for (int i=0;true;i++) {
-				if (cal.get(java.util.Calendar.DAY_OF_WEEK)==1) {
+				if (cal.get(java.util.Calendar.DAY_OF_WEEK)== Calendar.SUNDAY) {
 					cal.add(Calendar.DATE, 1);
 					continue;}
 				//System.out.println("=== i="+i+", date = "+sdf.format(cal.getTime()));
@@ -119,8 +119,7 @@ public class TicketServiceJs {
 				if (isProfOsmotr) {
 					spoId = ser.createMedcase("PolyclinicMedCase"); //Если профосмотр - все визиты в рамках одного осмотра
 				}
-				for (int i=0;i<workFunctions.length;i++) {
-					String aWorkFunctionId = workFunctions[i];
+				for (String aWorkFunctionId : workFunctions) {
 					if (!isProfOsmotr) {
 						spoId = ser.createMedcase("PolyclinicMedCase");
 					}
@@ -128,26 +127,26 @@ public class TicketServiceJs {
 					ids.append("Patient=").append(patId).append("&date=").append(date);
 					ids.append("&wf=").append(aWorkFunctionId);
 					String ticketSql = "update medcase set "
-							+ "username='"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), createdate=current_date"
-							+ ", noactuality='0',parent_id="+spoId+", servicestream_id="+serviceStream+", patient_id="+patId
-							+ ",workfunctionexecute_id="+aWorkFunctionId+", visitresult_id="+visitResult+", visitreason_id="+visitReason
-							+ ", workplacetype_id="+workplace
-							+ ", createtime=cast('12:35' as time(5)), medcard_id="+medcardId+" where id="+ticketId+" and dtype='ShortMedCase'";
-					String polSql = "update medcase set username = '"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), datefinish=to_date('"+date+"','dd.MM.yyyy') , createdate=current_date" +
-							" ,noactuality='0', lpu_id=(select coalesce(wf.lpu_id,w.lpu_id) from workfunction wf left join worker w on w.id=wf.worker_id where wf.id="+aWorkFunctionId+")" +
-							" ,servicestream_id="+serviceStream+", patient_id="+patId+", ownerfunction_id="+aWorkFunctionId+"" +
-							" ,startfunction_id="+aWorkFunctionId+", finishfunction_id="+aWorkFunctionId+", idc10_id="+dsId+" where id = "+spoId+" and dtype='PolyclinicMedCase'";
-					ids.append("&ticket = "+ticketId);
+							+ "username='" + username + "', datestart=to_date('" + date + "','dd.MM.yyyy'), createdate=current_date"
+							+ ", noactuality='0',parent_id=" + spoId + ", servicestream_id=" + serviceStream + ", patient_id=" + patId
+							+ ",workfunctionexecute_id=" + aWorkFunctionId + ", visitresult_id=" + visitResult + ", visitreason_id=" + visitReason
+							+ ", workplacetype_id=" + workplace
+							+ ", createtime=cast('12:35' as time(5)), medcard_id=" + medcardId + " where id=" + ticketId + " and dtype='ShortMedCase'";
+					String polSql = "update medcase set username = '" + username + "', datestart=to_date('" + date + "','dd.MM.yyyy'), datefinish=to_date('" + date + "','dd.MM.yyyy') , createdate=current_date" +
+							" ,noactuality='0', lpu_id=(select coalesce(wf.lpu_id,w.lpu_id) from workfunction wf left join worker w on w.id=wf.worker_id where wf.id=" + aWorkFunctionId + ")" +
+							" ,servicestream_id=" + serviceStream + ", patient_id=" + patId + ", ownerfunction_id=" + aWorkFunctionId + "" +
+							" ,startfunction_id=" + aWorkFunctionId + ", finishfunction_id=" + aWorkFunctionId + ", idc10_id=" + dsId + " where id = " + spoId + " and dtype='PolyclinicMedCase'";
+					ids.append("&ticket = ").append(ticketId);
 
 					String diagnosisSql = "insert into diagnosis (name, establishdate, priority_id, idc10_id" +
-							", medcase_id, illnesprimary_id, createusername) (select name , to_date('"+date+"','dd.MM.yyyy') " +
-							", "+mainPriority+","+dsId+","+ticketId+","+concludingActuity+",'"+username+"'"+
-							" from vocidc10 where id = "+dsId+")" ;
+							", medcase_id, illnesprimary_id, createusername) (select name , to_date('" + date + "','dd.MM.yyyy') " +
+							", " + mainPriority + "," + dsId + "," + ticketId + "," + concludingActuity + ",'" + username + "'" +
+							" from vocidc10 where id = " + dsId + ")";
 
 					service.executeUpdateNativeSql(polSql); //Формируем СПО
 					service.executeUpdateNativeSql(ticketSql); //Формируем визит
 					service.executeUpdateNativeSql(diagnosisSql); //Формируем диагноз по визиту
-					ids.append("&ds = "+dsId+"\n");
+					ids.append("&ds = ").append(dsId).append("\n");
 				}
 			}
 		//	System.out.print(ids);
@@ -193,7 +192,7 @@ public class TicketServiceJs {
         String result = "";
         StringBuilder str = new StringBuilder();
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        str.append("select uet from medservice where id="+aService+" and uet is not null");
+        str.append("select uet from medservice where id=").append(aService).append(" and uet is not null");
         Collection<WebQueryResult> res = service.executeNativeSql(str.toString(), 1);
         if (!res.isEmpty()) {
             WebQueryResult r = res.iterator().next();
@@ -282,7 +281,7 @@ public class TicketServiceJs {
 		StringBuilder res = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder sql1 = new StringBuilder() ;
-		sql1.append("select wf.workFunction_id as vwfid,wf.id as wfid from WorkFunction wf where wf.id="+aWorkFunction) ;
+		sql1.append("select wf.workFunction_id as vwfid,wf.id as wfid from WorkFunction wf where wf.id=").append(aWorkFunction);
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list1 = service.executeNativeSql(sql1.toString(),1) ;
 		WebQueryResult obj1 = list1.isEmpty()?null:list1.iterator().next() ;

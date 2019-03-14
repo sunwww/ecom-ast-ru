@@ -336,7 +336,7 @@ public class DisabilityDocument extends BaseEntity{
 	@Transient
 	@Comment("Информация о документе")
 	public String getInfo() {
-		return new StringBuilder().append("серия ").append(theSeries).append(" номер ").append(theNumber).toString() ;
+		return "серия " + theSeries + " номер " + theNumber;
 	}
 
 	@Transient

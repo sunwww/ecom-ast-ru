@@ -38,7 +38,7 @@ public class NaturalPerson extends ContractPerson{
 	
 	@Transient
 	public String getInformation() {
-		return new StringBuilder().append("Физ. лицо: ").append(thePatient!=null ? thePatient.getFio() : "").toString() ; 
+		return "Физ. лицо: " + (thePatient != null ? thePatient.getFio() : "");
 	}
 
 	public NaturalPerson(){}

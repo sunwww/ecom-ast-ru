@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 
+@Deprecated
 public interface IFindPolicyService {
 
-	public Collection<PolicyRow> findPolicy(String aLastname, String aFirstname, String aMiddlename, Date aBirthDate, String aSnils, long aMessageId) ;
-	public long  acceptPolicy(String aParameters) ;
-	public long getNextMessageId(long aMessageId) ;
-	public void restore() throws IOException ;
+	Collection<PolicyRow> findPolicy(String aLastname, String aFirstname, String aMiddlename, Date aBirthDate, String aSnils, long aMessageId) ;
+	long  acceptPolicy(String aParameters) ;
+	long getNextMessageId(long aMessageId) ;
+	void restore() throws IOException ;
 
 	
 }

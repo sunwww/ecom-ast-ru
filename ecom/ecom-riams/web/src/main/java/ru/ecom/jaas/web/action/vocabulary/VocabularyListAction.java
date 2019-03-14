@@ -1,27 +1,18 @@
 package ru.ecom.jaas.web.action.vocabulary;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-
-import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.mis.ejb.service.vocabulary.IVocabularyService;
 import ru.ecom.mis.ejb.service.vocabulary.VocEntityInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
 import ru.nuzmsh.web.tags.decorator.ITableDecorator;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 public class VocabularyListAction extends BaseAction{
 
@@ -32,12 +23,11 @@ public class VocabularyListAction extends BaseAction{
 		 final String sort = (aRequest.getParameter("sort") ==null || aRequest.getParameter("sort").equals(""))  ? "comment" : aRequest.getParameter("sort") ;
 
 		Collection<VocEntityInfo> list = service.listVocEntities() ;
-		List<VocabularyForm> listForm = new ArrayList<VocabularyForm>() ;
+		List<VocabularyForm> listForm = new ArrayList<>() ;
 		for(VocEntityInfo voc : list) {
 			
-			if (RolesHelper.checkRoles(new StringBuilder().append("/Policy/Voc/").append(voc.getSimpleName()).toString(),aRequest)) {
+			if (RolesHelper.checkRoles("/Policy/Voc/"+voc.getSimpleName(),aRequest)) {
 				VocabularyForm vocForm = new VocabularyForm(voc.getClassname(),voc.getSimpleName(),voc.getComment(),service.getCount(voc.getSimpleName()),voc.getIsSystem()) ;
-				System.out.println(new StringBuilder().append("/Policy/Voc/").append(voc.getSimpleName()+"---"+voc.getIsSystem()).toString()) ;
 				listForm.add(vocForm) ;
 			}
 		}
@@ -73,7 +63,7 @@ public class VocabularyListAction extends BaseAction{
         	}
 
         	public String getRowCssClass(Object aRow) {
-        		StringBuffer style = new StringBuffer();
+        		StringBuilder style = new StringBuilder();
         		VocabularyForm form = (VocabularyForm) aRow ;
         		if (form.getIsSystem()) style.append("systemVoc") ;
         		if (form.getClassname().equals(aVocId)) style.append( " current") ; 

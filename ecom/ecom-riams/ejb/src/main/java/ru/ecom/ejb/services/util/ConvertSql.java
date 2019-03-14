@@ -39,8 +39,7 @@ public class ConvertSql {
 	}
 	
 	public static Long parseLong(Object aValue) {
-		Long ret =null;
-		if (aValue==null) return ret ;
+		if (aValue==null) return null ;
 		if (aValue instanceof Integer) {
 			return Long.valueOf((Integer) aValue) ;
 		}
@@ -56,7 +55,7 @@ public class ConvertSql {
 		if (aValue instanceof String) {
 			return Long.valueOf((String) aValue);
 		}
-		return ret ;
+		return null ;
 	}
 	public static String parseString(Object aValue, boolean aIsVk) {
 		return aValue==null?"":String.valueOf(aValue);
@@ -171,7 +170,7 @@ public class ConvertSql {
 	}
 	private static boolean ChSub(String aMkb1,String aMkb2) {
 		if (aMkb2.indexOf('.')>-1) {
-			return aMkb1.indexOf(aMkb2)>-1 ;
+			return aMkb1.contains(aMkb2);
 		}
 		
 		int ind = aMkb1.indexOf('.') ;

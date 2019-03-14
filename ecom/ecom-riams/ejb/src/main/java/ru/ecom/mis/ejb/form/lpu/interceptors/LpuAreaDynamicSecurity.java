@@ -14,7 +14,7 @@ public class LpuAreaDynamicSecurity implements IDynamicParentSecurityInterceptor
 
     public void check(String aPolicyAction, Object aId, InterceptorContext aContext) {
         LpuArea area = aContext.getEntityManager().find(LpuArea.class, aId);
-        String policy = new StringBuilder("/Policy/Mis/MisLpuDynamic/").append(area.getLpu().getId()).append("/Areas/").append(aId).append("/").append(aPolicyAction).toString();
+        String policy = "/Policy/Mis/MisLpuDynamic/" + area.getLpu().getId() + "/Areas/" + aId + "/" + aPolicyAction;
         if (!aContext.getSessionContext().isCallerInRole(policy)) {
             try {
                 MisLpuDynamicSecurity.checkByParent(aPolicyAction

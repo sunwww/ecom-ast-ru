@@ -67,10 +67,8 @@ public class VocEditServiceBean implements IVocEditService {
 
 	public boolean isVocEditabled(String aVocKey) {
 //		return true ;
-		StringBuilder sb = new StringBuilder("/Policy/Voc/") ;
-		sb.append(aVocKey) ;
-		sb.append("/Create") ;
-		return theContext.isCallerInRole(sb.toString()) ;
+		String sb = "/Policy/Voc/" + aVocKey + "/Create";
+		return theContext.isCallerInRole(sb) ;
 	}
 
 	private @EJB IVocInfoService theInfoService ;

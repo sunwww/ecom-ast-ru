@@ -1,14 +1,13 @@
 package ru.ecom.mis.web.dwr.diet;
 
-import java.sql.Date;
-import java.text.ParseException;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import ru.ecom.mis.ejb.service.diet.IDietService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
+import java.text.ParseException;
 
 /**
  * Сервис для работы с диетой
@@ -111,7 +110,7 @@ public class DietServiceJs {
 		
 	}
 	private String savePrescriptExists(Long aIdTemplateMenu, Long aIdMenu, IDietService service) {
-		String ret ="";
+		String ret;
 		try {
 			if (service.saveInExistsMenu(aIdTemplateMenu, aIdMenu)) ret ="Сохранено в текущее меню" ;
 			else ret = "Ошибка при сохранении  в текущее меню" ;
@@ -124,7 +123,7 @@ public class DietServiceJs {
 	}
 	
 	private String saveMenuNew(Long aIdTemplateMenu,Date aDate, Long aLpu, Integer aPortionAmount, IDietService service) {
-		String ret ="";
+		String ret;
 		try {
 			if (service.saveInNewMenu(aIdTemplateMenu,aDate,aLpu,aPortionAmount)) ret ="Сохранено в новые меню-заказ" ;
 			else ret = "Ошибка при сохранении  в новые меню-заказ" ;
@@ -134,13 +133,12 @@ public class DietServiceJs {
 		return ret;	
 	}
 	private String saveMenuTempNew(Long aIdTemplateMenu, IDietService service) {
-		String ret ="";
-		try {
+		//try {
 //			if (service.saveInNewTemplateMenu(aIdTemplateMenu)) ret ="Сохранено в новый шаблон меню-заказа" ;
 //			else ret = "Ошибка при сохранении  в новый шаблон меню-заказа" ;
-		} catch (Exception e) {
-			ret = "Ошибка при сохранении  в новый шаблон меню-заказа:"+e.getMessage() ;
-		}
-		return ret;	
+//		} catch (Exception e) {
+//			ret = "Ошибка при сохранении  в новый шаблон меню-заказа:"+e.getMessage() ;
+//		}
+		return "";
 		}
 }

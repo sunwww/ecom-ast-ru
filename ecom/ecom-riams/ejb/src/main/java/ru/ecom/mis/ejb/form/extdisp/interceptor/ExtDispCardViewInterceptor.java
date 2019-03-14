@@ -16,10 +16,9 @@ public class ExtDispCardViewInterceptor implements IFormInterceptor {
 		//ExtDispCard card = (ExtDispCard)aEntity ;
 	
 		long id = form.getId() ;
-		List<Object> list = manager.createNativeQuery(new StringBuilder().append(" select list(''||dispRisk_id) from ExtDispRisk where card_id='").append(id).append("' group by card_id").toString()).getResultList();
-		if (list.size()>0) {
-			form.setRisks( new StringBuilder().append(list.get(0)).toString()
-					) ;
+		List<Object> list = manager.createNativeQuery(" select list(''||dispRisk_id) from ExtDispRisk where card_id='" + id + "' group by card_id").getResultList();
+		if (!list.isEmpty()) {
+			form.setRisks(String.valueOf(list.get(0))) ;
 		}
 
 		

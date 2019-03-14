@@ -159,7 +159,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
 
             Query query  = aContext.getEntityManager().createQuery
                     (sb.toString())
-                    .setParameter("query", new StringBuilder().append("%").append(aQuery).append("%").toString()) ;
+                    .setParameter("query", "%" + aQuery + "%") ;
             List list = query.setMaxResults(aCount)
                     .getResultList();
             return createValues(list);
@@ -169,7 +169,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
     public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
         // уще не установлен родитель
         if(theParentField!=null && StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
-            return new LinkedList<VocValue>() ;
+            return new LinkedList<>() ;
         }
         StringBuilder sb = new StringBuilder();
         sb.append("from ").append(theEntityName) ;

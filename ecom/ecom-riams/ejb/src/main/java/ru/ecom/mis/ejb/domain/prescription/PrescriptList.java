@@ -45,7 +45,7 @@ public class PrescriptList extends AbstractPrescriptionList {
 		Date endDate = null ;
 		for (Prescription pres:getPrescriptions()) {
 			if (pres.getPlanEndDate()!=null ) {
-				if ((endDate==null) || (endDate!=null && pres.getPlanEndDate().getTime()>endDate.getTime())) {
+				if ((endDate==null) || ( pres.getPlanEndDate().getTime()>endDate.getTime())) {
 					endDate=pres.getPlanEndDate() ;
 				}
 			}

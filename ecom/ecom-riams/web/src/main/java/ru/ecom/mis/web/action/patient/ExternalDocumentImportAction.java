@@ -59,7 +59,7 @@ public class ExternalDocumentImportAction extends BaseAction {
         	IIORegistry registry = IIORegistry.getDefaultInstance() ;
         	registry.registerServiceProvider(new TIFFImageWriterSpi()) ;
         	registry.registerServiceProvider(new TIFFImageReaderSpi()) ;
-    		boolean isCompress = false ;
+    		boolean isCompress;
     		boolean isRecord = false ;
         	Date dat = new Date() ;
         	String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -134,15 +134,8 @@ public class ExternalDocumentImportAction extends BaseAction {
             			file.mkdirs() ;
             			}catch (Exception e){}
             		}
-            		//save(image, dirmain+"proba/");
             		diradd=diradd+"/"+urlImage ;
-            		//ImageIO.write(image, "jpg", new File(dirmain+diradd+".jpg")) ;
-            		//ImageIO.write(image, "jpg", new File(dirmain+diradd+".jpg")) ;
-	            	//ImageIO.write(image, "TIFF", new File(dirmain+diradd+".tif")) ;
-            		if (parentType.equals("Template")) {
-            			//saveNotImage(ffile.getInputStream(),dirmain+"/"+diradd+".pdf");
-            		}
-            		else if (contentType!=null&&contentType.equals("application/pdf")) { //Сохраняем ПДФ как есть
+            		if ("application/pdf".equals(contentType)) { //Сохраняем ПДФ как есть
             			LOG.info("=== "+ffile.getFileSize()+" <>"+dirmain+"/"+diradd+".pdf");
             			
             			saveNotImage(ffile.getInputStream(),dirmain+"/"+diradd+".pdf");

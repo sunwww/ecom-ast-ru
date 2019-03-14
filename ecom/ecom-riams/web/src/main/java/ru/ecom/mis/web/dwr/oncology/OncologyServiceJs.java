@@ -326,7 +326,7 @@ public class OncologyServiceJs {
     public String getTreatment(String sqlSelect, String sqlFrom, String sqlWhere, String sqlOrdeby,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
-        if (sqlSelect.indexOf(";")==-1 && sqlFrom.indexOf(";")==-1 &&  sqlWhere.indexOf(";")==-1 && sqlOrdeby.indexOf(";")==-1) {
+        if (!sqlSelect.contains(";") && !sqlFrom.contains(";") && !sqlWhere.contains(";") && !sqlOrdeby.contains(";")) {
             Collection<WebQueryResult> list = service.executeNativeSql("select " + sqlSelect + " from " + sqlFrom + " where " + sqlWhere + " order by " + sqlOrdeby);
             if (!list.isEmpty()) {
                 for (WebQueryResult wqr : list)

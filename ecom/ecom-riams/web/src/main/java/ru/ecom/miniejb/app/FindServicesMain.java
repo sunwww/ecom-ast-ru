@@ -1,10 +1,6 @@
 package ru.ecom.miniejb.app;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +36,7 @@ public class FindServicesMain {
 
 
     public void find(String aDir, String aFilename) throws IOException {
-        LinkedList<String> list = new LinkedList<String>();
+        LinkedList<String> list = new LinkedList<>();
         File dir = new File(aDir);
         if(!dir.isDirectory()) throw new IllegalArgumentException(aDir+" не каталог") ;
         find(dir, dir, list) ;

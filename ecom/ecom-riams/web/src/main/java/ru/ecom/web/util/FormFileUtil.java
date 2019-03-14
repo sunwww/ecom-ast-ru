@@ -18,7 +18,7 @@ public class FormFileUtil {
 
     public static File writeFile(InputStream aInputStream) throws IOException {
         File file = File.createTempFile("formfile", "web") ;
-        int count = 0 ;
+        int count;
         FileOutputStream out = new FileOutputStream(file);
         byte[] buf = new byte[8192] ;
         while ( (count=aInputStream.read(buf)) > 0) {

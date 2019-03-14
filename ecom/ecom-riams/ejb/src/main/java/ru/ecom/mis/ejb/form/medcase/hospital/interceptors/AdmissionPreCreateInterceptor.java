@@ -27,10 +27,7 @@ public class AdmissionPreCreateInterceptor  implements IParentFormInterceptor {
         	form.setDateStart(DateFormat.formatToDate(date));
         	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
             form.setEntranceTime(timeFormat.format(date));
-        } else {
-        	
         }
-        
         if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand")) {
             form.addDisabledField("statCardNumber");
         }

@@ -1,14 +1,13 @@
 package ru.ecom.mis.web.action.medcase.journal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.web.util.ActionUtil;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class AdmissionJournalSearchAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -34,7 +33,7 @@ public class AdmissionJournalSearchAction extends BaseAction {
 				aRequest.setAttribute("emerIs","") ;
 				aRequest.setAttribute("emerInfo","все") ;
 			}
-			String dateI = null ;
+			String dateI;
 			//String timeI = null ;
 			if (typeDate!=null && typeDate.equals("1")) {
 	    		//aRequest.setAttribute("dateIs"," and m.dateStart between to_date('"+form.getDateBegin()+"','dd.mm.yyyy') and to_date('"+form.getDateBegin()+"','dd.mm.yyyy') ") ;

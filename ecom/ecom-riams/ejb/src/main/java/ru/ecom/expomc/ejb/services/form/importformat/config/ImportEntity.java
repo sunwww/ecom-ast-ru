@@ -85,7 +85,7 @@ public class ImportEntity {
 
     public List<ImportMap> getMaps(EntityManager aManager) throws Exception {
         List<ImportMap> list = new ArrayList<>();
-        List<Element> maps = null;
+        List<Element> maps;
         log("Построение запросов синхронизации внешних ключей");
         inclev();
         try {

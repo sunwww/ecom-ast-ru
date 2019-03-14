@@ -98,7 +98,7 @@ public class TicketServiceBean implements ITicketService {
     		Long spo = ConvertSql.parseLong(spoA[0]) ;
     		Long cnt = ConvertSql.parseLong(spoA[1]) ;
     		PolyclinicMedCase spoNew ;
-    		if (aNewSpo!=null&&!aNewSpo.equals(Long.valueOf(0))) {
+    		if (aNewSpo!=null&&!aNewSpo.equals(0L)) {
     			spoNew = theManager.find(PolyclinicMedCase.class, aNewSpo) ;
     			if (spoNew==null) throw new IllegalDataException("Неправильно определен СПО") ;
     		} else {
@@ -282,9 +282,7 @@ public class TicketServiceBean implements ITicketService {
     			LOG.warn("Ошибка преобразования даты "+aDate, e);
     		}
     	}
-    	if (date != null){
-    		//builder.add("t.date", date);
-    	} else {
+    	if (date == null){
     		throw new IllegalDataException("Неправильная дата") ;
     	}
     	String add ;
@@ -335,10 +333,8 @@ public class TicketServiceBean implements ITicketService {
     }
     
 	public List<GroupByDate> findOpenTicketGroupByDate() {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select t.date,count(t.id) from Ticket as t where t.status<> ").append(Ticket.STATUS_CLOSED).append(" group by t.date") ;
-		List<Object[]> list = theManager.createNativeQuery(sql.toString())
-				.getResultList() ;
+		String sql ="select t.date,count(t.id) from Ticket as t where t.status<> "+Ticket.STATUS_CLOSED+" group by t.date" ;
+		List<Object[]> list = theManager.createNativeQuery(sql).getResultList() ;
 		LinkedList<GroupByDate> ret = new LinkedList<>() ;
 		long i =0 ;
 		for (Object[] row: list ) {
@@ -428,13 +424,13 @@ public class TicketServiceBean implements ITicketService {
     		}
     	}
     	if (date != null) builder.add("date", date);
-    	String stat = "" ;
+    	String stat;
     	if (aStatus>0) {
     		stat = " and status=2" ;
     	} else {
     		stat = " and (status is null or status<2)" ;
     	}
-    	Query query = builder.build(theManager, new StringBuilder().append("from Ticket where workFunction_id in (").append(obj).append(") ").append(stat).toString(), " order by date,time, status");
+    	Query query = builder.build(theManager, "from Ticket where workFunction_id in (" + obj + ") " + stat, " order by date,time, status");
     	LOG.info("Запрос по ticket: ");
     	LOG.info(query.toString()) ;
     	return createList(query);
@@ -449,7 +445,7 @@ public class TicketServiceBean implements ITicketService {
         builder.add("workFunction_id", aSpecialist);
         // ==============
 
-    	String stat = "" ;
+    	String stat;
     	if (aStatus>0) {
     		stat = " status=2" ;
     	} else {
@@ -496,7 +492,7 @@ public class TicketServiceBean implements ITicketService {
     
      private List<TicketForm> createNativeList(Query aQuery) {
         List<Object> listId = aQuery.getResultList() ;
-        List<TicketForm> ret = new LinkedList<TicketForm>();
+        List<TicketForm> ret = new LinkedList<>();
         if (!listId.isEmpty()) {
         	StringBuilder ids = new StringBuilder() ;
         	StringBuilder sql = new StringBuilder() ;

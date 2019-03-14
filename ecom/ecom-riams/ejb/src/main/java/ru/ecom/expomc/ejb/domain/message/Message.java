@@ -20,6 +20,7 @@ import javax.persistence.Table;
 @AIndexes({
 	@AIndex(properties = {"importTime"})
 })
+@Deprecated
 public class Message extends NoLiveBaseEntity {
 
 

@@ -165,7 +165,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			Patient pat = pesa.getPatient();
 			JSONObject root = new JSONObject();
 			Map<String,String> params = new LinkedHashMap<>();
-			String function  = "";
+			String function;
 			String logType = "EXTERNAL_RESOURCE_";
 			if (pesa.getDateTo()!=null) {
 				logType+="BLOCK_PATIENT";
@@ -254,7 +254,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		Long aPatientId = pesa.getPatient().getId();
 		JSONObject root = new JSONObject();
 		JSONArray services = new JSONArray();
-		String serviceType = "", medcaseDate = "", medcaseTime = "", executor = "", record = "";
+		String serviceType, medcaseDate , medcaseTime, executor , record = "";
 		//List<Object[]> diaryList = aManager.createNativeQuery("select d.id as f1_did, mc.id f2_mid, mc.dtype from diary d left join medcase mc on mc.id=d.medcase_id " +
 		//		"left join medcase par on par.id=mc.parent_id left join patient pat on pat.id=COALESCE(mc.patient_id,par.patient_id) where d.dtype='Protocol' and mc.dtype='Visit' and pat.id =:pat").setParameter("pat", aPatientId).getResultList();
 		List<Object[]> list = aManager.createNativeQuery("select dd.id as f1_did, mc.id f2_mid" +
@@ -434,8 +434,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 								+ " left join Patient p on p.id=w.person_id "
 								+ " where dmc.parent_id='" + hosp.getId() + "' and dmc.DTYPE='DepartmentMedCase' order by dmc.dateStart,dmc.entranceTime ").getResultList();
 
-						for (int i = 0; i < list.size(); i++) {
-							Object[] dep = list.get(i);
+						for (Object[] dep : list) {
 							if (hosp.getResult() != null && (hosp.getResult().getCode().equals("11") || hosp.getResult().getCode().equals("15"))) {
 								if (dep[7] == null) {
 									executor = dep[3].toString();
@@ -447,9 +446,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 					} else {
 							return;
 						}
-				} else if (mc instanceof DepartmentMedCase) { //Дневники специалистов в отделении не трогаем
-					return;
-				} else if (mc instanceof Visit) { //Дневники визитов не выгружаем. Выгружаем только документ "Выписка из амбулаторной карты"
+				}  else if (mc instanceof Visit) { //Дневники визитов не выгружаем. Выгружаем только документ "Выписка из амбулаторной карты"
 					Visit vis = (Visit) mc;
 					//DischargeDocument doc = aManager.createQuery("from DischargeDocument where medCase=:vis").setParameter("vis",vis).getRe;
 					if (vis.getDateStart() == null) {
@@ -507,7 +504,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				//LOG.info("=== jSON is ready, " + root.toString());
 				makeHttpPostRequest(root.toString(), address,"SetStatement",null, mc.getId(), aManager);
 				//LOG.info("return = ");
-			} else if (pat == null) {
+			} else {
 				LOG.error("Дневник = " + d.getId() + ", patient = null");
 			}
 		} catch (Exception e) {
@@ -552,7 +549,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				//пользовательский справочник
 			} else if (type.equals("2")) {
 				Long id = ConvertSql.parseLong(value) ;
-				if (id!=null && !id.equals(Long.valueOf(0))) {
+				if (id!=null && !id.equals(0L)) {
 					UserValue uv = aManager.find(UserValue.class, id) ;
 					fip.setValueVoc(uv) ;
 					if (sb.length()>0) sb.append("\n") ;
@@ -574,7 +571,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				//пользовательский справочник (текст)
 			} else if (type.equals("7")) {
 				Long id = ConvertSql.parseLong(value) ;
-				if (id!=null && !id.equals(Long.valueOf(0))) {
+				if (id!=null && !id.equals(0L)) {
 					UserValue uv = aManager.find(UserValue.class, id) ;
 					fip.setValueVoc(uv) ;
 					fip.setValueText(String.valueOf(param.get("addValue"))) ;

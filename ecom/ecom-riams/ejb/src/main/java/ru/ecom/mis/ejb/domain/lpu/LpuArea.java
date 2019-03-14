@@ -1,21 +1,14 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocAreaType;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Участок
@@ -52,7 +45,7 @@ public class LpuArea extends BaseEntity {
     /** Название учaстка */
     @Transient
     public String getName() {
-        return new StringBuilder().append(theNumber).append(" ").append(getTypeName()).toString() ;
+        return theNumber + " " + getTypeName();
     }
     public void setName(String aName) { }
 

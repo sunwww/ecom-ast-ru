@@ -1,31 +1,19 @@
 package ru.ecom.gwtservice.idemode;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Map.Entry;
-
-import javax.servlet.jsp.tagext.TagAttributeInfo;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
-
-import ru.ecom.gwt.idemode.client.service.EditTagMessage;
-import ru.ecom.gwt.idemode.client.service.IIdeModeService;
-import ru.ecom.gwt.idemode.client.service.IdeModeException;
-import ru.ecom.gwt.idemode.client.service.TagAttributeInfoAdapter;
-import ru.ecom.gwt.idemode.client.service.TagInfoAdapter;
-import ru.ecom.gwt.idemode.client.service.TagValues;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import ru.ecom.gwt.idemode.client.service.*;
 import ru.ecom.web.idemode.JspFileHelper;
 import ru.ecom.web.idemode.tagext.TagLibraryManager;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.PropertyUtil;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import javax.servlet.jsp.tagext.TagAttributeInfo;
+import javax.servlet.jsp.tagext.TagInfo;
+import javax.servlet.jsp.tagext.TagLibraryInfo;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class IdeModeServiceImpl extends RemoteServiceServlet implements
 		IIdeModeService {
@@ -113,7 +101,7 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public List listTags() {
-		ArrayList<String[]> ret = new ArrayList<String[]>();
+		ArrayList<String[]> ret = new ArrayList<>();
 		for (TagLibraryInfo lib : theManager.getTagLibrariesInfos()) {
 			String prefix = lib.getPrefixString();
 			for (TagInfo tag : lib.getTags()) {
@@ -195,7 +183,7 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 	public List listFormProperties(String aFormClass) {
 		//System.out.println(11) ;
 		try {
-			ArrayList<String[]> list = new ArrayList<String[]>();
+			ArrayList<String[]> list = new ArrayList<>();
 			Class clazz = Thread.currentThread().getContextClassLoader()
 					.loadClass(aFormClass);
 			for (Method method : clazz.getMethods()) {
@@ -239,7 +227,7 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public static class StringArrayComparator implements Comparator<String[]> {
-		public int compare(String s1[], String[] s2) {
+		public int compare(String[] s1, String[] s2) {
 			//System.out.println(13) ;
 			int ret = 0 ;
 			if(s1!=null && s2!=null && s1.length>1 && s2.length>1 && s1[1]!=null) {

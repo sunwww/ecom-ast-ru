@@ -96,7 +96,7 @@ public class VocEntityServiceBean implements IVocEntityService {
 	
 	public Collection<VocEntityInfo> listVocEntities() {
 		Collection<Class> entities = theEntityHelper.listAllEntities() ;
-		ArrayList<VocEntityInfo> ret = new ArrayList<VocEntityInfo>(entities.size()) ; 
+		ArrayList<VocEntityInfo> ret = new ArrayList<>(entities.size()) ;
 		for(Class clazz : entities) {
 			if(theEntityHelper.isVocEntity(clazz) && !clazz.isAnnotationPresent(Deprecated.class)) {
 				ret.add(getInfo(clazz));
@@ -116,8 +116,6 @@ public class VocEntityServiceBean implements IVocEntityService {
 		//String fieldFind = "" ;
 		if(StringUtil.isNullOrEmpty(aOrderBy) ) {aOrderBy = "id"; 
 			//fieldFind="id" ;
-		} else {
-			//fieldFind=aOrderBy+"||'#'||id";
 		}
 		List <Object> list1 = theManager.createNativeQuery("select id from "+theEntityHelper.getTableName(clazz)
 		+ " order by "+aOrderBy+" "+(aAscending?"asc":"desc")+", id "+(aAscending?"asc":"desc"))
@@ -137,7 +135,7 @@ public class VocEntityServiceBean implements IVocEntityService {
 			.append(" order by ").append(aOrderBy).append(" ").append((aAscending?"asc":"desc")).append(", id ").append((aAscending?"asc":"desc"));
 		*/
 		
-		sql.append("from "+theEntityHelper.getEntityName(clazz)) 
+		sql.append("from ").append(theEntityHelper.getEntityName(clazz))
 		.append(" where id in (").append(ids.length()>0?ids.substring(1):"").append(")")
 		.append(" order by ").append(aOrderBy).append(" ").append((aAscending?"asc":"desc")).append(", id ").append((aAscending?"asc":"desc"));
 		List  list = theManager.createQuery(sql.toString())
@@ -152,18 +150,18 @@ public class VocEntityServiceBean implements IVocEntityService {
 			.getResultList();
 		*/
 		StringBuilder sb = new StringBuilder(2048) ;
-		sb.append("{'totalCount':'"+getCount(clazz)+"',") ;
+		sb.append("{'totalCount':'").append(getCount(clazz)).append("',");
 		sb.append("'topics':[") ;
 		boolean firstPassed = false ;
 		for(Object o : list) {
 			if(firstPassed) sb.append(", ") ;else firstPassed=true;
 			sb.append("{") ;
 			try {
-				sb.append("'id':'"+PropertyUtil.getPropertyValue(o, "id")+"'") ;
+				sb.append("'id':'").append(PropertyUtil.getPropertyValue(o, "id")).append("'");
 				for(VocEntityPropertyInfo prop : info.getProperties()) {
 					Object value = PropertyUtil.getPropertyValue(o, prop.getName()) ;
 					String strValue = value!=null?value.toString():"";
-					sb.append(", '"+prop.getName()+"':'"+strValue+"'") ;
+					sb.append(", '").append(prop.getName()).append("':'").append(strValue).append("'");
 					
 				}
 			} catch (Exception e) {

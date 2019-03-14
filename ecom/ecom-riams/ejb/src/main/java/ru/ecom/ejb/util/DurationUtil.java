@@ -45,7 +45,7 @@ public class DurationUtil {
 		} else {
 			if (aDn>0) durat=durat+1 ;
 		}
-		return new StringBuilder().append(durat).append(add).toString();
+		return durat + add;
 	}
 	
 	public static String getDurationMedCase(Date aFrom, Date aTo, int aFull ) {
@@ -69,7 +69,7 @@ public class DurationUtil {
 		long durat = (finish-start) / msecinday ;
 		if (((finish-start) / min)%60>55) ++durat ;
 		if (durat<1) durat=1;
-		return new StringBuilder().append(durat).append(add).toString();
+		return durat + add;
 	}
 	
 	public static String getDurationFull(Date aFrom, Date aTo) {

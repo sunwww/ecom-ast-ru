@@ -1,18 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
@@ -23,7 +12,12 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.uc.privilege.domain.Privilege;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 /**
 	 * Медицинский договор
@@ -245,9 +239,8 @@ public class MedContract extends BaseEntity{
 	@Comment("Информация")
 	@Transient
 	public String getInfo() {
-		return new StringBuilder()
-		.append(theParent==null?"основной":"поддоговор")
-		.append(" №").append(theContractNumber).toString();
+		return (theParent == null ? "основной" : "поддоговор") +
+				" №" + theContractNumber;
 	}
 	/** Дата создания */
 	@Comment("Дата создания")

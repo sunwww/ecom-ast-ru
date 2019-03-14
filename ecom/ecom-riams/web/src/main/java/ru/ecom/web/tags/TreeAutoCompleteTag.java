@@ -79,14 +79,7 @@ import javax.servlet.jsp.PageContext;
             if(getSize()>=50) {
                 styleClass.append(" maxHorizontalSize") ;
             }
-            try {
-                /* todo
-            	if(isFieldRequired()) {
-                    styleClass.append(" required") ;
-                }*/
-            } catch (Exception e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+
            
             div divDefault = new div() ;
 //            String horFill = getHorizontalFill() ? "horizontalFill" : "" ;
@@ -113,14 +106,14 @@ import javax.servlet.jsp.PageContext;
             divView.addElement(new span()) ;
            
           
-            StringBuffer sb = new StringBuffer();
+        /*    StringBuilder sb = new StringBuilder();
 
             sb.append(String.format("<input type='hidden' size='1'  name='%1$s' value='%2$s' id='%1$s'/>", getProperty(), id)) ;
             sb.append(String.format(new StringBuilder().append("<input title='").append(vocname).append("' type='text' name='%1$sName' value='%2$s' id='%1$sName' size='%3$s' class='%4$s'/>").toString()
                     , getProperty(), name, getSize()+"", styleClass)) ;
 
-            sb.append("<div id='"+divId+"'><span></span></div>") ;
-           
+            sb.append("<div id='").append(divId).append("'><span></span></div>");
+     */
             JavaScriptContext js = JavaScriptContext.getContext(pageContext, this) ;
 //            sb.append("$('"+getProperty()+"').focus = setFocusOnField('"+getProperty()+"Name') ;\n") ;
             js.println(new StringBuilder().append("var ").append(autoc).append(" = new ecom_tree_autocomplete.Autocomplete() ;").toString()) ;

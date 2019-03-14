@@ -14,8 +14,6 @@ import javax.persistence.Transient;
 public class ConfinementCertificate extends Certificate {
 	@Transient
 	public String getInformation() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("серия ").append(getSeries()).append(" номер ").append(getNumber()) ;
-		return ret.toString() ;
+		return "серия " + getSeries() + " номер " + getNumber();
 	}
 }

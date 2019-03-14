@@ -26,13 +26,9 @@ class JbossFileInfoLocal {
 
     protected File createFile(String aFilename) {
         if(theFile!=null) throw new IllegalStateException("Файл уже создан") ;
-        StringBuilder sb = new StringBuilder(theExportDir);
-        sb.append('/') ;
-        sb.append(theUniquePath) ;
-        sb.append('/') ;
-        sb.append(aFilename) ;
 
-        theFile = new File(sb.toString()) ;
+        String sb = theExportDir + '/' + theUniquePath + '/' + aFilename;
+        theFile = new File(sb) ;
         if (CAN_DEBUG) LOG.debug("File to write j: " + theFile.getAbsolutePath());
         new File(theFile.getParent()).mkdirs() ;
 

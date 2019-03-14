@@ -375,9 +375,7 @@ public class HospitalMedCase extends LongMedCase {
 	
 	@Transient
 	public String getInfo() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("СЛС ").append(getId()).append(" номер стат.карты ").append(getStatCardNumber()) ;
-		return ret.toString() ;
+		return "СЛС " + getId() + " номер стат.карты " + getStatCardNumber();
 	}
 	
 	/** Количество дней */

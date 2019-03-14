@@ -45,17 +45,14 @@ public class ActionUtil {
 	        StringBuilder sb = new StringBuilder();
 	        URL pageURL = new URL(pageAddress);
 	        URLConnection uc = pageURL.openConnection();
-	        BufferedReader br = new BufferedReader(
-	                new InputStreamReader(
-	                        uc.getInputStream(), codePage));
-	        try {
-	            String inputLine;
-	            while ((inputLine = br.readLine()) != null) {
-	                sb.append(inputLine);
-	            }         
-	        } finally {
-	        	br.close();
-	        }
+		 try (BufferedReader br = new BufferedReader(
+				 new InputStreamReader(
+						 uc.getInputStream(), codePage))) {
+			 String inputLine;
+			 while ((inputLine = br.readLine()) != null) {
+				 sb.append(inputLine);
+			 }
+		 }
 	        return sb.toString();
 	    }
 	public static WebQueryResult getElementArrayByCode(String aCode,String aAttribList,HttpServletRequest aRequest) {
@@ -200,19 +197,19 @@ public static String updateParameter(String aSession, String aNameParameter, Str
     		
     		String[] fs1=filter.split(",") ;
     		StringBuilder filtOr = new StringBuilder() ;
-    		
-    		for (int i=0;i<fs1.length;i++) {
-    			String filt1 = fs1[i].trim() ;
-    			String[] fs=filt1.split("-") ;
-    			if (filt1.length()>0) {
-	    			if (filtOr.length()>0) filtOr.append(" or ") ;
-		    		if (fs.length>1) {
-		    			filtOr.append(" ").append(aFldId).append(" between '").append(fs[0].trim()).append("' and '").append(fs[1].trim()).append("'") ;
-		    		} else {
-		    			filtOr.append(" substring(").append(aFldId).append(",1,").append(filt1.length()).append(") = '").append(filt1).append("'") ;
-		    		}
-    			}
-    		}
+
+			for (String s : fs1) {
+				String filt1 = s.trim();
+				String[] fs = filt1.split("-");
+				if (filt1.length() > 0) {
+					if (filtOr.length() > 0) filtOr.append(" or ");
+					if (fs.length > 1) {
+						filtOr.append(" ").append(aFldId).append(" between '").append(fs[0].trim()).append("' and '").append(fs[1].trim()).append("'");
+					} else {
+						filtOr.append(" substring(").append(aFldId).append(",1,").append(filt1.length()).append(") = '").append(filt1).append("'");
+					}
+				}
+			}
     		
     		if (filtOr.length()>0) {
     			aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"='||"+aFldId+"||'") ;

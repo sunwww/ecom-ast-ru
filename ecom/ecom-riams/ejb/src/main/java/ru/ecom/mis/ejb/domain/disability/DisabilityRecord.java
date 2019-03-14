@@ -88,10 +88,8 @@ public class DisabilityRecord extends BaseEntity{
 	@Comment("Информация о записи")
 	@Transient
 	public String getInfo() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append(getRegimeText()).append(" ") ;
-		ret.append(DurationUtil.getDuration(getDateFrom(), getDateTo())) ;
-		return ret.toString();
+		return getRegimeText() + " " +
+				DurationUtil.getDuration(getDateFrom(), getDateTo());
 	}
 
 	@Comment("Рабочая функция инфо")

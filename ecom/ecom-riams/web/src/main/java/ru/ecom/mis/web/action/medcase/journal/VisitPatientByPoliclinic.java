@@ -1,18 +1,16 @@
 package ru.ecom.mis.web.action.medcase.journal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.mis.ejb.service.medcase.IReportsService;
-import ru.ecom.web.util.ActionUtil;
 import ru.ecom.poly.web.action.ticket.JournalBySpecialistForm;
+import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class VisitPatientByPoliclinic  extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -113,32 +111,32 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 			, Long aSocialStatus, Long aDefect) {
 		StringBuilder filter = new StringBuilder() ;
 		
-		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
-			filter.append(" and wf.id="+aSpecialist) ;
+		if (aSpecialist!=null&&aSpecialist> 0L){
+			filter.append(" and wf.id=").append(aSpecialist);
 		}
-		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
-			filter.append(" and wf.workFunction_id="+aWorkFunction) ;
+		if (aWorkFunction!=null&&aWorkFunction> 0L){
+			filter.append(" and wf.workFunction_id=").append(aWorkFunction);
 		}
-		if (aLpu!=null&&aLpu>Long.valueOf(0)){
-			filter.append(" and w.lpu_id="+aLpu) ;
+		if (aLpu!=null&&aLpu> 0L){
+			filter.append(" and w.lpu_id=").append(aLpu);
 		}
-		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
-			filter.append(" and t.serviceStream_id="+aServiceStream) ;
+		if (aServiceStream!=null&&aServiceStream> 0L){
+			filter.append(" and t.serviceStream_id=").append(aServiceStream);
 		}
-		if (aWorkPlaceType!=null&&aWorkPlaceType>Long.valueOf(0)){
-			filter.append(" and t.workPlaceType_id="+aWorkPlaceType) ;
+		if (aWorkPlaceType!=null&&aWorkPlaceType> 0L){
+			filter.append(" and t.workPlaceType_id=").append(aWorkPlaceType);
 		}
-		if (aOrderLpu!=null&&aOrderLpu>Long.valueOf(0)){
-			filter.append(" and t.orderLpu_id="+aOrderLpu) ;
+		if (aOrderLpu!=null&&aOrderLpu> 0L){
+			filter.append(" and t.orderLpu_id=").append(aOrderLpu);
 		}
-		if (aOrderWF!=null&&aOrderWF>Long.valueOf(0)){
-			filter.append(" and t.orderWorkFunction_id="+aOrderWF) ;
+		if (aOrderWF!=null&&aOrderWF> 0L){
+			filter.append(" and t.orderWorkFunction_id=").append(aOrderWF);
 		}
-		if (aSocialStatus!=null&&aSocialStatus>Long.valueOf(0)){
-			filter.append(" and p.socialStatus_id="+aSocialStatus) ;
+		if (aSocialStatus!=null&&aSocialStatus> 0L){
+			filter.append(" and p.socialStatus_id=").append(aSocialStatus);
 		}
-		if (aDefect!=null&&aDefect>Long.valueOf(0)){
-			filter.append(" and t.medCaseDefect_id="+aDefect) ;
+		if (aDefect!=null&&aDefect> 0L){
+			filter.append(" and t.medCaseDefect_id=").append(aDefect);
 		}
 		return filter.toString() ;
 	}
@@ -148,41 +146,41 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 			, Long aSocialStatus, Long aDefect) {
 		StringBuilder filter = new StringBuilder() ;
 		filter.append("||':'") ;
-		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
+		if (aSpecialist!=null&&aSpecialist> 0L){
 			filter.append("||").append(aSpecialist) ;
 		}
 		filter.append("||':'") ;
-		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
+		if (aWorkFunction!=null&&aWorkFunction> 0L){
 			filter.append("||").append(aWorkFunction) ;
 		}
 		filter.append("||':'") ;
-		if (aLpu!=null&&aLpu>Long.valueOf(0)){
+		if (aLpu!=null&&aLpu> 0L){
 			filter.append("||").append(aLpu) ;
 		}
 		filter.append("||':'") ;
-		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
+		if (aServiceStream!=null&&aServiceStream> 0L){
 			filter.append("||").append(aServiceStream) ;
 		}
 		filter.append("||':'") ;
-		if (aWorkPlaceType!=null&& aWorkPlaceType>Long.valueOf(0)){
+		if (aWorkPlaceType!=null&& aWorkPlaceType> 0L){
 			filter.append("||").append(aWorkPlaceType) ;
 		}
 		filter.append("||':'") ;
-		if (aOrderLpu!=null&& aOrderLpu>Long.valueOf(0)){
+		if (aOrderLpu!=null&& aOrderLpu> 0L){
 			filter.append("||").append(aOrderLpu) ;
 		}
 		filter.append("||':'") ;
-		if (aOrderWF!=null&& aOrderWF>Long.valueOf(0)){
+		if (aOrderWF!=null&& aOrderWF> 0L){
 			filter.append("||").append(aOrderWF) ;
 		}
 		filter.append("||':'") ;
 		filter.append("||'t.dateStart'||':'") ;
 		filter.append("||':'") ;
-		if (aSocialStatus!=null&& aSocialStatus>Long.valueOf(0)){
+		if (aSocialStatus!=null&& aSocialStatus> 0L){
 			filter.append("||").append(aSocialStatus) ;
 		}
 		filter.append("||':'") ;
-		if (aDefect!=null&& aDefect>Long.valueOf(0)){
+		if (aDefect!=null&& aDefect> 0L){
 			filter.append("||").append(aDefect) ;
 		}
 		return filter.toString() ;
@@ -193,8 +191,8 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType
 			, Long aOrderLpu, Long aOrderWF, Long aSocialStatus, Long aDefect) {
 		StringBuilder sql = new StringBuilder() ;
-		String id = "" ;
-		String name = "" ;
+		String id;
+		String name;
 		String id1=null ;
 		if (aGroupBy.equals("2")) {
 			//LPU
@@ -249,8 +247,8 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType
 			, Long aOrderLpu, Long aOrderWF, Long aSocialStatus, Long aDefect) {
 		StringBuilder sql = new StringBuilder() ;
-		String group = "" ;
-		String order = "" ;
+		String group;
+		String order;
 		String sqlAdd = "" ;
 		if (aGroupBy.equals("2")) {
 			//LPU
@@ -322,7 +320,7 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 
 		if (aReestr) {
 			if (!aWhereDop.equals(""))sql.append(" and ").append(aWhereDop) ;
-			sql.append(" ORDER BY ").append(order).append("");
+			sql.append(" ORDER BY ").append(order);
 		} else {
 			
 			sql.append(" GROUP BY ").append(group) ;
@@ -331,9 +329,9 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 				sql.append(" ORDER BY ")
 				//.append("(count(distinct case when t.visitResult_id is not null and (t.noActuality is null or t.noActuality='0') then t.id else null end) )/cast(count(distinct t.id) as numeric) desc ")
 				//	.append(",count(distinct t.id),")
-				.append(order).append("");
+				.append(order);
 			} else {
-				sql.append(" ORDER BY ").append(order).append("");
+				sql.append(" ORDER BY ").append(order);
 			}
 		}
 			

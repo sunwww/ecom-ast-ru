@@ -42,7 +42,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		if (!isDiagnosisAllowed(form.getClinicalMkb(), form.getDepartment(), form.getPatient(), form.getServiceStream(), null,null,manager)) {
 			throw new IllegalStateException ("Данный диагноз запрещен в отделении!");
 		}
-		sqlupdate.append("update MedCase set dateFinish="+dateFinish+", dischargeTime="+timeFinish+" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))") ;
+		sqlupdate.append("update MedCase set dateFinish=").append(dateFinish).append(", dischargeTime=").append(timeFinish).append(" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))");
 		manager.createNativeQuery(sqlupdate.toString())
 			.setParameter("parent", form.getId())
 			.executeUpdate() ;
@@ -149,7 +149,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 
 	
 	public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long aPatient, Long serviceStream, Long diagnosisRegistrationType, Long diagnosisPriority, EntityManager manager) {
-		if (clinicalMkb==null || clinicalMkb.equals(Long.valueOf(0))) return true ;
+		if (clinicalMkb==null || clinicalMkb.equals(0L)) return true ;
 		if (diagnosisRegistrationType==null) {
 			diagnosisRegistrationType = Long.valueOf(manager.createNativeQuery("select id from vocdiagnosisregistrationtype where code='4'").getResultList().get(0).toString());  //4
 		}

@@ -1,7 +1,12 @@
 package ru.ecom.jaas.web.action.role;
 
-import java.io.IOException;
-import java.util.Date;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
+import ru.ecom.jaas.ejb.service.ISecRoleService;
+import ru.ecom.jaas.ejb.service.ISecUserService;
+import ru.ecom.web.login.LoginInfo;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -9,15 +14,8 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-
-import ru.ecom.ejb.services.query.IWebQueryService;
-import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
-import ru.ecom.jaas.ejb.service.ISecRoleService;
-import ru.ecom.jaas.ejb.service.ISecUserService;
-import ru.ecom.jaas.web.action.service.ServiceExportJbossAction;
-import ru.ecom.web.login.LoginInfo;
-import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.format.DateFormat;
+import java.io.IOException;
+import java.util.Date;
 
 
 public class RolePoliciesServiceJs  {
@@ -41,7 +39,7 @@ public class RolePoliciesServiceJs  {
 		//	System.out.println("PasswordAAAA , passLT = "+passwordLifetime+", passAge = "+passwordAge+", passStartdate = "+passwordStartDate);
 			diff = passwordLifetime - passwordAge;
 			if (diff<=0) {
-				diff = Long.valueOf(0);
+				diff = 0L;
 			} 
 		}
 		

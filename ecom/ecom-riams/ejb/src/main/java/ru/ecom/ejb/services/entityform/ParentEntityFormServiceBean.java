@@ -46,9 +46,9 @@ public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper i
     
     public <T extends IEntityForm> T prepareToCreate(Class<T> aFormClass, Object aParentId) throws EntityFormException {
         checkPermission(aFormClass, "Create") ;
-        if(aParentId==null) throw new IllegalArgumentException("Нет параметра aParentId ("+aParentId+")") ;
+        if(aParentId==null) throw new IllegalArgumentException("Нет параметра aParentId (null)") ;
         try {
-            IEntityForm form = aFormClass.newInstance() ;
+            T form = aFormClass.newInstance() ;
             Method getterFormMethod = ParentUtil.findParentMethod(aFormClass) ;
             if(getterFormMethod.getReturnType().getAnnotation(Entity.class)!=null) {
                 Class entityClass = findFormPersistanceClass(aFormClass);
@@ -62,7 +62,7 @@ public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper i
             }
             intercept(form, aParentId, aFormClass.getAnnotation(AParentPrepareCreateInterceptors.class)) ;
             checkDynamicParentPermission(aFormClass, aParentId, "Create") ;
-            return (T) form ;
+            return form;
         } catch (Exception e) {
             throw new EntityFormException("Ошибка подготовки к созданию новой формы",e);
         }
@@ -111,7 +111,7 @@ public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper i
             if (CAN_DEBUG) LOG.debug("entity = " + entity);
 
             // FIXME для кэша второго уровня. Доработать!!!
-            Collection results = null ; //getOneToManyCollection(entity, parentClass, entityClass);
+            Collection results; //getOneToManyCollection(entity, parentClass, entityClass);
 //            if (CAN_DEBUG)
 //				LOG.debug("listAll: results = " + results); 
 

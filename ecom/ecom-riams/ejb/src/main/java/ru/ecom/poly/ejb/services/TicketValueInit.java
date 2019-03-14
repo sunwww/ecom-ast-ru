@@ -1,13 +1,13 @@
 package ru.ecom.poly.ejb.services;
 
-import java.util.HashMap;
-
 import ru.ecom.mis.ejb.domain.patient.MedPolicy;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.poly.ejb.domain.Medcard;
 import ru.ecom.poly.ejb.domain.Ticket;
 import ru.ecom.report.replace.IValueGetter;
 import ru.ecom.report.replace.SetValueException;
+
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,9 +37,6 @@ public class TicketValueInit implements IValueGetter  {
         // номер мед. карты
         theMap.put("MedCardNum",mc.getNumber());
         // льгота
-        // Номер полиса ОМС
-        if (plc != null)
-            theMap.put("OMCCode", plc.getSeries() + plc.getPolNumber());
         // СНИЛС
         theMap.put("SNILS", prs.getSnils());
         // ФИО

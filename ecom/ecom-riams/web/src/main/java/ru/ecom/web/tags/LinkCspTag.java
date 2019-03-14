@@ -102,10 +102,10 @@ public class LinkCspTag extends AbstractGuidSimpleSupportTag {
             StringBuilder url = new StringBuilder();
             url.append(request.getScheme()).append("://").append(cspurl).append("/") ;
             url.append(theAction.charAt(0)=='/' ? theAction.substring(1) : theAction) ;
-            if(theAction.indexOf(".csp")<0) {
+            if(!theAction.contains(".csp")) {
                 url.append(".csp?user=").append(request.getUserPrincipal()) ;
             } else {
-            	 if(theAction.indexOf("?")<0) {
+            	 if(!theAction.contains("?")) {
             		 url.append("?user=") ;
             	 } else {
             		 url.append("&user=") ;

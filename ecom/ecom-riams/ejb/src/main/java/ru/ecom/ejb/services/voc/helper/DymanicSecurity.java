@@ -16,19 +16,13 @@ public class DymanicSecurity implements IDynamicSecurityInterceptor, IDynamicPar
 		setClazz(aClazz) ;
 	}
 	public void check(String aPolicyAction, Object aId, InterceptorContext aContext) {
-		if(isDisabled(aContext.getSessionContext())) return ;
-        //MisLpu lpu = aContext.getEntityManager().find(MisLpu.class, aId) ;
-        //checkByParent(aPolicyToExtend, lpu, aContext.getSessionContext());
-		
-		
+
 	}
 	
 	private StringBuilder getPolicy(StringBuilder aAppend,Long aId, InterceptorContext aContext) {
-		StringBuilder sql = new StringBuilder() ;
 		StringBuilder result = new StringBuilder() ;
-		sql.append("select count(*),parent_id from ").append(theClazz).append("where id=:id") ;
 		List<Object[]> list = aContext.getEntityManager()
-    		.createNativeQuery(sql.toString()).setParameter("id", aId).getResultList() ;
+    		.createNativeQuery("select count(*),parent_id from " + theClazz + "where id=:id").setParameter("id", aId).getResultList() ;
 		Object[] obj = null ;
 		if (list.size()>0) {
 			obj = list.get(0) ;
@@ -43,14 +37,11 @@ public class DymanicSecurity implements IDynamicSecurityInterceptor, IDynamicPar
 	public void checkParent(String aPolicyAction, Object aId, InterceptorContext aContext) {
 		if(isDisabled(aContext.getSessionContext())) return ;
         StringBuilder sb = new StringBuilder();
-        StringBuilder sql = new StringBuilder() ;
-        sql.append("select count(*),parent_id from ").append(theClazz).append("where id=:id") ;
-        List<Object[]> list = aContext.getEntityManager()
-        	.createNativeQuery(sql.toString()).setParameter("id", aId).getResultList() ;
-        Object[] obj = null ;
-        if (list.size()>0) obj = list.get(0) ;
-        Long count =ConvertSql.parseLong(obj[0]) ;
-        Long parent = ConvertSql.parseLong(obj[1]);
+		List<Object[]> list = aContext.getEntityManager()
+        	.createNativeQuery("select count(*),parent_id from " + theClazz + "where id=:id").setParameter("id", aId).getResultList() ;
+        Object[] obj = list.isEmpty() ? null : list.get(0) ;
+        Long count =obj!=null ? ConvertSql.parseLong(obj[0]) : null;
+     //   Long parent = ConvertSql.parseLong(obj[1]);
         while(count!=null && count>0) {
             StringBuilder policy = new StringBuilder("/Policy/Mis/MisLpuDynamic/");
             policy.append(aId) ;

@@ -25,5 +25,5 @@ public class UsersRoles {
 
     private File theJbossConfigDir = new File(System.getProperty("jboss.server.config.dir")) ;
     private long theVersion = 0 ;
-    private final HashMap<String, HashSet<String>> theHash = new HashMap<String, HashSet<String>>();
+    private final HashMap<String, HashSet<String>> theHash = new HashMap<>();
 }

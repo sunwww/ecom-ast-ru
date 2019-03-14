@@ -1,11 +1,11 @@
 package ru.ecom.jaas.web.action.service;
 
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
-import ru.ecom.web.util.Injection;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +27,7 @@ public class ServiceImportRolesAction extends BaseAction {
         aRequest.setAttribute("service", service);
 
 
-        LinkedList<String> list = new LinkedList<String>();
+        LinkedList<String> list = new LinkedList<>();
         Properties prop = new Properties();
         prop.load(form.getFile().getInputStream());
         String pols = prop.getProperty(form.getUserInFile()) ;

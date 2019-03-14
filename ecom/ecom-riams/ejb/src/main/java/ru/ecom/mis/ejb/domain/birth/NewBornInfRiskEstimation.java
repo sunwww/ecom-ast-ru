@@ -1,18 +1,12 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import ru.ecom.mis.ejb.domain.birth.voc.*;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.ecom.mis.ejb.domain.birth.voc.VocCommonMask;
-import ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskApgar;
-import ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskMotherDiseases;
-import ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskMotherTemperature;
-import ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskNewBornWeight;
-import ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskWaterNature;
-import ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskWaterless;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Оценка риска бактериальной инфекции у новорожденных
@@ -128,9 +122,7 @@ public class NewBornInfRiskEstimation extends Inspection{
 	}
 	@Transient
 	public String getInformation() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("Общая оценка (балл): ").append(theCommonMark!=null?theCommonMark.getCode():"").append(" ").append(theCommonMark!=null?theCommonMark.getName():"") ;
-		return ret.toString() ;
+		return "Общая оценка (балл): " + (theCommonMark != null ? theCommonMark.getCode() : "") + " " + (theCommonMark != null ? theCommonMark.getName() : "");
 	}
 	
 

@@ -35,7 +35,7 @@ public class GetMessageFromFile extends HttpServlet {
         response.setHeader("Access-Control-Allow-Methods","GET");
 
         String paramValue = request.getParameter("username");
-        String path = new GetMessageFromFile().getClass().getResource("/../../").getFile();
+        String path = GetMessageFromFile.class.getResource("/../../").getFile();
         path= path.replace("%20"," ");
 
         String file = ReadFile(path+"/WEB-INF/message.txt");

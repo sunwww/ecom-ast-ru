@@ -111,8 +111,8 @@ public class TemplateProtocolJs {
 		
 		return service.saveParametersByProtocol(aSmoId,aProtocolId, aParams, username);
 	}*/
-	public String getTemplateDisableEdit (long aTemplateId, HttpServletRequest aRequest) throws NamingException {
-		if (aTemplateId==0) return "0";
+	public String getTemplateDisableEdit (Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
+		if (aTemplateId==null||aTemplateId.equals(0L)) return "0";
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
@@ -122,9 +122,8 @@ public class TemplateProtocolJs {
 	public String changeTypeByParameter(Long aParam, Long aType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("update Parameter set type='").append(aType).append("' where id='").append(aParam).append("'") ;
-		service.executeUpdateNativeSql(sql.toString()) ;
+		String sql = "update Parameter set type='"+aType+"' where id='"+aParam+"'" ;
+		service.executeUpdateNativeSql(sql) ;
 		
 		return "" ;
 	}
@@ -135,11 +134,11 @@ public class TemplateProtocolJs {
 			parameters.put("disableEditProtocol",getTemplateDisableEdit(aTemplateId, aRequest));
 		return parameters.toString();
 	}
-	public String getParameterByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
+	public String getParameterByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 		return getParameterByObject(aProtocolId, aTemplateId, "Template", aRequest);
 		
 	}
-	public String getParameterByObject(Long aProtocolId, Long aTemplateId, String aObjectName, HttpServletRequest aRequest) throws NamingException, JspException {
+	public String getParameterByObject(Long aProtocolId, Long aTemplateId, String aObjectName, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		Collection<WebQueryResult> lwqr = null ;
@@ -147,9 +146,9 @@ public class TemplateProtocolJs {
 		 if (aObjectName.equals("AssessmentCard")){
 			fieldName = "pf.assessmentCard";
 		}
-		Long wfId = Long.valueOf(0) ;
+		Long wfId = 0L;
 		String wfName = "" ;
-		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+		if (aProtocolId!=null && !aProtocolId.equals(0L)) {
 			if (aObjectName.equals("Template")) {
 				fieldName = "d.id";
 			} 
@@ -181,7 +180,7 @@ public class TemplateProtocolJs {
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join userValue vv on vv.id=pf.valueVoc_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
-			sql.append(" where "+fieldName+"='").append(aProtocolId).append("'") ;
+			sql.append(" where ").append(fieldName).append("='").append(aProtocolId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
 			
@@ -214,15 +213,15 @@ public class TemplateProtocolJs {
 			sql.append(" left join parametergroup pg on pg.id=p.group_id");
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
-			sql.append(" where "+fieldName+"='").append(aTemplateId).append("'") ;
+			sql.append(" where ").append(fieldName).append("='").append(aTemplateId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
 		}
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder err = new StringBuilder() ;
 			sb.append("{");
-			sb.append("\"workFunction\":\""+wfId+"\",") ;
-			sb.append("\"workFunctionName\":\""+wfName+"\",") ;
+			sb.append("\"workFunction\":\"").append(wfId).append("\",");
+			sb.append("\"workFunctionName\":\"").append(wfName).append("\",");
 			/*if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
 				sb.append("\"isdoctoredit\":\"1\",") ;
 			} else {
@@ -276,7 +275,7 @@ public class TemplateProtocolJs {
 							if(isFirtMethodVoc) par.append(", ") ;else isFirtMethodVoc=true;
 							par.append("{\"id\":\"").append(str(""+vocVal[0])).append("\"") ;
 							par.append(",\"name\":\"").append(str(""+vocVal[1])).append("\"") ;
-							par.append(",\"checked\":\"").append(valList.indexOf(","+vocVal[0]+",")>-1?"1":"0").append("\"") ;
+							par.append(",\"checked\":\"").append(valList.contains("," + vocVal[0] + ",") ?"1":"0").append("\"") ;
 							par.append("}") ;
 						}
 						par.append("]") ;
@@ -306,7 +305,7 @@ public class TemplateProtocolJs {
 		
 	}
 	private String str(String aValue) {
-    	if (aValue.indexOf('\"')!=-1) {
+    	if (aValue.contains("\"")) {
     		aValue = aValue.replaceAll("\"", "\\\\\"") ;
     	}
     	return aValue ;
@@ -432,7 +431,7 @@ public class TemplateProtocolJs {
     		res.append("</ul></td>") ;
     	} else if (aSmoId!=null && !aSmoId.equals("") && !aSmoId.equals("0")){
     		list = service.executeNativeSql("select mc.id,mc.patient_id from medcase mc where mc.id="+aSmoId,1);
-    		if (!list.isEmpty()) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
+    		if (list.size()>0) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
     		list.clear() ;
     		
     		if (aType!=null && aType.equals("mydiary")  && patient!=null) {
@@ -656,7 +655,7 @@ public class TemplateProtocolJs {
 			name_cat = name_cat+"<input type='text' id='fldSearch"+aFunctionProt+"' name='fldSearch"+aFunctionProt+"' value='"+(aSearchText!=null?aSearchText:"")+"'>" ;
 			name_cat = name_cat+"<input  type='submit' value='Поиск' onclick='"+aFunctionProt+"Search(\""+aType+"\",\""+aParent+"\")'>" ;
 			name_cat = name_cat+"</form>" ;
-			res.append("<h2>Список своих шаблонов").append(!name_cat.equals("")?" КАТЕГОРИИ: "+name_cat:"---").append(" </h2>") ;
+			res.append("<h2>Список своих шаблонов").append(!name_cat.equals("") ? " КАТЕГОРИИ: "+name_cat : "---").append(" </h2>") ;
 			res.append("</td>") ;
 			res.append("</tr><tr><td colspan='2' valign='top'>") ;
 			res.append("<ul>");
@@ -915,21 +914,23 @@ public class TemplateProtocolJs {
 		return ret.toString();
 	}
 	public static Long parseLong(Object aValue) {
-		Long ret =null;
-		if (aValue==null) return ret ;
+		if (aValue==null) return null ;
 		if (aValue instanceof Integer) {
 			
 			return Long.valueOf((Integer) aValue) ;
 		}
 		if(aValue instanceof BigInteger) {
-			return ((BigInteger) aValue).longValue() ;
+			BigInteger bigint = (BigInteger) aValue ;
+			
+			return bigint.longValue() ;
 		} 
 		if (aValue instanceof Number) {
-			return ((Number) aValue).longValue() ;
+			Number number = (Number) aValue ;
+			return number.longValue() ;
 		}
 		if (aValue instanceof String) {
 			return Long.valueOf((String) aValue);
 		}
-		return ret ;
+		return null ;
 	}
 }

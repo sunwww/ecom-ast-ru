@@ -42,7 +42,7 @@ public abstract class StatisticStub extends BaseEntity {
 	@Transient
 	@Comment("Информация")
 	public String getInfo() {
-		return new StringBuilder().append("Номер стат.карты ").append(getCode()).append("-").append(getYear()).toString() ;
+		return "Номер стат.карты " + getCode() + "-" + getYear();
 	}
 	
 	/** Лечебное учреждение */
