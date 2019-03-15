@@ -16,6 +16,10 @@
 			document.location (ids)
 			
 		}
+		function printAmbulanceCard(aPatientId) {
+			window.document.location='print-ambcard.do?s=PatientPrintService&m=printInfo&id='+aPatientId;
+		}
+
 		</script>
 	</tiles:put>
 	<tiles:put name="body" type="string">
@@ -144,17 +148,17 @@ order by cao.operationDate desc,cao.operationTime desc
 			<msh:ifInRole roles="">
 <msh:section title="Обслуживаемые персоны (потребители)">
 			<ecom:webQuery nativeSql="select sp.id,
-			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
-			
+			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END as f2_name
+			,p.id as patientId
 			from ServedPerson sp
 			left join ContractPerson cp on cp.id=sp.person_id 
 			left join patient p on p.id=cp.patient_id
 			where sp.account_id='${param.id}'
-			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
-			
+			group by sp.id,cp.dtype,p.id,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			" name="serverPerson"/>
 				<msh:table name="serverPerson" action="entityParentView-contract_servedPerson.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableButton property="3" buttonShortName=" Амб. карта " buttonFunction="printAmbulanceCard"/>
 					<msh:tableColumn columnName="Информация" property="2"/>
 
 					

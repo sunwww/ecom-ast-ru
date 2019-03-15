@@ -1,5 +1,4 @@
 <%@page import="java.util.List"%>
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -306,6 +305,17 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
             function printLabAnalysis() {
 				showprintLabAnalysisCloseDocument($('id').value);
             }
+
+
+
+		</script>
+	</tiles:put>
+	<tiles:put name="javascript" type="string">
+		<script type="text/javascript">
+			alert(1);
+			function printAmbulanceCard(aPatientId) {
+				window.document.location='print-ambcard.do?s=PatientPrintService&m=printInfo&id='+aPatientId;
+			}
 
 		</script>
 	</tiles:put>
