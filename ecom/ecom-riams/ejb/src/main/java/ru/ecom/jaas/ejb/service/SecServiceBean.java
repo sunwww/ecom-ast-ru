@@ -223,7 +223,7 @@ public class SecServiceBean implements ISecService {
     		return aHash.get(aPolicy.getKey());
     	} else { // поиск от самой верхней
     		StringTokenizer st = new StringTokenizer(aPolicy.getKey(), " /\\\"'\t,.:|\n") ; 
-    		StringBuilder sb = new StringBuilder("") ;
+    		StringBuilder sb = new StringBuilder() ;
     		SecPolicy parentPolicy = aHash.get("/") ; //findOrCreatePolicy("/", aHash) ;
     		while(st.hasMoreTokens()) {
     			String key = st.nextToken() ;
@@ -285,7 +285,7 @@ public class SecServiceBean implements ISecService {
             role.setKey(aRole.getKey());
             role.setName(aRole.getName());
             role.setComment(aRole.getComment());
-            role.setSecPolicies(new LinkedList<SecPolicy>()) ;
+            role.setSecPolicies(new LinkedList<>()) ;
             theManager.persist(role);
 		} 
     	return role;

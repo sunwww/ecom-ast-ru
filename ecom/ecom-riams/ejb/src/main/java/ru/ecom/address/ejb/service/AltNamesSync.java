@@ -9,7 +9,7 @@ import java.util.List;
 
 public class AltNamesSync implements ISync {
     private EntityManager theEntityManager;
-	public void sync(SyncContext aContext) throws Exception {
+	public void sync(SyncContext aContext) {
 
         String clause = " where time = "+aContext.getImportTime().getId();
         String countQueryString = "select count(*) from AltNames " + clause;
@@ -25,24 +25,16 @@ public class AltNamesSync implements ISync {
         int maxResults = 1000;
         String listSql = "select oldCode, newCode, id from AltNames "+clause +" and id>";
         while (true) {
-        	System.out.println("=== Start New "+maxResults+" cycle "+id);
         List<Object[]> names = theEntityManager.createNativeQuery(listSql+id+" order by id").setMaxResults(maxResults).getResultList();
         if (names.isEmpty()) {break;}
-        System.out.println("=== Производим обновление данных КЛАДР в таблице адресов. "+names.size()+" записей");
-        
+
        for (Object[] o: names) {	
         	if (++i % 100 == 0) {
                 monitor.advice(100);
-                StringBuilder sb = new StringBuilder();
-                sb.append(i);
-                sb.append(" ");
-                sb.append(" ");
-                sb.append(" Заменяем устаревший код КЛАДРа "+o[0]+" на новый код "+o[1]);
-              monitor.setText(sb.toString());
+              monitor.setText(i+ " Заменяем устаревший код КЛАДРа "+o[0]+" на новый код "+o[1]);
             }
         	id = Long.valueOf(""+o[2]);
         	
-        	System.out.println(i+" Заменяем устаревший код КЛАДРа "+o[0]+" на новый код "+o[1]);
         	String sql = "update address2 set kladr = '"+o[1]+"' where kladr = '"+o[0]+"'";
 
         	theEntityManager.createNativeQuery(sql).executeUpdate();
@@ -50,7 +42,6 @@ public class AltNamesSync implements ISync {
        names.clear();
         }
         monitor.finish(aContext.getImportTime().getId() + "");
-        System.out.println("Синхронизация AltNames завершена");
         theEntityManager = null;
 	}
 

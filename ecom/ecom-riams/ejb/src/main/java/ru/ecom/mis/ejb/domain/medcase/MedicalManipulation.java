@@ -125,26 +125,23 @@ public class MedicalManipulation extends BaseEntity {
     @Comment("Информация")
     @Transient
     public String getInformation() {
-        StringBuilder ret = new StringBuilder() ;
-        ret.append("Период: ").append(theEndTime).append(" ").append(theEndTime).append(" - ")
-                .append(theEndDate
-                ).append(" ").append(theEndTime);
-        ret.append("Услуга: ").append(theMedService);
-        ret.append("Хирург: ").append(getSurgeonInfo());
         //ret.append("Анестезиолог: ").append(theAnaesthetist) ;
         //ret.append("Анестезия: ").append(theAnesthesia).append(" кол-во:").append(theAnesthesiaAmount);
 
-        return ret.toString() ;
+        return "Период: " + theEndTime + " " + theEndTime + " - " +
+                theEndDate +
+                " " + theEndTime +
+                "Услуга: " + theMedService +
+                "Хирург: " + getSurgeonInfo();
+
     }
 
     @Comment("Период")
     @Transient
     public String getPeriod() {
-        StringBuilder ret = new StringBuilder() ;
-        ret.append(theEndDate).append(" ").append(theStartDate).append(" - ")
-                .append(theEndDate
-                ).append(" ").append(theEndTime);
-        return ret.toString() ;
+        return theEndDate + " " + theStartDate + " - " +
+                theEndDate +
+                " " + theEndTime;
     }
 
     /** Информация о пациенте */

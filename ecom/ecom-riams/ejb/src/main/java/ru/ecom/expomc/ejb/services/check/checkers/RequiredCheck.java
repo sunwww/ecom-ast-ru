@@ -1,7 +1,5 @@
 package ru.ecom.expomc.ejb.services.check.checkers;
 
-import java.util.Collection;
-
 import ru.ecom.expomc.ejb.services.check.CheckException;
 import ru.ecom.expomc.ejb.services.check.CheckResult;
 import ru.ecom.expomc.ejb.services.check.ICheck;
@@ -10,6 +8,8 @@ import ru.ecom.expomc.ejb.services.check.checkers.sql.INativeSqlSupports;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.NativeSqlContext;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
+
+import java.util.Collection;
 
 /**
  * Проверка на обязательность поля
@@ -29,7 +29,7 @@ public class RequiredCheck implements ICheck, INativeSqlSupports {
 			
 			StringBuilder sb = new StringBuilder() ;
 			sb.append("insert into MESSAGE (dataId,check_Id,importTime_id) ") ;
-			sb.append(" select id, "+aContext.getCheckId()+", "+aContext.getTimeId()+" from "+aContext.getTableName()) ;
+			sb.append(" select id, ").append(aContext.getCheckId()).append(", ").append(aContext.getTimeId()).append(" from ").append(aContext.getTableName());
 			String p = "\""+aContext.getColumnName(theProperty)+"\"" ;
 			sb.append(" where (").append(p).append("=").append(emptyValue).append(" or ")
 				.append(p).append(" is null or ")

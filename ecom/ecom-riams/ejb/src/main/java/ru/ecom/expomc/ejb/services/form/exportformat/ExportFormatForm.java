@@ -5,22 +5,17 @@
 
 package ru.ecom.expomc.ejb.services.form.exportformat;
 
-import java.sql.ResultSet;
-
-import javax.persistence.Column;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expomc.ejb.domain.format.ExportFormat;
 import ru.ecom.expomc.ejb.services.form.impdoc.ImportDocumentForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
+
+import javax.persistence.Column;
+import java.sql.ResultSet;
 
 @EntityForm
 @Comment("Формат экспорта")
@@ -90,11 +85,7 @@ public class ExportFormatForm extends IdEntityForm {
 
     /** Результат запроса */
     public ResultSet getResultSet() {
-        ResultSet theResultSet ;
-        theResultSet = null;
-
-        //HibernateEntityManagerFactory factory=HibernateEntityManagerFactory.getSessionFactory();
-        return theResultSet ;
+        return null ;
     }
     //public void setResultSet(ResultSet aResultSet) { theResultSet = aResultSet ; }
     /** Результат запроса */

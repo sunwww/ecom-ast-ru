@@ -25,7 +25,7 @@ function onCreate(aForm, aEntity, aCtx) {
 			var param = addMedServicies[i].split(":") ;
 			//throw ""+ addMedServicies[i] ;
 			var par1 = java.lang.Long.valueOf(param[0]) ;
-			var par2 = (param[1])?java.lang.Long.valueOf(param[1]):null ;
+			var par3 = (param[2]) ?  +param[2] : null ;
 			var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.PriceMedService,par1) ;
 			var cnt = java.lang.Integer.valueOf(param[1]) ;
 			if (+cnt>0 && medService!=null) {
@@ -35,6 +35,7 @@ function onCreate(aForm, aEntity, aCtx) {
 				adMedService.setCountMedService(cnt) ;
 				adMedService.setCost(medService.pricePosition.cost) ;
 				adMedService.setServedPerson(servedPerson) ;
+				if (par3!=null) adMedService.setDoctor(par3);
 				aCtx.manager.persist(adMedService) ;
 			}
 		}

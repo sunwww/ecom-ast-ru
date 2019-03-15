@@ -19,7 +19,7 @@ public class ApiApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses(){
-        Set<Class<?>> set = new HashSet<Class<?>>();
+        Set<Class<?>> set = new HashSet<>();
         set.add(ApiRecordResource.class);
         set.add(ApiLoginResource.class);
         set.add(HospitalQueueResource.class);

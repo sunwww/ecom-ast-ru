@@ -53,14 +53,13 @@ public class ImportDocumentForm extends IdEntityForm {
 
     /** Поддержка импорта по времени */
     public boolean getImportTimeSupports() {
-        boolean ret = false ;
         try {
             Class clazz = ClassLoaderHelper.getInstance().loadClass(getEntityClassName()) ;
             return isTimeSupports(clazz) ;
         } catch (Exception e) {
             LOG.error(e) ;
         }
-        return ret ;
+        return false ;
     }
 
     private boolean isTimeSupports(Class aClass) {

@@ -104,7 +104,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /** Создаем запись в L файле */
     private Element createPERSElement(E2Entry aEntry) {
 
-        Boolean isKinsman = isNotNull(aEntry.getKinsmanLastname());
+      //  log.info("Добавляем данные о пациенте " + aEntry.getExternalPatientId() + " в L файле");
+        boolean isKinsman = isNotNull(aEntry.getKinsmanLastname());
         Element pers = new Element("PERS");
         pers.addContent(new Element("ID_PAC").setText(aEntry.getExternalPatientId().toString()));
         if (isKinsman) { //Заполняем данные о представителе
@@ -122,16 +123,17 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         } else {
             pers.addContent(new Element("FAM").setText(aEntry.getLastname()));
             pers.addContent(new Element("IM").setText(aEntry.getFirstname()));
-            pers=addIfNotNull(pers,"OT",aEntry.getMiddlename());
+            addIfNotNull(pers, "OT", aEntry.getMiddlename());
             pers.addContent(new Element("W").setText(aEntry.getSex()));
             pers.addContent(new Element("DR").setText(dateToString(aEntry.getBirthDate())));
         }
         //MR
-        pers=addIfNotNull(pers,"DOCTYPE",aEntry.getPassportType());
-        pers=addIfNotNull(pers,"DOCSER",aEntry.getPassportSeries());
-        pers=addIfNotNull(pers,"DOCNUM",aEntry.getPassportNumber());
-        pers=addIfNotNull(pers,"SNILS",isKinsman ? aEntry.getKinsmanSnils() : aEntry.getPatientSnils());
-        pers=addIfNotNull(pers,"ENP",aEntry.getCommonNumber());
+      //  log.info("Добавляем данные о пациенте OTHER_DATA " + aEntry.getExternalPatientId() + " в L файле");
+        addIfNotNull(pers,"DOCTYPE",aEntry.getPassportType());
+        addIfNotNull(pers,"DOCSER",aEntry.getPassportSeries());
+        addIfNotNull(pers, "DOCNUM", aEntry.getPassportNumber());
+        addIfNotNull(pers,"SNILS",isKinsman ? aEntry.getKinsmanSnils() : aEntry.getPatientSnils());
+        addIfNotNull(pers,"ENP",aEntry.getCommonNumber());
      //   pers=addIfNotNull(pers,"OKATOG",aEntry.getOkatoReg()); //код места жительства
      //   pers=addIfNotNull(pers,"OKATOP",aEntry.getOkatoReal()); //код места пребывания
         return pers;
@@ -174,10 +176,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         z.addContent(new Element("VIDPOM").setText(aEntry.getMedHelpKind().getCode()));
         z.addContent(new Element("FOR_POM").setText(forPom)); //форма помощи V014
 
-        if (!isNotNull(aEntry.getIsEmergency())) z=addIfNotNull(z,"NPR_MO",aEntry.getDirectLpu()); //Направившее ЛПУ
-        z=addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()); //Дата направления на лечение ***
-        z=addIfNotNull(z,"NPR_N",aEntry.getTicket263Number()); // Номер направления на портале ФОМС
-        z=addIfNotNull(z,"NPR_P",aEntry.getPlanHospDate()); // Дата планируемой госпитализации
+        if (!isNotNull(aEntry.getIsEmergency())) addIfNotNull(z,"NPR_MO",aEntry.getDirectLpu()); //Направившее ЛПУ
+        addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()); //Дата направления на лечение ***
+        addIfNotNull(z,"NPR_N",aEntry.getTicket263Number()); // Номер направления на портале ФОМС
+        addIfNotNull(z,"NPR_P",aEntry.getPlanHospDate()); // Дата планируемой госпитализации
         if ("2".equals(forPom)) add(z,"PRN_MO","300001");
         z.addContent(new Element("LPU").setText("1")); //ЛПУ лечения //TODO = сделать высчитываемым
         z.addContent(new Element("VBR").setText(isNotNull(aEntry.getIsMobilePolyclinic())?"1":"0")); //Признак мобильной бригады
@@ -186,15 +188,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (!isPoliclinic &&!isExtDisp)  z.addContent(new Element("KD_Z").addContent(aEntry.getBedDays()+"")); // Продолжительность госпитализации
        // if (isNedonosh) z.addContent(new Element("VNOV_M").setText(aEntry.getNewbornWeight()+""));
         z.addContent(new Element("RSLT").setText(aEntry.getFondResult().getCode())); // Результат обращения
-        if (isExtDisp) z=add(z,"RSLT_D",aEntry.getDispResult().getCode()); // Результат диспансеризации
+        if (isExtDisp) add(z,"RSLT_D",aEntry.getDispResult().getCode()); // Результат диспансеризации
         z.addContent(new Element("ISHOD").setText(aEntry.getFondIshod().getCode())); // Исход случая.
         //if (isExtDisp) z.addContent(new Element("P_OTK").setText("0")); // Отказ от ДД
         z.addContent(new Element("OS_SLUCH").setText(Expert2FondUtil.calculateFondOsSluch(aEntry))); // Особый случай
-        if (!isPoliclinic &&!isExtDisp)z.addContent(new Element("VB_P").setText(slCnt>1?"1":"0")); // Признак внутрибольничного перевода
+        if (!isPoliclinic &&!isExtDisp) z.addContent(new Element("VB_P").setText(slCnt>1?"1":"0")); // Признак внутрибольничного перевода
         z.addContent(new Element("SL_TEMPLATE")); // Список случаев
         //if (isExtDisp) z=add(z,"SGROUP",aEntry.getExtDispSocialGroup()); // Социальная группа в ДД +
         z.addContent(new Element("IDSP").setText(aEntry.getIDSP().getCode())); // Способ оплаты медицинской помощи (V010)
-        z=add(z,"SUMV",aEntry.getCost()); // Сумма, выставленная к оплате =SUMV7+ SUMV8
+        add(z,"SUMV",aEntry.getCost()); // Сумма, выставленная к оплате =SUMV7+ SUMV8
         return z;
     }
 
@@ -364,10 +366,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             sl.addContent(napr);
                         }
                     }
-                    if (isNotNull(cancerEntry.getConsiliumResult())) { //Консилиум в любом случае если есть ЗНО.
+                    String consiliumResult = cancerEntry.getConsiliumResult();
+                    if (isNotNull(consiliumResult)) { //Консилиум в любом случае если есть ЗНО.
                         Element cons = new Element("CONS");
-                        cons= add(cons, "PR_CONS", cancerEntry.getConsiliumResult());
-                        cons= add(cons, "DT_CONS", cancerEntry.getConsiliumDate());
+                        cons= add(cons, "PR_CONS", consiliumResult);
+                        if (",1,2,3,".contains(consiliumResult)) add(cons, "DT_CONS", cancerEntry.getConsiliumDate());
                         sl.addContent(cons);
                     }
                     if (!cancerEntry.getMaybeCancer()) { //Случай ЗНО
@@ -597,10 +600,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     List<Object[]> list = theManager.createNativeQuery("select vms.code as ms, cast(count(ems.id) as varchar) as cnt, cast(ems.serviceDate as varchar(10)) as serviceDate" +
                             " from EntryMedService ems left join vocMedService vms on vms.id=ems.medService_id where ems.entry_id=:id group by vms.code, ems.servicedate")
                             .setParameter("id",currentEntry.getId()).getResultList();
-                    if (list.isEmpty() ) {
-                     //   list.add(new String[]{currentEntry.getMedHelpProfile().getDefaultStacMedService()!=null ? currentEntry.getMedHelpProfile().getDefaultStacMedService().getCode() : "A02.12.002","1",null});
-                        list.add(new String[]{"A02.12.002","1",null});
-                    }
+
                     if (!list.isEmpty()) {
                         for (Object[] ms: list) {
                             uslCnt++;
@@ -621,6 +621,21 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             sl.addContent(usl);
                         }
                     }
+                    Element usl = new Element("USL");
+                    usl.addContent(new Element("IDSERV").setText(""+uslCnt));
+                    usl.addContent(new Element("LPU_U").setText("300001"));
+                    usl.addContent(new Element("PROFIL_U").setText(profileK));
+                    usl.addContent(new Element("VID_VME").setText(currentEntry.getMedHelpProfile().getDefaultStacMedService()!=null ? currentEntry.getMedHelpProfile().getDefaultStacMedService().getCode() : "AAA"));
+                    usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
+                    usl.addContent(new Element("DATE_1_U").setText(finishDate));
+                    usl.addContent(new Element("DATE_2_U").setText(finishDate));
+                    usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
+                    usl.addContent(new Element("KOL_USL").setText("1"));
+                    usl.addContent(new Element("SUMV_USL").setText("0"));
+                    usl.addContent(new Element("PRVS_U").setText(prvs));
+                    usl.addContent(new Element("IDDOKT_U").setText(currentEntry.getDoctorSnils()));
+                    usl.addContent(new Element("NPL").setText("0"));
+                    sl.addContent(usl);
                 }
                 // USL finish
                 zSl.addContent(indSl,sl);
@@ -923,15 +938,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             LOG.info("ok, we made all, let's make files");
             monitor.setText("Формирование файла завершено, сохраняем архив");
           //  if (aVersion.equals("3.1.1")) aVersion="3.1";
-            hRoot = makeHTitle(hRoot, periodDate, "H" + fileName, cnt, aBillNumber, aBillDate, totalSum,aVersion.equals("3.1.1")?"3.1":aVersion);
-        //Меняем статус счета на "выставлен"
+            makeHTitle(hRoot, periodDate, "H" + fileName, cnt, aBillNumber, aBillDate, totalSum,aVersion.equals("3.1.1")?"3.1":aVersion);
             E2Bill bill =theManager.find(E2Bill.class, theExpertService.getBillIdByDateAndNumber(aBillNumber, dateToString(aBillDate, "dd.MM.yyyy")));
             if (bill != null) {
                 bill.setStatus(getActualVocBySqlString(VocE2BillStatus.class, "select id from VocE2BillStatus where code='SENT'"));
                 bill.setSum(totalSum);
                 theManager.persist(bill);
             }
-            lRoot = makeLTitle(lRoot, periodDate, "L" + fileName,aVersion.equals("3.1")?"2.1":"3.1"); //гавнокод, спасибо фонду
+            makeLTitle(lRoot, periodDate, "L" + fileName,aVersion.equals("3.1")?"2.1":"3.1"); //гавнокод, спасибо фонду
             lRoot.addContent(perss);
             hRoot.addContent(zaps);
             String archiveName = packetType + fileName + ".MP";
@@ -1097,7 +1111,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             } catch (InstantiationException | IllegalAccessException e) {
                LOG.error(e);
             }
-            if (ret instanceof VocBaseEntity|| ret instanceof VocMedService) { //Проверить
+            if (ret instanceof VocBaseEntity) { //Проверить
                 try {
                     Method setCodeMethod = ret.getClass().getMethod("setCode",String.class);
                     setCodeMethod.invoke(ret,aCode);
@@ -1217,10 +1231,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         break;
                     }
                 }
-                aElement=add(aElement,"DS2",otherDiagnosis.get(0));
+                add(aElement,"DS2",otherDiagnosis.get(0));
                 if (otherDiagnosis.size()>1) {
                     for (int i=1;i<otherDiagnosis.size() && i<4;i++) {
-                        aElement=addIfNotNull(aElement,"DS2_"+i,otherDiagnosis.get(i));
+                        addIfNotNull(aElement,"DS2_"+i,otherDiagnosis.get(i));
                     }
                 }
             }
@@ -1230,7 +1244,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     theManager.persist(new E2EntryError(aEntry,"NO_HARAKTER"));
                     return null;
                 }
-                aElement=add(aElement,"C_ZAB",vip.getCode());
+                add(aElement,"C_ZAB",vip.getCode());
             }
         } else { //Если нет основного диагноза - нет случая
             return null;
@@ -1250,14 +1264,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         return false;
     }
 
-
     private @PersistenceContext
     EntityManager theManager;
     private @EJB
     ILocalMonitorService theMonitorService;
 
     private @EJB IExpert2Service theExpertService;
-
-    private @EJB
-    IJbossGetFileLocalService theJbossGetFileLocalService;
 }

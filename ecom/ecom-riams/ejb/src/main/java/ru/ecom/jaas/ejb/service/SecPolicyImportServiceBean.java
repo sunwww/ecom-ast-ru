@@ -137,7 +137,7 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
     		return null;
     	} else { // поиск от самой верхней
     		StringTokenizer st = new StringTokenizer(aPolicyLine, " /\\\"'\t,.:|\n") ; 
-    		StringBuilder sb = new StringBuilder("") ;
+    		StringBuilder sb = new StringBuilder() ;
     		SecPolicy parentPolicy = aHash.get("/") ; //findOrCreatePolicy("/", aHash) ;
     		while(st.hasMoreTokens()) {
     			String key = st.nextToken() ;

@@ -14,6 +14,7 @@ import ru.nuzmsh.util.voc.VocValue;
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * Вывод всех экспортов
@@ -39,7 +40,7 @@ public class ListDataExportAllValue implements IAllValue {
         File dir = new File(JBOSS_SERVER_DATA_EXPORT_DIR);
         File[] files = dir.listFiles() ;
         LinkedList<VocValue> list = new LinkedList<>();
-        for (File file : files) {
+        for (File file : Objects.requireNonNull(files)) {
             if(file.isFile()) {
                 list.add(getVocValue(file)) ;
             }

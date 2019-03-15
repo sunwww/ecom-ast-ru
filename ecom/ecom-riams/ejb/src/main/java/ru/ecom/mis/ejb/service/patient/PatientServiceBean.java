@@ -93,29 +93,7 @@ public class PatientServiceBean implements IPatientService {
 			String filename ="DNM"+defaultLpuCode+"T30_"+yyddmm.format(aDateTo)+"_"+aPacketNumber;
 			StringBuilder sql = new StringBuilder();
 			String[] flds = {"N_ZAP", "FAM",  "IM", "OT", "DR", "TEL", "IDCASE", "PROFIL", "DS", "D_BEG", "D_END", "END_RES","YEAR"};
-			sql.append("select " +
-					" pat.id as N_ZAP" +
-					" ,pat.lastname as FAM" +
-					" ,pat.firstname AS IM " +
-					" ,pat.middlename AS OT" +
-					" ,to_char(pat.birthday,'yyyy-MM-dd') as DR " +
-					" ,coalesce(pat.phone,'') as TEL" +
-					" ,d.id as IDCASE" +
-					" ,coalesce(profile.profilek,'') as PROFIL" +
-					" ,coalesce(mkb.code,'') as DS" +
-					" ,coalesce(to_char(d.startdate,'yyyy-MM-dd'),'') AS D_BEG" +
-					" ,coalesce(to_char(d.finishdate,'yyyy-MM-dd'),'') AS D_END" +
-					" ,coalesce(vde.code,'') AS END_RES" +
-					" ,to_char(coalesce(d.finishDate, d.startDate),'yyyy') as YEAR" +
-					" from dispensarycard d" +
-					" left join vocdispensaryend vde on vde.id=d.endreason_id" +
-					" left join workfunction wf on wf.id=d.workfunction_id" +
-					" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
-					" left join voce2medhelpprofile profile on profile.id=vwf.medhelpprofile_id" +
-					" left join patient pat on pat.id=d.patient_id" +
-					" left join vocidc10 mkb on mkb.id=d.diagnosis_id" +
-					sqlWhere.toString()+
-					" order by pat.id");
+			sql.append("select " + " pat.id as N_ZAP" + " ,pat.lastname as FAM" + " ,pat.firstname AS IM " + " ,pat.middlename AS OT" + " ,to_char(pat.birthday,'yyyy-MM-dd') as DR " + " ,coalesce(pat.phone,'') as TEL" + " ,d.id as IDCASE" + " ,coalesce(profile.profilek,'') as PROFIL" + " ,coalesce(mkb.code,'') as DS" + " ,coalesce(to_char(d.startdate,'yyyy-MM-dd'),'') AS D_BEG" + " ,coalesce(to_char(d.finishdate,'yyyy-MM-dd'),'') AS D_END" + " ,coalesce(vde.code,'') AS END_RES" + " ,to_char(coalesce(d.finishDate, d.startDate),'yyyy') as YEAR" + " from dispensarycard d" + " left join vocdispensaryend vde on vde.id=d.endreason_id" + " left join workfunction wf on wf.id=d.workfunction_id" + " left join vocworkfunction vwf on vwf.id=wf.workfunction_id" + " left join voce2medhelpprofile profile on profile.id=vwf.medhelpprofile_id" + " left join patient pat on pat.id=d.patient_id" + " left join vocidc10 mkb on mkb.id=d.diagnosis_id").append(sqlWhere.toString()).append(" order by pat.id");
 			JSONArray arr = new JSONArray(theWebQueryService.executeNativeSqlGetJSON(flds,sql.toString(),null));
 			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
@@ -268,7 +246,7 @@ public class PatientServiceBean implements IPatientService {
 		return Float.valueOf(comp) ;
 	}
 	public void insertExternalDocumentByObject(String aObject,Long aObjectId, Long aType,String aReferenceComp,String aReferenceTo, String aComment,String aUsername) {
-		ExternalDocument doc = null;
+		ExternalDocument doc;
 		if (aObject.equals("Template")) {
 			doc = new TemplateExternalDocument() ;
 		} else {
@@ -313,10 +291,9 @@ public class PatientServiceBean implements IPatientService {
 	}
 	
 	public boolean isNaturalPerson(Long aPatient) {
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("select count(*) from ContractPerson where dtype='NaturalPerson' and patient_id='")
-			.append(aPatient).append("'") ;
-		Object ret = theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+		String sql = "select count(*) from ContractPerson where dtype='NaturalPerson' and patient_id='" +
+				aPatient + "'";
+		Object ret = theManager.createNativeQuery(sql).getSingleResult() ;
 		Long cnt = ConvertSql.parseLong(ret) ;
 		
 		return cnt>0L;
@@ -340,9 +317,9 @@ public class PatientServiceBean implements IPatientService {
 				,{"В.Комарова ул","Космонавта В.Комарова ул"}
 				,{"М.ЛУКОНИНА ул","Михаила Луконина ул"}
 				};
-			for (int i=0;i<streetList.length;i++) {
-				if (streetList[i][0].equalsIgnoreCase(aStreet)) {
-					aStreet = streetList[i][1].toUpperCase();
+			for (String[] strings : streetList) {
+				if (strings[0].equalsIgnoreCase(aStreet)) {
+					aStreet = strings[1].toUpperCase();
 					break;
 				}
 			}
@@ -376,9 +353,7 @@ public class PatientServiceBean implements IPatientService {
 		aStreet=aStreet.trim() ;
 		streetType = streetType.toUpperCase().trim();
 		StringBuilder sql = new StringBuilder();
-		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode" +
-				" left join addresstype atype on atype.id=a.type_id"+
-	" where k.okatd='"+aOkato+"' and upper(a.name) = upper('"+aStreet+"')");
+		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode" + " left join addresstype atype on atype.id=a.type_id" + " where k.okatd='").append(aOkato).append("' and upper(a.name) = upper('").append(aStreet).append("')");
 		if (!streetType.equals("")) {
 			sql.append(" and upper(atype.shortname)=upper('").append(streetType).append("')");
 		}
@@ -646,7 +621,7 @@ public class PatientServiceBean implements IPatientService {
 			} else {patF.setIsPolicyUpdate(false);}
 			if (needUpdateAttachment) {
 				String s = updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate, doctorSnils,true, false);
-				patF.setIsAttachmentUpdate((s!=null&&s.length()>0)?true:false);
+				patF.setIsAttachmentUpdate((s!=null && s.length()>0));
 				
 			} else {patF.setIsAttachmentUpdate(false);}
 			theManager.persist(patF);
@@ -778,10 +753,9 @@ public class PatientServiceBean implements IPatientService {
 					LOG.error("Дата не распознана "+attachedDate);
 					e.printStackTrace();
 				}
-				ret.append("Создано новое прикрепление. Тип="+att.getAttachedType().getCode() +
-						", дата: "+ DateFormat.formatToDate(att.getDateFrom())+", участок =  "+(la!=null?la.getNumber():"Не определен"));
+				ret.append("Создано новое прикрепление. Тип=").append(att.getAttachedType().getCode()).append(", дата: ").append(DateFormat.formatToDate(att.getDateFrom())).append(", участок =  ").append(la != null ? la.getNumber() : "Не определен");
 			} else {
-				ret.append("0ЛПУ с кодом '"+lpu+"' не найдено, прикрепление не создано. ");
+				ret.append("0ЛПУ с кодом '").append(lpu).append("' не найдено, прикрепление не создано. ");
 			}
 			
 		} else  { // Обновляем существующее 
@@ -791,12 +765,8 @@ public class PatientServiceBean implements IPatientService {
 				if (la!=null) {
 					areaSql = ", area_id="+la.getId()+", lpu_id="+la.getLpu().getId();
 				}
-				ret.append("Обновлено прикрепление. Старый тип - " +
-					(a.getAttachedType()!=null?a.getAttachedType().getCode():"") +
-					", дата - "+ DateFormat.formatToDate(a.getDateFrom()) +
-					". Новый тип - "+attType.getCode()+ ", дата - "+ attachedDate+". ");
-				str.append("update LpuAttachedByDepartment set "+updateDate+" dateFrom=to_date('").append(attachedDate)
-					.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check', attachedtype_id="+attType.getId()+" "+areaSql+" where id='").append(a.getId()).append("'");
+				ret.append("Обновлено прикрепление. Старый тип - ").append(a.getAttachedType() != null ? a.getAttachedType().getCode() : "").append(", дата - ").append(DateFormat.formatToDate(a.getDateFrom())).append(". Новый тип - ").append(attType.getCode()).append(", дата - ").append(attachedDate).append(". ");
+				str.append("update LpuAttachedByDepartment set ").append(updateDate).append(" dateFrom=to_date('").append(attachedDate).append("','dd.mm.yyyy'), company_id='").append(insCompany.getId()).append("', editusername='fond_check', attachedtype_id=").append(attType.getId()).append(" ").append(areaSql).append(" where id='").append(a.getId()).append("'");
 				theManager.createNativeQuery(str.toString()).executeUpdate();
 			}
 		}
@@ -813,7 +783,7 @@ public class PatientServiceBean implements IPatientService {
 		
 		if (aFiodr!=null && !aFiodr.equals("")) {
 			fiodr = aFiodr.split("#") ;
-				if (aIsPatient && aPatientId!=null &&aPatientId>Long.valueOf(0) &&(aIsPolicy||(fiodr.length>6 &&fiodr[6].length()==10))) {
+				if (aIsPatient && aPatientId!=null &&aPatientId>0L &&(aIsPolicy||(fiodr.length>6 &&fiodr[6].length()==10))) {
 					StringBuilder sql = new StringBuilder() ;
 					if (!fiodr[0].startsWith("?")) {
 						sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
@@ -876,7 +846,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 		if (aAddress!=null &&!aAddress.equals("") &&aIsAddress) {
 			String[] adr = aAddress.split("#") ;
-			StringBuilder sql = new StringBuilder() ;
+			StringBuilder sql  ;
 			String kladr = adr[0] ;
 			String sity = adr[5].toUpperCase() ;
 			String street = adr[6].toUpperCase() ;
@@ -941,7 +911,7 @@ public class PatientServiceBean implements IPatientService {
 		Long cntL = ConvertSql.parseLong(cnt) ;
 		
 		String type = getTypePolicy(aSeries) ;
-		if (cntL!=null &&cntL>Long.valueOf(0)) {
+		if (cntL!=null &&cntL>0L) {
 			sql = new StringBuilder() ;
 			sql.append("update MedPolicy set lastname='").append(aLastname).append("'") ;
 			sql.append(", firstname='").append(aFirstname).append("'") ;
@@ -987,12 +957,12 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" and polNumber='").append(aNumber).append("'") ;
 			Object cnt1 =theManager.createNativeQuery(sql.toString()).getSingleResult() ;
 			Long cntL1 = ConvertSql.parseLong(cnt1) ;
-			if (cntL1.equals(Long.valueOf(0))) {
+			if (cntL1.equals(0L)) {
 				sql = new StringBuilder() ;
-				sql = sql.append("select id,omcCode from REG_IC where omcCode='").append(aComp).append("' order by id desc") ;
+				sql.append("select id,omcCode from REG_IC where omcCode='").append(aComp).append("' order by id desc") ;
 				List<Object[]> idS = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 				sql = new StringBuilder() ;
-				sql = sql.append("select id,code from VocMedPolicyOmc where code='").append(type).append("' order by id desc") ;
+				sql.append("select id,code from VocMedPolicyOmc where code='").append(type).append("' order by id desc") ;
 				List<Object[]> idT = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 				if (!idS.isEmpty() && !idT.isEmpty()) {
 					sql = new StringBuilder() ;
@@ -1124,7 +1094,7 @@ public class PatientServiceBean implements IPatientService {
 		fond.setDoctorSnils(aDoctorSnils);
 		fond.setDepartment(aCodeDepartment);
 		//Patient pat = null;
-		if (aPatientId!=null&&!aPatientId.equals("")&&!Long.valueOf(aPatientId).equals(Long.valueOf(0))) {
+		if (aPatientId!=null&&!aPatientId.equals("")&&!Long.valueOf(aPatientId).equals(0L)) {
 			//pat = theManager.find(Patient.class, Long.valueOf(aPatientId));
 			fond.setPatient(Long.valueOf(aPatientId));
 		}
@@ -1132,7 +1102,7 @@ public class PatientServiceBean implements IPatientService {
 			fond.setCheckTime(aCheckTime);
 		}
 		theManager.persist(fond) ;
-		if (aPatientId!=null&&!aPatientId.equals("")&&!Long.valueOf(aPatientId).equals(Long.valueOf(0))) {
+		if (aPatientId!=null&&!aPatientId.equals("")&&!Long.valueOf(aPatientId).equals(0L)) {
 			fond.setIsDifference(needUpdatePatient(Long.valueOf(aPatientId), fond.getId()));
 			theManager.persist(fond) ;
 		}
@@ -1192,7 +1162,7 @@ public class PatientServiceBean implements IPatientService {
 	}
 	public void setAddParamByMedCase(String aParam,Long aMedCase,Long aStatus)  {
 		MedCase mc = theManager.find(MedCase.class, aMedCase) ;
-		String method = new StringBuilder().append("set").append(Character.toUpperCase(aParam.charAt(0))).append(aParam.substring(1)).toString() ;
+		String method = "set" + Character.toUpperCase(aParam.charAt(0)) + aParam.substring(1);
 		try {
 			Method ejbSetterMethod =mc.getClass().getMethod(method,Long.class) ;
 			ejbSetterMethod.invoke(mc, aStatus);
@@ -1214,7 +1184,6 @@ public class PatientServiceBean implements IPatientService {
 		Patient newpat = theManager.find(Patient.class, aIdNew) ;
 		Patient oldpat = theManager.find(Patient.class, aIdOld) ;
 		if (!newpat.getSex().getOmcCode().equals(oldpat.getSex().getOmcCode())) throw new IllegalArgumentException("Нельзя данные перенести персонам разных полов!!!") ;
-		if (newpat!=null && oldpat!=null) {
 			theManager.createNativeQuery("	update Patient set attachedOmcPolicy_id = null where id =:idold	").setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Award set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update BirthCase set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
@@ -1258,8 +1227,6 @@ public class PatientServiceBean implements IPatientService {
 			theManager.createNativeQuery("  update FlowDocument set patient =:idnew where patient =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("  update SuicideMessage set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("  update QualityEstimationCard set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
-			
-		}
 	}
 	
 	public List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) {
@@ -1291,7 +1258,6 @@ public class PatientServiceBean implements IPatientService {
 				sql.append(" and ") ;
 			} else {
 				sql.append(" where ") ;
-				where = true ;
 			}
 			sql.append(" name like '%").append(aName).append("%'") ;
 		}
@@ -1644,17 +1610,17 @@ public class PatientServiceBean implements IPatientService {
 			PatientForm f = new PatientForm();
 			f.setId(((Number) arr[0]).longValue());
 			if (arr.length>6 && arr[6]!=null) {
-				f.setLastname(new StringBuilder().append("<font color='").append(arr[6]).append("'>").append(arr[1]).append("</font>").toString());
-				f.setFirstname(new StringBuilder().append("<font color='").append(arr[6]).append("'>").append(arr[2]).append("</font>").toString());
-				f.setMiddlename(new StringBuilder().append("<font color='").append(arr[6]).append("'>").append(arr[3]).append("</font>").toString());
+				f.setLastname("<font color='" + arr[6] + "'>" + arr[1] + "</font>");
+				f.setFirstname("<font color='" + arr[6] + "'>" + arr[2] + "</font>");
+				f.setMiddlename("<font color='" + arr[6] + "'>" + arr[3] + "</font>");
 				if(arr[4]!=null) {
 					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
 				}
 				f.setPatientSync(arr[5]!=null?(String) arr[5]:"") ;
 			} else if (aAddInfo!=null) {
-				f.setLastname(new StringBuilder().append(aAddInfo).append("<font color='blue'>").append(arr[1]).append("</font>").toString());
-				f.setFirstname(new StringBuilder().append("<font color='blue'>").append(arr[2]).append("</font>").toString());
-				f.setMiddlename(new StringBuilder().append("<font color='blue'>").append(arr[3]).append("</font>").toString());
+				f.setLastname(aAddInfo + "<font color='blue'>" + arr[1] + "</font>");
+				f.setFirstname("<font color='blue'>" + arr[2] + "</font>");
+				f.setMiddlename("<font color='blue'>" + arr[3] + "</font>");
 				if(arr[4]!=null) {
 					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
 				}
@@ -1723,14 +1689,10 @@ public class PatientServiceBean implements IPatientService {
 				LOG.error(e);
 				throw new IllegalStateException(e);
 			}
-			StringBuilder sb = new StringBuilder();
-			sb.append(point.getLpuAreaAddressText().getAddressText());
-			sb.append(" ");
-			sb.append(point.getLpuAreaAddressText().getArea().getName());
-			sb.append(" ");
-			sb.append(point.getLpuAreaAddressText().getArea().getLpu()
-					.getName());
-			return sb.toString();
+			String sb = point.getLpuAreaAddressText().getAddressText() +
+					" " + point.getLpuAreaAddressText().getArea().getName() +
+					" " + point.getLpuAreaAddressText().getArea().getLpu().getName();
+			return sb;
 		}
 	}
 
@@ -1745,9 +1707,7 @@ public class PatientServiceBean implements IPatientService {
 					+ ", aNumber=" + aNumber + ", aBuilding = " + aBuilding);
 		}
 		// ребенок, если < 18 и есть дата рождения
-		boolean isChild = aBirthday!=null
-		    ? AgeUtil.calcAgeYear(aBirthday,new java.util.Date())<18
-		    : false	;
+		boolean isChild = aBirthday != null && AgeUtil.calcAgeYear(aBirthday, new java.util.Date()) < 18;
 		EntityManager manager = theManager; // theFactory.createEntityManager();
 		StringBuilder sb = new StringBuilder();
 		sb.append("from LpuAreaAddressPoint where address = :address ");
@@ -1799,7 +1759,7 @@ public class PatientServiceBean implements IPatientService {
 	}
 	
 	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries) throws ParseException {
+			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries) {
 		return getDoubleByBaseData(aId, aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, "entityView-mis_patient.do") ;
 	}
 	
@@ -1890,12 +1850,12 @@ public class PatientServiceBean implements IPatientService {
 			for (Object[] res:doubles) {
 				ret.append("<li>")
 				.append("<a href='") ;
-				if (aAction.toLowerCase().indexOf("javascript")!=-1) {
+				if (aAction.toLowerCase().contains("javascript")) {
 					ret.append(aAction).append("(\"").append(res[0]).append("\",\"").append(res[1]).append(" ").append(res[2]).append(" ").append(res[3])
 						.append(" ").append(res[4]).append("\")'") ;
 				} else {
 					ret.append(aAction) ;
-					if (aAction.toLowerCase().indexOf(".do")==-1) {
+					if (!aAction.toLowerCase().contains(".do")) {
 						ret.append(".do") ;
 					}
 					if (aAction.indexOf("?")>0) {

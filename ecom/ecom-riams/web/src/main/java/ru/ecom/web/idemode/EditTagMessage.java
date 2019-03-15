@@ -28,7 +28,7 @@ public class EditTagMessage {
 //	}
 
 	/** Значения */
-	private final HashMap<String,String> theValues = new HashMap<String, String>();
+	private final HashMap<String,String> theValues = new HashMap<>();
 	/** TagInfo */
 	private TagInfo theTagInfo;
 }

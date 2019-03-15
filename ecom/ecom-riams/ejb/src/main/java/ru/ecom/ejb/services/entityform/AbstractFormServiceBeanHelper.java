@@ -93,8 +93,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 		EntityFormSecurityPrefix prefix = (EntityFormSecurityPrefix) aFormClass
 				.getAnnotation(EntityFormSecurityPrefix.class);
 		if (prefix != null) {
-			return new StringBuilder().append(prefix.value()).append("/")
-					.append(aSuffix).toString();
+			return prefix.value() + "/" + aSuffix;
 		} else {
 			throw new IllegalArgumentException("У формы "
 					+ aFormClass.getName()
@@ -135,7 +134,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 					+ aFormClass + " c идентификатором " + aId);
 		checkIsObjectDeleted(entity);
 		try {
-			IEntityForm form = aFormClass.newInstance();
+			T form = aFormClass.newInstance();
 			copyEntityToForm(entity, form);
 			checkDynamicPermission(aFormClass, aId, "View");
 			// FIXME может быть и понадобится
@@ -151,7 +150,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 				theRowPersistDelegate.load(form, theManager, entity);
 			}
 			invokeJavaScriptInterceptor("onView", form, entity, null, null);
-			return (T) form;
+			return form;
 		} catch (Exception e) {
 			throw new EntityFormException("Ошибка копирования данных", e);
 		}
@@ -212,17 +211,14 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 				
 				MapForm dest = (MapForm) cl.newInstance() ;
 				BeanUtils.copyProperties(dest, aOrigForm);
-				
-				if(aOrigForm instanceof BaseValidatorForm) {
-					BaseValidatorForm baseValidatorForm = (BaseValidatorForm) aOrigForm;
-					if(!baseValidatorForm.isTypeCreate()) {
-						// загружаем недостающие данные, чтобы не перезатереть их
-						MapForm fromBaseForm = (MapForm) load(cl, dest.getValue("id"));
-						for(Entry<String,Object> entry : fromBaseForm.getPrivateValues().entrySet()) {
-							String key = entry.getKey();
-							if(dest.getValue(key)==null) {
-								dest.setValue(key, entry.getValue());
-							}
+				BaseValidatorForm baseValidatorForm = (BaseValidatorForm) aOrigForm;
+				if(!baseValidatorForm.isTypeCreate()) {
+					// загружаем недостающие данные, чтобы не перезатереть их
+					MapForm fromBaseForm = (MapForm) load(cl, dest.getValue("id"));
+					for(Entry<String,Object> entry : fromBaseForm.getPrivateValues().entrySet()) {
+						String key = entry.getKey();
+						if(dest.getValue(key)==null) {
+							dest.setValue(key, entry.getValue());
 						}
 					}
 				}
@@ -334,7 +330,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 						String parentProperty = pm.parentProperty() ;
 						String valueProperty = pm.valueProperty() ;
 						Collection collection =null ;
-						if (tableName!=null && !tableName.equals("")) {	
+						if (!tableName.equals("")) {
 							saveOneToManyOneProperty(json, collection, type,tableName,parentProperty,valueProperty, aId);
 						}
 					} 
@@ -567,7 +563,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 			Method aEntityGetMethod, PersistManyToManyOneProperty aAnnotation, Object aId) {
 		String tableName = aAnnotation.tableName() ; 
 		try {
-			if (tableName==null||tableName.equals("")) {
+			if (tableName.equals("")) {
 				// String valueProperty = aAnnotation.valueProperty() ;
 				// String idProperty = "id" ;
 	
@@ -631,7 +627,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 		Method formSetterMethod = PropertyUtil.getSetterMethod(
 				aForm.getClass(), aFormGetterMethod);
 		if (aValue == null) {
-			formSetterMethod.invoke(aForm, aValue);
+			formSetterMethod.invoke(aForm, null);
 		} else {
 			if (aValueClass.isAnnotationPresent(Entity.class)) {
 				Object manyToOneValueIdValue = getIdValue(aValue, aValueClass);
@@ -742,7 +738,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 					String parentProperty = pm.parentProperty() ;
 					String valueProperty = pm.valueProperty() ;
 					Collection collection =null ;
-					if (tableName==null || tableName.equals("")) {	
+					if (tableName.equals("")) {
 						//Class valueClass = entityClass.getMethod(method.getName())
 						//.getReturnType();
 						collection = (Collection) entityClass.getMethod(

@@ -2463,13 +2463,13 @@
     	/>
     </voc>
 
-    
+    <!-- Находим страховую компанию по окато территории, не по коду фонда, ибо в противном случае находится не то что нужно-->
    <voc id='omcSprSmo' type='NativeVocService'>
 		    <NativeVocService
 		    	from=" OMC_SPRSMO as oss "
 		    	parent='okt.id=:parent'
 		    	nameId="oss.id"
-		    	join=" left join Omc_KodTer as okt on okt.okato=oss.fondOkato "
+		    	join=" left join Omc_KodTer as okt on oss.smocode like okt.voc_code||'%' "
 		    	queryAppend=" oss.smoCode is not null and oss.finishDate is null"
 		    	order=""
 		    	queried=" oss.name like UPPER(:query) "

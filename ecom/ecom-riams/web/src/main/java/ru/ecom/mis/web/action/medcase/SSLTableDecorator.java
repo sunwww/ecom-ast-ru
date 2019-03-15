@@ -11,7 +11,7 @@ public class SSLTableDecorator implements ITableDecorator {
 	}
 
 	public String getRowCssClass(Object aRow) {
-		StringBuffer style = new StringBuffer();
+		StringBuilder style = new StringBuilder();
 		HospitalMedCaseForm form = (HospitalMedCaseForm) aRow ;
 		if(form.getIsDeniedHospitalizating()) style.append("deniedHospitalizating") ;
 		//if (Long.valueOf(33545)==form.getId()) style.append( " current") ; 

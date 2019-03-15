@@ -11,7 +11,6 @@ import ru.nuzmsh.util.format.DateFormat;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class MedContractByPersonPreCreateInterceptor  implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
@@ -29,19 +28,18 @@ public class MedContractByPersonPreCreateInterceptor  implements IParentFormInte
         			form.setRulesProcessing(parent.getRulesProcessing().getId()) ;
         		}*/
     			form.setServedPerson(parent.getId()) ;
-        		StringBuilder sql = new StringBuilder() ;
-        		sql.append("select mc.contractNumber,mc.id from MedContract mc where mc.parent_id='")
-        			.append(aParentId).append("' order by mc.id desc") ;
-        		List<Object[]> list = aContext.getEntityManager().createNativeQuery(sql.toString()).setMaxResults(1)
+		/*		String sql = "select mc.contractNumber,mc.id from MedContract mc where mc.parent_id='" +
+						aParentId + "' order by mc.id desc";
+				List<Object[]> list = aContext.getEntityManager().createNativeQuery(sql).setMaxResults(1)
         				.getResultList() ;
-        		String addDog = ".1" ;
-        		if (list.size()>0) {
+        		String addDog;
+        		if (!list.isEmpty()) {
         			Object[] objs = list.get(0) ;
         			addDog = ""+objs[0] ;
         			//addDog = addDog.replaceFirst(parent.getContractNumber()+".", "") ;
         			addDog = "."+((Integer.valueOf(addDog)+1)) ;
         		}
-        		
+        		*/
         		/*form.setContractNumber(
         			new StringBuilder().append(parent.getContractNumber())
         			//.append(".")

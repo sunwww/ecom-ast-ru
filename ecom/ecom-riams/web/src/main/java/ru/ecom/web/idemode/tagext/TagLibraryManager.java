@@ -49,7 +49,7 @@ public class TagLibraryManager {
 	}
 	
 	public Map<String,String> getDefaultValues(TagInfo aTagInfo) {
-		HashMap<String,String> ret = new HashMap<String, String>() ;
+		HashMap<String,String> ret = new HashMap<>() ;
 		try {
 			Class clazz = Thread.currentThread().getContextClassLoader().loadClass(aTagInfo.getTagClassName()) ;
 			Object tag = clazz.newInstance();
@@ -115,6 +115,6 @@ public class TagLibraryManager {
 		//manager.loadLibs();
 	}
 	
-	private final HashMap<String, TagLibraryInfo> theLibraries = new HashMap<String, TagLibraryInfo>();
+	private final HashMap<String, TagLibraryInfo> theLibraries = new HashMap<>();
 	private final LoadTldHelper theLoadTldHelper = new LoadTldHelper() ;
 }

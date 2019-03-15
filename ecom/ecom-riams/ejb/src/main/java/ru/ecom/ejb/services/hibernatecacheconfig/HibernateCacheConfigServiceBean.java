@@ -31,7 +31,7 @@ public class HibernateCacheConfigServiceBean implements IHibernateCacheConfigSer
 					for(Method m : clazz.getDeclaredMethods()) {
 						if(m.isAnnotationPresent(OneToMany.class) || m.isAnnotationPresent(ManyToMany.class)) {
 							sb.append("hibernate.ejb.collectioncache.") ;
-							sb.append(clazz.getName()+"."+PropertyUtil.getPropertyName(m)) ;
+							sb.append(clazz.getName()).append(".").append(PropertyUtil.getPropertyName(m));
 							sb.append("=transactional\n") ;
 						}
 					}

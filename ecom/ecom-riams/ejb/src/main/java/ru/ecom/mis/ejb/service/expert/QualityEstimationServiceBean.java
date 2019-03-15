@@ -97,10 +97,10 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		//Long kind ;
 		if (!list1.isEmpty()) {
 			StringBuilder result = new StringBuilder() ;
-			cntSection = Long.valueOf(list1.size()) ;
+			cntSection = (long) list1.size();
 			result.append(cntSection) ;
-			for (int i =0 ; i<list1.size();i++) {
-				result.append("#").append(list1.get(i));
+			for (Object object : list1) {
+				result.append("#").append(object);
 			}
 			return result.toString() ;
 		} else {
@@ -142,7 +142,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		if (!aView && !aFullExpertCard) {
 			return getRowShort(replaceValue,val,kind, aCardId, aTypeSpecialist, cntSection, aView) ;
 		}
-		Boolean ifTypeBool=false;
+		boolean ifTypeBool=false;
 		String sql2 = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=:cardId";
 		List<Object[]> listkind = theManager.createNativeQuery(sql2).setParameter("cardId",aCardId).getResultList() ;
 		if (!listkind.isEmpty()) {
@@ -226,7 +226,6 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		 	.append(" order by vqec.code");
 		// LOG.info(sql) ;
 		 StringBuilder table = new StringBuilder() ;
-		 StringBuilder javaScript = new StringBuilder() ;
 		 table.append("<table border='1' width=90%>")  ;
 		 table.append("<tr>") ;
 		 table.append("<th rowspan=2>№№п/п</th>") ;
@@ -253,7 +252,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 cntPart++;
 					 table.append("<td rowspan='").append((cntSubsection+1)).append("' valign='top'><b><i>").append(row[1]).append(".</i></b></td>") ;
 					 int tmp=(ifTypeBool)? 6:5;
-					 table.append("<td colspan="+tmp+" align='center'><b><i>").append(row[2]).append("</i></b></td>") ;
+					 table.append("<td colspan=").append(tmp).append(" align='center'><b><i>").append(row[2]).append("</i></b></td>") ;
 					 table.append("</tr>") ;
 					 table.append("<tr>") ;
 					 firststr = true ;
@@ -301,9 +300,9 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 }
 		 }
 		 table.append("</table>") ;
-		 table.append("<input type='hidden' value='"+list.size()+"' name='criterionSize' id='criterionSize'>") ;
+		 table.append("<input type='hidden' value='").append(list.size()).append("' name='criterionSize' id='criterionSize'>");
 		 QualityEstimationRow row = new QualityEstimationRow() ;
-		 row.setJavaScriptText(javaScript.toString()) ;
+		 row.setJavaScriptText("") ;
 		 row.setTableColumn(table.toString()) ;
 		return row;
 	}
@@ -318,7 +317,6 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	public QualityEstimationRow getRowShort(boolean aReplaceValue,HashMap<String,String> aValueMap, Long aKind, Long aCard, String aTypeSpecialist, int aCntSection, boolean aView) {
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder table = new StringBuilder() ;
-		StringBuilder javaScript = new StringBuilder() ;
 		sql.append("select distinct vqec.id as vqecid,vqec.code as vqeccode,vqec.name as vqecname ")
 				.append(",")
 		.append(" (select qecBM.mark_id from qualityestimationcrit qecBM")
@@ -386,7 +384,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		.append(" from VocQualityEstimationCrit vqec")
 
 		.append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqec.id");
-		Boolean ifTypeBool=false;
+		boolean ifTypeBool=false;
 		String sql2 = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCard;
 		List<Object[]> listkind = theManager.createNativeQuery(sql2).getResultList() ;
 		if (!listkind.isEmpty()) {
@@ -462,16 +460,16 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 comments.append(";");
 				 if (row[14]!=null) comments.append(row[14]);
 				 int index=-1;
-				 if (list!=null && list2!=null) {
+				 if (list2 != null) {
 					 for (int t = 0; t < list2.size(); t++) {
 						 if (list2.get(t)[0].equals(list.get(i)[1].toString())) index = t;
 					 }
 				 }
 				 if (index!=-1 && list2!=null && list2.get(index)!=null && list2.get(index)[1]!=null && list2.get(index)[1].equals("yes")) {
-					 table.append("<td valign='top' align='right'"+color1+">").append(cntPart++).append("<input type='hidden' id='criterion" + (cntPart - 1) + "Comment' value='" + defects + "'></td>").append("<input type='hidden' id='criterion" + (cntPart - 1) + "CommentYesNo' value='"+comments.toString()+"'></td>");
+					 table.append("<td valign='top' align='right'").append(color1).append(">").append(cntPart++).append("<input type='hidden' id='criterion").append(cntPart - 1).append("Comment' value='").append(defects).append("'></td>").append("<input type='hidden' id='criterion").append(cntPart - 1).append("CommentYesNo' value='").append(comments.toString()).append("'></td>");
 				 }
 				 else
-					 table.append("<td valign='top' align='right'"+color2+">").append(cntPart++).append("<input type='hidden' id='criterion" + (cntPart - 1) + "Comment' value='" + defects + "'></td>").append("<input type='hidden' id='criterion" + (cntPart - 1) + "CommentYesNo' value='"+comments.toString()+"'></td>");
+					 table.append("<td valign='top' align='right'").append(color2).append(">").append(cntPart++).append("<input type='hidden' id='criterion").append(cntPart - 1).append("Comment' value='").append(defects).append("'></td>").append("<input type='hidden' id='criterion").append(cntPart - 1).append("CommentYesNo' value='").append(comments.toString()).append("'></td>");
 				 //BranchManager - зав.отделением
 				 //Expert - эксперт
 				 //Coeur - КЭР
@@ -500,9 +498,9 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 }
 		 }
 		 table.append("</table>") ;
-		 table.append("<input type='hidden' value='"+list.size()+"' name='criterionSize' id='criterionSize'>") ;
+		 table.append("<input type='hidden' value='").append(list.size()).append("' name='criterionSize' id='criterionSize'>");
 		 QualityEstimationRow row = new QualityEstimationRow() ;
-		 row.setJavaScriptText(javaScript.toString()) ;
+		 row.setJavaScriptText("") ;
 		 row.setTableColumn(table.toString()) ;
 		return row;
 	}
@@ -616,12 +614,11 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				}
 				for (int i = 0; i < list.size(); i++) {
 					String mcodes = (list.get(i)[2] != null) ? list.get(i)[2].toString() : "";
-					Boolean flag = false;
+					boolean flag = false;
 					total.add(new String[2]);
 					total.get(i)[0] = list.get(i)[0].toString();
 					if (!allMatches.isEmpty()) {
-						for (int j = 0; j < allMatches.size(); j++) {
-							String scode = allMatches.get(j);
+						for (String scode : allMatches) {
 							if (mcodes.contains("'" + scode + "'")) flag = true;
 						}
 					}
@@ -686,10 +683,10 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						"where mc.id=" + aMcaseId + " and reg.code='4' and prior.code='1'\n" +
 						" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)").getResultList();
 				if (crits != null) {
-					for (int i = 0; i < crits.size(); i++) {
+					for (Object critO : crits) {
 						QualityEstimationCrit crit = new QualityEstimationCrit();
-						Long id = Long.parseLong(crits.get(i).toString());//Long.parseLong(String.valueOf(crits.get(i)));
-						VocQualityEstimationCrit vcrit = id != null ? theManager.find(VocQualityEstimationCrit.class, id) : null;
+						Long id = Long.parseLong(critO.toString());//Long.parseLong(String.valueOf(crits.get(i)));
+						VocQualityEstimationCrit vcrit = theManager.find(VocQualityEstimationCrit.class, id);
 						if (vcrit != null) {
 							crit.setEstimation(qe);
 							crit.setCriterion(vcrit);
@@ -697,7 +694,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						}
 					}
 				}
-				return Long.valueOf(qe.getId());
+				return qe.getId();
 			}
 			return null;
 		}

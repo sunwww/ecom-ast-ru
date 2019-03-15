@@ -1,16 +1,12 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import ru.ecom.mis.ejb.domain.birth.voc.*;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.ecom.mis.ejb.domain.birth.voc.VocApgarMuscleTone;
-import ru.ecom.mis.ejb.domain.birth.voc.VocApgarPalpitation;
-import ru.ecom.mis.ejb.domain.birth.voc.VocApgarReflexes;
-import ru.ecom.mis.ejb.domain.birth.voc.VocApgarRespiration;
-import ru.ecom.mis.ejb.domain.birth.voc.VocApgarSkinColor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Оценка новорожденного по Апгар
@@ -74,9 +70,7 @@ public class ApgarEstimation extends Inspection{
 	}
 	@Transient
 	public String getInformation() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("Общая оценка (балл) ").append(theCommonMark) ;
-		return ret.toString() ;
+		return "Общая оценка (балл) " + theCommonMark;
 	}
 	/** Время после рождения (мин) */
 	private Integer thePostNatalTime;

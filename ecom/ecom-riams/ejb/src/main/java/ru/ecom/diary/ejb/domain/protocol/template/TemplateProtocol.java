@@ -97,8 +97,7 @@ public class TemplateProtocol extends BaseEntity {
 		for (TemplateCategory categ : theCategories) {
 			ret.append(", ").append(categ.getFullname()).append("<br>") ;
 		}
-		
-		return ret.length()>2?ret.substring(2).toString():ret.toString() ;
+		return ret.length()>2 ? ret.substring(2) : ret.toString() ;
 	}
 	
 	/** Группы пользователей */

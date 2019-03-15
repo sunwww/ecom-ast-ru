@@ -1,16 +1,12 @@
 package ru.ecom.mis.ejb.domain.patient;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.patient.voc.VocKinsmanRole;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
 
 /**
  * Родственник
@@ -81,7 +77,7 @@ public class Kinsman extends BaseEntity{
 	}
 	@Transient
 	public String getInfo() {
-		return new StringBuilder().append(getKinsmanRoleInfo()).append(" ").append(getKinsmanInfo()).toString() ;
+		return getKinsmanRoleInfo() + " " + getKinsmanInfo();
 	}
 
 }

@@ -52,48 +52,43 @@ public class CheckGroupTag extends AbstractGuidSimpleSupportTag {
 		            out.println("<table>");
 	
 	
-	                if (col != null) {
-	                    if (col.size() == 0) {
-	                        return ;
-	                    }
+					if (col.size() == 0) {
+						return ;
+					}
 	                   
-	                    for (WebQueryResult row:col) {
-	                    	Object currentId =  row.get1();
-	                    	Object currentTitle = row.get2() ;
-	                        boolean isChecked = row.get3()!=null?true:false ;
-	                        
-	                        out.print("<tr onclick='' class='") ;
-	                        out.print(theTableName) ;
-	                        out.print(' ') ;
-	                        out.print(currentId) ;
-	                        out.print(' ') ;
-	                        
-	                        out.print("'>");
-	
-	                        out.println("<td >") ;
-	                        //String typeId = theProperty+"_"+currentId ;
-	                        out.println("<input id='"+theProperty+"Temp' name='"+theProperty+"Temp' value='"+currentId+"' type='checkbox' onclick=\"$('"+theProperty+"').value=getCheckedCheckBox(this.form,this.name,',')\"");
-	                        if (isChecked) out.println(" checked='true'") ;
-	                        out.println("/>") ;
-	                        out.println("</td>") ;
-	                        out.println("<td>") ;
-	                        out.println(currentTitle) ;
-	                        out.println("</td>") ;
-	
-	                        out.println("</tr>");
-	                    }
-	    	            out.println("</table");
-	    	        	out.println("</td>");
-	                }
+					for (WebQueryResult row:col) {
+						Object currentId =  row.get1();
+						Object currentTitle = row.get2() ;
+						boolean isChecked = row.get3()!=null;
+
+						out.print("<tr onclick='' class='") ;
+						out.print(theTableName) ;
+						out.print(' ') ;
+						out.print(currentId) ;
+						out.print(' ') ;
+
+						out.print("'>");
+
+						out.println("<td >") ;
+						//String typeId = theProperty+"_"+currentId ;
+						out.println("<input id='"+theProperty+"Temp' name='"+theProperty+"Temp' value='"+currentId+"' type='checkbox' onclick=\"$('"+theProperty+"').value=getCheckedCheckBox(this.form,this.name,',')\"");
+						if (isChecked) out.println(" checked='true'") ;
+						out.println("/>") ;
+						out.println("</td>") ;
+						out.println("<td>") ;
+						out.println(currentTitle) ;
+						out.println("</td>") ;
+
+						out.println("</tr>");
+					}
+					out.println("</table");
+					out.println("</td>");
 		        }
 	        } catch (Exception e) {
 	                showException(e);
-            } finally {
-                
             }
 	        
 	        printIdeEnd();
-	        return ;
 		}
 	    /**
 	     * Название таблицы

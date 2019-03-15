@@ -1,22 +1,5 @@
 package ru.ecom.poly.ejb.domain;
 
-import static javax.persistence.CascadeType.ALL;
-
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -25,28 +8,22 @@ import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcRoadTrafficInjury;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityReason;
-
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocAmbulance;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocVisitOutcome;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocWorkMedservice;
-
+import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.poly.ejb.domain.voc.VocDisabilityDocumentStatus;
-import ru.ecom.poly.ejb.domain.voc.VocDispanseryRegistration;
-import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
-import ru.ecom.poly.ejb.domain.voc.VocMedUsluga;
-import ru.ecom.poly.ejb.domain.voc.VocReason;
-import ru.ecom.poly.ejb.domain.voc.VocSpecLabel;
-import ru.ecom.poly.ejb.domain.voc.VocTrauma;
-import ru.ecom.poly.ejb.domain.voc.VocVisitResult;
+import ru.ecom.poly.ejb.domain.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 
 /**
  * Талон амбулаторного пациента
@@ -260,12 +237,10 @@ public class Ticket extends BaseEntity {
 	@Transient
 	@Comment("Информация по талону")
 	public String getTicketInfo() {
-		StringBuilder sb = new StringBuilder() ;
-		sb.append("№").append(getId()).append(" ") ;
-		sb.append(getDate()!=null?getDate():"нет даты") ;
-		sb.append(" ") ;
-		sb.append(getWorkFunctionInfo());
-		return sb.toString();
+		String sb = "№" + getId() + " " +
+				(getDate() != null ? getDate() : "нет даты") +
+				" " + getWorkFunctionInfo();
+		return sb;
 	}
 	
 	/** Дата создания */

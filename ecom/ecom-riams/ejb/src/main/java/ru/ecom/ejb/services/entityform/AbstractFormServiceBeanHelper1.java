@@ -71,9 +71,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 					// throw new IllegalStateException("Нет политики
 					// "+sb.toString()) ;
 					// }
-				} catch (InstantiationException e) {
-					throw new IllegalStateException(e);
-				} catch (IllegalAccessException e) {
+				} catch (InstantiationException | IllegalAccessException e) {
 					throw new IllegalStateException(e);
 				}
 			}
@@ -97,8 +95,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 		EntityFormSecurityPrefix prefix = (EntityFormSecurityPrefix) aFormClass
 				.getAnnotation(EntityFormSecurityPrefix.class);
 		if (prefix != null) {
-			return new StringBuilder().append(prefix.value()).append("/")
-					.append(aSuffix).toString();
+			return prefix.value() + "/" + aSuffix;
 		} else {
 			throw new IllegalArgumentException("У формы "
 					+ aFormClass.getName()
@@ -138,7 +135,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 			throw new IllegalArgumentException("Не найден объект типа "
 					+ aFormClass + " c идентификатором " + aId);
 		try {
-			IEntityForm form = aFormClass.newInstance();
+			T form = aFormClass.newInstance();
 			copyEntityToForm(entity, form);
 			checkDynamicPermission(aFormClass, aId, "View");
 			// FIXME может быть и понадобится
@@ -154,7 +151,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 				theRowPersistDelegate.load(form, theManager, entity);
 			}
 			invokeJavaScriptInterceptor("onView", form, entity, null, null);
-			return (T) form;
+			return form;
 		} catch (Exception e) {
 			throw new EntityFormException("Ошибка копирования данных", e);
 		}
@@ -215,17 +212,14 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 				
 				MapForm dest = (MapForm) cl.newInstance() ;
 				BeanUtils.copyProperties(dest, aOrigForm);
-				
-				if(aOrigForm instanceof BaseValidatorForm) {
-					BaseValidatorForm baseValidatorForm = (BaseValidatorForm) aOrigForm;
-					if(!baseValidatorForm.isTypeCreate()) {
-						// загружаем недостающие данные, чтобы не перезатереть их
-						MapForm fromBaseForm = (MapForm) load(cl, dest.getValue("id"));
-						for(Entry<String,Object> entry : fromBaseForm.getPrivateValues().entrySet()) {
-							String key = entry.getKey();
-							if(dest.getValue(key)==null) {
-								dest.setValue(key, entry.getValue());
-							}
+				BaseValidatorForm baseValidatorForm = (BaseValidatorForm) aOrigForm;
+				if(!baseValidatorForm.isTypeCreate()) {
+					// загружаем недостающие данные, чтобы не перезатереть их
+					MapForm fromBaseForm = (MapForm) load(cl, dest.getValue("id"));
+					for(Entry<String,Object> entry : fromBaseForm.getPrivateValues().entrySet()) {
+						String key = entry.getKey();
+						if(dest.getValue(key)==null) {
+							dest.setValue(key, entry.getValue());
 						}
 					}
 				}

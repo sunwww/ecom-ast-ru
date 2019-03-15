@@ -174,13 +174,11 @@ public class CheckContext implements ICheckContext, ICheckLog {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder() ;
-		sb.append(getClass().getName()) ;
-		sb.append(" ").append("actualDate =").append(theActualDate) ;
-		sb.append(" ").append("values =").append(theValues) ;
-		sb.append(" ").append("allowed =").append(theAllowedFields) ;
-		sb.append(" ").append("object =").append(theEntity) ;
-		return sb.toString() ;
+		return getClass().getName() +
+				" actualDate =" + theActualDate +
+				" values =" + theValues +
+				" allowed =" + theAllowedFields +
+				" object =" + theEntity;
 	}
 
 	/** Дата актуальности */

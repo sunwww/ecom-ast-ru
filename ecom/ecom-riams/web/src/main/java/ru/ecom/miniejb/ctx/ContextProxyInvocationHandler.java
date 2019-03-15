@@ -53,22 +53,19 @@ public class ContextProxyInvocationHandler implements InvocationHandler {
 
     private SessionContext getSessionContext() throws IOException {
         LOG.info("Creating new SessionContext for "+theUsername+" ...");
-        FileInputStream in = new FileInputStream(new File(System.getProperty("jboss.server.config.dir"),"roles.properties"));
-        try {
+        try (FileInputStream in = new FileInputStream(new File(System.getProperty("jboss.server.config.dir"), "roles.properties"))) {
             Properties prop = new Properties();
             prop.load(in);
-            String roles = prop.getProperty(theUsername) ;
+            String roles = prop.getProperty(theUsername);
             HashSet<String> set = new HashSet<>();
-            if(roles!=null) {
-                StringTokenizer st = new StringTokenizer(roles,", \t\n");
-                while(st.hasMoreTokens()) {
-                    String policy = st.nextToken() ;
-                    set.add(policy) ;
+            if (roles != null) {
+                StringTokenizer st = new StringTokenizer(roles, ", \t\n");
+                while (st.hasMoreTokens()) {
+                    String policy = st.nextToken();
+                    set.add(policy);
                 }
             }
             return new SimpleSessionContext(theUsername, set);
-        } finally{
-            in.close() ;
         }
     }
 }

@@ -1,6 +1,11 @@
 package ru.ecom.mis.ejb.service.medcase;
 
-import java.util.List;
+import org.jboss.annotation.security.SecurityDomain;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -8,21 +13,14 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.jboss.annotation.security.SecurityDomain;
-
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
-import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
+import java.util.List;
 
 @Stateless
 @Remote(IReportsService.class)
 @SecurityDomain("other")
 public class ReportsServiceBean implements IReportsService {
 	public String getTitle(String aGroupBy) {
-		String title = "" ;
+		String title;
 		if (aGroupBy.equals("2")) {
 			title = "ЛПУ" ;
 		} else if (aGroupBy.equals("3")) {
@@ -44,7 +42,7 @@ public class ReportsServiceBean implements IReportsService {
 			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder filter = new StringBuilder() ;
 		String username = theContext.getCallerPrincipal().toString() ;
-		boolean isViewAll = false ;
+		boolean isViewAll;
 		if (aIsTicket) {
 			isViewAll=theContext.isCallerInRole("/Policy/Poly/Ticket/ShowInfoAllUsers") ;
 		} else {
@@ -64,34 +62,34 @@ public class ReportsServiceBean implements IReportsService {
 			//	filter.append(" and w.person_id='").append(listWQR.get(0)[0]).append("'") ;
 			//}
 		}
-		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
+		if (aSpecialist!=null&&aSpecialist>0L){
 			if (aIsTicket) {
-				filter.append(" and t.workFunction_id="+aSpecialist) ;
+				filter.append(" and t.workFunction_id=").append(aSpecialist);
 			} else {
-				filter.append(" and t.workFunctionExecute_id="+aSpecialist) ;
+				filter.append(" and t.workFunctionExecute_id=").append(aSpecialist);
 			}
 		}
-		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
-				filter.append(" and wf.workFunction_id="+aWorkFunction) ;
+		if (aWorkFunction!=null&&aWorkFunction>0L){
+				filter.append(" and wf.workFunction_id=").append(aWorkFunction);
 			//aRequest.setAttribute("workFunctionInfo", service.getVocWorkFunctionByIdInfo(form.getWorkFunction())) ;
 		}
-		if (aLpu!=null&&aLpu>Long.valueOf(0)){
-			filter.append(" and w.lpu_id="+aLpu) ;
+		if (aLpu!=null&&aLpu>0L){
+			filter.append(" and w.lpu_id=").append(aLpu);
 			//aRequest.setAttribute("lpuInfo", service.getWorkingLpuInfo(aLpu)) ;
 		}
-		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
+		if (aServiceStream!=null&&aServiceStream>0L){
 			if (aIsTicket) {
-				filter.append(" and t.vocPaymentType_id="+aServiceStream) ;
+				filter.append(" and t.vocPaymentType_id=").append(aServiceStream);
 			} else  {
-				filter.append(" and t.serviceStream_id="+aServiceStream) ;
+				filter.append(" and t.serviceStream_id=").append(aServiceStream);
 			}
 			//aRequest.setAttribute("serviceStreamInfo", service.getVocServiceStreamByIdInfo(form.getServiceStream())) ;
 		}
-		if (aWorkPlaceType!=null&&aWorkPlaceType>Long.valueOf(0)){
+		if (aWorkPlaceType!=null&&aWorkPlaceType>0L){
 			if (aIsTicket) {
-				filter.append(" and t.vocServicePlace_id="+aWorkPlaceType) ;
+				filter.append(" and t.vocServicePlace_id=").append(aWorkPlaceType);
 			} else  {
-				filter.append(" and t.workPlaceType_id="+aWorkPlaceType) ;
+				filter.append(" and t.workPlaceType_id=").append(aWorkPlaceType);
 			}
 		}
 		return filter.toString() ;
@@ -100,19 +98,19 @@ public class ReportsServiceBean implements IReportsService {
 			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder filter = new StringBuilder() ;
 		filter.append("||':'") ;
-		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
+		if (aSpecialist!=null&&aSpecialist>0L){
 			filter.append("||").append(aSpecialist) ;
 		}
 		filter.append("||':'") ;
-		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
+		if (aWorkFunction!=null&&aWorkFunction>0L){
 			filter.append("||").append(aWorkFunction) ;
 		}
 		filter.append("||':'") ;
-		if (aLpu!=null&&aLpu>Long.valueOf(0)){
+		if (aLpu!=null&&aLpu>0L){
 			filter.append("||").append(aLpu) ;
 		}
 		filter.append("||':'") ;
-		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
+		if (aServiceStream!=null&&aServiceStream>0L){
 			//if (aIsTicket) {
 			filter.append("||").append(aServiceStream) ;
 			//} else  {
@@ -120,7 +118,7 @@ public class ReportsServiceBean implements IReportsService {
 			//}
 		}
 		filter.append("||':'") ;
-		if (aWorkPlaceType!=null&& aWorkPlaceType>Long.valueOf(0)){
+		if (aWorkPlaceType!=null&& aWorkPlaceType>0L){
 			//if (aIsTicket) {
 				filter.append("||").append(aWorkPlaceType) ;
 			//} else  {
@@ -133,23 +131,23 @@ public class ReportsServiceBean implements IReportsService {
 			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder filter = new StringBuilder() ;
 		
-		if (aSpecialist!=null && aSpecialist>Long.valueOf(0)){
+		if (aSpecialist!=null && aSpecialist>0L){
 			WorkFunction wf = aManager.find(WorkFunction.class,aSpecialist) ;
 			filter.append(" Специалист: ").append(wf!=null?wf.getWorkFunctionInfo():"") ;
 		}
-		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
+		if (aWorkFunction!=null&&aWorkFunction>0L){
 			VocWorkFunction vwf = aManager.find(VocWorkFunction.class, aWorkFunction) ;
 			filter.append(" Должность: ").append(vwf!=null?vwf.getName():"") ;
 		}
-		if (aLpu!=null&&aLpu>Long.valueOf(0)){
+		if (aLpu!=null&&aLpu>0L){
 			MisLpu lpu = aManager.find(MisLpu.class, aLpu) ;
 			filter.append(" Подразделение: ").append(lpu!=null?lpu.getName():"") ;
 		}
-		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
+		if (aServiceStream!=null&&aServiceStream>0L){
 			VocServiceStream vss = aManager.find(VocServiceStream.class, aServiceStream) ;
 			filter.append(" Поток обслуживания: ").append(vss.getName()) ;
 		}
-		if (aWorkPlaceType!=null&&aWorkPlaceType>Long.valueOf(0)){
+		if (aWorkPlaceType!=null&&aWorkPlaceType>0L){
 			VocWorkPlaceType vwpt = aManager.find(VocWorkPlaceType.class, aWorkPlaceType) ;
 			filter.append(" Место обслуживания: ").append(vwpt.getName()) ;
 		}
@@ -163,8 +161,8 @@ public class ReportsServiceBean implements IReportsService {
 	public String getTextQueryBegin(boolean aIsTicket, String aGroupBy,String aStartDate, String aFinishDate
 			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder sql = new StringBuilder() ;
-		String id = "" ;
-		String name = "" ;
+		String id;
+		String name;
 		if (aGroupBy.equals("2")) {
 			//LPU
 			id= "lpu.id";
@@ -216,8 +214,8 @@ public class ReportsServiceBean implements IReportsService {
 	public String getTextQueryEnd(boolean aIsTicket, String aGroupBy,String aStartDate, String aFinishDate
 			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder sql = new StringBuilder() ;
-		String group = "" ;
-		String order = "" ;
+		String group;
+		String order;
 		if (aGroupBy.equals("2")) {
 			//LPU
 			group = "lpu.id,lpu.name" ;
@@ -300,7 +298,7 @@ public class ReportsServiceBean implements IReportsService {
 		}
 		sql.append(" ") ;
 		sql.append(getFilter(aIsTicket, aSpecialist, aWorkFunction, aLpu, aServiceStream,aWorkPlaceType)) ;
-		sql.append(" GROUP BY ").append(group).append(" ORDER BY ").append(order).append("");
+		sql.append(" GROUP BY ").append(group).append(" ORDER BY ").append(order);
 		return sql.toString() ;
 	}
 	
@@ -311,31 +309,31 @@ public class ReportsServiceBean implements IReportsService {
 			, Long aOrderLpu, Long aOrderWF) {
 		StringBuilder filter = new StringBuilder() ;
 		
-		if (aSpecialist!=null && aSpecialist>Long.valueOf(0)){
+		if (aSpecialist!=null && aSpecialist>0L){
 			WorkFunction wf = theManager.find(WorkFunction.class,aSpecialist) ;
 			filter.append(" Специалист: ").append(wf!=null?wf.getWorkFunctionInfo():"") ;
 		}
-		if (aWorkFunction!=null && aWorkFunction>Long.valueOf(0)){
+		if (aWorkFunction!=null && aWorkFunction>0L){
 			VocWorkFunction vwf = theManager.find(VocWorkFunction.class, aWorkFunction) ;
 			filter.append(" Должность: ").append(vwf!=null?vwf.getName():"") ;
 		}
-		if (aLpu!=null && aLpu>Long.valueOf(0)){
+		if (aLpu!=null && aLpu>0L){
 			MisLpu lpu = theManager.find(MisLpu.class, aLpu) ;
 			filter.append(" Подразделение: ").append(lpu!=null?lpu.getName():"") ;
 		}
-		if (aServiceStream!=null && aServiceStream>Long.valueOf(0)){
+		if (aServiceStream!=null && aServiceStream>0L){
 			VocServiceStream vss = theManager.find(VocServiceStream.class, aServiceStream) ;
 			filter.append(" Поток обслуживания: ").append(vss.getName()) ;
 		}
-		if (aWorkPlaceType!=null && aWorkPlaceType>Long.valueOf(0)){
+		if (aWorkPlaceType!=null && aWorkPlaceType>0L){
 			VocWorkPlaceType vwpt = theManager.find(VocWorkPlaceType.class, aWorkPlaceType) ;
 			filter.append(" Место обслуживания: ").append(vwpt.getName()) ;
 		}
-		if (aOrderLpu!=null && aOrderLpu>Long.valueOf(0)){
+		if (aOrderLpu!=null && aOrderLpu>0L){
 			MisLpu vwpt = theManager.find(MisLpu.class, aOrderLpu) ;
 			filter.append(" Внешний направитель: ").append(vwpt.getName()) ;
 		}
-		if (aOrderWF!=null && aOrderWF>Long.valueOf(0)){
+		if (aOrderWF!=null && aOrderWF>0L){
 			WorkFunction owf = theManager.find(WorkFunction.class, aOrderWF) ;
 			filter.append(" Направитель: ").append(owf.getWorkFunctionInfo()) ;
 		}

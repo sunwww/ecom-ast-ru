@@ -12,9 +12,8 @@ import javax.persistence.Transient;
 public class IdentityCardPensionSertificate extends IdentityCard {
     @Transient
     public String getText() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Пенсионное свидетельство № ") ;
-        sb.append(getNumber()) ;
-        return sb.toString() ;
+        String sb = "Пенсионное свидетельство № " +
+                getNumber();
+        return sb;
     }
 }

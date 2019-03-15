@@ -86,11 +86,8 @@ public class ContractServiceBean implements IContractService {
 					root.put("totalPaymentSum", totalSum.setScale(2,RoundingMode.HALF_UP).toString()) ;
 					root.put("totalTaxSum", taxSum.setScale(2, RoundingMode.HALF_UP).toString()) ;
 				}
-				//root.put("isTerminalPayment", isTerminalPayment);
 				root.put("FIO", aKassir);
-			//	log.warn("isTermPayment = "+isTerminalPayment);
 				makeHttpPostRequest(root.toString(), url);
-				//log.warn(root.toString());
 				return "Чек отправлен на печать";
 			} else {
 				return "Произошла ошибка, обратитесь к программистам";
@@ -165,9 +162,9 @@ public class ContractServiceBean implements IContractService {
 		 *  Для силовиков по умолчанию ищем общие палаты
 		 */
 		
-		if (aRoomType==null) aRoomType=Long.valueOf(3);
-		if (aRoomType.equals(Long.valueOf(1))) aRoomType=Long.valueOf(3);
-		if ("SILOVIK".equals(aCompanyType)) {aRoomType=Long.valueOf(1);}
+		if (aRoomType==null) aRoomType=3L;
+		if (aRoomType.equals(1L)) aRoomType=3L;
+		if ("SILOVIK".equals(aCompanyType)) {aRoomType=1L;}
 		String idsertypebed = "11" ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select wfs.medservice_id from workfunctionservice wfs left join medservice ms on ms.id=wfs.medservice_id" );
@@ -514,7 +511,7 @@ and (pp.isvat is null or pp.isvat='0')
 						theManager.persist(cams) ;
 					}
 				}
-				if (patient!=null && datestart!=null && servicestream!=null) {
+				if (patient != null && servicestream != null) {
 				sql = new StringBuilder() ;
 				sql.append("select vis.id as visid,to_char(vis.datestart,'dd.mm.yyyy'),ms.id as msid,wf.id as wfid") ;
 				sql.append("      from medcase vis") ;
@@ -730,7 +727,7 @@ and (pp.isvat is null or pp.isvat='0')
 	}
 	public void unionAccountsWithContract(Long aAccount1, Long aAccount2) {
 		theManager.createNativeQuery("update ContractAccountMedService set account_id="+aAccount1+" where account_id="+aAccount2).executeUpdate() ;
-		theManager.createNativeQuery("delete ContractAccount where id="+aAccount2).executeUpdate() ;
+		theManager.createNativeQuery("delete from ContractAccount where id="+aAccount2).executeUpdate() ;
 	}
 	public void accountCreation(long aMonitorId, String aDate, String aDateFrom,String aDateTo, Long aContract, String aAccountNumber
 			,boolean aIsHosp,int aIsPolyc, boolean aIsEmpty, boolean aDeleteServiceWithOtherAccount, boolean aIsPeresech) {
@@ -832,7 +829,7 @@ and (pp.isvat is null or pp.isvat='0')
 					.append(" and to_date('")
 					.append(aDateTo).append("','dd.mm.yyyy')") ;
 					if (par[2]!=null) sql.append(" and mc.serviceStream_id=").append(par[2]) ;
-					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]+" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)") ;
+					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]).append(" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)");
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
 					sql.append(" group by mc.id,mc.patient_id,mc.datestart") ;
 					LOG.info("Формирование счета по поликлинике визит. SQL = "+sql);
@@ -859,7 +856,7 @@ and (pp.isvat is null or pp.isvat='0')
 						.append(" and to_date('")
 						.append(aDateTo).append("','dd.mm.yyyy') and mcp.dtype='PolyclinicMedCase'") ;
 					if (par[2]!=null) sql.append(" and mc.serviceStream_id=").append(par[2]) ;
-					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]+" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)") ;
+					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]).append(" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)");
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
 					sql.append(" group by mc.id,mc.patient_id,mc.datestart") ;
 					List<Object[]> listHosp1 = theManager.createNativeQuery(sql.toString()).getResultList() ;

@@ -30,9 +30,9 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
 	public <T extends IEntityForm> T loadForm(Class<T> aFormClass, Object aEntity) throws EntityFormException {
         checkPermission(aFormClass, "View") ;
         try {
-            IEntityForm form = aFormClass.newInstance();
+            T form = aFormClass.newInstance();
             copyEntityToForm(aEntity, form);
-            return (T) form ;
+            return form;
         } catch (Exception e) {
             throw new EntityFormException("Ошибка копирования",e);
         }

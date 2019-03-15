@@ -99,18 +99,18 @@ public class WorkCalendarServiceJs {
 
 		list = service.executeNativeSql(sql);
 
-		List<String> st = new ArrayList<String>();
+		List<String> st = new ArrayList<>();
 		int i=0;
 		for (WebQueryResult t:list) {
 			st.add(t.get2().toString()+t.get4().toString());
 		}
 
-		String html="<div id=\"head-cont\">" +
+		StringBuilder html= new StringBuilder("<div id=\"head-cont\">" +
 				"<a href=\"#\" id=\"alink\" onClick=\"prevWeek()\" >&#8666; </a>" + date + "<a href=\"#\" id=\"alink\" onClick=\"nextWeek()\"> &#8667;</a></div>" +
 				"<div id=\"body-cont\"><table id=\"table\">" +
-				"<tbody>";
+				"<tbody>");
 		for(String ss:st){
-			html+="<tr>"+ss+"</tr>";
+			html.append("<tr>").append(ss).append("</tr>");
 		}
 		return html+"</tbody></table></div>";
 	}
@@ -278,7 +278,7 @@ public class WorkCalendarServiceJs {
 		service.deleteWorkCalendarTime(aTimeId) ;
 		return 1 ;
 	}
-	public String findDoubleBySpecAndDate(Long aId, Long aPatient, Long aSpec, String aDate, HttpServletRequest aRequest) throws NamingException, Exception {
+	public String findDoubleBySpecAndDate(Long aId, Long aPatient, Long aSpec, String aDate, HttpServletRequest aRequest) throws Exception {
 		//ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
@@ -294,7 +294,7 @@ public class WorkCalendarServiceJs {
 			.append(" where m.patient_id='").append(aPatient)
 			.append("' and m.dtype='Visit' and m.workFunctionPlan_id='")
 			.append(aSpec).append("' and m.datePlan_id='").append(aDate).append("' ") ;
-        if (aId!=null && aId>Long.valueOf(0)) sql.append(" and m.id!=").append(aId);
+        if (aId!=null && aId> 0L) sql.append(" and m.id!=").append(aId);
 
         Collection<WebQueryResult> doubles = service.executeNativeSql(sql.toString()) ;
         	
@@ -488,7 +488,6 @@ public class WorkCalendarServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
-		sql = new StringBuilder() ;
 		sql.append("select spo.id as spoid,coalesce(to_char(spo.dateStart,'dd.mm.yyyy'),'нет даты начала ')||coalesce('-'||to_char(spo.dateFinish,'dd.mm.yyyy'),'')||' '||vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
 		sql.append(" from MedCase spo left join WorkFunction wf on wf.id=spo.startFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where spo.id='").append(aSpo).append("' and spo.dtype='PolyclinicMedCase'") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
@@ -521,8 +520,8 @@ public class WorkCalendarServiceJs {
 						res.append(wqr.get1()).append("#") ;
 						res.append(wqr.get2()).append("#") ;
 					} else {
-						res.append("").append("#") ;
-						res.append("").append("#") ;
+						res.append("#") ;
+						res.append("#") ;
 					}
 				} else {
 					res = new StringBuilder() ;
@@ -549,7 +548,7 @@ public class WorkCalendarServiceJs {
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		sql.append("select w.lpu_id,w.id from SecUser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where su.login='"+username+"'" ) ;
+		sql.append("select w.lpu_id,w.id from SecUser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where su.login='").append(username).append("'");
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		if (list.isEmpty()) return "" ;
 		String dep = ""+list.iterator().next().get1() ;
@@ -559,7 +558,7 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and (vsrt.serviceStreams like '%,"+aServiceStream+",%' or vsrt.serviceStreams = '' or vsrt.serviceStreams is null) and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,"+dep+",%') and vsrt.id is not null order by wct.timefrom") ;
+		sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and (vsrt.serviceStreams like '%,").append(aServiceStream).append(",%' or vsrt.serviceStreams = '' or vsrt.serviceStreams is null) and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,").append(dep).append(",%') and vsrt.id is not null order by wct.timefrom");
 
 		list = service.executeNativeSql(sql.toString(),50);
 
@@ -569,7 +568,7 @@ public class WorkCalendarServiceJs {
 				res.append("; background:").append(wqr.get3()) ;
 			}
 			if (wqr.get4()!=null) {
-				res.append(";color:").append(wqr.get4()).append("") ;
+				res.append(";color:").append(wqr.get4());
 			}
 			res.append("' ") ;
 			res.append("onclick=\"this.childNodes[1].checked='checked';checkRecord('")
@@ -608,7 +607,7 @@ public class WorkCalendarServiceJs {
 				res.append(";background:").append(wqr.get4()) ;
 			}
 			if (wqr.get5()!=null) {
-				res.append("; color:").append(wqr.get5()).append("") ;
+				res.append("; color:").append(wqr.get5());
 			}
 			res.append("' ") ;
 			res.append("onclick=\"this.childNodes[1].checked='checked';checkRecord('")
@@ -643,7 +642,7 @@ public class WorkCalendarServiceJs {
 				res.append("; background:").append(wqr.get5()) ;
 			}
 			if (wqr.get6()!=null) {
-				res.append(";color:").append(wqr.get6()).append("") ;
+				res.append(";color:").append(wqr.get6());
 			}
 			res.append("'><i>") ;
 			res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ") ;
@@ -651,7 +650,7 @@ public class WorkCalendarServiceJs {
 			res.append(" value='")
 			.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3())
 			.append("'>") ;
-			res.append(wqr.get4()).append(" вместо ").append(wqr.get3()).append("") ;
+			res.append(wqr.get4()).append(" вместо ").append(wqr.get3());
 			res.append("</i></li>") ;
 		}
 		res.append("</ul></td><td><ul>") ;
@@ -670,7 +669,7 @@ public class WorkCalendarServiceJs {
 				res.append("; background:").append(wqr.get3()) ;
 			}
 			if (wqr.get4()!=null) {
-				res.append(";color:").append(wqr.get4()).append("") ;
+				res.append(";color:").append(wqr.get4());
 			}
 			res.append("' ") ;
 			res.append("onclick=\"this.childNodes[1].checked='checked';checkRecord('")
@@ -691,7 +690,9 @@ public class WorkCalendarServiceJs {
 	public String getDirectByPatient(String aLastname, String aFirstname, String aMiddlename
 			, String aBirthday, String aPolicySeries, String aPolicyNumber
 			,Long aRayon, String aRayonName, HttpServletRequest aRequest) throws NamingException {
-		if (new StringBuilder().append(aLastname!=null?aLastname:"").append(aFirstname!=null?aFirstname:"").append(aMiddlename!=null?aMiddlename:"").length()<4 && new StringBuilder().append(aPolicySeries!=null?aPolicySeries:"").append(aPolicyNumber!=null?aPolicyNumber:"").length()<4) return "введите данные для поиска" ;
+		if (aLastname==null
+				|| (aLastname+ (aFirstname!=null ? aFirstname : "")+(aMiddlename!=null ? aMiddlename : "")).length()<4
+				&& ((aPolicySeries!=null ? aPolicySeries : "")+(aPolicyNumber!=null ? aPolicyNumber : "")).length()<4) return "введите данные для поиска" ;
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder preInfo = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -745,7 +746,7 @@ public class WorkCalendarServiceJs {
 		} else {
 			preInfo.append("% ") ;
 		}
-		if (aRayon!=null && aRayon>Long.valueOf(0)) {
+		if (aRayon!=null && aRayon> 0L) {
 			sql.append(" and p.rayon_id='").append(aRayon).append("' ") ;
 			preInfo.append(aRayonName);
 		} else {
@@ -818,7 +819,7 @@ public class WorkCalendarServiceJs {
 		if (aPolicyNumber!=null && !aPolicyNumber.equals("")) {
 			sql.append(" and mp.polNumber='").append(aPolicyNumber.toUpperCase()).append("' ") ;
 		}
-		if (aRayon!=null && aRayon>Long.valueOf(0)) {
+		if (aRayon!=null && aRayon> 0L) {
 			sql.append(" and p.rayon_id='").append(aRayon).append("' ") ;
 		}
 		sql.append(") and m.dateStart is null ") ;
@@ -854,7 +855,9 @@ public class WorkCalendarServiceJs {
 	public String getPatients(String aLastname, String aFirstname, String aMiddlename
 			, String aBirthday, String aPolicySeries, String aPolicyNumber
 			,Long aRayon, HttpServletRequest aRequest) throws NamingException {
-		if (new StringBuilder().append(aLastname!=null?aLastname:"").append(aFirstname!=null?aFirstname:"").append(aMiddlename!=null?aMiddlename:"").length()<4 && new StringBuilder().append(aPolicySeries!=null?aPolicySeries:"").append(aPolicyNumber!=null?aPolicyNumber:"").length()<4) return "введите данные для поиска" ;
+		if (aLastname==null
+				|| (aLastname+(aFirstname!=null ? aFirstname : "")+(aMiddlename!=null ? aMiddlename : "")).length()<4
+				&& ((aPolicySeries!=null?aPolicySeries:"")+(aPolicyNumber!=null?aPolicyNumber:"")).length()<4) return "введите данные для поиска" ;
 		StringBuilder sql = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		sql.append("select p.id,p.patientSync,p.lastname,p.firstname,p.middlename,to_char(p.birthday,'dd.mm.yyyy') from patient p left join medpolicy mp on mp.patient_id=p.id where p.lastname like '").append(aLastname.toUpperCase()).append("%' ") ;
@@ -873,7 +876,7 @@ public class WorkCalendarServiceJs {
 		if (aPolicyNumber!=null && !aPolicyNumber.equals("")) {
 			sql.append(" and mp.polNumber='").append(aPolicyNumber.toUpperCase()).append("' ") ;
 		}
-		if (aRayon!=null && aRayon>Long.valueOf(0)) {
+		if (aRayon!=null && aRayon> 0L) {
 			sql.append(" and p.rayon_id='").append(aRayon).append("' ") ;
 		}
 		sql.append(" group by p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday") ;
@@ -881,14 +884,13 @@ public class WorkCalendarServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),20);
 		StringBuilder res = new StringBuilder() ;
 		res.append("<form name='frmPatient' id='frmPatient' action='javascript:step6()'><ul id='listPatients'>") ;
-		boolean isFirst = false ;
+		boolean onlyOneFoud = list.size()==1;
 		for (WebQueryResult wqr:list) {
 			
 			res.append("<li ondblclick=\"this.childNodes[1].checked='checked';document.forms['frmPatient'].action='javascript:step6Finish()';document.forms['frmPatient'].submit();\" onclick=\"this.childNodes[1].checked='checked';document.forms['frmPatient'].action='javascript:step6()';document.forms['frmPatient'].submit()\">") ;
 			res.append(" <input class='radio' type='radio' name='rdPatient' id='rdPatient' ") ;
-			if (isFirst) {
+			if (onlyOneFoud) {
 				res.append(" checked='true' ") ;
-				isFirst=false ;
 			}
 			res.append(" value='")
 			.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3())
@@ -1136,7 +1138,7 @@ public class WorkCalendarServiceJs {
 			.append(aWorkCalendar).append(",'").append(getMonth(month+1,false))
 			.append("','").append(Integer.valueOf(aYear));
 			if (aVocWorkFunction!=null) res.append("','").append(aVocWorkFunction);
-			res.append("');\">").append("")
+			res.append("');\">")
 			//.append(getMonth(month+1,true)).append(" ").append(Integer.valueOf(aYear))
 			.append("-></a> ") ;
 		}
@@ -1178,7 +1180,7 @@ public class WorkCalendarServiceJs {
 				res.append("</tr><tr>") ;
 			}
 		//	boolean isBusy = Integer.valueOf(""+wqr.get4())==0?true:false ;
-			boolean isBusy = Integer.parseInt(""+wqr.get4())==0?true:false ;
+			boolean isBusy = Integer.parseInt("" + wqr.get4()) == 0;
 			res.append("<td id='tdDay").append(wqr.get3()).append("'");
 			//if (true) {
 				res.append("onclick=\"step5(this,'").append(aWorkCalendar).append("','").append(wqr.get1())
@@ -1216,14 +1218,14 @@ public class WorkCalendarServiceJs {
 		res.append("</tr>") ;
 		if (aVocWorkFunction!=null) {
 			res.append("<tr>") ;
-			res.append("<td colspan='7' valign='top'><div id='rowStep6Time_").append("").append(aVocWorkFunction).append("' >Выберите дату</div></td>") ;
+			res.append("<td colspan='7' valign='top'><div id='rowStep6Time_").append(aVocWorkFunction).append("' >Выберите дату</div></td>") ;
 			res.append("</tr>") ;
 		}	
 		res.append("</table></form>") ;
 		return res.toString() ;
 	}
 	private String getMonth(int aMonth,boolean aFullname) {
-		String month = "" ;
+		String month;
 		switch (aMonth) {
 			case 1:	month=aFullname?"Январь":"01" ;	break;
 			case 2:	month=aFullname?"Февраль":"02" ;break;
@@ -1266,7 +1268,7 @@ public class WorkCalendarServiceJs {
 	public String getTimesByWorkCalendarDay(Long aWorkCalendar,Long aWorkCalendarDay,Long aVocWorkFunction,HttpServletRequest aRequest) throws NamingException, JspException {
 		StringBuilder sql = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Boolean isRemoteUser = remoteUser(service, aRequest) ;
+		boolean isRemoteUser = remoteUser(service, aRequest) ;
 		sql.append(" select wct.id,cast(wct.timeFrom as varchar(5)) as wcttimeFrom")
 			.append(" ,case when wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 0 when wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 2 else 1 end")
 			.append(" ,wct.medCase_id");
@@ -1288,8 +1290,8 @@ public class WorkCalendarServiceJs {
 		sql.append(",vsrt.background as v16srtbackground ") ;
 		
 		if (isRemoteUser) {
-			sql.append(", case when sw.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser1") ;
-			sql.append(", case when w.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser2") ;
+			sql.append(", case when sw.lpu_id!='").append(theLpuRemoteUser != null ? theLpuRemoteUser : "").append("' then 1 else null end as notViewRetomeUser1");
+			sql.append(", case when w.lpu_id!='").append(theLpuRemoteUser != null ? theLpuRemoteUser : "").append("' then 1 else null end as notViewRetomeUser2");
 		} else {
 			sql.append(",cast('-' as varchar(1)) as emp1,cast('-' as varchar(1)) as emp2");
 		}
@@ -1338,8 +1340,7 @@ public class WorkCalendarServiceJs {
 		int cntLi = 1 ;
 
 		int i=0 ;
-		boolean first =false;
-		
+
 		for (WebQueryResult wqr:list) {
 			i++ ;
 			if (i==1) res.append("<li class='liList'><ul class='ulTime'>") ;
@@ -1359,7 +1360,7 @@ public class WorkCalendarServiceJs {
 				if (!info) {
 					res.append("<li id='liTimeBusyForRemoteUser' >") 
 					.append(wqr.get2()) .append(" ") ;
-					res.append("-ЗАНЯТО").append("") ;
+					res.append("-ЗАНЯТО");
 				} else {
 					if (wqr.get7()!=null) {
 						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("' ><strike>")
@@ -1375,7 +1376,7 @@ public class WorkCalendarServiceJs {
 				if (!info) {
 					res.append("<li id='liTimeBusyForRemoteUser' >") 
 					.append(wqr.get2()).append(" ") ;
-					res.append("ЗАНЯТО").append("") ;
+					res.append("ЗАНЯТО");
 				} else {
 					if (wqr.get4()!=null) { // Если визит уже оформлен
 						String prelastname = ""+wqr.get8() ;
@@ -1383,21 +1384,19 @@ public class WorkCalendarServiceJs {
 						//if (wqr.get13()!=null) lastname=lastname+" ("+wqr.get13()+")" ;
 						res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'").append(wqr.get19()!=null?" title='"+wqr.get19().toString()+"' ":"").append(">") ;
 						String add = "" ;
-						if (prelastname!=null && lastname!=null) {
-							if (!prelastname.startsWith(lastname)) {
-								add = " <i> вместо "+prelastname+"</i> " ;
-							}
-						}
+                        if (!prelastname.startsWith(lastname)) {
+                            add = " <i> вместо "+prelastname+"</i> " ;
+                        }
 						if (wqr.get13()!=null) add = add+" ("+wqr.get13()+")" ;
 						if (wqr.get7()!=null) {
 							res.append(" <strike><u>")
-							.append(wqr.get2()).append("")
+							.append(wqr.get2())
 							.append(" ") ;
 							res.append(wqr.get5()).append(add).append("</strike></u>")  ;
 						} else {
 							res.append(" <u>");
 							res.append(" <a target='_blank' href=\"print-begunok.do?s=SmoVisitService&m=printDirectionByTime&wct=").append(wqr.get1()).append("\"").append(wqr.get1()).append("'\">ПЕЧАТЬ</a> ")  ;
-							res.append(wqr.get2()).append("")
+							res.append(wqr.get2())
 							.append(" ") ;
 							res.append(wqr.get5()).append(add).append("</u>")  ;
 						}
@@ -1415,7 +1414,6 @@ public class WorkCalendarServiceJs {
 				if (!info) {
 					res.append("<li id='liTimeBusyForRemoteUser' >") 
 					.append(wqr.get2()) .append(" ") ;
-					res.append("ЗАНЯТО").append("") ;
 				} else {
 					if (reserve) {
 						res.append("<li id='liTime' style='color:").append(wqr.get15()).append("; background:").append(wqr.get16()).append("' ondblclick=\"this.childNodes[1].checked='checked';step6Finish('").append(wqr.get1()).append("')\" onclick=\"this.childNodes[1].checked='checked';step6();\">") ;
@@ -1423,7 +1421,6 @@ public class WorkCalendarServiceJs {
 						//res.append("<li id='liReserve' style='color:").append(wqr.get15()).append("; background:").append(wqr.get16()).append("'>") ;
 						//res.append(wqr.get2()).append(" ") ;
 						res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
-						if (first) res.append(" checked='true'");
 						res.append(" value='").append(aWorkCalendarDay).append("#").append(wqr.get1()).append("#").append(wqr.get2()).append("'>") ;
 						if (RolesHelper.checkRoles("/Policy/Mis/Worker/WorkCalendar/DeleteTime", aRequest)) {
 							res.append("<a href=\"javascript:deleteWCTime('").append(wqr.get1()).append("')\">DEL</a>") ;
@@ -1435,7 +1432,6 @@ public class WorkCalendarServiceJs {
 						res.append("<li id='liTime' ondblclick=\"this.childNodes[1].checked='checked';step6Finish('").append(wqr.get1()).append("')\" onclick=\"this.childNodes[1].checked='checked';step6();\">") ;
 						
 						res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
-						if (first) res.append(" checked='true'");
 						res.append(" value='").append(aWorkCalendarDay).append("#").append(wqr.get1()).append("#").append(wqr.get2()).append("'>") ;
 						if (RolesHelper.checkRoles("/Policy/Mis/Worker/WorkCalendar/DeleteTime", aRequest)) {
 							res.append("<a href=\"javascript:deleteWCTime('").append(wqr.get1()).append("')\">DEL</a>") ;
@@ -1455,12 +1451,8 @@ public class WorkCalendarServiceJs {
 				res.append("</ul></li>") ;
 				i=0 ;
 			}
-			first=false ;
 		}
-		if (i<=cntLi) {
-			res.append("</ul></li>") ;
-		}
-		res.append("</ul>") ;
+			res.append("</ul></li></ul>") ;
 		//res.append("<button>Выбрать</button>");
 		return res.toString() ;
 	}
@@ -1568,7 +1560,7 @@ public class WorkCalendarServiceJs {
 	}
 	
 	
-	public String getInfoDay(String aDate, HttpServletRequest aRequest) throws NamingException {
+	public String getInfoDay(String aDate, HttpServletRequest aRequest) {
 		//IPolyclinicMedCaseService service = Injection.find(aRequest).getService(IPolyclinicMedCaseService.class) ;
 		return aDate ;
 		
@@ -1598,8 +1590,7 @@ public class WorkCalendarServiceJs {
 		
 	}
 	public Long getCurrentCalendarDay(HttpServletRequest aRequest) {
-		Long curCalDay = (Long)aRequest.getSession().getAttribute("smo_visit.currentCalendarDay") ;
-		return curCalDay ;
+		return (Long)aRequest.getSession().getAttribute("smo_visit.currentCalendarDay") ;
 	}
 	
 	public String getTableHeaderByDayAndFunction(String aDateStart, String aDateFinish,Long aWidthSpec, Long aWidthDate, HttpServletRequest aRequest) throws Exception {
@@ -1662,137 +1653,134 @@ public class WorkCalendarServiceJs {
 		calnext.setTime(dateStart) ;
 		int j =0;
 
-		for (int i = 0 ; i< listSpec.size(); i++) {
-			TableTimeBySpecialists row = listSpec.get(i) ;
-			if (idspec==null) {
-				spec = service.getWorkFunctionInfoById(row.getSpecialistId()) ;
-				calnext.setTime(dateStart) ;
-				tr.append("<tr") ;
-				tr.append(" class=\"x-grid-row x-grid-row-alt\">") ;
-				tr.append("<td class=\"x-grid-col \"><div class='x-grid-hd-spec'>") ;
-				tr.append(spec) ;
-				tr.append("</div></td>") ;
-				j=1;
+		for (TableTimeBySpecialists row : listSpec) {
+			if (idspec == null) {
+				spec = service.getWorkFunctionInfoById(row.getSpecialistId());
+				calnext.setTime(dateStart);
+				tr.append("<tr");
+				tr.append(" class=\"x-grid-row x-grid-row-alt\">");
+				tr.append("<td class=\"x-grid-col \"><div class='x-grid-hd-spec'>");
+				tr.append(spec);
+				tr.append("</div></td>");
+				j = 1;
 			}
-			if (idspec!=null &&!row.getSpecialistId().equals(idspec)) {
-				spec = service.getWorkFunctionInfoById(row.getSpecialistId()) ;
+			if (idspec != null && !row.getSpecialistId().equals(idspec)) {
+				spec = service.getWorkFunctionInfoById(row.getSpecialistId());
 				// новая строка
 				while (
-						calnext.getTime().getTime()<calstop.getTime().getTime()
-							)  {
-					 tr.append("<td >")  
-					 	.append("<div class='x-grid-col x-grid-cell-inner x-grid-hd-date'>")
-					 	.append("-")
-					 	.append("</div>")
-					 	.append("</td>");
-				
+						calnext.getTime().getTime() < calstop.getTime().getTime()
+				) {
+					tr.append("<td >")
+							.append("<div class='x-grid-col x-grid-cell-inner x-grid-hd-date'>")
+							.append("-")
+							.append("</div>")
+							.append("</td>");
+
 //tr.append("<td class=\"x-grid-hd-date\"><div class='x-grid-col x-grid-cell-inner'>-</div></td>");
-					calnext.add(Calendar.DATE, 1) ;
+					calnext.add(Calendar.DATE, 1);
 				}
-				
-					if (j==1) {
-						j=2 ;
-					} else{
-						j=1 ;
-					}
-			
-			
-				calnext.setTime(dateStart) ;
+
+				if (j == 1) {
+					j = 2;
+				} else {
+					j = 1;
+				}
+
+
+				calnext.setTime(dateStart);
 				tr.append("</tr><tr");
-				if (j==1)  {
-					tr.append(" class=\"x-grid-row x-grid-row-alt\"") ;
+				if (j == 1) {
+					tr.append(" class=\"x-grid-row x-grid-row-alt\"");
 				} else {
 					tr.append(" class=\"x-grid-row\"");
 				}
-				tr.append(">") ;
-				tr.append("<td class=\"x-grid-col \"><div class='x-grid-hd-spec'>") ;
+				tr.append(">");
+				tr.append("<td class=\"x-grid-col \"><div class='x-grid-hd-spec'>");
 				//tr.append(row.getSpecialist()) ;
-				tr.append(spec) ;
-				tr.append("</div></td>") ;
-				
-			} else {
-				// продолжается текущая строка
+				tr.append(spec);
+				tr.append("</div></td>");
+
 			}
-			calcurrent.setTime(row.getDate()) ;
-			
-			if (calcurrent.getTime().getTime()==calnext.getTime().getTime()) {	
-				 tr.append("<td >")  
-				 .append("<div class='x-grid-col x-grid-cell-inner x-grid-hd-date'>")
-				    .append("<a href='javascript:")
-				 	.append(aMethodName)
-				 	.append("(\"").append(row.getSpecialistId())	.append("\"")
-				 	.append(",\"").append(row.getCalendarDayId()).append("\"")
-				 	.append(",\"").append(row.getTimeMin()).append("\"")
-				 	//.append(",\"").append(row.getSpecialist()).append("\"")
-				 	.append(",\"").append(spec).append("\"")
-				 	.append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
-				 	.append(",\"").append(1).append("\"")
-				 	.append(")")
-				 	.append("'>") 
-				 	.append(row.getTimeMin())
-				 	.append("</a>-")
-				 	.append("<a href='javascript:")
-				 	.append(aMethodName)
-				 	.append("(\"").append(row.getSpecialistId())	.append("\"")
-				 	.append(",\"").append(row.getCalendarDayId()).append("\"")
-				 	.append(",\"").append(row.getTimeMax()).append("\"")
-				 	//.append(",\"").append(row.getSpecialist()).append("\"")
-				 	.append(",\"").append(spec).append("\"")
-				 	.append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
-				 	.append(",\"").append(0).append("\"")
-				 	.append(")")
-				 	.append("'>") 
-				 	.append(row.getTimeMax())
-				 	.append("</a>")
-				 	.append("</div>")
-				 	.append("</td>") ;
+			calcurrent.setTime(row.getDate());
+
+			if (calcurrent.getTime().getTime() == calnext.getTime().getTime()) {
+				tr.append("<td >")
+						.append("<div class='x-grid-col x-grid-cell-inner x-grid-hd-date'>")
+						.append("<a href='javascript:")
+						.append(aMethodName)
+						.append("(\"").append(row.getSpecialistId()).append("\"")
+						.append(",\"").append(row.getCalendarDayId()).append("\"")
+						.append(",\"").append(row.getTimeMin()).append("\"")
+						//.append(",\"").append(row.getSpecialist()).append("\"")
+						.append(",\"").append(spec).append("\"")
+						.append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
+						.append(",\"").append(1).append("\"")
+						.append(")")
+						.append("'>")
+						.append(row.getTimeMin())
+						.append("</a>-")
+						.append("<a href='javascript:")
+						.append(aMethodName)
+						.append("(\"").append(row.getSpecialistId()).append("\"")
+						.append(",\"").append(row.getCalendarDayId()).append("\"")
+						.append(",\"").append(row.getTimeMax()).append("\"")
+						//.append(",\"").append(row.getSpecialist()).append("\"")
+						.append(",\"").append(spec).append("\"")
+						.append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
+						.append(",\"").append(0).append("\"")
+						.append(")")
+						.append("'>")
+						.append(row.getTimeMax())
+						.append("</a>")
+						.append("</div>")
+						.append("</td>");
 			} else {
 				while (
-						calcurrent.getTime().getTime()!=calnext.getTime().getTime() 
-							&& calcurrent.getTime().getTime()<calstop.getTime().getTime()
-							) {
-					 tr.append("<td >")  
-					 	.append("<div class='x-grid-col x-grid-cell-inner x-grid-hd-date'>")
-					 	.append("-")
-					 	.append("</div>")
-					 	.append("</td>");
+						calcurrent.getTime().getTime() != calnext.getTime().getTime()
+								&& calcurrent.getTime().getTime() < calstop.getTime().getTime()
+				) {
+					tr.append("<td >")
+							.append("<div class='x-grid-col x-grid-cell-inner x-grid-hd-date'>")
+							.append("-")
+							.append("</div>")
+							.append("</td>");
 //tr.append("<td class=\"x-grid-hd-date\"><div class='x-grid-col x-grid-cell-inner'>-</div></td>");
-					calnext.add(Calendar.DATE, 1) ;
+					calnext.add(Calendar.DATE, 1);
 				}
-				if (calcurrent.getTime().getTime()==calnext.getTime().getTime()) {	
-					 tr.append("<td><div class='x-grid-col x-grid-col-id x-grid-cell-inner x-grid-hd-date'>")  
-				 	.append("<a href='javascript:")
-				 	.append(aMethodName)
-				 	.append("(\"").append(row.getSpecialistId())	.append("\"")
-				 	.append(",\"").append(row.getCalendarDayId()).append("\"")
-				 	.append(",\"").append(row.getTimeMin()).append("\"")
-				 	//.append(",\"").append(row.getSpecialist()).append("\"")
-				 	.append(",\"").append(spec).append("\"")
-				 	.append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
-				 	.append(",\"").append(1).append("\"")
-				 	.append(")")
-				 	.append("'>") 
-				 	.append(row.getTimeMin())
-				 	.append("</a>- ")
-				 	.append("<a href='javascript:")
-				 	.append(aMethodName)
-				 	.append("(\"").append(row.getSpecialistId())	.append("\"")
-				 	.append(",\"").append(row.getCalendarDayId()).append("\"")
-				 	.append(",\"").append(row.getTimeMax()).append("\"")
-				 	//.append(",\"").append(row.getSpecialist()).append("\"")
-				 	.append(",\"").append(spec).append("\"")
-				 	.append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
-				 	.append(",\"").append(0).append("\"")
-				 	.append(")")
-				 	.append("'>") 
-				 	.append(row.getTimeMax())
-				 	.append("</a>")
-				 	.append("</div></td>") ;
-				}				
+				if (calcurrent.getTime().getTime() == calnext.getTime().getTime()) {
+					tr.append("<td><div class='x-grid-col x-grid-col-id x-grid-cell-inner x-grid-hd-date'>")
+							.append("<a href='javascript:")
+							.append(aMethodName)
+							.append("(\"").append(row.getSpecialistId()).append("\"")
+							.append(",\"").append(row.getCalendarDayId()).append("\"")
+							.append(",\"").append(row.getTimeMin()).append("\"")
+							//.append(",\"").append(row.getSpecialist()).append("\"")
+							.append(",\"").append(spec).append("\"")
+							.append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
+							.append(",\"").append(1).append("\"")
+							.append(")")
+							.append("'>")
+							.append(row.getTimeMin())
+							.append("</a>- ")
+							.append("<a href='javascript:")
+							.append(aMethodName)
+							.append("(\"").append(row.getSpecialistId()).append("\"")
+							.append(",\"").append(row.getCalendarDayId()).append("\"")
+							.append(",\"").append(row.getTimeMax()).append("\"")
+							//.append(",\"").append(row.getSpecialist()).append("\"")
+							.append(",\"").append(spec).append("\"")
+							.append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
+							.append(",\"").append(0).append("\"")
+							.append(")")
+							.append("'>")
+							.append(row.getTimeMax())
+							.append("</a>")
+							.append("</div></td>");
+				}
 			}
-			
+
 			calnext.add(Calendar.DATE, 1);
-			idspec = row.getSpecialistId() ;
+			idspec = row.getSpecialistId();
 		}
 		if (listSpec.size()>0) {
 			
@@ -1877,8 +1865,7 @@ public class WorkCalendarServiceJs {
 	 * @return String "0" - всё ок
 	 */
     public String changeScheduleArrayReserve(Long[] array,Long reserveTypeId,HttpServletRequest aRequest) throws NamingException {
-        for (int i=0; i<array.length; i++)
-            changeScheduleElementReserve(array[i],reserveTypeId,aRequest);
+		for (Long aLong : array) changeScheduleElementReserve(aLong, reserveTypeId, aRequest);
 	    return "0";
     }
 

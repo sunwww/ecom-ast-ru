@@ -46,7 +46,7 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
     	//return theAllValue.findVocValueByQuery(aVocName, aQuery, aCount, aAdditional, ctx) ;/*
     	String query = aQuery.toUpperCase();
         String findedId = null;
-        boolean finded=false;
+        boolean finded;
         LinkedList<VocValue> ret = new LinkedList<>();
         if (!StringUtil.isNullOrEmpty(aQuery)) {
             for (VocValue value : listAll(aAdditional,aContext)) {

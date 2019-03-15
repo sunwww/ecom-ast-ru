@@ -82,18 +82,12 @@ public class Injection {
 
 
         if (filePropXml.exists()) {
-            FileInputStream in = new FileInputStream(filePropXml) ;
-            try {
+            try (FileInputStream in = new FileInputStream(filePropXml)) {
                 prop.loadFromXML(in);
-            } finally {
-                in.close();
             }
         } else if (fileProp.exists()) {
-            FileInputStream in = new FileInputStream(fileProp);
-            try {
+            try (FileInputStream in = new FileInputStream(fileProp)) {
                 prop.load(in);
-            } finally {
-                in.close();
             }
         } else {
             throw new IllegalStateException("Нет файла с настройками: " + filePropXml.getAbsolutePath()
@@ -131,8 +125,6 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                 } catch (Exception e) {
                     throw new IllegalStateException("Ошибка подключение к серверу: " + e.getMessage(), e);
                 }
-            } else {
-
             }
         } catch (IOException e) {
             throw new IllegalStateException("Ошибка настройки приложения: " + e.getMessage(), e);
@@ -162,8 +154,6 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                             , prop.getProperty("java.naming.security.protocol", "other")
                     );
                     aRequest.getSession().setAttribute(KEY, injection);
-            } else {
-
             }
         } catch (IOException e) {
             throw new IllegalStateException("Ошибка настройки приложения: " + e.getMessage(), e);

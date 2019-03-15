@@ -41,7 +41,7 @@ public class FondWebService {
 
 	public static Object checkPatientBySnils(HttpServletRequest aRequest, PatientForm aPatFrm, String aSnils)   throws Exception{
 		
-		String result = null ;
+		String result;
 		WSLocator service = new WSLocator() ;
         service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
         //System.out.println("http://"+theAddress+"/ws/WS.WSDL") ;
@@ -59,7 +59,7 @@ public class FondWebService {
     }
 	public static Object checkPatientByMedPolicy(HttpServletRequest aRequest, PatientForm aPatFrm, String aSeries, String aNumber)   throws Exception{
 		
-		String result = null ;
+		String result;
 		WSLocator service = new WSLocator() ;
         service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
         //System.out.println("http://"+theAddress+"/ws/WS.WSDL") ;
@@ -78,7 +78,7 @@ public class FondWebService {
 
 	public static Object checkPatientByFioDr(HttpServletRequest aRequest, PatientForm aPatFrm, String aLastname,String aFirstname
 			,String aMiddlename, String aBirthday) throws Exception  {
-		String result = null ;
+		String result;
 		WSLocator service = new WSLocator() ;
         service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
@@ -96,7 +96,7 @@ public class FondWebService {
         return getInfoByPatient(aRequest, aPatFrm,soap,rz);
     }
 	public static Object checkPatientByDocument(HttpServletRequest aRequest, PatientForm aPatFrm, String aType, String aSeries,String aNumber) throws Exception  {
-		String result = null ;
+		String result;
 		WSLocator service = new WSLocator() ;
 		service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
 		WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
@@ -147,8 +147,7 @@ public class FondWebService {
 					" left join patient p on p.id=att.patient_id" +
 					" where att.dateto is null and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
 		} else if (typePat.equals("3")) {
-			patSql.append(" from patient p" +
-					" where p.id in ("+aPatientList+") and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
+			patSql.append(" from patient p" + " where p.id in (").append(aPatientList).append(") and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
 		}
 	//	System.out.println("updPatient ="+updPatient +":"+updDocument);
 		boolean updatePatient=false, updatePolicy=false, updateDocument = false, updateAttachment=false;
@@ -160,7 +159,6 @@ public class FondWebService {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		StringBuilder str = new StringBuilder();
 		Collection<WebQueryResult> pats = serviceWQS.executeNativeSql(patSql.toString());
 		if (!pats.isEmpty()) {
 			PatientFondCheckData pfc = service.getNewPFCheckData(updatePatient, updateDocument, updatePolicy, updateAttachment);
@@ -171,11 +169,6 @@ public class FondWebService {
 			} else if (typePat.equals("3")) {
 				pfc.setComment(pfc.getComment()+"Выборочная проверка пациентов");
 			}
-		//	String defaultLpu =null;
-		//	Collection<WebQueryResult> listSC = serviceWQS.executeNativeSql("select sc.keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'") ;
-		//	if (!listSC.isEmpty()) {
-		//		defaultLpu = listSC.iterator().next().get1().toString();
-		//	}
 			int i=0;
 			for (WebQueryResult pat: pats) {
 				//if (i==10)break; 
@@ -184,13 +177,11 @@ public class FondWebService {
 				String middlename = pat.get4().toString(); String birthday = pat.get5().toString();
 				String aa =  lastname+" "+ firstname+" "+middlename+" "+birthday+" "+pid;
 				System.out.println("Проверка по базе ФОМС. Запись №= "+i +" "+ aa);
-				str.append(aa).append("#");
 				//Для отладки
 				
 		
-		//return  str.toString();
 		//------------------
-		String resultRZ = null ;
+		String resultRZ;
 		WSLocator serviceLocator = new WSLocator() ;
 		serviceLocator.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
 		WS_MES_SERVERSoapPort aSoap = serviceLocator.getWS_MES_SERVERSoapPort();
@@ -200,9 +191,9 @@ public class FondWebService {
 		String aRz = "";
 		InputStream in = new ByteArrayInputStream((resultRZ).getBytes());
 		Document doc = new SAXBuilder().build(in);
-		Element root = null;
-		Element cur1 = null;
-		Element rze = null;
+		Element root;
+		Element cur1;
+		Element rze;
 		try {
 			root = doc.getRootElement();
 			cur1 = root.getChild("cur1") ;
@@ -215,10 +206,7 @@ public class FondWebService {
 		in.close() ;
 		//------------------
 		if (!aRz.equals("")) {		
-			StringBuilder sb = new StringBuilder() ;
 			String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
-		//	System.out.println("result info:") ;
-		//	System.out.println(result) ;
 			result = updateXml(result) ;
 			
 			
@@ -233,8 +221,8 @@ public class FondWebService {
 			root = doc.getRootElement();
 			@SuppressWarnings("unchecked")
 			List<Element> list_cur = root.getChildren("cur1");
-			StringBuilder fiodr = new StringBuilder();
-			StringBuilder policy = new StringBuilder();
+		//	StringBuilder fiodr = new StringBuilder();
+		//	StringBuilder policy = new StringBuilder();
 			//StringBuilder docs = new StringBuilder();
 			for (Element e:list_cur) {
 				//F:I:O:DR:RZ:DEAD:SNILS:DATEPRIK:SP_PRIK:LPU:SSD:KODPODR
@@ -243,7 +231,7 @@ public class FondWebService {
 				attachedType=e.getChildText("sp_prik");attachedLpu=e.getChildText("lpu");
 				doctorSnils=e.getChildText("ssd"); codeDepartment=e.getChildText("kodpodr");
 				dateDeath = e.getChildText("datedead");
-				fiodr.append(lastname).append(":") ;
+/*				fiodr.append(lastname).append(":") ;
 				fiodr.append(firstname).append(":") ;
 				fiodr.append(middlename).append(":") ;
 				fiodr.append(birthday).append(":") ;
@@ -255,7 +243,7 @@ public class FondWebService {
 				fiodr.append(attachedLpu).append(":");
 				fiodr.append(doctorSnils).append(":");
 				fiodr.append(codeDepartment);
-			}
+*/			}
 			
 			in.close() ;
 			result = (String)aSoap.get_POLIS_from_RZ(aRz, theLpu) ;
@@ -269,7 +257,7 @@ public class FondWebService {
 			//@SuppressWarnings("unchecked")
 			list_cur = root.getChildren("cur1");
 			String companyCode = null, policySeries = null, policyNumber = null, policyDateFrom = null, policyDateTo = null;
-			sb.append("<h2>Список полисов</h2><table border=1 width=100%>") ;
+	//		sb.append("<h2>Список полисов</h2><table border=1 width=100%>") ;
 			
 			try {
 				for (Element el:list_cur) {
@@ -301,8 +289,8 @@ public class FondWebService {
 					
 					if (current.equals("1")) {
 						String datEnd = ddosr; //(ddosr!=null && !ddosr.equals(""))?ddosr:dpe ;
-						policy.append(serPol).append(":").append(numPol).append(":").append(sk).append(":")
-						.append(dpp).append(":").append(datEnd);
+			//			policy.append(serPol).append(":").append(numPol).append(":").append(sk).append(":")
+			//			.append(dpp).append(":").append(datEnd);
 						
 	            		companyCode=sk; policySeries=serPol;policyNumber=numPol;policyDateFrom=dpp; policyDateTo=datEnd;
 												
@@ -327,7 +315,7 @@ public class FondWebService {
 			list_cur = root.getChildren("cur1");
 			String documentType = null, documentSeries = null, documentNumber = null ;
 			String documentDateIssued = null; String documentWhomIssued = null;
-			sb.append("<h2>Список документов</h2><table border=1 width=100%>") ;
+/*			sb.append("<h2>Список документов</h2><table border=1 width=100%>") ;
 			sb.append("<tr>");
 			sb.append("<th>").append("</th>") ;
 			sb.append("<th>").append("Тип").append("</th>") ;
@@ -336,10 +324,9 @@ public class FondWebService {
 			sb.append("<th>").append("Дата выдачи").append("</th>") ;
 			sb.append("<th>").append("Кем выдан").append("</th>") ;
 			sb.append("</tr>") ;
-			Date maxDate = null;
+*/			Date maxDate = null;
 			for (Element el:list_cur) {
-				sb.append("<tr>") ;
-				String ac = "" ;
+	//			sb.append("<tr>") ;
 				Date currentDocDate = DateFormat.parseDate(el.getChildText("doc_d"), "yyyy-MM-dd");
 				if (maxDate==null||currentDocDate.getTime()>maxDate.getTime()) {
 					maxDate = currentDocDate;
@@ -360,9 +347,9 @@ public class FondWebService {
 			root = doc.getRootElement();
 			list_cur.clear() ;
 			list_cur = root.getChildren("cur1");
-			sb.append("<h2>Список адресов</h2><table border=1 width=100%>") ;
+//			sb.append("<h2>Список адресов</h2><table border=1 width=100%>") ;
 			String kladr = null, house = null, houseBuilding = null, flat = null , okato = null, street = null;
-			sb.append("<tr>") ;
+/*			sb.append("<tr>") ;
 			sb.append("<th></th>") ;
 			sb.append("<th>").append("КЛАДР").append("</th>") ;
 			sb.append("<th>").append("Индекс").append("</th>") ;
@@ -374,9 +361,9 @@ public class FondWebService {
 			sb.append("<th>").append("Корп").append("</th>") ;
 			sb.append("<th>").append("Кв").append("</th>") ;
 			sb.append("</tr>") ;
-			for (Element el:list_cur) {
+*/			for (Element el:list_cur) {
 				//System.out.println(result);
-				sb.append("<tr>") ;
+//				sb.append("<tr>") ;
 				//String ac = "" ;
 				String hn = el.getChildText("house") ;
 				String hb = el.getChildText("section") ;
@@ -500,7 +487,7 @@ public class FondWebService {
     			.append(attLpu).append("#").append(attType).append("#").append(attDate).append("#").append(doctorSnils)
     			.append("'/>").append("</td>") ;
            	
-            	sb.append("<td").append("").append(">").append(aRz).append("</td>") ;
+            	sb.append("<td").append(">").append(aRz).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getLastname().equals(f)?"":" bgcolor='yellow'"):"").append(">").append(f).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getFirstname().equals(i)?"":" bgcolor='yellow'"):"").append(">").append(i).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getMiddlename().equals(o!=null?o:"")?"":" bgcolor='yellow'"):"").append(">").append(o).append("</td>") ;
@@ -539,8 +526,8 @@ public class FondWebService {
         	sb.append("<h2>Список полисов</h2><table border=1 width=100%>") ;
         	sb.append("<tr>");
         	//sb.append("<th>").append("").append("</th>") ;
-        	sb.append("<th>").append("").append("</th>") ;
-        	sb.append("<th>").append("").append("</th>") ;
+        	sb.append("<th>").append("</th>") ;
+        	sb.append("<th>").append("</th>") ;
         	sb.append("<th>").append("СК").append("</th>") ;
         	sb.append("<th>").append("Серия").append("</th>") ;
         	sb.append("<th>").append("Номер").append("</th>") ;
@@ -643,7 +630,7 @@ public class FondWebService {
 			isStart=true ;
             sb.append("<h2>Список документов</h2><table border=1 width=100%>") ;
             sb.append("<tr>");
-            sb.append("<th>").append("").append("</th>") ;
+            sb.append("<th>").append("</th>") ;
             sb.append("<th>").append("Тип").append("</th>") ;
             sb.append("<th>").append("Серия").append("</th>") ;
             sb.append("<th>").append("Номер").append("</th>") ;

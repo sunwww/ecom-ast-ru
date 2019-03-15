@@ -1,7 +1,10 @@
 package ru.ecom.mis.ejb.service.jaas;
 
-import java.util.HashMap;
-import java.util.List;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
+import ru.ecom.mis.ejb.domain.lpu.LpuArea;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 
 import javax.annotation.EJB;
 import javax.ejb.Remote;
@@ -9,12 +12,8 @@ import javax.ejb.Stateless;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
-import ru.ecom.mis.ejb.domain.lpu.LpuArea;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Работа с политиками безопасности
@@ -39,7 +38,7 @@ public class JaasMisServiceBean implements IJaasMisService {
                 if(monitor.isCancelled()) throw new IllegalMonitorStateException("Прервано пользователем") ;
                 MisLpu lpu = area.getLpu();
                 importPolicy(service, "/Policy/Mis/MisLpuDynamic/"+lpu.getId()+"/Areas", area.getId()
-                        , new StringBuilder().append(area.getNumber()).append(" ").append(area.getTypeName()).toString());
+                        , area.getNumber() + " " + area.getTypeName());
                 monitor.setText(area.getName());
                 monitor.advice(1);
             }
@@ -58,8 +57,8 @@ public class JaasMisServiceBean implements IJaasMisService {
     }
 
     private static void importPolicy(ISecPolicyImportService aService, String aPrefix, long aId, String aName) {
-        String prefix = new StringBuilder().append(aPrefix).append("/").append(aId).toString() ;
-        HashMap<String,String> map = new HashMap<String, String>();
+        String prefix = aPrefix + "/" + aId;
+        HashMap<String,String> map = new HashMap<>();
         map.put(String.valueOf(aId), aName) ;
         aService.importPolicy(prefix+"/View",map) ;
         aService.importPolicy(prefix+"/Edit",map) ;

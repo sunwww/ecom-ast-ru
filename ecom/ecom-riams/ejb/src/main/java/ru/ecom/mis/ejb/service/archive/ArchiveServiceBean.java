@@ -21,14 +21,14 @@ public class ArchiveServiceBean implements IArchiveService{
 				aWorkFunctionId = Long.valueOf(
 						theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+aUsername+"'").getSingleResult().toString());
 			}
-			for (int i=0;i<sId.length;i++) {
-				Long aStatCardId = Long.valueOf(sId[i]);
-				if (aStatCardId==null||aStatCardId==0) {return null;}
+			for (String sl: sId) {
+				Long aStatCardId = Long.valueOf(sl);
+				if (aStatCardId==0) {return null;}
 				StatisticStub ss = theManager.find(StatisticStub.class, aStatCardId);
 				if (ss.getMedCase().getDateFinish()== null) {
-					ret.append("СЛС с номером стат. карты №"+ss.getCode()+" не законцен").append("#");
+					ret.append("СЛС с номером стат. карты №").append(ss.getCode()).append(" не законцен").append("#");
 				} else if (ss.getArchiveCase()!=null) {
-					ret.append("История болезни находится в архиве!"+ss.getArchiveCase()).append("#");
+					ret.append("История болезни находится в архиве!").append(ss.getArchiveCase()).append("#");
 				}else {
 					ArchiveCase ac = new ArchiveCase();
 					ac.setStatCard(ss.getId());

@@ -27,11 +27,9 @@ public class PharmacyServiceJs {
         Integer bol=1;
         try {
             IWebQueryService service2 = Injection.find(aRequest).getService(IWebQueryService.class);
-            StringBuilder sql = new StringBuilder();
-            StringBuilder sb = new StringBuilder();
-            sql.append("select pharmEndPrescription ("+prescriptionId+",'"+username+"');");
+            String sql = "select pharmEndPrescription ("+prescriptionId+",'"+username+"');";
 
-            Collection <WebQueryResult> res = service2.executeNativeSql(sql.toString());
+            Collection <WebQueryResult> res = service2.executeNativeSql(sql);
             for (WebQueryResult wqr: res) {
                 bol = (Integer) wqr.get1();
             }

@@ -42,7 +42,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		ExternalMedservice externalMedservice;
 		@SuppressWarnings("unchecked")
 		List<ExternalMedservice> list = theManager == null? null : theManager.createQuery("FROM Document WHERE dtype='ExternalMedservice' AND referenceTo='"+aUri+"'").getResultList();
-		if (list != null && list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 			externalMedservice = list.get(0) ;			
 		} else {
 			externalMedservice = new ExternalMedservice();
@@ -115,9 +115,9 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	        String lastname = upperCase(aPatient.getChildText("LastName"));
 	        String fmn = upperCase(aPatient.getChildText("FirstMiddleName")) ;
 	        String syncPat = upperCase(aPatient.getChildText("InsuranceNumber")) ;
-	        String[] firstMiddleName = fmn==null? null: fmn.split(" ") ;
-	        String firstname = (firstMiddleName==null||firstMiddleName.length<1)?"":firstMiddleName[0];
-	        String middlename = (firstMiddleName==null||firstMiddleName.length<2)?"":firstMiddleName[1];
+	        String[] firstMiddleName = fmn.split(" ");
+	        String firstname = firstMiddleName.length < 1 ?"":firstMiddleName[0];
+	        String middlename = firstMiddleName.length < 2 ?"":firstMiddleName[1];
 	        Date birthday = toDate(aPatient.getChildText("DOB"));
         
 	        //Long sex = ConvertSql.parseLong(patient.getChildText("Sex")=="M"?1:2);
@@ -242,7 +242,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		persist(documentParameter);
 		
 		if (theDocumentParametersTree.get(sectionID)==null){
-			theDocumentParametersTree.put(sectionID, new TreeMap<String, Object>());
+			theDocumentParametersTree.put(sectionID, new TreeMap<>());
 		}
 		
 		theDocumentParametersTree.get(sectionID).put(toString(100+sectionItem).substring(1), documentParameter);
@@ -275,7 +275,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		Entry<String, TreeMap<String, Object>> tm;
 		Entry<String, Object> pm;
 		String groupKey;
-		String norm="";
+		String norm;
 		
 		Iterator<Entry<String, TreeMap<String, Object>>> ti = parametersTree.iterator();		
 		int i=0;
@@ -295,7 +295,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				VocDocumentParameter vocDocumentParameter =  documentParameter.getParameter();
 				norm="";
 				if (vocDocumentParameter.getNormMinimum()!=null){
-					norm=new StringBuilder().append(vocDocumentParameter.getNormMinimum()).append("-").append(vocDocumentParameter.getNormMaximum()).toString();
+					norm= vocDocumentParameter.getNormMinimum() + "-" + vocDocumentParameter.getNormMaximum();
 					norm = substring(norm, 255);
 				}
 				else  if (vocDocumentParameter.getNorm()!=null){
@@ -329,7 +329,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		return String.valueOf(aInt);
 	}
 	public static String substring(String aString, int aLength){
-		if (aString!=null && aString.length()>aLength) return new StringBuilder().append(aString.trim().substring(0, aLength-4)).append("...").toString() ;
+		if (aString!=null && aString.length()>aLength) return aString.trim().substring(0, aLength - 4) + "...";
 		return aString==null?"":aString;
 	}
 	public static String upperCase(String aString){
@@ -368,10 +368,10 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			String message ;
 			message = variable+": "+(value==null?"":value);
 			if (type.equals("D")) {
-				message = message + " ("+((java.util.Date) DateFormat.parseDate(value, "yyyy-MM-dd"))+")";
+				message = message + " ("+(DateFormat.parseDate(value, "yyyy-MM-dd"))+")";
 			}
 			if (type.equals("T")) {
-				message = message + " ("+((java.sql.Time) DateFormat.parseSqlTime(value)+")");
+				message = message + " ("+(DateFormat.parseSqlTime(value)+")");
 			}
 
 			println(message);
@@ -398,7 +398,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			AttributeOverride attributeOverride = (AttributeOverride) aClass.getAnnotation(AttributeOverride.class);
 			if (attributeOverride!=null){
 				Column column = attributeOverride.column();
-				if (column!=null) ret=column.name();
+				ret=column.name();
 			}
 		}
 		return ret;

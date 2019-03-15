@@ -55,9 +55,9 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
             	DepartmentJournalForm form =(DepartmentJournalForm) aForm ;
             	lpu = form.getDepartment() ;
             	
-            	if (lpu==null || lpu.equals(Long.valueOf(0))) {
+            	if (lpu==null || lpu.equals(0L)) {
             		lpu=Long.valueOf(aRequest.getParameter("id")!=null?aRequest.getParameter("id"):"0") ;
-            		if (lpu==null || lpu.equals(Long.valueOf(0))) {
+            		if (lpu.equals(0L)) {
             			form.addMessage(new FormMessage("Укажите отделение поиска")) ;
             		}
             	}

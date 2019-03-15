@@ -165,19 +165,17 @@ public class ContractServiceJs {
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("select cg.id as id,cg.numberdoc, to_char(cg.issueDate,'dd.MM.yyyy') as guarDate, mc.contractnumber as contractNumber")
-			.append(",cg.limitMoney, mc.pricelist_id as price")
-			.append(" from contractguarantee  cg")
-			.append(" left join contractperson cp on cp.id=cg.contractperson_id")
-			.append(" left join medpolicy mp on mp.patient_id=cp.patient_id")
-			.append(" left join medcontract mc on mc.id=cg.contract_id")
-			.append(" left join contractperson cpCustomer on cpCustomer.id=mc.customer_id")
-			.append(" left join vocguaranteekindhelp vgkh on vgkh.id=cg.kindhelp_id")
-			.append(" where mc.servicestream_id='"+aServiceStreamId+"'") 
-			.append(" and (cg.contractperson_id is null or cp.patient_id='"+aPatient+"') and vgkh.code='"+aMedhelpType+"'");
+					.append(",cg.limitMoney, mc.pricelist_id as price")
+					.append(" from contractguarantee  cg")
+					.append(" left join contractperson cp on cp.id=cg.contractperson_id")
+					.append(" left join medpolicy mp on mp.patient_id=cp.patient_id")
+					.append(" left join medcontract mc on mc.id=cg.contract_id")
+					.append(" left join contractperson cpCustomer on cpCustomer.id=mc.customer_id")
+					.append(" left join vocguaranteekindhelp vgkh on vgkh.id=cg.kindhelp_id").append(" where mc.servicestream_id='").append(aServiceStreamId).append("'").append(" and (cg.contractperson_id is null or cp.patient_id='").append(aPatient).append("') and vgkh.code='").append(aMedhelpType).append("'");
 			if (aDate!=null&&!aDate.equals("")) {
-				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=to_date('"+aDate+"','dd.MM.yyyy'))");
+				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=to_date('").append(aDate).append("','dd.MM.yyyy'))");
 			} else if (aDatePlanId!=null&&!aDatePlanId.equals("")){
-				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=(select calendardate from workcalendarday where id='"+aDatePlanId+"'))");
+				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=(select calendardate from workcalendarday where id='").append(aDatePlanId).append("'))");
 			} else {
 				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=current_date)");
 			}
@@ -202,10 +200,12 @@ public class ContractServiceJs {
 					}				
 				}
 				sb.setLength(0);
+				//id письма
+				//номер письма
+				//Дата письма
 				sb.append(guaranteeId) //id письма
-				.append("|гар. письмо № ").append(r.get2()) //номер письма
-				.append(" от ").append(r.get3()) //Дата письма
-				.append(" Остаток средств: "+(limit - spent)+" руб. (Договор №").append(r.get4()).append(")");
+						.append("|гар. письмо № ").append(r.get2()) //номер письма
+						.append(" от ").append(r.get3()).append(" Остаток средств: ").append(limit - spent).append(" руб. (Договор №").append(r.get4()).append(")");
 				return "1"+sb.toString();
 			} else {
 				return "0Не найдено гарантийное письмо";
@@ -225,9 +225,8 @@ public class ContractServiceJs {
 public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServletRequest aRequest) throws NamingException {
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "";
+		String sql;
 		if (aPriceListId==null) {
-			LOG.debug("Ищем прайс лист по СМО, либо по умолчанию");
 			sql = "select pl.id as priceBySLS" +
 				" , (select max(id) from pricelist where isdefault='1') as defaultPrice" +
 				" from medcase mc" +
@@ -537,7 +536,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		StringBuilder sql  = new StringBuilder() ;
 		sql.append("select ca.id,mc.priceList_id from contractaccount ca left join MedContract mc on mc.id=ca.contract_id where ca.id=").append(aAccount).append(" and (ca.isfinished='0' or ca.isfinished is null)") ;
 		List<Object[]> l = service.executeNativeSqlGetObj(sql.toString()) ; 
-		if (l.isEmpty()) {
+		if (!l.isEmpty()) {
 			Long pms=serviceC.getPriceMedService(ConvertSql.parseLong(l.get(0)[1]), aMS) ;
 			if (pms!=null) {
 				sql = new StringBuilder() ;
@@ -767,11 +766,11 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 	public String findServiceByPriceList( Long aPriceList, String aCode, String aName, String aDivName
 			, String aJavascript, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
-		String addWhereSql = "" ;
+		String addWhereSql;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		sql.append("select p.id as pid,p.code as pcode,p.name as pname from PricePosition p ")
-			.append("").append("where ") ;
+			.append("where ") ;
 		addWhereSql=" p.priceList_id='"+aPriceList+"' and " ;
 		sql.append(addWhereSql) ;
 	
@@ -881,7 +880,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 	public String updateExtDispPlanService(Long aPlan, String aAction, Long aServiceId, Long aAgeGroup, Long aSex, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String actionNext="" ;
-		Long sexOther = aSex!=null && aSex.equals(Long.valueOf(1))?Long.valueOf("2"):Long.valueOf("1") ;
+		Long sexOther = aSex!=null && aSex.equals(1L)?Long.valueOf("2"):Long.valueOf("1") ;
 		if (aAction!=null && (aAction.equals("Д") || aAction.equals("-"))) {
 			Collection<WebQueryResult> list = service.executeNativeSql("select edps.id,edps.sex_id "
 				+"from ExtDispPlanService edps left join vocsex vs on vs.id=edps.sex_id where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
@@ -979,33 +978,33 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String[] appService = aAppropriateService.split(",") ;
-		for (int i=0;i<appService.length;i++) {
-			String[] vr = appService[i].split(":") ;
-			String aMedService = vr[1] ;
-			String aPricePosition = vr[0] ;
-			StringBuilder sql = new StringBuilder() ;
+		for (String s : appService) {
+			String[] vr = s.split(":");
+			String aMedService = vr[1];
+			String aPricePosition = vr[0];
+			StringBuilder sql = new StringBuilder();
 			sql.append("select min(case when pms.medService_id='").append(aMedService)
-				.append("' then pms.id else null end) as pmsser")
-				.append(", min(case when pms.medService_id is null then pms.id else null end) as pmsmin")
-				.append(", min(case when pms.medService_id is not null and pms.medService_id='").append(aMedService)
-				.append("' then pms.id else null end) as pmsother")
-				.append(" from PriceMedService pms where pricePosition_id='").append(aPricePosition).append("'");
-			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
-			if (!list.isEmpty())  {
-				WebQueryResult wqr = list.iterator().next() ;
-				if (wqr.get1()!=null) {
-					
-				} else if (wqr.get2()!=null) {
-					service.executeUpdateNativeSql("update PriceMedService set medService_id='"+aMedService
-							+"' where id='"+wqr.get2()+"'") ;
-				} else if (wqr.get3()!=null) {
-					service.executeUpdateNativeSql("update PriceMedService set medService_id='"+aMedService
-							+"' where id='"+wqr.get3()+"'") ;
+					.append("' then pms.id else null end) as pmsser")
+					.append(", min(case when pms.medService_id is null then pms.id else null end) as pmsmin")
+					.append(", min(case when pms.medService_id is not null and pms.medService_id='").append(aMedService)
+					.append("' then pms.id else null end) as pmsother")
+					.append(" from PriceMedService pms where pricePosition_id='").append(aPricePosition).append("'");
+			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(), 1);
+			if (!list.isEmpty()) {
+				WebQueryResult wqr = list.iterator().next();
+				if (wqr.get1() != null) {
+
+				} else if (wqr.get2() != null) {
+					service.executeUpdateNativeSql("update PriceMedService set medService_id='" + aMedService
+							+ "' where id='" + wqr.get2() + "'");
+				} else if (wqr.get3() != null) {
+					service.executeUpdateNativeSql("update PriceMedService set medService_id='" + aMedService
+							+ "' where id='" + wqr.get3() + "'");
 				} else {
 					service.executeUpdateNativeSql(
 							"insert into PriceMedService (medService_id,pricePosition_id) values ('"
-							+aMedService
-							+"','"+aPricePosition+"')") ;
+									+ aMedService
+									+ "','" + aPricePosition + "')");
 				}
 			}
 		}
@@ -1051,12 +1050,12 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 	//Milamesher получение списка шаблонов по списку услуг
 	public String getAllUserTemplateDocForPrintByService(String[] aMedServiceSId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
-		for (int i=0; i<aMedServiceSId.length; i++) {
-			String r=getUserTemplateDocForPrintByService(aMedServiceSId[i],aRequest);
+		for (String s : aMedServiceSId) {
+			String r = getUserTemplateDocForPrintByService(s, aRequest);
 			if (r.equals(""))
-				res.append(aMedServiceSId[i]).append("#").append("*").append("!"); //в имени файла не мб *
-			else if (res.indexOf(r)==-1)
-				res.append(aMedServiceSId[i]).append("#").append(r).append("!");
+				res.append(s).append("#").append("*").append("!"); //в имени файла не мб *
+			else if (res.indexOf(r) == -1)
+				res.append(s).append("#").append(r).append("!");
 		}
 		return res.toString();
 	}

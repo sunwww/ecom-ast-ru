@@ -1,12 +1,12 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import ru.ecom.mis.ejb.domain.diet.Diet;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.ecom.mis.ejb.domain.diet.Diet;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Назначение на диету
@@ -44,10 +44,7 @@ public class DietPrescription extends Prescription{
 	@Comment("Описание назначения")
 	@Transient
 	public String getDescriptionInfo() {
-		StringBuilder sb=new StringBuilder();
-		sb.append(getDietName());
-		sb.append(",");
-		return sb.toString();
+		return getDietName() + ",";
 	}
 
 	

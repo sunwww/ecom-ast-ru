@@ -1,11 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.death.interceptors;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -14,6 +8,11 @@ import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.death.DeathCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseViewInterceptor;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class DeathCasePreCreateInterceptor  implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
@@ -27,7 +26,7 @@ public class DeathCasePreCreateInterceptor  implements IParentFormInterceptor {
 			throw new IllegalArgumentException("Нельзя создать случай смерти в открытом СЛС!!!") ;
 		}
 		if (medCase.getResult()==null || !medCase.getResult().getCode().equals("11")) {
-			throw new IllegalArgumentException("Случай смерти создается только при результате госпитализации смерть, а не при "+medCase.getResult().getName()+"!!!") ;
+			throw new IllegalArgumentException("Случай смерти создается только при результате госпитализации смерть, а не при "+(medCase.getResult()!=null ? medCase.getResult().getName(): "_NULL_")+"!!!") ;
 		}
     	List<Object> l = aContext.getEntityManager().createNativeQuery("select id from DeathCase where medCase_id='"+medCase.getId()+"'").getResultList() ;
     	if (!l.isEmpty()) {

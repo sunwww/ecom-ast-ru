@@ -99,8 +99,6 @@ public class GroupWorkFunctionVoc implements IAllValue {
 	}
 	
 	private static void add(List<VocValue> aValues, GroupWorkFunction aGroup) {
-		StringBuilder name = new StringBuilder() ;
-		name.append(aGroup.getGroupName()) ;
-		aValues.add(new VocValue(String.valueOf(aGroup.getId()), name.toString())) ;
+		aValues.add(new VocValue(String.valueOf(aGroup.getId()), aGroup.getGroupName())) ;
 	}
 }

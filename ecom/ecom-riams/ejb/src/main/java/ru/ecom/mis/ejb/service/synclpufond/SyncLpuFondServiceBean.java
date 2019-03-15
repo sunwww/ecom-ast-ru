@@ -66,7 +66,6 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
                 .setParameter("middlename", aMiddlename)
                 .setParameter("birthday", aBirthday)
                 .getResultList();
-        if (CAN_DEBUG) LOG.debug("DONE");
         return list != null && list.size() == 1 ? list.iterator().next() : null;
     }
 

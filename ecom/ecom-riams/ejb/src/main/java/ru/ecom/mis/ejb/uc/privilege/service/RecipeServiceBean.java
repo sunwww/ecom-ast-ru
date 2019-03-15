@@ -41,9 +41,7 @@ public class RecipeServiceBean {
 	}
 	
 	private void append(List aContainer, List aAppendable) {
-		for(Object o : aAppendable) {
-			aContainer.add(o);
-		}
+		aContainer.addAll(aAppendable);
 	}
 	private void addMapping(int aRow, Sheet aSheet, List<String> aList, List<ColumnMapping> aMapping) {
 		for(ColumnMapping map: aMapping) {
@@ -94,7 +92,7 @@ public class RecipeServiceBean {
 	}
 
 	
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		GroupExcelConfig c = new GroupExcelConfig() ;
 		c.getGroupColumns().add(ColumnMapping.createGroupColumn(0, true, "SKIP_1", "Идент", 10));
 		c.getGroupColumns().add(ColumnMapping.createGroupColumn(3, true, "DOC_ID", null, 30));
@@ -124,7 +122,7 @@ public class RecipeServiceBean {
 		RecipeServiceBean service = new RecipeServiceBean() ;
 		service.convertExcelToDbf(c, file, countRow) ;
 
-		LinkedList<ColumnMapping> all = new LinkedList<ColumnMapping>() ;
+		LinkedList<ColumnMapping> all = new LinkedList<>() ;
 		service.append(all, c.getDetailsColumns()) ;
 		service.append(all, c.getGroupColumns()) ;
 		

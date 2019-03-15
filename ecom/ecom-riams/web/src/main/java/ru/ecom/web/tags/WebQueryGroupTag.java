@@ -30,7 +30,7 @@ public class WebQueryGroupTag  extends AbstractGuidSimpleSupportTag {
 			if (theMaxResult!=null && !theMaxResult.equals("")) {
 				maxResult = Integer.valueOf(theMaxResult) ;
 			}
-			Collection<WebQueryResult> result = new ArrayList<WebQueryResult>();
+			Collection<WebQueryResult> result = new ArrayList<>();
 			Collection<WebQueryResult> resultGroup = service.executeNativeSql(theGroupNativeSql,maxResult) ;
 			
 			for (WebQueryResult wqr:resultGroup) {
@@ -43,7 +43,7 @@ public class WebQueryGroupTag  extends AbstractGuidSimpleSupportTag {
 					natSql = theNativeSql.replaceAll(":group", "'"+wqr.get2()+"'") ; 
 							
 				}
-				result.addAll(service.executeNativeSql(natSql.toString(),maxResult)) ;
+				result.addAll(service.executeNativeSql(natSql,maxResult)) ;
 			}
 			request.setAttribute(theName, result) ;
 		} catch (Exception e) {

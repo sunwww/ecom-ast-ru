@@ -55,7 +55,7 @@ public class PersistList {
 			if (ids.length()>0) {
 				
 				sql.append("delete from ").append(aTableName)
-					.append(" where ").append(aFieldParent).append("='").append(aIdEntity).append("' and ").append(aFieldChildren).append(" not in (").append(ids.substring(1)+")") ;
+						.append(" where ").append(aFieldParent).append("='").append(aIdEntity).append("' and ").append(aFieldChildren).append(" not in (").append(ids.substring(1)).append(")");
 				aManager.createNativeQuery(sql.toString()).executeUpdate();
 			} else {
 				sql.append("delete from ").append(aTableName)
@@ -96,7 +96,6 @@ public class PersistList {
 	}
 	
 	public static Long parseLong(Object aValue) {
-		Long ret =null;
 		if (aValue==null) return null ;
 		if (aValue instanceof Integer) {
 			
@@ -114,6 +113,6 @@ public class PersistList {
 		if (aValue instanceof String) {
 			return Long.valueOf((String) aValue);
 		}
-		return ret ;
+		return null ;
 	}
 }

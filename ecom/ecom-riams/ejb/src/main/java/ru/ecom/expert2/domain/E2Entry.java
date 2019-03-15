@@ -643,6 +643,14 @@ public class E2Entry extends BaseEntity {
    /** Список операций */
    private String theOperationList ;
 
+    /** Список выполненных назначений*/
+    @Comment("Список операций")
+    @Column(length= 25000)
+    public String getPrescriptionList() {return thePrescriptionList;}
+    public void setPrescriptionList(String aPrescriptionList) {thePrescriptionList = aPrescriptionList;}
+    /** Список операций */
+    private String thePrescriptionList ;
+
    /** Список диагнозов по случаю */
    @Comment("Список диагнозов по случаю")
    @Column(length= 2500)

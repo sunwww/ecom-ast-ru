@@ -338,7 +338,7 @@ public class FondCheckUtil {
         params.put("ssd","docSnils");
         params.put("kodpodr","codeAttach");
 
-        return parseXmltoJSONArray(result,params).toString();
+        return parseXmltoJSONArray(result,params);
     }
 
     protected static String getPolis(String rz) throws IOException, NamingException,
@@ -360,7 +360,7 @@ public class FondCheckUtil {
         params.put("data_izgot","dateCreate");
         params.put("blank","blank");
 
-        return parseXmltoJSONArray(result,params).toString();
+        return parseXmltoJSONArray(result,params);
     }
 
 
@@ -378,7 +378,7 @@ public class FondCheckUtil {
         params.put("doc_v","issued");
 
 
-        return parseXmltoJSONArray(result,params).toString();
+        return parseXmltoJSONArray(result,params);
     }
 
     protected static String getAddress(String rz) throws IOException, NamingException,
@@ -400,7 +400,7 @@ public class FondCheckUtil {
         params.put("apartment","aparment");
         params.put("street_t","streetT");
 
-        return parseXmltoJSONArray(result,params).toString();
+        return parseXmltoJSONArray(result,params);
     }
 
 

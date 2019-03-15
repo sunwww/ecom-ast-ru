@@ -1,13 +1,12 @@
 package ru.ecom.mis.web.dwr.extdisp;
 
-import java.util.Collection;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 public class AppointmentServiceJs {
 
@@ -18,7 +17,7 @@ public class AppointmentServiceJs {
 		 String sql ="select ap.code from VocExtDispAppointment ap where ap.id="+aAppointmentId;
 		 Collection <WebQueryResult> res = service.executeNativeSql(sql);
 		 for (WebQueryResult wqr: res) {
-			sb.append(""+wqr.get1());
+			sb.append(wqr.get1());
 		 }
 		 return sb.toString();
 	}

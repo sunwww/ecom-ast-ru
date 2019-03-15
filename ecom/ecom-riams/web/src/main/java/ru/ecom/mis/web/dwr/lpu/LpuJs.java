@@ -1,16 +1,13 @@
 package ru.ecom.mis.web.dwr.lpu;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.lpu.ILpuService;
-import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.web.util.Injection;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 public class LpuJs {
 	public String getOtherEquipmentByLpu (String aLpu, HttpServletRequest aRequest) throws NamingException {
@@ -22,7 +19,7 @@ public class LpuJs {
 		StringBuilder ret = new StringBuilder();
 		if (!res.isEmpty()) {
 			for (WebQueryResult r: res) {
-				ret.append(r.get1().toString()+":"+r.get2().toString()+"@");
+				ret.append(r.get1().toString()).append(":").append(r.get2().toString()).append("@");
 				}
 		}
 		

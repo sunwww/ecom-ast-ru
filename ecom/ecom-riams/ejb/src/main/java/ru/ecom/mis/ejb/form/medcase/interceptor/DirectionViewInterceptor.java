@@ -37,7 +37,7 @@ public class DirectionViewInterceptor implements IFormInterceptor {
     		form.setPatientComment(entity.getTimePlan().getPatientComment());
 		}
     	form.setMedServices(TicketMedCaseViewInterceptor.getArray(manager,"MedCase","medService_id"
-				,new StringBuilder().append("parent_id='").append(entity.getId()).append("'").append(" and dtype='ServiceMedCase'").toString()
+				, "parent_id='" + entity.getId() + "'" + " and dtype='ServiceMedCase'"
 			)) ;
 	}
 

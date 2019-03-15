@@ -33,16 +33,16 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 		boolean adding1is = (!isEmpty(form.getEntranceDiagnos()) || (!isEmpty(form.getEntranceMkb()))) ;
 		String dateFinish = "null" ;
 		if (medCase.getDateFinish()!=null) {
-			dateFinish = new StringBuilder().append("to_date('").append(DateFormat.formatToDate(medCase.getDateFinish())).append("','dd.mm.yyyy')").toString() ;
+			dateFinish = "to_date('" + DateFormat.formatToDate(medCase.getDateFinish()) + "','dd.mm.yyyy')";
 		}
 		String timeFinish ="null" ;
 		if (medCase.getDischargeTime()!=null) {
-			timeFinish = new StringBuilder().append("'").append(DateFormat.formatToTime(medCase.getDischargeTime())).append("'").toString() ;
+			timeFinish = "'" + DateFormat.formatToTime(medCase.getDischargeTime()) + "'";
 		}
 		
 		StringBuilder sqlupdate = new StringBuilder() ;
 		if (medCase.getDischargeTime()!=null) {
-			sqlupdate.append("update MedCase set dateFinish="+dateFinish+", dischargeTime="+timeFinish+" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))") ;
+			sqlupdate.append("update MedCase set dateFinish=").append(dateFinish).append(", dischargeTime=").append(timeFinish).append(" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))");
 		
 			aManager.createNativeQuery(sqlupdate.toString())
 		

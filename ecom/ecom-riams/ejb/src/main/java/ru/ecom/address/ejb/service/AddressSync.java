@@ -24,7 +24,7 @@ public class AddressSync implements ISync {
 
 
 
-    public void sync(SyncContext aContext) throws Exception {
+    public void sync(SyncContext aContext) {
 
         String clause = " where time = "+aContext.getImportTime().getId();
         String countQueryString = "select count(*) from Kladr " + clause;
@@ -74,15 +74,7 @@ public class AddressSync implements ISync {
 
             if (++i % 100 == 0) {
                 monitor.advice(100);
-                StringBuilder sb = new StringBuilder();
-                sb.append(i);
-                sb.append(" ");
-                sb.append(kladr != null ? kladr.getName() : "");
-                sb.append(" ");
-                sb.append(kladr != null ? kladr.getKladrCode() : "");
-                monitor.setText(sb.toString());
-//                tx.commit();
-//                tx.begin();
+                monitor.setText(i+" "+kladr.getName()+" "+kladr.getKladrCode());
             }
             theEntityManager.flush();
             theEntityManager.clear();
