@@ -312,7 +312,6 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 	</tiles:put>
 	<tiles:put name="javascript" type="string">
 		<script type="text/javascript">
-			alert(1);
 			function printAmbulanceCard(aPatientId) {
 				window.document.location='print-ambcard.do?s=PatientPrintService&m=printInfo&id='+aPatientId;
 			}
