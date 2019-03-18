@@ -203,6 +203,9 @@
 	                        <li><msh:link isReport="true" action="report_timeexecute.do" roles="/Policy/Mis/TimeExecute/View">
 	                            Отчет "время ожидания мед.помощи"
 	                        </msh:link></li>
+						<li><msh:link isReport="true" action="leanClinicReport.do" roles="/Policy/Mis/MedCase/Visit/Report039">
+							Отчет "Бережливая поликлиника"
+						</msh:link></li>
 					</ul>
 					</div>
 				<div class='menu'>

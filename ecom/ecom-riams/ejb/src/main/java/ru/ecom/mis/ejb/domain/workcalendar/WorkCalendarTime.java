@@ -8,6 +8,7 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWayOfRecord;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.*;
@@ -270,5 +271,17 @@ public class WorkCalendarTime extends BaseEntity{
 		theCreateTime=new Time(currentDate.getTime());
 	}
 
-	
+	/** Тип способа обращения */
+	@Comment("Тип способа обращения")
+	@OneToOne
+	public VocWayOfRecord getVocWayOfRecord() {
+		return theVocWayOfRecord;
+	}
+
+	public void setVocWayOfRecord(VocWayOfRecord aVocWayOfRecord) {
+		theVocWayOfRecord = aVocWayOfRecord;
+	}
+
+	/** Тип способа обращения */
+	private VocWayOfRecord theVocWayOfRecord;
 }

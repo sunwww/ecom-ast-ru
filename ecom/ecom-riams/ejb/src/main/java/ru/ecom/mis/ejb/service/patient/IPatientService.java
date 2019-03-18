@@ -36,9 +36,7 @@ public interface IPatientService {
 			,String aPolicyDateFrom, String aPolicyDateTo
 			,String aUsername, String aCheckType
 			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
-			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
-			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
-			,String aLpuAttached, String aAttachedDate, String aAttachedType
+			,String aPatientId
 			) throws ParseException ;
 	Long insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday
@@ -47,11 +45,12 @@ public interface IPatientService {
 			,String aPolicyDateFrom, String aPolicyDateTo
 			,String aUsername, String aCheckType
 			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
+			,String aPatientId
 			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
 			,String aLpuAttached, String aAttachedDate, String aAttachedType, String dateDeath
 			,String aDocumentDateIssued, String aDocumentWhomIssued, String aDoctorSnils, String aCodeDepartment
-			,String aPatientId, PatientFondCheckData aCheckTime, String aStreet, String aOkato
+			, PatientFondCheckData aCheckTime, String aStreet, String aOkato
 			) throws ParseException ;
 	String getCodeByMedPolicyOmc(Long aType) ;
 	boolean isNaturalPerson(Long aPatient) ;

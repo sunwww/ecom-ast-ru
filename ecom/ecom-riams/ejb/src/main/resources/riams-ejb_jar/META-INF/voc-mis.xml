@@ -2205,7 +2205,14 @@
     			parentSplitCount="2"
     	/>
     </voc>
-    
+	<voc id="vocWayOfRecord" type="NativeVocService">
+		<NativeVocService
+				from="VocWayOfRecord voc"
+				nameId="voc.id"
+				order="voc.name"
+				names="voc.name"
+		/>
+	</voc>
      <voc id='vocWorkCalendarTimeWorkCalendarDay' type='NativeVocService'>
     	<NativeVocService  
     			from = 'WorkCalendarTime as wct '

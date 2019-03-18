@@ -39,7 +39,7 @@ public class FondWebService {
 		return "" ;
 	}
 
-	public static Object checkPatientBySnils(HttpServletRequest aRequest, PatientForm aPatFrm, String aSnils)   throws Exception{
+	public static Object checkPatientBySnils(HttpServletRequest aRequest, PatientForm aPatFrm, String aSnils, Long patId)   throws Exception{
 		
 		String result;
 		WSLocator service = new WSLocator() ;
@@ -54,10 +54,10 @@ public class FondWebService {
         Element root = doc.getRootElement();
         Element cur1 = root.getChild("cur1") ;
         Element rz = cur1.getChild("rz") ;
-        return getInfoByPatient(aRequest, aPatFrm,soap,rz.getText());
+        return getInfoByPatient(aRequest, aPatFrm,soap,rz.getText(),patId);
 		
     }
-	public static Object checkPatientByMedPolicy(HttpServletRequest aRequest, PatientForm aPatFrm, String aSeries, String aNumber)   throws Exception{
+	public static Object checkPatientByMedPolicy(HttpServletRequest aRequest, PatientForm aPatFrm, String aSeries, String aNumber, Long patId)   throws Exception{
 		
 		String result;
 		WSLocator service = new WSLocator() ;
@@ -72,12 +72,12 @@ public class FondWebService {
         Element root = doc.getRootElement();
         Element cur1 = root.getChild("cur1") ;
         Element rz = cur1.getChild("rz") ;
-        return getInfoByPatient(aRequest, aPatFrm,soap,rz.getText());
+        return getInfoByPatient(aRequest, aPatFrm,soap,rz.getText(),patId);
 		
     }
 
 	public static Object checkPatientByFioDr(HttpServletRequest aRequest, PatientForm aPatFrm, String aLastname,String aFirstname
-			,String aMiddlename, String aBirthday) throws Exception  {
+			,String aMiddlename, String aBirthday, Long patId) throws Exception  {
 		String result;
 		WSLocator service = new WSLocator() ;
         service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
@@ -93,9 +93,9 @@ public class FondWebService {
         Element rze = cur1.getChild("rz") ;
         String rz = rze.getText() ;
         in.close() ;
-        return getInfoByPatient(aRequest, aPatFrm,soap,rz);
+        return getInfoByPatient(aRequest, aPatFrm,soap,rz,patId);
     }
-	public static Object checkPatientByDocument(HttpServletRequest aRequest, PatientForm aPatFrm, String aType, String aSeries,String aNumber) throws Exception  {
+	public static Object checkPatientByDocument(HttpServletRequest aRequest, PatientForm aPatFrm, String aType, String aSeries,String aNumber, Long patId) throws Exception  {
 		String result;
 		WSLocator service = new WSLocator() ;
 		service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
@@ -110,9 +110,9 @@ public class FondWebService {
 		Element rze = cur1.getChild("rz") ;
 		String rz = rze.getText() ;
 		in.close() ;
-		return getInfoByPatient(aRequest, aPatFrm,soap,rz);
+		return getInfoByPatient(aRequest, aPatFrm,soap,rz, patId);
 	}
-	public static Object checkPatientByCommonNumber(HttpServletRequest aRequest, PatientForm aPatFrm, String aCommonNumber) throws Exception  {
+	public static Object checkPatientByCommonNumber(HttpServletRequest aRequest, PatientForm aPatFrm, String aCommonNumber, Long patId) throws Exception  {
 		//String result = null ;
 		WSLocator service = new WSLocator() ;
         service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
@@ -127,7 +127,7 @@ public class FondWebService {
         Element rze = cur1.getChild("rz") ;
         String rz = rze.getText() ;*/
         //in.close() ;
-        return getInfoByPatient(aRequest, aPatFrm,soap,aCommonNumber);
+        return getInfoByPatient(aRequest, aPatFrm,soap,aCommonNumber, patId);
     }
 	
 	public static StringBuilder checkAllPatientsByFond(String updPatient, String updDocument, String updPolicy, String updAttachment, HttpServletRequest aRequest) throws JDOMException, IOException, NamingException, ParseException, ServiceException {
@@ -383,11 +383,11 @@ public class FondWebService {
 			service.insertCheckFondData(lastname, firstname, middlename, birthday, snils
 					, aRz
 					, policySeries, policyNumber, policyDateFrom, policyDateTo
-					, username, PatientFond.STATUS_CHECK_TYPE_AUTOMATIC 
-					, companyCode, "", "", ""
+					, username, PatientFond.STATUS_CHECK_TYPE_AUTOMATIC
+					, companyCode, "", "", "", pid
 					, documentType, documentSeries, documentNumber
 					, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath
-					, documentDateIssued, documentWhomIssued, doctorSnils, codeDepartment, pid, pfc, street, okato);
+					, documentDateIssued, documentWhomIssued, doctorSnils, codeDepartment, pfc, street, okato);
 			service.updateDataByFondAutomaticByFIO(lastname,firstname, middlename, birthday, pfc.getId(), updatePatient, updateDocument
 					,updatePolicy, updateAttachment);
 			
@@ -412,9 +412,9 @@ public class FondWebService {
 		return new StringBuilder(e.getMessage());
 	}
 	}
-	private static String getInfoByPatient(HttpServletRequest aRequest, PatientForm aPatFrm, WS_MES_SERVERSoapPort aSoap,String aRz) throws JDOMException, IOException, NamingException, ParseException {
+	private static String getInfoByPatient(HttpServletRequest aRequest, PatientForm aPatFrm, WS_MES_SERVERSoapPort aSoap,String aRz, Long patId) throws JDOMException, IOException, NamingException, ParseException {
 		if (!aRz.equals("")) {
-			
+
 			IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
 			String defaultLpu =null;
 			Collection<WebQueryResult> list = serviceWQS.executeNativeSql("select sc.keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'") ;
@@ -740,10 +740,10 @@ public class FondWebService {
             		, aRz
             		, policySeries, policyNumber, policyDateFrom, policyDateTo
             		, username, PatientFond.STATUS_CHECK_TYPE_MANUAL 
-            		, companyCode, "", "", ""
+            		, companyCode, "", "", "",String.valueOf(patId)
             		, documentType, documentSeries, documentNumber
             		, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath,"","",doctorSnils,codeDepartment
-            		,null,null,null,null);
+            		,null,null,null);
             return sb.toString() ;
         }
 		
