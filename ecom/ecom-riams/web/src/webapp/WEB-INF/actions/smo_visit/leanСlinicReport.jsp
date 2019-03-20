@@ -115,6 +115,7 @@
         left join medcase vis on vis.id=wct.medcase_id
         where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
         ${sqlAddNew}
+        and (pat.id is not null or wct.prepatient_id is not null or wct.prepatientinfo is not null)
         group by lpu.id,pf.checkdate
         order by pf.checkdate desc"
                            guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -148,7 +149,7 @@
                 <msh:tableColumn isCalcAmount="true" columnName="Визит" property="7" addParam="&tView=SITEVisit&tViewName=по визитам через САЙТ" />
                 <msh:tableColumn isCalcAmount="true" columnName="Запись" property="8" addParam="&tView=PHONE&tViewName=по записям через ТЕЛЕФОН" />
                 <msh:tableColumn isCalcAmount="true" columnName="Визит" property="9" addParam="&tView=PHONEVisit&tViewName=по визитам через ТЕЛЕФОН" />
-                <msh:tableColumn isCalcAmount="true" columnName="Запись" property="10" addParam="&tView=PERSONALtViewName=по записям ЛИЧНО" />
+                <msh:tableColumn isCalcAmount="true" columnName="Запись" property="10" addParam="&tView=PERSONAL&tViewName=по записям ЛИЧНО" />
                 <msh:tableColumn isCalcAmount="true" columnName="Визит" property="11" addParam="&tView=PERSONALVisit&tViewName=по визитам ЛИЧНО" />
                 <msh:tableColumn isCalcAmount="true" columnName="Запись" property="12" addParam="&tView=MEDVOX&tViewName=по записям через РОБОТА" />
                 <msh:tableColumn isCalcAmount="true" columnName="Визит" property="13" addParam="&tView=MEDVOXVisit&tViewName=по визитам через РОБОТА" />
@@ -173,6 +174,9 @@
         select wct.id as wctId,wct.prepatientinfo as info,coalesce(wct.prepatient_id,patvis.id) as patId
         ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio
         ,wct.medcase_id as vis
+        ,case when wp.id is not null then vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
+        else  vwf.name end as doctor
+        ,ml.name as lpuname
         from workcalendartime wct
         left join secuser su on su.login=wct.createprerecord
         left join patient pat on pat.id=wct.prepatient_id
@@ -182,8 +186,15 @@
         left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
         left join medcase vis on vis.id=wct.medcase_id
         left join patient patvis on patvis.id=vis.patient_id
+        left join workcalendar wc on wc.id=wcd.workcalendar_id
+        left join workfunction wf on wf.id=wc.workfunction_id
+        left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+        left join Worker w on w.id=wf.worker_id
+        left join Patient wp on wp.id=w.person_id
+        left join mislpu ml on ml.id=coalesce(wf.lpu_id,w.lpu_id)
         where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
-        ${sqlAddNew} and case when ${param.lpuId}!=0 then lpu.id=${param.lpuId} else lpu.id is null end"
+        ${sqlAddNew} and case when ${param.lpuId}!=0 then lpu.id=${param.lpuId} else lpu.id is null end
+        and (pat.id is not null or wct.prepatient_id is not null or wct.prepatientinfo is not null) "
                            guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
             <form action="void" method="post" target="_blank">
                 Результат ${tViewName} за период с ${param.dateBegin} по ${dateEnd} (${param.lpuName}).
@@ -196,6 +207,8 @@
                 <msh:tableColumn columnName="#" property="sn" />
                 <msh:tableColumn columnName="Предварительная информация о пациенте" property="2" />
                 <msh:tableColumn columnName="Информация о пациенте" property="4" />
+                <msh:tableColumn columnName="Врач" property="6" />
+                <msh:tableColumn columnName="Отделение" property="7" />
                 <msh:tableButton buttonFunction="viewPatient" property="3" buttonShortName="Пациент"/>
                 <msh:tableButton buttonFunction="viewVisit" property="5" buttonShortName="Визит"/>
             </msh:table>
