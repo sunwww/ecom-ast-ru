@@ -31,9 +31,9 @@ public interface IWorkCalendarService {
 	 void deleteCalendarDaysByWorkFunction(WorkCalendar aCalendar,  Date aDateFrom, Date aDateTo);
 	 void addBusyPatternByWorkFunction(Long aWorkFunction,Date aBeginDate,Date aFinishDate, Long aPattern);
 	 void preRecordByPatient(String aUsername,Long aFunction, Long aSpecialist, Long aDay, Long aTime
-				,String aPatientInfo,Long aPatientId,Long aServiceStream,String aPhone,Long aService) ;
+				,String aPatientInfo,Long aPatientId,Long aServiceStream,String aPhone,Long aService, Long preWayOfRecord) ;
 	 String preRecordByPatient(String aUsername,Long aTime
-				,String aPatientInfo,Long aPatientId);
+				,String aPatientInfo,Long aPatientId, Long preWayOfRecord);
 	 void recordByPatient(String aUsername, Long aFunction, Long aSpecialist, Long aDay, Long aTime
 				,String aPatientInfo,Long aPatientId, Long aOrderLpu) ;
 	 String addCreateNewTimeBySpecAndDate(String aDate
