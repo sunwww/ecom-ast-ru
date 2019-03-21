@@ -13,7 +13,7 @@
   	String typeView =ActionUtil.updateParameter("ExtDispAction","typeView","1", request) ;
     	 %>
     <msh:form guid="formHello" action="/mis_archive_journal.do" defaultField="hello">
-      
+
       <msh:panel guid="panel">
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
           <msh:autoComplete vocName="vocLpuHospOtdAll" property="department" size="50" fieldColSpan="3" label="Отделение выписки" guid="5dda7fb6-b2c3-44be-9d10-d8d428637b32" />
@@ -59,6 +59,10 @@
 	           <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="3"> Журнал НЕпереданных историй болезни
 	        </td>
+			</td>
+			<td onclick="this.childNodes[1].checked='checked';">
+				<input type="radio" name="typeView" value="4"> Журнал переданных историй болезни
+			</td>
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" labelSave="Поиск" labelSaving="Поиск..." colSpan="4" />
       </msh:panel>
@@ -66,14 +70,14 @@
     <%
     String beginDate = request.getParameter("dateBegin") ;
 	if (beginDate!=null && !beginDate.equals("")) {
-		String finishDate = request.getParameter("dateEnd") ;		
+		String finishDate = request.getParameter("dateEnd") ;
 		if (finishDate==null || finishDate.equals("")) {
 			finishDate=beginDate ;
 		}
 		request.setAttribute("dateStart", beginDate) ;
 		request.setAttribute("dateFinish", finishDate) ;
     String dep = request.getParameter("department");
-    String orderBySql  = "pat.lastname, pat.firstname, pat.middlename" ; 
+    String orderBySql  = "pat.lastname, pat.firstname, pat.middlename" ;
     String depSql = "";
     if (dep!=null&&!dep.equals("")&&!dep.equals("0")) {
     	depSql+=" and slo.department_id='"+dep+"'";
@@ -88,15 +92,15 @@
     }  else if (typeOrder.equals("3")) {
     	orderBySql = "sls.datefinish, pat.lastname, pat.firstname, pat.middlename";
     } else if (typeOrder.equals("4")) {
-    	orderBySql = "ac.createDate, pat.lastname, pat.firstname, pat.middlename";	
+    	orderBySql = "ac.createDate, pat.lastname, pat.firstname, pat.middlename";
     }
     request.setAttribute("depSql",depSql);
     request.setAttribute("orderBySql",orderBySql);
     if (typeView!=null &&typeView.equals("1")) {
-    	
-    
+
+
     %>
-    
+
     <ecom:webQuery name = "archivesList" nativeSql="
     select ss.id as ssid, sls.id as slsid, ss.code as code, pat.patientinfo as pat
     , to_char (sls.dateStart,'dd.MM.yyyy') as dateStart, to_char (sls.dateFinish,'dd.MM.yyyy') as dateFinish
@@ -115,7 +119,7 @@ order by ${orderBySql}
     " />
     <msh:section>
     <msh:sectionContent>
-				<msh:table name="archivesList" action="javascript:void()" idField="1">
+				<msh:table printToExcelButton="Сохранить в excel" name="archivesList" action="javascript:void()" idField="1">
 					<msh:tableColumn columnName="Номер ИБ" property="3" />
 					<msh:tableColumn columnName="ФИО пациента" property="4" />
 					<msh:tableColumn columnName="Отделение" property="8" />
@@ -130,6 +134,8 @@ order by ${orderBySql}
     	<ecom:webQuery name="archivesList" nativeSql="select dep.name as depName
 , count(ss.id) as f2_cntAll
 , count (case when ss.archivecase is not null then ss.id else null end) as f3_cntPeredano
+, case when count (ss.id)!=0 then round(count (case when ss.archivecase is not null then ss.id else null end)/cast(count(ss.id) as numeric)*100.0,2)||'%' else '0%' end as perPered
+, case when count (ss.id)!=0 then round((count(ss.id)-count (case when ss.archivecase is not null then ss.id else null end))/cast(count(ss.id) as numeric)*100.0,2)||'%' else '0%' end as perNePered
 from medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.dateFinish is not null
 left join statisticstub ss on ss.medcase_id=sls.id
@@ -141,15 +147,19 @@ group by dep.name
 order by dep.name"/>
 <msh:section>
     <msh:sectionContent>
-				<msh:table name="archivesList" action="javascript:void()" idField="1">
+				<msh:table printToExcelButton="Сохранить в excel" name="archivesList" action="javascript:void()" idField="1">
 					<msh:tableColumn columnName="Отделение" property="1" />
-					<msh:tableColumn columnName="Выписано всего" property="2" />
-					<msh:tableColumn columnName="Передано историй в архив" property="3" />
+					<msh:tableColumn columnName="Выписано всего" property="2"/>
+					<msh:tableColumn columnName="Передано историй в архив" property="3"/>
+					<msh:tableColumn columnName="% переданных" property="4" />
+					<msh:tableColumn columnName="% НЕ переданных" property="5" />
 				</msh:table>
 				</msh:sectionContent>
 			</msh:section>
     	
-    <%} else if (typeView!=null&&typeView.equals("3")){ %>
+    <%} else if (typeView!=null&& (typeView.equals("3") || typeView.equals("4"))){
+		if (typeView.equals("4")) request.setAttribute("notSql"," not ");
+	%>
     	 <ecom:webQuery name = "archivesList" nativeSql="
     select ss.id as ssid, sls.id as slsid, ss.code as code, pat.patientinfo as pat
     , to_char (sls.dateStart,'dd.MM.yyyy') as dateStart, to_char (sls.dateFinish,'dd.MM.yyyy') as dateFinish
@@ -159,7 +169,9 @@ from medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.dateFinish is not null
 left join statisticstub ss on ss.medcase_id=sls.id
 left join mislpu dep on dep.id=slo.department_id
-where sls.dtype='HospitalMedCase' and ss.archivecase is null
+left join patient pat on pat.id=sls.patient_id
+left join archiveCase ac on ss.id=ac.statcard
+where sls.dtype='HospitalMedCase' and ss.archivecase is ${notSql} null
 
 and  ${typeDateSql} between to_date('${dateStart}','dd.MM.yyyy') and to_date('${dateFinish}','dd.MM.yyyy') 
 ${depSql}
@@ -167,7 +179,7 @@ order by ${orderBySql}
     " />
     <msh:section>
     <msh:sectionContent>
-				<msh:table name="archivesList" action="javascript:void()" idField="1">
+				<msh:table printToExcelButton="Сохранить в excel" name="archivesList" action="javascript:void()" idField="1">
 					<msh:tableColumn columnName="Номер ИБ" property="3" />
 					<msh:tableColumn columnName="ФИО пациента" property="4" />
 					<msh:tableColumn columnName="Отделение" property="8" />

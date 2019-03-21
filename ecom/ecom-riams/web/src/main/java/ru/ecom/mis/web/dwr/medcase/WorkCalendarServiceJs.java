@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
 import org.jdom.IllegalDataException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -1446,6 +1447,16 @@ public class WorkCalendarServiceJs {
 					.append(wqr.get10()).append("\")'><img src=\"/skin/images/main/view1.png\" alt=\"Просмотр записи\" title=\"Просмотр записи\" height=\"16\" width=\"16\"></a>") ;
 			}
 			//res.append(" (").append(wqr.get3()).append(" из ").append(wqr.get5()).append(")") ;
+			String prelastname = "" ;
+			String lastname = "";
+			if (wqr.get4()!=null) {
+				prelastname = wqr.get8()!=null? ""+wqr.get8():"";
+				lastname = wqr.get9()!=null? ""+wqr.get9():"";
+			}
+			StringBuilder msg = new StringBuilder();
+			msg.append(wqr.get19()!=null? wqr.get19().toString():"").append(!prelastname.startsWith(lastname) && !prelastname.equals("")? " вместо "+prelastname:"");
+			if (msg.toString().equals("")) msg.append("Нет данных.");
+			res.append("<input type=\"button\" value=\"...\" onclick=\"showToastMessage('").append(msg).append("',null,true);\"/>");
 			res.append("</li>") ;
 			if (i>=cntLi) {
 				res.append("</ul></li>") ;
@@ -1458,21 +1469,21 @@ public class WorkCalendarServiceJs {
 	}
 	public String preRecordByPatient(String aPatInfo,Long aPatientId
 			,Long aFunction,Long aSpec,Long aDay,Long aTime
-			,Long aServiceStream,String aPhone, Long aService,HttpServletRequest aRequest
+			,Long aServiceStream,String aPhone, Long aService,Long preWayOfRecord,HttpServletRequest aRequest
 			) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		service.preRecordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,aServiceStream,
-				aPhone,aService) ;
+				aPhone,aService,preWayOfRecord) ;
 		return "Сохранено" ;
 	}
 	public String preRecordByTimeAndPatient(String aPatInfo,Long aPatientId
-			,Long aTime
+			,Long aTime, Long preWayOfRecord
 			,HttpServletRequest aRequest
 			) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		return service.preRecordByPatient(username, aTime,aPatInfo,aPatientId) ;
+		return service.preRecordByPatient(username, aTime,aPatInfo,aPatientId,preWayOfRecord) ;
 		//return "Сохранено" ;
 	}
 	public String deletePreRecord(Long aTime, HttpServletRequest aRequest) throws NamingException {
@@ -1891,4 +1902,21 @@ public class WorkCalendarServiceJs {
                 "reservetype_id,current_date,current_time from workcalendartime where id=" + aTime);
 	    return "Добавлено.";
     }
+
+	/**
+	 * Получить возможные способы предварительной записи пациентов (выбирает регистратор при создании предварительной записи) #145
+	 * @return String json Способы предварительной записи пациентов
+	 */
+	public String getWaysOfPreRecords(HttpServletRequest aRequest) throws NamingException {
+		JSONArray res = new JSONArray() ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select  id,name from vocwayofrecord  where isavailableforrecorder =true") ;
+		for (WebQueryResult w :list) {
+			JSONObject o = new JSONObject() ;
+			o.put("id", w.get1())
+					.put("name", w.get2());
+			res.put(o);
+		}
+		return res.toString();
+	}
 }

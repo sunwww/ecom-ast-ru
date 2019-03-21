@@ -67,7 +67,7 @@ import java.util.StringTokenizer;
 @Local(IPatientService.class)
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
-	
+
 	private static final Logger LOG = Logger.getLogger(PatientServiceBean.class);
 	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	/**Выгружаем список карт Д наблюдения */
@@ -146,12 +146,12 @@ public class PatientServiceBean implements IPatientService {
 		theManager.createNativeQuery("update medpolicy set dtype=(select vmp.code from vocmedpolicy vmp" +
 				" where vmp.id="+aNewPolicyTypeId+") where id="+aPolicyId).executeUpdate();
 	}
-	
+
 	public boolean needUpdatePatient (Long aPatientId, Long aPatientFondId){
 		boolean isDifference=false;
 		PatientFond fond = theManager.find(PatientFond.class, aPatientFondId);
 		Patient pat = theManager.find(Patient.class, aPatientId);
-		if (needChangeValue(pat.getLastname(), fond.getLastname())					
+		if (needChangeValue(pat.getLastname(), fond.getLastname())
 				||needChangeValue(pat.getFirstname(), fond.getFirstname())
 				||needChangeValue(pat.getMiddlename(), fond.getMiddlename())
 				||needChangeValue(pat.getBirthday(), fond.getBirthday())
@@ -167,7 +167,7 @@ public class PatientServiceBean implements IPatientService {
 		String aPolicySeries = fond.getPolicySeries();
 		String aPolicyNumber = fond.getPolicyNumber();
 		String aCompanyCode = fond.getCompanyCode();
-			
+
 		//	try {
 				if (aLpuAttached!=null&&aAttachedDate!=null&&aAttachedType!=null) {
 					String aSql = "select " +
@@ -178,9 +178,9 @@ public class PatientServiceBean implements IPatientService {
 							" and (select max(sc.keyvalue) from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE')='"+aLpuAttached+"')) end";
 					Object a = theManager.createNativeQuery(aSql).getSingleResult();
 					if (a.toString().equals("0")) {isDifference = true;}
-					
+
 				}
-				
+
 				if (aPolicyNumber!=null&&aPolicySeries!=null&&aCompanyCode!=null) {
 					Object mp = theManager.createNativeQuery("select count(mp.id) from medpolicy mp" +
 							" where mp.patient_id="+aPatientId +
@@ -192,18 +192,18 @@ public class PatientServiceBean implements IPatientService {
 							.getSingleResult();
 					if (mp.toString().equals("0")) {isDifference = true;}
 				}
-				
+
 			/*} catch (Exception e) {
 				e.printStackTrace();
 			}*/
 			return isDifference;
 	}
-	
+
 	public boolean needChangeValue (Object aOldValue, Object aNewValue) {
 		if (toStr(aOldValue)==null && toStr(aNewValue)!=null) {return true;} //Старое значение пустое, новое - нет, обновляем.
 		if (toStr(aNewValue)==null) {return false;} //На пустое значение не обновляем.
 		return !toStr(aOldValue).equals(toStr(aNewValue));
-		
+
 	}
 	public void insertPatientNotFound(Long aPatientId, Long aCheckTimeId) throws ParseException {
 		StringBuilder str = new StringBuilder();
@@ -223,7 +223,7 @@ public class PatientServiceBean implements IPatientService {
 			theManager.createNativeQuery(sql).executeUpdate();
 			theManager.createNativeQuery(str.toString()).executeUpdate();
 		}
-		
+
 	}
 	public PatientFondCheckData getNewPFCheckData(boolean aNeedUpdatePatient, boolean aNeedUpdateDocument, boolean aNeedUpdatePolicy, boolean aNeedUpdateAttachment) {
 		PatientFondCheckData pfcd = new PatientFondCheckData ();
@@ -238,7 +238,7 @@ public class PatientServiceBean implements IPatientService {
 	public String getImageDir() {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		return config.get("tomcat.image.dir", "/opt/tomcat/webapps/docmis/");
-		
+
 	}
 	public float getImageCompress() {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
@@ -250,7 +250,7 @@ public class PatientServiceBean implements IPatientService {
 		if (aObject.equals("Template")) {
 			doc = new TemplateExternalDocument() ;
 		} else {
-			doc = new ExternalDocument() ; 
+			doc = new ExternalDocument() ;
 		}
 		doc.setReferenceTo(aReferenceTo) ;
 		doc.setReferenceCompTo(aReferenceComp) ;
@@ -265,7 +265,7 @@ public class PatientServiceBean implements IPatientService {
 			MedCase mc = theManager.find(MedCase.class, aObjectId) ;
 			doc.setMedCase(mc) ;
 		} else if (aObject.equals("Template")) {
-			
+
 		} else {
 			throw new IllegalStateException("Не определен object типа:"+aObject);
 		}
@@ -275,12 +275,12 @@ public class PatientServiceBean implements IPatientService {
 		}
 		theManager.persist(doc) ;
 		if (aObject.equals("Template")) {
-			
+
 		//	 doc = (TemplateExternalDocument) doc;
-		//	 theManager.persist(doc) ;	 
+		//	 theManager.persist(doc) ;
 			//theManager.createNativeQuery("update document set dtype='TemplateExternalDocument' where id =:id").setParameter("id", doc.getId()).executeUpdate();
 		}
-		
+
 	}
 	public String getCodeByMedPolicyOmc(Long aType) {
 		VocMedPolicyOmc type =null;
@@ -289,16 +289,16 @@ public class PatientServiceBean implements IPatientService {
 		}
 		return type==null?"0":type.getCode() ;
 	}
-	
+
 	public boolean isNaturalPerson(Long aPatient) {
 		String sql = "select count(*) from ContractPerson where dtype='NaturalPerson' and patient_id='" +
 				aPatient + "'";
 		Object ret = theManager.createNativeQuery(sql).getSingleResult() ;
 		Long cnt = ConvertSql.parseLong(ret) ;
-		
+
 		return cnt>0L;
-		
-		
+
+
 	}
 	public void createNaturalPerson(Long aPatient) {
 		 Patient pat = theManager.find(Patient.class, aPatient) ;
@@ -323,7 +323,7 @@ public class PatientServiceBean implements IPatientService {
 					break;
 				}
 			}
-		
+
 		return aStreet;
 	}
 	public String getAddressByOkato (String aOkato, String aStreet) {
@@ -390,16 +390,16 @@ public class PatientServiceBean implements IPatientService {
 		else if (aCity.startsWith("ПОС.")) aCity = aCity.substring(4) ;
 		else if (aCity.startsWith("ГОР ")) aCity = aCity.substring(4) ;
 		else if (aCity.startsWith("ПОС ")) aCity = aCity.substring(4) ;
-		
+
 		aCity=aCity.trim().toUpperCase().replaceAll("-", "").replaceAll(" ", "").replaceAll("№", "N") ;
-	
+
 		if (!StringUtil.isNullOrEmpty(aOkato)) {
 			String s = getAddressByOkato(aOkato, aStreet);
 			if (!StringUtil.isNullOrEmpty(s)) {
 				return s;
-			}	
+			}
 		}
-		
+
 		sql.append("select addressid,kladr from Address2 where kladr='").append(aKladr).append("'" ) ;
 		StringBuilder res = new StringBuilder() ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
@@ -409,7 +409,7 @@ public class PatientServiceBean implements IPatientService {
 			if (aStreet.startsWith("?")) return res.toString() ;
 			if (!StringUtil.isNullOrEmpty(aKladr)) {
 				String lastKl = aKladr.equals("") ? aRegion : aKladr.substring(aKladr.length()-1) ;
-				
+
 				while (lastKl!=null&&!lastKl.equals("")&&lastKl.equals("0")) {
 					aKladr = aKladr.substring(0,aKladr.length()-1) ;
 					lastKl = aKladr.length()>1 ? aKladr.substring(aKladr.length()-1) : null ;
@@ -458,7 +458,7 @@ public class PatientServiceBean implements IPatientService {
 		sql.append("select addressid,kladr from Address2 where kladr like '").append(kladr).append("%' and domen<6 and replace(replace(replace(UPPER(name),'-',''),' ',''),'№','N')='").append(aCity).append("'" ) ;
 		list.clear() ;
 		list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-		
+
 		if (!list.isEmpty()) {
 			String kladrId=kladr = ""+list.get(0)[0] ;
 			kladr = ""+list.get(0)[1] ;
@@ -540,19 +540,19 @@ public class PatientServiceBean implements IPatientService {
 	public String prepSql(String aField, String aValue, String aPrefix, String aPostfix) {
 		if (aValue==null) {aValue="";}
 			return aField+"="+aPrefix+"'"+aValue+"'"+aPostfix;
-		
+
 	}
 	public boolean updateDataByFondAutomaticByFIO (String aLastName, String aFirstName, String aMiddleName, String aBirthday, Long aCheckTimeId,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment) {
 		Object list = theManager.createNativeQuery("select max(pf.id) from patientfond pf where pf.lastname='"+aLastName+"' and " +
 				"pf.firstname = '"+aFirstName+"' and pf.middlename = '"+aMiddleName+"' and pf.birthday=to_date('"+aBirthday +
 				"','dd.MM.yyyy') and pf.checkTime_id='"+aCheckTimeId+"'").getSingleResult();
-		if (list!=null) {			
+		if (list!=null) {
 			Long patF = Long.valueOf(list.toString());
 			return updateDataByFondAutomatic(patF, aCheckTimeId, needUpdatePatient, needUpdateDocuments, needUpdatePolicy, needUpdateAttachment);
 		}
 		return false;
 	}
-	
+
 	public boolean updateDataByFondAutomatic (Long aPatientFondId, Long aCheckId
 			,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment) {
 		try{
@@ -579,12 +579,12 @@ public class PatientServiceBean implements IPatientService {
 					,aPolicySeries=toStr(arr[14]),aPolicyNumber=toStr(arr[15]),aPolicyDateFrom=toStr(arr[16])
 					,aPolicyDateTo=toStr(arr[17]),aCompany=toStr(arr[18]), aBirthday=toStr(arr[19]), aCheckDate = toStr(arr[21])
 					, doctorSnils = toStr(arr[24]);
-			 
+
 			Long aPatientId =toStr(arr[20])!=null?Long.valueOf(toStr(arr[20])):null;
 			String aStreet = toStr(arr[22]), aOkato = toStr(arr[23]);
-			
+
 			String address = getAddressByOkato(aOkato, aStreet);
-			
+
 			if (needUpdatePatient) {
 				o=1;
 				if (aSnils!=null&&!aSnils.equals("")) {
@@ -594,7 +594,7 @@ public class PatientServiceBean implements IPatientService {
 				if (address!=null) { str.append(prepSql(", address_addressid", address));}
 				patF.setIsPatientUpdate(true);
 			} else {patF.setIsPatientUpdate(false);}
-			
+
 			if (needUpdateDocuments) {
 				if (aDocNumber!=null&&aDocSeries!=null&&aDocType!=null&&aDocDateIssued!=null) {
 					if (o==1) {
@@ -607,48 +607,48 @@ public class PatientServiceBean implements IPatientService {
 					o=1;
 					patF.setIsDocumentUpdate(true);
 				} else {patF.setIsDocumentUpdate(false);}
-				
+
 			} else {patF.setIsDocumentUpdate(false);}
 			if (o==1) {
 				str.append(" where id=").append(aPatientId);
-								
+
 			}
 			if (needUpdatePolicy) {
 				patF.setIsPolicyUpdate(updateOrCreatePolicyByFond(aPatientId, aRz, aLastname, aFirstname, aMiddlename, aBirthday, aCompany
 						, aPolicySeries, aPolicyNumber, aPolicyDateFrom, aPolicyDateTo, aCheckDate));
-				
-				
+
+
 			} else {patF.setIsPolicyUpdate(false);}
 			if (needUpdateAttachment) {
 				String s = updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate, doctorSnils,true, false);
 				patF.setIsAttachmentUpdate((s!=null && s.length()>0));
-				
+
 			} else {patF.setIsAttachmentUpdate(false);}
 			theManager.persist(patF);
-			
+
 			if (patF.getIsPatientUpdate()&&patF.getIsDocumentUpdate()&&patF.getIsPolicyUpdate()&&patF.getIsAttachmentUpdate()) {
 				patF.setIsDifference(false);
 			} else {
 				patF.setIsDifference(needUpdatePatient(aPatientId, aPatientFondId));
 			}
-			
-			
+
+
 			theManager.persist(patF);
 			return true;
-			
-			} else { 
-				return false; 
+
+			} else {
+				return false;
 			}
-			
+
 		}
 	} catch (Exception e) {
 		e.printStackTrace();
-		
+
 	}
 		return false;
-		
-		
-		
+
+
+
 	}
 	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate, String aDoctorSnils
 			, boolean ignoreType, boolean updateEditDate) {
@@ -668,14 +668,14 @@ public class PatientServiceBean implements IPatientService {
 		}
 		String sqll = "from RegInsuranceCompany where "+sqlAdd+" = :code and (deprecated is null or deprecated='0')";
 		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery(sqll)
-				.setParameter("code", aCompany).getResultList(); 
-		
+				.setParameter("code", aCompany).getResultList();
+
 		if (!companies.isEmpty()) {
 			insCompany=companies.get(0);
 		} else {
 			LOG.error("Страх. компания не найдена");
 		}
-		
+
 	if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
 		//s(" ЛПУ наше, создаем прикрепления!!");
 		List<Object> obj ;
@@ -696,7 +696,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 		if ("1".equals(attachedType)){
 			obj=null;
-			try { 
+			try {
 				obj = theManager.createNativeQuery("select la.id from patient p" +
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
 					" left join lpuareaaddresstext laat on laat.id=laap.lpuareaaddresstext_id" +
@@ -725,9 +725,9 @@ public class PatientServiceBean implements IPatientService {
 			return "Прикрепление не создано, не распознан тип прикрепления: "+attachedType;
 		}
 		VocAttachedType attType =  attachedTypeList.get(0);
-		if (attachments.isEmpty()) { // Создаем новое 
+		if (attachments.isEmpty()) { // Создаем новое
 			MisLpu lpuAtt ;
-			
+
 			if (la!=null) {
 				lpuAtt = la.getLpu();
 			} else {
@@ -746,7 +746,7 @@ public class PatientServiceBean implements IPatientService {
 					att.setCompany(insCompany);
 					att.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
 					att.setCreateUsername("fond_check");
-					
+
 
 					theManager.persist(att);
 				} catch (ParseException e) {
@@ -757,8 +757,8 @@ public class PatientServiceBean implements IPatientService {
 			} else {
 				ret.append("0ЛПУ с кодом '").append(lpu).append("' не найдено, прикрепление не создано. ");
 			}
-			
-		} else  { // Обновляем существующее 
+
+		} else  { // Обновляем существующее
 			for (LpuAttachedByDepartment a: attachments) {
 				StringBuilder str = new StringBuilder();
 				String areaSql =""; //= areaId!=null?(", area_id="+areaId):"";
@@ -773,14 +773,14 @@ public class PatientServiceBean implements IPatientService {
 	}
 	return ret.toString();
 }
-	
+
 	public boolean updateDataByFond(String aUsername, Long aPatientId, String aFiodr
 			,String aDocument,String aPolicy,String aAddress
 			,boolean aIsPatient, boolean aIsPolicy
 			, boolean aIsDocument, boolean aIsAddress, boolean aIsAttachment) {
 		String[] fiodr =null;
 		String curDate = DateFormat.formatToDate(new java.util.Date()) ;
-		
+
 		if (aFiodr!=null && !aFiodr.equals("")) {
 			fiodr = aFiodr.split("#") ;
 				if (aIsPatient && aPatientId!=null &&aPatientId>0L &&(aIsPolicy||(fiodr.length>6 &&fiodr[6].length()==10))) {
@@ -816,7 +816,7 @@ public class PatientServiceBean implements IPatientService {
 						sql.append(" where id='").append(aPatientId).append("'") ;
 						theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 					}
-				}				
+				}
 		}
 		if (aDocument!=null &&!aDocument.equals("") &&aIsDocument) {
 			String[] doc = aDocument.split("#") ;
@@ -841,7 +841,7 @@ public class PatientServiceBean implements IPatientService {
 				sql.append(", editUsername='").append(aUsername).append("'") ;
 				sql.append(" where id='").append(aPatientId).append("'") ;
 				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
-				
+
 			}
 		}
 		if (aAddress!=null &&!aAddress.equals("") &&aIsAddress) {
@@ -854,7 +854,7 @@ public class PatientServiceBean implements IPatientService {
 			String region = adr[8].toUpperCase() ;
 			String okato = adr[9].toUpperCase();
 			String addressid=getAddressByKladr(kladr,region,rayon, sity, street,okato) ;
-			
+
 			sql = new StringBuilder() ;
 			sql.append("update Patient set ") ;
 			if (!StringUtil.isNullOrEmpty(addressid)) sql.append(" address_addressid='").append(addressid).append("' , ") ;
@@ -880,18 +880,18 @@ public class PatientServiceBean implements IPatientService {
 						String[] policyInfo = policy.split("#");
 						if (policyInfo[6].equals("1")) {
 							 aCompany = policyInfo[0];
-							break;								
+							break;
 						}
 					}
 				}
 				updateOrCreateAttachment(aPatientId, aCompany, fiodr[7], fiodr[8], fiodr[9],doctorSnils, false, false);
-			
+
 		}
 	}
-		
+
 		if (aPolicy!=null && !aPolicy.equals("") &&aIsPolicy) {
 			String[] pols = aPolicy.split("&") ;
-			
+
 			for (String p:pols) {
 				String[] pol = p.split("#") ;
 				updateOrCreatePolicyByFond(aPatientId, pol[5], fiodr[0], fiodr[1], fiodr[2], fiodr[3], pol[0], pol[1], pol[2],pol[3],pol[4],curDate) ;
@@ -909,7 +909,7 @@ public class PatientServiceBean implements IPatientService {
 		sql.append(" and polNumber='").append(aNumber).append("'") ;
 		Object cnt =theManager.createNativeQuery(sql.toString()).getSingleResult() ;
 		Long cntL = ConvertSql.parseLong(cnt) ;
-		
+
 		String type = getTypePolicy(aSeries) ;
 		if (cntL!=null &&cntL>0L) {
 			sql = new StringBuilder() ;
@@ -930,7 +930,7 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" where patient_id='").append(aPatientId).append("'");
 			sql.append(" and series='").append(aSeries).append("'") ;
 			sql.append(" and polNumber='").append(aNumber).append("'") ;
-			
+
 			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 			try {
 				Date dat = DateFormat.parseSqlDate(aDateFrom) ;
@@ -949,7 +949,7 @@ public class PatientServiceBean implements IPatientService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		} else {
 			sql = new StringBuilder() ;
 			sql.append("select count(*) from medpolicy ") ;
@@ -969,7 +969,7 @@ public class PatientServiceBean implements IPatientService {
 					sql.append("insert into MedPolicy (dtype,company_id,actualDateFrom,actualDateTo,commonNumber,patient_id,series,polNumber,type_id,lastname,firstname,middlename,birthday, confirmationDate) values ('MedPolicyOmc'") ;
 					sql.append(", '").append(idS.get(0)[0]).append("'") ;
 					sql.append(", to_date('").append(aDateFrom).append("','dd.mm.yyyy')") ;
-					
+
 					if (aDateTo!=null && !aDateTo.equals("")) {
 						sql.append(", to_date('").append(aDateTo).append("','dd.mm.yyyy')") ;
 					} else {
@@ -1009,7 +1009,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 		return true ;
 	}
-	public void insertCheckFondData(
+	/*public void insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday
 			,String aSnils
 			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
@@ -1040,9 +1040,13 @@ public class PatientServiceBean implements IPatientService {
 				,aPolicyDateFrom,aPolicyDateTo,aUsername,aCheckType,aCompanyCode,aCompabyCodeF,aCompanyOgrn, aCompanyOkato
 				,aDocumentType,aDocumentSeries,aDocumentNumber, aKladr,aHouse,aHouseBuilding,aFlat
 				,aLpuAttached,aAttachedDate,aAttachedType,null,null,null,null,null,null,null,null,null);
+	}*/
+
+	public void insertCheckFondData(String aLastname, String aFirstname, String aMiddlename, String aBirthday, String aSnils, String aCommonNumber, String aPolicySeries, String aPolicyNumber, String aPolicyDateFrom, String aPolicyDateTo, String aUsername, String aCheckType, String aCompanyCode, String aCompabyCodeF, String aCompanyOgrn, String aCompanyOkato, String aPatientId)
+			throws ParseException
+	{
+		insertCheckFondData(aLastname, aFirstname, aMiddlename, aBirthday, aSnils, aCommonNumber, aPolicySeries, aPolicyNumber, aPolicyDateFrom, aPolicyDateTo, aUsername, aCheckType, aCompanyCode, aCompabyCodeF, aCompanyOgrn, aCompanyOkato, aPatientId, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
-		
-	
 	public Long insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday
 			,String aSnils
@@ -1050,10 +1054,11 @@ public class PatientServiceBean implements IPatientService {
 			,String aPolicyDateFrom, String aPolicyDateTo
 			,String aUsername, String aCheckType
 			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
+			, String aPatientId
 			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
 			,String aLpuAttached, String aAttachedDate, String aAttachedType, String dateDeath
-			,String aDocumentDateIssued, String aDocumentWhomIssued, String aDoctorSnils, String aCodeDepartment, String aPatientId
+			,String aDocumentDateIssued, String aDocumentWhomIssued, String aDoctorSnils, String aCodeDepartment
 			,PatientFondCheckData aCheckTime, String aStreet, String aOkato
 			) throws ParseException {
 		PatientFond fond = new PatientFond() ;
@@ -1080,7 +1085,7 @@ public class PatientServiceBean implements IPatientService {
 		fond.setKladr(aKladr);
 		fond.setStreet(aStreet);
 		fond.setOkato(aOkato);
-		
+
 		fond.setSnils(aSnils);
 		fond.setHouse(aHouse) ;
 		fond.setHouseBuilding(aHouseBuilding);
@@ -1106,7 +1111,7 @@ public class PatientServiceBean implements IPatientService {
 			fond.setIsDifference(needUpdatePatient(Long.valueOf(aPatientId), fond.getId()));
 			theManager.persist(fond) ;
 		}
-		
+
 		return fond.getId();
 	}
 	public PatientForm getPatientById(Long aId) {
@@ -1131,27 +1136,27 @@ public class PatientServiceBean implements IPatientService {
 			frm.setMiddlename((String)objs[2]) ;
 			frm.setBirthday((String)objs[3]) ;
 			frm.setSnils((String)objs[4]) ;
-			
+
 			frm.setPassportNumber(""+objs[5]) ;
 			frm.setPassportSeries(""+objs[6]) ;
-			
+
 			frm.setPassportType(ConvertSql.parseLong(objs[7])) ;
-			
+
 			frm.setPassportWhomIssued(""+objs[8]) ;
 			frm.setAddressInfo(""+(objs[13]!=null?objs[13]:"")) ;
 			frm.setHouseNumber(""+(objs[14]!=null?objs[14]:"")) ;
 			frm.setHouseBuilding(""+(objs[15]!=null?objs[15]:"")) ;
 			frm.setFlatNumber(""+(objs[16]!=null?objs[16]:"")) ;
-			
+
 			MedPolicyOmcForm policy = new MedPolicyOmcForm() ;
-			
+
 			policy.setSeries(""+objs[9]);
 			policy.setPolNumber(""+objs[10]);
 			policy.setText(""+objs[11]);
 			policy.setCommonNumber(""+(objs[12]!=null?objs[12]:""));
-			
+
 			frm.setPolicyOmcForm(policy) ;
-			
+
 		}
 		return frm ;
 	}
@@ -1167,7 +1172,7 @@ public class PatientServiceBean implements IPatientService {
 			Method ejbSetterMethod =mc.getClass().getMethod(method,Long.class) ;
 			ejbSetterMethod.invoke(mc, aStatus);
 		} catch (Exception e) {
-			
+
 		}
 	}
     public void movePatientDoubleDataAndDeleteOld(Long aIdNew, Long aIdOld) {
@@ -1178,7 +1183,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 		movePatientDoubleData(aIdNew, aIdOld) ;
 		theManager.remove(oldpat) ;
-		
+
     }
     public void movePatientDoubleData(Long aIdNew, Long aIdOld)  {
 		Patient newpat = theManager.find(Patient.class, aIdNew) ;
@@ -1228,7 +1233,7 @@ public class PatientServiceBean implements IPatientService {
 			theManager.createNativeQuery("  update SuicideMessage set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("  update QualityEstimationCard set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 	}
-	
+
 	public List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) {
 		QueryClauseBuilder builder = new QueryClauseBuilder();
 		builder.addLike("oldFondNumber", aOldNumber) ;
@@ -1304,7 +1309,7 @@ public class PatientServiceBean implements IPatientService {
 		sqlFld.append(" else '' end end from PatientFond pf1 ");
 		sqlFld.append(" where pf1.id=(select max(pf.id) from PatientFond pf where pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename and pf.birthday=p.birthday ) ");
 		sqlFld.append(" ) as fondinfo ");
-		
+
 		if (isEnableLimitAreas) {
 			String username = theSessionContext.getCallerPrincipal().toString() ;
 			QueryClauseBuilder builder = new QueryClauseBuilder();
@@ -1327,7 +1332,7 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" left join worker w on w.lpu_id=ml.id") ;
 			sql.append(" left join workfunction wf on wf.worker_id=w.id") ;
 			sql.append(" left join secuser su on su.id=wf.secuser_id") ;
-			
+
 			sql.append(" where ((su.login='").append(username).append("' or p.createUsername='").append(username).append("') and lpcc.transferDate is null and lpcc.finishDate is null)") ;
 
 			if (!StringUtil.isNullOrEmpty(aLastname)) {
@@ -1420,7 +1425,7 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" where") ;
 			StringBuilder p1 = new StringBuilder() ;
 			StringBuilder p2 = new StringBuilder() ;
-	
+
 			QueryClauseBuilder builder = new QueryClauseBuilder();
 			if (!StringUtil.isNullOrEmpty(aLastname)) {
 				StringTokenizer st = new StringTokenizer(aLastname, " \t;,.");
@@ -1456,7 +1461,7 @@ public class PatientServiceBean implements IPatientService {
 				}
 				//sql.append(" ((").append(p1).append(") or (").append(p2).append("))") ;
 			}
-			
+
 			builder.add("att.lpu_id", aLpuId);
 			builder.add("att.area_id", aLpuAreaId);
 			Query query = builder.buildNative(theManager, new StringBuilder().append(sqlFld)
@@ -1471,12 +1476,12 @@ public class PatientServiceBean implements IPatientService {
 					.append(sql)
 					.append(p2)
 					.append(" and (jcp.lastname!=p.lastname or jcp.firstname!=p.firstname or jcp.middlename!=p.middlename)")
-					.append(" and not (").append(p1).append(")") 
+					.append(" and not (").append(p1).append(")")
 					.toString(),
 					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by  p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
 			appendNativeToList(query1, ret2,null,aNext);
-	
-			
+
+
 			// поиск по полису
 			if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty())) {
 				appendNativeToList(findByMedCardNumber(sqlFld,aLastname,aYear), ret3,null,true);
@@ -1499,7 +1504,7 @@ public class PatientServiceBean implements IPatientService {
 		wqr.set2(ret2) ;
 		wqr.set3(ret3) ;
 		return wqr;
-		
+
 	}
 
 	private Query findByPolicy(StringBuilder aSqlFld, Long aLpuId, Long aLpuAreaId, String aPolicyQuery,String aYear) {
@@ -1528,7 +1533,7 @@ public class PatientServiceBean implements IPatientService {
 			b.add("to_char(p.birthday,'yyyy')", aYear);
 		}
 		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname,p.middlename,p.id") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
-		// from MedPolicy where series = :series and 
+		// from MedPolicy where series = :series and
 	}
 
 	private Query findByMedCardNumber(StringBuilder aSqlFld,String aPolicyQuery,String aYear) {
@@ -1542,17 +1547,17 @@ public class PatientServiceBean implements IPatientService {
 		sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
 		sql.append(" left join VocAttachedType vat on vat.id=att.AttachedType_id") ;
 		sql.append(" where ") ;
-		
+
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
 		String number = st.hasMoreTokens() ? st.nextToken() : null ;
 		b.add("m.number", number);
-		
+
 		if (aYear!=null && !aYear.equals("")) {
 			b.add("to_char(p.birthday,'yyyy')", aYear);
 		}
 
 		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname,p.middlename,p.id") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
-		// from MedPolicy where series = :series and 
+		// from MedPolicy where series = :series and
 	}
 	private Query findByPatientSync(StringBuilder aSqlFld, String aPolicyQuery,String aYear) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
@@ -1574,7 +1579,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 
 		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname,p.middlename,p.id") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
-		// from MedPolicy where series = :series and 
+		// from MedPolicy where series = :series and
 	}
 	private Query findByPatientRz(StringBuilder aSqlFld, String aPolicyQuery,String aYear) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
@@ -1597,9 +1602,9 @@ public class PatientServiceBean implements IPatientService {
 
 		return b.buildNative(theManager, sql.toString()
 				, "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname,p.middlename,p.id") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
-		// from MedPolicy where series = :series and 
+		// from MedPolicy where series = :series and
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void appendNativeToList(Query aQuery, List<PatientForm> ret, String aAddInfo, boolean aNext) {
 		List<Object[]> list = aQuery.setMaxResults(50).getResultList();
@@ -1642,7 +1647,7 @@ public class PatientServiceBean implements IPatientService {
 
 	}
 
-	
+
 
 	/**
 	 * Обновление прикрепления
@@ -1657,7 +1662,7 @@ public class PatientServiceBean implements IPatientService {
 						aPatient.getHouseNumber(), aPatient.getHouseBuilding()
 						, aPatient.getBirthday(), aPatient.getFlatNumber());
 				if (CAN_DEBUG)	LOG.debug("point = " + p);
-				
+
 				// из этой точки последовательно выбираем ЛПУ, участок и адрес участка
 				LpuAreaAddressText text = p != null ? p.getLpuAreaAddressText()	: null;
 				LpuArea area = text != null ? text.getArea() : null;
@@ -1698,7 +1703,7 @@ public class PatientServiceBean implements IPatientService {
 
 	/**
 	 * Ищем первую попавшуюся точку прикрепления.
-	 * Теперь и в зависимости от возраста 
+	 * Теперь и в зависимости от возраста
 	 */
 	public LpuAreaAddressPoint findPoint(Address aAddress, String aNumber,
 			String aBuilding, Date aBirthday, String aFlat) {
@@ -1738,7 +1743,7 @@ public class PatientServiceBean implements IPatientService {
 		query.setParameter("address", aAddress);
 
 		LpuAreaAddressPoint point = (LpuAreaAddressPoint) getFirst(query);
-		
+
 		// дом корпус кв
 		if (point == null && !StringUtil.isNullOrEmpty(aNumber)	&& !StringUtil.isNullOrEmpty(aBuilding)
 				&& !StringUtil.isNullOrEmpty(aFlat) ) {
@@ -1747,22 +1752,22 @@ public class PatientServiceBean implements IPatientService {
 		} else if(point == null && !StringUtil.isNullOrEmpty(aNumber)	&& StringUtil.isNullOrEmpty(aBuilding)
 				&& !StringUtil.isNullOrEmpty(aFlat) ) {
 			point = findPoint(aAddress, aNumber, null, aBirthday, null);
-		// дом копус	
+		// дом копус
 		} else if (point == null && !StringUtil.isNullOrEmpty(aNumber)	&& !StringUtil.isNullOrEmpty(aBuilding)) {
 			point = findPoint(aAddress, aNumber, null, aBirthday, null);
-		// дом	
+		// дом
 		} else if (point == null && !StringUtil.isNullOrEmpty(aNumber)) {
 			point = findPoint(aAddress, null, null, aBirthday, null);
 		}
 
 		return point;
 	}
-	
+
 	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries) {
 		return getDoubleByBaseData(aId, aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, "entityView-mis_patient.do") ;
 	}
-	
+
 	public String addPatient(String aLastname, String aFirstname, String aMiddlename,
 			String aBirthday, Long aSex, Long aSocialStatus, String aSnils){
 		VocSocialStatus statusSocial = theManager.find(VocSocialStatus.class, aSocialStatus) ;
@@ -1786,7 +1791,7 @@ public class PatientServiceBean implements IPatientService {
 		pat.setSnils(aSnils) ;
 		theManager.persist(pat) ;
 		return pat.getId()+"#"+pat.getLastname()+" "+pat.getFirstname()+" "+pat.getMiddlename()+" "+date ;
-		
+
 	}
 	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction) {
@@ -1815,9 +1820,9 @@ public class PatientServiceBean implements IPatientService {
 		if (aPassportNumber!=null && !aPassportNumber.equals("") && aPassportSeries!=null && !aPassportSeries.equals("") ) {
 			sql.append(" or (p.passportNumber='").append(aPassportNumber).append("' and p.passportSeries='").append(aPassportSeries).append("')") ;
 		}
-		
+
 		sql.append(")") ;
-			
+
 		if (aId!=null && !aId.equals("") && !aId.equals("0")) {
 			sql.append(" and p.id!='").append(aId).append("'") ;
 		}
@@ -1832,7 +1837,7 @@ public class PatientServiceBean implements IPatientService {
 	//			.setParameter("pseries", aPassportSeries)
 				.setMaxResults(20)
 				.getResultList() ;
-		
+
 		if (!doubles.isEmpty()) {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;

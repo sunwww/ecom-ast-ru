@@ -654,16 +654,16 @@ public class PatientServiceJs {
 	}
 	public Object checkPatientByPolicy(Long aPatientId, String aSeries, String aNumber,HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return FondWebService.checkPatientByMedPolicy(aRequest, getPatientInfo(aPatientId, service),aSeries,aNumber) ;
+		return FondWebService.checkPatientByMedPolicy(aRequest, getPatientInfo(aPatientId, service),aSeries,aNumber, aPatientId) ;
 	}
 	public Object checkPatientByCommonNumber(Long aPatientId, String aCommonNumber,HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return FondWebService.checkPatientByCommonNumber(aRequest, getPatientInfo(aPatientId, service),aCommonNumber) ;
+		return FondWebService.checkPatientByCommonNumber(aRequest, getPatientInfo(aPatientId, service),aCommonNumber, aPatientId) ;
 	}
 	public Object checkPatientBySnils(Long aPatientId, String aSnils,HttpServletRequest aRequest) throws Exception {
 		if (aSnils!=null&&!aSnils.equals("")){
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return FondWebService.checkPatientBySnils(aRequest, getPatientInfo(aPatientId, service),aSnils) ;
+		return FondWebService.checkPatientBySnils(aRequest, getPatientInfo(aPatientId, service),aSnils, aPatientId) ;
 		} else {
 			return "Не заполнено поле \"СНИЛС\"";	
 		}
@@ -673,13 +673,13 @@ public class PatientServiceJs {
 			,String aMiddlename, String aBirthday,HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		return FondWebService.checkPatientByFioDr( aRequest, getPatientInfo(aPatientId, service),aLastname, aFirstname
-				, aMiddlename,  aBirthday) ;
+				, aMiddlename,  aBirthday, aPatientId) ;
 	}
 	public Object checkPatientByDocument(Long aPatientId, Long aType, String aSeries
 			,String aNumber,HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		String type = service.getOmcCodeByPassportType(aType) ;
-		return FondWebService.checkPatientByDocument(aRequest, getPatientInfo(aPatientId, service),type, aSeries, aNumber) ;
+		return FondWebService.checkPatientByDocument(aRequest, getPatientInfo(aPatientId, service),type, aSeries, aNumber, aPatientId) ;
 	}
 	private PatientForm getPatientInfo(Long aPatientId, IPatientService aService) {
 		return (aPatientId!=null &&aPatientId> 0L)?aService.getPatientById(aPatientId):null ;

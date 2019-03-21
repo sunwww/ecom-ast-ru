@@ -93,6 +93,7 @@
                     <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" guid="2156670f-b32c-4634-942b-2f8a4467567c" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
                     <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
                     <msh:sideLink styleId="viewShort" roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/javascript:getDefinition('entityParentList-expert_card.do?short=Short&id=${param.id}',null)"/>
+                    <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Сводный лист назначений" params="" action="/javascript:showSvod()" title="Показать все назначения СЛС" guid="7b0b69ae-3b9c-47d9-ab3c-5055fbe6fa9f" />
                     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" name="Диагнозы" params="id" action="/entityParentList-stac_diagnosis" title="Показать все диагнозы СЛО" guid="4ac8c095-3853-4150-9e4a-d01b4abc8061" />
                     <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневники специалистов" params="id" action="/entityParentList-smo_visitProtocol" title="Показать все дневники специалиста" guid="d43123-45ca-43cc-826d-bc85" />
                     <msh:sideLink name="Температурные листы" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные листы" guid="df23-45ca-43cc-826d-5hf5dd" params="id" />
@@ -968,6 +969,15 @@ where m.id ='${param.id}'"/>
         }
         function goTransfer() {
             window.location = 'entityParentPrepareCreate-stac_slo.do?id='+$('parent').value+"&tmp="+Math.random() ;
+        }
+        function showSvod() {
+            getDefinition('entityParentList-pres_prescriptList.do?short=Short&id='+$('parent').value);
+        }
+        function printPrescriptionList(id) {
+            window.document.location='print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id='+id;
+        }
+        function printPrescriptionListTotal (id) {
+            window.document.location='print-prescriptListTotal.do?s=HospitalPrintService&m=printPrescriptListTotal&id='+id;
         }
         </script>
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>

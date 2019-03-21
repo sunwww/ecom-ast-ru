@@ -212,6 +212,7 @@ left join workcalendar wc on wc.id=wcd.workcalendar_id
 left join workfunction wf on wf.id=wc.workfunction_id
 left join worker w on w.id=wf.worker_id
 left join mislpu ml on ml.id=coalesce(wf.lpu_id,w.lpu_id)
+left join secuser su on su.login=wct.createprerecord
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') ${sqlAddNew}
 group by ${selectSql},wct.createprerecord) as t
 group by t.fldName

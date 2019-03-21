@@ -50,6 +50,18 @@
                 <msh:row>
                     <msh:autoComplete property="department" fieldColSpan="5" label="Отделение" horizontalFill="true" vocName="lpu"/>
                 </msh:row>
+                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                    <td  id="mbd0" class="label" title="Поиск по  (typeGroup3)" colspan="1"><label for="typeGroup3Name" id="ttypeGroup3Label">Мобильная поликлиника:</label></td>
+                    <td id="mbd1" onclick="this.childNodes[1].checked='checked';" colspan="1">
+                        <input type="radio" name="typeGroup3" value="1" checked> всё
+                    </td>
+                    <td  id="mbd2" onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <input type="radio" name="typeGroup3" value="2"> только мобильная
+                    </td>
+                    <td  id="mbd3" onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup3" value="3"> только не мобильная
+                    </td>
+                </msh:row>
                 <msh:row>
                     <td colspan="3">
                         <input type="button" onclick="report()" value="Отчёт" />
@@ -63,6 +75,10 @@
             chk[0].checked='checked' ;
             eval('var chk =  document.forms[0].typeGroup2') ;
             chk[0].checked='checked' ;
+            eval('var chk =  document.forms[0].typeGroup2') ;
+            chk[0].checked='checked' ;
+            eval('var chk =  document.forms[0].typeGroup3') ;
+            chk[0].checked='checked' ;
             function report() {
                 if ($('dateBegin').value!=null && $('dateBegin').value!="" && $('dateEnd').value!=null && $('dateEnd').value!="") {
                     HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
@@ -70,9 +86,10 @@
                             var resMas = res.split("#");
                             if (res != "") {
                                 var profilek = ($('filterAdd').value != "") ? "&prname=" + $('filterAdd').value : "";
+
                                 if (getValue('typeGroup2')==3) {
                                     url="http://" + resMas[0] + "/jasperserver/flow.html?_flowIddepartment=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F"+"polyclinicFinPlan"+"&standAlone=true&decorate=no"
-                                        + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML + profilek;
+                                        + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML + profilek + "&ismobile="+getValue('typeGroup3');
                                 }
                                 else {
                                     var bdt = ($('hospType').value != "") ? "&bedtype=" + $('hospType').value : "";
@@ -118,7 +135,7 @@
             };
             document.getElementById("vmtd3").onclick=function() {
                 this.childNodes[1].checked='checked';
-                showPolyckinic();
+                showPolyclinic();
             };
             function showStac() {
                 $('hospTypeLabel').removeAttribute("hidden");
@@ -129,8 +146,12 @@
                 $('gtd1').removeAttribute("hidden");
                 $('gtd2').removeAttribute("hidden");
                 $('gtd3').removeAttribute("hidden");
+                $('mbd0').setAttribute("hidden",true);
+                $('mbd1').setAttribute("hidden",true);
+                $('mbd2').setAttribute("hidden",true);
+                $('mbd3').setAttribute("hidden",true);
             }
-            function showPolyckinic() {
+            function showPolyclinic() {
                 $('hospTypeLabel').setAttribute("hidden",true);
                 $('hospTypeName').setAttribute("hidden",true);
                 $('departmentLabel').setAttribute("hidden",true);
@@ -139,9 +160,13 @@
                 $('gtd1').setAttribute("hidden",true);
                 $('gtd2').setAttribute("hidden",true);
                 $('gtd3').setAttribute("hidden",true);
+                $('mbd0').removeAttribute("hidden");
+                $('mbd1').removeAttribute("hidden");
+                $('mbd2').removeAttribute("hidden");
+                $('mbd3').removeAttribute("hidden");
             }
             if (getValue('typeGroup2')==1 || getValue('typeGroup2')==2) showStac();
-            else if (getValue('typeGroup2')==3) showPolyckinic();
+            else if (getValue('typeGroup2')==3) showPolyclinic();
         </script>
     </tiles:put>
 </tiles:insert>
