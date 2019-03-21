@@ -274,14 +274,14 @@ public class WorkCalendarTime extends BaseEntity{
 	/** Тип способа обращения */
 	@Comment("Тип способа обращения")
 	@OneToOne
-	public VocWayOfRecord getVocWayOfRecord() {
-		return theVocWayOfRecord;
+	public VocWayOfRecord getWayOfRecord() {
+		return theWayOfRecord;
 	}
 
-	public void setVocWayOfRecord(VocWayOfRecord aVocWayOfRecord) {
-		theVocWayOfRecord = aVocWayOfRecord;
+	public void setWayOfRecord(VocWayOfRecord aWayOfRecord) {
+		theWayOfRecord = aWayOfRecord;
 	}
 
 	/** Тип способа обращения */
-	private VocWayOfRecord theVocWayOfRecord;
+	private VocWayOfRecord theWayOfRecord;
 }

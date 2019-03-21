@@ -110,7 +110,7 @@
         left join patient pat on pat.id=wct.prepatient_id
         left join patientfond pf on pf.patient=pat.id
         left join mislpu lpu on pf.LpuAttached=lpu.codef
-        left join vocwayofrecord wr on wr.id=wct.vocwayofrecord_id
+        left join vocwayofrecord wr on wr.id=wct.wayofrecord_id
         left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
         left join medcase vis on vis.id=wct.medcase_id
         where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
@@ -182,7 +182,7 @@
         left join patient pat on pat.id=wct.prepatient_id
         left join patientfond pf on pf.patient=pat.id
         left join mislpu lpu on pf.LpuAttached=lpu.codef
-        left join vocwayofrecord wr on wr.id=wct.vocwayofrecord_id
+        left join vocwayofrecord wr on wr.id=wct.wayofrecord_id
         left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
         left join medcase vis on vis.id=wct.medcase_id
         left join patient patvis on patvis.id=vis.patient_id
