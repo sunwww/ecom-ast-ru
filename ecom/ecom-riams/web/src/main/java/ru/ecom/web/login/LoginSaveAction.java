@@ -108,30 +108,23 @@ public class LoginSaveAction extends LoginExitAction {
         }
         checkMessage(aRequest,form.getUsername()) ;
         if(StringUtil.isNullOrEmpty(form.getNext())) {
-            return aMapping.findForward("success") ;
+            return aMapping.findForward(SUCCESS) ;
         } else {
             String next = form.getNext() ; //.substring(form.getNext().indexOf('/',2)) ;
             try {
-                LOG.debug("next(1) = "+next) ;
                 next = new StringSafeEncode().decode(next);
-                LOG.debug("next(2) = "+next) ;
                 next = next.substring(next.indexOf('/',2)) ;
-                LOG.debug("next(3) = "+next) ;
             } catch (StringIndexOutOfBoundsException ex) { // Если вдруг приложение запущено как корневое
 				next = next.substring(next.indexOf('/')) ;
 			} catch (Exception e) {
             	LOG.warn("next в URLEncode: "+next, e);
             	next = form.getNext().substring(form.getNext().indexOf('/',2)) ;
-                LOG.debug("next(4) = "+next) ;
             }
 
             if (next.length()>1900) {
                 if(next.indexOf('?')>0) {
                     String path  = next.substring(1,next.indexOf('?'));
                     String param = next.substring(next.indexOf('?')+1) ;
-
-
-
                     String[] paramM=param.split("&") ;
                     StringBuilder res = new StringBuilder() ;
                     res.append("<form method='post' action='").append(path).append("'>");
@@ -147,7 +140,7 @@ public class LoginSaveAction extends LoginExitAction {
 						res.append("<textarea name='").append(valN).append("' >");
 						res.append(valV1.trim());
 						res.append("</textarea>");
-						res.append("").append(valN).append("=");
+						res.append(valN).append("=");
 						res.append(valV1);
 						//list.add(wqr) ;
 

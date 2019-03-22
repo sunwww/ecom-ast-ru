@@ -73,6 +73,6 @@ public class ImportRoleEditListAction extends BaseAction{
     		System.out.println(e);
     	}
     	aRequest.setAttribute("roles",list);
-    	return aMapping.findForward("success") ;
+    	return aMapping.findForward(SUCCESS) ;
     }
 }

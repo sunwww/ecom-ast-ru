@@ -212,9 +212,9 @@ public class HospitalDirectInFondImportAction extends BaseAction {
             }
         }.start() ;
         
-        	return new MonitorActionForward(monitorId, new ActionForward(aMapping.findForward("success").getPath()+"?typeMode=2&infoImport=Импортировано&typeImport="+typeImport+"&errorFile="+fileErrorF)) ;
+        	return new MonitorActionForward(monitorId, new ActionForward(aMapping.findForward(SUCCESS).getPath()+"?typeMode=2&infoImport=Импортировано&typeImport="+typeImport+"&errorFile="+fileErrorF)) ;
     	} else {
-    		return new ActionForward(aMapping.findForward("success").getPath()+"?typeMode=2&typeImport="+typeImport+"&errorFile="+fileErrorF+"&infoImport=неверные параметры") ;
+    		return new ActionForward(aMapping.findForward(SUCCESS).getPath()+"?typeMode=2&typeImport="+typeImport+"&errorFile="+fileErrorF+"&infoImport=неверные параметры") ;
     	}
     }
 

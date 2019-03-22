@@ -1,14 +1,8 @@
 package ru.ecom.expomc.web.actions.checkproperty;
 
-import java.util.LinkedList;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.expomc.ejb.services.form.check.ChecksTableForm;
 import ru.ecom.expomc.ejb.services.form.check.ChecksTableFormRow;
 import ru.ecom.expomc.ejb.services.form.check.ChecksTableFormRowOn;
@@ -16,6 +10,10 @@ import ru.ecom.expomc.ejb.services.form.check.IFormCheckService;
 import ru.ecom.web.util.ForwardUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedList;
 
 /**
  * Таблица проверок
@@ -34,7 +32,7 @@ public class TableCheckPropertiesSaveAction extends BaseAction {
         LinkedList<Long> deleted = service.save(form, formatId);
         service.deleteChecks(deleted);
         
-        return ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), formatId) ;
+        return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), formatId) ;
     }
 
 

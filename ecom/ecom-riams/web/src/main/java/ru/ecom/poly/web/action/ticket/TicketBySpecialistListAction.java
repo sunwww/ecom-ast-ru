@@ -1,15 +1,14 @@
 package ru.ecom.poly.web.action.ticket;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.mis.ejb.service.patient.HospitalLibrary;
 import ru.ecom.web.util.ActionUtil;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class TicketBySpecialistListAction  extends BaseAction {
 
@@ -49,7 +48,7 @@ public class TicketBySpecialistListAction  extends BaseAction {
 			aRequest.setAttribute("infoTypePat", "Поиск по всем") ;
 		}*/
 		
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 	
 

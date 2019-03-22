@@ -66,6 +66,6 @@ public class AddressSheetHospitalAction extends BaseAction {
         	aRequest.setAttribute("printStatus", "") ;
         	aRequest.setAttribute("status", "") ;
         }
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

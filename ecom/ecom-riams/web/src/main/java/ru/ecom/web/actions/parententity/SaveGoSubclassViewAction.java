@@ -19,6 +19,6 @@ public class SaveGoSubclassViewAction extends ru.ecom.web.actions.entity.SaveAct
         return ForwardUtil.createGoSubclassForward((ActionForm)castEntityForm(aForm, aMapping), aMapping, aRequest, theStrutsFormUtil, theStrutsConfigUtil) ;
     }
 
-    StrutsConfigUtil theStrutsConfigUtil = new StrutsConfigUtil();
-    StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
+    final StrutsConfigUtil theStrutsConfigUtil = new StrutsConfigUtil();
+    final StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
 }

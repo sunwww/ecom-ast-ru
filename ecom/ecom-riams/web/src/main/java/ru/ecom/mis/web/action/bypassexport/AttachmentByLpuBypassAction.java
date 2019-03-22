@@ -97,6 +97,6 @@ public class AttachmentByLpuBypassAction extends BaseAction {
     		} else {
     			throw new Exception("HELLLO");
     		}
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 }

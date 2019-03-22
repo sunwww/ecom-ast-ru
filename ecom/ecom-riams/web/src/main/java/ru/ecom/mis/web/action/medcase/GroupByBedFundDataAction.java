@@ -80,6 +80,6 @@ public class GroupByBedFundDataAction extends BaseAction {
 		}
 		aRequest.setAttribute("info", "Поиск по дате "+dateInfo+" за период "+dateBegin+"-"+dateEnd);
 		
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 }

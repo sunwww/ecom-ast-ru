@@ -1,18 +1,11 @@
 package ru.ecom.diary.web.action.protocol.parameter;
 
-import static ru.ecom.web.util.EntityInjection.find;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm;
-
 import ru.ecom.diary.ejb.service.protocol.ParameterPage;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.IEntityFormService;
@@ -26,6 +19,11 @@ import ru.ecom.web.util.StrutsFormUtil;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.web.messages.InfoMessage;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import static ru.ecom.web.util.EntityInjection.find;
 
 public class ParameterSaveAction extends AbstractEntityAction {
 
@@ -72,10 +70,10 @@ public class ParameterSaveAction extends AbstractEntityAction {
             id = (Long)PropertyUtil.getPropertyValue(form, "id") ;
             new InfoMessage(aRequest, "Сохранено") ;
         }
-       // return ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), id) ;
+       // return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), id) ;
         return ForwardUtil.createGoParentForward((ActionForm)castEntityForm(aForm, aMapping), aMapping, aRequest, theStrutsFormUtil, theStrutsConfigUtil);
         
-        //return ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), 1) ;
+        //return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), 1) ;
     }
     StrutsConfigUtil theStrutsConfigUtil = new StrutsConfigUtil();
     StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();

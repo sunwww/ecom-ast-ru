@@ -18,7 +18,7 @@ public class UserRoleAddAction extends BaseAction {
         ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService") ;
         long userId = Long.parseLong(aRequest.getParameter("userId")) ;
         serviceDo(service, userId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")));
-        return new ActionForward(aMapping.findForward("success").getPath()+"?id="+userId, true) ;
+        return new ActionForward(aMapping.findForward(SUCCESS).getPath()+"?id="+userId, true) ;
     }
 
     void serviceDo(ISecUserService service, long aUserId, long[] aRoles) {

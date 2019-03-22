@@ -9,9 +9,9 @@ public class MonitorActionForward extends ActionForward {
 
     public MonitorActionForward(long aMonitorId, ActionForward aNextAction) {
         String nextAction = aNextAction.getPath().substring(1) ;
-        setPath("/ecom_monitor.do?id="+aMonitorId+"&nextUrl="+theStringSafeEncode.encode(nextAction));
+        StringSafeEncode theStringSafeEncode = new StringSafeEncode();
+        setPath("/ecom_monitor.do?id="+aMonitorId+"&nextUrl="+ theStringSafeEncode.encode(nextAction));
         setRedirect(true);
     }
 
-    private final StringSafeEncode theStringSafeEncode = new StringSafeEncode();
 }

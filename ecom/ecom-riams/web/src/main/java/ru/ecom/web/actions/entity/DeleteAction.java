@@ -32,6 +32,6 @@ public class DeleteAction extends AbstractEntityAction {
         
         new InfoMessage(aRequest, "Удалено") ;
 
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 }

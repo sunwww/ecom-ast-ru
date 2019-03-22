@@ -1,21 +1,12 @@
 package ru.ecom.mis.web.action.patient;
 
-import java.util.Collection;
-
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.nuzmsh.util.StringUtil;
-import ru.ecom.mis.ejb.service.patient.IPatientService;
-import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.ecom.web.login.LoginInfo;
-import ru.ecom.web.util.Injection;
-import ru.ecom.web.util.EntityInjection;
-import ru.ecom.ejb.services.entityform.IEntityFormService;
-import ru.ecom.ejb.services.query.IWebQueryService;
-import ru.ecom.ejb.services.query.WebQueryResult;
-
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.mis.ejb.service.patient.IPatientService;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +34,6 @@ public class PatientSearchAction extends BaseAction {
             aRequest.setAttribute("list_3" , wqr.get3());
 
         }
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

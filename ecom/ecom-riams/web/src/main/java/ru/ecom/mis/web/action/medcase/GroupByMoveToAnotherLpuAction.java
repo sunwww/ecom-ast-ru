@@ -1,14 +1,13 @@
 package ru.ecom.mis.web.action.medcase;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.mis.ejb.service.patient.HospitalLibrary;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class GroupByMoveToAnotherLpuAction extends BaseAction {
 
@@ -71,6 +70,6 @@ public class GroupByMoveToAnotherLpuAction extends BaseAction {
 		//}
 		aRequest.setAttribute("info", "Поиск по дате "+dateInfo+" за период "+dateBegin+"-"+dateEnd);
 		
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 }

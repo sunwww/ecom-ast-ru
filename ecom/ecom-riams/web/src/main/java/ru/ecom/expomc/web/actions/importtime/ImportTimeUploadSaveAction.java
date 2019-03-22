@@ -54,8 +54,7 @@ public class ImportTimeUploadSaveAction extends BaseAction {
             }
         }.start() ;
 
-        return new MonitorActionForward(monitorId, aMapping.findForward("success")) ;
-//        return new ActionForward("/ecom_monitor.do?id="+monitorId,true) ; //ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), form.getDocument());
+        return new MonitorActionForward(monitorId, aMapping.findForward(SUCCESS)) ;
     }
 
 

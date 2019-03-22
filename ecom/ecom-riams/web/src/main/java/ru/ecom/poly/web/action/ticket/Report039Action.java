@@ -1,25 +1,20 @@
 package ru.ecom.poly.web.action.ticket;
 
 //import javax.persistence.EntityManager;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-//import ru.ecom.mis.ejb.service.medcase.IReportsService;
-import ru.ecom.ejb.services.query.IWebQueryService;
-import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.medcase.IReportsService;
-//import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.web.util.ActionUtil;
-import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
-import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+//import ru.ecom.mis.ejb.service.medcase.IReportsService;
+//import ru.ecom.mis.ejb.service.worker.IWorkerService;
 
 public class Report039Action  extends BaseAction {
 
@@ -39,6 +34,6 @@ public class Report039Action  extends BaseAction {
 		aRequest.setAttribute("queryTextEnd", repService.getTextQueryEnd(aTicketIs, groupBy, form.getBeginDate(), form.getFinishDate(), form.getSpecialist(), form.getWorkFunction(), form.getLpu(), form.getServiceStream(),form.getWorkPlaceType())) ;
 		aRequest.setAttribute("filterInfo", repService.getFilterInfo(aTicketIs, form.getSpecialist(), form.getWorkFunction(), form.getLpu(), form.getServiceStream(),form.getWorkPlaceType())) ;
 		aRequest.setAttribute("groupByTitle", repService.getTitle(groupBy)) ;
-		return aMapping.findForward("success") ;
+		return aMapping.findForward(SUCCESS) ;
 	}
 }

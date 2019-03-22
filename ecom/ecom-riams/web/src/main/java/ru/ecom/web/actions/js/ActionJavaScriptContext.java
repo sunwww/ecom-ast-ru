@@ -43,13 +43,11 @@ public class ActionJavaScriptContext {
 	}
 	
 	public ActionForward createForward(String aPath) {
-		ActionForward ret = new ActionForward(aPath, false) ;
-		return ret ;
+		return new ActionForward(aPath, false);
 	}
 
 	public ActionForward createForwardRedirect(String aPath) {
-		ActionForward ret = new ActionForward(aPath, true) ;
-		return ret ;
+		return new ActionForward(aPath, true);
 	}
 
 	public Object getService(Class aClass)  {

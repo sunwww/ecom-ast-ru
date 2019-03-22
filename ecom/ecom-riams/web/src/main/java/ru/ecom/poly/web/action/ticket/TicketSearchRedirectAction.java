@@ -1,15 +1,14 @@
 package ru.ecom.poly.web.action.ticket;
 
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.LinkedList;
-
-import ru.nuzmsh.web.struts.BaseAction;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,6 +28,6 @@ public class TicketSearchRedirectAction extends BaseAction {
 
         aRequest.setAttribute("list", o);
 
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

@@ -1,13 +1,9 @@
 package ru.ecom.diary.web.action.protocol.parameter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm;
 import ru.ecom.diary.ejb.service.protocol.ParameterPage;
 import ru.ecom.ejb.services.entityform.IEntityForm;
@@ -17,6 +13,9 @@ import ru.ecom.web.actions.entity.AbstractEntityAction;
 import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class ParameterPrepareCreateAction extends AbstractEntityAction {
 
@@ -51,6 +50,6 @@ public class ParameterPrepareCreateAction extends AbstractEntityAction {
 			aRequest.setAttribute("paramscript","");
 		}
 
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 }

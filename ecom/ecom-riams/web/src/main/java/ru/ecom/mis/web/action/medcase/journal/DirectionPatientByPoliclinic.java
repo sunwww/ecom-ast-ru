@@ -91,7 +91,7 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 				,form.getWorkPlaceType(),form.getOrderLpu()
 				,form.getOrderWorkFunction())) ;
 		aRequest.setAttribute("groupByTitle", getTitle(groupBy,date,typeUser)) ;
-		return aMapping.findForward("success") ;
+		return aMapping.findForward(SUCCESS) ;
 
     }
     public String getTitle(String aGroupBy,String aTypeDate, String aTypeUser) {

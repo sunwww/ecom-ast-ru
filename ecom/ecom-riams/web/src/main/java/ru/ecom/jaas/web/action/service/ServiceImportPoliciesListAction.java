@@ -49,6 +49,6 @@ public class ServiceImportPoliciesListAction extends BaseAction {
         	e.printStackTrace();
         }
         
-        return new MonitorActionForward(monitorId, aMapping.findForward("success")) ;
+        return new MonitorActionForward(monitorId, aMapping.findForward(SUCCESS)) ;
     }
 }

@@ -76,7 +76,7 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 				,form.getWorkPlaceType(),form.getOrderLpu()
 				,form.getOrderWorkFunction())) ;
 		aRequest.setAttribute("groupByTitle", getTitle(groupBy)) ;
-		return aMapping.findForward("success") ;
+		return aMapping.findForward(SUCCESS) ;
 
     }
     public String getTitle(String aGroupBy) {

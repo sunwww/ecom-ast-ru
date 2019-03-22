@@ -1,15 +1,14 @@
 package ru.ecom.poly.web.action.ticketexport;
 
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.ecom.web.util.Injection;
-import ru.ecom.web.actions.monitor.MonitorActionForward;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import ru.ecom.ejb.services.file.IJbossGetFileService;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionForm;
-
 import ru.ecom.poly.ejb.services.ITicketService;
+import ru.ecom.web.actions.monitor.MonitorActionForward;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +37,6 @@ public class TicketExcelExportAction extends BaseAction {
             }
         }.start() ;
 
-        return new MonitorActionForward(fileId, aMapping.findForward("success")) ;
+        return new MonitorActionForward(fileId, aMapping.findForward(SUCCESS)) ;
     }
 }

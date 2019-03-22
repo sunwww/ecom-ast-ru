@@ -44,7 +44,7 @@ public class FindPersonBySocialCardAction extends BaseAction {
           aRequest.setAttribute("list3" , wqr.get3());
         }
         //form.validate(aMapping, aRequest) ;
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
     private String getAttributeSocialCard(HttpServletRequest aRequest, String aKey) {
     	String ret = aRequest.getParameter(aKey) ;

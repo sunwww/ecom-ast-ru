@@ -42,9 +42,7 @@ public class ExportSaveAction extends BaseAction {
                 }
             }
         }.start() ;
-        return new MonitorActionForward(monitorId, aMapping.findForward("success")) ;
-
-//        return new MonitorActionForward(monitorId, aMapping.findForward("success")) ;
+        return new MonitorActionForward(monitorId, aMapping.findForward(SUCCESS)) ;
     }
 
 

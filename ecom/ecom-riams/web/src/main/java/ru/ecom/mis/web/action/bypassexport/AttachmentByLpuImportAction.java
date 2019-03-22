@@ -43,6 +43,6 @@ public class AttachmentByLpuImportAction extends BaseAction {
 			aRequest.setAttribute("impResult", "Файл успешно проимпортирован!");
 		}
 
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 }

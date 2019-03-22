@@ -63,7 +63,7 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
             	}
             	
             } else{
-            	 return aMapping.findForward("success") ;
+            	 return aMapping.findForward(SUCCESS) ;
             }
         } else {
             try {
@@ -79,7 +79,7 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
 	        String lpuinfo = service.getWorkingLpuInfo(lpu) ;
 	        aRequest.setAttribute("departmentInfo",lpuinfo) ;
         }
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
 	}
 
 }

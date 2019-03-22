@@ -17,7 +17,7 @@ public class ShowHibernateConfigAction extends BaseAction {
 		aRequest.setAttribute("code",
 				Injection.find(aRequest).getService(IHibernateCacheConfigService.class).generateHibernateCacheProperties()) ;
 		aRequest.setAttribute("title", "Кэш для hibernate.properties") ;
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 
 	

@@ -48,6 +48,6 @@ public class MedcardSearchAction extends BaseAction {
         	 aRequest.setAttribute("fndNumber", null) ;
          }
          
-         return aMapping.findForward("success");
+         return aMapping.findForward(SUCCESS);
     }
 }

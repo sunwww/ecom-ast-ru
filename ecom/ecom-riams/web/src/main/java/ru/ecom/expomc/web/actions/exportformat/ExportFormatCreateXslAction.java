@@ -20,6 +20,6 @@ public class ExportFormatCreateXslAction extends BaseAction {
         final IExportFormatService service = Injection.find(aRequest).getService(IExportFormatService.class) ;
         final long id = getLongId(aRequest, "Идентификатор формата") ;
         service.createStandardXsl(id);
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

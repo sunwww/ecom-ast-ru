@@ -23,15 +23,13 @@ public class Expert2FileImportAction extends BaseAction {
 
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm,
-			HttpServletRequest aRequest, HttpServletResponse aResponse)
-			throws Exception {
+			HttpServletRequest aRequest, HttpServletResponse aResponse) {
     	try {
 			IExpert2ImportService expert2service = Injection.find(aRequest).getService(IExpert2ImportService.class);
-
-			ImportFileForm form = aForm!=null?(ImportFileForm)aForm:null ;
-    		FormFile ffile = form!=null?form.getFile():null;
+			ImportFileForm form = (ImportFileForm)aForm;
+    		FormFile ffile = form.getFile();
     		if (ffile==null) {
-				return aMapping.findForward("success") ;
+				return aMapping.findForward(SUCCESS) ;
 			}
 			String fileName=ffile.getFileName();
 			LOG.info("filename = "+fileName);
@@ -71,27 +69,27 @@ public class Expert2FileImportAction extends BaseAction {
 
 			LOG.info(result);
 			aRequest.setAttribute("importResult",result);
-    		return aMapping.findForward("success") ;
+    		return aMapping.findForward(SUCCESS) ;
 
     	} catch(Exception e) {
 			LOG.error("Ошибочка = ",e);
     	}
-    	return aMapping.findForward("success") ;
+    	return aMapping.findForward(SUCCESS) ;
     }
 
-	public void saveFile(InputStream aInputStream, String aFileName) throws IOException  {
-		int count ;
-		LOG.info("filename="+aFileName);
+	private void saveFile(InputStream aInputStream, String aFileName) throws IOException {
 		File outputFile = new File(aFileName);
-		if (!outputFile.exists()) {
-			outputFile.createNewFile();
-		}
-		try (FileOutputStream out = new FileOutputStream(aFileName)) {
-			byte[] buf = new byte[8192] ;
-			while ( (count=aInputStream.read(buf)) > 0) {
-				out.write(buf, 0, count) ;
+		if (outputFile.exists() || outputFile.createNewFile()) {
+			int count;
+			try (FileOutputStream out = new FileOutputStream(aFileName)) {
+				byte[] buf = new byte[8192];
+				while ((count = aInputStream.read(buf)) > 0) {
+					out.write(buf, 0, count);
+				}
+				aInputStream.close();
 			}
-			aInputStream.close();
+		} else {
+			LOG.error("Невозможно открыть / создать файл: "+aFileName);
 		}
 	}
 }

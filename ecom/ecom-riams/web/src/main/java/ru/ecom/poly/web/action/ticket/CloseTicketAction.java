@@ -1,12 +1,12 @@
 package ru.ecom.poly.web.action.ticket;
 
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.ecom.poly.ejb.services.ITicketService;
-import ru.ecom.poly.ejb.form.TicketForm;
-import ru.ecom.web.util.Injection;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import ru.ecom.poly.ejb.form.TicketForm;
+import ru.ecom.poly.ejb.services.ITicketService;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +25,6 @@ public class CloseTicketAction extends BaseAction {
          ITicketService service = Injection.find(aRequest).getService(ITicketService.class);
 
          service.closeTicket(form.getId());
-         return aMapping.findForward("success");
+         return aMapping.findForward(SUCCESS);
     }
 }

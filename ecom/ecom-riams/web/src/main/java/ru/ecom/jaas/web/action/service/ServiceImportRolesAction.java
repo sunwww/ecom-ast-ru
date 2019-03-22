@@ -43,6 +43,6 @@ public class ServiceImportRolesAction extends BaseAction {
         aRequest.setAttribute("list", list);
 
 
-         return aMapping.findForward("success") ;
+         return aMapping.findForward(SUCCESS) ;
     }
 }

@@ -1,21 +1,19 @@
 package ru.ecom.jaas.web.action.service;
 
-import java.util.Calendar;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.messages.InfoMessage;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Calendar;
+import java.util.Collection;
 
 public class ServiceAfterUpdateAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -43,6 +41,6 @@ public class ServiceAfterUpdateAction extends BaseAction {
         	}
         }
         new InfoMessage(aRequest, "Сообщение об обновление отправлено всем пользователям") ;
-        return new ActionForward(aMapping.findForward("success")) ;
+        return new ActionForward(aMapping.findForward(SUCCESS)) ;
     }
 }

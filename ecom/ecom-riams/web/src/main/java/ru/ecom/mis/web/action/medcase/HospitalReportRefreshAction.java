@@ -34,9 +34,9 @@ public class HospitalReportRefreshAction extends BaseAction {
 	            	}
 	            }
 	        }.start() ;
-	        return new MonitorActionForward(monitorId, aMapping.findForward("success")) ;
+	        return new MonitorActionForward(monitorId, aMapping.findForward(SUCCESS)) ;
         } else {
-        	return aMapping.findForward("success") ;
+        	return aMapping.findForward(SUCCESS) ;
         }
     }
 }

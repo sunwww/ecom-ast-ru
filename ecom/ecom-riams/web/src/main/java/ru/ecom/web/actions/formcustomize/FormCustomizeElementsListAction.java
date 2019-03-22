@@ -38,15 +38,7 @@ public class FormCustomizeElementsListAction extends BaseAction {
 
         public String getId(Object aRow) {
             FormElementInfo info = (FormElementInfo) aRow ;
-            String ret ;
-            if(info!=null) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(theFormName) ;
-                sb.append('.') ;
-                sb.append(info.getName()) ;
-                ret = sb.toString() ;
-            } else ret = "" ;
-            return ret;
+            return info==null ? "" : theFormName +'.' +info.getName();
         }
 
         private final String theFormName ;

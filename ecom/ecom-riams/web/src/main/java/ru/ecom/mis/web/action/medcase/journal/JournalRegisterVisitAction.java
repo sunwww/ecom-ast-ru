@@ -42,7 +42,7 @@ public class JournalRegisterVisitAction  extends BaseAction {
 			aRequest.setAttribute("listRegisterVisit",new java.util.ArrayList()) ;
 		}
 		*/
-		return aMapping.findForward("success") ;
+		return aMapping.findForward(SUCCESS) ;
 	}
 	
 

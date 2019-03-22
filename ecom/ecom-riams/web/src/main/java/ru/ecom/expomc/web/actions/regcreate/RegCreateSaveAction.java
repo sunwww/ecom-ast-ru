@@ -42,35 +42,6 @@ public class RegCreateSaveAction extends BaseAction {
             }
         }.start() ;
 
-        return new MonitorActionForward(monitorId, aMapping.findForward("success")) ;
+        return new MonitorActionForward(monitorId, aMapping.findForward(SUCCESS)) ;
     }
-    
-
-    public ActionForward _myExecute(ActionMapping aMapping, final ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-    	final long HOUR24 = 123 ;
-    	final long DS = 123 ;
-    	
-		CreateRegistryForm form = (CreateRegistryForm)aForm ;
-		form.setTemplate("registry.xls") ;
-		form.setFormat(30) ;
-		form.setBillDate("05.04.2007") ;
-		
-		// КРУГЛ
-		form.setTimeImport(HOUR24) ;
-		//      РОСНО
-		form.setCompany("10") ;
-		p(HOUR24, DS, 142,143, 97, aMapping, aForm, aRequest, aResponse) ;
-		p(HOUR24, DS, 144,145, 97, aMapping, aForm, aRequest, aResponse) ;
-		p(HOUR24, DS, 146,147, 97, aMapping, aForm, aRequest, aResponse) ;
-    	p(HOUR24, DS, 148,149, 97, aMapping, aForm, aRequest, aResponse) ;
-    	
-    	return aMapping.findForward("success") ;
-    }
-
-
-	private void p(long aKrug, long aDs, int aRegNumber, int aRegNumberDs, int aBillNumber, ActionMapping aMapping, ActionForm aForm, HttpServletRequest request, HttpServletResponse response) {
-		CreateRegistryForm form = (CreateRegistryForm)aForm ;
-		form.setTimeImport(aKrug) ;
-		
-	}
 }

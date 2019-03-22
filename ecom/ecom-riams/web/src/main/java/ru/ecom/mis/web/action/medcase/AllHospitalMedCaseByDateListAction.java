@@ -55,7 +55,7 @@ public class AllHospitalMedCaseByDateListAction extends ListAction {
 			aRequest.setAttribute("list"
 					, isMap ? ru.ecom.web.actions.entity.ListAction.transormCollection(list, form.getClass()) : list);
 	        aRequest.setAttribute("decorator", getDecorator(sslId));
-	        return aMapping.findForward("success") ;
+	        return aMapping.findForward(SUCCESS) ;
 	    }
 		
     private ITableDecorator getDecorator(final long aSlsId) {

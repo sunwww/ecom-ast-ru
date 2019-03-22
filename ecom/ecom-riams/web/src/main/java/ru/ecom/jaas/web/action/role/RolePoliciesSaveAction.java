@@ -29,7 +29,7 @@ public class RolePoliciesSaveAction extends BaseAction {
 
         new InfoMessage(aRequest, "Политики роли сохранены и экспортированы") ;
 
-        return new ActionForward(aMapping.findForward("success").getPath() + "?id=" + roleId, true);
+        return new ActionForward(aMapping.findForward(SUCCESS).getPath() + "?id=" + roleId, true);
     }
 
 

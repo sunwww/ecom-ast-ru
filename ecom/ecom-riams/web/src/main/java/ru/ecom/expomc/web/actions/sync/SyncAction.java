@@ -1,17 +1,16 @@
 package ru.ecom.expomc.web.actions.sync;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.expomc.ejb.services.sync.ISyncService;
 import ru.ecom.web.actions.monitor.MonitorActionForward;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -28,6 +27,6 @@ public class SyncAction extends BaseAction {
                 service.sync(monitorId, timeId);
             }
         }.start() ;
-        return new MonitorActionForward(monitorId, aMapping.findForward("success")) ;
+        return new MonitorActionForward(monitorId, aMapping.findForward(SUCCESS)) ;
     }
 }

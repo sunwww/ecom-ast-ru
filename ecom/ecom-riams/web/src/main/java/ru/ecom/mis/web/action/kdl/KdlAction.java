@@ -20,7 +20,7 @@ public class KdlAction extends BaseAction {
 			throws Exception {
 		theService = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
 		getFiles();
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 	public void getFiles() {
 		theDirName = getKdlDir();

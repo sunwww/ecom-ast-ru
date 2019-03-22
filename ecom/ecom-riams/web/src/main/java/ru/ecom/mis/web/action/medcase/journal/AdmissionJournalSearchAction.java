@@ -51,6 +51,6 @@ public class AdmissionJournalSearchAction extends BaseAction {
 	    		aRequest.setAttribute("dateInfo","состоящим") ;
 	    	}
 		}
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

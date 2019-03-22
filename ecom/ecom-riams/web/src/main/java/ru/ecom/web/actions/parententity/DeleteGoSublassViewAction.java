@@ -20,4 +20,4 @@ public class DeleteGoSublassViewAction extends DeleteAction {
         return ForwardUtil.createGoSubclassForward((ActionForm)castEntityForm(aForm, aMapping), aMapping, aRequest, theStrutsFormUtil, theUtil);
     }
 
-    private StrutsConfigUtil theUtil = new StrutsConfigUtil();}
+    private final StrutsConfigUtil theUtil = new StrutsConfigUtil();}

@@ -1,21 +1,18 @@
 package ru.ecom.mis.web.action.worker;
 
-import java.sql.Date;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.web.action.JaasUtil;
 import ru.ecom.mis.ejb.service.worker.IWorkCalendarService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.sql.Date;
 
 public class WorkCalendarAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -53,7 +50,7 @@ public class WorkCalendarAction extends BaseAction {
         		serviceMoveDateDo(service, lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate) ;
         	}
         }
-        return new ActionForward(aMapping.findForward("success").getPath()
+        return new ActionForward(aMapping.findForward(SUCCESS).getPath()
         		+"?id="+lpuId+"&beginDate="+beginDateS+"&finishDate="+finishDateS+"&tmp="+Math.random(), true) ;
     }
 

@@ -32,6 +32,6 @@ public class PrepareCreateAction extends AbstractEntityAction {
 
         validatorForm.setTypeCreate();
 
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 }

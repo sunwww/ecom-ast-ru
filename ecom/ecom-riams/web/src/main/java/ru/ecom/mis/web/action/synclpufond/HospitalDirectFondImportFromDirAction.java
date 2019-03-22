@@ -38,7 +38,7 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
             	theHospService.finishMonitor(monitorId) ;
             }
         }.start() ;
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 	public void getFiles(long aMonitorId) throws Exception {
 		theDirName = getOrder263InDir();

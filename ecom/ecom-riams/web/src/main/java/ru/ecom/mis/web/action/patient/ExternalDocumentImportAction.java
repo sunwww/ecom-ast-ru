@@ -124,7 +124,7 @@ public class ExternalDocumentImportAction extends BaseAction {
             	isCompress=true;
             	mcomp = 0.25f ;
 	    	} else {
-	    		return aMapping.findForward("success") ;
+	    		return aMapping.findForward(SUCCESS) ;
 	    	}
 	    		try {
 	    			//image = Scalr.resize(image, image.getWidth()/2,image.getHeight()/2) ;
@@ -185,7 +185,7 @@ public class ExternalDocumentImportAction extends BaseAction {
     		aRequest.setAttribute("result_image", "Ошибка при обработке") ;
     	}
     	
-    	return aMapping.findForward("success") ;
+    	return aMapping.findForward(SUCCESS) ;
     }
 	public void save(BufferedImage aImage, Float aCompress, String aFileName,String aFileMainName,IKdlDiaryService aService) throws IOException  {
 		

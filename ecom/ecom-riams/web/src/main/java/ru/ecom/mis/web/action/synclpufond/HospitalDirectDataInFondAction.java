@@ -178,7 +178,7 @@ public class HospitalDirectDataInFondAction extends BaseAction {
     	} else if (typeMode!=null && typeMode.equals("4")) {
     		
     	}*/
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
     private void update(HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

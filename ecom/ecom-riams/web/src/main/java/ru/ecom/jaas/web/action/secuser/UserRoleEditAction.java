@@ -20,7 +20,7 @@ public class UserRoleEditAction extends BaseAction {
         boolean isAddSystem = RolesHelper.checkRoles("/Policy/Jaas/SecRole/EditSystem", aRequest);
         aRequest.setAttribute("roles", service.listUserRoles(userId,isAddSystem));
         aRequest.setAttribute("toAdd", service.listRolesToAdd(userId,isAddSystem));
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
 
     }
 }

@@ -319,7 +319,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		}
 
 		aRequest.setAttribute("style", style) ;
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 	private String addField(String aType,int aInt) {
 		if (aType.equals("suicide")) {

@@ -22,7 +22,7 @@ public class GetFileAction extends BaseAction {
 				IJbossGetFileService.class);
 		String relative = "../export/" + service.getRelativeFilename(id);
 		aRequest.setAttribute("url", relative);
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 		// return new ActionForward(relative, true) ;
 	}
 }

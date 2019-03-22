@@ -27,6 +27,6 @@ public class UnionDoublePatientAction extends BaseAction{
 			.append("\n and count(distinct coalesce(''||pat.address_addressid,'-'))=1")
 			.append("\n and count(distinct case when pat.snils is null or trim(pat.snils)='' then '-' else pat.snils end)=1") ;
 */    	//Collection<WebQueryResult> list=wqservice.executeNativeSql(sql.toString()) ;
-    	return aMapping.findForward("success") ;
+    	return aMapping.findForward(SUCCESS) ;
     }
 }

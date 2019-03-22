@@ -108,7 +108,7 @@ public class ReestrByHospitalMedCaseAction  extends BaseAction {
 		    
 		}
 
-		return aMapping.findForward("success") ;
+		return aMapping.findForward(SUCCESS) ;
 
     }
 

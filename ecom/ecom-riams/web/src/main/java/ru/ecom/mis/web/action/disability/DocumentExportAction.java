@@ -66,6 +66,6 @@ public class DocumentExportAction extends BaseAction {
         	aRequest.setAttribute("status", "(dd.exportdate is not null and (dd.exportdefect is not null and dd.exportdefect!='')) and ") ;        	
         }
         
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 }

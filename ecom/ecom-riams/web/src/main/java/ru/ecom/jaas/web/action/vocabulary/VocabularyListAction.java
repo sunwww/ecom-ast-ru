@@ -51,7 +51,7 @@ public class VocabularyListAction extends BaseAction{
 		aRequest.setAttribute("list", listForm);
 		
 		aRequest.setAttribute("decorator", getDecorator(vocid));
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 	
 	private ITableDecorator getDecorator(final String aVocId) {

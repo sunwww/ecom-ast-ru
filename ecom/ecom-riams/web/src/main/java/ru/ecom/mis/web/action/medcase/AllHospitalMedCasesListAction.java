@@ -61,7 +61,7 @@ public class AllHospitalMedCasesListAction extends ListAction {
         */
         aRequest.setAttribute("list", list) ;
         aRequest.setAttribute("decorator", getDecorator(sslId));
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 
     private ITableDecorator getDecorator(final long aSlsId) {

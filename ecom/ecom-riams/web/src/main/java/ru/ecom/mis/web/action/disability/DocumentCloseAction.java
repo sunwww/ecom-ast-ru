@@ -120,6 +120,6 @@ public class DocumentCloseAction extends BaseAction {
         	aRequest.setAttribute("anotherlpuinfo", "") ;
         }
         
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 }
