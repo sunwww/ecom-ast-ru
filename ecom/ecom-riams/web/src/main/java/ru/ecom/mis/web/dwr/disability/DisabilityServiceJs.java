@@ -182,8 +182,8 @@ public class DisabilityServiceJs {
                 ",p.birthday as BIRTHDAY\n" +
                 ",case when sex.omccode = '1' then '0' else '1' end as GENDER\n" +
                 ",vdr.codef as REASON1\n" +
-                ",vdr2.code as REASON2\n" +
-                ",vdr3.code as REASON3\n" +
+                ",vdr2.codef as REASON2\n" +
+                ",vdr3.codef as REASON3\n" +
                 ",mkb.code as DIAGNOS\n" +
                 ",dd.mainworkdocumentnumber as PARENT_CODE\n" +
                 ",dd.sanatoriumdatefrom as DATE1\n" +
