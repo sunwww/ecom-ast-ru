@@ -105,8 +105,10 @@
 
                 if (typeDate.equals("1") ) {
                     request.setAttribute("dateSql", "wct.createdateprerecord") ;
+                    request.setAttribute("dateStartMedcaseSql","" ) ;
                 } else if (typeDate.equals("2")){
                     request.setAttribute("dateSql","wcd.calendardate" ) ;
+                    request.setAttribute("dateStartMedcaseSql"," and wct.medcase_id is not null " ) ;
                 }
 
                 StringBuilder sqlAddNew=new StringBuilder();
@@ -152,7 +154,9 @@ left join workfunction wf on wf.id=wc.workfunction_id
 left join worker w on w.id=wf.worker_id
 left join mislpu ml on ml.id=coalesce(wf.lpu_id,w.lpu_id)
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+and (wct.isdeleted is null or wct.isdeleted=false)
 ${sqlAddNew}
+${dateStartMedcaseSql}
 group by wct.createprerecord
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 
@@ -177,6 +181,8 @@ from workcalendartime wct
 left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
 left join secuser su on su.login=wct.createprerecord
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') ${sqlAddNew}
+and (wct.isdeleted is null or wct.isdeleted=false)
+${dateStartMedcaseSql}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
             <msh:sectionTitle>
             </msh:sectionTitle>
@@ -214,6 +220,8 @@ left join worker w on w.id=wf.worker_id
 left join mislpu ml on ml.id=coalesce(wf.lpu_id,w.lpu_id)
 left join secuser su on su.login=wct.createprerecord
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') ${sqlAddNew}
+and (wct.isdeleted is null or wct.isdeleted=false)
+${dateStartMedcaseSql}
 group by ${selectSql},wct.createprerecord) as t
 group by t.fldName
 "  />

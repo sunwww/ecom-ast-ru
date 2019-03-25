@@ -116,6 +116,7 @@
         where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
         ${sqlAddNew}
         and (pat.id is not null or wct.prepatient_id is not null or wct.prepatientinfo is not null)
+        and (wct.isdeleted is null or wct.isdeleted=false)
         group by lpu.id,pf.checkdate
         order by pf.checkdate desc"
                            guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -194,7 +195,8 @@
         left join mislpu ml on ml.id=coalesce(wf.lpu_id,w.lpu_id)
         where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
         ${sqlAddNew} and case when ${param.lpuId}!=0 then lpu.id=${param.lpuId} else lpu.id is null end
-        and (pat.id is not null or wct.prepatient_id is not null or wct.prepatientinfo is not null) "
+        and (pat.id is not null or wct.prepatient_id is not null or wct.prepatientinfo is not null)
+        and (wct.isdeleted is null or wct.isdeleted=false)"
                            guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
             <form action="void" method="post" target="_blank">
                 Результат ${tViewName} за период с ${param.dateBegin} по ${dateEnd} (${param.lpuName}).
