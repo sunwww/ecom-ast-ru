@@ -1,9 +1,11 @@
 package ru.ecom.mis.ejb.domain.extdisp.voc;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 	/**
 	 * Справочник видов дополнительной диспансеризации
@@ -35,8 +37,6 @@ public class VocExtDisp extends VocBaseEntity{
 	/** Оказывается только прикрепленному населению */
 	private Boolean theAttachmentPopulation;
 
-
-
 	/** Запрет на дублирование */
 	@Comment("Запрет на дублирование")
 	public Boolean getDisableAgeDoubles() {return theDisableAgeDoubles;}
@@ -50,5 +50,13 @@ public class VocExtDisp extends VocBaseEntity{
 	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
 	/** В архиве */
 	private Boolean theIsArchival ;
+
+	/** Автоматически расчитывать возраст */
+	@Comment("Автоматически расчитывать возраст")
+	@Column(nullable=false, columnDefinition="boolean default false")
+	public Boolean getAutoCalcAge() {return theAutoCalcAge;}
+	public void setAutoCalcAge(Boolean aAutoCalcAge) {theAutoCalcAge = aAutoCalcAge;}
+	/** Автоматически расчитывать возраст */
+	private Boolean theAutoCalcAge ;
 
 }

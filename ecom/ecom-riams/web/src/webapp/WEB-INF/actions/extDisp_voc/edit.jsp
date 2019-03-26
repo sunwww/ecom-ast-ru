@@ -22,8 +22,12 @@
 				</msh:ifInRole>
 				<msh:row>
 					<msh:checkBox property="attachmentPopulation" label="Оказывается только прикрепленному населению"/>
-					<msh:checkBox property="disableAgeDoubles" label="Запрет на создание карт с одинаковой возрастной группой"/> 
+					<msh:checkBox property="disableAgeDoubles" label="Запрет на создание карт с одинаковой возрастной группой"/>
+					</msh:row>
+				<msh:row>
+
 					<msh:checkBox property="isArchival" label="не используется"/>
+					<msh:checkBox property="autoCalcAge" label="Расчитывать возраст автоматически"/>
 				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>

@@ -200,7 +200,6 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 							if (!confirm("ВНИМАНИЕ!\n"+aResult.substring(1)+".\nВы хотите продолжить?")){
 								document.getElementById('submitButton').disabled=false;
 								document.getElementById('submitButton').value='Создать';
-								return;
 							} else {
 								document.forms['extDisp_cardForm'].action=oldaction ;
 	    						document.forms['extDisp_cardForm'].submit();
@@ -215,74 +214,101 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 						}
 					}
 				});
+			} else {
+				document.forms['extDisp_cardForm'].action=oldaction ;
+				document.forms['extDisp_cardForm'].submit();
 			}
 		}
 		function checkDispAttached(r) {
     		PatientService.checkDispAttached($('dispType').value, $('patient').value,{
     			callback: function (aResult) {
-    				if (aResult=='0') {
+    				if (aResult==='0') {
     					alert ("Данный вид ДД оказывается только прикрепленному населению,"+
     							"\nпо данным последней проверке ФОМС пациент не прикреплен."+
     							"\nСоздание карты невозможно");
-    					if (r=='1') {
+    					if (r==='1') {
 	    					document.getElementById('submitButton').disabled=false;
 							document.getElementById('submitButton').value='Создать';
     					}
     				} else {
-    					if (r=='1') {
+    					if (r==='1') {
     						checkDisp($('startDate').value, $('finishDate').value);
-    						
     					}
-    					
-    				} 
-    					
+    				}
     			}
     		});
     	}
 		
-		function checkDisableAgeDoubles()		{		
-			ExtDispService.checkDisableAgeDoubles($('id').value,$('dispType').value, $('patient').value, $('ageGroup').value, {
-				callback: function (aResult) {
-					if (aResult=='1'){
-						alert("У пациента уже существует карта с выбранной возрастной группой. Создание карты невозможно!");
-						document.getElementById('submitButton').disabled=false;
-						document.getElementById('submitButton').value='Создать';
-					} else { 
-						checkDispAttached('1');
-				}
-				}});
+		function checkDisableAgeDoubles()		{
+			if ($('ageGroup').value) {
+				ExtDispService.checkDisableAgeDoubles($('id').value,$('dispType').value, $('patient').value, $('ageGroup').value, {
+					callback: function (aResult) {
+						if (aResult=='1'){
+							alert("У пациента уже существует карта с выбранной возрастной группой. Создание карты невозможно!");
+							document.getElementById('submitButton').disabled=false;
+							document.getElementById('submitButton').value='Создать';
+						} else {
+							checkDispAttached('1');
+						}
+					}});
+			} else {
+				checkDispAttached('1');
+			}
+
 		
 		
 		}
-		</script>
-		
-		</msh:ifFormTypeIsNotView>
-		
-		<script type="text/javascript">
-    	function updateAge() {
-    		PatientService.getAgeForDisp($('patient').value, $('finishDate').value, {
-        		callback: function(aResult) {
-       				$('ageReadOnly').value=aResult ;
-        		}
-        	});
-    	}
-    	updateAge() ;
-    	try {
-    		dispTypeAutocomplete.addOnChangeCallback(function() {$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';checkDispAttached('0');});
-    		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('startDate').value, $('finishDate').value);}) ;
-    		eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('startDate').value, $('finishDate').value);}) ;
-    		eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
-    		} catch(e) {
 
-    	}
-		</script>
-		
+		function updateAge() {
+			//Обновляем возраст и проверяем - можно ли выбирать возраст вручную
+			ExtDispService.getAgeForDisp($('patient').value, $('finishDate').value,$('dispType').value, {
+				callback: function(aResult) {
+					console.log(aResult);
+					aResult = JSON.parse(aResult);
+					if (aResult.status==="ok") {
+						$('ageReadOnly').value=aResult.ageGroup ;
+						if (aResult.autoCalcAge===true) {
+							if (aResult.autoCalcAgeId) {
+								jQuery('#ageGroup').val(aResult.autoCalcAgeId);
+								jQuery('#ageGroupName').val(aResult.autoCalcAgeName);
+							} else {
+								jQuery('#ageGroup').val("");
+								jQuery('#ageGroupName').val("Нет подходящей возрастной группы!!");
+							}
+
+							$('ageGroupName').disabled=true;
+
+						} else {
+							$('ageGroup').value=0;
+							$('ageGroupName').value="";
+							$('ageGroupName').disabled=false;
+						}
+					} else {
+						console.log("some error"+aResult.errorCode);
+					}
+
+				}
+			});
+		}
+		updateAge() ;
+		try {
+			dispTypeAutocomplete.addOnChangeCallback(function() {updateAge() ;$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';checkDispAttached('0');});
+			eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('startDate').value, $('finishDate').value);}) ;
+			eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('startDate').value, $('finishDate').value);}) ;
+			eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
+		} catch(e) {
+
+		}
+			</script>
+
+		</msh:ifFormTypeIsNotView>
+
 		<script type="text/javascript">
     	function doDispCardNotReal() {
 
-    		if(document.getElementById('notPaid').checked==true)
-    		{ alert("Карта уже отмечена как недействительная!")} 
-    		else{
+    		if(document.getElementById('notPaid').checked===true) {
+    			alert("Карта уже отмечена как недействительная!")
+    		} else {
 		document.getElementById('notPaid').checked = true;
 		document.getElementById('isNoOmc').checked = true;
 		ExtDispService.dispCardNotReal($('id').value,{
