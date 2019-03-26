@@ -235,61 +235,62 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
      * @throws NamingException
      */
     public String annulEmptyPrescription(String aMedService,String aWorkCalendarTime, String aPrescriptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-        String medcaseId = null;
-        String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
-        Boolean isAnnulPermitted = false;
-        if (aWorkCalendarTime!=null && Long.valueOf(aWorkCalendarTime)>0L) { //Аннулиируем назначение по времени, на которое назначено.
-            WebQueryResult wqr =service.executeNativeSql("select wct.medcase_id as id, vis.dateStart  as datestart from workcalendartime wct left join medcase vis on vis.id = wct.medcase_id " +
-                    "where wct.id = "+aWorkCalendarTime).iterator().next();
-            medcaseId= wqr.get1().toString();
-            isAnnulPermitted  = wqr.get2()==null || wqr.get2().toString().equals("");
-        } else if (aPrescriptionId!=null && Long.valueOf(aPrescriptionId)>0L) { //Аннулируем по ИД назначения
-            if (aReason == null || aReason.trim().equals("")) {
-                return "Необходимо указать причину аннулирование!";
-            }
-            String canAnnulSql = "select mc.id as id, case when  p.canceltime is null and p.intakedate is null "+
-                    "and (mc.datestart is null) then '1' else '0' end "+
-                    "from prescription p "+
-                    "Left join workcalendartime wct on wct.id = p.calendartime_id "+
-                    "Left join medcase mc on mc.id = wct.medcase_id "+
-                    "where p.id="+aPrescriptionId;
-            WebQueryResult wqrAnnul =service.executeNativeSql(canAnnulSql).iterator().next();
-            isAnnulPermitted= wqrAnnul.get2().toString().equals("1");
-            medcaseId = wqrAnnul.get1()!=null?wqrAnnul.get1().toString():null;
-            if (isAnnulPermitted) {
-                canAnnulSql = "update prescription " +
-                        "set cancelDate = current_date, " +
-                        "canceltime = current_time, " +
-                        "cancelReasonText = '"+aReason+"' ," +
-                        "cancelspecial_id = (select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='"+username+"') " +
-                        "where id="+aPrescriptionId;
-                service.executeUpdateNativeSql(canAnnulSql); //Отметили назначение как аннулированное
-                Collection<WebQueryResult> wqr = service.executeNativeSql("select calendartime_id  as calendarTime, medservice_id as msId from prescription where id ='"+aPrescriptionId+"' and calendartime_id is not null ");
-                if (!wqr.isEmpty()) {
-                    WebQueryResult wqr1 = wqr.iterator().next();
-                    aWorkCalendarTime = wqr1.get1()!=null?wqr1.get1().toString():null;
-                    aMedService = wqr1.get2()!=null?wqr1.get2().toString():null;
-                }
-            }
-        }
-        if(isAnnulPermitted && medcaseId!=null) {
-            String sql;
-            if (aMedService!=null) {
-                sql = "update medcase set noactuality='1', medservice_id = null,parent_id=null where parent_id= "+medcaseId+" and dtype='ServiceMedCase' and medService_id="+aMedService;
-                service.executeUpdateNativeSql(sql);// Удаляем услуги у визита
-            }
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String medcaseId = null;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+		Boolean isAnnulPermitted = false;
+		if (aWorkCalendarTime != null && Long.valueOf(aWorkCalendarTime) > 0L) { //Аннулиируем назначение по времени, на которое назначено.
+			WebQueryResult wqr = service.executeNativeSql("select wct.medcase_id as id, vis.dateStart  as datestart from workcalendartime wct left join medcase vis on vis.id = wct.medcase_id " +
+					"where wct.id = " + aWorkCalendarTime).iterator().next();
+			medcaseId = wqr.get1().toString();
+			isAnnulPermitted = wqr.get2() == null || wqr.get2().toString().equals("");
+		} else if (aPrescriptionId != null && Long.valueOf(aPrescriptionId) > 0L) { //Аннулируем по ИД назначения
+			if (aReason == null || aReason.trim().equals("")) {
+				return "Необходимо указать причину аннулирование!";
+			}
+			String canAnnulSql = "select mc.id as id, case when  p.canceltime is null and p.intakedate is null " +
+					"and (mc.datestart is null) then '1' else '0' end " +
+					"from prescription p " +
+					"Left join workcalendartime wct on wct.id = p.calendartime_id " +
+					"Left join medcase mc on mc.id = wct.medcase_id " +
+					"where p.id=" + aPrescriptionId;
+			WebQueryResult wqrAnnul = service.executeNativeSql(canAnnulSql).iterator().next();
+			isAnnulPermitted = wqrAnnul.get2().toString().equals("1");
+			medcaseId = wqrAnnul.get1() != null ? wqrAnnul.get1().toString() : null;
+			if (isAnnulPermitted) {
+				canAnnulSql = "update prescription " +
+						"set cancelDate = current_date, " +
+						"canceltime = current_time, " +
+						"cancelReasonText = '" + aReason + "' ," +
+						"cancelusername = '" + username + "' ," +
+						"cancelspecial_id = (select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='" + username + "') " +
+						"where id=" + aPrescriptionId;
+				service.executeUpdateNativeSql(canAnnulSql); //Отметили назначение как аннулированное
+				Collection<WebQueryResult> wqr = service.executeNativeSql("select calendartime_id  as calendarTime, medservice_id as msId from prescription where id ='" + aPrescriptionId + "' and calendartime_id is not null ");
+				if (!wqr.isEmpty()) {
+					WebQueryResult wqr1 = wqr.iterator().next();
+					aWorkCalendarTime = wqr1.get1() != null ? wqr1.get1().toString() : null;
+					aMedService = wqr1.get2() != null ? wqr1.get2().toString() : null;
+				}
+			}
+		}
+		if (isAnnulPermitted && medcaseId != null) {
+			String sql;
+			if (aMedService != null) {
+				sql = "update medcase set noactuality='1', medservice_id = null,parent_id=null where parent_id= " + medcaseId + " and dtype='ServiceMedCase' and medService_id=" + aMedService;
+				service.executeUpdateNativeSql(sql);// Удаляем услуги у визита
+			}
 
-            sql = "update medcase set noactuality='1' where id= "+medcaseId+" and datestart is null and 0=(select count(*) from medcase where parent_id='"+medcaseId+"' and (noactuality is null or noactuality='0'))";
-            service.executeUpdateNativeSql(sql); //Если у видита не осталось активных услуг - помечаем его как недействительный
+			sql = "update medcase set noactuality='1' where id= " + medcaseId + " and datestart is null and 0=(select count(*) from medcase where parent_id='" + medcaseId + "' and (noactuality is null or noactuality='0'))";
+			service.executeUpdateNativeSql(sql); //Если у видита не осталось активных услуг - помечаем его как недействительный
 
-            sql = "update workcalendartime set prescription=null, medcase_id = null where id="+aWorkCalendarTime+" and 0=(select count(*) from medcase where id='"+medcaseId+"'and (noactuality is null or noactuality='0'))";
-            service.executeUpdateNativeSql(sql);// Если визит недействительный - очищаем время в расписании
+			sql = "update workcalendartime set prescription=null, medcase_id = null where id=" + aWorkCalendarTime + " and 0=(select count(*) from medcase where id='" + medcaseId + "'and (noactuality is null or noactuality='0'))";
+			service.executeUpdateNativeSql(sql);// Если визит недействительный - очищаем время в расписании
 
-            return "Назначение отменено " ;
-        } else {
-            return "Невозможно отменить назначение! Уже было отменено или находится в работе";
-        }
+			return "Назначение отменено ";
+		} else if (!isAnnulPermitted && medcaseId != null)
+			return "Невозможно отменить назначение! Уже было отменено или находится в работе";
+		else return "Назначение отменено!";
     }
 
 
