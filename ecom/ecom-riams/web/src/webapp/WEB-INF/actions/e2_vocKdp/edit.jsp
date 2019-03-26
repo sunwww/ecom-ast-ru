@@ -26,7 +26,7 @@
                     <msh:textArea property="medServicesList" size="100" />
                 </msh:row>
             <msh:row>
-                <msh:autoComplete property="profile" vocName="vocE2FondV015" size="50"/>
+                <msh:autoComplete property="speciality" vocName="vocE2FondV021" size="50"/>
             </msh:row>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
             </msh:panel>

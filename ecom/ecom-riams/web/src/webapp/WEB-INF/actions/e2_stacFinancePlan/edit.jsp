@@ -34,6 +34,15 @@
                     <msh:autoComplete property="ksg" vocName="vocKSGByBedSubType" size="100" parentAutocomplete="bedSubType"/>
                 </msh:row>
                 <msh:row>
+                    <msh:autoComplete property="ksgGroup" vocName="vocKsgGroup" size="100" />
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="vidSluch" vocName="vocE2VidSluch" label="Вид случая" size="50"/>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="bedProfile" vocName="vocE2FondV020" label="Профиль коек" size="50"/>
+                </msh:row>
+                <msh:row>
                     <msh:textField property="count" />
                     <msh:textField property="cost" />
                 </msh:row>

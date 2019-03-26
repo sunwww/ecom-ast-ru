@@ -4,7 +4,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expert2.domain.voc.VocE2ExtDispService;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -44,7 +44,7 @@ public class EntryMedService extends BaseEntity {
         theEntry=aEntry;
         theMedService=aMedService.getMedService();
         theServiceDate=aMedService.getServiceDate();
-        theSpeciality=aMedService.getSpeciality();
+        theDoctorSpeciality=aMedService.getDoctorSpeciality();
         theMkb=aMedService.getMkb();
     }
 
@@ -62,13 +62,13 @@ public class EntryMedService extends BaseEntity {
     /** Дата оказания мед. услуги */
     private Date theServiceDate ;
 
-    /** Специальность врача, оказавшего услугу */
-    @Comment("Специальность врача, оказавшего услугу")
+    /** Специальность врача */
+    @Comment("Специальность врача")
     @OneToOne
-    public VocE2FondV015 getSpeciality() {return theSpeciality;}
-    public void setSpeciality(VocE2FondV015 aSpeciality) {theSpeciality = aSpeciality;}
-    /** Специальность врача, оказавшего услугу */
-    private VocE2FondV015 theSpeciality ;
+    public VocE2FondV021 getDoctorSpeciality() {return theDoctorSpeciality;}
+    public void setDoctorSpeciality(VocE2FondV021 aDoctorSpeciality) {theDoctorSpeciality = aDoctorSpeciality;}
+    /** Специальность врача */
+    private VocE2FondV021 theDoctorSpeciality ;
 
     /** Диагноз, выявленный при оказании услуги */
     @Comment("Диагноз, выявленный при оказании услуги")

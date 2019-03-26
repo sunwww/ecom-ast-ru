@@ -1,5 +1,6 @@
 package ru.ecom.expert2.domain.voc.federal;
 
+import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -19,13 +20,6 @@ public class VocE2FondV021 extends VocBaseFederal {
     @PreUpdate
     void preUpdate() {}
 
-    /** Главный специалист в диагностическом СПО */
-    @Comment("Главный специалист в диагностическом СПО")
-    public Boolean getIsKdoChief() {return theIsKdoChief;}
-    public void setIsKdoChief(Boolean aIsKdoChief) {theIsKdoChief = aIsKdoChief;}
-    /** Главный специалист в диагностическом СПО */
-    private Boolean theIsKdoChief ;
-
     /** Услуга по умолчанию для поликлиники */
     @Comment("Услуга по умолчанию для поликлиники")
     @OneToOne
@@ -41,4 +35,20 @@ public class VocE2FondV021 extends VocBaseFederal {
     public void setRepeatMedService(VocMedService aRepeatMedService) {theRepeatMedService = aRepeatMedService;}
     /** Услуга по умолчания (повторный визит) */
     private VocMedService theRepeatMedService ;
+
+    /** Профиль мед. помощи для подачи по стационару */
+    @Comment("Профиль мед. помощи для подачи по стационару")
+    @OneToOne
+    public VocE2MedHelpProfile getStacProfile() {return theStacProfile;}
+    public void setStacProfile(VocE2MedHelpProfile aStacProfile) {theStacProfile = aStacProfile;}
+    /** Профиль мед. помощи для подачи по стационару */
+    private VocE2MedHelpProfile theStacProfile ;
+
+    /** Профиль мед. помощи для подачи по поликлинике */
+    @Comment("Профиль мед. помощи для подачи по поликлинике")
+    @OneToOne
+    public VocE2MedHelpProfile getPolicProfile() {return thePolicProfile;}
+    public void setPolicProfile(VocE2MedHelpProfile aPolicProfile) {thePolicProfile = aPolicProfile;}
+    /** Профиль мед. помощи для подачи по поликлинике */
+    private VocE2MedHelpProfile thePolicProfile ;
 }

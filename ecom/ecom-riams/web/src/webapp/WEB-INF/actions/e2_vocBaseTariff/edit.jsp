@@ -25,13 +25,7 @@
                    <msh:textField label="Значение тарифа" property="value"/>
             </msh:row><msh:row>
                    <msh:autoComplete label="Тип коек" property="stacType" vocName="vocBedSubType" size="100"/>
-            </msh:row><msh:row>
-                   <msh:autoComplete  property="speciality" vocName="vocE2FondV015" size="100"/>
-
-
-                </msh:row>
-
-
+            </msh:row>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
             </msh:panel>
         </msh:form>

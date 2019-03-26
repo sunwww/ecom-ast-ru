@@ -19,7 +19,7 @@
        <form-bean name="e2_v015LinkForm" type="ru.ecom.expert2.form.E2FondMedSpecLinkForm"/>
         <form-bean name="e2_vocFondV009Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV009Form"/>
         <form-bean name="e2_vocFondV012Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV012Form"/>
-        <form-bean name="e2_vocFondV015Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV015Form"/>
+        <form-bean name="e2_vocFondV020Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV020Form"/>
         <form-bean name="e2_vocFondV021Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV021Form"/>
         <form-bean name="e2_vocFondV025Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV025Form"/>
         <form-bean name="e2_entryMedServiceForm" type="ru.ecom.expert2.form.EntryMedServiceForm"/>

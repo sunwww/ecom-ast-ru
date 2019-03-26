@@ -174,7 +174,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     e.setMainMkb(sluch.getChildText("DS1"));
                     e.setFondResult(getVocByCode(VocE2FondV009.class, finishDate, sluch.getChildText("RSLT")));
                     e.setFondIshod(getVocByCode(VocE2FondV012.class, finishDate, sluch.getChildText("ISHOD")));
-                    e.setFondDoctorSpec(getVocByCode(VocE2FondV015.class, finishDate, sluch.getChildText("PRVS")));
+                    e.setFondDoctorSpecV021(getVocByCode(VocE2FondV021.class, finishDate, sluch.getChildText("PRVS")));
                     e.setDoctorSnils(sluch.getChildText("IDDOKT"));
                     e.setIDSP(getVocByCode(VocE2FondV010.class, finishDate, sluch.getChildText("IDSP")));
                     e.setTotalCoefficient(new BigDecimal(sluch.getChildText("KOEF")));
@@ -419,7 +419,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 }
                 list = theManager.createQuery(sql).setParameter("actualDate",aActualDate).getResultList();
                 if (list.isEmpty()){
-                    list = theManager.createQuery("from " + aClass.getName() + " where finishDate is null and " + (aSqlAdd != null ? aSqlAdd : "")).getResultList();
+                    list = theManager.createQuery("from " + aClass.getName() + " where finishDate is null and " + aSqlAdd ).getResultList();
                 }
             } else if (isNotNull(aSqlAdd)){
                 sql+=aSqlAdd;

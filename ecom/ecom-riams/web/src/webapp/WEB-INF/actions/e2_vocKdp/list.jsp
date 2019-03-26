@@ -22,7 +22,7 @@
             ,list(ms.code||' '||ms.name) as services
             ,pr.code|| ' '|| pr.name as profile
              from VocDiagnosticVisit kdp
-             left join VocE2FondV015 pr on pr.id=kdp.profile_id
+             left join VocE2FondV021 pr on pr.id=kdp.speciality_id
              left join VocDiagnosticVisitMedService vis on vis.visit_id=kdp.id
              left join vocMedService ms on ms.id=vis.medservice_id
              group by kdp.id, kdp.code, kdp.name, pr.code, pr.name

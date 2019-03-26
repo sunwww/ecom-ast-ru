@@ -1,7 +1,7 @@
 package ru.ecom.expert2.domain.voc;
 
 import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.*;
@@ -41,10 +41,10 @@ public class VocDiagnosticVisit extends VocBaseFederal {
     /** Профиль основной мед. специальности */
     @Comment("Профиль основной мед. специальности")
     @OneToOne
-    public VocE2FondV015 getProfile() {return theProfile;}
-    public void setProfile(VocE2FondV015 aProfile) {theProfile = aProfile;}
-    /** Профиль основной мед. специальности */
-    private VocE2FondV015 theProfile ;
+    public VocE2FondV021 getSpeciality() {return theSpeciality;}
+    public void setSpeciality(VocE2FondV021 aSpeciality) {theSpeciality = aSpeciality;}
+    /**  */
+    private VocE2FondV021 theSpeciality ;
 
     /** Список кодов услуг по КДП */
     @Comment("Список кодов услуг по КДП")

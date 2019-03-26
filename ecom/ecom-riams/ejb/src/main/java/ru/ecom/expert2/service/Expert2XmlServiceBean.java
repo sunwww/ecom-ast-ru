@@ -7,7 +7,6 @@ import org.jdom.output.XMLOutputter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
-import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
@@ -21,7 +20,6 @@ import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.services.exportservice.ExportServiceBean;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.date.AgeUtil;
@@ -56,7 +54,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private static final String POLYCLINICTYPE="POLYCLINIC";
     private static final String VMPTYPE="VMP";
     private static final String EXTDISPTYPE="EXTDISP";
-    private static final String POLYCLINICKDOTYPE="POLYCLINICKDO";
     private static final String KDPTYPE="POL_KDP";
     private static final String CENTRAL_SEGMENT_DOC="CENTRAL_SEGMENT";
     private <T> T get(Long aId) {
@@ -223,7 +220,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             else if (entryType.equals(VMPTYPE)) {isVmp=true; isNedonosh=aEntry.getIsChild();}
             else if (entryType.equals(POLYCLINICTYPE)) {isPoliclinic=true;}
             else if (entryType.equals(EXTDISPTYPE)) {isExtDisp=true;}
-            else if (entryType.equals(POLYCLINICKDOTYPE) || entryType.equals(KDPTYPE)) {isPoliclinic=true;isPoliclinicKdo=true;}
+            else if (entryType.equals(KDPTYPE)) {isPoliclinic=true;isPoliclinicKdo=true;}
             else {throw new IllegalStateException("UNKNOWN ENTRYTYPE"+entryType);}
             Element zap = new Element("ZAP");
             zap.addContent(new Element("N_ZAP").setText(aEntry.getId() + ""));
@@ -321,12 +318,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
              //   sl=add(sl,"PROFIL",profileK); //Профиль коек/специальностей (V002_K)
                 sl=add(sl,"PROFIL",profile.getCode()); //Профиль специальностей V002 * 12.12.2018
                 if (isHosp || isVmp) {
-                    if (profile.getProfileBed()==null) {
-                        LOG.error("Нет профиля койки для профиля: "+profile.getProfileK());
+                    if (currentEntry.getBedProfile()==null) {
+                        LOG.error("Нет профиля койки у записи: "+currentEntry);
                         theManager.persist(new E2EntryError(currentEntry,"NO_FOND_FIELD: Нет профиля койки"));
                         return null;
                     }
-                    sl=add(sl,"PROFIL_K",currentEntry.getBedProfile()!=null ? currentEntry.getBedProfile().getCode() : profile.getProfileBed().getCode()); //Профиль коек/специальностей (V020)
+                    sl=add(sl,"PROFIL_K", currentEntry.getBedProfile().getCode()); //Профиль коек/специальностей (V020)
                 }
                 sl=add(sl,"DET",isChild); //Признак детского возраста
                 if (isPoliclinic) {
@@ -453,7 +450,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     sl.addContent(ksgKpg);
                 }
                 // * REAB
-                String prvs = currentEntry.getFondDoctorSpecV021()!=null ? currentEntry.getFondDoctorSpecV021().getCode() : "V015_"+currentEntry.getFondDoctorSpec().getCode();
+                String prvs = currentEntry.getFondDoctorSpecV021()!=null ? currentEntry.getFondDoctorSpecV021().getCode() : "ERROR_"+currentEntry.getDoctorWorkfunction();
                 sl=add(sl,"PRVS",prvs); //Специальность лечащего врача
                 sl=add(sl,"VERS_SPEC",vers);
                 sl=add(sl,"IDDOKT",currentEntry.getDoctorSnils()); // СНИЛС лечащего врача
@@ -566,7 +563,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                 usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
                                 usl.addContent(new Element("KOL_USL").setText(ms[1].toString()));
                                 usl.addContent(new Element("SUMV_USL").setText("0"));
-                                usl.addContent(new Element("PRVS_U").setText(medService.getCode().startsWith("B") ? ems.getSpeciality().getMedSpecV021().getCode() : prvs));
+                                usl.addContent(new Element("PRVS_U").setText(medService.getCode().startsWith("B") ? ems.getDoctorSpeciality().getCode() : prvs));
                                 //usl.addContent(new Element("IDDOKT_U").setText(currentEntry.getDoctorSnils()));
                                 usl.addContent(new Element("IDDOKT_U").setText(isNotNull(ems.getDoctorSnils()) ? ems.getDoctorSnils() : currentEntry.getDoctorSnils())); //Так правильно
                                 usl.addContent(new Element("NPL").setText("0"));
@@ -622,10 +619,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                     }
                     Element usl = new Element("USL");
-                    usl.addContent(new Element("IDSERV").setText(""+uslCnt));
+                    usl.addContent(new Element("IDSERV").setText(++uslCnt+""));
                     usl.addContent(new Element("LPU_U").setText("300001"));
                     usl.addContent(new Element("PROFIL_U").setText(profileK));
-                    usl.addContent(new Element("VID_VME").setText(currentEntry.getMedHelpProfile().getDefaultStacMedService()!=null ? currentEntry.getMedHelpProfile().getDefaultStacMedService().getCode() : "AAA"));
+                    usl.addContent(new Element("VID_VME").setText(currentEntry.getBedProfile().getDefaultStacMedService()!=null ? currentEntry.getBedProfile().getDefaultStacMedService().getCode() : "AAA"));
                     usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
                     usl.addContent(new Element("DATE_1_U").setText(finishDate));
                     usl.addContent(new Element("DATE_2_U").setText(finishDate));
@@ -753,7 +750,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
             packetDateAdd = dateToString(periodDate, "yyMM");
             String packetType;
-            if (aType.equals(HOSPITALTYPE) || aType.equals(POLYCLINICTYPE) || aType.equals(POLYCLINICKDOTYPE) || aType.equals(HOSPITALPEREVODTYPE) || aType.equals(KDPTYPE)) {
+            if (aType.equals(HOSPITALTYPE) || aType.equals(POLYCLINICTYPE) || aType.equals(HOSPITALPEREVODTYPE) || aType.equals(KDPTYPE)) {
                 packetType = "Z";
             } else if (aType.equals(VMPTYPE)) {
                 packetType = "T";
@@ -789,7 +786,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 groupSqlAdd= "e.id";
              //   groupSqlAdd= "e.externalparentid"; //1 Z_SL = 1SL
                 isHosp=true;
-            } else if (aType.equals(POLYCLINICTYPE) || aType.equals(POLYCLINICKDOTYPE) || aType.equals(KDPTYPE)){
+            } else if (aType.equals(POLYCLINICTYPE) || aType.equals(KDPTYPE)){
                 if ("3.1.1".equals(aVersion)) {
                     selectSqlAdd =" list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
                     groupSqlAdd="e.id";
@@ -865,7 +862,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     err.append("НЕ УКАЗАН ПРОФИЛЬ МЕД. ПОМОЩИ;");
                     isError = true;
                 }
-                if (null == entry.getFondDoctorSpec()) {
+                if (null == entry.getFondDoctorSpecV021()) {
                     err.append("НЕ РАСЧИТАНА СПЕЦИАЛЬНОСТЬ ВРАЧА;");
                     isError = true;
                 }
@@ -1084,23 +1081,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         return archiveName;
     }
 
-    /** Добавляем соответствие между профилем мед. помощи и профилем койки */
-    //Для ServiceJS------------------------------------------------------------
-    public void ____addMedHelpProfileBedType(Long aMedHelpId, Long aBedTypeId) {
-        VocBedType bedType = theManager.find(VocBedType.class, aBedTypeId);
-        if (!theManager.createNativeQuery("select e. id from E2MedHelpProfileBedType e left join vocbedType vbt on vbt.id=e.bedtype_id " +
-                " where e.profile_id=:profile and (e.bedtype_id=:bedTypeId or vbt.omcCode=:omcCode)").setParameter("profile",aMedHelpId).setParameter("bedTypeId", aBedTypeId)
-                .setParameter("omcCode", bedType.getOmcCode()).getResultList().isEmpty()) {
-            LOG.warn("Нельзя прикрепить койку, т.к. койка с таким кодом уже прикреплена");
-            return;
-        }
-        E2MedHelpProfileBedType mhbt = new E2MedHelpProfileBedType();
-        mhbt.setBedType(bedType);
-        mhbt.setProfile(theManager.find(VocE2MedHelpProfile.class, aMedHelpId));
-        theManager.persist(mhbt);
-    }
-
-
     /** Получить сущность по коду (в основном для справочников) */
     private <T> T getEntityByCode(String aCode, Class aClass, Boolean needCreate) {
         List<T> list = theManager.createQuery("from " + aClass.getName() + " where code=:code").setParameter("code", aCode).getResultList();
@@ -1181,7 +1161,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         String mainDiagnosisSqlAdd ;
         List<EntryDiagnosis> mainDiagnosis = null;
         String entryType =aEntry.getEntryType();
-        if (entryType.equals(POLYCLINICTYPE) || entryType.equals(POLYCLINICKDOTYPE) || entryType.equals(KDPTYPE)) {
+        if (entryType.equals(POLYCLINICTYPE) || entryType.equals(KDPTYPE)) {
             mainDiagnosisSqlAdd ="priority.code='1'";
         } else {
             mainDiagnosisSqlAdd =" registrationType.code='3' and priority.code='1'";

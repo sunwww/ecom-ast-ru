@@ -50,4 +50,20 @@ public class VocE2FondV021Form extends VocBaseFederalForm {
     public void setRepeatMedService(Long aRepeatMedService) {theRepeatMedService = aRepeatMedService;}
     /** Услуга по умолчания (повторный визит) */
     private Long theRepeatMedService ;
+
+    /** Профиль мед. помощи для подачи по стационару */
+    @Comment("Профиль мед. помощи для подачи по стационару")
+    @Persist
+    public Long getStacProfile() {return theStacProfile;}
+    public void setStacProfile(Long aStacProfile) {theStacProfile = aStacProfile;}
+    /** Профиль мед. помощи для подачи по стационару */
+    private Long theStacProfile ;
+
+    /** Профиль мед. помощи для подачи по поликлинике */
+    @Comment("Профиль мед. помощи для подачи по поликлинике")
+    @Persist
+    public Long getPolicProfile() {return thePolicProfile;}
+    public void setPolicProfile(Long aPolicProfile) {thePolicProfile = aPolicProfile;}
+    /** Профиль мед. помощи для подачи по поликлинике */
+    private Long thePolicProfile ;
 }

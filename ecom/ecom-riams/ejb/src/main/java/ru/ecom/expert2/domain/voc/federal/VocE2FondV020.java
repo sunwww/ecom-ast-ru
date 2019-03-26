@@ -1,13 +1,15 @@
 package ru.ecom.expert2.domain.voc.federal;
 
+import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 /**
- * Классификатор медицинских специальностей
+ * Классификатор коек
  */
 @Entity
 public class VocE2FondV020 extends VocBaseFederal {
@@ -17,10 +19,11 @@ public class VocE2FondV020 extends VocBaseFederal {
     @PreUpdate
     void preUpdate() {}
 
-    /** Главный специалист в диагностическом СПО */
-    @Comment("Главный специалист в диагностическом СПО")
-    public Boolean getIsKdoChief() {return theIsKdoChief;}
-    public void setIsKdoChief(Boolean aIsKdoChief) {theIsKdoChief = aIsKdoChief;}
-    /** Главный специалист в диагностическом СПО */
-    private Boolean theIsKdoChief ;
+    /** Услуга по профилю для стационар по умолчанию */
+    @Comment("Услуга по профилю для стационар по умолчанию")
+    @OneToOne
+    public VocMedService getDefaultStacMedService() {return theDefaultStacMedService;}
+    public void setDefaultStacMedService(VocMedService aDefaultStacMedService) {theDefaultStacMedService = aDefaultStacMedService;}
+    /** Услуга по профилю для стационар по умолчанию */
+    private VocMedService theDefaultStacMedService ;
 }

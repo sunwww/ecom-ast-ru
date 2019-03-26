@@ -17,6 +17,14 @@ import java.math.BigDecimal;
 @Table(schema="SQLUser")
 public class VocKsg extends VocIdCodeName {
 
+	/** Группа КСГ */
+	@Comment("Группа КСГ")
+	@OneToOne
+	public VocKsgGroup getGroup() {return theGroup;}
+	public void setGroup(VocKsgGroup aGroup) {theGroup = aGroup;}
+	/** Группа КСГ */
+	private VocKsgGroup theGroup ;
+
 	/** Год КСГ */
 	@Comment("Год КСГ")
 	public Integer getYear() {return theYear;}

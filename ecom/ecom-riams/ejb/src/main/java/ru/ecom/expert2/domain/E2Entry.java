@@ -419,15 +419,6 @@ public class E2Entry extends BaseEntity {
     /** Многоплодная беременность */
     private Boolean theMultiplyBirth ;
 
-     /** Специальность врача по фонду */
-     @Comment("Специальность врача по фонду")
-     @OneToOne
-     @Deprecated
-     public VocE2FondV015 getFondDoctorSpec() {return theFondDoctorSpec;}
-     public void setFondDoctorSpec(VocE2FondV015 aFondDoctorSpec) {theFondDoctorSpec = aFondDoctorSpec;}
-     /** Специальность врача по фонду */
-     private VocE2FondV015 theFondDoctorSpec ;
-
     /** Специальность врача по фонду V021 */
     @Comment("Специальность врача по фонду V021")
     @OneToOne
@@ -645,7 +636,7 @@ public class E2Entry extends BaseEntity {
 
     /** Список выполненных назначений*/
     @Comment("Список операций")
-    @Column(length= 25000)
+    @Column(length= 250000)
     public String getPrescriptionList() {return thePrescriptionList;}
     public void setPrescriptionList(String aPrescriptionList) {thePrescriptionList = aPrescriptionList;}
     /** Список операций */

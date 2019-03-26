@@ -23,6 +23,12 @@
                     <msh:autoComplete property="repeatMedService" vocName="vocMedServiceActual" size="50"/>
                 </msh:row>
                 <msh:row>
+                    <msh:autoComplete property="policProfile" vocName="vocE2MedHelpProfile" size="100"/>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="stacProfile" vocName="vocE2MedHelpProfile" size="100"/>
+                </msh:row>
+                <msh:row>
                     <msh:checkBox property="isNoActual"/>
                 </msh:row>
 
@@ -30,6 +36,13 @@
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
             </msh:panel>
         </msh:form>
+        <msh:ifFormTypeIsView formName="e2_vocFondV021Form">
+            <ecom:webQuery name="linkList" nativeSql="select link.id, vp.code||' '||vp.name  from E2FondMedSpecLink link
+             left join vocpost vp on vp.code=link.medosworkfunction where link.speciality_id=${param.id}"/>
+            <msh:table idField="1" name="linkList" action="entityParentEdit-e2_v015Link.do" noDataMessage="Нет соответствий">
+                <msh:tableColumn columnName="Должность" property="2"/>
+            </msh:table>
+        </msh:ifFormTypeIsView>
 
     </tiles:put>
     <tiles:put name="title" type="string">

@@ -81,6 +81,21 @@ public class AggregateVolumesFinancePlan extends BaseEntity {
     /** КСГ */
     private Long theKsg ;
 
+    /** Группа КСГ */
+    @Comment("Группа КСГ")
+    public Long getKsgGroup() {return theKsgGroup;}
+    public void setKsgGroup(Long aKsgGroup) {theKsgGroup = aKsgGroup;}
+    /** Группа КСГ */
+    private Long theKsgGroup ;
+
+    /** Имя группы КСГ */
+    @Comment("Группа КСГ")
+    public String getKsgGroupName() {return theKsgGroupName;}
+    public void setKsgGroupName(String aKsgGroupName) {theKsgGroupName = aKsgGroupName;}
+    /** Имя группы КСГ */
+    private String theKsgGroupName ;
+
+
     /** Имя КСГ */
     @Comment("Имя КСГ")
     public String getKsgName() {return theKsgName;}

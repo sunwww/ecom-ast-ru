@@ -25,7 +25,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 }
 
 </style>
-<msh:sideMenu></msh:sideMenu>
 	    <msh:sideMenu title="Перейти" >
 			<msh:sideLink action="/entityList-e2_vocCofficientLpuLevel.do" name="Коэффициент уровня ЛПУ (отделения)" title="Коэффициент уровня ЛПУ (отделения)" roles="/Policy/E2"/>
 			<msh:sideLink action="/entityList-e2_vocMedHelpProfile.do" name="Справочник профилей мед. помощи" title="Справочник профилей мед. помощи" roles="/Policy/E2"/>
@@ -34,7 +33,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 			<msh:sideLink action="/entityList-e2_config.do" name="Справочник настроек экспертизы" title="Справочник настроек экспертизы" roles="/Policy/E2"/>
 			<msh:sideLink action="/entityList-e2_vocFondV012.do" name="Справочник V012" title="Справочник настроек экспертизы" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocFondV009.do" name="Справочник V009" title="Справочник настроек экспертизы" roles="/Policy/E2" />
-			<msh:sideLink action="/entityList-e2_vocFondV015.do" name="Справочник V015" title="Справочник V015" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocFondV020.do" name="Справочник V020" title="Справочник V020" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocFondV021.do" name="Справочник V021" title="Справочник V021" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocFondV025.do" name="Справочник V025" title="Справочник V025" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_extDispPrice.do" name="Цены ДД" title="Цены ДД" roles="/Policy/E2" />

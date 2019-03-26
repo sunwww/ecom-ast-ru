@@ -7,36 +7,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz = VmpFinancePlan.class)
 @Comment("Финансовый план по ВМП")
 @WebTrail(comment = "Финансовый план по ВМП", nameProperties = "id", view = "entityView-e2_vmpFinancePlan.do")
 @EntityFormSecurityPrefix("/Policy/E2")
-public class VmpFinancePlanForm extends HospitalFinancePlanForm {
-    /** Профиль медицинской помощи */
-    @Comment("Профиль медицинской помощи")
-    @Persist @Required
-    public Long getProfile() {return theProfile;}
-    public void setProfile(Long aProfile) {theProfile = aProfile;}
-    /** Профиль медицинской помощи */
-    private Long theProfile ;
-
-    /** Отделение */
-    @Comment("Отделение")
-    @Persist
-    public Long getDepartment() {return theDepartment;}
-    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
-    /** Отделение */
-    private Long theDepartment ;
-
-    /** КСГ */
-    @Comment("КСГ")
-    public Long getKsg() {return theKsg;}
-    public void setKsg(Long aKsg) {theKsg = aKsg;}
-    /** КСГ */
-    private Long theKsg ;
+public class VmpFinancePlanForm extends FinancePlanForm {
 
     /** Подтип коек */
     @Comment("Подтип коек")
@@ -52,4 +29,13 @@ public class VmpFinancePlanForm extends HospitalFinancePlanForm {
     public void setMethod(Long aMethod) {theMethod = aMethod;}
     /** Метод ВМП */
     private Long theMethod ;
+
+    /** Профиль коек V020 */
+    @Comment("Профиль коек V020")
+    @Persist
+    public Long getBedProfile() {return theBedProfile;}
+    public void setBedProfile(Long aBedProfile) {theBedProfile = aBedProfile;}
+    /** Профиль коек V020 */
+    private Long theBedProfile ;
+
 }

@@ -3,6 +3,7 @@ package ru.ecom.expert2.domain.financeplan;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.expert2.domain.voc.VocE2VidSluch;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV020;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -68,6 +69,14 @@ public class FinancePlan extends BaseEntity {
     public void setVidSluch(VocE2VidSluch aVidSluch) {theVidSluch = aVidSluch;}
     /** Вид случай */
     private VocE2VidSluch theVidSluch ;
+
+    /** Профиль коек V020 */
+    @Comment("Профиль коек V020")
+    @OneToOne
+    public VocE2FondV020 getBedProfile() {return theBedProfile;}
+    public void setBedProfile(VocE2FondV020 aBedProfile) {theBedProfile = aBedProfile;}
+    /** Профиль коек V020 */
+    private VocE2FondV020 theBedProfile ;
 
 
 }

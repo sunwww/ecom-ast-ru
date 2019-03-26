@@ -35,13 +35,13 @@ public class VocDiagnosticVisitForm extends VocBaseFederalForm {
     /** Мед услуга (для добавления) */
     private Long theMedServiceAdd ;
 
-    /** Профиль основной мед. специальности */
-    @Comment("Профиль основной мед. специальности")
+    /** Профиль основной мед. специальности V021*/
+    @Comment("Профиль основной мед. специальности V021")
     @Persist @Required
-    public Long getProfile() {return theProfile;}
-    public void setProfile(Long aProfile) {theProfile = aProfile;}
+    public Long getSpeciality() {return theSpeciality;}
+    public void setSpeciality(Long aSpeciality) {theSpeciality = aSpeciality;}
     /** Профиль основной мед. специальности */
-    private Long theProfile ;
+    private Long theSpeciality ;
 
     /** Список подходящих услуг */
     @Comment("Список подходящих услуг")

@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 
 @Entity
+//TODO индекс на entry
 public class E2CoefficientPatientDifficultyEntryLink extends BaseEntity{
 
     /** Запись */

@@ -115,8 +115,6 @@ public class E2EntryForm extends IdEntityForm {
     private Long theFondResult ;
     /** Исход случая */
     private Long theFondIshod ;
-    /** Специальность врача по фонду */
-    private Long theFondDoctorSpec ;
     /** Многоплодная беременность */
     private Boolean theMultiplyBirth ;
     /** ТИп записи */
@@ -742,11 +740,6 @@ public class E2EntryForm extends IdEntityForm {
     @Comment("Исход случая")
     public Long getFondIshod() {return theFondIshod;}
     public void setFondIshod(Long theFondIshod) {this.theFondIshod = theFondIshod;}
-
-    @Persist
-    @Comment("Специальность врача по фонду")
-    public Long getFondDoctorSpec() {return theFondDoctorSpec;}
-    public void setFondDoctorSpec(Long theFondDoctorSpec) {this.theFondDoctorSpec = theFondDoctorSpec;}
 
     @Persist
     @Comment("Многоплодная беременность")

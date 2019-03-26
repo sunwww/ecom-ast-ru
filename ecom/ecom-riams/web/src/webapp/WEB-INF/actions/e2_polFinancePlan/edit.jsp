@@ -23,8 +23,11 @@
             </msh:row><msh:row>
                 <msh:autoComplete property="profile" vocName="vocE2MedHelpProfile" size="100"/>
             </msh:row>
-                ><msh:row>
+                <msh:row>
                 <msh:autoComplete property="department" vocName="lpu" size="100"/>
+            </msh:row>
+                <msh:row>
+                <msh:autoComplete property="vidSluch" vocName="vocE2VidSluch" size="100"/>
             </msh:row>
                 <msh:row>
                     <msh:textField property="count" />

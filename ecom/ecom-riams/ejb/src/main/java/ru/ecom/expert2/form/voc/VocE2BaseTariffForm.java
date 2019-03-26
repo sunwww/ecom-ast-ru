@@ -14,15 +14,6 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Справочник базовых тарифов", nameProperties = "id", view = "entityView-e2_vocBaseTariff.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 public class VocE2BaseTariffForm extends VocCoefficientForm {
-    /** Профиль медициской специальности */
-    @Comment("Профиль медициской специальности")
-    @Persist
-    public Long getSpeciality() {return theSpeciality;}
-    public void setSpeciality(Long aSpeciality) {theSpeciality = aSpeciality;}
-    /** Профиль медициской специальности */
-    private Long theSpeciality ;
-
-
     /** Тип стационар (круглосуточный, дневной */
     @Comment("Тип стационар (круглосуточный, дневной")
     @Persist

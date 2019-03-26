@@ -234,13 +234,13 @@
                     <msh:autoComplete property="fondResult" size="50" vocName="vocE2FondV009"/>
                     <msh:autoComplete property="fondIshod" size="50" vocName="vocE2FondV012"/>
             </msh:row><msh:row>
-                    <msh:autoComplete property="fondDoctorSpec" size="50" vocName="vocE2FondV015"/>
+                    <msh:autoComplete property="fondDoctorSpecV021" size="50" vocName="vocE2FondV021"/>
                     <msh:autoComplete property="medHelpProfile" size="50" vocName="vocE2MedHelpProfile"/>
                 </msh:row><msh:row>
                 <msh:autoComplete property="bedProfile" size="50" vocName="vocE2FondV020"/>
                 </msh:row><msh:row>
             </msh:row><msh:row>
-                    <msh:autoComplete property="fondDoctorSpecV021" size="50" vocName="vocE2FondV021"/>
+
 
                 </msh:row><msh:row>
                 <msh:autoComplete property="vidSluch" size="50" vocName="vocE2VidSluch"/>

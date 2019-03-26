@@ -17,6 +17,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/E2")
 public class VocKsgForm extends IdEntityForm {
 
+    /** Группа КСГ */
+    @Comment("Группа КСГ")
+    @Persist
+    public Long getGroup() {return theGroup;}
+    public void setGroup(Long aGroup) {theGroup = aGroup;}
+    /** Группа КСГ */
+    private Long theGroup ;
+
     /** Код */
     @Comment("Код")
     @Persist

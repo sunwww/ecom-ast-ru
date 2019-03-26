@@ -250,18 +250,11 @@ public class Expert2ServiceJs {
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
         final long monitorId = monitorService.createMonitor();
         final IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
-        new Thread(()-> {
-                service.checkListEntry(aListEntryId, forceUpdateKsg, aParams, monitorId);
-
-            }).start();
+        new Thread(()-> service.checkListEntry(aListEntryId, forceUpdateKsg, aParams, monitorId)).start();
         return monitorId;
     }
     public void checkEntry(Long aEntryId, boolean forceUpdateKsg, HttpServletRequest aRequest) throws NamingException {
         Injection.find(aRequest).getService(IExpert2Service.class).makeCheckEntry(aEntryId,forceUpdateKsg);
-    }
-
-    public void addMedHelpProfileBedType (Long aMedHelpId, Long aBedTypeId, Long aBedSubTypeId, HttpServletRequest aRequest ) throws NamingException {
-        Injection.find(aRequest).getService(IExpert2Service.class).addMedHelpProfileBedType(aMedHelpId,aBedTypeId, aBedSubTypeId);
     }
 
     public boolean saveBillDateAndNumber(Long aListEntryId, String aType, String aServiceStream, String aOldBillNumber, String aOldBillDate,String aBillNumber, String aBillDate, String isForeign, HttpServletRequest aRequest) throws NamingException {

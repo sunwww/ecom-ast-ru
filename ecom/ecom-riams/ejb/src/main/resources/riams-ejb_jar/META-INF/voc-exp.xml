@@ -84,13 +84,7 @@
                 queried = 'code, name'
         />
     </voc>
-    <voc id='vocE2FondV015' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV015'
-                names   = 'code, name'
-                queried = 'code, name'
-        />
-    </voc>
+
     <voc id='vocE2FondV012' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV012'
@@ -305,6 +299,20 @@
                 queryAppend=""
                 join= "left join VocBedSubType vbst on vbst.id=vk.bedsubtype_id"
                 order=""
+        />
+    </voc>
+    <voc id='vocKSGByBedSubTypeAndDate' type='NativeVocService'>
+        <NativeVocService
+                from = ' vocKsg vk '
+                parent='  vbst.code=:par1 and  '
+                names=" vk.code||' '||vk.name ||' '||cast (vk.kz as varchar(5))"
+                nameId=" vk.id "
+                queried=" ( upper(vk.code) like upper(:query) or upper(vk.name) like upper(:query) )"
+                queryAppend=""
+                join= "left join VocBedSubType vbst on vbst.id=vk.bedsubtype_id"
+                order=""
+                parentSplitCount="2"
+
         />
     </voc>
 

@@ -17,15 +17,16 @@
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
                 <msh:row>
-                </msh:row><msh:row>
+                    <msh:autoComplete property="group" vocName="vocKsgGroup" fieldColSpan="3" size="100" viewOnlyField="true"/>
+                </msh:row>
+                <msh:row>
                 <msh:textField property="code"/>
-                <msh:textField property="name"/>
+                <msh:textField property="name" size="100"/>
             </msh:row>
                 <msh:row>
                     <msh:textField property="KZ"/>
-                    <msh:textField property="bedSubType" size="100"/>
+                    <msh:textField property="bedSubType" />
             </msh:row>
-
 
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
 
