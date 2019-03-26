@@ -248,6 +248,7 @@
                                     <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
                                     <input type="button" id="submitPreDischrge1" name="submitPreDischrge1" value="Сохранить пред. выписку+диагноз" onclick="check_diags('1');"/>
                                     <input type="button" id="changeSizeEpicrisisButton1" value="Увеличить" onclick="changeSizeEpicrisis()">
+                                    <input type="button" onclick="checkStorage();" value="Восстановить потерянные данные" />
 
                                 </td>
                             </msh:row>
@@ -263,6 +264,7 @@
                                     <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
                                     <input type="button" id="submitPreDischrge2" name="submitPreDischrge2" value="Сохранить пред. выписку+диагноз" onclick="check_diags('1');"/>
                                     <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
+                                    <input type="button" onclick="checkStorage();" value="Восстановить потерянные данные" />
                                 </td>
                             </msh:row>
                         </msh:ifFormTypeIsNotView>
@@ -425,7 +427,7 @@
             }
             eventutil.addEventListener($('dischargeEpicrisis'), "input", function(){saveToStorage();}) ;
             eventutil.addEventListener($('dischargeEpicrisis'), "keyup", function(){saveToStorage();}) ;
-            eventutil.addEventListener($('dischargeEpicrisis'), "blur", function(){saveToStorage();}) ;
+            //eventutil.addEventListener($('dischargeEpicrisis'), "blur", function(){saveToStorage();}) ;
             eventutil.addEventListener($('dischargeEpicrisis'), "paste", function(){saveToStorage();}) ;
         </script>
         <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
@@ -684,15 +686,18 @@
         </msh:ifInRole>
         <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
             <script type="text/javascript">
-                try {
-                    if (localStorage.getItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML) != null) {
-                        if (confirm('Обнаружена несохранённая выписка. Восстановить?')) {
-                            $('dischargeEpicrisis').value = localStorage.getItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML);
+                function checkStorage() {
+                    try {
+                        if (localStorage.getItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML) != null) {
+                            if (confirm('Обнаружена несохранённая выписка. Восстановить? Она заменит введённый текст.')) {
+                                $('dischargeEpicrisis').value = localStorage.getItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML);
+                            }
+                            //removeFromStorage();
                         }
-                        removeFromStorage();
+                        else showToastMessage("Данных для восстановления не найдено!",null,true);
+                    } catch (e) {
                     }
                 }
-                catch (e) {}
                 function submitFunc() {
                     var frm = document.stac_sslDischargeForm;
                     var medCaseId = document.querySelector('#id');

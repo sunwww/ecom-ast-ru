@@ -111,7 +111,7 @@ horizontalFill="true" />
 						<td colspan="3" align="right">
 						<input type="button" style="display: none" name="btnEditProt2" id="btnEditProt2"
 							value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" />
-
+							<input type="button" onclick="checkStorage();" value="Восстановить потерянные данные" />
 							<input id="usualCalcs" class="hide" type="button" value="Калькуляторы и шкалы риска" onClick="showallCalc(medCaseId,1)"/>
 
 							<!--input id="SKNF" class="hide" type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId,1)"/-->
@@ -273,7 +273,12 @@ horizontalFill="true" />
                 }
 
                 function saveToStorage() {
-                    try {localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId+";"+currentUsername, $('record').value);}catch(e) {}
+                    try {
+                        var text=$('record').value;
+                        if ($('record').value.match(/^С начала СЛС: \d+ сутки\nС начала СЛО: \d+ сутки\n$/ig)==null
+						&& $('record').value.match(/^С начала СЛС: \d+ сутки\n$/ig)==null)
+                        localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId+";"+currentUsername, $('record').value);
+                    }catch(e) {}
                 }
                 function removeFromStorage() {
                     try {localStorage.removeItem("smo_visitProtocolForm"+";"+medCaseId+";"+currentUsername);}catch (e) {alert("remove ex"+e);}
@@ -373,17 +378,19 @@ horizontalFill="true" />
     		document.smo_visitProtocolForm.submit() ;
     	}else {setTimeout(checktime,600000); }
     }
-
-	try {
-		var text = localStorage.getItem("smo_visitProtocolForm" + ";" + medCaseId + ";" + currentUsername);
-		if (text != null) {
-			if (confirm('Обнаружен несохранённый протокол. Восстановить?')) {
-				$('record').value = text;
-			}
-			removeFromStorage();
-		}
-	} catch (e) {}
-
+	function checkStorage() {
+        try {
+            var text = localStorage.getItem("smo_visitProtocolForm" + ";" + medCaseId + ";" + currentUsername);
+            if (text != null) {
+                if (confirm('Обнаружен несохранённый протокол. Восстановить? Он заменит введённый текст.')) {
+                    $('record').value = text;
+                }
+                //removeFromStorage();
+            }
+            else showToastMessage("Данных для восстановления не найдено!",null,true);
+        } catch (e) {
+        }
+    }
 	function saveCookie() {
 		if (($('record').value.replace(/|\s+|\s+$/gm,''))!="") setCookie("protocol", $('record').value) ;
 	}
