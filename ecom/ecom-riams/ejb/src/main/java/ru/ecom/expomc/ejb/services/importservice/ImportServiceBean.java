@@ -205,34 +205,33 @@ public class ImportServiceBean implements IImportService {
 
     public void checkFormat(ImportFileResult aResult, Format aFormat, File aDbfFile) throws IOException, ParseException {
         DbfFile dbfFile = new DbfFile();
-        FileInputStream in = new FileInputStream(aDbfFile);
-        dbfFile.load(in);
-        in.close() ;
-        int index = 0 ;
-        //Collection<DbfField> dbfFields = dbfFile.getDbfFields() ;
-        Iterator<DbfField> dbfIterator = dbfFile.getDbfFields().iterator() ;
-        for (Field field : aFormat.getFields()) {
-            index++ ;
-            if(dbfIterator.hasNext()) {
-                DbfField dbfField = dbfIterator.next();
-                if(!dbfField.getName().equals(field.getName())) {
-                    addMessage(index, aResult, dbfField, field, "Неправильное наименование поля");
-                }
-                if(field.getDbfType()!=Field.DATE && dbfField.getLength() != field.getDbfSize()) {
-                    addMessage(index, aResult, dbfField, field, "Hеправильная длина поля");
-                    //
-                }
-                if(field.getDbfType()!=Field.DATE && dbfField.getDecimalLength() != field.getDbfDecimal()) {
-                    addMessage(index, aResult, dbfField, field, "Hеправильнок количество десятичных знаков");
-                    //
-                }
+        try (FileInputStream in = new FileInputStream(aDbfFile)) {
+            dbfFile.load(in);
+            int index = 0 ;
+            //Collection<DbfField> dbfFields = dbfFile.getDbfFields() ;
+            Iterator<DbfField> dbfIterator = dbfFile.getDbfFields().iterator() ;
+            for (Field field : aFormat.getFields()) {
+                index++ ;
+                if(dbfIterator.hasNext()) {
+                    DbfField dbfField = dbfIterator.next();
+                    if(!dbfField.getName().equals(field.getName())) {
+                        addMessage(index, aResult, dbfField, field, "Неправильное наименование поля");
+                    }
+                    if(field.getDbfType()!=Field.DATE && dbfField.getLength() != field.getDbfSize()) {
+                        addMessage(index, aResult, dbfField, field, "Hеправильная длина поля");
+                        //
+                    }
+                    if(field.getDbfType()!=Field.DATE && dbfField.getDecimalLength() != field.getDbfDecimal()) {
+                        addMessage(index, aResult, dbfField, field, "Hеправильнок количество десятичных знаков");
+                        //
+                    }
 //                if(dbfField.getType() != field.getDbfType()) {
 //                    addMessage(index, aResult, dbfField, field, "неправильный тип поля");
 
 //                }
-
-            } else {
-                aResult.addMessage("нет полей в файле dbf");
+                } else {
+                    aResult.addMessage("нет полей в файле dbf");
+                }
             }
         }
     }

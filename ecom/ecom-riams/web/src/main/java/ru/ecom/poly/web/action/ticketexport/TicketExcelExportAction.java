@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  * Time: 8:02:14
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
 public class TicketExcelExportAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 

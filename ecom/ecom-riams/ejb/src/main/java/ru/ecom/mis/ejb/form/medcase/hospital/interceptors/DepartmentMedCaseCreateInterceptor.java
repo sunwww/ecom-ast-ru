@@ -41,7 +41,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		if (parentSSL.getDateFinish()!=null && parentSSL.getDischargeTime()!=null) {
     			throw new IllegalStateException("Нельзя добавить случай лечения в отделении (СЛО) в закрытый случай стационарного лечения (ССЛ) !!!") ;
     		}
-    		if (parentSSL.getEmergency()!=null && parentSSL.getEmergency()==Boolean.TRUE) {
+    		if (parentSSL.getEmergency()!=null && parentSSL.getEmergency()) {
     			form.setEmergency(Boolean.TRUE) ;
     		}
     		if (parentSSL.getDeniedHospitalizating()!=null) {
@@ -52,7 +52,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     			.createNativeQuery("select count(*) from MedCase where parent_id = :parentId and DTYPE='DepartmentMedCase' ")
     			.setParameter("parentId", aParentId)
     			.getSingleResult() ;
-    		if (listDep!=null && ConvertSql.parseLong(listDep).equals(Long.valueOf(0))) {
+    		if (listDep!=null && ConvertSql.parseLong(listDep).equals(0L)) {
     			prepareForCreationFirstSlo(form, parentSSL,manager,isOwnerFunction) ;
     		} else {
     			prepareForCreationNextSlo(form,parentSSL,manager) ;
@@ -60,7 +60,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		if (parentSSL.getLpu()!=null) form.setLpu(parentSSL.getLpu().getId());
     		form.setTypeCreate() ;
     		if (isOwnerFunction
-    				&&form.getDepartment()!=null&&form.getDepartment()>Long.valueOf(0)) {
+    				&&form.getDepartment()!=null&&form.getDepartment()>0L) {
         		String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
             	List<Object[]> listwf =  manager.createNativeQuery("select wf.id as wfid,w.id as wid from WorkFunction wf left join Worker w on w.id=wf.worker_id left join SecUser su on su.id=wf.secUser_id where su.login = :login and w.lpu_id=:lpu and wf.id is not null") 
         				.setParameter("login", username)

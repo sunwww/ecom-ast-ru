@@ -1,20 +1,12 @@
 package ru.ecom.report.rtf;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import org.jdom.Element;
-
 import ru.ecom.report.replace.IValueGetter;
 import ru.ecom.report.replace.ReplaceHelper;
 import ru.ecom.report.replace.SetValueException;
+
+import java.io.*;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class TxtPrintFileDriver implements IPrintFileDriver {
 
@@ -72,22 +64,19 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
     	//File aTemplateFile = getInputFile() ;
     	//File aOutputFile = getOutputFile() ;
     	//String aEncoding = getEncoding() ;
-        LineNumberReader in = null ;
-        PrintWriter out = null ;
-        try {
 
-            in = new LineNumberReader(new InputStreamReader(new FileInputStream(getInputFile()), getEncoding()));
-            out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(getOutputFile()), getEncoding()));
+        try(LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(getInputFile()), getEncoding()));
+			PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(getOutputFile()), getEncoding()))) {
             String line ;
-            StringBuilder sb = new StringBuilder();
+//            StringBuilder sb = new StringBuilder();
             int forCount = 0;
-            String forText = ""; 
+            StringBuilder forText = new StringBuilder();
             String forParam = "" ;
             int cntId = 0 ;
             while ( (line=in.readLine())!=null) {
             	cntId++ ;
             	boolean next = true ;
-            	if (cntId==1 && line!=null ) {
+            	if (cntId==1) {
             		if ( line.startsWith("cntSymbol=")) {
 	            		line = line.replace("cntSymbol=", "") ;
 	            		try {
@@ -101,7 +90,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             		}
             	} 
             	if (next) {
-                sb.append(line) ;
+  //              sb.append(line) ;
                 //System.out.println(line) ;
                 boolean isBeginFor = OdtPrintFileDriver.isBeginFor(line) ;
         		boolean isEndFor = OdtPrintFileDriver.isEndFor(line) ;
@@ -113,10 +102,10 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             			//System.out.println("Начало цикла") ;
             			forCount = forCount+1 ;
             			if (forCount>1) {
-            				forText = forText + line+"\n" ;
+            				forText.append(line).append("\n") ;
             			} else {
             				forParam=line ;
-            				forText = "";
+            				forText = new StringBuilder();
             			}
             			//forText = line ;
             			
@@ -127,19 +116,19 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             			if (forCount==0) {
             				//System.out.println("Окончание цикла") ;
             				try {
-            					forLine(out,aReplaceHelper, aValueGetter,forParam, forText);
-            					forText = "" ;
+            					forLine(out,aReplaceHelper, aValueGetter,forParam, forText.toString());
+            					forText = new StringBuilder() ;
             					forParam = "" ;
             				} catch (Exception e) {
             					out.println("ОШИБКА!!!!!!!!!!!"+e.getStackTrace()) ;
             				}
             			} else {
-            				forText = forText + line+"\n" ;
+            				forText.append(line).append("\n") ;
             				//System.out.println("Один из циклов закончился цикла") ;
             			}
             		} else {
             			//System.out.println("Продолжение цикла") ;
-            			forText = forText+line +"\n";
+            			forText.append(line).append("\n");
             		}
             	}
                 
@@ -150,11 +139,6 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             //out.print(outStr) ;
         } catch (Exception e) {
             throw new RtfPrintException("Ошибка печати",e);
-        } finally {
-            if(out!=null) out.close() ;
-            if(in!=null) try { in.close() ; } catch (Exception e) {
-                throw new RtfPrintException("Ошибка закрытия файла: "+e.getMessage(),e) ;
-            }
         }
     }
     private  void recordLine(PrintWriter aOut,ReplaceHelper aReplaceHelper, IValueGetter aValueGetter, String aLine) {
@@ -170,7 +154,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
 		try {
 			String[] strs = aLine.split("\n") ;
 			int forCount = 0;
-            String forText = ""; 
+            StringBuilder forText = new StringBuilder();
             String forParam="" ;
         	StringTokenizer st = new StringTokenizer(aParam, " \t:");
             st.nextToken() ;
@@ -198,26 +182,26 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
 	            		if (isBeginFor) {
 	            			forCount = forCount+1 ;
 	            			if (forCount>1) {
-	            				forText = forText + str+"\n" ;
+	            				forText.append(str).append("\n") ;
 	            			} else {
 	            				forParam = str ;
-	            				forText = "";
+	            				forText = new StringBuilder();
 	            			}
 	            			
 	            		} else if (isEndFor) {
 	             			forCount = forCount-1 ;
 	            			if (forCount==0) {
 	            				try {
-	            					forLine(aOut,aReplaceHelper, aValueGetter,forParam,forText); 
-	            					forText="";
+	            					forLine(aOut,aReplaceHelper, aValueGetter,forParam,forText.toString());
+	            					forText=new StringBuilder();
 	            				} catch (Exception e) {
 	            					aOut.println("ОШИБКА FOR!!!!!!!!!!!"+e.getStackTrace()) ;
 	            				}
 	            			} else {
-	            				forText = forText+str+"\n" ;
+	            				forText.append(str).append("\n") ;
 	            			}
 	            		} else {
-	            			forText = forText+str+"\n" ;
+	            			forText.append(str).append("\n") ;
 	            		}
 	            	}
 					
@@ -237,15 +221,15 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
     	while (aStr.length()>theMaxLineLength) {
     		//System.out.println("str="+aStr) ;
     		int lastInd ;
-    		String str = aStr.substring(0,theMaxLineLength-1) ;;
+    		String str ;//= aStr.substring(0,theMaxLineLength-1) ;;
     		if (aStr.substring(theMaxLineLength-1,theMaxLineLength).equals(" ")) {
     			
         		lastInd = theMaxLineLength ;
     		} else {
     			str = aStr.substring(0,theMaxLineLength-1) ;
-    			int lastInd1 = str.lastIndexOf(".") ;
-    			int lastInd2 = str.lastIndexOf(",") ;
-        		lastInd = str.lastIndexOf(" ") ;
+    			int lastInd1 = str.lastIndexOf('.') ;
+    			int lastInd2 = str.lastIndexOf(',') ;
+        		lastInd = str.lastIndexOf(' ') ;
         		boolean adding = true ;
         		if (lastInd1<theMaxLineLength && lastInd1>lastInd) {
         			adding = false ;

@@ -31,24 +31,18 @@ public class ServiceImportPoliciesListAction extends BaseAction {
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
         
         final Collection<String> policies = new LinkedList<>() ;
-        LineNumberReader in = new LineNumberReader(new InputStreamReader(form.getFile().getInputStream())) ;
-        String line ;
-        while ( (line=in.readLine())!=null) {
-        	policies.add(line) ;
+        try (LineNumberReader in = new LineNumberReader(new InputStreamReader(form.getFile().getInputStream())) ) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                policies.add(line);
+            }
         }
-        
         final long monitorId = monitorService.createMonitor() ;
         new Thread() {
             public void run() {
             	service.importPolicies(monitorId, policies, null, null ) ;
             }
         }.start() ;
-        try {
-        	in.close();
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-        
         return new MonitorActionForward(monitorId, aMapping.findForward(SUCCESS)) ;
     }
 }

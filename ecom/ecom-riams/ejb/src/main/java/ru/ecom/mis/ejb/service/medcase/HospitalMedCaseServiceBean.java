@@ -1152,7 +1152,7 @@ private HashMap getRegions() {
 								if (arr[j].startsWith("render")) {
 									String[] arrPrice = arr[j].split("%23");
 									String price = arrPrice[0].substring(7, arrPrice[0].length());
-									if (price!=null&&!price.equals("")) {
+									if (!price.equals("")) {
 										totalSum+=Double.valueOf(price);
 									}
 									break;
@@ -1723,28 +1723,23 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	private String getDate(org.jdom.Element aEl,String aParameter) {
 		String value=getText(aEl,aParameter) ;
 		if (value==null) return null ;
-		if (value instanceof String) {
-			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd") ;
-			long l = 0 ;
-
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd") ;
+		long l = 0 ;
+		try {
+			l=f.parse(value).getTime() ;
+		} catch(Exception e) {
+			e.printStackTrace() ;
+			//String aFormat1 =  ;
+			f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss") ;
 			try {
 				l=f.parse(value).getTime() ;
-			} catch(Exception e) {
-				e.printStackTrace() ;
-				//String aFormat1 =  ;
-				f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss") ;
-				try {
-					l=f.parse(value).getTime() ;
 
-				} catch(Exception e1) {
-					e1.printStackTrace() ;
-					return null ;
-				}
+			} catch(Exception e1) {
+				e1.printStackTrace() ;
+				return null ;
 			}
-			return f.format(l) ;
 		}
-		return null ;
-
+		return f.format(l) ;
 	}
 	private Object getTime(org.jdom.Element aEl,String aParameter) {
 		String value=getText(aEl,aParameter) ;
@@ -3969,9 +3964,9 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
         		XmlUtil.recordElementInDocumentXml(xmlDoc,obsmo,"SMOKD",0,true,"") ;
     		}*/
 		}
-		XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
-		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+		XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
 		if (workAddDir!=null) {
+            XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
 			try{
 				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
 			} catch (Exception e) {

@@ -67,47 +67,43 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	}
 	public String makePOSTRequest (String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager) {
 		//LOG.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
+		if (address==null) {
+			return "";
+		}
+		HttpURLConnection connection = null;
 		try {
-			if (address==null) {
-				return "";
-			}
-			HttpURLConnection connection = null;
-			try {
-				URL url = new URL(address+"/"+aMethod);
-				connection = (HttpURLConnection) url.openConnection();
-				if (params!=null&&!params.isEmpty()) {
-					for (Map.Entry<String,String> par: params.entrySet()) {
-					//	LOG.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
-						connection.setRequestProperty(par.getKey(),par.getValue());
-					}
+			URL url = new URL(address+"/"+aMethod);
+			connection = (HttpURLConnection) url.openConnection();
+			if (params!=null&&!params.isEmpty()) {
+				for (Map.Entry<String,String> par: params.entrySet()) {
+				//	LOG.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
+					connection.setRequestProperty(par.getKey(),par.getValue());
 				}
-				connection.setDoInput(true);
-				connection.setDoOutput(true);
-				connection.setRequestProperty("Accept", "application/json");
-				connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-				connection.setRequestProperty("Content-Type", "application/json");
-				OutputStream writer = connection.getOutputStream();
-				writer.write(data.getBytes("UTF-8"));
-				writer.flush();
-				writer.close();
-				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				StringBuilder response = new StringBuilder();
-				String s ;
+			}
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			connection.setRequestProperty("Content-Type", "application/json");
+			OutputStream writer = connection.getOutputStream();
+			writer.write(data.getBytes("UTF-8"));
+			writer.flush();
+			writer.close();
+			StringBuilder response = new StringBuilder();
+			try(BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+				String s;
 				while ((s = in.readLine()) != null) {
 					response.append(s);
 				}
-				in.close();
-				connection.disconnect();
-				return response.toString();
-
-			} catch (ConnectException e) {
-				LOG.error("Ошибка соединения с сервисом. "+e);
-			} catch (Exception e) {
-				if (connection!=null) {connection.disconnect();}
-				LOG.error("in thread happens exception"+e);
-				e.printStackTrace();
 			}
+			connection.disconnect();
+			return response.toString();
+
+		} catch (ConnectException e) {
+			LOG.error("Ошибка соединения с сервисом. "+e);
 		} catch (Exception e) {
+			if (connection!=null) {connection.disconnect();}
+			LOG.error("in thread happens exception"+e);
 			e.printStackTrace();
 		}
 		return "";
@@ -560,7 +556,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				//пользовательский справочник (множественный выбор)
 			} else if (type.equals("6")) {
 				String id = String.valueOf(param.get("value")) ;
-				if (id!=null && !id.trim().equals(",") && !id.trim().equals(",,") && !id.trim().equals("")) {
+				if (!id.trim().equals(",") && !id.trim().equals(",,") && !id.trim().equals("")) {
 					fip.setValueText(String.valueOf(param.get("valueVoc"))) ;
 					fip.setListValues(id) ;
 					if (sb.length()>0) sb.append("\n") ;
@@ -598,7 +594,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		aManager.persist(d) ;
 			if (m instanceof Visit)  {
 				Visit vis = (Visit) m;
-				if (wf!=null && !wf.equals("0")) {
+				if (!wf.equals("0")) {
 					WorkFunction wfo = aManager.find(WorkFunction.class, Long.valueOf(wf)) ;
 					vis.setWorkFunctionExecute(wfo) ;
 				} else {

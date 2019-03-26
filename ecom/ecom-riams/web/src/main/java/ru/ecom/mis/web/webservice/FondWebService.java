@@ -572,7 +572,7 @@ public class FondWebService {
             		String datEnd = ddosr ;
             		companyCode=sk; policySeries=serPol;policyNumber=numPol;policyDateFrom=dpp; policyDateTo=datEnd;
                 	
-            		if (datEnd!=null) {
+            		if (!datEnd.equals("")) {
             			try {
             				java.sql.Date dat = DateFormat.parseSqlDate(datEnd) ;
             				java.util.Date curDat = new java.util.Date() ;
@@ -592,7 +592,7 @@ public class FondWebService {
             	} else {
             		sb.append(" value='").append(sk).append("#")
             		.append(serPol).append("#").append(numPol).append("#")
-            		.append(dpp).append("#").append((ddosr!=null && !ddosr.equals(""))?ddosr:dpe).append("#") ;
+            		.append(dpp).append("#").append(!ddosr.equals("") ? ddosr : dpe).append("#") ;
             	}
     			sb.append(aRz).append("#").append(current).append("#")
     				.append("'/>").append("</td>") ;

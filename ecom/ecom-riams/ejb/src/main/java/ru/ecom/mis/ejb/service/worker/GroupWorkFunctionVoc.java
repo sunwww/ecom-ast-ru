@@ -35,7 +35,7 @@ public class GroupWorkFunctionVoc implements IAllValue {
 		LinkedList<VocValue> ret = new LinkedList<>() ;
 		StringBuilder sql = new StringBuilder();
 
-		if (aContext.getVocAdditional()==null || aContext.getVocAdditional()!=null && aContext.getVocAdditional().getParentId()==null) {
+		if (aContext.getVocAdditional()==null || aContext.getVocAdditional().getParentId()==null) {
 			sql.append("from GroupWorkFunction");
 			
 			List<GroupWorkFunction> groups ;

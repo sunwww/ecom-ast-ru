@@ -41,8 +41,6 @@ public class CheckGroupTag extends AbstractGuidSimpleSupportTag {
 				//System.out.println("--cg---sql="+"select "+theTableId+" as id, "+theTableField+" as fld "+valueSql+" from "+theTableName) ;
 		        boolean isEmpty=col.isEmpty();
 		        //boolean isFirst = true ;
-		        if (col == null) {throw new JspException("Нет Collection в request.getAttribute(" + theTableName + ")");} 
-		        
 		        if (!isEmpty) {
 		        	out.println("<td class='label' title='"+(theLabel!=null?theLabel+":":"")+" ("+theProperty+")' colspan='1'>");
 		        	out.println("<label id='"+theProperty+"Label'>"+(theLabel!=null?theLabel+":":"")+":</label>");
@@ -50,12 +48,7 @@ public class CheckGroupTag extends AbstractGuidSimpleSupportTag {
 		        	out.println("</td>");
 		        	out.println("<td colspan="+(theFieldColSpan!=null&&!theFieldColSpan.equals("")?theFieldColSpan:"1")+">");
 		            out.println("<table>");
-	
-	
-					if (col.size() == 0) {
-						return ;
-					}
-	                   
+
 					for (WebQueryResult row:col) {
 						Object currentId =  row.get1();
 						Object currentTitle = row.get2() ;

@@ -1,10 +1,13 @@
 package ru.ecom.mis.web.dwr.extdisp;
 
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 import ru.ecom.mis.ejb.service.extdispplan.IExtDispPlanService;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.naming.NamingException;
@@ -17,6 +20,67 @@ import java.util.Collection;
 
 
 public class ExtDispServiceJs {
+	private static final Logger LOG = Logger.getLogger(ExtDispServiceJs.class);
+
+	/**Расчет возраста пациенту для доп. диспансеризации*/
+	public String getAgeForDisp(Long aPatient, String aFinishDate, Long aExtDispId, HttpServletRequest aRequest) {
+		JSONObject ret = new JSONObject();
+		if (aPatient!=null && aFinishDate!=null && !aFinishDate.equals("")) {
+			try {
+				IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+				Collection<WebQueryResult> list = service.executeNativeSql("select pat.id,to_char(pat.birthday,'dd.mm.yyyy'), pat.sex_id from patient pat where pat.id='" + aPatient + "'", 1);
+				WebQueryResult wqr = list.iterator().next();
+				String birthDayS = wqr.get2() != null ? "" + wqr.get2() : "";
+				java.sql.Date birthday = DateFormat.parseSqlDate(birthDayS);
+				java.sql.Date finishDate = DateFormat.parseSqlDate(aFinishDate);
+				Calendar calB = Calendar.getInstance();
+				calB.setTime(birthday);
+				Calendar calF = Calendar.getInstance();
+				calF.setTime(finishDate);
+				String age = AgeUtil.getAgeCache(finishDate, birthday, 1);
+				int sb1 = age.indexOf('.');
+				int sb2 = age.indexOf('.', sb1 + 1);
+				String ageGroup;
+				int yearDif = Integer.parseInt(age.substring(0, sb1));
+				int monthDif = Integer.parseInt(age.substring(sb1 + 1, sb2));
+				if (yearDif == 0) {
+					ageGroup = yearDif + "." + monthDif;
+				} else if (yearDif == 1) {
+					if (monthDif >= 6) ageGroup = "1.6";
+					else if (monthDif >= 3) ageGroup = "1.3";
+					else ageGroup = "1";
+				} else {
+					int year1 = Integer.parseInt(birthDayS.substring(6));
+					int year2 = Integer.parseInt(aFinishDate.substring(6));
+					if (year2 < 20) year2 = year2 + 2000;
+					if (year2 < 100) year2 = year2 + 1900;
+					ageGroup = "" + (year2 - year1);
+				}
+				if (aExtDispId != null) {
+					boolean calcAge = !service.executeNativeSql("select ved.id from VocExtDisp ved where ved.id=" + aExtDispId + " and ved.autoCalcAge='1'").isEmpty();
+					ret.put("autoCalcAge", calcAge);
+					if (calcAge) { //Находим подходящую возрастную группу по возрасту и полу пациента
+						list = service.executeNativeSql("select vedag.id, vedag.name from ExtDispPlanService edps" +
+								" left join extdispplan edp on edp.id=edps.plan_id" +
+								" left join VocExtDispAgeGroup vedag on vedag.id=edps.agegroup_id" +
+								" where edp.disptype_id=" + aExtDispId + " and vedag.code='" + ageGroup + "'" +
+								" and (edps.sex_id is null or edps.sex_id=" + wqr.get3().toString() + ") and (vedag.isarchival is null or vedag.isarchival='0')", 1);
+						if (!list.isEmpty()) {
+							wqr = list.iterator().next();
+							ret.put("autoCalcAgeId", wqr.get1()).put("autoCalcAgeName", wqr.get2());
+						}
+
+					}
+				}
+				ret.put("status", "ok").put("ageGroup", ageGroup);
+				return ret.toString();
+			} catch (Exception e) {
+				LOG.error("ERR", e);
+				ret.put("errorCode", e.getMessage());
+			}
+		}
+		return ret.put("status","error").toString();
+	}
 
     public String countRecordsInPlan(Long aPlanId, HttpServletRequest aRequest) throws NamingException {
         return Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSql("select count(*) from extdispplanpopulationrecord where plan_id="+aPlanId+" and (isDeleted is null or isDeleted='0')").iterator().next().get1().toString();
@@ -53,7 +117,7 @@ public class ExtDispServiceJs {
 			return "";
 		}
 
-		if (aPatientInfo!=null&&!aPatientInfo.trim().equals("")){
+		if (aPatientInfo!=null && !aPatientInfo.trim().equals("")){
 			aPatientInfo=aPatientInfo.toUpperCase();
 			String[] patientInfo = aPatientInfo.split(" ");
 			sql.append(firstWhere?"":" and ").append(" pat.lastname like('%").append(patientInfo[0]).append("%')");
@@ -87,7 +151,7 @@ public class ExtDispServiceJs {
 		//if (aLimit!=null&&aYear>0) { sql.append(" and to_char(pat.birthday,'yyyy')='").append(aYear).append("'");}
 		IWebQueryService service= Injection.find(aRequest).getService(IWebQueryService.class);
 		String ret =service.executeNativeSqlGetJSON(new String[]{"id", "name","area"},sql.toString(),aLimit);
-		return  ret!=null?ret:"";
+		return  ret!=null ? ret : "";
 	}
 	
 	

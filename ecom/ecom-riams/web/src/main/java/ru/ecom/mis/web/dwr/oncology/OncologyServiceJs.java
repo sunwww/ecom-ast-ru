@@ -150,10 +150,10 @@ public class OncologyServiceJs {
                 if(wqr.get1()!=null) finishdate = wqr.get1().toString();
                 if(wqr.get2()!=null) idc10_id = wqr.get2().toString();
             }
-            if (finishdate != null && !finishdate.equals("")) {
-                if (idc10_id != null && !idc10_id.equals("")) {
-                    res = service.executeNativeSql("select case when count(id)>0 then true else false end  \n" +
-                            "from vocidc10  where  code like 'C%' and id=" + idc10_id);
+            if (!finishdate.equals("")) {
+                if (!idc10_id.equals("")) {
+                    res = service.executeNativeSql("select case when count(id)>0 then true else false end " +
+                            " from vocidc10  where id=" + idc10_id+" code like 'C%'" );
 
                     for (WebQueryResult wqr : res) {
                         result = wqr.get1().toString();

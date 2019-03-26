@@ -1,33 +1,23 @@
 package ru.ecom.report.rtf;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-
+import org.apache.log4j.Logger;
 import org.jdom.Attribute;
-import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.Text;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
-import ru.ecom.report.excel.PoiCellUtil;
 import ru.ecom.report.replace.IValueGetter;
 import ru.ecom.report.replace.ReplaceHelper;
 import ru.ecom.report.replace.SetValueException;
 import ru.nuzmsh.util.zip.JarUtil;
 
+import java.io.*;
+import java.util.List;
+import java.util.StringTokenizer;
+
 public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
+	private static final Logger LOG = Logger.getLogger(OdtPrintFileDriver.class);
 	
 	public OdtPrintFileDriver(String aExtension) {
 		theExtension = aExtension ;
@@ -79,12 +69,12 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 		File dir = new File(theWorkDir,getTempFileName().append("-out").toString()) ;
 		return new File(dir, "content.xml") ;
 	}
-	public File getStyleInputFile() {
+	private File getStyleInputFile() {
 		File dir = new File(theWorkDir,getTempFileName().toString()) ;
 		return new File(dir, "styles.xml") ;
 	}
 
-	public File getStyleOutputFile() {
+	private File getStyleOutputFile() {
 		File dir = new File(theWorkDir,getTempFileName().append("-out").toString()) ;
 		return new File(dir, "styles.xml") ;
 	}
@@ -115,12 +105,10 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 	private void prepare(String aDirSuffix) {
 		File archiveFile = new File(theTemplateDir, theKey+theExtension) ;
 		File dir = new File(theWorkDir,getTempFileName().append(aDirSuffix).toString()) ;
-		//log("dir=" +dir.getAbsolutePath()) ;
-		//log("arch="+archiveFile.getAbsolutePath()) ;
 		dir.mkdirs() ;
 		try {
-			log(archiveFile.getPath()) ;
-			log(dir.getPath()) ;
+			LOG.info(archiveFile.getPath()) ;
+			LOG.info(dir.getPath()) ;
 			JarUtil.extract(archiveFile,dir) ;
 		} catch (IOException e) {
 			throw new RuntimeException(e) ;
@@ -129,47 +117,35 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 	
 	public void print(ReplaceHelper aReplaceHelper, IValueGetter aValueGetter) throws RtfPrintException {
 		//InputStream os = new FileInputStream(getOutputFile()) ;
-		try {
-			InputStream is = new FileInputStream(getInputFile()) ;
+		try (InputStream is = new FileInputStream(getInputFile());
+			 OutputStream outStr = new FileOutputStream(getOutputFile()) ){
+			
 			Document oldXmlDoc = new SAXBuilder().build(is) ;
 			Document newXmlDoc = new Document() ;
 			Element oldroot = oldXmlDoc.getRootElement();
-			
-			
 			Element newroot = viewStrucXml(oldroot,aValueGetter, aReplaceHelper,false) ;
 			newXmlDoc.setRootElement(newroot);	        
-			
 			XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-			OutputStream outStr = new FileOutputStream(getOutputFile()) ; 
 			OutputStreamWriter out = new OutputStreamWriter(outStr, getEncoding()) ;
 			xmlOut.output(newXmlDoc, out) ;
 		} catch(Exception e) {
-			
-		} finally {
-			
-		}
-		try {
-	        InputStream is = new FileInputStream(getStyleInputFile()) ;
+			LOG.error(e.getLocalizedMessage(),e);
+		} 
+		try(InputStream is = new FileInputStream(getStyleInputFile()) ;
+			OutputStream outStr = new FileOutputStream(getStyleOutputFile()) ){
 	        Document oldXmlDoc = new SAXBuilder().build(is) ;
 	        Document newXmlDoc = new Document() ;
 	        Element oldroot = oldXmlDoc.getRootElement();
-	
-	        
 	        Element newroot = viewStrucXml(oldroot,aValueGetter, aReplaceHelper,false) ;
 	        newXmlDoc.setRootElement(newroot);	        
-	        
 	        XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-	        OutputStream outStr = new FileOutputStream(getStyleOutputFile()) ; 
 			OutputStreamWriter out = new OutputStreamWriter(outStr, getEncoding()) ;
 			xmlOut.output(newXmlDoc, out) ;
 		} catch(Exception e) {
-			
+			LOG.error(e.getLocalizedMessage(),e);
 		}
 	}
-	
-	
-	
-	
+
 	private static void setTextByTag(Element aEl, String aText) {
 		String[] sp = aText.split("<text:line-break/>") ;
 		for (int i=0;i<sp.length;i++) {
@@ -178,9 +154,7 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 			if (i<(sp.length-1)) aEl.addContent(new Element("line-break","text","urn:oasis:names:tc:opendocument:xmlns:text:1.0")) ;
 		}
 	}
-	private static void log(Object aObj) {
-		//System.out.println(aObj) ;
-	}
+	
 	public static Element viewStrucXml(Element aElement, IValueGetter aValueGetter,ReplaceHelper aReplaceHelper,boolean aNotEditText) {
     	//String value = aElement.getValue().trim() ; 
 		//boolean isChildren = isChildrenElement(aElement) ;
@@ -188,7 +162,6 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 		//boolean isReplaceValue = isReplaceValue(value) ;
 		
     	Element convElem = new Element(aElement.getName(),aElement.getNamespacePrefix(),aElement.getNamespaceURI()) ;
-    	//log(aElement.getName()+"--"+aElement.getNamespacePrefix()+"--"+aElement.getNamespaceURI());
     	copyAttribute(aElement, convElem);
 		//Milamesher #120 24092018 вставка qr-кода
 		String text = "";  //по умолчанию - если не получится создать qr-код, просто будет пустая строка вместо него
@@ -197,14 +170,13 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 			int index1=aLine.indexOf("("), index2=aLine.indexOf(")");
 			if (index1!=-1 && index2!=-1) {
 				String params=aLine.substring(index1+1,index2);
-				String pars[] = params.split(",");
+				String[] pars = params.split(",");
 				if (pars.length==3) {
 					String qr_text = convertText(pars[0],aValueGetter, aReplaceHelper);
-					int qr_w=0,qr_h=0;
 					try {
-						qr_w = Integer.valueOf(pars[1]);
-						qr_h = Integer.valueOf(pars[2]);
-						if (qr_w != 0 && qr_h != 0 && qr_text != null && !qr_text.equals("")) {
+						int qr_w = Integer.valueOf(pars[1]);
+						int qr_h = Integer.valueOf(pars[2]);
+						if (qr_w != 0 && qr_h != 0 && !qr_text.equals("")) {
 							theQR_text=qr_text;
 							theQR_w=qr_w;
 							theQR_h=qr_h;
@@ -222,7 +194,7 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
     	
         //String dop1 = aDop + "-" ;
 		//System.out.print(aDop+aElement.getQualifiedName());
-		//log(new StringBuilder() .append("  --> isChildren=")
+		//LOG.info(new StringBuilder() .append("  --> isChildren=")
 		//		.append(isChildren).append(" isAttributes=")
 		//		.append(isAttribute)
 		//		.append(" isReplace:")
@@ -237,13 +209,11 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
     		boolean isEndFor = isEndFor(tempValue) ;
     		
         	if (forCount==0 && (!isBeginFor||aNotEditText) ) {
-        		log("Нет цикла.  ---"+aNotEditText) ;
             	Element newEl = viewStrucXml(temp, aValueGetter, aReplaceHelper,aNotEditText)  ;
-        		if(newEl!=null) convElem.addContent(newEl);   
+        		//if(newEl!=null) 
+        			convElem.addContent(newEl);   
         	} else {
         		if (isBeginFor) {
-        			log("Начало цикла>>>>>>>>>>>>>>") ;
-        			log("forText="+tempValue) ;
         			forCount = forCount+1 ;
         			if (forCount>1) {
         				forE.addContent(viewStrucXml(temp, aValueGetter, aReplaceHelper,true)) ;
@@ -256,8 +226,6 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
         			
         			forCount = forCount-1 ;
         			if (forCount==0) {
-        				log("<<<<<<<<<<<<Окончание цикла") ;
-        				log(">>>>>>>>>>>Начало обратотки цикла") ;
         				try {
         					listParser(forE,convElem, aValueGetter,forText, aReplaceHelper) ;
         					forText = null ;
@@ -265,13 +233,10 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
         				} catch (Exception e) {
         					convElem.setText("ОШИБКА!!!!!!!!!!!") ;
         				}
-        				log("<<<<<<<<<<Окончание обратотки цикла") ;
         			} else {
         				forE.addContent(viewStrucXml(temp, aValueGetter, aReplaceHelper,true)) ;
-        				log("Один из циклов закончился цикла") ;
         			}
         		} else {
-        			log("Продолжение цикла") ;
         			forE.addContent(viewStrucXml(temp, aValueGetter, aReplaceHelper,true)) ;
         		}
         	}
@@ -280,9 +245,6 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
     }
     private static void listParser(Element aForE,Element toCopyElement, IValueGetter aValueGetter, String aStr,ReplaceHelper aReplaceHelper) throws SetValueException {
     	//Element el = new Element("result") ;
-    	log("ЦИКЛ========") ;
-    	log("forE="+aForE.toString()) ;
-    	log("param="+aStr);
     	StringTokenizer st = new StringTokenizer(aStr, " \t:");
         st.nextToken() ;
         String name = st.nextToken() ;
@@ -291,8 +253,6 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
         //aValueGetter.set(name, list) ;
         
     	for (Object val:list) {
-    		//log(name) ;
-    		//log(val) ;
     		aValueGetter.set(name, val);
     		int forCount = 0 ;
     		String forText = null ;
@@ -308,7 +268,7 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 		    		toCopyElement.addContent(convElem) ;   
 	        	} else {
 	        		if (isBeginFor) {
-	        			log("Начало цикла") ;
+	        			LOG.info("Начало цикла") ;
 	        			forCount = forCount+1 ;
 	        			
 	        			if (forCount>1) {
@@ -322,7 +282,7 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 	        			
 	        			forCount = forCount-1 ;
 	        			if (forCount==0) {
-	        				log("Окончание цикла") ;
+	        				LOG.info("Окончание цикла") ;
 	        				try {
 	        					listParser(forE,toCopyElement, aValueGetter,forText, aReplaceHelper) ;
 	        					forText = null ;
@@ -332,16 +292,13 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 	        				}
 	        			} else {
 	        				forE.addContent(viewStrucXml(temp, aValueGetter, aReplaceHelper,true)) ;
-	        				log("Один из циклов закончился цикла") ;
+	        				LOG.info("Один из циклов закончился цикла") ;
 	        			}
 	        		} else {
-	        			log("Продолжение цикла") ;
+	        			LOG.info("Продолжение цикла") ;
 	        			forE.addContent(viewStrucXml(temp, aValueGetter, aReplaceHelper,true)) ;
 	        		}
 	        	}
-	    		
-	    		
-	    		
 	    	}
 	    	
     	}
@@ -357,24 +314,18 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
     }
     private static String convertText(String aText, IValueGetter aValueGetter,ReplaceHelper aReplaceHelper)  {
     	try {
-    		//log("TEXT-->"+aText) ;
+    		//LOG.info("TEXT-->"+aText) ;
     		return aReplaceHelper.replaceWithValues(aText, aValueGetter).toString() ;
     	} catch (Exception e) {
-			return new StringBuilder().append("ОШИБКА !!!: ").append(aText).append(" ->").append(e).toString() ;
+			return "ОШИБКА !!!: "+aText+" ->"+e;
 		}    	
     }
     public static boolean isBeginFor(String aValue) {
-    	if (aValue!=null && aValue.startsWith("$$FOR") && aValue.endsWith("$$")) {
-    		return true ;
-    	}    	
-    	return false;
-    }
+		return aValue != null && aValue.startsWith("$$FOR") && aValue.endsWith("$$");
+	}
     public static boolean isEndFor(String aValue) {
-    	if (aValue!=null && aValue.equals("$$FOREND")) {
-    		return true ;
-    	}
-    	return false;
-    }
+		return aValue != null && aValue.equals("$$FOREND");
+	}
 
 	
 	

@@ -1,10 +1,10 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Comment("Справочник. Профиль коек")
 @Entity
@@ -16,8 +16,8 @@ public class VocBedType extends VocBaseEntity{
 	public void setOmcCode(String aOmcCode) {theOmcCode = aOmcCode;}
 
 	
-	/** Код федеральный стационар */
-	@Comment("Код федеральный стационар")
+	/** Код федеральный по справочнику V020 */
+	@Comment("Код федеральный по справочнику V020")
 	public String getCodeF() {return theCodeF;}
 	public void setCodeF(String aCodeF) {theCodeF = aCodeF;}
 
@@ -28,7 +28,7 @@ public class VocBedType extends VocBaseEntity{
 
 	/** Код федеральный стационар (для детей) */
 	private String theCodeFC;
-	/** Код федеральный стационар */
+	/** Код федеральный по справочнику V020 */
 	private String theCodeF;
 	/** ОМС код */
 	private String theOmcCode;

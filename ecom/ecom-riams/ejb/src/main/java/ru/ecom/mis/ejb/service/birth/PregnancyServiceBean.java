@@ -20,38 +20,36 @@ public class PregnancyServiceBean implements IPregnancyService {
 	public Long getPregnanExchangeCard(Long aPregId) {
 		List<PregnanExchangeCard> list = theManager.createQuery("from PregnanExchangeCard where pregnancy_id=:pregId")
 			.setParameter("pregId",aPregId).getResultList() ;
-		return list.size()>0?list.iterator().next().getId(): null;
+		return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	@SuppressWarnings("unchecked")
 	public Long getConfinedExchangeCard(Long aPregId) {
 		List<ConfinedExchangeCard> list = theManager.createQuery("from ConfinedExchangeCard where pregnancy_id=:pregId")
 		.setParameter("pregId",aPregId).getResultList() ;
-	return list.size()>0?list.iterator().next().getId(): null;
+		return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public Long getPregHistoryByMedCase(Long aMedCaseId) {
 		List<PregnancyHistory> list = theManager.createQuery("from PregnancyHistory where medCase_id=:medCaseId")
 		.setParameter("medCaseId",aMedCaseId).getResultList() ;
-	return list.size()>0?list.iterator().next().getId(): null;
+		return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	@SuppressWarnings("unchecked")
 	public Long getNewBornHistoryByMedCase(Long aMedCaseId) {
 		List<NewBorn> list = theManager.createQuery("from NewBorn where medCase_id=:medCaseId")
 		.setParameter("medCaseId",aMedCaseId).getResultList() ;
-	return list.size()>0?list.iterator().next().getId(): null;
+	return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	@SuppressWarnings("unchecked")
 	public Long getConfinementCertificate(Long aPregId) {
 		List<ConfinementCertificate> list = theManager.createQuery("from Certificate where DTYPE='ConfinementCertificate' and pregnancy_id=:pregId")
 		.setParameter("pregId",aPregId).getResultList() ;
-		return list.size()>0?list.iterator().next().getId(): null;
+		return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	public boolean isWomanByPatient(Long aPatient) {
 		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from patient p left join vocsex vs on vs.id=p.sex_id where p.id='"+aPatient+"' and vs.omcCode='2'").setMaxResults(1).getResultList() ;
-		return res.size()>0 ;
-		//Patient pat = theManager.find(Patient.class, aPatient) ;
-		//return isWomanByPatient(pat) ;
+		return !res.isEmpty() ;
 	}
 	
 	public boolean isWomanByMedCase(Long aMedCase) {
@@ -64,10 +62,6 @@ public class PregnancyServiceBean implements IPregnancyService {
 		return !res.isEmpty();
 	}
 
-	private boolean isWomanByPatient(Object aOmcCode) {
-		return (aOmcCode!=null && String.valueOf(aOmcCode).equals("2") );
-		
-	}
 	public Long calcApgarEstimation(Long aMuscleTone, Long aPalpitation
   			, Long aReflexes, Long aRespiration
   			, Long aSkinColor)  {
@@ -87,15 +81,11 @@ public class PregnancyServiceBean implements IPregnancyService {
 			.setParameter("muscleTone",aMuscleTone)
 			.setMaxResults(1)
 			.getResultList() ;
-		StringBuilder ret ;
 		Long value = 0L ;
 		if(!row.isEmpty()) {
-			ret = new StringBuilder() ;
-			ret.append(row.get(0)[0]) ;
 			value = ConvertSql.parseLong(row.get(0)[0]) ;
 			if (value==null) value=0L ;
 		} 
-		
 		return value ;
 	
 	}
@@ -171,7 +161,7 @@ public class PregnancyServiceBean implements IPregnancyService {
 		row = theManager.createNativeQuery(sql.toString())
 			.setParameter("valueball", value)
 			.getResultList() ;
-		if(row.size()>0) {
+		if(!row.isEmpty()) {
 			
 			ret.append(row.get(0)[0]) ;
 			ret.append("#").append(row.get(0)[1]);

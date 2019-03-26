@@ -569,17 +569,6 @@ public class DisabilityServiceJs {
     }
 
     /**
-     * @param aFileName
-     * @param aRequest
-     * @return
-     * @throws NamingException
-     */
-    public String analyseExportLN(String aFileName, HttpServletRequest aRequest) throws NamingException {
-        IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
-        return service.analyseExportLN(aFileName);
-    }
-
-    /**
      * @param aReason
      * @param aRequest
      * @return
@@ -645,37 +634,6 @@ public class DisabilityServiceJs {
         return service.closeDisabilityDocument(aDocId, aReasonId, aSeries, aNumber, aOtherCloseDate, dateGoToWork);
     }
 
-    /**
-     * Экспорт ЛН по дате.
-     *
-     * @param aDateStart
-     * @param aDateFinish
-     * @param aLpu
-     * @param aWorkFunction
-     * @param aPacketNumber
-     * @param aDateType
-     * @param aRequest
-     * @return
-     * @throws Exception
-     */
-    public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction,
-                                 String aPacketNumber, String aDateType, HttpServletRequest aRequest) throws Exception {
-        IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
-        return service.exportLNByDate(aDateStart, aDateFinish, aLpu, aWorkFunction, aPacketNumber, aDateType);
-    }
-
-    /**
-     * Экспорт ЛН по номеру.
-     *
-     * @param aNumber  DisabilityDocument.number
-     * @param aRequest HttpServletRequest
-     * @return String
-     * @throws Exception
-     */
-    private String exportLNByNumber(String aNumber, HttpServletRequest aRequest) throws Exception {
-        IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
-        return service.exportLNByNumber(aNumber);
-    }
 
     /**
      * Получить данные для закрытия ЛН.

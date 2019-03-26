@@ -44,7 +44,6 @@ function ws_onError(event) {
     jQuery('#ws_nextTicketDiv').unbind("click");
     jQuery('#ws_nextTicketDiv').html("Переподключиться");
     jQuery('#ws_nextTicketDiv').on('click',function(){connectWebSocket();});
-    showToastMessage(event.type+" Неизвестная Ошибка",null,null,true);
     console.log("reconnect in 10 sec");
     ws_onClose(event);
 }

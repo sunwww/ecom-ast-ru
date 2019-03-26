@@ -1,11 +1,11 @@
 package ru.ecom.mis.ejb.domain.lpu.voc;
 
+import ru.ecom.ejb.domain.simple.VocBaseEntity;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.ecom.ejb.domain.simple.VocBaseEntity;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Тип участка
@@ -14,7 +14,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Тип участка")
 @Table(schema="SQLUser")
 public class VocAreaType extends  VocBaseEntity {
-	public static String PEDIATRIC_CODE = "2" ;
+	private static final String PEDIATRIC_CODE = "2" ;
 	/**
 	 * Педиатрический?
 	 */

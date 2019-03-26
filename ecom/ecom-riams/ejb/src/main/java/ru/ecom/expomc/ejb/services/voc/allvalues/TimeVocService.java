@@ -34,7 +34,6 @@ import java.util.StringTokenizer;
 public class TimeVocService implements IVocContextService, IVocServiceManagement, IVocConfigXmlService {
 
     private static final Logger LOG = Logger.getLogger(TimeVocService.class) ;
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     private enum QueryConvertType {NONE, LOWER_CASE, UPPER_CASE}
 
@@ -223,7 +222,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
         return name ;
     }
 
-    private String getNameFromEntity(Object aEntity) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private String getNameFromEntity(Object aEntity) throws IllegalAccessException, InvocationTargetException {
         StringBuilder sb = new StringBuilder();
         boolean firstPassed = false ;
         for (String field : theNameFields) {

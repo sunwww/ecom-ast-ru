@@ -319,7 +319,7 @@ public class FondCheckUtil {
         return parseXml((String)createRequest().get_RZ_from_DOCS(type,serial,number,theLpu),"rz");
     }
 
-    protected static String getPersoninfo(String rz) throws IOException, NamingException, ParserConfigurationException, SAXException, JSONException {
+    protected static String getPersoninfo(String rz) throws IOException, ParserConfigurationException, SAXException, JSONException {
 
         String result = ((String)createRequest().get_FIODR_from_RZ(rz, theLpu))
                 .replace("Windows-1252", "utf-8") ;
@@ -341,7 +341,7 @@ public class FondCheckUtil {
         return parseXmltoJSONArray(result,params);
     }
 
-    protected static String getPolis(String rz) throws IOException, NamingException,
+    protected static String getPolis(String rz) throws IOException,
             ParserConfigurationException, SAXException, JSONException {
 
 
@@ -364,7 +364,7 @@ public class FondCheckUtil {
     }
 
 
-    protected static String getDocuments(String rz) throws IOException, NamingException,
+    protected static String getDocuments(String rz) throws IOException,
             ParserConfigurationException, SAXException, JSONException {
 
         String result = ((String)createRequest().get_DOCS_from_RZ(rz, theLpu))
@@ -381,7 +381,7 @@ public class FondCheckUtil {
         return parseXmltoJSONArray(result,params);
     }
 
-    protected static String getAddress(String rz) throws IOException, NamingException,
+    private static String getAddress(String rz) throws IOException,
             ParserConfigurationException, SAXException, JSONException {
 
         String result = ((String)createRequest().get_ADRES_from_RZ(rz, theLpu))
@@ -418,7 +418,7 @@ public class FondCheckUtil {
         return soap;
     }
 
-    protected static Document stringToDoc(String xml) throws ParserConfigurationException, IOException, SAXException {
+    private static Document stringToDoc(String xml) throws ParserConfigurationException, IOException, SAXException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -427,7 +427,7 @@ public class FondCheckUtil {
         return builder.parse(new ByteArrayInputStream(xml.getBytes()));
     }
 
-    protected static String parseXml(String xml,String param) throws IOException, SAXException,
+    private static String parseXml(String xml,String param) throws IOException, SAXException,
             ParserConfigurationException {
 
         Element root = stringToDoc(xml).getDocumentElement();
@@ -436,7 +436,7 @@ public class FondCheckUtil {
         }else return "0";
     }
 
-    protected static String parseXmltoJSONArray(String xml, Map<String,String> params) throws IOException, SAXException,
+    private static String parseXmltoJSONArray(String xml, Map<String,String> params) throws IOException, SAXException,
             ParserConfigurationException, JSONException {
 
         Element root = stringToDoc(xml).getDocumentElement();
@@ -468,17 +468,17 @@ public class FondCheckUtil {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return new Date(parsedDate.getTime());
+        return parsedDate ==null ? null : new Date(parsedDate.getTime());
     }
 
-    protected static Date getDateShort(String datetime){
+    private static Date getDateShort(String datetime){
         java.util.Date parsedDate=null;
         try {
             parsedDate = new SimpleDateFormat("yyyy-MM-dd").parse(datetime);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return new Date(parsedDate.getTime());
+        return parsedDate ==null ? null : new Date(parsedDate.getTime());
     }
 
     protected static String get(JsonObject obj, String name){

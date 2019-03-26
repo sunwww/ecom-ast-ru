@@ -68,7 +68,7 @@ public interface IPatientService {
 	List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) ;
 	void movePatientDoubleData(Long aIdNew, Long aIdOld);
 	String addPatient(String aLastname, String aFirstname, String aMiddlename,
-			String aBirthday, Long aSex, Long aSocialStatus, String aSnils) ;
+			String aBirthday, Long aSex, Long aSocialStatus, String aSnils) throws ParseException;
 	
 	String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction) throws ParseException ;

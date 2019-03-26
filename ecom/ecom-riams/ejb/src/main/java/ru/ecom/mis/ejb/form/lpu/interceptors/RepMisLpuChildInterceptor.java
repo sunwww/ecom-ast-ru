@@ -15,7 +15,7 @@ public class RepMisLpuChildInterceptor implements IFormInterceptor {
 		EntityManager manager = aManager ;
 		manager.createQuery("delete from RepMisLpuChild").executeUpdate();
 		List<MisLpu> list = manager.createQuery("from MisLpu").getResultList();
-		HashSet<String> hash = new HashSet<String>() ; 
+		HashSet<String> hash = new HashSet<>() ;
 		for(MisLpu lpu : list) {
 //			RepMisLpuChild rep = new RepMisLpuChild() ;
 //			rep.setLpu(lpu);
@@ -24,7 +24,7 @@ public class RepMisLpuChildInterceptor implements IFormInterceptor {
 //			aManager.persist(rep);
 			//listChilds(lpu, manager, hash);
 			if(lpu!=null){
-				if (lpu.getSubdivisions()!=null ? lpu.getSubdivisions().isEmpty() : true) {  //zav
+				if (lpu.getSubdivisions() == null || lpu.getSubdivisions().isEmpty()) {  //zav
 				// только последний уровень
 				insert(lpu, aManager, hash);
 				}
@@ -47,8 +47,10 @@ public class RepMisLpuChildInterceptor implements IFormInterceptor {
 		rep.setChildLpu(aChild) ;
 		String key = aMain+"_"+aChild ;
 		if(!hash.contains(key)) {
-			rep.setTrailName(aMain.getName()!=null?aMain.getName().substring(0,aMain.getName().length()>100?100:aMain.getName().length()-1):""+"  -  "
-					+aChild.getName()!=null?aChild.getName().substring(0,aChild.getName().length()>100?100:aChild.getName().length()-1):"");
+			rep.setTrailName(aMain.getName()!=null ?
+					aMain.getName().substring(0,aMain.getName().length()>100 ?
+							100 : aMain.getName().length()-1)
+					: "  -  "+(aChild.getName()!=null ? aChild.getName().substring(0,aChild.getName().length()>100 ? 100 : aChild.getName().length()-1):""));
 			rep.setLpuLevel(getLevel(aMain));
 			aManager.persist(rep);
 			hash.add(key);

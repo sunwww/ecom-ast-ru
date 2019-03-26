@@ -110,7 +110,7 @@ public class AstrkhanReginHelper {
 		if(doma!=null && !StringUtil.isNullOrEmpty(doma.getName())) {
 
 			List<AddressPointCheck> checks = thePointHelper.parsePoints(doma.getName()) ;
-			if(checks!=null && !checks.isEmpty()) {
+			if(!checks.isEmpty()) {
 				for(AddressPointCheck check : checks) {
 					if(check.getNumber()!=null && check.getNumber().equals(aHouse)) {
 						String rayon = getRayonCodeBySoato(doma.getOcatd());

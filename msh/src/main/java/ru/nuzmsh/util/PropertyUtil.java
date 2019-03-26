@@ -152,7 +152,7 @@ public class PropertyUtil {
         } else if (aInClass.equals(String.class) && aOutClass.equals(BigDecimal.class)) {
         	return StringUtil.isNullOrEmpty((String)aValue) ? null : new BigDecimal(((String) aValue).replace(",",".")) ;
         } else if (aInClass.equals(BigDecimal.class) && aOutClass.equals(String.class)) {
-        	return aValue!=null ? aValue.toString() : null ;
+        	return aValue.toString() ;
         } else if (aInClass.equals(String.class) && aOutClass.equals(Integer.TYPE)) {
             String str = (String) aValue ;
             return StringUtil.isNullOrEmpty(str) ? 0 : (int)Double.parseDouble(str) ;
@@ -176,8 +176,7 @@ public class PropertyUtil {
         	 Long l = (Long) aValue ;
         	 return l.intValue() ;
         } else if (aInClass.equals(Integer.class) && aOutClass.equals(Integer.TYPE)) {
-	       	 Integer i = (Integer) aValue ;
-	       	 return i ;
+            return aValue;
         } else if (aInClass.equals(String.class) && aOutClass.equals(boolean.class)) {
 	       	 return Boolean.parseBoolean((String)aValue) ;
         } else if (aInClass.equals(String.class) && aOutClass.equals(Boolean.class)) {
@@ -189,9 +188,9 @@ public class PropertyUtil {
         } else if (aInClass.equals(Boolean.TYPE) && aOutClass.equals(Boolean.class)) {
 	       	 return aValue ;
         } else if (aInClass.equals(Integer.TYPE) && aOutClass.equals(Integer.class)) {
-	       	 return (Integer)aValue ;
+	       	 return aValue ;
         } else if (aInClass.equals(Long.TYPE) && aOutClass.equals(Long.class)) {
-	       	 return (Long)aValue ;
+	       	 return aValue ;
         } else if (aInClass.equals(boolean.class) && aOutClass.equals(String.class)) {
 	       	 return String.valueOf(aValue) ;
         } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Time.class)) {
@@ -220,7 +219,7 @@ public class PropertyUtil {
     	if(propertyName==null) {
             String methodName = aMethod.getName() ;
             if(methodName.length()>2 && methodName.startsWith("is")) {
-                propertyName = new StringBuilder().append(Character.toLowerCase(methodName.charAt(2))).append(methodName.substring(3)).toString() ;
+                propertyName = Character.toLowerCase(methodName.charAt(2))+methodName.substring(3) ;
                 GET_PROPERTY_NAME_HASH.put(aMethod, propertyName) ;
             } else if(methodName.length()>3 && (methodName.startsWith("get")||methodName.startsWith("set"))) {
                 propertyName = Character.toLowerCase(methodName.charAt(3))+methodName.substring(4);
@@ -323,8 +322,8 @@ public class PropertyUtil {
     	GET_SETTER_METHOD_NAME.clear() ;
     }
     // 
-    private static final Map<Method,String> GET_PROPERTY_NAME_HASH = new HashMap<>() ;
+    private static final Map<Method,String> GET_PROPERTY_NAME_HASH = new HashMap<Method,String>() ;
     
     // getSetterMethodName
-    private static final Map<String, String> GET_SETTER_METHOD_NAME = new HashMap<>() ;
+    private static final Map<String, String> GET_SETTER_METHOD_NAME = new HashMap<String, String>() ;
 }

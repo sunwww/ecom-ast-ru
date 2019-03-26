@@ -415,21 +415,19 @@ public class JspFileHelper {
 		
 		String jspEdit = "/WEB-INF/actions/"+aNewFormName+"/edit.jsp" ;
 		String jspList = "/WEB-INF/actions/"+aNewFormName+"/list.jsp" ;
-		
+
 		try {
-			if(findJspFile(jspEdit)!=null) {
-				throw new IllegalArgumentException("Файл "+jspEdit+" уже существует") ;
-			}
+			findJspFile(jspEdit);
+			throw new IllegalArgumentException("Файл "+jspEdit+" уже существует") ;
 		} catch (IllegalStateException e) {
 			try {
-				if(findJspFile(jspList)!=null) {
-					throw new IllegalArgumentException("Файл "+jspList+" уже существует") ;
-				}
+				findJspFile(jspList);
+				throw new IllegalArgumentException("Файл "+jspList+" уже существует") ;
 			} catch (IllegalStateException e2) {
 				// OK
 			}
 		}
-		
+
 		// checks in struts config (FIXME)
 		
 		// add form to config-hello.xml

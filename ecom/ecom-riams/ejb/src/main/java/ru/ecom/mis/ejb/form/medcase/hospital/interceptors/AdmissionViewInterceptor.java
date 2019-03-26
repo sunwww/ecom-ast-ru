@@ -33,26 +33,22 @@ public class AdmissionViewInterceptor implements IFormInterceptor {
         if (!aContext.getSessionContext().isCallerInRole(StatisticStubStac.ChangeStatCardNumber)) {
             form.addDisabledField("statCardNumber");
         }
-        
-		if (medCase!=null) {
-			List<Diagnosis> diagList = aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ; 
-			for(Diagnosis diag:diagList) {
-				String regType = diag.getRegistrationType()!=null?diag.getRegistrationType().getCode():"" ;
-				//String prior = diag.getPriority().getCode() ;
-				Long mkb = diag.getIdc10()!=null?diag.getIdc10().getId():null ;
-				// Order
-				if (regType.equals("2")) {
-					form.setOrderDiagnos(diag.getName());
-					if (diag.getIdc10()!=null) form.setOrderMkb(mkb);
-				}
-				// Enter
-				if (regType.equals("1")) {
-					form.setEntranceDiagnos(diag.getName());
-					if (diag.getIdc10()!=null) form.setEntranceMkb(mkb);
-				}
+		List<Diagnosis> diagList = aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
+		for(Diagnosis diag:diagList) {
+			String regType = diag.getRegistrationType()!=null?diag.getRegistrationType().getCode():"" ;
+			//String prior = diag.getPriority().getCode() ;
+			Long mkb = diag.getIdc10()!=null?diag.getIdc10().getId():null ;
+			// Order
+			if (regType.equals("2")) {
+				form.setOrderDiagnos(diag.getName());
+				if (diag.getIdc10()!=null) form.setOrderMkb(mkb);
+			}
+			// Enter
+			if (regType.equals("1")) {
+				form.setEntranceDiagnos(diag.getName());
+				if (diag.getIdc10()!=null) form.setEntranceMkb(mkb);
 			}
 		}
-		
 	}
 
 }

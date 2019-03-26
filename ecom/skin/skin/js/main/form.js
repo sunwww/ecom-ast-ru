@@ -141,8 +141,8 @@ function showToastMessage(aMessage,aJson,aAutoClose,aError) {
 	} else {
 		jQuery.toast({
 			text:aMessage
-			,hideAfter:aAutoClose&&aAutoClose!=null?true:false
-			,icon:aError&&true==aError?"error":"info"
+			,hideAfter:aAutoClose!=null && aAutoClose
+			,icon:true===aError ? "error" : "info"
 
 		});
 	}

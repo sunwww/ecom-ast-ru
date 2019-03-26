@@ -218,10 +218,9 @@ public class WorkerServiceBean implements IWorkerService{
 		return ret ;
 	}
 
+	@Deprecated
 	public List<TableSpetialistByDay> getTableSpetialistByDay(Date aDate, Long aWorkCalendarDay) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')") ;
-		List<Object[]> list = theManager.createNativeQuery(sql.toString())
+		List<Object[]> list = theManager.createNativeQuery("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')")
 				.setParameter("WCDid", aWorkCalendarDay)
 				.getResultList() ;
 		LinkedList<TableSpetialistByDay> ret = new LinkedList<>() ;
@@ -233,6 +232,7 @@ public class WorkerServiceBean implements IWorkerService{
 			result.setTime(time) ;
 			result.setTimeString(DateFormat.formatToTime(time)) ;
 			result.setSn(++i) ;
+			ret.add(result);
 		}
 		return ret;
 		

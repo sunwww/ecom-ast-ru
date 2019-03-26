@@ -52,7 +52,7 @@ public class LoginServiceBean implements ILoginService {
         // todo
         Properties prop = new Properties();
         HashSet<String> ret = new HashSet<>();
-        try {
+        try (FileInputStream inputStream = new FileInputStream(JBossConfigUtil.getConfigDirname()+"/roles.properties")) {
             try {
                 MBeanServer SERVER = MBeanServerLocator.locateJBoss();
                 String[] signature = {"java.lang.String"};
@@ -62,7 +62,7 @@ public class LoginServiceBean implements ILoginService {
                 LOG.warn(e.getMessage()) ;
             }
 
-            prop.load(new FileInputStream(JBossConfigUtil.getConfigDirname()+"/roles.properties")) ;
+            prop.load(inputStream) ;
             StringTokenizer st = new StringTokenizer(prop.getProperty(user), ", ");
             while(st.hasMoreTokens()) {
                 ret.add(st.nextToken()) ;

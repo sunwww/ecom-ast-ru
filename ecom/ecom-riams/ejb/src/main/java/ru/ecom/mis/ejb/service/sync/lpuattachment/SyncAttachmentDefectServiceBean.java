@@ -132,7 +132,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 							Long patientId = theSyncService.findPatientId(lastname, firstname, middlename, new java.sql.Date(format.parse(birthday).getTime()));
 							if (patientId!=null&&patientId!=0) {
 								LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik,tPrik);
-								if (refreason!=null&&!refreason.equals("")) { //Дефект
+								if (!refreason.equals("")) { //Дефект
 					    			if (att!=null) {
 										sb.append("red:").append(i).append(":").append(patientId).append(":").append(att.getId()).append(":").append(prikName).append(" пациента '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'обновлено. Дефект='").append(refreason).append("'#");
 					    			} else {

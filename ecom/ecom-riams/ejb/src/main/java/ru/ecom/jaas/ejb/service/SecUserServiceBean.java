@@ -144,15 +144,13 @@ public class SecUserServiceBean implements ISecUserService {
                 List<Long> listRole = new ArrayList<>() ;
                 for (SecRole role : user.getRoles()) {
                 	Long idP = role.getId() ;
-                	if (listRole.contains(idP)) {
-                	} else {
+                	if (!listRole.contains(idP)) {
                 	//	log("Добавление..") ;
                 		listRole.add(idP) ;
                 		out.print(createPoliciesString(user,role,hash)) ;
                         for (SecRole childRole: role.getChildren()) {
                         	Long idC = childRole.getId() ;
-                        	if (listRole.contains(idC)) {
-                        	} else {
+                        	if (!listRole.contains(idC)) {
                         		listRole.add(idC) ;
                         		out.print(createPoliciesString(user,childRole,hash)) ;
                         	}
@@ -224,7 +222,7 @@ public class SecUserServiceBean implements ISecUserService {
     private static Collection<SecRoleForm> convert(Collection<SecRole> aForm, boolean aIsSystemView) {
         LinkedList<SecRoleForm> ret = new LinkedList<>();
         for (SecRole role : aForm) {
-        	if (aIsSystemView || (role.getIsSystems()==null || (role.getIsSystems()!=null && !role.getIsSystems()))) {
+        	if (aIsSystemView || (role.getIsSystems()==null || !role.getIsSystems())) {
 	            SecRoleForm form = new SecRoleForm();
 	            form.setId(role.getId());
 	            form.setName(role.getName());

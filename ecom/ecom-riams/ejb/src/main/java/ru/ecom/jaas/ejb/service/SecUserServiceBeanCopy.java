@@ -101,7 +101,7 @@ public class SecUserServiceBeanCopy   {
 	    	    			.append(aRoles).append(")");
 	        	List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 	        	Object[] obj = list.isEmpty() ? null : list.get(0);
-	        	if (obj[0]!=null) {
+	        	if (obj!=null && obj[0]!=null) {
 	        		aRoles =aRoles+","+obj[0] ;
 	        		return getAllRole(aRoles) ;
 	        	}

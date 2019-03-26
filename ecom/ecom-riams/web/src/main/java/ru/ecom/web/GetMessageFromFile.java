@@ -38,7 +38,7 @@ public class GetMessageFromFile extends HttpServlet {
         String path = GetMessageFromFile.class.getResource("/../../").getFile();
         path= path.replace("%20"," ");
 
-        String file = ReadFile(path+"/WEB-INF/message.txt");
+        String file = readFile(path+"/WEB-INF/message.txt");
         file= file.replace("[username]",paramValue);
         response.getWriter().write(file);
     }
@@ -46,11 +46,9 @@ public class GetMessageFromFile extends HttpServlet {
     public void destroy() {
         // do nothing.
     }
-    public static String ReadFile(String fileName){
+    private static String readFile(String fileName){
         StringBuilder stringBuilder = new StringBuilder();
-        try
-        {
-            FileReader reader = new FileReader(fileName);
+        try (FileReader reader = new FileReader(fileName)){
             int c;
             while((c=reader.read())!=-1){
                 stringBuilder.append((char)c);
@@ -62,4 +60,3 @@ public class GetMessageFromFile extends HttpServlet {
         return stringBuilder.toString();
     }
 }
-

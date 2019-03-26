@@ -15,15 +15,10 @@ public class StrutsConfigUtil {
         ModuleConfig moduleConfig = findModuleConfig(aRequest) ;
         FormBeanConfig formConfig = moduleConfig.findFormBeanConfig(aFormName) ;
         if(formConfig==null) throw new IllegalArgumentException("Нет формы "+aFormName+" в файле конфигурации Struts") ;
-        //WebMapClassLoaderHelper loader = new WebMapClassLoaderHelper() ;
-        //loader.setMapClassLoader(aRequest);
-        Class ret = new MapClassLoader(Thread.currentThread().getContextClassLoader()).loadClass(formConfig.getType());
-        //loader.unsetMapClassLoader();
-        return ret ;
-        //return theClassLoaderHelper.loadClass(formConfig.getType()) ;
+        return new MapClassLoader(Thread.currentThread().getContextClassLoader()).loadClass(formConfig.getType());
     }
 
-    public String findClassNameByFormName(HttpServletRequest aRequest, String aFormName) throws ClassNotFoundException {
+    public String findClassNameByFormName(HttpServletRequest aRequest, String aFormName) {
         ModuleConfig moduleConfig = findModuleConfig(aRequest) ;
         FormBeanConfig formConfig = moduleConfig.findFormBeanConfig(aFormName) ;
         if(formConfig==null) throw new IllegalArgumentException("Нет формы "+aFormName+" в файле конфигурации Struts") ;
@@ -34,9 +29,7 @@ public class StrutsConfigUtil {
     
     public ModuleConfig findModuleConfig(HttpServletRequest aRequest) {
         return (ModuleConfig) aRequest.getAttribute("org.apache.struts.action.MODULE") ;
-
     }
-
 
     public String findFormNameByClass(Class aParentForm, HttpServletRequest aRequest) {
         ModuleConfig moduleConfig = findModuleConfig(aRequest) ;
@@ -57,7 +50,4 @@ public class StrutsConfigUtil {
         }
         return ret;
     }
-
-    //private final ClassLoaderHelper theClassLoaderHelper = ClassLoaderHelper.getInstance();
-
 }

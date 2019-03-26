@@ -19,7 +19,6 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -420,15 +419,17 @@ public class PatientServiceJs {
 	public String checkAllPatients(String updPatient, String updDocument, String updPolicy,String updAttachment, String aType, String aPatientList,  HttpServletRequest aRequest) throws Exception {
 		return FondWebService.checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment, aType, aPatientList, aRequest).toString();
 	}
-	public String checkDispAttached (String aDispTypeId, String aPatientId, HttpServletRequest aRequest) throws NamingException {
+	public String checkDispAttached (Long aDispTypeId, Long aPatientId, HttpServletRequest aRequest) throws NamingException {
+        System.out.println("==="+aDispTypeId+"==="+aPatientId);
+		if (aDispTypeId==null || aDispTypeId==0 || aPatientId==null) return "1";
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String isDispAttachment = service.executeNativeSql("select case when attachmentpopulation ='1' then '1' else '0' end " +
-				"from vocextdisp where id='"+aDispTypeId+"'", 1).iterator().next().get1().toString();
+				"from vocextdisp where id="+aDispTypeId, 1).iterator().next().get1().toString();
 		JSONObject isPatAttached = new JSONObject(isPatientAttached(aPatientId, aRequest));
 
 		return  isDispAttachment.equals("1") && isPatAttached.getString("statusCode").equals("0") ? "0" : "1";
 	}
-	public String checkPatientAttachedOrDead(String aPatientId, String isDeath, String isAttached, HttpServletRequest aRequest) throws NamingException {
+	public String checkPatientAttachedOrDead(Long aPatientId, String isDeath, String isAttached, HttpServletRequest aRequest) throws NamingException {
 		boolean checkDeath = "1".equals(isDeath);
 		boolean checkAttachment = "1".equals(isAttached);
 		JSONObject ret = new JSONObject();
@@ -440,7 +441,7 @@ public class PatientServiceJs {
 					" ,coalesce(pf.doctorsnils,'') as doctorId" +
 					" from patient p " +
 					" left join patientfond pf on (pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename " +
-					" and pf.birthday=p.birthday) where p.id='"+aPatientId+"' and pf.id is not null order by pf.checkdate desc", 1);
+					" and pf.birthday=p.birthday) where p.id="+aPatientId+" and pf.id is not null order by pf.checkdate desc", 1);
 			Collection<WebQueryResult> defLpu =service.executeNativeSql("select sc.keyvalue, case when sc.description!='' then sc.description else '№ '|| sc.keyvalue end from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE'");
 				String defaultLpu = null, defaultLpuName = null;
 			if (checkAttachment) {
@@ -457,9 +458,9 @@ public class PatientServiceJs {
 			if (!list.isEmpty()) {
 				WebQueryResult wqr = list.iterator().next();
 				String lastAttachment = wqr.get1().toString();
-				String checkDate = wqr.get2()!=null?wqr.get2().toString():"";
-				String deathDate = wqr.get3()!=null?wqr.get3().toString():"";
-				String doctorSnils = wqr.get4()!=null?wqr.get4().toString():"";
+				String checkDate = wqr.get2()!=null ? wqr.get2().toString() : "";
+				String deathDate = wqr.get3()!=null ? wqr.get3().toString() : "";
+				String doctorSnils = wqr.get4()!=null ? wqr.get4().toString() : "";
 					if (checkAttachment) {
 						if (lastAttachment.equals(defaultLpu)) {
 							if (StringUtil.isNullOrEmpty(doctorSnils)) {
@@ -472,7 +473,7 @@ public class PatientServiceJs {
 							statusName =  "По данным ФОМС на "+checkDate+" пациент не прикреплен к ЛПУ "+defaultLpuName+".";
 						}
 					}
-					if (checkDeath&&deathDate!=null && deathDate.length()==10) {
+					if (checkDeath && deathDate.length()==10) {
 						statusCode="2";
 						statusName= "По данным ФОМС на "+checkDate+" пациент умер "+deathDate;
 					}
@@ -487,7 +488,7 @@ public class PatientServiceJs {
 			return ret.toString();
 		}
 	
-	public String isPatientAttached (String aPatientId, HttpServletRequest aRequest) throws NamingException {
+	public String isPatientAttached (Long aPatientId, HttpServletRequest aRequest) throws NamingException {
 		return checkPatientAttachedOrDead(aPatientId,"0","1",aRequest);
 	}
 	
@@ -511,73 +512,7 @@ public class PatientServiceJs {
 		service.executeUpdateNativeSql("update Patient set colorType='"+colorType+"' where id='"+aPatient+"'") ;
 		return "сохранено" ;
 	}
-	public String getAgeForDisp(Long aPatient, String aFinishDate, HttpServletRequest aRequest) {
-		try {
-			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-			Collection<WebQueryResult> list = service.executeNativeSql("select id,to_char(birthday,'dd.mm.yyyy') from patient where id='"+aPatient+"'",1) ;
-			WebQueryResult wqr = list.iterator().next() ;
-			
-			String birthDayS = wqr.get2()!=null ? ""+wqr.get2() : "" ;
-			//String birthDayYear = birthDayS.substring(5) ;
-			java.sql.Date birthday = DateFormat.parseSqlDate(birthDayS) ;
-			java.sql.Date finishDate = DateFormat.parseSqlDate(aFinishDate) ;
-			Calendar calB = Calendar.getInstance() ;
-			calB.setTime(birthday) ;
-			Calendar calF = Calendar.getInstance() ;
-			calF.setTime(finishDate) ;
-			boolean reMonth = (calF.get(Calendar.MONTH) == calB.get(Calendar.MONTH)) ;
-			String age=AgeUtil.getAgeCache(finishDate, birthday, 1);
-		//	System.out.println("age:"+age) ;
-			int sb1 = age.indexOf('.') ;
-			int sb2 = age.indexOf('.',sb1+1) ;
-			
-			//int yearDif = Integer.valueOf(age.substring(0,sb1)).intValue() ;
-			int yearDif = Integer.parseInt(age.substring(0,sb1)) ;
-		//	System.out.println("yearDif:"+yearDif) ;
-			//int monthDif = Integer.valueOf(age.substring(sb1+1, sb2)).intValue();
-			int monthDif = Integer.parseInt(age.substring(sb1+1, sb2));
-		//	System.out.println("monthDif:"+monthDif) ;
-			//int dayDif =  Integer.valueOf(age.substring(sb2+1)).intValue() ;
-			if (yearDif==2){
-				if (monthDif>=6) {
-					return "2.6" ;
-				} else {
-					return "2" ;
-				} //TODO = переделать !! убрать неактуальные возрастные группы! 18-01-2019
-			} else if (yearDif==1){
-				if (monthDif==0) return "1" ;
-				else if (monthDif==1 && reMonth) return "1" ;
-				else if (monthDif==2 && reMonth) return "1.3" ;
-				else if (monthDif==3) return "1.3" ;
-				else if (monthDif==5 && reMonth) return "1.6" ;
-				else if (monthDif==6) return "1.6" ;
-				else if (monthDif==8 && reMonth) return "1.9" ;
-				else if (monthDif==9) return "1.9" ;
-				else if (monthDif==11 && reMonth) return "2" ;
-				return "1."+monthDif+"" ;
-			} else if (yearDif==0){
-				return ""+yearDif+"."+monthDif ;
-			//} else if(yearDif<18) {
-			//	return ""+yearDif ;
-			} else {
-			//int year1=Integer.valueOf(birthDayS.substring(6)).intValue() ;
-			//int year2=Integer.valueOf(aFinishDate.substring(6)).intValue() ;
-				int year1=Integer.parseInt(birthDayS.substring(6)) ;
-				int year2=Integer.parseInt(aFinishDate.substring(6)) ;
-				if (year2<20) year2=year2+2000 ;
-				if (year2<100) year2=year2+1900 ;
-			//	System.out.println("year1="+year1) ;
-			//	System.out.println("year2="+year2) ;
-				return ""+(year2-year1) ;
-			}
-			
-		} catch(Exception e) {
-			LOG.error("ERR",e);
-			return "" ;
-		}
-		
-	}
-	
+
 	public String checkPolicy(String aRoles,HttpServletRequest aRequest) throws JspException {
 		return RolesHelper.checkRoles(aRoles, aRequest) ? "1" : "0";
 	}

@@ -71,7 +71,7 @@ public class AddressServiceJs {
             AddressPointCheckHelper helper = new AddressPointCheckHelper();
             IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
             List<AddressPointCheck> list = helper.parsePoints(aPoints) ;
-            if(list!=null && !list.isEmpty()) {
+            if(!list.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 boolean firstAdded = false ;
                 for (AddressPointCheck point : list) {

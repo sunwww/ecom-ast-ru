@@ -133,7 +133,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     				for (int i=0; i<cnt;i++) {
     					String querI = "quer"+(i+1) ;
     					//LOG.debug("quer="+querI) ;
-    					if (sql.toString().indexOf(querI)>0) {
+    					if (sql.toString().contains(querI)) {
 	    					if (i<split.length) {
 	    						//LOG.debug(split[i]) ;
 	    						query.setParameter(querI, split[i]+"%") ;
@@ -143,13 +143,13 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     					}
     				}
     	    	}
-    	    	if (sql.toString().indexOf("query")>0) {
+    	    	if (sql.toString().contains("query")) {
         			query.setParameter("query", "%"+aQuery+"%") ;
     	    	}
-    	    	if (sql.toString().indexOf("querId")>0) {
+    	    	if (sql.toString().contains("querId")) {
     	    		query.setParameter("querId", aQuery+"%") ;
     	    	}
-    	    	if (sql.toString().indexOf("querInd")>0) {
+    	    	if (sql.toString().contains("querInd")) {
     	    		query.setParameter("querInd", aQuery) ;
     	    	}
         		

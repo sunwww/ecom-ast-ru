@@ -27,32 +27,24 @@ public class ServiceGenUsersAction extends BaseAction {
         aRequest.setAttribute("service", service);
         IEntityFormService formService = EntityInjection.find(aRequest).getEntityFormService() ; 
 
-        LineNumberReader in = new LineNumberReader(
-        		new InputStreamReader(form.getFile().getInputStream(), "utf-8")
-        		) ; 
-        String line;
-        
-        while ( (line=in.readLine())!=null) {
-        	StringTokenizer st = new StringTokenizer(line, ";") ;
-        	String userLogin = st.hasMoreTokens() ? st.nextToken().trim() : null ;
-        	if(StringUtil.isNullOrEmpty(userLogin)) {
-        		String name = st.hasMoreTokens() ? st.nextToken().trim() : null ;
-        		// FIXME проверка на существование пользователя
-        		SecUserForm user = formService.prepareToCreate(SecUserForm.class) ;
-        		user.setLogin(userLogin) ;
-        		user.setFullname(name) ;
-        		user.setComment(name) ;
-        		long id = formService.create(user) ;
-        		
-        	}
-        }
-        try {
-        	in.close();
-        } catch (Exception e) {
-        	e.printStackTrace();
+        try (LineNumberReader in = new LineNumberReader(
+        		new InputStreamReader(form.getFile().getInputStream(), "utf-8"))) {
+            String line;
+
+            while ((line = in.readLine()) != null) {
+                StringTokenizer st = new StringTokenizer(line, ";");
+                String userLogin = st.hasMoreTokens() ? st.nextToken().trim() : null;
+                if (StringUtil.isNullOrEmpty(userLogin)) {
+                    String name = st.hasMoreTokens() ? st.nextToken().trim() : null;
+                    // FIXME проверка на существование пользователя
+                    SecUserForm user = formService.prepareToCreate(SecUserForm.class);
+                    user.setLogin(userLogin);
+                    user.setFullname(name);
+                    user.setComment(name);
+                    formService.create(user);
+                }
+            }
         }
         return aMapping.findForward(SUCCESS) ;
     }
-    
-    
 }

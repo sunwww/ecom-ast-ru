@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.persistence.*;
 import java.io.StringWriter;
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -640,14 +639,14 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 
 	private static Method getIdMethod(Class aEntityClass) throws SecurityException, NoSuchMethodException {
 		// оптимизация. // FIXME использовать хэш
-		Method idMethod = aEntityClass.getMethod("getId") ;
-		if(idMethod!=null) {
+		Method idMethod = aEntityClass.getMethod("getId") ; //Если нет метода с таким именем, произойдет NoSuchMethodException
+	//	if(idMethod!=null) {
 			if( ! idMethod.isAnnotationPresent(Id.class)) {
 				// FIXME У класса "+aEntityClass+"есть метод getId, но нет аннотации @Id
 				LOG.warn("У класса "+aEntityClass+" есть метод getId, но нет аннотации @Id") ;
 			}
 			return idMethod ;
-		} else {
+	/*	} else {
 			for (Method method : aEntityClass.getMethods()) {
 				if (method.isAnnotationPresent(Id.class)) {
 					return method ;
@@ -668,7 +667,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 			
 			throw new IllegalArgumentException(
 					"У класса "+aEntityClass+ " нет описанного идентификатора. Нет аннотации @Id");
-		}
+		}*/
 	}
 	
 	private static Object getIdValue(Object aEntity, Class aEntityClass)

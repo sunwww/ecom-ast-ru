@@ -38,47 +38,42 @@ import java.util.Set;
 public class LoginSaveAction extends LoginExitAction {
 
     private static final Logger LOG = Logger.getLogger(LoginSaveAction.class) ;
-    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
-    
-    public static boolean needChangePasswordAtLogin (String aUsername, HttpServletRequest aRequest) throws NamingException {
+
+    private static boolean needChangePasswordAtLogin (String aUsername, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
     	String res = service.executeNativeSql("select case when changePasswordAtLogin='1' then '1' else '0' end" +
     			" from secuser where login='"+aUsername+"'").iterator().next().get1().toString();
 		return "1".equals(res);
     }
-    public static Long getPasswordAge (String username, HttpServletRequest aRequest) throws NamingException {
+    private static int getPasswordAge (String username, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		Long diff ;
+		int passwordAge ;
 		try {
-			Long passwordLifetime = Long.valueOf(service.executeNativeSql("select sc.KeyValue from SoftConfig sc where sc.key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
+			Integer passwordLifetime = Integer.valueOf(service.executeNativeSql("select sc.KeyValue from SoftConfig sc where sc.key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
 			Date passwordStartDate  = DateFormat.parseDate(service.executeNativeSql("select case when su.passwordChangedDate is not null then to_char(su.passwordChangedDate,'dd.MM.yyyy') else to_char(coalesce(su.editdate,su.createdate),'dd.MM.yyyy') end as sudate from secuser su where su.login='"+username+"'").iterator().next().get1().toString());
-			Long passwordAge = ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null);
 				//System.out.println("PasswordAAAA , passLT = "+passwordLifetime+", passAge = "+passwordAge+", passStartdate = "+passwordStartDate);
-			diff = passwordLifetime - passwordAge;
-			if (diff<0) {
-				diff = 0L;
+			passwordAge= (int)(passwordLifetime - ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null));
+			if (passwordAge<0) {
+				passwordAge = 0;
 			}
 		} catch (Exception e){
-			LOG.error(e.getMessage(),e);
-			diff = null;
+			passwordAge = -1;
 		}
-		return diff;
+		return passwordAge;
 	}
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         super.myExecute(aMapping, aForm, aRequest, aResponse) ;
         LoginForm form = (LoginForm) aForm ;
 
-        //String password = getHashPassword(form.getUsername(), form.getPassword()) ;
         String password = form.getPassword() ;
-        LoginInfo loginInfo = new LoginInfo(form.getUsername(), password);
+        String username = form.getUsername().trim();
+        LoginInfo loginInfo = new LoginInfo(username, password);
 
         HttpSession session = aRequest.getSession(true) ;
         loginInfo.saveTo(session) ;
 
-        if (CAN_TRACE) LOG.info("Сохранение в сесии " + loginInfo.getUsername());
         try {
-
             ILoginService service = Injection.find(aRequest).getService(ILoginService.class) ;
             if(service==null) throw new IllegalStateException("Невозможно получить сервис "+ILoginService.class.getSimpleName()) ;
             String[] urls=service.getConfigUrl() ;
@@ -91,14 +86,14 @@ public class LoginSaveAction extends LoginExitAction {
 
             if(roles==null) throw new NullPointerException("Нет ролей у пользователя roles==null") ;
 
-            Long d = getPasswordAge(form.getUsername(),aRequest);
+            int age = getPasswordAge(username,aRequest);
             loginInfo.setUserRoles(service.getUserRoles());
             boolean changePasswordAtLogin = needChangePasswordAtLogin(form.getUsername(), aRequest);
-            if ((d!=null&& d==0)||changePasswordAtLogin){
-            	return aMapping.findForward("new_password") ;
-            }  else if (d!=null&&d<8L) {
-            	UserMessage.addMessage(aRequest,d,"Срок действия вашего пароля истекает через "+d+" дней. ", "Сменить пароль","js-secuser-changePassword.do") ;
+			if (age > 0 && age < 8) {
+				UserMessage.addMessage(aRequest, (long) age,"Срок действия вашего пароля истекает через "+age+" дней. ", "Сменить пароль","js-secuser-changePassword.do") ;
 
+			} else if (age == 0 || changePasswordAtLogin){
+            	return aMapping.findForward("new_password") ;
             }
         } catch (Exception e) {
             LOG.error("Ошибка при входе: "+getErrorMessage(e),e);
@@ -106,7 +101,7 @@ public class LoginSaveAction extends LoginExitAction {
             LoginErrorMessage.setMessage(aRequest, getErrorMessage(e));
             return aMapping.getInputForward() ;
         }
-        checkMessage(aRequest,form.getUsername()) ;
+        checkMessage(aRequest,username) ;
         if(StringUtil.isNullOrEmpty(form.getNext())) {
             return aMapping.findForward(SUCCESS) ;
         } else {

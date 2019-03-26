@@ -40,7 +40,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		if (!list.isEmpty()) {
 			String dtype=list.get(0)[0].toString() ;
 			//Стационар
-			if (dtype!=null && dtype.equals("HOSPITALMEDCASE")) {
+			if ("HOSPITALMEDCASE".equals(dtype)) {
 				sql = new StringBuilder() ;
 				sql.append("select wf.id as wfid,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
 					.append(" ,mkb.id as mkbid,mkb.code as mkbcode,mkb.name as mkbname,diag.name as diagname,mkb1.id as mkb1id,mkb1.code as mkb1code,mkb1.name as mkb1name,diag1.name as diag1name")

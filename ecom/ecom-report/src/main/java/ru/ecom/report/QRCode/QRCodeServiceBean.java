@@ -1,23 +1,26 @@
 package ru.ecom.report.QRCode;
 
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.imageio.ImageIO;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.qrcode.QRCodeWriter;
 import org.odftoolkit.simple.Document;
 import org.odftoolkit.simple.SpreadsheetDocument;
-import org.odftoolkit.simple.table.Cell;
-import org.odftoolkit.simple.table.Table;
-import sun.misc.BASE64Encoder;
-import java.awt.image.BufferedImage;
-import java.io.*;
 import org.odftoolkit.simple.TextDocument;
 import org.odftoolkit.simple.common.navigation.TextNavigation;
 import org.odftoolkit.simple.common.navigation.TextSelection;
+import org.odftoolkit.simple.table.Cell;
+import org.odftoolkit.simple.table.Table;
+import sun.misc.BASE64Encoder;
+
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -38,12 +41,7 @@ public class QRCodeServiceBean implements IQRCodeService {
             MatrixToImageWriter.writeToStream(new QRCodeWriter().encode(QR_text, BarcodeFormat.QR_CODE, QR_w, QR_h),QR_TYPE,new FileOutputStream(QR_CODE_IMAGE_PATH));
             base64 = encodeToString(ImageIO.read(new File(QR_CODE_IMAGE_PATH)), QR_TYPE);
         }
-        catch (WriterException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }  catch (Exception e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
         return base64;
@@ -73,19 +71,8 @@ public class QRCodeServiceBean implements IQRCodeService {
                 MatrixToImageWriter.writeToStream(new QRCodeWriter().encode(QR_text, BarcodeFormat.QR_CODE, QR_w, QR_h), QR_TYPE, new FileOutputStream(QR_CODE_IMAGE_PATH));
                 File file = new File(QR_CODE_IMAGE_PATH);
                 if (file.exists()) {
-                    try {
-                        flag = putQRImage(file.toURI(), template, replacesource);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        flag = false;
-                    }
+                    flag = putQRImage(file.toURI(), template, replacesource);
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                flag = false;
-            } catch (IOException e) {
-                e.printStackTrace();
-                flag = false;
             } catch (Exception e) {
                 e.printStackTrace();
                 flag = false;
@@ -98,9 +85,9 @@ public class QRCodeServiceBean implements IQRCodeService {
         try {
             Document  textdoc=null;
             if (template.endsWith(".odt")) {
-                textdoc = (TextDocument) TextDocument.loadDocument(template);
+                textdoc = TextDocument.loadDocument(template);
                 TextNavigation search = new TextNavigation(replacesource, textdoc);
-                if (search != null && uri != null) {
+                if ( uri != null) {
                     while (search.hasNext()) {
                         TextSelection item = (TextSelection) search.nextSelection();
                         try {
@@ -112,14 +99,14 @@ public class QRCodeServiceBean implements IQRCodeService {
             }
             //Milamesher #120 19112018 работа с .ods файлом
             else if (template.endsWith(".ods")) {
-                textdoc = (SpreadsheetDocument) SpreadsheetDocument.loadDocument(template);
-                if (textdoc.getTableList().size()>0) {
+                textdoc = SpreadsheetDocument.loadDocument(template);
+                if (!textdoc.getTableList().isEmpty()) {
                     Table t = textdoc.getTableList().get(0);
-                    Boolean flag = false;
+                    boolean flag = false;
                     for (int i = 0; i < t.getRowCount(); i++) {
                         for (int j = 0; i < t.getRowByIndex(i).getCellCount(); j++) {
                             Cell c = t.getCellByPosition(i, j);
-                            if (c.getDisplayText().indexOf(replacesource) != -1) {
+                            if (c.getDisplayText().contains(replacesource)) {
                                 c.setImage(uri);
                                 flag = true;
                                 break;

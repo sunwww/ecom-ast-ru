@@ -458,7 +458,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					}
 					//пользовательский справочник
 				} else if (type.equals("2")) {
-					if (value!=null&&!value.equals("")){
+					if (!value.equals("")){
 						Long id = ConvertSql.parseLong(value) ;
 						if (id!=null && !id.equals(0L)) {
 							UserValue uv = theManager.find(UserValue.class, id) ;
@@ -484,7 +484,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			}
 			d.setRecord(sb.toString()) ;
 			theManager.persist(d) ;
-			if (wf!=null && !wf.equals("0")) {
+			if (!wf.equals("0")) {
 				m.setWorkFunctionExecute(theManager.find(WorkFunction.class, Long.valueOf(wf))) ;
 			} else {
 				m.setWorkFunctionExecute(m.getWorkFunctionPlan()) ;

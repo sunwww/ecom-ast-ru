@@ -50,20 +50,25 @@ public class TicketServiceBean implements ITicketService {
     
     public Long createMedcase (String aType) {
     	if (aType==null) return null;
-    	if (aType.equals("Visit")) {
-    		Visit v = new Visit();
-    		theManager.persist(v);
-    		return v.getId();
-    	} else if (aType.equals("PolyclinicMedCase")) {
-    		PolyclinicMedCase v = new PolyclinicMedCase();
-    		theManager.persist(v);
-    		return v.getId();
-    	} else if (aType.equals("ShortMedCase")) {
-    		ShortMedCase v = new ShortMedCase();
-    		theManager.persist(v);
-    		return v.getId();
-    	} 
-    	else return null;
+		switch (aType) {
+			case "Visit": {
+				Visit v = new Visit();
+				theManager.persist(v);
+				return v.getId();
+			}
+			case "PolyclinicMedCase": {
+				PolyclinicMedCase v = new PolyclinicMedCase();
+				theManager.persist(v);
+				return v.getId();
+			}
+			case "ShortMedCase": {
+				ShortMedCase v = new ShortMedCase();
+				theManager.persist(v);
+				return v.getId();
+			}
+			default:
+				return null;
+		}
     }
   
     
@@ -409,12 +414,8 @@ public class TicketServiceBean implements ITicketService {
      */
     public List<TicketForm> findAllWorkerTickets(Long aSpecialist, String aDate, int aStatus) {
     	QueryClauseBuilder builder = new QueryClauseBuilder();
-    	StringBuilder sql = new StringBuilder().append("select list(wf1.id) from WorkFunction wf left join Worker w on w.id=wf.worker_id left join WorkFunction wf1 on wf1.worker_id=wf.worker_id where wf.id=").append(aSpecialist) ;
-    	Object obj = theManager.createNativeQuery(sql.toString()).getSingleResult() ;
-    	// IKO 070424 ***
-    	//builder.add("workFunction_id", aSpecialist);
-    	// ==============
-    	
+		Object obj = theManager.createNativeQuery("select list(wf1.id) from WorkFunction wf left join Worker w on w.id=wf.worker_id left join WorkFunction wf1 on wf1.worker_id=wf.worker_id where wf.id=" + aSpecialist).getSingleResult() ;
+
     	Date date = null;
     	if(!StringUtil.isNullOrEmpty(aDate)) {
     		try {
@@ -431,8 +432,6 @@ public class TicketServiceBean implements ITicketService {
     		stat = " and (status is null or status<2)" ;
     	}
     	Query query = builder.build(theManager, "from Ticket where workFunction_id in (" + obj + ") " + stat, " order by date,time, status");
-    	LOG.info("Запрос по ticket: ");
-    	LOG.info(query.toString()) ;
     	return createList(query);
     }
     /**
@@ -495,36 +494,31 @@ public class TicketServiceBean implements ITicketService {
         List<TicketForm> ret = new LinkedList<>();
         if (!listId.isEmpty()) {
         	StringBuilder ids = new StringBuilder() ;
-        	StringBuilder sql = new StringBuilder() ;
-	        for (Object obj:listId) {
+			for (Object obj:listId) {
 	        	//Long iddoc = ConvertSql.parseLong(obj) ;
 	        	ids.append(",").append(obj) ;
 	        }
-	        ids.substring(1) ;
-	        LOG.info(ids.substring(1)) ;
-	        sql.append("from Ticket where id in (").append(ids.substring(1)).append(")") ;
-	        LOG.info(sql.toString()) ;
-	    
-	    List<Ticket> list =theManager.createQuery(sql.toString()).getResultList() ;
-        
-        for (Ticket ticket : list) {
-            try {
-                ret.add(theEntityFormService.loadForm(TicketForm.class, ticket));
-            } catch (EntityFormException e) {
-                throw new IllegalStateException(e);
-            }
-        }}
+			List<Ticket> list =theManager.createQuery("from Ticket where id in (" + ids.substring(1) + ")").getResultList() ;
+			for (Ticket ticket : list) {
+				try {
+					ret.add(theEntityFormService.loadForm(TicketForm.class, ticket));
+				} catch (EntityFormException e) {
+					throw new IllegalStateException(e);
+				}
+			}
+        }
         return ret ;
     }
 
 
     /**
-     * Печать талонов
+     * Печать талонов (ничего на самом деле не печатает)
      */
+    @Deprecated
     public void printTicket(long aMonitorId, long aTicketId, long aFileId) {
 
         IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к экспорту талона");
-        Ticket ticket = theManager.find(Ticket.class, aTicketId);
+       // Ticket ticket = theManager.find(Ticket.class, aTicketId);
 
         theJbossGetFileLocalService.createFile(aFileId, "ticket.rtf");
 

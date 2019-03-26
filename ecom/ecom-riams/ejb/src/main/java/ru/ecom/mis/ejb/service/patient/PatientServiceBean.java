@@ -274,13 +274,6 @@ public class PatientServiceBean implements IPatientService {
 			doc.setType(type) ;
 		}
 		theManager.persist(doc) ;
-		if (aObject.equals("Template")) {
-
-		//	 doc = (TemplateExternalDocument) doc;
-		//	 theManager.persist(doc) ;
-			//theManager.createNativeQuery("update document set dtype='TemplateExternalDocument' where id =:id").setParameter("id", doc.getId()).executeUpdate();
-		}
-
 	}
 	public String getCodeByMedPolicyOmc(Long aType) {
 		VocMedPolicyOmc type =null;
@@ -369,7 +362,8 @@ public class PatientServiceBean implements IPatientService {
 	}
 	private String getAddressByKladr(String aKladr,String aRegion,String aRayon, String aCity, String aStreet, String aOkato) {
 		StringBuilder sql = new StringBuilder() ;
-		if (aCity!=null && aCity.contains("АСТРАХАН")) aCity="АСТРАХАНЬ" ;
+		if (aCity==null) aCity = "";
+		if (aCity.contains("АСТРАХАН")) aCity="АСТРАХАНЬ" ;
 		if (aCity.endsWith(" С")
 				||aCity.endsWith(" П")
 				||aCity.endsWith(" Г")
@@ -1769,7 +1763,7 @@ public class PatientServiceBean implements IPatientService {
 	}
 
 	public String addPatient(String aLastname, String aFirstname, String aMiddlename,
-			String aBirthday, Long aSex, Long aSocialStatus, String aSnils){
+			String aBirthday, Long aSex, Long aSocialStatus, String aSnils) throws ParseException {
 		VocSocialStatus statusSocial = theManager.find(VocSocialStatus.class, aSocialStatus) ;
 		VocSex sex = theManager.find(VocSex.class, aSex) ;
 		Date birthday;
@@ -1781,7 +1775,7 @@ public class PatientServiceBean implements IPatientService {
 			SimpleDateFormat dat = new SimpleDateFormat("dd.MM.yyyy") ;
 			date = dat.format(birthday) ;
 		} catch (ParseException e) {
-			new ParseException("Неправильно введена дата рождения пациента", 0) ;
+			throw new ParseException("Неправильно введена дата рождения пациента", 0) ;
 		}
 		pat.setLastname(aLastname.toUpperCase()) ;
 		pat.setMiddlename(aMiddlename.toUpperCase()) ;

@@ -2081,10 +2081,10 @@ public class HospitalMedCaseServiceJs {
 				String datefinish="",timedisharge="";
 				if (!list.isEmpty()) {
 					wqr = list.iterator().next() ;
-					datefinish=(wqr.get1()!=null)? wqr.get1().toString():"";
-					timedisharge=(wqr.get2()!=null)? wqr.get2().toString():"";
+					datefinish=wqr.get1()!=null ?  wqr.get1().toString() : "";
+					timedisharge=wqr.get2()!=null ?  wqr.get2().toString() : "";
 				}
-				if (datefinish!=null && !datefinish.equals("") && timedisharge!=null && !timedisharge.equals("")) {
+				if (!datefinish.equals("") && timedisharge!=null && !timedisharge.equals("")) {
 					//try {
 						Date d = new java.util.Date();
 						//Calendar d2=Calendar.getInstance();

@@ -1,11 +1,11 @@
 package ru.ecom.mis.ejb.service.disability;
 
-import java.text.ParseException;
-import java.util.List;
-import javax.naming.NamingException;
-
 import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
 import ru.ecom.poly.ejb.services.GroupByDate;
+
+import javax.naming.NamingException;
+import java.text.ParseException;
+import java.util.List;
 
 public interface IDisabilityService {
 
@@ -36,12 +36,6 @@ public interface IDisabilityService {
     Long createDuplicateDocument(Long aDocId, Long aReasonId, String aSeries, String aNumber, Long aWorkFuntion2, String aJob, Boolean aUpdateJob);
 
     Long createWorkComboDocument(Long aDocId, String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument);
-
-    String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber, String aDateType) throws ParseException, NamingException;
-
-    String exportLNByNumber(String aNumber) throws ParseException, NamingException;
-
-    String analyseExportLN(String aFileName) throws NamingException;
 
     boolean isRightSnils(String aSNILS) throws ParseException, NamingException;
 

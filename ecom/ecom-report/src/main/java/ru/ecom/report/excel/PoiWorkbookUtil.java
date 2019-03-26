@@ -12,19 +12,19 @@ import java.io.IOException;
  */
 public class PoiWorkbookUtil {
 
-    public static HSSFWorkbook openWorkbook(File aFile) throws IOException {
+    static HSSFWorkbook openWorkbook(File aFile) throws IOException {
         HSSFWorkbook wb ;
 
-        FileInputStream in = new FileInputStream(aFile);
-        wb = new HSSFWorkbook(in);
-        in.close() ;
+        try (FileInputStream in = new FileInputStream(aFile)) {
+            wb = new HSSFWorkbook(in);
+        }
         return wb ;
     }
 
-    public static void writeWorkbook(HSSFWorkbook aWorkbook, File aFile) throws IOException {
-        FileOutputStream out = new FileOutputStream(aFile);
-        aWorkbook.write(out);
-        out.close() ;
+    static void writeWorkbook(HSSFWorkbook aWorkbook, File aFile) throws IOException {
+        try (FileOutputStream out = new FileOutputStream(aFile)) {
+            aWorkbook.write(out);
+        }
     }
 
 }

@@ -16,7 +16,6 @@ import ru.nuzmsh.util.StringUtil;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
@@ -127,7 +126,7 @@ public class TemplateProtocolJs {
 		
 		return "" ;
 	}
-	public String getParameterAndPersmissionByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
+	public String getParameterAndPersmissionByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 
 		if (aTemplateId==null || aTemplateId.equals(0L)) return "{}";
 			JSONObject  parameters = new JSONObject(getParameterByTemplate(aProtocolId, aTemplateId, aRequest));
@@ -244,14 +243,11 @@ public class TemplateProtocolJs {
 				par.append("{") ;
 				boolean isFirtMethod = false ;
 				boolean isError = false ;
-				//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
-				String parType =String.valueOf(wqr.get4()); 
+				String parType =String.valueOf(wqr.get4());
 				String vocId = String.valueOf(wqr.get15()) ;
 				if (parType.equals("2")||parType.equals("6")||parType.equals("7")) {
-					//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
-					if (vocId==null||vocId.equals("")) {
+					if (vocId.equals("")) {
 						isError = true ;
-						//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
 					}
 				}
 				try {
@@ -266,9 +262,7 @@ public class TemplateProtocolJs {
 					
 					if (parType.equals("6")) {
 						par.append(",\"voc\":[");
-						StringBuilder sqlVoc = new StringBuilder() ;
-						sqlVoc.append("select id,name from UserValue where domain_id=").append(vocId).append(" order by id") ;
-						List<Object[]> vocVals = service.executeNativeSqlGetObj(sqlVoc.toString()) ;
+						List<Object[]> vocVals = service.executeNativeSqlGetObj("select id,name from UserValue where domain_id=" + vocId + " order by id") ;
 						boolean isFirtMethodVoc = false ;
 						String valList = ""+(wqr.get19()!=null?wqr.get19():""); 
 						for (Object[]vocVal:vocVals) {
@@ -337,10 +331,8 @@ public class TemplateProtocolJs {
 			return "" ;
 		} else {
 			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-			StringBuilder sql = new StringBuilder() ;
-			sql.append("select em.id,to_char(em.orderDate,'dd.mm.yyyy')||' '||em.comment as comment from Document em where em.id=").append(aId).append(" and dtype='ExternalMedservice'") ;
-			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
-			return list.isEmpty()?"":""+list.iterator().next().get2() ;
+			Collection<WebQueryResult> list = service.executeNativeSql("select em.id,to_char(em.orderDate,'dd.mm.yyyy')||' '||em.comment as comment from Document em where em.id=" + aId + " and dtype='ExternalMedservice'",1) ;
+			return list.isEmpty() ? "" : ""+list.iterator().next().get2() ;
 		}
 	}
     public String getTextDischarge(String aId, HttpServletRequest aRequest) throws NamingException {
@@ -351,7 +343,7 @@ public class TemplateProtocolJs {
         	return service.getDischargeEpicrisis(Long.parseLong(aId)) ;
         }
     }
-    public String listCategProtocolsByUsername(String aSmoId,String aType, String aFunction,HttpServletRequest aRequest) throws NamingException, JspException {
+    public String listCategProtocolsByUsername(String aSmoId,String aType, String aFunction,HttpServletRequest aRequest) throws NamingException {
     	StringBuilder sql = new StringBuilder() ;
     	String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -431,9 +423,8 @@ public class TemplateProtocolJs {
     		res.append("</ul></td>") ;
     	} else if (aSmoId!=null && !aSmoId.equals("") && !aSmoId.equals("0")){
     		list = service.executeNativeSql("select mc.id,mc.patient_id from medcase mc where mc.id="+aSmoId,1);
-    		if (list.size()>0) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
-    		list.clear() ;
-    		
+    		if (!list.isEmpty()) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
+
     		if (aType!=null && aType.equals("mydiary")  && patient!=null) {
     			res.append("<h2>заключения</h2>") ;
     			sql = new StringBuilder() ;
@@ -538,7 +529,7 @@ public class TemplateProtocolJs {
     	res.append("</td></tr></table>") ;
     	return res.toString() ;
     }
-    public String listProtocolsByUsername(String aSmoId,String aParent,String aType,String aFunctionTemp, String aFunctionProt,String aSearchText,HttpServletRequest aRequest) throws NamingException, JspException {
+    public String listProtocolsByUsername(String aSmoId,String aParent,String aType,String aFunctionTemp, String aFunctionProt,String aSearchText,HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -575,9 +566,7 @@ public class TemplateProtocolJs {
 					if (aSearchText!=null && aSearchText.length()>1) {
 						sql.append(" and upper(tp.title) like '%").append(aSearchText.toUpperCase()).append("%'");
 					}
-					StringBuilder sql1 = new StringBuilder() ;
-					sql1.append("select name from templatecategory where id=").append(aParent) ;
-					list=service.executeNativeSql(sql1.toString()) ;
+					list=service.executeNativeSql("select name from templatecategory where id=" + aParent) ;
 					if (!list.isEmpty()) name_cat=""+list.iterator().next().get1() ;
 				}
 				name_cat = name_cat+"<form action='javascript:"+aFunctionProt+"Search(\""+aType+"\",\""+aParent+"\")'>" ;
@@ -674,7 +663,6 @@ public class TemplateProtocolJs {
 		} else {
 			list = service.executeNativeSql("select mc.id,mc.patient_id from medcase mc where mc.id="+aSmoId,1);
 			if (!list.isEmpty()) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
-			list.clear() ;
 
 			if (aType!=null && aType.equals("mydiary")  && patient!=null) {
 				res.append("<h2>заключения</h2>") ;
@@ -823,7 +811,7 @@ public class TemplateProtocolJs {
     }
     public static String getUsername(HttpServletRequest aRequest) {
     	 LoginInfo loginInfo = LoginInfo.find(aRequest.getSession()) ;
-    	return loginInfo!=null?loginInfo.getUsername():"" ;
+    	return loginInfo!=null ? loginInfo.getUsername() : "" ;
     }
 	/**
 	 * Проверить, может ли пользователь редактировать протокол (может, если он и есть создатель дневника).

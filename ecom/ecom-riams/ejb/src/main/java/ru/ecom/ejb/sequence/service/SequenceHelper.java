@@ -119,13 +119,4 @@ public class SequenceHelper {
 		}
 		
 	}
-	public static void main(String[] args) {
-		SequenceHelper s = getInstance() ;
-		// 
-		// startUseNextValue() ;
-		// restartUseNextValue(old, new) ;
-		// acceptNextValue() ;
-		// rollbackNextValue() ;
-		
-	}
 }

@@ -27,13 +27,10 @@ public class LabReport4385Action extends BaseAction {
 	    	String leftJoinSql = "";
 	    	StringBuilder leftJoinAdd = new StringBuilder();
 	        String department = ""+form.getDepartment();
-	        String materialType = form.getPrescriptType()>0L ? ""+form.getPrescriptType() : "";
+	     //   String materialType = form.getPrescriptType()>0L ? ""+form.getPrescriptType() : "";
 	        String diagnosis = (form.getDiagnosis()!=null&&form.getDiagnosis()>0L)?""+form.getDiagnosis():"" ;
 	    	if (!department.equals("") && !department.equals("0")) {
 	    		sqlAdd.append(" and coalesce(p.department_id, w.lpu_id)=").append(department);
-	    	}
-	    	if (!materialType.equals("")&&!materialType.equals("0")) {
-	    		//sqlAdd.append(" and fip.valuevoc_id="+materialType);
 	    	}
 	    	if (!diagnosis.equals("")&&!diagnosis.equals("0")) {
 	    		leftJoinSql=" left join diagnosis diag on diag.medcase_id=mc.id" ;
@@ -51,7 +48,7 @@ public class LabReport4385Action extends BaseAction {
 		    	" left join parameter par on par.id=fip.parameter_id" +
 	    		leftJoinSql+
 		    	" where p.medservice_id=4385 and par.valuedomain_id=79" +sqlAdd.toString());
-    	if (titleList.size()>0){
+    	if (!titleList.isEmpty()){
     		table.append("<table>");
     		table.append("<tr><td>Период:</td><td> ").append(dateFrom).append(" - ").append(dateTo).append("</td></tr>");
     		table.append("<tr><td>Отделение:</td><td>").append(aRequest.getParameter("departmentName")).append("</td><td>Всего больных</td><td>").append(titleList.get(0)[1]).append("</td></tr>");
@@ -74,7 +71,7 @@ public class LabReport4385Action extends BaseAction {
 		    		
 		    List<Object[]> RISList = service.executeNativeSqlGetObj("select id, name from uservalue where domain_id= '60' ");
 		    StringBuilder RISTD = new StringBuilder();
-		    if (antiBioList.size()>0) {
+		    if (!antiBioList.isEmpty()) {
 		    	
 		    	StringBuilder selectAdd = new StringBuilder();
 		    	
@@ -87,7 +84,7 @@ public class LabReport4385Action extends BaseAction {
 		    		counts.append("<td colspan='3' align='center'><b>").append(o[2]).append("</b></td>");
 		    		for (Object[] oo: RISList) {
 		    			if (isFirst) {
-		    				RISTD.append("<td>").append(oo[1].toString().substring(0, 1)).append("</td>");
+		    				RISTD.append("<td>").append(oo[1].toString(), 0, 1).append("</td>");
 		    			}
 		    			selectAdd.append(", count(case when (select fip1.valuevoc_id from forminputprotocol fip1 left join parameter par1 on par1.id=fip1.parameter_id where fip1.docprotocol_id=d.id and par1.valuedomain_id=79)='").append(o[0]).append("' and fip.valuevoc_id='").append(oo[0]).append("' then p.id else null end) as cnt_").append(k);
 		    			//tdNames.append(" <msh:tableColumn columnName='"+o[1]+" "+(oo[1].toString().substring(0, 1))+"' property='"+k+"'/>");
@@ -115,7 +112,7 @@ public class LabReport4385Action extends BaseAction {
 		    		.append(" where p.medservice_id=4385 and par.valuedomain_id=60 ").append(sqlAdd)
 		    		.append("group by par.id, par.shortname order by par.shortname");
 		    	List<Object[]> resultList = service.executeNativeSqlGetObj(sql.toString());
-		    	if (resultList.size()>0){
+		    	if (!resultList.isEmpty()){
 		    		for (Object[] res: resultList) {
 		    			table.append("<tr>");
 		    			for (Object td: res) {

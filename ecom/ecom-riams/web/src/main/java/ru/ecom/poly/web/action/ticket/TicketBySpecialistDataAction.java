@@ -18,8 +18,8 @@ public class TicketBySpecialistDataAction  extends BaseAction {
 		//ITicketService service = Injection.find(aRequest).getService(ITicketService.class);
 		IWorkerService service = Injection.find(aRequest).getService(IWorkerService.class) ;
 		String idString = aRequest.getParameter("id") ;
-		int ind1 = idString.indexOf(":");
-		int ind2 = idString.indexOf(":",ind1+1);
+		int ind1 = idString.indexOf(':');
+		int ind2 = idString.indexOf(':',ind1+1);
 		String date =idString.substring(0,ind1) ;
 		String typePat = idString.substring(ind1+1,ind2) ;
 
@@ -42,14 +42,13 @@ public class TicketBySpecialistDataAction  extends BaseAction {
 			aRequest.setAttribute("infoTypePat", " (по всем)") ;
 		}
 		String spec ;
-		if (date.indexOf(".")>0) {
+		if (date.indexOf('.')>0) {
 			spec = idString.substring(ind2+1) ;
-			System.out.println(spec) ;
 			aRequest.setAttribute("date", date);
 			//aRequest.setAttribute("list", service.findTicketBySpecialistByDate(typePat,date,spec));
 		} else {
-			int ind3 = idString.indexOf(":",ind2+1);
-			int ind4 = idString.indexOf(":",ind3+1);
+			int ind3 = idString.indexOf(':',ind2+1);
+			int ind4 = idString.indexOf(':',ind3+1);
 			spec = idString.substring(ind2+1,ind3) ;
 			String begin= idString.substring(ind3+1,ind4) ;
 			String end = idString.substring(ind4+1);

@@ -68,16 +68,16 @@ public class ContractServiceJs {
 		    connection.setRequestMethod("POST");
 		    connection.setRequestProperty("Accept", "application/json");
 		    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-		    OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-		    writer.write(data);
-		    writer.close();
-		    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+				 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+				writer.write(data);
+			}
+
 		 //   StringBuffer answerString = new StringBuffer();
 		 //   String line;
 		 //   while ((line = br.readLine()) != null) {
 		 //   	answerString.append(line);
 		 //   }
-		    br.close();
 		    connection.disconnect();
 		} else {
 			LOG.error("Нет настройки ККМ по умолчанию для рабочей функции пользователя "+username+", работа с ККМ невозможна");

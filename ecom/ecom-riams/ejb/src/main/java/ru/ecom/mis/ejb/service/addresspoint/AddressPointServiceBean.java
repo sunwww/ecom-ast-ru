@@ -740,7 +740,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         } else {
             List<AddressPointCheck> checks = thePointCheckHelper.parsePoints(aLpuAreaAddressText.getAddressString());
             // нет домов, прикрепляем по всех улице
-            if (checks == null || checks.isEmpty()) {
+            if (checks.isEmpty()) {
                 LpuAreaAddressPoint point = new LpuAreaAddressPoint();
                 point.setLpuAreaAddressText(aLpuAreaAddressText);
                 point.setAddress(address);

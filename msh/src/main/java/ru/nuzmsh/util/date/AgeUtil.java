@@ -117,14 +117,12 @@ public class AgeUtil {
     	int year=year1-year2-tst ;
     	if (aFormat==0) return year+"";
     	if (aFormat==1) return year+"."+month+"."+day;
-    	String dy=(year==1)?" год ": 
+    	String dy=(year==1) ? " год ":
     		((year==0||year>4)?" лет ":" года ") ;
-    	String dm=(month==1)?" месяц ":
-    		(((month>1)&&(month<5))?" месяца ":" месяцев " );
-    	String dd = (day>4?" дней ":
-    		((day==0||(day>10&&(day<15)))?" дней ":((day==1)?" день ":" дня ")));
-    			 
-
+    	String dm=(month==1) ? " месяц ":
+    		(((month>1)&&(month<5)) ? " месяца " : " месяцев " );
+    	String dd = (day>4 ? " дней " :
+				(day==0 ? " дней " : (day==1 ? " день " : " дня ")));
     	return year+dy+month+dm+day+dd;
     }
      

@@ -36,10 +36,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
       <msh:sideLink name="Свод" action="/dis_swod.do"
       	roles="/Policy/Mis/Disability/Case/Document/View" styleId="swodNT"
       />
-        <%--НЕ ИСПОЛЬЗУЕТСЯ--%>
-      <msh:sideLink name="Обмен с ФСС" action="/dis_documentExport"
-      	roles="/DISABLED/Policy/Mis/Disability/Case/Document/View" styleId="exportDNT"
-      />
     </msh:sideMenu>
 <msh:sideMenu title="Журналы по КЭР">
       <msh:sideLink name="Направления на ВК" action="/expert_journal_ker.do"

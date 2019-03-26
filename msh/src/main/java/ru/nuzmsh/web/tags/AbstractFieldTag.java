@@ -625,9 +625,9 @@ public abstract class AbstractFieldTag extends TagSupport implements IGuidSuppor
                     FormElementInfo info = getElementInfo();
                     if(info!=null && !StringUtil.isNullOrEmpty(info.getDefaultValue())) {
                         ret = info.getDefaultValue() ;
-                        if(ret.indexOf("${currentDate}")>=0) {
+                        if(ret.contains("${currentDate}")) {
                         	ret = ret.replace("${currentDate}", DateFormat.formatToDate(new Date())) ;
-                        } else if(ret.indexOf("${currentTime}")>=0){
+                        } else if(ret.contains("${currentTime}")){
                         	ret = ret.replace("${currentTime}", DateFormat.formatToTime(new Time(new Date().getTime()))) ;
                         }
                     }

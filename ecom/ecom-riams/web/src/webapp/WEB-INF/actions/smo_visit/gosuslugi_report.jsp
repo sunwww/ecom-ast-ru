@@ -160,15 +160,15 @@ ${dateStartMedcaseSql}
 group by wct.createprerecord
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 
-            <msh:sectionTitle>
-            </msh:sectionTitle>${journal_ticket_sql}
+            <msh:sectionTitle>Общий свод
+            </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table
                         name="journal_ticket" action="/javascript:void()" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="Кем записано" property="3"/>
                     <msh:tableColumn columnName="Записано всего (записей)" property="1"/>
                     <msh:tableColumn columnName="Оформлено направление" property="2"/>
-                </msh:table>
+                </msh:table>${journal_ticket_sql}
             </msh:sectionContent>
         </msh:section>
         <%} else if (typeGroup.equals("2")){ %>
@@ -226,7 +226,7 @@ group by ${selectSql},wct.createprerecord) as t
 group by t.fldName
 "  />
             <msh:sectionTitle>
-            </msh:sectionTitle>${journal_ticket_sql}
+            </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table printToExcelButton="Excel" name="journal_ticket" action="/javascript:void()" idField="2" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="Поликлиника" property="1"/>
@@ -234,7 +234,7 @@ group by t.fldName
                     <msh:tableColumn columnName="Через промед" property="3"/>
                     <msh:tableColumn columnName="Через робота" property="4"/>
                     <msh:tableColumn columnName="Через сайт" property="5"/>
-                </msh:table>
+                </msh:table>${journal_ticket_sql}
             </msh:sectionContent>
         </msh:section>
         <% }}  else {%>
