@@ -5,15 +5,13 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.birth.voc.VocRobsonClass;
+import ru.ecom.mis.ejb.domain.birth.voc.VocSubRobson;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import java.sql.Time;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
 
 /**
@@ -64,6 +62,10 @@ public class RobsonClass extends BaseEntity {
     @Persist
     public String getEditUsername() {return theEditUsername;}
     public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    @Comment("Подгруппа классификации")
+    @OneToOne
+    public VocSubRobson getRobsonSub() {return theRobsonSub;}
+    public void setRobsonSub(VocSubRobson aRobsonSub) {theRobsonSub = aRobsonSub;}
 
     /** СМО */
     private MedCase theMedCase;
@@ -81,4 +83,6 @@ public class RobsonClass extends BaseEntity {
     private Date theEditDate;
     /** Дата создания */
     private Date theCreateDate;
+    /** Подгруппа классификации */
+    private VocSubRobson theRobsonSub;
 }

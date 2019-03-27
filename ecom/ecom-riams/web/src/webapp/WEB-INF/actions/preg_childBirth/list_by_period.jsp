@@ -129,7 +129,7 @@
     , case when cb.isRegisteredWithWomenConsultation=true then '+' else '-' end as f14_gk
     , place.name as f15_pl
     , vocem.name as f15_em
-    , vrb.name as vrbname
+    , case when vsr.name is not null then vrb.name||' ('||vsr.name||')' else vrb.name end as vrbname
     , paritet_pregn.code as f9_paritet_2
     , case when cb.createusername is not null then cb.createusername else cb.editusername end as creator
      from ChildBirth cb
@@ -146,11 +146,13 @@
      left join vocchildemergency vocem on vocem.id=cb.emergency_id
      left join robsonclass rb on rb.medcase_id=cb.medcase_id
      left join vocrobsonclass vrb on vrb.id=rb.robsontype_id
+     left join vocsubrobson vsr on vsr.id=rb.robsonsub_id
      where 
     cb.birthFinishDate between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
     group by slo.id, ss.code, pat.lastname, pat.firstname, pat.middlename, pat.birthday, sls.datestart, 
     sls.entrancetime, slo.datestart, cb.birthfinishdate,paritet_chb.code,cb.pangsstartdate,cb.id,rayon.name,place.name,vocem.name,vrb.name,paritet_pregn.code
+    ,vsr.name
     order by slo.datestart, pat.lastname, pat.firstname, pat.middlename" />
     <msh:table printToExcelButton="сохранить в excel" name="journal_surOperation" viewUrl="entitySubclassView-mis_medCase.do?short=Short"  action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
     <msh:tableColumn property="sn" columnName="#"/>

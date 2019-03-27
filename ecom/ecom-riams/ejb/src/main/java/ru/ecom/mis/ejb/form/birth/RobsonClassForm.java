@@ -73,6 +73,11 @@ public class RobsonClassForm extends IdEntityForm {
     @Persist
     public String getEditUsername() {return theEditUsername;}
     public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    /** Подгруппа классификации */
+    @Comment("Подгруппа классификации")
+    @Persist
+    public Long getRobsonSub() {return theRobsonSub;}
+    public void setRobsonSub(Long aRobsonSub) {theRobsonSub = aRobsonSub;}
 
     /** СМО */
     private Long theMedCase;
@@ -90,4 +95,6 @@ public class RobsonClassForm extends IdEntityForm {
     private String theEditDate;
     /** Дата создания */
     private String theCreateDate;
+    /** Подгруппа классификации */
+    private Long theRobsonSub;
 }
