@@ -192,7 +192,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		var oldaction = document.forms['extDisp_cardForm'].action ;
 		document.forms['extDisp_cardForm'].action="javascript:checkDisableAgeDoubles()";
 		
-		function checkDisp(aStartDate, aFinishDate) {
+		function checkDisp(aStartDate, aFinishDate, needSubmit) {
 			if (aStartDate!='' && aFinishDate!='' && +$('workFunction').value>0) {
 				ExtDispService.checkDispService(aFinishDate, 0,$('patient').value, $('workFunction').value,aStartDate,aFinishDate,{
 					callback: function(aResult) {
@@ -214,26 +214,24 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 						}
 					}
 				});
-			} else {
+			} else if (needSubmit) {
 				document.forms['extDisp_cardForm'].action=oldaction ;
 				document.forms['extDisp_cardForm'].submit();
 			}
 		}
-		function checkDispAttached(r) {
+		function checkDispAttached(needSubmit) {
     		PatientService.checkDispAttached($('dispType').value, $('patient').value,{
     			callback: function (aResult) {
     				if (aResult==='0') {
     					alert ("Данный вид ДД оказывается только прикрепленному населению,"+
     							"\nпо данным последней проверке ФОМС пациент не прикреплен."+
     							"\nСоздание карты невозможно");
-    					if (r==='1') {
+    					if (needSubmit) {
 	    					document.getElementById('submitButton').disabled=false;
 							document.getElementById('submitButton').value='Создать';
     					}
-    				} else {
-    					if (r==='1') {
-    						checkDisp($('startDate').value, $('finishDate').value);
-    					}
+    				} else if (needSubmit) {
+    						checkDisp($('startDate').value, $('finishDate').value, true);
     				}
     			}
     		});
@@ -248,11 +246,11 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 							document.getElementById('submitButton').disabled=false;
 							document.getElementById('submitButton').value='Создать';
 						} else {
-							checkDispAttached('1');
+							checkDispAttached(true);
 						}
 					}});
 			} else {
-				checkDispAttached('1');
+				checkDispAttached(true);
 			}
 
 		
@@ -292,9 +290,9 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		}
 		updateAge() ;
 		try {
-			dispTypeAutocomplete.addOnChangeCallback(function() {updateAge() ;$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';checkDispAttached('0');});
-			eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('startDate').value, $('finishDate').value);}) ;
-			eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('startDate').value, $('finishDate').value);}) ;
+			dispTypeAutocomplete.addOnChangeCallback(function() {updateAge() ;$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';checkDispAttached(false);});
+			eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('startDate').value, $('finishDate').value, false);}) ;
+			eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('startDate').value, $('finishDate').value, false);}) ;
 			eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
 		} catch(e) {
 
