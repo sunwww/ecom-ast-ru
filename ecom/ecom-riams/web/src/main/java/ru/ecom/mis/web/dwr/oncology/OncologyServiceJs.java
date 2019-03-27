@@ -74,11 +74,8 @@ public class OncologyServiceJs {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> res = service.executeNativeSql("select code from "+vocName+" where id="+idDir);
-        String code="";
-        for (WebQueryResult wqr : res) {
-            code = wqr.get1().toString();
-        }
-        return code;
+        return res.isEmpty() ? "" : res.iterator().next().get1().toString();
+
     }
 
     /**
@@ -103,26 +100,26 @@ public class OncologyServiceJs {
      * @return String есть ли онкологический случай в стацинаре
      * @throws NamingException
      */
-    public String checkSLO(String slsId, HttpServletRequest aRequest) throws NamingException {
+    public String checkSLO(Long slsId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        if (!checkIsOMC(slsId,aRequest).equals("1")) return "1";
-        Collection<WebQueryResult> res = service.executeNativeSql("select count(id) from oncologycase where medcase_id=" + slsId);
-        return !res.isEmpty() ? res.iterator().next().get1().toString() : "0";
+        if (!checkIsOMC(slsId,aRequest)) return "1";
+        Collection<WebQueryResult> res = service.executeNativeSql("select id from oncologycase where medcase_id=" + slsId);
+        return res.isEmpty() ? "0" : "1";
     }
     /**
      * Проверить, ОМС ли.
      *
      * @param slsId MedCase.id
      * @param aRequest HttpServletRequest
-     * @return String ОМС ли
+     * @return Boolean ОМС ли
      * @throws NamingException
      */
-    public String checkIsOMC(String slsId, HttpServletRequest aRequest) throws NamingException {
+    private Boolean checkIsOMC(Long slsId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> isOmc = service.executeNativeSql("select case when sstr.code='OBLIGATORYINSURANCE' then '1' else '0' end \n" +
-                " from vocservicestream sstr left join medcase mc on mc.servicestream_id=sstr.id\n" +
-                "where mc.id=" + slsId);
-        return isOmc.iterator().next().get1().toString();
+        Collection<WebQueryResult> isOmc = service.executeNativeSql("select mc.id " +
+                " from medcase mc left join vocservicestream vss on mc.servicestream_id=vss.id" +
+                "where mc.id=" + slsId+" and vss.code='OBLIGATORYINSURANCE'");
+        return !isOmc.isEmpty();
     }
     /**
      * Проверить СПО на необходимость наличия онк. формы.
@@ -132,37 +129,15 @@ public class OncologyServiceJs {
      * @return String нужен ли онкологический случай
      * @throws NamingException
      */
-    public String checkSPO(String slsId, HttpServletRequest aRequest) throws NamingException {
+    public String checkSPO(Long slsId, HttpServletRequest aRequest) throws NamingException {
 
        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-    if (!checkIsOMC(slsId,aRequest).equals("1")) return "false";
-       Collection<WebQueryResult> res = service.executeNativeSql("select count(id) from oncologycase where medcase_id=" + slsId);
-       int count = !res.isEmpty() ? Integer.parseInt(res.iterator().next().get1().toString()) : 0;
-
-       String result="false";
-        if (count == 0) {
-
-            res  = service.executeNativeSql("select dateFinish,idc10_id from medcase  where id=" + slsId);
-            String finishdate = "";
-            String idc10_id = "";
-
-            for (WebQueryResult wqr : res) {
-                if(wqr.get1()!=null) finishdate = wqr.get1().toString();
-                if(wqr.get2()!=null) idc10_id = wqr.get2().toString();
-            }
-            if (!finishdate.equals("")) {
-                if (!idc10_id.equals("")) {
-                    res = service.executeNativeSql("select case when count(id)>0 then true else false end " +
-                            " from vocidc10  where id=" + idc10_id+" code like 'C%'" );
-
-                    for (WebQueryResult wqr : res) {
-                        result = wqr.get1().toString();
-                    }
-                    return result;
-                }
-            }
-        }
-        return result;
+    if (!checkIsOMC(slsId,aRequest)) return "false";
+       Collection<WebQueryResult> res = service.executeNativeSql("select mc.id from medcase mc " +
+               "left join oncologycase o on o.medcase_id=mc.id " +
+               "left join vocIdc10 mkb on mkb.id=mc.idc10_id" +
+               "where mc.id=" + slsId+" and mc.dateFinish is not null and mkb.code like 'C%' and o.id is null");
+       return res.isEmpty() ? "false" : "true";
     }
 
     /**
@@ -466,16 +441,16 @@ public class OncologyServiceJs {
      * @return String Пустая строка, если всё в порядке/сообщение об ошибке
      * @throws NamingException
      */
-    public String checkDiagnosisOnkoForm(String slsId, String concludingMkb, HttpServletRequest aRequest) throws NamingException {
+    public String checkDiagnosisOnkoForm(Long slsId, String concludingMkb, HttpServletRequest aRequest) throws NamingException {
         //Если есть хотя бы одна форма с основным выписным, то всё ок
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        if (!checkIsOMC(slsId,aRequest).equals("1")) return "";
+        if (!checkIsOMC(slsId,aRequest)) return "";
         String res = "";
         if (concludingMkb.equals("")) return res;
         //Диагноз онкологической формы
         Collection<WebQueryResult> list = service.executeNativeSql(
                 "select mkb||' '||mkb.name,c.id from oncologycase c left join vocidc10 mkb on mkb.code=c.mkb where c.medcase_id="+slsId);
-        Boolean flag=false; //что есть такой же мкб - до этого момента уже выполнена проверка на наличие/отсутствие ЗНО
+        boolean flag=false; //что есть такой же мкб - до этого момента уже выполнена проверка на наличие/отсутствие ЗНО
         String ds="",cId="";
         for (WebQueryResult wqr : list) {
             if (wqr.get1()!=null && wqr.get2()!=null) {

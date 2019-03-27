@@ -450,7 +450,10 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         List<Object[]> list = theManager.createNativeQuery(searchSql.toString()).setParameter("listId",aListEntryId).getResultList();
      //   LOG.info("sql = "+searchSql+", size = "+list.size());
+        int i=0;
         for (Object[] spo: list){
+            i++;
+            if (i%100==0) LOG.info("Объединение случаев - "+i);
             //Создаем новую запись, все существущие помечаем как COMPLEXCASE
             String[] ids = spo[4].toString().split(",");
             E2Entry mainEntry = null;
@@ -464,15 +467,18 @@ public class Expert2ServiceBean implements IExpert2Service {
                     createDiagnosis(mainEntry);
                 }
                 mainEntry = unionPolyclinic(mainEntry,entry);
-                if (!mainEntry.getMedHelpProfile().equals(entry.getMedHelpProfile())) {
+                if (isGroupBySpo && !mainEntry.getMedHelpProfile().equals(entry.getMedHelpProfile())) {
                     theManager.persist(new E2EntryError(entry,"RAZNYE_POLIC_PROFILE","Различные профиля мед. помощи в одном обращении"));
                 }
 
                 String result = mainEntry.getFondResult().getCode();
-                if ("305".equals(result) || "306".equals(result)) mainEntry = null; //Если перевод в стационар - заканчиваем случай.
+                if ("305".equals(result) || "306".equals(result)) {
+                    makeCheckEntry(mainEntry,false,true);
+                    mainEntry = null; //Если перевод в стационар - заканчиваем случай.
+                }
             }
 
-            makeCheckEntry(mainEntry,false,true);
+            if (mainEntry!=null) makeCheckEntry(mainEntry,false,true);
         }
         if (isGroupBySpo) {
             checkDefectPolyclinicCrossSpo(aListEntryId);
