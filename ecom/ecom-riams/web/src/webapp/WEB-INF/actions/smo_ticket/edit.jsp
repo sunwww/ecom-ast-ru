@@ -621,7 +621,7 @@
 	    });
       	function setAdditionParam() {
       		var wf = +$("workFunctionExecute").value;
-    		medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value) ;
+    		medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value+"#"+$('serviceStream').value) ;
     		
      		if (wf>0) {
         		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
@@ -657,7 +657,7 @@
 		  		if (oldValue!=$('dateStart').value) {
 		  			var wf = +$("workFunctionExecute").value;
 		    		if (wf=='') {wf=0;}
-		  			 medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value) ;
+		  			 medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value+"#"+$('serviceStream').value) ;
 		  		}
 		  	}) ;
 		function changeParentMedService() {
@@ -737,7 +737,7 @@
     				return "none" ;
     			}
     		}
-    		 medServiceAutocomplete.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
+    		 medServiceAutocomplete.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value+"#"+$('serviceStream').value) ;
 
     	</script>
     	
