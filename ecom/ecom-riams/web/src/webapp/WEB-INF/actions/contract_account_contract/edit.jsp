@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -5,7 +6,9 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
-
+	<%
+		boolean createExecutor = ActionUtil.isUserInRole("/Policy/Mis/Contract/ExecutorInDogovor",request);
+	%>
 	<tiles:put name="javascript" type="string">
 
 		<script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
@@ -78,6 +81,14 @@
                                     td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='0' size='9' readonly='true' />";
                                 }
                                 td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
+								<% if(createExecutor) { %>
+								var td5 = document.createElement("TD");
+								td5.innerHTML= '<div><input size="1" name="workFunctionExecute'+cnt+'" id="workFunctionExecute'+cnt+'" type="hidden">' +
+										'<input name="workFunctionExecute'+cnt+'Name" id="workFunctionExecute'+cnt+'Name" size="50" class="autocomplete horizontalFill"' +
+										' autocomplete="off" type="text"><div id="workFunctionExecute'+cnt+'Div" ></div></div>';
+								row.appendChild(td5);
+								addDoctorAutocomplete('workFunctionExecute'+cnt);
+								<%}%>
                                 //$('sum'+cnt).readOnly=true ;
                                 eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
                                 eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
@@ -120,13 +131,11 @@
                                 var td2 = document.createElement("TD");
                                 var td3 = document.createElement("TD");
                                 var td4 = document.createElement("TD");
-								var td5 = document.createElement("TD");
 
                                 row.appendChild(td1);
                                 row.appendChild(td2);
                                 row.appendChild(td3);
                                 row.appendChild(td4);
-                                row.appendChild(td5);
 
                                 // Наполняем ячейки
                                 td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >"+"<input id='oldid"+cnt+"' name='oldid"+cnt+"' value='0' type='hidden' >";
@@ -140,11 +149,14 @@
                                 }
                                 td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
                                 //$('sum'+cnt).readOnly=true ;
-								var docHtml = '<div><input size="1" name="workFunctionExecute'+cnt+'" id="workFunctionExecute'+cnt+'" type="hidden">' +
-										'<input name="workFunctionExecute'+cnt+'Name" id="workFunctionExecute'+cnt+'Name" size="50" class="autocomplete horizontalFill"' +
-										' autocomplete="off" type="text"><div id="workFunctionExecute'+cnt+'Div" ></div></div>';
-								td5.innerHTML=docHtml;
-								addDoctorAutocomplete('workFunctionExecute'+cnt);
+								<% if (createExecutor) { %>
+								    var td5 = document.createElement("TD");
+								    row.appendChild(td5);
+                                    td5.innerHTML = '<div><input size="1" name="workFunctionExecute'+cnt+'" id="workFunctionExecute'+cnt+'" type="hidden">' +
+											'<input name="workFunctionExecute'+cnt+'Name" id="workFunctionExecute'+cnt+'Name" size="50" class="autocomplete horizontalFill"' +
+											' autocomplete="off" type="text"><div id="workFunctionExecute'+cnt+'Div" ></div></div>';
+									addDoctorAutocomplete('workFunctionExecute'+cnt);
+								<%}%>
                                 eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
                                 eval("eventutil.addEventListener($('count"+cnt+"'),'keyup',function(){checkSum() ;})");
 
@@ -165,7 +177,7 @@
                         var count=+$('count'+i).value
                         var cost = +$('cost'+i).value ;
                         var sum = (cost*count) ;
-						var wf = +$('workFunctionExecute'+i).value;
+						var wf = +($('workFunctionExecute'+i) ? $('workFunctionExecute'+i).value : 0);
                         costAll = costAll + sum ;
                         $('sum'+i).value=sum ;
                         if (medServAll!='') medServAll=medServAll+"#" ;
@@ -278,6 +290,7 @@
 					<th>Стоимость</th>
 					<th>Кол-во услуг</th>
 					<th>Общая стоимость</th>
+					<% if(createExecutor) out.print("<th>Исполнитель</th>");%>
 				</tr>
 				</thead>
 				<tbody>

@@ -38,7 +38,6 @@ public class ActionUtil {
 	} 
 	public static List<Object[]> getListObjFromNativeQuery(String aSql, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-	//	System.out.println(aSql) ;
 		return service.executeNativeSqlGetObj(aSql) ;
 	}
 	 public static String getContentOfHTTPPage(String pageAddress, String codePage) throws Exception {
@@ -57,11 +56,9 @@ public class ActionUtil {
 	    }
 	public static WebQueryResult getElementArrayByCode(String aCode,String aAttribList,HttpServletRequest aRequest) {
 		Collection<WebQueryResult> col = (Collection<WebQueryResult>)aRequest.getAttribute(aAttribList) ;
-		//System.out.println(" --- code="+aCode);
 		WebQueryResult wqr = null ;
 		if (!col.isEmpty()) for (WebQueryResult w:col) {
 			String code = ""+w.get1() ;
-			//System.out.println("id="+code+" --- code="+aCode);
 			if (code.contains(aCode)) {
 				wqr = w ;
 				break ;
@@ -69,7 +66,9 @@ public class ActionUtil {
 		}
 		return wqr ;
 	}
-	
+	public static Boolean isUserInRole(String aRole, HttpServletRequest aRequest) throws JspException {
+		return RolesHelper.checkRoles(aRole,aRequest);
+	}
 	public static String isReportBase(String aBeginDate,String aEndDate,HttpServletRequest aRequest) {
 		String isRepBase = "true" ;
 		try {
