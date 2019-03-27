@@ -56,7 +56,6 @@ public class SecRoleServiceBean implements ISecRoleService {
 		String ids =convertArrayToString(aUsersId);
 		java.util.Date date = new java.util.Date() ;
 		String username = theContext.getCallerPrincipal().getName() ;
-		LOG.info("ids="+ids) ;
 		int result = theManager.createNativeQuery("delete from SecUser_SecRole where roles_id=:idRole and secuser_id in ("+ids+")")
 			.setParameter("idRole", aRoleId)
 			//.setParameter("idUsers", ids)
@@ -73,7 +72,6 @@ public class SecRoleServiceBean implements ISecRoleService {
 			jour.setSerializationBefore("role:"+aRoleId) ;
 			theManager.persist(jour) ;
 		}
-		LOG.info("result for delete="+result) ;
 	}
 	public void addUsersToRole(long aRoleId, long[] aUsersId) {
 		//LOG.info("ids="+convertArrayToString(aUsersId)) ;
@@ -91,7 +89,6 @@ public class SecRoleServiceBean implements ISecRoleService {
 					.setParameter("idRole", aRoleId)
 					.setParameter("idUser", user)
 					.executeUpdate() ;
-				LOG.info("result for insert:"+result) ;
 				ChangeJournal jour = new ChangeJournal() ;
 				jour.setClassName("SecUser_SecRole") ;
 				
