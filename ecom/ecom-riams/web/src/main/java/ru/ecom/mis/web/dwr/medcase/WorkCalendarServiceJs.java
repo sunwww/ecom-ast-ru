@@ -327,7 +327,7 @@ public class WorkCalendarServiceJs {
 		StringBuilder sql = new StringBuilder() ;
 		Collection<WebQueryResult> list ;
 
-		sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
+		sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as workFunction ") ;
 		sql.append(" from WorkFunction wf")
 			.append(" left join SecUser su on su.id=wf.secUser_id ")
 			.append(" left join Worker w on w.id=wf.worker_id")
@@ -355,7 +355,7 @@ public class WorkCalendarServiceJs {
 		if (!list1.isEmpty()) list.addAll(list1) ;
 		if (anyWFadd) {
 			sql = new StringBuilder() ;
-			sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
+			sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as workFunction ") ;
 			sql.append(" from WorkFunction wf")
 				.append(" left join SecUser su on su.id=wf.secUser_id ")
 				.append(" left join Worker w on w.id=wf.worker_id")
@@ -365,7 +365,7 @@ public class WorkCalendarServiceJs {
 				.append(" left join VocWorkFunction vwf on vwf.id=wf1.workFunction_id")
 				.append(" left join patient wp on wp.id=w1.person_id ")
 				.append("where wf1.id='").append(aWorkFunctionPlan).append("' and wc1.id is not null ")
-				.append(" group by wf1.id ,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName)");
+				.append(" group by wf1.id ,vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName)");
 			list1 = service.executeNativeSql(sql.toString());
 			if (!list1.isEmpty()) list.addAll(list1) ;
 		}
@@ -467,7 +467,7 @@ public class WorkCalendarServiceJs {
 	public String getDataByTime(Long aTime,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select wf.id as wfid,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction, wcd.id as wcdid, to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcaldate,wct.id as wctid,  cast(wct.timeFrom as varchar(5)) as timefrom ") ;
+		sql.append("select wf.id as wfid,vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as workFunction, wcd.id as wcdid, to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcaldate,wct.id as wctid,  cast(wct.timeFrom as varchar(5)) as timefrom ") ;
 		sql.append(" from WorkCalendarTime wct left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id left join WorkFunction wf on wf.id=wc.workFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where wct.id='").append(aTime).append("' ") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
 		StringBuilder res = new StringBuilder() ;
@@ -489,7 +489,7 @@ public class WorkCalendarServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
-		sql.append("select spo.id as spoid,coalesce(to_char(spo.dateStart,'dd.mm.yyyy'),'нет даты начала ')||coalesce('-'||to_char(spo.dateFinish,'dd.mm.yyyy'),'')||' '||vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
+		sql.append("select spo.id as spoid,coalesce(to_char(spo.dateStart,'dd.mm.yyyy'),'нет даты начала ')||coalesce('-'||to_char(spo.dateFinish,'dd.mm.yyyy'),'')||' '||vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as workFunction ") ;
 		sql.append(" from MedCase spo left join WorkFunction wf on wf.id=spo.startFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where spo.id='").append(aSpo).append("' and spo.dtype='PolyclinicMedCase'") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
 		if (!list.isEmpty()) {
@@ -498,7 +498,7 @@ public class WorkCalendarServiceJs {
 			res.append(wqr.get2()).append("#") ;
 			
 			sql = new StringBuilder() ;
-			sql.append("select wf.id as wfid,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
+			sql.append("select wf.id as wfid,vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as workFunction ") ;
 			sql.append(" from WorkFunction wf left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where wf.id='").append(aWorkFunctionPlan).append("' ") ;
 			list = service.executeNativeSql(sql.toString(),1);
 			if (!list.isEmpty()) {
