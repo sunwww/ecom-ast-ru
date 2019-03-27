@@ -634,4 +634,18 @@ public class ChildBirthForm extends IdEntityForm {
 
 	/** Паритет беременностей */
 	private Long theParitetPregn;
+
+	/** Классификация Робсона */
+	@Comment("Классификация Робсона")
+	public Long getRobsonClass() {return theRobsonClass;}
+	public void setRobsonClass(Long aRobsonClass) {theRobsonClass = aRobsonClass;}
+	/** Классификация Робсона */
+	private Long theRobsonClass;
+
+	/** Подгруппа классификации */
+	@Comment("Подгруппа классификации")
+	public Long getRobsonSub() {return theRobsonSub;}
+	public void setRobsonSub(Long aRobsonSub) {theRobsonSub = aRobsonSub;}
+	/** Подгруппа классификации */
+	private Long theRobsonSub;
 }

@@ -298,9 +298,30 @@ function onCreate(aForm, aEntity, aCtx) {
 			aCtx.manager.persist(newBorn) ;
 		}
 	}
-	
+    createOrUpdateRobson(aForm, aCtx);
 }
 function onPreDelete(aId, aCtx) {
 	var obj=aCtx.manager.createNativeQuery("select count(*) from newBorn where childBirth_id='"+aId+"'").getSingleResult() ;
 	if (+obj>0) throw "Сначала нужно удалить данные по новорожденным" ;
+}
+//классификация Робсона
+function createOrUpdateRobson(aForm, aCtx) {
+    var robsonClass=aForm.getRobsonClass();
+    if (robsonClass!=null && robsonClass!='') {
+        var rEnt = new Packages.ru.ecom.mis.ejb.domain.birth.RobsonClass;
+        rEnt.setMedCase(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase,java.lang.Long.valueOf(aForm.getMedCase())));
+        rEnt.setRobsonType(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.voc.VocRobsonClass,java.lang.Long.valueOf(robsonClass)));
+        var date = new java.util.Date() ;
+        rEnt.setCreateDate(new java.sql.Date(date.getTime())) ;
+        rEnt.setCreateTime(new java.sql.Time (date.getTime())) ;
+        rEnt.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+        var robsonSub=aForm.getRobsonSub();
+        if (robsonSub!=null && robsonSub!='')
+            rEnt.setRobsonSub(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.voc.VocSubRobson,java.lang.Long.valueOf(robsonSub)));
+        aCtx.manager.persist(rEnt) ;
+    }
+}
+function onSave(aForm, aEntity, aCtx) {
+    aCtx.manager.createNativeQuery("delete from robsonclass where medcase_id="+aForm.getMedCase()).executeUpdate() ;
+    createOrUpdateRobson(aForm, aCtx);
 }

@@ -54,6 +54,8 @@
       <msh:hidden property="newBornsInfo"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
       <msh:hidden property="isECO"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
       <msh:hidden property="isRegisteredWithWomenConsultation"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
+      <msh:hidden property="robsonClass"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
+      <msh:hidden property="robsonSub"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
       <input type='hidden' name='deadBorn' id="deadBorn" value='${dead_born}' guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
       <msh:panel guid="0a4989f1-a793-45e4-905f-4ac4f46d7815">
         <msh:row guid="4bbea36b-255f-441f-8617-35cb54eaf9d0">
@@ -214,8 +216,6 @@
         <msh:row guid="21aa5b55-367d-404d-b8c5-03ce63e32329">
           <msh:autoComplete property="placentaInspector" label="Послед осматривал" vocName="workFunction" fieldColSpan="3" horizontalFill="true" guid="9429d5cb-cf05-42e1-8df8-ec5545f3a198" />
         </msh:row>
-        
-
         <msh:ifFormTypeIsView formName="preg_childBirthForm">
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -235,12 +235,14 @@
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>
         </msh:ifFormTypeIsView>
-        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
+          <h3><b>Классификация Робсона</b></h3>
+          <div id="classRobsonsDiv"></div>
+          <div id="subRobsonsDiv"></div>
+        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK() && checkRobson()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
       </msh:panel>
     </msh:form>
      <tags:preg_childBirthYesNo name="DeadBorn" field="DeadBeforeLabors"/>
     <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
-   
       <msh:ifInRole roles="/Policy/Mis/NewBorn/View" guid="187f5083-94a7-42fd-a428-7f9d4720bfd1">
         <%-- <ecom:parentEntityListAll attribute="newBorns" formName="preg_newBornForm" guid="35b71f42-e1fc-40f2-93e5-0908ea385878" /> --%>
         <ecom:webQuery name = "newBorns" nameFldSql="newBorns_sql" nativeSql="select nb.id as id, nb.birthDate as bDate, nb.birthTime as bTime, vs.name as sexName, pat.firstname as patName
@@ -263,11 +265,105 @@
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="preg_childBirthForm" guid="d16befe8-59da-47d9-9c54-ee0d13e97be2" />
   </tiles:put>
+    <script type="text/javascript" src="./dwr/interface/PregnancyService.js" >/**/</script>
   <tiles:put name="javascript" type="string">
   <script type="text/javascript">
   function printPregHistory() {
 	  document.location='print-preghistory.do?s=HospitalPrintService&m=printPregHistoryByMC&id='+$('medCase').value;
   }
+  //Milamesher #147 Робсон в родах
+  var voc='VocRobsonClass';
+  function loadListRobson() {
+      var txt="";
+      VocService.getAllValueByVocs(voc,{
+          callback: function(aResult) {
+              var vocRes=JSON.parse(aResult).vocs[0];
+              txt+="<table><tbody>";
+              txt+="<tr><td><label><b></b></label><td><td><select id='robsonClassList' style=\"background-color:#fcffa7\" ";
+              <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+              txt+=" disabled='true' ";
+              </msh:ifFormTypeIsView>
+              for (var ind1 = 0; ind1 < vocRes.values.length; ind1++) {
+                  var vocVal = vocRes.values[ind1];
+                  txt+="<option style=\"background-color:white\" onchange='loadSubs();' id='option"+vocVal.id+"'>"+vocVal.name;
+                  txt+="</option>";
+              }
+              txt+="</select><td></tr></tbody></table>";
+              document.getElementById('classRobsonsDiv').innerHTML+=txt;
+              if ($('robsonClass').value!='' && $('robsonClass').value!='0')
+                  selectItemById(document.getElementById('robsonClassList'),$('robsonClass').value);
+              else document.getElementById('robsonClassList').value='';
+              loadSubs();
+          }
+      });
+  }
+  //загрузка подгрупп в зависимости от группы, обнуление текущей
+  function loadSubs() {
+      var id=getRobsonIndex();
+      //$('robsonSub').value='';
+      var txt="";
+      if (id!=-1) {
+          $('robsonClass').value=id;
+          PregnancyService.getRobsonSub(id, {
+              callback: function (aResult) {
+                  if (aResult != null && aResult != '[]') {
+                      var res = JSON.parse(aResult);
+                      txt += "<table><tbody>";
+                      txt += "<tr><td><label><b>Подгруппа:</b></label><td><td><select id='sub'";
+                      <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                      txt += " disabled='true' ";
+                      </msh:ifFormTypeIsView>
+                      txt += " onchange='changeSub();' style=\"background-color:#fcffa7\">";
+                      for (var ind1 = 0; ind1 < res.length; ind1++) {
+                          var val = res[ind1];
+                          txt += "<option style=\"background-color:white\" id='option" + val.id + "'>" + val.name + "</option>";
+                      }
+                      txt += "</select><td></tr></tbody></table>";
+                  }
+                  document.getElementById('subRobsonsDiv').innerHTML = txt;
+                  if ($('robsonSub').value!='' && $('robsonSub').value!='0' && document.getElementById('sub'))
+                      selectItemById(document.getElementById('sub'),$('robsonSub').value);
+                  else if (document.getElementById('sub')) document.getElementById('sub').value='';
+                  if (document.getElementById('sub')==null) $('robsonSub').value='';
+              }
+          });
+      }
+  }
+  //установка значения подкатегории при выборе
+  function changeSub() {
+      var selects = document.getElementsByTagName('option');
+      for (var i = 0; i < selects.length; i++) {
+          if (selects[i].selected && selects[i].id.indexOf('option')!=-1)
+              $('robsonSub').value=selects[i].id.replace('option','');
+      }
+  }
+  //установка значения подкатегории при загрузке
+  function selectItemById(elmnt, numId){
+      for(var i=0; i < elmnt.options.length; i++) {
+          if(elmnt.options[i].id === 'option'+numId) {
+              elmnt.selectedIndex = i;
+              break;
+          }
+      }
+  }
+  //получить текущее значение классификации
+  function getRobsonIndex() {
+      var list=document.getElementById('robsonClassList');
+      if (list) {
+          var options = list.options;
+          return (options && options.selectedIndex != -1) ? options[options.selectedIndex].id.replace('option', '') : -1;
+      }
+      else return -1;
+  }
+  PregnancyService.getAllRobsonInfo($('medCase').value,{
+      callback: function (aResult) {
+          if (aResult != null && aResult != '{}') {
+              var aResult = JSON.parse(aResult) ;
+              $('robsonClass').value=(typeof aResult.robsonClass==='undefined')? '': aResult.robsonClass;
+              $('robsonSub').value=(typeof aResult.robsonSub==='undefined')? '': aResult.robsonSub;
+          }
+          loadListRobson();
+      }});
   </script>
   <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
   <script type="text/javascript">
@@ -275,8 +371,7 @@
   	var old_action = document.forms["mainForm"].action ; 
   	
   	//document.forms["mainForm"].action="javascript:checkForm()" ; 
-  	
-  	
+
   </script>
   <msh:ifFormTypeAreViewOrEdit formName="preg_childBirthForm">
   <script type="text/javascript">
@@ -307,6 +402,15 @@
               return true;
           }
           return false;
+      }
+      //#147 проверка на заполнение Росбона
+      function checkRobson() {
+          if ($('robsonClass').value!='' && $('robsonClass').value!='0' && (document.getElementById('sub') && $('robsonSub').value!='' || document.getElementById('sub')==null))
+              return true;
+          else {
+              alert("Необходимо заполнить классификацию Робсона!");
+              return false;
+          }
       }
   function checkForm() {
           if (isSaveNewBorns) {

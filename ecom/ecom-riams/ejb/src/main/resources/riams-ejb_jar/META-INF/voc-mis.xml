@@ -3254,4 +3254,13 @@ left join medcase smoP on smoP.owner_id=w.id "
 				queried=" upper(vb.branch) like upper(:query) "
 		/>
 	</voc>
+	<voc id="vocRobsonClass" type="NativeVocService">
+		<NativeVocService
+				from="vocrobsonclass vb "
+				nameId="vb.id"
+				join=" " order=""
+				names="vb.name"
+				queried=" upper(vb.name) like upper(:query) "
+		/>
+	</voc>
 </vocconfig>

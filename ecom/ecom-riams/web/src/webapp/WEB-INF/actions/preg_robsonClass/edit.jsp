@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -21,8 +20,10 @@
             <msh:hidden property="medCase" guid="2104232f-62fa-4f0b-84de-7ec4b5f306b3" />
             <msh:hidden property="saveType" guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
             <msh:hidden property="robsonType" />
+            <msh:hidden property="robsonSub" />
             <msh:panel guid="0a4989f1-a793-45e4-905f-4ac4f46d7815">
                 <div id="classRobsonsDiv"></div>
+                <div id="subRobsonsDiv"></div>
                 <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm">
                     <msh:row>
                         <msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -78,6 +79,7 @@
                             <msh:ifFormTypeIsView formName="preg_robsonClassForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
                             txt+=" disabled='true' ";
                             </msh:ifFormTypeIsView>
+                            txt+=" onchange='loadSubs();' ";
                                txt+= "><option>Нет</option>" +
                                 "<option>Да</option>" +
                                 "</select><td></tr>";
@@ -87,6 +89,7 @@
                         <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
                         document.getElementById('yesNo'+$('robsonType').value).selectedIndex=1;
                         </msh:ifFormTypeAreViewOrEdit>
+                        loadSubs();
                     }
                 });
             }
@@ -97,23 +100,70 @@
                     $('robsonType').value=id;
                     document.forms["mainForm"].submit();
                 }
+                else showToastMessage('Обязательно должен быть выбран ОДИН из подпунктов!',null,true);
             }
             //коряво, но такие странные требования
             function checkYesNoGetIndex() {
                 var selects = document.getElementsByTagName('select');
                 var count=0;
                 var id=-1;
-                for (i = 0; i < selects.length; i++) {
-                    if (selects[i].selectedIndex==1) {
+                for (var i = 0; i < selects.length; i++) {
+                    if (selects[i].selectedIndex==1 && selects[i].id.indexOf('yesNo')!=-1) {
                         id=selects[i].id.replace('yesNo',''); count++;
                     }
                 }
                 if (count!=1) {
-                    alert('Обязательно должен быть выбран ОДИН из подпунктов!');
-                    $('submitButton').disabled = false;
+                    if ($('submitButton')) $('submitButton').disabled = false;
                     return -1;
                 }
                 else return id;
+            }
+            //загрузка подгрупп в зависимости от группы, обнуление текущей
+            function loadSubs() {
+                var id=checkYesNoGetIndex();
+                $('robsonSub').value='';
+                var txt="";
+                PregnancyService.getRobsonSub(id,{
+                    callback: function(aResult) {
+                        if (aResult!=null && aResult!='[]') {
+                            var res=JSON.parse(aResult);
+                            txt+="<table><tbody>";
+                            txt+="<tr><td><label><b>Выберите:</b></label><td><td><select id='sub'";
+                            <msh:ifFormTypeIsView formName="preg_robsonClassForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                            txt+=" disabled='true' ";
+                            </msh:ifFormTypeIsView>
+                            txt+=" onchange='changeSub();' style=\"background-color:#fcffa7\">";
+                            for (var ind1 = 0; ind1 < res.length; ind1++) {
+                                var val = res[ind1];
+                                txt+= "<option id='option"+val.id+"'>"+val.name+"</option>";
+                            }
+                            txt+="</select><td></tr></tbody></table>";
+                        }
+                        document.getElementById('subRobsonsDiv').innerHTML=txt;
+                        <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                        if ($('robsonSub').value) selectItemById($('robsonSub').value);
+                        </msh:ifFormTypeAreViewOrEdit>
+                        changeSub();
+                    }
+                });
+            }
+            //установка значения подкатегории при выборе
+            function changeSub() {
+                var selects = document.getElementsByTagName('option');
+                for (var i = 0; i < selects.length; i++) {
+                    if (selects[i].selected && selects[i].id.indexOf('option')!=-1)
+                        $('robsonSub').value=selects[i].id.replace('option','');
+                }
+            }
+            //установка значения подкатегории при загрузке
+            function selectItemById(elmnt, numId){
+                for(var i=0; i < elmnt.options.length; i++)
+                {
+                    if(elmnt.options[i].id === 'option'+numId) {
+                        elmnt.selectedIndex = i;
+                        break;
+                    }
+                }
             }
         </script>
     </tiles:put>
