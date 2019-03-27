@@ -18,7 +18,8 @@
 		title="Список видов доп.диспансеризации">
 		<ecom:webQuery name="list" nativeSql="
 		select ved.id, ved.code, ved.name
-		from VocExtDisp ved
+		,case when ved.isarchival='1' then 'color:red' end as f4_colorStyle
+		from VocExtDisp ved order by ved.name
 		"/>
 	  	 <msh:tableNotEmpty name="list">
 		  	<msh:toolbar >
@@ -59,7 +60,7 @@
              		</table>
              		</msh:toolbar>
 	  	</msh:tableNotEmpty>
-		<msh:table name="list" action="entityView-extDisp_voc.do" idField="1" selection="true">
+		<msh:table styleRow="4" name="list" action="entityView-extDisp_voc.do" idField="1" selection="true">
 			<msh:tableColumn columnName="#" property="sn" />
 			<msh:tableColumn columnName="ИД" property="1" />
 			<msh:tableColumn columnName="Код" property="2" />
