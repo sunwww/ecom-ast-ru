@@ -648,4 +648,21 @@ public class ChildBirthForm extends IdEntityForm {
 	public void setRobsonSub(Long aRobsonSub) {theRobsonSub = aRobsonSub;}
 	/** Подгруппа классификации */
 	private Long theRobsonSub;
+
+
+	/** Длительность безводного периода (часы)*/
+	@Comment("Длительность безводного периода (часы)")
+	@Persist
+	public Long getWaterlessDurationHour() {return theWaterlessDurationHour;}
+	public void setWaterlessDurationHour(Long aWaterlessDurationHour) {theWaterlessDurationHour = aWaterlessDurationHour;}
+	/** Длительность безводного периода (часы)*/
+	private Long theWaterlessDurationHour;
+
+	/** Длительность безводного периода (минуты)*/
+	@Comment("Длительность безводного периода (минуты)")
+	@Persist
+	public Long getWaterlessDurationMin() {return theWaterlessDurationMin;}
+	public void setWaterlessDurationMin(Long aWaterlessDurationMin) {theWaterlessDurationMin = aWaterlessDurationMin;}
+	/** Длительность безводного периода (минуты)*/
+	private Long theWaterlessDurationMin;
 }

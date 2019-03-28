@@ -120,6 +120,17 @@
                       <input type="radio" name="gkGroup" value="2"> НЕ состояла на учёте в ЖК
                   </td>
               </msh:row>
+              <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                  <td class="label" title="Поиск по промежутку  (water)" colspan="1"><label for="waterName" id="twaterLabel">Длительный безводный период:</label></td>
+                  <td onclick="this.childNodes[1].checked='checked'; checkWater();" colspan="1">
+                      <input type="radio" name="water" value="1"> Нет
+                  </td>
+                  <td onclick="this.childNodes[1].checked='checked'; checkWater();" colspan="3">
+                      <input type="radio" name="water" value="2"> Да
+                  </td>
+                  <msh:textField property="waterlessDurationHour" label="Длительность безводного периода (часы)" />
+                  <msh:textField property="waterlessDurationMin" label="Длительность безводного периода (минуты)" />
+              </msh:row>
           </msh:ifFormTypeIsNotView>
           <msh:ifFormTypeIsView formName="preg_childBirthForm">
               <msh:row>
@@ -127,6 +138,10 @@
               </msh:row>
               <msh:row>
                   <msh:checkBox property="isRegisteredWithWomenConsultation" label="Учёт в ЖК?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="1"/>
+              </msh:row>
+              <msh:row>
+                  <msh:textField property="waterlessDurationHour" label="Длительность безводного периода (часы)" />
+                  <msh:textField property="waterlessDurationMin" label="Длительность безводного периода (минуты)" />
               </msh:row>
           </msh:ifFormTypeIsView>
         <msh:row styleId="rwSam1"><msh:separator label="Второй период родовой деятельности" colSpan="4"/>
@@ -238,7 +253,7 @@
           <h3><b>Классификация Робсона</b></h3>
           <div id="classRobsonsDiv"></div>
           <div id="subRobsonsDiv"></div>
-        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK() && checkRobson()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
+        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK() && checkRobson() && checkWaterBeforeSafe()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
       </msh:panel>
     </msh:form>
      <tags:preg_childBirthYesNo name="DeadBorn" field="DeadBeforeLabors"/>
@@ -270,6 +285,47 @@
   <script type="text/javascript">
   function printPregHistory() {
 	  document.location='print-preghistory.do?s=HospitalPrintService&m=printPregHistoryByMC&id='+$('medCase').value;
+  }
+  <msh:ifFormTypeAreViewOrEdit formName="preg_childBirthForm">
+  <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
+  if ($('waterlessDurationHour').value=='' && $('waterlessDurationMin').value=='')
+      document.getElementsByName("water")[0].checked=true;
+  else document.getElementsByName("water")[1].checked=true;
+  </msh:ifFormTypeIsNotView>
+  </msh:ifFormTypeAreViewOrEdit>
+  //настройка для безводного периода
+  function  checkWater() {
+      if (document.getElementsByName("water") && document.getElementsByName("water")[1]) {
+          if (document.getElementsByName("water")[1].checked) {
+              $('waterlessDurationHourLabel').removeAttribute('hidden');
+              $('waterlessDurationHour').removeAttribute('hidden');
+              $('waterlessDurationHour').className = "required";
+              $('waterlessDurationMinLabel').removeAttribute('hidden');
+              $('waterlessDurationMin').removeAttribute('hidden');
+              $('waterlessDurationMin').className = "required";
+          }
+          else {
+              $('waterlessDurationHourLabel').setAttribute('hidden', true);
+              $('waterlessDurationHour').setAttribute('hidden', true);
+              $('waterlessDurationHour').setAttribute('hidden', true);
+              $('waterlessDurationMinLabel').setAttribute('hidden', true);
+              $('waterlessDurationMin').setAttribute('hidden', true);
+              $('waterlessDurationHour').className = "";
+              $('waterlessDurationMin').className = "";
+              $('waterlessDurationHour').value = "";
+              $('waterlessDurationMin').value = "";
+          }
+      }
+  }
+  checkWater();
+  //проверка перед сохранением
+  function checkWaterBeforeSafe() {
+      if (!document.getElementsByName("water")[0].checked && !document.getElementsByName("water")[1].checked
+          || document.getElementsByName("water")[1].checked && $('waterlessDurationHour').value=='' && $('waterlessDurationMin').value=='') {
+          alert('Нужно отметить длительность и ввести значение (часов и/или минут)!');
+          return false;
+      }
+      else return true;
   }
   //Milamesher #147 Робсон в родах
   var voc='VocRobsonClass';
