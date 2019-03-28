@@ -118,7 +118,7 @@ public class OncologyServiceJs {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> isOmc = service.executeNativeSql("select mc.id " +
                 " from medcase mc left join vocservicestream vss on mc.servicestream_id=vss.id" +
-                "where mc.id=" + slsId+" and vss.code='OBLIGATORYINSURANCE'");
+                " where mc.id=" + slsId+" and vss.code='OBLIGATORYINSURANCE'");
         return !isOmc.isEmpty();
     }
     /**
@@ -132,11 +132,11 @@ public class OncologyServiceJs {
     public String checkSPO(Long slsId, HttpServletRequest aRequest) throws NamingException {
 
        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-    if (!checkIsOMC(slsId,aRequest)) return "false";
-       Collection<WebQueryResult> res = service.executeNativeSql("select mc.id from medcase mc " +
-               "left join oncologycase o on o.medcase_id=mc.id " +
-               "left join vocIdc10 mkb on mkb.id=mc.idc10_id" +
-               "where mc.id=" + slsId+" and mc.dateFinish is not null and mkb.code like 'C%' and o.id is null");
+        if (!checkIsOMC(slsId,aRequest)) return "false";
+       Collection<WebQueryResult> res = service.executeNativeSql("select mc.id from medcase mc" +
+               " left join oncologycase o on o.medcase_id=mc.id" +
+               " left join vocIdc10 mkb on mkb.id=mc.idc10_id" +
+               " where mc.id=" + slsId+" and mc.dateFinish is not null and mkb.code like 'C%' and o.id is null");
        return res.isEmpty() ? "false" : "true";
     }
 
@@ -160,12 +160,12 @@ public class OncologyServiceJs {
          list = service.executeNativeSql("select case when dtype='PolyclinicMedCase' then '1' else '0' end from medcase where id=" + medcaseId);
          if (!list.isEmpty() && list.iterator().next().get1().toString().equals("1")) {  //если это - СПО
              //беру основной диагноз последнего визита
-             list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds \n" +
-                     "left join vocidc10 idc on idc.id=ds.idc10_id \n" +
-                     "left join medcase vis on vis.id=ds.medcase_id and vis.dtype='Visit'\n" +
-                     "left join medcase spo on spo.id=vis.parent_id and spo.dtype='PolyclinicMedCase'\n" +
-                     "left join vocprioritydiagnosis pr on pr.id=ds.priority_id \n" +
-                     "where pr.code='1' and spo.id="+medcaseId+" order by vis.id desc limit 1");
+             list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds" +
+                     " left join vocidc10 idc on idc.id=ds.idc10_id " +
+                     " left join medcase vis on vis.id=ds.medcase_id and vis.dtype='Visit'" +
+                     " left join medcase spo on spo.id=vis.parent_id and spo.dtype='PolyclinicMedCase'" +
+                     " left join vocprioritydiagnosis pr on pr.id=ds.priority_id" +
+                     " where pr.code='1' and spo.id="+medcaseId+" order by vis.id desc limit 1");
              if (!list.isEmpty()) {
                  WebQueryResult wqr = list.iterator().next();
                  res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной последнего визита в СПО)");
