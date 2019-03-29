@@ -285,7 +285,7 @@ order by vis.dateStart
       btn.style.display  = "none";
         OncologyService.checkSPO(${param.id},{
             callback : function(res) {
-               if(res==="true"){
+               if(res){
                     if(confirm("Требуется создать онкологический случай")){
                         document.location.replace("entityParentPrepareCreate-oncology_case_reestr.do?id=${param.id}");
                     }

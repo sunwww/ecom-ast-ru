@@ -126,18 +126,18 @@ public class OncologyServiceJs {
      *
      * @param slsId MedCase.id
      * @param aRequest HttpServletRequest
-     * @return String нужен ли онкологический случай
+     * @return Boolean нужен ли онкологический случай
      * @throws NamingException
      */
-    public String checkSPO(Long slsId, HttpServletRequest aRequest) throws NamingException {
+    public Boolean checkSPO(Long slsId, HttpServletRequest aRequest) throws NamingException {
 
        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        if (!checkIsOMC(slsId,aRequest)) return "false";
+        if (!checkIsOMC(slsId,aRequest)) return false;
        Collection<WebQueryResult> res = service.executeNativeSql("select mc.id from medcase mc" +
                " left join oncologycase o on o.medcase_id=mc.id" +
                " left join vocIdc10 mkb on mkb.id=mc.idc10_id" +
                " where mc.id=" + slsId+" and mc.dateFinish is not null and mkb.code like 'C%' and o.id is null");
-       return res.isEmpty() ? "false" : "true";
+       return !res.isEmpty();
     }
 
     /**
@@ -153,19 +153,19 @@ public class OncologyServiceJs {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
         //ФИО пациента
-        Collection<WebQueryResult> list = service.executeNativeSql("select pat.lastname||' ' ||pat.firstname||' '||pat.middlename from medcase hmc\n" +
-                "left join patient pat on pat.id=hmc.patient_id\n" +
+        Collection<WebQueryResult> list = service.executeNativeSql("select pat.lastname||' ' ||pat.firstname||' '||pat.middlename, " +
+                "case when hmc.dtype='PolyclinicMedCase' then '1' else '0' end from medcase hmc " +
+                "left join patient pat on pat.id=hmc.patient_id " +
                 "where hmc.id=" + medcaseId);
          res.append(!list.isEmpty()? list.iterator().next().get1().toString()+"#" : "#");
-         list = service.executeNativeSql("select case when dtype='PolyclinicMedCase' then '1' else '0' end from medcase where id=" + medcaseId);
-         if (!list.isEmpty() && list.iterator().next().get1().toString().equals("1")) {  //если это - СПО
+         if (!list.isEmpty() && list.iterator().next().get2().toString().equals("1")) {  //если это - СПО
              //беру основной диагноз последнего визита
-             list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds" +
-                     " left join vocidc10 idc on idc.id=ds.idc10_id " +
-                     " left join medcase vis on vis.id=ds.medcase_id and vis.dtype='Visit'" +
-                     " left join medcase spo on spo.id=vis.parent_id and spo.dtype='PolyclinicMedCase'" +
+             list = service.executeNativeSql("select idc.code,ds.name from medcase spo" +
+                     " left join medcase vis on vis.parent_id=spo.id and (vis.dtype='Visit' or vis.dtype='ShortMedCase') " +
+                     " left join diagnosis ds on vis.id=ds.medcase_id" +
+                     " left join vocidc10 idc on idc.id=ds.idc10_id" +
                      " left join vocprioritydiagnosis pr on pr.id=ds.priority_id" +
-                     " where pr.code='1' and spo.id="+medcaseId+" order by vis.id desc limit 1");
+                     " where spo.id="+medcaseId +" and pr.code='1' and ds.id is not null order by vis.id desc limit 1");
              if (!list.isEmpty()) {
                  WebQueryResult wqr = list.iterator().next();
                  res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной последнего визита в СПО)");
