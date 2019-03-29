@@ -793,12 +793,12 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			}
 		} else if (aPresc instanceof DietPrescription) {
 			try{
-			DietPrescription presNew = (DietPrescription) aPresc;
-			list.setLength(0);
-			list.append("DIET@");
-			list.append(presNew.getDiet().getId()).append(":") ;
-			list.append(presNew.getDiet().getName()).append("#") ;
-			return list.toString();
+				DietPrescription presNew = (DietPrescription) aPresc;
+				list.setLength(0);
+				list.append("DIET@");
+				list.append(presNew.getDiet()!=null ? presNew.getDiet().getId() : "").append(":") ;
+				list.append(presNew.getDiet()!=null ? presNew.getDiet().getName() : "").append("#") ;
+				return list.toString();
 			}
 			catch (Exception e) {
 				log.error("catch DIET ",e);
