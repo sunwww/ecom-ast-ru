@@ -109,18 +109,19 @@ public class ContractServiceBean implements IContractService {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-		try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+			StringBuilder answerString = new StringBuilder();
+		try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8")){
 			writer.write(data);
 		}
-			//   StringBuffer answerString = new StringBuffer();
-			//   String line;
-			//   while ((line = br.readLine()) != null) {
-			//   	answerString.append(line);
-			//   }
-			connection.disconnect();
+		BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream()== null ? connection.getInputStream() : connection.getErrorStream()));
+		String line;
+		while ((line = br.readLine()) != null) {
+			answerString.append(line);
 		}
-
+		br.close();
+		connection.disconnect();
+		LOG.info("KKM return: "+answerString);
+		}
 
 	//Печать K, Z отчета
 	private String printKKMReport(String aType, String url) {

@@ -14,7 +14,6 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -48,7 +47,7 @@ public class ContractServiceJs {
 		service.executeUpdateNativeSql(sql);
 	}
 
-	private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throws IOException, NamingException {
+	private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throws NamingException {
 		LOG.info("===Send to KKM. Data = "+data);
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		//Milamesher 11012019 #136 отправка на привязанный к wf ККМ
@@ -57,28 +56,31 @@ public class ContractServiceJs {
 				" left join workfunction wf on wf.kkmequipmentdefault_id=eq.id" +
 				" where secuser_id=(select id from secuser where login='" + username + "')");
 		if (!l.isEmpty()) {
-			String address = l.iterator().next().get1().toString();
-			//method by milamesher 15.03.2017
-			//отправка пост-запроса на веб-сервис, управляющий печатью ккм  
-			URL url = new URL(address); 
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-		    connection.setDoInput(true);
-		    connection.setDoOutput(true);
-		    connection.setRequestMethod("POST");
-		    connection.setRequestProperty("Accept", "application/json");
-		    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-			try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-				 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-				writer.write(data);
+			try {
+				//method by milamesher 15.03.2017
+				//отправка пост-запроса на веб-сервис, управляющий печатью ккм
+				URL url = new URL(l.iterator().next().get1().toString());
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				StringBuilder answerString = new StringBuilder();
+				connection.setDoInput(true);
+				connection.setDoOutput(true);
+				connection.setRequestMethod("POST");
+				connection.setRequestProperty("Accept", "application/json");
+				connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+				try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8")){
+					writer.write(data);
+				}
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream()== null ? connection.getInputStream() : connection.getErrorStream()));
+				String line;
+				while ((line = br.readLine()) != null) {
+					answerString.append(line);
+				}
+				br.close();
+				connection.disconnect();
+				LOG.info("KKM return: "+answerString);
+			} catch (Exception e) {
+				LOG.error(e.getMessage(),e);
 			}
-
-		 //   StringBuffer answerString = new StringBuffer();
-		 //   String line;
-		 //   while ((line = br.readLine()) != null) {
-		 //   	answerString.append(line);
-		 //   }
-		    connection.disconnect();
 		} else {
 			LOG.error("Нет настройки ККМ по умолчанию для рабочей функции пользователя "+username+", работа с ККМ невозможна");
 		}
