@@ -179,9 +179,12 @@ count (wct.id) as cntAll
 , count (case when su.isremoteuser='1' then 1 else null end) as cntRemote
 from workcalendartime wct
 left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
+left join workcalendar wc on wc.id=wcd.workcalendar_id
+left join workfunction wf on wf.id=wc.workfunction_id
+left join worker w on w.id=wf.worker_id
 left join secuser su on su.login=wct.createprerecord
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') ${sqlAddNew}
-and (wct.isdeleted is null or wct.isdeleted=false)
+and (wct.isdeleted is null or wct.isdeleted='0') and (wcd.isdeleted is null or wcd.isdeleted='0')
 ${dateStartMedcaseSql}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
             <msh:sectionTitle>
