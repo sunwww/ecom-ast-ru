@@ -2056,7 +2056,7 @@ public class HospitalMedCaseServiceJs {
 	}
 
 	/**
-	 * Проставить перед удалением выписки: что юзер - лечащий врач последнего СЛО и всё это - в течение одного календарного дня.
+	 * Проставить перед удалением выписки: что юзер - лечащий врач (одна из его раб. ф-ий) последнего СЛО и всё это - в течение одного календарного дня.
 	 *
 	 * @param hmcId HospitalMedCase.id
 	 * @param aRequest HttpServletRequest
@@ -2067,8 +2067,16 @@ public class HospitalMedCaseServiceJs {
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		String query="select case when (select ownerfunction_id from medcase where transferdate is null \n" +
 				"and dtype='DepartmentMedCase' and parent_id="+hmcId+")\n" +
-				"=(select wf.id from workfunction wf \n" +
-				"left join secuser su on su.id=wf.secuser_id where su.login='"+login+"') \n" +
+				"=ANY(select wf.id \n" +
+				"from WorkFunction wf\n" +
+				"left join WorkFunction gwf on gwf.id=wf.group_id\n" +
+				"left join VocWorkFunction vwf on vwf.id=wf.workFunction_id\n" +
+				"left join Worker w on w.id=wf.worker_id\n" +
+				"left join MisLpu ml on ml.id=w.lpu_id\n" +
+				"left join Worker sw on sw.person_id=w.person_id\n" +
+				"left join WorkFunction swf on swf.worker_id=sw.id\n" +
+				"left join SecUser su on su.id=swf.secUser_id\n" +
+				"where su.login='"+login+"' and (wf.archival is null or wf.archival='0'))\n" +
 				"then '1' else '0' end";
 		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
 		boolean flag=false;
@@ -2085,19 +2093,9 @@ public class HospitalMedCaseServiceJs {
 					timedisharge=wqr.get2()!=null ?  wqr.get2().toString() : "";
 				}
 				if (!datefinish.equals("") && timedisharge!=null && !timedisharge.equals("")) {
-					//try {
-						Date d = new java.util.Date();
-						//Calendar d2=Calendar.getInstance();
-						String dstr=(new SimpleDateFormat("yyyy-MM-dd")).format(d);
-						flag = (datefinish.equals(dstr)); /*{ //дата сегодняшняя
-							//проверка, что прошло не более 2х часов
-							d = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse(datefinish+ " " + timedisharge);
-							Calendar calD = Calendar.getInstance();
-							calD.setTime(d);
-							long diff = System.currentTimeMillis() - calD.getTimeInMillis();
-							flag=(diff<3600000*2);
-						}
-					} catch (ParseException e) {}*/
+					Date d = new java.util.Date();
+					String dstr=(new SimpleDateFormat("yyyy-MM-dd")).format(d);
+					flag = (datefinish.equals(dstr));
 				}
 			}
 		}
