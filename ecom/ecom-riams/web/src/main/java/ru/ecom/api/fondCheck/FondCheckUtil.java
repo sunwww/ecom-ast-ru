@@ -491,7 +491,7 @@ public class FondCheckUtil {
         return null;
     }
 
-    public static JSONArray syncRecordTomorrow(HttpServletRequest aRequest)
+    public static JSONArray syncRecordTomorrow(HttpServletRequest aRequest, String dateStart)
             throws NamingException, ParserConfigurationException, SAXException, JSONException, IOException {
 
         String sql="select distinct pat.id,pat.lastname,pat.firstname,pat.middlename,pat.birthday,pat.snils\n" +
@@ -499,7 +499,7 @@ public class FondCheckUtil {
                 "left join patient pat on pat.id=wct.prepatient_id \n" +
                 "left join patientfond pf on pf.patient=pat.id  \n" +
                 "left join workcalendarday wcd on wcd.id=wct.workcalendarday_id \n" +
-                "where wcd.calendardate=current_date+1 \n" +
+                "where wcd.calendardate='" + dateStart + "'\n" +
                 "and pat.id is not null and (pf.checkdate is null or pf.checkdate<current_date-7)\n" +
                 "and (wct.isdeleted is null or wct.isdeleted=false)";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
