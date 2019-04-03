@@ -4069,6 +4069,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where id='"+aSmo+"'").executeUpdate() ;
 				} else if (dtype.equals("PolyclinicMedCase")) {
 					theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where parent_id='"+aSmo+"' and (dtype='Visit' or dtype='ShortMedCase')").executeUpdate() ;
+					//Milamesher update spo after visits
+					theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where id='"+aSmo+"'").executeUpdate() ;
 				}
 			} else {
 
