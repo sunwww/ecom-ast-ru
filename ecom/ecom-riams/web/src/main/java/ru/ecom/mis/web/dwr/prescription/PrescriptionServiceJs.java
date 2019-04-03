@@ -273,6 +273,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 					aMedService = wqr1.get2() != null ? wqr1.get2().toString() : null;
 				}
 			}
+			else return "Невозможно отменить назначение! Уже было отменено или находится в работе";
 		}
 		if (isAnnulPermitted && medcaseId != null) {
 			String sql;

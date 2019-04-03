@@ -90,6 +90,7 @@ public class FondCheckUtil {
             if(!mainObject.has("error")){
                 String patientFond_id = mainObject.get("patientFond_id").getAsString();
                 service.executeUpdateNativeSql("update patient set patientfond_id="+patientFond_id+" where id="+patient.getId());
+                service.executeUpdateNativeSql("update patientfond set patient="+patient.getId()+" where id="+patientFond_id);
                 jsonArray.put(new JSONObject().put("patient_id",patient.getId()));
 
             }else {
@@ -488,5 +489,21 @@ public class FondCheckUtil {
             }
         }
         return null;
+    }
+
+    public static JSONArray syncRecordTomorrow(HttpServletRequest aRequest)
+            throws NamingException, ParserConfigurationException, SAXException, JSONException, IOException {
+
+        String sql="select distinct pat.id,pat.lastname,pat.firstname,pat.middlename,pat.birthday,pat.snils\n" +
+                "from workcalendartime wct \n" +
+                "left join patient pat on pat.id=wct.prepatient_id \n" +
+                "left join patientfond pf on pf.patient=pat.id  \n" +
+                "left join workcalendarday wcd on wcd.id=wct.workcalendarday_id \n" +
+                "where wcd.calendardate=current_date+1 \n" +
+                "and pat.id is not null and (pf.checkdate is null or pf.checkdate<current_date-7)\n" +
+                "and (wct.isdeleted is null or wct.isdeleted=false)";
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        List<Patient> patients = getPatients(service.executeNativeSql(sql));
+        return FondCheckUtil.sync(aRequest,patients);
     }
 }

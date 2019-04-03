@@ -243,4 +243,19 @@ public class FondCheck {
         ApiUtil.init(aRequest,aToken);
         return FondCheckUtil.getRZbyFullnameAndBD(lastname,firstname,middlename,birthday);
     }
+
+    /**
+     * Проверка по фонду для пациентов, записанных на завтра.
+     * @return
+     */
+    @GET
+    @Path("syncRecordTomorrow")
+    @Produces("application/json")
+    public String syncRecordTomorrow(@Context HttpServletRequest aRequest,
+                                     @WebParam(name="token") String aToken
+    ) throws ParserConfigurationException,
+            SAXException, IOException, JSONException, NamingException {
+        ApiUtil.init(aRequest,aToken);
+        return String.valueOf(FondCheckUtil.syncRecordTomorrow(aRequest));
+    }
 }

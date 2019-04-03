@@ -813,8 +813,8 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
                     <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
                         <tr>
                             <th colspan=3></th>
-                            <th colspan=5>АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ</th>
                             <th colspan=5>РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ</th>
+                            <th colspan=5>АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ</th>
                         </tr>
                     </msh:tableNotEmpty>
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />

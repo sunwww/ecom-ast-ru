@@ -91,8 +91,8 @@
         <msh:section>
         <msh:sectionTitle>
             <ecom:webQuery isReportBase="true" name="leanClinicReport" nameFldSql="leanClinicReport_sql" nativeSql="
-        select case when lpu.name is not null and lpu.name!='' then replace(lpu.name,'\"','') else cast('Без прикрепления' as varchar(16)) end
-        , count (wct.id) as cntAll
+        select case when lpu.name is not null and lpu.name!='' then replace(replace(lpu.name,'\"',''),'''','') else cast('Без прикрепления' as varchar(16)) end
+        , count (distinct wct.id) as cntAll
         , count (case when wct.medcase_id is not null then 1 else null end) as cntVisit
         , count (case when wr.code='PROMED' then 1 else null end) as cntPROMED
         , count (case when wr.code='PROMED' and wct.medcase_id is not null then 1 else null end) as cntPROMEDVisit
@@ -104,11 +104,11 @@
         , count (case when wr.code='PERSONAL' and wct.medcase_id is not null then 1 else null end) as cntPERSONALVisit
         , count (case when wr.code='MEDVOX' then 1 else null end) as cntMEDVOX
         , count (case when wr.code='MEDVOX' and wct.medcase_id is not null then 1 else null end) as cntMEDVOXVisit
-        , '&lpuId='||coalesce(lpu.id,0)||'&lpuName='||coalesce(replace(lpu.name,'\"',''),cast('Без прикрепления' as varchar(16)))
+        , '&lpuId='||coalesce(lpu.id,0)||'&lpuName='||coalesce(replace(replace(lpu.name,'\"',''),'''',''),cast('Без прикрепления' as varchar(16)))
         from workcalendartime wct
         left join secuser su on su.login=wct.createprerecord
         left join patient pat on pat.id=wct.prepatient_id
-        left join patientfond pf on pf.patient=pat.id
+        left join patientfond pf on pat.patientfond_id=pf.id
         left join mislpu lpu on pf.LpuAttached=lpu.codef
         left join vocwayofrecord wr on wr.id=wct.wayofrecord_id
         left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
@@ -117,8 +117,7 @@
         ${sqlAddNew}
         and (pat.id is not null or wct.prepatient_id is not null or wct.prepatientinfo is not null)
         and (wct.isdeleted is null or wct.isdeleted=false)
-        group by lpu.id,pf.checkdate
-        order by pf.checkdate desc"
+        group by lpu.id,lpu.name"
                            guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
             <form action="leanClinicReport.do" method="post" target="_blank">
                 Результат за период с ${param.dateBegin} по ${dateEnd}.
@@ -172,7 +171,7 @@
         <msh:section>
         <msh:sectionTitle>
             <ecom:webQuery isReportBase="true" name="leanClinicReportt_pats" nameFldSql="leanClinicReport_pats_sql" nativeSql="
-        select wct.id as wctId,wct.prepatientinfo as info,coalesce(wct.prepatient_id,patvis.id) as patId
+        select distinct wct.id as wctId,wct.prepatientinfo as info,coalesce(wct.prepatient_id,patvis.id) as patId
         ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio
         ,wct.medcase_id as vis
         ,case when wp.id is not null then vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
@@ -181,7 +180,7 @@
         from workcalendartime wct
         left join secuser su on su.login=wct.createprerecord
         left join patient pat on pat.id=wct.prepatient_id
-        left join patientfond pf on pf.patient=pat.id
+        left join patientfond pf on pat.patientfond_id=pf.id
         left join mislpu lpu on pf.LpuAttached=lpu.codef
         left join vocwayofrecord wr on wr.id=wct.wayofrecord_id
         left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
