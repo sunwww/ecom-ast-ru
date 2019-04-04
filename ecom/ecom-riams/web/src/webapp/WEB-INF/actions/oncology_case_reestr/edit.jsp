@@ -84,24 +84,18 @@
                 <label></label><b>Противопоказания и отказы:</b></label><br>
                 <div class="borderedDiv" id="contraDiv">
                     <label>Медицинские противопоказания к оказанию медицинской помощи и дата регистрации (11):</label><br>
-                    <input type="checkBox" name="c1" id="c1" > <label onclick="document.getElementById('c1').click()">
-                    Противопоказания к проведению хирургического лечения</label>
+                    <label><input type="checkBox" name="c1" id="c1" >Противопоказания к проведению хирургического лечения</label>
                     <msh:textField property="date1" label="" /><br>
-                    <input type="checkBox" name="c2" id="c2" > <label onclick="document.getElementById('c2').click()">
-                        Противопоказания к проведению химиотерапевтического лечения</label>
+                    <label><input type="checkBox" name="c2" id="c2" >Противопоказания к проведению химиотерапевтического лечения</label>
                     <msh:textField property="date2" label="" /><br>
-                    <input type="checkBox" name="c3" id="c3" >  <label onclick="document.getElementById('c3').click()">
-                    Противопоказания к проведению лучевой терапии</label>
+                    <label><input type="checkBox" name="c3" id="c3" >Противопоказания к проведению лучевой терапии</label>
                     <msh:textField property="date3" label="" /><br>
                     <label>Отказ от проведения лечения и дата регистрации (12):</label><br>
-                    <input type="checkBox" name="c4" id="c4" >  <label onclick="document.getElementById('c4').click()">
-                    Отказ от проведения хирургического лечения</label>
+                    <label><input type="checkBox" name="c4" id="c4" >Отказ от проведения хирургического лечения</label>
                     <msh:textField property="date4" label="" /><br>
-                    <input type="checkBox" name="c5" id="c5" >  <label onclick="document.getElementById('c5').click()">
-                    Отказ от проведения химиотерапевтического лечения</label>
+                    <label><input type="checkBox" name="c5" id="c5" >Отказ от проведения химиотерапевтического лечения</label>
                     <msh:textField property="date5" label="" /><br>
-                    <input type="checkBox" name="c6" id="c6" >  <label onclick="document.getElementById('c6').click()">
-                    Отказ от проведения лучевой терапии</label>
+                    <label><input type="checkBox" name="c6" id="c6" >Отказ от проведения лучевой терапии</label>
                     <msh:textField property="date6" label="" /><br>
                 </div>
                 <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
