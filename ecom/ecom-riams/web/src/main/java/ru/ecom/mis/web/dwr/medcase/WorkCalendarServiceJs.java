@@ -326,7 +326,7 @@ public class WorkCalendarServiceJs {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		StringBuilder sql = new StringBuilder() ;
 		Collection<WebQueryResult> list ;
-
+ 		//Все раб. функции пользователя с календарем
 		sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as workFunction ") ;
 		sql.append(" from WorkFunction wf")
 			.append(" left join SecUser su on su.id=wf.secUser_id ")
@@ -339,8 +339,8 @@ public class WorkCalendarServiceJs {
 			.append("where su.login='").append(username).append("' and wc1.id is not null ") ;
 		
 		list = service.executeNativeSql(sql.toString());
-		sql = new StringBuilder() ;
-		sql.append("select wf1.id as wf1id,vwf.name ||' '||wfGr.groupName as workFunction ") ;
+		sql = new StringBuilder() ; //Отображаем групповые раб. функции
+		sql.append("select wfGr.id as wf1id,vwf.name ||' '||wfGr.groupName as workFunction ") ;
 		sql.append(" from WorkFunction wf")
 			.append(" left join SecUser su on su.id=wf.secUser_id ")
 			.append(" left join Worker w on w.id=wf.worker_id")
@@ -354,7 +354,7 @@ public class WorkCalendarServiceJs {
 		Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString());
 		if (!list1.isEmpty()) list.addAll(list1) ;
 		if (anyWFadd) {
-			sql = new StringBuilder() ;
+			sql = new StringBuilder() ; //Отображаем календарь врача, к которому направляем
 			sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as workFunction ") ;
 			sql.append(" from WorkFunction wf")
 				.append(" left join SecUser su on su.id=wf.secUser_id ")

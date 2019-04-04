@@ -4122,6 +4122,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 							"where prescriptionlist_id in (select id from prescriptionlist where medcase_id = '"+obj[1]+"')").executeUpdate();
 					theManager.createNativeQuery("delete from prescriptionlist where medcase_id ='"+obj[1]+"'").executeUpdate();
 
+					theManager.createNativeQuery("update screeningcardiac cd set medcase_id='"+aSlo+"' where cd.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
@@ -4161,6 +4162,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					theManager.createNativeQuery("delete from prescriptionlist where medcase_id ='"+obj[1]+"'").executeUpdate();
 
 
+					theManager.createNativeQuery("update screeningcardiac cd set medcase_id='"+aSlo+"' where cd.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;

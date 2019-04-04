@@ -227,7 +227,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 //							.indexOf("Field not") >= 0))) {
 //				LOG.error(query, e);
 //			}
-			LOG.error(m);
+			LOG.error(m+" : "+query.toString());
 		}
 	}
 

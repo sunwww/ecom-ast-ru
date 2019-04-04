@@ -174,9 +174,9 @@ public class ApiRecordResource {
             String firstname = getJsonField(root,"firstname");
             String middlename = getJsonField(root,"middlename");
             String birthday = getJsonField(root,"birthday");
-            String patientGUID = getJsonField(root,"patient_uid");
             String patientComment = getJsonField(root,"comment");
             String patientPhone = getJsonField(root,"phone");
+            String recordType = getJsonField(root,"recordType");
         //    String debug = getJsonField(root,"debug");
             String token = getJsonField(root,"token");
             String annul = getJsonField(root,"annul");
@@ -185,9 +185,10 @@ public class ApiRecordResource {
             ApiUtil.init(aRequest,token);
             IApiRecordService service =Injection.find(aRequest).getService(IApiRecordService.class);
             if (!StringUtil.isNullOrEmpty(annul)) {
-                list = new JSONObject(new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service));
+                list = new JSONObject(new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),service));
             } else {
-                String recordInfo = ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null) ,patientGUID ,patientComment ,patientPhone ,service);
+                String recordInfo = ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null)
+                       ,patientComment ,patientPhone ,service, recordType);
                 if (recordInfo == null) {
                     list=ApiRecordUtil.getErrorJsonObj("No make record","ERROR_RECORD");
                 } else {

@@ -11,6 +11,7 @@ import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWayOfRecord;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.util.StringUtil;
@@ -72,10 +73,9 @@ public class ApiRecordServiceBean implements IApiRecordService {
      * @param aPatientFirstname
      * @param aPatientMiddlename
      * @param aPatientBirthday
-     * @param aPatientGUID
      * @return
      */
-    public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment, String aPhone) {
+    public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aComment, String aPhone, String aRecordType) {
         long currentDateLong = System.currentTimeMillis();
         try {
             if (AgeUtil.calcAgeYear(aPatientBirthday,new Date(currentDateLong))>122) {
@@ -92,9 +92,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         }
 
         Patient patient ;
-        if (aPatientGUID!=null) { //Считаем, что записываем из приложения
-            patient=getPatientByGuid(aPatientGUID);
-        } else if (!StringUtil.isNullOrEmpty(aPatientLastname) && !StringUtil.isNullOrEmpty(aPatientFirstname)) { //Запись через сайт или другие источники.
+        if (!StringUtil.isNullOrEmpty(aPatientLastname) && !StringUtil.isNullOrEmpty(aPatientFirstname)) { //Запись через сайт или другие источники.
             patient = getPatientByFIO(aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday);
         } else {
             return getErrorJson("Необходимо указать ФИО либо GUID пациента","NO_PATIENT");
@@ -135,6 +133,17 @@ public class ApiRecordServiceBean implements IApiRecordService {
             wct.setCreatePreRecord(username);
             wct.setCreateDatePreRecord(currentDate);
             wct.setCreateTimePreRecord(currentTime);
+            if (aRecordType!=null ) {
+                try{
+                    wct.setWayOfRecord((VocWayOfRecord)theManager.createQuery("from VocWayOfRecord where code=:way").setParameter("way",aRecordType).getResultList().get(0));
+                } catch (Exception e) {
+                    wct.setWayOfRecord(null);
+                    LOG.error("Не смог определить способ записи по коду: "+aRecordType);
+                }
+
+            } else {
+                wct.setWayOfRecord(null);
+            }
             if (patient!=null) {
                 wct.setPrePatient(patient);
             } else {
@@ -168,14 +177,13 @@ public class ApiRecordServiceBean implements IApiRecordService {
      * @param aLastname
      * @param aFirstname
      * @param aMiddlename
-     * @param aPatientGUID
      * @return
      */
-    public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID) {
+    public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday) {
               Patient patient ;
-        if (aPatientGUID!=null) { //Аннулируем по ГУИД
+       /* if (aPatientGUID!=null) { //Аннулируем по ГУИД
             patient=getPatientByGuid(aPatientGUID);
-        } else if (aLastname!=null) {
+        } else */if (aLastname!=null) {
             patient=getPatientByFIO(aLastname,aFirstname,aMiddlename,aBirthday);
         } else {
             return getErrorJson("При аннулировании необходимо указать GUID или ФИО + ДР пациента","WRONG_PAR");
