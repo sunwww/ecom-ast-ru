@@ -2127,7 +2127,7 @@ public class HospitalMedCaseServiceJs {
             JSONObject o = new JSONObject() ;
             o.put("name1", w.get1())
                     .put("name3", w.get2())
-                    .put("shname", w.get3())
+                    .put("shname", w.get3()==null? "": w.get3())
                     .put("dt", w.get4());
             res.put(o);
         }
