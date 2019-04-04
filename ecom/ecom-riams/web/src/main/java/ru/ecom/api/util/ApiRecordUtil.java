@@ -158,10 +158,8 @@ public class ApiRecordUtil {
  String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment);
  String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID);
  * */
-public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment, IApiRecordService apiRecordService) {
-    return recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aPatientGUID,aComment,null,apiRecordService);
-}
-public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment,String aPhone, IApiRecordService apiRecordService) {
+public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday
+        ,  String aComment,String aPhone, IApiRecordService apiRecordService, String aRecordType) {
     try {
         if (AgeUtil.calcAgeYear(aPatientBirthday,new Date(System.currentTimeMillis()))>122) {
             return getErrorJson("Запись пациента старше 122 лет невозможна","TOO_OLD");
@@ -169,12 +167,12 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
     } catch (Exception e) {
         return getErrorJson("Проверьте дату рождения пациента","TOO_YOUNG");
     }
-    return apiRecordService.recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aPatientGUID,aComment,aPhone);
+    return apiRecordService.recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aComment,aPhone, aRecordType);
 }
 
     /** Аннулируем направление (соответствие по пациенту и времени*/
-    public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID, IApiRecordService aService){
-            return aService.annulRecord(aCalendarTimeId,aLastname,aFirstname,aMiddlename,aBirthday, aPatientGUID);
+    public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, IApiRecordService aService){
+            return aService.annulRecord(aCalendarTimeId,aLastname,aFirstname,aMiddlename,aBirthday);
         }
 
     public String getRecordInformation (String aWorkcalendarTimeId, IWebQueryService aService) {
