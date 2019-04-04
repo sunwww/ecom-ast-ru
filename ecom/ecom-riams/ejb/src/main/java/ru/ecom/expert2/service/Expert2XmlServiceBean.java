@@ -402,7 +402,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             pr=add(pr,"D_PROT",prot.getDate());
                             onkSl.addContent(pr);
                         }
-                        if (isHosp) {
+                        if (isHosp ||isVmp) {
                             Element onkUsl = new Element("ONK_USL");
                             String serviceType = cancerEntry.getServiceType()!=null?cancerEntry.getServiceType():"";
                             if (serviceType.equals("2")|| serviceType.equals("4")) {
@@ -547,23 +547,26 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     if (isPoliclinicKdo) { //Для КДП находим все услуги помимо дочерних визитов
                         List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id), servicedate,max(id) as cnt from EntryMedService where entry_id=:id group by medservice_id, servicedate").setParameter("id",aEntry.getId()).getResultList();
                         if (!list.isEmpty()) {
+                            String medServiceCode;
                             for (Object[] ms: list) {
                                 uslCnt++;
                                 EntryMedService ems = theManager.find(EntryMedService.class,Long.valueOf(ms[3].toString()));
                                 VocMedService medService = ems.getMedService(); //theManager.find(VocMedService.class,Long.valueOf(ms[0].toString()));
+                                medServiceCode = medService.getCode();
+                                boolean isOwnProfile = medServiceCode.startsWith("B");
                                 String serviceDate = dateToString(ems.getServiceDate());
                                 Element usl = new Element("USL");
                                 usl.addContent(new Element("IDSERV").setText(""+uslCnt));
                                 usl.addContent(new Element("LPU_U").setText("300001"));
-                                usl.addContent(new Element("PROFIL_U").setText(profileK));
-                                usl.addContent(new Element("VID_VME").setText(medService.getCode()));
+                                usl.addContent(new Element("PROFIL_U").setText(isOwnProfile ? getMedHelpProfileCodeByMedSpec(ems.getDoctorSpeciality()) : profileK));
+                                usl.addContent(new Element("VID_VME").setText(medServiceCode));
                                 usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
                                 usl.addContent(new Element("DATE_1_U").setText(serviceDate));
                                 usl.addContent(new Element("DATE_2_U").setText(serviceDate));
                                 usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
                                 usl.addContent(new Element("KOL_USL").setText(ms[1].toString()));
                                 usl.addContent(new Element("SUMV_USL").setText("0"));
-                                usl.addContent(new Element("PRVS_U").setText(medService.getCode().startsWith("B") ? ems.getDoctorSpeciality().getCode() : prvs));
+                                usl.addContent(new Element("PRVS_U").setText(isOwnProfile ? ems.getDoctorSpeciality().getCode() : prvs));
                                 //usl.addContent(new Element("IDDOKT_U").setText(currentEntry.getDoctorSnils()));
                                 usl.addContent(new Element("IDDOKT_U").setText(isNotNull(ems.getDoctorSnils()) ? ems.getDoctorSnils() : currentEntry.getDoctorSnils())); //Так правильно
                                 usl.addContent(new Element("NPL").setText("0"));
@@ -594,8 +597,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                     }
                 } */ else { //стационар
-                    List<Object[]> list = theManager.createNativeQuery("select vms.code as ms, cast(count(ems.id) as varchar) as cnt, cast(ems.serviceDate as varchar(10)) as serviceDate" +
-                            " from EntryMedService ems left join vocMedService vms on vms.id=ems.medService_id where ems.entry_id=:id group by vms.code, ems.servicedate")
+                    List<Object[]> list = theManager.createNativeQuery("select vms.code as ms, cast(count(ems.id) as varchar) as cnt, cast(case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end as varchar(10)) as serviceDate" +
+                            " from EntryMedService ems" +
+                            " left join e2entry e  on ems.entry_id = e.id left join vocMedService vms on vms.id=ems.medService_id where e.id=:id " +
+                            " group by vms.code, case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end")
                             .setParameter("id",currentEntry.getId()).getResultList();
 
                     if (!list.isEmpty()) {
@@ -607,8 +612,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             usl.addContent(new Element("PROFIL_U").setText(profileK));
                             usl.addContent(new Element("VID_VME").setText(ms[0].toString()));
                             usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
-                            usl.addContent(new Element("DATE_1_U").setText(ms[2]!=null?ms[2].toString():startDate));
-                            usl.addContent(new Element("DATE_2_U").setText(ms[2]!=null?ms[2].toString():startDate));
+                            usl.addContent(new Element("DATE_1_U").setText(ms[2].toString()));
+                            usl.addContent(new Element("DATE_2_U").setText(ms[2].toString()));
                             usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
                             usl.addContent(new Element("KOL_USL").setText(ms[1].toString()));
                             usl.addContent(new Element("SUMV_USL").setText("0"));
@@ -650,6 +655,13 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             LOG.error("EEEE = "+e.getLocalizedMessage(),e);
             throw new IllegalStateException("some unknown error!");
         }
+    }
+
+    /**Находим по врачебной специальности профиль медицинской помощи*/
+    private String getMedHelpProfileCodeByMedSpec(VocE2FondV021 aMedSpec) {
+            List<VocE2MedHelpProfile> list = theManager.createQuery("from VocE2MedHelpProfile where medSpecV021=:medSpec").setParameter("medSpec",aMedSpec).getResultList();
+            return list.isEmpty() ? aMedSpec.getId()+"_V021-"+aMedSpec.getCode() : list.get(0).getCode();
+
     }
 
     /** Создаем заголовок для L файла (информация о пациентах) */
