@@ -588,6 +588,7 @@ function closeSpoByCurrentDate(aContext,aSpoId) {
 		aContext.manager.createNativeQuery("update medcase set dateFinish=CURRENT_DATE,dateStart=to_date('"+dateStart
 				+"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
 				+"'"+(mkb!=null?(",idc10_id='"+mkb+"'"):"")+" where id="+aSpoId).executeUpdate() ;
+        setSpoSstreamLikeLastVisit(aContext,aSpoId);
 	} else {
 		if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
 	}
@@ -681,6 +682,7 @@ function closeSpo(aContext, aSpoId) {
 				+"','dd.mm.yyyy'),dateStart=to_date('"+dateStart
 				+"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
 				+"'"+(mkb!=null?(",idc10_id='"+mkb+"'"):"")+" where id="+aSpoId).executeUpdate() ;
+        setSpoSstreamLikeLastVisit(aContext,aSpoId);
 	} else {
 		if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
 		if (listOpenVis.size()>0) throw "Есть актуальные направления! <a href='entityParentView-smo_visit.do?id="+listOpenVis.get(0)[0]+"'>Перейти к нему</a>"
@@ -783,6 +785,7 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish, aWorkFu
 				+"','dd.mm.yyyy'),dateStart=to_date('"+dateStart
 				+"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
 				+"',idc10_id='"+mkb+"' where id="+aSpoId).executeUpdate() ;
+        setSpoSstreamLikeLastVisit(aContext,aSpoId);
 	} else {
 		if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
 	}
@@ -806,5 +809,18 @@ function findSpoIdByVisit(aContext, aVisitId) {
 	if(!visit) throw "Не найден Визит с ид "+aVisitId ;
 	if(!visit.parent) throw "У визита нет СПО" ;
 	return visit.parent.id ;	
+}
+
+/**
+ * Проставить поток обслуживания в СПО, как в последнем визите
+ */
+function setSpoSstreamLikeLastVisit(aContext, aSpoId) {
+    aContext.manager.createNativeQuery("update medcase set  servicestream_id=(select vis.servicestream_id from medcase spo \n" +
+        "left join medcase vis on vis.parent_id=spo.id and (vis.dtype='Visit' or vis.dtype='ShortMedCase')  \n" +
+        "left join diagnosis ds on vis.id=ds.medcase_id \n" +
+        "left join vocidc10 idc on idc.id=ds.idc10_id \n" +
+        "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
+        "where spo.id="+ aSpoId + " and pr.code='1' and ds.id is not null order by vis.datestart desc,vis.timeexecute desc limit 1)\n" +
+        " where id="+aSpoId).executeUpdate() ;
 }
 

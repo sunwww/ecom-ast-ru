@@ -252,10 +252,12 @@ public class FondCheck {
     @Path("syncRecordTomorrow")
     @Produces("application/json")
     public String syncRecordTomorrow(@Context HttpServletRequest aRequest,
-                                     @WebParam(name="token") String aToken
+                                     @WebParam(name="token") String aToken,
+                                     @QueryParam("dateStart") String dateStart
     ) throws ParserConfigurationException,
             SAXException, IOException, JSONException, NamingException {
+        if(dateStart==null || dateStart.equals("")) dateStart=getDate(1);
         ApiUtil.init(aRequest,aToken);
-        return String.valueOf(FondCheckUtil.syncRecordTomorrow(aRequest));
+        return String.valueOf(FondCheckUtil.syncRecordTomorrow(aRequest,dateStart));
     }
 }

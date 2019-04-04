@@ -165,7 +165,7 @@ public class OncologyServiceJs {
                      " left join diagnosis ds on vis.id=ds.medcase_id" +
                      " left join vocidc10 idc on idc.id=ds.idc10_id" +
                      " left join vocprioritydiagnosis pr on pr.id=ds.priority_id" +
-                     " where spo.id="+medcaseId +" and pr.code='1' and ds.id is not null order by vis.id desc limit 1");
+                     " where spo.id="+medcaseId +" and pr.code='1' and ds.id is not null  order by vis.datestart desc,vis.timeexecute desc limit 1");
              if (!list.isEmpty()) {
                  WebQueryResult wqr = list.iterator().next();
                  res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной последнего визита в СПО)");

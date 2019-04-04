@@ -54,14 +54,19 @@
 
     function show${name}FSSProgress() {
 
-        $('${name}FSSProgressResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
-        the${name}FSSProgress.show();
-        DisabilityService.exportDisabilityDocument('${documentId}', {
-            callback: function(a) {
-                $('${name}FSSProgressResultDiv').innerHTML=a;
+        if ($('issueDate').value!='' && $('hospitalizedTo').value!=''
+        && $('issueDate').value==$('hospitalizedTo').value!=''
+        || $('issueDate').value=='' || $('hospitalizedTo').value=='') {
+            $('${name}FSSProgressResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
+            the${name}FSSProgress.show();
+            DisabilityService.exportDisabilityDocument('${documentId}', {
+                callback: function(a) {
+                    $('${name}FSSProgressResultDiv').innerHTML=a;
 
-            }
-        });
+                }
+            });
+        }
+        else showToastMessage('Проверье дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!',null,true);
     }
     // Показать
     function show${name}FSSJournal() {
