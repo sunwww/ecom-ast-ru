@@ -322,40 +322,43 @@
   function checkWaterBeforeSafe() {
       if (!document.getElementsByName("water")[0].checked && !document.getElementsByName("water")[1].checked
           || document.getElementsByName("water")[1].checked && $('waterlessDurationHour').value=='' && $('waterlessDurationMin').value=='') {
-          alert('Нужно отметить длительность и ввести значение (часов и/или минут)!');
+          alert('Нужно отметить длительность безводного периода и ввести значение (часов и/или минут)!');
           return false;
       }
       else return true;
   }
   //Milamesher #147 Робсон в родах
   var voc='VocRobsonClass';
-  function loadListRobson() {
+  function loadYesNoRobson() {
       var txt="";
       VocService.getAllValueByVocs(voc,{
           callback: function(aResult) {
               var vocRes=JSON.parse(aResult).vocs[0];
-              txt+="<table><tbody>";
-              txt+="<tr><td><label><b></b></label><td><td><select id='robsonClassList' style=\"background-color:#fcffa7\" ";
-              <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
-              txt+=" disabled='true' ";
-              </msh:ifFormTypeIsView>
+              txt+="<table border='1px'><tbody>";
               for (var ind1 = 0; ind1 < vocRes.values.length; ind1++) {
                   var vocVal = vocRes.values[ind1];
-                  txt+="<option style=\"background-color:white\" onchange='loadSubs();' id='option"+vocVal.id+"'>"+vocVal.name;
-                  txt+="</option>";
+                  txt+="<tr><td><label  id='" + voc + vocVal.id + "'>"+vocVal.name+"</label></td>";
+                  txt+="<td><select id='yesNo" + vocVal.id + "'";
+                  <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                  txt+=" disabled='true' ";
+                  </msh:ifFormTypeIsView>
+                  txt+=" onchange='loadSubs();' ";
+                  txt+= "><option>Нет</option>" +
+                      "<option>Да</option>" +
+                      "</select><td></tr>";
               }
-              txt+="</select><td></tr></tbody></table>";
+              txt+="</tbody></table>";
               document.getElementById('classRobsonsDiv').innerHTML+=txt;
-              if ($('robsonClass').value!='' && $('robsonClass').value!='0')
-                  selectItemById(document.getElementById('robsonClassList'),$('robsonClass').value);
-              else document.getElementById('robsonClassList').value='';
+              <msh:ifFormTypeAreViewOrEdit formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+              document.getElementById('yesNo'+$('robsonClass').value).selectedIndex=1;
+              </msh:ifFormTypeAreViewOrEdit>
               loadSubs();
           }
       });
   }
   //загрузка подгрупп в зависимости от группы, обнуление текущей
   function loadSubs() {
-      var id=getRobsonIndex();
+      var id=checkYesNoGetIndex();
       //$('robsonSub').value='';
       var txt="";
       if (id!=-1) {
@@ -369,7 +372,11 @@
                       <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
                       txt += " disabled='true' ";
                       </msh:ifFormTypeIsView>
-                      txt += " onchange='changeSub();' style=\"background-color:#fcffa7\">";
+                      txt += " onchange='changeSub();'";
+                      <msh:ifFormTypeIsNotView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                      txt += "  style=\"background-color:#fcffa7\"' ";
+                      </msh:ifFormTypeIsNotView>
+                      txt+=">";
                       for (var ind1 = 0; ind1 < res.length; ind1++) {
                           var val = res[ind1];
                           txt += "<option style=\"background-color:white\" id='option" + val.id + "'>" + val.name + "</option>";
@@ -384,12 +391,14 @@
               }
           });
       }
+      else
+          document.getElementById('subRobsonsDiv').innerHTML ="";
   }
   //установка значения подкатегории при выборе
   function changeSub() {
       var selects = document.getElementsByTagName('option');
       for (var i = 0; i < selects.length; i++) {
-          if (selects[i].selected && selects[i].id.indexOf('option')!=-1)
+          if (selects[i].selected && selects[i].id.indexOf('option')!=-1 && selects[i].parentElement.id.indexOf('sub')!=-1)
               $('robsonSub').value=selects[i].id.replace('option','');
       }
   }
@@ -402,14 +411,21 @@
           }
       }
   }
-  //получить текущее значение классификации
-  function getRobsonIndex() {
-      var list=document.getElementById('robsonClassList');
-      if (list) {
-          var options = list.options;
-          return (options && options.selectedIndex != -1) ? options[options.selectedIndex].id.replace('option', '') : -1;
+  //коряво, но такие странные требования
+  function checkYesNoGetIndex() {
+      var selects = document.getElementsByTagName('select');
+      var count=0;
+      var id=-1;
+      for (var i = 0; i < selects.length; i++) {
+          if (selects[i].selectedIndex==1 && selects[i].id.indexOf('yesNo')!=-1) {
+              id=selects[i].id.replace('yesNo',''); count++;
+          }
       }
-      else return -1;
+      if (count!=1) {
+          if ($('submitButton')) $('submitButton').disabled = false;
+          return -1;
+      }
+      else return id;
   }
   PregnancyService.getAllRobsonInfo($('medCase').value,{
       callback: function (aResult) {
@@ -418,7 +434,7 @@
               $('robsonClass').value=(typeof aResult.robsonClass==='undefined')? '': aResult.robsonClass;
               $('robsonSub').value=(typeof aResult.robsonSub==='undefined')? '': aResult.robsonSub;
           }
-          loadListRobson();
+          loadYesNoRobson();
       }});
   </script>
   <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
@@ -461,7 +477,7 @@
       }
       //#147 проверка на заполнение Росбона
       function checkRobson() {
-          if ($('robsonClass').value!='' && $('robsonClass').value!='0' && (document.getElementById('sub') && $('robsonSub').value!='' || document.getElementById('sub')==null))
+          if (checkYesNoGetIndex()!=-1&& $('robsonClass').value!='' && $('robsonClass').value!='0' && (document.getElementById('sub') && $('robsonSub').value!='' || document.getElementById('sub')==null))
               return true;
           else {
               alert("Необходимо заполнить классификацию Робсона!");

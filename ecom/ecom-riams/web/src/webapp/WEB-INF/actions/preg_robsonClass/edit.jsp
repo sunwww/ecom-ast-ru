@@ -141,7 +141,7 @@
                         }
                         document.getElementById('subRobsonsDiv').innerHTML=txt;
                         <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
-                        if ($('robsonSub').value) selectItemById($('robsonSub').value);
+                        if ($('robsonSub').value) selectItemById(document.getElementById('sub'),$('robsonSub').value);
                         </msh:ifFormTypeAreViewOrEdit>
                         changeSub();
                     }
