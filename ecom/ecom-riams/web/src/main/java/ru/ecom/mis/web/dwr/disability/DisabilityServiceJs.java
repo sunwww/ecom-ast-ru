@@ -855,4 +855,18 @@ public class DisabilityServiceJs {
             return wqr.get1() + "#" + wqr.get2();
         } else return "";
     }
+
+    /**
+     * Проверить, есть ли подпись ВК.
+     *
+     *@param documentId DisabilityDocument.id
+     * @param aRequest HttpServletRequest
+     * @return Boolean true если есть ВК
+     * @throws NamingException
+     */
+    public Boolean getIfDisDocHasVK(String documentId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest, null).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list = service.executeNativeSql("select id from disabilitysign  where code='vk' and disabilitydocumentid_id="+documentId);
+        return !list.isEmpty();
+    }
 }
