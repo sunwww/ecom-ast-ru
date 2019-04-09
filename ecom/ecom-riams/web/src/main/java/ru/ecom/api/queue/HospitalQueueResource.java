@@ -40,7 +40,7 @@ public class HospitalQueueResource {
                 ",cast(extract(epoch from age(current_timestamp,cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) as minutesCount " +
                 (isDoctor ? ", dep.name as departmentName" : ", cast('' as varchar)")+
                 ",list (case when vis.datestart is not null then coalesce(vcms.name,ms.name)||'<br>' end) || list('Осмотр: '||vwf.name||'<br>') as madeServices" +
-                (isDoctor ? ",list ( coalesce(vcms.name,ms.name)||'<br>' )||'<br>' " : ", cast('' as varchar) ") +" as planServices" +
+                (isDoctor ? ",list ( case when vis.datestart is not null then '<s>'||coalesce(vcms.name,ms.name)||'</s>' else coalesce(vcms.name,ms.name) end ||'<br>') " : ", cast('' as varchar) ") +" as planServices" +
                 " from medcase sls " +
                 " left join patient pat on pat.id=sls.patient_id" +
                 " left join medcase slo on slo.parent_id = sls.id and slo.dtype='DepartmentMedCase'" +
