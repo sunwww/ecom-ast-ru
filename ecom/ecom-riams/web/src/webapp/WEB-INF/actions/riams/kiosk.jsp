@@ -35,29 +35,19 @@ request.setAttribute("pageTitle",title);
 <body>
 <%
 if (kioskType.equals("ADMISSION")) {
-    System.out.println("URI="+request.getRequestURI());
-    System.out.println("URI="+request.getPathInfo());
-    System.out.println("URI="+request.getQueryString());
-    System.out.println("URI="+request.getContextPath());
-
-    System.out.println("URI="+request.getPathTranslated());
     String pigeonHole = request.getParameter("pigeonHole");
     request.setAttribute("pigeonHole",pigeonHole);
     request.setAttribute("pigeonHoleName",request.getParameter("pigeonHoleName"));
     String isEmergency = request.getParameter("isEmergency");
     request.setAttribute("isEmergency",isEmergency);
-    String token = request.getParameter("token");
-    token="66405d38-a173-4cb7-a1b6-3ada51c16ac5";
-    //System.out.println("URI="+request.getContextPath());
-    if (1==1 ||token!=null) {
+    String token = "66405d38-a173-4cb7-a1b6-3ada51c16ac5";
         request.setAttribute("token","token:'"+token+"',");
-    } else {
-        request.setAttribute("token","");
-    }
+        boolean isDoctor = "1".equals(request.getParameter("isDoctor"));
+        request.setAttribute("isDoctor",isDoctor);
     //Показываем информацию об очереди в приемном отделении
+    if (isDoctor) {
     %>
 <msh:panel>
-    <msh:autoComplete property="pigeonHole" vocName="vocPigeonHole" label="Приемник"/>
 <msh:row>
 
     <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
@@ -72,28 +62,31 @@ if (kioskType.equals("ADMISSION")) {
     </td>
 </msh:row>
 </msh:panel>
-
+<%}%>
 <table id="patientWaitingTable">
-    <th width="20%">Пациент</th>
-    <th width="10%">Время ожидания</th>
-    <th width="20%">Время поступления</th>
-    <th width="50%">Отделение</th>
+    <th width="10%">Пациент</th>
+    <%if (isDoctor) {%>
+    <th width="5%">Время ожидания</th>
+    <th width="10%">Время поступления</th>
+    <th width="10%">Отделение</th>
+    <th width="35%" >Назначенные услуги</th>
+    <%}%>
+    <th width="30%" >Выполненные услуги</th>
 <tbody id="patientWaitingTableBody" name="patientWaitingTableBody"></tbody>
 </table>
 <script type="text/javascript" src="/skin/ac.js"></script>
 <script type="text/javascript">
-var colors={red:"background-color:red;", orange:"background-color: orange;", yellow:"background-color: yellow;",blue:"background-color: lightblue;"}
+var colors={red:"background-color:red;", orange:"background-color: orange;", yellow:"background-color: yellow;",blue:"background-color: lightblue;"};
     var tbl =jQuery('#patientWaitingTableBody');
     tbl.html("Подождите...");
-    $('pigeonHole').value='${pigeonHole}';
-    $('pigeonHoleName').value='${pigeonHoleName}';
 
     getQueue();
+    var isDoctor = ${isDoctor} ;
 
     pigeonHoleAutocomplete.addOnChangeCallback( function() {reloadPage();});
     function reloadPage() {
         var em = jQuery('input:radio[name=isEmergency]:checked').val();
-        window.location.search="mode=ADMISSION&isEmergency="+em+"&pigeonHole="+$('pigeonHole').value+"&pigeonHoleName="+$('pigeonHoleName');
+        window.location.search="mode=ADMISSION&isEmergency="+em+"&pigeonHole=${pigeonHole}&pigeonHoleName=${pigeonHoleName}";
     }
     function getQueue() {
         jQuery.ajax({
@@ -101,11 +94,12 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
             ,data:{
                ${token}
                 emergency:'${isEmergency}',
-                pigeonHole:'${pigeonHole}'
+                pigeonHole:'${pigeonHole}',
+                isDoctor:${isDoctor}
             }
             ,error: function(jqXHR,ex){console.log(ex);setTimeout(getQueue,60000);}
             ,success: function(array) {
-                if (!array||array.length==0)  {
+                if (!array||array.length===0)  {
                     tbl.html("Нет пациентов в очереди");
                 } else {
                     tbl.html("");
@@ -114,7 +108,11 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
                         var minutes = el.minutes;
                         var color="";
                         if (minutes>119){color=colors.red} else if (minutes>89){color=colors.orange} else if (minutes>59) {color=colors.yellow} else if (minutes>29){color=colors.blue}
-                        tbl.append("<tr onclick=\"goToPageNewWindow('entityView-stac_ssl.do','"+el.id+"');\"style='"+color+"'><td>"+el.patientInfo+"</td><td>"+el.waitTime+"</td><td>"+el.startTime+"</td><td>"+el.departmentName+"</td></tr>");
+                        tbl.append("<tr"+(isDoctor ? " onclick=\"goToPageNewWindow('entityView-stac_ssl.do','"+el.id+"');\" ": "")+" style='"+color+"'>" +
+                            "<td>"+el.patientInfo+"</td>" +
+                            (isDoctor ? "<td>"+el.waitTime+"</td><td>"+el.startTime+"</td><td>"+el.departmentName+"</td>" +
+                                "<td>"+(el.planServices ? el.planServices : "-")+"</td>" :"") +"<td>"+(el.madeServices ? el.madeServices : "-")+"</td>"+
+                            "</tr>");
                     }//60-90 - yellow
                 }
                 setTimeout(getQueue,60000);

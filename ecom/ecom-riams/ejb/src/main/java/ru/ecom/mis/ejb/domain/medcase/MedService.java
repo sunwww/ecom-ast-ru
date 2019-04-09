@@ -5,6 +5,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.ContractPerson;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocClassificationMedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceType;
@@ -33,7 +34,15 @@ import java.util.List;
     @AIndex(properties={"serviceType"})
     }) 
 @Table(schema="SQLUser")
-public class MedService extends BaseEntity{
+public class MedService extends BaseEntity {
+
+	/** Категория услуги */
+	@Comment("Категория услуги")
+	@OneToOne
+	public VocClassificationMedService getClassification() {return theClassification;}
+	public void setClassification(VocClassificationMedService aClassification) {theClassification = aClassification;}
+	/** Категория услуги */
+	private VocClassificationMedService theClassification ;
 
 	/** Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам */
 	@Comment("Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам")
