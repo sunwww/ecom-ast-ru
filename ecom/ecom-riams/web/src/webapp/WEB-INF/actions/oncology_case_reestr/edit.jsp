@@ -48,30 +48,30 @@
                     <label><b>Повод обращения (4):</b></label><br>
                 </div>
                 <msh:row>
-                    <msh:autoComplete  property="stad" label="Стадия заболевания (2)" vocName="vocOncologyN002parent" parentId="C16" size="25"/>
+                    <msh:autoComplete property="stad" label="Стадия заболевания (2)" vocName="vocOncologyN002parent" parentId="C16" size="25"/>
                 </msh:row>
                 <msh:separator colSpan="1" label="Стадия заболевания по TNM (3)"/>
-                    <msh:autoComplete  property="tumor" label="Значение Tumor" vocName="vocOncologyN003parent" parentId="C16" horizontalFill="true" />
-                    <msh:autoComplete  property="nodus" label="Значение Nodus" vocName="vocOncologyN004parent" parentId="C16" horizontalFill="true" />
-                    <msh:autoComplete  property="metastasis" label="Значение Metastasis" vocName="vocOncologyN005parent" parentId="C16" horizontalFill="true" />
+                    <msh:autoComplete property="tumor" label="Значение Tumor" vocName="vocOncologyN003parent" parentId="C16" horizontalFill="true" />
+                    <msh:autoComplete property="nodus" label="Значение Nodus" vocName="vocOncologyN004parent" parentId="C16" horizontalFill="true" />
+                    <msh:autoComplete property="metastasis" label="Значение Metastasis" vocName="vocOncologyN005parent" parentId="C16" horizontalFill="true" />
                 <msh:separator colSpan="10" label="." />
                 <br><msh:checkBox property="distantMetastasis" label="Наличие отдалённых метастазов (при прогрессировании/рецидиве)"/><br>
                 <div id="firstDiv">
                     <label><b>Заболевание выявлено:</b></label>
-                    <table><tbody>
+                    <table><tbody><tr>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeFirstOrNot" value="1"> впервые
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="2">
                         <input type="radio" name="typeFirstOrNot" value="2"> ранее
-                    </td>
+                    </td></tr>
                     </tbody></table>
                 </div>
                 <label><b>Гистология (5):</b></label>
                 <msh:textField property="dateBiops" label="Дата взятия биопсийного материала" fieldColSpan="3"/><br>
                 <div class="borderedDiv" id="histologyDiv"> </div>
                 <br>
-                <label></label><b>Иммуногистохимия/маркёры (6):</b></label><br>
+                <label><b>Иммуногистохимия/маркёры (6):</b></label><br>
                 <div class="borderedDiv" id="immunoGistMarkDiv"></div>
                 <div class="borderedDiv" id="vocOncologyConsiliumDiv">
                     <msh:autoComplete  property="consilium" label="Проведение консилиума (7)" vocName="vocOncologyConsiliumCode" horizontalFill="true" />
@@ -81,27 +81,21 @@
                 <label><b>Проведённое лечение (8):</b></label><br>
                 <div class="borderedDiv" id="treatmentDiv"></div>
                 <br>
-                <label></label><b>Противопоказания и отказы:</b></label><br>
+                <label><b>Противопоказания и отказы:</b></label><br>
                 <div class="borderedDiv" id="contraDiv">
                     <label>Медицинские противопоказания к оказанию медицинской помощи и дата регистрации (11):</label><br>
-                    <input type="checkBox" name="c1" id="c1" > <label onclick="document.getElementById('c1').click()">
-                    Противопоказания к проведению хирургического лечения</label>
+                    <label><input type="checkBox" name="c1" id="c1" >Противопоказания к проведению хирургического лечения</label>
                     <msh:textField property="date1" label="" /><br>
-                    <input type="checkBox" name="c2" id="c2" > <label onclick="document.getElementById('c2').click()">
-                        Противопоказания к проведению химиотерапевтического лечения</label>
+                    <label><input type="checkBox" name="c2" id="c2" >Противопоказания к проведению химиотерапевтического лечения</label>
                     <msh:textField property="date2" label="" /><br>
-                    <input type="checkBox" name="c3" id="c3" >  <label onclick="document.getElementById('c3').click()">
-                    Противопоказания к проведению лучевой терапии</label>
+                    <label><input type="checkBox" name="c3" id="c3" >Противопоказания к проведению лучевой терапии</label>
                     <msh:textField property="date3" label="" /><br>
                     <label>Отказ от проведения лечения и дата регистрации (12):</label><br>
-                    <input type="checkBox" name="c4" id="c4" >  <label onclick="document.getElementById('c4').click()">
-                    Отказ от проведения хирургического лечения</label>
+                    <label> <input type="checkBox" name="c4" id="c4">Отказ от проведения хирургического лечения</label>
                     <msh:textField property="date4" label="" /><br>
-                    <input type="checkBox" name="c5" id="c5" >  <label onclick="document.getElementById('c5').click()">
-                    Отказ от проведения химиотерапевтического лечения</label>
+                    <label><input type="checkBox" name="c5" id="c5" >Отказ от проведения химиотерапевтического лечения</label>
                     <msh:textField property="date5" label="" /><br>
-                    <input type="checkBox" name="c6" id="c6" >  <label onclick="document.getElementById('c6').click()">
-                    Отказ от проведения лучевой терапии</label>
+                    <label><input type="checkBox" name="c6" id="c6" >Отказ от проведения лучевой терапии</label>
                     <msh:textField property="date6" label="" /><br>
                 </div>
                 <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
@@ -158,8 +152,8 @@
                     <label>Направление с целью уточнения диагноза (1):</label><br>
                 </div>
                 <br>
-                <msh:autoComplete  property="methodDiagTreat" label="Метод исследования" vocName="vocOncologyMethodDiagTreat" horizontalFill="true"/>
-                <msh:autoComplete  property="medService" label="Медицинская услуга" vocName="vocMedService" horizontalFill="true" />
+                <msh:autoComplete property="methodDiagTreat" label="Метод исследования" vocName="vocOncologyMethodDiagTreat" horizontalFill="true"/>
+                <msh:autoComplete property="medService" label="Медицинская услуга" vocName="vocMedService" horizontalFill="true" />
             </div>
             <msh:submitCancelButtonsRow colSpan="4" functionSubmit="this.disabled=true; if (document.getElementById('suspicionOncologist').checked) saveDirectionReestr(this); else saveCase(this) ;"/>
             <%
@@ -302,7 +296,7 @@
                     oncologyDirection.style.display  = "block";
                     oncologyCase.style.display  = "none";
                     load1();
-                }else {
+                } else {
                     oncologyDirection.style.display  = "none";
                     oncologyCase.style.display  = "block";
                     load2();
@@ -1192,8 +1186,7 @@
                             txt=txt.replace("#<td onclick","<td onclick").replace("colspan=\"1\">#","colspan=\"1\">");
                         else
                             txt=txt.replace("#<td onclick=\"if (document.getElementById('histologyChb1').checked) this.childNodes[0].checked='checked';\" colspan=\"1\">#","");
-                    }
-                    if (type==2) { //гистологический тип клеток
+                    } else if (type==2) { //гистологический тип клеток
                         if (!type2) {
                             txt+="</tbody></table>";
                             txt+="<td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">\n" +
@@ -1233,8 +1226,7 @@
                             txt=txt.replace("#<td onclick","<td onclick").replace("colspan=\"1\">#","colspan=\"1\">");
                         else
                             txt=txt.replace("#<td onclick=\"if (document.getElementById('histologyChb2').checked) this.childNodes[0].checked='checked';\" colspan=\"1\">#","");
-                    }
-                    if (type==3) { //степень дифференцированности ткани опухоли
+                    } else if (type==3) { //степень дифференцированности ткани опухоли
                         if (!type3) {
                             txt+="</tbody></table>";
                             txt+="<tr><td onclick=\"this.childNodes[1].checked='checked';\" colspan=\"1\">\n" +
@@ -1277,7 +1269,6 @@
                     document.getElementById("histologyChb3").onclick= function() {
                         checkHoncoT(voc,3,"histologyChb3");setDateBiopsRequired();
                     };
-                    return;
                 }
                 else setHistologyTypeoncoT(voc,vocRes,divId,ids,type,type1,type2,type3,txt);
             }
@@ -1296,7 +1287,7 @@
             }
             //проставить доступность/недоступность группы в контейнере гистологии
             function  checkHoncoT(voc,type,chbid) {
-                var disable = (document.getElementById(chbid).checked) ? false : true;
+                var disable = (!document.getElementById(chbid).checked);
                 if (type == 1) {
                     setDisableEnableChb(voc,"1",disable);
                     setDisableEnableChb(voc,"2",disable);
@@ -1311,8 +1302,7 @@
                     setDisableEnableChb(voc,"15",disable);
                     setDisableEnableChb(voc,"16",disable);
                     setDisableEnableChb(voc,"17",disable);
-                }
-                if (type == 2) {
+                } else if (type == 2) {
                     setDisableEnableChb(voc,"3",disable);
                     setDisableEnableChb(voc,"4",disable);
                     setDisableEnableChb(voc,"9",disable);
@@ -1321,8 +1311,7 @@
                     setDisableEnableChb(voc,"19",disable);
                     setDisableEnableChb(voc,"20",disable);
                     setDisableEnableChb(voc,"21",disable);
-                }
-                if (type == 3) {
+                } else if (type == 3) {
                     setDisableEnableChb(voc,"5",disable);
                     setDisableEnableChb(voc,"6",disable);
                     setDisableEnableChb(voc,"7",disable);
@@ -1390,8 +1379,7 @@
                                     if (disabled)   txt += " disabled="+disabled;
                                     txt +=  " value='" + code + "'>"+ name+"</td></tr>";
                                     code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
-                                }
-                                else {
+                                } else {
                                     code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
                                 }
                                 txt+="<tr><td onclick=\"if (document.getElementById('vocOncologyN013_1') && document.getElementById('vocOncologyN013_1').checked) this.childNodes[0].checked='checked';\"><input type='"+'radio'+"' style=" + style + " name='" + voc2 + "' id='" + voc2 + code + "'";
@@ -1411,7 +1399,7 @@
                 var txt="<tbody><table>";
                 var voc="vocOncologyN013_2";
                 OncologyService.getTreatment("n13.id as n13c,n13.name as n13n","VocOncologyN013 n13",
-                    "n13.code='5' or n13.code='6'","n13.code",{
+                    "n13.code in ('5' ,'6')","n13.code",{
                         callback : function(res) {
                             if (res!="##") {
                                 var row=res.split("!");
@@ -1452,7 +1440,7 @@
                 };
             }
             function ch1() {
-                var disable = (document.getElementById('vocOncologyN013_1').checked) ? false : true;
+                var disable = (!document.getElementById('vocOncologyN013_1').checked);
                 for (var i=0; i<mas1.length-1; i++) {
                     var vals = mas1[i].split("#");
                     setDisableEnableChb('vocOncologyN014',vals[2],disable);

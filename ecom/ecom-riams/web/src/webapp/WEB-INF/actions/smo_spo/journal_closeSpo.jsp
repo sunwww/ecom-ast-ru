@@ -57,16 +57,13 @@
         </td>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="department" fieldColSpan="5"
-        	label="ЛПУ" horizontalFill="true" vocName="lpu"/>
+        	<msh:autoComplete property="department" fieldColSpan="5" label="ЛПУ" horizontalFill="true" vocName="lpu"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="specialist" fieldColSpan="5"
-        	label="Специалист" horizontalFill="true" vocName="workFunctionByDirect"/>
+        	<msh:autoComplete property="specialist" fieldColSpan="5" label="Специалист" horizontalFill="true" vocName="workFunctionByDirect"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="serviceStream" fieldColSpan="5"
-        	label="Поток обслуживания" horizontalFill="true" vocName="vocServiceStream"/>
+        	<msh:autoComplete property="serviceStream" fieldColSpan="5" label="Поток обслуживания" horizontalFill="true" vocName="vocServiceStream"/>
         </msh:row>
         <msh:row>
 	        <msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -84,18 +81,20 @@
     if (date!=null && !date.equals(""))  {
     	String finishDate = request.getParameter("finishDate") ;
     	if (finishDate==null||finishDate.equals("")) {
-    		request.setAttribute("finishDate", date) ;
     		finishDate = date ;
-    	} else {
-    		request.setAttribute("finishDate", finishDate) ;
     	}
+        request.setAttribute("finishDate", finishDate) ;
     	request.setAttribute("beginDate", date) ;
         request.setAttribute("isReportBase", ActionUtil.isReportBase(date,finishDate,request));
     	if ("1".equals(typeView)) {
-    		request.setAttribute("additionJoinSql", " left join medcase spo1 on spo1.patient_id=spo.patient_id and spo1.dtype='PolyclinicMedCase'     				left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id     				left join Worker ow1 on ow1.id=owf1.worker_id ") ;
+    		request.setAttribute("additionJoinSql", " left join medcase spo1 on spo1.patient_id=spo.patient_id and spo1.dtype='PolyclinicMedCase'" +
+                    " left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id     				" +
+                    " left join Worker ow1 on ow1.id=owf1.worker_id ") ;
     		request.setAttribute("additionWhereSql", " and spo1.dateFinish between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and owf.workFunction_id=owf1.workFunction_id  and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id ") ;
     	} else if ("2".equals(typeView)) {
-    		request.setAttribute("additionJoinSql", " left join medcase spo1 on spo1.patient_id=spo.patient_id and spo1.dtype='PolyclinicMedCase'     				left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id     				left join Worker ow1 on ow1.id=owf1.worker_id ") ;
+    		request.setAttribute("additionJoinSql", " left join medcase spo1 on spo1.patient_id=spo.patient_id and spo1.dtype='PolyclinicMedCase'" +
+                    " left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id" +
+                    " left join Worker ow1 on ow1.id=owf1.worker_id ") ;
     		request.setAttribute("additionWhereSql", " and spo1.dateFinish is null and owf.workFunction_id=owf1.workFunction_id  and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id ") ;
     		request.setAttribute("additionSpoSql", " and (select count(spo1.id) from medcase spo1 left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id left join Worker ow1 on ow1.id=owf1.worker_id where spo.patient_id=spo1.patient_id and spo1.dtype='PolyclinicMedCase' and owf.workFunction_id=owf1.workFunction_id and spo1.dateStart between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and ow.lpu_id=ow1.lpu_id and spo1.dateFinish is null)>1") ;
     	}
@@ -180,8 +179,13 @@
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
-    select ml.id||'&department='||ml.id,ml.name ,count(distinct spo.patient_id) as cntPat,count(distinct spo.id) as cntSpo  
+    select ml.id||'&department='||ml.id,ml.name ,count(distinct spo.patient_id) as cntPat,count(distinct spo.id) as cntSpo
+
+,count(distinct case when spo.dateStart!=spo.dateFinish then spo.id end) as f5_cntLongSpo
+,count(distinct case when spo.dateStart!=spo.dateFinish then smo.id end) as f6_cntVisitInLongSpo
+,count(distinct case when spo.dateStart=spo.dateFinish then spo.id end) as f7_cntShortSpo
 	from MedCase spo
+	left join MedCase smo on smo.parent_id=spo.id
 	left join VocServiceStream vss on vss.id=spo.serviceStream_id
 	left join WorkFunction owf on owf.id=spo.ownerFunction_id
 	left join Worker ow on ow.id=owf.worker_id
@@ -191,7 +195,7 @@
 	and spo.dateFinish between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 	${additionWhereSql} ${serviceStreamSql}
 	${typeCntVisitSql}
-	group by ml.id,ml.name order by ml.name" 
+	group by ml.id,ml.name order by ml.name"  nameFldSql="datelist_sql"
 	/>
     <msh:table name="datelist" 
     viewUrl="smo_journal_closeSpo.do?short=Short&typeView=${typeView}&serviceStream=${param.serviceStream}&beginDate=${beginDate}&finishDate=${finishDate}"
@@ -200,12 +204,14 @@
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во пацентов" property="3" isCalcAmount="true" />
       <msh:tableColumn columnName="Кол-во СПО" property="4" isCalcAmount="true" />
+      <msh:tableColumn columnName="Кол-во обращений" property="5" isCalcAmount="true"/>
+      <msh:tableColumn columnName="Кол-во визитов в обращениях" property="6" isCalcAmount="true"/>
+      <msh:tableColumn columnName="Кол-во посещений" property="7" isCalcAmount="true"/>
     </msh:table>
     </msh:sectionContent>
-    </msh:section> 
+    </msh:section>
     <% 
-    }
-    if (type==2 )  {
+    } else if (type==2 )  {
     %>
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
@@ -214,8 +220,12 @@
     select 
 owf.id||'&department=${department}&specialist='||owf.id as id
 ,ovwf.name as ovwfname,owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
-,count(distinct spo.patient_id) as cntPatient,count(distinct spo.id) as cntSpo 
+,count(distinct spo.patient_id) as cntPatient,count(distinct spo.id) as cntSpo
+,count(distinct case when spo.dateStart!=spo.dateFinish then spo.id end) as f6_cntLongSpo
+,count(distinct case when spo.dateStart!=spo.dateFinish then smo.id end) as f7_cntVisitInLongSpo
+,count(distinct case when spo.dateStart=spo.dateFinish then spo.id end) as f8_cntShortSpo
 from MedCase spo
+left join MedCase smo on smo.parent_id=spo.id
 left join Patient pat on spo.patient_id=pat.id 
 left join WorkFunction owf on spo.ownerFunction_id=owf.id 
 left join VocWorkFunction ovwf on owf.workFunction_id=ovwf.id 
@@ -228,7 +238,7 @@ and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${
  ${additionWhereSql}  ${typeCntVisitSql}
 group by owf.id,ovwf.name,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" nameFldSql="datelist_sql" />
     <msh:table name="datelist" 
     viewUrl="smo_journal_closeSpo.do?short=Short&typeView=${typeView}&serviceStream=${param.serviceStream}&beginDate=${beginDate}&finishDate=${finishDate}"
     action="smo_journal_closeSpo.do?typeView=${typeView}&serviceStream=${param.serviceStream}&beginDate=${beginDate}&finishDate=${finishDate}" idField="1">
@@ -237,10 +247,13 @@ order by owp.lastname,owp.middlename,owp.firstname
       <msh:tableColumn columnName="Лечащий врач" property="3" />
       <msh:tableColumn columnName="Кол-во пациентов" property="4" isCalcAmount="true"/>
       <msh:tableColumn columnName="Кол-во СПО" property="5" isCalcAmount="true"/>
+      <msh:tableColumn columnName="Кол-во обращений" property="6" isCalcAmount="true"/>
+      <msh:tableColumn columnName="Кол-во визитов в обращениях" property="7" isCalcAmount="true"/>
+      <msh:tableColumn columnName="Кол-во посещений" property="8" isCalcAmount="true"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-         <% } if (type==3 )  {	%>
+         <% } else if (type==3 )  {	%>
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>

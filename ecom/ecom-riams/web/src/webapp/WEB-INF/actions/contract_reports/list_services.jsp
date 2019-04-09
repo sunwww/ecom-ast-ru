@@ -74,7 +74,7 @@
 			<td onclick="this.childNodes[1].checked='checked';">
 				<input type="radio" name="typeGroup" value="6"> по специалисту
 			</td>
-        </msh:row>				
+        </msh:row>
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
         </msh:row>
@@ -114,8 +114,8 @@
 <%  }
 String dateFrom = request.getParameter("dateFrom") ;
 if (dateFrom!=null) {
-		String dFrom = "" ;
-		if (dateFrom==null ||dateFrom.equals("") ) {
+		String dFrom ;
+		if (dateFrom.equals("") ) {
 			dFrom=" is null " ;
 		} else {
 			dFrom = ">=to_date('"+dateFrom+"', 'dd.mm.yyyy')" ;
@@ -123,7 +123,7 @@ if (dateFrom!=null) {
 		request.setAttribute("dFrom",dFrom) ;
 		
 		String dateTo = request.getParameter("dateTo") ;
-		String dTo = "" ;
+		String dTo ;
 		if (dateTo==null ||dateTo.equals("") ) {
 			dTo=" is null " ;
 		} else {
@@ -131,10 +131,10 @@ if (dateFrom!=null) {
 		}
 		request.setAttribute("dTo",dTo) ;
 		
-		String FromTo = "";
-		if  (dateTo==null ||dateTo.equals("") ) {}
-		else if (dateFrom==null ||dateFrom.equals("") ) {}
-		else FromTo="C "+dFrom+" По "+dTo;
+	//	String FromTo = "";
+	//	if  (dateTo==null ||dateTo.equals("") ) {}
+	//	else if (dateFrom.equals("") ) {}
+		//else FromTo="C "+dFrom+" По "+dTo;
 		
 		if (typeGroup.equals("1")||typeGroup.equals("2")) {
 			// Группировка по услугам 
@@ -187,7 +187,7 @@ if (dateFrom!=null) {
 		ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
 		ActionUtil.setParameterFilterSql("workFunction","workfunctionExecutor","wfexec.id", request) ;
 		%>
-		<% if (typeGroup!=null&& typeGroup.equals("1")) {%>
+		<% if ("1".equals(typeGroup)) {%>
 			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||${workfunctionExecutorSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
@@ -221,7 +221,7 @@ left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 left join medcase vis on vis.id=caos.medcase_id
-left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
+left join workfunction wfexec on wfexec.id=coalesce(vis.workfunctionexecute_id,cams.doctor)
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql} ${workfunctionExecutorSql}
@@ -255,7 +255,7 @@ order by ${groupOrder}
 				</msh:table>
 
 			</msh:section>	
-	<%} else if (typeGroup!=null&& (typeGroup.equals("2") || typeGroup.equals("4"))) {%>
+	<%} else if ("2".equals(typeGroup) || "4".equals(typeGroup)) {%>
 			<msh:section>
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
@@ -307,7 +307,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 
 left join medcase vis on vis.id=caos.medcase_id
-left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
+left join workfunction wfexec on wfexec.id=coalesce(vis.workfunctionexecute_id,cams.doctor)
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}  ${workfunctionExecutorSql}
@@ -360,7 +360,7 @@ order by ${groupOrder}
 			</msh:sectionContent>
 
 			</msh:section>	
-	<%} else if (typeGroup!=null&& typeGroup.equals("3")) {%>
+	<%} else if ("3".equals(typeGroup)) {%>
 			<msh:section >
 
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
@@ -411,7 +411,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 
 left join medcase vis on vis.id=caos.medcase_id
-left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
+left join workfunction wfexec on wfexec.id=coalesce(vis.workfunctionexecute_id,cams.doctor)
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}  ${workfunctionExecutorSql}
@@ -458,7 +458,7 @@ order by ${groupOrder}
 				</msh:table>
 
 			</msh:section>	
-	<%} else if (typeGroup!=null&& typeGroup.equals("5")) {%>
+	<%} else if ("5".equals(typeGroup)) {%>
 			<msh:section title="Финасовый отчет за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT mc.id as sqlId
@@ -510,7 +510,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 
 left join medcase vis on vis.id=caos.medcase_id
-left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
+left join workfunction wfexec on wfexec.id=coalesce(vis.workfunctionexecute_id,cams.doctor)
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}  ${workfunctionExecutorSql}
@@ -564,7 +564,7 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("6")) { //группировка по специалистам
+	<%} else if ("6".equals(typeGroup)) { //группировка по специалистам
 		    %>
 		<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
@@ -599,11 +599,11 @@ left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 left join medcase vis on vis.id=caos.medcase_id
-left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
+left join workfunction wfexec on wfexec.id=coalesce(vis.workfunctionexecute_id,cams.doctor)
 left join worker wexec on wexec.id=wfexec.worker_id
 left join vocworkfunction vwfexec on vwfexec.id=wfexec.workfunction_id
 left join patient wpat on wpat.id=wexec.person_id
-WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
+WHERE CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql} ${workfunctionExecutorSql}
 ${departmentTypeSql}

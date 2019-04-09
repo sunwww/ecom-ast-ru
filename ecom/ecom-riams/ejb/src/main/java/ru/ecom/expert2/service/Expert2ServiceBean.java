@@ -5,7 +5,6 @@ package ru.ecom.expert2.service;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
@@ -80,14 +79,24 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /** Присваеваем отдельный счет для определенных иногородних регионов */
     public String splitForeignOtherBill(Long aListEntryId, String aBillNumber, Date aBillDate, String aTerritories) {
+        StringBuilder territories = new StringBuilder();
         if (aTerritories==null || aTerritories.equals("")) {
-            aTerritories="'08','05'";
+            territories.append("'08','05'");
+        } else {
+            boolean isFirst= true;
+            for (String t : aTerritories.split(",")) {
+                if (!isFirst) {
+                    territories.append(",");
+                } else {isFirst=false;}
+
+                territories.append("'").append(t).append("'");
+
+            }
         }
-        LOG.info("Разделяем иногородних по территории"+aBillNumber+" "+aBillDate+" "+aTerritories);
+        LOG.info("Разделяем иногородних по территории"+aBillNumber+" "+aBillDate+" "+territories);
         E2Bill bill = getBillEntryByDateAndNumber(aBillNumber,aBillDate);
-        List<BigInteger> list = theManager.createNativeQuery("select id from e2entry where listentry_id=:listId and substring(insurancecompanycode ,0,3) in ("+aTerritories+") and (isdeleted is null or isdeleted='0') and (donotsend is null or donotsend='0') ")
+        List<BigInteger> list = theManager.createNativeQuery("select id from e2entry where listentry_id=:listId and substring(insurancecompanycode ,0,3) in ("+territories.toString()+") and (isdeleted is null or isdeleted='0') and (donotsend is null or donotsend='0') ")
                 .setParameter("listId",aListEntryId).getResultList();
-        LOG.info("split ="+list.size());
         for (BigInteger id:list) {
             E2Entry e = theManager.find(E2Entry.class,id.longValue());
             e.setBill(bill);
@@ -95,12 +104,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             e.setBillNumber(aBillNumber);
             theManager.persist(e);
         }
-        try {
-            return getOKJson().put("count",list.size()).toString();
-        } catch (JSONException e) {
-            LOG.error(e); return "";
-        }
-
+        return getOKJson().put("count",list.size()).toString();
     }
 
     /** Находим или создаем счет*/

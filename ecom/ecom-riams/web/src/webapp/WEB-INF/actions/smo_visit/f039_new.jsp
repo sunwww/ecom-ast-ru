@@ -2,7 +2,6 @@
 <%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
-<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -272,14 +271,13 @@ if (RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll", request)) {
 	ActionUtil.setParameterFilterSql("person","wp.id", request) ;
 } else {
 	List list= (List)request.getAttribute("infoByLogin");
-    WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
-	request.setAttribute("personSql"," and wp.id="+(wqr!=null?wqr.get2():"0")) ;	
-	request.setAttribute("personInfo",""+(wqr!=null?wqr.get4():"НЕТ СООТВЕТСТВИЯ ПОЛЬЗОВАТЕЛЯ И РАБОЧЕЙ ФУНКЦИИ")) ;
+    WebQueryResult wqr = list.isEmpty() ? null  : (WebQueryResult)list.get(0);
+	request.setAttribute("personSql"," and wp.id="+(wqr!=null ? wqr.get2() : "0")) ;
+	request.setAttribute("personInfo",""+(wqr!=null ? wqr.get4() : "НЕТ СООТВЕТСТВИЯ ПОЛЬЗОВАТЕЛЯ И РАБОЧЕЙ ФУНКЦИИ")) ;
 	
 }
 ActionUtil.setParameterFilterSql("visitReason","vr.id", request) ;
 String age =null;
-SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
 String ageTo = request.getParameter("ageTo") ;
 String ageFrom = request.getParameter("ageFrom") ;
 if (ageFrom!=null && !ageFrom.equals("")) {
@@ -413,13 +411,13 @@ if (typeGroup.equals("1")) {
 %>
 ${personInfo}
 <%
-if (typeReestr!=null && (typeReestr.equals("1"))) {
+if ("1".equals(typeReestr)) {
 	
 	StringBuilder sqlAppend = new StringBuilder();
-	String place= request.getParameter("place"); if (place!=null) { sqlAppend.append(" and vwpt.code='"+place+"'"); }
-	String payment= request.getParameter("payment"); if (payment!=null) { sqlAppend.append(" and vss.code='"+payment+"'"); }
+	String place= request.getParameter("place"); if (place!=null) { sqlAppend.append(" and vwpt.code='").append(place).append("'"); }
+	String payment= request.getParameter("payment"); if (payment!=null) { sqlAppend.append(" and vss.code='").append(payment).append("'"); }
 	String isVillage = request.getParameter("isVillage"); if (isVillage!=null) { sqlAppend.append(" and ad1.addressIsVillage='1'"); }
-	String reason= request.getParameter("reason"); if (reason!=null) { sqlAppend.append(" and vr.code='"+reason+"'"); }
+	String reason= request.getParameter("reason"); if (reason!=null) { sqlAppend.append(" and vr.code='").append(reason).append("'"); }
 String ageToR = request.getParameter("ageToR") ;
 String ageFromR = request.getParameter("ageFromR") ;
 String ageR=null;
@@ -442,10 +440,7 @@ if (ageR!=null) {
 	asR.append(ageR) ;
 	sqlAppend.append(asR) ;
 }
-
 	request.setAttribute("appendSQL", sqlAppend.toString() );
-	
-	
     	%>
     
     <msh:section>
@@ -559,7 +554,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 
     </msh:section>
     <% } else {
-    	if (typeView!=null && (typeView.equals("1"))) {
+    	if ("1".equals(typeView)) { //039 форма
     
     	%>
     	
@@ -719,7 +714,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     	<%
-    } else if (typeView!=null && (typeView.equals("2"))) {
+    } else if ("2".equals(typeView)) { //039 по возрастам - заб.
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -921,7 +916,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("3"))) {
+    } else if ("3".equals(typeView)) { //039 cons
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1105,7 +1100,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("4"))) {
+    } else if ("4".equals(typeView)) { //30 форма
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1236,7 +1231,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("5"))) {
+    } else if ("5".equals(typeView)) { //30 - ст. трудосп.
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1395,7 +1390,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("6"))) {
+    } else if ("6".equals(typeView)) { //30 - дети
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1554,10 +1549,10 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("7"))) {
+    } else if ("7".equals(typeView)) { //62 форма
     	%>
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}"  name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1572,7 +1567,7 @@ select
 ,count(distinct case when vr.code='CONSULTATION' then smo.patient_id else null end) as cntConsPat
 ,count(distinct case when vr.code='CONSULTATION' and spo.dateStart!=spo.dateFinish then spo.id else null end) as cntConsSpo
 ,count(distinct case when vr.code='CONSULTATION' and spo.dateStart=spo.dateFinish then spo.id else null end) as cntConsSpo1
-FROM MedCase smo  
+FROM MedCase smo
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
 LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
@@ -1633,7 +1628,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionContent>
 
     </msh:section>    	
-    <%} else if (typeView!=null && (typeView.equals("8"))) {
+    <%} else if ("8".equals(typeView)) { //свод по пациентам
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1741,7 +1736,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionContent>
 
     </msh:section>    	
-    <%} else if (typeView!=null && (typeView.equals("9"))) {
+    <%} else if ("9".equals(typeView)) { //свод по у.е
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1860,7 +1855,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 	}
   	function getCheckedValue(radioGrp) {
   		var radioValue ;
-  		for(i=0; i < radioGrp.length; i++) {
+  		for(var i=0; i < radioGrp.length; i++) {
   		  if (radioGrp[i].checked == true){
   		    radioValue = radioGrp[i].value;
   		    break ;

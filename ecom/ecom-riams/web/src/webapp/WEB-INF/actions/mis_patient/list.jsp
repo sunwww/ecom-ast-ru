@@ -129,8 +129,7 @@
         </msh:row>
       </msh:panel>
     </msh:form>
-        <tags:mis_password command="ShowCardData(aObj)" name="cmdpas" title="Ввод пароля"/>
-    
+
    </msh:ifInRole>
     <%  if(request.getAttribute("list_1") != null || request.getAttribute("list_2") != null || request.getAttribute("list_3") != null) {  %>
     <msh:ifInRole roles="/Policy/MainMenu/Patient">
@@ -185,76 +184,39 @@
      
   </tiles:put>
   <tiles:put name="javascript" type="string">
+      <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
     <script type="text/javascript">
     	
     	try { lpuAreaAutocomplete.setParent(lpuAutocomplete); } catch (e) {} // FIXME forms
     	$('lastname').focus() ;
     	$('lastname').select() ;
-    
-	
-    var CADESCOM_CADES_X_LONG_TYPE_1 = 0x5d;
-    var CADESCOM_CADES_BES = 1;
-    var CAPICOM_CURRENT_USER_STORE = 2;
-    var CADESCOM_ENCODE_BASE64 = 0;
-    var CADESCOM_ENCODE_BINARY = 1;
-    var CAPICOM_MY_STORE = "My";
-    var CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED = 2;
-    var CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME = 1;
-    var CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME = 0;
-    var CADESCOM_AUTHENTICATED_ATTRIBUTE_DOCUMENT_NAME = 1;
-    function GetErrorMessage(e) {
-        var err = e.number;
-        if (!err) {
-			err = e;
-        } else if (e.number) {
-            err += " (" + e.number + ")";
-        }
-        return err;
-    }
-	
-    function CreateObject(name) {
-        switch (navigator.appName) {
-            case "Microsoft Internet Explorer":
-                return new ActiveXObject(name);
-            default:
-                var userAgent = navigator.userAgent;
-                if (userAgent.match(/Trident\/./i)) { // IE11
-                    return new ActiveXObject(name);
-                }
-                var cadesobject = document.getElementById("cadesplugin");
-                return cadesobject.CreateObject(name);
-        }
-    }
-    
 
-    function ShowCardData(sPin1) {
-        try {
-            var oCard = CreateObject("CAdESCOM.UECard");
-            
-			
-            oCard.SetPin1(sPin1);
-            var oCardholderData = oCard.CardholderData;
-            oText = document.getElementById("lastname");
-            CardHolderDOB = oCardholderData.DateOfBirth[6]+oCardholderData.DateOfBirth[7]
-            +"."+oCardholderData.DateOfBirth[4]+oCardholderData.DateOfBirth[5]
-            +"."+oCardholderData.DateOfBirth[0]+oCardholderData.DateOfBirth[1]
-            +oCardholderData.DateOfBirth[2]+oCardholderData.DateOfBirth[3];
-            oText.value = oCardholderData.CardholderLastName + " " 
-            + oCardholderData.CardholderFirstName + " " 
-            + oCardholderData.CardholderSecondName + " "
-            + CardHolderDOB;
-            $('hiddendata').value= oCardholderData.CardholderLastName + "#" 
-            + oCardholderData.CardholderFirstName + "#" 
-            + oCardholderData.CardholderSecondName + "#"
-            + CardHolderDOB + "#" + oCardholderData.OMSNumber+"#"
-            + oCardholderData.SocialAccountNumber + "#" + oCardholderData.Sex; 
-            document.forms[0].submit() ;
-            
 
-        } catch (err) {
-            alert("Ошибка: " + GetErrorMessage(err));
-            return;
+    function getPatient(aJson) {
+        if (!aJson) {
+            aJson = $('lastname').value; //debug
         }
+        PatientService.createOrGetPatient(aJson, {
+           callback: function (ret) {
+               console.log(ret);
+               ret = JSON.parse(ret);
+               if (ret.status==='error') {
+                   console.log("ERROR");
+                   return;
+               }
+               if (ret.status==='found') {
+                   console.log("Успешно найден пациент");
+               }
+               window.document.location = ret.link;
+
+
+
+               //ret = JSON.parse(ret);
+
+           }
+        });
+
+
     }
 	</script>
   </tiles:put>

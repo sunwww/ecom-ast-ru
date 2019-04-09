@@ -377,28 +377,21 @@ private HashMap getRegions() {
 	countries.put("87","Чукотский автономный округ");
 	countries.put("89","Ямало-Ненецкий автономный округ");
 	countries.put("99","Байконур (Казахстан)");
-	return  countries;
-
+	return countries;
 }
 
-
 	public String s(Object o) {
-	return o!=null?o.toString().trim():"";
+	return o!=null ? o.toString().trim() : "";
 }
 	public String getContentOfHTTPPage(String pageAddress, String codePage) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		URL pageURL = new URL(pageAddress);
 		URLConnection uc = pageURL.openConnection();
-		BufferedReader br = new BufferedReader(
-				new InputStreamReader(
-						uc.getInputStream(), codePage));
-		try {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(uc.getInputStream(), codePage))) {
 			String inputLine;
 			while ((inputLine = br.readLine()) != null) {
 				sb.append(inputLine);
 			}
-		} finally {
-			br.close();
 		}
 		return sb.toString();
 	}
@@ -1633,11 +1626,7 @@ private HashMap getRegions() {
 	}
 public String getDefaultParameterByConfig (String aParameter, String aDefaultValue) {
 		List<Object[]> list =  theManager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='" +aParameter+"'").getResultList();
-		if (!list.isEmpty()) {
-			return list.get(0)[1].toString();
-		} else {
-			return aDefaultValue;
-		}
+		return  list.isEmpty() ? aDefaultValue : list.get(0)[1].toString();
 }
 	private  StringBuilder param(String aParam, Object aValue) {
 		StringBuilder ret = new StringBuilder();
@@ -1823,18 +1812,11 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		} catch (Exception e) {
 
 		}
-
-
 		return null ;
 	}
 	public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
 		IMonitor monitor = null;
 		try {
-
-    		/*
-    		monitor = theMonitorService.startMonitor(aMonitorId, "ImportFondMonitor", aList.size());
-    		monitor.advice(20) ;
-*/
 			try {
 				monitor = theMonitorService.getMonitor(aMonitorId);
 				monitor.advice(20) ;
@@ -2244,7 +2226,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
     			ahr.setBirthday(ConvertSql.parseDate(obj[38]));*/
 					}
 				}
-				if(ii%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(ConvertSql.parseLong(obj[0])).append(" ").append(ConvertSql.parseLong(obj[2])).append("...").toString());
+				if(ii%10==0) monitor.setText("Импортируется: "+ConvertSql.parseLong(obj[0])+" "+ConvertSql.parseLong(obj[2])+"...");
 				if(size>0&&ii%size==0) monitor.advice(1);
 
 				if (ii % 80 == 0) {
@@ -2261,6 +2243,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		}
 	}
 	public void refreshReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) {
+		LOG.error("ВНИМАНИЕ!! Выполняется неизвестный код. никто не знает что он делает..");
 		IMonitor monitor = null;
 		try {
 			monitor = theMonitorService.startMonitor(aIdMonitor, "Обработка данных за период: "+aEntranceDate+" "+aDischargeDate, 100);
@@ -2491,7 +2474,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
 		workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 
-		String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
+		String workAddDir =aSaveInFolder ? config.get("data.dir.order263.out", null) : null;
 
 
 		String filename = getTitleFile("0",aLpu,aPeriodByReestr,aNPackage) ;
@@ -2504,18 +2487,12 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		xmlDoc.newElement(title, "FILENAME", filename);
 		xmlDoc.newElement(title, "VID_N", aVidN);
 
-		XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
-		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+		XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
+		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
 		res.set1(filename+".xml") ;
 		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
-
 		return res;
 	}
 	public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aIsPolyc, boolean aIsHospital, boolean aSaveInFolder)
@@ -2566,7 +2543,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as b14irthday");
 		sql.append(" ,wchb.phone as p15honepatient");
 		sql.append(" ,mkb.code as m16kbcode");
-		sql.append(" ,vbt.codeF as v17btcodef");
+		sql.append(" ,coalesce(vmhp.code,vbt.codeF) as v17btcodef");
 		sql.append(" ,wp.snils as w18psnils");
 		sql.append(" ,wchb.dateFrom as w19chbdatefrom");
 		sql.append(", wchb.visit_id as v20isit");
@@ -2575,6 +2552,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(", wchb.internalcode as f23_internalDirectionNumber");
 		sql.append(" from WorkCalendarHospitalBed wchb");
 		sql.append(" left join VocBedType vbt on vbt.id=wchb.bedType_id");
+		sql.append(" left join VocE2MedHelpProfile vmhp on vmhp.id=vbt.medHelpProfile_id");
 		sql.append(" left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id");
 		sql.append(" left join Patient p on p.id=wchb.patient_id");
 		sql.append(" left join VocSex vs on vs.id=p.sex_id");
@@ -2658,14 +2636,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		}
 		res.set1(filename+".xml") ;
 		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
-
 		return res;
 	}
 
@@ -2838,16 +2810,11 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		List<Object[]> l1 = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		if (l1.isEmpty()) {
 			return false ;
-		} else {
-			if (l1.size()>1) {
-
-			} else {
-				Object[] o=l1.get(0) ;
-				if (o[1]==null) return false ;
-			}
-			return true ;
+		} else if (l1.size()==1) {
+			Object[] o=l1.get(0) ;
+			if (o[1]==null) return false ;
 		}
-
+			return true ;
 	}
 	public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage
 			, boolean aSaveInFolder)
@@ -2886,7 +2853,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" ,p.middlename as f10middlename");
 		sql.append(" ,vs.omcCode as f11vsomccode");
 		sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as f12birthday");
-		sql.append(" ,vbt.codeF as f13vbtomccode");
+		sql.append(" ,,coalesce(vmhp.code,vbt.codeF as f13vbtomccode");
 		sql.append(" ,ss.code as f14sscode");
 		sql.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
 		sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
@@ -2916,6 +2883,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
 		sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
 		sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+		sql.append(" left join VocE2MedHelpProfile vmhp on vmhp.id=vbt.medHelpProfile_id");
 		sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
 		sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
 		sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
@@ -2964,14 +2932,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		}
 		res.set1(filename+".xml") ;
 		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
-
 		return res;
 	}
 
@@ -2998,13 +2960,14 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		List<WebQueryResult> i_error=new ArrayList<>() ;
 
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select  sls.id as slsid, count(distinct case when sloALL.dtype='DepartmentMedCase' then vbtALL.codef else null end) cntProfile" );
+		sql.append("select  sls.id as slsid, count(distinct case when sloALL.dtype='DepartmentMedCase' then coalesce(vmhpALL.code,vbtALL.codef) else null end) cntProfile" );
 		sql.append(", count(distinct case when sloALL.dtype='DepartmentMedCase' then sloALL.id else null end) as cntDep");
 
 		sql.append("  from medcase sls");
 		sql.append(" left join medcase sloALL on sloALL.parent_id=sls.id");
 		sql.append(" left join bedfund bfALL on bfALL.id=sloALL.bedfund_id");
 		sql.append(" left join vocbedtype vbtALL on vbtALL.id=bfALL.bedtype_id");
+		sql.append(" left join VocE2MedHelpProfile vmhpALL on vmhpALL.id=vbtALL.medHelpProfile_id");
 		sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
 		sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
 		sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
@@ -3047,7 +3010,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		xmlDoc.newElement(title, "FILENAME", filename);
 		//int i=0 ;
 		for (Object[] obj:list) {
-			if (ConvertSql.parseLong(obj[1])>Long.valueOf(1)) {
+			if (ConvertSql.parseLong(obj[1])>1L) {
 				StringBuilder sqlDep = new StringBuilder() ;
 				sqlDep.append("select to_char(slo.dateStart,'yyyy-mm-dd') as f0datestart");
 				sqlDep.append(" ,cast(slo.entranceTime as varchar(5)) as f1entrancetime");
@@ -3062,7 +3025,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				sqlDep.append(" ,hdf.middlename as f10middlename");
 				sqlDep.append(" ,vs.omcCode as f11vsomccode");
 				sqlDep.append(" ,to_char(hdf.birthday,'yyyy-mm-dd') as f12birthday");
-				sqlDep.append(" ,vbt.codeF as f13vbtomccode");
+				sqlDep.append(" ,coalesce(vmhp.code,vbt.codeF) as f13vbtomccode");
 				sqlDep.append(" ,ss.code as f14sscode");
 				sqlDep.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
 				sqlDep.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
@@ -3092,6 +3055,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				sqlDep.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
 				sqlDep.append(" left join BedFund bf on bf.id=slo.bedFund_id");
 				sqlDep.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+				sqlDep.append(" left join VocE2MedHelpProfile vmhp on vmhp.id=vbt.medHelpProfile_id");
 				sqlDep.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
 				sqlDep.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
 				sqlDep.append(" where sls.id=").append(obj[0]).append(" and slo.prevdocument_id is null") ;
@@ -3124,22 +3088,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		}
 		res.set1(filename+".xml") ;
 		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
-		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
-		}
-
 		return res;
 	}
 
@@ -3179,7 +3129,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" ,hdf.middlename as f10middlename");
 		sql.append(" ,vs.omcCode as f11vsomccode");
 		sql.append(" ,to_char(hdf.birthday,'yyyy-mm-dd') as f12birthday");
-		sql.append(" ,vbt.codeF as f13vbtomccode");
+		sql.append(" ,coalesce(vmhp.code,vbt.codeF) as f13vbtomccode");
 		sql.append(" ,ss.code as f14sscode")
 		.append(" ,coalesce (")
 			.append("(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id ") //Клиинческий диагноз в отделении
@@ -3230,6 +3180,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
 		sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
 		sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+		sql.append(" left join VocE2MedHelpProfile vmhp on vmhp.id=vbt.medHelpProfile_id");
 		sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
 		sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
 		sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
@@ -3278,22 +3229,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		}
 		res.set1(filename+".xml") ;
 		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
-		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
-		}
-
 		return res;
 	}
 	public WebQueryResult exportN1_planHosp(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)
@@ -3334,7 +3271,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as birthday");
 		sql.append(" ,case when p.phone is null or p.phone='' then '*' else p.phone end as phonepatient");
 		sql.append(" ,mkb.code as mkbcode");
-		sql.append(" ,vbt.codeF as vbtcodef");
+		sql.append(" ,coalesce(vmhp.code,vbt.codeF) as vbtcodef");
 		sql.append(" ,bf.snilsDoctorDirect263 as wpsnils");
 		sql.append(" ,to_char(sls.dateStart,'yyyy-mm-dd') as wchbdatefrom");
 		sql.append(", cast(null as int) as visit");
@@ -3353,7 +3290,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
 		sql.append(" left join mislpu olpu on olpu.id=sls.orderlpu_id");
 		sql.append(" left join mislpu oplpu on oplpu.id=olpu.parent_id");
-
 		sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
 		sql.append(" left join Patient p on p.id=sls.patient_id");
 		sql.append(" left join VocSex vs on vs.id=p.sex_id");
@@ -3362,6 +3298,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id") ;
 		sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
 		sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+		sql.append(" left join VocE2MedHelpProfile vmhp on vmhp.id=vbt.medHelpProfile_id");
 		sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
 		sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
 		sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
@@ -3369,7 +3306,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" and vss.code in ('OBLIGATORYINSURANCE')  and (sls.emergency is null or sls.emergency='0')") ;
 		sql.append(" and mkb.code is not null and (hdf.id is null)") ;
 		sql.append(" and coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef)='").append(aLpu).append("'") ;
-
 		sql.append(" order by p.lastname,p.firstname,p.middlename") ;
 
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -3414,14 +3350,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		}
 		res.set1(filename+".xml") ;
 		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
-
 		return res;
 	}
 
@@ -3459,7 +3389,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" ,coalesce(mp.middlename,p.middlename) as m10iddlename");
 		sql.append(" ,vs.omcCode as v11somccode");
 		sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as b12irthday");
-		sql.append(" ,vbt.codeF as v13btomccode");
+		sql.append(" ,coalesce(vmhp.code,vbt.codeF) as v13btomccode");
 		sql.append(" ,ss.code as s14scode");
 		sql.append(" ,mkb.code as m15kbcode");
 		sql.append(" ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as l16pucodef") ;
@@ -3475,7 +3405,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" left join reg_ic ri on ri.id=mp.company_id");
 		sql.append(" left join mislpu lpu on lpu.id=sls.lpu_id");
 		sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
-
 		sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
 		sql.append(" left join Patient p on p.id=sls.patient_id");
 		sql.append(" left join VocSex vs on vs.id=p.sex_id");
@@ -3484,6 +3413,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id") ;
 		sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
 		sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+		sql.append(" left join VocE2MedHelpProfile vmhp on vmhp.id=vbt.medHelpProfile_id");
 		sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
 		sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
 		sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
@@ -3518,14 +3448,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
 		}
 		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
-
 		return res;
 	}
 
@@ -3576,14 +3500,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
 		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
 		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
-
 		return filename+".xml";
 	}
 	public String exportN4b(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage)
@@ -3616,7 +3534,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" ,p.middlename as middlename");
 		sql.append(" ,vs.omcCode as vsomccode");
 		sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as birthday");
-		sql.append(" ,vbt.codeF as vbtomccode");
+		sql.append(" ,coalesce(vmhp.code,vbt.codeF) as vbtomccode");
 		sql.append(" ,ss.code as sscode");
 		sql.append(" ,mkb.code as mkbcode");
 		sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpucodef") ;
@@ -3638,6 +3556,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id") ;
 		sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
 		sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+		sql.append(" left join VocE2MedHelpProfile vmhp on vmhp.id=vbt.medHelpProfile_id");
 		sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
 		sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
 		sql.append(" and sls.deniedHospitalizating_id is not null ");
@@ -3759,12 +3678,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
 		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
 		if (workAddDir!=null) {
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
 
 		return filename+".xml";
@@ -3790,7 +3704,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
 
 		StringBuilder sqlB = new StringBuilder() ;
-		sqlB.append("select   vbt.codef as v0btcodef");
+		sqlB.append("select   coalesce(vmhp.code,vbt.codeF) as v0btcodef");
 		sqlB.append(",  case when vbst.code='3' then '2' else vbst.code end as u1sl_ok");
 		sqlB.append(", case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as d2et ") ;
 		sqlB.append(", sum(bf.amount) as b3famount");
@@ -3802,6 +3716,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sqlB.append("		and hospitalmedcase_id is null and hdf.directLpuCode=lpu.codef) as a5mountDirect") ;
 		sqlB.append("  from BedFund bf ");
 		sqlB.append("   left join VocBedType vbt on vbt.id=bf.bedType_id");
+		sqlB.append(" left join VocE2MedHelpProfile vmhp on vmhp.id=vbt.medHelpProfile_id");
 		sqlB.append("   left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
 		sqlB.append("   left join VocServiceStream vss on vss.id=bf.serviceStream_id");
 		sqlB.append("   left join MisLpu lpu on lpu.id=bf.lpu_id ");
@@ -3809,8 +3724,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sqlB.append("  where bf.dateStart<=to_date('").append(aDateFrom).append("','yyyy-MM-dd')");
 		sqlB.append("  and coalesce(bf.dateFinish,to_date('").append(aDateTo).append("','yyyy-MM-dd')) >=to_date('").append(aDateTo).append("','yyyy-MM-dd')");
 		sqlB.append("  and vss.code in ('OBLIGATORYINSURANCE') and (lpu.codef='").append(aLpu).append("' or lpuP.codef='").append(aLpu).append("')");
-		sqlB.append("  group by  vbt.codef ,   vbst.code , bf.forChild, lpu.codef");
-		sqlB.append("  order by vbt.codef,vbst.code");
+		sqlB.append("  group by  coalesce(vmhp.code,vbt.codeF) ,   vbst.code , bf.forChild, lpu.codef");
+		sqlB.append("  order by coalesce(vmhp.code,vbt.codeF),vbst.code");
 		List<Object[]> listB = theManager.createNativeQuery(sqlB.toString())
 				.setMaxResults(100).getResultList() ;
 		Element title = xmlDoc.newElement(root, "ZGLV", null);
@@ -3967,15 +3882,15 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
 		if (workAddDir!=null) {
             XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
-			try{
-				Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
-			} catch (Exception e) {
-
-			}
-
+			chmodDir(workAddDir);
 		}
 
 		return filename+".xml";
+	}
+
+	/**Выставляем права на папку*/
+	private void chmodDir(String aDir) {
+		try{Runtime.getRuntime().exec("chmod -R 777 "+aDir);} catch (Exception e) {}
 	}
 	public void createNewDiary(String aTitle, String aText, String aUsername) {
 		TemplateProtocol protocol = new TemplateProtocol() ;
@@ -4028,7 +3943,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		if (!list.isEmpty()) {
 			Object[] obj =list.get(0) ;
 			if (obj[0]!=null) {
-				String dtype=new StringBuilder().append(obj[0]).toString() ;
+				String dtype = obj[0].toString() ;
 				if (dtype.equals("HospitalMedCase")) {
 					List<Object[]> listBedFund = theManager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo"
 							+" left join BedFund bf on bf.id=slo.bedFund_id"
@@ -4072,8 +3987,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					//Milamesher update spo after visits
 					theManager.createNativeQuery("update MedCase set serviceStream_id='"+aServiceStream+"' where id='"+aSmo+"'").executeUpdate() ;
 				}
-			} else {
-
 			}
 		}
 	}
@@ -4238,8 +4151,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		//return "" ;
 	}
 	public String addressInfo(EntityManager aManager,Long aAddressId, Object[] aAddress) {
-		StringBuilder sb = new java.lang.StringBuilder();
-		String fullname = new StringBuilder().append(aAddress[1]).toString().trim() ;
+		StringBuilder sb = new StringBuilder();
+		String fullname = aAddress[1].toString().trim() ;
 
 		//Address a = aAddress ;
 		//Long id = a.getId() ;
@@ -4249,7 +4162,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		if (aAddress[3]!=null) {
 			String shortName = aAddress[3]+" " ;
 			sb.insert(0,  shortName) ;
-
 		}
 
 		//long oldId = a.getId() ;
@@ -4267,17 +4179,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				sb.insert(0, addressInfo(aManager,id1,list.get(0))) ;
 			}
 		}
-
-
-		//throw "address"+aAddress.id+" "+sb ;
-		//throw sb.toString() ;
-		//aAddress.setFullname(sb.toString()) ;
-
-		//theManager.persist(aAddress) ;
-		//Address a =theManager.find(Address.class, aAddressId) ;
-		//theManager.createNativeQuery("update set fullname='"+sb.toString()+"' ")
-		//a.setFullname(sb.toString()) ;
-		//theManager.persist(a) ;
 		aManager.createNativeQuery("update Address2 set fullname='"+sb.toString().trim()+"' where addressid="+aAddressId).executeUpdate() ;
 		return sb.toString().trim() ;
 	}
@@ -4286,14 +4187,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		theManager.createNativeQuery("update Address2 set fullname=null").executeUpdate() ;
 	}
 	public long addressUpdate(long id) {
-		//long id=0 ;
 		List<Object[]> list ;
-
-		//String sql = "from Address where id>"+id+" and fullname is null order by id" ;
-		//if (id>0) throw sql ;
-		//list = theManager.createQuery(sql)
-		//	.setMaxResults(450)
-		//	.getResultList() ;
 		list = theManager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid>"+id+" and a.fullname is null order by a.addressid")
 				.setMaxResults(450)
 				.getResultList() ;
@@ -4312,17 +4206,13 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		} else {
 			id=-1 ;
 		}
-
 		return id ;
 	}
 
 	public String getIdc10ByDocDiag(Long aIdDocDiag){
 		VocDiagnosis diag = theManager.find(VocDiagnosis.class, aIdDocDiag) ;
 		VocIdc10 mkb = diag.getIdc10() ;
-		if (mkb!=null) {
-			return new StringBuilder().append(mkb.getId()).append("#").append(mkb.getCode()).append("#").append(mkb.getName()).toString() ;
-		}
-		return "" ;
+		return  mkb==null ? "" :  mkb.getId()+"#"+mkb.getCode()+"#"+mkb.getName() ;
 	}
 	public String getOperationsText(Long aPatient, String aDateStart
 			,String aDateFinish) {
@@ -4340,7 +4230,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		for (Object[] obj :opers) {
 			if (res.length()>0) res.append("; ") ;
 			res.append("").append(obj[3]).append(" ").append(obj[0]).append(" ").append(obj[1]).append("-").append(obj[2]) ;
-
 		}
 		return res.toString() ;
 	}
@@ -4367,7 +4256,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					.append("from VocSex") ;
 			List<Object[]> usls  = theManager.createNativeQuery(sql.toString()).getResultList() ;
 
-			return !usls.isEmpty()?new StringBuilder().append(usls.get(0)[1]).toString():"" ;
+			return !usls.isEmpty() ? usls.get(0)[1].toString() : "" ;
 		} catch (Exception e) {
 			return "" ;
 		}
@@ -4410,14 +4299,12 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		if (aMedService!=null && aMedService>0) {
 			sql.append(" and smc.id!='").append(aMedService).append("'") ;
 		}
-
 		List<Object[]> doubles = theManager.createNativeQuery(
 				sql.toString())
 				.setParameter("pat", aPatient)
 				.setParameter("usl", aService)
 				.setParameter("dat", date)
 				.getResultList() ;
-
 		if (!doubles.isEmpty()) {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;
@@ -4607,8 +4494,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.append(aMedCaseId)
 				.append("' and policies_id='").append(aPolicy).append("'") ;
 		Object res= theManager.createNativeQuery(sql.toString()).getSingleResult() ;
-		Long cnt=ConvertSql.parseLong(res) ;
-		return cnt>Long.valueOf(0);
+		return ConvertSql.parseLong(res)>0L;
 	}
 
 	public void removePolicies(long aMedCaseId, long[] aPolicies) {
@@ -4617,8 +4503,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		for (long policyId:aPolicies) {
 			//MedPolicy policy= theManager.find(MedPolicy.class, policyId);
 			//listPolicies.remove(policy) ;
-			theManager.createNativeQuery(new StringBuilder().append("delete from MedCase_MEdPolicy where medCase_id='")
-					.append(aMedCaseId).append("' and policies_id='").append(policyId).append("'").toString()).executeUpdate();
+			theManager.createNativeQuery("delete from MedCase_MedPolicy where medCase_id='"+
+					aMedCaseId+"' and policies_id='"+policyId+"'").executeUpdate();
 		}
 
 		//theManager.persist(hospital);
@@ -4744,9 +4630,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	}
 
 	public List<SurgicalOperationForm> getSurgicalOperationByDate(String aDate) {
-		if (CAN_DEBUG) {
-			LOG.debug("findAllSpecialistTickets() aSpecialist = " + aDate);
-		}
 		QueryClauseBuilder builder = new QueryClauseBuilder();
 		//builder.add("operationDate", aDate);
 		Query query = builder.build(theManager, "from SurgicalOperation where operationDate='"+aDate+"' ", " order by operationTime");

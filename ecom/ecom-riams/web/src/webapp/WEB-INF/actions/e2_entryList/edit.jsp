@@ -111,7 +111,7 @@
                     <msh:sideLink action="/javascript:showUnionExportHistory()" name="Журнал пакетов по счетам" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:refillListEntry()" name="Переформировать заполнение" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:setDirectAndPlanHospDate()" name="Заполнить пустые даты направления и даты пред. госпитализации" roles="/Policy/E2/Admin" />
-                    <msh:sideLink action="/javascript:showSplitForeignOtherBill()" name="Выделить 08,05" roles="/Policy/E2/Admin" />
+                    <msh:sideLink action="/javascript:showSplitForeignOtherBill()" name="Выделить иногородних отдельным счетом" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:exportToCentralSegment()" name="Сделать запрос в ЦС" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:showCancerCancerDialog()" name="Сделать онкослучай" roles="/Policy/E2/Admin" />
                 </msh:ifPropertyIsTrue>
@@ -156,13 +156,16 @@
                         var billNumber=jQuery('#E2BillNumber').val();
 
                         //String aBillNumber, String aBillDate, String aTerritories
-                        Expert2Service.splitForeignOtherBill(${param.id},billNumber, billDate,null,{
+                        var terr = prompt("Введите территории (например 05,08)","08");
+                        if (terr) {
+                        Expert2Service.splitForeignOtherBill(${param.id},billNumber, billDate,terr,{
                             callback: function(ret){
                                 ret = JSON.parse(ret);
                                 showToastMessage("Изменено "+ret.count+" записей");
                                 window.document.location.reload();
                             }
                         });
+                        }
                     }
                 function refillListEntry() {
                     if (confirm('Вы действительно хотите пересчитать заполнение?')) {

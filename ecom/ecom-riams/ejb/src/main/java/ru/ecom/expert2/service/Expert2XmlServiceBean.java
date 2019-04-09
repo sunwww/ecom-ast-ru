@@ -412,7 +412,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             if (serviceType.equals("1")) onkUsl = addIfNotNull(onkUsl, "HIR_TIP", cancerEntry.getSurgicalType());
                             if (serviceType.equals("2")) onkUsl = addIfNotNull(onkUsl, "LEK_TIP_L", cancerEntry.getDrugLine());
                             if (serviceType.equals("2")) onkUsl = addIfNotNull(onkUsl, "LEK_TIP_V", cancerEntry.getDrugCycle());
-                       //    if (serviceType.equals("2")||serviceType.equals("4"))  onkUsl = addIfNotNull(onkUsl,"LEK_PR","LEK_PR"); //TODO реализовать информацию о лекарствах
+                            if (serviceType.equals("2")||serviceType.equals("4"))  onkUsl = addIfNotNull(onkUsl,"LEK_PR","LEK_PR"); //TODO реализовать информацию о лекарствах
                             if (serviceType.equals("3")||serviceType.equals("4")) onkUsl = addIfNotNull(onkUsl, "LUCH_TIP", cancerEntry.getRadiationTherapy());
                             onkSl.addContent(onkUsl);
                         }

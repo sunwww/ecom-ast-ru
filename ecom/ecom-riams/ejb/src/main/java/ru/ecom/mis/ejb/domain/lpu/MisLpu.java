@@ -282,7 +282,7 @@ public class MisLpu extends BaseEntity {
 	
 	/** Профиль отеделения */
 	@Comment("Профиль отеделения")
-	@OneToOne
+	@OneToOne @Deprecated
 	public VocMzDepType getProfile() {
 		return theProfile;
 	}
