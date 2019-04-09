@@ -189,7 +189,7 @@ public class TemplateProtocolJs {
 				fieldName = "tp.id";
 			}
 			sql = new StringBuilder() ;
-			sql.append("select p.id as p1id,p.name as p2name") ;
+			sql.append("select distinct p.id as p1id,p.name as p2name") ;
 			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
 			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
 			sql.append(" , p.maximum as p7maximum, p.normmaximum as p8normmaximum") ;
@@ -206,12 +206,16 @@ public class TemplateProtocolJs {
 			sql.append(" ,pg.id as f21GroupId");
 			sql.append(" ,pg.name as f22GroupIName");
 			sql.append(" ,case when p.type='7' then p.valueTextDefault else '' end as f23AddVal");
+			sql.append(" ,case when (uv.usebydefault) then uv.id else null end as usebydefault");
+			sql.append(" ,case when (uv.usebydefault) then uv.name else null end as usedefval");
+			sql.append(" ,pf.position"); //необходимо, т.к. находится в order by при distinct
 			sql.append(" from parameterbyform pf") ;
 			sql.append(" left join templateprotocol tp on pf.template_id = tp.id") ;
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
 			sql.append(" left join parametergroup pg on pg.id=p.group_id");
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
+			sql.append(" left join userValue uv on uv.domain_id=vd.id and uv.usebydefault") ;
 			sql.append(" where ").append(fieldName).append("='").append(aTemplateId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
@@ -235,7 +239,7 @@ public class TemplateProtocolJs {
 			,{"13","unitid"},{"14","unitname"}
 			,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
 			,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
-			,{"21","groupId"}, {"22","groupName"},{"23","addValue"}
+			,{"21","groupId"}, {"22","groupName"},{"23","addValue"},{"24","usebydefault"},{"25","usedefval"}
 			} ;
 			for(WebQueryResult wqr : lwqr) {
 				

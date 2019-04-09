@@ -217,6 +217,7 @@
   var lastGroupId=0;
   fillDataDiv ();
   var listIds = new Array();
+  var listDefaultVals = new Array();
   function fillDataDiv () {
 	    	    	 	 if (!$('template').value>0) {return;}
 	  TemplateProtocolService.getParameterByObject($('id').value, $('template').value, 'AssessmentCard', {
@@ -225,7 +226,8 @@
 	    						var arr = aResults.split("#");
 	    						var aResult = arr[0];
 	    						var editable = arr[1];
-	    						listIds = new Array();	    					
+	    						listIds = new Array();
+                                listDefaultVals = new Array();
 	    					      //  $('BioList').value=aSmoId;
 	    					      if ($('params')&&$('params').value!='') {
 	    					    	fldJson = JSON.parse($('params').value);  
@@ -272,6 +274,8 @@
 	    					        		eval("param"+param1.id+"Autocomlete.build() ;")
 	    					        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
 	    					        		eval("param"+param1.id+"Autocomlete.addOnChangeCallback(function(){getBall("+param1.id+") });");
+	    					        		if (param1.usebydefault!=null && typeof(param1.usebydefault)!=='undefined' && param1.usebydefault!='')
+                                                listDefaultVals.push(param1.id+"#"+param1.usebydefault+"#"+param1.usedefval);
 	    					        		listIds.push ("param"+param1.id);
 	    					        	}
 	    					        } 
@@ -282,20 +286,14 @@
 	    			 				$('dataField').innerHTML =txt 
 	    					       	+ "<input type=\"button\" value=\"ОК\" onclick=\"cancelBioIntakeInfo()\">";
 	    					     }
-	    			             
-	    			    /*         if (+fldJson.isdoctoredit>0) {
-
-	    		            		 $("param"+fldJson.params[0].idEnter).select() ;
-	    				        	 $("param"+fldJson.params[0].idEnter).focus() ;
-	    		           	 } else {
-	    		            		 $("param"+p+"Name").select() ;
-	    				        		$("param"+p+"Name").focus() ;
-	    				        		$('param'+p+'Name').className="autocomplete horizontalFill required" ;
-	    				        		eventutil.addEnterSupport("param"+p+"Name","param"+fldJson.params[0].idEnter) ;
-	    				        		
-	    		            	 } */ 
-	    					}
-	    				}) ;
+	    					     //Milamesher #149 - значения по умолчанию
+                                for(var ind=0;ind<listDefaultVals.length;ind++) {
+                                    var pp = listDefaultVals[ind].split('#');
+                                    document.getElementById('param'+pp[0]).value=pp[1];document.getElementById('param'+pp[0]+'Name').value=pp[2];
+                                    getBall(pp[0]);
+                                }
+                            }}
+	    				) ;
 	    			
 	     }
   function createSumRow( aGroupId) {
@@ -371,10 +369,6 @@
 			var par = fldJson.params[ind] ; 
 			var err ="";
 			errorutil.HideError($('param'+par.idEnter)) ;
-			/*if (val=="") {
-				errorutil.ShowFieldError($('param'+par.idEnter),"Пустое значение") ;
-				isError= true ;
-			} */
 			
 			if (+par.type==2) {
 				if (+val<1) {val='0' ;} else {
@@ -504,7 +498,6 @@
                       else if (sum == 2) $('comment').value += "Средний фактор риска развития ВТЭО (2 балла): - перемежающаяся пневмокомпрессия (ППК), - низкомолекулярные гепарины (НМГ)_________________в дозе_________ в течение 6-7 дней - нефракционированный гепарин (НФГ)________________в дозе_________в течение 6-7 дней.";
                       else if (sum >= 3) $('comment').value += "Высокий фактор риска развития ВТЭО (3 и более баллов): - ППК, - НМГ____________________в дозе___________в течение 6 недель - НФГ____________________в дозе___________в течение 6 недель.";
                   }
-				//  alert (a);
 			  }
 		  }); 
 	  
