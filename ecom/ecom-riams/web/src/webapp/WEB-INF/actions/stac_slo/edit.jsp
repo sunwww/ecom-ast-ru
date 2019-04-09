@@ -583,8 +583,6 @@ left join Patient pat on pat.id=wan.person_id
                         Роды
                         <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_childBirth.do?id=${param.id}">Добавить роды</a>
                         </msh:ifInRole>
-                        <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_robsonClass.do?id=${param.id}">Классификация Робсона</a>
-                        </msh:ifInRole>
                         <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_misbirth.do?id=${param.id}">Выкидыш</a>
                         </msh:ifInRole>
                         <msh:ifInRole roles="/Policy/Mis/NewBorn/Create">
@@ -597,7 +595,7 @@ left join Patient pat on pat.id=wan.person_id
                             <msh:tableColumn property="2" columnName="Дата окончания родов" addParam="&type=chb"/>
                             <msh:tableColumn property="3" columnName="Кол-во плодов" addParam="&type=chb"/>
                             <msh:tableColumn property="4" columnName="ФИО ребенка (детей)" addParam="&type=chb"/>
-                            <msh:tableColumn property="5" columnName="Классификация Робсона" addParam="&type=rb"/>
+                            <msh:tableColumn property="5" columnName="Классификация Робсона" addParam="&type=chb"/>
                             <msh:tableColumn property="6" columnName="Выкидыш" addParam="&type=mb"/>
                         </msh:table>
                     </msh:sectionContent>

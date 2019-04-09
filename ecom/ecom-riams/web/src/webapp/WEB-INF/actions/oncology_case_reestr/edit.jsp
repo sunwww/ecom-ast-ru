@@ -91,7 +91,7 @@
                     <label><input type="checkBox" name="c3" id="c3" >Противопоказания к проведению лучевой терапии</label>
                     <msh:textField property="date3" label="" /><br>
                     <label>Отказ от проведения лечения и дата регистрации (12):</label><br>
-                    <label> <input type="checkBox" name="c4" id="c4">Отказ от проведения хирургического лечения</label>
+                    <label><input type="checkBox" name="c4" id="c4" >Отказ от проведения хирургического лечения</label>
                     <msh:textField property="date4" label="" /><br>
                     <label><input type="checkBox" name="c5" id="c5" >Отказ от проведения химиотерапевтического лечения</label>
                     <msh:textField property="date5" label="" /><br>

@@ -45,7 +45,9 @@
     var the${name}fssExport= new msh.widget.Dialog($('${name}fssExport')) ;
 
     function show${name}fssExport() {
-        if ($('issueDate').value!='' && $('hospitalizedTo').value!=''
+        DisabilityService.getIfDisDocHasVK('${documentId}', {
+                callback: function(resultVK) {
+        if (resultVK || $('issueDate').value!='' && $('hospitalizedTo').value!=''
             && $('issueDate').value==$('hospitalizedTo').value!=''
             || $('issueDate').value=='' || $('hospitalizedTo').value=='') {
             $('${name}fssExportResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
@@ -81,6 +83,7 @@
             });
         }
         else showToastMessage('Проверье дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!',null,true);
+                }});
     }
         function cancel${name}fssExport() {
             the${name}fssExport.hide() ;

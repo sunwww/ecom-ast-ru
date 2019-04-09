@@ -91,7 +91,7 @@
         <msh:section>
         <msh:sectionTitle>
             <ecom:webQuery isReportBase="true" name="leanClinicReport" nameFldSql="leanClinicReport_sql" nativeSql="
-        select case when lpu.name is not null and lpu.name!='' then replace(replace(lpu.name,'\"',''),'''','') else cast('Без прикрепления' as varchar(16)) end
+         select case when lpu.name is not null and lpu.name!='' then replace(replace(replace(lpu.name,'\"',' '),'''',' '),'  ',' ') else cast('Без прикрепления' as varchar(16)) end
         , count (distinct wct.id) as cntAll
         , count (case when wct.medcase_id is not null then 1 else null end) as cntVisit
         , count (case when wr.code='PROMED' then 1 else null end) as cntPROMED
@@ -104,7 +104,7 @@
         , count (case when wr.code='PERSONAL' and wct.medcase_id is not null then 1 else null end) as cntPERSONALVisit
         , count (case when wr.code='MEDVOX' then 1 else null end) as cntMEDVOX
         , count (case when wr.code='MEDVOX' and wct.medcase_id is not null then 1 else null end) as cntMEDVOXVisit
-        , '&lpuId='||coalesce(lpu.id,0)||'&lpuName='||coalesce(replace(replace(lpu.name,'\"',''),'''',''),cast('Без прикрепления' as varchar(16)))
+        , '&lpuId='||coalesce(lpu.id,0)||'&lpuName='||coalesce(replace(replace(replace(lpu.name,'\"',' '),'''',' '),'  ',' '),cast('Без прикрепления' as varchar(16)))
         from workcalendartime wct
         left join secuser su on su.login=wct.createprerecord
         left join patient pat on pat.id=wct.prepatient_id
