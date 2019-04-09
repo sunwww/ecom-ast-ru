@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ru.ecom.web.util.ActionUtil" %><%--
   Created by IntelliJ IDEA.
   User: vtsybulin
   Date: 15.06.2018
@@ -9,6 +9,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <html>
 <%
+    boolean isDoctor = !ActionUtil.isUserInRole("/Policy/TV",request);
 String kioskType = request.getParameter("mode");
 if (kioskType==null) {kioskType="";}
 kioskType = kioskType.toUpperCase();
@@ -42,7 +43,7 @@ if (kioskType.equals("ADMISSION")) {
     request.setAttribute("isEmergency",isEmergency);
     String token = "66405d38-a173-4cb7-a1b6-3ada51c16ac5";
         request.setAttribute("token","token:'"+token+"',");
-        boolean isDoctor = "1".equals(request.getParameter("isDoctor"));
+   //     boolean isDoctor = "1".equals(request.getParameter("isDoctor"));
         request.setAttribute("isDoctor",isDoctor);
     //Показываем информацию об очереди в приемном отделении
     if (isDoctor) {

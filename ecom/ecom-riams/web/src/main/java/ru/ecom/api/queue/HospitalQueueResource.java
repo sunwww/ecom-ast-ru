@@ -31,8 +31,6 @@ public class HospitalQueueResource {
             , @QueryParam("isDoctor") Boolean isDoctor
     ) throws NamingException {
         ApiUtil.login(token,aRequest);
-        System.out.println("isDcotr = "+isDoctor);
-
         if (isEmergency==null) {isEmergency="";}
         String sql = " select sls.id, "+(isDoctor ? "pat.lastname||' '|| substring (pat.firstname,1,1)||' '||substring (pat.middlename,1,1)" : "left(pat.lastname,1)||'-'||right(''||pat.id,3)") +
                 (isDoctor ?
@@ -68,7 +66,7 @@ public class HospitalQueueResource {
                 " group by sls.id, pat.id,dep.id"+
                 " order by sls.dateStart, sls.entranceTime ";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        System.out.println("sql = "+sql);
+    //    System.out.println("sql = "+sql);
         String[] fields = {"id","patientInfo","waitTime","startTime","minutes", "departmentName", "madeServices", "planServices"};
         JSONArray ret = new JSONArray(service.executeNativeSqlGetJSON(fields,sql,null));
         return ret.toString();
