@@ -1,5 +1,5 @@
-<%@page import="java.util.Calendar"%>
 <%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Calendar"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -62,10 +62,11 @@
 		  end as cnt2
     	
     from medCase m 
-    left join MedCase as sls on sls.id = m.parent_id 
+    left join MedCase as sls on sls.id = m.parent_id
+    left join MedCase allSlo on allSlo.parent_id=sls.id
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join StatisticStub as sc on sc.medCase_id=sls.id
-    left join SurgicalOperation so on so.medCase_id in (m.id,sls.id)
+    left join SurgicalOperation so on so.medCase_id in (allSlo.id,sls.id)
     left join medservice ms on ms.id=so.medService_id
     left join WorkFunction wf on wf.id=m.ownerFunction_id
     left join Worker w on w.id=wf.worker_id
@@ -78,7 +79,7 @@
     ,bf.addCaseDuration
     order by sls.dateFinish,pat.lastname,pat.firstname,pat.middlename
     "
-     guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+     guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" nameFldSql="datelist_sql" />${datelist_sql}
     <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />

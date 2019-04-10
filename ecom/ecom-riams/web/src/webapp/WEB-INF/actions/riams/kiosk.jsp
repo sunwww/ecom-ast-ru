@@ -77,7 +77,11 @@ if (kioskType.equals("ADMISSION")) {
 </table>
 <script type="text/javascript" src="/skin/ac.js"></script>
 <script type="text/javascript">
-var colors={red:"background-color:red;", orange:"background-color: orange;", yellow:"background-color: yellow;",blue:"background-color: lightblue;"};
+var colors={red:"background-color:red;"
+    , orange:"background-color: orange;"
+    , yellow:"background-color: yellow;"
+    ,blue:"background-color: lightblue;"
+    ,green:"background-color: lightgreen;"};
     var tbl =jQuery('#patientWaitingTableBody');
     tbl.html("Подождите...");
 
@@ -108,7 +112,7 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
                         var el = array[i];
                         var minutes = el.minutes;
                         var color="";
-                        if (minutes>119){color=colors.red} else if (minutes>89){color=colors.orange} else if (minutes>59) {color=colors.yellow} else if (minutes>29){color=colors.blue}
+                        if (minutes>119){color=colors.red} else if (minutes>89){color=colors.orange} else if (minutes>59) {color=colors.yellow} else if (minutes>29){color=colors.blue} else {color=colors.green;}
                         tbl.append("<tr"+(isDoctor ? " onclick=\"goToPageNewWindow('entityView-stac_ssl.do','"+el.id+"');\" ": "")+" style='"+color+"'>" +
                             "<td>"+el.patientInfo+"</td>" +
                             (isDoctor ? "<td>"+el.waitTime+"</td><td>"+el.startTime+"</td><td>"+el.departmentName+"</td>" +
