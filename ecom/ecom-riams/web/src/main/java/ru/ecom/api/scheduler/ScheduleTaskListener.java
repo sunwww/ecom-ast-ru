@@ -25,7 +25,6 @@ public class ScheduleTaskListener  implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         System.out.println("ScheduleTaskListener is start");
         try {
-            Thread.sleep(600000); //ждём 10 минут
             setScheduler(event);
         }catch (InterruptedException e) {
             e.printStackTrace();
@@ -58,7 +57,7 @@ public class ScheduleTaskListener  implements ServletContextListener {
         }
         catch (NamingException | JSONException e) {
             e.printStackTrace();
-            Thread.sleep(300000); //ждём ещё 5 минут
+            Thread.sleep(600000); //ждём 10 минут
             setScheduler(event); //вторая попытка
         }
     }
