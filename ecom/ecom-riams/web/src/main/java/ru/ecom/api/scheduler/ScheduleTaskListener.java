@@ -59,6 +59,7 @@ public class ScheduleTaskListener  implements ServletContextListener {
             e.printStackTrace();
             Thread.sleep(600000); //ждём 10 минут
             setScheduler(event); //вторая попытка
+            return; //выход из функции
         }
     }
     public void contextDestroyed(ServletContextEvent event) {
