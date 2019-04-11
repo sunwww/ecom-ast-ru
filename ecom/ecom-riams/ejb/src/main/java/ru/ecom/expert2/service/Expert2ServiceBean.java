@@ -20,10 +20,7 @@ import ru.ecom.mis.ejb.domain.medcase.*;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
-import ru.ecom.oncological.ejb.domain.OncologyCase;
-import ru.ecom.oncological.ejb.domain.OncologyContra;
-import ru.ecom.oncological.ejb.domain.OncologyDiagnostic;
-import ru.ecom.oncological.ejb.domain.OncologyDirection;
+import ru.ecom.oncological.ejb.domain.*;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
@@ -1309,6 +1306,21 @@ public class Expert2ServiceBean implements IExpert2Service {
                         cancerEntry.setRefusals(list);
                     }
                     try {
+                        List<OncologyDrug> drugList = oncologyCase.getDrugs();
+                        for (OncologyDrug drug : drugList) {
+                            E2CancerDrug cancerDrug = new E2CancerDrug(cancerEntry);
+                            cancerDrug.setDrug(drug.getDrug());
+                            List<E2CancerDrugDate> drugDates = new ArrayList<>();
+                            for (OncologyDrugDate oncologyDrugDate : drug.getDates()) {
+                                E2CancerDrugDate drugDate = new E2CancerDrugDate(cancerDrug);
+                                drugDate.setDate(oncologyDrugDate.getDate());
+                                drugDates.add(drugDate);
+                            }
+                            cancerDrug.setDates(drugDates);
+                            theManager.persist(cancerDrug);
+                        }
+                        LOG.info("Найдено нарКотиков = "+drugList.size());
+
                         List<OncologyDiagnostic> diags  = oncologyCase.getDiagnostics();
                         if (!diags.isEmpty()) {
                             List<E2CancerDiagnostic> list = new ArrayList<>();
@@ -1361,7 +1373,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     priority=ds.getString("priority");
                     if (mkb.startsWith("C") && priority.equals("1")) { //Если основной диагноз начинается с С*
                         isCancer=true;
-                        findCancerEntry(aEntry);
+
                     }
                     boolean isClinical=false;//,isDischarge=false;
                     if (!diagnosisMap.containsKey("MKB_"+mkb)) {
@@ -1406,7 +1418,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                     theManager.persist(diagnosis);
                     if (isClinical) {clinicalIds.add(diagnosis.getId());}
                 }
-                if (isCancer){aEntry.setIsCancer(true);theManager.persist(aEntry);}
+                if (isCancer || !aEntry.getCancerEntries().isEmpty()){aEntry.setIsCancer(true);
+                findCancerEntry(aEntry);
+                theManager.persist(aEntry);}
                 if (foundClinical && foundDischarge) { //Если нашли и клинический и выписной диагноз - удаляем клинический.
                     for (Long id:clinicalIds) {
                         theManager.createNativeQuery("delete from EntryDiagnosis where id=:id").setParameter("id",id).executeUpdate();

@@ -12,6 +12,7 @@ function onCreate(aForm, aEntity, aContext) {
         direction.setType(aForm.getDirectionType());
         direction.setSurveyMethod(aForm.getDirectionSurveyMethod());
         direction.setMedService(aForm.getDirectionMedService());
+        direction.setDirectLpu(aForm.getDirectionDirectLpu());
         aContext.manager.persist(direction);
     }
 

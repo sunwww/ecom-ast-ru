@@ -19,8 +19,12 @@
                     <msh:row>
                         <msh:autoComplete property="surveyMethod" vocName="vocOncologyMethodDiagTreatCode" size="50"/>
                         <msh:autoComplete property="medService" vocName="vocMedServiceCode" size="50"/>
-
                     </msh:row>
+                <msh:row>
+                    <msh:textField property="directLpu" />
+                </msh:row>
+
+
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1" />
             </msh:panel>
         </msh:form>

@@ -241,6 +241,14 @@ public class OncologyCase extends BaseEntity {
     public void setDiagnostics(List<OncologyDiagnostic> aDiagnostics) {theDiagnostics = aDiagnostics;}
     /** Диагностические блоки */
     private List<OncologyDiagnostic> theDiagnostics ;
+    
+    /** Лекарственные препараты */
+    @Comment("Лекарственные препараты")
+    @OneToMany(mappedBy = "oncologyCase", cascade = CascadeType.ALL)
+    public List<OncologyDrug> getDrugs() {return theDrugs;}
+    public void setDrugs(List<OncologyDrug> aDrugs) {theDrugs = aDrugs;}
+    /** Лекарственные препараты */
+    private List<OncologyDrug> theDrugs ;
 
     /** Диагноз, с которым создана онкологическая форма*/
     @Comment("Диагноз, с которым создана онкологическая форма")

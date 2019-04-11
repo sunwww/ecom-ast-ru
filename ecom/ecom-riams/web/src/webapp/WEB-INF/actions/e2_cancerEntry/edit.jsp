@@ -23,6 +23,9 @@
                         <msh:autoComplete property="directionType" vocName="vocOncologyTypeDirectionCode" size="50"/>
                     </msh:row>
                     <msh:row>
+                        <msh:textField property="directionDirectLpu" label="ЛПУ куда направляем"/>
+                    </msh:row>
+                    <msh:row>
                         <msh:autoComplete property="directionSurveyMethod" vocName="vocOncologyMethodDiagTreatCode" size="50"/>
                         <msh:autoComplete property="directionMedService" vocName="vocMedServiceCode" size="50"/>
 
@@ -107,17 +110,30 @@
     </msh:section>
 
     <msh:section title="Диагностика" createUrl="entityParentPrepareCreate-e2_cancerDiagnostic.do?id=${param.id}">
-        <ecom:webQuery name="diagnosticList" nativeSql="select d.id, d.type, d.code, d.result
+    <ecom:webQuery name="diagnosticList" nativeSql="select d.id, d.type, d.code, d.result
         from e2cancerdiagnostic d
   where d.cancerentry_id=${param.id} "/>
-        <msh:tableNotEmpty  name="diagnosticList"  >
-            <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDiagnostic.do" idField="1" name="diagnosticList" action="entityEdit-e2_cancerDiagnostic.do" >
-                <msh:tableColumn columnName="Тип" property="2"/>
-                <msh:tableColumn columnName="Код" property="3"/>
-                <msh:tableColumn columnName="Результат" property="4"/>
+    <msh:tableNotEmpty  name="diagnosticList"  >
+        <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDiagnostic.do" idField="1" name="diagnosticList" action="entityEdit-e2_cancerDiagnostic.do" >
+            <msh:tableColumn columnName="Тип" property="2"/>
+            <msh:tableColumn columnName="Код" property="3"/>
+            <msh:tableColumn columnName="Результат" property="4"/>
+        </msh:table>
+    </msh:tableNotEmpty>
+</msh:section>
+
+    <msh:section title="Лекарственные препараты" createUrl="entityParentPrepareCreate-e2_cancerDrug.do?id=${param.id}">
+        <ecom:webQuery name="drugList" nativeSql="select d.id, v020.name
+        from e2cancerdrug d
+        left join VocOncologyN020 v020 on v020.id=d.drug_id
+  where d.cancerentry_id=${param.id} "/>
+        <msh:tableNotEmpty  name="drugList"  >
+            <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDrug.do" idField="1" name="drugList" action="entityEdit-e2_cancerDrug.do" >
+                <msh:tableColumn columnName="Лекарство" property="2"/>
             </msh:table>
         </msh:tableNotEmpty>
     </msh:section>
+
 </msh:ifFormTypeIsView>
     </tiles:put>
     <tiles:put name="title" type="string">

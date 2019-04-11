@@ -132,7 +132,7 @@ public class E2CancerEntry extends BaseEntity {
 
   /** Список направления */
   @Comment("Список направления")
-  @OneToMany(mappedBy = "cancerEntry", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "cancerEntry", cascade = CascadeType.ALL)
   public List<E2CancerDirection> getDirections() {return theDirections;}
   public void setDirections(List<E2CancerDirection> aDirections) {theDirections = aDirections;}
   /** Список направления */
@@ -140,7 +140,7 @@ public class E2CancerEntry extends BaseEntity {
 
   /** Диагностические блоки */
   @Comment("Диагностические блоки")
-  @OneToMany(mappedBy = "cancerEntry", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "cancerEntry", cascade = CascadeType.ALL)
   public List<E2CancerDiagnostic> getDiagnostics() {return theDiagnostics;}
   public void setDiagnostics(List<E2CancerDiagnostic> aDiagnostics) {theDiagnostics = aDiagnostics;}
   /** Диагностические блоки */
@@ -148,10 +148,18 @@ public class E2CancerEntry extends BaseEntity {
 
   /** Противопоказания */
   @Comment("Противопоказания")
-  @OneToMany(mappedBy = "cancerEntry", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "cancerEntry", cascade = CascadeType.ALL)
   public List<E2CancerRefusal> getRefusals() {return theRefusals;}
   public void setRefusals(List<E2CancerRefusal> aRefusals) {theRefusals = aRefusals;}
   /** Противопоказания */
   private List<E2CancerRefusal> theRefusals ;
+
+  /** Лекарства */
+  @Comment("Лекарства")
+  @OneToMany(mappedBy = "cancerEntry", cascade = CascadeType.ALL)
+  public List<E2CancerDrug> getDrugs() {return theDrugs;}
+  public void setDrugs(List<E2CancerDrug> aDrugs) {theDrugs = aDrugs;}
+  /** Лекарства */
+  private List<E2CancerDrug> theDrugs ;
 
 }

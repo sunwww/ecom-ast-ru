@@ -348,11 +348,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 //*DN дисп. наблюдение
                 //*DN_DP дата след. Д визита
                 if (isCancer && cancerEntry!=null) { //NAPR
-                    if (cancerEntry.getMaybeCancer()) { //Заполняем информация при подозрении на ЗНО
-                        List<E2CancerDirection> directions = cancerEntry.getDirections();
-                        if (directions.isEmpty()) {
-                            LOG.error("Не указаны направления в то время, когда они должны быть указаны!" + currentEntry.getId() + " " + currentEntry.getHistoryNumber());
-                        }
+                  //  if (cancerEntry.getMaybeCancer()) { //Заполняем информация при подозрении на ЗНО
+                    List<E2CancerDirection> directions = cancerEntry.getDirections();
+                    if (!directions.isEmpty()) {
                         for (E2CancerDirection direction : directions) {
                             Element napr = new Element("NAPR");
                             napr = add(napr, "NAPR_DATE", direction.getDate());
@@ -387,12 +385,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         onkSl=addIfNotNull(onkSl,"ONK_M",cancerEntry.getMetastasis());
                         onkSl=addIfNotNull(onkSl,"MTSTZ",cancerEntry.getIsMetastasisFound());
                         onkSl=addIfNotNull(onkSl,"SOD",cancerEntry.getSod());
-                        List<E2CancerDiagnostic> directions= cancerEntry.getDiagnostics();
-                        for (E2CancerDiagnostic direction: directions){
+                        List<E2CancerDiagnostic> diagnostics= cancerEntry.getDiagnostics();
+                        for (E2CancerDiagnostic diagnostic: diagnostics){
                             Element dir = new Element("B_DIAG");
-                            dir=add(dir,"DIAG_TIP",direction.getType());
-                            dir=add(dir,"DIAG_CODE",direction.getCode());
-                            dir=add(dir,"DIAG_RSLT",direction.getResult());
+                            dir=add(dir,"DIAG_TIP",diagnostic.getType());
+                            dir=add(dir,"DIAG_CODE",diagnostic.getCode());
+                            dir=add(dir,"DIAG_RSLT",diagnostic.getResult());
                             onkSl.addContent(dir);
                         }
                         List<E2CancerRefusal> prots = cancerEntry.getRefusals();
@@ -412,8 +410,23 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             if (serviceType.equals("1")) onkUsl = addIfNotNull(onkUsl, "HIR_TIP", cancerEntry.getSurgicalType());
                             if (serviceType.equals("2")) onkUsl = addIfNotNull(onkUsl, "LEK_TIP_L", cancerEntry.getDrugLine());
                             if (serviceType.equals("2")) onkUsl = addIfNotNull(onkUsl, "LEK_TIP_V", cancerEntry.getDrugCycle());
-                            if (serviceType.equals("2")||serviceType.equals("4"))  onkUsl = addIfNotNull(onkUsl,"LEK_PR","LEK_PR"); //TODO реализовать информацию о лекарствах
-                            if (serviceType.equals("3")||serviceType.equals("4")) onkUsl = addIfNotNull(onkUsl, "LUCH_TIP", cancerEntry.getRadiationTherapy());
+                            if (serviceType.equals("2")||serviceType.equals("4")) { //Сведения о введенном противоопухолевом препарате
+                                List<E2CancerDrug> drugList = cancerEntry.getDrugs();
+                                for (E2CancerDrug drug : drugList) {
+                                    Element lekPr = new Element("LEK_PR");
+                                    add(lekPr, "REGNUM",drug.getDrug().getCode());
+                                    add(lekPr, "CODE_SH","нЕт"); //TODO переделать, если будет схема
+                                    if (drug.getDates() == null || drug.getDates().isEmpty()) {
+                                        theManager.persist(new E2EntryError(aEntry,"NO_DATE_IN_DRUG"));
+                                        return null;
+                                    }
+                                    for(E2CancerDrugDate drugDate : drug.getDates()) {
+                                        add(lekPr,"DATE_INJ",drugDate.getDate());
+                                    }
+                                    onkSl.addContent(lekPr);
+                                }
+                            }
+                            if (serviceType.equals("3")||serviceType.equals("4")) onkUsl = addIfNotNull(onkUsl, "LUCH_TIP", cancerEntry.getRadiationTherapy()); //Тип лучевой терапии
                             onkSl.addContent(onkUsl);
                         }
                         sl.addContent(onkSl);
