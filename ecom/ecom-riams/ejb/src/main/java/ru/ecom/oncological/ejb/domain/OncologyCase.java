@@ -60,6 +60,8 @@ public class OncologyCase extends BaseEntity {
     private Date dateCons;
     /** диагноз, с которым создана онкологическая форма*/
     private String theMKB;
+    /**Признак проведения профилактики тошноты и рвотного рефлекса*/
+    private Boolean isNauseaAndGagReflexPrev;
 
     @Comment("Подозрение на ЗНО")
     public Boolean getSuspicionOncologist() {
@@ -248,4 +250,8 @@ public class OncologyCase extends BaseEntity {
     public void setMKB(String aMKB) {
         theMKB = aMKB;
     }
+
+    @Comment("Признак проведения профилактики тошноты и рвотного рефлекса")
+    public Boolean getIsNauseaAndGagReflexPrev() { return isNauseaAndGagReflexPrev; }
+    public void setIsNauseaAndGagReflexPrev(Boolean nauseaAndGagReflexPrev) { isNauseaAndGagReflexPrev = nauseaAndGagReflexPrev; }
 }

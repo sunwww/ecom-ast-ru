@@ -25,31 +25,43 @@ public class ScheduleTaskListener  implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         System.out.println("ScheduleTaskListener is start");
         try {
-            IDisabilityService service1 = Injection.find(event,"riams")
-                    .getService(IDisabilityService.class);
-            String endpoint = service1.getSoftConfigValue("EndpointApi", null);
-            if(endpoint!=null){
-            endpoint = (endpoint.split("/")[2]).split(":")[0];
-            List<String> endpoints = getEndPoints();
-            for(String endp: endpoints){
-                if(endp.equals(endpoint)) {
-                    System.out.println(endp+" This is TRUE server");
-                    IWebQueryService service = Injection.find(event, "riams")
-                            .getService(IWebQueryService.class);
-                    Collection<WebQueryResult> list = service.executeNativeSql("select id,name,link, time from ScheduleTask");
-                    ScheduleTasks scheduleTasks = new ScheduleTasks();
-                    for (WebQueryResult wqr : list) {
-                        Long id = Long.valueOf(wqr.get1().toString());
-                        map = scheduleTasks.startThread(id, wqr.get2().toString(), wqr.get3().toString(), wqr.get4().toString());
-                    }
-                    break;
-                }
-            }}
-        }catch (NamingException | JSONException e) {
+            setScheduler(event);
+        }catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-
+    private void setScheduler(ServletContextEvent event) throws InterruptedException{
+        try {
+            IDisabilityService service1 = Injection.find(event, "riams")
+                    .getService(IDisabilityService.class);
+            String endpoint = service1.getSoftConfigValue("EndpointApi", null);
+            if (endpoint != null) {
+                endpoint = (endpoint.split("/")[2]).split(":")[0];
+                List<String> endpoints = getEndPoints();
+                for (String endp : endpoints) {
+                    if (endp.equals(endpoint)) {
+                        System.out.println(endp + " This is TRUE server");
+                        IWebQueryService service = Injection.find(event, "riams")
+                                .getService(IWebQueryService.class);
+                        Collection<WebQueryResult> list = service.executeNativeSql("select id,name,link, time from ScheduleTask");
+                        ScheduleTasks scheduleTasks = new ScheduleTasks();
+                        for (WebQueryResult wqr : list) {
+                            Long id = Long.valueOf(wqr.get1().toString());
+                            map = scheduleTasks.startThread(id, wqr.get2().toString(), wqr.get3().toString(), wqr.get4().toString());
+                        }
+                        break;
+                    }
+                }
+            }
+            return;
+        }
+        catch (NamingException | JSONException e) {
+            e.printStackTrace();
+            Thread.sleep(600000); //ждём 10 минут
+            setScheduler(event); //вторая попытка
+            return; //выход из функции
+        }
+    }
     public void contextDestroyed(ServletContextEvent event) {
         System.out.println("ScheduleTaskListener is destroyed");
         for (Map.Entry entry : map.entrySet()) {

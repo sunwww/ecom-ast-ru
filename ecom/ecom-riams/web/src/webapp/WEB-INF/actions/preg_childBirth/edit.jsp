@@ -350,7 +350,7 @@
               txt+="</tbody></table>";
               document.getElementById('classRobsonsDiv').innerHTML+=txt;
               <msh:ifFormTypeAreViewOrEdit formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
-              document.getElementById('yesNo'+$('robsonClass').value).selectedIndex=1;
+              if (document.getElementById('yesNo'+$('robsonClass').value)) document.getElementById('yesNo'+$('robsonClass').value).selectedIndex=1;
               </msh:ifFormTypeAreViewOrEdit>
               loadSubs();
           }

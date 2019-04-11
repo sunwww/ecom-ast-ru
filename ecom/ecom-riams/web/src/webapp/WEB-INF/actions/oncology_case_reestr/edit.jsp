@@ -38,11 +38,13 @@
                 <msh:hidden guid="histString" property="histString" />
                 <msh:hidden guid="surgTreatment" property="surgTreatment" />
                 <msh:hidden guid="lineDrugTherapy" property="lineDrugTherapy" />
+                <msh:hidden guid="cycleDrugTherapy" property="cycleDrugTherapy" />
                 <msh:hidden guid="typeTreatment" property="typeTreatment" />
                 <msh:hidden guid="contraString" property="contraString" />
                 <msh:hidden guid="methodDiagTreat" property="typeTreatment" />
                 <msh:hidden guid="medService" property="contraString" />
                 <msh:hidden property="isFirst" />
+                <msh:hidden property="isNauseaAndGagReflexPrev" />
                 <msh:hidden property="MKB" />
                 <div id="vocOncologyReasonTreatDiv">
                     <label><b>Повод обращения (4):</b></label><br>
@@ -188,7 +190,7 @@
             document.getElementById("date5").style="margin-left:71px";
             document.getElementById("date6").style="margin-left:165px";
             //для экономии времени нужные массивы для лечения
-            var mas1=[], mas2=[];
+            var mas1=[], mas2=[], mas3=[];
             for(var i=1; i<=6; i++) checkDateContra(document.getElementById("c"+i));
             document.getElementById("c1").onclick=document.getElementById("c2").onclick=
                 document.getElementById("c3").onclick=document.getElementById("c4").onclick=
@@ -491,6 +493,7 @@
                 var histologyChb3=document.getElementById("histologyChb3");
                 var vocOncologyN013_1=document.getElementById("vocOncologyN013_1");
                 var vocOncologyN013_2=document.getElementById("vocOncologyN013_2");
+                var vocOncologyN013_4=document.getElementById("vocOncologyN013_4");
                 var ds=document.getElementById("ds").innerHTML.replace("Диагноз (по МКБ-10): ","");
                 ds=ds.substring(0,ds.indexOf(" "));
                 btn.value='Создание...';
@@ -668,6 +671,16 @@
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
+                else if (vocOncologyN013_4.checked && getValueVocRadiooncoT('vocOncologyN015')==-1) {
+                    alert("Отмечена лекарственная противоопухолевая терапия, выберите линию терапии.");
+                    btn.removeAttribute("disabled");
+                    btn.value='Создать';
+                }
+                else if (vocOncologyN013_4.checked && getValueVocRadiooncoT('vocOncologyN016')==-1) {
+                    alert("Отмечена лекарственная противоопухолевая терапия, выберите цикл линии.");
+                    btn.removeAttribute("disabled");
+                    btn.value='Создать';
+                }
                 else if (vocOncologyN013_1.checked && getValueVocRadiooncoT('vocOncologyN014')==-1) {
                     alert("Отмечено хирургическое лечение, выберите подпункт.");
                     btn.removeAttribute("disabled");
@@ -703,7 +716,7 @@
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
-                else if (!vocOncologyN013_1.checked && !vocOncologyN013_2.checked && !document.getElementById('vocOncologyN013_3').checked) {
+                else if (!vocOncologyN013_1.checked && !vocOncologyN013_2.checked && !document.getElementById('vocOncologyN013_3').checked && !document.getElementById('vocOncologyN013_4').checked) {
                     alert("Должен быть выбран тип лечения!");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
@@ -730,6 +743,21 @@
                     if (getValueVocRadiooncoT('vocOncologyN014')!=-1) {
                         $('surgTreatment').value=getValueVocRadiooncoT('vocOncologyN014','vocOncologyN014');
                         $('typeTreatment').value=document.getElementById("vocOncologyN013_1").value;
+                    }
+                    else $('surgTreatment').value=null;
+                    if (getValueVocRadiooncoT('vocOncologyN015')!=-1) {
+                        $('lineDrugTherapy').value=getValueVocRadiooncoT('vocOncologyN015','vocOncologyN015');
+                        $('typeTreatment').value=document.getElementById("vocOncologyN013_4").value;
+                    }//если не выбрана, затираем подпункты
+                    else $('lineDrugTherapy').value=null;
+                    if (getValueVocRadiooncoT('vocOncologyN016')!=-1) {
+                        $('cycleDrugTherapy').value=getValueVocRadiooncoT('vocOncologyN016','vocOncologyN016');
+                        $('typeTreatment').value=document.getElementById("vocOncologyN013_4").value;
+                        $('isNauseaAndGagReflexPrev').value=document.getElementsByName("typeNauseaOrNot")[0].checked;
+                    }
+                    else {
+                        $('cycleDrugTherapy').value=null;
+                        $('isNauseaAndGagReflexPrev').value=null;
                     }
                     if (document.getElementById("vocOncologyN013_2").checked) $('typeTreatment').value=document.getElementById("vocOncologyN013_2").value;
                     if (document.getElementById("vocOncologyN013_3").checked) $('typeTreatment').value=document.getElementById("vocOncologyN013_3").value;
@@ -1062,6 +1090,19 @@
                                 document.getElementById("vocOncologyN014" + $('surgTreatment').value).checked = 'checked';
                             for (var i = 0; i < document.getElementsByName("vocOncologyN014").length; i++) (document.getElementsByName("vocOncologyN014")[i]).removeAttribute("disabled");
                         }
+                        if (val == '4' && $('lineDrugTherapy').value != null && $('lineDrugTherapy').value != '' && $('lineDrugTherapy').value != '0') {
+                            document.getElementById("vocOncologyN015" + $('lineDrugTherapy').value).checked = 'checked';
+                            if (document.getElementById("vocOncologyN016" + $('cycleDrugTherapy').value))
+                                document.getElementById("vocOncologyN016" + $('cycleDrugTherapy').value).checked = 'checked';
+                            for (var i = 0; i < document.getElementsByName("vocOncologyN015").length; i++) (document.getElementsByName("vocOncologyN015")[i]).removeAttribute("disabled");
+                            for (var i = 0; i < document.getElementsByName("vocOncologyN016").length; i++) (document.getElementsByName("vocOncologyN016")[i]).removeAttribute("disabled");
+                            if (document.getElementById('nauseaDiv')) document.getElementById('nauseaDiv').removeAttribute('hidden');
+                            <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
+                            for (var i = 0; i < document.getElementsByName("typeNauseaOrNot").length; i++) (document.getElementsByName("typeNauseaOrNot")[i]).removeAttribute("disabled");
+                            </msh:ifFormTypeIsNotView>
+                            if ($('isNauseaAndGagReflexPrev').value=="true") document.getElementsByName("typeNauseaOrNot")[0].checked = 'checked';
+                            else document.getElementsByName("typeNauseaOrNot")[1].checked = 'checked';
+                        }
                     }
                 }
             }
@@ -1080,8 +1121,9 @@
                 var ind=-1;
                 var mas=document.getElementsByName("vocOncologyN013");
                 if (mas[0].value==$('typeTreatment').value) ind=1;
-                if (mas[1].value==$('typeTreatment').value) ind=2;
-                if (mas[2].value==$('typeTreatment').value) ind=3;
+                if (mas[1].value==$('typeTreatment').value) ind=4;
+                if (mas[2].value==$('typeTreatment').value) ind=2;
+                if (mas[3].value==$('typeTreatment').value) ind=3;
                 if (ind!=-1 &&  document.getElementById("vocOncologyN013_"+ind)) document.getElementById("vocOncologyN013_"+ind).checked='checked';
                 return ind;
             }
@@ -1373,7 +1415,7 @@
                                 var code,name,id,style;
                                 var outerId='';
                                 if (i==0) {
-                                    txt+="<td id='td"+voc+"' onclick=\"this.childNodes[0].checked='checked'; ch1();\" colspan=\"1\">";
+                                    txt+="<td id='td"+voc+"' onclick=\"this.childNodes[0].checked='checked'; ch1(); ch2();\" colspan=\"1\">";
                                     code=vals[0]; name=vals[1]; style="\"margin:3px\"";
                                     txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc.replace('_1','') + "' id='" + voc + "'";
                                     if (disabled)   txt += " disabled="+disabled;
@@ -1388,7 +1430,7 @@
                             }
                             txt+="</tbody></table>";
                             document.getElementById(divId).innerHTML+=txt;
-                            justAnotheroncoT(divId,ids2,ids3,disabled);
+                            drugAgainstTumoroncoT(divId,ids2,ids3,disabled);
                         }
                     }
                     });
@@ -1404,7 +1446,7 @@
                             if (res!="##") {
                                 var row=res.split("!");
                                 for(var i=0; i<row.length-1; i++) {
-                                    txt+="<td onclick=\"this.childNodes[0].checked='checked'; ch1();\" colspan=\"1\">";
+                                    txt+="<td onclick=\"this.childNodes[0].checked='checked'; ch1(); ch2();\" colspan=\"1\">";
                                     voc=(i==0)? "vocOncologyN013_2":"vocOncologyN013_3";
                                     var style="\"margin:3px\"";
                                     var code=res.split("!")[i].split("#")[0], name=res.split("!")[i].split("#")[1];
@@ -1420,6 +1462,82 @@
                             setOnInput();
                         }});
             }
+            //лекарственная противоопухолевая терапия
+            function drugAgainstTumoroncoT(divId,ids2,ids3,disabled) {
+                var txt="<table><tbody>";
+                var voc="vocOncologyN013_4",voc2='vocOncologyN015';
+                OncologyService.getTreatment("n13.id as n13c,n13.name as n13n,n15.id as n15c,n15.name as n15n",
+                    "VocOncologyN013 n13,VocOncologyN015 n15","n13.code='2'","n15.id",{
+                        callback : function(res) {
+                            if (res!="##") {
+                                var row=res.split("!");
+                                mas2=row;
+                                for(var i=0; i<row.length-1; i++) {
+                                    var vals = row[i].split("#");
+                                    var code,name,id,style;
+                                    if (i==0) {
+                                        txt+="<td id='td"+voc+"' onclick=\"this.childNodes[0].checked='checked'; ch1(); ch2();\" colspan=\"1\">";
+                                        code=vals[0]; name=vals[1]; style="\"margin:3px\"";
+                                        txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc.replace('_4','') + "' id='" + voc + "'";
+                                        if (disabled)   txt += " disabled="+disabled;
+                                        txt +=  " value='" + code + "'>"+ name+"</td></tr>";
+                                        code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
+                                        txt+="<tr><td><label style=\"\"margin:6px;margin-left:12px;\"><u>Линия лекарственной терапии:</u><br></label></td></tr>";
+                                    } else {
+                                        code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
+                                    }
+                                    txt+="<tr><td onclick=\"if (document.getElementById('vocOncologyN013_4') && document.getElementById('vocOncologyN013_4').checked) this.childNodes[0].checked='checked';\"><input type='"+'radio'+"' style=" + style + " name='" + voc2 + "' id='" + voc2 + code + "'";
+                                    txt += " disabled="+true;
+                                    txt +=  " value='" + code + "'>"+ name +"</td></tr>";
+                                }
+                                txt+="</tbody></table><br>";
+                                document.getElementById(divId).innerHTML+=txt;
+                                drugCycles(divId,ids2,ids3,disabled);
+                            }
+                        }
+                    });
+            }
+            //циклы лекарств. терапии
+            function drugCycles(divId,ids2,ids3,disabled) {
+                var txt="<table><tbody>";
+                var voc="vocOncologyN013_4",voc2='vocOncologyN016';
+                OncologyService.getTreatment("n16.id as n16c,n16.name as n16n",
+                    "VocOncologyN013 n13,VocOncologyN016 n16","n13.code='2'","n16.id",{
+                        callback : function(res) {
+                            if (res!="##") {
+                                var row=res.split("!");
+                                mas3=row;
+                                txt+="<tr><td><label style=\"\"margin:6px;margin-left:12px;\"><u>Цикл лекарственной терапии:</u></label></td></tr>";
+                                for(var i=0; i<row.length-1; i++) {
+                                    var vals = row[i].split("#");
+                                    var code,name,id,style;
+                                    code=vals[0]; name=vals[1]; style="\"margin:6px;margin-left:12px;\""
+                                    txt+="<tr><td onclick=\"if (document.getElementById('vocOncologyN013_4') && document.getElementById('vocOncologyN013_4').checked) this.childNodes[0].checked='checked';\"><input type='"+'radio'+"' style=" + style + " name='" + voc2 + "' id='" + voc2 + code + "'";
+                                    txt += " disabled="+true;
+                                    txt +=  " value='" + code + "'>"+ name +"</td></tr>";
+                                }
+                                txt+="</tbody></table>";
+                                txt+="<div hidden id=\"nauseaDiv\">" +
+                                    "<label style=\"margin:3px\"><u>Признак проведения профилактики тошноты и рвотного рефлекса:</u></label>" +
+                                    "<table><tbody><tr>" +
+                                    "<td onclick=\"this.childNodes[0].checked='checked';\" colspan=\"1\">" +
+                                    "<input  style=\"margin:6px;margin-left:12px;\" type=\"radio\" name=\"typeNauseaOrNot\" value=\"1\"> Да" +
+                                    "</td>" +
+                                    "<td onclick=\"this.childNodes[0].checked='checked';\" colspan=\"2\">" +
+                                    "<input  style=\"margin:6px;margin-left:12px;\" type=\"radio\" name=\"typeNauseaOrNot\" value=\"2\"> Нет" +
+                                    "</td></tr>" +
+                                    "</tbody></table>" +
+                                    "</div>";
+                                document.getElementById(divId).innerHTML+=txt;
+                                <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
+                                document.getElementsByName("typeNauseaOrNot")[1].checked=true;
+                                </msh:ifFormTypeIsCreate>
+                                justAnotheroncoT(divId,ids2,ids3,disabled);
+                            }
+                        }
+                    });
+
+            }
             //очистить иммуног. и маркёры
             function cleanI() {
                 var radios = document.getElementsByTagName('input');
@@ -1430,13 +1548,16 @@
             //set onclick
             function setOnInput() {
                 document.getElementById('vocOncologyN013_1').onclick = function () {
-                    ch1();
+                    ch1(); ch2();
                 };
                 document.getElementById("vocOncologyN013_2").onclick = function () {
-                    ch1();
+                    ch1(); ch2();
                 };
                 document.getElementById("vocOncologyN013_3").onclick = function () {
-                    ch1();
+                    ch1(); ch2();
+                };
+                document.getElementById("vocOncologyN013_4").onclick = function () {
+                    ch1(); ch2();
                 };
             }
             function ch1() {
@@ -1445,6 +1566,25 @@
                     var vals = mas1[i].split("#");
                     setDisableEnableChb('vocOncologyN014',vals[2],disable);
                 }
+                if (!document.getElementById('vocOncologyN013_4').checked) {
+                    document.getElementsByName("typeNauseaOrNot")[1].checked = 'checked';
+                    $('isNauseaAndGagReflexPrev').value=false;
+                }
+            }
+            function ch2() {
+                var disable = (document.getElementById("vocOncologyN013_4").checked) ? false : true;
+                for (var i=0; i<mas2.length-1; i++) {
+                    var vals = mas2[i].split("#");
+                    setDisableEnableChb('vocOncologyN015',vals[2],disable);
+                }
+                for (var i=0; i<mas3.length-1; i++) {
+                    var vals = mas3[i].split("#");
+                    setDisableEnableChb('vocOncologyN016',vals[0],disable);
+                }
+                if (!disable) document.getElementById('nauseaDiv').removeAttribute('hidden');
+                else document.getElementById('nauseaDiv').setAttribute('hidden',true);
+                if ($('isNauseaAndGagReflexPrev').value=="true") document.getElementsByName("typeNauseaOrNot")[0].checked = 'checked';
+                else document.getElementsByName("typeNauseaOrNot")[1].checked = 'checked';
             }
             //Скрыть див для редактирования
             function disableAll() {
