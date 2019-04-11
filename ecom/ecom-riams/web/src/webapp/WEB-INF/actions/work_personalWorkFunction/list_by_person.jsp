@@ -12,6 +12,7 @@
   	<ecom:webQuery name="list" nativeSql="
   		select wf.id as wfid,vwf.name as vwfname,su.login as sulogin,ml.name as mlname,wf.code
   		,gwf.groupName as groupName
+  		,case when wf.archival='1' then 'color: red' end as f7_styleRow
   		from WorkFunction wf
   		left join workfunction gwf on gwf.id=wf.group_id
   		left join Worker w on w.id=wf.worker_id
@@ -20,7 +21,7 @@
   		left join SecUser su on su.id=wf.secUser_id
   		where w.person_id=${param.id}
   	"/>
-    <msh:table name="list" action="entityView-work_personalWorkFunction.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="list" styleRow="7" action="entityView-work_personalWorkFunction.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
       <msh:tableColumn columnName="ИД" property="1" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
       <msh:tableColumn columnName="Код специалиста" property="5" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
