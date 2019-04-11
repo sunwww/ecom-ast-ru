@@ -68,6 +68,8 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     private Long typeRadTherapy;
     /** диагноз, с которым создана онкологическая форма*/
     private String theMKB;
+    /**Признак проведения профилактики тошноты и рвотного рефлекса*/
+    private Boolean isNauseaAndGagReflexPrev;
 
     @Persist
     public Long getMedCase() {
@@ -334,4 +336,8 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     public void setMKB(String aMKB) {
         theMKB = aMKB;
     }
+
+    @Persist
+    public Boolean getIsNauseaAndGagReflexPrev() { return isNauseaAndGagReflexPrev; }
+    public void setIsNauseaAndGagReflexPrev(Boolean nauseaAndGagReflexPrev) { isNauseaAndGagReflexPrev = nauseaAndGagReflexPrev; }
 }
