@@ -215,17 +215,22 @@
     </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/View,/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" guid="4cc62e2b-bf2a-4839-8bab-481886e8e721">
          <ecom:webQuery name="diags" nativeSql="
-         select Diagnosis.id as did, VocDiagnosisRegistrationType.name as vdrtname
-         ,Diagnosis.establishDate as establishDate
-         ,Diagnosis.name as dname,VocIdc10.code as mkbcode
+         select d.id as did, VocDiagnosisRegistrationType.name as vdrtname
+         ,d.establishDate as establishDate
+         ,d.name as dname,VocIdc10.code as mkbcode
          ,VocPriorityDiagnosis.name as vpdname  
          ,mkbB.code||' ' ||mkbB.name as backgroundName
-         from Diagnosis
-         left join VocIdc10 mkbB on mkbB.id=Diagnosis.backgroundDisease_id
-         left outer join VocDiagnosisRegistrationType on Diagnosis.registrationType_id = VocDiagnosisRegistrationType.id 
-         left outer join VocPriorityDiagnosis on Diagnosis.priority_id = VocPriorityDiagnosis.id
-         left outer join VocIdc10     on Diagnosis.idc10_id = VocIdc10.id
-         where Diagnosis.medCase_id=${param.id}" />
+         ,vwf.name || ' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as f8_worker
+         from Diagnosis d
+         left join VocIdc10 mkbB on mkbB.id=d.backgroundDisease_id
+         left outer join VocDiagnosisRegistrationType on d.registrationType_id = VocDiagnosisRegistrationType.id
+         left outer join VocPriorityDiagnosis on d.priority_id = VocPriorityDiagnosis.id
+         left outer join VocIdc10 on d.idc10_id = VocIdc10.id
+         left join workfunction wf on wf.id=d.medicalWorker_id
+         left join worker w on w.id=wf.worker_id
+         left join patient wpat on wpat.id=w.person_id
+         left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+         where d.medCase_id=${param.id}" />
         <msh:section createRoles="/Policy/Mis/MedCase/Diagnosis/Create" createUrl="entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }"
          title="Диагнозы" >
           <msh:table name="diags" action="entityParentView-stac_diagnosis.do" idField="1" guid="7312ce0c-0c61-482d-9079-71b2a0f29484">
@@ -236,6 +241,7 @@
             <msh:tableColumn columnName="Наименование" property="4" guid="2a519337-384d-4695-9d19-72dd7e02936c" />
             <msh:tableColumn columnName="Код МКБ" property="5" guid="150732a8-0a5a-4ac3-bbbb-9ff669be37a6" />
             <msh:tableColumn columnName="Фоновое заболевание" property="7" guid="150732a8-0a5a-4ac3-bbbb-9ff669be37a6" />
+            <msh:tableColumn columnName="Установил" property="8" guid="150732a8-0a5a-4ac3-bbbb-9ff669be37a6" />
           </msh:table>
         </msh:section>
       </msh:ifInRole>
