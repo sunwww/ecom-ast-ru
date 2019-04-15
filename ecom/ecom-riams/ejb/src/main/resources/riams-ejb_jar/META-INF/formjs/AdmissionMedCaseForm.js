@@ -18,20 +18,15 @@ function onPreCreate(aForm, aCtx) {
     var cal = java.util.Calendar.getInstance() ;
 	cal.setTime(date) ;
 	var year = cal.get(java.util.Calendar.YEAR) ;
- 	var ret = false ;
 	var aStatCardNumber = aForm.statCardNumber ;
 	if (aStatCardNumber!=null && aStatCardNumber!="") {
-		var list = aCtx.manager.createQuery("from StatisticStub where code=:number and year=:year and DTYPE='StatisticStubExist'")
-			.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year)).getResultList() ;
-		ret = (list==null || list.isEmpty()) ? false : true ;
+		if (!aCtx.manager.createQuery("from StatisticStub where code=:number and year=:year and DTYPE='StatisticStubExist'")
+			.setParameter("number", aStatCardNumber)
+			.setParameter("year",java.lang.Long.valueOf(year)).getResultList().isEmpty()
+		) {
+			throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
+		}
 	}
-	if (ret==true) {
-		throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
-	}
-
-
-
-	
 }
 function onCreate(aForm, aEntity, aCtx) { 
 	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
@@ -84,6 +79,8 @@ function onCreate(aForm, aEntity, aCtx) {
 		list.setMedCase(aEntity);
 		list.setCreateUsername(aForm.username);
 		aCtx.manager.persist(list);
+
+	chekIfOutOfReceivingDep(aForm,aEntity,aCtx);
 }
 //Закрытие СПО по id (взято с SmoVisitService) - датой последнего визита
 function closeSpo(aContext, aSpoId) {
@@ -185,6 +182,7 @@ function onPreDelete(aMedCaseId, aContext) {
 }
 
 function onSave(aForm,aEntity,aCtx) {
+	chekIfOutOfReceivingDep(aForm,aEntity,aCtx);
 	//aEntity.setEditTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 
 
@@ -201,7 +199,6 @@ function onSave(aForm,aEntity,aCtx) {
 }
 
 function onPreSave(aForm,aEntity, aCtx) {
-    chekIfOutOfReceivingDep(aForm,aEntity,aCtx);
 	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
 	if (pat.getDeathDate()!=null) {
 		
@@ -352,13 +349,14 @@ function onPreSave(aForm,aEntity, aCtx) {
 	    	} else{
 	    		var year = aForm.getDateStart().substring(6) ;
 	    		//throw ""+year ;
-	    		var list = aCtx.getManager()
+	    		if (!aCtx.getManager()
 	    				.createNativeQuery("select id from StatisticStub where medCase_id='"+aForm.getId()+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
 	    			.setParameter("number", statCardNumber)
 	    			.setParameter("year",java.lang.Long.valueOf(year))
-	    			.getResultList() ;
+	    			.getResultList().isEmpty())  {
+					throw "Номер стат. карты "+statCardNumber+" в "+year+" уже зарегистрирован!!!" ;
+				}
 	    		
-	    		if (list.size()>0) throw "Номер стат. карты "+statCardNumber+" в "+year+" уже зарегистрирован!!!" ;
 	    	}
     	}
     }
@@ -375,7 +373,7 @@ function sendMsg(aForm,aEntity, aCtx,user) {
 	    		
 	    		//здесь код, а потом этот код - в условия n!=171
 	    	//	var listnat =  aCtx.getManager().createNativeQuery("select name from Omc_Oksm where id='" + n + "'").getResultList() ; 
-	    		var list = aCtx.getManager().createNativeQuery("select name from mislpu where id='" + aForm.getDepartment() + "'").getResultList() ;
+	    		var list = aCtx.getManager().createNativeQuery("select name from mislpu where id=" + aForm.getDepartment() ).getResultList() ;
 	    		var m = "Гражданин (" + nationality.getName() + ") " + pat.getPatientInfo() + " госпитализирован в " + list.get(0);
 	    		var mes = new Packages.ru.ecom.ejb.services.live.domain.CustomMessage() ;
 				mes.setMessageText(m) ;
@@ -396,14 +394,17 @@ function sendMsg(aForm,aEntity, aCtx,user) {
 //Milamesher 06092018 проверка на выбыл ли пациент из приёмника
 //выбывает в случае, если меняется поле отказа с null на не null и наоборот
 function chekIfOutOfReceivingDep(aForm,aEntity, aCtx) {
-	if (aEntity!=null) {
-        var list = aCtx.manager.createNativeQuery("select deniedhospitalizating_id from medcase where id=" + aEntity.id).setMaxResults(1).getResultList();
-        var oldVal = list.size() > 0 ? list.get(0) : null;
-        var newVal = aForm.deniedHospitalizating;
-        var date = new java.util.Date();
-        if (oldVal == null && newVal != '0' || oldVal != null && newVal == '0') {
-            aForm.setTransferDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
-            aForm.setTransferTime(new java.sql.Time(date.getTime()));
-        }
-    }
+	var date = new java.util.Date().getTime() ;
+		if (aForm.deniedHospitalizating>0
+			&& aCtx.manager.createNativeQuery("select id from VocDeniedHospitalizating where id=" + aForm.deniedHospitalizating+" and code='IN_PIGEON_HOLE'").setMaxResults(1).getResultList().isEmpty()) { //отказ от госпитализации
+			if (aEntity.deniedHospitalizating == null || aForm.deniedHospitalizating !== aEntity.deniedHospitalizating.id ) { //если новая причина отказа != старой причине отказа
+				aEntity.setTransferDate(new java.sql.Date(date));
+				aEntity.setTransferTime(new java.sql.Time(date));
+				aCtx.manager.persist(aEntity);
+			}
+		} else { //нет отказа - нет даты выбытия из приемника
+			aEntity.setTransferDate(null);
+			aEntity.setTransferTime(null);
+			aCtx.manager.persist(aEntity);
+		}
 }
