@@ -1030,45 +1030,28 @@ where m.id ='${param.id}'"/>
                 }
             }
 
-
-
-
             function goDischarge() {
                 window.location = 'entityParentEdit-stac_sslDischarge.do?id='+$('parent').value+"&tmp="+Math.random() ;
             }
+            eventutil.addEventListener($('dateStart'),'blur',function(){updateLpuAndDate() ;}) ;
             $('lpuAndDate').value = (+$('department').value) +"#"+(+$('serviceStream').value)+"#" +$('dateStart').value;
             lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
             bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
             serviceStreamAutocomplete.setParentId(lpuDate) ;
-            //kindHighCareAutocomplete.setParentId(+$('serviceStream').value) ;
-            //bedFundAutocomplete.setVocId(theBedFund);
-            //alert(departmentAutocomplete) ;
-            //transferDepartmentAutocomplete.setParentId($('lpu').value) ;
 
             if (bedFundAutocomplete) bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
             serviceStreamAutocomplete.addOnChangeCallback(function() {
                 $('bedFund').value="";
                 $('bedFundName').value="";
-
-                //$('kindHighCare').value = "" ;
-                //$('kindHighCareName').value = "" ;
-                //kindHighCareAutocomplete.setParentId(+$('serviceStream').value) ;
-
                 updateLpuAndDate() ;
                 updateBedFund() ;
-
             });
             updateLpuAndDate() ;
             function updateLpuAndDate() {
-                //var serviceStream=+$('serviceStream').value ;
                 $('lpuAndDate').value = (+$('department').value) +"#"+(+$('serviceStream').value)+"#" +$('dateStart').value;
-                //lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
-                //alert("lpuAndDate"+$('lpuAndDate').value) ;
                 lpuDate = (+$('department').value) +"#"+$('dateStart').value ;
                 bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
                 serviceStreamAutocomplete.setParentId(lpuDate) ;
-                //var id = $('bedFund').value ;
-                //bedFundAutocomplete.setVocId(id);
             }
             function updateBedFund() {
                 HospitalMedCaseService.getDefaultBedFundBySlo($('parent').value
