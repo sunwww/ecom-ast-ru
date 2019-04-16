@@ -19,6 +19,10 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 public class E2EntryForm extends IdEntityForm {
 
 //----------все поля ниже добавлены на jsp!!!
+    /** Рост пациента */
+    private Integer theHeight ;
+    /** Вес пациента */
+    private Integer theWeigth ;
     /** Профиль койки */
     private Long theBedProfile ;
     /** Комментарии эксперта */
@@ -978,12 +982,20 @@ public class E2EntryForm extends IdEntityForm {
     public String getComment() {return theComment;}
     public void setComment(String aComment) {theComment = aComment;}
 
-
     @Comment("Профиль койки")
     @Persist
     public Long getBedProfile() {return theBedProfile;}
     public void setBedProfile(Long aBedProfile) {theBedProfile = aBedProfile;}
 
+    @Comment("Рост пациента")
+    @Persist
+    public Integer getHeight() {return theHeight;}
+    public void setHeight(Integer aHeight) {theHeight = aHeight;}
+
+    @Comment("Вес пациента")
+    @Persist
+    public Integer getWeigth() {return theWeigth;}
+    public void setWeigth(Integer aWeigth) {theWeigth = aWeigth;}
 
     //Ниже идут Нехранимые поля!!!
 

@@ -378,13 +378,19 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             theManager.persist(new E2EntryError(currentEntry,"NO_CANCERINFO"));
                             return null;
                         }
-                        onkSl=add(onkSl,"DS1_T",cancerEntry.getOccasion());
-                        onkSl=addIfNotNull(onkSl,"STAD",cancerEntry.getStage());
-                        onkSl=addIfNotNull(onkSl,"ONK_T",cancerEntry.getTumor());
-                        onkSl=addIfNotNull(onkSl,"ONK_N",cancerEntry.getNodus());
-                        onkSl=addIfNotNull(onkSl,"ONK_M",cancerEntry.getMetastasis());
-                        onkSl=addIfNotNull(onkSl,"MTSTZ",cancerEntry.getIsMetastasisFound());
-                        onkSl=addIfNotNull(onkSl,"SOD",cancerEntry.getSod());
+                        String serviceType = cancerEntry.getServiceType()!=null?cancerEntry.getServiceType():"";
+                        add(onkSl,"DS1_T",cancerEntry.getOccasion());
+                        addIfNotNull(onkSl,"STAD",cancerEntry.getStage());
+                        addIfNotNull(onkSl,"ONK_T",cancerEntry.getTumor());
+                        addIfNotNull(onkSl,"ONK_N",cancerEntry.getNodus());
+                        addIfNotNull(onkSl,"ONK_M",cancerEntry.getMetastasis());
+                        addIfNotNull(onkSl,"MTSTZ",cancerEntry.getIsMetastasisFound());
+                        addIfNotNull(onkSl,"SOD",cancerEntry.getSod());
+                        //K_FR
+                        if (serviceType.equals("2")) {
+                            add(onkSl,"WEI",currentEntry.getWeigth());
+                            add(onkSl,"HEI",currentEntry.getHeight());
+                        }
                         List<E2CancerDiagnostic> diagnostics= cancerEntry.getDiagnostics();
                         for (E2CancerDiagnostic diagnostic: diagnostics){
                             Element dir = new Element("B_DIAG");
@@ -402,14 +408,18 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                         if (isHosp ||isVmp) {
                             Element onkUsl = new Element("ONK_USL");
-                            String serviceType = cancerEntry.getServiceType()!=null?cancerEntry.getServiceType():"";
-                            if (serviceType.equals("2")|| serviceType.equals("4")) {
-                                theManager.persist(new E2EntryError(currentEntry,"ONCOLOGY_CASE_DRUG","Не может быть вид онколечения: "+serviceType+" лек. или химиолучевая терапия"));
+
+                            if ( serviceType.equals("4")) {
+                                theManager.persist(new E2EntryError(currentEntry,"ONCOLOGY_CASE_DRUG","Не может быть вид онколечения: "+serviceType+" химиолучевая терапия"));
                             }
-                            onkUsl = add(onkUsl, "USL_TIP", serviceType);
-                            if (serviceType.equals("1")) onkUsl = addIfNotNull(onkUsl, "HIR_TIP", cancerEntry.getSurgicalType());
-                            if (serviceType.equals("2")) onkUsl = addIfNotNull(onkUsl, "LEK_TIP_L", cancerEntry.getDrugLine());
-                            if (serviceType.equals("2")) onkUsl = addIfNotNull(onkUsl, "LEK_TIP_V", cancerEntry.getDrugCycle());
+                            add(onkUsl, "USL_TIP", serviceType);
+                            if (serviceType.equals("1")) {
+                                addIfNotNull(onkUsl, "HIR_TIP", cancerEntry.getSurgicalType());
+                            } else if (serviceType.equals("2")) {
+                               addIfNotNull(onkUsl, "LEK_TIP_L", cancerEntry.getDrugLine());
+                               addIfNotNull(onkUsl, "LEK_TIP_V", cancerEntry.getDrugCycle());
+                            }
+
                             if (serviceType.equals("2")||serviceType.equals("4")) { //Сведения о введенном противоопухолевом препарате
                                 List<E2CancerDrug> drugList = cancerEntry.getDrugs();
                                 for (E2CancerDrug drug : drugList) {
@@ -426,7 +436,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                     onkUsl.addContent(lekPr);
                                 }
                             }
-                            if (serviceType.equals("3")||serviceType.equals("4")) onkUsl = addIfNotNull(onkUsl, "LUCH_TIP", cancerEntry.getRadiationTherapy()); //Тип лучевой терапии
+                            if (serviceType.equals("3")||serviceType.equals("4")) {
+                                addIfNotNull(onkUsl, "LUCH_TIP", cancerEntry.getRadiationTherapy()); //Тип лучевой терапии
+                            }
                             onkSl.addContent(onkUsl);
                         }
                         sl.addContent(onkSl);

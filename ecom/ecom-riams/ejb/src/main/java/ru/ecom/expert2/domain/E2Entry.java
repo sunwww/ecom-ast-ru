@@ -289,6 +289,7 @@ public class E2Entry extends BaseEntity {
 
     /** Прерванный случай */
     @Comment("Прерванный случай")
+    @Deprecated
     public Boolean getIsBreakedCase() {return theIsBreakedCase;}
     public void setIsBreakedCase(Boolean aIsBreakedCase) {theIsBreakedCase = aIsBreakedCase;}
     /** Прерванный случай */
@@ -1170,6 +1171,20 @@ public class E2Entry extends BaseEntity {
     public void setBedProfile(VocE2FondV020 aBedProfile) {theBedProfile = aBedProfile;}
     /** Профиль койки */
     private VocE2FondV020 theBedProfile ;
+
+    /** Рост пациента */
+    @Comment("Рост пациента")
+    public Integer getHeight() {return theHeight;}
+    public void setHeight(Integer aHeight) {theHeight = aHeight;}
+    /** Рост пациента */
+    private Integer theHeight ;
+
+    /** Вес пациента */
+    @Comment("Вес пациента")
+    public Integer getWeigth() {return theWeigth;}
+    public void setWeigth(Integer aWeigth) {theWeigth = aWeigth;}
+    /** Вес пациента */
+    private Integer theWeigth ;
 
 
 }

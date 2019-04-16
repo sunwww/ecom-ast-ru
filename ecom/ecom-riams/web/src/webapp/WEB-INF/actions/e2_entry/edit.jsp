@@ -12,11 +12,17 @@
             <msh:hidden property="saveType" />
             <msh:hidden property="listEntry" />
             <msh:hidden property="isDeleted" />
+            <msh:hidden property="KLADRRegistration"/>
+            <msh:hidden property="KLADRReal" />
+            <msh:hidden property="okatoReg" />
+            <msh:hidden property="okatoReal"/>
+            <msh:hidden property="addressRegistration" />
+            <msh:hidden property="addressReal"  />
             <msh:panel>
      <msh:separator colSpan="4" label="Общие"/>
                 <msh:row>
-                <msh:checkBox property="doNotSend" label="Не включать в реестр"/>
-                <msh:checkBox property="isBreakedCase" label="Прерванный случай"/>
+                    <msh:checkBox property="doNotSend" label="Не включать в реестр"/>
+                    <msh:checkBox property="isForeign" />
                   </msh:row>
                 <msh:row>
                 <msh:checkBox property="isDefect" label="Дефект"/>
@@ -59,6 +65,10 @@
                     <msh:textField property="passportDateIssued" size="50" />
                     <msh:textField property="passportWhomIssued" size="50" />
             </msh:row>
+            <msh:row>
+                <msh:textField property="height" size="10" />
+                <msh:textField property="weigth" size="10" />
+            </msh:row>
     <msh:separator colSpan="4" label="Представитель"/>
                 <msh:row>
                     <msh:textField property="kinsmanLastname" size="50" />
@@ -72,22 +82,6 @@
             </msh:row><msh:row>
                     <msh:textField property="kinsmanRole"  size="50" />
             </msh:row>
-    <msh:separator colSpan="4" label="Адрес"/>
-                <msh:row>
-                    <msh:textField property="KLADRRegistration"  size="50"/>
-                    <msh:textField property="KLADRReal" size="50" />
-                </msh:row>
-                <msh:row>
-                    <msh:textField property="okatoReg" size="50" />
-                    <msh:textField property="okatoReal" size="50" />
-                </msh:row>
-
-                <msh:row>
-                    <msh:textField property="addressRegistration" size="50" />
-                    <msh:textField property="addressReal" size="50" />
-            </msh:row><msh:row>
-                    <msh:checkBox property="isForeign" />
-                </msh:row>
 
     <msh:separator colSpan="4" label="Медицинский полис"/>
                 <msh:row>
