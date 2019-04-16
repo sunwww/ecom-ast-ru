@@ -4,10 +4,8 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.oncological.ejb.domain.voc.VocOncologyN020;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,7 +22,7 @@ public class E2CancerDrug extends BaseEntity {
 
     /** Дата введения препарата */
     @Comment("Дата введения препарата")
-    @OneToMany
+    @OneToMany(mappedBy = "drug", cascade = CascadeType.ALL)
     public List<E2CancerDrugDate> getDates() {return theDates;}
     public void setDates(List<E2CancerDrugDate> aDates) {theDates= aDates;}
     /** Дата введения препарата */
@@ -40,4 +38,15 @@ public class E2CancerDrug extends BaseEntity {
 
     public E2CancerDrug() {}
     public E2CancerDrug(E2CancerEntry aCancerEntry) {theCancerEntry = aCancerEntry;}
+    public E2CancerDrug(E2CancerDrug aDrug, E2CancerEntry aCancerEntry) {
+        theCancerEntry = aCancerEntry;
+        theDrug = aDrug.theDrug;
+        List<E2CancerDrugDate> drugDates = new ArrayList<>();
+        for (E2CancerDrugDate drugDate : getDates()) {
+            E2CancerDrugDate cancerDrugDate = new E2CancerDrugDate(this);
+            cancerDrugDate.setDate(drugDate.getDate());
+            drugDates.add(cancerDrugDate);
+        }
+        setDates(drugDates);
+    }
 }

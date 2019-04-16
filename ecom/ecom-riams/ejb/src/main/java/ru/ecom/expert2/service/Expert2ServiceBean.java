@@ -65,16 +65,18 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final SimpleDateFormat MONTHYEARDATE = new SimpleDateFormat("yyyy-MM");
     private static final ArrayList<String> childBirthMkb = new ArrayList<>();
 
-    public E2Entry getEntryJson(Long aEntryId) {
-        return theManager.find(E2Entry.class,aEntryId);
-
-    }
+    public E2Entry getEntryJson(Long aEntryId) { return theManager.find(E2Entry.class,aEntryId);}
 
     private JSONObject getOKJson() {
             return new JSONObject().put("status","ok");
     }
 
-    /** Присваеваем отдельный счет для определенных иногородних регионов */
+    /** Присваеваем отдельный счет для определенных иногородних регионов
+     * @param aListEntryId - ИД заполнения
+     * @param aBillNumber Номер присваемого счета
+     * @param aBillDate - Дата присваемого счета
+     * @param aTerritories - список территорий, разделенных , например "05,08"
+     * */
     public String splitForeignOtherBill(Long aListEntryId, String aBillNumber, Date aBillDate, String aTerritories) {
         StringBuilder territories = new StringBuilder();
         if (aTerritories==null || aTerritories.equals("")) {
@@ -105,11 +107,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /** Находим или создаем счет*/
-    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate) {
-        SimpleDateFormat f= new SimpleDateFormat("dd.MM.yyy");
-        return getBillEntryByDateAndNumber(aBillNumber, f.format(aBillDate));
-
-    }
+    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate) {return getBillEntryByDateAndNumber(aBillNumber, new SimpleDateFormat("dd.MM.yyy").format(aBillDate));}
     public Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate) {return  getBillEntryByDateAndNumber(aBillNumber,aBillDate).getId();}
     public E2Bill getBillEntryByDateAndNumber(String aBillNumber, String aBillDate) {
         E2Bill bill = null;
@@ -135,7 +133,20 @@ public class Expert2ServiceBean implements IExpert2Service {
         return bill;
     }
 
-    /** Клонируем запись*/
+    /** Клонируем запись, оставим до лучших времен */
+    public void cloneEntityTest(Long aEntryId) {} /*
+    /*    try {
+            E2Entry entry = (E2Entry) SerializationHelper.clone(theManager.find(E2Entry.class, aEntryId));//cloneEntity(theManager.find(E2Entry.class,aEntryId),null,true);
+            if (entry != null) {
+                theManager.persist(entry);
+                LOG.info(entry.getId() + " SIZE_D = " + (entry.getDiagnosis() != null ? entry.getDiagnosis().size() : -1));
+            }
+        } catch (Exception e){
+            LOG.error(e.getMessage(),e);
+        }
+
+
+    }*/
     public E2Entry cloneEntity(E2Entry aSourceObject) {return cloneEntity(aSourceObject,null,false);}
     private E2Entry cloneEntity(E2Entry aSourceObject, E2Entry newEntry, boolean needPersist) {
         try {
@@ -198,7 +209,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             LOG.info("Finish create defects!");
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e.getMessage(),e);
         }
         return false;
     }
@@ -223,12 +234,25 @@ public class Expert2ServiceBean implements IExpert2Service {
                 cloneDiagnosis(entry,newEntry);
                 cloneMedService(entry,newEntry);
                 cloneChildEntries(entry,newEntry);
+                cloneOncologyCases(entry,newEntry);
             }
             LOG.info("Finish create defects!");
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e.getMessage(),e);
         }
         return true;
+    }
+
+    private void cloneOncologyCases(E2Entry aOldEntry, E2Entry aNewEntry) {
+        if (aOldEntry.getCancerEntries()==null) return;
+        List<E2CancerEntry> cancerEntryList = new ArrayList<>();
+        for (E2CancerEntry oldCancerEntry : aOldEntry.getCancerEntries()) {
+            E2CancerEntry ccc = new E2CancerEntry(oldCancerEntry, aNewEntry);
+            theManager.persist(ccc);
+            cancerEntryList.add(ccc);
+        }
+        aNewEntry.setCancerEntries(cancerEntryList);
+        theManager.persist(aNewEntry);
     }
 
     /** Клонируем дочерние случаи */
@@ -262,7 +286,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private Long toLong(String aString) {
-        return aString!=null&&!aString.trim().equals("")?Long.valueOf(aString.trim()):null;
+        return aString!=null && !aString.trim().equals("") ? Long.valueOf(aString.trim()) : null;
     }
 
     /**Добавляем услугу и диагноз в случай */
@@ -436,8 +460,8 @@ public class Expert2ServiceBean implements IExpert2Service {
          * */
         StringBuilder searchSql = new StringBuilder();
         searchSql.append("select ")
-                .append(isGroupBySpo ? "e2.externalparentid, cast('' as varchar) as empty, cast('' as varchar) as empty" : "e2.externalpatientid , medhelpprofile_id, servicestream")
-                .append(",cast('' as varchar) as empty, list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId") //Не учитываем диагноз *06.08.2018
+                .append(isGroupBySpo ? "e2.externalparentid as f1, cast('' as varchar) as f2_empty, cast('' as varchar) as f3_empty" : "e2.externalpatientid as f1 , e2.medhelpprofile_id as f2, e2.servicestream as f3")
+                .append(",cast('' as varchar) as f4_empty, list(e2.id||'') as f5_children from e2entry e2 where e2.listentry_id =:listId") //Не учитываем диагноз *06.08.2018
                 // searchSql.append("select e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1), list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId")
                 .append(" and e2.entryType='POLYCLINIC'")
                 .append(aPatientId!=null && aPatientId>0 ? " and e2.externalpatientid="+aPatientId : "")
@@ -446,9 +470,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                 .append(" and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') ")
                 .append(" and e2.medhelpprofile_id is not null")
                 //.append(" group by e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1)")
-                .append(" group by ").append(isGroupBySpo?"e2.externalparentid":"e2.externalpatientid , medhelpprofile_id, servicestream")
-                .append(" having count(e2.id)>1").append(isGroupBySpo?"":"and count(case when substring(e2.mainmkb,1,1)='Z'then 1 else null end)<count(e2.id)");
-
+                .append(" group by ").append(isGroupBySpo ? "e2.externalparentid" : "e2.externalpatientid , e2.medhelpprofile_id, e2.servicestream")
+                .append(" having count(e2.id)>1 ").append(isGroupBySpo ? "" : "and count(case when substring(e2.mainmkb,1,1)='Z' then 1 else null end)<count(e2.id)");
         List<Object[]> list = theManager.createNativeQuery(searchSql.toString()).setParameter("listId",aListEntryId).getResultList();
      //   LOG.info("sql = "+searchSql+", size = "+list.size());
         int i=0;
@@ -456,7 +479,8 @@ public class Expert2ServiceBean implements IExpert2Service {
             i++;
             if (i%100==0) LOG.info("Объединение случаев - "+i);
             //Создаем новую запись, все существущие помечаем как COMPLEXCASE
-            String[] ids = spo[4].toString().split(",");
+            String subList = (String) theManager.createNativeQuery("select (select list(id||'') from (select ee.id from e2entry ee where ee.id in ("+spo[4].toString()+") order by ee.startdate ) as chi ) ").getSingleResult();
+            String[] ids = subList.split(",");
             E2Entry mainEntry = null;
             for (String idd: ids) {
                 E2Entry entry = theManager.find(E2Entry.class,Long.valueOf(idd.trim()));
@@ -512,6 +536,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
         aSecondMedcase.setParentEntry(aMainMedcase);
         aSecondMedcase.setServiceStream(COMPLEXSERVICESTREAM);
+        aMainMedcase.setIsUnion(true);
         aSecondMedcase.setIsUnion(true);
         List<E2Entry> childs = theManager.createQuery(" from E2Entry where parentEntry=:entry").setParameter("entry",aSecondMedcase).getResultList();
         for (E2Entry child: childs) {
@@ -1259,6 +1284,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     /*Находим онкологический случай по СЛС */
     private void findCancerEntry(E2Entry aEntry) {
         List<OncologyCase> oncologyCases = theManager.createQuery("from OncologyCase where medCase_id=:id").setParameter("id",aEntry.getExternalParentId()).getResultList();
+        List<E2CancerEntry> cancerEntryList = new ArrayList<>();
         if (!oncologyCases.isEmpty()) {
             try {
                 OncologyCase oncologyCase = oncologyCases.get(0);
@@ -1319,7 +1345,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                             cancerDrug.setDates(drugDates);
                             theManager.persist(cancerDrug);
                         }
-                        LOG.info("Найдено нарКотиков = "+drugList.size());
 
                         List<OncologyDiagnostic> diags  = oncologyCase.getDiagnostics();
                         if (!diags.isEmpty()) {
@@ -1346,8 +1371,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                 }
                 theManager.persist(cancerEntry);
+                cancerEntryList.add(cancerEntry);
             } catch (Exception e) {LOG.error("Не смог создать раковый случай ",e);}
         }
+        aEntry.setCancerEntries(cancerEntryList);
     }
 
     private HashMap<String, Object > diagnosisMap = new HashMap<>();
@@ -1373,7 +1400,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                     priority=ds.getString("priority");
                     if (mkb.startsWith("C") && priority.equals("1")) { //Если основной диагноз начинается с С*
                         isCancer=true;
-
                     }
                     boolean isClinical=false;//,isDischarge=false;
                     if (!diagnosisMap.containsKey("MKB_"+mkb)) {
@@ -1418,8 +1444,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                     theManager.persist(diagnosis);
                     if (isClinical) {clinicalIds.add(diagnosis.getId());}
                 }
-                if (isCancer || !aEntry.getCancerEntries().isEmpty()){aEntry.setIsCancer(true);
                 findCancerEntry(aEntry);
+                if (isCancer || !aEntry.getCancerEntries().isEmpty()){aEntry.setIsCancer(true);
                 theManager.persist(aEntry);}
                 if (foundClinical && foundDischarge) { //Если нашли и клинический и выписной диагноз - удаляем клинический.
                     for (Long id:clinicalIds) {

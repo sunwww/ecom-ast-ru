@@ -511,6 +511,9 @@ where cancer.entry_id=${param.id}"/>
                    }
                 });
             }
+            function testCloneEntity() {
+                        Expert2Service.cloneEntityTest(${param.id},{callback: function(){alert('good');}});
+            }
                 </script>
 
         </msh:ifFormTypeIsView>

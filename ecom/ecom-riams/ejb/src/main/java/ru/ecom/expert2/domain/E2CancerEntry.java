@@ -6,6 +6,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -128,6 +129,54 @@ public class E2CancerEntry extends BaseEntity {
   private String theRadiationTherapy ;
 
   public E2CancerEntry(E2Entry aEntry) {theEntry=aEntry;}
+  public E2CancerEntry(E2CancerEntry aCancerEntry, E2Entry aEntry) {
+    theEntry = aEntry;
+    theMaybeCancer = aCancerEntry.theMaybeCancer;
+    theOccasion=aCancerEntry.theOccasion;
+    theStage=aCancerEntry.theStage;
+    theTumor=aCancerEntry.theTumor;
+    theNodus=aCancerEntry.theNodus;
+    theMetastasis=aCancerEntry.theMetastasis;
+    theIsMetastasisFound=aCancerEntry.theIsMetastasisFound;
+    theSod=aCancerEntry.theSod;
+    theConsiliumResult=aCancerEntry.theConsiliumResult;
+    theConsiliumDate=aCancerEntry.theConsiliumDate;
+    theServiceType=aCancerEntry.theServiceType;
+    theSurgicalType=aCancerEntry.theSurgicalType;
+    theDrugLine=aCancerEntry.theDrugLine;
+    theDrugCycle=aCancerEntry.theDrugCycle;
+    theRadiationTherapy=aCancerEntry.theRadiationTherapy;
+    if (aCancerEntry.theDirections!=null && !aCancerEntry.theDirections.isEmpty()) {
+      List<E2CancerDirection> directions = new ArrayList<>();
+      for (E2CancerDirection direction : aCancerEntry.getDirections()) {
+        directions.add(new E2CancerDirection(direction, this));
+      }
+      theDirections = directions;
+    }
+    if (aCancerEntry.theDiagnostics!=null && !aCancerEntry.theDiagnostics.isEmpty()) {
+      List<E2CancerDiagnostic> diagnostics = new ArrayList<>();
+      for (E2CancerDiagnostic diagnostic : aCancerEntry.getDiagnostics()) {
+        diagnostics.add(new E2CancerDiagnostic(diagnostic, this));
+      }
+      theDiagnostics = diagnostics;
+    }
+    if (aCancerEntry.theRefusals!=null && !aCancerEntry.theRefusals.isEmpty()) {
+      List<E2CancerRefusal> refusals = new ArrayList<>();
+      for (E2CancerRefusal refusal : aCancerEntry.getRefusals()) {
+        refusals.add(new E2CancerRefusal(refusal,this));
+      }
+      theRefusals = refusals;
+
+    }
+    if (aCancerEntry.theDrugs!=null && !aCancerEntry.theDrugs.isEmpty()) {
+      List<E2CancerDrug> drugs = new ArrayList<>();
+      for (E2CancerDrug drug : aCancerEntry.getDrugs()) {
+        drugs.add(new E2CancerDrug(drug,this));
+      }
+      theDrugs = drugs;
+    }
+  }
+
   public E2CancerEntry() {}
 
   /** Список направления */

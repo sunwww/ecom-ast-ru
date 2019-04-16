@@ -91,7 +91,7 @@
         <EntityVocService
                 entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN003'
                 names   = 'name'
-                queried = 'code,name'
+                queried = 'code,name,tumorCode'
                 queryAppend="(finishdate is null or current_date>=finishdate)"
         />
     </voc>
@@ -100,7 +100,7 @@
                 from="VocOncologyN003 voc"
                 nameId="voc.code"
                 order="voc.name"
-                names="voc.code||' '||voc.name"
+                names="voc.code||' '||voc.name||' '||voc.tumorCode"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
                 queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
@@ -110,7 +110,7 @@
         <EntityVocService
                 entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN004'
                 names   = 'name'
-                queried = 'code,name'
+                queried = 'code,name,nodusCode'
                 queryAppend="(finishdate is null or current_date>=finishdate)"
         />
     </voc>
@@ -119,7 +119,7 @@
                 from="VocOncologyN004 voc"
                 nameId="voc.code"
                 order="voc.name"
-                names="voc.code||' '||voc.name"
+                names="voc.code||' '||coalesce(voc.name,'')||' '||coalesce(voc.nodusCode,'')"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
                 queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
@@ -129,7 +129,7 @@
         <EntityVocService
                 entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN005'
                 names   = 'name'
-                queried = 'code,name'
+                queried = 'code,name,metastasisCode'
                 queryAppend="(finishdate is null or current_date>=finishdate)"
         />
     </voc>
@@ -139,7 +139,7 @@
                 from = "voconcologyn005 n005"
                 parent='n005.ds=:parent'
                 nameId= "n005.id"
-                names = "n005.name"
+                names = "n005.name||' '||metastasisCode"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
                 queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
@@ -150,7 +150,7 @@
                 from="VocOncologyN005 voc"
                 nameId="voc.code"
                 order="voc.name"
-                names="voc.code||' '||voc.name"
+                names="voc.code||' '||voc.name||' '||voc.metastasisCode"
                 queryAppend="(finishdate is null or current_date>=finishdate)"
                 queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />

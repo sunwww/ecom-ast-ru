@@ -26,6 +26,12 @@ import java.text.SimpleDateFormat;
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
+    public void cloneEntityTest(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
+        IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
+        service.cloneEntityTest(aEntryId);
+
+    }
+
     public void makeOncologyCase(Long aListEntryId, String aJson, String aDefectCode, HttpServletRequest aRequest) throws NamingException {
         IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
         service.makeOncologyCase(aListEntryId, aJson, aDefectCode);

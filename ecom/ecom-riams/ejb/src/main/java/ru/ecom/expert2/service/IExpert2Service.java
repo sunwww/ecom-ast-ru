@@ -13,6 +13,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 public interface IExpert2Service {
+    void cloneEntityTest(Long aEntryId);
     void makeOncologyCase(Long aListEntryId, String aJsonString, String aDefectCode);
     String splitLongCase(Long aEntryId);
     String getMedcaseCost(Long aMedcaseId);

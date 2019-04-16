@@ -67,6 +67,7 @@
         </msh:ifFormTypeAreViewOrEdit>
         <msh:ifFormTypeIsCreate formName="e2_cancerDrugForm">
             <script type="text/javascript">
+                jQuery('#date').addClass('required');
             function addDrugDate() {alert("Сначала создайте лекарство, потом вводите даты введения!");}
             </script>
         </msh:ifFormTypeIsCreate>

@@ -40,5 +40,11 @@ public class E2CancerDiagnostic extends BaseEntity {
 
     public E2CancerDiagnostic(){}
     public E2CancerDiagnostic(E2CancerEntry aCancerEntry){theCancerEntry=aCancerEntry;}
+    public E2CancerDiagnostic(E2CancerDiagnostic aDiag, E2CancerEntry aCancerEntry){
+        theCancerEntry=aCancerEntry;
+        theType = aDiag.theType;
+        theCode=aDiag.theCode;
+        theResult=aDiag.theResult;
+    }
 
 }
