@@ -1,5 +1,6 @@
 package ru.ecom.api.queue;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/queue/hospital")
 public class HospitalQueueResource {
+    private static final Logger LOG = Logger.getLogger(HospitalQueueResource.class);
 
     @GET
     @Path("emergencyQueue")
@@ -39,8 +41,11 @@ public class HospitalQueueResource {
                 (isDoctor ? " ,to_char(sls.dateStart,'dd.MM.yyyy')||' '||cast(sls.entranceTime as varchar(5)) " : ", cast('' as varchar)") +" as startDateTime"+ //только для врачей
                 ",cast(extract(epoch from age(current_timestamp,cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) as minutesCount " +
                 (isDoctor ? ", dep.name as departmentName" : ", cast('' as varchar)")+
-                ",list (case when vis.datestart is not null then coalesce(vcms.name,ms.name)||'<br>' end) || list('Осмотр: '||vwf.name||'<br>') as madeServices" +
-                (isDoctor ? ",list ( case when vis.datestart is not null then '<s>'||coalesce(vcms.name,ms.name)||'</s>' else coalesce(vcms.name,ms.name) end ||'<br>') " : ", cast('' as varchar) ") +" as planServices" +
+                ",list (case when p.dtype='WfConsultation' and p.diary_id is not null then 'Консультация: '||consVwf.name||'<br>' " +
+                "   when vis.datestart is not null then coalesce(vcms.name,ms.name)||'<br>' end) || list('Осмотр: '||vwf.name||'<br>') as madeServices" +
+                (isDoctor ? ",list ( case when p.dtype='WfConsultation' then" +
+                        " case when p.diary_id is not null then '<s>Консультация: '||consVwf.name||'</s><br>' else 'Консультация: '||consVwf.name||'<br>' end  " +
+                        " when vis.datestart is not null then '<s>'||coalesce(vcms.name,ms.name)||'</s>' else coalesce(vcms.name,ms.name) end ||'<br>') " : ", cast('' as varchar) ") +" as planServices" +
                 " from medcase sls " +
                 " left join patient pat on pat.id=sls.patient_id" +
                 " left join medcase slo on slo.parent_id = sls.id and slo.dtype='DepartmentMedCase'" +
@@ -49,6 +54,8 @@ public class HospitalQueueResource {
                 " left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id" +
                 " left join prescriptionlist pl on pl.medcase_id=sls.id" +
                 " left join prescription p on p.prescriptionlist_id=pl.id" +
+                " left join workfunction consWf on consWf.id=p.prescriptcabinet_id" +
+                " left join vocWorkfunction consVwf on consVwf.id=consWf.workfunction_id" +
                 " left join workcalendartime wct on wct.id=p.calendartime_id" +
                 " left join medcase vis on vis.id=coalesce(wct.medcase_id, p.medcase_id)" +
                 " left join medcase smc on smc.parent_id=vis.id" +
@@ -60,13 +67,13 @@ public class HospitalQueueResource {
                 " where sls.dtype='HospitalMedCase'" +
                 " and (sls.deniedhospitalizating_id is null or vdh.code='IN_PIGEON_HOLE') and slo.id is null" +
                 " and sls.transferdate is null and sls.transfertime is null" +
-                (isEmergency.equals("0")?" and (sls.emergency is null or sls.emergency='0')":isEmergency.equals("1")?" and sls.emergency='1'":"")+
+                (isEmergency.equals("0") ? " and (sls.emergency is null or sls.emergency='0')" : isEmergency.equals("1") ? " and sls.emergency='1'" : "")+
 
                 (pigeonHole!=null&&!pigeonHole.equals("")?" and vph.code='"+pigeonHole+"'":"") +
                 " group by sls.id, pat.id,dep.id"+
                 " order by sls.dateStart, sls.entranceTime ";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-    //    System.out.println("sql = "+sql);
+        LOG.info("sql = "+sql);
         String[] fields = {"id","patientInfo","waitTime","startTime","minutes", "departmentName", "madeServices", "planServices"};
         JSONArray ret = new JSONArray(service.executeNativeSqlGetJSON(fields,sql,null));
         return ret.toString();
