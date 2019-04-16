@@ -423,7 +423,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                     for(E2CancerDrugDate drugDate : drug.getDates()) {
                                         add(lekPr,"DATE_INJ",drugDate.getDate());
                                     }
-                                    onkSl.addContent(lekPr);
+                                    onkUsl.addContent(lekPr);
                                 }
                             }
                             if (serviceType.equals("3")||serviceType.equals("4")) onkUsl = addIfNotNull(onkUsl, "LUCH_TIP", cancerEntry.getRadiationTherapy()); //Тип лучевой терапии
