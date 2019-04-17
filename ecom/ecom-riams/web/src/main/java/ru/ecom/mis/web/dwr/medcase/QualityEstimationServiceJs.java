@@ -625,4 +625,23 @@ public class QualityEstimationServiceJs {
 		else res.append("##");
 		return res.toString();
 	}
+	/**
+	 * Получить возможные способы предварительной записи пациентов (выбирает регистратор при создании предварительной записи) #145
+	 * @param aSloId Slo.id
+	 * @param aKindId vocqualityestimationkind.id
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean Можно ли создавать (нельзя в случае, если выписан позднее опред. срока) #150
+	 */
+	public Boolean getIfCanCreateNow(Long aSloId, Long aKindId,HttpServletRequest aRequest) throws NamingException,JspException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select case when hmc.datefinish<current_date-(select cast(keyvalue as int) from softconfig where key='Pr203DaysAfterDischarge') \n")
+				.append((aKindId!=null)? "and (select code from vocqualityestimationkind where id="+aKindId+")='PR203'" : "")
+				.append("then '1' else '0' end\n")
+				.append("from medcase hmc\n")
+				.append("left join medcase slo on slo.parent_id=hmc.id\n")
+				.append("where slo.id=").append(aSloId).append(" or slo.parent_id=").append(aSloId);
+		Collection<WebQueryResult> list = service.executeNativeSql( sql.toString());
+		return (list.size() > 0 && list.iterator().next().get1().equals("0") || RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut",aRequest));
+	}
 }

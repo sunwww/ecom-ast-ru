@@ -66,11 +66,36 @@ function onCreate(aForm, aEntity, aCtx){
         if (res.size()>0)
             aEntity.setConsilium(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium, java.lang.Long.valueOf(res.get(0))));
     }
+    //медикаменты
+    var allMeds=aForm.getAllMeds();
+    if (allMeds!='') {
+        var obj = new Packages.org.json.JSONObject(allMeds) ;
+        var meds = obj.getJSONArray("list");
+        for (var i=0; i<meds.length(); i++) {
+            var child = meds.get(i);
+            var vocDrugId=java.lang.Long.valueOf(child.get("med"));
+            var drug = new Packages.ru.ecom.oncological.ejb.domain.OncologyDrug();
+            drug.setOncologyCase(aEntity);
+            drug.setDrug(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN020, java.lang.Long.valueOf(java.lang.Long.valueOf(child.get("med")))));
+            aCtx.manager.persist(drug);
+            for (var j=0; j<meds.length(); j++) {
+                var childj = meds.get(j);
+                if (i==j) {
+                    var drugDate = new Packages.ru.ecom.oncological.ejb.domain.OncologyDrugDate();
+                    drugDate.setOncologyDrug(drug);
+                    drugDate.setDate(new java.sql.Date(format.parse(java.lang.String.valueOf(childj.get("date"))).getTime()));
+                    aCtx.manager.persist(drugDate);
+                }
+            }
+        }
+    }
 }
 function onSave(aForm, aEntity, aCtx){
     aCtx.manager.createNativeQuery("delete from oncologycontra where oncologycase_id="+aEntity.id).executeUpdate() ;
     aCtx.manager.createNativeQuery("delete from oncologydiagnostic where oncologycase_id="+aEntity.id).executeUpdate() ;
-    onCreate(aForm, aEntity, aCtx);
+    aCtx.manager.createNativeQuery("delete from oncologydrugdate where oncologydrug_id=ANY(select id from oncologydrug where oncologycase_id="+aEntity.id+")").executeUpdate() ;
+    aCtx.manager.createNativeQuery("delete from oncologydrug where oncologycase_id="+aEntity.id).executeUpdate() ;
+   onCreate(aForm, aEntity, aCtx);
 }
 function getMedCaseType (aId, aCtx) {
     var list = aCtx.manager.createNativeQuery("select dtype from medcase where id="+aId).getResultList() ;

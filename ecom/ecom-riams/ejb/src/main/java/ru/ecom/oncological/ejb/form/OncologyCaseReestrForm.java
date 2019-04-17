@@ -221,6 +221,8 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     private String histString;
     /** данные для сохранения противопоказаний и отказов*/
     private String contraString;
+    /** данные для сохранения медикаментов*/
+    private String theAllMeds;
 
     public Long getMethodDiagTreat() {
         return methodDiagTreat;
@@ -340,4 +342,10 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     @Persist
     public Boolean getIsNauseaAndGagReflexPrev() { return isNauseaAndGagReflexPrev; }
     public void setIsNauseaAndGagReflexPrev(Boolean nauseaAndGagReflexPrev) { isNauseaAndGagReflexPrev = nauseaAndGagReflexPrev; }
+
+
+    public String getAllMeds() {
+        return theAllMeds;
+    }
+    public void setAllMeds(String aAllMeds) { theAllMeds = aAllMeds; }
 }

@@ -79,15 +79,23 @@
     }
     //Создание черновика ЭК
     function draft${name}CloseDocument() {
-        QualityEstimationService.createDraftEK(
-            ID, {
-                callback: function(res) {
-                    if (res!=null) window.location='entityEdit-expert_qualityEstimationDraft.do?id='+res+'&type=BranchManager';
-                    else {
-                        alert("Заведующий отделением уже заполнил эту карту, больше редактировать черновик нельзя!");
-                    }
+        QualityEstimationService.getIfCanCreateNow(ID,null, {
+            callback: function (res2) {
+                if (res2) { //Выписан позднее дней в настройке/Ещё лежит как обычно
+                    QualityEstimationService.createDraftEK(
+                        ID, {
+                            callback: function (res) {
+                                if (res != null) window.location = 'entityEdit-expert_qualityEstimationDraft.do?id=' + res + '&type=BranchManager';
+                                else {
+                                    alert("Заведующий отделением уже заполнил эту карту, больше редактировать черновик нельзя!");
+                                }
+                            }
+                        }
+                    );
                 }
+                else
+                    alert("Истёк срок с момента выписки пациента, во время которого можно создавать и редактировать экспертные карты (и черновики) по 203 приказу!");
             }
-        );
+        });
     }
 </script>

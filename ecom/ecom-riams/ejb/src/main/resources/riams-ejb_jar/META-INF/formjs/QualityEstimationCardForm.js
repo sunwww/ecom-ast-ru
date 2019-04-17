@@ -21,6 +21,7 @@ function onPreCreate(aForm, aCtx) {
             if (list.size() > 0)
                 if (list.get(0) == "0")
                     throw("Не найдены критерии оценки качества по 203 приказу (диагноз этого СЛС не входит в перечень 203 приказа, либо критерии не соответствуют возрасту пациента), поэтому данный вид оценки качества в этом СЛС создать нельзя!");
+            checkIfDischarge(aForm, aCtx);
             //проверка на имеется ли карта уже
            var ids= aCtx.manager.createNativeQuery("select id from qualityestimation where card_id=ANY(select id from qualityestimationcard  where medcase_id=" + aForm.getMedcase() + " and kind_id=5)").getResultList();
             if (ids.size() > 0) {
@@ -40,5 +41,24 @@ function onPreCreate(aForm, aCtx) {
                 }
             }
         }
+    }
+}
+function onSave(aForm, aEntity, aContext){
+    checkIfDischarge(aForm, aContext);
+}
+function onCreate(aForm, aEntity, aContext) {
+    checkIfDischarge(aForm, aContext);
+}
+//Milamesher проверка на выписан ли и не прошло ли больше допустимого времени #150
+function checkIfDischarge(aForm, aCtx) {
+    var resSlsFin = aCtx.manager.createNativeQuery("select case when hmc.datefinish<current_date-(select cast(keyvalue as int) from softconfig where key='Pr203DaysAfterDischarge')\n" +
+        "and (select code from vocqualityestimationkind where id="+aForm.getKind()+")='PR203'\n" +
+        "then '1' else '0' end\n" +
+        "from medcase hmc\n" +
+        "left join medcase slo on slo.parent_id=hmc.id\n" +
+        "where slo.id=" + aForm.getMedcase()).getResultList();
+    if (resSlsFin.size()>0) {
+        if (resSlsFin.get(0) == "1" && !aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut"))
+            throw("Истёк срок с момента выписки пациента, во время которого можно создавать/редактировать экспертные карты по 203 приказу!");
     }
 }
