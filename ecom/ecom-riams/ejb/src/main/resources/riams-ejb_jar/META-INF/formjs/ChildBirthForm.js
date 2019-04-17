@@ -191,7 +191,7 @@ function onCreate(aForm, aEntity, aCtx) {
 			var pnb = aCtx.manager.createNativeQuery("select pnb.id from kinsman km left join patient pnb on pnb.id=km.person_id left join vockinsmanrole vkr on km.kinsmanrole_id=vkr.id where km.kinsman_id="+mother.id+" and vkr.omccode='1' and pnb.birthday=to_date('"+child[0]+"','dd.mm.yyyy') and pnb.newborn_id"+(vch!=null?"="+vch.id:" is null")).getResultList() ;
 			//throw ""+pnb.size() ;
 			var patient ;
-			if (pnb.size()>0) {
+			if (!pnb.isEmpty()) {
 				var lPat = aCtx.manager.createQuery("from Patient where id='"+pnb.get(0)+"'").getResultList() ;
 				patient = lPat.get(0) ;
 			} else {
@@ -202,7 +202,7 @@ function onCreate(aForm, aEntity, aCtx) {
 				var addStatus = aCtx.manager.createQuery("from VocAdditionStatus where code='0'").getResultList() ;
 				patient.socialStatus = socStatus.size()>0?socStatus.get(0):null ;
 				patient.additionStatus = addStatus.size()>0?addStatus.get(0):null ;
-				if (lPol.size()>0) {
+				if (!lPol.isEmpty()) {
 					patient.passportType=mother.passportType ;
 					patient.passportSeries=mother.passportSeries ;
 					patient.passportDateIssued=mother.passportDateIssued ;
@@ -213,8 +213,8 @@ function onCreate(aForm, aEntity, aCtx) {
 					patient.passportType = idenCard.size()>0?idenCard.get(0):null ;
 				}
 				patient.lastname=mother.lastname ;
-				patient.firstname = (newBorn.sex!=null?(newBorn.sex.omcCode=="1"?"У":"Х"):"Х") ;
-				patient.middlename =  "Х";
+				patient.firstname = "X";
+				patient.middlename =  (newBorn.sex!=null ? (newBorn.sex.omcCode=="1" ? "У" : "Х") : "Х") ;
 				patient.birthday = newBorn.birthDate ;
 				patient.sex = newBorn.sex ;
 				patient.newborn=newBorn.child ;
