@@ -1133,11 +1133,12 @@
                                     var res=JSON.parse(aResult);
                                     for (var ind1 = 0; ind1 < res.length; ind1++) {
                                         var med = res[ind1];
-                                        createRowMed(ind1);
+                                        createRowMed(ind1-1);
                                         var voc='vocOncologyN020';
                                         $(voc+ind1).value=med.id;
                                         $(voc+ind1+'Name').value=med.name;
                                         $('dateSt'+ind1).value=med.date;
+                                        checkEnableAdd(ind1);
                                     }
                                 }
                             });
@@ -1146,7 +1147,7 @@
                     }
                 }
                 else  //создание
-                    createRowMed(0);
+                    createRowMed(-1);
             }
             //загрузка всех чекбоксов и рб
             function loadCaseAll(voc) {
@@ -1461,7 +1462,7 @@
                                     code=vals[0]; name=vals[1]; style="\"margin:3px\"";
                                     txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc.replace('_1','') + "' id='" + voc + "'";
                                     if (disabled)   txt += " disabled="+disabled;
-                                    txt +=  " value='" + code + "'>"+ name+"</td></tr>";
+                                    txt +=  " value='" + code + "'><b>"+ name+"</b></td></tr>";
                                     code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
                                 } else {
                                     code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
@@ -1494,7 +1495,7 @@
                                     var code=res.split("!")[i].split("#")[0], name=res.split("!")[i].split("#")[1];
                                     txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc.replace('_3','').replace('_2','') + "' id='" + voc + "'";
                                     if (disabled)   txt += " disabled="+disabled;
-                                    txt +=  " value='" + code + "'>"+ name +"</td><tr>";
+                                    txt +=  " value='" + code + "'><b>"+ name +"</b></td><tr>";
                                 }
                             }
                             txt+="</tbody></table>";
@@ -1522,7 +1523,7 @@
                                         code=vals[0]; name=vals[1]; style="\"margin:3px\"";
                                         txt+="<input type='"+'radio'+"' style=" + style + " name='" + voc.replace('_4','') + "' id='" + voc + "'";
                                         if (disabled)   txt += " disabled="+disabled;
-                                        txt +=  " value='" + code + "'>"+ name+"</td></tr>";
+                                        txt +=  " value='" + code + "'><b>"+ name+"</b></td></tr>";
                                         code=vals[2]; name=vals[3]; style="\"margin:6px;margin-left:12px;\""
                                         txt+="<tr><td><label style=\"\"margin:6px;margin-left:12px;\"><u>Линия лекарственной терапии:</u><br></label></td></tr>";
                                     } else {
@@ -1568,7 +1569,7 @@
                                     "<td onclick=\"this.childNodes[0].checked='checked';\" colspan=\"2\">" +
                                     "<input  style=\"margin:6px;margin-left:12px;\" type=\"radio\" name=\"typeNauseaOrNot\" value=\"2\"> Нет" +
                                     "</td></tr>" +
-                                    "</tbody></table>" +
+                                    "</tbody></table><br><label><u>Введённые препараты:<u></label><br>" +
                                     "<table id=\"allMedTble\"></table>"+
                                     "</div>";
                                 document.getElementById(divId).innerHTML+=txt;
@@ -1628,6 +1629,8 @@
                 else document.getElementById('nauseaDiv').setAttribute('hidden',true);
                 if ($('isNauseaAndGagReflexPrev').value=="true") document.getElementsByName("typeNauseaOrNot")[0].checked = 'checked';
                 else document.getElementsByName("typeNauseaOrNot")[1].checked = 'checked';
+                if (document.getElementById("vocOncologyN013_4").checked && $('vocOncologyN0200')==null)
+                    createRowMed(-1);
             }
             //Скрыть див для редактирования
             function disableAll() {
@@ -1636,7 +1639,9 @@
             }
             //Добавление строки с медикаментом
             function createRowMed(ii) {
+                var rowFromCopy=ii; //по умолчанию - ii-1
                 ii=+ii;
+                ii=getNextId(ii);
                 var voc='vocOncologyN020';
                 var table = document.getElementById('allMedTble');
                 var tr = document.createElement('tr');
@@ -1677,17 +1682,32 @@
                     eventutil.addEventListener($('dateSt'+ii), "dblclick", function(){checkEnableAdd(this.id);});
                     eventutil.addEventListener($('dateSt'+ii), "focus", function(){checkEnableAdd(this.id);});
                 }
+                return ii;
+            }
+            //получение следующего id для вставк:
+            //+1 - если не удаляли и +/++ с последнего элемента
+            //rowcount - если +/++ с любого элемента, но не удаляли
+            //первый свободный после rowcount - если +/++ с любого элемента и удаляли
+            //можно просто max(id)+1
+            function getNextId(ii) {
+                var max=ii;
+                //if (ii<document.getElementById('allMedTble').rows.length) ii=document.getElementById('allMedTble').rows.length;
+                for (var i=0; i<document.getElementById('allMedTble').rows.length; i++) {
+                    var id=document.getElementById('allMedTble').rows[i].id.replace('row','');
+                    if (id>max) max=id;
+                }
+                return ++max;
             }
             function delRow(btn) {
                document.getElementById('allMedTble').deleteRow(document.getElementById('row'+btn.id.replace("btnDel","")).rowIndex);
             }
             function addRowDblAfter(btn) {
-                createRowMed(+btn.id.replace("btnAddDbl","")+1);
-                $('vocOncologyN020'+(+btn.id.replace("btnAddDbl","")+1)).value=$('vocOncologyN020'+(+btn.id.replace("btnAddDbl",""))).value;
-                $('vocOncologyN020'+(+btn.id.replace("btnAddDbl","")+1)+'Name').value=$('vocOncologyN020'+(+btn.id.replace("btnAddDbl",""))+'Name').value;
+                var ii=createRowMed(+btn.id.replace("btnAddDbl",""));
+                $('vocOncologyN020'+ii).value=$('vocOncologyN020'+(+btn.id.replace("btnAddDbl",""))).value;
+                $('vocOncologyN020'+ii+'Name').value=$('vocOncologyN020'+(+btn.id.replace("btnAddDbl",""))+'Name').value;
             }
             function addRowAfter(btn) {
-                createRowMed(+btn.id.replace("btnAdd","")+1);
+                createRowMed(+btn.id.replace("btnAdd",""));
             }
             function checkEnableAdd(id) {
                 var ii=(''+id).replace('dateSt','');
