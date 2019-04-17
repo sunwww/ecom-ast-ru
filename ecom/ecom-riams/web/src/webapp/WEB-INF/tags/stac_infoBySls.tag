@@ -286,6 +286,7 @@
         		<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService">
         			<msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/Create,/Policy/Mis/MedCase/Stac/Ssl/Protocol/Create">
 		        		<a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id}'> Добавить новый дневник специалиста ПРИЕМНОГО ОТДЕЛЕНИЯ</a>
+                        <a href="printProtocolsBySLS.do?id=${param.id}&medcase=${param.id}">Печать дневников приемного отделения</a>
         			</msh:ifInRole>
         		</msh:ifNotInRole>
         </msh:sectionTitle>

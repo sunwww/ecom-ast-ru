@@ -26,6 +26,7 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
+        <tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
     <%
     	String stNoPrint = request.getParameter("stNoPrint") ;
     	String stPrint = request.getParameter("stPrint") ;
@@ -76,7 +77,8 @@
             	var ids = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
             	if(ids) {
             		//alert(ids) ;
-            		window.location = 'print-protocols.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
+            		var p = 'print-protocols.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
+                    initSelectPrinter(p,0);
             		
             	} else {
             		alert("Нет выделенных протоколов");

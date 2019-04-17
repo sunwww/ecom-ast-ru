@@ -81,8 +81,8 @@ order by d.dateRegistration,d.timeRegistration
     	}
     	
     	List l = ActionUtil.getListObjFromNativeQuery("select sls.dtype,sls.patient_id,to_char(sls.datestart,'dd.mm.yyyy') as dat1,to_char(coalesce(sls.datefinish,current_date),'dd.mm.yyyy') as dat2 from medcase slo left join medcase sls on sls.id=slo.parent_id where slo.id="+request.getParameter("id")+" and slo.dtype='DepartmentMedCase'", request) ;
-		if (l.size()>0) {
-			if (type!=null&&!type.equals("")&&!type.equals("0"))  {
+		if (!l.isEmpty()) {
+			if (type!=null && !type.equals("") && !type.equals("0"))  {
 				if (type.equals("1")) {
 					request.setAttribute("whereSQL", "slo.id='"+request.getParameter("id")+"'");
 					request.setAttribute("title",": Дневники") ;
