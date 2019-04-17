@@ -279,7 +279,7 @@ public class OncologyServiceJs {
                 "(select list(value) from VocOncologyN011 where marker=n10.code) as l2\n" +
                 "from VocOncologyN010 n10 \n" +
                 "left join VocOncologyN011 n11 on n11.marker=n10.code \n" +
-                "where n10.code<>'11' order by cast(n10.code as integer)");
+                "where n10.code<>'11' and (n10.finishdate is null or n10.finishdate < current_date) order by cast(n10.code as integer)");
         if (!list.isEmpty()) {
             for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("!");
         }
@@ -502,5 +502,21 @@ public class OncologyServiceJs {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> list = service.executeNativeSql("select case when dtype='HospitalMedCase' then '0' else case when dtype='PolyclinicMedCase' then '1' else '-1' end end from medcase where id="+medCaseId);
         return list.isEmpty()? "-1": list.iterator().next().get1().toString();
+    }
+
+    /**
+     * Получить все медикаменты в json.
+     *
+     * @param caseId OncologyCase.id
+     * @return String Выборка в json
+     * @throws NamingException,SQLException
+     */
+    public String getMedsJson(String caseId,HttpServletRequest aRequest) throws NamingException, SQLException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        return service.executeSqlGetJson("select drug.id,vocdrug.name,to_char(drugdate.date,'dd.mm.yyyy') as date\n" +
+                "from oncologydrug drug\n" +
+                "left join oncologydrugdate drugdate on drugdate.oncologydrug_id=drug.id\n" +
+                "left join voconcologyn020 vocdrug on drug.drug_id=vocdrug.id\n" +
+                "where drug.oncologycase_id="+caseId,null);
     }
 }

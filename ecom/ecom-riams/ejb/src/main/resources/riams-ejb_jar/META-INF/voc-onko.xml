@@ -493,4 +493,12 @@
                 queryAppend="(finishdate is null or current_date>=finishdate)"
         />
     </voc>
+    <voc id='vocOncologyN20' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN020'
+                names   = 'name'
+                queried = 'code,name'
+                queryAppend="(finishdate is null or current_date>=finishdate)"
+        />
+    </voc>
 </vocconfig>
