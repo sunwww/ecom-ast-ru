@@ -56,7 +56,7 @@
 
         DisabilityService.getIfDisDocHasVK('${documentId}', {
             callback: function(resultVK) {
-                if (resultVK || $('issueDate').value!='' && $('hospitalizedTo').value!=''
+                if ($('anotherLpu').value!='' || resultVK || $('issueDate').value!='' && $('hospitalizedTo').value!=''
         && $('issueDate').value==$('hospitalizedTo').value!=''
         || $('issueDate').value=='' || $('hospitalizedTo').value=='') {
             $('${name}FSSProgressResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
