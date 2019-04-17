@@ -33,9 +33,23 @@
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden guid="medcase" property="medcase" />
       <msh:panel guid="panel" colsWidth="10%,20%,10%,50%">
-        <msh:row>
-        	<msh:autoComplete viewAction="entityView-exp_vocKind.do" property="kind" label="Вид оценки кач-ва" vocName="vocQualityEstimationKind" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
+          <msh:ifFormTypeAreViewOrEdit formName="expert_cardForm">
+              <msh:ifFormTypeIsNotView formName="expert_cardForm">
+                  <msh:row>
+                      <msh:autoComplete viewAction="entityView-exp_vocKind.do" property="kind" viewOnlyField="true" label="Вид оценки кач-ва" vocName="vocQualityEstimationKind" fieldColSpan="3" horizontalFill="true"/>
+                  </msh:row>
+              </msh:ifFormTypeIsNotView>
+              <msh:ifFormTypeIsView formName="expert_cardForm">
+                  <msh:row>
+                      <msh:autoComplete viewAction="entityView-exp_vocKind.do" property="kind" label="Вид оценки кач-ва" vocName="vocQualityEstimationKind" fieldColSpan="3" horizontalFill="true"/>
+                  </msh:row>
+              </msh:ifFormTypeIsView>
+          </msh:ifFormTypeAreViewOrEdit>
+          <msh:ifFormTypeIsCreate formName="expert_cardForm">
+              <msh:row>
+                  <msh:autoComplete viewAction="entityView-exp_vocKind.do" property="kind" label="Вид оценки кач-ва" vocName="vocQualityEstimationKind" fieldColSpan="3" horizontalFill="true"/>
+              </msh:row>
+          </msh:ifFormTypeIsCreate>
         <%-- 
         <msh:row>
         	<msh:autoComplete viewAction="entitySubclassView-mis_medCase.do" property="medcase" label="Случ.мед.обслуж." vocName="allSMO" horizontalFill="true" fieldColSpan="3"/>
@@ -162,7 +176,19 @@
     idc10Autocomplete.addOnChangeCallback(closure());
   		</script>
   		<msh:ifFormTypeIsView formName="expert_cardForm">
-  		  		<script type="text/javascript">loadDataCriterion();</script>
+  		  		<script type="text/javascript">
+                    loadDataCriterion();
+                    //#150
+                    QualityEstimationService.getIfCanCreateNow($('medcase').value,$('kind').value, {
+                        callback: function (res2) {
+                            if (!res2) { //Выписан ранее дней в настройке
+                                showToastMessage("Истёк срок с момента выписки пациента, во время которого можно создавать и редактировать экспертные карты (и черновики) по 203 приказу!",null,true);
+                                jQuery('#'+document.getElementsByClassName('firstMenu')[0].id).fadeTo('slow',.6);
+                                jQuery('#'+document.getElementsByClassName('firstMenu')[0].id).append('<div style="position: absolute;bottom:0;left:0;width: 100%;height:98%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
+                            }
+                        }
+                    },$('kind').value);
+                </script>
   		</msh:ifFormTypeIsView>
   		<msh:ifFormTypeIsCreate formName="expert_cardForm">
   		<script type="text/javascript">

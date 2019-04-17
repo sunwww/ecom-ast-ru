@@ -6,6 +6,7 @@ function onPreCreate(aForm, aCtx) {
 }
 
 function onCreate(aForm, aEntity, aContext){
+    checkIfDischarge(aForm, aContext);
 ///set comment
     aEntity.setIsDraft(true);
     var crits = aForm.criterions.split("#") ;
@@ -103,10 +104,25 @@ function saveParentCriterion(aList,aEntity,aContext) {
 
 }
 function onSave(aForm, aEntity, aContext){
+    checkIfDischarge(aForm, aContext);
     var id=aForm.id ;
     aContext.manager.createNativeQuery("delete from QualityEstimationCritDefect qecd where criterion in (select id from QualityEstimationCrit qec where qec.estimation_id='"+id+"')").executeUpdate() ;
     aContext.manager.createNativeQuery("delete from QualityEstimationCrit where estimation_id='"+id+"'").executeUpdate() ;
     onCreate(aForm, aEntity, aContext) ;
 }
 function onPreSave(aForm,aEntity , aCtx) {
+}
+//Milamesher проверка на выписан ли и не прошло ли больше допустимого времени #150
+function checkIfDischarge(aForm, aCtx) {
+    var resSlsFin = aCtx.manager.createNativeQuery("select case when hmc.datefinish<current_date-(select cast(keyvalue as int) from softconfig where key='Pr203DaysAfterDischarge') \n" +
+        "then '1' else '0' end\n" +
+        "from medcase hmc\n" +
+        "left join medcase slo on slo.parent_id=hmc.id\n" +
+        "where slo.id=(select medcase_id from qualityestimationcard qecard \n" +
+        "left join vocqualityestimationkind vqekind on vqekind.id=qecard.kind_id\n" +
+        "where qecard.id=" + aForm.getCard()+" and vqekind.code='PR203')").getResultList();
+    if (resSlsFin.size()>0) {
+        if (resSlsFin.get(0) == "1" && !aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut"))
+            throw("Истёк срок с момента выписки пациента, во время которого можно создавать/редактировать экспертные карты по 203 приказу!");
+    }
 }
