@@ -17,7 +17,7 @@ public class OncologyCaseReestrViewInterceptor implements IFormInterceptor {
         //Запрет на ред-е в СЛО и СЛС, если случай закрыт. Админ может редактировать.
         OncologyCaseReestrForm form = (OncologyCaseReestrForm) aForm;
         MedCase parent = aContext.getEntityManager().find(MedCase.class, form.getMedCase());
-        if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut") &&
+        if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/Oncology/Case/EditOncoAfterOut") &&
                 (parent instanceof DepartmentMedCase || parent instanceof HospitalMedCase)) {
             MedCase hmc = (parent instanceof DepartmentMedCase) ? parent.getParent() : parent;
             if (hmc.getDateFinish() != null) {
