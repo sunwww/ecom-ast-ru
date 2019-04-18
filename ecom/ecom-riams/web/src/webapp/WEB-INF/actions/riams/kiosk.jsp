@@ -5,30 +5,30 @@
   Time: 13:18
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <html>
 <%
     boolean isDoctor = !ActionUtil.isUserInRole("/Policy/TV",request);
-String kioskType = request.getParameter("mode");
-if (kioskType==null) {kioskType="";}
-kioskType = kioskType.toUpperCase();
+    String kioskType = request.getParameter("mode");
+    if (kioskType==null) {kioskType="";}
+    kioskType = kioskType.toUpperCase();
 /**
  * ADMISSION = Очередь в приемном отделении
  * */
-String title ;
-switch (kioskType) {
-    case "ADMISSION":
-        title="Очередь в приемном отделении";
-        break;
-    case "QUEUE":
-        title="Электронная очередь";
-        break;
-        default:
-            title="НЕПОНЯТНО";
-}
+    String title ;
+    switch (kioskType) {
+        case "ADMISSION":
+            title="Очередь в приемном отделении";
+            break;
+        case "QUEUE":
+            title="Электронная очередь";
+            break;
+            default:
+                title="НЕПОНЯТНО";
+    }
 
-request.setAttribute("pageTitle",title);
+    request.setAttribute("pageTitle",title);
 %>
 <head>
     <title>${pageTitle}</title>
@@ -53,7 +53,7 @@ if (kioskType.equals("ADMISSION")) {
 
     <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
     <td onclick="this.childNodes[1].checked='checked'; reloadPage();">
-        <input type="radio" name="isEmergency" value="1">  Экстренные
+        <input type="radio" name="isEmergency" value="1" checked="checked">  Экстренные
     </td>
     <td onclick="this.childNodes[1].checked='checked';reloadPage();">
         <input type="radio" name="isEmergency" value="0">  Плановые
@@ -62,6 +62,7 @@ if (kioskType.equals("ADMISSION")) {
         <input type="radio" name="isEmergency" value="-1">  Все
     </td>
 </msh:row>
+
 </msh:panel>
 <%}%>
 <table id="patientWaitingTable">
@@ -77,6 +78,14 @@ if (kioskType.equals("ADMISSION")) {
 </table>
 <script type="text/javascript" src="/skin/ac.js"></script>
 <script type="text/javascript">
+ /*   jQuery(document).ready(function() {initPigeonHole();});
+
+    function initPigeonHole() {
+        jQuery(".select-pigeonHole").select2({
+            placeHolder:"Укажите приемное отделение"
+        });
+    }
+*/
 var colors={red:"background-color:red;"
     , orange:"background-color: orange;"
     , yellow:"background-color: yellow;"
@@ -87,11 +96,24 @@ var colors={red:"background-color:red;"
 
     getQueue();
     var isDoctor = ${isDoctor} ;
+ //   new dateutil.DateField($('startDate'));
+ //   new dateutil.DateField($('finishDate'));
 
-    pigeonHoleAutocomplete.addOnChangeCallback( function() {reloadPage();});
+    try{
+        pigeonHoleAutocomplete.addOnChangeCallback( function() {reloadPage();});
+    } catch (e) {
+        console.log(e);
+    }
+
     function reloadPage() {
         var em = jQuery('input:radio[name=isEmergency]:checked').val();
-        window.location.search="mode=ADMISSION&isEmergency="+em+"&pigeonHole=${pigeonHole}&pigeonHoleName=${pigeonHoleName}";
+        var append ="";
+   /*     if ($('startDate').value) {
+            append="&startDate="+$('startDate').value+"&finishDate="+($('finishDate').value ? $('finishDate').value : $('startDate').value);
+        }
+        */
+
+        window.location.search="mode=ADMISSION&isEmergency="+em+"&pigeonHole=${pigeonHole}&pigeonHoleName=${pigeonHoleName}"+append;
     }
     function getQueue() {
         jQuery.ajax({
@@ -99,8 +121,10 @@ var colors={red:"background-color:red;"
             ,data:{
                ${token}
                 emergency:'${isEmergency}',
-                pigeonHole:'${pigeonHole}',
-                isDoctor:${isDoctor}
+                pigeonHole:'${param.pigeonHole}',
+                isDoctor:${isDoctor},
+                startDate:'${param.startDate}',
+                finishDate:'${param.finishDate}'
             }
             ,error: function(jqXHR,ex){console.log(ex);setTimeout(getQueue,60000);}
             ,success: function(array) {
@@ -120,7 +144,7 @@ var colors={red:"background-color:red;"
                             "</tr>");
                     }//60-90 - yellow
                 }
-                setTimeout(getQueue,60000);
+                if ('${param.startDate}'!=='') setTimeout(getQueue,60000);
         }
     });
     }
