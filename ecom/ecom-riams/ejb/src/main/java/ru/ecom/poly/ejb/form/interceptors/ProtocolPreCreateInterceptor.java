@@ -16,15 +16,11 @@ public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
 	public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
 		MedCase parent = aContext.getEntityManager().find(MedCase.class, aParentId);
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService")) {
-			if (parent instanceof ServiceMedCase) {
-
-			} else {
-				throw new IllegalArgumentException(
-						"У Вас стоит ограничение!! Создать заключения можно только в созданной услуге!!!"
-				);
+			if (!(parent instanceof ServiceMedCase)) {
+				throw new IllegalArgumentException("У Вас стоит ограничение!! Создать заключения можно только в созданной услуге!!!");
 			}
 		}
-		String username = aContext.getSessionContext().getCallerPrincipal().toString();
+		String username = aContext.getSessionContext().getCallerPrincipal().getName();
 		VisitProtocolForm form = (VisitProtocolForm) aForm;
 		List<WorkFunction> listwf = aContext.getEntityManager().createQuery("from WorkFunction where secUser.login = :login")
 				.setParameter("login", username).getResultList();

@@ -161,18 +161,18 @@ function findLogginedWorkFunctionListByPoliclinic(aCtx,aWorkPlan) {
 		+" left join worker w on  w.id=wf.worker_id"
 		+" left join worker w1 on w.person_id=w1.person_id" ;
 	if (aWorkPlan!=null) { 
-		sql=sql+" left join workFunction wf1 on wf1.id='"+aWorkPlan+"' and wf1.worker_id=w1.id "
-		sql=sql+" left join workFunction wf2 on wf2.group_id='"+aWorkPlan+"' and wf2.worker_id=w1.id "
+		sql=sql+" left join workFunction wf1 on wf1.id='"+aWorkPlan+"' and wf1.worker_id=w1.id ";
+		sql=sql+" left join workFunction wf2 on wf2.group_id='"+aWorkPlan+"' and wf2.worker_id=w1.id ";
 	}
 	sql=sql	+" where su.login = '"+username+"'  group by wf.id";
-		
 	var list = aCtx.manager.createNativeQuery(sql)
 		//.setParameter("login", username) 
 		//.setParameter("plWF",aWorkPlan)
 		.getResultList() ;
 	if(list.isEmpty()) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и именем пользователя (WorkFunction и SecUser)" ;
 	var obj = list.get(0) ;
-	return obj[1]!=null?obj[1]: (obj[2]!=null?obj[2] : obj[0])  ;
+	return obj[1]!=null ? obj[1]
+		: (obj[2]!=null ? obj[2] : obj[0])  ;
 }
 function getWorkFunctionByCalenDay(aCtx, aCalenDayId) {
 	var list = aCtx.manager.createNativeQuery("select wf.id as wcdid,wc.id as wcid from WorkFunction wf left join WorkCalendar wc on wf.id=wc.workFunction_id left join WorkCalendarDay wcd on wcd.workCalendar_id=wc.id where wcd.id = '"+aCalenDayId+"'")

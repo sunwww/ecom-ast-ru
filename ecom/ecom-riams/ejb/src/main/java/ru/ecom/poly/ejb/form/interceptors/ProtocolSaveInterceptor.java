@@ -11,9 +11,7 @@ import java.util.List;
 public class ProtocolSaveInterceptor implements IFormInterceptor {
 
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
-		Protocol protocol=(Protocol)aEntity;
-    	String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
-    	protocol.setUsername(username);
+    	String username = aContext.getSessionContext().getCallerPrincipal().getName() ;
     	List<WorkFunction> listwf =  aContext.getEntityManager().createQuery("from WorkFunction where secUser.login = :login")
 		.setParameter("login", username).getResultList() ;
 		if (listwf.isEmpty()) {
@@ -21,6 +19,8 @@ public class ProtocolSaveInterceptor implements IFormInterceptor {
 					"Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответствия между рабочей функцией и пользователем (WorkFunction и SecUser)"
 					);
 		} else {
+			Protocol protocol=(Protocol)aEntity;
+			protocol.setUsername(username);
 			protocol.setSpecialist(listwf.get(0)) ;
 		}
 	}

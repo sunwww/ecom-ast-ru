@@ -11,7 +11,7 @@ public class Expert2FondUtil {
 
     /** Расчитываем признак перевода для случая*/ //Реализовано
     public static String calculateFondP_PER(E2Entry aEntry) { //TODO реализовать по нормальному!!!
-        String ret = "1"; // по умолчанию - самостоятельно
+        String ret ; // по умолчанию - самостоятельно
         String lpuType =aEntry.getDirectLpuType();
         if (aEntry.getExternalPrevMedcaseId()!=null && aEntry.getExternalPrevMedcaseId()>0L) { //Переведен из другого отделения
             ret="4"; //Перевод внутри МО с другого профиля
@@ -19,6 +19,8 @@ public class Expert2FondUtil {
             ret="2"; //СМП
         } else if ("С".equals(lpuType)) { //Переведен с другой МО
             ret = "3"; //Перевод в другой МО
+        } else {
+            ret="1";
         }
         return ret;
     }
