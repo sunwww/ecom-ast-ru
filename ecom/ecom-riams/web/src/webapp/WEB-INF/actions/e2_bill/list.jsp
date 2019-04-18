@@ -22,12 +22,13 @@
             ,vbs.name as f5_status, b.sum as f6_sum
             ,count(e2.id) as f7_cnt
             , list(el.name) as f8_listName
+            ,b.comment as f9_comment
             from e2bill b
             left join voce2billstatus vbs on vbs.id=b.status_id
             left join reg_ic ric on ric.id=b.company_id
             left join e2entry e2 on e2.bill_id=b.id
             left join e2listEntry el on el.id=e2.listEntry_id
-            group by b.id, b.billNumber, b.billDate, ric.name,vbs.name, b.sum
+            group by b.id, b.billNumber, b.billDate, ric.name,vbs.name, b.sum, b.comment
             order by billdate desc"/>
             <msh:section title='Результат поиска'>
                 <msh:table  name="billList" action="entityEdit-e2_bill.do" idField="1" disableKeySupport="true" styleRow="6" deleteUrl="entityDelete-e2_bill.do">
@@ -36,6 +37,7 @@
                     <msh:tableColumn columnName="Статус"  property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                     <msh:tableColumn columnName="Сумма" property="6" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                     <msh:tableColumn columnName="Заполнение" property="8" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="Примечание" property="9" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                     <msh:tableColumn columnName="Кол-во случаев" property="7" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                 </msh:table>
             </msh:section>

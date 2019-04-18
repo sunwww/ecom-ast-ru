@@ -20,7 +20,9 @@
           <msh:textField property="name" label="Название списка" />
         </msh:row>
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
-          <msh:textField property="colorName" label="Цвет фона" size="20" />
+          <msh:textField property="colorName" label="Цвет фона" size="100" />
+            </msh:row>
+          <msh:row>
           <msh:textField property="colorText" label="Цвет текста" size="20" />
         </msh:row>
         <msh:row>

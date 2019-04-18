@@ -30,6 +30,8 @@ public class HospitalQueueResource {
             , @QueryParam("token") String token
             , @QueryParam("emergency") String isEmergency
             , @QueryParam("pigeonHole") String pigeonHole
+            , @QueryParam("startDate") String aStartDate
+            , @QueryParam("finishDate") String aFinishDate
             , @QueryParam("isDoctor") Boolean isDoctor
     ) throws NamingException {
         ApiUtil.login(token,aRequest);
@@ -39,7 +41,7 @@ public class HospitalQueueResource {
                         " ,cast(cast(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp) - cast ((sls.dateStart||' '||sls.entranceTime) as timestamp) as time)as varchar(5))"
                         : ", cast('' as varchar)") +" as waitTime" + //только для врачей
                 (isDoctor ? " ,to_char(sls.dateStart,'dd.MM.yyyy')||' '||cast(sls.entranceTime as varchar(5)) " : ", cast('' as varchar)") +" as startDateTime"+ //только для врачей
-                ",cast(extract(epoch from age(current_timestamp,cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) as minutesCount " +
+                ",cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) as minutesCount " +
                 (isDoctor ? ", dep.name as departmentName" : ", cast('' as varchar)")+
                 ",list (case when p.dtype='WfConsultation' and p.diary_id is not null then 'Консультация: '||consVwf.name||'<br>' " +
                 "   when vis.datestart is not null then coalesce(vcms.name,ms.name)||'<br>' end) || list('Осмотр: '||vwf.name||'<br>') as madeServices" +
@@ -65,15 +67,18 @@ public class HospitalQueueResource {
                 " left join workfunction wf on wf.id=d.specialist_id" +
                 " left join vocWorkFunction vwf on vwf.id=wf.workfunction_id" +
                 " where sls.dtype='HospitalMedCase'" +
-                " and (sls.deniedhospitalizating_id is null or vdh.code='IN_PIGEON_HOLE') and slo.id is null" +
-                " and sls.transferdate is null and sls.transfertime is null" +
+                (aStartDate==null || aStartDate.equals("")
+                        ? " and (sls.deniedhospitalizating_id is null or vdh.code='IN_PIGEON_HOLE') and slo.id is null" +
+                        " and sls.transferdate is null and sls.transfertime is null"
+                        : "and sls.deniedhospitalizating_id is not null and sls.datestart between to_date('"+aStartDate+"','dd.MM.yyyy') and to_date('"+aFinishDate+"','dd.MM.yyyy')") +
+
                 (isEmergency.equals("0") ? " and (sls.emergency is null or sls.emergency='0')" : isEmergency.equals("1") ? " and sls.emergency='1'" : "")+
 
                 (pigeonHole!=null&&!pigeonHole.equals("")?" and vph.code='"+pigeonHole+"'":"") +
                 " group by sls.id, pat.id,dep.id"+
                 " order by sls.dateStart, sls.entranceTime ";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        LOG.info("sql = "+sql);
+//        LOG.info("sql = "+sql);
         String[] fields = {"id","patientInfo","waitTime","startTime","minutes", "departmentName", "madeServices", "planServices"};
         JSONArray ret = new JSONArray(service.executeNativeSqlGetJSON(fields,sql,null));
         return ret.toString();

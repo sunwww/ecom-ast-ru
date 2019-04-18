@@ -209,7 +209,7 @@ function checkPrescriptionList(aForm, aEntity, aCtx) {
 	var username = aCtx.getSessionContext().getCallerPrincipal().toString();
 	var list = aCtx.manager.createNativeQuery("select id from prescriptionList pl where pl.medCase_id="+aEntity.id).getResultList();
 	var pl = null;
-	if (list.size()>0) {
+	if (!list.isEmpty()) {
 		var id = +list.get(0);
 		pl = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList, new java.lang.Long(id));
 	} else {
@@ -316,6 +316,7 @@ function onSave(aForm, aEntity, aContext) {
 		aEntity.prevMedCase.transferDate = aEntity.dateStart ;
 		aEntity.prevMedCase.transferTime = aEntity.entranceTime ;
 		aEntity.prevMedCase.transferDepartment = aEntity.department ;
+		aContext.manager.persist(aEntity.prevMedCase);
 	}
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getComplicationDiags(), "4", "4",null) ;
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getConcomitantDiags(), "4","3",null) ;
@@ -385,7 +386,7 @@ function onPreDelete(aMedCaseId, aContext) {
 			medCase.setTransferTime(null) ;
 			medCase.setTransferDepartment(null) ;
 			medCase.setTargetHospType(null) ;
-			
+			aContext.manager.persist(medCase);
 		}
 	}
 	

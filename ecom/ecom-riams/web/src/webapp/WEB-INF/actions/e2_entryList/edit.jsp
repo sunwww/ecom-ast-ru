@@ -64,11 +64,12 @@
                 ,count(case when e.isDefect='1' then e.id else null end) as f6_cntDefect
                 ,e.serviceStream as f7
                 ,case when e.isForeign='1' then 'ИНОГ' else '' end as f8_isFor
+                ,bill.comment as f9_billComment
                  from e2entry e
                  left join e2bill bill on bill.id=e.bill_id
                  left join voce2billstatus vocbill on vocbill.id=bill.status_id
                 where e.listentry_id =${param.id} and (e.isDeleted is null or e.isDeleted='0')
-                group by e.entryType, e.billDate, e.billNumber ,e.serviceStream, e.isForeign
+                group by e.entryType, e.billDate, e.billNumber ,e.serviceStream, e.isForeign,bill.comment
                  order by e.entryType, e.serviceStream, e.billDate, e.billNumber  "/>
 
                 <msh:table idField="1" name="entries" action="entityParentList-e2_entry.do"  noDataMessage="Нет записей по заполнению" >
@@ -77,8 +78,9 @@
                     <msh:tableColumn columnName="Источник финансирования" property="7"/>
                     <msh:tableColumn columnName="Дата счета" property="3"/>
                     <msh:tableColumn columnName="Номер счета" property="4"/>
-                    <msh:tableColumn columnName="Количество записей" property="5"/>
-                    <msh:tableColumn columnName="Количество дефектов" property="6" addParam="&defect=1"/>
+                    <msh:tableColumn columnName="Примечание" property="9"/>
+                    <msh:tableColumn columnName="записей" property="5"/>
+                    <msh:tableColumn columnName="дефектов" property="6" addParam="&defect=1"/>
                     <msh:tableButton property="1" buttonShortName="Присвоить счет" buttonFunction="showE2BillDialog" addParam="this" role="/Policy/E2/Admin"  />
                     <msh:tableButton property="1" buttonShortName="Сформировать пакет" buttonFunction="createMPFile" addParam="this" role="/Policy/E2/Admin" />
                     <msh:tableButton property="1" buttonShortName="Проверить случаи по записи" buttonFunction="makeCheck" addParam="this" role="/Policy/E2/Admin" />

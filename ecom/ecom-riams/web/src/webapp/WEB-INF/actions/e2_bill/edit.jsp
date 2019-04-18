@@ -24,6 +24,10 @@
         <msh:row>
                 <msh:textField property="sum" size="50" viewOnlyField="true"/>
             </msh:row>
+        <msh:row>
+                <msh:textField property="comment" size="100" />
+            </msh:row>
+
 
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1" />
             </msh:panel>

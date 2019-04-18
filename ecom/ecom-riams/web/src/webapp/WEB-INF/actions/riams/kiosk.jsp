@@ -62,6 +62,16 @@ if (kioskType.equals("ADMISSION")) {
         <input type="radio" name="isEmergency" value="-1">  Все
     </td>
 </msh:row>
+    <msh:row>
+        <input type="text" size="10" id="startDate" name="startDate" value="${param.startDate}">
+        <input type="text" size="10" id="finishDate" name="finishDate" value="${param.finishDate}">
+        <input type="button" value="Отобразить" onclick="reloadPage()">
+        <input type="button" value="E" onclick="mshSaveTableToExcelById('patientWaitingTable')">
+    </msh:row>
+    <msh:row>
+        <select class="select-pigeonHole" id="select-pigeonHole" ></select>
+    </msh:row>
+    <msh:autoComplete property="pigeonHole" vocName="vocPigeonHole"/>
 
 </msh:panel>
 <%}%>
@@ -78,14 +88,14 @@ if (kioskType.equals("ADMISSION")) {
 </table>
 <script type="text/javascript" src="/skin/ac.js"></script>
 <script type="text/javascript">
- /*   jQuery(document).ready(function() {initPigeonHole();});
+    jQuery(document).ready(function() {initPigeonHole();});
 
     function initPigeonHole() {
-        jQuery(".select-pigeonHole").select2({
+        jQuery("#select-pigeonHole").select2({
             placeHolder:"Укажите приемное отделение"
         });
     }
-*/
+
 var colors={red:"background-color:red;"
     , orange:"background-color: orange;"
     , yellow:"background-color: yellow;"
@@ -96,8 +106,8 @@ var colors={red:"background-color:red;"
 
     getQueue();
     var isDoctor = ${isDoctor} ;
- //   new dateutil.DateField($('startDate'));
- //   new dateutil.DateField($('finishDate'));
+    new dateutil.DateField($('startDate'));
+    new dateutil.DateField($('finishDate'));
 
     try{
         pigeonHoleAutocomplete.addOnChangeCallback( function() {reloadPage();});
@@ -108,11 +118,9 @@ var colors={red:"background-color:red;"
     function reloadPage() {
         var em = jQuery('input:radio[name=isEmergency]:checked').val();
         var append ="";
-   /*     if ($('startDate').value) {
+        if ($('startDate').value) {
             append="&startDate="+$('startDate').value+"&finishDate="+($('finishDate').value ? $('finishDate').value : $('startDate').value);
         }
-        */
-
         window.location.search="mode=ADMISSION&isEmergency="+em+"&pigeonHole=${pigeonHole}&pigeonHoleName=${pigeonHoleName}"+append;
     }
     function getQueue() {
