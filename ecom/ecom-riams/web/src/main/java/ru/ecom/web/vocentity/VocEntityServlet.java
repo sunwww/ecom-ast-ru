@@ -6,7 +6,6 @@ import ru.ecom.web.servlet.AbstractAutocompleteServlet;
 import ru.ecom.web.util.Injection;
 
 import javax.naming.NamingException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +19,7 @@ public class VocEntityServlet extends HttpServlet {
 
 	
 	@Override
-	public void doGet(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
+	public void doGet(HttpServletRequest arg0, HttpServletResponse arg1) throws IOException {
 		// TODO Auto-generated method stub
 		service(arg0, arg1);
 	}
@@ -45,8 +44,6 @@ public class VocEntityServlet extends HttpServlet {
 		
 		try {
 			start = Integer.parseInt(aRequest.getParameter("start"));
-		} catch (Exception e) {}
-		try {
 			limit = Integer.parseInt(aRequest.getParameter("limit"));
 		} catch (Exception e) {}
 		

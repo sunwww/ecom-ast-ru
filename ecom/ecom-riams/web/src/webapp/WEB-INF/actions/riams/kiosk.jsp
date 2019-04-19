@@ -32,6 +32,7 @@
 %>
 <head>
     <title>${pageTitle}</title>
+    <link rel="stylesheet" type="text/css" href="/skin/select2.css">
 </head>
 <body>
 <%
@@ -62,6 +63,18 @@ if (kioskType.equals("ADMISSION")) {
         <input type="radio" name="isEmergency" value="-1">  Все
     </td>
 </msh:row>
+    <msh:row>
+        <td>
+        <label>Период: <input type="text" size="10" id="startDate" name="startDate" value="${param.startDate}">
+        <input type="text" size="10" id="finishDate" name="finishDate" value="${param.finishDate}"></label>
+        <input type="button" value="Поиск" onclick="reloadPage()">
+        <input type="button" value="Excel" onclick="mshSaveTableToExcelById('patientWaitingTable')">
+    </td>
+    </msh:row>
+    <msh:row><td colspan="4">
+        <select class="select-pigeonHole" id="select-pigeonHole" style="width: 100%"></select>
+    </td>
+    </msh:row>
 
 </msh:panel>
 <%}%>
@@ -78,14 +91,34 @@ if (kioskType.equals("ADMISSION")) {
 </table>
 <script type="text/javascript" src="/skin/ac.js"></script>
 <script type="text/javascript">
-  /*  jQuery(document).ready(function() {initPigeonHole();});
-
+    <% if (isDoctor) { %>
+    jQuery(document).ready(function() {initPigeonHole();});
+    var s2;
     function initPigeonHole() {
-        jQuery("#select-pigeonHole").select2({
-            placeHolder:"Укажите приемное отделение"
+        var pId=+'${param.pigeonHole}';
+         s2 = jQuery("#select-pigeonHole");
+        s2.select2({
+            ajax:{
+                url:'simpleVocAutocomplete/vocPigeonHole?type=json'
+                ,datatype:'json'
+                ,delay:250
+                ,data: function(params) {
+
+                }
+            }
+            ,placeholder:"Приемник"
+        });
+
+        if (pId>0) {
+            s2.val("1").trigger("change");
+            console.log(+pId+"<<<");
+        }
+        s2.on('select2:select', function (e) {
+            console.log(e);
+            reloadPage();
         });
     }
-*/
+<% } %>
 var colors={red:"background-color:red;"
     , orange:"background-color: orange;"
     , yellow:"background-color: yellow;"
@@ -96,22 +129,16 @@ var colors={red:"background-color:red;"
 
     getQueue();
     var isDoctor = ${isDoctor} ;
-//    new dateutil.DateField($('startDate'));
- //   new dateutil.DateField($('finishDate'));
-
-    try{
-        pigeonHoleAutocomplete.addOnChangeCallback( function() {reloadPage();});
-    } catch (e) {
-        console.log(e);
-    }
+    new dateutil.DateField($('startDate'));
+    new dateutil.DateField($('finishDate'));
 
     function reloadPage() {
         var em = jQuery('input:radio[name=isEmergency]:checked').val();
         var append ="";
-   /*     if ($('startDate').value) {
+        if ($('startDate').value) {
             append="&startDate="+$('startDate').value+"&finishDate="+($('finishDate').value ? $('finishDate').value : $('startDate').value);
         }
-    */    window.location.search="mode=ADMISSION&isEmergency="+em+"&pigeonHole=${pigeonHole}&pigeonHoleName=${pigeonHoleName}"+append;
+        window.location.search="mode=ADMISSION&isEmergency="+em+"&pigeonHole="+(jQuery('#select-pigeonHole').val()?jQuery('#select-pigeonHole').val():"")+"&pigeonHoleName=${pigeonHoleName}"+append;
     }
     function getQueue() {
         jQuery.ajax({
@@ -124,7 +151,7 @@ var colors={red:"background-color:red;"
                 startDate:'${param.startDate}',
                 finishDate:'${param.finishDate}'
             }
-            ,error: function(jqXHR,ex){console.log(ex);setTimeout(getQueue,60000);}
+            ,error: function(jqXHR,ex){console.log(ex);alert('Произошла какая-то ошибка: '+ex);setTimeout(getQueue,60000);}
             ,success: function(array) {
                 if (!array||array.length===0)  {
                     tbl.html("Нет пациентов в очереди");

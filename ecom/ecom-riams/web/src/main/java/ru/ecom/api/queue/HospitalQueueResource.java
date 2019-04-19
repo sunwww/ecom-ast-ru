@@ -50,7 +50,6 @@ public class HospitalQueueResource {
                         " when vis.datestart is not null then '<s>'||coalesce(vcms.name,ms.name)||'</s>' else coalesce(vcms.name,ms.name) end ||'<br>') " : ", cast('' as varchar) ") +" as planServices" +
                 " from medcase sls " +
                 " left join patient pat on pat.id=sls.patient_id" +
-                " left join medcase slo on slo.parent_id = sls.id and slo.dtype='DepartmentMedCase'" +
                 " left join mislpu dep on dep.id=sls.department_id" +
                 " left join vocpigeonhole vph on vph.id=dep.pigeonhole_id " +
                 " left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id" +
@@ -66,15 +65,12 @@ public class HospitalQueueResource {
                 " left join diary d on d.medcase_id=sls.id" +
                 " left join workfunction wf on wf.id=d.specialist_id" +
                 " left join vocWorkFunction vwf on vwf.id=wf.workfunction_id" +
-                " where sls.dtype='HospitalMedCase'" +
+                " where sls.dtype='HospitalMedCase' and sls.deniedhospitalizating_id is not null" +
                 (aStartDate==null || aStartDate.equals("")
-                        ? " and (sls.deniedhospitalizating_id is null or vdh.code='IN_PIGEON_HOLE') and slo.id is null" +
-                        " and sls.transferdate is null and sls.transfertime is null"
-                        : "and sls.deniedhospitalizating_id is not null and sls.datestart between to_date('"+aStartDate+"','dd.MM.yyyy') and to_date('"+aFinishDate+"','dd.MM.yyyy')") +
-
+                        ? " and sls.datestart between current_date-1 and current_date and vdh.code='IN_PIGEON_HOLE'"
+                        : " and sls.datestart between to_date('"+aStartDate+"','dd.MM.yyyy') and to_date('"+aFinishDate+"','dd.MM.yyyy')") +
                 (isEmergency.equals("0") ? " and (sls.emergency is null or sls.emergency='0')" : isEmergency.equals("1") ? " and sls.emergency='1'" : "")+
-
-                (pigeonHole!=null&&!pigeonHole.equals("")?" and vph.code='"+pigeonHole+"'":"") +
+                (pigeonHole!=null&&!pigeonHole.equals("")?" and vph.id="+Long.valueOf(pigeonHole)+"":"") +
                 " group by sls.id, pat.id,dep.id"+
                 " order by sls.dateStart, sls.entranceTime ";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);

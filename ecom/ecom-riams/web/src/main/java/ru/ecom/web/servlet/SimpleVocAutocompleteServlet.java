@@ -1,6 +1,8 @@
 package ru.ecom.web.servlet;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.web.util.EntityInjection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.voc.VocValue;
@@ -34,20 +36,18 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
 
     public void printFindByQuery(HttpServletRequest aRequest, String aQuery, int aCount, PrintWriter aOut) throws Exception {
         printResult(EntityInjection.find(aRequest).getVocService().findVocValueByQuery
-                (getVocName(aRequest), aQuery, aCount, VocAdditionalUtil.create(aRequest)), aOut);
+                (getVocName(aRequest), aQuery, aCount, VocAdditionalUtil.create(aRequest)), aOut,"json".equalsIgnoreCase(aRequest.getParameter("type")));
     }
 
     public void printNext(HttpServletRequest aRequest, String aId, int aCount, PrintWriter aOut) throws Exception {
-
         if (CAN_TRACE) LOG.info("printNext(): aId = " + aId);
         if (CAN_TRACE) LOG.info("  printNext(): aCount = " + aCount);
-
         Collection<VocValue> vocs = EntityInjection.find(aRequest).getVocService().findVocValueNext
                 (getVocName(aRequest), aId, aCount, VocAdditionalUtil.create(aRequest));
 
         if (CAN_TRACE) LOG.info("  vocs = " + vocs);
         if (CAN_TRACE) LOG.info("  vocs.size() = " + vocs.size());
-
+        boolean isJson = "json".equalsIgnoreCase(aRequest.getParameter("type"));
         if (!StringUtil.isNullOrEmpty(aId)) {
             String lastId = null;
             if (vocs != null && !vocs.isEmpty()) {
@@ -68,8 +68,7 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
 
                 if (CAN_TRACE) LOG.info("  hash = " + hash);
 
-                LinkedList<VocValue> ret = new LinkedList<>();
-                ret.addAll(addVocs);
+                LinkedList<VocValue> ret = new LinkedList<>(addVocs);
                 if (CAN_TRACE) LOG.info("  ret = " + ret);
 //                if (CAN_TRACE) LOG.info("  ret = " + ret);
 //                if (ret.size() > 0) ret.remove(ret.size() - 1);
@@ -83,12 +82,12 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
 //                    ret.add(vocValue);
                 }
                 if (CAN_TRACE) LOG.info("  after add ret = " + ret);
-                printResult(ret, aOut);
+                printResult(ret, aOut,isJson);
             } else {
-                printResult(vocs, aOut);
+                printResult(vocs, aOut,isJson);
             }
         } else {
-            printResult(vocs, aOut);
+            printResult(vocs, aOut, isJson);
         }
     }
 
@@ -96,7 +95,7 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
 
         Collection<VocValue> vocs = EntityInjection.find(aRequest).getVocService().findVocValuePrevious
                 (getVocName(aRequest), aId, aCount, VocAdditionalUtil.create(aRequest));
-
+        boolean isJson = "json".equalsIgnoreCase(aRequest.getParameter("type"));
         if (vocs.size() < aCount && !StringUtil.isNullOrEmpty(aId)) {
             VocValue lastVoc = null;
             for (VocValue vocValue : vocs) {
@@ -115,23 +114,38 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                         firstPassed = true;
                     }
                 }
-                printResult(ret, aOut);
+                printResult(ret, aOut,isJson);
             } else {
-                printResult(vocs, aOut);
+                printResult(vocs, aOut,isJson);
             }
         } else {
-            printResult(vocs, aOut);
+            printResult(vocs, aOut,isJson);
         }
     }
 
 
-    private void printResult(Collection aCol, PrintWriter aOut) {
+    private void printResult(Collection aCol, PrintWriter aOut, boolean isJson) {
         int COUNT = 10;
         int i = 0;
-        for (Object o : aCol) {
-            VocValue value = (VocValue) o;
-            p(aOut, value.getId(), value.getName());
-            if (i++ > COUNT) break;
+        if (isJson) {
+            JSONObject result = new JSONObject();
+            JSONArray arr = new JSONArray();
+
+            for (Object o : aCol) {
+                VocValue value = (VocValue) o;
+                JSONObject v = new JSONObject();
+                v.put("id",value.getId());
+                v.put("text",value.getName());
+                arr.put(v);
+                if (i++ > COUNT) break;
+            }
+            aOut.print("\"results\":"+arr);
+        } else {
+            for (Object o : aCol) {
+                VocValue value = (VocValue) o;
+                p(aOut, value.getId(), value.getName());
+                if (i++ > COUNT) break;
+            }
         }
     }
 }
