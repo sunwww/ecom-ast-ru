@@ -23,7 +23,10 @@ function onCreate(aForm, aEntity, aCtx){
             var diagn = new Packages.ru.ecom.oncological.ejb.domain.OncologyDiagnostic();
             diagn.setVocOncologyDiagType(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyDiagType, java.lang.Long.valueOf(vals[0])));
             if (vals[0] == '1') {
-                diagn.setHistiology(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN007, java.lang.Long.valueOf(vals[1])));
+                //получаем тип гистологии из ненормализованной таблицы
+                var histRes = aCtx.manager.createNativeQuery("select id from VocOncologyN007 where code=(select histology from VocOncologyN008 where code='"+vals[2]+"')").getResultList();
+                if (histRes.size()>0)
+                    diagn.setHistiology(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN007, java.lang.Long.valueOf(histRes.get(0))));
                 var res = aCtx.manager.createNativeQuery("select id from VocOncologyN008 where code='"+vals[2]+"'").getResultList();
                 if (res.size()>0)
                     diagn.setResultHistiology(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN008, java.lang.Long.valueOf(res.get(0))));
