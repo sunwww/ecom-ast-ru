@@ -189,8 +189,6 @@ public class PropertyUtil {
 	       	 return aValue ;
         } else if (aInClass.equals(Integer.TYPE) && aOutClass.equals(Integer.class)) {
 	       	 return aValue ;
-        } else if (aInClass.equals(Long.TYPE) && aOutClass.equals(Long.class)) {
-	       	 return aValue ;
         } else if (aInClass.equals(boolean.class) && aOutClass.equals(String.class)) {
 	       	 return String.valueOf(aValue) ;
         } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Time.class)) {
