@@ -21,7 +21,7 @@
                 </tr>
                 <tr>
                     <td align="right" width="100">Примечание</td>
-                    <td><input type="text" id="${name}BillComment" maxlength="50" size="200"></td>
+                    <td><input type="text" id="${name}BillComment" maxlength="50" size="100"></td>
                 </tr>
 
                 <tr>
