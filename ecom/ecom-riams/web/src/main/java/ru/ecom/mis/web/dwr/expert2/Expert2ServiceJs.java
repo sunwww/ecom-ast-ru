@@ -263,22 +263,23 @@ public class Expert2ServiceJs {
         Injection.find(aRequest).getService(IExpert2Service.class).makeCheckEntry(aEntryId,forceUpdateKsg);
     }
 
-    public boolean saveBillDateAndNumber(Long aListEntryId, String aType, String aServiceStream, String aOldBillNumber, String aOldBillDate,String aBillNumber, String aBillDate, String isForeign, HttpServletRequest aRequest) throws NamingException {
+    public boolean saveBillDateAndNumber(Long aListEntryId, String aType, String aServiceStream, String aOldBillNumber, String aOldBillDate,String aBillNumber
+            , String aBillDate, String isForeign, String aComment, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         IExpert2Service expert2Service= Injection.find(aRequest).getService(IExpert2Service.class);
         String sql ;
         if (aType==null||aType.trim().equals("")) {return false;}
         if (aServiceStream==null||aServiceStream.trim().equals("")) {return false;}
 
-        if (aBillNumber==null||aBillNumber.trim().equals("")) { //Удалить информацию о номере счета.
-            sql = "update e2entry set bill_id=null, billNumber='', billDate=null where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"' and isForeign='"+isForeign+"'";
+        if (StringUtil.isNullOrEmpty(aBillNumber)) { //Удалить информацию о номере счета.
+            sql = "update e2entry set bill_id=null, billNumber='', billDate=null  where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"' and isForeign='"+isForeign+"'";
             if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {return false;}
             if (aOldBillNumber!=null&&!aOldBillNumber.equals("")) {sql+=" and billNumber='"+aOldBillNumber+"'";}else {return false;}
         } else {
-            E2Bill bill = expert2Service.getBillEntryByDateAndNumber(aBillNumber,aBillDate);
-            sql = "update e2entry set bill_id="+bill.getId()+", billNumber='"+aBillNumber+"', billDate=to_date('"+aBillDate+"','dd.MM.yyyy')" +
+            E2Bill bill = expert2Service.getBillEntryByDateAndNumber(aBillNumber,aBillDate,aComment);
+            sql = "update e2entry set bill_id="+bill.getId()+", billNumber='"+aBillNumber+"', billDate=to_date('"+aBillDate+"','dd.MM.yyyy') "+
                     " where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"' and isForeign='"+isForeign+"'";
-            if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {sql+=" and billDate is null";}
+            if (!StringUtil.isNullOrEmpty(aOldBillDate)) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {sql+=" and billDate is null";}
             if (aOldBillNumber==null) {aOldBillNumber="";}
             sql+=" and billNumber='"+aOldBillNumber+"'";
         }

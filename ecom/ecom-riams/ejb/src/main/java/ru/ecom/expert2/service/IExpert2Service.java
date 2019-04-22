@@ -20,7 +20,7 @@ public interface IExpert2Service {
     E2Entry getEntryJson(Long aEntryId);
     String splitForeignOtherBill(Long aListEntryId, String aBillNumber, Date aBillDate, String aTerritories);
     BigDecimal calculatePolyclinicEntryPrice(VocE2VidSluch aVidSluch, Date aFinishDate, VocE2MedHelpProfile aMedHelpProfile);
-    E2Bill getBillEntryByDateAndNumber(String sBillNumber, String aBillDate);
+    E2Bill getBillEntryByDateAndNumber(String sBillNumber, String aBillDate, String aComment);
     E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate);
     Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate);
     boolean exportDefectNewListEntry(Long aListEntryId);

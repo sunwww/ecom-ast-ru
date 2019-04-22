@@ -49,4 +49,11 @@ public class E2Bill extends BaseEntity {
     public void setSum(BigDecimal aSum) {theSum = aSum;}
     /** Сумма счета */
     private BigDecimal theSum ;
+
+    /** Примечание к счету */
+    @Comment("Примечание к счету")
+    public String getComment() {return theComment;}
+    public void setComment(String aComment) {theComment = aComment;}
+    /** Примечание к счету */
+    private String theComment ;
 }

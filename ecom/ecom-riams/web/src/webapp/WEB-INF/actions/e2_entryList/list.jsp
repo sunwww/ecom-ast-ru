@@ -22,7 +22,6 @@
 ${importResult}
         <msh:hideException>
             <msh:textField label="Номер карты" property="historyNumber"/><input type="button" value="Найти по ИБ" onclick="findByNumber()">
-
             <ecom:webQuery name="entryList" nativeSql="select id, name, startDate, finishDate, createDate||' '|| createTime
             ,case when isClosed='1' then 'color:blue' else '' end as color
              from e2listentry where isDeleted='0' or isDeleted is null order by finishDate desc, createDate desc,createtime desc "/>
@@ -35,7 +34,7 @@ ${importResult}
                 </msh:table>
             </msh:section>
         </msh:hideException>
-        <<script type="text/javascript">
+        <script type="text/javascript">
         function findByNumber() {
             var val = jQuery('#historyNumber').val();
             if (val) window.document.location="entityList-e2_entry.do?id=&orderBy=firstNew&filter=historyNumber:"+val;

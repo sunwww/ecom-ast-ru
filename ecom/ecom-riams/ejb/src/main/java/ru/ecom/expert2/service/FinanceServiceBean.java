@@ -56,9 +56,9 @@ public class FinanceServiceBean implements IFinanceService {
             }
             SimpleDateFormat month = new SimpleDateFormat("MM");
             int planCnt=0;
-        boolean hospPlan = aType.equals("HospitalFinancePlan");
-        boolean polPlan = aType.equals("PolyclinicFinancePlan");
-        boolean vmpPlan = aType.equals("VmpFinancePlan");
+            boolean hospPlan = aType.equals("HospitalFinancePlan");
+            boolean polPlan = aType.equals("PolyclinicFinancePlan");
+            boolean vmpPlan = aType.equals("VmpFinancePlan");
             for (Long planId : plans) {
                 planCnt++;
                 //   boolean first = true;
@@ -94,9 +94,12 @@ public class FinanceServiceBean implements IFinanceService {
                         monthPlan.setFinishDate(currentMonth);
                         monthPlan.setCount(count);
 
+
                         sql="stacType_id=" +monthPlan.getBedSubType().getId();
                         VocKsg ksg=monthPlan.getKsg();
-                        if (ksg!=null) {
+                       if (yearPlan.getCost()!=null) {
+                           cost=yearPlan.getCost().divide(BigDecimal.valueOf(12.0),2, RoundingMode.UP);
+                       } else if (ksg!=null) {
                             priceKey=ksg.getId()+"#"+sql+"#"+currentMonth.getTime();
                             if (!caseCost.containsKey(priceKey)){
                                 VocE2BaseTariff tariff = expert2ServiceBean.getActualVocByClassName(VocE2BaseTariff.class, currentMonth, sql);
