@@ -1203,21 +1203,21 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
 from medcase mc1
  left join MisLpu dep on dep.id=mc1.department_id
  left join Medcase dmc on dmc.parent_id=mc1.id
- left join Patient pat on pat.id=mc1.patient_id or pat.id=dmc.patient_id
-  left join diagnosis ds on ds.medcase_id=mc1.id or ds.medcase_id=dmc.id
+ left join Patient pat on pat.id=mc1.patient_id or pat.id=mcRod.patient_id
+  left join diagnosis ds on ds.medcase_id=mc1.id or ds.medcase_id=mcRod.id
   left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
   left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
   left join vocprioritydiagnosis prior on prior.id=ds.priority_id
   left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id or qec.medcase_id=mc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 where mc1.id=mcRod.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
-and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
- ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
- and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
+  and reg.code='4' and prior.code='1'
+ and qe.experttype='BranchManager' and qek.code='PR203'
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
  ${param.isDraft}
-  )
+ and qd.isobserv is null)
  from medcase mc
 left join medcase mcRod on mcRod.parent_id=mc.parent_Id
 left join Mislpu dep on mc.department_id=dep.id
@@ -2127,12 +2127,12 @@ order by mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
             <msh:sectionTitle>
                 <ecom:webQuery isReportBase="${isReportBase}" name="203EK3Rod" nameFldSql="203EK_sql" nativeSql="
            select distinct mcRod.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
- ,( select min(qec.id)
+  ,( select min(qec.id)
 from medcase mc1
  left join MisLpu dep on dep.id=mc1.department_id
  left join Medcase dmc on dmc.parent_id=mc1.id
- left join Patient pat on pat.id=mc1.patient_id or pat.id=dmc.patient_id
-  left join diagnosis ds on ds.medcase_id=mc1.id or ds.medcase_id=dmc.id
+ left join Patient pat on pat.id=mc1.patient_id or pat.id=mcRod.patient_id
+  left join diagnosis ds on ds.medcase_id=mc1.id or ds.medcase_id=mcRod.id
   left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
   left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
   left join vocprioritydiagnosis prior on prior.id=ds.priority_id
@@ -2141,12 +2141,11 @@ from medcase mc1
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
 left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 where mc1.id=mcRod.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
-and mc.dateFinish >= to_date('01.04.2019','dd.mm.yyyy')
-and mc.dateFinish <= to_date('18.04.2019','dd.mm.yyyy')
-  and reg.code='4' and prior.code='1' and dep.id=212
- and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
+  and reg.code='4' and prior.code='1'
+ and qe.experttype='BranchManager' and qek.code='PR203'
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
-  )
+ ${param.isDraft}
+ and qd.isobserv is null)
  from medcase mc
 left join medcase mcRod on mcRod.parent_id=mc.parent_Id
 left join Mislpu dep on mc.department_id=dep.id
@@ -2157,7 +2156,7 @@ left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
 left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
-left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=mcRod.id --or qec.medcase_id=mc.id
+left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=mcRod.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
 left join qualityestimation qe on qe.card_id=qec.id
   where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
