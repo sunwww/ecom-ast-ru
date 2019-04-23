@@ -209,7 +209,7 @@ function check(aForm, aCtx,isCreate) {
                     + aForm.timeRegistration + "' ) then '0' else '1' end end" +
                     " from medcase hmc" +
                     " left join medcase dmc on hmc.id=dmc.parent_id and dmc.dtype='DepartmentMedCase'" +
-                    " where hmc.id=" + aForm.medCase + " order by dmc.id").setMaxResult(1).getResultList();
+                    " where hmc.id=" + aForm.medCase + " order by dmc.id limit 1").getResultList();
                 if (!list.isEmpty() && list.get(0) == '1') {
                     throw "Нельзя создавать дневник специалиста приёмного отделения с датой регистрации больше начала СЛО! Нужно изменить дату и время регистрации либо создать дневник в случае лечения в отделении.";
                 }
