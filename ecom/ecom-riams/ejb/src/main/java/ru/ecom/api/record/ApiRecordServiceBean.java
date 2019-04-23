@@ -66,6 +66,47 @@ public class ApiRecordServiceBean implements IApiRecordService {
         return theManager.find(Patient.class,list.get(0).longValue());
     }
 
+    /**Запись пациента с промеда
+     * Находим подходящее время
+     * */
+    public String recordPromedPatient(String aPromedDoctorId, String aLastname, String aFirstname, String aMiddlename, Date aBirthdate, Date aCalendarDate, Time aCalendarTime, String aPhone) {
+        List<WorkFunction> workFunctions = theManager.createQuery("from WorkFunction where promedCodeWorkstaff=:promedCode")
+                .setParameter("promedCode",aPromedDoctorId).getResultList();
+        if (workFunctions.isEmpty() || workFunctions.size()>1) {
+            LOG.error("Невозможно записать пациента, т.к. по коду "+aPromedDoctorId+" найдено "+workFunctions.size()+" рабочих функций");
+            return getErrorJson("По коду "+aPromedDoctorId+" не найдено рабочей функции","NO_PROMED_DOCTOR");
+        }
+        WorkFunction doctor = workFunctions.get(0);
+        System.out.println(DateFormat.formatToTime(aCalendarTime)+"=====");
+        List<BigInteger> workCalendarTimeList = theManager.createNativeQuery("select wct.id from workfunction wf" +
+                " left join workcalendar wc on wf.id = wc.workfunction_id" +
+                " left join workcalendarday wcd on wc.id = wcd.workcalendar_id" +
+                " left join workcalendartime wct on wcd.id = wct.workcalendarday_id" +
+                " left join vocservicereservetype vsrt on wct.reservetype_id = vsrt.id " +
+                " where wf.id=:doctorId and wcd.calendardate=:calendarDate and wct.timefrom =:timeFrom " +
+                " and vsrt.code='PROMED'" +
+                " and (wcd.isDeleted is null or wcd.isDeleted='0') and (wct.isDeleted is null or wct.isDeleted='0')" +
+                " and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
+                ).setParameter("doctorId",doctor).setParameter("calendarDate",aCalendarDate).setParameter("timeFrom",aCalendarTime).getResultList();
+        if (workCalendarTimeList.isEmpty()) {
+            workCalendarTimeList = theManager.createNativeQuery("select wct.id from workfunction wf" +
+                    " left join workcalendar wc on wf.id = wc.workfunction_id" +
+                    " left join workcalendarday wcd on wc.id = wcd.workcalendar_id" +
+                    " left join workcalendartime wct on wcd.id = wct.workcalendarday_id" +
+                    " left join vocservicereservetype vsrt on wct.reservetype_id = vsrt.id " +
+                    " where wf.id=:doctorId and wcd.calendardate=:calendarDate " +
+                    " and vsrt.code='PROMED' and wct.timefrom between '"+DateFormat.formatToTime(aCalendarTime)+"' -interval '2 minutes' and '"+DateFormat.formatToTime(aCalendarTime)+"' +interval '2 minutes'" +
+                    " and (wcd.isDeleted is null or wcd.isDeleted='0') and (wct.isDeleted is null or wct.isDeleted='0')" +
+                    " and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
+                    ).setParameter("doctorId",doctor).setParameter("calendarDate",aCalendarDate).getResultList();
+            if (workCalendarTimeList.isEmpty()) {
+                LOG.error("Не найдено подходящего времени");
+                return getErrorJson("Не найдено свободных времен к врачу: "+doctor.getWorkFunctionInfo()+" на "+aCalendarDate+" "+aCalendarTime,"NO_PROMED_FREE_TIME");
+            }
+        }
+        return recordPatient(workCalendarTimeList.get(0).longValue(),aLastname,aFirstname,aMiddlename,aBirthdate,null,null,aPhone);
+    }
+
     /**
      * Запись пациента на прием (если у резерва разрешено записывать без предварит. направление, создаем направление
      * @param aCalendarTimeId
@@ -252,7 +293,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
             writer.flush();
             return aFilename;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getLocalizedMessage(),e);
             return null;
         }
     }
