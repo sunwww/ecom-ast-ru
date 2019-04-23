@@ -32,7 +32,7 @@ select card.id as cardid,vek.name as vekname
  	when md.DTYPE='PolyclinicMedCase' then 'СПО №'||md.id 
  	else 'СМО №'||md.id end as dtype 
  ,mkb.code as mkbcode,card.createDate,card.createUsername 
- ,(select round(cast(avg(coalesce(vqem.mark,qecB.markTransient)) as numeric),2) from QualityEstimationCrit qecB left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id left join vocqualityEstimationCrit vqec on vqec.id=qecB.criterion_id where qecB.estimation_id=qeB.id and vqec.parent_id is null) as mark1
+ , case when vek.code='PR203' then 'Оценки Да/Нет' else cast((select round(cast(avg(coalesce(vqem.mark,qecB.markTransient)) as numeric),2) from QualityEstimationCrit qecB left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id left join vocqualityEstimationCrit vqec on vqec.id=qecB.criterion_id where qecB.estimation_id=qeB.id and vqec.parent_id is null) as varchar(5)) end as mark1
  , (select round(cast(avg(coalesce(vqem.mark,qecB.markTransient)) as numeric),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id left join vocqualityEstimationCrit vqec on vqec.id=qecB.criterion_id where qecB.estimation_id=qeE.id and vqec.parent_id is null) as mark2
  , (select round(cast(avg(coalesce(vqem.mark,qecB.markTransient)) as numeric),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id left join vocqualityEstimationCrit vqec on vqec.id=qecB.criterion_id where qecB.estimation_id=qeC.id and vqec.parent_id is null) as mark3
  from QualityEstimationCard card

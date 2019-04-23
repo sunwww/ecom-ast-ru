@@ -471,6 +471,7 @@
                         if(res=="0" && a.match(/C\d\d/ )!=null)
                         {
                             alert('Внимание! Для выбранного диагноза нужно заполнить случай ЗНО');
+                            savePreRecord();
                             window.open("entityParentPrepareCreate-oncology_case_reestr.do?id="+'${param.id}'+"&mkb="+concludingMkb);
                             try{$('submitPreDischrge2').disabled=false;
                                 $('submitPreDischrge1').disabled=false ;}catch(e){}
