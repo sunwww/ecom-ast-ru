@@ -107,9 +107,9 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /** Находим или создаем счет*/
-    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate) {return getBillEntryByDateAndNumber(aBillNumber, new SimpleDateFormat("dd.MM.yyy").format(aBillDate));}
-    public Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate) {return  getBillEntryByDateAndNumber(aBillNumber,aBillDate).getId();}
-    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, String aBillDate) {
+    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate) {return getBillEntryByDateAndNumber(aBillNumber, new SimpleDateFormat("dd.MM.yyy").format(aBillDate),null);}
+    public Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate) {return  getBillEntryByDateAndNumber(aBillNumber,aBillDate,null).getId();}
+    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, String aBillDate, String aComment) {
         E2Bill bill = null;
         String sql = "select id from e2bill where billNumber=:number and billDate=to_date(:date,'dd.MM.yyyy') ";
         List<BigInteger> list = theManager.createNativeQuery(sql).setParameter("number",aBillNumber).setParameter("date",aBillDate).getResultList();
@@ -119,7 +119,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 bill.setBillNumber(aBillNumber);
                 bill.setBillDate(DateFormat.parseSqlDate(aBillDate,"dd.MM.yyyy"));
                 bill.setStatus((VocE2BillStatus)getActualVocByClassName(VocE2BillStatus.class,null,"code='DRAFT'"));
-                theManager.persist(bill);
             } catch (ParseException e) {
                 e.printStackTrace();
                 LOG.error(e);
@@ -129,7 +128,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         } else {
             bill = theManager.find(E2Bill.class,list.get(0).longValue());
         }
-
+        if (bill!=null && aComment!=null) {
+            bill.setComment(aComment);
+            theManager.persist(bill);
+        }
         return bill;
     }
 
@@ -3321,7 +3323,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                 List<Diagnosis> diagnoses = medCase.getDiagnoses();
                 List<EntryDiagnosis> entryDiagnoses = new ArrayList<>();
                 for (Diagnosis d:diagnoses) {
-                    entryDiagnoses.add(new EntryDiagnosis(sloEntry,d.getIdc10(),d.getRegistrationType(),d.getPriority(),d.getMkbAdc(),d.getIllnesPrimary().getOmcCode()));
+                   try{entryDiagnoses.add(new EntryDiagnosis(sloEntry,d.getIdc10(),d.getRegistrationType(),d.getPriority(),d.getMkbAdc(),d.getIllnesPrimary().getOmcCode()));}
+                   catch (Exception e) {LOG.warn(e.getMessage());}
                 }
                 sloEntry.setDiagnosis(entryDiagnoses);
                 List<SurgicalOperation> operationList = medCase.getSurgicalOperations();

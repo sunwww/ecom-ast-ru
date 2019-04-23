@@ -63,4 +63,12 @@ public class E2BillForm extends IdEntityForm {
     /** Сумма счета */
     private String theSum ;
 
+    /** Примечание к счету */
+    @Comment("Примечание к счету")
+    @Persist
+    public String getComment() {return theComment;}
+    public void setComment(String aComment) {theComment = aComment;}
+    /** Примечание к счету */
+    private String theComment ;
+
 }

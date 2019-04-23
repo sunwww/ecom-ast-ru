@@ -56,7 +56,7 @@
                 <msh:ifFormTypeIsView formName="e2_entryListForm">
 
                 <ecom:webQuery name="entries" nameFldSql="entries_sql" nativeSql="select '${param.id}&entryType='||e.entryType||'&billDate='||
-                    coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'') ||'&serviceStream='||e.serviceStream||'&isForeign='||case when e.isForeign='1' then '1' else '0' end as id
+                    coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'') ||'&serviceStream='||e.serviceStream||'&isForeign='||case when e.isForeign='1' then '1' else '0' end||'&billComment='||coalesce(bill.comment,'') as id
                 ,e.entryType as f2
                 ,e.billDate as f3
                 ,e.billNumber||max(case when vocbill.id is not null then ' ('||vocbill.name||')' else '' end ) as f4

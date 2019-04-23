@@ -82,7 +82,7 @@
                 String selectDateSql ;
                 if (month==null||month.equals("")) { // Список по году
                     selectDateSql="to_char(fp.startDate,'yyyy')";
-                    startDateSql=" and to_char(fp.startDate,'yyyy')='"+year+"'";
+                    startDateSql+=" and to_char(fp.startDate,'yyyy')='"+year+"'";
                 } else { //Список планов за год
                     selectDateSql="to_char(fp.startDate,'MM.yyyy')";
                     startDateSql =" and '"+month+"'=to_char(fp.startDate,'MM.yyyy') and '"+month+"'=to_char(fp.finishDate,'MM.yyyy')";

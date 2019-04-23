@@ -182,6 +182,11 @@ public class ApiRecordResource {
             String annul = getJsonField(root,"annul");
             JSONObject list;
 
+            //запись с промеда
+            String doctorPromedCode = getJsonField(root,"doctorPromedId");
+            String calendarDate = getJsonField(root,"recordCalendarDate");
+            String calendarTime = getJsonField(root,"recordCalendarTime");
+
             ApiUtil.init(aRequest,token);
             IApiRecordService service =Injection.find(aRequest).getService(IApiRecordService.class);
             if (!StringUtil.isNullOrEmpty(annul)) {

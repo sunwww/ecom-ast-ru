@@ -32,7 +32,7 @@
 %>
 <head>
     <title>${pageTitle}</title>
-    <link rel="stylesheet" type="text/css" href="/skin/select2.css">
+    <link rel="stylesheet" type="text/css" href="/skin/css/css/select2/select2.min.css">
 </head>
 <body>
 <%
@@ -169,7 +169,7 @@ var colors={red:"background-color:red;"
                             "</tr>");
                     }//60-90 - yellow
                 }
-                if ('${param.startDate}'!=='') setTimeout(getQueue,60000);
+                if ('${param.startDate}'==='') setTimeout(getQueue,60000);
         }
     });
     }

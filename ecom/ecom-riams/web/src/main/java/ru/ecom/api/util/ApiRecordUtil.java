@@ -159,7 +159,7 @@ public class ApiRecordUtil {
  String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID);
  * */
 public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday
-        ,  String aComment,String aPhone, IApiRecordService apiRecordService, String aRecordType) {
+        , String aComment, String aPhone, IApiRecordService apiRecordService, String aRecordType) {
     try {
         if (AgeUtil.calcAgeYear(aPatientBirthday,new Date(System.currentTimeMillis()))>122) {
             return getErrorJson("Запись пациента старше 122 лет невозможна","TOO_OLD");

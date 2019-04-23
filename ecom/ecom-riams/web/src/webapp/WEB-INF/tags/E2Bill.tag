@@ -5,15 +5,6 @@
 
 <%@ attribute name="name" required="true" description="Название" %>
 
-
-<style type="text/css">
-    #CloseDisDocument {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
-    }
-</style>
-
 <div id='${name}BillDialog' class='dialog'>
     <h2>Введите реквизиты счета</h2>
     <div class='rootPane'>
@@ -27,6 +18,10 @@
                 <tr>
                     <td align="right" width="100">Дата счета</td>
                     <td><input type="text" id="${name}BillDate" maxlength="50" size="20"></td>
+                </tr>
+                <tr>
+                    <td align="right" width="100">Примечание</td>
+                    <td><input type="text" id="${name}BillComment" maxlength="50" size="100"></td>
                 </tr>
 
                 <tr>
@@ -52,12 +47,12 @@ function show${name}BillDialog(someStuff) {
         var dt =the${name}someData.split("&");
         var oldBillDate= dt[2].split("=")[1];
         var oldBillNumber= dt[3].split("=")[1];
+        var oldBillComment= dt[6].split("=")[1];
         $('${name}BillNumber').value=oldBillNumber;
         $('${name}BillDate').value=oldBillDate;
+        $('${name}BillComment').value=oldBillComment;
     }
-
     the${name}BillDialog.show() ;
-
 }
 
 // Отмена
@@ -66,8 +61,9 @@ function cancel${name}BillNumber() {
 }
 //Сохранение
 function save${name}BillNumber() {
-    var newBillNumber=$(${name}BillNumber).value;
-    var newBillDate=$(${name}BillDate).value;
+    var newBillNumber=$('${name}BillNumber').value;
+    var newBillDate=$('${name}BillDate').value;
+    var newBillComment=$('${name}BillComment').value;
     if (newBillNumber==''||newBillDate=='') {
         if (!confirm('Вы хотите очистить информацию о счете?')) {
             alert('Укажите номер и дату счета');
@@ -80,7 +76,7 @@ var oldBillDate= dt[2].split("=")[1];
 var oldBillNumber= dt[3].split("=")[1];
 var serviceStream = dt[4].split("=")[1];
 var isForeign=dt[5].split("=")[1];
-    Expert2Service.saveBillDateAndNumber(${param.id},type,serviceStream,oldBillNumber, oldBillDate,newBillNumber,newBillDate,isForeign, {
+    Expert2Service.saveBillDateAndNumber(${param.id},type,serviceStream,oldBillNumber, oldBillDate,newBillNumber,newBillDate,isForeign,newBillComment, {
         callback: function (a) {
             cancel${name}BillNumber();
             window.location.reload();
