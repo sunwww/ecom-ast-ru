@@ -449,7 +449,13 @@ public class OncologyServiceJs {
         if (concludingMkb.equals("")) return res;
         //Диагноз онкологической формы
         Collection<WebQueryResult> list = service.executeNativeSql(
-                "select mkb||' '||mkb.name,c.id from oncologycase c left join vocidc10 mkb on mkb.code=c.mkb where c.medcase_id="+slsId);
+                "select mkb||' '||mkb.name||' ('||prior.name||' '||reg.name||')',c.id from oncologycase c \n" +
+                        "left join vocidc10 mkb on mkb.code=c.mkb \n" +
+                        "left join medcase dmc on dmc.parent_id=c.medcase_id and dmc.dtype='DepartmentMedCase'\n" +
+                        "left join diagnosis ds on ds.medcase_id=dmc.id and  ds.idc10_id=mkb.id\n" +
+                        "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
+                        "left join vocprioritydiagnosis prior on prior.id=ds.priority_id\n" +
+                        "where c.medcase_id="+slsId);
         boolean flag=false; //что есть такой же мкб - до этого момента уже выполнена проверка на наличие/отсутствие ЗНО
         String ds="",cId="";
         for (WebQueryResult wqr : list) {
@@ -461,7 +467,7 @@ public class OncologyServiceJs {
                 }
             }
         }
-        if (!flag) res="Внимание! Онкологическая форма была создана для диагноза " + ds + "! Просьба уточнить диагноз в ЗНО.#"+cId;
+        if (!flag) res="Внимание! Онкологическая форма была создана для диагноза " + ds + "! Отредактируйте.#"+cId;
         return res;
     }
 
