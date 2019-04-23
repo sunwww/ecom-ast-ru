@@ -3323,7 +3323,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                 List<Diagnosis> diagnoses = medCase.getDiagnoses();
                 List<EntryDiagnosis> entryDiagnoses = new ArrayList<>();
                 for (Diagnosis d:diagnoses) {
-                    entryDiagnoses.add(new EntryDiagnosis(sloEntry,d.getIdc10(),d.getRegistrationType(),d.getPriority(),d.getMkbAdc(),d.getIllnesPrimary().getOmcCode()));
+                   try{entryDiagnoses.add(new EntryDiagnosis(sloEntry,d.getIdc10(),d.getRegistrationType(),d.getPriority(),d.getMkbAdc(),d.getIllnesPrimary().getOmcCode()));}
+                   catch (Exception e) {LOG.warn(e.getMessage());}
                 }
                 sloEntry.setDiagnosis(entryDiagnoses);
                 List<SurgicalOperation> operationList = medCase.getSurgicalOperations();
