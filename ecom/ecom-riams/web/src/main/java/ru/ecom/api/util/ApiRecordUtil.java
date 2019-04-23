@@ -4,7 +4,11 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import ru.ecom.api.record.IApiRecordService;
 import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.nuzmsh.util.date.AgeUtil;
+
+import java.sql.Date;
 
 public class ApiRecordUtil {
     private static final Logger LOG = Logger.getLogger(ApiRecordUtil.class);
@@ -155,7 +159,7 @@ public class ApiRecordUtil {
  String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID);
  * */
 public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday
-        ,  String aComment,String aPhone, IApiRecordService apiRecordService, String aRecordType) {
+        , String aComment, String aPhone, IApiRecordService apiRecordService, String aRecordType) {
     try {
         if (AgeUtil.calcAgeYear(aPatientBirthday,new Date(System.currentTimeMillis()))>122) {
             return getErrorJson("Запись пациента старше 122 лет невозможна","TOO_OLD");
