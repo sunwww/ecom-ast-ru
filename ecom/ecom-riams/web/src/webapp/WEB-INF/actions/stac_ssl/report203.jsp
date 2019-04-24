@@ -1092,7 +1092,7 @@ left join medcase mcRod on mcRod.parent_id=mc.parent_Id
 left join Mislpu dep on mc.department_id=dep.id
 left join Mislpu depRod on mcRod.department_id=depRod.id
 left join Patient pat on pat.id=mc.patient_id
-left join diagnosis ds on ds.medcase_id=mc.id
+left join diagnosis ds on ds.medcase_id=mcRod.id
 left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
@@ -1218,28 +1218,28 @@ where mc1.id=mcRod.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
  ${param.isDraft}
  and qd.isobserv is null)
- from medcase mc
-left join medcase mcRod on mcRod.parent_id=mc.parent_Id
-left join Mislpu dep on mc.department_id=dep.id
-left join Mislpu depRod on mcRod.department_id=depRod.id
- left join Medcase dmc on dmc.parent_id=mc.id
- left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
-  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
-  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
-  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
-  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
-  left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=dmc.id or qec.medcase_id=mc.id
-  left join qualityestimation qe on qe.card_id=qec.id
-  left join vocqualityestimationkind qek on qek.id=qec.kind_id
-  where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
-and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
- ${department} and reg.code='4' and prior.code='1'
- and depRod.ismaternityward
-  and dep.isobservable
- and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
+from medcase mc
+left join medcase as hmc on hmc.id=mc.parent_id
+left join Mislpu dep on mc.department_id=dep.id and dep.isobservable
+left join medcase as mcRod on mcRod.parent_id=hmc.id
+left join Mislpu depRod on mcRod.department_id=depRod.id and depRod.ismaternityward
+left join Patient pat on pat.id=mc.patient_id
+left join diagnosis ds on ds.medcase_id=mcRod.id
+left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
+ and reg.code='4' and prior.code='1'
+  and mc.dateFInish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and qe.experttype='BranchManager' and qek.code='PR203'
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
+and dep.isobservable=true and depRod.ismaternityward
+  and qd.isobserv is null
  ${param.isDraft}
- ${param.qd}
 group by mcRod.id,mc.id,pat.id,qec.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
 
@@ -1715,7 +1715,7 @@ left join patient pat on pat.id=mc.patient_id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
 where qd.vocidc10_id=ds.idc10_id
-  and reg.code='4' and prior.code='1' and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
+  and reg.code='4' and prior.code='1' and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
  and depRod.ismaternityward
   and dep.isobservable
 and mcRod.ownerFunction_id=dmc.ownerFunction_id and mcRod.id=dmc.id
@@ -1738,7 +1738,7 @@ left join patient pat on pat.id=mc.patient_id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
 where qd.vocidc10_id=ds.idc10_id
-  and reg.code='4' and prior.code='1' and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
+  and reg.code='4' and prior.code='1' and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
  and depRod.ismaternityward
   and dep.isobservable
 and mcRod.ownerFunction_id=dmc.ownerFunction_id and mcRod.id=dmc.id
@@ -1758,7 +1758,7 @@ left join Mislpu depRod on dmc.department_id=depRod.id and depRod.ismaternitywar
     left join Worker ow on ow.id=owf.worker_id
     left join Patient owp on owp.id=ow.person_id
 left join Patient pat on pat.id=mc.patient_id
-left join diagnosis ds on ds.medcase_id=mc.id
+left join diagnosis ds on ds.medcase_id=dmc.id
 left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
@@ -1847,7 +1847,7 @@ left join Mislpu dep on mc.department_id=dep.id and dep.isobservable
 left join medcase as dmc on dmc.parent_id=hmc.id
 left join Mislpu depRod on dmc.department_id=depRod.id and depRod.ismaternityward
 left join Patient pat on pat.id=mc.patient_id
-left join diagnosis ds on ds.medcase_id=mc.id
+left join diagnosis ds on ds.medcase_id=dmc.id
 left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
@@ -2016,7 +2016,7 @@ left join medcase mcRod on mcRod.parent_id=mc.parent_Id
 left join Mislpu dep on mc.department_id=dep.id
 left join Mislpu depRod on mcRod.department_id=depRod.id
 left join Patient pat on pat.id=mc.patient_id
-left join diagnosis ds on ds.medcase_id=mc.id
+left join diagnosis ds on ds.medcase_id=mcRod.id
 left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
