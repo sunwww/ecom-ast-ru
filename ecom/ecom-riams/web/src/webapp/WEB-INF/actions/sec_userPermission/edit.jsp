@@ -57,12 +57,6 @@
         </msh:ifFormTypeIsView>
         <msh:submitCancelButtonsRow colSpan="4" guid="8515167d-96cf-48ad-8294-1f3f60a105ec" />
       </msh:panel>
-          <%   
-  String ido=request.getParameter("ido");
-  String type =request.getParameter("type"); 
-  request.setAttribute("ido", ido);
-  request.setAttribute("type", type);  
-  %> 
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
@@ -73,30 +67,36 @@
   <msh:ifFormTypeIsCreate formName="sec_userPermissionForm">
    <script>
   window.onload=function (){
-      $('idObject').value='${ido}';
-	  $('object').value='${type}';
-	  if ('${type}'=="1") $('objectName').value="Протокол"; else if ('${type}'=="2") $('objectName').value="Выписка";
+      $('idObject').value='${param.ido}';
+	  $('object').value='${param.type}';
+	  if ($('object').value=="1") {
+	    $('objectName').value="Протокол";
+      } else if ($('object').value=="2") {
+             $('objectName').value="Выписка";
+	  }
       $('dateFrom').value=$('dateTo').value=getCurrentDate();
-      TemplateProtocolService.getDefaultValueForPermission($('object').value, {
-              callback: function(aResult) {
-                  if (aResult!='{}') {
-                      var perm=JSON.parse(aResult);
-                      $('permission').value=perm.id;
-                      $('permissionName').value=perm.name;
-                  }
-              }
-          });
-      TemplateProtocolService.getPeriodForPermission($('object').value,$('idObject').value, {
-          callback: function(aResult) {
-              if (aResult!='{}') {
-                  var res=JSON.parse(aResult);
-                  $('editPeriodFrom').value=res.dateStart;
-                  $('editPeriodTo').value=res.dateFinish;
-                  $('username').value=res.suId;
-                  $('usernameName').value=res.suLogin;
-              }
+	  if (+'${param.type}'>0) {
+        TemplateProtocolService.getDefaultValueForPermission($('object').value, {
+          callback: function (aResult) {
+            if (aResult != '{}') {
+              var perm = JSON.parse(aResult);
+              $('permission').value = perm.id;
+              $('permissionName').value = perm.name;
+            }
           }
-      });
+        });
+        TemplateProtocolService.getPeriodForPermission($('object').value, $('idObject').value, {
+          callback: function (aResult) {
+            if (aResult != '{}') {
+              var res = JSON.parse(aResult);
+              $('editPeriodFrom').value = res.dateStart;
+              $('editPeriodTo').value = res.dateFinish;
+              $('username').value = res.suId;
+              $('usernameName').value = res.suLogin;
+            }
+          }
+        });
+      }
       if ('${type}'=="1") $('usernameName').disabled=true;
   }
   </script>

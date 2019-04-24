@@ -277,9 +277,9 @@ function findListPermission(aContext, aId, aCnt, aNext) {
 	if (aNext < 0) {
 		if (aCnt<0) aCnt = aCnt*(-1) ;
 		if (aId==null || aId == "" || aId==0) {
-			list =  aContext.manager.createQuery("from Permission order by id asc").setMaxResults(aCnt).getResultList() ;
+			list =  aContext.manager.createQuery("from Permission where (isDeleted is null or isDeleted='0') order by id asc").setMaxResults(aCnt).getResultList() ;
 		} else {
-			list =  aContext.manager.createQuery("from Permission where id > "+aId+" order by id asc").setMaxResults(aCnt).getResultList() ;
+			list =  aContext.manager.createQuery("from Permission where (isDeleted is null or isDeleted='0') and id > "+aId+" order by id asc").setMaxResults(aCnt).getResultList() ;
 			if (list.size()<aCnt) {
 				return findListPermission(aContext,"",aCnt,1) ; 
 			}
@@ -291,9 +291,9 @@ function findListPermission(aContext, aId, aCnt, aNext) {
 		}
 	} else {
 		if (aId==null || aId == "" || aId==0) {
-			list =  aContext.manager.createQuery("from Permission order by id desc").setMaxResults(aCnt).getResultList() ;
+			list =  aContext.manager.createQuery("from Permission where (isDeleted is null or isDeleted='0')order by id desc").setMaxResults(aCnt).getResultList() ;
 		} else {
-			list =  aContext.manager.createQuery("from Permission where id < "+aId+" order by id desc").setMaxResults(aCnt).getResultList() ;
+			list =  aContext.manager.createQuery("from Permission where (isDeleted is null or isDeleted='0') and id < "+aId+" order by id desc").setMaxResults(aCnt).getResultList() ;
 			if (list.size()<aCnt) {
 				return findListPermission(aContext,"",aCnt,-1) ;
 			}

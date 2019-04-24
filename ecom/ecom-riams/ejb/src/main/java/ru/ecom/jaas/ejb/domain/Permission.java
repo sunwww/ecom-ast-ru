@@ -1,15 +1,7 @@
 package ru.ecom.jaas.ejb.domain;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
@@ -17,12 +9,17 @@ import ru.ecom.jaas.ejb.domain.voc.VocObjectPermission;
 import ru.ecom.jaas.ejb.domain.voc.VocPermission;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
+
 @Entity
 @EntityListeners(DeleteListener.class)
 @AIndexes({
     @AIndex(properties= {"object","permission","dateFrom","dateTo"})
 })
 @Table(schema="SQLUser")
+@UnDeletable
 public abstract class Permission extends BaseEntity {
 	/** Дата начала актульности */
 	@Comment("Дата начала актульности")
@@ -105,4 +102,11 @@ public abstract class Permission extends BaseEntity {
 	private Date theDateTo;
 	/** Дата начала актульности */
 	private Date theDateFrom;
+
+	/** Удаленная запись */
+	@Comment("Удаленная запись")
+	public Boolean getIsDeleted() {return theIsDeleted;}
+	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+	/** Удаленная запись */
+	private Boolean theIsDeleted ;
 }

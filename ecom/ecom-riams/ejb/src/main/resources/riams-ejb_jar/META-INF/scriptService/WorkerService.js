@@ -73,7 +73,7 @@ function checkPermission(aCtx,  aParam) {
 	+" left join vocObjectPermission vop on vop.id=p.object_id"
 	+" left join vocPermission vp on vp.id=p.permission_id"
 	+" left join SecUser su on su.id=p.username_id"
-	+" where p.dtype='UserPermission'"
+	+" where p.dtype='UserPermission' and (p.isDeleted is null or p.isDeleted='0')"
 	+" and CURRENT_DATE between coalesce(p.dateFrom,CURRENT_DATE) and coalesce(p.dateTo,CURRENT_DATE) "
 	+" and "+checkDate+" between coalesce(p.editPeriodFrom,CURRENT_DATE) and coalesce(p.editPeriodTo,CURRENT_DATE) "
 	+" and (su.login='"+username+"' or p.username_id is null)"
