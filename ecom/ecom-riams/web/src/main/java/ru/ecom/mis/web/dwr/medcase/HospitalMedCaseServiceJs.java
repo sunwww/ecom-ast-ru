@@ -273,7 +273,7 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String addSql = "LABSURVEY".equalsIgnoreCase(aServiceType) ? " and vst.code='LABSURVEY'" : "" ;
 		String sql = "select d.id as id, to_char(d.dateregistration,'dd.MM.yyyy') as recordDate"+
-			" ,to_char(d.timeregistration,'HH:MI') as recordTime,"+
+			" ,to_char(d.timeregistration,'HH24:MI') as recordTime,"+
 			" list(mc.code) as serviceCode, list(mc.name) as serviceName"+
 			" ,d.record as recordText"+
 			" from medcase sls " +
