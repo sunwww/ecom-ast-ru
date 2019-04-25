@@ -234,12 +234,10 @@ function check(aForm, aCtx,isCreate) {
             param1.put("id", +aForm.id);
             isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
             if (curDate.after(maxVisit) || t.get(0)[1] != null && !isCreate) {
-                if (+isCheck != 1) {
-                    if (ldm.isEmpty()) {
-                        var tmpStr = (dtype == 'HospitalMedCase' || dtype == 'DepartmentMedCase') ? " госпитализации" : "";
-                        if (t.get(0)[1] == null) throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
-                        else throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
-                    }
+                if (+isCheck !== 1 && ldm.isEmpty()) {
+                    var tmpStr = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? " госпитализации" : "";
+                    if (t.get(0)[1] == null) throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
+                    else throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
                 }
             }
             if (t.get(0)[1] != null && isCreate)
@@ -248,28 +246,22 @@ function check(aForm, aCtx,isCreate) {
     }
 }
 function checkCreateDiagnosis(aForm, aCtx) {
-    var idc = +aForm.getDiagnosisIdc10();
+    var idc = aForm.getDiagnosisIdc10();
     var m = aCtx.manager;
     var mc = m.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase, aForm.getMedCase());
     var dtype = "" + m.createNativeQuery("select id, dtype from medcase where id=" + mc.getId()).getSingleResult()[1];
-    if ((idc == null || idc === 0) && dtype === 'HospitalMedCase') {
-        if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/MustCreateDiaryInHospitalMedCase")) {
-            throw "Необходимо заполнить поле \"Диагноз\"";
-        }
-
-    } else if (idc == null || idc === 0) {
-
-    } else {
-
-        var theDiagnosisPriority = +aForm.getDiagnosisPriority();
+    if (+idc === 0 && dtype === 'HospitalMedCase' &&
+        aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/MustCreateDiaryInHospitalMedCase")) {
+        throw "Необходимо заполнить поле \"Диагноз\"";
+    } else if (+idc>0) {
+        var theDiagnosisPriority = aForm.getDiagnosisPriority();
         var theDiagnosisText = aForm.getDiagnosisText();
-        var theDiagnosisIllnessPrimary = +aForm.getDiagnosisIllnessPrimary();
-        var theDiagnosisRegistrationType = +aForm.getDiagnosisRegistrationType(); //not all
-        if (theDiagnosisPriority == null || theDiagnosisPriority === 0 || theDiagnosisIllnessPrimary == null || theDiagnosisIllnessPrimary === 0) {
+        var theDiagnosisIllnessPrimary = aForm.getDiagnosisIllnessPrimary();
+        var theDiagnosisRegistrationType = aForm.getDiagnosisRegistrationType(); //not all
+        if (+theDiagnosisPriority === 0 || +theDiagnosisIllnessPrimary === 0) {
             throw "При указании кода МКБ необходимо заполнить поля \"Характер заболевания\",\"Приоритет\"";
         }
-
-        if ((dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') && (theDiagnosisRegistrationType == null || theDiagnosisRegistrationType === 0)) {
+        if ((dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') && +theDiagnosisRegistrationType === 0) {
             throw "При указании кода МКБ в стационаре необходимо заполнить поля \"Тип регистрации\"";
         }
 
@@ -289,7 +281,7 @@ function checkCreateDiagnosis(aForm, aCtx) {
 }
 
 function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
-    l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='" + aParameter + "'").getResultList();
+    var l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='" + aParameter + "'").getResultList();
     return l.isEmpty() ? aValueDefault : l.get(0)[1];
 }
 function errorThrow(aList, aError) {
