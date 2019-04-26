@@ -11,7 +11,7 @@ import ru.ecom.oncological.ejb.form.OncologyCaseReestrForm;
 /**
  * Created by Milamesher on 06.03.2019.
  */
-public class OncologyCaseReestrViewInterceptor implements IFormInterceptor {
+public class OncologyCaseReestrSaveInterceptor implements IFormInterceptor {
 
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
         //Запрет на ред-е в СЛО и СЛС, если случай закрыт. Админ может редактировать.
@@ -20,10 +20,8 @@ public class OncologyCaseReestrViewInterceptor implements IFormInterceptor {
         if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/Oncology/Case/EditOncoAfterOut") &&
                 (parent instanceof DepartmentMedCase || parent instanceof HospitalMedCase)) {
             MedCase hmc = (parent instanceof DepartmentMedCase) ? parent.getParent() : parent;
-            if (hmc.getDateFinish() != null) {
-                form.getPage();
-                form.setTypeViewOnly();
-            }
+            if (hmc.getDateFinish() != null)
+                throw new IllegalStateException("Пациент выписан. Нельзя редактировать онкологический случай в закрытом СЛС!");
         }
     }
 }

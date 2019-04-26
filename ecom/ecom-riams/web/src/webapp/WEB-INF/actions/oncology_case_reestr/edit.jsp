@@ -162,6 +162,10 @@
             <%
                 String mkb=request.getParameter("mkb");
                 request.setAttribute("mkb", mkb);
+                String actualMsg=request.getParameter("actualMsg");
+                request.setAttribute("actualMsg", actualMsg);
+                String wasDeleted=request.getParameter("wasDeleted");
+                request.setAttribute("wasDeleted", wasDeleted);
             %>
         </msh:form>
     </tiles:put>
@@ -336,78 +340,160 @@
                 }
             }
             //проставить диагноз и ФИО пациента
-            <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
-            //Если онкологическая форма создаётся по кнопке - '${mkb}' будет пустым, иначе - заполнен пока ещё не созданным осн. вып.
-                OncologyService.getFIODsPatient(${param.id},'${mkb}', {
-                callback : function(res) {
-                    var mas=res.split("#");
-                    if (mas[0]!='' && mas[1]!=''  && mas[2]!='') {
-                        document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
-                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1] + mas[2].replace(mas[1],'');
-                        $('MKB').value=mas[1];
-                        suspicionOncologist.checked= !($('MKB').value.indexOf('C')!=-1);
-                        if (suspicionOncologist.checked) checkCheckbox();
-                        suspicionOncologist.disabled=true;
-                        if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
-                            var ind=mas[1].indexOf(' ');
-                            if (ind!=-1) {
-                                stadAutocomplete.setParentId(mas[1].substring(0, ind));
-                                tumorAutocomplete.setParentId(mas[1].substring(0, ind));
-                                nodusAutocomplete.setParentId(mas[1].substring(0, ind));
-                                metastasisAutocomplete.setParentId(mas[1].substring(0, ind));
-                            }
-                            else {
-                                stadAutocomplete.setParentId(mas[1]) ;
-                                tumorAutocomplete.setParentId(mas[1]) ;
-                                nodusAutocomplete.setParentId(mas[1]) ;
-                                metastasisAutocomplete.setParentId(mas[1]) ;
+            function setDs(medCaseId) {
+                <%
+                String mkb=request.getParameter("mkb");
+                if (mkb!=null && mkb.length()>5) {
+                    String[] masMkb = mkb.split(" ");
+                    if (masMkb.length>0)
+                        request.setAttribute("mkb", masMkb[0]);
+                }
+                %>
+                //Если онкологическая форма создаётся по кнопке - '${mkb}' будет пустым, иначе - заполнен пока ещё не созданным осн. вып.
+                OncologyService.getFIODsPatient(medCaseId,'${mkb}', {
+                    callback : function(res) {
+                        var mas=res.split("#");
+                        if (mas[0]!='' && mas[1]!=''  && mas[2]!='') {
+                            document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
+                            document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1] + mas[2].replace(mas[1],'');
+                            $('MKB').value=mas[1];
+                            suspicionOncologist.checked= !($('MKB').value.indexOf('C')!=-1);
+                            if (suspicionOncologist.checked) checkCheckbox();
+                            suspicionOncologist.disabled=true;
+                            if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
+                                var ind=mas[1].indexOf(' ');
+                                if (ind!=-1) {
+                                    stadAutocomplete.setParentId(mas[1].substring(0, ind));
+                                    tumorAutocomplete.setParentId(mas[1].substring(0, ind));
+                                    nodusAutocomplete.setParentId(mas[1].substring(0, ind));
+                                    metastasisAutocomplete.setParentId(mas[1].substring(0, ind));
+                                }
+                                else {
+                                    stadAutocomplete.setParentId(mas[1]) ;
+                                    tumorAutocomplete.setParentId(mas[1]) ;
+                                    nodusAutocomplete.setParentId(mas[1]) ;
+                                    metastasisAutocomplete.setParentId(mas[1]) ;
+                                }
                             }
                         }
-                    }
-                    else {
-                        alert('Нет основного диагноза в случае! Создание онкологической формы невозможно.');
-                        window.location.href='entityParentView-stac_ssl.do?id='+${param.id};
-                    }
-                }});
+                        else {
+                            alert('Нет основного диагноза в случае! Создание онкологической формы невозможно.');
+                            window.location.href='entityParentView-stac_ssl.do?id='+${param.id};
+                        }
+                    }});
+            }
+            <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
+            //если меняли диагноз с С на не С
+            if ('${wasDeleted}'!='' && '${mkb}'[0]!='C') {
+                showToastMessage('Созданная и неактуальная онкологическая форма была удалена. Если необходимо, можно создать подозрение на ЗНО. Если нет - просто закрыть вкладку.', null, true);
+                document.getElementById('cancelButton').onclick=function () {window.location.href='entityParentView-stac_ssl.do?id='+$('medCase').value;} //чтобы назад в СЛС
+            }
+            else if ('${wasDeleted}'!='' && '${mkb}'[0]=='C')
+                showToastMessage('Подозрение на ЗНО, связанное с неактуальынм диагнозом, было удалено. Необходимо создать случай онкологического лечения.', null, true);
+            setDs(${param.id});
             </msh:ifFormTypeIsCreate>
             <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
             //if ('${mkb}'=='')- простое редактирование формы
             ////если нет - то актуализация формы, в случае, когда форма создана с другим диагнозом, а в выписке указан новый
+            //Варианты
+            //- * на C - удалить направление (и связанное с ним) и открыть создание полного варианта формы
+            //- C на * - удалить форму (и связанное) и открыть создание направления
+            //- * на * - открыть направление на редактирование
+            //- C на C - актуализация формы - того, что зависит от диагноза
+            //- обычное редактирование и вариант с актуализацией формы при смене C на другой C
+
             OncologyService.getDsWithName(${param.id},'${mkb}', {
                 callback : function(res) {
-                    var mas = res.split("#");
-                    if (mas[0] != '' && mas[1] != '') {
-                        document.getElementById("fio").innerHTML = "Ф.И.О. пациента " + mas[0];
-                        document.getElementById("ds").innerHTML = "Диагноз (по МКБ-10): " + mas[1];
-                        if (mas[1] != null && mas[1] != '' && typeof stadAutocomplete != 'undefined') {
-                            var ind = mas[1].indexOf(' ');
+                    if (res!=null && res!='{}') {
+                        var aResult = JSON.parse(res);
+                        if (typeof aResult.pat!=='undefined' && typeof aResult.oldmkb!=='undefined') {
+                            document.getElementById("fio").innerHTML = "Ф.И.О. пациента " + aResult.pat;
+                            var isActual = (typeof aResult.newmkb!=='undefined' && aResult.newmkb!=aResult.oldmkb && aResult.newmkb!='');
+                            var mkb = ((typeof aResult.newmkb!=='undefined' && aResult.newmkb!=aResult.oldmkb || aResult.newmkb!=''))? aResult.oldmkb: aResult.newmkb;
+                            document.getElementById("ds").innerHTML = "Диагноз (по МКБ-10): " + mkb;
+                            <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
+                            var ind = mkb.indexOf(' ');
                             if (ind != -1) {
-                                stadAutocomplete.setParentId(mas[1].substring(0, ind));
-                                tumorAutocomplete.setParentId(mas[1].substring(0, ind));
-                                nodusAutocomplete.setParentId(mas[1].substring(0, ind));
-                                metastasisAutocomplete.setParentId(mas[1].substring(0, ind));
+                                stadAutocomplete.setParentId(mkb.substring(0, ind));
+                                tumorAutocomplete.setParentId(mkb.substring(0, ind));
+                                nodusAutocomplete.setParentId(mkb.substring(0, ind));
+                                metastasisAutocomplete.setParentId(mkb.substring(0, ind));
                             }
                             else {
-                                stadAutocomplete.setParentId(mas[1]);
-                                tumorAutocomplete.setParentId(mas[1]);
-                                nodusAutocomplete.setParentId(mas[1]);
-                                metastasisAutocomplete.setParentId(mas[1]);
+                                stadAutocomplete.setParentId(mkb);
+                                tumorAutocomplete.setParentId(mkb);
+                                nodusAutocomplete.setParentId(mkb);
+                                metastasisAutocomplete.setParentId(mkb);
                             }
-                            if ('${mkb}'!='') {
-                                $('stad').value=$('stadName').value='';
-                                $('tumor').value=$('tumorName').value='';
-                                $('nodus').value=$('nodusName').value='';
-                                $('metastasis').value=$('metastasisName').value='';
+                            if (isActual) actualForm(aResult.oldmkb,aResult.newmkb);
+                            else if (!isActual && '${actualMsg}'!='') { //актуализация в случае перехода после href=
+                                showToastMessage('${actualMsg}', null, true);
                                 $('MKB').value='${mkb}';
+                                setDs($('medCase').value);
                             }
+                            else {  //актуализация в случае изменения диагноза через Диагноз - Редактировать
+                                OncologyService.checkDiagnosisOnkoForm($('medCase').value,mkb, {  //получить текуший основной выписной или последний диагноз СЛО
+                                    callback: function (res2) {
+                                        if (res2 != '' && res2 != '0') {
+                                            var mas = res2.split("#");
+                                            OncologyService.getFIODsPatient($('medCase').value,'', {
+                                                callback: function (res3) {
+                                                    var mas3 = res3.split("#");
+                                                    if (mas3[0] != '' && mas3[1] != '' && mas3[2] != '') {
+                                                        window.location.href = "entityEdit-oncology_case_reestr.do?id=" + $('id').value + "&actualMsg="+mas[0];
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }});
+                            }
+                            </msh:ifFormTypeIsNotView>
                             suspicionOncologist.disabled=true;
+                        }
+                        else {
+                            alert('Нет диагноза, с которым была создана форма!');
+                            window.location.href = 'entityParentView-stac_ssl.do?id=' + $('medCase').value
                         }
                     }
                     else {
-                        alert('Нет диагноза, с которым была создана форма!');
+                        alert('Не удалось найти онкологическую форму! Добавьте основной выписной диагноз (через Диагно - Добавить) и создайте онкологическую форму через Создать случай!');
                         window.location.href = 'entityParentView-stac_ssl.do?id=' + $('medCase').value
                     }
                 }});
+            //актуализация формы
+            function actualForm(oldmkb,newmkb) {
+                var msg='Диагноз меняется с ' + oldmkb + ' на ' + newmkb;
+                if (oldmkb[0]=='C' && newmkb[0]=='C') {
+                    $('stad').value=$('stadName').value='';
+                    $('tumor').value=$('tumorName').value='';
+                    $('nodus').value=$('nodusName').value='';
+                    $('metastasis').value=$('metastasisName').value='';
+                    $('MKB').value='${mkb}';
+                    msg+=". Заполните заново стадию и TNM, которые зависят от диагноза.";
+                }
+                else if (oldmkb[0]!='C' && newmkb[0]!='C'){
+                    suspicionOncologist.checked=true;  //редактирование направления
+                    msg+=". Отредактируйте направление, если необходимо. Сохраните его.";
+                }
+                else if (oldmkb[0]!='C' && newmkb[0]=='C'){
+                    OncologyService.deleteDirectionsByCase($('id').value,{
+                        callback: function (res) {
+                            msg+=". Созданные направления в подозрении на ЗНО удалены. Создайте онкологическую форму.";
+                            window.location.href = "entityParentPrepareCreate-oncology_case_reestr.do?id=" + $('medCase').value + "&wasDeleted=1" + "&mkb="+newmkb;
+                        }
+                    });
+                }
+                else if (oldmkb[0]=='C' && newmkb[0]!='C'){
+                    OncologyService.deleteAllByCase($('id').value,{
+                        callback: function () {
+                            window.location.href = "entityParentPrepareCreate-oncology_case_reestr.do?id=" + $('medCase').value + "&wasDeleted=1" + "&mkb="+newmkb;
+                        }
+                    });
+                }
+                showToastMessage(msg, null, true);
+                $('MKB').value='${mkb}';
+                setDs($('medCase').value);
+            }
             OncologyService.getDates($('id').value, {
                 callback : function(res) {
                     if (res!="##") {
@@ -1634,8 +1720,9 @@
             }
             //Скрыть див для редактирования
             function disableAll() {
-                jQuery('#oncologyCase').fadeTo('slow',.6);
-                jQuery('#oncologyCase').append('<div style="position: absolute;bottom:0;left:0;width: 100%;height:98%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
+                var divToDisable = (suspicionOncologist.checked)? '#oncologyDirection' : '#oncologyCase';
+                jQuery(divToDisable).fadeTo('slow',.6);
+                jQuery(divToDisable).append('<div style="position: absolute;bottom:0;left:0;width: 100%;height:98%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
             }
             //Добавление строки с медикаментом
             function createRowMed(ii) {

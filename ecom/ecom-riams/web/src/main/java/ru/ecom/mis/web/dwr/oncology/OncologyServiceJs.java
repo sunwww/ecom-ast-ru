@@ -447,27 +447,47 @@ public class OncologyServiceJs {
         if (!checkIsOMC(slsId,aRequest)) return "";
         String res = "";
         if (concludingMkb.equals("")) return res;
+        StringBuilder sql = new StringBuilder();
+        sql.append("select c.mkb||' '||mkb.name||' ('||prior.name||' '||reg.name||')',c.id from oncologycase c ")
+                .append("left join vocidc10 mkb on mkb.code=c.mkb ")
+                .append("left join medcase dmc on dmc.parent_id=c.medcase_id and dmc.dtype='DepartmentMedCase' ")
+                .append("left join diagnosis ds on (ds.medcase_id=dmc.id or ds.medcase_id=dmc.parent_id) ")
+                .append("left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id ")
+                .append("left join vocprioritydiagnosis prior on prior.id=ds.priority_id ")
+                .append("where c.medcase_id="+slsId);// and reg.code='3' and pr.code='1'
         //Диагноз онкологической формы
-        Collection<WebQueryResult> list = service.executeNativeSql(
-                "select mkb||' '||mkb.name||' ('||prior.name||' '||reg.name||')',c.id from oncologycase c \n" +
-                        "left join vocidc10 mkb on mkb.code=c.mkb \n" +
-                        "left join medcase dmc on dmc.parent_id=c.medcase_id and dmc.dtype='DepartmentMedCase'\n" +
-                        "left join diagnosis ds on ds.medcase_id=dmc.id and  ds.idc10_id=mkb.id\n" +
-                        "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
-                        "left join vocprioritydiagnosis prior on prior.id=ds.priority_id\n" +
-                        "where c.medcase_id="+slsId);
+        Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()+" and prior.code='1' and reg.code='3' "); //основной выписной
+        if (list.isEmpty()) list = service.executeNativeSql(sql.toString()+" and prior.code='1' and reg.code='4' ");  //основной клинический
         boolean flag=false; //что есть такой же мкб - до этого момента уже выполнена проверка на наличие/отсутствие ЗНО
         String ds="",cId="";
-        for (WebQueryResult wqr : list) {
-            if (wqr.get1()!=null && wqr.get2()!=null) {
+        if (!list.isEmpty()) {
+            WebQueryResult wqr = list.iterator().next();
+            if (wqr.get1() != null && wqr.get2() != null) {
                 if (wqr.get1().toString().contains(concludingMkb)) flag = true; //проверяю по всем формам
                 if (ds.equals("")) {
-                    ds=wqr.get1().toString();  //беру диагноз первой созданной формы
-                    cId=wqr.get2().toString();
+                    ds = wqr.get1().toString();  //беру диагноз первой созданной формы
+                    cId = wqr.get2().toString();
                 }
             }
         }
-        if (!flag) res="Внимание! Онкологическая форма была создана для диагноза " + ds + "! Отредактируйте.#"+cId;
+        if (!flag && !list.isEmpty()) {
+            if (!concludingMkb.startsWith("C") && ds.startsWith("C")) res="Внимание! В случае установки этого диагноза неактуальная онкологическая форма будет удалена. Вы уверены?#"+cId;
+            else if (!concludingMkb.startsWith("C") && !ds.startsWith("C")) res="";  //пока так: подозрение на подозрение - менять форму не нужно
+            else if (checkIsOncoNeedChange(cId,concludingMkb,aRequest).equals("1") || (concludingMkb.startsWith("C") &&  !ds.startsWith("C"))) //актуализировать форму, если не подозрение
+                res="Внимание! Онкологическая форма была создана для диагноза " + ds + "! Уточните информацию (некоторые поля могут зависеть от диагноза) и сохраните.#"+cId;
+            else if (checkIsOncoNeedChange(cId,concludingMkb,aRequest).equals("0") && concludingMkb.startsWith("C") &&  ds.startsWith("C")) //поменять диагноз формы, если не нужно актуализировать
+                service.executeUpdateNativeSql("update oncologycase set mkb='"+concludingMkb+"' where id="+cId);
+        }
+        else if (list.isEmpty()) {
+            list = service.executeNativeSql(sql.toString().replace("c.mkb||' '||mkb.name||' ('||prior.name||' '||reg.name||')'","c.mkb"));  //получаю просто id формы
+            if (!list.isEmpty()) {
+                WebQueryResult wqr = list.iterator().next();
+                ds = wqr.get1().toString();
+                cId = wqr.get2().toString();
+            }
+            if (!ds.equals(concludingMkb) && concludingMkb.startsWith("C"))
+                res="Внимание! Диагноз, с которым была создана онкологическая форма, был удалён. Уточните информацию (некоторые поля могут зависеть от диагноза) и сохраните.#"+cId;
+        }
         return res;
     }
 
@@ -477,22 +497,26 @@ public class OncologyServiceJs {
      * @param caseId OncologyCase.id
      * @param mkb Диагноз, с которым была создана форма.
      * @param aRequest HttpServletRequest
-     * @return String Пустая строка, если всё в порядке/сообщение об ошибке
+     * @return json ФИО пациента, диагноз, с которым была создана форма и диагноз для актуализации формы(если есть)
      * @throws NamingException
      */
     public String getDsWithName(String caseId, String mkb, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        StringBuilder res = new StringBuilder();
-        //ФИО пациента
-        Collection<WebQueryResult> list = service.executeNativeSql("select pat.lastname||' ' ||pat.firstname||' '||pat.middlename from medcase hmc\n" +
+        Collection<WebQueryResult> list = service.executeNativeSql("select pat.lastname||' ' ||pat.firstname||' '||pat.middlename as pat,\n" +
+                "mkb.code||' '||mkb.name as oldmkb\n" +
+                ",case when '"+mkb+"'<>'' then (select code||' '||name from vocidc10 mkb where code='"+mkb+"') else '' end as newmkb\n" +
+                " from medcase hmc\n" +
                 "left join patient pat on pat.id=hmc.patient_id \n" +
                 "left join oncologycase c on c.medcase_id=hmc.id\n" +
+                "left join vocidc10 mkb on mkb.code=c.mkb\n" +
                 "where c.id=" + caseId);
-        res.append(!list.isEmpty()? list.iterator().next().get1().toString()+"#" : "#");
-        list =  mkb.equals("")?
-                service.executeNativeSql("select mkb||' '||mkb.name from oncologycase c left join vocidc10 mkb on mkb.code=c.mkb where c.id="+caseId)
-                : service.executeNativeSql("select code||' '||name from vocidc10 mkb where code='"+mkb +"'");
-        res.append(!list.isEmpty() && list.iterator().next().get1()!=null ? list.iterator().next().get1().toString(): "#");
+        JSONObject res = new JSONObject() ;
+        if (!list.isEmpty()) {
+            WebQueryResult w = list.iterator().next();
+            res.put("pat", w.get1())
+                    .put("oldmkb", w.get2())
+                    .put("newmkb", w.get3());
+        }
         return res.toString();
     }
 
@@ -524,5 +548,54 @@ public class OncologyServiceJs {
                 "left join oncologydrugdate drugdate on drugdate.oncologydrug_id=drug.id\n" +
                 "left join voconcologyn020 vocdrug on drug.drug_id=vocdrug.id\n" +
                 "where drug.oncologycase_id="+caseId,null);
+    }
+
+    /**
+     * Удалить все направления к подозрению на ЗНО и само подозрение.
+     *
+     * @param caseId OncologyCase.id
+     * @throws NamingException
+     */
+    public void deleteDirectionsByCase(String caseId,HttpServletRequest aRequest) throws JSONException, NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        service.executeUpdateNativeSql("delete from oncologydirection where oncologycase_id="+caseId);
+        service.executeUpdateNativeSql("delete from oncologycase where id="+caseId);
+    }
+
+    /**
+     * Удалить онкологическую форму (гистологии, маркеры и тп).
+     *
+     * @param caseId OncologyCase.id
+     * @throws NamingException
+     */
+    public void deleteAllByCase(String caseId,HttpServletRequest aRequest) throws JSONException, NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        service.executeUpdateNativeSql("delete from oncologycontra where oncologycase_id="+caseId);
+        service.executeUpdateNativeSql("delete from oncologydiagnostic where oncologycase_id="+caseId) ;
+        service.executeUpdateNativeSql("delete from oncologydrugdate where oncologydrug_id=ANY(select id from oncologydrug where oncologycase_id="+caseId+")") ;
+        service.executeUpdateNativeSql("delete from oncologydrug where oncologycase_id="+caseId) ;
+        service.executeUpdateNativeSql("delete from oncologycase where id="+caseId);
+    }
+
+    /**
+     * Проверить, нужно ли актуализировать онкологическую форму при изменении одного С на другой.
+     *
+     * @param caseId OncologyCase.id
+     * @throws NamingException
+     */
+    public String checkIsOncoNeedChange(String caseId, String ds, HttpServletRequest aRequest) throws JSONException, NamingException {
+        //есть вариант проще - проверять только основные цифры в диагнозе, например
+        //C83.1 на C83.2 - актуализировать не надо, т.к. 83 совпадает
+        //но в справочниках есть и значения с уточнением, например C44.3 и т.д.
+        //поэтому нужен общий способ
+        //если симптоматическое лечение, то не нужно актуализировать
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list = service.executeNativeSql("select case when rt.code='6' or rt.code='5' or (stad_id is null or (stad_id is not null and (select count(id) from voconcologyn002 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=stad_id  and (finishdate is null or finishdate>=current_date))<>0))\n" +
+                "and  (tumor_id is null or (tumor_id is not null and (select count(id) from voconcologyn003 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=tumor_id and (finishdate is null or finishdate>=current_date))<>0))\n" +
+                "and  (nodus_id is null or (nodus_id is not null and (select count(id) from voconcologyn004 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=nodus_id and (finishdate is null or finishdate>=current_date))<>0))\n" +
+                "and  (metastasis_id is null or (metastasis_id is not null and (select count(id) from voconcologyn005 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=metastasis_id and (finishdate is null or finishdate>=current_date))<>0))\n" +
+                "then '0' else '1' end\n" +
+                "from oncologycase c left join voconcologyreasontreat rt on c.voconcologyreasontreat_id=rt.id where c.id="+caseId);
+        return list.isEmpty()? "-1": list.iterator().next().get1().toString();
     }
 }
