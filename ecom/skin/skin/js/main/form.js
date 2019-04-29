@@ -5,10 +5,10 @@ var theDefaultFieldName ;
 var theDefaultEvt ; 
 
 function mshHideBlockByElement(element) {
-	var d = element.parentNode.children[1];
+/*	var d = element.parentNode.children[1];
 	var hided = d.style.display==='none';
 	d.style.display =  hided ? 'block' : 'none';
-	element.style.backgroundColor= hided ? '#ddd' : '#f65ce9' ;
+	element.style.backgroundColor= hided ? '#ddd' : '#f65ce9' ;*/
 }
 
 function mshSaveTableToExcelById(aId) {
