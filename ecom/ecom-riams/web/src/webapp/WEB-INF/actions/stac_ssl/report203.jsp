@@ -58,7 +58,7 @@
         <msh:section>
             <msh:sectionTitle>
                 <ecom:webQuery isReportBase="${isReportBase}" name="justdeps" nameFldSql="justdeps_sql" nativeSql="
-select case when dep.isobservable then cast('ОБСЕРВАЦИОННОЕ+РОДОВОЕ' as varchar(22)) else dep.name end, count (mc.id) as discharge
+select dep.name, count (mc.id) as discharge
  ,(select count(distinct mc.id) as pr203 from medcase mc
  left join diagnosis ds on ds.medcase_id=mc.id
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
@@ -224,6 +224,8 @@ left join medcase as hmc on hmc.id=mc.parent_id
   and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
   ${department}
+  and (dep.isobservable is null or dep.isobservable=false)
+  and (dep.ismaternityward is null or dep.ismaternityward=false)
  group by dep.id
  order by dep.name
  "/>
