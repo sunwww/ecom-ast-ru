@@ -218,9 +218,9 @@
     <msh:sectionTitle>Свод состоящих пациентов в отделении  ${departmentInfo} на текущий момент
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
     select m.department_id,ml.name, count(distinct sls.id) as cntSls
-    ,count(distinct case when sls.emergency='1' then sls.id else null end) as cntEmergency
+    ,count(distinct case when m.emergency='1' then sls.id else null end) as cntEmergency
     ,count(distinct case when so.id is not null or so1.id is not null then sls.id else null end) as cntOper
     from medCase m
     left join MedCase as sls on sls.id = m.parent_id

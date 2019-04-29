@@ -227,7 +227,6 @@
                     <msh:autoComplete label="Перевод в др ЛПУ" property="moveToAnotherLPU" guid="8c90d4e3-6351-405e-a5b0-0ea5cf61db87" fieldColSpan="5" horizontalFill="true" vocName="lpu" />
                 </msh:row>
                 <msh:row guid="efdbb0a9-eddc-4841-9985-5edf61220623">
-                    <msh:checkBox label="Провизорность" property="provisional" guid="d8588d59-3adb-4485-af94-cadecb04f82b" />
                     <msh:checkBox property="rareCase" label="Редкий случай" guid="6299a6be-428f-4a095" />
                 </msh:row>
                 <mis:ifPatientIsWoman classByObject="Patient" idObject="stac_sslForm.patient" roles="/Policy/Mis/Pregnancy/History/View">

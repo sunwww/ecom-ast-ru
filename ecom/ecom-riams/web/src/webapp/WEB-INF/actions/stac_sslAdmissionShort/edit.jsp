@@ -26,7 +26,6 @@
       <msh:hidden property="saveType" guid="7cb7bcb7-2cb3-4e65-92ce-2a4a2cec809f" />
       <msh:hidden property="dateFinish" guid="526ef07a-eb53-47a9-b145-02a81ede9b25" />
       <msh:hidden property="dischargeTime" guid="5d563628-c95b-40a5-a3d6-aa2d99fa0e74" />
-      <msh:hidden property="provisional" guid="38fe07ac-6706-4911-a217-65edb3c85dac" />
       <msh:hidden property="result" guid="156ff02c-61dd-40b9-80f4-d88885db16f8" />
       <msh:hidden property="moveToAnotherLPU" guid="c0b69264-2081-4952-8c0a-7ea12712f14c" />
       <msh:hidden property="height" />

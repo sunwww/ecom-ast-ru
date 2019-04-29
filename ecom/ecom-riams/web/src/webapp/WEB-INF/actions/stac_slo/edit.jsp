@@ -219,8 +219,7 @@
                     <msh:hidden property="bedNumber"/>
                 </msh:ifInRole>
                 <msh:row>
-                    <msh:checkBox label="Провизорность" property="provisional" guid="dh88d59-3adb-4485-af94-cahb04f82b" />
-                    <msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" />
+                    <msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" viewOnlyField="true" />
                 </msh:row>
                 <msh:ifFormTypeIsCreate formName="stac_sloForm" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
                     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Slo/ForceCreatePrescriptionList">

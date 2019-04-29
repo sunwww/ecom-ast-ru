@@ -79,8 +79,7 @@
           <msh:autoComplete property="bedNumber" vocName="hospitalBedByRoom" label="№ койки" parentAutocomplete="roomNumber"/>
         </msh:row>
         <msh:row>
-        	<msh:checkBox label="Провизорность" property="provisional" guid="dh88d59-3adb-4485-af94-cahb04f82b" />
-        	<msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" />
+        	<msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" viewOnlyField="true" />
         </msh:row>
         <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
           <msh:autoComplete vocName="workFunction" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" size="30" />

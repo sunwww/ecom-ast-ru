@@ -257,7 +257,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public void setLpu(Long aLpu) {theLpu = aLpu;	}
 
 	@Comment("Провизорность")
-	@Persist
+	@Persist @Deprecated
 	public Boolean getProvisional() {return theProvisional;}
 	public void setProvisional(Boolean aProvisional) {theProvisional = aProvisional;}
 

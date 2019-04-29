@@ -179,6 +179,7 @@ public class HospitalMedCase extends LongMedCase {
 
 	/** Провизорность */
 	@Comment("Провизорность")
+	@Deprecated
 	public Boolean getProvisional() {return theProvisional;}
 	public void setProvisional(Boolean aProvisional) {theProvisional = aProvisional;}
 

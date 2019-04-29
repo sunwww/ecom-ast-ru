@@ -289,7 +289,6 @@
         </msh:row>
 
         <msh:row>
-          <msh:checkBox label="Провизорность" property="provisional" guid="d8588d59-3adb-4485-af94-cadecb04f82b" />
           <msh:checkBox property="rareCase" label="Редкий случай" guid="6299a6be-428f-4a095" />
         </msh:row>
         <msh:row guid="16f1e99-4017-4385-87c1-bf5895e2">

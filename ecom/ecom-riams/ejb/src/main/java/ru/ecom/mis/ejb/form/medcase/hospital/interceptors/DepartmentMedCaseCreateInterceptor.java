@@ -200,6 +200,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 	    		
 			}
     	}
+    	aForm.setEmergency(aMedCase.getEmergency());
         aForm.setPatient(aMedCase.getPatient().getId());
         if (aMedCase.getDepartment()!=null) {
         	aForm.setDepartment(aMedCase.getDepartment().getId());
@@ -217,6 +218,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
      */
     private void prepareForCreationNextSlo(DepartmentMedCaseForm aForm, HospitalMedCase aMedCaseParent, EntityManager aManager) {
     	aForm.setPatient(aMedCaseParent.getPatient().getId());
+    	aForm.setEmergency(aMedCaseParent.getEmergency());
     	StringBuilder sql = new StringBuilder() ;
     	
     	sql.append("select max(ms1.dateFinish) as maxdatefinish")

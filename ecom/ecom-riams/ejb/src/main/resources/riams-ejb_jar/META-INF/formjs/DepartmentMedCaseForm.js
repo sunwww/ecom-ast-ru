@@ -30,10 +30,8 @@ function onPreCreate(aForm, aContext) {
  * Перед сохранением
  */
 function onPreSave(aForm,aEntity, aContext) {
-	var cal = java.util.Calendar.getInstance() ;
 	var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
 	var transferIs = false ;
-	var prof = "ALLTIMEHOSP" ;
 	if (aEntity!=null) {
 		var date = new java.util.Date() ;
 		aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
@@ -43,7 +41,7 @@ function onPreSave(aForm,aEntity, aContext) {
 	}
 	if (aForm.mkbAdc==null||aForm.mkbAdc.equals("")) {
 		var lMkb = aContext.manager.createNativeQuery("select vma.code from VocMkbAdc vma left join VocIdc10 mkb on mkb.code=vma.name where  mkb.id='"+aForm.clinicalMkb+"'").getResultList() ;
-		if (lMkb.size()>0) throw "Необходимо ввести дополнительный код по диагнозу" ;
+		if (!lMkb.isEmpty()) throw "Необходимо ввести дополнительный код по диагнозу" ;
 	}
 	var bedFund = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.BedFund, aForm.bedFund) ;
 	var hosp = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase,aForm.parent) ;
@@ -52,11 +50,9 @@ function onPreSave(aForm,aEntity, aContext) {
 	var isNoPalat = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Slo/NoRoomNumber") ;
 	
 	//Запрет на поступление в экстренном порядке на дневные койки
-	if (((hosp.emergency!=null&&hosp.emergency==true)||(aForm.emergency!=null&&aForm.emergency==true))&&bedFund.bedSubType!=null&&(bedFund.bedSubType.code=="2"||bedFund.bedSubType.code=="3")) {
+	if (hosp.emergency!=null&&hosp.emergency==true && bedFund.bedSubType!=null && (bedFund.bedSubType.code=="2" || bedFund.bedSubType.code=="3")) {
 		if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Sso/CreateEmergencyDayHospBedFund")){
-			
 			throw "Установлен запрет на ЭКСТРЕННУЮ госпитализацию на тип коек '"+bedFund.bedSubType.name+"'";
-			
 		}
 		
 	} //else throw "123";
