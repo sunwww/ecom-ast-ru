@@ -23,10 +23,10 @@
 	  	<msh:section title="Список экспертных карт">
   			<ecom:webQuery name="Expert" nativeSql="
   			
-select card.id,vek.name,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename,d.name,p.lastname||' '||p.firstname||' '||p.middlename
- ,case when md.DTYPE='HospitalMedCase' then 'СЛС №'||ss1.code  when md.DTYPE='DepartmentMedCase' then 'СЛО '||md.id||' СЛС №'||ss2.code  when md.DTYPE='PolyclinicMedCase' then 'СПО №'||md.id else 'СМО №'||md.id end 
- ,mkb.code,card.createDate,card.createUsername 
- ,(select +round(avg(vqem.mark),2) from QualityEstimationCrit qecB left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeB.id), (select +round(avg(vqem.mark),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeE.id), (select +round(avg(vqem.mark),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeC.id)
+select card.id as cId,vek.name as vekname,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as docFio,d.name as depname,p.lastname||' '||p.firstname||' '||p.middlename as patFio
+ ,case when md.DTYPE='HospitalMedCase' then 'СЛС №'||ss1.code  when md.DTYPE='DepartmentMedCase' then 'СЛО '||md.id||' СЛС №'||ss2.code  when md.DTYPE='PolyclinicMedCase' then 'СПО №'||md.id else 'СМО №'||md.id end as slsHist
+ ,mkb.code as dsCode,card.createDate as crDate,card.createUsername as userCreate
+ ,(select round(cast (avg(vqem.mark) as int),2) from QualityEstimationCrit qecB left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeB.id) as r1, (select round(cast (avg(vqem.mark) as int),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeE.id) as r2, (select round(cast (avg(vqem.mark) as int),2) from QualityEstimationCrit qecB  left join vocqualityEstimationMark vqem on vqem.id=qecB.mark_id where qecB.estimation_id=qeC.id) as r3
  from QualityEstimationCard card
  left join VocQualityEstimationKind vek on vek.id=card.kind_id
  left join WorkFunction wf on wf.id=card.doctorCase_id
