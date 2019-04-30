@@ -1201,17 +1201,13 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     			return;
     		}
 
-            if (!checkSymbolField($('middlename')) || !checkSymbolField($('firstname'))
-                || !checkSymbolField($('lastname')) ) {
+            if (!isFioCorrent($('middlename')) || !isFioCorrent($('firstname'))
+                || !isFioCorrent($('lastname')) ) {
     		    alert("Неверный формат ФИО!");
                 document.getElementById('submitButton').disabled=false;
                 document.getElementById('submitButton').value='Создать';
                 return;
             }
-    		var checkFull = false
-    		if ($('saveType').value=='1') {
-    			checkFull = true ;
-    		}
 
     		PatientService.getDoubleByFio($('id').value,$('lastname').value, $('firstname').value, $('middlename').value,
 				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do', {
@@ -1227,19 +1223,13 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 
     		}
     		function getValue(aFld) {
-    			if (aFld) {
-    				return aFld.value ;
-    			} else {
-    				return "none" ;
-    			}
+                return aFld ? aFld.value : "none";
     		}
 
-    		function checkSymbolField(field){
+    		function isFioCorrent(field){
     	     field = getValue(field);
-                if(field[0]=="-" ) return false;
-                if( field.search(/[\d!"#$%&'()*+,.:;<=>?@\\^_`{|}~]/g) != -1 ){
-                    return false;
-                }else return true;
+                if(field=="-" ) return false;
+                return field.match(/^[а-яйЙёЁА-Я -]+$/g);
             }
 
     	</script>
