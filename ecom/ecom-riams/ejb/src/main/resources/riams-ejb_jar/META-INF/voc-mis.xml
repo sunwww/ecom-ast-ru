@@ -3285,4 +3285,15 @@ left join medcase smoP on smoP.owner_id=w.id "
 				parent=" (vcip.id is null or vcip.id=:parent) "
 		/>
 	</voc>
+	<!-- Браслеты -->
+	<voc id="vocColorIdentityPatient" type="NativeVocService">
+		<NativeVocService
+				from="vocColorIdentityPatient vcip "
+				nameId="vcip.id"
+				join=" left join voccolor vc on vcip.color_id=vc.id " order=""
+				names="vc.name||' ('||vcip.name||')'"
+				queried=" upper(vc.name||' ('||vcip.name||')') like upper(:query) "
+				queryAppend = ''
+		/>
+	</voc>
 </vocconfig>

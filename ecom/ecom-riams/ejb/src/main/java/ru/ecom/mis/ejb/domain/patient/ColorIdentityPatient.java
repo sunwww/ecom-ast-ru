@@ -16,10 +16,10 @@ public class ColorIdentityPatient extends BaseEntity {
     /** Доп. информация о пациенте (для браслета) */
     @Comment("Доп. информация о пациенте (для браслета)")
     @OneToOne
-    public VocColorIdentityPatient getVocColorIndentity() {return theVocColorIndentity;}
-    public void setVocColorIndentity(VocColorIdentityPatient aVocColorIndentity) {theVocColorIndentity = aVocColorIndentity;}
+    public VocColorIdentityPatient getVocColorIdentity() {return theVocColorIdentity;}
+    public void setVocColorIdentity(VocColorIdentityPatient aVocColorIdentity) {theVocColorIdentity = aVocColorIdentity;}
     /** Доп. информация о пациенте (для браслета) */
-    private VocColorIdentityPatient theVocColorIndentity ;
+    private VocColorIdentityPatient theVocColorIdentity ;
     
     /** Дата установки */
     @Comment("Дата установки")
@@ -34,4 +34,18 @@ public class ColorIdentityPatient extends BaseEntity {
     public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
     /** Дата снятия */
     private Date theFinishDate ;
+
+    /** Пользователь, который последний редактировал запись */
+    @Comment("Пользователь, который последний редактировал запись")
+    public String getEditUsername() {return theEditUsername;}
+    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    /** Пользователь, который последний редактировал запись */
+    private String theEditUsername;
+
+    /** Пользователь, который создал запись */
+    @Comment("Пользователь, который создал запись")
+    public String getCreateUsername() {return theCreateUsername;}
+    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+    /** Пользователь, который создал запись */
+    private String theCreateUsername;
 }

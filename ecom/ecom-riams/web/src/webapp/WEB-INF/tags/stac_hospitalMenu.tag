@@ -137,6 +137,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	   <msh:sideLink roles="/Policy/Mis/Journal/JasperReports" name="Справка о стоимости"
 					 action='/javascript:showReferenceFSS()' title='Справка о стоимости' styleId="stac_slo"
 	   />
+	   <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit/PatientSet" name="Браслеты"
+					 styleId="viewShort" action="/javascript:showidentityPatient(${param.id},true)"  title='Браслеты'
+
+	   />
 </msh:sideMenu>
 
 
@@ -238,6 +242,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <tags:contract_getAccount name="ACCOUNT"  />
 <tags:order263 name="order263" />
 <tags:IMT name="IMT" />
+<tags:identityPatient name="identityPatient" title="в госпитализации"/>
   <script type='text/javascript' src='./dwr/interface/PregnancyService.js'></script>
   <script type="text/javascript">
   function viewOtherVisitsByPatient(d) {
