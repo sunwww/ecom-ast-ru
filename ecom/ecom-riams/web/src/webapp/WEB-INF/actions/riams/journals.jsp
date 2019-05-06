@@ -358,6 +358,9 @@
 						<li><msh:link  isReport="false" action="journal_svetofor.do?mode=ADMISSION" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 							Светофор
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="sls_listAdmissionWait.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Свод по светофору
+						</msh:link></li>
 						<li><msh:link  isReport="false" action="journal_onco.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 							Отчёт по онкологическим случаям
 						</msh:link></li>

@@ -362,6 +362,13 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/riams/kiosk.jsp" />
 		</action>
+		<action path='/sls_listAdmissionWait' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAdmission/sls_listAdmissionWait.jsp" />
+		</action>
 
 		<action path='/extDispPlanAdd' type='ru.ecom.web.actions.base.ForwardAction'
 				name='mis_attachmentForm'
