@@ -987,7 +987,7 @@ public class Patient extends BaseEntity{
 
 	private PatientFond patientFond;
 
-	@Comment("Актуальая проверка по фонду")
+	@Comment("Актуальная проверка по фонду")
 	@OneToOne
 	public PatientFond getPatientFond() {
 		return patientFond;
@@ -1005,4 +1005,14 @@ public class Patient extends BaseEntity{
 	public void setIsCheckFondError(Boolean isCheckFondError) {
 		this.isCheckFondError = isCheckFondError;
 	}
+
+	/** Цвета браслета пациента */
+	private List<ColorIdentityPatient> theColorsIdentity;
+
+	/** Цвета браслета пациента */
+	@Comment("Цвета браслета пациента")
+	@ManyToMany
+	public List<ColorIdentityPatient> getColorsIdentity() {return theColorsIdentity;}
+	public void setColorsIdentity(List<ColorIdentityPatient> aColorsIdentity) {theColorsIdentity = aColorsIdentity;}
+
 }

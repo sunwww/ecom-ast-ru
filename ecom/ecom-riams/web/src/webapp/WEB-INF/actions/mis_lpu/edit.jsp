@@ -376,6 +376,7 @@
         <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" key="ALT+7" params="id" action="/js-mis_worker-pattern" name="Шаблоны расписания сотрудников" title="Перейти к установке шаблонов календарей по специалистам" />
         <msh:sideLink roles="/Policy/Mis/Equipment/Equipment/View" params="id" action="/js-mis_lpu-showStandard" name="Оснащение по стандарту" title="Шаблоны по стандарту" />
         <msh:sideLink roles="/Policy/Mis/Equipment/KkmEquipment/View" params="id" action="/entityParentList-mis_kkmequipment" name="Кассовые аппараты" title="Кассовые аппараты" />
+        <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit" params="id" action="/entityParentList-mis_colorIdentity" name="Цвета браслетов" title="Цвета браслетов" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
