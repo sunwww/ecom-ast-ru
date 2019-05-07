@@ -27,7 +27,7 @@ public class PatientSearchAction extends BaseAction {
         		) ;
         if (!form.getLastname().equals("") && form.getLastname().length()>3) {
         	WebQueryResult wqr = service.findPatient(form.getLpu(), form.getLpuArea(), form.getLastname(),form.getYear()
-            		, aRequest.getParameter("next")==null||aRequest.getParameter("next").equals("100")?true:false
+            		, aRequest.getParameter("next") == null || aRequest.getParameter("next").equals("100")
             		,aRequest.getParameter("idna")) ;
         	aRequest.setAttribute("list_1" , wqr.get1());
             aRequest.setAttribute("list_2" , wqr.get2());
