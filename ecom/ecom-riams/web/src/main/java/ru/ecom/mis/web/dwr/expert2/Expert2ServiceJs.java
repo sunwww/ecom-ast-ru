@@ -136,8 +136,10 @@ public class Expert2ServiceJs {
 
     }
     /** Пересчитать заполнение (удаляем существующие записи и формируем новые в существующее заполнение) */
-    public void refillListEntry(Long aListEntryId, HttpServletRequest aRequest) throws NamingException {
-        Injection.find(aRequest).getService(IExpert2Service.class).reFillListEntry(aListEntryId);
+    public long refillListEntry(Long aListEntryId, HttpServletRequest aRequest) throws NamingException {
+        final long monitorId = createMonitor(aRequest);
+        Injection.find(aRequest).getService(IExpert2Service.class).reFillListEntry(aListEntryId,monitorId);
+        return monitorId;
     }
 
     /** Журнал сформированных пакетов/счетов */
@@ -232,6 +234,12 @@ public class Expert2ServiceJs {
         return "1_Успешно!";
     }
 
+    /**Создаем монитор*/
+        private long createMonitor(HttpServletRequest aRequest)throws NamingException {
+            IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
+            return monitorService.createMonitor();
+        }
+
     public long makeMPFIle (final Long aEntryListId,final  String aType, String aBillNumber, String aBillDate,final  Long aEntryId,final  Boolean calcAllListEntry, final String aVersion, HttpServletRequest aRequest) throws NamingException {
         final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         if (aEntryId!=null) {
@@ -239,10 +247,10 @@ public class Expert2ServiceJs {
             aBillDate=aBillDate!=null&&!aBillDate.equals("")?aBillDate:"24.12.1986";
         }
         final IExpert2XmlService service = Injection.find(aRequest).getService(IExpert2XmlService.class);
-        IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
-        final long monitorId = monitorService.createMonitor();
+
         final String finalBillNumber = aBillNumber;
         final String finalBillDate = aBillDate;
+        final long monitorId = createMonitor(aRequest);
         new Thread(() -> {
             Date finalDate = null;
             try {finalDate = new Date(format.parse(finalBillDate).getTime());} catch (Exception e) {}
@@ -253,8 +261,7 @@ public class Expert2ServiceJs {
     }
     public long checkListEntry(final Long aListEntryId, final boolean forceUpdateKsg, final String aParams, HttpServletRequest aRequest) throws NamingException {
         LOG.info("start checkEntryList "+forceUpdateKsg);
-        IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
-        final long monitorId = monitorService.createMonitor();
+        final long monitorId = createMonitor(aRequest);
         final IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
         new Thread(()-> service.checkListEntry(aListEntryId, forceUpdateKsg, aParams, monitorId)).start();
         return monitorId;

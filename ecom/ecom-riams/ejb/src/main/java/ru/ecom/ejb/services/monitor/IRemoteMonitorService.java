@@ -15,4 +15,6 @@ public interface IRemoteMonitorService {
     RemoteMonitorStatus getMonitorStatus(long aMonitorId) ;
 
     void cancel(long aMonitorId) ;
+
+    String getAllMonitors ();
 }

@@ -2853,7 +2853,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" ,p.middlename as f10middlename");
 		sql.append(" ,vs.omcCode as f11vsomccode");
 		sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as f12birthday");
-		sql.append(" ,,coalesce(vmhp.code,vbt.codeF as f13vbtomccode");
+		sql.append(" ,coalesce(vmhp.code,vbt.codeF) as f13vbtomccode");
 		sql.append(" ,ss.code as f14sscode");
 		sql.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
 		sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;

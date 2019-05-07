@@ -372,6 +372,9 @@
         <action path="/ecom_monitor" type='ru.ecom.web.actions.base.ForwardAction'>
             <forward name='success' path='/WEB-INF/actions/ecom_monitor/monitor.jsp' />
         </action>
+        <action path="/ecom_monitorList" type='ru.ecom.web.actions.base.ForwardAction'>
+            <forward name='success' path='/WEB-INF/actions/ecom_monitor/list.jsp' />
+        </action>
 
         <action path="/exp_exportEdit" type='ru.ecom.expomc.web.actions.export.ExportEditAction'
                 name='exp_exportForm' validate='false'>

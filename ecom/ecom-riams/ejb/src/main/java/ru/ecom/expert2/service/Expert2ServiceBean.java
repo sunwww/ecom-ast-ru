@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expert2.domain.*;
@@ -128,7 +129,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         } else {
             bill = theManager.find(E2Bill.class,list.get(0).longValue());
         }
-        if (bill!=null && aComment!=null) {
+        if (bill!=null) {
             bill.setComment(aComment);
             theManager.persist(bill);
         }
@@ -857,12 +858,12 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     public void addHospitalMedCaseToList(String aHistoryNumber, Long aListEntryId) throws SQLException, NamingException {
         if (isNotNull(aHistoryNumber)) {
-            fillListEntry(theManager.find(E2ListEntry.class, aListEntryId), aHistoryNumber);
+            fillListEntry(theManager.find(E2ListEntry.class, aListEntryId), aHistoryNumber,theRemoteMonitorService.createMonitor());
         }
     }
 
     /** Переформировывание заполнения */
-    public void reFillListEntry(Long aListEntryId)  {
+    public void reFillListEntry(Long aListEntryId, long aMonitorId)  {
         E2ListEntry list =theManager.find(E2ListEntry.class,aListEntryId);
         //String ids = (String) theManager.createNativeQuery("select list(''||id) from e2entry where listEntry_id =:id").setParameter("id",aListEntryId).getSingleResult();
         theManager.createNativeQuery("delete from e2entryerror where listentry_id=:id").setParameter("id",aListEntryId).executeUpdate();
@@ -871,8 +872,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         try {
             list.setCheckDate(null);
             list.setCheckTime(null);
+            list.setMonitorId(aMonitorId);
             theManager.persist(list);
-            fillListEntry(list,null);
+            fillListEntry(list,null, aMonitorId);
         } catch (NamingException | SQLException e) {
             e.printStackTrace();
             LOG.error(e);
@@ -887,7 +889,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      * @throws SQLException
      */
 
-    public void fillListEntry(E2ListEntry aListEntry, String aHistoryNumbers) throws NamingException, SQLException {
+    public void fillListEntry(E2ListEntry aListEntry, String aHistoryNumbers, long aMonitorId) throws NamingException, SQLException {
         String listEntryType = aListEntry.getEntryType() != null ? aListEntry.getEntryType().getCode() : null;
 
         if (listEntryType == null) {
@@ -948,7 +950,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         theManager.persist(aListEntry);
         try (Statement statement = createStatement()) {
             ResultSet foundCases = statement.executeQuery(searchSql);
-            createEntriesByEntryList(foundCases, paramMap, listEntryType, aListEntry); //Создаем записи по заполнению
+            createEntriesByEntryList(foundCases, paramMap, listEntryType, aListEntry, aMonitorId); //Создаем записи по заполнению
         } catch (ParseException e) {
             e.printStackTrace();
             LOG.error("can't parse data",e);
@@ -1285,6 +1287,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /*Находим онкологический случай по СЛС */
     private void findCancerEntry(E2Entry aEntry) {
+        if (COMPLEXSERVICESTREAM.equals(aEntry.getServiceStream())) return;
         List<OncologyCase> oncologyCases = theManager.createQuery("from OncologyCase where medCase_id=:id").setParameter("id",aEntry.getExternalParentId()).getResultList();
         List<E2CancerEntry> cancerEntryList = new ArrayList<>();
         if (!oncologyCases.isEmpty()) {
@@ -1446,9 +1449,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                     theManager.persist(diagnosis);
                     if (isClinical) {clinicalIds.add(diagnosis.getId());}
                 }
-                findCancerEntry(aEntry);
-                if (isCancer || !aEntry.getCancerEntries().isEmpty()){aEntry.setIsCancer(true);
-                theManager.persist(aEntry);}
+
+                aEntry.setIsCancer(isCancer);
+                theManager.persist(aEntry);
                 if (foundClinical && foundDischarge) { //Если нашли и клинический и выписной диагноз - удаляем клинический.
                     for (Long id:clinicalIds) {
                         theManager.createNativeQuery("delete from EntryDiagnosis where id=:id").setParameter("id",id).executeUpdate();
@@ -2328,7 +2331,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         } else {
             coefficient = null;
         }
-        BigDecimal kp = coefficient!=null?coefficient.getValue():one;
+        BigDecimal kp = coefficient!=null ? coefficient.getValue() : one;
 
         BigDecimal tariff = calculateTariff(aEntry);
         BigDecimal km = calculateKm();
@@ -2358,10 +2361,10 @@ public class Expert2ServiceBean implements IExpert2Service {
      * @throws ParseException
      */
     private HashMap<String, Method> methodMap = new HashMap<>();
-    private void createEntriesByEntryList(ResultSet aResultSet, Map<String, Object> aParamMap, String aEntryListCode, E2ListEntry aListEntry) throws ParseException { //Сохраняем сущности
+    private void createEntriesByEntryList(ResultSet aResultSet, Map<String, Object> aParamMap, String aEntryListCode, E2ListEntry aListEntry, long aMonitorId) throws ParseException { //Сохраняем сущности
+        IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Формирование нового заполнения",9999);
         try {
             ResultSetMetaData metaData = aResultSet.getMetaData();
-
             int rowsLength = metaData.getColumnCount();
             String[] fields = new String[rowsLength];
             int[] types = new int[rowsLength];
@@ -2375,7 +2378,10 @@ public class Expert2ServiceBean implements IExpert2Service {
             int j=0;
             while (aResultSet.next()) { // Для каждой строки (кортежа)
                 j++;
-                if (j%100==0) {LOG.info("Creating "+j+" records");}
+                if (j%100==0) {
+                    LOG.info("Creating "+j+" records");
+                    monitor.setText("Формирование заполнения: сформировано "+j+" записей");
+                }
                 entity = new E2Entry();
                 Class aClass = entity.getClass();
                 for (int i = 0; i < rowsLength; i++) { //Для каждого столбца находим геттер
@@ -2439,9 +2445,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
             }
             LOG.info("Success!");
+            monitor.finish("Законцено формирование нового заполнения");
         } catch (Exception e) {
+            monitor.error("Ошибка формирования нового заполнения: "+e.getLocalizedMessage(),e);
             e.printStackTrace();
-            LOG.error(e);
         }
         isCheckIsRunning=false;
     }
@@ -2511,15 +2518,14 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                     //Теперь снова находим КСГ, расчитываем цену и коэффициенты
                     if (!entry.getServiceStream().equals("COMPLEXCASE")) {
+                        findCancerEntry(entry);
                         makeCheckEntry(entry,true, true);
                     }
                 }
             } else if (listEntryCode.equals(POLYCLINICTYPE) ) {
                 //Проверка поликлинических случаев
-                if (listEntryCode.equals(POLYCLINICTYPE)) {
-                    monitor.setText("Удаляем дубли в поликлинике");
-                    deletePolyclinicDoubles(listEntryId ); //Удалим дубли при первой проверке
-                }
+                monitor.setText("Удаляем дубли в поликлинике");
+                deletePolyclinicDoubles(listEntryId ); //Удалим дубли при первой проверке
                 aEntryList = theManager.createNamedQuery("E2ListEntry.findAllEntries").setParameter("list",aListEntry).getResultList();
                 int i=0;
                 LOG.info("POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.");
@@ -2530,12 +2536,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                        if (isMonitorCancel(monitor,"Проверяем записи по поликлинике: "+i))return;
                     }
                     makeCheckEntry(entry,false, true);
+                    findCancerEntry(entry);
                 }
                 if (isMonitorCancel(monitor,"Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев."+(System.currentTimeMillis()-startStartDate.getTime())/60000)) return;
-                if (listEntryCode.equals(POLYCLINICTYPE)) {
-                    Boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO","0").equals("1");
-                    unionPolyclinicMedCase(listEntryId ,null,isGroupSpo);
-                }
+                Boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO","0").equals("1");
+                unionPolyclinicMedCase(listEntryId ,null,isGroupSpo);
                 monitor.setText("Приступаем к проверке перекрестных случаев.");
                 deleteCrossSpo(aListEntry);
                 monitor.setText("Закончили проверять поликлинику.");
@@ -3323,8 +3328,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 List<Diagnosis> diagnoses = medCase.getDiagnoses();
                 List<EntryDiagnosis> entryDiagnoses = new ArrayList<>();
                 for (Diagnosis d:diagnoses) {
-                   try{entryDiagnoses.add(new EntryDiagnosis(sloEntry,d.getIdc10(),d.getRegistrationType(),d.getPriority(),d.getMkbAdc(),d.getIllnesPrimary().getOmcCode()));}
-                   catch (Exception e) {LOG.warn(e.getMessage());}
+                       entryDiagnoses.add(new EntryDiagnosis(sloEntry,d.getIdc10(),d.getRegistrationType(),d.getPriority(),d.getMkbAdc(),d.getIllnesPrimary()!=null ? d.getIllnesPrimary().getOmcCode(): null));
                 }
                 sloEntry.setDiagnosis(entryDiagnoses);
                 List<SurgicalOperation> operationList = medCase.getSurgicalOperations();
@@ -3371,4 +3375,5 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
     private @PersistenceContext EntityManager theManager;
     private @EJB ILocalMonitorService theMonitorService;
+    private @EJB IRemoteMonitorService theRemoteMonitorService;
 }

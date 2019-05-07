@@ -33,4 +33,11 @@ public class RemoteMonitorServiceJs {
         service.cancel(aMonitorId);
     }
 
+    //все активные мониторы
+    public String getAllMonitors(HttpServletRequest aRequest) throws NamingException {
+        IRemoteMonitorService service = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
+        return service.getAllMonitors();
+
+    }
+
 }

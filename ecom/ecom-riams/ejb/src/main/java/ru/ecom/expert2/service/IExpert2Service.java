@@ -29,8 +29,8 @@ public interface IExpert2Service {
     void testUnionMecCase (Long aListEntryId, Long aHospitalMedcaseId, Long aPatientId, String aEntryType, boolean isGroupSpo);
     void makeCheckEntry (Long aEntryId, boolean updateKsgIfExist);
     E2Entry calculateEntryPrice(E2Entry  aEntry);
-    void fillListEntry(E2ListEntry aListEntry, String aHistoryNumbers) throws NamingException, SQLException;
-    void reFillListEntry(Long aListEntryId) ;
+    void fillListEntry(E2ListEntry aListEntry, String aHistoryNumbers, long aMonitorId) throws NamingException, SQLException;
+    void reFillListEntry(Long aListEntryId, long aMonitorId) ;
     Boolean addDiagnosisAndServiceToEntry(Long aEntryId, String aData) ;
     void addHospitalMedCaseToList(String aHistoryNumber, Long aListEntryId) throws SQLException, NamingException;
     BigDecimal calculateCusmo(String bedSubTypeCode, Long aDepartmentId, Long aProfileId, Date aDate);

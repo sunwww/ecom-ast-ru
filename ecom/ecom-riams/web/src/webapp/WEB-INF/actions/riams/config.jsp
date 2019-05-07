@@ -102,6 +102,9 @@
 							<li>
 								<msh:link action="js-riams-sync_parus.do" >Отчет по синхронизации с Парусом</msh:link>
 							</li>
+							<li>
+								<msh:link action="/ecom_monitorList.do" >Список фоновых "мониторов"</msh:link>
+							</li>
 
 						</ul>
 					</div>

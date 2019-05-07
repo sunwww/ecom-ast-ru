@@ -29,6 +29,7 @@
             <msh:hidden property="isClosed"/>
             <msh:hidden property="isDeleted"/>
             <msh:hidden property="lpuOmcCode"/>
+            <msh:hidden property="monitorId"/>
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
                <msh:row>
@@ -45,13 +46,14 @@
                 <msh:row>
                    <msh:autoComplete property="entryType" vocName="vocE2ListEntryType" size="100"/>
                 </msh:row>
+                <msh:ifFormTypeIsCreate formName="e2_entryListForm">
                 <msh:row>
                     <msh:checkBox property="createEmptyEntryList" />
                 </msh:row>
                 <msh:row>
                     <msh:textArea property="historyNumbers" fieldColSpan="5"/>
                 </msh:row>
-
+                </msh:ifFormTypeIsCreate>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
                 <msh:ifFormTypeIsView formName="e2_entryListForm">
 
@@ -125,6 +127,15 @@
         <msh:ifFormTypeIsView formName="e2_entryListForm">
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
             <script type="text/javascript">
+
+                checkIsRunning();
+                function checkIsRunning () {
+                    if (+$('monitorId').value>0) {
+                        monitor.id=+$('monitorId').value;
+                        updateStatus();
+                    }
+                }
+
                 function exportToCentralSegment() {
                     var histories = prompt("Ведите номера историй");
                     if (histories) {
@@ -172,8 +183,9 @@
                 function refillListEntry() {
                     if (confirm('Вы действительно хотите пересчитать заполнение?')) {
                         Expert2Service.refillListEntry($('id').value, {
-                            callback: function () {
-                                jQuery.toast({text:'Заполнение пересчитано!',icon:'Info', hideAfter: false });
+                            callback: function (monitorId) {
+                                monitor.id=monitorId;
+                                updateStatus();
                             }
                         });
                         jQuery.toast('Пересчет заполнения запущен!');
@@ -261,6 +273,7 @@
                //     if (confirm("Формировать в версии 3.1.1 ?")) {ver="3.1.1";}
                     Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,ver,{
                         callback: function(monitorId) {
+                            monitor ={};
                             monitor.id=monitorId;
                             jQuery.toast("Формирование файла запущено");
                             updateStatus();

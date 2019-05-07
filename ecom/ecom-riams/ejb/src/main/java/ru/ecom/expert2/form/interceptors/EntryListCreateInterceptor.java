@@ -16,14 +16,23 @@ public class EntryListCreateInterceptor implements IFormInterceptor {
          * СОздаем заполнение - находим список записей, расчитываем КСГ
          */
         E2EntryListForm form = (E2EntryListForm) aForm;
-        if (form.getCreateEmptyEntryList()!=null&&form.getCreateEmptyEntryList()) {
+        if (form.getCreateEmptyEntryList()==null || !form.getCreateEmptyEntryList()) {
+            E2ListEntry listEntry = (E2ListEntry) aEntity;
 
-        } else {
-            try {
-                EjbInjection.getInstance().getLocalService(IExpert2Service.class).fillListEntry((E2ListEntry) aEntity, form.getHistoryNumbers());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+      /*      final long monitorId = EjbInjection.getInstance().getRemoteService(MonitorServiceBean.class).createMonitor();
+            listEntry.setMonitorId(monitorId);
+            aContext.getEntityManager().persist(listEntry);
+                new Thread() {
+                        public void run(){
+                */    try {
+                        EjbInjection.getInstance().getLocalService(IExpert2Service.class)
+                            .fillListEntry(listEntry, form.getHistoryNumbers(),0L);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                //}};
+
+
         }
 
     }

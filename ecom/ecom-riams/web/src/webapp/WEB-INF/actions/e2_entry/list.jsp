@@ -69,7 +69,7 @@
     if ("firstNew".equals(orderBy)) {
         orderBy="id desc";
     } else if (orderBy==null || orderBy.equals("")) {
-      orderBy = "e.lastname, e.firstname, e.middlename, e.birthdate, e.finishDate"  ;
+      orderBy = "e.lastname, e.firstname, e.middlename, e.birthdate, e.startDate, e.finishDate"  ;
     }
     String errorCode = request.getParameter("errorCode");
     String searchFromSql ,searchWhereSql;
