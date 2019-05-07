@@ -797,9 +797,9 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
       </msh:ifInRole>
        <tags:mis_userDocumentList type="PATIENT" name="Pat" />
     </msh:ifFormTypeIsView>
- 
-    
-   
+
+
+    <tags:identityPatient name="identityPatient" />
     <tags:addressTag nextField="rayonName" fieldRayon="rayon"/>
     <tags:addressNewTag form="mis_patientForm" name="realAddress" zipcode="realZipcode" flatNumber="realFlatNumber" houseNumber="realHouseNumber" houseBuilding="realHouseBuilding" addressField="realAddressField" />
     <tags:addressNonresident form="mis_patientForm" name="nonresidentAddress" flatNumber="apartmentNonresident" 
@@ -891,6 +891,9 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/js-mis_assessmentCard-listByPatient" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
         <msh:sideLink params="id" action="/entityParentList-mis_patientExternalServiceAccount" name="Согласие на передачу данных"  title="Согласие на передачу данных" roles="/Policy/Mis/Patient/PatientExternalServiceAccount/View"/>
         <msh:sideLink params="id" action="/entityParentList-mis_dispensaryCard" name="Карты Д учета"  title="Карты Д учета" roles="/Policy/Mis/Patient/Dispensary/View"/>
+          <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit/PatientSet" name="Браслеты"
+                        styleId="viewShort" action="/javascript:showidentityPatient(${param.id},true)"  title='Браслеты'
+          />
         </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="157c0645-4549-461e-acf7-34072c393951">
         <msh:sideLink params="id" action="/print-ambcard.do?s=PatientPrintService&amp;m=printInfo" 

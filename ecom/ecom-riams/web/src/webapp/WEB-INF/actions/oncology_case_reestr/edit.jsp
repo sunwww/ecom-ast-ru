@@ -162,11 +162,16 @@
             <%
                 String mkb=request.getParameter("mkb");
                 request.setAttribute("mkb", mkb);
+                String actualMsg=request.getParameter("actualMsg");
+                request.setAttribute("actualMsg", actualMsg);
+                String wasDeleted=request.getParameter("wasDeleted");
+                request.setAttribute("wasDeleted", wasDeleted);
             %>
         </msh:form>
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <script type="text/javascript" src="./dwr/interface/OncologyService.js"></script>
+        <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
         <script type="text/javascript" >
             //Глобальные массивы
             var requiredStad = [0,1,2,3,4];  //коды поводов обращения, для которых обязательно указание стадии заболевания
@@ -336,78 +341,177 @@
                 }
             }
             //проставить диагноз и ФИО пациента
-            <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
-            //Если онкологическая форма создаётся по кнопке - '${mkb}' будет пустым, иначе - заполнен пока ещё не созданным осн. вып.
-                OncologyService.getFIODsPatient(${param.id},'${mkb}', {
-                callback : function(res) {
-                    var mas=res.split("#");
-                    if (mas[0]!='' && mas[1]!=''  && mas[2]!='') {
-                        document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
-                        document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1] + mas[2].replace(mas[1],'');
-                        $('MKB').value=mas[1];
-                        suspicionOncologist.checked= !($('MKB').value.indexOf('C')!=-1);
-                        if (suspicionOncologist.checked) checkCheckbox();
-                        suspicionOncologist.disabled=true;
-                        if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
-                            var ind=mas[1].indexOf(' ');
-                            if (ind!=-1) {
-                                stadAutocomplete.setParentId(mas[1].substring(0, ind));
-                                tumorAutocomplete.setParentId(mas[1].substring(0, ind));
-                                nodusAutocomplete.setParentId(mas[1].substring(0, ind));
-                                metastasisAutocomplete.setParentId(mas[1].substring(0, ind));
-                            }
-                            else {
-                                stadAutocomplete.setParentId(mas[1]) ;
-                                tumorAutocomplete.setParentId(mas[1]) ;
-                                nodusAutocomplete.setParentId(mas[1]) ;
-                                metastasisAutocomplete.setParentId(mas[1]) ;
+            function setDs(medCaseId) {
+                <%
+                String mkb=request.getParameter("mkb");
+                if (mkb!=null && mkb.length()>5) {
+                    String[] masMkb = mkb.split(" ");
+                    if (masMkb.length>0)
+                        request.setAttribute("mkb", masMkb[0]);
+                }
+                %>
+                //Если онкологическая форма создаётся по кнопке - '${mkb}' будет пустым, иначе - заполнен пока ещё не созданным осн. вып.
+                OncologyService.getFIODsPatient(medCaseId,'${mkb}', {
+                    callback : function(res) {
+                        var mas=res.split("#");
+                        if (mas[0]!='' && mas[1]!=''  && mas[2]!='') {
+                            document.getElementById("fio").innerHTML="Ф.И.О. пациента " + mas[0];
+                            document.getElementById("ds").innerHTML="Диагноз (по МКБ-10): " + mas[1] + mas[2].replace(mas[1],'');
+                            $('MKB').value=mas[1];
+                            suspicionOncologist.checked= !($('MKB').value.indexOf('C')!=-1);
+                            if (suspicionOncologist.checked) checkCheckbox();
+                            suspicionOncologist.disabled=true;
+                            if (mas[1]!=null && mas[1]!='' && typeof stadAutocomplete != 'undefined') {
+                                var ind=mas[1].indexOf(' ');
+                                if (ind!=-1) {
+                                    stadAutocomplete.setParentId(mas[1].substring(0, ind));
+                                    tumorAutocomplete.setParentId(mas[1].substring(0, ind));
+                                    nodusAutocomplete.setParentId(mas[1].substring(0, ind));
+                                    metastasisAutocomplete.setParentId(mas[1].substring(0, ind));
+                                }
+                                else {
+                                    stadAutocomplete.setParentId(mas[1]) ;
+                                    tumorAutocomplete.setParentId(mas[1]) ;
+                                    nodusAutocomplete.setParentId(mas[1]) ;
+                                    metastasisAutocomplete.setParentId(mas[1]) ;
+                                }
                             }
                         }
-                    }
-                    else {
-                        alert('Нет основного диагноза в случае! Создание онкологической формы невозможно.');
-                        window.location.href='entityParentView-stac_ssl.do?id='+${param.id};
-                    }
-                }});
+                        else {
+                            alert('Нет основного диагноза в случае! Создание онкологической формы невозможно.');
+                            window.location.href='entityParentView-stac_ssl.do?id='+${param.id};
+                        }
+                    }});
+            }
+            <msh:ifFormTypeIsCreate formName="oncology_case_reestrForm">
+            //если меняли диагноз с С на не С
+            if ('${wasDeleted}'!='' && '${mkb}'[0]!='C') {
+                showToastMessage('Созданная и неактуальная онкологическая форма была удалена. Если необходимо, можно создать подозрение на ЗНО. Если нет - просто закрыть вкладку.', null, true);
+                document.getElementById('cancelButton').onclick=function () {window.location.href='entityParentView-stac_ssl.do?id='+$('medCase').value;} //чтобы назад в СЛС
+            }
+            else if ('${wasDeleted}'!='' && '${mkb}'[0]=='C')
+                showToastMessage('Подозрение на ЗНО, связанное с неактуальынм диагнозом, было удалено. Необходимо создать случай онкологического лечения.', null, true);
+            setDs(${param.id});
             </msh:ifFormTypeIsCreate>
             <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
             //if ('${mkb}'=='')- простое редактирование формы
             ////если нет - то актуализация формы, в случае, когда форма создана с другим диагнозом, а в выписке указан новый
+            //Варианты
+            //- * на C - удалить направление (и связанное с ним) и открыть создание полного варианта формы
+            //- C на * - удалить форму (и связанное) и открыть создание направления
+            //- * на * - открыть направление на редактирование
+            //- C на C - актуализация формы - того, что зависит от диагноза
+            //- обычное редактирование и вариант с актуализацией формы при смене C на другой C
+
             OncologyService.getDsWithName(${param.id},'${mkb}', {
                 callback : function(res) {
-                    var mas = res.split("#");
-                    if (mas[0] != '' && mas[1] != '') {
-                        document.getElementById("fio").innerHTML = "Ф.И.О. пациента " + mas[0];
-                        document.getElementById("ds").innerHTML = "Диагноз (по МКБ-10): " + mas[1];
-                        if (mas[1] != null && mas[1] != '' && typeof stadAutocomplete != 'undefined') {
-                            var ind = mas[1].indexOf(' ');
+                    if (res!=null && res!='{}') {
+                        var aResult = JSON.parse(res);
+                        if (typeof aResult.pat!=='undefined' && typeof aResult.oldmkb!=='undefined') {
+                            document.getElementById("fio").innerHTML = "Ф.И.О. пациента " + aResult.pat;
+                            var isActual = (typeof aResult.newmkb!=='undefined' && aResult.newmkb!=aResult.oldmkb && aResult.newmkb!='');
+                            var mkb = ((typeof aResult.newmkb!=='undefined' && aResult.newmkb!=aResult.oldmkb || aResult.newmkb!=''))? aResult.oldmkb: aResult.newmkb;
+                            document.getElementById("ds").innerHTML = "Диагноз (по МКБ-10): " + mkb;
+                            <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
+                            var ind = mkb.indexOf(' ');
                             if (ind != -1) {
-                                stadAutocomplete.setParentId(mas[1].substring(0, ind));
-                                tumorAutocomplete.setParentId(mas[1].substring(0, ind));
-                                nodusAutocomplete.setParentId(mas[1].substring(0, ind));
-                                metastasisAutocomplete.setParentId(mas[1].substring(0, ind));
+                                stadAutocomplete.setParentId(mkb.substring(0, ind));
+                                tumorAutocomplete.setParentId(mkb.substring(0, ind));
+                                nodusAutocomplete.setParentId(mkb.substring(0, ind));
+                                metastasisAutocomplete.setParentId(mkb.substring(0, ind));
                             }
                             else {
-                                stadAutocomplete.setParentId(mas[1]);
-                                tumorAutocomplete.setParentId(mas[1]);
-                                nodusAutocomplete.setParentId(mas[1]);
-                                metastasisAutocomplete.setParentId(mas[1]);
+                                stadAutocomplete.setParentId(mkb);
+                                tumorAutocomplete.setParentId(mkb);
+                                nodusAutocomplete.setParentId(mkb);
+                                metastasisAutocomplete.setParentId(mkb);
                             }
-                            if ('${mkb}'!='') {
+                            if (isActual) actualForm(aResult.oldmkb,aResult.newmkb);
+                            else if (!isActual && '${actualMsg}'!='') { //актуализация в случае перехода после href=
+                                HospitalMedCaseService.getMedcaseDtypeById($('medCase').value, {
+                                    callback: function (resType) {
+                                        if (resType == '0') {
+                                            showToastMessage('${actualMsg}', null, true);
+                                            $('MKB').value='${mkb}';
+                                            setDs($('medCase').value);
+                                        }
+                                    }});
+                            }
+                            else {  //актуализация в случае изменения диагноза через Диагноз - Редактировать
+                                HospitalMedCaseService.getMedcaseDtypeById($('medCase').value, {
+                                    callback: function (resType) {
+                                        if (resType == '0') {
+                                            OncologyService.checkDiagnosisOnkoForm($('medCase').value, mkb, {  //получить текуший основной выписной или последний диагноз СЛО
+                                                callback: function (res2) {
+                                                    if (res2 != '' && res2 != '0') {
+                                                        var mas = res2.split("#");
+                                                        OncologyService.getFIODsPatient($('medCase').value, '', {
+                                                            callback: function (res3) {
+                                                                var mas3 = res3.split("#");
+                                                                if (mas3[0] != '' && mas3[1] != '' && mas3[2] != '') {
+                                                                    window.location.href = "entityEdit-oncology_case_reestr.do?id=" + $('id').value + "&actualMsg=" + mas[0];
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }});
+                            }
+                            </msh:ifFormTypeIsNotView>
+                            suspicionOncologist.disabled=true;
+                        }
+                        else {
+                            alert('Нет диагноза, с которым была создана форма!');
+                            window.location.href = 'entityParentView-stac_ssl.do?id=' + $('medCase').value
+                        }
+                    }
+                    else {
+                        alert('Не удалось найти онкологическую форму! Добавьте основной выписной диагноз (через Диагно - Добавить) и создайте онкологическую форму через Создать случай!');
+                        window.location.href = 'entityParentView-stac_ssl.do?id=' + $('medCase').value
+                    }
+                }});
+            //актуализация формы
+            function actualForm(oldmkb,newmkb) {
+                HospitalMedCaseService.getMedcaseDtypeById($('medCase').value, {
+                    callback: function (resType) {
+                        if (resType == '0') {
+                            var msg='Диагноз меняется с ' + oldmkb + ' на ' + newmkb;
+                            if (oldmkb[0]=='C' && newmkb[0]=='C') {
                                 $('stad').value=$('stadName').value='';
                                 $('tumor').value=$('tumorName').value='';
                                 $('nodus').value=$('nodusName').value='';
                                 $('metastasis').value=$('metastasisName').value='';
                                 $('MKB').value='${mkb}';
+                                msg+=". Заполните заново стадию и TNM, которые зависят от диагноза.";
                             }
-                            suspicionOncologist.disabled=true;
+                            else if (oldmkb[0]!='C' && newmkb[0]!='C'){
+                                suspicionOncologist.checked=true;  //редактирование направления
+                                msg+=". Отредактируйте направление, если необходимо. Сохраните его.";
+                            }
+                            else if (oldmkb[0]!='C' && newmkb[0]=='C'){
+                                OncologyService.deleteDirectionsByCase($('id').value,{
+                                    callback: function (res) {
+                                        msg+=". Созданные направления в подозрении на ЗНО удалены. Создайте онкологическую форму.";
+                                        window.location.href = "entityParentPrepareCreate-oncology_case_reestr.do?id=" + $('medCase').value + "&wasDeleted=1" + "&mkb="+newmkb;
+                                    }
+                                });
+                            }
+                            else if (oldmkb[0]=='C' && newmkb[0]!='C'){
+                                OncologyService.deleteAllByCase($('id').value,{
+                                    callback: function () {
+                                        window.location.href = "entityParentPrepareCreate-oncology_case_reestr.do?id=" + $('medCase').value + "&wasDeleted=1" + "&mkb="+newmkb;
+                                    }
+                                });
+                            }
+                            showToastMessage(msg, null, true);
+                            $('MKB').value='${mkb}';
+                            setDs($('medCase').value);
                         }
                     }
-                    else {
-                        alert('Нет диагноза, с которым была создана форма!');
-                        window.location.href = 'entityParentView-stac_ssl.do?id=' + $('medCase').value
-                    }
-                }});
+                });
+            }
             OncologyService.getDates($('id').value, {
                 callback : function(res) {
                     if (res!="##") {
@@ -489,314 +593,319 @@
             }
             //сохранить случай
             function saveCase(btn) {
-                var histologyChb1=document.getElementById("histologyChb1");
-                var histologyChb2=document.getElementById("histologyChb2");
-                var histologyChb3=document.getElementById("histologyChb3");
-                var vocOncologyN013_1=document.getElementById("vocOncologyN013_1");
-                var vocOncologyN013_2=document.getElementById("vocOncologyN013_2");
-                var vocOncologyN013_4=document.getElementById("vocOncologyN013_4");
-                var ds=document.getElementById("ds").innerHTML.replace("Диагноз (по МКБ-10): ","");
-                ds=ds.substring(0,ds.indexOf(" "));
-                btn.value='Создание...';
-                var patientCategory=getValueVocRadiooncoT('vocOncologyReasonTreat','vocOncologyReasonTreat');
-                if (patientCategory==-1) {
-                    alert("Заполните категорию пациента!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (requiredStad.include(patientCategory) &&  ($('stad').value==null || $('stad').value=='')) {
-                    alert("Заполните стадию заболевания! Для данного повода обращения она обязательна!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (requiredTNM.include(patientCategory) && ($('tumor').value==null || $('tumor').value=='')) {
-                    alert("Заполните Tumor! Для данного повода обращения обязательно!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (requiredTNM.include(patientCategory) && ($('nodus').value==null || $('nodus').value=='')) {
-                    alert("Заполните Nodus! Для данного повода обращения обязательно!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (requiredTNM.include(patientCategory) && ($('metastasis').value==null || $('metastasis').value=='')) {
-                    alert("Заполните Metastasis! Для данного повода обращения обязательно!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (!document.getElementsByName("typeFirstOrNot")[0].checked && !document.getElementsByName("typeFirstOrNot")[1].checked) {
-                    alert("Заполните, когда было выявлено заболевание!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if ((histologyChb1.checked || histologyChb2.checked || histologyChb3.checked) && $('dateBiops').value=='') {
-                    alert("Отмечена гистология, введите дату взятия биопсийного материала!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if ($('dateBiops').value!='' && !histologyChb1.checked && !histologyChb2.checked && !histologyChb3.checked) {
-                    alert("Введена дата гистологии, выберите гистологический тип/степени дифференцированности!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                /*else if((ds.indexOf("C15")!=-1 || ds.indexOf("C16")!=-1 || ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 ||
-                    ds.indexOf("C20")!=-1 || ds.indexOf("C25")!=-1 || ds.indexOf("C32")!=-1 || ds.indexOf("C34")!=-1 ||
-                    ds.indexOf("C50")!=-1 || ds.indexOf("C53")!=-1 || ds.indexOf("C56")!=-1 || ds.indexOf("C61")!=-1 || ds.indexOf("C67")!=-1)
-                    && getValueVocRadiooncoT("epit","vocOncologyN008")==-1) {
-                    alert("Для диагнозов С15, С16, С18, С19, С20, С25, С32, С34, С50, С53, С56, С61, С67 указывается, является ли опухоль эпителиальной.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (((ds.indexOf("C15")!=-1 || ds.indexOf("C16")!=-1) && getValueVocRadiooncoT("carc","vocOncologyN008")==-1)) {
-                    alert("Для диагнозов С15, С16 (эпителиальная опухоль) указывается, является ли опухоль аденокарциномой.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C34")!=-1 && getValueVocRadiooncoT("melkoklet","vocOncologyN008")==-1) {
-                    alert("Для диагноза С34 (эпителиальная опухоль) указывается, является ли опухоль мелкоклеточной.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C44")!=-1 && getValueVocRadiooncoT("bazalklet","vocOncologyN008")==-1) {
-                    alert("Для диагноза С44 (эпителиальная опухоль) указывается, является ли опухоль базальноклеточной или плоскоклеточной.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C44")!=-1 && getValueVocRadiooncoT("ploskoklet","vocOncologyN008")==-1) {
-                    alert("Для диагноза С44 (эпителиальная опухоль) указывается, является ли опухоль базальноклеточной или плоскоклеточной.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C54")!=-1 && getValueVocRadiooncoT("endom","vocOncologyN008")==-1) {
-                    alert("Для диагноза С54 (любой тип опухоли) указывается, является ли опухоль эндометриоидной.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (getValueVocRadiooncoT("endom","vocOncologyN008")==22 && getValueVocRadiooncoT("diff","vocOncologyN008")==-1) {
-                    alert("Для эндометриоидной опухоли указывается степень дифференцированности опухоли.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C56")!=-1 && getValueVocRadiooncoT("diff","vocOncologyN008")==-1) {
-                    alert("Для диагноза С56 (эпителиальная опухоль) указывается степень дифференцированности опухоли.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C64")!=-1 && getValueVocRadiooncoT("pochech","vocOncologyN008")==-1) {
-                    alert("Для диагноза С64 (любой тип опухоли) указывается, является ли опухоль почечноклеточной.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (getValueVocRadiooncoT("pochech","vocOncologyN008")==11 && getValueVocRadiooncoT("svetloklet","vocOncologyN008")==-1) {
-                    alert("Для почечноклеточной опухоли указывается, является ли она светлоклеточной.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C73")!=-1 && getValueVocRadiooncoT("rad5","vocOncologyN008")==-1) {
-                    alert("Для диагноза С73 (любой тип опухоли) указывается, является ли опухоль папиллярной, фолликулярной, гюртклеточной, медуллярной или анапластической.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C16")!=-1 && getValueVocRadiooncoT("vocOncologyN010_111","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С16 (эпителиальная опухоль) указывается уровень экспрессии белка НЕR2.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if ((ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 || ds.indexOf("C20")!=-1) && getValueVocRadiooncoT("vocOncologyN010_114","vocOncologyN010_11")==-1) {
-                    alert("Для диагнозов С18, С19, С20 (эпителиальная опухоль) указывается наличие мутаций в генах RAS и BRAF.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if ((ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 || ds.indexOf("C20")!=-1) && getValueVocRadiooncoT("vocOncologyN010_112","vocOncologyN010_11")==-1) {
-                    alert("Для диагнозов С18, С19, С20 (эпителиальная опухоль) указывается наличие мутаций в генах RAS и BRAF.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C34")!=-1 && getValueVocRadiooncoT("vocOncologyN010_115","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С34 (эпителиальная опухоль) указываются наличие мутаций в гене EGFR, наличие транслокации в генах АLK или ROSI, уровень экспрессии белка PD-L1.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C34")!=-1 && getValueVocRadiooncoT("vocOncologyN010_116","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С34 (эпителиальная опухоль) указываются наличие мутаций в гене EGFR, наличие транслокации в генах АLK или ROSI, уровень экспрессии белка PD-L1.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C34")!=-1 && getValueVocRadiooncoT("vocOncologyN010_117","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С34 (эпителиальная опухоль) указываются наличие мутаций в гене EGFR, наличие транслокации в генах АLK или ROSI, уровень экспрессии белка PD-L1.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C43")!=-1 && getValueVocRadiooncoT("vocOncologyN010_112","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С43 указываются наличие мутаций в гене BRAF, наличие мутаций в гене c-Kit.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C43")!=-1 && getValueVocRadiooncoT("vocOncologyN010_113","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С43 указываются наличие мутаций в гене BRAF, наличие мутаций в гене c-Kit.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_118","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_119","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_1110","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_111","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_1112","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }*/
-                else if ($('consilium').value=='') {
-                    alert("Введите данные о консилиуме!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if ($('consiliumName').value.length>0 && $('consiliumName').value[0]!='0' && $('dateCons').value=='') {
-                    alert("Отмечено, что было выполнено на консилиуме. Заполните дату проведения консилиума.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (vocOncologyN013_4.checked && getValueVocRadiooncoT('vocOncologyN015')==-1) {
-                    alert("Отмечена лекарственная противоопухолевая терапия, выберите линию терапии.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (vocOncologyN013_4.checked && getValueVocRadiooncoT('vocOncologyN016')==-1) {
-                    alert("Отмечена лекарственная противоопухолевая терапия, выберите цикл линии.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (vocOncologyN013_4.checked && getValueVocRadiooncoT('vocOncologyN016')==-1) {
-                    alert("Отмечена лекарственная противоопухолевая терапия, выберите цикл линии.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (vocOncologyN013_4.checked && !checkMeds()) {
-                    alert("Отмечена лекарственная противоопухолевая терапия. Заполните минимум один медикамент (перпарат и дата являются обязательными)!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (document.getElementById("c1").checked && $('date1').value=='') {
-                    alert("Отмечено противопоказание к проведению хирургического лечения, введите дату.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (document.getElementById("c2").checked && $('date2').value=='') {
-                    alert("Отмечено противопоказание к проведению химиотерапевтического лечения, введите дату.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (document.getElementById("c3").checked && $('date3').value=='') {
-                    alert("Отмечено противопоказание к проведению лучевой терапии, введите дату.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (document.getElementById("c4").checked && $('date4').value=='') {
-                    alert("Отмечен отказ от проведения хирургического лечения, введите дату.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (document.getElementById("c5").checked && $('date5').value=='') {
-                    alert("Отмечен отказ от проведения химиотерапевтического лечения, введите дату.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (document.getElementById("c6").checked && $('date6').value=='') {
-                    alert("Отмечен отказ от проведения лучевой терапии, введите дату.");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else if (!vocOncologyN013_1.checked && !vocOncologyN013_2.checked && !document.getElementById('vocOncologyN013_3').checked && !document.getElementById('vocOncologyN013_4').checked) {
-                    alert("Должен быть выбран тип лечения!");
-                    btn.removeAttribute("disabled");
-                    btn.value='Создать';
-                }
-                else {
-                    $('isFirst').value=document.getElementsByName("typeFirstOrNot")[0].checked;
-                    $('vocOncologyReasonTreat').value=patientCategory;
-                    //гистология hm=true is hist hm=false id marker
-                    histString="";
-                    saveHistString(1,"epit",1,"vocOncologyN008");
-                    saveHistString(1,"pochech",1,"vocOncologyN008");
-                    saveHistString(1,"rad5",1,"vocOncologyN008");
-                    saveHistString(1,"endom",1,"vocOncologyN008");
-                    saveHistString(1,"carc",1,"vocOncologyN008");
-                    saveHistString(1,"svetloklet",2,"vocOncologyN008");
-                    saveHistString(1,"melkoklet",2,"vocOncologyN008");
-                    saveHistString(1,"bazalklet",2,"vocOncologyN008");
-                    saveHistString(1,"ploskoklet",2,"vocOncologyN008");
-                    saveHistString(1,"diff",3,"vocOncologyN008");
-                    //маркёры
-                    for (var i=1; i<=12; i++) saveHistString(2,"vocOncologyN010_11"+i,i,"vocOncologyN010_11");
-                    $('histString').value=histString;
-                    //лечение
-                    if (getValueVocRadiooncoT('vocOncologyN014')!=-1) {
-                        $('surgTreatment').value=getValueVocRadiooncoT('vocOncologyN014','vocOncologyN014');
-                        $('typeTreatment').value=document.getElementById("vocOncologyN013_1").value;
-                    }
-                    else $('surgTreatment').value=null;
-                    if (getValueVocRadiooncoT('vocOncologyN015')!=-1) {
-                        $('lineDrugTherapy').value=getValueVocRadiooncoT('vocOncologyN015','vocOncologyN015');
-                        $('typeTreatment').value=document.getElementById("vocOncologyN013_4").value;
-                    }//если не выбрана, затираем подпункты
-                    else $('lineDrugTherapy').value=null;
-                    if (getValueVocRadiooncoT('vocOncologyN016')!=-1) {
-                        $('cycleDrugTherapy').value=getValueVocRadiooncoT('vocOncologyN016','vocOncologyN016');
-                        $('typeTreatment').value=document.getElementById("vocOncologyN013_4").value;
-                        $('isNauseaAndGagReflexPrev').value=document.getElementsByName("typeNauseaOrNot")[0].checked;
-                    }
-                    else {
-                        $('cycleDrugTherapy').value=null;
-                        $('isNauseaAndGagReflexPrev').value=null;
-                    }
-                    if (document.getElementById("vocOncologyN013_2").checked) $('typeTreatment').value=document.getElementById("vocOncologyN013_2").value;
-                    if (document.getElementById("vocOncologyN013_3").checked) $('typeTreatment').value=document.getElementById("vocOncologyN013_3").value;
-                    //отказы и пр-я
-                    $('contraString').value="";
-                    for (var i=1; i<=6; i++) {
-                        if (document.getElementById("c"+i).checked) {
-                            $('contraString').value += i;
-                            $('contraString').value += "#";
-                            $('contraString').value += $('date' + i).value;
-                            $('contraString').value += "!";
+                //тип лечения обязателен только для стационара
+                HospitalMedCaseService.getMedcaseDtypeById($('medCase').value, {
+                    callback: function (resType) {
+                        var histologyChb1 = document.getElementById("histologyChb1");
+                        var histologyChb2 = document.getElementById("histologyChb2");
+                        var histologyChb3 = document.getElementById("histologyChb3");
+                        var vocOncologyN013_1 = document.getElementById("vocOncologyN013_1");
+                        var vocOncologyN013_2 = document.getElementById("vocOncologyN013_2");
+                        var vocOncologyN013_4 = document.getElementById("vocOncologyN013_4");
+                        var ds = document.getElementById("ds").innerHTML.replace("Диагноз (по МКБ-10): ", "");
+                        ds = ds.substring(0, ds.indexOf(" "));
+                        btn.value = 'Создание...';
+                        var patientCategory = getValueVocRadiooncoT('vocOncologyReasonTreat', 'vocOncologyReasonTreat');
+                        if (patientCategory == -1) {
+                            alert("Заполните категорию пациента!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (requiredStad.include(patientCategory) && ($('stad').value == null || $('stad').value == '')) {
+                            alert("Заполните стадию заболевания! Для данного повода обращения она обязательна!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (requiredTNM.include(patientCategory) && ($('tumor').value == null || $('tumor').value == '')) {
+                            alert("Заполните Tumor! Для данного повода обращения обязательно!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (requiredTNM.include(patientCategory) && ($('nodus').value == null || $('nodus').value == '')) {
+                            alert("Заполните Nodus! Для данного повода обращения обязательно!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (requiredTNM.include(patientCategory) && ($('metastasis').value == null || $('metastasis').value == '')) {
+                            alert("Заполните Metastasis! Для данного повода обращения обязательно!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (!document.getElementsByName("typeFirstOrNot")[0].checked && !document.getElementsByName("typeFirstOrNot")[1].checked) {
+                            alert("Заполните, когда было выявлено заболевание!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if ((histologyChb1.checked || histologyChb2.checked || histologyChb3.checked) && $('dateBiops').value == '') {
+                            alert("Отмечена гистология, введите дату взятия биопсийного материала!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if ($('dateBiops').value != '' && !histologyChb1.checked && !histologyChb2.checked && !histologyChb3.checked) {
+                            alert("Введена дата гистологии, выберите гистологический тип/степени дифференцированности!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        /*else if((ds.indexOf("C15")!=-1 || ds.indexOf("C16")!=-1 || ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 ||
+                            ds.indexOf("C20")!=-1 || ds.indexOf("C25")!=-1 || ds.indexOf("C32")!=-1 || ds.indexOf("C34")!=-1 ||
+                            ds.indexOf("C50")!=-1 || ds.indexOf("C53")!=-1 || ds.indexOf("C56")!=-1 || ds.indexOf("C61")!=-1 || ds.indexOf("C67")!=-1)
+                            && getValueVocRadiooncoT("epit","vocOncologyN008")==-1) {
+                            alert("Для диагнозов С15, С16, С18, С19, С20, С25, С32, С34, С50, С53, С56, С61, С67 указывается, является ли опухоль эпителиальной.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (((ds.indexOf("C15")!=-1 || ds.indexOf("C16")!=-1) && getValueVocRadiooncoT("carc","vocOncologyN008")==-1)) {
+                            alert("Для диагнозов С15, С16 (эпителиальная опухоль) указывается, является ли опухоль аденокарциномой.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C34")!=-1 && getValueVocRadiooncoT("melkoklet","vocOncologyN008")==-1) {
+                            alert("Для диагноза С34 (эпителиальная опухоль) указывается, является ли опухоль мелкоклеточной.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C44")!=-1 && getValueVocRadiooncoT("bazalklet","vocOncologyN008")==-1) {
+                            alert("Для диагноза С44 (эпителиальная опухоль) указывается, является ли опухоль базальноклеточной или плоскоклеточной.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C44")!=-1 && getValueVocRadiooncoT("ploskoklet","vocOncologyN008")==-1) {
+                            alert("Для диагноза С44 (эпителиальная опухоль) указывается, является ли опухоль базальноклеточной или плоскоклеточной.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C54")!=-1 && getValueVocRadiooncoT("endom","vocOncologyN008")==-1) {
+                            alert("Для диагноза С54 (любой тип опухоли) указывается, является ли опухоль эндометриоидной.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (getValueVocRadiooncoT("endom","vocOncologyN008")==22 && getValueVocRadiooncoT("diff","vocOncologyN008")==-1) {
+                            alert("Для эндометриоидной опухоли указывается степень дифференцированности опухоли.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C56")!=-1 && getValueVocRadiooncoT("diff","vocOncologyN008")==-1) {
+                            alert("Для диагноза С56 (эпителиальная опухоль) указывается степень дифференцированности опухоли.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C64")!=-1 && getValueVocRadiooncoT("pochech","vocOncologyN008")==-1) {
+                            alert("Для диагноза С64 (любой тип опухоли) указывается, является ли опухоль почечноклеточной.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (getValueVocRadiooncoT("pochech","vocOncologyN008")==11 && getValueVocRadiooncoT("svetloklet","vocOncologyN008")==-1) {
+                            alert("Для почечноклеточной опухоли указывается, является ли она светлоклеточной.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C73")!=-1 && getValueVocRadiooncoT("rad5","vocOncologyN008")==-1) {
+                            alert("Для диагноза С73 (любой тип опухоли) указывается, является ли опухоль папиллярной, фолликулярной, гюртклеточной, медуллярной или анапластической.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C16")!=-1 && getValueVocRadiooncoT("vocOncologyN010_111","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С16 (эпителиальная опухоль) указывается уровень экспрессии белка НЕR2.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if ((ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 || ds.indexOf("C20")!=-1) && getValueVocRadiooncoT("vocOncologyN010_114","vocOncologyN010_11")==-1) {
+                            alert("Для диагнозов С18, С19, С20 (эпителиальная опухоль) указывается наличие мутаций в генах RAS и BRAF.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if ((ds.indexOf("C18")!=-1 || ds.indexOf("C19")!=-1 || ds.indexOf("C20")!=-1) && getValueVocRadiooncoT("vocOncologyN010_112","vocOncologyN010_11")==-1) {
+                            alert("Для диагнозов С18, С19, С20 (эпителиальная опухоль) указывается наличие мутаций в генах RAS и BRAF.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C34")!=-1 && getValueVocRadiooncoT("vocOncologyN010_115","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С34 (эпителиальная опухоль) указываются наличие мутаций в гене EGFR, наличие транслокации в генах АLK или ROSI, уровень экспрессии белка PD-L1.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C34")!=-1 && getValueVocRadiooncoT("vocOncologyN010_116","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С34 (эпителиальная опухоль) указываются наличие мутаций в гене EGFR, наличие транслокации в генах АLK или ROSI, уровень экспрессии белка PD-L1.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C34")!=-1 && getValueVocRadiooncoT("vocOncologyN010_117","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С34 (эпителиальная опухоль) указываются наличие мутаций в гене EGFR, наличие транслокации в генах АLK или ROSI, уровень экспрессии белка PD-L1.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C43")!=-1 && getValueVocRadiooncoT("vocOncologyN010_112","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С43 указываются наличие мутаций в гене BRAF, наличие мутаций в гене c-Kit.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C43")!=-1 && getValueVocRadiooncoT("vocOncologyN010_113","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С43 указываются наличие мутаций в гене BRAF, наличие мутаций в гене c-Kit.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_118","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_119","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_1110","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_111","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }
+                        else if (ds.indexOf("C50")!=-1 && getValueVocRadiooncoT("vocOncologyN010_1112","vocOncologyN010_11")==-1) {
+                            alert("Для диагноза С50 (эпителиальная опухоль) указываются наличие рецепторов к эстрогенам, наличие рецепторов к прогестерону, индекс пролиферативной активности экспрессии Ki-67, уровень экспрессии белка HER2, наличие мутаций в генах BRCA.");
+                            btn.removeAttribute("disabled");
+                            btn.value='Создать';
+                        }*/
+                        else if ($('consilium').value == '') {
+                            alert("Введите данные о консилиуме!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if ($('consiliumName').value.length > 0 && $('consiliumName').value[0] != '0' && $('dateCons').value == '') {
+                            alert("Отмечено, что было выполнено на консилиуме. Заполните дату проведения консилиума.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (vocOncologyN013_4.checked && getValueVocRadiooncoT('vocOncologyN015') == -1) {
+                            alert("Отмечена лекарственная противоопухолевая терапия, выберите линию терапии.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (vocOncologyN013_4.checked && getValueVocRadiooncoT('vocOncologyN016') == -1) {
+                            alert("Отмечена лекарственная противоопухолевая терапия, выберите цикл линии.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (vocOncologyN013_4.checked && getValueVocRadiooncoT('vocOncologyN016') == -1) {
+                            alert("Отмечена лекарственная противоопухолевая терапия, выберите цикл линии.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (vocOncologyN013_4.checked && !checkMeds()) {
+                            alert("Отмечена лекарственная противоопухолевая терапия. Заполните минимум один медикамент (перпарат и дата являются обязательными)!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (document.getElementById("c1").checked && $('date1').value == '') {
+                            alert("Отмечено противопоказание к проведению хирургического лечения, введите дату.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (document.getElementById("c2").checked && $('date2').value == '') {
+                            alert("Отмечено противопоказание к проведению химиотерапевтического лечения, введите дату.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (document.getElementById("c3").checked && $('date3').value == '') {
+                            alert("Отмечено противопоказание к проведению лучевой терапии, введите дату.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (document.getElementById("c4").checked && $('date4').value == '') {
+                            alert("Отмечен отказ от проведения хирургического лечения, введите дату.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (document.getElementById("c5").checked && $('date5').value == '') {
+                            alert("Отмечен отказ от проведения химиотерапевтического лечения, введите дату.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (document.getElementById("c6").checked && $('date6').value == '') {
+                            alert("Отмечен отказ от проведения лучевой терапии, введите дату.");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else if (!vocOncologyN013_1.checked && !vocOncologyN013_2.checked && !document.getElementById('vocOncologyN013_3').checked && !document.getElementById('vocOncologyN013_4').checked && resType=='0') {
+                            alert("Должен быть выбран тип лечения!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
+                        else {
+                            $('isFirst').value = document.getElementsByName("typeFirstOrNot")[0].checked;
+                            $('vocOncologyReasonTreat').value = patientCategory;
+                            //гистология hm=true is hist hm=false id marker
+                            histString = "";
+                            saveHistString(1, "epit", 1, "vocOncologyN008");
+                            saveHistString(1, "pochech", 1, "vocOncologyN008");
+                            saveHistString(1, "rad5", 1, "vocOncologyN008");
+                            saveHistString(1, "endom", 1, "vocOncologyN008");
+                            saveHistString(1, "carc", 1, "vocOncologyN008");
+                            saveHistString(1, "svetloklet", 2, "vocOncologyN008");
+                            saveHistString(1, "melkoklet", 2, "vocOncologyN008");
+                            saveHistString(1, "bazalklet", 2, "vocOncologyN008");
+                            saveHistString(1, "ploskoklet", 2, "vocOncologyN008");
+                            saveHistString(1, "diff", 3, "vocOncologyN008");
+                            //маркёры
+                            for (var i = 1; i <= 12; i++) saveHistString(2, "vocOncologyN010_11" + i, i, "vocOncologyN010_11");
+                            $('histString').value = histString;
+                            //лечение
+                            if (getValueVocRadiooncoT('vocOncologyN014') != -1) {
+                                $('surgTreatment').value = getValueVocRadiooncoT('vocOncologyN014', 'vocOncologyN014');
+                                $('typeTreatment').value = document.getElementById("vocOncologyN013_1").value;
+                            }
+                            else $('surgTreatment').value = null;
+                            if (getValueVocRadiooncoT('vocOncologyN015') != -1) {
+                                $('lineDrugTherapy').value = getValueVocRadiooncoT('vocOncologyN015', 'vocOncologyN015');
+                                $('typeTreatment').value = document.getElementById("vocOncologyN013_4").value;
+                            }//если не выбрана, затираем подпункты
+                            else $('lineDrugTherapy').value = null;
+                            if (getValueVocRadiooncoT('vocOncologyN016') != -1) {
+                                $('cycleDrugTherapy').value = getValueVocRadiooncoT('vocOncologyN016', 'vocOncologyN016');
+                                $('typeTreatment').value = document.getElementById("vocOncologyN013_4").value;
+                                $('isNauseaAndGagReflexPrev').value = document.getElementsByName("typeNauseaOrNot")[0].checked;
+                            }
+                            else {
+                                $('cycleDrugTherapy').value = null;
+                                $('isNauseaAndGagReflexPrev').value = null;
+                            }
+                            if (document.getElementById("vocOncologyN013_2").checked) $('typeTreatment').value = document.getElementById("vocOncologyN013_2").value;
+                            if (document.getElementById("vocOncologyN013_3").checked) $('typeTreatment').value = document.getElementById("vocOncologyN013_3").value;
+                            //отказы и пр-я
+                            $('contraString').value = "";
+                            for (var i = 1; i <= 6; i++) {
+                                if (document.getElementById("c" + i).checked) {
+                                    $('contraString').value += i;
+                                    $('contraString').value += "#";
+                                    $('contraString').value += $('date' + i).value;
+                                    $('contraString').value += "!";
+                                }
+                            }
+                            //медикаменты
+                            if (document.getElementById("vocOncologyN013_4").checked) {  //проверяем на клиенте, теперь не надо очищать и проверять на сервере
+                                var table = document.getElementById('allMedTble');
+                                $('allMeds').value = "";
+                                var mas = {
+                                    list: []
+                                };
+                                var voc = 'vocOncologyN020';
+                                for (var i = 0; i < table.rows.length; i++) {
+                                    var ii = table.rows[i].id.replace('row', '');
+                                    var obj = {
+                                        med: $('' + voc + ii).value,
+                                        date: $('dateSt' + ii).value
+                                    };
+                                    mas.list.push(obj);
+                                }
+                                $('allMeds').value = JSON.stringify(mas);
+                            }
+                            document.forms[0].submit();
                         }
                     }
-                    //медикаменты
-                    if (document.getElementById("vocOncologyN013_4").checked) {  //проверяем на клиенте, теперь не надо очищать и проверять на сервере
-                        var table = document.getElementById('allMedTble');
-                        $('allMeds').value = "";
-                        var mas = {
-                            list: []
-                        };
-                        var voc = 'vocOncologyN020';
-                        for (var i = 0; i < table.rows.length; i++) {
-                            var ii = table.rows[i].id.replace('row', '');
-                            var obj = {
-                                med: $('' + voc + ii).value,
-                                date: $('dateSt' + ii).value
-                            };
-                            mas.list.push(obj);
-                        }
-                        $('allMeds').value = JSON.stringify(mas);
-                    }
-                    document.forms[0].submit();
-                }
+                });
             }
             //сохранить значение элементов в строку формата атр1#атр2!
             function saveHistString(ht,name,type,voc) {
@@ -1634,8 +1743,9 @@
             }
             //Скрыть див для редактирования
             function disableAll() {
-                jQuery('#oncologyCase').fadeTo('slow',.6);
-                jQuery('#oncologyCase').append('<div style="position: absolute;bottom:0;left:0;width: 100%;height:98%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
+                var divToDisable = (suspicionOncologist.checked)? '#oncologyDirection' : '#oncologyCase';
+                jQuery(divToDisable).fadeTo('slow',.6);
+                jQuery(divToDisable).append('<div style="position: absolute;bottom:0;left:0;width: 100%;height:98%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
             }
             //Добавление строки с медикаментом
             function createRowMed(ii) {

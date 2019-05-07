@@ -6,6 +6,7 @@ import ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcQz;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.*;
+import ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -13,6 +14,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 
 /**
  * Стационарный случай медицинского обслуживания
@@ -472,4 +474,13 @@ public class HospitalMedCase extends LongMedCase {
 	private Integer theHeight;
 	/** Индекс массы тела */
 	private Double theIMT;
+
+	/** Цвета браслета пациента в госпитализации */
+	@Comment("Цвета браслета пациента в госпитализации")
+	@ManyToMany
+	public List<ColorIdentityPatient> getColorsIdentity() {return theColorsIdentity;}
+	public void setColorsIdentity(List<ColorIdentityPatient> aColorsIdentity) {theColorsIdentity = aColorsIdentity;}
+
+	/** Цвета браслета пациента в госпитализации  */
+	private List<ColorIdentityPatient> theColorsIdentity;
 }

@@ -3263,4 +3263,37 @@ left join medcase smoP on smoP.owner_id=w.id "
 				queried=" upper(vb.name) like upper(:query) "
 		/>
 	</voc>
+	<!-- Все цвета -->
+	<voc id="vocColor" type="NativeVocService">
+		<NativeVocService
+				from="voccolor vc "
+				nameId="vc.id"
+				join=" " order=""
+				names="vc.name"
+				queried=" upper(vc.name) like upper(:query) "
+		/>
+	</voc>
+	<!-- Все цвета, которые ещё не связаны с болезнью/примечанием в ColorIdentity -->
+	<voc id="vocColorFree" type="NativeVocService">
+		<NativeVocService
+				from="voccolor vc "
+				nameId="vc.id"
+				join=" left join voccoloridentitypatient vcip on vcip.color_id=vc.id " order=""
+				names="vc.name"
+				queried=" upper(vc.name) like upper(:query) "
+				queryAppend = ''
+				parent=" (vcip.id is null or vcip.id=:parent) "
+		/>
+	</voc>
+	<!-- Браслеты -->
+	<voc id="vocColorIdentityPatient" type="NativeVocService">
+		<NativeVocService
+				from="vocColorIdentityPatient vcip "
+				nameId="vcip.id"
+				join=" left join voccolor vc on vcip.color_id=vc.id " order=""
+				names="vc.name||' ('||vcip.name||')'"
+				queried=" upper(vc.name||' ('||vcip.name||')') like upper(:query) "
+				queryAppend = ''
+		/>
+	</voc>
 </vocconfig>

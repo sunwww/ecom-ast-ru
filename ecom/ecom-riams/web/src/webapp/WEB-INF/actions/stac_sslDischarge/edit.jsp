@@ -464,7 +464,7 @@
                 var concludingMkb=$('concludingMkbName').value;
                 var index=concludingMkb.indexOf(' ');
                 if (index!=-1) concludingMkb=concludingMkb.substring(0,index);
-                if (a.match(/C\d\d/ )==null) concludingMkb='';
+                //if (a.match(/C\d\d/ )==null) concludingMkb='';
                 OncologyService.checkSLO(${param.id},{
                     callback : function(res) {
                         if(res=="0" && a.match(/C\d\d/ )!=null)
@@ -487,30 +487,60 @@
                                         $('submitButton').disabled=false ;
                                         window.open("entityEdit-oncology_case_reestr.do?id="+mas[1]+"&mkb="+concludingMkb);
                                     }
+                                    //смена С на не С
+                                    /*else if (res!='' && res!='0' && !a.match(/C\d\d/ )!=null) {
+                                        var mas = res.split('#');
+                                        alert(mas[0]);
+                                        try{$('submitPreDischrge2').disabled=false;
+                                            $('submitPreDischrge1').disabled=false ;}catch(e){}
+                                        $('submitButton').disabled=false ;
+                                        window.open("entityEdit-oncology_case_reestr.do?id="+mas[1]+"&mkb="+concludingMkb);// + "&actualMsg=Созданная ранее онкологическая форма была удалена. Если необходимо, создайте подозрение на ЗНО.");
+                                    }*/
                                     else {
-                                        //if (res=='0' && a.match(/C\d\d/ )!=null) alert('Есть несколько ЗНО, у одного из них совпадает диагноз с основным выписным.');
-                                        var list_diag = ["complication", "concomitant"];
-                                        var isnext = true;
-                                        try {
-                                            $('submitPreDischrge2').disabled = true;
-                                            $('submitPreDischrge1').disabled = true;
-                                        } catch (e) {
-                                        }
-                                        $('submitButton').disabled = true;
-                                        for (var i = 0; i < list_diag.length; i++) {
-                                            isnext = addDiag(list_diag[i], 1);
-                                            if (!isnext) break;
-                                            createOtherDiag(list_diag[i]);
-                                        }
-                                        if (isnext) {
-                                            if (+aPrefix > 0) {
-                                                document.forms["mainForm"].action = 'entityParentSaveGoView-stac_sslDischargePre.do';
-                                            } else {
-                                                document.forms["mainForm"].action = old_action;
+                                        if ((res != '' && res != '0' && !a.match(/C\d\d/) != null && confirm(res.split('#')[0])) || (res=='' || res=='0')) {
+                                            if (res != '' && res != '0' && !a.match(/C\d\d/) != null) { //смена С на не С
+                                                var mas = res.split('#');
+                                                //удаление формы
+                                                if (mas[1]!='') {
+                                                    OncologyService.deleteAllByCase(mas[1], {
+                                                        callback: function () {
+                                                            showToastMessage('Неактуальная онкологическая форма была удалена',null,false);
+                                                        }
+                                                    });
+                                                }
                                             }
-                                            removeFromStorage();
-                                            document.forms["mainForm"].submit();
-                                        } else {
+                                            //if (res=='0' && a.match(/C\d\d/ )!=null) alert('Есть несколько ЗНО, у одного из них совпадает диагноз с основным выписным.');
+                                            var list_diag = ["complication", "concomitant"];
+                                            var isnext = true;
+                                            try {
+                                                $('submitPreDischrge2').disabled = true;
+                                                $('submitPreDischrge1').disabled = true;
+                                            } catch (e) {
+                                            }
+                                            $('submitButton').disabled = true;
+                                            for (var i = 0; i < list_diag.length; i++) {
+                                                isnext = addDiag(list_diag[i], 1);
+                                                if (!isnext) break;
+                                                createOtherDiag(list_diag[i]);
+                                            }
+                                            if (isnext) {
+                                                if (+aPrefix > 0) {
+                                                    document.forms["mainForm"].action = 'entityParentSaveGoView-stac_sslDischargePre.do';
+                                                } else {
+                                                    document.forms["mainForm"].action = old_action;
+                                                }
+                                                removeFromStorage();
+                                                document.forms["mainForm"].submit();
+                                            } else {
+                                                try {
+                                                    $('submitPreDischrge2').disabled = false;
+                                                    $('submitPreDischrge1').disabled = false;
+                                                } catch (e) {
+                                                }
+                                                $('submitButton').disabled = false;
+                                            }
+                                        }
+                                        else if (res != '' && res != '0' && !a.match(/C\d\d/) != null) {
                                             try {
                                                 $('submitPreDischrge2').disabled = false;
                                                 $('submitPreDischrge1').disabled = false;

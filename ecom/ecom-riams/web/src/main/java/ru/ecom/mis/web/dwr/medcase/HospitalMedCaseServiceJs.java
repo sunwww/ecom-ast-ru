@@ -273,7 +273,7 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String addSql = "LABSURVEY".equalsIgnoreCase(aServiceType) ? " and vst.code='LABSURVEY'" : "" ;
 		String sql = "select d.id as id, to_char(d.dateregistration,'dd.MM.yyyy') as recordDate"+
-			" ,to_char(d.timeregistration,'HH:MI') as recordTime,"+
+			" ,to_char(d.timeregistration,'HH24:MI') as recordTime,"+
 			" list(mc.code) as serviceCode, list(mc.name) as serviceName"+
 			" ,d.record as recordText"+
 			" from medcase sls " +
@@ -2291,13 +2291,16 @@ public class HospitalMedCaseServiceJs {
 	/**
 	 * Получить dtype medcase
 	 * @param aMedcaseId MedCase.id
-	 * @return String (0 - hospital, 1 - dep, 2 - visit, 3 - другое)
+	 * @return String (0 - hospital, 1 - dep, 2 - visit, 3 - polyclinic, 4 - short, 5 - service, -1 - другое)
 	 */
 	public String getMedcaseDtypeById(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("select case when mc.dtype='HospitalMedCase' then '0'\n" +
 				"else case when mc.dtype='DepartmentMedCase' then '1'\n" +
-				"else case when mc.dtype='Visit' then '2' else '0' end end end\n" +
+				"else case when mc.dtype='Visit' then '2'\n" +
+                "else case when mc.dtype='PolyclinicMedCase' then '3' \n" +
+                "else case when mc.dtype='ShortMedCase' then '4' \n" +
+                "else case when mc.dtype='ServiceMedCase' then '5' else '-1' end end end end end end\n" +
 				"from medcase mc where mc.id="+aMedcaseId) ;
 		return l.isEmpty()? "" : l.iterator().next().get1().toString();
 	}
@@ -2336,5 +2339,70 @@ public class HospitalMedCaseServiceJs {
                     .put("dmcCnt",w.get2());
 		}
 		return res.toString();
+	}
+
+    /**
+     * Получить браслеты пациента в госпитализации или в персоне #151
+     * @param aSlsOrPatId Sls.id or Patient.id
+     * @param aSlsOrPat 1 - СЛС, 0 - пациент
+     * @return String json Браслеты пациента
+     */
+    public String selectIdentityPatient(Long aSlsOrPatId, Boolean aSlsOrPat, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        StringBuilder sql = new StringBuilder();
+        sql.append("select cip.id,vc.name||' ('||vcip.name||')' ")
+				.append("from vocColorIdentityPatient vcip ")
+				.append("left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id ")
+				.append("left join voccolor vc on vcip.color_id=vc.id ")
+				.append(aSlsOrPat? "left join medcase_coloridentitypatient " : "left join patient_coloridentitypatient ")
+				.append(" ss on ss.colorsidentity_id=cip.id where ")
+				.append(aSlsOrPat? "medcase_id='" : "patient_id='")
+				.append(aSlsOrPatId).append("' and cip.startdate<=current_date and (cip.finishdate is null or cip.finishdate>=current_date)");
+        JSONArray res = new JSONArray() ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		for (WebQueryResult w :list) {
+			JSONObject o = new JSONObject() ;
+			o.put("vcipId", w.get1())
+					.put("vsipName", w.get2());
+			res.put(o);
+		}
+        return res.toString();
+    }
+
+	/**
+	 * Добавить браслет пациенту/СЛС #151
+	 * @param aSlsOrPatId Sls.id or Patient.id
+	 * @param aSlsOrPat 1 - СЛС, 0 - пациент
+	 * @param idP vocColorIdentityPatient.id
+	 * @return void
+	 */
+	public void addIdentityPatient(Long aSlsOrPatId, Boolean aSlsOrPat, Long idP, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		StringBuilder sql = new StringBuilder() ;
+		String id="";
+		Collection<WebQueryResult> res = service.executeNativeSql("insert into coloridentitypatient(startdate,finishdate,voccoloridentity_id,createusername) values(current_date,null,"+idP+",'"+login+"') returning id") ;
+		for (WebQueryResult wqr : res) {
+			id = wqr.get1().toString();
+		}
+		if (!id.equals("")) {
+			sql.append("insert into ")
+					.append(aSlsOrPat ? "medcase_coloridentitypatient(medcase_id, " : "patient_coloridentitypatient(patient_id, ")
+					.append(" colorsidentity_id) values(")
+					.append(aSlsOrPatId).append(",").append(id).append(")");
+			service.executeUpdateNativeSql(sql.toString());
+		}
+	}
+
+	/**
+	 * Удалить браслет у пациента/СЛС (проставить дату окончания) #151
+	 * @param aColorIdentityId ColorIdentityPatient.id
+	 * @return void
+	 */
+	public void deleteIdentityPatient(Long aColorIdentityId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		//закрывается вчерашним днём, чтобы сразу снимался браслет
+		service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date-1,editusername='"+login+"' where id="+aColorIdentityId);
 	}
 }
