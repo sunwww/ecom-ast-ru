@@ -2291,13 +2291,16 @@ public class HospitalMedCaseServiceJs {
 	/**
 	 * Получить dtype medcase
 	 * @param aMedcaseId MedCase.id
-	 * @return String (0 - hospital, 1 - dep, 2 - visit, 3 - другое)
+	 * @return String (0 - hospital, 1 - dep, 2 - visit, 3 - polyclinic, 4 - short, 5 - service, -1 - другое)
 	 */
 	public String getMedcaseDtypeById(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("select case when mc.dtype='HospitalMedCase' then '0'\n" +
 				"else case when mc.dtype='DepartmentMedCase' then '1'\n" +
-				"else case when mc.dtype='Visit' then '2' else '0' end end end\n" +
+				"else case when mc.dtype='Visit' then '2'\n" +
+                "else case when mc.dtype='PolyclinicMedCase' then '3' \n" +
+                "else case when mc.dtype='ShortMedCase' then '4' \n" +
+                "else case when mc.dtype='ServiceMedCase' then '5' else '-1' end end end end end end\n" +
 				"from medcase mc where mc.id="+aMedcaseId) ;
 		return l.isEmpty()? "" : l.iterator().next().get1().toString();
 	}
