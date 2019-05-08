@@ -1204,7 +1204,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     			return;
     		}
 
-            if (!isFioCorrent($('middlename')) || !isFioCorrent($('firstname'))
+            if (($('middlename').value && !isFioCorrent($('middlename'))) || !isFioCorrent($('firstname'))
                 || !isFioCorrent($('lastname')) ) {
     		    alert("Неверный формат ФИО!");
                 document.getElementById('submitButton').disabled=false;
@@ -1380,109 +1380,6 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
             });
 			
         }
-/*
-      	function checkAttached() {
-			checkAttachedByDepartment() ;
-			checkAttachedByPolicyOmc() ;
-		}
-		
-		function checkAttachedByDepartment() {
-			var isAttachedByDepartment = $('attachedByDepartment').checked ;
-			if(isAttachedByDepartment) {
-				$('attachedByPolicy').checked = false ;
-				checkAttachedByPolicyOmc() ;
-			}
-			showRow('rowLpu', isAttachedByDepartment, "lpu") ;
-			showRow('rowLpuArea', isAttachedByDepartment, 'lpuArea') ;
-			$('tableNewOmcPolicy').style.display = 'none' ;
-			$('submitButton').disabled = false;
-			showRow('rowAttachedOmcPolicy', false, 'attachedOmcPolicy') ;
-		}
-		
-		function checkAttachedByPolicyOmc() {
-			var attachedByPolicy = $('attachedByPolicy').checked ;
-			if(attachedByPolicy) {
-				$('attachedByDepartment').checked = false ;
-			}
-			showRow('rowLpu', attachedByPolicy) ;
-			showRow('rowLpuArea', attachedByPolicy) ;
-			showRow('rowAttachedOmcPolicy', attachedByPolicy) ;
-			showRow('rowPatientLpuDiv', ! attachedByPolicy) ;
-			showRow('rowCreateNewOmcPolicy', attachedByPolicy) ;
-			onCreateNewOmcPolicyWithFocus(false) ;
-			//$('tableNewOmcPolicy').style.display = attachedByPolicy ? 'block' : 'none' ;
-			$('submitButton').disabled = false;
-			if(!attachedByPolicy) checkPatientLpu() ;
-		}
-		
-        
-
-        function onAddressSave() {
-            checkPatientLpu();
-
-        }
-
-		function onCheckBoxFocus() {
-			try {
-				$(this.id+'Label').style.border='1px dotted black' ;
-			} catch(e) {}
-		}
-		function onCheckBoxBlur() {
-			try {
-				$(this.id+'Label').style.border='none' ;
-			} catch(e) {}
-		}
-
-		function onCreateNewOmcPolicyWithFocus(aFocus) {
-			var attachedByPolicy = $('attachedByPolicy').checked ;
-			var isCreateNewOmcPolicy = $('createNewOmcPolicy').checked && attachedByPolicy;
-			if(attachedByPolicy) showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
-			$('tableNewOmcPolicy').style.display = isCreateNewOmcPolicy ? 'block' : 'none' ;
-			if(aFocus) {
-				showRow('rowAttachedOmcPolicy', !isCreateNewOmcPolicy) ;
-				try {
-				if(isCreateNewOmcPolicy) {
-					$('policyOmcForm.typeName').select() ;
-					$('policyOmcForm.typeName').focus() ;
-				} else {
-					$('attachedOmcPolicyName').focus() ;
-					$('attachedOmcPolicyName').select() ;
-				}
-				} catch (e) {}
-			}
-		}
-		
-		function setSubmitButtonDisabled(aDisabled) {
-			var alwaysSave = $('attachedByPolicy').checked || $('createNewOmcPolicy').checked || $('attachedByDepartment').checked;
-			if(!alwaysSave) {
-				// $('submitButton').disabled = aDisabled;
-			}
-		}
-		
-		function onCreateNewOmcPolicy() {
-			onCreateNewOmcPolicyWithFocus(true) ;
-		}
-		
-        checkPatientLpu();
-
-        eventutil.addEventListener($('attachedByPolicy'), 'click', checkAttachedByPolicyOmc) ;
-        eventutil.addEventListener($('attachedByDepartment'), 'click', checkAttachedByDepartment) ;
-        eventutil.addEventListener($('createNewOmcPolicy'), 'click', onCreateNewOmcPolicy) ;
-
-        eventutil.addEventListener($('attachedByPolicy'), 'focus', onCheckBoxFocus) ;
-        eventutil.addEventListener($('attachedByPolicy'), 'blur', onCheckBoxBlur) ;
-        eventutil.addEventListener($('createNewOmcPolicy'), 'focus', onCheckBoxFocus) ;
-        eventutil.addEventListener($('createNewOmcPolicy'), 'blur', onCheckBoxBlur) ;
-        eventutil.addEventListener($('attachedByDepartment'), 'focus', onCheckBoxFocus) ;
-        eventutil.addEventListener($('attachedByDepartment'), 'blur', onCheckBoxBlur) ;
-		
-		// проверка по дате рождения для пед. или терап. участков RIAMS-107
-        eventutil.addEventListener($('birthday'), 'blur', checkAttachedByPolicyOmc) ;
-
-        checkAttached() ;
-        */
-		//lpuAreaAutocomplete.setParent(lpuAutocomplete);
-		
 			eventutil.addEnterSupport('addressFlatNumber1', 'buttonSaveAddressOk') ;
 			eventutil.addEnterSupport('birthPlace', 'buttonShowAddress') ;
 			eventutil.addEnterSupport('foreignRegistrationAddress', 'buttonShowrealAddressAddress') ;

@@ -123,15 +123,17 @@
 			<ecom:webQuery name="examQuery" nativeSql="
 select eds.card_id as adscard,coalesce(veds.code,'') ||' '||coalesce(veds.name,'') as vedsname
 ,eds.servicedate,eds.isPathology as edsIsPathology
+,eds.deniedService as а5_otkaz
 from ExtDispService eds 
 left join VocExtDispService veds on veds.id=eds.serviceType_id
-where eds.card_id=${param.id} and eds.dtype='ExtDispExam'
+where eds.card_id=${param.id} and eds.dtype='ExtDispExam' order by veds.name
 			"/>
 			
 				<msh:table name="examQuery" action="js-extDisp_service-edit.do" idField="1">
 					<msh:tableColumn columnName="Услуга" property="2"/>
 					<msh:tableColumn columnName="Дата" property="3"/>
 					<msh:tableColumn columnName="Выявлена патология" property="4"/>
+					<msh:tableColumn columnName="Отказ от прохождения услуги" property="5"/>
 				</msh:table>
 			</msh:section>
 			<msh:section title="Посещения">
@@ -150,7 +152,7 @@ left join worker wrk on wrk.id=wf.worker_id
 left join patient pw on pw.id=wrk.person_id
 left join vocIdc10 mkb on mkb.id=eds.idc10_id
 left join VocExtDispService veds on veds.id=eds.servicetype_id
-where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
+where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit' order by veds.name
 			"/>
 				<msh:table  name="examQuery" action="js-extDisp_service-edit.do" idField="1">
 					<msh:tableColumn columnName="Услуга" property="2"/>
@@ -252,9 +254,6 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			} else {
 				checkDispAttached(true);
 			}
-
-		
-		
 		}
 
 		function updateAge() {
@@ -284,7 +283,6 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 					} else {
 						console.log("some error"+aResult.errorCode);
 					}
-
 				}
 			});
 		}
@@ -294,9 +292,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('startDate').value, $('finishDate').value, false);}) ;
 			eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('startDate').value, $('finishDate').value, false);}) ;
 			eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
-		} catch(e) {
-
-		}
+		} catch(e) {}
 			</script>
 
 		</msh:ifFormTypeIsNotView>

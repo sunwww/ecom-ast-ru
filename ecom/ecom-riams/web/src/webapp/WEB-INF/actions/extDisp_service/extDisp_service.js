@@ -33,7 +33,7 @@ function save(aForm,aCtx) {
 	var cntExam = +aCtx.request.getParameter("cntExam");
 	var cntVisit = +aCtx.request.getParameter("cntVisit");
 	var card = aCtx.request.getParameter("card");
-	var fldExam = ["examId","examServiceType","examServiceDate","examIsPathology"] ;
+	var fldExam = ["examId","examServiceType","examServiceDate","examIsPathology","deniedService"] ;
 	var fldPe = "" ;
 	var fldPv = "" ;
 	var fldVisit = ["visitId","visitServiceType","visitServiceDate","visitRecommendation","visitIsEtdccSuspicion","workFunction","Idc10"] ;
