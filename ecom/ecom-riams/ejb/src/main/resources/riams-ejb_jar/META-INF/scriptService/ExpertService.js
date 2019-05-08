@@ -11,31 +11,12 @@ function createExtDispExamService(aCtx,aParams){
 	
 	var card = param[0] ;
 	var cardO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.extdisp.ExtDispCard,java.lang.Long.valueOf(card)) ;
-	var id = param[1] ;
 	var serviceType=+param[2] ;
 	var serviceDate = param[3] ;
 	var isPathology = param[4] ;
+	var deniedService = param[5] ;
 	if (isPathology=="checked"||isPathology=="true"||isPathology=="on"||isPathology=="1") {isPathology=1 ;} else {isPathology=0;}
-/*	if (+id>0) {} else {
-		var list=aCtx.manager.createNativeQuery("select id, card_id from ExtDispService where card_id="+card+" and serviceType_id="+serviceType).getResultList();
-		if (list.size()>0) {
-			id=+list.get(0)[0] ;
-		} else {
-			
-		}
-	}
-	if (+id>0) {
-		if (serviceDate!=null && serviceDate!="") {
-			serviceDate="to_date('"+serviceDate+"','dd.mm.yyyy')" ;
-		} else {
-			serviceDate="null" ;
-		}
-		var sql = "update ExtDispService set " ;
-		sql=sql+"serviceDate="+serviceDate+",isPathology='"+isPathology+"' where id="+id ;
-		//throw sql ;
-		aCtx.manager.createNativeQuery(sql).executeUpdate() ;
-	} else{*/
-		
+	if (deniedService=="checked"||deniedService=="true"||deniedService=="on"||deniedService=="1") {deniedService=1 ;} else {deniedService=0;}
 		var serviceO = new Packages.ru.ecom.mis.ejb.domain.extdisp.ExtDispExam();
 		var serviceTypeO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService,java.lang.Long.valueOf(serviceType)) ;
 		try {
@@ -45,11 +26,9 @@ function createExtDispExamService(aCtx,aParams){
 		}
 		serviceO.card = cardO;
 		serviceO.serviceType = serviceTypeO;
-		serviceO.isPathology = isPathology>0?true:false ;
-		//if (serviceO.serviceDate!=null) {
+		serviceO.isPathology = isPathology>0 ;
+		serviceO.deniedService=deniedService>0;
 			aCtx.manager.persist(serviceO) ;
-		//}
-//	}
 }
 function createExtDispVisitService(aCtx,aParams){
 	
@@ -57,44 +36,15 @@ function createExtDispVisitService(aCtx,aParams){
 	//throw "PARAMS="+param[6]; 
 	var card = param[0] ;
 	var cardO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.extdisp.ExtDispCard,java.lang.Long.valueOf(card)) ;
-	var id = param[1] ;
+	//var id = param[1] ;
 	var serviceType=+param[2] ;
 	var serviceDate = param[3] ;
 	var recommendation = param[4] ;
 	var isEtdccSuspicion = param[5] ;
 	var workFunction = param[6] ;
 	var Idc10=param[7];
-	var createVisit = (param.length>9&&+param[9]==1)?1:0;
+	var createVisit = (param.length>9&&+param[9]===1)?1:0;
 	if (isEtdccSuspicion=="checked"||isEtdccSuspicion=="true"||isEtdccSuspicion=="on"||isEtdccSuspicion=="1") {isEtdccSuspicion=1 ;} else {isEtdccSuspicion=0;}
-	/*if (+id>0) {
-		if (serviceDate!=null && serviceDate!="") {
-			serviceDate="to_date('"+serviceDate+"','dd.mm.yyyy')" ;
-		} else {
-			serviceDate="null" ;
-		}
-		var sql = "update ExtDispService set " ;
-		sql=sql+"serviceDate="+serviceDate+",isEtdccSuspicion='"+isEtdccSuspicion+"',recommendation='"+recommendation+"' ";
-		if (workFunction!=null && workFunction!="" && workFunction!="null") {
-			sql=sql+", workfunction_id='"+workFunction+"'";
-		} else {
-			sql=sql+", workfunction_id=null";
-		}
-		if (Idc10!=null && Idc10!="" && Idc10!="null") {
-			sql+=", idc10_id='"+Idc10+"' ";
-		} else {
-			sql+=", idc10_id=null ";
-		}
-				sql+="where id="+id ;
-	//	throw sql ;
-		aCtx.manager.createNativeQuery(sql).executeUpdate() ;
-	} else{*/
-/*		var list=aCtx.manager.createNativeQuery("select id from ExtDispService where card_id="+card+" and serviceType_id="+serviceType).getResultList();
-		if (list.size()>0) {
-			
-		} else {
-			
-		}*/
-	
 		var serviceO = new Packages.ru.ecom.mis.ejb.domain.extdisp.ExtDispVisit();
 		var serviceTypeO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService,java.lang.Long.valueOf(serviceType)) ;
 		try {
@@ -105,19 +55,16 @@ function createExtDispVisitService(aCtx,aParams){
 		serviceO.card = cardO;
 		serviceO.serviceType = serviceTypeO;
 		serviceO.recommendation = recommendation ;
-		serviceO.isEtdccSuspicion = isEtdccSuspicion>0?true:false ;
+		serviceO.isEtdccSuspicion = isEtdccSuspicion>0 ;
+        serviceO.deniedService=false;
 		if (Idc10!=null && Idc10!="" && Idc10!="null") {
-		var Idc10O=aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,java.lang.Long.valueOf(Idc10)) ;
-		serviceO.idc10=Idc10O;//(Idc10!=null&&Idc10!="0")?Idc10:null;
+            var Idc10O=aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,java.lang.Long.valueOf(Idc10)) ;
+            serviceO.idc10=Idc10O;
 		}
 		if (workFunction!=null && workFunction!="" && workFunction!="null") {
-		var workFunctionO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,java.lang.Long.valueOf(workFunction)) ;
-		serviceO.workFunction=workFunctionO;
+            var workFunctionO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,java.lang.Long.valueOf(workFunction)) ;
+            serviceO.workFunction=workFunctionO;
 		}
-		
-		
-		
-		//if (serviceO.serviceDate!=null) {
 			aCtx.manager.persist(serviceO) ;
 			
 			//Время создавать визиты
@@ -155,12 +102,9 @@ function createExtDispVisitService(aCtx,aParams){
 					var visitWorkPlace=aCtx.manager.createQuery(" from VocWorkPlaceType where omcCode=:par").setParameter("par","1").getSingleResult() ; //Поликлиника
 					var visitIllnesPrimary=aCtx.manager.createQuery(" from VocIllnesPrimary where code=:par").setParameter("par","1").getSingleResult() ; //Поликлиника
 					var visitMedcard = aCtx.manager.createQuery(" from Medcard where person=:pat").setParameter("pat",cardO.patient).getResultList(); //Поликлиника
-					//var visitMedCard = null;
-					if (visitMedcard.size()>0) {
-					//	throw ">0";
+					if (!visitMedcard.isEmpty()) {
 						visitMedcard = visitMedcard.get(0);
 					} else {
-						
 						visitMedcard = new Packages.ru.ecom.poly.ejb.domain.Medcard();
 						visitMedcard.setPerson(pat);
 						var cardNumber = pat.patientSync!=null&&pat.patientSync!=""?pat.patientSync:""+pat.id;
@@ -191,19 +135,15 @@ function createExtDispVisitService(aCtx,aParams){
 					if (serviceO.idc10!=null||cardO.idcMain!=null){
 						var vocConcomType = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveInterceptor.getVocByCode(aCtx.manager,"VocPriorityDiagnosis","1") ;
 						var diag=new Packages.ru.ecom.mis.ejb.domain.medcase.Diagnosis() ;
-						  diag.setMedCase(smc)
-						  diag.setPatient(pat)
-						  diag.setEstablishDate(smc.dateStart)
+						  diag.setMedCase(smc);
+						  diag.setPatient(pat);
+						  diag.setEstablishDate(smc.dateStart);
 						  diag.setIdc10(serviceO.idc10!=null?serviceO.idc10:cardO.idcMain);
 						  diag.setPriority(vocConcomType);
-						  diag.setName(serviceO.idc10!=null?serviceO.idc10.name:cardO.idcMain.name)
+						  diag.setName(serviceO.idc10!=null?serviceO.idc10.name:cardO.idcMain.name);
 						  diag.setIllnesPrimary(visitIllnesPrimary);
 						  aCtx.manager.persist(diag);
-						  
-						  
-						  
 					}
-					
 				}
 }
 function getCountDispServices (aCtx, aCardId) {
@@ -296,5 +236,4 @@ function cardMap(aCard) {
 	map.put("createDate", aCard[7]) ;
 	map.put("createUsername", aCard[8]) ;
 	return map ;
-
 }
