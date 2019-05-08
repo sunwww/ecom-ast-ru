@@ -76,18 +76,21 @@ function onCreate(aForm, aEntity, aCtx){
         var meds = obj.getJSONArray("list");
         for (var i=0; i<meds.length(); i++) {
             var child = meds.get(i);
-            var vocDrugId=java.lang.Long.valueOf(child.get("med"));
+            var vocDrugId = java.lang.Long.valueOf(child.get("med"));
             var drug = new Packages.ru.ecom.oncological.ejb.domain.OncologyDrug();
             drug.setOncologyCase(aEntity);
-            drug.setDrug(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN020, java.lang.Long.valueOf(java.lang.Long.valueOf(child.get("med")))));
-            aCtx.manager.persist(drug);
-            for (var j=0; j<meds.length(); j++) {
-                var childj = meds.get(j);
-                if (i==j) {
-                    var drugDate = new Packages.ru.ecom.oncological.ejb.domain.OncologyDrugDate();
-                    drugDate.setOncologyDrug(drug);
-                    drugDate.setDate(new java.sql.Date(format.parse(java.lang.String.valueOf(childj.get("date"))).getTime()));
-                    aCtx.manager.persist(drugDate);
+            var vocDrug = aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN020, vocDrugId);
+            if (vocDrug != null) {
+                drug.setDrug(vocDrug);
+                aCtx.manager.persist(drug);
+                for (var j = 0; j < meds.length(); j++) {
+                    var childj = meds.get(j);
+                    if (i == j) {
+                        var drugDate = new Packages.ru.ecom.oncological.ejb.domain.OncologyDrugDate();
+                        drugDate.setOncologyDrug(drug);
+                        drugDate.setDate(new java.sql.Date(format.parse(java.lang.String.valueOf(childj.get("date"))).getTime()));
+                        aCtx.manager.persist(drugDate);
+                    }
                 }
             }
         }

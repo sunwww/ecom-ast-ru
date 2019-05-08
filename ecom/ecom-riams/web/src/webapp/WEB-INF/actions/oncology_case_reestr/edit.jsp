@@ -894,11 +894,13 @@
                                 var voc = 'vocOncologyN020';
                                 for (var i = 0; i < table.rows.length; i++) {
                                     var ii = table.rows[i].id.replace('row', '');
-                                    var obj = {
-                                        med: $('' + voc + ii).value,
-                                        date: $('dateSt' + ii).value
-                                    };
-                                    mas.list.push(obj);
+                                    if (typeof $('' + voc + ii) !== 'undefined') {
+                                        var obj = {
+                                            med: $('' + voc + ii).value,
+                                            date: $('dateSt' + ii).value
+                                        };
+                                        mas.list.push(obj);
+                                    }
                                 }
                                 $('allMeds').value = JSON.stringify(mas);
                             }
@@ -1244,7 +1246,7 @@
                                         var med = res[ind1];
                                         createRowMed(ind1-1);
                                         var voc='vocOncologyN020';
-                                        $(voc+ind1).value=med.id;
+                                        $(voc+ind1).value=med.vdid;
                                         $(voc+ind1+'Name').value=med.name;
                                         $('dateSt'+ind1).value=med.date;
                                         checkEnableAdd(ind1);
@@ -1694,7 +1696,7 @@
             //очистить иммуног. и маркёры
             function cleanI() {
                 var radios = document.getElementsByTagName('input');
-                for (i = 0; i < radios.length; i++)
+                for (var i = 0; i < radios.length; i++)
                     if (radios[i].type == 'radio' && radios[i].id.indexOf('vocOncologyN010_11')!=-1)
                         radios[i].checked=false;
             }
@@ -1768,9 +1770,11 @@
                     "class=\"autocomplete\"></div></div>";
                 td2.innerHTML="<label id=\"dateSt"+ii+"Label\" for=\"dateSt"+ii+"\">Дата&nbsp;введения:</label>" +
                     "<input title=\"Дата&nbsp;введенияNoneField\" class=\" required\" id=\"dateSt"+ii+"\" name=\"dateSt"+ii+"\" size=\"10\" value=\"\" type=\"text\" autocomplete=\"off\">";
-                if (ii!=0) td3.innerHTML="<input id=\"btnDel"+ii+"\" type=\"button\" value=\"-\" onclick=\"delRow(this);\">";
-                td4.innerHTML="<input  disabled=\"true\" id=\"btnAdd"+ii+"\" type=\"button\" value=\"+\" onclick=\"addRowAfter(this);\">";
-                td5.innerHTML="<input  disabled=\"true\" id=\"btnAddDbl"+ii+"\" type=\"button\" value=\"++\" onclick=\"addRowDblAfter(this);\">";
+                if (ii!=0) td5.innerHTML="<input id=\"btnDel"+ii+"\" type=\"button\" value=\"-\" onclick=\"delRow(this);\">";
+                td5.setAttribute("width","25px");
+                td5.setAttribute("align","right");
+                td3.innerHTML="<input  disabled=\"true\" id=\"btnAdd"+ii+"\" type=\"button\" value=\"+\" onclick=\"addRowAfter(this);\">";
+                td4.innerHTML="<input  disabled=\"true\" id=\"btnAddDbl"+ii+"\" type=\"button\" value=\"++\" onclick=\"addRowDblAfter(this);\">";
                 tr.appendChild(td1); tr.appendChild(td2);
                 tr.appendChild(td3); tr.appendChild(td4); tr.appendChild(td5);
                 table.appendChild(tr);
