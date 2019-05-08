@@ -543,7 +543,7 @@ public class OncologyServiceJs {
      */
     public String getMedsJson(String caseId,HttpServletRequest aRequest) throws NamingException, SQLException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return service.executeSqlGetJson("select drug.id,vocdrug.name,to_char(drugdate.date,'dd.mm.yyyy') as date\n" +
+        return service.executeSqlGetJson("select drug.id as did,vocdrug.name,vocdrug.id as vdid,to_char(drugdate.date,'dd.mm.yyyy') as date\n" +
                 "from oncologydrug drug\n" +
                 "left join oncologydrugdate drugdate on drugdate.oncologydrug_id=drug.id\n" +
                 "left join voconcologyn020 vocdrug on drug.drug_id=vocdrug.id\n" +

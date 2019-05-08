@@ -372,7 +372,7 @@
                       <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
                       txt += " disabled='true' ";
                       </msh:ifFormTypeIsView>
-                      txt += " onchange='changeSub();'";
+                      txt += "";
                       <msh:ifFormTypeIsNotView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
                       txt += "  style=\"background-color:#fcffa7\"' ";
                       </msh:ifFormTypeIsNotView>
@@ -384,6 +384,18 @@
                       txt += "</select><td></tr></tbody></table>";
                   }
                   document.getElementById('subRobsonsDiv').innerHTML = txt;
+                  if (document.getElementById('sub')) {
+                      document.getElementById('sub').onselect = function () {
+                          changeSub();
+                      };
+                      document.getElementById('sub').onclick = function () {
+                          changeSub();
+                      };
+                      document.getElementById('sub').onchange = function () {
+                          changeSub();
+                      };
+                      document.getElementById('sub').selectedIndex = -1;
+                  }
                   if ($('robsonSub').value!='' && $('robsonSub').value!='0' && document.getElementById('sub'))
                       selectItemById(document.getElementById('sub'),$('robsonSub').value);
                   else if (document.getElementById('sub')) document.getElementById('sub').value='';

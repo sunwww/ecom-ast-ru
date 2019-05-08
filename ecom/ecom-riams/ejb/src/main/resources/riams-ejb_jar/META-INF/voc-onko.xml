@@ -497,7 +497,7 @@
         <EntityVocService
                 entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN020'
                 names   = 'name'
-                queried = 'code,name'
+                queried = 'name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
