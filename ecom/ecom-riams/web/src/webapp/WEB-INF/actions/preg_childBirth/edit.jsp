@@ -384,9 +384,18 @@
                       txt += "</select><td></tr></tbody></table>";
                   }
                   document.getElementById('subRobsonsDiv').innerHTML = txt;
-                  document.getElementById('sub').onselect=function() { changeSub();};
-                  document.getElementById('sub').onclick=function() { changeSub();};
-                  document.getElementById('sub').onchange=function() { changeSub();};
+                  if (document.getElementById('sub')) {
+                      document.getElementById('sub').onselect = function () {
+                          changeSub();
+                      };
+                      document.getElementById('sub').onclick = function () {
+                          changeSub();
+                      };
+                      document.getElementById('sub').onchange = function () {
+                          changeSub();
+                      };
+                      document.getElementById('sub').selectedIndex = -1;
+                  }
                   if ($('robsonSub').value!='' && $('robsonSub').value!='0' && document.getElementById('sub'))
                       selectItemById(document.getElementById('sub'),$('robsonSub').value);
                   else if (document.getElementById('sub')) document.getElementById('sub').value='';
