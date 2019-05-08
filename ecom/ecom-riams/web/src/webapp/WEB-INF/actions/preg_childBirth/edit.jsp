@@ -395,6 +395,9 @@
                           changeSub();
                       };
                       document.getElementById('sub').selectedIndex = -1;
+                      <msh:ifFormTypeIsNotView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                      $('robsonSub').value='';
+                      </msh:ifFormTypeIsNotView>
                   }
                   if ($('robsonSub').value!='' && $('robsonSub').value!='0' && document.getElementById('sub'))
                       selectItemById(document.getElementById('sub'),$('robsonSub').value);
