@@ -81,16 +81,13 @@
     </msh:ifInRole>
         <%
     
-    String date = (String)request.getParameter("dateBegin") ;
-    String dateEnd = (String)request.getParameter("dateEnd") ;
-    String id = (String)request.getParameter("id") ;
-    String period = (String)request.getParameter("period") ;
-    
+    String date = request.getParameter("dateBegin") ;
+    String dateEnd = request.getParameter("dateEnd") ;
+
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
     
-    String view = (String)request.getAttribute("typeView") ;
     String department = request.getParameter("department") ;
     boolean isgoing = false ;
 	if (department!=null && !department.equals("") && !department.equals("0")) {
@@ -194,12 +191,13 @@ and slo.roomNumber_id is null
      </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <msh:section title="Список направлений на госпитализацию из поликлиники">
+    <msh:section title="Список направлений на госпитализацию">
     <ecom:webQuery name="stac_planHospital"
     nativeSql="select wchb.id,ml.name as mlname,p.id,p.lastname||' '||p.firstname||' '||p.middlename as fio,p.birthday
 as birthday,mkb.code,wchb.diagnosis
  ,wchb.dateFrom,mc.dateStart,mc.dateFinish,list(mkbF.code),wchb.phone
  ,wchb.createDate as wchbcreatedate
+ ,list(vwf.name ||' '||wPat.lastname) as f14_creator
 from WorkCalendarHospitalBed wchb
 left join Patient p on p.id=wchb.patient_id
 left join MedCase mc on mc.id=wchb.medcase_id
@@ -207,8 +205,11 @@ left join VocIdc10 mkb on mkb.id=wchb.idc10_id
 left join MisLpu ml on ml.id=wchb.department_id
 left join Diagnosis diag on diag.medcase_id=mc.id
 left join VocIdc10 mkbF on mkbF.id=diag.idc10_id
-where wchb.visit_id is not null
-and wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy')
+left join workfunction wf on wf.id=wchb.workfunction_id
+left join worker w on w.id=wf.worker_id
+left join patient wpat on wpat.id=w.person_id
+left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+where wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy')
 	 and to_date('${dateEnd}','dd.mm.yyyy')
  ${departmentPlanSql}
 group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
@@ -226,8 +227,9 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="Дата рождения" property="5"/>
             <msh:tableColumn columnName="Код МКБ" property="6"/>
             <msh:tableColumn columnName="Диагноз" property="7"/>
+            <msh:tableColumn columnName="Кто создал" property="14"/>
             <msh:tableColumn columnName="Дата создания" property="13"/>
-    	
+
     </msh:table>
     </msh:section>
     <%} %>

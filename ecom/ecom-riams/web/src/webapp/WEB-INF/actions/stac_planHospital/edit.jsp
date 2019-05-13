@@ -22,10 +22,6 @@
 
     </tiles:put>
   <tiles:put name="body" type="string">
-    <!-- 
-    	  - Хирургическая операция
-    	  -->
-
     <msh:form action="/entitySaveGoView-stac_planHospital.do" defaultField="patientName" guid="137f576d-2283-4edd-9978-74290e04b873" editRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
       <msh:panel guid="80209fa0-fbd4-45d0-be90-26ca4219af2e">
         <msh:hidden property="id" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
@@ -132,18 +128,28 @@
   
   <tiles:put name="javascript" type="string">
   	<msh:ifFormTypeIsNotView formName="stac_planHospitalForm">
-  	<script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
-  	
+  	<script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
+  	<script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+
   	<script type="text/javascript">
   		initPersonPatientDialog();
-  		departmentAutocomplete.addOnChangeCallback(function() {
+  		patientAutocomplete.addOnChangeCallback(function() {
+  		    if ($('patient').value) {
+                PatientService.getPhoneByPatientId($('patient').value, {
+                    callback: function(phone) {
+                        $('phone').value=phone;
+                    }
+                });
+            }
+        });
+        departmentAutocomplete.addOnChangeCallback(function() {
 			HospitalMedCaseService.getDefaultBedTypeByDepartment(
 					 $('department').value, $('serviceStream').value
       				, $('dateFrom').value,{
       			callback: function(aResult) {
       				var res = aResult.split('#') ;
 
-      				if (+res[0]!=0) {
+      				if (+res[0]>0) {
       					$('bedType').value = res[0] ; 
       					$('bedTypeName').value = res[1] ; 
       					$('bedSubType').value = res[2] ; 
