@@ -71,6 +71,7 @@
 	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
        else  pat.foreignRegistrationAddress end as address
     ,pat.passportSeries||' '||pat.passportNumber as passportshort
+,case when vcid.isfornewborn then 'background:'||vcr.code else '' end as styleRow
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -94,6 +95,10 @@
     left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id
     left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id
     left join VocIdentityCard vic on vic.id=pat.passportType_id
+left join medcase_coloridentitypatient mcid on mcid.medcase_id=sls.id
+left join ColorIdentityPatient cid on cid.id=mcid.colorsidentity_id
+left join VocColorIdentityPatient vcid on vcid.id=cid.voccoloridentity_id
+left join voccolor vcr on vcr.id=vcid.color_id
     where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'
     and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
@@ -107,6 +112,7 @@
               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident
 
        , pat.foreignRegistrationAddress
+       ,vcid.isfornewborn,vcr.code
     order by pat.lastname,pat.firstname,pat.middlename
     "
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
@@ -179,7 +185,7 @@
     </msh:sectionTitle>
     <msh:sectionContent>
 
-    <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30" styleRow="14">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
