@@ -741,13 +741,11 @@ public class DisabilityServiceBean implements IDisabilityService {
         List<DisabilityDocumentForm> ret = new LinkedList<>();
         if (!idlist.isEmpty()) {
         	StringBuilder ids = new StringBuilder() ;
-        	StringBuilder sql = new StringBuilder() ;
-	        for (Object obj:idlist) {
+            for (Object obj:idlist) {
 	        	ids.append(",").append(obj) ;
 	        }
-	        sql.append("from DisabilityDocument where id in (").append(ids.substring(1)).append(")") ;
 
-	        List<DisabilityDocument> list = theManager.createQuery(sql.toString()).setMaxResults(50).getResultList() ;
+            List<DisabilityDocument> list = theManager.createQuery("from DisabilityDocument where id in (" + ids.substring(1) + ")").setMaxResults(50).getResultList() ;
 	        for (DisabilityDocument doc : list) {
 	            try {
 	                ret.add(theEntityFormService.loadForm(DisabilityDocumentForm.class, doc));
