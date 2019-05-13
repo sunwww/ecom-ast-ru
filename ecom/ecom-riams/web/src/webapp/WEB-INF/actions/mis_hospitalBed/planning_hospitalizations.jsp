@@ -198,6 +198,7 @@ as birthday,mkb.code,wchb.diagnosis
  ,wchb.dateFrom,mc.dateStart,mc.dateFinish,list(mkbF.code),wchb.phone
  ,wchb.createDate as wchbcreatedate
  ,list(vwf.name ||' '||wPat.lastname) as f14_creator
+ ,list(case when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f15_styleRow
 from WorkCalendarHospitalBed wchb
 left join Patient p on p.id=wchb.patient_id
 left join MedCase mc on mc.id=wchb.medcase_id
@@ -218,7 +219,7 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
     "
     />
     <msh:table name="stac_planHospital" action="entityParentEdit-stac_planHospital.do"
-    idField="1" >
+    idField="1" styleRow="15" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата пред.госпитализации" property="8"/>
             <msh:tableColumn columnName="Направлен в отделение" property="2"/>

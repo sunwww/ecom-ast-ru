@@ -30,7 +30,7 @@
     </msh:form>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     
     if (date!=null && !date.equals("")) {
     	%>
