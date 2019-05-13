@@ -131,6 +131,16 @@
                   <msh:textField property="waterlessDurationHour" label="Длительность безводного периода (часы)" />
                   <msh:textField property="waterlessDurationMin" label="Длительность безводного периода (минуты)" />
               </msh:row>
+              <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                  <td class="label" title="Поиск по промежутку  (diabetIdentity)" colspan="1"><label for="diabetIdentityName" id="tdiabetIdentityLabel">Диабет у матери:</label></td>
+                  <td onclick="this.childNodes[1].checked='checked'; checkdiabetIdentity();" colspan="1">
+                      <input type="radio" name="diabetIdentityRad" value="1"> Нет
+                  </td>
+                  <td onclick="this.childNodes[1].checked='checked'; checkdiabetIdentity();" colspan="3">
+                      <input type="radio" name="diabetIdentityRad" value="2"> Да
+                  </td>
+                  <msh:autoComplete property="diabetIdentity" fieldColSpan="3" horizontalFill="true" label="" vocName="vocIdentityPatientNewBorn"/>
+              </msh:row>
           </msh:ifFormTypeIsNotView>
           <msh:ifFormTypeIsView formName="preg_childBirthForm">
               <msh:row>
@@ -142,6 +152,9 @@
               <msh:row>
                   <msh:textField property="waterlessDurationHour" label="Длительность безводного периода (часы)" />
                   <msh:textField property="waterlessDurationMin" label="Длительность безводного периода (минуты)" />
+              </msh:row>
+              <msh:row>
+                <msh:autoComplete property="diabetIdentity" fieldColSpan="1" horizontalFill="true" label="Диабет у матери" vocName="vocIdentityPatientNewBorn" viewOnlyField="true"/>
               </msh:row>
           </msh:ifFormTypeIsView>
         <msh:row styleId="rwSam1"><msh:separator label="Второй период родовой деятельности" colSpan="4"/>
@@ -253,7 +266,7 @@
           <h3><b>Классификация Робсона</b></h3>
           <div id="classRobsonsDiv"></div>
           <div id="subRobsonsDiv"></div>
-        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK() && checkRobson() && checkWaterBeforeSafe()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
+        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK() && checkRobson() && checkWaterBeforeSafe() && checkSaveIdentity()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
       </msh:panel>
     </msh:form>
      <tags:preg_childBirthYesNo name="DeadBorn" field="DeadBeforeLabors"/>
@@ -318,6 +331,51 @@
       }
   }
   checkWater();
+  //проверка диабета у матери
+  function checkdiabetIdentity() {
+      if (document.getElementsByName("diabetIdentityRad") && document.getElementsByName("diabetIdentityRad")[1]) {
+          if (document.getElementsByName("diabetIdentityRad")[1].checked) {
+              $('diabetIdentity').removeAttribute('hidden');
+              $('diabetIdentityName').removeAttribute('hidden');
+              $('diabetIdentity').value='';
+              $('diabetIdentityName').value='';
+              $('diabetIdentityName').className = "autocomplete horizontalFill required";
+              setAutoBracelet();
+          }
+          else {
+
+              $('diabetIdentity').setAttribute('hidden', true);
+              $('diabetIdentityName').setAttribute('hidden', true);
+              $('diabetIdentity').value='';
+              $('diabetIdentityName').value='';
+              $('diabetIdentityName').className = 'autocomplete horizontalFill';
+          }
+      }
+  }
+  //если есть единственное значение для браслета новорожд., то выбрать его автоматически
+  function setAutoBracelet() {
+      PregnancyService.getAutoBracelet({
+          callback: function (aResult) {
+              if (aResult != null && aResult != '{}') {
+                  var res = JSON.parse(aResult);
+                  $('diabetIdentity').value=res.id;
+                  $('diabetIdentityName').value=res.name;
+              }
+          }
+      });
+  }
+  //проверка перед сохранением
+  function checkSaveIdentity() {
+      if (!(document.getElementsByName("diabetIdentityRad") && document.getElementsByName("diabetIdentityRad")[1] && document.getElementsByName("diabetIdentityRad")[1].checked && $('diabetIdentity').value!=''
+      || document.getElementsByName("diabetIdentityRad") && document.getElementsByName("diabetIdentityRad")[0] && document.getElementsByName("diabetIdentityRad")[0].checked && $('diabetIdentity').value=='')) {
+          alert('Заполните правильно диабет матери!');
+          return false;
+      }
+      else return true;
+  }
+  <msh:ifFormTypeIsNotView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+  checkdiabetIdentity();
+  </msh:ifFormTypeIsNotView>
   //проверка перед сохранением
   function checkWaterBeforeSafe() {
       if (!document.getElementsByName("water")[0].checked && !document.getElementsByName("water")[1].checked

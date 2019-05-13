@@ -6,6 +6,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.birth.voc.*;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -537,4 +538,13 @@ public class ChildBirth extends BaseEntity{
 	public void setWaterlessDurationMin(Long aWaterlessDurationMin) {theWaterlessDurationMin = aWaterlessDurationMin;}
 	/** Длительность безводного периода (минуты)*/
 	private Long theWaterlessDurationMin;
+
+
+	/** Диабет (браслет)*/
+	@Comment("Диабет (браслет)")
+	@OneToOne
+	public VocColorIdentityPatient getDiabetIdentity() {return theDiabetIdentity;}
+	public void setDiabetIdentity(VocColorIdentityPatient aDiabetIdentity) {theDiabetIdentity = aDiabetIdentity;}
+	/** Диабет (браслет)*/
+	private VocColorIdentityPatient theDiabetIdentity;
 }

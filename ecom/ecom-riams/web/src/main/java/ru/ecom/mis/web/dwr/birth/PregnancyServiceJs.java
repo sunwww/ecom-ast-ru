@@ -154,4 +154,20 @@ public class PregnancyServiceJs {
 		}
 		return res.toString();
 	}
+
+	/**
+	 * Получить (если есть) единственное значение для браслета новорождённого #151
+	 * @return String json Значение
+	 */
+	public String getAutoBracelet(HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocColorIdentityPatient  where isfornewborn=true");
+		JSONObject res = new JSONObject() ;
+		if (list.size()==1) {
+			WebQueryResult w = list.iterator().next() ;
+			res.put("id", w.get1())
+					.put("name", w.get2());
+		}
+		return res.toString();
+	}
 }

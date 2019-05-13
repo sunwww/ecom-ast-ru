@@ -34,4 +34,12 @@ public class NeonatalNewBornForm  extends NewBornForm {
 
 	/** Отделение */
 	private Long theDepartment;
+
+	/** Диабет (браслет)*/
+	@Comment("Диабет (браслет)")
+	@Persist
+	public Long getDiabetIdentity() {return theDiabetIdentity;}
+	public void setDiabetIdentity(Long aDiabetIdentity) {theDiabetIdentity = aDiabetIdentity;}
+	/** Диабет (браслет)*/
+	private Long theDiabetIdentity;
 }

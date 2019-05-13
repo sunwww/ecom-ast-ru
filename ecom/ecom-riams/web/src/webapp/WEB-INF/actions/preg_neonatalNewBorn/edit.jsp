@@ -104,6 +104,23 @@
           <msh:textField property="oesophagusPermeability" label="Проходимость пищевода" guid="3cdd3867-1684-4184-9050-41ee7b2a7219" horizontalFill="true" />
           <msh:checkBox property="anus" label="Наличие ануса" guid="efeb3f63-f958-4f8f-919b-f68df6ab20df" />
         </msh:row>
+        <msh:ifFormTypeIsNotView formName="preg_neonatalNewBornForm">
+          <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+            <td class="label" title="Поиск по промежутку  (diabetIdentity)" colspan="1"><label for="diabetIdentityName" id="tdiabetIdentityLabel">Диабет у матери:</label></td>
+            <td onclick="this.childNodes[1].checked='checked'; checkdiabetIdentity();" colspan="1">
+              <input type="radio" name="diabetIdentityRad" value="1"> Нет
+            </td>
+            <td onclick="this.childNodes[1].checked='checked'; checkdiabetIdentity();" colspan="3">
+              <input type="radio" name="diabetIdentityRad" value="2"> Да
+            </td>
+            <msh:autoComplete property="diabetIdentity" fieldColSpan="3" horizontalFill="true" label="" vocName="vocIdentityPatientNewBorn"/>
+          </msh:row>
+        </msh:ifFormTypeIsNotView>
+        <msh:ifFormTypeIsView formName="preg_neonatalNewBornForm">
+          <msh:row>
+            <msh:autoComplete property="diabetIdentity" fieldColSpan="1" horizontalFill="true" label="Диабет у матери" vocName="vocIdentityPatientNewBorn" viewOnlyField="true"/>
+          </msh:row>
+        </msh:ifFormTypeIsView>
         <msh:row guid="8392365c-d4d2-4df5-9b69-f8b273165275">
           <msh:textField property="malformations" label="Пороки развития" fieldColSpan="3" horizontalFill="true" guid="495d5ee7-30fa-478f-8e04-53e3f8d2e9d1" />
         </msh:row>
@@ -117,7 +134,7 @@
         <msh:row guid="ca06aabe-2a85-4477-81b5-9590545b3b87">
           <msh:textField property="username" label="Пользователь" viewOnlyField="true" guid="e6946c8a-08e3-4c5e-bc45-500c5fa53b01" />
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="3" guid="15e2342c-9373-4dec-b306-0bc21c1b603c" />
+        <msh:submitCancelButtonsRow colSpan="3" guid="15e2342c-9373-4dec-b306-0bc21c1b603c"  functionSubmit="if (checkSaveIdentity()) document.forms[0].submit();" />
       </msh:panel>
        <msh:ifFormTypeIsView formName="preg_neonatalNewBornForm">
     <msh:section title="Госпитализация">
@@ -177,6 +194,56 @@
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Patient" beginForm="preg_neonatalNewBornForm" guid="59d4465e-092d-4353-98ff-af27d0a2c482" />
+  </tiles:put>
+  <script type="text/javascript" src="./dwr/interface/PregnancyService.js" >/**/</script>
+  <tiles:put name="javascript" type="string">
+  <script type="text/javascript">
+      //проверка диабета у матери
+      function checkdiabetIdentity() {
+          if (document.getElementsByName("diabetIdentityRad") && document.getElementsByName("diabetIdentityRad")[1]) {
+              if (document.getElementsByName("diabetIdentityRad")[1].checked) {
+                  $('diabetIdentity').removeAttribute('hidden');
+                  $('diabetIdentityName').removeAttribute('hidden');
+                  $('diabetIdentity').value='';
+                  $('diabetIdentityName').value='';
+                  $('diabetIdentityName').className = "autocomplete horizontalFill required";
+                  setAutoBracelet();
+              }
+              else {
+
+                  $('diabetIdentity').setAttribute('hidden', true);
+                  $('diabetIdentityName').setAttribute('hidden', true);
+                  $('diabetIdentity').value='';
+                  $('diabetIdentityName').value='';
+                  $('diabetIdentityName').className = 'autocomplete horizontalFill';
+              }
+          }
+      }
+      //если есть единственное значение для браслета новорожд., то выбрать его автоматически
+      function setAutoBracelet() {
+          PregnancyService.getAutoBracelet({
+              callback: function (aResult) {
+                  if (aResult != null && aResult != '{}') {
+                      var res = JSON.parse(aResult);
+                      $('diabetIdentity').value=res.id;
+                      $('diabetIdentityName').value=res.name;
+                  }
+              }
+          });
+      }
+      //проверка перед сохранением
+      function checkSaveIdentity() {
+          if (!(document.getElementsByName("diabetIdentityRad") && document.getElementsByName("diabetIdentityRad")[1] && document.getElementsByName("diabetIdentityRad")[1].checked && $('diabetIdentity').value!=''
+              || document.getElementsByName("diabetIdentityRad") && document.getElementsByName("diabetIdentityRad")[0] && document.getElementsByName("diabetIdentityRad")[0].checked && $('diabetIdentity').value=='')) {
+              alert('Заполните правильно диабет матери!');
+              return false;
+          }
+          else return true;
+      }
+      <msh:ifFormTypeIsNotView formName="preg_neonatalNewBornForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+      checkdiabetIdentity();
+      </msh:ifFormTypeIsNotView>
+  </script>
   </tiles:put>
 </tiles:insert>
 
