@@ -106,6 +106,7 @@
     	if (countBed!=null && !countBed.equals("") && !countBed.equals("0")) {
     		request.setAttribute("countBed", " and wp.countBed_id='"+countBed+"'") ;
     	}
+    	if (1==2) {
     %>
     <msh:section>
     <msh:sectionTitle>Список пациентов</msh:sectionTitle>
@@ -162,7 +163,9 @@ order by case when length(replace(replace(replace(replace(replace(replace(replac
     </msh:table>
     </msh:sectionContent>
     </msh:section>
+      <%}%>
     <msh:section>
+
     <msh:sectionTitle>Список пациентов, по которым не определены палаты</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_pat" nativeSql="
