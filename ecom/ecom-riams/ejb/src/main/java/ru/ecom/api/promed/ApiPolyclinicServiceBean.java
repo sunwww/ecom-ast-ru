@@ -71,12 +71,13 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * Получить cписок закрытых случаев поликлинического обслуживания в JSON.
      *
      * @param dateTo MedCase.dateFinish
+     * @param sstream VocServiceStream.code (по умолчанию - ОМС)
      * @return JSON in String
      */
-    public String getPolyclinicCase(Date dateTo) {
+    public String getPolyclinicCase(Date dateTo, String sstream) {
         JSONArray jTap = new JSONArray();
 
-            List<BigInteger> list = getAllVisitsBeforeDate(dateTo);
+            List<BigInteger> list = getAllVisitsBeforeDate(dateTo,sstream);
             LOG.warn(list.size());
             for (int i = 0; i < list.size(); i++) {
                 JSONObject json = new JSONObject();
@@ -117,18 +118,18 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * @param dateTo MedCase.dateFinish
      * @return List<BigInteger>
      */
-    private List<BigInteger> getAllVisitsBeforeDate(Date dateTo) {
+    private List<BigInteger> getAllVisitsBeforeDate(Date dateTo,String sstream) {
         return theManager.createNativeQuery("select m.id from medcase m " +
                 "left join vocservicestream vss on vss.id=m.servicestream_id" +
                 " left join workfunction wf on wf.id=m.finishfunction_id" +
                 " left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
                 " where m.datefinish = :dateTo and m.dtype='PolyclinicMedCase' and (m.noactuality is null or m.noactuality=false)" +
-                " and (m.upload is null or m.upload =false) and vss.code='OBLIGATORYINSURANCE'" +
+                " and (m.upload is null or m.upload =false) and (vss.code=:sstream or vss.code is null)" +
                 " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0')" +
                 " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
                 " and vis.visitResult_id!=11 and vis.parent_id = m.id) > 0" +
-                " and 1= all(select servicestream_id from medcase vis where parent_id=m.id)")
-                .setParameter("dateTo",dateTo).getResultList();
+                " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)")
+                .setParameter("dateTo",dateTo).setParameter("sstream",sstream).getResultList();
     }
     /**
      * Получить код из диагноза визита (заключительный основной клинический диагноз)
@@ -238,9 +239,9 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
         jsonVis.put(DATETIMEVISIT, visit.getDateStart()+""+ (visit.getTimeExecute()==null ? "" : visit.getTimeExecute()))
                 .put(WFLPUSECTIION,  wf.getPromedCodeLpuSection())
                 .put(WORKSTAFF, wf.getPromedCodeWorkstaff())
-                .put(WORKPLACETYPE, vwr.getOmcCode())
-                .put(VISITREASON, vr.getOmcCode())
-                .put(SSTREAM, vss.getCode())
+                .put(WORKPLACETYPE, (vwr==null || vwr.getOmcCode()==null)? "" : vwr.getOmcCode())
+                .put(VISITREASON, (vr==null || vr.getOmcCode()==null)? "" : vr.getOmcCode())
+                .put(SSTREAM, (vss==null || vss.getCode()==null)? "" : vss.getCode())
                 .put(MESID, wf.getPromedCodeLpuSection())
                 .put(DESEASETYPE, vh!=null ? vh.getCode() : "1")
                 .put(MEDCICALCARE, MEDCICALCAREVAL)

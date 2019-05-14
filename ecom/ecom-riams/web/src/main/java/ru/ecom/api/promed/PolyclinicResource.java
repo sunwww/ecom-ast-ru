@@ -27,15 +27,17 @@ public class PolyclinicResource {
      * @param aRequest HttpServletRequest
      * @param aToken String
      * @param dateTo String Дата окончания случая в формате yyyy-MM-dd
+     * @param sstream String Код потока обслуживания
      * @return JSON in String
      */
     public String getPolyclinicCase(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken
-            , @QueryParam("dateTo") String dateTo
+            , @QueryParam("dateTo") String dateTo, @QueryParam("sstream") String sstream
     ) throws NamingException, ParseException {
         if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
         ApiUtil.init(aRequest,aToken);
         IApiPolyclinicService service =Injection.find(aRequest).getService(IApiPolyclinicService.class);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return service.getPolyclinicCase(new java.sql.Date(format.parse(dateTo).getTime()));
+        if (sstream==null || sstream.equals("")) sstream="OBLIGATORYINSURANCE";
+        return service.getPolyclinicCase(new java.sql.Date(format.parse(dateTo).getTime()),sstream);
     }
 }
