@@ -119,6 +119,20 @@ function onCreate(aForm,aEntity, aCtx) {
             }
         }
     }
+    //автоматически передавать консультации с соответствующей пометкой в гр. раб. ф-ии
+    if (aEntity.prescriptCabinet!=null) {
+        var res = aCtx.manager.createNativeQuery("select case when IsTransferConsAfterCreate then '1' else '0' end from workfunction where id="
+            + aEntity.prescriptCabinet.id).getResultList();
+        if (res.size() > 0) {
+            if (res.get(0) == "1") {
+                var date = new java.util.Date();
+                aEntity.setTransferDate(new java.sql.Date(date.getTime()));
+                aEntity.setTransferTime(new java.sql.Time(date.getTime()));
+                aEntity.setTransferUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+                aCtx.manager.persist(aEntity);
+            }
+        }
+    }
 }
 function onPreDelete(aEntityId, aContext) {
     var res = aContext.manager.createNativeQuery("select case when transferdate is null then '1' else '0' end from prescription where id=" + aEntityId).getResultList();
