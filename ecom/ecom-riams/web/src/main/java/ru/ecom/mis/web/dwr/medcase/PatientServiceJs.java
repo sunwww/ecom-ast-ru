@@ -26,22 +26,28 @@ public class PatientServiceJs {
 
 	private static final Logger LOG = Logger.getLogger(PatientServiceJs.class);
 
-	public void polisIsChecked(String medcaseId,HttpServletRequest request) throws NamingException {
+	public String getPhoneByPatientId(Long aPatientid, HttpServletRequest request) throws NamingException {
+		IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
+		Collection<WebQueryResult> list = service.executeNativeSql("select coalesce(phone,'') from patient where id="+aPatientid);
+		return list.isEmpty() ? "" : list.iterator().next().get1().toString();
+	}
+
+	public void polisIsChecked(String medcaseId, HttpServletRequest request) throws NamingException {
 		IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
 		service.executeUpdateNativeSql("update medcase_medpolicy " +
 				"set datesync = current_date where medcase_id="+medcaseId);
 	}
 
-	public String getPaid(String aPatientId,HttpServletRequest aRequest) throws NamingException {
+	public String getPaid(String aPatientId ,HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		sql.append("select count(cao.cost) from patient p" + " left join contractperson cp on cp.patient_id= p. id" + " left join medcontract mc on mc.customer_id= cp.id" + " left join contractaccount ca on ca.contract_id= mc.id" + " left join contractaccountoperation cao on cao.account_id= ca.id" + " where p.id =").append(aPatientId);
+		sql.append("select count(cao.cost) from patient p " +
+				" left join contractperson cp on cp.patient_id= p. id" +
+				" left join medcontract mc on mc.customer_id= cp.id" +
+				" left join contractaccount ca on ca.contract_id= mc.id" +
+				" left join contractaccountoperation cao on cao.account_id= ca.id" + " where p.id =").append(aPatientId);
 		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
-		String str = "";
-		for (WebQueryResult wqr : res) {
-			str = wqr.get1().toString();
-		}
-		return str;
+		return res.isEmpty() ? "" : res.iterator().next().get1().toString();
 	}
 
 	public String getPatientFromContractPerson(String aContractPerson,HttpServletRequest aRequest) throws NamingException {

@@ -186,6 +186,14 @@
   <tiles:put name="javascript" type="string">
       <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
     <script type="text/javascript">
+        jQuery('#hiddendata').on("change", function() {
+            var valu = jQuery('#hiddendata').val();
+            console.log("changed!"+valu);
+            if (valu) {
+                getPatient(valu);
+                console.log("GET_patient1!");
+            }
+        });
     	
     	try { lpuAreaAutocomplete.setParent(lpuAutocomplete); } catch (e) {} // FIXME forms
     	$('lastname').focus() ;

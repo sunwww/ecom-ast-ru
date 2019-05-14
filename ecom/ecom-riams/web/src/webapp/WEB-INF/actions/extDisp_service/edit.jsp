@@ -379,7 +379,7 @@ order by veds.id,veds.name"
 	}
 		%>
 		<tr><td class="buttons"><input type="button" value="Отменить" title="Отменить изменения" onclick="this.disabled=true; window.location.href='entityParentView-extDisp_card.do?id=${param.id}';  return true ;" id="cancelButton">
-		<input type="button" title="Сохранить изменения " id='submButton' onclick="checkServicies(true);" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr>
+		<input type="button" title="Сохранить изменения " onclick="this.disabled=true; checkServicies(true);" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr>
 		</table>
 		<%
 		
@@ -492,6 +492,7 @@ order by veds.id,veds.name"
 			} else {
 				if (subm) {
 					alert ('Исправьте ошибки и попробуйте снова');
+					subm.disabled=false;
 				}
 			}
 		}

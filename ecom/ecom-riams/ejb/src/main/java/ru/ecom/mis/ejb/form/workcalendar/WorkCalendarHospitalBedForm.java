@@ -45,7 +45,7 @@ public class WorkCalendarHospitalBedForm extends IdEntityForm {
 
 	/** Палата */
 	@Comment("Палата")
-	@Persist @Required
+	@Persist
 	public Long getHospitalRoom() {return theHospitalRoom;}
 	public void setHospitalRoom(Long aHospitalRoom) {theHospitalRoom = aHospitalRoom;}
 

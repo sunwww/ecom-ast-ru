@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал хирургических операций"></msh:title>
+    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал хирургических операций"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:style_currentMenu currentAction="stac_surOperation" />
@@ -140,6 +140,9 @@
       <msh:row>
       	<msh:autoComplete property="serviceStream" fieldColSpan="7" horizontalFill="true" vocName="vocServiceStream"/>
       </msh:row>
+      <msh:row>
+      	<msh:autoComplete property="additionStatus" label="Результат госпитализации" fieldColSpan="7" horizontalFill="true" vocName="vocHospitalizationResult"/>
+      </msh:row>
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
@@ -150,11 +153,7 @@
     </msh:panel>
     </msh:form>
            <script type='text/javascript'>
-    
-<%--    checkFieldUpdate('typeDate','${typeDate}',1) ;
-     checkFieldUpdate('typePatient','${typePatient}',3) ;
-    checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
-    checkFieldUpdate('typeHour','${typeHour}',3) ;--%>
+
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeEndoscopyUse','${typeEndoscopyUse}',3) ;
     checkFieldUpdate('typeAnaesthesUse','${typeAnaesthesUse}',3) ;
@@ -180,31 +179,6 @@
     	frm.action='journal_surOperation.do' ;
     }
 
-    /*
-    function print() {
-    	var frm = document.forms[0] ;
-    	frm.m.value="printReestrByDay" ;
-    	frm.target='_blank' ;
-    	frm.action='print-stac_report007.do' ;
-    	$('id').value = getCheckedRadio(frm,"typeEmergency")+":"
-    		+getCheckedRadio(frm,"typeHour")+":"
-    		+getCheckedRadio(frm,"typeDate")+":"
-    		+$('dateBegin').value+":"
-    		+$('pigeonHole').value+":"
-    		+$('department').value;
-    }
-    function printJournal() {
-    	var frm = document.forms[0] ;
-    	frm.m.value="printJournalByDay" ;
-    	frm.target='_blank' ;
-    	frm.action='print-stac_journal001.do' ;
-    	$('id').value = 
-    		$('dateBegin').value+":"
-    		
-    		+$('department').value;
-    }
-    */
-    /**/
     if ($('dateBegin').value=="") {
     	$('dateBegin').value=getCurrentDate() ;
     }
@@ -212,61 +186,57 @@
 			 
     </script>
     <%
-    String date = (String)request.getParameter("dateBegin") ;
-    String dateEnd = (String)request.getParameter("dateEnd") ;
+    String date = request.getParameter("dateBegin") ;
+    String dateEnd = request.getParameter("dateEnd") ;
 
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
     ActionUtil.setParameterFilterSql("serviceStream", "so.serviceStream_id", request) ;
+    ActionUtil.setParameterFilterSql("additionStatus", "sls.result_id", request) ;
     String view = (String)request.getAttribute("typeView") ;
     String typeOrder = (String)request.getAttribute("typeOrder") ;
     
     String typeEndoscopyUseSql=""; 
-    if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("1")) {
+    if ("1".equals(typeEndoscopyUse)) {
     	typeEndoscopyUseSql=" and so.endoscopyUse='1'" ;
-    } else if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("2")) {
+    } else if ("2".equals(typeEndoscopyUse)) {
     	typeEndoscopyUseSql= "and (so.endoscopyUse='0' or so.endoscopyUse is null)" ;
     }
     request.setAttribute("typeEndoscopyUseSql", typeEndoscopyUseSql) ;
     
-    /* <AOI 28.10.2016 для  Захарова по анестезиологическим пособиям */
-    String typeAnaesthesUseSql=""; 
-    if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("1")) {
+    String typeAnaesthesUseSql="";
+    if ("1".equals(typeAnaesthesUse)) {
     	typeAnaesthesUseSql=" and an.id is not null " ;
-    } else if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("2")) {
+    } else if ("2".equals(typeAnaesthesUse)) {
     	typeAnaesthesUseSql= " and an.id is null " ;
     }
     request.setAttribute("typeAnaesthesUseSql", typeAnaesthesUseSql) ;
-    /* < AOI 28.10.2016 */ 
 
 	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
 	if (typeEmergency.equals("1")) {
-		if (typeDate!=null && typeDate.equals("2")) {
+		if ("2".equals(typeDate)) {
 			request.setAttribute("typeEmergencySql", " and sls.emergency='1'") ;
-    	} else if (typeDate!=null && typeDate.equals("3")) {
+    	} else if ("3".equals(typeDate)) {
     		request.setAttribute("typeEmergencySql", " and slsHosp.emergency='1')") ;
     	} else {
     		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and sls.emergency='1' or slo.datestart is null and slsHosp.emergency='1')") ;
     	}
-	} else if (typeEmergency.equals("2")) {
-		
-		if (typeDate!=null && typeDate.equals("2")) {
+	} else if ("2".equals(typeEmergency)) {
+		if ("2".equals(typeDate)) {
 			request.setAttribute("typeEmergencySql", " and (sls.emergency='0' or sls.emergency is null)") ;
-    	} else if (typeDate!=null && typeDate.equals("3")) {
+    	} else if ("3".equals(typeDate)) {
     		request.setAttribute("typeEmergencySql", " and (slsHosp.emergency='0' or slsHosp.emergency is null)") ;
     	} else {
     		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and (sls.emergency='0' or sls.emergency is null) or slo.datestart is null and (slsHosp.emergency='0' or slsHosp.emergency is null))") ;
     	}
-		
 	}
 
     if (date!=null && !date.equals("")) {
     	String typeDateSql = "so.operationDate" ;
-    	//String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
-    	if (typeDate!=null && typeDate.equals("2")) {
+    	if ("2".equals(typeDate)) {
     		typeDateSql = "sls.dateFinish" ;
-    	} else if (typeDate!=null && typeDate.equals("3")) {
+    	} else if ("3".equals(typeDate)) {
     		typeDateSql = "slsHosp.dateFinish" ;
     	} 
     	request.setAttribute("typeDateSql", typeDateSql);
@@ -278,7 +248,7 @@
     		String group1 = "so.medservice_id,vo.id,vo.name,vo.code,vo.complexity" ;
     		String orderName = "vo.name" ;
     		String orderId = "vo.id" ;
-    		if (view!=null &&(view.equals("6")||view.equals("7"))) {
+    		if ("6".equals(view) || "7".equals(view)) {
     			orderId="vo.complexity" ;orderName="vo.complexity" ;
     			group1 = "vo.complexity" ;
     		} 
@@ -305,11 +275,11 @@
 	    	}
     	}
     	if (frm!=null) {
-    	if (frm.getDepartment()!=null && !frm.getDepartment().equals(Long.valueOf(0))) {
+    	if (frm.getDepartment()!=null && !frm.getDepartment().equals(0L)) {
     		request.setAttribute("department", " and so.department_id='"+frm.getDepartment()+"'") ;
     		request.setAttribute("departmentSql", " and so.department_id="+frm.getDepartment()+"") ;
     	}
-    	if (frm.getSpec()!=null && !frm.getSpec().equals(Long.valueOf(0))) {
+    	if (frm.getSpec()!=null && !frm.getSpec().equals(0L)) {
     		request.setAttribute("spec", " and so.surgeon_id='"+frm.getSpec()+"'") ;
     		request.setAttribute("specSql", " and so.surgeon_id="+frm.getSpec()+"") ;
     	}
@@ -321,13 +291,13 @@
     <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
     </msh:section>
     <%
-    if (view!=null&&view.equals("1")) {
+    if ("1".equals(view)) {
     %>
     <msh:section>
     <msh:sectionTitle>Разбивка по дням</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperation" nativeSql="
-    select '${departmentSql} ${specSql}:'||to_char(${typeDateSql},'dd.mm.yyyy')||':'||to_char(${typeDateSql},'dd.mm.yyyy')
+    select '${departmentSql} ${specSql}:'||to_char(${typeDateSql},'dd.mm.yyyy')||':'||to_char(${typeDateSql},'dd.mm.yyyy')||'&additionStatus=${param.additionStatus}' as id
     ,to_char(${typeDateSql},'dd.mm.yyyy')
     , count(distinct so.id) as cntOper
     , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
@@ -338,7 +308,7 @@
      left join anesthesia an on an.surgicaloperation_id=so.id
      where 
     ${typeDateSql}  between to_date('${dateBegin}','dd.mm.yyyy') 
-    and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${typeAnaesthesUseSql} 
+    and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${typeAnaesthesUseSql} ${additionStatusSql}
     
     group by ${typeDateSql} 
     order by ${typeDateSql}" />
@@ -349,14 +319,14 @@
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <%}
-    if (view!=null&&view.equals("2")) {
+    <%
+    } else if ("2".equals(view)) {
     %>
     <msh:section>
     <msh:sectionTitle>Разбивка по хирургам и операциям</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
-    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':'||so.medservice_id as id
+    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':'||so.medservice_id||'&additionStatus=${param.additionStatus}' as id
     ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
     , vo.code as vocode, vo.name as voname,vo.complexity,count(distinct so.id) as cnt 
     , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
@@ -371,7 +341,7 @@ left join vocworkfunction vwf on vwf.id=wf.workFunction_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${additionStatusSql}
 group by ${group1}so.surgeon_id,vwf.name,p.lastname, p.firstname, p.middlename ${group2}
 order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table printToExcelButton="Сохранить в Excel" name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -384,14 +354,14 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%}
-    if (view!=null&&view.equals("3")) {
+    <%
+    } else if ("3".equals(view)) {
     %>
     <msh:section>
     <msh:sectionTitle>Разбивка по отделениям и операциям</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperationBySpec"  nativeSql="select 
-    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||':'||so.medservice_id||':'||so.department_id as id
+    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||':'||so.medservice_id||':'||so.department_id||'&additionStatus=${param.additionStatus}' as id
     ,dep.name as depname
     , vo.code as vocode, vo.name as voname,vo.complexity,count(distinct so.id) as cnt
     , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
@@ -403,7 +373,7 @@ left join mislpu dep on dep.id=so.department_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${additionStatusSql}
 group by  ${group1} so.department_id,dep.name ${group2}
 order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table printToExcelButton="Сохранить в Excel" name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1">
@@ -416,14 +386,14 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%}
-    if (view!=null&&view.equals("5")) {
+    <%
+    } else if ("5".equals(view)) {
     %>
     <msh:section>
     <msh:sectionTitle>Разбивка по отделениям</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
-    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||'::'||so.department_id as id
+    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||'::'||so.department_id||'&additionStatus=${param.additionStatus}' as id
     ,dep.name as depname
     ,count(distinct so.id) as cnt 
         , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
@@ -435,7 +405,7 @@ left join mislpu dep on dep.id=so.department_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${additionStatusSql}
 group by so.department_id,dep.name
 order by dep.name 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -446,14 +416,14 @@ order by dep.name
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%}
-    if (view!=null&&view.equals("4")) {
+    <%
+    } else if ("4".equals(view)) {
     %>
     <msh:section>
     <msh:sectionTitle>Разбивка по операциям</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
-    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}::'||so.medservice_id as id
+    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}::'||so.medservice_id ||'&additionStatus=${param.additionStatus}' as id
     , vo.code as vocode, vo.name as voname,vo.complexity,count(distinct so.id) as cnt 
         , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
         , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
@@ -469,7 +439,7 @@ left join vocworkfunction vwf on vwf.id=wf.workFunction_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${additionStatusSql}
 group by so.medservice_id, vo.code,vo.name ,vo.complexity
 
 order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -483,14 +453,13 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     </msh:sectionContent>    
     </msh:section>
     <%
-    }
-    if (view!=null&&view.equals("6")) {
+    } else if ("6".equals(view)) {
     %>
     <msh:section>
     <msh:sectionTitle>Разбивка по хирургам и уровням сложности операций</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
-    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':' as id
+    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':'||'&additionStatus=${param.additionStatus}' as id
     ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
    ,vo.complexity
    	,count(distinct so.id) as cnt 
@@ -506,7 +475,7 @@ left join vocworkfunction vwf on vwf.id=wf.workFunction_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${additionStatusSql}
 group by ${group1}so.surgeon_id,vwf.name,p.lastname, p.firstname, p.middlename ${group2}
 order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table printToExcelButton="Сохранить в Excel" name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -517,14 +486,14 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%}
-    if (view!=null&&view.equals("7")) {
+    <%
+    } else if ("7".equals(view)) {
     %>
     <msh:section>
     <msh:sectionTitle>Разбивка по отделениям и уровням сложности операций</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperationBySpec"  nativeSql="select 
-    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||'::'||so.department_id as id
+    '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||'::'||so.department_id ||'&additionStatus=${param.additionStatus}' as id
     ,dep.name as depname
     ,vo.complexity,count(*) as cnt 
     ,round(100*count(distinct so.id)/
@@ -541,7 +510,7 @@ left join mislpu dep on dep.id=so.department_id
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
 where ${typeDateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
-and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
+and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${additionStatusSql}
 group by  ${group1} so.department_id,dep.name ${group2}
 order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table printToExcelButton="Сохранить в Excel" name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -553,9 +522,8 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%}
-
-    if (view!=null&&view.equals("8")) {
+    <%
+    } else if ("8".equals(view)) {
     %>
 	    <ecom:webQuery name="journal_surOperation1" nameFldSql="journal_surOperation1_sql" nativeSql="select so.id as id
 	    ,coalesce(to_char(so.operationDate,'DD.MM.YYYY')||' '||cast(so.operationTime as varchar(5))||' - '||to_char(so.operationDateTo,'DD.MM.YYYY')||' '||cast(so.operationTimeTo as varchar(5)),to_char(${typeDateSql},'DD.MM.YYYY')) as operDate
@@ -591,10 +559,10 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
 	       where ${typeDateSql} 
 	        between to_date('${dateBegin}','dd.mm.yyyy')
 	          and to_date('${dateEnd}','dd.mm.yyyy')   ${department} ${spec} 
-	          ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
+	          ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${additionStatusSql}
 	          order by ${order1} p.lastname,p.firstname,p.middlename ${order2}
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:section>
+    <msh:section>${journal_surOperation1_sql}
     <msh:sectionTitle>
     
     <form action="print-stac_journal_surOperationByDate_8.do" method="post" target="_blank">
@@ -623,8 +591,8 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
 	    </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <%} %>
-    <% } else {%>
+    <%}
+    } else {%>
     	<i>Нет данных </i>
     	<% }   %>
     

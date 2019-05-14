@@ -1,5 +1,5 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -35,7 +35,7 @@
   	
     String typeEndoscopyUse = ActionUtil.updateParameter("SurgicalOperation","typeEndoscopyUse","3", request) ;
     String typeAnaesthesUse = ActionUtil.updateParameter("SurgicalOperation","typeAnaesthesUse","3", request) ;
-  	
+
     String typeDateSql = "so.operationDate" ;
 	if (typeDate!=null && typeDate.equals("2")) {
 		typeDateSql = "sls.dateFinish" ;
@@ -84,7 +84,8 @@
 	}
 	
 	ActionUtil.setParameterFilterSql("serviceStream", "so.serviceStream_id", request) ;
-    
+	ActionUtil.setParameterFilterSql("additionStatus", "sls.result_id", request) ;
+
   %>
     <msh:section guid="863b6d75-fded-49ba-8eab-108bec8e092a">
       <msh:sectionTitle guid="1dcd4d93-235d-4141-a7ee-eca528858925">
@@ -125,7 +126,7 @@
 	        between to_date('${beginDate}','dd.mm.yyyy')
 	          and to_date('${endDate}','dd.mm.yyyy') 
 	          ${department} ${spec} ${medService}
-	           ${addParamSql} ${serviceStreamSql} ${typeEmergencySql} ${typeEndoscopyUseSql} ${typeAnaesthesUseSql}
+	           ${addParamSql} ${serviceStreamSql} ${typeEmergencySql} ${typeEndoscopyUseSql} ${typeAnaesthesUseSql} ${additionStatusSql}
 	          order by p.lastname,p.firstname,p.middlename
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	        

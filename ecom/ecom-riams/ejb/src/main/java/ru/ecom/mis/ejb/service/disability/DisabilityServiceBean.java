@@ -401,14 +401,12 @@ public class DisabilityServiceBean implements IDisabilityService {
     public Long createDuplicateDocument( Long aDocId,Long aReasonId, String aSeries, String aNumber,Long aWorkFunction2
     		,String aJob, Boolean aUpdateJob){
     	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
-    	boolean isElectronicDocument = false; // Отключаем проверки для электронных больничных листов
-		List<Object[]> list = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",doc.getId()).getResultList();
-		if (!list.isEmpty()) {isElectronicDocument = true;}
+		boolean isPaperDocument = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",doc.getId()).getResultList().isEmpty();
 
-    	if (!isElectronicDocument && (doc.getIsClose()==null || !doc.getIsClose())) {
+    	if (isPaperDocument && (doc.getIsClose()==null || !doc.getIsClose())) {
     		throw new IllegalDataException("ДУБЛИКАТ МОЖНО СДЕЛАТЬ ТОЛЬКО ЗАКРЫТОГО ДОКУМЕНТА!!!") ;
     	}
-    	if (!isElectronicDocument && (doc.getStatus()==null || !doc.getStatus().getCode().equals("0"))) {
+    	if (isPaperDocument && (doc.getStatus()==null || !doc.getStatus().getCode().equals("0"))) {
     		throw new IllegalDataException("ДУБЛИКАТ МОЖНО СДЕЛАТЬ ТОЛЬКО ДЕЙСТВУЮЩЕГО ДОКУМЕНТА!!!") ;
     	}
     	
@@ -419,23 +417,15 @@ public class DisabilityServiceBean implements IDisabilityService {
     		newDoc.setJob(aJob) ;
     		if (aUpdateJob!=null && aUpdateJob) {
     			Patient pat = doc.getDisabilityCase()!=null && doc.getDisabilityCase().getPatient()!=null ? doc.getDisabilityCase().getPatient():null ;
-    			//VocOrg org= pat.getWorks() ;
-    			//org.setCode(aJob) ;
 				if (pat!=null) {
 					pat.setWorks(aJob) ;
 					theManager.persist(pat) ;
 				}
     		}
     	}
-    	
     	doc.setStatus(stat) ;
     	doc.setNoActuality(true) ;
     	doc.setDuplicate(newDoc) ;
-    	//if (stat!=null && stat.getCode().trim().equals("2")) {
-    	//	List<VocDisabilityDocumentPrimarity> primarity = theManager.createQuery("from VocDisabilityDocumentPrimarity where code='2'").getResultList() ;
-    	//	newDoc.setPrimarity(primarity.size()>0?primarity.get(0):null);
-    	//	theManager.persist(newDoc) ;
-    	//}
     	theManager.persist(doc) ;
     	return newDoc.getId() ;
     	
@@ -445,15 +435,14 @@ public class DisabilityServiceBean implements IDisabilityService {
     	DisabilityDocument docPrev = aPrevDocument!=null&&!aPrevDocument.equals(0L)?theManager.find(DisabilityDocument.class, aPrevDocument):null ;
     	VocCombo newVocComb = theManager.find(VocCombo.class, aVocCombo) ;
 
-		List<Object[]> list = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",aDocId).getResultList();
-		boolean isElectronicDocument = !list.isEmpty(); //Уберем проверки для ЭЛН
-    	if (!isElectronicDocument && doc.getWorkComboType()!=null) {
+		boolean isPaperDocument = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",aDocId).getResultList().isEmpty();//Уберем проверки для ЭЛН
+    	if (isPaperDocument && doc.getWorkComboType()!=null) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО ДОБАВИТЬ ТОЛЬКО ПО ОСНОВНОМУ МЕСТУ РАБОТЫ") ;
     	}
-    	if (!isElectronicDocument && (doc.getIsClose()==null || !doc.getIsClose())) {
+    	if (isPaperDocument && (doc.getIsClose()==null || !doc.getIsClose())) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО СДЕЛАТЬ ТОЛЬКО ЗАКРЫТОГО ДОКУМЕНТА!!!") ;
     	}
-    	if (!isElectronicDocument && (doc.getStatus()==null || !doc.getStatus().getCode().equals("0"))) {
+    	if (isPaperDocument && (doc.getStatus()==null || !doc.getStatus().getCode().equals("0"))) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО СДЕЛАТЬ ТОЛЬКО ДЕЙСТВУЮЩЕГО ДОКУМЕНТА!!!") ;
     	}
     	
@@ -752,13 +741,11 @@ public class DisabilityServiceBean implements IDisabilityService {
         List<DisabilityDocumentForm> ret = new LinkedList<>();
         if (!idlist.isEmpty()) {
         	StringBuilder ids = new StringBuilder() ;
-        	StringBuilder sql = new StringBuilder() ;
-	        for (Object obj:idlist) {
+            for (Object obj:idlist) {
 	        	ids.append(",").append(obj) ;
 	        }
-	        sql.append("from DisabilityDocument where id in (").append(ids.substring(1)).append(")") ;
 
-	        List<DisabilityDocument> list = theManager.createQuery(sql.toString()).setMaxResults(50).getResultList() ;
+            List<DisabilityDocument> list = theManager.createQuery("from DisabilityDocument where id in (" + ids.substring(1) + ")").setMaxResults(50).getResultList() ;
 	        for (DisabilityDocument doc : list) {
 	            try {
 	                ret.add(theEntityFormService.loadForm(DisabilityDocumentForm.class, doc));
