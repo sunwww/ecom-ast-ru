@@ -272,6 +272,20 @@ function onCreate(aForm, aEntity, aCtx) {
 				aCtx.manager.persist(ss) ;
 				sls.statisticStub = ss ;
 				aCtx.manager.persist(sls) ;
+				//диабет у матери в родах будет проставляться только при создании. Если нужно редактировать - путь меняют в СЛС
+                if (aForm.getDiabetIdentity()!=null && aForm.getDiabetIdentity()!=''){
+                	var vocColorIdentity = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient,java.lang.Long.valueOf(aForm.getDiabetIdentity()));
+                	if (vocColorIdentity!=null) {
+                        var colorIdentity = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
+                        colorIdentity.startDate=sls.dateStart;
+                        colorIdentity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+                        colorIdentity.setVocColorIdentity(vocColorIdentity);
+                        aCtx.manager.persist(colorIdentity) ;
+                        var colIds = new java.util.ArrayList() ;
+                        colIds.add(colorIdentity);
+                        sls.setColorsIdentity(colIds);
+					}
+                }
 			}
 			newBorn.setPatient(patient) ;			
 			}

@@ -585,7 +585,7 @@ left join Patient pat on pat.id=wan.person_id
                         <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_misbirth.do?id=${param.id}">Выкидыш</a>
                         </msh:ifInRole>
                         <msh:ifInRole roles="/Policy/Mis/NewBorn/Create">
-                            <a href="entityParentPrepareCreate-preg_neonatalNewBorn.do?id=${param.id}"> Добавить инф. о новорожденному</a>
+                            <a href="entityParentPrepareCreate-preg_neonatalNewBorn.do?id=${param.id}"> Добавить инф. о новорожденном</a>
                         </msh:ifInRole>
                     </msh:sectionTitle>
                     <msh:sectionContent>

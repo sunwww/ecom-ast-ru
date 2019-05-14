@@ -25,6 +25,7 @@ import ru.ecom.mis.ejb.domain.birth.voc.VocNewBornMaturity;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -395,4 +396,12 @@ public class NewBorn extends BaseEntity{
 
 	/** Отделение */
 	private MisLpu theDepartment;
+
+	/** Диабет (браслет)*/
+	@Comment("Диабет (браслет)")
+	@OneToOne
+	public VocColorIdentityPatient getDiabetIdentity() {return theDiabetIdentity;}
+	public void setDiabetIdentity(VocColorIdentityPatient aDiabetIdentity) {theDiabetIdentity = aDiabetIdentity;}
+	/** Диабет (браслет)*/
+	private VocColorIdentityPatient theDiabetIdentity;
 }

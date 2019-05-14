@@ -3296,4 +3296,15 @@ left join medcase smoP on smoP.owner_id=w.id "
 				queryAppend = ''
 		/>
 	</voc>
+	<!-- Браслеты, которые могут быть заполнены в родах и инф. по новорожд. -->
+	<voc id="vocIdentityPatientNewBorn" type="NativeVocService">
+		<NativeVocService
+				from="vocColorIdentityPatient vcip "
+				nameId="vcip.id"
+				join=" left join voccolor vc on vcip.color_id=vc.id " order=""
+				names="vcip.name"
+				queried=" upper(vc.name||' ('||vcip.name||')') like upper(:query) "
+				queryAppend = 'vcip.isfornewborn=true'
+		/>
+	</voc>
 </vocconfig>
