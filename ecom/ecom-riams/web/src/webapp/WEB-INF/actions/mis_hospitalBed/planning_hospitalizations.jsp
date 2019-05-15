@@ -106,94 +106,8 @@
     	if (countBed!=null && !countBed.equals("") && !countBed.equals("0")) {
     		request.setAttribute("countBed", " and wp.countBed_id='"+countBed+"'") ;
     	}
-    	if (1==2) {
-    %>
-    <msh:section>
-    <msh:sectionTitle>Список пациентов</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_pat" nameFldSql="journal_pat_sql" nativeSql="
-    select wp.id as wpid,wp.name as wpnamw,vcbihr.name as vcbihr
-,list(
-'<br /><'||'span class=\"'||
-case when slo.dateFinish is not null then 'discharge' else 'current' end
-||'\">'||
-case 
-when ${department1} slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-or coalesce(slo.datefinish,slo.transferdate,current_date)  between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-
-then p.lastname ||' '|| coalesce(substring(p.firstname,1,1),'') ||' '||coalesce(substring(p.middlename,1,1),'') 
-||' '|| to_char(slo.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy'),to_char(slo.transferDate,'dd.mm.yyyy')
-,'')||'<'||'/span>'
-||' <a href='||'\"javascript:void(0)\" onclick=\"viewSlo('||slo.id||')\">Перейти</a>'
-
-else null end
-
-) as realPat
-,list('<br />'||case 
-when wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-or wchb.dateTo  between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-
-then pp.lastname ||' '|| coalesce(substring(pp.firstname,1,1),'') ||' '||coalesce(substring(pp.middlename,1,1),'') 
-||' '|| to_char(wchb.dateFrom,'dd.mm.yyyy')||'-'||coalesce(to_char(wchb.dateTo,'dd.mm.yyyy'),'')
-||' <a href='||'\"javascript:void(0)\" onclick=\"editPlanning('||wchb.id||')\">Изменить</a>'
-
-
-else null end
-) as planPat
- from workplace wp
-left join medcase slo on slo.roomNumber_id=wp.id
-left join patient p on p.id=slo.patient_id
-left join VocCountBedInHospitalRoom vcbihr on vcbihr.id=wp.countBed_id
-left join WorkCalendarHospitalBed wchb on wchb.hospitalRoom_id=wp.id
-left join patient pp on pp.id=wchb.patient_id 
-
-where wp.dtype='HospitalRoom' ${department}
-${roomType} ${countBed}
-and (wp.isNoActuality is null or wp.isNoActuality='0')
-and (slo.datefinish is null or coalesce(slo.datefinish,slo.transferdate,current_date) between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy'))
-group by wp.id,wp.name,vcbihr.name
-order by case when length(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(wp.name,'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9',''))=0 then cast(wp.name as int) else 100 end
- " />
-    <msh:table name="journal_pat" 
-     action="javascript:void(0)" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6" escapeSymbols="false">
-      <msh:tableColumn columnName="Палата" property="2" />
-      <msh:tableColumn columnName="Вместимость" property="3" />
-      <msh:tableColumn columnName="Список пациентов, которые лежат" property="4" />
-      <msh:tableColumn columnName="Список пациентов, которые планируются" property="5" />
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-      <%}%>
-    <msh:section>
-
-    <msh:sectionTitle>Список пациентов, по которым не определены палаты</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_pat" nativeSql="
-    select 1,list(
- '<br/>'||p.lastname ||' '|| coalesce(substring(p.firstname,1,1),'') ||' '||coalesce(substring(p.middlename,1,1),'') 
-||' '|| to_char(slo.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy'),to_char(slo.transferDate,'dd.mm.yyyy')
-,'')
-||' <a href='||'\"javascript:void(0)\" onclick=\"viewSlo('||slo.id||')\">Перейти</a>'
-
-) as realPat
- from  medcase slo
-left join patient p on p.id=slo.patient_id
-
-where  ${department1} slo.dateStart<=to_date('${dateEnd}','dd.mm.yyyy')
-and 
-(coalesce(slo.datefinish,slo.transferdate) is null
-or coalesce(slo.datefinish,slo.transferdate)>= to_date('${dateBegin}','dd.mm.yyyy')
-)
-and slo.dtype='DepartmentMedCase'
-
-and slo.roomNumber_id is null
- " />
-    <msh:table name="journal_pat" 
-     action="javascript:void(0)" idField="1" noDataMessage="Нет данных" hideTitle="true" escapeSymbols="false">
-      <msh:tableColumn columnName="Список пациентов, которые лежат" property="2" />
-     </msh:table>
-    </msh:sectionContent>
-    </msh:section>
+	}%>
+      <a href="javascript:void(0)" onclick="window.location.href='fillbedsreport.do'">Распределение пациентов по палатам</a>
     <msh:section title="Список направлений на госпитализацию">
     <ecom:webQuery name="stac_planHospital"
     nativeSql="select wchb.id,ml.name as mlname,p.id,p.lastname||' '||p.firstname||' '||p.middlename as fio,p.birthday
@@ -236,7 +150,6 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
 
     </msh:table>
     </msh:section>
-    <%} %>
     <div id="divViewBed">
     </div>
     

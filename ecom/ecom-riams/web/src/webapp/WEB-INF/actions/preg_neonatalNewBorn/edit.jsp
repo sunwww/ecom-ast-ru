@@ -107,10 +107,10 @@
         <msh:ifFormTypeIsNotView formName="preg_neonatalNewBornForm">
           <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
             <td class="label" title="Поиск по промежутку  (diabetIdentity)" colspan="1"><label for="diabetIdentityName" id="tdiabetIdentityLabel">Диабет у матери:</label></td>
-            <td onclick="this.childNodes[1].checked='checked'; checkdiabetIdentity();" colspan="1">
-              <input type="radio" name="diabetIdentityRad" value="1"> Нет
+            <td onclick="this.childNodes[1].checked='checked'; checkdiabetIdentity();" colspan="1" style="background-color:#ffffa0">
+              <input type="radio" name="diabetIdentityRad" value="1" > Нет
             </td>
-            <td onclick="this.childNodes[1].checked='checked'; checkdiabetIdentity();" colspan="3">
+            <td onclick="this.childNodes[1].checked='checked'; checkdiabetIdentity();" colspan="3" style="background-color:#ffffa0">
               <input type="radio" name="diabetIdentityRad" value="2"> Да
             </td>
             <msh:autoComplete property="diabetIdentity" fieldColSpan="3" horizontalFill="true" label="" vocName="vocIdentityPatientNewBorn"/>
@@ -236,6 +236,7 @@
           if (!(document.getElementsByName("diabetIdentityRad") && document.getElementsByName("diabetIdentityRad")[1] && document.getElementsByName("diabetIdentityRad")[1].checked && $('diabetIdentity').value!=''
               || document.getElementsByName("diabetIdentityRad") && document.getElementsByName("diabetIdentityRad")[0] && document.getElementsByName("diabetIdentityRad")[0].checked && $('diabetIdentity').value=='')) {
               alert('Заполните правильно диабет матери!');
+              $('submitButton').disabled = false;
               return false;
           }
           else return true;

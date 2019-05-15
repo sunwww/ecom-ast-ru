@@ -310,6 +310,9 @@
 						<li><msh:link  isReport="true" action="stac_planning_hospitalizations.do" roles="/Policy/Mis/MedCase/Stac/Journal/PlanningHospitalizations">
 	                            Планирование госпитализаций
 	                        </msh:link></li>
+						<li><msh:link  isReport="true" action="fillbedsreport.do" roles="/Policy/Mis/MedCase/Stac/Journal/FillBedsReport">
+							Распределение пациентов по палатам
+						</msh:link></li>
 						<li><msh:link  isReport="true" action="stac_journal_denied_without_diagnosis.do" roles="/Policy/Mis/MedCase/Stac/Journal/DeniedWithoutDiagnosis">
 	                            Отказы от госпитализаций без диагнозов
 	                        </msh:link></li>

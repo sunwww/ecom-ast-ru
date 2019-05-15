@@ -111,6 +111,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_hospitalBed/planning_hospitalizations.jsp" />
         </action>
+        <action path='/fillbedsreport' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+        >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_hospitalBed/fillbedsreport.jsp" />
+        </action>
         <action path='/stac_report_insCompany' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
