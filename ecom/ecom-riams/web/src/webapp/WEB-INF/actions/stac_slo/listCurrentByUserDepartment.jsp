@@ -71,7 +71,7 @@
 	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
        else  pat.foreignRegistrationAddress end as address
     ,pat.passportSeries||' '||pat.passportNumber as passportshort
-,case when vcid.isfornewborn then 'background:'||vcr.code else '' end as styleRow
+,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -112,7 +112,6 @@ left join voccolor vcr on vcr.id=vcid.color_id
               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident
 
        , pat.foreignRegistrationAddress
-       ,vcid.isfornewborn,vcr.code
     order by pat.lastname,pat.firstname,pat.middlename
     "
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
