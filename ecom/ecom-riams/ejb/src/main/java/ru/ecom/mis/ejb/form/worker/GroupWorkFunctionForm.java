@@ -55,11 +55,18 @@ public class GroupWorkFunctionForm extends WorkFunctionForm {
 	public String getGroupName() {return theGroupName;}
 	public void setGroupName(String aGroupName) {theGroupName = aGroupName;}
 
+	/** Помечать ли созданные заявки на консультации сразу после создания? */
+	@Comment("Помечать ли созданные заявки на консультации сразу после создания?")
+	@Persist
+	public Boolean getIsTransferConsAfterCreate() {return theIsTransferConsAfterCreate;}
+	public void setIsTransferConsAfterCreate(Boolean aIsTransferConsAfterCreate) {theIsTransferConsAfterCreate = aIsTransferConsAfterCreate;}
+
 	/** Название группы */
 	private String theGroupName;
 	/** ЛПУ */
 	private Long theLpu;
 	/** Наименование */
 	private String theName;
-
+	/** Помечать ли созданные заявки на консультации сразу после создания? */
+	private Boolean theIsTransferConsAfterCreate;
 }

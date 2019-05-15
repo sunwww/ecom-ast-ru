@@ -56,6 +56,9 @@
           <msh:checkBox property="isNoViewRemoteUser" label="Запрет на запись удаленными пользователями" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+          <msh:checkBox property="isTransferConsAfterCreate" label="Созданные консультации передавать автоматически" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>                
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
