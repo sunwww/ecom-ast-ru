@@ -141,7 +141,7 @@ group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlenam
 order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
     "
     />
-    <msh:table name="stac_planHospital" action="entityParentEdit-stac_planHospital.do"
+    <msh:table printToExcelButton="Сохранить в excel" name="stac_planHospital" action="entityParentEdit-stac_planHospital.do"
     idField="1" styleRow="15" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата пред.госпитализации" property="8"/>
