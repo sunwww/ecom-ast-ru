@@ -64,6 +64,8 @@
     // Отмена
     function cancel${name}() {
         the${name}Dialog.hide() ;
+        //перезагрузка
+        loadBracelets();
     }
     //Перезагрузка
     function reload${name}() {

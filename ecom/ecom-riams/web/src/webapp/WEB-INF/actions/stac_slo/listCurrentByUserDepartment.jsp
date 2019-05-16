@@ -71,7 +71,7 @@
 	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
        else  pat.foreignRegistrationAddress end as address
     ,pat.passportSeries||' '||pat.passportNumber as passportshort
-,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
+,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -80,6 +80,7 @@
 
     left join MedCase as sls on sls.id = m.parent_id
     left join medcase sloAll on sloAll.parent_id=sls.id and sloAll.dtype='DepartmentMedCase'
+left join Mislpu dep on dep.id=sloAll.department_id
     left join bedfund as bf on bf.id=m.bedfund_id
     left join StatisticStub as sc on sc.medCase_id=sls.id
     left join SurgicalOperation so on so.medCase_id =sloAll.id

@@ -1283,6 +1283,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         	showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
         	*/
 
+    	function loadBracelets() {
           //вывод браслетов #151
           HospitalMedCaseService.selectIdentityPatient(
               ${param.id},0, {
@@ -1299,6 +1300,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
                   }
               }
           );
+        }
+          loadBracelets();
       </script>
     </msh:ifFormTypeIsView>
     
