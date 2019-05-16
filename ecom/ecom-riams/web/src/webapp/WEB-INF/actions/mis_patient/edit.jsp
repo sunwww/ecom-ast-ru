@@ -16,6 +16,7 @@
    request.setAttribute("passportRF", passportRF);
    %>
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="c1b89933-a744-46a8-ba32-014ac1b4fcb4">
+    <div id='identityDiv'></div>
     <div id='patientInfoDiv'></div>
     <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     	<msh:separator label="Проверка пациента по базе фонда" colSpan="4"/>
@@ -892,7 +893,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/entityParentList-mis_patientExternalServiceAccount" name="Согласие на передачу данных"  title="Согласие на передачу данных" roles="/Policy/Mis/Patient/PatientExternalServiceAccount/View"/>
         <msh:sideLink params="id" action="/entityParentList-mis_dispensaryCard" name="Карты Д учета"  title="Карты Д учета" roles="/Policy/Mis/Patient/Dispensary/View"/>
           <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit/PatientSet" name="Браслеты"
-                        styleId="viewShort" action="/javascript:showidentityPatient(${param.id},true)"  title='Браслеты'
+                        styleId="viewShort" action="/javascript:showidentityPatient(${param.id},0)"  title='Браслеты'
           />
         </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="157c0645-4549-461e-acf7-34072c393951">
@@ -1258,6 +1259,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 	</script>
     <!-- При просмотре -->
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="b8c4d74b-4db5-433e-982c-e3133e4993ea">
+        <script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
       <script type="text/javascript">
           function showAllE2EntriesByPatient() {
               var commonNumber = $('commonNumber').value;
@@ -1280,6 +1282,23 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         	//alert(!$('attachedByPolicy').checked) ;
         	showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
         	*/
+
+          //вывод браслетов #151
+          HospitalMedCaseService.selectIdentityPatient(
+              ${param.id},0, {
+                  callback: function(res) {
+                      if (res!=null && res!='[]') {
+                          var aResult = JSON.parse(res);
+                          var str='<table><tr>';
+                          for (var i=0; i<aResult.length; i++) {
+                              str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 10px;height: 10px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
+                          }
+                          str+="</tr></table>";
+                          document.getElementById('identityDiv').innerHTML=str;
+                      }
+                  }
+              }
+          );
       </script>
     </msh:ifFormTypeIsView>
     

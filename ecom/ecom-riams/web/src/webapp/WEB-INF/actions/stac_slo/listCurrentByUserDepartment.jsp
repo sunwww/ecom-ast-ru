@@ -71,7 +71,7 @@
 	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
        else  pat.foreignRegistrationAddress end as address
     ,pat.passportSeries||' '||pat.passportNumber as passportshort
-,case when vcid.isfornewborn then 'background:'||vcr.code else '' end as styleRow
+,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -112,7 +112,6 @@ left join voccolor vcr on vcr.id=vcid.color_id
               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident
 
        , pat.foreignRegistrationAddress
-       ,vcid.isfornewborn,vcr.code
     order by pat.lastname,pat.firstname,pat.middlename
     "
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
@@ -198,6 +197,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
       <msh:tableColumn columnName="Диагноз" property="10"/>
       <msh:tableColumn columnName="Паспортные данные" property="11"/>
       <msh:tableColumn columnName="Адрес" property="12"/>
+      <msh:tableColumn columnName="Браслеты пациента" property="1"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -252,5 +252,55 @@ left join voccolor vcr on vcr.id=vcid.color_id
      </msh:ifInRole>
     <% } %>
   </tiles:put>
+  <%
+    Long department = (Long)request.getAttribute("department") ;
+    if (department!=null && department.intValue()>0 )  {
+  %>
+    <msh:ifInRole roles="/Policy/Mis/ColorIdentityEdit/ViewIdentityInLisCurrentPatients">
+    <tiles:put name="javascript" type="string">
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+    <script type="text/javascript">
+        //Milamesher #151 - вывод браслетов в Журнале обращений
+        //на js, т.к. неохота возиться с хранимыми + по ролям можно отключить
+        //реализовано через механизм замыканий, чтобы передавать параметр в callback
+        var closure2 = function(td) {
+            return function(res) {
+                var str="";
+                if (res != null && res != '[]') {
+                    var aResult = JSON.parse(res);
+                    str = '<table><tr>';
+                    for (var i = 0; i < aResult.length; i++) {
+                        str += '<td><div title="' + aResult[i].vsipnameJust + '" style="background: ' + aResult[i].colorCode + ';width: 10px;height: 10px;outline: 1px solid gray;"></div></td>';
+                    }
+                    str += "</tr></table>";
+                }
+                td.innerHTML = str==''? '-' : str;
+            };
+        };
+
+        var closure1 = function(td) {
+            return function(slsId) {
+                if (slsId != null && slsId != '') {
+                    HospitalMedCaseService.selectIdentityPatient(
+                        slsId, true, closure2(td)
+                    );
+                }
+            };
+        };
+
+        var table=document.getElementsByTagName('table')[0];
+        for (var i=1; i<table.rows.length; i++) {
+            var row = table.rows[i];
+            var td = row.cells[row.cells.length-1];
+            //получить parent
+            var sloId = row.className.replace('datelist', '').replace('selected', '');
+            HospitalMedCaseService.getParentId(
+                sloId,  closure1(td)
+            );
+        }
+    </script>
+    </tiles:put>
+    </msh:ifInRole>
+  <%}%>
 </tiles:insert>
 

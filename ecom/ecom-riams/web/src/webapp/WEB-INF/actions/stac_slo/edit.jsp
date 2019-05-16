@@ -991,6 +991,22 @@ where m.id ='${param.id}'"/>
                         }
                     }) ;
                 }
+                //вывод браслетов #151
+                HospitalMedCaseService.selectIdentityPatient(
+                    $('parent').value,true, {
+                        callback: function(res) {
+                            if (res!=null && res!='[]') {
+                                var aResult = JSON.parse(res);
+                                var str='<table><tr>';
+                                for (var i=0; i<aResult.length; i++) {
+                                    str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 10px;height: 10px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
+                                }
+                                str+="</tr></table>";
+                                document.getElementById('mainFormLegend').parentNode.innerHTML=document.getElementById('mainFormLegend').parentNode.innerHTML.replace('<h2 id="mainFormLegend">Лечение в отделении</h2>',"<h2 id=\"mainFormLegend\">Лечение в отделении</h2>"+str);
+                            }
+                        }
+                    }
+                );
             </script>
         </msh:ifFormTypeIsView>
         <msh:ifFormTypeIsNotView formName="stac_sloForm" guid="518fe547-aed9-be2229f04ba3">

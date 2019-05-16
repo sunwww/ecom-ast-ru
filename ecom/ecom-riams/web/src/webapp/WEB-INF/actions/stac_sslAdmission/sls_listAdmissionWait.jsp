@@ -68,7 +68,7 @@ select '&dateBegin=${startDate}&dateEnd=${finishDate}&reestr=1&department='||ml.
 from medcase sls
 left join mislpu ml on ml.id=sls.department_id
 left join vocdeniedhospitalizating vdg on vdg.id=sls.deniedhospitalizating_id
-where sls.datestart between to_date('${startDate}','dd.MM.yyyy') and to_date('${startDate}','dd.MM.yyyy')
+where sls.datestart between to_date('${startDate}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
 and sls.deniedhospitalizating_id is not null ${departmentSql}
 group by ml.id, ml.name
 order by ml.name
@@ -138,7 +138,7 @@ select sls.id as fldId
 from medcase sls
 left join patient pat on pat.id=sls.patient_id
 left join mislpu ml on ml.id=sls.department_id
-where sls.datestart between to_date('${startDate}','dd.MM.yyyy') and to_date('${startDate}','dd.MM.yyyy')
+where sls.datestart between to_date('${startDate}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
 and sls.deniedhospitalizating_id is not null ${departmentSql}
 and cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) ${waitSql}
 order by ml.name

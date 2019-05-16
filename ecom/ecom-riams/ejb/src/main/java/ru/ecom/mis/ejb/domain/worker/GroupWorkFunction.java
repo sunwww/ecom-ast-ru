@@ -76,7 +76,13 @@ public class GroupWorkFunction extends WorkFunction {
 	}
 	/** Рабочие функции входящие в состав группы */
 	private List<PersonalWorkFunction> theFunctions;
-	
 
+
+	/** Помечать ли созданные заявки на консультации сразу после создания? */
+	@Comment("Помечать ли созданные заявки на консультации сразу после создания?")
+	public Boolean getIsTransferConsAfterCreate() {return theIsTransferConsAfterCreate;}
+	public void setIsTransferConsAfterCreate(Boolean aIsTransferConsAfterCreate) {theIsTransferConsAfterCreate = aIsTransferConsAfterCreate;}
+	/** Помечать ли созданные заявки на консультации сразу после создания? */
+	private Boolean theIsTransferConsAfterCreate;
 
 }

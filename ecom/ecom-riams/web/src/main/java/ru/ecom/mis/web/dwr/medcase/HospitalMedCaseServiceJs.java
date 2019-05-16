@@ -2367,7 +2367,7 @@ public class HospitalMedCaseServiceJs {
     public String selectIdentityPatient(Long aSlsOrPatId, Boolean aSlsOrPat, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         StringBuilder sql = new StringBuilder();
-        sql.append("select cip.id,vc.name||' ('||vcip.name||')' ")
+        sql.append("select cip.id,vc.name||' ('||vcip.name||')',vc.code as colorCode,vcip.name as vsipnameJust ")
 				.append("from vocColorIdentityPatient vcip ")
 				.append("left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id ")
 				.append("left join voccolor vc on vcip.color_id=vc.id ")
@@ -2380,7 +2380,9 @@ public class HospitalMedCaseServiceJs {
 		for (WebQueryResult w :list) {
 			JSONObject o = new JSONObject() ;
 			o.put("vcipId", w.get1())
-					.put("vsipName", w.get2());
+					.put("vsipName", w.get2())
+					.put("colorCode", w.get3())
+					.put("vsipnameJust", w.get4());
 			res.put(o);
 		}
         return res.toString();
@@ -2422,4 +2424,15 @@ public class HospitalMedCaseServiceJs {
 		//закрывается вчерашним днём, чтобы сразу снимался браслет
 		service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date-1,editusername='"+login+"' where id="+aColorIdentityId);
 	}
+
+    /**
+     * Получить получить parent СЛС в СЛО #151
+     * @param aSloId HDeparetmentMedCase.id
+     * @return String parent СЛС
+     */
+    public String getParentId(String aSloId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        Collection<WebQueryResult> l= service.executeNativeSql("select parent_id from medcase where id="+aSloId) ;
+        return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
+    }
 }
