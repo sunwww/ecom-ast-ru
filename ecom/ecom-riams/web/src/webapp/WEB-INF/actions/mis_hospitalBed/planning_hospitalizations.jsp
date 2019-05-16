@@ -52,6 +52,11 @@
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   	
     <script type="text/javascript">
+
+        function createHosp(id) {
+            id = id.split("#");
+            window.document.location='entityParentPrepareCreate-stac_sslAdmission.do?id='+id[1]+'&preHosp='+id[0];
+        }
     	function find() {
     		
     	}
@@ -202,6 +207,7 @@ as birthday,mkb.code,wchb.diagnosis
  ,wchb.createDate as wchbcreatedate
  ,list(vwf.name ||' '||wPat.lastname) as f14_creator
  ,list(case when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f15_styleRow
+ ,wchb.id||'#'||p.id as f16_createHospIds
 from WorkCalendarHospitalBed wchb
 left join Patient p on p.id=wchb.patient_id
 left join MedCase mc on mc.id=wchb.medcase_id
@@ -233,6 +239,7 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="Диагноз" property="7"/>
             <msh:tableColumn columnName="Кто создал" property="14"/>
             <msh:tableColumn columnName="Дата создания" property="13"/>
+        <msh:tableButton property="16" buttonShortName="ГОСП" buttonFunction="createHosp" />
 
     </msh:table>
     </msh:section>

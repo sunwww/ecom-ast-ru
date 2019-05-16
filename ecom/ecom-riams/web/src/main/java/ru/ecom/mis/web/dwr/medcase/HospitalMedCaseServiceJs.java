@@ -33,6 +33,27 @@ import java.util.List;
 public class HospitalMedCaseServiceJs {
 	private static final Logger LOG = Logger.getLogger(HospitalMedCaseServiceJs.class);
 
+	/**
+	 * Информация о направлении на госпитализацию для автоматического заполнения госпитализации
+	 * */
+	public String getInfoByPreHosp(Long aPreHospId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select" +
+				" vss.id as vssId, vss.name as vssName" +
+				" ,oMl.id as orderId, oml.name as orderName" +
+				" ,ml.id as depId, ml.name as depName" +
+				" ,mkb.id as dsId,mkb.code||' '||mkb.name as dsName,wchb.diagnosis as diagnos" +
+				" from WorkCalendarHospitalBed wchb" +
+				" left join vocservicestream vss on vss.id=wchb.servicestream_id" +
+				" left join mislpu oMl on oMl.id=wchb.orderlpu_id" +
+				" left join VocIdc10 mkb on mkb.id=wchb.idc10_id" +
+				" left join MisLpu ml on ml.id=wchb.department_id" +
+				" where wchb.id ="+aPreHospId;
+		return service.executeNativeSqlGetJSON(new String[] {"serviceStream","serviceStreamName","orderLpu","orderLpuName"
+		,"department","departmentName","orderMkb","orderMkbName","orderDiagnos"},sql,1);
+
+	}
+
 	public boolean isAbortRequiredByOperation(Long aMedServiceId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String ret ;
@@ -41,7 +62,7 @@ public class HospitalMedCaseServiceJs {
 				} catch (Exception e) {
 					ret = null;
 				}
-		return ret!=null && ret.equals("1");
+		return "1".equals(ret);
 	}
 
 
@@ -221,11 +242,10 @@ public class HospitalMedCaseServiceJs {
 	
 	public String getDiaryDefects(Long aDiaryId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder req = new StringBuilder();
 		StringBuilder res = new StringBuilder();
-		req.append("select vdd.id, vdd.name from VocDefectDiary vdd ");
-		req.append("order by vdd.id ");
-		List<Object[]> list = service.executeNativeSqlGetObj(req.toString()) ;
+		String req = "select vdd.id, vdd.name from VocDefectDiary vdd " +
+				"order by vdd.id ";
+		List<Object[]> list = service.executeNativeSqlGetObj(req) ;
 		for (Object[] obj : list) {
 			res.append(obj[0]).append(":").append(obj[1]).append("#");
 		}
@@ -560,12 +580,12 @@ public class HospitalMedCaseServiceJs {
 	}
 	public String updateTable(String aTable, String aFldId, String aValId, String aFldSet, String aValSet, String aWhereAdd, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String add = aWhereAdd!=null &&!aWhereAdd.equals("")?" and "+aWhereAdd:"" ;
 		if (aValSet==null || aValSet.equals("null")) {
-			service.executeUpdateNativeSql("update "+aTable+" set "+aFldSet+"=null where "+aFldId+"='"+aValId+"' "+(aWhereAdd!=null &&!aWhereAdd.equals("")?" and "+aWhereAdd:"" )) ;
+			service.executeUpdateNativeSql("update "+aTable+" set "+aFldSet+"=null where "+aFldId+"='"+aValId+"' "+add) ;
 		} else {
-			service.executeUpdateNativeSql("update "+aTable+" set "+aFldSet+"='"+aValSet+"' where "+aFldId+"='"+aValId+"' "+(aWhereAdd!=null &&!aWhereAdd.equals("")?" and "+aWhereAdd:"" )) ;
+			service.executeUpdateNativeSql("update "+aTable+" set "+aFldSet+"='"+aValSet+"' where "+aFldId+"='"+aValId+"' "+add) ;
 		}
-		
 		return "" ;
 	}
 	public String isCanDischarge(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
@@ -1477,9 +1497,7 @@ public class HospitalMedCaseServiceJs {
 		boolean isEdit =true ;
 		boolean isCurentOnly = RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay",aRequest) ;
 		if (isCurentOnly) {
-			StringBuilder sql = new StringBuilder() ;
-			sql.append("select SLS.id from medcase SLS  left join vochospitalizationresult vhr on vhr.id= SLS.result_id where SLS.id='").append(aMedCaseId).append("' and (sls.dateFinish is not null or (vhr.code='11' and (current_date-sls.datefinish)<4))") ;
-			Collection<WebQueryResult> list = service1.executeNativeSql(sql.toString()) ;
+			Collection<WebQueryResult> list = service1.executeNativeSql("select SLS.id from medcase SLS  left join vochospitalizationresult vhr on vhr.id= SLS.result_id where SLS.id='" + aMedCaseId + "' and (sls.dateFinish is not null or (vhr.code='11' and (current_date-sls.datefinish)<4))") ;
 			if (!list.isEmpty()) {
 				IScriptService service = (IScriptService)Injection.find(aRequest).getService("ScriptService") ;
 	        	isEdit = TicketServiceJs.checkPermission(service, "DischargeMedCase", "editDischargeEpicrisis", aMedCaseId, aRequest) ;
@@ -1535,13 +1553,12 @@ public class HospitalMedCaseServiceJs {
         IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
         //return service.(aStatCardNumber, aDateStart, aEntranceTime, aPatient);
         
-        createAdminChangeMessageBySmo(aMedCase, "CHANGE_STAT_CARD_NUMBER",new StringBuffer()
-		.append("Изменение номера стат. карты с:")
-		.append((l.isEmpty()?"-":l.iterator().next().get1()))
-		.append(" на ")
-		.append(aNewStatCardNumber)
-		.append(" случая лечения в стационаре #")
-		.append(aMedCase).toString(), aRequest) ;
+        createAdminChangeMessageBySmo(aMedCase, "CHANGE_STAT_CARD_NUMBER", "Изменение номера стат. карты с:" +
+				(l.isEmpty() ? "-" : l.iterator().next().get1()) +
+				" на " +
+				aNewStatCardNumber +
+				" случая лечения в стационаре #" +
+				aMedCase, aRequest) ;
         return service.getChangeStatCardNumber(aMedCase, aNewStatCardNumber,always) ;
     }
     public String getListTemperatureCurve(Long aMedCase, HttpServletRequest aRequest) throws Exception {
@@ -1713,7 +1730,7 @@ public class HospitalMedCaseServiceJs {
     	StringBuilder res = new StringBuilder() ;
     	sql.append("select d.id,d.record from Diary d ") ;
     	sql.append(" where d.medCase_id='").append(aMedCase).append("'") ;
-    	
+
     	Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),2) ;
     	for(WebQueryResult wqr:list) {
     		//WebQueryResult wqr = list.iterator().next() ;

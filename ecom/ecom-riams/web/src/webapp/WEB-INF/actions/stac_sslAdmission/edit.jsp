@@ -362,12 +362,9 @@
 	                        //alert(aResult) ;
 	                        if (+aResult==1)  {
 	                        	//alert('Есть действующий полис!') ;
-	                        } else {
-	                        	if (confirm('Нет действующего полиса или корректно заполненного полиса у пациента!!! Вы хотите перевести его на бюджет?')) {
+	                        } else if (confirm('Нет действующего полиса или корректно заполненного полиса у пациента!!! Вы хотите перевести его на бюджет?')) {
 	                        		$('serviceStream').value = aResult.substring(aResult.indexOf('#')+1) ;
-	                        	} else {
-	                        	}
-	                        	
+
 	                        }
 	                        document.forms[0].action = oldURL ;
 	                        document.forms[0].submit() ;
@@ -376,8 +373,29 @@
 	                    );
 	    			
 	    		}
+
+
 	    	</script>
     	</msh:ifInRole>
+         <script type="text/javascript">
+             if (+'${param.preHosp}'>0) {
+                 HospitalMedCaseService.getInfoByPreHosp(+'${param.preHosp}', {
+                     callback: function(ret) {
+                         console.log(ret);
+                         ret = JSON.parse(ret)[0];
+                         $('serviceStream').value = ret.serviceStream;
+                         $('serviceStreamName').value = ret.serviceStreamName;
+                         $('orderLpu').value=ret.orderLpu;
+                         $('orderLpuName').value=ret.orderLpuName;
+                         $('department').value=ret.department;
+                         $('departmentName').value=ret.departmentName;
+                         $('orderMkb').value=ret.orderMkb;
+                         $('orderMkbName').value=ret.orderMkbName;
+                         $('orderDiagnos').value=ret.orderDiagnos;
+                     }
+                 });
+             }
+         </script>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
       <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
@@ -395,8 +413,6 @@
   	  						$('guarantee').value = arr[0];
   	  						$('guaranteeName').value = arr[1];
   	  					}	 
-  	  				} else {
-  	  				
   	  				}
   	  			$('guaranteeName').disabled=true;
   	  			}

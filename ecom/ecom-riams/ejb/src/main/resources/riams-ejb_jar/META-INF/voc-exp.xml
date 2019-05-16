@@ -105,6 +105,16 @@
                 nameId="voc.omccode"
                 order="voc.name"
                 names="voc.omccode||' '||voc.name"
+                queried="upper(voc.name) like upper(:query) or voc.omccode like :query"
+        />
+    </voc>
+    <voc id="vocServiceStreamCode" type="NativeVocService">
+        <NativeVocService
+                from="VocServiceStream voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+                queried="upper(voc.name) like upper(:query) or voc.code like :query"
         />
     </voc>
     <voc id="vocOpenListEntry" type="NativeVocService">
@@ -133,8 +143,10 @@
                 from="omc_sprsmo voc"
                 nameId="voc.smocode"
                 order="voc.name"
-                names="voc.smocode|| ' '||voc.name"
+                names="voc.smocode|| ' '||voc.name||' '||coalesce(t.name,'') "
+                join="left join Omc_KodTer t on t.okato=voc.fondokato"
                 queried="voc.smocode like :querId or upper(voc.name) like upper(:query) "
+                queryAppend="voc.finishDate is null"
         />
     </voc>
     <voc id="vocNationalityCode" type="NativeVocService">

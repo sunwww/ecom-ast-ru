@@ -200,15 +200,15 @@ public class WorkCalendarServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql("select case when su.isRemoteUser='1' then 1 else null end as remote,w.lpu_id from secUser su left join WorkFunction wf on wf.secUser_id=su.id left join Worker w on w.id=wf.worker_id where su.login='"+username+"'",1) ;
 		WebQueryResult wqr = list.iterator().next() ;
 		if (wqr!=null && wqr.get1()!=null) {
-			theIsRemoteUser=true ;
+	//		theIsRemoteUser=true ;
 			theLpuRemoteUser=ConvertSql.parseLong(wqr.get2()) ;
 			return true ;
 		}
 		theLpuRemoteUser=null ;
-		theIsRemoteUser=false ;
+	//	theIsRemoteUser=false ;
 		return false;
 	}
-	private static boolean theIsRemoteUser ;
+//	private static boolean theIsRemoteUser ;
 	private static Long theLpuRemoteUser ;
 	public String checkPolicyByPatient(Long aPatientId,String aDatePlan, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
 		aDatePlan = aDatePlan.trim() ;
@@ -228,15 +228,14 @@ public class WorkCalendarServiceJs {
 	}
 	public String getInfoByWorkFunction(Long aWorkFunction,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("select wp.lastname,wp.firstname,wp.middlename,to_char(wp.birthday,'ddMMyyyy'),vwf.name as vwfname,lpu.name as lpuname")
-		.append(" from WorkFunction wf left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join MisLpu lpu on lpu.id=w.lpu_id left join Patient wp on wp.id=w.person_id where wf.id='").append(aWorkFunction).append("'") ;
-		 Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
-		for (WebQueryResult res:list) {
+		String sql = "select wp.lastname,wp.firstname,wp.middlename,to_char(wp.birthday,'ddMMyyyy'),vwf.name as vwfname,lpu.name as lpuname" +
+				" from WorkFunction wf left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join MisLpu lpu on lpu.id=w.lpu_id left join Patient wp on wp.id=w.person_id where wf.id='" + aWorkFunction + "'";
+		Collection<WebQueryResult> list = service.executeNativeSql(sql,1) ;
+		if (!list.isEmpty()) {
+			WebQueryResult res = list.iterator().next();
 			String lastname = ""+res.get1() ;
 			String firstname = ""+res.get2() ;
-			String user = firstname.substring(0,1) +lastname;
-			user = ConvertSql.translate(user) ;
+			String user = ConvertSql.translate(firstname.substring(0,1) +lastname);
 			return user+"#"+res.get1()+" "+res.get2()+" "+res.get3()+"#"+res.get4()+"#"+res.get5()+" "+res.get6() ;
 		}
         return null ;

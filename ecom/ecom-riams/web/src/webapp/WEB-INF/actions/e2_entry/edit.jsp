@@ -37,7 +37,7 @@
                     <msh:textField property="mainService" size="50"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="serviceStream"  size="50"/>
+                    <msh:autoComplete property="serviceStream" vocName="vocServiceStreamCode" size="50"/>
                     <msh:textField property="lpuCode"  size="50"/>
                 </msh:row><msh:row>
                     <msh:checkBox property="isCriminalMessage" />
