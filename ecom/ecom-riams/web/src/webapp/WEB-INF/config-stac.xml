@@ -6,6 +6,7 @@
 
 	<form-beans>
 	
+        <form-bean name="stac_omcCriterionForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.OmcCriterionForm" />
         <form-bean name="stac_planHospitalForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedForm" />
         <form-bean name="smo_planHospitalByVisitForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByVisitForm" />
         <form-bean name="smo_planHospitalByHospForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByHospForm" />

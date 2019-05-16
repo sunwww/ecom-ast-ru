@@ -139,7 +139,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	   />
 	   <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit/PatientSet" name="Браслеты"
 					 styleId="viewShort" action="/javascript:showidentityPatient(${param.id},true)"  title='Браслеты'
-
+	   />
+	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/OmcCriterion" name="Клас. критерии" params="id"
+					 styleId="viewShort" action="/entityParentList-stac_omcCriterion"  title="Клас. критерии"
 	   />
 </msh:sideMenu>
 
