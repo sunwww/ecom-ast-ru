@@ -52,46 +52,21 @@
         <msh:section>
             <msh:sectionTitle>
                 <ecom:webQuery isReportBase="${isReportBase}" name="totalinfo" nameFldSql="totalinfo_sql" nativeSql="
-                select '&vrid='||coalesce(t.vrid,0)||'&vrname='||coalesce(t.vrname,''),t.vrname as vrname,sum(t.ks) as ks,sum(t.chbc) as chbc,
-                case when ${r}=0 then 0 else round(100*sum(t.chbc)/cast(${r} as numeric),1) end as per1,
-                case when sum(t.chbc)=0 then 0 else round(100*sum(t.ks)/cast(sum(t.chbc) as numeric),1) end  as per2,
-                case when ${ks}=0 then 0 else round(100*sum(t.ks)/cast(${ks} as numeric),1) end  as per3,
-                case when ${r}=0 then 0 else round(100*sum(t.ks)/cast(${r} as numeric),1) end  as per4
-                from (
-                select vr.id as vrid,vr.name as vrname,
-                count(distinct chb.id) as chbc,
-                (select count(distinct chb1.id) from childbirth chb1
-                left join medcase slo on slo.id=chb1.medcase_id or slo.parent_id=(select parent_id from medcase where id=chb1.medcase_id)
-                left join robsonclass r on r.medcase_id=slo.id
-                left join vocrobsonclass vr on vr.id=robsontype_id
-                left join SurgicalOperation so on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase' or so.medCase_id=(select parent_id from medcase where id=chb.medcase_id)
-                left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
-                left join MedService vo on vo.id=so.medService_id
-                where chb1.id=chb.id and vo.code='${ksCode}') as ks
-                from childbirth chb
-                left join medcase slo on slo.id=chb.medcase_id
-                left join robsonclass r on r.medcase_id=slo.id
-                left join vocrobsonclass vr on vr.id=r.robsontype_id
-                left join SurgicalOperation so on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase' or so.medCase_id=(select parent_id from medcase where id=chb.medcase_id)
-                left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
-                left join MedService vo on vo.id=so.medService_id
-                where chb.birthfinishdate between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') and vr.id is not null
-                group by vr.name,chb.id,vr.id) as t
-                group by t.vrid,t.vrname
-                order by t.vrid"/>
+                select * from selectRobson('${ksCode}','${dateBegin}','${dateEnd}',${r},${ks})"/>
                 <form action="journal_robson.do" method="post" target="_blank">
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table name="totalinfo"
-                           action="journal_robson.do" idField="1" cellFunction="true" printToExcelButton="Сохранить в excel">
-                    <msh:tableColumn columnName="Группа" property="2" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Кол-во КС в группе" property="3" isCalcAmount="true" addParam="&short=Short&ks=true&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(КС)"/>
-                    <msh:tableColumn columnName="Кол-во женщин в группе" property="4" isCalcAmount="true" addParam="&short=Short&ks=false&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(роды)"/>
-                    <msh:tableColumn columnName="Размер группы (%)" property="5" addParam="&nul=nul"/>
-                    <msh:tableColumn columnName="Частота КС в группе (%)" property="6" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Абсолютный вклад группы в общую частоту КС (%)" property="8" addParam="&nul=nul"/>
-                    <msh:tableColumn columnName="Относительный вклад группы в общую частоту КС (%)" property="7" addParam="&nul=nul"/>
+                           action="journal_robson.do" idField="2" cellFunction="true" printToExcelButton="Сохранить в excel">
+                    <msh:tableColumn property="1" columnName="#" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Группа" property="3" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Кол-во КС в группе" property="4" addParam="&short=Short&ks=true&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(КС)"/>
+                    <msh:tableColumn columnName="Кол-во женщин в группе" property="5"  addParam="&short=Short&ks=false&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(роды)"/>
+                    <msh:tableColumn columnName="Размер группы (%)" property="7" addParam="&nul=nul"/>
+                    <msh:tableColumn columnName="Частота КС в группе (%)" property="7" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Абсолютный вклад группы в общую частоту КС (%)" property="9" addParam="&nul=nul"/>
+                    <msh:tableColumn columnName="Относительный вклад группы в общую частоту КС (%)" property="8" addParam="&nul=nul"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -110,6 +85,9 @@
         } else {
             if (dateEnd!=null && !dateEnd.equals("")) request.setAttribute("dateTo"," по "+dateEnd);
                 request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                //строчки "итого" считаются в хранимке (и не должны генерить запрос на ФИО), т.к. есть разбивка по подкатегориям => нельзя calcAmount
+                //чтобы не было ошибки в выполнении запроса
+           if (request.getParameter("vrid")!=null && !request.getParameter("vrid").toString().equals("")) {
         %>
         <msh:section>
             <msh:sectionTitle>
@@ -119,15 +97,17 @@
                 left join medcase slo on slo.id=ANY(select id from medcase where parent_id=(select parent_id from medcase where id=chb.medcase_id) and dtype='DepartmentMedCase')
                 left join robsonclass r on r.medcase_id=slo.id
                 left join vocrobsonclass vr on vr.id=r.robsontype_id
+                left join vocsubrobson vsr on vsr.id=r.robsonsub_id
                 left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
                 left join SurgicalOperation so on case when ${param.ks}=true then so.medCase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase') else so.medCase_id=chb.medcase_id end
                 left join MedService vo on vo.id=so.medService_id
                 left join patient pat on slo.patient_id=pat.id
                 where chb.birthfinishdate between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') and vr.id=${param.vrid}
-                and case when ${param.ks}=true then vo.code='${ksCode}' else 1=1 end"/>
+                and case when ${param.ks}=true then vo.code='${ksCode}' else 1=1 end
+                and case when ${param.vsrid}<>0 then vsr.id=${param.vsrid} else 1=1 end"/>
 
                 <form action="journal_robson.do" method="post" target="_blank">
-                    ${param.vrname} за период с ${param.dateBegin} ${dateTo} ${param.viewname}
+                    ${param.vrname} (подгруппа: ${param.vsrname}) за период с ${param.dateBegin} ${dateTo} ${param.viewname}
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
@@ -139,7 +119,7 @@
             </msh:sectionContent>
         </msh:section>
         <%
-            }
+            }}
         %>
     </tiles:put>
 </tiles:insert>
