@@ -81,13 +81,13 @@
         <msh:row>
         	<msh:textField horizontalFill="true" property="diagnosis" fieldColSpan="3" label="Диагноз"/>
         </msh:row>
-        <msh:ifFormTypeIsCreate formName="smo_planHospitalByVisitForm">
+        <msh:ifFormTypeIsNotView formName="smo_planHospitalByVisitForm">
             <msh:row><td></td>
         	<td colspan="3" align="center">
         	<input type="button" onclick="getTextDiaryByMedCase(this);return false;" value="Вставить данные дневниковой записи"/><input type="button" value="Вставить данные из шаблона" onClick="showtmpTemplateProtocol()"/>
         	</td>
         </msh:row>  
-        </msh:ifFormTypeIsCreate>
+        </msh:ifFormTypeIsNotView>
         <msh:row>
         	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>

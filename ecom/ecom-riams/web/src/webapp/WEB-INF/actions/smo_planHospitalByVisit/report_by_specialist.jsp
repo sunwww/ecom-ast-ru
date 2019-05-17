@@ -1,13 +1,12 @@
 <%@page import="ru.ecom.web.login.LoginInfo"%>
-<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -25,7 +24,7 @@
     ActionUtil.updateParameter("ReportPlanHospitalByVisit","id","", request) ;
     ActionUtil.updateParameter("ReportPlanHospitalByVisit","typeReestr","2", request) ;
     boolean isZav = RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll", request) ;
-    String infoSql = "" ;
+    String infoSql  ;
     if (isZav) {
     	infoSql = "wchb.visit_id is not null" ;
     } else {
