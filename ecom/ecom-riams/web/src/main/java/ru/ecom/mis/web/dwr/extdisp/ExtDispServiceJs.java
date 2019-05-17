@@ -146,10 +146,12 @@ public class ExtDispServiceJs {
 			}
 
 		}
-		sql.append(" and att.dateTo is null and pat.deathDate is null and (pat.noActuality='0' or pat.noActuality is null) and (select count(*) from medpolicy where dtype='MedPolicyOmc' and patient_id=pat.id and (actualdateto is null or actualdateto>current_date)>0");
-		sql.append(" order by ").append(aTypeSort!=null&&aTypeSort.equals("2")?" random() ":" pat.patientinfo ");
+		sql.append(" and att.dateTo is null and pat.deathDate is null and (pat.noActuality='0' or pat.noActuality is null)" +
+				" and (select count(*) from medpolicy where dtype='MedPolicyOmc' and patient_id=pat.id and (actualdateto is null or actualdateto>current_date))>0");
+		sql.append(" order by ").append("2".equals(aTypeSort) ?" random() ":" pat.patientinfo ");
 		//if (aLimit!=null&&aYear>0) { sql.append(" and to_char(pat.birthday,'yyyy')='").append(aYear).append("'");}
 		IWebQueryService service= Injection.find(aRequest).getService(IWebQueryService.class);
+		LOG.info("sql = "+sql);
 		String ret =service.executeNativeSqlGetJSON(new String[]{"id", "name","area"},sql.toString(),aLimit);
 		return  ret!=null ? ret : "";
 	}
