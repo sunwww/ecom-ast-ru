@@ -1290,9 +1290,9 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
                   callback: function(res) {
                       if (res!=null && res!='[]') {
                           var aResult = JSON.parse(res);
-                          var str='<table><tr>';
+                          var str='<table style="margin-left:45%"><tr>';
                           for (var i=0; i<aResult.length; i++) {
-                              str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 10px;height: 10px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
+                              str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
                           }
                           str+="</tr></table>";
                           document.getElementById('identityDiv').innerHTML=str;
