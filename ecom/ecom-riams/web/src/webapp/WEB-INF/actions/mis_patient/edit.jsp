@@ -1297,6 +1297,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
                           str+="</tr></table>";
                           document.getElementById('identityDiv').innerHTML=str;
                       }
+                      else
+                          document.getElementById('identityDiv').innerHTML='';
                   }
               }
           );

@@ -72,6 +72,7 @@
        else  pat.foreignRegistrationAddress end as address
     ,pat.passportSeries||' '||pat.passportNumber as passportshort
 ,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
+    ,cast('-' as varchar(1)) as tempId
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -126,7 +127,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-sls.dateStart)+1)
 			else (CURRENT_DATE-sls.dateStart)
 		  end as cnt1
-
+    ,cast('-' as varchar(1)) as tempId
     from medCase m
 
     left join MedCase as prev1 on prev1.id=m.prevMedCase_id
@@ -198,7 +199,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
       <msh:tableColumn columnName="Диагноз" property="10"/>
       <msh:tableColumn columnName="Паспортные данные" property="11"/>
       <msh:tableColumn columnName="Адрес" property="12"/>
-      <msh:tableColumn columnName="Браслеты пациента" property="1"/>
+      <msh:tableColumn columnName="Браслеты пациента" property="15"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -216,6 +217,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
       <msh:tableColumn columnName="Леч.врач" property="7"/>
       <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
       <msh:tableColumn columnName="Операции" property="6"/>
+      <msh:tableColumn columnName="Браслеты пациента" property="9"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -289,16 +291,21 @@ left join voccolor vcr on vcr.id=vcid.color_id
             };
         };
 
-        var table=document.getElementsByTagName('table')[0];
-        for (var i=1; i<table.rows.length; i++) {
-            var row = table.rows[i];
-            var td = row.cells[row.cells.length-1];
-            //получить parent
-            var sloId = row.className.replace('datelist', '').replace('selected', '');
-            HospitalMedCaseService.getParentId(
-                sloId,  closure1(td)
-            );
+        function setBr(table) {
+            if (typeof table !== 'undefined') {
+                for (var i = 1; i < table.rows.length; i++) {
+                    var row = table.rows[i];
+                    var td = row.cells[row.cells.length - 1];
+                    //получить parent
+                    var sloId = row.className.replace('datelist', '').replace('selected', '').replace('_r', '');
+                    HospitalMedCaseService.getParentId(
+                        sloId, closure1(td)
+                    );
+                }
+            }
         }
+        setBr(document.getElementsByTagName('table')[0]);
+        setBr(document.getElementsByTagName('table')[1]);
     </script>
     </tiles:put>
     </msh:ifInRole>

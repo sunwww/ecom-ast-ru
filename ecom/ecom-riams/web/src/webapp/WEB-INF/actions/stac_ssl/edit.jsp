@@ -331,6 +331,7 @@
                 HospitalMedCaseService.selectIdentityPatient(
                     ${param.id},true, {
                         callback: function(res) {
+                            document.getElementById('mainFormLegend').parentNode.innerHTML='<h2 id="mainFormLegend">Госпитализация</h2>';
                             if (res!=null && res!='[]') {
                                 var aResult = JSON.parse(res);
                                 var str='<table><tr>';
@@ -338,7 +339,6 @@
                                     str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 10px;height: 10px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
                                 }
                                 str+="</tr></table>";
-                                document.getElementById('mainFormLegend').parentNode.innerHTML='<h2 id="mainFormLegend">Госпитализация</h2>';
                                 document.getElementById('mainFormLegend').parentNode.innerHTML=document.getElementById('mainFormLegend').parentNode.innerHTML.replace('<h2 id="mainFormLegend">Госпитализация</h2>',"<h2 id=\"mainFormLegend\">Госпитализация</h2>"+str);
                             }
                         }
