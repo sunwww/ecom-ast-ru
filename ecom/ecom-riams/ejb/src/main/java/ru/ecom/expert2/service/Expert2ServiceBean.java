@@ -93,7 +93,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             }
         }
-        LOG.info("Разделяем иногородних по территории"+aBillNumber+" "+aBillDate+" "+territories);
+        LOG.info("Разделяем иногородних по территории "+aBillNumber+" "+aBillDate+" "+territories);
         E2Bill bill = getBillEntryByDateAndNumber(aBillNumber,aBillDate);
         List<BigInteger> list = theManager.createNativeQuery("select id from e2entry where listentry_id=:listId and substring(insurancecompanycode ,0,3) in ("+territories.toString()+") and (isdeleted is null or isdeleted='0') and (donotsend is null or donotsend='0') ")
                 .setParameter("listId",aListEntryId).getResultList();
@@ -551,15 +551,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         return aMainMedcase;
 
     }
-    public void testUnionMecCase (Long aListEntryId, Long aHospitalMedcaseId, Long aPatientId, String aEntryType, boolean isGroupSpo) {
-        if (aEntryType.equals(POLYCLINICTYPE)&&aPatientId!=null) {
-            LOG.info("testUnionPolyclinicMedCase");
-            unionPolyclinicMedCase(aListEntryId,aPatientId, isGroupSpo);
-        } else if (aHospitalMedcaseId!=null) {
-            LOG.info("testUnionHospitalMedCase");
-            unionHospitalMedCase(aListEntryId, aHospitalMedcaseId);
-        }
-    }
+
     /** Объединеяем все записи по СЛС *Логика объединения тут */
     private void unionHospitalMedCase (Long aListEntryId, Long aHospitalMedCaseId) {
 
@@ -2622,9 +2614,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         List<VocDiagnosticVisit> kdps = getActualKdps();
         VocDiagnosticVisit bestKdp;
         List<E2Entry> emergency = new ArrayList<>();
-        VocE2FondV008 medHelpKind = getEntityByCode("13",VocE2FondV008.class,false); //
-        VocE2FondV009 fondResult = getEntityByCode("301",VocE2FondV009.class,false); //
-        VocE2FondV012 fondIshod = getEntityByCode("303",VocE2FondV012.class,false); //
+        VocE2FondV008 medHelpKind = getEntityByCode("13",VocE2FondV008.class,false); // первичная специализированная медико-санитарная помощь
+        VocE2FondV009 fondResult = getEntityByCode("301",VocE2FondV009.class,false); // ЛЕЧЕНИЕ ЗАВЕРШЕНО
+        VocE2FondV012 fondIshod = getEntityByCode("303",VocE2FondV012.class,false); // УЛУЧШЕНИЕ
         for (E2Entry entry : aListEntry) {
             bestKdp = null;
             List<String> medServiceList = entry.getMedServicesCodes();
@@ -2690,12 +2682,12 @@ public class Expert2ServiceBean implements IExpert2Service {
         VocE2FondV025 visitPurpose = subType.getVisitPurpose();
         VocE2FondV010 idsp = getEntityByCode("41",VocE2FondV010.class,false); //
         boolean isFirst;
-        String polyclinic = POLYCLINICTYPE;
         for (E2Entry entry : aEntryList) {
             entry.setDoNotSend(true); //По умолчанию - НМП отмечаем как брак. Хороший НМП отметим позже.
             isFirst=true;
             List<EntryMedService> services = entry.getMedServices();
             List<EntryDiagnosis> diagnoses = entry.getDiagnosis();
+            List<Long> uniqueSpecList = new ArrayList<>();
                 for(EntryMedService service : services) {
                     VocE2FondV021 spec = service.getDoctorSpeciality();
                     if (service.getMkb()!=null && spec!=null) { //Если в услуге есть врач и диагноз
@@ -2707,7 +2699,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 break;
                             }
                         }
-                        if (ed!=null) { // В случае есть подходящий диагноз!
+                        if (ed!=null && !uniqueSpecList.contains(spec.getId())) { // В случае есть подходящий диагноз!
                             if (!isFirst) {
                                 entry = cloneEntity(entry); //Если 2 и более дненик с диагнозом
                                 diagnoses.remove(ed);
@@ -2716,20 +2708,21 @@ public class Expert2ServiceBean implements IExpert2Service {
                             }
                             entry.setDoNotSend(ed.getMkb().getCode().startsWith("Z"));
                             entry.setIsEmergency(true);
-                            entry.setWorkPlace(polyclinic);
+                            entry.setWorkPlace(POLYCLINICTYPE);
                             entry.setSubType(subType);
                             entry.setMedHelpUsl(medHelpUsl);
                             entry.setVidSluch(vidSluch);
                             entry.setVisitPurpose(visitPurpose);
                             entry.setIDSP(idsp);
                             entry.setMainMkb(service.getMkb().getCode());
-                            entry.setEntryType(polyclinic);
+                            entry.setEntryType(POLYCLINICTYPE);
                             entry.setDoctorSnils(service.getDoctorSnils());
                             entry.setFondDoctorSpecV021(spec);
                             entry.setMedHelpProfile(spec.getPolicProfile());
                             theManager.persist(entry);
                             makeCheckEntry(entry,false,true);
                             isFirst=false;
+                            uniqueSpecList.add(spec.getId());
                         }
                     }
                 }

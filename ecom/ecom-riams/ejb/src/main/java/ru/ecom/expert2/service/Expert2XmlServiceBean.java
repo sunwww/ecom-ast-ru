@@ -22,6 +22,7 @@ import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.services.exportservice.ExportServiceBean;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 
 import javax.annotation.EJB;
@@ -61,11 +62,20 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      * */
     public String exportToCentralSegment(Long aListEntryId, String aHistoryNumbers) {
             StringBuilder sqlAdd = new StringBuilder();
-            for (String h : aHistoryNumbers.split(",")) {
-                if (sqlAdd.length() > 0) sqlAdd.append(",");
-                sqlAdd.append("'").append(h).append("'");
+            if (StringUtil.isNullOrEmpty(aHistoryNumbers)) {
+                sqlAdd.append("insuranceCompanyCode not like '30%' and serviceStream='OBLIGATORYINSURANCE'"); // по умолчанию - иногородние омс
+            } else {
+                boolean first = true;
+                for (String h : aHistoryNumbers.split(",")) {
+                    if (!first) sqlAdd.append(",");
+                    else first=false;
+                    sqlAdd.append("'").append(h).append("'");
+                }
+                sqlAdd.insert(0,"historyNumber in (");
+                sqlAdd.append(") ");
             }
-            String sql = "from E2Entry where listEntry_id=:listId and historyNumber in (" + sqlAdd.toString() + ") and (isDeleted is null or isDeleted='0')";
+
+            String sql = "from E2Entry where listEntry_id=:listId and " + sqlAdd.toString() + " and (isDeleted is null or isDeleted='0')";
             List<Object> list = theManager.createQuery(sql).setParameter("listId", aListEntryId).getResultList();
             File dbfFile = new File(getWorkDir() + "/expert2xml/" + aListEntryId + "_flyToFond.dbf");
             List<ImportDocument> documents = theManager.createNamedQuery("ImportDocument.findByKey").setParameter("key", CENTRAL_SEGMENT_DOC).getResultList();
@@ -411,7 +421,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                         if (isHosp ||isVmp) {
                             Element onkUsl = new Element("ONK_USL");
-                            if ( serviceType.equals("4")) {
+                            if (serviceType.equals("4")) {
                                 theManager.persist(new E2EntryError(currentEntry,"ONCOLOGY_CASE_DRUG","Не может быть вид онколечения: "+serviceType+" химиолучевая терапия"));
                             }
                             add(onkUsl, "USL_TIP", serviceType);

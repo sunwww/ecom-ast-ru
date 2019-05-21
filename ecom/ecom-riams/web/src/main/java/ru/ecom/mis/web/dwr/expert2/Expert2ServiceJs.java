@@ -25,6 +25,13 @@ import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
+    public void deleteAllDeletedEntries(HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        LOG.info("All entries = "+service.executeNativeSql("select count(id) from e2entry").iterator().next().get1().toString());
+        service.executeUpdateNativeSql("delete from e2entry where isDeleted='1'");
+        LOG.info("All entries2 = "+service.executeNativeSql("select count(id) from e2entry").iterator().next().get1().toString());
+        service.executeUpdateNativeSql("delete from e2listentry where isDeleted='1'");
+    }
 
     public void cloneEntityTest(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
         IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
@@ -292,12 +299,6 @@ public class Expert2ServiceJs {
         }
         sql+=" and (isDeleted is null or isDeleted='0')";
         service.executeUpdateNativeSql(sql);
-        return true;
-    }
-
-    public boolean unionMedCase (Long aListEntryId, Long aHospitalMedCase, Long aPatientId, String aEntryType,boolean isGroupSpo, HttpServletRequest aRequest) throws NamingException {
-        IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
-        service.testUnionMecCase(aListEntryId,aHospitalMedCase,aPatientId, aEntryType, isGroupSpo);
         return true;
     }
 

@@ -120,6 +120,7 @@
                     <msh:sideLink action="/javascript:showCancerCancerDialog()" name="Сделать онкослучай" roles="/Policy/E2/Admin" />
                 </msh:ifPropertyIsTrue>
                 <msh:sideLink action="/javascript:closeListEntry(false)" name="Открыть заполнение" roles="/Policy/E2/Admin" />
+                <msh:sideLink action="/javascript:deleteAllDeletedEntries()" name="Удалить удаленные случаи" roles="/Policy/E2/Admin" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
@@ -129,6 +130,9 @@
             <script type="text/javascript">
 
                 checkIsRunning();
+                function deleteAllDeletedEntries() {
+                    Expert2Service.deleteAllDeletedEntries();
+                }
                 function checkIsRunning () {
                     if (+$('monitorId').value>0) {
                         monitor.id=+$('monitorId').value;
@@ -138,13 +142,11 @@
 
                 function exportToCentralSegment() {
                     var histories = prompt("Ведите номера историй");
-                    if (histories) {
                         Expert2Service.exportToCentralSegment(${param.id},histories, {
                             callback: function (fileName) {
                                 showToastMessage("<a href='/rtf/expert2xml/"+fileName+"'>Скачать файл </a>");
                             }
                         });
-                    }
                 }
 
                 function testNewTable() {

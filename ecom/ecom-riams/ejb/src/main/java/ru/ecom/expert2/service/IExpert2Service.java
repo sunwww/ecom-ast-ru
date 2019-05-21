@@ -26,7 +26,6 @@ public interface IExpert2Service {
     boolean exportDefectNewListEntry(Long aListEntryId);
     boolean exportErrorsNewListEntry(Long aListEntryId, String[] aErrorCodes);
     void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId);
-    void testUnionMecCase (Long aListEntryId, Long aHospitalMedcaseId, Long aPatientId, String aEntryType, boolean isGroupSpo);
     void makeCheckEntry (Long aEntryId, boolean updateKsgIfExist);
     E2Entry calculateEntryPrice(E2Entry  aEntry);
     void fillListEntry(E2ListEntry aListEntry, String aHistoryNumbers, long aMonitorId) throws NamingException, SQLException;
