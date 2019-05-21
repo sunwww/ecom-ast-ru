@@ -259,7 +259,6 @@ left join voccolor vcr on vcr.id=vcid.color_id
     Long department = (Long)request.getAttribute("department") ;
     if (department!=null && department.intValue()>0 )  {
   %>
-    <msh:ifInRole roles="/Policy/Mis/ColorIdentityEdit/ViewIdentityInLisCurrentPatients">
     <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
     <script type="text/javascript">
@@ -308,7 +307,6 @@ left join voccolor vcr on vcr.id=vcid.color_id
         setBr(document.getElementsByTagName('table')[1]);
     </script>
     </tiles:put>
-    </msh:ifInRole>
   <%}%>
 </tiles:insert>
 
