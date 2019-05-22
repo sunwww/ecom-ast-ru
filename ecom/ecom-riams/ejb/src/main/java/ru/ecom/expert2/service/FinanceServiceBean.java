@@ -66,7 +66,6 @@ public class FinanceServiceBean implements IFinanceService {
                 String priceKey;
                 BigDecimal cost;
                 startFromCalendar.setTimeInMillis(yearPlan.getStartDate().getTime());
-                LOG.info(planCnt+"<<>>"+planId);
 
                 Date currentMonth;
                 Long yearCount = yearPlan.getCount();
@@ -146,6 +145,10 @@ public class FinanceServiceBean implements IFinanceService {
                         if (!caseCost.containsKey(priceKey)){
                             VocKindHighCare kind =  expert2ServiceBean.getActualVocBySqlString(VocKindHighCare.class,"select id from VocKindHighCare where code='"+monthPlan.getMethod().getKindHighCare()+"' " +
                                             "and to_date('" +DateFormat.formatToDate(monthPlan.getFinishDate()) +"','dd.MM.yyyy') between datefrom and coalesce(dateTo,current_date) and serviceStreamCode='OBLIGATORYINSURANCE'");
+                            if (kind==null) {
+                                LOG.error("Невозможно найти вид ВМП "+monthPlan.getMethod().getKindHighCare());
+                                return;
+                            }
                             cost=kind.getCost();
                             cost=cost.setScale(2,RoundingMode.HALF_UP);
                             caseCost.put(priceKey,cost);
@@ -211,21 +214,27 @@ return "good";
         int ret=0;
         String entryType;
         StringBuilder sqlAdd = new StringBuilder();
+        boolean isHosp, isVmp, isPol;
         switch (aType) {
             case "HospitalFinancePlan":
+                isHosp = true;
+                isPol=isVmp=false;
                 entryType="='HOSPITAL'";
                 sqlAdd.append( " and plan.ksgGroup_id=(select group_id from vocksg where id=e.ksg_id)" );
                 break;
-
             case "PolyclinicFinancePlan":
                 entryType=" in ('POLYCLINIC','POLYCLINICKDO')";
-
+                isPol = true;
+                isHosp=isVmp=false;
                 break;
             case "VmpFinancePlan":
+                isVmp = true;
+                isPol=isHosp=false;
                 entryType="='VMP'";
                 sqlAdd.append( " and e.vmpMethod=vmp.code " );
                 break;
             default:
+                isVmp=isPol=isHosp=false;
                     entryType=" is null";
         }
         while (calendar.getTimeInMillis()<=aFinishDate.getTime()) {
@@ -255,19 +264,20 @@ return "good";
                     .append(" and to_char(plan.startdate,'yyyy-MM')='").append(finishDate).append("' ")
                     .append(" group by plan.vidSluch_id, cast(date_part('month',plan.startdate) as int),cast (date_part('year',plan.startdate) as int), plan.profile_id, plan.department_id, plan.bedsubtype_id, plan.ksgGroup_id ,plan.count, plan.cost, vmp.code, vmp.name")
 
-                    .append(" union select '")
+                    .append(" union select '") //Находим фактические случаи без плана
                     .append(aType).append("', e.vidSluch_id, cast(date_part('month',e.finishDate)as int) , cast(date_part('year',e.finishDate)as int), e.medhelpprofile_id, cast('0'||e.departmentid as int), cast('0'||e.bedsubtype as int)")
                     .append(", 0,0, count(e.id), sum(e.cost)")
                     .append(" ,vmp.code as f10_vmpCode ").append(" ,vmp.name as f11_vmpName ,ksg.group_id as f12_ksgGroupId")
                     .append(" from e2entry e")
                     .append(" left join vocksg ksg on ksg.id=e.ksg_id")
                     .append(" left join e2bill bill on bill.id=e.bill_id")
-                    .append(" left join financeplan plan on e.medhelpprofile_id=plan.profile_id and plan.vidsluch_id=e.vidsluch_id " +
-                            "and (plan.department_id is null or plan.department_id=e.departmentid) " +
-                            "and plan.ksgGroup_id=ksg.group_id ")
-                    .append(" left join vocmethodhighcare vmp on vmp.id=plan.method_id")
-                    .append(sqlAdd)
-                    .append(" where to_char(e.finishdate,'yyyy-MM') ='").append(finishDate).append("'")
+                    .append(" left join vocmethodhighcare vmp on e.vmpMethod=vmp.code and vmp.dateto is null")
+                    .append(" left join financeplan plan on e.medhelpprofile_id=plan.profile_id and plan.vidsluch_id=e.vidsluch_id and to_char(plan.startdate,'mm.yyyy') = to_char(plan.finishdate,'mm.yyyy') " +
+                            " and (plan.department_id is null or plan.department_id=e.departmentid) and to_char(plan.startdate,'yyyy-MM')='").append(finishDate).append("'");
+                       if (isHosp) sql.append(" and plan.ksgGroup_id=ksg.group_id ");
+                       else if (isVmp) sql.append(" and plan.method_id=vmp.id");
+
+                    sql.append(" where to_char(e.finishdate,'yyyy-MM') ='").append(finishDate).append("'")
                     .append(" and e.entrytype ").append(entryType)
                     .append(" and (e.isDeleted is null or e.isDeleted='0')").append(" and (e.doNotSend is null or e.doNotSend='0')").append(" and (e.isDefect is null or e.isDefect='0')").append(" and (e.isForeign is null or e.isForeign='0')")
                     .append(" and e.servicestream='").append(aServiceStream).append("'").append(" and bill.status_id=3 and plan.id is null")
@@ -278,8 +288,7 @@ return "good";
              ret += theManager.createNativeQuery(sql.toString()).executeUpdate();
              calendar.add(Calendar.MONTH,1);
         }
-LOG.info("Закончили формировать факты/планы");
-
+        LOG.info("Закончили формировать факты/планы");
         return new JSONObject().put("status","ok").put("count",ret).toString();
 
     }
@@ -287,10 +296,7 @@ LOG.info("Закончили формировать факты/планы");
         SimpleDateFormat mm = new SimpleDateFormat("MM");
         SimpleDateFormat yyyy= new SimpleDateFormat("yyyy");
         LOG.info("Очищаем сведения о факте-плане за "+aMonthDate+" месяц");
-        String sql = "delete from aggregatevolumesfinanceplan where type='"+aType+"' and  month="+mm.format(aMonthDate)+" and year="+yyyy.format(aMonthDate);
-        LOG.info("sqql="+sql);
-        theManager.createNativeQuery(sql).executeUpdate();
-
+        theManager.createNativeQuery("delete from aggregatevolumesfinanceplan where type='"+aType+"' and  month="+mm.format(aMonthDate)+" and year="+yyyy.format(aMonthDate)).executeUpdate();
     }
 
     /** Клонируем запись*/

@@ -381,17 +381,20 @@
              if (+'${param.preHosp}'>0) {
                  HospitalMedCaseService.getInfoByPreHosp(+'${param.preHosp}', {
                      callback: function(ret) {
-                         console.log(ret);
-                         ret = JSON.parse(ret)[0];
-                         $('serviceStream').value = ret.serviceStream;
-                         $('serviceStreamName').value = ret.serviceStreamName;
-                         $('orderLpu').value=ret.orderLpu;
-                         $('orderLpuName').value=ret.orderLpuName;
-                         $('department').value=ret.department;
-                         $('departmentName').value=ret.departmentName;
-                         $('orderMkb').value=ret.orderMkb;
-                         $('orderMkbName').value=ret.orderMkbName;
-                         $('orderDiagnos').value=ret.orderDiagnos;
+                         ret = JSON.parse(ret);
+                         if (ret.length>0) {
+                             ret = ret[0];
+                             $('serviceStream').value = ret.serviceStream;
+                             $('serviceStreamName').value = ret.serviceStreamName;
+                             $('orderLpu').value=ret.orderLpu;
+                             $('orderLpuName').value=ret.orderLpuName;
+                             $('department').value=ret.department;
+                             $('departmentName').value=ret.departmentName;
+                             $('orderMkb').value=ret.orderMkb;
+                             $('orderMkbName').value=ret.orderMkbName;
+                             $('orderDiagnos').value=ret.orderDiagnos;
+                         }
+
                      }
                  });
              }

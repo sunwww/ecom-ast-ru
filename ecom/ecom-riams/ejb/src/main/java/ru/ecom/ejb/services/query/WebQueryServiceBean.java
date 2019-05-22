@@ -106,7 +106,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 						JSONObject el = new JSONObject();
 						int fldId=0;
 						for (Object val:row){
-							el.put(aFieldNames.length>fldId?aFieldNames[fldId]:"fldValue_"+fldId,val!=null?val.toString():null);
+							el.put(aFieldNames.length>fldId?aFieldNames[fldId]:"fldValue_"+fldId,val!=null?val.toString():"");
 							fldId++;
 						}
 						ret.put(el);

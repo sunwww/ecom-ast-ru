@@ -645,7 +645,7 @@
 		<NativeVocService
 				from="vocExtDisp as ved"
 				nameId='ved.id'
-				queryAppend="(ved.isArchival is null or ved.isArchival='0')"
+				queryAppend="(ved.isArchival is null or ved.isArchival='0') and (ved.isComission is null or ved.isComission='0')"
 				order=""
 				names= "ved.name "
 				queried="upper(ved.name) like upper(:query)"

@@ -22,6 +22,12 @@
                 <msh:textField property="finishDate"/>
             </msh:row>
                 <msh:row>
+                    <msh:autoComplete property="vidSluch" vocName="vocE2VidSluch" label="Вид случая" size="50"/>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="bedProfile" vocName="vocE2FondV020" label="Профиль коек" size="50"/>
+                </msh:row>
+                <msh:row>
                 <msh:autoComplete property="profile" vocName="vocE2MedHelpProfile" size="100"/>
             </msh:row>
                 <msh:row>
