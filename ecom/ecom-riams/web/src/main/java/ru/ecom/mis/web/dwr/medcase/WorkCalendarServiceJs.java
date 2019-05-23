@@ -1905,6 +1905,7 @@ public class WorkCalendarServiceJs {
 
 	/**
 	 * Получить возможные способы предварительной записи пациентов (выбирает регистратор при создании предварительной записи) #145
+	 * @param aRequest HttpServletRequest
 	 * @return String json Способы предварительной записи пациентов
 	 */
 	public String getWaysOfPreRecords(HttpServletRequest aRequest) throws NamingException {
@@ -1918,5 +1919,19 @@ public class WorkCalendarServiceJs {
 			res.put(o);
 		}
 		return res.toString();
+	}
+
+	/**
+	 * Получить кабинет, связанный с раб. функцией #152
+	 * @param wfId String WorkFunction.id
+	 * @param aRequest HttpServletRequest
+	 * @return String Кабинет
+	 */
+	public String getWfCabinet(String wfId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select wpl.name from workplace wpl\n" +
+				"left join workplace_workfunction wpwf on wpwf.workplace_id=wpl.id\n" +
+				"where wpwf.workfunctions_id=" + wfId);
+		return list.isEmpty()? "": list.iterator().next().get1().toString();
 	}
 }

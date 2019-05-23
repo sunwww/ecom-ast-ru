@@ -206,6 +206,9 @@
 						<li><msh:link isReport="true" action="leanClinicReport.do" roles="/Policy/Mis/MedCase/Visit/Report039">
 							Отчет "Бережливая поликлиника"
 						</msh:link></li>
+						<li><msh:link isReport="true" action="sheduleToday.do" roles="/Policy/Mis/MedCase/Visit/Report039">
+							Расписание специалистов консультативной поликлиники
+						</msh:link></li>
 					</ul>
 					</div>
 				<div class='menu'>

@@ -293,6 +293,14 @@ public class WorkFunctionForm extends IdEntityForm{
 
 	/** ККМ по умолчанию */
 	private Long theKkmEquipmentDefault;
+
+	/** Кабинет */
+	@Comment("Кабинет")
+	public String getCabinet() {return theCabinet;}
+	public void setCabinet(String aCabinet) {theCabinet = aCabinet;}
+
+	/** Кабинет */
+	private String theCabinet;
 	
 }
 

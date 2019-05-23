@@ -326,12 +326,13 @@
                     }
                 }
             });
+            var info = document.getElementById('mainFormLegend').parentNode.innerHTML;
             function loadBracelets() {
                 //вывод браслетов #151
                 HospitalMedCaseService.selectIdentityPatient(
                     ${param.id},true, {
                         callback: function(res) {
-                            document.getElementById('mainFormLegend').parentNode.innerHTML='<h2 id="mainFormLegend">Госпитализация</h2>';
+                            document.getElementById('mainFormLegend').parentNode.innerHTML=info;
                             if (res!=null && res!='[]') {
                                 var aResult = JSON.parse(res);
                                 var str='<table style="margin-left:45%"><tr>';

@@ -85,6 +85,9 @@
             <msh:autoComplete property="kkmEquipmentDefault" vocName="kkmEquipment"
                               horizontalFill="true" label="ККМ"/>
         </msh:row>
+          <msh:row>
+              <msh:textField property="cabinet" label="Кабинет" horizontalFill="true"/>
+          </msh:row>
         <msh:row>
         	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
@@ -145,8 +148,8 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+      <script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
   	<msh:ifFormTypeIsView formName="work_personalWorkFunctionForm">
-		<script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
   		<script type="text/javascript">
   			function generationCalendar(){
   				WorkCalendarService.generateBySpecialist(
@@ -182,6 +185,17 @@
 
       	 </script>
     </msh:ifFormTypeIsNotView>
+      <script type="text/javascript">
+          function getWfCabinet(){
+              WorkCalendarService.getWfCabinet(${param.id}, {
+                      callback: function(res) {
+                          if ($('cabinet')) $('cabinet').value=res;
+                          if ($('cabinetReadOnly')) $('cabinetReadOnly').value=res;
+                      }
+                  }	) ;
+          }
+          getWfCabinet();
+      </script>
   </tiles:put>
 </tiles:insert>
 

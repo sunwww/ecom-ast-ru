@@ -43,7 +43,7 @@ function onCreate(aForm, aEntity, aContext) {
 	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 
-	
+    saveCabinet(aForm, aEntity, aContext);
 	//throw aEntity.worker.doctorInfo+""
 }
 
@@ -57,7 +57,9 @@ function onSave(aForm, aEntity, aContext) {
 	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setEditUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
-	
+
+    aContext.manager.createNativeQuery("delete from workplace_workfunction where workfunctions_id="+aEntity.id).executeUpdate() ;
+    saveCabinet(aForm, aEntity, aContext);
 }
 function errorThrow(aList) {
 	if (aList!=null && aList.size()>0) {
@@ -105,4 +107,23 @@ function onPreDelete(aFunctionId, aCtx) {
 			aCtx.manager.remove(cal) ;
 		}	
 	//}
+}
+//Сохранение кабинета
+function saveCabinet(aForm, aEntity, aCtx) {
+    var cabinet=aForm.getCabinet();
+    if (cabinet!='') {
+        var res = aCtx.manager.createNativeQuery("select id from workplace where name='" + cabinet + "'").setMaxResults(1).getResultList();
+        if (res.size() > 0)
+            aCtx.manager.createNativeQuery("insert into workplace_workfunction(workplace_id,workfunctions_id) values(" + java.lang.Long.valueOf(res.get(0)) + "," + aEntity.id + ")").executeUpdate();
+        else {
+            var resId=aCtx.manager.createNativeQuery("insert into workplace(dtype,name) values('ConsultingRoom','"+cabinet+"') returning id").getResultList();
+            if (resId.size()>0) {
+            	var wp = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.ConsultingRoom,java.lang.Long.valueOf(resId.get(0)));
+                var wfs = new java.util.ArrayList() ;
+                wfs.add(aEntity);
+                wp.setWorkFunctions(wfs);
+                aCtx.manager.persist(wp);
+			}
+        }
+    }
 }
