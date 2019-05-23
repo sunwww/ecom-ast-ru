@@ -4,7 +4,7 @@ function onCreate(aForm, aEntity, aContext){
 	var mother = aEntity.childBirth.medCase.patient;
 	
 	patient.lastname=mother.lastname ;
-	patient.firstname = "X";
+	patient.firstname = "Х";
 	patient.middlename = aEntity.sex!=null ? (aEntity.sex.omcCode=="1" ? "У" : "Х") : "Х" ;
 	patient.birthday = aEntity.birthDate ;
 	patient.sex = aEntity.sex ;

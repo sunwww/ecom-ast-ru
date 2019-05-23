@@ -213,7 +213,7 @@ function onCreate(aForm, aEntity, aCtx) {
 					patient.passportType = idenCard.size()>0?idenCard.get(0):null ;
 				}
 				patient.lastname=mother.lastname ;
-				patient.firstname = "X";
+				patient.firstname = "Х";
 				patient.middlename =  (newBorn.sex!=null ? (newBorn.sex.omcCode=="1" ? "У" : "Х") : "Х") ;
 				patient.birthday = newBorn.birthDate ;
 				patient.sex = newBorn.sex ;
