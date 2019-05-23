@@ -16,6 +16,19 @@
 				<div class='menu'>
 				<h2>Что появилось нового в ПО "МедОС"?</h2>
 				<ul>
+					<% if (1==2) { //Добавляем по мер необходимости %>
+					<li><msh:link action="ecom_release-201905.do">декабрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201905.do">ноябрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201905.do">октябрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201905.do">сентябрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201905.do">август 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201905.do">июль 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201905.do">июнь 2019 года </msh:link></li>
+					<% } %>
+
+					<li><msh:link action="ecom_release-201905.do">май 2019 года </msh:link></li>
+
+					<% if (1==2) { %>
 					<li><msh:link  action="ecom_release-201712.do">
 						декабрь 2017 года
 					</msh:link></li>
@@ -82,7 +95,7 @@
 					<li><msh:link  action="ecom_release-201501mkb.do">
 					Изменения в МКБ январь 2015 г.
                         </msh:link></li>
-					
+					<% } %>
 				</ul>
 				</div>
 			</tr>
