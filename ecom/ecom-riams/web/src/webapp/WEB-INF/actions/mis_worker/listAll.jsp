@@ -26,9 +26,12 @@
   	, case when wf.workFunction_id is not null then (select vwf.name from VocWorkFunction vwf where vwf.id=wf.workFunction_id) else '' end,case when wf.group_id is not null then (select gr.groupname from workfunction gr where gr.id=wf.group_id) else '' end as groufunc
   	, case when wf.archival='1' then 'Да' else 'Нет' end as isarch
   	, case when wf.archival='1' then 'color:red' else '' end as isarchStyle
+  	, wpl.name as cab
   	from worker w 
   	left join workFunction wf on w.id=wf.worker_id 
   	left join Patient wp on wp.id=w.person_id
+    left join workplace_workfunction wpwf on wpwf.workfunctions_id=wf.id
+    left join workplace wpl on wpl.id=wpwf.workplace_id
   	where w.lpu_id=${param.id}
   	order by wp.lastname,wp.firstname,wp.middlename
   	"/>
@@ -38,6 +41,7 @@
       <msh:tableColumn columnName="Должностные обязанности" property="3"/>
       <msh:tableColumn columnName="Групповая функция" property="4"/>
       <msh:tableColumn columnName="Архив" property="5"/>
+      <msh:tableColumn columnName="Кабинет" property="7"/>
     </msh:table>
   </tiles:put>
 </tiles:insert>
