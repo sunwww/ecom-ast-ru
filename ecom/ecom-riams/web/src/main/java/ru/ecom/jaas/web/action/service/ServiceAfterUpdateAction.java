@@ -32,14 +32,14 @@ public class ServiceAfterUpdateAction extends BaseAction {
             		+" values ('1','"+user.get1()+"','Обновление','Через 10 минут будет обновление системы МедОС'" 
             		+" ,'update_message','ecom_releases.do',current_date,cast('"+t1+"' as time),current_date,cast('"+t+"' as time),'0')") ;
         	}
-        } /* else {
+        }  else {
         	Collection<WebQueryResult> list = service.executeNativeSql("select su.login from secuser su where su.disabled = '0' or su.disabled is null") ;
         	for (WebQueryResult user:list) {
 	        	service.executeUpdateNativeSql("insert into CustomMessage (Recipient,MessageTitle,MessageText,Username,MessageUrl,DispatchDate,DispatchTime,issystem)" 
 	        		+" values ('"+user.get1()+"','Обновление','Произведено обновление системы. Информацию о последних изменений смотрите в новостях.'" 
 	        		+" ,'update_message','ecom_releases.do',current_date,current_time,'1')") ;
         	}
-        } */
+        }
         new InfoMessage(aRequest, "Сообщение об обновление отправлено всем пользователям") ;
         return new ActionForward(aMapping.findForward(SUCCESS)) ;
     }
