@@ -35,6 +35,10 @@
          font-size: 30px;
          margin-bottom: 10px;
      }
+    .rightAlign {
+        text-align:right;
+        margin-right:80px
+    }
     </style>
 <!-- Дополнительное определение стиля END -->
 
@@ -218,7 +222,7 @@
     	<tiles:insert attribute="hotkey" ignore="true"/>
     </div>
 
-    <div id="footer">
+    <div id="footer" class="rightAlign">
 
         <div id='gotoUpDown'><a class="gotoTop" href="#header">Вверх</a><a class="gotoBottom" href="#copyright">Вниз</a></div>
         <msh:ifInRole roles="/Policy/WebSocket/Queue">
