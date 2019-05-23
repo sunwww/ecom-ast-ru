@@ -125,7 +125,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                 " left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
                 " where m.datefinish = :dateTo and m.dtype='PolyclinicMedCase' and (m.noactuality is null or m.noactuality=false)" +
                 " and (m.upload is null or m.upload =false) and (vss.code=:sstream or vss.code is null)" +
-                " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0')" +
+                " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
                 " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
                 " and vis.visitResult_id!=11 and vis.parent_id = m.id) > 0" +
                 " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)")
