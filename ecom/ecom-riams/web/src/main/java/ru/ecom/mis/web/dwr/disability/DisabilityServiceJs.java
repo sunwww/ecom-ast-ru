@@ -864,9 +864,9 @@ public class DisabilityServiceJs {
      * @return Boolean true если есть ВК
      * @throws NamingException
      */
-    public Boolean getIfDisDocHasVK(String documentId,HttpServletRequest aRequest) throws NamingException {
+    public Boolean getIfDisDocHasVK(Long documentId,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest, null).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list = service.executeNativeSql("select id from disabilitysign  where code='vk' and disabilitydocumentid_id="+documentId);
+        Collection<WebQueryResult> list = service.executeNativeSql("select id from disabilityrecord where disabilitydocument_id="+documentId+" and workfunctionadd_id is not null");
         return !list.isEmpty();
     }
 }
