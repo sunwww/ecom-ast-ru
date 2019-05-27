@@ -74,10 +74,10 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * @param sstream VocServiceStream.code (по умолчанию - ОМС)
      * @return JSON in String
      */
-    public String getPolyclinicCase(Date dateTo, String sstream) {
+    public String getPolyclinicCase(Date dateTo, String sstream, Boolean isUpload) {
         JSONArray jTap = new JSONArray();
 
-            List<BigInteger> list = getAllVisitsBeforeDate(dateTo,sstream);
+            List<BigInteger> list = getAllVisitsBeforeDate(dateTo,sstream,isUpload);
             LOG.warn(list.size());
             for (int i = 0; i < list.size(); i++) {
                 JSONObject json = new JSONObject();
@@ -89,7 +89,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                 json.put(POLYCLINICID, polyclinicCaseId)
                         .put(ISCASEFINISHED,  "1");
 
-                List<ShortMedCase> allVisits = getAllVisitsInSpo(polyclinicCaseId);
+                List<ShortMedCase> allVisits = getAllVisitsInSpo(polyclinicCaseId,isUpload);
                 if (allVisits.isEmpty()) {
                     LOG.error("Законченный случай без визитов, быть такого не может");
                     return "";
@@ -118,7 +118,8 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * @param dateTo MedCase.dateFinish
      * @return List<BigInteger>
      */
-    private List<BigInteger> getAllVisitsBeforeDate(Date dateTo,String sstream) {
+    private List<BigInteger> getAllVisitsBeforeDate(Date dateTo,String sstream,Boolean isUpload) {
+        String upStr = isUpload? " and (m.upload is null or m.upload=false)" : "";
         return theManager.createNativeQuery("select m.id from medcase m " +
                 "left join vocservicestream vss on vss.id=m.servicestream_id" +
                 " left join workfunction wf on wf.id=m.finishfunction_id" +
@@ -128,7 +129,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                 " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
                 " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
                 " and vis.visitResult_id!=11 and vis.parent_id = m.id) > 0" +
-                " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)")
+                " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" + upStr)
                 .setParameter("dateTo",dateTo).setParameter("sstream",sstream).getResultList();
     }
     /**
@@ -151,8 +152,9 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * @param polyclinicCaseId
      * @return List<BigInteger>
      */
-    private List<ShortMedCase> getAllVisitsInSpo(Long polyclinicCaseId) {
-        return theManager.createQuery("from ShortMedCase where parent_id  = :parentId and (noActuality is null or noActuality='0') and dateStart is not null order by dateStart , timeExecute ")
+    private List<ShortMedCase> getAllVisitsInSpo(Long polyclinicCaseId,Boolean isUpload) {
+        String upStr = isUpload? " and (upload is null or upload=false)" : "";
+        return theManager.createQuery("from ShortMedCase where parent_id  = :parentId and (noActuality is null or noActuality='0') and dateStart is not null " + upStr + " order by dateStart , timeExecute ")
                 .setParameter("parentId",polyclinicCaseId).getResultList();
     }
     /**
@@ -253,6 +255,26 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
         return jsonVis;
     }
 
+    /**
+     * Получить весь визит в json
+     *
+     * @param medcase_id Long id случая
+     * @param tap_id String promed_id
+     * @return JSONObject
+     */
+    public String setEvnTap(Long medcase_id, String tap_id) {
+        JSONObject res = new JSONObject();
+        List<String> info=theManager.createNativeQuery("select promedcode from medcase where id=:medcaseId").setParameter("medcaseId",medcase_id).getResultList() ;
+        if (info.isEmpty()) {
+            res.put("status","error")
+                    .put("reason","medcase not found");
+        }
+        else {
+            theManager.createNativeQuery("update medcase set promedcode=:tapId,upload=true where id=:medcaseId").setParameter("tapId",tap_id).setParameter("medcaseId",medcase_id).executeUpdate();
+            res.put("status","Ok");
+        }
+        return res.toString();
+    }
     private @PersistenceContext
     EntityManager theManager;
 }

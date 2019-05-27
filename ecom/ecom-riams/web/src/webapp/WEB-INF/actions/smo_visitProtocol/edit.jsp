@@ -276,7 +276,7 @@ horizontalFill="true" />
                     try {
                         var text=$('record').value;
                         if ($('record').value.match(/^С начала СЛС: \d+ сутки\nС начала СЛО: \d+ сутки\n$/ig)==null
-						&& $('record').value.match(/^С начала СЛС: \d+ сутки\n$/ig)==null)
+						&& $('record').value.match(/^С начала СЛС: \d+ сутки\n$/ig)==null && $('record').value!='')
                         localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId+";"+currentUsername, $('record').value);
                     }catch(e) {}
                 }

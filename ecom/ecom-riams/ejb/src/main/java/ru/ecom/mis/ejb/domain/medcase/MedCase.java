@@ -469,4 +469,14 @@ abstract public class MedCase extends BaseEntity {
 	public void setUpload(Boolean upload) {
 		isUpload = upload;
 	}
+
+	/**Код в промеде**/
+	private String promedCode;
+	@Comment("Код в промеде")
+	public String getPromedCode() {
+		return promedCode;
+	}
+	public void setPromedCode(String promedCode) {
+		this.promedCode = promedCode;
+	}
 }
