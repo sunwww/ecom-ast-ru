@@ -1,7 +1,6 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -65,7 +64,7 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 	} else if (typeStatus.equals("9")) {
 		statusSql +=" and cl.freezeDate is not null and (cl.FinishDate is null or cl.cancelDate is null)";
 	}
-	if (typeUser!=null&&typeUser.equals("2")) {
+	if ("2".equals(typeUser)) {
 		statusSql += " and cl.startworkusername ='"+login+"'";
 	}
 	if (executorUserName!=null&&!executorUserName.equals("")) {

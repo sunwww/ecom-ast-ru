@@ -28,28 +28,29 @@ function onPreCreate(aForm, aCtx) {
 		}
 	}
 }
-function onCreate(aForm, aEntity, aCtx) { 
+function onCreate(aForm, aEntity, aCtx) {
+	var manager = aCtx.manager;
 	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 	if (aForm.attachedPolicies!="" && aForm.attachedPolicies>0) {
-		var medPolicyOmc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicies) ;
+		var medPolicyOmc = manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicies) ;
 		var mp1 = new Packages.ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy() ;
 		mp1.setPolicies(medPolicyOmc) ;
 		mp1.setMedCase(aEntity) ;
-		aCtx.manager.persist(mp1) ;
+		manager.persist(mp1) ;
 		//var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicies+"'" ;
 		//aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 	}	
 	if (aForm.attachedPolicyDmc!="" && aForm.attachedPolicyDmc>0) {
-		var medPolicyDmc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicyDmc) ;
+		var medPolicyDmc = manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicyDmc) ;
 		var mp2 = new Packages.ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy() ;
 		mp2.setPolicies(medPolicyDmc) ;
 		mp2.setMedCase(aEntity) ;
-		aCtx.manager.persist(mp2) ;
+		manager.persist(mp2) ;
 		//var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicyDmc+"'" ;
 		//aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 	}
 	if (aForm.pregnancyOrderNumber!=null && aForm.pregnancyOrderNumber>0) {
-		var list = aCtx.manager.createQuery("from Pregnancy where patient=:pat and orderNumber=:number")
+		var list = manager.createQuery("from Pregnancy where patient=:pat and orderNumber=:number")
 			.setParameter("pat",aEntity.patient)
 			.setParameter("number",aForm.pregnancyOrderNumber)
 			.getResultList() ;
@@ -61,16 +62,14 @@ function onCreate(aForm, aEntity, aCtx) {
 			preg.setOrderNumber(aForm.pregnancyOrderNumber) ;
 			preg.setChildbirthAmount(aForm.childbirthAmount) ;
 			preg.setPatient(aEntity.patient) ;
-			aCtx.manager.persist(preg) ;
+			manager.persist(preg) ;
 			//aEntity.setPregnancy(preg) ;
-
-			
 		}
 		aEntity.setPregnancy(preg) ;
 	}
     //Milamesher 28.08.2018 #108 - дополнение: при госпитализации пациента все открытые СПО закрываются датой последнего визита
 	//Закрытие всех СПО
-    var listSpoByPat = aCtx.manager.createNativeQuery("select id from medcase where dtype='PolyclinicMedCase' and datefinish is null and patient_id="+aEntity.patient.id).getResultList();
+    var listSpoByPat = manager.createNativeQuery("select id from medcase where dtype='PolyclinicMedCase' and datefinish is null and patient_id="+aEntity.patient.id).getResultList();
     for (var ind=0 ; ind< listSpoByPat.size() ; ind++) {
         var opSpoId = listSpoByPat.get(ind);
         closeSpo(aCtx,opSpoId);
@@ -80,6 +79,12 @@ function onCreate(aForm, aEntity, aCtx) {
 		list.setCreateUsername(aForm.username);
 		aCtx.manager.persist(list);
 
+	if (+aForm.preHosp>0) { //Если есть предварительная госпитализация - связываем её с госпитализацией
+		var preHosp = manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarHospitalBed,aForm.preHosp) ;
+		preHosp.setMedCase(aEntity);
+		manager.persist(preHosp);
+
+	}
 	chekIfOutOfReceivingDep(aForm,aEntity,aCtx);
 }
 //Закрытие СПО по id (взято с SmoVisitService) - датой последнего визита

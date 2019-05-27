@@ -31,9 +31,9 @@
                     left join vocworkfunction vwf on vwf.id=wf.workfunction_id
                     left join patient wpat on wpat.id=w.person_id
                     where pre.patient_id=${param.patient}
-                    order by pre.createdate
+                    order by pre.dateFrom
       "/>
-                <msh:table name="list" action="entityEdit-smo_planHospitalByVisit.do" idField="1" noDataMessage="Не найдено">
+                <msh:table name="list" action="entityView-stac_planHospital.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="Дата пред. госпитализации" property="2" />
                     <msh:tableColumn columnName="Отделение" property="3" />

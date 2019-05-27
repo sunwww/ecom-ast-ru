@@ -66,6 +66,7 @@
       <msh:hidden property="dischargeEpicrisis" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
       <msh:hidden property="reasonDischarge" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
       <msh:hidden property="rareCase"/>
+      <msh:hidden property="preHosp"/>
        <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
        	<msh:hidden property="hotelServices"/>
        </msh:ifNotInRole>
@@ -384,6 +385,7 @@
                          ret = JSON.parse(ret);
                          if (ret.length>0) {
                              ret = ret[0];
+                             $('preHosp').value='${param.preHosp}';
                              $('serviceStream').value = ret.serviceStream;
                              $('serviceStreamName').value = ret.serviceStreamName;
                              $('orderLpu').value=ret.orderLpu;

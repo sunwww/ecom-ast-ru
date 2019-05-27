@@ -118,20 +118,27 @@
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-stac_planHospital" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
-      	<msh:sideLink key="CTRL+2" params="id" action="/print-planHospital.do?m=printPlanHospital&s=VisitPrintService" name="Предварительной госпитализации"/>
+      	<msh:sideLink key="CTRL+2" params="id" action="/print-documentDirection1.do?m=printPlanHospital&s=VisitPrintService" name="Предварительной госпитализации"/>
       </msh:sideMenu>
       <msh:sideMenu title="Дополнительно">
       	<msh:sideLink name="Журнал по предварительной госпитализации" action="/stac_planning_hospitalizations.do"/>
+      	<msh:sideLink name="Госпитализировать" action="/javascript:createHosp()"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
   
   <tiles:put name="javascript" type="string">
+      <script type="text/javascript">
+          function createHosp() {
+              window.document.location='entityParentPrepareCreate-stac_sslAdmission.do?id='+$('patient').value+'&preHosp=${param.id}';
+          }
+      </script>
   	<msh:ifFormTypeIsNotView formName="stac_planHospitalForm">
   	<script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
   	<script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
 
   	<script type="text/javascript">
+
   		initPersonPatientDialog();
   		patientAutocomplete.addOnChangeCallback(function() {
   		    if ($('patient').value) {

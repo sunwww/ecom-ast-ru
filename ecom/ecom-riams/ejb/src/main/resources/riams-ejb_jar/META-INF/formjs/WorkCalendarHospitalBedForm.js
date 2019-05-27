@@ -1,5 +1,7 @@
 function onPreSave(aForm, aEntity, aCtx) {
 	checkDouble(aForm.patient, aForm.dateFrom, aForm.id, aCtx);
+	var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
+	aForm.setWorkFunction(wf.id) ;
 }
 /**
  * Перед сохранением

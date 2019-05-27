@@ -1,22 +1,13 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
@@ -44,6 +35,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 	@AEntityFormInterceptor(AdmissionSaveInterceptor.class)
 })
 public class AdmissionMedCaseForm extends HospitalMedCaseForm {
+
+	/** Предварительная госпитализация */
+	@Comment("Предварительная госпитализация")
+	public Long getPreHosp() {return thePreHosp;}
+	public void setPreHosp(Long aPreHosp) {thePreHosp = aPreHosp;}
+	/** Предварительная госпитализация */
+	private Long thePreHosp ;
+
 	/** Дата начала */
 	@Comment("Дата начала") 
 	@DateString @DoDateString 

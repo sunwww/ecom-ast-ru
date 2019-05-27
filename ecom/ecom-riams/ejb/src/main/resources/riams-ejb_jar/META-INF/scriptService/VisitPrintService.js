@@ -177,14 +177,14 @@ function printPlanHospital(aCtx,aParams) {
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
 	map.put("diagnosis",recordMultiText(doc.diagnosis)) ;
 	var wf = doc.workFunction ;
-	var pers = wf.worker!=null?wf.worker.person:null;
+	var pers = wf!=null && wf.worker!=null ? wf.worker.person : null;
 	var spec = "_____________________" ;
 	if (pers!=null) {
 		spec=pers.lastname+" "+pers.firstname+" "+pers.middlename
 	} 
-	map.put("specCODE",wf.code!=null?wf.code:"_____________") ;
-	map.put("doc.workFunctionInfo",(wf.workFunction!=null?wf.workFunction.name:"_____________")+" " + spec) ;
-	map.put("doc.date",medCase.dateStart!=null?FORMAT_2.format(medCase.dateStart):"") ;
+	map.put("specCODE",wf!=null && wf.code!=null?wf.code:"_____________") ;
+	map.put("doc.workFunctionInfo",(wf!=null && wf.workFunction!=null ? wf.workFunction.name : "_____________")+" " + spec) ;
+	map.put("doc.date",medCase!=null && medCase.dateStart!=null?FORMAT_2.format(medCase.dateStart):"") ;
 	map.put("doc.plandate",doc.dateFrom!=null?FORMAT_2.format(doc.dateFrom):"") ;
 	map.put("doc.mkbCode",doc.idc10!=null?doc.idc10.code:"") ;
 	map.put("department",doc.department!=null?doc.department.name:"") ;
@@ -193,27 +193,21 @@ function printPlanHospital(aCtx,aParams) {
 }
 function parseInt(aNumeric) {
 	if (+aNumeric>0){} else{ return "0 руб 00 коп" ;}
-	var ret = "" ;
 	var value = new java.math.BigDecimal(aNumeric) ;
 	var kop =(+aNumeric % 1).toFixed(2).slice(2) ;
 	var rub = value.intValue();
-	ret = ""+rub+" руб. "+kop+" коп." ;
-	
-	return ret ;
+	return ""+rub+" руб. "+kop+" коп." ;
 }
 function parseSymRub(aNumeric) {
 	if (+aNumeric>0){} else{ return "ноль руб 00 коп" ;}
 	var value = new java.math.BigDecimal(aNumeric) ;
 	var kop =(+aNumeric % 1).toFixed(2).slice(2) ;
-	//if (kop<10) kop="0"+kop ;
-	 
 	return Packages.ru.ecom.ejb.services.util.ConvertSql.toWords(value)+" руб. "+ kop +" коп." ;
 }
 
-
 function refenceSMO(aCtx,aParams) {
 	var map = new java.util.HashMap() ;
-	referenceSMOmap(aCtx,aParams,map)
+	referenceSMOmap(aCtx,aParams,map);
 	return map ;
 }
 function referenceSMOmap(aCtx,aParams,aMap) {
