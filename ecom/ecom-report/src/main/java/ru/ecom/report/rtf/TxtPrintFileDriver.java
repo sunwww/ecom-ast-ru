@@ -141,14 +141,46 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             throw new RtfPrintException("Ошибка печати",e);
         }
     }
+
+	/**
+	 * Вернуть файл с символами для замены перед печатью на матричном принтере
+	 *
+	 * @return File
+	 */
+    private File getTxtMatrixFile() {
+		return new File(theTemplateDir, "bad_matrix_change.txt") ;
+	}
+
+	/**
+	 * Заменить в строке недопустимые для печати символы
+	 *
+	 * @param outStr String Строка, в которой нужно заменить символы
+	 * @return String изменённая строка
+	 */
+	private String changeStringForMatrixPrinter(String outStr) {
+		String res=outStr;
+		String line ;
+		try (LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(getTxtMatrixFile()), "UTF-8"))) {
+			while ( (line=in.readLine())!=null) {
+				String[] syms = line.split(" ");
+				if (!syms[0].equals("") && !syms[1].equals("") && !syms[1].equals("?")) {
+					res=res.replace(syms[0],syms[1]);
+				}
+			}
+		} catch (FileNotFoundException fe) {
+			fe.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
     private  void recordLine(PrintWriter aOut,ReplaceHelper aReplaceHelper, IValueGetter aValueGetter, String aLine) {
     	try {
-    		String outStr = aReplaceHelper.replaceWithValues(aLine, aValueGetter).toString();
-    		getMultyLine(outStr, aOut) ;
+			String outStr = aReplaceHelper.replaceWithValues(aLine, aValueGetter).toString();
+    		getMultyLine(changeStringForMatrixPrinter(outStr), aOut) ;
     	} catch (SetValueException e) {
     		e.printStackTrace();
     	}
-    	
     }
     private  void forLine(PrintWriter aOut,ReplaceHelper aReplaceHelper, IValueGetter aValueGetter,String aParam, String aLine) {
 		try {
@@ -258,7 +290,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
     		
     		
     	}
-    	if (print) aOut.println(aStr.replace("–","-")) ;
+    	if (print) aOut.println(aStr/*.replace("–","-")*/) ;
 
     }
 	
