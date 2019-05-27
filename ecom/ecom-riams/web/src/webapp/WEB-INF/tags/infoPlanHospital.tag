@@ -25,8 +25,9 @@
      <td align="center" width="350"><b>Диагноз</b></td>
      <td align="center" width="250"><b>Отделение</b></td> 
      <td align="center" width="180"><b>Врач</b></td>
-    </tr> 
- </table>  
+     <td align="center" width="180"></td>
+    </tr>
+ </table>
  <table><tr height="15"> <td></td><td></tr> </table>
  <div align="center"><input type="button" value='Закрыть' id="${name}Cancel" onclick='javascript:the${name}CloseDocumentDialog.hide() ;'/></div>
  </form>
@@ -36,6 +37,9 @@
 <script type="text/javascript">
      var theIs${name}CloseDocumentDialogInitialized = false ;
      var the${name}CloseDocumentDialog = new msh.widget.Dialog($('${name}CloseDocumentDialog')) ;
+     function editPre(id) {
+         window.location = 'entityEdit-smo_planHospitalByVisit.do?id='+id;
+     }
 
      function show${name}CloseDocument() {
          HospitalMedCaseService.prevPlanHospital($('patient').value, {
@@ -55,10 +59,13 @@
                          td3.appendChild(document.createTextNode(obj.lpu));
                          var td4 = document.createElement('td');
                          td4.appendChild(document.createTextNode(obj.fiopost));
+                         var td5 = document.createElement('td');
+                         td5.innerHTML="<input type='button' onclick='editPre("+obj.id+")' value='ИЗМЕНИТЬ'>";
                          row.appendChild(td1);
                          row.appendChild(td2);
                          row.appendChild(td3);
                          row.appendChild(td4);
+                         row.appendChild(td5);
                          table.appendChild(row);
                      }
                      the${name}CloseDocumentDialog.show() ;

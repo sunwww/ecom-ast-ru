@@ -33,6 +33,16 @@ import java.util.List;
 public class HospitalMedCaseServiceJs {
 	private static final Logger LOG = Logger.getLogger(HospitalMedCaseServiceJs.class);
 
+	/*Количество пред. госпитализаций за месяц*/
+	public String getPreHospByMonth(Integer aYear, Integer aMonth, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select cast(to_char(pre.datefrom,'dd') as int) as dat, count(pre.id) as cnt" +
+				" from workcalendarhospitalbed pre" +
+				" where to_char(pre.datefrom,'MM.yyyy')='"+(aMonth>9?aMonth:"0"+aMonth)+"."+aYear+"'" +
+				" group by to_char(pre.datefrom,'dd')" +
+				" order by cast(to_char(pre.datefrom,'dd') as int)";
+		return service.executeNativeSqlGetJSON(new String[] {"monthDate","amount"},sql,31);
+	}
 	/**
 	 * Информация о направлении на госпитализацию для автоматического заполнения госпитализации
 	 * */
@@ -1946,6 +1956,7 @@ public class HospitalMedCaseServiceJs {
     	String query="select distinct to_char(wchb.datefrom,'dd.mm.yyyy')" +
 				" ,wchb.diagnosis,m.name" +
 				" ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as fiopost" +
+				" ,wchb.id as f5_preId" +
 				" from workcalendarhospitalbed wchb" +
 				" left join mislpu m on wchb.department_id=m.id" +
 				" left join medcase mc on wchb.patient_id=mc.patient_id" +
@@ -1958,6 +1969,7 @@ public class HospitalMedCaseServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(query);
 		for (WebQueryResult w :list) {
 			JSONObject o = new JSONObject() ;
+			o.put("id",w.get5());
 			o.put("date", w.get1())
 					.put("diagnosis", w.get2())
 					.put("lpu", w.get3())
