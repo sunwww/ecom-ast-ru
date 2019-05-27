@@ -7,10 +7,7 @@ import ru.ecom.web.util.Injection;
 import javax.jws.WebParam;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.text.ParseException;
@@ -28,16 +25,40 @@ public class PolyclinicResource {
      * @param aToken String
      * @param dateTo String Дата окончания случая в формате yyyy-MM-dd
      * @param sstream String Код потока обслуживания
+     * @param isUpload Boolean Если true, то не возвращать выгруженные
      * @return JSON in String
      */
     public String getPolyclinicCase(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken
             , @QueryParam("dateTo") String dateTo, @QueryParam("sstream") String sstream
+            , @QueryParam("isUpload") Boolean isUpload
     ) throws NamingException, ParseException {
         if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
         ApiUtil.init(aRequest,aToken);
+        if (isUpload==null) isUpload=false;
         IApiPolyclinicService service =Injection.find(aRequest).getService(IApiPolyclinicService.class);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         if (sstream==null || sstream.equals("")) sstream="OBLIGATORYINSURANCE";
-        return service.getPolyclinicCase(new java.sql.Date(format.parse(dateTo).getTime()),sstream);
+        return service.getPolyclinicCase(new java.sql.Date(format.parse(dateTo).getTime()),sstream,isUpload);
+    }
+
+    @POST
+    @Path("setEvnTap")
+    @Produces(MediaType.APPLICATION_JSON)
+    /**
+     * Установить случаю promed_id и отметку о выгрузке.
+     *
+     * @param aRequest HttpServletRequest
+     * @param aToken String
+     * @param medcase_id Long id случая
+     * @param tap_id String promed_id
+     * @return JSON in String
+     */
+    public String setEvnTap(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken
+            , @QueryParam("medcase_id") Long medcase_id, @QueryParam("tap_id") String tap_id
+    ) throws NamingException {
+        if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
+        ApiUtil.init(aRequest,aToken);
+        IApiPolyclinicService service =Injection.find(aRequest).getService(IApiPolyclinicService.class);
+        return service.setEvnTap(medcase_id,tap_id);
     }
 }
