@@ -50,6 +50,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
     private static final String FIRSTVISITID="firstVisit";              //id первого визита
     private static final String VISITRESULT="ResultClass_id";           //результат обращения (обязательно, если случай закончен)
     private static final String DIAGRES="Diag_lid";                     //заключительный диагноз
+    private static final String DIAGMKB="Diag_code";                     //заключительный диагноз (код МКБ)
     private static final String DIARY="diary";                          //заключение
     private static final String DOCTORWF="doctorWf";                    //должность врача
     private static final String DOCTORLASTNAME="doctorLastname";        //ФИО врача
@@ -79,37 +80,42 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
 
             List<BigInteger> list = getAllVisitsBeforeDate(dateTo,sstream,isUpload);
             LOG.warn(list.size());
-            for (int i = 0; i < list.size(); i++) {
-                JSONObject json = new JSONObject();
+        for (BigInteger bigInteger : list) {
+            JSONObject json = new JSONObject();
 
-                Long polyclinicCaseId = list.get(i).longValue();
+            Long polyclinicCaseId = bigInteger.longValue();
 
-                PolyclinicMedCase polyclinicCase = theManager.find(PolyclinicMedCase.class, polyclinicCaseId);
+            PolyclinicMedCase polyclinicCase = theManager.find(PolyclinicMedCase.class, polyclinicCaseId);
 
-                json.put(POLYCLINICID, polyclinicCaseId)
-                        .put(ISCASEFINISHED,  "1");
+            json.put(POLYCLINICID, polyclinicCaseId)
+                    .put(ISCASEFINISHED, "1");
 
-                List<ShortMedCase> allVisits = getAllVisitsInSpo(polyclinicCaseId,isUpload);
-                if (allVisits.isEmpty()) {
-                    LOG.error("Законченный случай без визитов, быть такого не может");
-                    return "";
-                }
-                ShortMedCase lastVisit= allVisits.get(allVisits.size()-1);
-                if (lastVisit != null && lastVisit.getVisitResult() != null) {
-                    json.put(VISITRESULT, lastVisit.getVisitResult().getCodefpl());
-                    json.put(DIAGRES, getPromedCodeFromDiagnosisInVisit(lastVisit.getId()));
-                }
-
-                Long firstResultId = allVisits.get(0).getId();
-                JSONArray jVisit = new JSONArray();
-
-                for (ShortMedCase visit : allVisits)
-                    jVisit.put(getVisitInJson(visit,firstResultId));
-
-                json.put(PATIENT, getPatient(polyclinicCase));
-                json.put(VISITS, jVisit);
-                jTap.put(json);
+            List<ShortMedCase> allVisits = getAllVisitsInSpo(polyclinicCaseId, isUpload);
+            if (allVisits.isEmpty()) {
+                LOG.error("Законченный случай без визитов, быть такого не может");
+                return "";
             }
+            ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
+            if (lastVisit != null && lastVisit.getVisitResult() != null) {
+                json.put(VISITRESULT, lastVisit.getVisitResult().getCodefpl());
+                Object[] ds = getDiagnosisFromDiagnosisInVisit(lastVisit.getId());
+                if (ds != null) {
+                    json.put(DIAGRES, ds[0]);
+                    json.put(DIAGMKB, ds[1]);
+                }
+
+            }
+
+            Long firstResultId = allVisits.get(0).getId();
+            JSONArray jVisit = new JSONArray();
+
+            for (ShortMedCase visit : allVisits)
+                jVisit.put(getVisitInJson(visit, firstResultId));
+
+            json.put(PATIENT, getPatient(polyclinicCase));
+            json.put(VISITS, jVisit);
+            jTap.put(json);
+        }
         return new JSONObject().put(CACES, jTap).toString();
     }
     /**
@@ -119,7 +125,6 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * @return List<BigInteger>
      */
     private List<BigInteger> getAllVisitsBeforeDate(Date dateTo,String sstream,Boolean isUpload) {
-        String upStr = isUpload? " and (m.upload is null or m.upload=false)" : "";
         return theManager.createNativeQuery("select m.id from medcase m " +
                 "left join vocservicestream vss on vss.id=m.servicestream_id" +
                 " left join workfunction wf on wf.id=m.finishfunction_id" +
@@ -129,7 +134,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                 " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
                 " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
                 " and vis.visitResult_id!=11 and vis.parent_id = m.id) > 0" +
-                " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" + upStr)
+                " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" +  (isUpload? " and (m.upload is null or m.upload=false)" : ""))
                 .setParameter("dateTo",dateTo).setParameter("sstream",sstream).getResultList();
     }
     /**
@@ -138,8 +143,8 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * @param visitId
      * @return Long
      */
-    private String getPromedCodeFromDiagnosisInVisit(Long visitId) {
-        List<String> mkbPromedCode=theManager.createNativeQuery("select mkb.promedCode" +
+    private Object[] getDiagnosisFromDiagnosisInVisit(Long visitId) {
+        List<String[]> mkbPromedCode=theManager.createNativeQuery("select mkb.promedCode as dPromed,mkb.code as dCode" +
                 " from diagnosis ds"+
                 " left join vocidc10 mkb on mkb.id=ds.idc10_id"+
                 " left join vocprioritydiagnosis vpd on vpd.id=ds.priority_id"+
@@ -232,13 +237,12 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      */
     private JSONObject getVisitInJson(ShortMedCase visit,Long firstResultId) {
         JSONObject jsonVis = new JSONObject();
-
         WorkFunction wf = visit.getWorkFunctionExecute();
         VocReason vr = visit.getVisitReason();
         VocWorkPlaceType vwr = visit.getWorkPlaceType();
         VocServiceStream vss = visit.getServiceStream();
         VocHospitalization vh = visit.getHospitalization();
-        jsonVis.put(DATETIMEVISIT, visit.getDateStart()+""+ (visit.getTimeExecute()==null ? "" : visit.getTimeExecute()))
+        jsonVis.put(DATETIMEVISIT, visit.getDateStart()+" "+ (visit.getTimeExecute()==null ? "" : visit.getTimeExecute()))
                 .put(WFLPUSECTIION,  wf.getPromedCodeLpuSection())
                 .put(WORKSTAFF, wf.getPromedCodeWorkstaff())
                 .put(WORKPLACETYPE, (vwr==null || vwr.getOmcCode()==null)? "" : vwr.getOmcCode())
@@ -249,9 +253,14 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                 .put(MEDCICALCARE, MEDCICALCAREVAL)
                 .put(VISITID, visit.getId())
                 .put(FIRSTVISITID, (visit.getId() == firstResultId) ? "true" : "false")
-                .put(DIAGRES, getPromedCodeFromDiagnosisInVisit(visit.getId()))
+         //       .put(DIAGRES, getPromedCodeFromDiagnosisInVisit(visit.getId()))
                 .put(DIARY,getDiaryInVisit(visit.getId()))
                 .put(WORKSTAFFINFO,getDoctorInfoInJson(wf));
+        Object[] ds = getDiagnosisFromDiagnosisInVisit(visit.getId());
+        if (ds!=null) {
+            jsonVis.put(DIAGRES,ds[0]);
+            jsonVis.put(DIAGMKB,ds[1]);
+        }
         return jsonVis;
     }
 
@@ -268,8 +277,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
         if (info.isEmpty()) {
             res.put("status","error")
                     .put("reason","medcase not found");
-        }
-        else {
+        } else {
             theManager.createNativeQuery("update medcase set promedcode=:tapId,upload=true where id=:medcaseId").setParameter("tapId",tap_id).setParameter("medcaseId",medcase_id).executeUpdate();
             res.put("status","Ok");
         }

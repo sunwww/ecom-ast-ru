@@ -59,7 +59,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
             findSql.append(" and birthday=to_date('").append(DateFormat.formatToDate(aBirthdate)).append("','dd.MM.yyyy')");
         }
         List<BigInteger> list = theManager.createNativeQuery(findSql.toString()).getResultList();
-        if (list.isEmpty() || list.size()>1) {
+        if (list.size() != 1) {
             LOG.warn("search patient sql = "+findSql+" .found = "+list.size());
             return null;
         }
@@ -72,7 +72,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
     public String recordPromedPatient(String aPromedDoctorId, String aLastname, String aFirstname, String aMiddlename, Date aBirthdate, Date aCalendarDate, Time aCalendarTime, String aPhone) {
         List<WorkFunction> workFunctions = theManager.createQuery("from WorkFunction where promedCodeWorkstaff=:promedCode")
                 .setParameter("promedCode",aPromedDoctorId).getResultList();
-        if (workFunctions.isEmpty() || workFunctions.size()>1) {
+        if (workFunctions.size() != 1) {
             LOG.error("Невозможно записать пациента, т.к. по коду "+aPromedDoctorId+" найдено "+workFunctions.size()+" рабочих функций");
             return getErrorJson("По коду "+aPromedDoctorId+" не найдено рабочей функции","NO_PROMED_DOCTOR");
         }
@@ -261,7 +261,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         //LOG.info("record File "+aFilename+"<>"+aPatientId+"<>"+aMedcaseId+"<>"+aCalendartimeId+"<>"+aDebug);
         aFilename = saveFile(aFilename,base64String);
         if (aFilename!=null) { //Файл сохранен в нужную папку, создаем "сущность"
-            Long currentDateLong = System.currentTimeMillis();
+            long currentDateLong = System.currentTimeMillis();
             String username = "ApiClient "+theContext.getCallerPrincipal().getName();
             ExternalDocument document = new ExternalDocument();
             document.setCreateDate(new Date(currentDateLong));
