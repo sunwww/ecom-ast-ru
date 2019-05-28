@@ -36,14 +36,14 @@ public class HospitalMedCaseServiceJs {
 
 	/**Календарь с предварительной госпитализацией*/
 
-	public String getPreHospCalendar(Integer aMonth, Integer aYear, HttpServletRequest aRequest) throws NamingException {
+	public String getPreHospCalendar( Integer aYear, Integer aMonth, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		JSONArray preHosps = new JSONArray(getPreHospByMonth( aYear,aMonth,aRequest));
 		StringBuilder res = new StringBuilder();
 		res.append("<form name='frmDate' id='frmDate' action='javascript:step5()'>");
 		res.append("<span class = 'spanNavigMonth'>");
 		if (aMonth == 1) {
-			res.append("<a href=\"javascript:nextMonth(")
+			res.append("<a href=\"javascript:showPreHospCalendar('")
 					.append(getMonth(12, false))
 					.append("','").append(aYear - 1);
 			res.append("');\">")
@@ -51,7 +51,7 @@ public class HospitalMedCaseServiceJs {
 					//.append(getMonth(12,true)).append(" ").append(Integer.valueOf(aYear)-1)
 					.append("</a> ");
 		} else {
-			res.append("<a href=\"javascript:nextMonth(")
+			res.append("<a href=\"javascript:showPreHospCalendar('")
 					.append(getMonth(aMonth - 1, false))
 					.append("','").append(aYear);
 			res.append("');\">").append("<-")
@@ -60,7 +60,7 @@ public class HospitalMedCaseServiceJs {
 		}
 		res.append(" ").append(getMonth(aMonth, true).toUpperCase()).append(" ").append(aYear);
 		if (aMonth == 12) {
-			res.append(" <a href=\"javascript:nextMonth(")
+			res.append(" <a href=\"javascript:showPreHospCalendar('")
 					.append(getMonth(1, false))
 					.append("','").append(aYear + 1);
 			res.append("');\">")
@@ -68,9 +68,9 @@ public class HospitalMedCaseServiceJs {
 					//.append(" ").append(Integer.valueOf(aYear)+1)
 					.append("-></a>");
 		} else {
-			res.append("<a href=\"javascript:nextMonth(")
+			res.append("<a href=\"javascript:showPreHospCalendar('")
 					.append(getMonth(aMonth + 1, false))
-					.append("','").append(Integer.valueOf(aYear));
+					.append("','").append(aYear);
 			res.append("');\">-></a> ");
 		}
 		res.append("</span>");
@@ -96,15 +96,16 @@ public class HospitalMedCaseServiceJs {
 				.append("<th>Пят</th>")
 				.append("<th>Суб</th>")
 				.append("<th>Вос</th>")
-				.append("<tr>");
+				.append("</tr>");
 
 		res.append("<tr>");
 		res.append(getFreeDay(0, week, false, 1));
-WebQueryResult wqr = new WebQueryResult();
 		for (int i=0;i<preHosps.length();i++) {
 			JSONObject preHosp = preHosps.getJSONObject(i);
 			//oldday = Integer.valueOf(""+wqr.get3()) ;
-			oldday = Integer.parseInt("" + wqr.get3());
+            int monthDate = preHosp.getInt("monthDate");
+            int amount = preHosp.getInt("amount");
+			oldday =  monthDate;
 			res.append(getFreeDay(day, oldday, true, week));
 			week = (week + oldday - day) % 7;
 			if (week == 0) week = 7;
@@ -112,17 +113,14 @@ WebQueryResult wqr = new WebQueryResult();
 			if (week > 7) {
 				res.append("</tr><tr>");
 			}
-			//	boolean isBusy = Integer.valueOf(""+wqr.get4())==0?true:false ;
-			boolean isBusy = Integer.parseInt("" + wqr.get4()) == 0;
-			res.append("<td id='tdDay").append(wqr.get3()).append("'");
+			boolean isBusy = amount == 0;
+			res.append("<td id='tdDay").append(monthDate).append("'");
 			//if (true) {
-			res.append("onclick=\"showPreHospByDate(this,'").append(wqr.get1())
-					.append("','").append(wqr.get2());
-
+			res.append("onclick=\"showPreHospByDate(this,'").append(preHosp.getString("calendarDate"));
 			res.append("')\"");
 			res.append(" class='").append(isBusy ? "busyDay" : "visitDay").append("'>");
-			res.append(isBusy ? "" : "<b>").append(Integer.valueOf("" + wqr.get3()));
-			res.append(" <br>(").append(wqr.get5()).append("/").append(wqr.get6()).append(")");
+			res.append(isBusy ? "" : "<b>").append(monthDate);
+			res.append(" <br>(").append(amount).append(")");
 			res.append(isBusy ? "" : "</b>").append("</td>");
 			day = oldday + 1;
 		}
@@ -212,12 +210,12 @@ WebQueryResult wqr = new WebQueryResult();
 	/*Количество пред. госпитализаций за месяц*/
 	public String getPreHospByMonth(Integer aYear, Integer aMonth, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select cast(to_char(pre.datefrom,'dd') as int) as dat, count(pre.id) as cnt" +
+		String sql = "select to_char(pre.datefrom,'dd.MM.yyyy'), cast(to_char(pre.datefrom,'dd') as int) as dat, count(pre.id) as cnt" +
 				" from workcalendarhospitalbed pre" +
 				" where to_char(pre.datefrom,'MM.yyyy')='"+(aMonth>9?aMonth:"0"+aMonth)+"."+aYear+"'" +
-				" group by to_char(pre.datefrom,'dd')" +
-				" order by cast(to_char(pre.datefrom,'dd') as int)";
-		return service.executeNativeSqlGetJSON(new String[] {"monthDate","amount"},sql,31);
+				" group by pre.datefrom" +
+				" order by pre.datefrom";
+		return service.executeNativeSqlGetJSON(new String[] {"calendarDate","monthDate","amount"},sql,31);
 	}
 	/**
 	 * Информация о направлении на госпитализацию для автоматического заполнения госпитализации

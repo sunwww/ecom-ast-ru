@@ -10,19 +10,188 @@
       String typeStatus = ActionUtil.updateParameter("ClaimList","typeStatus","1", request) ;
       %>
   <tiles:put name="style" type="string">
-  	<style type="text/css">
+      <style type="text/css">
 
-  	span.discharge {
-  		list-style:none outside none;
-  		background-color: #33cc66;
-  	}
-  	span.current {
-  		list-style:none outside none;
-  		
-  	}
-  	
+          ul#listSpecialists li,ul#listDates li,ul#listTimes li,ul#listPatients li
+          ,ul#listFunctions li {
+              list-style:none outside none;
+          }
+          li#liTime:HOVER,ul#listPatients li:HOVER,ul#listSpecialists li:HOVER
+          ,ul#listFunctions li:HOVER,.busyDay:HOVER,.selectedVisitDay:HOVER
+          ,.selectedBusyDay:HOVER
+          ,.visitDay:HOVER
+          {
+              cursor: pointer;
 
-  	</style>
+          }
+          .preDirectRemoteUsername {
+              color:#fff ;
+
+          }
+          .directRemoteUsername {
+              color:#fff ;
+          }
+          .freeDay{
+              background-color: #DDD;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+          }
+          .busyDay{
+              background-color: #ff3333;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+          }
+          .selectedVisitDay {
+              background-color: navy;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+              color: white;
+          }
+          .selectedVisitDay:HOVER{
+              background-color: #4D90FE;
+              /*font-size: medium;*/
+              color:black;
+              font-weight: bolder;
+              text-align: center;
+          }
+          .selectedBusyDay {
+              background-color: pink;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+              color: white;
+          }
+          .selectedBusyDay:HOVER{
+              background-color: #4D90FE;
+              /*font-size: medium;*/
+              color:black;
+              font-weight: bolder;
+              text-align: center;
+          }
+          .visitDay {
+              background-color: #0066cc;
+              color:white;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+          }
+          .visitDay:HOVER{
+              background-color: #4D90FE;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+              color:black;
+          }
+          .listDates {
+              border: 2px;
+              padding: 2px;
+              margin: 2px;
+              border: 2px black outset;
+          }
+          .listDates td,.listDates th {
+              border: 2px black outset;
+          }
+          .listDates th {
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+              background-color: #BBCCFF;
+
+          }
+          .spanNavigMonth {
+              /*font-size: medium;*/
+              font-weight: bolder;
+          }
+          .spanNavigMonth a{
+              /*font-size: medium;*/
+              font-weight: bolder;
+          }
+          .spanNavigMonth a:HOVER{
+              /*font-size: medium;*/
+              font-weight: bolder;
+              background-color: yellow;
+          }
+
+          ul li.title {
+              font-weight: bolder;
+          }
+          ul.listTimes {
+              margin-left: 0;
+              padding-left: 0;
+          }
+          ul.listTimes li ul.ulTime {
+              margin-left: 0;
+              padding: 0;
+
+              display: list-item;
+              list-style: none;
+              /*font-size: medium;*/
+          }
+          ul.listTimes li ul.ulTime li#liTimeDirect{
+              margin-left:  0;
+              padding-left:0;
+              list-style: none;
+              /*font-size: medium;*/
+              background-color: #ff3333;
+              font-weight: bold;
+          }
+          ul.listTimes li ul.ulTime li#liTimeBusyForRemoteUser{
+              margin-left:  0;
+              padding-left:0;
+              list-style: none;
+              /*font-size: medium;*/
+              background-color: red;
+              font-weight: bold;
+          }
+          ul#listDirects li.liTimeDirect {
+              background-color: #ff3333;
+              border-top: 1px solid;
+
+          }
+          ul#listDirects li.liTimePre {
+              background-color: #33cc66;
+              border-top: 1px solid;
+
+          }
+          li.liList{
+              padding: 0;
+          }
+          ul.listTimes li ul.ulTime li#liTimePre{
+              margin-left:  0;
+              padding-left: 0;
+              list-style: none;
+              /*font-size: medium;*/
+              background-color: #33cc66;
+              font-weight: bold;
+          }
+          ul.listTimes {
+              margin: 0;
+              padding: 0;
+              display: inline;
+          }
+
+          ul.listTimes li {
+              padding-bottom: 0px ;
+              padding-top: 0px ;
+              padding-left: 0px ;
+              padding-right: 0px ;
+              list-style: none;
+              display: inline;
+          }
+
+          ul.listTimes li.first {
+              margin-left: 0;
+              border-left: none;
+              list-style: none;
+              display: inline;
+          }
+          /*
+          input.radio {
+          display: none ;}*/
+      </style>
   </tiles:put>
   <tiles:put name="body" type="string">
    <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View">
@@ -72,46 +241,22 @@
     <script type="text/javascript">
         checkFieldUpdate('typeStatus','${param.typeStatus}','1');
 
-    //    makeCalc();
-
-
-        function makeCalc() {
-            var dt = new Date();
-            var allDates ={};
-            HospitalMedCaseService.getPreHospByMonth(dt.getFullYear(),dt.getMonth(), {
-                callback:function(inf) {
-                  //  console.log(inf);
-                    allDates = JSON.parse(inf);
-                    jQuery('#dPicker').datepicker({
-                        regional:"ru"
-                        ,dateFormat:"dd.mm.yy"
-                        ,onSelect: function(date, obj){
-                            console.log('date='+date+"</>");
-                            jQuery("#dPickerData").load("js-mis_hospitalBed-listByDate.do?startDate="+date+"&finishDate="+date);
-                        }
-                        ,onChangeMonthYear: function(y,m,cal) {
-                            console.log("changed month");
-                         //   makeCalc()
-                        }
-                        ,beforeShowDay:function (day) {
-                            return [true,"dayNumber dateAmount:"+day.getDate()];
-
-                        }
-
-                    });
-       /*             jQuery('.dayNumber').each(function(a,b){
-                        var am = jQuery(b).attr('class').trim().split(" ")[1].split(":")[0];
-                       //console.log(jQuery(b).children(':first').html());
-
-                        jQuery(b).children(':first').append(am);
-                    });*/
+        showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());
+        function showPreHospCalendar(month,year) {
+            HospitalMedCaseService.getPreHospCalendar(year,month,{
+                callback: function(html) {
+                    jQuery('#dPicker').html(html);
                 }
             });
         }
 
-        /**примечание на день */
-        function setDateComment(aDate) {
+        function showPreHospByDate(el,date) {
+            jQuery('.selectedVisitDay').each(function(i,el){
+                jQuery(el).attr('class','visitDay');
+            });
+            jQuery(el).attr('class','selectedVisitDay');
 
+            jQuery("#dPickerData").load("js-mis_hospitalBed-listByDate.do?startDate="+date+"&finishDate="+date+" .sectionContent");
         }
 
         function checkFieldUpdate(aField,aValue,aDefaultValue) {

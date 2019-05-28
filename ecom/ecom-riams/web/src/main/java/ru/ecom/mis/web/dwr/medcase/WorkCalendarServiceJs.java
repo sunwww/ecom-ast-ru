@@ -1202,7 +1202,7 @@ public class WorkCalendarServiceJs {
                 .append("<th>Пят</th>")
                 .append("<th>Суб</th>")
                 .append("<th>Вос</th>")
-                .append("<tr>");
+                .append("</tr>");
 
         res.append("<tr>");
         res.append(getFreeDay(0, week, false, 1));
