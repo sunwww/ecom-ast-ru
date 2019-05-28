@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -5,7 +6,9 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
-  
+  <%
+      String typeStatus = ActionUtil.updateParameter("ClaimList","typeStatus","1", request) ;
+      %>
   <tiles:put name="style" type="string">
   	<style type="text/css">
 
@@ -39,6 +42,18 @@
     		<msh:textField property="dateBegin" label="Дата начала"/>
     		<msh:textField property="dateEnd" label="Окончания"/>
     	</msh:row>
+        <msh:row>
+            <td class="label" title="Статус заявки (typeStatus)" colspan="1"><label for="typeStatusName" id="typeStatusLabel">Статус:</label></td>
+            <td><label>
+                <input type="radio" name="typeStatus" value="1">  Все</label>
+            </td>
+            <td colspan="2"><label>
+                <input type="radio" name="typeStatus" value="2">  Не госпитализированные</label>
+            </td>
+            <td colspan="2"><label>
+                <input type="radio" name="typeStatus" value="3">  Только госпитализированные</label>
+            </td>
+        </msh:row>
     	<msh:row>
     		<td colspan="4">
     			<input type="submit" onclick="find()" value="Поиск"/>
@@ -49,10 +64,63 @@
     	</msh:row>
     </msh:panel>
     </msh:form>
+       <div id="dPicker"></div>
+       <div id="dPickerData"></div>
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+
   	
     <script type="text/javascript">
+        checkFieldUpdate('typeStatus','${param.typeStatus}','1');
 
+    //    makeCalc();
+
+
+        function makeCalc() {
+            var dt = new Date();
+            var allDates ={};
+            HospitalMedCaseService.getPreHospByMonth(dt.getFullYear(),dt.getMonth(), {
+                callback:function(inf) {
+                  //  console.log(inf);
+                    allDates = JSON.parse(inf);
+                    jQuery('#dPicker').datepicker({
+                        regional:"ru"
+                        ,dateFormat:"dd.mm.yy"
+                        ,onSelect: function(date, obj){
+                            console.log('date='+date+"</>");
+                            jQuery("#dPickerData").load("js-mis_hospitalBed-listByDate.do?startDate="+date+"&finishDate="+date);
+                        }
+                        ,onChangeMonthYear: function(y,m,cal) {
+                            console.log("changed month");
+                         //   makeCalc()
+                        }
+                        ,beforeShowDay:function (day) {
+                            return [true,"dayNumber dateAmount:"+day.getDate()];
+
+                        }
+
+                    });
+       /*             jQuery('.dayNumber').each(function(a,b){
+                        var am = jQuery(b).attr('class').trim().split(" ")[1].split(":")[0];
+                       //console.log(jQuery(b).children(':first').html());
+
+                        jQuery(b).children(':first').append(am);
+                    });*/
+                }
+            });
+        }
+
+        /**примечание на день */
+        function setDateComment(aDate) {
+
+        }
+
+        function checkFieldUpdate(aField,aValue,aDefaultValue) {
+            if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
+                jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);
+            } else {
+                jQuery(":radio[name="+aField+"][value='"+aDefaultValue+"']").prop('checked',true);
+            }
+        }
         function createHosp(id) {
             id = id.split("#");
             window.document.location='entityParentPrepareCreate-stac_sslAdmission.do?id='+id[1]+'&preHosp='+id[0];
@@ -70,18 +138,17 @@
     		getDefinition('entityShortView-stac_slo.do?id='+aSlo+"&tmp="+Math.random()) ;
     	}
     	
-    	if (+$('department').value<1) {
-    		HospitalMedCaseService.getDefaultDepartmentByUser (
-					 {
+    	/*if (+$('department').value<1) {
+    		HospitalMedCaseService.getDefaultDepartmentByUser ({
      			callback: function(aResult) {
      				var res = aResult.split('#') ;
-     				if (+res[0]!=0) {
+     				if (+res[0]!==0) {
      					$('department').value = res[0] ; 
      					$('departmentName').value = res[1] ; 
      				}
      			}
      		}) ;      		
-    	} 
+    	} */
     </script>
     </msh:ifInRole>
         <%
@@ -111,7 +178,16 @@
     	if (countBed!=null && !countBed.equals("") && !countBed.equals("0")) {
     		request.setAttribute("countBed", " and wp.countBed_id='"+countBed+"'") ;
     	}
-	}%>
+	}
+    String statusSql ="";
+    if ("2".equals(typeStatus)) {
+        statusSql = " and wchb.medcase_id is null"; //не госпитализированные
+    } else if ("3".equals(typeStatus)) {
+        statusSql = " and wchb.medcase_id is not null";
+    }
+    request.setAttribute("statusSql",statusSql);
+
+        %>
       <a href="javascript:void(0)" onclick="window.location.href='fillbedsreport.do'">Распределение пациентов по палатам</a>
     <msh:section title="Список направлений на госпитализацию">
     <ecom:webQuery name="stac_planHospital"
@@ -120,8 +196,8 @@ as birthday,mkb.code,wchb.diagnosis
  ,wchb.dateFrom,mc.dateStart,mc.dateFinish,list(mkbF.code),wchb.phone
  ,wchb.createDate as wchbcreatedate
  ,list(vwf.name ||' '||wPat.lastname) as f14_creator
- ,list(case when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f15_styleRow
- ,wchb.id||'#'||p.id as f16_createHospIds
+ ,list(case when wchb.medcase_id is not null then 'background-color:green' when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f15_styleRow
+ ,case when wchb.medcase_id is null then wchb.id||'#'||p.id else null end as f16_createHospIds
 from WorkCalendarHospitalBed wchb
 left join Patient p on p.id=wchb.patient_id
 left join MedCase mc on mc.id=wchb.medcase_id
@@ -135,13 +211,13 @@ left join patient wpat on wpat.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 where wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy')
 	 and to_date('${dateEnd}','dd.mm.yyyy')
- ${departmentPlanSql}
+ ${departmentPlanSql} ${statusSql}
 group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
 ,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone
 order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
     "
     />
-    <msh:table printToExcelButton="Сохранить в excel" name="stac_planHospital" action="entityParentEdit-stac_planHospital.do"
+    <msh:table printToExcelButton="Сохранить в excel" name="stac_planHospital" action="entityParentView-stac_planHospital.do"
     idField="1" styleRow="15" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата пред.госпитализации" property="8"/>
@@ -153,7 +229,7 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="Диагноз" property="7"/>
             <msh:tableColumn columnName="Кто создал" property="14"/>
             <msh:tableColumn columnName="Дата создания" property="13"/>
-        <msh:tableButton property="16" buttonShortName="ГОСП" buttonFunction="createHosp" />
+        <msh:tableButton property="16" buttonShortName="ГОСП" buttonFunction="createHosp" hideIfEmpty="true" />
 
     </msh:table>
     </msh:section>

@@ -5,6 +5,7 @@ import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedForm;
+import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.persistence.EntityManager;
@@ -58,5 +59,25 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
 	    		 form.setWorkFunction(ConvertSql.parseLong(list.get(0)[0])) ;
 	    	}
         }
+        list = manager.createNativeQuery("select pre.id,to_char(pre.dateFrom,'dd.MM.yyyy') ||' '|| ml.name ||' '||mkb.code||' '|| vwf.name ||' '||wpat.lastname as info" +
+				" from medcase vis " +
+				" left join workcalendarhospitalbed pre on pre.patient_id = vis.patient_id" +
+				" left join mislpu ml on ml.id=pre.department_id" +
+				" left join vocbedtype vbt on vbt.id=pre.bedtype_id" +
+				" left join vocidc10 mkb on mkb.id=pre.idc10_id" +
+				" left join workfunction wf on wf.id=pre.workfunction_id" +
+				" left join worker w on w.id=wf.worker_id" +
+				" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+				" left join patient wpat on wpat.id=w.person_id" +
+				" where vis.id =:id and pre.dateFrom>=current_date order by pre.dateFrom").setParameter("id",aParentId).getResultList();
+        if (!list.isEmpty()) {
+			StringBuilder sb = new StringBuilder("ВНИМАНИЕ, у пациента созданы пред. госпитализации: ");
+        	for (Object[] obj: list){
+        		sb.append("<br><a href='entityView-smo_planHospitalByVisit.do?id=").append(obj[0]).append("'>")
+						.append(obj[1]).append("</a>");
+			}
+			FormMessage formMessage = new FormMessage(sb.toString());
+        	form.addMessage(formMessage);
+		}
     }
 }

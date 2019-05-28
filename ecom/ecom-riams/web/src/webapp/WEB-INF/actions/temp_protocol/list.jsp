@@ -20,7 +20,7 @@
 		  	<msh:toolbar >
 			                	<tbody>
 			                		<msh:toolbar>
-			                		<form >
+			                		<form action="js-temp_protocol-listTemplate.do" >
 			                			<table>
 				                		<msh:row>
 										    <td colspan="1" class='label'>
@@ -30,6 +30,10 @@
 											    <label id='findByUsernameLabel' for="findByUsername"> Отображать только свои шаблоны </label>
 										    
 										    </td>
+					     				</msh:row>
+					     				<msh:row>
+                                            <input type="text" id="search" name="search" placeholder="Введите текст для поиска">
+                                            <input type="submit" >
 					     				</msh:row>
 
 				                		</table>

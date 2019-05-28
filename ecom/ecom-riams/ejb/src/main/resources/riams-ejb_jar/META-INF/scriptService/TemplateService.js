@@ -1,16 +1,17 @@
 /**
 * Поиск
 */
-function findListTemplate(aContext, aId, aCnt, aNext) {
+function findListTemplate(aContext, aId, aCnt, aNext, aSearch) {
 	var list ;
 	var ret = new java.util.ArrayList() ;
 	//if (aCnt==0) aCnt=10 ;
+	var sqlAdd = ""+aSearch!=="" ? " upper(text) like upper('%"+aSearch+"%')" : "";
 	if (aNext < 0) {
 		if (aCnt<0) aCnt = aCnt*(-1) ;
 		if (aId==null || aId == "" || aId==0) {
-			list =  aContext.manager.createQuery("from TemplateProtocol order by id desc").setMaxResults(aCnt).getResultList() ;
+			list =  aContext.manager.createQuery("from TemplateProtocol "+(sqlAdd!==""? "where "+sqlAdd : "")+" order by id desc").setMaxResults(aCnt).getResultList() ;
 		} else {
-			list =  aContext.manager.createQuery("from TemplateProtocol where id < "+aId+" order by id desc").setMaxResults(aCnt).getResultList() ;
+			list =  aContext.manager.createQuery("from TemplateProtocol where id < "+aId+(sqlAdd!==""? "and "+sqlAdd:"")+" order by id desc").setMaxResults(aCnt).getResultList() ;
 			if (list.size()<aCnt) {
 				return findListTemplate(aContext,"",aCnt,1) ;
 			}
@@ -20,13 +21,12 @@ function findListTemplate(aContext, aId, aCnt, aNext) {
 		for (var i=list.size()-1 ; i>=0 ; i--) {
 			var temp = list.get(i) ;
 			ret.add(protocolMap(temp)) ;
-			
 		}
 	} else {
 		if (aId==null || aId == "" || aId==0) {
-			list =  aContext.manager.createQuery("from TemplateProtocol order by id asc").setMaxResults(aCnt).getResultList() ;
+			list =  aContext.manager.createQuery("from TemplateProtocol "+(sqlAdd!==""? "where "+sqlAdd : "")+" order by id asc").setMaxResults(aCnt).getResultList() ;
 		} else {
-			list =  aContext.manager.createQuery("from TemplateProtocol where id > "+aId+" order by id asc").setMaxResults(aCnt).getResultList() ;
+			list =  aContext.manager.createQuery("from TemplateProtocol where id > "+aId+(sqlAdd!==""? "and "+sqlAdd:"")+" order by id asc").setMaxResults(aCnt).getResultList() ;
 			if (list.size()<aCnt) {
 				return findListTemplate(aContext,"",aCnt,-1) ;
 			}
