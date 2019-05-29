@@ -31,6 +31,7 @@ public class PolyclinicResource {
     public String getPolyclinicCase(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken
             , @QueryParam("dateTo") String dateTo, @QueryParam("sstream") String sstream
             , @QueryParam("isUpload") Boolean isUpload
+            , @QueryParam("includeNeoUzi") Boolean includeNeoUzi
     ) throws NamingException, ParseException {
         if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
         ApiUtil.init(aRequest,aToken);
@@ -38,7 +39,7 @@ public class PolyclinicResource {
         IApiPolyclinicService service =Injection.find(aRequest).getService(IApiPolyclinicService.class);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         if (sstream==null || sstream.equals("")) sstream="OBLIGATORYINSURANCE";
-        return service.getPolyclinicCase(new java.sql.Date(format.parse(dateTo).getTime()),sstream,isUpload);
+        return service.getPolyclinicCase(new java.sql.Date(format.parse(dateTo).getTime()),sstream,isUpload, includeNeoUzi!=null && includeNeoUzi);
     }
 
     @POST
