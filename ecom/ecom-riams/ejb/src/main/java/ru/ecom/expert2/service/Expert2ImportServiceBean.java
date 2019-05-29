@@ -347,6 +347,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     theManager.persist(entry);
                 }
             }
+            LOG.info("По счету №"+bill.getBillNumber() +" сумма = "+totalSum);
             bill.setSum(totalSum);
             theManager.persist(bill);
             LOG.info("Обновление закончено!");

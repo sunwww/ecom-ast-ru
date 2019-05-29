@@ -790,8 +790,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             } else { //Сделано для теста.
               entry = theManager.find(E2Entry.class, aEntryId);
                 periodDate = entry.getFinishDate();
-                aBillDate = aBillDate != null ? aBillDate : periodDate;
-                aBillNumber = aBillNumber != null ? aBillNumber : "TEST";
+                aBillDate = new Date(0L);
+                aBillNumber = "TEST";
                 cntNumber = "00";
                 aEntryListId=entry.getListEntry().getId();
 
