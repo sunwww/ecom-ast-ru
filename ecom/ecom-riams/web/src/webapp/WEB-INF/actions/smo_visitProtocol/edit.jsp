@@ -349,10 +349,22 @@ horizontalFill="true" />
 					TemplateProtocolService.getUsername({
 						callback: function(aValue) {
 							if (aValue!="") {
-								removeFromStorage();
-								var frm = document.smo_visitProtocolForm;
-								frm.action= oldaction;
-								frm.submit();
+                                HospitalMedCaseService.getMedServiceNecessaryInDiary($('medCase').value,{
+                                    callback: function(res) {
+                                        if (res=="0" || (res=="1"
+											&& document.getElementById("medServiceName").value != "" && document.getElementById("medService").value != "")) {
+                                            removeFromStorage();
+                                            var frm = document.smo_visitProtocolForm;
+                                            frm.action= oldaction;
+                                            frm.submit();
+										}
+										else if (res=="1") {
+                                            $('submitButton').disabled=false;
+                                            showToastMessage("Заполнение услуги обязательно при создании дневника в СЛО (с потоком обслуживания ДМС/Платный) врачом - не сотрудником текущего отделения!",null,true);
+										}
+                                    }
+                                });
+
 							} else {
 								$('submitButton').disabled=false;
 								 if (confirm("Возникли проблемы с авторизацией. Вы хотите ввести логин и пароль в новом окне?")) {
@@ -490,7 +502,28 @@ horizontalFill="true" />
                 }
                 getDtype();
 
-
+                //Обязательна ли услуга
+				function checkMedServiceNecessary() {
+                    HospitalMedCaseService.getMedServiceNecessaryInDiary($('medCase').value,{
+                        callback: function(res) {
+                            if (res=="1")
+                                document.getElementById("medServiceName").className = "autocomplete horizontalFill required";
+                        }
+                    });
+				}
+                checkMedServiceNecessary();
+                //при возвращении с черновика протокола (когда услуга не была заполнена), теряется поток обслуживания => справочник услуг  не работает
+				function setLostSstreamAfterDraft() {
+                    if ($('serviceStream').value=='' && window.location.href.indexOf('entityParentSaveGoSubclassView-smo_visitProtocol')!=-1) {
+                        HospitalMedCaseService.getSstreamId($('medCase').value,{
+                            callback: function(res) {
+                                $('serviceStream').value=res;
+                                setMedServiceParent();
+                            }
+                        });
+                    }
+				}
+                setLostSstreamAfterDraft();
 			</script>
 
 
