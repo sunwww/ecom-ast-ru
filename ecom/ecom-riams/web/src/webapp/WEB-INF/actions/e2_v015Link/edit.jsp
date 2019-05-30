@@ -9,7 +9,7 @@
     <tiles:put name="body" type="string">
         <msh:form action="/entityParentSaveGoParentView-e2_v015Link.do" defaultField="medosHospResult" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
             <msh:hidden property="id" />
-            <msh:hidden property="medSpec" />
+            <msh:hidden property="speciality" />
             <msh:hidden property="saveType" />
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
@@ -26,16 +26,6 @@
     </tiles:put>
     <tiles:put name="title" type="string">
         <ecom:titleTrail mainMenu="Expert2" beginForm="e2_v015LinkForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
-    </tiles:put>
-    <tiles:put name="javascript" type="string">
-        <msh:ifFormTypeIsView formName="e2_v015LinkForm">
-            <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
-            <script type="text/javascript">
-            function attachNewBedType () {
-
-                    }
-            </script>
-        </msh:ifFormTypeIsView>
     </tiles:put>
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="e2_v015LinkForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
