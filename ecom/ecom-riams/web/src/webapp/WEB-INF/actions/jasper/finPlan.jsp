@@ -84,6 +84,7 @@
                     HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
                         callback: function (res) {
                             var resMas = res.split("#");
+                            var url;
                             if (res != "") {
                                 var profilek = ($('filterAdd').value != "") ? "&prname=" + $('filterAdd').value : "";
 

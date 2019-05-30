@@ -137,6 +137,9 @@
 						<li><msh:link  isReport="false" action="finPlan.do" roles="/Policy/Mis/Journal/JasperReports/ExecutionOfFinancialPlan">
 							Выполнение финансового плана
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="registriesForSMO.do" roles="/Policy/Mis/Journal/JasperReports/RegistriesForSMO">
+							Реестры для СМО
+						</msh:link></li>
 						<li><msh:link  isReport="false" action="smo_deniedHospitelByAttach.do" roles="/Policy/Mis/ArchiveCase/Create">
 							Отказы госпитализации по прикрепленным
 						</msh:link></li>

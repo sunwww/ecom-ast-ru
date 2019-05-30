@@ -1212,6 +1212,13 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/reestrNaOplatyDogovorov.jsp" />
 		</action>
+		<action path='/registriesForSMO' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/registriesForSMO.jsp" />
+		</action>
 		<action path='/finPlan' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
