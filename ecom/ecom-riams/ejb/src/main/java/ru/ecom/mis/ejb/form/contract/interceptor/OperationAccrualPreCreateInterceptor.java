@@ -22,7 +22,6 @@ public class OperationAccrualPreCreateInterceptor implements IParentFormIntercep
             throw new IllegalStateException("По данному счету уже оформлено начисление, создание нового начисления невозможно");
         }
         OperationAccrualForm form = (OperationAccrualForm) aForm;
-        System.out.println("account_id="+aParentId);
         ContractAccount account = manager.find(ContractAccount.class,Long.valueOf(aParentId.toString()));
         MedContract contract = account.getContract();
         form.setContractNumber(contract.getContractNumber());
