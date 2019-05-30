@@ -2455,25 +2455,46 @@ public class HospitalMedCaseServiceJs {
 	}
 
 	/**
-	 * Имеет ли СЛС или СЛО (id, ifMc=false), в котором сделан Diary (ifMc=true), поток обслуживания ДМС? #122.
+	 * Обязательно ли заполнение услуги в дневнике? #122.
+	 * Обязательно, если:
+	 * это в СЛО
+	 * поток облуживания платный/ДМС
+	 * отделение создающего дневник не совпадает с отделением СЛО
 	 *
-	 * @param id MedCase.id (ifMc=true) / Diary.id (ifMc=false)
-	 * @param ifMc boolean MedCase/Diary
+	 * @param medCaseId MedCase.id
 	 * @param aRequest HttpServletRequest
-	 * @return String "1" - ДМС, "0" - нет
+	 * @return String "1" - необходима, "0" - нет
 	 */
-	public String getIfPrivateInsurance(Long id, Boolean ifMc, HttpServletRequest aRequest) throws NamingException {
+	public String getMedServiceNecessaryInDiary(Long medCaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql=ifMc ? "select case when ss.code='PRIVATEINSURANCE' then '1' else '0' end\n" +
-				" from vocservicestream ss\n" +
-				"left join medcase mc on mc.servicestream_id=ss.id\n" +
-				"where (mc.dtype='HospitalMedCase' or mc.dtype='DepartmentMedCase') and mc.id="+id : "select case when ss.code='PRIVATEINSURANCE' then '1' else '0' end\n" +
-				" from vocservicestream ss\n" +
-				"left join medcase mc on mc.servicestream_id=ss.id\n" +
-				"left join diary d on mc.id=d.medcase_id\n" +
-				"where (mc.dtype='HospitalMedCase' or mc.dtype='DepartmentMedCase') and d.id="+id;
+		String sql="select case when (ss.code='PRIVATEINSURANCE' or ss.code='CHARGED') and mc.dtype='DepartmentMedCase'" +
+				" and ml.id<>mc.department_id" +
+				" then '1' else '0' end" +
+				" from medcase mc" +
+				" left join vocservicestream ss on mc.servicestream_id=ss.id" +
+				" left join secuser su on su.login='"+LoginInfo.find(aRequest.getSession(true)).getUsername() +
+				"' left join workfunction wf on su.id=wf.secuser_id" +
+				" left join Worker w on w.id=wf.worker_id" +
+				" left join MisLpu ml on ml.id=w.lpu_id" +
+				" where  mc.id="+medCaseId;
 		Collection<WebQueryResult> l= service.executeNativeSql(sql) ;
 		return !l.isEmpty() && l.iterator().next().get1().toString().equals("1") ? "1" : "0";
+	}
+
+	/**
+	 * Получить id потока обслуживания в СЛО #122.
+	 *
+	 * @param medCaseId MedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return String VocServiceStream.id
+	 */
+	public String getSstreamId(Long medCaseId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql="select ss.id from medcase mc" +
+				" left join vocservicestream ss on mc.servicestream_id=ss.id" +
+				" where  mc.id="+medCaseId;
+		Collection<WebQueryResult> l= service.executeNativeSql(sql) ;
+		return !l.isEmpty()? l.iterator().next().get1().toString() : "";
 	}
 
 	/**

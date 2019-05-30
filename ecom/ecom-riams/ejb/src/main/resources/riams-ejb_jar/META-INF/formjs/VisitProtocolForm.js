@@ -202,6 +202,10 @@ function check(aForm, aCtx,isCreate) {
             if (dtype === 'HospitalMedCase' && (aForm.journalText == null || aForm.journalText.equals(""))) {
                 throw "Необходимо заполнить поле Принятые меры для журнала. Если их нет, необходимо ставить: -";
             }
+            //при сохранении шаблона как оригинал нужно заполнять услугу, если она обязательна
+            if (getMedServiceNecessaryInDiary(aForm.medCase,aCtx)=="1" && (aForm.medService == null || (+aForm.medService === 0))) {
+                throw "Заполнение услуги обязательно при создании дневника в СЛО (с потоком обслуживания ДМС/Платный) врачом - не сотрудником текущего отделения!";
+            }
             //Milamesher 16102018 - создание дневника специалиста приёмного отделения по времени - только ДО создания СЛО
             if (dtype === 'HospitalMedCase' && aForm.getDateRegistration() != null && aForm.getDateRegistration() != '') {
                 var list = aCtx.manager.createNativeQuery("select case when dmc.id is null then '0' else case when (dmc.dateStart>to_date('"
@@ -295,4 +299,26 @@ function errorThrow(aList, aError) {
         }
         throw aError + error;
     }
+}
+/**
+ * Обязательно ли заполнение услуги в дневнике? #122.
+ * Обязательно, если:
+ * это в СЛО
+ * поток облуживания платный/ДМС
+ * отделение создающего дневник не совпадает с отделением СЛО
+ *
+ * @param medCaseId MedCase.id
+ * @return String "1" - необходима, "0" - нет
+ */
+function getMedServiceNecessaryInDiary(medCaseId, aCtx) {
+    var l = aCtx.manager.createNativeQuery("select case when (ss.code='PRIVATEINSURANCE' or ss.code='CHARGED') and mc.dtype='DepartmentMedCase'" +
+        " and ml.id<>mc.department_id" +
+        " then '1' else '0' end" +
+        " from medcase mc" +
+        " left join vocservicestream ss on mc.servicestream_id=ss.id" +
+        " left join workfunction wf on wf.id=" + aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction").id +
+        " left join Worker w on w.id=wf.worker_id" +
+        " left join MisLpu ml on ml.id=w.lpu_id" +
+        " where  mc.id="+medCaseId).getResultList();
+    return !l.isEmpty() && l.get(0)=="1" ? "1" : "0";
 }
