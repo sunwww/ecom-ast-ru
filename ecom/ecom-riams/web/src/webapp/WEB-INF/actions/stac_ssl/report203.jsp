@@ -53,11 +53,11 @@
         </msh:form>
         <%
             if (request.getParameter("dateBegin")!=null &&  !request.getParameter("dateBegin").equals("")) {
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="justdeps" nameFldSql="justdeps_sql" nativeSql="
+                <ecom:webQuery  name="justdeps" nameFldSql="justdeps_sql" nativeSql="
 select dep.name, count (mc.id) as discharge
  ,(select count(distinct mc.id) as pr203 from medcase mc
  left join diagnosis ds on ds.medcase_id=mc.id
@@ -251,7 +251,7 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         </msh:section>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="transfer" nameFldSql="transfer_sql" nativeSql="
+                <ecom:webQuery  name="transfer" nameFldSql="transfer_sql" nativeSql="
                  select CAST('ПЕРЕВОД ИЗ ПАТОЛОГИИ БЕРЕМЕННОСТИ В РОДОВОЕ' AS varchar(50))
 ,count(distinct slo.id)
 ,(select count(distinct mc.id) as pr203
@@ -454,7 +454,7 @@ end as per2
         </msh:section>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="observdep" nameFldSql="observdep_sql" nativeSql="
+                <ecom:webQuery  name="observdep" nameFldSql="observdep_sql" nativeSql="
   select CAST('АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ' as varchar(25)) as depname, count (distinct mc.id) as discharge
  ,(select count(distinct mc.id) as pr203 from medcase mc
  left join diagnosis ds on ds.medcase_id=mc.id
@@ -922,11 +922,11 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
                 if (view.equals("dishAll")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                    request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                    
                 %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="dishAll" nameFldSql="dishAll_sql" nativeSql="
+                <ecom:webQuery  name="dishAll" nameFldSql="dishAll_sql" nativeSql="
              select mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 from MedCase as mc
 left join medcase as hmc on hmc.id=mc.parent_id
@@ -958,11 +958,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("203All")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203All" nameFldSql="203All_sql" nativeSql="
+                <ecom:webQuery  name="203All" nameFldSql="203All_sql" nativeSql="
                 select mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
@@ -1043,11 +1043,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("203AllRod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203AllRod" nameFldSql="203AllRod_sql" nativeSql="
+                <ecom:webQuery  name="203AllRod" nameFldSql="203AllRod_sql" nativeSql="
                select mcRod.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
@@ -1131,11 +1131,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("203EK")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203EK" nameFldSql="203EK_sql" nativeSql="
+                <ecom:webQuery  name="203EK" nameFldSql="203EK_sql" nativeSql="
                select distinct mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
  ,( select min(qec.id)
 from medcase mc1
@@ -1195,11 +1195,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
             if (view.equals("203EKRod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203EKRod" nameFldSql="203EKRod_sql" nativeSql="
+                <ecom:webQuery  name="203EKRod" nameFldSql="203EKRod_sql" nativeSql="
                select distinct mcRod.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
  ,( select min(qec.id)
 from medcase mc1
@@ -1261,11 +1261,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
         <%
             }
             if (view.equals("dishAll2")) {
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="dishAll2" nameFldSql="dishAll2_sql" nativeSql="
+                <ecom:webQuery  name="dishAll2" nameFldSql="dishAll2_sql" nativeSql="
              select
 slo.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 from medcase slo
@@ -1294,11 +1294,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
         <%
             }
             if (view.equals("203All2")) {
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203All2" nameFldSql="203All2_sql" nativeSql="
+                <ecom:webQuery  name="203All2" nameFldSql="203All2_sql" nativeSql="
 select distinct mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
@@ -1379,11 +1379,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
         <%
                 }
             if (view.equals("203EK2")) {
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203EK2" nameFldSql="203EK2_sql" nativeSql="
+                <ecom:webQuery  name="203EK2" nameFldSql="203EK2_sql" nativeSql="
              select distinct mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
  ,( select min(qec.id)
 from medcase mc1
@@ -1455,11 +1455,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
                 && !request.getAttribute("department").toString().replace("and dep.id=","").equals(request.getAttribute("depId")))
                     request.setAttribute("department","");
                 request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="treatDoctors" nameFldSql="treatDoctors_sql" nativeSql="
+                <ecom:webQuery  name="treatDoctors" nameFldSql="treatDoctors_sql" nativeSql="
                 select mc.ownerFunction_id,ovwf.name||' '||owp.lastname||' '||substring(owp.firstname,1,1)||' '||coalesce(substring(owp.middlename,1,1),'') as worker,
 count (mc.id) as discharge
  ,(select count(distinct mcinner.id) as pr203 from medcase mcinner
@@ -1668,11 +1668,11 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
             if (view.equals("treatDoctorsRod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="treatDoctorsRod" nameFldSql="treatDoctorsRod_sql" nativeSql="
+                <ecom:webQuery  name="treatDoctorsRod" nameFldSql="treatDoctorsRod_sql" nativeSql="
                 select t.ownerfunction_id as ownerfunction_id,t.worker as worker,sum(t.discharge) as discharge,sum(t.pr203) as pr203,sum(t.noque) as noque
 ,max(t.col) as col,
 case when sum(t.pr203)=0 then '0' else
@@ -1799,11 +1799,11 @@ and dep.isobservable=true and depRod.ismaternityward
             if (view.equals("dishAll3")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="dishAll3" nameFldSql="dishAll3_sql" nativeSql="
+                <ecom:webQuery  name="dishAll3" nameFldSql="dishAll3_sql" nativeSql="
              select mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 from MedCase as mc
 left join medcase as hmc on hmc.id=mc.parent_id
@@ -1837,11 +1837,11 @@ order by mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("dishAll3Rod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="dishAll3Rod" nameFldSql="dishAll3Rod_sql" nativeSql="
+                <ecom:webQuery  name="dishAll3Rod" nameFldSql="dishAll3Rod_sql" nativeSql="
             select distinct mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 from medcase mc
 left join medcase as hmc on hmc.id=mc.parent_id
@@ -1881,11 +1881,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("203All3")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203All3" nameFldSql="203All3_sql" nativeSql="
+                <ecom:webQuery  name="203All3" nameFldSql="203All3_sql" nativeSql="
                 select mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
@@ -1967,11 +1967,11 @@ order by mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("203All3Rod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203All3Rod" nameFldSql="203All3Rod_sql" nativeSql="
+                <ecom:webQuery  name="203All3Rod" nameFldSql="203All3Rod_sql" nativeSql="
                    select mcRod.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
@@ -2055,11 +2055,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("203EK3")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203EK3" nameFldSql="203EK_sql" nativeSql="
+                <ecom:webQuery  name="203EK3" nameFldSql="203EK_sql" nativeSql="
                select distinct mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
  ,( select min(qec.id)
 from medcase mc1
@@ -2123,11 +2123,11 @@ order by mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
             if (view.equals("203EK3Rod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203EK3Rod" nameFldSql="203EK_sql" nativeSql="
+                <ecom:webQuery  name="203EK3Rod" nameFldSql="203EK_sql" nativeSql="
            select distinct mcRod.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
   ,( select min(qec.id)
 from medcase mc1
@@ -2192,11 +2192,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("treatDoctors2")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="treatDoctors2" nameFldSql="treatDoctors2_sql" nativeSql="
+                <ecom:webQuery  name="treatDoctors2" nameFldSql="treatDoctors2_sql" nativeSql="
                 select slo.ownerFunction_id,ovwf.name||' '||owp.lastname||' '||substring(owp.firstname,1,1)||' '||coalesce(substring(owp.middlename,1,1),'') as worker
 ,count(distinct slo.id)
 ,(select count(distinct mcinner.id) as pr203
@@ -2418,11 +2418,11 @@ end as per2
                 }
                 //////////
             if (view.equals("dishAll4")) {
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="dishAll4" nameFldSql="dishAll2_sql" nativeSql="
+                <ecom:webQuery  name="dishAll4" nameFldSql="dishAll2_sql" nativeSql="
              select
 slo.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 from medcase slo
@@ -2452,11 +2452,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
         <%
             }
             if (view.equals("203All4")) {
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203All4" nameFldSql="203All2_sql" nativeSql="
+                <ecom:webQuery  name="203All4" nameFldSql="203All2_sql" nativeSql="
 select distinct mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
@@ -2538,11 +2538,11 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
         <%
             }
             if (view.equals("203EK4")) {
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="${isReportBase}" name="203EK4" nameFldSql="203EK2_sql" nativeSql="
+                <ecom:webQuery  name="203EK4" nameFldSql="203EK2_sql" nativeSql="
              select distinct mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
  ,( select min(qec.id)
 from medcase mc1
