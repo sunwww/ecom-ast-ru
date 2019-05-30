@@ -39,7 +39,7 @@
     //проставялем дату-время
     function setCurrentDateTime() {
         if (typeof $('now')!=='undefined' && $('now')!=null)
-            $('now').innerHTML=new Date(jQuery.now()).toLocaleTimeString().substring(0,5)+' '+getCurrentDate();
+            $('now').innerHTML=new Date(jQuery.now()).toLocaleTimeString()+' '+getCurrentDate();
         setTimeout(setCurrentDateTime,1000);
     }
     //получаем кол-во строк
