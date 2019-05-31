@@ -26,6 +26,9 @@
                     <td  id="gtd2" onclick="this.childNodes[1].checked='checked';" colspan="2">
                         <input type="radio" name="typeGroup" value="2"> По виду МП
                     </td>
+                    <td  id="gtd3" onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <input type="radio" name="typeGroup" value="3"> По подразделению
+                    </td>
                 </msh:row>
                 <msh:row>
                     <msh:textArea rows="15" property="filterAdd1" label="Номера карт" fieldColSpan="3"></msh:textArea>
@@ -57,8 +60,11 @@
                                     + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&cards="+$('filterAdd1').value
                                     + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML;
                                 var type = getValue('typeGroup');
-                                url= (type == '1')? url.replace("NAMEREPORT","Reestr2_for_SMO_v1") : url.replace("NAMEREPORT","Reestr_for_SMO_v3");
-                                window.open(url);
+                                var NAMEREPORT="";
+                                if (type == '1') NAMEREPORT="Reestr2_for_SMO_v1";
+                                else if (type == '2') NAMEREPORT="Reestr_for_SMO_v3";
+                                else if (type == '3') NAMEREPORT="Reestr3_for_SMO_v1";
+                                window.open(url.replace("NAMEREPORT",NAMEREPORT));
                             }
                             else
                                 showToastMessage("Нет настройки адреса сервиса!",null,true);
