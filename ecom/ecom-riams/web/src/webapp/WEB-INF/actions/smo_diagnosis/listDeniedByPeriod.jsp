@@ -178,7 +178,7 @@
 	checkMode() ;
     </script>
     <%
-    if (typeMode.equals("3") && request.getParameter("department1")!=null && !request.getParameter("department1").equals("0") ) {
+    if (typeMode.equals("3") && request.getParameter("department1")!=null && !request.getParameter("department1").equals("0")  && !request.getParameter("department1").equals("")) {
     %>
     <msh:section>
     <msh:sectionTitle>Список соответствий сотрудников по экстренным пунктам</msh:sectionTitle>
@@ -195,7 +195,7 @@ where w.lpu_id='${param.department1}'
 group by wf.id,vwf.name,wp.lastname
 " 
 	/>
-    <msh:table name="datelist" 
+    <msh:table name="datelist" printToExcelButton="сохранить в Excel"
     action="entityParentView-work_personalWorkFunction.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Должность" property="2" />
@@ -242,6 +242,13 @@ group by wf.id,vwf.name,wp.lastname
     	} else {
     		request.setAttribute("serviceStream", "0") ;
     	}
+		String vwfid = request.getParameter("vwfid") ;
+		if (vwfid!=null && !vwfid.equals("") && !vwfid.equals("0")) {
+			request.setAttribute("vocWorkFunctionsSql", " and vwf.id="+vwfid) ;
+			request.setAttribute("vocWorkFunctionsSqlId", vwfid) ;
+		} else {
+			request.setAttribute("vocWorkFunctionsSqlId", "0") ;
+		}
     	%>
     	
     	
@@ -318,7 +325,7 @@ and sls.medicalAid='1'
 	group by ml.id,ml.name 
 	order by ml.name" 
 	/>
-    <msh:table name="datelist" 
+    <msh:table name="datelist" printToExcelButton="сохранить в Excel"
     viewUrl="stac_journal_denied_without_diagnosis.do?short=Short&typeView=${typeView}&serviceStream=${param.serviceStream}&dateBegin=${beginDate}&dateEnd=${finishDate}"
     action="stac_journal_denied_without_diagnosis.do?typeView=${typeView}&serviceStream=${param.serviceStream}&dateBegin=${beginDate}&dateEnd=${finishDate}" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
@@ -363,7 +370,7 @@ and sls.department_id='${department}' and sls.medicalAid='1'
 and diag.id is null
 order by sls.dateStart,p.lastname,p.firstname,p.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" 
+    <msh:table name="datelist" printToExcelButton="сохранить в Excel"
     viewUrl="entityParentView-stac_sslAdmission.do?short=Short"
     action="entityParentView-stac_sslAdmission.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
@@ -399,7 +406,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     <msh:sectionTitle>Свод по дневникам</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nameFldSql="datelist_sql" nativeSql="
-    select cast(${vocWorkFunctionsSqlId} as varchar) as vwfid,vwf.name as vwfname
+    select '&vwfid='||coalesce(vwf.id,0),vwf.name as vwfname
     ,count(distinct sls.id) as cntSls
     ,count(distinct case when diag.id is null then sls.id else null end) as notdiag
     ,count(distinct case when diag.id is not null ${filterMkbSql} then sls.id else null end) as diagFilter
@@ -416,10 +423,10 @@ and sls.medicalAid='1'
  ${vocWorkFunctionsSql}
  ${serviceStreamSql}
 	${diagSql}
-	group by vwf.id,vwf.name 
-	order by vwf.name" 
+	group by vwf.id,vwf.name
+	order by vwf.name"
 	/>
-    <msh:table name="datelist" 
+    <msh:table name="datelist" printToExcelButton="сохранить в Excel"
     viewUrl="stac_journal_denied_without_diagnosis.do?short=Short&typeView=2&typeMode=${typeMode}&serviceStream=${param.serviceStream}&dateBegin=${beginDate}&dateEnd=${finishDate}"
     action="stac_journal_denied_without_diagnosis.do?typeView=2&typeMode=${typeMode}&serviceStream=${param.serviceStream}&dateBegin=${beginDate}&dateEnd=${finishDate}" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
@@ -429,7 +436,7 @@ and sls.medicalAid='1'
       <msh:tableColumn columnName="С подходящим диагнозом" property="5" isCalcAmount="true" />
     </msh:table>${datelist_sql}
     </msh:sectionContent>
-    </msh:section> 
+    </msh:section>
     <% } %>
 
          <%if (typeView.equals("2"))  {	%>
@@ -437,7 +444,7 @@ and sls.medicalAid='1'
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nameFldSql="datelist_sql" nativeSql="
-select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
+select distinct sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,p.lastname||' '||p.firstname||' '||p.middlename as fiopatient
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
@@ -465,7 +472,7 @@ and sls.deniedHospitalizating_id is not null
  ${vocWorkFunctionsSql}
  ${serviceStreamSql}
 ${diagSql}
-order by sls.dateStart,p.lastname,p.firstname,p.middlename
+order by to_char(sls.datestart,'dd.mm.yyyy'),p.lastname||' '||p.firstname||' '||p.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" printToExcelButton="сохранить в Excel"
     viewUrl="entityParentView-stac_sslAdmission.do?short=Short"
