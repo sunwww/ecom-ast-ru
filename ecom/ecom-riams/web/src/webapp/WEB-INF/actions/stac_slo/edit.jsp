@@ -175,6 +175,14 @@
             <msh:hidden property="kindHighCare"/>
             <msh:hidden property="methodHighCare"/>
             <msh:hidden property="targetHospType"/>
+            <msh:ifFormTypeIsCreate formName="stac_sloForm">
+                <msh:hidden property="emergency"/>
+            </msh:ifFormTypeIsCreate>
+            <msh:ifFormTypeAreViewOrEdit formName="stac_sloForm">
+            <msh:ifFormTypeIsNotView formName="stac_sloForm">
+                <msh:hidden property="emergency"/>
+            </msh:ifFormTypeIsNotView>
+            </msh:ifFormTypeAreViewOrEdit>
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Slo/ForceCreatePrescriptionList">
                 <msh:hidden property="diet"/>
                 <msh:hidden property="mode"/>
@@ -220,9 +228,11 @@
                     <msh:hidden property="roomType"/>
                     <msh:hidden property="bedNumber"/>
                 </msh:ifInRole>
-                <msh:row>
-                    <msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" viewOnlyField="true" />
-                </msh:row>
+                <msh:ifFormTypeIsView formName="stac_sloForm">
+                    <msh:row>
+                        <msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" viewOnlyField="true" />
+                    </msh:row>
+                </msh:ifFormTypeIsView>
                 <msh:ifFormTypeIsCreate formName="stac_sloForm" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
                     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Slo/ForceCreatePrescriptionList">
                         <msh:row>
