@@ -43,4 +43,11 @@ public class MedCaseMedPolicy extends BaseEntity{
 	public void setDateSync(Date dateSync) {
 		this.dateCheck = dateSync;
 	}
+
+	/** Ручная проверка актуальности полиса */
+	@Comment("Ручная проверка актуальности полиса")
+	public Boolean getIsManualSync() {return theIsManualSync;}
+	public void setIsManualSync(Boolean aIsManualSync) {theIsManualSync = aIsManualSync;}
+	/** Ручная проверка актуальности полиса */
+	private Boolean theIsManualSync ;
 }

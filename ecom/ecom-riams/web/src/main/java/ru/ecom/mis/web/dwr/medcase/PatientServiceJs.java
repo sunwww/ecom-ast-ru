@@ -32,32 +32,33 @@ public class PatientServiceJs {
 		return list.isEmpty() ? "" : list.iterator().next().get1().toString();
 	}
 
-	public void polisIsChecked(String medcaseId, HttpServletRequest request) throws NamingException {
+	/*Устанавливаем признак *полис проверен для конкретного случая СЛС */
+	public void polisIsChecked(Long medcaseId, HttpServletRequest request) throws NamingException {
 		IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
 		service.executeUpdateNativeSql("update medcase_medpolicy " +
-				"set datesync = current_date where medcase_id="+medcaseId);
+				"set datesync = current_date , isManualSync ='1' where medcase_id="+medcaseId);
 	}
 
-	public String getPaid(String aPatientId ,HttpServletRequest aRequest) throws NamingException {
+	public String getPaid(Long aPatientId ,HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		sql.append("select count(cao.cost) from patient p " +
 				" left join contractperson cp on cp.patient_id= p. id" +
 				" left join medcontract mc on mc.customer_id= cp.id" +
 				" left join contractaccount ca on ca.contract_id= mc.id" +
-				" left join contractaccountoperation cao on cao.account_id= ca.id" + " where p.id =").append(aPatientId);
+				" left join contractaccountoperation cao on cao.account_id= ca.id where p.id =").append(aPatientId);
 		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 		return res.isEmpty() ? "" : res.iterator().next().get1().toString();
 	}
 
-	public String getPatientFromContractPerson(String aContractPerson,HttpServletRequest aRequest) throws NamingException {
+	public String getPatientFromContractPerson(Long aContractPerson,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String sql = "select patient_id from contractperson  where id = "+aContractPerson;
 		Collection<WebQueryResult> res = service.executeNativeSql(sql);
 		return res.iterator().next().get1().toString();
 	}
 
-	public String savePrivilege(String aPatientId, String aNumberdoc,String aSerialdoc,
+	public String savePrivilege(Long aPatientId, String aNumberdoc,String aSerialdoc,
 								String aBegindate,String aEnddate, String aCategoryId,
 								HttpServletRequest aRequest) throws NamingException {
 
