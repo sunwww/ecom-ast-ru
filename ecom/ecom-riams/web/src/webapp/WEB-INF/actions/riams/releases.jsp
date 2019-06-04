@@ -23,10 +23,10 @@
 					<li><msh:link action="ecom_release-201905.do">сентябрь 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201905.do">август 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201905.do">июль 2019 года </msh:link></li>
-					<li><msh:link action="ecom_release-201905.do">июнь 2019 года </msh:link></li>
 					<% } %>
 
 					<li><msh:link action="ecom_release-201905.do">май 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201906.do">июнь 2019 года </msh:link></li>
 
 					<% if (1==2) { %>
 					<li><msh:link  action="ecom_release-201712.do">

@@ -229,11 +229,53 @@
                     href.innerText="Показать примечание";
                 }
             }
+            //удалить ненужные элементы, если мы во фрейме
+            function deleteIfFrame() {
+                //фрейм ли это
+                var isFramed = false;
+                try {
+                    isFramed = window != window.top || document != top.document || self.location != top.location;
+                } catch (e) {
+                    isFramed = true;
+                }
+                //удаление ненужных элементов на фрейме
+                function deleteChilds(name) {
+                    var d = document.getElementById(name);
+                    if (d!=null && d.parentNode!=null)
+                        d.parentNode.removeChild(d);
+                }
+                if (isFramed) {
+                    deleteChilds('user');
+                    deleteChilds('mainmenu');
+                    deleteChilds('header');
+                    deleteChilds('side');
+                    deleteChilds('ideModeMainMenu');
+                    deleteChilds('ideModeMainMenuClose');
+                    deleteChilds('footer');
+                    if (document.getElementsByClassName('titleTrail').length>0) {
+                        var d = document.getElementsByClassName('titleTrail')[0];
+                        if (d!=null && d.parentNode!=null)
+                            d.parentNode.removeChild(d);
+                    }
+                }
+                //не закрываю сразу, т.к. фрейм можно закрыть только из родителя.
+            }
             //GLOBALS
             var histString="";
             <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
                 disabled=true;
+                deleteIfFrame();
             </msh:ifFormTypeIsView>
+            <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
+            var isFramed = false;
+            try {
+                isFramed = window != window.top || document != top.document || self.location != top.location;
+            } catch (e) {
+                isFramed = true;
+            }
+            if (isFramed) //чтобы кнопка была большая, как кнопка Закрыть в тэге
+                document.getElementById('submitButton').style.fontSize='25px';
+            </msh:ifFormTypeIsNotView>
             <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
             suspicionOncologist.disabled=true;
             //проставить дату направления
@@ -388,9 +430,12 @@
             if ('${wasDeleted}'!='' && '${mkb}'[0]!='C') {
                 showToastMessage('Созданная и неактуальная онкологическая форма была удалена. Если необходимо, можно создать подозрение на ЗНО. Если нет - просто закрыть вкладку.', null, true);
                 document.getElementById('cancelButton').onclick=function () {window.location.href='entityParentView-stac_ssl.do?id='+$('medCase').value;} //чтобы назад в СЛС
+                deleteIfFrame();
             }
-            else if ('${wasDeleted}'!='' && '${mkb}'[0]=='C')
-                showToastMessage('Подозрение на ЗНО, связанное с неактуальынм диагнозом, было удалено. Необходимо создать случай онкологического лечения.', null, true);
+            else if ('${wasDeleted}'!='' && '${mkb}'[0]=='C') {
+                showToastMessage('Подозрение на ЗНО, связанное с неактуальным диагнозом, было удалено. Необходимо создать случай онкологического лечения.', null, true);
+                deleteIfFrame();
+            }
             setDs(${param.id});
             </msh:ifFormTypeIsCreate>
             <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
@@ -434,6 +479,7 @@
                                             showToastMessage('${actualMsg}', null, true);
                                             $('MKB').value='${mkb}';
                                             setDs($('medCase').value);
+                                            deleteIfFrame();
                                         }
                                     }});
                             }
@@ -508,6 +554,7 @@
                             showToastMessage(msg, null, true);
                             $('MKB').value='${mkb}';
                             setDs($('medCase').value);
+                            deleteIfFrame();
                         }
                     }
                 });

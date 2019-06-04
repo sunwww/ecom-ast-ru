@@ -241,8 +241,7 @@
                         <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
                             <msh:row>
                                 <td colspan="4" align="center">
-                                    <!--tags:oncologyTag parentId="${param.id}" name="Onk"/>
-                                    <input type="button" value="Случай ЗНО" onclick="showOnkOncology('.do')"/-->
+                                    <tags:oncologyTag parentId="${param.id}" name="Onk"/>
                                     <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
                                     <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
                                     <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
@@ -471,7 +470,8 @@
                         {
                             alert('Внимание! Для выбранного диагноза нужно заполнить случай ЗНО');
                             savePreRecord();
-                            window.open("entityParentPrepareCreate-oncology_case_reestr.do?id="+'${param.id}'+"&mkb="+concludingMkb);
+                            //window.open
+                            showOnkOncology("entityParentPrepareCreate-oncology_case_reestr.do?id="+'${param.id}'+"&mkb="+concludingMkb+"&short=ShortCreate");
                             try{$('submitPreDischrge2').disabled=false;
                                 $('submitPreDischrge1').disabled=false ;}catch(e){}
                             $('submitButton').disabled=false ;
@@ -485,7 +485,8 @@
                                         try{$('submitPreDischrge2').disabled=false;
                                             $('submitPreDischrge1').disabled=false ;}catch(e){}
                                         $('submitButton').disabled=false ;
-                                        window.open("entityEdit-oncology_case_reestr.do?id="+mas[1]+"&mkb="+concludingMkb);
+                                        showOnkOncology(/*'.do'*/"entityEdit-oncology_case_reestr.do?id="+mas[1]+"&mkb="+concludingMkb+"&short=ShortCreate");
+                                        //window.open();
                                     }
                                     //смена С на не С
                                     /*else if (res!='' && res!='0' && !a.match(/C\d\d/ )!=null) {
@@ -666,7 +667,7 @@
             // 5. наим. поля в форме 6. очищать поле в форме при добавление да-1, нет-0
             var theFld = [['Код МКБ','Mkb',1,3,1,'Mkb',1],['Наименование','Diagnos',2,8,1,'Diagnos',1]] ;
             function editMkbByDiag(aDiagType,aNode) {
-                if (+$(aDiagType+'Mkb').value==0 || confirm("Вы точно хотите продолжить? В этом случае Вы потеряете дааные еще недобавленного диагноза!")) {
+                if (+$(aDiagType+'Mkb').value==0 || confirm("Вы точно хотите продолжить? В этом случае Вы потеряете данные еще недобавленного диагноза!")) {
                     for (var ii=0;ii<theFld.length;ii++) {
                         $(aDiagType+theFld[ii][5]).value=aNode.childNodes[0].childNodes[theFld[ii][3]].value;
                         if (theFld[ii][2]==1) {
@@ -821,7 +822,7 @@
                         $('id').value,$('dischargeEpicrisis').value, {
                             callback: function(aResult) {
                                 removeFromStorage();
-                                alert("Сохранено") ;
+                                alert("Текст выписки сохранён") ;
                             }
                         }
                     ) ;
