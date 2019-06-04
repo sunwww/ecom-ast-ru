@@ -451,7 +451,7 @@ public class OncologyServiceJs {
         sql.append("select c.mkb||' '||mkb.name||' ('||prior.name||' '||reg.name||')',c.id from oncologycase c ")
                 .append("left join vocidc10 mkb on mkb.code=c.mkb ")
                 .append("left join medcase dmc on dmc.parent_id=c.medcase_id and dmc.dtype='DepartmentMedCase' ")
-                .append("left join diagnosis ds on (ds.medcase_id=dmc.id or ds.medcase_id=dmc.parent_id) ")
+                .append("left join diagnosis ds on (ds.medcase_id=dmc.id or ds.medcase_id=dmc.parent_id) and mkb.id=ds.idc10_id ")
                 .append("left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id ")
                 .append("left join vocprioritydiagnosis prior on prior.id=ds.priority_id ")
                 .append("where c.medcase_id="+slsId);// and reg.code='3' and pr.code='1'
@@ -486,7 +486,7 @@ public class OncologyServiceJs {
                 cId = wqr.get2().toString();
             }
             if (!ds.equals(concludingMkb) && concludingMkb.startsWith("C"))
-                res="Внимание! Диагноз, с которым была создана онкологическая форма, был удалён. Уточните информацию (некоторые поля могут зависеть от диагноза) и сохраните.#"+cId;
+                res="Внимание! Диагноз, с которым была создана онкологическая форма, был удалён либо форма была создана до сохранения диагноза. Уточните информацию (некоторые поля могут зависеть от диагноза) и сохраните.#"+cId;
         }
         return res;
     }

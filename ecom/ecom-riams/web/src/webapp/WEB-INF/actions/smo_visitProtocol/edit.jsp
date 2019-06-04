@@ -246,6 +246,7 @@ horizontalFill="true" />
 	</tiles:put>
 
 	<tiles:put name='javascript' type='string'>
+		<script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
 <script type="text/javascript">
 	function printProtocol() {
 		HospitalMedCaseService.getPrefixByProtocol(${param.id},
