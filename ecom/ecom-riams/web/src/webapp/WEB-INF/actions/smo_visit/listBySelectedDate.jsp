@@ -18,7 +18,20 @@
     <tags:visit_finds currentAction="workCalendar"/>
   </tiles:put>
   <tiles:put name="body" type="string">
-  	
+  	<%
+		String orderBy = request.getParameter("orderBy") ;
+		if (orderBy!=null && !orderBy.equals("")) {
+		    request.setAttribute("orderBy1"," p.lastname||' '||p.firstname||' '||p.middlename");
+			request.setAttribute("orderBy2"," p.lastname||' '||p.firstname||' '||p.middlename");
+		}
+		else {
+			request.setAttribute("orderBy1"," wct.timeFrom");
+			request.setAttribute("orderBy2"," v.timeExecute");
+		}
+  	%>
+	  <input type="checkbox" name="chbOrder" id="chbOrder">
+	  <label onclick="checkBox();"> <b>Сортировать по ФИО</b></label>
+	  </input>
   	<msh:section title="Непринятые пациенты" >
   		<ecom:webQuery name="list_no" nativeSql="select v.id
   		,cast(wct.timeFrom as varchar(5)) as timeFrom
@@ -55,7 +68,7 @@ group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,pe.lastname,pe.firstname,pe.middlename
 ,vvr.name,v.visitResult_id,mlo.name
 having (v.dateStart is null or (count(d.id)=0 and (vwfe.isNoDiagnosis is null or vwfe.isNoDiagnosis='0')))
-order by wct.timeFrom"/>
+order by ${orderBy1}"/>
 	    <msh:table name="list_no" action="entitySubclassEdit-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Доп. инф." property="6" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
@@ -120,7 +133,7 @@ group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,pe.lastname,pe.firstname,pe.middlename
 ,vvr.name,v.visitResult_id,mlo.name
 having (count(d.id)>0 or vwfe.isNoDiagnosis='1')
-order by v.timeExecute"/>
+order by ${orderBy2}"/>
 <msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Пациент" property="6" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
@@ -159,7 +172,7 @@ left join diagnosis d on d.medcase_id=v.id
 left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
 where  v.datePlan_id='${calenDayId}' and v.DTYPE='Visit' and v.noActuality='1'
-order by v.timeExecute"/>
+order by ${orderBy2}"/>
 <msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_no_other" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Пациент" property="6" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
@@ -174,6 +187,20 @@ order by v.timeExecute"/>
     
     
   </tiles:put>
-  
+
 </tiles:insert>
 
+<script type='text/javascript'>
+    //работа с группировкой
+    function checkBox() {
+        document.getElementById('chbOrder').click();
+        window.location.href=
+            window.location.href.indexOf('orderBy=1')==-1?
+                window.location.href.replace('?id=','?orderBy=1&id=') :
+                window.location.href.replace('?orderBy=1&id=','?id=');
+    }
+    window.onload=function() {
+        if (window.location.href.indexOf('orderBy=1')!=-1)
+            document.getElementById('chbOrder').click();
+    }
+</script>
