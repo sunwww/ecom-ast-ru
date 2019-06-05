@@ -29,8 +29,8 @@
 			request.setAttribute("orderBy2"," v.timeExecute");
 		}
   	%>
-	  <input type="checkbox" name="chbOrder" id="chbOrder">
-	  <label onclick="checkBox();"> <b>Сортировать по ФИО</b></label>
+	  <input type="checkbox" name="chbOrder" id="chbOrder" onclick="checkBox();">
+	  <label onclick="document.getElementById('chbOrder').click();"> <b>Сортировать по ФИО</b></label>
 	  </input>
   	<msh:section title="Непринятые пациенты" >
   		<ecom:webQuery name="list_no" nativeSql="select v.id
@@ -193,14 +193,12 @@ order by ${orderBy2}"/>
 <script type='text/javascript'>
     //работа с группировкой
     function checkBox() {
-        document.getElementById('chbOrder').click();
         window.location.href=
             window.location.href.indexOf('orderBy=1')==-1?
                 window.location.href.replace('?id=','?orderBy=1&id=') :
                 window.location.href.replace('?orderBy=1&id=','?id=');
     }
     window.onload=function() {
-        if (window.location.href.indexOf('orderBy=1')!=-1)
-            document.getElementById('chbOrder').click();
+        document.getElementById('chbOrder').checked=(window.location.href.indexOf('orderBy=1')!=-1);
     }
 </script>
