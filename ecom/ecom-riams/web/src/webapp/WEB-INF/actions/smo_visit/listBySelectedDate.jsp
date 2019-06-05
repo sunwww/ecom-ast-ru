@@ -193,10 +193,18 @@ order by ${orderBy2}"/>
 <script type='text/javascript'>
     //работа с группировкой
     function checkBox() {
-        window.location.href=
-            window.location.href.indexOf('orderBy=1')==-1?
-                window.location.href.replace('?id=','?orderBy=1&id=') :
-                window.location.href.replace('?orderBy=1&id=','?id=');
+        if (window.location.href.indexOf('.do?id')==-1) {
+            window.location.href=
+                window.location.href.indexOf('orderBy=1')==-1?
+                    window.location.href.replace('.do?','.do?orderBy=1') :
+                    window.location.href.replace('.do?orderBy=1','.do?');
+		}
+		else {
+            window.location.href=
+                window.location.href.indexOf('orderBy=1')==-1?
+                    window.location.href.replace('.do?id=','.do?orderBy=1&id=') :
+                    window.location.href.replace('orderBy=1&','');
+		}
     }
     window.onload=function() {
         document.getElementById('chbOrder').checked=(window.location.href.indexOf('orderBy=1')!=-1);
