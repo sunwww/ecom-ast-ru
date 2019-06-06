@@ -82,6 +82,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		HashMap<String, String> ss = new HashMap<>();
 		ss.put("OBLIGATORY","Средства ОМС");
 		ss.put("BUDGET","Средства бюджета");
+		ss.put("UFSIN","Личные средства граждан, по договору и ДМС");
 		ss.put("CHARGED","Личные средства граждан, по договору и ДМС");
 		return ss;
 	}
@@ -1184,8 +1185,7 @@ private HashMap getRegions() {
 			}
 			LOG.info("report_stac_finished");
 		} catch (JSONException e) {
-			LOG.error("JSONEXEPTION HAPP");
-			e.printStackTrace();
+			LOG.error("JSONEXEPTION HAPP",e);
 		}
 			//Начинаем искать пол-ку
 		sql = new StringBuilder();
@@ -1231,8 +1231,8 @@ private HashMap getRegions() {
 				profile = profileMap.get(s(row[3]))!=null?profileMap.get(s(row[3])):"PROFILE_CODE="+s(row[3]);
 				financeSource = s(row[4]);
 				totalSum = 0;
-				if (financeSource.equals("OBLIGATORY") || financeSource.equals("BUDGET")) { //считаем цену за ОМС
-					String[] visits = s(row[6]).split(",");
+				if (financeSource.equals("OBLIGATORY") || financeSource.equals("BUDGET")) { //считаем цену за ОМС //Отключим, всё равно не работает
+			/*		String[] visits = s(row[6]).split(",");
 					for (String vis : visits) {
 						try {
 							String s = getDataByReferencePrintNotOnlyOMS(Long.valueOf(vis.trim()), "VISIT", false, "OTHER','BUDGET");
@@ -1248,7 +1248,7 @@ private HashMap getRegions() {
 							e.printStackTrace();
 						}
 					}
-				} else {
+	*/			} else {
 					try {
 						totalSum = Double.valueOf(s(row[5]));
 					} catch (NumberFormatException e) {
