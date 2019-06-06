@@ -306,11 +306,11 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     entry.setBill(bill);
 
                     //Проставляем данные о мед. полисе
-                    entry.setMedPolicyType(pac.getChildText("VPOLIS"));
+         /*           entry.setMedPolicyType(pac.getChildText("VPOLIS"));
                     if (pac.getChild("SPOLIS")!=null) {entry.setMedPolicySeries(pac.getChildText("SPOLIS"));} else {entry.setMedPolicySeries("");}
                     entry.setMedPolicyNumber(pac.getChildText("NPOLIS"));
                     entry.setInsuranceCompanyCode(pac.getChildText("SMO"));
-
+`*/
                     //Расчет цены случая ФОМС
                     Element commentCalc = sl.getChild("D_COMMENT_CALC");
                     if (commentCalc!=null && commentCalc.getChild("root")!=null) {

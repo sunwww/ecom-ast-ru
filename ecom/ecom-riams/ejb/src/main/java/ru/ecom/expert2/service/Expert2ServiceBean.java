@@ -492,7 +492,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
                 if (mainEntry==null) {
                     mainEntry=cloneEntity(entry,null, true);
-                    createDiagnosis(mainEntry);
                 }
                 mainEntry = unionPolyclinic(mainEntry,entry);
                 if (isGroupBySpo && !mainEntry.getMedHelpProfile().equals(entry.getMedHelpProfile())) {
@@ -501,12 +500,16 @@ public class Expert2ServiceBean implements IExpert2Service {
 
                 String result = mainEntry.getFondResult().getCode();
                 if ("305".equals(result) || "306".equals(result)) {
+                    createDiagnosis(mainEntry);
                     makeCheckEntry(mainEntry,false,true);
                     mainEntry = null; //Если перевод в стационар - заканчиваем случай.
                 }
             }
 
-            if (mainEntry!=null) makeCheckEntry(mainEntry,false,true);
+            if (mainEntry!=null) {
+                createDiagnosis(mainEntry);
+                makeCheckEntry(mainEntry,false,true);
+            }
         }
         if (isGroupBySpo) {
             checkDefectPolyclinicCrossSpo(aListEntryId);
@@ -536,6 +539,8 @@ public class Expert2ServiceBean implements IExpert2Service {
             aMainMedcase.setFinishTime(aSecondMedcase.getFinishTime());
             aMainMedcase.setFondResult(aSecondMedcase.getFondResult());
             aMainMedcase.setFondIshod(aSecondMedcase.getFondIshod());
+            aMainMedcase.setDiagnosisList(aSecondMedcase.getDiagnosisList());
+            aMainMedcase.setMainMkb(aSecondMedcase.getMainMkb());
         }
         aSecondMedcase.setParentEntry(aMainMedcase);
         aSecondMedcase.setServiceStream(COMPLEXSERVICESTREAM);
@@ -2354,6 +2359,9 @@ public class Expert2ServiceBean implements IExpert2Service {
      */
     private HashMap<String, Method> methodMap = new HashMap<>();
     private void createEntriesByEntryList(ResultSet aResultSet, Map<String, Object> aParamMap, String aEntryListCode, E2ListEntry aListEntry, long aMonitorId) throws ParseException { //Сохраняем сущности
+        if (aMonitorId==0L) {
+            aMonitorId = theRemoteMonitorService.createMonitor();
+        }
         IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Формирование нового заполнения",9999);
         try {
             ResultSetMetaData metaData = aResultSet.getMetaData();
@@ -2488,11 +2496,14 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (isMonitorCancel(monitor,"Закончили первичную проверку случаев.FINISH_FIRST_CHECK")) return;
 
                 //теперь объединим все случаи объединим все случаи (только для стационара)
-                List<BigInteger> hospitalIds = theManager.createNativeQuery("select externalparentid from e2entry " +
+                List<BigInteger> hospitalIds = theManager.createNativeQuery("select externalparentid from e2entry" +
                         " where id in ("+entriesId.substring(1)+") and listentry_id=" + listEntryId  + " and (isDeleted is null or isDeleted='0') and (isUnion is null or isUnion='0') group by externalparentid having count(externalparentid)>1").getResultList();//Находис все СЛС, в которых больше 1 СЛО
                 i=0;
                 isMonitorCancel(monitor,"Приступаем к объединению случаев. START_UNION");
                 fillChildBirthMkbs();
+                if (HOSPITALPEREVODTYPE.equals(listEntryCode)) { //Если заполнение - переводы, отметим *не подавать* все СЛС вида: отделение-реанимация-отделение
+
+                }
                 for (BigInteger hospId : hospitalIds) {
                     i++;
                     if (i%100==0) {
