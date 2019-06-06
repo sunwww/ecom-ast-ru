@@ -44,7 +44,7 @@ function onCreate(aForm, aEntity, aContext){
 	if (aEntity.getLiveBorn().getCode()=='1'){ //Создаем пациента только живому ребенку
 		patient.lastname=mother.lastname ;
 		patient.middlename = aEntity.sex!=null ? (aEntity.sex.omcCode=="1" ? "У" : "Х") : "Х" ;
-		patient.firstname =  "X";
+		patient.firstname =  "Х";
 		patient.birthday = aEntity.birthDate ;
 		patient.sex = aEntity.sex ;
 		patient.newborn=aEntity.child ;

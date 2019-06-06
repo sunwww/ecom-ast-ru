@@ -88,7 +88,7 @@ public class ContractServiceJs {
 
 	//Печать K, Z отчета
 	private String printKKMReport(String aType, HttpServletRequest aRequest) {
-		if (aType!=null && (aType.equals("Z") || aType.equals("X"))) {
+		if ("Z".equals(aType) || "X".equals(aType)) {
 			try {
 				JSONObject root = new JSONObject();
 				root.put("function", "print"+aType+"Report");
