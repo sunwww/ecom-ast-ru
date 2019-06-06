@@ -40,6 +40,9 @@
         <td onclick="this.childNodes[1].checked='checked';document.location.href='expert_kersopen.do?typeJournal=4'"  colspan="2">
         	<input type="radio" name="typeJournal" value="4">  по специалистам
         </td>
+	  <td onclick="this.childNodes[1].checked='checked';document.location.href='expert_kersopen.do?typeJournal=5'"  colspan="2">
+		  <input type="radio" name="typeJournal" value="5">  по типу ВК
+	  </td>
       </msh:row>
       <msh:row>
         <td class="label" title="Тип ЛПУ (typeLpu)" colspan="1"><label for="typeLpuName" id="typeLpuLabel">ЛПУ:</label></td>
@@ -104,6 +107,9 @@
     			request.setAttribute("queryFld", "ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename");
     			request.setAttribute("queryTitle", "Специалист");
     		}
+    		if (typeJournal.equals("5")) {
+				request.setAttribute("queryOrder", "vet.name");
+			}
     	%>
     	<ecom:webQuery name="list"
     	nativeSql="select 
@@ -138,6 +144,9 @@
     		} else {
     			request.setAttribute("queryOrder", "cec.orderDate,p.lastname||' '||p.firstname||' '||p.middlename");
     		}
+			if (typeJournal.equals("5")) {
+				request.setAttribute("queryOrder", "vet.name");
+			}
         %>
 	       	<ecom:webQuery name="list"
 		    	nativeSql="select 
@@ -148,6 +157,7 @@ cec.id,cec.orderDate,cec.disabilitydate
 left join medcase slo1 on slo1.id=cec1.medcase_id
 left join medcase sls1 on sls1.id=slo1.parent_id
 where sls1.id=sls.id) as con1Sls
+,vet.name as vetname
 from ClinicExpertCard cec
 left join WorkFunction owf on owf.id=cec.orderFunction_id
 left join Worker ow on ow.id=owf.worker_id
@@ -157,6 +167,7 @@ left join Patient p on p.id=cec.patient_id
 			    	left join medcase slo on slo.id=cec.medcase_id
 			    	left join mislpu ml on ml.id=slo.department_id
 left join medcase sls on sls.id=slo.parent_id
+left join vocexperttype vet on cec.type_id=vet.id
 where cec.expertDate is null ${queryWhere} ${lpuSql}
 order by ${queryOrder}
 "
@@ -169,6 +180,7 @@ order by ${queryOrder}
 		      <msh:tableColumn columnName="Дата посл. продления по госпитализации" property="6"/>
 		      <msh:tableColumn columnName="Специалист" property="4"/>
 		      <msh:tableColumn columnName="Пациент" property="5"/>
+				<msh:tableColumn columnName="Тип ВК" property="7"/>
 		    </msh:table>
         <% 
         }
