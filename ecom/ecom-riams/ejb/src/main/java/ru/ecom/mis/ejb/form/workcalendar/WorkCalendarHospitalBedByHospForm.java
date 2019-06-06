@@ -106,4 +106,12 @@ public class WorkCalendarHospitalBedByHospForm extends WorkCalendarHospitalBedFo
 	public void setSurgCabinet(Long aSurgCabinet) {theSurgCabinet = aSurgCabinet;}
 	/** Операционная */
 	private Long theSurgCabinet;
+
+	/** Отделение */
+	@Comment("Отделение")
+	@Persist
+	public Long getDepartment() {return theDepartment;}
+	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	/** Отделение */
+	private Long theDepartment;
 }
