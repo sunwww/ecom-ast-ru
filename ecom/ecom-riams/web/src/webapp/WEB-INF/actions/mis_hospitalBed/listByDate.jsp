@@ -7,7 +7,13 @@
 <tiles:insert page="/WEB-INF/tiles/mainShortLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
+<%
+    long department  = request.getParameter("department")!=null ? Long.valueOf(request.getParameter("department")):0L;
+    if (department>0L) {
+        request.setAttribute("departmentPlanSql"," and wchb.department_id="+department);
 
+    }
+%>
     <msh:section title="Список направлений на госпитализацию">
     <ecom:webQuery name="stac_planHospital" nameFldSql="stac_planHospital_sql"
     nativeSql="select wchb.id,ml.name as mlname,p.id,p.lastname||' '||p.firstname||' '||p.middlename as fio,p.birthday

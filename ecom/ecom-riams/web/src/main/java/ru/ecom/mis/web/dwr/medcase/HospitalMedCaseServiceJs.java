@@ -36,9 +36,9 @@ public class HospitalMedCaseServiceJs {
 
 	/**Календарь с предварительной госпитализацией*/
 
-	public String getPreHospCalendar( Integer aYear, Integer aMonth, HttpServletRequest aRequest) throws NamingException {
+	public String getPreHospCalendar( Integer aYear, Integer aMonth, Long aDepartment, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		JSONArray preHosps = new JSONArray(getPreHospByMonth( aYear,aMonth,aRequest));
+		JSONArray preHosps = new JSONArray(getPreHospByMonth( aYear,aMonth,aDepartment,aRequest));
 		StringBuilder res = new StringBuilder();
 		res.append("<form name='frmDate' id='frmDate' action='javascript:step5()'>");
 		res.append("<span class = 'spanNavigMonth'>");
@@ -208,11 +208,12 @@ public class HospitalMedCaseServiceJs {
 		return res;
 	}
 	/*Количество пред. госпитализаций за месяц*/
-	public String getPreHospByMonth(Integer aYear, Integer aMonth, HttpServletRequest aRequest) throws NamingException {
+	public String getPreHospByMonth(Integer aYear, Integer aMonth, Long aDepartment, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select to_char(pre.datefrom,'dd.MM.yyyy'), cast(to_char(pre.datefrom,'dd') as int) as dat, count(pre.id) as cnt" +
 				" from workcalendarhospitalbed pre" +
 				" where to_char(pre.datefrom,'MM.yyyy')='"+(aMonth>9?aMonth:"0"+aMonth)+"."+aYear+"'" +
+				(aDepartment!=null && aDepartment>0L ? " and pre.department_id="+aDepartment:"") +
 				" group by pre.datefrom" +
 				" order by pre.datefrom";
 		return service.executeNativeSqlGetJSON(new String[] {"calendarDate","monthDate","amount"},sql,31);

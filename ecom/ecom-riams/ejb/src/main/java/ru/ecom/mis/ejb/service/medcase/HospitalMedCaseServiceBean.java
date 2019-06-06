@@ -1072,11 +1072,11 @@ private HashMap getRegions() {
  		HashMap<String, String> profileMap = getStacProfileMap();
  		HashMap<String, String> sredstvaMap = getMiacServiceStreamMap();
 		if (aLpuCode==null||aLpuCode.equals("")) {return "Не указан код ЛПУ";}
- 		if (aType!=null&&aType.equals("inog")) {
+ 		if ("inog".equals(aType)) {
  			sqlAppend.append(" and a.addressid is not null and a.kladr not like '30%' ");
 			sqlSelect.append(",substring(a.kladr,0,3)");
 			regionOrCountry = getRegions();
-		} else if (aType!=null&&aType.equals("inos")){
+		} else if ("inos".equals(aType)){
 			sqlSelect.append(",nat.voc_code");
 			sqlAppend.append(" and nat.id is not null and nat.voc_code!='643' ");
 			regionOrCountry = getCountries();

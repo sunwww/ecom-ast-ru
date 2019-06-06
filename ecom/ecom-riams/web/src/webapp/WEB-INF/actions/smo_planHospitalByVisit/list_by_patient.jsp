@@ -33,7 +33,7 @@
                     where pre.patient_id=${param.patient}
                     order by pre.dateFrom
       "/>
-                <msh:table name="list" action="entityView-stac_planHospital.do" idField="1" noDataMessage="Не найдено">
+                <msh:table name="list" action="entityView-smo_planHospitalByVisit.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="Дата пред. госпитализации" property="2" />
                     <msh:tableColumn columnName="Отделение" property="3" />

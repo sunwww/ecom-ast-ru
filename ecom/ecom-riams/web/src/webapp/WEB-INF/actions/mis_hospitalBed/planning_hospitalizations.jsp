@@ -237,64 +237,6 @@
        <div id="dPickerData"></div>
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
 
-  	
-    <script type="text/javascript">
-        checkFieldUpdate('typeStatus','${param.typeStatus}','1');
-
-        showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());
-        function showPreHospCalendar(month,year) {
-            HospitalMedCaseService.getPreHospCalendar(year,month,{
-                callback: function(html) {
-                    jQuery('#dPicker').html(html);
-                }
-            });
-        }
-
-        function showPreHospByDate(el,date) {
-            jQuery('.selectedVisitDay').each(function(i,el){
-                jQuery(el).attr('class','visitDay');
-            });
-            jQuery(el).attr('class','selectedVisitDay');
-
-            jQuery("#dPickerData").load("js-mis_hospitalBed-listByDate.do?startDate="+date+"&finishDate="+date+" .sectionContent");
-        }
-
-        function checkFieldUpdate(aField,aValue,aDefaultValue) {
-            if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
-                jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);
-            } else {
-                jQuery(":radio[name="+aField+"][value='"+aDefaultValue+"']").prop('checked',true);
-            }
-        }
-        function createHosp(id) {
-            id = id.split("#");
-            window.document.location='entityParentPrepareCreate-stac_sslAdmission.do?id='+id[1]+'&preHosp='+id[0];
-        }
-    	function find() {
-    		
-    	}
-    	function newP() {
-    		window.location = 'entityPrepareCreate-stac_planHospital.do?department='+$('department').value+"&roomType="+$('roomType').value+"&countBed="+$('countBed').value+"&dateEnd="+$('dateEnd').value+"&dateBegin="+$('dateBegin').value+"&tmp="+Math.random() ;
-      	}
-    	function editPlanning(aWp) {
-    		window.location = 'entityEdit-stac_planHospital.do?id='+aWp+"&tmp="+Math.random() ;
-    	}
-    	function viewSlo(aSlo) {
-    		getDefinition('entityShortView-stac_slo.do?id='+aSlo+"&tmp="+Math.random()) ;
-    	}
-    	
-    	/*if (+$('department').value<1) {
-    		HospitalMedCaseService.getDefaultDepartmentByUser ({
-     			callback: function(aResult) {
-     				var res = aResult.split('#') ;
-     				if (+res[0]!==0) {
-     					$('department').value = res[0] ; 
-     					$('departmentName').value = res[1] ; 
-     				}
-     			}
-     		}) ;      		
-    	} */
-    </script>
     </msh:ifInRole>
         <%
     
@@ -388,5 +330,66 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
 
   <tiles:put name="title" type="string">
   </tiles:put>
+    <tiles:put type="string" name="javascript">
 
+    <script type="text/javascript">
+        checkFieldUpdate('typeStatus','${param.typeStatus}','1');
+        departmentAutocomplete.addOnChangeCallback(function(){showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());});
+        departmentAutocomplete
+
+        showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());
+        function showPreHospCalendar(month,year) {
+            HospitalMedCaseService.getPreHospCalendar(year,month,$('department').value,{
+                callback: function(html) {
+                    jQuery('#dPicker').html(html);
+                }
+            });
+        }
+
+        function showPreHospByDate(el,date) {
+            jQuery('.selectedVisitDay').each(function(i,el){
+                jQuery(el).attr('class','visitDay');
+            });
+            jQuery(el).attr('class','selectedVisitDay');
+
+            jQuery("#dPickerData").load("js-mis_hospitalBed-listByDate.do?startDate="+date+"&finishDate="+date+"&department="+(+$('department').value)+" .sectionContent");
+        }
+
+        function checkFieldUpdate(aField,aValue,aDefaultValue) {
+            if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
+                jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);
+            } else {
+                jQuery(":radio[name="+aField+"][value='"+aDefaultValue+"']").prop('checked',true);
+            }
+        }
+        function createHosp(id) {
+            id = id.split("#");
+            window.document.location='entityParentPrepareCreate-stac_sslAdmission.do?id='+id[1]+'&preHosp='+id[0];
+        }
+        function find() {
+
+        }
+        function newP() {
+            window.location = 'entityPrepareCreate-stac_planHospital.do?department='+$('department').value+"&roomType="+$('roomType').value+"&countBed="+$('countBed').value+"&dateEnd="+$('dateEnd').value+"&dateBegin="+$('dateBegin').value+"&tmp="+Math.random() ;
+        }
+        function editPlanning(aWp) {
+            window.location = 'entityEdit-stac_planHospital.do?id='+aWp+"&tmp="+Math.random() ;
+        }
+        function viewSlo(aSlo) {
+            getDefinition('entityShortView-stac_slo.do?id='+aSlo+"&tmp="+Math.random()) ;
+        }
+
+        /*if (+$('department').value<1) {
+            HospitalMedCaseService.getDefaultDepartmentByUser ({
+                 callback: function(aResult) {
+                     var res = aResult.split('#') ;
+                     if (+res[0]!==0) {
+                         $('department').value = res[0] ;
+                         $('departmentName').value = res[1] ;
+                     }
+                 }
+             }) ;
+        } */
+    </script>
+    </tiles:put>
 </tiles:insert>
