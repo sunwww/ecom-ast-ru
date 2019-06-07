@@ -45,7 +45,21 @@
                 <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
                 </msh:row>
                 <msh:row>
-                <td colspan="3">
+                    <td colspan="2">
+                        <input type="checkbox" name="chbShow2" id="chbShow2" onclick="checkBox(2);">
+                            <label onclick="document.getElementById('chbShow'+2).click();"> <b>ПЕРЕВОД ИЗ ПАТОЛОГИИ В РОДОВОЕ</b></label>
+                        </input>
+                    </td>
+                </msh:row>
+                <msh:row>
+                    <td colspan="2">
+                        <input type="checkbox" name="chbShow3" id="chbShow3" onclick="checkBox(3);">
+                            <label onclick="document.getElementById('chbShow'+3).click();"> разбивка <b>РОДОВОЕ/ОБСЕРВАЦИОННОЕ</b></label>
+                        </input>
+                    </td>
+                </msh:row>
+                <msh:row>
+                <td>
                     <input type="button" onclick="find()" value="Найти" />
                 </td>
                 </msh:row>
@@ -914,6 +928,21 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
                     frm.submit();
                 }
             }
+            function checkBox(index) {
+
+                if (document.getElementsByTagName('table').length>index && typeof document.getElementsByTagName('table')[index]!=='undefined') {
+                    if (document.getElementById('chbShow'+index).checked)
+                        document.getElementsByTagName('table')[index].removeAttribute('hidden');
+                    else
+                        document.getElementsByTagName('table')[index].setAttribute('hidden', true);
+                }
+            }
+            if (window.location.href.indexOf('chbShow2=on')!=-1)
+                document.getElementById('chbShow2').checked=true;
+            if (window.location.href.indexOf('chbShow3=on')!=-1)
+                document.getElementById('chbShow3').checked=true;
+            checkBox(2);
+            checkBox(3);
         </script>
         <%
             } else {
