@@ -509,7 +509,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 names="ml.name"
                 parent='ml.parent_id = :parent'
                 nameId="ml.id"
-                queryAppend=" (vlf.code='3' or vlf.code='7') "
+                queryAppend=" (vlf.code='3' or vlf.code='7') and (ml.isArchive is null or ml.isArchive='0')"
                 join="left join VocLpuFunction vlf ON vlf.id = ml.lpuFunction_id"
                 order=""
 	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
