@@ -239,7 +239,6 @@
 
         <div id='copyright' style="float: right;">&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
         </div>
-    </div>
     <div id="divInstantMessage" class="instant_message">&nbsp;</div>
     
     <msh:javascriptContextWrite/>
@@ -285,7 +284,7 @@ theDefaultTimeOut = setTimeout(funcemergencymessage.func,12000) ;
 <iframe width=174 height=189 name="gToday:datetime::gfPop1:plugins_time.js" 
 id="gToday:datetime::gfPop1:plugins_time.js" 
 src="/skin/ext/cal/themes/DateTime/ipopeng.htm" 
-scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; top:-500px; left:-500px;"/>
+scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; top:-500px; left:-500px;">
 </iframe>
 
 <iframe width=174 height=189 name="gToday:normal::gfPop2:plugins.js" 
