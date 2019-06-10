@@ -120,7 +120,12 @@
             <li> <a href='javascript:void(0)' onclick='getDefinition("js-riams-instructions.do?short=Short")'>Инструкции</a>
              </li>
              <li class="separator">|</li>
-             
+            <msh:ifInRole roles="/Policy/Config/MakeScreenshortWithout500">
+            <li>
+                <a href='javascript:void(0)' onclick='capture()'>Заявка в ТП</a>
+            </li>
+            <li class="separator">|</li>
+            </msh:ifInRole>
              <li>
              <% request.setAttribute("servletPath", request.getServletPath()); %>
              <msh:ifNotInRole roles="/Policy/Mis/Help/Edit">
@@ -281,7 +286,49 @@ theDefaultTimeOut = setTimeout(funcemergencymessage.func,12000) ;
 
 </script>
 </msh:ifInRole>
+<msh:ifInRole roles="/Policy/Config/MakeScreenshortWithout500">
+    <script type="text/javascript" src="html2canvas.js"></script>
+    <script type="text/javascript" src="promise-6.1.0.js"></script>
+    <script type='text/javascript' src='./dwr/interface/ClaimService.js'></script>
+    <script type="text/javascript">
+        function checkTime(i) {
+            if (i<10) i="0" + i;
+            return i;
+        }
+        Date.prototype.yyyymmdd = function() {
+            var mm = this.getMonth() + 1; // getMonth() is zero-based
+            var dd = this.getDate();
 
+            return [this.getFullYear() + "-" ,
+                (mm>9 ? '' : '0')+ mm + "-",
+                (dd>9 ? '' : '0') + dd
+            ].join('');
+        };
+        function capture() {
+            var img = {
+                image_pro: null
+            };
+            html2canvas(document.body).then(function(canvas) { cp(canvas); });
+            var cp = function(canvas) {
+                img = canvas.toDataURL("image/png");
+                var now = new Date();
+                var fileName=now.yyyymmdd()+"_"+checkTime(now.getHours())+"."+checkTime(now.getMinutes())+"."+checkTime(now.getSeconds())
+                    +checkTime(now.getMilliseconds())+"_" + document.getElementById("current_username_li").innerHTML+".png";
+                showToastMessage('Вы будете перенаправлены на создание заявки, к которой будет прикреплён скриншот окна. Ожидайте.',null,false);
+                ClaimService.postRequestWithErrorScrean(img,fileName,{
+                    callback: function (res) {
+                        if (res!=null) {
+                            if (document.getElementsByClassName("errorMessage")[0] != null)
+                                window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=" + text;
+                            else
+                                window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=Описание в скриншоте";
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</msh:ifInRole>
 <iframe width=174 height=189 name="gToday:datetime::gfPop1:plugins_time.js" 
 id="gToday:datetime::gfPop1:plugins_time.js" 
 src="/skin/ext/cal/themes/DateTime/ipopeng.htm" 

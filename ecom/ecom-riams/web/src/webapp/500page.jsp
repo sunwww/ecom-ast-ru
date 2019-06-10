@@ -12,7 +12,7 @@
 
     <tiles:put name="side" type="string">
     <msh:sideMenu>
-        <msh:sideLink key='ALT+0' params="" action=' javascript:capture()' name="Заявка в ТП"/>
+        <msh:sideLink key='ALT+0' params="" action=' javascript:capture500()' name="Заявка в ТП"/>
     	<msh:sideLink key='ALT+1' params="" action=' javascript:backException(".do")' name="Отмена"/>
     	<msh:sideLink key='ALT+2' params="" action=' javascript:showException(".do")' roles="/Policy/Config/ViewError" name="Ошибка" title="Показать ошибку"/>
     </msh:sideMenu>
@@ -102,19 +102,17 @@
       </div>  
     </tiles:put>
     <tiles:put name="javascript" type="string">
-        <script type='text/javascript' src='./dwr/interface/ClaimService.js'></script>
-     <script type="text/javascript">
-        if ($('type').value=='1') backException();
-		function showException() {
-			$("divException").style.display="block";
-			
-		}
-		function backException() {
-			window.history.back();
-		}
-     </script>
         <script type="text/javascript" src="html2canvas.js"></script>
+        <script type="text/javascript" src="promise-6.1.0.js"></script>
+        <script type='text/javascript' src='./dwr/interface/ClaimService.js'></script>
         <script type='text/javascript'>
+            if ($('type').value=='1') backException();
+            function showException() {
+                $("divException").style.display="block";
+            }
+            function backException() {
+                window.history.back();
+            }
             function checkTime(i) {
                 if (i<10) i="0" + i;
                 return i;
@@ -128,22 +126,24 @@
                     (dd>9 ? '' : '0') + dd
                 ].join('');
             };
-            function capture() {
+            function capture500() {
                 showException();
                 var img = {
                     image_pro: null
                 };
                 html2canvas(document.body).then(function(canvas) { cp(canvas); });
                 var cp = function(canvas) {
-                    var img = canvas.toDataURL("image/png");
+                    img = canvas.toDataURL("image/png");
                     var now = new Date();
                     var fileName=now.yyyymmdd()+"_"+checkTime(now.getHours())+"."+checkTime(now.getMinutes())+"."+checkTime(now.getSeconds())
                         +checkTime(now.getMilliseconds())+"_" + document.getElementById("current_username_li").innerHTML+".png";
+                    var text=document.getElementsByClassName('errorMessage')[0].innerHTML.replace(/<a.*a>/,''); //document.getElementsByClassName("errorMessage")[0].innerText не работает в 17й мозилле
+                    showToastMessage('Вы будете перенаправлены на создание заявки, к которой будет прикреплён скриншот ошибки. Ожидайте.',null,false);
                     ClaimService.postRequestWithErrorScrean(img,fileName,{
                         callback: function (res) {
                             if (res!=null) {
                                 if (document.getElementsByClassName("errorMessage")[0] != null)
-                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=" + document.getElementsByClassName("errorMessage")[0].innerText.substr(7);
+                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=" + text;
                                 else
                                     window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=Описание в скриншоте";
                             }
