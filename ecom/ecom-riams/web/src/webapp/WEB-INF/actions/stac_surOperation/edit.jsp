@@ -202,7 +202,7 @@
         	<msh:hidden property="printTime"/>
         	<msh:label property="printUsername" label="пользователь"/>
         </msh:row>
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
+                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3"  functionSubmit="save();"/>
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="6ea7dcbb-d32c-4230-b6b0-a662dcc9f568">
@@ -325,6 +325,25 @@
 	    		});
     		}
     	}
+
+    	//проверка даты-времени начала/окончания
+    	function save() {
+    	    if ($('operationDate').value!='' && $('operationTime').value!=''
+            && $('operationDateTo').value!='' && $('operationTimeTo').value!='') {
+                var date1=new Date($('operationDate').value+' '+$('operationTime').value);
+                var date2=new Date($('operationDateTo').value+' '+$('operationTimeTo').value);
+                if (date2>date1)
+                    document.forms["mainForm"].submit();
+                else {
+                    $('submitButton').disabled = false;
+                    showToastMessage('Дата и время окончания должны быть больше даты и времени начала!',null,true);
+                }
+            }
+            else {
+                $('submitButton').disabled = false;
+                showToastMessage('Поля дата и время начала и окончания обязательны для заполнения!',null,true);
+            }
+        }
     	</script>
     	
   </msh:ifFormTypeIsNotView>

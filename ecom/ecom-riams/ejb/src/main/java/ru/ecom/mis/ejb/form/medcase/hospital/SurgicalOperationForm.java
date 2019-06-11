@@ -134,7 +134,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	@Comment("Дата операции по")
 	@DateString
 	@DoDateString
-	@Persist  @MaxDateCurrent
+	@Persist  @MaxDateCurrent @Required
 	public String getOperationDateTo() {return theOperationDateTo;}
 	public void setOperationDateTo(String aOperationDateTo) {theOperationDateTo = aOperationDateTo;}
 
@@ -199,7 +199,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	@Comment("Время операции по")
 	@Persist
 	@TimeString
-	@DoTimeString
+	@DoTimeString @Required
 	public String getOperationTimeTo() {return theOperationTimeTo;}
 	public void setOperationTimeTo(String aOperationTimeTo) {theOperationTimeTo = aOperationTimeTo;}
 
