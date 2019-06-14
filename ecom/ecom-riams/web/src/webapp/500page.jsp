@@ -12,7 +12,7 @@
 
     <tiles:put name="side" type="string">
     <msh:sideMenu>
-        <msh:sideLink key='ALT+0' params="" action=' javascript:capture500()' name="Заявка в ТП"/>
+        <msh:sideLink key='ALT+0' params="" action=' javascript:capture500()' name="Скриншот проблемы"/>
     	<msh:sideLink key='ALT+1' params="" action=' javascript:backException(".do")' name="Отмена"/>
     	<msh:sideLink key='ALT+2' params="" action=' javascript:showException(".do")' roles="/Policy/Config/ViewError" name="Ошибка" title="Показать ошибку"/>
     </msh:sideMenu>

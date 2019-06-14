@@ -122,7 +122,7 @@
              <li class="separator">|</li>
             <msh:ifInRole roles="/Policy/Config/MakeScreenshortWithout500">
             <li>
-                <a href='javascript:void(0)' onclick='capture()'>Заявка в ТП</a>
+                <a href='javascript:void(0)' onclick='capture()'>Скриншот проблемы</a>
             </li>
             <li class="separator">|</li>
             </msh:ifInRole>
