@@ -332,6 +332,10 @@
             && $('operationDateTo').value!='' && $('operationTimeTo').value!='') {
                 var date1=Date.parse($('operationDate').value.replace(".","/").replace(".","/")+' '+$('operationTime').value);
                 var date2=Date.parse($('operationDateTo').value.replace(".","/").replace(".","/")+' '+$('operationTimeTo').value);
+                if (isNaN(date1) || isNaN(date2)) {
+                    date1=new Date($('operationDate').value.split(".").reverse().join("-")+' '+$('operationTime').value);
+                    date2=new Date($('operationDateTo').value.split(".").reverse().join("-")+' '+$('operationTimeTo').value);
+                }
                 if (date2>date1)
                     document.forms["mainForm"].submit();
                 else {
