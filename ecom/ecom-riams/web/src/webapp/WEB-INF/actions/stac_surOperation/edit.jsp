@@ -330,8 +330,8 @@
     	function save() {
     	    if ($('operationDate').value!='' && $('operationTime').value!=''
             && $('operationDateTo').value!='' && $('operationTimeTo').value!='') {
-                var date1=new Date($('operationDate').value+' '+$('operationTime').value);
-                var date2=new Date($('operationDateTo').value+' '+$('operationTimeTo').value);
+                var date1=Date.parse($('operationDate').value.replace(".","/").replace(".","/")+' '+$('operationTime').value);
+                var date2=Date.parse($('operationDateTo').value.replace(".","/").replace(".","/")+' '+$('operationTimeTo').value);
                 if (date2>date1)
                     document.forms["mainForm"].submit();
                 else {
