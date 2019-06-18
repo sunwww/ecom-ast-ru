@@ -105,9 +105,12 @@ div#header{display:none;}
       </msh:row>
        <msh:row>
            <td colspan="11">
-            <input type="submit"  value="Найти" />
+            <input type="submit"  value="Найти"  onclick="find()"/>
+			<input type="submit" onclick="printQuarterlyReport()" value="Печать ежеквартального отчёта" />
           </td>
       </msh:row>
+		<input type="hidden" value="HospitalPrintService" name="s"/>
+		<input type="hidden" value="printQuarterlyReport" name="m"/>
       </msh:panel>
       </msh:form>
           <script type='text/javascript'>
@@ -127,6 +130,19 @@ div#header{display:none;}
    		chk[+aValue-1].checked='checked' ;
    	}
    }
+
+    function find() {
+        var frm = document.forms[0] ;
+        frm.target='' ;
+        frm.action='quality_card_journal.do' ;
+    }
+
+    function printQuarterlyReport() {
+        var frm = document.forms[0] ;
+        frm.target='_blank' ;
+        frm.m.value='printQuarterlyReport' ;
+        frm.action='print-quarterlyReport.do' ;
+    }
       </script>
     	<% 
     	StringBuilder sqlAdd = new StringBuilder();

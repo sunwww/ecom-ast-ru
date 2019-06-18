@@ -2305,3 +2305,355 @@ function recordDuration(aDateBegin,aDateEnd,aAddCount) {
 		return "" ;
 	}
 }
+
+//Получить критерии для запроса
+function getCritList(aCtx,estimationKind) {
+	return aCtx.manager.createNativeQuery("select id,code,name from vocqualityestimationcrit where kind_id="+estimationKind+" and parent_id is null order by code").getResultList();
+}
+
+function getSqlAdd(typeMarks,department,workFunction,expert) {
+    var sqlAdd="";
+    if (typeMarks!=null && typeMarks!="") {
+        if (typeMarks=="1") {
+            sqlAdd+=" and qe.experttype='Expert'";
+        } else if (typeMarks=="2") {
+            sqlAdd+=" and qe.experttype='BranchManager'";
+        }
+    }
+    if (department!=null && department!="") {
+        sqlAdd=sqlAdd+" and wml.id='"+department+"'";
+    }
+    if (workFunction!=null && workFunction!="") {
+        sqlAdd=sqlAdd+" and qec.doctorcase_id='"+workFunction+"'";
+    }
+    if (expert!=null && expert!="") {
+        sqlAdd=sqlAdd+" and qe.expert_id='"+expert+"'";
+    }
+    return sqlAdd;
+}
+
+//реестр по пациентам
+function getQuarterlyReportPatientsList(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder) {
+    var critList = getCritList(aCtx,estimationKind);
+    var critSql="";
+    for (var i=0;i<critList.size();i++) {
+        critSql+=",max(case when vqec.id = '";
+        critSql+=critList.get(i)[0];
+        critSql+="' then (vqem.mark||' '||(select list(vqecd.name) from qualityestimationcritdefect qecd left join vocqualityestimationcritdefect vqecd on vqecd.id=qecd.defect where qecd.criterion=qecr.id ))  else ''||0 end) as f";
+        critSql+=i+5;
+        critSql+="_def1";
+    }
+
+   var sqlAdd=getSqlAdd(typeMarks,department,workFunction,expert);
+
+    var orderBySql="";
+    if (typeOrder!=null && typeOrder!="") {
+        if (typeOrder=="1") {
+            orderBySql+=" pat.patientinfo";
+        } else if (typeOrder=="2") {
+            orderBySql+=" qec.createdate";
+        }
+    }
+    var sql="select qec.id" +
+        " ,to_char(qec.createdate,'dd.MM.yyyy') as f1_createDate" +
+        " ,vwf.name ||' '||wpat.lastname ||' ' || wpat.firstname||' '||wpat.middlename ||' '|| \twml.name as f2_dep_doctor" +
+        " ,pat.patientinfo ||' (№'||coalesce(ss.code,pat.patientSync)||')' as f3_patient" +
+        " ,mkb.code as f4_diagnosis" +
+        critSql +
+        " ,round(cast(sum (vqem.mark)/count(vqec.id) as numeric),2) as f5_average" +
+        " from qualityestimationcard qec" +
+        " left join vocidc10 mkb on mkb.id=qec.idc10_id" +
+        " left join workfunction wf on wf.id=qec.doctorcase_id" +
+        " left join worker w on w.id=wf.worker_id" +
+        " left join mislpu wml on wml.id=w.lpu_id" +
+        " left join patient wpat on wpat.id=w.person_id" +
+        " left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+        " left join qualityestimation qe on qe.card_id=qec.id" +
+        " left join qualityestimationcrit qecr on qecr.estimation_id=qe.id" +
+        " left join vocqualityestimationmark vqem on vqem.id=qecr.mark_id" +
+        " left join vocqualityestimationcrit vqec on vqec.kind_id = qec.kind_id and vqec.id=qecr.criterion_id  " +
+        " left join medcase sls on sls.id=qec.medcase_id" +
+        " left join medcase sls2 on sls2.id=sls.parent_id" +
+        " left join patient pat on pat.id=sls.patient_id" +
+        " left join statisticstub ss on ss.medcase_id=coalesce(sls2.id,sls.id)" +
+        " where  qec.createDate between to_date('"+dateBegin+"','dd.MM.yyyy') and to_date('"+dateEnd+"','dd.MM.yyyy')" +
+        " and qec.kind_id=" + estimationKind +
+        sqlAdd  +
+        " group by qec.id,qec.createdate ,wml.name ,vwf.name,wpat.lastname, wpat.firstname,wpat.middlename ,ss.code,pat.patientinfo ,mkb.code,pat.patientSync" +
+        " order by " + orderBySql;
+    var list=aCtx.manager.createNativeQuery(sql).getResultList() ;
+    var patientsList = new java.util.ArrayList() ;
+    for (var i=0;i<list.size();i++) {
+        var o = list.get(i);
+        var oo = new java.util.ArrayList();
+        var f1_createDate = unNull(o[1]);
+        var f2_dep_doctor = unNull(o[2]);
+        var f3_patient = unNull(o[3]);
+        var f4_diagnosis = unNull(o[4]);
+        var f5_def1 = unNull(o[5]);
+        var f6_def1 = unNull(o[6]);
+        var f7_def1 = unNull(o[7]);
+        var f8_def1 = unNull(o[8]);
+        var f9_def1 = unNull(o[9]);
+        var f10_def1 = unNull(o[10]);
+        var f11_def1 = unNull(o[11]);
+        var f12_def1 = unNull(o[12]);
+        var f13_def1 = unNull(o[13]);
+        var f14_def1 = unNull(o[14]);
+        var f5_average = unNull(o[15]);
+
+        oo.add(i+1+'.');
+        oo.add(f1_createDate);
+        oo.add(f2_dep_doctor);
+        oo.add(f3_patient);
+        oo.add(f4_diagnosis);
+        oo.add(f5_def1);
+        oo.add(f6_def1);
+        oo.add(f7_def1);
+        oo.add(f8_def1);
+        oo.add(f9_def1);
+        oo.add(f10_def1);
+        oo.add(f11_def1);
+        oo.add(f12_def1);
+        oo.add(f13_def1);
+        oo.add(f14_def1);
+        oo.add(f5_average);
+        patientsList.add(oo);
+    }
+    return patientsList;
+}
+//реестр по лечащему врачу (typeReport 2), по отделению (3), по эксперту (4)
+function getQuarterlyReportTypeReport235List(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder,typeReport) {
+    var critSql="";
+    var critList = getCritList(aCtx,estimationKind);
+    for (var i=0;i<critList.size();i++) {
+        critSql+=",round(cast(avg(case when vqec.id = '";
+        critSql+=critList.get(i)[0];
+        critSql+="' then vqem.mark else null end) as numeric),2) as f";
+        critSql+=(i+5);
+        critSql+="_def1";
+    }
+
+    var groupBy="";
+    var nameFldId="";
+    var nameFld="";
+    var orderBySql="";
+    if (typeReport=="2") { //Группировка по врачу
+        groupBy="wf.id,wml.name ,vwf.name,wpat.lastname, wpat.firstname,wpat.middlename";
+        nameFldId="wf.id";
+        nameFld="vwf.name ||' '||wpat.lastname ||' ' || wpat.firstname||' '||wpat.middlename ||' '|| 	wml.name";
+        orderBySql="wpat.lastname, wpat.firstname,wpat.middlename";
+    } else if (typeReport=="3") {  //Группировка по отделению
+        groupBy="wml.id,wml.name ";
+        nameFldId="wml.id";
+        nameFld="wml.name";
+        orderBySql="wml.name";
+    } else if (typeReport=="5") { //Группировка по эксперту
+        groupBy="wfExp.id, vwfExp.name, patExp.lastname, patExp.firstname, patExp.middlename";
+        nameFldId=" wfExp.id";
+        nameFld="vwfExp.name||' '||patExp.lastname||' '|| patExp.firstname ||' '|| patExp.middlename";
+        orderBySql="patExp.lastname, patExp.firstname, patExp.middlename";
+    }
+
+    var sqlAdd=getSqlAdd(typeMarks,department,workFunction,expert);
+
+    var sql="select " + nameFldId + " , " + nameFld + " as f2_dep_doctor" +
+		" ,count(distinct qe.id) as f3_cntExp " +
+		critSql +
+		" ,round(cast(sum (vqem.mark)/count(vqec.id) as numeric),2) as f5_average" +
+        " from qualityestimationcard qec" +
+        " left join vocidc10 mkb on mkb.id=qec.idc10_id" +
+        " left join workfunction wf on wf.id=qec.doctorcase_id" +
+        " left join worker w on w.id=wf.worker_id" +
+        " left join mislpu wml on wml.id=w.lpu_id" +
+        " left join patient wpat on wpat.id=w.person_id" +
+        " left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+        " left join qualityestimation qe on qe.card_id=qec.id" +
+        " left join workfunction wfExp on wfExp.id=qe.expert_id" +
+        " left join worker wExp on wExp.id=wfExp.worker_id" +
+        " left join vocworkfunction vwfExp on vwfExp.id=wfExp.workfunction_id" +
+        " left join patient patExp on patExp.id=wExp.person_id" +
+        " left join qualityestimationcrit qecr on qecr.estimation_id=qe.id" +
+        " left join vocqualityestimationmark vqem on vqem.id=qecr.mark_id" +
+        " left join vocqualityestimationcrit vqec on vqec.kind_id = qec.kind_id and vqec.id=qecr.criterion_id  " +
+        " left join medcase sls on sls.id=qec.medcase_id" +
+        " left join medcase sls2 on sls2.id=sls.parent_id" +
+        " left join patient pat on pat.id=sls.patient_id" +
+        " left join statisticstub ss on ss.medcase_id=coalesce(sls2.id,sls.id)" +
+		" where  qec.createDate between to_date('" + dateBegin + "','dd.MM.yyyy') and to_date('" + dateEnd + "','dd.MM.yyyy')" +
+		" and qec.kind_id='" + estimationKind + "'" +
+		sqlAdd +
+		" group by " + groupBy +
+		" order by " + orderBySql;
+    var list=aCtx.manager.createNativeQuery(sql).getResultList() ;
+    var resList = new java.util.ArrayList() ;
+    for (var i=0;i<list.size();i++) {
+        var o = list.get(i);
+        var rr = new java.util.ArrayList();
+        var f1 = unNull(o[1]);
+        var f2 = unNull(o[2]);
+        var f3 = unNull(o[3]);
+        var f4 = unNull(o[4]);
+        var f5_def1 = unNull(o[5]);
+        var f6_def1 = unNull(o[6]);
+        var f7_def1 = unNull(o[7]);
+        var f8_def1 = unNull(o[8]);
+        var f9_def1 = unNull(o[9]);
+        var f10_def1 = unNull(o[10]);
+        var f11_def1 = unNull(o[11]);
+        var f12_def1 = unNull(o[12]);
+        var f13_def1 = unNull(o[13]);
+        var f14_def1 = unNull(o[14]);
+        var f5_average = unNull(o[15]);
+
+        rr.add(i+1+'.');
+        rr.add(f1);
+        rr.add(f2);
+        rr.add(f3);
+        rr.add(f4);
+        rr.add(f5_def1);
+        rr.add(f6_def1);
+        rr.add(f7_def1);
+        rr.add(f8_def1);
+        rr.add(f9_def1);
+        rr.add(f10_def1);
+        rr.add(f11_def1);
+        rr.add(f12_def1);
+        rr.add(f13_def1);
+        rr.add(f14_def1);
+        rr.add(f5_average);
+        resList.add(rr);
+    }
+    return resList;
+}
+
+//Получить кол-во проведённых экспертиз и без дефектов
+function getCountCards(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks) {
+    var sqlAdd=getSqlAdd(typeMarks,department,workFunction,expert);
+	var sql="select count(distinct qe.id) as f1_cntExp" +
+        " , count(distinct qe.id) - count(distinct case when vqem.mark='1' then null else qe.id end) as f4_cntExp" +
+        " from qualityestimationcard qec" +
+        " left join vocidc10 mkb on mkb.id=qec.idc10_id" +
+        " left join workfunction wf on wf.id=qec.doctorcase_id" +
+        " left join worker w on w.id=wf.worker_id" +
+        " left join mislpu wml on wml.id=w.lpu_id" +
+        " left join patient wpat on wpat.id=w.person_id" +
+        " left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+        " left join qualityestimation qe on qe.card_id=qec.id" +
+        " left join qualityestimationcrit qecr on qecr.estimation_id=qe.id" +
+        " left join vocqualityestimationmark vqem on vqem.id=qecr.mark_id" +
+        " left join vocqualityestimationcrit vqec on vqec.kind_id = qec.kind_id and vqec.id=qecr.criterion_id  " +
+        " left join medcase sls on sls.id=qec.medcase_id" +
+        " left join medcase sls2 on sls2.id=sls.parent_id" +
+        " left join patient pat on pat.id=sls.patient_id" +
+        " left join statisticstub ss on ss.medcase_id=coalesce(sls2.id,sls.id)" +
+        " where  qec.createDate between to_date('"+dateBegin+"','dd.MM.yyyy') and to_date('"+dateEnd+"','dd.MM.yyyy')" +
+        " and qec.kind_id='"+estimationKind+"'" +
+        sqlAdd;
+    var list=aCtx.manager.createNativeQuery(sql).getResultList() ;
+    var res = "";
+    for (var i=0;i<list.size();i++) {
+        var o = list.get(i);
+        var f1 = unNull(o[0]);
+        var f2 = unNull(o[1]);
+        res=f1+"#"+f2;
+    }
+    return res;
+}
+
+//Получить кол-во проведённых экспертиз и без дефектов
+function getQuarterlyReportTypeReportIndicators(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,total,nodef) {
+    var sqlAdd=getSqlAdd(typeMarks,department,workFunction,expert);
+    var sql="select vqec.name as f3_name_crit" +
+        " ,count(distinct case when vqem.mark='1' then null else qec.id end) as f4_cntExp" +
+        " ,round(cast((100*count(distinct case when vqem.mark='1' then null else qec.id end)/'"+total+"') as numeric),2) as f5_cntExp" +
+        " ,round(cast(avg (vqem.mark) as numeric),2) as f6_average" +
+        " from qualityestimationcard qec" +
+        " left join vocidc10 mkb on mkb.id=qec.idc10_id" +
+        " left join workfunction wf on wf.id=qec.doctorcase_id" +
+        " left join worker w on w.id=wf.worker_id" +
+        " left join mislpu wml on wml.id=w.lpu_id" +
+        " left join patient wpat on wpat.id=w.person_id" +
+        " left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+        " left join qualityestimation qe on qe.card_id=qec.id" +
+        " left join qualityestimationcrit qecr on qecr.estimation_id=qe.id" +
+        " left join vocqualityestimationmark vqem on vqem.id=qecr.mark_id" +
+        " left join vocqualityestimationcrit vqec on vqec.kind_id = qec.kind_id and vqec.id=qecr.criterion_id  " +
+        " left join medcase sls on sls.id=qec.medcase_id" +
+        " left join medcase sls2 on sls2.id=sls.parent_id" +
+        " left join patient pat on pat.id=sls.patient_id" +
+        " left join statisticstub ss on ss.medcase_id=coalesce(sls2.id,sls.id)" +
+        " where  qec.createDate between to_date('"+dateBegin+"','dd.MM.yyyy') and to_date('"+dateEnd+"','dd.MM.yyyy')" +
+        " and qec.kind_id='"+estimationKind+"'" +
+        sqlAdd +
+		" group by vqec.id ,vqec.code,vqec.name" +
+        " order by vqec.code";
+    var list=aCtx.manager.createNativeQuery(sql).getResultList() ;
+    var resList = new java.util.ArrayList() ;
+    for (var i=0;i<list.size();i++) {
+        var o = list.get(i);
+        var rr = new java.util.ArrayList();
+        var f0 = unNull(o[0]);
+        var f1 = unNull(o[1]);
+        var f2 = unNull(o[2]);
+        var f3 = unNull(o[3]);
+
+        rr.add(i+1+'.');
+        rr.add(f0);
+        rr.add(f1);
+        rr.add(f2);
+        rr.add(f3);
+        resList.add(rr);
+    }
+    return resList;
+}
+
+//получить квартал, считается по дате начала
+function getQuarter(dateBegin) {
+	var q='';
+	var month=+dateBegin.substring(3,5);
+	if (month<=3)
+		q='I'; //01 02 03
+    else if (month>3 && month<=6)
+        q='II'; //04 05 06
+    else if (month>6 && month<=9)
+        q='III'; //07 08 09
+    else if (month>9 && month<=12)
+        q='IV'; //10 11 12
+	return q;
+
+}
+//получить год
+function getYear(dateBegin) {
+	return +dateBegin.substring(6);
+}
+function printQuarterlyReport(aCtx, aParams) {
+    var estimationKind = aParams.get("estimationKind") ;
+    var department = aParams.get("department") ;
+    var workFunction = aParams.get("workFunction") ;
+    var expert = aParams.get("expert") ;
+    var dateBegin = aParams.get("dateBegin") ;
+    var dateEnd = aParams.get("dateEnd") ;
+    var typeMarks = aParams.get("typeMarks") ;
+    var typeOrder = aParams.get("typeOrder") ;
+    var depname = aParams.get("departmentName") ;
+
+    map.put('depname',depname);
+    map.put('dateBegin',dateBegin);
+    map.put('dateEnd',dateEnd);
+    map.put('qy',getQuarter(dateBegin)+' квартал ' + getYear(dateBegin) + ' г.');
+
+	map.put('patientsList',getQuarterlyReportPatientsList(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder));
+    map.put('doctorsList',getQuarterlyReportTypeReport235List(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder,2));
+    map.put('depList',getQuarterlyReportTypeReport235List(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder,3));
+    map.put('expList',getQuarterlyReportTypeReport235List(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder,5));
+
+    var cnts=getCountCards(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks);
+    var total = cnts.split('#')[0];
+    var nodef = cnts.split('#')[1];
+    map.put('total',total);
+    map.put('nodef',nodef);
+
+	map.put('indicList',getQuarterlyReportTypeReportIndicators(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,total,nodef));
+	return map;
+}
