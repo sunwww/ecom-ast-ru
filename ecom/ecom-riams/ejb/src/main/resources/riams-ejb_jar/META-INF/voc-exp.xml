@@ -609,6 +609,16 @@
                 order=""
         />
     </voc>
+    <voc id='vocQualityEstimationChangeReason' type='NativeVocService'>
+        <NativeVocService
+                from = ' vocQualityEstimationChangeReason v '
+                names=" v.name "
+                nameId=" v.id "
+                queried=" ( upper(v.id) like upper(:query) or upper(v.name) like upper(:query) )"
+                join= ""
+                order=""
+        />
+    </voc>
     <!-- type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationMark'
