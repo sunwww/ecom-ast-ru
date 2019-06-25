@@ -33,6 +33,9 @@
 				        <td onclick="format${name}Services();">
 				        	<label> <input type="checkbox" id="${name}ExtLabsReg" /> Перевести в ниж.регистр</label>
 				        </td>
+					<td onclick="format${name}Services();">
+						<label> <input type="checkbox" id="${name}ExtLabsOrder" /> Обратный порядок (от старых к новым)</label>
+					</td>
 			        </msh:row>
 		            <msh:row>
 		            	<td></td>
@@ -143,21 +146,21 @@
 			//формирование дневников лаборатории
 			var showService = jQuery('[name=${name}ExtLabsCode]:checked').val()=='0';
 			var showServiceName = jQuery('[name=${name}ExtLabsCode]:checked').val()!='2';
-
+			var isOldFirst = jQuery('#${name}ExtLabsOrder').is(':checked');
 			var makeOneString = jQuery('#${name}ExtLabsStr').is(':checked');
 			var lowerCase = jQuery('#${name}ExtLabsReg').is(':checked');
 			var noIntake = jQuery('#${name}ExtLabsNoIntake').is(':checked');
 			var addDate = jQuery('#${name}ExtLabsDate').is(':checked');
 			p+="<tr><td colspan='3'><label><input type='checkbox' onclick='checkAllServices(this.checked)'>Отметить все</label></td></tr>";
 			for (var i=0;i<servicesList.length;i++){
-				var diary = servicesList[i];
+				var diary = isOldFirst ? servicesList[servicesList.length-(i+1)] : servicesList[i];
 				p+='<tr>';
 				p+='<td><input type=\'checkbox\' class=\'diary${name}Checkbox\' name=\'diary'+diary.id+'\'></td>';
 				p+='<td>'+diary.recordDate+" "+diary.recordTime+'</td>';
 				p+='<td id='+diary.id+'>'+escapeHtml(
-						(true==addDate ? diary.recordDate+" " : "") +
-						(true==showService ? diary.serviceCode+" " : "")
-						+(true==showServiceName ? diary.serviceName : "")+" "+diary.recordText
+						(true===addDate ? diary.recordDate+" " : "") +
+						(true===showService ? diary.serviceCode+" " : "")
+						+(true===showServiceName ? diary.serviceName : "")+" "+diary.recordText
 						,lowerCase,makeOneString, noIntake)+'</td>';
 				p+='</tr>';
 			}
