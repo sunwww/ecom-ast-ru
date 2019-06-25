@@ -1475,16 +1475,16 @@ public class Expert2ServiceBean implements IExpert2Service {
                 //Делаем проверку на роды. Если отделение - обсервационное (27-12-2018), диагнозы входят в список, то создаем услуги
                 if (isNotNull(aEntry.getDepartmentId()) && aEntry.getDepartmentId()==212) {
                     if (isNotNull(aEntry.getMainMkb())) {
-                        String patologicDs = "O60.1,O60.2,O84.0";
+                        String patologicDs = "O60.1,O60.2,O84.0,O36.4";
                         String fiziologicDs = "O80.0,O80.1";
-                        if (patologicDs.indexOf(aEntry.getMainMkb())>-1) { //Если подходящий диагноз по патологическим родам
+                        if (patologicDs.contains(aEntry.getMainMkb())) { //Если подходящий диагноз по патологическим родам
                             if ("B01.001.006".indexOf(operationList) ==-1){ //И в списке услуг нет нужной услуги - добавим её
                                 JSONObject pat = new JSONObject();
                                 pat.put("serviceCode","B01.001.006");
                                 pat.put("serviceDate",dateToString(aEntry.getStartDate()));
                                 services.put(pat);
                             }
-                        } else if (fiziologicDs.indexOf(aEntry.getMainMkb())>-1) {
+                        } else if (fiziologicDs.contains(aEntry.getMainMkb())) {
                             if ("B01.001.009".indexOf(operationList) ==-1){
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("serviceCode","B01.001.009");
