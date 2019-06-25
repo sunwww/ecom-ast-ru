@@ -2318,7 +2318,7 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select ms.code as name1,ms.name as name3,ms.shortname as shname,to_char(aslo.datestart,'dd.mm.yyyy') as dt" +
 				" from diary d" +
-				" left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=1092" +
+				" left join forminputprotocol fipr on fipr.docprotocol_id=d.id and fipr.parameter_id=(select cast(keyvalue as int) from softconfig where key='FIP_parameterMicroBio')" +
 				" left join uservalue uv on uv.id=fipr.valuevoc_id" +
 				" left join medcase aslo on d.medcase_id=aslo.id and aslo.dtype='Visit'" +
 				" left join medcase dmc on dmc.parent_id=aslo.parent_id" +

@@ -29,9 +29,7 @@
 			request.setAttribute("orderBy2"," v.timeExecute");
 		}
   	%>
-	  <input type="checkbox" name="chbOrder" id="chbOrder" onclick="checkBox();">
-	  <label onclick="document.getElementById('chbOrder').click();"> <b>Сортировать по ФИО</b></label>
-	  </input>
+	  <label><input type="checkbox" name="chbOrder" id="chbOrder" onclick="checkBox();"/><b>Сортировать по ФИО</b></label>
   	<msh:section title="Непринятые пациенты" >
   		<ecom:webQuery name="list_no" nativeSql="select v.id
   		,cast(wct.timeFrom as varchar(5)) as timeFrom

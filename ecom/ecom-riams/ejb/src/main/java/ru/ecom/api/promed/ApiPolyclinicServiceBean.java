@@ -53,6 +53,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
     private static final String DIAGMKB="Diag_code";                     //заключительный диагноз (код МКБ)
     private static final String DIARY="diary";                          //заключение
     private static final String DOCTORWF="doctorWf";                    //должность врача
+    private static final String workFunctionId="workFunctionId";        //WorkFunction.id
     private static final String DOCTORLASTNAME="doctorLastname";        //ФИО врача
     private static final String DOCTORFIRSTNAME="doctorFirstname";
     private static final String DOCTORMIDNAME="doctorMiddlename";
@@ -140,7 +141,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                 " left join medservice ms on ms.id=smc.medservice_id"+
                 " where m.datefinish = :dateTo and m.dtype='PolyclinicMedCase' and (vis.noactuality is null or vis.noactuality=false)" +
                 " and (vss.code=:sstream or vss.code is null)" +
-                " and ms.code='A04.30.001' and vis.visitresult_id!=11"+
+                " and ms.code='A04.30.001' and vis.visitresult_id!=11 and vis.timeexecute is not null"+
                 (isUpload ? " and (m.upload is null or m.upload=false)" : "") +
                 " group by m.id"+
                 " having count(vis.id)>0")
@@ -162,7 +163,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                 " and (vss.code=:sstream or vss.code is null)" +
                 " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
                 " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
-                " and vis.visitResult_id!=11 and vis.parent_id = m.id) > 0" +
+                " and vis.visitResult_id!=11 and vis.parent_id = m.id  and vis.timeexecute is not null) > 0" +
                 " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" +  (isUpload? " and (m.upload is null or m.upload=false)" : ""))
                 .setParameter("dateTo",dateTo).setParameter("sstream",serviceStream).getResultList();
     }
@@ -211,7 +212,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
     private HashMap<Long, Object[]> doctorMap = new HashMap<>();
     private Object[] getDoctorInfo(Long wfId) {
         if (doctorMap.containsKey(wfId)) return doctorMap.get(wfId); //Не будем каждый раз искать врача в БД
-        List<Object[]> docInfoList =  theManager.createNativeQuery("select vwf.name, wpat.lastname,wpat.firstname,wpat.middlename,wpat.snils,wf.promedCode_workstaff as promedCode" +
+        List<Object[]> docInfoList =  theManager.createNativeQuery("select wf.id,vwf.name, wpat.lastname,wpat.firstname,wpat.middlename,wpat.snils,wf.promedCode_workstaff as promedCode" +
                 " from Workfunction wf" +
                 " left join Worker w on w.id=wf.worker_id" +
                 " left join VocWorkfunction vwf on vwf.id=wf.workfunction_id" +
@@ -221,7 +222,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
         return docInfoList.get(0);
     }
     /**
-     * Получить в JSON инфо по рабочей функции врача (ФИО, СНИЛС, ДОЛЖНОСТЬ)
+     * Получить в JSON инфо по рабочей функции врача (WorkFinction.id,ФИО, СНИЛС, ДОЛЖНОСТЬ)
      *
      * @param wf WorkFunction
      * @return JSONObject
@@ -230,12 +231,13 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
         JSONObject dccInfoJson = new JSONObject();
             Object[] doctorInfo=getDoctorInfo(wf.getId());
             if (doctorInfo!=null) {
-                dccInfoJson.put(DOCTORWF,doctorInfo[0])
-                        .put(DOCTORLASTNAME,doctorInfo[1])
-                        .put(DOCTORFIRSTNAME,doctorInfo[2])
-                        .put(DOCTORMIDNAME,doctorInfo[3])
-                        .put(DOCTORSNILS,doctorInfo[4])
-                        .put(DOCTORPROMEDCODE,doctorInfo[5])
+                dccInfoJson.put(workFunctionId,doctorInfo[0])
+                        .put(DOCTORWF,doctorInfo[1])
+                        .put(DOCTORLASTNAME,doctorInfo[2])
+                        .put(DOCTORFIRSTNAME,doctorInfo[3])
+                        .put(DOCTORMIDNAME,doctorInfo[4])
+                        .put(DOCTORSNILS,doctorInfo[5])
+                        .put(DOCTORPROMEDCODE,doctorInfo[6])
                 ;
             }
         return dccInfoJson;
@@ -294,7 +296,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
     }
 
     /**
-     * Получить весь визит в json
+     * Установить отметку о выгрузке.
      *
      * @param medcase_id Long id случая
      * @param tap_id String promed_id
@@ -302,13 +304,87 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      */
     public String setEvnTap(Long medcase_id, String tap_id) {
         JSONObject res = new JSONObject();
-        List<String> info=theManager.createNativeQuery("select promedcode from medcase where id=:medcaseId").setParameter("medcaseId",medcase_id).getResultList() ;
-        if (info.isEmpty()) {
+        if (medcase_id==null) {
             res.put("status","error")
-                    .put("reason","medcase not found");
-        } else {
-            theManager.createNativeQuery("update medcase set promedcode=:tapId,upload=true where id=:medcaseId").setParameter("tapId",tap_id).setParameter("medcaseId",medcase_id).executeUpdate();
-            res.put("status","Ok");
+                    .put("reason","medcase_id is null");
+        }
+        else {
+            List<String> info = theManager.createNativeQuery("select promedcode from medcase where id=:medcaseId").setParameter("medcaseId", medcase_id).getResultList();
+            if (info.isEmpty()) {
+                res.put("status", "error")
+                        .put("reason", "medcase not found");
+            } else {
+                theManager.createNativeQuery("update medcase set promedcode=:tapId,upload=true where id=:medcaseId").setParameter("tapId", tap_id).setParameter("medcaseId", medcase_id).executeUpdate();
+                res.put("status", "Ok");
+            }
+        }
+        return res.toString();
+    }
+
+
+    /**
+     * Получить ФИО, отделение и promedcode_lpusection и promedcode_workstaff.
+     *
+     * @param workfunction_id WorkFunction.id
+     * @return JSON in String
+     */
+    public String getWfInfo(Long workfunction_id) {
+        JSONObject res = new JSONObject();
+        if (workfunction_id==null) {
+            res.put("status","error")
+                    .put("reason","workfunction is null");
+        }
+        else {
+            List<Object[]> info = theManager.createNativeQuery("select wpat.lastname||' '||wpat.firstname||' '||wpat.middlename,dep.name as dep" +
+                    " ,wf.promedcode_lpusection as promedcode_lpusection,wf.promedcode_workstaff as promedcode_workstaff" +
+                    " from Workfunction wf" +
+                    " left join Worker w on w.id=wf.worker_id" +
+                    " left join VocWorkfunction vwf on vwf.id=wf.workfunction_id" +
+                    " left join Patient wpat on wpat.id=w.person_id" +
+                    " left join mislpu dep on dep.id=coalesce(wf.lpu_id,w.lpu_id)" +
+                    " where wf.id=:workfunctionId").setParameter("workfunctionId", workfunction_id).getResultList();
+            if (info.isEmpty()) {
+                res.put("status", "error")
+                        .put("reason", "workfunction not found");
+            } else {
+                if (info.get(0)[0] != null)
+                    res.put("fio", String.valueOf(info.get(0)[0]));
+                if (info.get(0)[1] != null)
+                    res.put("dep", String.valueOf(info.get(0)[1]));
+                if (info.get(0)[2] != null)
+                    res.put("promedcode_lpusection", String.valueOf(info.get(0)[2]));
+                if (info.get(0)[3] != null)
+                    res.put("promedcode_workstaff", String.valueOf(info.get(0)[3]));
+            /*res.put("promedcode_lpusection",info.get(0)[0]==null? "" : String.valueOf(info.get(0)[0]));
+            res.put("promedcode_workstaff",info.get(0)[1]==null? "" : String.valueOf(info.get(0)[1]));*/
+            }
+        }
+        return res.toString();
+    }
+
+    /**
+     * Установить promedcode_lpusection и promedcode_workstaff.
+     *
+     * @param workfunction_id Long id случая
+     * @param promedcode_lpusection String promed_id
+     * @param promedcode_workstaff String promedcode_workstaff
+     * @return JSONObject
+     */
+    public String setWfInfo(Long workfunction_id,String promedcode_lpusection,String promedcode_workstaff) {
+        JSONObject res = new JSONObject();
+        if (workfunction_id==null) {
+            res.put("status","error")
+                    .put("reason","workfunction is null");
+        }
+        else {
+            List<String> info = theManager.createNativeQuery("select id from workfunction where id=:workfunctionId").setParameter("workfunctionId", workfunction_id).getResultList();
+            if (info.isEmpty()) {
+                res.put("status", "error")
+                        .put("reason", "workfunction not found");
+            } else {
+                theManager.createNativeQuery("update workfunction set promedcode_lpusection=:promedcode_lpusection,promedcode_workstaff=:promedcode_workstaff where id=:workfunctionId").setParameter("promedcode_lpusection", promedcode_lpusection).setParameter("promedcode_workstaff", promedcode_workstaff).setParameter("workfunctionId", workfunction_id).executeUpdate();
+                res.put("status", "Ok");
+            }
         }
         return res.toString();
     }

@@ -5,6 +5,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -144,6 +145,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
 	        	<input type="radio" name="typeView" value="4"  > свод по возрастам 
 	        </td>
+            <td onclick="this.childNodes[1].checked='checked';" colspan="4">
+                <input type="radio" name="typeView" value="5"  > свод по пациентам
+            </td>
         </msh:row>
         </table></td></tr>
         <msh:row>
@@ -420,6 +424,53 @@ ${groupBy}
 
     </msh:section>
     <% }
+        if (view==null || view.equals("5")) {
+            ActionUtil.getValueBySql("select cast(keyvalue as int) from softconfig where key='MenWorkingCapacity'", "menCap","menCapName",request) ;
+            ActionUtil.getValueBySql("select cast(keyvalue as int) from softconfig where key='WomenWorkingCapacity'", "womenCap","womenCapName",request) ;
+            if (request.getParameter("lpu")!=null && !request.getParameter("lpu").toString().equals(""))
+                request.setAttribute("lpuSql"," and w.lpu_id="+request.getParameter("lpu"));
+            else
+                request.setAttribute("lpuSql","");
+    %>
+      <msh:section>
+          <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. Свод пациентов.</msh:sectionTitle>
+          <msh:sectionContent>
+              <ecom:webQuery isReportBase="true" name="journal_swod_pat" nativeSql="
+select distinct p.id as pid
+, p.lastname||' '||p.firstname||' '||coalesce(p.middlename)||' '||to_char(p.birthday,'dd.mm.yyyy') as fiopat
+, s.name as sex
+,case when (adr.addressisvillage='1') then 'сел' else null end as cntVil
+,case when s.code='1'
+	then case when EXTRACT(YEAR from AGE(p.birthday))<${menCap} then 'Да ('||${menCap}||' и менее)' else 'Нет (>'||${menCap}||')' end
+	else case when EXTRACT(YEAR from AGE(p.birthday))<${womenCap} then 'Да ('||${womenCap}||' и менее)' else 'Нет (>'||${womenCap}||')' end
+end as workCap
+from medcase t
+left join WorkFunction wf on wf.id=t.workfunctionExecute_id
+left join vocMedCaseDefect vmcd on vmcd.id=t.medCaseDefect_id
+left join worker w on w.id=wf.worker_id
+left join Patient p ON p.id=t.patient_id
+left join vocsex s on s.id=p.sex_id
+left join Address2 adr on adr.addressid=p.address_addressid
+WHERE   (t.dtype='Visit' or t.dtype='ShortMedCase')
+and t.dateStart BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy')
+and (t.noActuality is null or t.noActuality='0') ${lpuSql}
+ORDER BY case when s.code='1'
+	then case when EXTRACT(YEAR from AGE(p.birthday))<${menCap} then 'Да ('||${menCap}||' и менее)' else 'Нет (>'||${menCap}||')' end
+	else case when EXTRACT(YEAR from AGE(p.birthday))<${womenCap} then 'Да ('||${womenCap}||' и менее)' else 'Нет (>'||${womenCap}||')' end
+end,p.id
+" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+              <msh:table printToExcelButton="Сохранить в excel"
+                      name="journal_swod_pat" action="entityView-mis_patient.do" idField="1" noDataMessage="Не найдено">
+                  <msh:tableColumn columnName="#" property="sn"/>
+                  <msh:tableColumn columnName="Пациент" property="2"/>
+                  <msh:tableColumn columnName="Пол" property="3"/>
+                  <msh:tableColumn columnName="Житель" property="4"/>
+                  <msh:tableColumn columnName="Трудоспособность?" property="5"/>
+              </msh:table>
+          </msh:sectionContent>
+
+      </msh:section>
+      <% }
     	} else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>

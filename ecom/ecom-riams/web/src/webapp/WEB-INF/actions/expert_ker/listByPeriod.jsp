@@ -212,8 +212,8 @@ cec.id as f1_id, to_char(expertDate,'dd.mm.yyyy')
 ,to_char(cec.orderHADate,'dd.mm.yyyy') as orderHADate,cec.conclusionHA as conlusionHA
 ,to_char(cec.receiveHADate,'dd.mm.yyyy') as receiveHADate,cec.additionInfoHA as addtionInfoHA
 ,coalesce(cec.numberinjournal,''||cec.id) as numberInJournal
-,replace(replace(vecomp.name,' ',''),',',chr(13)) as expertComission
-,cast('' as varchar(2)) as expertsign
+,replace(replace(vecomp.name,' ',''),',',chr(13)||chr(13)) as expertComission
+,chr(13)||chr(13)||cast('____________' as varchar(12))||chr(13)||chr(13)||cast('____________' as varchar(12))||chr(13)||chr(13)||cast('____________' as varchar(12))||chr(13)||chr(13) as expertsign
 from ClinicExpertCard cec
 left join VocExpertComposition vecomp on vecomp.id=cec.expcomposition_id
 left join MedCase slo on slo.id=cec.medCase_id

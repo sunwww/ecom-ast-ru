@@ -33,7 +33,7 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 					if (whereDop.equals("wcd.calendarDate") || whereDop.equals("t.createDate")) {
 						whereDop=whereDop+"=to_date('"+ids[2]+"','dd.mm.yyyy')" ;
 					} else {
-						whereDop=whereDop+"='"+ids[2]+"'" ;
+						whereDop="'"+whereDop+"'='"+ids[2]+"'" ;
 					}
 				} else{
 					whereDop=whereDop+" is null" ;
@@ -52,11 +52,11 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 		} else {
 			view =ActionUtil.updateParameter("VisitPatientByPoliclinic","typeView","2", aRequest) ;
 			//date =ActionUtil.updateParameter("VisitPatientByPoliclinic","typeDate","2", aRequest) ;
-			aRequest.setAttribute("beginDate","");// form.getBeginDate()) ;
-			aRequest.setAttribute("finishDate", "");//form.getFinishDate()) ;
+			aRequest.setAttribute("beginDate",form.getBeginDate());// ""
+			aRequest.setAttribute("finishDate", form.getFinishDate());//""
 		}
 		
-		
+
 
 		boolean isReestr = false ;
 		if (view.equals("1")) isReestr=true ;

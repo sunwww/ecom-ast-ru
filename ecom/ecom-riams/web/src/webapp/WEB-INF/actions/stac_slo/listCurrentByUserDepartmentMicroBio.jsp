@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -34,6 +35,7 @@
       String plus = request.getParameter("p");
       if (plus==null || plus.equals("") || !plus.equals("Plus")) request.setAttribute("p","");
       else request.setAttribute("p"," and uv.cntball=1");
+      ActionUtil.getValueBySql("select cast(keyvalue as int) from softconfig where key='FIP_parameterMicroBio'", "fipr","fiprName",request) ;
       if (department!=null && department.intValue()>0 )  {
     %>
     <msh:section>
@@ -102,7 +104,7 @@ select m.id as mid
 
     left join MedCase aslo on aslo.parent_id=m.parent_id and aslo.dtype='Visit'
     left join diary d on d.medcase_id=aslo.id and d.dtype='Protocol'
-    left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=1092
+    left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=${fipr}
     left join uservalue uv on uv.id=fipr.valuevoc_id
 
     where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'
@@ -160,7 +162,7 @@ select m.id as mid
 
     left join MedCase aslo on aslo.parent_id=m.parent_id and aslo.dtype='Visit'
     left join diary d on d.medcase_id=aslo.id and d.dtype='Protocol'
-    left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=1092
+    left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=${fipr}
     left join uservalue uv on uv.id=fipr.valuevoc_id
 
     where m.DTYPE='DepartmentMedCase'
@@ -263,7 +265,7 @@ select m.id as mid
     left join MisLpu ml on ml.id=m.department_id
     left join MedCase aslo on aslo.parent_id=sls.id and aslo.dtype='Visit'
     left join diary d on d.medcase_id=aslo.id and d.dtype='Protocol'
-    left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=1092
+    left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=${fipr}
     left join uservalue uv on uv.id=fipr.valuevoc_id
     where m.DTYPE='DepartmentMedCase'
     and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
