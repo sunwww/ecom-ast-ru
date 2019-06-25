@@ -409,7 +409,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             add(dir,"DIAG_DATE",currentEntry.getFinishDate());
                             add(dir,"DIAG_TIP",diagnostic.getType());
                             add(dir,"DIAG_CODE",diagnostic.getCode());
-                            add(dir,"DIAG_RSLT",diagnostic.getResult());
+                      //      add(dir,"DIAG_RSLT",diagnostic.getResult());
                             onkSl.addContent(dir);
                         }
                         List<E2CancerRefusal> prots = cancerEntry.getRefusals();
@@ -591,15 +591,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                 VocMedService medService = ems.getMedService(); //theManager.find(VocMedService.class,Long.valueOf(ms[0].toString()));
                                 medServiceCode = medService.getCode();
                                 boolean isOwnProfile = medServiceCode.startsWith("B");
-                                String serviceDate = dateToString(ems.getServiceDate());
+                         //       String serviceDate = dateToString(ems.getServiceDate());
                                 Element usl = new Element("USL");
                                 usl.addContent(new Element("IDSERV").setText(""+uslCnt));
                                 usl.addContent(new Element("LPU_U").setText("300001"));
                                 usl.addContent(new Element("PROFIL_U").setText(isOwnProfile ? getMedHelpProfileCodeByMedSpec(ems.getDoctorSpeciality()) : profileK));
                                 usl.addContent(new Element("VID_VME").setText(medServiceCode));
                                 usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
-                                usl.addContent(new Element("DATE_1_U").setText(serviceDate));
-                                usl.addContent(new Element("DATE_2_U").setText(serviceDate));
+                                usl.addContent(new Element("DATE_1_U").setText(startDate)); //24-06 - дата услуги = дата КДП
+                                usl.addContent(new Element("DATE_2_U").setText(finishDate));
                                 usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
                                 usl.addContent(new Element("KOL_USL").setText(ms[1].toString()));
                                 usl.addContent(new Element("SUMV_USL").setText("0"));
