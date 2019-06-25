@@ -122,12 +122,11 @@ public class MedcaseMedpolicy {
                                        patient.getString("birthday")+" >> "+sdf.parse(patient.getString("birthday"))+" : "+wqr.get10().toString());
                            }
                        } else {
-                           LOG.info("fondINfo = "+fondInfo);
+                        //   LOG.info("fondINfo = "+fondInfo);
                            LOG.warn("Дата действия полиса не попадает в госпитализацию: "+policy.getString("dateStart")+" "+policy.getString("dateEarlyEnd"));
                            jsonObject.put("status","bad_period");
                            //Установим дату окончания полиса согласно ТФОМС
-                           service.executeUpdateNativeSql("update medpolicy set actualDateTo="+sdf.format(new java.util.Date(policyExpireDate)) +
-                                   " where id = "+wqr.get11().toString());
+                           service.executeUpdateNativeSql("update medpolicy set actualDateTo='"+sdf.format(new java.util.Date(policyExpireDate)) + "' where id = "+wqr.get11().toString());
                        }
                    }
 
