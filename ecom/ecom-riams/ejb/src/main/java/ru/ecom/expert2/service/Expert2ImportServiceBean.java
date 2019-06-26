@@ -208,6 +208,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             List<Element> npr = doc.getRootElement().getChildren("NPR");
             LOG.info("Найдено "+npr.size()+" случаев");
             int i=0;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             for (Element el:npr) {
                 i++;
                 if (i%100==0) {LOG.info("Обработано "+i+" записей");}
@@ -215,25 +216,25 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 String planHospDate = el.getChildText("DATE_1");
                 String directDate = el.getChildText("D_NPR");
                 String historyNumber = el.getChildText("NHISTORY");
-                String sql = "from E2Entry where listentry_id=:listEntryId and historyNumber=:historyNumber";
+                String sql = "from E2Entry where listentry_id=:listEntryId and historyNumber=:historyNumber and serviceStream='OBLIGATORYINSURANCE' and (isDeleted is null or isDeleted='0')";
                 List<E2Entry> list = theManager.createQuery(sql).setParameter("listEntryId",aListEntryId).setParameter("historyNumber",historyNumber).getResultList();
-
                 for (E2Entry entry: list) {
-                    boolean persist = false;
-
-                    if (StringUtil.isNullOrEmpty(entry.getTicket263Number())) {
-                        entry.setTicket263Number(num);
-                        persist=true;
+                    if (sdf.format(entry.getStartDate()).equals(planHospDate)) {
+                        boolean persist = false;
+                        if (StringUtil.isNullOrEmpty(entry.getTicket263Number())) {
+                            entry.setTicket263Number(num);
+                            persist=true;
+                        }
+                        if (null==entry.getPlanHospDate()) {
+                            entry.setPlanHospDate(DateFormat.parseSqlDate(planHospDate,"yyyy-MM-dd"));
+                            persist=true;
+                        }
+                        if (null==entry.getDirectDate()) {
+                            entry.setDirectDate(DateFormat.parseSqlDate(directDate,"yyyy-MM-dd"));
+                            persist=true;
+                        }
+                        if (persist)theManager.persist(entry);
                     }
-                    if (null==entry.getPlanHospDate()) {
-                        entry.setPlanHospDate(DateFormat.parseSqlDate(planHospDate,"yyyy-MM-dd"));
-                        persist=true;
-                    }
-                    if (null==entry.getDirectDate()) {
-                        entry.setDirectDate(DateFormat.parseSqlDate(directDate,"yyyy-MM-dd"));
-                        persist=true;
-                    }
-                    if (persist)theManager.persist(entry);
                 }
             }
             LOG.info("Закончили импортировать N5");
