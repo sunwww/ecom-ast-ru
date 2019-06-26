@@ -381,6 +381,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")
 				.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
 				.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Coeur') as commentcoeur")
+				.append(", (select list(cast(id as varchar)) from vocqualityestimationmark qecBM where criterion_id=vqec.id) as allmarks")
 		.append(" from VocQualityEstimationCrit vqec")
 
 		.append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqec.id");
@@ -465,11 +466,9 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						 if (list2.get(t)[0].equals(list.get(i)[1].toString())) index = t;
 					 }
 				 }
-				 if (index!=-1 && list2!=null && list2.get(index)!=null && list2.get(index)[1]!=null && list2.get(index)[1].equals("yes")) {
-					 table.append("<td valign='top' align='right'").append(color1).append(">").append(cntPart++).append("<input type='hidden' id='criterion").append(cntPart - 1).append("Comment' value='").append(defects).append("'></td>").append("<input type='hidden' id='criterion").append(cntPart - 1).append("CommentYesNo' value='").append(comments.toString()).append("'></td>");
-				 }
-				 else
-					 table.append("<td valign='top' align='right'").append(color2).append(">").append(cntPart++).append("<input type='hidden' id='criterion").append(cntPart - 1).append("Comment' value='").append(defects).append("'></td>").append("<input type='hidden' id='criterion").append(cntPart - 1).append("CommentYesNo' value='").append(comments.toString()).append("'></td>");
+				 String color = (index!=-1 && list2!=null && list2.get(index)!=null && list2.get(index)[1]!=null && list2.get(index)[1].equals("yes"))? color1:color2;
+				 table.append("<td valign='top' align='right'").append(color).append(">").append(cntPart++).append("<input type='hidden' id='criterion").append(cntPart - 1).append("Comment' value='").append(defects).append("'></td>").append("<input type='hidden' id='criterion").append(cntPart - 1).append("CommentYesNo' value='").append(comments.toString());
+				 table.append("'></td>");
 				 //BranchManager - зав.отделением
 				 //Expert - эксперт
 				 //Coeur - КЭР
@@ -479,21 +478,47 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 valMark=aValueMap.get(String.valueOf(cntPart-1)) ;
 					 //LOG.info(String.valueOf(cntPart-1)+":"+valMark) ;
 				 }
-				 table.append(recordExpertShort(row[0],row[4], valMark, cntPart, aCntSection, "BranchManager", aTypeSpecialist, aView) );
-				 valMark =  row[5];
-				 if (aReplaceValue &&!aView&& aTypeSpecialist.equals("Expert")) {
-					 valMark=aValueMap.get(String.valueOf(cntPart-1)) ;
-				 }				 
-				 table.append(recordExpertShort(row[0],row[6], valMark, cntPart, aCntSection, "Expert", aTypeSpecialist, aView)) ;
-				 valMark =  row[7];
-				 if (aReplaceValue &&!aView && aTypeSpecialist.equals("Coeur")) {
-					 valMark=aValueMap.get(String.valueOf(cntPart-1)) ;
-				 }
-				 table.append(recordExpertShort(row[0],row[8], valMark, cntPart, aCntSection, "Coeur", aTypeSpecialist, aView) );
-				 //Milamesher 04062018 - комментарий по желанию
 				 if (ifTypeBool) {
-					 table.append("<td colspan=6 align='center'><input onclick=\"showYesNoCommentFromBean(").append((cntPart - 1)).append(")\" type=\"button\" value=\"Комм. зав.\" /></td>");
+				 	if (valMark==null) valMark="";
+				 	 String[] allmarks=row [15].toString().replace(" ","").split(",");
+					 String styleYesNo="style='margin-left:5px; margin-right:30px'";
+				 	 String styleTd="style='width:110px; height:30px'";
+					 String styleRadioInput="style='transform: scale(1.5)'";
+					//Только оценка заведующего
+					 table.append("<td ").append(styleTd).append("><label ").append(styleYesNo)
+							 .append("onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(allmarks[0])
+							 .append(")\"><input ").append(allmarks[0].equals(valMark.toString()) || color.equals(color1)? " checked='true'" : "").append(styleRadioInput)
+							 .append(" type='radio' name='criterion")
+							 .append(cntPart - 1).append("' value='").append(allmarks[0]).append("' id='radio").append(cntPart - 1).append("1'>  Да</label>")
+							 .append("<label onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(allmarks[1])
+							 .append(")\"><input ").append(!(allmarks[0].equals(valMark.toString()) || color.equals(color1))? " checked='true'" : "").append(styleRadioInput)
+							 .append(" type='radio' name='criterion").append(cntPart - 1).append("' value='").append(allmarks[1]).append("' id='radio")
+							 .append(cntPart - 1).append("0'>  Нет</label>")
+							 .append("<input type='hidden' id='criterion").append(cntPart - 1).append("P' value='").append(row[0]).append("'>");
+					 if (valMark.equals("")) {
+					 	if (color.equals(color1))
+							valMark=allmarks[0];
+					 	else
+							valMark=allmarks[1];
+					 }
+					 table.append("<input type='hidden' id='criterion").append(cntPart - 1).append("' value='").append(valMark).append("'>")
+                             .append("</td><td></td><td></td>");
+					 table.append("<td colspan=6 align='center'><input onclick=\"showYesNoCommentFromBean(")
+							 .append((cntPart - 1)).append(")\" type=\"button\" value=\"Комм. зав.\" /></td>");
 					 table.append("</tr>");
+				 }
+				 else {
+					 table.append(recordExpertShort(row[0], row[4], valMark, cntPart, aCntSection, "BranchManager", aTypeSpecialist, aView));
+					 valMark = row[5];
+					 if (aReplaceValue && !aView && aTypeSpecialist.equals("Expert")) {
+						 valMark = aValueMap.get(String.valueOf(cntPart - 1));
+					 }
+					 table.append(recordExpertShort(row[0], row[6], valMark, cntPart, aCntSection, "Expert", aTypeSpecialist, aView));
+					 valMark = row[7];
+					 if (aReplaceValue && !aView && aTypeSpecialist.equals("Coeur")) {
+						 valMark = aValueMap.get(String.valueOf(cntPart - 1));
+					 }
+					 table.append(recordExpertShort(row[0], row[8], valMark, cntPart, aCntSection, "Coeur", aTypeSpecialist, aView));
 				 }
 			 }
 		 }

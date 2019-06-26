@@ -91,19 +91,11 @@
 						 callback: function(aRow) {
 						     //alert(aRow.substring(1000));
 						     	if (aRow!=null) {
-						     	    if (voc=="vocQualityEstimationMarkYesNo") {
-						     	        //вывод других этапов
-						     	        aRow=aRow.replace(new RegExp('\'center\'>1.0<td', 'g'),'\'center\'>Да<td');
-                                        aRow=aRow.replace(new RegExp('\'center\'>0.0<td', 'g'),'\'center\'>Нет<td');
-                                        //вывод текущего этапа
-                                        aRow=aRow.replace(new RegExp('size="10" value="1.0 "', 'g'),'size="10" value="Да"');
-                                        aRow=aRow.replace(new RegExp('size="10" value="0.0 "', 'g'),'size="10" value="Нет"');
-                                    }
 						     		$('loadCriterion').innerHTML = aRow ;
 						     		cntCrit=+$('criterionSize').value ;
 			     					updateVoc();
 			     					updateCriterions() ;
-						     				
+
 						     		
 						     	}
 						  	}
@@ -152,8 +144,15 @@
 	  			}
 					
 					
-	  			function checkCommentNeeded(aCriterion,ii) {
+	  			function checkCommentNeeded(aCriterion,ii,val) {
 	  				var aMarkId = $(aCriterion).value;
+	  				if (voc=="vocQualityEstimationMarkYesNo") {
+                        aMarkId=val;
+                        if ($('radio'+ii+'1') && $('radio'+ii+'1').checked)
+                            $('criterion'+ii).value=val;
+                        else if ($('radio'+ii+'0') && $('radio'+ii+'0').checked)
+                            $('criterion'+ii).value=val;
+                    }
 	  				//alert(aCriterion);
 	  				//var ii=parseInt(aCriterion,10);
                    // alert(ii);
@@ -229,6 +228,12 @@
 	  			//Milamesher просмотр комментария по кнопке 04062018 с сервисбина
             function showYesNoCommentFromBean(ii) {
                 var aMarkId = $('criterion'+ii).value;
+                if (voc=="vocQualityEstimationMarkYesNo") {
+                    if ($('radio'+ii+'1') && $('radio'+ii+'1').checked)
+                        aMarkId=$('radio'+ii+'1').value;
+                    else if ($('radio'+ii+'0') && $('radio'+ii+'0').checked)
+                        aMarkId=$('radio'+ii+'0').value;
+                }
                 if (+aMarkId>0 && voc == "vocQualityEstimationMarkYesNo") {
                     var total = $('criterion' + ii + 'CommentYesNo').value;
                     //alert(total);
