@@ -12,6 +12,8 @@
     <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Медицинская услуга">
       <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="e2054544-85-a21c-3bb9b4569efc">
         <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medService" name="Изменить" roles="/Policy/Mis/MedService/Edit" />
+          <tags:changeParentMedService name="changeParentMedService" />
+        <msh:sideLink key="ALT+2" params="id" action="/javascript:showchangeParentMedService(${param.id})" name="Изменить родителя" roles="/Policy/Mis/MedService/Edit" />
       </msh:ifFormTypeIsView>
       <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm" guid="a6802286-1d60-46ea-b7f4-f588331a09f7">
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_medService" name="Удалить" roles="/Policy/Mis/MedService/Delete" />

@@ -1395,6 +1395,18 @@
     
     </voc>
 
+	<voc id='medServiceGroupAll' type='NativeVocService'>
+		<NativeVocService
+				from = 'MedService ms'
+				parent=""
+				names = "ms.name"
+				nameId="id"
+				queryAppend="parent_id='4056'"
+				join=''
+				order=''
+		/>
+
+	</voc>
 	<!-- Услуги, доступные для выбора в пол-ке, по ОМС раб. функция/дата услуги/поток обслуживания -->
     <voc id='medServiceForSpec' type='NativeVocService'>
     	<NativeVocService
