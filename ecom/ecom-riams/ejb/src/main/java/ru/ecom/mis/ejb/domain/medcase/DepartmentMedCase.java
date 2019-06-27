@@ -10,6 +10,7 @@ import ru.ecom.mis.ejb.domain.lpu.HospitalBed;
 import ru.ecom.mis.ejb.domain.lpu.HospitalRoom;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
+import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.*;
@@ -139,7 +140,10 @@ public class DepartmentMedCase extends HospitalMedCase {
 	private String theMotherWard;
 	@Transient
 	public String getInfo() {
-		return "СЛО " + getId() + " номер стат.карты СЛС " + getStatCardBySLS();
+		Patient patient = getPatient();
+		return "Пациент " +
+				patient.getLastname()+" "+ patient.getFirstname()
+				+" " +(patient.getMiddlename()!=null ? patient.getMiddlename():"")+ " номер стат.карты " + getStatCardBySLS();
 	}
 	/** Стандарт */
 	@Comment("Стандарт")
