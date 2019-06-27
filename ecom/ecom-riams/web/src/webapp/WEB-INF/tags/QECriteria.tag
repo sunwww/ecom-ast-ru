@@ -23,11 +23,13 @@
                 <tr>
                     <th align="center" width="450">Критерий</th>
                     <th align="center" width="150">Выполнен?*</th>
+                    <th align="center" width="150">Оценка в карте?**</th>
                 </tr>
             </table>
             <table width="100%" cellspacing="10" cellpadding="10" id="table2">
             </table>
             <div>*Информация рассчитана автоматически.</div>
+            <div>**Информация оценки из черновика/экспертной карты.</div>
             <div><input type="button" value='Черновик экспертной карты заведующего' id="${name}Cancel" onclick='javascript:draft${name}CloseDocument()'/></div>
         </form>
     </div>
@@ -49,21 +51,21 @@
         table2.innerHTML="<tr><td></td></tr><tr><td align=\"center\"><input type=\"button\" value=\'Закрыть\' id=\"${name}Cancel\" onclick=\'javascript:cancel${name}CloseDocument()\'/></td></tr><tr><td></td></tr>";
         QualityEstimationService.showCriteriasByDiagnosis(
             ID, {
-                callback: function(res) {
-                    //alert(res);
-                    if (res!="##") {
-
-                        var all = res.split('!') ;
+                callback: function(aResult) {
+                    if (aResult!=null && aResult!='[]') {
+                        var res = JSON.parse(aResult);
                         var table = document.getElementById('table1');
-                        table.innerHTML="<tr><th align=\"center\" width=\"850\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th></tr>";
-                        for (var i=0; i<all.length-1; i++) {
-                            var aResult = all[i].split('#');
+                        table.innerHTML="<tr><th align=\"center\" width=\"850\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th><th align=\"center\" width=\"150\">Оценка в карте?**</th></tr>";
+                        for (var i=0; i<res.length; i++) {
                             var tr = document.createElement('tr');
                             var td1 = document.createElement('td');
                             var td2 = document.createElement('td');
-                            td1.innerHTML = aResult[1];td2.innerHTML = aResult[2];
-                            td1.align = "center";td2.align = "center";
-                            tr.appendChild(td1);tr.appendChild(td2);
+                            var td3 = document.createElement('td');
+                            td1.innerHTML = res[i].crit;td2.innerHTML = res[i].automark;td3.innerHTML = res[i].mark;
+                            td1.setAttribute("align","center");
+                            td2.setAttribute("align","center");
+                            td3.setAttribute("align","center");
+                            tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
                             table.appendChild(tr);
                         }
                         the${name}CloseDisDocumentDialog.show() ;

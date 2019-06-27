@@ -1,5 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.expert.IQualityEstimationService;
@@ -295,12 +297,18 @@ public class QualityEstimationServiceJs {
 		}
 		return res.toString();//.equals("5");
 	}
-	//Milamesher критерии по medcase при диагнозе
-	public String showCriteriasByDiagnosis(Long id,HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res = new StringBuilder();
+
+	/**
+	 * Получить критерии по medcase при диагнозе
+	 * @param medCaseId MedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return String json в списке: Критерии, автоматическая оценка, оценка в карте (если есть)
+	 */
+	public String showCriteriasByDiagnosis(Long medCaseId,HttpServletRequest aRequest) throws NamingException {
+		JSONArray res = new JSONArray() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		long medcase;
-		String query="select parent_id from medcase where id=" +id;
+		String query="select parent_id from medcase where id=" +medCaseId;
 		Collection<WebQueryResult> list0 = service.executeNativeSql(query);
 		if (list0.size()!=0) {
 			medcase = Long.parseLong(list0.iterator().next().get1().toString());
@@ -309,45 +317,46 @@ public class QualityEstimationServiceJs {
 			Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
 			while (m.find()) {
 				allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
-				//res.append(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", "")).append(" ");
 			}
-			//return res.toString();
-			/*m = Pattern.compile("\"vmscode\":\"\\S*\"},").matcher(json);
-			while (m.find()) {
-				allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"},", ""));
-				res.append(m.group().replace("\"vmscode\":\"", "").replace("\"},", "")).append(";");
-			}*/
-			query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes\n" +
-					" from vocqualityestimationcrit vqecrit\n" +
-					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
-					" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
-					" left join diagnosis ds on ds.idc10_id=d.id \n" +
-					" left join medcase mc on mc.id=ds.medcase_id \n" +
-					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
-					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
-					" left join patient pat on pat.id=mc.patient_id \n" +
-					" where mc.id=" + id + " and reg.code='4' and prior.code='1'\n" +
+			query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes,coalesce(vqem.name,'') as vqename" +
+					" from vocqualityestimationcrit vqecrit" +
+					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  " +
+					" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id " +
+					" left join diagnosis ds on ds.idc10_id=d.id " +
+					" left join medcase mc on mc.id=ds.medcase_id " +
+					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  " +
+					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id " +
+					" left join patient pat on pat.id=mc.patient_id " +
+					" left join qualityestimationcard qec on qec.medcase_id=mc.id" +
+					" left join qualityestimation qe on qe.card_id=qec.id" +
+					" left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id " +
+					" and vqem.id= (select max(qecC.mark_id) " +
+					" from qualityestimationcrit qecC" +
+					" left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id " +
+					" left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id" +
+					" where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')" +
+					" where mc.id=" + medCaseId + " and reg.code='4' and prior.code='1'" +
 					" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
 			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
+					JSONObject o = new JSONObject() ;
 					String mcodes = (w.get3() != null) ? w.get3().toString() : "";
 					boolean flag = false;
-					res.append(w.get1()).append("#").append(w.get2()).append("#");
+					o.put("crit",w.get2())
+							.put("mark",w.get4());
 					if (allMatches.size() > 0) {
 						for (String scode : allMatches) {
 							if (mcodes.contains("'" + scode + "'")) flag = true;
 						}
 					}
-					if (flag) res.append("Да");
-					else res.append("Нет");
-					res.append("!");
+					if (flag) o.put("automark","Да");
+					else o.put("automark","Нет");
+					res.put(o);
 				}
 			}
-			else res.append("##");
 		}
-		else res.append("##");
-		return res.toString();//*/}return null;
+		return res.toString();
 	}
 	//Milamesher чисто критерии по диазнозу, список
 	public String showJustCriterias(Long idc10_id, Long regID, Long priorId, Long medcaseId, HttpServletRequest aRequest) throws NamingException {
