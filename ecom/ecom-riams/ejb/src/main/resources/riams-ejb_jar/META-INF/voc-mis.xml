@@ -1401,7 +1401,7 @@
 				parent=""
 				names = "ms.name"
 				nameId="id"
-				queryAppend="parent_id='4056'"
+				queryAppend=" dtype='MedServiceGroup' "
 				join=''
 				order=''
 		/>

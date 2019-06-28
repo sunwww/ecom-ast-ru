@@ -12,8 +12,6 @@
     <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Медицинская услуга">
       <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="e2054544-85-a21c-3bb9b4569efc">
         <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medService" name="Изменить" roles="/Policy/Mis/MedService/Edit" />
-          <tags:changeParentMedService name="changeParentMedService" />
-        <msh:sideLink key="ALT+2" params="id" action="/javascript:showchangeParentMedService(${param.id})" name="Изменить родителя" roles="/Policy/Mis/MedService/Edit" />
       </msh:ifFormTypeIsView>
       <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm" guid="a6802286-1d60-46ea-b7f4-f588331a09f7">
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_medService" name="Удалить" roles="/Policy/Mis/MedService/Delete" />
@@ -39,8 +37,10 @@
     <msh:form action="/entityParentSaveGoView-mis_medService.do" defaultField="vocMedService" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
       <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
       <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
-      <msh:hidden property="parent" guid="bd32944-4587-a963-a09db2b93caf" />
       <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="20% 30%">
+          <msh:row>
+              <msh:autoComplete vocName="medServiceGroupAll" property="parent" label="Родитель" horizontalFill="true" fieldColSpan="3" />
+          </msh:row>
         <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
           <msh:autoComplete vocName="vocMedService" property="vocMedService" label="Услуга" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f" fieldColSpan="3" />
         </msh:row>
