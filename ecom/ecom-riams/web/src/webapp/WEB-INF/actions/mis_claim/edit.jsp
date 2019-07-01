@@ -12,8 +12,10 @@
         <%
             String img = request.getParameter("img");
             String desc = request.getParameter("description");
+            String hist = request.getParameter("hist");
             request.setAttribute("description",desc);
             request.setAttribute("img",img);
+            request.setAttribute("hist",hist);
         %>
         <msh:form action="entitySaveGoView-mis_claim.do" defaultField="id">
 
@@ -127,19 +129,22 @@
                     <script type="text/javascript">
                         window.onload = function() {
                             ($('screenFileName')).setAttribute("readonly","false"); //чтобы при перезагрузке не терялся скрин
-                            $('description').value='${description}';
-                            $('screenFileName').value='${img}';
-                            ($('screenFileName')).setAttribute("readonly","true")
-                            if ($('description').value!=null && $('description').value!="") {
-                                ClaimService.getSoftType({
-                                    callback: function (res) {
-                                        if (res != null && res != '{}') {
-                                            var Result = JSON.parse(res);
-                                            if (typeof(Result.id) !=='undefined') $('claimType').value = Result.id;
-                                            if (typeof(Result.name) !=='undefined') $('claimTypeName').value = Result.name;
+                            if ('${description}'!='') {
+                                $('description').value='Описание: ' + '${description}' + '\nСтраница ошибки: ' + document.referrer +
+                                    '\nСтраница перед ошибкой: ' + '${hist}';
+                                $('screenFileName').value='${img}';
+                                ($('screenFileName')).setAttribute("readonly","true");
+                                if ($('description').value!=null && $('description').value!="") {
+                                    ClaimService.getSoftType({
+                                        callback: function (res) {
+                                            if (res != null && res != '{}') {
+                                                var Result = JSON.parse(res);
+                                                if (typeof(Result.id) !=='undefined') $('claimType').value = Result.id;
+                                                if (typeof(Result.name) !=='undefined') $('claimTypeName').value = Result.name;
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
                         }
                     </script>

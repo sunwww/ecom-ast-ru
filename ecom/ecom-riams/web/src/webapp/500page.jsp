@@ -143,9 +143,9 @@
                         callback: function (res) {
                             if (res!=null) {
                                 if (document.getElementsByClassName("errorMessage")[0] != null)
-                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=" + text;
+                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=" + text + "&hist=" + document.referrer;
                                 else
-                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=Описание в скриншоте";
+                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=в скриншоте" + "&hist=" + document.referrer;
                             }
                         }
                     });
