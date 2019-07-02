@@ -104,9 +104,13 @@ public class ContractServiceJs {
 		return "Неизвестный тип отчета";
 	}
 
-//method by milamesher 15.03.2017
-//отправляет на принтер команду возврата (пока 3 копейки, чтобы продемонстрировать отказ возврата)
-
+	/**
+	 * Отправить запрос на ККМ.
+	 * @param aFunction  - команда ККМ
+	 * @param aRequest
+	 * @return ответ
+	 * @throws JspException
+	 */
 	public String sendKKMRequest(String aFunction, HttpServletRequest aRequest) throws JspException {
 		if (RolesHelper.checkRoles(" /Policy/Config/KKMWork", aRequest)) {
             if ("makePayment".equals(aFunction) || "makeRefund".equals(aFunction)) {
@@ -1022,8 +1026,15 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
 		return list.isEmpty() ? "" : ""+list.iterator().next().get1() ;
 	}
-	//Milamesher получение дополнительных шаблонов
-	public String getLabAnalysisExtra(String id, HttpServletRequest aRequest) throws NamingException {
+
+	/**
+	 * Получить дополнительные шаблонов (для печати лаб. анализов в договоре).
+	 *
+	 * @param aMedServiceId MedService.id
+	 * @param aRequest HttpServletRequest
+	 * @return String дополнительные шаблоны
+	 */
+	public String getLabAnalysisExtra(String aMedServiceId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select ms.code||' '||ms.name,ms.id\n" +
@@ -1033,7 +1044,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				"left join ContractAccountMedService cams on cams.medservice_id=pms.id\n" +
 				"left join ContractAccount ca on cams.account_id=ca.id\n" +
 				"left join medcontract mc on ca.contract_id=mc.id\n" +
-				"where mc.id="+ id;
+				"where mc.id="+ aMedServiceId;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql);
 		if (!list.isEmpty()) {
 			for (WebQueryResult w : list) {
@@ -1042,14 +1053,28 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		} else res.append("##");
 		return res.toString();
 	}
-	//Milamesher получение шаблона по коду услуги
+
+	/**
+	 * Получить шаблон по коду услуги.
+	 *
+	 * @param aMedServiceId MedService.id
+	 * @param aRequest HttpServletRequest
+	 * @return String шаблон
+	 */
 	public String getUserTemplateDocForPrintByService(String aMedServiceId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select filename from userDocument where template="+aMedServiceId;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql);
 		return list.isEmpty() ? "" : list.iterator().next().get1().toString() ;
 	}
-	//Milamesher получение списка шаблонов по списку услуг
+
+	/**
+	 * Получить список шаблонов по списку услуг.
+	 *
+	 * @param aMedServiceSId Список услуг
+	 * @param aRequest HttpServletRequest
+	 * @return String шаблоны
+	 */
 	public String getAllUserTemplateDocForPrintByService(String[] aMedServiceSId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		for (String s : aMedServiceSId) {
@@ -1061,7 +1086,15 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		}
 		return res.toString();
 	}
-	//Milamesher #133 копирование шаблонов из одной услуги в другую
+
+	/**
+	 * Копировать шаблоны из одной услуги в другую #133.
+	 *
+	 * @param aMedServiceIdFrom MedService.id копировать из
+	 * @param aMedServiceIdTo MedService.id в
+	 * @param aRequest HttpServletRequest
+	 * @return String сообщение
+	 */
 	public String copyTemplatesToMedService(String aMedServiceIdFrom, String aMedServiceIdTo, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeNativeSql("select copymedservicetemplates ("+aMedServiceIdFrom+","+aMedServiceIdTo+")");

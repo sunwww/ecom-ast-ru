@@ -429,7 +429,13 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		String res = service.executeNativeSql(sql, 1).iterator().next().get1().toString();
 			return "1".equals(res);
 	}
-	//Milamesher #112 проверка на визит ли
+
+	/**
+	 * Получить, является ли визитом #112.
+	 *
+	 * @param aId MedCase.id
+	 * @return Boolean true если визит
+	 */
 	public boolean  isMedcaseIsVisit(String aId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aId);
@@ -1440,33 +1446,49 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		if (o!=null) {return o.toString();}
 		return "";
 	}
-	//Можно ли создавать ЛН из СЛС (можно, пока не сделан СЛО)
+
+	/**
+	 * Получить, можно ли создавать ЛН из СЛС (можно, пока не сделан СЛО).
+	 *
+	 * @param aMedcase MedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean true - department
+	 */
 	public Boolean isPrescriptListCanBeChangedFromSLS(String aMedcase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select id from medcase where dtype='DepartmentMedCase' and parent_id="+aMedcase;
-		return !service.executeNativeSql(sql, 1).isEmpty();
+		return !service.executeNativeSql("select id from medcase where dtype='DepartmentMedCase' and parent_id="+aMedcase, 1).isEmpty();
 	}
-	//Department or Hospital medcase (для вывода ЛН из СЛО). Returns true if department
+
+	/**
+	 * Получить, СЛО или нет.
+	 *
+	 * @param aMedcase MedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean true - department
+	 */
 	public Boolean isPrescriptListfromSLO(String aMedcase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select case when dtype='DepartmentMedCase'  then '1' else '0' end from medcase where id="+aMedcase;
-		Collection <WebQueryResult> wrt = service.executeNativeSql(sql, 1);
-		if (!wrt.isEmpty()) {
-			Object res=wrt.iterator().next().get1();
-			return res.toString().equals("1");
-		}
-		return false;
+		Collection <WebQueryResult> wrt = service.executeNativeSql("select case when dtype='DepartmentMedCase'  then '1' else '0' end from medcase where id="+aMedcase, 1);
+		return !wrt.isEmpty() && wrt.iterator().next().get1().toString().equals("1");
 	}
-	//Milamesher 11102018 отмена назначения на консультацию - пока не выполнено
+
+	/**
+	 * Отменить назначения на консультацию - пока не выполнено.
+	 *
+	 * @param aPresctiptionId Presctiption.id
+	 * @param aReason String причина отмены
+	 * @param aRequest HttpServletRequest
+	 * @return String сообщение
+	 */
 	public String cancelWFPrescription(String aPresctiptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		if (aReason == null || aReason.trim().equals("")) {
 			return "Необходимо указать причину аннулирования!";
 		}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String permSql="select case when wf.intakeDate is null then '1' else '0' end\n" +
-				"from prescription wf\n" +
-				"left join vocconsultingtype t on wf.vocconsultingtype_id=t.id\n" +
-				"where cancelDate is null and wf.id="+aPresctiptionId;
+		String permSql="select case when wf.intakeDate is null then '1' else '0' end" +
+				" from prescription wf" +
+				" left join vocconsultingtype t on wf.vocconsultingtype_id=t.id" +
+				" where cancelDate is null and wf.id="+aPresctiptionId;
 		Collection <WebQueryResult> wrt = service.executeNativeSql(permSql, 1);
 		if (!wrt.isEmpty() && wrt.iterator().next().get1().equals("1")) {
 			String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
