@@ -1,5 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.expert.IQualityEstimationService;
@@ -283,7 +285,13 @@ public class QualityEstimationServiceJs {
 	private boolean IsFullExpertCardEdit(HttpServletRequest aRequest) throws JspException {
 		return RolesHelper.checkRoles(" /Policy/Mis/MedCase/QualityEstimationCard/QualityEstimation/Create,/Policy/Mis/MedCase/QualityEstimationCard/QualityEstimation/FullExpertCard", aRequest) ;
 	}
-//Milamesher булевские ли значения критериев
+
+    /**
+     * Получить, является ли карта картой по 203 приказу (булевские ли значения критериев)
+     * @param aCardId QualityEsimationCard.id экспертная карта
+     * @param aRequest HttpServletRequest
+     * @return String 1 - да, 0 - нет
+     */
 	public String IsQECardKindBoolean(Long aCardId, HttpServletRequest aRequest) throws Exception {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -293,14 +301,20 @@ public class QualityEstimationServiceJs {
 			WebQueryResult wqr = list.iterator().next() ;
 			res.append(wqr.get1());
 		}
-		return res.toString();//.equals("5");
+		return res.toString();
 	}
-	//Milamesher критерии по medcase при диагнозе
-	public String showCriteriasByDiagnosis(Long id,HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res = new StringBuilder();
+
+	/**
+	 * Получить критерии по medcase при диагнозе
+	 * @param medCaseId MedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return String json в списке: Критерии, автоматическая оценка, оценка в карте (если есть)
+	 */
+	public String showCriteriasByDiagnosis(Long medCaseId,HttpServletRequest aRequest) throws NamingException {
+		JSONArray res = new JSONArray() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		long medcase;
-		String query="select parent_id from medcase where id=" +id;
+		String query="select parent_id from medcase where id=" +medCaseId;
 		Collection<WebQueryResult> list0 = service.executeNativeSql(query);
 		if (list0.size()!=0) {
 			medcase = Long.parseLong(list0.iterator().next().get1().toString());
@@ -309,47 +323,57 @@ public class QualityEstimationServiceJs {
 			Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
 			while (m.find()) {
 				allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
-				//res.append(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", "")).append(" ");
 			}
-			//return res.toString();
-			/*m = Pattern.compile("\"vmscode\":\"\\S*\"},").matcher(json);
-			while (m.find()) {
-				allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"},", ""));
-				res.append(m.group().replace("\"vmscode\":\"", "").replace("\"},", "")).append(";");
-			}*/
-			query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes\n" +
-					" from vocqualityestimationcrit vqecrit\n" +
-					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
-					" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
-					" left join diagnosis ds on ds.idc10_id=d.id \n" +
-					" left join medcase mc on mc.id=ds.medcase_id \n" +
-					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
-					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
-					" left join patient pat on pat.id=mc.patient_id \n" +
-					" where mc.id=" + id + " and reg.code='4' and prior.code='1'\n" +
+			query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes,coalesce(vqem.name,'') as vqename" +
+					" from vocqualityestimationcrit vqecrit" +
+					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  " +
+					" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id " +
+					" left join diagnosis ds on ds.idc10_id=d.id " +
+					" left join medcase mc on mc.id=ds.medcase_id " +
+					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  " +
+					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id " +
+					" left join patient pat on pat.id=mc.patient_id " +
+					" left join qualityestimationcard qec on qec.medcase_id=mc.id" +
+					" left join qualityestimation qe on qe.card_id=qec.id" +
+					" left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id " +
+					" and vqem.id= (select max(qecC.mark_id) " +
+					" from qualityestimationcrit qecC" +
+					" left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id " +
+					" left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id" +
+					" where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')" +
+					" where mc.id=" + medCaseId + " and reg.code='4' and prior.code='1'" +
 					" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
 			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
+					JSONObject o = new JSONObject() ;
 					String mcodes = (w.get3() != null) ? w.get3().toString() : "";
 					boolean flag = false;
-					res.append(w.get1()).append("#").append(w.get2()).append("#");
+					o.put("crit",w.get2())
+							.put("mark",w.get4());
 					if (allMatches.size() > 0) {
 						for (String scode : allMatches) {
 							if (mcodes.contains("'" + scode + "'")) flag = true;
 						}
 					}
-					if (flag) res.append("Да");
-					else res.append("Нет");
-					res.append("!");
+					if (flag) o.put("automark","Да");
+					else o.put("automark","Нет");
+					res.put(o);
 				}
 			}
-			else res.append("##");
 		}
-		else res.append("##");
-		return res.toString();//*/}return null;
+		return res.toString();
 	}
-	//Milamesher чисто критерии по диазнозу, список
+
+    /**
+     * Получить критерии чисто по диагнозу
+     * @param idc10_id VocIdc10.id МКБ
+     * @param regID Тип регистрации
+     * @param priorId Приоритет
+     * @param medcaseId СЛО
+     * @param aRequest HttpServletRequest
+     * @return String json в списке: Критерии
+     */
 	public String showJustCriterias(Long idc10_id, Long regID, Long priorId, Long medcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res=new StringBuilder();
@@ -361,8 +385,6 @@ public class QualityEstimationServiceJs {
 						" from vocqualityestimationcrit vqecrit\n" +
 						" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
 						" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
-						//" left join diagnosis ds on ds.idc10_id=d.id \n" +
-						//" left join medcase mc on mc.id=ds.medcase_id \n" +
 						" left join medcase mc on mc.id="+medcaseId + "\n" +
 						" left join vocdiagnosisregistrationtype reg on reg.id=" + regID + "\n" +
 						" left join vocprioritydiagnosis prior on prior.id=" + priorId + "\n" +
@@ -473,12 +495,24 @@ public class QualityEstimationServiceJs {
 		}
 		return res;
 	}
-	//Milamesher создание черновик ЭК
+
+    /**
+     * Создать черновик ЭК.
+     * @param aMcaseId СЛО
+     * @param aRequest HttpServletRequest
+     * @return Long id созданного черновика
+     */
 	public Long createDraftEK(Long aMcaseId, HttpServletRequest aRequest) throws NamingException {
 		IQualityEstimationService service = Injection.find(aRequest).getService(IQualityEstimationService.class);
 		return service.createDraftEK(aMcaseId);
 	}
-	//Milamesher получить departmentMedCase
+
+    /**
+     * Получить departmentMedCase.
+     * @param aCardId QualityEstimationCard.id
+     * @param aRequest HttpServletRequest
+     * @return String medcase_id СЛО
+     */
 	public String getDepMedcaseFromDraftEK(Long aCardId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -490,6 +524,13 @@ public class QualityEstimationServiceJs {
 		}
 		return res.toString();
 	}
+
+    /**
+     * Удалить критерий и всё, что на него ссылается.
+     * @param aCritId qualityestimationcrit.id
+     * @param aRequest HttpServletRequest
+     * @return Boolean flag true - удалено, false - не найдено
+     */
 	public Boolean deleteCrit(Long aCritId, HttpServletRequest aRequest) throws NamingException {
 		boolean flag=false;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -506,9 +547,24 @@ public class QualityEstimationServiceJs {
 		}
 		return flag;
 	}
+
+    /**
+     * Удалить связь критерий-диагноз.
+     * @param aCritId qualityestimationcrit.id
+     * @param aIdc10Id МКБ
+     * @param aRequest HttpServletRequest
+     */
 	public void deleteDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
 		(Injection.find(aRequest).getService(IWebQueryService.class)).executeUpdateNativeSql("delete from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id);
 	}
+
+    /**
+     * Добавить связь критерий-диагноз.
+     * @param aCritId qualityestimationcrit.id
+     * @param aIdc10Id МКБ
+     * @param aRequest HttpServletRequest
+     * @return Boolean flag true - добавлено, false - уже было
+     */
 	public Boolean addDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String query="select * from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id;
@@ -520,6 +576,13 @@ public class QualityEstimationServiceJs {
 		}
 		return flag;
 	}
+
+    /**
+     * Получить диагноз по критерию.
+     * @param aCritId qualityestimationcrit.id
+     * @param aRequest HttpServletRequest
+     * @return String данные диагноза
+     */
 	public String selectDiagnoseOfCrit203ById(Long aCritId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -535,6 +598,13 @@ public class QualityEstimationServiceJs {
 		} else res.append("##");
 		return res.toString();
 	}
+
+    /**
+     * Получить услуги по критерию.
+     * @param aCritId qualityestimationcrit.id
+     * @param aRequest HttpServletRequest
+     * @return String данные услуг
+     */
 	public String selectMedServOfCrit203ById(Long aCritId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -547,6 +617,14 @@ public class QualityEstimationServiceJs {
 		} else res.append("##");
 		return res.toString();
 	}
+
+    /**
+     * Удалить связь критерий-услуга.
+     * @param aCritId qualityestimationcrit.id
+     * @param medServ String услуга
+     * @param aRequest HttpServletRequest
+     * @return String 0 - всё ок
+     */
 	public String deleteMedServOfCrit203ById(Long aCritId, String medServ, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -571,6 +649,14 @@ public class QualityEstimationServiceJs {
 		}
 		return "0";
 	}
+
+    /**
+     * Добавить связь критерий-услуга.
+     * @param aCritId qualityestimationcrit.id
+     * @param medServId MedService.id
+     * @param aRequest HttpServletRequest
+     * @return String 0 - всё ок
+     */
 	public String addMedServOfCrit203ById(Long aCritId, String medServId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -608,11 +694,22 @@ public class QualityEstimationServiceJs {
 		}
 		return "0";
 	}
+
+    /**
+     * Очистить список услуг, привязанных к критерию.
+     * @param aCritId qualityestimationcrit.id
+     * @param aRequest HttpServletRequest
+     */
 	public void setMedServEmptyString(Long aCritId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes='' where id=" + aCritId);
 	}
-	//Milamesher #105 получить отделение, за которым закреплён пациент (для ЭК по отказам от госпитализаций
+
+    /**
+     * Получить отделение, за которым закреплён пациент (для ЭК по отказам от госпитализаций) #105
+     * @param mc MedCase.id СЛО
+     * @param aRequest HttpServletRequest
+     */
 	public String getFixedDepartmentFromMedcase(String mc, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -625,6 +722,7 @@ public class QualityEstimationServiceJs {
 		else res.append("##");
 		return res.toString();
 	}
+
 	/**
 	 * Получить возможные способы предварительной записи пациентов (выбирает регистратор при создании предварительной записи) #145
 	 * @param aSloId Slo.id

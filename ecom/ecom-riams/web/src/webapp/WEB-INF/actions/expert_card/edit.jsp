@@ -173,7 +173,7 @@
             }
         };
     };
-    idc10Autocomplete.addOnChangeCallback(closure());
+    if (typeof idc10Autocomplete !=='undefined') idc10Autocomplete.addOnChangeCallback(closure());
   		</script>
   		<msh:ifFormTypeIsView formName="expert_cardForm">
   		  		<script type="text/javascript">

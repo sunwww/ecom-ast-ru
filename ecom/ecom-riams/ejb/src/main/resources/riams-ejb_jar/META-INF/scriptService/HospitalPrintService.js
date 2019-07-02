@@ -2657,3 +2657,24 @@ function printQuarterlyReport(aCtx, aParams) {
 	map.put('indicList',getQuarterlyReportTypeReportIndicators(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,total,nodef));
 	return map;
 }
+function printAnestResPatient(aCtx, aParams) {
+    var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
+        , new java.lang.Long(aParams.get("id"))) ;
+    var patient = medCase.patient;
+    map.put("fio",patient.lastname+' '+patient.firstname+' '+patient.middlename) ;
+    var sql = "select to_char(pat.birthday,'dd.MM.yyyy') as birthDay,coalesce(dep.name,'')" +
+        " from medcase mc" +
+        " left join medcase hmc on hmc.id=mc.parent_id" +
+        " left join patient pat on pat.id=mc.patient_id" +
+        " left join medcase pastmc on pastmc.transferdepartment_id=mc.department_id and pastmc.parent_id=hmc.id" +
+        " left join mislpu dep on dep.id=pastmc.department_id" +
+        " where hmc.dtype='HospitalMedCase' and mc.dtype='DepartmentMedCase'" +
+        " and mc.id="+medCase.id;
+    var arr  = aCtx.manager.createNativeQuery(sql).getResultList();
+    if (!arr.isEmpty()) {
+        var data = arr.get(0);
+        map.put("bd",""+data[0]);
+        map.put("dep",""+data[1]);
+    }
+    return map;
+}

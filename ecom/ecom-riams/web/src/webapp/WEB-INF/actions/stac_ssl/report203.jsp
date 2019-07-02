@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -100,12 +99,19 @@ and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
  ,'&depId='||coalesce(dep.id,0)||'&depname='||coalesce(dep.name,'')
  , case when (select count(distinct mc.id) as noque
@@ -120,12 +126,19 @@ and dep.name is not null
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )=0 then '0' else
  round(100*(select count(distinct mc.id) as noque
   from medcase mc
@@ -139,12 +152,19 @@ and dep.name is not null
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
-and dep.name is not null)/
+and dep.name is not null
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)/
 cast((select count(distinct mc.id) as pr203 from medcase mc
  left join diagnosis ds on ds.medcase_id=mc.id
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
@@ -172,12 +192,19 @@ end as per1
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
 , case when (select count(distinct mc.id) as noquedraft
   from medcase mc
@@ -191,12 +218,19 @@ and dep.name is not null
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )=0 then '0' else
  round(100*(select count(distinct mc.id) as noquedraft
   from medcase mc
@@ -210,12 +244,19 @@ and dep.name is not null
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
-and dep.name is not null)/
+and dep.name is not null
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)/
 cast((select count(distinct mc.id) as pr203 from medcase mc
  left join diagnosis ds on ds.medcase_id=mc.id
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
@@ -298,12 +339,19 @@ left join medcase slo1 on slo1.prevMedCase_id=mc.id
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
  ,case when (select count(distinct mc.id) as noque
 from medcase mc
 left join medcase slo1 on slo1.prevMedCase_id=mc.id
@@ -318,12 +366,19 @@ left join medcase slo1 on slo1.prevMedCase_id=mc.id
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
 =0 then '0' else
 round(100*(select count(distinct mc.id) as noque
 from medcase mc
@@ -339,12 +394,19 @@ left join medcase slo1 on slo1.prevMedCase_id=mc.id
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
 /cast((select count(distinct mc.id) as pr203
 from medcase mc
 left join medcase slo1 on slo1.prevMedCase_id=mc.id
@@ -376,12 +438,19 @@ left join medcase slo1 on slo1.prevMedCase_id=mc.id
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
  ,case when (select count(distinct mc.id) as noquedraft
 from medcase mc
 left join medcase slo1 on slo1.prevMedCase_id=mc.id
@@ -396,12 +465,19 @@ left join medcase slo1 on slo1.prevMedCase_id=mc.id
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
 =0 then '0' else
 round(100*(select count(distinct mc.id) as noquedraft
 from medcase mc
@@ -417,12 +493,19 @@ left join medcase slo1 on slo1.prevMedCase_id=mc.id
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
 /cast((select count(distinct mc.id) as pr203
 from medcase mc
 left join medcase slo1 on slo1.prevMedCase_id=mc.id
@@ -498,13 +581,20 @@ and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
   and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
- and qd.isobserv 
+ and qd.isobserv
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
  ,'&depId='||coalesce(dep.id,0)||'&depname='||coalesce(dep.name,'')
  , case when (select count(distinct mc.id) as noque
@@ -519,6 +609,8 @@ and dep.name is not null
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -526,6 +618,11 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
  and qd.isobserv
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )=0 then '0' else
  round(100*(select count(distinct mc.id) as noque
   from medcase mc
@@ -539,13 +636,20 @@ and dep.name is not null
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
   and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null 
- and qd.isobserv)/
+ and qd.isobserv
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)/
 cast((select count(distinct mc.id) as pr203 from medcase mc
  left join diagnosis ds on ds.medcase_id=mc.id
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
@@ -574,6 +678,8 @@ end as per1
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -581,6 +687,11 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
  and qd.isobserv
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
 , case when (select count(distinct mc.id) as noquedraft
   from medcase mc
@@ -594,6 +705,8 @@ and dep.name is not null
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -601,6 +714,11 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
  and qd.isobserv
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )=0 then '0' else
  round(100*(select count(distinct mc.id) as noquedraft
   from medcase mc
@@ -614,13 +732,20 @@ and dep.name is not null
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
   and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
- and qd.isobserv)/
+ and qd.isobserv
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)/
 cast((select count(distinct mc.id) as pr203 from medcase mc
  left join diagnosis ds on ds.medcase_id=mc.id
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
@@ -677,6 +802,7 @@ left join patient pat on pat.id=mc.patient_id
   left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -685,7 +811,12 @@ and dep2.id=depRod.id and qe.experttype='BranchManager' and qek.code='PR203' and
 and dep.name is not null
  and qd.isobserv is null
  and depRod.ismaternityward
-  and dep.isobservable 
+  and dep.isobservable
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
  ,'&depId='||coalesce(dep.id,0)||'&depname='||coalesce(dep.name,'')
  , case when (select count(distinct mcRod.id) as noque_2
@@ -704,6 +835,7 @@ left join patient pat on pat.id=mc.patient_id
   left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -713,6 +845,11 @@ and dep.name is not null
  and qd.isobserv is null
  and depRod.ismaternityward
   and dep.isobservable
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )=0 then '0' else
  round(100*(select count(distinct mcRod.id) as noque_2
   from medcase mc
@@ -725,11 +862,12 @@ left join medcase as hmc on hmc.id=mc.parent_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
 left join MisLpu dep2 on dep2.id=mcRod.department_id
-left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 left join patient pat on pat.id=mc.patient_id
   left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -738,7 +876,12 @@ and dep2.id=depRod.id and qe.experttype='BranchManager' and qek.code='PR203' and
 and dep.name is not null
  and qd.isobserv is null
  and depRod.ismaternityward
-  and dep.isobservable  )/
+  and dep.isobservable
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)/
 cast((select count(distinct mcRod.id) as pr203_2 
 from medcase mc
 left join medcase as hmc on hmc.id=mc.parent_id
@@ -779,6 +922,7 @@ left join patient pat on pat.id=mc.patient_id
   left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -787,7 +931,12 @@ and dep2.id=depRod.id and qe.experttype='BranchManager' and qek.code='PR203' and
 and dep.name is not null
  and qd.isobserv is null
  and depRod.ismaternityward
-  and dep.isobservable 
+  and dep.isobservable
+   and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
 , case when (select count(distinct mcRod.id) as noquedraft_2
   from medcase mc
@@ -805,6 +954,7 @@ left join patient pat on pat.id=mc.patient_id
   left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -813,7 +963,12 @@ and dep2.id=depRod.id and qe.experttype='BranchManager' and qek.code='PR203' and
 and dep.name is not null
  and qd.isobserv is null
  and depRod.ismaternityward
-  and dep.isobservable 
+  and dep.isobservable
+   and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )=0 then '0' else
  round(100*(select count(distinct mcRod.id) as noque_2
   from medcase mc
@@ -831,6 +986,7 @@ left join patient pat on pat.id=mc.patient_id
   left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -839,7 +995,12 @@ and dep2.id=depRod.id and qe.experttype='BranchManager' and qek.code='PR203' and
 and dep.name is not null
  and qd.isobserv is null
  and depRod.ismaternityward
-  and dep.isobservable  )/
+  and dep.isobservable
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)/
 cast((select count(distinct mcRod.id) as pr203_2 
 from medcase mc
 left join medcase as hmc on hmc.id=mc.parent_id
@@ -1000,7 +1161,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and (select min(qecC.mark_id) 
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id 
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as zav
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -1008,7 +1178,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as doc
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as doc
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -1072,7 +1251,7 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("203AllRod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                
+
         %>
         <msh:section>
             <msh:sectionTitle>
@@ -1085,7 +1264,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id or qec.medcase_id=mc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mcRod.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mcRod.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as zav
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -1093,7 +1281,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id or qec.medcase_id=mc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mcRod.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as doc
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mcRod.id and qe.experttype='BranchManager' and qek.code='PR203' and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as doc
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -1133,9 +1330,9 @@ where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
   and mc.dateFInish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and depRod.ismaternityward
   and dep.isobservable
- and dep.name is not null 
+ and dep.name is not null
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
-  and qd.isobserv is null 
+  and qd.isobserv is null
  group by mcRod.id,mc.id,pat.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename
 "/>
@@ -1160,7 +1357,7 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
             if (view.equals("203EK")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                
+
         %>
         <msh:section>
             <msh:sectionTitle>
@@ -1178,12 +1375,19 @@ from medcase mc1
   left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where mc1.id=mc.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
  and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
  ${param.isDraft}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
   )
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
@@ -1196,6 +1400,8 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
   where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -1203,6 +1409,11 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
  ${param.isDraft}
  ${param.qd}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 group by mc.id,pat.id,qec.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
 
@@ -1224,7 +1435,7 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
             if (view.equals("203EKRod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
-                
+
         %>
         <msh:section>
             <msh:sectionTitle>
@@ -1243,12 +1454,18 @@ from medcase mc1
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
 left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where mc1.id=mcRod.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
   and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
  ${param.isDraft}
- and qd.isobserv is null)
+ and qd.isobserv is null
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
 from medcase mc
 left join medcase as hmc on hmc.id=mc.parent_id
 left join Mislpu dep on mc.department_id=dep.id and dep.isobservable
@@ -1263,6 +1480,7 @@ left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
   and mc.dateFInish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
@@ -1271,6 +1489,11 @@ and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(
 and dep.isobservable=true and depRod.ismaternityward
   and qd.isobserv is null
  ${param.isDraft}
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 group by mcRod.id,mc.id,pat.id,qec.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
 
@@ -1290,7 +1513,7 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
         <%
             }
             if (view.equals("dishAll2")) {
-                
+
         %>
         <msh:section>
             <msh:sectionTitle>
@@ -1323,7 +1546,7 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
         <%
             }
             if (view.equals("203All2")) {
-                
+
         %>
         <msh:section>
             <msh:sectionTitle>
@@ -1336,7 +1559,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as zav
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -1344,7 +1576,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as вщс
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as вщс
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -1428,6 +1669,8 @@ from medcase mc1
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
   left join medcase slo1 on slo1.prevMedCase_id=mc1.id
 left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where mc1.id=mc.id and qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
@@ -1436,6 +1679,11 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
  ${param.isDraft}
  ${param.qd}
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
   )
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
@@ -1450,6 +1698,8 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
   left join medcase slo1 on slo1.prevMedCase_id=mc.id
 left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
   where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
@@ -1458,6 +1708,11 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
  ${param.isDraft}
  ${param.qd}
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 group by mc.id,pat.id,qec.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename
   "/>
@@ -1519,6 +1774,8 @@ and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
   left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -1526,6 +1783,11 @@ ${department} and dep.id=${param.depId} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mcinner.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
  ,'&depId='||coalesce(dep.id,0)||'&depname='||coalesce(dep.name,'')||'&wfId='||coalesce(mc.ownerFunction_id,0)||'&wfname='||ovwf.name||' '||owp.lastname||' '||substring(owp.firstname,1,1)||' '||coalesce(substring(owp.middlename,1,1),'')
  , case when (select count(distinct mcinner.id) as noque
@@ -1540,6 +1802,8 @@ and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
   left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -1547,6 +1811,11 @@ ${department} and dep.id=${param.depId} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mcinner.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )=0 then '0' else
  round(100*(select count(distinct mcinner.id) as noque
   from medcase mcinner
@@ -1560,13 +1829,20 @@ and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
   left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department} and dep.id=${param.depId}  and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mcinner.DTYPE='DepartmentMedCase'
 and dep.name is not null
-and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd})/
+and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)/
 cast((select count(distinct mcinner.id) as pr203 from medcase mcinner
  left join diagnosis ds on ds.medcase_id=mcinner.id
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
@@ -1595,6 +1871,8 @@ end as per1
   left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -1602,6 +1880,11 @@ ${department} and dep.id=${param.depId} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mcinner.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
 , case when (select count(distinct mcinner.id) as noquedraft
   from medcase mcinner
@@ -1615,6 +1898,8 @@ and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
   left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -1622,6 +1907,11 @@ ${department} and dep.id=${param.depId} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mcinner.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )=0 then '0' else
  round(100*(select count(distinct mcinner.id) as noquedraft
   from medcase mcinner
@@ -1635,13 +1925,20 @@ and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
   left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
 and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department} and dep.id=${param.depId}  and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mcinner.DTYPE='DepartmentMedCase'
 and dep.name is not null
-and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd})/
+and mcinner.ownerFunction_id=mc.ownerFunction_id ${param.qd}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)/
 cast((select count(distinct mcinner.id) as pr203 from medcase mcinner
  left join diagnosis ds on ds.medcase_id=mcinner.id
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
@@ -1745,12 +2042,18 @@ left join patient pat on pat.id=mc.patient_id
   left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
   and reg.code='4' and prior.code='1' and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
  and depRod.ismaternityward
   and dep.isobservable
 and mcRod.ownerFunction_id=dmc.ownerFunction_id and mcRod.id=dmc.id
   and qd.isobserv is null and qe.isdraft<>true
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
 ,(select count(distinct mcRod.id) as noquedraft
   from medcase mc
@@ -1768,12 +2071,18 @@ left join patient pat on pat.id=mc.patient_id
   left join qualityestimationcard qec on qec.medcase_id=mcRod.id or qec.medcase_id=mc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
   and reg.code='4' and prior.code='1' and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
  and depRod.ismaternityward
   and dep.isobservable
 and mcRod.ownerFunction_id=dmc.ownerFunction_id and mcRod.id=dmc.id
   and qd.isobserv is null
+   and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
  ,'&wfId='||coalesce(dmc.ownerFunction_id,0)||'&wfname='||ovwf.name||' '||
 owp.lastname||' '||substring(owp.firstname,1,1)||' '||coalesce(substring(owp.middlename,1,1),'') as col
@@ -1923,7 +2232,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as zav
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -1931,7 +2249,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as doc
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as doc
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -2009,7 +2336,17 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id or qec.medcase_id=mc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mcRod.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
+left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mcRod.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id ) is not null then 'Да' else '-' end ) as zav
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -2017,7 +2354,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id or qec.medcase_id=mc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mcRod.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as doc
+left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mcRod.id and qe.experttype='BranchManager' and qek.code='PR203' and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as doc
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -2103,12 +2449,18 @@ from medcase mc1
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
 left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where mc1.id=mc.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
  and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
   )
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
@@ -2122,6 +2474,7 @@ and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
 left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
   where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
@@ -2131,6 +2484,11 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
  ${param.qd}
   ${param.isDraft}
+   and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 group by mc.id,pat.id,qec.id
 order by mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
 
@@ -2171,12 +2529,18 @@ from medcase mc1
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
 left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where mc1.id=mcRod.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
   and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
  ${param.isDraft}
- and qd.isobserv is null)
+ and qd.isobserv is null
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
  from medcase mc
 left join medcase mcRod on mcRod.parent_id=mc.parent_Id
 left join Mislpu dep on mc.department_id=dep.id
@@ -2190,6 +2554,7 @@ left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=mcRod.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
 left join qualityestimation qe on qe.card_id=qec.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
   where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
 and mc.dateFInish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
   and reg.code='4' and prior.code='1'
@@ -2199,6 +2564,11 @@ and mc.dateFInish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${da
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
  ${param.qd}
   ${param.isDraft}
+   and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 group by mcRod.id,mc.id,pat.id,qec.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename
 "/>
@@ -2342,13 +2712,20 @@ left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
   left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
 and mcinner.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mcinner.department_id='182' and slo1.department_id='203' and mcinner.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
-and mcinner.ownerFunction_id=slo.ownerFunction_id)
+and mcinner.ownerFunction_id=slo.ownerFunction_id
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
 ,case when (select count(distinct mcinner.id) as noquedraft
   from medcase mcinner
 left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
@@ -2363,13 +2740,20 @@ left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
   left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
 and mcinner.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mcinner.department_id='182' and slo1.department_id='203' and mcinner.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
-and mcinner.ownerFunction_id=slo.ownerFunction_id)
+and mcinner.ownerFunction_id=slo.ownerFunction_id
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
 =0 then '0' else
 round(100*(select count(distinct mcinner.id) as noquedraft
   from medcase mcinner
@@ -2385,12 +2769,19 @@ left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
   left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
 and mcinner.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mcinner.department_id='182' and slo1.department_id='203' and mcinner.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null)
 and mcinner.ownerFunction_id=slo.ownerFunction_id)
 /cast((select count(distinct mcinner.id) as pr203
  from medcase mcinner
@@ -2494,7 +2885,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
+left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as zav
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -2502,7 +2902,16 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as doc
+left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id ) is not null then 'Да' else '-' end ) as doc
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -2587,12 +2996,19 @@ from medcase mc1
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
   left join medcase slo1 on slo1.prevMedCase_id=mc1.id
 left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
 where mc1.id=mc.id and qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
   )
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
@@ -2607,6 +3023,8 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
   left join medcase slo1 on slo1.prevMedCase_id=mc.id
 left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+left join vocqualityestimationcrit vqecrit on vqecrit.id=qd.vqecrit_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
   where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
  and qe.experttype='BranchManager' and qek.code='PR203'
@@ -2616,6 +3034,11 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
  and mc.ownerFunction_id=${param.wfId}
  ${param.isDraft}
  ${param.qd}
+  and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 group by mc.id,pat.id,qec.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename
   "/>

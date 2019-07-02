@@ -86,7 +86,7 @@
         the${name}CommentYesNoDialog.show() ;
         document.getElementById('reasonYesNo').value=the${name}Comment;
         the${name}Flag=flag;
-
+        $('${name}vocQualityEstimationChangeReason').value=$('${name}vocQualityEstimationChangeReasonName').value="";
         ${name}vocQualityEstimationChangeReasonAutocomplete.addOnChangeCallback(function() {
             setText();
         });

@@ -1067,4 +1067,18 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		service.executeNativeSql("select copymedservicetemplates ("+aMedServiceIdFrom+","+aMedServiceIdTo+")");
 		return "Шаблоны скопированы!" ;
 	}
+
+	/**
+	 * Изменить родителя услуги.
+	 *
+	 * @param aMedServiceId MedService.id
+	 * @param aMedServiceGroupId MedService.id группа
+	 * @param aRequest HttpServletRequest
+	 * @return String результат
+	 */
+	public String changeParentMedService(String aMedServiceId, String aMedServiceGroupId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update medservice set parent_id='"+aMedServiceGroupId+"' where id='"+aMedServiceId+"'");
+		return "Услуга перенесена в группу!" ;
+	}
 }

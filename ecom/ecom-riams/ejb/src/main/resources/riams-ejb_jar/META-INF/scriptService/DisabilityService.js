@@ -319,7 +319,7 @@ function printDocument(aCtx, aParams) {
 	
 	
 	var duplicate = aCtx.manager.createNativeQuery("select dd.id,vds.code from DisabilityDocument dd left join VocDisabilityStatus vds on vds.id=dd.status_id where dd.duplicate_id="+id).setMaxResults(1).getResultList() ;
-	if (duplicate.size()>0 && +duplicate.get(0)[1]==2) {
+	if (duplicate.size()>0 && +duplicate.get(0)[1]!=0) {  //если не действующий
 		recordCode(1,1,"doc.duplicate") ;
 		recordChar("",12,"doc.prevdoc.number") ;
 		recordCode("",2,"doc.primary") ;
