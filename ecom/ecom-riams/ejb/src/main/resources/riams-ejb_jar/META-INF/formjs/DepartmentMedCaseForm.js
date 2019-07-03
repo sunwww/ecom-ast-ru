@@ -317,6 +317,7 @@ function onSave(aForm, aEntity, aContext) {
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getComplicationDiags(), "4", "4",null) ;
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getConcomitantDiags(), "4","3",null) ;
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getClinicalMkb()+"@#@ @#@"+aForm.getClinicalDiagnos(), "4", "1",aForm.clinicalActuity,aForm.mkbAdc) ;
+    checkDouble(aForm,aEntity, aContext);
 }
 
 // Перед удалением
@@ -392,4 +393,29 @@ function onPreDelete(aMedCaseId, aContext) {
  * При удалении
  */
 function onDelete(aEntityId, aContext) {
+}
+//Проверка на дубли при создании первого СЛО в СЛС
+function checkDouble(aForm,aEntity, aContext) {
+    if (aForm.prevMedCase==0) {
+        var listDep = aContext.manager.createNativeQuery("select id from MedCase where parent_id='"+aForm.parent+"' and dtype='DepartmentMedCase' and prevMedCase_id=null")
+			.getResultList() ;
+        var inBd=true;
+        if (listDep.isEmpty()) {
+        	inBd=false;
+            listDep = aContext.manager.createQuery("from MedCase where parent_id=:parent and dtype='DepartmentMedCase' and prevMedCase_id=null")
+                .setParameter("parent", aForm.parent)
+                .getResultList();
+		}
+        for (var i=0; i<listDep.size(); i++) {
+        	var obj = listDep.get(i);
+        	var sloId = inBd?
+				obj.get(0) :
+				obj.id;
+            if (sloId!=aEntity.id) {
+            	if (inBd)
+                    aContext.manager.createNativeQuery("delete from MedCase where id='"+aEntity.id+"'").executeUpdate() ;
+                throw "Уже завели случай в отделелении. <a href='entitySubclassView-mis_medCase.do?id="+sloId+"'>Перейти к нему</a>"
+            }
+        }
+    }
 }
