@@ -634,6 +634,12 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				.append(")") ;
 			service.executeUpdateNativeSql(sql.toString()) ;
 		}
+		//Обновление текста дневника в случае отметки о браке после подтверждения врачом КДЛ
+		sql = new StringBuilder() ;
+		sql.append("update diary set record='").append("Брак биоматериала: ").append(reasonText).append(". Дата и время брака: '")
+				.append("||to_char(current_date,'dd.mm.yyyy')||' '||to_char(current_timestamp,'HH24:MI:SS')||chr(13)||chr(13)||record")
+				.append(" where medcase_id=(select medcase_id from prescription  where id in (").append(aPrescripts).append("))");
+		service.executeUpdateNativeSql(sql.toString()) ;
 		return "1" ;
 	}
 	
