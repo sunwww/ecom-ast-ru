@@ -1397,13 +1397,15 @@
 
 	<voc id='medServiceGroupAll' type='NativeVocService'>
 		<NativeVocService
-				from = 'MedService ms'
+				from = 'MedService'
 				parent=""
-				names = "ms.name"
+				names = "code||' '||name"
 				nameId="id"
 				queryAppend=" dtype='MedServiceGroup' "
 				join=''
 				order=''
+				queried = "((cast(id as varchar(10)) like :query or name like UPPER(:query)) or (replace(upper(code),'.','') like (upper(:query))) or upper(name) like upper(:query) or upper(code) like upper(:query))"
+
 		/>
 
 	</voc>
