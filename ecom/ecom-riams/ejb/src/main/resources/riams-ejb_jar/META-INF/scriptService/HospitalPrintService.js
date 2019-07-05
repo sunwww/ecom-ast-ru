@@ -2627,6 +2627,14 @@ function getQuarter(dateBegin) {
 function getYear(dateBegin) {
 	return +dateBegin.substring(6);
 }
+//получить процент показателя качества в отборе по дефектам
+function getDefectPercent(indicList) {
+	var sum=0;
+	for (var i=0; i<indicList.size(); i++) {
+		sum+=+indicList.get(i).get(4);
+	}
+	return sum/indicList.size();
+}
 function printQuarterlyReport(aCtx, aParams) {
     var estimationKind = aParams.get("estimationKind") ;
     var department = aParams.get("department") ;
@@ -2653,8 +2661,13 @@ function printQuarterlyReport(aCtx, aParams) {
     var nodef = cnts.split('#')[1];
     map.put('total',total);
     map.put('nodef',nodef);
+    var def = total-nodef;
+    def=''+def;
+    map.put('def',def.replace('.0',''));
 
-	map.put('indicList',getQuarterlyReportTypeReportIndicators(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,total,nodef));
+    var indicList = getQuarterlyReportTypeReportIndicators(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,total,nodef);
+	map.put('indicList',indicList);
+    map.put('iper',getDefectPercent(indicList));
 	return map;
 }
 function printAnestResPatient(aCtx, aParams) {
