@@ -196,7 +196,7 @@
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/View">
       	<msh:section title="Услуги" createUrl="entityParentPrepareCreate-smo_medService.do?id=${param.id}" createRoles="/Policy/Mis/MedCase/MedService/Create">
-      		<ecom:webQuery name="services" nativeSql="select mc.id,ms.name,mc.medServiceAmount
+      		<ecom:webQuery name="services" nativeSql="select mc.id,ms.name,mc.medServiceAmount,mc.serviceComment
       		from MedCase mc 
       		left join MedService ms on mc.medService_id=ms.id
       		where mc.parent_id='${param.id}' and mc.dtype='ServiceMedCase'
@@ -205,6 +205,7 @@
       	 	 viewUrl="entityShortView-smo_medService.do" idField="1" >
       			<msh:tableColumn columnName="Название услуги" property="2"/>
       			<msh:tableColumn columnName="Кол-во" property="3"/>
+                <msh:tableColumn columnName="Примечание" property="4"/>
       		</msh:table>
       	</msh:section>
       </msh:ifInRole>
@@ -623,9 +624,65 @@
 	  	}
 	  	goPriem(0) ;
 	  </script>
-
   	</msh:ifNotInRole>
   </msh:ifFormTypeIsView>
+      <script type="text/javascript">
+          //вывести текстовые поля для ввода примечания
+          function otmoaOnCnahge() {
+              for (var i=0; i<100; i++) { //id при удалении будут идти не по порядку, но вряд ли больше 100
+                  if(document.getElementById('otma_input_'+(i+1))) {
+                      var tableRow=document.getElementById('otma_input_'+(i+1)).parentNode.parentNode;
+                      if (tableRow.childNodes.length<4) {
+                          var td = document.createElement('td');
+                          td.innerHTML="<input type='text' disabled id='otma_input_cmnt"+(i+1)+"' size='80'/>";
+                          tableRow.appendChild(td);
+                      }
+                  }
+              }
+          }
+          //загрузка комментариев
+          function loadComments() {
+              TicketService.getServiceComments(
+                  '${param.id}', {
+                      callback: function (res) {
+                          if (res!=null && res!='[]') {
+                              <msh:ifFormTypeIsNotView formName="smo_visitForm" guid="71ddfd0b-09a1-4cfe-bd83-3dc3738cb9d2">
+                              var otmoaMas = document.getElementsByClassName('autocomplete maxHorizontalSize');
+                              </msh:ifFormTypeIsNotView>
+                              <msh:ifFormTypeIsView formName="smo_visitForm" guid="71ddfd0b-09a1-4cfe-bd83-3dc3738cb9d2">
+                              var otmoaMas = document.getElementsByTagName('a');
+                              </msh:ifFormTypeIsView>
+
+                              var aResult = JSON.parse(res);
+                              for (var j=0; j<otmoaMas.length; j++) {
+                                  var flag=true;
+                                  <msh:ifFormTypeIsView formName="smo_visitForm" guid="71ddfd0b-09a1-4cfe-bd83-3dc3738cb9d2">
+                                  flag=otmoaMas[j].href.indexOf('entityView-mis_medService.do')!=-1;
+                                  </msh:ifFormTypeIsView>
+                                  if (flag) {
+                                      for (var i = 0; i < aResult.length; i++) {
+                                          if (typeof aResult[i].cmnt!=='undefined') {
+                                              <msh:ifFormTypeIsNotView formName="smo_visitForm" guid="71ddfd0b-09a1-4cfe-bd83-3dc3738cb9d2">
+                                              var val = otmoaMas[j].value;
+                                              </msh:ifFormTypeIsNotView>
+                                              <msh:ifFormTypeIsView formName="smo_visitForm" guid="71ddfd0b-09a1-4cfe-bd83-3dc3738cb9d2">
+                                              var val = otmoaMas[j].text;
+                                              </msh:ifFormTypeIsView>
+                                              if (otmoaMas[j].id.indexOf('otma_input_') != -1 && val == aResult[i].name) {
+                                                  document.getElementById('otma_input_cmnt' + otmoaMas[j].id.replace('otma_input_', '')).value = aResult[i].cmnt;
+                                              }
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  }
+              );
+          }
+          otmoaOnCnahge();
+          loadComments()
+      </script>
   </tiles:put>
 </tiles:insert>
 
