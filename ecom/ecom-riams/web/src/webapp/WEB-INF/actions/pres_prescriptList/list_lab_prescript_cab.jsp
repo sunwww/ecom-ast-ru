@@ -200,7 +200,8 @@
     
       , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
     , p.materialId||' ('||coalesce(vsst.code,'---')||')' as f4material
-    ,pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as f5birthday
+    ,case when ht.id is not null then 'ВМП '||pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy')
+    else pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy')  end as f5birthday
    , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name as f6medServicies
    ,wp.lastname ||' ('||ml.name||')' as f7fioworker
       ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5))||' '||iwp.lastname as f8dtintake
@@ -245,6 +246,7 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
+    left join hitechMedicalCase ht on ht.medcase_id=slo.id or ht.medcase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase')
     where p.dtype='ServicePrescription'
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
@@ -259,7 +261,7 @@
     ,p.medCase_id,mc.workFunctionExecute_id,mc.dateStart,vsst.code
     ,wp.lastname,wp.middlename,wp.firstname,vwf.name,mc.id,ml.name
     ,p.canceldate,p.materialid,p.planstartdate
-    ,vsst.biomaterial,d.record,d.id
+    ,vsst.biomaterial,d.record,d.id, ht.id
     order by pat.lastname,pat.firstname,pat.middlename
     
     "/>
