@@ -336,7 +336,7 @@ abstract public class WorkFunction extends BaseEntity {
 	private String thePromedCodeWorkstaff;
 
 
-	@Comment("Код рабочего места в промеде")
+	@Comment("Код отделения в промеде")
 	@Column(name="promedCode_lpusection")
 	public String getPromedCodeLpuSection() {
 		return thePromedCodeLpuSection;

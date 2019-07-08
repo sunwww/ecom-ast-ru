@@ -298,23 +298,24 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
     /**
      * Установить отметку о выгрузке.
      *
-     * @param medcase_id Long id случая
-     * @param tap_id String promed_id
+     * @param medcaseId Long id случая
+     * @param tapId Long promed_id
      * @return JSONObject
      */
-    public String setEvnTap(Long medcase_id, String tap_id) {
+    public String setEvnTap(Long medcaseId, Long tapId) {
         JSONObject res = new JSONObject();
-        if (medcase_id==null) {
+        if (medcaseId==null) {
             res.put("status","error")
                     .put("reason","medcase_id is null");
         }
         else {
-            List<String> info = theManager.createNativeQuery("select promedcode from medcase where id=:medcaseId").setParameter("medcaseId", medcase_id).getResultList();
+            List<String> info = theManager.createNativeQuery("select promedcode from medcase where id=:medcaseId").setParameter("medcaseId", medcaseId).getResultList();
             if (info.isEmpty()) {
                 res.put("status", "error")
                         .put("reason", "medcase not found");
             } else {
-                theManager.createNativeQuery("update medcase set promedcode=:tapId,upload=true where id=:medcaseId").setParameter("tapId", tap_id).setParameter("medcaseId", medcase_id).executeUpdate();
+                theManager.createNativeQuery("update medcase set promedcode=:tapId,upload=true where id=:medcaseId")
+                        .setParameter("tapId", tapId.toString()).setParameter("medcaseId", medcaseId).executeUpdate();
                 res.put("status", "Ok");
             }
         }
@@ -325,12 +326,12 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
     /**
      * Получить ФИО, отделение и promedcode_lpusection и promedcode_workstaff.
      *
-     * @param workfunction_id WorkFunction.id
+     * @param workfunctionId WorkFunction.id
      * @return JSON in String
      */
-    public String getWfInfo(Long workfunction_id) {
+    public String getWfInfo(Long workfunctionId) {
         JSONObject res = new JSONObject();
-        if (workfunction_id==null) {
+        if (workfunctionId==null) {
             res.put("status","error")
                     .put("reason","workfunction is null");
         }
@@ -342,7 +343,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                     " left join VocWorkfunction vwf on vwf.id=wf.workfunction_id" +
                     " left join Patient wpat on wpat.id=w.person_id" +
                     " left join mislpu dep on dep.id=coalesce(wf.lpu_id,w.lpu_id)" +
-                    " where wf.id=:workfunctionId").setParameter("workfunctionId", workfunction_id).getResultList();
+                    " where wf.id=:workfunctionId").setParameter("workfunctionId", workfunctionId).getResultList();
             if (info.isEmpty()) {
                 res.put("status", "error")
                         .put("reason", "workfunction not found");
@@ -365,24 +366,26 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
     /**
      * Установить promedcode_lpusection и promedcode_workstaff.
      *
-     * @param workfunction_id Long id случая
-     * @param promedcode_lpusection String promed_id
-     * @param promedcode_workstaff String promedcode_workstaff
+     * @param workfunctionId Long id рабочей функции врача
+     * @param promedcodeLpuSection String promed_id
+     * @param promedcodeWorkstaff String promedcode_workstaff
      * @return JSONObject
      */
-    public String setWfInfo(Long workfunction_id,String promedcode_lpusection,String promedcode_workstaff) {
+    public String setWfInfo(Long workfunctionId,Long promedcodeLpuSection,Long promedcodeWorkstaff) {
         JSONObject res = new JSONObject();
-        if (workfunction_id==null) {
+        if (workfunctionId==null) {
             res.put("status","error")
                     .put("reason","workfunction is null");
-        }
-        else {
-            List<String> info = theManager.createNativeQuery("select id from workfunction where id=:workfunctionId").setParameter("workfunctionId", workfunction_id).getResultList();
+        } else {
+            List<String> info = theManager.createNativeQuery("select id from workfunction where id=:workfunctionId").setParameter("workfunctionId", workfunctionId).getResultList();
             if (info.isEmpty()) {
                 res.put("status", "error")
                         .put("reason", "workfunction not found");
             } else {
-                theManager.createNativeQuery("update workfunction set promedcode_lpusection=:promedcode_lpusection,promedcode_workstaff=:promedcode_workstaff where id=:workfunctionId").setParameter("promedcode_lpusection", promedcode_lpusection).setParameter("promedcode_workstaff", promedcode_workstaff).setParameter("workfunctionId", workfunction_id).executeUpdate();
+                theManager.createNativeQuery("update workfunction set promedcode_lpusection=:promedcode_lpusection,promedcode_workstaff=:promedcode_workstaff where id=:workfunctionId")
+                        .setParameter("promedcode_lpusection", promedcodeLpuSection)
+                        .setParameter("promedcode_workstaff", promedcodeWorkstaff)
+                        .setParameter("workfunctionId", workfunctionId).executeUpdate();
                 res.put("status", "Ok");
             }
         }

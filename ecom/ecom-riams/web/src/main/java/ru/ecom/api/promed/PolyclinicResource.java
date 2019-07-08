@@ -1,6 +1,7 @@
 package ru.ecom.api.promed;
 
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.web.util.Injection;
@@ -16,6 +17,8 @@ import java.text.SimpleDateFormat;
 
 @Path("/promed")
 public class PolyclinicResource {
+
+    private static final Logger LOG = Logger.getLogger(PolyclinicResource.class);
     @GET
     @Path("getPolyclinicCase")
     @Produces(MediaType.APPLICATION_JSON)
@@ -67,12 +70,12 @@ public class PolyclinicResource {
      * @return JSON in String
      */
     public String setEvnTap(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken
-            , @QueryParam("medcase_id") Long medcase_id, @QueryParam("tap_id") String tap_id
+            , @QueryParam("medcase_id") Long medcaseId, @QueryParam("tap_id") Long tapId
     ) throws NamingException {
         if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
         ApiUtil.init(aRequest,aToken);
         IApiPolyclinicService service =Injection.find(aRequest).getService(IApiPolyclinicService.class);
-        return service.setEvnTap(medcase_id,tap_id);
+        return service.setEvnTap(medcaseId,tapId);
     }
 
     @GET
@@ -87,8 +90,7 @@ public class PolyclinicResource {
      * @return JSON in String
      */
     public String getWfInfo(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken
-            , @QueryParam("workfunction_id") Long workfunction_id
-    ) throws NamingException, ParseException {
+            , @QueryParam("workfunction_id") Long workfunction_id ) throws NamingException {
         if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
         ApiUtil.init(aRequest,aToken);
         IApiPolyclinicService service =Injection.find(aRequest).getService(IApiPolyclinicService.class);
@@ -109,13 +111,18 @@ public class PolyclinicResource {
      * @param promedcode_workstaff String promedcode_workstaff
      * @return JSON in String
      */
-    public String setWfInfo(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken
-            , @QueryParam("workfunction_id") Long workfunction_id
-            , @QueryParam("promedcode_lpusection") String promedcode_lpusection, @QueryParam("promedcode_workstaff") String promedcode_workstaff
+    public String setWfInfo(@Context HttpServletRequest aRequest, String jsonData
+
     ) throws NamingException {
-        if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
-        ApiUtil.init(aRequest,aToken);
+        LOG.info("get = "+jsonData);
+        JSONObject req = new JSONObject(jsonData);
+        String token = req.has("token") ? req.getString("token") : null;
+        if (token!=null) {ApiUtil.login(token,aRequest);}
+        ApiUtil.init(aRequest,token);
+        Long workFunctionId = req.getLong("workfunctionId");
+        Long promedcodeLpuSection = req.getLong("promedcodeLpuSection");
+        Long promedcodeWorkstaff = req.getLong("promedcodeWorkstaff");
         IApiPolyclinicService service =Injection.find(aRequest).getService(IApiPolyclinicService.class);
-        return service.setWfInfo(workfunction_id,promedcode_lpusection,promedcode_workstaff);
+        return service.setWfInfo(workFunctionId,promedcodeLpuSection,promedcodeWorkstaff);
     }
 }

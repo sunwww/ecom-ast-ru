@@ -1,16 +1,11 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Резерв обслуживания
@@ -20,6 +15,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Резерв обслуживания")
 @Entity
 @Table(schema="SQLUser")
+@Deprecated //никогда не использовалось
 public class ServiceReserve extends BaseEntity{
 	
 	/** Рабочие времена */

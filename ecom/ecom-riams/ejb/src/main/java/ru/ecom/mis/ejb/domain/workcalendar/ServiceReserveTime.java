@@ -1,11 +1,11 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Время резерва обслуживания
@@ -15,6 +15,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Время резерва обслуживания")
 @Entity
 @Table(schema="SQLUser")
+@Deprecated //никогда не использовалось
 public class ServiceReserveTime extends BaseEntity{
 	
 	/** Времена рабочего календаря */

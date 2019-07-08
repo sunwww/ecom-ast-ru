@@ -114,12 +114,11 @@ public class MedcaseMedpolicy {
                                isActualPolicy = true;
 
                            } else {
-                               LOG.info("fondINfo = "+fondInfo);
                                LOG.warn("Пациент не сходится: "+
                                        patient.getString("lastname")+" : "+ wqr.get7().toString() +" \n  " +
                                        patient.getString("firstname")+" : "+ wqr.get8().toString()+" \n  " +
                                        patient.getString("middlename")+" : "+wqr.get9().toString()+" \n  " +
-                                       patient.getString("birthday")+" >> "+sdf.parse(patient.getString("birthday"))+" : "+wqr.get10().toString());
+                                       patient.getString("birthday")+" : "+wqr.get10().toString());
                            }
                        } else {
                         //   LOG.info("fondINfo = "+fondInfo);
@@ -131,6 +130,7 @@ public class MedcaseMedpolicy {
                    }
 
                } else {
+                   LOG.warn("Нет действующего полиса");
                    jsonObject.put("status","error_no_pol2");
                }
                // дата начала действия полиса ранее даты окончания госпитализации - хорошо

@@ -109,12 +109,12 @@ public class ApiRecordServiceBean implements IApiRecordService {
 
     /**
      * Запись пациента на прием (если у резерва разрешено записывать без предварит. направление, создаем направление
-     * @param aCalendarTimeId
-     * @param aPatientLastname
-     * @param aPatientFirstname
-     * @param aPatientMiddlename
-     * @param aPatientBirthday
-     * @return
+     * @param aCalendarTimeId ИД записи
+     * @param aPatientLastname Фамилия пациента
+     * @param aPatientFirstname Имя пациента
+     * @param aPatientMiddlename Отчество пациента
+     * @param aPatientBirthday Дата рождения пациента
+     * @return Информация о записи
      */
     public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aComment, String aPhone, String aRecordType) {
         long currentDateLong = System.currentTimeMillis();
@@ -136,7 +136,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         if (!StringUtil.isNullOrEmpty(aPatientLastname) && !StringUtil.isNullOrEmpty(aPatientFirstname)) { //Запись через сайт или другие источники.
             patient = getPatientByFIO(aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday);
         } else {
-            return getErrorJson("Необходимо указать ФИО либо GUID пациента","NO_PATIENT");
+            return getErrorJson("Необходимо указать ФИО пациента","NO_PATIENT");
         }
         String prePatientInfo =aPatientLastname+ " "+aPatientFirstname+" "+(aPatientMiddlename!=null  ? aPatientMiddlename : "")+" "+DateFormat.formatToDate(aPatientBirthday)+(aPhone!=null ? " тел."+aPhone : "");
 
@@ -153,7 +153,6 @@ public class ApiRecordServiceBean implements IApiRecordService {
                 .append(currentDate).append(" время:").append(currentTime).append(", WCT_ID").append(aCalendarTimeId).append(". Дата записи:").append(wct.getWorkCalendarDay().getCalendarDate())
                 .append(", время:").append(wct.getTimeFrom());
         if (wct.getReserveType()!=null && wct.getReserveType().getIsNoPreRecord()!=null && wct.getReserveType().getIsNoPreRecord() && patient != null) { //Создаем визит
-            LOG.info("TIME_TO_CREATE_VISITI");
             VocServiceStream serviceStream = getServiceStreamByWorkCalendarTime(wct);
             Visit visit = new Visit();
             visit.setUsername(username);
@@ -193,7 +192,6 @@ public class ApiRecordServiceBean implements IApiRecordService {
             recordLogInfo.append(". Пациент ").append(prePatientInfo.toUpperCase());
             wct.setPatientComment(aComment);
             recordLogInfo.append(".Создана предварительная запись");
-            LOG.info("RECORD_MAKE!!!");
         }
         theManager.persist(wct);
         theManager.persist(new ApiRecordJournal(recordLogInfo.toString()));
