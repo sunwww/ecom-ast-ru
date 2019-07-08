@@ -2566,8 +2566,11 @@ function getQuarterlyReportTypeReportIndicators(aCtx,estimationKind,department,w
     var sqlAdd=getSqlAdd(typeMarks,department,workFunction,expert);
     var sql="select vqec.name as f3_name_crit" +
         " ,count(distinct case when vqem.mark='1' then null else qec.id end) as f4_cntExp" +
-        " ,round(cast((100*count(distinct case when vqem.mark='1' then null else qec.id end)/'"+total+"') as numeric),2) as f5_cntExp" +
-        " ,round(cast(avg (vqem.mark) as numeric),2) as f6_average" +
+		" ,replace(selectalldefectspercent(cast(vqec.id as integer),"+total+",cast(wml.id as integer),'"+dateBegin+"','"+dateEnd+"',"+estimationKind+"),'.00','') as f5_cntExp" +
+        " ,replace(cast (round(cast(avg (vqem.mark) as numeric),2) as varchar),'.00','') as f6_average" +
+        " ,replace(count(distinct case when vqem.mark='1' then null else qec.id end)" +
+        " ||case when count(distinct case when vqem.mark='1' then null else qec.id end)>0 then" +
+        " ' ('||(round(cast(100.0*count(distinct case when vqem.mark='1' then null else qec.id end)/'"+total+"' as numeric),2))||'%)'  else '' end,'.00','') as allpers" +
         " from qualityestimationcard qec" +
         " left join vocidc10 mkb on mkb.id=qec.idc10_id" +
         " left join workfunction wf on wf.id=qec.doctorcase_id" +
@@ -2586,7 +2589,7 @@ function getQuarterlyReportTypeReportIndicators(aCtx,estimationKind,department,w
         " where  qec.createDate between to_date('"+dateBegin+"','dd.MM.yyyy') and to_date('"+dateEnd+"','dd.MM.yyyy')" +
         " and qec.kind_id='"+estimationKind+"'" +
         sqlAdd +
-		" group by vqec.id ,vqec.code,vqec.name" +
+		" group by vqec.id ,vqec.code,vqec.name,wml.id" +
         " order by vqec.code";
     var list=aCtx.manager.createNativeQuery(sql).getResultList() ;
     var resList = new java.util.ArrayList() ;
@@ -2597,12 +2600,14 @@ function getQuarterlyReportTypeReportIndicators(aCtx,estimationKind,department,w
         var f1 = unNull(o[1]);
         var f2 = unNull(o[2]);
         var f3 = unNull(o[3]);
+        var f4 = unNull(o[4]);
 
         rr.add(i+1+'.');
         rr.add(f0);
         rr.add(f1);
         rr.add(f2);
         rr.add(f3);
+        rr.add(f4);
         resList.add(rr);
     }
     return resList;
@@ -2633,7 +2638,7 @@ function getDefectPercent(indicList) {
 	for (var i=0; i<indicList.size(); i++) {
 		sum+=+indicList.get(i).get(4);
 	}
-	return sum/indicList.size();
+	return (sum/indicList.size()).toFixed(2);
 }
 function printQuarterlyReport(aCtx, aParams) {
     var estimationKind = aParams.get("estimationKind") ;
