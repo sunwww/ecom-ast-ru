@@ -165,7 +165,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     /** Создаем тэг с информацией о госпитализации (версия 3.1.1)*/
-    private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase) {
+    private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isExport263) {
     //    String startDate = dateToString(aEntry.getHospitalStartDate()), finishDate = dateToString(aEntry.getHospitalFinishDate()!=null?aEntry.getHospitalFinishDate():aEntry.getFinishDate());
         boolean isExtDisp = aEntry.getEntryType().equals(EXTDISPTYPE);
         String forPom = isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic ? "2" : "1") : "3";
@@ -177,9 +177,13 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         z.addContent(new Element("VIDPOM").setText(aEntry.getMedHelpKind().getCode()));
         z.addContent(new Element("FOR_POM").setText(forPom)); //форма помощи V014
 
-        if (!isNotNull(aEntry.getIsEmergency())) addIfNotNull(z,"NPR_MO",aEntry.getDirectLpu()); //Направившее ЛПУ
-        addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()); //Дата направления на лечение ***
-        addIfNotNull(z,"NPR_N",aEntry.getTicket263Number()); // Номер направления на портале ФОМС
+        if (!isNotNull(aEntry.getIsEmergency())) {
+            if ((aEntry.getMainMkb()!=null && aEntry.getMainMkb().startsWith("C")) || !isPoliclinic) {
+                addIfNotNull(z,"NPR_MO",aEntry.getDirectLpu()); //Направившее ЛПУ
+                addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()); //Дата направления на лечение ***
+            }
+        }
+        if (isExport263) addIfNotNull(z,"NPR_N",aEntry.getTicket263Number()); // Номер направления на портале ФОМС
         addIfNotNull(z,"NPR_P",aEntry.getPlanHospDate()); // Дата планируемой госпитализации
         if ("2".equals(forPom)) add(z,"PRN_MO","300001");
         z.addContent(new Element("LPU").setText("1")); //ЛПУ лечения //TODO = сделать высчитываемым
@@ -209,7 +213,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      * aEntry - случай госпитализации
      * entriesList - строка с ИД СЛО
      * */
-        private Element createSlElements(E2Entry aEntry, String entriesString, int cnt) {
+        private Element createSlElements(E2Entry aEntry, String entriesString, int cnt, boolean isExport263) {
 
             /*
             ZSL, SL = информация об обращении. визиты переносятся в USL
@@ -270,7 +274,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
           //  edCol="1"; //06-08-2018 Ед кол больше не равно 1 !
 
             String[] slIds = entriesString.split(",");
-            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length,cnt);
+            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length,cnt, isExport263);
             int indSl = zSl.indexOf(zSl.getChild("SL_TEMPLATE"));
             Date startHospitalDate = null, finishHospitalDate=null;
             int kdz=0;
@@ -818,6 +822,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
             java.util.Date startStartDate = new java.util.Date();
             String regNumber = getExpertConfigValue("LPU_REG_NUMBER", "300001");
+            boolean isExport263 = "1".equals(getExpertConfigValue("EXPORT_263", "1"));
             String fileName = "M" + regNumber + "T30_" + packetDateAdd; // M300001 T30_171227
             SequenceHelper sequenceHelper = SequenceHelper.getInstance();
             if (cntNumber == null) {
@@ -967,7 +972,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 Element z ;
                 switch (aVersion) { //При появлении новых форматов файла - добавляем сюда
                     case "3.1.1":
-                        z= createSlElements(entry, sls,cnt+1);
+                        z= createSlElements(entry, sls,cnt+1, isExport263);
                         break;
                     case "3.1":
                         throw new IllegalStateException("Создание файла версии 3.1 более не поддерживается!");

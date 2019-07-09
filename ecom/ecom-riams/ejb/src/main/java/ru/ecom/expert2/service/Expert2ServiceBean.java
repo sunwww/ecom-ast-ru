@@ -2022,6 +2022,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             "and :vmpDate between dateFrom and coalesce(dateTo,current_date) and cost is not null")
                             .setParameter("code", aEntry.getVMPKind()).setParameter("vmpDate",aEntry.getFinishDate()).getResultList();
                     if (!costs.isEmpty()) {
+                        LOG.info("NOT est found! ");
                         cost = costs.get(0);
                         hospitalCostMap.put(key,cost);
                     } else {
@@ -2031,6 +2032,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                 } else {
                     cost=hospitalCostMap.get(key);
+                    LOG.info("est = ");
                 }
                 aEntry.setCost(cost);
                 aEntry.setBaseTarif(cost);
