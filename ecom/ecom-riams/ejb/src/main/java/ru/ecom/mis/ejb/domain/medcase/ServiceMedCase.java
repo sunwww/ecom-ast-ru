@@ -77,5 +77,15 @@ public class ServiceMedCase extends ShortMedCase{
 		return getMedService()!=null ? getMedService().getParent():null;
 	}
 
+	/** Комментарий по услуге */
+	@Comment("Комментарий по услуге")
+	public String getServiceComment() {
+		return theServiceComment;
+	}
+	public void setServiceComment(String aServiceComment) {
+		theServiceComment = aServiceComment;
+	}
 
+	/** Комментарий по услуге */
+	private String theServiceComment;
 }

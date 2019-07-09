@@ -1,5 +1,7 @@
 package ru.ecom.poly.web.dwr;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
@@ -664,4 +666,30 @@ public class TicketServiceJs {
 		long res1 = TemplateProtocolJs.parseLong(res);
 		return res1>0;
     }
+
+	/**
+	 * Получить примечания к услугам в направлении/визите (с пробелом на конце)
+	 * @param aMedCaseId MedCase.id
+	 * @return String json Услуги с комментариями
+	 */
+	public String getServiceComments(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder();
+		sql.append("select mc.id,ms.code||' '||ms.name||' ',mc.serviceComment ")
+				.append(" from MedCase mc  ")
+				.append(" left join MedService ms on mc.medService_id=ms.id ")
+				.append(" where mc.dtype='ServiceMedCase' and mc.parent_id=' ")
+				.append(aMedCaseId)
+				.append("'");
+		JSONArray res = new JSONArray() ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		for (WebQueryResult w :list) {
+			JSONObject o = new JSONObject() ;
+			o.put("id", w.get1())
+					.put("name", w.get2())
+					.put("cmnt", w.get3());
+			res.put(o);
+		}
+		return res.toString();
+	}
 }

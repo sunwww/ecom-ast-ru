@@ -208,7 +208,8 @@ function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 		}
 	}
 
-
+    sql = "delete "+aTableSql+" !='0' " ;
+    aManager.createNativeQuery(sql).executeUpdate();
 	for (var i = 0; i < ar.length(); i++) {
 		var child = ar.get(i);
 		var jsId = java.lang.String.valueOf(child.get("value"));
@@ -222,6 +223,7 @@ function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 				for (var j=0;j<aAddCmd.length;j++) {
 					eval(aAddCmd[j]) ;
 				}
+                objNew.setServiceComment(java.lang.String.valueOf(child.get("cmnt")));
 				aManager.persist(objNew) ;
 				if (hasSls) {
                     var pres = new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription();
@@ -237,12 +239,12 @@ function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
             }
 		}
 	}
-	if (ids.length()>0) {
+	/*if (ids.length()>0) {
 		sql = "delete "+aTableSql+" not in ("+ids.substring(1)+") " ;
 		aManager.createNativeQuery(sql).executeUpdate();
 	} else {
 		sql = "delete "+aTableSql+" !='0' " ;
 		aManager.createNativeQuery(sql).executeUpdate();
-	}
+	}*/
 	
 }

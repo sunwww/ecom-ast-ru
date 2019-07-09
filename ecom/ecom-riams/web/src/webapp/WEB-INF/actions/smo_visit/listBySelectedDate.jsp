@@ -39,7 +39,7 @@
   		,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
 		
 		,case when v.dateStart is not null then 'нет диагноза' when v.visitResult_id is null then '' else 'пред. оформлен' end as prerecord
-		, list(distinct ms.code||' '||ms.name) as servicies
+		, list(distinct ms.code||' '||ms.name||(case when (smc.servicecomment is null or smc.servicecomment='') then '' else ' ('||smc.servicecomment||')' end)) as servicies
 from medcase v 
 left join patient p on p.id=v.patient_id
 left join WorkCalendarDay wcd on wcd.id=v.datePlan_id

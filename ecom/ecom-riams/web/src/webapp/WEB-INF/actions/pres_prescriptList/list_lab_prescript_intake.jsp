@@ -164,7 +164,7 @@
     
     ||'#'||pat.lastname else list(p.materialId) end) as f4material
     ,coalesce(vsst.name,'---') as f5vsstname
-    ,pat.lastname as f6lastname,pat.firstname as f7firstname,pat.middlename as f8middlename
+    ,case when ht.id is not null then 'ВМП '||pat.lastname else pat.lastname end as f6lastname,pat.firstname as f7firstname,pat.middlename as f8middlename
     ,to_char(pat.birthday,'dd.mm.yyyy') as f9birthday
    ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as f10medServicies
    ,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
@@ -193,6 +193,7 @@
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
+    left join hitechMedicalCase ht on ht.medcase_id=slo.id or ht.medcase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase')
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
@@ -202,7 +203,7 @@
     group by ${addByGroup} pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime,p.planStartDate
-    ,vst.name
+    ,vst.name, ht.id
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     
