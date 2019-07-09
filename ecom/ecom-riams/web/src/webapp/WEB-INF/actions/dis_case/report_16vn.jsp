@@ -329,8 +329,13 @@
         where dd.disabilityCase_id=dd1.disabilityCase_id 
         and (dd1.noActuality='0' or dd1.noActuality is null) 
         and dd1.anotherLpu_id is null)) as sumdays
+        , list(ml.name) as deps
         from DisabilityCase dc
         left join DisabilityDocument dd on dd.disabilityCase_id=dc.id
+        left join DisabilityRecord dr on dr.disabilityDocument_id=dd.id
+        left join Workfunction wf on wf.id=dr.workfunction_id
+        left join worker w on w.id=wf.worker_id
+        left join mislpu ml on ml.id=w.lpu_id
         left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
         left join VocDisabilityReason vdr1 on vdr1.id=dd.disabilityReasonChange_id
         left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
@@ -371,6 +376,7 @@
               <msh:tableColumn columnName="Код МКБ" property="3" />
               <msh:tableColumn columnName="Возраст" property="4"/>
               <msh:tableColumn columnName="Длительность" property="5" />
+              <msh:tableColumn columnName="Длительность" property="6" />
             </msh:table>
             </msh:sectionContent>
             </msh:section>  
