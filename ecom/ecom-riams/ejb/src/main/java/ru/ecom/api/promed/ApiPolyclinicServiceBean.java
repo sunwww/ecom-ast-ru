@@ -316,7 +316,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
             } else {
                 theManager.createNativeQuery("update medcase set promedcode=:tapId,upload=true where id=:medcaseId")
                         .setParameter("tapId", tapId.toString()).setParameter("medcaseId", medcaseId).executeUpdate();
-                res.put("status", "Ok");
+                res.put("status", "ok");
             }
         }
         return res.toString();
@@ -386,7 +386,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
                         .setParameter("promedcode_lpusection", promedcodeLpuSection)
                         .setParameter("promedcode_workstaff", promedcodeWorkstaff)
                         .setParameter("workfunctionId", workfunctionId).executeUpdate();
-                res.put("status", "Ok");
+                res.put("status", "ok");
             }
         }
         return res.toString();
