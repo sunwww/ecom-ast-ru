@@ -1053,11 +1053,20 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		IPrescriptionService service2 = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		java.util.Date currentDate = new java.util.Date() ; 
+		java.util.Date currentDate = new java.util.Date() ;
 		java.util.Date intakeDate = DateFormat.parseDate(aDate+aTime, "dd.MM.yyyyHH:mm");
 		if (intakeDate.getTime()>currentDate.getTime()) {
 			return "Дата забора не может быть больше текущей даты!";
-		} 
+		}
+		String pattern = "MM/dd/yyyy";
+		SimpleDateFormat df = new SimpleDateFormat(pattern);
+		java.util.Date yesterday = new java.util.Date(System.currentTimeMillis() - 1000L * 60L * 60L * 24L);
+		String yString = df.format(yesterday);
+		yesterday = DateFormat.parseDate(yString,pattern); //календарное вчера
+		java.util.Date intakeJustDate = DateFormat.parseDate(aDate, "dd.MM.yyyy"); //календарная дата забора
+		if (intakeJustDate.getTime()< yesterday.getTime()) {
+			return "Дата забора не может быть раньше вчерашней даты!";
+		}
 		/*
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;*/
