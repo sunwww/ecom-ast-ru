@@ -55,8 +55,7 @@
      // Отмена
      function next${name}Double() {
         document.forms[0].action = oldaction ;
-        save();
-		//document.forms[0].submit() ;
+		document.forms[0].submit() ;
 		$('submitButton').style.display='true' ;
 		$('${name}DoubleSave').readOnly='true' ;
 		$('${name}DoubleSave').style.display = 'none' ;
