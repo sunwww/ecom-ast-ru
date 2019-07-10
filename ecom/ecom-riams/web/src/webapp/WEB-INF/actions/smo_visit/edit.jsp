@@ -627,18 +627,22 @@
   	</msh:ifNotInRole>
   </msh:ifFormTypeIsView>
       <script type="text/javascript">
-          //вывести текстовые поля для ввода примечания
+          //вывести восклицательные знаки, показывающие, что к услуге есть примечание
           function otmoaOnCnahge() {
               for (var i=0; i<100; i++) { //id при удалении будут идти не по порядку, но вряд ли больше 100
                   if(document.getElementById('otma_input_'+(i+1))) {
                       var tableRow=document.getElementById('otma_input_'+(i+1)).parentNode.parentNode;
                       if (tableRow.childNodes.length<4) {
                           var td = document.createElement('td');
-                          td.innerHTML="<input type='text' disabled id='otma_input_cmnt"+(i+1)+"' size='80'/>";
-                          tableRow.appendChild(td);
+                          td.innerHTML="<img src='/skin/images/main/znak.png' alt='Примечание' hidden height='20' width='20' id='otma_input_cmnt"+(i+1)+"' onclick='showTitle(this);'>";
+                          tableRow.insertBefore(td,tableRow.childNodes[0]);
                       }
                   }
               }
+          }
+          //показать комментарий по клику на знак
+          function showTitle(label) {
+              showToastMessage(label.title,false,null);
           }
           //загрузка комментариев
           function loadComments() {
@@ -669,7 +673,8 @@
                                               var val = otmoaMas[j].text;
                                               </msh:ifFormTypeIsView>
                                               if (otmoaMas[j].id.indexOf('otma_input_') != -1 && val == aResult[i].name) {
-                                                  document.getElementById('otma_input_cmnt' + otmoaMas[j].id.replace('otma_input_', '')).value = aResult[i].cmnt;
+                                                  document.getElementById('otma_input_cmnt' + otmoaMas[j].id.replace('otma_input_', '')).title = aResult[i].cmnt;
+                                                  document.getElementById('otma_input_cmnt' + otmoaMas[j].id.replace('otma_input_', '')).removeAttribute('hidden');
                                               }
                                           }
                                       }
