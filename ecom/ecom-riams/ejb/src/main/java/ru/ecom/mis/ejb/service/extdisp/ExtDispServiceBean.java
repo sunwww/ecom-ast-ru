@@ -36,9 +36,9 @@ import java.util.Map;
 @Local(IExtDispService.class)
 @Remote(IExtDispService.class)
 /**
- * 
+ *
  * @author VTsybulin 19.12.2014
- * 
+ *
  * Формирование XML для импорта на сайте мониторинга ДД Росминздрава (orph.rosminzdrav.ru)
  * Версия формата 20140307
  *
@@ -170,14 +170,10 @@ public class ExtDispServiceBean implements IExtDispService {
 			String patIdType="3"; //3 - несовершеннолетний. Если сирота - то "1"
 			String patIdCategory = "4"; //Категория ребенка. 4 - без категории. 1 - сирота, 2 - ТЖС, 3 - опекаемый
 			String cardIdType ="2"; //1 - ДД сирот, 2-Профосмотры, 3-Предварительные, 4 - Периодические
-			
-			String cardReccomend = aReccomend; //"_";
-			String cardRecommendZOZH = aZOJReccomend; //"Режим дня и отдыха - по возрасту, рациональное питание"
-				//	+ ", закаливание, профилактика вредных привычек."; //Рекомендации
+
 			String fizkultG = aFizGroup>0?aFizGroup+"":"1"; //"1"; //Группа здоровья для физкультуры
-			String cardIsslResult = aAnalysesText;//"Без патологий"; // Результат анализов
 			Date currentDate = new Date(System.currentTimeMillis());
-			String astrakhanFias = "83009239-25CB-4561-AF8E-7EE111B1CB73";
+			String astrakhanFias = "30"; //"83009239-25CB-4561-AF8E-7EE111B1CB73";
 
 			while (rs.next()) {
 				String diagnosis = rs.getString("mkbcode");
@@ -257,7 +253,7 @@ public class ExtDispServiceBean implements IExtDispService {
 						record.addContent(new Element("id").addContent(orphCode))
 								.addContent(new Element("date").addContent(format.format(service.getServiceDate())));
 						if (service instanceof ExtDispExam ) {
-									record.addContent(new Element("result").addContent(cardIsslResult));
+									record.addContent(new Element("result").addContent(aAnalysesText));
 							cardBasic.addContent(record);
 						} else if (service instanceof ExtDispVisit) {
 							cardOsmotri.addContent(record);
@@ -390,7 +386,7 @@ public class ExtDispServiceBean implements IExtDispService {
 								.addContent(new Element("needVMP").addContent("0")) //Рекомендована ВМП (0-1)
 								.addContent(new Element("needSMP").addContent("0")) //Рекомендована СМП (0-1)
 								.addContent(new Element("needSKL").addContent("0")) //Рекомендовано СКЛ (0-1)
-								.addContent(new Element("recommendNext").addContent(cardReccomend)) //Рекомендации по диспансерному наблюдению, лечению,
+								.addContent(new Element("recommendNext").addContent(aReccomend)) //Рекомендации по диспансерному наблюдению, лечению,
 							)
 						);
 					}
@@ -407,7 +403,7 @@ public class ExtDispServiceBean implements IExtDispService {
 					card.addContent(cardOsmotri);
 					cards.addContent(card);
 					currPat.addContent(cards);
-					card.addContent(new Element("recommendZOZH").addContent(cardRecommendZOZH));
+					card.addContent(new Element("recommendZOZH").addContent(aZOJReccomend));
 					card.addContent(new Element("privivki")
 							.addContent(new Element("state").addContent("1")) // Привит по возрасту
 				);
