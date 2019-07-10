@@ -2632,13 +2632,21 @@ function getQuarter(dateBegin) {
 function getYear(dateBegin) {
 	return +dateBegin.substring(6);
 }
-//получить процент показателя качества в отборе по дефектам
-function getDefectPercent(indicList) {
-	var sum=0;
-	for (var i=0; i<indicList.size(); i++) {
-		sum+=+indicList.get(i).get(4);
-	}
-	return (sum/indicList.size()).toFixed(2);
+//получить общее количество дефектов
+function getTotalDefects(indicList) {
+    var sum=0;
+    for (var i=0; i<indicList.size(); i++) {
+        sum+=+indicList.get(i).get(2);
+    }
+    return (''+sum).replace('.0','');
+}
+//получить процент показателя качества
+function getDefectPercent(list,pos) {
+    var sum=0;
+    for (var i=0; i<list.size(); i++) {
+        sum+=+list.get(i).get(pos);
+    }
+    return (sum/list.size()).toFixed(2);
 }
 function printQuarterlyReport(aCtx, aParams) {
     var estimationKind = aParams.get("estimationKind") ;
@@ -2651,13 +2659,18 @@ function printQuarterlyReport(aCtx, aParams) {
     var typeOrder = aParams.get("typeOrder") ;
     var depname = aParams.get("departmentName") ;
 
-    map.put('depname',depname);
+    map.put('depname',depname.replace('.    ',''));
     map.put('dateBegin',dateBegin);
     map.put('dateEnd',dateEnd);
     map.put('qy',getQuarter(dateBegin)+' квартал ' + getYear(dateBegin) + ' г.');
 
 	map.put('patientsList',getQuarterlyReportPatientsList(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder));
-    map.put('doctorsList',getQuarterlyReportTypeReport235List(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder,2));
+	var doctorsList = getQuarterlyReportTypeReport235List(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder,2);
+    map.put('doctorsList', doctorsList);
+    for (var i=1; i<12; i++) {
+        map.put('dd'+i, getDefectPercent(doctorsList,i+2));
+	}
+
     map.put('depList',getQuarterlyReportTypeReport235List(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder,3));
     map.put('expList',getQuarterlyReportTypeReport235List(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,typeOrder,5));
 
@@ -2666,13 +2679,15 @@ function printQuarterlyReport(aCtx, aParams) {
     var nodef = cnts.split('#')[1];
     map.put('total',total);
     map.put('nodef',nodef);
-    var def = total-nodef;
+    /*var def = total-nodef;
     def=''+def;
-    map.put('def',def.replace('.0',''));
+    map.put('def',def.replace('.0',''));*/
+
 
     var indicList = getQuarterlyReportTypeReportIndicators(aCtx,estimationKind,department,workFunction,expert,dateBegin,dateEnd,typeMarks,total,nodef);
 	map.put('indicList',indicList);
-    map.put('iper',getDefectPercent(indicList));
+    map.put('iper',getDefectPercent(indicList,4));
+    map.put('def',getTotalDefects(indicList));
 	return map;
 }
 function printAnestResPatient(aCtx, aParams) {
