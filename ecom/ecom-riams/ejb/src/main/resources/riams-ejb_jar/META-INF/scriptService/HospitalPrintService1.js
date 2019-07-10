@@ -271,6 +271,8 @@ function printProtocols(aCtx, aParams) {
 		if (protType!=null) {
 			mapS.typeInfo=protType.name ;
 			mapS.setTicket(protType.isPrintAdministrator==true ? java.lang.Long.valueOf(0) : null) ;
+		} else {
+			//стоит ли делать : если в визите были услуги - отображать их списком ?
 		}
 		mapS.setInfo(protocol.medCase!=null?protocol.medCase.info:"");
 		mapS.setRecord(recordMultiValue(getMedServiceNameByProtocol(aCtx, id)+protocol.record));

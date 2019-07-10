@@ -9,6 +9,7 @@ import ru.ecom.web.util.Injection;
 import javax.jws.WebParam;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -111,10 +112,9 @@ public class PolyclinicResource {
      * @param promedcode_workstaff String promedcode_workstaff
      * @return JSON in String
      */
-    public String setWfInfo(@Context HttpServletRequest aRequest, String jsonData
-
-    ) throws NamingException {
-        LOG.info("get = "+jsonData);
+    public String setWfInfo(@Context HttpServletRequest aRequest, @Context HttpServletResponse aResponse,  String jsonData) throws NamingException {
+        aResponse.setHeader("Access-Control-Allow-Origin", "*");
+        aResponse.setHeader("Access-Control-Allow-Methods", "POST");
         JSONObject req = new JSONObject(jsonData);
         String token = req.has("token") ? req.getString("token") : null;
         if (token!=null) {ApiUtil.login(token,aRequest);}

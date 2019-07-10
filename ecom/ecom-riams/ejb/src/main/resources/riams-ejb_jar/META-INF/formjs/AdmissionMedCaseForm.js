@@ -13,8 +13,8 @@ function onPreCreate(aForm, aCtx) {
 
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.checkPolicyCreateHour(aCtx.getSessionContext()
 	        , aForm.getDateStart(), aForm.getEntranceTime());
-	onPreSave(aForm,null,aCtx)
-    var date = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());
+	onPreSave(aForm,null,aCtx);
+    date = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());
     var cal = java.util.Calendar.getInstance() ;
 	cal.setTime(date) ;
 	var year = cal.get(java.util.Calendar.YEAR) ;
@@ -200,13 +200,12 @@ function onSave(aForm,aEntity,aCtx) {
 		.setParameter("lpu",aForm.lpu)
 		.setParameter("idSLS",aForm.id)
 		.executeUpdate() ;
-	var aStatCardNumber = aForm.statCardNumber ;
+	aCtx.manager.createNativeQuery("update medcase set emergency='"+(aForm.emergency ? "1" : "0")+"' where parent_id="+aForm.id+" and dtype='DepartmentMedCase'").executeUpdate();
 }
 
 function onPreSave(aForm,aEntity, aCtx) {
 	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
 	if (pat.getDeathDate()!=null) {
-		
 		var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(),"yyyy-MM-dd");
 		if (date.getTime() > deathDate.getTime()) {
 		throw "Невозможно создать СЛС позже даты смерти пациента: "
