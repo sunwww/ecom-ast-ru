@@ -314,3 +314,162 @@ function format2day(aCnt) {
 		return "0"+aCnt ;
 	}
 }
+function checkTime(i) {
+    if (i<10) i="0" + i;
+    return i;
+}
+Date.prototype.yyyymmdd = function() {
+    var mm = this.getMonth() + 1; // getMonth() is zero-based
+    var dd = this.getDate();
+
+    return [this.getFullYear() + "-" ,
+        (mm>9 ? '' : '0')+ mm + "-",
+        (dd>9 ? '' : '0') + dd
+    ].join('');
+};
+function capture() {
+    var img = {
+        image_pro: null
+    };
+    html2canvas(document.body).then(function(canvas) { cp(canvas); });
+    var cp = function(canvas) {
+        img = canvas.toDataURL("image/png");
+        var now = new Date();
+        var fileName=now.yyyymmdd()+"_"+checkTime(now.getHours())+"."+checkTime(now.getMinutes())+"."+checkTime(now.getSeconds())
+            +checkTime(now.getMilliseconds())+"_" + document.getElementById("current_username_li").innerHTML+".png";
+        showToastMessage('Вы будете перенаправлены на создание заявки, к которой будет прикреплён скриншот окна. Ожидайте.',null,false);
+        ClaimService.postRequestWithErrorScrean(img,fileName,{
+            callback: function (res) {
+                if (res!=null) {
+                    if (document.getElementsByClassName("errorMessage")[0] != null)
+                        window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=в скриншоте" + "&hist=" + document.referrer;
+                    else
+                        window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=в скриншоте" + "&hist=" + document.referrer;
+                }
+            }
+        });
+    }
+}
+function capture500() {
+    showException();
+    var img = {
+        image_pro: null
+    };
+    html2canvas(document.body).then(function(canvas) { cp(canvas); });
+    var cp = function(canvas) {
+        img = canvas.toDataURL("image/png");
+        var now = new Date();
+        var fileName=now.yyyymmdd()+"_"+checkTime(now.getHours())+"."+checkTime(now.getMinutes())+"."+checkTime(now.getSeconds())
+            +checkTime(now.getMilliseconds())+"_" + document.getElementById("current_username_li").innerHTML+".png";
+        var text=document.getElementsByClassName('errorMessage')[0].innerHTML.replace(/<a.*a>/,''); //document.getElementsByClassName("errorMessage")[0].innerText не работает в 17й мозилле
+        showToastMessage('Вы будете перенаправлены на создание заявки, к которой будет прикреплён скриншот ошибки. Ожидайте.',null,false);
+        ClaimService.postRequestWithErrorScrean(img,fileName,{
+            callback: function (res) {
+                if (res!=null) {
+                    if (document.getElementsByClassName("errorMessage")[0] != null)
+                        window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=" + text + "&hist=" + document.referrer;
+                    else
+                        window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=в скриншоте" + "&hist=" + document.referrer;
+                }
+            }
+        });
+    }
+}
+//проверка корректности даты
+function checkDate(chDate) {
+    var dateParts = chDate.split(".");
+    if (dateParts.length<2) return false;
+    var date = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
+
+    var dd=date.getDate();
+    var mm=date.getMonth() + 1;
+    var yyyy=date.getFullYear();
+
+    var bday2=(dd>9 ? '' : '0') +  dd+ "." + (mm>9 ? '' : '0')  + mm+ "." + yyyy;
+    return (chDate==bday2);
+}
+//сравнение дат-строк
+//return 0 if =
+//1 if dateStr1>dateStr2
+//-1 if dateStr1<dateStr2
+function compareDates(dateStr1,dateStr2) {
+    var dateParts1 = dateStr1.split(".");
+    var dateParts2 = dateStr2.split(".");
+    var date1 = new Date(dateParts1[2], (dateParts1[1] - 1), dateParts1[0]);
+    var date2 = new Date(dateParts2[2], (dateParts2[1] - 1), dateParts2[0]);
+    var res=0;
+    if (date1>date2) res=1;
+    if (date1<date2) res=-1;
+    return res;
+}
+//Сортировка таблицы
+function sortMshTable(th,num) {
+    var direct = th.getAttribute('name');
+    var table = th.parentElement.parentElement.parentElement;
+    var rows, switching, i, x, y, shouldSwitch;
+    switching = true;
+    rows = table.rows;
+    if (rows.length < 100) {
+        var last = rows[rows.length - 1].getElementsByTagName("TD")[0].className.indexOf('sumTd') != -1 ? 2 : 1;
+        while (switching) {
+            switching = false;
+            for (i = 1; i < (rows.length - last); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[num];
+                y = rows[i + 1].getElementsByTagName("TD")[num];
+                if (x != null && y != null && typeof x !== 'undefined' && typeof y !== 'undefined') {
+                    if (isNaN(x.innerHTML)) {
+                        if (direct == 0) {
+                            if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты
+                                if (compareDates(x.innerHTML, y.innerHTML) == -1) {
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                            else if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                        else {
+                            if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты
+                                if (compareDates(x.innerHTML, y.innerHTML) == 1) {
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                            else if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    }
+                    else if (!isNaN(x.innerHTML)) {
+                        if (direct == 0) {
+                            if (+x.innerHTML < (+y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                        else {
+                            if (+x.innerHTML > (+y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+        direct = direct == 0 ? 1 : 0;
+        th.setAttribute('name', direct);
+        if (th.getElementsByTagName('i').length > 0)
+            th.getElementsByTagName('i')[0].className = direct == 0 ? 'arrow arrowUp' : 'arrow arrowDown';
+    }
+    else
+        showToastMessage('Таблица слишком большая для сортировки! Займёт слишком много времени.',null,false);
+}

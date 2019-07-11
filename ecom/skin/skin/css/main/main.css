@@ -1706,3 +1706,20 @@ ul il a#selected {
     -moz-border-radius-topleft: 4px ;
     -moz-border-radius-bottomleft: 4px ;
 }
+/*стрелки сортировки таблиц*/
+.arrow {
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 1px;
+    margin: 5px;
+    float:right
+}
+.arrowDown {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+.arrowUp {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
