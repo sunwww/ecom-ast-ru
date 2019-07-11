@@ -44,6 +44,8 @@
   	  		<fileset file='skin/js/main/form.js' />
   	  		<fileset file='skin/js/main/widget/OneToManyAutocompletes.js' />
   	  		<fileset file='skin/js/main/ws/websocket.js' />
+			<fileset file='skin/js/main/capture/html2canvas.js' />
+	  		<fileset file='skin/js/main/capture/promise-6.1.0.js' />
 
 	</concat>
   	

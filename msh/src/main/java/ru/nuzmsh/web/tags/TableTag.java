@@ -204,7 +204,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
                         new Column(tag.getProperty(), tag.getColumnName()
                                 , tag.isIdentificator(), tag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth(),theEscapeSymbols)
+                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth(),theEscapeSymbols,theSortable)
 
                 );
             } else if (aTag instanceof TableButtonTag) {
@@ -212,7 +212,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 theCells.add(
                         new Button(tag.getProperty(), tag.getButtonShortName(), tag.getButtonName()
                                 , tag.getButtonFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(),tag.getGuid(), (HttpServletRequest)pageContext.getRequest()
+                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(),tag.getGuid(), theSortable, (HttpServletRequest)pageContext.getRequest()
                         )
 
                 );
@@ -221,7 +221,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 theCells.add(
                         new Textfield(tag.getProperty(), tag.getTextfieldShortName(), tag.getTextfieldName()
                                 , tag.getTextfieldFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest())
+                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), theSortable, (HttpServletRequest)pageContext.getRequest())
                 );
             }
         }
@@ -433,6 +433,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
                     // шапка таблицы
                     if(!theHideTitle) {
+                        int i=0;
                         out.println("<tr>");
                         if(theSelection!=null) {
                             //out.println("<th></th>") ;
@@ -442,43 +443,50 @@ public class TableTag extends AbstractGuidSupportTag {
                             out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClickAll(this)' title='Выделить все'/>") ;
                             out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClickInvert(this)' title='Инвертировать все'/>") ;
                             out.println("</th>") ;
-
+                            i++;
                         }
                         if (theViewUrl!=null) {
                             out.println("<th  width='14px'>") ;
                             out.println("&nbsp;") ;
                             out.println("</th>") ;
                             createViewFunctionName(theViewUrl);
+                            i++;
                         }
                         if (thePrintUrl!=null) {
                             out.println("<th  width='14px'>") ;
                             out.println("&nbsp;") ;
                             out.println("</th>") ;
                             createPrintFunctionName(thePrintUrl);
+                            i++;
                         }
                         if (theEditUrl!=null) {
                             out.println("<th  width='14px'>") ;
                             out.println("&nbsp;") ;
                             out.println("</th>") ;
                             createEditFunctionName(theEditUrl);
+                            i++;
                         }
                         if (theDeleteUrl!=null) {
                             createDeleteFunctionName(theDeleteUrl);
                             out.println("<th  width='14px'>") ;
                             out.println("&nbsp;") ;
                             out.println("</th>") ;
+                            i++;
                         }
                         for (Iterator iterator = theCells.iterator(); iterator.hasNext();) {
                             Object obj = iterator.next();
                             if (obj instanceof Button) {
                                 Button button = (Button) obj;
                                 button.printHeader(out);
+                                i++;
                             } else if (obj instanceof Column) {
                                 Column column = (Column) obj;
-                                column.printHeader(out);
+                                column.printHeader(out,i);
+                                i++;
                             } else if (obj instanceof Textfield){
                                 Textfield textfield = (Textfield) obj;
                                 textfield.printHeader(out);
+                                i++;
                             }
                         }
                         out.println("</tr>");
@@ -745,7 +753,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
     static final class Button {
         public Button(String aProperty,String aButtonShortName, String aButtonName
-                , String aButtonFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty,String aGuid,HttpServletRequest aRequest) {
+                , String aButtonFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty,String aGuid,boolean aSortable, HttpServletRequest aRequest) {
             theProperty = aProperty;
             theButtonName = aButtonName;
             theCssClass = aCssClass;
@@ -756,6 +764,7 @@ public class TableTag extends AbstractGuidSupportTag {
             theButtonShortName = aButtonShortName ;
             theHideIfEmpty = aHideIfEmpty ;
             theGuid = aGuid ;
+            theSortable = aSortable;
         }
 
 
@@ -846,12 +855,13 @@ public class TableTag extends AbstractGuidSupportTag {
         private final HttpServletRequest theServleRequest ;
         private final String theAddParam ;
         private final String theGuid ;
+        private boolean theSortable=true;
     }
 
     static final class Textfield {
 
         public Textfield(String aProperty,String aTextfieldShortName, String aTextfieldName
-                , String aTextfieldFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, HttpServletRequest aRequest) {
+                , String aTextfieldFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, boolean aSortable, HttpServletRequest aRequest) {
             theProperty = aProperty;
             theTextfieldName = aTextfieldName;
             theCssClass = aCssClass;
@@ -861,6 +871,7 @@ public class TableTag extends AbstractGuidSupportTag {
             theTextfieldFunction = aTextfieldFunction ;
             theTextfieldShortName = aTextfieldShortName ;
             theHideIfEmpty = aHideIfEmpty ;
+            theSortable =  aSortable;
         }
 
 
@@ -949,10 +960,11 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theCssClass;
         private final HttpServletRequest theServleRequest ;
         private final String theAddParam;
+        private boolean theSortable=true;
     }
 
     static final class Column {
-        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth,boolean aEscapeSymbols) {
+        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth,boolean aEscapeSymbols,boolean aSortable) {
             theProperty = aProperty;
             theColumnName = aColumnname;
             theIdColumn = aIdColumn;
@@ -964,6 +976,7 @@ public class TableTag extends AbstractGuidSupportTag {
             theAddParam =aAddParam ;
             theWidth=aWidth;
             theEscapeSymbols=aEscapeSymbols;
+            theSortable=aSortable;
         }
 
         @SuppressWarnings("unused")
@@ -971,20 +984,23 @@ public class TableTag extends AbstractGuidSupportTag {
             return theIdColumn;
         }
 
-        private void printHeader(JspWriter aOut) throws IOException {
+        private void printHeader(JspWriter aOut, int i) throws IOException {
             if (theCssClass != null) {
                 aOut.print("<th");
                 aOut.print(" class='");
                 aOut.print(theCssClass);
+                if (theSortable) aOut.print("' onclick='sortMshTable(this,"+i+")  name='0'");
                 aOut.print("'>");
             } else {
                 if (theWidth!=null && !theWidth.equals(""))
                     aOut.print("<th width=\""+theWidth+"%\">");
+                else if (theSortable) aOut.print("<th onclick='sortMshTable(this,"+i+")'  name='0'>");
                 else aOut.print("<th>");
             }
             //IdeTagHelper.getInstance().printMarker(, aJspContext)
             aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
             aOut.print(theColumnName);
+            if (theSortable) aOut.print("<i class='arrow arrowUp' style='margin:5px; float:right'></i>");
             aOut.println("</th>");
         }
 
@@ -1171,6 +1187,7 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theWidth;
         // Milamesher 25102018 экранировать символы
         private boolean theEscapeSymbols=true;
+        private boolean theSortable=true;
     }
 
 
@@ -1239,4 +1256,15 @@ public class TableTag extends AbstractGuidSupportTag {
     public void setEscapeSymbols(Boolean aEscapeSymbols) {theEscapeSymbols = aEscapeSymbols;}
     /** Milamesher 25102018 экранировать символы */
     private boolean theEscapeSymbols=true;
+
+    /**
+     * Сортировать таблицу
+     * @jsp.attribute   description = "Сортировать таблицу"
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+     */
+    public Boolean getSortable() {return theSortable;}
+    public void setSortable(Boolean aSortable) {theSortable = aSortable;}
+    /** Сортировать таблицу */
+    private boolean theSortable=true;
 }
