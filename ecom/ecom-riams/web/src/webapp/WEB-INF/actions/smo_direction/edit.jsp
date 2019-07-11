@@ -563,10 +563,10 @@
                       if (tableRow.childNodes.length<4) {
                           var td = document.createElement('td');
                           <msh:ifFormTypeIsNotView formName="smo_directionForm" guid="71ddfd0b-09a1-4cfe-bd83-3dc3738cb9d2">
-                          td.innerHTML="<input type='text' id='otma_input_cmnt"+(i+1)+"' size='80'/>";
+                          td.innerHTML="<input type='text' id='otma_input_cmnt"+(i+1)+"' size='40' placeholder='Введите примечание'/>";
                           </msh:ifFormTypeIsNotView>
                           <msh:ifFormTypeIsView formName="smo_directionForm" guid="71ddfd0b-09a1-4cfe-bd83-3dc3738cb9d2">
-                          td.innerHTML="<input type='text' disabled id='otma_input_cmnt"+(i+1)+"' size='80'/>";
+                          td.innerHTML="<input type='text' disabled id='otma_input_cmnt"+(i+1)+"' size='40' placeholder='Введите примечание'/>";
                           </msh:ifFormTypeIsView>
                           tableRow.appendChild(td);
                       }
