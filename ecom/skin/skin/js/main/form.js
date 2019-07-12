@@ -418,6 +418,10 @@ function sortMshTable(th,num) {
                 x = rows[i].getElementsByTagName("TD")[num];
                 y = rows[i + 1].getElementsByTagName("TD")[num];
                 if (x != null && y != null && typeof x !== 'undefined' && typeof y !== 'undefined') {
+                    if (x.innerHTML==' ' && y.innerHTML!=' ' && direct==0 || x.innerHTML!=' ' && y.innerHTML==' ' && direct!=0) {
+                        shouldSwitch = true;
+                        break;
+                    }
                     if (isNaN(x.innerHTML)) {
                         if (direct == 0) {
                             if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты

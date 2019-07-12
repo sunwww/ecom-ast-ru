@@ -424,6 +424,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 ITableDecorator decorator = theDecorator!=null ? getDecoratorObject() : null;
 
                 Collection col = getCollection();
+                if (col.size()<2) theSortable=false;
                 if (col == null) {
                     throw new JspException("Нет Collection в request.getAttribute(\"" + theName + "\")");
                 } else {
@@ -481,7 +482,7 @@ public class TableTag extends AbstractGuidSupportTag {
                                 i++;
                             } else if (obj instanceof Column) {
                                 Column column = (Column) obj;
-                                column.printHeader(out,i);
+                                column.printHeader(out,i,theSortable);
                                 i++;
                             } else if (obj instanceof Textfield){
                                 Textfield textfield = (Textfield) obj;
@@ -984,23 +985,23 @@ public class TableTag extends AbstractGuidSupportTag {
             return theIdColumn;
         }
 
-        private void printHeader(JspWriter aOut, int i) throws IOException {
+        private void printHeader(JspWriter aOut, int i, boolean theSortInner) throws IOException {
             if (theCssClass != null) {
                 aOut.print("<th");
                 aOut.print(" class='");
                 aOut.print(theCssClass);
-                if (theSortable) aOut.print("' onclick='sortMshTable(this,"+i+")  name='0'");
+                if (theSortable && theSortInner) aOut.print("' onclick='sortMshTable(this,"+i+")'  name='0'");
                 aOut.print("'>");
             } else {
                 if (theWidth!=null && !theWidth.equals(""))
                     aOut.print("<th width=\""+theWidth+"%\">");
-                else if (theSortable) aOut.print("<th onclick='sortMshTable(this,"+i+")'  name='0'>");
+                else if (theSortable && theSortInner) aOut.print("<th onclick='sortMshTable(this,"+i+")'  name='0'>");
                 else aOut.print("<th>");
             }
             //IdeTagHelper.getInstance().printMarker(, aJspContext)
             aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
             aOut.print(theColumnName);
-            if (theSortable) aOut.print("<i class='arrow arrowUp' style='margin:5px; float:right'></i>");
+            if (theSortable && theSortInner) aOut.print("<i class='arrow arrowUp' style='margin:5px; float:right'></i>");
             aOut.println("</th>");
         }
 
