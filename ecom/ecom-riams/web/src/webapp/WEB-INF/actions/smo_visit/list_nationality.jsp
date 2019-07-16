@@ -242,7 +242,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 	      <msh:tableColumn columnName="Дата обращения" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
 	      <msh:tableColumn columnName="Диагноз" identificator="false" property="6" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
 	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Поток обслуживания" property="7"/>
+    	  <msh:tableColumn columnName="Поток обслуживания" property="7"/>
 	    </msh:table>
   	</msh:section>
   	<msh:section title="Стационар">
@@ -292,7 +292,8 @@ order by p.lastname,p.firstname,p.middlename"/>
 	    ,to_char(m.dateStart,'DD.MM.YYYY') as dateStart
 	    ,to_char(m.dateFinish,'DD.MM.YYYY') as dateFinish
 	    ,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'DD.MM.YYYY') as pfio
-	    ,ss.code as sscode 
+	    ,ss.code as sscode
+	    ,vss.name as f6_serviceStream
 
 from medcase m 
 left join patient p on p.id=m.patient_id
@@ -316,6 +317,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
 	      <msh:tableColumn columnName="Пациент" property="4" />
 	      <msh:tableColumn columnName="Дата обращения" property="2" />
+	      <msh:tableColumn columnName="Поток обслуживания" property="5" />
 	    </msh:table>
   	</msh:section>  	
 
@@ -430,6 +432,7 @@ ${groupSqlAdd}
     	    ,vn.name as vnname
     	    ,a.fullname as afullname
     	    ,list(to_char(m.datestart,'dd.mm.yyyy')||vdh.name) as denhosp
+    	    ,list(vss.name) as f7_ss
     	    
     from medcase m 
     left join patient p on p.id=m.patient_id
@@ -459,6 +462,7 @@ ${groupSqlAdd}
     	      <msh:tableColumn columnName="Гражданство" property="4" />
     	      <msh:tableColumn columnName="Адрес" property="5" />
     	      <msh:tableColumn columnName="Дата и причина отказов" property="6" />
+    	      <msh:tableColumn columnName="Поток обслуживания" property="7" />
     	    </msh:table>
       	</msh:section>  	
 	<%    	

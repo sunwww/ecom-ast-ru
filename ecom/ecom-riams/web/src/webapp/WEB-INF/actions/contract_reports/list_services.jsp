@@ -130,53 +130,55 @@ if (dateFrom!=null) {
 			dTo = "<=to_date('"+dateTo+"', 'dd.mm.yyyy')" ;
 		}
 		request.setAttribute("dTo",dTo) ;
-		
-	//	String FromTo = "";
-	//	if  (dateTo==null ||dateTo.equals("") ) {}
-	//	else if (dateFrom.equals("") ) {}
-		//else FromTo="C "+dFrom+" По "+dTo;
-		
-		if (typeGroup.equals("1")||typeGroup.equals("2")) {
-			// Группировка по услугам 
-   			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
-   			request.setAttribute("groupSqlId", "'&pricePosition='||pp.id") ;
-   			request.setAttribute("groupName", "Услуга") ;
-       		request.setAttribute("groupGroupNext", "5") ;
-   			request.setAttribute("groupGroup", "pp.id,pp.code,pp.name,pp.isVat,lpu.name") ;
-   			request.setAttribute("groupOrder", "lpu.name,pp.code") ;
-		} else if (typeGroup.equals("3")){
-			// Группировка по отделению 
-   			request.setAttribute("groupSql", "lpu.name") ;
-   			request.setAttribute("groupSqlId", "'&department='||lpu.id") ;
-   			request.setAttribute("groupName", "Отделение") ;
-       		request.setAttribute("groupGroupNext", "2") ;
-   			request.setAttribute("groupGroup", "lpu.id,lpu.name") ;
-   			request.setAttribute("groupOrder", "lpu.name") ;
-		} else if (typeGroup.equals("4")){
-			// Группировка по типу услуг 
-   			request.setAttribute("groupSql", "vpt.name") ;
-   			request.setAttribute("groupSqlId", "'&department='||lpu.id||'&positionType='||vpt.id") ;
-   			request.setAttribute("groupName", "Тип услуги") ;
-       		request.setAttribute("groupGroupNext", "2") ;
-   			request.setAttribute("groupGroup", "lpu.id,lpu.name,vpt.id,vpt.name") ;
-   			request.setAttribute("groupOrder", "lpu.name,vpt.name") ;
-		} else if (typeGroup.equals("6")) { //Группировка по рабочим функциям исполнителя
-			request.setAttribute("groupSql", "vwfexec.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename") ;
-			request.setAttribute("groupSqlId", "'&department='||lpu.id||'&workFunction='||wfexec.id||'&pricePosition='||pp.id") ;
-			request.setAttribute("groupName", "Специалист") ;
-			request.setAttribute("groupGroupNext", "5") ;
-			request.setAttribute("groupGroup", "lpu.id,lpu.name,wfexec.id,vwfexec.name,wpat.lastname,wpat.firstname,wpat.middlename,pp.code,pp.name,pp.id") ;
-			request.setAttribute("groupOrder", "lpu.name,vwfexec.name,wpat.lastname,wpat.firstname,wpat.middlename,pp.code,pp.name") ;
 
-		} else {
-		
+	switch (typeGroup) {
+		case "1":
+		case "2":
+			// Группировка по услугам
+			request.setAttribute("groupSql", "pp.code||' '||pp.name");
+			request.setAttribute("groupSqlId", "'&pricePosition='||pp.id");
+			request.setAttribute("groupName", "Услуга");
+			request.setAttribute("groupGroupNext", "5");
+			request.setAttribute("groupGroup", "pp.id,pp.code,pp.name,pp.isVat,lpu.name");
+			request.setAttribute("groupOrder", "lpu.name,pp.code");
+			break;
+		case "3":
+			// Группировка по отделению
+			request.setAttribute("groupSql", "lpu.name");
+			request.setAttribute("groupSqlId", "'&department='||lpu.id");
+			request.setAttribute("groupName", "Отделение");
+			request.setAttribute("groupGroupNext", "2");
+			request.setAttribute("groupGroup", "lpu.id,lpu.name");
+			request.setAttribute("groupOrder", "lpu.name");
+			break;
+		case "4":
+			// Группировка по типу услуг
+			request.setAttribute("groupSql", "vpt.name");
+			request.setAttribute("groupSqlId", "'&department='||lpu.id||'&positionType='||vpt.id");
+			request.setAttribute("groupName", "Тип услуги");
+			request.setAttribute("groupGroupNext", "2");
+			request.setAttribute("groupGroup", "lpu.id,lpu.name,vpt.id,vpt.name");
+			request.setAttribute("groupOrder", "lpu.name,vpt.name");
+			break;
+		case "6":  //Группировка по рабочим функциям исполнителя
+			request.setAttribute("groupSql", "vwfexec.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename");
+			request.setAttribute("groupSqlId", "'&department='||lpu.id||'&workFunction='||wfexec.id||'&pricePosition='||pp.id");
+			request.setAttribute("groupName", "Специалист");
+			request.setAttribute("groupGroupNext", "5");
+			request.setAttribute("groupGroup", "lpu.id,lpu.name,wfexec.id,vwfexec.name,wpat.lastname,wpat.firstname,wpat.middlename,pp.code,pp.name,pp.id");
+			request.setAttribute("groupOrder", "lpu.name,vwfexec.name,wpat.lastname,wpat.firstname,wpat.middlename,pp.code,pp.name");
+
+			break;
+		default:
+
 			//Реестр
-   			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
-   			request.setAttribute("groupSqlId", "'&pricePosition='||pp.id") ;
-   			request.setAttribute("groupName", "Сотрудник") ;
-   			request.setAttribute("groupGroup", "pp.id,pp.code,pp.name,pp.isVat") ;
-   			request.setAttribute("groupOrder", "pp.code") ;
-		}
+			request.setAttribute("groupSql", "pp.code||' '||pp.name");
+			request.setAttribute("groupSqlId", "'&pricePosition='||pp.id");
+			request.setAttribute("groupName", "Сотрудник");
+			request.setAttribute("groupGroup", "pp.id,pp.code,pp.name,pp.isVat");
+			request.setAttribute("groupOrder", "pp.code");
+			break;
+	}
 		ActionUtil.setParameterFilterSql("operator","cao.workFunction_id", request) ;
 		//ActionUtil.setParameterFilterSql("priceMedService","pms.id", request) ;
 		ActionUtil.setParameterFilterSql("pricePosition","pp.id", request) ;
@@ -229,7 +231,7 @@ ${departmentTypeSql}
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
-				<msh:table name="finansReport"  printToExcelButton="Сохранить в excel"
+				<msh:table name="finansReport" printToExcelButton="Сохранить в excel"
 				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
 				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">

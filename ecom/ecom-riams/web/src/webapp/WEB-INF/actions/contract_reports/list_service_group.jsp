@@ -108,12 +108,11 @@
   
 		String dateFrom = request.getParameter("dateFrom") ;
 		String dateTo = request.getParameter("dateTo") ;
-		if (dateFrom!=null) {
-	if (dateFrom!=null && !dateTo.equals("")) {
-		
+		if (dateFrom!=null && !dateFrom.equals("")) {
 		if (dateTo==null || dateTo.equals("")) {
 			dateTo=dateFrom ;
 		}
+		request.setAttribute("dateTo", dateTo);
 		
 		if (typeGroup.equals("2")) {
 			// Группировка по услугам 
@@ -175,11 +174,11 @@
 		ActionUtil.setParameterFilterSql("positionType","pp.positionType_id", request) ;
 		ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
 		%>
-		<% if (typeGroup!=null&& (typeGroup.equals("1")||typeGroup.equals("5"))) { %>
+		<% if (typeGroup.equals("1")||typeGroup.equals("5")) { %>
 			
 			
 			
-			<ecom:setAttribute name="id_group" value="${groupSqlId1}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}"/>
+			<ecom:setAttribute name="id_group" value="${groupSqlId1}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${dateTo}"/>
 			<ecom:setAttribute name="queryGroup_sql" value="
 SELECT ${selectSql1}
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
@@ -227,7 +226,7 @@ left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
-WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
@@ -264,8 +263,8 @@ order by ${orderSql1}
 </tr>
 			<% 
 			List list = (List) request.getAttribute("department_list") ;
-			for (int i=0;i<list.size();i++) { 
-				WebQueryResult wqr = (WebQueryResult)list.get(i) ;
+			for (Object o : list) { 
+				WebQueryResult wqr = (WebQueryResult) o ;
 				request.setAttribute("lpu", wqr) ;
 				request.setAttribute("groupDep_id", wqr.get1()!=null?"="+wqr.get1():" is null") ;
 				out.println("<tr>") ;
@@ -286,7 +285,7 @@ order by ${orderSql1}
 			%>
 				<ecom:setAttribute name="queryElement_id"
 value="
-SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
 
@@ -338,7 +337,7 @@ left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
-WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  
 and ${whereSql1} ${groupDep_id}
 ${priceMedServiceSql} ${operatorSql} ${priceListSql}
@@ -381,7 +380,7 @@ for (int ii=0;ii<listPat.size();ii++) {
 				<% }%>
 			</table>
 			
-	<%} else if (typeGroup!=null&& typeGroup.equals("2") ) { %>
+	<%} else if (typeGroup.equals("2") ) { %>
 		<ecom:webQuery name="dep_list" nameFldSql="dep_list_sql" nativeSql="
 SELECT lpu.id as sqlId
 ,lpu.name as lpuname
@@ -417,7 +416,7 @@ left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') 
-AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+AND to_date('${dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' ) and cao.repealOperation_id is null  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
@@ -445,23 +444,23 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 			
 			Object vLpu1 = null ;
 			Object vContract = null;
-			Object vService = null;
+		//	Object vService = null;
 			int cntMC = 1 ;
-			BigDecimal sLpu1 = new BigDecimal(0) ;BigDecimal sLpu2 = new BigDecimal(0) ; BigDecimal sLpu3 = new BigDecimal(0) ;BigDecimal sLpu4 = new BigDecimal(0) ;
+			BigDecimal sLpu1 = new BigDecimal(0) ;BigDecimal sLpu2 = new BigDecimal(0) ; BigDecimal sLpu3 = new BigDecimal(0) ; //BigDecimal sLpu4 = new BigDecimal(0) ;
 			BigDecimal sLpu1d = new BigDecimal(0) ;BigDecimal sLpu2d = new BigDecimal(0) ; BigDecimal sLpu3d = new BigDecimal(0) ;
 			BigDecimal sContract1 = new BigDecimal(0) ;BigDecimal sContract2 = new BigDecimal(0) ; BigDecimal sContract3 = new BigDecimal(0) ;
 			BigDecimal sContract1d = new BigDecimal(0) ;BigDecimal sContract2d = new BigDecimal(0) ; BigDecimal sContract3d = new BigDecimal(0) ;
-			boolean isNewLpu = false; boolean isNewContract=false ;
+			boolean isNewLpu ; boolean isNewContract ;
 			for (int i=0;i<list.size();i++) { 
 				WebQueryResult wqr = (WebQueryResult)list.get(i) ;
-				isNewContract=false ; isNewLpu=false ;
+			//	isNewContract=false ; isNewLpu=false ;
 				if (i>0) {
 					if (vLpu1==null&&wqr.get2()==null || vLpu1!=null&&wqr.get2()!=null&&vLpu1.equals(wqr.get2())) {
 						isNewLpu=false ;
 						//vLpu1=wqr.get2() ;
 						if (vContract==null&&wqr.get3()==null || vContract!=null&&wqr.get3()!=null&&vContract.equals(wqr.get3())) {
 							isNewContract=false;
-							
+
 						} else {
 							isNewContract=true;
 						}
@@ -590,7 +589,7 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 		%>
 		Выберите параметры и нажмите  кнопку "СФОРМИРОВАТЬ"
 		<%
-		}}
+		}
 		%>
 		
 		

@@ -35,7 +35,7 @@
         <%
         	boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments",request) ;
 	    	List list= (List)request.getAttribute("infoByLogin");
-	    	WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
+	    	WebQueryResult wqr = list.isEmpty() ? null : (WebQueryResult)list.get(0) ;
         	String department = request.getParameter("department") ;
         	if (department==null || department.equals("")) {
         		department = "0" ;
@@ -45,16 +45,16 @@
         		spec = "0" ;
         	}
         	String workFunc = wqr!=null?""+wqr.get1():"0" ;
-        	boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
+        	boolean isBossDepartment= wqr != null && wqr.get3() != null;
 
  
         	int type=0 ;
-        	if (spec!=null && !spec.equals("0")) {
+        	if (!spec.equals("0")) {
         		type=3 ;
         		if (!isViewAllDepartment&&!isBossDepartment&&!spec.equals(workFunc)) {
         			spec=workFunc ;
         		}
-        	} else if (department!=null && !department.equals("0") && (isViewAllDepartment || isBossDepartment)) {
+        	} else if (!department.equals("0") && (isViewAllDepartment || isBossDepartment)) {
         		type=2 ;
        		} else if (isViewAllDepartment) {
        			type=1 ;
@@ -98,7 +98,7 @@
     <%
     String dateBegin = request.getParameter("dateBegin") ;
     if (dateBegin!=null && !dateBegin.equals("")) {
-    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	String dateEnd = request.getParameter("dateEnd") ;
     	String cntSymbols = request.getParameter("cntSymbols") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("finishDate", dateBegin) ;
@@ -147,8 +147,7 @@
     </msh:table>
     </msh:sectionContent>
     </msh:section> 
-    <% } %>
-    <%   if (type==2 )  {	%>
+    <% } else if (type==2 )  {	%>
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <msh:sectionContent>
@@ -176,8 +175,7 @@ order by wp.lastname,wp.middlename,wp.firstname
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-         <%}%>
-         <%if (type==3 )  {	%>
+         <%} else if (type==3 )  {	%>
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>

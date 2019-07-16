@@ -132,9 +132,9 @@
     </msh:form>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
-    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	String dateEnd = request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("dateEnd", date) ;
     	} else {
@@ -152,12 +152,9 @@
     		request.setAttribute("ageSql", "to_date('"+dateEnd+"','dd.mm.yyyy')") ;
     	}
     	request.setAttribute("dtypeSql", dtypeSql);
-    	String stat = (String)request.getParameter("typeStatus") ;
-    	//String typeMKB = (String)request.getAttribute("typeMKB") ;
-    	//String typeDate = (String)request.getAttribute("typeDate") ;
+    //	String stat = request.getParameter("typeStatus") ;
     	String mkbCode = "mkb.code" ;
     	String mkbName = "mkb.name" ;
-    	//String mkbLike = "0" ;
     	if (typeMKB!=null) {
     		if (typeMKB.equals("1")) {mkbName="substring(mkb.code,1,1)";mkbCode="substring(mkb.code,1,1)" ;} 
     		else if (typeMKB.equals("2")) {mkbName="substring(mkb.code,1,2)";mkbCode="substring(mkb.code,1,2)" ;}
@@ -168,84 +165,80 @@
     	request.setAttribute("mkbCode",mkbCode) ;
     	//request.setAttribute("mkbLike",mkbLike) ;
 
-    	boolean isStat = true ;
+/*    	boolean isStat = true ;
     	if (stat!=null && stat.equals("2")) {
     		isStat = false ;
     	}
-
-    	String dep = (String)request.getParameter("department") ;
+*/
+    	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("departmentSql", " and w.lpu_id="+dep) ;
     		request.setAttribute("department",dep) ;
     	} else {
     		request.setAttribute("department","0") ;
     	}
-    	String spec = (String)request.getParameter("spec") ;
+    	String spec = request.getParameter("spec") ;
     	if (spec!=null && !spec.equals("") && !spec.equals("0")) {
     		request.setAttribute("specSql", " and vis.workFunctionExecute_id="+spec) ;
     		request.setAttribute("spec",spec) ;
     	} else {
     		request.setAttribute("workFunction","0") ;
     	}
-    	String workFunction = (String)request.getParameter("workFunction") ;
+    	String workFunction = request.getParameter("workFunction") ;
     	if (workFunction!=null && !workFunction.equals("") && !workFunction.equals("0")) {
     		request.setAttribute("workFunctionSql", " and wf.workFunction_id="+workFunction) ;
     		request.setAttribute("workFunction",spec) ;
     	} else {
     		request.setAttribute("workFunction","0") ;
     	}
-    	String servStream = (String)request.getParameter("serviceStream") ;
+    	String servStream = request.getParameter("serviceStream") ;
     	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
     		request.setAttribute("serviceStreamSql", " and vss.id="+servStream) ;
     		request.setAttribute("serviceStream", servStream) ;
     	} else {
     		request.setAttribute("serviceStream", "0") ;
     	}
-    	String priority = (String)request.getParameter("priority") ;
+    	String priority = request.getParameter("priority") ;
     	if (priority!=null && !priority.equals("") && !priority.equals("0")) {
     		request.setAttribute("prioritySql", " and diag.priority_id="+priority) ;
     	} 
-    	String illnesPrimary = (String)request.getParameter("illnesPrimary") ;
+    	String illnesPrimary = request.getParameter("illnesPrimary") ;
     	if (illnesPrimary!=null && !illnesPrimary.equals("") && !illnesPrimary.equals("0")) {
     		request.setAttribute("illnesPrimarySql", " and diag.illnesPrimary_id="+illnesPrimary) ;
     	} 
     	
-    	if (typeEmergency!=null && typeEmergency.equals("1")) {
+    	if ("1".equals(typeEmergency)) {
     		request.setAttribute("emergencySql", " and vis.emergency='1' ") ;
-    	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
+    	} else if ("2".equals(typeEmergency)) {
     		request.setAttribute("emergencySql", " and (vis.emergency is null or vis.emergency='0') ") ;
     	} 
-    	String filter = (String)request.getParameter("filterAdd") ;
+    	String filter = request.getParameter("filterAdd") ;
     	if (filter!=null && !filter.equals("")) {
     		filter = filter.toUpperCase() ;
     		request.setAttribute("filterAdd",filter) ;
     		//filter = filter.replaceAll(" ", "") ;
     		String[] fs1=filter.split(",") ;
     		StringBuilder filtOr = new StringBuilder() ;
-    		
-    		for (int i=0;i<fs1.length;i++) {
-    			String filt1 = fs1[i].trim() ;
-    			String[] fs=filt1.split("-") ;
-    			if (filt1.length()>0) {
-	    			if (filtOr.length()>0) filtOr.append(" or ") ;
-		    		if (fs.length>1) {
-		    			filtOr.append(" mkb.code between '"+fs[0].trim()+"' and '"+fs[1].trim()+"'") ;
-		    		} else {
-		    			filtOr.append(" substring(mkb.code,1,"+filt1.length()+") = '"+filt1+"'") ;
-		    		}
-    			}
-    		}
+
+			for (String s : fs1) {
+				String filt1 = s.trim();
+				String[] fs = filt1.split("-");
+				if (filt1.length() > 0) {
+					if (filtOr.length() > 0) filtOr.append(" or ");
+					if (fs.length > 1) {
+						filtOr.append(" mkb.code between '").append(fs[0].trim()).append("' and '").append(fs[1].trim()).append("'");
+					} else {
+						filtOr.append(" substring(mkb.code,1,").append(filt1.length()).append(") = '").append(filt1).append("'");
+					}
+				}
+			}
     		request.setAttribute("filterSql", filtOr.insert(0, " and (").append(")").toString()) ;
     		
     	} 
-    	
-    	
-    	
-    	if (typeReestr!=null && typeReestr.equals("1")) {
+    	if ("1".equals(typeReestr)) {
     		String mkbCodeP = request.getParameter("mkbcode") ;
-    		String mkbCodeA = "and mkb.code = '"+mkbCodeP+"'" ;
-    		mkbCodeA=" and mkb.code = '"+mkbCodeP+"'" ;
-    		if (!typeMKB.equals("4")) {
+    		String mkbCodeA = " and mkb.code = '"+mkbCodeP+"'" ;
+    		if (!"4".equals(typeMKB)) {
     			mkbCodeA=" and mkb.code like '"+mkbCodeP+"%'" ;
     		}
     		request.setAttribute("mkbCodeSql",mkbCodeA) ;
