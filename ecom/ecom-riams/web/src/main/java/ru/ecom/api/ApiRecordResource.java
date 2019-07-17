@@ -52,7 +52,6 @@ public class ApiRecordResource {
     @GET
     @Path("/getServiceStream")
     @Produces(MediaType.APPLICATION_JSON)
-
     public String getServiceStream(@Context HttpServletRequest aRequest) {
         JSONArray array = new JSONArray();
         for (String[] s: serviceStreams) {
@@ -180,7 +179,8 @@ public class ApiRecordResource {
                 " where wf.promedcode_workstaff ='"+aDoctorPromedId+"' and wcd.calendardate=to_date('"+aDate+"','yyyy-MM-dd')" +
                 " and wct.timefrom between '"+aTime+"'- interval '4 min' and '"+aTime+"'+interval '4 min' "+
                 " and vsrt.code='PROMED'"+ //Ищем только времена с резервом промеда
-                " and wct.medcase_id is null and wct.prepatient_id is null and (wct.prepatientInfo is null or wct.prepatientInfo='')";
+                " and wct.medcase_id is null and wct.prepatient_id is null and (wct.prepatientInfo is null or wct.prepatientInfo='')" +
+                " and (wct.isDeleted is null or wct.isDeleted='0') and (wcd.isDeleted is null or wcd.isDeleted='0')";
         Collection<WebQueryResult> resultList = aService.executeNativeSql(sql,3);
         return resultList.isEmpty() ? null : resultList.iterator().next().get1().toString();
 
@@ -199,6 +199,9 @@ public class ApiRecordResource {
                 String calendarTime = getJsonField(root,"recordCalendarTime");
                 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
                 calendarId = getWorkCalendarTimeByDateTime(doctorPromedCode, calendarDate, calendarTime,service);
+                if (calendarId==null ) {
+                    return ApiRecordUtil.getErrorJsonObj("BUSY_CALENDARTIME","Не найдено свободное время");
+                }
             }
             if (calendarId==null ) {
                 return ApiRecordUtil.getErrorJsonObj("NO_CALENDARTIME","Не указано время записи");

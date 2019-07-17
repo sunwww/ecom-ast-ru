@@ -199,11 +199,10 @@ public class LoginSaveAction extends LoginExitAction {
 		sqlA.append("select su.id as suid,w.lpu_id as depuser,wf.id as wfid from SecUser su left join WorkFunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where su.login='").append(aUsername).append("'") ;
     	list1.clear() ;
     	list1 =service.executeNativeSql(sqlA.toString(),1) ;
-    	Long secUserId = null , wfId = null, depId = null ;
+    	Long secUserId = null , depId = null ;
     	if (!list1.isEmpty()) {
     		WebQueryResult wqr = list1.iterator().next() ;
     		secUserId = ConvertSql.parseLong(wqr.get1()) ;
-    	//	wfId =  ConvertSql.parseLong(wqr.get3()) ;
     		depId =  ConvertSql.parseLong(wqr.get2()) ;
     	}
     	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/ShortProtocol", aRequest)) {
@@ -234,15 +233,13 @@ public class LoginSaveAction extends LoginExitAction {
     			sql.append("select ml.name");
     			sql.append(" ,count(distinct slo.id)");
     			sql.append(" from MedCase slo");
-    			//sql.append(" left join Diary p on slo.id=p.medcase_id");
     			sql.append(" left join MisLpu ml on slo.department_id=ml.id");
     			sql.append(" where slo.dateFinish is null ");
     			sql.append(" and slo.dtype='DepartmentMedCase'");
     			sql.append(" and slo.transferDate is null");
-    			sql.append(" and slo.dateStart < current_date-").append("2");
-    			sql.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2) ") ;
+    			sql.append(" and slo.dateStart < current_date-").append(cntDays);
+    			sql.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-").append(cntDays).append(") ") ;
     			sql.append(" group by ml.name");
-    			//sql.append(" having max(p.dateRegistration)<current_date-2") ;
     			sql.append(" order by ml.name");
     		}
     		Collection<WebQueryResult> list =service.executeNativeSql(sql.toString()) ;
@@ -256,65 +253,6 @@ public class LoginSaveAction extends LoginExitAction {
     			//System.out.println("id="+id) ;
     			UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более "+cntDays+" дней:", res1.toString(),"stac_report_cases_not_filled.do") ;
     		}
-    	}
-    	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/Hospital", aRequest)) {
-    		StringBuilder sql = new StringBuilder() ;
-    		if (!RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) {
-    			sql.append("select")
-    			//.append(",pat.lastname||' '||pat.middlename||' '||pat.firstname as pat")
-    			.append(" case when wf.isAdministrator='1' then owp.lastname||' '||owp.firstname||' '||owp.middlename else '' end as lechvr")
-    			.append(" ,count(distinct slo.id) as cntSlo")
-    			//.append(",count(distinct diag.id) as cntDiag")
-    			//.append(" ,current_date-max(p.dateRegistration) as cntDays,max(p.dateRegistration) as maxdateReg") 
-    			.append(" from MedCase slo")
-    			//.append(" left join Diagnosis diag on diag.medcase_id=slo.id")
-    			//.append(" left join Diary p on slo.id=p.medcase_id")
-    			.append(" left join Patient pat on slo.patient_id=pat.id")
-    			.append(" left join Worker w on w.lpu_id=slo.department_id")
-    			.append(" left join WorkFunction wf on w.id=wf.worker_id")
-    			.append(" left join SecUser su on wf.secUser_id=su.id")
-    			.append(" left join WorkFunction owf on slo.ownerFunction_id=owf.id")
-    			.append(" left join Worker ow on owf.worker_id=ow.id")
-    			.append(" left join Patient owp on ow.person_id=owp.id")
-    			.append(" where su.id='").append(secUserId).append("'")
-    			.append(" and (wf.isAdministrator='1' or (wf.isAdministrator is null or wf.isAdministrator='0') and slo.ownerFunction_id=wf.id)")
-    			.append(" and slo.dtype='DepartmentMedCase'")
-    			.append(" and slo.dateFinish is null and slo.transferDate is null")
-    			.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2) ")
-    			.append(" group by wf.isAdministrator")
-    			//.append(",pat.lastname,pat.middlename,pat.firstname")
-    			.append(" ,owp.lastname,owp.middlename,owp.firstname")
-    			//.append(" having max(p.dateRegistration)<current_date-2 or count(diag.id)=0")
-    			.append(" order by owp.lastname,owp.middlename,owp.firstname")
-    			//.append(",pat.lastname,pat.middlename,pat.firstname") 
-    			;
-    		} else {
-    			sql.append("select ml.name");
-    			sql.append(" ,count(distinct slo.id)");
-    			sql.append(" from MedCase slo");
-    			//sql.append(" left join Diary p on slo.id=p.medcase_id");
-    			sql.append(" left join MisLpu ml on slo.department_id=ml.id");
-    			sql.append(" where slo.dateFinish is null ");
-    			sql.append(" and slo.dtype='DepartmentMedCase'");
-    			sql.append(" and slo.transferDate is null");
-    			sql.append(" and slo.dateStart < current_date-2");
-    			sql.append(" and (select max(p.dateRegistration) from diary p where p.medcase_id=slo.id and p.dtype='Protocol')<(current_date-2) ") ;
-    			sql.append(" group by ml.name");
-    			//sql.append(" having max(p.dateRegistration)<current_date-2") ;
-    			sql.append(" order by ml.name");
-    		}
-    		Collection<WebQueryResult> list =service.executeNativeSql(sql.toString()) ;
-    		StringBuilder res1 = new StringBuilder() ;
-    		if (!list.isEmpty()) {
-    			for (WebQueryResult wqr:list) {
-    				res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
-    			}
-    			//System.out.println("get id message") ;
-    			Long id=serviceLogin.createSystemMessage("Не заполнялись данные по пациентам более 2х дней:", res1.toString(), aUsername) ;
-    			//System.out.println("id="+id) ;
-    			UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более 2х дней:", res1.toString(),"stac_report_cases_not_filled.do") ;
-    		}
-    		
     	}
     	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/DirectMedicalCommission", aRequest)) { //Превышены сроки ожидания направления на ВК
     		StringBuilder sql = new StringBuilder() ;

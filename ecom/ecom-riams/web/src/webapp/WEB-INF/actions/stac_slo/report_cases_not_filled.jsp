@@ -29,7 +29,7 @@
             String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
             request.setAttribute("cntDays", cntDays) ;
         	String typeIsOtherDocFromLpu =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeIsOtherDocFromLpu","1", request) ;
-        	if (typeIsOtherDocFromLpu!=null &&typeIsOtherDocFromLpu.equals("1")) {
+        	if ("1".equals(typeIsOtherDocFromLpu)) {
         		request.setAttribute("equalsSql", "p.specialist_id=slo.ownerfunction_id") ;
         	} else {
         		request.setAttribute("equalsSql", "pw.lpu_id=ow.lpu_id") ;
@@ -49,10 +49,10 @@
          <msh:row>
 	        <td class="label" title="Записи других врачей из отделения (typeIsOtherDocFromLpu)" colspan="1"><label for="typeIsOtherDocFromLpuName" id="typeIsOtherDocFromLpuLabel">Записи других врачей из отделения:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';checkfrm();">
-	        	<input type="radio" name="typeIsOtherDocFromLpu" value="1">  не учитывать 
+	        	<input type="radio" name="typeIsOtherDocFromLpu" value="1">  не учитывать
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';checkfrm();"  colspan="2">
-	        	<input type="radio" name="typeIsOtherDocFromLpu" value="2"  >  учитывать 
+	        	<input type="radio" name="typeIsOtherDocFromLpu" value="2"  >  учитывать
 	        </td>
         </msh:row>
         </msh:panel>
@@ -74,7 +74,6 @@
            		chk[+aValue-1].checked='checked' ;
            	}
         }
-        fun
         </script>
         <%
             boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments",request) ;
@@ -83,13 +82,13 @@
             String department = request.getParameter("department") ;
             String curator = request.getParameter("curator") ;
             String workFunc = wqr!=null?""+wqr.get1():"0" ;
-            boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
+            boolean isBossDepartment= wqr != null && wqr.get3() != null;
 
  
             int type=0 ;
             if (curator!=null && !curator.equals("0")) {
                 type=3 ;
-                if (!isViewAllDepartment&&!isBossDepartment&&!curator.equals(workFunc)) {
+                if (!isViewAllDepartment && !isBossDepartment && !curator.equals(workFunc)) {
                     curator=workFunc ;
                 }
             } else if (department!=null && !department.equals("0") && (isViewAllDepartment || isBossDepartment)) {
@@ -120,7 +119,7 @@
 left join Worker ow on ow.id=owf.worker_id
     left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol'
     left join MisLpu ml on slo.department_id=ml.id
-    where slo.dateFinish is null 
+    where slo.dateFinish is null
     and slo.dtype='DepartmentMedCase'
     and slo.transferDate is null
 and (current_date-(select coalesce(max(p.dateRegistration),slo.datestart) from diary p 
@@ -142,8 +141,7 @@ and ${equalsSql }
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% } %>
-    <%   if (type==2 )  {    %>
+    <% } else if (type==2 )  {    %>
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <msh:sectionContent>
@@ -179,8 +177,7 @@ order by owp.lastname,owp.middlename,owp.firstname
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-         <%}%>
-         <%if (type==3 )  {    %>
+         <%} else if (type==3 )  {    %>
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>

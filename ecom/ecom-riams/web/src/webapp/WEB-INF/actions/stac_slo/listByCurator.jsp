@@ -19,7 +19,7 @@
   <tiles:put name="body" type="string">    
         <%
 		    Long curator = (Long)request.getAttribute("curator") ;
-		    if (curator!=null && curator.intValue()>0 )  {
+		    if (curator!=null && curator>0L )  {
     	%>
     <msh:section>
     <msh:sectionTitle>Журнал по лечащему врачу:  ${curatorInfo}. Печать дневников:

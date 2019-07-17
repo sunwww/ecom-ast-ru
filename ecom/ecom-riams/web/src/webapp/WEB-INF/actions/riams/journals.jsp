@@ -37,8 +37,11 @@
 					<li><msh:link isReport="true" roles="/Policy/Mis/Elections" action="js-mis_lpuArea-elections.do">
                              Отчетные формы к выборам
                         </msh:link></li>
-					<li><msh:link isReport="true" roles="/Policy/Mis/Journal/ShortDiaryReport" action="stac_report_cases_short_protocol">
+					<li><msh:link isReport="true" roles="/Policy/Mis/Journal/ShortDiaryReport" action="stac_report_cases_short_protocol.do">
                              Отчет по коротким дневникам
+                        </msh:link></li>
+					<li><msh:link isReport="true" roles="/Policy/Mis/Journal/AbsentDiary" action="stac_report_cases_not_filled.do">
+						Журнал по пациентам, у которых не заполнялись дневниковые записи
                         </msh:link></li>
 
 				</ul>
