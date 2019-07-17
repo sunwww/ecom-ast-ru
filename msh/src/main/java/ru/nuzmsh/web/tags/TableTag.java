@@ -1001,7 +1001,7 @@ public class TableTag extends AbstractGuidSupportTag {
             //IdeTagHelper.getInstance().printMarker(, aJspContext)
             aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
             aOut.print(theColumnName);
-            if (theSortable && theSortInner) aOut.print("<i class='arrow arrowUp' style='margin:5px; float:right'></i>");
+            if (theSortable && theSortInner) aOut.print("<i class='arrow arrowUp'></i>");
             aOut.println("</th>");
         }
 
