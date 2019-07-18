@@ -57,7 +57,7 @@ public class MedcaseMedpolicy {
         }
 
         String sql = " select mcmp.id as mpId,mcmp.medcase_id as f2_hospId " +
-                " ,mp.series as f3_policySeries ,mp.polNumber as f4_policyNumber" +
+                " ,coalesce(mp.series,'') as f3_policySeries ,coalesce(mp.polNumber,'') as f4_policyNumber" +
                 " ,m.dateStart as f5_hospStart, coalesce(m.dateFinish,current_date) as f6_hospFinish" +
                 " ,pat.lastname as f7_lastname, pat.firstname as f8_firstname, coalesce(pat.middlename,'') as f9_middlename , to_char(pat.birthday,'yyyy-MM-dd') as f10_bday" +
                 ", mp.id as f11_medpolicyId" +
