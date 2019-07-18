@@ -41,9 +41,14 @@ public class LoginSaveAction extends LoginExitAction {
 
     private static boolean needChangePasswordAtLogin (String aUsername, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-    	String res = service.executeNativeSql("select case when changePasswordAtLogin='1' then '1' else '0' end" +
-    			" from secuser where login='"+aUsername+"'").iterator().next().get1().toString();
-		return "1".equals(res);
+        String res = null;
+        try {
+            res = service.executeNativeSql("select case when changePasswordAtLogin='1' then '1' else '0' end" +
+                    " from secuser where login='"+aUsername+"'").iterator().next().get1().toString();
+        } catch (Exception e) {
+            LOG.error("error login = "+aUsername, e);
+        }
+        return "1".equals(res);
     }
     private static int getPasswordAge (String username, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
