@@ -402,6 +402,17 @@ function compareDates(dateStr1,dateStr2) {
     if (date1<date2) res=-1;
     return res;
 }
+//Снять выделение с остальных столбцов (по которым не сортируем)
+function uncheckTh(th,num) {
+    var table = th.parentElement.parentElement.parentElement;
+    if (table.rows.length>0) {
+        var cols = table.rows[0].getElementsByTagName('th');
+        for (var i = 0; i < cols.length; i++) {
+            if (i != num)
+                cols[i].className = cols[i].className.replace('thSorted', '');
+        }
+    }
+}
 //Сортировка таблицы
 function sortMshTable(th,num) {
     var direct = th.getAttribute('name');
@@ -418,6 +429,10 @@ function sortMshTable(th,num) {
                 x = rows[i].getElementsByTagName("TD")[num];
                 y = rows[i + 1].getElementsByTagName("TD")[num];
                 if (x != null && y != null && typeof x !== 'undefined' && typeof y !== 'undefined') {
+                    if (x.innerHTML==' ' && y.innerHTML!=' ' && direct==0 || x.innerHTML!=' ' && y.innerHTML==' ' && direct!=0) {
+                        shouldSwitch = true;
+                        break;
+                    }
                     if (isNaN(x.innerHTML)) {
                         if (direct == 0) {
                             if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты
@@ -461,6 +476,10 @@ function sortMshTable(th,num) {
                 }
             }
             if (shouldSwitch) {
+                if (th.className.indexOf('thSorted')==-1) {
+                    th.className += ' thSorted ';
+                    uncheckTh(th,num);
+                }
                 rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
                 switching = true;
             }

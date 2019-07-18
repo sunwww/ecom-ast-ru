@@ -1723,3 +1723,6 @@ ul il a#selected {
     transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
 }
+table.sel tr:hover th.thSorted,table.tabview th.thSorted {
+    background-color: #C0C0C0;
+}

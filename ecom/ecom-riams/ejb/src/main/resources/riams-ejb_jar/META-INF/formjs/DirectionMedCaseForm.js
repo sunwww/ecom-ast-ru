@@ -223,7 +223,8 @@ function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 				for (var j=0;j<aAddCmd.length;j++) {
 					eval(aAddCmd[j]) ;
 				}
-                objNew.setServiceComment(java.lang.String.valueOf(child.get("cmnt")));
+                if (child.get("cmnt")!='')
+                	objNew.setServiceComment(java.lang.String.valueOf(child.get("cmnt")));
 				aManager.persist(objNew) ;
 				if (hasSls) {
                     var pres = new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription();
