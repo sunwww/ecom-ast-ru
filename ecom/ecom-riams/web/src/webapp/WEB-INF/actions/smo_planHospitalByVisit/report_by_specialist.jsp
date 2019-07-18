@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -6,7 +5,6 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -23,15 +21,15 @@
     ActionUtil.updateParameter("ReportPlanHospitalByVisit","typeDate","2", request) ;
     ActionUtil.updateParameter("ReportPlanHospitalByVisit","id","", request) ;
     ActionUtil.updateParameter("ReportPlanHospitalByVisit","typeReestr","2", request) ;
-    boolean isZav = RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll", request) ;
+  /*  boolean isZav = RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll", request) ;
     String infoSql  ;
     if (isZav) {
     	infoSql = "wchb.visit_id is not null" ;
     } else {
     	String login = LoginInfo.find(request.getSession(true)).getUsername() ;
     	infoSql = "wchb.createUsername='"+login+"'" ;
-    }
-    request.setAttribute("infoSql", infoSql) ;
+    }*/
+    request.setAttribute("infoSql", "") ;
   %>
     <msh:form action="/smo_report_plan_hospital_by_visit.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="m" id="m" value="f039"/>
@@ -47,12 +45,10 @@
         	<msh:textField property="finishDate" fieldColSpan="3" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="serviceStream" vocName="vocServiceStream"
-        		horizontalFill="true" fieldColSpan="9" size="70"/>
+        	<msh:autoComplete property="serviceStream" vocName="vocServiceStream" horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="lpu" vocName="lpu"
-        		horizontalFill="true" fieldColSpan="9" size="70"/>
+        	<msh:autoComplete property="lpu" vocName="lpu" horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
 
         <tr><td colspan="12"><table>    
@@ -115,9 +111,6 @@
            <script type='text/javascript'>
     
     checkFieldUpdate('typeDate','${typeDate}',2) ;
-<%--     checkFieldUpdate('typePatient','${typePatient}',3) ;
-    checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
-    checkFieldUpdate('typeHour','${typeHour}',3) ;--%>
     checkFieldUpdate('typeView','${typeView}',3) ;
     checkFieldUpdate('typeReestr','${typeReestr}',2) ;
     
@@ -138,17 +131,17 @@
     		ActionUtil.setParameterFilterSql("serviceStream","visit.serviceStream_id", request) ;
     		ActionUtil.setParameterFilterSql("lpu","wchb.department_id", request) ;
 
-
-    	if (request.getParameter("beginDate")!=null	) {
-    		request.setAttribute("dateFrom",request.getParameter("beginDate")) ;
+String beginDate = request.getParameter("beginDate");
+    	if (beginDate!=null	) {
+    		request.setAttribute("dateFrom",beginDate) ;
     		if (request.getParameter("finishDate")==null) {
-    			request.setAttribute("dateTo", request.getParameter("beginDate")) ;
+    			request.setAttribute("dateTo", beginDate) ;
     		} else {
     			request.setAttribute("dateTo", request.getParameter("finishDate")) ;
     		}
     		String typeReestr = (String)request.getAttribute("typeReestr");
     	    String date = (String)request.getAttribute("typeDate") ;
-    	    String dateSql = "" ;
+    	    String dateSql  ;
     	    if (date.equals("1")) {
     	    	dateSql = "wchb.dateFrom" ;
     	    } else if (date.equals("3")) {
@@ -157,24 +150,24 @@
     	    	dateSql = "wchb.createDate" ;
     	    }
     	    String view = (String)request.getAttribute("typeView") ;
-    	    String viewSql ="" ;
+    	    String viewSql ;
     	    String id=(String) request.getAttribute("id");
     	    if (id!=null&&!id.equals("")) {
-    	    	id="and wchb.workfunction_id="+id;
+    	    	id=" wchb.workfunction_id="+id+" and ";
     	    }
     	    
-        	if (view!=null && (view.equals("1"))) {
+        	if ("1".equals(view)) {
         		viewSql = " and mc.id is not null" ;
-        	} else if (view!=null && (view.equals("2"))) {
+        	} else if ("2".equals(view)) {
         		viewSql = " and mc.id is null" ;
-        	} 
+        	} else {
+        		viewSql="";
+			}
         	request.setAttribute("viewSql", viewSql) ;
         	request.setAttribute("dateSql", dateSql) ;
         	request.setAttribute("idSql",id);
         	
-        	if (typeReestr!=null&&typeReestr.equals("1")){
-    		%>
-    ${serviceStreamSql} 
+        	if ("1".equals(typeReestr)){ %>
 
     <msh:section>
 <ecom:webQuery name="journal_reestr" nameFldSql="journal_reestr_sql" nativeSql="
@@ -195,8 +188,7 @@ left join VocServiceStream vss on vss.id=visit.serviceStream_id
 left join VocServiceStream vss1 on vss1.id=wchb.serviceStream_id
    	left join mislpu mlD on mlD.id=wchb.department_id
 
-where ${infoSql} ${idSql}
-and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
+where ${idSql} ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
 ${viewSql} ${serviceStreamSql} ${lpuSql}
 group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
 ,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone,vss.name,vss1.name
@@ -234,11 +226,7 @@ order by ${dateSql}
     </msh:sectionContent>
 
     </msh:section>
-    <%}
-   	else if (typeReestr!=null&&typeReestr.equals("2")) {
-   		%>
-${serviceStreamSql} 
-
+    <%} else if ("2".equals(typeReestr)) { %>
    	 <msh:section>
    	<ecom:webQuery name="journal_svod" nameFldSql="journal_svod_sql" nativeSql="
    	select ml.name as mlname
@@ -247,18 +235,15 @@ ${serviceStreamSql}
    	,wf.id as wfId
    	from WorkCalendarHospitalBed wchb
    	left join Patient p on p.id=wchb.patient_id
-left join MedCase mc on mc.id=wchb.medcase_id
-left join MedCase visit on visit.id=wchb.visit_id
-
+	left join MedCase mc on mc.id=wchb.medcase_id
+	left join MedCase visit on visit.id=wchb.visit_id
    	left join workfunction wf on wf.id=wchb.workfunction_id
    	left join vocworkfunction vwf on vwf.id=wf.workfunction_id
    	left join worker w on w.id=wf.worker_id
    	left join Patient wp on wp.id=w.person_id
    	left join mislpu ml on ml.id=w.lpu_id
    	left join mislpu mlD on mlD.id=wchb.department_id
-
-   	where ${infoSql}
-   	and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
+   	where ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
    	${viewSql}  ${serviceStreamSql} ${lpuSql}
    	group by wf.id,ml.name, wp.lastname, wp.firstname, wp.middlename, vwf.name
    	order by wp.lastname,wp.firstname,wp.middlename
@@ -278,11 +263,7 @@ left join MedCase visit on visit.id=wchb.visit_id
    	    </msh:sectionContent>
 
    	    </msh:section>
-   <%}
-   	else if (typeReestr!=null&&typeReestr.equals("3")) {
-   		%>
-${serviceStreamSql}  
-
+   <%} else if ("3".equals(typeReestr)) { %>
    	 <msh:section>
    	<ecom:webQuery name="journal_svod" nameFldSql="journal_svod_sql" nativeSql="
    	select vss.name as mlname
@@ -300,9 +281,7 @@ left join VocServiceStream vss on vss.id=visit.serviceStream_id
    	left join Patient wp on wp.id=w.person_id
    	left join mislpu ml on ml.id=w.lpu_id
    	left join mislpu mlD on mlD.id=wchb.department_id
-
-   	where ${infoSql}
-   	and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
+   	where ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
    	${viewSql}  ${serviceStreamSql} ${lpuSql}
    	group by vss.id, vss.name
    	order by vss.name
@@ -322,10 +301,7 @@ left join VocServiceStream vss on vss.id=visit.serviceStream_id
 
    	    </msh:section>
 
-   	   <%}
-   	else if (typeReestr!=null&&typeReestr.equals("4")) {
-   		%>
-${serviceStreamSql} 
+   	   <%} else if ("4".equals(typeReestr)) { %>
 
    	 <msh:section>
    	<ecom:webQuery name="journal_svod" nameFldSql="journal_svod_sql" nativeSql="
@@ -344,8 +320,7 @@ left join VocServiceStream vss on vss.id=visit.serviceStream_id
    	left join Patient wp on wp.id=w.person_id
    	left join mislpu ml on ml.id=w.lpu_id
    	left join mislpu mlD on mlD.id=wchb.department_id
-   	where ${infoSql}
-   	and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
+   	where ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
    	${viewSql}  ${serviceStreamSql} ${lpuSql}
    	group by mlD.id, mlD.name
    	order by mlD.name
