@@ -84,8 +84,8 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 				//Milamesher #132 Карта оценки риска обязательна всегда
 				//Обазятельны либо роды, либо выкидыш
 				//lastrelease milamesher 10.04.2018 #97
-				if (!isRiskCardBornExists(manager, prevMedCase) && !isDsO82(manager, form.getPrevMedCase())) {
-					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не создана карта оценки риска!");
+				if (!isRiskCardBornExists(manager, prevMedCase) && !isCalcCardBornExists(manager, prevMedCase) && !isDsO82(manager, form.getPrevMedCase())) {
+					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не создана карта оценки риска или вычисление риска ВТЭО после родов!");
 				}
 				if (!noCheckPregnancy && !isPregnancyExists(manager, prevMedCase) && !isMisbirthClassExists(manager, form.getPrevMedCase())) {
 					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не заполнены данные по родам либо данные по выкидышу!");
@@ -117,6 +117,13 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 			String sql = "select count(ac.id) from assessmentCard ac where medcase_id=:medcaseId and template=7";
 			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
 			return Long.valueOf(list.toString())>0;
+
+	}
+	//Milamesher существует ли вычисление риска ВТЭО (в дальнейшем заменит карту оценки риска)
+	private static boolean isCalcCardBornExists(EntityManager aManager, MedCase aMedCase) {
+		String sql = "select count(id) from calculationsresult where departmentmedcase_id=:medcaseId and calculator_id=15";
+		Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
+		return Long.valueOf(list.toString())>0;
 
 	}
     //Milamesher 10122018 #131 существует ли классификация Робсона

@@ -280,4 +280,14 @@ public class CalculateServiceJs {
 			r.append(res.iterator().next().get1().toString()).append("#").append(res.iterator().next().get2().toString());
 		return r.toString();
 	}
+	/**
+	 * Получить имя калькулятора
+	 * @param calcId Calculator.id
+	 * @return String name
+	 */
+	public String getCalcName(String calcId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select name from calculator where id="+calcId) ;
+		return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
+	}
 }

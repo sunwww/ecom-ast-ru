@@ -185,7 +185,7 @@
             </td>
         </tr>
     </div>
-    <tags:calculation_extra name="calculation_extra"/>
+
     <script type="text/javascript" src="./dwr/interface/CalculateService.js"></script>
     <script type="text/javascript">
         var theIs${name}NewCalculationDialogInitialized = false ;

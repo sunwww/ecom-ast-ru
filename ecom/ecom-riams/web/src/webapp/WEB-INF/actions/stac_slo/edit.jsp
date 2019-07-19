@@ -623,7 +623,8 @@ left join Patient pat on pat.id=wan.person_id
                 <msh:section>
                     <msh:sectionTitle>
                         Карты оценки рисков
-                        <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard()">Добавить карту оценки</a></msh:ifInRole>
+                        <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard()">Добавить карту оценки</a>
+                            <a href="entityParentPrepareCreate-calc_calculationsResult.do?id=${param.id}&calculator=15">Добавить вычисление</a></msh:ifInRole>
                     </msh:sectionTitle>
                     <msh:sectionContent>
                         <msh:table name="asCard" action="entityParentView-mis_assessmentCard.do" idField="1">
