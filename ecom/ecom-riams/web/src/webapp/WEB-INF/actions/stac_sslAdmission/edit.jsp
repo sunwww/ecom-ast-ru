@@ -276,7 +276,7 @@
         	<msh:label property="editTime" label="время"/>
           	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
+        <msh:submitCancelButtonsRow guid="submitCancel" functionSubmit="saveWithAsk();" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
       </msh:panel>
     </msh:form>
     <tags:stac_infoBySls form="stac_sslAdmissionForm"/>
@@ -320,6 +320,19 @@
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 
       <script>
+          function saveWithAsk() {
+              <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
+              if (confirm('Проведена ли идентификация личности пациента?'))
+                  document.forms["mainForm"].submit();
+              else
+                  $('submitButton').disabled = false;
+              </msh:ifFormTypeIsCreate>
+              <msh:ifFormTypeAreViewOrEdit formName="stac_sslAdmissionForm">
+                  <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm">
+                        document.forms["mainForm"].submit();
+                  </msh:ifFormTypeIsNotView>
+              </msh:ifFormTypeAreViewOrEdit>
+          }
           eventutil.addEventListener($('weight'), "change",function(){
               $('weight').value=parseInt($('weight').value);
               if ($('weight').value=="NaN") $('weight').value="";
