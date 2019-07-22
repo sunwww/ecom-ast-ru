@@ -167,7 +167,7 @@ IF (select count(*) from tableRobson tr where tr.outNumR='9')=0
 THEN
 insert into tableRobson(outNumR,vr,vrname,ksnum,chbc,per1,per2,per3,per4) values('9',selectRobsonInfo(9,null),(select name from vocrobsonclass where id=9),0,0,round(0,2),round(0,2),round(0,2),round(0,2));
 END IF;
-insert into tableRobson select * from select1RowSubRobsonById(ksCode,dateBegin,dateEnd,r,ks,9,null,'9');
+insert into tableRobson select * from select1RowSubRobsonById(ksCode,dateBegin,dateEnd,r,ks,10,null,'10');
 IF (select count(*) from tableRobson tr where tr.outNumR='10')=0
 THEN
 insert into tableRobson(outNumR,vr,vrname,ksnum,chbc,per1,per2,per3,per4) values('10',selectRobsonInfo(10,null),(select name from vocrobsonclass where id=10),0,0,round(0,2),round(0,2),round(0,2),round(0,2));
