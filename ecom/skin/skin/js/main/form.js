@@ -421,7 +421,8 @@ function sortMshTable(th,num) {
     switching = true;
     rows = table.rows;
     if (rows.length < 100) {
-        var last = rows[rows.length - 1].getElementsByTagName("TD")[0].className.indexOf('sumTd') != -1 ? 2 : 1;
+        var j= rows[rows.length - 1].getElementsByTagName("TD").length>1 ? 1 : 0; //первый столбец мб пустым
+        var last = rows[rows.length - 1].getElementsByTagName("TD")[j].className.indexOf('sumTd') != -1 ? 2 : 1;
         while (switching) {
             switching = false;
             for (i = 1; i < (rows.length - last); i++) {
@@ -490,5 +491,5 @@ function sortMshTable(th,num) {
             th.getElementsByTagName('i')[0].className = direct == 0 ? 'arrow arrowUp' : 'arrow arrowDown';
     }
     else
-        showToastMessage('Таблица слишком большая для сортировки! Займёт слишком много времени.',null,false);
+        showToastMessage('Таблица слишком большая для сортировки! Займёт слишком много времени.',null,true);
 }

@@ -204,7 +204,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
                         new Column(tag.getProperty(), tag.getColumnName()
                                 , tag.isIdentificator(), tag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth(),theEscapeSymbols,theSortable)
+                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth(),theEscapeSymbols)
 
                 );
             } else if (aTag instanceof TableButtonTag) {
@@ -212,7 +212,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 theCells.add(
                         new Button(tag.getProperty(), tag.getButtonShortName(), tag.getButtonName()
                                 , tag.getButtonFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(),tag.getGuid(), theSortable, (HttpServletRequest)pageContext.getRequest()
+                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(),tag.getGuid(), (HttpServletRequest)pageContext.getRequest()
                         )
 
                 );
@@ -221,7 +221,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 theCells.add(
                         new Textfield(tag.getProperty(), tag.getTextfieldShortName(), tag.getTextfieldName()
                                 , tag.getTextfieldFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), theSortable, (HttpServletRequest)pageContext.getRequest())
+                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest())
                 );
             }
         }
@@ -424,14 +424,12 @@ public class TableTag extends AbstractGuidSupportTag {
                 ITableDecorator decorator = theDecorator!=null ? getDecoratorObject() : null;
 
                 Collection col = getCollection();
-                if (col.size()<2) theSortable=false;
                 if (col == null) {
                     throw new JspException("Нет Collection в request.getAttribute(\"" + theName + "\")");
                 } else {
                     if (col.size() == 0) {
                         return EVAL_PAGE;
                     }
-
                     // шапка таблицы
                     if(!theHideTitle) {
                         int i=0;
@@ -482,7 +480,7 @@ public class TableTag extends AbstractGuidSupportTag {
                                 i++;
                             } else if (obj instanceof Column) {
                                 Column column = (Column) obj;
-                                column.printHeader(out,i,theSortable);
+                                column.printHeader(out,i,theSortable && col.size()>1);
                                 i++;
                             } else if (obj instanceof Textfield){
                                 Textfield textfield = (Textfield) obj;
@@ -754,7 +752,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
     static final class Button {
         public Button(String aProperty,String aButtonShortName, String aButtonName
-                , String aButtonFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty,String aGuid,boolean aSortable, HttpServletRequest aRequest) {
+                , String aButtonFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty,String aGuid,HttpServletRequest aRequest) {
             theProperty = aProperty;
             theButtonName = aButtonName;
             theCssClass = aCssClass;
@@ -765,7 +763,6 @@ public class TableTag extends AbstractGuidSupportTag {
             theButtonShortName = aButtonShortName ;
             theHideIfEmpty = aHideIfEmpty ;
             theGuid = aGuid ;
-            theSortable = aSortable;
         }
 
 
@@ -856,13 +853,12 @@ public class TableTag extends AbstractGuidSupportTag {
         private final HttpServletRequest theServleRequest ;
         private final String theAddParam ;
         private final String theGuid ;
-        private boolean theSortable=true;
     }
 
     static final class Textfield {
 
         public Textfield(String aProperty,String aTextfieldShortName, String aTextfieldName
-                , String aTextfieldFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, boolean aSortable, HttpServletRequest aRequest) {
+                , String aTextfieldFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, HttpServletRequest aRequest) {
             theProperty = aProperty;
             theTextfieldName = aTextfieldName;
             theCssClass = aCssClass;
@@ -872,7 +868,6 @@ public class TableTag extends AbstractGuidSupportTag {
             theTextfieldFunction = aTextfieldFunction ;
             theTextfieldShortName = aTextfieldShortName ;
             theHideIfEmpty = aHideIfEmpty ;
-            theSortable =  aSortable;
         }
 
 
@@ -961,11 +956,10 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theCssClass;
         private final HttpServletRequest theServleRequest ;
         private final String theAddParam;
-        private boolean theSortable=true;
     }
 
     static final class Column {
-        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth,boolean aEscapeSymbols,boolean aSortable) {
+        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth,boolean aEscapeSymbols) {
             theProperty = aProperty;
             theColumnName = aColumnname;
             theIdColumn = aIdColumn;
@@ -977,7 +971,6 @@ public class TableTag extends AbstractGuidSupportTag {
             theAddParam =aAddParam ;
             theWidth=aWidth;
             theEscapeSymbols=aEscapeSymbols;
-            theSortable=aSortable;
         }
 
         @SuppressWarnings("unused")
@@ -990,18 +983,18 @@ public class TableTag extends AbstractGuidSupportTag {
                 aOut.print("<th");
                 aOut.print(" class='");
                 aOut.print(theCssClass);
-                if (theSortable && theSortInner) aOut.print("' onclick='sortMshTable(this,"+i+")'  name='0'");
+                if (theSortInner) aOut.print("' onclick='sortMshTable(this,"+i+")'  name='0'");
                 aOut.print("'>");
             } else {
                 if (theWidth!=null && !theWidth.equals(""))
                     aOut.print("<th width=\""+theWidth+"%\">");
-                else if (theSortable && theSortInner) aOut.print("<th onclick='sortMshTable(this,"+i+")'  name='0'>");
+                else if (theSortInner) aOut.print("<th onclick='sortMshTable(this,"+i+")'  name='0'>");
                 else aOut.print("<th>");
             }
             //IdeTagHelper.getInstance().printMarker(, aJspContext)
             aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
             aOut.print(theColumnName);
-            if (theSortable && theSortInner) aOut.print("<i class='arrow arrowUp'></i>");
+            if (theSortInner) aOut.print("<i class='arrow arrowUp'></i>");
             aOut.println("</th>");
         }
 
@@ -1188,7 +1181,6 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theWidth;
         // Milamesher 25102018 экранировать символы
         private boolean theEscapeSymbols=true;
-        private boolean theSortable=true;
     }
 
 
