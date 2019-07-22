@@ -74,6 +74,14 @@
             }
         %>
         <script type='text/javascript'>
+            function setCssClassName() {
+                var num = document.getElementsByTagName('table').length > 0 ? 1 : 0;
+                var rows = document.getElementsByTagName('table')[num].rows;
+                var r = rows[rows.length - 1];
+                for (var j = 0; j < r.cells.length; j++)
+                    r.cells[j].className += ' sumTd ';
+            }
+            setCssClassName();
         function find() {
             var frm = document.forms[0];
             frm.target = '';
