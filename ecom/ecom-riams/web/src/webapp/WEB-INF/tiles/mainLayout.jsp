@@ -187,6 +187,8 @@
                           roles="/Policy/MainMenu/Expert" title="Экспертиза"/>
 			<msh:sideLink params="" styleId="mainMenuExpert2" action="/entityList-e2_entryList.do" name="Реестры ФОМС"
                           roles="/Policy/MainMenu/Expert2" title="Реестры ФОМС"/>
+            <msh:sideLink params="" styleId="mainMenuExpert2" action="/riams_edkc.do" name="ЕДКЦ"
+                          roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet" title="ЕДКЦ"/>
             <msh:sideLink params="" styleId="mainMenuVoc" action="/pharm_admin" name="Аптека"
                           roles="/Policy/Mis/Pharmacy/Administration" title="Аптека"/>
             <msh:sideLink params="" styleId="mainMenuConfig" action="/riams_config.do" name="Настройки"

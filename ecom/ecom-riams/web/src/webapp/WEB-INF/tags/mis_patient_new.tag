@@ -148,8 +148,9 @@
 			     					+" "+ $('${name}Middlename').value+" "+ $('${name}Birthday').value ;
 			     				var ind = aString.indexOf("#") ;
 			     				updatePatient(aString.substring(0,ind),aString.substring(ind+1)) ;
-			     				
+
 		                        cancel${name}Patient() ;
+                               	if (typeof checkObservStatus !== 'undefined') checkObservStatus();
 		                    }
 		                }
 		         ) ;
@@ -161,7 +162,7 @@
      }
      function checkRequered(aField,aFieldView) {
      	if ($(aField).value=="" || $(aField).value==0) {
-	     	alert("Поле дата является обязательным") ;
+	     	alert("Все жёлтые поля являются обязательными") ;
 	     	if (aFieldView==null || aFieldView=="") {
 		     	$(aField).focus() ;
 		     	$(aField).select() ;
