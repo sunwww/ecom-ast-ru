@@ -420,7 +420,7 @@ function sortMshTable(th,num) {
     var rows, switching, i, x, y, shouldSwitch;
     switching = true;
     rows = table.rows;
-    if (rows.length < 100) {
+    if (rows.length < 100 || confirm('Таблица содержит много строк! Сортировка может занять много времени. Вы уверены?')) {
         var j= rows[rows.length - 1].getElementsByTagName("TD").length>1 ? 1 : 0; //первый столбец мб пустым
         var last = rows[rows.length - 1].getElementsByTagName("TD")[j].className.indexOf('sumTd') != -1 ? 2 : 1;
         while (switching) {
@@ -490,6 +490,4 @@ function sortMshTable(th,num) {
         if (th.getElementsByTagName('i').length > 0)
             th.getElementsByTagName('i')[0].className = direct == 0 ? 'arrow arrowUp' : 'arrow arrowDown';
     }
-    else
-        showToastMessage('Таблица слишком большая для сортировки! Займёт слишком много времени.',null,true);
 }
