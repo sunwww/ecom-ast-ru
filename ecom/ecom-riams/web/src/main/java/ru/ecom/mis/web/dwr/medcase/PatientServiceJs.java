@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -396,19 +397,28 @@ public class PatientServiceJs {
 		 }
 		 
 	}
-	
+
+    /**
+     * Получение списка печатных документов по группе
+     * @param aGroupName - Имя группы документов
+     * @param aRequest -
+     * @return JSON со списком документов
+     * @throws NamingException
+     */
 	public String getUserDocumentList(String aGroupName, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder ret = new StringBuilder();
 		String sql = "select ud.id, ud.name, ud.filename from  userDocument ud" +
 				" left join VocUserDocumentGroup vudg on ud.groupType_id = vudg.id where upper(vudg.code) = upper('"+aGroupName+"')";
 	 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 	 Collection <WebQueryResult> res = service.executeNativeSql(sql);
+		JSONArray ret = new JSONArray();
 	 if (!res.isEmpty()) {
 		 for (WebQueryResult r: res) {
-			 ret.append(r.get1().toString()).append(":").append(r.get2().toString()).append(":").append(r.get3().toString()).append("#");
+		 	JSONObject el = new JSONObject();
+		 	el.put("docId",r.get1().toString()).put("docName",r.get2().toString()).put("docFileName",r.get3().toString());
+		 	ret.put(el);
 		 }
 	 }
-		return ret.length()>0?ret.substring(0, ret.length()-1):"";
+		return ret.toString();
 	}
 	public void changeMedPolicyType(Long aPolicyId, Long aNewPolicyTypeId, HttpServletRequest aRequest) throws NamingException {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);

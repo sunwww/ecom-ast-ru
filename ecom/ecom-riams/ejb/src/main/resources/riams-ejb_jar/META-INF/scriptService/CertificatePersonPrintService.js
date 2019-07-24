@@ -129,8 +129,7 @@ function getGroup(aCtx,aPriceList,aParent) {
 }
 function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	var pid = aParams.get("id");
-    var lpuId = 0;
-	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService" 
+	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService"
 		+"	,cams.countMedService*cams.cost as sumNoAccraulMedService"
 		+"  ,round((cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as costDisc" 
 		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as sumNoAccraulMedServiceDisc"

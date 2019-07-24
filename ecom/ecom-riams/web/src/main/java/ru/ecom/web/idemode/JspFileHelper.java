@@ -493,8 +493,7 @@ public class JspFileHelper {
 	public static void main(String[] args) throws Exception {
 		TagLibraryManager manager = new TagLibraryManager() ;
 		manager.addTld(ru.nuzmsh.web.tags.AbstractFieldTag.class, "msh");
-		manager.addTld(new File("/home/esinev/workspace/ecom/ecom-ejbweb/web/src/main/resources/META-INF/ecom.tld"), "ecom");
-		
+
 		JspFileHelper h = new JspFileHelper() ;
 		
 		System.out.println(h.getAttributeValues("/WEB-INF/actions/mis_lpuArea/edit.jsp"

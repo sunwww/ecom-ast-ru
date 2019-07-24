@@ -6,6 +6,8 @@
 <%@ attribute name="name" required="true" description="Имя" %>
 <%@ attribute name="type" required="true" description="Группа" %>
 <%@ attribute name="status" required="false" description="tttt" %>
+<%@ attribute name="s" required="true" description="PrintServiceName" %>
+<%@ attribute name="m" required="true" description="PrintFunctionName"  %>
 
 <msh:ifInRole roles="${roles}">
 
@@ -39,20 +41,15 @@
 
 </div>
 </div>
-
-<script type="text/javascript"><!--
+    <script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
+<script type="text/javascript">
      var theIs${name}ClaimStartDialogInitialized = false ;
-     var claimId =0;
+     var claim${name}Id =0;
      var the${name}ClaimStartDialog = new msh.widget.Dialog($('${name}ClaimStartDialog')) ;
      // Показать
-     function show${name}ClaimStart() {
-         // устанавливается инициализация для диалогового окна
-       //  if (!theIs${name}ClaimStartDialogInitialized) {
-         	init${name}ClaimStartDialog() ;
-        //  }
-         
-       
-
+     function show${name}ClaimStart(someId) {
+         claim${name}Id = +someId>0 ? +someId : +${param.id}
+         init${name}ClaimStartDialog() ;
      }
 
      // Отмена
@@ -60,8 +57,8 @@
          the${name}ClaimStartDialog.hide() ;
      }
 
-    function goPrint(aFileName, aId) {
-    	var url = "print-"+aFileName+".do?id="+aId+"&s=PatientPrintService&m=printInfo";
+    function go${name}Print(aFileName, aId) {
+    	var url = "print-"+aFileName+".do?id="+aId+"&s=${s}&m=${m}";
     	
     	window.location=url;
     }
@@ -69,21 +66,19 @@
          // инициализация диалогового окна
      function init${name}ClaimStartDialog() {
     	 PatientService.getUserDocumentList('${type}', {
-      		callback: function (a) {
-      			if (a!=null&&a!='') {
+      		callback: function (arr) {
+      		    arr = JSON.parse(arr);
+      			if (arr.length>0) {
       				 var tbody = document.getElementById('tableDocuments');
       				 tbody.innerHTML='';
-      				var rows = a.split("#");
-      				for (var i=0;i<rows.length;i++) {
+      				for (var i=0;i<arr.length;i++) {
+      				    var el = arr[i];
       					var radio='';
       					var row = document.createElement("TR");
- 						var param = rows[i].split(":");
- 						var tId = ""+param[0];
- 						var tName = ""+param[1];
- 						var tFileName = ""+param[2]; 
- 						//var checkbox = "<td id='tdDocument"+i+"'  onclick='this.childNodes[0].checked=\"checked\";'>";
+ 						var tName = el.docName;
+ 						var tFileName = el.docFileName;
  						radio +="<input type='hidden' id = 'document"+i+"' name='document' value='"+tFileName+"' onclick=''>"+tName+"</td>";
- 						radio +="<td> <input type='button' value = 'Печать' onclick = \"goPrint('"+tFileName+"','"+${param.id}+"')\" /></td>";
+ 						radio +="<td> <input type='button' value = 'Печать' onclick = \"go${name}Print('"+tFileName+"','"+claim${name}Id+"')\" /></td>";
  						tbody.appendChild(row);
  						row.innerHTML=radio;
       				}
@@ -93,7 +88,6 @@
       				//theIs${name}ClaimStartDialogInitialized = false ;
       				cancel${name}ClaimStart();
       				alert ('Не найдено документов в группе ${type}');
-      				return;
       			}
       			
       		}

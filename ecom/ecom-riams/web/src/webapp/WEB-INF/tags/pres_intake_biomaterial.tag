@@ -127,13 +127,12 @@
 	    	aReason = get${name}Reason(aReason) ;
 	    	if (aReason!=null) {
 	    		//alert(123) ;
-	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
-		            callback: function(aResult) {
+	        	PrescriptionService.cancelService(aId,aReasonId,aReason, {
+		            callback: function() {
 		            	window.document.location.reload();
 		            }
 				});
 	    	} else {
-	    		//alert(321) ;
 	    		cancelBioIntakeInfo();
 	    	}	
 		}

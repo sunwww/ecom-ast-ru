@@ -13,13 +13,13 @@
       <msh:hidden property="saveType" />
       <msh:panel>
       	<msh:row>
-      	  <msh:textField property="name" label="Наименование" fieldColSpan="3"  horizontalFill="true"/>
+      	  <msh:textField property="name" label="Наименование" fieldColSpan="3"  horizontalFill="true" size="100"/>
       	</msh:row>
         <msh:row>
-          <msh:textField property="fileName" label='Имя файла' fieldColSpan="3"  horizontalFill="true"/>
+          <msh:textField property="fileName" label='Имя файла' fieldColSpan="3"  horizontalFill="true" size="100"/>
         </msh:row>
         <msh:row>
-          <msh:autoComplete property="groupType" vocName="userDocumentGroup" label="Группа" size="20" />
+          <msh:autoComplete property="groupType" vocName="userDocumentGroup" label="Группа" size="100" />
         </msh:row>
         
         <msh:submitCancelButtonsRow colSpan="2"/>

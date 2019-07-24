@@ -29,21 +29,17 @@
 </div>
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}PrescTypesDialogInitialized = false ;
      var the${name}PrescTypesDialog = new msh.widget.Dialog($('${name}PrescTypesDialog')) ;
-     // Показать 
      function show${name}PrescTypes() {
-    	 // устанавливается инициализация для диалогового окна 
          if (!theIs${name}PrescTypesDialogInitialized) {
         	 if ($('labDate')) {$('labDate').disabled=false;}
          	init${name}PrescTypesDialog() ;
          	 the${name}PrescTypesDialog.show() ;
-          } else {
-        	  if (confirm("Вы действительно хотите изменить тип листа назначения? Некоторые назначение могу быть удалены!")){
-        		  the${name}PrescTypesDialog.show() ;
-        	  }
-          }
+         } else if (confirm("Вы действительно хотите изменить тип листа назначения? Некоторые назначение могу быть удалены!")){
+              the${name}PrescTypesDialog.show() ;
+         }
      }
      
      // Отмена 
@@ -80,7 +76,6 @@
 	}
      // инициализация диалогового окна 
      function init${name}PrescTypesDialog() {
-	//	alert ("In TAG, $medcase = ="+${medcase}); 
 		 PrescriptionService.checkMedCaseEmergency('${parentID}', '${parentType}',{
 			 callback: function(aResult) {
 				 PrescriptionService.getPrescriptionTypes(aResult, {

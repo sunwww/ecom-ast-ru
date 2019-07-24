@@ -3,7 +3,6 @@ package ru.ecom.mis.web.servlet;
 import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.vocentity.IVocEntityService;
 import ru.ecom.web.util.Injection;
-import ru.ecom.web.vocentity.VocEntityServlet;
 
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -16,7 +15,7 @@ import java.util.Enumeration;
 
 public class EncodingAccordanceServlet extends HttpServlet {
 
-	private static final Logger LOG = Logger.getLogger(VocEntityServlet.class);
+	private static final Logger LOG = Logger.getLogger(EncodingAccordanceServlet.class);
 
 	@Override
 	public void doGet(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
@@ -26,7 +25,7 @@ public class EncodingAccordanceServlet extends HttpServlet {
 
 	@Override
 	public void service(HttpServletRequest aRequest,
-			HttpServletResponse aResponse) throws ServletException, IOException {
+			HttpServletResponse aResponse) throws IOException {
 		aResponse.setCharacterEncoding("utf-8");
 		Enumeration en = aRequest.getParameterNames() ;
 		while(en.hasMoreElements()) {
@@ -44,27 +43,21 @@ public class EncodingAccordanceServlet extends HttpServlet {
 		
 		try {
 			start = Integer.parseInt(aRequest.getParameter("start"));
+            limit = Integer.parseInt(aRequest.getParameter("limit"));
 		} catch (Exception e) {}
-		try {
-			limit = Integer.parseInt(aRequest.getParameter("limit"));
-		} catch (Exception e) {}
-		
+
 		if(callback!=null) {
 			out.print(callback+"(") ;
 		}
 		try {
 			IVocEntityService service = Injection.find(aRequest).getService(IVocEntityService.class);
-			//String vocEntityClass = AbstractAutocompleteServlet.getNextDir(aRequest);
 			String vocEntityClass = "EncodingAccordance" ;
 			String json = service.loadJsonValues(vocEntityClass, start, limit, orderBy, !descending) ; 
 			out.println(json);
-			//System.out.println(json);
-			
+
 		} catch (NamingException e) {
 			LOG.error(e.getMessage(),e);
 		}
-//		out
-//				.print("{\"totalCount\":\"1\",    \"topics\":[{\"post_id\":\"53657\"                ,\"topic_title\":\"Visibility Problem in 1.1\"                ,\"topic_id\":\"10890\"                ,\"author\":\"mystix\"                ,\"post_time\":\"1186816484\"                ,\"post_text\":\"firstly, i think the correct format for the tag menus ...\"                ,\"forum_title\":\"Bugs\"                ,\"forumid\":\"3\"                ,\"reply_count\":\"4\"               }            ]}               ");
 		if(callback!=null) {
 			out.println(");") ;
 		}

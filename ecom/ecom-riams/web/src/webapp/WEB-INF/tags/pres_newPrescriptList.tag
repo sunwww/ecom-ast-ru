@@ -113,7 +113,7 @@ var isSLSClosed = true;
      function show${name}PrescriptList() {
 		//alert ("In TAG, $id = ="+'${parentID}');
          parentId=${parentID};
-         PrescriptionService.isPrescriptListExists('${parentID}', {
+         PrescriptionService.isPrescriptListExists(+'${parentID}', {
              callback: function (aPresID) {
                  if (aPresID==null||aPresID=='null') {
                      showToastMessage ('Пациент выписан, назначения отсутствуют, добавление назначений невозможно!',false);
