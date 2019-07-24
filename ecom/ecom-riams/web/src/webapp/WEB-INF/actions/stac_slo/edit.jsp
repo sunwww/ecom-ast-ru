@@ -693,6 +693,21 @@ where m.id ='${param.id}'"/>
                         }
                     })
                 }
+                //проставить идентификацию
+                function saveIdentityWithAsk() {
+                    HospitalMedCaseService.getIsPatientIdentified(${param.id}, {
+                        callback: function(aResult) {
+                            if (aResult!='1' && confirm('Проведена ли идентификация личности пациента?')) {
+                                HospitalMedCaseService.setIsPatientIdentified(${param.id}, {
+                                    callback: function() {
+                                        showToastMessage('Отметка об идентификации пациента проставлена',null,true);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                saveIdentityWithAsk();
             </script>
         </msh:ifFormTypeIsView>
         <tags:CreateDiagnoseCriteria name="CreateDiagnoseCriteria" />

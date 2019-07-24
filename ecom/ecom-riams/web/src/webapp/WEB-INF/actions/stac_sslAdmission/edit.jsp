@@ -78,6 +78,7 @@
       <msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
       <msh:hidden property="guarantee"/>
       </msh:ifNotInRole>
+        <msh:hidden property="isIdentified"/>
      
 
       <msh:panel guid="6e8d827a-d32c-4a05-b4b0-5ff7eed6eedc">
@@ -276,7 +277,7 @@
         	<msh:label property="editTime" label="время"/>
           	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" functionSubmit="saveWithAsk();" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
+        <msh:submitCancelButtonsRow guid="submitCancel" functionSubmit="saveIdentityWithAsk();" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
       </msh:panel>
     </msh:form>
     <tags:stac_infoBySls form="stac_sslAdmissionForm"/>
@@ -320,19 +321,32 @@
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 
       <script>
-          function saveWithAsk() {
+          //сохранить/проставить идентификацию
+          function saveIdentityWithAsk() {
               <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
-              if (confirm('Проведена ли идентификация личности пациента?'))
+              $('isIdentified').value = confirm('Проведена ли идентификация личности пациента?');
                   document.forms["mainForm"].submit();
-              else
-                  $('submitButton').disabled = false;
               </msh:ifFormTypeIsCreate>
               <msh:ifFormTypeAreViewOrEdit formName="stac_sslAdmissionForm">
                   <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm">
                         document.forms["mainForm"].submit();
                   </msh:ifFormTypeIsNotView>
+                  <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
+                  HospitalMedCaseService.getIsPatientIdentified(${param.id}, {
+                      callback: function(aResult) {
+                          if (aResult!='1' && confirm('Проведена ли идентификация личности пациента?')) {
+                              HospitalMedCaseService.setIsPatientIdentified(${param.id}, {
+                                  callback: function() {
+                                      showToastMessage('Отметка об идентификации пациента проставлена',null,true);
+                                  }
+                              });
+                          }
+                      }
+                  });
+                  </msh:ifFormTypeIsView>
               </msh:ifFormTypeAreViewOrEdit>
           }
+          saveIdentityWithAsk();
           eventutil.addEventListener($('weight'), "change",function(){
               $('weight').value=parseInt($('weight').value);
               if ($('weight').value=="NaN") $('weight').value="";

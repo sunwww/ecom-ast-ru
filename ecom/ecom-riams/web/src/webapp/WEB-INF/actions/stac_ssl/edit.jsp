@@ -314,8 +314,8 @@
         <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
 
         <script type="text/javascript" >
+        <msh:ifFormTypeIsView formName="stac_sslForm">
             <msh:ifInRole roles="/Policy/Mis/Pregnancy/ConfinementCertificate">
-            <msh:ifFormTypeIsView formName="stac_sslForm">
             PatientService.checkSLSonDepartment(${param.id},{
                 callback : function(res) {
                     if(res==true){
@@ -347,8 +347,23 @@
                 );
             }
             loadBracelets();
+        </msh:ifInRole>
+        //проставить идентификацию
+        function saveIdentityWithAsk() {
+            HospitalMedCaseService.getIsPatientIdentified(${param.id}, {
+                callback: function(aResult) {
+                    if (aResult!='1' && confirm('Проведена ли идентификация личности пациента?')) {
+                        HospitalMedCaseService.setIsPatientIdentified(${param.id}, {
+                            callback: function() {
+                                showToastMessage('Отметка об идентификации пациента проставлена',null,true);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        saveIdentityWithAsk();
             </msh:ifFormTypeIsView>
-            </msh:ifInRole>
             function printPrescriptionList(id) {
                 window.document.location='print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id='+id;
             }

@@ -1170,6 +1170,13 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/oncology_case_reestr/reestr.jsp" />
 		</action>
+		<action path='/journal_noIdentSls' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/journal_noIdentSls.jsp" />
+		</action>
 		<action path='/journal_cardiacScreening' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
