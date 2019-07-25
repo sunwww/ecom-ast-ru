@@ -1052,6 +1052,7 @@ public class TableTag extends AbstractGuidSupportTag {
                         value = value.toString().replace("<br />", "\r\n");
                         value = value.toString().replace("<", "&lt;");
                         value = value.toString().replace(">", "&gt;");
+                        value = value.toString().replace("&lt;div id=\"circle\"&gt;&lt;/div&gt;", "<div id=\"circle\"></div>");
                     }
                     if(DemoModeUtil.isInDemoMode(theServleRequest)) {
                         value = DemoModeUtil.secureValue(value);
