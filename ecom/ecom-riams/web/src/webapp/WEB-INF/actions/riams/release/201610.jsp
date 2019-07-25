@@ -1,4 +1,4 @@
-alter table VocQualityEstimationCritDefect alter column id set default nextval('VocQualityEstimationCritDefect_sequence');<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh"%>
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis"%>
