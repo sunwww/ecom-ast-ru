@@ -74,6 +74,14 @@
             }
         %>
         <script type='text/javascript'>
+            function setCssClassName() {
+                var num = document.getElementsByTagName('table').length > 0 ? 1 : 0;
+                var rows = document.getElementsByTagName('table')[num].rows;
+                var r = rows[rows.length - 1];
+                for (var j = 0; j < r.cells.length; j++)
+                    r.cells[j].className += ' sumTd ';
+            }
+            setCssClassName();
         function find() {
             var frm = document.forms[0];
             frm.target = '';
@@ -93,16 +101,17 @@
             <msh:sectionTitle>
                 <ecom:webQuery isReportBase="${isReportBase}" name="patList" nameFldSql="patList_sql" nativeSql="
                 select distinct sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
-                from childbirth chb
-                left join medcase slo on slo.id=ANY(select id from medcase where parent_id=(select parent_id from medcase where id=chb.medcase_id) and dtype='DepartmentMedCase')
+                from medcase slo
+                left join childbirth chb on chb.medcase_id=slo.id
                 left join robsonclass r on r.medcase_id=slo.id
                 left join vocrobsonclass vr on vr.id=r.robsontype_id
                 left join vocsubrobson vsr on vsr.id=r.robsonsub_id
                 left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
-                left join SurgicalOperation so on case when ${param.ks}=true then so.medCase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase') else so.medCase_id=chb.medcase_id end
+                left join SurgicalOperation so on so.medCase_id=slo.id
                 left join MedService vo on vo.id=so.medService_id
                 left join patient pat on slo.patient_id=pat.id
-                where chb.birthfinishdate between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') and vr.id=${param.vrid}
+                where chb.birthfinishdate between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')  and slo.dtype='DepartmentMedCase'
+                and case when ${param.vrid}<>-1 then vr.id=${param.vrid} else vr.id is not null end
                 and case when ${param.ks}=true then vo.code='${ksCode}' else 1=1 end
                 and case when ${param.vsrid}<>0 then vsr.id=${param.vsrid} else 1=1 end"/>
 

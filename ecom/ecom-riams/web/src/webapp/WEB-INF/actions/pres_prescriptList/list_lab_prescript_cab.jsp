@@ -200,7 +200,7 @@
     
       , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
     , p.materialId||' ('||coalesce(vsst.code,'---')||')' as f4material
-    ,case when ht.id is not null then 'ВМП '||pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy')
+    ,case when ht.id is not null then '<div id=\"circle\"></div> '||pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy')
     else pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy')  end as f5birthday
    , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name as f6medServicies
    ,wp.lastname ||' ('||ml.name||')' as f7fioworker

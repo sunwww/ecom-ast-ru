@@ -75,7 +75,7 @@
             prop${name}=prop;
             resFormCalculation${name}=res;
             document.getElementById('${name}title').innerHTML=title;
-            document.getElementById('risk${name}').innerHTML+=risk;
+            document.getElementById('risk${name}').innerHTML=risk;
             loadPresc(voc,depid,name,calcId,riskId);
             the${name}NewCalculationDialog.show() ;
             document.getElementById("cancel").style.display ="";
@@ -90,13 +90,16 @@
             mas[0][1]=calcId;
             mas[1][0]='calcrisk_id';
             mas[1][1]=riskId;
+            document.getElementById('${name}Table').innerHTML="";
             CalculateService.getInJson(voc,name,mas,{
                 callback: function(aResult) {
                     var vocRes=JSON.parse(aResult);
                     for (var ind1 = 0; ind1 < vocRes.length; ind1++) {
                         var vocVal = vocRes[ind1];
-                        document.getElementById('${name}Table').innerHTML+="<input type=\"checkbox\" name='${name}"+vocVal.prescvalue+"' id="+vocVal.id+">"+vocVal.prescvalue;
+                        document.getElementById('${name}Table').innerHTML+="<label><input type=\"checkbox\" name='${name}"+vocVal.prescvalue+"' id="+vocVal.id+">"+vocVal.prescvalue+'<\label>';
                          document.getElementById('${name}Table').innerHTML+="<br>";
+                         if ((ind1+1)%3==0)
+                             document.getElementById('${name}Table').innerHTML+="<br>";
                     }
                     loadContras('contracalc',depid,'contravalue',calcId);
                 }});
@@ -109,12 +112,13 @@
                 for (var i=0; i<n; i++) mas[i]=new Array(m);
                 mas[0][0]='calculator_id';
                 mas[0][1]=calcId;
+                document.getElementById('${name}Table2').innerHTML="";
                 CalculateService.getInJson(voc,name,mas,{
                     callback: function(aResult) {
                         var vocRes=JSON.parse(aResult);
                         for (var ind1 = 0; ind1 < vocRes.length; ind1++) {
                             var vocVal = vocRes[ind1];
-                            document.getElementById('${name}Table2').innerHTML+="<input type=\"checkbox\"  name='${name}"+vocVal.contravalue+"' id="+vocVal.id+">"+vocVal.contravalue;
+                            document.getElementById('${name}Table2').innerHTML+="<label><input type=\"checkbox\"  name='${name}"+vocVal.contravalue+"' id="+vocVal.id+">"+vocVal.contravalue+'<\label>';
                             document.getElementById('${name}Table2').innerHTML+="<br>";
                         }
                     }});
@@ -129,8 +133,8 @@
             var inputs=document.getElementById('${name}Table').childNodes;
             var count1=0,count2=0;
             for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].type=='checkbox' && inputs[i].checked==true) {
-                    formString${name}+=inputs[i].name.replace('${name}','')+"\n";
+                if (inputs[i].childNodes.length>0 && inputs[i].childNodes[0].type=='checkbox' && inputs[i].childNodes[0].checked==true) {
+                    formString${name}+=inputs[i].childNodes[0].name.replace('${name}','')+"\n";
                     count1++;
                 }
             }
@@ -140,8 +144,8 @@
             formString${name}+="Противопоказания:\n";
             inputs=document.getElementById('${name}Table2').childNodes;
             for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].type=='checkbox' && inputs[i].checked==true) {
-                    formString${name}+=inputs[i].name.replace('${name}','')+"\n";
+                if (inputs[i].childNodes.length>0 && inputs[i].childNodes[0].type=='checkbox' && inputs[i].childNodes[0].checked==true) {
+                    formString${name}+=inputs[i].childNodes[0].name.replace('${name}','')+"\n";
                     count2++;
                 }
             }
@@ -159,7 +163,10 @@
            else
                CalculateService.SetCalculateResultCreate(departmentId${name},
                    resFormCalculation${name}, calcId${name}, formString${name}, {
-                       callback: function () {showToastMessage("Вычисление успешно создано!",null,true);}
+                       callback: function () {
+                           showToastMessage("Вычисление успешно создано!",null,true);
+                           location.href = "entityParentView-stac_slo.do?id=" + departmentId${name};
+                       }
                    });
             the${name}NewCalculationDialog.hide();
         }

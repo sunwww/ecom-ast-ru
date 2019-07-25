@@ -505,7 +505,7 @@
                                                 if (mas[1]!='') {
                                                     OncologyService.deleteAllByCase(mas[1], {
                                                         callback: function () {
-                                                            showToastMessage('Неактуальная онкологическая форма была удалена',null,false);
+                                                            showToastMessage('Неактуальная онкологическая форма была удалена',null,true);
                                                         }
                                                     });
                                                 }

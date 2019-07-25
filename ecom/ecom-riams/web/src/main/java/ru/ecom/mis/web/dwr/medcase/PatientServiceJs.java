@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
 import org.apache.log4j.Logger;
+import org.jdom.IllegalDataException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -705,4 +706,107 @@ public class PatientServiceJs {
 		}
 		return false;
 	}
+
+	/**
+	 * Получить статус листка наблюдения #171
+	 * @param aPatId Patient.id
+	 * @return String Статус (0 - нет никаких, можно открыть
+	 *                   	1 - есть открытый: можно просмотреть, закрыть, добавить всё
+	 *                   	2 - есть закрытый: можно просмотреть, открыть)
+	 */
+	public String getObservationSheetStatus(String aPatId, HttpServletRequest aRequest) throws NamingException {
+            IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+            Collection<WebQueryResult> l= service.executeNativeSql("select min(case when finishdate is null then '1' else '2' end)" +
+                    " from observationsheet" +
+                    " where patient_id="+aPatId) ;
+		return l.isEmpty() || l.iterator().next().get1()==null? "0" :
+				l.iterator().next().get1().toString();
+	}
+
+    /**
+     * Получить текущую рабочую функцию
+     * @param aRequest HttpServletRequest
+     * @return Long WorkFunction.id
+     */
+	private Long getCurrentWorkFunction(HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Long wf;
+		try {
+			wf =Long.valueOf(service.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+LoginInfo.find(aRequest.getSession(true)).getUsername()+"'").iterator().next().get1().toString());
+		} catch (Exception e) {
+			LOG.error("Ошибка нахождения раб. фунции = ",e);
+			throw new IllegalDataException(e.toString());
+		}
+		return wf;
+	}
+
+	/**
+	 * Открыть лист наблюдения #171
+	 * @param aPatId Patient.id
+	 * @return String 1 - ok, 0 - error
+	 */
+	public String openObservSheet(String aPatId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String status=getObservationSheetStatus(aPatId,aRequest);
+		if (status.equals("0") || status.equals("2")) {
+			service.executeNativeSql("insert into observationsheet(createusername,startdate,specialiststart_id,patient_id) values('"
+					+ LoginInfo.find(aRequest.getSession(true)).getUsername() + "',current_date," + getCurrentWorkFunction(aRequest) +
+					", " + aPatId + ") returning id");
+			return "1";
+		}
+		return "0";
+	}
+
+	/**
+	 * Закрыть лист наблюдения #171
+	 * @param aPatId Patient.id
+	 * @return String 1 - ok, 0 - error
+	 */
+	public String closeObservSheet(String aPatId, String observResId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String status=getObservationSheetStatus(aPatId,aRequest);
+		if (status.equals("1")) {
+			service.executeUpdateNativeSql("update observationsheet set editusername='"+LoginInfo.find(aRequest.getSession(true)).getUsername()
+					+ "',finishdate=current_date,specialistfin_id='" + getCurrentWorkFunction(aRequest) + "',observresult_id='" + observResId
+					+ "' where patient_id='" + aPatId + "' and finishdate is null");
+			return "1";
+		}
+		return "0";
+	}
+
+    /**
+     * Получить листки наблюдений персоны #171
+     * @param aPatId Sls.id or Patient.id
+     * @return String json Листки наблюдений персоны
+     */
+    public String selectIdentityPatient(Long aPatId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        StringBuilder sql = new StringBuilder();
+        sql.append("select o.id as oId, to_char(o.startdate,'dd.mm.yyyy') as std ")
+                .append(",vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as  wp ")
+                .append(",to_char(o.finishdate,'dd.mm.yyyy') as fd ")
+                .append(",vwf2.name||' '||wpat2.lastname||' '||wpat2.firstname||' '||wpat2.middlename as  wp2 ")
+                .append("from  observationsheet o ")
+                .append("left join workfunction wf on wf.id=o.specialiststart_id ")
+                .append("left join workfunction wf2 on wf2.id=o.specialistfin_id ")
+                .append("left join worker w on w.id=wf.worker_id ")
+                .append("left join worker w2 on w2.id=wf2.worker_id ")
+                .append("left join vocworkfunction vwf on vwf.id=wf.workfunction_id ")
+                .append("left join vocworkfunction vwf2 on vwf2.id=wf2.workfunction_id ")
+                .append("left join patient wpat on wpat.id=w.person_id ")
+                .append("left join patient wpat2 on wpat2.id=w2.person_id ")
+                .append("where o.patient_id= ").append(aPatId);
+        JSONArray res = new JSONArray() ;
+        Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+        for (WebQueryResult w :list) {
+            JSONObject o = new JSONObject() ;
+            o.put("id",w.get1())
+                    .put("startDate", w.get2())
+                    .put("wpStart", w.get3())
+                    .put("finishDate", w.get4())
+                    .put("wpFin", w.get5());
+            res.put(o);
+        }
+        return res.toString();
+    }
 }

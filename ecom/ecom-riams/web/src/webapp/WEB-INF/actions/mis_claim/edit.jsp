@@ -129,7 +129,7 @@
                     <script type="text/javascript">
                         window.onload = function() {
                             ($('screenFileName')).setAttribute("readonly","false"); //чтобы при перезагрузке не терялся скрин
-                            if ('${description}'!='') {
+                            if ('${img}'!='') {
                                 $('description').value='Описание: ' + '${description}' + '\nСтраница ошибки: ' + document.referrer +
                                     '\nСтраница перед ошибкой: ' + '${hist}';
                                 $('screenFileName').value='${img}';

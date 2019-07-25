@@ -2644,4 +2644,26 @@ public class HospitalMedCaseServiceJs {
         Collection<WebQueryResult> l= service.executeNativeSql("select parent_id from medcase where id="+aSloId) ;
         return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
     }
+
+	/**
+	 * Получить, была ли проведена идентификация #173
+	 * @param aMedCaseId Medcase.id (СЛС или СЛО)
+	 * @return String 1 - была проведена идентификация, 0 - нет
+	 */
+	public String getIsPatientIdentified(String aMedCaseId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql
+				("select case when isidentified=true then '1' else '0' end from statisticstub where medcase_id='"+aMedCaseId+"' or medcase_id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;
+		return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
+	}
+
+	/**
+	 * Проставить, что была проведена идентификация #173
+	 * @param aMedCaseId Medcase.id (СЛС или СЛО)
+	 */
+	public void setIsPatientIdentified(String aMedCaseId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql
+				("update statisticstub set isidentified=true where medcase_id='"+aMedCaseId+"' or medcase_id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;;
+	}
 }

@@ -329,6 +329,11 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	public Long getAttachedPolicyDmc() {return theAttachedPolicyDmc;}
 	public void setAttachedPolicyDmc(Long aAttachedPolicyDmc) {theAttachedPolicyDmc = aAttachedPolicyDmc;}
 
+	/** Была ли проведена идентификация пациента? */
+	@Comment("Была ли проведена идентификация пациента?")
+	public Boolean getIsIdentified() { return theIsIdentified; }
+	public void setIsIdentified(Boolean aIsIdentified) { theIsIdentified = aIsIdentified; }
+
 	/** Прикрепленный полис ДМС */
 	private Long theAttachedPolicyDmc;
 	/** Прикрепленные полисы */
@@ -424,5 +429,8 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	private Integer theHeight;
 	/** Индекс массы тела */
 	private Double theIMT;
+
+	/** Была ли проведена идентификация пациента */
+	private Boolean theIsIdentified;
 }
 

@@ -3321,4 +3321,15 @@ left join medcase smoP on smoP.owner_id=w.id "
 				queryAppend = 'vcip.isfornewborn=true'
 		/>
 	</voc>
+	<!-- Исход наблюдения -->
+	<voc id="vocObservationResult" type="NativeVocService">
+		<NativeVocService
+				from="vocObservationResult voc "
+				nameId="voc.id"
+				join="" order=""
+				names="voc.name"
+				queried=" upper(voc.cod||' ('||voc.name||')') like upper(:query) "
+				queryAppend = ''
+		/>
+	</voc>
 </vocconfig>

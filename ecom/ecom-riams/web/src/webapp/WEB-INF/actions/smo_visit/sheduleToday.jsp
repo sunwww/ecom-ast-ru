@@ -87,7 +87,7 @@
             }
         });
         setTimeout(setCurrentDateTime,1000);
-        setTimeout(loadAll,30000);
+        setTimeout(loadAll,15000);
     }
     jQuery(document).ready(function() {getNumOfRowsAndLoad();});
 </script>

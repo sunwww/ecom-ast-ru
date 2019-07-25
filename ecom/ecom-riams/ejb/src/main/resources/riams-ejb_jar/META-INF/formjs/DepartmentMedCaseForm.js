@@ -396,26 +396,37 @@ function onDelete(aEntityId, aContext) {
 }
 //Проверка на дубли при создании первого СЛО в СЛС
 function checkDouble(aForm,aEntity, aContext) {
-    if (aForm.prevMedCase==0) {
-        var listDep = aContext.manager.createNativeQuery("select id from MedCase where parent_id='"+aForm.parent+"' and dtype='DepartmentMedCase' and prevMedCase_id=null")
-			.getResultList() ;
-        var inBd=true;
+    var listDep;
+    var inBd = true;
+    if (aForm.prevMedCase == 0) {
+        listDep = aContext.manager.createNativeQuery("select id from MedCase where parent_id='" + aForm.parent + "' and dtype='DepartmentMedCase' and prevMedCase_id=null")
+            .getResultList();
         if (listDep.isEmpty()) {
-        	inBd=false;
+            inBd = false;
             listDep = aContext.manager.createQuery("from MedCase where parent_id=:parent and dtype='DepartmentMedCase' and prevMedCase_id=null")
                 .setParameter("parent", aForm.parent)
                 .getResultList();
-		}
-        for (var i=0; i<listDep.size(); i++) {
-        	var obj = listDep.get(i);
-        	var sloId = inBd?
-				obj.get(0) :
-				obj.id;
-            if (sloId!=aEntity.id) {
-            	if (inBd)
-                    aContext.manager.createNativeQuery("delete from MedCase where id='"+aEntity.id+"'").executeUpdate() ;
-                throw "Уже завели случай в отделелении. <a href='entitySubclassView-mis_medCase.do?id="+sloId+"'>Перейти к нему</a>"
-            }
+        }
+    }
+    else {
+        listDep = aContext.manager.createNativeQuery("select id from MedCase where parent_id='" + aForm.parent + "' and dtype='DepartmentMedCase' and prevMedCase_id="+aForm.prevMedCase)
+            .getResultList();
+        if (listDep.isEmpty() || (!listDep.isEmpty() &&  listDep.get(0)==aEntity.id)) {
+            inBd = false;
+            listDep = aContext.manager.createQuery("from MedCase where parent_id=:parent and dtype='DepartmentMedCase' and prevMedCase_id="+aForm.prevMedCase)
+                .setParameter("parent", aForm.parent)
+                .getResultList();
+        }
+	}
+    for (var i = 0; i < listDep.size(); i++) {
+        var obj = listDep.get(i);
+        var sloId = inBd ?
+            obj :
+            obj.id;
+        if (sloId != aEntity.id) {
+            if (inBd)
+                aContext.manager.createNativeQuery("delete from MedCase where id='" + aEntity.id + "'").executeUpdate();
+            throw "Уже завели случай в отделелении. <a href='entitySubclassView-mis_medCase.do?id=" + sloId + "'>Перейти к нему</a>"
         }
     }
 }

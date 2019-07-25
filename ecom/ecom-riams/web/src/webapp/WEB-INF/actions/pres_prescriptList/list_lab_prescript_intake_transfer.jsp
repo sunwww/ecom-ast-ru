@@ -292,7 +292,7 @@
     
     ||'#'||pat.lastname else list(p.materialId) end) as f4material
     ,coalesce(vsst.name,'---') as f5vsstname
-    ,case when ht.id is not null then 'ВМП '||pat.lastname else pat.lastname end as f6lastname,pat.firstname as f7firstname,pat.middlename as f8middlename
+    ,case when ht.id is not null then '<div id=\"circle\"></div> '||pat.lastname else pat.lastname end as f6lastname,pat.firstname as f7firstname,pat.middlename as f8middlename
     ,to_char(pat.birthday,'dd.mm.yyyy') as f9birthday
    ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||' <b>'||coalesce(vpt.shortname,'')||'</b>' else null end) as f10medServicies
    ,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker

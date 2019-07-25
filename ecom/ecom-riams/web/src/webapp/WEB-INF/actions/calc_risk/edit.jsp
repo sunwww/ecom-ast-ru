@@ -21,7 +21,7 @@
             <msh:hidden property="calculator" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
             <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01">
                 <msh:row>
-                    <msh:textField property="riskValue" label="Назначение" size="150" />
+                    <msh:textField property="riskValue" label="Название" size="150" />
                 </msh:row>
                 <msh:row>
                     <msh:textField property="lowScore" label="Нижнее значение баллов" size="15" />

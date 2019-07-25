@@ -358,7 +358,7 @@
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:sectionTitle>Реестр пациентов ${title}</msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="reestr" action="javascript:void(0)" idField="1">
+	    <msh:table name="reestr" action="javascript:void(0)" idField="1" escapeSymbols="false">
 	      <msh:tableColumn columnName="Управление" property="9"  />
 	      <msh:tableColumn columnName="Стат.карта" property="2"  />
 	      <msh:tableColumn columnName="Фамилия пациента" property="3"  />

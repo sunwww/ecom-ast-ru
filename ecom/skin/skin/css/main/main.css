@@ -1726,3 +1726,11 @@ ul il a#selected {
 table.sel tr:hover th.thSorted,table.tabview th.thSorted {
     background-color: #C0C0C0;
 }
+#circle {
+    width: 15px;
+    height: 15px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+    background: #800000;
+}

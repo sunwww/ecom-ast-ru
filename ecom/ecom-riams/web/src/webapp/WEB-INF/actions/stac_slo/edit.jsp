@@ -623,7 +623,8 @@ left join Patient pat on pat.id=wan.person_id
                 <msh:section>
                     <msh:sectionTitle>
                         Карты оценки рисков
-                        <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard()">Добавить карту оценки</a></msh:ifInRole>
+                        <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard()">Добавить карту оценки</a>
+                            <a href="entityParentPrepareCreate-calc_calculationsResult.do?id=${param.id}&calculator=15">Добавить вычисление</a></msh:ifInRole>
                     </msh:sectionTitle>
                     <msh:sectionContent>
                         <msh:table name="asCard" action="entityParentView-mis_assessmentCard.do" idField="1">
@@ -692,6 +693,21 @@ where m.id ='${param.id}'"/>
                         }
                     })
                 }
+                //проставить идентификацию
+                function saveIdentityWithAsk() {
+                    HospitalMedCaseService.getIsPatientIdentified(${param.id}, {
+                        callback: function(aResult) {
+                            if (aResult!='1' && confirm('Проведена ли идентификация личности пациента?')) {
+                                HospitalMedCaseService.setIsPatientIdentified(${param.id}, {
+                                    callback: function() {
+                                        showToastMessage('Отметка об идентификации пациента проставлена',null,true);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                saveIdentityWithAsk();
             </script>
         </msh:ifFormTypeIsView>
         <tags:CreateDiagnoseCriteria name="CreateDiagnoseCriteria" />

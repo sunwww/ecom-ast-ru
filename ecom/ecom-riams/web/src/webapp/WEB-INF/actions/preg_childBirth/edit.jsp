@@ -342,7 +342,7 @@
               $('diabetIdentityName').className = "autocomplete horizontalFill required";
               setAutoBracelet();
           }
-          else {
+          else if (document.getElementsByName("diabetIdentityRad")[0].checked) {
 
               $('diabetIdentity').setAttribute('hidden', true);
               $('diabetIdentityName').setAttribute('hidden', true);
@@ -524,7 +524,14 @@
   //Milamesher 03092018 radiobuttons ЭКО и ЖК
   if ($('isECO').value=='true') document.getElementsByName("ecoGroup")[0].checked=true; else document.getElementsByName("ecoGroup")[1].checked=true;
   if ($('isRegisteredWithWomenConsultation').value=='true') document.getElementsByName("gkGroup")[0].checked=true; else document.getElementsByName("gkGroup")[1].checked=true;
+      <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
+          if ($('diabetIdentity').value=='')
+            document.getElementsByName("diabetIdentityRad")[0].checked=true;
+          else
+          document.getElementsByName("diabetIdentityRad")[1].checked=true;
+            checkdiabetIdentity();
    </script>
+      </msh:ifFormTypeIsNotView>
   </msh:ifFormTypeAreViewOrEdit>
   <msh:ifFormTypeIsCreate formName="preg_childBirthForm">
   <script type="text/javascript">
