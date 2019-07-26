@@ -346,7 +346,6 @@ abstract public class WorkFunction extends BaseEntity {
 
 	/** Разрешено записывать на дату без указания времени */
 	@Comment("Разрешено записывать на дату без указания времени")
-	@Column(nullable=false, columnDefinition="boolean default false")
 	public Boolean getIsDirectionNoTime() {return theIsDirectionNoTime;}
 	public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {theIsDirectionNoTime = aIsDirectionNoTime;}
 	/** Разрешено записывать на дату без указания времени */
