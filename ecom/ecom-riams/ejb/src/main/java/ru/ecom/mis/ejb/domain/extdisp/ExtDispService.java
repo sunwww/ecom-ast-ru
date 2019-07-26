@@ -8,7 +8,10 @@ import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.sql.Date;
 
 	/**
@@ -87,7 +90,7 @@ public class ExtDispService extends BaseEntity{
 
 	/** Отказ от услуги */
 	@Comment("Отказ от услуги")
-	@Column(nullable=false, columnDefinition="boolean default false")
+	//@Column(nullable=false, columnDefinition="boolean default false")
 	public Boolean getDeniedService() {return theDeniedService;}
 	public void setDeniedService(Boolean aDeniedService) {theDeniedService = aDeniedService;}
 	/** Отказ от услуги */

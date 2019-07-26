@@ -56,7 +56,7 @@ public class AbstractImportFormat extends BaseEntity {
     
     /** Служебный формат импорта */
 	@Comment("Служебный формат импорта")
-    @Column(nullable=false, columnDefinition="boolean default false")
+    //@Column(nullable=false, columnDefinition="boolean default false")
 	public Boolean getSystemFormat() {return theSystemFormat;}
 	public void setSystemFormat(Boolean aSystemFormat) {theSystemFormat = aSystemFormat;}
 	/** Служебный формат импорта */

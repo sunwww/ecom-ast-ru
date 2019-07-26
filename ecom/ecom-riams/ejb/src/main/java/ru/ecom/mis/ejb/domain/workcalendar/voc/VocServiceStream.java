@@ -3,7 +3,6 @@ package ru.ecom.mis.ejb.domain.workcalendar.voc;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdNameOmcCode;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -60,7 +59,7 @@ public class VocServiceStream extends VocIdNameOmcCode {
 
 	/** Считать цену стационара по ОМС тарифу */
 	@Comment("Считать цену стационара по ОМС тарифу")
-	@Column(nullable=false, columnDefinition="boolean default true")
+	//@Column(nullable=false, columnDefinition="boolean default true")
 	public Boolean getIsCalcOmcHosp() {return theIsCalcOmcHosp;}
 	public void setIsCalcOmcHosp(Boolean aIsCalcOmcHosp) {theIsCalcOmcHosp = aIsCalcOmcHosp;}
 	/** Считать цену по ОМС тарифу */

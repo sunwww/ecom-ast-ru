@@ -3,7 +3,6 @@ package ru.ecom.mis.ejb.domain.extdisp.voc;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -53,7 +52,7 @@ public class VocExtDisp extends VocBaseEntity{
 
 	/** Автоматически расчитывать возраст */
 	@Comment("Автоматически расчитывать возраст")
-	@Column(nullable=false, columnDefinition="boolean default false")
+	//@Column(nullable=false, columnDefinition="boolean default false")
 	public Boolean getAutoCalcAge() {return theAutoCalcAge;}
 	public void setAutoCalcAge(Boolean aAutoCalcAge) {theAutoCalcAge = aAutoCalcAge;}
 	/** Автоматически расчитывать возраст */
