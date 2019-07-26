@@ -346,7 +346,12 @@
                   </msh:ifFormTypeIsView>
               </msh:ifFormTypeAreViewOrEdit>
           }
+          <msh:ifFormTypeAreViewOrEdit formName="stac_sslAdmissionForm">
+          <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
           saveIdentityWithAsk();
+          </msh:ifFormTypeIsView>
+          </msh:ifFormTypeAreViewOrEdit>
+
           eventutil.addEventListener($('weight'), "change",function(){
               $('weight').value=parseInt($('weight').value);
               if ($('weight').value=="NaN") $('weight').value="";
