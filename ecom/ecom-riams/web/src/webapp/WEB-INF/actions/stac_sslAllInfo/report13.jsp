@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -111,15 +110,12 @@
     
     String date = request.getParameter("dateBegin") ;
     String dateEnd = request.getParameter("dateEnd") ;
-    //String id = (String)request.getParameter("id") ;
     String period = request.getParameter("period") ;
     String strcode =request.getParameter("strcode") ;
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
-    
-    String view = (String)request.getAttribute("typeView") ;
     
     if (date!=null && !date.equals("")) {
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
@@ -202,7 +198,7 @@ sls.dtype='HospitalMedCase' and sls.dateFinish  between to_date('${dateBegin}','
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
 " />
-    <msh:table name="report13swod" 
+    <msh:table printToExcelButton="Сохранить в excel" name="report13swod"
     viewUrl="stac_report_13.do?typeAbort=${typeAbort}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_13.do?typeAbort=${typeAbort}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Наименование" property="2" />
@@ -279,7 +275,7 @@ group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
 ,va.code ,va.name,vsp.name
 order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
     viewUrl="entityShortView-stac_surOperation.do" 
      action="entityView-stac_surOperation.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />
