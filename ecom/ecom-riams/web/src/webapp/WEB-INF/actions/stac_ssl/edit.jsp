@@ -349,6 +349,7 @@
             loadBracelets();
         </msh:ifInRole>
         //проставить идентификацию
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/PatientIdentify">
         function saveIdentityWithAsk() {
             HospitalMedCaseService.getIsPatientIdentified(${param.id}, {
                 callback: function(aResult) {
@@ -363,6 +364,7 @@
             });
         }
         saveIdentityWithAsk();
+        </msh:ifInRole>
             </msh:ifFormTypeIsView>
             function printPrescriptionList(id) {
                 window.document.location='print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id='+id;

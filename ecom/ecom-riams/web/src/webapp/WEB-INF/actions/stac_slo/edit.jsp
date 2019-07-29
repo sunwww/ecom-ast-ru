@@ -694,6 +694,7 @@ where m.id ='${param.id}'"/>
                     })
                 }
                 //проставить идентификацию
+                <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/PatientIdentify">
                 function saveIdentityWithAsk() {
                     HospitalMedCaseService.getIsPatientIdentified(${param.id}, {
                         callback: function(aResult) {
@@ -708,6 +709,7 @@ where m.id ='${param.id}'"/>
                     });
                 }
                 saveIdentityWithAsk();
+                </msh:ifInRole>
             </script>
         </msh:ifFormTypeIsView>
         <tags:CreateDiagnoseCriteria name="CreateDiagnoseCriteria" />

@@ -332,6 +332,7 @@
                         document.forms["mainForm"].submit();
                   </msh:ifFormTypeIsNotView>
                   <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
+              <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/PatientIdentify">
                   HospitalMedCaseService.getIsPatientIdentified(${param.id}, {
                       callback: function(aResult) {
                           if (aResult!='1' && confirm('Проведена ли идентификация личности пациента?')) {
@@ -343,6 +344,7 @@
                           }
                       }
                   });
+              </msh:ifInRole>
                   </msh:ifFormTypeIsView>
               </msh:ifFormTypeAreViewOrEdit>
           }
