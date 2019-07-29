@@ -601,7 +601,7 @@ function closeSpo(aContext, aSpoId) {
 			+" where vis.parent_id="+aSpoId
 			+" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
 			+" and vis.dateStart is null"
-			+ "  and (vis.noactuality=null or vis.noactuality=false)" //только актуальные визиты надо проверять
+			+ "  and (vis.noactuality=null or vis.noactuality='0')" //только актуальные визиты надо проверять
 	).setMaxResults(1).getResultList() ;
 	var listVisLast = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
@@ -670,7 +670,7 @@ function closeSpo(aContext, aSpoId) {
 					+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 					+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
 					+" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
-			var mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
+			mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
 
 			
 		}

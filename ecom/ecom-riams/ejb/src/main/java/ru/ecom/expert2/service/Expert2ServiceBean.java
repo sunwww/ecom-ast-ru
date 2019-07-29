@@ -1178,7 +1178,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
         VocE2EntrySubType subType =entrySubTypeHashMap.get(code);
         if (subType == null) {
-            throw new IllegalStateException("Не найдено вида случая с кодом: "+code);
+            subType = getEntityByCode("UNKNOWN", VocE2EntrySubType.class,true);
+            entrySubTypeHashMap.put(code,subType);
+            theManager.persist(new E2EntryError(aEntry,"NO_ENTRY_TYPE", "Не найдено вида случая с кодом: "+code));
         }
         aEntry.setSubType(subType);
         if (subType.getVidSluch()!=null) {

@@ -4117,9 +4117,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	public void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) {
 
 		HospitalMedCase sls = theManager.find(HospitalMedCase.class, aMedCaseId) ;
-		if (sls.getDateFinish()!=null) throw new IllegalArgumentException("На выписанных пациентов, предварительная выписка не оформляется!!!!");
+	//	if (sls.getDateFinish()!=null) throw new IllegalArgumentException("На выписанных пациентов, предварительная выписка не оформляется!!!!"); //Проверка перенесена в *ServiceJs
 		saveDischargeEpicrisis(aMedCaseId,aDischargeEpicrisis,theManager);
-		//theManager.persist(sls) ;
 	}
 	public void updateDischargeDateByInformationBesk(String aIds, String aDate) throws ParseException {
 		String[] ids = aIds.split(",") ;

@@ -5,20 +5,88 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 @Path("login")
 public class ApiLoginResource {
+    @GET
+    @Path("makeTimurHappy")
+    @Produces(MediaType.APPLICATION_JSON)
+    /*Найдем информация для Тимура. ТЕСТ*/
+    public String makeTimurHappy(@Context HttpServletRequest aRequest, @QueryParam("patientId") Long aPatientId, @QueryParam("token") String token) throws NamingException {
+        ApiUtil.login(token,aRequest);
+        String sql = "select pat.lastname , pat.birthday, sex.name , ss.weight , ss.height , ss.imt , sls.datestart,  sls.id" +
+                " from patient pat " +
+                " left join vocsex sex on sex.id=pat.sex_id " +
+                " left join medcase sls on sls.patient_id = pat.id and sls.dtype='HospitalMedCase' and sls.deniedhospitalizating_id is null" +
+                " left join statisticstub ss on ss.medcase_id = sls.id" +
+                " where pat.id="+aPatientId+" and sls.id is not null" +
+                " order by sls.datestart desc";
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> patientInfo = service.executeNativeSql(sql,1);
+        JSONObject ret = new JSONObject();
+        if (!patientInfo.isEmpty()) {
+            WebQueryResult wqr = patientInfo.iterator().next();
+            ret.put("lastname", toS(wqr.get1()));
+            ret.put("sex", toS(wqr.get3()));
+            ret.put("birthday",toS(wqr.get2()));
+            ret.put("weight",toS(wqr.get4()));
+            ret.put("height",toS(wqr.get5()));
+            ret.put("imt",toS(wqr.get6()));
+            String medcaseId = toS(wqr.get8());
+            sql = "select mc.id, list(ms.code) as cde, list(ms.name) as nme , to_char(mc.datestart,'dd.MM.yyyy') as f4_dat " +
+                    " ,(select json_array(list('value#'||fip.valuebd||'#name#'||par.name||'#code#'||coalesce(par.externalcode, par.code)),'#')) as f5_cd" +
+                    " , to_char(mc.timeexecute, 'HH24:MI') as f6_startTime" +
+                    " from medcase sls " +
+                    " left join medcase slo on slo.parent_id = sls.id and slo.dtype='DepartmentMedCase'" +
+                    " left join prescriptionList pl on pl.medcase_id = slo.id or pl.medcase_id = sls.id" +
+                    " left join prescription p on p.prescriptionlist_id = pl.id " +
+                    " left join medservice ms on ms.id=p.medservice_id" +
+                    " left join vocservicetype vst on vst.id=ms.servicetype_id" +
+                    " left join medcase mc on mc.id=p.medcase_id" +
+                    " left join diary d on d.medcase_id=mc.id" +
+                    " left join FormInputProtocol fip on fip.docprotocol_id = d.id" +
+                    " left join parameter par on par.id=fip.parameter_id" +
+                    " where sls.id = "+medcaseId+" and sls.dtype='HospitalMedCase' and ms.id is not null and mc.datestart is not null" +
+                    " group by mc.id" +
+                    " order by mc.datestart desc";
+            Collection<WebQueryResult> surveyInfo = service.executeNativeSql(sql);
+           // ArrayList<String> servicesCode = new ArrayList<>();
+            JSONArray ser = new JSONArray();
+            for (WebQueryResult r : surveyInfo) {
+                String sCode = toS(r.get2());
+            //    if (!servicesCode.contains(sCode)) {
+                    JSONObject s = new JSONObject();
+                    s.put("serviceCode", sCode);
+                    s.put("serviceName", toS(r.get3()));
+                    s.put("serviceDate", toS(r.get4()));
+                    s.put("serviceTime", toS(r.get6()));
+                    s.put("result", new JSONArray(toS(r.get5())));
+                //    servicesCode.add(sCode);
+                    ser.put(s);
+            //    }
+            }
+            ret.put("servicesArray", ser);
+            ret.put("status", "ok");
+        } else {
+            ret.put("status", "error");
+            ret.put("errorName", "Не найдено госпитализаций по пациенту или типа того");
+        }
+
+
+        return ret.toString();
+
+    }
 
     @GET
     @Path("login/{token}")
@@ -69,11 +137,15 @@ public class ApiLoginResource {
         if (arr.length()>0) {
             for (int i=0;i<arr.length();i++) {
                 JSONObject obj = arr.getJSONObject(i);
-                ret.append("newBornSize=").append(arr.length()).append(";birthDate=").append(obj.getString("date")).append(";birthMale=").append(obj.getString("male")).append(";birthFeMale=").append(obj.getString("female")).append("\n\r");
+                ret.append("newBornSize=").append(arr.length()).append(";birthDate=").append(obj.getString("date")).append(";birthMale=").append(obj.getString("male")).append(";birthFeMale=").append(obj.getString("female")).append("\r");
             }
         }
         else
-            ret.append("newBornSize=").append("1").append(";birthDate=").append(tmpDate).append(";birthMale=").append("0").append(";birthFeMale=").append("0").append("\n\r");
+            ret.append("newBornSize=").append("1").append(";birthDate=").append(tmpDate).append(";birthMale=").append("0").append(";birthFeMale=").append("0").append("\r");
         return ret.toString();
+    }
+
+    private String toS(Object o ){
+        return o!=null ? o.toString() : "";
     }
 }

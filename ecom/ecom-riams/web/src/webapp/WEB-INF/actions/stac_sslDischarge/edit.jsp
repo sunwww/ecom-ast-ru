@@ -466,8 +466,7 @@
                 //if (a.match(/C\d\d/ )==null) concludingMkb='';
                 OncologyService.checkSLO(${param.id},{
                     callback : function(res) {
-                        if(res=="0" && a.match(/C\d\d/ )!=null)
-                        {
+                        if(res=="0" && a.match(/C\d\d/ )!=null) {
                             alert('Внимание! Для выбранного диагноза нужно заполнить случай ЗНО');
                             savePreRecord();
                             //window.open

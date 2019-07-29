@@ -32,9 +32,10 @@ import java.util.List;
 @Comment("Назначение")
 @Entity
 @Table(schema="SQLUser")
-@AIndexes(value = { @AIndex(properties = { "intakeDate" })
+@AIndexes(value = {  @AIndex(properties = { "intakeDate" })
 					,@AIndex(properties = { "calendarTime" })
 					,@AIndex(properties = { "prescriptionList" })
+					,@AIndex(properties = {"medCase"})
 })
 @EntityListeners(DeleteListener.class)
 public abstract class Prescription extends BaseEntity{
