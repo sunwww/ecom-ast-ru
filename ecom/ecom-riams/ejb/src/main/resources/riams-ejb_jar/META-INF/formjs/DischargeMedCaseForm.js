@@ -205,21 +205,24 @@ function checkDeathThenPlan(aCtx,resultId,reasonId) {
  * Проверить наличие II этапа кардиоскрининга перед выпиской (только при выписке из отделения новорождённых).
  */
 function checkNewBornScreeningSecondExists(aForm,aCtx) {
-    var sql = "select slo.id\n" +
-        "from medcase sls\n" +
-        "left join mislpu lpu on lpu.id=sls.department_id\n" +
-        "left join medcase slo on slo.parent_id=sls.id\n" +
-        "left join medcase allslo on allslo.parent_id=sls.id\n" +
-        "left join mislpu lpuslo on lpuslo.id=slo.department_id\n" +
-        "left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
-        "where lpu.IsCreateCardiacScreening=true  and lpuslo.IsCreateCardiacScreening=true and\n" +
-        "sls.dtype='HospitalMedCase'  and slo.dtype='DepartmentMedCase'  and allslo.dtype='DepartmentMedCase'\n" +
-        "and sls.id='" + aForm.id + "'\n"+
-        "group by slo.id\n" +
-        "having count(distinct allslo.id)=1 and count(distinct scrII.id)=0";
-    var list = aCtx.manager.createNativeQuery(sql).getResultList();
-    if (!list.isEmpty())
-		throw ("<a href='entityParentPrepareCreate-stac_screeningCardiacSecond.do?id=" + list.get(0) + "' target='_blank'>II этап кардиоскрининга</a> в отд. новорождённых должен быть создан до выписки!");
+	try { //fix cache
+		var sql = "select slo.id" +
+			" from medcase sls" +
+			" left join mislpu lpu on lpu.id=sls.department_id" +
+			" left join medcase slo on slo.parent_id=sls.id" +
+			" left join medcase allslo on allslo.parent_id=sls.id" +
+			" left join mislpu lpuslo on lpuslo.id=slo.department_id" +
+			" left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'" +
+			" where sls.id=" + aForm.id + " and sls.dtype='HospitalMedCase' and lpu.IsCreateCardiacScreening='1'  and lpuslo.IsCreateCardiacScreening='1' " +
+			" and slo.dtype='DepartmentMedCase'  and allslo.dtype='DepartmentMedCase'" +
+			" group by slo.id" +
+			" having count(distinct allslo.id)=1 and count(distinct scrII.id)=0";
+		var list = aCtx.manager.createNativeQuery(sql).getResultList();
+		if (!list.isEmpty()) {
+			throw ("<a href='entityParentPrepareCreate-stac_screeningCardiacSecond.do?id=" + list.get(0) + "' target='_blank'>II этап кардиоскрининга</a> в отд. новорождённых должен быть создан до выписки!");
+		}
+	} catch (e) {
+	}
 }
 //првоерка на наличие экспертной карты по критериям. Если нет - выписку запретить
 function checkIfIsQECard(aForm,aCtx) {
