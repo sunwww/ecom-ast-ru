@@ -159,7 +159,7 @@
     </script>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
         String dateEnd = request.getParameter("dateEnd") ;
         //String id = (String)request.getParameter("id") ;
@@ -167,17 +167,17 @@
         request.setAttribute("dateEnd", dateEnd) ;
         request.setAttribute("emerSql", ReportParamUtil.getEmergencySql(typeEmergency, "m")) ;
 		request.setAttribute( "emerInfo",ReportParamUtil.getEmergencyInfo(typeEmergency)) ;
-		if (typeAutopsy!=null && typeAutopsy.equals("1")) {
+		if ("1".equals(typeAutopsy)) {
 			request.setAttribute("autopsySql", " and dc.isAutopsy='1' ") ;
 			request.setAttribute("autopsyInfo", "производилось вскрытие") ;
-		} else if (typeAutopsy!=null && typeAutopsy.equals("2")) {
+		} else if ("2".equals(typeAutopsy)) {
 			request.setAttribute("autopsyInfo", "не производилось вскрытие") ;
 			request.setAttribute("autopsySql", " and (dc.isAutopsy is null or dc.isAutopsy='0') ") ;
 		}
-		if (typeDifference!=null && typeDifference.equals("1")) {
+		if ("1".equals(typeDifference)) {
 			request.setAttribute("differenceSql", " and dc.categoryDifference_id is not null") ;
 			request.setAttribute("differenceInfo", " были расхождения по диагнозу ") ;
-		} else if (typeDifference!=null && typeDifference.equals("2")) {
+		} else if ("2".equals(typeDifference)) {
 			request.setAttribute("differenceInfo", "не было расхождений по диагнозу ") ;
 			request.setAttribute("differenceSql", " and dc.categoryDifference_id is null ") ;
 		}
@@ -185,17 +185,17 @@
     	if (deathReson!=null&&!deathReson.equals("")) {
     		request.setAttribute("deathReasonSql", " and upper(dc.commentReason) like '%"+deathReson.toUpperCase()+"%'") ;
     	}
-		if (typeOperation!=null && typeOperation.equals("1")) {
+		if ("1".equals(typeOperation)) {
 			request.setAttribute("operationSql", " and (so1.id is not null or so2.id is not null) ") ;
 			request.setAttribute("operationInfo", " были произведены хирургические вмешательства ") ;
-		} else if (typeOperation!=null && typeOperation.equals("2")) {
+		} else if ("2".equals(typeOperation)) {
 			request.setAttribute("operationInfo", "не было хирургических вмешательств ") ;
 			request.setAttribute("operationSql", " and (so1.id is null and so2.id is null) ") ;
 		}
-		if (typeCertificate!=null && typeCertificate.equals("1")) {
+		if ("1".equals(typeCertificate)) {
 			request.setAttribute("certificateSql", " and c.id is not null ") ;
 			request.setAttribute("certificateInfo", " были выданы свидетельства о смерти ") ;
-		} else if (typeCertificate!=null && typeCertificate.equals("2")) {
+		} else if ("2".equals(typeCertificate)) {
 			request.setAttribute("certificateInfo", " нет свидетельств о смерти ") ;
 			request.setAttribute("certificateSql", " and c.id is null ") ;
 		}
@@ -299,7 +299,7 @@ then -1 else 0 end)
     </msh:sectionTitle>
     <msh:sectionContent>
     	<input type="button" value="Печать экс. карт по выбранным ИБ" onclick="printExpCard('stac_expcards_death_empty')"> 
-        <msh:table selection="multiply" name="journal_ticket" action="entityView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
+        <msh:table printToExcelButton="Сохранить в excel" selection="multiply" name="journal_ticket" action="entityView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="№ИБ" property="2"/>
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
@@ -331,13 +331,10 @@ then -1 else 0 end)
             function printExpCard(aFile) {
             	var ids = theTableArrow.getInsertedIdsAsParams("id","journal_ticket") ;
             	if(ids) {
-            		//alert(ids) ;
             		window.location = 'print-'+aFile+'.do?multy=1&m=printStatCards&s=HospitalPrintService1&'+ids ;
-            		
             	} else {
             		alert("Нет выделенных случаев");
             	}
-            	
             }
        </script>
    </tiles:put>  
