@@ -55,8 +55,7 @@
                 from medcase sls
                 left join mislpu dep on dep.id=sls.department_id
                 left join patient pat on pat.id=sls.patient_id
-                left join statisticstub st on st.medcase_id=sls.id
-                where sls.dtype='HospitalMedCase' and (st.isidentified=false or st.isidentified is null) and st.id is not null
+                where sls.dtype='HospitalMedCase' and (sls.isidentified=false or sls.isidentified is null) and sls.id is not null
                 and sls.dateStart between to_date('${dateBegin}','dd.mm.yyyy') 
                 and to_date('${dateEnd}','dd.mm.yyyy')
                 ${department}
@@ -81,8 +80,7 @@
                 from medcase sls
                 left join mislpu dep on dep.id=sls.department_id
                 left join patient pat on pat.id=sls.patient_id
-                left join statisticstub st on st.medcase_id=sls.id
-                where sls.dtype='HospitalMedCase' and (st.isidentified=false or st.isidentified is null) and st.id is not null
+                where sls.dtype='HospitalMedCase' and (sls.isidentified=false or sls.isidentified is null) and sls.id is not null
                 and sls.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
                 and to_date('${param.dateEnd}','dd.mm.yyyy') and dep.id=${param.depId}
                 order by sls.dateStart" />

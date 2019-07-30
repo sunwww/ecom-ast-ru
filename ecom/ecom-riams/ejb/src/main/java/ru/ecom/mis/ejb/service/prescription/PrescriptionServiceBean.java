@@ -482,6 +482,18 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				}
 				theManager.persist(fip) ;
 			}
+			//ФИО лабораторного техника
+			List<Object> labExec = theManager.createNativeQuery("select vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename" +
+					" from WorkFunction wf" +
+					" left join SecUser su on wf.secUser_id=su.id" +
+					" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" +
+					" left join Worker as w on w.id=wf.worker_id" +
+					" left join Patient as p on p.id=w.person_id" +
+					" where su.login=:login").setParameter("login",aUsername).getResultList() ;
+			if ( !labExec.isEmpty()) {
+				sb.append("\n");
+				sb.append(String.valueOf(labExec.get(0)));
+			}
 			d.setRecord(sb.toString()) ;
 			theManager.persist(d) ;
 			if (!wf.equals("0")) {

@@ -277,6 +277,11 @@
         	<msh:label property="editTime" label="время"/>
           	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
+        <msh:row>
+            <msh:label property="identDate" label="Дата идент."/>
+            <msh:label property="identTime" label="время"/>
+            <msh:label property="identUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+        </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" functionSubmit="saveIdentityWithAsk();" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
       </msh:panel>
     </msh:form>
@@ -339,6 +344,7 @@
                               HospitalMedCaseService.setIsPatientIdentified(${param.id}, {
                                   callback: function() {
                                       showToastMessage('Отметка об идентификации пациента проставлена',null,true);
+                                      window.location.reload() ;
                                   }
                               });
                           }

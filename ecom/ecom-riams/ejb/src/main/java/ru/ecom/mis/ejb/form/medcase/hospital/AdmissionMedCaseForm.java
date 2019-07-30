@@ -331,8 +331,29 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 
 	/** Была ли проведена идентификация пациента? */
 	@Comment("Была ли проведена идентификация пациента?")
+	@Persist
 	public Boolean getIsIdentified() { return theIsIdentified; }
 	public void setIsIdentified(Boolean aIsIdentified) { theIsIdentified = aIsIdentified; }
+
+	/** Дата идентификации */
+	@Comment("Дата идентификации")
+	@DateString @DoDateString
+	@Persist @MaxDateCurrent
+	public String getIdentDate() {return theIdentDate;	}
+	public void setIdentDate(String aIdentDate) {theIdentDate = aIdentDate;}
+
+	/** Время идентификации */
+	@Comment("Время идентификации")
+	@Persist
+	@DoTimeString @TimeString
+	public String getIdentTime() {return theIdentTime;	}
+	public void setIdentTime(String aIdentTime) {theIdentTime = aIdentTime;}
+
+	/** Кто провёл идентификацию */
+	@Comment("Кто провёл идентификацию")
+	@Persist
+	public String getIdentUsername() {return theIdentUsername;}
+	public void setIdentUsername(String aIdentUsername) {theIdentUsername = aIdentUsername;}
 
 	/** Прикрепленный полис ДМС */
 	private Long theAttachedPolicyDmc;
@@ -432,5 +453,11 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 
 	/** Была ли проведена идентификация пациента */
 	private Boolean theIsIdentified;
+	/** Дата идентификации */
+	private String theIdentDate;
+	/** Время идентификации */
+	private String theIdentTime;
+	/** Кто провёл идентификацию */
+	private String theIdentUsername;
 }
 

@@ -173,12 +173,4 @@ public abstract class StatisticStub extends BaseEntity {
 	/** Визит оформлен диетологом */
 	private Boolean theDietDone;
 
-	/** Была ли проведена идентификация пациента */
-	@Comment("Была ли проведена идентификация пациента")
-	public Boolean getIsIdentified() { return theIsIdentified; }
-
-	public void setIsIdentified(Boolean aIsIdentified) { theIsIdentified = aIsIdentified; }
-
-	/** Была ли проведена идентификация пациента */
-	private Boolean theIsIdentified;
 }

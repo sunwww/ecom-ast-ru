@@ -2650,10 +2650,11 @@ public class HospitalMedCaseServiceJs {
 	 * @param aMedCaseId Medcase.id (СЛС или СЛО)
 	 * @return String 1 - была проведена идентификация, 0 - нет
 	 */
-	public String getIsPatientIdentified(String aMedCaseId, HttpServletRequest aRequest) throws NamingException {
+	public String getIsPatientIdentified(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException, JspException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		if (!RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/PatientIdentify",aRequest)) return "1";
 		Collection<WebQueryResult> l= service.executeNativeSql
-				("select case when isidentified='1' then '1' else '0' end from statisticstub where medcase_id='"+aMedCaseId+"' or medcase_id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;
+				("select case when max(cast(isidentified as int))=1 then '1' else '0' end from medcase where id='"+aMedCaseId+"' or id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;
 		return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
 	}
 
@@ -2661,9 +2662,11 @@ public class HospitalMedCaseServiceJs {
 	 * Проставить, что была проведена идентификация #173
 	 * @param aMedCaseId Medcase.id (СЛС или СЛО)
 	 */
-	public void setIsPatientIdentified(String aMedCaseId, HttpServletRequest aRequest) throws NamingException {
+	public void setIsPatientIdentified(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		service.executeUpdateNativeSql
-				("update statisticstub set isidentified='1' where medcase_id='"+aMedCaseId+"' or medcase_id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;;
+				("update medcase set isidentified='1', identdate=current_date,identtime=current_time,identusername='"
+						+login+"' where id='"+aMedCaseId+"' or id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;
 	}
 }
