@@ -677,4 +677,29 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private Integer theHeight;
 	/** Индекс массы тела */
 	private Double theIMT;
+
+	/** Дата идентификации */
+	@Comment("Дата идентификации")
+	@DateString @DoDateString
+	@MaxDateCurrent
+	public String getIdentDate() {return theIdentDate;	}
+	public void setIdentDate(String aIdentDate) {theIdentDate = aIdentDate;}
+
+	/** Время идентификации */
+	@Comment("Время идентификации")
+	@DoTimeString @TimeString
+	public String getIdentTime() {return theIdentTime;	}
+	public void setIdentTime(String aIdentTime) {theIdentTime = aIdentTime;}
+
+	/** Кто провёл идентификацию */
+	@Comment("Кто провёл идентификацию")
+	public String getIdentUsername() {return theIdentUsername;}
+	public void setIdentUsername(String aIdentUsername) {theIdentUsername = aIdentUsername;}
+
+	/** Дата идентификации */
+	private String theIdentDate;
+	/** Время идентификации */
+	private String theIdentTime;
+	/** Кто провёл идентификацию */
+	private String theIdentUsername;
 }

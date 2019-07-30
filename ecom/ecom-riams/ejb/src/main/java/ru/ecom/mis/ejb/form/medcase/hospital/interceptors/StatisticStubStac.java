@@ -366,7 +366,6 @@ public class StatisticStubStac {
             statcard.setCode(aStatCardNumberByHand);
             statcard.setYear(year);
             statcard.setMedCase(medCase);
-            statcard.setIsIdentified(form.getIsIdentified()!=null && form.getIsIdentified());
             medCase.setStatisticStub(statcard);
             aManager.persist(statcard) ;
             //StringTokenizer st = new StringTokenizer(aForm.getStatCardNumber()," -");
@@ -427,7 +426,6 @@ public class StatisticStubStac {
 	                stubexist.setYear(year);
 	                stubexist.setMedCase(medCase);
 	                stubexist.setPigeonHole(vph) ;
-					stubexist.setIsIdentified(form.getIsIdentified()!=null && form.getIsIdentified());
 	                if (isEmerPlan) {
 	                	stubexist.setIsEmergency(emergency) ;
 	                	stubexist.setIsPlan(!emergency) ;
@@ -467,7 +465,6 @@ public class StatisticStubStac {
 	            		stubnew = new StatisticStubNew();
 	            		stubnew.setYear(year);
 	            		stubnew.setPigeonHole(vph) ;
-						stubnew.setIsIdentified(form.getIsIdentified()!=null && form.getIsIdentified());
 		                if (isEmerPlan) {
 		                	stubnew.setIsEmergency(emergency) ;
 		                	stubnew.setIsPlan(!emergency) ;
@@ -497,7 +494,6 @@ public class StatisticStubStac {
 	                stubexist.setCode(nextStatCardNumber);
 	                stubexist.setYear(year);
 	                stubexist.setMedCase(medCase);
-					stubexist.setIsIdentified(form.getIsIdentified()!=null && form.getIsIdentified());
 	                aManager.persist(stubexist);
 	            	medCase.setStatisticStub(stubexist);
 	            	

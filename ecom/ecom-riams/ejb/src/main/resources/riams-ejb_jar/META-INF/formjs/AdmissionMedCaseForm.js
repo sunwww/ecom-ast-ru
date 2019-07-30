@@ -10,7 +10,11 @@ function onPreCreate(aForm, aCtx) {
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
-
+	if (aForm.getIsIdentified()!=null && aForm.getIsIdentified()==true) {
+        aForm.setIdentDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+        aForm.setIdentTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
+        aForm.setIdentUsername(aForm.username);
+	}
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.checkPolicyCreateHour(aCtx.getSessionContext()
 	        , aForm.getDateStart(), aForm.getEntranceTime());
 	onPreSave(aForm,null,aCtx);

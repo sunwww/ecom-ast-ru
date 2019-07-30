@@ -483,4 +483,33 @@ public class HospitalMedCase extends LongMedCase {
 
 	/** Цвета браслета пациента в госпитализации  */
 	private List<ColorIdentityPatient> theColorsIdentity;
+
+
+	/** Была ли проведена идентификация пациента */
+	@Comment("Была ли проведена идентификация пациента")
+	public Boolean getIsIdentified() { return theIsIdentified; }
+	public void setIsIdentified(Boolean aIsIdentified) { theIsIdentified = aIsIdentified; }
+	/** Была ли проведена идентификация пациента */
+	private Boolean theIsIdentified;
+
+	/** Кто провёл идентификацию */
+	@Comment("Кто провёл идентификацию")
+	public String getIdentUsername() {return theIdentUsername;}
+	public void setIdentUsername(String aIdentUsername) {theIdentUsername = aIdentUsername;}
+	/** Кто провёл идентификацию */
+	private String theIdentUsername;
+
+	/** Дата идентификации */
+	@Comment("Дата идентификации")
+	public Date getIdentDate() {return theIdentDate;	}
+	public void setIdentDate(Date aIdentDate) {theIdentDate = aIdentDate;}
+	/** Дата идентификации */
+	private Date theIdentDate;
+
+	/** Время идентификации */
+	@Comment("Время идентификации")
+	public Time getIdentTime() {return theIdentTime;	}
+	public void setIdentTime(Time aIdentTime) {theIdentTime = aIdentTime;}
+	/** Время идентификации */
+	private Time theIdentTime;
 }
