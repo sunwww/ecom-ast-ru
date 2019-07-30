@@ -1,8 +1,9 @@
 @charset "utf-8";
 @import "../jquery/jquerytoast.css";
+@import "../jquery/jquery-ui.css";
 @media print {
 	div#header ul#mainMenu,div#header ul#user,div#side { display: none; }
-	div#content {margin-left: 0em;}
+	div#content {margin-left: 0;}
 }
 
 #ticketQueueDiv {display: block; /*Блок с информацией об очереди*/
@@ -92,7 +93,7 @@ div.titleTrail a.a_instance_message{
 .instant_message div#shortContentClose {
 		background: white ;
 		border: outset 2px #FFFFFF;
-		right: opx ;
+		right: 0 ;
 		text-align: right;
 		text-decoration: inherit ;
 		font-weight: bold;
@@ -103,13 +104,13 @@ div.titleTrail a.a_instance_message{
 .instant_message div#shortContentClose:hover {
 		background: white ;
 		border: outset 2px silver ;
-		right: opx ;
+		right: 0 ;
 		color: black ;
 		text-align: center;
 		text-decoration: inherit ;
 		font-weight: bold;
 		text-transform: uppercase;
-		text-shadow: aqua;
+		text-shadow: aqua; /**FIX*/
 	}
 /* Шрифты */
 label, input, select, textarea {
@@ -150,22 +151,12 @@ a#viewShort {
     margin-left: 12em ;
     padding-top: 0.4em ;
     min-height: 20em ;
-    /*border-top: 20px solid rgb(195,217,255) ;
-    border-left: 10px solid rgb(195,217,255) ;
-    border-bottom: 20px solid rgb(195,217,255) ;
-    padding-left: 5px ;
-    */
 }
 #shortContent {
     position: relative;
     margin-left: 0.4em ;
     padding-top: 0.4em ;
     min-height: 0.4em ;
-    /*border-top: 20px solid rgb(195,217,255) ;
-    border-left: 10px solid rgb(195,217,255) ;
-    border-bottom: 20px solid rgb(195,217,255) ;
-    padding-left: 5px ;
-    */
 }
 #footer {
     position: relative;
@@ -203,23 +194,21 @@ img {
 #header h1 {
     font-size: 100% ;
     position: absolute;
-    top: 0px ;
+    top: 0 ;
     left: 110px ;
     margin: 0 ;
     color: #666;
-    /*font-weight: normal;*/
-    /*text-decoration:overline;*/
 }
 
 #header img {
     position: absolute;
-    top: 0px ;
-    left: 0px ;
+    top: 0;
+    left: 0 ;
 }
 
 #header ul#user {
     position: absolute;
-    top: 0px ;
+    top: 0 ;
     right: 5px ;
     list-style: none ;
     margin: 0 ;
@@ -229,7 +218,7 @@ img {
     float: left;
     display: block;
     margin-left: 7px ;
-    margin-top: 0px ;
+    margin-top: 0 ;
 }
 
 #header ul#user li.separator {
@@ -262,16 +251,16 @@ img {
     margin-right: 2px ;
     background-color: #eee ;
     text-decoration: none ;
-    -moz-border-radius-topleft: 7px ;
-    -moz-border-radius-topright: 7px ;
+    border-top-left-radius: 7px ;
+    border-top-right-radius: 7px ;
 }
 
 #header ul#mainMenu li a.selected  {
 
     /*border-bottom: 1px solid white ;*/
-    border-top-color:1px solid #999;
-    border-left-color:1px solid #999;
-	border-right-color:1px solid #999;
+    border-top-color: #999;
+    border-left-color: #999;
+	border-right-color: #999;
     background-color: white ;
     color: black ;
     font-weight: bold;
@@ -287,10 +276,9 @@ ul li a#selected {
     background-repeat: no-repeat;
     background-position: center left; ;
 	font-weight: bold ;
-    -moz-border-radius-topleft: 4px ;
-    -moz-border-radius-bottomleft: 4px ;
+    border-top-left-radius: 4px ;
+    border-bottom-left-radius: 4px ;
 }
-
 
 /*
  *  DIALOG
@@ -379,21 +367,17 @@ ul li a#selected {
     display: block; ;
     width: 95% ;
     padding: 1px 1px 0 10px ;
-    padding-left: 10px ;
-    /*border: 1px solid #fff ;*/
 }
 
 #side ul li a:hover {
     background-color: #eee ;
     text-decoration: underline;
     color: blue;
-    /*border: 1px solid #ddd ;*/
 }
 #side ul li a#viewShort{
     display: block; ;
     width: 95% ;
-    padding: 1px 1px 0 10px ;
-    padding-left: 20px ;
+    padding: 1px 1px 0 20px;
     /*border: 1px solid #fff ;*/
 }
 
@@ -408,8 +392,8 @@ ul li a#selected {
     background-repeat: no-repeat;
     background-position: center left; ;
 	font-weight: bold ;
-    -moz-border-radius-topleft: 4px ;
-    -moz-border-radius-bottomleft: 4px ;
+    border-top-left-radius: 4px ;
+    border-bottom-left-radius: 4px ;
 }
 a#selected_menu, #side ul li a#selected_menu, #side ul li a#selected_menu  {
     color: black ;
@@ -421,8 +405,8 @@ a#selected_menu, #side ul li a#selected_menu, #side ul li a#selected_menu  {
     background-repeat: no-repeat;
     background-position: center left; ;
 	font-weight: bold ;
-    -moz-border-radius-topleft: 4px ;
-    -moz-border-radius-bottomleft: 4px ;
+    border-top-left-radius: 4px ;
+    border-bottom-left-radius: 4px ;
 }
 
 #side div.subMenu {
@@ -483,14 +467,13 @@ a#selected_menu, #side ul li a#selected_menu, #side ul li a#selected_menu  {
     border: 1px solid #999 ;
     padding: 1px ;
     
-    -moz-opacity: 0.5  ;
-    //visibility: hidden;
+    opacity: 0.5  ;
     visibility: visible;
 }
 
 #side ul li a:hover .accessKey {
     color: black ;
-    -moz-opacity: 1  ;
+    opacity: 1  ;
     visibility: visible;
 }
 
@@ -512,15 +495,10 @@ input.autocomplete {
 
 input.searching {
     background: #ccc ;
-    /*background: url('/skin/images/ajaxtags/throbber.gif') no-repeat 100% 2px;*/
-    /*background-position: 100% -18px;*/
 }
 
 input.vocEditabled {
     border-right: 2px solid blue ;
-    /*background: #ccc ;*/
-    /*background: url('/skin/images/ajaxtags/throbber.gif') no-repeat 100% 2px;*/
-    /*background-position: 100% -18px;*/
 }
 
 div.autocomplete {
@@ -533,7 +511,6 @@ div.autocomplete div {
 div.autocomplete ul {
     background-color: white ;
     position: absolute ;
-    /*width: 30em ;*/
     padding: 0 ;
     margin: 0 ;
     border: 1px solid gray ;
@@ -543,7 +520,6 @@ div.autocomplete ul li {
     list-style: none ;
     padding-left: 3px ;
 }
-
 
 div.autocomplete ul li:hover {
 }
@@ -555,9 +531,6 @@ div.autocomplete ul li.selected {
 }
 
 div.autocomplete ul li span.id {
-   /* visibility: hidden ;
-    display: none ;
-    */
     color: #ccc ;
     padding-right: 1em ;
 }
@@ -571,9 +544,6 @@ div.autocomplete table {
     z-index: 100 ;
     background-color: white ;
     position: absolute ;
-    /*left: 10em ;*/
-    /*top: 10em ;*/
-    /*width: 30em ;*/
     padding: 0 ;
     margin: 0 ;
     border-bottom: 1px solid #333 ;
@@ -618,9 +588,7 @@ div.autocomplete table tr {
 
 div.autocomplete table tr:hover td {
     color: black ;
-    /*background-color: blue ;*/
-	background-color: rgb(159,159,80);    
-	/*text-decoration: underline;*/
+	background-color: rgb(159,159,80);
 }
 /* END AUTOCOMPLETE */
 
@@ -671,15 +639,14 @@ div.autocomplete table tr:hover td {
     border-top: 1px solid gray ;
     padding: 4px 4px 4px 10px;
     margin: 0 0 5px 0 ;
-    -moz-border-radius-topleft: 7px ;
+    border-top-left-radius: 7px ;
 }
 
 #content table.mainMenu div.menu {
     margin-bottom: 20px ;
     margin-top: 20px ;
     background: #fdfdfd ;
-    -moz-border-radius-bottomright: 7px ;
-    /*background: url("images/gradient_lightgray_10x30.gif") repeat-x top*/
+    border-bottom-right-radius: 7px ;
 }
 
 #content table.mainMenu td {
@@ -698,9 +665,8 @@ div.autocomplete table tr:hover td {
 
 #content table.mainMenu ul {
     padding: 0 10px 10px 0 ;
-    margin:  0px 0px 0px 15px ;
+    margin:  0 0 0 15px ;
 }
-
 
 /*
  * CURRENT
@@ -753,12 +719,9 @@ div.errorMessage, div.formInfoMessage,div.userMessage {
     background-color: #ce4542 ;
     color: white ;
     font-weight: bold;
-    padding-left: 5em ;
-    padding-right: 5em ;
     margin-top: 0.3em;
-    padding-top: 0.3em ;
-    padding-bottom: 0.3em ;
-    -moz-border-radius: 5px ;
+    padding: 0.3em 5em;
+    border-radius: 5px ;
     position: relative ;
 }
 
@@ -769,15 +732,13 @@ div.claimMessage {
     font-weight: bold;
     min-width: 400px;
     margin-top: 0.3em;
-    padding-top: 0.3em ;
-    padding-bottom: 0.3em ;
-    -moz-border-radius: 5px ;
+    border-radius: 5px ;
     position: relative ;
     padding:0.3em 1em;
 }
 
 div.formInfoMessage {
-	    color: black ;
+	color: black ;
 	background-color: rgb(255,209,99) ;
 	padding:0.3em 1em;
 }
@@ -815,7 +776,7 @@ form {
 
 #mainFormFieldset {
 	border: 1px solid #ddd ;
-    -moz-border-radius: 1em ;
+    border-radius: 1em ;
 }
 
 #mainFormFieldset legend {
@@ -889,7 +850,7 @@ td.field {
 td.commentBox {
 	color: gray ;
 	font-size: 80% ;
-	padding-top: 0px ;
+	padding-top: 0 ;
 }
 td.buttons {
     text-align: right ;
@@ -931,8 +892,6 @@ table.tabview td{
 table.tabview tr:hover td {
     padding: 1px ;
     background-color: rgb(159,159,80);
-    /*background-color: #e0ecff;*/
-   /*border-bottom: 3px solid black ;*/
 
 }
 
@@ -976,7 +935,7 @@ td.errorField div.errorField {
     background-color: #ddd ;
     border: 1px solid red ;
     padding: 2px 2px 0 2px ;
-    margin-top: 0px ;
+   /* margin-top: 0px ; */
 }
 
 td.errorLabel label {
@@ -1073,7 +1032,6 @@ div.autocompleteSelect input {
     margin: 0 ;
 }
 
-
 /*
  * LinkButton
  */
@@ -1086,8 +1044,8 @@ div.linkButtons {
 
 div.linkButtons button {
 	font-size: 85% ;
-	margin: 2px 10px 2px 0px ;
-	padding: 0px 0.6em ;
+	margin: 2px 10px 2px 0 ;
+	padding: 0 0.6em ;
 }
 
 table.tabview ul.linkButtons {
@@ -1147,11 +1105,11 @@ table.tabview th.linkButtons div.linkButtons {
 
 #fadeEffect {
     position: absolute ;
-    left: 0px ;
-    top: 0px ;
+    left: 0 ;
+    top: 0 ;
     bottom: 0 ;
     right: 0 ;
-    /*-moz-opacity:0.87  ;*/
+    /*opacity:0.87  ;*/
     /*color: #ccc ;*/
     background-image: url('/skin/images/main/fade_gray.gif') ;
     z-index: 0 ;
@@ -1246,12 +1204,7 @@ fieldset {
     border-left: 1px solid gray ;
     border-bottom: 1px solid gray ;
     border-right: 1px solid gray ;
-
-    padding-top: 0.5em ;
-    padding-left: 4em ;
-    padding-right: 3em ;
-    padding-bottom: 1em ;
-
+    padding: 0.5em 3em 1em 4em;
     text-align: left ;
     border-top: 1px solid #ddd ;
 }
@@ -1290,12 +1243,11 @@ fieldset {
     display: block ;
     background-color: #ddd ;
     padding: 5px ;
-    margin-right: 2px ;
     border: 1px solid gray ;
     text-decoration: none ;
     margin: 0 4px -2px 0 ;
-    -moz-border-radius-topleft: 7px ;
-    -moz-border-radius-topright: 7px ;
+    border-top-left-radius: 7px ;
+    border-top-right-radius: 7px ;
 }
 
 #tabbedPaneHeader ul li a.selected, #tabbedPaneHeader ul li a:hover.selected {
@@ -1326,9 +1278,8 @@ fieldset {
 .tabPane {
     margin-top: 1.2em ;
     padding-left: 1em ;
-    top: 0px ;
-    left: 0px ;
-   /* position: absolute ; */
+    top: 0 ;
+    left: 0 ;
     visibility: hidden ;
     display: none ;
 
@@ -1425,8 +1376,8 @@ div.idetag_disabled {
 	font-size: 9px ;
 	cursor: pointer;
 	background-color: white ;
-	-moz-border-radius-topleft: 4px ;
-	-moz-border-radius-topright: 4px ;
+	border-top-left-radius: 4px ;
+	border-top-right-radius: 4px ;
 }
 
 div.idetag {
@@ -1471,8 +1422,6 @@ div.idetag {
 	font-size: 60% ;
 	padding-top: 0 ;
 }	
-
-
 
 #ideModeMainMenu li {
 	margin: 1em ;
@@ -1583,7 +1532,6 @@ span.tagError {
 
 .x-box-tl {
 	background: transparent url(/skin/images/ext/box/corners.gif) no-repeat 0 0;
-    zoom:1;
 }
 
 .x-box-tc {
@@ -1600,7 +1548,6 @@ span.tagError {
 	background: transparent url(/skin/images/ext/box/l.gif) repeat-y 0;
 	padding-left: 4px;
 	overflow: hidden;
-    zoom:1;
 }
 
 .x-box-mc {
@@ -1615,10 +1562,9 @@ span.tagError {
 	font-family: "Myriad Pro","Myriad Web","Tahoma","Helvetica","Arial",sans-serif;
 	font-size: 14px;
 	font-weight: bold;
-	margin: 0 0 4 0;
+	margin: 0 0 4px 0;
 	padding-left: 2em ;
 	padding-bottom: 0.1em ;
-    zoom:1;
 }
 
 .x-box-mr {
@@ -1629,7 +1575,6 @@ span.tagError {
 
 .x-box-bl {
 	background: transparent url(/skin/images/ext/box/corners.gif) no-repeat 0 -16px;
-    zoom:1;
 }
 
 .x-box-bc {
@@ -1690,10 +1635,10 @@ a#selectedLink, #side ul li a#selectedLink, #side ul li a#selectedLink:hover  {
     background-repeat: no-repeat;
     background-position: center left; ;
 	font-weight: bold ;
-    -moz-border-radius-topleft: 4px ;
-    -moz-border-radius-bottomleft: 4px ;
+    border-top-left-radius: 4px ;
+    border-bottom-left-radius: 4px ;
 }
-ul il a#selected {
+ul li a#selected {
     color: black ;
     background-color: rgb(195,217,255) ;
     cursor: text ;
@@ -1703,8 +1648,8 @@ ul il a#selected {
     background-repeat: no-repeat;
     background-position: center left; ;
 	font-weight: bold ;
-    -moz-border-radius-topleft: 4px ;
-    -moz-border-radius-bottomleft: 4px ;
+    border-top-left-radius: 4px ;
+    border-bottom-left-radius: 4px ;
 }
 /*стрелки сортировки таблиц*/
 .arrow {
@@ -1730,7 +1675,6 @@ table.sel tr:hover th.thSorted,table.tabview th.thSorted {
     width: 15px;
     height: 15px;
     -webkit-border-radius: 25px;
-    -moz-border-radius: 25px;
     border-radius: 25px;
     background: #800000;
 }

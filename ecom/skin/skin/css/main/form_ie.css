@@ -9,7 +9,6 @@ table.sel td {
 #fadeEffect {
     width: 100% ;
     height: 100% ;
-    background-image: none ;
-    background: #ccc 100% ;
+    background: #ccc none 100% 100%;
     filter:alpha(opacity=87);
 }

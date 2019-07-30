@@ -160,7 +160,6 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
     left:0;
     top:0;
     background:#777;
-    zoom:1;
 }
 
 .x-shadow {
@@ -478,7 +477,6 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
 
 .x-form-field-wrap {
     position:relative;
-    zoom:1;
     white-space: nowrap;
 }
 
@@ -602,7 +600,6 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;
-    zoom:1;
 }
 .x-form-grow-sizer p {
     margin:0 !important;
@@ -752,7 +749,6 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
     margin:0;
     width:48%;
     overflow:hidden;
-    zoom:1;
 }
 
 
@@ -950,7 +946,6 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
 	padding:2px;
     background:#d0def0 url(../images/default/layout/panel-title-light-bg.gif) repeat-x;
     position:relative;
-    zoom:1;
 }
 .x-toolbar .x-item-disabled .x-btn-icon {
     opacity: .35;
@@ -1121,7 +1116,6 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,bloc
 	 background:white;
 	 filter:alpha(opacity=0);
 	 opacity:0;
-	 zoom:1;
 }
 .x-resizable-handle-east{
     width:6px;
@@ -2322,12 +2316,10 @@ input.x-tree-node-cb {
 .x-tip .x-tip-top-left {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat 0 0;
 	padding-left:6px;
-    zoom:1;
 }
 .x-tip .x-tip-top-right {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat right 0;
 	padding-right:6px;
-    zoom:1;
 }
 .x-tip .x-tip-ft {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat 0 -18px;
@@ -2337,12 +2329,10 @@ input.x-tree-node-cb {
 .x-tip .x-tip-ft-left {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat 0 -6px;
 	padding-left:6px;
-    zoom:1;
 }
 .x-tip .x-tip-ft-right {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat right -6px;
 	padding-right:6px;
-    zoom:1;
 }
 .x-tip .x-tip-bd {
     border:0 none;
@@ -2351,12 +2341,10 @@ input.x-tree-node-cb {
 .x-tip .x-tip-bd-left {
 	background: #fff url(../images/default/qtip/tip-sprite.gif) no-repeat 0 -24px;
 	padding-left:6px;
-    zoom:1;
 }
 .x-tip .x-tip-bd-right {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat right -24px;
 	padding-right:6px;
-    zoom:1;
 }
 
 .x-tip h3 {
@@ -2508,7 +2496,6 @@ table.x-date-inner {
 	text-decoration:none;
     color:black;
     text-align:right;
-    zoom:1;
 }
 .x-date-inner .x-date-active{
 	cursor:pointer;
@@ -2653,7 +2640,6 @@ td.x-date-mp-sep {
 	background: #fff url(../images/default/menu/menu.gif) repeat-y;
 }
 .ext-ie .x-menu {
-    zoom:1;
     overflow:hidden;
 }
 .x-menu-list{
@@ -2763,7 +2749,6 @@ td.x-date-mp-sep {
 
 .x-box-tl {
 	background: transparent url(../images/default/box/corners.gif) no-repeat 0 0;
-    zoom:1;
 }
 
 .x-box-tc {
@@ -2780,7 +2765,6 @@ td.x-date-mp-sep {
 	background: transparent url(../images/default/box/l.gif) repeat-y 0;
 	padding-left: 4px;
 	overflow: hidden;
-    zoom:1;
 }
 
 .x-box-mc {
@@ -2794,8 +2778,7 @@ td.x-date-mp-sep {
 .x-box-mc h3 {
 	font-size: 14px;
 	font-weight: bold;
-	margin: 0 0 4 0;
-    zoom:1;
+	margin: 0 0 4px 0;
 }
 
 .x-box-mr {
@@ -2806,7 +2789,6 @@ td.x-date-mp-sep {
 
 .x-box-bl {
 	background: transparent url(../images/default/box/corners.gif) no-repeat 0 -16px;
-    zoom:1;
 }
 
 .x-box-bc {
@@ -2902,14 +2884,12 @@ td.x-date-mp-sep {
 .x-combo-list {
     border:1px solid #98c0f4;
     background:#ddecfe;
-    zoom:1;
     overflow:hidden;
 }
 .x-combo-list-inner {
     overflow:auto;
     background:white;
     position:relative; 
-    zoom:1;
     overflow-x:hidden;
 }
 .x-combo-list-hd {
