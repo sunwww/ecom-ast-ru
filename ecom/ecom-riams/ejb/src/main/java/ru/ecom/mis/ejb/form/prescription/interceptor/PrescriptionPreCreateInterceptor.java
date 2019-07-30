@@ -16,9 +16,12 @@ public class PrescriptionPreCreateInterceptor implements IParentFormInterceptor 
         //Проставим поток обслуживания родительского случая
         EntityManager manager = aContext.getEntityManager();
         PrescriptList pl = manager.find(PrescriptList.class,aParentId);
-        PrescriptionForm form = (PrescriptionForm) aForm;
         if (pl==null || pl.getMedCase() == null ) return;
+        PrescriptionForm form = (PrescriptionForm) aForm;
         form.setServiceStream(pl.getServiceStream().getId());
         form.setMedcaseType(pl.getMedCase() instanceof HospitalMedCase ? "HOSPITAL" : "POLYCLINIC");
+        form.setMedcaseId(pl.getMedCase().getId());
+        form.setAllowOnlyPaid(pl.getServiceStream().getIsPaidConfirmation()!=null && pl.getServiceStream().getIsPaidConfirmation());
+        form.setPatient(pl.getMedCase().getPatient().getId());
     }
 }

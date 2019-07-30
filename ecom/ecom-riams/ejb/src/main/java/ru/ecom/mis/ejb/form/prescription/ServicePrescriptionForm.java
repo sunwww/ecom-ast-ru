@@ -29,6 +29,13 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 )
 public class ServicePrescriptionForm extends PrescriptionForm{
 
+	/** Подтверждено назначение услуги без оплаты */
+	@Comment("Подтверждено назначение услуги без оплаты")
+	public Boolean getUnpaidConfirmation() {return theUnpaidConfirmation;}
+	public void setUnpaidConfirmation(Boolean aUnpaidConfirmation) {theUnpaidConfirmation = aUnpaidConfirmation;}
+	/** Подтверждено назначение услуги без оплаты */
+	private Boolean theUnpaidConfirmation ;
+
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist

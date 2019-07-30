@@ -2,9 +2,12 @@ package ru.ecom.mis.web.dwr.prescription;
 
 import org.apache.log4j.Logger;
 import org.jdom.IllegalDataException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
@@ -19,6 +22,7 @@ import javax.servlet.jsp.JspException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 /**
  * Сервис назначений
@@ -26,7 +30,39 @@ import java.util.List;
  */
 public class PrescriptionServiceJs {
 	private static final Logger LOG = Logger.getLogger(PrescriptionServiceJs.class);
-	
+
+	private boolean allowByPrescriptionType(Long aMedServiceId, Long aPresctiptionType, IWebQueryService aService) {
+		return aService.executeNativeSql("select wfs.id from workfunctionservice wfs where wfs.medservice_id = "+aMedServiceId
+				+" and wfs.prescripttype_id = "+aPresctiptionType).isEmpty(); //Если не нашли запрещающего правила - то разрешено
+	}
+	public String getAllowedLabServiciesByPatient(Long aPatientId, Long aPrescriptionType, HttpServletRequest aRequest) throws NamingException {
+		JSONArray ret = new JSONArray();
+		IContractService contractService = Injection.find(aRequest).getService(IContractService.class);
+		List<Object[]> serviceList = contractService.getPaidMedServicesByPatient(aPatientId, null,null, null, null, "LABSURVEY");
+
+		if (!serviceList.isEmpty()) {
+			IWebQueryService webQueryService = Injection.find(aRequest).getService(IWebQueryService.class);
+			for (Object[] row : serviceList){
+				JSONObject el = new JSONObject();
+				Long medServiceId = Long.valueOf(row[2].toString());
+				el.put("serviceName", row[0]+" "+row[3]);
+				el.put("serviceId",medServiceId);
+				el.put("caosId", row[1]);
+				el.put("isAllow", allowByPrescriptionType(medServiceId,aPrescriptionType, webQueryService));
+				ret.put(el);
+			}
+		}
+		return ret.toString();
+	}
+
+	/**
+	 * Прием пробирки в лабораторию по номеру штрих-кода
+	 * @param aBarcodeNumber Штрих-код пробирки
+	 * @param aRequest -
+	 * @return Текстовая информация о результате приема
+	 * @throws NamingException
+	 * @throws JspException
+	 */
 	public String checkTransferServiceBarcode(String aBarcodeNumber, HttpServletRequest aRequest) throws NamingException, JspException {
 		if (aBarcodeNumber!=null&&!aBarcodeNumber.equals("")) {
 			IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -55,103 +91,93 @@ public class PrescriptionServiceJs {
 				
 				checkTransferService(prescriptionList, aRequest);
 				setDefaultDiary(pres, services, aRequest);
-				if(checkTransferService(prescriptionList, aRequest).equals("1")){
-					
-					StringBuilder sql2 = new StringBuilder();
-					sql2.append("select coalesce(vsst.name,'---') as f5vsstname" + " ,coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed" + " ,pat.lastname ||' '|| pat.firstname ||' '|| pat.middlename as fio" + " ,to_char(pat.birthday,'dd.mm.yyyy') ||' г.р.' as f9birthday" + " ,list(case when vst.code='LABSURVEY' " + " then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||coalesce(vpt.shortname,'') else null end) as f10medServicies" + " from prescription p" + " left join medservice ms on ms.id=p.medservice_id" + " left join medservice msGr on msGr.id=ms.parent_id" + " left join workfunctionservice wfs on wfs.medservice_id=msGr.id" + " left join workfunction gwf on gwf.id=wfs.workfunction_id" + " left join PrescriptionList pl on pl.id=p.prescriptionList_id" + " left join MedCase slo on slo.id=pl.medCase_id" + " left join MedCase sls on sls.id=slo.parent_id" + " left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id" + " left join StatisticStub ssSls on ssSls.id=sls.statisticstub_id" + " left join StatisticStub ssSlo on ssSlo.id=slo.statisticstub_id" + " left join Patient pat on pat.id=slo.patient_id" + " left join VocServiceType vst on vst.id=ms.serviceType_id" + " left join VocPrescriptType vpt on vpt.id=p.prescriptType_id" + " where p.barcodeNumber='").append(aBarcodeNumber.trim()).append("' and gwf.isDefaultLabCabinet='1'").append(" group by gwf.id, msGr.id, p.transferDate,ssSls.code,ssslo.code,pl.medCase_id,vsst.name,").append(" pat.lastname,pat.firstname,pat.middlename,pat.birthday");
-					Collection<WebQueryResult > list2 = wqs.executeNativeSql(sql2.toString());
-					WebQueryResult re = list2.iterator().next();
-					String ret = "Передано!\n"+re.get1().toString()+"\n"+
-					"№ ИБ: "+re.get2().toString()+
-					"\n"+re.get3().toString()+" "+re.get4().toString()+"\n"+re.get5().toString();
-					return ret;
-				}
-				
-				return "1";
+				Collection<WebQueryResult > list2 = wqs.executeNativeSql("select coalesce(vsst.name,'---') as f5vsstname" + " ,coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed" + " ,pat.lastname ||' '|| pat.firstname ||' '|| pat.middlename as fio" + " ,to_char(pat.birthday,'dd.mm.yyyy') ||' г.р.' as f9birthday" + " ,list(case when vst.code='LABSURVEY' " + " then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||coalesce(vpt.shortname,'') else null end) as f10medServicies" + " from prescription p" + " left join medservice ms on ms.id=p.medservice_id" + " left join medservice msGr on msGr.id=ms.parent_id" + " left join workfunctionservice wfs on wfs.medservice_id=msGr.id" + " left join workfunction gwf on gwf.id=wfs.workfunction_id" + " left join PrescriptionList pl on pl.id=p.prescriptionList_id" + " left join MedCase slo on slo.id=pl.medCase_id" + " left join MedCase sls on sls.id=slo.parent_id" + " left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id" + " left join StatisticStub ssSls on ssSls.id=sls.statisticstub_id" + " left join StatisticStub ssSlo on ssSlo.id=slo.statisticstub_id" + " left join Patient pat on pat.id=slo.patient_id" + " left join VocServiceType vst on vst.id=ms.serviceType_id" + " left join VocPrescriptType vpt on vpt.id=p.prescriptType_id" + " where p.barcodeNumber='" + aBarcodeNumber.trim() + "' and gwf.isDefaultLabCabinet='1'" + " group by gwf.id, msGr.id, p.transferDate,ssSls.code,ssslo.code,pl.medCase_id,vsst.name," + " pat.lastname,pat.firstname,pat.middlename,pat.birthday");
+				WebQueryResult re = list2.iterator().next();
+				return "Передано!\n"+re.get1().toString()+"\n"+"№ ИБ: "+re.get2().toString()+"\n"+re.get3().toString()+" "+re.get4().toString()+"\n"+re.get5().toString();
 			}
 		}
-		
 		return null;
 	}
 
+	/**
+	 * Копирование назначения с новой услугой (для лаборатории)
+	 * @param aPrescriptionId ИД назначения
+	 * @param aMedServiceId ИД новой мед. услуги
+	 * @param aRequest -
+	 * @return
+	 * @throws NamingException
+	 */
 	public Long duplicatePrescription(Long aPrescriptionId, Long aMedServiceId, HttpServletRequest aRequest) throws NamingException {
 		if (aPrescriptionId!=null&&aPrescriptionId>0) {
 			IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
 			IPrescriptionService psb = Injection.find(aRequest).getService(IPrescriptionService.class);
 			String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
-			
-			/*			String wf = wqs.executeNativeSql("select vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename " +
-								"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
-								"left join vocworkfunction vwf on vwf.id=wf.workfunction_id left join worker w on w.id=wf.worker_id " +
-								"left join patient wpat on wpat.id=w.person_id where su.login='"+login+"'").iterator().next().get1().toString();
-			*/			String workFunction = wqs.executeNativeSql("select wf.id " +
-								"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
-								"where su.login='"+login+"'").iterator().next().get1().toString();
+			String workFunction = wqs.executeNativeSql("select wf.id " +
+					"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
+					"where su.login='"+login+"'").iterator().next().get1().toString();
 			return psb.clonePrescription(aPrescriptionId, aMedServiceId, Long.parseLong(workFunction), login) ;
 		}
 		return null;
 	}
-	// 	public String createNewDirectionFromPrescription(Long aPrescriptionListId, 
-//Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, 
-//String aUsername, Long aOrderWorkFunction) {
 
-	public void createAnnulMessageByPrescription (String aPrescriptionID, HttpServletRequest aRequest) throws NamingException {
+
+	private void createAnnulMessageByPrescription (Long aPrescriptionID, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		try {
-			String id = service.executeNativeSql("select max(id) from AdminChangeJournal where prescription="+aPrescriptionID).iterator().next().get1().toString();
+			Long id = Long.valueOf(service.executeNativeSql("select max(id) from AdminChangeJournal where prescription="+aPrescriptionID).iterator().next().get1().toString());
 			createAnnulMessage(id, aRequest);
 		} catch (Exception e) {
 			LOG.error("Ex=",e);
 		}
 	}
 
-public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest aRequest) throws NamingException {
-	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-	StringBuilder sql ;
-	List<Object[]> list = service.executeNativeSqlGetObj("select mc.id" +
-			" ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio" +
-			" ,ms.name" +
-			" ,vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as cancelPerson" +
-			" ,to_char(apj.createDate,'dd.mm.yyyy') || ' '|| to_char(apj.createTime,'HH24:MI')  as dtime" +
-			", p.createusername as prescreateuser" +
-			" ,apj.annulReason" +
-			" ,apj.createusername as cancelUser" +
-			" from AdminChangeJournal apj" +
-			
-			" left join prescription p on p.id=apj.prescription" +
-			" left join medservice ms on ms.id=p.medservice_id left join prescriptionlist pl on pl.id=p.prescriptionlist_id " +
-			" left join medcase mc on mc.id=pl.medcase_id left join patient pat on pat.id=mc.patient_id " +
-			" left join workfunction wf on wf.id=apj.annulWorkFunction" +
-			" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
-			" left join worker w on w.id=wf.worker_id" +
-			" left join patient wpat on wpat.id=w.person_id" +
-			" where apj.id="+aAnnulJournalRecordId+"") ;
-	if (!list.isEmpty()) {
-		Object[] obj = list.get(0) ;
-		String username=""+obj[5] ;
-		
-		sql = new StringBuilder() ;
+	private void createAnnulMessage (Long aAnnulJournalRecordId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql ;
+		List<Object[]> list = service.executeNativeSqlGetObj("select mc.id" +
+				" ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio" +
+				" ,ms.name" +
+				" ,vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as cancelPerson" +
+				" ,to_char(apj.createDate,'dd.mm.yyyy') || ' '|| to_char(apj.createTime,'HH24:MI')  as dtime" +
+				", p.createusername as prescreateuser" +
+				" ,apj.annulReason" +
+				" ,apj.createusername as cancelUser" +
+				" from AdminChangeJournal apj" +
 
-		sql.append("insert into CustomMessage (messageTitle,messageText,recipient")
-				.append(",dispatchDate,dispatchTime,username,messageUrl)")
-				.append("values ('").append("Аннулирование результатов исследование").append("','")
-				.append("Результаты исследования ''").append(obj[2]).append("'' пациента ''").append(obj[1]).append("'' были аннулированы сотрудником ")
-				.append(obj[3]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("','")
-				.append(username)
-				.append("',current_date,current_time,'").append(obj[7]).append("','").append("entityParentView-stac_slo.do?id=").append(obj[0]).append("')") ;
-		service.executeUpdateNativeSql(sql.toString()) ;
+				" left join prescription p on p.id=apj.prescription" +
+				" left join medservice ms on ms.id=p.medservice_id left join prescriptionlist pl on pl.id=p.prescriptionlist_id " +
+				" left join medcase mc on mc.id=pl.medcase_id left join patient pat on pat.id=mc.patient_id " +
+				" left join workfunction wf on wf.id=apj.annulWorkFunction" +
+				" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+				" left join worker w on w.id=wf.worker_id" +
+				" left join patient wpat on wpat.id=w.person_id" +
+				" where apj.id="+aAnnulJournalRecordId+"") ;
+		if (!list.isEmpty()) {
+			Object[] obj = list.get(0) ;
+			String username=""+obj[5] ;
+
+			sql = new StringBuilder() ;
+
+			sql.append("insert into CustomMessage (messageTitle,messageText,recipient")
+					.append(",dispatchDate,dispatchTime,username,messageUrl)")
+					.append("values ('").append("Аннулирование результатов исследование").append("','")
+					.append("Результаты исследования ''").append(obj[2]).append("'' пациента ''").append(obj[1]).append("'' были аннулированы сотрудником ")
+					.append(obj[3]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("','")
+					.append(username)
+					.append("',current_date,current_time,'").append(obj[7]).append("','").append("entityParentView-stac_slo.do?id=").append(obj[0]).append("')") ;
+			service.executeUpdateNativeSql(sql.toString()) ;
+		}
 	}
-}
 
     /**
      * Аннулируем результат выполнения назначения (отмена выполнения)
      * @param aPrescriptionId -ID назначения
      * @param aReason - причина аннулирования
-     * @param aRequest
+     * @param aRequest -
      * @return
      * @throws NamingException
      */
-	public String annulPrescription (String aPrescriptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
+	public String annulPrescription (Long aPrescriptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class);
 		String medCaseID = null;
 		try {
@@ -164,16 +190,10 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		}
 		if (medCaseID!=null) {
 			String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
-			
-/*			String wf = wqs.executeNativeSql("select vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename " +
-					"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
-					"left join vocworkfunction vwf on vwf.id=wf.workfunction_id left join worker w on w.id=wf.worker_id " +
-					"left join patient wpat on wpat.id=w.person_id where su.login='"+login+"'").iterator().next().get1().toString();
-*/			String cancelWf = wqs.executeNativeSql("select wf.id " +
-					"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
-					"where su.login='"+login+"'").iterator().next().get1().toString();
-			
-			if (aReason==null) {aReason="";} 
+			String cancelWf = wqs.executeNativeSql("select wf.id " +
+				"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
+				"where su.login='"+login+"'").iterator().next().get1().toString();
+			if (aReason==null) {aReason="";}
 			
 			//Аннулируем медкейс
 			wqs.executeUpdateNativeSql("update medcase set datestart = null , editdate = current_date, edittime = current_time, editusername='"+login+"' where id="+medCaseID);
@@ -203,7 +223,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
      * @param aRequest
      * @throws NamingException
      */
-	public void insertRecordAnnulJournal (String aPrescription, String aMedCase, String aDate, String aTime, String aUsername, String aCancelWf,  String aReason, HttpServletRequest aRequest) throws NamingException {
+	private void insertRecordAnnulJournal(Long aPrescription, String aMedCase, String aDate, String aTime, String aUsername, String aCancelWf, String aReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		if (aDate==null || aDate.equals("")) {
 			aDate="current_date";
@@ -234,17 +254,17 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
      * @param aRequest
      * @throws NamingException
      */
-    public String annulEmptyPrescription(String aMedService,String aWorkCalendarTime, String aPrescriptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
+	private String annulEmptyPrescription(Long aMedService, Long aWorkCalendarTime, Long aPrescriptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String medcaseId = null;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
-		Boolean isAnnulPermitted = false;
-		if (aWorkCalendarTime != null && Long.valueOf(aWorkCalendarTime) > 0L) { //Аннулиируем назначение по времени, на которое назначено.
+		boolean isAnnulPermitted = false;
+		if (aWorkCalendarTime != null && aWorkCalendarTime > 0L) { //Аннулиируем назначение по времени, на которое назначено.
 			WebQueryResult wqr = service.executeNativeSql("select wct.medcase_id as id, vis.dateStart  as datestart from workcalendartime wct left join medcase vis on vis.id = wct.medcase_id " +
 					"where wct.id = " + aWorkCalendarTime).iterator().next();
 			medcaseId = wqr.get1().toString();
 			isAnnulPermitted = wqr.get2() == null || wqr.get2().toString().equals("");
-		} else if (aPrescriptionId != null && Long.valueOf(aPrescriptionId) > 0L) { //Аннулируем по ИД назначения
+		} else if (aPrescriptionId != null && aPrescriptionId > 0L) { //Аннулируем по ИД назначения
 			if (aReason == null || aReason.trim().equals("")) {
 				return "Необходимо указать причину аннулирование!";
 			}
@@ -269,8 +289,8 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				Collection<WebQueryResult> wqr = service.executeNativeSql("select calendartime_id  as calendarTime, medservice_id as msId from prescription where id ='" + aPrescriptionId + "' and calendartime_id is not null ");
 				if (!wqr.isEmpty()) {
 					WebQueryResult wqr1 = wqr.iterator().next();
-					aWorkCalendarTime = wqr1.get1() != null ? wqr1.get1().toString() : null;
-					aMedService = wqr1.get2() != null ? wqr1.get2().toString() : null;
+					aWorkCalendarTime = wqr1.get1() != null ? Long.valueOf(wqr1.get1().toString()) : null;
+					aMedService = wqr1.get2() != null ? Long.valueOf(wqr1.get2().toString()) : null;
 				}
 			}
 			else return "Невозможно отменить назначение! Уже было отменено или находится в работе";
@@ -295,7 +315,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
     }
 
 
-	public String cancelPrescription (String aPresctiptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
+	public String cancelPrescription (Long aPresctiptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		return annulEmptyPrescription(null,null,aPresctiptionId,aReason,aRequest);
 	}
 
@@ -366,26 +386,21 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			return "Плохой ID тип = "+aIdType;
 		}
 		String sql = "select p.id from "+fromSql+" "+leftJoinSql+" where "+whereSql;
-		
-		String patientId=null;
+
 		try {
-			patientId = service.executeNativeSql(sql).iterator().next().get1().toString();
-		} catch (Exception e) {
-			LOG.error("Ошибка нахождения пациента",e);
-		}
-		if (patientId!=null) {
+			String patientId = service.executeNativeSql(sql).iterator().next().get1().toString();
 			StringBuilder pz = new StringBuilder().append("select ms.id as msId, ms.code||' ' ||ms.name as msName" +
 					", to_char(wcd.calendardate, 'dd.MM.yyyy') as calDateName, wf.id as wfId , wf.groupname as wfGroupName, wct.id as wctId " +
 					" ,cast (wct.timefrom as varchar(5)) as timeName");
 			pz.append(" from patient pat ")
-			.append(" left join workcalendartime wct on wct.prepatient_id=pat.id")
-			.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
-			.append(" left join prescription p on p.id=wct.prescription")
-			.append(" left join medservice ms on ms.id=coalesce(wct.service, p.medservice_id)")
-			.append(" left join vocservicetype vst on vst.id=ms.servicetype_id")
-			.append(" left join workcalendar wc on wc.id=wcd.workcalendar_id")
-			.append(" left join workfunction wf on wf.id=wc.workfunction_id")
-			.append(" where pat.id=").append(patientId).append(" and vst.code='").append(aServiceType).append("'");
+					.append(" left join workcalendartime wct on wct.prepatient_id=pat.id")
+					.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
+					.append(" left join prescription p on p.id=wct.prescription")
+					.append(" left join medservice ms on ms.id=coalesce(wct.service, p.medservice_id)")
+					.append(" left join vocservicetype vst on vst.id=ms.servicetype_id")
+					.append(" left join workcalendar wc on wc.id=wcd.workcalendar_id")
+					.append(" left join workfunction wf on wf.id=wc.workfunction_id")
+					.append(" where pat.id=").append(patientId).append(" and vst.code='").append(aServiceType).append("'");
 			if (aDateFrom!=null && !aDateFrom.equals("")){
 				pz.append(" and wcd.calendardate>=to_date('").append(aDateFrom).append("','dd.MM.yyyy')");
 			}
@@ -401,47 +416,57 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 					String timeId = r.get6().toString();
 					String dateName = r.get3().toString();
 					String timeName = r.get7().toString();
-				if (!isFirst) ret.append("#");
-				isFirst=false;
+					if (!isFirst) ret.append("#");
+					isFirst=false;
 					ret.append(aServiceType).append(":").append(msID).append(":").append(msCode)
-					.append(":").append(dateName)
-					.append(":").append(wfID).append(":").append(wfName).append(":::").append(timeId).append(":").append(timeName.replace(":", "-"));
+							.append(":").append(dateName)
+							.append(":").append(wfID).append(":").append(wfName).append(":::").append(timeId).append(":").append(timeName.replace(":", "-"));
 				}
 			}
+		} catch (Exception e) {
+			LOG.error("Ошибка нахождения пациента",e);
 		}
 		return ret.toString();
 	}
 	
-	public boolean  isSLSClosed (String aId, HttpServletRequest aRequest) throws NamingException {
+	private boolean isSLSClosed(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
 		String sql = "select case when mc.dtype='HospitalMedCase' then" +
-				"   case when mc.datefinish is not null and mc.dischargetime is not null then 1 else 0 end" +
-				" when mc.dtype='DepartmentMedCase' then" +
-				"   case when mcP.datefinish is not null and mcP.dischargetime is not null then 1 else 0 end " +
-				" when mc.dtype='PolyclinicMedCase' then " +
-				"   case when mc.datefinish is not null then 1 else 0 end " +
-				" when mc.dtype='Visit' then " +
-				"   case when mcP.datefinish is not null then 1 else 0 end " +
-				"end" +
-				" from medcase mc" +
-				" left join medcase mcP on mcP.id=mc.parent_id" +
-				" where mc.id=" + aId;
+			"   case when mc.datefinish is not null and mc.dischargetime is not null then 1 else 0 end" +
+			" when mc.dtype='DepartmentMedCase' then" +
+			"   case when mcP.datefinish is not null and mcP.dischargetime is not null then 1 else 0 end " +
+			" when mc.dtype='PolyclinicMedCase' then " +
+			"   case when mc.datefinish is not null then 1 else 0 end " +
+			" when mc.dtype='Visit' then " +
+			"   case when mcP.datefinish is not null then 1 else 0 end " +
+			"end" +
+			" from medcase mc" +
+			" left join medcase mcP on mcP.id=mc.parent_id" +
+			" where mc.id=" + aMedCaseId;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String res = service.executeNativeSql(sql, 1).iterator().next().get1().toString();
-			return "1".equals(res);
+		return "1".equals(res);
 	}
 
 	/**
 	 * Получить, является ли визитом #112.
 	 *
-	 * @param aId MedCase.id
+	 * @param aMedCaseId MedCase.id
 	 * @return Boolean true если визит
 	 */
-	public boolean  isMedcaseIsVisit(String aId, HttpServletRequest aRequest) throws NamingException {
+	private boolean isMedcaseIsVisit(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aId);
+		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aMedCaseId);
 		String dtype = !res.isEmpty()?res.iterator().next().get1().toString():null;
 		return "Visit".equals(dtype);
 	}
+
+	/**
+	 * Является ли СМО создания назначения - случаем лечения в отделении
+	 * @param aMedcaseId ИД случая мед обслуживания
+	 * @param aRequest -
+	 * @return
+	 * @throws NamingException
+	 */
 	public boolean isMedcaseIsDepartment(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aMedcaseId);
@@ -456,6 +481,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			return false;
 		} */
 	}
+
     public String listProtocolsByUsername(String aFunctionTemp, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -491,25 +517,29 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		res.append("</tr></table>") ;
 		return res.toString() ;
 	}
-	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups,HttpServletRequest aRequest) throws NamingException {
+
+	//Кажися, не используется.
+	/*public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups,HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ; 
 		return service.createTempPrescriptList(aName,aComment,aCategories,aSecGroups) ;
-	}
-	public String removePrescriptionFromList (String aPrescriptList, String aMedService, HttpServletRequest aRequest) throws NamingException {
+	}*/
+
+	public String removePrescriptionFromList (Long aPrescriptList, Long aMedService, HttpServletRequest aRequest) throws NamingException {
 		return removePrescriptionFromListWCT(aPrescriptList,aMedService,null,aRequest);
 	}
-	public String removePrescriptionFromListWCT (String aPrescriptList, String aMedService,String aWorkCalendarTime, HttpServletRequest aRequest) throws NamingException {
+
+	public String removePrescriptionFromListWCT (Long aPrescriptList, Long aMedService,Long aWorkCalendarTime, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder str = new StringBuilder();
 		str.append("delete from prescription where").append(" prescriptionlist_id=").append(aPrescriptList).append(" and medservice_id=").append(aMedService);
-		if (aWorkCalendarTime!=null&&!aWorkCalendarTime.equals("")) {
+		if (aWorkCalendarTime!=null && !aWorkCalendarTime.equals(0L)) {
 			str.append(" and calendartime_id=").append(aWorkCalendarTime) ;		
 		}
         service.executeUpdateNativeSql(str.toString());
 		return annulEmptyPrescription(aMedService,aWorkCalendarTime,null,null,aRequest);
 	}
 
-	public String addPrescriptionToList (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType, HttpServletRequest aRequest) throws NamingException {
+	public String addPrescriptionToList (Long aPrescriptList, Long aMedService, Long aDepartment, Long aCabinet,String dType, HttpServletRequest aRequest) throws NamingException {
 		return addPrescriptionToListWCT (aPrescriptList, aMedService, aDepartment, aCabinet, dType,null,null,"", aRequest);
 	}
 	
@@ -520,9 +550,9 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	 * @param aDepartment - Отдел для забора биоматериала
 	 * @param aCabinet - рабочая функция для направления
 	 */
-	public String addPrescriptionToListWCT (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType, String aDateStart, String aWorkCalendarTime
+	public String addPrescriptionToListWCT (Long aPrescriptList, Long aMedService, Long aDepartment, Long aCabinet, String dType, String aDateStart, String aWorkCalendarTime
 			, String aComments, HttpServletRequest aRequest) throws NamingException {
-		java.util.Date date = new java.util.Date() ;
+		Date date = new Date() ;
 		/*Prescription prescription ; //TODO Переделать на создание объектом для корректного удаления
 		if (dType.equals("ServicePrescription")) {
 			prescription = new ServicePrescription();
@@ -554,8 +584,8 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		values.append("prescriptionlist_id");valuesData.append("'").append(aPrescriptList).append("'");
 		values.append(",dtype");valuesData.append(",'").append(dType).append("'");
 		values.append(",medservice_id");valuesData.append(",'").append(aMedService).append("'");
-		if (aDepartment!=null&&!aDepartment.equals("")) {values.append(",department_id");valuesData.append(",'").append(aDepartment).append("'");}
-		if (aCabinet!=null&&!aCabinet.equals("")) {values.append(",prescriptcabinet_id");valuesData.append(",'").append(aCabinet).append("'");}
+		if (aDepartment!=null&&!aDepartment.equals(0L)) {values.append(",department_id");valuesData.append(",'").append(aDepartment).append("'");}
+		if (aCabinet!=null&&!aCabinet.equals(0L)) {values.append(",prescriptcabinet_id");valuesData.append(",'").append(aCabinet).append("'");}
 		if (aWorkCalendarTime!=null&&!aWorkCalendarTime.equals("")) {values.append(",calendartime_id");valuesData.append(",'").append(aWorkCalendarTime).append("'");}
 		if (aDateStart!=null&&!aDateStart.equals("")) {values.append(",planstartdate");valuesData.append(" ,to_date('").append(aDateStart).append("','dd.MM.yyyy')"); }
 		values.append(",comments");valuesData.append(" ,'").append(aComments).append("'");
@@ -582,10 +612,10 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	 * @return
 	 * @throws NamingException
 	 */
-	public String cancelService(String aPrescripts,Long aReasonId,String aReason,HttpServletRequest aRequest) throws NamingException {
+	public void cancelService(Long aPrescripts,Long aReasonId,String aReason,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		java.util.Date date = new java.util.Date() ;
+		Date date = new Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -640,7 +670,6 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				.append("||to_char(current_date,'dd.mm.yyyy')||' '||to_char(current_timestamp,'HH24:MI:SS')||chr(13)||chr(13)||record")
 				.append(" where medcase_id=(select medcase_id from prescription  where id in (").append(aPrescripts).append("))");
 		service.executeUpdateNativeSql(sql.toString()) ;
-		return "1" ;
 	}
 	
 	public String uncancelService(String aPrescripts, HttpServletRequest aRequest) throws NamingException {
@@ -656,12 +685,12 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	 * UPD 11.2015 - Если ЛН не существует, то создает его
 	 * 	
 	 * @param aMedcase - ИД СЛО
-	 * @param aRequest
+	 * @param aRequest -
 	 * @return - ИД листа назначений
 	 * @throws NamingException
 	 */
 		
-	public String isPrescriptListExists(String aMedcase, HttpServletRequest aRequest) throws NamingException {
+	public String isPrescriptListExists(Long aMedcase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String req = "Select pl.id from prescriptionlist pl where pl.medcase_id='"+aMedcase+"' order by id ";
 		boolean isMedcaseClosed = isSLSClosed(aMedcase, aRequest);
@@ -677,7 +706,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			return plId;
 		} else {
 			if (isMedcaseClosed && !isMedcaseIsVisit(aMedcase, aRequest)) { return null;}
-			java.util.Date date = new java.util.Date() ;
+			Date date = new Date() ;
 			SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 			SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 			String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -694,38 +723,34 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			}
 		}
 	}
-	
-	
-	public Long getPatientIdByPrescriptionList(Long aPrescList, HttpServletRequest aRequest) throws NamingException {
+
+	/**
+	 * Получаем ИД пациента по ИД листа назначений
+	 * @param aPrescriptionListId ИД листа назначений
+	 * @param aRequest -
+	 * @return
+	 * @throws NamingException
+	 */
+	public Long getPatientIdByPrescriptionList(Long aPrescriptionListId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String req = "select mc.patient_id from prescriptionList pl "+
-"left join medcase mc on mc.id = pl.medcase_id "+
-"where pl.id = '"+aPrescList+"' ";
+			" left join medcase mc on mc.id = pl.medcase_id "+
+			" where pl.id = "+aPrescriptionListId+" ";
 		Collection<WebQueryResult> list = service.executeNativeSql(req,1) ;
-		if (!list.isEmpty()) {
-			WebQueryResult obj = list.iterator().next() ; 
-				return ConvertSql.parseLong(obj.get1());
-			
-		} 
-		return 0L;
+		return list.isEmpty() ? 0L : ConvertSql.parseLong(list.iterator().next().get1());
 	}
 	/**
 	 * Поиск СЛО по ИД листа назначения
-	 * @param aPrescList - ИД листа назначения
+	 * @param aPrescriptionListId - ИД листа назначения
 	 * @param aRequest
 	 * @return ИД MedCase
 	 * @throws NamingException
 	 */
-	public Long getMedcaseByPrescriptionList(String aPrescList, HttpServletRequest aRequest) throws NamingException {
+	public Long getMedcaseByPrescriptionList(Long aPrescriptionListId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String req = "Select pl.medcase_id from prescriptionList pl where pl.id='"+aPrescList+"' ";
+		String req = "Select pl.medcase_id from prescriptionList pl where pl.id="+aPrescriptionListId+" ";
 		Collection<WebQueryResult> list = service.executeNativeSql(req,1) ;
-		if (!list.isEmpty()) {
-			WebQueryResult obj = list.iterator().next() ; 
-				return ConvertSql.parseLong(obj.get1());
-			
-		} 
-		return 0L;
+		return list.isEmpty() ? 0L : ConvertSql.parseLong(list.iterator().next().get1());
 	}
 	/**
 	 * Проверка назначений на наличие дублей (имеются назначения на такие же 
@@ -845,6 +870,14 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		}
 		return res.length()>0?res.substring(0,res.length()-1):"";
 	}
+
+	/**
+	 * Получаем описание шаблона листа назначения
+	 * @param aIdTemplateList
+	 * @param aRequest
+	 * @return
+	 * @throws NamingException
+	 */
 	public String getDescription(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		if (aIdTemplateList!=null&& !aIdTemplateList.equals(0L)) {
@@ -912,16 +945,16 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		ret.append("</table></form>") ;
 		return ret.toString() ;
 	}
-	public String checkLabAnalyzed(Long aPrescript,HttpServletRequest aRequest) throws NamingException {
+	public void checkLabAnalyzed(Long aPrescript,HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
 		service.checkLabAnalyzed(aPrescript,username) ;
-		return "1" ;
 	}
-	public String checkTransferService(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
+
+	public void checkTransferService(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql ;
-		java.util.Date date = new java.util.Date() ;
+		Date date = new Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -936,7 +969,6 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			.append(" where id in (").append(cab[2]).append(") and medservice_id in (").append(cab[3]).append(")");
 			service.executeUpdateNativeSql(sql.toString()) ;
 		}
-		return "1" ;
 	}
 	public String setDefaultDiary(String aPrescriptions, String aServices, HttpServletRequest aRequest) throws NamingException, JspException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -1049,21 +1081,21 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				
 	}
 	
-	public String intakeServiceWithBarcode(String aListPrescript,String aDate,String aTime, String aBarcode, HttpServletRequest aRequest) throws NamingException, ParseException {
+	private String intakeServiceWithBarcode(String aListPrescript,String aDate,String aTime, String aBarcode, HttpServletRequest aRequest) throws NamingException, ParseException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		IPrescriptionService service2 = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		java.util.Date currentDate = new java.util.Date() ;
-		java.util.Date intakeDate = DateFormat.parseDate(aDate+aTime, "dd.MM.yyyyHH:mm");
+		Date currentDate = new Date() ;
+		Date intakeDate = DateFormat.parseDate(aDate+aTime, "dd.MM.yyyyHH:mm");
 		if (intakeDate.getTime()>currentDate.getTime()) {
 			return "Дата забора не может быть больше текущей даты!";
 		}
 		String pattern = "MM/dd/yyyy";
 		SimpleDateFormat df = new SimpleDateFormat(pattern);
-		java.util.Date yesterday = new java.util.Date(System.currentTimeMillis() - 1000L * 60L * 60L * 24L);
+		Date yesterday = new Date(System.currentTimeMillis() - 1000L * 60L * 60L * 24L);
 		String yString = df.format(yesterday);
 		yesterday = DateFormat.parseDate(yString,pattern); //календарное вчера
-		java.util.Date intakeJustDate = DateFormat.parseDate(aDate, "dd.MM.yyyy"); //календарная дата забора
+		Date intakeJustDate = DateFormat.parseDate(aDate, "dd.MM.yyyy"); //календарная дата забора
 		if (intakeJustDate.getTime()< yesterday.getTime()) {
 			return "Дата забора не может быть раньше вчерашней даты!";
 		}
@@ -1093,7 +1125,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	public String receptionIntakeService(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		java.util.Date date = new java.util.Date() ;
+		Date date = new Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
@@ -1109,9 +1141,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	}
 	public String intakeServiceRemove(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("update Prescription set intakeSpecial_id=null,intakeDate=null,intakeTime=null,intakeUsername=null where id in (").append(aListPrescript).append(")");
-		service.executeUpdateNativeSql(sql.toString()) ;
+		service.executeUpdateNativeSql("update Prescription set intakeSpecial_id=null,intakeDate=null,intakeTime=null,intakeUsername=null where id in (" + aListPrescript + ")") ;
 		return "1" ;
 	}
 	public boolean checkMedCaseEmergency(Long aIdTemplateList, String idType, HttpServletRequest aRequest) throws NamingException {
@@ -1142,15 +1172,10 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				return getPresLabTypes(sb.toString(),aPrescriptTypeId,aRequest);
 			}
 		}
-		
 		return ret;
-		
 	}
 	
 	public String savePrescription(Long aIdParent,Long aIdTemplateList, Long aFlag, HttpServletRequest aRequest) throws NamingException {
-//		Long id = Long.valueOf(aIdParent);
-//		Long flag = Long.valueOf(aFlag);
-		
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		if (aFlag==1) return savePrescriptExists(aIdTemplateList,aIdParent, service) ;
 		if (aFlag==2) return savePrescriptNew(aIdTemplateList,aIdParent, service) ;
@@ -1247,10 +1272,20 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		return service.saveLabAnalyzed(aSmoId,aPrescriptId,aProtocolId,aParams,username, aTemplateId) ;
 	}
-	public String checkLabControl(Long aSmoId,Long aProtocol, HttpServletRequest aRequest) throws NamingException {
+
+	/**
+	 * Подтверждение выполнения лабораторного анализа
+	 * @param aSmoId - ИД 'визита' к врачу лаборатории
+	 * @param aProtocol ИД дневника врача-лаборанта
+	 * @param aRequest -
+	 * @return
+	 * @throws NamingException
+	 */
+
+	public void checkLabControl(Long aSmoId,Long aProtocol, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		java.util.Date date = new java.util.Date() ;
+		Date date = new Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -1273,6 +1308,9 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		.append("','dd.mm.yyyy'),timeRegistration=cast('").append(formatT.format(date)).append("' as time)")
 		.append(" where id in (").append(aProtocol).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
+		//Сохраним информацию о выполнении исследования для платных услуг:
+		service.executeUpdateNativeSql("update ContractAccountOperationByService set medCase_id="+aSmoId+
+				" where serviceType='PRESCRIPTION' and serviceId in (select id from Prescription where medCase_id = "+aSmoId+")");
 		//Тут делаем вызов функции по передаче лаб. исследования в ЛК
 /* отключаем передачу данных в личный кабинет
 		try{
@@ -1282,7 +1320,6 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			LOG.error("err = ",e);
 		}
 */
-		return "" ;
 	}
 	public String getParameterByTemplate(Long aSmoId, Long aPrescript, Long aServiceId, Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

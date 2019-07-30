@@ -2653,7 +2653,7 @@ public class HospitalMedCaseServiceJs {
 	public String getIsPatientIdentified(String aMedCaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql
-				("select case when isidentified=true then '1' else '0' end from statisticstub where medcase_id='"+aMedCaseId+"' or medcase_id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;
+				("select case when isidentified='1' then '1' else '0' end from statisticstub where medcase_id='"+aMedCaseId+"' or medcase_id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;
 		return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
 	}
 
@@ -2664,6 +2664,6 @@ public class HospitalMedCaseServiceJs {
 	public void setIsPatientIdentified(String aMedCaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql
-				("update statisticstub set isidentified=true where medcase_id='"+aMedCaseId+"' or medcase_id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;;
+				("update statisticstub set isidentified='1' where medcase_id='"+aMedCaseId+"' or medcase_id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;;
 	}
 }

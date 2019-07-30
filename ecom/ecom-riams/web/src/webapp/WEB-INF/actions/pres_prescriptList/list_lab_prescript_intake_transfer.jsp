@@ -420,7 +420,7 @@
   	        if (list!=null) {
   	        	
   	        	PrescriptionService.checkTransferService( list, {
-  		            callback: function(aResult) {
+  		            callback: function() {
   		           	var tmpList = list.split(":");
   		           	var presList = "";
   		           	var serviceList = "";
@@ -469,7 +469,7 @@
   	    	var reason = getReason(aReason) ;
   	    	if (reason!=null) {
   	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
-  		            callback: function(aResult) {
+  		            callback: function() {
   		            	window.document.location.reload();
   		            }
   				});

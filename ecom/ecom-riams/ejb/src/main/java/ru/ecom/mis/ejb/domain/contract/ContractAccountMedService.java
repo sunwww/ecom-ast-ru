@@ -1,14 +1,5 @@
 package ru.ecom.mis.ejb.domain.contract;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,6 +8,10 @@ import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+
 /**
  * Мед услуги по счету
  */
@@ -24,8 +19,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(unique= false, properties = {"account"})
-	,@AIndex(unique= false, properties = {"medService"})
+	@AIndex(properties = {"account"})
+	,@AIndex(properties = {"medService"})
 	
 })
 @EntityListeners(DeleteListener.class)

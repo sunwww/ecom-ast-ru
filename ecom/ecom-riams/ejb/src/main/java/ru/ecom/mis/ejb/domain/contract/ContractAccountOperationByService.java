@@ -1,14 +1,14 @@
 package ru.ecom.mis.ejb.domain.contract;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 /**
  * Конкретизация операции договорного счета по услуге 
@@ -48,4 +48,18 @@ public class ContractAccountOperationByService extends BaseEntity {
 	private ContractAccountMedService theAccountMedService;
 	/** Операция договорного счета */
 	private ContractAccountOperation theAccountOperation;
+
+	/** Тип мед. случая */
+	@Comment("Тип мед. случая")
+	public String getServiceType() {return theServiceType;}
+	public void setServiceType(String aServiceType) {theServiceType = aServiceType;}
+	/** Тип мед. случая */
+	private String theServiceType ;
+
+	/** ИД мед. случая */
+	@Comment("ИД мед. случая")
+	public Long getServiceId() {return theServiceId;}
+	public void setServiceId(Long aServiceId) {theServiceId = aServiceId;}
+	/** ИД мед. случая */
+	private Long theServiceId ;
 }

@@ -32,8 +32,15 @@ public class PrescriptionForm extends IdEntityForm {
 	@Comment("Тип случая СМО")
 	public String getMedcaseType() {return theMedcaseType;}
 	public void setMedcaseType(String aMedcaseType) {theMedcaseType = aMedcaseType;}
-	/**  */
+	/** Тип случая СМО */
 	private String theMedcaseType ;
+
+	/** ИД случая СМО */
+	@Comment("ИД случая СМО")
+	public Long getMedcaseId() {return theMedcaseId;}
+	public void setMedcaseId(Long aMedcaseId) {theMedcaseId = aMedcaseId;}
+	/** ИД случая СМО */
+	private Long theMedcaseId ;
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
@@ -494,5 +501,19 @@ public class PrescriptionForm extends IdEntityForm {
 	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
 	/** Хирургическая операция */
 	private Long theSurgicalOperation;
+	
+	/** ИД пациента */
+	@Comment("ИД пациента")
+	public Long getPatient() {return thePatient;}
+	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	/** ИД пациента */
+	private Long thePatient ;
+
+	/** Разрешены только оплаченные услуги по потоку обслуживания */
+	@Comment("Разрешены только оплаченные услуги по потоку обслуживания")
+	public Boolean getAllowOnlyPaid() {return theAllowOnlyPaid;}
+	public void setAllowOnlyPaid(Boolean aAllowOnlyPaid) {theAllowOnlyPaid = aAllowOnlyPaid;}
+	/** Разрешены только оплаченные услуги по потоку обслуживания */
+	private Boolean theAllowOnlyPaid ;
 }
 

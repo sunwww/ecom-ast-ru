@@ -63,7 +63,7 @@
 					</msh:row>
 				</msh:ifFormTypeIsCreate>
 				<ecom:webQuery name="sumCost" nativeSql="
-							select sum(CAMS.countMedService*CAMS.cost) as sumaccrual,list(''||cams.id) as lstid ,min(ca.discountDefault) as discount   
+							select sum(CAMS.countMedService*CAMS.cost) as sumaccrual,list(''||cams.id||'#'||coalesce(cams.countmedservice,1)) as lstid ,min(ca.discountDefault) as discount
 							from ContractAccountMedService CAMS
 							left join ContractAccount ca on ca.id=cams.account_id
 							where ca.id= '${param.id }'
@@ -128,16 +128,14 @@
 select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
 	, cams.countMedService*cams.cost as sumNoAccraulMedService 
 	, cao.discount,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2),case when cao.repealOperation_id is not null then 'Возврат' else null end as commentReturn
-			from ContractAccountMedService cams
+			from ContractAccountOperation cao
+			left join ContractAccountMedService cams on cams.account_id = cao.account_id
 			left join ServedPerson sp on cams.servedPerson_id = sp.id
-			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
-			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
-			left join ContractPerson cp on cp.id=sp.person_id 
+			left join ContractPerson cp on cp.id=sp.person_id
 			left join patient p on p.id=cp.patient_id
-						
 			left join PriceMedService pms on pms.id=cams.medService_id
 			left join PricePosition pp on pp.id=pms.pricePosition_id
-			where cao.id='${param.id}'
+			where cao.id='${param.id}' and cao.dtype='OperationAccrual'
 			"/>
 				
 				<msh:table name="medicalService" 
@@ -147,7 +145,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 					 <msh:tableNotEmpty>
 				 <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation">
 
-					 	<input type="button" id='repealButton' name='repealButton' onclick="javascript:makeRefund(this)" value="Оформить возврат всей суммы">
+					 	<input type="button" id='repealButton' name='repealButton' onclick="makeRefund(this)" value="Оформить возврат всей суммы">
 				 </msh:ifInRole>
 					 </msh:tableNotEmpty>
 					<msh:tableColumn columnName="Код" property="2" />
@@ -178,6 +176,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			var oldaction = "";
 			
 			function makeRefund(aButton) {
+				alert(123);
 			    aButton.value="Подождите...";
 				aButton.disabled=true;
 				window.location = "js-contract_medContract-issueRefund.do?id=${param.id}";

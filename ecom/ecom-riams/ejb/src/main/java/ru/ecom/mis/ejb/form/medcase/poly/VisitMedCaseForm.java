@@ -2,16 +2,14 @@ package ru.ecom.mis.ejb.form.medcase.poly;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionViewInterceptor;
+import ru.ecom.mis.ejb.form.medcase.interceptor.VisitSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
@@ -31,6 +29,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Visit")
 @AViewInterceptors(
 		@AEntityFormInterceptor(DirectionViewInterceptor.class)
+)
+@ASaveInterceptors(
+		@AEntityFormInterceptor(VisitSaveInterceptor.class)
 )
 public class VisitMedCaseForm extends TicketMedCaseForm {
 	/** Количество выписанных льготных рецептов */

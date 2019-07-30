@@ -13,7 +13,7 @@
 	
 	var currentDate = new Date;
 	var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
-	var textMonth = currentDate.getMonth()+1;textMonth = textMonth<10?'0'+textMonth:textMonth;
+	var textMonth = currentDate.getMonth()+1; textMonth = textMonth<10 ? '0'+textMonth : textMonth;
 	var textYear =currentDate.getFullYear();
 	var textDate = textDay+'.'+textMonth+'.'+textYear;
 	var canChangeDate = false;
@@ -28,7 +28,7 @@
 	
 	function changeDate(days) {
 		if (canChangeDate){
-			var l = $('labDate')?$('labDate').value:$('planStartDate').value;
+			var l = $('labDate') ? $('labDate').value : $('planStartDate').value;
 			l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
 			currentDate.setTime (Date.parse(l));
 			currentDate.setDate(currentDate.getDate()+days);
@@ -36,13 +36,12 @@
 			var newTextMonth = currentDate.getMonth()+1;
 			newTextMonth = newTextMonth<10 ? '0'+newTextMonth : newTextMonth;
 			var newTextYear =currentDate.getFullYear();
-			var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
-			if ($('labDate')) $('labDate').value=newTextDate;
-			if ($('planStartDate')) $('planStartDate').value=newTextDate;
-			textDate = newTextDate;
+            textDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
+			if ($('labDate')) $('labDate').value=textDate ;
+			if ($('planStartDate')) $('planStartDate').value=textDate ;
 			for (var i=1;i<=labNum;i++) {
 					if ($('labDate'+i)) { 
-						$('labDate'+i).value=newTextDate;
+						$('labDate'+i).value=textDate ;
 					}
 				}
 		}
@@ -117,9 +116,7 @@
 	 }
 	onload =
 		function isInDepartment () {
-		PrescriptionService.getMedcaseByPrescriptionList($('prescriptionList').value,{
-			callback: function(aResult) {
-				PrescriptionService.isMedcaseIsDepartment(aResult,{
+				PrescriptionService.isMedcaseIsDepartment($('medcaseId').value,{
 					callback: function(aResults) {
 						if (aResults===true) {
 							$('labDepartmentName').style.visibility='hidden';
@@ -135,8 +132,6 @@
 					}
 				}); 
 				startLoad();
-			}
-		});
 	}
 	function startLoad () {
 		var date = new Date();
@@ -145,10 +140,10 @@
 		var year = date.getFullYear();
 		if ($('labDate')) $('labDate').value=day+"."+month+"."+year;
 		if ($('funcDate')) $('funcDate').value=day+"."+month+"."+year;
-			if ($('prescriptType').value=="" || $('prescriptType').value==null){
- 				showcheckPrescTypes();
- 			}	
-	}	
+        if ($('prescriptType').value=="" || $('prescriptType').value==null){
+            showcheckPrescTypes();
+        }
+	}
 
 	function checkDoubles () {
 		labList="";
@@ -156,8 +151,6 @@
 			writeServicesToList('lab');
 		}
 		
-		var i=0;
-		// Id from aList 
 		var str="";
 		var aList =labList;
 		aList = aList.substring(0,aList.length-1);
@@ -169,53 +162,62 @@
 			}
 		}
 		str=str.substring(0,str.length-1);
-		PrescriptionService.getMedcaseByPrescriptionList($('prescriptionList').value, {
-			callback: function (aMedCase) {
-				PrescriptionService.getDuplicatePrescriptions(""+aMedCase, str,{
-					callback: function(aResult) {
-						if (aResult.length>0){
-							var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту в этой истории болезни, все равно назначить?";
-								if (!confirm (aText)) {							
-									document.getElementById('submitButton').disabled=false;
-									document.getElementById('submitButton').value='Создать';
-									return;
-									}
-						}
-						checkLabs();
-						
-						
-					}
-				});		
-			}
-		});
-		 
-	
+        PrescriptionService.getDuplicatePrescriptions($('medcaseId').value, str,{
+            callback: function(aResult) {
+                if (aResult.length>0){
+                    var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту в этой истории болезни, все равно назначить?";
+                        if (!confirm (aText)) {
+                            document.getElementById('submitButton').disabled=false;
+                            document.getElementById('submitButton').value='Создать';
+                            return;
+                            }
+                }
+                checkLabs();
 
+
+            }
+        });
 	}
-	
+
+	//Запускаем при создании/изменении типа назначения
 	function changePrescriptionType() {
-		labServiciesAutocomplete.setParentId($('prescriptType').value);
-		 writeServicesToList('lab');
-			$('labServicies').value="";
-			$('labServiciesName').value="";
-			if (labList.length>0) {
-				 removeRows('lab');
-				PrescriptionService.getPresLabTypes(labList, $('prescriptType').value,{
-					callback: function(aResult) {
-						if (aResult) {
-	       					var resultList = aResult.split('#');
-	       					if (resultList.length>0) {
-	       						for (var i=0; i<resultList.length;i++) {
-	       							var resultRow = resultList[i].split(':');
-	       							if (resultRow[0]!=null&&resultRow[0]!=""){
-	       								addRows(resultList[i],0);
-	       							}
-	       						}
-	       					}
-	       				}
-					}
-				});
-			}
+        var prescriptionType = $('prescriptType').value;
+        if ($('allowOnlyPaid').value == "true") { //начинаем...
+            showToastMessage("Создание назначения возможно только из списка оплаченных назначений!");
+            jQuery('[name="subm"]').hide();
+            //jQuery('#btnAddCharged').show();
+            PrescriptionService.getAllowedLabServiciesByPatient($('patient').value,prescriptionType, {
+                callback: function(servList) {
+                    showChargedServiceList(JSON.parse(servList));
+                }
+            } );
+
+        } else {
+            jQuery('#btnAddCharged').hide();
+            jQuery('#btnAddCharged').hide();
+            labServiciesAutocomplete.setParentId(prescriptionType);
+            writeServicesToList('lab');
+            $('labServicies').value = "";
+            $('labServiciesName').value = "";
+            if (labList.length > 0) {
+                removeRows('lab');
+                PrescriptionService.getPresLabTypes(labList, prescriptionType, {
+                    callback: function (aResult) {
+                        if (aResult) {
+                            var resultList = aResult.split('#');
+                            if (resultList.length > 0) {
+                                for (var i = 0; i < resultList.length; i++) {
+                                    var resultRow = resultList[i].split(':');
+                                    if (resultRow[0] != null && resultRow[0] != "") {
+                                        addRows(resultList[i], 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
 	}
 	
 	function removeRows(type) {
@@ -241,7 +243,6 @@
 		}
 		
 		$('labList').value=labList ;
-	//alert($('labList').value);
 		document.forms['pres_servicePrescriptionForm'].action=oldaction ;
 		document.forms['pres_servicePrescriptionForm'].submit();
 	}
@@ -266,6 +267,7 @@
 	            labList+=curDate.value+":";
 	            labList+=curCabinet.value+":";
 	            labList+=curDepartment.value;
+	            if ($(type+'CaosService'+typeNum)) labList+=":::"+$(type+'CaosService'+typeNum).value;
 	            labList+="#";
 	            // Проверка на дубли 
 	            if ($(type+'Servicies').value==curService.value) {
@@ -390,7 +392,7 @@
 		} else if (type=='func1') {
 			num = funcNum;
 		}
-		if (document.getElementById(type+'Servicies').value==""){
+		if ($(type+'Servicies').value==""){
 			alert("Выбирите услугу!");
 			return;
 		}
@@ -399,22 +401,21 @@
 		var checkNum = 1;
 		if (num>0){
 			while (checkNum<=num) {
-				if (document.getElementById(type+'Service'+checkNum)) {
-					if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
-					//	if ($(type+'Date').value==document.getElementById(type+'Date'+checkNum).value) { 
-							alert("Уже существует такое исследование!!!");
-							return;
-					//	} 
+				if ($(type+'Service'+checkNum)) {
+					if ($(type+'Servicies').value==$(type+'Service'+checkNum).value){
+                        alert("Уже существует такое исследование!!!");
+                        return;
 					}
 				}
 				checkNum+=1;
+		    }
 		}
-		}
+		//Проверяем - если платное назнаничение - должно быть оплачено.
 		
 		num+=1;
 	    // Считываем значения с формы 
 	    
-	    var nameId = document.getElementById(type+'Servicies').value;
+	  //  var nameId = document.getElementById(type+'Servicies').value;
  			var tbody = document.getElementById('add'+type+'Elements');
 	    var row = document.createElement("TR");
 		row.id = type+"Element"+num;
@@ -436,6 +437,7 @@
 		 row.appendChild(td4);
 	    // Наполняем ячейки 
 	    var dt="<input id='"+type+"Service"+num+"' value='"+$(type+'Servicies').value+"' type='hidden' name='"+type+"Service"+num+"' horizontalFill='true' size='90' readonly='true' />";
+	    dt+="<input id='"+type+"CaosService"+num+"' value='"+$(type+'CaosService').value+"' type='hidden'>";
 	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='1' readonly='true' />";
 	    var dt4 = "<input id='"+type+"Department"+num+"' value='"+$(type+'Department').value+"' type='hidden' name='"+type+"Department"+num+"' horizontalFill='true' size='1' readonly='true' />";
 	    td2.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
@@ -507,24 +509,6 @@
 		addRows(type+":"+ar[0],1);
 	}
 		
-	/* function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments) {
-		alert ("addROw "+aLabID+":"+ aLabDepartment+":"+ aLabCabinet+":"+ aDateStart+":"+ aWCT+":"+ comments);
-		PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
-	} 
-	 function deletePrescription(aMedService, aWCT) {
-		PrescriptionService.removePrescriptionFromListWCT($('prescriptionList').value,aMedService,aWCT);
-	} */
-	
-	function hiddenInput(aType,aFld,aNum,aValue,aDefaultValue) {
-		return "<input id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='hidden' />"
-	}
-	function textInput(aLabel,aType,aFld,aNum,aValue,aDefaultValue,aSize) {
-		return "<span>"+aLabel+"</span><input "+(+aSize>0?"size="+aSize:"")+" id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='text' />"
-	}
-	function spanTag(aText,aValue,aDefaultValue) {
-		return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
-	}
-	
 	function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId) {
 		var next = true ;
 		var l="",lAll="",isDoubble=0 ;
@@ -551,6 +535,69 @@
 	}
 	return [l,lAll,isDoubble] ;
 	}
+
+	/* Формируем блок с информаций об оплаченных услугах*/
+	function showChargedServiceList(serviceList) {
+	    var labSerName = jQuery('#labServiciesName');
+        if (serviceList.length===0) {
+            alert('У пациента нет оплаченных услуг, назначать нечего!');
+            labSerName.val('НЕТ ОПЛАЧЕННЫХ ЛАБОРАТОРНЫХ УСЛУГ, НАЗНАЧЕНИЕ НЕВОЗМОЖНО');
+            labSerName.prop('disabled',true);
+            jQuery('#btnAddCharged').hide();
+            return;
+        }
+	    var d = jQuery( '#chargedDiv' );
+	    var dd = jQuery( '#chargedDataDiv' );
+	    var txt = "";
+	    for (var i=0;i<serviceList.length;i++) {
+	        var s = serviceList[i];
+	        txt+="<label><input type='checkbox' id="+s.serviceId+":"+s.caosId+" name='chkChargedService'"
+                +(s.isAllow? "" :" disabled ")+"/>"+s.serviceName+"</label><br>";
+        }
+	    dd.html(txt);
+
+        d.dialog({
+            modal:true,
+            position: 'top',
+            width: '70%',
+            buttons: [
+                {
+                    text: "Назначить",
+                    click: function() {
+                        jQuery('[name="chkChargedService"]').each(function(ind, el){
+                            if (el.checked) {
+                                jQuery('#labServicies').val(el.id.split(':')[0]);
+                                labSerName.val(jQuery(el).parent().text());
+                                jQuery('#labCaosService').val(el.id.split(':')[1]);
+                                addRow('lab');
+                            }
+                        });
+                        //Сохраняем все
+                        labSerName.val('ВЫБОР ТОЛЬКО ИЗ СПИСКА ОПЛАЧЕННЫХ УСЛУГ');
+                        labSerName.prop('disabled',true);
+                        jQuery( this ).dialog( "close" );
+                    }
+                },
+                {
+                    text: "Отмена",
+                    click: function() {
+                        labSerName.val('ВЫБОР ТОЛЬКО ИЗ СПИСКА ОПЛАЧЕННЫХ УСЛУГ');
+                        labSerName.prop('disabled',true);
+                        jQuery( this ).dialog( "close" );
+                    }
+                }
+            ]
+        });
+    }
+
+    /*Делаем возможность назначить любую услугу без информации об оплате*/
+    function prescriptWithoutPayment() {
+	    if (confirm('Информация о назначении будет передана в договорной отдел. Продолжить?')){
+            jQuery('#labServiciesName').prop('disabled',false);
+            jQuery('[name="subm"]').show();
+            jQuery('#unpaidConfirmation').val("true");
+        }
+    }
 	
 			</script>
 			</msh:ifFormTypeIsNotView >
@@ -570,16 +617,24 @@
 			</tiles:put>
 
   <tiles:put name="body" type="string">
+      <div id="chargedDiv" title="Список оплаченных услуг">
+          <div id="chargedDataDiv"></div>
+      </div>
     <!-- 
     	  - Назначение медицинской услуги
     	  -->
     <msh:form guid="formHello" action="/entityParentSaveGoView-pres_servicePrescription.do" defaultField="id" title="Назначение медицинской услуги">
       <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
-      <msh:hidden property="serviceStream" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
-      <msh:hidden property="medcaseType" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
+      <msh:hidden property="prescriptionList" />
+      <msh:hidden property="serviceStream" />
+      <msh:hidden property="medcaseType" />
+      <msh:hidden property="medcaseId" />
+      <msh:hidden property="patient" />
+      <msh:hidden property="allowOnlyPaid" />
+      <msh:hidden property="unpaidConfirmation" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <msh:hidden property="labList" />
+      <input type="hidden" id="labCaosService" value="">
       <input type="hidden" id="funcDepartment" value="">
       <input type="hidden" id="labCabinet" value="">
       <msh:panel guid="panel" colsWidth="3">
@@ -589,6 +644,7 @@
       <msh:row>
       <input type='button' name='btnChangePrescriptionType' onclick='showcheckPrescTypes();' value='Изменить тип назначения' />
       <input type='button' style="visibility:hidden" id="btnChangeDepartment" name='btnChangeDepartment' onclick='showChangeDepartment();' value='Изменить место забора' />
+      <input type='button' id="btnMakeAnyPrescription" name='btnMakeAnyPrescription' onclick='prescriptWithoutPayment();' value='Назначить без оплаты' />
        	<msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип назначения" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="3" size="100" />
       </msh:row>
  </msh:ifFormTypeIsNotView>
@@ -611,9 +667,10 @@
         </msh:row>
         <tbody id="addlabElements">
 	<tr>
-	<td align="center" colspan="6" >        	
+	<td style="text-align: center;" colspan="6" >
             <input type="button" name="subm" onclick="addRow('lab');" value="+" tabindex="4" />
-            	            <input type="button" name="subm" onclick="preShowDir() ;show1DirMedService();" value="++" tabindex="4" />
+            <input type="button" name="subm" onclick="preShowDir() ;show1DirMedService();" value="++" tabindex="4" />
+            <input type="button" name="btnAddCharged" id="btnAddCharged" onclick="jQuery( '#chargedDiv' ).dialog('open')" value="Назначить из списка оплаченных">
             
             </td>
 	</tr>
@@ -637,6 +694,7 @@
     		
 
         </msh:row>
+
 
         </msh:ifFormTypeIsCreate>
          <msh:ifFormTypeAreViewOrEdit formName="pres_servicePrescriptionForm">

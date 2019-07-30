@@ -27,14 +27,17 @@ function onCreate(aForm, aEntity, aCtx) {
     aEntity.setCreateUsername(username);
     var servicies = aForm.medServicies.split(',');
     for (var i = 0; i < servicies.length; i++) {
-        var serv = servicies[i].trim();
-        var cams = new Packages.ru.ecom.mis.ejb.domain.contract.ContractAccountOperationByService();
+        var el = servicies[i].trim().split("#");
+        var serv = el[0];
+        var amount = el[1]; //Для каждой единицы услуги делаем свой cams
         var ams = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.ContractAccountMedService, java.lang.Long.valueOf(serv));
+        for (var j=0;j<amount;j++) {
+        var cams = new Packages.ru.ecom.mis.ejb.domain.contract.ContractAccountOperationByService();
         cams.setAccountOperation(aEntity);
         cams.setAccountMedService(ams);
         aCtx.manager.persist(cams);
+        }
     }
-
 
     if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/AutoOperationWriteOff")) {
         var writeOff = new Packages.ru.ecom.mis.ejb.domain.contract.OperationWriteOff();
@@ -61,7 +64,7 @@ function onCreate(aForm, aEntity, aCtx) {
      //   var balSumOld = +aEntity.account.balanceSum;
         var balSum = +aEntity.account.balanceSum;
         var cost = +aEntity.cost;
-        if (+aForm.discount > 0) {cost = cost-(cost * aForm.discount / 100);};
+        if (+aForm.discount > 0) {cost = cost-(cost * aForm.discount / 100);}
         balSum = balSum + cost;
         aEntity.account.setBalanceSum(new java.math.BigDecimal(balSum));
         aEntity.account.setReservationSum(new java.math.BigDecimal(balSum));

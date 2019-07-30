@@ -32,6 +32,54 @@ import java.util.List;
 public class ContractServiceBean implements IContractService {
 	private static final Logger LOG = Logger.getLogger(ContractServiceBean.class);
 
+	/**
+	 *
+	 * @param aPatientId - ИД пациента, кому оказана услуга
+	 * @param aMedserviceCode - Код услуги
+	 * @param aMedCaseId - ИД случая СМО, в котором оказана услуга
+	 * @return
+	 */
+
+	public Boolean isMedServicePayedByPatient(Long aPatientId, String aMedserviceCode, Long aMedCaseId
+	, String aServiceType, Long aServiceId) {
+		return !getPaidMedServicesByPatient(aPatientId, aMedserviceCode, aMedCaseId,aServiceType, aServiceId, null).isEmpty();
+	}
+
+	/**
+	 * Получаем список оплаченных, но не оказанных услуг по пациенту
+	 * @param aPatientId - ИД пациента
+	 * @param aMedserviceCode - код услуги
+	 * @param aMedCaseId - ИД случая СМО
+	 * @param aServiceType - Тип создаваемой услуги (операция, назначение)
+	 * @param aServiceId - ИД создаваемой услуги (операции, назначения)
+	 * @param aMedServiceType - Тип медицинской услуги
+	 * @return
+	 */
+	public List getPaidMedServicesByPatient(Long aPatientId, String aMedserviceCode, Long aMedCaseId
+			, String aServiceType, Long aServiceId, String aMedServiceType) {
+		String sql = "select ms.code as serviceCode, caos.id as caosId, ms.id as serviceId " +
+				" ,ms.name as serviceName, vms.code as serviceCode" +
+				" from patient pat" +
+				" left join contractperson cp on cp.patient_id=pat.id" +
+				" left join servedperson sp on sp.person_id = cp.id" +
+				" left join ContractAccountMedService cams on cams.servedperson_id=sp.id" +
+				" left join contractaccountoperation cao on cao.account_id=cams.account_id" +
+				" left join contractaccountoperationbyservice caos on caos.accountmedservice_id=cams.id" +
+				" left join pricemedservice pms on pms.id=cams.medservice_id" +
+				" left join medservice ms on ms.id=pms.medservice_id" +
+				" left join VocServiceType vms on vms.id=ms.servicetype_id" +
+				" where pat.id=:patientId and cao.dtype='OperationAccrual' and cao.repealoperation_id is null" +
+				(aMedserviceCode!=null && !aMedserviceCode.equals("") ? " and ms.code='"+aMedserviceCode+"'" : "") +
+				" and (caos.medcase_id is null " +(aMedCaseId!=null ? " or caos.medcase_id="+aMedCaseId: "")+")"+
+				" and (caos.serviceId is null " +(aServiceId!=null ? " or caos.serviceId="+aServiceId : "")+ ")"+
+				(aMedServiceType!=null && !aMedServiceType.equals("")? " and vms.code='"+aMedServiceType+"'" : "") +
+				" and (cao.isdeleted is null or cao.isdeleted='0') " +
+				" order by caos.medcase_id, caos.serviceId";
+		LOG.warn("sql = "+sql+" , "+aPatientId);
+		return theManager.createNativeQuery(sql)
+				.setParameter("patientId", aPatientId).getResultList();
+	}
+
 
 	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, String aKassir, String aCustomerPhone, EntityManager aManager, String url) {
 		try {
