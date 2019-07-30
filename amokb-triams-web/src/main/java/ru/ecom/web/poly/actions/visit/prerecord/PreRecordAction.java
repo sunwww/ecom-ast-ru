@@ -1,44 +1,8 @@
 package ru.ecom.web.poly.actions.visit.prerecord;
 
-
-import java.awt.Graphics;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
-import java.io.File;
-import java.io.FileInputStream;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.TreeMap;
-
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.SimpleDoc;
-import javax.print.attribute.DocAttribute;
-import javax.print.attribute.DocAttributeSet;
-import javax.print.attribute.HashDocAttributeSet;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttribute;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.attribute.standard.Copies;
-import javax.print.attribute.standard.OrientationRequested;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.ecs.xhtml.li;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
-import ru.ecom.ejb.print.IPrintService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -48,14 +12,18 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.struts.BaseAction;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+
 public class PreRecordAction  extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
     	IWebQueryService serviceWeb = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
     	
-		
-		//System.out.println("patid="+aPatientId) ;
-    	String addParam=PreRecordAction.saveData(aRequest) ;
+    	PreRecordAction.saveData(aRequest) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		Long aFunction = ConvertSql.parseLong(aRequest.getParameter("vocWorkFunction")) ; 
 		Long aSpec = ConvertSql.parseLong(aRequest.getParameter("workCalendar")) ; 
@@ -63,31 +31,30 @@ public class PreRecordAction  extends BaseAction {
 		Long aTime = ConvertSql.parseLong(aRequest.getParameter("workCalendarTime")) ; 
 		String aPatInfo = aRequest.getParameter("lastname")+" "+aRequest.getParameter("firstname")+" "+aRequest.getParameter("middlename") ;
 		Long aPatientId = null;
-		service.preRecordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,null,null,null) ;
-		String sql="" ;
-		sql=sql+"select wct.id as wctid,to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate, cast(wct.timeFrom as varchar(5)) as wcttimeFrom, vwf.name as vwfname, wp.lastname ||' '||wp.firstname||' '||wp.middlename as wpmiddlename " ;
-		sql=sql+" , coalesce(p.lastname ||' '||substring(p.firstname,1,1)||' '||substring(p.middlename,1,1),p1.lastname ||' '||substring(p1.firstname,1,1)||' '||substring(p1.middlename,1,1)) as fio ";
-		sql=sql+" , coalesce(p.patientSync,p1.patientSync) as sync, case when wct.medCase_id is null then '(Пред. запись)' else '' end as pred,wct.prePatientInfo ";
-		sql=sql+" , case when m.dateStart is null then '' else '+' end as priem";
-		sql=sql+", 'Каб.: '||list(wpl.name)||'.' as wpname" ;
-		sql=sql+" from WorkCalendarTime wct" ; 
-		sql=sql+" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id " 
-				+" left join Medcase m on m.id=wct.medCase_id "
-				+" left join WorkCalendar wc on wc.id=wcd.workCalendar_id " 
-				+" left join WorkFunction wf on wf.id=wc.workFunction_id " 
-				+" left join WorkPlace_WorkFunction wpf on wpf.workFunctions_id=wf.id" 
-				+" left join WorkPlace wpl on wpl.id=wpf.workPlace_id and wpl.dtype='ConsultingRoom'" 
-				+" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id " 
-				+" left join Worker w on w.id=wf.worker_id " 
-				+" left join patient wp on wp.id=w.person_id " 
-				+" left join Patient p on p.id=wct.prePatient_id " 
-				+" left join Patient p1 on p1.id=m.patient_id " 
-				+" left join medpolicy mp on mp.patient_id=p.id where wcd.calendarDate>=CURRENT_DATE " ;
-		sql=sql+" and wct.id = '"+aTime+"' " ;
-		sql=sql+" group by wct.id,wct.prePatient_id,m.dateStart, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday,wct.prepatientInfo,wct.medcase_id,p1.patientSync,p1.lastname,p1.firstname,p1.middlename" ;
-		sql=sql+" order by wcd.calendarDate,wct.timeFrom" ;
+		service.preRecordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,null,null,null,4L) ; //4L - лично. только для АМОКБ
+		String sql = "select wct.id as wctid,to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate, cast(wct.timeFrom as varchar(5)) as wcttimeFrom, vwf.name as vwfname, wp.lastname ||' '||wp.firstname||' '||wp.middlename as wpmiddlename "
+			+" , coalesce(p.lastname ||' '||substring(p.firstname,1,1)||' '||substring(p.middlename,1,1),p1.lastname ||' '||substring(p1.firstname,1,1)||' '||substring(p1.middlename,1,1)) as fio "
+			+" , coalesce(p.patientSync,p1.patientSync) as sync, case when wct.medCase_id is null then '(Пред. запись)' else '' end as pred,wct.prePatientInfo "
+			+" , case when m.dateStart is null then '' else '+' end as priem"
+			+" ,'Каб.: '||list(wpl.name)||'.' as wpname"
+			+" from WorkCalendarTime wct"
+			+" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id "
+			+" left join Medcase m on m.id=wct.medCase_id "
+			+" left join WorkCalendar wc on wc.id=wcd.workCalendar_id "
+			+" left join WorkFunction wf on wf.id=wc.workFunction_id "
+			+" left join WorkPlace_WorkFunction wpf on wpf.workFunctions_id=wf.id"
+			+" left join WorkPlace wpl on wpl.id=wpf.workPlace_id and wpl.dtype='ConsultingRoom'"
+			+" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id "
+			+" left join Worker w on w.id=wf.worker_id "
+			+" left join patient wp on wp.id=w.person_id "
+			+" left join Patient p on p.id=wct.prePatient_id "
+			+" left join Patient p1 on p1.id=m.patient_id "
+			+" left join medpolicy mp on mp.patient_id=p.id where wcd.calendarDate>=CURRENT_DATE "
+			+" and wct.id = '"+aTime+"' "
+			+" group by wct.id,wct.prePatient_id,m.dateStart, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday,wct.prepatientInfo,wct.medcase_id,p1.patientSync,p1.lastname,p1.firstname,p1.middlename"
+			+" order by wcd.calendarDate,wct.timeFrom" ;
 		Collection<WebQueryResult> list = serviceWeb.executeNativeSql(sql) ;
-		WebQueryResult wqr = list.isEmpty()?null:list.iterator().next() ;
+		WebQueryResult wqr = list.isEmpty() ? new WebQueryResult() : list.iterator().next() ;
 		aRequest.setAttribute("wctInfo", wqr.get1()) ;
 		aRequest.setAttribute("patientInfo", wqr.get9()) ;
 		aRequest.setAttribute("specialistInfo", wqr.get4()) ;
@@ -96,21 +63,20 @@ public class PreRecordAction  extends BaseAction {
 		aRequest.setAttribute("timeInfo", wqr.get3()) ;
 		aRequest.setAttribute("cabInfo", wqr.get10()) ;
 		aRequest.setAttribute("documentInfo", "Вам необходимо подойти за <b>10-20</b> минут до приема в регистратуру со следующими документами:") ;
-		Date date = new Date() ;
 		Calendar calC = Calendar.getInstance() ;
 		Calendar cal1 = Calendar.getInstance() ;
 		cal1.set(Calendar.DAY_OF_MONTH, 1) ;
 		cal1.set(Calendar.MONTH, Calendar.JANUARY) ;
 		Calendar cal2 = Calendar.getInstance() ;
-		cal1.set(Calendar.DAY_OF_MONTH, 13) ;
-		cal1.set(Calendar.MONTH, Calendar.JANUARY) ;
+		cal2.set(Calendar.DAY_OF_MONTH, 13) ;
+		cal2.set(Calendar.MONTH, Calendar.JANUARY) ;
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm") ;
 		aRequest.setAttribute("currentDate", format.format(calC.getTime())) ;
-		if (calC.after(cal1)) {
+		if (calC.get(Calendar.MONTH)==Calendar.DECEMBER) {
 			aRequest.setAttribute("additionalMessage", "С наступающим новым годом!!!") ;
-		} else if (cal2.equals(cal2)) {
+		} else if (calC.equals(cal2)) {
 			aRequest.setAttribute("additionalMessage", "Со старым Новым Годом!!!") ;
-		} else if (calC.after(cal2)) {
+		} else if (calC.get(Calendar.MONTH)==Calendar.JANUARY) {
 			aRequest.setAttribute("additionalMessage", "С новым годом!!! С новым счастьем!!!") ;
 		}
 		/*
@@ -189,19 +155,19 @@ public class PreRecordAction  extends BaseAction {
 
     	return aMapping.findForward("success") ;
     }
-	public static String convertToString(String aStr[]) {
+/*	public static String convertToString(String[] aStr) {
 		StringBuilder ret = new StringBuilder() ;
         for (int i = 0; i < aStr.length; i++) {
             ret.append(aStr[i]);
             if (i<aStr.length-1) ret.append(",") ;
         }
         return ret.toString() ;
-    }
+    }*/
     public static String saveData(HttpServletRequest aRequest) {
 		String year=aRequest.getParameter("year") ; 
 		aRequest.setAttribute("year", year) ;
 		//System.out.println("year="+ year) ;
-		String month=aRequest.getParameter("month") ; ;
+		String month=aRequest.getParameter("month") ;
 		aRequest.setAttribute("month", month) ;
 		//System.out.println("month="+ month) ;
 		String vocWorkFunction= aRequest.getParameter("vocWorkFunction") ;
@@ -232,8 +198,7 @@ public class PreRecordAction  extends BaseAction {
 		aRequest.setAttribute("workCalendarDay", workCalendarDay) ;    	
 		//System.out.println("workCalendarDay="+ workCalendarDay) ;
 		String path = aRequest.getServletPath() ;
-		String p1 = "" ;String p2 = "",p3="" ;int path2=-1 ;
-		//System.out.println(path) ;
+		String p1 = "" ;String p2 = "",p3 ;
 		String[] pt = path.split("record_") ;
 		if (pt.length>1) {
 			System.out.println(pt[1]) ;
@@ -251,7 +216,7 @@ public class PreRecordAction  extends BaseAction {
 				aRequest.setAttribute("infoRecord", "ОФОРМЛЕНИЕ ЗАПИСИ НА ПРИЁМ.") ;
 			}
 			aRequest.setAttribute("path_rec", p2.substring(1)) ;
-			if (p1.length()==1) path2 = Integer.valueOf(p1) ;
+			//if (p1.length()==1) path2 = Integer.valueOf(p1) ;
 		}
 		
 		StringBuilder addParam = new StringBuilder() ;

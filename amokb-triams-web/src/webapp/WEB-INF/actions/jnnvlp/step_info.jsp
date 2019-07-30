@@ -10,7 +10,7 @@
     </tiles:put>
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">Перечень жизненно необходимых и важнейших лекарственныъ препаратов для медицинского применения на 2018 г.</msh:title>
+        <msh:title mainMenu="Lpu">Перечень жизненно необходимых и важнейших лекарственных препаратов для медицинского применения на 2019 г.</msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
         <style type="text/css">
@@ -19,7 +19,7 @@
 
     <tiles:put name='body' type='string'>
         <div>
-            <iframe src="progrm.pdf" width="800" height="800" alt="Попробуйте в другом браузере"></iframe>
+            <iframe src="jvl.pdf" width="800" height="800" alt="Попробуйте в другом браузере"></iframe>
 
         </div>
         <tags:timerGoMain interval="600000"/>

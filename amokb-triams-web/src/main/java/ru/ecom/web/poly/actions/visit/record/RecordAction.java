@@ -1,18 +1,8 @@
 package ru.ecom.web.poly.actions.visit.record;
 
-import java.awt.print.Printable;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -22,6 +12,12 @@ import ru.ecom.web.poly.actions.visit.prerecord.PreRecordAction;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+
 public class RecordAction extends BaseAction  {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
     	IWebQueryService serviceWeb = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -29,7 +25,7 @@ public class RecordAction extends BaseAction  {
     	
 		
 		//System.out.println("patid="+aPatientId) ;
-    	String addParam=PreRecordAction.saveData(aRequest) ;
+    	PreRecordAction.saveData(aRequest) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		Long aFunction = ConvertSql.parseLong(aRequest.getParameter("vocWorkFunction")) ; 
 		Long aSpec = ConvertSql.parseLong(aRequest.getParameter("workCalendar")) ; 
@@ -37,8 +33,7 @@ public class RecordAction extends BaseAction  {
 		Long aTime = ConvertSql.parseLong(aRequest.getParameter("workCalendarTime")) ; 
 		String aPatInfo = aRequest.getParameter("lastname")+" "+aRequest.getParameter("firstname")+" "+aRequest.getParameter("middlename") ;
 		Long aPatientId = ConvertSql.parseLong(aRequest.getParameter("patient")) ; 
-;
-		service.recordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,Long.valueOf(0)) ;
+		service.recordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId, 0L) ;
 		String sql="" ;
 		sql=sql+"select wct.id as wctid,to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate, cast(wct.timeFrom as varchar(5)) as wcttimeFrom, vwf.name as vwfname, wp.lastname ||' '||wp.firstname||' '||wp.middlename as wpmiddlename " ;
 		sql=sql+" , coalesce(p.lastname ||' '||substring(p.firstname,1,1)||' '||substring(p.middlename,1,1),p1.lastname ||' '||substring(p1.firstname,1,1)||' '||substring(p1.middlename,1,1)) as fio ";

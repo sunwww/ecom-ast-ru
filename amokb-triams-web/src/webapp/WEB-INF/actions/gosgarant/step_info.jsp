@@ -10,7 +10,7 @@
     </tiles:put>
 	
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">Программа гос. гарантий бесплатного оказания гражданам мед. помощи на территории АО на 2018 год</msh:title>
+        <msh:title mainMenu="Lpu">Программа гос. гарантий бесплатного оказания гражданам мед. помощи на территории Астраханской области </msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">
@@ -19,7 +19,7 @@
 
     <tiles:put name='body' type='string'>
     <div>
-<iframe src="progrm.pdf" width="800" height="800" alt="Попробуйте в другом браузере"></iframe> 
+<iframe src="pgg.pdf" width="800" height="800" alt="Попробуйте в другом браузере"></iframe>
 
     </div>
 	   <tags:timerGoMain interval="600000"/>

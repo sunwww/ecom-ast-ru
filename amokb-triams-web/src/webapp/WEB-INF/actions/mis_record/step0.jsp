@@ -10,66 +10,62 @@
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">
-div.button {
-    height: 100px ;
-    width: 500px ;  
-    font: bold 1.6em/2.2em Arial,Helvetica ;
-}
+		div.button {
+			height: 100px ;
+			width: 500px ;
+			font: bold 1.6em/2.2em Arial,Helvetica ;
+		}
     </style>
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-    <% String infomat = request.getParameter("infomat");
-    if (infomat!=null && !infomat.equals("")) {
-    	%>
-    	<script type="text/javascript">
-    	window.location = "infomat.do" ;
-    	</script>
-    	<%
-    }
-    %>
-	    <div class="button fb " onclick="next_pre_record()">
-	    	<p class="label">Оформить предварительную запись</p>
-	    	<p class="info">Необходимо будет подойти в регистратуру</p>
-	    	<p class="info"> за 10-20 минут до приема</p>
-	    </div>
-	    <br/>
-	    <div class="button fb " onclick="next_record_direct()">
-	    	<p class="label">Оформить направление</p>
-	    	<p class="info">Необходимо будет оформить Ваши анкетные данные.</p>
-	    	<p class="info">Затем подойти к врачу к назначенному времени.</p>
-	    </div>
-	    <br/>
-	    <div class="button fb " onclick="next_record_view_table_specialist()">
-	    	<p class="label">Прием врачей-специалистов</p>
-	    	<p class="info">Просмотр расписания специалистов</p>
-	    	<p class="info"> </p>
-	    </div>
-	    <br/>
-	    <div class="button fb " onclick="next_record_view_table_all_specialist()">
-	    	<p class="label">Расписание всех специалистов</p>
-	    	<p class="info">Просмотр расписания всех специалистов</p>
-	    	<p class="info"> </p>
-	    </div>
-	    <br/>
-	    <div class="button fb " onclick="next_record_view_table_diag()">
-	    	<p class="label">Услуги, оказываемые в больнице</p>
-	    	<p class="info">Просмотр прейскуранта по услугам</p>
-	    	<p class="info">специалистов </p>
-	    </div>
-	    <br/>
-	    <div class="button fb " onclick="next_gosgarant()">
-	    	<p class="label">Программа гос. гарантий</p>
-	    	<p class="info">Постановление Правительства Астраханской области</p>
-			<p class="info">от 29 декабря 2017г №546-П.</p>
-	    </div>
-		<br>
-		<div class="button fb " onclick="next_jnnvlp()">
-			<p class="label">перечень ЖННВЛП</p>
-			<p class="info">Перечень жизненно необхдимых и важнейших лек. преп.</p>
-			<p class="info">от 23 октября 2017г №2323-р.</p>
-		</div>
-	    
+		<table>
+			<tr>
+				<td>
+					<div class="button fb " onclick="next_pre_record()">
+	    				<p class="label">Оформить предварительную запись</p>
+	    				<p class="info">Необходимо будет подойти в регистратуру</p>
+	    				<p class="info"> за 10-20 минут до приема</p>
+	    			</div>
+					<br/>
+				</td>
+				<td>
+					<div class="button fb " onclick="next_record_view_table_specialist()">
+						<p class="label">Прием врачей-специалистов</p>
+						<p class="info">Просмотр расписания специалистов</p>
+						<p class="info"> </p>
+					</div>
+					<br/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="button fb " onclick="next_record_view_table_all_specialist()">
+						<p class="label">Расписание всех специалистов</p>
+						<p class="info">Просмотр расписания всех специалистов</p>
+						<p class="info"> </p>
+					</div>
+					<br/>
+				</td>
+				<td>
+					<div class="button fb " onclick="next_gosgarant()">
+						<p class="label">Программа гос. гарантий</p>
+						<p class="info">Программа государственных гарантий</p>
+						<p class="info">бесплатного оказания медицинской помощи</p>
+					</div>
+					<br>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="button fb " onclick="next_jnnvlp()">
+						<p class="label">перечень ЖНВЛП</p>
+						<p class="info">Перечень жизненно необходимых и важнейших </p>
+						<p class="info">лекарственных препаратов</p>
+					</div>
+				</td>
+			</tr>
+		</table>
     </tiles:put>
     <tiles:put name="javascript" type="string">
     	<script type="text/javascript">
@@ -96,7 +92,7 @@ div.button {
     		window.location = "step_gosgarant_info.do" ;
     	}
         function next_jnnvlp() {
-            window.location = "step_jnnvlp.do?infomat=Infomat" ;
+            window.location = "step_jnnvlp_info.do?infomat=Infomat" ;
         }
     	</script>
     	<tags:timerGoMain interval="600000"/>

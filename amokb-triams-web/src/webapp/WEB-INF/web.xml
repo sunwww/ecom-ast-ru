@@ -41,9 +41,9 @@
         <init-param>
             <param-name>config</param-name>
             <param-value>
-            	/WEB-INF/config-ecom.xml
-            	,/WEB-INF/config-triams.xml
-            	
+                /WEB-INF/config-triams.xml
+                ,/WEB-INF/config-ecom.xml
+
             </param-value>
         </init-param>
         <load-on-startup>2</load-on-startup>
@@ -71,10 +71,7 @@
     <servlet>
         <servlet-name>dwr-invoker</servlet-name>
         <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
-        <init-param>
-        	<param-name>config-ecom</param-name>
-          	<param-value>WEB-INF/dwr-ecom.xml</param-value>
-        </init-param>        <init-param>
+         <init-param>
         	<param-name>config-asset</param-name>
           	<param-value>WEB-INF/dwr-triams.xml</param-value>
         </init-param>

@@ -66,7 +66,7 @@ try {
     <body>
     <div id='header'>
         <h1>МедОС</h1>
-        <a href="<%=request.getContextPath()%>/infomat.do">
+        <a href="<%=request.getContextPath()%>/start.do">
             <img src='/customer/images/main/logo-75x50.jpg' width='75' height="50"
                  alt='На главное меню' title='Переход на главное меню'/>
         </a>
