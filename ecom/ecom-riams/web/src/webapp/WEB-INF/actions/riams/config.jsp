@@ -77,16 +77,11 @@
 									Экспертиза
 								</mis:linkCsp>
 							</li>
-							<li><msh:link action="ecom_hibernateCacheConfig.do">
+							<li><msh:link action="ecom_hibernateCacheConfig.do" roles="/Policy/Config/SystemAdmin">
 								Кэш для persistence.properties
 							</msh:link></li>
-
-							<li><msh:link roles='/Policy/Jaas/SecPolicy/Create'
-										  action="mis_lpuUpdateJaasPolicy.do">
-								Перекрепить все население
-							</msh:link></li>
 							<li>
-								<msh:link action="js-ecom_deleteJournal-listNext.do">Журнал удаленных данных</msh:link>
+								<msh:link action="js-ecom_deleteJournal-listNext.do" roles="/Policy/Config/DeleteJournalView">Журнал удаленных данных</msh:link>
 							</li>
 							<li>
 								<msh:link roles='/Policy/Jaas/SecPolicy/Create'
@@ -100,7 +95,7 @@
 							</li>
 							<li><msh:link action="entityPrepareCreate-mis_customMessage.do" roles="/Policy/Mis/CustomMessage/Create">Создать информационное сообщение</msh:link></li>
 							<li>
-								<msh:link action="js-riams-sync_parus.do" >Отчет по синхронизации с Парусом</msh:link>
+								<msh:link action="js-riams-sync_parus.do" roles="/Policy/Config/SyncParus" >Отчет по синхронизации с Парусом</msh:link>
 							</li>
 							<li>
 								<msh:link action="/ecom_monitorList.do" >Список фоновых "мониторов"</msh:link>
@@ -142,22 +137,7 @@
 			</tr>
 			<tr>
 				<td style='padding-left: 5em'>
-					<msh:ifInRole roles="/Policy/IdeMode/Hello/View">
-						<div class='menu'>
-							<h2>Шаблоны</h2>
-							<ul>
-								<li><msh:link action="entityList-ecom_hello.do" roles="/Policy/IdeMode/Hello/View">
-									list.jsp
-								</msh:link></li>
-								<li><msh:link action="entityEdit-ecom_hello.do?id=1" roles="/Policy/IdeMode/Hello/View">
-									edit.jsp
-								</msh:link></li>
-								<li><msh:link action="js-ecom_forms-listAllStrutsForms.do" roles="/Policy/IdeMode/Hello/View">
-									Список всех форм
-								</msh:link></li>
-							</ul>
-						</div>
-					</msh:ifInRole>
+
 				</td>
 
 				<td style='padding-left: 5em'>
@@ -213,7 +193,7 @@
                 }
             }
             function getLNNumberRange() {
-                var num = prompt("Укажите количество требуемых номеров",20);
+                var num = prompt("Укажите количество требуемых номеров",'20');
                 if (+num>0) {
                     DisabilityService.getLNNumberRange(num, {
                         callback:function (ret) {
