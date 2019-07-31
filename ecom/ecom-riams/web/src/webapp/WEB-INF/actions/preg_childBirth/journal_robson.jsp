@@ -53,17 +53,23 @@
             <msh:sectionTitle>
                 <ecom:webQuery isReportBase="${isReportBase}" name="totalinfo" nameFldSql="totalinfo_sql" nativeSql="
                 select * from selectRobson('${ksCode}','${dateBegin}','${dateEnd}',${r},${ks})"/>
-                <form action="journal_robson.do" method="post" target="_blank">
+                <form action="print-journal_robson.do" method="post" target="_blank">
+                    <input type='hidden' name="sqlText" id="sqlText" value="${totalinfo_sql}">
+                    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                    <input type='hidden' name="s" id="s" value="PrintService">
+                    <input type='hidden' name="m" id="m" value="printNativeQuery">
+                    <input type="submit" value="Печать">
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table name="totalinfo"
-                           action="journal_robson.do" idField="2" cellFunction="true" printToExcelButton="Сохранить в excel">
+                           action="journal_robson.do" idField="2" cellFunction="true">
                     <msh:tableColumn property="1" columnName="#" addParam="&nul=nul" />
                     <msh:tableColumn columnName="Группа" property="3" addParam="&nul=nul" />
                     <msh:tableColumn columnName="Кол-во КС в группе" property="4" addParam="&short=Short&ks=true&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(КС)"/>
                     <msh:tableColumn columnName="Кол-во женщин в группе" property="5"  addParam="&short=Short&ks=false&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(роды)"/>
-                    <msh:tableColumn columnName="Размер группы (%)" property="7" addParam="&nul=nul"/>
+                    <msh:tableColumn columnName="Размер группы (%)" property="6" addParam="&nul=nul"/>
                     <msh:tableColumn columnName="Частота КС в группе (%)" property="7" addParam="&nul=nul" />
                     <msh:tableColumn columnName="Абсолютный вклад группы в общую частоту КС (%)" property="9" addParam="&nul=nul"/>
                     <msh:tableColumn columnName="Относительный вклад группы в общую частоту КС (%)" property="8" addParam="&nul=nul"/>
