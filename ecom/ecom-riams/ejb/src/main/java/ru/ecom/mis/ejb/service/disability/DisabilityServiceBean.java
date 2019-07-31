@@ -35,6 +35,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -89,7 +90,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 			connection.setRequestMethod("GET");
 
 			StringBuilder response;
-			try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
 				response = new StringBuilder();
 				String s;
 				while ((s = in.readLine()) != null) {
@@ -186,21 +187,19 @@ public class DisabilityServiceBean implements IDisabilityService {
 			LOG.error("У ЛПУ не указан ОГРН. ЛПУ = " + lpuId);
 			return "У ЛПУ не указан ОГРН. ЛПУ = " + lpuId;
 		}
-		if (aMethod != null && aMethod.equals("exportDocument")) {
+		if ("exportDocument".equals(aMethod)) {
 			if (aDocumentId != null && aDocumentId > 0) {
 				method = "SetLnData?id=" + aDocumentId + "&ogrn=" + ogrn;
 			} else {
 				return "Ошибка! При экспорте документа не указан ИД документа";
 			}
-
-		} else if (aMethod != null && aMethod.equals("getNumberRange")) {
+		} else if ("getNumberRange".equals(aMethod)) {
 			if (aRangeCount != null && aRangeCount > 0) {
 				method = "sNewLnNumRange?ogrn=" + ogrn + "&count=" + aRangeCount;
 			} else {
 				return "Ошибка! При получении номеров ЭЛН не указано кол-во номеров";
 			}
-		} else if (aMethod != null && aMethod.equals("annullSheet")) {
-
+		} else if ("annullSheet".equals(aMethod)) {
 			if (aDocumentId != null && aDocumentId > 0 && aReasonAnnulId != null && textReason != null && snils != null) {
 				method = "sDisableLn?ogrn=" + ogrn + "&lnCode=" + aDocumentId + "&snils=" + snils + "&reasonCode=" + aReasonAnnulId + "&reason=" + textReason;
 			} else {
@@ -214,13 +213,9 @@ public class DisabilityServiceBean implements IDisabilityService {
 
 	}
    public boolean isRightSnils (String aSNILS) {
-	//   LOG.info("=======isRightSnils, snilsBefore="+aSNILS);
 		String currentSnils = aSNILS.replace("-", "").replace(" ", "").replace("\t","");
-	//	 LOG.info("=======isRightSnils, snilsAFTER="+currentSnils);
 		int snilsCN = Integer.parseInt(currentSnils.substring(currentSnils.length()-2));
-	//	LOG.info(snilsCN);
 		if (currentSnils.length()!=11) {
-		//	LOG.info("==isRightSnils, Неправильная длина поля СНИЛС! "+currentSnils);
 			return false;
 		} 
 		int sum = 0;
@@ -238,7 +233,7 @@ public class DisabilityServiceBean implements IDisabilityService {
    }
     public DisabilityDocument getDocument (String aNumber) {
 		try {
-		return (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
+			return (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -453,7 +448,6 @@ public class DisabilityServiceBean implements IDisabilityService {
     	newDoc.setMainWorkDocumentSeries(doc.getSeries()) ;
     	newDoc.setWorkComboType(newVocComb);
     	newDoc.setPrevDocument(docPrev) ;
-    	//newDoc.setNoActuality(doc.getNoActuality()) ;   	
     	theManager.persist(newDoc) ;
     	return newDoc.getId() ;
     }
@@ -723,8 +717,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 		return ret ;
 	}
 	public List<DisabilityDocumentForm> findOpenTicketByDate(String aDate) {
-		
-		//QueryClauseBuilder builder = new QueryClauseBuilder();
         Date date = null;
         if(!StringUtil.isNullOrEmpty(aDate)) {
             try {

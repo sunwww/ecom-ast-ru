@@ -460,26 +460,27 @@ public class DisabilityServiceJs {
     public String setAnnulDisabilityDocument(Long aDocumentId, String aAnnulText, String aAnnulCode, HttpServletRequest aRequest) throws NamingException {
         String ret;
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String sql = "SELECT number from electronicdisabilitydocumentnumber WHERE disabilitydocument_id='" + aDocumentId + "'";
+        String sql = "SELECT eln.id as elnId, eln.number as numb, pat.snils as snils " +
+                " from electronicdisabilitydocumentnumber eln " +
+                " left join disabilitydocument dd on dd.id=eln.disabilitydocument_id" +
+                " left join disabilitycase dc on dc.id=dd.disabilitycase_id\n" +
+                " left join patient pat on pat.id=dc.patient_id" +
+                " where eln.disabilitydocument_id=" + aDocumentId + " and eln.number = dd.number";
         Collection<WebQueryResult> list = service.executeNativeSql(sql);
-        if (!list.isEmpty()) {
+        if (list.size()==1) {
+            WebQueryResult wqr = list.iterator().next();
             IDisabilityService disService = Injection.find(aRequest).getService(IDisabilityService.class);
-            String number = list.iterator().next().get1().toString();
-            String snils = null;
-            list = service.executeNativeSql("select p.snils from disabilitydocument d " +
-                    " left join disabilitycase dc on dc.id=d.disabilitycase_id" +
-                    " left join patient p on dc.patient_id = p.id" +
-                    " where d.id=" + aDocumentId);
-            if (!list.isEmpty()) {
-                snils = list.iterator().next().get1().toString();
-            }
+            String number = wqr.get2().toString();
+            String snils = wqr.get3().toString();
+            String elnId = wqr.get1().toString();
+            if (snils == null || "".equals(snils)) return "У пациента не указан СНИЛС, аннулирование невозможно!";
             ret = disService.annulDisabilityDocument(Long.valueOf(number), aAnnulCode, aAnnulText, snils);
             if (ret != null && !ret.equals("")) { //Если сервис успешно аннулировал запись
-                service.executeUpdateNativeSql("UPDATE electronicdisabilitydocumentnumber SET annuldate=current_date, comment='" + aAnnulText + "', annulreason_id=(SELECT id FROM vocannulreason WHERE code='" + aAnnulCode + "') WHERE disabilitydocument_id='" + aDocumentId + "'");
-                service.executeUpdateNativeSql("UPDATE disabilitydocument SET noactuality='1', status_id=(select id from VocDisabilityStatus where code='1_ELN')  WHERE id='" + aDocumentId + "'");
+                service.executeUpdateNativeSql("UPDATE electronicdisabilitydocumentnumber SET annuldate=current_date, comment='" + aAnnulText + "', annulreason_id=(SELECT id FROM vocannulreason WHERE code='" + aAnnulCode + "') WHERE id = " + elnId );
+                service.executeUpdateNativeSql("UPDATE disabilitydocument SET noactuality='1', status_id=(select id from VocDisabilityStatus where code='1_ELN')  WHERE id="+ aDocumentId );
             }
         } else {
-            ret = "Такого электронного ЛН нет!";
+            ret = list.size()+": ЭЛН с таким номером не найдено, либо номер ЭЛН != номер документа";
         }
         return ret;
     }
