@@ -380,7 +380,7 @@
 							Отчёт по онкологическим случаям
 						</msh:link></li>
 						<li><msh:link  isReport="false" action="journal_noIdentSls.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
-							Отчёт по неподтверждённым госпитализациям
+							Отчёт по неидентифицированным госпитализациям
 						</msh:link></li>
 					</ul>
 					</div>
