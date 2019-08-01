@@ -881,6 +881,11 @@
                             btn.removeAttribute("disabled");
                             btn.value = 'Создать';
                         }
+                        else if (vocOncologyN013_1.checked && getValueVocRadiooncoT('vocOncologyN014','vocOncologyN014')==-1) {
+                            alert("Выбрано хирургическое лечение, выберите уточнение!");
+                            btn.removeAttribute("disabled");
+                            btn.value = 'Создать';
+                        }
                         else {
                             $('isFirst').value = document.getElementsByName("typeFirstOrNot")[0].checked;
                             $('vocOncologyReasonTreat').value = patientCategory;
