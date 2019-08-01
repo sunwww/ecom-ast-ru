@@ -127,6 +127,8 @@ function getGroup(aCtx,aPriceList,aParent) {
 	wqM.set2(childPosition) ;
 	return wqM ;
 }
+
+//Печать договора по неоплаченному счету
 function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	var pid = aParams.get("id");
 	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService"
@@ -172,11 +174,9 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
 	var login = aCtx.getSessionContext().getCallerPrincipal().toString() ;
-	var list = aCtx.manager.createNativeQuery("select fullname from SecUser where login=:login")
-	.setParameter("login",login)
-	.setMaxResults(1)
-	.getResultList() ;
-	map.put("login",list.size()>0?list.get(0):login) ;
+	list = aCtx.manager.createNativeQuery("select fullname from SecUser where login=:login")
+			.setParameter("login",login).setMaxResults(1).getResultList() ;
+	map.put("login",list.size()>0 ? list.get(0) : login) ;
 	map.put("accountNumber",pid) ;
 	printAttorney(aCtx);
 	
@@ -186,15 +186,15 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		+"      left join ContractAccount ca on mc.id=ca.contract_id"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
 		+"		left join ServedPerson sp on cams.servedPerson_id = sp.id"
-		+"		left join PriceMedService pms on pms.id=cams.medService_id"
-		+"		left join PricePosition pp on pp.id=pms.pricePosition_id"
-		+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
-		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
+		//+"		left join PriceMedService pms on pms.id=cams.medService_id"
+		//+"		left join PricePosition pp on pp.id=pms.pricePosition_id"
+		//+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
+		//+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
 		+"		left join ContractPerson cp on cp.id=sp.person_id left join patient cpp on cpp.id=cp.patient_id"
 		+"		left join ContractPerson cp1 on cp1.id=mc.customer_id left join patient cpp1 on cpp1.id=cp1.patient_id"
-		+"		where ca.id='"+pid+"' and cao.id is null and caos.id is null group by mc.id,mc.contractnumber" ;
+		+"		where ca.id='"+pid+"' group by mc.id,mc.contractnumber" ;
 	var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
-	var obj = list1.size()>0?list1.get(0):null ;
+	var obj = list1.size()>0 ? list1.get(0) : null ;
 	var ret = new java.util.ArrayList() ;
 	if (obj!=null) {
 		map.put("discount",+obj[6]>0?+obj[6]:null) ;
@@ -254,11 +254,11 @@ function printAttorney (aCtx) {
 	if (list_attorney.size()>0) {
 		var p = list_attorney.get(0);
 		att_exeName = ""+p[0];
-		var att_exeAltName = ""+p[3];
-		var att_exeShortName = ""+p[4];
-		var att_number = ""+p[1];
-		var att_dateFrom = ""+p[2];
-		var att_altName = ""+p[5];
+		att_exeAltName = ""+p[3];
+		att_exeShortName = ""+p[4];
+		att_number = ""+p[1];
+		att_dateFrom = ""+p[2];
+		att_altName = ""+p[5];
 	}
 	map.put("executorFullName",att_exeName);
 	map.put("executorAltFullName", att_exeAltName);
@@ -268,6 +268,8 @@ function printAttorney (aCtx) {
 	map.put("attorneyTypeAltName",att_altName);
 	
 }
+
+//Печать оплаченного счета
 function printContractByAccrual(aCtx, aParams) {
 	var pid = aParams.get("id");
     var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService \n" +
@@ -315,11 +317,11 @@ function printContractByAccrual(aCtx, aParams) {
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
 	var login = aCtx.getSessionContext().getCallerPrincipal().toString() ;
-	var list = aCtx.manager.createNativeQuery("select fullname from SecUser where login=:login")
+	list = aCtx.manager.createNativeQuery("select fullname from SecUser where login=:login")
 		.setParameter("login",login)
 		.setMaxResults(1)
 		.getResultList() ;
-	map.put("login",list.size()>0?list.get(0):login) ;
+	map.put("login",list.size()>0 ? list.get(0) : login) ;
 	
 	printAttorney(aCtx) ;
 	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||coalesce(cpp.middlename,'')) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||coalesce(cpp1.middlename,'')) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id"+
@@ -336,9 +338,9 @@ function printContractByAccrual(aCtx, aParams) {
 		+"		left join ContractPerson cp1 on cp1.id=mc.customer_id left join patient cpp1 on cpp1.id=cp1.patient_id"
 		+"		where cao.id='"+pid+"' group by mc.id,mc.contractnumber" ;
 	var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
-	var obj = list1.size()>0?list1.get(0):null ;
+	var obj = list1.size()>0 ? list1.get(0) : null ;
 	if (obj!=null) {
-		map.put("discount",+obj[6]>0?+obj[6]:null) ;
+		map.put("discount",+obj[6]>0 ? +obj[6] : null) ;
 		var contract = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.MedContract,java.lang.Long.valueOf(""+obj[5])) ;
 		var ret = new java.util.ArrayList() ;
 		map.put("contract",contract) ;
@@ -399,8 +401,6 @@ function parseInt(aValue1,aDiscount,aValue2) {
 function parseSymRub(aNumeric) {
 	var value = new java.math.BigDecimal(aNumeric) ;
 	var kop =(+aNumeric % 1).toFixed(2).slice(2) ;
-	//if (kop<10) kop="0"+kop ;
-	 
 	return Packages.ru.ecom.ejb.services.util.ConvertSql.toWords(value)+" руб. "+ kop +" коп." ;
 }
 function getPassportInfo(aPassportType,aPassportSeries,aPassportNumber,aPassportDateIssue,aPassportWhomIssued) {
@@ -435,7 +435,7 @@ function printLabAnalysisTemplateExtra (aCtx, aParams) {
         "        left join ContractPerson cp on cp.id=sp.person_id left join patient cpp on cpp.id=cp.patient_id\n" +
         "        where mc.id='"+pid+"'  and cao.id is null and caos.id is null and  CAST(EXTRACT(YEAR from (cpp.birthday)) as INTEGER) is not null group by mc.id,cpp.id" ;
     var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
-    var obj = list1.size()>0?list1.get(0):null ;
+    var obj = list1.size()>0 ? list1.get(0) : null ;
     if (obj!=null) {
         map.put("contractNumber", obj[0]);
         map.put("servedFIO", obj[1]);
@@ -443,5 +443,5 @@ function printLabAnalysisTemplateExtra (aCtx, aParams) {
         var servedPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[3])) ;
         map.put("address",servedPerson.addressRegistration);
     }
-        return map;
+    return map;
 }
