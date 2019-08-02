@@ -36,7 +36,7 @@ public class VisitSaveInterceptor implements IFormInterceptor {
                     String code = ms.getCode();
                     boolean ispaid= false;
                     for (Object[] o :paidServices) {
-                        String pCode = o[0].toString();
+                        String pCode = o[0]!=null ? o[0].toString() : "";
                         if (pCode.equals(code)) {
                             ContractAccountOperationByService caos = manager.find(ContractAccountOperationByService.class, Long.valueOf(o[1].toString()));
                             caos.setMedcase(visit);
