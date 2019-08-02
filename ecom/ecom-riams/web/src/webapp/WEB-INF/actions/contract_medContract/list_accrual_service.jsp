@@ -16,8 +16,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 	, cao.discount,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2)
 			from ContractAccountMedService cams
 			left join ServedPerson sp on cams.servedPerson_id = sp.id
-			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
-			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
+			left join ContractAccountOperation cao on cao.account_id = sp.account_id and cao.dtype='OperationAccrual'
 			left join ContractAccount ca on ca.id=cao.account_id
 			left join ContractPerson cp on cp.id=sp.person_id 
 			left join patient p on p.id=cp.patient_id
