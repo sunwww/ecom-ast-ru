@@ -75,7 +75,7 @@ public class ContractServiceBean implements IContractService {
 				(aMedServiceType!=null && !aMedServiceType.equals("")? " and vms.code='"+aMedServiceType+"'" : "") +
 				" and (cao.isdeleted is null or cao.isdeleted='0') " +
 				" order by caos.medcase_id, caos.serviceId";
-		LOG.warn("sql = "+sql+" , "+aPatientId);
+		//LOG.warn("sql = "+sql+" , "+aPatientId);
 		return theManager.createNativeQuery(sql)
 				.setParameter("patientId", aPatientId).getResultList();
 	}
