@@ -398,7 +398,7 @@ where cancer.entry_id=${param.id}"/>
                 <script type="text/javascript">
                     String.prototype.replaceAt=function(index, replacement) {
                         return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
-                    }
+                    };
 
                     function splitLongCase() {
                         Expert2Service.splitLongCase(${param.id}, {callback: function (a) {

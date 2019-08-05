@@ -1,10 +1,10 @@
 package ru.ecom.mis.ejb.service.addresspoint;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 /**
  *
@@ -29,9 +29,9 @@ public interface IAddressPointService {
             , String aDateFrom, String aDateTo, String aPeriodByReestr
             , String aNReestr, String aNPackage, Long aCompany, String aDispPlanType) throws ParserConfigurationException, TransformerException ;
     
-    public WebQueryResult export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo,String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException ;
-    public WebQueryResult exportNoAddress(String aAge, boolean aLpuCheck, Long aLpu,Long aArea, String aDateFrom, String aDateTo,String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException ;
-    public WebQueryResult exportAll(String aAge, String aFilenameAddSuffix, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException;
-    public WebQueryResult exportAll(String aAge, String aFilenameAddSuffix, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage, Long aCompnay, boolean needDivide, String xmlFormatб, String aReturnType) throws ParserConfigurationException, TransformerException;
-    public WebQueryResult exportFondAll(String aAge, String aFilenameAddSuffix, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage, Long aCompnay, boolean needDivide) throws ParserConfigurationException, TransformerException;
+    WebQueryResult export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo,String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException ;
+    WebQueryResult exportNoAddress(String aAge, boolean aLpuCheck, Long aLpu,Long aArea, String aDateFrom, String aDateTo,String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException ;
+    WebQueryResult exportAll(String aAge, String aFilenameAddSuffix, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException;
+    WebQueryResult exportAll(String aAge, String aFilenameAddSuffix, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage, Long aCompnay, boolean needDivide, String xmlFormatб, String aReturnType) throws ParserConfigurationException, TransformerException;
+    WebQueryResult exportFondAll(String aAge, String aFilenameAddSuffix, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr, String aNReestr, String aNPackage, Long aCompnay, boolean needDivide) throws ParserConfigurationException, TransformerException;
 }

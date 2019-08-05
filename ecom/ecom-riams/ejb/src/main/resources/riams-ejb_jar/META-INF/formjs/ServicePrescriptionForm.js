@@ -72,7 +72,6 @@ function onCreate(aForm, aEntity, aCtx) {
 			var vss = manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream, aForm.serviceStream);
 			var isOnlyPayed = vss!=null && vss.getIsPaidConfirmation()!=null && vss.getIsPaidConfirmation();
 			var matId = null;
-//			throw "All OK"+addMedServicies.length;
 			for (var i=0; i<addMedServicies.length; i++) {
 				var param = addMedServicies[i].split(":") ;
 				var par1 = java.lang.Long.valueOf(param[0]) ;

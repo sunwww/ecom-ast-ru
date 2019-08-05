@@ -197,7 +197,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         z.addContent(new Element("ISHOD").setText(aEntry.getFondIshod().getCode())); // Исход случая.
         //if (isExtDisp) z.addContent(new Element("P_OTK").setText("0")); // Отказ от ДД
         z.addContent(new Element("OS_SLUCH").setText(Expert2FondUtil.calculateFondOsSluch(aEntry))); // Особый случай
-        if (!isPoliclinic &&!isExtDisp) z.addContent(new Element("VB_P").setText(slCnt>1?"1":"0")); // Признак внутрибольничного перевода
+        if (!isPoliclinic &&!isExtDisp && slCnt>1) add(z,"VB_P","1"); // Признак внутрибольничного перевода *05.08 1 - только если есть перевод
         z.addContent(new Element("SL_TEMPLATE")); // Список случаев
         //if (isExtDisp) z=add(z,"SGROUP",aEntry.getExtDispSocialGroup()); // Социальная группа в ДД +
         z.addContent(new Element("IDSP").setText(aEntry.getIDSP().getCode())); // Способ оплаты медицинской помощи (V010)
@@ -736,9 +736,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         schet.addContent(new Element("MONTH").setText(dateToString(aDocumentDate, "M")));
         schet.addContent(new Element("NSCHET").setText(aBillNumber));
         schet.addContent(new Element("DSCHET").setText(dateToString(aBillDate)));
-   //   schet.addContent(new Element("PLAT").setText("30004"));
         schet.addContent(new Element("SUMMAV").setText(aTotalSum + ""));
-  //      schet.addContent(new Element("SUMMAV8_P").setText(aTotalSum + ""));
         root.addContent(schet);
 
     }
@@ -959,6 +957,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
                 if (!isNotNull(entry.getVidSluch())) {
                     err.append("НЕ ЗАПОЛНЕН ВИД СЛУЧАЯ");
+                    isError = true;
+                }
+                if (!isNotNull(entry.getDoctorSnils())) {
+                    err.append("НЕ УКАЗАН СНИЛС ВРАЧА");
                     isError = true;
                 }
                 if (isError) {

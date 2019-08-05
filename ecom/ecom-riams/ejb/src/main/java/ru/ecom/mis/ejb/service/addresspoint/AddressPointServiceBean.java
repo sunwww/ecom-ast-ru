@@ -701,6 +701,8 @@ public class AddressPointServiceBean implements IAddressPointService {
     public WebQueryResult exportNoAddress(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo , String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException {
 		return exportAll(aAge,"_no_addresss", "and p.address_addressid is null",aLpuCheck, aLpu, aArea, aDateFrom,aDateTo, aPeriodByReestr, aNReestr, aNPackage);
     }
+
+    @Deprecated
     public void onRemove(LpuAreaAddressText aLpuAreaAddressText) {
         EntityManager manager = theManager ; //theFactory.createEntityManager() ;
         try {
@@ -777,6 +779,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	
     }
     // todo обновить по адресу, дому и корпусу привязку пациентов
+	@Deprecated //прикрепление перенесено из пациента в отдельную сущность
     private void updatePatients(LpuAreaAddressText aText, Address aAddress, String aNumber, String aBuilding, String aFlat) {
         if (CAN_DEBUG) LOG.debug("aText.getId() = " + aText.getId());
         LpuArea area = aText.getArea();

@@ -44,7 +44,7 @@ public class ForwardUtil {
     	String action = parentForm.getAnnotation(Parent.class)!=null ? "entityParentView" : "entityView" ;
     	Object id = PropertyUtil.getPropertyValue(form, parent.property()) ;
     	
-    	return new ActionForward(new StringBuilder().append(action).append('-').append(parentFormName).append(".do?id=").append(id).toString(), true) ;
+    	return new ActionForward(action + '-' + parentFormName + ".do?id=" + id, true) ;
     	
     }
     public static ActionForward createGoSubclassForward(ActionForm aForm, ActionMapping aMapping, HttpServletRequest aRequest, StrutsFormUtil aStrutsFormUtil, StrutsConfigUtil aStrutsConfigUtil) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
