@@ -5,6 +5,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
+import ru.ecom.mis.ejb.domain.patient.ObservationSheet;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.voc.VocProtocolMode;
 import ru.ecom.poly.ejb.domain.voc.VocTypeProtocol;
@@ -168,4 +169,13 @@ public class Protocol extends Diary {
 
 	/** Режим */
 	private VocProtocolMode theMode;
+
+	/** Лист наблюдения (для ЕДКЦ) */
+	@Comment("Лист наблюдения (для ЕДКЦ)")
+	@OneToOne
+	public ObservationSheet getObsSheet() {return theObsSheet;}
+	public void setObsSheet(ObservationSheet aObsSheet) {theObsSheet = aObsSheet;}
+
+	/** Лист наблюдения (для ЕДКЦ) */
+	private ObservationSheet theObsSheet;
 }

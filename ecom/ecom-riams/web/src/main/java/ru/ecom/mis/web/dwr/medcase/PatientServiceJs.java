@@ -723,6 +723,20 @@ public class PatientServiceJs {
 				l.iterator().next().get1().toString();
 	}
 
+	/**
+	 * Получить id текущего открытого листка наблюдения #171
+	 * @param aPatId Patient.id
+	 * @return String OnservationSheet.id
+	 */
+	public String getObservationSheetOpenedId(String aPatId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select id" +
+				" from observationsheet" +
+				" where patient_id='"+aPatId + "' and finishdate is null") ;
+		return l.isEmpty() || l.iterator().next().get1()==null? "0" :
+				l.iterator().next().get1().toString();
+	}
+
     /**
      * Получить текущую рабочую функцию
      * @param aRequest HttpServletRequest
@@ -779,13 +793,18 @@ public class PatientServiceJs {
      * @param aPatId Sls.id or Patient.id
      * @return String json Листки наблюдений персоны
      */
-    public String selectIdentityPatient(Long aPatId, HttpServletRequest aRequest) throws NamingException {
+    public String selectObservSheetPatient(Long aPatId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         StringBuilder sql = new StringBuilder();
         sql.append("select o.id as oId, to_char(o.startdate,'dd.mm.yyyy') as std ")
                 .append(",vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as  wp ")
                 .append(",to_char(o.finishdate,'dd.mm.yyyy') as fd ")
                 .append(",vwf2.name||' '||wpat2.lastname||' '||wpat2.firstname||' '||wpat2.middlename as  wp2 ")
+                .append(", case when ")
+                .append("count(case when o.finishdate is null then '1' else null end)>0 ")
+                .append("then null ")
+                .append("else case when max(o.finishdate)=min(o.startdate) then '1' else max(o.finishdate)-min(o.startdate)+1 end end as dlit ")
+                .append(",vr.name as vrn ")
                 .append("from  observationsheet o ")
                 .append("left join workfunction wf on wf.id=o.specialiststart_id ")
                 .append("left join workfunction wf2 on wf2.id=o.specialistfin_id ")
@@ -795,7 +814,10 @@ public class PatientServiceJs {
                 .append("left join vocworkfunction vwf2 on vwf2.id=wf2.workfunction_id ")
                 .append("left join patient wpat on wpat.id=w.person_id ")
                 .append("left join patient wpat2 on wpat2.id=w2.person_id ")
-                .append("where o.patient_id= ").append(aPatId);
+                .append("left join vocobservationresult vr on vr.id=o.observresult_id ")
+                .append("where o.patient_id= ").append(aPatId)
+                .append("group by o.id,vwf.name,vwf2.name,wpat.id,wpat2.id,vr.name ")
+                .append("order by o.id");
         JSONArray res = new JSONArray() ;
         Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
         for (WebQueryResult w :list) {
@@ -804,7 +826,9 @@ public class PatientServiceJs {
                     .put("startDate", w.get2())
                     .put("wpStart", w.get3())
                     .put("finishDate", w.get4())
-                    .put("wpFin", w.get5());
+                    .put("wpFin", w.get5())
+                    .put("dlit", w.get6())
+                    .put("res", w.get7());
             res.put(o);
         }
         return res.toString();

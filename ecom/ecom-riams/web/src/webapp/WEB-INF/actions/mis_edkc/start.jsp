@@ -71,7 +71,7 @@
                 }
                 function showvocObservResJs() {
                     if ($('patient').value!='')
-                        showvocObservRes($('patient').value);
+                        showvocObservRes($('patient').value,'/riams/riams_edkc.do?close=1');
                     else
                         showToastMessage('Необходимо выбрать пациента!',null,true);
                 }
@@ -82,8 +82,16 @@
                         showToastMessage('Необходимо выбрать пациента!',null,true);
                 }
                 function consultProtocolJs() {
-                    if ($('patient').value!='')
-                        alert('В разработке!');
+                    if ($('patient').value!='') {
+                        PatientService.getObservationSheetOpenedId($('patient').value, {
+                            callback: function(id) {
+                                if (id!=0)
+                                    window.location.href='entityParentPrepareCreate-edkcProtocol.do?id='+id;
+                                else
+                                    showToastMessage('Не удалось найти открытый лист наблюдения!',null,true);
+                            }
+                        });
+                    }
                     else
                         showToastMessage('Необходимо выбрать пациента!',null,true);
                 }

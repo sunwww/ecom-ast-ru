@@ -32,22 +32,24 @@
     </div>
 </div>
 <script type="text/javascript">
-    var aPatId;
+    var aPatId${name};
+    var loc${name};
     var the${name}Dialog = new msh.widget.Dialog($('${name}Dialog')) ;
 
     // Показать
-    function show${name}(id) {
-        aPatId=id;
+    function show${name}(id,loc) {
+        aPatId${name}=id;
+        loc${name}=loc;
         the${name}Dialog.show();
     }
     // Закрыть лист наблюдения
     function closeObservSheet${name}() {
         if ($('${name}vocObservationResult').value!='') {
-        PatientService.closeObservSheet(aPatId,$('${name}vocObservationResult').value, {
+        PatientService.closeObservSheet(aPatId${name},$('${name}vocObservationResult').value, {
             callback: function(res) {
                 if (res=='1')
                     //window.location.reload();
-                    window.location.href='/riams/riams_edkc.do?close=1'; //лучше сбросить пациента
+                    window.location.href=loc${name}; //лучше сбросить пациента
                 else
                     showToastMessage('Не найдено открытых листов наблюдения!',null,true);
             }

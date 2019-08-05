@@ -29,9 +29,14 @@
             </msh:panel>
         </msh:form>
         <script type='text/javascript'>
-            function showConsultProtocol(id) {
+            function showPatient(id) {
                 if (id)
-                    alert('В разработке!');
+                    window.location.href='entityView-mis_patient.do?id='+id;
+            }
+
+            function showObsSheet(id) {
+                if (id)
+                    window.location.href='entityView-edkcObsSheet.do?id='+id;
             }
 
         </script>
@@ -69,14 +74,15 @@
                 left join patient pat on pat.id=o.patient_id
                 where o.patient_id is not null
                 and o.startDate between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')" />
-                <msh:table printToExcelButton="сохранить в excel" name="journal_patientList" action="entityView-mis_patient.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+                <msh:table printToExcelButton="сохранить в excel" name="journal_patientList" action="/javascript:void()" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
                     <msh:tableColumn property="sn" columnName="#"/>
                     <msh:tableColumn property="3" columnName="Пациент"/>
                     <msh:tableColumn property="4" columnName="Дата установки"/>
                     <msh:tableColumn property="5" columnName="Открыл лист наблюдения"/>
                     <msh:tableColumn property="6" columnName="Дата снятия"/>
                     <msh:tableColumn property="7" columnName="Закрыл лист наблюдения"/>
-                    <msh:tableButton property="2" addParam="this" buttonFunction="showConsultProtocol" buttonName="Показать протоколы и консультации" buttonShortName="Протоколы"/>
+                    <msh:tableButton property="1" addParam="this" buttonFunction="showPatient" buttonName="Показать пациента" buttonShortName="Пациент"/>
+                    <msh:tableButton property="2" addParam="this" buttonFunction="showObsSheet" buttonName="Показать ЛН" buttonShortName="Лист набл."/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
