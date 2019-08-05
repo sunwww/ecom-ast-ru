@@ -160,8 +160,7 @@
 			String sqlAdd = "(select ca1.id"+
 				" from contractaccount CA1"+ 
 				" left join ContractAccountOperation CAO1 on CAO1.account_id=CA1.id"+ 
-				" left join ContractAccountOperationByService caos1 on cao1.id=caos1.accountOperation_id"+ 
-				" left join ContractAccountMedService cams1 on caos1.accountMedService_id=cams1.id"+ 
+				" left join ContractAccountMedService cams1 on cams1.account_id = ca1.id"+
 				" left join PriceMedService pms1 on pms1.id=cams1.medService_id "+
 				" left join PricePosition pp1 on pp1.id=pms1.pricePosition_id"+ 
 				" left join medservice ms1 on ms1.id=pms1.medservice_id"+
@@ -189,8 +188,7 @@ SELECT wp.lastname as sqlId
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
-left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
-left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join ContractAccountMedService cams on cams.account_id = ca.id
 
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
@@ -223,8 +221,7 @@ SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.d
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
-left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
-left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join ContractAccountMedService cams on cams.account_id = ca.id
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
@@ -256,8 +253,7 @@ SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.d
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
-left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
-left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join ContractAccountMedService cams on cams.account_id = ca.id
 
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
@@ -337,8 +333,7 @@ SELECT wp.lastname as sqlId
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
-left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
-left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join ContractAccountMedService cams on cams.account_id = ca.id
 
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
@@ -370,8 +365,7 @@ SELECT cao.id as caoid
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
-left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
-left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join ContractAccountMedService cams on cams.account_id = ca.id
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
@@ -401,8 +395,7 @@ SELECT cao.id as caoid
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
-left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
-left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join ContractAccountMedService cams on cams.account_id = ca.id
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
