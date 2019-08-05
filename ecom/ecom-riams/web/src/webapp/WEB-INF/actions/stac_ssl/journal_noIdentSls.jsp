@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="StacJournal">Отчёт по неподтверждённым госпитализациям</msh:title>
+        <msh:title mainMenu="StacJournal">Отчёт по неидентифицированным госпитализациям</msh:title>
     </tiles:put>
     <tiles:put name='side' type='string'>
     </tiles:put>
@@ -65,7 +65,7 @@
                            action="journal_noIdentSls.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
                     <msh:tableColumn property="sn" columnName="#" addParam=""/>
                     <msh:tableColumn property="2" columnName="Отделение" addParam=""/>
-                    <msh:tableColumn property="3" columnName="Кол-во неподтверждённых" addParam=""/>
+                    <msh:tableColumn property="3" columnName="Кол-во неидентифицированных" addParam="" isCalcAmount="true"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
