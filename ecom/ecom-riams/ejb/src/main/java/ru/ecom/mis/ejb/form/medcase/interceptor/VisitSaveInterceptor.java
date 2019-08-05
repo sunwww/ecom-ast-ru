@@ -49,7 +49,7 @@ public class VisitSaveInterceptor implements IFormInterceptor {
                         errorList.append("Услуга ").append(code).append(" ").append(ms.getName()).append(" не входит в список оплаченных\n\r");
 
                     }
-                } catch (NumberFormatException e) {
+                } catch (Exception e) {
                  LOG.error(e.getMessage(), e);
                 }
             }
