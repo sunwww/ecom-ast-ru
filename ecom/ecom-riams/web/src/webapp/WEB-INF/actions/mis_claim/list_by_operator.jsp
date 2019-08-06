@@ -237,12 +237,12 @@ order by ${orderBySql}
             <msh:tableColumn columnName="Дата и время создания" property="4" />
             <msh:tableColumn columnName="Статус" property="5" />
             <msh:tableColumn columnName="Комментарий исполнителя" property="14" />
-            <msh:tableButton hideIfEmpty="true" property="10" buttonFunction="setView" buttonShortName='Просмотрено' buttonName="Просмотрено" />
-            <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setStartWork" buttonShortName="В работу/Переназначить" buttonName="В работу"/>
-            <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setCancel" buttonShortName="Отменить" buttonName="Отменить"/>
-            <msh:tableButton hideIfEmpty="true" property="15" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
-            <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
-            <msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFreeze" buttonShortName="Заморозить" buttonName="Заморозить"/>
+			<msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setStartWork" buttonShortName="В работу/Переназначить" buttonName="В работу"/>
+			<msh:tableButton hideIfEmpty="true" property="15" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
+			<msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
+			<msh:tableButton hideIfEmpty="true" property="10" buttonFunction="setView" buttonShortName='Просмотрено' buttonName="Просмотрено" />
+			<msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setCancel" buttonShortName="Отменить" buttonName="Отменить"/>
+			<msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFreeze" buttonShortName="Заморозить" buttonName="Заморозить"/>
             <msh:tableButton role="/Policy/Mis/Claim/Boss" hideIfEmpty="true" property="9" buttonFunction="sendToUser" buttonShortName="Отправить пользователю на подтверждение" buttonName="Отправить пользователю на подтверждение"/>
         </msh:table>${claimListSql}
 	</msh:section>
