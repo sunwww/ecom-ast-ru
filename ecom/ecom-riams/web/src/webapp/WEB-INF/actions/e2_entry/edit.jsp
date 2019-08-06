@@ -343,13 +343,17 @@
             </msh:section>
 
             <msh:separator colSpan="4" label="Услуги по случаю"/>
-                <ecom:webQuery name="servicesList" nativeSql="select ms.id, vms.code ||' '|| coalesce(vms.name,'Нет наименования'), ms.serviceDate as name from entryMedService ms left join VocMedService vms on vms.id=ms.medservice_id
+                <ecom:webQuery name="servicesList" nativeSql="select ms.id, vms.code ||' '|| coalesce(vms.name,'Нет наименования')
+                , ms.serviceDate as name
+                ,ms.doctorsnils as dsnils
+                from entryMedService ms left join VocMedService vms on vms.id=ms.medservice_id
                      where ms.entry_id=${param.id}"/>
                 <msh:table idField="1" name="servicesList" action="jabascript:void()" noDataMessage="Нет услуг по случаю"
                            deleteUrl="entityParentDeleteGoParentView-e2_entryMedService.do" >
                     <msh:tableColumn columnName="ИД" property="1"/>
                     <msh:tableColumn columnName="Услуга" property="2"/>
                     <msh:tableColumn columnName="Дата оказания" property="3"/>
+                    <msh:tableColumn columnName="СНИЛС" property="4"/>
                 </msh:table>
 
             <msh:separator colSpan="4" label="Сложности лечения пациента"/>

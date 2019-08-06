@@ -204,39 +204,33 @@ public class Expert2ServiceJs {
     }
 
     public String replaceFieldByError(Long aEntryListId, String aErrorCode, String aFieldName, String aOldValue, String aNewValue, HttpServletRequest aRequest) throws NamingException {
-        if (aFieldName==null||aNewValue==null) {return "неуспешно!";}
+        if (StringUtil.isNullOrEmpty(aFieldName) ||StringUtil.isNullOrEmpty(aNewValue) || StringUtil.isNullOrEmpty(aOldValue)) {return "неуспешно!";}
         StringBuilder sql = new StringBuilder();
         String fieldName;
         sql.append("update e2entry e set ");
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         if (aFieldName.equals("SERVICESTREAM")) {
             fieldName="serviceStream";
             //sql.append();
         } else if (aFieldName.equals("SNILS_DOCTOR")) {
             fieldName="doctorSnils";
-        }else {
+            //Обновляем СНИЛС в мед услугах по заполнению
+            service.executeUpdateNativeSql("update entrymedservice ems set doctorsnils = '"+aNewValue+"' " +
+                    " from e2entry e where e.listentry_id = "+aEntryListId+" and (e.isDeleted is null or e.isDeleted='0') and ems.entry_id = e.id and ems.doctorsnils = '"+aOldValue+"'");
+        } else {
             return "BAD_FIELD_NAME!";
         }
         sql.append(fieldName).append("='").append(aNewValue).append("'");
-        if (aErrorCode!=null&&!aErrorCode.equals("")) { //меняем записи по ошибке
-
+        if (!StringUtil.isNullOrEmpty(aErrorCode)) { //меняем записи по ошибке
             sql.append(" where id in (select distinct entry_id from e2entryerror err where err.listentry_id=")
-                    .append(aEntryListId).append(" and err.errorcode='").append(aErrorCode).append("' and (err.isDeleted is null or err.isDeleted='0') )");
+                .append(aEntryListId).append(" and err.errorcode='").append(aErrorCode).append("' and (err.isDeleted is null or err.isDeleted='0') )");
 
-            if (aOldValue!=null&&!aOldValue.equals("")) {
-                sql.append(" and ").append(fieldName).append(" ='").append(aOldValue).append("'");
-            }
+            sql.append(" and ").append(fieldName).append(" ='").append(aOldValue).append("'");
         } else { //Меняем записи по заполнению
-            if (aOldValue!=null&&!aOldValue.equals("")) {
-                sql.append(" where listEntry_id=").append(aEntryListId).append(" and ").append(fieldName).append("='").append(aOldValue).append("'");
-            } else {
-                return "Необходимо указать старое значение поля! ";
-            }
-
+           sql.append(" where listEntry_id=").append(aEntryListId).append(" and ").append(fieldName).append("='").append(aOldValue).append("'");
         }
         sql.append(" and (isDeleted is null or isDeleted='0')");
-        LOG.info("SQL for update field = "+sql);
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-
+      //  LOG.info("SQL for update field = "+sql);
         service.executeUpdateNativeSql(sql.toString());
         return "1_Успешно!";
     }
