@@ -5,9 +5,8 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
 	var sql = "";
 	
 	for (var i=0;i<8;i++) {
-		sql ="";
-		sql=sql+"	select";
-		sql=sql+"	list(''||case when wfs.lpu_id=w.lpu_id and wfs.vocworkfunction_id=wf.workfunction_id";
+		sql="	select";
+		sql=sql+"	list(''||case when (wfs.lpu_id is null or wfs.lpu_id=w.lpu_id) and wfs.vocworkfunction_id=wf.workfunction_id";
 		sql=sql+"	and ms.isPoliclinic='1' and ms.finishDate is null";
 		sql=sql+"	and mc.dateStart between cao.operationdate and cao.operationdate+"+i+" and caos.medcase_id is null";
 		sql=sql+"	then caos.id else null end)";
@@ -62,7 +61,7 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
 				sql=sql+"	left join Worker w on w.id=wf.worker_id";
 				sql=sql+"	left join Patient wp on wp.id=w.person_id";
 				sql=sql+"	left join VocServiceStream vss on vss.id=mc.serviceStream_id";
-                sql=sql+"	left join medcase smc on smc.parent_id=mc.id"
+                sql=sql+"	left join medcase smc on smc.parent_id=mc.id";
 				sql=sql+"	where mc.dtype='Visit' and smc.dtype='ServiceMedCase' and smc.medservice_id=ms.id";
 				sql=sql+"	and mc.dateStart between cao.operationdate and cao.operationdate+"+i;
 				sql=sql+"	and vss.code='CHARGED' and (mc.noActuality='0' or mc.noActuality is null)";
@@ -83,19 +82,17 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
 		}
 	}
 	} catch (e) {
-		
 		throw ""+e;
 	}
-	
 }
 
 function printPriceList(aCtx,aParams) {
-	var id = aParams.get("id") ;
-	var date=aParam.get("date") ;
-	var dateSql="CURRENT_DATE" ;
+	//var id = aParams.get("id") ;
+	//var date=aParam.get("date") ;
+/*	var dateSql="CURRENT_DATE" ;
 	if (date) {
 		dateSql = "to_date('"+date+"','dd.mm.yyyy')"
-	}
+	}*/
 	var sqlMainGroup = "select id,code,name,comment from priceposition where parent_id is null and dtype='PriceGroup' order by code" ;
 	var list = aCtx.manager.createNativeQuery(sqlMainGroup).getResultList() ;
 	var ret = new java.util.ArrayList() ;
@@ -176,12 +173,8 @@ function FinRep(aCtx, aParams){
 		ref.setHaemorrhoids(datenum);
 		ref.setPerineumEdema(sumkopl);
 		ref.setVulvaEdema(saldoend);
-		
 		servisec.add(ref);
 	}
 	map.put("serv",servisec) ;
-
-	
-	
 	return map;
 }
