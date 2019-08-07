@@ -18,7 +18,6 @@ import ru.nuzmsh.util.format.DateFormat;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.rpc.ServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -130,23 +129,22 @@ public class FondWebService {
         return getInfoByPatient(aRequest, aPatFrm,soap,aCommonNumber, patId);
     }
 	
-	public static StringBuilder checkAllPatientsByFond(String updPatient, String updDocument, String updPolicy, String updAttachment, HttpServletRequest aRequest) throws JDOMException, IOException, NamingException, ParseException, ServiceException {
+	public static StringBuilder checkAllPatientsByFond(String updPatient, String updDocument, String updPolicy, String updAttachment, HttpServletRequest aRequest) {
 	 return checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment,"1", "",aRequest);
 	}
 
-	public static StringBuilder checkAllPatientsByFond(String updPatient, String updDocument, String updPolicy, String updAttachment, String aType, String aPatientList, HttpServletRequest aRequest) throws JDOMException, IOException, NamingException, ParseException, ServiceException {
+	public static StringBuilder checkAllPatientsByFond(String updPatient, String updDocument, String updPolicy, String updAttachment, String aType, String aPatientList, HttpServletRequest aRequest) {
 		// Создаем список пациентов
 		if (aType==null) {return new StringBuilder();}
-		String typePat=aType;
-		StringBuilder patSql = new StringBuilder().append("select p.id, p.lastname, p.firstname, p.middlename, p.birthday ");
-		if (typePat.equals("1")) {
+        StringBuilder patSql = new StringBuilder().append("select p.id, p.lastname, p.firstname, p.middlename, p.birthday ");
+		if (aType.equals("1")) {
 			patSql.append(" from patient p" +
 					" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
-		} else if (typePat.equals("2")) {
+		} else if (aType.equals("2")) {
 			patSql.append("from lpuattachedbydepartment att " +
 					" left join patient p on p.id=att.patient_id" +
 					" where att.dateto is null and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
-		} else if (typePat.equals("3")) {
+		} else if (aType.equals("3")) {
 			patSql.append(" from patient p" + " where p.id in (").append(aPatientList).append(") and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
 		}
 	//	System.out.println("updPatient ="+updPatient +":"+updDocument);
@@ -162,11 +160,11 @@ public class FondWebService {
 		Collection<WebQueryResult> pats = serviceWQS.executeNativeSql(patSql.toString());
 		if (!pats.isEmpty()) {
 			PatientFondCheckData pfc = service.getNewPFCheckData(updatePatient, updateDocument, updatePolicy, updateAttachment);
-			if (typePat.equals("2")) {
+			if (aType.equals("2")) {
 				pfc.setComment(pfc.getComment()+"Проверка только прикрепленного населения");
-			} else if (typePat.equals("1")) {
+			} else if (aType.equals("1")) {
 				pfc.setComment(pfc.getComment()+"Проверка всей базы пациентов");
-			} else if (typePat.equals("3")) {
+			} else if (aType.equals("3")) {
 				pfc.setComment(pfc.getComment()+"Выборочная проверка пациентов");
 			}
 			int i=0;
@@ -288,12 +286,7 @@ public class FondWebService {
 					String ac = "" ;
 					
 					if (current.equals("1")) {
-						String datEnd = ddosr; //(ddosr!=null && !ddosr.equals(""))?ddosr:dpe ;
-			//			policy.append(serPol).append(":").append(numPol).append(":").append(sk).append(":")
-			//			.append(dpp).append(":").append(datEnd);
-						
-	            		companyCode=sk; policySeries=serPol;policyNumber=numPol;policyDateFrom=dpp; policyDateTo=datEnd;
-												
+	            		companyCode=sk; policySeries=serPol;policyNumber=numPol;policyDateFrom=dpp; policyDateTo= ddosr;
 					}
 				}
 				in.close() ;
@@ -424,24 +417,14 @@ public class FondWebService {
 			
 			StringBuilder sb = new StringBuilder() ;
         	String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
-        	//System.out.println("getInfoByPatient FIODR_from_RZ, result info:") ;
-            //System.out.println(result) ;
         	result = updateXml(result) ;
         	IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
     		
-			/*
-        	
-			
-			;String aCompanyCode ;String aCompabyCodeF;String aCompanyOgrn; String aCompanyOkato
-			;String aDocumentType; String aDocumentSeries;String aDocumentNumber
-			;String aKladr;String aHouse; String aHouseBuilding; String aFlat;
-        	*/
         	String lastname = null, firstname = null, middlename = null, birthday = null, snils = null;
         	String attachedDate = null; String attachedType = null; String attachedLpu = null;
-        	String c = null; String doctorSnils=null; String codeDepartment=null;
+        	String doctorSnils=null; String codeDepartment=null;
         	String dateDeath = null;
 			String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-			//String commonNumber;
         	InputStream in = new ByteArrayInputStream(result.getBytes());
         	Document doc = new SAXBuilder().build(in);
         	Element root = doc.getRootElement();
@@ -511,21 +494,15 @@ public class FondWebService {
         	in.close() ;
         	result = (String)aSoap.get_POLIS_from_RZ(aRz, theLpu) ;
         	
-            //System.out.println("result policy:") ;
-            //System.out.println(result) ;
-        	
         	result = updateXml(result) ;
-        	//System.out.println("=== FondWebService policy: "+result);
         	in = new ByteArrayInputStream(result.getBytes());
         	doc = new SAXBuilder().build(in);
         	root = doc.getRootElement();
         	list_cur.clear() ;
-        	//@SuppressWarnings("unchecked")
         	list_cur = root.getChildren("cur1");
         	String companyCode = null, policySeries = null, policyNumber = null, policyDateFrom = null, policyDateTo = null;
         	sb.append("<h2>Список полисов</h2><table border=1 width=100%>") ;
         	sb.append("<tr>");
-        	//sb.append("<th>").append("").append("</th>") ;
         	sb.append("<th>").append("</th>") ;
         	sb.append("<th>").append("</th>") ;
         	sb.append("<th>").append("СК").append("</th>") ;
@@ -669,11 +646,8 @@ public class FondWebService {
             in.close() ;
             
             result = (String)aSoap.get_ADRES_from_RZ(aRz, theLpu) ;
-         //   System.out.println("result adress:") ;
-         //   System.out.println(result) ;
-        	
+
         	result = updateXml(result) ;
-        	//System.out.println(result) ;
         	in = new ByteArrayInputStream(result.getBytes());
             doc = new SAXBuilder().build(in);
             root = doc.getRootElement();
@@ -695,22 +669,20 @@ public class FondWebService {
             sb.append("<th>").append("Кв").append("</th>") ;
             sb.append("</tr>") ;
             for (Element el:list_cur) {
-            //	System.out.println(" FondWebService address = "+result);
             	sb.append("<tr>") ;
         		String ac = "" ;
-        		String hn = el.getChildText("house") ;
-        		String hb = el.getChildText("section") ;
-        		String fn = el.getChildText("apartment") ;
+        		String hn = el.getChildText("house").replace('\\','/') ;
+        		String hb = el.getChildText("section").replace('\\','/') ;
+        		String fn = el.getChildText("apartment").replace('\\','/') ;
         		String kl = el.getChildText("street_gni") ;
         		String r = el.getChildText("rayon") ; 
-        		String sity = el.getChildText("sity") ;
-        		String street = el.getChildText("street");
-        		String streetT = el.getChildText("street_t");
+        		String sity = el.getChildText("sity").replace('\\','/') ;
+        		String street = el.getChildText("street").replace('\\','/');
+        		String streetT = el.getChildText("street_t").replace('\\','/');
         		String provance = el.getChildText("province") ;
         		String index = el.getChildText("ssity") ;
         		String okato = el.getChildText("region");
         		sb.append("<td>").append("<input  onclick=\"patientcheck('address')\" type='radio' ")
-            	//.append(isStart?" checked='true' ":"") 
             	.append("name='fondAdr' id='fondAdr' value='")
         			.append(kl).append("#").append(hn).append("#")
         			.append(hb).append("#").append(fn).append("#").append(r).append("#")
