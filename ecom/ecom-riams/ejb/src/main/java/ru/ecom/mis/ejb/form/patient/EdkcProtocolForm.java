@@ -42,67 +42,66 @@ public class EdkcProtocolForm extends IdEntityForm {
     @MaxDateCurrent
     public String getDateRegistration() {    return theDateRegistration ;}
     public void setDateRegistration(String aDateRegistration ) {  theDateRegistration = aDateRegistration ; }
-
-    /** ИД */
-    @Id
-    @Comment("ИД")
-    public long getId() {    return theId ;}
-    public void setId(long aId ) {  theId = aId ; }
+    /** Дата регистрации */
+    private String theDateRegistration ;
 
     /** Дата */
     @Persist @DateString @DoDateString
     @Comment("Дата")
     public String getDate() {    return theDate ;}
     public void setDate(String aDate ) {  theDate = aDate ; }
+    /** Дата */
+    private String theDate ;
 
     /** Запись */
     @Persist @Required
     @Comment("Запись")
     public String getRecord() {    return theRecord ;}
     public void setRecord(String aRecord ) {  theRecord = aRecord ; }
-
+    /** Запись */
+    private String theRecord ;
 
     /** Специалист */
     @Comment("Специалист")
     @Persist
     public Long getSpecialist() {return theSpecialist;}
     public void setSpecialist(Long aSpecialist) {theSpecialist = aSpecialist;}
+    /** Специалист */
+    private Long theSpecialist;
 
     /** Пользователь */
     @Comment("Пользователь")
     @Persist
     public String getUsername() {return theUsername;}
     public void setUsername(String aUsername) {theUsername = aUsername;}
+    /** Пользователь */
+    private String theUsername;
 
     /** Время регистрации */
     @Comment("Время регистрации")
-    @Persist
+    @Persist @Required
     @TimeString
     @DoTimeString
     public String getTimeRegistration() {return theTimeRegistration;}
     public void setTimeRegistration(String aTimeRegistration) {theTimeRegistration = aTimeRegistration;}
+    /** Время регистрации */
+    private String theTimeRegistration;
 
     /** Время создания */
     @Comment("Время создания")
     @Persist @TimeString @DoTimeString
     public String getTime() {return theTime;}
     public void setTime(String aTime) {theTime = aTime;}
-
     /** Время создания */
     private String theTime;
-    /** Время регистрации */
-    private String theTimeRegistration;
-    /** Пользователь */
-    private String theUsername;
-    /** Специалист */
-    private Long theSpecialist;
-    private String theRecord ;
-    private String theDate ;
-    private long theId ;
 
-    /** Дата регистрации */
-    private String theDateRegistration ;
-
+    /** Дата редактирования*/
+    @Persist @DateString @DoDateString
+    @Comment("Дата редактирования")
+    public String getEditDate() {    return theEditDate ;}
+    public void setEditDate(String aEditDate ) {  theEditDate = aEditDate ; }
+    /** Дата редактирования */
+    private String  theEditDate;
 
     /** Время редактирования */
     @Comment("Время редактирования")
@@ -116,4 +115,48 @@ public class EdkcProtocolForm extends IdEntityForm {
     }
     /** Время редактирования */
     private String  theEditTime;
+
+    /** Пользователь последний, изменявший запись */
+    @Comment("Пользователь последний, изменявший запись")
+    @Persist
+    public String getEditUsername() {
+        return theEditUsername;
+    }
+
+    public void setEditUsername(String aEditUsername) {
+        theEditUsername = aEditUsername;
+    }
+
+    /** Пользователь последний, изменявший запись */
+    private String theEditUsername;
+
+    /** Шаблон, на основе которого создано заключение */
+    @Comment("Шаблон, на основе которого создано заключение")
+    @Persist
+    public Long getTemplateProtocol() {return theTemplateProtocol;}
+    public void setTemplateProtocol(Long aTemplateProtocol) {theTemplateProtocol = aTemplateProtocol;}
+    /** Шаблон, на основе которого создано заключение */
+    private Long theTemplateProtocol;
+
+    /** Параметры шаблона */
+    @Comment("Параметры шаблона")
+    public String getParams() {return theParams;}
+    public void setParams(String aParams) {theParams = aParams;}
+    /** Параметры шаблона */
+    private String theParams;
+
+    /** Тип протокола */
+    @Comment("Тип протокола")
+    @Persist
+    public Long getType() {return theType;}
+    public void setType(Long aType) {theType = aType;}
+    /** Тип протокола */
+    private Long theType;
+
+    /** ИД */
+    @Id
+    @Comment("ИД")
+    public long getId() {    return theId ;}
+    public void setId(long aId ) {  theId = aId ; }
+    private long theId ;
 }

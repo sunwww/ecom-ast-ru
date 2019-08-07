@@ -14,7 +14,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityForm
 @EntityFormPersistance(clazz = ObservationSheet.class)
 @Comment("Лист наблюдения ЕДКЦ")
-@WebTrail(comment = "Лист наблюдения ЕДКЦ", nameProperties= "patient", list="entityParentList-edkcObsSheet.do", view="entityView-edkcObsSheet.do")
+@WebTrail(comment = "Лист наблюдения ЕДКЦ", nameProperties= "id", list="entityParentList-edkcObsSheet.do", view="entityView-edkcObsSheet.do")
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet")
 public class ObservationSheetForm extends IdEntityForm {

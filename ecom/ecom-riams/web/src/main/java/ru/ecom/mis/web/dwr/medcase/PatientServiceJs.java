@@ -833,4 +833,26 @@ public class PatientServiceJs {
         }
         return res.toString();
     }
+
+	/**
+	 * Получить статус листка наблюдения #171
+	 * @param aCode vocTypeProtocol.code
+	 * @return String Статус vocTypeProtocol.name
+	 */
+	public String getNameTypeProtocol(String aCode, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select id,name from vocTypeProtocol where code='" +aCode + "'") ;
+		JSONObject o = new JSONObject() ;
+		if (!l.isEmpty()) {
+			WebQueryResult w = l.iterator().next();
+			o.put("id",w.get1())
+					.put("name", w.get2());
+		}
+		Collection<WebQueryResult> l2= service.executeNativeSql("select keyvalue from softconfig where key='" +aCode + "'") ;
+		if (!l2.isEmpty()) {
+			WebQueryResult w = l2.iterator().next();
+			o.put("tmpl",w.get1());
+		}
+		return o.toString();
+	}
 }

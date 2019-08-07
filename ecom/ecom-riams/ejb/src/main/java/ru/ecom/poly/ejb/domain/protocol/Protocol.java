@@ -11,10 +11,7 @@ import ru.ecom.poly.ejb.domain.voc.VocProtocolMode;
 import ru.ecom.poly.ejb.domain.voc.VocTypeProtocol;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
 
@@ -172,7 +169,7 @@ public class Protocol extends Diary {
 
 	/** Лист наблюдения (для ЕДКЦ) */
 	@Comment("Лист наблюдения (для ЕДКЦ)")
-	@OneToOne
+	@ManyToOne
 	public ObservationSheet getObsSheet() {return theObsSheet;}
 	public void setObsSheet(ObservationSheet aObsSheet) {theObsSheet = aObsSheet;}
 
