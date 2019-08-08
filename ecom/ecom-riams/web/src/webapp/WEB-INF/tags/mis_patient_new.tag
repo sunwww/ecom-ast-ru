@@ -116,7 +116,7 @@
      function check${name}Patient(aLastname,aFirstname,aMiddlename,aBirthday, aSex, aSocialStatus,aSnils) {
      	PatientService.getDoubleByFio(
 		     		null,aLastname,aFirstname,aMiddlename,aSnils,aBirthday
-		     			'','','','javascript:updatePatient' ,{
+		     			,'','','','javascript:updatePatient' ,{
 		     		 callback: function(aString) {
 		     		 	if (aString==null || aString=="") {
 		     		 		add${name}Patient(aLastname,aFirstname,aMiddlename,aBirthday, aSex, aSocialStatus,aSnils) ;
