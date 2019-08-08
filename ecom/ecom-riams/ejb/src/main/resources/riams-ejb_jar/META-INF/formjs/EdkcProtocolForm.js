@@ -50,8 +50,8 @@ function check(aForm, aCtx) {
         if (dateTime.getTime() > currentDate.getTime()) {
             throw "Дата регистрации дневника не может быть больше текущего времени!";
         }
-
     }
+
 }
 function errorThrow(aList, aError) {
     if (!aList.isEmpty()) {

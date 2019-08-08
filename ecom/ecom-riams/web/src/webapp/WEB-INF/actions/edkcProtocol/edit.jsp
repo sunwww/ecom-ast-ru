@@ -81,13 +81,8 @@
 
                 <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Delete"
                               key='ALT+DEL' params="id"
-                              action="/entityParentDeleteGoSubclassView-edkcProtocol"
+                              action="/entityParentDeleteGoParentView-edkcProtocol"
                               name="Удалить" confirm="Вы действительно хотите удалить?" />
-
-                <msh:sideLink action="/entityPrepareCreate-sec_userPermission.do?type=1&ido=${param.id}"
-                              name="Добавить разрешение на редактирование протокола"
-                              title="Добавить разрешение на редактирование протокола"
-                              roles="/Policy/Jaas/Permission/User/Create" />
             </msh:ifFormTypeIsView>
         </msh:sideMenu>
     </tiles:put>
