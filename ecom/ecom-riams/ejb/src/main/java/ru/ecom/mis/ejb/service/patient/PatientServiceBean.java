@@ -287,9 +287,7 @@ public class PatientServiceBean implements IPatientService {
 		String sql = "select count(*) from ContractPerson where dtype='NaturalPerson' and patient_id='" +
 				aPatient + "'";
 		Object ret = theManager.createNativeQuery(sql).getSingleResult() ;
-		Long cnt = ConvertSql.parseLong(ret) ;
-
-		return cnt>0L;
+		return ConvertSql.parseLong(ret)>0L;
 
 
 	}
@@ -835,10 +833,9 @@ public class PatientServiceBean implements IPatientService {
 				sql.append(", editUsername='").append(aUsername).append("'") ;
 				sql.append(" where id='").append(aPatientId).append("'") ;
 				theManager.createNativeQuery(sql.toString()).executeUpdate() ;
-
 			}
 		}
-		if (aAddress!=null &&!aAddress.equals("") &&aIsAddress) {
+		if (aIsAddress && aAddress!=null &&!aAddress.equals("") ) {
 			String[] adr = aAddress.split("#") ;
 			StringBuilder sql  ;
 			String kladr = adr[0] ;
@@ -1688,10 +1685,9 @@ public class PatientServiceBean implements IPatientService {
 				LOG.error(e);
 				throw new IllegalStateException(e);
 			}
-			String sb = point.getLpuAreaAddressText().getAddressText() +
+			return point.getLpuAreaAddressText().getAddressText() +
 					" " + point.getLpuAreaAddressText().getArea().getName() +
 					" " + point.getLpuAreaAddressText().getArea().getLpu().getName();
-			return sb;
 		}
 	}
 
@@ -1757,11 +1753,6 @@ public class PatientServiceBean implements IPatientService {
 		return point;
 	}
 
-	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries) {
-		return getDoubleByBaseData(aId, aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, "entityView-mis_patient.do") ;
-	}
-
 	public String addPatient(String aLastname, String aFirstname, String aMiddlename,
 			String aBirthday, Long aSex, Long aSocialStatus, String aSnils) throws ParseException {
 		VocSocialStatus statusSocial = theManager.find(VocSocialStatus.class, aSocialStatus) ;
@@ -1787,12 +1778,9 @@ public class PatientServiceBean implements IPatientService {
 		return pat.getId()+"#"+pat.getLastname()+" "+pat.getFirstname()+" "+pat.getMiddlename()+" "+date ;
 
 	}
+
 	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction) {
-		return getDoubleByBaseData(aId, aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction, false) ;
-	}
-	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) {
+			String aSnils, String aBirthday, String aPassportType, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) {
 		StringBuilder sql = new StringBuilder() ;
 		aFirstname = aFirstname.toUpperCase().trim() ;
 		aMiddlename = aMiddlename.toUpperCase().trim() ;
@@ -1811,8 +1799,10 @@ public class PatientServiceBean implements IPatientService {
 		if (aSnils!=null && !aSnils.equals("") && !aSnils.equals("999-999-999 99")) {
 			sql.append(" or (p.snils='").append(aSnils).append("')") ;
 		}
-		if (aPassportNumber!=null && !aPassportNumber.equals("") && aPassportSeries!=null && !aPassportSeries.equals("") ) {
-			sql.append(" or (p.passportNumber='").append(aPassportNumber).append("' and p.passportSeries='").append(aPassportSeries).append("')") ;
+		if (!StringUtil.isNullOrEmpty(aPassportType)
+				&& !StringUtil.isNullOrEmpty(aPassportNumber)
+				&& !StringUtil.isNullOrEmpty(aPassportSeries)  ) {
+			sql.append(" or ( p.passportType_id=").append(aPassportType).append(" and p.passportNumber='").append(aPassportNumber).append("' and p.passportSeries='").append(aPassportSeries).append("')") ;
 		}
 
 		sql.append(")") ;
@@ -1826,26 +1816,13 @@ public class PatientServiceBean implements IPatientService {
 				.setParameter("firstname", aFirstname)
 				.setParameter("middlename", aMiddlename)
 				.setParameter("birthyear", birthyear)
-	//			.setParameter("snils", aSnils)
-	//			.setParameter("pnumber", aPassportNumber)
-	//			.setParameter("pseries", aPassportSeries)
 				.setMaxResults(20)
 				.getResultList() ;
 
 		if (!doubles.isEmpty()) {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;
-			Object cntdoubles = theManager.createNativeQuery(
-			"select count(*) "+sql.toString())
-			.setParameter("lastname", aLastname)
-			.setParameter("firstname", aFirstname)
-			.setParameter("middlename", aMiddlename)
-			.setParameter("birthyear", birthyear)
-			//			.setParameter("snils", aSnils)
-			//			.setParameter("pnumber", aPassportNumber)
-			//			.setParameter("pseries", aPassportSeries)
-			.getSingleResult() ;
-			ret.append("<li>Количество найденных дублей: <b>").append(cntdoubles).append("</b></li>") ;
+			ret.append("<li>Количество найденных дублей: <b>").append(doubles.size()).append("</b></li>") ;
 			for (Object[] res:doubles) {
 				ret.append("<li>")
 				.append("<a href='") ;

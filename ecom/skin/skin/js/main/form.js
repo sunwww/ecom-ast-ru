@@ -73,7 +73,7 @@ function goToPageNewWindow(aPage,aId,aTableCell){
 	goToPage(aPage,aId,aTableCell+"##NEW_WINDOW##");
 }
 
-function goToPage(aPage,aId,aTableCell) { //TODO сделать переход на страницу в другой вкладке
+function goToPage(aPage,aId,aTableCell) {
 	//if (aTableCell==null) aTableCell="" ;
     if (aPage.indexOf('javascript:')!=-1) {
     	

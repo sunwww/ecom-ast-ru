@@ -70,9 +70,6 @@ public interface IPatientService {
 	String addPatient(String aLastname, String aFirstname, String aMiddlename,
 			String aBirthday, Long aSex, Long aSocialStatus, String aSnils) throws ParseException;
 	
-	String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction) throws ParseException ;
-	
     WebQueryResult findPatient(Long aLpuId, Long aLpuAreaId, String aLastname, String aYear
     		, Boolean aNext, String aIdNext) ;
     
@@ -83,11 +80,9 @@ public interface IPatientService {
      * @param aPatientId
      */
     void updatePatientLpuByAddress(Patient aPatientId) ;
-    
+
     String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries) throws ParseException;
-    String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) throws ParseException;
+			String aSnils, String aBirthday, String aPassportType, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) throws ParseException;
     LpuAreaAddressPoint findPoint(Address aAddress, String aNumber, String aBuilding, Date aBirthday, String aFlat) ;
     
     void setAddParamByMedCase(String aParam, Long aMedCase,Long aStatus)  ;

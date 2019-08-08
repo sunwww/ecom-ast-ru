@@ -17,11 +17,7 @@ public class PatientCreateInterceptor implements IFormInterceptor {
 		patient.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 		java.sql.Date cur = new java.sql.Date(new java.util.Date().getTime()) ;
 		patient.setCreateDate(cur) ;
-		patient.setEditDate(cur) ;
-		
-		
-		//form.setNumber(next);
-		
+
 		if (patient.getPatientSync()==null || patient.getPatientSync().equals("")) {
 			if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MisLpuDynamic/1/View")) {
 				String syncCode = EjbInjection.getInstance().getLocalService(ISequenceService.class).startUseNextValue("Patient","patientSync");
@@ -33,25 +29,5 @@ public class PatientCreateInterceptor implements IFormInterceptor {
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MisLpuDynamic/1/View") && StringUtil.isNullOrEmpty(form.getPhone())) { //Только для АМОКБ
 			throw new IllegalStateException("Необходимо указать контактный телефон");
 		}
-		/*if(form.isAttachedByDepartment()) {
-			// убираем прикрепление по полису, потом SaveInterceptor его прикрепит по адресу
-			patient.setAttachedOmcPolicy(null);
-			patient.setLpu(null);
-			patient.setLpuArea(null);
-			
-			// новое прикрепление по ведомству
-			LpuAttachedByDepartmentForm lpuAttachedForm = new LpuAttachedByDepartmentForm() ;
-			lpuAttachedForm.setPatient(patient.getId());
-			lpuAttachedForm.setArea(form.getLpuArea());
-			lpuAttachedForm.setLpu(form.getLpu());
-			try {
-				EjbInjection.getInstance().getLocalService(IParentEntityFormService.class)
-					.create(lpuAttachedForm);
-			} catch (Exception e) {
-				throw new IllegalStateException(e);
-			}
-			
-		}*/
-		
 	}
 }

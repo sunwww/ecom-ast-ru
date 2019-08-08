@@ -1213,7 +1213,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
             }
 
     		PatientService.getDoubleByFio($('id').value,$('lastname').value, $('firstname').value, $('middlename').value,
-				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do', {
+				$('snils').value, $('birthday').value, getValue($('passportType')),getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do', {
                    callback: function(aResult) {
                       if (aResult) {
 				    		showPatientDouble(aResult) ;

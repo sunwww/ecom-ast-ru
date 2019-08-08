@@ -648,10 +648,10 @@ public class PatientServiceJs {
 		}
 	}
 	public String getDoubleByFio(String aId, String aLastname, String aFirstname, String aMiddlename,
-								 String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries,String aAction, HttpServletRequest aRequest) throws ParseException, NamingException {
+								 String aSnils, String aBirthday, String aPassportType, String aPassportNumber, String aPassportSeries,String aAction, HttpServletRequest aRequest) throws ParseException, NamingException {
 
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction);//"123";
+		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportType, aPassportNumber, aPassportSeries, aAction, true);
 	}
 	private void createAdminChangeMessageByPatient (Long aSmo, String aType, String aTextInfo
 			, HttpServletRequest aRequest) throws NamingException {
