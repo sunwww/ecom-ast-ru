@@ -612,7 +612,7 @@ public class PrescriptionServiceJs {
 	 * @return
 	 * @throws NamingException
 	 */
-	public void cancelService(Long aPrescripts,Long aReasonId,String aReason,HttpServletRequest aRequest) throws NamingException {
+	public void cancelService(String aPrescripts,Long aReasonId,String aReason,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		Date date = new Date() ;
@@ -668,7 +668,7 @@ public class PrescriptionServiceJs {
 		sql = new StringBuilder() ;
 		sql.append("update diary set record='").append("Брак биоматериала: ").append(reasonText).append(". Дата и время брака: '")
 				.append("||to_char(current_date,'dd.mm.yyyy')||' '||to_char(current_timestamp,'HH24:MI:SS')||chr(13)||chr(13)||record")
-				.append(" where medcase_id=(select medcase_id from prescription  where id in (").append(aPrescripts).append("))");
+				.append(" where medcase_id=ANY(select medcase_id from prescription  where id in (").append(aPrescripts).append("))");
 		service.executeUpdateNativeSql(sql.toString()) ;
 	}
 	

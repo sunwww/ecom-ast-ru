@@ -35,11 +35,11 @@
                         <msh:sideLink action="/javascript:showvocObservResJs()" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
                                       name="Закрыть ЛН" title="Закрыть текущий ЛН"
                         />
-                        <msh:sideLink action="/javascript:everydayProtocolJs()" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
-                                      name="Протокол ежесуточного наблюдения" title="Протокол ежесуточного наблюдения"
-                        />
-                        <msh:sideLink action="/javascript:consultProtocolJs()" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
+                        <msh:sideLink action="/javascript:consultProtocolJs('edkc_1')" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
                                       name="Протокол консультации" title="Протокол консультации"
+                        />
+                        <msh:sideLink action="/javascript:consultProtocolJs('edkc_ev')" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
+                                      name="Протокол ежесуточного наблюдения" title="Протокол ежесуточного наблюдения"
                         />
                     <h2>Отчёты</h2>
                     <msh:sideLink action="/riams_edkc_patientList.do" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
@@ -71,19 +71,21 @@
                 }
                 function showvocObservResJs() {
                     if ($('patient').value!='')
-                        showvocObservRes($('patient').value);
+                        showvocObservRes($('patient').value,'/riams/riams_edkc.do?close=1');
                     else
                         showToastMessage('Необходимо выбрать пациента!',null,true);
                 }
-                function everydayProtocolJs() {
-                    if ($('patient').value!='')
-                        alert('В разработке!');
-                    else
-                        showToastMessage('Необходимо выбрать пациента!',null,true);
-                }
-                function consultProtocolJs() {
-                    if ($('patient').value!='')
-                        alert('В разработке!');
+                function consultProtocolJs(code) {
+                    if ($('patient').value!='') {
+                        PatientService.getObservationSheetOpenedId($('patient').value, {
+                            callback: function(id) {
+                                if (id!=0)
+                                    window.location.href='entityParentPrepareCreate-edkcProtocol.do?id='+id+'&type='+code;
+                                else
+                                    showToastMessage('Не удалось найти открытый лист наблюдения!',null,true);
+                            }
+                        });
+                    }
                     else
                         showToastMessage('Необходимо выбрать пациента!',null,true);
                 }
