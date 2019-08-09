@@ -89,7 +89,6 @@
         </td>
       </msh:row>
       <msh:row>
-      <msh:row>
         <td class="label" title="Экстренность (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Порядок поступления.:</label></td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
         	<input type="radio" name="typeEmergency" value="1">  экстренно
@@ -113,7 +112,6 @@
         	<input type="radio" name="typeEndoscopyUse" value="3">  все
         </td>
       </msh:row>
-<!-- <AOI 28.10.2016 для  Захарова по анестезиологическим пособиям -->
       <msh:row>
         <td class="label" title="Поиск по анестезии (typeAnaesthesUse)" colspan="1"><label for="typeAnaesthesUseName" id="typeAnaesthesUseLabel">Операции с испол.:</label></td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
@@ -125,8 +123,6 @@
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
         	<input type="radio" name="typeAnaesthesUse" value="3"> все
         </td>
-      </msh:row>
-<!-- </AOI 28.10.2016 -->
       </msh:row>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
@@ -290,9 +286,7 @@
     <msh:section>
     <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
     </msh:section>
-    <%
-    if ("1".equals(view)) {
-    %>
+    <% if ("1".equals(view)) { %>
     <msh:section>
     <msh:sectionTitle>Разбивка по дням</msh:sectionTitle>
     <msh:sectionContent>
@@ -312,16 +306,14 @@
     
     group by ${typeDateSql} 
     order by ${typeDateSql}" />
-    <msh:table name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short&dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Дата" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" identificator="false" property="3" />
       <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="4" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <%
-    } else if ("2".equals(view)) {
-    %>
+    <% } else if ("2".equals(view)) { %>
     <msh:section>
     <msh:sectionTitle>Разбивка по хирургам и операциям</msh:sectionTitle>
     <msh:sectionContent>
@@ -354,9 +346,7 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%
-    } else if ("3".equals(view)) {
-    %>
+    <% } else if ("3".equals(view)) { %>
     <msh:section>
     <msh:sectionTitle>Разбивка по отделениям и операциям</msh:sectionTitle>
     <msh:sectionContent>
@@ -386,9 +376,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%
-    } else if ("5".equals(view)) {
-    %>
+    <% } else if ("5".equals(view)) { %>
     <msh:section>
     <msh:sectionTitle>Разбивка по отделениям</msh:sectionTitle>
     <msh:sectionContent>
@@ -416,9 +404,7 @@ order by dep.name
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%
-    } else if ("4".equals(view)) {
-    %>
+    <% } else if ("4".equals(view)) { %>
     <msh:section>
     <msh:sectionTitle>Разбивка по операциям</msh:sectionTitle>
     <msh:sectionContent>
@@ -452,9 +438,7 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%
-    } else if ("6".equals(view)) {
-    %>
+    <% } else if ("6".equals(view)) { %>
     <msh:section>
     <msh:sectionTitle>Разбивка по хирургам и уровням сложности операций</msh:sectionTitle>
     <msh:sectionContent>
@@ -486,9 +470,7 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%
-    } else if ("7".equals(view)) {
-    %>
+    <% } else if ("7".equals(view)) { %>
     <msh:section>
     <msh:sectionTitle>Разбивка по отделениям и уровням сложности операций</msh:sectionTitle>
     <msh:sectionContent>
@@ -522,9 +504,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
-    <%
-    } else if ("8".equals(view)) {
-    %>
+    <% } else if ("8".equals(view)) { %>
 	    <ecom:webQuery name="journal_surOperation1" nameFldSql="journal_surOperation1_sql" nativeSql="select so.id as id
 	    ,coalesce(to_char(so.operationDate,'DD.MM.YYYY')||' '||cast(so.operationTime as varchar(5))||' - '||to_char(so.operationDateTo,'DD.MM.YYYY')||' '||cast(so.operationTimeTo as varchar(5)),to_char(${typeDateSql},'DD.MM.YYYY')) as operDate
 	    , vo.name as voname
@@ -562,7 +542,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
 	          ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${additionStatusSql}
 	          order by ${order1} p.lastname,p.firstname,p.middlename ${order2}
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:section>${journal_surOperation1_sql}
+    <msh:section>
     <msh:sectionTitle>
     
     <form action="print-stac_journal_surOperationByDate_8.do" method="post" target="_blank">

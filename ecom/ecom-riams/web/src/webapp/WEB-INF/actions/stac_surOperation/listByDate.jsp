@@ -36,47 +36,47 @@
     String typeEndoscopyUse = ActionUtil.updateParameter("SurgicalOperation","typeEndoscopyUse","3", request) ;
     String typeAnaesthesUse = ActionUtil.updateParameter("SurgicalOperation","typeAnaesthesUse","3", request) ;
 
-    String typeDateSql = "so.operationDate" ;
-	if (typeDate!=null && typeDate.equals("2")) {
+    String typeDateSql ;
+	if ("2".equals(typeDate)) {
 		typeDateSql = "sls.dateFinish" ;
-	} else if (typeDate!=null && typeDate.equals("3")) {
+	} else if ("3".equals(typeDate)) {
 		typeDateSql = "slsHosp.dateFinish" ;
-	} 
+	}  else {
+		typeDateSql = "so.operationDate";
+	}
 	request.setAttribute("typeDateSql", typeDateSql);
 	
-	/* <AOI 31.10.2016 Почему-то этого не было*/
-    String typeEndoscopyUseSql=""; 
-    if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("1")) {
+    String typeEndoscopyUseSql;
+    if ("1".equals(typeEndoscopyUse)) {
     	typeEndoscopyUseSql=" and so.endoscopyUse='1'" ;
-    } else if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("2")) {
+    } else if ("2".equals(typeEndoscopyUse)) {
     	typeEndoscopyUseSql= "and (so.endoscopyUse='0' or so.endoscopyUse is null)" ;
-    }
+    } else {
+		typeEndoscopyUseSql ="";
+	}
     request.setAttribute("typeEndoscopyUseSql", typeEndoscopyUseSql) ;
-    /* </ AOI 31.10.2016 */ 
-    
-    /* <AOI 31.10.2016 для  Захарова по анестезиологическим пособиям */
-    String typeAnaesthesUseSql=""; 
-    if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("1")) {
+    String typeAnaesthesUseSql;
+    if ("1".equals(typeAnaesthesUse)) {
     	typeAnaesthesUseSql=" and an.id is not null " ;
-    } else if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("2")) {
+    } else if ("2".equals(typeAnaesthesUse)) {
     	typeAnaesthesUseSql= " and an.id is null " ;
-    }
+    } else {
+		typeAnaesthesUseSql = "";
+	}
     request.setAttribute("typeAnaesthesUseSql", typeAnaesthesUseSql) ;
-    /* </ AOI 31.10.2016 */ 
 
 	if (typeEmergency.equals("1")) {
-		if (typeDate!=null && typeDate.equals("2")) {
+		if ("2".equals(typeDate)) {
 			request.setAttribute("typeEmergencySql", " and sls.emergency='1'") ;
-    	} else if (typeDate!=null && typeDate.equals("3")) {
+    	} else if ("3".equals(typeDate)) {
     		request.setAttribute("typeEmergencySql", " and slsHosp.emergency='1')") ;
     	} else {
     		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and sls.emergency='1' or slo.datestart is null and slsHosp.emergency='1')") ;
     	}
 	} else if (typeEmergency.equals("2")) {
-		
-		if (typeDate!=null && typeDate.equals("2")) {
+		if ("2".equals(typeDate)) {
 			request.setAttribute("typeEmergencySql", " and (sls.emergency='0' or sls.emergency is null)") ;
-    	} else if (typeDate!=null && typeDate.equals("3")) {
+    	} else if ("3".equals(typeDate)) {
     		request.setAttribute("typeEmergencySql", " and (slsHosp.emergency='0' or slsHosp.emergency is null)") ;
     	} else {
     		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and (sls.emergency='0' or sls.emergency is null) or slo.datestart is null and (slsHosp.emergency='0' or slsHosp.emergency is null))") ;
@@ -143,7 +143,7 @@
 	        
       </msh:sectionTitle>
       <msh:sectionContent>
-	    <msh:table name="journal_surOperation1" 
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation1"
 	    action="entityView-stac_surOperation.do" idField="1" 
 	    viewUrl="entityShortView-stac_surOperation.do"
 	    >

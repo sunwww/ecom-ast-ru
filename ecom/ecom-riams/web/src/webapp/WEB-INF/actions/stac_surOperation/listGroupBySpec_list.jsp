@@ -58,7 +58,7 @@
     </msh:form>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
     	%>
     
@@ -85,7 +85,7 @@
     
     group by m.department_id,m.bedfund_id,vbst.id
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
+        <msh:table printToExcelButton="Сохранить в excel" name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Поток обслужив." property="6"/>
@@ -104,7 +104,7 @@
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
     <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
-    <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
+    <style type="text/css">@import url('/skin/ext/jscalendar/css/calendar-blue.css');</style>
     <script type='text/javascript'>
     var typePatient = document.forms[0].typePatient ;
      var typeDate = document.forms[0].typeDate ;
