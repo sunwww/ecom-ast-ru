@@ -26,7 +26,8 @@ import java.sql.Time;
 @AIndexes({
 	@AIndex(properties="medCase",table="Diary"),
 	@AIndex(properties={"medCase","printDate"},table="Diary"),
-	@AIndex(properties="dateRegistration",table="Diary")
+	@AIndex(properties="dateRegistration",table="Diary"),
+	@AIndex(properties="obsSheet",table="Diary")
 	//?,@AIndex(properties="specialist",table="Diary")
     }) 
 @Table(schema="SQLUser")

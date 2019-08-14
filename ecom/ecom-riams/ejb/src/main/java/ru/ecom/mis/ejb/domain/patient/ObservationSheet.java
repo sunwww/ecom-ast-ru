@@ -3,6 +3,8 @@ package ru.ecom.mis.ejb.domain.patient;/**
  */
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.patient.voc.VocObservationResult;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -10,12 +12,18 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.sql.Date;
 
 /** Лист наблюдения пациента выездной
  * анестезиолого-реанимационной неонатальной
  * бригады ОПЦ*/
 @Entity
+@Table(schema="SQLUser")
+@AIndexes({
+        @AIndex(properties="patient"),
+        @AIndex(properties="startDate")
+})
 public class ObservationSheet extends BaseEntity {
     /** Дата установки */
     @Comment("Дата установки")
