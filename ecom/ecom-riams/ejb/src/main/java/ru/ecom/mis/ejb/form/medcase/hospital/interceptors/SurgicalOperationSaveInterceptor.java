@@ -7,6 +7,7 @@ import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperationByService;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
+import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
 import ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm;
 import ru.ecom.mis.ejb.service.contract.IContractService;
 
@@ -35,7 +36,11 @@ public class SurgicalOperationSaveInterceptor implements IFormInterceptor {
 				ContractAccountOperationByService caos = manager.find(ContractAccountOperationByService.class, Long.valueOf(o[1].toString()));
 				caos.setMedcase(parentMedCase);
 				caos.setServiceType(operation);
-				caos.setServiceId(form.getId());
+				if (!String.valueOf(form.getId()).equals("0")) caos.setServiceId(form.getId());
+				else {
+					SurgicalOperation oper = (SurgicalOperation) aEntity;
+					caos.setServiceId(oper.getId());
+				}
 				manager.persist(caos);
 			}
 		}

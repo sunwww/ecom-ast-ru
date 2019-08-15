@@ -108,4 +108,6 @@ function onPreDelete(aEntityId, aCtx) {
         var parent=(dtype=='DepartmentMedCase')? so.getMedCase().getParent() : so.getMedCase() ;
         if (parent.getDateFinish()!=null) throw "Пациент выписан. Нельзя удалять операцию в закрытом СЛС!";
     }
+    //очищение в ContractAccountOperationByService, чтобы потом вновь можно было увидеть операцию в списке оплаченных
+    aCtx.manager.createNativeQuery("update ContractAccountOperationByService set serviceid=null where serviceid="+aEntityId).executeUpdate() ;
 }

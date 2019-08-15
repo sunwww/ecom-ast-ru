@@ -18,6 +18,8 @@ import ru.nuzmsh.forms.validator.transforms.DoIntegerString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.*;
 
+import javax.persistence.Id;
+
 @Comment("Хирургическая операция")
 @EntityForm
 @EntityFormPersistance(clazz= SurgicalOperation.class)
@@ -491,4 +493,12 @@ public class SurgicalOperationForm extends IdEntityForm{
 	public void setLeftRight(Long aLeftRight) {theLeftRight = aLeftRight;}
 	/** На какой конечности была сделана операция */
 	private Long theLeftRight ;
+
+	/** Идентификатор */
+	@Id
+	@Comment("Идентификатор")
+	public long getId() { return theId ; }
+	public void setId(long aId) { theId = aId ; }
+	/** Идентификатор */
+	private long theId ;
 }
