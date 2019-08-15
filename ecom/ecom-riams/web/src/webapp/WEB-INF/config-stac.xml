@@ -65,6 +65,14 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/leanСlinicReport.jsp" />
         </action>
 
+        <action path='/recordReport' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+        >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/recordReport.jsp" />
+        </action>
+
         <action path='/sheduleToday' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
