@@ -491,4 +491,48 @@ public class SurgicalOperation extends BaseEntity {
 	/** На какой конечности была сделана операция */
 	private VocLeftRight theLeftRight ;
 
+	/** Класс раны */
+	@Comment("Класс раны")
+	@OneToOne
+	public VocClassWound getClassWound() {return theClassWound;}
+	public void setClassWound(VocClassWound aClassWound) {theClassWound = aClassWound;}
+	/** Класс раны */
+	private VocClassWound theClassWound ;
+
+	/** Препарат периоперационной антибиотикопрофилактики */
+	@Comment("Препарат периоперационной антибиотикопрофилактики")
+	@OneToOne
+	public VocAntibioticDrug getAntibioticDrug() {return theAntibioticDrug;}
+	public void setAntibioticDrug(VocAntibioticDrug aAntibioticDrug) {theAntibioticDrug = aAntibioticDrug;}
+	/** Препарат периоперационной антибиотикопрофилактики */
+	private VocAntibioticDrug theAntibioticDrug ;
+
+	/** Доза (мл) */
+	@Comment("Доза (мл)")
+	public Integer getDose() {return theDose;}
+	public void setDose(Integer aDose) {theDose = aDose;}
+	/** Доза (мл) */
+	private Integer theDose;
+
+	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
+	@Comment("Способы введения препаратов при периоперационной антибиотикопрофилактике")
+	@OneToOne
+	public VocMethodsDrugAdm getMethodsDrugAdm() {return theMethodsDrugAdm;}
+	public void setMethodsDrugAdm(VocMethodsDrugAdm aMethodsDrugAdm) {theMethodsDrugAdm = aMethodsDrugAdm;}
+	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
+	private VocMethodsDrugAdm theMethodsDrugAdm ;
+	
+	/** Время первой дозы */
+	@Comment("Время первой дозы")
+	public Time getFirstDoseTime() {return theFirstDoseTime;}
+	public void setFirstDoseTime(Time aFirstDoseTime) {theFirstDoseTime = aFirstDoseTime;	}
+	/** Время первой дозы */
+	private Time theFirstDoseTime;
+
+	/** Время повторной (при необходимости) дозы */
+	@Comment("Время повторной (при необходимости) дозы")
+	public Time getSecondDoseTime() {return theSecondDoseTime;}
+	public void setSecondDoseTime(Time aSecondDoseTime) {theSecondDoseTime = aSecondDoseTime;	}
+	/** Время повторной (при необходимости) дозы */
+	private Time theSecondDoseTime;
 }

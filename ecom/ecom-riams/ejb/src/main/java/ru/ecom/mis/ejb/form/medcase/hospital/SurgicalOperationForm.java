@@ -501,4 +501,55 @@ public class SurgicalOperationForm extends IdEntityForm{
 	public void setId(long aId) { theId = aId ; }
 	/** Идентификатор */
 	private long theId ;
+
+
+	/** Класс раны */
+	@Comment("Класс раны")
+	@Persist @Required
+	public Long getClassWound() {return theClassWound;}
+	public void setClassWound(Long aClassWound) {theClassWound = aClassWound;}
+	/** Класс раны */
+	private Long theClassWound ;
+
+	/** Препарат периоперационной антибиотикопрофилактики */
+	@Comment("Препарат периоперационной антибиотикопрофилактики")
+	@Persist @Required
+	public Long getAntibioticDrug() {return theAntibioticDrug;}
+	public void setAntibioticDrug(Long aAntibioticDrug) {theAntibioticDrug = aAntibioticDrug;}
+	/** Препарат периоперационной антибиотикопрофилактики */
+	private Long theAntibioticDrug ;
+
+	/** Доза (мл) */
+	@Comment("Доза (мл)")
+	@Persist
+	public Integer getDose() {return theDose;}
+	public void setDose(Integer aDose) {theDose = aDose;}
+	/** Доза (мл) */
+	private Integer theDose;
+
+	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
+	@Comment("Способы введения препаратов при периоперационной антибиотикопрофилактике")
+	@Persist
+	public Long getMethodsDrugAdm() {return theMethodsDrugAdm;}
+	public void setMethodsDrugAdm(Long aMethodsDrugAdm) {theMethodsDrugAdm = aMethodsDrugAdm;}
+	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
+	private Long theMethodsDrugAdm ;
+
+	/** Время первой дозы */
+	@Comment("Время первой дозы")
+	@TimeString @DoTimeString
+	@Persist
+	public String getFirstDoseTime() {return theFirstDoseTime;}
+	public void setFirstDoseTime(String aFirstDoseTime) {theFirstDoseTime = aFirstDoseTime;	}
+	/** Время первой дозы */
+	private String theFirstDoseTime;
+
+	/** Время повторной (при необходимости) дозы */
+	@Comment("Время повторной (при необходимости) дозы")
+	@TimeString @DoTimeString
+	@Persist
+	public String getSecondDoseTime() {return theSecondDoseTime;}
+	public void setSecondDoseTime(String aSecondDoseTime) {theSecondDoseTime = aSecondDoseTime;	}
+	/** Время повторной (при необходимости) дозы */
+	private String theSecondDoseTime;
 }

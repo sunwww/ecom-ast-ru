@@ -95,9 +95,26 @@
         	<msh:hidden property="aspect"/>
         	<msh:hidden property="technology"/>
         </msh:ifInRole>
-        
-        
-      
+
+
+          <msh:separator label="Периоперационная антибиотикопрофилактика" colSpan="5"  />
+          <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
+              <msh:autoComplete property="classWound" label="Класс раны" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocClassWound" />
+          </msh:row>
+          <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
+              <msh:autoComplete property="antibioticDrug" label="Препарат" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocAntibioticDrug" />
+          </msh:row>
+          <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
+              <msh:textField property="dose" label="Доза" guid="26df1de7-4d5b-4ef3-a1d0-8521a33b8078" />
+          </msh:row>
+          <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
+              <msh:autoComplete property="methodsDrugAdm" label="Путь введения" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocMethodsDrugAdm" />
+          </msh:row>
+          <msh:row guid="f7540b-4474-46c6-b162-828">
+              <msh:textField property="firstDoseTime" label="Время первой дозы" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
+              <msh:textField property="secondDoseTime" label="Время повторной дозы (при необходимости)" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
+          </msh:row>
+          <msh:separator label="Протокол" colSpan="5"  />
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="ca8a7727-42ac-4c64-8e52-23d4f84dfe43">
           <msh:textArea rows="6" hideLabel="false" property="operationText" viewOnlyField="false" guid="e-5833-4bc3-80df-52fdd237fce9" fieldColSpan="3" label="Протокол операции" />
@@ -204,6 +221,22 @@
         </msh:row>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3"  functionSubmit="save();"/>
       </msh:panel>
+        <div>
+            <a id='noteH' href="#bottom" onclick="showNote();" >Показать примечание</a><br>
+            <div id="note" style="display:none;">
+                <b>Класс I: чистая</b>: неинфицированная послеоперационная рана при отсутствии воспаления, при этом не затрагивались дыхательный,
+                пищеварительный, половой или неинфицированный мочевыводящий тракты. Чистые раны закрываются первичным натяжением и в случае необходимости
+                дренируются с помощью закрытого дренажа.<br>
+                <b>Класс II: условно-чистая («чисто – контаминированная»)</b>: послеоперационная рана, затрагивающая дыхательный, пищеварительный, половой
+                или мочевыводящий тракты в контролируемых условиях и без необычной контаминации.<br>
+                <b>Класс III: контаминированная («загрязненная»)</b>: открытые, свежие, травматические раны. Кроме того, в эту категорию включены операции
+                со значительными нарушениями асептики (например, открытый массаж сердца), или сопровождающиеся выраженной утечкой содержимого
+                желудочно-кишечного тракта, а также операции, при которых наблюдается острое негнойное воспаление.<br>
+                <b>Класс IV: «грязная» (инфицированная)</b>: старые травматические раны с нежизнеспособными тканями, а также послеоперационные раны,
+                в области которых уже имелась инфекция или произошла перфорация кишечника. Подразумевается, что микроорганизмы, способные вызвать ИОХВ,
+                присутствовали в области оперативного вмешательства до операции.<br>
+            </div>
+        </div>
     </msh:form>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="6ea7dcbb-d32c-4230-b6b0-a662dcc9f568">
       <tags:templateProtocol property="histologicalStudy" name="HistologicalStudyTemp" 
@@ -258,7 +291,13 @@
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
     <script type="text/javascript">// <![CDATA[//
-    
+
+    //массив хранит имя элемента и то, обязателен ли он (req). Поле desc - описание, check - проверять заполнение при смене препарата
+    var masAntibioElemets = [{name:'classWoundName',req:true,desc:'класс раны'},{name:'antibioticDrugName',req:true,desc:'препарат'},
+        {name:'dose',req:true, desc:'доза',check:true},{name:'methodsDrugAdm',req:true,check:true},
+        {name:'methodsDrugAdmName',req:true,desc:'путь введения',check:true},{name:'firstDoseTime',req:true,desc:'первая доза',check:true},
+        {name:'secondDoseTime',req:false,check:true}];
+    checkDrugRequired();
 	var isChangeSizeEpicrisis=1 ;
 	var isChangeSizeHist=1 ;
 	function changeSizeEpicrisis() {
@@ -325,11 +364,11 @@
 	    		});
     		}
     	}
-
-    	//проверка даты-времени начала/окончания
-    	function save() {
-    	    if ($('operationDate').value!='' && $('operationTime').value!=''
-            && $('operationDateTo').value!='' && $('operationTimeTo').value!='') {
+        //проверка даты-времени начала/окончания
+    	function checkDateTime() {
+    	    let flag=false;
+            if ($('operationDate').value!='' && $('operationTime').value!=''
+                && $('operationDateTo').value!='' && $('operationTimeTo').value!='') {
                 var date1=Date.parse($('operationDate').value.replace(".","/").replace(".","/")+' '+$('operationTime').value);
                 var date2=Date.parse($('operationDateTo').value.replace(".","/").replace(".","/")+' '+$('operationTimeTo').value);
                 if (isNaN(date1) || isNaN(date2)) {
@@ -337,7 +376,7 @@
                     date2=new Date($('operationDateTo').value.split(".").reverse().join("-")+' '+$('operationTimeTo').value);
                 }
                 if (date2>date1)
-                    document.forms["mainForm"].submit();
+                    flag=true;
                 else {
                     $('submitButton').disabled = false;
                     showToastMessage('Дата и время окончания должны быть больше даты и времени начала!',null,true);
@@ -347,7 +386,67 @@
                 $('submitButton').disabled = false;
                 showToastMessage('Поля дата и время начала и окончания обязательны для заполнения!',null,true);
             }
+            return flag;
         }
+        //проверка заполнения антибиотикотерапии
+    	function checkAntibiotic() {
+            checkDrugRequired();
+    	    let msg='';
+            for (let m in masAntibioElemets) {
+                let el = masAntibioElemets[m];
+                if (typeof el == 'function') break;
+                if (el.req && el.desc && $(el.name).value=='') {
+                    if (!msg && $(el.name).className.include('required'))
+                        msg='Проверьте заполнение следующих полей:';
+                    if ($(el.name).className.include('required'))
+                        msg+=' '+el.desc + ' ; ';
+                }
+            }
+            if (!!msg) {
+                $('submitButton').disabled = false;
+                showToastMessage(msg,null,true);
+            }
+            else
+                document.forms["mainForm"].submit();
+        }
+
+    	function save() {
+            if (checkDateTime())
+                checkAntibiotic();
+        }
+
+        //ф-я проверяет, выбрали ли препарат (или выбрано 'Нет') и делает доступными/недоступными элементы из массива объектов masAntibioElemets
+        function checkDrugRequired(checkEmpty) { //checkEmpty - обнулять ли значения
+    	    let disabled=$('antibioticDrugName').value.trim()=='Нет' || $('antibioticDrugName').value.trim()=='';
+    	    for (let m in masAntibioElemets) {
+    	        let el = masAntibioElemets[m];
+                if (!el.check) continue;
+    	        if (typeof el == 'function') break;
+                $(el.name).disabled=disabled;
+                if (!disabled && el.req)
+                    $(el.name).className += " required";
+                else if (checkEmpty) {
+                    $(el.name).className = $(el.name).className.replace(new RegExp("required", "g"), "");
+                    $(el.name).value='';
+                }
+            }
+        }
+    antibioticDrugAutocomplete.addOnChangeCallback(function() {
+        checkDrugRequired(1);
+    });
+    //показать/скрыть примечание
+    function showNote() {
+        var note = document.getElementById("note");
+        var href = document.getElementById("noteH");
+        if (note.style.display=="none") {
+            note.style.display="block";
+            href.innerText="Скрыть примечание";
+        }
+        else {
+            note.style.display="none";
+            href.innerText="Показать примечание";
+        }
+    }
     	</script>
     	
   </msh:ifFormTypeIsNotView>
