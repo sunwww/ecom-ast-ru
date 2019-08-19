@@ -65,8 +65,8 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete label="Хирург" property="surgeon" horizontalFill="true" fieldColSpan="3" vocName="workFunctionIsSurgical" />
-        </msh:row>     
-        <msh:ifFormTypeIsView formName="stac_surOperationForm">   
+        </msh:row>
+        <msh:ifFormTypeIsView formName="stac_surOperationForm">
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="operation" label="Операция" size="60" guid="e22-9d6f-4c39-a6a1-302f14f" fieldColSpan="3" horizontalFill="true" vocName="vocOperation" />
         </msh:row>
@@ -75,12 +75,12 @@
           <msh:autoComplete property="medService" label="Операция (услуга)" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceOperation" />
 	        </msh:row>
         <mis:ifPatientIsWoman classByObject="MedCase" idObject="${medcase}">
-         
+
         <msh:row>
         <msh:autoComplete property="profile" label="Профиль" guid="e22-9d6f-4c39-a6a1-302f14f" horizontalFill="true" vocName="vocSurgicalProfile" />
         <msh:autoComplete property="method" label="Метод" guid="e22-9d6a1-302f14f" horizontalFill="true" vocName="vocOperationMethod" />
         </msh:row>
-        
+
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
    		<msh:autoComplete property="abortion" vocName="vocAbortationByProfile" parentAutocomplete="profile" fieldColSpan="3" horizontalFill="true" label="Тип аборта"/>
        	</msh:row>
@@ -88,9 +88,9 @@
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         	<msh:hidden property="surgeonFunctions"/>
         	<msh:hidden property="complications"/>
-        	
+
         	<msh:hidden property="operatingNurse"/>
-        	
+
         	<msh:hidden property="operationText"/>
         	<msh:hidden property="aspect"/>
         	<msh:hidden property="technology"/>
@@ -98,6 +98,15 @@
 
 
           <msh:separator label="Периоперационная антибиотикопрофилактика" colSpan="5"  />
+          <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+              <td class="label" title="Поиск по промежутку  (antibio)" colspan="1"><label for="antibioName" id="tantibioLabel">Периоперационная антибиотикопрофилактика?</label></td>
+              <td onclick="this.childNodes[1].checked='checked'; checkАntibioRb();" colspan="1">
+                  <input type="radio" name="antibio" value="1"> Нет
+              </td>
+              <td onclick="this.childNodes[1].checked='checked'; checkАntibioRb();" colspan="2">
+                  <input type="radio" name="antibio" value="2"> Да
+              </td>
+          </msh:row>
           <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
               <msh:autoComplete property="classWound" label="Класс раны" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocClassWound" />
           </msh:row>
@@ -132,15 +141,15 @@
           <msh:autoComplete horizontalFill="true" property="aspect" label="Показания" vocName="vocHospitalAspect" />
           <msh:autoComplete horizontalFill="true" vocName="vocOperationTechnology" property="technology" label="С испол. ВМТ"/>
         </msh:row>
-        
+
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
 	       <msh:row>
 	          <msh:checkBox property="base" label="Основная" guid="35bdec3d-2c23-47df-b8c7-4fb706224994" fieldColSpan="1" />
 	          <msh:checkBox property="minor" label="Малая операция" guid="a8774c57-1b50-4358-916d-ba51249357e7" />
 	       </msh:row>
         </msh:ifNotInRole>
-      <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">          
-        
+      <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+
         <msh:row guid="f0851bc5-6ac2-4e6f-bfab-90593e637799">
           <ecom:oneToManyOneAutocomplete colSpan="3" label="Ассистенты" property="surgeonFunctions" vocName="workFunctionIsSurgical" guid="e68271bf-c384-4022-9fb6-6ba7eeedb6fe" />
         </msh:row>
@@ -180,7 +189,7 @@
 	          <msh:checkBox property="cryogenicUse" label="Криогенная аппаратура" guid="99f18eb4-ad41-4d24-8e21-5a5df64e0d07"  fieldColSpan="3"/>
 	        </msh:row>
         <msh:separator label="Сведения после операции" colSpan="5" guid="a7a51c30-4065-4ab8-ac94-335b4ade6f66" />
-        
+
         <msh:row guid="ad5ec-5754-4cbd-bcb5-a592">
           <ecom:oneToManyOneAutocomplete vocName="vocComplication" colSpan="3" label="Осложнения" property="complications" guid="652c9b95-2724-4086-87f5-aefd67b01e8c" />
         </msh:row>
@@ -239,10 +248,10 @@
         </div>
     </msh:form>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="6ea7dcbb-d32c-4230-b6b0-a662dcc9f568">
-      <tags:templateProtocol property="histologicalStudy" name="HistologicalStudyTemp" 
+      <tags:templateProtocol property="histologicalStudy" name="HistologicalStudyTemp"
       idSmo="stac_surOperationForm.medCase" version="Visit" voc="protocolVisitByPatient"
       />
-      <tags:templateProtocol property="operationText" name="OperationTextTemp" 
+      <tags:templateProtocol property="operationText" name="OperationTextTemp"
       idSmo="stac_surOperationForm.medCase" version="Visit" voc="protocolVisitByPatient"
       />
     </msh:ifFormTypeIsNotView>
@@ -263,9 +272,9 @@
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
     	<tags:mis_double name='MedService' title='Данная операция оказана:' cmdAdd="document.forms[0].submitButton.disabled = false "/>
     	<tags:service_change name="ServiceChange" autoCompliteServiceFind="medService"/>
-    </msh:ifFormTypeIsNotView>  
-    
-    
+    </msh:ifFormTypeIsNotView>
+
+
     </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="StacJournal" beginForm="stac_surOperationForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
@@ -286,17 +295,74 @@
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
-  
+
   <tiles:put name="javascript" type="string">
+      <script type="text/javascript">
+          //массив хранит имя элемента и то, обязателен ли он (req). Поле desc - описание, check - проверять заполнение при смене препарата
+          var masAntibioElements = [{name:'classWoundName',req:true,desc:'класс раны'},{name:'antibioticDrugName',req:true,desc:'препарат'},
+              {name:'dose',req:true, desc:'доза',check:true},{name:'methodsDrugAdm',req:true,check:true},
+              {name:'methodsDrugAdmName',req:true,desc:'путь введения',check:true},{name:'firstDoseTime',req:true,desc:'первая доза',check:true},
+              {name:'secondDoseTime',req:false,check:true}];
+
+          //ф-я проверяет, выбрали ли препарат (или выбрано 'Нет') и делает доступными/недоступными элементы из массива объектов masAntibioElements
+          function checkDrugRequired(checkEmpty) { //checkEmpty - обнулять ли значения
+              var disabled=$('antibioticDrugName').value.trim()=='Нет' || $('antibioticDrugName').value.trim()=='';
+              for (var m in masAntibioElements) {
+                  var el = masAntibioElements[m];
+                  if (!el.check) continue;
+                  if (typeof el == 'function') break;
+                  $(el.name).disabled=disabled;
+                  if (!disabled && el.req)
+                      $(el.name).className += " required";
+                  else if (checkEmpty) {
+                      $(el.name).className = $(el.name).className.replace(new RegExp("required", "g"), "");
+                      $(el.name).value='';
+                  }
+              }
+          }
+          //работа с радиобатонами
+          function checkАntibioRb() {
+              var disabled = jQuery('[name="antibio"]')[0].checked;
+              for (var m in masAntibioElements) {
+                  var el = masAntibioElements[m];
+                  if (typeof el == 'function') break;
+                  $(el.name).disabled=disabled;
+                  if (!disabled && el.req)
+                      $(el.name).className += " required";
+                  else {
+                      $(el.name).className = $(el.name).className.replace(new RegExp("required", "g"), "");
+                      $(el.name).value='';
+                  }
+                  checkDrugRequired(1);
+              }
+          }
+      </script>
+      <msh:ifFormTypeAreViewOrEdit formName="stac_surOperationForm">
+      <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
+      <script type="text/javascript">
+          //проставить радиобаттоны Да-нет в операции при просмотре/редактировании
+          function checkOnloadRb() {
+                var el=null;
+                <msh:ifFormTypeIsView formName="stac_surOperationForm">
+                el=jQuery('#classWoundReadOnly')[0];
+                jQuery('[name="antibio"]')[0].disabled=jQuery('[name="antibio"]')[1].disabled=true;
+                jQuery('[name="antibio"]')[0].parentNode.onclick=jQuery('[name="antibio"]')[1].parentNode.onclick=function() {};
+                </msh:ifFormTypeIsView>
+                <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
+                el=jQuery('#classWoundName')[0];
+                </msh:ifFormTypeIsNotView>
+                jQuery('[name="antibio"]')[1].checked=el!=null && el.value!='';
+                jQuery('[name="antibio"]')[0].checked=!(el!=null && el.value!='');
+                <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
+                checkАntibioRb();
+                </msh:ifFormTypeIsNotView>
+          }
+          checkOnloadRb();
+      </script>
+      </msh:ifFormTypeAreViewOrEdit>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
     <script type="text/javascript">// <![CDATA[//
-
-    //массив хранит имя элемента и то, обязателен ли он (req). Поле desc - описание, check - проверять заполнение при смене препарата
-    var masAntibioElemets = [{name:'classWoundName',req:true,desc:'класс раны'},{name:'antibioticDrugName',req:true,desc:'препарат'},
-        {name:'dose',req:true, desc:'доза',check:true},{name:'methodsDrugAdm',req:true,check:true},
-        {name:'methodsDrugAdmName',req:true,desc:'путь введения',check:true},{name:'firstDoseTime',req:true,desc:'первая доза',check:true},
-        {name:'secondDoseTime',req:false,check:true}];
     checkDrugRequired();
 	var isChangeSizeEpicrisis=1 ;
 	var isChangeSizeHist=1 ;
@@ -311,11 +377,11 @@
 			isChangeSizeEpicrisis=1;
 		}
 	}
-	eventutil.addEventListener($('operationText'), "dblclick", 
+	eventutil.addEventListener($('operationText'), "dblclick",
   		  	function() {
 				changeSizeEpicrisis() ;
   		  	}) ;
-	
+
 	function changeSizeHist() {
 		if (isChangeSizeHist==1) {
 			Element.addClassName($('histologicalStudy'), "protocols") ;
@@ -327,15 +393,15 @@
 			isChangeSizeHist=1;
 		}
 	}
-	eventutil.addEventListener($('histologicalStudy'), "dblclick", 
+	eventutil.addEventListener($('histologicalStudy'), "dblclick",
   		  	function() {
 				changeSizeHist() ;
   		  	}) ;
-    	
+
     	var oldaction = document.forms[0].action ;
     	document.forms[0].action = 'javascript:isExistSurOperation()';
     	function isExistSurOperation() {
-    		 
+
     		HospitalMedCaseService.findDoubleOperationByPatient($('id').value,$('medCase').value,$('medService').value, $('operationDate').value
     		, {
                    callback: function(aResult) {
@@ -350,7 +416,7 @@
 	        	}
 	        	);
     	}
-    	
+
     	function setEndoscopyUse(){
     		if ($('endoscopyUse')){
 	    		HospitalMedCaseService.checkIsEndoscopyMethod($('method').value,{
@@ -366,7 +432,7 @@
     	}
         //проверка даты-времени начала/окончания
     	function checkDateTime() {
-    	    let flag=false;
+    	    var flag=false;
             if ($('operationDate').value!='' && $('operationTime').value!=''
                 && $('operationDateTo').value!='' && $('operationTimeTo').value!='') {
                 var date1=Date.parse($('operationDate').value.replace(".","/").replace(".","/")+' '+$('operationTime').value);
@@ -389,37 +455,44 @@
             return flag;
         }
         //проверка заполнения антибиотикотерапии
-    	function checkAntibiotic() {
-            checkDrugRequired();
-    	    let msg='';
-            for (let m in masAntibioElemets) {
-                let el = masAntibioElemets[m];
-                if (typeof el == 'function') break;
-                if (el.req && el.desc && $(el.name).value=='') {
-                    if (!msg && $(el.name).className.include('required'))
-                        msg='Проверьте заполнение следующих полей:';
-                    if ($(el.name).className.include('required'))
-                        msg+=' '+el.desc + ' ; ';
+    	function checkAntibioticSave() {
+    	    if (jQuery('[name="antibio"]')[1].checked) {
+                checkDrugRequired();
+                var msg = '';
+                for (var m in masAntibioElements) {
+                    var el = masAntibioElements[m];
+                    if (typeof el == 'function') break;
+                    if (el.req && el.desc && $(el.name).value == '') {
+                        if (!msg && $(el.name).className.include('required'))
+                            msg = 'Проверьте заполнение следующих полей:';
+                        if ($(el.name).className.include('required'))
+                            msg += ' ' + el.desc + ' ; ';
+                    }
                 }
+                if (!!msg) {
+                    $('submitButton').disabled = false;
+                    showToastMessage(msg, null, true);
+                }
+                else
+                    document.forms["mainForm"].submit();
             }
-            if (!!msg) {
-                $('submitButton').disabled = false;
-                showToastMessage(msg,null,true);
-            }
-            else
+            else if (jQuery('[name="antibio"]')[0].checked)
                 document.forms["mainForm"].submit();
+    	    else  {
+                $('submitButton').disabled = false;
+                showToastMessage('Выберите, проводилась ли периоперационная антибиотикопрофилактика!', null, true);
+            }
         }
-
     	function save() {
             if (checkDateTime())
-                checkAntibiotic();
+                checkAntibioticSave();
         }
 
-        //ф-я проверяет, выбрали ли препарат (или выбрано 'Нет') и делает доступными/недоступными элементы из массива объектов masAntibioElemets
+        //ф-я проверяет, выбрали ли препарат (или выбрано 'Нет') и делает доступными/недоступными элементы из массива объектов masAntibioElements
         function checkDrugRequired(checkEmpty) { //checkEmpty - обнулять ли значения
-    	    let disabled=$('antibioticDrugName').value.trim()=='Нет' || $('antibioticDrugName').value.trim()=='';
-    	    for (let m in masAntibioElemets) {
-    	        let el = masAntibioElemets[m];
+    	    var disabled=$('antibioticDrugName').value.trim()=='Нет' || $('antibioticDrugName').value.trim()=='';
+    	    for (var m in masAntibioElements) {
+    	        var el = masAntibioElements[m];
                 if (!el.check) continue;
     	        if (typeof el == 'function') break;
                 $(el.name).disabled=disabled;
@@ -448,9 +521,9 @@
         }
     }
     	</script>
-    	
+
   </msh:ifFormTypeIsNotView>
-  
+
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="8b68bb61-7bc0-425e-b09c-7361891144b1">
     	  <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
     	  <script type="text/javascript">
@@ -470,15 +543,15 @@
   	try {
   		if (operationAutocomplete) operationAutocomplete.setParentId($('operationDate').value) ;
 	} catch(e) {
-		
+
 	}
-  	
-  	eventutil.addEventListener($('operationDate'), "change", 
+
+  	eventutil.addEventListener($('operationDate'), "change",
   	function() {
   		changeParentMedService() ;
   	}) ;
   	eventutil.addEventListener($('operationDate'),'blur',function(){
-  		
+
   		if (oldValue!=$('operationDate').value) {
   			changeParentMedService() ;
   			if ($('operationDateTo').value=="") {
@@ -491,12 +564,12 @@
   			changeParentMedService() ;
 
   		}
-  		
+
   	}) ;*/
 
   	function changeParentMedService() {
-  		
-  		
+
+
   		try {
   		    if (operationAutocomplete) {
   			var oper = $('operation').value ;
@@ -504,7 +577,7 @@
   			operationAutocomplete.setVocId(oper) ;
   		    }
   		} catch(e) {
-  			
+
   		}
   		var medService = $('medService').value ;
   		if ($('operationDate').value && $('surgeon').value && $('department').value && $('serviceStream').value) {
@@ -513,14 +586,14 @@
             console.log("parent="+$('operationDate').value+'#'+$('surgeon').value+'#'+$('department').value+'#'+$('serviceStream').value);
         }
 
-  		
+
   		//$('operationName').value='' ;
   		oldValue = $('operationDate').value ;
   	}
   	serviceStreamAutocomplete.addOnChangeCallback(function() {changeParentMedService();})
   	 surgeonAutocomplete.addOnChangeCallback(function() {changeParentMedService() ;});
   	 departmentAutocomplete.addOnChangeCallback(function() {changeParentMedService() ;});
-  	 
+
   	try {
   		methodAutocomplete.addOnChangeCallback(function() {
   	  		setEndoscopyUse() ;

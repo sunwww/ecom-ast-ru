@@ -505,7 +505,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Класс раны */
 	@Comment("Класс раны")
-	@Persist @Required
+	@Persist
 	public Long getClassWound() {return theClassWound;}
 	public void setClassWound(Long aClassWound) {theClassWound = aClassWound;}
 	/** Класс раны */
@@ -513,7 +513,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Препарат периоперационной антибиотикопрофилактики */
 	@Comment("Препарат периоперационной антибиотикопрофилактики")
-	@Persist @Required
+	@Persist
 	public Long getAntibioticDrug() {return theAntibioticDrug;}
 	public void setAntibioticDrug(Long aAntibioticDrug) {theAntibioticDrug = aAntibioticDrug;}
 	/** Препарат периоперационной антибиотикопрофилактики */
