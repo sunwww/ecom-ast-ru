@@ -64,5 +64,5 @@ public interface IPrescriptionService {
 	String getDescription(Long aIdTemplateList) ;
 
 //	boolean canShowPrescriptionFulfilments(long aPrescriptionId) ;
-
+	String getRealLabTechUsername(Long aPrescriptId,String aUsername);
 }

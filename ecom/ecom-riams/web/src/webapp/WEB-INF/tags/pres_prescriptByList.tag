@@ -111,6 +111,7 @@ where ${field} and pres.dtype = 'DrugPrescription'"/>
  ,case when p.canceldate is not null then 'color:red;' else null end as stylCancel
  , case when presV.datestart is not null then coalesce(d.record, '') else '' end as lab_rests
  ,presV.datestart
+,case when p.canceldate is not null then vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename else null end as f13_cnsl
  from Prescription p
  left join PrescriptionList pl on pl.id=p.prescriptionList_id
  left join mislpu ml on ml.id=p.department_id
@@ -120,6 +121,11 @@ where ${field} and pres.dtype = 'DrugPrescription'"/>
  left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelReason_id
  left join medcase presV on presV.id=p.medcase_id
  left join diary d on d.medcase_id=p.medcase_id
+left join SecUser su on p.cancelusername=su.login
+left join WorkFunction wf on wf.secUser_id=su.id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker as w on w.id=wf.worker_id
+left join Patient as wp on wp.id=w.person_id
  where ${field } and p.DTYPE='ServicePrescription'
  and vms.code='LABSURVEY'
  order by p.planStartDate"/>
@@ -133,6 +139,7 @@ where ${field} and pres.dtype = 'DrugPrescription'"/>
 			<msh:tableColumn property="12" columnName="Дата выполнения"/>
 			<msh:tableColumn property="6" columnName="ИД биоматериала"/>
 			<msh:tableColumn property="9" columnName="Причина брака"/>
+			<msh:tableColumn property="13" columnName="Отбраковал"/>
 			<msh:tableColumn property="11" columnName="Результат"/>
 
 		</msh:table>
