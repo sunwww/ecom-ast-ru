@@ -514,9 +514,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				String.valueOf(labExec.get(0)) : "";
 	}
 
+	//Если был брак, вернёт того, кто отбраковал.
+	// Если это - бак. исследование - вернёт того, кто принял в лабораторию, иначе - того, кто выполнил
 	public String getRealLabTechUsername(Long aPrescriptId,String aUsername) {
 		List<Object> transferUsername = theManager.createNativeQuery("select case when p.cancelusername is not null then " +
-				" p.cancelusername else p.transferusername end from medservice ms" +
+				" p.cancelusername else case when msgr.code='Q06' then p.transferusername else null end end from medservice ms" +
 				" left join medservice msgr on msgr.id=ms.parent_id" +
 				" left join prescription p on p.medservice_id=ms.id" +
 				" left join templateProtocol tp on tp.medservice_id=ms.id" +
