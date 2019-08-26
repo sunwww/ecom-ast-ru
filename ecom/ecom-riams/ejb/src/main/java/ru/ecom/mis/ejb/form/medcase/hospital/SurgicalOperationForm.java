@@ -522,10 +522,10 @@ public class SurgicalOperationForm extends IdEntityForm{
 	/** Доза (мл) */
 	@Comment("Доза (мл)")
 	@Persist
-	public Integer getDose() {return theDose;}
-	public void setDose(Integer aDose) {theDose = aDose;}
+	public Double getDose() {return theDose;}
+	public void setDose(Double aDose) {theDose = aDose;}
 	/** Доза (мл) */
-	private Integer theDose;
+	private Double theDose;
 
 	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
 	@Comment("Способы введения препаратов при периоперационной антибиотикопрофилактике")

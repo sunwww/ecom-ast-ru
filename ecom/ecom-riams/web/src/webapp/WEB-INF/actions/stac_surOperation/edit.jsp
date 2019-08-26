@@ -456,6 +456,7 @@
         }
         //проверка заполнения антибиотикотерапии
     	function checkAntibioticSave() {
+    	    $('dose').value = $('dose').value.replace(new RegExp(",","g"),".");
     	    if (jQuery('[name="antibio"]')[1].checked) {
                 checkDrugRequired();
                 var msg = '';
