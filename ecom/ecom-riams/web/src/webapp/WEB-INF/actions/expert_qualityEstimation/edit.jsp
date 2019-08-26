@@ -180,6 +180,8 @@
                                         }
                                         showYesNoCommentYesNo(comment,aMarkId,ii,$('expertType').value,true);
                                     }
+                                    else
+                                        showToastMessage('Комментарий не нужен',null,true,false,1000);
                                 }
                                 });
                         }

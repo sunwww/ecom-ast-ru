@@ -483,16 +483,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				theManager.persist(fip) ;
 			}
 			//ФИО лабораторного техника
-			List<Object> labExec = theManager.createNativeQuery("select vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename" +
-					" from WorkFunction wf" +
-					" left join SecUser su on wf.secUser_id=su.id" +
-					" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" +
-					" left join Worker as w on w.id=wf.worker_id" +
-					" left join Patient as p on p.id=w.person_id" +
-					" where su.login=:login").setParameter("login",aUsername).getResultList() ;
-			if ( !labExec.isEmpty()) {
+			String fio = getRealLabTechUsername(aPrescriptId,aUsername);
+			if (!fio.equals("")) {
 				sb.append("\n");
-				sb.append(String.valueOf(labExec.get(0)));
+				sb.append(fio);
 			}
 			d.setRecord(sb.toString()) ;
 			theManager.persist(d) ;
@@ -507,6 +501,31 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			log.error(e);
 		}
 		return "" ;
+	}
+	private String getWorkfuntctionInfoByLabTechUsername(String aUsername) {
+		List<Object> labExec = theManager.createNativeQuery("select vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename" +
+				" from WorkFunction wf" +
+				" left join SecUser su on wf.secUser_id=su.id" +
+				" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" +
+				" left join Worker as w on w.id=wf.worker_id" +
+				" left join Patient as p on p.id=w.person_id" +
+				" where su.login=:login").setParameter("login",aUsername).getResultList();
+		return !labExec.isEmpty() && labExec.get(0)!=null?
+				String.valueOf(labExec.get(0)) : "";
+	}
+
+	//Если был брак, вернёт того, кто отбраковал.
+	// Если это - бак. исследование - вернёт того, кто принял в лабораторию, иначе - того, кто выполнил
+	public String getRealLabTechUsername(Long aPrescriptId,String aUsername) {
+		List<Object> transferUsername = theManager.createNativeQuery("select case when p.cancelusername is not null then " +
+				" p.cancelusername else case when msgr.code='Q06' then p.transferusername else null end end from medservice ms" +
+				" left join medservice msgr on msgr.id=ms.parent_id" +
+				" left join prescription p on p.medservice_id=ms.id" +
+				" left join templateProtocol tp on tp.medservice_id=ms.id" +
+				" where p.id=:aPrescriptId").setParameter("aPrescriptId",aPrescriptId).getResultList();
+		if (!transferUsername.isEmpty() && transferUsername.get(0)!=null)
+			aUsername=String.valueOf(transferUsername.get(0));
+		return  getWorkfuntctionInfoByLabTechUsername(aUsername);
 	}
 	public Long checkLabAnalyzed(Long aPrescriptId,Long aWorkFunctionId,String aUsername) {
 		StringBuilder sql = new StringBuilder() ;

@@ -108,6 +108,7 @@ where ${field}
 ,coalesce(vpcr.name,'')||' '||coalesce(p.cancelReasonText,'') as а6_fldCancel
 ,case when p.canceldate is not null then 'color:red;' else null end as а7_stylCancel
 ,presV.datestart||' '||cast(presV.timeExecute as varchar(5)) as f8_execute
+,case when p.canceldate is not null then vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename else null end as f9_cnsl
 from Medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
@@ -117,6 +118,11 @@ left join vocservicetype as vms on vms.id=ms.serviceType_id
 left join vocprescripttype vpt on vpt.id=p.prescriptType_id
 left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelReason_id
 left join medcase presV on p.medcase_id=presV.id
+left join SecUser su on p.cancelusername=su.login
+left join WorkFunction wf on wf.secUser_id=su.id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker as w on w.id=wf.worker_id
+left join Patient as wp on wp.id=w.person_id
 where ${field}
  and p.DTYPE='ServicePrescription' and vms.code='LABSURVEY'  order by p.planStartDate"/>
     	<msh:sectionContent>
@@ -127,6 +133,7 @@ where ${field}
     			<msh:tableColumn property="8" columnName="Дата выполнения"/>
     			<msh:tableColumn property="4" columnName="ИД биоматериала"/>
     			<msh:tableColumn property="6" columnName="Причина брака"/>
+				<msh:tableColumn property="9" columnName="Отбраковал"/>
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>

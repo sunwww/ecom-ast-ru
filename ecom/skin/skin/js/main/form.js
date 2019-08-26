@@ -142,13 +142,15 @@ var funcemergencymessage = {
 		    } ) ;
 		}
 }
-function showToastMessage(aMessage,aJson,aAutoClose,aError) {
+function showToastMessage(aMessage,aJson,aAutoClose,aError, aMs) {
+    if (aMs==null || typeof aMs==='undefined')
+        aMs=10000;
 	if (aJson) {
         jQuery.toast(aJson);
 	} else {
 		jQuery.toast({
 			text:aMessage
-			,hideAfter:aAutoClose!=null && aAutoClose
+			,hideAfter:aAutoClose!=null && aAutoClose ? aMs : aAutoClose
 			,icon:true===aError ? "error" : "info"
 
 		});

@@ -449,7 +449,8 @@ function printGroup3NativeQuery(aCtx,aParams) {
             ++cntBegin ;
            if (isupdate) {
                     var print_id = printSql.replace(":id",""+obj[printId-1]) ;
-                    aCtx.manager.createNativeQuery(print_id).executeUpdate() ;
+                    if (!isNaN(print_id))
+                    	aCtx.manager.createNativeQuery(print_id).executeUpdate() ;
             }
             
             var isEquals = false ;

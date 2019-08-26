@@ -486,12 +486,12 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 String styleRadioInput="style='transform: scale(1.5)'";
 					//Только оценка заведующего
 					 table.append("<td ").append(styleTd).append("><label ").append(styleYesNo)
-							 .append("onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(allmarks[0])
-							 .append(")\"><input ").append(allmarks[0].equals(valMark.toString()) || color.equals(color1)? " checked='true'" : "").append(styleRadioInput)
-							 .append(" type='radio' name='criterion")
-							 .append(cntPart - 1).append("' value='").append(allmarks[0]).append("' id='radio").append(cntPart - 1).append("1'>  Да</label>")
-							 .append("<label onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(allmarks[1])
-							 .append(")\"><input ").append(!(allmarks[0].equals(valMark.toString()) || color.equals(color1))? " checked='true'" : "").append(styleRadioInput)
+							 .append("><input ").append(allmarks[0].equals(valMark.toString()) || color.equals(color1)? " checked='true'" : "").append(styleRadioInput)
+							 .append(" type='radio' name='criterion").append(cntPart - 1)
+							 .append("' onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(allmarks[0]).append(")\"")
+							 .append(" value='").append(allmarks[0]).append("' id='radio").append(cntPart - 1).append("1'>  Да</label>")
+							 .append("<label><input ").append(!(allmarks[0].equals(valMark.toString()) || color.equals(color1))? " checked='true'" : "").append(styleRadioInput)
+							 .append(" onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(allmarks[1]).append(")\"")
 							 .append(" type='radio' name='criterion").append(cntPart - 1).append("' value='").append(allmarks[1]).append("' id='radio")
 							 .append(cntPart - 1).append("0'>  Нет</label>")
 							 .append("<input type='hidden' id='criterion").append(cntPart - 1).append("P' value='").append(row[0]).append("'>");

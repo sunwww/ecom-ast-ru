@@ -1,6 +1,5 @@
 package ru.ecom.sql;
 
-import org.apache.log4j.Logger;
 import org.jboss.annotation.ejb.Service;
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 
@@ -23,11 +22,9 @@ import java.util.zip.ZipInputStream;
 @Local(ISqlUpdateService.class)
 public class SqlUpdateServiceBean implements ISqlUpdateService {
 
-    private static final Logger LOG = Logger.getLogger(SqlUpdateServiceBean.class);
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
+
 
     public SqlUpdateServiceBean() throws NamingException {
-        LOG.info("Try get scripts...");
 
         int min=-1000;
         Integer databaseVersion = Integer.valueOf(select("select keyvalue from softconfig where key='BD_version'"));
@@ -35,7 +32,6 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
 
         List<String> files = getListFiles();
         for(String s : files){
-            LOG.info(">>>Work with file: "+s);
             InputStream in = getClass().getResourceAsStream("/"+s);
             String sql = convertStreamToString(in);
             String[] tmp = sql.split("#");
@@ -43,14 +39,12 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
             try {
                 Integer currScriptVersion = Integer.valueOf(tmp[0]);
                 if(databaseVersion<currScriptVersion){
-                    LOG.info("executing "+s);
                     execute(tmp[1]);
                     if(min<currScriptVersion){
                         min=currScriptVersion;
                     }
                 }
             } catch (Exception e) {
-                LOG.error("Error sql script "+s);
             }
         }
 
@@ -67,7 +61,6 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
         String result="0";
         try (Connection connection = ds.getConnection();
              Statement statement = connection.createStatement()) {
-            if(CAN_DEBUG) LOG.info("try select query>>>"+sql);
             try (ResultSet resultSet = statement.executeQuery(sql)){
                 int columnCount = resultSet.getMetaData().getColumnCount();
                 while (resultSet.next()) {
@@ -77,7 +70,6 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
                 }
             }
         } catch (Exception e){
-            LOG.error(e);
         }
         return result;
     }
@@ -86,7 +78,6 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
         DataSource ds =findDataSource();
         try (Connection connection = ds.getConnection();
              Statement statement = connection.createStatement()) {
-            if(CAN_DEBUG)  LOG.info("try execute query>>>"+sql);
             statement.executeUpdate(sql);
         } catch (Exception e){
             e.printStackTrace();
@@ -123,6 +114,6 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
-  //  @PersistenceContext     EntityManager theManager ;
+    //  @PersistenceContext     EntityManager theManager ;
     // @Resource SessionContext theContext ;
 }

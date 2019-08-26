@@ -61,6 +61,12 @@
 				        	<label><input type="checkbox" name="${name}ExtLabsNoIntake" id="${name}ExtLabsNoIntake" checked="checked"> Убрать инф. о заборе</label>
 				        </td>
 					</msh:row>
+					<msh:row>
+						<td></td>
+						<td onclick=" format${name}Services();">
+							<label><input type="checkbox" name="${name}NoLabTechnik" id="${name}NoLabTechnik" checked="checked"> Убрать инф. о лаборанте</label>
+						</td>
+					</msh:row>
 		            <msh:row>
 		                <td></td>
 				        <td onclick=" format${name}Services();">
@@ -118,9 +124,10 @@
 <script type="text/javascript">
      var theIs${name}EpicrisisDialogInitialized = false ;
      var the${name}EpicrisisDialog = new msh.widget.Dialog($('${name}EpicrisisDialog')) ;
-	function escapeHtml(aText, lowerCase, oneString, noIntake) {
+	function escapeHtml(aText, lowerCase, oneString, noIntake, noLabTechnik) {
 	    if (true==lowerCase) aText = aText.toLowerCase();
 	    if (true==noIntake) aText = aText.replace(/([Зз]абор)[абор имтелпзвдн:]*\d{2}.\d{2}.\d{4} \d{2}:\d{2}/g,'');
+	    if (true==noLabTechnik) aText = aText.replace(/(Лаборант ).*/g,'');
 		aText = aText.replace(/&/g, '&amp;')
             .replace(/>/g, '&gt;')
             .replace(/</g, '&lt;')
@@ -150,6 +157,7 @@
 			var makeOneString = jQuery('#${name}ExtLabsStr').is(':checked');
 			var lowerCase = jQuery('#${name}ExtLabsReg').is(':checked');
 			var noIntake = jQuery('#${name}ExtLabsNoIntake').is(':checked');
+            var noLabTechnik = jQuery('#${name}NoLabTechnik').is(':checked');
 			var addDate = jQuery('#${name}ExtLabsDate').is(':checked');
 			p+="<tr><td colspan='3'><label><input type='checkbox' onclick='checkAllServices(this.checked)'>Отметить все</label></td></tr>";
 			for (var i=0;i<servicesList.length;i++){
@@ -161,7 +169,7 @@
 						(true===addDate ? diary.recordDate+" " : "") +
 						(true===showService ? diary.serviceCode+" " : "")
 						+(true===showServiceName ? diary.serviceName : "")+" "+diary.recordText
-						,lowerCase,makeOneString, noIntake)+'</td>';
+						,lowerCase,makeOneString, noIntake, noLabTechnik)+'</td>';
 				p+='</tr>';
 			}
 			p+='</tbody></table>'

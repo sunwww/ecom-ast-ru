@@ -505,7 +505,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Класс раны */
 	@Comment("Класс раны")
-	@Persist @Required
+	@Persist
 	public Long getClassWound() {return theClassWound;}
 	public void setClassWound(Long aClassWound) {theClassWound = aClassWound;}
 	/** Класс раны */
@@ -513,7 +513,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Препарат периоперационной антибиотикопрофилактики */
 	@Comment("Препарат периоперационной антибиотикопрофилактики")
-	@Persist @Required
+	@Persist
 	public Long getAntibioticDrug() {return theAntibioticDrug;}
 	public void setAntibioticDrug(Long aAntibioticDrug) {theAntibioticDrug = aAntibioticDrug;}
 	/** Препарат периоперационной антибиотикопрофилактики */
@@ -522,10 +522,10 @@ public class SurgicalOperationForm extends IdEntityForm{
 	/** Доза (мл) */
 	@Comment("Доза (мл)")
 	@Persist
-	public Integer getDose() {return theDose;}
-	public void setDose(Integer aDose) {theDose = aDose;}
+	public Double getDose() {return theDose;}
+	public void setDose(Double aDose) {theDose = aDose;}
 	/** Доза (мл) */
-	private Integer theDose;
+	private Double theDose;
 
 	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
 	@Comment("Способы введения препаратов при периоперационной антибиотикопрофилактике")

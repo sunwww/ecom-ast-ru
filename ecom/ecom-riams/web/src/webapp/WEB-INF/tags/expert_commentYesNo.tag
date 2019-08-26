@@ -72,8 +72,13 @@
         the${name}CommentYesNoDialog.hide() ;
         the${name}CommentYesNoDialog.hide() ;
         if (the${name}Flag) {
-            $('criterion'+the${name}Ii+'Name').value='';
-            $('criterion'+the${name}Ii).value='';
+            //fix radio.
+            //radio group name = radiothe${name}Ii
+            //radio id - radiothe${name}Ii 0 - Нет, 1 - да
+            if ($('radio'+the${name}Ii+'1').checked)
+                $('radio'+the${name}Ii+'0').checked=true;
+            else
+                $('radio'+the${name}Ii+'1').checked=true;
         }
     }
 
