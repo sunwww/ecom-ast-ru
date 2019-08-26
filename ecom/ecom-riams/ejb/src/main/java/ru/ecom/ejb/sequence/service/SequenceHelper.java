@@ -51,15 +51,9 @@ public class SequenceHelper {
 			String value ;
 			String addValue = addValue(aTable) ;
 			String mayByNextValue = nextValue(addValue, info.getNextValue());
-			
-			
 			value = mayByNextValue ;
-			mayByNextValue = nextValue(addValue, mayByNextValue);
-		
-		/*	if(value==null) {
-				throw new IllegalStateException("Ошибка получение следу") ;
-			}
-		*/	info.setNextValue(addValue.equals("")?value:value.replace(addValue, ""));
+			nextValue(addValue, mayByNextValue);
+			info.setNextValue(addValue.equals("") ? value : value.replace(addValue, ""));
 			
 			return value ;
 		
@@ -71,14 +65,8 @@ public class SequenceHelper {
 			String value ;
 			String addValue = addValue(aTable) ;
 			String mayByNextValue = nextValue(addValue, info.getNextValue());
-			
-			
 			value = mayByNextValue ;
-			mayByNextValue = nextValue(addValue, mayByNextValue);
-		
-		/*	if(value==null) {
-				throw new IllegalStateException("Ошибка получение следу") ;
-			}*/
+			nextValue(addValue, mayByNextValue);
 			info.setNextValue(addValue.equals("") ? value : value.replace(addValue, ""));
 			aManager.persist(info) ;
 			return value ;

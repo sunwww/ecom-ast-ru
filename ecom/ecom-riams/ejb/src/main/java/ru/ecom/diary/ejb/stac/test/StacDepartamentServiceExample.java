@@ -23,7 +23,6 @@ public class StacDepartamentServiceExample implements IStacDepartamentService {
             case 1:
                 return 0L ;
             case 2:
-                return 1L ;
             case 3:
                 return 1L ;
             case 4:

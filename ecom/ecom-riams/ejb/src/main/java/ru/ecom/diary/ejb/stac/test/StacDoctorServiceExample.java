@@ -16,9 +16,7 @@ public class StacDoctorServiceExample implements IStacDoctorService {
     public String getFio(long aId) {
         switch ((int)aId) {
             case 1:
-                return ""  ;
             case 2:
-                return "" ;
             case 3:
                 return "" ;
             case 4:

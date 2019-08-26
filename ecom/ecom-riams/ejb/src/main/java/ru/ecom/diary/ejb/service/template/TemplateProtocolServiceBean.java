@@ -12,13 +12,14 @@ import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.mis.ejb.domain.licence.DischargeDocument;
-import ru.ecom.mis.ejb.domain.medcase.*;
+import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
+import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.PatientExternalServiceAccount;
 import ru.ecom.mis.ejb.domain.prescription.AdminChangeJournal;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInterceptor;
 import ru.ecom.poly.ejb.domain.protocol.Protocol;
 import ru.nuzmsh.util.StringUtil;
 
@@ -241,7 +242,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	@Deprecated
 	public void sendPatientMedicalHistoryToExternalResource(Long aPatientExternalAccountId, EntityManager aManager) { // Делаем разовую выгрузку всей информации по случаям лечения пациента.
 		LOG.warn("sendPatientMedicalHistoryToExternalResource deprecated");
-		if (1==1) return;
+	/*	if (1==1) return;
 		if (aManager==null) {aManager=theManager;}
 		String address = getExternalServiceAddress();
 		if (address==null) {return;}
@@ -375,7 +376,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		}
 		root.put("services",services);
 		makeHttpPostRequest(root.toString(), address,"SetStatement",null, null, aManager);
-
+*/
 	}
 	//public  void sendProtocolToExternalResource(Protocol d, MedCase mc, String aRecord, EntityManager aManager) {		//sendProtocolToExternalResource(d,mc.);	}
 	public  void sendProtocolToExternalResource(Protocol d, MedCase mc, String aRecord, EntityManager aManager) {
