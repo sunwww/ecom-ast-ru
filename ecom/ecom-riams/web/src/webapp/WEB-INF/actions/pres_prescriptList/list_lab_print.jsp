@@ -85,7 +85,10 @@
                 <input type="hidden" name="sql_info" id="sql_info" value="
     select 
     d.id as pid
-    ,  d.record as f2drecord
+    , case when d.id is not null then d.record else
+    cast('Брак биоматериала: ' as varchar(19))||creason.name||chr(13)||cast('Дата и время брака: ' as varchar(20))||
+    to_char(p.canceldate,'dd.mm.yyyy')||' '||to_char(p.canceltime,'HH24:MM')||chr(13)||vwfCns.name||' '|| pCns.lastname||' '||pCns.firstname||' '||pCns.middlename
+    end as f2drecord
    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
    , p.materialId||' ('||vsst.code||')' as f4material
    ,coalesce(vsst.name,'---') as f5vsstname
@@ -125,10 +128,17 @@
     left join medcase sloallBySlo on sloallBySlo.parent_id=slo.parent_id and slo.dtype='DepartmentMedCase' and sloallBySlo.dtype='DepartmentMedCase' and sloallBySlo.Transferdate is null
     left join MisLpu ml1 on ml1.id=sloall.department_id
     left join MisLpu ml2 on ml2.id=sloallBySlo.department_id
-    left join vocprescripttype vpt on vpt.id=p.prescripttype_id 
+    left join vocprescripttype vpt on vpt.id=p.prescripttype_id
+        left join vocprescriptcancelreason creason on creason.id=p.cancelreason_id
+    left join SecUser suCns on suCns.login=p.cancelusername
+    left join WorkFunction wfCns on wfCns.secuser_id=suCns.id
+    left join VocWorkFunction vwfCns on vwfCns.id=wfCns.workFunction_id
+    left join Worker as wCns on wCns.id=wfCns.worker_id
+    left join Patient as pCns on pCns.id=wCns.person_id
    where {dateInfo}
     and vst.code='LABSURVEY' 
-    and mc.workFunctionExecute_id is not null and mc.dateStart is not null and d.id is not null
+     and case when d.id is not null then mc.workFunctionExecute_id is not null and mc.dateStart is not null
+    else (creason.code='4' or creason.code='6') end
     {sqlAdd}
     order by {mlname},pat.lastname,pat.firstname,pat.middlename,pat.birthday
         ,mc.datestart,ms.code 
@@ -304,7 +314,10 @@
             	
    select 
     p.id||''',''${param.beginDate}' as pid
-    ,  d.record as f2drecord
+     , case when d.id is not null then d.record else
+    cast('Брак биоматериала: ' as varchar(19))||creason.name||chr(13)||cast('Дата и время брака: ' as varchar(20))||
+    to_char(p.canceldate,'dd.mm.yyyy')||' '||to_char(p.canceltime,'HH24:MM')||chr(13)||vwfCns.name||' '|| pCns.lastname||' '||pCns.firstname||' '||pCns.middlename
+    end as f2drecord
    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
    , p.materialId||' ('||vsst.code||')' as f4material
    ,coalesce(vsst.name,'---') as f5vsstname
@@ -344,9 +357,16 @@
     left join MisLpu ml2 on ml2.id=sloallBySlo.department_id
     left join vocprescripttype vpt on vpt.id=p.prescripttype_id
     left join vochospitalizationresult vhr on vhr.id=sls.result_id
+        left join vocprescriptcancelreason creason on creason.id=p.cancelreason_id
+    left join SecUser suCns on suCns.login=p.cancelusername
+    left join WorkFunction wfCns on wfCns.secuser_id=suCns.id
+    left join VocWorkFunction vwfCns on vwfCns.id=wfCns.workFunction_id
+    left join Worker as wCns on wCns.id=wfCns.worker_id
+    left join Patient as pCns on pCns.id=wCns.person_id
     where ${dateInfo}
     and vst.code='LABSURVEY' 
-    and mc.workFunctionExecute_id is not null and mc.dateStart is not null
+     and case when d.id is not null then mc.workFunctionExecute_id is not null and mc.dateStart is not null
+    else (creason.code='4' or creason.code='6') end
     ${sqlAdd}
     order by pat.lastname,pat.firstname,pat.middlename
     
