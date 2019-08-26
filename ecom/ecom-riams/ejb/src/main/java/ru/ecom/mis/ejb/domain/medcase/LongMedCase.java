@@ -111,10 +111,7 @@ public abstract class LongMedCase extends MedCase{
 
 	/** Куда переведен */
 	private VocHospType theTargetHospType;
-	
 
-	
-	
 	
 	// [start] Вычисляемые поля
 	/** Длительность в днях */
@@ -130,8 +127,5 @@ public abstract class LongMedCase extends MedCase{
 	public String getDaysCount() {
 		return DurationUtil.getDuration(getDateStart(), getDateFinish());
 	}
-
-
-	// [end]
 
 }

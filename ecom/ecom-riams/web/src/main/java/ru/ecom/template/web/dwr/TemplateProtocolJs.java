@@ -648,7 +648,7 @@ public class TemplateProtocolJs {
 			name_cat = name_cat+"<input type='text' id='fldSearch"+aFunctionProt+"' name='fldSearch"+aFunctionProt+"' value='"+(aSearchText!=null?aSearchText:"")+"'>" ;
 			name_cat = name_cat+"<input  type='submit' value='Поиск' onclick='"+aFunctionProt+"Search(\""+aType+"\",\""+aParent+"\")'>" ;
 			name_cat = name_cat+"</form>" ;
-			res.append("<h2>Список своих шаблонов").append(!name_cat.equals("") ? " КАТЕГОРИИ: "+name_cat : "---").append(" </h2>") ;
+			res.append("<h2>Список своих шаблонов").append(" КАТЕГОРИИ: ").append(name_cat).append(" </h2>") ;
 			res.append("</td>") ;
 			res.append("</tr><tr><td colspan='2' valign='top'>") ;
 			res.append("<ul>");

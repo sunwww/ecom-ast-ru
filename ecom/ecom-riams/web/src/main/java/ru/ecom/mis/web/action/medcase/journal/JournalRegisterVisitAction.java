@@ -14,34 +14,19 @@ public class JournalRegisterVisitAction  extends BaseAction {
 
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 		JournalBySpecialistForm form = (JournalBySpecialistForm)aRequest.getSession().getAttribute("poly_journalBySpecForm");
-	//	String args =form.getBeginDate()+":"+form.getFinishDate()
-	//	+":"+form.getSpecialist()+":"+form.getRayon()
-	//	+":"+form.getPrimaryInYear() +":" +form.getNumberInJournal() +":"
-	//	;
 		aRequest.setAttribute("beginDate", form.getBeginDate()) ;
 		aRequest.setAttribute("finishDate", form.getFinishDate()) ;
 		aRequest.setAttribute("specialist", form.getSpecialist()) ;
 		aRequest.setAttribute("rayon", form.getRayon()) ;
 		aRequest.setAttribute("primaryInYear", form.getPrimaryInYear()) ;
-		String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", aRequest) ;
+		ActionUtil.updateParameter("Form039Action","typeDtype","3", aRequest) ;
 		if (form.getOrderBySpecialist()!=null &&
 				form.getOrderBySpecialist().equals(Boolean.TRUE)) {
-		//	args=args+"workFunction_id" ;
 			aRequest.setAttribute("order", "Сортировка по специалисту") ;
 		}  else {
 			aRequest.setAttribute("order", "Сортировка по времени приема") ;
-	//		args=args+"dateStart,timeExecute" ;
 		}
-		//args=args+":"+form.getWorkFunction()+":"+form.getLpu()+":"+form.getServiceStream()+":"+typeDtype ;
 		aRequest.setAttribute("func", form.getWorkFunction()) ;
-		/*if (form!=null) {
-			IScriptService script = Injection.find(aRequest).getService(IScriptService.class) ; 
-			aRequest.setAttribute("listRegisterVisit",script.invoke("SmoVisitService","journalRegisterVisitByMap", 
-				new Object[]{args})) ;
-		} else {
-			aRequest.setAttribute("listRegisterVisit",new java.util.ArrayList()) ;
-		}
-		*/
 		return aMapping.findForward(SUCCESS) ;
 	}
 	

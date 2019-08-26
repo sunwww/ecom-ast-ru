@@ -91,10 +91,19 @@ public class PatientServiceBean implements IPatientService {
 			SimpleDateFormat yyddmm = new SimpleDateFormat("yyMMdd");
 			String defaultLpuCode = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE","123456",theManager);
 			String filename ="DNM"+defaultLpuCode+"T30_"+yyddmm.format(aDateTo)+"_"+aPacketNumber;
-			StringBuilder sql = new StringBuilder();
 			String[] flds = {"N_ZAP", "FAM",  "IM", "OT", "DR", "TEL", "IDCASE", "PROFIL", "DS", "D_BEG", "D_END", "END_RES","YEAR"};
-			sql.append("select " + " pat.id as N_ZAP" + " ,pat.lastname as FAM" + " ,pat.firstname AS IM " + " ,pat.middlename AS OT" + " ,to_char(pat.birthday,'yyyy-MM-dd') as DR " + " ,coalesce(pat.phone,'') as TEL" + " ,d.id as IDCASE" + " ,coalesce(profile.profilek,'') as PROFIL" + " ,coalesce(mkb.code,'') as DS" + " ,coalesce(to_char(d.startdate,'yyyy-MM-dd'),'') AS D_BEG" + " ,coalesce(to_char(d.finishdate,'yyyy-MM-dd'),'') AS D_END" + " ,coalesce(vde.code,'') AS END_RES" + " ,to_char(coalesce(d.finishDate, d.startDate),'yyyy') as YEAR" + " from dispensarycard d" + " left join vocdispensaryend vde on vde.id=d.endreason_id" + " left join workfunction wf on wf.id=d.workfunction_id" + " left join vocworkfunction vwf on vwf.id=wf.workfunction_id" + " left join voce2medhelpprofile profile on profile.id=vwf.medhelpprofile_id" + " left join patient pat on pat.id=d.patient_id" + " left join vocidc10 mkb on mkb.id=d.diagnosis_id").append(sqlWhere.toString()).append(" order by pat.id");
-			JSONArray arr = new JSONArray(theWebQueryService.executeNativeSqlGetJSON(flds,sql.toString(),null));
+			String sql = "select pat.id as N_ZAP, pat.lastname as FAM ,pat.firstname AS IM ,pat.middlename AS OT ,to_char(pat.birthday,'yyyy-MM-dd') as DR  ,coalesce(pat.phone,'') as TEL ,d.id as IDCASE" +
+					" ,coalesce(profile.profilek,'') as PROFIL ,coalesce(mkb.code,'') as DS ,coalesce(to_char(d.startdate,'yyyy-MM-dd'),'') AS D_BEG ,coalesce(to_char(d.finishdate,'yyyy-MM-dd'),'') AS D_END" +
+					" ,coalesce(vde.code,'') AS END_RES ,to_char(coalesce(d.finishDate, d.startDate),'yyyy') as YEAR" +
+					" from dispensarycard d" +
+					" left join vocdispensaryend vde on vde.id=d.endreason_id" +
+					" left join workfunction wf on wf.id=d.workfunction_id" +
+					" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+					" left join voce2medhelpprofile profile on profile.id=vwf.medhelpprofile_id" +
+					" left join patient pat on pat.id=d.patient_id" +
+					" left join vocidc10 mkb on mkb.id=d.diagnosis_id" +
+					sqlWhere.toString() + " order by pat.id";
+			JSONArray arr = new JSONArray(theWebQueryService.executeNativeSqlGetJSON(flds, sql,null));
 			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
 			Element dn = new Element("DN");
@@ -402,13 +411,12 @@ public class PatientServiceBean implements IPatientService {
 			if (!StringUtil.isNullOrEmpty(aKladr)) {
 				String lastKl = aKladr.equals("") ? aRegion : aKladr.substring(aKladr.length()-1) ;
 
-				while (lastKl!=null&&!lastKl.equals("")&&lastKl.equals("0")) {
+				while ("0".equals(lastKl)) {
 					aKladr = aKladr.substring(0,aKladr.length()-1) ;
 					lastKl = aKladr.length()>1 ? aKladr.substring(aKladr.length()-1) : null ;
 				}
 				sql = new StringBuilder() ;
 				sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladr).append("%' and UPPER(name)='").append(aCity).append("'" ) ;
-				list.clear() ;
 				list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 				if (!list.isEmpty()) {
 					aKladr = ""+list.get(0)[1] ;

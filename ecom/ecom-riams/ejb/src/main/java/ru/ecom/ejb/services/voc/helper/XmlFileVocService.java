@@ -77,7 +77,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	    if (StringUtil.isNullOrEmpty(key)) {
 	    	throw new IllegalArgumentException("Нет атрибута name");
 	    }
-	    String type = aElement.getAttributeValue("type");
+//	    String type = aElement.getAttributeValue("type");
 	    /*LOG.info(new StringBuilder().append(" Parameter ").append(key)
 	        		.append(" (name = ").append(name).append("")
 	        		.append(" type= ").append(type).append(")")

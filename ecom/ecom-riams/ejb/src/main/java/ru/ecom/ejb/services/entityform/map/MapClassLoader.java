@@ -39,8 +39,6 @@ public class MapClassLoader extends ClassLoader {
 
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		// только первый раз загружаем неуникальный
-		boolean loadUnique = true ;
 		//if(!loadUnique) theLoadUniqueName = true ;
 		
 		Class ret ;
@@ -64,14 +62,11 @@ public class MapClassLoader extends ClassLoader {
 					ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 					MapFormInfo formInfo = theMapFormManager.getFormInfo(removeUuidFromClassName(name)) ;
 					MapClassVisitor visitor = new MapClassVisitor(writer
-							, formInfo, loadUnique ? classNameForLoader : formInfo.getClassname(), theTomcatMode);
+							, formInfo,  classNameForLoader, theTomcatMode);
 					reader.accept(visitor, ClassReader.SKIP_DEBUG);
 					byte[] buf = writer.toByteArray();
 					ret = defineClass(
-							loadUnique
-									? classNameForLoader
-									: "ru.ecom.ejb.services.entityform.MapEntityForm"
-							//formInfo.getClassname()
+							 classNameForLoader
 							, buf,
 							0, buf.length);
 					if (CAN_DEBUG)
@@ -83,19 +78,7 @@ public class MapClassLoader extends ClassLoader {
 				}
 			}
 		} else {
-//			Class hashedClass = HASH.get(name);
-//			if(hashedClass!=null) {
-//				ret = hashedClass ;
-//			} else {
 				ret = theLoader.loadClass(name);
-//			}
-			//try {
-				
-			//} catch (Throwable e) {
-			//	LOG.error("Error loading "+name+": "+e.getMessage(), e) ;
-			//	e.printStackTrace();
-			//	throw new IllegalStateException(e) ;
-			//}
 		}
 		if (CAN_DEBUG)
 			LOG.debug("loadClass: returned class = " + ret); 

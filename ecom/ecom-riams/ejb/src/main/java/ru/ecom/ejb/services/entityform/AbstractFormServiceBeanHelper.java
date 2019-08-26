@@ -48,8 +48,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 			String aPolicyAction) {
 		if (aId == null)
 			throw new IllegalArgumentException("Нет параметра aId");
-		Class clazz = aFormClass;
-		ADynamicSecurityInterceptor interceptor = (ADynamicSecurityInterceptor) clazz
+		ADynamicSecurityInterceptor interceptor = (ADynamicSecurityInterceptor) aFormClass
 				.getAnnotation(ADynamicSecurityInterceptor.class);
 		// String policyToExtend = getSecurityRole(clazz, aSuffix) ;
 		if (interceptor != null) {
@@ -76,7 +75,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 
 	}
 
-	String getSecurityRole(Class aFormClass, String aSuffix) {
+	private String getSecurityRole(Class aFormClass, String aSuffix) {
 		// 
 //		if(aFormClass.equals(MapEntityForm.class)) {
 //			try {
@@ -272,27 +271,27 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 				if (CAN_DEBUG)
 					LOG.debug("create() Id after copy = "
 							+ getIdMethod.invoke(entity));
-				
+
 				if( !doPersistBefore ) manager.persist(entity);
-				
+
 				if(theRowPersistDelegate.isRowPersistEnable(aForm.getClass())) {
 					theRowPersistDelegate.create( aForm, theManager, entity);
 				}
-				
+
 				if(aForm.getClass().isAnnotationPresent(ACreateInterceptors.class)) {
 					ACreateInterceptors interceptors = aForm.getClass().getAnnotation(ACreateInterceptors.class) ;
 					invokeFormInterceptors(interceptors.value(),aForm, entity);
 				}
-				
+
 				invokeJavaScriptInterceptor("onCreate", aForm, entity, null, null);
-				
+
 				//if(true) throw new IllegalStateException("//fixme") ;
-				
+
 			} finally {
 				//manager.close();
 			}
-			
-			
+
+
 			return (Long) getIdMethod.invoke(entity);
 		} catch (Exception e) {
 			LOG.error("Ошибка создания нового " + entityClass, e);
@@ -340,21 +339,21 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	    }
 
 	
-public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentException{
+	private void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentException {
 		Class entityClass = aEntity.getClass();
 		if (entityClass.isAnnotationPresent(UnDeletable.class)) {
-			UnDeletable unDeletable = (UnDeletable )entityClass.getAnnotation(UnDeletable.class);
+			UnDeletable unDeletable = (UnDeletable) entityClass.getAnnotation(UnDeletable.class);
 			try {
 				Method getterIsDeleted = PropertyUtil.getGetterMethod(entityClass,unDeletable.fieldName());
 				Boolean isDeleted = (Boolean)getterIsDeleted.invoke(aEntity);
-				if (isDeleted!=null&&isDeleted) {
+				if (isDeleted!=null && isDeleted) {
 					throw new IllegalArgumentException("Этот объект был удален");
 				}
 			} catch (InvocationTargetException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
-}
+	}
 	/**
 	 * Сохранение
 	 * 
@@ -532,13 +531,9 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 					
 					formSetterMethod.invoke(aForm, json);
 				} else {
-					
-					
 					copyEntityToForm(aEntity, aForm, method);
 				}
-				
 			}
-			
 		}
 		FormAfterLoadInterceptor afterLoadInterceptor = (FormAfterLoadInterceptor) formClass
 			.getAnnotation(FormAfterLoadInterceptor.class);
@@ -553,19 +548,16 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 					ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor interceptor = (ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor) clazz
 							.newInstance();
 					interceptor.intercept(aForm, aEntity, new InterceptorContext(theManager,theContext));
-					}
+				}
 			}
 		}
 	}
 
 	private String createJsonOneToManyOneProperty(Object aEntity,
-			Method aEntityGetMethod, PersistManyToManyOneProperty aAnnotation, Object aId) {
+		Method aEntityGetMethod, PersistManyToManyOneProperty aAnnotation, Object aId) {
 		String tableName = aAnnotation.tableName() ; 
 		try {
 			if (tableName.equals("")) {
-				// String valueProperty = aAnnotation.valueProperty() ;
-				// String idProperty = "id" ;
-	
 				StringWriter out = new StringWriter();
 				JSONWriter j = new JSONWriter(out);
 				j.object();
@@ -588,7 +580,6 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 				j.endObject();
 				return out.toString();
 			} else {
-				//System.out.println("-----primer----------") ;
 				return PersistList.getArrayJson(tableName, aAnnotation.parentProperty(), PersistList.parseLong(aId), aAnnotation.valueProperty(), theManager) ;
 			}
 			
@@ -640,34 +631,11 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 	private static Method getIdMethod(Class aEntityClass) throws SecurityException, NoSuchMethodException {
 		// оптимизация. // FIXME использовать хэш
 		Method idMethod = aEntityClass.getMethod("getId") ; //Если нет метода с таким именем, произойдет NoSuchMethodException
-	//	if(idMethod!=null) {
-			if( ! idMethod.isAnnotationPresent(Id.class)) {
-				// FIXME У класса "+aEntityClass+"есть метод getId, но нет аннотации @Id
-				LOG.warn("У класса "+aEntityClass+" есть метод getId, но нет аннотации @Id") ;
-			}
-			return idMethod ;
-	/*	} else {
-			for (Method method : aEntityClass.getMethods()) {
-				if (method.isAnnotationPresent(Id.class)) {
-					return method ;
-				}
-			}
-			// ПРОТОКОЛ ОШИБКИ
-			LOG.error("У класса "+aEntityClass+ " нет описанного идентификатора. Нет аннотации @Id") ;
-			LOG.warn("ОПИСАНИЕ ОШИБКИ: ") ;
-			for (Method method : aEntityClass.getMethods()) {
-				for (Annotation ann: method.getAnnotations()) {
-					LOG.warn("   "+ann) ;
-				}
-				LOG.warn(" ПОИСК @ID: "+method);
-				if (method.isAnnotationPresent(Id.class)) {
-					LOG.warn("   НАЙДЕНО");
-				}
-			}
-			
-			throw new IllegalArgumentException(
-					"У класса "+aEntityClass+ " нет описанного идентификатора. Нет аннотации @Id");
-		}*/
+		if( ! idMethod.isAnnotationPresent(Id.class)) {
+			// FIXME У класса "+aEntityClass+"есть метод getId, но нет аннотации @Id
+			LOG.warn("У класса "+aEntityClass+" есть метод getId, но нет аннотации @Id") ;
+		}
+		return idMethod ;
 	}
 	
 	private static Object getIdValue(Object aEntity, Class aEntityClass)
@@ -836,25 +804,16 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 
 	protected EntityFormPersistance findFormPersistance(
 			Class<IEntityForm> aFormClass) {
-    	if (CAN_DEBUG) LOG.debug("  findFormPersistance: starting..."); 
-		
 		if (aFormClass == null)
 			throw new IllegalArgumentException(
 					"Параметр aFormClass не должен быть равен null");
 
-		if (CAN_DEBUG) LOG.debug("  findFormPersistance: getting annotation..."); 
 		EntityFormPersistance p = aFormClass
 				.getAnnotation(EntityFormPersistance.class);
 		
-    	if (CAN_DEBUG) LOG.debug("findFormPersistance: p = "+p);
 		if (p == null)
 			throw new IllegalArgumentException("У формы " + aFormClass
 					+ " нет аннотации EntityFormPersistance");
-		
-    	if (CAN_DEBUG) LOG.debug("findFormPersistance: p.clazz = "+p.clazz());
-		if (p.clazz() == null)
-			throw new IllegalArgumentException(
-					"У аннотации EntityFormPersistance нет поля clazz");
 		return p;
 	}
 
@@ -902,8 +861,6 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 
 	JavaScriptFormInterceptorManager theJavaScriptFormInterceptorManager = JavaScriptFormInterceptorManager.getInstance();
 	private final EjbInjection theEjbInjection = EjbInjection.getInstance();
-	//private @PersistenceUnit
-	//EntityManagerFactory theFactory;
 	private final RowPersistDelegate theRowPersistDelegate = new RowPersistDelegate() ;
 
 }

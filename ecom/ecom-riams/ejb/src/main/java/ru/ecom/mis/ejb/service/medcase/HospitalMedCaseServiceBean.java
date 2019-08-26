@@ -76,7 +76,6 @@ import java.util.*;
 public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
 	private static final  Logger LOG = Logger.getLogger(HospitalMedCaseServiceBean.class);
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	private HashMap getMiacServiceStreamMap() {
 		HashMap<String, String> ss = new HashMap<>();
@@ -206,180 +205,180 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	 * @return  map со странами в виде (Код, Название_МИАЦа)
 	 */
 	private HashMap getCountries() {
-	HashMap<String, String> countries = new HashMap<>();
-	countries.put("598","Экваториальная Гвинея"); //ПАПУА-НОВАЯ ГВИНЕЯ
-	countries.put("226","Экваториальная Гвинея");
-	countries.put("148","Республика Чад");
-	countries.put("624","Гвинея-Бисау");
-	countries.put("31","Азербайджан");
-	countries.put("24","Ангола");
-	countries.put("51","Армения");
-	countries.put("4","Афганистан");
-	countries.put("50","Бангладеш");
-	countries.put("112","Беларусь");
-	countries.put("72","Ботсвана");
-	countries.put("76","Бразилия");
-	countries.put("862","Венесуэла");
-	countries.put("704","Вьетнам");
-	countries.put("598","Гвинея");
-	countries.put("276","Германия");
-	countries.put("268","Грузия");
-	countries.put("818","Египет");
-	countries.put("894","Замбия");
-	countries.put("716","Зимбабве");
-	countries.put("376","Израиль");
-	countries.put("356","Индия");
-	countries.put("368","Ирак");
-	countries.put("364","Иран");
-	countries.put("724","Испания");
-	countries.put("398","Казахстан");
-	countries.put("120","Камерун");
-	countries.put("124","Канада");
-	countries.put("178","Конго");
-	countries.put("192","Куба");
-	countries.put("442","Люксембург");
-	countries.put("466","Мали");
-	countries.put("504","Марокко");
-	countries.put("508","Мозамбик");
-	countries.put("498","Молдова");
-	countries.put("496","Монголия");
-	countries.put("516","Намибия");
-	countries.put("566","Нигерия");
-	countries.put("784","Объединенные Арабские Эмираты");
-	countries.put("616","Польша");
-	countries.put("895","Республика Абхазия");
-	countries.put("144","Республика Шри-Ланка");
-	countries.put("642","Румыния");
-	countries.put("686","Сенегал");
-	countries.put("688","Сербия");
-	countries.put("762","Таджикистан");
-	countries.put("764","Таиланд");
-	countries.put("834","Танзания");
-	countries.put("795","Туркменистан");
-	countries.put("860","Узбекистан");
-	countries.put("804","Украина");
-	countries.put("191","Хорватия");
-	countries.put("152","Чили");
-	countries.put("896","Южная Осетия");
-	countries.put("392","Япония");
-	countries.put("12","Алжир");
-	countries.put("70","Босния");
-	countries.put("288","Ганна");
-	countries.put("300","Греция");
-	countries.put("887","Йемен");
-	countries.put("417","Киргизия");
-	countries.put("156","Китай");
-	countries.put("384","Кот-д-Вуар");
-	countries.put("417","Кыргызстан");
-	countries.put("428","Латвия");
-	countries.put("422","Ливан");
-	countries.put("440","Литва");
-	countries.put("484","Мексика");
-	countries.put("528","Нидерланды");
-	countries.put("9999","Перу");
-	countries.put("790","Сирия");
-	countries.put("840","США");
-	countries.put("788","Тунис");
-	countries.put("795","Туркмения");
-	countries.put("792","Турция");
-	countries.put("246","Финляндия");
-	countries.put("710","Южная-Африканская Республика");
-	return countries;
-}
+		HashMap<String, String> countries = new HashMap<>();
+		countries.put("598","Экваториальная Гвинея"); //ПАПУА-НОВАЯ ГВИНЕЯ
+		countries.put("226","Экваториальная Гвинея");
+		countries.put("148","Республика Чад");
+		countries.put("624","Гвинея-Бисау");
+		countries.put("31","Азербайджан");
+		countries.put("24","Ангола");
+		countries.put("51","Армения");
+		countries.put("4","Афганистан");
+		countries.put("50","Бангладеш");
+		countries.put("112","Беларусь");
+		countries.put("72","Ботсвана");
+		countries.put("76","Бразилия");
+		countries.put("862","Венесуэла");
+		countries.put("704","Вьетнам");
+		countries.put("598","Гвинея");
+		countries.put("276","Германия");
+		countries.put("268","Грузия");
+		countries.put("818","Египет");
+		countries.put("894","Замбия");
+		countries.put("716","Зимбабве");
+		countries.put("376","Израиль");
+		countries.put("356","Индия");
+		countries.put("368","Ирак");
+		countries.put("364","Иран");
+		countries.put("724","Испания");
+		countries.put("398","Казахстан");
+		countries.put("120","Камерун");
+		countries.put("124","Канада");
+		countries.put("178","Конго");
+		countries.put("192","Куба");
+		countries.put("442","Люксембург");
+		countries.put("466","Мали");
+		countries.put("504","Марокко");
+		countries.put("508","Мозамбик");
+		countries.put("498","Молдова");
+		countries.put("496","Монголия");
+		countries.put("516","Намибия");
+		countries.put("566","Нигерия");
+		countries.put("784","Объединенные Арабские Эмираты");
+		countries.put("616","Польша");
+		countries.put("895","Республика Абхазия");
+		countries.put("144","Республика Шри-Ланка");
+		countries.put("642","Румыния");
+		countries.put("686","Сенегал");
+		countries.put("688","Сербия");
+		countries.put("762","Таджикистан");
+		countries.put("764","Таиланд");
+		countries.put("834","Танзания");
+		countries.put("795","Туркменистан");
+		countries.put("860","Узбекистан");
+		countries.put("804","Украина");
+		countries.put("191","Хорватия");
+		countries.put("152","Чили");
+		countries.put("896","Южная Осетия");
+		countries.put("392","Япония");
+		countries.put("12","Алжир");
+		countries.put("70","Босния");
+		countries.put("288","Ганна");
+		countries.put("300","Греция");
+		countries.put("887","Йемен");
+		countries.put("417","Киргизия");
+		countries.put("156","Китай");
+		countries.put("384","Кот-д-Вуар");
+		countries.put("417","Кыргызстан");
+		countries.put("428","Латвия");
+		countries.put("422","Ливан");
+		countries.put("440","Литва");
+		countries.put("484","Мексика");
+		countries.put("528","Нидерланды");
+		countries.put("9999","Перу");
+		countries.put("790","Сирия");
+		countries.put("840","США");
+		countries.put("788","Тунис");
+		countries.put("795","Туркмения");
+		countries.put("792","Турция");
+		countries.put("246","Финляндия");
+		countries.put("710","Южная-Африканская Республика");
+		return countries;
+	}
 
 	/**
 	 * Формируем "справочник" регионов с названиями для экспорта в МИАЦ
 	 * @return  map с регионами в виде (Код, Название_МИАЦа)
 	 */
-private HashMap getRegions() {
-	HashMap<String, String> countries = new HashMap<>();
-	countries.put("01","Республика Адыгея");
-	countries.put("04","Республика Алтай");
-	countries.put("02","Республика Башкортостан");
-	countries.put("03","Республика Бурятия");
-	countries.put("05","Республика Дагестан");
-	countries.put("06","Республика Ингушетия");
-	countries.put("07","Кабардино-Балкарская республика");
-	countries.put("08","Республика Калмыкия");
-	countries.put("09","Карачаево-Черкесская республика");
-	countries.put("10","Республика Карелия");
-	countries.put("11","Республика Коми");
-	countries.put("91","Республика Крым");
-	countries.put("12","Республика Марий Эл");
-	countries.put("13","Республика Мордовия");
-	countries.put("14","Республика Саха (Якутия)");
-	countries.put("15","Республика Северная Осетия-Алания");
-	countries.put("16","Республика Татарстан");
-	countries.put("17","Республика Тыва");
-	countries.put("18","Удмуртская республика");
-	countries.put("19","Республика Хакасия");
-	countries.put("20","Чеченская республика");
-	countries.put("21","Чувашская республика");
-	countries.put("22","Алтайский край");
-	countries.put("75","Забайкальский край");
-	countries.put("41","Камчатский край");
-	countries.put("23","Краснодарский край");
-	countries.put("24","Красноярский край");
-	countries.put("59","Пермский край");
-	countries.put("25","Приморский край");
-	countries.put("26","Ставропольский край");
-	countries.put("27","Хабаровский край");
-	countries.put("28","Амурская область");
-	countries.put("29","Архангельская область");
-	countries.put("31","Белгородская область");
-	countries.put("32","Брянская область");
-	countries.put("33","Владимирская область");
-	countries.put("34","Волгоградская область");
-	countries.put("35","Вологодская область");
-	countries.put("36","Воронежская область");
-	countries.put("37","Ивановская область");
-	countries.put("38","Иркутская область");
-	countries.put("39","Калининградская область");
-	countries.put("40","Калужская область");
-	countries.put("42","Кемеровская область");
-	countries.put("43","Кировская область");
-	countries.put("44","Костромская область");
-	countries.put("45","Курганская область");
-	countries.put("46","Курская область");
-	countries.put("47","Ленинградская область");
-	countries.put("48","Липецкая область");
-	countries.put("49","Магаданская область");
-	countries.put("50","Московская область");
-	countries.put("51","Мурманская область");
-	countries.put("52","Нижегородская область");
-	countries.put("53","Новгородская область");
-	countries.put("54","Новосибирская область");
-	countries.put("55","Омская область");
-	countries.put("56","Оренбургская область");
-	countries.put("57","Орловская область");
-	countries.put("58","Пензенская область");
-	countries.put("60","Псковская область");
-	countries.put("61","Ростовская область");
-	countries.put("62","Рязанская область");
-	countries.put("63","Самарская область");
-	countries.put("64","Саратовская область");
-	countries.put("65","Сахалинская область");
-	countries.put("66","Свердловская область");
-	countries.put("67","Смоленская область");
-	countries.put("68","Тамбовская область");
-	countries.put("69","Тверская область");
-	countries.put("70","Томская область");
-	countries.put("71","Тульская область");
-	countries.put("72","Тюменская область");
-	countries.put("73","Ульяновская область");
-	countries.put("74","Челябинская область");
-	countries.put("76","Ярославская область");
-	countries.put("77","Москва");
-	countries.put("78","Санкт-Петербург");
-	countries.put("92","Севастополь");
-	countries.put("79","Еврейская автономная область");
-	countries.put("83","Ненецкий автономный округ");
-	countries.put("86","Ханты-Мансийский автономный округ - Югра");
-	countries.put("87","Чукотский автономный округ");
-	countries.put("89","Ямало-Ненецкий автономный округ");
-	countries.put("99","Байконур (Казахстан)");
-	return countries;
-}
+	private HashMap getRegions() {
+		HashMap<String, String> countries = new HashMap<>();
+		countries.put("01","Республика Адыгея");
+		countries.put("04","Республика Алтай");
+		countries.put("02","Республика Башкортостан");
+		countries.put("03","Республика Бурятия");
+		countries.put("05","Республика Дагестан");
+		countries.put("06","Республика Ингушетия");
+		countries.put("07","Кабардино-Балкарская республика");
+		countries.put("08","Республика Калмыкия");
+		countries.put("09","Карачаево-Черкесская республика");
+		countries.put("10","Республика Карелия");
+		countries.put("11","Республика Коми");
+		countries.put("91","Республика Крым");
+		countries.put("12","Республика Марий Эл");
+		countries.put("13","Республика Мордовия");
+		countries.put("14","Республика Саха (Якутия)");
+		countries.put("15","Республика Северная Осетия-Алания");
+		countries.put("16","Республика Татарстан");
+		countries.put("17","Республика Тыва");
+		countries.put("18","Удмуртская республика");
+		countries.put("19","Республика Хакасия");
+		countries.put("20","Чеченская республика");
+		countries.put("21","Чувашская республика");
+		countries.put("22","Алтайский край");
+		countries.put("75","Забайкальский край");
+		countries.put("41","Камчатский край");
+		countries.put("23","Краснодарский край");
+		countries.put("24","Красноярский край");
+		countries.put("59","Пермский край");
+		countries.put("25","Приморский край");
+		countries.put("26","Ставропольский край");
+		countries.put("27","Хабаровский край");
+		countries.put("28","Амурская область");
+		countries.put("29","Архангельская область");
+		countries.put("31","Белгородская область");
+		countries.put("32","Брянская область");
+		countries.put("33","Владимирская область");
+		countries.put("34","Волгоградская область");
+		countries.put("35","Вологодская область");
+		countries.put("36","Воронежская область");
+		countries.put("37","Ивановская область");
+		countries.put("38","Иркутская область");
+		countries.put("39","Калининградская область");
+		countries.put("40","Калужская область");
+		countries.put("42","Кемеровская область");
+		countries.put("43","Кировская область");
+		countries.put("44","Костромская область");
+		countries.put("45","Курганская область");
+		countries.put("46","Курская область");
+		countries.put("47","Ленинградская область");
+		countries.put("48","Липецкая область");
+		countries.put("49","Магаданская область");
+		countries.put("50","Московская область");
+		countries.put("51","Мурманская область");
+		countries.put("52","Нижегородская область");
+		countries.put("53","Новгородская область");
+		countries.put("54","Новосибирская область");
+		countries.put("55","Омская область");
+		countries.put("56","Оренбургская область");
+		countries.put("57","Орловская область");
+		countries.put("58","Пензенская область");
+		countries.put("60","Псковская область");
+		countries.put("61","Ростовская область");
+		countries.put("62","Рязанская область");
+		countries.put("63","Самарская область");
+		countries.put("64","Саратовская область");
+		countries.put("65","Сахалинская область");
+		countries.put("66","Свердловская область");
+		countries.put("67","Смоленская область");
+		countries.put("68","Тамбовская область");
+		countries.put("69","Тверская область");
+		countries.put("70","Томская область");
+		countries.put("71","Тульская область");
+		countries.put("72","Тюменская область");
+		countries.put("73","Ульяновская область");
+		countries.put("74","Челябинская область");
+		countries.put("76","Ярославская область");
+		countries.put("77","Москва");
+		countries.put("78","Санкт-Петербург");
+		countries.put("92","Севастополь");
+		countries.put("79","Еврейская автономная область");
+		countries.put("83","Ненецкий автономный округ");
+		countries.put("86","Ханты-Мансийский автономный округ - Югра");
+		countries.put("87","Чукотский автономный округ");
+		countries.put("89","Ямало-Ненецкий автономный округ");
+		countries.put("99","Байконур (Казахстан)");
+		return countries;
+	}
 
 	public String s(Object o) {
 	return o!=null ? o.toString().trim() : "";
@@ -397,7 +396,6 @@ private HashMap getRegions() {
 		return sb.toString();
 	}
 	public String getDataByReferencePrintNotOnlyOMS(Long aMedCase,String aType, boolean aIsUrl, String aSqlAdd) throws Exception {
-	//	IWebQueryService service = IWebQueryService.class.newInstance();
 		String code_page = ""+getDefaultParameterByConfig("code_csp_page", "CP1251") ;
 		String address_lpu = ""+getDefaultParameterByConfig("address_lpu", "_______________________________________________________") ;
 		String name_lpu = ""+getDefaultParameterByConfig("name_lpu", "_______________________________________________________") ;
@@ -417,7 +415,7 @@ private HashMap getRegions() {
 			}
 		} else {aSqlAdd = "";}
 		boolean isf = true ;
-		if (aType!=null &&aType.equals("HOSP")) {
+		if ("HOSP".equals(aType)) {
 			//Дополнительная диспансеризация
 			href.append(param("AddDisp", null));
 			href.append(param("AddDispAge", null));
@@ -620,7 +618,7 @@ private HashMap getRegions() {
 			}
 		}
 			//res.append("&render=21663%23ПУЛЬМОНОЛОГИЧЕСКОЕ ОТДЕЛЕНИЕ. КОЙКИ АЛЛЕРГОЛОГИЧЕСКИЕ. КРУГЛОСУТОЧНЫЙ СТАЦИОНАР, ПОЛНЫЙ СЛУЧАЙ,ВЗРОСЛЫЕ С 03.01.2014 ПО 14.01.2014") ;
-		} else if (aType!=null && aType.equals("PREVISIT")) {
+		} else if ("PREVISIT".equals(aType)) {
 			//Дополнительная диспансеризация
 			href.append(param("AddDisp", null));
 			href.append(param("AddDispAge", null));
@@ -763,7 +761,7 @@ private HashMap getRegions() {
 			}
 		}
 
-		} else if (aType!=null && aType.equals("VISIT")) {
+		} else if ( "VISIT".equals(aType)) {
 			//Дополнительная диспансеризация
 			href.append(param("AddDisp", null));
 			href.append(param("AddDispAge", null));
@@ -862,7 +860,8 @@ private HashMap getRegions() {
 
 				List<Object[]> l_vis = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList();
 				//res.append("&render=") ;
-				for (Object[] wqr_vis : l_vis) {
+				if (!l_vis.isEmpty()) {
+					Object[] wqr_vis  = l_vis.get(0);
 					StringBuilder href_vis = new StringBuilder();
 					href_vis.append(href);
 					href_vis.append(param("Lpu", wqr_vis[14]));
@@ -882,10 +881,9 @@ private HashMap getRegions() {
 					href_vis.append(param("LpuFunction", wqr_vis[2])); //
 					href_vis.append(param("Operations", null));
 					return getContentOfHTTPPage("http://" + cspurl + "/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&" + href_vis.toString(), code_page);
-
 				}
 			}
-		} else if (aType!=null && aType.equals("SPO")) {
+		} else if ("SPO".equals(aType)) {
 			//Дополнительная диспансеризация
 			href.append(param("AddDisp", null));
 			href.append(param("AddDispAge", null));
@@ -1021,7 +1019,7 @@ private HashMap getRegions() {
 			}
 		}
 
-		} else if (aType!=null && aType.equals("EXTDISP")) {
+		} else if ("EXTDISP".equals(aType)) {
 			//Дополнительная диспансеризация
 			href.append("AddDisp=").append("") ;
 			href.append("AddDispAge=").append("") ;
@@ -2836,7 +2834,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
 		Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
 		Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
-		ArrayList<WebQueryResult> i_exist=new ArrayList<>() ;
+//		ArrayList<WebQueryResult> i_exist=new ArrayList<>() ;
 		List<WebQueryResult> i_error=new ArrayList<>() ;
 
 		StringBuilder sql = new StringBuilder() ;
@@ -2918,12 +2916,12 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		}
 		XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
 		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
-		if (!i_exist.isEmpty()) {
+/*		if (!i_exist.isEmpty()) {
 			res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
 			res.set4(i_exist) ;
 			XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workDir).append("/exist_").append(filename).append(".xml").toString())) ;
 			if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workAddDir).append("/").append("exist_").append(filename).append(".xml").toString())) ;
-		}
+		} */
 		if (!i_error.isEmpty()) {
 			res.set3(new StringBuilder().append("error_").append(filename).append(".xml").toString()) ;
 			res.set5(i_error) ;
@@ -2956,7 +2954,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
 		Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
 		Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
-		ArrayList<WebQueryResult> i_exist=new ArrayList<>() ;
+//		ArrayList<WebQueryResult> i_exist=new ArrayList<>() ;
 		List<WebQueryResult> i_error=new ArrayList<>() ;
 
 		StringBuilder sql = new StringBuilder() ;
@@ -3074,12 +3072,12 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
 		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
 
-		if (!i_exist.isEmpty()) {
+/*		if (!i_exist.isEmpty()) {
 			res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
 			res.set4(i_exist) ;
 			XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workDir).append("/exist_").append(filename).append(".xml").toString())) ;
 			if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workAddDir).append("/").append("/exist_").append(filename).append(".xml").toString())) ;
-		}
+		} */
 		if (!i_error.isEmpty()) {
 			res.set3(new StringBuilder().append("error_").append(filename).append(".xml").toString()) ;
 			res.set5(i_error) ;
@@ -3112,7 +3110,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
 		Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
 		Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
-		ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;
+//		ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;
 		List<WebQueryResult> i_error=new ArrayList<>() ;
 
 		StringBuilder sql = new StringBuilder() ;
@@ -3215,12 +3213,12 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
 		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
 
-		if (!i_exist.isEmpty()) {
+/*		if (!i_exist.isEmpty()) {
 			res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
 			res.set4(i_exist) ;
 			XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workDir).append("/exist_").append(filename).append(".xml").toString())) ;
 			if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workAddDir).append("/").append("/exist_").append(filename).append(".xml").toString())) ;
-		}
+		} */
 		if (!i_error.isEmpty()) {
 			res.set3(new StringBuilder().append("error_").append(filename).append(".xml").toString()) ;
 			res.set5(i_error) ;
@@ -3906,7 +3904,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		MisLpu department = theManager.find(MisLpu.class, aDepartment) ;
 		for (int i = 0; i < obj.length; i++) {
 			String jsId = obj[i];
-			if (jsId!=null && (!jsId.equals("") || jsId.equals("0"))) {
+			if (jsId!=null && !jsId.equals("") && !jsId.equals("0")) {
 
 				Long jsonId=java.lang.Long.valueOf(jsId) ;
 
@@ -4116,7 +4114,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	}
 	public void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) {
 
-		HospitalMedCase sls = theManager.find(HospitalMedCase.class, aMedCaseId) ;
+	//	HospitalMedCase sls = theManager.find(HospitalMedCase.class, aMedCaseId) ;
 	//	if (sls.getDateFinish()!=null) throw new IllegalArgumentException("На выписанных пациентов, предварительная выписка не оформляется!!!!"); //Проверка перенесена в *ServiceJs
 		saveDischargeEpicrisis(aMedCaseId,aDischargeEpicrisis,theManager);
 	}
@@ -4369,11 +4367,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		return "Запрос выполнен: "+result ;
 	}
 
-	public List<HospitalMedCaseForm>findSlsByStatCard(String aNumber) {
-		if (CAN_DEBUG) {
-			LOG.debug("findStatCard Number = " + aNumber );
-		}
-		//Patient patient = theManager.find(Patient.class, aParentId) ;
+	public List<HospitalMedCaseForm> findSlsByStatCard(String aNumber) {
 		StringBuilder query = new StringBuilder() ;
 		query.append("from HospitalMedCase c")
 				.append(" where statisticStub.code like :number order by dateStart");

@@ -70,7 +70,7 @@
 </div>
 
 <script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}PatientDialogInitialized = false ;
      var the${name}PatientDialog = new msh.widget.Dialog($('${name}PatientDialog')) ;
 

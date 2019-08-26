@@ -322,19 +322,17 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 			if (!aWhereDop.equals(""))sql.append(" and ").append(aWhereDop) ;
 			sql.append(" ORDER BY ").append(order);
 		} else {
-			
 			sql.append(" GROUP BY ").append(group) ;
 				//.append(" having count(distinct t.id)>0") ;
-			if (aOrderByProcent) {
+/*			if (aOrderByProcent) {
 				sql.append(" ORDER BY ")
 				//.append("(count(distinct case when t.visitResult_id is not null and (t.noActuality is null or t.noActuality='0') then t.id else null end) )/cast(count(distinct t.id) as numeric) desc ")
 				//	.append(",count(distinct t.id),")
 				.append(order);
 			} else {
-				sql.append(" ORDER BY ").append(order);
-			}
+*/				sql.append(" ORDER BY ").append(order);
+//			}
 		}
-			
 		return sql.toString() ;
 	}
 }

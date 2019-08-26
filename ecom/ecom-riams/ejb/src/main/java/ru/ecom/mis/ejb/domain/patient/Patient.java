@@ -71,16 +71,6 @@ public class Patient extends BaseEntity{
 	/** Телефон */
 	private String thePhone;
 
-	public static String medcaseMedpolicy_id;
-
-	@Comment("Последняя синхронизация с фондом")
-	public static String getMedcaseMedpolicy_id() {
-		return medcaseMedpolicy_id;
-	}
-	public static void setMedcaseMedpolicy_id(String medcaseMedpolicy_id) {
-		Patient.medcaseMedpolicy_id = medcaseMedpolicy_id;
-	}
-
 	/** Участок основного прикрепления*/
 	@Comment("Участок основного прикрепления")
 	@OneToOne
@@ -111,12 +101,6 @@ public class Patient extends BaseEntity{
 	@Transient
 	public String getLpuAreaName() { return theLpuArea!=null ? theLpuArea.getName() : ""; }
 	public void setLpuAreaName(String aLpuAreaName) {}
-
-	/** Полис прикрепления */
-	//@Comment("Полис прикрепления")
-	//@OneToOne
-	//public MedPolicyOmc getAttachedOmcPolicy() {return theAttachedOmcPolicy;}
-	//public void setAttachedOmcPolicy(MedPolicyOmc aAttachedOmcPolicy) {theAttachedOmcPolicy = aAttachedOmcPolicy;}
 
 	/** Ведомственное прикрепление */
 	//@Comment("Ведомственное прикрепление")
@@ -218,17 +202,6 @@ public class Patient extends BaseEntity{
 //    @OneToMany(mappedBy = "patient", cascade= ALL)
 //    public List<IdentityCard> getIdentityCard() { return theIdentityCard ; }
 //    public void setIdentityCard(List<IdentityCard> aIdentityCard) { theIdentityCard = aIdentityCard ; }
-
-
-//    /** Место проживания */
-//    @OneToOne(cascade = CascadeType.ALL)
-//    public PatientAddress getRegistrationPlace() { return theRegistrationPlace ; }
-//    public void setRegistrationPlace(PatientAddress aRegistrationPlace) { theRegistrationPlace = aRegistrationPlace ; }
-
-//    /** Место проживания */
-//    private PatientAddress theRegistrationPlace ;
-//    /** Документы */
-//    private List<IdentityCard> theIdentityCard ;
 
 	/** Номер паспорта */
 	@Comment("Номер паспорта")

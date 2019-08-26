@@ -74,7 +74,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 		}
 			
 			
-		return res.length()>0?res.substring(0,res.length()-2):"" ;
+		return res.length()>1 ? res.substring(0,res.length()-2) : "" ;
 	}
 	public static String  getArray(EntityManager aManager
 			, String aTableName

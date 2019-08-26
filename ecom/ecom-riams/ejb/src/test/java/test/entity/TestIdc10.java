@@ -4,7 +4,7 @@ import ru.ecom.ejb.services.util.ConvertSql;
 
 
 public class TestIdc10 {
-	public static void main(String args[] ) {
+	public static void main(String[] args ) {
 		check("1", "01", "N70") ;
 		String int1 = "A00-B99" ;
 		String int2 = "B00.2-C09.5" ;

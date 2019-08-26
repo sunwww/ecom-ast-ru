@@ -302,9 +302,6 @@ public class DisabilityServiceBean implements IDisabilityService {
     		String mkb = ""+obj[1] ;
     		String sex = ""+obj[3] ;
     		String reason = ""+obj[2] ;
-    		LOG.info("mkb--->"+mkb) ;
-    		LOG.info("sex--->"+sex) ;
-    		LOG.info("reason--->"+reason) ;
     		if (reason.equals("09")) {
     			if (sex.equals("1")) {str=str+","+"96,102" ;} else {str=str+","+"97,103" ;}
     		} else {if (reason.equals("08")) {
@@ -369,7 +366,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 	    		//if (ConvertSql.ChInt("",mkb)) {if (sex.equals("1")) {str=str+","+"" ;} else {str=str+","+"" ;}}
     		}}}}
     		LOG.info("str--->"+str) ;
-    		if (!str.equals("")) {
     			str = str.substring(1) ;
     			String[] strs = str.split(",") ;
     			theManager.createNativeQuery("delete from DisabilityReport where caseR='"+obj[0]+"'").executeUpdate() ;
@@ -387,7 +383,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 	    			LOG.info("duration--->"+obj[5]) ;
 	    			theManager.createNativeQuery("update DisabilityCase set agePatient='"+age+"', durationCase='"+obj[5]+"' where id='"+obj[0]+"'").executeUpdate() ;
     			}
-    		}
     		}
     			
 
@@ -539,7 +534,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     	}
     	List<RegimeViolationRecord> list2 = new ArrayList<>() ;
     	for (int i=0;i<aDocument.getRegimeViolationRecords().size();i++) {
-    		RegimeViolationRecord old = aDocument.getRegimeViolationRecords().get(0) ;
+    		RegimeViolationRecord old = aDocument.getRegimeViolationRecords().get(i) ;
     		RegimeViolationRecord record = new RegimeViolationRecord() ;
     		record.setComment(old.getComment()) ;
     		record.setDateFrom(old.getDateFrom()) ;

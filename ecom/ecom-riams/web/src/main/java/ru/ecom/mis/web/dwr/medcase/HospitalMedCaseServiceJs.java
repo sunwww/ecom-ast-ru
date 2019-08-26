@@ -37,7 +37,6 @@ public class HospitalMedCaseServiceJs {
 	/**Календарь с предварительной госпитализацией*/
 
 	public String getPreHospCalendar( Integer aYear, Integer aMonth, Long aDepartment, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		JSONArray preHosps = new JSONArray(getPreHospByMonth( aYear,aMonth,aDepartment,aRequest));
 		StringBuilder res = new StringBuilder();
 		res.append("<form name='frmDate' id='frmDate' action='javascript:step5()'>");
@@ -2049,7 +2048,6 @@ public class HospitalMedCaseServiceJs {
 				.append(" left join SecUser su on su.id=wf.secUser_id")
 				.append(" left join Patient as p on p.id=w.person_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id")
 				.append(" where w.lpu_id='").append(aDepartment).append("' and wf.isAdministrator='1'") ;
-			list1.clear() ;
 			list1 = service.executeNativeSql(sql1.toString(),1) ;
 			if (!list1.isEmpty()) {
 				WebQueryResult wqr = list1.iterator().next() ;

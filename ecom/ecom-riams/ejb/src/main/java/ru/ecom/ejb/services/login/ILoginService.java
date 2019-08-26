@@ -7,12 +7,12 @@ import java.util.Set;
  */
 public interface ILoginService {
     /** Получить список ролей пользователя */
-    public Set getUserRoles() ;
-	public Long createSystemMessage(String aTitle, String aText, String aRecipient) ;
-	public void dispatchMessage(Long aIdMessage) ;
-    public void checkMessage(Long aIdMessage);
-	public void hideMessage(Long aIdMessage) ;
-	public String[] getConfigUrl() ;
-	public void createRecordInAuthJournal(String aUsername, String aRemoteIp, String aLocalIp
+    Set getUserRoles() ;
+	Long createSystemMessage(String aTitle, String aText, String aRecipient) ;
+	void dispatchMessage(Long aIdMessage) ;
+    void checkMessage(Long aIdMessage);
+	void hideMessage(Long aIdMessage) ;
+	String[] getConfigUrl() ;
+	void createRecordInAuthJournal(String aUsername, String aRemoteIp, String aLocalIp
     		,String aServerName,boolean aIsChecked,String aError,String aErrorPassword);
 }

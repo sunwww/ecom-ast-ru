@@ -912,11 +912,11 @@ public class ImportFormatServiceBean implements IImportFormatService {
 
 //                        if (i<=debugCount) LOG.info("REPLACE ID:"+id);
 
-                } else if (id!=null && id.equals("0")) {
+                } else if (id!=null) {
                 	log("("+i+") Пропущено, несколько объектов имеют одинаковый ключ");
                 	importStatistics.incSyncEntity();
                 	isModified = false;
-                }else {
+                } else {
                     importStatistics.incAddEntity();
                     log("("+i+") Запись  добавлена");
                     isModified = true;

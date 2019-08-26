@@ -37,8 +37,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
     	final IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
     	List<WebQueryResult> list = new LinkedList<>() ;
     	final List<List> listFrom = new LinkedList<>() ;
-    	final List<WebQueryResult> listError = new LinkedList<>() ;
-    	
+
     	final String typeImport = ActionUtil.updateParameter("HospitalDirectDataInFond","typeImport","1", aRequest) ;
     	String typeView=ActionUtil.updateParameter("HospitalDirectDataInFond","typeView","1", aRequest) ;
     	String typeView1=ActionUtil.updateParameter("HospitalDirectDataInFond","typeView1","1", aRequest) ;

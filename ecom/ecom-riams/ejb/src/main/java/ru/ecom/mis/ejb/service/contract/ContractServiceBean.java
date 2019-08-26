@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.text.ParseException;
 import java.util.List;
@@ -75,7 +76,6 @@ public class ContractServiceBean implements IContractService {
 				(aMedServiceType!=null && !aMedServiceType.equals("")? " and vms.code='"+aMedServiceType+"'" : "") +
 				" and (cao.isdeleted is null or cao.isdeleted='0') " +
 				" order by caos.medcase_id, caos.serviceId";
-		//LOG.warn("sql = "+sql+" , "+aPatientId);
 		return theManager.createNativeQuery(sql)
 				.setParameter("patientId", aPatientId).getResultList();
 	}
@@ -151,14 +151,13 @@ public class ContractServiceBean implements IContractService {
 		LOG.debug("===Send to KKM_BEAN. Data = "+data);
 			URL url = new URL(address);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 			StringBuilder answerString = new StringBuilder();
-		try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8")){
+		try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)){
 			writer.write(data);
 		}
 		BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream()== null ? connection.getInputStream() : connection.getErrorStream()));
@@ -171,7 +170,6 @@ public class ContractServiceBean implements IContractService {
 		LOG.info("KKM return: "+answerString);
 		}
 
-	//Печать K, Z отчета
 	private String printKKMReport(String aType, String url) {
 		if ("Z".equals(aType) || "X".equals(aType)) {
 			try {
@@ -233,32 +231,21 @@ public class ContractServiceBean implements IContractService {
 		return ConvertSql.parseLong(list.get(0)) ;
 	}
 	public Long getPriceMedService(Long aPriceList,Long aMedService) {
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("select pms.id from priceposition pp " );
-		sql.append(" left join pricemedservice pms on pms.priceposition_id=pp.id " );
-		sql.append(" where pp.pricelist_id=").append(aPriceList).append(" and pms.medservice_id=").append(aMedService) ;
-		List<Object> list=theManager.createNativeQuery(sql.toString()).getResultList() ;
+		String sql = "select pms.id from priceposition pp " +
+				" left join pricemedservice pms on pms.priceposition_id=pp.id " +
+				" where pp.pricelist_id=" + aPriceList + " and pms.medservice_id=" + aMedService;
+		List<Object> list=theManager.createNativeQuery(sql).getResultList() ;
 		return list.isEmpty() ? null : ConvertSql.parseLong(list.get(0)) ;
-		/*
-		 left join workfunctionservice wfs on wfs.lpu_id=slo.department_id
-    and bf.bedtype_id=wfs.bedtype_id and bf.bedsubtype_id=wfs.bedsubtype_id
-    and wfs.roomType_id=wp.roomType_id
-left join medservice ms on ms.id=wfs.medservice_id
-    left join pricemedservice pms on pms.medservice_id=wfs.medservice_id
-        left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}' 
-and (pp.isvat is null or pp.isvat='0')
-
-		 */
-		//return null ;
 	}
+
 	@SuppressWarnings("unchecked")
 	public Long getMedContractBySmo(String aDtypeSmo, Long aIdSmo, boolean aIsRecalc) {
 		return null ;
 	}
+
 	private boolean checkNoDoubleCAMS(Long aIdSmo, String aDtype) {
-		List<Object> l = theManager.createNativeQuery("select id from ContractAccountMedService where Smo="+aIdSmo+" and TypeService='"+aDtype+"'").getResultList() ;
-		return  l.isEmpty(); 
-		
+		return theManager.createNativeQuery("select id from ContractAccountMedService where Smo="+aIdSmo+" and TypeService='"+aDtype+"'").getResultList().isEmpty() ;
+
 	}
 	public Long setSmoByAccount(Long aAccount,String aDtypeSmo, Long aIdSmo, boolean aDeleteServiceWithOtherAccount, boolean aPeresech) throws ParseException {
 		Long contract = null ;
@@ -824,12 +811,9 @@ and (pp.isvat is null or pp.isvat='0')
 					sql.append(" group by mc.id,mp.id,mc.patient_id") ;
 					LOG.info("Формирование счета по стациционару. SQL = "+sql);
 					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
-					if (!isStart) {
-						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по стационару. Найдено госпитализаций: "+listHosp.size(),listHosp.size()) ;
-						isStart=true ;
-					} else {
-						monitor.setText("Формирование счета по стационару. Найдено госпитализаций: "+listHosp.size()) ;
-					}
+					monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по стационару. Найдено госпитализаций: "+listHosp.size(),listHosp.size()) ;
+					isStart=true ;
+
 					for (Object[] hosp:listHosp) {
 						Long hospId=ConvertSql.parseLong(hosp[0]) ;
 						setSmoByAccount(ac.getId(), "HOSPITALMEDCASE", hospId, aDeleteServiceWithOtherAccount,aIsPeresech) ;
@@ -908,12 +892,7 @@ and (pp.isvat is null or pp.isvat='0')
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
 					sql.append(" group by mc.id,mc.patient_id,mc.datestart") ;
 					List<Object[]> listHosp1 = theManager.createNativeQuery(sql.toString()).getResultList() ;
-					if (!isStart) {
-						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по поликлинике визит. Найдено услуг: "+listHosp.size(),listHosp.size()) ;
-//						isStart=true ;
-					} else {
-						monitor.setText("Формирование счета по поликлинике визит. Найдено услуг: "+listHosp1.size()) ;
-					}
+					monitor.setText("Формирование счета по поликлинике визит. Найдено услуг: "+listHosp1.size()) ;
 					for (Object[] hosp:listHosp1) {
 						Long hospId=ConvertSql.parseLong(hosp[0]) ;
 						setSmoByAccount(ac.getId(), "SERVICEMEDCASE", hospId, aDeleteServiceWithOtherAccount,aIsPeresech) ;
@@ -926,6 +905,7 @@ and (pp.isvat is null or pp.isvat='0')
 			monitor.error(e.getMessage(), e) ;
 		}
 	}
+
 	public void addMedServiceByAccount(Long aAccount,Long aPriceMedService, Integer aCount, BigDecimal aPrice, Long oldid) {
 		StringBuilder sql = new StringBuilder() ;
 		ContractAccount account = theManager.find(ContractAccount.class, aAccount) ;

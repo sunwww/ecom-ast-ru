@@ -56,7 +56,7 @@ public class SecRoleServiceBean implements ISecRoleService {
 		String ids =convertArrayToString(aUsersId);
 		java.util.Date date = new java.util.Date() ;
 		String username = theContext.getCallerPrincipal().getName() ;
-		int result = theManager.createNativeQuery("delete from SecUser_SecRole where roles_id=:idRole and secuser_id in ("+ids+")")
+		theManager.createNativeQuery("delete from SecUser_SecRole where roles_id=:idRole and secuser_id in ("+ids+")")
 			.setParameter("idRole", aRoleId)
 			//.setParameter("idUsers", ids)
 			.executeUpdate() ;

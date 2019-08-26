@@ -666,7 +666,6 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				if (col.isEmpty()) {
 					sql = new StringBuilder() ;
 					sql.append("select id from pricemedservice where medService_id is null and pricePosition_id='").append(aId1).append("'") ;
-					col.clear() ;
 					col = service.executeNativeSql(sql.toString()) ;
 					sql = new StringBuilder() ;
 					if (col.isEmpty()) {

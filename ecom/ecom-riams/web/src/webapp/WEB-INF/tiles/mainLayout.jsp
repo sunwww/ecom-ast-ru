@@ -79,13 +79,13 @@
     String path_curdate="default" ;
     if (month == Calendar.JANUARY) { 
     	if (day<10) {path_curdate="0101";}
-    	if (day==13) {path_curdate="0113";}
+    	else if (day==13) {path_curdate="0113";}
     } else if (month ==  Calendar.FEBRUARY) {
     	if (day==14) {path_curdate="0214";}
-    	if (day>20 && day<24) {path_curdate="0223";}
+    	else if (day>20 && day<24) {path_curdate="0223";}
     } else if (month == Calendar.MARCH) {
     	if (day>5 && day<9) {path_curdate="0308";}
-    	if (day>20) {path_curdate="1231";}
+    	else if (day>20) {path_curdate="1231";}
     }
     String style="background: url('/customer/images/top_images/"+path_curdate+".jpg') no-repeat left top ;" ;
     request.setAttribute("style_addition_body", style) ;

@@ -55,8 +55,7 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                     lastId = vocValue.getId();
                 }
             }
-            if (CAN_TRACE) LOG.info("  lastId = " + lastId);
-            if (vocs.size() < aCount && !StringUtil.isNullOrEmpty(lastId)) {
+            if (vocs!=null && vocs.size() < aCount && !StringUtil.isNullOrEmpty(lastId)) {
                 Collection<VocValue> addVocs = EntityInjection.find(aRequest).getVocService().findVocValuePrevious
                         (getVocName(aRequest), lastId, aCount - vocs.size(), VocAdditionalUtil.create(aRequest));
 
