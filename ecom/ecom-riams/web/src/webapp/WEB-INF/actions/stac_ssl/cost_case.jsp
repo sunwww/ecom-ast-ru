@@ -22,7 +22,7 @@
   request.setAttribute("priceList", "5");
   request.setAttribute("idsertypebed","11") ;
   List l = (List)request.getAttribute("patinfoQ") ;
-  if (l!=null && l.size()>0) {
+  if (l!=null && !l.isEmpty()) {
       WebQueryResult p = (WebQueryResult) l.get(0) ;
       request.setAttribute("patient_id", p.get1());
       request.setAttribute("datestart", p.get2());

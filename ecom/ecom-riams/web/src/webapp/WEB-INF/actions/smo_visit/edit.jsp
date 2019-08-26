@@ -346,8 +346,8 @@
     	 
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
-	   	
 
+          <msh:sideLink name="Ориентировочная цена по ОМС" action=".javascript:getMedcaseCost()" roles="/Policy/E2/Admin"/>
 	   	<tags:mis_changeServiceStream service="TicketService" name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
       	<tags:mis_choiceSpo method="moveVisitOtherSpo" methodGetPatientByPatient="getOpenSpoBySmo" hiddenNewSpo="0" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Перевести визит в другой СПО" />
       <tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
@@ -383,6 +383,7 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+  <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
   <script type="text/javascript">
 
   function printAgree() {
@@ -685,6 +686,21 @@
                   }
               );
           }
+
+          function getMedcaseCost() {
+              Expert2Service.getMedcaseCost(${param.id},{
+                  callback:function(js) {
+                      js=JSON.parse(js);
+                      if (js.status=='ok') {
+                          showToastMessage("Расчетная стоимость случая:<br>Тип расчета:"+js.calcType
+                              +"<br>aКСГ="+(js.ksg?js.ksg:'-')+"<br>Цена="+js.price+"<br>Формула расчета: "+(js.formulaCost?js.formulaCost:''));
+                      } else {
+                          showToastMessage("Ошибка расчета цены:"+js.errorName ? js.errorName :'--');
+                      }
+                  }
+              })
+          }
+
           otmoaOnCnahge();
           loadComments()
       </script>

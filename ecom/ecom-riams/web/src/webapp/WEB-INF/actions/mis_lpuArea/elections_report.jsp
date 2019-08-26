@@ -20,7 +20,7 @@
 <input type='hidden' name='m' id='m' value="printGroup3NativeQuery"/>
 <input type='hidden' name='s' id='s' value="PrintService"/>
 <%
-request.setAttribute("fldDate", "18.09.2016"); //Дата выборов
+request.setAttribute("fldDate", "08.09.2019"); //Дата выборов
 %>
 <input type='hidden' name="groupField" id="groupField" value="11,2,3">
 <input type='hidden' name='sqlText' id='sqlText' value=''>
@@ -98,14 +98,14 @@ and cast(to_char(to_date('${fldDate}','dd.mm.yyyy'),'yyyy') as int) -cast(to_cha
  +(case when (cast(to_char(to_date('${fldDate}','dd.mm.yyyy'), 'mm') as int)
  -cast(to_char(pat.birthday, 'mm') as int)+(case when (cast(to_char(to_date('${fldDate}','dd.mm.yyyy'),'dd') as int)
  - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) >= 18
-and sls.datestart<to_date('15.09.2016','dd.MM.yyyy')
+and sls.datestart<to_date('${fldDate}','dd.MM.yyyy')
 and (pat.notvote is null or pat.notvote='0')
  order by {orderNumber}
  "/>
  </form>
      <script type="text/javascript">
      var orderByDAO = "case when (ml.isnoomc is null or ml.isnoomc='0') then ml.booknumer else prevMl.booknumer end,case when (ml.isnoomc is null or ml.isnoomc='0') then case when ml.id !=203 then ml.name else 'АКУШЕРСКОЕ ОТДЕЛЕНИЕ ПАТОЛОГИИ БЕРЕМЕННОСТИ' end else case when prevml.id !=203 then prevml.name else 'АКУШЕРСКОЕ ОТДЕЛЕНИЕ ПАТОЛОГИИ БЕРЕМЕННОСТИ' end end ,pat.lastname,pat.firstname,pat.middlename,pat.birthday";
-     var orderByExample = "pat.lastname,pat.firstname,pat.middlename,pat.birthday"
+     var orderByExample = "pat.lastname,pat.firstname,pat.middlename,pat.birthday";
      function goPrint(name) {
     	 if ($('sqlText').value=='') {
     		 $('sqlText').value = $('originText').value;

@@ -111,7 +111,6 @@ public class WorkCalendarServiceJs {
         list = service.executeNativeSql(sql);
 
         List<String> st = new ArrayList<>();
-        int i = 0;
         for (WebQueryResult t : list) {
             st.add(t.get2().toString() + t.get4().toString());
         }

@@ -82,7 +82,7 @@ public class Expert2ServiceJs {
         return patient;
     }
 
-    public String getMedcaseCost(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+    public static String getMedcaseCost(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
         return Injection.find(aRequest).getService(IExpert2Service.class).getMedcaseCost(aMedcaseId);
     }
 
