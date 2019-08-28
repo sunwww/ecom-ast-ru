@@ -86,6 +86,9 @@
         <msh:row>
         	<msh:checkBox property="isAbortRequired" label="Обязательно указывать тип аборта при создании операции" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
+      <msh:row>
+          <msh:checkBox property="printCodeLabReestr" label="Отображать код услуги при печати в реестре назначений для лаборатории" fieldColSpan="3" horizontalFill="true"/>
+      </msh:row>
         <msh:row>
         	<msh:separator label="Услуга может оказываться:" colSpan="4"/>
         </msh:row>

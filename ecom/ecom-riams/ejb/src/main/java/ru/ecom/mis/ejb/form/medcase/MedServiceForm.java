@@ -289,4 +289,14 @@ public class MedServiceForm extends IdEntityForm  {
 	/** Указывать тип аборта при создании операции */
 	private Boolean theIsAbortRequired =false;
 
+	/** Отображать код услуги при печати в реестре назначений для лаборатории */
+	private Boolean printCodeLabReestr;
+	@Persist
+	@Comment("Отображать код услуги при печати в реестре назначений для лаборатории")
+	public Boolean getPrintCodeLabReestr() {
+		return printCodeLabReestr;
+	}
+	public void setPrintCodeLabReestr(Boolean printCodeLabReestr) {
+		this.printCodeLabReestr = printCodeLabReestr;
+	}
 }
