@@ -16,9 +16,9 @@
   </tiles:put>
   <tiles:put name="side" type="string">
  <msh:sideMenu>
-                <tags:laboratory_menu currentAction="pres_cabinet"/>
-        </msh:sideMenu>
-  </tiles:put>
+	<tags:laboratory_menu currentAction="pres_cabinet"/>
+</msh:sideMenu>
+</tiles:put>
   <tiles:put name="body" type="string">
   	<%
   	
@@ -116,7 +116,6 @@
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
-   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
    	if ((+aValue)==0 || (+aValue)>(+aMax)) {
    		chk[+aDefaultValue-1].checked='checked' ;
    	} else {
@@ -142,28 +141,28 @@
   		request.setAttribute("beginDate", beginDate) ;
   		request.setAttribute("endDate", endDate) ;
     StringBuilder sqlAdd = new StringBuilder() ;
-    if (typeDate!=null&&typeDate.equals("1")) {
+    if ("1".equals(typeDate)) {
     	request.setAttribute("dateSql", "p.planStartDate") ;
-    } else if (typeDate!=null&&typeDate.equals("2")) {
+    } else if ("2".equals(typeDate)) {
     	request.setAttribute("dateSql", "p.intakeDate") ;
     } else {
     	request.setAttribute("dateSql", "p.transferDate") ;
     }
-    if (typeResult!=null && typeResult.equals("1")) {
+    if ("1".equals(typeResult)) {
     	sqlAdd.append(" and p.medcase_id is null and p.cancelDate is null") ;
-    } else if (typeResult!=null && typeResult.equals("2")) {
+    } else if ("2".equals(typeResult)) {
     	sqlAdd.append(" and mc.dateStart is null and p.cancelDate is null and p.medcase_id is not null and mc.workFunctionExecute_id is null") ;
-    } else if (typeResult!=null && typeResult.equals("3")) {
+    } else if ("3".equals(typeResult)) {
     	sqlAdd.append(" and mc.dateStart is null and p.cancelDate is null and mc.workFunctionExecute_id is not null") ;
-    } else if (typeResult!=null && typeResult.equals("4")) {
+    } else if ("4".equals(typeResult)) {
     	sqlAdd.append("  and mc.dateStart is not null and p.cancelDate is null and mc.workFunctionExecute_id is not null") ;
-    } else if (typeResult!=null && typeResult.equals("5")) {
+    } else if ("5".equals(typeResult)) {
     	sqlAdd.append("  and p.cancelDate is not null ") ;
     }
-    if (typeCabinet!=null && typeCabinet.equals("1")) {
-    	sqlAdd.append(" and p.prescriptCabinet_id = '"+groupId+"'") ;
+    if ("1".equals(typeCabinet)) {
+    	sqlAdd.append(" and p.prescriptCabinet_id = '").append(groupId).append("'");
     } else {
-    	sqlAdd.append(" and p.prescriptCabinet_id in (select g2wf.id from workfunction gwf left join workfunctionservice gwfs on gwfs.workfunction_id=gwf.id left join workfunctionservice g2wfs on g2wfs.medservice_id=gwfs.medservice_id left join workfunction g2wf on g2wf.id=g2wfs.workfunction_id where gwf.id='"+groupId+"') and (select count(*) from WorkFunctionService wfs left join MedService pms on pms.id=wfs.medservice_id where wfs.workfunction_id='"+groupId+"' and pms.id=ms.parent_id)>0") ;
+    	sqlAdd.append(" and p.prescriptCabinet_id in (select g2wf.id from workfunction gwf left join workfunctionservice gwfs on gwfs.workfunction_id=gwf.id left join workfunctionservice g2wfs on g2wfs.medservice_id=gwfs.medservice_id left join workfunction g2wf on g2wf.id=g2wfs.workfunction_id where gwf.id='").append(groupId).append("') and (select count(*) from WorkFunctionService wfs left join MedService pms on pms.id=wfs.medservice_id where wfs.workfunction_id='").append(groupId).append("' and pms.id=ms.parent_id)>0");
     }
 	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
 			, "отделение","department","ml.id", request)) ;
@@ -173,15 +172,13 @@
 			, "исследование","service","ms.id", request)) ;
 	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocServiceSubType where id=:id"
 			, "биоматериал","serviceSubType","ms.serviceSubType_id", request)) ;
-	 StringBuilder title = new StringBuilder() ;
-	title.append(request.getAttribute("departmentInfo"))
-		.append(" ").append(request.getAttribute("serviceSubTypeInfo")) 
-		.append(" ").append(request.getAttribute("prescriptTypeInfo")) 
-		.append(" ").append(request.getAttribute("serviceInfo")) ;
-	
-    request.setAttribute("sqlAdd", sqlAdd.toString()) ;
-    request.setAttribute("titleInfo", title.toString()) ;
-    //out.println(sqlAdd.toString()) ;
+
+		request.setAttribute("sqlAdd", sqlAdd.toString()) ;
+		String title = request.getAttribute("departmentInfo") +
+				" " + request.getAttribute("serviceSubTypeInfo") +
+				" " + request.getAttribute("prescriptTypeInfo") +
+				" " + request.getAttribute("serviceInfo");
+		request.setAttribute("titleInfo", title) ;
     %>
     <msh:section>
     <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
@@ -268,11 +265,11 @@
     <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
     <msh:sectionContent>
 	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" >
-	     <msh:tableButton property="21" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак"/>
-	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="checkLabAnalyzed" buttonName="Анализ" buttonShortName="Анализ"/>
-	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Ан.+Рез."/>
-	     <msh:tableButton property="15" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="Ввести результат" buttonShortName="Рез."/>
-	     <msh:tableButton property="16" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="checkLabControl" buttonName="Результат заведен правильно" buttonShortName="Подт."/>
+	     <msh:tableButton property="21" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак" />
+	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); checkLabAnalyzed" buttonName="Анализ" buttonShortName="Анализ" />
+	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Ан.+Рез." />
+	     <msh:tableButton property="15" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); goBioService" buttonName="Ввести результат" buttonShortName="Рез." />
+	     <msh:tableButton property="16" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); checkLabControl" buttonName="Результат заведен правильно" buttonShortName="Подт." />
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Код назн." property="4"/>
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="ИБ" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
@@ -306,21 +303,22 @@
   	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
   	<script type="text/javascript">
   	var fldJson = null ;
-  		
+  		function hideRow(btn) {
+            jQuery(btn).parent().parent().fadeTo(0,0.2);
+        }
+
   		function checkLabControl(aSmoId,aProtocolId) {
   			PrescriptionService.checkLabControl(aSmoId,aProtocolId, {
   				callback: function () {
-  					window.document.location.reload();
+  					//window.document.location.reload();
   				}
   			}) ;
   		}
   		
-  		
-  		
   		function checkLabAnalyzed(aId) {
   			PrescriptionService.checkLabAnalyzed( aId, { 
 		            callback: function() {
-		            	window.document.location.reload();
+		            //	window.document.location.reload();
 		            }
 				});
   		}

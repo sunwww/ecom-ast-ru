@@ -43,7 +43,7 @@
     	 save${name}Result(null, aSmoId,aPrescriptId,aProtocolId, aTemplateId) 
      }
      function save${name}Result(aButton, aSmoId,aPrescriptId,aProtocolId, aTemplateId) {
-    	 if (aButton &&aButton!=null ) aButton.disabled=true;
+    	 if (aButton ) aButton.disabled=true;
 			var isError = false ;
 			for (var ind=0;ind<fldJson.params.length;ind++) {
 				var val = $('param'+fldJson.params[ind].id).value ;
@@ -100,8 +100,8 @@
 			//alert(str) ;
 			if (!isError) {
 			    PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, aTemplateId, {
-				callback: function (aResult) {
-					window.document.location.reload();
+				callback: function () {
+					cancel${name}IntakeInfo();// убираем reload страницы. //window.document.location.reload();
 				}}) ;
 			} else {
 				 if (aButton &&aButton!=null ) aButton.disabled=false;
@@ -236,15 +236,15 @@
 				        		
 				        	}
 				        	if (+param1.type==2) {
-				        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
-				        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;")
-				        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;")
-				        		eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;")
-				        		eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;")
-				        		eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;")
-				        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;")
-				        		eval("param"+param1.id+"Autocomlete.build() ;")
-				        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
+				        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;");
+				        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;");
+				        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;");
+				        		eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;");
+				        		eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;");
+				        		eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;");
+				        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;");
+				        		eval("param"+param1.id+"Autocomlete.build() ;");
+				        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;");
 				        	}
 				        } 
 		             } else {
