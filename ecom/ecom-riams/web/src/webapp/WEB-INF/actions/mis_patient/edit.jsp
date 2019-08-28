@@ -32,7 +32,7 @@
           <tr valign="top">
           <td style="padding-right: 8px">
       <msh:ifInRole roles="/Policy/Poly/Medcard/View" guid="a7036440-353f-4667-a18e-a0da4885cdaa">
-          <msh:ifPropertyIsTrue guid="123"  formName="mis_patientForm" propertyName="noActuality" invert="true" >
+          <msh:ifPropertyIsTrue guid="123" formName="mis_patientForm" propertyName="noActuality" invert="true" >
         <msh:section title="Мед.карты" createUrl="entityParentPrepareCreate-poly_medcard.do?id=${param.id}">
 		          <ecom:webQuery name="medcard"
 		        nativeSql="select m.id,m.number,vci.name as vciname, ml.name as mlname
@@ -313,6 +313,9 @@ where pcc.patient_id='${param.id}'
         <msh:row guid="050f23d4-4e9f-4c6b-8739-5fd78bdff3d0">
           <msh:checkBox property="noActuality" label="Запись на пациента не действует" fieldColSpan="3" horizontalFill="true" guid="21178d7e-7a57-4f91-95ca-22392369f761" />
         </msh:row>
+          <msh:row>
+              <msh:checkBox property="notVote" label="Не участвует в выборах" fieldColSpan="3" horizontalFill="true" />
+          </msh:row>
 
         <msh:separator colSpan="4" label="Документ, удостоверяющий личность" guid="5a353bf6-7fee-45e5-96ec-7b019182cfcb" />
         <msh:row guid="391bb191-d1f0-49d1-9e01-cc432e742118">
@@ -353,13 +356,7 @@ where pcc.patient_id='${param.id}'
 	          <msh:textField property="birthPlace" label="Др.место рождения" horizontalFill="true" size="40" fieldColSpan="3"/>
 	        </msh:row>
         </msh:ifFormTypeIsNotView>
-        <!--        <msh:row>-->
-        <!--            <td colspan='1' title='Адрес&nbsp;прописки (passportAddressField)' class='label'><label id='passportAddressFieldLabel'-->
-        <!--                                                                              for='passportAddressField'>Адрес:</label></td>-->
-        <!--            <td colspan='5' class='passportAddressField'><input title='АдресpassportAddressNoneField' class=' horizontalFill'-->
-        <!--                                                        id='passportAddressField' name='passportAddressField' size='10'-->
-        <!--                                                        value='Адрес... ' type='text'/></td>-->
-        <!--        </msh:row> -->
+
         <msh:separator colSpan="4" label="Адрес регистрации" guid="5a353bf6-7fee-45e5-96ec-7b019182cfcb" />
         <msh:row guid="e034c8ae-b8b7-40f8-82a7-eac5979cc85e">
           <td colspan="1" title="Адрес (addressField)" class="label">
@@ -410,7 +407,6 @@ where pcc.patient_id='${param.id}'
         	<msh:textField property="editDate" label="Дата редактирования" viewOnlyField="true"/>
         	<msh:textField property="editUsername" label="Пользователь" viewOnlyField="true"/>
         </msh:row>
-        <!--  ПРИКРЕПЛЕНИЕ -->
 
          <msh:ifFormTypeIsNotView formName="mis_patientForm">
         <msh:separator colSpan="4" label="Добавить полис и прикрепление" guid="d4871cf3-d393-47e3-9d7b-9a5625b0000" />
