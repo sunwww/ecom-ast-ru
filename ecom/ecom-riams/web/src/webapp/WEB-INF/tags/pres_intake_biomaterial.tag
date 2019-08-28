@@ -24,9 +24,9 @@
 	</div>
 </div>
 
-<script type="text/javascript"><!--
-     var theIs${name}IntakeInfoDialogInitialized = false ;
-     var the${name}IntakeInfoDialog = new msh.widget.Dialog($('${name}IntakeInfoDialog')) ;
+<script type="text/javascript">
+    var theIs${name}IntakeInfoDialogInitialized = false ;
+    var the${name}IntakeInfoDialog = new msh.widget.Dialog($('${name}IntakeInfoDialog')) ;
      // Показать
      function show${name}IntakeCancel(aPrescipt,aBiomatType) {
          $('${name}IntakeInfoTitle').innerHTML = "ВЫБОР ДЕФЕКТА" ;
@@ -49,11 +49,6 @@
 				var val = $('param'+fldJson.params[ind].id).value ;
 				var par = fldJson.params[ind] ; 
 				errorutil.HideError($('param'+par.idEnter)) ;
-				/*if (val=="") {
-					errorutil.ShowFieldError($('param'+par.idEnter),"Пустое значение") ;
-					isError= true ;
-				} */
-				
 				if (+par.type==2) {
 					if (+val<1) {val='0' ;} else {
 						par.valueVoc = $('param'+fldJson.params[ind].id+'Name').value ;
@@ -104,7 +99,7 @@
 					cancel${name}IntakeInfo();// убираем reload страницы. //window.document.location.reload();
 				}}) ;
 			} else {
-				 if (aButton &&aButton!=null ) aButton.disabled=false;
+				 if (aButton ) aButton.disabled=false;
 			}
 		}
 	    
@@ -126,7 +121,6 @@
 	    function cancel${name}InLab(aId,aReasonId,aReason) {
 	    	aReason = get${name}Reason(aReason) ;
 	    	if (aReason!=null) {
-	    		//alert(123) ;
 	        	PrescriptionService.cancelService(aId,aReasonId,aReason, {
 		            callback: function() {
 		            	window.document.location.reload();
