@@ -15,6 +15,7 @@ import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfo;
 import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfoResult;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.live.domain.CustomMessage;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.medcase.*;
@@ -45,6 +46,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -392,6 +394,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) {
 		try {
+			StringBuilder infoToSend = new StringBuilder();
 			Protocol d =null;
 			JSONObject obj = new JSONObject(aParams) ;
 			String wf = String.valueOf(obj.get("workFunction"));
@@ -452,9 +455,28 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 						sb.append(param.get("name")).append(": ") ;
 						sb.append(value).append(" ") ;
 						sb.append(param.get("unitname")).append(" ") ;
-						//start Добавление отображения референтных интервалов
-						//sb.append("Реф. инт: ").append(p.getNormMinimumBD()).append(" <> ").append(p.getNormMaximumBD());
-						//end
+						//Добавление отображения референтных интервалов
+						Double val = ifDoubleReturn(value);
+						Double min = ifDoubleReturn(p.getNormMinimumBD());
+						Double max = ifDoubleReturn(p.getNormMaximumBD());
+						if (val!=null && min!=null && max!=null && (val<min || val>max)) {
+							StringBuilder msg = new StringBuilder();
+							if (val<min) msg.append("▼");
+							else if (val>max) msg.append("▲");
+							msg.append(" (реф. инт: ").append(p.getNormMinimumBD()).append(" - ").append(p.getNormMaximumBD()).append(")");
+							sb.append(msg);
+							StringBuilder allmsg = new StringBuilder();
+							allmsg.append(param.get("name")).append(": ") ;
+							allmsg.append(value).append(" ") ;
+							allmsg.append(param.get("unitname")).append(" ") ;
+							allmsg.append(msg);
+							infoToSend.append(allmsg).append("<br>");
+						}
+						else {
+							sb.append(param.get("name")).append(": ") ;
+							sb.append(value).append(" ") ;
+							sb.append(param.get("unitname")).append(" ") ;
+						}
 					}
 					//пользовательский справочник
 				} else if (type.equals("2")) {
@@ -497,10 +519,85 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				theManager.persist(m) ;
 			}
 			theManager.persist(m) ;
+			if (!infoToSend.toString().isEmpty())
+				sendMesgOutOfReferenceInterval(infoToSend.toString(),aPrescriptId);
 		} catch (Exception e) {
 			log.error(e);
 		}
 		return "" ;
+	}
+
+	/**
+	 * Получить число либо null, если невозможно преобразовать #177
+	 * @param d String
+	 * @return Double(d) или null
+	 */
+	private Double ifDoubleReturn(String d) {
+	    	Double res=null;
+			try {
+				res = Double.parseDouble(d);
+			}
+			catch(NumberFormatException nfe) {
+				return null;
+			}
+			return res;
+	}
+
+	/**
+	 * Отправить сообщение лечащему врачу, что результат находится вне референсного интервала #177
+	 * @param msg String
+	 * @param aPrescriptId Long Prescription.id
+	 */
+	private void sendMesgOutOfReferenceInterval(String msg, Long aPrescriptId) {
+		JSONObject obj = getOwnerfunctionUsernameAndExtraInfo(aPrescriptId);
+		if (!obj.toString().equals("{}")) {
+			CustomMessage mes = new CustomMessage() ;
+			mes.setMessageTitle("Выход за границы референсного интервала в лаб. анализе") ;
+			mes.setMessageText("Результат анализа пациента: " + obj.get("patient") + ":<br>" + msg) ;
+			mes.setUsername("system_message") ;
+			long date = new java.util.Date().getTime() ;
+			mes.setDateReceipt(new java.sql.Date(date)) ;
+			mes.setTimeReceipt(new Time(date)) ;
+			mes.setDispatchDate(new java.sql.Date(date)) ;
+			mes.setDispatchTime(new Time(date)) ;
+			mes.setRecipient(obj.get("username").toString()) ;
+			mes.setMessageUrl("entityParentView-stac_slo.do?id=" + Long.valueOf(obj.get("dmcId").toString()));
+			mes.setIsEmergency(true) ;
+			theManager.persist(mes) ;
+		}
+	}
+
+	/**
+	 * Получить имя пользователя лечащего врача (даже если выбрана другая раб. ф-я сейчас), инфо о пациенте и СЛО по назначению #177
+	 * @param aPrescriptId Long Prescription.id
+	 * @return JSONObject username
+	 */
+	private JSONObject getOwnerfunctionUsernameAndExtraInfo(Long aPrescriptId) {
+		List<Object[]> loginList = theManager.createNativeQuery("select (select su.login  " +
+				" from WorkFunction wfinner" +
+				" left join Worker w on w.id=wfinner.worker_id" +
+				" left join Worker sw on sw.person_id=w.person_id" +
+				" left join WorkFunction swf on swf.worker_id=sw.id" +
+				" left join vocworkfunction vwf on vwf.id=wfinner.workfunction_id" +
+				" left join SecUser su on su.id=swf.secUser_id" +
+				" where su.id is not null and wfinner.id=wf.id)" +
+				" ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as patfio" +
+				" ,dmc.id as dmcId" +
+				" from medcase dmc" +
+				" left join prescriptionlist pl on pl.medcase_id=dmc.id" +
+				" left join prescription p on p.prescriptionlist_id=pl.id" +
+				" left join workfunction wf on wf.id=dmc.ownerfunction_id" +
+				" left join vocworkFunction vwf on vwf.id=wf.workFunction_id" +
+				" left join SecUser su on wf.secUser_id=su.id" +
+				" left join patient pat on pat.id=dmc.patient_id" +
+				" where p.id=:aPrescriptId").setParameter("aPrescriptId",aPrescriptId).getResultList();
+		JSONObject obj = new JSONObject();
+		if (!loginList.isEmpty()) {
+				obj.put("username",loginList.get(0)[0])
+						.put("patient",loginList.get(0)[1])
+						.put("dmcId",loginList.get(0)[2]);
+		}
+		return obj;
 	}
 	private String getWorkfuntctionInfoByLabTechUsername(String aUsername) {
 		List<Object> labExec = theManager.createNativeQuery("select vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename" +
