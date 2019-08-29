@@ -10,8 +10,8 @@ import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 public class EdkcProtocolPreCreateInterceptor implements IParentFormInterceptor {
     @Override
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
-        Object val = aContext.getEntityManager().createNativeQuery("select case when finishDate is null then '0' else '1' end from observationsheet where id='" + aParentId + "'").getSingleResult();
-        if (String.valueOf(val).equals("1"))
+        if (aContext.getEntityManager().createNativeQuery("select id from observationsheet where id='"
+                + aParentId + "' and finishDate is null ").getResultList().isEmpty())
             throw new IllegalStateException("Нельзя добавлять протоколы в закрытый лист наблюдения!");
     }
 }
