@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by Milamesher on 08.08.2019.
  */
-public class EdkcProtocolSaveInterceptor implements IFormInterceptor {
+public class EdkcProtocolCreateInterceptor implements IFormInterceptor {
 
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
         String username = aContext.getSessionContext().getCallerPrincipal().getName() ;
@@ -28,8 +28,10 @@ public class EdkcProtocolSaveInterceptor implements IFormInterceptor {
             protocol.setUsername(username);
             protocol.setSpecialist(listwf.get(0)) ;
 
-
+            
             checkEditAfterClose(aEntity);
+            checkFirstProtocol(aForm, aEntity, aContext);
+            checkAfterFirstProtocol(aForm, aEntity, aContext);
         }
     }
 
