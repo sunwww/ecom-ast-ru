@@ -268,7 +268,7 @@ public class PrescriptionServiceJs {
 			if (aReason == null || aReason.trim().equals("")) {
 				return "Необходимо указать причину аннулирование!";
 			}
-			String canAnnulSql = "select mc.id as id, case when  p.canceltime is null and p.intakedate is null " +
+			String canAnnulSql = "select mc.id as id, case when  p.canceltime is null and p.transferdate is null " +
 					"and (mc.datestart is null) then '1' else '0' end " +
 					"from prescription p " +
 					"Left join workcalendartime wct on wct.id = p.calendartime_id " +
@@ -311,7 +311,10 @@ public class PrescriptionServiceJs {
 			return "Назначение отменено ";
 		} else if (!isAnnulPermitted && medcaseId != null)
 			return "Невозможно отменить назначение! Уже было отменено или находится в работе";
-		else return "Назначение отменено!";
+		else {
+			service.executeUpdateNativeSql("update contractaccountoperationbyservice set serviceid=null, servicetype= null where serviceType = 'PRESCRIPTION' and serviceId = "+aPrescriptionId); //аннулируем инф.
+			return "Назначение отменено!";
+		}
     }
 
 
