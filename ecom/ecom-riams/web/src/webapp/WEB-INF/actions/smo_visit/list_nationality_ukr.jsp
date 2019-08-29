@@ -314,7 +314,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 	request.setAttribute("list_yes", listPol);
   	}
   	%>
-   <msh:table name="list_yes" action="entitySubclassView-mis_medCase.do"
+   <msh:table printToExcelButton="Сохранить в excel" name="list_yes" action="entitySubclassView-mis_medCase.do"
     	viewUrl="entityView-mis_medCase.do?short=Short" idField="1">
     	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
     	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
@@ -422,7 +422,7 @@ ${emergencySql} ${departmentSql}
 ${serviceStreamSql}
 ${nationalitySql} ${regionSql} ${patientSql}  ${ageSql}
 order by p.lastname,p.firstname,p.middlename"/>
-<msh:table viewUrl="entityShortView-stac_ssl.do" 
+<msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-stac_ssl.do"
  name="list_stac1"
  action="entityView-stac_ssl.do" idField="1" >
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
@@ -467,7 +467,7 @@ ${groupSqlAdd}
     group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
     	    ,vwfe.name,pe.lastname , vn.name,a.fullname,vss.name
     order by p.lastname,p.firstname,p.middlename"/>
-    <msh:table name="list_yes" action="entityView-mis_patient.do"
+    <msh:table printToExcelButton="Сохранить в excel" name="list_yes" action="entityView-mis_patient.do"
     	viewUrl="entityShortView-mis_patient.do" 
     	idField="1">
     	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
@@ -513,7 +513,7 @@ ${groupSqlAdd}
     group by p.id,p.lastname,p.firstname,p.middlename 
     ,p.birthday,vn.name ,a.fullname
     order by p.lastname,p.firstname,p.middlename"/>
-    <msh:table viewUrl="entityShortView-stac_ssl.do" 
+    <msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-stac_ssl.do"
      name="list_stac"
      action="entityView-mis_patient.do" idField="1" >
     	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
@@ -555,7 +555,7 @@ ${groupSqlAdd}
     group by p.id,p.lastname,p.firstname,p.middlename
     	    ,p.birthday ,vn.name ,a.fullname
     order by p.lastname,p.firstname,p.middlename"/>
-    <msh:table viewUrl="entityShortView-mis_patient.do" 
+    <msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-mis_patient.do"
      name="list_stac1" 
      action="entityView-mis_patient.do" idField="1" >
     	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
@@ -696,7 +696,7 @@ group by ${groupSqlId},${groupSql}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_swod" action="journal_nationality_ukraine.do?beginDate=${param.beginDate}&finishDate=${param.finishDate}&typeView=1&typeGroup=${typeGroup}&typePatient=${typePatient}&typeEmergency=${typeEmergency}" idField="1" noDataMessage="Не найдено">
             <msh:tableNotEmpty>
               <tr>
