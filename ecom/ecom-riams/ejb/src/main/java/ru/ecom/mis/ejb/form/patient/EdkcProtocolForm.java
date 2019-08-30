@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.form.patient;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.*;
+import ru.ecom.poly.ejb.form.interceptors.EdkcProtocolCreateInterceptor;
 import ru.ecom.poly.ejb.form.interceptors.EdkcProtocolPreCreateInterceptor;
 import ru.ecom.poly.ejb.form.interceptors.EdkcProtocolSaveInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
@@ -32,7 +33,7 @@ import javax.persistence.Id;
         @AParentEntityFormInterceptor(EdkcProtocolPreCreateInterceptor.class)
 )
 @ACreateInterceptors(
-        @AEntityFormInterceptor(EdkcProtocolSaveInterceptor.class)
+        @AEntityFormInterceptor(EdkcProtocolCreateInterceptor.class)
 )
 @ASaveInterceptors(
         @AEntityFormInterceptor(EdkcProtocolSaveInterceptor.class)

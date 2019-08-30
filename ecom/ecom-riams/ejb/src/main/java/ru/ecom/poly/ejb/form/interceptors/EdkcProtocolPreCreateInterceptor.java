@@ -11,7 +11,7 @@ public class EdkcProtocolPreCreateInterceptor implements IParentFormInterceptor 
     @Override
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
         if (aContext.getEntityManager().createNativeQuery("select id from observationsheet where id='"
-                + aParentId + "' and finishDate is not null ").getResultList().isEmpty())
+                + aParentId + "' and finishDate is null ").getResultList().isEmpty())
             throw new IllegalStateException("Нельзя добавлять протоколы в закрытый лист наблюдения!");
     }
 }

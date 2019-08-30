@@ -295,6 +295,7 @@
     ,to_char(${typeDateSql},'dd.mm.yyyy')
     , count(distinct so.id) as cntOper
     , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    ,count(distinct case when so.firstdosetime is not null then so.id else null end) as cntAntibio
      from SurgicalOperation so 
      left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
@@ -310,6 +311,7 @@
       <msh:tableColumn columnName="Дата" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" identificator="false" property="3" />
       <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="4" />
+        <msh:tableColumn isCalcAmount="true" columnName="из них антибиотикотерапия" property="5" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -322,6 +324,7 @@
     ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
     , vo.code as vocode, vo.name as voname,vo.complexity,count(distinct so.id) as cnt 
     , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    ,count(distinct case when so.firstdosetime is not null then so.id else null end) as cntAntibio
     
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
@@ -343,6 +346,7 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
       <msh:tableColumn columnName="Уровень сложности" property="5" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="6" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
       <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="7" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+        <msh:tableColumn isCalcAmount="true" columnName="из них антибиотикотерапия" property="8" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -355,6 +359,7 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     ,dep.name as depname
     , vo.code as vocode, vo.name as voname,vo.complexity,count(distinct so.id) as cnt
     , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    ,count(distinct case when so.firstdosetime is not null then so.id else null end) as cntAntibio
      
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
@@ -373,6 +378,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
       <msh:tableColumn columnName="Уровень сложности" property="5" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="6" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
       <msh:tableColumn isCalcAmount="true" columnName="из них эндоскопии" property="7"/>
+       <msh:tableColumn isCalcAmount="true" columnName="из них антибиотикотерапия" property="8"/>
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -385,6 +391,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     ,dep.name as depname
     ,count(distinct so.id) as cnt 
         , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    ,count(distinct case when so.firstdosetime is not null then so.id else null end) as cntAntibio
     
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
@@ -401,6 +408,7 @@ order by dep.name
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="3" />
       <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="4" />
+      <msh:tableColumn isCalcAmount="true" columnName="из них антибиотикотерапия" property="5" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -412,7 +420,7 @@ order by dep.name
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}::'||so.medservice_id ||'&additionStatus=${param.additionStatus}' as id
     , vo.code as vocode, vo.name as voname,vo.complexity,count(distinct so.id) as cnt 
         , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
-        , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    ,count(distinct case when so.firstdosetime is not null then so.id else null end) as cntAntibio
     
     from SurgicalOperation so
      
@@ -435,6 +443,7 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
       <msh:tableColumn columnName="Уровень сложности" property="4" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="5" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
       <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="6" />
+        <msh:tableColumn isCalcAmount="true" columnName="из них выполнена антибиотикопрофилактика" property="7" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -448,6 +457,7 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
    ,vo.complexity
    	,count(distinct so.id) as cnt 
        , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    ,count(distinct case when so.firstdosetime is not null then so.id else null end) as cntAntibio
    
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
@@ -467,6 +477,7 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
        <msh:tableColumn columnName="Уровень сложности" property="3" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
       <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="5" />
+        <msh:tableColumn isCalcAmount="true" columnName="из них антибиотикотерапия" property="6" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -484,6 +495,7 @@ where so1.operationDate between to_date('${dateBegin}','dd.mm.yyyy')
 and to_date('${dateEnd}','dd.mm.yyyy')  and so.department_id=so1.department_id
 ) as numeric) ,2) as srDep
     , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    ,count(distinct case when so.firstdosetime is not null then so.id else null end) as cntAntibio
 
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
@@ -501,6 +513,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
       <msh:tableColumn isCalcAmount="true" columnName="Количество операций" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
       <msh:tableColumn columnName="% от общ. числа опер. по отд." property="5"/>            
       <msh:tableColumn isCalcAmount="true" columnName="из них с испол. эндоскопии" property="6" />
+        <msh:tableColumn isCalcAmount="true" columnName="из них антибиотикотерапия" property="7" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>
@@ -522,7 +535,10 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
 	    )
 	     ,vas.name as vasname
 	     ,svwf.name||' '||swp.lastname||' '||swp.firstname||' '||swp.middlename as surinfo
-	     ,vo.complexity
+	     ,vo.complexity,
+	     cast('Класс раны: ' as varchar(12))||vcw.name||cast(', препарат: ' as varchar(12))
+	    ||vab.name||' '||so.dose||' '||vmd.name||cast(' в 1). ' as varchar(7))||so.firstdosetime||cast(' 2). ' as varchar(5))
+	    ||case when so.seconddosetime is not null then cast(so.seconddosetime as varchar) else '-' end as ant
 	     from SurgicalOperation so
 
 	    left join WorkFunction swf on swf.id=so.surgeon_id
@@ -536,6 +552,10 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
      left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+
+          left join vocclasswound vcw on vcw.id=so.classwound_id
+     left join vocmethodsdrugadm vmd on vmd.id=so.methodsdrugadm_id
+     left join vocantibioticdrug vab on vab.id=so.antibioticdrug_id
 	       where ${typeDateSql} 
 	        between to_date('${dateBegin}','dd.mm.yyyy')
 	          and to_date('${dateEnd}','dd.mm.yyyy')   ${department} ${spec} 
@@ -568,6 +588,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
 	      <msh:tableColumn columnName="Операция" property="3"/>
 	      <msh:tableColumn columnName="Уровень сложности" property="9"/>
 	      <msh:tableColumn columnName="Анестезия" property="6"/>
+            <msh:tableColumn columnName="Антибиотикопрофилактика" property="10"/>
 	    </msh:table>
     </msh:sectionContent>
     </msh:section>

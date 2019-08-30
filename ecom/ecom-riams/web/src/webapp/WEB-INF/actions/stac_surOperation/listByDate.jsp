@@ -105,7 +105,11 @@
 	    where a.surgicalOperation_id=so.id
 	    )
 	     ,vas.name as vasname
-	     ,svwf.name||' '||swp.lastname||' '||swp.firstname||' '||swp.middlename as surinfo
+	     ,svwf.name||' '||swp.lastname||' '||swp.firstname||' '||swp.middlename as surinfo,
+
+	     cast('Класс раны: ' as varchar(12))||vcw.name||cast(', препарат: ' as varchar(12))
+	    ||vab.name||' '||so.dose||' '||vmd.name||cast(' в 1). ' as varchar(7))||so.firstdosetime||cast(' 2). ' as varchar(5))
+	    ||case when so.seconddosetime is not null then cast(so.seconddosetime as varchar) else '-' end as ant
 	     from SurgicalOperation so
 
 	    left join anesthesia an on an.surgicaloperation_id=so.id
@@ -121,7 +125,10 @@
      left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
-	      
+
+     left join vocclasswound vcw on vcw.id=so.classwound_id
+     left join vocmethodsdrugadm vmd on vmd.id=so.methodsdrugadm_id
+     left join vocantibioticdrug vab on vab.id=so.antibioticdrug_id
 	       where ${typeDateSql} 
 	        between to_date('${beginDate}','dd.mm.yyyy')
 	          and to_date('${endDate}','dd.mm.yyyy') 
@@ -155,6 +162,7 @@
 	      <msh:tableColumn columnName="Ассистенты" property="4"/>
 	      <msh:tableColumn columnName="Операции" property="3"/>
 	      <msh:tableColumn columnName="Анестезия" property="6"/>
+			<msh:tableColumn columnName="Антибиотикопрофилактика" property="9"/>
 	    </msh:table>
       </msh:sectionContent>
     </msh:section>
