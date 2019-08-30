@@ -43,7 +43,7 @@
 	        </td>
 	    </msh:row>
         <msh:row>
-	        <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
+	        <td class="label" title="Группировака (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="1">  датам
 	        </td>
@@ -81,34 +81,25 @@
 <%
 		String dateFrom = request.getParameter("dateFrom") ;
 		if (dateFrom!=null) {
-		String dFrom = "" ;
-		if (dateFrom==null ||dateFrom.equals("") ) {
-			dFrom=" is null " ;
-		} else {
-			dFrom = ">=to_date('"+dateFrom+"', 'dd.mm.yyyy')" ;
-		}
+		String dFrom = dateFrom.equals("") ? " is null " : ">=to_date('"+dateFrom+"', 'dd.mm.yyyy')" ;
 		request.setAttribute("dFrom",dFrom) ;
-		if (typePayment!=null && typePayment.equals("1")) {
+		if ("1".equals(typePayment)) {
 			request.setAttribute("paymentSql", " and (cao.isPaymentTerminal is null or cao.isPaymentTerminal='0')") ;
 			request.setAttribute("paymentInfo", " Оплата наличными.") ;
-		} else if (typePayment!=null && typePayment.equals("2")) {
+		} else if ("2".equals(typePayment)) {
 			request.setAttribute("paymentSql", " and cao.isPaymentTerminal='1'") ;
 			request.setAttribute("paymentInfo", " Безналичный расчет.") ;
 		}
 		String dateTo = request.getParameter("dateTo") ;
-		String dTo = "" ;
-		if (dateTo==null ||dateTo.equals("") ) {
-			dTo=" is null " ;
-		} else {
-			dTo = "<=to_date('"+dateTo+"', 'dd.mm.yyyy')" ;
-		}
+		String dTo =  dateTo==null || dateTo.equals("")  ? " is null " :  "<=to_date('"+dateTo+"', 'dd.mm.yyyy')" ;
 		request.setAttribute("dTo",dTo) ;
 		
-		String FromTo = "";
+		String fromTo = "";
 		if  (dateTo==null ||dateTo.equals("") ) {}
-		else if (dateFrom==null ||dateFrom.equals("") ) {}
-		else FromTo="C "+dFrom+" По "+dTo;
-		
+		else if (dateFrom.equals("") ) {}
+		else fromTo="C "+dFrom+" По "+dTo;
+		request.setAttribute("fromTo", fromTo);
+
 		if (typeGroup.equals("1")) {
 			// Группировка по дате
 			request.setAttribute("groupSql", "to_char(CAo.operationdate,'dd.mm.yyyy')") ;
@@ -156,7 +147,7 @@
    			request.setAttribute("groupGroup", "pms.id,pms.code,pms.name") ;
    			request.setAttribute("groupOrder", "pms.code") ;
 		}
-		if (typeHelp!=null&&(typeHelp.equals("1")||typeHelp.equals("2"))) { //Поликлиника или стац
+		if ("1".equals(typeHelp) || "2".equals(typeHelp)) { //Поликлиника или стац
 			String sqlAdd = "(select ca1.id"+
 				" from contractaccount CA1"+ 
 				" left join ContractAccountOperation CAO1 on CAO1.account_id=CA1.id"+ 
@@ -180,7 +171,7 @@
 		ActionUtil.setParameterFilterSql("medService","pms.id", request) ;
 		ActionUtil.setParameterFilterSql("nationality","ccp.nationality_id", request) ;
 		%>
-		<% if (typeGroup!=null && (typeGroup.equals("1") || typeGroup.equals("2")|| typeGroup.equals("4")|| typeGroup.equals("5"))) {%>
+		<% if (typeGroup.equals("1") || typeGroup.equals("2")|| typeGroup.equals("4")|| typeGroup.equals("5")) {%>
 			<msh:section>
 			<ecom:webQuery name="finansReport_operators" nameFldSql="finansReport_operators_sql" nativeSql="
 SELECT wp.lastname as sqlId
@@ -280,7 +271,7 @@ order by ${groupOrder}
 
 			<msh:sectionTitle> 
     <form action="print-contract_finance_group_operator.do" method="post" target="_blank">
-    Финасовый отчет за период ${paymentInfo} ${FromTo}
+    Финасовый отчет за период ${paymentInfo} ${fromTo}
     <input type='hidden' name="sqlText3" id="sqlText3" value="${finansReport_operators_sql}"> 
     <input type='hidden' name="sqlText2" id="sqlText2" value="${finansReport_with_vat_sql}">
     <input type='hidden' name="sqlText1" id="sqlText1" value="${finansReport_without_vat_sql}">
@@ -324,7 +315,7 @@ order by ${groupOrder}
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("3")) {%>
+	<%} else if ( typeGroup.equals("3")) {%>
 			<msh:section>
 			<msh:sectionTitle> 
 			<ecom:webQuery name="finansReport_operators" nameFldSql="finansReport_operators_sql" nativeSql="
@@ -414,7 +405,7 @@ group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO
 order by cao.operationDate,cao.operationTime
 			"/>
     <form action="print-contract_finance_reestr_operator.do" method="post" target="_blank">
-    Финасовый отчет за период ${paymentInfo}. ${FromTo}
+    Финасовый отчет за период ${paymentInfo}. ${fromTo}
     <input type='hidden' name="sqlText3" id="sqlText3" value="${finansReport_operators_sql}"> 
     <input type='hidden' name="sqlText2" id="sqlText2" value="${finansReport_with_vat_sql}">
     <input type='hidden' name="sqlText1" id="sqlText1" value="${finansReport_without_vat_sql}">
