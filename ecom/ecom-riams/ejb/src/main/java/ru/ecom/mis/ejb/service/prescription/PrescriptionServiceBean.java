@@ -465,18 +465,16 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 							else if (val>max) msg.append("▲");
 							msg.append(" (реф. инт: ").append(p.getNormMinimumBD()).append(" - ").append(p.getNormMaximumBD()).append(")");
 							sb.append(msg);
-							StringBuilder allmsg = new StringBuilder();
-							allmsg.append(param.get("name")).append(": ") ;
-							allmsg.append(value).append(" ") ;
-							allmsg.append(param.get("unitname")).append(" ") ;
-							allmsg.append(msg);
+							String allmsg = param.get("name") + ": " +
+									value + " " +
+									param.get("unitname") + " " +
+									msg;
 							infoToSend.append(allmsg).append("<br>");
-						}
-						else {
+						} /*else {
 							sb.append(param.get("name")).append(": ") ;
 							sb.append(value).append(" ") ;
 							sb.append(param.get("unitname")).append(" ") ;
-						}
+						}*/
 					}
 					//пользовательский справочник
 				} else if (type.equals("2")) {
@@ -533,14 +531,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 * @return Double(d) или null
 	 */
 	private Double ifDoubleReturn(String d) {
-	    	Double res=null;
-			try {
-				res = Double.parseDouble(d);
-			}
-			catch(NumberFormatException nfe) {
+l			try {
+				return Double.parseDouble(d);
+			} catch (Exception e) {
 				return null;
 			}
-			return res;
 	}
 
 	/**
