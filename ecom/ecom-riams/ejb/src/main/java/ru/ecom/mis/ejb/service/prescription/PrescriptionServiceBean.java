@@ -531,7 +531,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 * @return Double(d) или null
 	 */
 	private Double ifDoubleReturn(String d) {
-l			try {
+			try {
 				return Double.parseDouble(d);
 			} catch (Exception e) {
 				return null;
