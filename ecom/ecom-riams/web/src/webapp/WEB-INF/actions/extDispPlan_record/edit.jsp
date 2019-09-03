@@ -17,7 +17,7 @@
 					<msh:autoComplete property="socialGroup" label="Социальная группа" vocName="vocExtDispSocialGroup" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDisp" horizontalFill="true" fieldColSpan="3"/>
+					<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDispAll" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
         		<msh:row>
 					<msh:textField property="startDate" label="Дата начала"/>

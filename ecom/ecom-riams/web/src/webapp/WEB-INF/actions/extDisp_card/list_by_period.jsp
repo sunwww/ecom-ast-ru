@@ -23,7 +23,7 @@
 				<msh:textField property="finishDate" label="по"/>
 			</msh:row>
 			<msh:row>
-				<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDisp" horizontalFill="true" fieldColSpan="3"/>
+				<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDispAll" horizontalFill="true" fieldColSpan="3"/>
 			</msh:row>
 			<msh:row>
 				<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroupByDispType" parentAutocomplete="dispType" horizontalFill="true" fieldColSpan="3"/>

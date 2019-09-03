@@ -651,6 +651,16 @@
 				queried="upper(ved.name) like upper(:query)"
 		/>
 	</voc>
+	<voc id="vocExtDispAll" type="NativeVocService">
+		<NativeVocService
+				from="vocExtDisp as ved"
+				nameId='ved.id'
+				queryAppend="ved.isComission is null or ved.isComission='0'"
+				order=""
+				names= "ved.name "
+				queried="upper(ved.name) like upper(:query)"
+		/>
+	</voc>
 
 <voc id="extDispCom" type="NativeVocService">
 	<NativeVocService

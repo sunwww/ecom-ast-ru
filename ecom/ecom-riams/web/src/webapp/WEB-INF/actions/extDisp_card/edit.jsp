@@ -57,6 +57,9 @@
 					<msh:autoComplete property="healthGroup" label="Группа здоровья" parentAutocomplete="dispType" vocName="vocExtDispHealthGroupByDispType" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
+					<msh:textField property="nextDispDate"/>
+				</msh:row>
+				<msh:row>
 					<msh:checkBox property="isServiceIndication" label="Направлен на след. этап" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>

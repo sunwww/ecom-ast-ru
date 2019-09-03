@@ -308,4 +308,13 @@ public class ExtDispCardForm extends IdEntityForm{
 	public Boolean getIsDiagnosisSetFirstTime(){return theIsDiagnosisSetFirstTime;}
 	public void setIsDiagnosisSetFirstTime(Boolean aIsDiagnosisSetFirstTime){theIsDiagnosisSetFirstTime = aIsDiagnosisSetFirstTime;}
 	private Boolean theIsDiagnosisSetFirstTime ;
+
+	/** Дата следующего визита */
+	@Comment("Дата следующего визита")
+	@Persist
+	@DateString @DoDateString
+	public String getNextDispDate() {return theNextDispDate;}
+	public void setNextDispDate(String aNextDispDate) {theNextDispDate = aNextDispDate;}
+	/** Дата следующего визита */
+	private String theNextDispDate ;
 }

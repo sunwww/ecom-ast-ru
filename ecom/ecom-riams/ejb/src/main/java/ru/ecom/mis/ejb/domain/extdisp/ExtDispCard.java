@@ -1,16 +1,5 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -26,6 +15,11 @@ import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 /** Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у) */
 @Comment("Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)")
@@ -299,4 +293,11 @@ public class ExtDispCard extends BaseEntity{
 	public Boolean getIsDiagnosisSetFirstTime(){return theIsDiagnosisSetFirstTime;}
 	public void setIsDiagnosisSetFirstTime(Boolean aIsDiagnosisSetFirstTime){theIsDiagnosisSetFirstTime = aIsDiagnosisSetFirstTime;}
 	private Boolean theIsDiagnosisSetFirstTime ;
+
+	/** Дата следующего визита */
+	@Comment("Дата следующего визита")
+	public Date getNextDispDate() {return theNextDispDate;}
+	public void setNextDispDate(Date aNextDispDate) {theNextDispDate = aNextDispDate;}
+	/** Дата следующего визита */
+	private Date theNextDispDate ;
 }
