@@ -311,19 +311,21 @@ where pcc.patient_id='${param.id}'
 
         </msh:ifInRole>
         <msh:row guid="050f23d4-4e9f-4c6b-8739-5fd78bdff3d0">
-          <msh:checkBox property="noActuality" label="Запись на пациента не действует" fieldColSpan="3" horizontalFill="true" guid="21178d7e-7a57-4f91-95ca-22392369f761" />
+          <msh:checkBox property="noActuality" label="Запись на пациента не действует" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
           <msh:row>
               <msh:checkBox property="notVote" label="Не участвует в выборах" fieldColSpan="3" horizontalFill="true" />
+              </msh:row><msh:row>
+              <msh:checkBox property="ppz" fieldColSpan="3" horizontalFill="true" />
           </msh:row>
 
-        <msh:separator colSpan="4" label="Документ, удостоверяющий личность" guid="5a353bf6-7fee-45e5-96ec-7b019182cfcb" />
+        <msh:separator colSpan="4" label="Документ, удостоверяющий личность" />
         <msh:row guid="391bb191-d1f0-49d1-9e01-cc432e742118">
-          <msh:autoComplete property="passportType" label="Тип" vocName="vocIdentityCard" fieldColSpan="3" horizontalFill="true" guid="42f6487b-3fd4-4c4f-8323-ee634762221d" />
+          <msh:autoComplete property="passportType" label="Тип" vocName="vocIdentityCard" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row guid="711d49d7-1dd4-4af3-be58-9b1d766961c3">
-          <msh:textField property="passportSeries" label="Серия" guid="93b5c12a-27a3-42ed-8951-6661d19edf64" />
-          <msh:textField property="passportNumber" label="Номер" guid="3c109874-0bd2-4303-9de8-621589d5201e" />
+          <msh:textField property="passportSeries" label="Серия" />
+          <msh:textField property="passportNumber" label="Номер" />
         </msh:row>
         <msh:ifFormTypeIsView formName="mis_patientForm">
 	        <msh:row guid="8f6ac7f2-e407-42e4-813c-950a6e2ab33a">

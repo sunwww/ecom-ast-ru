@@ -55,6 +55,13 @@ import java.util.List;
 @Table(schema="SQLUser")
 public class Patient extends BaseEntity{
 
+	/** ППЗ */
+	@Comment("ППЗ")
+	public Boolean getPpz() {return thePpz;}
+	public void setPpz(Boolean aPpz) {thePpz = aPpz;}
+	/** ППЗ */
+	private Boolean thePpz ;
+
 	/** Не голосует */
 	@Comment("Не голосует")
 	public Boolean getNotVote() {return theNotVote;}
