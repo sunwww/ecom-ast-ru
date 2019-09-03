@@ -41,8 +41,11 @@
                         <input type="button" name="btnEditProt2" id="btnEditProt2"
                                value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" />
                         <div name="btnEditProt1" id="btnEditProt1"></div>
+                        </td>
+                        <td  colspan="3" align="center">
+                            <input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
+                        </td>
                     </msh:ifFormTypeIsNotView>
-                    </td>
                 </msh:row>
                 <msh:row>
                     <msh:textArea property="record" label="Текст:" size="100" rows="25"
@@ -63,6 +66,12 @@
                         <msh:label property="editTime" label="Время редак." />
                         <msh:label property="editUsername" label="Пользователь" />
                     </msh:row>
+                    <msh:row>
+                        <msh:textField property="printDate" label="Дата печати"
+                                       viewOnlyField="true" />
+                        <msh:textField property="printTime" label="Время"
+                                       viewOnlyField="true" />
+                    </msh:row>
                 </msh:ifFormTypeIsView>
                 <msh:row>
                     <msh:submitCancelButtonsRow colSpan="3" />
@@ -72,8 +81,10 @@
         <tags:templateProtocol  property="record" name="tmp" voc="protocolVisitByPatient"/>
     </tiles:put>
     <tiles:put name='side' type='string'>
+        <msh:ifFormTypeIsView formName="edkcProtocolForm">
+            <tags:stac_selectPrinter name="Select"
+                                     roles="/Policy/Config/SelectPrinter" />
         <msh:sideMenu>
-            <msh:ifFormTypeIsView formName="edkcProtocolForm">
                 <tags:mis_protocolTemplateDocumentList name="Print" />
                 <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Edit" key="ALT+2"
                               params="id" action="/entityParentEdit-edkcProtocol"
@@ -83,9 +94,15 @@
                               key='ALT+DEL' params="id"
                               action="/entityParentDeleteGoParentView-edkcProtocol"
                               name="Удалить" confirm="Вы действительно хотите удалить?" />
-            </msh:ifFormTypeIsView>
         </msh:sideMenu>
-    </tiles:put>
+        <msh:sideMenu title="Печать">
+            <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol"
+                          name="Печать дневника"
+                          action='/javascript:showPrintProtocolTemplate()'
+                          title='Печать дневника' />
+        </msh:sideMenu>
+        </msh:ifFormTypeIsView>
+</tiles:put>
     <tiles:put name='title' type='string'>
         <ecom:titleTrail mainMenu="Patient" beginForm="edkcProtocolForm"/>
     </tiles:put>
@@ -113,5 +130,21 @@
                 }
             </script>
         </msh:ifFormTypeIsCreate>
+        <msh:ifFormTypeIsView formName="edkcProtocolForm">
+        <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+        <script type="text/javascript">
+            function printProtocol() {
+                HospitalMedCaseService.getPrefixByProtocol(${param.id},
+                    {
+                        callback: function(prefix) {
+                            if (prefix==null) prefix="" ;
+                            initSelectPrinter("print-protocolEdkc"+prefix+".do?m=printEdkcProtocol&s=HospitalPrintService&id=${param.id}",1)
+
+                        }
+                    }
+                )
+            }
+        </script>
+        </msh:ifFormTypeIsView>
     </tiles:put>
 </tiles:insert>

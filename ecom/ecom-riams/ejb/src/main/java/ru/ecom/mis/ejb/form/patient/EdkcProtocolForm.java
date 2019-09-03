@@ -172,4 +172,21 @@ public class EdkcProtocolForm extends IdEntityForm {
     public long getId() {    return theId ;}
     public void setId(long aId ) {  theId = aId ; }
     private long theId ;
+
+    /** Дата печати */
+    @Comment("Дата печати")
+    @Persist @DateString @DoDateString
+    public String getPrintDate() {return thePrintDate;}
+    public void setPrintDate(String aPrintDate) {thePrintDate = aPrintDate;}
+
+    /** Время печати */
+    @Comment("Время печати")
+    @Persist @DoTimeString @TimeString
+    public String getPrintTime() {return thePrintTime;}
+    public void setPrintTime(String aPrintTime) {thePrintTime = aPrintTime;}
+
+    /** Время печати */
+    private String thePrintTime;
+    /** Дата печати */
+    private String thePrintDate;
 }
