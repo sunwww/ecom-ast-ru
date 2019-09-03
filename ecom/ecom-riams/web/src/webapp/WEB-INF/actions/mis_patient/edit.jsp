@@ -315,8 +315,12 @@ where pcc.patient_id='${param.id}'
         </msh:row>
           <msh:row>
               <msh:checkBox property="notVote" label="Не участвует в выборах" fieldColSpan="3" horizontalFill="true" />
-              </msh:row><msh:row>
+              </msh:row>
+          <msh:row>
               <msh:checkBox property="ppz" fieldColSpan="3" horizontalFill="true" />
+          </msh:row>
+          <msh:row>
+              <msh:checkBox property="voteInRoom" fieldColSpan="3" horizontalFill="true" />
           </msh:row>
 
         <msh:separator colSpan="4" label="Документ, удостоверяющий личность" />
