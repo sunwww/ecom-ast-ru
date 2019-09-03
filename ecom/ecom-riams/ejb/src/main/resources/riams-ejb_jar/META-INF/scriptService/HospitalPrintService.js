@@ -2188,6 +2188,29 @@ function printProtocol (aCtx,aParams){
 	recordDiagnosis(aCtx,medCase.id,"1","1","diag_order") ;
 	return map ;
 }
+function printEdkcProtocol (aCtx,aParams){
+    var protocol = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol
+        , new java.lang.Long(aParams.get("id"))) ;
+    var obsSheet = protocol.obsSheet ;
+    var current = new java.util.Date() ;
+    var curDate = new java.sql.Date(current.getTime()) ;
+    var curTime = new java.sql.Time(current.getTime()) ;
+    protocol.setPrintDate(curDate) ;
+    protocol.setPrintTime(curTime) ;
+    map.put("prot.date",protocol.dateRegistration);
+    map.put("prot.time",protocol.timeRegistration);
+    //Возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
+    if (obsSheet.patient!=null&&protocol.dateRegistration!=null) {
+        getAge("prot.age",obsSheet.patient.birthday,protocol.dateRegistration,aCtx.manager) ;
+    } else {
+        map.put("prot.age","") ;
+    }
+    map.put("protocol",protocol);
+    map.put("prot.spec",protocol.specialistInfo);
+    map.put("medCase.info","") ;
+    recordMultiText("prot.rec", protocol.record) ;
+    return map ;
+}
 // получить возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
 function getAge(aKey,aBirthday,aDate,aManager,aType) {
 	if (aType==null) aType=3 ;

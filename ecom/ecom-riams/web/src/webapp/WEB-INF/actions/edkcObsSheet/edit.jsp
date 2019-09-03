@@ -44,7 +44,7 @@
         <msh:ifFormTypeIsView formName="edkcObsSheetForm">
             <msh:section title="Список протоколов ЕДКЦ">
                 <ecom:webQuery name="protocols"  nativeSql="
-          select d.id, to_char(d.dateRegistration,'dd.mm.yyyy'), d.timeRegistration, d.record
+          select d.id,  to_char(d.dateRegistration,'dd.mm.yyyy') ||' '|| cast(d.timeRegistration as varchar(5)) as dtimeRegistration, d.record
          , vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doc
          ,vtp.name as type
           from Diary as d
@@ -56,16 +56,26 @@
                     where d.DTYPE='Protocol' and d.obssheet_id='${param.id}'
                     order by d.dateRegistration,d.timeRegistration"/>
 
-                <msh:table hideTitle="false" idField="1" name="protocols" action="entityParentView-edkcProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
+                <msh:table hideTitle="false" selection="multiply" idField="1" name="protocols" action="entityParentView-edkcProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37"
+                           noDataMessage="Нет протоколов">
+                    <msh:tableNotEmpty>
+                        <tr>
+                            <th colspan='8'>
+                                <msh:toolbar>
+                                    <a href='javascript:printProtocols("protocols")'>Печать протоколов</a>
+                                </msh:toolbar>
+                            </th>
+                        </tr>
+                    </msh:tableNotEmpty>
                     <msh:tableColumn columnName="#" property="sn"/>
-                    <msh:tableColumn columnName="Дата" property="2" width="5%"/>
-                    <msh:tableColumn columnName="Время" property="3" width="5%"/>
-                    <msh:tableColumn columnName="Протокол" property="4" cssClass="preCell" width="70%"/>
-                    <msh:tableColumn columnName="Специалист" property="5" width="10%"/>
-                    <msh:tableColumn columnName="Тип" property="6" width="10%"/>
+                    <msh:tableColumn columnName="Дата и время" property="2" width="10"/>
+                    <msh:tableColumn columnName="Протокол" property="3" cssClass="preCell" width="70"/>
+                    <msh:tableColumn columnName="Специалист" property="4" width="10"/>
+                    <msh:tableColumn columnName="Тип" property="5" width="10"/>
                 </msh:table>
             </msh:section>
         </msh:ifFormTypeIsView>
+        <tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
     </tiles:put>
     <tiles:put name='title' type='string'>
         <ecom:titleTrail mainMenu="Patient" beginForm="edkcObsSheetForm"/>
@@ -78,6 +88,18 @@
                     showvocObservRes($('patient').value,window.location.href);
                 else
                     showToastMessage('Необходимо выбрать пациента!',null,true);
+            }
+            function printProtocols(aFile) {
+                var ids = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
+                if(ids) {
+                    var p = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
+                    initSelectPrinter(p,0);
+
+
+                } else {
+                    alert("Нет выделенных протоколов");
+                }
+
             }
         </script>
     </tiles:put>
