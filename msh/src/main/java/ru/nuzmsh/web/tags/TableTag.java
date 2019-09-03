@@ -979,18 +979,16 @@ public class TableTag extends AbstractGuidSupportTag {
         }
 
         private void printHeader(JspWriter aOut, int i, boolean theSortInner) throws IOException {
+            aOut.print("<th");
             if (theCssClass != null) {
-                aOut.print("<th");
                 aOut.print(" class='");
                 aOut.print(theCssClass);
-                if (theSortInner) aOut.print("' onclick='sortMshTable(this,"+i+")'  name='0'");
-                aOut.print("'>");
-            } else {
-                if (theWidth!=null && !theWidth.equals(""))
-                    aOut.print("<th width=\""+theWidth+"%\">");
-                else if (theSortInner) aOut.print("<th onclick='sortMshTable(this,"+i+")'  name='0'>");
-                else aOut.print("<th>");
+                aOut.print("' ");
             }
+            if (theSortInner) aOut.print(" onclick='sortMshTable(this,"+i+")'  name='0'");
+            if (theWidth!=null && !theWidth.equals(""))  aOut.print(" width=\""+theWidth+"%\"");
+            aOut.print(">");
+
             //IdeTagHelper.getInstance().printMarker(, aJspContext)
             aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
             aOut.print(theColumnName);
