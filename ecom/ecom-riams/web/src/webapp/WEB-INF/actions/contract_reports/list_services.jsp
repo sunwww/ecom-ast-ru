@@ -130,6 +130,7 @@ if (dateFrom!=null) {
 			dTo = "<=to_date('"+dateTo+"', 'dd.mm.yyyy')" ;
 		}
 		request.setAttribute("dTo",dTo) ;
+		request.setAttribute("fromTo", " c "+dateFrom+" по "+dateTo);
 
 	switch (typeGroup) {
 		case "1":
@@ -190,20 +191,20 @@ if (dateFrom!=null) {
 		ActionUtil.setParameterFilterSql("workFunction","workfunctionExecutor","wfexec.id", request) ;
 		%>
 		<% if ("1".equals(typeGroup)) {%>
-			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
+			<msh:section title="Финасовый отчет по услугам за период ${fromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||${workfunctionExecutorSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
-, sum(case when cao.dtype='OperationAccrual' and coalesce(cao.discount,0)>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscount 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end) as sumCountMedService
+, sum(case when cao.dtype='OperationAccrual' and coalesce(cao.discount,0)>0 then 1 else 0 end) as sumCountMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then cams.cost else 0 end) as sumNoAccraulMedService
+, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
 
-, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' and coalesce(cao.discount,0)>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscountRet 
-, sum(case when cao.dtype='OperationReturn' then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
+, sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceRet
+, sum(case when cao.dtype='OperationReturn' and coalesce(cao.discount,0)>0 then 1 else 0 end) as sumCountMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then cams.cost else 0 end) as sumNoAccraulMedServiceRet
+, sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
 
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
@@ -265,26 +266,26 @@ SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId
 ,list(distinct lpu.name)
 
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end) as sumCountMedService
+, sum(case when cao.dtype='OperationAccrual' then round(1*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then round(1*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat
 
 , count(distinct case when cao.dtype='OperationReturn' then mc.id else null end) as cntDogMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+, sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceRet
+, sum(case when cao.dtype='OperationReturn' then round(1*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then round(1*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat
 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
-- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceItog 
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end)
+- sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceItog
 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, sum(case when cao.dtype='OperationAccrual' then round(1*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(1*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, (sum(case when cao.dtype='OperationAccrual' then round(1*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(1*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
  )   
 as sumItogWithoutVat
 FROM medcontract MC
@@ -321,9 +322,9 @@ order by ${groupOrder}
 
 			<msh:sectionTitle> 
 	    <form action="print-contract_reports_services_2_4.do" method="post" target="_blank">
-	    Финасовый отчет по услугам за период ${FromTo}
+	    Финасовый отчет по услугам за период ${fromTo}
 	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
-	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${fromTo}">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
 	    <input type='hidden' name="s" id="s" value="PrintService">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -370,27 +371,27 @@ SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId
 ,${groupSql} as dateNum
 
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as countMedDog 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end) as sumCountMedService
+, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then round(1*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat
 
 , count(distinct case when cao.dtype='OperationReturn' then mc.id else null end) as countMedDogRet 
-, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+, sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceRet
+, sum(case when cao.dtype='OperationReturn' then round(1*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then round(1*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat
 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end)  
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceItog
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+ sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceItog
+, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end)
 -
 
  sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, (sum(case when cao.dtype='OperationAccrual' then round(1*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(1*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
  )
 as sumItogWithoutVat
 FROM medcontract MC
@@ -423,16 +424,16 @@ order by ${groupOrder}
 			"/>
 			<msh:sectionTitle>
 	    <form action="print-contract_reports_services_3.do" method="post" target="_blank">
-	    Финасовый отчет по услугам за период ${FromTo}
+	    Финасовый отчет по услугам за период ${fromTo}
 	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
-	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${fromTo}">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
 	    <input type='hidden' name="s" id="s" value="PrintService">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
 	    <input type="submit" value="Печать"> 
 	    </form>     
 			</msh:sectionTitle>
-				<msh:table name="finansReport"   printToExcelButton="Сохранить в excel"
+				<msh:table name="finansReport" printToExcelButton="Сохранить в excel"
 				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
 				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
@@ -461,7 +462,7 @@ order by ${groupOrder}
 
 			</msh:section>	
 	<%} else if ("5".equals(typeGroup)) {%>
-			<msh:section title="Финасовый отчет за период ${FromTo} ">
+			<msh:section title="Финасовый отчет за период ${fromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT mc.id as sqlId
 ,MC.contractnumber || ' '||to_char(mc.dateFrom,'dd.mm.yyyy') as dateNum
@@ -470,26 +471,26 @@ SELECT mc.id as sqlId
 ,lpu.name as lpuname
 ,pp.code||' '||pp.name as pmsname
 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end) as sumCountMedService
+, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat
 
-, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+, sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceRet
+, sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat
 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
-- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end)
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end)
+- sum(case when cao.dtype='OperationReturn' then 1 else 0 end)
 as sumCountMedServiceItog 
 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, (sum(case when cao.dtype='OperationAccrual' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end)
  )
 as sumItogWithoutVat
 FROM medcontract MC
@@ -522,9 +523,9 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 			"/>
 			<msh:sectionTitle>
 	    <form action="print-contract_reports_services_5.do" method="post" target="_blank">
-	    Финасовый отчет по услугам за период ${FromTo}
+	    Финасовый отчет по услугам за период ${fromTo}
 	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
-	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${fromTo}">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
 	    <input type='hidden' name="s" id="s" value="PrintService">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -533,7 +534,7 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 			
 			</msh:sectionTitle>
 
-				<msh:table name="finansReport"  printToExcelButton="Сохранить в excel"
+				<msh:table name="finansReport" printToExcelButton="Сохранить в excel"
 				action="entityView-contract_medContract.do" 
 				viewUrl="entityView-contract_medContract.do?short=Short"
 				idField="1">
@@ -568,20 +569,20 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 			</msh:section>
 	<%} else if ("6".equals(typeGroup)) { //группировка по специалистам
 		    %>
-		<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
+		<msh:section title="Финасовый отчет по услугам за период ${fromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||${workfunctionExecutorSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,pp.code||' '||pp.name
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService
-, sum(case when cao.dtype='OperationAccrual' and coalesce(cao.discount,0)>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscount
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end) as sumCountMedService
+, sum(case when cao.dtype='OperationAccrual' and coalesce(cao.discount,0)>0 then 1 else 0 end) as sumCountMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then cams.cost else 0 end) as sumNoAccraulMedService
+, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
 
-, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet
-, sum(case when cao.dtype='OperationReturn' and coalesce(cao.discount,0)>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscountRet
-, sum(case when cao.dtype='OperationReturn' then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedServiceRet
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceRet
+, sum(case when cao.dtype='OperationReturn' and coalesce(cao.discount,0)>0 then 1 else 0 end) as sumCountMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then cams.cost else 0 end) as sumNoAccraulMedServiceRet
+, sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
 
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id

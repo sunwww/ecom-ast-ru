@@ -47,7 +47,7 @@
 		</msh:form>
 <%
 		String dateFrom = request.getParameter("dateFrom") ;
-		String dFrom = "" ;
+		String dFrom ;
 		if (dateFrom==null ||dateFrom.equals("") ) {
 			dFrom=" is null " ;
 		} else {
@@ -56,18 +56,13 @@
 		request.setAttribute("dFrom",dFrom) ;
 		
 		String dateTo = request.getParameter("dateTo") ;
-		String dTo = "" ;
+		String dTo  ;
 		if (dateTo==null ||dateTo.equals("") ) {
 			dTo=" is null " ;
 		} else {
 			dTo = "<=to_date('"+dateTo+"', 'dd.mm.yyyy')" ;
 		}
 		request.setAttribute("dTo",dTo) ;
-		
-		String FromTo = "";
-		if  (dateTo==null ||dateTo.equals("") ) {}
-		else if (dateFrom==null ||dateFrom.equals("") ) {}
-		else FromTo="C "+dFrom+" По "+dTo;
 		
 		if (typeGroup.equals("1")) {
 			// Группировка по дате
@@ -104,7 +99,7 @@
 		ActionUtil.setParameterFilterSql("operator","cao.workFunction_id", request) ;
 		ActionUtil.setParameterFilterSql("medService","pms.id", request) ;
 		%>
-		<% if (typeGroup!=null && typeGroup.equals("1") ) {%>
+		<% if (typeGroup.equals("1") ) {%>
 			<msh:section title="Контрольный отчет по договорам за период ${param.dateFrom}-${param.dateTo} ">
 			<ecom:webQuery name="finansReport" nativeSql="
 select sls.id as slsid,ss.code as sscode,pat.lastname||' '||pat.firstname||' '||pat.middlename as patinfo
@@ -203,7 +198,7 @@ order by pat.lastname,pat.firstname,pat.middlename
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("2")) {%>
+	<%} else if (typeGroup.equals("2")) {%>
 			<msh:section title="Расхождения, за период ${param.dateFrom}-${param.dateTo} ">
 			<ecom:webQuery name="finansReport" nativeSql="
 select sls.id as slsid,ss.code as sscode,pat.lastname||' '||pat.firstname||' '||pat.middlename as patinfo
@@ -303,7 +298,7 @@ order by pat.lastname,pat.firstname,pat.middlename
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("3")) {%>
+	<%} else if (typeGroup.equals("3")) {%>
 			<msh:section title="Еще находятся на лечение, за период ${param.dateFrom}-${param.dateTo} ">
 			<ecom:webQuery name="finansReport" nativeSql="
 select sls.id as slsid,ss.code as sscode,pat.lastname||' '||pat.firstname||' '||pat.middlename as patinfo
@@ -382,8 +377,8 @@ order by pat.lastname,pat.firstname,pat.middlename
 				</msh:table>
 
 			</msh:section>
-	<%} else if (typeGroup!=null&& typeGroup.equals("4")) {%>
-			<msh:section title="Реестр ${FromTo} ">
+	<%} else if (typeGroup.equals("4")) {%>
+			<msh:section title="Реестр за период ${param.dateFrom}-${param.dateTo} ">
 			<ecom:webQuery name="finansReport" nativeSql="
 select sls.id as slsid,ss.code as sscode,pat.lastname||' '||pat.firstname||' '||pat.middlename as patinfo
 ,ml.name as mlname

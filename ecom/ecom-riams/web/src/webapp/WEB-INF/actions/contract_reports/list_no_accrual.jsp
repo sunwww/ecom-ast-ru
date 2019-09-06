@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -15,13 +14,6 @@
     	<tags:contractMenu currentAction="controlReportNoAccrual"/>
   </tiles:put>
   <tiles:put name="body" type="string">
-  <%
-    //String typeView =ActionUtil.updateParameter("Contract_analisis","typeView","3", request) ;
-	//String typeFindMed =ActionUtil.updateParameter("Contract_analisis","typeFindMed","5", request) ;
-	
-	
-  %>
-  
     <msh:form action="/contact_analisis_no_accrual.do" defaultField="dateFrom">
     <msh:panel>
       <msh:row>
@@ -39,9 +31,6 @@
     </msh:form>
     <script type='text/javascript'>
     
-//    checkFieldUpdate('typeFindMed','${typeFindMed}',3) ;
- //   checkFieldUpdate('typeView','${typeView}',1) ;
-  
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
@@ -57,8 +46,8 @@
 
         <tags:service_change name="VMS"/>    
     <%
-    String date1 = (String)request.getParameter("dateFrom") ;
-    String date2 = (String)request.getParameter("dateTo") ;
+    String date1 = request.getParameter("dateFrom") ;
+    String date2 = request.getParameter("dateTo") ;
     
     if (date1!=null && !date1.equals("") )  {
     	if (date2==null || date2.equals("")) {request.setAttribute("dateTo", date1) ;} else {request.setAttribute("dateTo", date2) ;}

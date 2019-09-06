@@ -92,10 +92,10 @@
 		}
 		request.setAttribute("dTo",dTo) ;
 		
-		String FromTo = "";
+		String fromTo = "";
 		if  (dateTo==null ||dateTo.equals("") ) {}
 		else if (dateFrom==null ||dateFrom.equals("") ) {}
-		else FromTo="C "+dFrom+" По "+dTo;
+		else fromTo=" c "+dateFrom+" по "+dateTo;
 		/*
 		if (typeGroup.equals("1")||typeGroup.equals("2")) {
 			// Группировка по услугам 
@@ -138,13 +138,14 @@
 		ActionUtil.setParameterFilterSql("positionType","pp.positionType_id", request) ;
 		ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
 		*/
+		request.setAttribute("fromTo", fromTo);
 		%>
-		<% if (typeGroup!=null&& typeGroup.equals("1")) {%>
-			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
+		<% if ("1".equals(typeGroup)) {%>
+			<msh:section title="Финасовый отчет по услугам за период ${fromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 select pp.id as ppid,pp.code as ppcode,pp.name as ppname
 ,vwf.name as vwfnam,wp.lastname,count(distinct caos.id) as cnt,
-sum(round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2)) as sumRender
+sum(round(1*(cams.cost*(100-coalesce(cao.discount,0))/100),2)) as sumRender
 from ContractAccountOperationByService caos
 left join ContractAccountOperation cao on caos.accountOperation_id=cao.id and cao.dtype='OperationAccrual' and cao.repealOperation_id is null
 left join medcase mc on mc.id=caos.medcase_id
@@ -165,7 +166,7 @@ left join medservice ms on pms.medservice_id=ms.id
 where cao.operationdate
 between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
 and ppG.lpu_id in (184,180 )
-and pp.positionType_id in (2,11)
+
 group by ppG.lpu_id,pp.id,pp.code,pp.name,wp.lastname,vwf.name
 order by pp.name
 
@@ -183,13 +184,13 @@ order by pp.name
 				</msh:table>
 
 			</msh:section>	
-	<%} else if (typeGroup!=null&& typeGroup.equals("2")) {%>
+	<%} else if ("2".equals(typeGroup)) {%>
 			<msh:section>
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 select caos.id as caosid,p.patientSync,p.lastname||' '||p.firstname||' '||p.middlename as fiopat
 ,to_char(cao.operationdate,'dd.mm.yyyy') as operdate 
-,pp.code||' '||pp.name as rendername,count(distinct caos.id) as cntRender,
-sum(round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2)) as sumRender
+,pp.code||' '||pp.name as rendername,count(distinct caos.id) as cntRender
+,sum(round(cams.cost*((100-coalesce(cao.discount,0))/100),2)) as sumRender
 from ContractAccountOperationByService caos
 left join ContractAccountOperation cao on caos.accountOperation_id=cao.id and cao.dtype='OperationAccrual' and cao.repealOperation_id is null
 left join medcase mc on mc.id=caos.medcase_id
