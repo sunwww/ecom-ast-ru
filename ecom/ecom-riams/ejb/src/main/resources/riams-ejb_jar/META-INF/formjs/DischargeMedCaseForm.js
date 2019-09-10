@@ -298,6 +298,6 @@ function updateListIdCAOS(days,aMedcaseId,aCtx) {
         "' and sstream.code='CHARGED'" +
         " and cams.fromcomplexmedserviceid is not null" +
         " and caos.medcase_id is null and caos.serviceid is null  " +
-        " and (ca.createdate between sls.datestart and sls.datestart-7 or ca.createdate=sls.datestart" +
+        " and (ca.createdate between sls.datestart and sls.datestart-" + days + " or ca.createdate=sls.datestart" +
         " or ca.createdate=sls.datestart-"+days+"))").executeUpdate();
 }
