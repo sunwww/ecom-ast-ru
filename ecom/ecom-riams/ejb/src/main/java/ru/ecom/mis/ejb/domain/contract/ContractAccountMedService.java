@@ -305,4 +305,11 @@ public class ContractAccountMedService extends BaseEntity{
 
 	/** Пациент */
 	private Long thePatient;
+
+	/**Комлексная услуга, частью которой является текущий объект */
+	private Long theFromComplexMedServiceId;
+	/** Комлексная услуга, частью которой является текущий объект */
+	@Comment("Комлексная услуга, частью которой является текущий объект")
+	public Long getFromComplexMedServiceId() {return theFromComplexMedServiceId;}
+	public void setFromComplexMedServiceId(Long aFromComplexMedServiceId) {theFromComplexMedServiceId = aFromComplexMedServiceId;}
 }

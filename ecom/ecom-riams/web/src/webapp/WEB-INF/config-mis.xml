@@ -303,6 +303,7 @@
         		
         <!-- Медицинские услуги -->  		
         <form-bean name="mis_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceForm" />
+		<form-bean name="mis_medServiceComplexLinkForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceComplexLinkForm" />
         <form-bean name="mis_medServiceGroupForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceGroupForm" />
         <form-bean name="mis_medService_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceGroupForm" />
         <form-bean name="mis_medServiceGroup_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceForm" />
