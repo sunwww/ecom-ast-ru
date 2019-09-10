@@ -184,6 +184,10 @@
             <msh:hidden property="lawCourtDesicionDate"/>
             <msh:hidden property="psychReason"/>
             <msh:hidden property="guarantee"/>
+            <msh:hidden property="identDate"/>
+            <msh:hidden property="identTime"/>
+            <msh:hidden property="identUsername"/>
+            <msh:hidden property="isIdentified"/>
             <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
                 <msh:hidden property="hotelServices"/>
             </msh:ifNotInRole>

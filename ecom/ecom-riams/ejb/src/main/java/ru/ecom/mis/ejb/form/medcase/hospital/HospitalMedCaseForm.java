@@ -696,10 +696,17 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public String getIdentUsername() {return theIdentUsername;}
 	public void setIdentUsername(String aIdentUsername) {theIdentUsername = aIdentUsername;}
 
+	/** Была ли проведена идентификация пациента? */
+	@Comment("Была ли проведена идентификация пациента?")
+	public Boolean getIsIdentified() { return theIsIdentified; }
+	public void setIsIdentified(Boolean aIsIdentified) { theIsIdentified = aIsIdentified; }
+
 	/** Дата идентификации */
 	private String theIdentDate;
 	/** Время идентификации */
 	private String theIdentTime;
 	/** Кто провёл идентификацию */
 	private String theIdentUsername;
+	/** Была ли проведена идентификация пациента */
+	private Boolean theIsIdentified;
 }

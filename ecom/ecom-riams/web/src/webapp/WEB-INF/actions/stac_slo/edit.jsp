@@ -176,9 +176,6 @@
             <msh:hidden property="kindHighCare"/>
             <msh:hidden property="methodHighCare"/>
             <msh:hidden property="targetHospType"/>
-            <msh:hidden property="identDate"/>
-            <msh:hidden property="identTime"/>
-            <msh:hidden property="identUsername"/>
             <msh:ifFormTypeIsCreate formName="stac_sloForm">
                 <msh:hidden property="emergency"/>
             </msh:ifFormTypeIsCreate>
