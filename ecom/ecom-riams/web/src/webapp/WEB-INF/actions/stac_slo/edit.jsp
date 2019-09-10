@@ -176,9 +176,6 @@
             <msh:hidden property="kindHighCare"/>
             <msh:hidden property="methodHighCare"/>
             <msh:hidden property="targetHospType"/>
-            <msh:hidden property="identDate"/>
-            <msh:hidden property="identTime"/>
-            <msh:hidden property="identUsername"/>
             <msh:ifFormTypeIsCreate formName="stac_sloForm">
                 <msh:hidden property="emergency"/>
             </msh:ifFormTypeIsCreate>
@@ -626,8 +623,7 @@ left join Patient pat on pat.id=wan.person_id
                 <msh:section>
                     <msh:sectionTitle>
                         Карты оценки рисков
-                        <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard()">Добавить карту оценки</a>
-                            <a href="entityParentPrepareCreate-calc_calculationsResult.do?id=${param.id}&calculator=15">Добавить вычисление</a></msh:ifInRole>
+                        <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard()">Добавить карту оценки</a></msh:ifInRole>
                     </msh:sectionTitle>
                     <msh:sectionContent>
                         <msh:table name="asCard" action="entityParentView-mis_assessmentCard.do" idField="1">
@@ -649,10 +645,11 @@ where m.id ='${param.id}'"/>
                     <msh:sectionTitle>
                         Расчеты
                         <msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
+                            <a href="entityParentPrepareCreate-calc_calculationsResult.do?id=${param.id}&calculator=15">Добавить вычисление риска ВТЭО</a>
+                        </msh:ifInRole>
+                        <msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
                             <a href="entityParentPrepareCreate-calc_calculationsResult.do?id=${param.id}">Добавить вычисление</a>
                         </msh:ifInRole>
-
-
                         <msh:ifInRole roles="/Policy/Mis/Calc/Calculator/Create">
                             <a href="entityPrepareCreate-calc_calculator.do"> Добавить новый калькулятор</a>
                         </msh:ifInRole>
@@ -955,7 +952,7 @@ where m.id ='${param.id}'"/>
                 getDefinition("js-mis_assessmentCard-listByPatient.do?short=Short&id="+$('patient').value, null);
             }
             function goCreateAssessmentCard() {
-                window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&typeCard=7&slo="+${param.id};
+                window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value;//+"&typeCard=7&slo="+${param.id};
                 $('isPrintInfo').checked='checked' ;
             }
         </script>
