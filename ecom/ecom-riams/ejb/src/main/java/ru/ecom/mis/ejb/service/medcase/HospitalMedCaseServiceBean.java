@@ -21,6 +21,7 @@ import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.ejb.xml.XmlUtil;
+import ru.ecom.expert2.service.IExpert2Service;
 import ru.ecom.expomc.ejb.domain.med.VocDiagnosis;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
@@ -1083,7 +1084,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			LOG.error("NO VALID TYPE");
 			return "---1";
 		}
-		List<Object[]> list = theManager.createNativeQuery("select id , id from PriceList where isdefault='1'").getResultList();
+		List<Object[]> list = theManager.createNativeQuery("select id, id from PriceList where isdefault='1'").setMaxResults(1).getResultList();
 		String priceListId = null;
 		if (!list.isEmpty()) {
 			priceListId=list.get(0)[0].toString();
@@ -1126,8 +1127,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			if (1%100==0) {LOG.info("report_stac make "+i+" records");}
 				period = s(row[0]).split("-");
 				patientCount = s(row[1]);
-				region = regionOrCountry.get(s(row[2]))!=null?regionOrCountry.get(s(row[2])):"REGION_CODE="+s(row[2]);
-				profile = profileMap.get(s(row[3]))!=null?profileMap.get(s(row[3])):"PROFILE_CODE="+s(row[3]);
+				region = regionOrCountry.get(s(row[2]))!=null ? regionOrCountry.get(s(row[2])) : "REGION_CODE="+s(row[2]);
+				profile = profileMap.get(s(row[3]))!=null ? profileMap.get(s(row[3])) : "PROFILE_CODE="+s(row[3]);
 				financeSource = s(row[4]);
 				hosps = s(row[5]).split(",");
 				totalSum = 0;
@@ -1136,30 +1137,20 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 						JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim()),priceListId));
 						totalSum += hospitalInfo.getDouble("totalSum");
 					}
-                } else if (financeSource.equals("OBLIGATORY")||financeSource.equals("BUDGET")) { //ОМС + БЮДЖЕТ
+                } else if (financeSource.equals("OBLIGATORY")) { //ОМС
 					for (String hosp : hosps) {
 						try {
-							String[] arr = getDataByReferencePrintNotOnlyOMS(Long.valueOf(hosp.trim()), "HOSP", false, "OTHER','BUDGET").split("&");
-							for (int j = 0; j < arr.length; j++) {
-								if (arr[j].startsWith("render")) {
-									String[] arrPrice = arr[j].split("%23");
-									String price = arrPrice[0].substring(7, arrPrice[0].length());
-									if (!price.equals("")) {
-										totalSum+=Double.valueOf(price);
-									}
-									break;
-								}
-							}
-						} catch (java.lang.NumberFormatException e) {
-							LOG.warn("Не удалось расчитать цену");
-							totalSum=0.0;
+                            JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(hosp.trim())));
+                            if (costJson.has("price")) {
+                                double cost  = costJson.getDouble("price");
+                                totalSum += cost;
+                            }
 						} catch (Exception e) {
-							e.printStackTrace();
-							LOG.error("Неизведанная ошибка");
+							LOG.warn("Не удалось расчитать цену OMC "+e);
+							totalSum=0.0;
 						}
 					}
 				} else {
-					LOG.warn("Неизвестный источник оплаты: "+financeSource);
 					continue;
 				}
 				if (totalSum>0.0) {
@@ -1195,11 +1186,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             .append(" , vss.financesource as f4_financesource")
             .append(" ,sum (coalesce(smc.medserviceamount ,1)*pp.cost) as f5_totalSum")
             .append(",list(''||vis.id) as f6_listVisits")
+			.append(", list(distinct (vis.parent_id) ||'') as f7_listSpo")
             .append(" from medcase spo")
             .append(" left join medcase vis on vis.parent_id=spo.id")
             .append(" left join medcase smc on smc.parent_id=vis.id and smc.dtype='ServiceMedCase'")
             .append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
-            .append(" left join priceposition pp on pp.id=pms.priceposition_id ").append((priceListId!=null?" and pp.pricelist_id="+priceListId:""))
+            .append(" left join priceposition pp on pp.id=pms.priceposition_id ").append(( priceListId!=null ? " and pp.pricelist_id="+priceListId : ""))
             .append(" left join patient pat on pat.id=vis.patient_id")
             .append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
             .append(" left join address2 a on a.addressid=pat.address_addressid")
@@ -1230,23 +1222,16 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				financeSource = s(row[4]);
 				totalSum = 0;
 				if (financeSource.equals("OBLIGATORY") || financeSource.equals("BUDGET")) { //считаем цену за ОМС //Отключим, всё равно не работает
-			/*		String[] visits = s(row[6]).split(",");
-					for (String vis : visits) {
-						try {
-							String s = getDataByReferencePrintNotOnlyOMS(Long.valueOf(vis.trim()), "VISIT", false, "OTHER','BUDGET");
-							String[] arr = s != null ? s.split("<body>") : null;
-							String price = arr.length > 1 ? arr[1].trim().split("#")[0].trim() : "0";
-							totalSum += Double.valueOf(price);
-
-						} catch (java.lang.NumberFormatException e) {
-							totalSum = 0.0;
-
-						} catch (Exception e) {
-							LOG.error("ERROR============ ");
-							e.printStackTrace();
+					String[] spoIds = row[7].toString().split(",");
+					for (String spoId : spoIds) {
+						JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(spoId.trim())));
+						if (costJson.has("price")) {
+							double cost  = costJson.getDouble("price");
+							LOG.info(spoId + " OMC pol cost = "+cost);
+							totalSum += cost;
 						}
 					}
-	*/			} else {
+				} else {
 					try {
 						totalSum = Double.valueOf(s(row[5]));
 					} catch (NumberFormatException e) {
@@ -4009,6 +3994,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			if (obj[1]!=null) {
 				if (obj[0]!=null) {
 					// Отд next1=current (объединять 2 отделения)
+					theManager.createNativeQuery("update assessmentCard cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update newBorn cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update medcase  set parent_id='"+aSlo+"' where parent_id='"+obj[1]+"'").executeUpdate() ;
@@ -4058,6 +4044,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					theManager.createNativeQuery("delete from medcase m where m.id='"+obj[1]+"'").executeUpdate() ;
 				} else {
 					//
+					theManager.createNativeQuery("update assessmentCard cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
 					theManager.createNativeQuery("update newBorn nb    set medcase_id='"+aSlo+"' where nb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
 
@@ -4677,6 +4664,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	@PersistenceContext EntityManager theManager ;
 	@Resource SessionContext theContext ;
 	@EJB ILocalMonitorService theMonitorService;
+	@EJB IExpert2Service theExpertService;
 
 
 

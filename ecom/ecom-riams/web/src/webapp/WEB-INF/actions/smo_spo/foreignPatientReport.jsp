@@ -73,10 +73,7 @@
        // alert (dateFrom+"<>"+dateTo+"<>"+type);
         HospitalMedCaseService.getMedcaseCost(dateFrom,dateTo,type,lpu, {
             callback: function (fileUrl) {
-                var str = "<a target='_blank' href='"+fileUrl+"'>Сохранить файл</a>";
-                //jQuery('#resultDiv').html(str);
-                $('resultDiv').innerHTML=str;
-                //jQuery("input:button").prop("disabled",false);
+                $('resultDiv').innerHTML="<a target='_blank' href='" + fileUrl + "'>Сохранить файл</a>";
                 $('submitButton').disabled=false;
             }
         });
