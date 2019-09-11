@@ -14,7 +14,7 @@
 select cams.id,'Договор №'||mc.contractNumber||' счет №'||ca.id||' от '||to_char(ca.dateFrom,'dd.mm.yyyy'), pp.code,pp.name,cams.cost,cams.countMedService as f6_cntMs
 	, cams.countMedService*cams.cost as f7_sumNoAccraulMedService
 	, cao.discount as f9_discont ,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as f9_totalCost
-	, (select list(caos1.serviceType||' '||caos1.serviceId) from contractaccountoperationbyservice caos1 where caos1.accountmedservice_id = cams.id) as f10_madeInfo
+	, (select list(coalesce(caos1.medcase_id,0)||' - ' ||coalesce(caos1.serviceType||' '||caos1.serviceId,'')) from contractaccountoperationbyservice caos1 where caos1.accountmedservice_id = cams.id) as f10_madeInfo
 			from ContractAccountMedService cams
 			left join ServedPerson sp on cams.servedPerson_id = sp.id
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id

@@ -14,7 +14,7 @@
 select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
 	, cams.countMedService*cams.cost as sumNoAccraulMedService 
 	, cao.discount,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as f8
-	, (select list(caos.serviceType||' '||caos.serviceId) from contractaccountoperationbyservice caos where caos.accountmedservice_id = cams.id) as f10_madeInfo
+	, (select list(coalesce(caos1.medcase_id,0)||' - ' ||coalesce(caos1.serviceType||' '||caos1.serviceId,'')) from contractaccountoperationbyservice caos where caos.accountmedservice_id = cams.id) as f10_madeInfo
 			from ContractAccountMedService cams
 			left join ServedPerson sp on cams.servedPerson_id = sp.id
 			left join ContractAccountOperation cao on cao.account_id = sp.account_id and cao.dtype='OperationAccrual'
