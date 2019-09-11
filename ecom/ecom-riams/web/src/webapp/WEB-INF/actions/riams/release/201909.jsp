@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh"%>
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis"%>
@@ -17,6 +17,10 @@
 				<h1>Сентябрь 2019 года</h1>
 				
 				<ul>
+					<h2>Лаборатория:</h2>
+					<ul>
+						<li>В шаблонах лаб. анализах создана возможность создавать референтные значения по возрасту и полу</li>
+					</ul>
 					<h2>Стационар:</h2>
 					<ul>
 						<li> * Для перевода из родового отделения необходимо добавить именно вычисление риска ВТЭО (СЛО->Расчёты (в самом низу страницы)->
