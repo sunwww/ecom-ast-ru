@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.jdom.IllegalDataException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterReferenceValue;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -48,7 +49,7 @@ public class PrescriptionServiceJs {
 				el.put("serviceName", row[0]+" "+row[3]);
 				el.put("serviceId",medServiceId);
 				el.put("caosId", row[1]);
-				el.put("isAllow", allowByPrescriptionType(medServiceId,aPrescriptionType, webQueryService));
+				el.put("isAllow", aPrescriptionType == null || allowByPrescriptionType(medServiceId, aPrescriptionType, webQueryService));
 				ret.put(el);
 			}
 		}
@@ -308,13 +309,11 @@ public class PrescriptionServiceJs {
 			sql = "update workcalendartime set prescription=null, medcase_id = null where id=" + aWorkCalendarTime + " and 0=(select count(*) from medcase where id='" + medcaseId + "'and (noactuality is null or noactuality='0'))";
 			service.executeUpdateNativeSql(sql);// Если визит недействительный - очищаем время в расписании
 
-			return "Назначение отменено ";
-		} else if (!isAnnulPermitted && medcaseId != null)
-			return "Невозможно отменить назначение! Уже было отменено или находится в работе";
-		else {
-			service.executeUpdateNativeSql("update contractaccountoperationbyservice set serviceid=null, servicetype= null where serviceType = 'PRESCRIPTION' and serviceId = "+aPrescriptionId); //аннулируем инф.
-			return "Назначение отменено!";
-		}
+		} else if (!isAnnulPermitted && medcaseId != null) {
+            return "Невозможно отменить назначение! Уже было отменено или находится в работе";
+        }
+        service.executeUpdateNativeSql("update contractaccountoperationbyservice set serviceid=null, servicetype= null where serviceType = 'PRESCRIPTION' and serviceId = "+aPrescriptionId); //аннулируем инф.
+		 return "Назначение отменено!";
     }
 
 
@@ -458,9 +457,7 @@ public class PrescriptionServiceJs {
 	 */
 	private boolean isMedcaseIsVisit(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aMedCaseId);
-		String dtype = !res.isEmpty()?res.iterator().next().get1().toString():null;
-		return "Visit".equals(dtype);
+		return !service.executeNativeSql("select id from medcase where id="+aMedCaseId+ " and dtype='Visit'").isEmpty();
 	}
 
 	/**
@@ -472,17 +469,7 @@ public class PrescriptionServiceJs {
 	 */
 	public boolean isMedcaseIsDepartment(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aMedcaseId);
-		String dtype = !res.isEmpty() ? res.iterator().next().get1().toString() : null;
-		return "DepartmentMedCase".equals(dtype);
-		/*if ("DepartmentMedCase".equals(dtype)) {
-			return true;
-		} else if ("HospitalMedCase".equals(dtype)) {
-			return false;
-		} else {
-			LOG.warn("isMedcaseIsDepartment, STRANGE dtype="+dtype);
-			return false;
-		} */
+		return !service.executeNativeSql("select id from medcase where id="+aMedcaseId+ " and dtype='DepartmentMedCase'").isEmpty();
 	}
 
     public String listProtocolsByUsername(String aFunctionTemp, HttpServletRequest aRequest) throws NamingException {
@@ -1078,9 +1065,7 @@ public class PrescriptionServiceJs {
 				 saveParameterByProtocol(0L, pid, 0L, sb.toString(), templateId, aRequest);
 				}
 			}
-			
-				
-		return sb.toString();		
+		return sb.toString();
 	}
 	public String intakeService(String aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException, ParseException {
 		return intakeServiceWithBarcode(aListPrescript, aDate, aTime, null, aRequest);
@@ -1327,20 +1312,44 @@ public class PrescriptionServiceJs {
 		}
 */
 	}
+
+	/*Находим правильный референтный интервал*/
+	private ParameterReferenceValue getReferenceByParameternadPatient(Integer aAge, Integer aSex,  Long aParameterId, HttpServletRequest aRequest) {
+		LOG.info("start , presId = "+", templ = "+aParameterId);
+		String sql = "select pat.sex_id, cast(date_part('year',age(current_date, pat.birthday)) as int)" +
+				" from prescription p" +
+				" left join prescriptionlist pl on pl.id = p.prescriptionlist_id" +
+				" left join medcase mc on mc.id=pl.medcase_id" +
+				" left join patient pat on pat.id = mc.patient_id" +
+				" where p.id="+aParameterId ;
+		return null;
+	}
+
+	/*находим информацию по пациенту для нахождения реф. значений*/
+	private WebQueryResult getPatientAgeAndSexByPrescription(Long aPrescription, IWebQueryService aService) {
+		String sql = "select pat.sex_id as sexId, cast(date_part('year',age(p.planStartDate, pat.birthday)) as int) as age" +
+				" from prescription p " +
+				" left join prescriptionlist pl on pl.id = p.prescriptionlist_id" +
+				" left join medcase mc on mc.id=pl.medcase_id" +
+				" left join patient pat on pat.id = mc.patient_id" +
+				" where p.id="+aPrescription;
+		Collection<WebQueryResult> list = aService.executeNativeSql(sql);
+		return list.isEmpty() ? null : list.iterator().next();
+	}
+
 	public String getParameterByTemplate(Long aSmoId, Long aPrescript, Long aServiceId, Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		Collection<WebQueryResult> lwqr = null ;
-		
+		WebQueryResult patientInfo = getPatientAgeAndSexByPrescription(aPrescript, service);
 		Long wfId = 0L;
 		String wfName = "" ;
-		if (aProtocolId!=null && !aProtocolId.equals(0L)) {
+		if (aProtocolId!=null && !aProtocolId.equals(0L)) { //результаты по существующему протоколу
 			sql.append("select p.id as p1id,p.name as p2name") ;
 			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
-			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
-			sql.append(" , p.maximum as p7maximum, p.normmaximum as p8normmaximum") ;
-			sql.append(" , p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd") ;
-			sql.append(" , p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd") ;
+			sql.append(" , prv.superMin as p5minimum, prv.normaMin as p6normminimum") ;
+			sql.append(" , prv.superMax as p7maximum, prv.normaMax as p8normmaximum") ;
+			sql.append(", cast('' as varchar) as f9, cast('' as varchar) as f10, cast('' as varchar) as f11, cast('' as varchar) as f12 ");
 			sql.append(" , vmu.id as v13muid,vmu.name as v14muname") ;
 			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
 			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
@@ -1353,6 +1362,8 @@ public class PrescriptionServiceJs {
 			sql.append(" from FormInputProtocol pf") ;
 			sql.append(" left join Diary d on pf.docProtocol_id = d.id") ;
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+			sql.append(" left join ParameterReferenceValue prv on prv.parameter_id= p.id and (prv.sex_id is null or prv.sex_id=").append(patientInfo.get1())
+					.append(") and (").append(patientInfo.get2()).append(" between prv.ageFrom and prv.ageTo or (prv.ageFrom is null and prv.ageTo is null))") ;
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join userValue vv on vv.id=pf.valueVoc_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
@@ -1365,19 +1376,19 @@ public class PrescriptionServiceJs {
 			sql = new StringBuilder() ;
 			sql.append("select p.id as p1id,p.name as p2name") ;
 			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
-			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
-			sql.append(" , p.maximum as p7maximum, p.normmaximum as p8normmaximum") ;
-			sql.append(" , p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd") ;
-			sql.append(" , p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd") ;
+			sql.append(" , prv.superMin as p5minimum, prv.normaMin as p6normminimum") ;
+			sql.append(" , prv.superMax as p7maximum, prv.normaMax as p8normmaximum") ;
+			sql.append(", cast('' as varchar) as f9, cast('' as varchar) as f10, cast('' as varchar) as f11, cast('' as varchar) as f12 ");
 			sql.append(" , vmu.id as v13muid,vmu.name as v14muname") ;
 			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
 			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
 			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
 			sql.append(" , case when p.type in ('3','5')  then p.valueTextDefault else '' end as p19valuetextdefault") ;
-			//sql.append(", null as d18val1v,null as d19val2v,null as d20val3v,null as d21val4v") ;
 			sql.append(" from parameterbyform pf") ;
 			sql.append(" left join templateprotocol tp on pf.template_id = tp.id") ;
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+			sql.append(" left join ParameterReferenceValue prv on prv.parameter_id= p.id and (prv.sex_id is null or prv.sex_id=").append(patientInfo.get1())
+					.append(") and (").append(patientInfo.get2()).append(" between prv.ageFrom and prv.ageTo or (prv.ageFrom is null and prv.ageTo is null))") ;
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
 			sql.append(" where tp.id='").append(aTemplateId).append("'") ;
@@ -1420,12 +1431,7 @@ public class PrescriptionServiceJs {
 				StringBuilder par = new StringBuilder() ;
 				par.append("{") ;
 				boolean isFirtMethod = false ;
-				boolean isError = false ;
-				if (String.valueOf(wqr.get4()).equals("2")) {
-					if (wqr.get15()==null) {
-						isError = true ;
-					}
-				}
+				boolean isError = String.valueOf(wqr.get4()).equals("2") && wqr.get15()==null ;
 				try {
 					
 					for(String[] prop : props) {
@@ -1444,7 +1450,7 @@ public class PrescriptionServiceJs {
 				if (isError) {
 					if(firstError) err.append(", ") ;else firstError=true;
 					err.append(par) ;
-				}else{
+				} else {
 					if(firstPassed) sb.append(", ") ;else firstPassed=true;
 					sb.append(par) ;
 				}
@@ -1501,8 +1507,7 @@ public class PrescriptionServiceJs {
 		return sb.toString();
 	    }
 	private String unnul(Object o) {
-		if (o!=null) {return o.toString();}
-		return "";
+		return  o == null ? "" : o.toString();
 	}
 
 	/**
@@ -1526,8 +1531,8 @@ public class PrescriptionServiceJs {
 	 */
 	public Boolean isPrescriptListfromSLO(String aMedcase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection <WebQueryResult> wrt = service.executeNativeSql("select case when dtype='DepartmentMedCase'  then '1' else '0' end from medcase where id="+aMedcase, 1);
-		return !wrt.isEmpty() && wrt.iterator().next().get1().toString().equals("1");
+		Collection <WebQueryResult> wrt = service.executeNativeSql("select id from medcase where id="+aMedcase+" and dtype='DepartmentMedCase'", 1);
+		return !wrt.isEmpty() ;
 	}
 
 	/**
