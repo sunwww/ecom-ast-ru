@@ -313,15 +313,6 @@ where pcc.patient_id='${param.id}'
         <msh:row guid="050f23d4-4e9f-4c6b-8739-5fd78bdff3d0">
           <msh:checkBox property="noActuality" label="Запись на пациента не действует" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-          <msh:row>
-              <msh:checkBox property="notVote" label="Не участвует в выборах" fieldColSpan="3" horizontalFill="true" />
-              </msh:row>
-          <msh:row>
-              <msh:checkBox property="ppz" fieldColSpan="3" horizontalFill="true" />
-          </msh:row>
-          <msh:row>
-              <msh:checkBox property="voteInRoom" fieldColSpan="3" horizontalFill="true" />
-          </msh:row>
 
         <msh:separator colSpan="4" label="Документ, удостоверяющий личность" />
         <msh:row guid="391bb191-d1f0-49d1-9e01-cc432e742118">
