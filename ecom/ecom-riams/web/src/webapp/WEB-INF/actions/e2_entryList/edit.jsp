@@ -14,6 +14,7 @@
         <select id="replaceSelect">
             <option value="SERVICESTREAM">Поток обслуживания</option>
             <option value="SNILS_DOCTOR">СНИЛС лечащего врача</option>
+            <option value="SNILS_REPLACE_STRING">СНИЛСы из настроек</option>
         </select>
         <input type="text" name="replaceFrom" id="replaceFrom" placeholder="Заменить с">
         <input type="text" name="replaceTo" id="replaceTo" placeholder="Заменить на">
@@ -128,14 +129,14 @@
         <msh:ifFormTypeIsView formName="e2_entryListForm">
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
             <script type="text/javascript">
-
+                var monitor = {};
                 checkIsRunning();
                 function deleteAllDeletedEntries() {
                     Expert2Service.deleteAllDeletedEntries();
                 }
                 function checkIsRunning () {
                     if (+$('monitorId').value>0) {
-                        monitor.id=+$('monitorId').value;
+                        monitor.id = +$('monitorId').value;
                         updateStatus();
                     }
                 }
@@ -160,7 +161,7 @@
                     new agGrid.Grid(eGridDiv, {colunmDef:colunms,rowData:data});
                 }
 
-                    var monitor = {};
+
                     function showSplitForeignOtherBill(){
                         jQuery('#E2Save').click(function(){splitForeignOtherBill();});
                         showE2BillDialog('');
@@ -218,7 +219,7 @@
                 function replaceValue(btn) {
                     btn.disabled=true;
                     var fld = $('replaceSelect').value;
-                    if (fld &&$('replaceTo').value) {
+                    if (fld && $('replaceTo').value) {
                         Expert2Service.replaceFieldByError(${param.id},null,fld, $('replaceFrom').value, $('replaceTo').value, {
                             callback: function (a) {
                                 alert(a);

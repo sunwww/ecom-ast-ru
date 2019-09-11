@@ -69,11 +69,8 @@ public class WebQueryServiceBean implements IWebQueryService {
 
 	/** Возвращаем первый результат запроса в качестве json объекта*/
 	public String executeSqlGetJsonObject(String aQuery) throws NamingException {
-		JSONArray arr = new JSONArray(executeSqlGetJson(aQuery,null,null));
-		if (arr.length()>0) {
-			return arr.getJSONObject(0).toString();
-		}
-		return null;
+		JSONArray arr = new JSONArray(executeSqlGetJson(aQuery,1,null));
+		return arr.isEmpty() ? null :  arr.getJSONObject(0).toString();
 	}
 
 	private DataSource findDataSource() throws NamingException {
@@ -202,6 +199,4 @@ public class WebQueryServiceBean implements IWebQueryService {
 	public List<Object[]> executeNativeSqlGetObj(String aQuery) {
 		return executeNativeSqlGetObj(aQuery,null) ;
 	}
-
-
 }

@@ -930,6 +930,10 @@ public class Expert2ServiceBean implements IExpert2Service {
             e.printStackTrace();
             LOG.error("can't parse data",e);
         }
+        if (aListEntry.getMonitorId()!=null) {
+            aListEntry.setMonitorId(null);
+            theManager.persist(aListEntry);
+        }
     }
 
     /** Базовая точка для выполнения всех проверок внутри заполнения */
@@ -1652,7 +1656,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             String dopmkb = null;
             boolean isCancer=false;
             for (EntryDiagnosis ed: diagnosisList) {
-                if (ed.getPriority().getCode().equals("1")){
+                if (ed!=null && ed.getPriority()!=null & "1".equals(ed.getPriority().getCode())) {
                     if(isNotNull(ed.getDopMkb())) {
                         dopmkb=ed.getDopMkb();
                     }
@@ -3282,6 +3286,8 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /**Расчет предварительной цены случая
      * upd: добавляем расчет цены платного случая
+     *
+     * @param aMedcaseId ИД случая мед. обслуживания (любого)
      * */
     public String getMedcaseCost(Long aMedcaseId) {
         JSONObject ret = new JSONObject();
@@ -3290,7 +3296,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             int priceListId = 5; //TODO обязательно потом поправить
             MedCase medCase = theManager.find(MedCase.class, aMedcaseId);
             E2Entry sloEntry = new E2Entry();
-            boolean calcOmc = medCase.getServiceStream().getCode().equals("OBLIGATORYINSURANCE");
+            boolean calcOmc = medCase.getServiceStream().getCode().equals("OBLIGATORYINSURANCE") || medCase.getServiceStream().getCode().equals("BUDGET");
             if (calcOmc) {
                 ret.put("calcType","OMC");
                 List<HitechMedicalCase> vmps = medCase.getHitechMedicalCases();
@@ -3483,10 +3489,9 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             ret.put("status","error");
             ret.put("errorCode",e.getLocalizedMessage());
-            LOG.error(e);
+            LOG.error("Ошибка нахождения цены "+e.getMessage(),e);
         }
         return ret.toString();
     }

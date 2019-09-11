@@ -153,19 +153,16 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
     /** Расчет строки с признаком новорожденного */
     private String makeNovorString(E2Entry aEntry) {
-        String ret ;
         if (isNotNull(aEntry.getKinsmanLastname())) {
             SimpleDateFormat format = new SimpleDateFormat("ddMMyy");
-            ret = aEntry.getSex() + ""+format.format(aEntry.getBirthDate())+"" + (isNotNull(aEntry.getBirthOrder()) ? aEntry.getBirthOrder() : 1);
+            return aEntry.getSex() + ""+format.format(aEntry.getBirthDate())+"" + (isNotNull(aEntry.getBirthOrder()) ? aEntry.getBirthOrder() : 1);
         } else {
-            ret ="0";
+            return "0";
         }
-        return ret;
-
     }
 
     /** Создаем тэг с информацией о госпитализации (версия 3.1.1)*/
-    private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isExport263) {
+    private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isExport263, boolean isNedonosh) {
     //    String startDate = dateToString(aEntry.getHospitalStartDate()), finishDate = dateToString(aEntry.getHospitalFinishDate()!=null?aEntry.getHospitalFinishDate():aEntry.getFinishDate());
         boolean isExtDisp = aEntry.getEntryType().equals(EXTDISPTYPE);
         String forPom = isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic ? "2" : "1") : "3";
@@ -191,7 +188,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         z.addContent(new Element("DATE_Z_1").setText("_")); //Дата начала случая
         z.addContent(new Element("DATE_Z_2").setText("_")); //Дата окончания случая
         if (!isPoliclinic &&!isExtDisp)  z.addContent(new Element("KD_Z").addContent(aEntry.getBedDays()+"")); // Продолжительность госпитализации
-       // if (isNedonosh) z.addContent(new Element("VNOV_M").setText(aEntry.getNewbornWeight()+""));
+        if (isNedonosh && isNotNull(aEntry.getKinsmanLastname())) z.addContent(new Element("VNOV_M").setText(aEntry.getNewbornWeight()+""));
         z.addContent(new Element("RSLT").setText(aEntry.getFondResult().getCode())); // Результат обращения
         if (isExtDisp) add(z,"RSLT_D",aEntry.getDispResult().getCode()); // Результат диспансеризации
         z.addContent(new Element("ISHOD").setText(aEntry.getFondIshod().getCode())); // Исход случая.
@@ -263,7 +260,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
             String novorString=makeNovorString(aEntry);
             add(pat,"NOVOR",novorString);
-            if (isNedonosh){ // && novorString.equals("0")) { //11.10.2018 по согласованию с фондом
+            if (isNedonosh && !isNotNull(aEntry.getKinsmanLastname())) { // && novorString.equals("0")) { //11.10.2018 по согласованию с фондом
                 add(pat,"VNOV_D",aEntry.getNewbornWeight()+"");
             }
 
@@ -274,7 +271,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
           //  edCol="1"; //06-08-2018 Ед кол больше не равно 1 !
 
             String[] slIds = entriesString.split(",");
-            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length,cnt, isExport263);
+            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length,cnt, isExport263, isNedonosh);
             int indSl = zSl.indexOf(zSl.getChild("SL_TEMPLATE"));
             Date startHospitalDate = null, finishHospitalDate=null;
             int kdz=0;
@@ -1100,7 +1097,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     /** Создаем файл из документа */
-    private void createXmlFile(Element aElement, String aFileName) {
+    public void createXmlFile(Element aElement, String aFileName) {
         if (aElement == null) {
             LOG.error("no data for create file " + aFileName);
             return;

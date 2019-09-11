@@ -3,6 +3,9 @@ package ru.ecom.mis.web.dwr.expert2;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
+import org.jdom.Element;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -22,9 +25,110 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
+
+    private List<Element> createXmlFromJson(JSONArray aJson, String[] aFlds, String aElementName) {
+        List<Element> ret = new ArrayList<>();
+        for (int i=0;i<aJson.length();i++) {
+            JSONObject jso = aJson.getJSONObject(i);
+            Element xml = new Element(aElementName);
+            for (String key : aFlds) {
+                xml.addContent(new Element(key).setText(jso.get(key.toLowerCase()).toString()));
+            }
+            ret.add(xml);
+        }
+        return ret;
+    }
+    private void putEl(Element aElement, String aName, String aValue) {
+        aElement.addContent(new Element(aName).setText(aValue));
+    }
+
+    public String fixSomeErrors(Long aListEntryId, String aErrorCode, String aFix, HttpServletRequest aRequest) throws NamingException, SQLException {
+        if ("503".equals(aErrorCode) ) {
+            IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+            String sql = "select case when e.ticket263number='' then '0' else coalesce(e.ticket263Number,'0') end as N_NPR" +
+                    ", e.startDate as D_NPR" +
+                    ", case when e.isEmergency ='1' then '2' else '1' end  as FOR_POM" +
+                    ",e.lpuCode as DCODE_MO , e.directLpu as NCODE_MO" +
+                    ", e.startDate as DATE_1 , to_char(e.startTime, 'HH:MI') as TIME_1" +
+                    ", e.medPolicyType as VPOLIS, e.medPolicySeries as SPOLIS, e.medPolicyNumber as NPOLIS" +
+                    ", e.lastname as FAM, e.firstname as IM, e.middlename as OT, e.sex as W, e.birthDate as DR" +
+                    ", '1' as USL_OK ,case when e.isChild='1' then '1' else '0' end as DET" +
+                    ", mhp.code as PROFIL, e.historyNumber as NHISTORY, e.mainMkb as DS1" +
+                    ", e.finishDate as DATE_2" +
+                    " from e2entry e" +
+                    " left join e2entrySanction err on err.entry_id=e.id " +
+                    " left join voce2medhelpprofile mhp on mhp.id=e.medHelpProfile_id" +
+                    " where e.listentry_id="+aListEntryId+" and err.dopcode='503' and (e.ticket263Number is null or e.ticket263Number ='')" +
+                    " and (e.isdeleted is null or e.isdeleted='0') and (e.isEmergency is null or e.isEmergency='0')";
+            LOG.info(sql);
+            JSONArray list = new JSONArray(service.executeSqlGetJson(sql, null));
+            Element ZL_LIST;
+            String filename;
+            if ("N2".equals(aFix)) {
+                LOG.info("Формируем N2 по ошибкам 503");
+
+                String[] flds = {"N_NPR","D_NPR","FOR_POM","DCODE_MO","NCODE_MO","DATE_1","TIME_1","VPOLIS","SPOLIS","NPOLIS","FAM","IM","OT","W","DR","USL_OK","DET","PROFIL","NHISTORY","DS1"};
+                List<Element> nprs = createXmlFromJson(list, flds,"NPR");
+                ZL_LIST = new Element("ZL_LIST");
+                Element ZGLV = new Element("ZGLV");
+                filename = "N2M300001T30_190873";
+
+                putEl(ZGLV,"VERSION","1.0");
+                putEl(ZGLV,"DATA","2019-09-05");
+                putEl(ZGLV,"FILENAME",filename);
+                ZL_LIST.addContent(ZGLV);
+                ZL_LIST.addContent(nprs);
+
+            } else if ("N5".equals(aFix)) {
+                LOG.info("Формируем N5 по ошибкам 503");
+                 sql = "select case when e.ticket263number='' then '0' else coalesce(e.ticket263Number,'0') end as N_NPR" +
+                        ", e.startDate as D_NPR" +
+                        ", case when e.isEmergency ='1' then '2' else '1' end  as FOR_POM" +
+                        ",e.lpuCode as LPU , e.directLpu as NCODE_MO" +
+                        ", e.startDate as DATE_1 , to_char(e.startTime, 'HH:MI') as TIME_1" +
+                        ", e.medPolicyType as VPOLIS, e.medPolicySeries as SPOLIS, e.medPolicyNumber as NPOLIS" +
+                        ", e.lastname as FAM, e.firstname as IM, e.middlename as OT, e.sex as W, e.birthDate as DR" +
+                        ", '1' as USL_OK ,case when e.isChild='1' then '1' else '0' end as DET" +
+                        ", mhp.code as PROFIL, e.historyNumber as NHISTORY, e.mainMkb as DS1" +
+                        ", e.finishDate as DATE_2" +
+                        " from e2entry e" +
+                        " left join e2entrySanction err on err.entry_id=e.id " +
+                        " left join voce2medhelpprofile mhp on mhp.id=e.medHelpProfile_id" +
+                        " where e.listentry_id="+aListEntryId+" and err.dopcode='503' and (e.ticket263Number is not null and e.ticket263Number !='')" +
+                        " and (e.isdeleted is null or e.isdeleted='0') ";
+                list = new JSONArray(service.executeSqlGetJson(sql, null));
+                String[] flds = {"N_NPR","D_NPR","FOR_POM","LPU","DATE_1","DATE_2","W","DR","PROFIL","NHISTORY"};
+                List<Element> nprs = createXmlFromJson(list, flds, "NPR");
+                ZL_LIST = new Element("ZL_LIST");
+                Element ZGLV = new Element("ZGLV");
+                filename = "N5M300001T30_190873";
+
+                putEl(ZGLV,"VERSION","1.0");
+                putEl(ZGLV,"DATA","2019-09-05");
+                putEl(ZGLV,"FILENAME",filename);
+                ZL_LIST.addContent(ZGLV);
+                ZL_LIST.addContent(nprs);
+                IExpert2XmlService xmlService = Injection.find(aRequest).getService(IExpert2XmlService.class);
+                xmlService.createXmlFile(ZL_LIST, "/"+filename);
+                return "/expert2xml/"+filename+".xml";
+            } else {
+                return null;
+            }
+            IExpert2XmlService xmlService = Injection.find(aRequest).getService(IExpert2XmlService.class);
+            xmlService.createXmlFile(ZL_LIST, filename);
+            return "/expert2xml/"+filename+".xml";
+
+        } else {
+            return "Я не понял что мне делать!";
+        }
+    }
+
     public void deleteAllDeletedEntries(HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         LOG.info("All entries = "+service.executeNativeSql("select count(id) from e2entry").iterator().next().get1().toString());
@@ -217,6 +321,20 @@ public class Expert2ServiceJs {
             //Обновляем СНИЛС в мед услугах по заполнению
             service.executeUpdateNativeSql("update entrymedservice ems set doctorsnils = '"+aNewValue+"' " +
                     " from e2entry e where e.listentry_id = "+aEntryListId+" and (e.isDeleted is null or e.isDeleted='0') and ems.entry_id = e.id and ems.doctorsnils = '"+aOldValue+"'");
+        } else if (aFieldName.equals("SNILS_REPLACE_STRING")) {
+            try {
+                WebQueryResult wqr = service.executeNativeSql("select value from Expert2Config where code='SNILS_REPLACE_STRING'").iterator().next();
+                String[] snilses = wqr.get1().toString().split(";");
+                for (String p : snilses) {
+                    String[] pair = p.trim().split(":");
+                    String snilsFrom = pair[0].trim();
+                    String snilsTo = pair[1].trim();
+                    replaceFieldByError(aEntryListId, aErrorCode,"SNILS_DOCTOR",snilsFrom,snilsTo, aRequest);
+                }
+                return "СНИЛСЫ заменены: "+ Arrays.toString(snilses);
+            } catch (Exception e) {
+                return "Не удалось заменить СНИЛСы = "+e;
+            }
         } else {
             return "BAD_FIELD_NAME!";
         }

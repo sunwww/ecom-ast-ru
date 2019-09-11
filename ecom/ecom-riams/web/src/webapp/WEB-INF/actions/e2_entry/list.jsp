@@ -146,6 +146,7 @@ String defectColumnName = "Дефект";
             <input type="checkbox" id="dontShowComplexCase" name="dontShowComplexCase" onclick="dontShow(this)">
             <br>
             <input type="button" onclick="exportErrorsNewListEntry()" value="Перенести ошибки в новое заполнение">
+            <input type="button" onclick="fixSomeError()" value="Поправить 503">
 
 
         </msh:panel>
@@ -198,6 +199,18 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <script type="text/javascript">
             var errorCode = '${param.errorCode}';
+            function fixSomeError() {
+           //     if (errorCode) {
+                    let conf = prompt("Подтвердите ошибку","N2");
+                    if (conf) {
+                        Expert2Service.fixSomeErrors(${param.id}, "503", conf, {
+                            callback: function (res) {
+                                alert(res);
+                            }
+                        })
+                    }
+         //       }
+            }
             function exportErrorsNewListEntry() {
                 if (errorCode) {
                     Expert2Service.exportErrorsNewListEntry(${param.id},errorCode, {

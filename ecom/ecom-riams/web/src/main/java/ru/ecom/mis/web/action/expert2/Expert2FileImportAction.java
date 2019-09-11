@@ -47,7 +47,7 @@ public class Expert2FileImportAction extends BaseAction {
 					}
 					break;
 				case "importN5":
-					if (fileName.startsWith("N5") && fileName.toUpperCase().endsWith(".XML")) { //Импортируем файл для проставления номеров направления фонда
+					if ((fileName.startsWith("N2") || fileName.startsWith("N5")) && fileName.toUpperCase().endsWith(".XML")) { //Импортируем файл для проставления номеров направления фонда
 						LOG.info("start import N5");
 						Long entryListId = form.getObjectId();
 						result = expert2service.importN5File(new SAXBuilder().build(ffile.getInputStream()),entryListId);
