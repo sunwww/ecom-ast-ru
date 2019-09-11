@@ -7,6 +7,7 @@
     <form-beans>
 
         <!--шаблоны протоколов-->
+        <form-bean name="diary_parameterRefForm" type="ru.ecom.diary.ejb.form.protocol.parameter.ParameterReferenceValueForm"/>
         <form-bean name="diary_templatewordForm" type="ru.ecom.diary.ejb.form.TemplateWordForm"/>
         <form-bean name="diary_protocolForm" type="ru.ecom.diary.ejb.form.DiaryForm"/>
 <!--         <form-bean name="diary_templateProtocolForm" type="ru.ecom.diary.ejb.form.TemplateProtocolForm"/> -->

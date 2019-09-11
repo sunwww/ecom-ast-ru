@@ -47,6 +47,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -436,6 +438,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			sb.append(" ").append(pres.getIntakeTime()!=null? DateFormat.formatToTime(pres.getIntakeTime()) : "").append("\n") ;
 			//sb.append("Дата передачи в лабораторию: ").append(DateFormat.formatToDate(pres.getTransferDate()));
 			//sb.append(" ").append(DateFormat.formatToTime(pres.getTransferTime())).append("\n") ;
+            NumberFormat numberFormat =new DecimalFormat("#.######");
 			for (int i = 0; i < params.length(); i++) {
 				//boolean isSave = true ;
 				JSONObject param = (JSONObject) params.get(i);
@@ -457,24 +460,23 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 						sb.append(param.get("unitname")).append(" ") ;
 						//Добавление отображения референтных интервалов
 						Double val = ifDoubleReturn(value);
-						Double min = ifDoubleReturn(p.getNormMinimumBD());
-						Double max = ifDoubleReturn(p.getNormMaximumBD());
-						if (val!=null && min!=null && max!=null && (val<min || val>max)) {
+						String normaMin = param.getString("nmin");
+						String normaMax = param.getString("nmax");
+						Double min = ifDoubleReturn(normaMin);
+						Double max = ifDoubleReturn(normaMax);
+						if (val!=null && min!=null && max!=null ) { // если есть реф. интервал - пишем его в дневнике
 							StringBuilder msg = new StringBuilder();
-							if (val<min) msg.append("▼");
-							else if (val>max) msg.append("▲");
-							msg.append(" (реф. инт: ").append(p.getNormMinimumBD()).append(" - ").append(p.getNormMaximumBD()).append(")");
+							msg.append(" (реф. инт: ").append(numberFormat.format(min)).append(" - ").append(numberFormat.format(max)).append(")");
+							if (val<min || val>max) {
+								msg.insert(0, val<min ? "▼" : "▲");
+								String allmsg = param.get("name") + ": " +
+										value + " " +
+										param.get("unitname") + " " +
+										msg;
+								infoToSend.append(allmsg).append("<br>");
+							}
 							sb.append(msg);
-							String allmsg = param.get("name") + ": " +
-									value + " " +
-									param.get("unitname") + " " +
-									msg;
-							infoToSend.append(allmsg).append("<br>");
-						} /*else {
-							sb.append(param.get("name")).append(": ") ;
-							sb.append(value).append(" ") ;
-							sb.append(param.get("unitname")).append(" ") ;
-						}*/
+						}
 					}
 					//пользовательский справочник
 				} else if (type.equals("2")) {
@@ -545,18 +547,16 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 */
 	private void sendMesgOutOfReferenceInterval(String msg, Long aPrescriptId) {
 		JSONObject obj = getOwnerfunctionUsernameAndExtraInfo(aPrescriptId);
-		if (!obj.toString().equals("{}")) {
+		if (obj.has("username")) {
 			CustomMessage mes = new CustomMessage() ;
 			mes.setMessageTitle("Выход за границы референсного интервала в лаб. анализе") ;
-			mes.setMessageText("Результат анализа пациента: " + obj.get("patient") + ":<br>" + msg) ;
+			mes.setMessageText("Результат анализа пациента: " + obj.getString("patient") + ":<br>" + msg) ;
 			mes.setUsername("system_message") ;
 			long date = new java.util.Date().getTime() ;
-			mes.setDateReceipt(new java.sql.Date(date)) ;
-			mes.setTimeReceipt(new Time(date)) ;
 			mes.setDispatchDate(new java.sql.Date(date)) ;
 			mes.setDispatchTime(new Time(date)) ;
-			mes.setRecipient(obj.get("username").toString()) ;
-			mes.setMessageUrl("entityParentView-stac_slo.do?id=" + Long.valueOf(obj.get("dmcId").toString()));
+			mes.setRecipient(obj.getString("username")) ;
+			mes.setMessageUrl("entityParentView-stac_slo.do?id=" + Long.valueOf(obj.getString("dmcId")));
 			mes.setIsEmergency(true) ;
 			theManager.persist(mes) ;
 		}

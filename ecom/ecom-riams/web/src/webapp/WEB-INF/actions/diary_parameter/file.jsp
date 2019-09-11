@@ -14,6 +14,7 @@
       </msh:ifFormTypeIsView>
       <msh:ifFormTypeAreViewOrEdit formName="diary_parameterForm" guid="a6802286-1d60-46ea-b7f4-f588331a09f7">
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-diary_parameter" name="Удалить" roles="/Policy/Diary/ParameterGroup/Parameter/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+        <msh:sideLink params="id" action="/entityParentPrepareCreate-diary_parameterRef" name="Создать реф инт" roles="/Policy/Diary/ParameterGroup/Parameter/Create" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
@@ -36,6 +37,26 @@
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="diary_parameterForm">
+      <msh:section title="Перечень референтных значений">
+        <ecom:webQuery name="refValues"
+                       nativeSql="
+    select rv.id, rv.normaMin, rv.normaMax, rv.superMin, rv.superMax, rv.ageFrom, rv.ageTo, vs.name
+from ParameterReferenceValue rv
+left join vocSex vs on vs.id=rv.sex_id
+where rv.parameter_id=${param.id} order by rv.ageFrom
+    "
+        />
+        <msh:table name="refValues" action="entityParentEdit-diary_parameterRef.do" idField="1">
+          <msh:tableColumn property="6" columnName="Возраст от"/>
+          <msh:tableColumn property="7" columnName="Возраст до"/>
+          <msh:tableColumn property="8" columnName="Пол"/>
+          <msh:tableColumn property="2" columnName="Норма от" />
+          <msh:tableColumn property="3" columnName="Норма до" />
+          <msh:tableColumn property="5" columnName="Мин значение" />
+          <msh:tableColumn property="4" columnName="Макс значение" />
+        </msh:table>
+      </msh:section>
+
     <msh:section title="Список шаблонов, где присутствует данный параметер">
     <ecom:webQuery name="list_template"
     nativeSql="

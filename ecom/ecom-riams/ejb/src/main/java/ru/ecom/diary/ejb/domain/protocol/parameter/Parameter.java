@@ -1,11 +1,5 @@
 package ru.ecom.diary.ejb.domain.protocol.parameter;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserDomain;
 import ru.ecom.diary.ejb.domain.protocol.parameter.voc.VocMeasureUnit;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -13,6 +7,10 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.util.List;
+
 /**
  * Параметр
  * @author stkacheva
@@ -53,21 +51,25 @@ public class Parameter extends BaseEntity{
 
 	/** Максимальное значение */
 	@Comment("Максимальное значение")
+	@Deprecated
 	public Long getMaximum() {return theMaximum;}
 	public void setMaximum(Long aMaximum) {theMaximum = aMaximum;}
 
 	/** Минимальное значение */
 	@Comment("Минимальное значение")
+	@Deprecated
 	public Long getMinimum() {return theMinimum;}
 	public void setMinimum(Long aMinimum) {theMinimum = aMinimum;}
 
 	/** Норма - максимальное значение */
 	@Comment("Норма - максимальное значение")
+	@Deprecated
 	public Long getNormMaximum() {return theNormMaximum;}
 	public void setNormMaximum(Long aNormMaximum) {theNormMaximum = aNormMaximum;}
 
 	/** Норма - минимальное значение */
 	@Comment("Норма - минимальное значение")
+	@Deprecated
 	public Long getNormMinimum() {return theNormMinimum;}
 	public void setNormMinimum(Long aNormMinimum) {theNormMinimum = aNormMinimum;}
 
@@ -113,23 +115,28 @@ public class Parameter extends BaseEntity{
 	
 	/** Норма - минимальное значение */
 	@Comment("Норма - минимальное значение")
+	@Deprecated
 	public String getNormMinimumBD() {return theNormMinimumBD;}
 	public void setNormMinimumBD(String aNormMinimumBD) {theNormMinimumBD = aNormMinimumBD;}
 
 	/** Норма - максимальное значение */
 	@Comment("Норма - максимальное значение")
+	@Deprecated
 	public String getNormMaximumBD() {return theNormMaximumBD;}
 	public void setNormMaximumBD(String aNormMaximumBD) {theNormMaximumBD = aNormMaximumBD;}
 
 	/** Максимальное значение */
 	@Comment("Максимальное значение")
+	@Deprecated
 	public String getMaximumBD() {return theMaximumBD;}
 	public void setMaximumBD(String aMaximumBD) {theMaximumBD = aMaximumBD;}
 
 	/** Минимальное значение */
 	@Comment("Минимальное значение")
+	@Deprecated
 	public String getMinimumBD() {return theMinimumBD;}
 	public void setMinimumBD(String aMinimumBD) {theMinimumBD = aMinimumBD;}
+
 	/** Кол-во знаков после запятой */
 	@Comment("Кол-во знаков после запятой")
 	public Long getCntDecimal() {return theCntDecimal;}
@@ -157,4 +164,12 @@ public class Parameter extends BaseEntity{
 
 	/** Значение по умолчанию для текстового поля */
 	private String theValueTextDefault;
+
+	/** Список референтных значений */
+	@Comment("Список референтных значений")
+	@OneToMany (mappedBy = "parameter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	public List<ParameterReferenceValue> getReferenceValues() {return theReferenceValues;}
+	public void setReferenceValues(List<ParameterReferenceValue> aReferenceValues) {theReferenceValues = aReferenceValues;}
+	/** Список референтных значений */
+	private List<ParameterReferenceValue> theReferenceValues ;
 }

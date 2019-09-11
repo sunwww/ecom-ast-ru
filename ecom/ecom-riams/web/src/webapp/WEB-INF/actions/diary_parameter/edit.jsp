@@ -11,6 +11,7 @@
     <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Параметр">
       <msh:ifFormTypeIsView formName="diary_parameterForm" guid="e2054544-85-a21c-3bb9b4569efc">
         <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-diary_parameter" name="Изменить" roles="/Policy/Diary/ParameterGroup/Parameter/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
+          <msh:sideLink params="id" action="/entityParentPrepareCreate-diary_parameterRef" name="Создать реф. инт." roles="/Policy/Diary/ParameterGroup/Parameter/Create" />
       </msh:ifFormTypeIsView>
       <msh:ifFormTypeAreViewOrEdit formName="diary_parameterForm" guid="a6802286-1d60-46ea-b7f4-f588331a09f7">
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-diary_parameter" name="Удалить" roles="/Policy/Diary/ParameterGroup/Parameter/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
@@ -51,18 +52,40 @@
           <msh:separator label="Референтный интервал" colSpan="4" guid="8a5d7b52-f7c9-435b-a0a6-0f0ee96ff98a" />
         </msh:row>
         <msh:row guid="24a99174-6e3c-4a2b-aee8-170d17f75823">
-          <msh:textField property="normMinimum" label="Минимальное значение" guid="c6bcea98-7d63-4c4f-b6ca-8c21f8e6afb2" />
-          <msh:textField property="normMaximum" label="Максимальное значение" guid="d9c99474-04f7-4e21-b236-9407f1340bb2" />
+          <msh:textField property="normMinimum" label="Минимальное значение" guid="c6bcea98-7d63-4c4f-b6ca-8c21f8e6afb2" viewOnlyField="true" />
+          <msh:textField property="normMaximum" label="Максимальное значение" guid="d9c99474-04f7-4e21-b236-9407f1340bb2" viewOnlyField="true" />
         </msh:row>
         <msh:row guid="751f466a-e4b1-4734-8366-78404e3116a5">
           <msh:separator label="Границы допустимых значений" colSpan="4" guid="ab667acc-fbdc-487f-90bc-97a8bd689e13" />
         </msh:row>
         <msh:row guid="9f396407-75b9-4804-955a-96677a5c21af">
-          <msh:textField property="minimum" label="Минимальное значение" guid="c3a6b3c6-989b-454d-ac72-67e35aaf8313" />
-          <msh:textField property="maximum" label="Максимальное значение" guid="e4db521f-0810-4728-829b-72392c0c8814" />
+          <msh:textField property="minimum" label="Минимальное значение" guid="c3a6b3c6-989b-454d-ac72-67e35aaf8313" viewOnlyField="true" />
+          <msh:textField property="maximum" label="Максимальное значение" guid="e4db521f-0810-4728-829b-72392c0c8814" viewOnlyField="true" />
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="3" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
+        <msh:ifFormTypeIsView formName="diary_parameterForm">
+        <msh:section title="Перечень референтных значений">
+            <ecom:webQuery name="refValues"
+                           nativeSql="
+    select rv.id, rv.normaMin, rv.normaMax, rv.superMin, rv.superMax, rv.ageFrom, rv.ageTo, vs.name
+from ParameterReferenceValue rv
+left join vocSex vs on vs.id=rv.sex_id
+where rv.parameter_id=${param.id} order by rv.ageFrom
+    "
+            />
+            <msh:table name="refValues" action="entityParentEdit-diary_parameterRef.do" idField="1">
+                <msh:tableColumn property="6" columnName="Возраст от"/>
+                <msh:tableColumn property="7" columnName="Возраст до"/>
+                <msh:tableColumn property="8" columnName="Пол"/>
+                <msh:tableColumn property="2" columnName="Норма от" />
+                <msh:tableColumn property="3" columnName="Норма до" />
+                <msh:tableColumn property="5" columnName="Мин значение" />
+                <msh:tableColumn property="4" columnName="Макс значение" />
+
+            </msh:table>
+        </msh:section>
+        </msh:ifFormTypeIsView>
     </msh:form>
     
     

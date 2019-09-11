@@ -291,7 +291,7 @@
 		        txt += "</div>";
 		        txt += "</div>";
 	        } else {
-		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+		        txt += "<input onblur='checkFieldValue(this, "+aParam.id+")' id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
 		        
 	        }
 	        txt += "</td>" ;
@@ -302,6 +302,34 @@
 	        txt += "</tr>" ;
 			return txt ;
 		}
+
+
+		/*Проверяем на минимальные / максимальные значения*/
+		function checkFieldValue(txtField, id) {
+		    var val = +jQuery(txtField).val().replace(",",".").trim();
+		    if (val){
+                var el = getParameterById(id);
+                if (el.nmin || el.nmax) {
+                    if (val < el.min || val > el.max) { //выходит вообще за всякие рамки
+                        if (! confirm ("Значение "+val +(val <el.nmin ? " меньше минимального значения "+(+el.min) : " превышает максимальное значение "+(+el.max))+", вы уверены? ")) {
+                            jQuery(txtField).val("");
+                            return;
+                        }
+                    }
+                    if (val < el.nmin || val > el.nmax) { //выход за пределы реф. значений
+                        jQuery(jQuery(txtField).parent().parent().children()[2]).html((val < el.nmin ? "<img src='/skin/images/arrow/green-down.png'>" : "<img src='/skin/images/arrow/red-up.png'>")+"" +
+                            " (норм "+(+el.nmin)+" - "+(+el.nmax)+")");
+                    } else { //значение в норме
+                        jQuery(jQuery(txtField).parent().parent().children()[2]).html("("+el.cntdecimal+") "+el.unitname);
+                    }
+                }
+            }
+        }
+
+        function getParameterById(id) {
+		    var ret = jQuery.grep(fldJson.params, function(el) {return el.id==id;});
+		    return ret ? ret[0] : {} ;
+        }
 
      // Отмена
      function cancel${name}IntakeInfo() {
