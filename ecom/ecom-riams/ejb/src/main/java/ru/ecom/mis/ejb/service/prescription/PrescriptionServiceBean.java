@@ -505,11 +505,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				theManager.persist(fip) ;
 			}
 			//ФИО лабораторного техника
-			String fio = getRealLabTechUsername(aPrescriptId,aUsername);
+	/*		String fio = getRealLabTechUsername(aPrescriptId,aUsername);
 			if (!fio.equals("")) {
 				sb.append("\n");
 				sb.append(fio);
-			}
+			}*/
 			d.setRecord(sb.toString()) ;
 			theManager.persist(d) ;
 			if (!wf.equals("0")) {
@@ -617,7 +617,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				" where p.id=:aPrescriptId").setParameter("aPrescriptId",aPrescriptId).getResultList();
 		if (!transferUsername.isEmpty() && transferUsername.get(0)!=null)
 			aUsername=String.valueOf(transferUsername.get(0));
-		return  getWorkfuntctionInfoByLabTechUsername(aUsername);
+		return getWorkfuntctionInfoByLabTechUsername(aUsername);
 	}
 	public Long checkLabAnalyzed(Long aPrescriptId,Long aWorkFunctionId,String aUsername) {
 		StringBuilder sql = new StringBuilder() ;
