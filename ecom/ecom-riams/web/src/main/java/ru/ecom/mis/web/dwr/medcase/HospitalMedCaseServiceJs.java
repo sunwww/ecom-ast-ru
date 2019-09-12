@@ -2633,7 +2633,7 @@ public class HospitalMedCaseServiceJs {
 	}
 
     /**
-     * Получить получить parent СЛС в СЛО #151
+     * Получить parent СЛС в СЛО #151
      * @param aSloId HDeparetmentMedCase.id
      * @return String parent СЛС
      */
@@ -2666,5 +2666,16 @@ public class HospitalMedCaseServiceJs {
 		service.executeUpdateNativeSql
 				("update medcase set isidentified='1', identdate=current_date,identtime=current_time,identusername='"
 						+login+"' where id='"+aMedCaseId+"' or id=(select parent_id from medcase where id='"+aMedCaseId+"')") ;
+	}
+
+	/**
+	 * Получить id карты оценки по коду
+	 * @param aCode Code
+	 * @return String
+	 */
+	public String getDiabetCardByCode(String aCode, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select id from assessmentCardTemplate where code='"+aCode+"'") ;
+		return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
 	}
 }

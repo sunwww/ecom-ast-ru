@@ -17,7 +17,7 @@
          
          
 
-         <msh:textField property="name" label="Название" size="10"/>
+         <msh:textField property="name" label="Название" horizontalFill="true"/>
        	 <br>
           <msh:textField property="maxBall" label="Максимальный балл" size="10"/>
      	  <br>

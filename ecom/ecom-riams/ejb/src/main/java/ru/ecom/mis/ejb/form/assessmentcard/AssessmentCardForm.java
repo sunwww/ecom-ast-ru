@@ -4,6 +4,9 @@ import javax.persistence.Column;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCard;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
@@ -24,6 +27,12 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Карта оценки", nameProperties= "id", view="entityParentView-mis_assessmentCard.do" ,list = "entityList-mis_assessmentCard.do")
 @Parent(property = "patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/AssessmentCard")
+@ACreateInterceptors(
+		@AEntityFormInterceptor(AssessmentCardSaveInterceptor.class)
+)
+@ASaveInterceptors(
+		@AEntityFormInterceptor(AssessmentCardSaveInterceptor.class)
+)
 public class AssessmentCardForm extends IdEntityForm{
 	/** Тип карты оценки */
 	@Comment("Тип карты оценки")

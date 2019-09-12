@@ -618,7 +618,7 @@ left join Patient pat on pat.id=wan.person_id
                   ,ac.ballsum as f4_ballsum
                   from assessmentCard ac
                   left join assessmentcardtemplate act on act.id=ac.template
-                  where ac.medcase_id=${param.id}
+                  where ac.medcase_id=${param.id}   and act.code<>'checkDiabetes'
                 order by ac.startDate desc"/>
                 <msh:section>
                     <msh:sectionTitle>
@@ -630,6 +630,30 @@ left join Patient pat on pat.id=wan.person_id
                             <msh:tableColumn columnName="Название" property="2" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
                             <msh:tableColumn columnName="Дата приема" property="3" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
                             <msh:tableColumn columnName="Сумма баллов" property="4" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                        </msh:table>
+                    </msh:sectionContent>
+                </msh:section>
+            </msh:ifInRole>
+            <msh:ifInRole roles="/Policy/Mis/Journal/CheckDiabetes">
+                <ecom:webQuery name="asCard" nativeSql="  select ac.id, act.name, to_char(ac.startDate,'dd.MM.yyyy') as priemDate
+                  ,ac.ballsum as f4_ballsum
+                  ,ass.name as risk
+                  from assessmentCard ac
+                  left join assessmentcardtemplate act on act.id=ac.template
+                  left join assessment ass on ass.assessmentcard=ac.id
+                  where ac.medcase_id=${param.id} and act.code='checkDiabetes'
+                order by ac.startDate desc"/>
+                <msh:section>
+                    <msh:sectionTitle>
+                        Риск развития сахарного диабета
+                        <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard('checkDiabetes')">Добавить карту оценки</a></msh:ifInRole>
+                    </msh:sectionTitle>
+                    <msh:sectionContent>
+                        <msh:table name="asCard" action="entityParentView-mis_assessmentCard.do" idField="1">
+                            <msh:tableColumn columnName="Название" property="2" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                            <msh:tableColumn columnName="Дата приема" property="3" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                            <msh:tableColumn columnName="Сумма баллов" property="4" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                            <msh:tableColumn columnName="Риск" property="5" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
                         </msh:table>
                     </msh:sectionContent>
                 </msh:section>
@@ -951,9 +975,18 @@ where m.id ='${param.id}'"/>
             function viewAssessmentCardsByPatient(d) {
                 getDefinition("js-mis_assessmentCard-listByPatient.do?short=Short&id="+$('patient').value, null);
             }
-            function goCreateAssessmentCard() {
-                window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value;//+"&typeCard=7&slo="+${param.id};
-                $('isPrintInfo').checked='checked' ;
+            function goCreateAssessmentCard(codeCard) {
+                if (codeCard) {
+                    HospitalMedCaseService.getDiabetCardByCode(
+                        codeCard, {
+                            callback: function(typeCard) {
+                                var way = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&slo="+${param.id};
+                                window.location.href = typeCard? way+"&typeCard="+typeCard : way;
+                            }}
+                    );
+                }
+                else
+                    window.location.href ="entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&slo="+${param.id};
             }
         </script>
 
