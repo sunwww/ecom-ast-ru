@@ -127,7 +127,10 @@
 	function escapeHtml(aText, lowerCase, oneString, noIntake, noLabTechnik) {
 	    if (true==lowerCase) aText = aText.toLowerCase();
 	    if (true==noIntake) aText = aText.replace(/([Зз]абор)[абор имтелпзвдн:]*\d{2}.\d{2}.\d{4} \d{2}:\d{2}/g,'');
-	    if (true==noLabTechnik) aText = aText.replace(/(Лаборант ).*/g,'');
+	    if (true==noLabTechnik) {
+	        aText = aText.replace(/(Лаборант ).*/g,'');
+            aText = aText.replace(/(лаборант ).*/g,'');
+        }
 		aText = aText.replace(/&/g, '&amp;')
             .replace(/>/g, '&gt;')
             .replace(/</g, '&lt;')
