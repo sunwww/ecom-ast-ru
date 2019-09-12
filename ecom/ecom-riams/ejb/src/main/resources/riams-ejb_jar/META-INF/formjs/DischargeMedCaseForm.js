@@ -33,6 +33,7 @@ function onSave(aForm,aEntity, aCtx) {
 		aCtx.manager.persist(aEntity) ;
 	}*/
 	closePrescriptions(aForm, aCtx);
+    checkPaidServicesExecuted(aEntity, aCtx);
 }
 function onPreSave(aForm,aEntity, aCtx) {
     //checkUniqueDiagnosis(aForm,aCtx);
@@ -243,4 +244,60 @@ function checkIfIsQECard(aForm,aCtx) {
         	" vqk.code='PR203' and qe.experttype='BranchManager'";
         if (aCtx.manager.createNativeQuery(sql).getResultList().isEmpty() ) throw ("Выписка пациента разрешена только после создания заведующим экспертной карты по 203 приказу!")
     }
+}
+
+/**
+ * Отметить оплаченные назначения выполненными #178
+ * @param aEntity сущность
+ * @param aCtx контекст
+ */
+function checkPaidServicesExecuted(aEntity, aCtx) {
+	/* Если поток обслуживания - платный,
+	в течение days дней до госпитализации по текущий день (настройка приложения)
+	получить все CAOS, которые являются частью комплексной услуги (но не самой комплексной услугой)
+	и которые не были выполнены в СЛС/СЛО.
+	Проставить отметку о выполнении (medcase_id - СЛС)
+	 */
+	if (aEntity.getServiceStream()!=null && aEntity.getServiceStream().getCode()=='CHARGED') {
+		var days = getSettingDaysByKey('checkContractsServicesInSls', 7, aCtx);
+        updateListIdCAOS(days,aEntity.id,aCtx);
+	}
+}
+
+/**
+ * Получить настройку кол-ва дней по ключу #178
+ * @param aKey ключ
+ * @param aCtx контекст
+ * @return настройка String
+ */
+function getSettingDaysByKey(aKey, aDefault, aCtx) {
+    var resSet = aCtx.manager.createNativeQuery("select keyvalue from softconfig where key='"+aKey+"'").getResultList();
+    return resSet.isEmpty() || +resSet.get(0)==0? aDefault: +resSet.get(0);
+}
+
+/**
+ * Проставить medcase всем CAOS, которые являются частью комплексной услуги (но не самой комплексной услугой)
+ * и которые не были выполнены в СЛС/СЛО #178
+ * @param days в течение какого кол-ва дней проверять счета
+ * @param aMedcaseId СЛС
+ * @param aCtx контекст
+ */
+function updateListIdCAOS(days,aMedcaseId,aCtx) {
+    return aCtx.manager.createNativeQuery("update contractaccountoperationbyservice set medcase_id = " + aMedcaseId +
+		" where id=ANY(select caos.id" +
+        " from medcase sls" +
+        " left join vocservicestream sstream on sstream.id=sls.servicestream_id" +
+        " left join patient pat on sls.patient_id=pat.id " +
+        " left join contractperson cp on pat.id=cp.patient_id" +
+        " left join servedperson sp on cp.id=sp.person_id" +
+        " left join contractaccount ca on ca.id=sp.account_id" +
+        " left join contractaccountmedservice cams on ca.id=cams.account_id" +
+        " left join contractaccountoperationbyservice caos on cams.id=caos.accountmedservice_id" +
+        " where sls.datefinish is null" +
+        " and sls.id='" + aMedcaseId +
+        "' and sstream.code='CHARGED'" +
+        " and cams.fromcomplexmedserviceid is not null" +
+        " and caos.medcase_id is null and caos.serviceid is null  " +
+        " and (ca.createdate between sls.datestart and sls.datestart-" + days + " or ca.createdate=sls.datestart" +
+        " or ca.createdate=sls.datestart-"+days+"))").executeUpdate();
 }

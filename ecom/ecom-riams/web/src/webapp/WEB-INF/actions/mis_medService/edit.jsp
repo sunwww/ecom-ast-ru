@@ -186,7 +186,28 @@
 				</msh:table>
 			</msh:section>
 		</msh:ifInRole>
-		
+
+          <msh:ifInRole roles="/Policy/Mis/MedService/View">
+              <msh:section title="Услуги, входящие в данную комплексную программу"
+                           createUrl="entityParentPrepareCreate-mis_medServiceComplexLink.do?id=${param.id}">
+                  <ecom:webQuery name="innerComplex"
+                                 nativeSql="select cmpl.id,ms.code,ms.name,cmpl.countinnermedservice
+                                  from medservice ms
+                                  left join MedServiceComplexLink cmpl on ms.id=cmpl.innermedservice_id
+                                  where cmpl.complexmedservice_id =${param.id}"
+                  />
+                  <msh:table name="innerComplex"
+                             action="entityParentView-mis_medServiceComplexLink.do" idField="1"
+                             editUrl="entityParentEdit-mis_medServiceComplexLink.do"
+                             deleteUrl="entityParentDeleteGoParentView-mis_medServiceComplexLink.do">
+                      <msh:tableColumn columnName="#" property="sn"/>
+                      <msh:tableColumn columnName="Код" property="2"/>
+                      <msh:tableColumn columnName="Услуга" property="3"/>
+                      <msh:tableColumn columnName="Кол-во" property="4"/>
+                  </msh:table>
+              </msh:section>
+          </msh:ifInRole>
+
       </msh:ifFormTypeIsView>
     
   </tiles:put>
