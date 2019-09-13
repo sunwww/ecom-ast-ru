@@ -189,7 +189,8 @@
 		//window.document.location="print-ass_card1.do?s=PrintService&m=printAssessmentCard&id=${param.id}&groupFields="+groupFields+"&sqlText"+sql;
   }
   function goBackSloOrVisit() {
-      if ($('medcase').value!=null && $('medcase').value!='' && $('medcase').value!='0') {
+      if ($('medcase').value!=null && $('medcase').value!='' && $('medcase').value!='0'
+          && $('patient').value!=null  && $('patient').value!='' && $('patient').value!='0') {
           HospitalMedCaseService.getMedcaseDtype($('medcase').value,{
               callback: function(res) {
                   if (res=='1')
@@ -208,8 +209,11 @@
   <msh:ifFormTypeIsNotView formName="mis_assessmentCardForm">
   <script type="text/javascript" src="./dwr/interface/TemplateProtocolService.js"></script>
   
-  <script type = 'text/javascript'> 
-  
+  <script type = 'text/javascript'>
+
+      if ('${typeCard}'!=null && '${typeCard}'!='' && !$('templateName').disabled)  //чтобы не меняли, если передан параметр
+          $('templateName').disabled=$('template').disabled=true;
+
   templateAutocomplete.addOnChangeCallback(function() {fillDataDiv();$('ballSum').value='';});
   //eventutil.addEventListener($('template'),'change',function(){fillDataDiv();}) ;
  //var oldaction = document.forms['mis_assessmentCardForm'].action ;
@@ -364,9 +368,9 @@
   	var regexp = /^[\d+.]+$/;
 		var isError = false ;
 		for (var ind=0;ind<fldJson.params.length;ind++) {
-			
+
 			var val = $('param'+fldJson.params[ind].id).value ;
-			var par = fldJson.params[ind] ; 
+			var par = fldJson.params[ind] ;
 			var err ="";
 			errorutil.HideError($('param'+par.idEnter)) ;
 			
@@ -439,7 +443,7 @@
 			document.forms['mis_assessmentCardForm'].submit();
 		}
 	} 
-  
+
   function getBall (aParameterId) {
 	  if (+$('param'+aParameterId).value>0) {} else {
 		  $('Param'+aParameterId+'Ball').innerHTML ="";
@@ -488,16 +492,13 @@
 					  
 				  }
 				  $('ballSum').value = sum;
-				  //Milamesher 06122018 в картах оценки риска в родовом - в причечание добавлять расшифровку риска
-                  if ($('template').value=='7') {
-                      //удалить старые данные
-                      $('comment').value=$('comment').value.replace("Низкий фактор риска развития ВТЭО (0-1 балл): - эластическая компрессия нижних конечностей.","");
-                      $('comment').value=$('comment').value.replace(new RegExp("Средний фактор.{1,}дней."),"");
-                      $('comment').value=$('comment').value.replace(new RegExp("Высокий фактор.{1,}в течение 6 недель."),"");
-                      if (sum <= 1) $('comment').value += "Низкий фактор риска развития ВТЭО (0-1 балл): - эластическая компрессия нижних конечностей.";
-                      else if (sum == 2) $('comment').value += "Средний фактор риска развития ВТЭО (2 балла): - перемежающаяся пневмокомпрессия (ППК), - низкомолекулярные гепарины (НМГ)_________________в дозе_________ в течение 6-7 дней - нефракционированный гепарин (НФГ)________________в дозе_________в течение 6-7 дней.";
-                      else if (sum >= 3) $('comment').value += "Высокий фактор риска развития ВТЭО (3 и более баллов): - ППК, - НМГ____________________в дозе___________в течение 6 недель - НФГ____________________в дозе___________в течение 6 недель.";
-                  }
+				  //Milamesher проставить оценку из карты
+                  TemplateProtocolService.getRisk($('template').value,sum, {
+                      callback: function (a){
+                          if (a && a!='')
+                              $('comment').value=a;
+                      }
+                  });
 			  }
 		  }); 
 	  

@@ -925,4 +925,17 @@ public class TemplateProtocolJs {
 		}
 		return null ;
 	}
+	/**
+	 * Получить риск по баллам
+	 * @param aCardTypeId Тип карты оценки
+	 * @param val Long Результат (баллы)
+	 * @return String
+	 */
+	public String getRisk(String aCardTypeId, Long val, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql
+				("select name from assessment" +
+						" where "+ val + " between minball and maxball and assessmentcard=" + aCardTypeId);
+		return !res.isEmpty()? res.iterator().next().get1().toString() : "";
+	}
 }
