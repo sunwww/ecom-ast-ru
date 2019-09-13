@@ -16,6 +16,7 @@ import javax.servlet.jsp.JspException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collection;
@@ -161,9 +162,9 @@ public class ContractServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l = service.executeNativeSql("select id from vocserviceStream where id="+aServiceStreamId+" and isCalcDogovor='1'");
 		if (!l.isEmpty()) {
-			if (aMedhelpType!=null&& aMedhelpType.equals("POLYCLINIC")) {
+			if ("POLYCLINIC".equals(aMedhelpType)) {
 				aMedhelpType = "AMB";
-			} else if (aMedhelpType!=null&&aMedhelpType.equals("HOSPITAL")) {
+			} else if ("HOSPITAL".equals(aMedhelpType)) {
 				aMedhelpType = "PLAN_HOSP";
 			} else {
 				return "0Неизвестный тип помощи";
@@ -171,13 +172,15 @@ public class ContractServiceJs {
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("select cg.id as id,cg.numberdoc, to_char(cg.issueDate,'dd.MM.yyyy') as guarDate, mc.contractnumber as contractNumber")
-					.append(",cg.limitMoney, mc.pricelist_id as price")
+					.append(",cg.limitMoney, mc.pricelist_id as price,  case when  cg.isnolimit ='1' then '1' else '0' end as f7_isNoLimit")
 					.append(" from contractguarantee  cg")
 					.append(" left join contractperson cp on cp.id=cg.contractperson_id")
-					.append(" left join medpolicy mp on mp.patient_id=cp.patient_id")
 					.append(" left join medcontract mc on mc.id=cg.contract_id")
 					.append(" left join contractperson cpCustomer on cpCustomer.id=mc.customer_id")
-					.append(" left join vocguaranteekindhelp vgkh on vgkh.id=cg.kindhelp_id").append(" where mc.servicestream_id='").append(aServiceStreamId).append("'").append(" and (cg.contractperson_id is null or cp.patient_id='").append(aPatient).append("') and vgkh.code='").append(aMedhelpType).append("'");
+					.append(" left join medpolicy mp on mp.patient_id=cp.patient_id and mp.company_id=cpCustomer.regcompany_id")
+					.append(" left join vocguaranteekindhelp vgkh on vgkh.id=cg.kindhelp_id")
+					.append(" where mc.servicestream_id='").append(aServiceStreamId).append("'")
+					.append(" and (cg.contractperson_id is null or cp.patient_id='").append(aPatient).append("') and vgkh.code='").append(aMedhelpType).append("'");
 			if (aDate!=null&&!aDate.equals("")) {
 				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=to_date('").append(aDate).append("','dd.MM.yyyy'))");
 			} else if (aDatePlanId!=null&&!aDatePlanId.equals("")){
@@ -185,33 +188,34 @@ public class ContractServiceJs {
 			} else {
 				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=current_date)");
 			}
-			sb.append(" and case when cpCustomer.regcompany_id is not null and mp.company_id=cpCustomer.regcompany_id then 1 else 0 end = 1");
+			sb.append(" and case when cpCustomer.regcompany_id is not null and mp.id is not null then 1 when cpCustomer.regcompany_id is null then 1 else 0 end = 1");
 		LOG.info("=== Ищем гар. письмо по пациенту. sql="+sb.toString());
 			l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
 				LOG.info("Ищем уже исрасходованную сумму лечения");
 				WebQueryResult r = l.iterator().next();
-				float limit  = Float.parseFloat(r.get5().toString());
-				String priceListId = r.get6().toString();
 				String guaranteeId = r.get1().toString();
-				l = service.executeNativeSql("select list(''||id) from medcase where guarantee_id="+guaranteeId);
-				float spent = 0;
-				for (WebQueryResult wqr: l) {
-					String listId =wqr.get2()!=null?wqr.get2().toString():null;
-					if (listId!=null) {
-						String[] ids = listId.split(",");
-						for (String id: ids) {
-							spent +=calculateMedCaseCost(Long.valueOf(id), Long.valueOf(priceListId), aRequest);
+				BigDecimal limit = null , spent = BigDecimal.valueOf(0.0);
+				if ("0".equals(r.get7())) {
+					limit  = BigDecimal.valueOf(Double.parseDouble(r.get5().toString()));
+					String priceListId = r.get6().toString();
+					l = service.executeNativeSql("select list(''||id) from medcase where guarantee_id="+guaranteeId);
+					for (WebQueryResult wqr: l) {
+						String listId =wqr.get2()!=null?wqr.get2().toString():null;
+						if (listId!=null) {
+							String[] ids = listId.split(",");
+							for (String id: ids) {
+								spent = spent.add(calculateMedCaseCost(Long.valueOf(id), Long.valueOf(priceListId), aRequest));
+							}
 						}
-					}				
+					}
 				}
+
 				sb.setLength(0);
-				//id письма
-				//номер письма
 				//Дата письма
 				sb.append(guaranteeId) //id письма
 						.append("|гар. письмо № ").append(r.get2()) //номер письма
-						.append(" от ").append(r.get3()).append(" Остаток средств: ").append(limit - spent).append(" руб. (Договор №").append(r.get4()).append(")");
+						.append(" от ").append(r.get3()).append(" Остаток средств: ").append(limit!=null ? limit.subtract(spent) : " без лимита").append(" руб. (Договор №").append(r.get4()).append(")");
 				return "1"+sb.toString();
 			} else {
 				return "0Не найдено гарантийное письмо";
@@ -228,7 +232,7 @@ public class ContractServiceJs {
 	 * @return Стоимость случая
 	 * @throws NamingException
 	 */
-public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServletRequest aRequest) throws NamingException {
+public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServletRequest aRequest) throws NamingException {
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql;
@@ -249,13 +253,13 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 					aPriceListId = Long.valueOf(r.get2().toString());
 				} else {
 					LOG.info("Не удалось вычислить прайс-лист для расчета цены случая " +aMedcaseId);
-					return 0.00;
+					return BigDecimal.ZERO;
 				}
 			}
 		}
 		LOG.debug("Находим информацию по пацинету, СМО="+aMedcaseId);
 		sql = "select m.patient_id,to_char(m.datestart,'dd.mm.yyyy') as dstart ,to_char(coalesce(m.datefinish,current_date),'dd.mm.yyyy') as dfinish,m.serviceStream_id as servstream, m.dtype as dtype from medcase m where m.id="+aMedcaseId;
-		Double sum = 0.00;
+		BigDecimal sum = BigDecimal.ZERO;
 		Collection<WebQueryResult> l = service.executeNativeSql(sql);
 		if (!l.isEmpty()) {
 			WebQueryResult slsInfo = l.iterator().next();
@@ -294,9 +298,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				l= service.executeNativeSql(sql);
 				if (!l.isEmpty()) {
 					Object o = l.iterator().next().get1();
-					Double cost = (o!=null && !o.toString().equals("")) ? Double.valueOf(o.toString()) : 0.00;
+					BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 					LOG.debug("Сумма за койко дни СЛС№"+aMedcaseId+" = "+cost);
-					sum +=cost;
+					sum =sum.add(cost);
 				}
 				sql = "select sum (pp.cost) as ppcost " +
 					" from medcase vis" +
@@ -317,9 +321,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				l = service.executeNativeSql(sql);
 				if (!l.isEmpty()) {
 					Object o = l.iterator().next().get1();
-					Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+					BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 					LOG.debug("Найдена сумма по диагностическим визитам при нахождении в стационаре ("+aMedcaseId+"), сумма = "+cost);
-					sum+=cost;
+					sum=sum.add(cost);
 				}
 				
 				LOG.debug("Поиск лабораторных исследований");
@@ -343,9 +347,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 					l = service.executeNativeSql(sql);
 					if (!l.isEmpty()) {
 						Object o = l.iterator().next().get1();
-						Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+						BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 						LOG.debug("Найдена сумма за лабораторные анализы ("+aMedcaseId+"), сумма = "+cost);
-						sum+=cost;
+						sum=sum.add(cost);
 					}
 					
 					LOG.debug("Поиск цен за операции");
@@ -366,9 +370,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 						l = service.executeNativeSql(sql);
 						if (!l.isEmpty()) {
 							Object o = l.iterator().next().get1();
-							Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+							BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 							LOG.debug("Найдена сумма за операции ("+aMedcaseId+"), сумма = "+cost);
-							sum+=cost;
+							sum=sum.add(cost);
 						}
 						
 						LOG.debug("Поиск цен за анастезию");
@@ -391,9 +395,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 							l = service.executeNativeSql(sql);
 							if (!l.isEmpty()) {
 								Object o = l.iterator().next().get1();
-								Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+								BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 								LOG.debug("Найдена сумма за анастезию ("+aMedcaseId+"), сумма = "+cost);
-								sum+=cost;
+								sum=sum.add(cost);
 							}
 							
 							LOG.debug("Поиск цен за доп. услуги");
@@ -416,9 +420,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 								l = service.executeNativeSql(sql);
 								if (!l.isEmpty()) {
 									Object o = l.iterator().next().get1();
-									Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+									BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 									LOG.debug("Найдена сумма за доп. услуги ("+aMedcaseId+"), сумма = "+cost);
-									sum+=cost;
+									sum=sum.add(cost);
 								}
 			} else if ("VISIT".equalsIgnoreCase(dtype)) {
 				LOG.debug("Поиск стоимости случая по визиту №"+aMedcaseId);
@@ -430,14 +434,14 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				l = service.executeNativeSql(sql);
 				if (!l.isEmpty()) {
 					Object o = l.iterator().next().get1();
-					Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+					BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 					LOG.debug("Найдена сумма по визиту №"+aMedcaseId+", сумма = "+cost);
-					sum+=cost;
+					sum=sum.add(cost);
 				}
 			}
 			return sum;
 		} else {
-			return 0.00;
+			return BigDecimal.ZERO;
 		}
 		
 	}
