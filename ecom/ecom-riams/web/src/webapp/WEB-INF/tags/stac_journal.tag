@@ -114,9 +114,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 					roles="/Policy/Mis/MedCase/Stac/Journal/CurrentByUserDepartmentMicroBio"
 					action="/stac_journalCurrentByUserDepartmentMicroBio" name="По микробиологическим исследованиям" />
 			<msh:sideLink
-					styleId="stac_journalCurrentByUserDepartment"
+					styleId="stac_journalCurrentByUserDepartmentMicroBio"
 					roles="/Policy/Mis/MedCase/Stac/Journal/CurrentByUserDepartment" key="ALT+0"
-					action="/stac_directionHIVByUserDepartment" name="Направления на ВИЧ" />
+					action="/stac_directionHIVByUserDepartment" name="Направление на СПИД" />
 	    </msh:sideMenu>
 	    <msh:sideMenu title="Журналы">
 	    	<msh:sideLink

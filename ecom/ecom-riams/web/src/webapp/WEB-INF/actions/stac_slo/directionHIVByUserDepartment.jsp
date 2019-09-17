@@ -60,7 +60,7 @@ left join Mislpu dep on dep.id=sloAll.department_id
      <msh:sectionTitle>
      Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент
      <br>ВНИМАНИЕ! Необходимо ввести <u>код контингента</u> и <u>дату забора крови</u>, чтобы пациент попал в направление!
-         <input type="button" value="Печать" onclick="print()">
+         <input type="button" value="ПЕЧАТЬ НАПРАВЛЕНИЯ" onclick="print()">
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="datelist" viewUrl="entityShortView-mis_patient.do" action="/javascript:void()" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
