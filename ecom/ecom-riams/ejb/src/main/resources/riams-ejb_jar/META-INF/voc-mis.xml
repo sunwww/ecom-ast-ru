@@ -3343,4 +3343,14 @@ left join medcase smoP on smoP.owner_id=w.id "
 				queryAppend = ''
 		/>
 	</voc>
+	<!-- Код обследования на ВИЧ -->
+	<voc id="vocHIVCodeResearch" type="NativeVocService">
+		<NativeVocService
+				from="VocHIVCodeResearch voc"
+				nameId="voc.code"
+				order="voc.name"
+				names="voc.code||' '||voc.name"
+				queried=" upper(voc.code||' ('||voc.name||')') like upper(:query) "
+		/>
+	</voc>
 </vocconfig>

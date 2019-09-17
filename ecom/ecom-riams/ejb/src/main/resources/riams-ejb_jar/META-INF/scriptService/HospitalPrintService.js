@@ -2734,3 +2734,58 @@ function printAnestResPatient(aCtx, aParams) {
     }
     return map;
 }
+
+//Получить информацию по пациенту (patId) для печати в направлении
+function getPatientHIVDirectionInfo(aCtx,patId) {
+	return aCtx.manager.createNativeQuery("select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio" +
+        " ,vsex.name as sex" +
+        " ,to_char(pat.birthday,'dd.mm.yyyy') as birthday" +
+        " , case when pat.address_addressId is not null" +
+        "      then coalesce(adr.fullname,adr.name)" +
+        "           ||case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end" +
+        "           ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end" +
+        "       ||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end" +
+        "   when pat.territoryRegistrationNonresident_id is not null" +
+        "  then okt.name||' '||pat.RegionRegistrationNonresident||' '||oq.name||' '||pat.SettlementNonresident" +
+        "       ||' '||ost.name||' '||pat.StreetNonresident" +
+        "           ||case when pat.HouseNonresident is not null and pat.HouseNonresident!='' then ' д.'||pat.HouseNonresident else '' end" +
+        "       ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end" +
+        "       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end" +
+        "   else  pat.foreignRegistrationAddress end as address" +
+
+        " from Patient pat" +
+        " left join vocsex vsex on vsex.id=pat.sex_id" +
+        " left join Address2 adr on adr.addressid = pat.address_addressid" +
+        " left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id" +
+        " left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id" +
+        " left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id" +
+        " where pat.id="+patId).getResultList() ;
+}
+
+
+//Печать направления на исследование на СПИД
+function printDirectionHIV(aCtx, aParams) {
+    var ret = new java.util.ArrayList() ;
+	var info = new java.lang.String(aParams.get("info"));
+	var infoMas=info.split('!');
+    for (var i=0; i<infoMas.length; i++) {
+        var row = infoMas[i].split('-');
+        if (row[2]) {
+            var list = getPatientHIVDirectionInfo(aCtx, row[0]);
+            if (!list.isEmpty()) {
+                var obj = list.get(0);
+                var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult();
+                par.set1("" + (i + 1));  //#
+                par.set2(obj[0]);	//фио
+                par.set3(obj[1]);	//пол
+                par.set4(obj[2]);	//дата рождения
+                par.set5(obj[3]);	//дом. адрес
+                par.set6(row[1]);	//код контингента
+                par.set7(row[2]);	//дата забора крови
+                ret.add(par);
+			}
+        }
+    }
+    map.put("listPat",ret) ;
+    return map;
+}
