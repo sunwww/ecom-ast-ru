@@ -67,6 +67,12 @@
 							<label><input type="checkbox" name="${name}NoLabTechnik" id="${name}NoLabTechnik" checked="checked"> Убрать инф. о лаборанте</label>
 						</td>
 					</msh:row>
+					<msh:row>
+						<td></td>
+						<td onclick=" format${name}Services();">
+							<label><input type="checkbox" name="${name}NoRefValues" id="${name}NoRefValues" checked="checked"> Убрать инф. о реф. инт.</label>
+						</td>
+					</msh:row>
 		            <msh:row>
 		                <td></td>
 				        <td onclick=" format${name}Services();">
@@ -124,12 +130,17 @@
 <script type="text/javascript">
      var theIs${name}EpicrisisDialogInitialized = false ;
      var the${name}EpicrisisDialog = new msh.widget.Dialog($('${name}EpicrisisDialog')) ;
-	function escapeHtml(aText, lowerCase, oneString, noIntake, noLabTechnik) {
+	function escapeHtml(aText, lowerCase, oneString, noIntake, noLabTechnik,NoRefValues) {
 	    if (true==lowerCase) aText = aText.toLowerCase();
 	    if (true==noIntake) aText = aText.replace(/([Зз]абор)[абор имтелпзвдн:]*\d{2}.\d{2}.\d{4} \d{2}:\d{2}/g,'');
 	    if (true==noLabTechnik) {
 	        aText = aText.replace(/(Лаборант ).*/g,'');
             aText = aText.replace(/(лаборант ).*/g,'');
+        }
+        if (true==NoRefValues) {
+            aText = aText.replace(/▲/g,'');
+            aText = aText.replace(/▼/g,'');
+            aText = aText.replace(/\((реф. инт: .*)/g,'');
         }
 		aText = aText.replace(/&/g, '&amp;')
             .replace(/>/g, '&gt;')
@@ -161,6 +172,7 @@
 			var lowerCase = jQuery('#${name}ExtLabsReg').is(':checked');
 			var noIntake = jQuery('#${name}ExtLabsNoIntake').is(':checked');
             var noLabTechnik = jQuery('#${name}NoLabTechnik').is(':checked');
+            var NoRefValues = jQuery('#${name}NoRefValues').is(':checked');
 			var addDate = jQuery('#${name}ExtLabsDate').is(':checked');
 			p+="<tr><td colspan='3'><label><input type='checkbox' onclick='checkAllServices(this.checked)'>Отметить все</label></td></tr>";
 			for (var i=0;i<servicesList.length;i++){
@@ -172,7 +184,7 @@
 						(true===addDate ? diary.recordDate+" " : "") +
 						(true===showService ? diary.serviceCode+" " : "")
 						+(true===showServiceName ? diary.serviceName : "")+" "+diary.recordText
-						,lowerCase,makeOneString, noIntake, noLabTechnik)+'</td>';
+						,lowerCase,makeOneString, noIntake, noLabTechnik, NoRefValues)+'</td>';
 				p+='</tr>';
 			}
 			p+='</tbody></table>'
