@@ -2782,6 +2782,7 @@ function printDirectionHIV(aCtx, aParams) {
                 par.set5(obj[3]);	//дом. адрес
                 par.set6(row[1]);	//код контингента
                 par.set7(row[2]);	//дата забора крови
+                par.set8(row[3]);	//рег. номер
                 ret.add(par);
 			}
         }

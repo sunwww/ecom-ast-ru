@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Направление на исследование образцов крови в ИФА на СПИД</msh:title>
+    <msh:title guid="helloItle-123" mainMenu="StacJournal">Направление на исследование образцов крови в ИФА на ВИЧ</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_directionHIVByUserDepartment"/>
@@ -28,7 +28,6 @@
     ||case when m.datestart!=sls.dateStart then '(госп. с '||to_char(sls.dateStart,'dd.mm.yyyy')||')' else '' end
     ||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart
     	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
-    ,list(vdrt.name||' '||vpd.name||' '||mkb.code) as diag
     ,cast('' as varchar) as emp
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
@@ -59,20 +58,20 @@ left join Mislpu dep on dep.id=sloAll.department_id
      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
      <msh:sectionTitle>
      Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент
-     <br>ВНИМАНИЕ! Необходимо ввести <u>код контингента</u> и <u>дату забора крови</u>, чтобы пациент попал в направление!
+     <br>ВНИМАНИЕ! Необходимо ввести <u>код контингента</u>, <u>дату забора крови</u> и <u>рег. номер</u>, чтобы пациент попал в направление!
          <input type="button" value="ПЕЧАТЬ НАПРАВЛЕНИЯ" onclick="print()">
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="datelist" viewUrl="entityShortView-mis_patient.do" action="/javascript:void()" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Код контингента" property="8"/>
-      <msh:tableColumn columnName="Дата забора крови" property="8"/>
+      <msh:tableColumn columnName="Код контингента" property="7"/>
+      <msh:tableColumn columnName="Дата забора крови" property="7"/>
+      <msh:tableColumn columnName="Регистрац. номер" property="7"/>
       <msh:tableColumn columnName="Стат.карта" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Дата поступления" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Леч.врач" property="6"/>
-      <msh:tableColumn columnName="Диагноз" property="7"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -141,6 +140,11 @@ left join Mislpu dep on dep.id=sloAll.department_id
             createAutocomplete(ii);
         }
 
+        //создать текстовое поле
+        function createTextField(td,ii) {
+            td.innerHTML="<label id=\"regNum"+ii+"Label\" for=\"regNum"+ii+"\"></label>" +
+                "<input title=\"Рег.&nbsp;номерNoneField\" id=\"regNum"+ii+"\" name=\"regNum"+ii+"\" size=\"10\" value=\"\" type=\"text\" autocomplete=\"off\">";
+        }
 
         //создать дату
         function createDate(td,ii) {
@@ -156,6 +160,7 @@ left join Mislpu dep on dep.id=sloAll.department_id
                 for (var ii = 1; ii < table.rows.length; ii++) {
                     createDivAutocomplete(table.rows[ii].cells[2],ii);
                     createDate(table.rows[ii].cells[3],ii);
+                    createTextField(table.rows[ii].cells[4],ii);
                 }
             }
         }
@@ -169,10 +174,11 @@ left join Mislpu dep on dep.id=sloAll.department_id
                     var row = table.rows[ii];
                     var id=+row.className.replace('datelist','')
                         .replace('selected','').replace(' ','');
-                    if (!isNaN(id) && $(voc+ii).value!='' && $('dateIntake'+ii).value!='') {
+                    if (!isNaN(id) && $(voc+ii).value!='' && $('dateIntake'+ii).value!='' && $('regNum'+ii).value!='') {
                         params=params+id+"-"
                             +$(voc+ii).value+"-"
-                            +$('dateIntake'+ii).value+"!";
+                            +$('dateIntake'+ii).value+"-"
+                            +$('regNum'+ii).value+"!";
                     }
                 }
             }
