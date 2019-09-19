@@ -20,10 +20,10 @@ function checkReagentsAndChecks(aForm, aEntity) {
         (aForm.getReagentForm1().getReagent()=='0' || aForm.getReagentForm1().getSeries()=='' ||  aForm.getReagentForm1().getExpirationDate()==''
             || aForm.getReagentForm2().getReagent()=='0' || aForm.getReagentForm2().getSeries()==''
             ||  aForm.getReagentForm2().getExpirationDate()=='' ))
-        throw "Не вся информация по реактивам заполнена! Реактивы можно не заполнять только в случае переливания плазмы, аутоплазмы и тромбоцитного концентрата.";
+        throw "Не вся информация по реактивам заполнена!";
     if (!aEntity.getBloodPreparation().getCode().equals("PLAZMA") && !aEntity.getBloodPreparation().getCode().equals("TROMB")
-        && (aForm.getPatBloodGroupCheck()=='0' || aForm.getPrepBloodGroupCheck()=='0'))
-        throw "Не вся информация по контрольным проверкам заполнена! Группу крови реципиента и донора в проверке можно не заполнять только в случае переливания плазмы, аутоплазмы и тромбоцитного концентрата.";
+        && (aForm.getPatBloodGroupCheck()=='0'))
+        throw "Не вся информация по контрольным проверкам заполнена! Группа крови реципиента обязательна для заполнения!";
 }
 function onCreate(aForm, aEntity, aContext) {
     checkReagentsAndChecks(aForm, aEntity);
@@ -36,7 +36,6 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	//aCtx.getSessionContext().set("dCreate","123");
 }
 /**
  * При сохранении
@@ -44,9 +43,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 function onSave(aForm, aEntity, aCtx) {
     checkReagentsAndChecks(aForm, aEntity);
 	aCtx.manager.persist(aEntity) ;
-	var date = new java.util.Date() ;
 	saveAdditionData(aForm,aEntity,aCtx) ;
-	
 }
 
 
@@ -61,17 +58,8 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 	saveMonitoring(aEntity,aCtx.manager,aForm.getMonitorForm1(),'1') ;
 	saveMonitoring(aEntity,aCtx.manager,aForm.getMonitorForm2(),'2') ;
 	// Реактивы
-	//milamesher only if all info provided #95
-    if (aEntity.getBloodPreparation().getCode()!=null && !aEntity.getBloodPreparation().getCode().equals("PLAZMA")
-		&& !aEntity.getBloodPreparation().getCode().equals("TROMB")
-		&& aForm.getReagentForm1().getReagent()!='0' && aForm.getReagentForm1().getSeries()!=''
-		&&  aForm.getReagentForm1().getExpirationDate()!='' && aForm.getReagentForm2().getReagent()!='0'
-		&& aForm.getReagentForm2().getSeries()!=''&&  aForm.getReagentForm2().getExpirationDate()!='') {
-    	//throw "Реагенты будут сохранены";
-        saveReagent(aEntity, aCtx.manager, aForm.getReagentForm1(), '1');
-        saveReagent(aEntity, aCtx.manager, aForm.getReagentForm2(), '2');
-    }
-    //else throw "не будут";
+	saveReagent(aEntity, aCtx.manager, aForm.getReagentForm1(), '1');
+	saveReagent(aEntity, aCtx.manager, aForm.getReagentForm2(), '2');
 	saveArray(aEntity, aCtx.manager,aForm.getComplications()
 			,Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionReaction
 			,[]
