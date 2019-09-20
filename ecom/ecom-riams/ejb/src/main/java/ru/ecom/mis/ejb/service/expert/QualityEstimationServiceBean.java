@@ -12,7 +12,6 @@ import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationCrit;
 import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationKind;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -24,8 +23,6 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Stateless
 @Remote(IQualityEstimationService.class)
@@ -603,10 +600,127 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		List<Object[]> result = theManager.createNativeQuery("select qe.id, qe.expert_id from qualityestimation qe where qe.card_id='"+aIdCard+"' and qe.expertType=:aType").setParameter("aType",aType).getResultList();
 		return result.isEmpty()? null : ConvertSql.parseLong(result.get(0)[0]) ;
 	}
+
+	/**
+	 * Преобразовать в ArrayList<String>
+	 * @param list List<Object>
+	 * @return ArrayList
+	 */
+	private ArrayList<String> getMedServicesList(List<Object> list) {
+		ArrayList<String> res = new ArrayList<>();
+		for (Object w : list)
+			res.add(w.toString());
+		return res;
+	}
+
+	/**
+	 * Получить список диагностических услуг за весь СЛС
+	 * @param startDate дата начала госпитализации
+	 * @param finishDate окончание госпитализации/текущая дата
+	 * @param patId пациент
+	 * @return ArrayList
+	 */
+	private List<Object> getDiagnosticServices(String startDate, String finishDate, Long patId) {
+		return theManager.createNativeQuery("select ms.code" +
+				" from medcase vis" +
+				" left join medcase smc on smc.parent_id=vis.id and upper(smc.dtype)='SERVICEMEDCASE'" +
+				" left join medservice ms on ms.id=smc.medservice_id" +
+				" left join vocservicestream vss on vss.id=vis.servicestream_id " +
+				" where vis.patient_id=" + patId +
+				" and ms.id is not null and (vis.datestart between to_date('" + startDate + "','dd.mm.yyyy') and to_date('" + finishDate + "','dd.mm.yyyy')" +
+				" and upper(vis.dtype)='VISIT' and (vss.code='HOSPITAL' or vss.id='1' or vss.code='OTHER') or vis.datestart-to_date('" + startDate + "','dd.mm.yyyy') = -1" +
+				" and upper(vis.dtype)='VISIT' and ( vss.id='1' )) and (vis.noActuality='0' or vis.noActuality is null) order by vis.datestart").getResultList();
+	}
+
+	/**
+	 * Получить список лабораторных услуг за весь СЛС
+	 * @param medcaseId СЛС
+	 * @param startDate дата начала госпитализации
+	 * @param finishDate окончание госпитализации/текущая дата
+	 * @return List<Object>
+	 */
+	private List<Object> getLaboratoryServices(Long medcaseId, String startDate, String finishDate) {
+		return theManager.createNativeQuery("select ms.code" +
+				" from medcase vis" +
+				" left join medcase smc on smc.parent_id=vis.id" +
+				" left join medservice ms on ms.id=smc.medservice_id" +
+				" left join vocservicestream vss on vss.id=vis.servicestream_id " +
+				" where vis.parent_id='" + medcaseId + "' and vis.datestart between to_date('" + startDate + "','dd.mm.yyyy') and to_date('" + finishDate + "','dd.mm.yyyy')" +
+				" and ms.id is not null and upper(vis.dtype)='VISIT' and upper(smc.dtype)='SERVICEMEDCASE' " +
+				" and (vss.code='HOSPITAL' or vss.id is null) and (vis.noActuality='0' or vis.noActuality is null)").getResultList();
+	}
+
+	/**
+	 * Получить список операций за весь СЛС
+	 * @param medcaseId СЛС
+	 * @return List<Object>
+	 */
+	private List<Object> getOperationServices(Long medcaseId) {
+		return theManager.createNativeQuery("select ms.code " +
+				" from SurgicalOperation so" +
+				" left join medcase slo on slo.id=so.medcase_id" +
+				" left join medservice ms on ms.id=so.medservice_id" +
+				" where (slo.parent_id='" + medcaseId + "' or slo.id='" + medcaseId + "') and ms.id is not null").getResultList();
+	}
+
+	/**
+	 * Получить список анестезий за весь СЛС
+	 * @param medcaseId СЛС
+	 * @return List<Object>
+	 */
+	private List<Object> getAnestesiaServices(Long medcaseId)  {
+		return theManager.createNativeQuery("select ms.code" +
+				" from Anesthesia aso" +
+				" left join SurgicalOperation so on so.id=aso.surgicalOperation_id" +
+				" left join medcase slo on slo.id=so.medcase_id" +
+				" left join medservice ms on ms.id=aso.medservice_id" +
+				" where (slo.parent_id='" + medcaseId + "' or slo.id='" + medcaseId + "') and ms.id is not null").getResultList();
+	}
+
+	/**
+	 * Получить список доп. услуг за весь СЛС
+	 * @param medcaseId СЛС
+	 * @return List<Object>
+	 */
+	private List<Object> getExtraServices(Long medcaseId) {
+		return theManager.createNativeQuery("select ms.code" +
+				" from MedCase so " +
+				" left join medcase slo on slo.id=so.parent_id" +
+				" left join vocservicestream vss on vss.id=so.servicestream_id" +
+				" left join medservice ms on ms.id=so.medservice_id" +
+				" where (slo.parent_id='" + medcaseId + "' or slo.id='" + medcaseId + "')" +
+				" and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT' and ms.id is not null").getResultList();
+	}
+
+	/**
+	 * Получить список всех услуг за весь СЛС
+	 * @param aMedcaseId СЛС
+	 * @return ArrayList
+	 */
+	public ArrayList<String> getAllServicesByMedCase(Long aMedcaseId) {
+		ArrayList<String> res = new ArrayList<>();
+		String startDate, finishDate;
+		Long patId;
+		List<Object[]> list0 = theManager.createNativeQuery("select to_char(dateStart,'dd.mm.yyyy') as ds" +
+				" , to_char(case when datefinish is null then current_date else datefinish end,'dd.mm.yyyy') as df" +
+				" ,patient_id as pat" +
+				" from medcase sls where id=" +aMedcaseId).getResultList();
+		if (!list0.isEmpty()) {
+			startDate = list0.get(0)[0].toString();
+			finishDate = list0.get(0)[1].toString();
+			patId = Long.parseLong(list0.get(0)[2].toString());
+			res.addAll(getMedServicesList(getDiagnosticServices(startDate,finishDate,patId)));
+			res.addAll(getMedServicesList(getLaboratoryServices(aMedcaseId,startDate,finishDate)));
+			res.addAll(getMedServicesList(getOperationServices(aMedcaseId)));
+			res.addAll(getMedServicesList(getAnestesiaServices(aMedcaseId)));
+			res.addAll(getMedServicesList(getExtraServices(aMedcaseId)));
+		}
+		return res;
+	}
+
 	@EJB ILocalEntityFormService theEntityFormService ;
     @PersistenceContext EntityManager theManager ;
     @Resource SessionContext theContext;
-	@EJB IHospitalMedCaseService theHospitalMedCaseService ;
 	//Milamesher получение списка критерии+услуги
 	private List<String[]> getExecutedCriterias(Long aCard) {
 
@@ -630,20 +744,14 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			List<Object> list0 = theManager.createNativeQuery(query).getResultList();
 			if (!list0.isEmpty()) {
 				Long id = Long.parseLong(list0.get(0).toString());
-				String json=theHospitalMedCaseService.getAllServicesByMedCase(id);
-				List<String> allMatches = new ArrayList<>();
-				Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
-				while (m.find()) {
-					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
-					//res.append(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", "")).append(" ");
-				}
+				ArrayList<String> listServicies = getAllServicesByMedCase(id);
 				for (int i = 0; i < list.size(); i++) {
 					String mcodes = (list.get(i)[2] != null) ? list.get(i)[2].toString() : "";
 					boolean flag = false;
 					total.add(new String[2]);
 					total.get(i)[0] = list.get(i)[0].toString();
-					if (!allMatches.isEmpty()) {
-						for (String scode : allMatches) {
+					if (!listServicies.isEmpty()) {
+						for (String scode : listServicies) {
 							if (mcodes.contains("'" + scode + "'")) flag = true;
 						}
 					}

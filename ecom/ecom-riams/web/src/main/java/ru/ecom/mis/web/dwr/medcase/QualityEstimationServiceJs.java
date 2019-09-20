@@ -6,7 +6,6 @@ import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.expert.IQualityEstimationService;
 import ru.ecom.mis.ejb.service.expert.QualityEstimationRow;
-import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
@@ -16,9 +15,6 @@ import javax.servlet.jsp.JspException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 public class QualityEstimationServiceJs {
 	
@@ -314,16 +310,13 @@ public class QualityEstimationServiceJs {
 		JSONArray res = new JSONArray() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		long medcase;
-		String query="select parent_id from medcase where id=" +medCaseId;
+        String query="select parent_id from medcase where id=" +medCaseId;
 		Collection<WebQueryResult> list0 = service.executeNativeSql(query);
 		if (list0.size()!=0) {
-			medcase = Long.parseLong(list0.iterator().next().get1().toString());
-			String json = getAllServicesByMedCase(medcase, aRequest);
-			List<String> allMatches = new ArrayList<>();
-			Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
-			while (m.find()) {
-				allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
-			}
+		    WebQueryResult wqr = list0.iterator().next();
+			medcase = Long.parseLong(wqr.get1().toString());
+			ArrayList<String> listServicies = getAllServicesByMedCase(medcase, aRequest);
+
 			query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes,coalesce(vqem.name,'') as vqename" +
 					" from vocqualityestimationcrit vqecrit" +
 					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  " +
@@ -347,15 +340,12 @@ public class QualityEstimationServiceJs {
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
 					JSONObject o = new JSONObject() ;
-					String mcodes = (w.get3() != null) ? w.get3().toString() : "";
-					boolean flag = false;
+					String[] mcodes = (w.get3() != null ? w.get3().toString().replaceAll("'","") : "").split(",");
 					o.put("crit",w.get2())
 							.put("mark",w.get4());
-					if (allMatches.size() > 0) {
-						for (String scode : allMatches) {
-							if (mcodes.contains("'" + scode + "'")) flag = true;
-						}
-					}
+					Boolean flag=false;
+					for (int i=0; i<mcodes.length && !flag; i++)
+                        if (listServicies.indexOf(mcodes[i])!=-1) flag=true;
 					if (flag) o.put("automark","Да");
 					else o.put("automark","Нет");
 					res.put(o);
@@ -419,8 +409,8 @@ public class QualityEstimationServiceJs {
 		}
 		return res.toString();
 	}
-	public String getAllServicesByMedCase(Long aMedcaseId,HttpServletRequest aRequest) throws NamingException {
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
+	public ArrayList<String> getAllServicesByMedCase(Long aMedcaseId,HttpServletRequest aRequest) throws NamingException {
+		IQualityEstimationService service = Injection.find(aRequest).getService(IQualityEstimationService.class);
 		return service.getAllServicesByMedCase(aMedcaseId);
 	}
 	public String GetIfCommentYesNoNeeded(String type, Long markId, Long qEId, Boolean createEdit,HttpServletRequest aRequest) throws NamingException {
@@ -447,12 +437,9 @@ public class QualityEstimationServiceJs {
 			Collection<WebQueryResult> list0 = service.executeNativeSql(query);
 			if (list0.size() != 0) {
 				medcase = Long.parseLong(list0.iterator().next().get1().toString());
-				String json = getAllServicesByMedCase(medcase, aRequest);
-				List<String> allMatches = new ArrayList<>();
-				Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
-				while (m.find()) {
-					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
-				}
+
+                ArrayList<String> listServicies = getAllServicesByMedCase(medcase, aRequest);
+
 				query = "select vqcrit.medservicecodes,qem.name\n" +
 						"from vocqualityestimationcrit vqcrit\n" +
 						"left join vocqualityestimationmark qem on qem.criterion_id=vqcrit.id\n" +
@@ -462,7 +449,7 @@ public class QualityEstimationServiceJs {
 				String mcodes = (w.get1() != null) ? w.get1().toString() : "";
 				boolean flag = false;
 				if (!mcodes.equals("")) {
-					for (String scode : allMatches) {
+					for (String scode : listServicies) {
 						if (mcodes.contains("'" + scode + "'")) flag = true;
 						//res+=scode+=" ; ";
 					}
