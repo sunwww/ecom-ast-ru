@@ -70,6 +70,7 @@
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата и время" property="2" width="10"/>
                     <msh:tableColumn columnName="Протокол" property="3" cssClass="preCell" width="70"/>
+                    <msh:tableButton buttonFunction="createNew" property="1" cssClass="preCell" buttonName="Протокол на основе дневника" buttonShortName="Протокол на основе дневника"/>
                     <msh:tableColumn columnName="Специалист" property="4" width="10"/>
                     <msh:tableColumn columnName="Тип" property="5" width="10"/>
                 </msh:table>
@@ -100,6 +101,11 @@
                     alert("Нет выделенных протоколов");
                 }
 
+            }
+
+            //Функция позовляет создать днвеник на основе выбранного =
+            function createNew(id) {
+                window.location.href = 'entityParentPrepareCreate-edkcProtocol.do?id='+$('id').value+'&type=edkc_ev&basis='+id;
             }
         </script>
     </tiles:put>

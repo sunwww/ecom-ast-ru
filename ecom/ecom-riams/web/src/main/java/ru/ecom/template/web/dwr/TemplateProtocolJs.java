@@ -938,4 +938,15 @@ public class TemplateProtocolJs {
 						" where "+ val + " between minball and maxball and assessmentcard=" + aCardTypeId);
 		return !res.isEmpty()? res.iterator().next().get1().toString() : "";
 	}
+
+	/**
+	 * Получить текст протокола
+	 * @param aProtocolId Diary.id
+	 * @return String
+	 */
+	public String getBasisProtocolRecord(Long aProtocolId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql("select record from diary where id = " + aProtocolId);
+		return !res.isEmpty()? res.iterator().next().get1().toString() : "";
+	}
 }
