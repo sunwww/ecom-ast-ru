@@ -2435,25 +2435,6 @@ public class HospitalMedCaseServiceJs {
 	}
 
 	/**
-	 * Проставить отметку о том, что консультация была передана врачу #121.
-	 *
-	 * @param prId Prescription.id
-	 * @param aRequest HttpServletRequest
-	 * @return String "0" - консультация уже отменена, "1" - всё ок, передано врачу.
-	 */
-	public String setWfConsultingIsTransfered(int prId, HttpServletRequest aRequest) throws NamingException {
-		String res="0";
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> l= service.executeNativeSql("select case when transferdate is null and canceldate is null then '1' else '0' end from prescription where id="+prId) ;
-			if (!l.isEmpty() && l.iterator().next().get1().toString().equals("1")) {
-				service.executeUpdateNativeSql("update prescription set transferdate=current_date,transfertime=current_time,transferusername='" +
-                        LoginInfo.find(aRequest.getSession(true)).getUsername() + "' where id=" + prId);
-				res="1";
-			}
-		return res;
-	}
-
-	/**
 	 * Обязательно ли заполнение услуги в дневнике? #122.
 	 * Обязательно, если:
 	 * это в СЛО
