@@ -173,7 +173,7 @@
       <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/AssessmentCard/Edit" />
       <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
       <msh:sideLink guid="sideLinkDelete" key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/AssessmentCard/View" />
-      <msh:sideLink guid="sideLinkEdit" action="/javascript:goBackSloOrVisit()" name="СЛО/Визит/Пациент" roles="/Policy/Mis/AssessmentCard/View" />
+      <msh:sideLink guid="sideLinkEdit" action="/javascript:goBackSloOrVisit()" name="СЛС/СЛО/Визит/Пациент" roles="/Policy/Mis/AssessmentCard/View" />
     </msh:sideMenu>
     
     <msh:sideMenu title="Перейти" guid="sideMenu-123">
@@ -193,7 +193,9 @@
           && $('patient').value!=null  && $('patient').value!='' && $('patient').value!='0') {
           HospitalMedCaseService.getMedcaseDtype($('medcase').value,{
               callback: function(res) {
-                  if (res=='1')
+                  if (res=='0')
+                      window.location.href="entityParentView-stac_ssl.do?id="+$('medcase').value;
+                  else if (res=='1')
                       window.location.href="entityParentView-stac_slo.do?id="+$('medcase').value;
                   else if (res=='2')
                       window.location.href="entityParentView-smo_visit.do?id="+$('medcase').value;
