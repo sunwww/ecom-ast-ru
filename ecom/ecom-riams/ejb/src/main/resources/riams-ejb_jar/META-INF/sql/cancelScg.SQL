@@ -22,7 +22,7 @@ left join medcase slo on slo.id=pl.medcase_id
 left join medcase sls on sls.id=slo.parent_id or sls.id=pl.medcase_id
 where scg.diary_id is null and scg.canceldate is null
 and   scg.dtype='WfConsultation'
-and sls.datefinish is not null
+and (sls.datefinish is not null or sls.deniedhospitalizating_id is not null)
 order by scg.id;
  for arow in select * from tableC
  loop
