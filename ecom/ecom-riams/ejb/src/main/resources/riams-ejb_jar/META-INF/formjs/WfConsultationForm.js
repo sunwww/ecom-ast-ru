@@ -45,12 +45,16 @@ function onCreate(aForm,aEntity, aCtx) {
             "left join PrescriptionList pl on pl.id="+aEntity.prescriptionList.id+"\n" +
             "where d.dateregistration=current_date\n" +
             "and case when mc.dtype='HospitalMedCase' then mc.id=pl.medcase_id \n" +
-            "else case when mc.dtype='DepartmentMedCase' then mc.id=pl.medcase_id \n" +
+            "else case when mc.dtype='DepartmentMedCase' then (mc.id=pl.medcase_id or mc.parent_id=pl.medcase_id)\n" +
             "or mc.id=ANY(select id from medcase where dtype='DepartmentMedCase'\n" +
             "and parent_id=(select parent_id from medcase where id=pl.medcase_id)) end end \n" +
-            "and pl.id=" + aEntity.prescriptionList.id + " and wf.group_id="+aEntity.prescriptCabinet.id+
-            //" and (wf.archival is null or wf.archival='0')\n" +
-            " and (select count(id) from prescription where diary_id=d.id)=0").getResultList();
+            "and pl.id=" + aEntity.prescriptionList.id + " and vwf.id=ANY(select wf.workfunction_id from WorkFunction wf\n" +
+            "left join Worker w on w.id=wf.worker_id\n" +
+            "left join Worker sw on sw.person_id=w.person_id\n" +
+            "left join WorkFunction swf on swf.worker_id=sw.id\n" +
+            "left join SecUser su on su.id=swf.secUser_id\n" +
+            "where su.login='"+aCtx.getSessionContext().getCallerPrincipal().toString()+
+            "') and (select count(id) from prescription where diary_id=d.id)=0").getResultList();
         if (res.size() > 0) {
             if (res.get(0) !=null && res.get(0) != "") {
                 aEntity.setDiary(aCtx.manager.find(Packages.ru.ecom.diary.ejb.domain.Diary, java.lang.Long.valueOf(res.get(0)[0])));
