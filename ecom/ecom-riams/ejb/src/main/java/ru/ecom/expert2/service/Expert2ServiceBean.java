@@ -1656,7 +1656,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             String dopmkb = null;
             boolean isCancer=false;
             for (EntryDiagnosis ed: diagnosisList) {
-                if (ed!=null && ed.getPriority()!=null & "1".equals(ed.getPriority().getCode())) {
+                if (ed!=null && ed.getPriority()!=null && "1".equals(ed.getPriority().getCode())) {
                     if(isNotNull(ed.getDopMkb())) {
                         dopmkb=ed.getDopMkb();
                     }
