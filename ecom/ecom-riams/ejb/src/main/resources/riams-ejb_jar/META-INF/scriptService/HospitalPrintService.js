@@ -2716,21 +2716,24 @@ function printQuarterlyReport(aCtx, aParams) {
 function printAnestResPatient(aCtx, aParams) {
     var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
         , new java.lang.Long(aParams.get("id"))) ;
-    var patient = medCase.patient;
-    map.put("fio",patient.lastname+' '+patient.firstname+' '+patient.middlename) ;
-    var sql = "select to_char(pat.birthday,'dd.MM.yyyy') as birthDay,coalesce(dep.name,'')" +
+    var sql = "select st.code as stcode,coalesce(idc.code||' '||ds.name,'') as mkb,coalesce(dep.name,'')" +
         " from medcase mc" +
         " left join medcase hmc on hmc.id=mc.parent_id" +
-        " left join patient pat on pat.id=mc.patient_id" +
         " left join medcase pastmc on pastmc.transferdepartment_id=mc.department_id and pastmc.parent_id=hmc.id" +
         " left join mislpu dep on dep.id=pastmc.department_id" +
+        " left join statisticstub st on st.id=hmc.statisticstub_id" +
+        " left join diagnosis ds on ds.medcase_id=mc.id" +
+        " left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id" +
+        " left join vocprioritydiagnosis prior on prior.id=ds.priority_id" +
+        " left join vocidc10 idc on idc.id=ds.idc10_id and reg.code='4' and prior.code='1' " +
         " where hmc.dtype='HospitalMedCase' and mc.dtype='DepartmentMedCase'" +
         " and mc.id="+medCase.id;
     var arr  = aCtx.manager.createNativeQuery(sql).getResultList();
     if (!arr.isEmpty()) {
         var data = arr.get(0);
-        map.put("bd",""+data[0]);
-        map.put("dep",""+data[1]);
+        map.put("stat",""+data[0]);
+        map.put("ds",""+data[1]);
+        map.put("dep",""+data[2]);
     }
     return map;
 }
