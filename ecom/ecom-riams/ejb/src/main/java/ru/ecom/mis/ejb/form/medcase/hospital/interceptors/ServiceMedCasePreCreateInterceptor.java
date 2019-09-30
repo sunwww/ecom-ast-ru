@@ -57,7 +57,7 @@ public class ServiceMedCasePreCreateInterceptor implements IParentFormIntercepto
     	WorkFunction wf = listwf.get(0) ;
     	form.setWorkFunctionExecute(wf.getId()) ;
     	*/
-        List<Object[]> listwf = manager.createNativeQuery("select wf.id,secUser.id,* from WorkFunction as wf  left join SecUser as secUser on secUser.id=wf.secUser_id  where secUser.login = :login")
+        List<Object[]> listwf = manager.createNativeQuery("select wf.id,secUser.id from WorkFunction as wf  left join SecUser as secUser on secUser.id=wf.secUser_id  where secUser.login = :login")
         	.setParameter("login", username)
         	.getResultList() ;
         if (listwf.isEmpty()) {
