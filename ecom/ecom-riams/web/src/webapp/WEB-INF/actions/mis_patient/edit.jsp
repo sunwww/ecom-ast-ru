@@ -628,7 +628,7 @@ where pcc.patient_id='${param.id}'
           		</msh:sectionContent>
           		<msh:sectionContent>
           			<ecom:webQuery name="kinsmanHim"
-          			nativeSql="select p.id,p.lastname||' '||p.middlename||' '||p.firstname||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') ,vk.name as vknam, vk1.name vk1name from Kinsman k
+          			nativeSql="select p.id,p.lastname||' '||p.firstname||' '||p.middlename||' г.р.'||to_char(p.birthday,'dd.mm.yyyy') ,vk.name as vknam, vk1.name vk1name from Kinsman k
           			left join patient p on p.id=k.person_id
           			left join VocKinsmanRole vk on vk.id=k.KinsmanRole_id
           			left join VocKinsmanRole vk1 on vk.OppositeRole_id = vk1.id
