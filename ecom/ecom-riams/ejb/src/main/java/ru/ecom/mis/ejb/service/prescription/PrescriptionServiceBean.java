@@ -57,7 +57,7 @@ import java.util.*;
 @Stateless
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
-	private static final Logger log = Logger.getLogger(PrescriptionServiceBean.class);
+	private static final Logger LOG = Logger.getLogger(PrescriptionServiceBean.class);
 
 	public void checkXmlFiles() throws ParserConfigurationException, SAXException, IOException {
 
@@ -68,7 +68,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
         File[] fileList = getFiles(xmlDirectory);
         
         if (fileList.length>0) {
-        	log.debug("Найдено "+fileList.length+" файлов");
+        	LOG.debug("Найдено "+fileList.length+" файлов");
         	
         	for (File file: fileList) {
 	        	String fileName = file.getName();
@@ -82,7 +82,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	        	}
         	}
 	    } else {
-	    	log.warn("Файлов не найдено, заканчиваем...");
+	    	LOG.warn("Файлов не найдено, заканчиваем...");
 	    }
 	}
 	
@@ -134,7 +134,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					 return name.toLowerCase().endsWith(".xml");
 				 }});
 	     	} catch(Exception e) {
-	     		log.error("Директория не обнаружена. Проверьте правильность.",e);
+	     		LOG.error("Директория не обнаружена. Проверьте правильность.",e);
 	     		return new File[0];
 	     	}
 	     }
@@ -149,18 +149,18 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	        try {
 	            final File myFile = new File(pdfDirectory + fileName );
 	            if (myFile.renameTo(new File(archDirectory + fileName))) {
-	                log.info("Файл "+ fileName + " успешно перенесен из директории " + pdfDirectory + " в директорию " + archDirectory);
+	                LOG.info("Файл "+ fileName + " успешно перенесен из директории " + pdfDirectory + " в директорию " + archDirectory);
 	            } else {
-					log.warn("Файл не был перенесен!");
+					LOG.warn("Файл не был перенесен!");
 	            }
 	        } catch (Exception e) {
-	            log.error("ОШибка переноса файла",e);
+	            LOG.error("ОШибка переноса файла",e);
 	        }
 	    }
 
 	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) {
 		if (parsedPdfInfo==null) {
-			log.error("NO_RESULT");
+			LOG.error("NO_RESULT");
 			return "";
 		}
 		String barcode = parsedPdfInfo.getBarcode();
@@ -276,7 +276,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			//  log.info("==== JSSON= "+sb.toString());
 			    saveLabAnalyzed(0L,pid,0L,sb.toString(),username, templateId) ;
 				} catch(Exception e){
-					log.error(e);
+					LOG.error(e.getMessage(),e);
 				} 
 			}
 			}
@@ -285,7 +285,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		return sb.toString();
 		
 		} else {
-			log.info("Штрих код пустой, либо это нет");
+			LOG.info("Штрих код пустой, либо это нет");
 			return null;
 		}
 				
@@ -370,7 +370,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			vis.setCreateDate(new java.sql.Date(date));
 			vis.setCreateTime(new java.sql.Time(date));
 			if (aDatePlanId!=null && !aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
-				log.error("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
+				LOG.error("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
 				return null;
 			}
 			vis.setDatePlan(wct.getWorkCalendarDay());
@@ -522,7 +522,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			if (!infoToSend.toString().isEmpty())
 				sendMesgOutOfReferenceInterval(infoToSend.toString(),aPrescriptId);
 		} catch (Exception e) {
-			log.error(e);
+			LOG.error(e.getMessage(), e);
 		}
 		return "" ;
 	}
@@ -556,7 +556,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			mes.setDispatchDate(new java.sql.Date(date)) ;
 			mes.setDispatchTime(new Time(date)) ;
 			mes.setRecipient(obj.getString("username")) ;
-			mes.setMessageUrl("entityParentView-stac_slo.do?id=" + Long.valueOf(obj.getString("dmcId")));
+			mes.setMessageUrl("entityParentView-stac_slo.do?id=" + obj.get("dmcId"));
 			mes.setIsEmergency(true) ;
 			theManager.persist(mes) ;
 		}
@@ -588,9 +588,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				" where p.id=:aPrescriptId").setParameter("aPrescriptId",aPrescriptId).getResultList();
 		JSONObject obj = new JSONObject();
 		if (!loginList.isEmpty()) {
-				obj.put("username",loginList.get(0)[0])
-						.put("patient",loginList.get(0)[1])
-						.put("dmcId",loginList.get(0)[2]);
+            Object[] oo = loginList.get(0);
+				obj.put("username",oo[0])
+						.put("patient",oo[1])
+						.put("dmcId",oo[2]);
 		}
 		return obj;
 	}
@@ -836,7 +837,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					isEmergency=true;
 				}
 			} catch (ParseException e) {
-				log.error(e);
+				LOG.error(e);
 			}	
 		}
 		return isEmergency ;
@@ -912,7 +913,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			return list.toString() ;
 			}
 			catch (Exception e) {
-				log.error("catch Drug ",e);
+				LOG.error("catch Drug ",e);
 			}
 		} else if (aPresc instanceof DietPrescription) {
 			try{
@@ -924,7 +925,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				return list.toString();
 			}
 			catch (Exception e) {
-				log.error("catch DIET ",e);
+				LOG.error("catch DIET ",e);
 			}
 		} else if (aPresc instanceof ServicePrescription) {
 			try {
@@ -945,7 +946,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				list.append(presNew.getDepartment()!=null?presNew.getDepartment().getName():"").append("#");
 				return list.toString();
 			} catch (Exception e) {
-				log.error("catch Service ",e);
+				LOG.error("catch Service ",e);
 			}
 		} else if (aPresc instanceof ModePrescription)  {
 			ModePrescription prescNew = (ModePrescription) aPresc;
@@ -955,7 +956,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			list.append(prescNew.getModePrescription().getId()).append("#");
 			return list.toString();
 		} 
-		log.error("_----------------Some shit happens!!!"+aPresc);
+		LOG.error("_----------------Some shit happens!!!"+aPresc);
 		return "";
 	}
 	/**
