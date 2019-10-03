@@ -76,7 +76,7 @@ public class AssessmentCardSaveInterceptor implements IFormInterceptor {
      */
     private String getRisk(Long aCardTypeId, Long val, EntityManager entityManager) {
         List<Object> risk = entityManager.createNativeQuery("select name from assessment" +
-                " where "+ val + " between minball and maxball and assessmentcard=" + aCardTypeId).getResultList();
+                " where assessmentcard=" + aCardTypeId+" and "+ val + " between minball and maxball").getResultList();
         return  risk.isEmpty()? "" : risk.get(0).toString();
     }
 }

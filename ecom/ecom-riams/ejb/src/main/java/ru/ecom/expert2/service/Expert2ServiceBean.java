@@ -2818,7 +2818,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private String getFileAsSTring(String aFilename) {
-        String url = getJbossConfigValue("jboss.userdocument.dir", "/opt/jboss-4.0.4.GAi-postgres/server/default/data");
+        String url = getJbossConfigValue("jboss.userdocument.dir", "/opt/jboss-4.0.4.GAi/server/default/data");
         File resourceFile = new File(url + "/" + aFilename);
         LOG.warn("SQL file = " + resourceFile);
         if (resourceFile.exists() && resourceFile.isFile()) {

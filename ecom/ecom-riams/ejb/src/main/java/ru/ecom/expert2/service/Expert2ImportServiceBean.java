@@ -39,7 +39,7 @@ import java.util.List;
 public class Expert2ImportServiceBean implements IExpert2ImportService {
     private static final Logger LOG = Logger.getLogger(Expert2ImportServiceBean.class);
     private static final EjbEcomConfig CONFIG = EjbEcomConfig.getInstance() ;
-    private static final String XMLDIR =CONFIG.get("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/riams/expert2xml");
+    private static final String XMLDIR =CONFIG.get("expert2.input.folder","/opt/jboss-4.0.4.GAi/server/default/riams/expert2xml");
     private Date toDate(String aDate) throws ParseException {
         return new java.sql.Date(new SimpleDateFormat("yyy-MM-dd").parse(aDate).getTime());
     }
