@@ -93,7 +93,7 @@
             <msh:section title='Результат поиска'>
             	<ecom:webQuery name="listPres" nativeSql="
     select 
-    p.id as pid,
+    p.id as f1_pid,
     case 
     when p.cancelDate is not null then 'ОТМЕНЕНО: ' ||vpcr.name||' '||coalesce(p.cancelreasontext,'')
     when p.intakeDate is null then 'Назначено'
@@ -102,11 +102,11 @@
     when mc.workFunctionExecute_id is null then 'Передан в кабинет'
     when mc.workFunctionExecute_id is not null and mc.dateStart is null  then 'Ожидается подтверждение врача КДЛ'
     else 'Выполнено'
-    end as comment
+    end as f2_comment
     
-      , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
-    , p.materialId||' ('||vsst.code||')' as f4material
-    ,coalesce(vsst.name,'---') as f5vsstname
+      , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3_codemed
+    , p.materialId||' ('||vsst.code||')' as f4_material
+    ,coalesce(vsst.name,'---') as f5_vsstname
     ,(case when ht.id is not null then '<div id=\"circle\"></div> ' else '' end)||pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as f6birthday
    , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||' ('||coalesce(vpt.shortname||')',')') as f7medServicies
    ,wp.lastname||' '||wp.firstname||' '||wp.middlename as f8fioworker
@@ -119,11 +119,13 @@
    ,coalesce(mlIntake.name,ml.name) as m15lname
   ,  case when mc.dateStart is null and p.cancelDate is null and p.transferDate is not null then coalesce(mc.id,0)||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
   ,  case when p.medCase_id is null and p.cancelDate is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
-   , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as drecord
-   ,case when mc.datestart is not null then p.id end as btnAnnul
+   , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as f18_drecord
+   ,case when mc.datestart is not null then p.id end as f19_btnAnnul
    ,to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f20dtintake
-   ,case when p.canceldate is not null then p.id end as btnUncancel
-   ,p.barcodenumber , p.id
+   ,case when p.canceldate is not null then p.id end as f21_btnUncancel
+   ,p.barcodenumber as f22
+   , case when p.medcase_id is not null then 'Выполнил: '||suLab.fullName ||' '|| to_char(mc.createdate,'dd.MM.yyyy')||' '||cast(mc.createTime as varchar(5))
+      || case when mc.datestart is not null then ' Подтвердил: '||suLabDoc.fullName||' '||to_char(mc.editdate,'dd.MM.yyyy')||' '||cast(mc.edittime as varchar(5)) else '' end else '' end as f23_executeinfo
     from prescription p
     left join vocprescriptcancelreason vpcr on vpcr.id=p.cancelreason_id
     left join MedCase mc on mc.id=p.medcase_id
@@ -148,6 +150,8 @@
     left join MisLpu mlIntake on mlIntake.id=p.department_id
     left join vocPrescriptType vpt on vpt.id=p.prescripttype_id
     left join hitechMedicalCase ht on ht.medcase_id=slo.id or ht.medcase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase')
+    left join secuser suLab on suLab.login=mc.username
+    left join secuser suLabDoc on suLabDoc.login=mc.editUsername
     where  ${typeD} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
     and pat.lastname like upper('${f}') and pat.firstname like upper('${i}') and pat.middlename like upper('${o}')
     and vst.code='LABSURVEY' 
@@ -170,11 +174,12 @@
 	      <msh:tableColumn columnName="Передача в лаб." property="20"/>
 	      <msh:tableColumn columnName="Код" property="4"/>
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о пациенте" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
-	      <msh:tableButton property="23" buttonFunction="showMyPrescriptionReport" buttonName="История назначения" buttonShortName="О" hideIfEmpty="true" role="/Policy/Mis/Prescription/ViewInformation"/>
+	      <msh:tableButton property="1" buttonFunction="showMyPrescriptionReport" buttonName="История назначения" buttonShortName="О" hideIfEmpty="true" role="/Policy/Mis/Prescription/ViewInformation"/>
 	      <msh:tableColumn columnName="ФИО пациента" property="6"  />
 	      <msh:tableColumn columnName="Услуга" property="7"/>
 	      <msh:tableColumn columnName="Результат" property="18" cssClass="preCell"/>
-	      
+	      <msh:tableColumn columnName="Выполнение" property="23" />
+
 	    </msh:table>
             </msh:section>
             <%} %>

@@ -220,6 +220,8 @@
     end as f19_colorcomment
     ,case when p.canceldate is null and (p.medcase_id is null or mc.datestart is null) then p.id else null end as f20_prescriptionLabDoctorButton
     ,case when p.cancelDate is null then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j21cancelAllTime
+    , case when p.medcase_id is not null then 'Выполнил: '||suLab.fullName ||' '|| to_char(mc.createdate,'dd.MM.yyyy')||' '||cast(mc.createTime as varchar(5))
+      || case when mc.datestart is not null then ' Подтвердил: '||suLabDoc.fullName||' '||to_char(mc.editdate,'dd.MM.yyyy')||' '||cast(mc.edittime as varchar(5)) else '' end else '' end as f22_executeinfo
     from prescription p
     left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelreason_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
@@ -243,6 +245,8 @@
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
     left join hitechMedicalCase ht on ht.medcase_id=slo.id or ht.medcase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase')
+    left join secuser suLab on suLab.login=mc.username
+    left join secuser suLabDoc on suLabDoc.login=mc.editUsername
     where p.dtype='ServicePrescription'
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
@@ -257,7 +261,7 @@
     ,p.medCase_id,mc.workFunctionExecute_id,mc.dateStart,vsst.code
     ,wp.lastname,wp.middlename,wp.firstname,vwf.name,mc.id,ml.name
     ,p.canceldate,p.materialid,p.planstartdate
-    ,vsst.biomaterial,d.record,d.id, ht.id
+    ,vsst.biomaterial,d.record,d.id, ht.id, suLab.fullName, suLabDoc.fullName
     order by pat.lastname,pat.firstname,pat.middlename
     
     "/>
@@ -281,6 +285,7 @@
 	      <msh:tableColumn columnName="Прием в лабораторию" property="9"/>
 	      <msh:tableColumn columnName="Исследование" property="6"/>
 	      <msh:tableColumn columnName ="Назначил" property="7"/>
+	      <msh:tableColumn columnName ="Выполнил" property="22"/>
 	      <msh:tableButton property="20" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showLabDoctorDirMedService" buttonName="Добавить анализ" buttonShortName="Доб.А"/>
 	      
 	    </msh:table>
