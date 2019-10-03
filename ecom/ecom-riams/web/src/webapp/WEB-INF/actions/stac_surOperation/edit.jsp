@@ -320,6 +320,20 @@
                   }
               }
           }
+
+          //показать/скрыть примечание
+          function showNote() {
+              var note = document.getElementById("note");
+              var href = document.getElementById("noteH");
+              if (note.style.display=="none") {
+                  note.style.display="block";
+                  href.innerText="Скрыть примечание";
+              }
+              else {
+                  note.style.display="none";
+                  href.innerText="Показать примечание";
+              }
+          }
           //работа с радиобатонами
           function checkАntibioRb() {
               var disabled = jQuery('[name="antibio"]')[0].checked;
@@ -508,19 +522,6 @@
     antibioticDrugAutocomplete.addOnChangeCallback(function() {
         checkDrugRequired(1);
     });
-    //показать/скрыть примечание
-    function showNote() {
-        var note = document.getElementById("note");
-        var href = document.getElementById("noteH");
-        if (note.style.display=="none") {
-            note.style.display="block";
-            href.innerText="Скрыть примечание";
-        }
-        else {
-            note.style.display="none";
-            href.innerText="Показать примечание";
-        }
-    }
     	</script>
 
   </msh:ifFormTypeIsNotView>

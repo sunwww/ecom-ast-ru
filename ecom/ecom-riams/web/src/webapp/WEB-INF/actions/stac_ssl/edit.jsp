@@ -369,6 +369,21 @@
         }
         saveIdentityWithAsk();
         </msh:ifInRole>
+        <msh:ifInRole roles="/Policy/Mis/Journal/CheckDiabetes">
+        function goCreateAssessmentCard(codeCard) {
+            if (codeCard) {
+                HospitalMedCaseService.getDiabetCardByCode(
+                    codeCard, {
+                        callback: function(typeCard) {
+                            var way = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&slo="+${param.id};
+                            window.location.href = typeCard? way+"&typeCard="+typeCard : way;
+                        }}
+                );
+            }
+            else
+                window.location.href ="entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&slo="+${param.id};
+        }
+        </msh:ifInRole>
             </msh:ifFormTypeIsView>
             function printPrescriptionList(id) {
                 window.document.location='print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id='+id;

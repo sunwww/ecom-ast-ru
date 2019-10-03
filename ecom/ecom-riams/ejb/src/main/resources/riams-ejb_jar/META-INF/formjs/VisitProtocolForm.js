@@ -147,7 +147,7 @@ function checkPrescription(aForm, aEntity, aCtx, flagIfSave) {
     var username = aCtx.getSessionContext().getCallerPrincipal().getName();
     var sql= "select scg.id from prescription scg" +
     " left join PrescriptionList pl on pl.id=scg.prescriptionList_id" +
-    " left join medcase slo on slo.id=pl.medcase_id" +
+    " left join medcase slo on slo.id=pl.medcase_id or slo.parent_id=pl.medcase_id" +
     " left join workfunction wf on wf.id=scg.prescriptcabinet_id" +
     " left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
     " where scg.diary_id is null" +

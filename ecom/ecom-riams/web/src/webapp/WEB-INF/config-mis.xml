@@ -645,6 +645,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/find_prescription.jsp" />
         </action>
+		<action path='/pres_prescription_findFIO' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/find_prescriptionFIO.jsp" />
+		</action>
         <action path='/pres_doctor_lab_journal' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'

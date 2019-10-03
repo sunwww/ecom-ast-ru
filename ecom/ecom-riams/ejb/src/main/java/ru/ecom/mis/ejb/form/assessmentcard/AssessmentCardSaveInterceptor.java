@@ -26,7 +26,7 @@ public class AssessmentCardSaveInterceptor implements IFormInterceptor {
        if (card.getTemplate()==8) {  //в бд ещё нет, объектов тоже нет
            JSONObject out = new JSONObject();
            out.put("patientId",card.getPatient());
-           out.put("sloId",cardForm.getMedcase());
+           out.put("slsId",cardForm.getMedcase());
            out.put("createDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
            out.put("birthday",getBirthday(card.getPatient(),aContext.getEntityManager()));
            out.put("bals",card.getBallSum());

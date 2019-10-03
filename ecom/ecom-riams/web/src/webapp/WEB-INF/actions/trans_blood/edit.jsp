@@ -238,7 +238,7 @@
         <msh:row>
           <msh:autoComplete property="executor" label="Исполнитель" vocName="workFunction" guid="56067cb3-f8bd-4c07-9330-ad6ffee3e83a" fieldColSpan="9" horizontalFill="true" />
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="5" />
+        <msh:submitCancelButtonsRow colSpan="5" functionSubmit="save(this);"/>
       </msh:panel>
     </msh:form>
   </tiles:put>
@@ -255,6 +255,9 @@
   	eventutil.addEventListener($('phenotypeD'), 'click', phenotype) ;
     eventutil.addEventListener($('phenotypeNone'), 'click', phenotype) ;
   	eventutil.addEventListener($('isIllPatientsBT'), 'click', biologTest) ;
+    bloodPreparationAutocomplete.addOnChangeCallback(function() {
+        checkMasReq() ;
+    }) ;
   	function phenotype() {
   		$('phenotype').value="C"+check("phenotypeC")+"c"+check("phenotypec1")+"D"+check("phenotypeD")+"E"+check("phenotypeE")+"e"+check("phenotypee1") + "Не опр"+check("phenotypeNone");
   		$('phenotypeReadOnly').value=$('phenotype').value ;
@@ -276,8 +279,67 @@
             //alert($("row20").style.display);
   		}
   	}
+
+    //если поле prop имеет значение из vals или не имеет значение из notVals, все поля в req сделать обязательными
+    //если другое значение - убрать обязательность, снимать значения не надо
+    var masReq = [{prop: 'bloodPreparation', vals:[1,2,3,4,5,6,7,8,9,10,11], notVals: [], req: [{field: 'patBloodGroupCheckName', cmnt: 'группа крови реципиента'}
+            ,{field: 'reagentForm1.reagentName',cmnt: 'реактив 1'}
+            ,{field: 'reagentForm1.series',cmnt: 'серия 1'}
+            ,{field: 'reagentForm1.expirationDate',cmnt: 'срок годности 1'}
+            ,{field: 'reagentForm2.reagentName',cmnt: 'реактив 2'}
+            ,{field: 'reagentForm2.series',cmnt: 'серия 2'}
+            ,{field: 'reagentForm2.expirationDate',cmnt: 'срок годности 2'}]}];
+
+    //ф-я настраивает обязательность полей req в masReq
+    function checkMasReq() {
+        for (var i=0; i<masReq.length; i++) {
+            var el = masReq[i];
+            if ($(el.prop).value!='' && (el.vals.length>0 && el.vals.indexOf(+$(el.prop).value)!=-1 || el.notVals.length>0 && el.notVals.indexOf(+$(el.prop).value)==-1)) {
+                el.req.forEach(function (reqMasEl) {
+                    $(reqMasEl.field).className += " required"
+                });}
+            else {
+                el.req.map(function (reqMasEl) {
+                    $(reqMasEl.field).className = $(reqMasEl.field).className.replace(new RegExp("required", "g"), "");
+                    //$(fieldName).value = '';
+                });
+            }
+        }
+    }
+
+    //ф-я проверяет заполнение masReq
+    function checkSaveMasReq() {
+        var msg = '';
+        for (var i = 0; i < masReq.length; i++) {
+            var el = masReq[i];
+            if ($(el.prop).value!='' && (el.vals.length>0 && el.vals.indexOf(+$(el.prop).value)!=-1 || el.notVals.length>0 && el.notVals.indexOf(+$(el.prop).value)==-1)) {
+                el.req.forEach(function (reqMasEl) {
+                    if ($(reqMasEl.field).value=='') {
+                        if (!msg)
+                            msg = 'Проверьте заполнение следующих полей:';
+                        msg+=' ' + reqMasEl.cmnt + ';';
+                    }
+                });
+            }
+        }
+        return msg;
+    }
   	biologTest();
   	phenotype();
+    checkMasReq();
+
+    //проверка и сохранение
+    function save(btn) {
+        btn.value='Создание...';
+        var msg = checkSaveMasReq();
+        if (msg) {
+            showToastMessage(checkSaveMasReq(),null,true);
+            btn.removeAttribute("disabled");
+            btn.value='Создать';
+        }
+        else
+            document.forms[0].submit();
+    }
   	</script>
   	</msh:ifFormTypeIsNotView>
       <script type="text/javascript">

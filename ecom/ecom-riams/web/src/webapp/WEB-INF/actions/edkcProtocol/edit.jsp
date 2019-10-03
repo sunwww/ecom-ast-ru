@@ -9,6 +9,8 @@
     <%
         String type = request.getParameter("type");
         request.setAttribute("type",type);
+        String basis = request.getParameter("basis");
+        request.setAttribute("basis",basis);
     %>
     <tiles:put name='body' type='string'>
         <msh:form action="entityParentSaveGoView-edkcProtocol.do" defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07"
@@ -111,7 +113,14 @@
         <msh:ifFormTypeIsCreate formName="edkcProtocolForm">
             <script type="text/javascript">
                 window.onload = function() {
-                    if ('${type}'!='') {
+                    if ('${basis}'!='') {  //получаю базу для создания нового (копировать текст выбранного протокола в новый)
+                        TemplateProtocolService.getBasisProtocolRecord( '${basis}',{
+                                callback: function(aRecord) {
+                                    $('record').value = aRecord ;
+                                }
+                            } ) ;
+                    }
+                    else if ('${type}'!='') {
                         PatientService.getNameTypeProtocol('${type}',{
                             callback: function (res) {
                                 if (res != null && res != '[]') {

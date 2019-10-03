@@ -30,6 +30,9 @@
             <msh:hidden property="diary"/>
             <msh:hidden property="prescriptionList" />
             <msh:hidden property="saveType"/>
+            <msh:hidden property="transferDate"/>
+            <msh:hidden property="transferTime"/>
+            <msh:hidden property="transferUsername"/>
             <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01">
                 <msh:row>
                     <msh:autoComplete property="vocConsultingType" label="Тип консультации" horizontalFill="true" vocName="vocConsultingType" fieldColSpan="3" size="150"/>
@@ -54,11 +57,6 @@
                     <msh:textField property="editDate" label="Дата редак." viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
                     <msh:textField property="editTime" label="Время редак." viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
                     <msh:textField property="editUsername" label="Пользователь" viewOnlyField="true" guid="4eac72aa-0de9-427e-b2db-15635bb16fe0" />
-                </msh:row>
-                <msh:row>
-                    <msh:textField property="transferDate" label="Дата передачи специалисту" viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
-                    <msh:textField property="transferTime" label="Время передачи специалисту" viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
-                    <msh:textField property="transferUsername" label="Пользователь" viewOnlyField="true" guid="4eac72aa-0de9-427e-b2db-15635bb16fe0" />
                 </msh:row>
                 <msh:row>
                     <msh:textField property="intakeDate" label="Дата выполнения" viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />

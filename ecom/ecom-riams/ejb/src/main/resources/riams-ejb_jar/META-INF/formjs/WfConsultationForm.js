@@ -45,7 +45,7 @@ function onCreate(aForm,aEntity, aCtx) {
             "left join PrescriptionList pl on pl.id="+aEntity.prescriptionList.id+"\n" +
             "where d.dateregistration=current_date\n" +
             "and case when mc.dtype='HospitalMedCase' then mc.id=pl.medcase_id \n" +
-            "else case when mc.dtype='DepartmentMedCase' then mc.id=pl.medcase_id \n" +
+            "else case when mc.dtype='DepartmentMedCase' then (mc.id=pl.medcase_id or mc.parent_id=pl.medcase_id)\n" +
             "or mc.id=ANY(select id from medcase where dtype='DepartmentMedCase'\n" +
             "and parent_id=(select parent_id from medcase where id=pl.medcase_id)) end end \n" +
             "and pl.id=" + aEntity.prescriptionList.id + " and wf.group_id="+aEntity.prescriptCabinet.id+
@@ -64,20 +64,18 @@ function onCreate(aForm,aEntity, aCtx) {
         }
     }
     //Milamesher 11102018
-    //Плановые - автоматически переданные при создании
+    //Любые - автоматически переданные при создании, об экстренных надо уведомлять
     if (aEntity.vocConsultingType != null) {
+        var date = new java.util.Date();
+        aEntity.setTransferDate(new java.sql.Date(date.getTime()));
+        aEntity.setTransferTime(new java.sql.Time(date.getTime()));
+        aEntity.setTransferUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+        aCtx.manager.persist(aEntity);
         var res = aCtx.manager.createNativeQuery("select case when t.code='plan' then '1' else '0' end \n" +
             "from vocconsultingtype t\n" +
             "where t.id=" + aEntity.vocConsultingType.id).getResultList();
         if (res.size() > 0) {
-            if (res.get(0) == "1") {
-                var date = new java.util.Date();
-                aEntity.setTransferDate(new java.sql.Date(date.getTime()));
-                aEntity.setTransferTime(new java.sql.Time(date.getTime()));
-                aEntity.setTransferUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
-                aCtx.manager.persist(aEntity);
-            }
-            else if (res.get(0) == "0" && aEntity.prescriptCabinet != null && aEntity.prescriptionList != null && !t) {
+            if (res.get(0) != "1" && aEntity.prescriptCabinet != null && aEntity.prescriptionList != null && !t) {
                 //уведомление пользователей об экстренных заявках к ним
                 var sls = aCtx.manager.createNativeQuery("select case when mc.dtype='DepartmentMedCase' then mc.parent_id else mc.id end\n" +
                 "from medcase mc\n" +
@@ -119,26 +117,7 @@ function onCreate(aForm,aEntity, aCtx) {
             }
         }
     }
-    //автоматически передавать консультации с соответствующей пометкой в гр. раб. ф-ии
-    if (aEntity.prescriptCabinet!=null) {
-        var res = aCtx.manager.createNativeQuery("select case when IsTransferConsAfterCreate then '1' else '0' end from workfunction where id="
-            + aEntity.prescriptCabinet.id).getResultList();
-        if (res.size() > 0) {
-            if (res.get(0) == "1") {
-                var date = new java.util.Date();
-                aEntity.setTransferDate(new java.sql.Date(date.getTime()));
-                aEntity.setTransferTime(new java.sql.Time(date.getTime()));
-                aEntity.setTransferUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
-                aCtx.manager.persist(aEntity);
-            }
-        }
-    }
 }
 function onPreDelete(aEntityId, aContext) {
-    var res = aContext.manager.createNativeQuery("select case when transferdate is null then '1' else '0' end from prescription where id=" + aEntityId).getResultList();
-    if (res.size()>0) {
-        if (res.get(0) == "0") {
-            throw "Назначение, которое уже было передано специалисту, удалять нельзя!";
-        }
-    }
+    throw "Назначение удалять нельзя! Можно отменять, пока они не были выполнены";
 }

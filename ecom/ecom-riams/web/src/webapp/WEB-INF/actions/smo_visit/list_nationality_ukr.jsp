@@ -444,6 +444,7 @@ order by p.lastname,p.firstname,p.middlename"/>
     	    ,a.fullname
     	    ,list(distinct mkb.code) as mkbcode
     	    ,vss.name
+    	    ,m.id
     from medcase m 
     left join patient p on p.id=m.patient_id
     left join address2 a on a.addressid=p.address_addressid
@@ -465,8 +466,32 @@ ${groupSqlAdd}
     ${serviceStreamSql}
      ${nationalitySql} ${regionSql} ${patientSql}
     group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
-    	    ,vwfe.name,pe.lastname , vn.name,a.fullname,vss.name
+    	    ,vwfe.name,pe.lastname , vn.name,a.fullname,vss.name,m.id
     order by p.lastname,p.firstname,p.middlename"/>
+		</msh:section>
+			<%
+				List listPol = (List)request.getAttribute("list_yes") ;
+				int sizePol = listPol.size();
+				if (sizePol>0) {
+					for (int i=0; i<sizePol; i++) {
+						WebQueryResult wqr = (WebQueryResult) listPol.get(i) ;
+						try {
+							JSONObject expertCalc = new JSONObject(Expert2ServiceJs.getMedcaseCost(Long.valueOf(wqr.get10().toString()), request));
+							if (expertCalc.has("price")) {
+								wqr.set11(expertCalc.get("price"));
+							} else {
+								wqr.set11( "---");
+							}
+							listPol.set(i,wqr);
+						} catch (Exception e) {
+
+							System.out.println("some pol error "+e);
+
+						}
+					}
+					request.setAttribute("list_yes", listPol);
+				}
+			%>
     <msh:table printToExcelButton="Сохранить в excel" name="list_yes" action="entityView-mis_patient.do"
     	viewUrl="entityShortView-mis_patient.do" 
     	idField="1">
@@ -479,8 +504,8 @@ ${groupSqlAdd}
     	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
     	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
     	      <msh:tableColumn columnName="Поток обслуживания" property="9"/>
+				<msh:tableColumn columnName="Стоимость случая" property="11"/>
     	    </msh:table>
-      	</msh:section>
       	<msh:section title="Стационар">
 
       	
@@ -494,6 +519,7 @@ ${groupSqlAdd}
     	    ,list(vss.name) as vssname
     	    ,vn.name as vnname
     	    ,a.fullname as afullname
+    	    ,m.id
     from medcase m 
     left join medcase smo on smo.id=m.parent_id
     left join patient p on p.id=m.patient_id
@@ -510,9 +536,33 @@ ${groupSqlAdd}
     ${emergencySql} ${departmentSql} 
     ${serviceStreamSql}
     ${nationalitySql} ${regionSql} ${patientSql}
-    group by p.id,p.lastname,p.firstname,p.middlename 
-    ,p.birthday,vn.name ,a.fullname
+    group by p.id,p.lastname,p.firstname,p.middlename
+    ,p.birthday,vn.name ,a.fullname, m.id
     order by p.lastname,p.firstname,p.middlename"/>
+		</msh:section>
+	  <%
+		  List listStac = (List)request.getAttribute("list_stac") ;
+		  int sizeStac = listStac.size();
+		  if (sizeStac>0) {
+			  for (int i=0; i<sizeStac; i++) {
+				  WebQueryResult wqr = (WebQueryResult) listStac.get(i) ;
+				  try {
+					  JSONObject expertCalc = new JSONObject(Expert2ServiceJs.getMedcaseCost(Long.valueOf(wqr.get9().toString()), request));
+					  if (expertCalc.has("price")) {
+						  wqr.set10(expertCalc.get("price"));
+					  } else {
+						  wqr.set10( "---");
+					  }
+					  listStac.set(i,wqr);
+				  } catch (Exception e) {
+
+					  System.out.println("some stac error "+e);
+
+				  }
+			  }
+			  request.setAttribute("list_stac", listStac);
+		  }
+	  %>
     <msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-stac_ssl.do"
      name="list_stac"
      action="entityView-mis_patient.do" idField="1" >
@@ -524,8 +574,8 @@ ${groupSqlAdd}
     	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="8" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
     	      <msh:tableColumn columnName="Отделения" identificator="false" property="4" />
     	      <msh:tableColumn property="6" columnName="Потоки обслуживания"/>
+				<msh:tableColumn columnName="Стоимость случая" property="10"/>
     	    </msh:table>
-      	</msh:section>
       	<msh:section title="Отказы от госпитализаций">
 
       	
@@ -534,8 +584,8 @@ ${groupSqlAdd}
     	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
     	    ,vn.name as vnname
     	    ,a.fullname as afullname
-    	    ,list(to_char(m.datestart,'dd.mm.yyyy')||vdh.name) as denhosp
-    	    
+    	    ,list(to_char(m.datestart,'dd.mm.yyyy')||' '||vdh.name) as denhosp
+    	    ,m.id
     from medcase m 
     left join patient p on p.id=m.patient_id
     left join address2 a on a.addressid=p.address_addressid
@@ -553,8 +603,32 @@ ${groupSqlAdd}
     ${serviceStreamSql}
     ${nationalitySql} ${regionSql} ${patientSql}
     group by p.id,p.lastname,p.firstname,p.middlename
-    	    ,p.birthday ,vn.name ,a.fullname
+    	    ,p.birthday ,vn.name ,a.fullname, m.id
     order by p.lastname,p.firstname,p.middlename"/>
+		</msh:section>
+	  <%
+		  List listStac1 = (List)request.getAttribute("list_stac1") ;
+		  int sizeStac1 = listStac1.size();
+		  if (sizeStac>0) {
+			  for (int i=0; i<sizeStac1; i++) {
+				  WebQueryResult wqr = (WebQueryResult) listStac1.get(i) ;
+				  try {
+					  JSONObject expertCalc = new JSONObject(Expert2ServiceJs.getMedcaseCost(Long.valueOf(wqr.get7().toString()), request));
+					  if (expertCalc.has("price")) {
+						  wqr.set8(expertCalc.get("price"));
+					  } else {
+						  wqr.set8( "---");
+					  }
+					  listStac1.set(i,wqr);
+				  } catch (Exception e) {
+
+					  System.out.println("some stac1 error "+e);
+
+				  }
+			  }
+			  request.setAttribute("list_stac1", listStac1);
+		  }
+	  %>
     <msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-mis_patient.do"
      name="list_stac1" 
      action="entityView-mis_patient.do" idField="1" >
@@ -564,8 +638,8 @@ ${groupSqlAdd}
     	      <msh:tableColumn columnName="Гражданство" property="4" />
     	      <msh:tableColumn columnName="Адрес" property="5" />
     	      <msh:tableColumn columnName="Дата и причина отказов" property="6" />
+		<msh:tableColumn columnName="Стоимость случая" property="8" />
     	    </msh:table>
-      	</msh:section>
 
 	<% } else { /* начало свода */ %>
 

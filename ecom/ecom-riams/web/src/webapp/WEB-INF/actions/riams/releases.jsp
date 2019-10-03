@@ -27,6 +27,7 @@
 					<li><msh:link action="ecom_release-201907.do">июль 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201908.do">август 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201909.do">сентябрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201910.do">октябрь 2019 года </msh:link></li>
 
 
 					<% if (1==2) { %>
