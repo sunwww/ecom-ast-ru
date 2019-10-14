@@ -30,9 +30,13 @@ function onPreSave(aForm, aEntity, aCtx) {
  * Перед сохранением
  */
 function onPreCreate(aForm, aCtx) {
-	checkBirthDate(aForm, aCtx)
-	var list=aCtx.manager.createNativeQuery("select cb.id from childbirth cb where  cb.medcase_id='"+aForm.getMedCase()+"'").getResultList() ;
-	if (list.size()>0) throw "В отделении уже заведен случай родов!";
+	checkBirthDate(aForm, aCtx);
+	if (!aCtx.manager.createNativeQuery("select cb.id from medcase slo " +
+		" left join medcase allSlo on allSlo.parent_id=slo.parent_id " +
+		" left join childbirth cb on cb.medcase_id in (allSlo.id)" +
+		" where slo.id=" + aForm.getMedCase() +" and cb.id is not null ").getResultList().isEmpty()) {
+		throw "В госпитализации уже заведен случай родов!";
+	}
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
