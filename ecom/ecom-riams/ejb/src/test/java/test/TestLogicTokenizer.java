@@ -1,25 +1,28 @@
 package test;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 import ru.nuzmsh.util.LogicTokenizer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author esinev
  * Date: 09.06.2006
  * Time: 9:20:32
  */
-public class TestLogicTokenizer extends TestCase {
+public class TestLogicTokenizer {
 
-    public void testEmpty() {
+    @Test
+    void testEmpty() {
         LogicTokenizer st = new LogicTokenizer("###",'#');
         for(int i=0;i<4; i++) {
             st.hasNext() ;
-            System.out.println("st.getNextString() = " + st.getNextString());
         }
         st.hasNext() ;
         st.getNextString() ;
         st.hasNext() ;
         st.getNextString() ;
+        assertEquals(1,1);
     }
 
 }

@@ -1,8 +1,12 @@
 package test.util;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import ru.nuzmsh.util.PropertyUtil;
 
 import java.lang.reflect.InvocationTargetException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestPropertyUtil {
 
@@ -12,7 +16,7 @@ public class TestPropertyUtil {
 			return theName;
 		}
 
-		public void setName(String aName) {
+		private void setName(String aName) {
 			theName = aName;
 		}
 
@@ -26,27 +30,22 @@ public class TestPropertyUtil {
 			return theHello;
 		}
 
-		public void setHello(Hello aHello) {
+		private void setHello(Hello aHello) {
 			theHello = aHello;
 		}
 
 		/** Hello */
 		private Hello theHello;
 	}
-	
-	public static void  main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
+	@Test
+	@DisplayName("Тестируем поиск значений обхектов ")
+	void makeTest() throws InvocationTargetException, IllegalAccessException {
 		Hello hello = new Hello() ;
 		hello.setName("hello name");
-		
 		Foo foo = new Foo() ;
 		foo.setHello(hello);
-		
-		try {
 		Object obj = PropertyUtil.getPropertyValue(foo, "hello.name");
-		System.out.println(obj);
-		} catch (Exception e) {
-			System.out.println(e) ;
-			e.printStackTrace(System.out);
-		}
+		assertEquals(obj.toString(), "hello name");
 	}
 }

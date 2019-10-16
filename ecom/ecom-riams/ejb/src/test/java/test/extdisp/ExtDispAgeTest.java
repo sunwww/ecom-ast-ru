@@ -1,6 +1,7 @@
 package test.extdisp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import ru.nuzmsh.util.date.AgeUtil;
 import test.BaseTest;
 
@@ -9,14 +10,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExtDispAgeTest extends BaseTest {
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
     @Test
+    @DisplayName("Нахождение возрастной группы в доп. диспансеризации")
     public void testAgeGroup() throws ParseException {
-    //    assertEquals("0.0",getAgeForDisp("15.01.2018","16.01.2018"));
         assertEquals("0.0",getAgeForDisp("15.01.2018","14.02.2018"));
         assertEquals("0.1",getAgeForDisp("15.01.2018","15.02.2018"));
         assertEquals("0.1",getAgeForDisp("15.01.2018","16.02.2018"));
@@ -84,9 +85,5 @@ public class ExtDispAgeTest extends BaseTest {
        //     log("ageGroup  = "+ageGroup);
             return ageGroup;
 
-    }
-
-    private void log(String msg){
-        System.out.println(msg);
     }
 }
