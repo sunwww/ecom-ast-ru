@@ -40,9 +40,6 @@
         <msh:row guid="b6gteb-b971-441e-9a90-5107">
           <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" guid="5dfb6-b2c3-44be-9d10-d8d4" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="8c3c-f605-42cc-accb-6c6b">
-          <msh:autoComplete vocName="vocHospitalServiceType" property="serviceType" label="Тип госпитального обслуживания" guid="88e-3158-4b9a-ab8c-f364e9" horizontalFill="true" fieldColSpan="3" />
-        </msh:row>
         <msh:row guid="07fbe7a5-4caf-4e14-aa70-287cf4ca610d">
           <msh:textField property="dateStart" label="Дата начала актуальности" guid="e4d1b-8802-467d-b205-70jgh5" />
           <msh:textField property="timeStart" label="Время начала актуальности" guid="e4d1b-8802-467d-b205-75765" />

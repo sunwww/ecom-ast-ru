@@ -7,7 +7,6 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -79,19 +78,4 @@ public class ReportSetTypeParameterType extends VocBaseEntity{
 
 	/** Тип параметра */
 	private VocReportSetParameterType theParameterType;
-	
-	/** Отчетный показатель */
-	@Comment("Тип отчетного показателя")
-	@ManyToOne
-	public VocReportSetType getReportSetType() {
-		return theReportSetType;
-	}
-
-	public void setReportSetType(VocReportSetType aReportSetType) {
-		theReportSetType = aReportSetType;
-	}
-
-	/** Тип отчетного показателя */
-	private VocReportSetType theReportSetType;
-
 }

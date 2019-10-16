@@ -5,10 +5,7 @@ import ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliConclusion;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
@@ -18,23 +15,12 @@ public class ProtocolKili extends BaseEntity{
 
 /** Случай смерти */
 @Comment("Случай смерти")
-@OneToOne
+@ManyToOne
 public DeathCase getDeathCase() {return theDeathCase;}
 public void setDeathCase(DeathCase aDeathCase) {theDeathCase = aDeathCase;}
 /** Случай смерти */
 private DeathCase theDeathCase;
 
-/** Профиль КИЛИ */
-/**
-@Comment("Профиль КИЛИ")
-@OneToOne
-public VocKiliProfile getProfile() {return theProfile;}
-public void setProfile(VocKiliProfile aProfile) {theProfile = aProfile;}
-*/
-/** Профиль КИЛИ */
-/**
- * private VocKiliProfile theProfile;
- */
 	
 /** Дата проведения КИЛИ */
 @Comment("Дата проведения КИЛИ")

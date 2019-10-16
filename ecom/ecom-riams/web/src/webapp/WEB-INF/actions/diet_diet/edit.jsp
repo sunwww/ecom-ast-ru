@@ -68,8 +68,6 @@
       <msh:sideMenu title="Показать все" guid="b6202b67-4d44-4463-a63f-40471c1086f8">
         <msh:sideLink roles="/Policy/Mis/InvalidFood/MealMenuTemplate/View" params="id" action="/entityParentList-diet_mealMenuTemplate" name="Шаблон меню-раскладки" guid="73fda363-6c83-42e0-8de4-806f65bb2427" />
         <msh:sideLink roles="/Policy/Mis/InvalidFood/MealMenuOrder/View" params="id" action="/entityParentList-diet_mealMenuOrder" name="Меню-заказы" guid="5883c1e8-70ef-4a84-a55d-6fa359b69ad3" />
-        <msh:sideLink roles="/Policy/Mis/InvalidFood/MealQualityControl/View" params="id" action="/entityParentList-diet_mealQualityControl" name="Журнал контроля качества пищи" guid="178c6efa-50e4-4aeb-9d7f-61a03b122216" />
-        <msh:sideLink roles="/Policy/Mis/InvalidFood/MealWorkerHealthControl/View" params="id" action="/entityParentList-diet_mealWorkerHealthControl.do?diet=${param.id}" name="Журнал контроля здоровья работающих с пищей" guid="f03f1358-59a7-4b84-a6c7-44c77cb6de0a" />
       </msh:sideMenu>
       <msh:sideMenu title="Дополнительно" guid="0ecbb4d3-2ad1-4400-9736-a3ed7c5ca571">
         <msh:sideLink action="/entityList-diet_diet" name="⇧Список всех диет" guid="13a3d527-25c9-4ee7-92b2-5f445ddbb27f" />

@@ -23,8 +23,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
-import static javax.persistence.CascadeType.ALL;
-
 /**
  * Талон амбулаторного пациента
  * @param <NursingPatientAge>
@@ -151,11 +149,6 @@ public class Ticket extends BaseEntity {
 	public VocDisabilityReason getDisabilityReason() {return theDisabilityReason;}
 	public void setDisabilityReason(VocDisabilityReason aDisabilityReason) {theDisabilityReason = aDisabilityReason;}
 	
-	/** Выписанные рецептурные бланки */
-    @OneToMany(mappedBy = "ticket", cascade = ALL)
-    public List<PrescriptionBlank> getPrescriptionBlanks() {return thePrescriptionBlanks;}
-    public void setPrescriptionBlanks(List<PrescriptionBlank> aPrescriptionBlanks) {thePrescriptionBlanks = aPrescriptionBlanks;}
-
     /** @return Специальная метка **/
     @OneToOne
     public VocSpecLabel getSpecialLabel() { return theLabel; }
@@ -337,8 +330,6 @@ public class Ticket extends BaseEntity {
     private Time theTime;
     /** Специальная метка **/
     private VocSpecLabel theLabel;
-    /** Выписанные рецептурные бланки */
-    private List<PrescriptionBlank> thePrescriptionBlanks;
     /** Травма */
     private VocTrauma theVocTrauma;
     /** Диспансерный учет */
@@ -364,15 +355,7 @@ public class Ticket extends BaseEntity {
 
 	/** Характер заболевания */
 	private VocIllnesPrimary theIllnesPrimary;
-	
-	/** Тип мед. обслуживания */
-	@Comment("Тип мед. обслуживания")
-	@OneToOne
-	public VocWorkMedservice getWorkMedservice() {return theWorkMedservice;}
-	public void setWorkMedservice(VocWorkMedservice aWorkMedservice) {theWorkMedservice = aWorkMedservice;}
 
-	/** Тип мед. обслуживания */
-	private VocWorkMedservice theWorkMedservice;
 	/** СПО */
 	@Comment("СПО")
 	@OneToOne

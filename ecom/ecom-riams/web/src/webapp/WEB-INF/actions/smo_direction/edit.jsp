@@ -7,10 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <!-- 
-    	  - Проба
-    	  -->
-    <msh:form guid="formHello" action="/entitySaveGoView-smo_direction" 
+    <msh:form action="/entitySaveGoView-smo_direction"
     defaultField="orderLpuName" >
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
@@ -59,8 +56,8 @@
         </msh:row>
         </msh:ifInRole>
         <msh:row>
-        	<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" 
-	   		property="medServices" vocName="medServiceForSpec" colSpan="6" />
+        	<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги"
+	   		property="medServices" vocName="medServiceForSpec" colSpan="6"  />
 	 
 	    </msh:row>
         <msh:ifFormTypeIsNotView formName="smo_directionForm">
@@ -248,6 +245,10 @@
       	</script>
     <msh:ifFormTypeIsCreate formName="smo_directionForm">
     	<script type="text/javascript">
+            function testMe(el) {
+                console.log("test me "+el);
+                alert("test me "+el);
+            }
     		if ((+'${param.orderLpu}'>0) && (+$('orderLpu').value==0)) {
     			orderLpuAutocomplete.setVocId('${param.orderLpu}') ;
     		}

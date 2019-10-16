@@ -45,16 +45,10 @@
 							<li><msh:link roles="/Policy/Exp/Document/Edit" action="entityList-exp_importdocument.do">
 								Импорт
 							</msh:link></li>
-							<li><msh:link roles='/Policy/Exp/FillTime/View' action="entityList-exp_fillTime.do">
-								Заполнения
-							</msh:link></li>
 							<li><msh:link roles='/Policy/Exp/FillTime/View' action="entityList-exp_iterate.do">
 								Переборы
 							</msh:link></li>
 
-							<li><msh:link roles='/Policy/Exp/Sequence/View' action="entityList-exp_sequenceInfo.do">
-								Последовательности
-							</msh:link></li>
 
 							<msh:ifInRole roles="/Policy/Stac/CustomizeMode/Edit">
 								<li>
@@ -176,24 +170,48 @@
 		<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 		<script type='text/javascript' src='./dwr/interface/ContractService.js'></script>
 		<script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
+		<script type='text/javascript' src='./dwr/interface/Expert2Service.js'></script>
 		<script type="text/javascript">
+
+			function testMedcaseCost(id) {
+				Expert2Service.getMedcaseCost(id, {
+					callback: function (jso) {
+						console.log(jso);
+						jso = JSON.parse(jso);
+						alert(jso.status);
+					}
+				})
+			}
+
             function test() {
-                for (var i=0;i<4;i++) {
-                    jQuery.toast({
-                        title: 'My message '+i
-                        , text: 'this is text'
-                        , beforeShow: function () {
-                            msh.effect.FadeEffect.putFade();
-                        }
-                        , beforeHide: function () {
-                            msh.effect.FadeEffect.pushFade();
-                        }
-                        , hideAfter: false
-                    });
-                }
+                let url = 'entitySaveGoViewXml-mis_patient.do';
+                let patient = {
+                    saveType:1
+                    ,lastname: 'ТОРТОВ'
+                    ,firstname: "ТОРТ"
+                    ,middlename: "ТОРТОВИЧ"
+                    ,birthday: "01.01.1986"
+                    ,sex: 1
+                    ,socialStatus:1
+                    ,additionStatus:1
+                    ,phone: '123'
+                };
+
+                jQuery.ajax({ //создаем сущность
+                    type: "POST"
+                    ,url:url
+                    ,data: patient
+                }).done (function(htm) {
+                    alert('goof');
+                    console.log(htm);
+                    alert("Добавлено!")
+                }).fail( function (err) {
+                    console.log("ERROR "+err);
+                });
+
             }
             function getLNNumberRange() {
-                var num = prompt("Укажите количество требуемых номеров",'20');
+                let num = prompt("Укажите количество требуемых номеров",'20');
                 if (+num>0) {
                     DisabilityService.getLNNumberRange(num, {
                         callback:function (ret) {

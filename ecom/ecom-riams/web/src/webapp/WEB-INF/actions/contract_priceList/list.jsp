@@ -18,7 +18,6 @@
 		<msh:table name="list" action="entityView-contract_priceList.do" idField="id">
 			<msh:tableColumn columnName="#" property="sn" />
 			<msh:tableColumn columnName="Название" property="name" />
-			<msh:tableColumn columnName="Справочник типов цен" property="vocPriceInfo" />
 			<msh:tableColumn columnName="Дата начала действия" property="dateFrom" />
 			<msh:tableColumn columnName="Дата окончания действия" property="dateTo" />
 		</msh:table>

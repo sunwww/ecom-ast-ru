@@ -1,15 +1,10 @@
 package ru.ecom.mis.ejb.domain.worker.voc;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdName;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.util.List;
 
 /**
  *  Справочник должностей
@@ -57,18 +52,4 @@ public class VocPost extends VocIdName {
 
 	/** Рабочие функции */
 	private List<VocWorkFunction> theVocWorkFunctions;
-	
-	 /** Тип рабочего места */
-	@Comment("Тип рабочего места")
-	@OneToOne
-	public VocPostType getPostType() {
-		return thePostType;
-	}
-
-	public void setPostType(VocPostType aPostType) {
-		thePostType = aPostType;
-	}
-
-	/** Тип рабочего места */
-	private VocPostType thePostType;
 }

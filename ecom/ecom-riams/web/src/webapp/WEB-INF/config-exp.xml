@@ -78,13 +78,6 @@
         <form-bean name="exp_importformatForm" type="ru.ecom.expomc.ejb.services.form.importformat.ImportFormatForm"/>
         <form-bean name='exp_importformatUploadForm' type='ru.ecom.expomc.web.actions.importformat.ImportFormatUploadForm' />
         <!-- IKO 070228 ===  -->
-		
-		<!-- Заполнение -->
-        <form-bean name='exp_fillTimeForm' type='ru.ecom.expomc.ejb.uc.filltime.form.FillTimeForm' />
-        <form-bean name='exp_fillTimePropertyForm' type='ru.ecom.expomc.ejb.uc.filltime.form.FillTimePropertyForm' />
-		
-		<!-- Перебор -->
-        <form-bean name='exp_iterateForm' type='ru.ecom.expomc.ejb.uc.iterate.form.IterateForm' />
 
 		<!-- Последовательности -->
 		<form-bean name='exp_sequenceInfoForm' type='$$map$$exp_sequenceInfoForm' />
@@ -411,35 +404,7 @@
             scope='request' validate="false" >
             <forward name="success" redirect='true' path="/entityList-exp_importdocument.do" />
         </action>
-        
-        <!-- Запуск заполнения -->
-        <action path = "/exp_fillTimeExecute" 
-        		type = 'ru.ecom.expomc.web.actions.filltime.ExecuteFillTimeServiceAction'
-               scope = 'request' 
-            validate = "false" >
-            <forward name="success" 
-            	 redirect='true' 
-            	     path="/entityParentView-exp_importtime.do?id=" />
-        </action>
-        
-        <!-- Свойство заполнения по формату -->
-        <action path = "/exp_fillTimePropertyByFormat" 
-        		type = 'ru.ecom.expomc.web.actions.filltime.FillTimePropertyByFormatAction'
-               scope = 'request' 
-            validate = "false" 
-                name = "exp_fillTimePropertyForm"
-            >
-        </action>
 
-        <!-- Запуск перебора -->
-        <action path = "/exp_iterateExecute" 
-        		type = 'ru.ecom.expomc.web.actions.iterate.ExecuteIterateServiceAction'
-               scope = 'request' 
-            validate = "false" >
-            <forward name="success" 
-            	 redirect='true' 
-            	     path="/entityView-exp_iterate.do?id=" />
-        </action>
         <!-- Редактирование связей по 203 приказу -->
         <action path='/listCrits203'
                 type='ru.ecom.web.actions.base.ForwardAction'

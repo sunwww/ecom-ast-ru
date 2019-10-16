@@ -32,13 +32,6 @@ public class VocPostForm extends IdEntityForm {
 	public void setOmcDoctorPost(Long aOmcDoctorPost) {theOmcDoctorPost = aOmcDoctorPost;}
 	/** Врачебная должность по ОМС */
 	private Long theOmcDoctorPost;
-	
-	
-	 /** Тип рабочего места */
-	@Comment("Тип рабочего места")
-	@Persist
-	public Long getPostType() {return thePostType;}
-	public void setPostType(Long aPostType) {thePostType = aPostType;}
 
     /** Название */
     @Comment("Наименование")
@@ -61,6 +54,4 @@ public class VocPostForm extends IdEntityForm {
 	private String theCode;
     /** Название */
     private String theName ;
-    /** Тип рабочего места */
-	private Long thePostType;
 }

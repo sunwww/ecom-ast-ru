@@ -1,14 +1,12 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
-import java.util.List;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import ru.ecom.mis.ejb.domain.extdisp.ExtDispDiagnosis;
-import ru.ecom.mis.ejb.domain.extdisp.ExtDispServiceIndication;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.util.List;
 
 	/**
 	 * Визит по дополнительной диспансеризации
@@ -17,13 +15,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class ExtDispVisit extends ExtDispService{
-	@OneToMany(mappedBy="visit", cascade=CascadeType.ALL)
-	public List<ExtDispDiagnosis> getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(List<ExtDispDiagnosis> aDiagnosis) {theDiagnosis = aDiagnosis;}
-	/**
-	 * Диагнозы
-	 */
-	private List<ExtDispDiagnosis> theDiagnosis;
+
 	@OneToMany(mappedBy="visit", cascade=CascadeType.ALL)
 	public List<ExtDispServiceIndication> getServiceIndications() {return theServiceIndications;}
 	public void setServiceIndications(List<ExtDispServiceIndication> aServiceIndications) {theServiceIndications = aServiceIndications;}

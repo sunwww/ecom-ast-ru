@@ -107,13 +107,6 @@ public class VocKsgForm extends IdEntityForm {
     /** Расширение для МКБ */
     private Long theExtendsForIdc10;
 
-    /** Уровень оказания для детей */
-    @Comment("Уровень оказания для детей")
-    @Persist
-    public Long getChildLevel() {
-        return theChildLevel;
-    }
-
     /** Ср. количество дней для детей */
     @Comment("Ср. количество дней для детей")
     public String getChildDays() {
@@ -122,17 +115,6 @@ public class VocKsgForm extends IdEntityForm {
 
     public void setChildDays(String aChildDays) {
         theChildDays = aChildDays;
-    }
-
-    /** Уровень оказания для взрослых */
-    @Comment("Уровень оказания для взрослых")
-    @Persist
-    public Long getAdultLevel() {
-        return theAdultLevel;
-    }
-
-    public void setAdultLevel(Long aAdultLevel) {
-        theAdultLevel = aAdultLevel;
     }
 
     /** Ср. кол-во дней для взрослых */
@@ -145,19 +127,11 @@ public class VocKsgForm extends IdEntityForm {
         theAdultDays = aAdultDays;
     }
 
-    public void setChildLevel(Long aChildLevel) {
-        theChildLevel = aChildLevel;
-    }
-
     /** Ср. кол-во дней для взрослых */
     private String theAdultDays;
-    /** Уровень оказания для взрослых */
-    private Long theAdultLevel;
     /** Ср. количество дней для детей */
     private String theChildDays;
 
-    /** Уровень оказания для детей */
-    private Long theChildLevel;
 
     /** Тип коек */
     @Comment("Тип коек")

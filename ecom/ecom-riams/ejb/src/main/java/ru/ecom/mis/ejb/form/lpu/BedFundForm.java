@@ -3,11 +3,7 @@ package ru.ecom.mis.ejb.form.lpu;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.lpu.BedFund;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
@@ -125,21 +121,7 @@ public class BedFundForm extends IdEntityForm {
 	private Boolean theNoFood;
 	/** Для детей */
 	private Boolean theForChild;
-	
-	/** Тип госпитального обслуживания */
-	@Comment("Тип госпитального обслуживания")
-	@Persist
-	public Long getServiceType() {
-		return theServiceType;
-	}
 
-	public void setServiceType(Long aServiceType) {
-		theServiceType = aServiceType;
-	}
-
-	/** Тип госпитального обслуживания */
-	private Long theServiceType;
-	
 	/** Тип свертывания (текст) */
 	@Comment("Тип свертывания (текст)")
 	@Persist

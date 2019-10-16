@@ -656,16 +656,7 @@ public class Patient extends BaseEntity{
 	//private MedPolicyOmc theAttachedOmcPolicy;
 	/** Случаи нетрудоспособности */
 	//private List<DisabilityCase> theDisabilityCases;
-	/** Трудовые книги */
-	//private List<WorkBook> theWorkBook ;
-	/** Знание языков */
-	//private List<LanguageSkill> theLanguageSkills;
-	/** Образования */
-	//private List<Education> theEducations ;
-	///** Квалификации */
-	//private List<Qualification> theQualifications ;
-	/** Награды */
-	//private List<Award> theAwards;
+
 	/** Медицинские карты */
 	//private List<Medcard> theMedcard;
 	/** Район города и области для фонда */

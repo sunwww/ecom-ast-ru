@@ -145,12 +145,6 @@ public class DisabilityDocumentForm extends IdEntityForm{
 	public String getIssueDate() {return theIssueDate;}
 	public void setIssueDate(String aIssueDate) {theIssueDate = aIssueDate;}
 
-	/** Разрешение на выдачу документа нетрудоспособности иногороднему */
-	@Comment("Разрешенение на выдачу документа нетрудоспособности иногороднему")
-	@Persist
-	public Long getPermission() {return thePermission;}
-	public void setPermission(Long aOpenPermission) {thePermission = aOpenPermission;}
-
 	/** Серия документа нетрудоспособности по основному месту работы */
 	@Comment("Серия документа нетрудоспособности по основному месту работы")
 	@Persist @DoUpperCase
@@ -360,8 +354,6 @@ public class DisabilityDocumentForm extends IdEntityForm{
 	private Long thePrimarity;
 	/** Дата выдачи */
 	private String theIssueDate;
-	/** Разрешение на выдачу документа нетрудоспособности иногороднему */
-	private Long thePermission;
 	/** Номер документа нетрудоспособности по основному месту работы */
 	private String theMainWorkDocumentNumber;
 	/** Предполагаемая дата родов */

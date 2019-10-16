@@ -38,11 +38,6 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
     private enum QueryConvertType {NONE, LOWER_CASE, UPPER_CASE}
 
     public TimeVocService() {
-//        setEntityName("OmcOrg");
-//        setNameFields(new String[] {"name", "newCode"});
-//        setCodeField("code");
-//        setQueriedFields(new String[] {"name","code","newCode"});
-//        setQueryConvertType(QueryConvertType.UPPER_CASE);
     }
 
     private Class findEntityClassByName(String aEntityName) throws IOException, JDOMException, ClassNotFoundException {

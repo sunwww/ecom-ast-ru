@@ -23,9 +23,6 @@
           <msh:autoComplete vocName="vocPriorityDiagnosis" property="priority" label="Приоритет" guid="e28f35fc-fe25-4968-bf2f-d1fe4661349e" horizontalFill="true" />
         </msh:row>
         <msh:row guid="cfba9b91-b2af-4867-aab3-29a1f39833fd">
-          <msh:autoComplete vocName="vocDiagnosis" property="docDiagnosis" label="Код МКБ-10" guid="e36df3bf-fe77-4096-a082-51016fc2baad" fieldColSpan="3" horizontalFill="true" />
-          </msh:row>
-        <msh:row guid="cfba9b91-b2af-4867-aab3-29a1f39833fd">
           <msh:autoComplete vocName="vocIdc10" property="idc10" label="Код МКБ-10" guid="e36df3bf-fe77-4096-a082-51016fc2baad" fieldColSpan="3" horizontalFill="true" />
           </msh:row>
         <msh:row guid="fb31a065-5f7f-4b11-b1b5-0f336254b9fd">
@@ -70,22 +67,7 @@
 	  		idc10Autocomplete.addOnChangeCallback(function() {
 		      	 	setDiagnosisText('idc10','name');
 		    });
-		    docDiagnosisAutocomplete.addOnChangeCallback(function() {
-		      	 	setDiagnosisText('docDiagnosis','name');
-		      	 	setIdc10('docDiagnosis','idc10');
-		    });
-	  		function setIdc10(aFieldDiag,aFieldIdc10) {
-	  			var val = $(aFieldMkb).value ;
-	  			HospitalMedCaseService.getIdc10ByDocDiag($(aFieldDiag).value, {
-		    		callback: function(aResult) {
-		    			if (aResult!=null && aResult!="") {
-		    				var ind = val.indexOf('#') ;
-		    				$(aFieldIdc10).value=aResult.substring(0,ind);
-		    				$(aFieldIdc10+'Name').value=aResult.substring(ind+1) ;
-		    			}
-		    		}
-		    	});
-	  		}
+
 	  		function setDiagnosisText(aFieldMkb,aFieldText) {
 	  			var val = $(aFieldMkb+'Name').value ;
 	  			var ind = val.indexOf(' ') ;

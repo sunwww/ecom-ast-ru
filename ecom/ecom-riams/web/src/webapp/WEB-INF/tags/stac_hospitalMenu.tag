@@ -128,9 +128,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="263 приказ" 
     	 action='/javascript:showorder263CloseDocument()' title='263 приказ' styleId="stac_slo"
     	/>
-    
-              <msh:sideLink roles="/Policy/Mis/Document/Flow/View" styleId="viewShort" action="/javascript:getDefinition('js-doc_flow-infoByPatient.do?id=${param.id}&medcase=${param.id}&short=Short')" name="Передача документов" title="Передача документов" />
-
 	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="Изменить рост/вес/ИМТ"
 					 action='/javascript:showIMTCloseDocument()' title='Изменить рост/вес/ИМТ' styleId="stac_slo"
 	   />
@@ -236,6 +233,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
  <msh:sideMenu title="Дополнительно">
         <msh:sideLink action="/stac_sslList.do?sslid=${param.id}" name="⇧Все госпитализации пациента" title="Все госпитализации пациента" />
         <msh:sideLink action="/mis_patients" name="Новая госпитализация" roles="/Mis/MainMenu/Patient,/Policy/Mis/MedCase/Stac/Ssl/Admission/Create"/>
+        <msh:sideLink action="/javascript:makeTimurHappy()" name="Расчитать вероятность диабета" roles="/Policy/Mis/Journal/CheckDiabetes"/>
 </msh:sideMenu>
 
 <msh:sideMenu title = "Добавить">

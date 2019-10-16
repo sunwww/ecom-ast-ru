@@ -1,22 +1,18 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedReductionType;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalServiceType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * Коечный фонд
@@ -119,21 +115,7 @@ public class BedFund extends BaseEntity{
 
 	/** Для детей */
 	private Boolean theForChild;
-	
-	/** Тип госпитального обслуживания */
-	@Comment("Тип госпитального обслуживания")
-	@OneToOne
-	public VocHospitalServiceType getServiceType() {
-		return theServiceType;
-	}
 
-	public void setServiceType(VocHospitalServiceType aServiceType) {
-		theServiceType = aServiceType;
-	}
-
-	/** Тип госпитального обслуживания */
-	private VocHospitalServiceType theServiceType;
-	
 	/** Тип свертывания (текст) */
 	@Comment("Тип свертывания (текст)")
 	@Transient
@@ -170,10 +152,7 @@ public class BedFund extends BaseEntity{
 	@Comment("Тип госпитального обслуживания (текст)")
 	@Transient
 	public String getServiceTypeName() {
-		return theServiceType!=null?theServiceType.getName():"";
-	}
-
-	public void setServiceTypeName(String aServiceTypeName) {
+		return "";
 	}
 
 	/** Время окончания актуальности */

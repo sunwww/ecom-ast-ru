@@ -7,7 +7,6 @@ import ru.ecom.expomc.ejb.domain.med.voc.VocSexPermission;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.sql.Date;
@@ -47,20 +46,7 @@ public class VocIdc10 extends VocIdCodeName {
 
 	/** Разрешен в ОМС */
 	private Boolean theOmcPermission;
-	/** Класс МКБ */
-	@Comment("Класс МКБ")
-	@ManyToOne
-	public VocIdc10Class getIdcClass() {
-		return theIdcClass;
-	}
 
-	public void setIdcClass(VocIdc10Class aIdcClass) {
-		theIdcClass = aIdcClass;
-	}
-
-	/** Класс МКБ */
-	private VocIdc10Class theIdcClass;
-	
 	/** Начальный возраст */
 	@Comment("Начальный возраст")
 	public Double getAgeFrom() {

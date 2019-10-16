@@ -9,7 +9,6 @@ import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
-import ru.ecom.expomc.ejb.services.importservice.factory.SimpleFactory;
 import ru.nuzmsh.dbf.DbfField;
 import ru.nuzmsh.dbf.DbfFile;
 import ru.nuzmsh.dbf.DbfFileReader;
@@ -249,11 +248,6 @@ public class ImportServiceBean implements IImportService {
                 "." + aField.getDbfDecimal() +
                 " : " + aMessage;
         aResult.addMessage(sb);
-    }
-
-    public IImportEntityFactory getImportEntityFactory() {
-        // пока для пробы
-        return new SimpleFactory() ;
     }
 
     /**

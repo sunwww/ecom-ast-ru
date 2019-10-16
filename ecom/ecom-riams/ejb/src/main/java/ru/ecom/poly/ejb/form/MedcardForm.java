@@ -5,11 +5,7 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.poly.ejb.form.interceptors.PrepareCreateMedcardInterceptor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTrimString;
@@ -57,21 +53,12 @@ public class MedcardForm extends IdEntityForm {
     public String getRegistrator() {return theRegistrator;}
     public void setRegistrator(String aRegistrator) {theRegistrator = aRegistrator;}
 
-
     /** Лечебно-профилактическое учреждение */
 	@Comment("Лечебно-профилактическое учреждение")
 	@Persist
 	public Long getLpu() {return theLpu;}
 	public void setLpu(Long aLpu) {theLpu = aLpu;}
 
-	/** Катротека */
-	@Comment("Катротека")
-	@Persist
-	public Long getCardIndex() {return theCardIndex;}
-	public void setCardIndex(Long aCardIndex) {theCardIndex = aCardIndex;}
-
-	/** Катротека */
-	private Long theCardIndex;
 	/** Лечебно-профилактическое учреждение */
 	private Long theLpu;
     /** Пациент **/

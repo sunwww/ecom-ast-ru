@@ -87,8 +87,6 @@ public class DisabilityDocument extends BaseEntity{
 	private VocDisabilityRegime theDisabilityRegime;
 	/** Первичность */
 	private VocDisabilityDocumentPrimarity thePrimarity;
-	/** Разрешение на выдачу документа нетрудоспособности иногороднему */
-	private DisabilityPermission thePermission;
 	/** Серия документа нетрудоспособности по основному месту работы */
 	private String theMainWorkDocumentSeries;
 	/** Номер документа нетрудоспособности по основному месту работы */
@@ -228,11 +226,6 @@ public class DisabilityDocument extends BaseEntity{
 	@Comment("Дата выдачи")
 	public Date getIssueDate() {return theIssueDate;}
 	public void setIssueDate(Date aIssueDate) {theIssueDate = aIssueDate;}
-
-	@Comment("Разрешенение на выдачу документа нетрудоспособности иногороднему")
-	@OneToOne
-	public DisabilityPermission getPermission() {return thePermission;}
-	public void setPermission(DisabilityPermission aOpenPermission) {thePermission = aOpenPermission;}
 
 	@Comment("Серия документа нетрудоспособности по основному месту работы")
 	public String getMainWorkDocumentSeries() {return theMainWorkDocumentSeries;}

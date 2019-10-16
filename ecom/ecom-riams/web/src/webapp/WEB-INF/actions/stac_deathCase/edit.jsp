@@ -40,7 +40,6 @@
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_deathCase" name="Удалить" roles="/Policy/Mis/MedCase/DeathCase/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
       </msh:sideMenu>
       <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc9" title="Добавить">
-        <msh:sideLink roles="/Policy/Mis/MedCase/DeathCase/Reason/Create" name="Причину смерти" params="id" action="/entityParentPrepareCreate-stac_deathReason" title="Добавить причину смерти" guid="11cc057f-b309-4193-9d22-199373cfd28d" />
         <msh:sideLink roles="/Policy/Mis/Certificate/Death/Create" name="Свидетельство о смерти" params="id" action="/entityParentPrepareCreate-stac_deathCertificate" title="Добавить свидетельство о смерти" guid="11cc0-b309-4193-9d22-199373cfd28d" />
         <msh:sideLink roles="/Policy/Mis/MedCase/ProtocolKili/Create" name="Протокол КИЛИ" params="id" action="/entityParentPrepareCreate-mis_protocolKili" title="Добавить протокол КИЛИ" guid="11cc0-b309-4193-9d22-199373cfd28d" />
       </msh:sideMenu>
@@ -223,16 +222,6 @@
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="stac_deathCaseForm" guid="48eb9700-d07d-4115-a476-a5a5e">
-      <msh:ifInRole roles="/Policy/Mis/MedCase/DeathCase/Reason/View" guid="932601e0-0d99-4b63-8f44-2466f6e91c0f">
-        <msh:section title="Причины смерти" guid="1f21294-8ea0-4b66-a0f3-62713c1">
-          <ecom:parentEntityListAll formName="stac_deathReasonForm" attribute="deathReasons" guid="30260c-7369-4ec7-a67c-882abcf" />
-          <msh:table hideTitle="true" idField="id" name="deathReasons" action="entityParentView-stac_deathReason.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
-            <msh:tableColumn columnName="Тип" property="reasonTypeInfo" guid="0694f7-ed40-4ebf-a274-1efd6901cfe4" />
-            <msh:tableColumn columnName="Причина" property="reason" guid="0694fd40-4ebf-a274-1efd6901cfe4" />
-            <msh:tableColumn columnName="Код МКБ10" property="idc10Info" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-          </msh:table>
-        </msh:section>
-      </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Certificate/Death/View" guid="b0ceb3e4-a6a2-41fa-be6b-ea222196a33d">
         <msh:section title="Свидетельства о смерти" guid="1f214-8ea0-4b66-a0f3-62713c1">
           <ecom:parentEntityListAll formName="stac_deathCertificateForm" attribute="deathCertificate" guid="302c-7369-4ec7-a67c-882abcf" />

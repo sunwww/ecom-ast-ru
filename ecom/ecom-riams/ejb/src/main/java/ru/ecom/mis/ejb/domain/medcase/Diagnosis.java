@@ -4,7 +4,6 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
-import ru.ecom.expomc.ejb.domain.med.VocDiagnosis;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcRoadTrafficInjury;
@@ -430,15 +429,6 @@ public class Diagnosis extends BaseEntity {
 		}
 		return buf.toString();
 	}
-	
-	/** Диагноз текст */
-	@Comment("Диагноз текст")
-	@OneToOne
-	public VocDiagnosis getDocDiagnosis() {return theDocDiagnosis;}
-	public void setDocDiagnosis(VocDiagnosis aDocDiagnosis) {theDocDiagnosis = aDocDiagnosis;}
-
-	/** Диагноз текст */
-	private VocDiagnosis theDocDiagnosis;
 
 	/** Медицинский специалист */
 	private WorkFunction theMedicalWorker;

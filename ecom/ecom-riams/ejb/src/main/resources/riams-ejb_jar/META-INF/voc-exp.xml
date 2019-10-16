@@ -393,110 +393,12 @@
     </voc>
 
 
-    <!-- Предприятие: код -> название предприятия + новый код -->
-    <voc id='timeOmcOrg' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcOrg'
-                    names = 'name,newCode'
-                    code = 'code'
-                    queried = 'name,code,newCode'
-                    queryConvertType = 'UPPER_CASE'  />
-    </voc>
-
-    <!-- Предприятие: код -> новый код -->
-    <voc id='timeOmcOrgCode-Code15' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcOrg'
-                    names = 'newCode'
-                    code = 'code'
-                    queried = 'name,code,newCode'
-                    queryConvertType = 'UPPER_CASE'  />
-    </voc>
-
-    <!-- Предприятие: код -> название предприятия -->
-    <voc id='timeOmcOrgCode-Name' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcOrg'
-                    names = 'name'
-                    code = 'code'
-                    queried = 'name,code,newCode'
-                    queryConvertType = 'UPPER_CASE'  />
-    </voc>
-
     <voc id='timeOmcLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
         <timeVoc    entity = 'OmcLpu'
                     queryConvertType="UPPER_CASE"
         />
     </voc>
 
-    <voc id='timeOmcVidLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcVidLpu' />
-    </voc>
-
-    <voc id='timeOmcSgroup' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcSgroup' />
-    </voc>
-
-    <voc id='timeOmcSex' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcSex' />
-    </voc>
-
-    <voc id='timeOmcRayon' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcRayon' />
-    </voc>
-
-    <voc id='timeOmcStreetType' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcStreetType' />
-    </voc>
-
-    <voc id='timeOmcSk' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcSk' />
-    </voc>
-
-    <voc id='timeOmcTariff' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcTariff' />
-    </voc>
-
-    <voc id='timeOmcMkb10' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcMkb10' />
-    </voc>
-
-    <voc id='timeOmcResG' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcResG' />
-    </voc>
-
-    <voc id='timeOmcPrvd' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcPrvd' />
-    </voc>
-
-    <voc id='timeOmcLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcLpu' />
-    </voc>
-
-    <voc id='timeOmcVidLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcVidLpu' />
-    </voc>
-
-    <voc id='timeOmcAs' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcAs' />
-    </voc>
-
-    <voc id='timeOmcKl' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcKl' />
-    </voc>
-
-    <voc id='timeOmcDepType' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcDepType' />
-    </voc>
-
-    <voc id='timeOmcOsl' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcOsl' />
-    </voc>
-
-    <voc id='timeOmcQz' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcQz' />
-    </voc>
-
-    <voc id='timeOmcExpert' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcExpert' />
-    </voc>
     <voc id='omcOksm' type='EntityVocService'>
         <EntityVocService
                 names   = 'code,name'
@@ -539,14 +441,7 @@
                 queryAppend="(noActuality is null or noActuality=false) and (isBlock='0' or isBlock is null)"
         />
     </voc>
-    <voc id='vocDiagnosis' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.med.VocDiagnosis'
-                names   = 'code,name'
-                queried = 'code,name'
-                queryConvertType="FIRST_LAT_UPPER"
-        />
-    </voc>
+
     <!--  МКБ 10 Травма-->
     <voc id='vocIdc10Travm' type='EntityVocService'>
         <EntityVocService
@@ -571,13 +466,6 @@
         />
     </voc>
 
-    <voc id='vocHello' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.ejb.domain.hello.Hello'
-                names   = 'hello'
-                queried = 'hello'
-        />
-    </voc>
     <voc id="omcStandart" type="EntityVocService">
         <EntityVocService
                 entity="ru.ecom.expomc.ejb.domain.omcvoc.OmcStandart"

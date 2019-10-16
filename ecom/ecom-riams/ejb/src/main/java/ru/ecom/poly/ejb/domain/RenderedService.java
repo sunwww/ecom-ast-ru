@@ -1,15 +1,15 @@
 package ru.ecom.poly.ejb.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,6 +25,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	,@AIndex(properties={"ticket","medService"})
 })
 @Table(schema="SQLUser")
+@Deprecated
 public class RenderedService extends BaseEntity {
    /** Талоны **/
     @ManyToOne

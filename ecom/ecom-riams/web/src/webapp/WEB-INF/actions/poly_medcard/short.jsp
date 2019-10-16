@@ -24,9 +24,6 @@
         <msh:row guid="f7e60994-c39c-4e57-a48d-2fbdf95717dc">
           <msh:textField property="number" label="Номер мед. карты" horizontalFill="true" size="10" guid="5c63b3f6-bad5-4ac0-8bab-16e93d194cb7" />
         </msh:row>
-        <msh:row>
-        	<msh:autoComplete parentAutocomplete="lpu" vocName="vocCardIndex" property="cardIndex" fieldColSpan="3" horizontalFill="true" label="Картотека"/>
-        </msh:row>
         <msh:row guid="24ce0983-813b-4cc4-a329-f7487c49b66c">
           <msh:textField viewOnlyField="true" property="dateRegistration" label="Дата регистрации" horizontalFill="true" size="10" guid="e4905c10-14f2-471f-a07a-9d3119230614" />
           <msh:textField viewOnlyField="true" property="registrator" label="Регистратор" horizontalFill="true" size="10" guid="e4905c10-14f2-471f-a07a-9d3119230614" />

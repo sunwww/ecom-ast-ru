@@ -3,7 +3,6 @@ package ru.ecom.mis.ejb.domain.medcase;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcQz;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient;
@@ -156,10 +155,10 @@ public class HospitalMedCase extends LongMedCase {
 	//public void setPolicies(List<MedCaseMedPolicy> aPolicies) {thePolicies = aPolicies;}
 
 	/** Характер заболевания */
-	@Comment("Характер заболевания")
-	@OneToOne
-	public OmcQz getIllessCharacter() {return theIllessCharacter;}
-	public void setIllessCharacter(OmcQz aIllessCharacter) {theIllessCharacter = aIllessCharacter;}
+//	@Comment("Характер заболевания")
+//	@OneToOne
+//	public OmcQz getIllessCharacter() {return theIllessCharacter;}
+//	public void setIllessCharacter(OmcQz aIllessCharacter) {theIllessCharacter = aIllessCharacter;}
 
 	///** Причина смерти */
 	//@Comment("Причина смерти")
@@ -347,7 +346,7 @@ public class HospitalMedCase extends LongMedCase {
 	///** Причина смерти */
 	//private VocDeathCause theDeathCause;
 	/** Характер заболевания */
-	private OmcQz theIllessCharacter;
+	//private OmcQz theIllessCharacter;
 	///** Полисы */
 	//private List<MedCaseMedPolicy> thePolicies;
 	/** Оказана мед. помощь в приемном отделении */

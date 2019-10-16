@@ -42,11 +42,6 @@ public class HospitalDataFondForm extends IdEntityForm{
 	public String getNumberFond() {return theNumberFond;}
 	public void setNumberFond(String aNumberFond) {theNumberFond = aNumberFond;}
 
-	/** Отказ от госпитализации */
-	@Persist @Comment("Отказ от госпитализации")
-	public Long getDeniedHosp() {return theDeniedHosp;}
-	public void setDeniedHosp(Long aDeniedHosp) {theDeniedHosp = aDeniedHosp;}
-
 	/** Фамилия */
 	@Persist @Comment("Фамилия")
 	public String getLastname() {return theLastname;}
@@ -114,8 +109,6 @@ public class HospitalDataFondForm extends IdEntityForm{
 	private String theFirstname;
 	/** Фамилия */
 	private String theLastname;
-	/** Отказ от госпитализации */
-	private Long theDeniedHosp;
 	/** Номер направления из фонда */
 	private String theNumberFond;
 	/** Экстренность */
