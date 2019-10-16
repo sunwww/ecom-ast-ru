@@ -30,17 +30,13 @@ public class CheckGroupTag extends AbstractGuidSimpleSupportTag {
             
 	    	try {
 	    		String value=(String) PropertyUtil.getPropertyValue(form,  theProperty) ; 
-	    		//System.out.println("--cg---value="+value) ;
 				IWebQueryService service = Injection.find(request).getService(IWebQueryService.class) ;
 				String valueSql="" ;
 				if (value!=null &&!value.trim().equals("")) {
 					valueSql = ",case when "+theTableId+" in ("+value+") then 1 else null end as eqval" ;
 				}
 				Collection<WebQueryResult> col = service.executeNativeSql("select "+theTableId+" as id, "+theTableField+" as fld "+valueSql+" from "+theTableName);
-				//System.out.println("--cg---col="+col.size()) ;
-				//System.out.println("--cg---sql="+"select "+theTableId+" as id, "+theTableField+" as fld "+valueSql+" from "+theTableName) ;
 		        boolean isEmpty=col.isEmpty();
-		        //boolean isFirst = true ;
 		        if (!isEmpty) {
 		        	out.println("<td class='label' title='"+(theLabel!=null?theLabel+":":"")+" ("+theProperty+")' colspan='1'>");
 		        	out.println("<label id='"+theProperty+"Label'>"+(theLabel!=null?theLabel+":":"")+":</label>");
@@ -63,7 +59,6 @@ public class CheckGroupTag extends AbstractGuidSimpleSupportTag {
 						out.print("'>");
 
 						out.println("<td >") ;
-						//String typeId = theProperty+"_"+currentId ;
 						out.println("<input id='"+theProperty+"Temp' name='"+theProperty+"Temp' value='"+currentId+"' type='checkbox' onclick=\"$('"+theProperty+"').value=getCheckedCheckBox(this.form,this.name,',')\"");
 						if (isChecked) out.println(" checked='true'") ;
 						out.println("/>") ;

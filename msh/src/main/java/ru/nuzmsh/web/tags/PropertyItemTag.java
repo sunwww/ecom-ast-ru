@@ -1,6 +1,7 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
+import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspContext;
@@ -8,9 +9,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.StringUtil;
+import java.io.IOException;
 
 /**
  *
@@ -77,19 +76,19 @@ public class PropertyItemTag extends SimpleTagSupport {
 
         int pointPosition = aProperty.indexOf('.') ;
         Object value ;
-        String keyToRead ;
+  //      String keyToRead ;
         if(pointPosition>0) {
             String object = aProperty.substring(0, pointPosition) ;
             String property = aProperty.substring(pointPosition+1) ;
             try {
                 value = PropertyUtil.getPropertyValue(request.getAttribute(object), property) ;
-                keyToRead = object +"."+property ;
+ //               keyToRead = object +"."+property ;
             } catch (Exception e) {
                 throw new JspException("Ошибка получение значения: "+object+"."+property,e) ;
             }
         } else {
             value = request.getAttribute(aProperty) ;
-            keyToRead = aProperty ;
+ //           keyToRead = aProperty ;
         }
 
         return value!=null ? value.toString() : null ;

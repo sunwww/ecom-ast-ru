@@ -1,12 +1,12 @@
 package ru.nuzmsh.web.tags;
 
-
 /**
  * @jsp.tag name="comboBox"
  *          display-name="Combo box Field"
  *          body-content="empty"
  *          description="ComboBox field JSP tag."
  */
+
 public class ComboBoxTag extends AutoCompleteTag {
 
     /*

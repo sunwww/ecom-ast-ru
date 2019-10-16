@@ -29,8 +29,6 @@ public class InfoMessage {
             HttpSession session = request.getSession();
             if(session!=null) {
                 message = (InfoMessage) session.getAttribute(ATTRIBUTE) ;
-            } else {
-                message = null ;
             }
         }
         return message;

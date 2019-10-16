@@ -3,8 +3,8 @@ package ru.nuzmsh.util.format;
 import ru.nuzmsh.util.StringUtil;
 
 import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -122,7 +122,7 @@ public static String convertOtherFormat(String aDate, String aFromFormat, String
 			    throw new IllegalArgumentException("Дата "+FORMAT_1.format(ret)+" не должна быть меньше "+FORMAT_1.format(minDate)) ;
 			}
 		}
-        return new java.sql.Date(ret.getTime()) ;
+        return ret !=null ? new java.sql.Date(ret.getTime()) : null ;
     }
 
 	/** Из строки 25.03.2018 в java.util.Date */

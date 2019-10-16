@@ -1701,11 +1701,7 @@ public class HospitalMedCaseServiceJs {
 		service.updateDischargeDateByInformationBesk(aIds, aDate) ;
 		return "Обновлены" ;
 	}
-	//Получить данные диагноза по умолчанию для акушерства
-	public String getIdc10ByDocDiag(Long aIdDocDiag,HttpServletRequest aRequest) throws NamingException { 
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-		return service.getIdc10ByDocDiag(aIdDocDiag) ;
-	}
+
 	public String getTypeDiagByAccoucheur(HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		return service.getTypeDiagByAccoucheur() ;

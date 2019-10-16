@@ -8,7 +8,6 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import ru.nuzmsh.commons.auth.ILoginInfo;
 import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.web.struts.forms.customize.FormCustomizeException;
 import ru.nuzmsh.web.struts.forms.customize.FormElementInfo;
 import ru.nuzmsh.web.struts.forms.customize.FormInfo;
 import ru.nuzmsh.web.struts.forms.customize.IFormCustomizeService;
@@ -24,9 +23,6 @@ import java.util.*;
 public class XmlFormCustomizeService implements IFormCustomizeService {
 
     private static final Logger LOG = Logger.getLogger(XmlFormCustomizeService.class) ;
-    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
-
-
 
     /** Каталог для хранения настроек */
     public String getConfigDir() { return theConfigDir ; }
@@ -80,10 +76,6 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
         } else {
             info = null ;
         }
-//        FormElementInfo info = theHash.get(sb.toString()) ;
-        //if (CAN_TRACE) LOG.info("findFormElementInfo(): key = " + sb);
-        StringBuilder sb = new StringBuilder(aFormName).append('.').append(aElementName);
-        if (CAN_TRACE) LOG.info(new StringBuilder().append("findFormElementInfo(): ").append(sb).append(" = ").append(info).toString());
         return info ;
     }
 
@@ -100,8 +92,6 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
 
 
     private void saveFormElementInfoNoSave(ILoginInfo aLoginInfo, String aFormName, FormElementInfo aInfo) {
-        if (CAN_TRACE) LOG.info("saving " +aFormName+"." + aInfo);
-
         if(aInfo!=null && !canSave(aInfo)) { // удаляем из базы
             TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName) ;
             if(elementsHash!=null) {
@@ -174,7 +164,6 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
     }
 
     private boolean canSave(FormElementInfo aInfo) {
-        if (CAN_TRACE) LOG.info("canSave()" + aInfo);
         return !StringUtil.isNullOrEmpty(aInfo.getDefaultValue()) || !StringUtil.isNullOrEmpty(aInfo.getLabel()) ||aInfo.isVisible()!=null ;
     }
 
@@ -188,7 +177,7 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
         return ret ;
     }
 
-    public Collection<FormElementInfo> listCustomizedElements(String aFormName) throws FormCustomizeException {
+    public Collection<FormElementInfo> listCustomizedElements(String aFormName) {
         TreeMap<String,FormElementInfo> elementsHash = theHash.get(aFormName) ;
         return elementsHash!=null ? elementsHash.values() : null ;
     }

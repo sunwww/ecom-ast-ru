@@ -35,7 +35,7 @@ public class Expert2FileImportAction extends BaseAction {
 			LOG.info("filename = "+fileName);
 			String action = form.getDirName();
 			String result ;
-			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/data");
+			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi/server/default/data");
 			switch (action) {
 				case "createEntry":
 					if (fileName.toUpperCase().endsWith(".MP")) {

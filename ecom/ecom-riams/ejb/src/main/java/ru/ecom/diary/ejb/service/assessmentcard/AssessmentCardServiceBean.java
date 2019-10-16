@@ -57,7 +57,7 @@ public class AssessmentCardServiceBean implements IAssessmentCardService{
 						sb.append(param.get("unitname")).append(" ") ;*/
 					}
 					//пользовательский справочник
-				} else if (type.equals("2")) {
+				} else if (type.equals("2") && !"".equals(value)) {
 					Long id = ConvertSql.parseLong(value) ;
 					if (id!=null && !id.equals(0L)) {
 						UserValue uv = aManager.find(UserValue.class, id) ;

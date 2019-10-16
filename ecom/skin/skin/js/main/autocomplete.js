@@ -5,15 +5,11 @@ function error(aHtml) {
 		console.error("AutocompleteError!") ;
 	} catch (e) {
 	}
-    //var w = window.open(""
-    //        , ""
-    //        , "height=500,width=600,scrollbars=yes") ;
-    //w.document.write(aHtml);
 }
 
 var msh_autocomplete = {
     Version: '1.0'
-}
+};
 
 var theMshaHttpRequest ;
 var theIsSearching = false ;
@@ -25,7 +21,7 @@ if (window.XMLHttpRequest) {
 
 function mshaGetElementsByClassName(aElement, className) {
     var children = element.getElementsByTagName('*') ;
-    var elements = new Array();
+    var elements = [];
 
     for (var i = 0; i < children.length; i++) {
         var child = children[i];
@@ -55,17 +51,8 @@ function mshaDoRequestSync(aUrl, aQuery) {
 
 
 function mshaDoRequest(aUrl, aQuery, aCallback) {
-    // old
-//    try {
-//        theMshaHttpRequest.abort() ;
-//    } catch (e) {}
     if (theIsSearching) return;
     theIsSearching = true;
-    // end old
-
-    //    if(theMshaHttpRequest!=null && theMshaHttpRequest.readyState!=0) {
-    //        theMshaHttpRequest.abort() ;
-    //    }
 
     if (window.XMLHttpRequest) {
         theMshaHttpRequest = new XMLHttpRequest();
@@ -105,7 +92,7 @@ msh_autocomplete.View = function(aElement, aDiv) {
             }
             theElement.title = theElement.title + "  Добавить - [ALT+INSERT], изменить - [F2]" ;
         }
-    }
+    };
 
     /*
     *  Создание падающего списка
@@ -126,7 +113,7 @@ msh_autocomplete.View = function(aElement, aDiv) {
         setSelected(0);
         theDiv.style.visibility = 'visible';
         theDiv.style.display = 'block';
-    }
+    };
 
     this.setSearching = function (aSearching) {
         if (aSearching) {
@@ -135,41 +122,41 @@ msh_autocomplete.View = function(aElement, aDiv) {
         } else {
             Element.removeClassName(theElement, "searching");
         }
-    }
+    };
 
     this.hide = function() {
         theDiv.innerHTML = "";
         theDiv.style.visibility = 'hidden';
         theDiv.style.display = 'none';
-    }
+    };
 
     this.getLastId = function() {
         var lis = theDiv.getElementsByTagName("li") ;
         var li = lis[lis.length - 1] ;
         return getValue(li, "span");
-    }
+    };
 
     this.getFirstId = function() {
         var lis = theDiv.getElementsByTagName("li") ;
         var li = lis[0] ;
         return getValue(li, "span");
-    }
+    };
 
     this.selectNext = function() {
         return setSelected(theLastSelectedIndex + 1);
-    }
+    };
 
     this.selectPrevious = function() {
         return setSelected(theLastSelectedIndex - 1);
-    }
+    };
 
     this.getSelectedName = function() {
         return getSelectedBySpanClass('name');
-    }
+    };
 
     this.getSelectedId = function() {
         return getSelectedBySpanClass('id');
-    }
+    };
 
     function getSelectedBySpanClass(aSpanClass) {
         var lis = theDiv.getElementsByTagName("li") ;
@@ -269,13 +256,6 @@ function preventDefault(e) {
     e.returnValue = false;
 }
 
-/*function preventDefaultForScrollKeys(e) {
-    if (keys!=null && keys!="" && keys!="undefined" && keys[e.keyCode]) {
-        preventDefault(e);
-        return false;
-    }
-}*/
-
 function disableScroll() {
     if (window.addEventListener) // older FF
         window.addEventListener('DOMMouseScroll', preventDefault, false);
@@ -352,42 +332,42 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
     this.setVocKey = function(aVocKey) {
         theVocKey = aVocKey ;
         this.setVocId(theIdField.value) ;
-    }
+    };
 
     this.setParentId = function(aParentId) {
     	theParentId = aParentId ;
-    }
+    };
     this.getParentId = function() {
         return theParentId  ;
-    }
+    };
 
     this.setUrl = function(aUrl) {
         theUrl = aUrl ;
         this.setVocId(theIdField.value) ;
-    }
+    };
 
     this.setShowIdInName = function(aShow) {
         theShowIdInName = aShow ;
-    }
+    };
 
     this.setParent = function(aParent) {
         theParent = aParent ;
-    }
+    };
 
     this.addOnChangeCallback = function(aFunction) {
         theOnChangeCallback = aFunction ;
-    }
+    };
 
     this.clearValuesWithNoEvents = function() {
         theElement.value = "" ;
         theIdField.value = "" ;
         if(theOnChangeCallback) theOnChangeCallback() ;
-    }
+    };
 
     this.publicFindNext = function() {
         var query = 'id=' + theView.getLastId()+createParentQuery() ;
         mshaDoRequest(theUrl, query, onResponse);
-    }
+    };
 
     ///////////////////////////////////////////////////////
     // PRIVATE FUNCTIONS
@@ -418,22 +398,7 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
         } ) ;
 
 
-//        theIdField.value = aId ;
-//        mshaDoRequestSync(theUrl, 'id=' + aId);
-//        var aResponse = theMshaHttpRequest;
-//        if (theMshaHttpRequest.status == 200) {
-//            var names = aResponse.responseXML.getElementsByTagName("name") ;
-//            if(names && names.length>0 && names[0].firstChild) {
-//
-//                theElement.value = names[0].firstChild.nodeValue ;
-//            }
-//        } else {
-//            alert(aResponse.status + " " + aResponse.statusText);
-//            error(aResponse.responseText);
-//            throw new Exception(aResponse.responseText) ;
-//        }
-//        theView.setSearching(false);
-    }
+    };
 
     function onVocIdResponse() {
         aResponse = theMshaHttpRequest;
@@ -473,11 +438,11 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
         }
         setBoxShowed(false);
         theView.hide(); enableScroll();
-        if(canSendChangeEvent && theOnChangeCallback) theOnChangeCallback() ;
+        if(canSendChangeEvent && theOnChangeCallback) theOnChangeCallback();
     }
-function searchParentNode(name) {
-        return name.replace("Name","")+"Div";
-    }
+    function searchParentNode(name) {
+            return name.replace("Name","")+"Div";
+        }
     function select() {
         var doc_table_id;
         //просто autocomplete
@@ -497,12 +462,7 @@ function searchParentNode(name) {
             var el = document.getElementById(searchParentNode(aElement.id));
             if (el!=null && el!==undefined && el.childNodes[0]!=null) doc_table_id=el.childNodes[0].id;
         }
-        /*if (doc_table_id===undefined) {
-            setTimeout(function () {
-                aElement.click()
-            }, 10);
 
-        }*/
         if (doc_table_id!=null) {
             if (doc_table_id == "doc_table1") {
                 theCanShow = false;
@@ -571,14 +531,12 @@ function searchParentNode(name) {
     }
 
     function findParentId(aAutocomplete) {
-        //alert("auto="+aAutocomplete) ;
         if(aAutocomplete==null  || aAutocomplete=="undefined") {
             return null ;
         } else {
             if(aAutocomplete.getVocId()==null || aAutocomplete.getVocId()=="" || aAutocomplete.getVocId()=="undefined") {
                 return findParentId(aAutocomplete.getParent()) ;
             } else {
-                //alert(aAutocomplete.getVocId()) ;
                 return aAutocomplete.getVocId() ;
             }
         }
@@ -592,7 +550,6 @@ function searchParentNode(name) {
 
     function onKeyUp(aEvent) {
         theCanShow = true ;
-        //alert("onKeyUp"+aEvent) ;
         var keyCode = aEvent.keyCode ;
         if (13 == keyCode || 9 == keyCode) { // ENTER
             select();
@@ -609,19 +566,16 @@ function searchParentNode(name) {
     */
     function onKey(aEvent) {
         theCanShow = true ;
-        //alert("onKeyDown"+aEvent) ;
         var keyCode = aEvent.keyCode ;
         if (keyCode == eventutil.VK_ESCAPE || keyCode == eventutil.VK_DEL) { // пропускаем ESCAPE
             return selectEmpty();
         } else if(aEvent.ctrlKey || aEvent.shiftKey) {
             return false ;
         } else if(aEvent.altKey && keyCode==eventutil.VK_INSERT) {
-            //alert("finded: "+findParentId(theParent!=null ? theParent : null )) ;
             getVocValueEdit().insertNewValue(findParentId(theParent!=null ? theParent : null )) ;
             return true ;
         } else {
             if (!isBoxShowed() && keyCode==eventutil.VK_PAGE_DOWN) { // если нет на экране
-//                if (13 != keyCode && 9 != keyCode) { // ENTER
                     findFromEnteredId();
 //                }
             } else {
@@ -651,21 +605,6 @@ function searchParentNode(name) {
                         mshaDoRequest(theUrl, "", onResponse);
                         break ;
                 }
-//                if(eventutil.VK_PAGE_DOWN==keyCode) {
-//                    findNext() ;
-//                } if (40 == keyCode) { // KEY_DOWN
-//                    if (! theView.selectNext()) {
-//                        findNext();
-//                    }
-//                } else if (38 == keyCode) { // KEY_UP
-//                    if (! theView.selectPrevious()) {
-//                        findPrevious();
-//                    }
-//                } else if (13 == keyCode || 9 == keyCode) { // ENTER
-//                    select();
-//                } else {
-//                    //alert(keyCode) ;
-//                }
             }
         }
     }
@@ -773,48 +712,48 @@ msh_autocomplete.Autocomplete = function() {
 
     this.getParent = function() {
         return theParent ;
-    }
+    };
 
     this.setVocTitle = function(aVocTitle) {
         theVocTitle = aVocTitle ;
-    }
+    };
 
     this.setVocKey = function(aVocKey) {
         theVocKey = aVocKey ;
         if(theAction!=null) {
             theAction.setVocKey(aVocKey) ;
         }
-    }
+    };
 
     this.setNameFieldId = function(aNameFieldId) {
         theNameField = $(aNameFieldId);
-    }
+    };
     this.setIdFieldId = function (aIdFieldId) {
         theIdField = $(aIdFieldId);
-    }
+    };
     this.setDivId = function (aDivId) {
         theDiv = $(aDivId);
-    }
+    };
 
     this.setUrl = function (aUrl) {
         theUrl = aUrl;
         if(theAction!=null) {
             theAction.setUrl(aUrl) ;
         }
-    }
+    };
 
     this.setParentId = function(aParentId) {
     	theAction.setParentId(aParentId) ;
-    }
+    };
     this.getParentId = function() {
         return theAction.getParentId() ;
-    }
+    };
 
     this.setParent = function(aParent) {
         theParent = aParent ;
         theAction.setParent(aParent) ;
         theParent.addOnChangeCallback(parentOnChange) ;
-    }
+    };
 
     function parentOnChange() {
         //theAction.setVocId("") ;
@@ -826,7 +765,7 @@ msh_autocomplete.Autocomplete = function() {
         theAction.addOnChangeCallback(aFunction) ;
         //theOnChangeCallback = aFunction ;
     }
-
+;
     this.build = function () {
 
         var view = new msh.widget.AutocompleteTableView(theNameField, theDiv) ;//new msh_autocomplete.View(theNameField, theDiv) ;
@@ -835,21 +774,12 @@ msh_autocomplete.Autocomplete = function() {
             theNameField.setAttribute("autocomplete", "off");
         } catch (e) {
         }
-        // For minimize traffic check Editabled before insert or edit value
-        //try {
-        //    VocEditService.isVocEditabled(theVocKey, {
-        //       callback: function(aEditabled) {
-        //            if(aEditabled) view.setEditabled(true) ;
-        //        }
-        //    } ) ;
-        //} catch (e) {
-        //}
-    }
+    };
 
     /* Получение фокуса*/
     this.requestFocus = function() {
         theNameField.focus();
-    }
+    };
 
     this.getVocIdForParent = function() {
         var ret = null ;
@@ -862,31 +792,31 @@ msh_autocomplete.Autocomplete = function() {
             ret = id ;
         }
         return ret ;
-    }
+    };
 
     /**
     * Получение идентификатора из справочника
     */
     this.getVocId = function() {
         return theIdField.value ;
-    }
+    };
 
     /**
     * Названия из справочника
     */
     this.getVocName = function() {
         return theNameField.value ;
-    }
+    };
 
     this.setVocId = function(aId) {
         theAction.setVocId(aId) ;
-    }
+    };
 
     this.setShowIdInName = function(aShow) {
         theAction.setShowIdInName(aShow) ;
     }
 	
-}
+};
 
 function showAutocompleteWindow(aIdField, aNameField, aSelectedId, aVocName) {
     //    window.open("autocompleteWindow.do?idField="+aIdField+"&nameField="+aNameField

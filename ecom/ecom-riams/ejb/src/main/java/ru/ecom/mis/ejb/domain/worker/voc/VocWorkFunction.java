@@ -1,13 +1,13 @@
 package ru.ecom.mis.ejb.domain.worker.voc;
 
-import java.util.List;
-
-import javax.persistence.*;
-
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Рабочая функция
@@ -18,6 +18,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocWorkFunction extends VocBaseEntity{
+
+	/** Специальность по справочнику V021 */
+	@Comment("Специальность по справочнику V021")
+	@OneToOne
+	public VocE2FondV021 getFondSpeciality() {return theFondSpeciality;}
+	public void setFondSpeciality(VocE2FondV021 aFondSpeciality) {theFondSpeciality = aFondSpeciality;}
+	/** Специальность по справочнику V021 */
+	private VocE2FondV021 theFondSpeciality ;
 	
 	/** Должности */
 	@Comment("Должности")

@@ -22,8 +22,6 @@ import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.ejb.xml.XmlUtil;
 import ru.ecom.expert2.service.IExpert2Service;
-import ru.ecom.expomc.ejb.domain.med.VocDiagnosis;
-import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterConfig;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -2569,6 +2567,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" where wchb.visit_id is not null");
 		sql.append(" and wchb.createDate between to_date('").append(aDateFrom).append("','yyyy-MM-dd') and to_date('").append(aDateTo).append("','yyyy-MM-dd')");
 		sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER') and wchb.visit_id is not null");
+		sql.append(" and mp.dtype='MedPolicyOmc'"); //только местные полиса, иногородних не выгружаем
 		if (aIsPolyc&&aIsHospital) {
 		} else if (aIsPolyc&&!aIsHospital) {
 			sql.append(" and upper(mc.dtype) = 'VISIT'") ;
@@ -2878,6 +2877,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" and (hdf.istable2 is null or hdf.istable2='0')") ;
 		sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
 		sql.append(" and (hdf.istable5 is null or hdf.istable5='0')") ;
+		sql.append(" and mp.dtype='MedPolicyOmc'"); //только местные полиса, иногородних не выгружаем
+
 		sql.append(" order by p.lastname,p.firstname,p.middlename") ;
 
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -2979,6 +2980,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" and (hdf.istable2 is null or hdf.istable2='0')") ;
 		sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
 		sql.append(" and (hdf.istable5 is null or hdf.istable5='0')") ;
+		sql.append(" and mp.dtype='MedPolicyOmc'"); //только местные полиса, иногородних не выгружаем
 		sql.append(" group by sls.id,p.lastname,p.firstname,p.middlename") ;
 		sql.append(" order by p.lastname,p.firstname,p.middlename") ;
 
@@ -3174,6 +3176,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" and (hdf.istable2 is null or hdf.istable2='0')") ;
 		sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
 		sql.append(" and (hdf.istable5 is null or hdf.istable5='0')") ;
+		sql.append(" and mp.dtype='MedPolicyOmc'"); //только местные полиса, иногородних не выгружаем
 		sql.append(" order by p.lastname,p.firstname,p.middlename") ;
 
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -3288,6 +3291,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" and sls.deniedHospitalizating_id is null and (sls.emergency is null or sls.emergency='0') and slo.prevMedCase_id is null");
 		sql.append(" and vss.code in ('OBLIGATORYINSURANCE')  and (sls.emergency is null or sls.emergency='0')") ;
 		sql.append(" and mkb.code is not null and (hdf.id is null)") ;
+		sql.append(" and mp.dtype='MedPolicyOmc'"); //только местные полиса, иногородних не выгружаем
 		sql.append(" and coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef)='").append(aLpu).append("'") ;
 		sql.append(" order by p.lastname,p.firstname,p.middlename") ;
 
@@ -3403,6 +3407,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
 		sql.append(" and vss.code in ('OBLIGATORYINSURANCE')") ;
 		sql.append(" and mkb.code is not null and (hdf.id is not null and (hdf.numberfond is null or hdf.numberfond='') or hdf.id is null)") ;
+		sql.append(" and mp.dtype='MedPolicyOmc'"); //только местные полиса, иногородних не выгружаем
 		sql.append(" order by p.lastname,p.firstname,p.middlename") ;
 
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
@@ -4030,6 +4035,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					theManager.createNativeQuery("update ClinicExpertCard d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update transfusion d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update hitechmedicalcase d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
+					theManager.createNativeQuery("update robsonclass d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='"+obj[2]+"') "
 							+" ,transferDate=(select transferDate from medcase where id='"+obj[2]+"')"
 							+" ,transferTime=(select transferTime from medcase where id='"+obj[2]+"')"
@@ -4045,6 +4051,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					theManager.createNativeQuery("delete from medcase m where m.id='"+obj[1]+"'").executeUpdate() ;
 				} else {
 					//
+					theManager.createNativeQuery("update robsonclass d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update assessmentCard cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
 					theManager.createNativeQuery("update newBorn nb    set medcase_id='"+aSlo+"' where nb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
@@ -4195,11 +4202,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		return id ;
 	}
 
-	public String getIdc10ByDocDiag(Long aIdDocDiag){
-		VocDiagnosis diag = theManager.find(VocDiagnosis.class, aIdDocDiag) ;
-		VocIdc10 mkb = diag.getIdc10() ;
-		return  mkb==null ? "" :  mkb.getId()+"#"+mkb.getCode()+"#"+mkb.getName() ;
-	}
 	public String getOperationsText(Long aPatient, String aDateStart
 			,String aDateFinish) {
 		if (aDateFinish==null || aDateFinish.equals("")) {

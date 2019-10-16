@@ -116,14 +116,14 @@ import javax.servlet.jsp.PageContext;
      */
             JavaScriptContext js = JavaScriptContext.getContext(pageContext, this) ;
 //            sb.append("$('"+getProperty()+"').focus = setFocusOnField('"+getProperty()+"Name') ;\n") ;
-            js.println(new StringBuilder().append("var ").append(autoc).append(" = new ecom_tree_autocomplete.Autocomplete() ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setUrl('simpleVocAutocomplete/").append(vocname).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setIdFieldId('").append(fieldId).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setNameFieldId('").append(nameId).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setDivId('").append(divId).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setVocKey('").append(vocname).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setVocTitle('").append(getLabel()).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".build() ;").toString()) ;
+            js.println("var " + autoc + " = new ecom_tree_autocomplete.Autocomplete() ;") ;
+            js.println(autoc + ".setUrl('simpleVocAutocomplete/" + vocname + "') ;") ;
+            js.println(autoc + ".setIdFieldId('" + fieldId + "') ;") ;
+            js.println(autoc + ".setNameFieldId('" + nameId + "') ;") ;
+            js.println(autoc + ".setDivId('" + divId + "') ;") ;
+            js.println(autoc + ".setVocKey('" + vocname + "') ;") ;
+            js.println(autoc + ".setVocTitle('" + getLabel() + "') ;") ;
+            js.println(autoc + ".build() ;") ;
             
             if(!StringUtil.isNullOrEmpty(theParentId)) {
                 js.println(autoc,".setParentId('",getParentIdValue(pageContext),"') ;") ;

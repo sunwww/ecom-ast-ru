@@ -297,7 +297,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     }
                     out.println("<table border='1' class='tabview sel tableArrow'"+(getGuid()!=null?"id='"+getGuid()+"'":"")+">");
                 } catch (Exception e) {
-                    new JspException(e);
+                    throw new JspException(e);
                 }
             }
             theIsEmpty = isEmpty ;
@@ -800,12 +800,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     value = DateFormat.formatToDate((Date) value);
 
                 } else if (value instanceof Boolean) {
-                    Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
-                        value = "1" ;
-                    } else {
-                        value = "0" ;
-                    }
+                    value =  (Boolean) value ?  "1" :  "0" ;
                 }
 
             } catch (Exception e) {
@@ -898,12 +893,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     value = DateFormat.formatToDate((Date) value);
 
                 } else if (value instanceof Boolean) {
-                    Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
-                        value = "1" ;
-                    } else {
-                        value = "0" ;
-                    }
+                    value =  (Boolean) value ?  "1" :  "0" ;
                 }
 
             } catch (Exception e) {
@@ -1036,7 +1026,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     styleClass = "number";
                 } else if (value instanceof Boolean) {
                     Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
+                    if(booleanValue) {
                         value = "Да" ;
                         styleClass = "boolean";
                     } else {
@@ -1107,7 +1097,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     styleClass = "number";
                 } else if (value instanceof Boolean) {
                     Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
+                    if(booleanValue) {
                         value = "Да" ;
                         styleClass = "boolean";
                     } else {
@@ -1149,17 +1139,15 @@ public class TableTag extends AbstractGuidSupportTag {
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
                 BigDecimal val2 ;
                 if (value instanceof Number) {
-                    val2 = new BigDecimal(value!=null?""+value:"0") ;
-                } else if (value instanceof String) {
-                    val2 = new BigDecimal((String)value) ;
+                    val2 = new BigDecimal(""+value) ;
                 } else {
-                    val2 = new BigDecimal((String)value);
+                    val2 = new BigDecimal(value!=null ? (String)value : "0");
                 }
                 //val2 = val1+val2 ;
-                String val3 = new StringBuilder().append(val1.add(val2)).toString() ;
+                String val3 = val1.add(val2).toString() ;
 
                 PropertyUtil.setPropertyValue(aObject, theProperty, val3) ;
-                value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+            //    value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
                 //System.out.println("val1="+val1+" val2="+val2+" val3="+val3+" valSum="+value) ;
             } catch (Exception e) {
                 e.printStackTrace();
