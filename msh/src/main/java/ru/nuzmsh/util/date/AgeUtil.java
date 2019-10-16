@@ -63,7 +63,7 @@ public class AgeUtil {
     	} if (bd.get(Calendar.DAY_OF_MONTH) > cd.get(Calendar.DAY_OF_MONTH)){ 
     		ageMonths --; 
     		int monthT = cd.get(Calendar.MONTH) -1; 
-    		int compareMonth = 0;
+    		int compareMonth ;
     		if (monthT == 0 || monthT == 2 || monthT == 4 || monthT == 6 || monthT == 7 || monthT == 9 || monthT == 11){ 
     			compareMonth = 30; 
     		} else if (monthT == 3 || monthT == 5 || monthT == 8 || monthT == 10){ 
@@ -140,7 +140,7 @@ public class AgeUtil {
     	} if (bd.get(Calendar.DAY_OF_MONTH) > cd.get(Calendar.DAY_OF_MONTH)){ 
     		ageMonths --; 
     		int monthT = cd.get(Calendar.MONTH) -1; 
-    		int compareMonth = 0;
+    		int compareMonth ;
     		if (monthT == 0 || monthT == 2 || monthT == 4 || monthT == 6 || monthT == 7 || monthT == 9 || monthT == 11){ 
     			compareMonth = 30; 
     		} else if (monthT == 3 || monthT == 5 || monthT == 8 || monthT == 10){ 

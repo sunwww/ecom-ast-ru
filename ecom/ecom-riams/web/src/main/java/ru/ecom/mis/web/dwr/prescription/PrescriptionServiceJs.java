@@ -529,6 +529,7 @@ public class PrescriptionServiceJs {
 		return annulEmptyPrescription(aMedService,aWorkCalendarTime,null,null,aRequest);
 	}
 
+	@Deprecated //см ниже
 	public String addPrescriptionToList (Long aPrescriptList, Long aMedService, Long aDepartment, Long aCabinet,String dType, HttpServletRequest aRequest) throws NamingException {
 		return addPrescriptionToListWCT (aPrescriptList, aMedService, aDepartment, aCabinet, dType,null,null,"", aRequest);
 	}
@@ -540,6 +541,7 @@ public class PrescriptionServiceJs {
 	 * @param aDepartment - Отдел для забора биоматериала
 	 * @param aCabinet - рабочая функция для направления
 	 */
+	@Deprecated //Переделано на создание объектом стандартным способом
 	public String addPrescriptionToListWCT (Long aPrescriptList, Long aMedService, Long aDepartment, Long aCabinet, String dType, String aDateStart, String aWorkCalendarTime
 			, String aComments, HttpServletRequest aRequest) throws NamingException {
 		Date date = new Date() ;
@@ -1315,7 +1317,6 @@ public class PrescriptionServiceJs {
 
 	/*Находим правильный референтный интервал*/
 	private ParameterReferenceValue getReferenceByParameternadPatient(Integer aAge, Integer aSex,  Long aParameterId, HttpServletRequest aRequest) {
-		LOG.info("start , presId = "+", templ = "+aParameterId);
 		String sql = "select pat.sex_id, cast(date_part('year',age(current_date, pat.birthday)) as int)" +
 				" from prescription p" +
 				" left join prescriptionlist pl on pl.id = p.prescriptionlist_id" +

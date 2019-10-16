@@ -3,27 +3,14 @@ package ru.nuzmsh.forms.validator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessage;
-
-import ru.nuzmsh.forms.validator.transforms.DoIntegerString;
-import ru.nuzmsh.forms.validator.transforms.DoIntegerStringTransform;
-import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
-import ru.nuzmsh.forms.validator.transforms.DoUpperCaseTransform;
-import ru.nuzmsh.forms.validator.transforms.DoTrimString;
-import ru.nuzmsh.forms.validator.transforms.DoTrimStringTransform;
-import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.transforms.DoTimeString;
-import ru.nuzmsh.forms.validator.transforms.DoDateStringTransform;
-import ru.nuzmsh.forms.validator.transforms.DoTimeStringTransform;
-import ru.nuzmsh.forms.validator.transforms.DoInputNonLat;
-import ru.nuzmsh.forms.validator.transforms.DoInputNonLatTransform;
+import ru.nuzmsh.forms.validator.transforms.*;
 import ru.nuzmsh.forms.validator.validators.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author ESinev
@@ -32,8 +19,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class ValidateUtil {
 
-    private static final HashMap<Class, IValidator> VALIDATORS = new HashMap<Class, IValidator>();
-    private static final HashMap<Class, ITransform> TRANSFORMS = new HashMap<Class, ITransform>();
+    private static final HashMap<Class, IValidator> VALIDATORS = new HashMap<>();
+    private static final HashMap<Class, ITransform> TRANSFORMS = new HashMap<>();
 
     static {
         VALIDATORS.put(DateString.class, new DateStringValidator());
@@ -45,7 +32,7 @@ public class ValidateUtil {
         VALIDATORS.put(VInputNonLat.class, new VInputNonLatValidator());
         VALIDATORS.put(MinDate.class, new MinDateValidator());
         VALIDATORS.put(MaxLength.class, new MaxLengthValidator());
-        VALIDATORS.put(Mkb.class, new MkbValidator());
+        //VALIDATORS.put(Mkb.class, new MkbValidator());
         VALIDATORS.put(VInputFIOByMaskOmc.class, new VInputFIOByMaskOmcValidator());
         VALIDATORS.put(IntegerString.class, new IntegerStringValidator());
         VALIDATORS.put(EmailString.class, new EmailStringValidator());
@@ -84,10 +71,7 @@ public class ValidateUtil {
             try {
                 Object value = aMethod.invoke(aObject);
                 validator.validate(value, aAnnotation,aRequest);
-            } catch (IllegalAccessException e) {
-                addError(aErrors, aMethod, e.getMessage());
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 addError(aErrors, aMethod, e.getMessage());
                 e.printStackTrace();
             } catch (ValidateException e) {
@@ -104,9 +88,7 @@ public class ValidateUtil {
                 if (ret != null) {
                     BeanUtils.setProperty(aObject, getPropertyName(aMethod), ret);
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
 
