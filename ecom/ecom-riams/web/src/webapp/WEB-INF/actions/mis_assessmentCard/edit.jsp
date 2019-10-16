@@ -10,9 +10,6 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <!-- 
-    	  - Проба
-    	  -->
     <msh:form guid="formHello" action="/entityParentSaveGoView-mis_assessmentCard.do" defaultField="template">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
@@ -79,11 +76,14 @@
         </msh:ifFormTypeIsCreate>
         <%
           }
+          %>
+
+        <%
+
       String id = request.getParameter("id");
       if (id!=null&&!id.equals("")) {
     	  
        %>
-
        <ecom:webQuery name="groupList" nativeSql="select distinct pg.id
 	,pg.name as f2_groupName
 	from assessmentCard ac 
@@ -111,7 +111,9 @@
 					" left join forminputprotocol fip on fip.assessmentCard=ac.id"+
 					" left join parameter p on p.id=fip.parameter_id"+
 					" left join uservalue uv on uv.id=valuevoc_id"+
-					" where ac.id='"+request.getParameter("id")+"' and p.group_id="+r.get1();
+					" where ac.id='"+id+"' and p.group_id="+r.get1();
+
+
 					List rows = (List)service.executeNativeSql(sql);
 					if (!rows.isEmpty()) {
 						for (int j=0;j<rows.size();j++) {
@@ -121,21 +123,13 @@
 							out.print("<td>"+(tds.get4()!=null?tds.get4():"")+"</td>");
 							out.print("<td>"+(tds.get5()!=null?tds.get5():"")+"</td>");
 							out.print("</tr>");
-							
 						}
 					}
 					out.print("</tr>");
-					
-			
 		}
 		out.print("</table>");
-	}
-	%>
-	
-
-				 <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
-				</msh:ifFormTypeIsView>
-				<%} %>
+		}
+	} %>
     </msh:form>
       <form action="print-assessment_card.do" method="post" target="_blank">
                 <input type="hidden" name="SSsqlText" id="SSsqlText" value="select p.id as pid
@@ -210,7 +204,6 @@
   </msh:ifFormTypeIsView>
   <msh:ifFormTypeIsNotView formName="mis_assessmentCardForm">
   <script type="text/javascript" src="./dwr/interface/TemplateProtocolService.js"></script>
-  
   <script type = 'text/javascript'>
 
       if ('${typeCard}'!=null && '${typeCard}'!='' && !$('templateName').disabled)  //чтобы не меняли, если передан параметр
@@ -224,6 +217,12 @@
   fillDataDiv ();
   var listIds = new Array();
   var listDefaultVals = new Array();
+  var PATIENTSEX =0;
+  TemplateProtocolService.getPatientSex($('patient').value, {
+      callback: function (sexId) {
+          PATIENTSEX = +sexId;
+      }
+  })
   function fillDataDiv () {
 	    	    	 	 if (!$('template').value>0) {return;}
 	  TemplateProtocolService.getParameterByObject($('id').value, $('template').value, 'AssessmentCard', {
@@ -235,7 +234,7 @@
 	    						listIds = new Array();
                                 listDefaultVals = new Array();
 	    					      //  $('BioList').value=aSmoId;
-	    					      if ($('params')&&$('params').value!='') {
+	    					      if ($('params') && $('params').value!='') {
 	    					    	fldJson = JSON.parse($('params').value);  
 	    					      }  else {
 	    					      fldJson = JSON.parse(aResult) ;
@@ -261,29 +260,31 @@
 	    			            	
 	    					        for (var ind=0;ind<fldJson.params.length;ind++) {
 	    					        	var param1 = fldJson.params[ind] ;
-	    					        	
-	    					        	if (ind<cnt-1) {
-	    					        		var param2 = fldJson.params[ind+1] ;
-	    					        		eventutil.addEnterSupport("param"+param1.idEnter,"param"+param2.idEnter) ;
-	    					        	} else {
-	    					        		eventutil.addEnterSupport("param"+param1.idEnter,"paramOK") ;
-	    					        		
-	    					        	}
-	    					        	if (+param1.type==2) {
-	    					        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.build() ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.addOnChangeCallback(function(){getBall("+param1.id+") });");
-	    					        		if (param1.usebydefault!=null && typeof(param1.usebydefault)!=='undefined' && param1.usebydefault!='')
-                                                listDefaultVals.push(param1.id+"#"+param1.usebydefault+"#"+param1.usedefval);
-	    					        		listIds.push ("param"+param1.id);
-	    					        	}
+                                        if (!param1.sex || param1.sex==PATIENTSEX) {
+                                            if (ind<cnt-1) {
+                                                var param2 = fldJson.params[ind+1] ;
+                                                eventutil.addEnterSupport("param"+param1.idEnter,"param"+param2.idEnter) ;
+                                            } else {
+                                                eventutil.addEnterSupport("param"+param1.idEnter,"paramOK") ;
+
+                                            }
+                                            if (+param1.type==2) {
+                                                eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
+                                                eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;")
+                                                eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;")
+                                                eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;")
+                                                eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;")
+                                                eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;")
+                                                eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;")
+                                                eval("param"+param1.id+"Autocomlete.build() ;")
+                                                eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
+                                                eval("param"+param1.id+"Autocomlete.addOnChangeCallback(function(){getBall("+param1.id+") });");
+                                                if (param1.usebydefault!=null && typeof(param1.usebydefault)!=='undefined' && param1.usebydefault!='')
+                                                    listDefaultVals.push(param1.id+"#"+param1.usebydefault+"#"+param1.usedefval);
+                                                listIds.push ("param"+param1.id);
+                                            }
+                                        }
+
 	    					        } 
 	    			             } else {
 	    			            	var txt ="<form name='frmTemplate' id='frmTemplate'>" ;
@@ -317,110 +318,109 @@
 			txt+="<tr ><td width='40px'></td><td colspan = '2' style='font-size:20px;' align='center' >"+aParam.groupName+"</td><td><label style='font-size:20px;' align='center' id='Group"+aParam.groupId+"Sums'></label></td></tr>";
 			lastGroupId =aParam.groupId; 
 		}
-		 txt += "<tr>" ;
-		var type=+aParam.type;
-		 txt+="<td class='label' width='40px'><label id='Param"+aParam.id+"Ball'></label></td>";
-		txt += "<td>" ;
-	      if (type==2) {
-		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"hidden\" value=\""+aParam.value+"\" title=\"\" autocomplete=\"\">";
-	      	txt += "<div>";
-		        txt += "<input id=\"param"+aParam.idEnter+"\" name=\"param"+aParam.idEnter+"\" type=\"text\" value=\""+aParam.valueVoc+"\" title=\""+aParam.vocname+"\" class=\"autocomplete horizontalFill\" autocomplete=\"on\">";
-	      	txt += "<div id=\"param"+aParam.id+"Div\">";
-	      	txt += "<span></span>";
-		        //txt += ;
-		        txt += "</div>";
-		        txt += "</div>";
-	      } else {
-		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
-		        
-	      }
-	      // Кол-во баллов 
-	     
-	      txt += "</td>" ;
-		
-      txt += "<td align='left' ><label id=\"param"+aParam.id+"Label\" for=\"param"+aParam.idEnter+"\" title='"+aParam.name ;
-      if (type==1) {
-      	txt += '(число)' ;
-      } else if (type==3) {
-      	txt += '(текст)' ;
-      } else if (type==4) {
-      	txt += '(число зн. '+aParam.cntdecimal+')' ;
-      } else if (type==5) {
-      	txt += '(текст с огр. '+aParam.cntdecimal+')' ;
-      	
-      } 
-      txt += "'>" ;
-      txt += aParam.shortname ;
-      txt += "</label></td>" ;
-      
-      txt += "<td>" ;
-      if (+aParam.type==4) {txt += " ("+aParam.cntdecimal+") ";}
-      txt += aParam.unitname ;
-      txt += "</td>" ;
-      txt += "</tr>" ;
-      if (aParam.groupId!=lastGroupId) {
-			//Отспут перед след. группой
-		//	txt+="<tr style='height: 14px'><td colspan='2'><label id='Group"+aParam.groupId+"Label'></label></td><td><label id='Group"+aParam.groupId+"Sum'></label></td></tr>";
-			
-		//	lastGroupId =aParam.groupId; 
-		}
+		if (!aParam.sex || aParam.sex==PATIENTSEX) {
+            txt += "<tr>" ;
+            var type=+aParam.type;
+            txt+="<td class='label' width='40px'><label id='Param"+aParam.id+"Ball'></label></td>";
+            txt += "<td>" ;
+            if (type==2) {
+                txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"hidden\" value=\""+aParam.value+"\" title=\"\" autocomplete=\"\">";
+                txt += "<div>";
+                txt += "<input id=\"param"+aParam.idEnter+"\" name=\"param"+aParam.idEnter+"\" type=\"text\" value=\""+aParam.valueVoc+"\" title=\""+aParam.vocname+"\" class=\"autocomplete horizontalFill\" autocomplete=\"on\">";
+                txt += "<div id=\"param"+aParam.id+"Div\">";
+                txt += "<span></span>";
+                //txt += ;
+                txt += "</div>";
+                txt += "</div>";
+            } else {
+                txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+
+            }
+            // Кол-во баллов
+
+            txt += "</td>" ;
+
+            txt += "<td align='left' ><label id=\"param"+aParam.id+"Label\" for=\"param"+aParam.idEnter+"\" title='"+aParam.name ;
+            if (type==1) {
+                txt += '(число)' ;
+            } else if (type==3) {
+                txt += '(текст)' ;
+            } else if (type==4) {
+                txt += '(число зн. '+aParam.cntdecimal+')' ;
+            } else if (type==5) {
+                txt += '(текст с огр. '+aParam.cntdecimal+')' ;
+
+            }
+            txt += "'>" ;
+            txt += aParam.shortname ;
+            txt += "</label></td>" ;
+
+            txt += "<td>" ;
+            if (+aParam.type==4) {txt += " ("+aParam.cntdecimal+") ";}
+            txt += aParam.unitname ;
+            txt += "</td>" ;
+            txt += "</tr>" ;
+        }
+
 		return txt ;
 	}
   function saveIntakeInfo() {
   	var regexp = /^[\d+.]+$/;
 		var isError = false ;
 		for (var ind=0;ind<fldJson.params.length;ind++) {
+		  if ($('param' + fldJson.params[ind].id)) {
+            var val = $('param' + fldJson.params[ind].id).value;
+            var par = fldJson.params[ind];
+            var err = "";
+            errorutil.HideError($('param' + par.idEnter));
 
-			var val = $('param'+fldJson.params[ind].id).value ;
-			var par = fldJson.params[ind] ;
-			var err ="";
-			errorutil.HideError($('param'+par.idEnter)) ;
-			
-			if (+par.type==2) {
-				if (+val<1) {val='0' ;} else {
-					par.valueVoc = $('param'+fldJson.params[ind].id+'Name').value ;
-				}
-			}
-			 if (par.type=='4') {
-				val = val.replace(",",".") ;
-				val = val.replace("-",".") ;
-				var v = val.split(".") ;
-				var cntdecimal = +par.cntdecimal
-				
-				
-				if (val!="") {
-					if (!regexp.test(val)){
-						err+="Допускается ввод только чисел! " ;						
-						isError=true;
-					}
-					if (v.length==2 && v[1].length!=cntdecimal) {
-						errorutil.ShowFieldError($('param'+par.idEnter),err+"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
-						isError= true ;
-					}
-					
-	  					if (cntdecimal>0 ) {
-	  						if (v.length==1) {
-	  							errorutil.ShowFieldError($('param'+par.idEnter),err+"Должна быть 1 точка или запятая") ;
-	  							isError= true ;
-	  						} else if (v.length>1 && !isNaN(v[2])) {
-	 							errorutil.ShowFieldError($('param'+par.idEnter),err+"Должна быть 1 точка или запятая") ;
-	 							isError= true ;
-							}
-	  					} else {
-	  						
-	  					}
-					}
-			} 
-			 if (par.type==1) {
-				if (val!='' &&!regexp.test(val)){
-					errorutil.ShowFieldError($('param'+par.idEnter),"Допускается ввод только чисел!") ;	
-					isError=true;
-				}
-			}
-			
-			par.value = val ;
-			
-			
+            if (+par.type == 2) {
+                if (+val < 1) {
+                    val = '0';
+                } else {
+                    par.valueVoc = $('param' + fldJson.params[ind].id + 'Name').value;
+                }
+            }
+            if (par.type == '4') {
+                val = val.replace(",", ".");
+                val = val.replace("-", ".");
+                var v = val.split(".");
+                var cntdecimal = +par.cntdecimal
+
+
+                if (val != "") {
+                    if (!regexp.test(val)) {
+                        err += "Допускается ввод только чисел! ";
+                        isError = true;
+                    }
+                    if (v.length == 2 && v[1].length != cntdecimal) {
+                        errorutil.ShowFieldError($('param' + par.idEnter), err + "Необходимо ввести " + cntdecimal + " знаков после запятой");
+                        isError = true;
+                    }
+
+                    if (cntdecimal > 0) {
+                        if (v.length == 1) {
+                            errorutil.ShowFieldError($('param' + par.idEnter), err + "Должна быть 1 точка или запятая");
+                            isError = true;
+                        } else if (v.length > 1 && !isNaN(v[2])) {
+                            errorutil.ShowFieldError($('param' + par.idEnter), err + "Должна быть 1 точка или запятая");
+                            isError = true;
+                        }
+                    } else {
+
+                    }
+                }
+            }
+            if (par.type == 1) {
+                if (val != '' && !regexp.test(val)) {
+                    errorutil.ShowFieldError($('param' + par.idEnter), "Допускается ввод только чисел!");
+                    isError = true;
+                }
+            }
+
+            par.value = val;
+
+        }
 		}
 		if (+fldJson.isdoctoredit==0) {
             if (+$('paramWF').value == 0) {
@@ -503,11 +503,8 @@
                   });
 			  }
 		  }); 
-	  
-
   }
   </script>
   </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
-

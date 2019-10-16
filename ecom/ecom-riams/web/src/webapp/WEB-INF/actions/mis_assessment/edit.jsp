@@ -5,35 +5,20 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
-    
-   
     <tiles:put name='body' type='string'>
-    
-          
         <msh:form action="/entitySaveGoView-mis_assessment.do" defaultField="name">
         <msh:hidden property="assessmentCard"/>
         <msh:hidden guid="hiddenSaveType" property="saveType" />
-          
-         
-         
-
-         <msh:textField property="name" label="Название" horizontalFill="true"/>
+         <msh:textField property="name" label="Название" size="200"/>
        	 <br>
-          <msh:textField property="maxBall" label="Максимальный балл" size="10"/>
-     	  <br>
           <msh:textField property="minBall" label="Минимальный балл" size="10"/>
          <br>
+            <msh:textField property="maxBall" label="Максимальный балл" size="10"/>
+            <br>
         <msh:row guid="0489132a-531c-47bc-abfc-1528e774bbfe">
-        
-        
-      <msh:submitCancelButtonsRow colSpan="4"></msh:submitCancelButtonsRow>
-         
+      <msh:submitCancelButtonsRow colSpan="4"/>
          </msh:row>
-     
-      
-      
       <msh:ifFormTypeAreViewOrEdit formName="mis_assessmentForm">
-      
        <msh:hidden guid="hiddenId" property="id" />
       <tiles:put name='side' type='string'>
 	  <msh:sideMenu> 
@@ -42,19 +27,12 @@
 	   
 	  </msh:sideMenu>
 	   </tiles:put>
-	  
-	   
       </msh:ifFormTypeAreViewOrEdit>
        </msh:form>
     </tiles:put>
 
-   
-    
-  
-<!-- 
      <tiles:put name='title' type='string'>
         <ecom:titleTrail mainMenu="Patient" beginForm="mis_assessmentForm" />
     </tiles:put>
- -->
 
 </tiles:insert>

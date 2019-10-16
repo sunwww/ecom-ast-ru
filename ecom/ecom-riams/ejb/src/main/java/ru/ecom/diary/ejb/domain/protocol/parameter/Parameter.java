@@ -6,6 +6,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
+import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.*;
@@ -172,4 +173,12 @@ public class Parameter extends BaseEntity{
 	public void setReferenceValues(List<ParameterReferenceValue> aReferenceValues) {theReferenceValues = aReferenceValues;}
 	/** Список референтных значений */
 	private List<ParameterReferenceValue> theReferenceValues ;
+
+	/** Только для пола */
+	@Comment("Только для пола")
+	@OneToOne
+	public VocSex getForSex() {return theForSex;}
+	public void setForSex(VocSex aForSex) {theForSex = aForSex;}
+	/** Только для пола */
+	private VocSex theForSex ;
 }

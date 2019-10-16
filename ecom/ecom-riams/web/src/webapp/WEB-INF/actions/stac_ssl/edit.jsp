@@ -319,6 +319,33 @@
 
         <script type="text/javascript" >
         <msh:ifFormTypeIsView formName="stac_sslForm">
+        function makeTimurHappy() {
+            showToastMessage("Подождите, идет расчет...",null,true,null, 5000);
+                jQuery.ajax({
+                    url:"api/login/getTimurBiohim?medcaseId=${param.id}&token=123"
+                    ,error: function(jqXHR,ex){console.log(ex);alert('Произошла какая-то ошибка: '+ex);}
+                    ,success: function(el) {
+                        if (!el)  {
+                            alert("Ошибка расчета гиперкоэффициента абразивности!");
+                        } else {
+                     jQuery.ajax({
+                         url: "http://192.168.1.52:8080/sdrisk"
+                         ,method:"POST"
+                         , data: JSON.stringify(el)
+                         , contentType: "application/json; charset=utf-8"
+                         , dataType: "json"
+                         , success: function (el2) {
+                             if (el2 && el2.status && el2.status == "ok") {
+                                 showToastMessage("Степень вероятности: " + el2.risk + " из 10",null,false);
+                             } else {
+                                 console.log(JSON.stringify(el2));
+                             }
+                         }
+                     });
+                        }
+                    }
+                });
+        }
             <msh:ifInRole roles="/Policy/Mis/Pregnancy/ConfinementCertificate">
             PatientService.checkSLSonDepartment(${param.id},{
                 callback : function(res) {
