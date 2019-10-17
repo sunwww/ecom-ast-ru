@@ -71,34 +71,7 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Не входит в оплату по ОМС */
 	private Boolean theIsNoOmc;
-	
-	/** Вид собственности */
-	@Comment("Вид собственности")
-	@Persist
-	public Long getPropertyAdmin() {
-		return thePropertyAdmin;
-	}
 
-	public void setPropertyAdmin(Long aPropertyAdmin) {
-		thePropertyAdmin = aPropertyAdmin;
-	}
-
-	/** Вид собственности */
-	private Long thePropertyAdmin;
-	/** Подчиненность */
-	@Comment("Подчиненность")
-	@Persist
-	public Long getSubordination() {
-		return theSubordination;
-	}
-
-	public void setSubordination(Long aSubordination) {
-		theSubordination = aSubordination;
-	}
-
-	/** Подчиненность */
-	private Long theSubordination;
-	
     /** Участки */
 //    @PersistOneToManyOneProperty(valueProperty="type", parentProperty="lpu")
     public String getAreas() { return theAreas ; }
@@ -295,24 +268,9 @@ public class MisLpuForm extends IdNameEntityForm {
 	public void setLpuFunction(Long aLpuFunction) {
 		theLpuFunction = aLpuFunction;
 	}
-	
-	/** Профиль отделения */
-	@Comment("Профиль отделения")
-	@Persist
-	public Long getProfile() {
-		return theProfile;
-	}
-
-	public void setProfile(Long aProfile) {
-		theProfile = aProfile;
-	}
-
-	/** Профиль отделения */
-	private Long theProfile;
 
 	/** Функция ЛПУ */
 	private Long theLpuFunction;
-
 
     /**
      * Телефон

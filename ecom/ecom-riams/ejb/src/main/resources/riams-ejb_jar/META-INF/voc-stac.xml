@@ -549,25 +549,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
      </voc> 
-     
-      <!-- Справочник показаний к поступлению -->
-    <voc id='vocAdmissionAspect' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAdmissionAspect'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-           
-            <!-- Справочник типов госпитального обслуживания -->
-    <voc id='vocHospitalServiceType' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalServiceType'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-           
+
            <!--  queryAppend = 'dateFinish is null' -->
            
            <!-- Справочник типов стационара при выписке, поступлении -->
@@ -658,16 +640,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc> 
-     
-    <!-- Справочник видов сертификатов -->
-    <voc id='vocCertificateType' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.document.ejb.domain.voc.VocCertificateType'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
+
     <!-- Справочник. Кем установлена смерть -->
     <voc id='vocDeathWitnessFunction' type='EntityVocService'>
         <EntityVocService
@@ -676,42 +649,8 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc> 
-    
-    <!-- Справочник осложнений родов -->
-    <voc id='vocChildbirthComplication' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocChildbirthComplication'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
-    <!-- Справочник места родов -->
-    <voc id='vocChildbirthPlace' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocChildbirthPlace'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
-    <!-- Справочник врожденных аномалий развития -->
-    <voc id='vocCongenitalAnomaly' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocCongenitalAnomaly'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
-    <!-- Справочник критериев живорождения -->
-    <voc id='vocLivebirthCriterion' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocLivebirthCriterion'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+
+
     
     <!-- Справочник осложнений новорожденного -->
     <voc id='vocNewbornComplication' type='EntityVocService'>

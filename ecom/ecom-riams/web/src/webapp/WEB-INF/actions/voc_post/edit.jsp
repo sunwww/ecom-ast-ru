@@ -19,7 +19,6 @@
         </msh:row>
         <msh:row>
         	<msh:textField label="Наименование" property="name" size="40"/>
-        	<msh:autoComplete size="40" property="postType" vocName="vocPostType" label="Тип рабочего места"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete horizontalFill="true" property="omcDoctorPost" vocName="vocOmcDoctorPost" label="Врачебная должность по ОМС" fieldColSpan="3"/>

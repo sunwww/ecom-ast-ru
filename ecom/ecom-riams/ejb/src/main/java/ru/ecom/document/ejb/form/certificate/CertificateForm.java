@@ -5,11 +5,7 @@ import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
@@ -29,7 +25,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment="Свидетельство",  nameProperties="id", view="entityView-stac_deathCertificate.do" )
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Certificate")
-@Subclasses( { BirthCertificateForm.class, ConfinementCertificateForm.class, DeathCertificateForm.class })
+@Subclasses( { ConfinementCertificateForm.class, DeathCertificateForm.class })
 public class CertificateForm extends IdEntityForm {
 
 	/** Серия документа */
@@ -49,12 +45,6 @@ public class CertificateForm extends IdEntityForm {
 	@Persist @DateString @DoDateString
 	public String getDateIssue() {return theDateIssue;}
 	public void setDateIssue(String aDateIssue) {theDateIssue = aDateIssue;}
-
-	/** Тип свидетельства */
-	@Comment("Тип свидетельства")
-	@Persist
-	public Long getCertificateType() {return theCertificateType;}
-	public void setCertificateType(Long aCertificateType) {theCertificateType = aCertificateType;}
 
 	/** Серия предварительного свидетельства */
 	@Comment("Серия предварительного свидетельства")
@@ -82,8 +72,6 @@ public class CertificateForm extends IdEntityForm {
 	private Integer theNumber;
 	/** Дата выдачи документа */
 	private String theDateIssue;
-	/** Тип свидетельства */
-	private Long theCertificateType;
 	/** Серия предварительного свидетельства */
 	private String theSeriesPreCertificate;
 	/** Номер предварительного свидетельства */

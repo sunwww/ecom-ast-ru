@@ -22,18 +22,16 @@
 	       	<msh:sectionTitle>Справочник должностей</msh:sectionTitle>
 	       	<msh:sectionContent>
 	       		<ecom:webQuery nativeSql="
-	       			select vp.id,vp.name as vpname,vp.code as vpcode, vodp.code as vodpcode,vodt.code as vodtcode,vpt.name
+	       			select vp.id,vp.name as vpname,vp.code as vpcode, vodp.code as vodpcode,vodt.code as vodtcode
 	       			from VocPost vp 
 	       			left join VocOmcDepType vodt on vodt.id=vp.omcDepType_id
 	       			left join VocOmcDoctorPost vodp on vodp.id=vp.omcDoctorPost_id 
-	       			left join VocPostType vpt on vpt.id=vp.postType_id
 	       		" name="list"/>
 	            <msh:table name="list" action="entityView-voc_post.do" idField="1" disableKeySupport="true">
 	                <msh:tableColumn columnName="Код" property="3"/>
 	                <msh:tableColumn columnName="Название" property="2"/>
 	                <msh:tableColumn columnName="Врачебная должность по ОМС" property="4"/>
 	                <msh:tableColumn columnName="Код профиля отделения для стационара или специалиста для поликлиники" property="5"/>
-	                <msh:tableColumn columnName="Тип рабочего места" property="6"/>
 	            </msh:table>
 	       	</msh:sectionContent>
        </msh:section>

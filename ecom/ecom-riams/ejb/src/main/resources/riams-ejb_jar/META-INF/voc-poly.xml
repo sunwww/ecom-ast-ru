@@ -44,14 +44,6 @@
                     />
     </voc>
 
-    <voc id='omcMkb10' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcMkb10'
-                    names   = 'name'
-                    queried = 'name,code'
-                    />
-    </voc>
-    
     <voc id='vocTraumaType' type='EntityVocService'>
             <EntityVocService
                     entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType'
@@ -76,15 +68,6 @@
                     />
     </voc>
 
-    <voc id='vocPolyMedUsluga' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcTariff'
-                    names   = 'code,name'
-                    queried = 'code,name'
-                    queryAppend = 'x4 > 1'
-                    />
-                <!-- queryAppend = 'domen = 6' -->
-    </voc>
     <voc  id='vocMedUsluga' type='EntityVocService'>
             <EntityVocService
                     entity  = 'ru.ecom.poly.ejb.domain.voc.VocMedUsluga'

@@ -274,18 +274,6 @@
                 </msh:table>
             </msh:section>
         </msh:ifInRole>
-      <%--
-      <msh:ifInRole roles="/Policy/Mis/MedCase/PrescriptionBlank/View" guid="5a2a2f8d-9bd8-4443-962c-1bbd5aa6caa9">
-        <msh:section title="Рецептурные бланки" guid="4d7584a1-8f31-468c-9185-b3cb98e8368e">
-          <ecom:parentEntityListAll formName="smo_visitPrescriptionBlankForm" attribute="prescriptionBlanks" guid="c9756299-7963-4979-bdc3-a3f1290e279c" />
-          <msh:table name="prescriptionBlanks" action="entityParentView-smo_visitPrescriptionBlank.do" idField="id" guid="e52580a8-d07a-47b8-b2a4-b875333e687f">
-            <msh:tableColumn columnName="Дата выдачи" property="writingOutDate" guid="5a18547c-ed9d-48df-b448-253d004c7562" />
-            <msh:tableColumn columnName="Серия" property="series" guid="56eb20e4-e7cc-4832-8fce-a69798817ba8" />
-            <msh:tableColumn columnName="Номер" property="number" guid="f3a255cd-dda5-4a44-a782-cf4480680a4a" />
-          </msh:table>
-        </msh:section>
-      </msh:ifInRole>
-       --%>
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
@@ -331,8 +319,6 @@
         <msh:sideLink params="id" action="/pharm_outcome" name="Списание" title="Добавить Списание" roles="/Policy/Mis/Pharmacy/CreateOutcome"/>
          <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" key="ALT+8" name="Услугу" params="id"
          	action="/entityParentPrepareCreate-smo_medService" title="Добавить услугу" guid="df23d" />
-<%--         <msh:sideLink params="id" action="/js-smo_visit-addDisabilityByRedirectFromVisit" name="Нетрудоспособность" title="Добавить нетрудоспособность" guid="784c86f1-44e5-4642-ae35-b68c2abd0604" roles="/Policy/Mis/Disability/DisabilityCase/Create" key="ALT+7" /> --%>
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_visitPrescriptionBlank" name="Рецептурный бланк" title="Добавить рецептурный бланк" guid="78d-4642-ae35-b6d04" roles="/Policy/Mis/MedCase/PrescriptionBlank/Create" />
             <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"
     	name="Направление к себе &larr;"   action="/javascript:goNewDirectionMine('.do')"
     	 title='Направление к план. раб. функции'  />

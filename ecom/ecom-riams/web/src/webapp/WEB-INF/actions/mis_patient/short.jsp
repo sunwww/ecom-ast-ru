@@ -14,20 +14,17 @@
       <msh:ifInRole roles="/Policy/Poly/Medcard/View" guid="a7036440-353f-4667-a18e-a0da4885cdaa">
         <msh:section title="Мед.карты" createUrl="entityParentPrepareCreate-poly_medcard.do?id=${param.id}">
 		          <ecom:webQuery name="medcard" 
-		        nativeSql="select m.id,m.number,vci.name
+		        nativeSql="select m.id,m.number
 		         from MedCard m
-		         left join VocCardIndex vci on m.cardIndex_id=vci.id
 		         where m.person_id='${param.id}'
-		         "
-		         /><msh:table viewUrl="entityShortView-poly_medcard.do" 
+		         "/>
+            <msh:table viewUrl="entityShortView-poly_medcard.do"
 			         hideTitle="false" disableKeySupport="false" idField="1" 
 			         name="medcard" action="entityParentView-poly_medcard.do" 
 			         disabledGoFirst="false" disabledGoLast="false" 
 			         >
 		            <msh:tableColumn columnName="Номер" identificator="false" 
 		            	property="2" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
-		            <msh:tableColumn columnName="Картотека" identificator="false" 
-		            	property="3" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
 		          </msh:table>
         </msh:section>
       </msh:ifInRole>

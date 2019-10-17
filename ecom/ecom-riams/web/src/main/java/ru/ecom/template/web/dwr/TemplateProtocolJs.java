@@ -30,6 +30,9 @@ import java.util.List;
 public class TemplateProtocolJs {
     private static final Logger LOG = Logger.getLogger(TemplateProtocolJs.class);
 
+    public Long getPatientSex(Long aPatientId, HttpServletRequest aRequest) throws NamingException {
+    	return Long.valueOf(Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSql("select sex_id from patient where id ="+aPatientId).iterator().next().get1().toString());
+	}
 	public String getSummaryBallsByNewCard (String aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {
 		if (aParams==null||aParams.equals("")) {aParams="0";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -54,8 +57,8 @@ public class TemplateProtocolJs {
 		return res.toString();
 		
 	}
-	public String getParameterBallId(String aParameterId, HttpServletRequest aRequest) throws NamingException {
-		if (aParameterId==null||aParameterId.equals("")) {return "";}
+	public String getParameterBallId(Long aParameterId, HttpServletRequest aRequest) throws NamingException {
+		if (aParameterId==null||aParameterId.equals(0L)) {return "";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> res = service.executeNativeSql("select coalesce(cast(cntBall as decimal(11,0)),0) as cntBall, coalesce(comment,'') as comment from uservalue  where id = "+aParameterId);
 		if (!res.isEmpty()) {
@@ -206,9 +209,10 @@ public class TemplateProtocolJs {
 			sql.append(" ,pg.id as f21GroupId");
 			sql.append(" ,pg.name as f22GroupIName");
 			sql.append(" ,case when p.type='7' then p.valueTextDefault else '' end as f23AddVal");
-			sql.append(" ,case when (uv.usebydefault) then uv.id else null end as usebydefault");
-			sql.append(" ,case when (uv.usebydefault) then uv.name else null end as usedefval");
-			sql.append(" ,pf.position"); //необходимо, т.к. находится в order by при distinct
+			sql.append(" ,case when (uv.usebydefault) then uv.id else null end as f24_usebydefault");
+			sql.append(" ,case when (uv.usebydefault) then uv.name else null end as f25_usedefval");
+			sql.append(" ,pf.position as f26"); //необходимо, т.к. находится в order by при distinct
+			sql.append(" ,p.forSex_id as f27_sexId");
 			sql.append(" from parameterbyform pf") ;
 			sql.append(" left join templateprotocol tp on pf.template_id = tp.id") ;
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
@@ -239,7 +243,7 @@ public class TemplateProtocolJs {
 			,{"13","unitid"},{"14","unitname"}
 			,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
 			,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
-			,{"21","groupId"}, {"22","groupName"},{"23","addValue"},{"24","usebydefault"},{"25","usedefval"}
+			,{"21","groupId"}, {"22","groupName"},{"23","addValue"},{"24","usebydefault"},{"25","usedefval"},{"27","sex"}
 			} ;
 			for(WebQueryResult wqr : lwqr) {
 				
@@ -543,7 +547,7 @@ public class TemplateProtocolJs {
 		res.append("<table>");
 		//res.append("<tr><td colspan='3'><h2>Выбор осуществляется двойным нажатием мыши</h2></td></tr>") ;
 		res.append("<tr><td colspan='2' valign='top'>") ;
-		if (aType!=null && aType.equals("temp")) {
+		if (aType!=null && aType.equals("temp")) { //TODO слишком долгий запрос! Переделать!
 			sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile")
 			.append(" ,(select count(*) from parameterByForm where template_id=tp.id) as cntInput") ; 
 			sql.append(" from TemplateProtocol tp");

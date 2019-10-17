@@ -35,9 +35,8 @@
           <msh:ifPropertyIsTrue guid="123" formName="mis_patientForm" propertyName="noActuality" invert="true" >
         <msh:section title="Мед.карты" createUrl="entityParentPrepareCreate-poly_medcard.do?id=${param.id}">
 		          <ecom:webQuery name="medcard"
-		        nativeSql="select m.id,m.number,vci.name as vciname, ml.name as mlname
+		        nativeSql="select m.id,m.number, ml.name as mlname
 		         from MedCard m
-		         left join VocCardIndex vci on m.cardIndex_id=vci.id
 		         left join MisLpu ml on ml.id=m.lpu_id
 		         where m.person_id='${param.id}'
 		         "
@@ -47,8 +46,7 @@
 			         disabledGoFirst="false" disabledGoLast="false"
 			         >
 		            <msh:tableColumn columnName="Номер" identificator="false" property="2" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
-		            <msh:tableColumn columnName="Картотека" identificator="false" property="3" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
-		            <msh:tableColumn columnName="ЛПУ" identificator="false" property="4" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
+		            <msh:tableColumn columnName="ЛПУ" identificator="false" property="3" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
 		          </msh:table>
         </msh:section>
           </msh:ifPropertyIsTrue>
@@ -815,7 +813,6 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:ifFormTypeAreViewOrEdit formName="mis_patientForm" guid="6c8ddaec-6990-410d-8e58-1780385ef2d3">
           <msh:sideLink roles="/Policy/Mis/Patient/Delete" key="ALT+DEL" params="id" action="/entityDelete-mis_patient" name="Удалить" confirm="Удалить персону?" guid="3322c218-9d9b-4996-9ba9-7d5bef9d0b00" />
           <msh:sideLink roles="/Policy/Mis/Patient/View" styleId="viewShort" action="/javascript:getDefinition('js-mis_patient-viewChange.do?id=${param.id}&short=Short')" name="Изменения ПД" title="Изменения персональных данных" />
-          <msh:sideLink roles="/Policy/Mis/Document/Flow/ViewByPatient" styleId="viewShort" action="/javascript:getDefinition('js-doc_flow-infoByPatient.do?id=${param.id}&patient=${param.id}&short=Short')" name="Передача документов" title="Передача документов" />
         </msh:ifFormTypeAreViewOrEdit>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
@@ -876,11 +873,6 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_invalidity" name="Инвалидность"  title="Добавить инвалидность" roles="/Policy/Mis/Patient/Invalidity/Create" />
 		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_dispensaryCard" name="Карту Д учета"  title="Добавить карту Д учета" roles="/Policy/Mis/Patient/Dispensary/Create" />
         <%--
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-work_award" name="Награду" title="Добавить награду" guid="bbdd4af8-7978-476f-a23c-618d3bbc2b6a" roles="/Policy/Mis/Worker/Award/Create" />
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_education" name="Образование" title="Добавить образование" guid="ac6aa3fc-47d3-4d9f-a5ce-0e1ff7651f99" roles="/Policy/Mis/Worker/Education/Create" />
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_qualification" name="Квалификацию" title="Добавить квалификацию" guid="4c1b636f-7338-48d2-9835-26e1f491fd0a" roles="/Policy/Mis/Worker/Qualification/Create" />
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_languageSkill" name="Знание языков" title="Добавить знание языков" guid="13e03012-904b-4ee4-93ce-063a5ad76e18" roles="/Policy/Mis/Worker/LaguageSkill/Create" />
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_workBook" name="Трудовую книжку" title="Добавить трудовую книжку" guid="8e53bc77-8ba0-422f-901d-fec5f4fda589" roles="/Policy/Mis/Worker/WorkBook/Create" />
          --%>
           <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_patientExternalServiceAccount" name="Согласие на передачу данных"  title="Согласие на передачу данных" roles="/Policy/Mis/Patient/PatientExternalServiceAccount/Create"/>
       </msh:sideMenu>

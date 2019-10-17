@@ -105,70 +105,6 @@
         <webTrail comment='Диагноз' nameProperties='id' view='entityView-smo_diagnosis.do'/>
         <persist clazz="ru.ecom.mis.ejb.domain.medcase.Diagnosis" />
     </form>
-
-    <!--	Нетрудоспособоность	-->
-    <!--
-      <form        name = "$$map$$dis_disabilityCaseForm"
-         securityPrefix = "/Policy/Mis/Disability/DisabilityCase"
-                comment = "Случай нетрудоспособности">
-        <parent property='medCase' parentForm='ru.ecom.mis.ejb.form.medcase.MedCaseForm'/>
-        <webTrail comment='Случай нетрудоспособности' nameProperties='id' view='entityView-dis_disabilityCase.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.disability.DisabilityCase" />
-      </form>
-
-      <form        name = "$$map$$dis_disabilityCaseByPatientForm"
-         securityPrefix = "/Policy/Mis/Disability/DisabilityCase"
-                comment = "Случай нетрудоспособности по пациенту">
-        <parent property='medCase.patient' parentForm='ru.ecom.mis.ejb.form.patient.PatientForm'/>
-        <webTrail comment='Случай нетрудоспособности' nameProperties='id' view='entityView-dis_disabilityCase.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.disability.DisabilityCase" />
-      </form>
-
-      <form        name = "$$map$$smo_disabilityForm"
-         securityPrefix = "/Policy/Mis/Disability/DisabilityDocument"
-                comment = "Документ нетрудоспособности">
-        <parent property='disabilityCase' parentForm='$$map$$dis_disabilityCaseForm'/>
-        <webTrail comment='Документ нетрудоспособности' nameProperties='id' view='entityView-smo_disability.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.disability.DisabilityDocument" />
-      </form>
-
-
-      <form        name = "$$map$$dis_regimeViolationForm"
-         securityPrefix = "/Policy/Mis/Disability/RegimeViolationRecord"
-                comment = "Нарушение режима">
-        <parent  property='disabilityDocument' parentForm='$$map$$smo_disabilityForm'/>
-        <webTrail comment='Нарушение режима' nameProperties='id'
-                     view='entityView-dis_regimeViolation.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.disability.RegimeViolationRecord" />
-      </form>
-
-      <form        name = "$$map$$dis_disabilityRecordForm"
-         securityPrefix = "/Policy/Mis/Disability/DisabilityRecord"
-                comment = "Запись">
-        <parent  property='disabilityDocument' parentForm='$$map$$smo_disabilityForm'/>
-        <webTrail comment='Запись' nameProperties='id'
-                     view='entityView-dis_disabilityRecord.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.disability.DisabilityRecord" />
-      </form>
-
-      <form        name = "$$map$$dis_MedSocCommissionForm"
-         securityPrefix = "/Policy/Mis/Disability/MedSocCommission"
-                comment = "МСЭ">
-        <parent  property='disabilityDocument' parentForm='$$map$$smo_disabilityForm'/>
-        <webTrail comment='МСЭ' nameProperties='id'
-                     view='entityView-dis_MedSocCommissionForm.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.disability.MedSocCommission" />
-      </form>
-
-      <form        name = "$$map$$dis_DisabilityPermissionForm"
-         securityPrefix = "/Policy/Mis/Disability/DisabilityPermission"
-                comment = "Разрешение">
-        <parent  property='disabilityDocument' parentForm='$$map$$smo_disabilityForm'/>
-        <webTrail comment='Разрешение' nameProperties='id'
-                     view='entityView-dis_DisabilityPermission.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.disability.DisabilityPermission" />
-      </form>
-    -->
     <!--	Сотрудник	-->
     <form        name = "$$map$$mis_workerForm"
                  securityPrefix = "/Policy/Mis/Worker/Worker"
@@ -178,84 +114,6 @@
                   view='entityView-mis_worker.do' list='entityParentList-mis_worker.do'/>
         <persist clazz="ru.ecom.mis.ejb.domain.worker.Worker" />
     </form>
-
-    <form        name = "$$map$$mis_educationForm"
-                 securityPrefix = "/Policy/Mis/Worker/Education"
-                 comment = "Образование">
-        <parent  property='person' parentForm='ru.ecom.mis.ejb.form.patient.PatientForm'/>
-        <webTrail comment='Образование' nameProperties='id'
-                  view='entityView-mis_education.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.worker.Education" />
-    </form>
-
-
-    <form        name = "$$map$$mis_qualificationForm"
-                 securityPrefix = "/Policy/Mis/Worker/Qualification"
-                 comment = "Квалификация">
-        <parent  property='person' parentForm='ru.ecom.mis.ejb.form.patient.PatientForm'/>
-        <webTrail comment='Квалификация' nameProperties='id'
-                  view='entityView-mis_qualification.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.worker.Qualification" />
-    </form>
-
-    <!--     <form        name = "$$map$$work_awardForm"
-       securityPrefix = "/Policy/Mis/Worker/Award"
-              comment = "Награждения">
-      <parent  property='person' parentForm='ru.ecom.mis.ejb.form.patient.PatientForm'/>
-      <webTrail comment='Награждения' nameProperties='awardNumber'
-                   view='entityView-work_award.do'/>
-      <persist clazz="ru.ecom.mis.ejb.domain.worker.Award" />
-    </form>  -->
-
-    <form        name = "$$map$$mis_languageSkillForm"
-                 securityPrefix = "/Policy/Mis/Worker/LaguageSkill"
-                 comment = "Знание языков">
-        <parent  property='person' parentForm='ru.ecom.mis.ejb.form.patient.PatientForm'/>
-        <webTrail comment='Знание языков' nameProperties='languageText'
-                  view='entityView-mis_languageSkill.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.worker.LanguageSkill" />
-    </form>
-
-    <form        name = "$$map$$mis_workBookForm"
-                 securityPrefix = "/Policy/Mis/Worker/WorkBook"
-                 comment = "Трудовая книжка">
-        <parent  property='person' parentForm='ru.ecom.mis.ejb.form.patient.PatientForm'/>
-        <webTrail comment='Трудовая книжка' nameProperties='id'
-                  view='entityView-mis_workBook.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.worker.WorkBook" />
-    </form>
-
-    <form        name = "$$map$$work_workBookRecordForm"
-                 securityPrefix = "/Policy/Mis/Worker/WorkBookRecord"
-                 comment = "Запись трудовой книги">
-        <parent  property='workBook' parentForm='$$map$$mis_workBookForm'/>
-        <webTrail comment='Запись трудовой книги' nameProperties='id'
-                  view='entityView-work_workBookRecord.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.worker.WorkBookRecord" />
-    </form>
-
-
-    <form        name = "$$map$$work_staffForm"
-                 securityPrefix = "/Policy/Mis/Worker/Staff"
-                 comment = "Штатное расписание">
-        <parent  property='lpu' parentForm='ru.ecom.mis.ejb.form.lpu.MisLpuForm'/>
-        <webTrail comment='Штатное расписание' nameProperties='id'
-                  view='entityView-work_staff.do'
-                  list='entityParentList-work_staff.do'
-        />
-        <persist clazz="ru.ecom.mis.ejb.domain.worker.Staff" />
-    </form>
-
-    <form        name = "$$map$$work_staffUnitForm"
-                 securityPrefix = "/Policy/Mis/Worker/StaffUnit"
-                 comment = "Штатные единицы">
-        <parent  property='staff' parentForm="$$map$$work_staffForm"/>
-        <webTrail comment='Штатные единицы' nameProperties='id'
-                  view='entityView-work_staffUnit.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.worker.StaffUnit" />
-    </form>
-
-
 
     <!-- Вакцинация -->
     <form        name = "$$map$$vac_vaccinationByPatientForm"
@@ -277,7 +135,7 @@
         <persist clazz="ru.ecom.mis.ejb.domain.mortality.MortalityReportDate" />
     </form>
 
-    <!-- Импорт записей ОМС -->
+    <!-- Импорт записей ОМС
     <form        name = "$$map$$mis_lpuFondForm"
                  securityPrefix = "/Policy/Mis/Lpu/Import"
                  comment = "Импорт записей ОМС">
@@ -286,7 +144,7 @@
                   view='entityView-mis_lpuFond.do'/>
         <persist clazz="ru.ecom.expomc.ejb.domain.registry.LpuFond" />
     </form>
-
+-->
     <!--  	Диета	-->
     <form        name = "$$map$$diet_dietForm"
                  securityPrefix = "/Policy/Mis/Diet"
@@ -387,28 +245,6 @@
                   view='entityView-diet_dishMealMenuTemplate.do'/>
         <persist clazz="ru.ecom.mis.ejb.domain.diet.DishMealMenu" />
     </form>
-
-    <!-- Журнал контроля качества готовой пищи (УФ 6-лп) -->
-    <form        name = "$$map$$diet_mealQualityControlForm"
-                 securityPrefix = "/Policy/Mis/InvalidFood/MealQualityControl"
-                 comment = "Журнал контроля качества готовой пищи (УФ 6-лп)">
-        <parent  property='diet' parentForm='ru.ecom.mis.ejb.form.diet.DietForm'/>
-        <webTrail comment='Журнал контроля качества готовой пищи (УФ 6-лп)' nameProperties='id'
-                  view='entityView-diet_mealQualityControl.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.diet.MealQualityControl" />
-    </form>
-
-    <!-- Контроль здоровья работающих с пищей (УФ 2-лп) -->
-    <form        name = "$$map$$diet_mealWorkerHealthControlForm"
-                 securityPrefix = "/Policy/Mis/InvalidFood/MealWorkerHealthControl"
-                 comment = "Контроль здоровья работающих с пищей (УФ 2-лп)">
-        <parent  property='diet' parentForm='ru.ecom.mis.ejb.form.diet.DietForm'/>
-        <webTrail comment='Контроль здоровья работающих с пищей (УФ 2-лп)' nameProperties='id'
-                  view='entityView-diet_mealWorkerHealthControl.do'/>
-        <persist clazz="ru.ecom.mis.ejb.domain.diet.MealWorkerHealthControl" />
-    </form>
-
-
 
     <!-- Диагноз по стационару  -->
     <form        name = "$$map$$stac_diagnosisForm"

@@ -276,7 +276,7 @@ abstract public class WorkFunction extends BaseEntity {
 
 	/** Категория специалиста */
 	private VocAcademicDegree theDegrees;
-	
+
 	/** Категория специалиста */
 	@Comment("Категория специалиста")
 	@OneToOne

@@ -3,7 +3,6 @@ package ru.ecom.mis.ejb.domain.contract;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.contract.voc.VocPrice;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.*;
@@ -28,21 +27,7 @@ public class PriceList extends BaseEntity{
 	 * Позиции прейскуранта
 	 */
 	private List<PricePosition> thePositions;
-	/**
-	 * Справочник типов цен
-	 */
-	@Comment("Справочник типов цен")
-	@OneToOne
-	public VocPrice getVocPrice() {
-		return theVocPrice;
-	}
-	public void setVocPrice(VocPrice aVocPrice) {
-		theVocPrice = aVocPrice;
-	}
-	/**
-	 * Справочник типов цен
-	 */
-	private VocPrice theVocPrice;
+
 	/**
 	 * Название
 	 */
@@ -91,7 +76,7 @@ public class PriceList extends BaseEntity{
 	
 	@Transient
 	public String getVocPriceInfo() {
-		return theVocPrice!=null? theVocPrice.getName() : "" ;
+		return "" ;
 	}
 	
 	/** Используется по умолчанию */

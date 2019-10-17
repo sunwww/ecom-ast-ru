@@ -76,8 +76,6 @@
 	    <form-bean name="smo_directionForm" type="ru.ecom.mis.ejb.form.medcase.poly.DirectionMedCaseForm" />
 	    <form-bean name="smo_direction_medserviceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCase20ForDirect" />
 
-		<form-bean name="doc_flow_searchForm" type="ru.ecom.mis.web.action.patient.FlowDocumentSearchForm"/>
-		<form-bean name="doc_flowForm" type="ru.ecom.document.ejb.form.FlowDocumentForm"/>
 		<form-bean name="doc_baseMedicalExaminationForm" type="ru.ecom.mis.ejb.form.licence.BaseMedicalExaminationForm"/>
 		<form-bean name="doc_documentForm" type="ru.ecom.mis.ejb.form.licence.DocumentForm"/>
 		<form-bean name="doc_directionMicrobiologForm" type="ru.ecom.mis.ejb.form.licence.DirectionToMicrobiologAnalysisForm"/>
@@ -111,7 +109,6 @@
 		<form-bean name="cal_weekDaysAlgorithmForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarWeekDaysAlgorithmForm" />
 
 		<!-- Медкарта -->
-		<form-bean name="voc_cardIndexForm" type="ru.ecom.poly.ejb.form.VocCardIndexForm" />
 		<form-bean name="voc_documentParameterForm" type="ru.ecom.mis.ejb.form.licence.VocDocumentParameterForm" />
 		<!-- Договора -->
 		<form-bean name="contract_account_contractForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
@@ -149,7 +146,6 @@
 		<form-bean name="contract_juridicalAccountMedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountMedServiceJuridicalForm" />
 		<form-bean name="contract_contractAccount20MedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccount20MedServiceForm" />
 		<form-bean name="contract_reportsForm" type="ru.ecom.mis.web.action.contract.ContractReportsForm" />
-		<form-bean name="mis_encodingAccordanceForm" type="ru.ecom.mis.ejb.form.identification.EncodingAccordanceForm"/>
 		<form-bean name="ecom_deleteJournalForm" type="ru.ecom.ejb.form.live.DeleteJournalForm"/>
 		<form-bean name="mis_kinsmanForm" type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>
 		<form-bean name="mis_lpuForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
@@ -178,12 +174,6 @@
 		
 		<form-bean name="mis_patientForm"
 			type="ru.ecom.mis.ejb.form.patient.PatientForm" />
-		<form-bean name="mis_identityCardForm"
-			type="ru.ecom.mis.ejb.form.patient.IdentityCardForm" />
-		<form-bean name="mis_identityCardPassportForm"
-			type="ru.ecom.mis.ejb.form.patient.IdentityCardPassportForm" />
-		<form-bean name="mis_identityCardPensionCertificateForm"
-			type="ru.ecom.mis.ejb.form.patient.IdentityCardPensionCertificateForm" />
 
 		<form-bean name="mis_medPolicyForm"
 			type="ru.ecom.mis.ejb.form.patient.MedPolicyForm" />
@@ -199,14 +189,7 @@
 		
 		<form-bean name="mis_patientSearchForm"
 			type="ru.ecom.mis.web.action.patient.PatientSearchForm" />
-		
-		<!-- Лицензии ЛПУ -->
-		
-		<form-bean name="mis_licenceForm"
-			type="ru.ecom.mis.ejb.form.licence.LicenceForm" />
-		<form-bean name="mis_prilogenieForm"
-			type="ru.ecom.mis.ejb.form.licence.PrilogenieForm" />
-			
+
 		<!-- Диетология -->
 		
 		<form-bean name="diet_dishFoodStuffForm" type="ru.ecom.mis.ejb.form.diet.DishFoodStuffForm" />
@@ -230,10 +213,6 @@
 			type="ru.ecom.mis.ejb.form.diet.DishMealMenuOrderForm" />
 		<form-bean name="diet_dishMealMenuTemplateForm"
 			type="ru.ecom.mis.ejb.form.diet.DishMealMenuTemplateForm" />
-		<form-bean name="diet_mealQualityControlForm"
-			type="ru.ecom.mis.ejb.form.diet.MealQualityControlForm" />
- 		<form-bean name="diet_mealWorkerHealthControlForm"
-			type="ru.ecom.mis.ejb.form.diet.MealWorkerHealthControlForm" />
 		<form-bean name="diet_foodStuffSearchForm"
 			type="ru.ecom.mis.web.action.diet.FoodStuffSearchForm" />
 
@@ -242,18 +221,12 @@
 		<!-- Кадры -->
 		
 		<form-bean name="mis_workerForm" type="$$map$$mis_workerForm" />
-		<form-bean name="mis_stateListForm" type="$$map$$mis_stateListForm" />
-		<form-bean name="mis_educationForm" type="$$map$$mis_educationForm" />
-		<form-bean name="mis_qualificationForm" type="$$map$$mis_qualificationForm" />
-		<form-bean name="mis_workBookForm" type="$$map$$mis_workBookForm" />
-		
 
 		<form-bean name="mis_equipmentForm" type="ru.ecom.mis.ejb.form.equipment.EquipmentForm" />
 		<form-bean name="mis_colorIdentityForm" type="ru.ecom.mis.ejb.form.patient.VocColorIdentityPatientForm" />
 		<form-bean name="mis_kkmequipmentForm" type="ru.ecom.mis.ejb.form.equipment.KkmEquipmentForm" />
 		<form-bean name="mis_invalidityForm" type="ru.ecom.mis.ejb.form.patient.InvalidityForm" />
 		<form-bean name="mis_privilegeForm" type="ru.ecom.mis.ejb.uc.privilege.form.PrivilegeForm" />
-		<form-bean name="mis_drugNeedForm"  type="ru.ecom.mis.ejb.uc.privilege.form.DrugNeedForm" />
 		<form-bean name="mis_recipeForm" 	type="ru.ecom.mis.ejb.uc.privilege.form.RecipeForm" />
 		<form-bean name="mis_privilegeRecipeForm" 	type="ru.ecom.mis.ejb.uc.privilege.form.PrivilegeRecipeForm" />
 		
@@ -308,7 +281,6 @@
         <form-bean name="mis_medService_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceGroupForm" />
         <form-bean name="mis_medServiceGroup_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceForm" />
         <form-bean name="smo_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCaseForm" />
-        <form-bean name="smo_visitPrescriptionBlankForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitPrescriptionBlankForm" />
 		<form-bean name="stac_bandageForm" type="ru.ecom.mis.ejb.form.medcase.hospital.BandageForm" />
 
         <!-- Лекарсвенные средства -->
@@ -530,28 +502,6 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_claim/list_by_operator_pda.jsp" />
         </action>
- 		<action path='/doc_flow_sending' type='ru.ecom.web.actions.base.ForwardAction'
-                name='doc_flow_searchForm'
-                validate='false'
-                scope="session"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_flow/list_sending_documents.jsp" />
-        </action>
- 		<action path='/doc_flow_receit' type='ru.ecom.web.actions.base.ForwardAction'
-                name='doc_flow_searchForm'
-                validate='false'
-                scope="session"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_flow/list_receit_documents.jsp" />
-        </action>
- 		<action path='/doc_flow_backtrace' type='ru.ecom.web.actions.base.ForwardAction'
-                name='doc_flow_searchForm'
-                validate='false'
-                scope="session"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_flow/list_backtrace.jsp" />
-        </action>
-        
  		<action path='/all_claims' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'

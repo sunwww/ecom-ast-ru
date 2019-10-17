@@ -3,11 +3,7 @@ package ru.ecom.mis.ejb.form.diet;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.diet.Diet;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
 /**
@@ -23,35 +19,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Parent(property="parent", parentForm=DietForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Diet")
 public class DietForm extends IdEntityForm{
-	
-	/** Журнал контроля качества пищи */
-	@Comment("Журнал контроля качества пищи")
-	@Persist
-	public Long getMealQualityControl() {
-		return theMealQualityControl;
-	}
 
-	public void setMealQualityControl(Long aMealQualityControl) {
-		theMealQualityControl = aMealQualityControl;
-	}
-
-	/** Журнал контроля качества пищи */
-	private Long theMealQualityControl;
-	
-	/** Контроль здоровья работающих с пищей */
-	@Comment("Контроль здоровья работающих с пищей")
-	@Persist
-	public Long getMealWorkerHealthControl() {
-		return theMealWorkerHealthControl;
-	}
-
-	public void setMealWorkerHealthControl(Long aMealWorkerHealthControl) {
-		theMealWorkerHealthControl = aMealWorkerHealthControl;
-	}
-
-	/** Контроль здоровья работающих с пищей */
-	private Long theMealWorkerHealthControl;
-	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@Persist

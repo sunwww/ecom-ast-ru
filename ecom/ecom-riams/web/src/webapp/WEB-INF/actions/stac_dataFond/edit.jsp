@@ -25,8 +25,7 @@
 	    <msh:row>
 	    	<msh:autoComplete property="directMedCase" label="Визит" vocName="allSMO" shortViewAction="entitySubclassShortView-mis_medCase.do" viewAction="entitySubclassView-mis_medCase.do"/>
 	    	<msh:autoComplete property="hospitalMedCase" label="Госпитализация" vocName="allSMO" shortViewAction="entitySubclassShortView-mis_medCase.do" viewAction="entitySubclassView-mis_medCase.do"/>
-	    	<msh:autoComplete property="deniedHosp" label="Отказ" vocName="vocDeniedHospitalizatingFond" shortViewAction="" viewAction=""/>
-	    	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/HospitalDataFond/DeleteSls"> 
+	    	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/HospitalDataFond/DeleteSls">
 	    	<A href="javascript:void(0)" onclick="if (confirm('Вы точно хотите открепить госпитализацию?')) getDefinition('js-stac_dataFond-deleteSlsInDirectFond.do?short=Short&id=${param.id}')"> ОТКРЕПИТЬ СЛУЧАЙ ОТ ГОСПИТАЛИЗАЦИИ</A>
 	    	</msh:ifInRole>
 	    </msh:row>

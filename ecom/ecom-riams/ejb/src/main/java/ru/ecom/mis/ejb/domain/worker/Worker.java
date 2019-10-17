@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.domain.worker;
 
-import ru.ecom.document.ejb.domain.DocumentFormJournal;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -28,21 +27,6 @@ import java.util.List;
 })
 @Table(schema="SQLUser")
 public class Worker extends BaseEntity {
-	
-	/** Журналы учета бланков документов */
-	@Comment("Журналы учета бланков документов")
-	@OneToMany(mappedBy="responsibleWorker", cascade=CascadeType.ALL)
-	public List<DocumentFormJournal> getDocumentFormJournals() {
-		return theDocumentFormJournals;
-	}
-
-	public void setDocumentFormJournals(List<DocumentFormJournal> aDocumentFormJournals) {
-		theDocumentFormJournals = aDocumentFormJournals;
-	}
-
-	/** Журналы учета бланков документов */
-	private List<DocumentFormJournal> theDocumentFormJournals;
-	
 	/** Персона */
 	@Comment("Персона")
 	@ManyToOne
@@ -124,21 +108,8 @@ public class Worker extends BaseEntity {
     @Comment("Должность")
     @Transient
     public String getPost() {
-/*        List<WorkBook> workList = getWorkBook();
-        if (workList == null || workList.size() == 0) {
-            return "";
-        }
-        WorkBook workBook = workList.get(0);
-        if (workBook == null) {
-            return "";
-        }*/
-        return "// FIXME Worker.getPost()"; //FIXME 
-
- /*       VocPost post = workBook.getPost();
-        if (post == null) return "";
-        //return "["+post.getId()+"] "+post.getName();
-        return post.getName();  //+" ("+post.getId()+")";
-*/    }
+        return "// FIXME Worker.getPost()"; //FIXME
+    }
 
     public void setPost(String s) {}
 

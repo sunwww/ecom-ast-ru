@@ -2,8 +2,6 @@ package ru.ecom.expomc.ejb.services.voc.allvalues;
 
 import ru.ecom.ejb.services.voc.helper.ArrayAllValue;
 import ru.ecom.expomc.ejb.services.check.checkers.*;
-import ru.ecom.expomc.ejb.uc.snils.ChangeSnilsChecker;
-import ru.ecom.expomc.ejb.uc.snils.ChangeSnilsNormalizeChecker;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import java.util.Collection;
@@ -36,10 +34,6 @@ public class AllowedChecksAllValues extends ArrayAllValue {
 
         add(ChangeIfEmpty.class) ;
         
-        add(ChangeSnilsChecker.class) ;
-        
-        add(ChangeSnilsNormalizeChecker.class) ;
-
         add(ChangeSubstring.class) ;
         
 

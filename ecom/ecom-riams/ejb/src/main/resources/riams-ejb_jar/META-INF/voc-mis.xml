@@ -1226,14 +1226,7 @@
 	    		
 			/>
 	</voc>
-    <voc id='vocCardIndex' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.poly.ejb.domain.voc.VocCardIndex'
-                names   = 'code,name'
-                queried = 'code,name'
-                 parent = "lpu"
-                />
-    </voc>
+
     <voc id='patient' type='NativeVocService'>
         <NativeVocService
                 from  = 'Patient p'
@@ -1364,13 +1357,6 @@
                 />
     </voc>
 
-	<voc id="vocEncodingSystem" type="EntityVocService">
-		<EntityVocService 
-			entity="ru.ecom.mis.ejb.domain.identification.voc.VocEncodingSystem"
-			names="name" 
-			queried="name"
-			/>
-	</voc>
     <voc id='lpu' type='AllValueHelper'>
         <IAllValue>ru.ecom.mis.ejb.service.lpu.LpuAllValueVoc</IAllValue>
     </voc>
@@ -1659,14 +1645,6 @@
        queryConvertType = "UPPER_CASE"
                 />
     </voc>
-   <voc id='vocWorkPlaceLevel' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.voc.VocWorkPlaceLevel'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc>
-    
    <voc id='vocDisabilityDocumentType' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentType'
@@ -1932,36 +1910,6 @@
                 />
     </voc>
 
-
-    <!-- Лицензии -->
-    <voc id='vocStatus' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocStatus'
-                 names   = 'name'
-                 queried = 'name'
-                 queryConvertType = 'FIRST_UPPER'
-                 />
-     </voc>
-     <voc id='=vocUrMember' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocUrMember'
-                 names   = 'name'
-                 queried = 'name'
-                 queryConvertType = 'FIRST_UPPER'
-                 />
-     </voc>
-
-     <voc id='vocTypeWork' type='EntityVocService'>
-         <EntityVocService
-             entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocTypeWork'
-             names   = 'name'
-             queried = 'name'
-             queryConvertType = 'FIRST_UPPER'
-             />
-     </voc>
-
-
-
     <!-- Оборудование -->
     <voc id='vocTypeEquip' type='EntityVocService'>
          <EntityVocService
@@ -2030,13 +1978,6 @@
                  entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.DrugClassificator'
                  names   = 'name'
                  queried = 'name'
-                 />
-     </voc>
-     <voc id='vocDloDoctor' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.VocDloDoctor'
-                 names   = 'code,name'
-                 queried = 'code,name'
                  />
      </voc>
 
@@ -2451,9 +2392,8 @@
     		from="Medcard m"
     		nameId="m.id"
     		queryAppend=""
-    		names="m.number || ' '||COALESCE(vci.name,'')"
+    		names="m.number "
     		queried="m.number like UPPER(:query)"
-    		join="left join VocCardIndex vci on vci.id=m.cardIndex_id"
     	/>
     </voc>
     <voc id="psychiatricCareCard" type="NativeVocService">
@@ -2654,13 +2594,6 @@ left join medcase smoP on smoP.owner_id=w.id "
         />
     </voc> 
 
-    <voc id='staffUnit' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.worker.StaffUnit'
-                names   = 'info'
-                queried = 'post.name'
-        />
-    </voc> 
     
     <voc id='vocDiagnosisRegistrationType' type='EntityVocService'>
         <EntityVocService
@@ -2671,14 +2604,7 @@ left join medcase smoP on smoP.owner_id=w.id "
         />
     </voc> 
     <!-- Диетология -->
-    <voc id='vocDishPreparationMethod' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.voc.VocDishPreparationMethod'
-                names   = 'name'
-                queried = 'name'
-        />
-    </voc> 
-  
+
     <voc id='vocDishType' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.diet.voc.VocDishType'
@@ -3241,13 +3167,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     		queried = 'name'
     	/>
     </voc>
-    <voc id="vocMzDepType" type="EntityVocService">
-    	<EntityVocService
-    		entity  = "ru.ecom.mis.ejb.domain.lpu.voc.VocMzDepType"
-    		names   = "name"
-    		queried = "name"
-    	/>
-    </voc>
+
     <voc id='vocDocumentParameter' type='EntityVocService'>
 		<EntityVocService
 			entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter'

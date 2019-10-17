@@ -1,17 +1,11 @@
 package ru.ecom.mis.ejb.domain.diet;
 
-import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Диета
@@ -24,35 +18,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class Diet extends BaseEntity{
 
-	/** Журнал контроля качества пищи */
-	@Comment("Журнал контроля качества пищи")
-	@OneToOne
-	public MealQualityControl getMealQualityControl() {
-		return theMealQualityControl;
-	}
-
-	public void setMealQualityControl(MealQualityControl aMealQualityControl) {
-		theMealQualityControl = aMealQualityControl;
-	}
-
-	/** Журнал контроля качества пищи */
-	private MealQualityControl theMealQualityControl;
-	
-	/** Контроль здоровья работающих с пищей */
-	@Comment("Контроль здоровья работающих с пищей")
-	@OneToOne
-	public MealWorkerHealthControl getMealWorkerHealthControl() {
-		return theMealWorkerHealthControl;
-	}
-
-	public void setMealWorkerHealthControl(MealWorkerHealthControl aMealWorkerHealthControl) {
-		theMealWorkerHealthControl = aMealWorkerHealthControl;
-	}
-
-	/** Контроль здоровья работающих с пищей */
-	private MealWorkerHealthControl theMealWorkerHealthControl;
-	
-	
 	/** Список меню */
 	@Comment("Список меню")
 	@OneToMany(mappedBy="diet", cascade=CascadeType.ALL)

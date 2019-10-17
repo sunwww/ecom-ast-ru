@@ -23,8 +23,6 @@ import java.sql.Date;
 @Table(schema="SQLUser")
 public class LpuAttachmentFomc extends BaseEntity implements IImportData {
 
-	
-	
 	/** СНИЛС */
 	@Comment("СНИЛС")
 	public String getSnils() {

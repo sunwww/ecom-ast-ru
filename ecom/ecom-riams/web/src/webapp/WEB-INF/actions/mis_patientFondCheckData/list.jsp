@@ -1,5 +1,3 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -14,7 +12,6 @@
  <tiles:put name='side' type='string'>
         <msh:sideMenu>
             <msh:sideLink key="ALT+1" params="id" action="/entityView-mis_lpu" name="⇧ К ЛПУ"/>
-            <msh:sideLink key='ALT+N' params="id" action="/entityParentPrepareCreate-mis_stateList" name="Добавить должность в штатное расписание" />
             <msh:link action="/entityPrepareCreate-mis_patientFondCheckData.do">Запустить новую проверку всех пациентов</msh:link>
         </msh:sideMenu>
     </tiles:put>

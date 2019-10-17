@@ -5,7 +5,6 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAmbulance;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocVisitOutcome;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocWorkMedservice;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
@@ -220,16 +219,7 @@ public class ShortMedCase extends MedCase{
 
 	/** Следующая дата приема */
 	private Date theNextVisitDate;
-	
-	/** Тип мед. обслуживания */
-	@Comment("Тип мед. обслуживания")
-	@OneToOne
-	public VocWorkMedservice getWorkMedservice() {return theWorkMedservice;}
-	public void setWorkMedservice(VocWorkMedservice aWorkMedservice) {theWorkMedservice = aWorkMedservice;}
 
-	/** Тип мед. обслуживания */
-	private VocWorkMedservice theWorkMedservice;
-	
 	/** Бригада скорой помощи */
 	@Comment("Бригада скорой помощи")
 	@OneToOne

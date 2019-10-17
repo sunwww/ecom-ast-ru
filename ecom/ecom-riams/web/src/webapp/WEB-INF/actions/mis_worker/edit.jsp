@@ -61,7 +61,6 @@
     <msh:ifFormTypeIsView formName="mis_workerForm" guid="b0b5c1a9-5459-43b9-9030-ba0177a24cbd">
       <msh:sideMenu title="Добавить" guid="652cf5dc-1acf-4fb5-b064-7eb3912e6531">
         <msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-work_personalWorkFunction" name="Должностные обязанности" title="Добавить Должностные обязанности" guid="6bebca67-8d42-4281-baaf-a203fb08f426" roles="/Policy/Mis/Worker/WorkFunction/Create" />
-        <!--        <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_workBook" name="Трудовая книжка" title="Добавить трудовую книжку" guid="6b2a67-8d42-4281-baaf-a288f426" roles="/Policy/Mis/Worker/WorkBook/Create" />-->
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

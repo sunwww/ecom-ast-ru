@@ -1,18 +1,15 @@
 package ru.ecom.document.ejb.domain.certificate;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import ru.ecom.document.ejb.domain.voc.VocCertificateType;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.birth.Pregnancy;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.sql.Date;
+import java.sql.Time;
 
 
 /**
@@ -41,13 +38,6 @@ public class Certificate extends BaseEntity {
 	public Date getDateIssue() {return theDateIssue;}
 	public void setDateIssue(Date aDateIssue) {theDateIssue = aDateIssue;}
 
-	/** Тип свидетельства */
-	@Comment("Тип свидетельства")
-	@OneToOne
-	public VocCertificateType getCertificateType() {return theCertificateType;}
-	public void setCertificateType(VocCertificateType aCertificateType) {theCertificateType = aCertificateType;}
-
-	
 	/** Серия предварительного свидетельства */
 	@Comment("Серия предварительного свидетельства")
 	public String getSeriesPreCertificate() {return theSeriesPreCertificate;}
@@ -75,8 +65,6 @@ public class Certificate extends BaseEntity {
 	private Integer theNumber;
 	/** Дата выдачи документа */
 	private Date theDateIssue;
-	/** Тип свидетельства */
-	private VocCertificateType theCertificateType;
 	/** Серия предварительного свидетельства */
 	private String theSeriesPreCertificate;
 	/** Номер предварительного свидетельства */

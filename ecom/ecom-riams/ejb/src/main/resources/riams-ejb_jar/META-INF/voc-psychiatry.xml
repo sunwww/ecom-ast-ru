@@ -49,13 +49,7 @@
 		    	names = "vcca.code||' '||vcca.name"
           />
      </voc>
-     <voc id='vocInvalidWorkPlace' type='EntityVocService'>
-          <EntityVocService
-               entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocInvalidWorkPlace'
-               names   = 'name'
-               queried = 'code,name'
-          />
-     </voc>
+
      <voc id='vocLawCourt' type='EntityVocService'>
           <EntityVocService
                entity  = 'ru.ecom.mis.ejb.domain.psychiatry.voc.VocLawCourt'

@@ -1,9 +1,5 @@
 package ru.ecom.expomc.ejb.services.check.checkers;
 
-import java.util.Collection;
-
-import javax.persistence.NoResultException;
-
 import ru.ecom.expomc.ejb.services.check.CheckException;
 import ru.ecom.expomc.ejb.services.check.CheckResult;
 import ru.ecom.expomc.ejb.services.check.ICheck;
@@ -15,27 +11,13 @@ import ru.ecom.report.replace.ReplaceHelper;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
 
+import javax.persistence.NoResultException;
+import java.util.Collection;
+
 /**
  * Проверка на вхохдение в домен
  * 
- * select RegistryEntry.streetType 
-	from RegistryEntry
-	where  RegistryEntry.time=72
-	and streetType is not null 
-	and streetType <> '' 
-	and streetType not in
-	(select OMC_STREET_TYPE.voc_code from OMC_STREET_TYPE) 
-	
-	
-insert into MESSAGE (dataId,check_Id,importTime_id)
-select id, 78, 72 
-from RegistryEntry
-where  "time"=72
-and streetType is not null 
-and streetType <> '' 
-and streetType not in
-(select OMC_STREET_TYPE.voc_code from OMC_STREET_TYPE) 
-	
+
  */
 @Comment("Проверка на вхождение в домен")
 public class CheckInDomain implements ICheck, INativeSqlSupports {

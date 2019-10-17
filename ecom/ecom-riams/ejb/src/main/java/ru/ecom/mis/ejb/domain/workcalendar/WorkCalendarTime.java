@@ -14,7 +14,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 
 /**
  * Рабочее время
@@ -67,21 +66,7 @@ public class WorkCalendarTime extends BaseEntity{
 
 	/** Время начала */
 	private Time theTimeFrom;
-	
-	/** Резервы обслуживания */
-	@Comment("Резервы обслуживания")
-	@ManyToMany
-	public List<ServiceReserve> getServiceReserves() {
-		return theServiceReserves;
-	}
 
-	public void setServiceReserves(List<ServiceReserve> aServiceReserves) {
-		theServiceReserves = aServiceReserves;
-	}
-
-	/** Резервы обслуживания */
-	private List<ServiceReserve> theServiceReserves;
-	
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne

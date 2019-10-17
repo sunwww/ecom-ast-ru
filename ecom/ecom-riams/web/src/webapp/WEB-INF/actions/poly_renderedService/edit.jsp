@@ -15,10 +15,6 @@
 
             <msh:panel>
 
-                <msh:row>
-                    <msh:autoComplete vocName="vocPolyMedUsluga" property="usluga" label="Медицинская услуга" fieldColSpan="3" size="80"
-                                      horizontalFill="true"/>
-                </msh:row>
 
                 <msh:submitCancelButtonsRow colSpan="2"/>
             </msh:panel>

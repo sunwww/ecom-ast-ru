@@ -167,21 +167,6 @@
     	</msh:ifInRole>
     </msh:ifInRole>
     </msh:ifFormTypeIsView>
-    <msh:ifInRole roles="/Policy/Poly/PrescriptionBlank/View">
-    <msh:ifFormTypeIsView formName="poly_ticketForm" guid="e2bc3fba-21d3-49fd-95ba-4b65d5dc2eaf">
-      <msh:section guid="f58220d8-bf90-4099-a5c8-cb51ad9937fb">
-        <msh:sectionTitle guid="cd08cdbe-22e2-4ae5-9734-0d1dea83306a">Рецептурные бланки</msh:sectionTitle>
-        <msh:sectionContent guid="6d850709-2323-43da-8cb9-56b6cba18cc8">
-          <ecom:parentEntityListAll formName="poly_prescriptionBlankForm" attribute="blanks" guid="3114a75b-0027-4e7d-845d-710be7ef97e2" />
-          <msh:table name="blanks" action="entityParentView-poly_prescriptionBlank.do" idField="id" guid="cfb57244-ac75-4062-888a-346a3aa301c7">
-            <msh:tableColumn columnName="Дата выдачи" property="writingOutDate" guid="f4c3707a-c480-4b80-9556-e690a2644fbe" />
-            <msh:tableColumn columnName="Серия" property="series" guid="1556c5dd-bd80-43d3-90ac-d6cbdffbbbc7" />
-            <msh:tableColumn columnName="Номер" property="number" guid="7e292520-fb32-40c2-ad1d-62388e440bc8" />
-          </msh:table>
-        </msh:sectionContent>
-      </msh:section>
-    </msh:ifFormTypeIsView>
-    </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View">
     <msh:ifFormTypeIsView formName="poly_ticketForm" guid="35116e3f-c2be-453e-82a9-188919feffeb">
       <msh:section guid="d1ffa344-d0a3-44f5-bc17-9df25e81577a">
@@ -216,7 +201,6 @@
         </msh:ifFormTypeAreViewOrEdit>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="3d94cf79-f341-469e-863e-5e28bd16aabe">
-        <msh:sideLink roles="/Policy/Poly/PrescriptionBlank/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-poly_prescriptionBlank" name="Рецептурный бланк" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить рецептурный бланк" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-poly_protocol" name="Заключение" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">

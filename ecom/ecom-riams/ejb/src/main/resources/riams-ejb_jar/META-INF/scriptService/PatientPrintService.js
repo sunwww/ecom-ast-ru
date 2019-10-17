@@ -68,13 +68,8 @@ function printInfoByPatient(aPatient,aCtx) {
 	map.put("policyText", policy!=null? policy.text : "") ;
 	var medcardL = aCtx.manager.createQuery("from Medcard where person_id="+aPatient.id).getResultList() ;
 	var medcard = medcardL.size()>0?medcardL.get(0):null ;
-	if (medcard!=null) {
-		map.put("card.code",medcard.number) ;
-		map.put("card.cardIndex",medcard.cardIndex!=null?medcard.cardIndex.name:"") ;
-	} else {
-		map.put("card.code",aPatient.patientSync) ;
-		map.put("card.cardIndex","") ;
-	}
+	map.put("card.code",medcard!=null ? medcard.number : aPatient.patientSync) ;
+    map.put("card.cardIndex","") ;
 	var listInv = aCtx.manager.createQuery("from Invalidity where patient_id=:pat and (nextRevisionDate>=CURRENT_DATE or withoutExam='1') order by dateFrom desc,revisionDate desc,lastRevisionDate desc")
 	.setParameter("pat",aPatient.id).setMaxResults(1).getResultList() ;
 	var inv=listInv.size()>0?listInv.get(0):null;
