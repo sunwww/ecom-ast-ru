@@ -122,34 +122,32 @@
 					  strProf = profile.equals("10") ? "Неонатологический" : "Акушерский";
 					  strProfSelect = "CAST('" + strProf + "' AS varchar(50))";
 				  }*/
-				  sql = "select \n" +
-						  "f1 as f1,f2 as f2, f3 as f3, sum(cntPat) as cntPat, '&protocolNumber='||f4||'&protocolDate='||f5||'&profile='||'&profileName='||profileName as f5,profileName as justProfName from (\n" +
-						  "select\n" +
-						  "pk.protocolnumber as f1\n" +
-						  ",'№'||pk.protocolnumber|| ' от '||to_char(pk.protocoldate,'dd.MM.yyyy') as f2\n" +
-						  ",pk.protocolDate as f3\n" +
-						  ",count(pat.id) as cntPat\n" +
-						  ",pk.protocolnumber as f4\n" +
-						  ",to_char(pk.protocoldate,'dd.MM.yyyy') as f5\n" +
-						  ",case when dc.isneonatologic=true then cast('Акушерский' as varchar(20)) else case when \n" +
-						  "cast(to_char(sls.dateFinish,'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) < 1 \n" +
-						  "then cast('Неонатологический' as varchar(20)) else coalesce(vkp.name,'Не определен профиль') end end\n" +
-						  " as profileName\n" +
-						  "from protocolKili pk \n" +
-						  "left join deathcase dc on dc.id = pk.deathcase_id\n" +
-						  "left join medcase sls on sls.id = dc.medcase_id\n" +
-						  "left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.transferdate is null\n" +
-						  "left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id \n" +
-						  "left join patient pat on sls.patient_id = pat.id\n" +
-						  "left join mislpu dep on dep.id=slo.department_id\n" +
-						  "left join mislpu depPrev on depPrev.id=sloPrev.department_id\n" +
-						  "left join vockiliprofile vkp on vkp.id= case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end\n" +
-						  "left join Patient p on p.id=sls.patient_id\n" +
-						  "where pk.id is not null and sls.dateFinish between to_date('{dateBegin}','dd.MM.yyyy') and to_date('{dateEnd}','dd.MM.yyyy') " + profSql + "\n" +
-						  "group by pk.protocolNumber, pk.protocolDate, dc.isneonatologic,sls.dateFinish,p.birthday,vkp.name\n" +
-						  "ORDER BY cast(pk.protocolNumber as int)\n" +
-						  ") as t\n" +
-						  "group by f1,f2,f3,f4,f5,profileName";
+				  sql = "select f1 as f1,f2 as f2, f3 as f3, sum(cntPat) as cntPat, '&protocolNumber='||f4||'&protocolDate='||f5||'&profile='||'&profileName='||profileName as f5,profileName as justProfName from (" +
+						  " select pk.protocolnumber as f1" +
+						  " ,'№'||pk.protocolnumber|| ' от '||to_char(pk.protocoldate,'dd.MM.yyyy') as f2" +
+						  " ,pk.protocolDate as f3" +
+						  " ,count(pat.id) as cntPat" +
+						  " ,pk.protocolnumber as f4" +
+						  " ,to_char(pk.protocoldate,'dd.MM.yyyy') as f5" +
+						  " ,case when dc.isneonatologic=true then cast('Акушерский' as varchar(20)) else case when " +
+						  " cast(to_char(sls.dateFinish,'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) < 1 " +
+						  " then cast('Неонатологический' as varchar(20)) else coalesce(vkp.name,'Не определен профиль') end end" +
+						  " as profileName" +
+						  " from protocolKili pk" +
+						  " left join deathcase dc on dc.id = pk.deathcase_id" +
+						  " left join medcase sls on sls.id = dc.medcase_id" +
+						  " left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.transferdate is null" +
+						  " left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id" +
+						  " left join patient pat on sls.patient_id = pat.id" +
+						  " left join mislpu dep on dep.id=slo.department_id" +
+						  " left join mislpu depPrev on depPrev.id=sloPrev.department_id" +
+						  " left join vockiliprofile vkp on vkp.id= case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end" +
+						  " left join Patient p on p.id=sls.patient_id" +
+						  " where pk.id is not null and sls.dateFinish between to_date('{dateBegin}','dd.MM.yyyy') and to_date('{dateEnd}','dd.MM.yyyy') " + profSql  +
+						  " group by pk.protocolNumber, pk.protocolDate, dc.isneonatologic,sls.dateFinish,p.birthday,vkp.name" +
+						  " ) as t" +
+						  " group by f1,f2,f3,f4,f5,profileName" +
+						  " ORDER BY f3, f1";
 			  }
 			  sql = sql.replace("{dateBegin}", startDate);
 			  sql = sql.replace("{dateEnd}", finishDate);
@@ -295,7 +293,7 @@ SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_ch
 	left join statisticstub sts on sls.id = sts.medcase_id
    where sls.deniedhospitalizating_id is null
 		 ${sqlAdd}
-"/>${calc_reestr_sql}
+"/>
 	  <form action="print-${printFileName}.do" method="post" target="_blank">
 			  ${dbMother}
 		  Период с ${dateBegin} по ${dateEnd}.
