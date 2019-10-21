@@ -135,7 +135,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			left join patient p on p.id=cp.patient_id
 			left join PriceMedService pms on pms.id=cams.medService_id
 			left join PricePosition pp on pp.id=pms.pricePosition_id
-			where cao.id='${param.id}' and cao.dtype='OperationAccrual'
+			where cao.id='${param.id}' and cao.dtype='OperationAccrual' and cams.fromcomplexmedserviceid is null
 			"/>
 				
 				<msh:table name="medicalService" 
@@ -176,7 +176,6 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			var oldaction = "";
 			
 			function makeRefund(aButton) {
-				alert(123);
 			    aButton.value="Подождите...";
 				aButton.disabled=true;
 				window.location = "js-contract_medContract-issueRefund.do?id=${param.id}";
@@ -188,9 +187,8 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 				function changeIsTerminalPayment() {
 					ContractService.changeIsPaymentTerminal(${param.id}, {
 					callback: function () {
-					alert("Изменено");
-					window.location.reload();
-
+						alert("Изменено");
+						window.location.reload();
 					}
 					});
 				}

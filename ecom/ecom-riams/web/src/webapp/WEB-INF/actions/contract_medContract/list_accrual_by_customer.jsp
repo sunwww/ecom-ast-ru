@@ -27,7 +27,7 @@ select cams.id,'Договор №'||mc.contractNumber||' счет №'||ca.id||
 			left join PriceMedService pms on pms.id=cams.medService_id
 			left join PricePosition pp on pp.id=pms.pricePosition_id
 			where mc.customer_id='${param.id}'
-			and cao.id is not null
+			and cao.id is not null and cams.fromComplexMedServiceId is null
 			order by ca.dateFrom,ca.id
 			"/>
 				

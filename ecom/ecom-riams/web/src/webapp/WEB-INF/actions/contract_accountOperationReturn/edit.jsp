@@ -105,7 +105,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 						
 			left join PriceMedService pms on pms.id=cams.medService_id
 			left join PricePosition pp on pp.id=pms.pricePosition_id
-			where cao.id='${param.id}'
+			where cao.id='${param.id}' and cams.fromcomplexmedserviceid is null
 			"/>
 				
 				<msh:table name="medicalService" 

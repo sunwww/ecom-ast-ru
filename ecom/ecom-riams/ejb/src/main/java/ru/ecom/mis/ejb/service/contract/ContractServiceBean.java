@@ -94,7 +94,7 @@ public class ContractServiceBean implements IContractService {
 					.append(" left join pricemedservice pms on pms.id=cams.medservice_id")
 					.append(" left join priceposition pp on pp.id=pms.priceposition_id")
 					.append(" left join vocvat vv on vv.id=pp.tax_id")
-					.append(" where ca.id=").append(aAccountId);
+					.append(" where ca.id=").append(aAccountId).append(" and cams.fromcomplexmedserviceid is null");
 			List<Object[]> l = aManager.createNativeQuery(sb.toString()).getResultList();
 			//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
@@ -135,6 +135,7 @@ public class ContractServiceBean implements IContractService {
 					root.put("totalTaxSum", taxSum.setScale(2, RoundingMode.HALF_UP).toString()) ;
 				}
 				root.put("FIO", aKassir);
+				LOG.info("json for kkm = "+root.toString());
 				makeHttpPostRequest(root.toString(), url);
 				return "Чек отправлен на печать";
 			} else {
