@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -9,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Форма 32. Раздел 3."/>
+    <msh:title mainMenu="StacJournal" title="Форма 32. Раздел 3."/>
   </tiles:put>
   <tiles:put name="side" type="string">
 
@@ -78,7 +77,6 @@
     String dateEnd = request.getParameter("dateEnd") ;
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
-    //String id = (String)request.getParameter("id") ;
 
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
@@ -86,26 +84,24 @@
 	request.setAttribute("dateEndmm", dateEnd.substring(3,5)) ;
 	request.setAttribute("dateEndyyyy", dateEnd.substring(6)) ;
 
-  //  String view = (String)request.getAttribute("typeView") ;
     String sex = request.getParameter("sex");
     String sqlAdd = "";
-    if (sex!=null&&!sex.equals("")) sqlAdd+=" and pat.sex_id="+sex;
+    if (sex!=null && !sex.equals("")) sqlAdd+=" and pat.sex_id="+sex;
 
     String type=request.getParameter("type");
     
 if (type!=null&&type.equals("reestr")) {
 	String id =  request.getParameter("id");
 	if (id!=null&&!id.equals("")) {
-		if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' ";}    
-		else if (id.equals("born2die")) {sqlAdd+=" and vlb.code='1' and mc.result_id=6 ";}    
-		else if (id.equals("dead")) {sqlAdd+=" and vlb.code='2' and (nb.deadbeforelabors is null or nb.deadbeforelabors='0') ";}    
-		else if (id.equals("deadbefore")) {sqlAdd+=" and vlb.code='2' and nb.deadbeforelabors='1' ";}    
+		if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' ";}
+		else if (id.equals("born2die")) {sqlAdd+=" and vlb.code='1' and mc.result_id=6 ";}
+		else if (id.equals("dead")) {sqlAdd+=" and vlb.code='2' and (nb.deadbeforelabors is null or nb.deadbeforelabors='0') ";}
+		else if (id.equals("deadbefore")) {sqlAdd+=" and vlb.code='2' and nb.deadbeforelabors='1' ";}
 		else if (id.equals("stayalive")) {sqlAdd+=" and vlb.code='1' and (mc.result_id is null or mc.result_id!=6) ";}    
 	}
  	String w = request.getParameter("weight");
  
-	if (w!=null&&!w.equals("")) {
-		//request.setAttribute("weigth", w);
+	if (w!=null && !w.equals("")) {
 		int weight = Integer.valueOf(w).intValue();
 		
 		switch(weight) {
@@ -163,8 +159,8 @@ if (type!=null&&type.equals("reestr")) {
 	request.setAttribute("sqlAdd", sqlAdd);
 	%> 
 	 <msh:section>
-    <ecom:webQuery isReportBase="true" name="Report32_reestr" nameFldSql="Report32_reestr_sql" nativeSql="
-select case when pat.id is null then mthr.id else pat.id end pat_id
+    <ecom:webQuery isReportBase="${isReportBase}" name="Report32_reestr" nameFldSql="Report32_reestr_sql" nativeSql="
+select ss.code pat_id
 ,case when pat.id is null then mthr.lastname || ' X ' || to_char(nb.birthdate, 'dd.mm.yyyy') else pat.patientinfo end pat_info
 ,cast('&type=reestr' as char) as fldId
 from newborn nb
@@ -174,6 +170,7 @@ left join childbirth cb on cb.id=nb.childbirth_id
 left join patient pat on pat.id=nb.patient_id
 left join medcase mc on mc.patient_id=pat.id and mc.datestart=pat.birthday and mc.dtype='HospitalMedCase'
 left join medcase mmc on mmc.id=cb.medcase_id
+left join statisticstub ss on ss.medcase_id=mc.id
 left join patient mthr on mthr.id=mmc.patient_id
 where nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 ${sqlAdd}
@@ -182,10 +179,9 @@ order by pat_info
     <msh:sectionTitle>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <input type="button" value="Печать списка" onclick="print()" >
-    <msh:table name="Report32_reestr" action="entityView-mis_patient.do" idField="1">
+    <msh:table printToExcelButton="Excel" name="Report32_reestr" action="entityView-mis_patient.do" idField="1">
         <msh:tableColumn property="sn"/>
-      <msh:tableColumn columnName="ИД" property="1" />
+      <msh:tableColumn columnName="Номер ИБ" property="1" />
       <msh:tableColumn columnName="ФИО ребенка" property="2"  />
     </msh:table>
     
@@ -202,7 +198,7 @@ order by pat_info
     </msh:section>
    
     <msh:section>
-    <ecom:webQuery isReportBase="true" name="Report32" nameFldSql="Report32_sql" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="Report32" nameFldSql="Report32_sql" nativeSql="
 select '1) Родился живым' as f1_name
 , count(nb.id) as f2_cntAll
 ,count(case when nb.birthweight between 500 and 749 then nb.id else null end) as f3_749
@@ -282,16 +278,14 @@ group by f1_name order by f1_name
     	    <form action="print-stac_report_32.do" method="post" target="_blank">
 	    Распределение родившихся и умерших по массе тела при рождении
 	    <input type='hidden' name="sqlText" id="sqlText" value="${Report32swod_sql}"> 
-	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (выписанные) за ${param.dateBegin}-${dateEnd}.">
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (выписанные) за ${dateBegin}-${dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
 	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
-	    <!-- <input type="submit" value="Печать"> --> 
-	    </form>     
+	    </form>
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="Report32" 
-     
      action="stac_report_32.do?short=Short&type=reestr&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="16"
     cellFunction="true"  
      >
@@ -319,7 +313,5 @@ group by f1_name order by f1_name
     <% }
     }
     	%>
-   
   </tiles:put>
-
 </tiles:insert>
