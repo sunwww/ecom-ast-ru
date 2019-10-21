@@ -174,6 +174,7 @@ function checkPrescription(aForm, aEntity, aCtx, flagIfSave) {
     }
 }
 function check(aForm, aCtx,isCreate) {
+    var manager = aCtx.manager;
     if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowCreateDiaryFutureTime")) {
         // Дата регистрации дневника не должна быть больше текущей даты
         var dateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateRegistration, aForm.timeRegistration);
@@ -184,15 +185,14 @@ function check(aForm, aCtx,isCreate) {
 
     }
     if (aForm.medCase != null && (+aForm.medCase) > 0) {
-        var lother = aCtx.manager.createNativeQuery("select case when mc.dtype='ShortMedCase' then mc.dtype else null end as dtype,case when mc.datestart=to_date('" + aForm.getDateRegistration() + "','dd.mm.yyyy') and mc.workfunctionexecute_id='" + aForm.specialist + "' then mc.id end as agrmc,to_char(mc.datefinish,'dd.mm.yyyy') as mcfinish,mc.id as mcid from medcase mc where mc.id='" + aForm.medCase + "'").getResultList();
+        var lother = manager.createNativeQuery("select case when mc.dtype='ShortMedCase' then mc.dtype else null end as dtype,case when mc.datestart=to_date('" + aForm.getDateRegistration() + "','dd.mm.yyyy') and mc.workfunctionexecute_id='" + aForm.specialist + "' then mc.id end as agrmc,to_char(mc.datefinish,'dd.mm.yyyy') as mcfinish,mc.id as mcid from medcase mc where mc.id='" + aForm.medCase + "'").getResultList();
         if (!lother.isEmpty()) {
             var lobj = lother.get(0);
             if (lobj[0] != null && lobj[1] == null)
                 throw "Протокол в талоне может быть создан только датой талона и врачом, за которым зарегистрирован талон!!!";
         }
 
-        var t = aCtx.manager.createNativeQuery("select m1.dtype,case when m1.dtype='DepartmentMedCase' and m2.dischargeTime is not null then m2.dateFinish else null end as datefinish from medcase m1 left join medcase m2 on m2.id=m1.parent_id where m1.id=" + aForm.medCase).getResultList();
-  //      var hmc = aCtx.manager.createNativeQuery("select case when dtype='HospitalMedCase' or dtype='PolyclinicMedCase' then id else parent_id end from medcase where id=" + aForm.medCase).getSingleResult(); //Если парент_ид = нулл, будет ошибка
+        var t = manager.createNativeQuery("select m1.dtype,case when m1.dtype='DepartmentMedCase' and m2.dischargeTime is not null then m2.dateFinish else null end as datefinish from medcase m1 left join medcase m2 on m2.id=m1.parent_id where m1.id=" + aForm.medCase).getResultList();
         if (!t.isEmpty()) {
             var dtype = "" + t.get(0)[0];
             if (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') {
@@ -208,7 +208,7 @@ function check(aForm, aCtx,isCreate) {
             }
             //Milamesher 16102018 - создание дневника специалиста приёмного отделения по времени - только ДО создания СЛО
             if (dtype === 'HospitalMedCase' && aForm.getDateRegistration() != null && aForm.getDateRegistration() != '') {
-                var list = aCtx.manager.createNativeQuery("select case when dmc.id is null then '0' else case when (dmc.dateStart>to_date('"
+                var list = manager.createNativeQuery("select case when dmc.id is null then '0' else case when (dmc.dateStart>to_date('"
                     + aForm.dateRegistration + "','dd.mm.yyyy') or dmc.dateStart=to_date('" + aForm.dateRegistration + "','dd.mm.yyyy') and dmc.entranceTime>'"
                     + aForm.timeRegistration + "' ) then '0' else '1' end end" +
                     " from medcase hmc" +
@@ -220,31 +220,45 @@ function check(aForm, aCtx,isCreate) {
             }
         }
         var isCheck = null;
-        var ldm = aCtx.manager.createNativeQuery("select dm.id,dm.validitydate from diarymessage dm where dm.diary_id=" + aForm.id + " and (dm.validitydate>current_date or dm.validitydate=current_date and dm.validitytime>=current_time)").getResultList();
+        var ldm = manager.createNativeQuery("select dm.id,dm.validitydate from diarymessage dm where dm.diary_id=" + aForm.id + " and (dm.validitydate>current_date or dm.validitydate=current_date and dm.validitytime>=current_time)").getResultList();
         if (!ldm.isEmpty()) {
-            aCtx.manager.createNativeQuery("update diarymessage dm set IsDoctorCheck='1' where dm.diary_id=" + aForm.id + "").executeUpdate();
+            manager.createNativeQuery("update diarymessage dm set IsDoctorCheck='1' where dm.diary_id=" + aForm.id + "").executeUpdate();
         }
         if (aForm.getDateRegistration() != null && aForm.getDateRegistration() != '' && ldm.isEmpty()) {
             var curDate = java.util.Calendar.getInstance();
             var maxVisit = java.util.Calendar.getInstance();
             var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(), aForm.getTimeRegistration());
             maxVisit.setTime(dateVisit);
+            var slsId = aForm.medCase;
+            if (dtype==='DepartmentMedCase') {
+                slsId = manager.createNativeQuery("select parent_id from medcase where id = "+slsId).getResultList().get(0);
+            }
             var config = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? "count_hour_edit_hosp_protocol" : "count_hour_edit_protocol";
             var cntHour = +getDefaultParameterByConfig(config, 24, aCtx);
             maxVisit.add(java.util.Calendar.HOUR, cntHour);
-            var param1 = new java.util.HashMap();
-            param1.put("obj", "Protocol");
-            param1.put("permission", "editAfterCertainHour");
-            param1.put("id", +aForm.id);
-            isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
             if (curDate.after(maxVisit) || t.get(0)[1] != null && !isCreate) {
-                if (+isCheck !== 1 && ldm.isEmpty()) {
-                    var tmpStr = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? " госпитализации" : "";
-                    if (t.get(0)[1] == null) throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
-                    else throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
+                var param1 = new java.util.HashMap();
+                if (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') {
+                    param1.put("obj", "DischargeMedCase");
+                    param1.put("permission", "editAfterDischarge");
+                    param1.put("id", +slsId);
+                    isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
                 }
+                if (+isCheck!==1) {
+                    param1 = new java.util.HashMap();
+                    param1.put("obj", "Protocol");
+                    param1.put("permission", "editAfterCertainHour");
+                    param1.put("id", +aForm.id);
+                    isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
+                    if (+isCheck !== 1 && ldm.isEmpty()) {
+                        var tmpStr = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? " госпитализации" : "";
+                        if (t.get(0)[1] == null) throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
+                        else throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
+                    }
+                }
+
             }
-            if (t.get(0)[1] != null && isCreate)
+            if (+isCheck!==1 && t.get(0)[1] != null && isCreate)
                 throw "У Вас стоит ограничение на создание данных после выписки!!!";
         }
     }
