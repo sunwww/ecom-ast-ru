@@ -198,20 +198,21 @@ left join Patient as wp on wp.id=w.person_id
 	</msh:sectionContent>
 </msh:section>
 <msh:section>
-	<ecom:webQuery name="pres" nativeSql="select scg.id,vtype.code||' '||vtype.name as f00,
-wf.groupname as f01,scg.createusername as f1
-,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4,
-scg.transferusername as f5 ,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'HH24:MI:SS') as f6,
-vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'HH24:MI:SS') as f8
-from prescription scg left join PrescriptionList pl on pl.id=scg.prescriptionList_id
-left join workfunction wf on wf.id=scg.prescriptcabinet_id
+	<ecom:webQuery name="pres" nativeSql="select p.id,vtype.code||' '||vtype.name as f00,
+wf.groupname as f01,p.createusername as f1
+,to_char(p.createdate,'dd.mm.yyyy')||' '||p.createtime as f2,p.editusername as f3,to_char(p.editdate,'dd.mm.yyyy')||' '||p.edittime as f4,
+p.transferusername as f5 ,to_char(p.transferdate,'dd.mm.yyyy')||' '||to_char(p.transfertime,'HH24:MI:SS') as f6,
+vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7,to_char(p.intakedate,'dd.mm.yyyy')||' '||to_char(p.intaketime,'HH24:MI:SS') as f8
+from prescription p
+left join PrescriptionList pl on pl.id=p.prescriptionList_id
+left join workfunction wf on wf.id=p.prescriptcabinet_id
 left join vocworkFunction vwf on vwf.id=wf.workFunction_id
-left join workfunction wf2 on wf2.id=scg.intakespecial_id
+left join workfunction wf2 on wf2.id=p.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
 left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
-left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
-where ${field } and scg.canceldate is null and scg.dtype='WfConsultation'"/>
+left join vocconsultingtype vtype on vtype.id=p.vocconsultingtype_id
+where ${field } and p.dtype='WfConsultation' and p.canceldate is null "/>
 	<msh:sectionTitle>Список консультаций</msh:sectionTitle>
 	<msh:sectionContent>
 		<msh:table name="pres" action="entityParentView-pres_wfConsultation.do" idField="1">

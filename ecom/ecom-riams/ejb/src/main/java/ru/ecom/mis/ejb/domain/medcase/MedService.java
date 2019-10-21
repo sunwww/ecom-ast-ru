@@ -253,6 +253,7 @@ public class MedService extends BaseEntity {
 	
 	/** Не федеральный код */
 	@Comment("Не федеральный код")
+	@Deprecated
 	public Boolean getIsNoFederal() {return theIsNoFederal;}
 	public void setIsNoFederal(Boolean aIsNoFederal) {theIsNoFederal = aIsNoFederal;}
 

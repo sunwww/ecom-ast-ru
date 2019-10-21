@@ -3,11 +3,7 @@ package ru.ecom.mis.ejb.form.patient;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
@@ -198,15 +194,7 @@ public class DiagnosisForm extends IdEntityForm {
 	@Persist
 	public String getPrimaryInfo() {return thePrimaryInfo;}
 	public void setPrimaryInfo(String aPrimaryInfo) {thePrimaryInfo = aPrimaryInfo;}
-	
-	/** Диагноз текст */
-	@Comment("Диагноз текст")
-	@Persist
-	public Long getDocDiagnosis() {return theDocDiagnosis;}
-	public void setDocDiagnosis(Long aDocDiagnosis) {theDocDiagnosis = aDocDiagnosis;}
-	
-	/** Диагноз текст */
-	private Long theDocDiagnosis;
+
 	/** Перичность инфо */
 	private String thePrimaryInfo;
 	/** Приоритет(ИНФО) */

@@ -60,15 +60,11 @@
     	out.print(request.getAttribute("tableList"));
      } %>
     <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">
-           <script type='text/javascript'>
-       //    checkFieldUpdate('typeIntake','${typeIntake}',1) ;
-           checkFieldUpdate('typeGroup','${typeGroup}',1) ;
-           checkFieldUpdate('typeState','${typeState}',1) ;
-        //   checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
-       //    checkFieldUpdate('typeService','${typeService}',1) ;
-
-  </script>
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
+    <script type='text/javascript'>
+      checkFieldUpdate('typeGroup','${typeGroup}',1) ;
+      checkFieldUpdate('typeState','${typeState}',1) ;
+    </script>
   </tiles:put>
 </tiles:insert>
 

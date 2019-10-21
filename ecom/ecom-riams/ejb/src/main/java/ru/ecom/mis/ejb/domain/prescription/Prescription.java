@@ -112,19 +112,7 @@ public abstract class Prescription extends BaseEntity{
 	@OneToOne
 	public VocPrescriptCancelReason getCancelReason() {return theCancelReason;}
 	public void setCancelReason(VocPrescriptCancelReason aCancelReason) {theCancelReason = aCancelReason;}
-	
-	///** Отменивший */
-	//@Comment("Отменивший")
-	//@OneToOne
-	//public Worker getCancelWorker() {return theCancelWorker;}
-	//public void setCancelWorker(Worker aCancelWorker) {theCancelWorker = aCancelWorker;}
-	
-	///** Назначивший */
-	//@Comment("Назначивший")
-	//@OneToOne
-	//public Worker getPrescriptor() {return thePrescriptor;}
-	//public void setPrescriptor(Worker aPrescriptor) {thePrescriptor = aPrescriptor;}
-	
+
 	/** Комментарии */
 	@Comment("Комментарии")
 	public String getComments() {return theComments;}
@@ -156,13 +144,11 @@ public abstract class Prescription extends BaseEntity{
 	@Comment("Регистратор (text)")
 	@Transient
 	public String getRegistratorInfo() {return theRegistrator!=null? theRegistrator.getWorkerInfo() : "";}
-	public void setRegistratorInfo(String aRegistratorInfo) {}
-	
+
 	/** Описание назначений */
 	@Comment("Описание назначений")
 	@Transient
 	public String getDescriptionInfo() {
-		//sb.append(getDescriptionInfo());
 		return "Описание назначения";
 	}
 	
@@ -253,10 +239,6 @@ public abstract class Prescription extends BaseEntity{
 	private Time theCancelTime;
 	/** Причина отмены */
 	private VocPrescriptCancelReason theCancelReason;
-	///** Отменивший */
-	//private Worker theCancelWorker;
-	///** Назначивший */
-	//private Worker thePrescriptor;
 	/** Комментарии */
 	private String theComments;
 	/** Состояние исполнения */

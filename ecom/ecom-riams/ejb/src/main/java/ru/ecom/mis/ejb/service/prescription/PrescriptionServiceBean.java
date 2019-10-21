@@ -974,9 +974,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 */
 	public Long savePrescriptNew(Long aIdTemplateList, Long aIdParent, String aName) {
 		AbstractPrescriptionList template = theManager.find(AbstractPrescriptionList.class, aIdTemplateList);
-	//	PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
-	//	PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
-		MedCase medCase = theManager.find(MedCase.class, aIdParent) ;
+		MedCase medCase = aIdParent!=null ? theManager.find(MedCase.class, aIdParent) : null;
 		WorkFunction wf = WorkerServiceBean.getWorkFunction(theContext, theManager) ;
 
 		AbstractPrescriptionList list  ;

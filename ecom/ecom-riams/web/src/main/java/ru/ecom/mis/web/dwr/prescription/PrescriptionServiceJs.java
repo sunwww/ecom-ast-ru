@@ -1480,14 +1480,12 @@ public class PrescriptionServiceJs {
 		}
 		return ret;	}
 
-	public String createTemplateFromList(Long aPrescriptList, String aName, HttpServletRequest aRequest) throws NamingException {
+	public Long createTemplateFromList(Long aPrescriptList, String aName, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ; 
-			
-		return ""+service.savePrescriptNew(aPrescriptList, 0L,aName).toString();
+		return service.savePrescriptNew(aPrescriptList, 0L,aName);
 	}
 	
 	 public String getInfoAboutPrescription(Long aId, HttpServletRequest aRequest) throws NamingException {
-		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sql = new StringBuilder();
 		

@@ -42,10 +42,8 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 		return list ;
 	}
 	private void loadFile( String aResourceString,List<VocValue> aList,VocContext aContext) {
-        //LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
 
         try (InputStream in = getInputStream(aResourceString)){
-                //LOG.info(new StringBuilder().append("		file=").append(in).toString());
                	Document doc = new SAXBuilder().build(in);
                 Element parConfigElement = doc.getRootElement();
                 for (Object o : parConfigElement.getChildren()) {

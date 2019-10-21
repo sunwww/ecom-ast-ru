@@ -330,8 +330,8 @@ public class ApiLoginResource {
                 "left join parameter par on par.id=fipr.parameter_id\n" +
                 "left join patient pat on pat.id=slo.patient_id\n" +
                 "left join templateprotocol tmpl on tmpl.medservice_id=ms.id\n" +
-                "where slsinner.id="+aMedcaseId+" and slsinner.datefinish is not null \n" +
-                "and slsinner.dtype='HospitalMedCase' and idc.code like 'E11%'\n" +
+                " where slsinner.id="+aMedcaseId+
+                " and slsinner.dtype='HospitalMedCase'" +
                 "and d.dateregistration is not null\n" +
                 "and (ms.code like 'A09.05.023%' or ms.code like 'A09.05.026' or ms.code like 'A09.05.017'\n" +
                 "or ms.code like 'A09.05.020' or ms.code like 'A09.05.021' or ms.code like 'A09.05.011'\n" +
