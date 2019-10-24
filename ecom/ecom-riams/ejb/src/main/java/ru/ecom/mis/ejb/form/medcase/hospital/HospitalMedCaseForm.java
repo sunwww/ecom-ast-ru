@@ -171,7 +171,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 	///** Дата RW */
 	//@Comment("Дата RW")
-	//@DateString @DoDateString 
+	//@DateString @DoDateString
 	//@Persist
 	//public String getRwDate() {return theRwDate;}
 	//public void setRwDate(String aRwDate) {theRwDate = aRwDate;}

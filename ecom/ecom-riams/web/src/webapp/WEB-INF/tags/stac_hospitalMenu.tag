@@ -188,11 +188,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-stac_deathCase.do?short=Short&id=${param.id}','.do')" name='Случай смерти' title="Просмотр случая смерти"
         	roles="/Policy/Mis/MedCase/DeathCase/View" />
-		
-		<msh:sideLink roles="/Policy/Mis/MedCase/BirthCase/View"  name="Случай рождения"   
-		params="id"  action='/entityParentList-stac_birthCase' title='Просмотр случая рождения'
-		styleId="stac_birthCase"
-		/>
+
 		<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View"  name="Направления на госпитализацию"
 		params="id"  action='/entityParentList-smo_planHospitalByHosp' title='Список направлений на госпитализацию'
 		styleId="smo_planHospitalByHosp"

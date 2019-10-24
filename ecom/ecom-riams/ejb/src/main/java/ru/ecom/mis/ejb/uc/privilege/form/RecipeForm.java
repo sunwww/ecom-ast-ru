@@ -26,24 +26,6 @@ public class RecipeForm extends IdEntityForm {
 		return theDrugClassify;
 	}
 
-	public void setDrugClassify(Long aDrugClassify) {
-		theDrugClassify = aDrugClassify;
-	}
-
-	///** Льгота */
-	//@Comment("Льгота")
-	//@Persist
-	//public Long getPrivilege() {
-	//	return thePrivilege;
-	//}
-
-	//public void setPrivilege(Long aPrivilege) {
-	//	thePrivilege = aPrivilege;
-	//}
-
-	///** Льгота */
-	//private Long thePrivilege;
-	
 	/** ЛПУ, которое выписало рецепт */
 	@Comment("ЛПУ, которое выписало рецепт")
 	@Persist

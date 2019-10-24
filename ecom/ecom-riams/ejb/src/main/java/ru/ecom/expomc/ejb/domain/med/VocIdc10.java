@@ -15,8 +15,8 @@ import java.sql.Date;
 @Comment("МКБ 10")
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(unique=false, properties={"code"}),
-	@AIndex(unique=false, properties={"code","name"})
+	@AIndex(properties={"code"}),
+	@AIndex(properties={"code","name"})
 })
 public class VocIdc10 extends VocIdCodeName {
 	

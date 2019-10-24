@@ -168,8 +168,8 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 
 	///** Дата RW */
 	//@Comment("Дата RW")
-	//@DateString @DoDateString 
-	//@Persist 
+	//@DateString @DoDateString
+	//@Persist
 	//public String getRwDate() {return theRwDate;}
 	//public void setRwDate(String aRwDate) {theRwDate = aRwDate;}
 

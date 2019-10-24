@@ -329,14 +329,15 @@
                             alert("Ошибка расчета гиперкоэффициента абразивности!");
                         } else {
                      jQuery.ajax({
-                         url: "http://192.168.1.52:8080/sdrisk"
+                         url: "http://192.168.1.52:8080/api/1.0/sdrisk"
                          ,method:"POST"
                          , data: JSON.stringify(el)
                          , contentType: "application/json; charset=utf-8"
                          , dataType: "json"
                          , success: function (el2) {
                              if (el2 && el2.status && el2.status == "ok") {
-                                 showToastMessage("Степень вероятности: " + el2.risk + " из 10",null,false);
+                                 var txt = el2.clinical_risk+"<br>"+el2.find_risk+"<br>"+el2.ins_risk;
+                                 showToastMessage(txt,null,false);
                              } else {
                                  console.log(JSON.stringify(el2));
                              }

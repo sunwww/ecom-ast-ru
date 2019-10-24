@@ -124,27 +124,7 @@ public class SurgicalOperation extends BaseEntity {
 	public String getSurgeonInfo(){
 		return theSurgeon!=null?theSurgeon.getWorkFunctionInfo():"";
 	}
-	/*
-	@Comment("Отделение инфо")
-	@Transient
-	public String getDepartmentInfo() {	return theDepartment!=null ? theDepartment.getName():"";}
-	
-	@Comment("Анестезия инфо")
-	@Transient
-	public String getAnesthesiaInfo(){return theAnesthesia!=null ? theAnesthesia.getName():"";}
-	
-	@Comment("Операция инфо")
-	@Transient
-	public String getOperationInfo(){return theOperation!=null ? theOperation.getName():"";}
-	*/
-	/** Лечебное учреждение 
-	@Comment("Лечебное учреждение")
-	@Transient
-	public MisLpu getLpu() {
-		MisLpu lpu = null ;
-		if (theMedCase!=null && theMedCase.getLpu()!=null) lpu = theMedCase.getLpu() ;
-		return lpu ;
-	}*/
+
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@OneToOne
@@ -220,87 +200,53 @@ public class SurgicalOperation extends BaseEntity {
 	@Comment("Информации")
 	@Transient
 	public String getInformation() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("Период: ").append(theOperationDate).append(" ").append(theOperationTime).append(" - ")
-			.append(theOperationDateTo).append(" ").append(theOperationTimeTo);
-		ret.append("Операция: ").append(theOperation);
-		ret.append("Хирург: ").append(getSurgeonInfo());
-		//ret.append("Анестезиолог: ").append(theAnaesthetist) ;
-		//ret.append("Анестезия: ").append(theAnesthesia).append(" кол-во:").append(theAnesthesiaAmount);
-		
-		return ret.toString() ;
+		return "Период: " + theOperationDate + " " + theOperationTime + " - " +
+				theOperationDateTo + " " + theOperationTimeTo +
+				"Операция: " + theOperation +
+				"Хирург: " + getSurgeonInfo();
 	}
 		
 		@Comment("Период")
 		@Transient
 		public String getPeriod() {
-			String ret = theOperationDate + " " + theOperationTime + " - " +
+			return theOperationDate + " " + theOperationTime + " - " +
 					theOperationDateTo + " " + theOperationTimeTo;
-			return ret;
 	}
 		
 		 /** Информация о пациенте */
 	    @Comment("Информация о пациенте")
 	    @Transient
-	    public String getPatientInfo() {
-	        
-	        return thePatient!=null?thePatient.getPatientInfo():"";
-	    }
+	    public String getPatientInfo() {return thePatient!=null ? thePatient.getPatientInfo() : "";}
 	
 	 /** Экстренность */
 	@Comment("Экстренность")
-	public Boolean getEmergency() {
-		return theEmergency;
-	}
+	public Boolean getEmergency() {return theEmergency;}
+	public void setEmergency(Boolean aEmergency) {theEmergency = aEmergency;}
+    private Boolean theEmergency;
 
-	public void setEmergency(Boolean aEmergency) {
-		theEmergency = aEmergency;
-	}
 	/** Показания для операции */
 	@Comment("Показания для операции")
 	@OneToOne
 	public VocHospitalAspect getAspect() {return theAspect;}
 	public void setAspect(VocHospitalAspect aAspect) {theAspect = aAspect;}
-
-	/** Показания для операции */
 	private VocHospitalAspect theAspect;
 
-	/** Экстренность */
-	private Boolean theEmergency;
-	
 	/** Малая */
 	@Comment("Малая")
-	public Boolean getMinor() {
-		return theMinor;
-	}
-
-	public void setMinor(Boolean aMinor) {
-		theMinor = aMinor;
-	}
-
-	/** Малая */
+	public Boolean getMinor() {return theMinor;}
+	public void setMinor(Boolean aMinor) {theMinor = aMinor;}
 	private Boolean theMinor;
 	
 	/** Анестезии */
 	@Comment("Анестезии")
 	@OneToMany(mappedBy="surgicalOperation", cascade=CascadeType.ALL)
-	public List<Anesthesia> getAnesthesies() {
-		return theAnesthesies;
-	}
-
-	public void setAnesthesies(List<Anesthesia> aAnesthesies) {
-		theAnesthesies = aAnesthesies;
-	}
+	public List<Anesthesia> getAnesthesies() {return theAnesthesies;}
+	public void setAnesthesies(List<Anesthesia> aAnesthesies) {theAnesthesies = aAnesthesies;}
 	
 	/** Номер в журнале */
 	@Comment("Номер в журнале")
-	public String getNumberInJournal() {
-		return theNumberInJournal;
-	}
-
-	public void setNumberInJournal(String aNumberInJournal) {
-		theNumberInJournal = aNumberInJournal;
-	}
+	public String getNumberInJournal() {return theNumberInJournal;}
+	public void setNumberInJournal(String aNumberInJournal) {theNumberInJournal = aNumberInJournal;}
 	
 	/** Хирург */
 	@Comment("Хирург")

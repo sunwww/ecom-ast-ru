@@ -87,7 +87,6 @@
 		<form-bean name="diary_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentByMedCaseForm"/>
 		<form-bean name="medcase_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentByMedCaseForm"/>
 		<form-bean name="doc_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentForm"/>
-	    <form-bean name="cal_patternByOperRoomForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternByOperatingRoomForm" />
 	    <form-bean name="cal_patternBySpecForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternBySpecialistForm" />
 	    
 		<!-- Рабочий календарь -->

@@ -356,17 +356,14 @@ public abstract class Prescription extends BaseEntity{
 	@OneToOne
 	public WorkFunction getTransferSpecial() {return theTransferSpecial;}
 	public void setTransferSpecial(WorkFunction aTransferSpecial) {theTransferSpecial = aTransferSpecial;}
+	private WorkFunction theTransferSpecial;
 
 	/** Раб. функция, осущ. забор */
 	@Comment("Раб. функция, осущ. забор")
 	@OneToOne
 	public WorkFunction getIntakeSpecial() {return theIntakeSpecial;}
 	public void setIntakeSpecial(WorkFunction aIntakeSpecial) {theIntakeSpecial = aIntakeSpecial;}
-
-	/** Раб. функция, осущ. забор */
 	private WorkFunction theIntakeSpecial;
-	/** Раб. функция, принявшего биоматериал */
-	private WorkFunction theTransferSpecial;
 
 	/** Пользователь, принявший биоматериал */
 	private String theTransferUsername;

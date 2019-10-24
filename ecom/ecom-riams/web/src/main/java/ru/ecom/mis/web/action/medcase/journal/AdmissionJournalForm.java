@@ -12,7 +12,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
  * Журнал обращений
  * @author stkacheva
  */
-public class AdmissionJournalForm extends BaseValidatorForm{
+public class AdmissionJournalForm extends BaseValidatorForm {
 	/** Дата начала периода */
 	@Comment("Дата начала периода") 
 	@Required @DateString @DoDateString

@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
-
+@Deprecated
+//not use
 public class EncodingAccordanceServlet extends HttpServlet {
 
 	private static final Logger LOG = Logger.getLogger(EncodingAccordanceServlet.class);

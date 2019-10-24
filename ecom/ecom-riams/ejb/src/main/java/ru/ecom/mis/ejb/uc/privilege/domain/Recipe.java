@@ -84,23 +84,11 @@ abstract public class Recipe extends BaseEntity {
 		theDrugQuantity = aDrugQuantity;
 	}
 	
-	/** Статус */
-//	@Comment("Статус")
-//	@OneToOne
-/*	public VocRecipeStatus getStatus() {
-		return theStatus;
-	}
-
-	public void setStatus(VocRecipeStatus aStatus) {
-		theStatus = aStatus;
-	}
-*/
 	/** Количество лекарства на прием */
 	@Comment("Количество лекарства на прием")
 	public BigDecimal getTakingDoseAmount() {
 		return theTakingDoseAmount;
 	}
-
 	public void setTakingDoseAmount(BigDecimal aTakingDoseAmount) {
 		theTakingDoseAmount = aTakingDoseAmount;
 	}
@@ -110,7 +98,6 @@ abstract public class Recipe extends BaseEntity {
 	public Integer getDayTakingAmount() {
 		return theDayTakingAmount;
 	}
-
 	public void setDayTakingAmount(Integer aDayTakingAmount) {
 		theDayTakingAmount = aDayTakingAmount;
 	}
@@ -120,7 +107,6 @@ abstract public class Recipe extends BaseEntity {
 	public String getUseDuration() {
 		return theUseDuration;
 	}
-
 	public void setUseDuration(String aUseDuration) {
 		theUseDuration = aUseDuration;
 	}
