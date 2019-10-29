@@ -14,9 +14,6 @@
 					<msh:textField property="name" label="Название" fieldColSpan="3" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="vocPrice" label="Справочник типов цен" vocName="vocPrice" horizontalFill="true" fieldColSpan="3"/>
-				</msh:row>
-				<msh:row>
 				<msh:checkBox property="isDefault"/>
 				</msh:row>
 				<msh:row>
