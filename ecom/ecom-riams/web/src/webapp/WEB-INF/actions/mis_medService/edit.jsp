@@ -87,6 +87,9 @@
         	<msh:checkBox property="isAbortRequired" label="Обязательно указывать тип аборта при создании операции" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
       <msh:row>
+          <msh:checkBox property="isShowSiteAsDefault" label="Отображать на сайте как услугу по умолчанию у специалиста" fieldColSpan="3" horizontalFill="true"/>
+      </msh:row>
+      <msh:row>
           <msh:checkBox property="printCodeLabReestr" label="Отображать код услуги при печати в реестре назначений для лаборатории" fieldColSpan="3" horizontalFill="true"/>
       </msh:row>
         <msh:row>
