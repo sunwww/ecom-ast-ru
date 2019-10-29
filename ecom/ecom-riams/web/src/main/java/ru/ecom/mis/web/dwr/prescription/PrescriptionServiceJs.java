@@ -31,6 +31,14 @@ import java.util.List;
  */
 public class PrescriptionServiceJs {
 	private static final Logger LOG = Logger.getLogger(PrescriptionServiceJs.class);
+	/* Получение ИД отделения по рабочей функции */
+	public Long getDepartmentFromWorkfunction(Long aWorkfunctionId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		return Long.valueOf(service.executeNativeSql("select coalesce(wf.lpu_id, w.lpu_id) as lpuId" +
+				" from workfunction wf" +
+				" left join worker w on w.id=wf.worker_id" +
+				" where wf.id = "+aWorkfunctionId).iterator().next().get1().toString());
+	}
 
 	private boolean allowByPrescriptionType(Long aMedServiceId, Long aPresctiptionType, IWebQueryService aService) {
 		return aService.executeNativeSql("select wfs.id from workfunctionservice wfs where wfs.medservice_id = "+aMedServiceId

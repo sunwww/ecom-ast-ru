@@ -566,7 +566,8 @@ public class WorkCalendarServiceJs {
     public String getReserveByDateAndServiceByPrescriptionList(Long aWorkCalendarDay, Long aPrescriptList
             , HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> col = service.executeNativeSql("select case when mc.dtype='DepartmentMedCase' or mc.dtype='HospitalMedCase' then (select min(vss.id) from vocservicestream vss where vss.code='HOSPITAL') else mc.servicestream_id end,mc.patient_id from PrescriptionList pl left join MedCase mc on mc.id=pl.medcase_id where pl.id=" + aPrescriptList);
+        Collection<WebQueryResult> col = service.executeNativeSql("select case when mc.dtype='DepartmentMedCase' or mc.dtype='HospitalMedCase' then (select min(vss.id) from vocservicestream vss where vss.code='HOSPITAL') else mc.servicestream_id end" +
+                ",mc.patient_id from PrescriptionList pl left join MedCase mc on mc.id=pl.medcase_id where pl.id=" + aPrescriptList);
         if (col.isEmpty()) return "";
         WebQueryResult wqr = col.iterator().next();
         return getReserveByDateAndService(aWorkCalendarDay, ConvertSql.parseLong(wqr.get1())
@@ -628,7 +629,7 @@ public class WorkCalendarServiceJs {
                 .append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
                 .append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
                 .append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ");
-        sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='')) order by wct.timeFrom");
+        sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.rest is null or wct.rest='0') and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='')) order by wct.timeFrom");
         Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(), 50);
         StringBuilder res = new StringBuilder();
         res.append("<table border=1><tr><th>Предварительно записанные к специалисту</th><th>Оформленные вместо других пациентов</th><th>Резервы</th></tr><tr><td><ul>");
@@ -661,9 +662,10 @@ public class WorkCalendarServiceJs {
         sql.append(" prepat.lastname ||coalesce(' ('||prepat.patientSync||')',' ('||prepat.id||')'),wct.prepatientInfo) as prepat");
         sql.append(",pc.lastname ||coalesce(' ('||pc.patientSync||')',' ('||pc.id||')') as camepat");
         sql.append(",vsrt.background,vsrt.colorText");
-        sql.append(" from WorkCalendarTime wct left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id left join MedCase m on m.id=wct.medCase_id left join Patient pc on pc.id=m.patient_id left join Patient prepat on prepat.id=wct.prepatient_id where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ");
-        sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is not null and (wct.prepatient_id is not null and m.patient_id!=wct.prepatient_id")
-                .append(" or (wct.prepatientinfo is not null and wct.prepatientinfo!='' and wct.prepatientinfo not like pc.lastname||' %'))  order by wct.timeFrom");
+        sql.append(" from WorkCalendarTime wct left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id left join MedCase m on m.id=wct.medCase_id")
+            .append(" left join Patient pc on pc.id=m.patient_id left join Patient prepat on prepat.id=wct.prepatient_id where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ")
+            .append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is not null and (wct.prepatient_id is not null and m.patient_id!=wct.prepatient_id")
+            .append(" or (wct.prepatientinfo is not null and wct.prepatientinfo!='' and wct.prepatientinfo not like pc.lastname||' %'))  order by wct.timeFrom");
 
         list = service.executeNativeSql(sql.toString(), 50);
 
@@ -688,10 +690,11 @@ public class WorkCalendarServiceJs {
         res.append("</ul></td><td><ul>");
         list.clear();
         sql = new StringBuilder();
-        sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
+        sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name , coalesce(wct.rest,'0') as f6_isBusy from WorkCalendarTime wct ")
                 .append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
                 .append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ");
-        sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and wct.reserveType_id is not null  order by wct.timeFrom");
+        sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.prepatient_id is null")
+                .append(" and (wct.prepatientinfo is null or wct.prepatientinfo='')) and wct.reserveType_id is not null  order by wct.timeFrom");
 
         list = service.executeNativeSql(sql.toString(), 50);
 
@@ -704,15 +707,18 @@ public class WorkCalendarServiceJs {
                 res.append(";color:").append(wqr.get4());
             }
             res.append("' ");
-            res.append("onclick=\"this.childNodes[1].checked='checked';checkRecord('")
-                    .append(wqr.get1()).append("','")
-                    .append(wqr.get2()).append("','").append(wqr.get6()).append("')\">");
-            res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
+            boolean isBusy = "true".equals(wqr.get6().toString());
+            if (!isBusy) {
+                res.append("onclick=\"this.childNodes[1].checked='checked';checkRecord('")
+                        .append(wqr.get1()).append("','")
+                        .append(wqr.get2()).append("','").append(wqr.get6()).append("')\">");
+                res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
 
-            res.append(" value='")
-                    .append(wqr.get1()).append("#").append(wqr.get2())
-                    .append("'>");
-            res.append(wqr.get2()).append(" ").append(wqr.get5() != null ? wqr.get5() : "");
+                res.append(" value='")
+                        .append(wqr.get1()).append("#").append(wqr.get2());
+            }
+            res.append("'>");
+            res.append(wqr.get2()).append(" ").append(wqr.get5() != null ? wqr.get5() : "").append(isBusy ? " (ЗАНЯТО)" : "");
             res.append("</li>");
         }
         res.append("</ul></td></tr></table>");

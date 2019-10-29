@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameterconfig>
+        <parameter id="15" name="15 мин"/>
+        <parameter id="30" name="30 мин"/>
+        <parameter id="45" name="45 мин"/>
+        <parameter id="60" name="1 час"/>
+        <parameter id="90" name="90 мин (1.5 часа)"/>
+        <parameter id="120" name="120 мин (2 часа)"/>
+        <parameter id="180" name="180 мин (3 часа)"/>
+</parameterconfig>

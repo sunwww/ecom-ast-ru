@@ -37,6 +37,9 @@
 
     </voc>
 
+    <voc id='durationInMinute' type='XmlFileVocService'>
+        <XmlFileVocService filename="/META-INF/diary/duration-in-minute-config.xml"/>
+    </voc>
     <voc id='parameterType' type='XmlFileVocService'>
         <XmlFileVocService filename="/META-INF/diary/parameter-config.xml"/>
     </voc>

@@ -591,7 +591,7 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="vst.code = 'OPERATION'  and ms.finishDate is null " 
+		queryAppend="vst.code = 'OPERATION'  and (ms.finishDate is null or ms.finishDate>current_date)"
 		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "

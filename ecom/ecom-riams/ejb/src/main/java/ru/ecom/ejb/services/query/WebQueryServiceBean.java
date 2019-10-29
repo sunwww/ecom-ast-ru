@@ -117,9 +117,10 @@ public class WebQueryServiceBean implements IWebQueryService {
 		}
 		return null;
 	}
-	public Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult) {
-
-		return executeQuery(theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")),aMaxResult) ;
+	public Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult) {return executeNativeSql(aQuery,aMaxResult,null);}
+	public Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult, EntityManager aManager) {
+		if (aManager == null) aManager = theManager;
+	 return executeQuery(aManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")), aMaxResult);
 	}
 	public Collection<WebQueryResult> executeNativeSql(String aQuery) {
 
@@ -129,6 +130,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 	public Collection<WebQueryResult> executeQuery(Query aQuery) {
 		return executeQuery(aQuery,null) ;
 	}
+
 	@SuppressWarnings("unchecked")
 	public Collection<WebQueryResult> executeQuery(Query aQuery,Integer aMaxResult) {
 		List<Object> list ;
