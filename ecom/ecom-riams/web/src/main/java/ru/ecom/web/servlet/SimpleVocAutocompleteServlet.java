@@ -40,13 +40,9 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
     }
 
     public void printNext(HttpServletRequest aRequest, String aId, int aCount, PrintWriter aOut) throws Exception {
-        if (CAN_TRACE) LOG.info("printNext(): aId = " + aId);
-        if (CAN_TRACE) LOG.info("  printNext(): aCount = " + aCount);
         Collection<VocValue> vocs = EntityInjection.find(aRequest).getVocService().findVocValueNext
                 (getVocName(aRequest), aId, aCount, VocAdditionalUtil.create(aRequest));
 
-        if (CAN_TRACE) LOG.info("  vocs = " + vocs);
-        if (CAN_TRACE) LOG.info("  vocs.size() = " + vocs.size());
         boolean isJson = "json".equalsIgnoreCase(aRequest.getParameter("type"));
         if (!StringUtil.isNullOrEmpty(aId)) {
             String lastId = null;
@@ -59,28 +55,20 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                 Collection<VocValue> addVocs = EntityInjection.find(aRequest).getVocService().findVocValuePrevious
                         (getVocName(aRequest), lastId, aCount - vocs.size(), VocAdditionalUtil.create(aRequest));
 
-                if (CAN_TRACE) LOG.info("  addVocs = " + addVocs);
                 HashMap<String, VocValue> hash = new HashMap<>();
                 for (VocValue vocValue : addVocs) {
                     hash.put(vocValue.getId(), vocValue) ;
                 }
 
-                if (CAN_TRACE) LOG.info("  hash = " + hash);
 
                 LinkedList<VocValue> ret = new LinkedList<>(addVocs);
-                if (CAN_TRACE) LOG.info("  ret = " + ret);
-//                if (CAN_TRACE) LOG.info("  ret = " + ret);
-//                if (ret.size() > 0) ret.remove(ret.size() - 1);
-//                if (CAN_TRACE) LOG.info("  after delete ret = " + ret);
                 for (VocValue vocValue : vocs) {
                     String id = vocValue.getId() ;
                     if(id!=null && hash.get(id)==null) {
                         hash.put(id, vocValue) ;
                         ret.add(vocValue) ;
                     }
-//                    ret.add(vocValue);
                 }
-                if (CAN_TRACE) LOG.info("  after add ret = " + ret);
                 printResult(ret, aOut,isJson);
             } else {
                 printResult(vocs, aOut,isJson);

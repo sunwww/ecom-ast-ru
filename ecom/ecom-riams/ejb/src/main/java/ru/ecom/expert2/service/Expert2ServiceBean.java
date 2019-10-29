@@ -3308,13 +3308,13 @@ public class Expert2ServiceBean implements IExpert2Service {
                     sloEntry.setVMPKind(vmp.getKind().getCode());
                 } else if (medCase instanceof ShortMedCase || medCase instanceof PolyclinicMedCase) { // Расчет цены СПО
                     PolyclinicMedCase spo;
-                    Visit visit;
+                    ShortMedCase visit;
                     if (medCase instanceof ShortMedCase) {
-                        visit = (Visit) medCase;
+                        visit = (ShortMedCase) medCase;
                         spo = (PolyclinicMedCase) medCase.getParent() ;
                     } else { //SPO
                         spo =(PolyclinicMedCase) medCase;
-                        visit = (Visit) theManager.createQuery("from Visit where parent=:parent order by dateStart desc").setParameter("parent", spo).getResultList().get(0);
+                        visit = (ShortMedCase) theManager.createQuery("from ShortMedCase where parent=:parent order by dateStart desc").setParameter("parent", spo).getResultList().get(0);
                     }
                     PersonalWorkFunction wf = (PersonalWorkFunction) visit.getWorkFunctionExecute();
                     sloEntry.setEntryType(POLYCLINICTYPE);

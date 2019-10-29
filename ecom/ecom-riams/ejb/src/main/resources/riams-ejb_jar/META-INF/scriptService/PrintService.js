@@ -503,7 +503,7 @@ function printNativeQuery(aCtx,aParams) {
 	var retAll = new java.util.ArrayList() ;
 	var parAll = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 	var oldFieldIdUniq="" ;
-	var isUniqSn = fieldIdUniq<1?false:true ;
+	var isUniqSn = fieldIdUniq >= 1 ;
 	for (var i=0; i < list.size(); i++) {
 		var obj = list.get(i) ;
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;

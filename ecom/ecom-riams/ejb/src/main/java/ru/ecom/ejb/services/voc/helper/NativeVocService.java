@@ -334,16 +334,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     }
 
     private String getNameFromEntity(Object[] aObj) {
-        StringBuilder sb = new StringBuilder();
-        int i=0 ;
-       // for (String field : theNames) {
-        	//int column = Integer.valueOf(field.trim()) ;
-            //sb.append(aObj[column]) ;
-        	sb.append(aObj[++i]) ;
-            sb.append(" ") ;
-            
-        //}
-        return sb.toString();
+        return aObj[1]+" ";
     }
 
     private VocValue createVocValue(Object[] aObj) {

@@ -51,6 +51,14 @@
   <global-forwards />
 
   <action-mappings>
+        <action path='/elmedImport' type='ru.ecom.web.actions.base.ForwardAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/riams/elmed.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/riams/elmed.jsp" />
+        </action>
         <action path='/ws_chat' type='ru.ecom.web.actions.base.ForwardAction'
                 name='mis_searchForm'
                 validate='true'
