@@ -293,4 +293,11 @@ public class MedService extends BaseEntity {
 	public void setIsAbortRequired(Boolean aIsAbortRequired) {theIsAbortRequired = aIsAbortRequired;}
 	/** Указывать тип аборта при создании операции */
 	private Boolean theIsAbortRequired =false;
+
+	/** Отображать на сайте как услугу по умолчанию у специалиста*/
+	@Comment("Отображать на сайте как услугу по умолчанию у специалиста")
+	public Boolean getIsShowSiteAsDefault() {return theIsShowSiteAsDefault;}
+	public void setIsShowSiteAsDefault(Boolean aIsShowSiteAsDefault) {theIsShowSiteAsDefault = aIsShowSiteAsDefault;}
+	/** Отображать на сайте как услугу по умолчанию у специалиста */
+	private Boolean theIsShowSiteAsDefault =false;
 }

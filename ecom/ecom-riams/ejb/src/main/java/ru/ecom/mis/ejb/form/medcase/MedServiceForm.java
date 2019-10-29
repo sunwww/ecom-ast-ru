@@ -299,4 +299,12 @@ public class MedServiceForm extends IdEntityForm  {
 	public void setPrintCodeLabReestr(Boolean printCodeLabReestr) {
 		this.printCodeLabReestr = printCodeLabReestr;
 	}
+
+	/** Отображать на сайте как услугу по умолчанию у специалиста*/
+	@Persist
+	@Comment("Отображать на сайте как услугу по умолчанию у специалиста")
+	public Boolean getIsShowSiteAsDefault() {return theIsShowSiteAsDefault;}
+	public void setIsShowSiteAsDefault(Boolean aIsShowSiteAsDefault) {theIsShowSiteAsDefault = aIsShowSiteAsDefault;}
+	/** Отображать на сайте как услугу по умолчанию у специалиста */
+	private Boolean theIsShowSiteAsDefault =false;
 }
