@@ -57,6 +57,31 @@ public class ApiRecordUtil {
         return getData(selectSql,aServiceStream!=null?aServiceStream:"",orderBy,groupBy,jsonFields,100, aService);
     }
 
+    /**
+     * Получаем список услуг с ценами по умолчанию для выбранного врача
+     * @param aWorkfunctionId
+     * @return
+     */
+    private String getDefaultMedServicesAndPrices(String aWorkfunctionId, IWebQueryService aService) {
+        if (aWorkfunctionId==null || aWorkfunctionId.equals(""))
+            return getErrorJson("Неверное значение параметра 'Должность'",ERRORWORKFUNCTION);
+        else {
+            StringBuilder sqlAdd = new StringBuilder();
+            StringBuilder selectSql = new StringBuilder();
+            String[] jsonFields = {"msName", "ppCost"};
+            selectSql.append("select distinct ms.name,pp.cost from priceposition pp")
+                    .append(" left join pricelist pl on pl.id=pp.pricelist_id")
+                    .append(" left join pricemedservice pms on pms.priceposition_id=pp.id")
+                    .append(" left join medservice ms on ms.id=pms.medservice_id")
+                    .append(" left join WorkFunctionService wfs on wfs.medService_id=ms.id")
+                    .append(" left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end")
+                    .append(" where wf.id=").append(aWorkfunctionId).append(" and (ms.startDate is null or current_date  >=ms.startDate)")
+                    .append(" and (ms.finishDate is null or ms.finishDate>=current_date)")
+                    .append(" and ms.isShowSiteAsDefault=true")
+                    .append(" and pl.isdefault=true order by pp.cost");
+            return aService.executeNativeSqlGetJSON(jsonFields,selectSql.toString(),30);
+        }
+    }
 
     /**
      * Получаем спсиок рабочих функций врачей по потоку обслуживания и специальности
@@ -64,8 +89,9 @@ public class ApiRecordUtil {
      * @param aVocWorkfunctionId
      * @return
      */
-    public String getDoctors (String aServiceStream, String aVocWorkfunctionId, IWebQueryService aService) {return getDoctors(aServiceStream,aVocWorkfunctionId,null,aService);}
-    public String getDoctors (String aServiceStream, String aVocWorkfunctionId, String aLpuId,  IWebQueryService aService) {
+    public String getDoctors (String aServiceStream, String aVocWorkfunctionId, IWebQueryService aService) {return getDoctors(aServiceStream,aVocWorkfunctionId,null,null,aService);}
+    public String getDoctors (String aServiceStream, String aVocWorkfunctionId, String aLpuId, String aWantDefMedServices,  IWebQueryService aService) {
+        Boolean isCharged = aServiceStream.equals("CHARGED");
         aServiceStream=getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
             return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
@@ -82,7 +108,21 @@ public class ApiRecordUtil {
         if (aLpuId!=null && !aLpuId.equals("")) {
             sqlAdd+=" and mlGr.id="+aLpuId;
         }
-        return getData(selectSql,sqlAdd,orderBySql,groupBySql,jsonFields,100,aService);
+        String data = getData(selectSql,sqlAdd,orderBySql,groupBySql,jsonFields,100,aService);
+        if (aWantDefMedServices==null || !isCharged)
+            return data;
+        else { //только для платных
+            JSONObject ret = new JSONObject();
+            JSONArray dataBody = new JSONArray();
+            JSONArray arr = new JSONObject(data).getJSONArray("data");
+            for (int i=0; i<arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                obj.put("listMedServices",new JSONArray(getDefaultMedServicesAndPrices(obj.getString("workfunction_id"),aService)));
+                dataBody.put(obj);
+            }
+            ret.put("data",dataBody);
+            return ret.toString();
+        }
     }
 
     /**

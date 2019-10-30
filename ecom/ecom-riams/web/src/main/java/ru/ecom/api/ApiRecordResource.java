@@ -96,10 +96,11 @@ public class ApiRecordResource {
             , @QueryParam("vocWorkfunction_id") String vocWorkfunction
             , @QueryParam("serviceStream") String serviceStream
             , @QueryParam("lpu") String aLpu
+            , @QueryParam("wantDefMedServices") String aWantDefMedServices
             , @QueryParam("token") String aToken) throws NamingException {
         ApiUtil.init(aRequest,aToken);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return new ApiRecordUtil().getDoctors(serviceStream,vocWorkfunction,aLpu,service);
+        return new ApiRecordUtil().getDoctors(serviceStream,vocWorkfunction,aLpu,aWantDefMedServices,service);
     }
 
     /** Список свободных дат по врачу или его профилю*/
