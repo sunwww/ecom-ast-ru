@@ -183,25 +183,25 @@
 SELECT ${selectSql1}
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
 , sum(case when cao.dtype='OperationAccrual' then 1 else 0 end) as sumCountMedService
-, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
-, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat
 
 , count(distinct case when cao.dtype='OperationReturn' then mc.id else null end) as cntDogMedServiceRet 
 , sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceRet
-, sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
-, sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat
+, sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat
 
 , sum(case when cao.dtype='OperationAccrual' then 1 else 0 end)
 - sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceItog
 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end)
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+, (sum(case when cao.dtype='OperationAccrual' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2) else 0 end)
  )   
 as sumItogWithoutVat
 FROM medcontract MC
@@ -292,25 +292,25 @@ SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSql
 
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
 , sum(case when cao.dtype='OperationAccrual' then 1 else 0 end) as sumCountMedService
-, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
-, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat
 
 , count(distinct case when cao.dtype='OperationReturn' then mc.id else null end) as cntDogMedServiceRet 
 , sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceRet
-, sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
-, sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat
+, sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat
 
 , sum(case when cao.dtype='OperationAccrual' then 1 else 0 end)
 - sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceItog
 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end)
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.cost*(100-coalesce(cao.discount,0))/100,2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+, (sum(case when cao.dtype='OperationAccrual' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2) else 0 end)
  )   
 as sumItogWithoutVat
 FROM medcontract MC
@@ -389,9 +389,9 @@ SELECT lpu.id as sqlId
 ,pp.positionType_id
 ,pp.code||' '||pp.name as pmsname
 , count(cams.countMedService) as sumCountMedServiceItog
-, sum(round(cams.cost*(100-coalesce(cao.discount,0))/100,2))
+, sum(round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2))
 as sumItog
-, sum(round(case when pp.isVat='1' then 0.1*1000/118 else 1 end *(cams.cost*(100-coalesce(cao.discount,0))/100),2))
+, sum(round(case when pp.isVat='1' then 0.1*1000/118 else 1 end *(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2))
 as sumItogWithoutVat
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
