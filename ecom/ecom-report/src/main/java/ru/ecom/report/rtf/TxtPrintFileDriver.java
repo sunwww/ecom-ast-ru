@@ -163,8 +163,11 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
 		try (LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(getTxtMatrixFile()), "UTF-8"))) {
 			while ( (line=in.readLine())!=null) {
 				String[] syms = line.split(" ");
-				if (!syms[0].equals("") && !syms[1].equals("") && !syms[1].equals("?")) {
-					res=res.replace(syms[0],syms[1]);
+				if (syms.length>0 && !syms[0].equals("")) {
+					if (syms.length > 1 && !syms[1].equals("") && !syms[1].equals("?"))
+						res = res.replace(syms[0], syms[1]);
+					else
+						res = res.replace(syms[0], "");
 				}
 			}
 		} catch (FileNotFoundException fe) {
