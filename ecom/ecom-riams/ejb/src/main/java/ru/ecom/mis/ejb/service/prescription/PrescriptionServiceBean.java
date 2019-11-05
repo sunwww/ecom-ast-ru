@@ -18,6 +18,7 @@ import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.live.domain.CustomMessage;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.*;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
@@ -337,6 +338,15 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			presNew.setTransferTime(presOld.getTransferTime());
 			presNew.setTransferUsername(presOld.getTransferUsername());
 			presNew.setIntakeSpecial(presOld.getIntakeSpecial());
+			//проставляет отделение, чтобы в отчёте по чувствительности к антибиотикам всё разбивалось по отделениям, а не в лаборатории
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("select w.lpu_id from worker w")
+					.append(" left join workfunction wf on wf.worker_id=w.id")
+					.append(" left join prescription p on p.intakespecial_id=wf.id")
+					.append(" where p.id=").append(presOld.getId());
+			List<Object> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
+			if (!list.isEmpty())
+				presNew.setDepartment(theManager.find(MisLpu.class, Long.valueOf(list.get(0).toString())));
 			theManager.persist(presNew);
 			ret = presNew.getId();
 		}
