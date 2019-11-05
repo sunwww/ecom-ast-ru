@@ -169,7 +169,7 @@ left join Patient as wp on wp.id=w.person_id
 			<msh:tableColumn property="3" columnName="Операция"/>
 			<msh:tableColumn property="6" columnName="Операционная"/>
 			<msh:tableColumn property="4" columnName="Дата начала"/>
-			<msh:tableColumn property="5" columnName="Время назначения"/>
+			<msh:tableColumn property="5" columnName="Время начала"/>
 
 
 		</msh:table>

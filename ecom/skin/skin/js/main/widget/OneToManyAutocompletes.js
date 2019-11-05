@@ -186,19 +186,20 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
 
         // через json
         var value = $(theFieldName).value ;
-        //alert(value) ;
         if(value!=null && value!="null" && value!="") {
-	        var json = eval('(' + $(theFieldName).value + ')') ;
+	        var json = eval('(' + value + ')') ;
 	        //alert(theFieldName.value) ;
 	        var childs = json.childs ;
 	        for (var i = 0; i < childs.length; i++) {
-	            var tr = ce("tr") ;
-	            theTbody.appendChild(tr);
-	            var one = new msh.widget.OneToManyAuto(getNextSerial(), childs[i], tr, theTitle
-	                    , onRemove, onAdd,recalc
-	                    , theVocName, theIsView,theParentId, theParentAutocomplete, theViewAction) ;
-	            one.add();
-	            theAutos.push(one);
+	            if (childs[i]) {
+                    var tr = ce("tr") ;
+                    theTbody.appendChild(tr);
+                    var one = new msh.widget.OneToManyAuto(getNextSerial(), childs[i], tr, theTitle
+                        , onRemove, onAdd,recalc
+                        , theVocName, theIsView,theParentId, theParentAutocomplete, theViewAction) ;
+                    one.add();
+                    theAutos.push(one);
+                }
 	        }
 	        if(childs.length==0) {
 	            onAdd() ;
@@ -255,7 +256,7 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
 
     // при удалении строки
     function onRemove(aAutoId) {
-        var ar = new Array() ;
+        var ar = [] ;
         var remotedIndex = 0 ;
 
         for (var i = 0; i < theAutos.length; i++) {
@@ -269,14 +270,18 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
         onUpdate();
     }
 
+    this.addRow = function(id, name) {
+      onAdd(id,name);
+    };
+
     // при добавлении
-    function onAdd() {
+    function onAdd(id, name) {
         var tr = ce("tr") ;
         theTbody.appendChild(tr);
         var child = {} ;
         child["id"] = "" ;
-        child["value"] = "" ;
-
+        child["value"] =  id ? id : "" ;
+        child["name"] =  name ? name : "" ;
         var one = new msh.widget.OneToManyAuto(getNextSerial(), child, tr, theTitle
                 , onRemove, onAdd, recalc
                 , theVocName, theIsView, theParentId, theParentAutocomplete) ;

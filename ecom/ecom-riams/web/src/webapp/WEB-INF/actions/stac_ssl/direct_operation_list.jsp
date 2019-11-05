@@ -73,27 +73,26 @@
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_suroper" nameFldSql="journal_list_suroper_sql" nativeSql="
 select 
-case when wct.prescription is not null then  mc.id else wchb.visit_id end as f1_medcaseid
-,case when wct.prescription is not null then pat.lastname||' '|| substring(pat.firstname,1,1)||' '||substring(coalesce(pat.middlename,' '),1,1) ||
- ', '||to_char(pat.birthday,'yyyy')||'г.р. №' || coalesce(ss.code,'') else patP.patientInfo end as f2_patInfo
+ mc.id as f1_medcaseid
+,pat.lastname||' '|| substring(pat.firstname,1,1)||' '||substring(coalesce(pat.middlename,' '),1,1) ||
+ ', '||to_char(pat.birthday,'yyyy')||'г.р. №' || coalesce(ss.code,'') as f2_patInfo
 ,wf.id as f3
 ,ms.code||' '||ms.name as oper_name
 ,wf.groupname
-,to_char(wcd.calendardate,'dd.MM.yyyy') as f6_oper_date
-,cast(wct.timefrom as varchar(5))||'-'||cast(p.planEndTime as varchar(5)) as f7_oper_time
+,to_char(p.planStartDate,'dd.MM.yyyy') as f6_oper_date
+,cast(p.planStartTime as varchar(5))||'-'||cast(p.planEndTime as varchar(5)) as f7_oper_time
 ,mlN.name||' (' ||wp.lastname||')' as f8_naprInfo
 ,p.comments as f9_comments
-, case when wct.prescription is not null then 'background:#F6D8CE;color:black;' else 'background:#6495ED;color:black;' end as f10_colorStyle
+, 'background:#F6D8CE;color:black;' as f10_colorStyle
 ,p.id as f11_presId
 ,mkb.code||' '||mkb.name as f12_diagnosis
 ,va.name as f13_anastesia
 , vbg.name||' '||vrf.name as f14_bloodInfo
 , surgPat.lastname as f15_surgeonInfo
-from workcalendartime wct
-left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
-left join workcalendar wc on wc.id=wcd.workcalendar_id
-left join patient patP on patP.id=wct.prepatient_id
-left join prescription p on wct.prescription=p.id
+from prescription p
+left join medservice ms on ms.id=p.medservice_id
+left join vocservicetype vst on vst.id=ms.servicetype_id
+left join workfunction wf on wf.id=p.prescriptCabinet_id
 left join workfunction surgWf on surgWf.id=p.intakeSpecial_id
 left join worker surgW on surgW.id=surgWf.worker_id
 left join patient surgPat on surgPat.id=surgW.person_id
@@ -106,20 +105,16 @@ left join diagnosis d on d.medcase_id=mc.id and d.priority_id=1 and d.registrati
 left join vocidc10 mkb on mkb.id=d.idc10_id
 left join medcase mcP on mcP.id=mc.parent_id
 left join patient pat on pat.id=mc.patient_id
-left join medservice ms on ms.id=coalesce(p.medservice_id, wct.service)
-left join vocservicetype vst on vst.id=ms.servicetype_id
-left join workfunction wf on wf.id=wc.workfunction_id
 left join workfunction wfN on wfN.id=p.prescriptspecial_id
 left join worker wN on wN.id=wfN.worker_id
 left join patient wp on wp.id=wN.person_id
 left join mislpu mlN on mlN.id=wN.lpu_id
-left join WorkCalendarHospitalBed wchb on wchb.id=wct.prehospital
 left join statisticstub ss on ss.id=coalesce(mc.statisticstub_id,mcP.statisticstub_id)
-where wcd.calendardate between to_date('${startDate}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
+where p.planStartDate between to_date('${startDate}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
 and wf.dtype='OperatingRoom'
 and vst.code='OPERATION'  
 ${dep}
-order by wcd.calendardate, wct.timefrom" />
+order by p.planStartDate, p.planStartTime" />
 
         <msh:table printToExcelButton="сохранить в excel" styleRow='10' name="journal_list_suroper"
          action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
@@ -135,8 +130,6 @@ order by wcd.calendardate, wct.timefrom" />
             <msh:tableColumn columnName="Дата назначения" property="6"/>
             <msh:tableColumn columnName="Примечание" property="9"/>
             <msh:tableButton buttonFunction="printCheckList" buttonShortName="Печать чек-листа" buttonName="Печать чек-листа" property="12"/>
-            
-            
         </msh:table>
     </msh:sectionContent>
     </msh:section>

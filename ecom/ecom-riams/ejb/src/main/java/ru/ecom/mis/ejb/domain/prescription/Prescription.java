@@ -35,7 +35,8 @@ import java.util.List;
 @AIndexes(value = {  @AIndex(properties = { "intakeDate" })
 					,@AIndex(properties = { "calendarTime" })
 					,@AIndex(properties = { "prescriptionList" })
-					,@AIndex(properties = {"medCase"})
+					,@AIndex(properties = { "planStartDate" })
+					,@AIndex(properties = { "medCase" })
 })
 @EntityListeners(DeleteListener.class)
 public abstract class Prescription extends BaseEntity{

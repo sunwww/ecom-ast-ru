@@ -156,7 +156,7 @@ left join vocservicetype as vms on vms.id=ms.serviceType_id
     			<msh:tableColumn property="3" columnName="Операция"/>
     			<msh:tableColumn property="6" columnName="Операционная"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
-    			<msh:tableColumn property="5" columnName="Время назначения"/>
+    			<msh:tableColumn property="5" columnName="Время начала"/>
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>
