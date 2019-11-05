@@ -17,11 +17,24 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TicketServiceJs {
+
+	public String showSimpleServiceBySpecialist(Long aWorkfunctionId, HttpServletRequest aRequest) throws SQLException, NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String sql = "select ms.id as serviceid, ms.code||' '||ms.name as servicename, case when link.isDefault='1' then 'true' else 'false' end as isDefault " +
+				" from workfunction wf" +
+				" left join vocworkfunction vwf on vwf.id=wf.workfunction_id " +
+				" left join MedServiceComplexLink link on link.speciality_id=vwf.fondSpeciality_id" +
+				" left join medservice ms on ms.id=link.innerMedService_id" +
+				" where wf.id="+aWorkfunctionId+" and ms.id is not null";
+		return service.executeSqlGetJson(sql,null);
+
+	}
 	
 	public String getDefaultParameter(String aKey, String aDefaultValue, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);

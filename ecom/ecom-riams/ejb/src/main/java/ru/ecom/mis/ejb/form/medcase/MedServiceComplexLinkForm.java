@@ -35,11 +35,8 @@ public class MedServiceComplexLinkForm extends IdEntityForm  {
 	/** Комплексная мед. услуга */
 	@Comment("Комплексная мед. услуга")
 	@Persist
-	@Required
 	public Long getComplexMedService() {return theComplexMedService;}
 	public void setComplexMedService(Long aComplexMedService) {theComplexMedService = aComplexMedService;}
-
-	/** Комплексная мед. услуга */
 	private Long theComplexMedService;
 
 	/** Мед. услуга в программе комплексной*/
@@ -48,22 +45,28 @@ public class MedServiceComplexLinkForm extends IdEntityForm  {
 	@Required
 	public Long getInnerMedService() {return theInnerMedService;}
 	public void setInnerMedService(Long aInnerMedService) {theInnerMedService = aInnerMedService;}
-
-	/** Мед. услуга в программе комплексной */
 	private Long theInnerMedService;
 
 	/** Количество */
 	@Comment("Количество")
 	@Persist
 	@Required
-	public Integer getCountInnerMedService() {
-		return theCountInnerMedService;
-	}
-	public void setCountInnerMedService(Integer aCountInnerMedService) {
-		theCountInnerMedService = aCountInnerMedService;
-	}
-
-	/** Количество */
+	public Integer getCountInnerMedService() {return theCountInnerMedService;}
+	public void setCountInnerMedService(Integer aCountInnerMedService) {theCountInnerMedService = aCountInnerMedService;}
 	private Integer theCountInnerMedService;
+
+	/** Специальность врача */
+	@Comment("Специальность врача")
+	@Persist
+	public Long getSpeciality() {return theSpeciality;}
+	public void setSpeciality(Long aSpeciality) {theSpeciality = aSpeciality;}
+	private Long theSpeciality ;
+
+	/** Выбрана по умолчанию */
+	@Comment("Выбрана по умолчанию")
+	@Persist
+	public Boolean getIsDefault() {return theIsDefault;}
+	public void setIsDefault(Boolean aIsDefault) {theIsDefault = aIsDefault;}
+	private Boolean theIsDefault ;
 
 }

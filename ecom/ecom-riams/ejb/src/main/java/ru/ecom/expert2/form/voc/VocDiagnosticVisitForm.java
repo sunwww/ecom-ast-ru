@@ -28,13 +28,6 @@ public class VocDiagnosticVisitForm extends VocBaseFederalForm {
     /** Цена */
     private String theCost ;
 
-    /** Мед услуга (для добавления) */
-    @Comment("Мед услуга (для добавления)")
-    public Long getMedServiceAdd() {return theMedServiceAdd;}
-    public void setMedServiceAdd(Long aMedServiceAdd) {theMedServiceAdd = aMedServiceAdd;}
-    /** Мед услуга (для добавления) */
-    private Long theMedServiceAdd ;
-
     /** Профиль основной мед. специальности V021*/
     @Comment("Профиль основной мед. специальности V021")
     @Persist @Required

@@ -16,6 +16,7 @@ import ru.nuzmsh.util.StringUtil;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
@@ -33,11 +34,11 @@ public class TemplateProtocolJs {
     public Long getPatientSex(Long aPatientId, HttpServletRequest aRequest) throws NamingException {
     	return Long.valueOf(Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSql("select sex_id from patient where id ="+aPatientId).iterator().next().get1().toString());
 	}
-	public String getSummaryBallsByNewCard (String aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {
+	public String getSummaryBallsByNewCard (Long aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {
 		if (aParams==null||aParams.equals("")) {aParams="0";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res = new StringBuilder();
-		String sql = "select pg.id, pg.name,cast(coalesce(sum(uv.cntBall),0) as decimal(11,0))" +
+		String sql = "select pg.id, pg.name,cast(coalesce(sum(uv.cntBall),0) as decimal(11,2))" +
 				" from  parameterbyform pf" +
 				" left join parameter p on p.id=pf.parameter_id" +
 				" left join parametergroup pg on pg.id=p.group_id" +
@@ -60,7 +61,7 @@ public class TemplateProtocolJs {
 	public String getParameterBallId(Long aParameterId, HttpServletRequest aRequest) throws NamingException {
 		if (aParameterId==null||aParameterId.equals(0L)) {return "";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> res = service.executeNativeSql("select coalesce(cast(cntBall as decimal(11,0)),0) as cntBall, coalesce(comment,'') as comment from uservalue  where id = "+aParameterId);
+		Collection<WebQueryResult> res = service.executeNativeSql("select coalesce(cast(cntBall as decimal(11,2)),0) as cntBall, coalesce(comment,'') as comment from uservalue  where id = "+aParameterId);
 		if (!res.isEmpty()) {
 			WebQueryResult r =res.iterator().next(); 
 			return r.get1().toString()+"#"+r.get2().toString();
@@ -935,7 +936,7 @@ public class TemplateProtocolJs {
 	 * @param val Long Результат (баллы)
 	 * @return String
 	 */
-	public String getRisk(String aCardTypeId, Long val, HttpServletRequest aRequest) throws NamingException {
+	public String getRisk(String aCardTypeId, BigDecimal val, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		Collection<WebQueryResult> res = service.executeNativeSql
 				("select name from assessment" +

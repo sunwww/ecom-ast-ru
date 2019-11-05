@@ -93,7 +93,6 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 	return check ;
 }
 function onPreSave(aForm,aEntity, aCtx) {
-	
 	var stat=!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/OnlyTheir") ;
 	if(+aForm.workFunctionExecute==0) {
 		//aForm.workFunctionExecute = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
@@ -223,17 +222,13 @@ function saveArray(aEntity,aManager, aJsonString, aClazz,aMainCmd, aAddCmd,
 		 //, aStringAmount
 		 ) {
 	var obj = new Packages.org.json.JSONObject(aJsonString) ;
-//	var str = aStringAmount.split(",");
-	
 	var ar = obj.getJSONArray("childs");
 	var ids = new Packages.java.lang.StringBuilder() ;
 	
 	for (var j=0;j<aMainCmd.length;j++) {
 		eval(aMainCmd[j]) ;
 	}
-	
-	
-	
+
 	for (var i = 0; i < ar.length(); i++) {
 		var child = ar.get(i);
 		var jsId = java.lang.String.valueOf(child.get("value"));

@@ -1,5 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -27,7 +25,7 @@
       <msh:autoComplete vocName="vocAssessmentCard" property="assessmentCardTemplate" label="Тип оценочной карты"  fieldColSpan="4" size="30" />
 	  </msh:row>
       <msh:row>
-      <msh:autoComplete vocName="VocAssessmentsByTemplate" property="assessment" label="Оценка"  parentAutocomplete="assessmentCardTemplate" fieldColSpan="4" size="30" />
+      <msh:autoComplete vocName="vocAssessmentsByTemplate" property="assessment" label="Оценка"  parentAutocomplete="assessmentCardTemplate" fieldColSpan="4" size="30" />
 	  </msh:row>
       <msh:row>
       <input type="submit" value="Найти" />
