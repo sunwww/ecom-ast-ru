@@ -365,7 +365,7 @@
 	/>
 </voc>
 
-<!-- depr
+
 <voc id="executorByClaimType" type="NativeVocService">
 	<NativeVocService
 		from="SecUser su"
@@ -386,7 +386,7 @@
 		queried="upper(pat.lastname) like upper(:querId) or upper(su.login) like upper(:query) "
 		parent="vct.id=:parent"
 	/>
-</voc> -->
+</voc>
 
 <voc id="vocClaimType" type="NativeVocService">
 	<NativeVocService
