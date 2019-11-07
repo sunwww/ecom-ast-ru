@@ -339,7 +339,7 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
 
         showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());
         function showPreHospCalendar(month,year) {
-            HospitalMedCaseService.getPreHospCalendar(year,month,$('department').value,{
+            HospitalMedCaseService.getPreHospCalendar(year,month,$('department').value,false,{
                 callback: function(html) {
                     jQuery('#dPicker').html(html);
                 }

@@ -852,4 +852,22 @@ public class PatientServiceJs {
 		}
 		return o.toString();
 	}
+
+	/**
+	 * Получить id и телефон пациента по его визиту #181
+	 * @param aVisitId medcase.id
+	 * @return Json id и телефон пациента
+	 */
+	public String getIdPhoneByVisitId(Long aVisitId, HttpServletRequest request) throws NamingException {
+		IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
+		Collection<WebQueryResult> list = service.executeNativeSql("select p.id,coalesce(p.phone,'') from patient p" +
+				" left join medcase v on v.patient_id=p.id where v.id="+aVisitId);
+		JSONObject o = new JSONObject() ;
+		if (!list.isEmpty()) {
+			WebQueryResult w = list.iterator().next();
+			o.put("id",w.get1())
+					.put("phone", w.get2());
+		}
+		return o.toString();
+	}
 }

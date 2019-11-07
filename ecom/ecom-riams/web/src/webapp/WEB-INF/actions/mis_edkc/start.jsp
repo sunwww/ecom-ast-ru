@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
     <msh:ifInRole roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet">
         <tiles:put name='title' type='string'>
-            <msh:title mainMenu="Journals">ЕДКЦ</msh:title>
+            <msh:title mainMenu="Expert2">ЕДКЦ</msh:title>
         </tiles:put>
 
         <tiles:put name='body' type='string'>
