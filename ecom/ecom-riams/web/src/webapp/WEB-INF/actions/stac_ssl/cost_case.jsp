@@ -197,7 +197,7 @@ where slo.parent_id='${param.id}'
        vis.datestart-to_date('${datestart}','dd.mm.yyyy') = -1
        and upper(vis.dtype)='VISIT' and ( vss.id='${serStreamId}' )
        )
-        and pp.priceList_id='${priceList}'
+        and pp.priceList_id='${priceList}' and (pp.dateTo is null or pp.dateTo>=vis.dateStart)
         and (vis.noActuality='0' or vis.noActuality is null)
         order by vis.datestart
       "/>
