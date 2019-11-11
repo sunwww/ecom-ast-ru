@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import org.apache.log4j.Logger;
 import org.jdom.IllegalDataException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class WorkCalendarServiceJs {
+
+    private static final Logger LOG = Logger.getLogger(WorkCalendarServiceJs.class) ;
+
     public String getActualReserves(HttpServletRequest aRequest) throws NamingException {
         String sql = "select id, name, code from VocServiceReserveType";
         return Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSqlGetJSON(new String[]{"id", "name", "code"}, sql, 50);
@@ -1319,7 +1323,7 @@ public class WorkCalendarServiceJs {
                 .append(" ,wct.medCase_id");
         sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')");
         sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' тел. '||wct.phone,' тел. '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')");
-        sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||case when wct.service is not null then coalesce(ms.shortname,ms.name) else (select list(coalesce(ms.shortname,ms.name)) from medcase servMc left join medservice ms on ms.id=servMc.medservice_id where servMc.parent_id=vis.id ) end as f7_fio");
+        sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||case when vis.datestart is not null then '' when wct.service is not null then coalesce(ms.shortname,ms.name) else (select list(coalesce(ms.shortname,ms.name)) from medcase servMc left join medservice ms on ms.id=servMc.medservice_id where servMc.parent_id=vis.id ) end as f7_fio");
         sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart");
         sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast");
         sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as f12_patid")
@@ -1335,7 +1339,7 @@ public class WorkCalendarServiceJs {
         sql.append(",vsrt.background as v16srtbackground ");
 
         if (isRemoteUser) {
-            sql.append(", case when sw.lpu_id!='").append(theLpuRemoteUser != null ? theLpuRemoteUser : "").append("' then 1 else null end as notViewRetomeUser1");
+            sql.append(", case when (wct.createPreRecord is not null and sw.lpu_id is null) or sw.lpu_id!='").append(theLpuRemoteUser != null ? theLpuRemoteUser : "").append("' then 1 else null end as notViewRetomeUser1");
             sql.append(", case when w.lpu_id!='").append(theLpuRemoteUser != null ? theLpuRemoteUser : "").append("' then 1 else null end as notViewRetomeUser2");
         } else {
             sql.append(",cast('-' as varchar(1)) as emp1,cast('-' as varchar(1)) as emp2");
@@ -1378,7 +1382,6 @@ public class WorkCalendarServiceJs {
 		}*/
         sql.append(" order by wct.timeFrom");
         StringBuilder res = new StringBuilder();
-
         Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
         String frmName = "frmTime";
         if (aVocWorkFunction != null) frmName = frmName + "_" + aVocWorkFunction;
@@ -1474,7 +1477,6 @@ public class WorkCalendarServiceJs {
                         res.append(" ").append(wqr.get2()).append(" ");
                         res.append(wqr.get12());
                     } else {
-
                         res.append("<li id='liTime' ondblclick=\"this.childNodes[1].checked='checked';step6Finish('").append(wqr.get1()).append("')\" onclick=\"this.childNodes[1].checked='checked';step6();\">");
 
                         res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
@@ -1498,10 +1500,11 @@ public class WorkCalendarServiceJs {
                 prelastname = wqr.get8() != null ? "" + wqr.get8() : "";
                 lastname = wqr.get9() != null ? "" + wqr.get9() : "";
             }
-            StringBuilder msg = new StringBuilder();
-            msg.append(wqr.get19() != null ? wqr.get19().toString() : "").append(!prelastname.startsWith(lastname) && !prelastname.equals("") ? " вместо " + prelastname : "");
-            if (msg.toString().equals("")) msg.append("Нет данных.");
-            res.append("<input type=\"button\" value=\"...\" onclick=\"showToastMessage('").append(msg).append("',null,true);\"/>");
+            if (!isRemoteUser) {
+                String msg = (wqr.get19() != null ? wqr.get19().toString() : "") +(!prelastname.startsWith(lastname) && !prelastname.equals("") ? " вместо " + prelastname : "");
+                res.append("<input type=\"button\" value=\"...\" onclick=\"showToastMessage('").append(msg.equals("") ? "Нет данных." : msg).append("',null,true);\"/>");
+            }
+
             res.append("</li>");
             if (i >= cntLi) {
                 res.append("</ul></li>");
