@@ -27,7 +27,7 @@ public class ApiLoginResource {
     public String makeTimurBiohim(@Context HttpServletRequest aRequest, @QueryParam("medcaseId") Long aMedcaseId, @QueryParam("token") String token) throws NamingException, SQLException {
         JSONObject ret = new JSONObject();
         ApiUtil.login(token,aRequest);
-        String sql = "select t.id as id" +
+        String sql = "select t.id as id, t.sex as sex" +
                 " ,max(t.p247) as Bldl\n" +
                 ",max(t.p248) as Bbelok\n" +
                 ",max(t.p243) as Bchol\n" +
@@ -70,7 +70,7 @@ public class ApiLoginResource {
                 ",max(t.p38) as ESR\n" +
                 ",max(t.p249) as Balb\n" +
                 "from (\n" +
-                "select pat.id as id, pat.id as fio" +
+                "select pat.id as id, pat.id as fio, vs.code as sex" +
                 " ,case when par.id=247 then\n" +
                 "list(case when fipr.valuebd is not null then round(fipr.valuebd,2)::varchar else fipr.valuetext end)\n" +
                 "else null end as p247\n" +
@@ -317,19 +317,20 @@ public class ApiLoginResource {
                 ",case when par.id=249 then\n" +
                 "list(case when fipr.valuebd is not null then round(fipr.valuebd,2)::varchar else fipr.valuetext end)\n" +
                 "else null end as p249\n" +
-                "from medcase slsinner\n" +
-                "left join medcase slo on slo.parent_id=slsinner.id and slo.dtype='DepartmentMedCase'\n" +
-                "left join prescriptionlist pl on pl.medcase_id=slsinner.id or pl.medcase_id=slo.id\n" +
-                "left join prescription p on p.prescriptionlist_id=pl.id\n" +
-                "left join medcase msmc on msmc.id=p.medcase_id\n" +
-                "left join diary d on msmc.id=d.medcase_id \n" +
-                "left join diagnosis ds on ds.medcase_id=slsinner.id or ds.medcase_id=slo.id\n" +
-                "left join vocidc10 idc on idc.id=ds.idc10_id\n" +
-                "left join medservice ms on ms.id=p.medservice_id \n" +
-                "left join forminputprotocol fipr on fipr.docprotocol_id=d.id\n" +
-                "left join parameter par on par.id=fipr.parameter_id\n" +
-                "left join patient pat on pat.id=slo.patient_id\n" +
-                "left join templateprotocol tmpl on tmpl.medservice_id=ms.id\n" +
+                " from medcase slsinner\n" +
+                " left join medcase slo on slo.parent_id=slsinner.id and slo.dtype='DepartmentMedCase'\n" +
+                " left join prescriptionlist pl on pl.medcase_id=slsinner.id or pl.medcase_id=slo.id\n" +
+                " left join prescription p on p.prescriptionlist_id=pl.id\n" +
+                " left join medcase msmc on msmc.id=p.medcase_id\n" +
+                " left join diary d on msmc.id=d.medcase_id \n" +
+                " left join diagnosis ds on ds.medcase_id=slsinner.id or ds.medcase_id=slo.id\n" +
+                " left join vocidc10 idc on idc.id=ds.idc10_id\n" +
+                " left join medservice ms on ms.id=p.medservice_id \n" +
+                " left join forminputprotocol fipr on fipr.docprotocol_id=d.id\n" +
+                " left join parameter par on par.id=fipr.parameter_id\n" +
+                " left join patient pat on pat.id=slo.patient_id\n" +
+                " left join vocsex vs on vs.id=pat.sex_id" +
+                " left join templateprotocol tmpl on tmpl.medservice_id=ms.id\n" +
                 " where slsinner.id="+aMedcaseId+
                 " and slsinner.dtype='HospitalMedCase'" +
                 "and d.dateregistration is not null\n" +
@@ -340,9 +341,9 @@ public class ApiLoginResource {
                 "or ms.code like 'A09.05.028' or ms.code like 'A09.05.031' or ms.code like 'B03.016.006'\n" +
                 "or ms.code like 'A09.05.010' or ms.code like 'A09.05.025' or ms.code like 'B03.005.006'\n" +
                 "or ms.code like 'A09.05.030' or ms.code like 'B03.016.014' or ms.code like 'A09.28.003.001')\n" +
-                " group by pat.id,par.id,d.dateregistration\n" +
-                " order by d.dateregistration) as t\n" +
-                " group by t.id,t.fio\n";
+                " group by pat.id,par.id,d.dateregistration, vs.code" +
+                " order by d.dateregistration) as t" +
+                " group by t.id,t.fio, t.sex";
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         JSONArray array = new JSONArray(service.executeSqlGetJson(sql,100));
