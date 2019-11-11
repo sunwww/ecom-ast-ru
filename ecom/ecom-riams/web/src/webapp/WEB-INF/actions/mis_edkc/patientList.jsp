@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <msh:title guid="helloItle-123" mainMenu="Journals" title="Отчет по листам наблюдений"></msh:title>
+        <msh:title guid="helloItle-123" mainMenu="Expert2" title="Отчет по листам наблюдений"></msh:title>
     </tiles:put>
     <tiles:put name="side" type="string">
         <tags:observSheet name="observSheet"/>

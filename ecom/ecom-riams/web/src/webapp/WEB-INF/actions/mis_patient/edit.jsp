@@ -875,6 +875,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <%--
          --%>
           <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_patientExternalServiceAccount" name="Согласие на передачу данных"  title="Согласие на передачу данных" roles="/Policy/Mis/Patient/PatientExternalServiceAccount/Create"/>
+          <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_planOphtHospital" name="Добавить планирование введения ангиогенеза" title="Добавить планирование введения ангиогенеза" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Create"/>
       </msh:sideMenu>
       <msh:sideMenu title="Показать все" guid="9f390953-ddd1-426b-bf16-5198c38f449b">
 

@@ -34,8 +34,8 @@ import java.sql.Time;
 		})
 public class WorkCalendarHospitalBed extends BaseEntity {
 
-	/** Внутренний номер направлания */
-	@Comment("Внутренний номер направлания")
+	/** Внутренний номер направления */
+	@Comment("Внутренний номер направления")
 	public String getInternalCode() {return theInternalCode;}
 	public void setInternalCode(String aInternalCode) {theInternalCode = aInternalCode;}
 	/** Внутренний номер направлания */

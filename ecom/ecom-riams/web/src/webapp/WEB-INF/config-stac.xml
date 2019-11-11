@@ -8,6 +8,8 @@
 	
         <form-bean name="stac_omcCriterionForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.OmcCriterionForm" />
         <form-bean name="stac_planHospitalForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedForm" />
+        <form-bean name="stac_planOphtHospitalForm"            type="ru.ecom.mis.ejb.form.workcalendar.PlanOphtHospitalForm" />
+        <form-bean name="stac_planOphtHospitalByVisitForm"            type="ru.ecom.mis.ejb.form.workcalendar.PlanOphtHospitalByVisitForm" />
         <form-bean name="smo_planHospitalByVisitForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByVisitForm" />
         <form-bean name="smo_planHospitalByHospForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByHospForm" />
         <form-bean name="stac_sslAdmissionForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
@@ -122,6 +124,13 @@
                 scope="session"
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_hospitalBed/planning_hospitalizations.jsp" />
+        </action>
+        <action path='/stac_planning_OphtHospitalizations' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+        >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_planOphtHospital/planning_OphtHospitalizations.jsp" />
         </action>
         <action path='/fillbedsreport' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
                 name='stac_admissionJournalForm'

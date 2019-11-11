@@ -529,8 +529,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				theManager.persist(m) ;
 			}
 			theManager.persist(m) ;
-			if (!infoToSend.toString().isEmpty())
-				sendMesgOutOfReferenceInterval(infoToSend.toString(),aPrescriptId);
+			/*if (!infoToSend.toString().isEmpty())
+				sendMesgOutOfReferenceInterval(infoToSend.toString(),aPrescriptId);*/
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}

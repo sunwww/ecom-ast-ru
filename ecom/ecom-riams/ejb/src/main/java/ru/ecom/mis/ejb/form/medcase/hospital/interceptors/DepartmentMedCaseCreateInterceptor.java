@@ -80,18 +80,15 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 
 		if (form.getPrevMedCase()!=null) {
 			DepartmentMedCase prevMedCase = manager.find(DepartmentMedCase.class, form.getPrevMedCase());
-			if (prevMedCase.getDepartment().getIsMaternityWard()!=null && prevMedCase.getDepartment().getIsMaternityWard() ) {
-				//Milamesher #132 Карта оценки риска обязательна всегда
-				//Обазятельны либо роды, либо выкидыш
-				//lastrelease milamesher 10.04.2018 #97
-				if (/*!isRiskCardBornExists(manager, prevMedCase) && */!isCalcCardBornExists(manager, prevMedCase) && !isDsO82(manager, form.getPrevMedCase())) {
+			if (prevMedCase.getDepartment().getIsMaternityWard()!=null && prevMedCase.getDepartment().getIsMaternityWard()
+					&& !isWithoutChildBirthDiagnosis(prevMedCase)) {
+				if (!isCalcCardBornExists(manager, prevMedCase) && !isDsO82(manager, form.getPrevMedCase())) {
 					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не создано вычисление риска ВТЭО после родов!");
 				}
 				if (!noCheckPregnancy && !isPregnancyExists(manager, prevMedCase) && !isMisbirthClassExists(manager, form.getPrevMedCase())) {
 					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не заполнены данные по родам либо данные по выкидышу!");
 				}
-				//lastrelease milamesher 10.12.2018 #131
-				if (form.getPrevMedCase()!=null && !isMisbirthClassExists(manager, form.getPrevMedCase()) &&!isRobsonClassExists(manager, prevMedCase )) {
+				if (!isMisbirthClassExists(manager, form.getPrevMedCase()) &&!isRobsonClassExists(manager, prevMedCase )) {
 					throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не создана классификация Робсона!");
 				}
 			}
@@ -102,26 +99,23 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		if (aMedCaseId==null) {return true;}
 		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
 		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
-			String sql = "select count(idc.id) from vocidc10 idc\n" +
-					"left join diagnosis ds on ds.idc10_id=idc.id\n" +
-					"left join medcase mc on mc.id=ds.medcase_id\n" +
-					"where idc.code like 'O82%' and mc.id=:medcaseId";
-			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCaseId).getSingleResult();
+			String sql = "select count(idc.id) from vocidc10 idc" +
+					" left join diagnosis ds on ds.idc10_id=idc.id" +
+					" left join medcase mc on mc.id=ds.medcase_id" +
+					" where idc.code like 'O82%' and mc.id=:medcase";
+			Object list = aManager.createNativeQuery(sql).setParameter("medcase",aMedCaseId).getSingleResult();
 			return Long.valueOf(list.toString())>0;
 		} else {
 			return true;
 		}
 	}
-    //Milamesher существует ли карта оценки риска
-    /*private static boolean isRiskCardBornExists(EntityManager aManager, MedCase aMedCase) {
-			String sql = "select count(ac.id) from assessmentCard ac where medcase_id=:medcaseId and template=7";
-			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
-			return Long.valueOf(list.toString())>0;
-
-	}*/
-	//Milamesher существует ли вычисление риска ВТЭО (в дальнейшем заменит карту оценки риска)
+	//Milamesher существует ли вычисление риска ВТЭО в госпитализации
 	private static boolean isCalcCardBornExists(EntityManager aManager, MedCase aMedCase) {
-		String sql = "select count(id) from calculationsresult where departmentmedcase_id=:medcaseId and calculator_id=15";
+		String sql = "select count(cr.id) from calculationsresult cr" +
+				" left join medcase dmc on dmc.id=cr.departmentmedcase_id" +
+				" left join medcase hmc on hmc.id=dmc.parent_id" +
+				" where hmc.id=(select parent_id from medcase where id=:medcaseId)" +
+				" and calculator_id=15";
 		Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
 		return Long.valueOf(list.toString())>0;
 
@@ -167,11 +161,16 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		return withoutChildBirth;
 	}
 
+	/** Есть ли в СЛО диагноз, при котором не нужно проверять роды и т.п.*/
+	private static boolean isWithoutChildBirthDiagnosis(DepartmentMedCase aMedCase) {
+		Diagnosis diagnosis = aMedCase.getMainDiagnosis();
+		ArrayList<String> withoutChildBirth = getDiagosisWithoutChldBirth();
+		return diagnosis == null || withoutChildBirth.contains(diagnosis.getIdc10().getCode());
+}
+
     private static boolean isPregnancyExists(EntityManager aManager, DepartmentMedCase aMedCase) {
     	if (aMedCase.getDepartment().getIsMaternityWard()!=null && aMedCase.getDepartment().getIsMaternityWard()) {
-			Diagnosis diagnosis = aMedCase.getMainDiagnosis();
-			ArrayList<String> withoutChildBirth = getDiagosisWithoutChldBirth();
-			if (diagnosis == null || withoutChildBirth.contains(diagnosis.getIdc10().getCode())) return true;
+			if (isWithoutChildBirthDiagnosis(aMedCase)) return true;
 			String sql = "select count(cb.id) from medcase slo " +
 					" left join medcase slos on slos.parent_id=slo.parent_id and slos.dtype='DepartmentMedCase'" +
 					" left join childBirth cb on cb.medcase_id=slos.id" +
@@ -269,10 +268,6 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
             	aForm.setConcomitantDiagnos(diag.getName());
 				if (diag.getIdc10()!=null) aForm.setConcomitantMkb(diag.getIdc10()) ;
 			}
-			/*if (aMedCaseParent.getServiceStream()!=null) {
-            	aForm.setServiceStream(aMedCaseParent.getServiceStream().getId());
-				aForm.addDisabledField("serviceStream");
-			}*/
     		
     	} else {
     		throw new IllegalStateException("Нет случая лечения в отделении оформленного для перевода") ;

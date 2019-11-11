@@ -29,12 +29,12 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 )
 public class WorkCalendarHospitalBedForm extends IdEntityForm {
 
-	/** Внутренний номер направлания */
-	@Comment("Внутренний номер направлания")
+	/** Внутренний номер направления */
+	@Comment("Внутренний номер направления")
 	@Persist
 	public String getInternalCode() {return theInternalCode;}
 	public void setInternalCode(String aInternalCode) {theInternalCode = aInternalCode;}
-	/** Внутренний номер направлания */
+	/** Внутренний номер направления */
 	private String theInternalCode ;
 
 	/** Отделение */

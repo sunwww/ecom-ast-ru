@@ -320,7 +320,8 @@
         <msh:sideLink params="id" action="/entityParentPrepareCreate-vac_vaccination" name="Вакцинацию" title="Добавить вакцинацию" roles="/Policy/Mis/Vaccination/Create" key="ALT+6" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" title="Добавить протокол" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+7" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить предварительную госпитализацию" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+10" />
-        <msh:sideLink params="id" action="/pharm_outcome" name="Списание" title="Добавить Списание" roles="/Policy/Mis/Pharmacy/CreateOutcome"/>
+          <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Create" params="" action="/javascript:createPlanOphtHospital()" name="Планирование введения ангиогенеза" title="Планирование введения ангиогенеза"/>
+          <msh:sideLink params="id" action="/pharm_outcome" name="Списание" title="Добавить Списание" roles="/Policy/Mis/Pharmacy/CreateOutcome"/>
          <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" key="ALT+8" name="Услугу" params="id"
          	action="/entityParentPrepareCreate-smo_medService" title="Добавить услугу" />
             <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"
@@ -332,8 +333,8 @@
     	 title='Направление к другому специалисту'  />
         <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
     	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/Create" name="Лист назначений" action="/javascript: showCreatePrescriptList('${param.id}','.do')" title="Лист назначений" />         
-    	<msh:sideLink roles="/Policy/Mis/AssessmentCard/Create" name="Карту оценки" action="/javascript:goCreateAssessmentCard()" title="Карту оценки" />         
-    	 
+    	<msh:sideLink roles="/Policy/Mis/AssessmentCard/Create" name="Карту оценки" action="/javascript:goCreateAssessmentCard()" title="Карту оценки" />
+
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
 
@@ -350,14 +351,15 @@
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации' title="Просмотр госпитазиций по пациенту" key="ALT+6" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherPreHospByPatient('.do')" name='Пред госпитализации' title="Просмотр предварительных госпитазиций по пациенту" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
+          <msh:sideLink styleId="viewShort" action="/javascript:viewOtherPreHospOphtByPatient('.do')" name='Введения ингибиторов ангиогенеза' title="Просмотр направлений на введение ингибиторов ангиогенеза" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/View" />
+          <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"  
     	params="id"  action='/javascript:getDefinition("entityParentList-stac_surOperation.do?short=Short&id=${param.id}", null);'  title='Операции'
     	styleId="viewShort"
     	/>
     	<msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByVisit('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
        <msh:sideLink styleId="viewShort" roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/javascript:getDefinition('entityParentList-expert_card.do?short=Short&id=${param.id}',null)"/>
-      </msh:sideMenu>
+           </msh:sideMenu>
       <msh:tableNotEmpty name="info_print_list">
       <msh:sideMenu title="Печать">
         <msh:sideLink action="/javascript:printVisit('.do')" name="Визита" title="Печать визита" key="ALT+8" params="" roles="/Policy/Mis/MedCase/Visit/PrintVisit" />
@@ -428,7 +430,11 @@
       });
 
   }
-
+  //создание направления на введение ингибитора ангиогенеза
+  // (фактически, создание предв. госпитализации в офтальмологию с доп параметрами)
+  function createPlanOphtHospital() {
+      window.document.location='entityParentPrepareCreate-stac_planOphtHospitalByVisit.do?id='+$('id').value;
+  }
   </script>
   <msh:ifFormTypeIsNotView formName="smo_visitForm">
   
@@ -578,6 +584,9 @@
   var isPrint=0, isDiary=0, isDiag=0, isCloseSpo=0 ;
   function viewOtherPreHospByPatient(d) {
       getDefinition("js-smo_planHospitalByVisit-allByPatient.do?short=Short&patient="+$('patient').value, null);
+  }
+  function viewOtherPreHospOphtByPatient(d) {
+      getDefinition("js-smo_planHospitalByVisit-allByPatientOpht.do?short=Short&patient="+$('patient').value, null);
   }
   function viewOtherExtMedserviceByPatient(d) {
   	  getDefinition("js-doc_externalMedservice-list.do?short=Short&id=${param.id}", null);

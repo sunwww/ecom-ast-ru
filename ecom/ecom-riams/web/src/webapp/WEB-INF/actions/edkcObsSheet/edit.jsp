@@ -79,7 +79,7 @@
         <tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <ecom:titleTrail mainMenu="Patient" beginForm="edkcObsSheetForm"/>
+        <ecom:titleTrail mainMenu="Expert2" beginForm="edkcObsSheetForm"/>
     </tiles:put>
     <tiles:put name='javascript' type='string'>
         <script type="text/javascript" src="./dwr/interface/PatientService.js">/**/</script>

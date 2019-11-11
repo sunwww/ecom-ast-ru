@@ -595,4 +595,12 @@ public class MisLpuForm extends IdNameEntityForm {
 	public void setIsCreateCardiacScreening(Boolean aIsCreateCardiacScreening) {theIsCreateCardiacScreening = aIsCreateCardiacScreening;}
 	/** Создают ли кадриоскрининг новорождённым? */
 	private Boolean theIsCreateCardiacScreening;
+
+	/** Офтальмологическое? */
+	@Comment("Офтальмологическое?")
+	@Persist
+	public Boolean getIsOphthalmic() {return theIsOphthalmic;}
+	public void setIsOphthalmic(Boolean aIsOphthalmic) {theIsOphthalmic = aIsOphthalmic;}
+	/** Офтальмологическое? */
+	private Boolean theIsOphthalmic;
 }

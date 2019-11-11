@@ -74,7 +74,7 @@ public class ApiRecordUtil {
                     .append(" left join pricemedservice pms on pms.priceposition_id=pp.id")
                     .append(" left join medservice ms on ms.id=pms.medservice_id")
                     .append(" left join WorkFunctionService wfs on wfs.medService_id=ms.id")
-                    .append(" left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end")
+                    .append(" left join WorkFunction wf on wf.id=wfs.workfunction_id")
                     .append(" where wf.id=").append(aWorkfunctionId).append(" and (ms.startDate is null or current_date  >=ms.startDate)")
                     .append(" and (ms.finishDate is null or ms.finishDate>=current_date)")
                     .append(" and ms.isShowSiteAsDefault=true")

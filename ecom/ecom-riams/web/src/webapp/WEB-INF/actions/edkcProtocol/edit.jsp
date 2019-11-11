@@ -106,7 +106,7 @@
         </msh:ifFormTypeIsView>
 </tiles:put>
     <tiles:put name='title' type='string'>
-        <ecom:titleTrail mainMenu="Patient" beginForm="edkcProtocolForm"/>
+        <ecom:titleTrail mainMenu="Expert2" beginForm="edkcProtocolForm"/>
     </tiles:put>
     <tiles:put name='javascript' type='string'>
         <script type="text/javascript" src="./dwr/interface/PatientService.js">/**/</script>

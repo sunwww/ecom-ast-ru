@@ -102,6 +102,7 @@
         <msh:row>
         	<msh:checkBox property="isNewBornDep" label="Отд. новорожденных"/>
         	<msh:checkBox property="isMaternityWard" label="Родильное отделение"/>
+            <msh:checkBox property="isOphthalmic" label="Офтальмологическое отделение"/>
         </msh:row>
         <msh:row>
             <msh:checkBox property="isMobilePolyclinic" label="Мобильная поликлиника"/>

@@ -36,8 +36,8 @@ public class HospitalMedCaseServiceJs {
 
 	/**Календарь с предварительной госпитализацией*/
 
-	public String getPreHospCalendar( Integer aYear, Integer aMonth, Long aDepartment, HttpServletRequest aRequest) throws NamingException {
-		JSONArray preHosps = new JSONArray(getPreHospByMonth( aYear,aMonth,aDepartment,aRequest));
+	public String getPreHospCalendar( Integer aYear, Integer aMonth, Long aDepartment, Boolean isOpht, HttpServletRequest aRequest) throws NamingException {
+		JSONArray preHosps = new JSONArray(getPreHospByMonth( aYear,aMonth,aDepartment,isOpht,aRequest));
 		StringBuilder res = new StringBuilder();
 		res.append("<form name='frmDate' id='frmDate' action='javascript:step5()'>");
 		res.append("<span class = 'spanNavigMonth'>");
@@ -116,7 +116,7 @@ public class HospitalMedCaseServiceJs {
 			res.append("<td id='tdDay").append(monthDate).append("'");
 			//if (true) {
 			res.append("onclick=\"showPreHospByDate(this,'").append(preHosp.getString("calendarDate"));
-			res.append("')\"");
+			res.append("',").append(isOpht).append(")\"");
 			res.append(" class='").append(isBusy ? "busyDay" : "visitDay").append("'>");
 			res.append(isBusy ? "" : "<b>").append(monthDate);
 			res.append(" <br>(").append(amount).append(")");
@@ -207,12 +207,14 @@ public class HospitalMedCaseServiceJs {
 		return res;
 	}
 	/*Количество пред. госпитализаций за месяц*/
-	public String getPreHospByMonth(Integer aYear, Integer aMonth, Long aDepartment, HttpServletRequest aRequest) throws NamingException {
+	public String getPreHospByMonth(Integer aYear, Integer aMonth, Long aDepartment, Boolean isOpht, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select to_char(pre.datefrom,'dd.MM.yyyy'), cast(to_char(pre.datefrom,'dd') as int) as dat, count(pre.id) as cnt" +
 				" from workcalendarhospitalbed pre" +
+				" left join voceye e on e.id=pre.eye_id" +
 				" where to_char(pre.datefrom,'MM.yyyy')='"+(aMonth>9?aMonth:"0"+aMonth)+"."+aYear+"'" +
 				(aDepartment!=null && aDepartment>0L ? " and pre.department_id="+aDepartment:"") +
+				(isOpht? " and e.id is not null " : "") +
 				" group by pre.datefrom" +
 				" order by pre.datefrom";
 		return service.executeNativeSqlGetJSON(new String[] {"calendarDate","monthDate","amount"},sql,31);
@@ -2654,5 +2656,16 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("select id from assessmentCardTemplate where code='"+aCode+"'") ;
 		return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
+	}
+
+
+	/**
+	 * Получить офтальмологическое отделение
+	 * @return
+	 */
+	public String getOpthalmicDep(HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select id from mislpu where isophthalmic=true") ;
+		return l.isEmpty()? "" : l.iterator().next().get1().toString();
 	}
 }
