@@ -208,7 +208,7 @@
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f13sls
   ,  case when p.medCase_id is null and p.cancelDate is null and p.transferdate is not null  then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j14scanc
   ,  case when mc.dateStart is null and p.medcase_id is not null and p.cancelDate is null then mc.id||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j15sanaliz
-  ,  case when mc.dateStart is null and p.cancelDate is null and mc.workFunctionExecute_id is not null then mc.id||''','''||d.id else null end as j16enter
+  ,  case when mc.dateStart is null and p.cancelDate is null and mc.workFunctionExecute_id is not null then mc.id||''','''||d.id||''','''||p.id else null end as j16enter
   , case when p.canceldate is not null then list(coalesce(vpcr.name,'') ||' '||coalesce(p.cancelreasontext,'')) else d.record end as d17record 
   ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null and p.transferdate is not null then '0'','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j18scanc
   ,
@@ -312,8 +312,8 @@
             jQuery(btn).parent().parent().fadeTo(0,0.2);
         }
 
-  		function checkLabControl(aSmoId,aProtocolId) {
-  			PrescriptionService.checkLabControl(aSmoId,aProtocolId, {
+  		function checkLabControl(aSmoId,aProtocolId,aPrescriptId) {
+  			PrescriptionService.checkLabControl(aSmoId,aProtocolId,aPrescriptId, {
   				callback: function () {
   					//window.document.location.reload();
   				}

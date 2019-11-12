@@ -1283,7 +1283,7 @@ public class PrescriptionServiceJs {
 	 * @throws NamingException
 	 */
 
-	public void checkLabControl(Long aSmoId,Long aProtocol, HttpServletRequest aRequest) throws NamingException {
+	public void checkLabControl(Long aSmoId,Long aProtocol, Long aPrescriptId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		Date date = new Date() ;
@@ -1312,6 +1312,9 @@ public class PrescriptionServiceJs {
 		//Сохраним информацию о выполнении исследования для платных услуг:
 		service.executeUpdateNativeSql("update ContractAccountOperationByService set medCase_id="+aSmoId+
 				" where serviceType='PRESCRIPTION' and serviceId in (select id from Prescription where medCase_id = "+aSmoId+")");
+
+		createEmergencyReferenceMsg(aProtocol,aPrescriptId,aRequest);
+
 		//Тут делаем вызов функции по передаче лаб. исследования в ЛК
 /* отключаем передачу данных в личный кабинет
 		try{
@@ -1323,6 +1326,17 @@ public class PrescriptionServiceJs {
 */
 	}
 
+	/**
+	 * Отправить сообщение лечащему враче о выходе за граница реф. инт.
+	 *
+	 * @param aDiaryId Diary.id
+	 * @param aPrescriptId Prescription.id
+	 * @param aRequest HttpServletRequest
+	 */
+	public void createEmergencyReferenceMsg(Long aDiaryId, Long aPrescriptId, HttpServletRequest aRequest) throws NamingException {
+		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
+		bean.sendEmergencyReferenceMsg(aDiaryId,aPrescriptId);
+	}
 	/*Находим правильный референтный интервал*/
 	private ParameterReferenceValue getReferenceByParameternadPatient(Integer aAge, Integer aSex,  Long aParameterId, HttpServletRequest aRequest) {
 		String sql = "select pat.sex_id, cast(date_part('year',age(current_date, pat.birthday)) as int)" +

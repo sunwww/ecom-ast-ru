@@ -630,7 +630,38 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			aUsername=String.valueOf(transferUsername.get(0));
 		return getWorkfuntctionInfoByLabTechUsername(aUsername);
 	}
-	public Long checkLabAnalyzed(Long aPrescriptId,Long aWorkFunctionId,String aUsername) {
+
+    /**
+     * Отправить сообщение лечащему враче о выходе за граница реф. инт.
+     *
+     * @param aDiaryId Diary.id
+     * @param aPrescriptId Prescription.id
+     */
+    public void sendEmergencyReferenceMsg(Long aDiaryId, Long aPrescriptId) {
+        StringBuilder sql = new StringBuilder() ;
+        sql.append("select p.name||': '||round(fip.valuebd,2)||' '||unit.name")
+            .append("||' '||(case when fip.valuebd<prv.normamin then '▼' else '▲' end)||cast('<br>' as varchar)")
+            .append(" from FormInputProtocol fip")
+            .append(" left join parameter p on fip.parameter_id=p.id")
+            .append(" left join diary d on d.id=fip.docprotocol_id")
+            .append(" left join medcase vis on vis.id=d.medcase_id")
+            .append(" left join patient pat on pat.id=vis.patient_id")
+            .append(" left join parameterreferencevalue prv on prv.parameter_id=p.id and (prv.sex_id is null or prv.sex_id=pat.sex_id)")
+            .append(" and cast(date_part('year',age(d.dateregistration, pat.birthday)) as int) between prv.ageFrom and prv.ageTo or (prv.ageFrom is null and prv.ageTo is null)")
+            .append(" left join vocmeasureunit unit on unit.id=p.measureunit_id")
+            .append(" where fip.valuebd is not null and (prv.normamin is not null and fip.valuebd<prv.normamin or prv.normamax is not null and fip.valuebd>prv.normamax)")
+            .append(" and fip.docprotocol_id=").append(aDiaryId);
+        List<Object> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
+        for (int i=0; i<list.size(); i++) {
+        	if (list.get(i)!=null) {
+				String msg = list.get(i).toString();
+				if (!msg.isEmpty())
+					sendMesgOutOfReferenceInterval(msg, aPrescriptId);
+			}
+        }
+    }
+
+    public Long checkLabAnalyzed(Long aPrescriptId,Long aWorkFunctionId,String aUsername) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select pat.id as patid,case when slo.dtype='DepartmentMedCase' then sls.id") ; 
 		sql.append(" when slo.dtype='Visit' then coalesce (sls.id,slo.id) else slo.id end as pmo") ;
