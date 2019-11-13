@@ -34,14 +34,11 @@
                     ,url:elmedUrl+"uploadFile"
                     ,data: frm
                     ,processData: false
-                    ,contentType:"multipart/form-data"
                     ,dataType    : 'json'
                     ,contentType : false,
                 }).done (function(htm) {
-                    alert('goof');
                     console.log(htm);
                     jQuery('#fileInfo').html("Файл загружен. <input type='button' value='Синхронизировать' onclick='makeImport(\""+htm.fileName+"\")'><br>");
-                    alert("Добавлено!")
                 }).fail( function (err) {
                     console.log("ERROR "+JSON.stringify(err));
                 });
@@ -51,16 +48,21 @@
                 jQuery.ajax({
                     url:elmedUrl+"/importFile?file="+fileName
                 }).done(function(res) {
-                    res = JSON.parse(res);
-                    if (res.status=="ok") {
+                    console.log("res1="+res);
+                    console.log("res11="+res.code);
+                    console.log("res12="+res.result);
+                    var dt = JSON.parse(res.result);
+                    console.log("res12="+dt.data);
+                 //   res = JSON.parse(res);
+            //        if (res.code=="good") {
                         let str = "";
-                        jQuery.each(res.data, function (ind, el) {
-                            str+="<br><p color="+(el.status=="ok" ?"'green'>"+el.recordId +" УСПЕШНО": "'red'>"+el.statusName+" "+el.recordId)+"</p>";
+                        jQuery.each(dt.data, function (ind, el) {
+                            str+="<br><p style=\"color: "+(el.status=="ok" ?"green\">"+el.recordId +" УСПЕШНО": "red\">"+el.recordId+" "+el.statusName)+"</p>";
                         });
                         jQuery('#fileInfo').html(str);
 
 
-                    }
+              //      }
                 }).fail(function (err) {
                     console.log("ERR = "+JSON.stringify(err));
                 });
