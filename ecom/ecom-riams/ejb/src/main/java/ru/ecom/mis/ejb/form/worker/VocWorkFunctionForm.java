@@ -93,4 +93,11 @@ public class VocWorkFunctionForm extends IdEntityForm {
 	public Long getFondSpeciality() {return theFondSpeciality;}
 	public void setFondSpeciality(Long aFondSpeciality) {theFondSpeciality = aFondSpeciality;}
 	private Long theFondSpeciality ;
+
+	/** Не подавать по ОМС */
+	@Comment("Не подавать по ОМС")
+	@Persist
+	public Boolean getIsNoOmc() {return theIsNoOmc;}
+	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
+	private Boolean theIsNoOmc ;
 }

@@ -1120,56 +1120,56 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			//1 строка = 9 строчек
 		int i=0;
 		try {
-		for (Object[] row : list) {
-			i++;
-			if (1%100==0) {LOG.info("report_stac make "+i+" records");}
-				period = s(row[0]).split("-");
-				patientCount = s(row[1]);
-				region = regionOrCountry.get(s(row[2]))!=null ? regionOrCountry.get(s(row[2])) : "REGION_CODE="+s(row[2]);
-				profile = profileMap.get(s(row[3]))!=null ? profileMap.get(s(row[3])) : "PROFILE_CODE="+s(row[3]);
-				financeSource = s(row[4]);
-				hosps = s(row[5]).split(",");
-				totalSum = 0;
-				if (financeSource.equals("CHARGED")) { //Платные случаи
-				    for (String hosp : hosps) {
-						JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim()),priceListId));
-						totalSum += hospitalInfo.getDouble("totalSum");
-					}
-                } else if (financeSource.equals("OBLIGATORY")) { //ОМС
-					for (String hosp : hosps) {
-						try {
-                            JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(hosp.trim())));
-                            if (costJson.has("price")) {
-                                double cost  = costJson.getDouble("price");
-                                totalSum += cost;
-                            }
-						} catch (Exception e) {
-							LOG.warn("Не удалось расчитать цену OMC "+e);
-							totalSum=0.0;
+			for (Object[] row : list) {
+				i++;
+				if (1%100==0) {LOG.info("report_stac make "+i+" records");}
+					period = s(row[0]).split("-");
+					patientCount = s(row[1]);
+					region = regionOrCountry.get(s(row[2]))!=null ? regionOrCountry.get(s(row[2])) : "REGION_CODE="+s(row[2]);
+					profile = profileMap.get(s(row[3]))!=null ? profileMap.get(s(row[3])) : "PROFILE_CODE="+s(row[3]);
+					financeSource = s(row[4]);
+					hosps = s(row[5]).split(",");
+					totalSum = 0;
+					if (financeSource.equals("CHARGED")) { //Платные случаи
+						for (String hosp : hosps) {
+							JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim()),priceListId));
+							totalSum += hospitalInfo.getDouble("totalSum");
 						}
-					}
-				} else {
-					continue;
-				}
-				if (totalSum>0.0) {
-					period[1] = period[1].startsWith("0")?period[1].substring(1):period[1];
-					String recordHash = (period[0]+""+period[1]).hashCode()+"#"+region.hashCode()+""+uslovia.hashCode()+""+profile.hashCode()+""+financeSource.hashCode();
-					JSONObject rec =allRecords.get(recordHash);
-					if (rec!=null) {
-						totalSum += rec.getDouble("sum");
-						patientCount=""+(Long.valueOf(patientCount)+Long.valueOf(rec.getString("patientCount")));
-						rec.remove("sum");rec.remove("patientCount");
-						rec.put("patientCount",patientCount).put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+					} else if (financeSource.equals("OBLIGATORY")) { //ОМС
+						for (String hosp : hosps) {
+							try {
+								JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(hosp.trim())));
+								if (costJson.has("price")) {
+									double cost  = costJson.getDouble("price");
+									totalSum += cost;
+								}
+							} catch (Exception e) {
+								LOG.warn("Не удалось расчитать цену OMC "+e);
+								totalSum=0.0;
+							}
+						}
 					} else {
-						rec = new JSONObject();
-						rec.put("hash",recordHash).put("period0",period[0]).put("period1",period[1]).put("region",region).put("uslovia",uslovia).put("profile",profile).put("financeSource",sredstvaMap.get(financeSource))
-								.put("patientCount",patientCount).put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+						continue;
 					}
-					allRecords.put(recordHash,rec);
-				} else {
-				//	LOG.error("HOSP, price = null");
+					if (totalSum>0.0) {
+						period[1] = period[1].startsWith("0")?period[1].substring(1):period[1];
+						String recordHash = (period[0]+""+period[1]).hashCode()+"#"+region.hashCode()+""+uslovia.hashCode()+""+profile.hashCode()+""+financeSource.hashCode();
+						JSONObject rec =allRecords.get(recordHash);
+						if (rec!=null) {
+							totalSum += rec.getDouble("sum");
+							patientCount=""+(Long.valueOf(patientCount)+Long.valueOf(rec.getString("patientCount")));
+							rec.remove("sum");rec.remove("patientCount");
+							rec.put("patientCount",patientCount).put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+						} else {
+							rec = new JSONObject();
+							rec.put("hash",recordHash).put("period0",period[0]).put("period1",period[1]).put("region",region).put("uslovia",uslovia).put("profile",profile).put("financeSource",sredstvaMap.get(financeSource))
+									.put("patientCount",patientCount).put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+						}
+						allRecords.put(recordHash,rec);
+					} else {
+					//	LOG.error("HOSP, price = null");
+					}
 				}
-			}
 			LOG.info("report_stac_finished");
 		} catch (JSONException e) {
 			LOG.error("JSONEXEPTION HAPP",e);
@@ -1177,7 +1177,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			//Начинаем искать пол-ку
 		sql = new StringBuilder();
 		LOG.warn("Start search policlinic");
-		sql.append("select to_char(vis.datestart,'yyyy-MM') as f0_date")
+		sql.append("select to_char(spo.datefinish,'yyyy-MM') as f0_date")
             .append(" ,count(distinct pat.id) as f1_person_count")
             .append(sqlSelect).append(" as f2_address")
             .append(" ,vwf.code as f3_profile")
@@ -1189,7 +1189,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             .append(" left join medcase vis on vis.parent_id=spo.id")
             .append(" left join medcase smc on smc.parent_id=vis.id and smc.dtype='ServiceMedCase'")
             .append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
-            .append(" left join priceposition pp on pp.id=pms.priceposition_id ").append(( priceListId!=null ? " and pp.pricelist_id="+priceListId : ""))
+            .append(" left join priceposition pp on pp.id=pms.priceposition_id ").append( priceListId!=null ? " and pp.pricelist_id="+priceListId : "")
             .append(" left join patient pat on pat.id=vis.patient_id")
             .append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
             .append(" left join address2 a on a.addressid=pat.address_addressid")
@@ -1197,10 +1197,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             .append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
             .append(" left join vocservicestream vss on vss.id=vis.servicestream_id")
             .append(" where spo.dtype='PolyclinicMedCase' and (vis.dtype='Visit' or vis.dtype='ShortMedCase') ")
-            .append(" and vis.datestart between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
+            .append(" and spo.datefinish between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
             .append(" and vss.financesource is not null and vss.financesource!='' ")
             .append(sqlAppend)
-            .append(" group by to_char(vis.datestart,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect);
+            .append(" group by to_char(spo.datefinish,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect);
 			LOG.info("===========repotr_pol = "+sql);
 			list = theManager.createNativeQuery(sql.toString()).getResultList();
 		LOG.info("repotr_pol found "+list.size()+" records");
@@ -1219,13 +1219,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				profile = profileMap.get(s(row[3]))!=null?profileMap.get(s(row[3])):"PROFILE_CODE="+s(row[3]);
 				financeSource = s(row[4]);
 				totalSum = 0;
-				if (financeSource.equals("OBLIGATORY") || financeSource.equals("BUDGET")) { //считаем цену за ОМС //Отключим, всё равно не работает
+				if (financeSource.equals("OBLIGATORY") || financeSource.equals("BUDGET")) { //считаем цену за ОМС
 					String[] spoIds = row[7].toString().split(",");
 					for (String spoId : spoIds) {
 						JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(spoId.trim())));
 						if (costJson.has("price")) {
 							double cost  = costJson.getDouble("price");
-							LOG.info(spoId + " OMC pol cost = "+cost);
 							totalSum += cost;
 						}
 					}

@@ -87,7 +87,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	    }
 	}
 	
-	public static List<ParsedPdfInfo> readXML(String namefile) throws ParserConfigurationException, SAXException, IOException {
+	private static List<ParsedPdfInfo> readXML(String namefile) throws ParserConfigurationException, SAXException, IOException {
 		ParsedPdfInfo parsedPdfInfo ;
 		List<ParsedPdfInfoResult> parsedPdfInfoResults = new ArrayList<>();
         List<ParsedPdfInfo>parsedPdfInfos = new ArrayList<>();
@@ -146,7 +146,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	        return  f.exists() && !f.isDirectory();
 	    }
 	    */
-	    public static void moveFile(String pdfDirectory, String archDirectory, String fileName) {
+	    private static void moveFile(String pdfDirectory, String archDirectory, String fileName) {
 	        try {
 	            final File myFile = new File(pdfDirectory + fileName );
 	            if (myFile.renameTo(new File(archDirectory + fileName))) {
@@ -339,12 +339,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			presNew.setTransferUsername(presOld.getTransferUsername());
 			presNew.setIntakeSpecial(presOld.getIntakeSpecial());
 			//проставляет отделение, чтобы в отчёте по чувствительности к антибиотикам всё разбивалось по отделениям, а не в лаборатории
-			StringBuilder sql = new StringBuilder() ;
-			sql.append("select w.lpu_id from worker w")
-					.append(" left join workfunction wf on wf.worker_id=w.id")
-					.append(" left join prescription p on p.intakespecial_id=wf.id")
-					.append(" where p.id=").append(presOld.getId());
-			List<Object> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
+			String sql = "select w.lpu_id from prescription p" +
+					" left join workfunction wf on wf.id = p.intakespecial_id" +
+					" left join worker w on w.id = wf.worker_id" +
+					" where p.id=" + presOld.getId();
+			List<Object> list = theManager.createNativeQuery(sql).getResultList() ;
 			if (!list.isEmpty())
 				presNew.setDepartment(theManager.find(MisLpu.class, Long.valueOf(list.get(0).toString())));
 			theManager.persist(presNew);
@@ -354,56 +353,57 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 	public String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction) {
 		MedService sms = theManager.find(MedService.class, aMedServiceId);
-	if (sms!=null) {
-		long date = new java.util.Date().getTime() ;
-		PrescriptList pl = theManager.find(PrescriptList.class, aPrescriptionListId);
-		Patient pat = pl.getMedCase().getPatient();
-		WorkFunction wfp = theManager.find(WorkFunction.class, aWorkFunctionPlanId);
-		WorkFunction wfo = theManager.find(WorkFunction.class, aOrderWorkFunction);
-		WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTimePlanId);
-		Visit vis;
-		if (wct.getMedCase()!=null) {
-			vis = (Visit) wct.getMedCase();
-		} else {
-			vis = new Visit();
-			MedCase mc = pl.getMedCase() ;
-			if (mc instanceof HospitalMedCase) {
-				VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
-				vis.setServiceStream(vss);
+		if (sms!=null) {
+			long date = new java.util.Date().getTime() ;
+			PrescriptList pl = theManager.find(PrescriptList.class, aPrescriptionListId);
+			Patient pat = pl.getMedCase().getPatient();
+			WorkFunction wfp = theManager.find(WorkFunction.class, aWorkFunctionPlanId);
+			WorkFunction wfo = theManager.find(WorkFunction.class, aOrderWorkFunction);
+			WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTimePlanId);
+			Visit vis;
+			if (wct.getMedCase()!=null) {
+				vis = (Visit) wct.getMedCase();
 			} else {
-				vis.setServiceStream(mc.getServiceStream()) ;
-			}
-			VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
-			vis.setWorkPlaceType(wpt) ;
+				vis = new Visit();
+				MedCase mc = pl.getMedCase() ;
+				if (mc instanceof HospitalMedCase) {
+					VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
+					vis.setServiceStream(vss);
+				} else {
+					vis.setServiceStream(mc.getServiceStream()) ;
+				}
+				VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
+				vis.setWorkPlaceType(wpt) ;
 
-			vis.setPatient(pat);
-			vis.setCreateDate(new java.sql.Date(date));
-			vis.setCreateTime(new java.sql.Time(date));
-			if (aDatePlanId!=null && !aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
-				LOG.error("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
-				return null;
+				vis.setPatient(pat);
+				vis.setCreateDate(new java.sql.Date(date));
+				vis.setCreateTime(new java.sql.Time(date));
+				if (aDatePlanId!=null && !aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
+					LOG.error("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
+					return null;
+				}
+				vis.setDatePlan(wct.getWorkCalendarDay());
+				vis.setNoActuality(false);
+				vis.setTimePlan(wct);
+				vis.setWorkFunctionPlan(wfp);
+				vis.setOrderWorkFunction(wfo);
+				vis.setUsername(aUsername);
+				theManager.persist(vis);
 			}
-			vis.setDatePlan(wct.getWorkCalendarDay());
-			vis.setNoActuality(false);
-			vis.setTimePlan(wct);
-			vis.setWorkFunctionPlan(wfp);
-			vis.setOrderWorkFunction(wfo);
-			vis.setUsername(aUsername);
-			theManager.persist(vis);
+
+			ServiceMedCase smc = new ServiceMedCase();
+			smc.setParent(vis);
+			smc.setMedService(sms);
+			smc.setPatient(pat);
+			smc.setNoActuality(false);
+			theManager.persist(smc);
+			wct.setMedCase(vis) ;
+			theManager.persist(wct) ;
+			return ""+vis.getId();
 		}
-
-	ServiceMedCase smc = new ServiceMedCase();
-	smc.setParent(vis);
-	smc.setMedService(sms);
-	smc.setPatient(pat);
-	smc.setNoActuality(false);
-	theManager.persist(smc);
-	wct.setMedCase(vis) ;
-	theManager.persist(wct) ;
-	return ""+vis.getId();	
-	}
 		return null ;
 	}
+
 	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) {
 		try {
 			StringBuilder infoToSend = new StringBuilder();

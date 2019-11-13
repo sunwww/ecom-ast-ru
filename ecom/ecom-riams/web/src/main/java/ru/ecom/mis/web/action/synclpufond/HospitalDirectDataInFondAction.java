@@ -34,7 +34,6 @@ public class HospitalDirectDataInFondAction extends BaseAction {
     		if (form.getLpu()!=null && !form.getLpu().equals(0L)) {
     		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
 	    	String typeView = ActionUtil.updateParameter("HospitalDirectDataInFond","typeView","1", aRequest) ; 
-	    	//SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		SimpleDateFormat format_n = new SimpleDateFormat("yyyy-MM-dd") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
     		Calendar cal = Calendar.getInstance() ;

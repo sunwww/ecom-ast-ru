@@ -17,14 +17,18 @@
         </msh:row>
         <msh:row>
         	<msh:textField property="shortName"  label="Короткое название"/>
-        	<msh:checkBox property="isRadiationDiagnosis" label="Лучевая диагностика"/>
+          <msh:checkBox property="isNoOmc" />
+
         </msh:row>
         <msh:row>
+          <msh:checkBox property="isRadiationDiagnosis" label="Лучевая диагностика"/>
         	<msh:checkBox property="isFuncDiag" label="Функциональная диагностика"/>
-        	<msh:checkBox property="isLab" label="Лаборатория"/>
         </msh:row>
         <msh:row>
+          <msh:checkBox property="isLab" label="Лаборатория"/>
         	<msh:checkBox property="isNoDiagnosis" label="Не заполняется диагноз"/>
+        </msh:row>
+        <msh:row>
         	<msh:checkBox property="isNo039" label="Не включать в 039 форму"/>
         </msh:row>
         <msh:row>

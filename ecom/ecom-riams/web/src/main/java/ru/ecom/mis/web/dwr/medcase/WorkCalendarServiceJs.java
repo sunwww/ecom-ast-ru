@@ -629,9 +629,9 @@ public class WorkCalendarServiceJs {
         sql.append(" prepat.lastname ||coalesce(' ('||prepat.patientSync||')',' ('||prepat.id||')')");
         sql.append(",wct.prepatientInfo)");
         sql.append(" as fio, vsrt.background,vsrt.colorText,vss.id as vssid,vss.name as vssname from WorkCalendarTime wct ")
-                .append(" left join Patient prepat on prepat.id=wct.prepatient_id ")
-                .append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
-                .append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
+            .append(" left join Patient prepat on prepat.id=wct.prepatient_id ")
+            .append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
+            .append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
                 .append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ");
         sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.rest is null or wct.rest='0') and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='')) order by wct.timeFrom");
         Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(), 50);
