@@ -87,6 +87,8 @@ public class Expert2FileImportAction extends BaseAction {
 					out.write(buf, 0, count);
 				}
 				aInputStream.close();
+			} catch (Exception e) {
+				LOG.error("Невозможно записать файл: "+e.getMessage(),e);
 			}
 		} else {
 			LOG.error("Невозможно открыть / создать файл: "+aFileName);

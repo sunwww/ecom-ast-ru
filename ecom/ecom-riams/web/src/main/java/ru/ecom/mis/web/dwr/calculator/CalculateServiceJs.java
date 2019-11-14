@@ -258,7 +258,7 @@ public class CalculateServiceJs {
 			where.append(args[i][0]).append("='").append(args[i][1]).append("' ");
 			if (i<args.length-1) where.append(" and ");
 		}
-		return service.executeSqlGetJson("select id," + name + " from " + voc + where.toString(),null);
+		return service.executeSqlGetJson("select id," + name + " from " + voc + where.toString());
 	}
 	//Milamesher #127 получить имя шкалы
 	public String getScaleName(String aCalcId, HttpServletRequest aRequest) throws NamingException {

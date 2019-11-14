@@ -32,7 +32,7 @@ public class TicketServiceJs {
 				" left join MedServiceComplexLink link on link.speciality_id=vwf.fondSpeciality_id" +
 				" left join medservice ms on ms.id=link.innerMedService_id" +
 				" where wf.id="+aWorkfunctionId+" and ms.id is not null";
-		return service.executeSqlGetJson(sql,null);
+		return service.executeSqlGetJson(sql);
 
 	}
 	

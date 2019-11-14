@@ -83,7 +83,7 @@
 		    	join=" left join VocServiceStream vss on vss.code=vkhc.serviceStreamCode  "
 		    	queryAppend="(vkhc.dateTo is null or vkhc.dateTo >=current_date)"
 		    	order=""
-		    	queried=" (vkhc.name like upper(:query) or vkhc.code like upper(:querId) or replace(vkhc.code,'.','') like upper(:querId))"
+		    	queried=" (vkhc.name like upper(:query) or upper(vkhc.code) like upper(:querId) or replace(upper(vkhc.code),'.','') like upper(:querId))"
 		    	names = "vkhc.code||' '||vkhc.name"
 		/>
 	</voc>

@@ -32,10 +32,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 	 * */
 	public String executeSqlGetJson(String aQuery,Integer limit,String nameArray) throws NamingException {
 
-		//if(limit==null || limit==0 || limit>100 ) limit=100;
-
 		DataSource ds =findDataSource();
-
 		try (Connection connection = ds.getConnection();
              Statement statement = connection.createStatement()){
 			if (limit!=null) statement.setMaxRows(limit);
@@ -50,22 +47,16 @@ public class WebQueryServiceBean implements IWebQueryService {
                     }
                     array.put(temp);
                 }
-
-                if(nameArray==null || nameArray.equals("")){
-                    return array.toString();
-                }else {
-                    return new JSONObject().put(nameArray, array).toString();
-                }
+				return nameArray==null || nameArray.equals("") ?  array.toString() : new JSONObject().put(nameArray, array).toString();
             }
 		} catch (SQLException e){
-			e.printStackTrace();
+			LOG.error(e);
 		}
 		return null;
 	}
 	/** Возвращаем json массив с результатом запроса*/
-	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException {
-		return executeSqlGetJson(aQuery,limit,"");
-	}
+	public String executeSqlGetJson(String aQuery) throws NamingException {return executeSqlGetJson(aQuery,null,null);}
+	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException {return executeSqlGetJson(aQuery,limit,null);}
 
 	/** Возвращаем первый результат запроса в качестве json объекта*/
 	public String executeSqlGetJsonObject(String aQuery) throws NamingException {

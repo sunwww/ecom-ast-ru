@@ -183,27 +183,27 @@ public class OncologyServiceJs {
         }
         else {
             //Основной выписной диагноз
-            list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds\n" +
-                    "left join vocidc10 idc on idc.id=ds.idc10_id\n" +
-                    "left join medcase hmc on hmc.id=ds.medcase_id\n" +
-                    "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
-                    "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
-                    "where hmc.dtype='HospitalMedCase' and reg.code='3' and pr.code='1' and hmc.id=" + medcaseId);
+            list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds" +
+                    " left join vocidc10 idc on idc.id=ds.idc10_id" +
+                    " left join medcase hmc on hmc.id=ds.medcase_id" +
+                    " left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id" +
+                    " left join vocprioritydiagnosis pr on pr.id=ds.priority_id" +
+                    " where hmc.dtype='HospitalMedCase' and reg.code='3' and pr.code='1' and hmc.id=" + medcaseId);
             if (!list.isEmpty()) {
                 WebQueryResult wqr = list.iterator().next();
                 res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной выписной)");
             }
             //Основной клинический последнего СЛО в СЛС
             if (list.isEmpty()) {
-                list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds\n" +
-                        "left join vocidc10 idc on idc.id=ds.idc10_id\n" +
-                        "left join medcase dmc on dmc.id=ds.medcase_id\n" +
-                        "left join medcase hmc on hmc.id=dmc.parent_id\n" +
-                        "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
-                        "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
-                        "where dmc.dtype='DepartmentMedCase' and reg.code='4' and pr.code='1' \n" +
-                        "and dmc.transferdate is null\n" +
-                        "and hmc.id=" + medcaseId);
+                list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds" +
+                        " left join vocidc10 idc on idc.id=ds.idc10_id" +
+                        " left join medcase dmc on dmc.id=ds.medcase_id" +
+                        " left join medcase hmc on hmc.id=dmc.parent_id" +
+                        " left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id" +
+                        " left join vocprioritydiagnosis pr on pr.id=ds.priority_id" +
+                        " where  hmc.id=" + medcaseId + " and dmc.dtype='DepartmentMedCase' and reg.code='4' and pr.code='1'" +
+                        " and dmc.transferdate is null"
+                        );
                 if (!list.isEmpty()) {
                     WebQueryResult wqr = list.iterator().next();
                     res.append(wqr.get1()).append("# ").append(wqr.get2()).append(" (основной клинический последнего СЛО в СЛС)");
@@ -224,9 +224,9 @@ public class OncologyServiceJs {
     public String getAllDirectionCode(Long caseId,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
-        Collection<WebQueryResult> list = service.executeNativeSql("select t.code from oncologydirection d\n" +
-                "left join vocOncologyTypeDirection t on d.typedirection_id=t.id\n" +
-                "where d.oncologycase_id=" + caseId);
+        Collection<WebQueryResult> list = service.executeNativeSql("select t.code from oncologydirection d" +
+                " left join vocOncologyTypeDirection t on d.typedirection_id=t.id" +
+                " where d.oncologycase_id=" + caseId);
         if (!list.isEmpty()) {
             for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#");
         }
@@ -276,12 +276,12 @@ public class OncologyServiceJs {
     public String getMarkersAndMarks(HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
-        Collection<WebQueryResult> list = service.executeNativeSql("select distinct cast(n10.code as integer),n10.name,\n" +
-                "(select list(cast(case when(finishdate is null or finishdate>=current_date) then code else null end as varchar)) from VocOncologyN011 where marker=n10.code) as l1,\n" +
-                "(select list(case when(finishdate is null or finishdate>=current_date) then value else  null end) from VocOncologyN011 where marker=n10.code) as l2\n" +
-                "from VocOncologyN010 n10 \n" +
-                "left join VocOncologyN011 n11 on n11.marker=n10.code \n" +
-                "where n10.code<>'11' and (n10.finishdate is null or n10.finishdate>=current_date) order by cast(n10.code as integer)\n");
+        Collection<WebQueryResult> list = service.executeNativeSql("select distinct cast(n10.code as integer),n10.name" +
+                " ,(select list(cast(case when(finishdate is null or finishdate>=current_date) then code else null end as varchar)) from VocOncologyN011 where marker=n10.code) as l1" +
+                " ,(select list(case when(finishdate is null or finishdate>=current_date) then value else  null end) from VocOncologyN011 where marker=n10.code) as l2" +
+                " from VocOncologyN010 n10" +
+                " left join VocOncologyN011 n11 on n11.marker=n10.code" +
+                " where n10.code<>'11' and (n10.finishdate is null or n10.finishdate>=current_date) order by cast(n10.code as integer)");
         if (!list.isEmpty()) {
             for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("!");
         }
@@ -325,12 +325,12 @@ public class OncologyServiceJs {
     public String getHistology(String caseId,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
-        Collection<WebQueryResult> list = service.executeNativeSql("select t.id,case when t.code='1' then n8.code else n11.code end\n" +
-                "from oncologydiagnostic d\n" +
-                "left join voconcologydiagtype t on t.id=d.voconcologydiagtype_id\n" +
-                "left join VocOncologyN008 n8 on n8.id=d.resulthistiology_id\n" +
-                "left join VocOncologyN011 n11 on n11.id=d.valuemarkers_id\n" +
-                "where d.oncologycase_id=" + caseId);
+        Collection<WebQueryResult> list = service.executeNativeSql("select t.id,case when t.code='1' then n8.code else n11.code end" +
+                " from oncologydiagnostic d" +
+                " left join voconcologydiagtype t on t.id=d.voconcologydiagtype_id" +
+                " left join VocOncologyN008 n8 on n8.id=d.resulthistiology_id" +
+                " left join VocOncologyN011 n11 on n11.id=d.valuemarkers_id" +
+                " where d.oncologycase_id=" + caseId);
         if (!list.isEmpty()) {
             for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("!");
         }
@@ -390,9 +390,9 @@ public class OncologyServiceJs {
      */
     public String getVocInJson(String voc,Boolean isCode,Boolean groupByCode,HttpServletRequest aRequest) throws NamingException, SQLException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String sql=(isCode)? "select code as id,name from ":"select id,name from ";
-        String tmpOrder=(groupByCode)? "  order by cast(code as integer)":"";
-        return service.executeSqlGetJson(sql+voc+" where (finishdate is null or finishdate>=current_date) "+tmpOrder,null);
+        String sql= isCode ? "select code as id,name from " : "select id,name from ";
+        String tmpOrder= groupByCode ? "  order by cast(code as integer)" : "";
+        return service.executeSqlGetJson(sql+voc+" where (finishdate is null or finishdate>=current_date) "+tmpOrder);
     }
 
     /**
@@ -506,14 +506,14 @@ public class OncologyServiceJs {
      */
     public String getDsWithName(String caseId, String mkb, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list = service.executeNativeSql("select pat.lastname||' ' ||pat.firstname||' '||pat.middlename as pat,\n" +
-                "mkb.code||' '||mkb.name as oldmkb\n" +
-                ",case when '"+mkb+"'<>'' then (select code||' '||name from vocidc10 mkb where code='"+mkb+"') else '' end as newmkb\n" +
-                " from medcase hmc\n" +
-                "left join patient pat on pat.id=hmc.patient_id \n" +
-                "left join oncologycase c on c.medcase_id=hmc.id\n" +
-                "left join vocidc10 mkb on mkb.code=c.mkb\n" +
-                "where c.id=" + caseId);
+        Collection<WebQueryResult> list = service.executeNativeSql("select pat.lastname||' ' ||pat.firstname||' '||pat.middlename as pat" +
+                " ,mkb.code||' '||mkb.name as oldmkb" +
+                " ,case when '"+mkb+"'<>'' then (select code||' '||name from vocidc10 mkb where code='"+mkb+"') else '' end as newmkb" +
+                " from medcase hmc" +
+                " left join patient pat on pat.id=hmc.patient_id" +
+                " left join oncologycase c on c.medcase_id=hmc.id" +
+                " left join vocidc10 mkb on mkb.code=c.mkb" +
+                " where c.id=" + caseId);
         JSONObject res = new JSONObject() ;
         if (!list.isEmpty()) {
             WebQueryResult w = list.iterator().next();
@@ -547,11 +547,11 @@ public class OncologyServiceJs {
      */
     public String getMedsJson(String caseId,HttpServletRequest aRequest) throws NamingException, SQLException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return service.executeSqlGetJson("select drug.id as did,vocdrug.name,vocdrug.id as vdid,to_char(drugdate.date,'dd.mm.yyyy') as date\n" +
-                "from oncologydrug drug\n" +
-                "left join oncologydrugdate drugdate on drugdate.oncologydrug_id=drug.id\n" +
-                "left join voconcologyn020 vocdrug on drug.drug_id=vocdrug.id\n" +
-                "where drug.oncologycase_id="+caseId,null);
+        return service.executeSqlGetJson("select drug.id as did,vocdrug.name,vocdrug.id as vdid,to_char(drugdate.date,'dd.mm.yyyy') as date" +
+                " from oncologydrug drug" +
+                " left join oncologydrugdate drugdate on drugdate.oncologydrug_id=drug.id" +
+                " left join voconcologyn020 vocdrug on drug.drug_id=vocdrug.id" +
+                " where drug.oncologycase_id="+caseId);
     }
 
     /**
@@ -594,12 +594,12 @@ public class OncologyServiceJs {
         //поэтому нужен общий способ
         //если симптоматическое лечение, то не нужно актуализировать
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list = service.executeNativeSql("select case when rt.code='6' or rt.code='5' or (stad_id is null or (stad_id is not null and (select count(id) from voconcologyn002 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=stad_id  and (finishdate is null or finishdate>=current_date))<>0))\n" +
-                "and  (tumor_id is null or (tumor_id is not null and (select count(id) from voconcologyn003 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=tumor_id and (finishdate is null or finishdate>=current_date))<>0))\n" +
-                "and  (nodus_id is null or (nodus_id is not null and (select count(id) from voconcologyn004 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=nodus_id and (finishdate is null or finishdate>=current_date))<>0))\n" +
-                "and  (metastasis_id is null or (metastasis_id is not null and (select count(id) from voconcologyn005 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=metastasis_id and (finishdate is null or finishdate>=current_date))<>0))\n" +
-                "then '0' else '1' end\n" +
-                "from oncologycase c left join voconcologyreasontreat rt on c.voconcologyreasontreat_id=rt.id where c.id="+caseId);
+        Collection<WebQueryResult> list = service.executeNativeSql("select case when rt.code='6' or rt.code='5' or (stad_id is null or (stad_id is not null and (select count(id) from voconcologyn002 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=stad_id  and (finishdate is null or finishdate>=current_date))<>0))" +
+                " and  (tumor_id is null or (tumor_id is not null and (select count(id) from voconcologyn003 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=tumor_id and (finishdate is null or finishdate>=current_date))<>0))" +
+                " and  (nodus_id is null or (nodus_id is not null and (select count(id) from voconcologyn004 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=nodus_id and (finishdate is null or finishdate>=current_date))<>0))" +
+                " and  (metastasis_id is null or (metastasis_id is not null and (select count(id) from voconcologyn005 where (ds='"+ds+"' or ds=substring('"+ds+"' from 1 for 3) ) and id=metastasis_id and (finishdate is null or finishdate>=current_date))<>0))" +
+                " then '0' else '1' end" +
+                " from oncologycase c left join voconcologyreasontreat rt on c.voconcologyreasontreat_id=rt.id where c.id="+caseId);
         return list.isEmpty()? "-1": list.iterator().next().get1().toString();
     }
 }

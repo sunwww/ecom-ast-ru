@@ -5,7 +5,25 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/mis" prefix="mis" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
-
+    <style type="text/css">
+        .recordButton {
+            font-size: 20px;
+            margin-bottom: 5px;
+            margin-left:5px;
+            padding: 4px 5px;
+        }
+        .recordButtonDisabled {
+            border: 1px solid #999999;
+            background-color: #cccccc;
+            color: #666666;
+        }
+        .recordButtonUnClicked {
+            background-color:green
+        }
+        .recordButtonClicked {
+            background-color:green
+        }
+    </style>
 	<tiles:put name="javascript" type="string">
 	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
 	<script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>
@@ -77,9 +95,28 @@
 	function getPreRecord() {
 		if ($('tdPreRecord')) {
 			if ($('surgCalDate') && +$('surgCalDate').value>0) {
-	  			WorkCalendarService.getPreRecord($('surgCalDate').value, {
-	  		  				callback:function(aResult) {
-	  		  				    $('tdPreRecord').innerHTML=aResult!=null ? aResult : "";
+	  			WorkCalendarService.getTimesByCalendarDay($('surgCalDate').value,$('duration').value, {
+	  		  				callback:function(arr) {
+	  		  				    console.log(arr);
+	  		  				    arr = JSON.parse(arr);
+	  		  				    var last = '00';
+	  		  				    var txt="";
+	  		  				    var newLineNums=['00','03','06','09','12','15','18','21'];
+	  		  				    for (var i=0;i<arr.length;i++) {
+	  		  				        var el = arr[i];
+	  		  				        var hour =el.timefrom.substring(0,2);
+	  		  				        if (last!=hour && newLineNums.includes(hour)) {
+	  		  				            last=hour;
+	  		  				            txt+='<br>';
+                                    }
+	  		  				        if (el.isrest===true) { //нельзя назначить
+                                        txt+= "<input name='recordButton' class='recordButton recordButtonDisabled' type='button' alt='Занято' value='"+el.timefrom+"'>";
+                                    } else {
+                                        txt+= "<input name='recordButton' class='recordButton recordButtonNoClicked' type='button' onclick='checkRecord(this, "+el.id+",\""+el.timefrom+"\")' value='"+el.timefrom+"'>";
+                                    }
+
+                                }
+                                $('tdPreRecord').innerHTML=txt;
 	  			  			}
 	  		  			}) ;
 	  			$('planStartDate').value=$('surgCalDateName').value;
@@ -90,7 +127,11 @@
 	}
 
     //нужно, не убираем
-    function checkRecord(aId, aValue) {
+    function checkRecord(aBtn, aId, aValue) {
+	    jQuery("input[name='recordButton']").removeClass('recordButtonClicked', false);
+	    jQuery(aBtn).removeClass('recordButtonNoClicked', false);
+	    jQuery(aBtn).addClass('recordButtonClicked');
+
         $('calendarTime').value = aId;
         $('planStartTime').value = aValue;
         $('planStartTimeReadOnly').value = aValue;
@@ -187,7 +228,7 @@
             <msh:autoComplete property="rhesusFactor" label="Резус-фактор" vocName="vocRhesusFactor"  />
         </msh:row>
 			<msh:row>
-				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="4" />
+				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="2" />
 			</msh:row>
 	         <tr><td colspan="10"><table><tr><td valign="top"><table>
         <msh:row>

@@ -822,7 +822,7 @@ public class DisabilityServiceJs {
                 " left join disabilitydocument _dd on _dd.disabilitycase_id=_dc.id" +
                 " where _dd.id='" + documentId + "')  and dd.disabilitycase_id<>(select disabilitycase_id from disabilitydocument where id='" + documentId + "')" +
                 " group by dc.id" +
-                " order by dc.id", null);
+                " order by dc.id");
     }
 
     /**

@@ -67,7 +67,7 @@ public class Expert2ServiceJs {
                     " where e.listentry_id="+aListEntryId+" and err.dopcode='503' and (e.ticket263Number is null or e.ticket263Number ='')" +
                     " and (e.isdeleted is null or e.isdeleted='0') and (e.isEmergency is null or e.isEmergency='0')";
             LOG.info(sql);
-            JSONArray list = new JSONArray(service.executeSqlGetJson(sql, null));
+            JSONArray list = new JSONArray(service.executeSqlGetJson(sql));
             Element ZL_LIST;
             String filename;
             if ("N2".equals(aFix)) {
@@ -102,7 +102,7 @@ public class Expert2ServiceJs {
                         " left join voce2medhelpprofile mhp on mhp.id=e.medHelpProfile_id" +
                         " where e.listentry_id="+aListEntryId+" and err.dopcode='503' and (e.ticket263Number is not null and e.ticket263Number !='')" +
                         " and (e.isdeleted is null or e.isdeleted='0') ";
-                list = new JSONArray(service.executeSqlGetJson(sql, null));
+                list = new JSONArray(service.executeSqlGetJson(sql));
                 String[] flds = {"N_NPR","D_NPR","FOR_POM","LPU","DATE_1","DATE_2","W","DR","PROFIL","NHISTORY"};
                 List<Element> nprs = createXmlFromJson(list, flds, "NPR");
                 ZL_LIST = new Element("ZL_LIST");

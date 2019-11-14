@@ -40,9 +40,6 @@
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-work_journalPatternCalendar" name="Изменить" roles="/Policy/Mis/Worker/WorkCalendar/JournalPattern/Edit" guid="e4b8061b-28f5-4429-ba7d-0b00cf4ad3d0" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-work_journalPatternCalendar" name="Удалить" roles="/Policy/Mis/Worker/WorkCalendar/JournalPattern/Delete" guid="01fbfbe3-3dff-4766-a299-f9d4f634aff0" />
       </msh:sideMenu>
-      <msh:sideMenu title="Добавить">
-      	<msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-cal_workCalendarPatternBySpec" name="Шаблон графика работы"/>
-      </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
 </tiles:insert>

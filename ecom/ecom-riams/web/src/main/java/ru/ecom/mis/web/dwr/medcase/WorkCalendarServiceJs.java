@@ -497,10 +497,9 @@ public class WorkCalendarServiceJs {
 
     public String getDataByTime(Long aTime, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        StringBuilder sql = new StringBuilder();
-        sql.append("select wf.id as wfid,vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as workFunction, wcd.id as wcdid, to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcaldate,wct.id as wctid,  cast(wct.timeFrom as varchar(5)) as timefrom ");
-        sql.append(" from WorkCalendarTime wct left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id left join WorkFunction wf on wf.id=wc.workFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where wct.id='").append(aTime).append("' ");
-        Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(), 1);
+        String sql = "select wf.id as wfid,vwf.name ||' '||coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename,wf.groupName) as workFunction, wcd.id as wcdid, to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcaldate,wct.id as wctid,  cast(wct.timeFrom as varchar(5)) as timefrom " +
+                " from WorkCalendarTime wct left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id left join WorkFunction wf on wf.id=wc.workFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id where wct.id='" + aTime + "' ";
+        Collection<WebQueryResult> list = service.executeNativeSql(sql, 1);
         StringBuilder res = new StringBuilder();
         if (!list.isEmpty()) {
             WebQueryResult wqr = list.iterator().next();
@@ -620,6 +619,23 @@ public class WorkCalendarServiceJs {
         }
         res.append("</ul>");
         return res.toString();
+    }
+
+    /*Получаем список свободных времен, включая резервы по дню*/
+    public String getTimesByCalendarDay(Long aWorkCalendarDay, Integer aDuration, HttpServletRequest aRequest) throws NamingException {
+        String sql = "select case when wct.rest='1' then 0 else wct.id end as id, cast(wct.timeFrom as varchar(5))" +
+                ", vsrt.background,vsrt.colorText,vss.id as vssid,vss.name as vssname " +
+                ",vsrt.name as reserveName , coalesce(wct.rest,'0') as isrest" +
+                "" + //prepatient? medcase? nado li?
+                " from WorkCalendarTime wct" +
+                " left join Patient prepat on prepat.id=wct.prepatient_id" +
+                " left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id" +
+                " left join VocServiceStream vss on vss.id=wct.serviceStream_id" +
+                " where wct.workCalendarDay_id=" +aWorkCalendarDay+
+                " and (wct.isDeleted is null or wct.isDeleted='0') order by wct.timeFrom";
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        return service.executeSqlGetJson(sql);
+
     }
 
     public String getPreRecord(Long aWorkCalendarDay, HttpServletRequest aRequest) throws NamingException {
