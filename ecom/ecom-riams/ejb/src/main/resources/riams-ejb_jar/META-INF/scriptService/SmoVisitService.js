@@ -213,14 +213,12 @@ function cancelPrescriptionByVisit (aContext, aVisit) {
 
 function checkIfLabAlreadyTransfered(aContext, aVisitId) {
     var list = aContext.manager.createNativeQuery(
-        " select pr.id from prescription pr" +
-        " left join prescriptionlist pl on pl.id=pr.prescriptionlist_id" +
-        " left join medcase vis on vis.id=" +
+        " select pr.id from prescriptionlist pl " +
+        " left join prescription pr on pr.prescriptionlist_id=pl.id" +
         " where pl.medcase_id=" + aVisitId + " and pr.transferdate is not null ").getResultList() ;
     if (!list.isEmpty()) {
 		throw "Лабораторные направления, сделанные в этом визите, уже переданы в лабораторию. Поставить неявку на приём нельзя.";
     }
-    return false;
 }
 
 /**
