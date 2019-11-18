@@ -176,13 +176,13 @@ function visitNoPatient(aContext, aVisitId) {
 	}
 	visit.noActuality = true;
 
-	if (visit.timePlan!=null) { //не освобождаем время в записи. Раз не пришел, время прошло и записать нового пациента нельзя. *служебка 05-11-19
-//            visit.timePlan.medCase = null;
+	if (visit.timePlan!=null) { //не освобождаем время в записи. Раз не пришел, время прошло и записать нового пациента нельзя. *служебка 05-11-19 *upd получается у меня склероз, сделал какую-то херь сам по себе, вернул всё как было
+            visit.timePlan.medCase = null;
 		if (visit.timePlan.prescription!=null) {
 			cancelPrescriptionByVisit(aContext, visit);
 			visit.timePlan.prescription = null;
 		}
-//          visit.timePlan = null;
+          visit.timePlan = null;
 	}
 
 	// FIXME определять функцию правильно
