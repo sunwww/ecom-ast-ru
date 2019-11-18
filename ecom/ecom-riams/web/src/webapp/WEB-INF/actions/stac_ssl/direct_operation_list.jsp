@@ -78,15 +78,15 @@ select
  ', '||to_char(pat.birthday,'yyyy')||'г.р. №' || coalesce(ss.code,'') as f2_patInfo
 ,wf.id as f3
 ,ms.code||' '||ms.name as oper_name
-,wf.groupname
+,wf.groupname as f5_groupname
 ,to_char(p.planStartDate,'dd.MM.yyyy') as f6_oper_date
 ,cast(p.planStartTime as varchar(5))||'-'||cast(p.planEndTime as varchar(5)) as f7_oper_time
 ,mlN.name||' (' ||wp.lastname||')' as f8_naprInfo
 ,p.comments as f9_comments
-, 'background:#F6D8CE;color:black;' as f10_colorStyle
-,p.id as f11_presId
-,mkb.code||' '||mkb.name as f12_diagnosis
-,va.name as f13_anastesia
+,cast('background:#F6D8CE;color:black;' as varchar) as f10_colorStyle
+, p.id as f11_presId
+, mkb.code||' '||mkb.name as f12_diagnosis
+, va.name as f13_anastesia
 , vbg.name||' '||vrf.name as f14_bloodInfo
 , surgPat.lastname as f15_surgeonInfo
 from prescription p
