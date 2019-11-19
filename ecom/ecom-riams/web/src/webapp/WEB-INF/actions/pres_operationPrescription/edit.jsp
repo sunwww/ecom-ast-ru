@@ -74,12 +74,16 @@
 	prescriptCabinetAutocomplete.addOnChangeCallback(function(){
 		updateDefaultDate() ;
         $('labDepartment').value=0;
-		PrescriptionService.getDepartmentFromWorkfunction(+$('prescriptCabinet').value, {
-		    callback: function (depId) {
-		        $('labDepartment').value = +depId;
-                updateOperationParent();
-            }
-        });
+        if ($('prescriptCabinet').value>0) {
+            PrescriptionService.getDepartmentFromWorkfunction(+$('prescriptCabinet').value, {
+                callback: function (depId) {
+                    $('labDepartment').value = +depId;
+                    updateOperationParent();
+                }
+            });
+        } else {
+            $('labDepartment').value=0;
+        }
 	}) ;
 
     intakeSpecialAutocomplete.addOnChangeCallback(function() {updateOperationParent();});
@@ -87,7 +91,6 @@
 	function updateOperationParent() {
 	    //date#wfId#depId#serviceStreamId
         var str = $('planStartDate').value.trim()+'#'+$('intakeSpecial').value+'#'+$('labDepartment').value+"#"+$('serviceStream').value;
-        console.log("str= "+str);
         medServiceAutocomplete.setParentId(str);
 
     }
@@ -138,27 +141,28 @@
     }
 
 	function updateDefaultDate() {
-			WorkCalendarService.getDefaultDate($('prescriptCabinet').value, {
-				callback:function(aDateDefault) {
-					if (aDateDefault!=null) {
-                        var calDayId, calDayInfo,ind1 ;
-                        ind1 = aDateDefault.indexOf("#") ;
+	    if ($('prescriptCabinet').value>0) {
+            WorkCalendarService.getDefaultDate($('prescriptCabinet').value, {
+                    callback:function(aDateDefault) {
+                        if (aDateDefault!=null) {
+                            var calDayId, calDayInfo,ind1 ;
+                            ind1 = aDateDefault.indexOf("#") ;
                             calDayInfo = aDateDefault.substring(0,ind1) ;
                             calDayId = aDateDefault.substring(ind1+1) ;
 
-                        $('surgCalDate').value=calDayId ;
-                        $('surgCalDateName').value = calDayInfo;
-                        getPreRecord();
-					} else {
-                        $('surgCalDate').value=0 ;
-                        $('surgCalDateName').value = "";
-                        getPreRecord();
-				}
-			}
-			}
-			) ;
+                            $('surgCalDate').value=calDayId ;
+                            $('surgCalDateName').value = calDayInfo;
+                            getPreRecord();
+                        } else {
+                            $('surgCalDate').value=0 ;
+                            $('surgCalDateName').value = "";
+                            getPreRecord();
+                        }
+                    }
+                }
+            ) ;
+        }
 			$('calendarTime').value="0" ;
-
 		}
 
 			</script>
@@ -294,4 +298,3 @@
     </msh:ifFormTypeIsCreate>
   </tiles:put>
 </tiles:insert>
-
