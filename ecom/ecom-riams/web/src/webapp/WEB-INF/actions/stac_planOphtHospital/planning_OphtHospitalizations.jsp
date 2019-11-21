@@ -250,15 +250,14 @@
             request.setAttribute("statusSql",statusSql);
 
         %>
-        <msh:section title="Список направлений на госпитализацию">
+        <msh:section title="Список направлений на введение ингибиторов ангиогенеза">
             <ecom:webQuery name="stac_planHospital"
                            nativeSql=" select wct.id as id,pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as fio
-,pat.phone as phone
+,wct.phone as phone
 ,to_char(wct.dateokt,'dd.mm.yyyy') as dateokt
 ,e.name as eye
-,to_char(wct.datefrom,'dd.mm.yyyy') as dateFrom
 ,wct.comment as cmnt
-,wct.createusername as creator
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as creator
 ,to_char(wct.createdate,'dd.mm.yyyy')||' '||to_char(wct.createTime,'HH24:MI') as dt
 ,list(case when wct.medcase_id is not null then 'background-color:green' when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f10_styleRow
  ,case when wct.medcase_id is null then wct.id||'#'||pat.id else null end as f11_createHospIds
@@ -267,13 +266,18 @@ left join patient pat on wct.patient_id=pat.id
 left join voceye e on e.id=wct.eye_id
 left join workfunction wf on wf.id=wct.workfunction_id
 left join MedCase mc on mc.id=wct.medcase_id
-where wct.dateFrom between to_date('${dateBegin}','dd.mm.yyyy')
+left join vocworkFunction vwf on vwf.id=wf.workFunction_id
+left join worker w on w.id = wf.worker_id
+left join patient wp on wp.id=w.person_id
+
+where wct.createDate between to_date('${dateBegin}','dd.mm.yyyy')
 	 and to_date('${dateEnd}','dd.mm.yyyy')
   ${statusSql}
   and e.id is not null
 group by wct.id,wct.createDate,pat.id
-,wct.dateFrom,mc.dateStart,mc.dateFinish,wct.phone,e.name
-order by wct.dateFrom,pat.lastname,pat.firstname,pat.middlename
+,wct.createDate,mc.dateStart,mc.dateFinish,wct.phone,e.name
+,vwf.name,wp.lastname,wp.firstname,wp.middlename
+order by wct.createDate,pat.lastname,pat.firstname,pat.middlename
     "
             />
             <msh:table printToExcelButton="Сохранить в excel" name="stac_planHospital" action="entityParentView-stac_planHospital.do"
@@ -283,11 +287,10 @@ order by wct.dateFrom,pat.lastname,pat.firstname,pat.middlename
                 <msh:tableColumn columnName="Телефон" property="3" guid="781559cd-fd34-40f5-a214-cec404fe19e3" />
                 <msh:tableColumn columnName="Дата ОКТ" property="4" guid="5905cf65-048f-4ce1-8301-5aef1e9ac80e" />
                 <msh:tableColumn columnName="Глаз" property="5" guid="2bab495e-eadb-4cd9-b2e9-140bf7a5f43f" />
-                <msh:tableColumn columnName="Дата планируемой госпитализации" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-                <msh:tableColumn columnName="Замечания" property="7" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableColumn columnName="Создал" property="8" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableColumn columnName="Дата и время создания" property="9" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableButton property="11" buttonShortName="ГОСП" buttonFunction="createHosp" hideIfEmpty="true" />
+                <msh:tableColumn columnName="Замечания" property="6" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+                <msh:tableColumn columnName="Создал" property="7" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
+                <msh:tableColumn columnName="Дата и время создания" property="8" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
+                <msh:tableButton property="10" buttonShortName="ГОСП" buttonFunction="createHosp" hideIfEmpty="true" />
 
             </msh:table>
         </msh:section>
@@ -348,7 +351,7 @@ order by wct.dateFrom,pat.lastname,pat.firstname,pat.middlename
 
             }
             function newP() {
-                window.location = 'entityPrepareCreate-stac_planOphtHospital.do?dateFrom='+$('dateBegin').value+"&tmp="+Math.random() ;
+                window.location = 'entityPrepareCreate-stac_planOphtHospital.do?'+"&tmp="+Math.random() ;
             }
             function editPlanning(aWp) {
                 window.location = 'entityEdit-stac_planOphtHospital.do?id='+aWp+"&tmp="+Math.random() ;

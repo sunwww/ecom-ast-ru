@@ -13,7 +13,7 @@
 
     </tiles:put>
     <tiles:put name="body" type="string">
-        <msh:section title="Планирование введения ингибиторов ангиогенеза пациента">
+        <msh:section title="Планирование введения ингибиторов ангиогенеза пациента в визите">
             <msh:sectionContent>
                 <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
                    select wct.id as id
@@ -26,15 +26,15 @@
                     left join patient pat on wct.patient_id=pat.id
                     left join voceye e on e.id=wct.eye_id
                     left join workfunction wf on wf.id=wct.workfunction_id
-                    left join MedCase mc on mc.id=wct.medcase_id
+                    left join MedCase mc on mc.id=wct.visit_id
                     left join vocworkFunction vwf on vwf.id=wf.workFunction_id
                     left join worker w on w.id = wf.worker_id
                     left join patient wp on wp.id=w.person_id
-                    where pat.id=${param.patient}
+                    where mc.id=${param.vis}
                     and wct.dtype='PlanOphtHospital'
                     order by wct.createdate
       "/>
-                <msh:table name="list" action="entityView-stac_planOphtHospital.do" idField="1" noDataMessage="Не найдено">
+                <msh:table name="list" action="entityView-stac_planOphtHospitalByVisit.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="Дата ОКТ" property="2" guid="5905cf65-048f-4ce1-8301-5aef1e9ac80e" />
                     <msh:tableColumn columnName="Глаз" property="3" guid="2bab495e-eadb-4cd9-b2e9-140bf7a5f43f" />

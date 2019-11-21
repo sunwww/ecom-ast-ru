@@ -21,9 +21,6 @@
                 <msh:textField property="dateOKT" label="Дата ОКТ"/>
             </msh:row>
             <msh:row>
-                <msh:textField property="dateFrom" label="Предварительная дата госпитализации"/>
-            </msh:row>
-            <msh:row>
                 <msh:autoComplete property="eye" label="Глаз" fieldColSpan="3" horizontalFill="true" vocName="vocEye"/>
             </msh:row>
             <msh:row>
@@ -61,7 +58,7 @@
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-stac_planOphtHospitalByVisit" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
             </msh:sideMenu>
             <msh:sideMenu title="Печать">
-                <msh:sideLink key="CTRL+2" params="id" action="/print-documentDirection1.do?m=printPlanHospital&s=VisitPrintService" name="Предварительной госпитализации"/>
+                <msh:sideLink key="CTRL+2" params="id" action="/print-documentDirection1.do?m=printPlanHospital&s=VisitPrintService" name="Направления"/>
             </msh:sideMenu>
             <msh:sideMenu title="Дополнительно">
                 <msh:sideLink name="Журнал по офт." action="/stac_planning_OphtHospitalizations.do"/>

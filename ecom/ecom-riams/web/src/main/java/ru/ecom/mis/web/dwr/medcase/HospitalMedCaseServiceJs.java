@@ -209,14 +209,15 @@ public class HospitalMedCaseServiceJs {
 	/*Количество пред. госпитализаций за месяц*/
 	public String getPreHospByMonth(Integer aYear, Integer aMonth, Long aDepartment, Boolean isOpht, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select to_char(pre.datefrom,'dd.MM.yyyy'), cast(to_char(pre.datefrom,'dd') as int) as dat, count(pre.id) as cnt" +
+		String date = isOpht? "createDate" : "dateFrom";
+		String sql = "select to_char(pre."+date+",'dd.MM.yyyy'), cast(to_char(pre."+date+",'dd') as int) as dat, count(pre.id) as cnt" +
 				" from workcalendarhospitalbed pre" +
 				" left join voceye e on e.id=pre.eye_id" +
-				" where to_char(pre.datefrom,'MM.yyyy')='"+(aMonth>9?aMonth:"0"+aMonth)+"."+aYear+"'" +
+				" where to_char(pre."+date+",'MM.yyyy')='"+(aMonth>9?aMonth:"0"+aMonth)+"."+aYear+"'" +
 				(aDepartment!=null && aDepartment>0L ? " and pre.department_id="+aDepartment:"") +
 				(isOpht? " and e.id is not null " : "") +
-				" group by pre.datefrom" +
-				" order by pre.datefrom";
+				" group by pre." + date +
+				" order by pre." + date;
 		return service.executeNativeSqlGetJSON(new String[] {"calendarDate","monthDate","amount"},sql,31);
 	}
 	/**
@@ -2125,7 +2126,8 @@ public class HospitalMedCaseServiceJs {
     public String prevPlanHospital(int patId,HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	String query="select distinct to_char(wchb.datefrom,'dd.mm.yyyy')" +
-				" ,coalesce(wchb.diagnosis, mkb.name) as mkb,m.name" +
+				" ,case when wchb.diagnosis<>'null. null' then coalesce(wchb.diagnosis, mkb.code||' ' ||mkb.name) else" +
+				" mkb.code||' ' ||mkb.name end as mkb,m.name" +
 				" ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as fiopost" +
 				" ,wchb.id as f5_preId" +
 				" from workcalendarhospitalbed wchb" +
@@ -2136,7 +2138,7 @@ public class HospitalMedCaseServiceJs {
 				" left join worker w on w.id=wf.worker_id" +
 				" left join patient wp on wp.id=w.person_id" +
 				" left join vocidc10 mkb on mkb.id=wchb.idc10_id" +
-				" where wchb.datefrom>=CAST('today' AS DATE) and wchb.patient_id=" + patId;
+				" where wchb.dtype='WorkCalendarHospitalBed' and wchb.datefrom>=CAST('today' AS DATE) and wchb.patient_id=" + patId;
         JSONArray res = new JSONArray() ;
 		Collection<WebQueryResult> list = service.executeNativeSql(query);
 		for (WebQueryResult w :list) {

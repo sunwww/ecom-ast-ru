@@ -1,6 +1,6 @@
 
 function onPreSave(aForm, aEntity, aCtx) {
-    checkDouble(aForm.patient, aForm.dateFrom, aForm.id, aCtx);
+    checkDouble(aForm.patient, aForm.createDate, aForm.id, aCtx);
     var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
     aForm.setWorkFunction(wf.id) ;
 }
@@ -26,14 +26,14 @@ function onCreate(aForm, aEntity, aCtx) {
 }
 
 function onPreCreate(aForm, aCtx) {
-    /*Проверка - есть ли у пациента пред. запись на это число*/
-    checkDouble(aForm.patient, aForm.dateFrom, 0, aCtx);
+    /*Проверка - есть ли у пациента направление на это число*/
+    checkDouble(aForm.patient, aForm.createDate, 0, aCtx);
 }
 
-function checkDouble(aPatientId, aDateHosp, aId, aCtx) {
-    var sql = "select pre.id from WorkCalendarHospitalBed pre where pre.patient_id="+aPatientId+" and pre.dateFrom = to_date('"+aDateHosp+"','dd.MM.yyyy')" ;
+function checkDouble(aPatientId, aDateCreate, aId, aCtx) {
+    var sql = "select pre.id from WorkCalendarHospitalBed pre where pre.dtype='PlanOphtHospital' and pre.patient_id="+aPatientId+" and pre.createDate = current_date" ;
     if (+aId>0) sql +=" and pre.id!="+aId;
     if (!aCtx.manager.createNativeQuery(sql).getResultList().isEmpty()) {
-        throw "У пациента уже создана предварительная госпитализация на это число, создание еще одной невозможно!";
+        throw "У пациента уже создано направление на введение ингибиторов ангиогенеза в этот день, создание еще одного невозможно!";
     }
 }

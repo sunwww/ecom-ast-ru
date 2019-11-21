@@ -80,24 +80,5 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
 			FormMessage formMessage = new FormMessage(sb.toString());
         	form.addMessage(formMessage);
 		}
-		list = manager.createNativeQuery("select pre.id,to_char(pre.dateFrom,'dd.MM.yyyy') ||' '|| e.name ||' '|| vwf.name ||' '||wpat.lastname as info" +
-				" from medcase vis " +
-				" left join workcalendarhospitalbed pre on pre.patient_id = vis.patient_id" +
-				" left join mislpu ml on ml.id=pre.department_id" +
-				" left join workfunction wf on wf.id=pre.workfunction_id" +
-				" left join worker w on w.id=wf.worker_id" +
-				" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
-				" left join patient wpat on wpat.id=w.person_id" +
-				" left join voceye e on e.id=pre.eye_id" +
-				" where e.id is not null and vis.id =:id and pre.dateFrom>=current_date order by pre.dateFrom").setParameter("id",aParentId).getResultList();
-		if (!list.isEmpty()) {
-			StringBuilder sb = new StringBuilder("ВНИМАНИЕ, у пациента созданы пред. госпитализации на введение ингибиторов ангиогенеза: ");
-			for (Object[] obj: list){
-				sb.append("<br><a href='entityView-stac_planOphtHospitalByVisit.do?id=").append(obj[0]).append("'>")
-						.append(obj[1]).append("</a>");
-			}
-			FormMessage formMessage = new FormMessage(sb.toString());
-			form.addMessage(formMessage);
-		}
     }
 }

@@ -2,8 +2,11 @@ package ru.ecom.mis.ejb.form.workcalendar;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.workcalendar.PlanOphtHospital;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
+import ru.ecom.mis.ejb.form.workcalendar.interceptor.PlanOphtHospitalCreate;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -23,6 +26,9 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         ,list="entityParentList-stac_planOphtHospital.do"
         , view="entityView-stac_planOphtHospital.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht")
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(PlanOphtHospitalCreate.class)
+)
 public class PlanOphtHospitalForm extends IdEntityForm {
     /** Отделение */
     @Comment("Отделение")
@@ -42,14 +48,6 @@ public class PlanOphtHospitalForm extends IdEntityForm {
     @Persist @Required
     public Long getPatient() {return thePatient;}
     public void setPatient(Long aPatient) {thePatient = aPatient;}
-
-    /** Предполагаемая дата начала госпитализации */
-    @Comment("Предполагаемая дата начала госпитализации")
-    @Persist @DateString
-    @DoDateString
-    @Required
-    public String getDateFrom() {return theDateFrom;}
-    public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
 
     /** Примечание */
     @Comment("Примечание")
@@ -130,8 +128,6 @@ public class PlanOphtHospitalForm extends IdEntityForm {
     private String thePhone;
     /** Пациент */
     private Long thePatient;
-    /** Предполагаемая дата начала госпитализации */
-    private String theDateFrom;
     /** Примечание */
     private String theComment;
     /** Дата ОКТ */

@@ -5,7 +5,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.workcalendar.PlanOphtHospital;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
-import ru.ecom.mis.ejb.form.workcalendar.interceptor.PlanOphtHospitalByVisitCreate;
+import ru.ecom.mis.ejb.form.workcalendar.interceptor.PlanOphtHospitalCreate;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -24,7 +24,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
         , view="entityView-stac_planOphtHospitalByVisit.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht")
 @AParentPrepareCreateInterceptors(
-        @AParentEntityFormInterceptor(PlanOphtHospitalByVisitCreate.class)
+        @AParentEntityFormInterceptor(PlanOphtHospitalCreate.class)
 )
 public class PlanOphtHospitalByVisitForm extends PlanOphtHospitalForm {
 }

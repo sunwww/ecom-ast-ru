@@ -900,7 +900,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/entityParentList-mis_dispensaryCard" name="Карты Д учета"  title="Карты Д учета" roles="/Policy/Mis/Patient/Dispensary/View"/>
         <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit/PatientSet" name="Браслеты" styleId="viewShort" action="/javascript:showidentityPatient(${param.id},0)"  title='Браслеты' />
           <msh:sideLink action="/javascript:getDefinition('js-smo_planHospitalByVisit-allByPatient.do?short=Short&patient=${param.id}')" name="Предварит. госпитализации"  title="Пред. госпитализации" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View"/>
-        </msh:sideMenu>
+          <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-smo_planHospitalByVisit-allByPatientOpht.do?short=Short&patient=${param.id}')" name='Введение ингибиторов ангиогенеза' title="Просмотр направлений на введение ингибиторов ангиогенеза" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/View" />
+      </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="157c0645-4549-461e-acf7-34072c393951">
         <msh:sideLink params="id" action="/print-ambcard.do?s=PatientPrintService&amp;m=printInfo"
         name="Амбул.карты" title="Печать амбул.карты"
