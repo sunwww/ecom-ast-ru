@@ -57,9 +57,6 @@
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-stac_planOphtHospitalByVisit" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-stac_planOphtHospitalByVisit" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
             </msh:sideMenu>
-            <msh:sideMenu title="Печать">
-                <msh:sideLink key="CTRL+2" params="id" action="/print-documentDirection1.do?m=printPlanHospital&s=VisitPrintService" name="Направления"/>
-            </msh:sideMenu>
             <msh:sideMenu title="Дополнительно">
                 <msh:sideLink name="Журнал по офт." action="/stac_planning_OphtHospitalizations.do"/>
                 <msh:sideLink name="Общий журнал" action="/stac_planning_hospitalizations.do"/>
