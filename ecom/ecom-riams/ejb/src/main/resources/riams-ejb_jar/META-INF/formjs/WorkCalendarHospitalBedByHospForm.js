@@ -47,7 +47,7 @@ function onPreCreate(aForm, aCtx) {
 }
 
 function checkDouble(aPatientId, aDateHosp, aId, aCtx) {
-	var sql = "select pre.id from WorkCalendarHospitalBed pre where pre.dtype='WorkCalendarHospitalBed' pre.patient_id="+aPatientId+" and pre.dateFrom = to_date('"+aDateHosp+"','dd.MM.yyyy')" ;
+	var sql = "select pre.id from WorkCalendarHospitalBed pre where pre.dtype='WorkCalendarHospitalBed' and pre.patient_id="+aPatientId+" and pre.dateFrom = to_date('"+aDateHosp+"','dd.MM.yyyy')" ;
 	if (+aId>0) sql +=" and pre.id!="+aId;
 	if (!aCtx.manager.createNativeQuery(sql).getResultList().isEmpty()) {
 		throw "У пациента уже создана предварительная госпитализация на это число, создание еще одной невозможно!";
