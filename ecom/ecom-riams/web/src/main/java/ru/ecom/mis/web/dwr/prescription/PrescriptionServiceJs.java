@@ -197,26 +197,23 @@ public class PrescriptionServiceJs {
 		} catch (Exception e) {
 			LOG.error("Ex=",e);
 		}
-		if (medCaseID!=null) {
-			String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
-			String cancelWf = wqs.executeNativeSql("select wf.id " +
-				"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
-				"where su.login='"+login+"'").iterator().next().get1().toString();
-			if (aReason==null) {aReason="";}
-			
-			//Аннулируем медкейс
-			wqs.executeUpdateNativeSql("update medcase set datestart = null , editdate = current_date, edittime = current_time, editusername='"+login+"' where id="+medCaseID);
-			/*String cancelText = "'Результаты анализа были аннулированы '||to_char(current_date,'dd.MM.yyyy')||' в '" +
-				"||to_char(cast(current_time as time),'HH:MI')||' сотрудником "+wf +
-				". Причина: "+aReason+"'";*/
-			
-			//wqs.executeUpdateNativeSql("update diary set record="+cancelText+"||'\n\n'|| record , editdate = current_date, edittime = current_time, editusername='"+login+"' where medcase_id="+medCaseID);
-			//wqs.executeUpdateNativeSql("update prescription set medcase_id = null where id="+aPrescriptionId);
-			insertRecordAnnulJournal (aPrescriptionId, medCaseID, null, null,login, cancelWf, aReason, aRequest);
-			createAnnulMessageByPrescription(aPrescriptionId, aRequest);
-			return "Результат исследования аннулирован";
-		}
-		return "0";
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
+		String cancelWf = wqs.executeNativeSql("select wf.id " +
+			"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
+			"where su.login='"+login+"'").iterator().next().get1().toString();
+		if (aReason==null) {aReason="";}
+
+		//Аннулируем медкейс
+		wqs.executeUpdateNativeSql("update medcase set datestart = null , editdate = current_date, edittime = current_time, editusername='"+login+"' where id="+medCaseID);
+		/*String cancelText = "'Результаты анализа были аннулированы '||to_char(current_date,'dd.MM.yyyy')||' в '" +
+			"||to_char(cast(current_time as time),'HH:MI')||' сотрудником "+wf +
+			". Причина: "+aReason+"'";*/
+
+		//wqs.executeUpdateNativeSql("update diary set record="+cancelText+"||'\n\n'|| record , editdate = current_date, edittime = current_time, editusername='"+login+"' where medcase_id="+medCaseID);
+		//wqs.executeUpdateNativeSql("update prescription set medcase_id = null where id="+aPrescriptionId);
+		insertRecordAnnulJournal (aPrescriptionId, medCaseID, null, null,login, cancelWf, aReason, aRequest);
+		createAnnulMessageByPrescription(aPrescriptionId, aRequest);
+		return "Результат исследования аннулирован";
 	}
 
 
@@ -265,63 +262,60 @@ public class PrescriptionServiceJs {
      */
 	private String annulEmptyPrescription(Long aMedService, Long aWorkCalendarTime, Long aPrescriptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String medcaseId = null;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
-		boolean isAnnulPermitted = false;
-		if (aWorkCalendarTime != null && aWorkCalendarTime > 0L) { //Аннулиируем назначение по времени, на которое назначено.
-			WebQueryResult wqr = service.executeNativeSql("select wct.medcase_id as id, vis.dateStart  as datestart from workcalendartime wct left join medcase vis on vis.id = wct.medcase_id " +
-					"where wct.id = " + aWorkCalendarTime).iterator().next();
-			medcaseId = wqr.get1().toString();
-			isAnnulPermitted = wqr.get2() == null || wqr.get2().toString().equals("");
-		} else if (aPrescriptionId != null && aPrescriptionId > 0L) { //Аннулируем по ИД назначения
+		boolean isAnnulPermitted ;
+		if (aPrescriptionId ==null && aWorkCalendarTime != null && aWorkCalendarTime > 0L) { //Аннулиируем назначение по времени, на которое назначено.
+			Collection<WebQueryResult> wqrList = service.executeNativeSql("select p.id from prescription p where p.calendartime_id=" + aWorkCalendarTime+" and p.medService_id="+aMedService);
+			if (wqrList.isEmpty()) {
+				return "Не найдено назначения для аннулирования";
+			} else {//можно аннулировать
+				WebQueryResult wqr = wqrList.iterator().next();
+				aPrescriptionId = Long.valueOf(wqr.get1().toString());
+			}
+		}
+		if (aPrescriptionId != null && aPrescriptionId > 0L) { //Аннулируем по ИД назначения
+			String medcaseId = null;
 			if (aReason == null || aReason.trim().equals("")) {
 				return "Необходимо указать причину аннулирование!";
 			}
-			String canAnnulSql = "select mc.id as id, case when  p.canceltime is null and p.transferdate is null " +
-					"and (mc.datestart is null) then '1' else '0' end " +
-					"from prescription p " +
-					"Left join workcalendartime wct on wct.id = p.calendartime_id " +
-					"Left join medcase mc on mc.id = wct.medcase_id " +
-					"where p.id=" + aPrescriptionId;
+			String canAnnulSql = "select mc.id as id, case when p.canceltime is null and p.transferdate is null" +
+					" and mc.datestart is null then '1' else '0' end as isCan" +
+					" , wct.id as f3_calendarTime" +
+					" ,p.medservice_id as f4_medService" +
+					" from prescription p " +
+					" left join workcalendartime wct on wct.id = p.calendartime_id" +
+					" left join medcase mc on mc.id = wct.medcase_id" +
+					" where p.id=" + aPrescriptionId;
 			WebQueryResult wqrAnnul = service.executeNativeSql(canAnnulSql).iterator().next();
 			isAnnulPermitted = wqrAnnul.get2().toString().equals("1");
-			medcaseId = wqrAnnul.get1() != null ? wqrAnnul.get1().toString() : null;
 			if (isAnnulPermitted) {
+				medcaseId = wqrAnnul.get1() != null ? wqrAnnul.get1().toString() : null;
+				aWorkCalendarTime = wqrAnnul.get3() != null ? Long.valueOf(wqrAnnul.get3().toString()) : null;
+				aMedService = wqrAnnul.get4() != null ? Long.valueOf(wqrAnnul.get4().toString()) : null;
 				canAnnulSql = "update prescription " +
-						"set cancelDate = current_date, " +
-						"canceltime = current_time, " +
-						"cancelReasonText = '" + aReason + "' ," +
-						"cancelusername = '" + username + "' ," +
-						"cancelspecial_id = (select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='" + username + "') " +
-						"where id=" + aPrescriptionId;
+						" set cancelDate = current_date, " +
+						" canceltime = current_time, " +
+						" cancelReasonText = '" + aReason + "' ," +
+						" cancelusername = '" + username + "' ," +
+						" cancelspecial_id = (select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='" + username + "') " +
+						", calendartime_id = null" +
+						" where id=" + aPrescriptionId;
 				service.executeUpdateNativeSql(canAnnulSql); //Отметили назначение как аннулированное
-				Collection<WebQueryResult> wqr = service.executeNativeSql("select calendartime_id  as calendarTime, medservice_id as msId from prescription where id ='" + aPrescriptionId + "' and calendartime_id is not null ");
-				if (!wqr.isEmpty()) {
-					WebQueryResult wqr1 = wqr.iterator().next();
-					aWorkCalendarTime = wqr1.get1() != null ? Long.valueOf(wqr1.get1().toString()) : null;
-					aMedService = wqr1.get2() != null ? Long.valueOf(wqr1.get2().toString()) : null;
+				if (medcaseId != null) {
+					if (aMedService != null) {
+						service.executeUpdateNativeSql("update medcase set parent_id=null, medService_id = null where parent_id= " + medcaseId + " and dtype='ServiceMedCase' and medService_id=" + aMedService);// помечаем услуг как недействующие у визита
+					}
+					service.executeUpdateNativeSql("update medcase set noactuality='1' where id= " + medcaseId + " and 0=(select count(*) from medcase where parent_id='" + medcaseId + "' and (noactuality is null or noactuality='0'))"); //Если у видита не осталось активных услуг - помечаем его как недействительный
+					service.executeUpdateNativeSql("update workcalendartime set prescription=null, medcase_id = null where id=" + aWorkCalendarTime
+							+ " and 0=(select count(*) from medcase where id='" + medcaseId + "'and (noactuality is null or noactuality='0'))");// Если визит недействительный - очищаем время в расписании
 				}
+				service.executeUpdateNativeSql("update contractaccountoperationbyservice set serviceid=null, servicetype= null where serviceType = 'PRESCRIPTION' and serviceId = "+aPrescriptionId); //аннулируем информацию в договоре
+				return "Назначение отменено!";
+			} else {
+				return "Невозможно отменить назначение! Уже было отменено или находится в работе";
 			}
-			else return "Невозможно отменить назначение! Уже было отменено или находится в работе";
 		}
-		if (isAnnulPermitted && medcaseId != null) {
-			String sql;
-			if (aMedService != null) {
-				sql = "update medcase set noactuality='1', medservice_id = null,parent_id=null where parent_id= " + medcaseId + " and dtype='ServiceMedCase' and medService_id=" + aMedService;
-				service.executeUpdateNativeSql(sql);// Удаляем услуги у визита
-			}
-
-			sql = "update medcase set noactuality='1' where id= " + medcaseId + " and datestart is null and 0=(select count(*) from medcase where parent_id='" + medcaseId + "' and (noactuality is null or noactuality='0'))";
-			service.executeUpdateNativeSql(sql); //Если у видита не осталось активных услуг - помечаем его как недействительный
-
-			sql = "update workcalendartime set prescription=null, medcase_id = null where id=" + aWorkCalendarTime + " and 0=(select count(*) from medcase where id='" + medcaseId + "'and (noactuality is null or noactuality='0'))";
-			service.executeUpdateNativeSql(sql);// Если визит недействительный - очищаем время в расписании
-
-		} else if (!isAnnulPermitted && medcaseId != null) {
-            return "Невозможно отменить назначение! Уже было отменено или находится в работе";
-        }
-        service.executeUpdateNativeSql("update contractaccountoperationbyservice set serviceid=null, servicetype= null where serviceType = 'PRESCRIPTION' and serviceId = "+aPrescriptionId); //аннулируем инф.
-		 return "Назначение отменено!";
+	 return "Ошибка при определении контекста импедантности!";
     }
 
 
@@ -522,19 +516,15 @@ public class PrescriptionServiceJs {
 		return service.createTempPrescriptList(aName,aComment,aCategories,aSecGroups) ;
 	}*/
 
-	public String removePrescriptionFromList (Long aPrescriptList, Long aMedService, HttpServletRequest aRequest) throws NamingException {
-		return removePrescriptionFromListWCT(aPrescriptList,aMedService,null,aRequest);
-	}
-
-	public String removePrescriptionFromListWCT (Long aPrescriptList, Long aMedService,Long aWorkCalendarTime, HttpServletRequest aRequest) throws NamingException {
+	/*удаляем назначение сразу же при создании, удаление из шаблона листа назначений*/
+	public String removePrescriptionFromList (Long aPrescriptList, Long aMedService,Long aWorkCalendarTime, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder str = new StringBuilder();
-		str.append("delete from prescription where").append(" prescriptionlist_id=").append(aPrescriptList).append(" and medservice_id=").append(aMedService);
-		if (aWorkCalendarTime!=null && !aWorkCalendarTime.equals(0L)) {
-			str.append(" and calendartime_id=").append(aWorkCalendarTime) ;		
+		if (aWorkCalendarTime!=null && aWorkCalendarTime>0L) { //удаляем при назначении, не знаем ИД назначения
+			return annulEmptyPrescription(aMedService,aWorkCalendarTime,null,"Аннулирован при назначении",aRequest);
+		} else { //удаляем из шаблона
+			service.executeUpdateNativeSql("delete from prescription where prescriptionlist_id="+aPrescriptList+" and medservice_id="+aMedService);
+			return "Удалено";
 		}
-        service.executeUpdateNativeSql(str.toString());
-		return annulEmptyPrescription(aMedService,aWorkCalendarTime,null,null,aRequest);
 	}
 
 	@Deprecated //см ниже
