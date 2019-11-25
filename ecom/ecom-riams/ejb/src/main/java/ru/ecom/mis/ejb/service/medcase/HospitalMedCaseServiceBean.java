@@ -4317,7 +4317,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			ret.append("<br/><ol>") ;
 			for (Object[] res:doubles) {
 				ret.append("<li>")
-						.append("<a href='entitySubclassView-mis_medCase.do?id=").append(res[0]).append("'>")
+						.append("<a href='entityView-stac_surOperation.do?id=").append(res[0]).append("'>")
 						.append(res[1]).append(" ").append(res[2]).append("-").append(res[3]).append(" ").append(res[4]).append(" ").append(res[5])
 						.append("</a>")
 						.append("</li>") ;

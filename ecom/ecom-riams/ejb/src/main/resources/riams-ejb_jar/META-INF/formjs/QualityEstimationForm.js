@@ -39,21 +39,21 @@ function onCreate(aForm, aEntity, aContext){
             }
 		}
 		
-		var list1 = aContext.manager.createNativeQuery("select vqec.id as vqecid "
-				+"\n ,list(''||vqecC.id)"+"\n "
-				+"\n from VocQualityEstimationCrit vqec" 
-				+"\n left join VocQualityEstimationMark vqem on vqem.criterion_id=vqec.id"
-				+"\n left join VocQualityEstimationCrit vqecC on vqecC.parent_id=vqec.id"
-				+"\n WHERE vqec.kind_id=1"+"\n and vqec.parent_id is not null"
-				+"\n "+"\n group by vqec.id"+"\n having count(vqem.id)=0").getResultList() ;
+		var list1 = aContext.manager.createNativeQuery("select vqec.id as vqecid"
+				+" ,list(''||vqecC.id)"
+				+" from VocQualityEstimationCrit vqec"
+				+" left join VocQualityEstimationMark vqem on vqem.criterion_id=vqec.id"
+				+" left join VocQualityEstimationCrit vqecC on vqecC.parent_id=vqec.id"
+				+" WHERE vqec.kind_id=1 and vqec.parent_id is not null"
+				+" group by vqec.id having count(vqem.id)=0").getResultList() ;
 		saveParentCriterion(list1,aEntity,aContext) ;
-		list1 = aContext.manager.createNativeQuery("select vqec.id as vqecid "
-			+"\n ,list(''||vqecC.id)"+"\n "
-			+"\n from VocQualityEstimationCrit vqec" 
-			+"\n left join VocQualityEstimationMark vqem on vqem.criterion_id=vqec.id"
-			+"\n left join VocQualityEstimationCrit vqecC on vqecC.parent_id=vqec.id"
-			+"\n WHERE vqec.kind_id=1"+"\n and vqec.parent_id is null"
-			+"\n "+"\n group by vqec.id"+"\n having count(vqem.id)=0").getResultList() ;
+		list1 = aContext.manager.createNativeQuery("select vqec.id as vqecid"
+			+" ,list(''||vqecC.id)"
+			+" from VocQualityEstimationCrit vqec"
+			+" left join VocQualityEstimationMark vqem on vqem.criterion_id=vqec.id"
+			+" left join VocQualityEstimationCrit vqecC on vqecC.parent_id=vqec.id"
+			+" WHERE vqec.kind_id=1 and vqec.parent_id is null"
+			+" group by vqec.id having count(vqem.id)=0").getResultList() ;
 		saveParentCriterion(list1,aEntity,aContext) ;
 	}
 }
@@ -83,7 +83,6 @@ function saveParentCriterion(aList,aEntity,aContext) {
 		}
 		if (cntCr>0) {
 			if (sumCr>0) {
-				//throw cntCr+" -- "+sumCr ;
 				cntBD = new java.math.BigDecimal(cntCr) ;
 				sumBD = new java.math.BigDecimal(sumCr) ;
 				sumBD = sumBD.divide(cntBD,2,java.math.BigDecimal.ROUND_HALF_UP) ;
@@ -110,12 +109,12 @@ function onPreSave(aForm,aEntity , aCtx) {
 }
 //Milamesher проверка на выписан ли и не прошло ли больше допустимого времени #150
 function checkIfDischarge(aForm, aCtx) {
-    var resSlsFin = aCtx.manager.createNativeQuery("select case when hmc.datefinish<current_date-(select cast(keyvalue as int) from softconfig where key='Pr203DaysAfterDischarge') \n" +
-        "then '1' else '0' end\n" +
-        "from medcase hmc\n" +
-        "left join medcase slo on slo.parent_id=hmc.id\n" +
-        "where slo.id=(select qecard.medcase_id from qualityestimationcard qecard \n" +
-        "left join vocqualityestimationkind vqekind on vqekind.id=qecard.kind_id where vqekind.code='PR203' and qecard.id=" + aForm.getCard()+")").getResultList();
+    var resSlsFin = aCtx.manager.createNativeQuery("select case when hmc.datefinish<current_date-(select cast(keyvalue as int) from softconfig where key='Pr203DaysAfterDischarge')" +
+        " then '1' else '0' end" +
+        " from medcase hmc" +
+        " left join medcase slo on slo.parent_id=hmc.id" +
+        " where slo.id=(select qecard.medcase_id from qualityestimationcard qecard" +
+        " left join vocqualityestimationkind vqekind on vqekind.id=qecard.kind_id where vqekind.code='PR203' and qecard.id=" + aForm.getCard()+")").getResultList();
     if (resSlsFin.size()>0) {
         if (resSlsFin.get(0) == "1" && !aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut"))
             throw("Истёк срок с момента выписки пациента, во время которого можно создавать/редактировать экспертные карты по 203 приказу!");

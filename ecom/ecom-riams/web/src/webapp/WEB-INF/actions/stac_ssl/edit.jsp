@@ -358,28 +358,28 @@
                     }
                 }
             });
-            var info = document.getElementById('mainFormLegend').parentNode.innerHTML;
-            function loadBracelets() {
-                //вывод браслетов #151
-                HospitalMedCaseService.selectIdentityPatient(
-                    ${param.id},true, {
-                        callback: function(res) {
-                            document.getElementById('mainFormLegend').parentNode.innerHTML=info;
-                            if (res!=null && res!='[]') {
-                                var aResult = JSON.parse(res);
-                                var str='<table style="margin-left:45%"><tr>';
-                                for (var i=0; i<aResult.length; i++) {
-                                    str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
-                                }
-                                str+="</tr></table>";
-                                document.getElementById('mainFormLegend').parentNode.innerHTML=document.getElementById('mainFormLegend').parentNode.innerHTML.replace('<h2 id="mainFormLegend">Госпитализация</h2>',"<h2 id=\"mainFormLegend\">Госпитализация</h2>"+str);
+        </msh:ifInRole>
+        var info = document.getElementById('mainFormLegend').parentNode.innerHTML;
+        function loadBracelets() {
+            //вывод браслетов #151
+            HospitalMedCaseService.selectIdentityPatient(
+                ${param.id},true, {
+                    callback: function(res) {
+                        document.getElementById('mainFormLegend').parentNode.innerHTML=info;
+                        if (res!=null && res!='[]') {
+                            var aResult = JSON.parse(res);
+                            var str='<table style="margin-left:45%"><tr>';
+                            for (var i=0; i<aResult.length; i++) {
+                                str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
                             }
+                            str+="</tr></table>";
+                            document.getElementById('mainFormLegend').parentNode.innerHTML=document.getElementById('mainFormLegend').parentNode.innerHTML.replace('<h2 id="mainFormLegend">Госпитализация</h2>',"<h2 id=\"mainFormLegend\">Госпитализация</h2>"+str);
                         }
                     }
-                );
-            }
-            loadBracelets();
-        </msh:ifInRole>
+                }
+            );
+        }
+        loadBracelets();
         //проставить идентификацию
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/PatientIdentify">
         function saveIdentityWithAsk() {

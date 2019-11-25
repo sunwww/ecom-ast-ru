@@ -23,11 +23,11 @@ function onPreDelete(aEntityId, aCtx) {
 
     aCtx.manager.createNativeQuery("delete from forminputprotocol where docprotocol_id=" + aEntityId).executeUpdate();
     //Milamesher #121 очищение данных в конслультации об этом дневнике: сам diary_id,и кто-когда-во сколько
-    var res = aCtx.manager.createNativeQuery( "select  scg.id from prescription scg\n" +
-        "left join PrescriptionList pl on pl.id=scg.prescriptionList_id\n" +
-        "left join medcase slo on slo.id=pl.medcase_id\n" +
-        "left join workfunction wf on wf.id=scg.prescriptcabinet_id\n" +
-        "where scg.transferdate is not null and scg.diary_id='" + aEntityId + "'").getResultList();
+    var res = aCtx.manager.createNativeQuery( "select  scg.id from prescription scg" +
+        " left join PrescriptionList pl on pl.id=scg.prescriptionList_id" +
+        " left join medcase slo on slo.id=pl.medcase_id" +
+        " left join workfunction wf on wf.id=scg.prescriptcabinet_id" +
+        " where scg.transferdate is not null and scg.diary_id='" + aEntityId + "'").getResultList();
     if (!res.isEmpty()) {
         if (res.get(0)!=null) {
             var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
