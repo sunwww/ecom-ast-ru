@@ -189,8 +189,19 @@ function visitNoPatient(aContext, aVisitId) {
 	if (visit.workFunctionExecute == null) {
 		visit.workFunctionExecute = startWF;
 	}
+    freeCaosIfNoVisit(aContext, aVisitId);
 	return visit.getId();
 }
+
+/**
+ * Убираем отметку о выполнении в CAOS при неявке на приём
+ */
+function freeCaosIfNoVisit(aContext, aVisitId) {
+    aContext.manager.createNativeQuery("update contractaccountoperationbyservice set serviceid=null, servicetype= null where medcase_id="+aVisitId).executeUpdate();
+    aContext.manager.createNativeQuery("update contractaccountoperationbyservice set serviceid=null, servicetype= null where medcase_id = " +
+		" any(select id from medcase where parent_id="+aVisitId + ")").executeUpdate();
+}
+
 /**
  * Отменяем назначение при неявке пациента
  */
