@@ -19,6 +19,9 @@
                 </msh:row> <msh:row>
                 <msh:autoComplete property="result" vocName="vocOncologyN008Code" size="50"/>
                 </msh:row>
+                <msh:row>
+                    <msh:textField property="biopsyDate"/>
+                </msh:row>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1" />
             </msh:panel>
         </msh:form>
