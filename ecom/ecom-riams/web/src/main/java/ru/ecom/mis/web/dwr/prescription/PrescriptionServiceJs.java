@@ -130,10 +130,10 @@ public class PrescriptionServiceJs {
 	}
 
 
-	private void createAnnulMessageByPrescription (Long aPrescriptionID, HttpServletRequest aRequest) throws NamingException {
+	private void createAnnulMessageByPrescription (Long aPrescriptionId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		try {
-			Long id = Long.valueOf(service.executeNativeSql("select max(id) from AdminChangeJournal where prescription="+aPrescriptionID).iterator().next().get1().toString());
+			Long id = Long.valueOf(service.executeNativeSql("select max(id) from AdminChangeJournal where prescription="+aPrescriptionId).iterator().next().get1().toString());
 			createAnnulMessage(id, aRequest);
 		} catch (Exception e) {
 			LOG.error("Ex=",e);
@@ -165,16 +165,18 @@ public class PrescriptionServiceJs {
 			Object[] obj = list.get(0) ;
 			String username=""+obj[5] ;
 
-			sql = new StringBuilder() ;
+			for (int i=0;i<2;i++) { //экстренное и плановое сообщение
+				sql = new StringBuilder() ;
+				sql.append("insert into CustomMessage (isEmergency, messageTitle,messageText,recipient")
+						.append(",dispatchDate,dispatchTime,username,messageUrl)")
+						.append("values ('").append(i).append("','").append("Аннулирование результатов исследование").append("','")
+						.append("Результаты исследования ''").append(obj[2]).append("'' пациента ''").append(obj[1]).append("'' были аннулированы сотрудником ")
+						.append(obj[3]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("','")
+						.append(username)
+						.append("',current_date,current_time,'").append(obj[7]).append("','").append("entityParentView-stac_slo.do?id=").append(obj[0]).append("')") ;
+				service.executeUpdateNativeSql(sql.toString()) ;
+			}
 
-			sql.append("insert into CustomMessage (messageTitle,messageText,recipient")
-					.append(",dispatchDate,dispatchTime,username,messageUrl)")
-					.append("values ('").append("Аннулирование результатов исследование").append("','")
-					.append("Результаты исследования ''").append(obj[2]).append("'' пациента ''").append(obj[1]).append("'' были аннулированы сотрудником ")
-					.append(obj[3]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("','")
-					.append(username)
-					.append("',current_date,current_time,'").append(obj[7]).append("','").append("entityParentView-stac_slo.do?id=").append(obj[0]).append("')") ;
-			service.executeUpdateNativeSql(sql.toString()) ;
 		}
 	}
 
@@ -188,14 +190,15 @@ public class PrescriptionServiceJs {
      */
 	public String annulPrescription (Long aPrescriptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class);
-		String medCaseID = null;
+		Long medCaseId ;
 		try {
-			medCaseID = wqs.executeNativeSql("select medcase_id from prescription where id="+aPrescriptionId).iterator().next().get1().toString();
+			medCaseId = Long.parseLong(wqs.executeNativeSql("select medcase_id from prescription where id="+aPrescriptionId).iterator().next().get1().toString());
 		} catch (java.lang.NullPointerException e) {
 			LOG.error("Пытаемся отменить невыполненное назначение!");
 			return "Исследование не выполнено, аннулировать результат невозможно";
 		} catch (Exception e) {
 			LOG.error("Ex=",e);
+			return "Системная ошибка: "+e.getMessage();
 		}
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
 		String cancelWf = wqs.executeNativeSql("select wf.id " +
@@ -204,16 +207,22 @@ public class PrescriptionServiceJs {
 		if (aReason==null) {aReason="";}
 
 		//Аннулируем медкейс
-		wqs.executeUpdateNativeSql("update medcase set datestart = null , editdate = current_date, edittime = current_time, editusername='"+login+"' where id="+medCaseID);
-		/*String cancelText = "'Результаты анализа были аннулированы '||to_char(current_date,'dd.MM.yyyy')||' в '" +
-			"||to_char(cast(current_time as time),'HH:MI')||' сотрудником "+wf +
-			". Причина: "+aReason+"'";*/
+		wqs.executeUpdateNativeSql("update medcase set datestart = null , editdate = current_date, edittime = current_time, editusername='"+login+"' where id="+medCaseId);
 
-		//wqs.executeUpdateNativeSql("update diary set record="+cancelText+"||'\n\n'|| record , editdate = current_date, edittime = current_time, editusername='"+login+"' where medcase_id="+medCaseID);
-		//wqs.executeUpdateNativeSql("update prescription set medcase_id = null where id="+aPrescriptionId);
-		insertRecordAnnulJournal (aPrescriptionId, medCaseID, null, null,login, cancelWf, aReason, aRequest);
-		createAnnulMessageByPrescription(aPrescriptionId, aRequest);
+		String cancelFunction = Injection.find(aRequest).getService(IPrescriptionService.class).getWorkfuntctionInfoByLabTechUsername(login);
+		updateDiaryWhileCancelPrescription(medCaseId,null,"Результаты анализа были аннулированы: "+aReason,cancelFunction,wqs); //запись в дневник
+		insertRecordAnnulJournal (aPrescriptionId, medCaseId, login, cancelWf, aReason, aRequest); //сообщение в журнал администратору
+		createAnnulMessageByPrescription(aPrescriptionId, aRequest); //сообщение врачу
 		return "Результат исследования аннулирован";
+	}
+
+	/*В начале дневника пишем информацию о том что результат исследования аннулирован*/
+	private void updateDiaryWhileCancelPrescription(Long aMedcaseId, String aPrescriptIds, String aCancelText, String aCancelDoctor, IWebQueryService aService) {
+		String sql ="update diary set record='Брак биоматериала: "+aCancelText+". Дата и время: '"+
+				"||to_char(current_date,'dd.mm.yyyy')||' '||to_char(current_timestamp,'HH24:MI:SS')||chr(13)||"+
+				"'Отбраковал: "+aCancelDoctor+"'||chr(13)||chr(13)||record"+", editdate = current_date, edittime=current_time where "+( aMedcaseId!=null ? "medcase_id="+aMedcaseId
+				:"medcase_id=ANY(select medcase_id from prescription  where id in ("+aPrescriptIds+"))");
+		aService.executeUpdateNativeSql(sql);
 	}
 
 
@@ -221,32 +230,20 @@ public class PrescriptionServiceJs {
      * Создание записи в журнале аннулирования назначения
      * @param aPrescription
      * @param aMedCase
-     * @param aDate
-     * @param aTime
      * @param aUsername
      * @param aCancelWf
      * @param aReason
      * @param aRequest
      * @throws NamingException
      */
-	private void insertRecordAnnulJournal(Long aPrescription, String aMedCase, String aDate, String aTime, String aUsername, String aCancelWf, String aReason, HttpServletRequest aRequest) throws NamingException {
+	private void insertRecordAnnulJournal(Long aPrescription, Long aMedCase, String aUsername, String aCancelWf, String aReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		if (aDate==null || aDate.equals("")) {
-			aDate="current_date";
-		} else {
-			aDate = "to_date('"+aDate+",'dd.MM.yyyy')";
-		}
-		if (aTime==null || aTime.equals("")) {
-			aTime="current_time";
-		} else {
-			aTime = "to_timestamp('"+aTime+"','HH24:MI')";
-		}
 		if (aUsername == null || aUsername.equals("")) {
 			aUsername = LoginInfo.find(aRequest.getSession(true)).getUsername();
 		}
 		if (aReason==null) {aReason="";}
 		String sql = "insert into AdminChangeJournal (cType, prescription, medcase, createDate, createTime, createUsername, annulReason, annulWorkFunction, prescriptWorkFunction, annulRecord) " +
-				"values ('UN_PRESCRIPT',"+aPrescription+", "+aMedCase+", "+aDate+", "+aTime+", '"+aUsername+"', '"+aReason+"',"+aCancelWf+", (select prescriptspecial_id from prescription where id = "+aPrescription+")" +
+				"values ('UN_PRESCRIPT',"+aPrescription+", "+aMedCase+", current_date, current_time, '"+aUsername+"', '"+aReason+"',"+aCancelWf+", (select prescriptspecial_id from prescription where id = "+aPrescription+")" +
 						",(select record from diary where medcase_id="+aMedCase+"))";	
 		wqs.executeUpdateNativeSql(sql);
 				
@@ -627,9 +624,9 @@ public class PrescriptionServiceJs {
 		String reasonText ="";
 		if (aReasonId!=null&&aReasonId>0) {
 			Collection<WebQueryResult> list = service.executeNativeSql("select name from VocPrescriptCancelReason where id="+aReasonId);
-			reasonText= list.isEmpty() ? "" : list.iterator().next().get1().toString() ;
+			reasonText = list.isEmpty() ? "" : list.iterator().next().get1().toString() ;
 		}
-		reasonText+=StringUtil.isNullOrEmpty(aReason) ? "" : " "+aReason;
+		reasonText += StringUtil.isNullOrEmpty(aReason) ? "" : " "+aReason;
 		List<Object[]> list = service.executeNativeSqlGetObj("select pl.id,p.createusername,to_char(p.planstartdate,'dd.mm.yyyy')  as dt,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ms.code||' '||ms.name from prescription p left join medservice ms on ms.id=p.medservice_id left join prescriptionlist pl on pl.id=p.prescriptionlist_id left join medcase mc on mc.id=pl.medcase_id left join patient pat on pat.id=mc.patient_id where p.id in ("+aPrescripts+")") ;
 		if (!list.isEmpty()) {
 			Object[] obj = list.get(0) ;
@@ -655,14 +652,17 @@ public class PrescriptionServiceJs {
 			service.executeUpdateNativeSql(sql.toString()) ;
 		}
 		//Обновление текста дневника в случае отметки о браке после подтверждения врачом КДЛ
-		sql = new StringBuilder() ;
+	//	sql = new StringBuilder() ;
 		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
 		String wfCnsl = bean.getRealLabTechUsername(Long.valueOf(aPrescripts.split(",")[0]),"");
-		sql.append("update diary set record='").append("Брак биоматериала: ").append(reasonText).append(". Дата и время брака: '")
+		updateDiaryWhileCancelPrescription(null,aPrescripts,"Брак биоматериала: "+reasonText,wfCnsl,service);
+		/*sql.append("update diary set record='").append("Брак биоматериала: ").append(reasonText).append(". Дата и время брака: '")
 				.append("||to_char(current_date,'dd.mm.yyyy')||' '||to_char(current_timestamp,'HH24:MI:SS')||chr(13)||")
 				.append("'Отбраковал: ").append(wfCnsl).append("'||chr(13)||chr(13)||record")
 				.append(" where medcase_id=ANY(select medcase_id from prescription  where id in (").append(aPrescripts).append("))");
 		service.executeUpdateNativeSql(sql.toString()) ;
+		*/
+
 	}
 	
 	public String uncancelService(String aPrescripts, HttpServletRequest aRequest) throws NamingException {
