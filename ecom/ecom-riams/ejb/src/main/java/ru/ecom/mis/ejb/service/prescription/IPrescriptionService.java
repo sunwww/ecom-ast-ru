@@ -65,5 +65,6 @@ public interface IPrescriptionService {
 
 //	boolean canShowPrescriptionFulfilments(long aPrescriptionId) ;
 	String getRealLabTechUsername(Long aPrescriptId,String aUsername);
+	String getWorkfuntctionInfoByLabTechUsername(String aUsername);
 	void sendEmergencyReferenceMsg(Long aDiaryId,Long aPrescriptId);
 }
