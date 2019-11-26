@@ -484,6 +484,8 @@
                             msg += ' ' + el.desc + ' ; ';
                     }
                 }
+                if ($('dose').value<=0)
+                    msg+='\nЗначение дозы должно быть строго больше нуля!';
                 if (!!msg) {
                     $('submitButton').disabled = false;
                     showToastMessage(msg, null, true);

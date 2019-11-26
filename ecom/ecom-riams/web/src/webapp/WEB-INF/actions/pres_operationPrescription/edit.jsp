@@ -108,7 +108,7 @@
 	  		  				    for (var i=0;i<arr.length;i++) {
 	  		  				        var el = arr[i];
 	  		  				        var hour =el.timefrom.substring(0,2);
-	  		  				        if (last!=hour && newLineNums.includes(hour)) {
+	  		  				        if (last!=hour && newLineNums.indexOf(hour)!=-1) {
 	  		  				            last=hour;
 	  		  				            txt+='<br>';
                                     }
@@ -228,11 +228,11 @@
                 <msh:autoComplete property="anesthesiaType" vocName="vocAnesthesia" label="Анестезия" size="100" fieldColSpan="4" horizontalFill="true" />
             </msh:row>
         <msh:row>
-            <msh:autoComplete property="bloodGroup" label="Группа крови" vocName="vocBloodGroup" horizontalFill="true" />
+            <msh:autoComplete property="bloodGroup" fieldColSpan="1" label="Группа крови" vocName="vocBloodGroup" />
             <msh:autoComplete property="rhesusFactor" label="Резус-фактор" vocName="vocRhesusFactor"  />
         </msh:row>
 			<msh:row>
-				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="2" />
+				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="4" />
 			</msh:row>
 	         <tr><td colspan="10"><table><tr><td valign="top"><table>
         <msh:row>

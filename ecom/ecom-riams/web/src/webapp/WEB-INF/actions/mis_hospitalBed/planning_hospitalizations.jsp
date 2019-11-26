@@ -299,6 +299,7 @@ left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 where wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy')
 	 and to_date('${dateEnd}','dd.mm.yyyy')
  ${departmentPlanSql} ${statusSql}
+ and wchb.dtype='WorkCalendarHospitalBed'
 group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
 ,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone
 order by wchb.dateFrom,p.lastname,p.firstname,p.middlename

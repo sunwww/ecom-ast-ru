@@ -70,24 +70,24 @@
 		  String tableName = "";
 		  if (typeSearch != null && (shor==null|| shor.equals(""))) {
 			  if (typeSearch.equals("1") || typeSearch.equals("2")) {
-				  sql = "SELECT {header} as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk\n" +
-						  ",case when count(sls.id)>0 then count(pk.id)*100/ count(sls.id) else 0 end  as persDead\n" +
-						  ",case when count(dc.id)>0 then count(pk.id)*100/ count(dc.id) else 0 end  as persCase\n" +
-						  "from medcase sls\n" +
-						  "left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null\n" +
-						  "left join mislpu dep on dep.id=slo.department_id\n" +
-						  "left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id\n" +
-						  "left join mislpu depPrev on depPrev.id=sloPrev.department_id\n" +
-						  "left join deathcase dc on dc.medcase_id=sls.id\n" +
-						  "left join protocolkili pk on pk.deathcase_id=dc.id\n" +
-						  "left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end\n" +
-						  "left join vochospitalizationresult vhr on vhr.id=sls.result_id\n" +
-						  "left join Patient p on p.id=sls.patient_id\n" +
-						  "where sls.deniedhospitalizating_id is null\n" +
-						  "and sls.dateFinish between to_date('{dateBegin}','dd.MM.yyyy') and to_date('{dateEnd}','dd.MM.yyyy')\n" +
-						  "{where}\n" +
-						  "{group}\n" +
-						  "{order}";
+				  sql = "SELECT {header} as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk" +
+						  " ,case when count(sls.id)>0 then count(pk.id)*100/ count(sls.id) else 0 end  as persDead" +
+						  " ,case when count(dc.id)>0 then count(pk.id)*100/ count(dc.id) else 0 end  as persCase" +
+						  " from medcase sls" +
+						  " left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null" +
+						  " left join mislpu dep on dep.id=slo.department_id" +
+						  " left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id" +
+						  " left join mislpu depPrev on depPrev.id=sloPrev.department_id" +
+						  " left join deathcase dc on dc.medcase_id=sls.id" +
+						  " left join protocolkili pk on pk.deathcase_id=dc.id" +
+						  " left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end" +
+						  " left join vochospitalizationresult vhr on vhr.id=sls.result_id" +
+						  " left join Patient p on p.id=sls.patient_id" +
+						  " where sls.deniedhospitalizating_id is null" +
+						  " and sls.dateFinish between to_date('{dateBegin}','dd.MM.yyyy') and to_date('{dateEnd}','dd.MM.yyyy')" +
+						  " {where}" +
+						  " {group}" +
+						  " {order}";
 				  tableName = (typeSearch.equals("1")) ? "Наименование отделения" : "Наименование профиля";
 				  if (!profile.equals("10") && !profile.equals("16")) {
 					  sql = sql.replace("{where}", " and slo.dtype='DepartmentMedCase' and sls.dtype='HospitalMedCase' " + profSql + " and vhr.code='11' ");
@@ -116,12 +116,7 @@
 			  } else if (typeSearch.equals("3")) {
 				  if (profile.equals("16")) profSql+=" and dc.isneonatologic = true ";
 				  if (profile.equals("10")) profSql+=" and cast(to_char(sls.dateFinish,'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) < 1 ";
-				 /* String strProfSelect="",strProf="";
-				  if (!profile.equals("10") && !profile.equals("16")) strProfSelect="vkp.name";
-				  else {
-					  strProf = profile.equals("10") ? "Неонатологический" : "Акушерский";
-					  strProfSelect = "CAST('" + strProf + "' AS varchar(50))";
-				  }*/
+
 				  sql = "select f1 as f1,f2 as f2, f3 as f3, sum(cntPat) as cntPat, '&protocolNumber='||f4||'&protocolDate='||f5||'&profile='||'&profileName='||profileName as f5,profileName as justProfName from (" +
 						  " select pk.protocolnumber as f1" +
 						  " ,'№'||pk.protocolnumber|| ' от '||to_char(pk.protocoldate,'dd.MM.yyyy') as f2" +

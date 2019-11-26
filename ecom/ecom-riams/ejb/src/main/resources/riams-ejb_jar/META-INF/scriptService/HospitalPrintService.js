@@ -1343,12 +1343,21 @@ function printSurOperation(aCtx,aParams) {
 			if (card[1]!=null) card1=card[1] ;
 		}
 	}
-	
+	map.put("ant",getAntibioFromSurgicalOperation(aCtx, java.lang.Long(aParams.get("id"))));
 	map.put("surOper.statisticStub",card1) ;
 	return map ;
 }
 
-
+function getAntibioFromSurgicalOperation(aCtx, aOper) {
+	var list = aCtx.manager.createNativeQuery("select vab.name||' '||round(cast (so.dose as numeric),2)" +
+		" ||' '||vmd.name||cast(' в 1). ' as varchar(7))||so.firstdosetime||cast(' 2). ' as varchar(5))" +
+        " ||case when so.seconddosetime is not null then cast(so.seconddosetime as varchar) else '-' end as ant" +
+        " from SurgicalOperation so" +
+        " left join vocmethodsdrugadm vmd on vmd.id=so.methodsdrugadm_id" +
+        " left join vocantibioticdrug vab on vab.id=so.antibioticdrug_id" +
+        " where so.id=" + aOper).setMaxResults(1).getResultList();
+	return list.size()>0 && list.get(0)!=null? 'Антибиотикопрофилактика: ' + list.get(0) : '';
+}
 
 function printPregHistoryByMC(aCtx, aParams) {
 	//var pregHistory = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.PregnancyHistory

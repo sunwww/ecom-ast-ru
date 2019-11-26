@@ -241,7 +241,7 @@
       		,d.diagnosis
       		from WorkCalendarHospitalBed d
       		left join MisLpu dep on dep.id=d.department_id 
-      		where d.visit_id='${param.id}'
+      		where d.visit_id='${param.id}' and d.dtype='WorkCalendarHospitalBed'
       		"/>
       		<msh:table name="WorkCalendarHospitalBed" action="entityView-smo_planHospitalByVisit.do" 
       	 	 viewUrl="entityShortView-smo_planHospitalByVisit.do" idField="1" hideTitle="true">
@@ -351,7 +351,7 @@
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации' title="Просмотр госпитазиций по пациенту" key="ALT+6" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherPreHospByPatient('.do')" name='Пред госпитализации' title="Просмотр предварительных госпитазиций по пациенту" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
-          <msh:sideLink styleId="viewShort" action="/javascript:viewOtherPreHospOphtByPatient('.do')" name='Введения ингибиторов ангиогенеза' title="Просмотр направлений на введение ингибиторов ангиогенеза" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/View" />
+          <msh:sideLink styleId="viewShort" action="/javascript:viewOtherPreHospOphtByPatient('.do')" name='Введение ингибиторов ангиогенеза' title="Просмотр направлений на введение ингибиторов ангиогенеза" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/View" />
           <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"  
     	params="id"  action='/javascript:getDefinition("entityParentList-stac_surOperation.do?short=Short&id=${param.id}", null);'  title='Операции'
@@ -586,7 +586,7 @@
       getDefinition("js-smo_planHospitalByVisit-allByPatient.do?short=Short&patient="+$('patient').value, null);
   }
   function viewOtherPreHospOphtByPatient(d) {
-      getDefinition("js-smo_planHospitalByVisit-allByPatientOpht.do?short=Short&patient="+$('patient').value, null);
+      getDefinition("js-smo_planHospitalByVisit-allByPatientOphtVis.do?short=Short&vis="+$('id').value, null);
   }
   function viewOtherExtMedserviceByPatient(d) {
   	  getDefinition("js-doc_externalMedservice-list.do?short=Short&id=${param.id}", null);
