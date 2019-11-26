@@ -605,7 +605,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		}
 		return obj;
 	}
-	private String getWorkfuntctionInfoByLabTechUsername(String aUsername) {
+	public String getWorkfuntctionInfoByLabTechUsername(String aUsername) {
 		List<Object> labExec = theManager.createNativeQuery("select vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename" +
 				" from WorkFunction wf" +
 				" left join SecUser su on wf.secUser_id=su.id" +

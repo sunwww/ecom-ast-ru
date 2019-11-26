@@ -407,10 +407,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         List<E2CancerDiagnostic> diagnostics= cancerEntry.getDiagnostics();
                         for (E2CancerDiagnostic diagnostic: diagnostics){
                             Element dir = new Element("B_DIAG");
-                            add(dir,"DIAG_DATE",currentEntry.getFinishDate());
+                            add(dir,"DIAG_DATE",diagnostic.getBiopsyDate());
                             add(dir,"DIAG_TIP",diagnostic.getType());
                             add(dir,"DIAG_CODE",diagnostic.getCode());
-                      //      add(dir,"DIAG_RSLT",diagnostic.getResult());
+                            add(dir,"DIAG_RSLT",diagnostic.getResult());
+                            add(dir,"REC_RSLT","1");
                             onkSl.addContent(dir);
                         }
                         List<E2CancerRefusal> prots = cancerEntry.getRefusals();
@@ -580,6 +581,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         usl.addContent(new Element("IDDOKT_U").setText(child.getDoctorSnils()));
                         usl.addContent(new Element("NPL").setText("0"));
                         sl.addContent(usl);
+
+                        List<EntryMedService> serviceList = child.getMedServices();
+                        for (EntryMedService service : serviceList) {
+                            uslCnt++;
+                            Element uslService = (Element) usl.clone();
+                            uslService.getChild("IDSERV").setText(uslCnt+"");
+                            uslService.getChild("VID_VME").setText(service.getMedService().getCode());
+                            sl.addContent(uslService);
+                        }
                         isFirst=false;
                     }
                     if (isPoliclinicKdo) { //Для КДП находим все услуги помимо дочерних визитов

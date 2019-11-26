@@ -26,7 +26,7 @@
 			PrescriptionService.addPrescriptionToList(aID, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription");
 		}
 		function deletePrescription(aMedService) {
-			PrescriptionService.removePrescriptionFromList($('id').value,aMedService);
+			PrescriptionService.removePrescriptionFromList($('id').value,aMedService,null);
 		}
  		onload=function () {
            	if ($('labList').value.length>0)

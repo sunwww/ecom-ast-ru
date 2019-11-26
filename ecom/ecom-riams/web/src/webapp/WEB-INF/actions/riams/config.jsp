@@ -16,6 +16,9 @@
 					<div class='menu'>
 						<h2>Работа с данными</h2>
 						<ul>
+							<li><msh:link roles='/Policy/Mis/Config/Elmed' action="elmedImport.do">
+								Импорт данных из системы ЭлМед
+							</msh:link></li>
 							<li><msh:link roles='/Policy/Mis/Patient' action="/javascript:sendDiary(this)">
 								Сформировать файл об оказанной помощи иногородним или иностранцам
 								<div id="miacFileLinkDiv"></div>

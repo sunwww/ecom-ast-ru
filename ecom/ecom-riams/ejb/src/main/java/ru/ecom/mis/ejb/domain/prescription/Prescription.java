@@ -249,79 +249,69 @@ public abstract class Prescription extends BaseEntity{
 	@Comment("Дата создания")
 	public Date getCreateDate() {return theCreateDate;}
 	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	private Date theCreateDate;
 	
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	public Date getEditDate() {return theEditDate;}
 	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	private Date theEditDate;
 	
 	/** Время создания */
 	@Comment("Время создания")
 	public Time getCreateTime() {return theCreateTime;}
 	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+	private Time theCreateTime;
+
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	public Time getEditTime() {return theEditTime;}
 	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+	private Time theEditTime;
+
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	public String getCreateUsername() {return theCreateUsername;}
 	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	private String theCreateUsername;
+
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Пользователь, который последний редактировал запись */
 	private String theEditUsername;
-	/** Пользователь, который создал запись */
-	private String theCreateUsername;
-	/** Время редактрования */
-	private Time theEditTime;
-	/** Время создания */
-	private Time theCreateTime;
-	/** Дата редактирования */
-	private Date theEditDate;
-	/** Дата создания */
-	private Date theCreateDate;
-	
+
 	/** Тип назначения */
 	@Comment("Тип назначения")
 	@OneToOne
 	public VocPrescriptType getPrescriptType() {return thePrescriptType;}
 	public void setPrescriptType(VocPrescriptType aPrescriptType) {thePrescriptType = aPrescriptType;}
-	/** Тип назначения */
 	private VocPrescriptType thePrescriptType;
 
 	/** Дата забора */
 	@Comment("Дата забора")
 	public Date getIntakeDate() {return theIntakeDate;}
 	public void setIntakeDate(Date aIntakeDate) {theIntakeDate = aIntakeDate;}
+	private Date theIntakeDate;
 
 	/** Время забора */
 	@Comment("Время забора")
 	public Time getIntakeTime() {return theIntakeTime;}
 	public void setIntakeTime(Time aIntakeTime) {theIntakeTime = aIntakeTime;}
+	private Time theIntakeTime;
 
 	/** Пользователь, осуществившей забор */
 	@Comment("Пользователь, осуществившей забор")
 	public String getIntakeUsername() {return theIntakeUsername;}
 	public void setIntakeUsername(String aIntakeUsername) {theIntakeUsername = aIntakeUsername;}
+	private String theIntakeUsername;
 
 	/** Идентификатор материала */
 	@Comment("Идентификатор материала")
 	public String getMaterialId() {return theMaterialId;}
 	public void setMaterialId(String aMaterialId) {theMaterialId = aMaterialId;}
-
-	/** Идентификатор материала */
 	private String theMaterialId;
-	/** Пользователь, осуществившей забор */
-	private String theIntakeUsername;
-	/** Время забора */
-	private Time theIntakeTime;
-	/** Дата забора */
-	private Date theIntakeDate;
-	
+
 	/** Причина отмены текст */
 	@Comment("Причина отмены текст")
 	public String getCancelReasonText() {return theCancelReasonText;}
@@ -341,16 +331,19 @@ public abstract class Prescription extends BaseEntity{
 	@Comment("Дата передачи в лабораторию")
 	public Date getTransferDate() {return theTransferDate;}
 	public void setTransferDate(Date aTransferDate) {theTransferDate = aTransferDate;}
+	private Date theTransferDate;
 
 	/** Время передачи */
 	@Comment("Время передачи")
 	public Time getTransferTime() {return theTransferTime;}
 	public void setTransferTime(Time aTransferTime) {theTransferTime = aTransferTime;}
+	private Time theTransferTime;
 
 	/** Пользователь, принявший биоматериал */
 	@Comment("Пользователь, принявший биоматериал")
 	public String getTransferUsername() {return theTransferUsername;}
 	public void setTransferUsername(String aTransferUsername) {theTransferUsername = aTransferUsername;}
+	private String theTransferUsername;
 	
 	/** Раб. функция, принявшего биоматериал */
 	@Comment("Раб. функция, принявшего биоматериал")
@@ -366,20 +359,11 @@ public abstract class Prescription extends BaseEntity{
 	public void setIntakeSpecial(WorkFunction aIntakeSpecial) {theIntakeSpecial = aIntakeSpecial;}
 	private WorkFunction theIntakeSpecial;
 
-	/** Пользователь, принявший биоматериал */
-	private String theTransferUsername;
-	/** Время передачи */
-	private Time theTransferTime;
-	/** Дата передачи в лабораторию */
-	private Date theTransferDate;
-	
 	/** Время из wct */
 	@Comment("Время из wct")
 	@OneToOne
 	public WorkCalendarTime getCalendarTime() {return theCalendarTime;}
 	public void setCalendarTime(WorkCalendarTime aCalendarTime) {theCalendarTime = aCalendarTime;}
-
-	/** Время из wct */
 	private WorkCalendarTime theCalendarTime;
 	
 	/** Отделение (забора) */
@@ -387,8 +371,6 @@ public abstract class Prescription extends BaseEntity{
 	@OneToOne
 	public MisLpu getDepartment() {return theDepartment;}
 	public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
-
-	/** Отделение (забора) */
 	private MisLpu theDepartment;
 	
 	/** СМО */
@@ -396,17 +378,11 @@ public abstract class Prescription extends BaseEntity{
 	@OneToOne
 	public MedCase getMedCase() {return theMedCase;}
 	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-
-	/** СМО */
 	private MedCase theMedCase;
 
-	
 	/** Хирургическая операция */
 	@Comment("Хирургическая операция")
 	public Long getSurgicalOperation() {return theSurgicalOperation;}
 	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
-	/** Хирургическая операция */
 	private Long theSurgicalOperation;
-	
-
 }

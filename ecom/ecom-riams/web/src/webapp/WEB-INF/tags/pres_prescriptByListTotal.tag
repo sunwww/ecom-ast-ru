@@ -78,8 +78,8 @@ where ${field}  and p.dtype = 'DrugPrescription'"/>
 
     <msh:section title="Список назначений на диагностические исследования">
     	<ecom:webQuery name="pres" nativeSql="
- select p.id as pid,pl.id as plid,ms.code||' '|| ms.name as f3_drname ,p.planStartDate ,m.datestart ||' '||cast(m.timeexecute as varchar(5)) as f5_timeexecute
-  , p.canceldate as f6_canceldate ,coalesce(p.cancelreasontext,'') as f7_cancelText
+ select p.id as pid,pl.id as plid,ms.code||' '|| ms.name as f3_drname ,p.planStartDate ,to_char(m.datestart,'dd.MM.yyyy') ||' '||cast(m.timeexecute as varchar(5)) as f5_timeexecute
+  , to_char(p.canceldate,'dd.MM.yyyy') as f6_canceldate ,coalesce(p.cancelreasontext,'') as f7_cancelText
   ,case when canceldate is not null then 'color:red;' else null end as f8_styleCancel
   from Medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
@@ -107,8 +107,8 @@ where ${field}
   ,ms.name as f2_drname ,p.planStartDate as f3,p.materialId as f4,vpt.shortname as f5_vptname
 ,coalesce(vpcr.name,'')||' '||coalesce(p.cancelReasonText,'') as а6_fldCancel
 ,case when p.canceldate is not null then 'color:red;' else null end as а7_stylCancel
-,presV.datestart||' '||cast(presV.timeExecute as varchar(5)) as f8_execute
-,case when p.canceldate is not null then vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename else null end as f9_cnsl
+,to_char(presV.datestart,'dd.MM.yyyy')||' '||cast(presV.timeExecute as varchar(5)) as f8_execute
+,case when p.canceldate is not null then vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename||' '||to_char(p.canceldate,'dd.MM.yyyy')||' '||cast(p.canceltime as varchar(5)) else null end as f9_cnsl
 from Medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
