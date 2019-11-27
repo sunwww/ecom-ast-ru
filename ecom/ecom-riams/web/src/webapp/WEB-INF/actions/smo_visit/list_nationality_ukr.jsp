@@ -75,7 +75,7 @@
         	<input type="radio" name="typeView" value="3">  свод
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по возрастам (typeAge)" colspan="1"><label for="typeAgeName" id="typeAgeLabel">Возраст:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeAge" value="1">  До 18 лет
@@ -87,7 +87,7 @@
         	<input type="radio" name="typeAge" value="3">  Все
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  иностранцы
@@ -99,7 +99,7 @@
         	<input type="radio" name="typePatient" value="3">  иногородние
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="4">  без адреса
@@ -108,7 +108,7 @@
         	<input type="radio" name="typePatient" value="5">  иностранцы+соотечественники
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="1">  Дата начала госпитализации
@@ -130,8 +130,8 @@
         	label="Поток облуживания" horizontalFill="true" vocName="vocServiceStream"/>
         </msh:row>
       <msh:row>
-        	<msh:textField property="beginDate"  label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        	<msh:textField property="finishDate" fieldColSpan="7" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        	<msh:textField property="beginDate"  label="Период с" />
+        	<msh:textField property="finishDate" fieldColSpan="7" label="по" />
         </msh:row>
 		<msh:submitCancelButtonsRow colSpan="3" submitLabel="Найти" notDisplayCancel="true" labelSaving="Поиск..."/>
     </msh:panel>
@@ -251,45 +251,40 @@
     <% if (typeView.equals("1")) { /* реестр обращений*/ %>
 
   	<msh:section title="Поликлиника">
-
-  	
 	    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="list_yes_sql" name="list_yes" maxResult="1000" nativeSql="select m.id
-	    
 	    ,to_char(m.dateStart,'DD.MM.YYYY') as dateStart
-
 	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio,to_char(p.birthday,'DD.MM.YYYY') as birthday
 	    ,vwfe.name||' '||pe.lastname as pefio
 	    ,list(mkb.code) as mkbcode
 	    ,vss.name, res.name as resname
 	    ,case when vsst.omccode='66' then '+' else '-' end 
-from medcase m 
-left join vocvisitresult res on res.id=m.visitresult_id 
-left join patient p on p.id=m.patient_id
-left join address2 a on a.addressid=p.address_addressid
-left join Omc_Oksm vn on vn.id=p.nationality_id
-left join WorkFunction wfe on wfe.id=m.workFunctionExecute_id
-left join Worker we on we.id=wfe.worker_id
-left join MisLpu ml on ml.id=we.lpu_id
-left join Patient pe on pe.id=we.person_id
-left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
-left join VocVisitResult vvr on vvr.id=m.visitResult_id
-left join VocServiceStream vss on vss.id=m.serviceStream_id
-left join Diagnosis d on d.medcase_id=m.id
-left join Vocidc10 mkb on mkb.id=d.idc10_id
-left join vocsocialstatus vsst on vsst.id=p.socialstatus_id 
-${groupSqlAdd}
-where  m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
-and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')  
-and (m.noActuality is null or m.noActuality='0')
-and vss.code!='HOSPITAL' and (vwfe.isnodiagnosis is null or vwfe.isnodiagnosis ='0') and (vwfe.isFuncDiag is null or vwfe.isFuncDiag='0') and (vwfe.isLab is null or vwfe.isLab='0')
-${emergencySql} ${departmentWFSql}
-${serviceStreamSql}
- ${nationalitySql} ${regionSql} ${patientSql} ${ageSql}
-group by m.id,m.dateStart,m.timeExecute
+		from medcase m
+		left join vocvisitresult res on res.id=m.visitresult_id
+		left join patient p on p.id=m.patient_id
+		left join address2 a on a.addressid=p.address_addressid
+		left join Omc_Oksm vn on vn.id=p.nationality_id
+		left join WorkFunction wfe on wfe.id=m.workFunctionExecute_id
+		left join Worker we on we.id=wfe.worker_id
+		left join MisLpu ml on ml.id=we.lpu_id
+		left join Patient pe on pe.id=we.person_id
+		left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
+		left join VocVisitResult vvr on vvr.id=m.visitResult_id
+		left join VocServiceStream vss on vss.id=m.serviceStream_id
+		left join Diagnosis d on d.medcase_id=m.id
+		left join Vocidc10 mkb on mkb.id=d.idc10_id
+		left join vocsocialstatus vsst on vsst.id=p.socialstatus_id
+		${groupSqlAdd}
+		where  m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+		and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')
+		and (m.noActuality is null or m.noActuality='0')
+		and vss.code!='HOSPITAL' and (vwfe.isnodiagnosis is null or vwfe.isnodiagnosis ='0') and (vwfe.isFuncDiag is null or vwfe.isFuncDiag='0') and (vwfe.isLab is null or vwfe.isLab='0')
+		${emergencySql} ${departmentWFSql}
+		${serviceStreamSql}
+		${nationalitySql} ${regionSql} ${patientSql} ${ageSql}
+		group by m.id,m.dateStart,m.timeExecute
 	    ,p.lastname,p.firstname,p.middlename,p.birthday
 	    ,vwfe.name,pe.lastname,vss.name,res.name,vsst.omccode  
-order by p.lastname,p.firstname,p.middlename"/>
-
+		order by p.lastname,p.firstname,p.middlename"/>
   	</msh:section>
   	<%
   	List listPol = (List)request.getAttribute("list_yes") ;
@@ -306,9 +301,7 @@ order by p.lastname,p.firstname,p.middlename"/>
 				}
 				listPol.set(i,wqr);
 			} catch (Exception e) {
-
 				System.out.println("some pol error "+e);
-
 			}
 		}
 	request.setAttribute("list_yes", listPol);
@@ -316,19 +309,18 @@ order by p.lastname,p.firstname,p.middlename"/>
   	%>
    <msh:table printToExcelButton="Сохранить в excel" name="list_yes" action="entitySubclassView-mis_medCase.do"
     	viewUrl="entityView-mis_medCase.do?short=Short" idField="1">
-    	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-    	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-    	      <msh:tableColumn columnName="Дата рождения" property="4" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-    	      <msh:tableColumn columnName="Беженец" property="9" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-    	      <msh:tableColumn columnName="Дата обращения" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-    	      <msh:tableColumn columnName="Диагноз" property="6" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-    	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Результат лечения" identificator="false" property="8" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Поток обслуживания" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Стоимость случая" identificator="false" property="10" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+    	      <msh:tableColumn columnName="Пациент" property="3" />
+    	      <msh:tableColumn columnName="Дата рождения" property="4" />
+    	      <msh:tableColumn columnName="Беженец" property="9" />
+    	      <msh:tableColumn columnName="Дата обращения" property="2" />
+    	      <msh:tableColumn columnName="Диагноз" property="6" />
+    	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" />
+    	      <msh:tableColumn columnName="Результат лечения" identificator="false" property="8" />
+    	      <msh:tableColumn columnName="Поток обслуживания" identificator="false" property="7" />
+    	      <msh:tableColumn columnName="Стоимость случая" identificator="false" property="10" />
     	     </msh:table>
   	<msh:section title="Стационар">
-
 	    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="list_stac_sql" name="list_stac" maxResult="1000" nativeSql="select smo.id
 	    ,to_char(smo.dateStart,'DD.MM.YYYY') as dateStart
 	    ,to_char(smo.dateFinish,'DD.MM.YYYY') as dateFinish
@@ -338,26 +330,25 @@ order by p.lastname,p.firstname,p.middlename"/>
 	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
 	    ,mkb.code || ' ' ||mkb.name as f10_diagnosis
 	    ,case when vsst.omccode='66' then '+' else '-' end 
-	    
-from medcase smo
-left join vochospitalizationresult res on res.id=smo.result_id
-left join patient p on p.id=smo.patient_id
-left join address2 a on a.addressid=p.address_addressid
-${groupSqlAdd}
-left join Omc_Oksm vn on vn.id=p.nationality_id
-left join statisticstub ss on ss.id=smo.statisticStub_id
-left join mislpu ml on ml.id=smo.department_id
-left join VocServiceStream vss on vss.id=smo.serviceStream_id
-left join diagnosis ds on ds.medcase_id=smo.id and ds.registrationtype_id='3' and ds.priority_id='1'
-left join vocidc10 mkb on mkb.id=ds.idc10_id
-left join vocsocialstatus vsst on vsst.id=p.socialstatus_id 
-where  
-smo.DTYPE='HospitalMedCase' and ${dateSql} between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
-and (smo.noActuality is null or smo.noActuality='0') and smo.deniedHospitalizating_id is null
-${emergencySql} ${departmentSql} 
-${serviceStreamSql}
-${nationalitySql} ${regionSql} ${patientSql}  ${ageSql}
-order by p.lastname,p.firstname,p.middlename"/>${list_stac_sql}
+		from medcase smo
+		left join vochospitalizationresult res on res.id=smo.result_id
+		left join patient p on p.id=smo.patient_id
+		left join address2 a on a.addressid=p.address_addressid
+		${groupSqlAdd}
+		left join Omc_Oksm vn on vn.id=p.nationality_id
+		left join statisticstub ss on ss.id=smo.statisticStub_id
+		left join mislpu ml on ml.id=smo.department_id
+		left join VocServiceStream vss on vss.id=smo.serviceStream_id
+		left join diagnosis ds on ds.medcase_id=smo.id and ds.registrationtype_id='3' and ds.priority_id='1'
+		left join vocidc10 mkb on mkb.id=ds.idc10_id
+		left join vocsocialstatus vsst on vsst.id=p.socialstatus_id
+		where
+		smo.DTYPE='HospitalMedCase' and ${dateSql} between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+		and (smo.noActuality is null or smo.noActuality='0') and smo.deniedHospitalizating_id is null
+		${emergencySql} ${departmentSql}
+		${serviceStreamSql}
+		${nationalitySql} ${regionSql} ${patientSql}  ${ageSql}
+		order by p.lastname,p.firstname,p.middlename"/>
 </msh:section>
   <%
   	List listStac = (List)request.getAttribute("list_stac") ;
@@ -377,13 +368,12 @@ order by p.lastname,p.firstname,p.middlename"/>${list_stac_sql}
 			listStac.set(i,wqr);
 		} catch (Exception e) {
 			System.out.println("some stac error "+ e);
-
 		}
 	}
 	request.setAttribute("list_stac", listStac);
   	}
   	%>
-  	  <msh:table viewUrl="entityShortView-stac_ssl.do"
+  	  <msh:table viewUrl="entityShortView-stac_ssl.do" printToExcelButton="сохранить в Excel"
  name="list_stac"
  action="entityView-stac_ssl.do" idField="1" >
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
@@ -395,7 +385,7 @@ order by p.lastname,p.firstname,p.middlename"/>${list_stac_sql}
 	      <msh:tableColumn property="6" columnName="Отделение"/>
 	      <msh:tableColumn property="7" columnName="Поток обслуживания"/>
 	      <msh:tableColumn property="8" columnName="Результат лечения"/>
-	      <msh:tableColumn property="8" columnName="Диагноз"/>
+	      <msh:tableColumn property="10" columnName="Диагноз"/>
 	      <msh:tableColumn property="12" columnName="Объем финансирования"/>
 	    </msh:table>	
   	<msh:section title="Отказы от госпитализаций">
@@ -437,7 +427,6 @@ order by p.lastname,p.firstname,p.middlename"/>
     	    <ecom:webQuery isReportBase="${isReportBase}" name="list_yes" maxResult="1000" nativeSql="select
     	    p.id as pid
     	    ,count(distinct m.id)
-
     	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio,to_char(p.birthday,'DD.MM.YYYY') as birthday
     	    ,vwfe.name||' '||pe.lastname as pefio
     	    ,vn.name as vnname
@@ -445,29 +434,29 @@ order by p.lastname,p.firstname,p.middlename"/>
     	    ,list(distinct mkb.code) as mkbcode
     	    ,vss.name
     	    ,m.id
-    from medcase m 
-    left join patient p on p.id=m.patient_id
-    left join address2 a on a.addressid=p.address_addressid
-${groupSqlAdd}
-    left join Omc_Oksm vn on vn.id=p.nationality_id
-    left join WorkFunction wfe on wfe.id=m.workFunctionExecute_id
-    left join Worker we on we.id=wfe.worker_id
-    left join MisLpu ml on ml.id=we.lpu_id
-    left join Patient pe on pe.id=we.person_id
-    left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
-    left join VocVisitResult vvr on vvr.id=m.visitResult_id
-    left join VocServiceStream vss on vss.id=m.serviceStream_id
-    left join Diagnosis d on d.medcase_id=m.id
-    left join Vocidc10 mkb on mkb.id=d.idc10_id
-    where  m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
-    and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')  
-    and (m.noActuality is null or m.noActuality='0') and (vwfe.isnodiagnosis is null or vwfe.isnodiagnosis ='0') and (vwfe.isFuncDiag is null or vwfe.isFuncDiag='0') and (vwfe.isLab is null or vwfe.isLab='0')
-    ${emergencySql} ${departmentWFSql}
-    ${serviceStreamSql}
-     ${nationalitySql} ${regionSql} ${patientSql}
-    group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
+			from medcase m
+			left join patient p on p.id=m.patient_id
+			left join address2 a on a.addressid=p.address_addressid
+		${groupSqlAdd}
+			left join Omc_Oksm vn on vn.id=p.nationality_id
+			left join WorkFunction wfe on wfe.id=m.workFunctionExecute_id
+			left join Worker we on we.id=wfe.worker_id
+			left join MisLpu ml on ml.id=we.lpu_id
+			left join Patient pe on pe.id=we.person_id
+			left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id
+			left join VocVisitResult vvr on vvr.id=m.visitResult_id
+			left join VocServiceStream vss on vss.id=m.serviceStream_id
+			left join Diagnosis d on d.medcase_id=m.id
+			left join Vocidc10 mkb on mkb.id=d.idc10_id
+			where  m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+			and (m.DTYPE='Visit' or m.DTYPE='ShortMedCase')
+			and (m.noActuality is null or m.noActuality='0') and (vwfe.isnodiagnosis is null or vwfe.isnodiagnosis ='0') and (vwfe.isFuncDiag is null or vwfe.isFuncDiag='0') and (vwfe.isLab is null or vwfe.isLab='0')
+			${emergencySql} ${departmentWFSql}
+			${serviceStreamSql}
+			 ${nationalitySql} ${regionSql} ${patientSql}
+			group by p.id,p.lastname,p.firstname,p.middlename,p.birthday
     	    ,vwfe.name,pe.lastname , vn.name,a.fullname,vss.name,m.id
-    order by p.lastname,p.firstname,p.middlename"/>
+    		order by p.lastname,p.firstname,p.middlename"/>
 		</msh:section>
 			<%
 				List listPol = (List)request.getAttribute("list_yes") ;
@@ -484,9 +473,7 @@ ${groupSqlAdd}
 							}
 							listPol.set(i,wqr);
 						} catch (Exception e) {
-
 							System.out.println("some pol error "+e);
-
 						}
 					}
 					request.setAttribute("list_yes", listPol);
@@ -495,50 +482,47 @@ ${groupSqlAdd}
     <msh:table printToExcelButton="Сохранить в excel" name="list_yes" action="entityView-mis_patient.do"
     	viewUrl="entityShortView-mis_patient.do" 
     	idField="1">
-    	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-    	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-    	      <msh:tableColumn columnName="Дата рождения" property="4" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-    	      <msh:tableColumn columnName="Кол-во обращения" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-    	      <msh:tableColumn columnName="Диагноз" property="8" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="6" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+    	      <msh:tableColumn columnName="Пациент" property="3" />
+    	      <msh:tableColumn columnName="Дата рождения" property="4" />
+    	      <msh:tableColumn columnName="Кол-во обращения" property="2" />
+    	      <msh:tableColumn columnName="Диагноз" property="8" />
+    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="6" />
+    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="7" />
+    	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" />
     	      <msh:tableColumn columnName="Поток обслуживания" property="9"/>
 				<msh:tableColumn columnName="Стоимость случая" property="11"/>
     	    </msh:table>
       	<msh:section title="Стационар">
-
-      	
     	    <ecom:webQuery isReportBase="${isReportBase}" name="list_stac" maxResult="1000" nativeSql="select
     	    p.id as pid
     	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
-    	    
     	    ,list(ml.name) as mlname
     	    ,list(ss.code) as sscode
     	    ,list(vss.name) as vssname
     	    ,vn.name as vnname
     	    ,a.fullname as afullname
     	    ,m.id
-    from medcase m 
-    left join medcase smo on smo.id=m.parent_id
-    left join patient p on p.id=m.patient_id
-    left join address2 a on a.addressid=p.address_addressid
-    ${groupSqlAdd}
-    left join Omc_Oksm vn on vn.id=p.nationality_id
-    left join statisticstub ss on ss.id=smo.statisticStub_id
-    left join mislpu ml on ml.id=m.department_id
-    left join VocServiceStream vss on vss.id=smo.serviceStream_id
-    where  
-    m.DTYPE='DepartmentMedCase' and ${dateSql} between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
-    and (m.noActuality is null or m.noActuality='0')
-    and smo.deniedHospitalizating_id is null
-    ${emergencySql} ${departmentSql} 
-    ${serviceStreamSql}
-    ${nationalitySql} ${regionSql} ${patientSql}
-    group by p.id,p.lastname,p.firstname,p.middlename
-    ,p.birthday,vn.name ,a.fullname, m.id
-    order by p.lastname,p.firstname,p.middlename"/>
+			from medcase m
+			left join medcase smo on smo.id=m.parent_id
+			left join patient p on p.id=m.patient_id
+			left join address2 a on a.addressid=p.address_addressid
+			${groupSqlAdd}
+			left join Omc_Oksm vn on vn.id=p.nationality_id
+			left join statisticstub ss on ss.id=smo.statisticStub_id
+			left join mislpu ml on ml.id=m.department_id
+			left join VocServiceStream vss on vss.id=smo.serviceStream_id
+			where
+			m.DTYPE='DepartmentMedCase' and ${dateSql} between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+			and (m.noActuality is null or m.noActuality='0')
+			and smo.deniedHospitalizating_id is null
+			${emergencySql} ${departmentSql}
+			${serviceStreamSql}
+			${nationalitySql} ${regionSql} ${patientSql}
+			group by p.id,p.lastname,p.firstname,p.middlename
+			,p.birthday,vn.name ,a.fullname, m.id
+			order by p.lastname,p.firstname,p.middlename"/>
 		</msh:section>
 	  <%
 		  List listStac = (List)request.getAttribute("list_stac") ;
@@ -555,9 +539,7 @@ ${groupSqlAdd}
 					  }
 					  listStac.set(i,wqr);
 				  } catch (Exception e) {
-
 					  System.out.println("some stac error "+e);
-
 				  }
 			  }
 			  request.setAttribute("list_stac", listStac);
@@ -570,15 +552,13 @@ ${groupSqlAdd}
     	      <msh:tableColumn columnName="№№ стат.карт" property="5" />
     	      <msh:tableColumn columnName="Пациент" property="2" />
     	      <msh:tableColumn columnName="Дата рождения" property="3" />
-    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="8" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="7" />
+    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="8" />
     	      <msh:tableColumn columnName="Отделения" identificator="false" property="4" />
     	      <msh:tableColumn property="6" columnName="Потоки обслуживания"/>
 				<msh:tableColumn columnName="Стоимость случая" property="10"/>
     	    </msh:table>
       	<msh:section title="Отказы от госпитализаций">
-
-      	
     	    <ecom:webQuery isReportBase="${isReportBase}" name="list_stac1" maxResult="1000" nativeSql="select p.id
     	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
@@ -621,9 +601,7 @@ ${groupSqlAdd}
 					  }
 					  listStac1.set(i,wqr);
 				  } catch (Exception e) {
-
 					  System.out.println("some stac1 error "+e);
-
 				  }
 			  }
 			  request.setAttribute("list_stac1", listStac1);
@@ -640,9 +618,7 @@ ${groupSqlAdd}
     	      <msh:tableColumn columnName="Дата и причина отказов" property="6" />
 		<msh:tableColumn columnName="Стоимость случая" property="8" />
     	    </msh:table>
-
 	<% } else { /* начало свода */ %>
-
     <msh:section>
 <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="sql_journal_swod" name="journal_swod" nativeSql="
 select ${groupId}||${departmentSqlId}||${nationalitySqlId}||${serviceStreamSqlId} as idparam,${groupSql} as vnname
@@ -716,7 +692,6 @@ group by ${groupSqlId},${groupSql}
 		JSONObject expertCalc ;
 		for (int i=0; i<sizeStac; i++) {
 			WebQueryResult wqr = (WebQueryResult) listStac.get(i) ;
-
 			try {
 				String[] polIds = wqr.get20().toString().split(",");
 				BigDecimal cost = BigDecimal.ZERO;
@@ -727,7 +702,6 @@ group by ${groupSqlId},${groupSql}
 							cost = cost.add(expertCalc.getBigDecimal("price"));
 						}
 					}
-
 				}
 				wqr.set20(cost.setScale(2, RoundingMode.HALF_UP));
 				System.out.println("pol cost = "+cost);
@@ -743,13 +717,9 @@ group by ${groupSqlId},${groupSql}
 					}
 				}
 				wqr.set21(cost.setScale(2, RoundingMode.HALF_UP));
-				System.out.println("stac cost = "+cost);
-
-
 				listStac.set(i,wqr);
 			} catch (Exception e) {
 				System.out.println("some svod error "+ e);
-
 			}
 		}
 		request.setAttribute("list_stac", listStac);
