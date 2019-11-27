@@ -32,21 +32,23 @@ public class SurgicalOperationSaveInterceptor implements IFormInterceptor {
 					throw new IllegalStateException("Операция "+medServiceCode+" "+medService.getName()+" не оплачена пациентом!");
 				}
 			} else { //Нашли услугу, проставляем соответствие
-				Object[] o = paidServiceList.get(0);
-				ContractAccountOperationByService caos = manager.find(ContractAccountOperationByService.class, Long.valueOf(o[1].toString()));
-				caos.setMedcase(parentMedCase);
-				caos.setServiceType(operation);
-				if (!String.valueOf(form.getId()).equals("0")) caos.setServiceId(form.getId());
-				else {
-					SurgicalOperation oper = (SurgicalOperation) aEntity;
-					caos.setServiceId(oper.getId());
+				SurgicalOperation oper = (SurgicalOperation) aEntity;
+				List<ContractAccountOperationByService> services = manager.createQuery("from ContractAccountOperationByService where serviceType=:serviceType and serviceId=:serviceId")
+						.setParameter("serviceType",operation).setParameter("serviceId",oper.getId()).getResultList();
+				ContractAccountOperationByService payCaos = manager.find(ContractAccountOperationByService.class, Long.valueOf(paidServiceList.get(0)[1].toString()));
+				if (!services.isEmpty()) {
+					ContractAccountOperationByService realCaos = services.get(0);
+					if (realCaos.getId()!=payCaos.getId()){ //при изменение услуги - удаляем информацию в caos о старой услуге
+						realCaos.setServiceId(null);
+						realCaos.setServiceType(null);
+						manager.persist(realCaos);
+					}
 				}
-				manager.persist(caos);
+				payCaos.setMedcase(parentMedCase);
+				payCaos.setServiceType(operation);
+				payCaos.setServiceId(oper.getId());
+				manager.persist(payCaos);
 			}
 		}
     }
-
-
-
-
 }
