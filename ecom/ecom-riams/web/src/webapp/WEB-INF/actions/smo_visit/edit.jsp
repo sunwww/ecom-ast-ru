@@ -6,10 +6,18 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
-
+    <tiles:put name="style" type="string">
+        <style type="text/css">
+            .centerModalDiv {
+                top: 10%;
+                left: 20%;
+                line-height: 1.7;
+            }
+        </style>
+    </tiles:put>
 
   <tiles:put name="body" type="string">
-      <div id="simpleServiceDiv" title="Простые услуги">
+      <div class="centerModalDiv" id="simpleServiceDiv" title="Простые услуги">
           <div id="simpleServiceDataDiv"></div>
       </div>
     <msh:form action="/entitySaveGoView-smo_visit.do" defaultField="dateStart">
@@ -392,16 +400,17 @@
                  var txt = "";
                  for (var i = 0; i < serviceList.length; i++) {
                      var s = serviceList[i];
-                     txt += "<label><input type='checkbox'" +(s.isdefault=="true" ? "checked" : "") + " id='" + s.serviceid + "' name='chkSimpleService'"
+                     txt += "<label style='"+(s.isdefault=="true" ? "font-weight: bold;" : "")+"'><input onclick='this.parentNode.style.fontWeight= (this.checked? \"bold\": \"\")' type='checkbox'" +(s.isdefault=="true" ? "checked" : "") + " id='" + s.serviceid + "' name='chkSimpleService'"
                          + "/>" + s.servicename + "</label><br>";
                  }
                  dd.html(txt);
-
                  d.dialog({
                      modal: true,
-             //        position: 'top',
+                     position: ['80','40'],
                      width: '50%',
-                     position: { my: "center", at: "center", of: window } ,
+                     top: '10%',
+                     left: '20%',
+                     closeOnEscape: true,
                      buttons: [
                          {
                              text: "Назначить",
@@ -423,6 +432,7 @@
                          }
                      ]
                  });
+                 d.addClass("centerModalDiv");
              } else {
                  alert('Простые услуги по специальности не настроены');
              }
