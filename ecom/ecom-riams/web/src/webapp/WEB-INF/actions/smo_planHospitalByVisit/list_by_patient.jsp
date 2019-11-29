@@ -31,7 +31,7 @@
                     left join vocworkfunction vwf on vwf.id=wf.workfunction_id
                     left join patient wpat on wpat.id=w.person_id
                     where pre.patient_id=${param.patient}
-                    and pre.dtype='WorkCalendarHospitalBed'
+                    and pre.dateFrom is not null
                     order by pre.dateFrom
       "/>
                 <msh:table name="list" action="entityView-smo_planHospitalByVisit.do" idField="1" noDataMessage="Не найдено">

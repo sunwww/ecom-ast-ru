@@ -2138,7 +2138,7 @@ public class HospitalMedCaseServiceJs {
 				" left join worker w on w.id=wf.worker_id" +
 				" left join patient wp on wp.id=w.person_id" +
 				" left join vocidc10 mkb on mkb.id=wchb.idc10_id" +
-				" where wchb.dtype='WorkCalendarHospitalBed' and wchb.datefrom>=CAST('today' AS DATE) and wchb.patient_id=" + patId;
+				" where wchb.dateFrom is not null and wchb.datefrom>=CAST('today' AS DATE) and wchb.patient_id=" + patId;
         JSONArray res = new JSONArray() ;
 		Collection<WebQueryResult> list = service.executeNativeSql(query);
 		for (WebQueryResult w :list) {
@@ -2669,5 +2669,18 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("select id from mislpu where isophthalmic=true") ;
 		return l.isEmpty()? "" : l.iterator().next().get1().toString();
+	}
+
+	/**
+	 * Установить дату предварительной госп на введении инг. анг. #181
+	 * @param aPreId Long Предв. госп.
+	 * @param dateFrom String Дата предв. госп.
+	 */
+	public void setPreHospOphtDate(Long aPreId, String dateFrom, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		service.executeUpdateNativeSql
+				("update WorkCalendarHospitalBed set dateFrom=to_date('"+dateFrom+"','dd.mm.yyyy'), editdate=current_date,edittime=current_time,editusername='"
+						+login+"' where id="+aPreId) ;
 	}
 }

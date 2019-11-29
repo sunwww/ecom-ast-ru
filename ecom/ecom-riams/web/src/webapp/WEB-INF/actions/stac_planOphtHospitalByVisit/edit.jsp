@@ -57,18 +57,10 @@
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-stac_planOphtHospitalByVisit" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-stac_planOphtHospitalByVisit" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
             </msh:sideMenu>
-            <msh:sideMenu title="Дополнительно">
-                <msh:sideLink name="Журнал по офт." action="/stac_planning_OphtHospitalizations.do"/>
-                <msh:sideLink name="Общий журнал" action="/stac_planning_hospitalizations.do"/>
-                <msh:sideLink name="Госпитализировать" action="/javascript:createHosp()"/>
-            </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
     <tiles:put name="javascript" type="string">
     <script type="text/javascript">
-            function createHosp() {
-                window.document.location='entityParentPrepareCreate-stac_sslAdmission.do?id='+$('patient').value+'&preHosp=${param.id}';
-            }
         <msh:ifFormTypeIsCreate formName="stac_planOphtHospitalByVisitForm">
             </script>
             <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>

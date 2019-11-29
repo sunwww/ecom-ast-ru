@@ -57,11 +57,6 @@
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-stac_planOphtHospital" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-stac_planOphtHospital" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
             </msh:sideMenu>
-            <msh:sideMenu title="Дополнительно">
-                <msh:sideLink name="Журнал по офт." action="/stac_planning_OphtHospitalizations.do" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht"/>
-                <msh:sideLink name="Общий журнал" action="/stac_planning_hospitalizations.do" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View"/>
-                <msh:sideLink name="Госпитализировать" action="/javascript:createHosp()"/>
-            </msh:sideMenu>
             <msh:sideMenu title="Перейти" guid="b43f7427-60be-4539-8b79-38a6882a8512">
                 <msh:sideLink key="ALT+2" action="/javascript:goVisit()" name="⇧ К визиту" guid="f07e71b2-bfbe-4137-8bba-b347b8056561" />
             </msh:sideMenu>
@@ -69,9 +64,6 @@
     </tiles:put>
     <tiles:put name="javascript" type="string">
     <script type="text/javascript">
-            function createHosp() {
-                window.document.location='entityParentPrepareCreate-stac_sslAdmission.do?id='+$('patient').value+'&preHosp=${param.id}';
-            }
         function goVisit() {
                 if ($('visit').value!='' && +$('visit').value!=0)
                     window.document.location='entityParentView-smo_visit.do?id='+$('visit').value;

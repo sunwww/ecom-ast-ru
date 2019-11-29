@@ -16,8 +16,9 @@
 ,wct.comment as cmnt
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as creator
 ,to_char(wct.createdate,'dd.mm.yyyy')||' '||to_char(wct.createTime,'HH24:MI') as dt
-,list(case when wct.medcase_id is not null then 'background-color:green' when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f10_styleRow
- ,case when wct.medcase_id is null then wct.id||'#'||pat.id else null end as f11_createHospIds
+,list(case when wct.medcase_id is not null then 'background-color:green' when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f9_styleRow
+ ,case when wct.medcase_id is null then wct.id||'#'||pat.id else null end as f10_createHospIds
+ ,wct.dateFrom as f11_dateh
 from WorkCalendarHospitalBed wct
 left join patient pat on wct.patient_id=pat.id
 left join voceye e on e.id=wct.eye_id
@@ -37,7 +38,7 @@ order by wct.createDate,pat.lastname,pat.firstname,pat.middlename
     "
     />
     <msh:table printToExcelButton="Сохранить в excel" name="stac_planHospitalOpht" action="entityView-stac_planOphtHospital.do"
-               idField="1" styleRow="10" >
+               idField="1" styleRow="9" >
         <msh:tableColumn columnName="#" property="sn"/>
         <msh:tableColumn columnName="ФИО" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
         <msh:tableColumn columnName="Телефон" property="3" guid="781559cd-fd34-40f5-a214-cec404fe19e3" />
@@ -46,7 +47,8 @@ order by wct.createDate,pat.lastname,pat.firstname,pat.middlename
         <msh:tableColumn columnName="Замечания" property="6" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
         <msh:tableColumn columnName="Создал" property="7" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
         <msh:tableColumn columnName="Дата и время создания" property="8" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
-        <msh:tableButton property="10" buttonShortName="ГОСП" buttonFunction="createHosp" hideIfEmpty="true" />
+        <msh:tableColumn columnName="Дата предв. госп" property="11" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
+        <msh:tableButton property="10" buttonShortName="Уст. дату" buttonFunction="setDate" hideIfEmpty="true" />
 
     </msh:table>
     </msh:section>
