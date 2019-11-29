@@ -17,7 +17,7 @@
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as creator
 ,to_char(wct.createdate,'dd.mm.yyyy')||' '||to_char(wct.createTime,'HH24:MI') as dt
 ,list(case when wct.medcase_id is not null then 'background-color:green' when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f9_styleRow
- ,case when wct.medcase_id is null then wct.id||'#'||pat.id else null end as f10_createHospIds
+ ,wct.id as f10_changeDtsFlds
  ,wct.dateFrom as f11_dateh
 from WorkCalendarHospitalBed wct
 left join patient pat on wct.patient_id=pat.id
