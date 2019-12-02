@@ -251,22 +251,8 @@
                     });
                 }
             }
-            function getTomorowDate() {
-                var tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                var dd = tomorrow.getDate();
-                var mm = tomorrow.getMonth() + 1;
-                var yyyy = tomorrow.getFullYear();
-                if (dd < 10) {
-                    dd = '0' + dd;
-                }
-                if (mm < 10) {
-                    mm = '0' + mm;
-                }
-                return dd + '.' + mm + '.' + yyyy;
-			}
             function syncRecordTomorrow () {
-                var date = prompt('Введите дату направления',getTomorowDate());
+                var date = prompt('Введите дату направления',getTomorrowDateAfter());
                 if (date!=null && date!='' && date!='dd.mm.yyyy') window.open('api/foncCheck/syncRecordTomorrow?dateStart='+date);
                 else window.open('api/foncCheck/syncRecordTomorrow');
             }

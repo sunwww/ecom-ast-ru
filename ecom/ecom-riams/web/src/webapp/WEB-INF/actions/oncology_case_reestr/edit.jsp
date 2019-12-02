@@ -1868,8 +1868,12 @@
                document.getElementById('allMedTble').deleteRow(document.getElementById('row'+btn.id.replace("btnDel","")).rowIndex);
             }
             function addRowDblAfter(btn) {
-                var ii=createRowMed(+btn.id.replace("btnAddDbl",""));
+                var oldII=+btn.id.replace("btnAddDbl","");
+                var ii=createRowMed(oldII);
                 $('vocOncologyN020'+ii).value=$('vocOncologyN020'+(+btn.id.replace("btnAddDbl",""))).value;
+                $('dateSt'+ii).value=getTomorrowDateAfter($('dateSt'+oldII).value,'.');  //проставить следующую дату по умолчанию
+                $('btnAddDbl'+ii).removeAttribute('disabled');
+                $('btnAdd'+ii).removeAttribute('disabled');
                 $('vocOncologyN020'+ii+'Name').value=$('vocOncologyN020'+(+btn.id.replace("btnAddDbl",""))+'Name').value;
             }
             function addRowAfter(btn) {
