@@ -13,12 +13,12 @@ import java.sql.Date;
 /** Информация о пациенте (для браслета) */
 @Entity
 public class ColorIdentityPatient extends BaseEntity {
-    /** Доп. информация о пациенте (для браслета) */
-    @Comment("Доп. информация о пациенте (для браслета)")
+    /** Браслет */
+    @Comment("Браслет")
     @OneToOne
     public VocColorIdentityPatient getVocColorIdentity() {return theVocColorIdentity;}
     public void setVocColorIdentity(VocColorIdentityPatient aVocColorIdentity) {theVocColorIdentity = aVocColorIdentity;}
-    /** Доп. информация о пациенте (для браслета) */
+    /** Браслет */
     private VocColorIdentityPatient theVocColorIdentity ;
     
     /** Дата установки */
@@ -48,4 +48,11 @@ public class ColorIdentityPatient extends BaseEntity {
     public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
     /** Пользователь, который создал запись */
     private String theCreateUsername;
+
+    /** Доп. информация о пациенте (для браслета) */
+    @Comment("Доп. информация о пациенте (для браслета)")
+    public String getInfo() {return theInfo;}
+    public void setInfo(String aInfo) {theInfo = aInfo;}
+    /** Доп. информация о пациенте (для браслета) */
+    private String theInfo;
 }

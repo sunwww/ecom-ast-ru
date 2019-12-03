@@ -385,4 +385,33 @@ public abstract class Prescription extends BaseEntity{
 	public Long getSurgicalOperation() {return theSurgicalOperation;}
 	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
 	private Long theSurgicalOperation;
+
+	/** Дата установки патологии*/
+	@Comment("Дата установки патологии")
+	public Date getSetPatologyDate() {return theSetPatologyDate;}
+	public void setSetPatologyDate(Date aSetPatologyDate) {theSetPatologyDate = aSetPatologyDate;}
+	/** Дата установки патологии */
+	private Date theSetPatologyDate;
+
+	/** Время установки патологии */
+	@Comment("Время установки патологии")
+	public Time getSetPatologyTime() {return theSetPatologyTime;}
+	public void setSetPatologyTime(Time aSetPatologyTime) {theSetPatologyTime = aSetPatologyTime;}
+	/** Время установки патологии */
+	private Time theSetPatologyTime;
+
+	/** Пользователь, установивший патологию*/
+	@Comment("Пользователь, установивший патологию")
+	public String getSetPatologyUsername() {return theSetPatologyUsername;}
+	public void setSetPatologyUsername(String aSetPatologyUsername) {theSetPatologyUsername = aSetPatologyUsername;}
+	/** Пользователь, установивший патологию*/
+	private String theSetPatologyUsername;
+
+	/** Проставил патологию специалист */
+	@Comment("Проставил патологию специалист")
+	@OneToOne
+	public WorkFunction getSetPatologySpecial() {return theSetPatologySpecial;}
+	public void setSetPatologySpecial(WorkFunction aSetPatologySpecial) {theSetPatologySpecial = aSetPatologySpecial;}
+	/** Проставил патологию специалист */
+	private WorkFunction theSetPatologySpecial;
 }

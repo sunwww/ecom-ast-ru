@@ -272,7 +272,11 @@ left join voccolor vcr on vcr.id=vcid.color_id
                     var aResult = JSON.parse(res);
                     str = '<table><tr>';
                     for (var i = 0; i < aResult.length; i++) {
-                        str += '<td><div title="' + aResult[i].vsipnameJust + '" style="background: ' + aResult[i].colorCode + ';width: 10px;height: 10px;outline: 1px solid gray;"></div></td>';
+                        var style = 'style="width: 10px;height: 10px;outline: 1px solid gray; border:2px;';
+                        style+=typeof aResult[i].picture !=='undefined' && aResult[i].picture!=''? '">':' background: '+aResult[i].colorCode +';">';
+                        if (typeof aResult[i].picture !=='undefined' && aResult[i].picture!='')
+                            style+='<img src="/skin/images/patology.png" title="Патология" height="10px" width="10px">';
+                        str += '<td><div title="' + aResult[i].vsipnameJust + '" '+style+'</div></td>';
                     }
                     str += "</tr></table>";
                 }

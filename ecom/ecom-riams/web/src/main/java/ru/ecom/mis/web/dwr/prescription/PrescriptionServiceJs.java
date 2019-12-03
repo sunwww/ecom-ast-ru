@@ -44,6 +44,7 @@ public class PrescriptionServiceJs {
 		return aService.executeNativeSql("select wfs.id from workfunctionservice wfs where wfs.medservice_id = "+aMedServiceId
 				+" and wfs.prescripttype_id = "+aPresctiptionType).isEmpty(); //Если не нашли запрещающего правила - то разрешено
 	}
+
 	public String getAllowedLabServiciesByPatient(Long aPatientId, Long aPrescriptionType, HttpServletRequest aRequest) throws NamingException {
 		JSONArray ret = new JSONArray();
 		IContractService contractService = Injection.find(aRequest).getService(IContractService.class);
@@ -129,7 +130,6 @@ public class PrescriptionServiceJs {
 		return null;
 	}
 
-
 	private void createAnnulMessageByPrescription (Long aPrescriptionId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		try {
@@ -166,15 +166,12 @@ public class PrescriptionServiceJs {
 			String username=""+obj[5] ;
 
 			for (int i=0;i<2;i++) { //экстренное и плановое сообщение
-				sql = new StringBuilder() ;
-				sql.append("insert into CustomMessage (isEmergency, messageTitle,messageText,recipient")
-						.append(",dispatchDate,dispatchTime,username,messageUrl)")
-						.append("values ('").append(i).append("','").append("Аннулирование результатов исследование").append("','")
-						.append("Результаты исследования ''").append(obj[2]).append("'' пациента ''").append(obj[1]).append("'' были аннулированы сотрудником ")
-						.append(obj[3]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("','")
-						.append(username)
-						.append("',current_date,current_time,'").append(obj[7]).append("','").append("entityParentView-stac_slo.do?id=").append(obj[0]).append("')") ;
-				service.executeUpdateNativeSql(sql.toString()) ;
+				StringBuilder msgText=new StringBuilder();
+				msgText.append("Результаты исследования ''").append(obj[2]).append("'' пациента ''").append(obj[1]).append("'' были аннулированы сотрудником ")
+						.append(obj[3]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("'");
+				IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
+				bean.sendMessageCurrentDate(msgText.toString(),"Аннулирование результатов исследования",username
+						,obj[7].toString(),"entityParentView-stac_slo.do?id="+obj[0].toString(),i<1);
 			}
 
 		}
@@ -224,7 +221,6 @@ public class PrescriptionServiceJs {
 				:"medcase_id=ANY(select medcase_id from prescription  where id in ("+aPrescriptIds+"))");
 		aService.executeUpdateNativeSql(sql);
 	}
-
 
     /**
      * Создание записи в журнале аннулирования назначения
@@ -314,7 +310,6 @@ public class PrescriptionServiceJs {
 		}
 	 return "Ошибка при определении контекста импедантности!";
     }
-
 
 	public String cancelPrescription (Long aPresctiptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		return annulEmptyPrescription(null,null,aPresctiptionId,aReason,aRequest);
@@ -507,12 +502,6 @@ public class PrescriptionServiceJs {
 		return res.toString() ;
 	}
 
-	//Кажися, не используется.
-	/*public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups,HttpServletRequest aRequest) throws NamingException {
-		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ; 
-		return service.createTempPrescriptList(aName,aComment,aCategories,aSecGroups) ;
-	}*/
-
 	/*удаляем назначение сразу же при создании, удаление из шаблона листа назначений*/
 	public String removePrescriptionFromList (Long aPrescriptList, Long aMedService,Long aWorkCalendarTime, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -627,44 +616,112 @@ public class PrescriptionServiceJs {
 			reasonText = list.isEmpty() ? "" : list.iterator().next().get1().toString() ;
 		}
 		reasonText += StringUtil.isNullOrEmpty(aReason) ? "" : " "+aReason;
-		List<Object[]> list = service.executeNativeSqlGetObj("select pl.id,p.createusername,to_char(p.planstartdate,'dd.mm.yyyy')  as dt,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ms.code||' '||ms.name from prescription p left join medservice ms on ms.id=p.medservice_id left join prescriptionlist pl on pl.id=p.prescriptionlist_id left join medcase mc on mc.id=pl.medcase_id left join patient pat on pat.id=mc.patient_id where p.id in ("+aPrescripts+")") ;
-		if (!list.isEmpty()) {
-			Object[] obj = list.get(0) ;
-			String usernameO=""+obj[1] ;
-			sql = new StringBuilder() ;
-			sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
-				.append(",dispatchDate,dispatchTime,username,messageUrl)") 
-				.append("values ('").append("Брак биоматериала: ").append(reasonText).append("','")
-				.append(obj[2]).append(" пациент ").append(obj[3]).append(" услуга ").append(obj[4]).append("','").append(usernameO)
-				.append("',current_date,current_time,'").append(username).append("','")
-				.append("entityView-pres_prescriptList.do?id=").append(obj[0]).append("')") ;
-			service.executeUpdateNativeSql(sql.toString()) ;
-			sql = new StringBuilder();
-			sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
-				.append(",dispatchDate,dispatchTime,username,messageUrl,isEmergency)")
-				.append("values ('")
-					.append("Брак биоматериала: ").append(reasonText).append("','")
-				.append(obj[2]).append(" пациент ").append(obj[3]).append(" услуга ").append(obj[4]).append("','").append(usernameO)
-				.append("',current_date,current_time,'").append(username).append("','")
-				.append("entityView-pres_prescriptList.do?id=").append(obj[0]).append("'")
-				.append(",'1'")
-				.append(")") ;
-			service.executeUpdateNativeSql(sql.toString()) ;
+		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
+		JSONObject res = getPrescriptionInfo(aPrescripts, service);
+		if (res!=null) {
+			StringBuilder msgTitle=new StringBuilder();
+			msgTitle.append(res.getString("date")).append(" пациент ").append(res.getString("patFio")).append(" услуга ").append(res.getString("medService"));
+			for (int i=0; i<2; i++)
+				bean.sendMessageCurrentDate("Брак биоматериала: "+reasonText,msgTitle.toString(),res.getString("usernameO"),username
+						,"entityView-pres_prescriptList.do?id="+res.get("plId"),i<1);
 		}
 		//Обновление текста дневника в случае отметки о браке после подтверждения врачом КДЛ
-	//	sql = new StringBuilder() ;
-		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
 		String wfCnsl = bean.getRealLabTechUsername(Long.valueOf(aPrescripts.split(",")[0]),"");
 		updateDiaryWhileCancelPrescription(null,aPrescripts,"Брак биоматериала: "+reasonText,wfCnsl,service);
-		/*sql.append("update diary set record='").append("Брак биоматериала: ").append(reasonText).append(". Дата и время брака: '")
-				.append("||to_char(current_date,'dd.mm.yyyy')||' '||to_char(current_timestamp,'HH24:MI:SS')||chr(13)||")
-				.append("'Отбраковал: ").append(wfCnsl).append("'||chr(13)||chr(13)||record")
-				.append(" where medcase_id=ANY(select medcase_id from prescription  where id in (").append(aPrescripts).append("))");
-		service.executeUpdateNativeSql(sql.toString()) ;
-		*/
+	}
+
+	/* Отметка патологии назначений. Заполняет поля о том, кто и когда поставил патологию
+	 * @param aPrescriptId ИД назначения
+	 * @param aRequest
+	 * @return String Сообщение
+	 * @throws NamingException
+	* */
+	public String patologyService(Long aPrescriptId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		Date date = new Date() ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+
+		Long wfId = getWorkFunction(username,service);
+		if (wfId!=null) {
+			sql.append("update Prescription set setPatologyDate=to_date('").append(new SimpleDateFormat("dd.MM.yyyy").format(date)).append("','dd.mm.yyyy'),setPatologyTime=cast('")
+					.append(new SimpleDateFormat("HH:mm").format(date)).append("' as time)")
+					.append(",setPatologyUsername='").append(username).append("', setPatologySpecial_id='").append(wfId).append("' where id=").append(aPrescriptId);
+			service.executeUpdateNativeSql(sql.toString()) ;
+			noteUsersAboutPatology(aPrescriptId,aRequest);
+			return "Отметка о патологии назначения проставлена.";
+		}
+		else return "У пользователя "+username+" нет соответствия с рабочей функцией" ;
+
 
 	}
-	
+
+	/* Патология назначений. Отправляет сообщения: экстренное и обычное
+	 * @param aPrescriptId ИД назначения
+	 * @param aRequest
+	 * @return String Сообщение
+	 * @throws NamingException
+	 * */
+	private void noteUsersAboutPatology(Long aPrescriptId,HttpServletRequest aRequest) throws NamingException {
+		JSONObject res = getPrescriptionInfo(String.valueOf(aPrescriptId), Injection.find(aRequest).getService(IWebQueryService.class));
+		if (res!=null) {
+			StringBuilder msgTitle=new StringBuilder();
+			msgTitle.append(res.getString("date")).append(" пациент ").append(res.getString("patFio")).append(" услуга ").append(res.getString("medService"));
+			IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
+			for (int i = 0; i < 2; i++)
+				bean.sendMessageCurrentDate( "Патология биоматериала", msgTitle.toString(), res.getString("usernameO")
+						, LoginInfo.find(aRequest.getSession(true)).getUsername()
+						, "entityView-pres_servicePrescription.do?id=" + aPrescriptId, i < 1);
+			bean.setPatientIdentityBracelet(res.toString());
+		}
+	}
+
+
+
+	/* Получить информацию о пациенте, услуге и т.п. по назначению
+	 * @param aPrescripts ИД назначения (или назначения через запятую)
+	 * @param service
+	 * @return JSONObject Информация в json
+	 * @throws NamingException
+	 * */
+	private JSONObject getPrescriptionInfo(String aPrescripts,IWebQueryService service) throws NamingException {
+		JSONObject res = new JSONObject();
+		List<Object[]> list = service.executeNativeSqlGetObj("select pat.id as patId,p.createusername,to_char(p.planstartdate,'dd.mm.yyyy')  as dt " +
+				" ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ms.code||' '||ms.name,pl.id as plId, hmc.id as mcId " +
+				" from prescription p " +
+				" left join medservice ms on ms.id=p.medservice_id " +
+				" left join prescriptionlist pl on pl.id=p.prescriptionlist_id " +
+				" left join medcase mc on mc.id=pl.medcase_id " +
+				" left join patient pat on pat.id=mc.patient_id " +
+				" left join medcase hmc on hmc.id=case when mc.dtype='DepartmentMedCase' then mc.parent_id else mc.id end" +
+				" where p.id in("+aPrescripts+")") ;
+		if (!list.isEmpty()) {
+			Object[] obj = list.get(0);
+			res.put("usernameO","" + obj[1])
+					.put("patId",obj[0])
+					.put("date",obj[2])
+					.put("patFio",obj[3])
+					.put("medService",obj[4])
+					.put("plId",obj[5])
+					.put("mcId",obj[6]);
+		}
+		return res;
+	}
+
+	/* Получить рабочую функцию пользователя
+	 * @param username String
+	 * @param service
+	 * @return Long WorkFunction.id
+	 * */
+	private Long getWorkFunction(String username,IWebQueryService service) {
+		Long wfId=null;
+		Collection<WebQueryResult> specP = service.executeNativeSql("select wf.id from secuser su left join workFunction wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
+		if (!specP.isEmpty()) {
+			wfId = ConvertSql.parseLong(specP.iterator().next().get1()) ;
+		}
+		return wfId;
+	}
+
 	public String uncancelService(String aPrescripts, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql ="update Prescription set cancelReason_id=null, cancelReasonText=null, cancelDate=null, "
@@ -745,31 +802,27 @@ public class PrescriptionServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(req,1) ;
 		return list.isEmpty() ? 0L : ConvertSql.parseLong(list.iterator().next().get1());
 	}
+
 	/**
 	 * Проверка назначений на наличие дублей (имеются назначения на такие же 
 	 * исследования в том же СЛО, в котором создается назначение)
 	 * **** upd 12.12.2014 - Поиск осуществляется во всех СЛО, которые относятся к тому же СЛС, что и указаное СЛО.
 	 */
-	
 	public String getDuplicatePrescriptions(String aMedCase, String aData, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder req = new StringBuilder();
 		req.append("select distinct p.medservice_id ");
 		req.append(",ms.code ||' ' || ms.name as labName ");
-		//req.append(",count(p.id) as cnt1 ");
 		req.append("from medcase mc ");
 		req.append("left join medcase mc2 on mc2.parent_id = mc.parent_id ");
 		req.append("left join prescriptionList pl on pl.medcase_id = mc2.id ");
 		req.append("left join prescription p on p.prescriptionList_id = pl.id ");
-	//	req.append("left join patient pat on pat.id = mc.patient_id ");
 		req.append("left join medservice ms on ms.id = p.medservice_id ");
 		req.append("where mc.id ='").append(aMedCase).append("' ");
 		req.append("and p.dtype='ServicePrescription' ");
 		req.append("and p.medservice_id is not null ");
 		req.append("and p.fulfilmentstate_id is null ");
 		req.append("and p.canceldate is null ");
-	//	req.append("group by p.medservice_id, labName ");
-		//req.append("having count(p.id)>1 ");
 		Collection<WebQueryResult> list = service.executeNativeSql(req.toString()) ;
 		StringBuilder res = new StringBuilder();
 		if (!list.isEmpty()) {
@@ -786,20 +839,9 @@ public class PrescriptionServiceJs {
 	}
 	
 	/*
-	 * Возвращаем тип исследование, его код и имя, код и имя кабинета
-	 * в формате: medserviceID:msName:msType:date:cabinetName# 
-	 * На входе берем список исследований в формате ID:date:cabinet#
-	 */
-	/*public String getPresLabTypes(String aPresIDs, HttpServletRequest aRequest) throws NamingException {
-		return getPresLabTypes(aPresIDs, Long.valueOf(0),aRequest);
-	}*/
-	
-	
-	/*
 	 * Проверяем полученные исследования на соответствие типу листа назначения 
 	 * и возвращаем те, которые соответствуют типу ЛН.
 	 */
-	//lastrelease milamesher 20.03.2018 #31 - ф-я с двумя параметрами не используется нигде! Где не нужен 2й параметр, передаётся 0
 	public String getPresLabTypes(String aPresIDs, Long aPrescriptListType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		aPresIDs = aPresIDs.substring(0,aPresIDs.length()-1); // Обрезаем #
@@ -879,6 +921,7 @@ public class PrescriptionServiceJs {
 		return "";
 		
 	}
+
 	public String getDefectByBiomaterial(String aPrescript, String aBiomaterialType, String aPrefixMethod,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
@@ -896,6 +939,7 @@ public class PrescriptionServiceJs {
 		ret.append("</table>") ;
 		return ret.toString() ;
 	}
+
 	public String getLabCabinetByPres(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
@@ -938,6 +982,7 @@ public class PrescriptionServiceJs {
 		ret.append("</table></form>") ;
 		return ret.toString() ;
 	}
+
 	public void checkLabAnalyzed(Long aPrescript,HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
@@ -963,6 +1008,7 @@ public class PrescriptionServiceJs {
 			service.executeUpdateNativeSql(sql.toString()) ;
 		}
 	}
+
 	public String setDefaultDiary(String aPrescriptions, String aServices, HttpServletRequest aRequest) throws NamingException, JspException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder();
@@ -996,7 +1042,6 @@ public class PrescriptionServiceJs {
 				sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
 				sql.append(" , case when p.type in ('3','5')  then p.valueTextDefault when p.type='2' and uv.useByDefault='1' then ''||uv.id else '' end as p19valuetextdefault") ;
 				sql.append(" ,case when uv.useByDefault='1' then uv.name else '' end as p20valueVoc");
-				//sql.append(", null as d18val1v,null as d19val2v,null as d20val3v,null as d21val4v") ;
 				sql.append(" from prescription pres"); //parameterbyform pf
 				sql.append(" left join templateprotocol tp on tp.medservice_id=pres.medservice_id") ;
 				sql.append(" left join parameterbyform pf on pf.template_id = tp.id") ;
@@ -1067,6 +1112,7 @@ public class PrescriptionServiceJs {
 			}
 		return sb.toString();
 	}
+
 	public String intakeService(String aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException, ParseException {
 		return intakeServiceWithBarcode(aListPrescript, aDate, aTime, null, aRequest);
 				
@@ -1090,18 +1136,11 @@ public class PrescriptionServiceJs {
 		if (intakeJustDate.getTime()< yesterday.getTime()) {
 			return "Дата забора не может быть раньше вчерашней даты!";
 		}
-		/*
-		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
-		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;*/
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		Long spec  = null ;
-		Collection<WebQueryResult> specL = service.executeNativeSql("select wf.id from secuser su left join workFunction wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
-		if (!specL.isEmpty()) {
-			spec = ConvertSql.parseLong(specL.iterator().next().get1()) ;
-		}
-		if (spec==null) {
+		Long spec  =  getWorkFunction(username,service);
+		if (spec==null)
 			return "У пользователя "+username+" нет соответствия с рабочей функцией" ;
-		}
+
 		sql.append("update Prescription set intakeDate=to_date('").append(aDate).append("','dd.mm.yyyy'),intakeTime=cast('").append(aTime).append("' as time)")
 			.append(",intakeUsername='").append(username).append("' ")
 			.append(",intakeSpecial_id='").append(spec).append("' ");
@@ -1113,6 +1152,7 @@ public class PrescriptionServiceJs {
 		service2.setPatientDateNumber(aListPrescript,aDate,aTime,username,spec);
 		return "1" ;
 	}
+
 	public String receptionIntakeService(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
@@ -1120,21 +1160,19 @@ public class PrescriptionServiceJs {
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
-		Long spec  = null ;
-		Collection<WebQueryResult> specL = service.executeNativeSql("select wf.id from secuser su left join workFunction wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
-		if (!specL.isEmpty()) {
-			spec = ConvertSql.parseLong(specL.iterator().next().get1()) ;
-		}
+		Long spec  = getWorkFunction(username,service);
 		if (spec==null) throw new IllegalDataException("У пользователя "+username+" нет соответствия с рабочей функцией") ;
 		sql.append("update Prescription set transferSpecial_id='").append(spec).append("',transferDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),transferTime=cast('").append(formatT.format(date)).append("' as time),transferUsername='").append(username).append("' where id in (").append(aListPrescript).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		return "1" ;
 	}
+
 	public String intakeServiceRemove(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("update Prescription set intakeSpecial_id=null,intakeDate=null,intakeTime=null,intakeUsername=null where id in (" + aListPrescript + ")") ;
 		return "1" ;
 	}
+
 	public boolean checkMedCaseEmergency(Long aIdTemplateList, String idType, HttpServletRequest aRequest) throws NamingException {
 		
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
@@ -1173,6 +1211,7 @@ public class PrescriptionServiceJs {
 		return "" ;
 		
 	}
+
 	private String savePrescriptExists(Long aIdTemplateList, Long aIdPrescript, IPrescriptionService service) {
 		String ret;
 		try {
@@ -1184,6 +1223,7 @@ public class PrescriptionServiceJs {
 		
 		return ret ;
 	}
+
 	public String getTemplateByService(Long aSmoId,Long aPrescriptId, Long aService, String aFunctionGo,String aFunctionSave, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder ret = new StringBuilder() ;
@@ -1207,15 +1247,12 @@ public class PrescriptionServiceJs {
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
 			sql.append(" left join parametergroup pg on pg.id=p.group_id") ;
 			sql.append(" left join medservice ms on ms.id=tp.medservice_id") ;
-			//sql.append(" left join medcase mc1 on mc1.medservice_id=ms.id") ;
-			//sql.append(" left join medcase mc2 on mc2.id=mc1.parent_id") ;
 			sql.append(" where tp.medservice_id='").append(aService).append("'") ;
 			sql.append(" group by tp.id,tp.title,ms.id,ms.name") ;
 			Collection<WebQueryResult> lwqr = service.executeNativeSql(sql.toString()) ;
 			
 			
 			String oldi = "" ;
-		//	StringBuilder listCab = new StringBuilder() ;
 			if (lwqr.isEmpty()) {
 				ret.append("0#") ;
 				ret.append("<form name='frmTemplate' id='frmTemplate'>") ;
@@ -1231,8 +1268,6 @@ public class PrescriptionServiceJs {
 					String newi = String.valueOf(wqr.get1()) ;
 					if (!newi.equals(oldi)) {
 						oldi=newi ;
-	//					if (listCab.length()>0)listCab.append(",") ;
-	//					listCab.append(newi) ;
 						ret.append("<tr>") ;
 						ret.append("<th colspan='2'>").append(wqr.get2()).append("</th>") ;
 						ret.append("</tr>") ;
@@ -1257,6 +1292,7 @@ public class PrescriptionServiceJs {
 		
 		return ret.toString() ;
 	}
+
 	//public String 
 	public String saveParameterByProtocol(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
@@ -1272,7 +1308,6 @@ public class PrescriptionServiceJs {
 	 * @return
 	 * @throws NamingException
 	 */
-
 	public void checkLabControl(Long aSmoId,Long aProtocol, Long aPrescriptId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
@@ -1280,11 +1315,7 @@ public class PrescriptionServiceJs {
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		Long spec  = null ;
-		Collection<WebQueryResult> specL = service.executeNativeSql("select wf.id from secuser su left join workFunction wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
-		if (!specL.isEmpty()) {
-			spec = ConvertSql.parseLong(specL.iterator().next().get1()) ;
-		}
+		Long spec  = getWorkFunction(username,service);
 		if (spec==null) throw new IllegalDataException("У пользователя "+username+" нет соответствия с рабочей функцией") ;
 		
 		sql.append("update MedCase set workFunctionExecute_id='").append(spec).append("',dateStart=to_date('").append(formatD.format(date))
@@ -1304,20 +1335,10 @@ public class PrescriptionServiceJs {
 				" where serviceType='PRESCRIPTION' and serviceId in (select id from Prescription where medCase_id = "+aSmoId+")");
 
 		createEmergencyReferenceMsg(aProtocol,aPrescriptId,aRequest);
-
-		//Тут делаем вызов функции по передаче лаб. исследования в ЛК
-/* отключаем передачу данных в личный кабинет
-		try{
-			ITemplateProtocolService service1 = Injection.find(aRequest).getService(ITemplateProtocolService.class) ;
-			service1.sendProtocolToExternalResource(aProtocol,aSmoId,null,null);
-		} catch (Exception e) {
-			LOG.error("err = ",e);
-		}
-*/
 	}
 
 	/**
-	 * Отправить сообщение лечащему враче о выходе за граница реф. инт.
+	 * Отправить сообщение лечащему враче о выходе за границы реф. инт.
 	 *
 	 * @param aDiaryId Diary.id
 	 * @param aPrescriptId Prescription.id
@@ -1327,6 +1348,7 @@ public class PrescriptionServiceJs {
 		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
 		bean.sendEmergencyReferenceMsg(aDiaryId,aPrescriptId);
 	}
+
 	/*Находим правильный референтный интервал*/
 	private ParameterReferenceValue getReferenceByParameternadPatient(Integer aAge, Integer aSex,  Long aParameterId, HttpServletRequest aRequest) {
 		String sql = "select pat.sex_id, cast(date_part('year',age(current_date, pat.birthday)) as int)" +
@@ -1424,11 +1446,7 @@ public class PrescriptionServiceJs {
 			sb.append("{");
 			sb.append("\"workFunction\":\"").append(wfId).append("\",");
 			sb.append("\"workFunctionName\":\"").append(wfName).append("\",");
-	//		if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
-				sb.append("\"isdoctoredit\":\"1\",") ;
-	//		} else {
-	//			sb.append("\"isdoctoredit\":\"0\",") ;
-	//		}
+            sb.append("\"isdoctoredit\":\"1\",") ;
 			sb.append("\"params\":[") ;
 			boolean firstPassed = false ;
 			boolean firstError = false ;
@@ -1476,12 +1494,14 @@ public class PrescriptionServiceJs {
 			return sb.toString();
 		
 	}
+
 	private String str(String aValue) {
     	if (aValue.indexOf('\"')!=-1) {
     		aValue = aValue.replaceAll("\"", "\\\\\"") ;
     	}
     	return aValue ;
     }
+
 	private String savePrescriptNew(Long aTemplateList, Long aMedCase, IPrescriptionService service) {
 		String ret ;
 		try {
@@ -1517,6 +1537,7 @@ public class PrescriptionServiceJs {
 		}
 		return sb.toString();
 	    }
+
 	private String unnul(Object o) {
 		return  o == null ? "" : o.toString();
 	}

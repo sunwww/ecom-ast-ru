@@ -35,4 +35,11 @@ public class VocColorIdentityPatient extends VocBaseEntity {
     public void setLpu(MisLpu aLpu) { theLpu = aLpu ; }
     /** ЛПУ */
     private MisLpu theLpu;
+
+    /** Патология в лаборатории? */
+    @Comment("Патология в лаборатории?")
+    public Boolean getIsForPatology() {return theIsForPatology;}
+    public void setIsForPatology(Boolean aIsForPatology) {theIsForPatology = aIsForPatology;}
+    /** Патология в лаборатории?  */
+    private Boolean theIsForPatology ;
 }
