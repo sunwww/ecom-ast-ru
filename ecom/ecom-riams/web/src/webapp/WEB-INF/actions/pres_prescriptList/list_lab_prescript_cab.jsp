@@ -287,8 +287,9 @@
 	      <msh:tableColumn columnName ="Назначил" property="7"/>
 	      <msh:tableColumn columnName ="Выполнил" property="22"/>
 	      <msh:tableButton property="20" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showLabDoctorDirMedService" buttonName="Добавить анализ" buttonShortName="Доб.А"/>
-	      
-	    </msh:table>
+		  <msh:tableButton property="21" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="makePatology" buttonName="Патология" buttonShortName="Патология" />
+
+		</msh:table>
 	    <script type="text/javascript">
 	    
 	    </script>
@@ -331,6 +332,16 @@
     	  serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
       	  departmentAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
       	  prescriptTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
+
+      	  function makePatology(prId) {
+      	      if (confirm("Установить патологию этому назначению?")) {
+                  PrescriptionService.patologyService(prId, {
+                      callback: function (res) {
+                          showToastMessage(res, null, true, false, 3000);
+                      }
+                  });
+              }
+		  }
 
   	</script>
   </tiles:put>

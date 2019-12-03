@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.service.prescription;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -63,8 +64,10 @@ public interface IPrescriptionService {
 	 */
 	String getDescription(Long aIdTemplateList) ;
 
-//	boolean canShowPrescriptionFulfilments(long aPrescriptionId) ;
 	String getRealLabTechUsername(Long aPrescriptId,String aUsername);
 	String getWorkfuntctionInfoByLabTechUsername(String aUsername);
 	void sendEmergencyReferenceMsg(Long aDiaryId,Long aPrescriptId);
+	void sendMessageCurrentDate(String messageText, String messageTitle, String recipient
+			,String username,String messageUrl, Boolean isEmergency);
+	void setPatientIdentityBracelet(String infoStr);
 }

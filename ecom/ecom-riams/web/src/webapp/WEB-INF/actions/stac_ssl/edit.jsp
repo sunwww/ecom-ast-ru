@@ -370,7 +370,11 @@
                             var aResult = JSON.parse(res);
                             var str='<table style="margin-left:45%"><tr>';
                             for (var i=0; i<aResult.length; i++) {
-                                str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
+                                var style = 'width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;';
+                                style+=aResult[i].picture!=''? '">':' background: '+aResult[i].colorCode +';">';
+                                if (aResult[i].picture!='') style+='<img src="/skin/images/patology.png" title="Патология" height="30px" width="30px">';
+                                var msg = aResult[i].info!=''? aResult[i].info : aResult[i].vsipnameJust;
+                                str+='<td><div onclick="showToastMessage(\''+msg+'\',null,true,false);" title="'+aResult[i].vsipnameJust+'" style="'+style+'</div></td>';
                             }
                             str+="</tr></table>";
                             document.getElementById('mainFormLegend').parentNode.innerHTML=document.getElementById('mainFormLegend').parentNode.innerHTML.replace('<h2 id="mainFormLegend">Госпитализация</h2>',"<h2 id=\"mainFormLegend\">Госпитализация</h2>"+str);

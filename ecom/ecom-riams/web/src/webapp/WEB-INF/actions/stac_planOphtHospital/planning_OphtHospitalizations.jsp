@@ -251,7 +251,7 @@
 
         %>
         <msh:section title="Список направлений на введение ингибиторов ангиогенеза">
-            <ecom:webQuery name="stac_planHospital"
+            <ecom:webQuery name="stac_planOphtHospital"
                            nativeSql=" select wct.id as id,pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as fio
 ,wct.phone as phone
 ,to_char(wct.dateokt,'dd.mm.yyyy') as dateokt
@@ -259,8 +259,9 @@
 ,wct.comment as cmnt
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as creator
 ,to_char(wct.createdate,'dd.mm.yyyy')||' '||to_char(wct.createTime,'HH24:MI') as dt
-,list(case when wct.medcase_id is not null then 'background-color:green' when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f10_styleRow
- ,case when wct.medcase_id is null then wct.id||'#'||pat.id else null end as f11_createHospIds
+,list(case when wct.medcase_id is not null then 'background-color:green' when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f9_styleRow
+ ,wct.id as f10_changeDtsFlds
+ ,wct.dateFrom as f11_dateh
 from WorkCalendarHospitalBed wct
 left join patient pat on wct.patient_id=pat.id
 left join voceye e on e.id=wct.eye_id
@@ -280,8 +281,8 @@ group by wct.id,wct.createDate,pat.id
 order by wct.createDate,pat.lastname,pat.firstname,pat.middlename
     "
             />
-            <msh:table printToExcelButton="Сохранить в excel" name="stac_planHospital" action="entityParentView-stac_planHospital.do"
-                       idField="1" styleRow="10" >
+            <msh:table printToExcelButton="Сохранить в excel" name="stac_planOphtHospital" action="entityParentView-stac_planHospital.do"
+                       idField="1" styleRow="9" >
                 <msh:tableColumn columnName="#" property="sn"/>
                 <msh:tableColumn columnName="ФИО" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
                 <msh:tableColumn columnName="Телефон" property="3" guid="781559cd-fd34-40f5-a214-cec404fe19e3" />
@@ -290,7 +291,8 @@ order by wct.createDate,pat.lastname,pat.firstname,pat.middlename
                 <msh:tableColumn columnName="Замечания" property="6" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
                 <msh:tableColumn columnName="Создал" property="7" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
                 <msh:tableColumn columnName="Дата и время создания" property="8" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableButton property="10" buttonShortName="ГОСП" buttonFunction="createHosp" hideIfEmpty="true" />
+                <msh:tableColumn columnName="Дата предв. госп" property="11" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
+                <msh:tableButton property="10" buttonShortName="Уст. дату" buttonFunction="setDate" hideIfEmpty="true" />
 
             </msh:table>
         </msh:section>
@@ -343,10 +345,26 @@ order by wct.createDate,pat.lastname,pat.firstname,pat.middlename
                     jQuery(":radio[name="+aField+"][value='"+aDefaultValue+"']").prop('checked',true);
                 }
             }
-            function createHosp(id) {
-                id = id.split("#");
-                window.document.location='entityParentPrepareCreate-stac_sslAdmission.do?id='+id[1]+'&preHosp='+id[0];
+            function setDate(id) {
+                var from = prompt('Введите дату dd.mm.yyyy', getCurrentDate());
+                if (from != null && checkDate(from)) {
+                    from = from.split(".");
+                    var hDate = new Date(from[2], from[1] - 1, from[0]);
+                    if (hDate < new Date().setHours(0, 0, 0, 0))
+                        showToastMessage('Предварительная дата госпитализации не может быть меньше текущей!', null, true, true, 3000);
+                    else {
+                        HospitalMedCaseService.setPreHospOphtDate(id, from[0] + '.' + from[1] + '.' + from[2], {
+                            callback: function () {
+                                showToastMessage('Установлено.', null, true, false, 2000);
+                                document.forms[0].submit();
+                            }
+                        });
+                    }
+                }
+                else
+                    showToastMessage(from+' - некорректная дата! Формат должен быть dd.mm.yyyy', null, true, true, 3000);
             }
+
             function find() {
 
             }

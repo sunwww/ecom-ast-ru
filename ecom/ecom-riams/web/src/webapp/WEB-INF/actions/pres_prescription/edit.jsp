@@ -14,6 +14,10 @@
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden guid="hiddenParent" property="id" />
+      <msh:hidden guid="hiddenSetPatologySpecial" property="setPatologySpecial" />
+      <msh:hidden guid="hiddenSetPatologyUsername" property="setPatologyUsername" />
+      <msh:hidden guid="hiddenSetPatologyDate" property="setPatologyDate" />
+      <msh:hidden guid="hiddenSetPatologyTime" property="SetPatologyTime" />
       <msh:panel guid="panel">
         <msh:row guid="bh5fb-b971-441e-9a90-51941">
           <msh:label property="descriptionInfo" label="Назначение" guid="ae3hf-1794-4d32-8918-ad928dae7eb5" viewOnlyField="true" horizontalFill="true" size="50" fieldColSpan="4" />

@@ -309,6 +309,27 @@ function getCurrentDate() {
 	var dt = new Date() ;
 	return format2day(dt.getDate())+"."+format2day(dt.getMonth()+1)+"."+dt.getFullYear() ;
 }
+//toDate - в дату из строки, dd mm yyyy разделённы символом sym
+//например, dd.mm.yyyy sym - это .
+function toDate(dateStr,sym) {
+    var parts = dateStr.split(sym)
+    return new Date(parts[2], parts[1] - 1, parts[0])
+}
+//dd - дата, следующую за которой надо получить
+function getTomorrowDateAfter(dateStr,sym) {
+    var tomorrow = typeof dateStr=='undefined'? new Date() : toDate(dateStr,sym);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    var dd = tomorrow.getDate();
+    var mm = tomorrow.getMonth() + 1;
+    var yyyy = tomorrow.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd;
+    }
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+    return dd + '.' + mm + '.' + yyyy;
+}
 function format2day(aCnt) {
 	if (aCnt>9) {
 		return aCnt ;

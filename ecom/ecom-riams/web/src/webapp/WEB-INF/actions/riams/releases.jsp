@@ -17,7 +17,6 @@
 				<h2>Что появилось нового в ПО "МедОС"?</h2>
 				<ul>
 					<% if (1==2) { //Добавляем по мер необходимости %>
-					<li><msh:link action="ecom_release-201905.do">декабрь 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201905.do">ноябрь 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201905.do">октябрь 2019 года </msh:link></li>
 					<% } %>
@@ -29,6 +28,7 @@
 					<li><msh:link action="ecom_release-201909.do">сентябрь 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201910.do">октябрь 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201911.do">ноябрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201912.do">декабрь 2019 года </msh:link></li>
 
 
 					<% if (1==2) { %>

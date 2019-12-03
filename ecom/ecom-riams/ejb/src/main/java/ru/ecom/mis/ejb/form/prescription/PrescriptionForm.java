@@ -483,5 +483,37 @@ public class PrescriptionForm extends IdEntityForm {
 	public Long getIntakeSpecial() {return theIntakeSpecial;}
 	public void setIntakeSpecial(Long aIntakeSpecial) {theIntakeSpecial = aIntakeSpecial;}
 	private Long theIntakeSpecial;
+
+	/** Дата установки патологии */
+	@Comment("Дата установки патологии")
+	@Persist @DateString @DoDateString
+	public String getSetPatologyDate() {return theSetPatologyDate;}
+	public void setSetPatologyDate(String aSetPatologyDate) {theSetPatologyDate = aSetPatologyDate;}
+	/** Дата установки патологии */
+	private String theSetPatologyDate;
+
+	/** Время установки патологии */
+	@Comment("Время установки патологии")
+	@Persist @TimeString @DoTimeString
+	public String getSetPatologyTime() {return theSetPatologyTime;}
+	public void setSetPatologyTime(String aSetPatologyTime) {theSetPatologyTime = aSetPatologyTime;}
+	/** Время установки патологии */
+	private String theSetPatologyTime;
+
+	/** Пользователь, установивший патологию*/
+	@Comment("Пользователь, установивший патологию")
+	@Persist
+	public String getSetPatologyUsername() {return theSetPatologyUsername;}
+	public void setSetPatologyUsername(String aSetPatologyUsername) {theSetPatologyUsername = aSetPatologyUsername;}
+	/** Пользователь, установивший патологию */
+	private String theSetPatologyUsername;
+
+	/** Проставил патологию специалист */
+	@Comment("Проставил патологию специалист")
+	@Persist
+	public Long getSetPatologySpecial() {return theSetPatologySpecial;}
+	public void setSetPatologySpecial(Long aSetPatologySpecial) {theSetPatologySpecial = aSetPatologySpecial;}
+	/** Проставил патологию специалист */
+	private Long theSetPatologySpecial;
 }
 

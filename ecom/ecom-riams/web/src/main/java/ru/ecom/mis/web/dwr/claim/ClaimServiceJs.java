@@ -54,25 +54,30 @@ public class ClaimServiceJs {
 		} else {
 			aTime = "current_time";
 		}
-		String sql = "update claim set "+aStatus+"Date = "+aDate;
-			sql+=", "+aStatus+"Time =" +aTime;
-			
-			if (aComment!=null&&!aComment.equals("")) {
-				sql+=", executorComment='"+aComment +"'";
-				
-			}
-			if (aUsername!=null&&!aUsername.equals("")) {
-				sql+=", "+aStatus+"Username='"+aUsername+"'";
-						
-			} else if (aStatus.equalsIgnoreCase("FINISH")) {
-				sql +=", finishUsername = startWorkUsername, canceldate=null, cancelusername=null";
-			}
-			if (!aStatus.equalsIgnoreCase("FREEZE")) {
-				sql +=", freezeDate = null, freezeusername = null";
-			}
-			sql+=" where id="+aId;
+		StringBuilder sql = new StringBuilder();
+		sql.append("update claim set ").append(aStatus)
+				.append("Date = ").append(aDate)
+				.append(", ").append(aStatus).append("Time =").append(aTime);
 
-			return aStatus+" : "+ service.executeUpdateNativeSql(sql);
+		if (aComment!=null&&!aComment.equals(""))
+			sql.append(", executorComment='").append(aComment).append("'");
+
+		if (aUsername!=null&&!aUsername.equals(""))
+			sql.append(", ").append(aStatus).append("Username='").append(aUsername).append("'");
+		else if (aStatus.equalsIgnoreCase("FINISH"))
+			sql.append(", finishUsername = startWorkUsername, canceldate=null, cancelusername=null");
+
+		if (!aStatus.equalsIgnoreCase("FREEZE")) {
+			sql.append(", freezeDate = null, freezeusername = null");
+		}
+		if (aStatus.equalsIgnoreCase("FINISH")) {
+			sql.append(",startworkusername= case when startworkusername is null then '").append(aUsername).append("' else startworkusername end")
+					.append(",startworkdate= case when startworkdate is null then ").append(aDate).append(" else startworkdate end")
+					.append(",startworktime= case when startworktime is null then ").append(aTime).append(" else startworktime end");
+		}
+		sql.append(" where id="+aId);
+
+		return aStatus+" : "+ service.executeUpdateNativeSql(sql.toString());
 		
 	}
 	@Deprecated //отключили СМС-ки

@@ -77,16 +77,18 @@
                     if (res!=null && res!='[]') {
                         var aResult = JSON.parse(res);
                         for (var i=0; i<aResult.length; i++) {
-                            var tr = document.createElement('tr');
-                            var td = document.createElement('td');
-                            var td2 = document.createElement('td');
-                            td.innerHTML=aResult[i].vsipName;
-                            td2.innerHTML = "<input type=\"button\" value='Снять' id="+aResult[i].vcipId+" onclick='javascript:deleteIdentityPatient${name}(\""+aResult[i].vcipId+"\")'/>";
-                            td.setAttribute("align","center");
-                            td2.setAttribute("align","center");
-                            tr.appendChild(td);
-                            tr.appendChild(td2);
-                            table.appendChild(tr);
+                            if (aResult[i].picture=='') { //только цветные браслеты, не патология
+                                var tr = document.createElement('tr');
+                                var td = document.createElement('td');
+                                var td2 = document.createElement('td');
+                                td.innerHTML=aResult[i].vsipName;
+                                td2.innerHTML = "<input type=\"button\" value='Снять' id="+aResult[i].vcipId+" onclick='javascript:deleteIdentityPatient${name}(\""+aResult[i].vcipId+"\")'/>";
+                                td.setAttribute("align","center");
+                                td2.setAttribute("align","center");
+                                tr.appendChild(td);
+                                tr.appendChild(td2);
+                                table.appendChild(tr);
+                            }
                         }
                     }
                     the${name}Dialog.show();

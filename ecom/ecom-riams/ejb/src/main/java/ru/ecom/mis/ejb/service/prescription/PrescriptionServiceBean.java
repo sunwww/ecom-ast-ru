@@ -20,7 +20,9 @@ import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.*;
+import ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.prescription.*;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
@@ -139,13 +141,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	     		return new File[0];
 	     	}
 	     }
-	    
-		//Кажется, нигде не используем
-	  /*  public static boolean checkIsExist(String filePath, boolean resultExist) {
-	        File f = new File(filePath);
-	        return  f.exists() && !f.isDirectory();
-	    }
-	    */
+
 	    private static void moveFile(String pdfDirectory, String archDirectory, String fileName) {
 	        try {
 	            final File myFile = new File(pdfDirectory + fileName );
@@ -274,7 +270,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				sb.append(",\"template\":\"").append(templateId).append("\"") ;
 				sb.append(",\"protocol\":\"").append("\"") ;
 				sb.append("}") ;
-			//  log.info("==== JSSON= "+sb.toString());
 			    saveLabAnalyzed(0L,pid,0L,sb.toString(),username, templateId) ;
 				} catch(Exception e){
 					LOG.error(e.getMessage(),e);
@@ -282,7 +277,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			}
 			}
 
-	//	log.debug("Finish setDefaultDiary");
 		return sb.toString();
 		
 		} else {
@@ -443,14 +437,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			Prescription pres = theManager.find(Prescription.class,aPrescriptId) ;
 			JSONArray params = obj.getJSONArray("params");
 			StringBuilder sb = new StringBuilder() ;
-			//sb.append(ms).append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
 			sb.append("Забор биоматериала произведен: ").append(pres.getIntakeDate()!=null? DateFormat.formatToDate(pres.getIntakeDate()) : "");
 			sb.append(" ").append(pres.getIntakeTime()!=null? DateFormat.formatToTime(pres.getIntakeTime()) : "").append("\n") ;
-			//sb.append("Дата передачи в лабораторию: ").append(DateFormat.formatToDate(pres.getTransferDate()));
-			//sb.append(" ").append(DateFormat.formatToTime(pres.getTransferTime())).append("\n") ;
             NumberFormat numberFormat =new DecimalFormat("#.######");
 			for (int i = 0; i < params.length(); i++) {
-				//boolean isSave = true ;
 				JSONObject param = (JSONObject) params.get(i);
 				FormInputProtocol fip = new FormInputProtocol() ;
 				fip.setDocProtocol(d) ;
@@ -514,12 +504,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				}
 				theManager.persist(fip) ;
 			}
-			//ФИО лабораторного техника
-	/*		String fio = getRealLabTechUsername(aPrescriptId,aUsername);
-			if (!fio.equals("")) {
-				sb.append("\n");
-				sb.append(fio);
-			}*/
 			d.setRecord(sb.toString()) ;
 			theManager.persist(d) ;
 			if (!wf.equals("0")) {
@@ -529,8 +513,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				theManager.persist(m) ;
 			}
 			theManager.persist(m) ;
-			/*if (!infoToSend.toString().isEmpty())
-				sendMesgOutOfReferenceInterval(infoToSend.toString(),aPrescriptId);*/
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
@@ -558,7 +540,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	private void sendMesgOutOfReferenceInterval(String msg, Long aPrescriptId) {
 		JSONObject obj = getOwnerfunctionUsernameAndExtraInfo(aPrescriptId);
 		if (obj.has("username")) {
-			CustomMessage mes = new CustomMessage() ;
+			/*CustomMessage mes = new CustomMessage() ;
 			mes.setMessageTitle("Выход за границы референсного интервала в лаб. анализе") ;
 			mes.setMessageText("Результат анализа пациента: " + obj.getString("patient") + ":<br>" + msg) ;
 			mes.setUsername("system_message") ;
@@ -568,7 +550,91 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			mes.setRecipient(obj.getString("username")) ;
 			mes.setMessageUrl("entityParentView-stac_slo.do?id=" + obj.get("dmcId"));
 			mes.setIsEmergency(true) ;
-			theManager.persist(mes) ;
+			theManager.persist(mes) ;*/
+			sendMessageCurrentDate("Результат анализа пациента: " + obj.getString("patient") + ":<br>" + msg
+					,"Выход за границы референсного интервала в лаб. анализе",obj.getString("username"),"system_message"
+					,"entityParentView-stac_slo.do?id=" + obj.get("dmcId"),true);
+		}
+	}
+
+	/**
+	 * Отправить сообщение согласно параметрам
+	 * @param messageText String
+	 * @param messageTitle String
+	 * @param recipient String
+	 * @param username String
+	 * @param messageUrl String
+	 * @param isEmergency Boolean
+	 */
+	public void sendMessageCurrentDate(String messageText, String messageTitle, String recipient
+			,String username,String messageUrl, Boolean isEmergency) {
+		CustomMessage mes = new CustomMessage() ;
+		mes.setMessageTitle(messageTitle) ;
+		mes.setMessageText(messageText) ;
+		mes.setUsername(username) ;
+		long date = new java.util.Date().getTime() ;
+		mes.setDispatchDate(new java.sql.Date(date)) ;
+		mes.setDispatchTime(new Time(date)) ;
+		mes.setRecipient(recipient) ;
+		mes.setMessageUrl(messageUrl);
+		mes.setIsEmergency(isEmergency) ;
+		theManager.persist(mes) ;
+	}
+
+	/* Патология назначений. Создание браслета пациента
+	 * @param info JSONObject информация для браслета
+	 * */
+	public void setPatientIdentityBracelet(String infoStr) {
+		//добавить текст
+		JSONObject info = new JSONObject(infoStr);
+		Long cipId = getColorIdentityPatientExist(info.getLong("mcId"));
+		if (cipId==0) {
+			VocColorIdentityPatient vocColorIdentity = getVocColorIdentityPatientPatology();
+			HospitalMedCase hmc = theManager.find(HospitalMedCase.class, Long.valueOf(info.get("mcId").toString()));
+			if (vocColorIdentity != null && hmc != null) {
+				ColorIdentityPatient colorIdentity = new ColorIdentityPatient();
+				colorIdentity.setStartDate(new java.sql.Date(new java.util.Date().getTime()));
+				colorIdentity.setCreateUsername(info.getString("usernameO"));
+				colorIdentity.setVocColorIdentity(vocColorIdentity);
+				colorIdentity.setInfo("Патология анализа: " + info.getString("medService") + " " + info.getString("date"));
+				theManager.persist(colorIdentity);
+				ArrayList colIds = new java.util.ArrayList();
+				colIds.addAll(hmc.getColorsIdentity());
+				colIds.add(colorIdentity);
+				hmc.setColorsIdentity(colIds);
+			}
+		}
+		else {
+			ColorIdentityPatient cip = theManager.find(ColorIdentityPatient.class, cipId) ;
+			if (cip!=null)
+				cip.setInfo(cip.getInfo()+"<br>" + info.getString("medService") + " " + info.getString("date"));
+		}
+	}
+
+
+	/* Патология назначений. Получить уже существующий браслет в СЛС
+	 * @param medcaseId Long
+	 * @return id Long Браслет
+	 * */
+	private Long getColorIdentityPatientExist(Long medcaseId) {
+		List<Object> mcList = theManager.createNativeQuery("select cip.id" +
+				" from ColorIdentityPatient cip" +
+				" left join medcase_coloridentitypatient mcip on mcip.colorsidentity_id=cip.id" +
+				" left join vocColorIdentityPatient vcip on vcip.id=cip.voccoloridentity_id" +
+				" where vcip.isforpatology=true and mcip.medcase_id=:medcaseId")
+						.setParameter("medcaseId",medcaseId).getResultList();
+		return mcList.isEmpty()? 0 : Long.valueOf(mcList.get(0).toString());
+	}
+
+	/* Патология назначений. Получить браслет
+	* @return VocColorIdentityPatient
+	* */
+	private VocColorIdentityPatient getVocColorIdentityPatientPatology () {
+		try {
+			return (VocColorIdentityPatient) theManager.createQuery("from VocColorIdentityPatient where isforpatology=true").getSingleResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -712,9 +778,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		theManager.persist(vis) ;
 		theManager.persist(smc) ;
 		theManager.persist(pres) ;
-		//theManager.createNativeQuery("update prescription set medcase_id="+vis.getId()+" where id="+aPrescriptId).executeUpdate() ;
 		return  vis.getId();
 	}
+
 	public Long checkLabAnalyzed(Long aPrescriptId,String aUsername) {
 		List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login=:login").setParameter("login",aUsername).getResultList() ;
 		if ( wf.isEmpty()) {
@@ -738,26 +804,18 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		SimpleDateFormat sdfOut =new SimpleDateFormat("yyyy-MM-dd") ;
 		aDate = sdfOut.format(sdfIn.parse(aDate));
 		String[] prescriptionIds = aPrescriptions.split(",");
-		String aKey;// = "";
-		String matId ;// = null;
+		String aKey;
+		String matId ;
 		HashMap<String, String> aLabMap =  new HashMap<>() ;
 		for (String prescriptionId: prescriptionIds) {
 			Long presId = Long.parseLong(prescriptionId.trim());
 			ServicePrescription p = theManager.find(ServicePrescription.class, presId);
-//			if (p!=null &&p.getMedService().getServiceType().getCode().equals("LABSURVEY")&&aDate!=null&&!aDate.equals("")) {
 			if (p != null && !aDate.equals("")) {
 				long aPatientId =p.getPrescriptionList().getMedCase().getPatient().getId();
 				aKey = ""+aPatientId+"#"+aDate;
 				matId = getPatientDateNumber(aLabMap, aKey, aPatientId, aDate, theManager);
 				aLabMap.put(aKey, matId);
-			//	p.setIntakeDate(DateFormat.parseSqlDate(aDate));
-			//	p.setIntakeTime(DateFormat.parseSqlTime(aTime));
 				p.setMaterialId(matId);
-			//	if (aBarcode!=null&&!aBarcode.equals("")){
-			//		p.setBarcodeNumber(aBarcode);
-			//	}
-			//	p.setIntakeUsername(aUsername);
-			//	p.setIntakeSpecial(theManager.find(WorkFunction.class, aSpecId));
 				theManager.persist(p);
 			} 		
 		}
@@ -773,7 +831,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 * @param aManager
 	 * @return Номер дня пациента для исследования
 	 */
-	
 	public static String getPatientDateNumber(Map aLabMap, String aKey, long aPatientId, String aDate, EntityManager aManager) {
 		String matId = null;
 		Map<String, String> labMap = aLabMap ;
@@ -806,7 +863,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 * @param aIdTemplateList - ИД листа назначения
 	 * @return описание листа назначений
 	 */
-	
 	public String getDescription(Long aIdTemplateList) {
 		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
 		if (template==null) return "";
@@ -945,11 +1001,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				list.append(presNew.getAmountUnit().getId()).append(":");
 				list.append(presNew.getAmountUnit().getName()).append(":");
 			} else list.append(":::");
-			/*if (presNew.getDuration()!=null) {
-				list.append(presNew.getDuration()).append(":");
-				list.append(presNew.getDurationUnit().getId()).append(":");
-				list.append(presNew.getDurationUnit().getName()).append("#");
-			} else list.append("::#");*/
 			
 			return list.toString() ;
 			}
@@ -972,7 +1023,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			try {
 				ServicePrescription presNew = (ServicePrescription) aPresc;
 				if (presNew.getMedService().getFinishDate()!=null) {
-				//	log.error("Услуга "+presNew.getMedService().getName()+" запрещена к назначению (закрыта)");
 					return "";
 				}
 				list.setLength(0);
@@ -1082,29 +1132,28 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		}
 		return desc.toString() ;
 	}
+
 	private Prescription newPrescriptionOnTemplate(Prescription aPrescOld, WorkFunction aSpecialist) {
 		if (aPrescOld instanceof DrugPrescription) {
 			DrugPrescription presNew = new DrugPrescription();
-			DrugPrescription presOld = (DrugPrescription)aPrescOld ;
+			DrugPrescription presOld = (DrugPrescription) aPrescOld;
 			presNew.setAmount(presOld.getAmount());
 			presNew.setAmountUnit(presOld.getAmountUnit());
 			presNew.setComments(presOld.getComments());
 			presNew.setDrug(presOld.getDrug());
-			//presNew.setDuration(presOld.getDuration());
-			//presNew.setDurationUnit(presOld.getDurationUnit());
 			presNew.setFrequency(presOld.getFrequency());
 			presNew.setFrequencyUnit(presOld.getFrequencyUnit());
 			presNew.setMethod(presOld.getMethod());
 			presNew.setOrderTime(presOld.getOrderTime());
 			presNew.setOrderType(presOld.getOrderType());
-			presNew.setPrescriptSpecial(aSpecialist) ;
-			return presNew ;
+			presNew.setPrescriptSpecial(aSpecialist);
+			return presNew;
 		} else if (aPrescOld instanceof DietPrescription) {
-			DietPrescription presNew = new DietPrescription() ;
-			DietPrescription presOld = (DietPrescription)aPrescOld ;
-			presNew.setDiet(presOld.getDiet()) ;
-			presNew.setPrescriptSpecial(aSpecialist) ;
-			return presNew ;
+			DietPrescription presNew = new DietPrescription();
+			DietPrescription presOld = (DietPrescription) aPrescOld;
+			presNew.setDiet(presOld.getDiet());
+			presNew.setPrescriptSpecial(aSpecialist);
+			return presNew;
 		} else if (aPrescOld instanceof ServicePrescription) {
 			ServicePrescription presNew = new ServicePrescription();
 			ServicePrescription presOld = (ServicePrescription) aPrescOld;
@@ -1120,8 +1169,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			return presNew;
 		}
 		throw new IllegalStateException("Невозможно создать шаблон назначения по текущему назначению, неизвестен тип назначения!");
-		//return null ;
-}
+	}
 
 		
 		@EJB ILocalEntityFormService 
@@ -1130,8 +1178,4 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	    EntityManager theManager ;
 	    @Resource
 		SessionContext theContext ;
-
-	}	
-
-
-
+	}

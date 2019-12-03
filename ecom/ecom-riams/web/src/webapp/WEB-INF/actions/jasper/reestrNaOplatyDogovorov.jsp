@@ -37,6 +37,7 @@
         <script type="text/javascript">
             $('serviceStreamName').className += " required";
             $('hospTypeName').className += " required";
+            $('dateEnd').className += " required";
             function report() {
                 if (document.getElementById("serviceStreamName").value!=null && document.getElementById("serviceStreamName").value!=""
                 && $('dateBegin').value!=null && $('dateBegin').value!="" && $('dateEnd').value!=null && $('dateEnd').value!="") {
@@ -63,7 +64,7 @@
                     });
                 }
                 else
-                    alert("Необходимо заполнить поток обслуживания и тип помощи!");
+                    alert("Необходимо заполнить поток обслуживания, тип помощи и период!");
             }
         </script>
     </tiles:put>

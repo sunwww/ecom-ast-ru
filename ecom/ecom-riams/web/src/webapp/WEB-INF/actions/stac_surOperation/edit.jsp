@@ -302,7 +302,7 @@
           var masAntibioElements = [{name:'classWoundName',req:true,desc:'класс раны'},{name:'antibioticDrugName',req:true,desc:'препарат'},
               {name:'dose',req:true, desc:'доза',check:true},{name:'methodsDrugAdm',req:true,check:true},
               {name:'methodsDrugAdmName',req:true,desc:'путь введения',check:true},{name:'firstDoseTime',req:true,desc:'первая доза',check:true},
-              {name:'secondDoseTime',req:false,check:true}];
+              {name:'secondDoseTime',req:false,check:true},{name:'classWound',req:false,desc:'класс раны'},{name:'antibioticDrug',req:true,check:true}];
 
           //ф-я проверяет, выбрали ли препарат (или выбрано 'Нет') и делает доступными/недоступными элементы из массива объектов masAntibioElements
           function checkDrugRequired(checkEmpty) { //checkEmpty - обнулять ли значения
@@ -470,7 +470,7 @@
         }
         //проверка заполнения антибиотикотерапии
     	function checkAntibioticSave() {
-    	    $('dose').value = $('dose').value.replace(new RegExp(",","g"),".");
+    	    $('dose').value = $('dose').value.replace(new RegExp(",","g"),".").replace(/[^.\d]/g, '');
     	    if (jQuery('[name="antibio"]')[1].checked) {
                 checkDrugRequired();
                 var msg = '';

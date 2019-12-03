@@ -3141,7 +3141,7 @@ left join patient wp on wp.id=w.person_id "
 				join=" left join voccolor vc on vcip.color_id=vc.id " order=""
 				names="vc.name||' ('||vcip.name||')'"
 				queried=" upper(vc.name||' ('||vcip.name||')') like upper(:query) "
-				queryAppend = ''
+				queryAppend = ' (isforpatology is null or isforpatology=false)'
 		/>
 	</voc>
 	<!-- Браслеты, которые могут быть заполнены в родах и инф. по новорожд. -->
