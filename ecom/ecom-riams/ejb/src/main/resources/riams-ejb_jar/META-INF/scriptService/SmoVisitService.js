@@ -197,8 +197,8 @@ function visitNoPatient(aContext, aVisitId) {
  * Убираем отметку о выполнении в CAOS при неявке на приём
  */
 function freeCaosIfNoVisit(aContext, aVisitId) {
-    aContext.manager.createNativeQuery("update contractaccountoperationbyservice set serviceid=null, servicetype= null where medcase_id="+aVisitId).executeUpdate();
-    aContext.manager.createNativeQuery("update contractaccountoperationbyservice set serviceid=null, servicetype= null where medcase_id = " +
+    aContext.manager.createNativeQuery("update contractaccountoperationbyservice set serviceid=null, servicetype= null, medcase_id=null where medcase_id="+aVisitId).executeUpdate();
+    aContext.manager.createNativeQuery("update contractaccountoperationbyservice set serviceid=null, servicetype= null, medcase_id=null where medcase_id = " +
 		" any(select id from medcase where parent_id="+aVisitId + ")").executeUpdate();
 }
 
