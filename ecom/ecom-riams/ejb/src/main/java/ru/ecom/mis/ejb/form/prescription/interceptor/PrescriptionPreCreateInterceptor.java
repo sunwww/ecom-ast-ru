@@ -18,7 +18,11 @@ public class PrescriptionPreCreateInterceptor implements IParentFormInterceptor 
         PrescriptList pl = manager.find(PrescriptList.class,aParentId);
         if (pl==null || pl.getMedCase() == null ) return;
         PrescriptionForm form = (PrescriptionForm) aForm;
-        form.setServiceStream(pl.getServiceStream().getId());
+        if (pl.getServiceStream()!=null)
+            form.setServiceStream(pl.getServiceStream().getId());
+        else
+            throw new IllegalStateException("Необходимо <a href='entityEdit-stac_sslAdmission.do?id="
+                    +pl.getMedCase().getId()+"' target='_blank'>проставить поток обслуживания!</a>");
         form.setMedcaseType(pl.getMedCase() instanceof HospitalMedCase ? "HOSPITAL" : "POLYCLINIC");
         form.setMedcaseId(pl.getMedCase().getId());
         form.setAllowOnlyPaid(pl.getServiceStream().getIsPaidConfirmation()!=null && pl.getServiceStream().getIsPaidConfirmation());
