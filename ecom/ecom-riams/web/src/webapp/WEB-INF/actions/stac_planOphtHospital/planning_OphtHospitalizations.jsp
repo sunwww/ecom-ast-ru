@@ -361,7 +361,7 @@ order by wct.createDate,pat.lastname,pat.firstname,pat.middlename
                         });
                     }
                 }
-                else
+                else if (!from==null)
                     showToastMessage(from+' - некорректная дата! Формат должен быть dd.mm.yyyy', null, true, true, 3000);
             }
 
