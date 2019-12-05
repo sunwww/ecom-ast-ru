@@ -287,7 +287,7 @@
 	      <msh:tableColumn columnName ="Назначил" property="7"/>
 	      <msh:tableColumn columnName ="Выполнил" property="22"/>
 	      <msh:tableButton property="20" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showLabDoctorDirMedService" buttonName="Добавить анализ" buttonShortName="Доб.А"/>
-		  <msh:tableButton property="21" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="makePatology" buttonName="Патология" buttonShortName="Патология" />
+		  <msh:tableButton property="21" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="makePatology" buttonName="Критическая патология" buttonShortName="Критическая патология" />
 
 		</msh:table>
 	    <script type="text/javascript">

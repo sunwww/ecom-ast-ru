@@ -669,7 +669,7 @@ public class PrescriptionServiceJs {
 			msgTitle.append(res.getString("date")).append(" пациент ").append(res.getString("patFio")).append(" услуга ").append(res.getString("medService"));
 			IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
 			for (int i = 0; i < 2; i++)
-				bean.sendMessageCurrentDate( "Патология биоматериала", msgTitle.toString(), res.getString("usernameO")
+				bean.sendMessageCurrentDate( "Критическая патология биоматериала", msgTitle.toString(), res.getString("usernameO")
 						, LoginInfo.find(aRequest.getSession(true)).getUsername()
 						, "entityView-pres_servicePrescription.do?id=" + aPrescriptId, i < 1);
 			bean.setPatientIdentityBracelet(res.toString());

@@ -596,7 +596,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				colorIdentity.setStartDate(new java.sql.Date(new java.util.Date().getTime()));
 				colorIdentity.setCreateUsername(info.getString("usernameO"));
 				colorIdentity.setVocColorIdentity(vocColorIdentity);
-				colorIdentity.setInfo("Патология анализа: " + info.getString("medService") + " " + info.getString("date"));
+				colorIdentity.setInfo("Критическая патология анализа: " + info.getString("medService") + " " + info.getString("date"));
 				theManager.persist(colorIdentity);
 				ArrayList colIds = new java.util.ArrayList();
 				colIds.addAll(hmc.getColorsIdentity());
