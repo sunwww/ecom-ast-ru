@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Реестр по пациентам поступившим/ выбывшим из стационара</msh:title>
+    <msh:title mainMenu="StacJournal">Реестр по пациентам поступившим/ выбывшим из стационара</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_reestrByHospital"/>
@@ -24,7 +24,7 @@
 	String typeFormat =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeFormat","2", request) ;
 	String typeNumber =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeNumber","3", request) ;
   	%>
-    <msh:form action="/stac_reestrByHospital.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_reestrByHospital.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
     <input type="hidden" name="id" id="id" value=""/>
@@ -32,11 +32,11 @@
         <input type='hidden' id="sqlText2" name="sqlText2">
         <input type='hidden' id="infoText1" name="infoText1">
         <input type='hidden' id="infoText2" name="infoText2">
-      <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
       	<msh:autoComplete property="pigeonHole" fieldColSpan="3" 
       		horizontalFill="true" label="Приемник"
       		vocName="vocPigeonHole"
@@ -54,7 +54,7 @@
         	<input type="radio" name="typeEmergency" value="3">  все
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  региональные
@@ -84,7 +84,7 @@
         	<input type="radio" name="typeHour" value="4">  календар. день
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="1">  поступления в стац.
@@ -115,7 +115,7 @@
 	        </td>
         </msh:row>
         <msh:row guid="Дата">
-        <msh:textField fieldColSpan="2" property="dateBegin" label="Дата" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+        <msh:textField fieldColSpan="2" property="dateBegin" label="Дата" />
       </msh:row>
       <msh:row>
         <msh:autoComplete property="serviceStream" fieldColSpan="4"
@@ -263,15 +263,15 @@
 		    ,ok.voc_code,pvss.omccode,adr.kladr
 		
        order by m.${dateI},${departmentFldNameSql},pat.lastname,pat.firstname,pat.middlename
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Стат.карта" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Отделение" property="9" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-      <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Пациент" property="10" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      " />
+    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Стат.карта" property="7" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
+      <msh:tableColumn columnName="Отделение" property="9" />
+      <msh:tableColumn columnName="Дата выписки" property="3" />
+      <msh:tableColumn columnName="Пациент" property="10" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -307,14 +307,14 @@
       ${emerIs} ${pigeonHole1} ${department} ${serviceStreamSql}
       ${addPat}
        order by m.${dateI},pat.lastname,pat.firstname,pat.middlename
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem"  viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Стат.карта" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата обращения" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Экстрено" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Причина отказа" property="6" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
+      " />
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem"  viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Стат.карта" property="4" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Дата обращения" property="2" />
+      <msh:tableColumn columnName="Экстрено" property="5" />
+      <msh:tableColumn columnName="Причина отказа" property="6" />
       <msh:tableColumn columnName="Пациент" property="7"/>
       <msh:tableColumn columnName="Отделение" property="8"/>
     </msh:table>
@@ -354,15 +354,15 @@
      ${emerIs} ${pigeonHole} ${serviceStreamSql} ${addPat} ${departmentFldAddSql}
      group by ${departmentFldIdSql},${departmentFldNameSql}
         order by ${departmentFldIdSql},${departmentFldNameSql}
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" action="stac_reestrByHospital.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Отделение" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во экстренных" isCalcAmount="true" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во плановых" isCalcAmount="true" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во иностранцев" isCalcAmount="true" property="6" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Кол-во иногородних" isCalcAmount="true" property="7" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
+      " />
+    <msh:table name="journal_priem" action="stac_reestrByHospital.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Отделение" property="2" />
+      <msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="3" />
+      <msh:tableColumn columnName="Кол-во экстренных" isCalcAmount="true" property="4" />
+      <msh:tableColumn columnName="Кол-во плановых" isCalcAmount="true" property="5" />
+      <msh:tableColumn columnName="Кол-во иностранцев" isCalcAmount="true" property="6" />
+      <msh:tableColumn columnName="Кол-во иногородних" isCalcAmount="true" property="7" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -391,14 +391,14 @@
      where m.DTYPE='HospitalMedCase' ${period}
       and m.deniedHospitalizating_id is not null
       ${emerIs} ${pigeonHole1} group by vdh.name order by vdh.name
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" action="stac_reestrByHospital.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Причина отказа" property="1" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="2" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстренных" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иностранцев" property="4" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иногородних" property="5" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
+      " />
+    <msh:table name="journal_priem" action="stac_reestrByHospital.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Причина отказа" property="1" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="2" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстренных" property="3" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иностранцев" property="4" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иногородних" property="5" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>

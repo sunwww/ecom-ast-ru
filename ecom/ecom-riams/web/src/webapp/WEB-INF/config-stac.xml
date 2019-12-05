@@ -497,6 +497,14 @@
 		    	path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
 		    />
 		</action>
+		<action path='/stac_admissionDoctorDiaryList'
+		    type='ru.ecom.mis.web.action.medcase.journal.DepartmentSearchAction'
+		    name='stac_admissionJournalForm' validate='true' scope='request'
+		    input='/WEB-INF/actions/stac_sslAllInfo/adminssionDoctorDiaryList.jsp'
+		   >
+		    <forward name="success" redirect="false" path='/WEB-INF/actions/stac_sslAllInfo/adminssionDoctorDiaryList.jsp'/>
+
+		</action>
 		<action path='/stac_reestrByDepartment'
 		    type='ru.ecom.mis.web.action.medcase.journal.DepartmentSearchAction'
 		    name='stac_admissionJournalForm' validate='true' scope='request'

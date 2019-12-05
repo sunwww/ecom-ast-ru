@@ -43,10 +43,7 @@
 	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;" colspan="2">
 	        	<input type="radio" name="typeMode" value="2" > по дневникам
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;" colspan="2">
-	        	<input type="radio" name="typeMode" value="3" > генерация специалистов экстр.пунктов
-	        </td>
-	        
+
 		</msh:row>
 
 		</msh:panel>
