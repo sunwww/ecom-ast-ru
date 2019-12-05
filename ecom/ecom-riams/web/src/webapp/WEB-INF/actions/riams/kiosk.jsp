@@ -63,6 +63,19 @@ if (kioskType.equals("ADMISSION")) {
         <input type="radio" name="isEmergency" value="-1">  Все
     </td>
 </msh:row>
+<msh:row>
+
+    <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отказные:</label></td>
+    <td onclick="this.childNodes[1].checked='checked'; reloadPage();">
+        <input type="radio" name="onlyDenied" value="1" checked="checked">  Отказ от госпитализации
+    </td>
+    <td onclick="this.childNodes[1].checked='checked';reloadPage();">
+        <input type="radio" name="onlyDenied" value="0">  Госпитализированные
+    </td>
+    <td onclick="this.childNodes[1].checked='checked';reloadPage();">
+        <input type="radio" name="onlyDenied" value="-1">  Все
+    </td>
+</msh:row>
     <msh:row>
         <td>
         <label>Период: <input type="text" size="10" id="startDate" name="startDate" value="${param.startDate}">
@@ -133,12 +146,13 @@ var colors={red:"background-color:red;"
     new dateutil.DateField($('finishDate'));
 
     function reloadPage() {
+        var onlyDenied = jQuery('input:radio[name=onlyDenied]:checked').val();
         var em = jQuery('input:radio[name=isEmergency]:checked').val();
         var append ="";
         if ($('startDate').value) {
             append="&startDate="+$('startDate').value+"&finishDate="+($('finishDate').value ? $('finishDate').value : $('startDate').value);
         }
-        window.location.search="mode=ADMISSION&isEmergency="+em+"&pigeonHole="+(jQuery('#select-pigeonHole').val()?jQuery('#select-pigeonHole').val():"")+"&pigeonHoleName=${pigeonHoleName}"+append;
+        window.location.search="mode=ADMISSION&onlyDenied="+onlyDenied+"&isEmergency="+em+"&pigeonHole="+(jQuery('#select-pigeonHole').val()?jQuery('#select-pigeonHole').val():"")+"&pigeonHoleName=${pigeonHoleName}"+append;
     }
     function getQueue() {
         jQuery.ajax({
@@ -149,7 +163,8 @@ var colors={red:"background-color:red;"
                 pigeonHole:'${param.pigeonHole}',
                 isDoctor:${isDoctor},
                 startDate:'${param.startDate}',
-                finishDate:'${param.finishDate}'
+                finishDate:'${param.finishDate}',
+                onlyDenied: '${param.onlyDenied}'
             }
             ,error: function(jqXHR,ex){console.log(ex);alert('Произошла какая-то ошибка: '+ex);setTimeout(getQueue,60000);}
             ,success: function(array) {
@@ -174,6 +189,7 @@ var colors={red:"background-color:red;"
     });
     }
 checkFieldUpdate("isEmergency",'${param.isEmergency}','1');
+checkFieldUpdate("onlyDenied",'${param.onlyDenied}','1');
 function checkFieldUpdate(aField,aValue,aDefaultValue) {
     if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
         jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);

@@ -33,6 +33,7 @@ public class HospitalQueueResource {
             , @QueryParam("startDate") String aStartDate
             , @QueryParam("finishDate") String aFinishDate
             , @QueryParam("isDoctor") Boolean isDoctor
+            , @QueryParam("onlyDenied") String onlyDenied
     ) throws NamingException {
         ApiUtil.login(token,aRequest);
         if (isEmergency==null) {isEmergency="";}
@@ -65,7 +66,9 @@ public class HospitalQueueResource {
                 " left join diary d on d.medcase_id=sls.id" +
                 " left join workfunction wf on wf.id=d.specialist_id" +
                 " left join vocWorkFunction vwf on vwf.id=wf.workfunction_id" +
-                " where sls.dtype='HospitalMedCase' and sls.deniedhospitalizating_id is not null" +
+                " where sls.dtype='HospitalMedCase'" +
+                ("1".equals(onlyDenied) ? " and sls.deniedhospitalizating_id is not null" : ("0".equals(onlyDenied) ? "and sls.deniedhospitalizating_id is null":"")) +
+
                 (aStartDate==null || aStartDate.equals("")
                         ? " and sls.datestart between current_date-1 and current_date and vdh.code='IN_PIGEON_HOLE'"
                         : " and sls.datestart between to_date('"+aStartDate+"','dd.MM.yyyy') and to_date('"+aFinishDate+"','dd.MM.yyyy')") +
