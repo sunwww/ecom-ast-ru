@@ -83,9 +83,12 @@ public class WorkCalendarServiceJs {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
-        String workcalendarId = "";
+        String workcalendarId ;
         Collection<WebQueryResult> list = service.executeNativeSql("select id from workcalendar where workfunction_id=" + workFunctionId);
-        if (!list.isEmpty()) {
+        if (list.isEmpty()) {
+            LOG.error("Нет календаря у рабочей функции "+workFunctionId);
+            return "Нет календаря у рабочей функции"+workFunctionId;
+        } else {
             WebQueryResult w = list.iterator().next();
             workcalendarId = w.get1().toString();
         }

@@ -210,29 +210,30 @@
         <table id="surgTable">
         <tbody id="addsurgElements">
     		<msh:row>
-				 <msh:autoComplete property="prescriptCabinet" label="Операционная"  fieldColSpan="4" vocName="operationRoom" size='20' horizontalFill="true" />
+				 <msh:autoComplete property="prescriptCabinet" label="Операционная"  fieldColSpan="5" vocName="operationRoom" size='20' horizontalFill="true" />
 			</msh:row>
             <msh:row>
                 <msh:autoComplete property="surgCalDate" parentAutocomplete="prescriptCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
-                <msh:textField property="planStartTime" label="Начало операции: " viewOnlyField="true"/>
+                <msh:textField property="planStartTime" label="Начало операции" viewOnlyField="true"/>
             </msh:row><msh:row>
-                <msh:autoComplete property="duration" vocName="durationInMinute" size="40"/>
+                <msh:autoComplete property="duration" vocName="durationInMinute" size="40" fieldColSpan="5"/>
             </msh:row>
             <msh:row>
-                <msh:autoComplete property="intakeSpecial" vocName="workFunctionIsSurgical" label="Хирург" size="100" fieldColSpan="4" horizontalFill="true" />
+                <msh:autoComplete property="intakeSpecial" vocName="workFunctionIsSurgical" label="Хирург" size="100" fieldColSpan="5" horizontalFill="true" />
             </msh:row>
             <msh:row>
-                <msh:autoComplete property="medService" label="Операция" vocName="medServiceOperation" horizontalFill="true" size="90" fieldColSpan="4" />
+                <msh:autoComplete property="medService" label="Операция" vocName="medServiceOperation" horizontalFill="true" size="90" fieldColSpan="5" />
             </msh:row>
     		<msh:row>
-                <msh:autoComplete property="anesthesiaType" vocName="vocAnesthesia" label="Анестезия" size="100" fieldColSpan="4" horizontalFill="true" />
+                <msh:autoComplete property="anesthesiaType" vocName="vocAnesthesia" label="Анестезия" size="100" fieldColSpan="5" horizontalFill="true" />
             </msh:row>
         <msh:row>
             <msh:autoComplete property="bloodGroup" fieldColSpan="1" label="Группа крови" vocName="vocBloodGroup" />
+            </msh:row><msh:row>
             <msh:autoComplete property="rhesusFactor" label="Резус-фактор" vocName="vocRhesusFactor"  />
         </msh:row>
 			<msh:row>
-				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="4" />
+				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="5" />
 			</msh:row>
 	         <tr><td colspan="10"><table><tr><td valign="top"><table>
         <msh:row>

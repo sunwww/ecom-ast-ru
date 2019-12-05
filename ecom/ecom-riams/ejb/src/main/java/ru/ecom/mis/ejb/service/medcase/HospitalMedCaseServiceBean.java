@@ -1815,9 +1815,11 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				if (wqr.get1()!=null) {
 					List<Object> lf = theManager.createNativeQuery("select id from HospitalDataFond where numberFond='"+wqr.get1()+"' order by id desc").setMaxResults(1).getResultList() ;
 					//HospitalDataFond hdf ;
-					Object id = null ;
+					Object id ;
 					if (!lf.isEmpty()) {
 						id=lf.get(0) ;
+					} else  {
+						id = null;
 					}
 					StringBuilder sql1 = new StringBuilder() ;
 					StringBuilder sql2 = new StringBuilder() ;
@@ -1932,7 +1934,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					//	}
 					//}
 				}
-				if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(i+" ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
+				if(i%10==0) monitor.setText("Импортируется: "+i+" "+wqr.get1()+" "+wqr.get2()+"...");
 				if(size>0&&i%size==0) monitor.advice(1);
 
 				if (i % 300 == 0) {
