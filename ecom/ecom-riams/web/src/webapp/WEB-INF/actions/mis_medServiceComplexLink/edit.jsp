@@ -17,7 +17,7 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:form action="/entityParentSaveGoParentView-mis_medServiceComplexLink.do" defaultField="complexMedService">
+    <msh:form action="/entitySaveGoView-mis_medServiceComplexLink.do" defaultField="complexMedService">
       <msh:hidden property="id"/>
       <msh:hidden property="saveType"/>
       <msh:hidden property="speciality"/>
@@ -33,6 +33,8 @@
         </msh:row>
         <msh:row>
           <msh:checkBox property="isDefault" />
+        </msh:row><msh:row>
+          <msh:textField property="weight"/>
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
@@ -48,7 +50,7 @@
       }
         eventutil.addEventListener($('countInnerMedService'), "change",function(){
             $('countInnerMedService').value=parseInt($('countInnerMedService').value);
-            if ($('countInnerMedService').value=="NaN") $('countInnerMedService').value="";
+            if ($('countInnerMedService').value=="NaN") $('countInnerMedService').value="1";
         }) ;
         <msh:ifFormTypeIsCreate formName="mis_medServiceComplexLinkForm">
         $('countInnerMedService').value=1;

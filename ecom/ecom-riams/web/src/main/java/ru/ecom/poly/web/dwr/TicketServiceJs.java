@@ -31,9 +31,8 @@ public class TicketServiceJs {
 				" left join vocworkfunction vwf on vwf.id=wf.workfunction_id " +
 				" left join MedServiceComplexLink link on link.speciality_id=vwf.fondSpeciality_id" +
 				" left join medservice ms on ms.id=link.innerMedService_id" +
-				" where wf.id="+aWorkfunctionId+" and ms.id is not null";
+				" where wf.id="+aWorkfunctionId+" and ms.id is not null order by link.weight";
 		return service.executeSqlGetJson(sql);
-
 	}
 	
 	public String getDefaultParameter(String aKey, String aDefaultValue, HttpServletRequest aRequest) throws NamingException {

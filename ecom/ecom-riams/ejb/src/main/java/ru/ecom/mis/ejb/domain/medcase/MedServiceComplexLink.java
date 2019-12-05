@@ -62,4 +62,10 @@ public class MedServiceComplexLink extends BaseEntity {
     public Boolean getIsDefault() {return theIsDefault;}
     public void setIsDefault(Boolean aIsDefault) {theIsDefault = aIsDefault;}
     private Boolean theIsDefault ;
+
+    /** Вес (для сортировки) */
+    @Comment("Вес")
+    public Integer getWeight() {return theWeight;}
+    public void setWeight(Integer aWeight) {theWeight = aWeight;}
+    private Integer theWeight ;
 }

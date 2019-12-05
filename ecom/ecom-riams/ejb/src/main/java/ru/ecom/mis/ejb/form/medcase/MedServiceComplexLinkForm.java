@@ -69,4 +69,11 @@ public class MedServiceComplexLinkForm extends IdEntityForm  {
 	public void setIsDefault(Boolean aIsDefault) {theIsDefault = aIsDefault;}
 	private Boolean theIsDefault ;
 
+	/** Вес */
+	@Comment("Вес")
+	@Persist
+	public Integer getWeight() {return theWeight;}
+	public void setWeight(Integer aWeight) {theWeight = aWeight;}
+	private Integer theWeight ;
+
 }
