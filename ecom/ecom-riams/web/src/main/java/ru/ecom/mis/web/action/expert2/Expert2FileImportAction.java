@@ -36,6 +36,7 @@ public class Expert2FileImportAction extends BaseAction {
 			String action = form.getDirName();
 			String result ;
 			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi/server/default/data");
+			Long entryListId = form.getObjectId();
 			switch (action) {
 				case "createEntry":
 					if (fileName.toUpperCase().endsWith(".MP")) {
@@ -49,7 +50,6 @@ public class Expert2FileImportAction extends BaseAction {
 				case "importN5":
 					if ((fileName.startsWith("N2") || fileName.startsWith("N5")) && fileName.toUpperCase().endsWith(".XML")) { //Импортируем файл для проставления номеров направления фонда
 						LOG.info("start import N5");
-						Long entryListId = form.getObjectId();
 						result = expert2service.importN5File(new SAXBuilder().build(ffile.getInputStream()),entryListId);
 					} else {
 						result="Неверное имя файла для импорта N5 (xml файл должен начинаться с N5)!";
@@ -57,7 +57,7 @@ public class Expert2FileImportAction extends BaseAction {
 					break;
 				case "importFlk":
 					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
-					result = expert2service.importFlkAnswer(fileName);
+					result = expert2service.importFlkAnswer(fileName, entryListId);
 					break;
 				case "importDefect":
 					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);

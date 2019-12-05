@@ -16,6 +16,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Запись в заполнении", nameProperties = "id", view = "entityParentView-e2_v015Link.do")
 @Parent(property = "speciality", parentForm = VocE2FondV021Form.class)
 @EntityFormSecurityPrefix("/Policy/E2")
+@Deprecated
 public class E2FondMedSpecLinkForm extends IdEntityForm {
 
      /** Медицинская специальность  */

@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
  * Соответствие исхода случая результату медоса
  */
 @Entity
+@Deprecated
 public class E2FondMedSpecLink extends BaseEntity {
 
     /** Медицинская специальность */

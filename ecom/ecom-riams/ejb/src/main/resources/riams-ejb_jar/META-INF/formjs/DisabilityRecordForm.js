@@ -92,7 +92,7 @@ function checkExport(aEntityId, aCtx) {
     	var createTime = disRec.get(0)[1];
    		 if (createTime != null)  createTime = createTime.getTime();   else return;
     	var exportDate = electronic.get(0)[0];
-   		var exportTime = electronic.get(0)[1]
+   		var exportTime = electronic.get(0)[1];
     	if (exportDate != null) {
         	exportDate = exportDate.getTime();
         	if (exportDate > createDate) {

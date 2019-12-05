@@ -165,6 +165,8 @@
             </msh:row><msh:row>
                     <msh:textField property="operationList" size="50" />
                     <msh:textField property="diagnosisList" size="50" />
+                </msh:row><msh:row>
+                    <msh:textField property="prescriptionList" size="50" />
             </msh:row>
                 <msh:row>
                     <msh:textField property="services" size="50" />

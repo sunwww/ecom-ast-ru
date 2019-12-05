@@ -396,7 +396,6 @@ public class Expert2ServiceJs {
         String sql ;
         if (aType==null||aType.trim().equals("")) {return false;}
         if (aServiceStream==null||aServiceStream.trim().equals("")) {return false;}
-
         if (StringUtil.isNullOrEmpty(aBillNumber)) { //Удалить информацию о номере счета.
             sql = "update e2entry set bill_id=null, billNumber='', billDate=null  where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"' and isForeign='"+isForeign+"'";
             if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {return false;}

@@ -997,6 +997,14 @@ public class E2EntryForm extends IdEntityForm {
     public Integer getWeigth() {return theWeigth;}
     public void setWeigth(Integer aWeigth) {theWeigth = aWeigth;}
 
+    /** Список выполненных назначений*/
+    @Comment(" выполненных назначений")
+    @Persist
+    public String getPrescriptionList() {return thePrescriptionList;}
+    public void setPrescriptionList(String aPrescriptionList) {thePrescriptionList = aPrescriptionList;}
+    /** Список  выполненных назначений */
+    private String thePrescriptionList ;
+
     //Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */
@@ -1005,5 +1013,7 @@ public class E2EntryForm extends IdEntityForm {
     public void setNewMedService(Long aNewMedService) {theNewMedService = aNewMedService;}
     /** Добавить услугу к случаю */
     private Long theNewMedService ;
+
+
 
 }

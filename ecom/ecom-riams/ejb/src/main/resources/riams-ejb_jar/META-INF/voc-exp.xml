@@ -181,7 +181,7 @@
                 from="VocSex voc"
                 nameId="voc.omccode"
                 order="voc.name"
-                names="voc.code||' '||voc.name"
+                names="voc.omccode||' '||voc.name"
         />
     </voc>
     <voc id="vocReasonDischargeCode" type="NativeVocService">

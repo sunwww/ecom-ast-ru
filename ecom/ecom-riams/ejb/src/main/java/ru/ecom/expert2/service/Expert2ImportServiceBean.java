@@ -67,12 +67,14 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
 
     /*Импортируем ответ ФЛК от фонда*/
-    public String importFlkAnswer(String aFilename) {//, String aBillNumber, Date aBillDate) {
+    public String importFlkAnswer(String aFilename, Long aListEntryId) {//, String aBillNumber, Date aBillDate) {
         LOG.info("start import FLK="+aFilename);
         Document root = getDocumentFromFile(XMLDIR+"/",aFilename,true);
         XMLOutputter out = new XMLOutputter();
         Element rootElement = root.getRootElement();
         List<Element> defs = rootElement.getChildren("PR");
+        theManager.createNativeQuery("update e2entry set isdefect='0' where listentry_id=:id and (isdeleted is null or isdeleted='0')").setParameter("id",aListEntryId).executeUpdate();
+        LOG.info("clean defect before flk");
         int cnt = 0;
         for (Element el:defs) {
             String entryId =el.getChildText("N_ZAP");

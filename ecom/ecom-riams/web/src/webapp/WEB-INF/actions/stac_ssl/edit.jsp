@@ -351,8 +351,7 @@
             PatientService.checkSLSonDepartment(${param.id},{
                 callback : function(res) {
                     if(res==true){
-                        var isAdmin = confirm("Требуется добавить родовый сертификат!");
-                        if(isAdmin){
+                        if(confirm("Требуется добавить родовый сертификат!")){
                             document.location.replace("entityParentPrepareCreate-preg_shortConfCertificate.do?id=${param.id}");
                         }
                     }

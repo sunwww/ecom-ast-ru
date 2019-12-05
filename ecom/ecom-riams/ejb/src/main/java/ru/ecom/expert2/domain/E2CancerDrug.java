@@ -42,10 +42,12 @@ public class E2CancerDrug extends BaseEntity {
         theCancerEntry = aCancerEntry;
         theDrug = aDrug.theDrug;
         List<E2CancerDrugDate> drugDates = new ArrayList<>();
-        for (E2CancerDrugDate drugDate : getDates()) {
-            E2CancerDrugDate cancerDrugDate = new E2CancerDrugDate(this);
-            cancerDrugDate.setDate(drugDate.getDate());
-            drugDates.add(cancerDrugDate);
+        if (getDates()!=null) {
+            for (E2CancerDrugDate drugDate : getDates()) {
+                E2CancerDrugDate cancerDrugDate = new E2CancerDrugDate(this);
+                cancerDrugDate.setDate(drugDate.getDate());
+                drugDates.add(cancerDrugDate);
+            }
         }
         setDates(drugDates);
     }

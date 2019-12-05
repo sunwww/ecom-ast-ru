@@ -53,6 +53,7 @@ import java.util.*;
 @Remote(IExpert2Service.class)
 public class Expert2ServiceBean implements IExpert2Service {
     private Boolean isCheckIsRunning = false;
+    private Boolean isConsultativePolyclinic = true;
     private static final Logger LOG = Logger.getLogger(Expert2ServiceBean.class);
     private static final String KDPTYPE="POL_KDP";
     private static final String HOSPITALTYPE="HOSPITAL";
@@ -64,6 +65,11 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final SimpleDateFormat SQLDATE = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat MONTHYEARDATE = new SimpleDateFormat("yyyy-MM");
     private static final ArrayList<String> childBirthMkb = new ArrayList<>();
+
+ /*   public Expert2ServiceBean() {
+        isConsultativePolyclinic = "300001".equals(getExpertConfigValue("LPU_REG_NUMBER"));
+        LOG.info("isConsultativePolyclinic = "+isConsultativePolyclinic);
+    }*/
 
     public E2Entry getEntryJson(Long aEntryId) { return theManager.find(E2Entry.class,aEntryId);}
 
@@ -624,10 +630,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 }
                             }
                         } else { //Если классы МКБ не сходятся, текущее СЛО становится главным
-                            LOG.info("start perevod!");
                             String ss = mainEntry.getBedSubType(); //Текущему случаю ставим результат - перевод на другой профиль коек
                             mainEntry.setFondResult(getActualVocByClassName(VocE2FondV009.class,mainEntry.getFinishDate()," code='"+ss+"04'")); //TODO Колхоз - исправить
-                            LOG.info("start perevod, result = "+mainEntry.getFondResult().getCode());
                             theManager.persist(mainEntry);
                             if (entriesList.size()>2) {
                                 setRightParent(mainEntry,null);
@@ -1133,7 +1137,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 } else { //Обращение
                     code = "POL_LONGCASE";
                 }
-                code = (isMobilePolyclinic ? "MOBILE_" : "CONS_") +code;
+                code = (isMobilePolyclinic ? "MOBILE_" : isConsultativePolyclinic ? "CONS_" : "TERR_") +code;
                 code += "_" + (workPlace != null ? workPlace : "NO_WORKPLACE");
             }
         } else if (entryType.equals(VMPTYPE)) {
@@ -1331,6 +1335,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 E2CancerDiagnostic cancerDiagnostic = new E2CancerDiagnostic(cancerEntry);
                                 String diagnosticType = diag.getVocOncologyDiagType()!=null ? diag.getVocOncologyDiagType().getCode() : null;
                                 if (diagnosticType !=null) {
+                                    cancerDiagnostic.setBiopsyDate(oncologyCase.getDateBiops());
                                     cancerDiagnostic.setType(diagnosticType);
                                     if (diagnosticType.equals("1")){
                                         cancerDiagnostic.setCode(diag.getHistiology().getCode());
@@ -1751,6 +1756,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                 ksgMap.put(key,results);
                 if (results.isEmpty()) {
                     LOG.warn(key+" Не смог найти КСГ для случая с ИД="+aEntry.getId()+" по запросу: "+sql);
+                    aEntry.setKsg(null);
+                    aEntry.setKsgPosition(null);
                 }
             } else {
                 results=ksgMap.get(key);
@@ -3007,7 +3014,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (stacCase && aEntry.getMedHelpProfile() != null && aEntry.getMedHelpProfile().getMedSpecV021() != null) {  /* от 09-02-2018 Если у профиля мед. помощи указана специальность врача, указываем ее. Только для стационара */
                 aEntry.setFondDoctorSpecV021(aEntry.getMedHelpProfile().getMedSpecV021());
             } else if (isNotNull(aEntry.getDoctorWorkfunction())) {
-                String doctorWorkFunction = aEntry.getDoctorWorkfunction();
+                String doctorWorkFunction = aEntry.getDoctorWorkfunction(); //с 3 декабря - v021.code
                 key = "DOCTOR#" + doctorWorkFunction;
                 if (vmpCase) {
                     if (aEntry.getMedHelpProfile() != null && aEntry.getMedHelpProfile().getProfileK().equals("81") && doctorWorkFunction.equals("26")) {
@@ -3019,14 +3026,15 @@ public class Expert2ServiceBean implements IExpert2Service {
                     sb = new StringBuilder();
                     sb.append("select  v021.id from E2FondMedSpecLink link left join VocE2FondV021 v021 on v021.id=link.speciality_id where link.medosWorkFunction='")
                             .append(doctorWorkFunction).append("'");
-                    list = theManager.createNativeQuery(sb.toString()).getResultList();
+               //     list = theManager.createNativeQuery(sb.toString()).getResultList();
+                    list = theManager.createNativeQuery("select id from VocE2FondV021 where code='"+doctorWorkFunction+"'").getResultList();
                     if (list.isEmpty()) {
                         LOG.error("can't find DOCTOR = " + doctorWorkFunction + "____  find sql string = " + sb);
                     }
                     resultMap.put(key, list.isEmpty() ? null : theManager.find(VocE2FondV021.class, list.get(0).longValue()));
                 }
                 VocE2FondV021 doctor = (VocE2FondV021) resultMap.get(key);
-                if (doctor!=null) aEntry.setFondDoctorSpecV021(doctor);
+                aEntry.setFondDoctorSpecV021(doctor);
 
             }
             if (aEntry.getFondDoctorSpecV021()==null && aEntry.getMedHelpProfile()!=null) {
