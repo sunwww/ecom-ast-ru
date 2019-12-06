@@ -160,6 +160,7 @@ function printPlanHospital(aCtx,aParams) {
 			, new java.lang.Long(aParams.get("id"))) ;
 	var medCase = doc.visit ;
 	var patient = doc.patient ;
+	map.put("directLpu",doc.directLpu);
 	var list = aCtx.manager.createNativeQuery("select mp.id,mp.patient_id from MedPolicy mp where mp.patient_id='"+doc.patient.id+"' and mp.DTYPE like 'MedPolicyOmc%' AND (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE))")
 	.getResultList();
 	if (list.size()>0) {
