@@ -367,7 +367,9 @@
     	/>
     	<msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByVisit('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
        <msh:sideLink styleId="viewShort" roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/javascript:getDefinition('entityParentList-expert_card.do?short=Short&id=${param.id}',null)"/>
-           </msh:sideMenu>
+          <msh:sideLink roles="/Policy/Mis/MedCase/ActRVK" name="Акт РВК" params="" action="/javascript:showOrCreateAktRvk();" title="Акт РВК"
+          />
+      </msh:sideMenu>
       <msh:tableNotEmpty name="info_print_list">
       <msh:sideMenu title="Печать">
         <msh:sideLink action="/javascript:printVisit('.do')" name="Визита" title="Печать визита" key="ALT+8" params="" roles="/Policy/Mis/MedCase/Visit/PrintVisit" />
@@ -626,6 +628,29 @@
   		var isDiag = 0 ,isDiary = 0, isPrint = 0 ; 
   	</script>
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/ActRVK">
+            <script type="text/javascript">
+                function showOrCreateAktRvk() {
+                    PatientService.getIfRVKAlreadyExists(${param.id}, {
+                        callback: function (aResult) {
+                            if (aResult != '{}') {
+                                if (confirm('У пациента уже есть открытый акт РВК. Перейти к нему?')) {
+                                    var res = JSON.parse(aResult);
+                                    if (res.dtype=='Visit')
+                                        window.location.href = 'entityView-rvk_aktVisit.do?id=' +res.id;
+                                    else if (res.dtype=='DepartmentMedCase')
+                                        window.location.href = 'entityView-rvk_aktSlo.do?id=' +res.id;
+                                    else
+                                        showToastMessage('Тип medcase в акте РВК некорректный! Обратитесь к администратору',null,true,true);
+                                }
+                            }
+                            else
+                                window.location.href = 'entityParentPrepareCreate-rvk_aktVisit.do?id=' + ${param.id};
+                        }
+                    });
+                }
+            </script>
+        </msh:ifInRole>
   		<msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/Create">
 	  		<script type="text/javascript">isDiag=1 ;</script>
 	  	</msh:ifInRole>
@@ -636,6 +661,11 @@
 	  		<script type="text/javascript">isPrint=1 ;</script>
 	  	</msh:ifInRole>
 	  	<script type="text/javascript">
+        <msh:ifInRole roles="/Policy/Mis/MedCase/ActRVK">
+            function goToRVK(id) {
+            window.location.href='entityParentPrepareCreate-rvk_aktVisit.do?id='+id;
+            }
+        </msh:ifInRole>
 	  	var url_next = new Array(
 	  			new Array(0,"entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id}"
 	  				,"Вы хотите создать заключение по визиту?","isDiaryCreate",isDiary)

@@ -870,4 +870,23 @@ public class PatientServiceJs {
 		}
 		return o.toString();
 	}
+
+	/**
+	 * Получить id существующего открытого акта РВК + dtype medcase-а
+	 * @param aMedCaseId medcase.id
+	 * @return json
+	 */
+	public String getIfRVKAlreadyExists(Long aMedCaseId, HttpServletRequest request) throws NamingException {
+		IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
+		Collection<WebQueryResult> list = service.executeNativeSql("select a.id,mc.dtype from actrvk a " +
+						" left join medcase mc on mc.id=a.medcase_id and a.patient_id=mc.patient_id " +
+						" where (a.datefinish is null or a.datefinish>current_date) and medcase_id=" +aMedCaseId);
+		JSONObject o = new JSONObject() ;
+		if (!list.isEmpty()) {
+			WebQueryResult w = list.iterator().next();
+			o.put("id",w.get1())
+					.put("dtype", w.get2());
+		}
+		return o.toString();
+	}
 }
