@@ -124,6 +124,8 @@
                     <msh:sideLink styleId="viewShort" action="/javascript:showCardiacScreening(${param.id})" name='Кардиоскрининги новорождённых' title="Кардио-скрининги нов." params="" roles="/Policy/Mis/Pregnancy/CardiacScreening/View" />
                     <tags:identityPatient name="identityPatient" />
                     <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit/PatientSet" name="Браслеты" styleId="viewShort" action="/javascript:showidentityPatient($('parent').value,true)"  title='Браслеты'/>
+                    <msh:sideLink roles="/Policy/Mis/MedCase/ActRVK" name="Акт РВК" params="" action="/javascript:showOrCreateAktRvk();" title="Акт РВК"
+                    />
                 </msh:sideMenu>
                 <msh:sideMenu title="Печать">
 
@@ -733,6 +735,29 @@ where m.id ='${param.id}'"/>
                 }
             </script>
         </msh:ifInRole>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/ActRVK">
+            <script type="text/javascript">
+                function showOrCreateAktRvk() {
+                    PatientService.getIfRVKAlreadyExists(${param.id}, {
+                        callback: function (aResult) {
+                            if (aResult != '{}') {
+                                if (confirm('У пациента уже есть открытый акт РВК. Перейти к нему?')) {
+                                    var res = JSON.parse(aResult);
+                                    if (res.dtype=='Visit')
+                                        window.location.href = 'entityView-rvk_aktVisit.do?id=' +res.id;
+                                    else if (res.dtype=='DepartmentMedCase')
+                                        window.location.href = 'entityView-rvk_aktSlo.do?id=' +res.id;
+                                    else
+                                        showToastMessage('Тип medcase в акте РВК некорректный! Обратитесь к администратору',null,true,true);
+                                }
+                            }
+                            else
+                                window.location.href = 'entityParentPrepareCreate-rvk_aktSlo.do?id=' + ${param.id};
+                        }
+                    });
+                }
+            </script>
+        </msh:ifInRole>
         <msh:ifNotInRole roles="/Policy/Mis/Order203">
             <script type="text/javascript">
                 function check_diags() {
@@ -1020,6 +1045,7 @@ where m.id ='${param.id}'"/>
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
         <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
+        <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
         <msh:ifFormTypeIsView formName="stac_sloForm">
             <script type="text/javascript">
                 function unionSloWithNextSlo() {

@@ -26,6 +26,11 @@
 		<form-bean name="calc_prescForm"	type="ru.ecom.mis.ejb.form.calc.PrescCalcForm" />
 		<form-bean name="calc_contraForm"	type="ru.ecom.mis.ejb.form.calc.ContraCalcForm" />
 	<!-- /Калькулятор -->
+
+	<!-- Акты РВК -->
+		<form-bean name="rvk_aktSloForm"			type="ru.ecom.mis.ejb.form.medcase.ActRVKSloForm" />
+		<form-bean name="rvk_aktVisitForm"			type="ru.ecom.mis.ejb.form.medcase.ActRVKVisitForm" />
+	<!-- /Акты РВК -->
 		<form-bean name="mis_patientExternalServiceAccountForm"			type="ru.ecom.mis.ejb.form.patient.PatientExternalServiceAccountForm" />
 		<form-bean name="work_attorneyForm"			type="ru.ecom.mis.ejb.form.worker.AttorneyForm" />
 		<form-bean name="stac_vmpCaseForm"			type="ru.ecom.mis.ejb.form.medcase.hospital.HitechMedicalCaseForm" />
@@ -478,6 +483,13 @@
 			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_deniedHospitalByAttach.jsp" />
 		</action>
 
+
+		<action path='/actRVKReport' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session">
+			<forward name="success" redirect="false" path="/WEB-INF/actions/rvk_aktVisit/rvkReport.jsp" />
+		</action>
 
 		<action path='/gener_ticket' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'

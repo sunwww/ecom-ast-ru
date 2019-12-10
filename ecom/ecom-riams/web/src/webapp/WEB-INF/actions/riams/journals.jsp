@@ -149,6 +149,9 @@
 						<li><msh:link  isReport="false" action="smo_deniedHospitelByAttach.do" roles="/Policy/Mis/ArchiveCase/Create">
 							Отказы госпитализации по прикрепленным
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="actRVKReport.do" roles="/Policy/Mis/MedCase/ActRVK/View">
+							Отчёт по актам РВК
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>
