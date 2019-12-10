@@ -918,8 +918,11 @@ public class Expert2ServiceBean implements IExpert2Service {
         } else {
             sqlHistory.append("");
         }
+        String lpuCode = getExpertConfigValue("LPU_REG_NUMBER","300001");
         while(searchSql.indexOf("##dateStart##")>-1) {searchSql=searchSql.replace("##dateStart##", toSQlDateString(aListEntry.getStartDate())); }
         while(searchSql.indexOf("##dateEnd##")>-1) {searchSql=searchSql.replace("##dateEnd##", toSQlDateString(aListEntry.getFinishDate()));}
+        while(searchSql.contains("##LPU_CODE##")) {searchSql=searchSql.replace("##LPU_CODE##", lpuCode);}
+
         searchSql+=sqlHistory.toString();
         LOG.info("SQL = " + searchSql);
 
@@ -944,7 +947,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     /** Базовая точка для выполнения всех проверок внутри заполнения */
     public void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId) {checkListEntry(theManager.find(E2ListEntry.class,aListEntryId),updateKsgIfExist, aParams,aMonitorId );}
     private void checkListEntry(E2ListEntry aListEntry, final boolean updateKsgIfExist, String aParams, long aMonitorId) {
-        if (aListEntry.getIsClosed()!=null&&aListEntry.getIsClosed()) {
+        if (Boolean.TRUE==aListEntry.getIsClosed()) {
             LOG.warn("Заполнение закрыто, проверка невозможна");
             throw new IllegalStateException("Заполнение закрыто, проверка невозможна");
         }
@@ -1526,18 +1529,16 @@ public class Expert2ServiceBean implements IExpert2Service {
                         if (isNotNull(serviceDate)) {ms.setServiceDate(DateFormat.parseSqlDate(serviceDate,dateFrormat));}
 
                         if (isNotNull(workfunction)) {
-                            VocE2FondV021 doctor = null;
+                            VocE2FondV021 doctor ;
                             String key = "DOCTOR#"+workfunction;
                             if (!resultMap.containsKey(key)) {
-                                List<BigInteger> list = theManager.createNativeQuery("select  v021.id from E2FondMedSpecLink link left join VocE2FondV021 v021 on v021.id=link.speciality_id where link.medosWorkFunction=:workfunction")
-                                        .setParameter("workfunction",workfunction).getResultList();
-                                if (!list.isEmpty()) {
-                                    doctor=theManager.find(VocE2FondV021.class,list.get(0).longValue());
-                                }
+                                doctor = getActualVocByClassName(VocE2FondV021.class,null,"code='"+workfunction+"'");
+                                resultMap.put(key,doctor);
+                                if (doctor==null) LOG.error("S_Не нашел доктора по коду V021 = "+workfunction);
                             } else {
                                 doctor = (VocE2FondV021)resultMap.get(key);
                             }
-                            if (doctor!=null) ms.setDoctorSpeciality(doctor);
+                            ms.setDoctorSpeciality(doctor);
                         }
                         if (service.has("diagnosisCode")) {
                             String mkb = service.getString("diagnosisCode");
@@ -1558,10 +1559,9 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /*Нахождение услуги по умолчанию по специальности врача*/
     private VocMedService findDefaultMedServiceByWorkfunction(String aWorkfunctionCode) {
-        String sql = "select v021.defaultmedservice_id from" +
-                " E2FondMedSpecLink link " +
-                " left join voce2fondv021 v021 on v021.id=link.speciality_id" +
-                " where link.medosworkfunction = :workFunction and v021.defaultmedservice_id is not null";
+        String sql = "select v021.defaultmedservice_id" +
+                " from voce2fondv021 v021 " +
+                " where v021.code = :workFunction and v021.defaultmedservice_id is not null";
         List<Object> list = theManager.createNativeQuery(sql).setParameter("workFunction",aWorkfunctionCode).getResultList();
         if (list.isEmpty()) {
             LOG.error("Не найдено услуги по умолчанию для профиля специальности: "+aWorkfunctionCode);
@@ -2877,7 +2877,6 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
             list = theManager.createQuery(sql).setParameter("actualDate",aActualDate).getResultList();
             if (list.isEmpty()){
-
                 list = theManager.createQuery("from " + aClass.getName() + " where finishDate is null" + (aSqlAdd != null ?" and "+ aSqlAdd : "")).getResultList();
             }
         } else if (isNotNull(aSqlAdd)){
@@ -3017,23 +3016,18 @@ public class Expert2ServiceBean implements IExpert2Service {
                 String doctorWorkFunction = aEntry.getDoctorWorkfunction(); //с 3 декабря - v021.code
                 key = "DOCTOR#" + doctorWorkFunction;
                 if (vmpCase) {
-                    if (aEntry.getMedHelpProfile() != null && aEntry.getMedHelpProfile().getProfileK().equals("81") && doctorWorkFunction.equals("26")) {
+                    if (aEntry.getMedHelpProfile() != null && aEntry.getMedHelpProfile().getProfileK().equals("81") && doctorWorkFunction.equals("25")) { //09-12 26VWF = 25V021 = кардиолог
                         key += "#VMP";
                         if (!resultMap.containsKey(key)) {resultMap.put(key, getActualVocByClassName(VocE2FondV021.class, actualDate , "code='45'"));}
                     }
                 }
                 if (!resultMap.containsKey(key)) {
-                    sb = new StringBuilder();
-                    sb.append("select  v021.id from E2FondMedSpecLink link left join VocE2FondV021 v021 on v021.id=link.speciality_id where link.medosWorkFunction='")
-                            .append(doctorWorkFunction).append("'");
-               //     list = theManager.createNativeQuery(sb.toString()).getResultList();
-                    list = theManager.createNativeQuery("select id from VocE2FondV021 where code='"+doctorWorkFunction+"'").getResultList();
-                    if (list.isEmpty()) {
-                        LOG.error("can't find DOCTOR = " + doctorWorkFunction + "____  find sql string = " + sb);
-                    }
-                    resultMap.put(key, list.isEmpty() ? null : theManager.find(VocE2FondV021.class, list.get(0).longValue()));
+                    resultMap.put(key, getActualVocByClassName(VocE2FondV021.class, actualDate , "code='"+doctorWorkFunction+"'"));
                 }
                 VocE2FondV021 doctor = (VocE2FondV021) resultMap.get(key);
+                if (doctor == null) {
+                    LOG.error("can't find DOCTOR, v021 code = " + doctorWorkFunction);
+                }
                 aEntry.setFondDoctorSpecV021(doctor);
 
             }

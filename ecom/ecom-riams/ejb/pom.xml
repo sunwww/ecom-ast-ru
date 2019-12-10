@@ -15,11 +15,21 @@
 		<dirname>ecom/riams</dirname>
 	</properties>
 	<artifactId>riams-ejb</artifactId>
-	<version>1</version>
+	<version>RELEASE</version>
 	<packaging>jar</packaging>
 	<name>riams-ejb</name>
 
 <dependencies>
+	<dependency>
+		<groupId>org.postgresql</groupId>
+		<artifactId>postgresql</artifactId>
+		<version>42.2.8.jre7 </version>
+	</dependency>
+	<dependency>
+		<groupId>org.flywaydb</groupId>
+		<artifactId>flyway-core</artifactId>
+		<version>6.0.7</version>
+	</dependency>
 	<dependency>
 		<groupId>ru.ecom</groupId>
 		<artifactId>msh</artifactId>
@@ -44,7 +54,20 @@
     -->
 
 	<!-- ecom-ejbweb-ejb deps -->
-
+	<dependency>
+		<groupId>org.jboss</groupId>
+		<artifactId>annotations</artifactId>
+		<systemPath>${libdir}/jboss/jboss-annotations-ejb3.jar</systemPath>
+		<scope>system</scope>
+		<version>RELEASE</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>annotations</artifactId>
+		<systemPath>${libdir}/hibernate/entitymanager/hibernate-annotations.jar</systemPath>
+		<scope>system</scope>
+		<version>RELEASE</version>
+	</dependency>
 	<dependency>
 		<groupId>ru.ecom</groupId>
 		<artifactId>ecom-jboss-lib</artifactId>
@@ -59,11 +82,7 @@
 		<scope>system</scope>
 		<version>RELEASE</version>
 	</dependency>
-	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>4.12</version>
-	</dependency>
+
     <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
@@ -71,6 +90,7 @@
         <scope>compile</scope>
     </dependency>
 </dependencies>
+
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<finalName>riams-ejb</finalName>
@@ -79,11 +99,14 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/riams-ejb_jar/META-INF/*</include>
+					<include>*/riams-ejb_jar/META-INF/*</include>
+					<include>riams-ejb_jar/META-INF/*</include>
 					<include>**/riams-ejb_jar/META-INF/**/*</include>
+					<include>*/riams-ejb_jar/META-INF/**/*</include>
+					<include>riams-ejb_jar/META-INF/**/*</include>
 				</includes>
 				<excludes>
 					<exclude>**/ear</exclude>
-					<exclude>**/riams-ejb_jar.*</exclude>
 				</excludes>
 				<filtering>false</filtering>
 			</resource>
@@ -91,7 +114,30 @@
 
 
 		<plugins>
-
+			<plugin>
+					<groupId>org.flywaydb</groupId>
+					<artifactId>flyway-maven-plugin</artifactId>
+					<version>6.0.7</version>
+				<configuration>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://192.168.7.249:5432/riams</url>
+					<serverId>test</serverId>
+					<workingDirectory>db/migration</workingDirectory>
+					<user>postgres</user>
+					<password>mySecretPassword</password>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.pvsstudio</groupId>
+				<artifactId>pvsstudio-maven-plugin</artifactId>
+				<version>7.03.32667</version>
+				<configuration>
+					<analyzer>
+						<outputType>text</outputType>
+						<outputFile>pvs-output.txt</outputFile>
+					</analyzer>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ear-plugin</artifactId>
@@ -125,7 +171,20 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
+			</plugin>
 
 		</plugins>
 	</build>
+
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>pvsstudio-maven-repo</id>
+			<url>http://files.viva64.com/java/pvsstudio-maven-repository/</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>

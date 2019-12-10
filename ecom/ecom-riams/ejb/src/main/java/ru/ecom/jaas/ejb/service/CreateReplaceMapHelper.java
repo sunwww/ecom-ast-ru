@@ -13,7 +13,6 @@ import java.util.TreeMap;
 public class CreateReplaceMapHelper {
 
     public Map<String, String> create() {
-        System.out.println("creating theMap = " + theMap);
         r("Edit","Изменение") ;
         r("View","Просмотр") ;
         r("Create","Создание") ;
