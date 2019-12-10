@@ -31,8 +31,8 @@
   	/>
   	<msh:section createUrl="entityPrepareCreate-mis_customMessage.do" 
   	createRoles="/Policy/Mis/CustomMessage/Create" title="${title}">
-  	<msh:sectionTitle><msh:sideLink roles="/Policy/Mis/CustomMessage/Create" action="/default_message_update.do?emergency=1" name="Отправить Экстренное сообщение об обновлении через 10 минут" />
-      <msh:sideLink roles="/Policy/Mis/CustomMessage/Create" action="/default_message_update.do" name="Отправить Обычное сообщение после обновлении" />
+  	<msh:sectionTitle><msh:sideLink roles="/Policy/Mis/CustomMessage/Emergency/Create" action="/default_message_update.do?emergency=1" name="Отправить Экстренное сообщение об обновлении через 10 минут" />
+      <msh:sideLink roles="/Policy/Mis/CustomMessage/Emergency/Create" action="/default_message_update.do" name="Отправить Обычное сообщение после обновлении" />
   	</msh:sectionTitle>
   	<msh:sectionContent >
   	<table>

@@ -44,7 +44,7 @@
 
      <script type="text/javascript">
          var ws_socketServerStorageName;
-         jQuery(document).ready(function() {
+ /*        jQuery(document).ready(function() {
              var xhr = new XMLHttpRequest();
              xhr.open('GET', 'GetMessageFromFile?username=${username}', false);
              xhr.send();
@@ -56,7 +56,7 @@
                  t.innerHTML=xhr.responseText
              }
          });
-
+*/
 
      </script>
      <msh:ifInRole roles="/Policy/WebSocket">
@@ -85,7 +85,9 @@
     	else if (day>20 && day<24) {path_curdate="0223";}
     } else if (month == Calendar.MARCH) {
     	if (day>5 && day<9) {path_curdate="0308";}
-    	else if (day>20) {path_curdate="1231";}
+    } else if (month==Calendar.DECEMBER) {
+        if (day>23) {path_curdate="ny";}
+        else if (day>10) {path_curdate="1231";}
     }
     String style="background: url('/customer/images/top_images/"+path_curdate+".jpg') no-repeat left top ;" ;
     request.setAttribute("style_addition_body", style) ;
@@ -109,7 +111,7 @@
             <li><a href='ecom_releases.do'>Новости</a></li>
             <msh:ifInRole roles="/Policy/Mis/CustomMessage/View">
             <li class="separator">|</li>
-            <li><a href='javascript:void(0)' onclick='getDefinition("js-mis_customMessage-getSystemMessages.do?id=-1&short=Short")'>Сообщения</a></li>
+            <li><a href='javascript:void(0)' onclick='getDefinition("js-mis_customMessage-getMessages.do?id=-1&short=Short")'>Сообщения</a></li>
             </msh:ifInRole>
              <msh:ifInRole roles="/Policy/Jaas/SecUser/ReplaceWorkFunction">
             <li class="separator">|</li>
