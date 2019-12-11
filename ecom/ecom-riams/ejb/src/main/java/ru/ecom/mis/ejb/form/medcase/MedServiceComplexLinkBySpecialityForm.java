@@ -1,12 +1,8 @@
 package ru.ecom.mis.ejb.form.medcase;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
+import ru.ecom.expert2.form.voc.federal.VocE2FondV021Form;
 import ru.ecom.mis.ejb.domain.medcase.MedServiceComplexLink;
-import ru.ecom.mis.ejb.form.medcase.interceptor.MedServiceComplexLinkSaveInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.validators.Required;
@@ -17,25 +13,18 @@ import ru.nuzmsh.forms.validator.validators.Required;
  */
 @EntityForm
 @EntityFormPersistance(clazz=MedServiceComplexLink.class)
-@Comment("Связь с комплексной услугой")
-@WebTrail(comment = "Связь с комплексной услугой"
+@Comment("Общие услуги для специальности")
+@WebTrail(comment = "Общие услуги для специальности"
 	, nameProperties= "innerMedService"
-		, view="entityParentView-mis_medServiceComplexLink.do"
+		, view="entityParentView-e2_vocFondV021.do"
 				)
-@Parent(property="complexMedService", parentForm= MedServiceForm.class)
+@Parent(property="speciality", parentForm= VocE2FondV021Form.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedService")
-@ACreateInterceptors(
-		@AEntityFormInterceptor(MedServiceComplexLinkSaveInterceptor.class)
-)
-@ASaveInterceptors(
-		@AEntityFormInterceptor(MedServiceComplexLinkSaveInterceptor.class)
-)
-public class MedServiceComplexLinkForm extends IdEntityForm  {
+public class MedServiceComplexLinkBySpecialityForm extends MedServiceComplexLinkForm  {
 
 	/** Комплексная мед. услуга */
 	@Comment("Комплексная мед. услуга")
 	@Persist
-	@Required
 	public Long getComplexMedService() {return theComplexMedService;}
 	public void setComplexMedService(Long aComplexMedService) {theComplexMedService = aComplexMedService;}
 	private Long theComplexMedService;
@@ -58,7 +47,7 @@ public class MedServiceComplexLinkForm extends IdEntityForm  {
 
 	/** Специальность врача */
 	@Comment("Специальность врача")
-	@Persist
+	@Persist @Required
 	public Long getSpeciality() {return theSpeciality;}
 	public void setSpeciality(Long aSpeciality) {theSpeciality = aSpeciality;}
 	private Long theSpeciality ;

@@ -15,7 +15,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = VocE2FondV021.class)
 @Comment("Медицинская специальность V021")
-@WebTrail(comment = "Медицинская специальность V021", nameProperties = "code", view = "entityView-e2_vocFondV021.do")
+@WebTrail(comment = "Медицинская специальность V021", nameProperties = {"code","name"}, view = "entityView-e2_vocFondV021.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 public class VocE2FondV021Form extends VocBaseFederalForm {
 

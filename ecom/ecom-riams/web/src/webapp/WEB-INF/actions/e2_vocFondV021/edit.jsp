@@ -49,7 +49,7 @@
             <ecom:webQuery name="simpeServiceList" nativeSql="select link.id, ms.code||' '||ms.name as name, link.weight as f3_weight
             from MedServiceComplexLink link
              left join medservice ms on ms.id=link.innerMedService_id where link.speciality_id=${param.id} order by link.weight"/>
-            <msh:table idField="1" name="simpeServiceList" action="entityEdit-mis_medServiceComplexLink.do" noDataMessage="Нет простых услуг">
+            <msh:table idField="1" name="simpeServiceList" action="entityEdit-mis_medServiceBySpeciality.do" noDataMessage="Нет простых услуг">
                 <msh:tableColumn columnName="Услуга" property="2"/>
                 <msh:tableColumn columnName="Вес" property="3"/>
             </msh:table>
@@ -70,7 +70,7 @@
                         alert('Укажите простую услугу!');
                         return;
                     }
-                    let url = 'entitySaveGoView-mis_medServiceComplexLink.do';
+                    let url = 'entitySaveGoView-mis_medServiceBySpeciality.do';
                     let medServiceLink = {
                         saveType:1
                         ,speciality:${param.id}
