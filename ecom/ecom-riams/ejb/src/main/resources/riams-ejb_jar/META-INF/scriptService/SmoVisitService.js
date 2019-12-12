@@ -502,6 +502,7 @@ function createNewVisitByDenied(aContext,aDepartment,aBeginDate,aFinishDate,aDep
  * Закрыть СПО
  */
 function closeSpoByCurrentDate(aContext,aSpoId) {
+    checkIfExistingActRVKClosed(aSpoId,aContext);
 	var listOpenVis = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,vis.dateStart as mkbid"
 			+" from MedCase vis"
@@ -592,6 +593,7 @@ function closeSpoByCurrentDate(aContext,aSpoId) {
 	return aSpoId;
 }
 function closeSpo(aContext, aSpoId) {
+    checkIfExistingActRVKClosed(aSpoId,aContext);
 	var listOpenVis = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,vis.dateStart as mkbid"
 			+" from MedCase vis"
@@ -690,6 +692,7 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish) {
 	return closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish, null); 
 }
 function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish, aWorkFunctionClose) {
+    checkIfExistingActRVKClosed(aSpoId,aContext);
 	var listOpenVis = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,vis.dateStart as mkbid"
 			+" from MedCase vis"
@@ -815,3 +818,14 @@ function setSpoSstreamLikeLastVisit(aContext, aSpoId, aVisLastId) {
     aContext.manager.createNativeQuery("update medcase set  servicestream_id=(select servicestream_id from medcase where id="+aVisLastId+") where id="+aSpoId).executeUpdate() ;
 }
 
+/**
+ * Проверка на наличие открытого акта РВК. Если есть - выписку запретить #183
+ * @param aForm форма
+ * @param aCtx контекст
+ */
+function checkIfExistingActRVKClosed(sSpoId,aCtx) {
+	var sql="select id from actrvk where datefinish is null and medcase_id=ANY(select id from medcase where parent_id=" + sSpoId + ")";
+	var list = aCtx.manager.createNativeQuery(sql).getResultList();
+	if (!list.isEmpty())
+		throw ("<a href='entityEdit-rvk_aktVisit.do?id=" + list.get(0)+"'>Акт РВК</a> необходимо закрыть до закрытия СПО!");
+}

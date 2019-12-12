@@ -6,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="StacJournal">Консультации в стационаре</msh:title>
+        <msh:title mainMenu="StacJournal">Отчёт по актам РВК</msh:title>
     </tiles:put>
     <tiles:put name='side' type='string'>
     </tiles:put>
@@ -16,6 +16,9 @@
                 <msh:row>
                     <msh:textField property="dateBegin" label="Период с"/>
                     <msh:textField property="dateEnd" label="по"/>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
                 </msh:row>
                 <msh:row>
                     <td class="label" title="Показать  (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Показать:</label></td>
@@ -70,6 +73,8 @@
                     typeSql.append(" and a.createdate between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('" + dateEnd+"','dd.mm.yyyy') ");
                 }
             }
+            String department = request.getParameter("department") ;
+            if (department!=null && !department.equals("")) request.setAttribute("department"," and dep.id="+department);
             request.setAttribute("typeSql", typeSql.toString());
             request.setAttribute("typeGroup",type1);
             request.setAttribute("typeGroup2",type2);
@@ -96,7 +101,7 @@ left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 left join worker w on w.id=wf.worker_id
 left join patient wpat on wpat.id=w.person_id
 left join medcase mc on mc.id=a.medcase_id
-where 1=1 ${typeSql}"/>
+where 1=1 ${typeSql} ${department}"/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
             <msh:sectionContent>

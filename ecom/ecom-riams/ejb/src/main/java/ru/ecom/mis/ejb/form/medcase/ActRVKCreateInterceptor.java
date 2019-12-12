@@ -11,10 +11,10 @@ public class ActRVKCreateInterceptor  implements IFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
         ActRVKVisitForm form=(ActRVKVisitForm)aForm ;
         if (!aContext.getEntityManager()
-                .createNativeQuery("select a.id from actrvk a " +
-                        " left join medcase mc on mc.id=a.medcase_id and a.patient_id=mc.patient_id " +
-                        " where (a.datefinish is null or a.datefinish>current_date) and medcase_id=:medCaseId")
+                .createNativeQuery("select a.id from actrvk a" +
+                        " where a.medcase_id=:medCaseId or a.medcase_id=ANY(select id from medcase where" +
+                        " parent_id=(select parent_id from medcase where id=:medCaseId))")
                 .setParameter("medCaseId", form.getMedCase()).getResultList().isEmpty())
-            throw new IllegalStateException("У этого пациента уже есть открытый акт РВК!") ;
+            throw new IllegalStateException("У этого пациента уже есть акт РВК в этом случае лечения!") ;
     }
 }

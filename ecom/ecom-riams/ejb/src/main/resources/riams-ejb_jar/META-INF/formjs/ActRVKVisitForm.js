@@ -37,7 +37,9 @@ function checkSpecName(aForm, aCtx) {
 }
 
 function onPreSave(aForm, aEntity, aCtx) {
+    checkDates(aForm);
     checkSpecName(aForm,aCtx);
+    checkSpoClosed(aForm.getMedCase(),aCtx);
     var date = new java.util.Date() ;
     aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
     aForm.setEditTime(new java.sql.Time (date.getTime())) ;
@@ -52,6 +54,27 @@ function onSave(aForm, aEntity, aCtx) {
     if (typeof wf[0]!=='undefined')
         aEntity.setWorkFunctionFinish(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,wf[0]));
 }
+
+//проверка на редактирование акта РВК в закрытом СПО
+function checkSpoClosed(aVisId,aCtx) {
+    var list = aCtx.manager.createNativeQuery("select case when spo.datefinish is null then '0' else '1' end" +
+        " from medcase vis" +
+        " left join medcase spo on spo.id=vis.parent_id" +
+        " where spo.dtype='PolyclinicMedCase'" +
+        " and vis.id=" + aVisId).getResultList();
+    if (!list.isEmpty())
+        if (list.get(0)==1)
+            throw 'Нельзя редактировать акт РВК после закрытия СПО!';
+}
+
+//дата закрытия >=даты открытия акта
+function checkDates(aForm) {
+    var theStartDate = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.getDateStart()) ;
+    var theFinishDate = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.getDateFinish()) ;
+    if (theStartDate!=null && theFinishDate!=null && theStartDate.getTime() > theFinishDate.getTime())
+        throw 'Дата закрытия акта РВК не может быть меньше даты открытия!';
+}
+
 /**
  * При создании
  */
