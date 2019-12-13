@@ -41,6 +41,7 @@ function onPreSave(aForm,aEntity, aCtx) {
     checkNewBornScreeningSecondExists(aForm,aCtx);
     //проверка на наличие ЭК по критериям
     //checkIfIsQECard(aForm, aCtx);
+    checkIfExistingActRVKClosed(aForm,aCtx);
 	var manager = aCtx.manager;
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
 	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy")) {
@@ -225,7 +226,7 @@ function checkNewBornScreeningSecondExists(aForm,aCtx) {
 	} catch (e) {
 	}
 }
-//првоерка на наличие экспертной карты по критериям. Если нет - выписку запретить
+//проверка на наличие экспертной карты по критериям. Если нет - выписку запретить
 function checkIfIsQECard(aForm,aCtx) {
     if (aForm.id != null) {
         /*var sql = "select id from qualityestimationcard where medcase_id=" + aForm.id + " and  kind_id=(select id from vocqualityestimationkind where code='PR203')";
@@ -300,4 +301,18 @@ function updateListIdCAOS(days,aMedcaseId,aCtx) {
         " and caos.medcase_id is null and caos.serviceid is null  " +
         " and (ca.createdate between sls.datestart and sls.datestart-" + days + " or ca.createdate=sls.datestart" +
         " or ca.createdate=sls.datestart-"+days+"))").executeUpdate();
+}
+
+/**
+ * Проверка на наличие открытого акта РВК. Если есть - выписку запретить #183
+ * @param aForm форма
+ * @param aCtx контекст
+ */
+function checkIfExistingActRVKClosed(aForm,aCtx) {
+    if (aForm.id != null) {
+        var sql="select id from actrvk where datefinish is null and medcase_id=ANY(select id from medcase where parent_id=" + aForm.id + ")";
+        var list = aCtx.manager.createNativeQuery(sql).getResultList();
+        if (!list.isEmpty())
+            throw ("<a href='entityEdit-rvk_aktSlo.do?id=" + list.get(0) + "' target='_blank'>Акт РВК</a> необходимо закрыть до выписки!");
+    }
 }

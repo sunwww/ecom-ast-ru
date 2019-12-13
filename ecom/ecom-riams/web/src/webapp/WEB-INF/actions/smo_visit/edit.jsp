@@ -634,7 +634,7 @@
                     PatientService.getIfRVKAlreadyExists(${param.id}, {
                         callback: function (aResult) {
                             if (aResult != '{}') {
-                                if (confirm('У пациента уже есть открытый акт РВК. Перейти к нему?')) {
+                                if (confirm('У пациента уже есть акт РВК в этом СПО. Перейти к нему?')) {
                                     var res = JSON.parse(aResult);
                                     if (res.dtype=='Visit')
                                         window.location.href = 'entityView-rvk_aktVisit.do?id=' +res.id;
