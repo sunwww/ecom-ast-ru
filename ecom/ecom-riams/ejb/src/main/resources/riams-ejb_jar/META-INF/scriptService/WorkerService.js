@@ -146,6 +146,7 @@ function getGroupByWorkFunction(aCtx,aWorkFunction) {
 		.getResultList() ;
 	return list.isEmpty() ? 0 : +list.get(0)[0] ;
 }
+
 function findLogginedWorkFunctionListByPoliclinic(aCtx,aWorkPlan) {
 	var username = aCtx.sessionContext.callerPrincipal.name ;
 	var sql = "select wf.id as wfid";
@@ -166,8 +167,6 @@ function findLogginedWorkFunctionListByPoliclinic(aCtx,aWorkPlan) {
 	}
 	sql=sql	+" where su.login = '"+username+"'  group by wf.id";
 	var list = aCtx.manager.createNativeQuery(sql)
-		//.setParameter("login", username) 
-		//.setParameter("plWF",aWorkPlan)
 		.getResultList() ;
 	if(list.isEmpty()) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и именем пользователя (WorkFunction и SecUser)" ;
 	var obj = list.get(0) ;

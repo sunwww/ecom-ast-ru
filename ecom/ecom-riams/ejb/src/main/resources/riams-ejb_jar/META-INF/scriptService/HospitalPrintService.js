@@ -2172,11 +2172,6 @@ function infoPrint(aCtx,aParams) {
 	map.put("print.info","") ;
 }
 function printProtocol (aCtx,aParams){
-	//var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
-	//	, new java.lang.Long(aParams.get("id"))) ;
-	//var list = aCtx.manager.createQuery("from Protocol where medCase_id=:sls")
-		//.setParameter("sls",medCase.id).getResultList();
-	//var protocol = !list.isEmpty()?list.iterator().next().record:"";
 	var protocol = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol
 		, new java.lang.Long(aParams.get("id"))) ;
 	var medCase = protocol.medCase ;
@@ -2197,6 +2192,7 @@ function printProtocol (aCtx,aParams){
 	map.put("prot.spec",protocol.specialistInfo);
 	map.put("medCase.info",protocol.medCase.info) ;
 	recordMultiText("prot.rec", protocol.record) ;
+	map.put("prot.title",recordMultiValue(protocol.title));
 	map.put("drugs",new java.util.ArrayList()) ;
 	var protType=protocol.type ;
 	if (protType!=null) {
@@ -2291,7 +2287,6 @@ function recordVocProba(aKey, aValue, aMin, aMax) {
 } 
 
 function recordMultiText(aKey, aValue) {
-	var ret = new java.lang.StringBuilder () ;
 	var val = aValue!=null?"" +aValue:"" ;
 	var n = /\n/ ;
 	var items = val.split(n);

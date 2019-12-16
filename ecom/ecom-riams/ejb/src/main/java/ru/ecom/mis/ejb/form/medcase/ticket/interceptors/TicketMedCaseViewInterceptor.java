@@ -86,9 +86,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 
 			j.key("childs").array();
 
-			StringBuilder sql = new StringBuilder() ;
-			sql.append("select ").append(aFieldChildren).append(" from ").append(aTableName).append(" where ").append(aWhere) ;
-			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList();
+			List<Object> list = aManager.createNativeQuery("select " + aFieldChildren + " from " + aTableName + " where " + aWhere).getResultList();
 			for (Object child : list) {
 				j.object().key("value").value(ConvertSql.parseLong(child));
 				j.endObject();

@@ -5,7 +5,7 @@ function onPreDelete(aEntityId, aCtx) {
         var obj = l.get(0);
         if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/DisableDeleteOnlyTheir")
             && aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/EnableDeleteOnlyTheir")) {
-            if (aCtx.getSessionContext().getCallerPrincipal().toString() != ("" + obj[0])) {
+            if (aCtx.getSessionContext().getCallerPrincipal().getName() != ("" + obj[0])) {
                 throw "У Вас стоит запрет на удаление протоколов (дневников специалиста) других специалистов!";
             }
             var curDate = java.util.Calendar.getInstance();
@@ -27,7 +27,7 @@ function onPreDelete(aEntityId, aCtx) {
         " left join PrescriptionList pl on pl.id=scg.prescriptionList_id" +
         " left join medcase slo on slo.id=pl.medcase_id" +
         " left join workfunction wf on wf.id=scg.prescriptcabinet_id" +
-        " where scg.transferdate is not null and scg.diary_id='" + aEntityId + "'").getResultList();
+        " where scg.diary_id='" + aEntityId + "' and scg.transferdate is not null").getResultList();
     if (!res.isEmpty()) {
         if (res.get(0)!=null) {
             var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
@@ -58,13 +58,8 @@ function onPreCreate(aForm, aCtx) {
     check(aForm, aCtx, true);
 
     if (wf != null) {
-        var protocols;
-        //throw "select d.id,d.record from Diary d where d.dtype='Protocol'"
-        //	+" and  d.medCase_id='"+aForm.medCase+"' and d.specialist_id='"+aForm.specialist+"'"
-        //	+" and d.dateRegistration=$$ei^Zcdat('"+aForm.dateRegistration+"') and d.timeRegistration=cast('"+aForm.timeRegistration+"' as TIME) "
-        //	;
         var dat = Packages.ru.nuzmsh.util.format.DateFormat.formatToJDBC(aForm.dateRegistration);
-        protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.dtype='Protocol'"
+        var protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.dtype='Protocol'"
             + " and  d.medCase_id='" + aForm.medCase + "' and d.specialist_id='" + wf + "'"
             + " and d.dateRegistration=cast('" + dat + "' as date) and d.timeRegistration=cast('" + aForm.timeRegistration + "' as TIME) "
         )
@@ -75,19 +70,36 @@ function onPreCreate(aForm, aCtx) {
     checkCreateDiagnosis(aForm, aCtx);
 }
 function onCreate(aForm, aEntity, aCtx) {
-
     var username = aCtx.getSessionContext().getCallerPrincipal().getName();
     if (aForm.getParams() != null && aForm.getParams() != "") {
         Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(), aEntity, aForm.getParams(), username, aCtx.manager);
     }
     createServiceMedCase(aForm, aEntity, aCtx);
     checkPrescription(aForm, aEntity, aCtx,false);
+    makeTitleAndBottom(aForm, aEntity, aCtx);
 }
+
+/**
+ * Создаем заголовок и подвал дневника
+ * Заголовок создаем только для определенный раб. функций
+ * */
+function makeTitleAndBottom(aForm, aEntity, aCtx) {
+    if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/GenerateTitleAndBottom")) {
+        var vwf = aEntity.specialist.workFunction;
+        if (true == vwf.getIsDiaryTitle()) {
+            var pat = aEntity.medCase.patient;
+            var title = "Пациент: "+pat.lastname + " " + pat.firstname + " " + (pat.middlename ? pat.middlename : "") + " " + Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(pat.birthday);
+            title+="\nМО: ГБУЗ АО \"АМОКБ\"\nДата: "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aEntity.dateRegistration);
+            aEntity.setTitle(title);
+            aCtx.manager.persist(aEntity);
+        }
+    }
+}
+
 function createServiceMedCase(aForm, aEntity, aCtx) {
+    var smc ;
     if (aForm.medService !== null && +aForm.medService > 0) {
-        var smc ;
         if (aEntity.serviceMedCase != null) {
-            //	throw "ggod:";
             smc = aEntity.getServiceMedCase();
         } else {
             smc = new Packages.ru.ecom.mis.ejb.domain.medcase.ServiceMedCase();
@@ -99,12 +111,12 @@ function createServiceMedCase(aForm, aEntity, aCtx) {
         smc.setDateStart(aEntity.dateRegistration);
         smc.setTimeExecute(aEntity.timeRegistration);
         smc.setWorkFunctionExecute(aEntity.specialist);
-        smc.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+        smc.setUsername(aCtx.getSessionContext().getCallerPrincipal().getName());
         aCtx.manager.persist(smc);
         aEntity.serviceMedCase = smc;
 
     } else if (aEntity.serviceMedCase != null) { //Если услуга пустая, а сервисмедкейс есть, удаляем сервис медкейс
-        var smc = aEntity.getServiceMedCase();
+        smc = aEntity.getServiceMedCase();
         aEntity.serviceMedCase = null;
         aCtx.manager.persist(aEntity);
         aCtx.manager.remove(smc);
@@ -115,7 +127,7 @@ function onPreSave(aForm, aEntity, aCtx) {
     var date = new java.util.Date();
     aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
     aForm.setEditTime(new java.sql.Time (date.getTime())) ;
-    aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+    aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().getName());
     var protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.id='" + aEntity.id + "' and d.dtype='Protocol'").getResultList();
     if (protocols.isEmpty()) {
         onPreCreate(aForm, aCtx);
@@ -126,7 +138,7 @@ function onPreSave(aForm, aEntity, aCtx) {
  * При сохранении
  */
 function onSave(aForm, aEntity, aCtx) {
-    var username = aCtx.getSessionContext().getCallerPrincipal().toString();
+    var username = aCtx.getSessionContext().getCallerPrincipal().getName();
     if (aForm.username!=null && aForm.username!="" && !aForm.username.equals(username)) {
         throw "У Вас стоит ограничение на редактрование данного протокола!"+
         "<br><br> Текущий пользователь: "+username+", протокол был создан пользователем: "+aForm.username ;
@@ -264,14 +276,14 @@ function check(aForm, aCtx,isCreate) {
     }
 }
 function checkCreateDiagnosis(aForm, aCtx) {
-    var idc = aForm.getDiagnosisIdc10();
+    var idc = +aForm.getDiagnosisIdc10();
     var m = aCtx.manager;
     var mc = m.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase, aForm.getMedCase());
     var dtype = "" + m.createNativeQuery("select id, dtype from medcase where id=" + mc.getId()).getSingleResult()[1];
-    if (+idc === 0 && dtype === 'HospitalMedCase' &&
+    if (idc === 0 && dtype === 'HospitalMedCase' &&
         aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/MustCreateDiaryInHospitalMedCase")) {
         throw "Необходимо заполнить поле \"Диагноз\"";
-    } else if (+idc>0) {
+    } else if (idc>0) {
         var theDiagnosisPriority = aForm.getDiagnosisPriority();
         var theDiagnosisText = aForm.getDiagnosisText();
         var theDiagnosisIllnessPrimary = aForm.getDiagnosisIllnessPrimary();
@@ -290,7 +302,7 @@ function checkCreateDiagnosis(aForm, aCtx) {
         d.setEstablishDate(Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.getDateRegistration()));
         d.setMedCase(mc);
         d.setRegistrationType(m.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType, theDiagnosisRegistrationType));
-        d.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+        d.setUsername(aCtx.getSessionContext().getCallerPrincipal().getName());
         d.setMedicalWorker(m.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, aForm.getSpecialist()));
         d.setIllnesPrimary(m.find(Packages.ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary, theDiagnosisIllnessPrimary));
         d.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));

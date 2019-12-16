@@ -216,4 +216,10 @@ public class VisitProtocolForm extends ProtocolForm {
 	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
 	/** Поток обслуживания случая */
 	private Long theServiceStream ;
+
+	/** Заголовок дневника */
+	@Comment("Заголовок дневника")
+	public String getTitle() {return theTitle;}
+	public void setTitle(String aTitle) {theTitle = aTitle;}
+	private String theTitle ="";
 }

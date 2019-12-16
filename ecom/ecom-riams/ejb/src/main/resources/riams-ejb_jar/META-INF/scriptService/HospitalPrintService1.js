@@ -267,6 +267,7 @@ function printProtocols(aCtx, aParams) {
 		mapS.specialistInfo=protocol.specialistInfo ;
 		mapS.setTicket(null) ;
 		mapS.setTypeInfo("") ;
+		mapS.setTitle(protocol.title!=null ? recordMultiValue(protocol.title) : "");
 		var protType=protocol.type ;
 		if (protType!=null) {
 			mapS.typeInfo=protType.name ;
@@ -284,8 +285,7 @@ function printProtocols(aCtx, aParams) {
 	
 	return map ;
 }
-function printBillings(aCtx, aParams)
-{
+function printBillings(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var ids = ids1.split(",") ;
 	infoPrint(aCtx,ids[0]) ;

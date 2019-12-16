@@ -42,19 +42,13 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	private static final Logger LOG = Logger
 			.getLogger(AbstractFormServiceBeanHelper.class);
 
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-
 	void checkDynamicPermission(Class aFormClass, Object aId,
 			String aPolicyAction) {
 		if (aId == null)
 			throw new IllegalArgumentException("Нет параметра aId");
 		ADynamicSecurityInterceptor interceptor = (ADynamicSecurityInterceptor) aFormClass
 				.getAnnotation(ADynamicSecurityInterceptor.class);
-		// String policyToExtend = getSecurityRole(clazz, aSuffix) ;
 		if (interceptor != null) {
-			// StringBuilder sb = new StringBuilder();
-			// sb.append(getSecurityRole(clazz, aSuffix)) ;
-			// sb.append('/') ;
 			InterceptorContext ctx = new InterceptorContext(theManager,
 					theContext);
 			for (Class interceptorClass : interceptor.value()) {
@@ -62,32 +56,14 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 					IDynamicSecurityInterceptor dynamicInterceptor = (IDynamicSecurityInterceptor) interceptorClass
 							.newInstance();
 					dynamicInterceptor.check(aPolicyAction, aId, ctx);
-					// sb.append(dynamicInterceptor.getExtend(aForm, ctx)) ;
-					// if(!theContext.isCallerInRole(sb.toString())) {
-					// throw new IllegalStateException("Нет политики
-					// "+sb.toString()) ;
-					// }
 				} catch (InstantiationException | IllegalAccessException e) {
 					throw new IllegalStateException(e);
 				}
 			}
 		}
-
 	}
 
 	private String getSecurityRole(Class aFormClass, String aSuffix) {
-		// 
-//		if(aFormClass.equals(MapEntityForm.class)) {
-//			try {
-//				aFormClass = new MapClassLoader(Thread.currentThread().getContextClassLoader())
-//					.loadClass("$$asdf") ;
-//			} catch (ClassNotFoundException e) {
-//				System.err.println(e);
-//				e.printStackTrace();
-//			}
-//		}
-		//
-		
 		EntityFormSecurityPrefix prefix = (EntityFormSecurityPrefix) aFormClass
 				.getAnnotation(EntityFormSecurityPrefix.class);
 		if (prefix != null) {
@@ -139,10 +115,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 			if(aFormClass.isAnnotationPresent(AViewInterceptors.class)) {
 				AViewInterceptors interceptors = aFormClass.getAnnotation(AViewInterceptors.class) ;
 				invokeFormInterceptors(interceptors.value(), form, entity);
-//				for(AEntityFormInterceptor entityFormInterceptor : interceptors.value()) {
-//					IFormInterceptor interceptor = (IFormInterceptor)entityFormInterceptor.value().newInstance() ;
-//					interceptor.intercept(form, entity, theManager) ;
-//				}
 			}
 			if(theRowPersistDelegate.isRowPersistEnable(aFormClass)) {
 				theRowPersistDelegate.load(form, theManager, entity);
@@ -196,17 +168,10 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	}
 
 	private IEntityForm transformMapForm(IEntityForm aOrigForm) {
-		if (CAN_DEBUG)
-			LOG.debug("transformMapForm: aForm = " + aOrigForm); 
-
 		if(aOrigForm instanceof MapForm) {
 			MapForm form = (MapForm) aOrigForm ;
-			if (CAN_DEBUG)
-				LOG.debug("transformMapForm: form.getName() = " + form.getStrutsFormName()); 
-
 			Class cl = loadMapForm("$$map$$"+form.getStrutsFormName()) ;
 			try {
-				
 				MapForm dest = (MapForm) cl.newInstance() ;
 				BeanUtils.copyProperties(dest, aOrigForm);
 				BaseValidatorForm baseValidatorForm = (BaseValidatorForm) aOrigForm;
@@ -220,7 +185,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 						}
 					}
 				}
-
 				return (IEntityForm) dest ;
 			} catch (Exception e) {
 				throw new IllegalStateException(e) ;
@@ -248,7 +212,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 		Class entityClass = findFormPersistanceClass(aForm.getClass());
 		
 		// MapForm
-		
 		try {
 			Object entity = entityClass.newInstance();
 			Method getIdMethod = entityClass.getMethod("getId");
@@ -262,18 +225,8 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	    				manager.refresh(entity) ; // для ManyToManyOneProperty, чтобы коллекции были инициализированы
 	    				createManyToManyOneProperty(aForm,entity,getIdMethod.invoke(entity)) ;
 				}
-				//manager.persist(entity);
-				//manager.refresh(entity) ; // для ManyToManyOneProperty, чтобы коллекции были инициализированы
-				if (CAN_DEBUG)
-					LOG.debug("create() Id before copy = "
-							+ getIdMethod.invoke(entity));
 				copyFormToEntity(aForm, entity, false); // не копируем @Id
-				if (CAN_DEBUG)
-					LOG.debug("create() Id after copy = "
-							+ getIdMethod.invoke(entity));
-
 				if( !doPersistBefore ) manager.persist(entity);
-
 				if(theRowPersistDelegate.isRowPersistEnable(aForm.getClass())) {
 					theRowPersistDelegate.create( aForm, theManager, entity);
 				}
@@ -282,15 +235,10 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 					ACreateInterceptors interceptors = aForm.getClass().getAnnotation(ACreateInterceptors.class) ;
 					invokeFormInterceptors(interceptors.value(),aForm, entity);
 				}
-
 				invokeJavaScriptInterceptor("onCreate", aForm, entity, null, null);
-
-				//if(true) throw new IllegalStateException("//fixme") ;
-
 			} finally {
 				//manager.close();
 			}
-
 
 			return (Long) getIdMethod.invoke(entity);
 		} catch (Exception e) {
@@ -299,8 +247,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 		}
 
 	}
-	
-	
+
 	private static boolean hasManyToManyOneProperty(Class aClass) {
 	    Method[] methods = aClass.getMethods() ;
 	    for(Method m : methods) {
@@ -319,7 +266,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 				boolean isViewable = isEntityMethodDataAvailable(aEntity,aEntity.getClass(), method, aId);
 				if(isViewable) {
 						String json = (String) method.invoke(aForm);
-						// Method entityGetterMethod =
 
 						PersistManyToManyOneProperty pm = method
 								.getAnnotation(PersistManyToManyOneProperty.class);
@@ -332,10 +278,8 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 							saveOneToManyOneProperty(json, collection, type,tableName,parentProperty,valueProperty, aId);
 						}
 					} 
-					
 				}
 			}
-	    
 	    }
 
 	
@@ -346,7 +290,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 			try {
 				Method getterIsDeleted = PropertyUtil.getGetterMethod(entityClass,unDeletable.fieldName());
 				Boolean isDeleted = (Boolean)getterIsDeleted.invoke(aEntity);
-				if (isDeleted!=null && isDeleted) {
+				if (Boolean.TRUE==isDeleted) {
 					throw new IllegalArgumentException("Этот объект был удален");
 				}
 			} catch (InvocationTargetException | IllegalAccessException e) {
@@ -368,10 +312,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 		
 		// MapForm
 		aForm = transformMapForm(aForm) ;
-
 		checkPermission(aForm.getClass(), "Edit");
-		
-		
 		try {
 			Object idValue = getIdValue(aForm, aForm.getClass());
 			Object entity = theManager.find(findFormPersistanceClass(aForm
@@ -383,7 +324,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 				ASaveInterceptors interceptors = aForm.getClass().getAnnotation(ASaveInterceptors.class) ;
 				invokeFormInterceptors(interceptors.value(),aForm, entity);
 			}
-			// ROW PERSIST
 			if(theRowPersistDelegate.isRowPersistEnable(aForm.getClass())) {
 				theRowPersistDelegate.save(aForm, theManager, entity);
 			}
@@ -394,9 +334,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 			LOG.error("Ошибка копирование из формы "+aForm+" в объект",e) ;
 			throw new EntityFormException(
 //					"Ошибка копирование из формы "+aForm+" в объект", e)
-					"ОШИБКА", e)
-			
-			;
+					"ОШИБКА", e);
 		}
 	}
 
@@ -521,14 +459,11 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 							formClass, method);
 					Method ejbGetterMethod = entityClass.getMethod(method
 							.getName());
-					//System.out.println("primer-----") ;
 					String json = createJsonOneToManyOneProperty(
 							aEntity,
 							ejbGetterMethod,
 							method
 									.getAnnotation(PersistManyToManyOneProperty.class),id);
-					if (CAN_DEBUG) LOG.debug("json = " + json);
-					
 					formSetterMethod.invoke(aForm, json);
 				} else {
 					copyEntityToForm(aEntity, aForm, method);
@@ -566,13 +501,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 				Collection childs = (Collection) aEntityGetMethod.invoke(aEntity);
 				for (Object child : childs) {
 					// FIXME child.getClass() - получше придумать
-					j.object().key("value").value(getIdValue(child, child.getClass())); // PropertyUtil.getPropertyValue(child,
-																		// idProperty))
-																		// ;
-					// Object voc = PropertyUtil.getPropertyValue(child,
-					// valueProperty) ;
-					// Object value = getIdValue(voc) ;
-					// j.key("value").value(value) ;
+					j.object().key("value").value(getIdValue(child, child.getClass()));
 					j.endObject();
 				}
 				j.endArray();
@@ -706,8 +635,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 					String valueProperty = pm.valueProperty() ;
 					Collection collection =null ;
 					if (tableName.equals("")) {
-						//Class valueClass = entityClass.getMethod(method.getName())
-						//.getReturnType();
 						collection = (Collection) entityClass.getMethod(
 								method.getName()).invoke(aEntity);
 					}
@@ -715,7 +642,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 					saveOneToManyOneProperty(json, collection, type,tableName,parentProperty,valueProperty, id);
 				} else if (method.getAnnotation(Persist.class) != null
 						|| (aMustCopyId && (method.getAnnotation(Id.class) != null))) {
-					//LOG.info(" Copy "+method) ;
 					Method ejbGetterMethod = entityClass
 							.getMethod(method.getName());
 					if(!ejbGetterMethod.isAnnotationPresent(Transient.class)) {
@@ -741,8 +667,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	private void saveOneToManyOneProperty(String aJson, Collection aCollection,
 			Class aType,String aTableName, String aParentProperty, String aValueProperty, Object aId) throws JSONException, ParseException,
 			SecurityException, NoSuchMethodException {
-		//System.out.println(aTableName);
-		//System.out.println(aJson);
 		if (aTableName==null || aTableName.equals("")) {
 			JSONArray ar ;
 			if (aJson!=null && !aJson.equals("")) {
@@ -751,11 +675,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 			} else {
 				ar = new JSONArray() ;
 			}
-			
-	
-			//JSONArray ar = obj.getJSONArray("childs");
-			// Class entityClass = aEntity.getClass() ;
-			// ashMap<Object, Object> map = new HashMap<Object, Object>();
 			Set<Object> set = new HashSet<>();
 			for (int i = 0; i < ar.length(); i++) {
 				JSONObject child = (JSONObject) ar.get(i);
@@ -763,17 +682,10 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 				if (!StringUtil.isNullOrEmpty(jsonId) || "0".equals(jsonId)) {
 					Object id = PropertyUtil.convertValue(String.class,
 							getIdClass(aType), jsonId);
-					// Object value = PropertyUtil.convertValue(String.class,
-					// aValueClass, child.get("value")) ;
-					// System.out.println("id="+id) ;
 					Object entity = theManager.find(aType, id);
 					set.add(entity);
-					// aCollection.add(entity) ;
-					// map.put(id, value) ;
 				}
-				// map.put(id, value) ;
 			}
-			// remove
 
 			if(aCollection!=null) {
 				Iterator it = aCollection.iterator();
@@ -798,8 +710,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 			Long id = PersistList.parseLong(aId) ;
 			if (id!=null && id>0) PersistList.saveArrayJson(aTableName, id, aJson, aParentProperty , aValueProperty, theManager);
 		}
-
-		// if (CAN_DEBUG) LOG.debug("map = " + map);
 	}
 
 	protected EntityFormPersistance findFormPersistance(

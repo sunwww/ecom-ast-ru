@@ -100,4 +100,11 @@ public class VocWorkFunctionForm extends IdEntityForm {
 	public Boolean getIsNoOmc() {return theIsNoOmc;}
 	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
 	private Boolean theIsNoOmc ;
+
+	/** Создавать заголовок в дневнике */
+	@Comment("Создавать заголовок в дневнике")
+	@Persist
+	public Boolean getIsDiaryTitle() {return theIsDiaryTitle;}
+	public void setIsDiaryTitle(Boolean aIsDiaryTitle) {theIsDiaryTitle = aIsDiaryTitle;}
+	private Boolean theIsDiaryTitle ;
 }

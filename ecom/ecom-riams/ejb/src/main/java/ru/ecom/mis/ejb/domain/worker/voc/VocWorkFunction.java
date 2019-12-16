@@ -86,6 +86,13 @@ public class VocWorkFunction extends VocBaseEntity{
 	public Boolean getIsRadiationDiagnosis() {return theIsRadiationDiagnosis;}
 	public void setIsRadiationDiagnosis(Boolean aIsRadiationDiagnosis) {theIsRadiationDiagnosis = aIsRadiationDiagnosis;}
 
+	/** Создавать заголовок в дневнике */
+	@Comment("Создавать заголовок в дневнике")
+	@Column(nullable=false, columnDefinition="boolean default false")
+	public Boolean getIsDiaryTitle() {return theIsDiaryTitle;}
+	public void setIsDiaryTitle(Boolean aIsDiaryTitle) {theIsDiaryTitle = aIsDiaryTitle;}
+	private Boolean theIsDiaryTitle ;
+
 	/** Лучевая диагностика */
 	private Boolean theIsRadiationDiagnosis;
 	/** Лаборатория */

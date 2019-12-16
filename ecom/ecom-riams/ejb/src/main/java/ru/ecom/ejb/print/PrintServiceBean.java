@@ -30,14 +30,12 @@ public class PrintServiceBean implements IPrintService {
 			, String aServiceName
 			, String aMethodName, Map<String,String> aParams) {
 		// получение данных
-		EjbInjection theInjection = EjbInjection.getInstance();
-		IScriptService serv = theInjection.getLocalService(IScriptService.class) ;
+		IScriptService serv = EjbInjection.getInstance().getLocalService(IScriptService.class) ;
 		return print(aLogin, aIsTxtFirst, aKey,serv ,aServiceName,aMethodName, aParams);
 	}
 	public String print(String aLogin,boolean aIsTxtFirst, String aKey
 			,IScriptService aServiceScr, String aServiceName
 			, String aMethodName, Map<String,String> aParams) {
-	
 		try {
 			Map<String,Object> values = (Map<String, Object>)aServiceScr.invoke(aServiceName, aMethodName,new Object[] {aParams});
 			// печать
@@ -46,8 +44,7 @@ public class PrintServiceBean implements IPrintService {
             RtfPrintServiceHelper service = new RtfPrintServiceHelper(aIsTxtFirst);
             String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
             boolean removedTemp =config.get("tomcat.data.dir.removedtemp", "1").equals("1");
-            
-            service.setWorkDir(config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf"));
+            service.setWorkDir(workDir);
             service.setTemplateDir(System.getProperty("jboss.server.data.dir"));
             service.setRemovedTempFile(removedTemp);
             service.setLogin(aLogin) ;
@@ -70,10 +67,6 @@ public class PrintServiceBean implements IPrintService {
 		private final Map<String, Object> theValues ;
 		
 	}
-
-	
 	private @EJB
     IJbossGetFileLocalService theJbossGetFileLocalService;
-
-	//private EjbInjection theInjection = EjbInjection.getInstance();
 }
