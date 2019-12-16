@@ -47,11 +47,13 @@
             </msh:table>
             <msh:separator colSpan="8" label="Простые услуги"/>
             <ecom:webQuery name="simpeServiceList" nativeSql="select link.id, ms.code||' '||ms.name as name, link.weight as f3_weight
+            ,link.isDefault as f4_isDefault
             from MedServiceComplexLink link
              left join medservice ms on ms.id=link.innerMedService_id where link.speciality_id=${param.id} order by link.weight"/>
             <msh:table idField="1" name="simpeServiceList" action="entityEdit-mis_medServiceBySpeciality.do" noDataMessage="Нет простых услуг">
                 <msh:tableColumn columnName="Услуга" property="2"/>
                 <msh:tableColumn columnName="Вес" property="3"/>
+                <msh:tableColumn columnName="По умолчанию" property="4"/>
             </msh:table>
 
         </msh:ifFormTypeIsView>

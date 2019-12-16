@@ -224,9 +224,6 @@ horizontalFill="true" />
 
 		<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
 			<msh:sideMenu title="Печать">
-				<%--     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol"
-    	name="Печать дневника"
-    	action='/javascript:printProtocol(".do")' title='Печать дневника' /> --%>
 				<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol"
 							  name="Печать дневника"
 							  action='/javascript:showPrintProtocolTemplate()'
@@ -249,16 +246,12 @@ horizontalFill="true" />
 		<script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
 <script type="text/javascript">
 	function printProtocol() {
-		HospitalMedCaseService.getPrefixByProtocol(${param.id},
-				{
-					callback: function(prefix) {
-						if (prefix==null) prefix="" ;
-						initSelectPrinter("print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}",1)
-						//window.location.href="print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}" ;
-
-					}
-				}
-		)
+		HospitalMedCaseService.getPrefixByProtocol(${param.id}, {
+			callback: function(prefix) {
+				if (prefix==null) prefix="" ;
+				initSelectPrinter("print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}",1);
+			}
+		});
 	}
 </script>
 

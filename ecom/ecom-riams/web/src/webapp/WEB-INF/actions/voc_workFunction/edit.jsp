@@ -30,6 +30,7 @@
         </msh:row>
         <msh:row>
         	<msh:checkBox property="isNo039" label="Не включать в 039 форму"/>
+        	<msh:checkBox property="isDiaryTitle" />
         </msh:row>
         <msh:row>
           <msh:autoComplete property="medHelpProfile" label="Профиль мед. помощи" vocName="vocE2MedHelpProfile" size="50"/>

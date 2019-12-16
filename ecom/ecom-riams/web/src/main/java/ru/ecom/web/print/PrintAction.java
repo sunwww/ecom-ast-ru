@@ -52,45 +52,32 @@ public class PrintAction extends BaseAction {
 		boolean isTxtFile = false ;
 		
 		WebQueryResult printMain = null ;
-        if (list.size()>0) {
+        if (!list.isEmpty()) {
         	printMain = list.iterator().next() ;
         } else {
             sql = new StringBuilder() ;
             sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from WorkFunction wf left join SecUser su on su.id=secUser_id left join Worker w on w.id=wf.worker_id left join MisLpu lpu on lpu.id=w.lpu_id left join CopyingEquipment ce on ce.id=lpu.copyingEquipmentDefault_id where su.login='").append(login).append("'  and ce.id is not null") ;
             list = service1.executeNativeSql(sql.toString(),1);
-            if (list.size()>0) {
+            if (!list.isEmpty()) {
             	printMain = list.iterator().next() ;
             }
         }
-        //System.out.println("print="+printMain.get1()) ;
 		if (printMain!=null) {
             sql = new StringBuilder() ;
             sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from  CopyingEquipment ce where ce.parent_id='").append(printMain.get2()).append("' and ce.maskFiles = substring('").append(reportKey).append("',1,length(ce.maskFiles))");
-            //System.out.println(sql.toString());
             list = service1.executeNativeSql(sql.toString(),1);
-            if (list.size()>0) {
+            if (!list.isEmpty()) {
             	printMain = list.iterator().next() ;
             }
         	if (printMain.get1()!=null) print = ""+printMain.get1() ;
         	if (printMain.get3()!=null) isTxtFile = true ;
 		}
 		String printTxtFirst = aRequest.getParameter("printTxtFirst") ;
-		if (printTxtFirst!=null&&printTxtFirst.equals("1")){
-		//	System.out.println("all feel good");
+		if ("1".equals(printTxtFirst)){
 			isTxtFile = true ;
-		} else if (printTxtFirst!=null&&printTxtFirst.equals("0")) {
-		//	System.out.println("all feel good no matrix");
+		} else if ("0".equals(printTxtFirst)) {
 			isTxtFile = false ;
 		}
-		// start
-		//if (aRequest.getParameter("printTxt")!=null&&aRequest.getParameter("printTxt").equals("1")) {
-			//throw "txt good"
-		//	isTxtFile=true;
-		//} else {
-		//	isTxtFile=false;
-		//}
-		// end
-		//System.out.println("print="+printMain.get2()) ;
         while (en.hasMoreElements()) {
         	String key = (String) en.nextElement();
             if (key.equals("id") && isMultyId) {
@@ -98,30 +85,23 @@ public class PrintAction extends BaseAction {
             } else {
             	map.put(key, aRequest.getParameter(key)) ;
             }
-            
-//            System.out.println("key = " + key);
-//            System.out.println("aRequest.getParameter(key) = " + aRequest.getParameter(key));
         }
-        //Map<String,Object> values =  ;
-       // System.out.println("=====MAP "+map);
-        String filename = service.print(new StringBuilder().append(print).append("-").append(login).toString()
+        String filename = service.print(print+"-"+login
         		,isTxtFile,reportKey,
         		serviceScr,servJs, methodJs, map) ;
         
         String next = aRequest.getParameter("next") ;
-        if ((next!=null && !next.equals("")||(printTxtFirst!=null&&(printTxtFirst.equals("1")||printTxtFirst.equals("0")))) && filename.toLowerCase().contains(".txt")) {
+        if ((next!=null && !next.equals("") || ("1".equals(printTxtFirst) || "0".equals(printTxtFirst))) && filename.toLowerCase().contains(".txt")) {
         	IKdlDiaryService serviceKdl = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
         	String path=serviceKdl.getDir("tomcat.data.rtf","/opt/tomcat/webapps/rtf") ;
         	
         	if (!print.equals("no")) {run("lp -d "+print+" "+path+"/"+filename) ;}
         	new InfoMessage(aRequest, "Документ отправлен в очередь на печать") ;
-        	if ((printTxtFirst!=null&&(printTxtFirst.equals("1")||printTxtFirst.equals("0")))&&(next==null||next.equals(""))) {
+        	if (("1".equals(printTxtFirst) || "0".equals(printTxtFirst)) && (next==null||next.equals(""))) {
         		return new ActionForward(null, true);
         	} else {
         		return new ActionForward(next.replace("__", "?"),true);
-        		
         	}
-        	
         } else {
         	return new ActionForward("../rtf/"+filename,true);
         }
@@ -135,15 +115,11 @@ public class PrintAction extends BaseAction {
         }
         return ret.toString() ;
     }
-	private String run(String Command){
-		try{
-			//System.out.println("command: " + Command );
+	private void run(String Command){
+		try {
 			Runtime.getRuntime().exec(Command);
-			return("0");
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			System.out.println("Error running command: " + Command + "\n" + e.getMessage());
-			return(e.getMessage());
 		}
 	} 
 }
