@@ -28,7 +28,6 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 		d.theTemplateDir = templateDir ;
 		d.theKey = key ;
 		d.theWorkDir = new File(theWorkDir) ;
-		//d.theExtension = ".odt" ;
 		return d;
 	}
 	
@@ -150,17 +149,12 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 		String[] sp = aText.split("<text:line-break/>") ;
 		for (int i=0;i<sp.length;i++) {
 			aEl.addContent(sp[i]) ;
-			//aEl.addContent(new Text("                                  ")) ;
 			if (i<(sp.length-1)) aEl.addContent(new Element("line-break","text","urn:oasis:names:tc:opendocument:xmlns:text:1.0")) ;
 		}
 	}
 	
 	public static Element viewStrucXml(Element aElement, IValueGetter aValueGetter,ReplaceHelper aReplaceHelper,boolean aNotEditText) {
-    	//String value = aElement.getValue().trim() ; 
-		//boolean isChildren = isChildrenElement(aElement) ;
-		//boolean isAttribute = isAttributes(aElement) ;
-		//boolean isReplaceValue = isReplaceValue(value) ;
-		
+
     	Element convElem = new Element(aElement.getName(),aElement.getNamespacePrefix(),aElement.getNamespaceURI()) ;
     	copyAttribute(aElement, convElem);
 		//Milamesher #120 24092018 вставка qr-кода
@@ -175,7 +169,7 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 					String qr_text = convertText(pars[0],aValueGetter, aReplaceHelper);
 					try {
 						int qr_w = Integer.valueOf(pars[1]);
-						int qr_h = Integer.valueOf(pars[2]);
+						int qr_h = Integer.parseInt(pars[2]);
 						if (qr_w != 0 && qr_h != 0 && !qr_text.equals("")) {
 							theQR_text=qr_text;
 							theQR_w=qr_w;
@@ -188,17 +182,7 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 			}
 		}
 		else text = aNotEditText?aElement.getText():convertText(aElement.getText(),aValueGetter, aReplaceHelper) ;
-    	//Text text = new Text() ;
-    	//convElem.addContent() ;
     	setTextByTag(convElem,text) ;
-    	
-        //String dop1 = aDop + "-" ;
-		//System.out.print(aDop+aElement.getQualifiedName());
-		//LOG.info(new StringBuilder() .append("  --> isChildren=")
-		//		.append(isChildren).append(" isAttributes=")
-		//		.append(isAttribute)
-		//		.append(" isReplace:")
-		//		.append(isReplaceValue));
 		int forCount = 0;
 		Element forE = new Element("forE") ;
 		String forText = null ;
@@ -244,14 +228,12 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 		return convElem ;
     }
     private static void listParser(Element aForE,Element toCopyElement, IValueGetter aValueGetter, String aStr,ReplaceHelper aReplaceHelper) throws SetValueException {
-    	//Element el = new Element("result") ;
     	StringTokenizer st = new StringTokenizer(aStr, " \t:");
         st.nextToken() ;
         String name = st.nextToken() ;
         String expression = st.nextToken() ;
         List list = (List) aValueGetter.getValue(expression) ;
-        //aValueGetter.set(name, list) ;
-        
+
     	for (Object val:list) {
     		aValueGetter.set(name, val);
     		int forCount = 0 ;
@@ -314,7 +296,6 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
     }
     private static String convertText(String aText, IValueGetter aValueGetter,ReplaceHelper aReplaceHelper)  {
     	try {
-    		//LOG.info("TEXT-->"+aText) ;
     		return aReplaceHelper.replaceWithValues(aText, aValueGetter).toString() ;
     	} catch (Exception e) {
 			return "ОШИБКА !!!: "+aText+" ->"+e;
@@ -323,12 +304,8 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
     public static boolean isBeginFor(String aValue) {
 		return aValue != null && aValue.startsWith("$$FOR") && aValue.endsWith("$$");
 	}
-    public static boolean isEndFor(String aValue) {
-		return aValue != null && aValue.equals("$$FOREND");
-	}
+    public static boolean isEndFor(String aValue) { return "$$FOREND".equals(aValue);}
 
-	
-	
 	/** Логин */
 	public String getLogin() {return theLogin;}
 	public void setLogin(String aLogin) {theLogin = aLogin;}

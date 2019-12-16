@@ -61,14 +61,10 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
 		return "Cp866" ;
 	}
     public void print(ReplaceHelper aReplaceHelper,  IValueGetter aValueGetter) throws RtfPrintException {
-    	//File aTemplateFile = getInputFile() ;
-    	//File aOutputFile = getOutputFile() ;
-    	//String aEncoding = getEncoding() ;
 
         try(LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(getInputFile()), getEncoding()));
 			PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(getOutputFile()), getEncoding()))) {
             String line ;
-//            StringBuilder sb = new StringBuilder();
             int forCount = 0;
             StringBuilder forText = new StringBuilder();
             String forParam = "" ;
@@ -90,13 +86,10 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             		}
             	} 
             	if (next) {
-  //              sb.append(line) ;
-                //System.out.println(line) ;
                 boolean isBeginFor = OdtPrintFileDriver.isBeginFor(line) ;
         		boolean isEndFor = OdtPrintFileDriver.isEndFor(line) ;
             	if (forCount==0 && !isBeginFor) {
-            		//System.out.println("Нет цикла") ;
-            		recordLine(out,aReplaceHelper, aValueGetter, line);   
+            		recordLine(out,aReplaceHelper, aValueGetter, line);
             	} else {
             		if (isBeginFor) {
             			//System.out.println("Начало цикла") ;
@@ -107,11 +100,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             				forParam=line ;
             				forText = new StringBuilder();
             			}
-            			//forText = line ;
-            			
             		} else if (isEndFor) {
-            			
-            			
             			forCount = forCount-1 ;
             			if (forCount==0) {
             				//System.out.println("Окончание цикла") ;
@@ -124,19 +113,12 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             				}
             			} else {
             				forText.append(line).append("\n") ;
-            				//System.out.println("Один из циклов закончился цикла") ;
             			}
             		} else {
-            			//System.out.println("Продолжение цикла") ;
             			forText.append(line).append("\n");
             		}
             	}
-                
-               // System.out.println(outStr) ;
-               
             }}
-            //String outStr = aReplaceHelper.replaceWithValues(sb.toString(), aValueGetter).toString() ;
-            //out.print(outStr) ;
         } catch (Exception e) {
             throw new RtfPrintException("Ошибка печати",e);
         }
@@ -175,9 +157,10 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		res = res.replace("<text:line-break/>","\n");
 		return res;
 	}
-    private  void recordLine(PrintWriter aOut,ReplaceHelper aReplaceHelper, IValueGetter aValueGetter, String aLine) {
+    private void recordLine(PrintWriter aOut,ReplaceHelper aReplaceHelper, IValueGetter aValueGetter, String aLine) {
     	try {
 			String outStr = aReplaceHelper.replaceWithValues(aLine, aValueGetter).toString();
     		getMultyLine(changeStringForMatrixPrinter(outStr), aOut) ;
@@ -196,22 +179,12 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             String name = st.nextToken() ;
             String expression = st.nextToken() ;
             List list = (List) aValueGetter.getValue(expression) ;
-            //aValueGetter.set(name, list) ;
-            //System.out.println("ЦИКЛ===========") ;
-			//System.out.println("forText="+aLine) ;
-			//System.out.println("forParam="+aParam) ;
-			//System.out.println("cnt="+strs.length) ;
-            
         	for (Object val:list) {
-        		//System.out.println(name) ;
-        		//System.out.println(val) ;
         		aValueGetter.set(name, val);
 				for (String str: strs) {
 	                boolean isBeginFor = OdtPrintFileDriver.isBeginFor(str) ;
 	        		boolean isEndFor = OdtPrintFileDriver.isEndFor(str) ;
 	            	if (forCount==0 && !isBeginFor) {
-	            		//System.out.println("Нет цикла") ;
-	            		//System.out.println("=== str="+str) ;
 	            		recordLine(aOut,aReplaceHelper, aValueGetter, str);   
 	            	} else {
 	            		if (isBeginFor) {
@@ -250,7 +223,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
     }
     
     
-    private  void getMultyLine(String aStr, PrintWriter aOut) {
+    private void getMultyLine(String aStr, PrintWriter aOut) {
     	//aStr.replace("\n\n", "\n") ;
     	boolean print = true ;
     	while (aStr.length()>theMaxLineLength) {
@@ -289,12 +262,8 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
     			aStr = "" ;
     			print = false ;
     		}
-    		
-    		
-    		
     	}
     	if (print) aOut.println(aStr) ;
-
     }
 	
 
