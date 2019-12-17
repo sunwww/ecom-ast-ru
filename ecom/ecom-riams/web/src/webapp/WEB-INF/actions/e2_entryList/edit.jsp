@@ -359,6 +359,18 @@
             </script>
 
         </msh:ifFormTypeIsView>
+
+        <msh:ifFormTypeIsCreate formName="e2_entryListForm">
+            <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
+            <script type="text/javascript">
+                Expert2Service.getDefaultLpuOmcCode({
+                    callback: function (code) {
+                        $('lpuOmcCode').value=code;
+                    }
+                });
+            </script>
+
+        </msh:ifFormTypeIsCreate>
     </tiles:put>
 </tiles:insert>
 

@@ -32,6 +32,13 @@ import java.util.List;
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
+    public String getDefaultLpuOmcCode(HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        return service.executeNativeSql("select coalesce(omccode,'0') from softconfig sc" +
+                " left join mislpu ml on ml.id=cast(sc.keyvalue as int)" +
+                " where sc.key='DEFAULT_LPU' ").iterator().next().get1().toString();
+    }
+
     private List<Element> createXmlFromJson(JSONArray aJson, String[] aFlds, String aElementName) {
         List<Element> ret = new ArrayList<>();
         for (int i=0;i<aJson.length();i++) {

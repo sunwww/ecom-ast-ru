@@ -19,6 +19,7 @@ function onPreDelete(aEntityId, aContext) {
 		,"данные о беременностях"
 		,"карты диспансеризации"
 		,"экспертные карты"
+		,"план диспансеризации"
 		] ;
 		
 		//throw medCase.getId() + "  getStatisticStub()="+medCase.getStatisticStub() ;
@@ -40,6 +41,7 @@ function onPreDelete(aEntityId, aContext) {
 		+",(select count(*) from Pregnancy as pr where pr.patient_id=p.id) as v14"
 		+",(select count(*) from ExtDispCard as edc where edc.patient_id=p.id) as v15"
 		+",(select count(*) from QualityEstimationCard qec where qec.patient_id=p.id) as v16"
+		+",(select count(*) from extdispplanpopulationrecord qec where qec.patient_id=p.id) as v17"
 		+" from Patient as p where p.id=:id")
 		.setParameter("id",aEntityId).getSingleResult() ;
 		var err_mes="",isErr=false ;

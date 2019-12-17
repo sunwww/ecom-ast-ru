@@ -121,11 +121,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 		List<Object[]> list = theManager.createNativeQuery("select sc.id, sc.keyvalue from softconfig sc where sc.key=:key").setParameter("key",aKey).getResultList();
 		return  list.isEmpty() ? aDefaultValue : list.get(0)[1].toString();
 	}
-/* //unused
-	private String getConfigValue(String aKey, String aDefaultValue) {
-		EjbEcomConfig config = EjbEcomConfig.getInstance();
-		return config.get(aKey, aDefaultValue);
-	}*/
 
 	public Map<String, String> getDefaultParametersForFSS() {
 		String address = getSoftConfigValue("FSS_PROXY_SERVICE", null);
@@ -180,8 +175,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 			LOG.error("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = NULL, ЛПУ = " + lpuId);
 			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = NULL, ЛПУ = " + lpuId;
 		}
-		//List<Object[]> list = theManager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = " + lpuId).getResultList();
-
 
 		if (ogrn.equals("0")) {
 			LOG.error("У ЛПУ не указан ОГРН. ЛПУ = " + lpuId);

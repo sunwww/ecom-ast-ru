@@ -162,17 +162,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     /** Создаем тэг с информацией о госпитализации (версия 3.1.1)*/
-    private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isExport263, boolean isNedonosh) {
-    //    String startDate = dateToString(aEntry.getHospitalStartDate()), finishDate = dateToString(aEntry.getHospitalFinishDate()!=null?aEntry.getHospitalFinishDate():aEntry.getFinishDate());
+    private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isExport263, boolean isNedonosh, String lpuOmcCode) {
         boolean isExtDisp = aEntry.getEntryType().equals(EXTDISPTYPE);
         String forPom = isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic ? "2" : "1") : "3";
         Element z = new Element("Z_SL");
-        z.addContent(new Element("IDCASE").setText(zslIdCase+""));
-      // z.addContent(new Element("IDCASE").setText(aEntry.getExternalParentId()+""));
-        z.addContent(new Element("VID_SLUCH").setText(aEntry.getVidSluch().getCode()));
-        z.addContent(new Element("USL_OK").setText(aEntry.getMedHelpUsl().getCode())); //дневной-круглосуточный-поликлиника
-        z.addContent(new Element("VIDPOM").setText(aEntry.getMedHelpKind().getCode()));
-        z.addContent(new Element("FOR_POM").setText(forPom)); //форма помощи V014
+        add(z,"IDCASE",zslIdCase+"");
+        add(z,"VID_SLUCH",aEntry.getVidSluch().getCode());
+        add(z,"USL_OK",aEntry.getMedHelpUsl().getCode()); //дневной-круглосуточный-поликлиника
+        add(z,"VIDPOM",aEntry.getMedHelpKind().getCode());
+        add(z,"FOR_POM",forPom); //форма помощи V014
 
         if (!isNotNull(aEntry.getIsEmergency())) {
             if ((aEntry.getMainMkb()!=null && aEntry.getMainMkb().startsWith("C")) || !isPoliclinic) {
@@ -183,21 +181,21 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (isExport263) addIfNotNull(z,"NPR_N",aEntry.getTicket263Number()); // Номер направления на портале ФОМС
         addIfNotNull(z,"NPR_P",aEntry.getPlanHospDate()); // Дата планируемой госпитализации
         if ("2".equals(forPom)) add(z,"PRN_MO","300001");
-        z.addContent(new Element("LPU").setText("1")); //ЛПУ лечения //TODO = сделать высчитываемым
-        z.addContent(new Element("VBR").setText(isNotNull(aEntry.getIsMobilePolyclinic())?"1":"0")); //Признак мобильной бригады
-        z.addContent(new Element("DATE_Z_1").setText("_")); //Дата начала случая
-        z.addContent(new Element("DATE_Z_2").setText("_")); //Дата окончания случая
-        if (!isPoliclinic &&!isExtDisp)  z.addContent(new Element("KD_Z").addContent(aEntry.getBedDays()+"")); // Продолжительность госпитализации
-        if (isNedonosh && isNotNull(aEntry.getKinsmanLastname())) z.addContent(new Element("VNOV_M").setText(aEntry.getNewbornWeight()+""));
-        z.addContent(new Element("RSLT").setText(aEntry.getFondResult().getCode())); // Результат обращения
+        add(z,"LPU",lpuOmcCode); //ЛПУ лечения
+        add(z,"VBR",isNotNull(aEntry.getIsMobilePolyclinic())?"1":"0"); //Признак мобильной бригады
+        add(z,"DATE_Z_1","_"); //Дата начала случая
+        add(z,"DATE_Z_2","_"); //Дата окончания случая
+        if (!isPoliclinic &&!isExtDisp)  add(z,"KD_Z",aEntry.getBedDays()+""); // Продолжительность госпитализации
+        if (isNedonosh && isNotNull(aEntry.getKinsmanLastname())) add(z,"VNOV_M",aEntry.getNewbornWeight()+"");
+        add(z,"RSLT",aEntry.getFondResult().getCode()); // Результат обращения
         if (isExtDisp) add(z,"RSLT_D",aEntry.getDispResult().getCode()); // Результат диспансеризации
-        z.addContent(new Element("ISHOD").setText(aEntry.getFondIshod().getCode())); // Исход случая.
+        add(z,"ISHOD",aEntry.getFondIshod().getCode()); // Исход случая.
         //if (isExtDisp) z.addContent(new Element("P_OTK").setText("0")); // Отказ от ДД
-        z.addContent(new Element("OS_SLUCH").setText(Expert2FondUtil.calculateFondOsSluch(aEntry))); // Особый случай
+        add(z,"OS_SLUCH",Expert2FondUtil.calculateFondOsSluch(aEntry)); // Особый случай
         if (!isPoliclinic &&!isExtDisp && slCnt>1) add(z,"VB_P","1"); // Признак внутрибольничного перевода *05.08 1 - только если есть перевод
         z.addContent(new Element("SL_TEMPLATE")); // Список случаев
         //if (isExtDisp) z=add(z,"SGROUP",aEntry.getExtDispSocialGroup()); // Социальная группа в ДД +
-        z.addContent(new Element("IDSP").setText(aEntry.getIDSP().getCode())); // Способ оплаты медицинской помощи (V010)
+        add(z,"IDSP",aEntry.getIDSP().getCode()); // Способ оплаты медицинской помощи (V010)
         add(z,"SUMV",aEntry.getCost()); // Сумма, выставленная к оплате =SUMV7+ SUMV8
         return z;
     }
@@ -210,7 +208,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      * aEntry - случай госпитализации
      * entriesList - строка с ИД СЛО
      * */
-        private Element createSlElements(E2Entry aEntry, String entriesString, int cnt, boolean isExport263, String mainLpu) {
+        private Element createSlElements(E2Entry aEntry, String entriesString, int cnt, boolean isExport263, String mainLpu, String lpuOmcCode) {
 
             /*
             ZSL, SL = информация об обращении. визиты переносятся в USL
@@ -271,7 +269,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
           //  edCol="1"; //06-08-2018 Ед кол больше не равно 1 !
 
             String[] slIds = entriesString.split(",");
-            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length,cnt, isExport263, isNedonosh);
+            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length,cnt, isExport263, isNedonosh, lpuOmcCode);
             int indSl = zSl.indexOf(zSl.getChild("SL_TEMPLATE"));
             Date startHospitalDate = null, finishHospitalDate=null;
             int kdz=0;
@@ -793,6 +791,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String cntNumber = null;
             boolean needCreateArchive = false;
             E2Entry entry=null;
+            String lpuOmcCode ;
             if (aEntryListId != null) {
                 needCreateArchive = true;
                 E2ListEntry listEntry = theManager.find(E2ListEntry.class, aEntryListId);
@@ -806,13 +805,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     return "";
 
                 }
+                lpuOmcCode = listEntry.getLpuOmcCode();
             } else { //Сделано для теста.
-              entry = theManager.find(E2Entry.class, aEntryId);
+                entry = theManager.find(E2Entry.class, aEntryId);
                 periodDate = entry.getFinishDate();
                 aBillDate = new Date(0L);
                 aBillNumber = "TEST";
                 cntNumber = "00";
                 aEntryListId=entry.getListEntry().getId();
+                lpuOmcCode = "0";
 
             }
             packetDateAdd = dateToString(periodDate, "yyMM");
@@ -990,7 +991,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 Element z ;
                 switch (aVersion) { //При появлении новых форматов файла - добавляем сюда
                     case "3.1.1":
-                        z= createSlElements(entry, sls,cnt+1, isExport263, regNumber);
+                        z= createSlElements(entry, sls,cnt+1, isExport263, regNumber, lpuOmcCode);
                         break;
                     default:
                         LOG.error("Неизвестный формат пакета: "+aVersion);

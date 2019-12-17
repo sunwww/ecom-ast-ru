@@ -155,11 +155,7 @@ public class DisabilitySign {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> list = service.executeNativeSql("select keyvalue from softconfig  where key = 'FSS_PROXY_SERVICE'");
-        String endpoint = "";
-        for (WebQueryResult wqr : list) {
-            endpoint = wqr.get1().toString();
-        }
-        return endpoint;
+        return list.isEmpty() ? "" : list.iterator().next().get1().toString();
     }
 
     private String get(JsonObject obj, String name) {
