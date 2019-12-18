@@ -2,7 +2,17 @@
 var theDefaultTimeOut ;
 var theDefaultTimeOutCnt=4 ;
 var theDefaultFieldName ;
-var theDefaultEvt ; 
+var theDefaultEvt ;
+
+/*Преобразуем данные html формы в объект json*/
+function getFormDataAsJson(form){
+    var unindexed_array = form.serializeArray();
+    var indexed_array = {};
+    jQuery.map(unindexed_array, function(n, i){
+        indexed_array[n['name']] = n['value'];
+    });
+    return indexed_array;
+}
 
 function mshHideBlockByElement(element) {
 /*	var d = element.parentNode.children[1];
@@ -312,7 +322,7 @@ function getCurrentDate() {
 //toDate - в дату из строки, dd mm yyyy разделённы символом sym
 //например, dd.mm.yyyy sym - это .
 function toDate(dateStr,sym) {
-    var parts = dateStr.split(sym)
+    var parts = dateStr.split(sym);
     return new Date(parts[2], parts[1] - 1, parts[0])
 }
 //dd - дата, следующую за которой надо получить
