@@ -113,12 +113,13 @@
               </msh:row>
               <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
                   <td class="label" title="Поиск по промежутку  (gkGroup)" colspan="1"><label for="gkGroupName" id="tgkGroupLabel">Выберите:</label></td>
-                  <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                  <td onclick="this.childNodes[1].checked='checked'; checkWomenConsult();" colspan="1">
                       <input type="radio" name="gkGroup" value="1"> Состояла на учёте в ЖК
                   </td>
-                  <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                  <td onclick="this.childNodes[1].checked='checked'; checkWomenConsult();" colspan="3">
                       <input type="radio" name="gkGroup" value="2"> НЕ состояла на учёте в ЖК
                   </td>
+                  <msh:autoComplete property="womenConsult" fieldColSpan="3" horizontalFill="true" label="" vocName="vocWomenConsult"/>
               </msh:row>
               <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
                   <td class="label" title="Поиск по промежутку  (water)" colspan="1"><label for="waterName" id="twaterLabel">Длительный безводный период:</label></td>
@@ -148,6 +149,7 @@
               </msh:row>
               <msh:row>
                   <msh:checkBox property="isRegisteredWithWomenConsultation" label="Учёт в ЖК?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="1"/>
+                  <msh:autoComplete property="womenConsult" fieldColSpan="1" horizontalFill="true" label="Консультация" vocName="vocWomenConsult"  viewOnlyField="true"/>
               </msh:row>
               <msh:row>
                   <msh:textField property="waterlessDurationHour" label="Длительность безводного периода (часы)" />
@@ -266,7 +268,7 @@
           <h3><b>Классификация Робсона</b></h3>
           <div id="classRobsonsDiv"></div>
           <div id="subRobsonsDiv"></div>
-        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK() && checkRobson() && checkWaterBeforeSafe() && checkSaveIdentity()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
+        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK() && checkRobson() && checkWaterBeforeSafe() && checkSaveIdentity() && checkSaveWomenConsult()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
       </msh:panel>
     </msh:form>
      <tags:preg_childBirthYesNo name="DeadBorn" field="DeadBeforeLabors"/>
@@ -352,6 +354,28 @@
           }
       }
   }
+
+  //проверка ЖК матери
+  function checkWomenConsult() {
+      if (document.getElementsByName("gkGroup") && document.getElementsByName("gkGroup")[0]) {
+          if (document.getElementsByName("gkGroup")[0].checked) {
+              $('womenConsult').removeAttribute('hidden');
+              $('womenConsultName').removeAttribute('hidden');
+              $('womenConsult').value='';
+              $('womenConsultName').value='';
+              $('womenConsultName').className = "autocomplete horizontalFill required";
+          }
+          else if (document.getElementsByName("gkGroup")[1].checked) {
+
+              $('womenConsult').setAttribute('hidden', true);
+              $('womenConsultName').setAttribute('hidden', true);
+              $('womenConsult').value='';
+              $('womenConsultName').value='';
+              $('womenConsultName').className = 'autocomplete horizontalFill';
+          }
+      }
+  }
+  
   //если есть единственное значение для браслета новорожд., то выбрать его автоматически
   function setAutoBracelet() {
       PregnancyService.getAutoBracelet({
@@ -373,8 +397,19 @@
       }
       else return true;
   }
+
+  //проверка перед сохранением
+  function checkSaveWomenConsult() {
+      if (!(document.getElementsByName("gkGroup") && document.getElementsByName("gkGroup")[0] && document.getElementsByName("gkGroup")[0].checked && $('womenConsult').value!=''
+          || document.getElementsByName("gkGroup") && document.getElementsByName("gkGroup")[1] && document.getElementsByName("gkGroup")[1].checked && $('womenConsult').value=='')) {
+          alert('Выберите женскую консультацию!');
+          return false;
+      }
+      else return true;
+  }
   <msh:ifFormTypeIsNotView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
   checkdiabetIdentity();
+  $('womenConsultName').className = "autocomplete horizontalFill required";
   </msh:ifFormTypeIsNotView>
   //проверка перед сохранением
   function checkWaterBeforeSafe() {
@@ -530,6 +565,12 @@
           else
           document.getElementsByName("diabetIdentityRad")[1].checked=true;
             checkdiabetIdentity();
+
+          if ($('womenConsult').value=='')
+          document.getElementsByName("womenConsult")[0].checked=true;
+          else
+          document.getElementsByName("womenConsult")[1].checked=true;
+          checkWomenConsult();
    </script>
       </msh:ifFormTypeIsNotView>
   </msh:ifFormTypeAreViewOrEdit>

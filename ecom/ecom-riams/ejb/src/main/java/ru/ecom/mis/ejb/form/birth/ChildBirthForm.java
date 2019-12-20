@@ -673,4 +673,13 @@ public class ChildBirthForm extends IdEntityForm {
 	public void setDiabetIdentity(Long aDiabetIdentity) {theDiabetIdentity = aDiabetIdentity;}
 	/** Диабет (браслет)*/
 	private Long theDiabetIdentity;
+
+	/** Женская консультация */
+	@Comment("Женская консультация")
+	@Persist
+	public Long getWomenConsult() {return theWomenConsult;}
+	public void setWomenConsult(Long aWomenConsult) {theWomenConsult = aWomenConsult;}
+
+	/** Женская консультация */
+	private Long theWomenConsult;
 }

@@ -3155,6 +3155,16 @@ left join patient wp on wp.id=w.person_id "
 				queryAppend = 'vcip.isfornewborn=true'
 		/>
 	</voc>
+	<!-- Список женских консультаций -->
+	<voc id="vocWomenConsult" type="NativeVocService">
+		<NativeVocService
+				from="vocWomenConsult"
+				nameId="id"
+				join="" order=""
+				names=" name "
+				queried=" name "
+		/>
+	</voc>
 	<!-- Исход наблюдения -->
 	<voc id="vocObservationResult" type="NativeVocService">
 		<NativeVocService

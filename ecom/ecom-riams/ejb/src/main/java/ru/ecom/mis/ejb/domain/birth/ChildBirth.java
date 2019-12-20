@@ -547,4 +547,13 @@ public class ChildBirth extends BaseEntity{
 	public void setDiabetIdentity(VocColorIdentityPatient aDiabetIdentity) {theDiabetIdentity = aDiabetIdentity;}
 	/** Диабет (браслет)*/
 	private VocColorIdentityPatient theDiabetIdentity;
+
+	/** Женская консультация */
+	@Comment("Женская консультация")
+	@OneToOne
+	public VocWomenConsult getWomenConsult() {return theWomenConsult;}
+	public void setWomenConsult(VocWomenConsult aWomenConsult) {theWomenConsult = aWomenConsult;}
+
+	/** Женская консультация */
+	private VocWomenConsult theWomenConsult;
 }
