@@ -31,6 +31,7 @@
 		<form-bean name="stac_admissionJournalForm"	       type="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm" />
 		<form-bean name="stac_dischargeJournalForm"	       type="ru.ecom.mis.web.action.medcase.journal.DischargeJournalForm" />
 		<form-bean name="stac_departmentJournalForm"       type="ru.ecom.mis.web.action.medcase.journal.DepartmentJournalForm" />
+        <form-bean name="stac_departmentMicroBioJournalForm"       type="ru.ecom.mis.web.action.medcase.journal.DepartmentMicroBioJournalForm" />
 		<form-bean name="stac_deathCaseForm"               type="ru.ecom.mis.ejb.form.medcase.death.DeathCaseForm" />
 		<form-bean name="stac_deathCertificateForm"        type="ru.ecom.document.ejb.form.certificate.DeathCertificateForm" />
 		<form-bean name="stac_certificateForm"             type="ru.ecom.document.ejb.form.certificate.CertificateForm" />
@@ -581,7 +582,7 @@
 		</action>
         <action path='/stac_journalCurrentByUserDepartmentMicroBio'
                 type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
-                name='stac_departmentJournalForm' validate='false' scope='request'
+                name='stac_departmentMicroBioJournalForm' validate='false' scope='request'
                 input='/WEB-INF/actions/stac_slo/listCurrentByUserDepartmentMicroBio.jsp'
         >
             <forward name="success" redirect="false"

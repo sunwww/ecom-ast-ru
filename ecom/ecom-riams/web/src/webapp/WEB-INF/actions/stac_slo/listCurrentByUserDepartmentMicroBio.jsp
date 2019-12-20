@@ -15,27 +15,36 @@
     <tags:mbioResResList name="mbioResResList" />
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments,/Policy/Mis/MedCase/Stac/Journal/ShowInfoByDate">
-      <msh:form action="/stac_journalCurrentByUserDepartmentMicroBio.do" defaultField="dateStart" disableFormDataConfirm="true" method="POST" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-        <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff"  colsWidth="10%,89%">
-          <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9" >
-            <msh:separator label="Параметры поиска" colSpan="6" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:form action="/stac_journalCurrentByUserDepartmentMicroBio.do" defaultField="dateBegin" disableFormDataConfirm="true" method="POST">
+        <msh:panel>
+          <msh:row>
+            <msh:separator label="Параметры поиска" colSpan="6"/>
           </msh:row>
           <msh:row>
-            <msh:textField property="dateStart" label="Дата"/>
+            <msh:textField property="dateBegin" label="Период с"/>
+            <msh:textField property="dateEnd" label="по"/>
+          </msh:row>
+          <msh:row>
             <td>
               <input type="submit" value="Найти" />
             </td>
           </msh:row>
         </msh:panel>
       </msh:form>
-    </msh:ifInRole>
     <%
       Long department = (Long)request.getAttribute("department") ;
       String plus = request.getParameter("p");
       if (plus==null || plus.equals("") || !plus.equals("Plus")) request.setAttribute("p","");
       else request.setAttribute("p"," and uv.cntball=1");
       ActionUtil.getValueBySql("select cast(keyvalue as int) from softconfig where key='FIP_parameterMicroBio'", "fipr","fiprName",request) ;
+      String dateBegin = request.getParameter("dateBegin") ;
+      if (dateBegin!=null && !dateBegin.equals("")) {
+        String dateEnd = request.getParameter("dateEnd") ;
+        if (dateEnd==null || dateEnd.equals("")) dateEnd=dateBegin;
+        if (dateEnd!=null && !dateEnd.equals(""))
+          request.setAttribute("dates"," and m.dateStart between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('" + dateEnd+"','dd.mm.yyyy') ");
+      }
+      else request.setAttribute("dates"," and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME) ");
       if (department!=null && department.intValue()>0 )  {
     %>
     <msh:section>
@@ -108,8 +117,8 @@ select m.id as mid
     left join uservalue uv on uv.id=fipr.valuevoc_id
 
     where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'
-    and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
-   ${p}
+    and m.transferDate is null
+   ${p} ${dates}
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
     ,bf.addCaseDuration,m.dateFinish,m.dischargeTime
@@ -166,14 +175,14 @@ select m.id as mid
     left join uservalue uv on uv.id=fipr.valuevoc_id
 
     where m.DTYPE='DepartmentMedCase'
-    and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
+    and m.transferDate is null
     and
 
     	lp.isNoOmc='1' and (prev1.department_id='${department}'
     	or lp1.isNoOmc='1' and
     	(prev2.department_id='${department}' or lp2.isNoOmc='1' and prev3.department_id='${department}')
     	)
-    ${p}
+    ${p} ${dates}
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
     ,bf.addCaseDuration,m.dateFinish,m.dischargeTime,uv.cntball
@@ -185,9 +194,9 @@ select m.id as mid
                      guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
       <msh:sectionTitle>
         <form action="print-stac_current_department.do" method="post" target="_blank">
-          Журнал результатов микробиологических исследований пациентов, состоящих в отделении  ${departmentInfo} на текущий момент
+          Журнал результатов микробиологических исследований пациентов  ${departmentInfo}, состоящих в отделении
           <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
-          <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент">
+          <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделении  ${departmentInfo}">
           <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
           <input type='hidden' name="s" id="s" value="PrintService">
           <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -196,7 +205,7 @@ select m.id as mid
         <form action="print-stac_current_department_adr.do" method="post" target="_blank">
 
           <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
-          <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент">
+          <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделении  ${departmentInfo}">
           <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
           <input type='hidden' name="s" id="s" value="PrintService">
           <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -249,7 +258,7 @@ select m.id as mid
     <% } else {%>
     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
       <msh:section>
-        <msh:sectionTitle>Свод результатов микробиологических исследований пациентов, состоящих  в отделении  ${departmentInfo} на текущий момент
+        <msh:sectionTitle>Свод результатов микробиологических исследований пациентов
         </msh:sectionTitle>
         <msh:sectionContent>
           <ecom:webQuery name="datelist" nativeSql="
@@ -268,12 +277,14 @@ select m.id as mid
     left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=${fipr}
     left join uservalue uv on uv.id=fipr.valuevoc_id
     where m.DTYPE='DepartmentMedCase'
-    and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
+    and m.transferDate is null ${dates}
     group by m.department_id,ml.name
     order by ml.name
     "
                          guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-          <msh:table name="datelist" viewUrl="stac_journalCurrentByUserDepartmentMicroBio.do?short=Short&" action="stac_journalCurrentByUserDepartmentMicroBio.do?short=Short&" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30" cellFunction="true">
+          <msh:table name="datelist" viewUrl="stac_journalCurrentByUserDepartmentMicroBio.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
+                     action="stac_journalCurrentByUserDepartmentMicroBio.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
+                     idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30" cellFunction="true">
             <msh:tableColumn property="sn" columnName="#"/>
             <msh:tableColumn columnName="Отделение" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
             <msh:tableColumn columnName="Кол-во состоящих" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
