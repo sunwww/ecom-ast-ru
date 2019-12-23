@@ -618,13 +618,11 @@ public class PrescriptionServiceJs {
 		reasonText += StringUtil.isNullOrEmpty(aReason) ? "" : " "+aReason;
 		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
 		JSONObject res = getPrescriptionInfo(aPrescripts, service);
-		if (res!=null) {
-			StringBuilder msgTitle=new StringBuilder();
-			msgTitle.append(res.getString("date")).append(" пациент ").append(res.getString("patFio")).append(" услуга ").append(res.getString("medService"));
-			for (int i=0; i<2; i++)
-				bean.sendMessageCurrentDate("Брак биоматериала: "+reasonText,msgTitle.toString(),res.getString("usernameO"),username
-						,"entityView-pres_prescriptList.do?id="+res.get("plId"),i<1);
-		}
+		StringBuilder msgTitle=new StringBuilder();
+		msgTitle.append(res.getString("date")).append(" пациент ").append(res.getString("patFio")).append(" услуга ").append(res.getString("medService"));
+		for (int i=0; i<2; i++)
+			bean.sendMessageCurrentDate("Брак биоматериала: "+reasonText,msgTitle.toString(),res.getString("usernameO"),username
+					,"entityView-pres_prescriptList.do?id="+res.get("plId"),i<1);
 		//Обновление текста дневника в случае отметки о браке после подтверждения врачом КДЛ
 		String wfCnsl = bean.getRealLabTechUsername(Long.valueOf(aPrescripts.split(",")[0]),"");
 		updateDiaryWhileCancelPrescription(null,aPrescripts,"Брак биоматериала: "+reasonText,wfCnsl,service);
@@ -664,16 +662,14 @@ public class PrescriptionServiceJs {
 	 * */
 	private void noteUsersAboutPatology(Long aPrescriptId,HttpServletRequest aRequest) throws NamingException {
 		JSONObject res = getPrescriptionInfo(String.valueOf(aPrescriptId), Injection.find(aRequest).getService(IWebQueryService.class));
-		if (res!=null) {
-			StringBuilder msgTitle=new StringBuilder();
-			msgTitle.append(res.getString("date")).append(" пациент ").append(res.getString("patFio")).append(" услуга ").append(res.getString("medService"));
-			IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
-			for (int i = 0; i < 2; i++)
-				bean.sendMessageCurrentDate( "Критическая патология биоматериала", msgTitle.toString(), res.getString("usernameO")
-						, LoginInfo.find(aRequest.getSession(true)).getUsername()
-						, "entityView-pres_servicePrescription.do?id=" + aPrescriptId, i < 1);
-			bean.setPatientIdentityBracelet(res.toString());
-		}
+		StringBuilder msgTitle=new StringBuilder();
+		msgTitle.append(res.getString("date")).append(" пациент ").append(res.getString("patFio")).append(" услуга ").append(res.getString("medService"));
+		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
+		for (int i = 0; i < 2; i++)
+			bean.sendMessageCurrentDate( "Критическая патология биоматериала", msgTitle.toString(), res.getString("usernameO")
+					, LoginInfo.find(aRequest.getSession(true)).getUsername()
+					, "entityView-pres_servicePrescription.do?id=" + aPrescriptId, i < 1);
+		bean.setPatientIdentityBracelet(res.toString());
 	}
 
 

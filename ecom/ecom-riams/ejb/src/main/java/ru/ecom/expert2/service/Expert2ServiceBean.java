@@ -666,7 +666,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     /*Делаем все дочерние случаи от дочернего случая дочерними случаями главного случая*/
     private void setRightParent (E2Entry aMainEntry, List<E2Entry> aChildEntries) {
         if (1==1) {LOG.info("NE nado "+aMainEntry.getId());return;}
-        if (aChildEntries==null) {
+  /*      if (aChildEntries==null) {
             aChildEntries = theManager.createQuery("from E2Entry where parentEntry_id=:parent").setParameter("parent",aMainEntry.getId()).getResultList();
             LOG.info("sze = "+aChildEntries.size());
         }
@@ -684,7 +684,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
 
             }
-        }
+        }*/
     }
     /** Делаем правильных родителей для комплексных случаев */
  /*   private void setRightParent(Long aListEntryId, Long aHospitalMedCaseId) { //находим все "комплексные" случаи, у которых есть дочерние случаи и делаем дочерние случаи дочерними случаями родителя "комплексного" случая
@@ -1051,9 +1051,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             aListEntry.setCheckTime(new java.sql.Time(currentTime));
             theManager.persist(aListEntry);
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error(e);
-            LOG.error("ERR"+e);
+            LOG.error(e.getMessage(),e);
         }
         LOG.info("check list entry finished!");
         cleanAllMaps();

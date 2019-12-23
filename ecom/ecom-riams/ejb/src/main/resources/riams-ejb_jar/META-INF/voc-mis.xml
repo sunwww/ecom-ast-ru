@@ -2823,6 +2823,7 @@ left join patient wp on wp.id=w.person_id "
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocMedService'
                 names   = 'code,name'
                 queried = 'code,name'
+				queryAppend="finishDate is null"
         />
     </voc>
     

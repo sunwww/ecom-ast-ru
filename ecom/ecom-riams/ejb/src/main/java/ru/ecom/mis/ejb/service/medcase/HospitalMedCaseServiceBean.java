@@ -115,7 +115,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		policProfiles.put("31","лечебная физкультура и спортивная медицина");
 		policProfiles.put("32","лечебная физкультура и спортивная медицина");
 		policProfiles.put("34","мануальная терапия");
-		policProfiles.put("17","медицинская генетика");
+//		policProfiles.put("17","медицинская генетика");
 		policProfiles.put("35","неврология");
 		policProfiles.put("36","нейрохирургия");
 		policProfiles.put("37","нефрология");
@@ -219,7 +219,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		countries.put("76","Бразилия");
 		countries.put("862","Венесуэла");
 		countries.put("704","Вьетнам");
-		countries.put("598","Гвинея");
+//		countries.put("598","Гвинея");
 		countries.put("276","Германия");
 		countries.put("268","Грузия");
 		countries.put("818","Египет");
@@ -265,7 +265,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		countries.put("288","Ганна");
 		countries.put("300","Греция");
 		countries.put("887","Йемен");
-		countries.put("417","Киргизия");
+//		countries.put("417","Киргизия");
 		countries.put("156","Китай");
 		countries.put("384","Кот-д-Вуар");
 		countries.put("417","Кыргызстан");
@@ -278,7 +278,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		countries.put("790","Сирия");
 		countries.put("840","США");
 		countries.put("788","Тунис");
-		countries.put("795","Туркмения");
+//		countries.put("795","Туркмения");
 		countries.put("792","Турция");
 		countries.put("246","Финляндия");
 		countries.put("710","Южная-Африканская Республика");
@@ -1643,7 +1643,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		return HospitalMedCaseViewInterceptor.getDischargeEpicrisis(aMedCaseId, theManager) ;
 	}
 
-	public static boolean saveDischargeEpicrisisByCase(MedCase aMedCase,String aDischargeEpicrisis,EntityManager aManager) {
+	public static void saveDischargeEpicrisisByCase(MedCase aMedCase,String aDischargeEpicrisis,EntityManager aManager) {
 		aManager.createNativeQuery("delete from diary d where d.medcase_id= "+aMedCase.getId()+" and upper(d.dtype)='DISCHARGEEPICRISIS' ").executeUpdate() ;
 		int len = 15000 ;
 		int lend = aDischargeEpicrisis.length() ;
@@ -1660,19 +1660,10 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			prot.setMedCase(aMedCase) ;
 			aManager.persist(prot);
 		}
-/*		try { //отключаем передачу данных в личный кабинет
-			TemplateProtocolServiceBean bean = new TemplateProtocolServiceBean();
-			bean.sendProtocolToExternalResource(null,aMedCase, aDischargeEpicrisis, aManager);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-*/
-		return true ;
-
 	}
-	public static boolean saveDischargeEpicrisis(long aMedCaseId,String aDischargeEpicrisis,EntityManager aManager) {
+	public static void saveDischargeEpicrisis(long aMedCaseId,String aDischargeEpicrisis,EntityManager aManager) {
 		HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aMedCaseId) ;
-		return saveDischargeEpicrisisByCase(medCase, aDischargeEpicrisis, aManager) ;
+		saveDischargeEpicrisisByCase(medCase, aDischargeEpicrisis, aManager) ;
 	}
 	private String getText(org.jdom.Element aEl, String aParameter) {
 		return aEl!=null?

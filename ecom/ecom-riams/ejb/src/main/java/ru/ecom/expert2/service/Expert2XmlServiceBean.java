@@ -1302,6 +1302,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 VocE2FondV027 vip = ds.getVocIllnessPrimary();
                 if (vip==null) {
                     theManager.persist(new E2EntryError(aEntry,"NO_HARAKTER"));
+                    aElement = null;
                     return ;
                 }
                 add(aElement,"C_ZAB",vip.getCode());
