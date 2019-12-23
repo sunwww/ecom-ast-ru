@@ -29,7 +29,7 @@ public static String convertOtherFormat(String aDate, String aFromFormat, String
 	public static Boolean isHoliday (String aDate) throws ParseException {
     		Calendar cal = Calendar.getInstance();
     		cal.setTime(parseDate(aDate));
-    		return cal.get(java.util.Calendar.DAY_OF_WEEK)==1;
+    		return cal.get(java.util.Calendar.DAY_OF_WEEK)==Calendar.SUNDAY;
     }
 	/** Из строк 2018-03-25, 12:34 в java.util.Date */
     public static Date formatDateFromDateTime(String aSqlDate, String aSqlTime) {
