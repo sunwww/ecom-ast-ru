@@ -274,7 +274,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
     	if (aListStyle!=null && aListStyle.length>0) {
     		StringBuilder st = new StringBuilder() ;
     		for (String s: aListStyle) {
-    			Collection<WebQueryResult> list = aWebService.executeNativeSql(s.replaceAll(":id", ""+aId)) ;
+    			Collection<WebQueryResult> list = aWebService.executeNativeSql(s.replace(":id", ""+aId)) ;
     			if (!list.isEmpty()) {
     				Object obj=list.iterator().next().get1() ;
     				if (obj!=null)st.append(obj).append(";") ;

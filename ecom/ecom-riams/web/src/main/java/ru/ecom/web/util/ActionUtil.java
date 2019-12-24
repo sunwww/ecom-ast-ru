@@ -160,7 +160,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 			String param = aRequest.getParameter(aParameter) ;
 	    	if (param!=null && !param.equals("") && !param.equals("0")) {
 	    		service = Injection.find(aRequest).getService(IWebQueryService.class);
-	    		aSql = aSql.replaceAll(":id", param) ;
+	    		aSql = aSql.replace(":id", param) ;
 				Collection<WebQueryResult> col = service.executeNativeSql(aSql,1) ;
 				if (!col.isEmpty()) {
 					WebQueryResult obj = col.iterator().next() ;

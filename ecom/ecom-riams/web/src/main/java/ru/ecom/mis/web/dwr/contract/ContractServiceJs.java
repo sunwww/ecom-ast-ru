@@ -298,7 +298,7 @@ public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpS
 				l= service.executeNativeSql(sql);
 				if (!l.isEmpty()) {
 					Object o = l.iterator().next().get1();
-					BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
+					BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 					LOG.debug("Сумма за койко дни СЛС№"+aMedcaseId+" = "+cost);
 					sum =sum.add(cost);
 				}
@@ -321,7 +321,7 @@ public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpS
 				l = service.executeNativeSql(sql);
 				if (!l.isEmpty()) {
 					Object o = l.iterator().next().get1();
-					BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
+					BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 					LOG.debug("Найдена сумма по диагностическим визитам при нахождении в стационаре ("+aMedcaseId+"), сумма = "+cost);
 					sum=sum.add(cost);
 				}
@@ -347,7 +347,7 @@ public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpS
 					l = service.executeNativeSql(sql);
 					if (!l.isEmpty()) {
 						Object o = l.iterator().next().get1();
-						BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
+						BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 						LOG.debug("Найдена сумма за лабораторные анализы ("+aMedcaseId+"), сумма = "+cost);
 						sum=sum.add(cost);
 					}
@@ -370,7 +370,7 @@ public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpS
 						l = service.executeNativeSql(sql);
 						if (!l.isEmpty()) {
 							Object o = l.iterator().next().get1();
-							BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
+							BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 							LOG.debug("Найдена сумма за операции ("+aMedcaseId+"), сумма = "+cost);
 							sum=sum.add(cost);
 						}
@@ -395,7 +395,7 @@ public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpS
 							l = service.executeNativeSql(sql);
 							if (!l.isEmpty()) {
 								Object o = l.iterator().next().get1();
-								BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
+								BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 								LOG.debug("Найдена сумма за анастезию ("+aMedcaseId+"), сумма = "+cost);
 								sum=sum.add(cost);
 							}
@@ -420,7 +420,7 @@ public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpS
 								l = service.executeNativeSql(sql);
 								if (!l.isEmpty()) {
 									Object o = l.iterator().next().get1();
-									BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
+									BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 									LOG.debug("Найдена сумма за доп. услуги ("+aMedcaseId+"), сумма = "+cost);
 									sum=sum.add(cost);
 								}
@@ -434,7 +434,7 @@ public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpS
 				l = service.executeNativeSql(sql);
 				if (!l.isEmpty()) {
 					Object o = l.iterator().next().get1();
-					BigDecimal cost = (o!=null && !o.toString().equals("")) ? new BigDecimal(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
+					BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 					LOG.debug("Найдена сумма по визиту №"+aMedcaseId+", сумма = "+cost);
 					sum=sum.add(cost);
 				}

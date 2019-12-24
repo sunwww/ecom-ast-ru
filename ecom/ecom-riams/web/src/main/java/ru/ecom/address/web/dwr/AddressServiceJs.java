@@ -49,7 +49,7 @@ public class AddressServiceJs {
                 IAddressService service = Injection.find(aRequest).getService(IAddressService.class);
                 return service.getAddressString(Long.parseLong(aAddressId), aHouse, aCorpus, aFlat,aZipCode);
             } catch (Exception e) {
-                e.printStackTrace() ;
+                LOG.error(e.getMessage(),e);
                 throw new IllegalStateException(e) ;
             }
         }
