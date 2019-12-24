@@ -57,7 +57,7 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
             	
             	if (lpu==null || lpu.equals(0L)) {
             		lpu=Long.valueOf(aRequest.getParameter("id")!=null?aRequest.getParameter("id"):"0") ;
-            		if (lpu.equals(0L)) {
+            		if (lpu.equals(0L) && !(aForm instanceof DepartmentMicroBioJournalForm)) {
             			form.addMessage(new FormMessage("Укажите отделение поиска")) ;
             		}
             	}
