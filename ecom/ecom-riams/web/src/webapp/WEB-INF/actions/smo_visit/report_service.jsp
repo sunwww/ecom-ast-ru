@@ -1,5 +1,5 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -31,7 +31,7 @@
 		request.setAttribute("personClear", "<input type='button' name='clearPerson' value='Очистить инф. о сотруднике' onclick=\"$('person').value='';this.style.display='none'\">") ;
 	}
   %>
-    <msh:form action="/visit_report_service.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/visit_report_service.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="m" id="m" value="f039"/>
     <input type="hidden" name="s" id="s" value="TicketService"/>
     <input type="hidden" name="id" id="id"/>
@@ -40,12 +40,12 @@
     <input type="hidden" name="person" id="person" value="${param.person}"/>
     
     <msh:panel>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="9" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="9" />
       </msh:row>
       <msh:row>
-        	<msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        	<msh:textField property="finishDate" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        	<msh:textField property="beginDate" label="Период с" />
+        	<msh:textField property="finishDate" label="по" />
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="workFunction" vocName="vocWorkFunction" 
@@ -330,13 +330,13 @@
        			request.setAttribute("groupGroup", "ext.name,owflpu.id,owflpu.name") ;
        			request.setAttribute("groupOrder", "owflpu.name") ;
     		}
-    		if (typeReestr!=null && (typeReestr.equals("1"))) {
+    		if ("1".equals(typeReestr)) {
     	%>
     
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nativeSql="
+<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500"  name="journal_ticket" nativeSql="
 select smo.id as name
 ,smo.dateStart as nameFld
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -400,10 +400,11 @@ group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,
 ,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
 
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
+" />
         <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
-            <msh:tableColumn columnName="Дата посещения" property="2"/>            
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Дата посещения" property="2"/>
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
             <msh:tableColumn columnName="Дата рождения" property="4"/>
             <msh:tableColumn columnName="Возраст" property="5"/>
@@ -421,8 +422,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 
     </msh:section>
     <% } else {
-    	if (typeView!=null && (typeView.equals("1"))) {
-    
+    	if ("1".equals(typeView)) {
     	%>
     <msh:section>
 <ecom:webQuery  isReportBase="${isReportBase}" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
@@ -482,7 +482,7 @@ and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${is039Sql}
 GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
+" /> 
     <msh:sectionTitle>
     <form action="print-f039_stand.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -492,7 +492,7 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type="submit" value="Печать"> 
-    </form>${journal_ticket_sql}
+    </form>
     </msh:sectionTitle>
     <msh:sectionContent>
   
@@ -537,16 +537,14 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     	<%
-    } else if (typeView!=null && (typeView.equals("2"))) {
+    } else if ("2".equals(typeView)) {
     	%>
-
-
     <msh:section>
 <ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
-''||'&workFunctionGroup='||wfg.id||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+''||'&workFunctionGroup='||coalesce(wfg.id,0)||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
-,coalesce(wfg.groupname)
+,coalesce(wfg.groupname,'') as groupName
 ,sum(coalesce(smc.medserviceamount,1)) as cntAll
 ,sum(case when (vwpt.code='POLYCLINIC') then coalesce(smc.medserviceamount,1) else null end) as cntAllPoly
 ,sum(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then coalesce(smc.medserviceamount,1) else null end) as cntVil
@@ -596,7 +594,7 @@ and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${is039Sql}
 GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
+" /> 
     <msh:sectionTitle>
     <form action="print-f039_stand.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -611,7 +609,7 @@ GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
     <msh:sectionContent>
   
         <msh:table printToExcelButton="Сохранить в excel"
-         name="journal_ticket" action="visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
+         name="journal_ticket" action="visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}"
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -623,7 +621,8 @@ GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
          		<th colspan="7">Услуги по видам оплаты</th>
          	</tr>
          </msh:tableNotEmpty>  
-            <msh:tableColumn columnName="${groupName}" property="2"/>            
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="${groupName}" property="2"/>
             <msh:tableColumn columnName="Кабинет" property="3"/>
             <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во посещ." property="4"/>
             
@@ -684,10 +683,7 @@ GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
  			+":"+$('serviceStream').value
  			+":"+$('workPlaceType').value
  			+":0";
-		//aSpecialist, aWorkFunction, aLpu, aServiceStream
-		//aGroupBy, aStartDate, aFinishDate
-		//, aSpecialist, aWorkFunction, aLpu, aServiceStream 			
-		$('id').value =args ; 
+		$('id').value =args ;
 		if (+aBis>0) {
 			$('m').value='f039add' ;
 		} else {
@@ -697,7 +693,7 @@ GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
 	}
   	function getCheckedValue(radioGrp) {
   		var radioValue ;
-  		for(i=0; i < radioGrp.length; i++) {
+  		for(var i=0; i < radioGrp.length; i++) {
   		  if (radioGrp[i].checked == true){
   		    radioValue = radioGrp[i].value;
   		    break ;
@@ -708,5 +704,4 @@ GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
   		
   	</script>
   </tiles:put>
-
 </tiles:insert>
