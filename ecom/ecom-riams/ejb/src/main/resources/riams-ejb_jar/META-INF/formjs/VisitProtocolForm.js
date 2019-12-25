@@ -298,7 +298,7 @@ function checkCreateDiagnosis(aForm, aCtx) {
         var d = new Packages.ru.ecom.mis.ejb.domain.medcase.Diagnosis();
         d.setName(theDiagnosisText);
         d.setPriority(m.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis, theDiagnosisPriority));
-        d.setIdc10(m.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10, idc));
+        d.setIdc10(m.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10, java.lang.Long.valueOf(idc)));
         d.setEstablishDate(Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.getDateRegistration()));
         d.setMedCase(mc);
         d.setRegistrationType(m.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType, theDiagnosisRegistrationType));
