@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.birth.IPregnancyService;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
@@ -169,5 +170,101 @@ public class PregnancyServiceJs {
 					.put("name", w.get2());
 		}
 		return res.toString();
+	}
+
+	/**
+	 * Можно ли редактировать карту нозологий? #185
+	 * нельзя редактировать выписанного пациента, либо пациента, имеющего СЛО с обсервационным отделением в СЛС
+	 * @param aSlsId HospitalMedCase.id
+	 * @return true - да, false - нет
+	 */
+	private Boolean getIfICanEditNosologyCard(Long aSlsId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select case when hmc.datefinish is not null or" +
+				" (select count(dmc.id) from medcase dmc" +
+				" left join mislpu lpu on lpu.id=dmc.department_id" +
+				" where dmc.dtype='DepartmentMedCase' and IsObservable=true" +
+				" and dmc.parent_id="+aSlsId+")>0" +
+				" then '0' else '1' end" +
+				" from medcase hmc" +
+				" where hmc.id="+aSlsId);
+		return list.isEmpty() || list.iterator().next().get1().equals("0")? false:true;
+	}
+
+	/**
+	 * Получить id карты назологий, если есть #185
+	 * если нет - 0
+	 * @param aSlsId HospitalMedCase.id
+	 * @return card.id или 0
+	 */
+	private Long getNosologyCardIfExists(Long aSlsId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select c.id from  birthnosologycard_vocbirthnosology bv" +
+				" left join birthnosologycard c on c.id=bv.birthnosologycard_id" +
+				" where c.medcase_id=" + aSlsId);
+		return list.isEmpty() ? 0L
+				: Long.valueOf(list.iterator().next().get1().toString());
+	}
+
+	/**
+	 * Получить нозологии по medcase #185
+	 * @param aSlsId HospitalMedCase.id
+	 * @return String json нозологии
+	 */
+	public String getBirthNosologyCard(Long aSlsId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		JSONArray res = new JSONArray() ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocbirthnosology"); //получили все нозологии
+		for (WebQueryResult w : list) {
+			JSONObject o = new JSONObject() ;
+			o.put("vocID",w.get1())
+					.put("vocName", w.get2());
+			if (!getIfICanEditNosologyCard(aSlsId,aRequest))
+				o.put("disabled",1); //уже нельзя редактировать
+			res.put(o);
+		}
+		Long aCardId = getNosologyCardIfExists(aSlsId,aRequest);
+		if (aCardId==0L)
+			return res.toString(); //нет карты - вернуть просто нозологии
+		else { //уже существующая карта
+			for (int i=0; i<res.length(); i++) {
+				Long vocID = res.getJSONObject(i).getLong("vocID");
+				list = service.executeNativeSql("select * from birthnosologycard_vocbirthnosology where birthnosologycard_id="+aCardId +
+				" and nosologies_id="+vocID);
+				if (!list.isEmpty())
+					res.getJSONObject(i).put("checked",1); //если была выбрана, проставить checked
+			}
+		}
+		return res.toString();
+	}
+
+	/**
+	 * Сохранить нозологии #185
+	 * @param aSlsId HospitalMedCase.id
+	 * @param mas String массив с выбранными нозологиями
+	 */
+	public String saveBirthNosologyCard(Long aSlsId, String mas, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Long aCardId = getNosologyCardIfExists(aSlsId,aRequest);
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
+		String workFunction = service.executeNativeSql("select wf.id " +
+				"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
+				"where su.login='"+login+"'").iterator().next().get1().toString();
+		if (aCardId==0L) {  //если карты нет, нужно добавить
+			Collection<WebQueryResult> res = service.executeNativeSql("INSERT INTO birthnosologycard(medcase_id,createdate,createtime,createusername,creator_id)" +
+					"values ("+aSlsId+",current_date,current_time,'"+login+"',"+workFunction+") returning id");
+			for (WebQueryResult wqr : res) {
+				aCardId = Long.valueOf(wqr.get1().toString());
+			}
+		}
+		else {
+			service.executeUpdateNativeSql("update birthnosologycard set editdate=current_date,edittime=current_time,editusername='"+login+
+					"',editor_id=" + workFunction + " where id="+aCardId); //отметка о редактировании
+			service.executeUpdateNativeSql("delete from birthnosologycard_vocbirthnosology where birthnosologycard_id="+aCardId);  //удалить старные
+		}
+		String[] arr = mas.split(",");
+		for (int i=0; i<arr.length; i++)
+			service.executeUpdateNativeSql("INSERT INTO birthnosologycard_vocbirthnosology(birthnosologycard_id,nosologies_id) values("+aCardId+","+arr[i]+")");
+		return "Сохранено.";
 	}
 }
