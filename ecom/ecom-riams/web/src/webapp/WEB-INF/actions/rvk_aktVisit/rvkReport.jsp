@@ -78,6 +78,7 @@
             request.setAttribute("typeSql", typeSql.toString());
             request.setAttribute("typeGroup",type1);
             request.setAttribute("typeGroup2",type2);
+            if (dateBegin!=null && !dateBegin.equals("")) {
         %>
         <msh:section>
             <msh:sectionTitle>Сведения о призывниках, направленных в ГБУЗ АО АМОКБ
@@ -120,6 +121,9 @@ where 1=1 ${typeSql} ${department}"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
+        <%} else{ %>
+        <i>Выберите параметры поиска и нажмите "Найти" </i>
+        <%}%>
         <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
         <script type="text/javascript">
             checkFieldUpdate('typeGroup','${typeGroup}',1) ;
