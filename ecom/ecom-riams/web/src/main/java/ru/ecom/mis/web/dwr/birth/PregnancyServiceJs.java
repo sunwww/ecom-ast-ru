@@ -230,7 +230,7 @@ public class PregnancyServiceJs {
 			for (int i=0; i<res.length(); i++) {
 				Long vocID = res.getJSONObject(i).getLong("vocID");
 				list = service.executeNativeSql("select * from birthnosologycard_vocbirthnosology where birthnosologycard_id="+aCardId +
-						" and nosologies_id="+vocID);
+				" and nosologies_id="+vocID);
 				if (!list.isEmpty())
 					res.getJSONObject(i).put("checked",1); //если была выбрана, проставить checked
 			}
