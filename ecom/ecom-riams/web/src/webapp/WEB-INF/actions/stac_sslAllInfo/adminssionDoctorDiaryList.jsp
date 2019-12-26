@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -37,7 +37,7 @@
         <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" />
         <msh:textField fieldColSpan="2" property="dateEnd" label="Период по" />
       </msh:row>
-          <input type="submit" value="Найти">
+          <msh:submitCancelButtonsRow colSpan="4" notDisplayCancel="true" submitLabel="Найти" />
 
     </msh:panel>
     </msh:form>
@@ -133,7 +133,7 @@
     <msh:table name="journal_priem" action="stac_admissionDoctorDiaryList.do" idField="1" cellFunction="true">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="ФИО врача приемного отделения" property="2" />
-      <msh:tableColumn columnName="Кол-во история болезни" isCalcAmount="true" property="3" />
+      <msh:tableColumn columnName="Кол-во историй болезни" isCalcAmount="true" property="3" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
