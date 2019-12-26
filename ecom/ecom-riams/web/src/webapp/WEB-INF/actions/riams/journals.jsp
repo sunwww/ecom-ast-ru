@@ -253,6 +253,9 @@
 						<li><msh:link  isReport="false" action="journal_robson.do" roles="/Policy/Mis/Pregnancy/ChildBirth/View">
 							Отчёт по классификации Робсона
 						</msh:link></li>
+						<li><msh:link isReport="true" action="preg_nosology.do" roles="/Policy/Mis/Pregnancy/BirthNosologyCard/View">
+							Отчёт по нозологиям
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>			

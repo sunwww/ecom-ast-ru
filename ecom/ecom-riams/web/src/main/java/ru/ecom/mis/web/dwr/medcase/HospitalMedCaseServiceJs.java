@@ -2685,4 +2685,36 @@ public class HospitalMedCaseServiceJs {
 				("update WorkCalendarHospitalBed set dateFrom=to_date('"+dateFrom+"','dd.mm.yyyy'), editdate=current_date,edittime=current_time,editusername='"
 						+login+"' where id="+aPreId) ;
 	}
+
+	/**
+	 * Получить, необходимо ли при переводе заполнять карту по нозологиям в акушерстве
+	 * Необходимо, в случае перевода и родового или патологии беременности
+	 * @param aSloId DepartmentMedCase.id
+	 * @return 0 если необходимо
+	 */
+	public String checkNessessaryTransferNosologyCard(String aSloId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select case when lpu.ismaternityward=true or lpu.ispatologypregnant is true then '0' else '' end" +
+				" from medcase dmc" +
+				" left join mislpu lpu on lpu.id=dmc.department_id" +
+				" where dmc.id=" + aSloId) ;
+		return l.isEmpty()? "" : l.iterator().next().get1().toString();
+	}
+
+    /**
+     * Получить, необходимо ли при выписке заполнять карту по нозологиям в акушерстве
+     * Необходимо, в случае выписки из патологии беременности (последнее отделение в СЛС)
+     * @param aSlsId DepartmentMedCase.id
+     * @return 0 если необходимо
+     */
+    public String checkNessessaryDischargeNosologyCard(String aSlsId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        Collection<WebQueryResult> l= service.executeNativeSql("select case when lpu.ispatologypregnant is true then '0' else '' end" +
+                " from medcase dmc" +
+                " left join mislpu lpu on lpu.id=dmc.department_id" +
+                " left join medcase hmc on hmc.id=dmc.parent_id" +
+                " where hmc.id=" + aSlsId + " and dmc.id = (select max(id) from medcase " +
+                " where dtype='DepartmentMedCase' and parent_id=" + aSlsId + ")") ;
+        return l.isEmpty()? "" : l.iterator().next().get1().toString();
+    }
 }

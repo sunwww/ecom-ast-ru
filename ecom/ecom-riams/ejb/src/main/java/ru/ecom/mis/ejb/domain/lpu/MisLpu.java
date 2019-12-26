@@ -461,6 +461,19 @@ public class MisLpu extends BaseEntity {
 
 	/** Родильное отделение */
 	private Boolean theIsMaternityWard;
+
+	/** Отделение патологии беременности */
+	@Comment("Отделение патологии беременности")
+	public Boolean getIsPatologyPregnant() {
+		return theIsPatologyPregnant;
+	}
+
+	public void setIsPatologyPregnant(Boolean aIsPatologyPregnant) {
+		theIsPatologyPregnant = aIsPatologyPregnant;
+	}
+
+	/** Отделение патологии беременности */
+	private Boolean theIsPatologyPregnant;
 	
 	/** Уровень оказания медицинской помощи */
 	@Comment("Уровень оказания медицинской помощи")

@@ -388,13 +388,6 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/contract_guaranteeLetter/list_by_period.jsp" />
         </action>
 
-	 <action path='/lab_checkImportPDF' type='ru.ecom.mis.web.action.kdl.ImportPdfAction'
-                name='diet_journalForm'
-                validate='false'
-                scope="request"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/riams/config.jsp" />
-        </action>
 	 <action path='/diet_dietJournal' type='ru.ecom.mis.web.action.diet.DietJournalAction'
                 name='diet_journalForm'
                 validate='false'
@@ -475,6 +468,13 @@
 				scope="session"
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/journal_robson.jsp" />
+		</action>
+		<action path='/preg_nosology' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/preg_nosology.jsp" />
 		</action>
 
 		<action path='/smo_deniedHospitelByAttach' type='ru.ecom.web.actions.base.ForwardAction'

@@ -140,6 +140,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/OmcCriterion" name="Клас. критерии" params="id"
 					 styleId="viewShort" action="/entityParentList-stac_omcCriterion"  title="Клас. критерии"
 	   />
+	   <msh:sideLink roles="/Policy/Mis/Pregnancy/BirthNosologyCard/View" name="Карта по нозологиям" params=""
+					 styleId="viewShort" action="/javascript:showbirthNosologyCard(${param.id},null,0)"  title="Карта по нозологиям"
+	   />
 </msh:sideMenu>
 
 
@@ -214,6 +217,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	<tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/ChangeServiceStream" />
 		<tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
 		<tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
+		<tags:birthNosologyCard  name="birthNosologyCard"  />
 </msh:sideMenu>
 <msh:sideMenu title="Перейти">
 	    <msh:sideLink 

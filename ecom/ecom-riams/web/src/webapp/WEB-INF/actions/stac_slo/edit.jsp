@@ -718,6 +718,16 @@ where m.id ='${param.id}'"/>
         <msh:ifInRole roles="/Policy/Mis/Order203">
             <script type="text/javascript">
                 function check_diags() {
+                    //#185 - проверка на необходимость заполнения карты нозологий в акушерстве
+                    <msh:ifFormTypeIsCreate formName="stac_sloForm">
+                    var ifNotSubmit=true;
+                    <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
+                    if ($('prevMedCase').value>0) {
+                        checkNessessaryTransferNosologyCard('entityParentView-stac_slo.do?id='+$('prevMedCase').value+"&tmp="+Math.random(),document.forms[0]);
+                        ifNotSubmit=false;
+                    }
+                    </msh:ifInRole>
+                    </msh:ifFormTypeIsCreate>
                     var list_diag = ["complication","concomitant"] ;
                     var isnext=true ;
                     for (var i=0;i<list_diag.length;i++) {
@@ -727,7 +737,7 @@ where m.id ='${param.id}'"/>
                     }
                     if (isnext) {
                         document.forms[0].action=old_action ;
-                        showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0],${param.id});
+                        showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0],${param.id},ifNotSubmit);
                         //document.forms[0].submit() ;
                     } else {
                         $('submitButton').disabled=false ;
@@ -761,6 +771,14 @@ where m.id ='${param.id}'"/>
         <msh:ifNotInRole roles="/Policy/Mis/Order203">
             <script type="text/javascript">
                 function check_diags() {
+                    //#185 - проверка на необходимость заполнения карты нозологий в акушерстве
+                    <msh:ifFormTypeIsCreate formName="stac_sloForm">
+                    <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
+                    if ($('prevMedCase').value>0) {
+                        checkNessessaryTransferNosologyCard('entityParentView-stac_slo.do?id='+$('prevMedCase').value+"&tmp="+Math.random(),document.forms[0]);
+                    }
+                    </msh:ifInRole>
+                    </msh:ifFormTypeIsCreate>
                     var list_diag = ["complication","concomitant"] ;
                     var isnext=true ;
                     for (var i=0;i<list_diag.length;i++) {
@@ -771,7 +789,9 @@ where m.id ='${param.id}'"/>
                     if (isnext) {
                         document.forms[0].action=old_action ;
                         //showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0]);
+                        <msh:ifNotInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
                         document.forms[0].submit() ;
+                        </msh:ifNotInRole>
                     } else {
                         $('submitButton').disabled=false ;
                     }
@@ -809,9 +829,23 @@ where m.id ='${param.id}'"/>
             function trim(aStr) {
                 return aStr.replace(/|\s+|\s+$/gm,'') ;
             }
+            <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
+            //функция проверки необходимости наличия нозологии при переводе
+            function checkNessessaryTransferNosologyCard(goIfNotSave,form) {
+                HospitalMedCaseService.checkNessessaryTransferNosologyCard($('prevMedCase').value,{
+                    callback: function(aResult) {
+                        if (aResult=='0') {
+                            showToastMessage("При переводе из патологии беременности или из родового необходимо выбрать нозологию!",null,true,false);
+                            showbirthNosologyCard($('parent').value,goIfNotSave,false,form);
+                        }
+                        else
+                            showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0],null,true);
+                    }
+                }) ;
+            }
+            </msh:ifInRole>
 
-            onload=function() {
-
+                onload=function() {
                 var list_diag = ["complication", "concomitant"];
                 for (var j = 0; j < list_diag.length; j++) {
 
@@ -1010,6 +1044,9 @@ where m.id ='${param.id}'"/>
                 </script>
             </msh:ifInRole>
         </msh:ifFormTypeIsView>
+        <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
+        <tags:birthNosologyCard  name="birthNosologyCard"  />
+        </msh:ifInRole>
         <script type="text/javascript">//var theBedFund = $('bedFund').value;
         function viewOtherVisitsByPatient(d) {
             //alert("js-smo_visit-infoShortByPatient.do?id="+$('patient').value) ;
@@ -1030,7 +1067,7 @@ where m.id ='${param.id}'"/>
             window.location = 'entityParentEdit-stac_sslDischarge.do?id='+$('parent').value+"&tmp="+Math.random() ;
         }
         function goTransfer() {
-            window.location = 'entityParentPrepareCreate-stac_slo.do?id='+$('parent').value+"&tmp="+Math.random() ;
+            window.location = 'entityParentPrepareCreate-stac_slo.do?id='+$('parent').value+"&tmp="+Math.random();
         }
         function showSvod() {
             getDefinition('entityParentList-pres_prescriptList.do?short=Short&id='+$('parent').value);

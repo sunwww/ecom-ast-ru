@@ -546,7 +546,21 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Родильное отделение */
 	private Boolean theIsMaternityWard;
-	
+
+	/** Отделение патологии беременности */
+	@Comment("Отделение патологии беременности")
+	@Persist
+	public Boolean getIsPatologyPregnant() {
+		return theIsPatologyPregnant;
+	}
+
+	public void setIsPatologyPregnant(Boolean aIsPatologyPregnant) {
+		theIsPatologyPregnant = aIsPatologyPregnant;
+	}
+
+	/** Отделение патологии беременности */
+	private Boolean theIsPatologyPregnant;
+
 	/** Уровень оказания медицинской помощи */
 	@Comment("Уровень оказания медицинской помощи")
 	@Persist

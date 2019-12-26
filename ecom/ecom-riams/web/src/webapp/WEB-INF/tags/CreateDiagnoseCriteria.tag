@@ -37,16 +37,19 @@
     var PRIOR;
     var FORM;
     var MC;
+    var ifNotSubmit${name};
     var theIs${name}CloseDisDocumentDialogInitialized = false ;
+    var theIs${name}Submitted = false ;  //что ещё не сабмиттили форму из тэга
     var the${name}CloseDisDocumentDialog = new msh.widget.Dialog($('${name}CloseDisDocumentDialog')) ;
     // Показать
 
-    function show${name}CloseDocument(id,reg,prior,form,mc) {
+    function show${name}CloseDocument(id,reg,prior,form,mc,ifNotSubmit) {
         ID=id;
         REG=reg;
         PRIOR=prior;
         FORM=form;
         MC=mc;
+        ifNotSubmit${name}=ifNotSubmit;
         showCriteriasWhenDiagnoseCreating();
         theTableArrow = null ;
     }
@@ -58,6 +61,7 @@
                 callback: function(res) {
                     if (res!="##") {
                         the${name}CloseDisDocumentDialog.show() ;
+                        theIs${name}CloseDisDocumentDialogInitialized=true;
                         var table = document.getElementById('table1');
                         table.innerHTML="<tr><th align=\"center\" width=\"150\">Критерий</th>";
                         var aResult = res.split('#');
@@ -70,7 +74,12 @@
                             table.appendChild(tr);
                         }
                     }
-                    else FORM.submit();
+                    else
+                        if (ifNotSubmit${name} && !theIs${name}CloseDisDocumentDialogInitialized && !theIs${name}Submitted) {
+                            theIs${name}Submitted=true;
+                            FORM.submit();
+                        }
+
                 }
             }
         );

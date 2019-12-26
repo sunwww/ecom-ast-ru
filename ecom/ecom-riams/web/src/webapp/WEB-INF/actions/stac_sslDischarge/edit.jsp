@@ -458,10 +458,17 @@
                     }});
 
             }
-            function check_diags(aPrefix) {
 
-                //var countOncology=checkCountSLO();
-                //aert(countOncology);
+            function check_diags(aPrefix) {
+                <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
+                checkNessessaryDischargeNosologyCard(aPrefix);
+                </msh:ifInRole>
+                <msh:ifNotInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
+                saveNext(aPrefix);
+                </msh:ifNotInRole>
+            }
+
+            function saveNext(aPrefix) {
                 var a= $('concludingMkbName').value;
 
                 var concludingMkb=$('concludingMkbName').value;
@@ -556,9 +563,24 @@
                                 }
                             });
 
-                    }}});
-
+                        }}});
             }
+
+            <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
+            //проверка, необходимо ли наличие карты нозологий
+            function checkNessessaryDischargeNosologyCard(aPrefix) {
+                HospitalMedCaseService.checkNessessaryDischargeNosologyCard(${param.id},{
+                    callback: function(aResult) {
+                        if (aResult=='0') {
+                            showToastMessage("При выписке из патологии беременности необходимо выбрать нозологию!",null,true,false,4000);
+                            showbirthNosologyCard(${param.id},null,null,null,aPrefix);
+                        }
+                        else saveNext(aPrefix);
+                    }
+                }) ;
+            }
+            </msh:ifInRole>
+
             onload=function(){
 
                 var list_diag = ["complication","concomitant"] ;
