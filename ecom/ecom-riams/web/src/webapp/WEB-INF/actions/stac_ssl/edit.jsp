@@ -336,7 +336,7 @@
                          , dataType: "json"
                          , success: function (el2) {
                              if (el2 && el2.status && el2.status == "ok") {
-                                 var txt = el2.clinical_risk+"<br>"+el2.dinamik_risk+"<br>"+el2.ins_risk+"<br>"+el2.final_risk;
+                                 var txt = el2.clinical_risk+"<br>"+el2.ins_risk+"<br>"+el2.final_risk;
                                  showToastMessage(txt,null,false);
                              } else {
                                  console.log(JSON.stringify(el2));

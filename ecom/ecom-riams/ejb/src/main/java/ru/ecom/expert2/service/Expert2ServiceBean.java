@@ -1747,7 +1747,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             //   LOG.info("sql for best KSG = "+sql.toString());
             List<BigInteger> results;
             String key = mainDiagnosis.hashCode()+"#SQL#"+sql.toString().hashCode(); //bedType+"#"+aEntry.getMainMkb()+"#"+(dopmkb!=null?dopmkb:"");
-         //      LOG.warn("sql for ksg = "+sql.toString());
+            //   LOG.warn("sql for ksg = "+sql.toString());
             if (!ksgMap.containsKey(key)) {
              //     LOG.info(key+" not found new sql ="+sql);
                 results = theManager.createNativeQuery(sql.toString()).setParameter("year",2019).getResultList();
@@ -1798,22 +1798,20 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
 
                 } else if (isNotNull(ksg.getServiceCode())) {continue;}
-                if (ksg.getAge() != null && ksgAge.indexOf(""+ksg.getAge())>-1) {} else if (ksg.getAge()!=null) {continue;}
-                if (ksg.getDuration() != null  && duration) {weight=6;} else if (ksg.getDuration() != null ) {continue;}
-       //         if(ksg.getKSGValue().getCode().equals("5")) {weight=7;} //Если нашли 5 КСГ, то берем его! //TODO 01-03-2018
+                if (ksg.getAge() != null && !ksgAge.contains(""+ksg.getAge())) {continue;}
+                if (ksg.getDuration() != null && duration) {
+                    weight=6;} else if (ksg.getDuration() != null ) {continue;}
        //         if(ksg.getKSGValue().getCode().equals("st02.003")) {weight=6;} //Если нашли родовое КСГ, то берем его! //TODO 08-02-2018
     //st02.012 , st02.013 круче родов и кесарева
                 double currentKZ = k.getKZ();
-
-                if (weight > maxWeight || (weight == maxWeight && currentKZ > maxKZ) || (currentKZ == maxKZ && isNotNull(ksg.getServiceCode()) )) {
-                    maxWeight=weight;
+                if (weight > maxWeight || (weight == maxWeight && currentKZ > maxKZ)) { // || (currentKZ == maxKZ && isNotNull(ksg.getServiceCode()) )) { // не помню зачем я так делал, попробуем убрать это 26.12.2019
+                    if (weight>maxWeight) maxWeight=weight;
                     maxKZ = currentKZ;
                     pos = ksg;
                 } else if (k.getIsOperation() && currentKZ>maxKZ){
                         justServicePositions.add(ksg);
                 }
             } //Закончили искать лучшее КСГ
-
             if (pos==null && cancerKsgPosition!=null) {pos=cancerKsgPosition;}
             if (therapicKsgPosition!=null && surgicalKsgPosition!=null) { //Если мы нашли хирургическое КСГ, но есть и терапевтическое, то проверим на исключения
                 GrouperKSGPosition exc =  checkIsKsgException(surgicalKsgPosition,therapicKsgPosition);
@@ -2487,10 +2485,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                 i=0;
                 isMonitorCancel(monitor,"Приступаем к объединению случаев. START_UNION");
                 fillChildBirthMkbs();
-                if (HOSPITALPEREVODTYPE.equals(listEntryCode)) { //Если заполнение - переводы, отметим *не подавать* все СЛС вида: отделение-реанимация-отделение
+ /*               if (HOSPITALPEREVODTYPE.equals(listEntryCode)) { //Если заполнение - переводы, отметим *не подавать* все СЛС вида: отделение-реанимация-отделение
 
                 }
-                for (BigInteger hospId : hospitalIds) {
+ */               for (BigInteger hospId : hospitalIds) {
                     i++;
                     if (i%100==0) {
                         if (isMonitorCancel(monitor,"Идет объединение случаев: "+i))return;

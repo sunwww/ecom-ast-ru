@@ -813,7 +813,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 aBillNumber = "TEST";
                 cntNumber = "00";
                 aEntryListId=entry.getListEntry().getId();
-                lpuOmcCode = "0";
+                lpuOmcCode = entry.getListEntry()!=null ? entry.getListEntry().getLpuOmcCode(): "1";
 
             }
             packetDateAdd = dateToString(periodDate, "yyMM");

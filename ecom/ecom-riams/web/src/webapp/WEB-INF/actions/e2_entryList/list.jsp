@@ -18,8 +18,6 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-        <%System.out.println("IMPORT_result = "+request.getAttribute("importResult"));%>
-${importResult}
         <msh:hideException>
             <msh:textField label="Номер карты" property="historyNumber"/><input type="button" value="Найти по ИБ" onclick="findByNumber()">
             <ecom:webQuery name="entryList" nativeSql="select id, name, startDate, finishDate, createDate||' '|| createTime
@@ -38,6 +36,10 @@ ${importResult}
         function findByNumber() {
             var val = jQuery('#historyNumber').val();
             if (val) window.document.location="entityList-e2_entry.do?id=&orderBy=firstNew&filter=historyNumber:"+val;
+        }
+        let result = '${importResult}';
+        if (result) {
+            showToastMessage(result);
         }
         </script>
     </tiles:put>
