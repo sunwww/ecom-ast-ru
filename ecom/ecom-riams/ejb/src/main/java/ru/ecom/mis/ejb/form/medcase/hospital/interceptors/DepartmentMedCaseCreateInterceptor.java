@@ -88,9 +88,9 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 				if (!noCheckPregnancy && !isPregnancyExists(manager, prevMedCase) && !isMisbirthClassExists(manager, form.getPrevMedCase())) {
 					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не заполнены данные по родам либо данные по выкидышу!");
 				}
-				if (!isMisbirthClassExists(manager, form.getPrevMedCase()) &&!isRobsonClassExists(manager, prevMedCase )) {
+				/*if (!isMisbirthClassExists(manager, form.getPrevMedCase()) &&!isRobsonClassExists(manager, prevMedCase )) {
 					throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не создана классификация Робсона!");
-				}
+				}*/
 			}
 		}
 	}

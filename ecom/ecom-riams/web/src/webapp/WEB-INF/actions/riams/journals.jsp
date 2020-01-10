@@ -262,7 +262,7 @@
 					<h2>Стационар</h2>
 					<ul style='list-style: none outside none; '>
 						<li><msh:link isReport="true" action="/stac_admissionDoctorDiaryList.do" roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod">
-							Журнал госпитализированных пациентов, осмотренные врачами приемного отделения
+							Журнал пациентов, осмотренных врачами приемного отделения
 	                        </msh:link></li>
 						<li><msh:link isReport="true" action="stac_journalByHospital.do" roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod">
 	                            Журнал по поступившим и выбывшим стационара, а также отказам от госпитализаций
