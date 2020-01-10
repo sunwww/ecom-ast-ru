@@ -655,9 +655,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             " from EntryMedService ems" +
                             " left join e2entry e on ems.entry_id = e.id" +
                             " left join vocMedService vms on vms.id=ems.medService_id" +
-                            " where e.id=:id or e.parententry_id=:id" +
+                            " where (e.id=:id or e.parententry_id=:id) and ems.serviceDate>=:entryDate" + //выгружаем только услуги
                             " group by vms.code, case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end")
-                            .setParameter("id",currentEntry.getId()).getResultList();
+                            .setParameter("id",currentEntry.getId()).setParameter("entryDate",currentEntry.getStartDate()).getResultList();
 
                     if (!list.isEmpty()) {
                         for (Object[] ms: list) {

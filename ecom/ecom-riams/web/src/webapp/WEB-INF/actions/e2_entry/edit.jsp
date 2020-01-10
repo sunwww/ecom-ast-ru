@@ -158,7 +158,7 @@
                 <msh:checkBox property="multiplyBirth"/>
 
             </msh:row><msh:row>
-                <msh:autoComplete vocName="vocWorkFunctionCode" property="doctorWorkfunction" size="50" />
+                <msh:autoComplete vocName="vocE2FondV021Code" property="doctorWorkfunction" size="50" />
                     <msh:textField property="doctorName" size="50" />
             </msh:row><msh:row>
                     <msh:textField property="doctorSnils" size="50" />

@@ -257,7 +257,7 @@ function trim(aStr) {
 function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction,aFilterMkb,aBeginDate,aFinishDate,aDepartmentPolyclinic) {
 	var username = aContext.getSessionContext().getCallerPrincipal().toString() ;
 //	aDepartmentPolyclinic=256;
-	filterMkbSql = "" ;
+	var filterMkbSql = "" ;
 	var manager = aContext.manager;
 	if (aFilterMkb!=null && aFilterMkb!="") {
 		aFilterMkb = aFilterMkb.toUpperCase() ;
@@ -285,7 +285,7 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 	}
 	// Создание мед.карты //Исключаем создание дублей
 	sql = "insert into Medcard (number,dateregistration,registrator,person_id)"
-		+" select p.patientSync,min(sls.datestart),'admin',p.id as patid"
+		+" select p.patientSync,min(sls.datestart),'"+username+"',p.id as patid"
 		+"  from MedCase sls"
 		+" left join patient p on p.id=sls.patient_id"
 		+" left join medcard mp on mp.person_id=p.id"
@@ -306,7 +306,6 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 	sql+=" and sls.medicalAid='1'"
 		+" and diag.id is not null and mp.id is null "+filterMkbSql
 		+" group by p.patientSync,p.id";
-		//+" order by p.lastname,p.firstname,p.middlename" ;
 	manager.createNativeQuery(sql).executeUpdate() ;
 	// Список талонов
 	sql = "select coalesce(sls.serviceStream_id,1) as serviceStream,case when sls.emergency='1' then '1' else '0' end as emergency"
@@ -358,8 +357,7 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 		+" and patient_id='"+obj[6]+"' and dateStart=to_date('"+obj[2]+"','dd.mm.yyyy')" ;
 		var listspo = manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
 		var idspo=0 ;
-		if (listspo.size()>0) {idspo=listspo.get(0) ;}else {throw 'Проблема с определением СПО по отказу №'+obj  ;}
-		//throw ''+idspo ;
+		if (!listspo.isEmpty()) {idspo=listspo.get(0) ;}else {throw 'Проблема с определением СПО по отказу №'+obj  ;}
 		// создание визита
 		sql = "insert into MedCase (parent_id,dtype,createtime,createdate,username"
 			+",serviceStream_id,emergency,dateStart,timeExecute,workfunctionExecute_id"
@@ -376,14 +374,18 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 		+" and patient_id='"+obj[6]+"' and dateStart=to_date('"+obj[2]+"','dd.mm.yyyy')" ;
 		var listvis = manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
 		var idvis=0 ;
-		if (listvis.size()>0) {idvis=listvis.get(0) ;}else {throw 'Проблема с определением визита по отказу №'+obj  ;}
+		if (!listvis.isEmpty()) {idvis=listvis.get(0) ;}else {throw 'Проблема с определением визита по отказу №'+obj  ;}
 		
 		// создание диагноза
 		sql = "insert into diagnosis (patient_id,priority_id,medcase_id,idc10_id,name,illnesPrimary_id,medicalWorker_id) select patient_id,priority_id,'"+idvis+"',idc10_id,name,illnesPrimary_id,'"+obj[4]+"' from diagnosis where id="+obj[8] ;
 		manager.createNativeQuery(sql).executeUpdate() ;
 	}
 }
+
+//@deprecated
 function createNewVisitByDenied(aContext,aDepartment,aBeginDate,aFinishDate,aDepartmentPolyclinic) {
+	if (1==1) throw "Невозможно!";
+
 	var username = aContext.getSessionContext().getCallerPrincipal().toString() ;
 	aDepartmentPolyclinic=256;
 	//--createNewEmergencySpec(aContext,aDepartment,aGroup);

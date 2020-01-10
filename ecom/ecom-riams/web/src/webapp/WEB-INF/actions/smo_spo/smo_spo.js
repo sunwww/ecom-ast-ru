@@ -66,11 +66,12 @@ function spoClosedCurrentDate(aForm, aCtx) {
 }
 /** создание талонов по отказам от госпитализации **/
 function createNewVisitByDenied(aForm,aCtx) {
-	var department = aCtx.request.getParameter("department") ;
+	throw "Запрещено";
+/*	var department = aCtx.request.getParameter("department") ;
 	var dateBegin = aCtx.request.getParameter("dateBegin") ;
 	var dateEnd = aCtx.request.getParameter("dateEnd") ;
 	aCtx.invokeScript("SmoVisitService", "createNewVisitByDenied",department,dateBegin,dateEnd) ;
-	return aCtx.createForwardRedirect("/stac_journal_denied_without_diagnosis.do?department="+department) ;
+	return aCtx.createForwardRedirect("/stac_journal_denied_without_diagnosis.do?department="+department) ; */
 }
 function createNewVisitByDeniedDiary(aForm,aCtx) {
 	var vocWorkFunctions = aCtx.request.getParameter("vocWorkFunctions") ;
