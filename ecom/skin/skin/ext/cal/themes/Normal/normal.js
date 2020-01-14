@@ -19,8 +19,8 @@ var gbFixedPos=false;	// true: pop the calendar absolutely at gPosOffset; false:
 var gMonths=["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Нояб","Дек"];
 var gWeekDay=["Вс","Пн","Вт","Ср","Чт","Пт","Сб"];	// weekday caption from Sunday to Saturday
 
-var gBegin=[1900,1,1];	// calendar date range begin from [Year,Month,Date]. Using gToday here will make it start from today.
-var gEnd=[2020,12,31];	// calendar date range end at [Year,Month,Date]
+var gBegin=[1920,1,1];	// calendar date range begin from [Year,Month,Date]. Using gToday here will make it start from today.
+var gEnd=[2030,12,31];	// calendar date range end at [Year,Month,Date]
 var gsOutOfRange="Sorry, you may not go beyond the designated range!";	// out-of-date-range error message. If set to "", no alerts will popup on such error.
 var guOutOfRange=null;	// the background image url for the out-range dates. e.g. "outrange.gif"
 

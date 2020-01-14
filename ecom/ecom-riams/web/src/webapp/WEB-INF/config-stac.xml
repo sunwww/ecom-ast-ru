@@ -499,7 +499,7 @@
 		    />
 		</action>
 		<action path='/stac_admissionDoctorDiaryList'
-		    type='ru.ecom.mis.web.action.medcase.journal.DepartmentSearchAction'
+		    type='ru.ecom.web.actions.base.ForwardAction'
 		    name='stac_admissionJournalForm' validate='true' scope='request'
 		    input='/WEB-INF/actions/stac_sslAllInfo/adminssionDoctorDiaryList.jsp'
 		   >

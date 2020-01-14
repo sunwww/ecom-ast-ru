@@ -173,11 +173,9 @@ public class ApiRecordUtil {
             return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
         }
         StringBuilder sqlAdd = new StringBuilder();
-        StringBuilder selectSql = new StringBuilder();
         String groupBySql = "wct.id, wct.timeFrom";
         String orderBySql = "wct.timeFrom";
         String[] jsonFields = {"calendarTime_id","calendarTime"};
-        selectSql.append("wct.id as id, cast(wct.timefrom as varchar(5)) as calendarTime");
         if (aCalendarDayId!=null&&!aCalendarDayId.equals("")) { //Ищем по конкретному специалисту
             sqlAdd.append(" and wcd.id=").append(aCalendarDayId);
         } else if (aVocWorkfunctionId!=null && !aVocWorkfunctionId.equals("") && aCalendarDate!=null) { //Ищем по всем врачам выбранной специальности
@@ -190,7 +188,8 @@ public class ApiRecordUtil {
             }
 
         sqlAdd.append(" and case when wcd.calendardate=current_date and wct.timeFrom>current_time then 1 when wcd.calendardate>current_date then 1 else 0 end =1").append(aServiceStream);
-        return getData(selectSql.toString(),sqlAdd.toString(),orderBySql,groupBySql,jsonFields,50,aService);
+        return getData("wct.id as id, cast(wct.timefrom as varchar(5)) as calendarTime" //Ищем по конкретному специалисту //Ищем по всем врачам выбранной специальности
+                ,sqlAdd.toString(),orderBySql,groupBySql,jsonFields,50,aService);
     }
 
 /**

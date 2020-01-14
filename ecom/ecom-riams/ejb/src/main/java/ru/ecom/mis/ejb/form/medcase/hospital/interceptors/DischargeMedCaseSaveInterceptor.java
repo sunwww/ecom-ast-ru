@@ -20,12 +20,10 @@ import java.util.List;
 public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
  
 	private static final Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+
     public void intercept(IEntityForm aForm, Object aEntity, EntityManager aManager) {
 		HospitalMedCaseForm form=(HospitalMedCaseForm)aForm ;
-		if (CAN_DEBUG) LOG.debug("Проверка правильности введенных данных");
-		
+
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
 		boolean adding4is = (!isEmpty(form.getClinicalDiagnos()) || (!isEmpty(form.getClinicalMkb()))) ;	
 		boolean adding5is = (!isEmpty(form.getPathanatomicalDiagnos()) || (!isEmpty(form.getPathanatomicalMkb()))) ;	
@@ -45,9 +43,6 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 			sqlupdate.append("update MedCase set dateFinish=").append(dateFinish).append(", dischargeTime=").append(timeFinish).append(" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))");
 		
 			aManager.createNativeQuery(sqlupdate.toString())
-		
-			//.setParameter("dateF", medCase.getDateFinish())
-			//.setParameter("timeF", medCase.getDischargeTime())
 				.setParameter("parent", form.getId())
 				 .executeUpdate() ;
 		}
@@ -61,21 +56,14 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 			boolean adding1 = false ;
 			if (!adding1is) adding1 = true ;
 
-			/*VocDiagnosisRegistrationType vocTypeClinical = aManager.find(VocDiagnosisRegistrationType.class, Long.valueOf(4));
-			VocDiagnosisRegistrationType vocTypePathanatomical = aManager.find(VocDiagnosisRegistrationType.class, Long.valueOf(5));
-			VocDiagnosisRegistrationType vocTypeConcluding = aManager.find(VocDiagnosisRegistrationType.class, Long.valueOf(3));*/
 			VocDiagnosisRegistrationType vocTypeClinical = (VocDiagnosisRegistrationType)getVocByCode(aManager,"VocDiagnosisRegistrationType","4");
 			VocDiagnosisRegistrationType vocTypePathanatomical = (VocDiagnosisRegistrationType)getVocByCode(aManager,"VocDiagnosisRegistrationType","5");
 			VocDiagnosisRegistrationType vocTypeConcluding = (VocDiagnosisRegistrationType)getVocByCode(aManager,"VocDiagnosisRegistrationType","3");
 			VocDiagnosisRegistrationType vocTypeEnter = (VocDiagnosisRegistrationType)getVocByCode(aManager,"VocDiagnosisRegistrationType","1");
 			
 			VocPriorityDiagnosis vocPriorType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","1") ;
-//			VocPriorityDiagnosis vocConcomType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","3") ;
-//			VocPriorityDiagnosis vocComplicationType = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis","4") ;
-			/*List<VocPriorityDiagnosis> listpr = aManager.createQuery("from VocPriorityDiagnosis where code=1").getResultList() ;
-			if (listpr.size()>0) vocPriorType=listpr.get(0) ;*/
-			List<Diagnosis> diagList = medCase.getDiagnoses(); //aManager.createQuery("from Diagnosis where medCase_id="+medCase.getId()).getResultList() ;
-			//if (diagList==null) diagList = new ArrayList<Diagnosis>();
+			List<Diagnosis> diagList = medCase.getDiagnoses();
+
 			for(Diagnosis diag:diagList){
 				if (!adding4) adding4=setDiagnosisByType(false,diag, vocTypeClinical, form.getClinicalDiagnos(), form.getDateFinish(), form.getClinicalMkb(), medCase, aManager,vocPriorType,form.getClinicalActuity()) ;
 				if (!adding5) adding5=setDiagnosisByType(false,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getDateFinish(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
@@ -120,8 +108,7 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 		if (!aNewIs) {
 			aNewIs = aDiag.getRegistrationType()!=null && aDiag.getRegistrationType().getCode().equals(aType.getCode()) 
 				&& aDiag.getPriority()!=null && aDiag.getPriority().getCode().equals(aPriorityType.getCode())  
-				//&& aDiag.getPriority()!=null && aDiag.getPrimary().equals(aPriorityType) 
-				; 
+				;
 		}
 		if (aNewIs) {
 			aDiag.setName(aName);
@@ -132,7 +119,7 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 			aDiag.setMedCase(aMedCase);
 			try {aDiag.setEstablishDate(DateFormat.parseSqlDate(aDate));} 
 			catch(Exception e) {
-
+				LOG.error(e);
 			}
 			if (aDiag.getRegistrationType()==null) aDiag.setRegistrationType(aType);
 			if (aDiag.getPriority()==null) aDiag.setPriority(aPriorityType) ;

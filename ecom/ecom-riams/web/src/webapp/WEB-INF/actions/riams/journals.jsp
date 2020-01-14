@@ -264,8 +264,11 @@
 					<div class='menu'>
 					<h2>Стационар</h2>
 					<ul style='list-style: none outside none; '>
+						<li><msh:link isReport="true" action="/stac_admissionDoctorDiaryList.do" roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod">
+							Журнал пациентов, осмотренных врачами приемного отделения
+	                        </msh:link></li>
 						<li><msh:link isReport="true" action="stac_journalByHospital.do" roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod">
-	                            Журнал по поступившим и выбывшим стационара, а также отказам от госпитализаций 
+	                            Журнал по поступившим и выбывшим стационара, а также отказам от госпитализаций
 	                        </msh:link></li>
 						<li><msh:link action="stac_report_007.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report007">
 	                            007/у-02 форма

@@ -15,14 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 public class DepartmentSearchAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         AdmissionJournalForm form = (AdmissionJournalForm) aForm;
-        //form.validate(aMapping, aRequest) ;
-        /*IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
-         
-//        IEntityFormService entityService = EntityInjection.find(aRequest).getEntityFormService();
-        aRequest.setAttribute("list"
-                , service.findPatient(form.getLpu(), form.getLpuArea(), form.getLastname()));
-        */
-        //aContext.isCallerInRole(
         Long lpu ;
         IWorkerService service = Injection.find(aRequest).getService(IWorkerService.class) ;
         if (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) {
@@ -33,9 +25,7 @@ public class DepartmentSearchAction extends BaseAction {
         } else {
             try {
                 lpu = service.getWorkingLpu() ;
-             //   System.out.println("lpu="+lpu) ;
             } catch(Exception e) {
-            	System.out.println("lpu not found") ;
             	return aMapping.findForward("successerror");
             }
         	
@@ -44,7 +34,7 @@ public class DepartmentSearchAction extends BaseAction {
 	    	aRequest.setAttribute("department",lpu) ;
 	        String lpuinfo = service.getWorkingLpuInfo(lpu) ;
 	        aRequest.setAttribute("departmentInfo",lpuinfo) ;
-	        if (form.getDischargeIs()!=null && form.getDischargeIs()==true) {
+	        if (form.getDischargeIs()!=null && Boolean.TRUE==form.getDischargeIs()) {
 	        	aRequest.setAttribute("dateSearch","dateFinish") ;
 	        	aRequest.setAttribute("infoSearch"," Поиск по дате выписки") ;
 	        } else {

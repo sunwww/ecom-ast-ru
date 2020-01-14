@@ -521,7 +521,8 @@ order by to_char(sls.datestart,'dd.mm.yyyy'),p.lastname||' '||p.firstname||' '||
         if (ids) {
         	var chk =  document.forms[0].typeMode ;
       	   if (chk[0].checked) {
-            	window.location = 'js-smo_spo-createNewVisitByDenied.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value+"&department="+$('department').value ;
+      	   	alert ("Генерация дневников по отделению отключена");
+            //	window.location = 'js-smo_spo-createNewVisitByDenied.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value+"&department="+$('department').value ;
       	   } else {
       		   
       		/* var obj = JSON.parse($('vocWorkFunctions').value) ;

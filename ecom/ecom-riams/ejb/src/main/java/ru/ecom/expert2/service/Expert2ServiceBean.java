@@ -46,6 +46,7 @@ import java.sql.Date;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Stateless
@@ -1083,7 +1084,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (checkErrors) checkErrors(aEntry);
             theManager.persist(aEntry);
         } catch (Exception e) {
-            LOG.error("ERR=",e);
+            LOG.error("ERR="+aEntry.getId(),e);
             throw new IllegalStateException("Какая-то ошибка, формировать ничего не будем!");
         }
     }
@@ -1747,10 +1748,11 @@ public class Expert2ServiceBean implements IExpert2Service {
             //   LOG.info("sql for best KSG = "+sql.toString());
             List<BigInteger> results;
             String key = mainDiagnosis.hashCode()+"#SQL#"+sql.toString().hashCode(); //bedType+"#"+aEntry.getMainMkb()+"#"+(dopmkb!=null?dopmkb:"");
-         //      LOG.warn("sql for ksg = "+sql.toString());
+            //   LOG.warn("sql for ksg = "+sql.toString());
             if (!ksgMap.containsKey(key)) {
              //     LOG.info(key+" not found new sql ="+sql);
-                results = theManager.createNativeQuery(sql.toString()).setParameter("year",2019).getResultList();
+                LocalDate date = aEntry.getFinishDate().toLocalDate();
+                results = theManager.createNativeQuery(sql.toString()).setParameter("year",date.getYear()).getResultList();
                 ksgMap.put(key,results);
                 if (results.isEmpty()) {
                     LOG.warn(key+" Не смог найти КСГ для случая с ИД="+aEntry.getId()+" по запросу: "+sql);
@@ -1798,22 +1800,20 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
 
                 } else if (isNotNull(ksg.getServiceCode())) {continue;}
-                if (ksg.getAge() != null && ksgAge.indexOf(""+ksg.getAge())>-1) {} else if (ksg.getAge()!=null) {continue;}
-                if (ksg.getDuration() != null  && duration) {weight=6;} else if (ksg.getDuration() != null ) {continue;}
-       //         if(ksg.getKSGValue().getCode().equals("5")) {weight=7;} //Если нашли 5 КСГ, то берем его! //TODO 01-03-2018
+                if (ksg.getAge() != null && !ksgAge.contains(""+ksg.getAge())) {continue;}
+                if (ksg.getDuration() != null && duration) {
+                    weight=6;} else if (ksg.getDuration() != null ) {continue;}
        //         if(ksg.getKSGValue().getCode().equals("st02.003")) {weight=6;} //Если нашли родовое КСГ, то берем его! //TODO 08-02-2018
     //st02.012 , st02.013 круче родов и кесарева
                 double currentKZ = k.getKZ();
-
-                if (weight > maxWeight || (weight == maxWeight && currentKZ > maxKZ) || (currentKZ == maxKZ && isNotNull(ksg.getServiceCode()) )) {
-                    maxWeight=weight;
+                if (weight > maxWeight || (weight == maxWeight && currentKZ > maxKZ)) { // || (currentKZ == maxKZ && isNotNull(ksg.getServiceCode()) )) { // не помню зачем я так делал, попробуем убрать это 26.12.2019
+                    if (weight>maxWeight) maxWeight=weight;
                     maxKZ = currentKZ;
                     pos = ksg;
                 } else if (k.getIsOperation() && currentKZ>maxKZ){
                         justServicePositions.add(ksg);
                 }
             } //Закончили искать лучшее КСГ
-
             if (pos==null && cancerKsgPosition!=null) {pos=cancerKsgPosition;}
             if (therapicKsgPosition!=null && surgicalKsgPosition!=null) { //Если мы нашли хирургическое КСГ, но есть и терапевтическое, то проверим на исключения
                 GrouperKSGPosition exc =  checkIsKsgException(surgicalKsgPosition,therapicKsgPosition);
@@ -1982,7 +1982,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         return cusmoMap.get(key);
     }
     private BigDecimal calculateCusmo(E2Entry aEntry) {
-        if (aEntry.getKsg()!=null && aEntry.getKsg().getDoNotUseCusmo())return BigDecimal.valueOf(1);
+        if (aEntry.getKsg()!=null && Boolean.TRUE == aEntry.getKsg().getDoNotUseCusmo())return BigDecimal.valueOf(1);
         return calculateCusmo(aEntry.getBedSubType(),aEntry.getDepartmentId(),aEntry.getMedHelpProfile()!=null?aEntry.getMedHelpProfile().getId():null,aEntry.getFinishDate());
     }
 
@@ -2086,8 +2086,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         if(HOSPITALTYPE.equals(entryType) && !aEntry.getBedSubType().equals("1")) { return;}
 
         //Удалим старые значения КСЛП
-   //     theManager.createNativeQuery("delete from E2CoefficientPatientDifficultyEntryLink where entry_id=:id").setParameter("id",aEntry.getId()).executeUpdate();
-        if (aEntry.getPatientDifficulty()!=null && !aEntry.getPatientDifficulty().isEmpty()) {
+        if (aEntry.getPatientDifficulty()!=null) {
             for (E2CoefficientPatientDifficultyEntryLink link : aEntry.getPatientDifficulty()) {
                 theManager.remove(link);
             }
@@ -2135,34 +2134,37 @@ public class Expert2ServiceBean implements IExpert2Service {
         //12 Парные операции
         List<EntryMedService> medServiceList = aEntry.getMedServices();
         if (medServiceList!=null && !medServiceList.isEmpty()) {
-            ArrayList<Long> serviceList = new ArrayList<>();
-            ArrayList<Long> doubleServiceList = new ArrayList<>();
-            StringBuilder sbb = new StringBuilder();
+            ArrayList<String> serviceList = new ArrayList<>();
+//            StringBuilder doubleServiceCodes = new StringBuilder();
+            StringBuilder serviceCodes = new StringBuilder();
             for (EntryMedService ems: medServiceList) {
-                Long emsId = ems.getId();
-                if (serviceList.contains(emsId)) {
-                    doubleServiceList.add(emsId);
-                    LOG.info("found double service: "+ems.getMedService().getCode());
+                String serviceCode = ems.getMedService().getCode();
+                if (serviceList.contains(serviceCode)) {
+                    // Отключили 10.01.2020 из-за невозможности определить парность операции //TODO
+                    //                  doubleServiceCodes.append("'").append(serviceCode).append("',");
+                    LOG.info("depr found double service: "+serviceCode);
                 } else {
-                    serviceList.add(emsId);
+                    serviceList.add(serviceCode);
+                    serviceCodes.append("'").append(serviceCode).append("',");
                 }
-                if (sbb.length()>0) {sbb.append(",");}
-                sbb.append("'").append(ems.getMedService().getCode()).append("'");
+
             }
-            if (!doubleServiceList.isEmpty()) {
-                String doubleIds = doubleServiceList.toString().substring(1,doubleServiceList.toString().length()-1);
-                List<String> pairOperation = theManager.createNativeQuery("select ''||op.id from VocPairOperations op " +
-                        " where op.medService_id in ("+doubleIds+") and coalesce(finishDate,current_date)>=:actualDate ")
+            serviceCodes.delete(serviceCodes.length()-1,serviceCodes.length());
+/*            if (doubleServiceCodes.length()>0) {
+                doubleServiceCodes.delete(doubleServiceCodes.length()-1,doubleServiceCodes.length());
+                if (! theManager.createNativeQuery("select ''||op.id from VocPairOperations op " +
+                        " left join VocMedService vms on vms.id=op.medservice_id" +
+                        " where vms.code in ("+doubleServiceCodes.toString()+") and coalesce(op.finishDate,current_date)>=:actualDate ")
                         .setParameter("actualDate", actualDate)
-                        .getResultList();
-                if (!pairOperation.isEmpty()) {
+                        .getResultList().isEmpty()) {
                     codes.add("11");
                 }
             }
-
-            String allIds = serviceList.toString().substring(1,serviceList.toString().length()-1);
-            if (!theManager.createNativeQuery("select vco.id from VocCombinedOperations vco " +
-                " where vco.medservice1_id in ("+allIds+") and vco.medservice2_id in ("+allIds+") and coalesce(vco.finishDate,current_date)>=:actualDate ")
+*/
+            if (!theManager.createNativeQuery("select vco.id from VocCombinedOperations vco" +
+                    " left join vocmedservice vms1 on vms1.id=vco.medservice1_id " +
+                    " left join vocmedservice vms2 on vms2.id=vco.medservice2_id " +
+                    " where vms1.code in ("+serviceCodes.toString()+") and vms2.code in ("+serviceCodes.toString()+") and coalesce(vco.finishDate,current_date)>=:actualDate ")
                     .setParameter("actualDate",actualDate)
                 .getResultList().isEmpty()
                 ) {
@@ -2487,10 +2489,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                 i=0;
                 isMonitorCancel(monitor,"Приступаем к объединению случаев. START_UNION");
                 fillChildBirthMkbs();
-                if (HOSPITALPEREVODTYPE.equals(listEntryCode)) { //Если заполнение - переводы, отметим *не подавать* все СЛС вида: отделение-реанимация-отделение
+ /*               if (HOSPITALPEREVODTYPE.equals(listEntryCode)) { //Если заполнение - переводы, отметим *не подавать* все СЛС вида: отделение-реанимация-отделение
 
                 }
-                for (BigInteger hospId : hospitalIds) {
+ */               for (BigInteger hospId : hospitalIds) {
                     i++;
                     if (i%100==0) {
                         if (isMonitorCancel(monitor,"Идет объединение случаев: "+i))return;
