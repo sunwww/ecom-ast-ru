@@ -25,22 +25,27 @@
 </div>
 
 <script type="text/javascript">
-    var ID;
+    var aSlsID${name};
     var theIs${name}NosCardDialogInitialized = false ;
     var the${name}NosCardDialog = new msh.widget.Dialog($('${name}NosCardDialog')) ;
     var goIfNOtSave${name};
     var disable${name};
     var aPrefix${name};
     var Form${name};
+    var codeNum${name};  //codeNum - номер страницы вывода чекбоксов = code в voc
+    var saveMasChb${name};  //saveMasChb - массив с сохранённмыи выбранными чекбоксами
     // Показать
-    function show${name}(id,goIfNOtSave,disable,form,aPrefix) {
-        ID=id;
+    function show${name}(id,goIfNOtSave,disable,form,aPrefix,codeNum, saveMasChb) {
+        aSlsID${name}=id;
         goIfNOtSave${name}=goIfNOtSave;
         disable${name}=disable;
         Form${name}=form;
         aPrefix${name}=aPrefix;
+        if (codeNum) codeNum${name}=codeNum;
+        else codeNum${name}=1;
+        saveMasChb${name} = saveMasChb;
         PregnancyService.getBirthNosologyCard(
-            ID, {
+            aSlsID${name}, codeNum${name}, {
                 callback: function(aResult) {
                     if (aResult!=null && aResult!='[]') {
                         var dsbl=false;
@@ -60,18 +65,20 @@
                             if (res.checked) html+=' checked';
                             html+= '>'+res.vocName+'</label>';
                             td1.innerHTML =  html;
-                            td1.setAttribute("align","center");
+                            td1.setAttribute("align","left");
                             tr.id='${name}row'+i;
                             tr.appendChild(td1);
                             table.appendChild(tr);
                         }
-                        table.innerHTML+=" <table width=\"100%\" cellspacing=\"0\" cellpadding=\"4\" id=\"table${name}\" border=\"1\">" +
-                            "        <tr>" +
-                            "        <tr>" +
-                            "        <tr>" +
-                            "            <td><input type=\"button\" value='Сохранить' id=\"${name}Save\" onclick='save${name}();'/></td>" +
-                            "            <td><input type=\"button\" value='Закрыть' id=\"${name}Cancel\" onclick='javascript:cancel${name}NosCardDialog()'/></td>" +
-                            "        </tr>" +
+                        var tHtml=""
+                        tHtml+=" <table width=\"100%\" cellspacing=\"0\" cellpadding=\"4\" id=\"table${name}\" border=\"1\">" +
+                            "        <tbody><tr>";
+                            if (codeNum${name}==2)
+                                tHtml+=    "            <td align=\"center\" ><input type=\"button\" value='Сохранить' id=\"${name}Save\" onclick='save${name}();'/></td>";
+                        tHtml+="            <td align=\"center\"><input type=\"button\" value='Закрыть' id=\"${name}Cancel\" onclick='javascript:cancel${name}NosCardDialog()'/></td>";
+                            if (codeNum${name}==1)
+                                tHtml+="            <td align=\"center\" ><input type=\"button\" value='Далее' id=\"${name}Next\" onclick='next${name}();'/></td>";
+                        tHtml+="        </tr></tbody>" +
                             "        </table>";
                         if (dsbl) {
                             jQuery("#${name}Save").prop("disabled", true);
@@ -84,6 +91,7 @@
                                     tr.childNodes[0].childNodes[0].click();
                             }
                         });*/
+                        table.innerHTML+=tHtml;
                         the${name}NosCardDialog.show() ;
                     }
                     else showToastMessage("Нозологии не найдены!",null,true,true);
@@ -94,9 +102,9 @@
 
     //Сохранить
     function save${name}() {
-        var mas = getCheckBoxes${name}();
+        var mas = getAllCheckBoxesFromPages${name}();
         if (mas.length>0) {
-            PregnancyService.saveBirthNosologyCard(ID,mas+'', {
+            PregnancyService.saveBirthNosologyCard(aSlsID${name},mas+'', {
                 callback: function (aResult) {
                     showToastMessage(aResult,null,true,false,2000);
                     the${name}NosCardDialog.hide() ;
@@ -112,6 +120,14 @@
         }
         else
             showToastMessage("Обязательно должна быть отмечена хотя бы одна нозология!",null,true,false);
+    }
+
+    //Получить все чекбоксы + сохранённые с предыдущих страниц
+    function getAllCheckBoxesFromPages${name}() {
+        var mas = getCheckBoxes${name}();
+        for (var i=0; i<saveMasChb${name}.length; i++)
+            mas.push(saveMasChb${name}[i]);
+        return mas;
     }
 
     //Получить все отмеченные чекбоксы
@@ -133,5 +149,51 @@
             window.location = goIfNOtSave${name};
         if (aPrefix${name} || aPrefix${name}=='')
             $('submitButton').disabled=false ;
+    }
+
+    //Далее (на след. страницу)
+    function next${name}() {
+        the${name}NosCardDialog.hide() ;
+        show${name}(aSlsID${name},goIfNOtSave${name},disable${name},Form${name},aPrefix${name},++codeNum${name}, getCheckBoxes${name}());
+    }
+
+    function showOnlyChecked${name}(id) {
+        aSlsID${name}=id;
+        PregnancyService.getBirthNosologyCardOnlyChecked(
+            aSlsID${name}, {
+                callback: function(aResult) {
+                    if (aResult!=null && aResult!='[]' && aResult!="0") {
+                        var dsbl=false;
+                        var result = JSON.parse(aResult);
+                        var table = document.getElementById('table${name}');
+                        table.innerHTML="";
+                        for (var i=0; i<result.length; i++) {
+                            var res=result[i];
+                            var tr = document.createElement('tr');
+                            var td1 = document.createElement('td');
+                            td1.setAttribute("colspan",2);
+                            var html = '<label height="100%" width="100%" for="${name}'+res.vocID+'"><input type="checkbox" id="${name}'+res.vocID+'" name="${name}Chb"';
+                            html+=' disabled';
+                            dsbl=true;
+                            if (res.checked) html+=' checked';
+                            html+= '>'+res.vocName+'</label>';
+                            td1.innerHTML =  html;
+                            td1.setAttribute("align","left");
+                            tr.id='${name}row'+i;
+                            tr.appendChild(td1);
+                            table.appendChild(tr);
+                        }
+                        var tHtml=" <table width=\"100%\" cellspacing=\"0\" cellpadding=\"4\" id=\"table${name}\" border=\"1\">" +
+                            "        <tbody><tr>" +
+                            "            <td align=\"center\"><input type=\"button\" value='Закрыть' id=\"${name}Cancel\" onclick='javascript:cancel${name}NosCardDialog()'/></td>" +
+                            "        </tr></tbody>" +
+                            "        </table>";
+                        table.innerHTML+=tHtml;
+                        the${name}NosCardDialog.show() ;
+                    }
+                    else showToastMessage("Заполненные нозологии не найдены!",null,true,true);
+                }
+            }
+        );
     }
 </script>

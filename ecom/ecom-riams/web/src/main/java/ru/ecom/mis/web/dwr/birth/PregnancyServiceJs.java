@@ -209,12 +209,13 @@ public class PregnancyServiceJs {
 	/**
 	 * Получить нозологии по medcase #185
 	 * @param aSlsId HospitalMedCase.id
+	 * @param aCode VocNosologyCard.code (является номером страницы вывода чекбоксов в тэге)
 	 * @return String json нозологии
 	 */
-	public String getBirthNosologyCard(Long aSlsId, HttpServletRequest aRequest) throws NamingException {
+	public String getBirthNosologyCard(Long aSlsId, String aCode, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		JSONArray res = new JSONArray() ;
-		Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocbirthnosology"); //получили все нозологии
+		Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocbirthnosology where code like '" + aCode + "' order by id"); //получили все нозологии
 		for (WebQueryResult w : list) {
 			JSONObject o = new JSONObject() ;
 			o.put("vocID",w.get1())
@@ -233,6 +234,34 @@ public class PregnancyServiceJs {
 				" and nosologies_id="+vocID);
 				if (!list.isEmpty())
 					res.getJSONObject(i).put("checked",1); //если была выбрана, проставить checked
+			}
+		}
+		return res.toString();
+	}
+
+	/**
+	 * Получить только отмеченные нозологии по medcase #185
+	 * @param aSlsId HospitalMedCase.id
+	 * @return String json нозологии
+	 */
+	public String getBirthNosologyCardOnlyChecked(Long aSlsId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		JSONArray res = new JSONArray() ;
+		Long aCardId = getNosologyCardIfExists(aSlsId,aRequest);
+		if (aCardId==0L)
+			return "0"; //нет карты
+		else { //уже существующая карта
+			Collection<WebQueryResult> list = service.executeNativeSql("select vb.id,vb.name from birthnosologycard_vocbirthnosology bb" +
+					" left join vocbirthnosology vb on vb.id=bb.nosologies_id" +
+					" where bb.birthnosologycard_id=" + aCardId);
+			for (WebQueryResult w : list) {
+				JSONObject o = new JSONObject();
+				o.put("vocID", w.get1())
+						.put("vocName", w.get2())
+						.put("checked", 1);
+				if (!getIfICanEditNosologyCard(aSlsId, aRequest))
+					o.put("disabled", 1); //уже нельзя редактировать
+				res.put(o);
 			}
 		}
 		return res.toString();

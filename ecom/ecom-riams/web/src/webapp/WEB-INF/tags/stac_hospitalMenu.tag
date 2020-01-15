@@ -143,6 +143,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	   <msh:sideLink roles="/Policy/Mis/Pregnancy/BirthNosologyCard/View" name="Карта по нозологиям" params=""
 					 styleId="viewShort" action="/javascript:showbirthNosologyCard(${param.id},null,0)"  title="Карта по нозологиям"
 	   />
+	   <msh:sideLink roles="/Policy/Mis/Pregnancy/BirthNosologyCard/View" name="Карта по нозологиям: отмеченные" params=""
+					 styleId="viewShort" action="/javascript:showOnlyCheckedbirthNosologyCard(${param.id})"  title="Карта по нозологиям: отмеченные"
+	   />
 </msh:sideMenu>
 
 
