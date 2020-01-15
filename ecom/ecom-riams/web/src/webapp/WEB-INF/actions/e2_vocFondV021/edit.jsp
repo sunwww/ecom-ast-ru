@@ -29,6 +29,7 @@
                     <msh:autoComplete property="stacProfile" vocName="vocE2MedHelpProfile" size="100"/>
                 </msh:row>
                 <msh:row>
+                    <msh:checkBox property="isPodushevoy"/>
                     <msh:checkBox property="isNoActual"/>
                 </msh:row>
                 <msh:submitCancelButtonsRow colSpan="4" />
@@ -40,11 +41,6 @@
         <msh:checkBox label="Выбрана по умолчанию" property="booleanAdd" />
         <input type="button" onclick="createSimpleService()" value="Добавить услугу">
         <msh:ifFormTypeIsView formName="e2_vocFondV021Form">
-            <ecom:webQuery name="linkList" nativeSql="select link.id, vp.code||' '||vp.name  from E2FondMedSpecLink link
-             left join vocpost vp on vp.code=link.medosworkfunction where link.speciality_id=${param.id}"/>
-            <msh:table idField="1" name="linkList" action="entityParentEdit-e2_v015Link.do" noDataMessage="Нет соответствий">
-                <msh:tableColumn columnName="Должность" property="2"/>
-            </msh:table>
             <msh:separator colSpan="8" label="Простые услуги"/>
             <ecom:webQuery name="simpeServiceList" nativeSql="select link.id, ms.code||' '||ms.name as name, link.weight as f3_weight
             ,link.isDefault as f4_isDefault

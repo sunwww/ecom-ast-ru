@@ -19,6 +19,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 public class E2EntryForm extends IdEntityForm {
 
 //----------все поля ниже добавлены на jsp!!!
+    /** Реабилитационная койка*/
+    private Boolean theIsRehabBed ;
     /** Рост пациента */
     private Integer theHeight ;
     /** Вес пациента */
@@ -123,6 +125,8 @@ public class E2EntryForm extends IdEntityForm {
     private Boolean theMultiplyBirth ;
     /** ТИп записи */
     private String theEntryType ;
+    /** Тип файла */
+    private String theFileType ;
     /** Способ оплаты медицинской помощи */
     private Long theIDSP ;
     /** Причины неполной оплаты */
@@ -754,6 +758,17 @@ public class E2EntryForm extends IdEntityForm {
     @Comment("Тип записи")
     public String getEntryType() {return theEntryType;}
     public void setEntryType(String theEntryType) {this.theEntryType = theEntryType;}
+
+    @Persist
+    @Comment("Тип файла") //P, Z, DF, раки
+    public String getFileType() {return theFileType;}
+    public void setFileType(String aFileType) {theFileType = aFileType;}
+
+    /** Реабилитационная койка */
+    @Comment("Реабилитационная койка")
+    @Persist
+    public Boolean getIsRehabBed() {return theIsRehabBed;}
+    public void setIsRehabBed(Boolean aIsRehabBed) {theIsRehabBed = aIsRehabBed;}
 
     @Persist
     @Comment("Способ оплаты медицинской помощи")

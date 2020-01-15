@@ -11,7 +11,7 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-        <msh:sideMenu title="Добавить" guid="fdcda21a-c1c6-4e0e-a74e-1bf843a8c1c8">
+        <msh:sideMenu title="Добавить">
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_vocEntrySubType" name="Создать" roles="/Policy/E2/Create" />
         </msh:sideMenu>
         <tags:expertvoc_menu currentAction="main"/>
@@ -29,13 +29,14 @@
     left join VocE2VidSluch vvs on vvs.id=voc.vidSluch_id
     left join VocE2FondV006 usl on usl.id=voc.uslok_id
     left join VocE2FondV025 v025 on v025.id=voc.visitPurpose_id
+    order by voc.code
     " />
                 <msh:table  name="tariffList" action="entityView-e2_vocEntrySubType.do" idField="1" disableKeySupport="true" styleRow="5">
-                    <msh:tableColumn columnName="Тип записи" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Код тарифа" property="3" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Условия оказания" property="4" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Вид случая" property="6" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Цель посещения" property="7" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Тип записи" property="2" />
+                    <msh:tableColumn columnName="Код тарифа" property="3" />
+                    <msh:tableColumn columnName="Условия оказания" property="4" />
+                    <msh:tableColumn columnName="Вид случая" property="6" />
+                    <msh:tableColumn columnName="Цель посещения" property="7" />
                 </msh:table>
             </msh:section>
         </msh:hideException>

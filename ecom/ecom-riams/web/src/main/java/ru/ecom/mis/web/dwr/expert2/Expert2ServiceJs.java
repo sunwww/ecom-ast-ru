@@ -144,12 +144,6 @@ public class Expert2ServiceJs {
         service.executeUpdateNativeSql("delete from e2listentry where isDeleted='1'");
     }
 
-    public void cloneEntityTest(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
-        IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
-        service.cloneEntityTest(aEntryId);
-
-    }
-
     public void makeOncologyCase(Long aListEntryId, String aJson, String aDefectCode, HttpServletRequest aRequest) throws NamingException {
         IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
         service.makeOncologyCase(aListEntryId, aJson, aDefectCode);
@@ -300,8 +294,8 @@ public class Expert2ServiceJs {
         return Injection.find(aRequest).getService(IExpert2Service.class).addDiagnosisAndServiceToEntry(aEntryId, aData);
     }
 
-    public boolean exportErrorsNewListEntry(Long aListEntryId, String aErrorCodes, HttpServletRequest aRequest) throws NamingException {
-        return Injection.find(aRequest).getService(IExpert2Service.class).exportErrorsNewListEntry(aListEntryId,aErrorCodes.split(","));
+    public void exportErrorsNewListEntry(Long aListEntryId, String aErrorCodes, HttpServletRequest aRequest) throws NamingException {
+        Injection.find(aRequest).getService(IExpert2Service.class).exportErrorsNewListEntry(aListEntryId,aErrorCodes.split(","));
     }
 
     /** Выгрузить дефекты в новое заполнение */
@@ -366,7 +360,9 @@ public class Expert2ServiceJs {
             return monitorService.createMonitor();
         }
 
-    public long makeMPFIle (final Long aEntryListId,final  String aType, String aBillNumber, String aBillDate,final  Long aEntryId,final  Boolean calcAllListEntry, final String aVersion, HttpServletRequest aRequest) throws NamingException {
+    public long makeMPFIle (final Long aEntryListId,final  String aType, String aBillNumber, String aBillDate
+            ,final  Long aEntryId,final  Boolean calcAllListEntry
+            , final String aVersion, final String aFileType, HttpServletRequest aRequest) throws NamingException {
         final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         if (aEntryId!=null) {
             aBillNumber=aBillNumber!=null?aBillNumber:"TEST";
@@ -380,7 +376,7 @@ public class Expert2ServiceJs {
         new Thread(() -> {
             Date finalDate = null;
             try {finalDate = new Date(format.parse(finalBillDate).getTime());} catch (Exception e) {}
-                service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId,aVersion);
+                service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId,aVersion, aFileType);
         }).start();
 
         return monitorId;
@@ -397,26 +393,29 @@ public class Expert2ServiceJs {
     }
 
     public boolean saveBillDateAndNumber(Long aListEntryId, String aType, String aServiceStream, String aOldBillNumber, String aOldBillDate,String aBillNumber
-            , String aBillDate, String isForeign, String aComment, HttpServletRequest aRequest) throws NamingException {
+            , String aBillDate, String isForeign, String aComment, String aFileType, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         IExpert2Service expert2Service= Injection.find(aRequest).getService(IExpert2Service.class);
-        String sql ;
+        StringBuilder sql = new StringBuilder();
         if (aType==null||aType.trim().equals("")) {return false;}
         if (aServiceStream==null||aServiceStream.trim().equals("")) {return false;}
         if (StringUtil.isNullOrEmpty(aBillNumber)) { //Удалить информацию о номере счета.
-            sql = "update e2entry set bill_id=null, billNumber='', billDate=null  where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"' and isForeign='"+isForeign+"'";
-            if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {return false;}
-            if (aOldBillNumber!=null&&!aOldBillNumber.equals("")) {sql+=" and billNumber='"+aOldBillNumber+"'";}else {return false;}
+            if (aOldBillDate == null || aOldBillDate.equals("")) {return false;}
+            if (aOldBillNumber == null || aOldBillNumber.equals("")) {return false;}
+            sql.append("update e2entry set bill_id=null, billNumber='', billDate=null");
         } else {
             E2Bill bill = expert2Service.getBillEntryByDateAndNumber(aBillNumber,aBillDate,aComment);
-            sql = "update e2entry set bill_id="+bill.getId()+", billNumber='"+aBillNumber+"', billDate=to_date('"+aBillDate+"','dd.MM.yyyy') "+
-                    " where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"' and isForeign='"+isForeign+"'";
-            if (!StringUtil.isNullOrEmpty(aOldBillDate)) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {sql+=" and billDate is null";}
-            if (aOldBillNumber==null) {aOldBillNumber="";}
-            sql+=" and billNumber='"+aOldBillNumber+"'";
+            sql.append("update e2entry set bill_id=").append(bill.getId()).append(", billNumber='").append(aBillNumber)
+                    .append("', billDate=to_date('").append(aBillDate).append("','dd.MM.yyyy') ");
+
         }
-        sql+=" and (isDeleted is null or isDeleted='0')";
-        service.executeUpdateNativeSql(sql);
+         sql.append(" where listEntry_id=")
+                    .append(aListEntryId).append(" and entryType='").append(aType).append("' and serviceStream='")
+                    .append(aServiceStream).append("' and isForeign='").append(isForeign).append("' and fileType='").append(aFileType).append("'");
+        if (!StringUtil.isNullOrEmpty(aOldBillDate)) {sql.append(" and billDate=to_date('").append(aOldBillDate).append("','dd.MM.yyyy')");} else {sql.append(" and billDate is null");}
+        sql.append(" and billNumber='").append(aOldBillNumber == null ? "" : aOldBillNumber).append("'").append(" and (isDeleted is null or isDeleted='0')");
+        LOG.info("bill sql = "+sql);
+        service.executeUpdateNativeSql(sql.toString());
         return true;
     }
 

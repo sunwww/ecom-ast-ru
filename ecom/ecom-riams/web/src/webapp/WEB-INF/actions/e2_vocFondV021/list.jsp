@@ -11,7 +11,7 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-        <msh:sideMenu title="Добавить" guid="fdcda21a-c1c6-4e0e-a74e-1bf843a8c1c8">
+        <msh:sideMenu title="Добавить">
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_vocFondV021" name="Создать (не надо нажимать)" roles="/Policy/E2/Create" />
             <msh:sideLink key="ALT+2"  action="/entityList-e2_vocFondV021.do?typeFilter=all&" name="Показать все" roles="/Policy/E2/Create" />
         </msh:sideMenu>
@@ -37,10 +37,10 @@
                  left join vocmedservice vms2 on vms2.id=voc.repeatMedService_id
                  ${filterSql} order by cast(voc.code as int)"/>
                 <msh:table  name="listAll" action="entityView-e2_vocFondV021.do" idField="1" disableKeySupport="true">
-                    <msh:tableColumn columnName="Код"  property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Название" property="3" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Услуга первичная" property="4" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Услуга повторная" property="5" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Код"  property="2" />
+                    <msh:tableColumn columnName="Название" property="3" />
+                    <msh:tableColumn columnName="Услуга первичная" property="4" />
+                    <msh:tableColumn columnName="Услуга повторная" property="5" />
 
                 </msh:table>
             </msh:section>

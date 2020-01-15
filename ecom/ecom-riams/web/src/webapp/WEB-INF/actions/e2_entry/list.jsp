@@ -52,12 +52,13 @@
 
     ActionUtil.setParameterFilterSql("entryType","e.entryType",request);
     ActionUtil.setParameterFilterSql("serviceStream","e.serviceStream",request);
+    ActionUtil.setParameterFilterSql("fileType","e.fileType",request);
     String billNumber = request.getParameter("billNumber");
         String isForeign = request.getParameter("isForeign");
 
     ActionUtil.setParameterFilterSql("defect","e.isDefect",request);
     String listId=request.getParameter("id");
-    if (listId!=null && (listId.equals("") || listId.equals("0"))) { //Нет листа - ищем все оплаченные случаи **Нет листа - ищем все случаи. Есть фильтр что оплачен - ищем оплаченные
+    if ("".equals(listId) || "0".equals(listId)) { //Нет листа - ищем все оплаченные случаи **Нет листа - ищем все случаи. Есть фильтр что оплачен - ищем оплаченные
         listId=null;
     }
     String billDate = request.getParameter("billDate");
@@ -170,10 +171,10 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         left join e2bill bill on bill.id=e.bill_id
         left join voce2billstatus vbs on vbs.id=bill.status_id
         left join VocDiagnosticVisit vdv on vdv.id=e.kdpVisit_id
- where ${searchWhereSql}
+ where ${searchWhereSql} ${fileTypeSql}
  and (e.isDeleted is null or e.isDeleted='0')
  group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
-        , e.departmentName, ksg.code, ksg.name, e.historyNumber, e.cost, vbt.code,vbt.name, rslt.code,rslt.name,e.doNotSend
+        , e.departmentName, ksg.code, ksg.name, e.historyNumber, e.cost, vbt.code,vbt.name, rslt.code,rslt.name,e.doNotSend,e.birthdate,e.isdefect,e.servicestream
   order by ${orderBySql} "/>
         <msh:hideException>
             <msh:section title='Результат поиска ${searchTitle}'>

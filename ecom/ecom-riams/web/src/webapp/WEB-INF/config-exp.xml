@@ -16,7 +16,6 @@
        <form-bean name="e2_v009LinkForm" type="ru.ecom.expert2.form.E2FondResultLinkForm"/>
        <form-bean name="e2_v010LinkForm" type="ru.ecom.expert2.form.E2FondResultLinkForm"/>
        <form-bean name="e2_v012LinkForm" type="ru.ecom.expert2.form.E2FondIshodLinkForm"/>
-       <form-bean name="e2_v015LinkForm" type="ru.ecom.expert2.form.E2FondMedSpecLinkForm"/>
         <form-bean name="e2_vocFondV009Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV009Form"/>
         <form-bean name="e2_vocFondV012Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV012Form"/>
         <form-bean name="e2_vocFondV020Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV020Form"/>

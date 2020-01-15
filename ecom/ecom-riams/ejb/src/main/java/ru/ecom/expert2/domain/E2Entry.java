@@ -408,6 +408,13 @@ public class E2Entry extends BaseEntity {
      /** Тип записи */
      private String theEntryType ;
 
+     /** Тип файла */ //P, Z, DF, раки
+     @Comment("Тип файла")
+     public String getFileType() {return theFileType;}
+     public void setFileType(String aFileType) {theFileType = aFileType;}
+     /** Тип записи */
+     private String theFileType ;
+
      /** Тип заполнения */
      @Comment("Тип заполнения")
      @Transient
@@ -1186,5 +1193,10 @@ public class E2Entry extends BaseEntity {
     /** Вес пациента */
     private Integer theWeigth ;
 
+    /** Реабилитационная койка */
+    @Comment("Реабилитационная койка")
+    public Boolean getIsRehabBed() {return theIsRehabBed;}
+    public void setIsRehabBed(Boolean aIsRehabBed) {theIsRehabBed = aIsRehabBed;}
+    private Boolean theIsRehabBed ;
 
 }

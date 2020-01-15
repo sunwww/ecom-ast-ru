@@ -71,12 +71,14 @@ function save${name}BillNumber() {
         }
     }
     var dt =the${name}someData.split("&");
+    alert(the${name}someData);
 var type = dt[1].split("=")[1];
 var oldBillDate= dt[2].split("=")[1];
 var oldBillNumber= dt[3].split("=")[1];
 var serviceStream = dt[4].split("=")[1];
 var isForeign=dt[5].split("=")[1];
-    Expert2Service.saveBillDateAndNumber(${param.id},type,serviceStream,oldBillNumber, oldBillDate,newBillNumber,newBillDate,isForeign,newBillComment, {
+var fileType=dt[7].split("=")[1];
+    Expert2Service.saveBillDateAndNumber(${param.id},type,serviceStream,oldBillNumber, oldBillDate,newBillNumber,newBillDate,isForeign,newBillComment, fileType, {
         callback: function (a) {
             cancel${name}BillNumber();
             window.location.reload();
