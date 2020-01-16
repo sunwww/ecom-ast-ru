@@ -460,12 +460,9 @@
             }
 
             function check_diags(aPrefix) {
-                <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
-                checkNessessaryDischargeNosologyCard(aPrefix);
-                </msh:ifInRole>
-                <msh:ifNotInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
+                //checkNessessaryDischargeNosologyCard(aPrefix);
+                //update 1501 - пока запускать при открытии страницы, не при сохранении
                 saveNext(aPrefix);
-                </msh:ifNotInRole>
             }
 
             function saveNext(aPrefix) {
@@ -565,10 +562,10 @@
 
                         }}});
             }
-
+            <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
             <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
-            //проверка, необходимо ли наличие карты нозологий
-            function checkNessessaryDischargeNosologyCard(aPrefix) {
+            //проверка, необходимо ли наличие карты нозологий перед сохранением
+            /*function checkNessessaryDischargeNosologyCard(aPrefix) {
                 HospitalMedCaseService.checkNessessaryDischargeNosologyCard(${param.id},{
                     callback: function(aResult) {
                         if (aResult=='0') {
@@ -578,9 +575,38 @@
                         else saveNext(aPrefix);
                     }
                 }) ;
-            }
-            </msh:ifInRole>
+            }*/
 
+            function checkNessessaryDischargeNosologyCardOnload() {
+                HospitalMedCaseService.checkNessessaryDischargeNosologyCard(${param.id},{
+                    callback: function(aResult) {
+                        if (aResult=='0') {
+                            showToastMessage("При выписке из патологии беременности необходимо выбрать нозологию!",null,true,false,4000);
+                            showbirthNosologyCard(${param.id},null,null,null,null,null,null,true);
+                        }
+                    }
+                }) ;
+            }
+            //создание сопутствующих диагнозов из списка нозологий (в случае, когда заполнено)
+            function fillСoncomitantDiagnosis(id) {
+                if (id==${param.id}) { //если это - текущее окно
+                    HospitalMedCaseService.getConcomitantDiagnosisFromNosCard(
+                        id, {
+                            callback: function(aResult) {
+                                if (aResult!=null && aResult!='[]') {
+                                    var result = JSON.parse(aResult);
+                                    for (var i=0; i<result.length; i++) {
+                                        $('concomitantMkb').value=result[i].idcId; $('concomitantMkbName').value=result[i].idcName;
+                                        $('concomitantDiagnos').value=result[i].idcName;
+                                        addDiag('concomitant');
+                                    }
+                            }}}
+                    );
+                }
+            }
+            checkNessessaryDischargeNosologyCardOnload();
+            </msh:ifInRole>
+            </msh:ifFormTypeIsNotView>
             onload=function(){
 
                 var list_diag = ["complication","concomitant"] ;

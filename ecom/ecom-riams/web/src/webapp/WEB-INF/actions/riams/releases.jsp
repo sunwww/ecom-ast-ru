@@ -29,6 +29,7 @@
 					<li><msh:link action="ecom_release-201910.do">октябрь 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201911.do">ноябрь 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201912.do">декабрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-202001.do">январь 2020 года </msh:link></li>
 
 
 					<% if (1==2) { %>

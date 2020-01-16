@@ -215,7 +215,8 @@ public class PregnancyServiceJs {
 	public String getBirthNosologyCard(Long aSlsId, String aCode, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		JSONArray res = new JSONArray() ;
-		Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocbirthnosology where code like '" + aCode + "' order by id"); //получили все нозологии
+		Collection<WebQueryResult> list = service.executeNativeSql("select vb.id,idc.code||' - '||idc.name from vocbirthnosology vb " +
+                " left join vocidc10 idc on idc.id=vb.idccode_id where vb.code like '" + aCode + "' order by id"); //получили все нозологии
 		for (WebQueryResult w : list) {
 			JSONObject o = new JSONObject() ;
 			o.put("vocID",w.get1())
@@ -251,8 +252,9 @@ public class PregnancyServiceJs {
 		if (aCardId==0L)
 			return "0"; //нет карты
 		else { //уже существующая карта
-			Collection<WebQueryResult> list = service.executeNativeSql("select vb.id,vb.name from birthnosologycard_vocbirthnosology bb" +
+			Collection<WebQueryResult> list = service.executeNativeSql("select vb.id,idc.code||' - '||idc.name from birthnosologycard_vocbirthnosology bb" +
 					" left join vocbirthnosology vb on vb.id=bb.nosologies_id" +
+                    " left join vocidc10 idc on idc.id=vb.idccode_id " +
 					" where bb.birthnosologycard_id=" + aCardId);
 			for (WebQueryResult w : list) {
 				JSONObject o = new JSONObject();

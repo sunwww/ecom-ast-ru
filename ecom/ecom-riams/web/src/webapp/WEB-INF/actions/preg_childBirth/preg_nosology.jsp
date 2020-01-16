@@ -18,15 +18,12 @@
                     <msh:textField property="dateEnd" label="по"/>
                 </msh:row>
                 <msh:row>
-                    <td class="label" title="Показать  (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel"></label></td>
-                    <td onclick="this.childNodes[1].checked='checked';" colspan="1">
-                        <input type="radio" name="typeGroup" value="1" checked> все
+                    <td class="label" title="Показать  (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Искать по дате:</label></td>
+                    <td onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeGroup" value="1">  поступления
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-                        <input type="radio" name="typeGroup" value="2"> выписанные
-                    </td>
-                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
-                        <input type="radio" name="typeGroup" value="3"> состоящие
+                        <input type="radio" name="typeGroup" value="2">  выписки
                     </td>
                 </msh:row>
                 <msh:row>
@@ -38,18 +35,17 @@
         </msh:form>
         <%
             StringBuilder typeSql=new StringBuilder();
+            String dateT=" hmc.dateStart ";
             String type = (String)request.getParameter("typeGroup");
             if (type==null || type.equals("")) type="1";
-            if (type!=null && !type.equals("")) {
-                if (type.equals("2")) typeSql.append(" and hmc.datefinish is not null ");
-                if (type.equals("3")) typeSql.append(" and hmc.datefinish is null ");
-            }
+            if (type!=null && !type.equals("1"))
+                dateT = " hmc.datefinish ";
             String dateBegin = request.getParameter("dateBegin") ;
             if (dateBegin!=null && !dateBegin.equals("")) {
                 String dateEnd = request.getParameter("dateEnd") ;
                 if (dateEnd==null || dateEnd.equals("")) dateEnd=dateBegin;
                 if (dateEnd!=null && !dateEnd.equals("")) {
-                    typeSql.append(" and hmc.dateStart between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('" + dateEnd+"','dd.mm.yyyy') ");
+                    typeSql.append(" and " + dateT + " between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('" + dateEnd+"','dd.mm.yyyy') ");
                 }
             }
             String department = request.getParameter("department") ;
@@ -61,15 +57,24 @@
         <msh:section>
             <msh:sectionTitle>Сведения о нозологиях в акушерстве
                 <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
-select hmc.id
-,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as fio
-,to_char(pat.birthday,'dd.mm.yyyy') as bd
-,to_char(c.createdate,'dd.mm.yyyy') as cd
-,vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as w
-,to_char(c.editdate,'dd.mm.yyyy') as ed
-,vwf2.name||' '||wpat2.lastname||' '||wpat2.firstname||' '||wpat2.middlename as w2
-from birthnosologycard c
-left join medcase hmc on hmc.id=c.medcase_id
+select hmc.id as f1
+,pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as f2
+, to_char(hmc.dateStart,'dd.mm.yyyy') as f3
+, to_char(hmc.dateFinish,'dd.mm.yyyy') as f4
+,case when(exists(select depPat.id from mislpu depPat
+left join medcase dmc on dmc.parent_id=hmc.id
+where dmc.dtype='DepartmentMedCase' and (depPat.ismaternityward=true)
+and depPat.id=dmc.department_id)) then '+' else '-' end as f5
+,case when(exists(select depPat.id from mislpu depPat
+left join medcase dmc on dmc.parent_id=hmc.id
+where dmc.dtype='DepartmentMedCase' and (depPat.ispatologypregnant=true)
+and depPat.id=dmc.department_id)) then '+' else '-' end as f6
+,to_char(c.createdate,'dd.mm.yyyy') as f7
+,vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as f8
+,to_char(c.editdate,'dd.mm.yyyy') as f9
+,vwf2.name||' '||wpat2.lastname||' '||wpat2.firstname||' '||wpat2.middlename as f10
+from medcase hmc
+left join birthnosologycard c on hmc.id=c.medcase_id
 left join patient pat on pat.id=hmc.patient_id
 left join workfunction wf on wf.id=c.creator_id
 left join vocworkfunction vwf on vwf.id=wf.workfunction_id
@@ -79,19 +84,27 @@ left join workfunction wf2 on wf2.id=c.editor_id
 left join vocworkfunction vwf2 on vwf2.id=wf2.workfunction_id
 left join worker w2 on w2.id=wf2.worker_id
 left join patient wpat2 on wpat2.id=w2.person_id
-where 1=1  ${typeSql} "/>
+where hmc.dtype='HospitalMedCase'
+and exists(select depPat.id from mislpu depPat
+left join medcase dmc on dmc.parent_id=hmc.id
+where dmc.dtype='DepartmentMedCase' and (depPat.ismaternityward=true or depPat.ispatologypregnant=true)
+and depPat.id=dmc.department_id) ${typeSql}
+order by hmc.dateStart "/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table printToExcelButton="Сохранить в excel" name="totalName" action="entityParentView-stac_ssl.do" idField="1">
                     <msh:tableColumn columnName="#" property="sn"/>
-                    <msh:tableColumn columnName="ФИО пацииента" property="2"/>
-                    <msh:tableColumn columnName="Число, месяц, год рождения" property="3"/>
-                    <msh:tableColumn columnName="Дата создания" property="4"/>
-                    <msh:tableColumn columnName="Создал" property="5"/>
-                    <msh:tableColumn columnName="Дата редактирования" property="6"/>
-                    <msh:tableColumn columnName="Отредактировал" property="7"/>
-                    <msh:tableButton buttonFunction="showbirthNosology" property="1" buttonShortName="Нозология"/>
+                    <msh:tableColumn columnName="Пациент" property="2"/>
+                    <msh:tableButton buttonFunction="showbirthNosology" property="1" buttonShortName="Нозологии"/>
+                    <msh:tableColumn columnName="Дата госпитализации" property="3"/>
+                    <msh:tableColumn columnName="Дата выписки" property="4"/>
+                    <msh:tableColumn columnName="Есть СЛО в род. отд.?" property="5" />
+                    <msh:tableColumn columnName="Есть СЛО в пат. бер.?" property="6" />
+                    <msh:tableColumn columnName="Дата создания" property="7"/>
+                    <msh:tableColumn columnName="Создал" property="8"/>
+                    <msh:tableColumn columnName="Дата редактирования" property="9"/>
+                    <msh:tableColumn columnName="Отредактировал" property="10"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -115,7 +128,7 @@ where 1=1  ${typeSql} "/>
             }
 
             function showbirthNosology(aSlsId) {
-                showbirthNosologyCard(aSlsId,null,true);
+                showOnlyCheckedbirthNosologyCard(aSlsId);
             }
         </script>
     </tiles:put>

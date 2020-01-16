@@ -2717,4 +2717,30 @@ public class HospitalMedCaseServiceJs {
                 " where dtype='DepartmentMedCase' and parent_id=" + aSlsId + ")") ;
         return l.isEmpty()? "" : l.iterator().next().get1().toString();
     }
+
+	/**
+	 * Вывести данные для сопутствующих диагнозов в карте нозологий #185.
+	 *
+	 * @param aSlsId HospitalMedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return String json с результатом
+	 */
+	public String getConcomitantDiagnosisFromNosCard(Long aSlsId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select idc.id as id,idc.code||' '||idc.name as idcname" +
+				" from birthnosologycard_vocbirthnosology bb" +
+				" left join vocbirthnosology vb on vb.id=bb.nosologies_id" +
+				" left join vocidc10 idc on idc.id=vb.idcCode_id" +
+				" left join birthnosologycard b on b.id=bb.birthnosologycard_id" +
+				" where b.medcase_id=" + aSlsId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		JSONArray res = new JSONArray() ;
+		for (WebQueryResult w : list) {
+			JSONObject o = new JSONObject() ;
+			o.put("idcId", w.get1())
+					.put("idcName", w.get2());
+			res.put(o);
+		}
+		return res.toString();
+	}
 }

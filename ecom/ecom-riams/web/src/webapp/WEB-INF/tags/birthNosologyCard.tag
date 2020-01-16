@@ -34,8 +34,9 @@
     var Form${name};
     var codeNum${name};  //codeNum - номер страницы вывода чекбоксов = code в voc
     var saveMasChb${name};  //saveMasChb - массив с сохранённмыи выбранными чекбоксами
+    var saveDs${name};  //saveDs - сохранять диагнозы
     // Показать
-    function show${name}(id,goIfNOtSave,disable,form,aPrefix,codeNum, saveMasChb) {
+    function show${name}(id,goIfNOtSave,disable,form,aPrefix,codeNum, saveMasChb, saveDs) {
         aSlsID${name}=id;
         goIfNOtSave${name}=goIfNOtSave;
         disable${name}=disable;
@@ -44,6 +45,7 @@
         if (codeNum) codeNum${name}=codeNum;
         else codeNum${name}=1;
         saveMasChb${name} = saveMasChb;
+        saveDs${name}=saveDs;
         PregnancyService.getBirthNosologyCard(
             aSlsID${name}, codeNum${name}, {
                 callback: function(aResult) {
@@ -108,9 +110,11 @@
                 callback: function (aResult) {
                     showToastMessage(aResult,null,true,false,2000);
                     the${name}NosCardDialog.hide() ;
+                    if (saveDs${name})  //сохранить
+                        fillСoncomitantDiagnosis(aSlsID${name});
                     if (Form${name}) {
                         //Form${name}.submit();
-                        showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0],${param.id},true);
+                        showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0],aSlsID${name},true);
                     }
                     if (aPrefix${name} || aPrefix${name}=='')
                         saveNext(aPrefix${name});
@@ -154,7 +158,7 @@
     //Далее (на след. страницу)
     function next${name}() {
         the${name}NosCardDialog.hide() ;
-        show${name}(aSlsID${name},goIfNOtSave${name},disable${name},Form${name},aPrefix${name},++codeNum${name}, getCheckBoxes${name}());
+        show${name}(aSlsID${name},goIfNOtSave${name},disable${name},Form${name},aPrefix${name},++codeNum${name}, getCheckBoxes${name}(),saveDs${name});
     }
 
     function showOnlyChecked${name}(id) {
