@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
+    <msh:title mainMenu="LaboratoryJournal" title="Забор биоматериала для лабораторных исследований" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -31,8 +31,8 @@
   	if (groupId!=null && !groupId.equals("")) {
   	%>
   	  <msh:form action="/pres_journal_prescript_cab_lab.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+    <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
@@ -222,6 +222,7 @@
     ,case when mc.datestart is null and p.cancelDate is null then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j21cancelAllTime
     , case when p.medcase_id is not null then 'Выполнил: '||suLab.fullName ||' '|| to_char(mc.createdate,'dd.MM.yyyy')||' '||cast(mc.createTime as varchar(5))
       || case when mc.datestart is not null then ' Подтвердил: '||suLabDoc.fullName||' '||to_char(mc.editdate,'dd.MM.yyyy')||' '||cast(mc.edittime as varchar(5)) else '' end else '' end as f22_executeinfo
+      ,'js-stac_slo-list_protocols.do?short=Short&id='||pl.medCase_id||'&patient='||pat.id||'&service='||p.medService_id as f23presHistory
     from prescription p
     left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelreason_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
@@ -278,6 +279,7 @@
 	      <msh:tableColumn columnName="Код назн." property="4"/>
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="ИБ" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableButton property="12" buttonFunction="getDefinition" buttonName="Просмотр данных о лабораторных назначениях" buttonShortName="ЛН" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>
+	      <msh:tableButton property="23" buttonFunction="getDefinition" buttonName="Просмотр динамики анализа" buttonShortName="Дин" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>
 	      <msh:tableColumn columnName="ИБ" property="3"  />
 	      <msh:tableColumn columnName="ФИО пациента" property="5"  />
 	      <msh:tableColumn columnName ="Результат" property="17" cssClass="preCell"/>

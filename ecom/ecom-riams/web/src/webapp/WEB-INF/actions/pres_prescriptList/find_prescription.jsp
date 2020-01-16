@@ -68,11 +68,12 @@
    ,coalesce(mlIntake.name,ml.name) as m15lname
   ,  case when mc.dateStart is null and p.cancelDate is null and p.transferDate is not null then coalesce(mc.id,0)||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
   ,  case when p.medCase_id is null and p.cancelDate is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
-   , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as drecord
-   ,case when mc.datestart is not null then p.id end as btnAnnul
+   , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as f18drecord
+   ,case when mc.datestart is not null then p.id end as f19btnAnnul
    ,to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f20dtintake
-   ,case when p.canceldate is not null then p.id end as btnUncancel
-   ,p.barcodenumber , p.id
+   ,case when p.canceldate is not null then p.id end as f21btnUncancel
+   ,p.barcodenumber as f22
+   ,'js-stac_slo-list_protocols.do?short=Short&id='||pl.medCase_id||'&patient='||pat.id||'&service='||p.medService_id as f23presHistory
     from prescription p
     left join vocprescriptcancelreason vpcr on vpcr.id=p.cancelreason_id
     left join MedCase mc on mc.id=p.medcase_id
@@ -119,7 +120,8 @@
 	      <msh:tableColumn columnName="Передача в лаб." property="20"/>
 	      <msh:tableColumn columnName="Код" property="4"/>  <!-- 'showMyPrescriptionReport('||p.id||',1)' -->
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о пациенте" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
-	      <msh:tableButton property="23" buttonFunction="showMyPrescriptionReport" buttonName="История назначения" buttonShortName="О" hideIfEmpty="true" role="/Policy/Mis/Prescription/ViewInformation"/>
+	      <msh:tableButton property="1" buttonFunction="showMyPrescriptionReport" buttonName="История назначения" buttonShortName="О" hideIfEmpty="true" role="/Policy/Mis/Prescription/ViewInformation"/>
+	      <msh:tableButton property="23" buttonFunction="getDefinition" buttonName="Просмотр динамики анализа" buttonShortName="Дин" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>
 	      <msh:tableColumn columnName="ФИО пациента" property="6"  />
 	      <msh:tableColumn columnName="Услуга" property="7"/>
 	      <msh:tableColumn columnName="Результат" property="18" cssClass="preCell"/>

@@ -33,7 +33,7 @@ public class RecordAction extends BaseAction  {
 		Long aTime = ConvertSql.parseLong(aRequest.getParameter("workCalendarTime")) ; 
 		String aPatInfo = aRequest.getParameter("lastname")+" "+aRequest.getParameter("firstname")+" "+aRequest.getParameter("middlename") ;
 		Long aPatientId = ConvertSql.parseLong(aRequest.getParameter("patient")) ; 
-		service.recordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId, 0L) ;
+		service.recordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId, 0L,2L) ;
 		String sql="" ;
 		sql=sql+"select wct.id as wctid,to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate, cast(wct.timeFrom as varchar(5)) as wcttimeFrom, vwf.name as vwfname, wp.lastname ||' '||wp.firstname||' '||wp.middlename as wpmiddlename " ;
 		sql=sql+" , coalesce(p.lastname ||' '||substring(p.firstname,1,1)||' '||substring(p.middlename,1,1),p1.lastname ||' '||substring(p1.firstname,1,1)||' '||substring(p1.middlename,1,1)) as fio ";

@@ -332,10 +332,6 @@ public class TableTag extends AbstractGuidSupportTag {
 
         aOut.print("<td width='14px' onclick=\"");
         aOut.print(aGoFunctionName) ;
-        //aOut.print("('") ;
-        //aOut.print(URLEncoder.encode(aId, "utf-8")) ;
-        //aOut.print(aId) ;
-        //aOut.print("')");
         aOut.print("\"");
         aOut.print(" class='") ;
         aOut.print(styleClass);
@@ -347,15 +343,9 @@ public class TableTag extends AbstractGuidSupportTag {
     }
 
     private String theFunctionGoName = null;
-    //private static int theFunctionGoIndex = 1;
 
-    //private synchronized void createGoFunctionName() {
-    //    theFunctionGoName = "go_" + theFunctionGoIndex++;
-    //}
-
-    private synchronized void createGoFunctionName(String aAction) {createGoFunctionName(aAction,false);}
     private synchronized void createGoFunctionName(String aAction, Boolean aOpenNewWindow) {
-        theFunctionGoName = new StringBuilder().append("goToPage"+((aOpenNewWindow!=null&&aOpenNewWindow)?"NewWindow":"")+"('").append(aAction).append("',").toString();
+        theFunctionGoName = "goToPage"+(Boolean.TRUE.equals(aOpenNewWindow) ? "NewWindow" : "")+"('"+aAction+"',";
     }
 
     private synchronized void createDeleteFunctionName(String aDeleteAction) {
@@ -369,57 +359,48 @@ public class TableTag extends AbstractGuidSupportTag {
     }
     private synchronized void createViewFunctionName(String aAction) {
         if (aAction.indexOf("?")==-1) {
-            theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("?id=").toString();
+            theFunctionViewName="getDefinition('"+aAction+"?id=";
         } else if(aAction.endsWith("&")) {
-            theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("id=").toString();
+            theFunctionViewName="getDefinition('"+aAction+"id=";
         } else {
-            theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("&id=").toString();
+            theFunctionViewName="getDefinition('"+aAction+"&id=";
         }
     }
     private static String getGoFunctionName(String theFunctionGoName, Object aParam,String aAddParam) {
-        return new StringBuilder().append(theFunctionGoName)
-                .append("('").append(aParam).append("'")
-                .append(aAddParam!=null&&!aAddParam.equals("")?","+aAddParam:"")
-                .append(")").toString() ;
+        return theFunctionGoName +
+                "('" + aParam + "'" +
+                (aAddParam != null && !aAddParam.equals("") ? "," + aAddParam : "") +
+                ")";
     }
 
     private String getDeleteFunctionName(String aId) {
-        return new StringBuilder().append(theFunctionDeleteName).append("'").append(aId).append("');").toString();
+        return theFunctionDeleteName + "'" + aId + "');";
     }
     private String getGoFunctionName(String aId) {
-        return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("');").toString();
+        return theFunctionGoName + "'" + aId + "');";
     }
     private String getGoFunctionCellName(String aId,String aCellName) {
-        return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("','").append(aCellName).append("');").toString();
+        return theFunctionGoName + "'" + aId + "','" + aCellName + "');";
     }
 
     private String getViewFunctionName(String aId) {
-        //onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
         if (theFunctionViewName==null) {
             createViewFunctionName(theViewUrl) ;
         }
-        return new StringBuilder().append(theFunctionViewName).append(aId).append("',event); ").toString();
+        return theFunctionViewName + aId + "',event); ";
     }
     private String getEditFunctionName(String aId) {
-        //onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
-        return new StringBuilder().append(theFunctionEditName).append(aId).append("'); ").toString();
+        return theFunctionEditName + aId + "'); ";
     }
     private String getPrintFunctionName(String aId) {
-        //onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
-        return new StringBuilder().append(theFunctionPrintName).append(aId).append("'); ").toString();
+        return theFunctionPrintName + aId + "'); ";
     }
-
-
-    //private String getGoFunctionName() {
-    //    return theFunctionGoName;
-    //}
 
     public int doEndTag() throws JspException {
         if (!isEmpty()) {
 
             try {
                 JspWriter out = pageContext.getOut();
-//            out.println("</thead>") ;
 
                 ITableDecorator decorator = theDecorator!=null ? getDecoratorObject() : null;
 
@@ -511,10 +492,6 @@ public class TableTag extends AbstractGuidSupportTag {
                         }
                         lastId = currentId;
 
-                        // переход по всей строке
-//                        out.print("<tr onclick=\"" + getGoFunctionName() + "(");
-//                        out.print(currentId);
-//                        out.print(")\" class='");
                         out.print("<tr onclick='' ");
                         if (theStyleRow!=null && !theStyleRow.equals("")) {out.print(" style=\"");out.print(getValueByProperty(row,theStyleRow));out.print("\"");} ;
                         out.print(" class='") ;

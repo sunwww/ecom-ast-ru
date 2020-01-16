@@ -235,6 +235,7 @@
                 </msh:row><msh:row>
                 <msh:autoComplete property="bedProfile" size="50" vocName="vocE2FondV020"/>
                 </msh:row><msh:row>
+                <msh:checkBox property="isRehabBed" />
             </msh:row><msh:row>
 
 
@@ -247,6 +248,9 @@
             </msh:row>
                 <msh:row>
                     <msh:textField property="entryType" size="50"/>
+                    <msh:textField property="fileType" size="50"/>
+                </msh:row>
+                <msh:row>
                     <msh:autoComplete vocName="vocE2FondV010" property="IDSP" size="50"/>
             </msh:row>
                 <msh:row>
@@ -304,15 +308,14 @@
         <msh:ifFormTypeIsView formName="e2_entryForm">
             <msh:separator colSpan="4" label="Комплексные СЛО"/>
                 <ecom:webQuery name="childEntries" nativeSql="select e.id
- ,e.departmentName, e.startDate, e.finishDate, e.serviceStream
+ ,e.departmentName, e.startDate, e.finishDate
  from e2entry e
  where e.parententry_id=${param.id} and (e.isDeleted is null or e.isDeleted='0') order by e.startdate, e.starttime"/>
-                <msh:table  idField="1" name="childEntries" action="entityParentView-e2_entry.do" noDataMessage="Нет дочерних СЛО">
+                <msh:table idField="1" name="childEntries" action="entityParentView-e2_entry.do" noDataMessage="Нет дочерних СЛО">
                     <msh:tableColumn columnName="ИД" property="1"/>
                     <msh:tableColumn columnName="Отделение" property="2"/>
                     <msh:tableColumn columnName="Дата начала" property="3"/>
                     <msh:tableColumn columnName="Дата окончания" property="4"/>
-                    <msh:tableColumn columnName="Источник финансирования" property="5"/>
                 </msh:table>
 
             <msh:separator colSpan="4" label="Диагнозы по случаю"/>
@@ -437,8 +440,9 @@ where cancer.entry_id=${param.id}"/>
             function makeMPFromRecord() {
                 //Long aEntryListId, String aType, String aBillNumber, String aBillDate, Long aEntryId,
                 var ver = "3.1.1";
-                //if (prompt("Формировать в версии 3.1 ?")) {ver="3.1";}
-                Expert2Service.makeMPFIle(null,$('entryType').value,$('billNumber').value, $('billDate').value,${param.id},false,ver,{
+                if (confirm("2020?")) ver = "3.2";
+                Expert2Service.makeMPFIle(null,$('entryType').value,$('billNumber').value, $('billDate').value
+                    ,${param.id},false,ver,$('fileType').value,{
                     callback: function (monitorId) {
                         monitor.id=monitorId;
                         jQuery.toast("Проверка запущена");
@@ -502,9 +506,6 @@ where cancer.entry_id=${param.id}"/>
                        alert(ret);
                    }
                 });
-            }
-            function testCloneEntity() {
-                        Expert2Service.cloneEntityTest(${param.id},{callback: function(){alert('good');}});
             }
                 </script>
 

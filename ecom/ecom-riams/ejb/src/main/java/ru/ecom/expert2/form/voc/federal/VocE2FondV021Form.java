@@ -66,4 +66,11 @@ public class VocE2FondV021Form extends VocBaseFederalForm {
     public void setPolicProfile(Long aPolicProfile) {thePolicProfile = aPolicProfile;}
     /** Профиль мед. помощи для подачи по поликлинике */
     private Long thePolicProfile ;
+
+    /** Признак подушевого финансирования специальности */
+    @Comment("Признак подушевого финансирования специальности")
+    @Persist
+    public Boolean getIsPodushevoy() {return theIsPodushevoy;}
+    public void setIsPodushevoy(Boolean aIsPodushevoy) {theIsPodushevoy = aIsPodushevoy;}
+    private Boolean theIsPodushevoy ;
 }

@@ -29,7 +29,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 			<msh:sideLink action="/entityList-e2_vocCofficientLpuLevel.do" name="Коэффициент уровня ЛПУ (отделения)" title="Коэффициент уровня ЛПУ (отделения)" roles="/Policy/E2"/>
 			<msh:sideLink action="/entityList-e2_vocMedHelpProfile.do" name="Справочник профилей мед. помощи" title="Справочник профилей мед. помощи" roles="/Policy/E2"/>
 			<msh:sideLink action="/entityList-e2_vocBaseTariff.do" name="Справочник базовых тарифов" title="Справочник базовых тарифов" roles="/Policy/E2"/>
-			<msh:sideLink action="/entityList-e2_vocPolyclinicCoefficient.do" name="Справочник коэффициентов по поликлинике" title="Справочник коэффициентов по поликлинике" roles="/Policy/E2"/>
 			<msh:sideLink action="/entityList-e2_config.do" name="Справочник настроек экспертизы" title="Справочник настроек экспертизы" roles="/Policy/E2"/>
 			<msh:sideLink action="/entityList-e2_vocFondV012.do" name="Справочник V012" title="Справочник настроек экспертизы" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocFondV009.do" name="Справочник V009" title="Справочник настроек экспертизы" roles="/Policy/E2" />
@@ -53,7 +52,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    var txt = prompt("Введите RZ или ФИО_ДР");
 	    if (txt) {
             txt = txt.split(" ");
-
             if (txt.length>3) {
                 href="lastname:"+txt[0]+" "+txt[1]+" "+txt[2]+" "+txt[3];
             } else {
@@ -61,7 +59,5 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
             }
             window.open("entityList-e2_entry.do?id=0&filter="+href);
 		}
-
-
 	}
 </script>

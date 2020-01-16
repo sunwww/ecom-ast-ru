@@ -130,7 +130,7 @@
 			<plugin>
 				<groupId>com.pvsstudio</groupId>
 				<artifactId>pvsstudio-maven-plugin</artifactId>
-				<version>7.03.32667</version>
+				<version>${pvsstudio.version}</version>
 				<configuration>
 					<analyzer>
 						<outputType>text</outputType>

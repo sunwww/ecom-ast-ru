@@ -126,6 +126,7 @@
    ,p.barcodenumber as f22
    , case when p.medcase_id is not null then 'Выполнил: '||suLab.fullName ||' '|| to_char(mc.createdate,'dd.MM.yyyy')||' '||cast(mc.createTime as varchar(5))
       || case when mc.datestart is not null then ' Подтвердил: '||suLabDoc.fullName||' '||to_char(mc.editdate,'dd.MM.yyyy')||' '||cast(mc.edittime as varchar(5)) else '' end else '' end as f23_executeinfo
+   ,'js-stac_slo-list_protocols.do?short=Short&id='||pl.medCase_id||'&patient='||pat.id||'&service='||p.medService_id as f24presHistory
     from prescription p
     left join vocprescriptcancelreason vpcr on vpcr.id=p.cancelreason_id
     left join MedCase mc on mc.id=p.medcase_id
@@ -175,6 +176,7 @@
 	      <msh:tableColumn columnName="Код" property="4"/>
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о пациенте" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableButton property="1" buttonFunction="showMyPrescriptionReport" buttonName="История назначения" buttonShortName="О" hideIfEmpty="true" role="/Policy/Mis/Prescription/ViewInformation"/>
+	      <msh:tableButton property="24" buttonFunction="getDefinition" buttonName="Просмотр динамики анализа" buttonShortName="Дин" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>
 	      <msh:tableColumn columnName="ФИО пациента" property="6"  />
 	      <msh:tableColumn columnName="Услуга" property="7"/>
 	      <msh:tableColumn columnName="Результат" property="18" cssClass="preCell"/>

@@ -13,7 +13,6 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 public interface IExpert2Service {
-    void cloneEntityTest(Long aEntryId);
     void makeOncologyCase(Long aListEntryId, String aJsonString, String aDefectCode);
     String splitLongCase(Long aEntryId);
     String getMedcaseCost(Long aMedcaseId);
@@ -24,7 +23,7 @@ public interface IExpert2Service {
     E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate);
     Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate);
     boolean exportDefectNewListEntry(Long aListEntryId);
-    boolean exportErrorsNewListEntry(Long aListEntryId, String[] aErrorCodes);
+    void exportErrorsNewListEntry(Long aListEntryId, String[] aErrorCodes);
     void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId);
     void makeCheckEntry (Long aEntryId, boolean updateKsgIfExist);
     E2Entry calculateEntryPrice(E2Entry  aEntry);
