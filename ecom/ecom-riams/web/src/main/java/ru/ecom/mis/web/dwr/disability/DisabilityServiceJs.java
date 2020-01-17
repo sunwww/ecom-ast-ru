@@ -525,7 +525,7 @@ public class DisabilityServiceJs {
         }
         aCount++;
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list = service.executeNativeSql("select number as f1,to_char(reservedate,'dd.MM.yyyy') as f2_date, cast(reservetime as varchar(5)) as f3_time, id as f4_id from ElectronicDisabilityDocumentNumber where disabilitydocument_id is null ");
+        Collection<WebQueryResult> list = service.executeNativeSql("select number as f1,to_char(reservedate,'dd.MM.yyyy') as f2_date, cast(reservetime as varchar(5)) as f3_time, id as f4_id from ElectronicDisabilityDocumentNumber where disabilitydocument_id is null order by number");
         if (!list.isEmpty()) {
             Date currentDate = new Date();
             Calendar cal = new GregorianCalendar();

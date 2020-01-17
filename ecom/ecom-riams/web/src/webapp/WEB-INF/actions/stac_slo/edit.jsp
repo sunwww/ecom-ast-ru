@@ -737,8 +737,14 @@ where m.id ='${param.id}'"/>
                     }
                     if (isnext) {
                         document.forms[0].action=old_action ;
+                        <msh:ifFormTypeIsCreate formName="stac_sloForm">
+                        <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
                         showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0],${param.id},ifNotSubmit);
-                        //document.forms[0].submit() ;
+                        </msh:ifInRole>
+                        </msh:ifFormTypeIsCreate>
+                        <msh:ifFormTypeAreViewOrEdit formName="stac_sloForm">
+                        document.forms[0].submit() ;
+                        </msh:ifFormTypeAreViewOrEdit>
                     } else {
                         $('submitButton').disabled=false ;
                     }
