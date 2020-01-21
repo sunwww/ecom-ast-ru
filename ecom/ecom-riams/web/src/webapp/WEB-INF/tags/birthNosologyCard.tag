@@ -60,10 +60,10 @@
                             var td1 = document.createElement('td');
                             td1.setAttribute("colspan",2);
                             var html = '<label height="100%" width="100%" for="${name}'+res.vocID+'"><input type="checkbox" id="${name}'+res.vocID+'" name="${name}Chb"';
-                            if ( disable${name}!=null && (res.disabled || disable${name})) {
+                            /*if ( disable${name}!=null && (res.disabled || disable${name})) {
                                 html+=' disabled';
                                 dsbl=true;
-                            }
+                            }*/
                             if (res.checked) html+=' checked';
                             html+= '>'+res.vocName+'</label>';
                             td1.innerHTML =  html;
@@ -72,7 +72,7 @@
                             tr.appendChild(td1);
                             table.appendChild(tr);
                         }
-                        var tHtml=""
+                        var tHtml="";
                         tHtml+=" <table width=\"100%\" cellspacing=\"0\" cellpadding=\"4\" id=\"table${name}\" border=\"1\">" +
                             "        <tbody><tr>";
                             if (codeNum${name}==2)
@@ -82,11 +82,11 @@
                                 tHtml+="            <td align=\"center\" ><input type=\"button\" value='Далее' id=\"${name}Next\" onclick='next${name}();'/></td>";
                         tHtml+="        </tr></tbody>" +
                             "        </table>";
-                        if (dsbl) {
+                        /*if (dsbl) {
                             jQuery("#${name}Save").prop("disabled", true);
                             if (!disable${name})
                                 showToastMessage("Пациент выписан, либо уже есть СЛО в обсервационном отделении (при выписке можно будет уточнить нозологии)! Сейчас доступно только для просмотра.",null,true,false);
-                        }
+                        }*/
                         /*jQuery('#table${name} > tbody  > tr').each(function(index, tr) {
                             tr.onclick = function() {
                                 if (tr.childNodes.length>0 && tr.childNodes[0].childNodes.length>0)

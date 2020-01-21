@@ -27,6 +27,21 @@
                     </td>
                 </msh:row>
                 <msh:row>
+                    <td class="label" title="Показать  (typeGroup2)" colspan="1"><label for="typeGroup2Name" id="typeGroup2Label">Отделение выписки (текущее):</label></td>
+                    <td onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeGroup2" value="1">  все
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeGroup2" value="2">  патологии беременности
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <input type="radio" name="typeGroup2" value="3">  обсервационное
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup2" value="4">  реанимация
+                    </td>
+                </msh:row>
+                <msh:row>
                     <td colspan="3">
                         <input type="button" onclick="this.disabled=true;find();" value="Найти" />
                     </td>
@@ -52,12 +67,23 @@
             if (department!=null && !department.equals("")) request.setAttribute("department"," and dep.id="+department);
             request.setAttribute("typeSql", typeSql.toString());
             request.setAttribute("typeGroup",type);
+            String type2 = (String)request.getParameter("typeGroup2");
+            if (type2==null || type2.equals("")) type2="1";
+            String sloLastSql = "";
+            if (type2.equals("2"))
+                sloLastSql= " and mlLast.IsPatologyPregnant=true ";
+            if (type2.equals("3"))
+                sloLastSql= " and mlLast.IsObservable=true ";
+            if (type2.equals("4"))
+                sloLastSql= " and mlLast.IsNoOmc=true ";
+            request.setAttribute("sloLastSql",sloLastSql);
+            request.setAttribute("typeGroup2",type2);
             if (dateBegin!=null) {
         %>
         <msh:section>
             <msh:sectionTitle>Сведения о нозологиях в акушерстве
                 <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
-select hmc.id as f1
+select distinct hmc.id as f1
 ,pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as f2
 , to_char(hmc.dateStart,'dd.mm.yyyy') as f3
 , to_char(hmc.dateFinish,'dd.mm.yyyy') as f4
@@ -73,6 +99,8 @@ and depPat.id=dmc.department_id)) then '+' else '-' end as f6
 ,vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as f8
 ,to_char(c.editdate,'dd.mm.yyyy') as f9
 ,vwf2.name||' '||wpat2.lastname||' '||wpat2.firstname||' '||wpat2.middlename as f10
+,mlLast.name as f11
+,hmc.dateStart as justForDistinct
 from medcase hmc
 left join birthnosologycard c on hmc.id=c.medcase_id
 left join patient pat on pat.id=hmc.patient_id
@@ -84,12 +112,15 @@ left join workfunction wf2 on wf2.id=c.editor_id
 left join vocworkfunction vwf2 on vwf2.id=wf2.workfunction_id
 left join worker w2 on w2.id=wf2.worker_id
 left join patient wpat2 on wpat2.id=w2.person_id
+left join MedCase sloLast on sloLast.parent_id=hmc.id and sloLast.dtype='DepartmentMedCase'
+left join MisLpu mlLast on mlLast.id=sloLast.department_id
+left join medcase slo on slo.parent_id=hmc.id and slo.dtype='DepartmentMedCase'
+left join MisLpu mlslo on mlslo.id=slo.department_id
 where hmc.dtype='HospitalMedCase'
-and exists(select depPat.id from mislpu depPat
-left join medcase dmc on dmc.parent_id=hmc.id
-where dmc.dtype='DepartmentMedCase' and (depPat.ismaternityward=true or depPat.ispatologypregnant=true)
-and depPat.id=dmc.department_id) ${typeSql}
-order by hmc.dateStart "/>
+ and  (sloLast.id is null or sloLast.transferDate is null)
+ and (mlslo.ismaternityward=true or mlslo.ispatologypregnant=true)
+ ${typeSql} ${sloLastSql}
+order by hmc.dateStart"/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
             <msh:sectionContent>
@@ -101,6 +132,7 @@ order by hmc.dateStart "/>
                     <msh:tableColumn columnName="Дата выписки" property="4"/>
                     <msh:tableColumn columnName="Есть СЛО в род. отд.?" property="5" />
                     <msh:tableColumn columnName="Есть СЛО в пат. бер.?" property="6" />
+                    <msh:tableColumn columnName="Отделение выписки (текущее)" property="11" />
                     <msh:tableColumn columnName="Дата создания" property="7"/>
                     <msh:tableColumn columnName="Создал" property="8"/>
                     <msh:tableColumn columnName="Дата редактирования" property="9"/>
@@ -112,6 +144,7 @@ order by hmc.dateStart "/>
         <tags:birthNosologyCard  name="birthNosologyCard"  />
         <script type="text/javascript">
             checkFieldUpdate('typeGroup','${typeGroup}',1) ;
+            checkFieldUpdate('typeGroup2','${typeGroup2}',1) ;
             function checkFieldUpdate(aField,aValue,aDefault) {
                 eval('var chk =  document.forms[0].'+aField) ;
                 var max = chk.length ;
