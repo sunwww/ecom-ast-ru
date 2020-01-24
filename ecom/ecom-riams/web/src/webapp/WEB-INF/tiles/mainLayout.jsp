@@ -7,6 +7,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@page import="java.util.Calendar"%>
 
 <%
@@ -233,7 +234,25 @@
 
     <div id="footer" class="rightAlign">
 
+        <tags:UnreadMessages name="UnreadMessages" />
         <div id='gotoUpDown'><a class="gotoTop" href="#header">Вверх</a><a class="gotoBottom" href="#copyright">Вниз</a></div>
+        <div class="msgBox">
+                <h3>Сообщения</h3>
+                <table>
+                    <tr id="clorRow" onclick="showUnreadMessages();">
+                        <td><img src='/skin/images/msg/new.png' width='25' height="25"
+                                 alt='Новые' title='Непрочитанные сообщения' style="margin-right:3px"/></td>
+                        <td>новые:</td>
+                        <td id="unreadMsg"></td>
+                    </tr>
+                    <tr onclick='getDefinition("js-mis_customMessage-getMessages.do?id=-1&short=Short")'>
+                        <td><img src='/skin/images/msg/all.png' width='25' height="25"
+                                 alt='Все' title='Все сообщения' style="margin-right:3px"/></td>
+                        <td>все</td>
+                        <td id="msgAllTd"></td>
+                    </tr>
+                </table>
+        </div>
         <msh:ifInRole roles="/Policy/WebSocket/Queue">
            <div class='ws_workerDiv'>
                 <p id='ws_windowWorkDiv' title="Нажмите для изменения номера окна" onclick="ws_setNewWindowNumber()"></p><hr/>
@@ -286,6 +305,7 @@
 <script type="text/javascript">
 theDefaultTimeOut = setTimeout(funcemergencymessage.func,12000) ;
 
+getCountUnreadMessages();
 
 </script>
 </msh:ifInRole>

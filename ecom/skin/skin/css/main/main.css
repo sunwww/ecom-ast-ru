@@ -68,6 +68,27 @@ bottom: 5%;
 opacity: 0.6;
 padding: 10px;
 }
+
+.msgBox {
+    background-color: #ddd;
+    position: fixed;
+    bottom: 17%;
+    right: 1%;
+    opacity: 0.6;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.msgBox td {
+    text-align: left;
+}
+
+.msgBox td:hover {
+    text-align: left;
+    font-size: 14px;
+    color: #4682B4;
+}
+
 .instant_message { padding: 5px; font-size: 12px; font-family: Arial; visibility: hidden;
 position: absolute;
 width: 80%;

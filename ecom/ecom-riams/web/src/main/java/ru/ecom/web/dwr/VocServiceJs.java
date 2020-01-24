@@ -100,7 +100,17 @@ public class VocServiceJs {
     	serviceLogin.hideMessage(aIdMessage) ;
     	return true ;
     }
-    public String getEmergencyMessages(HttpServletRequest aRequest) throws NamingException {
+
+	/**
+	 * Получить непрочитанные сообщения #187
+	 *
+	 * @param isEmergency true - экстренные
+	 * @param aMaxCount макс. кол-во
+	 * @param isOrderByDesc сначала самые новые
+	 * @param aRequest HttpServletRequest
+	 * @return String json с результатом
+	 */
+    public String getUnreadMessages(String isEmergency, Integer aMaxCount, Boolean isOrderByDesc, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	StringBuilder sqlA = new StringBuilder() ;
     	java.util.Date date = new java.util.Date() ;
@@ -109,10 +119,15 @@ public class VocServiceJs {
 		sqlA.append("select id,messagetitle,messageText as messageText,to_char(dispatchdate,'dd.mm.yyyy')||' '||cast(dispatchtime as varchar(5)) as inforeceipt,messageUrl from CustomMessage") ;
 		sqlA.append(" where recipient='").append(username).append("'") ;
 		sqlA.append(" and readDate is null");
-		sqlA.append(" and isEmergency='1' and ((validitydate>current_date or validitydate=current_date and validitytime>=cast('")
+		String isEmergencyStr = "";
+		if (!isEmergency.equals(""))
+			isEmergencyStr = isEmergency.equals("1")? " and isEmergency='1' " : " and (isEmergency is null or isEmergency='0') ";
+		sqlA.append(isEmergencyStr)
+		.append(" and ((validitydate>current_date or validitydate=current_date and validitytime>=cast('")
 		.append(dispatchTime)
 		.append("' as time)) or validitydate is null)");
-    	Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),10);
+		if (isOrderByDesc) sqlA.append(" order by id desc");
+    	Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),aMaxCount);
 		JSONArray params = new JSONArray() ;
 		String[][] props = {{"1","id"},{"2","messageTitle"},{"3","messageText"},{"4","infoReceipt"},{"5","messageUrl"}} ;
 		for(WebQueryResult wqr : list) {
@@ -137,6 +152,34 @@ public class VocServiceJs {
 		}
     	return root.toString() ;
     }
+
+	/**
+	 * Получить кол-во непрочитанных сообщений #187
+	 *
+	 * @param isEmergency true - экстренные
+	 * @param aRequest HttpServletRequest
+	 * @return String кол-во
+	 */
+	public String getCountUnreadMessages(String isEmergency,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sqlA = new StringBuilder() ;
+		java.util.Date date = new java.util.Date() ;
+		java.sql.Time dispatchTime = new java.sql.Time(date.getTime()) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		sqlA.append("select count(id) from CustomMessage") ;
+		sqlA.append(" where recipient='").append(username).append("'") ;
+		sqlA.append(" and readDate is null");
+		String isEmergencyStr = "";
+		if (!isEmergency.equals(""))
+			isEmergencyStr = isEmergency.equals("1")? " and isEmergency='1' " : " and (isEmergency is null or isEmergency='0') ";
+		sqlA.append(isEmergencyStr)
+		.append(" and ((validitydate>current_date or validitydate=current_date and validitytime>=cast('")
+		.append(dispatchTime)
+		.append("' as time)) or validitydate is null)");
+		Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),10);
+		return list.iterator().next()!=null? list.iterator().next().get1().toString() : "0";
+	}
+
     private String str(String aValue) {
     	if (aValue.indexOf('\"')!=-1) {
     		aValue = aValue.replaceAll("\"", "\\\"") ;
