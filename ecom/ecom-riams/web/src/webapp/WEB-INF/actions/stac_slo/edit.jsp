@@ -741,6 +741,9 @@ where m.id ='${param.id}'"/>
                         <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
                         showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0],${param.id},ifNotSubmit);
                         </msh:ifInRole>
+                        <msh:ifNotInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
+                        showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0],${param.id},true);
+                        </msh:ifNotInRole>
                         </msh:ifFormTypeIsCreate>
                         <msh:ifFormTypeAreViewOrEdit formName="stac_sloForm">
                         document.forms[0].submit() ;

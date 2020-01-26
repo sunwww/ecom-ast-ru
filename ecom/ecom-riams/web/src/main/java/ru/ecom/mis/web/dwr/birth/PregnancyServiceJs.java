@@ -298,4 +298,13 @@ public class PregnancyServiceJs {
 			service.executeUpdateNativeSql("INSERT INTO birthnosologycard_vocbirthnosology(birthnosologycard_id,nosologies_id) values("+aCardId+","+arr[i]+")");
 		return "Сохранено.";
 	}
+
+	/**
+	 * Создать пустого ребёнка (на случай, если врачи ошиблись кол-вом плодов)
+	 * @param aChbId ChildBirth.id
+	 */
+	public void addEmptyChild(Long aChbId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("insert into newborn(createdate,childbirth_id) values(current_date,"+aChbId+")");
+	}
 }

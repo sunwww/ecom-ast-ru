@@ -158,6 +158,13 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		withoutChildBirth.add("O47.0");
 		withoutChildBirth.add("O47.1");
 		withoutChildBirth.add("O42.2");
+		withoutChildBirth.add("O44.0");
+		withoutChildBirth.add("O44.1");
+		withoutChildBirth.add("O45.8");
+		withoutChildBirth.add("O45.9");
+		withoutChildBirth.add("O14.0");
+		withoutChildBirth.add("O14.1");
+		withoutChildBirth.add("O14.9");
 		return withoutChildBirth;
 	}
 

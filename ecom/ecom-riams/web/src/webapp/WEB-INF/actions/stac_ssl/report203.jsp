@@ -1102,6 +1102,9 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
                 document.getElementById('chbShow2').checked=true;
             if (window.location.href.indexOf('chbShow3=on')!=-1)
                 document.getElementById('chbShow3').checked=true;
+            var tbls = document.getElementsByTagName('table'); //все таблицы страницы
+            if (tbls[0].id.indexOf('claimMessageContainer')!=-1)
+                tbls[0].remove()
             checkBox(2);
             checkBox(3);
         </script>

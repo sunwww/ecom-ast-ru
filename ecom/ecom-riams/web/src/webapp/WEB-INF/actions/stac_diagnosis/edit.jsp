@@ -81,7 +81,7 @@
         <msh:ifInRole roles="/Policy/Mis/Order203">
             <script type="text/javascript">
             function showCriteria() {
-            showCreateDiagnoseCriteriaCloseDocument($(idc10).value,$('registrationType').value,$('priority').value, document.forms[0],$(medCase).value);
+            showCreateDiagnoseCriteriaCloseDocument($(idc10).value,$('registrationType').value,$('priority').value, document.forms[0],$(medCase).value,true);
             //document.forms[0].submit() ;
             }
             </script>

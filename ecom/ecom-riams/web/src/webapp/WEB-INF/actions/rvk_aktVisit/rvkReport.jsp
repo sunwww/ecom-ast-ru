@@ -83,7 +83,7 @@
         <msh:section>
             <msh:sectionTitle>Сведения о призывниках, направленных в ГБУЗ АО АМОКБ
                 <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
-select a.id||'!'||mc.dtype,a.numact,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as fio
+select a.id||'!'||mc.dtype,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as fio
 ,to_char(pat.birthday,'dd.mm.yyyy') as bd
 ,adr.fullname as address
 ,to_char(a.datestart,'dd.mm.yyyy') as st
@@ -108,16 +108,15 @@ where 1=1 ${typeSql} ${department}"/>
             <msh:sectionContent>
                 <msh:table printToExcelButton="Сохранить в excel" name="totalName" action="js-rvk_aktVisit-actView.do" idField="1">
                     <msh:tableColumn columnName="#" property="sn"/>
-                    <msh:tableColumn columnName="№№" property="2"/>
-                    <msh:tableColumn columnName="ФИО" property="3"/>
-                    <msh:tableColumn columnName="Число, месяц, год рождения" property="4"/>
-                    <msh:tableColumn columnName="Место жительства" property="5"/>
-                    <msh:tableColumn columnName="Находится на обследовании (лечении)" property="6"/>
-                    <msh:tableColumn columnName="Завершил обследование (лечение)" property="7"/>
-                    <msh:tableColumn columnName="Окончательный диагноз после проведённого обследования (лечения)" property="8"/>
-                    <msh:tableColumn columnName="Отделение" property="9"/>
-                    <msh:tableColumn columnName="Открыл акт" property="10"/>
-                    <msh:tableColumn columnName="Примечание" property="11"/>
+                    <msh:tableColumn columnName="ФИО" property="2"/>
+                    <msh:tableColumn columnName="Число, месяц, год рождения" property="3"/>
+                    <msh:tableColumn columnName="Место жительства" property="4"/>
+                    <msh:tableColumn columnName="Находится на обследовании (лечении)" property="5"/>
+                    <msh:tableColumn columnName="Завершил обследование (лечение)" property="6"/>
+                    <msh:tableColumn columnName="Окончательный диагноз после проведённого обследования (лечения)" property="7"/>
+                    <msh:tableColumn columnName="Отделение" property="8"/>
+                    <msh:tableColumn columnName="Открыл акт" property="9"/>
+                    <msh:tableColumn columnName="Примечание" property="10"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>

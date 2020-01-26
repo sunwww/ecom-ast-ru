@@ -15,6 +15,7 @@
                 <msh:hidden property="medCase"/>
                 <msh:hidden property="workFunctionStart"/>
                 <msh:hidden property="workFunctionFinish"/>
+                <msh:hidden property="numAct"/>
                 <msh:hidden property="specName"/>
                 <msh:ifFormTypeIsCreate formName="rvk_aktVisitForm">
                     <msh:hidden property="dateFinish"/>
@@ -29,9 +30,6 @@
                 </msh:ifFormTypeIsCreate>
                 <msh:row>
                     <msh:textField property="dateStart" label="Дата начала обследования (лечения)"/>
-                </msh:row>
-                <msh:row>
-                    <msh:textField property="numAct" label="Номер акта"/>
                 </msh:row>
                 <msh:row>
                     <msh:textArea property="comment" fieldColSpan="3" horizontalFill="true" label="Замечания"/>

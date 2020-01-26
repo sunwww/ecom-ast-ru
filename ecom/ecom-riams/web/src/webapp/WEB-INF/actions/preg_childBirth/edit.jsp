@@ -30,6 +30,7 @@
       <msh:sideMenu title="Роды" guid="bc6ceef3-4709-47d9-ba37-d68540cffc61">
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_childBirth" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" guid="a8d1a1fa-aa31-408a-b1f6-6b9ba1ff18e8" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-preg_childBirth" name="Удалить" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" guid="91460b8b-80a7-46b3-bc95-a53cd320f687" />
+          <msh:sideLink key="ALT+3" params="id" action="/javascript:addEmptyChild()" name="Добавить пустого ребёнка" roles="/Policy/Mis/MedCase/Stac/Ssl/Delete" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="3f5cf55a-2ae6-4367-b9b9-1ce75e0938c4">
          <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.medcase}"
@@ -307,6 +308,15 @@
       document.getElementsByName("water")[0].checked=true;
   else document.getElementsByName("water")[1].checked=true;
   </msh:ifFormTypeIsNotView>
+  <msh:ifFormTypeIsView formName="preg_childBirthForm">
+  function addEmptyChild() {
+      PregnancyService.addEmptyChild(${param.id},{
+          callback: function () {
+              window.location.reload() ;
+          }
+      });
+  }
+  </msh:ifFormTypeIsView>
   </msh:ifFormTypeAreViewOrEdit>
   //настройка для безводного периода
   function  checkWater() {
