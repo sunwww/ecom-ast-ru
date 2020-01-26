@@ -25,7 +25,7 @@
                 <msh:row>
                     <msh:autoComplete vocName="vocE2FondV021" property="medSpecV021" size="100"/>
                 </msh:row>
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+                <msh:submitCancelButtonsRow colSpan="4" />
             </msh:panel>
         </msh:form>
         <ecom:webQuery name="polyclinicCoefficientList" nativeSql="select coef.id, coef.startDate,coef.finishDate,coef.value, vest.code||' '||coalesce(vest.name,'')  as entryType

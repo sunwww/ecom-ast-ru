@@ -11,7 +11,7 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-        <msh:sideMenu title="Добавить" guid="fdcda21a-c1c6-4e0e-a74e-1bf843a8c1c8">
+        <msh:sideMenu title="Добавить" >
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_vocCofficientLpuLevel" name="Сформировать новое" roles="/Policy/E2/Create" />
         </msh:sideMenu>
         <tags:expertvoc_menu currentAction="main"/>
@@ -25,14 +25,14 @@
     ,voc.startDate as startDate, voc.finishdate
     , case when voc.finishDate<current_date then 'color:red' else '' end as f7_styleRow
                 from VocCoefficient voc
-  left join MisLpu dep on dep.id=voc.department_id left join VocE2MedHelpProfile vmhp on vmhp.id=voc.helpprofile_id
+  left join MisLpu dep on dep.id=voc.department_id left join VocE2MedHelpProfile vmhp on vmhp.id=voc.profile_id
   where dtype='VocCoefficientLpuLevel' order by cast(vmhp.profilek as int),voc.startDate  "/>
                 <msh:table styleRow="7" name="listAll" action="entityView-e2_vocCofficientLpuLevel.do" idField="1" disableKeySupport="true">
-                    <msh:tableColumn columnName="Профиль помощи (К)" property="4" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Отделение"  property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Коэффициент"  property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Период с"  property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Период по"  property="6" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="Профиль помощи (К)" property="4"  />
+                    <msh:tableColumn columnName="Отделение"  property="3"  />
+                    <msh:tableColumn columnName="Коэффициент"  property="2"  />
+                    <msh:tableColumn columnName="Период с"  property="5"  />
+                    <msh:tableColumn columnName="Период по"  property="6"  />
                 </msh:table>
 
             </msh:section>

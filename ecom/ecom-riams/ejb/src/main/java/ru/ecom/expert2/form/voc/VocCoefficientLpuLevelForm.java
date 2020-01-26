@@ -1,19 +1,13 @@
 package ru.ecom.expert2.form.voc;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.expert2.domain.voc.VocCoefficient;
 import ru.ecom.expert2.domain.voc.VocCoefficientLpuLevel;
-import ru.ecom.expert2.domain.voc.VocE2BaseTariff;
-import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 /**
  * Коэффицинт уровня оказания мед. помощи
@@ -36,8 +30,8 @@ public class VocCoefficientLpuLevelForm  extends VocCoefficientForm {
     /** Профиль мед. помощи */
     @Comment("Профиль мед. помощи")
     @Persist
-    public Long getHelpProfile() {return theHelpProfile;}
-    public void setHelpProfile(Long aHelpProfile) {theHelpProfile = aHelpProfile;}
+    public Long getProfile() {return theProfile;}
+    public void setProfile(Long aProfile) {theProfile = aProfile;}
     /** Профиль мед. помощи */
-    private Long theHelpProfile ;
+    private Long theProfile ;
 }

@@ -414,7 +414,6 @@ public class Expert2ServiceJs {
                     .append(aServiceStream).append("' and isForeign='").append(isForeign).append("' and fileType='").append(aFileType).append("'");
         if (!StringUtil.isNullOrEmpty(aOldBillDate)) {sql.append(" and billDate=to_date('").append(aOldBillDate).append("','dd.MM.yyyy')");} else {sql.append(" and billDate is null");}
         sql.append(" and billNumber='").append(aOldBillNumber == null ? "" : aOldBillNumber).append("'").append(" and (isDeleted is null or isDeleted='0')");
-        LOG.info("bill sql = "+sql);
         service.executeUpdateNativeSql(sql.toString());
         return true;
     }

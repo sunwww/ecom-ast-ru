@@ -161,6 +161,44 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         }
     }
 
+    /** Создаем тэг с информацией о госпитализации (версия 3.2*)*/
+    private Element createZSl2020(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isExport263, boolean isNedonosh, String lpuOmcCode
+    ,boolean a1, boolean a2, boolean a3, boolean a4) {
+        //boolean isExtDisp = aEntry.getEntryType().equals(EXTDISPTYPE);
+        String forPom = isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic ? "2" : "1") : "3";
+        Element z = new Element("Z_SL");
+        add(z,"IDCASE",zslIdCase+"");
+        add(z,"VID_SLUCH",aEntry.getVidSluch().getCode());
+        add(z,"USL_OK",aEntry.getMedHelpUsl().getCode()); //дневной-круглосуточный-поликлиника
+        add(z,"VIDPOM",aEntry.getMedHelpKind().getCode());
+        add(z,"FOR_POM",forPom); //форма помощи V014
+
+        if (!isNotNull(aEntry.getIsEmergency())) {
+            if ((aEntry.getMainMkb()!=null && aEntry.getMainMkb().startsWith("C")) || !isPoliclinic) {
+                addIfNotNull(z,"NPR_MO",aEntry.getDirectLpu()); //Направившее ЛПУ
+                addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()); //Дата направления на лечение ***
+            }
+        }
+        add(z,"LPU",aEntry.getLpuCode()); //ЛПУ лечения
+        if (a3) add(z,"VBR",isNotNull(aEntry.getIsMobilePolyclinic()) ? "1" : "0"); //Признак мобильной бригады
+        add(z,"DATE_Z_1","_"); //Дата начала случая
+        add(z,"DATE_Z_2","_"); //Дата окончания случая
+        if (!isPoliclinic && !a3)  add(z,"KD_Z",aEntry.getBedDays()+""); // Продолжительность госпитализации
+        if (a3) add(z,"RSLT_D",aEntry.getDispResult()!=null ?aEntry.getDispResult().getCode(): "___"); // Результат диспансеризации
+        if (isNedonosh && isNotNull(aEntry.getKinsmanLastname())) add(z,"VNOV_M",aEntry.getNewbornWeight()+"");
+        if (!a3) {
+            add(z,"RSLT",aEntry.getFondResult().getCode()); // Результат обращения
+            add(z,"ISHOD",aEntry.getFondIshod().getCode()); // Исход случая.
+        }
+        addIfNotNull(z,"OS_SLUCH",Expert2FondUtil.calculateFondOsSluch(aEntry)); // Особый случай
+        if (!isPoliclinic &&!a3 && slCnt>1) add(z,"VB_P","1"); // Признак внутрибольничного перевода *05.08 1 - только если есть перевод
+        z.addContent(new Element("SL_TEMPLATE")); // Список случаев
+        //if (isExtDisp) z=add(z,"SGROUP",aEntry.getExtDispSocialGroup()); // Социальная группа в ДД +
+        add(z,"IDSP",aEntry.getIDSP().getCode()); // Способ оплаты медицинской помощи (V010)
+        add(z,"SUMV",aEntry.getCost()); // Сумма, выставленная к оплате
+        return z;
+    }
+
     /** Создаем тэг с информацией о госпитализации (версия 3.1.1)*/
     private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isExport263, boolean isNedonosh, String lpuOmcCode) {
         boolean isExtDisp = aEntry.getEntryType().equals(EXTDISPTYPE);
@@ -285,11 +323,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
 
             zap.addContent(pat); //Добавили данные по пациенту
-            List<E2Entry> children = null;
+            List<E2Entry> children = new ArrayList<>();
             String isChild = isNotNull(aEntry.getIsChild()) ? "1" : "0";
 
             String[] slIds = entriesString.split(",");
-            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length,cnt, isExport263, isNedonosh, lpuOmcCode);
+            Element zSl = createZSl2020(aEntry,isPoliclinic,slIds.length,cnt, isExport263, isNedonosh, lpuOmcCode
+            ,a1,a2,a3,a4);
             int indSl = zSl.indexOf(zSl.getChild("SL_TEMPLATE"));
             Date startHospitalDate = null, finishHospitalDate=null;
             int kdz=0;
@@ -302,19 +341,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 E2Entry currentEntry = theManager.find(E2Entry.class,Long.valueOf(slId.trim()));
                 String edCol="1";
                 if (isPoliclinicKdp) {
-                    //edCol="1";
-                    //children = theManager.createQuery("from E2Entry where parentEntry_id=:id and (isDeleted is null or isDeleted='0') and (doNotSend is null or DoNotSend='0')").setParameter("id",currentEntry.getId()).getResultList();
                     children = new ArrayList<>();
                 } else if (isPoliclinic) {
                     children = theManager.createQuery("from E2Entry where parentEntry_id=:id and (isDeleted is null or isDeleted='0') and (doNotSend is null or DoNotSend='0') order by startDate").setParameter("id",currentEntry.getId()).getResultList();
-                    //   edCol=""+(children.size()>0?children.size():1);
                 } else { //стационар
                     kdz+=currentEntry.getBedDays().intValue();
-                    //    edCol= currentEntry.getBedDays().toString(); // Количество единиц оплаты мед. помощи
                 }
 
                 boolean isCancer = isNotNull(currentEntry.getIsCancer());
-                //       if (isCancer && currentEntry.getMedHelpProfile().getCode().equals("12")) {isCancer=false;} //Убрать колхоз
                 if (isCancer && currentEntry.getVisitPurpose()!=null && "1.3".equals(currentEntry.getVisitPurpose().getCode())) {isCancer=false;}
                 E2CancerEntry cancerEntry = null;
                 if (isCancer && !currentEntry.getCancerEntries().isEmpty()) {
@@ -344,7 +378,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 //PODR
  //               add(sl,"TELEMED",currentEntry.getDepartmentId()==416 ? "1" : "0");
                 add(sl,"PROFIL",profile.getCode()); //Профиль специальностей V002 * 12.12.2018
-                if (a1 || a2) {
+                if (isHosp || isVmp) {
                     if (currentEntry.getBedProfile()==null) {
                         LOG.error("Нет профиля койки у записи: "+currentEntry);
                         theManager.persist(new E2EntryError(currentEntry,"NO_FOND_FIELD: Нет профиля койки"));
@@ -370,7 +404,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 if (isHosp) {
                     add(sl,"KD",currentEntry.getBedDays()); //Продолжительность госпитализации
                 }
-                setSluchDiagnosis(sl, currentEntry,version);
+                setSluchDiagnosis(sl, currentEntry,version,a3);
                 if (sl==null) {
                     theManager.persist(new E2EntryError(currentEntry,"NO_MAIN_DIAGNOSIS"));
                     return null;
@@ -542,9 +576,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 int uslCnt = 0;
                 if (currentEntry.getReanimationEntry()!=null) { //Реанимационная услуга
                     uslCnt++;
-                    sl.addContent(createUsl(""+uslCnt,mainLpu,profileK,"B03.003.005",isChild,startDate,finishDate,sl.getChildText("DS1"),"1",prvs,currentEntry.getDoctorSnils()));
+                    sl.addContent(createUsl(""+uslCnt,mainLpu,profileK,"B03.003.005",isChild,startDate,finishDate,sl.getChildText("DS1"),"1",prvs,currentEntry.getDoctorSnils(), BigDecimal.ZERO));
                 }
                 //Информация об услугах
+                BigDecimal uslSum = BigDecimal.ZERO;
                 if (isPoliclinic) { //Для поликлиники - кол-во визитов
                     if (!isPoliclinicKdp && children.isEmpty()) {
                         children.add(currentEntry);
@@ -552,7 +587,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     boolean isFirst = true;
                     for (E2Entry child: children) {
                         boolean isFoundPriemService = false;
-                        String visitService = ""; //находим - есть ли первичный/повторный прием врача или создавать самим
+                        String visitService = null; //находим - есть ли первичный/повторный прием врача или создавать самим
                         uslCnt++;
                         String uslDate = dateToString(child.getStartDate());
                         VocE2MedHelpProfile childProfile =child.getMedHelpProfile();
@@ -564,38 +599,29 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         VocE2FondV021 spec = child.getFondDoctorSpecV021();
                         prvs = child.getFondDoctorSpecV021()!=null ? child.getFondDoctorSpecV021().getCode() : childProfile.getMedSpecV021().getCode();
 
-                        String vidVme;
-                        if (isPoliclinicKdp) {
-                            vidVme = child.getMainService();
-                        } else {
-                            try {
-                                VocMedService vms = isFirst? spec.getDefaultMedService():spec.getRepeatMedService();
-                                vidVme = vms.getCode();
-                                visitService = vms.getCode();
-                            } catch (Exception e) {
-                                vidVme = "A02.12.002";
-                                LOG.error(" У врача "+spec.getCode()+" нет услуги по умолчанию");
-                            }
+                        try {
+                            VocMedService vms = isFirst? spec.getDefaultMedService() : spec.getRepeatMedService();
+                            visitService = vms.getCode();
+                        } catch (Exception e) {
+                            LOG.error(" У врача "+spec.getCode()+" нет услуги по умолчанию");
                         }
-                        Element usl = createUsl(""+uslCnt, mainLpu, childProfile.getCode(),vidVme,isChild,uslDate,uslDate
-                                ,isNotNull(child.getMainMkb())?child.getMainMkb():sl.getChildText("DS1"),"1",spec.getCode(),child.getDoctorSnils()); //Создаем услугу по умолчанию. Для КДП и неотложки - не нужно
-
                         List<EntryMedService> serviceList = child.getMedServices();
-                        for (EntryMedService service : serviceList) {
+                        for (EntryMedService service : serviceList) { //простые услуги в пол-ке
                             uslCnt++;
-                            Element uslService = (Element) usl.clone();
-                            uslService.getChild("IDSERV").setText(uslCnt+"");
                             String serviceCode = service.getMedService().getCode();
-                            uslService.getChild("VID_VME").setText(serviceCode);
-                            sl.addContent(uslService);
+                            BigDecimal cost = service.getCost() ;
+                            uslSum = uslSum.add(cost);
+                            sl.addContent(createUsl(""+uslCnt, mainLpu, childProfile.getCode(),serviceCode,isChild,uslDate,uslDate
+                                    ,isNotNull(child.getMainMkb())?child.getMainMkb():sl.getChildText("DS1"),"1",spec.getCode(),child.getDoctorSnils(), cost));
                             if (serviceCode.equals(visitService)) isFoundPriemService = true;
                         }
                         isFirst=false;
-                        if (!isPoliclinicKdp && !isFoundPriemService) { //не нашли нужную услугу - создадим её сами!
-                            sl.addContent(usl);
+                        if (visitService!=null && !isFoundPriemService) { //не нашли нужную услугу - создадим её сами!
+                            sl.addContent(createUsl(""+uslCnt, mainLpu, childProfile.getCode(),visitService,isChild,uslDate,uslDate
+                                    ,isNotNull(child.getMainMkb())?child.getMainMkb():sl.getChildText("DS1"),"1",spec.getCode(),child.getDoctorSnils(), BigDecimal.ZERO)); //Создаем услугу по умолчанию. Для КДП и неотложки - не нужно
                         }
                     }
-                    if (isPoliclinicKdp) { //Для КДП находим все услуги помимо дочерних визитов
+  /*                  if (isPoliclinicKdp) { //Для КДП находим все услуги помимо дочерних визитов
                         List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id), servicedate,max(id) as cnt from EntryMedService where entry_id=:id group by medservice_id, servicedate").setParameter("id",aEntry.getId()).getResultList();
                         if (!list.isEmpty()) {
                             String medServiceCode;
@@ -607,12 +633,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                 boolean isOwnProfile = medServiceCode.startsWith("B");
                                 sl.addContent(createUsl(""+uslCnt, mainLpu,isOwnProfile ? getMedHelpProfileCodeByMedSpec(ems.getDoctorSpeciality()) : profileK
                                         ,medServiceCode,isChild,startDate,finishDate,sl.getChildText("DS1"),ms[1].toString()
-                                        ,isOwnProfile && ems.getDoctorSpeciality()!=null ? ems.getDoctorSpeciality().getCode()  : prvs,isNotNull(ems.getDoctorSnils()) ? ems.getDoctorSnils() : currentEntry.getDoctorSnils()));
+                                        ,isOwnProfile && ems.getDoctorSpeciality()!=null ? ems.getDoctorSpeciality().getCode()  : prvs,isNotNull(ems.getDoctorSnils()) ? ems.getDoctorSnils() : currentEntry.getDoctorSnils()
+                                ,ems.getCost()));
+                                if (ems.getCost()!=null && ems.getCost().compareTo(BigDecimal.ZERO)>0) uslSum = uslSum.add(ems.getCost());
                             }
                             sl.getChild("ED_COL").setText("1"); //ED_COL всегда равен 1 *** 02-08-2018
                         }
                         //   isKdoServicesSet = true;
-                    }
+                    } */
                 }  /* else if (isExtDisp) { //TODO
                   List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id) as cnt from EntryMedService where entry_id=:id group by medservice_id").setParameter("id",aEntry.getId()).getResultList();
                     if (list.size()>0) {
@@ -648,14 +676,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             uslCnt++;
                             sl.addContent(createUsl(""+uslCnt, mainLpu, profileK, ms[0].toString(),isChild,startDate
                                     ,finishDate,sl.getChildText("DS1"),ms[1].toString()
-                                    ,prvs,currentEntry.getDoctorSnils()));
+                                    ,prvs,currentEntry.getDoctorSnils(),BigDecimal.ZERO)); //в стационаре КТ-МРТ не оплачивается
 
                         }
                     }
                     sl.addContent(createUsl(++uslCnt+"", mainLpu, profileK, currentEntry.getBedProfile().getDefaultStacMedService()!=null ? currentEntry.getBedProfile().getDefaultStacMedService().getCode() : "AAA"
                             ,isChild,finishDate,finishDate,sl.getChildText("DS1"),"1"
-                            ,prvs,currentEntry.getDoctorSnils()));
+                            ,prvs,currentEntry.getDoctorSnils(),BigDecimal.ZERO));
                 }
+                if (uslSum.compareTo(BigDecimal.ZERO)==1) sl.getChild("SUM_M").setText(currentEntry.getCost().add(uslSum).toString());
                 // USL finish
                 zSl.addContent(indSl,sl);
                 indSl++;
@@ -675,7 +704,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     /*Создаем тэг USL по формату 2020 года*/
-    private Element createUsl(String id, String lpu, String profile, String vidVme, String isChild, String startDate, String finishDate, String ds, String kolUsl, String prvs, String codeMd) {
+    private Element createUsl(String id, String lpu, String profile, String vidVme, String isChild, String startDate, String finishDate, String ds, String kolUsl, String prvs, String codeMd, BigDecimal cost) {
         Element usl = new Element("USL");
         usl.addContent(new Element("IDSERV").setText(id));
         usl.addContent(new Element("LPU").setText(lpu));
@@ -691,7 +720,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     //  add(usl,"CODE_USL",codeUsl);
         add(usl,"KOL_USL",kolUsl);
     //  add(usl,"TARIF","1");
-        add(usl,"SUMV_USL","0");
+        add(usl,"SUMV_USL",cost);
         add(usl,"PRVS",prvs);
         add(usl,"CODE_MD",codeMd);
         add(usl,"NPL","0");
@@ -843,7 +872,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 if (isHosp||isVmp) {
                     add(sl,"KD",currentEntry.getBedDays()); //Продолжительность госпитализации
                 }
-                setSluchDiagnosis(sl, currentEntry,version);
+                setSluchDiagnosis(sl, currentEntry,version, false);
                 if (sl==null) {
                     theManager.persist(new E2EntryError(currentEntry,"NO_MAIN_DIAGNOSIS"));
                     return null;
@@ -1507,15 +1536,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         patientIdsList.add(personId);
                     }
                     zaps.add(z);
-                    totalSum = totalSum.add(entry.getCost());
+                    BigDecimal entryCost = new BigDecimal(z.getChild("Z_SL").getChildText("SUMV"));
+                    totalSum = totalSum.add(entryCost);
                 } else {
                     LOG.error("Не удалось сформировать запись по случаю с ИД "+entry.getId());
                 }
             }
             LOG.info("ok, we made all, let's make files");
             monitor.setText("Формирование файла завершено, сохраняем архив");
-          //  if (aVersion.equals("3.1.1")) aVersion="3.1";
-            makeHTitle(hRoot, periodDate, "H" + fileName, cnt, aBillNumber, aBillDate, totalSum,aVersion.equals("3.1.1")?"3.1":aVersion, regNumber);
+            makeHTitle(hRoot, periodDate, "H" + fileName, cnt, aBillNumber, aBillDate, totalSum,"3.1", regNumber);
             E2Bill bill =theManager.find(E2Bill.class, theExpertService.getBillIdByDateAndNumber(aBillNumber, dateToString(aBillDate, "dd.MM.yyyy")));
             if (bill != null) {
                 bill.setStatus(getActualVocBySqlString(VocE2BillStatus.class, "select id from VocE2BillStatus where code='SENT'"));
@@ -1528,7 +1557,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String archiveName = packetType + fileName + ".MP";
             createXmlFile(hRoot, "H" + fileName);
             createXmlFile(lRoot, "L" + fileName);
-            //   LOG.info("deb14");
             LOG.info("Время формирования файла (минут) = " + (System.currentTimeMillis() - startStartDate.getTime()) / 60000);
             monitor.setText("Завершено. Время формирования файла (минут) = " + (System.currentTimeMillis() - startStartDate.getTime()) / 60000);
 
@@ -1734,7 +1762,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         return config.get(aConfigName, aDefaultValue);
     }
 
-    private void setSluchDiagnosis(Element aElement, E2Entry aEntry, String aVersion) {
+    private void setSluchDiagnosis(Element aElement, E2Entry aEntry, String aVersion, boolean a3) {
         /** Нюансы
          * 30.01.2018 Если есть диабет - указываем его как главный сопутствующий
          */
@@ -1758,30 +1786,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
         List<String> otherDiagnosis = findDiagnosisCodes(list,null,"3"); // Сопутствующие
         List<String> napravitDiagnosis = findDiagnosisCodes(list,"1,2","3"); // Направительные
-        if (!napravitDiagnosis.isEmpty()) {
-            aElement.addContent(new Element("DS0").setText(napravitDiagnosis.get(0)));
+        if (!napravitDiagnosis.isEmpty() && !a3) {
+            add(aElement,"DS0",napravitDiagnosis.get(0));
         }
 
         if (!mainDiagnosis.isEmpty()) {
-            boolean isExtDisp = aEntry.getEntryType().equals(EXTDISPTYPE);
             EntryDiagnosis ds = mainDiagnosis.get(0);
             String mainMkb = ds.getMkb().getCode();
-            aElement.addContent(new Element("DS1").setText(mainMkb));
-
-            String ds1Pr = "0";
-            String illnesPrimary =ds.getIllnessPrimary();
-            if (aVersion.equals("3.1")) {
-                if (illnesPrimary!=null) {
-                    if (illnesPrimary.equals("3")){ds1Pr="1";}
-                    else if (illnesPrimary.equals("4")||illnesPrimary.equals("5")) {ds1Pr="2";}
-                }
-            } else if (aVersion.equals("3.1.1")) {
-                if (isExtDisp) { //Если ДД и галочка выявлено впервые - ставим 1.
-                    ds1Pr="1";
-                }
-            }
-
-            aElement.addContent(new Element("DS1_PR").setText(ds1Pr));
+            add(aElement,"DS1",mainMkb);
+            /*if (a3)*/ add(aElement,"DS1_PR","0"); //TODO сделать для ДД
             if (isNotNull(ds.getDopMkb())) {
                 otherDiagnosis.add(0,ds.getDopMkb());
             }
@@ -1800,7 +1813,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
                 }
             }
-            if (aVersion.equals("3.1.1") && !isExtDisp &&!mainMkb.startsWith("Z")) { //C_ZAB * Характер заболевания, если USL_OK!=4 || DS1!=Z*
+            if (!a3 &&!mainMkb.startsWith("Z")) { //C_ZAB * Характер заболевания, если USL_OK!=4 || DS1!=Z*
                 VocE2FondV027 vip = ds.getVocIllnessPrimary();
                 if (vip==null) {
                     theManager.persist(new E2EntryError(aEntry,"NO_HARAKTER"));

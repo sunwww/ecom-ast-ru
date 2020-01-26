@@ -13,6 +13,7 @@ import java.util.List;
 /** Справочник консультативно-диагностических посещений */
 @Entity
 @NamedQuery(name = "VocDiagnosticVisit.getActualKdps" , query = "from VocDiagnosticVisit where finishDate is null")
+@Deprecated //неактуально с 2020 года
 public class VocDiagnosticVisit extends VocBaseFederal {
 
     /** Цена  */
