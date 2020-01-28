@@ -441,8 +441,7 @@ where cancer.entry_id=${param.id}"/>
             }
             function makeMPFromRecord() {
                 //Long aEntryListId, String aType, String aBillNumber, String aBillDate, Long aEntryId,
-                var ver = "3.1.1";
-                if (confirm("2020?")) ver = "3.2";
+                var ver = "3.2";
                 Expert2Service.makeMPFIle(null,$('entryType').value,$('billNumber').value, $('billDate').value
                     ,${param.id},false,ver,$('fileType').value,{
                     callback: function (monitorId) {

@@ -275,10 +275,9 @@
                     var billNumber=a[3].split("=")[1];
                     var billDate=a[2].split("=")[1];
                     var useAllListEntry = confirm("Формировать файл по счету по всем заполнениям?");
-                    var ver = "3.1.1";
+                    var ver = "3.2";
                     var fileType=a[7].split("=")[1];
-                    if (confirm("2020?")) ver = "3.2";
-                    alert(fileType);
+               //     if (confirm("2020?")) ver = "3.2";
                     Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,ver,
                         fileType,{
                         callback: function(monitorId) {
