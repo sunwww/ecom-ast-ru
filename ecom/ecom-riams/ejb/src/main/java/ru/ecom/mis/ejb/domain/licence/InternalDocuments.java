@@ -33,24 +33,28 @@ public class InternalDocuments extends Document {
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getHistory() {return theHistory;}
 	public void setHistory(String aHistory) {theHistory = aHistory;}
+	private String theHistory;
 
 	/** Рекомендации */
 	@Comment("Рекомендации")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getRecommendations() {return theRecommendations;}
 	public void setRecommendations(String aRecommendations) {theRecommendations = aRecommendations;}
+	private String theRecommendations;
 
 	/** Куда направлен */
 	@Comment("Куда направлен")
 	@OneToOne
 	public MisLpu getSentToLpu() {return theSentToLpu;}
 	public void setSentToLpu(MisLpu aSentToLpu) {theSentToLpu = aSentToLpu;}
+	private MisLpu theSentToLpu;
 
 	/** Диагноз */
 	@Comment("Диагноз")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getDiagnosis() {return theDiagnosis;}
 	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
+	private String theDiagnosis;
 
 
 	/** Код диагноза */
@@ -58,33 +62,22 @@ public class InternalDocuments extends Document {
 	@OneToOne
 	public VocIdc10 getIdc10() {return theIdc10;}
 	public void setIdc10(VocIdc10 aIdc10) {theIdc10 = aIdc10;}
+	private VocIdc10 theIdc10;
 
 	/** Телефон */
 	@Comment("Телефон")
 	public String getPhonePatient() {return thePhonePatient;}
 	public void setPhonePatient(String aPhonePatient) {thePhonePatient = aPhonePatient;}
+	private String thePhonePatient;
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@OneToOne
 	public VocServiceStream getServiceStream() {return theServiceStream;}
 	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
-
-	
-	/** Поток обслуживания */
 	private VocServiceStream theServiceStream;
-	/** Телефон */
-	private String thePhonePatient;
-	/** Код диагноза */
-	private VocIdc10 theIdc10;
-	/** Диагноз */
-	private String theDiagnosis;
-	/** Куда направлен */
-	private MisLpu theSentToLpu;
-	/** Рекомендации */
-	private String theRecommendations;
-	/** Обоснование */
-	private String theHistory;
+
+
 	
 	/** Талон */
 	@Comment("Талон")
@@ -92,6 +85,7 @@ public class InternalDocuments extends Document {
 	public Ticket getTicket() {return theTicket;}
 	@Deprecated
 	public void setTicket(Ticket aTicket) {theTicket = aTicket;}
+	private Ticket theTicket;
 
 	/** Цель биологического исследования */
 	@Comment("Цель биологического исследования")
@@ -99,10 +93,8 @@ public class InternalDocuments extends Document {
 	public VocDocumentObjectBiologAnalysis getObjectBiologAnalysis() {
 		return theObjectBiologAnalysis;
 	}
-
-	public void setObjectBiologAnalysis(VocDocumentObjectBiologAnalysis aObjectAnalysis) {
-		theObjectBiologAnalysis = aObjectAnalysis;
-	}
+	public void setObjectBiologAnalysis(VocDocumentObjectBiologAnalysis aObjectAnalysis) {theObjectBiologAnalysis = aObjectAnalysis;}
+	private VocDocumentObjectBiologAnalysis theObjectBiologAnalysis;
 
 	/** Исследование */
 	@Comment("Исследование")
@@ -110,10 +102,10 @@ public class InternalDocuments extends Document {
 	public VocDocumentBiologAnalysis getBiologAnalysis() {
 		return theBiologAnalysis;
 	}
-
 	public void setBiologAnalysis(VocDocumentBiologAnalysis aBiologAnalysis) {
 		theBiologAnalysis = aBiologAnalysis;
 	}
+	private VocDocumentBiologAnalysis theBiologAnalysis;
 
 	/** Материал для микробилогического исследования */
 	@Comment("Материал для микробилогического исследования")
@@ -121,64 +113,46 @@ public class InternalDocuments extends Document {
 	public VocDocumentMaterialBiologAnalysis getMaterialBiologAnalysis() {
 		return theMaterialBiologAnalysis;
 	}
-
-	public void setMaterialBiologAnalysis(VocDocumentMaterialBiologAnalysis aMaterialBiologAnalysis) {
-		theMaterialBiologAnalysis = aMaterialBiologAnalysis;
-	}
+	public void setMaterialBiologAnalysis(VocDocumentMaterialBiologAnalysis aMaterialBiologAnalysis) {theMaterialBiologAnalysis = aMaterialBiologAnalysis;}
+	private VocDocumentMaterialBiologAnalysis theMaterialBiologAnalysis;
 
 	/** Услуги */
 	@Comment("Услуги")
 	public String getServicies() {return theServicies;}
 	public void setServicies(String aServicies) {theServicies = aServicies;}
-
-	/** Услуги */
 	private String theServicies;
-	/** Материал для микробилогического исследования */
-	private VocDocumentMaterialBiologAnalysis theMaterialBiologAnalysis;
-	/** Исследование */
-	private VocDocumentBiologAnalysis theBiologAnalysis;
-	/** Цель биологического исследования */
-	private VocDocumentObjectBiologAnalysis theObjectBiologAnalysis;
-	/** Талон */
-	private Ticket theTicket;
-	
+
+
 	/** Отделение */
 	@Comment("Отделение")
 	@OneToOne
 	public MisLpu getDepartment() {return theDepartment;}
 	public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
+	private MisLpu theDepartment;
 
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@OneToOne
 	public VocBedType getBedType() {return theBedType;}
 	public void setBedType(VocBedType aBedType) {theBedType = aBedType;}
-
-	/** Профиль коек */
 	private VocBedType theBedType;
-	/** Отделение */
-	private MisLpu theDepartment;
+
 	/** Планируемая дата с */
 	@Comment("Планируемая дата с")
 	public Date getPlanDateFrom() {return thePlanDateFrom;}
 	public void setPlanDateFrom(Date aPlanDateFrom) {thePlanDateFrom = aPlanDateFrom;}
+	private Date thePlanDateFrom;
 
 	/** Планируемая дата по */
 	@Comment("Планируемая дата по")
 	public Date getPlanDateTo() {return thePlanDateTo;}
 	public void setPlanDateTo(Date aPlanDateTo) {thePlanDateTo = aPlanDateTo;}
-
-	/** Планируемая дата по */
 	private Date thePlanDateTo;
-	/** Планируемая дата с */
-	private Date thePlanDateFrom;
-	
+
 	/** Планируется операция? */
 	@Comment("Планируется операция?")
 	public Boolean getIsPlanOperation() {return theIsPlanOperation;}
 	public void setIsPlanOperation(Boolean aIsPlanOperation) {theIsPlanOperation = aIsPlanOperation;}
-
-	/** Планируется операция? */
 	private Boolean theIsPlanOperation;
 	
 	/** Тип коек */
@@ -186,8 +160,6 @@ public class InternalDocuments extends Document {
 	@OneToOne
 	public VocBedSubType getBedSubType() {return theBedSubType;}
 	public void setBedSubType(VocBedSubType aBedSubType) {theBedSubType = aBedSubType;}
-
-	/** Тип коек */
 	private VocBedSubType theBedSubType;
 
 }

@@ -72,4 +72,10 @@ public class VocE2EntrySubType extends VocBaseEntity {
   public void setIdsp(VocE2FondV010 aIdsp) {theIdsp = aIdsp;}
   /** Способ оплаты */
   private VocE2FondV010 theIdsp ;
+
+  /** Тип файла */
+  @Comment("Тип файла")
+  public String getFileType() {return theFileType;}
+  public void setFileType(String aFileType) {theFileType = aFileType;}
+  private String theFileType ;
 }

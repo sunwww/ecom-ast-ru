@@ -1090,11 +1090,8 @@ public class Expert2ServiceBean implements IExpert2Service {
             } else if (aEntry.getBedSubType().equals("1")) {
                 code=(Boolean.TRUE.equals(aEntry.getIsRehabBed())? "REHAB_":"") +"ALLTIMEHOSP";
             } else if (aEntry.getBedSubType().equals("2")){
-                if (aEntry.getDepartmentId().equals(382L)) { //Дневной стационар при АПУ *пока только для АМОКБ
-                    code=(Boolean.TRUE.equals(aEntry.getIsRehabBed())? "REHAB_":"") +"POLDAYTIMEHOSP";
-                } else { //Дневной стационар при стационаре
-                    code=(Boolean.TRUE.equals(aEntry.getIsRehabBed())? "REHAB_":"") +"DAYTIMEHOSP";
-                }
+                //departmentType = 7 - Дневной стационар при АПУ
+                code = (Boolean.TRUE.equals(aEntry.getIsRehabBed())? "REHAB_":"")+("7".equals(aEntry.getDepartmentType()) ? "POL":"") +"DAYTIMEHOSP";
             } else {
                 code="UNKNOWNTIMEHOSP";
             }
@@ -1137,7 +1134,8 @@ public class Expert2ServiceBean implements IExpert2Service {
             fileType="T";
             LOG.info("vmp2 happens");
         } else if (entryType.equals(EXTDISPTYPE)){
-            code=EXTDISPTYPE+"_"+aEntry.getExtDispType();
+            //определяемся что ДД будем получать только с элмеда, VIDSLUCH уже есть
+            code=EXTDISPTYPE+"_"+(aEntry.getVidSluch()!=null ? aEntry.getVidSluch().getCode() : "VIDSLUCH");
             fileType = "DV"; //TODO dodelat'
         } else if (entryType.equals(KDPTYPE)) {
             code=KDPTYPE;
@@ -1156,10 +1154,15 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (aEntry.getId()>0) theManager.persist(new E2EntryError(aEntry,"NO_ENTRY_TYPE", "Не найдено вида случая с кодом: "+code));
         }
         aEntry.setSubType(subType);
-        if (subType.getVidSluch()!=null) {
-            aEntry.setVidSluch(subType.getVidSluch());
-        } else {
-            LOG.error("Не заполнен вид случая для записей с типом "+subType.getCode()+" "+subType.getName());
+        if (subType!=null) {
+            if (subType.getVidSluch()!=null) {
+                aEntry.setVidSluch(subType.getVidSluch());
+            } else {
+                LOG.error("Не заполнен вид случая для записей с типом "+subType.getCode()+" "+subType.getName());
+            }
+            if (subType.getExtDispType()!=null) {
+                aEntry.setExtDispType(subType.getExtDispType().getCode());
+            }
         }
         aEntry.setVisitPurpose(subType.getVisitPurpose()); //Цель посещения (V025)
         aEntry.setMedHelpUsl(subType.getUslOk()); //Условия оказания находим согласно подтипу записи (V006)
@@ -1638,7 +1641,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         }
         if (foundMain && foundOther) {
-            return getActualVocByClassName(VocKsg.class,new Date(System.currentTimeMillis()),"code='st29.007'");
+            return getActualVocByClassName(VocKsg.class,null,"code='st29.007'");
         }
         return null;
     }
@@ -1861,8 +1864,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /** Проверяем, является ли пара КСГ исключением из случая*/
-    //private static final String[] ksgExceptions = {"9#11","9#12","10#11","18#76","18#77","179#173","300#301","207#301","242#245","244#35","271#256"}; //терапевтическая#Хирургическая 2018
-    private static final String[] ksgExceptions = {"st02.008#st02.010","st02.008#st02.011","st02.009#st02.010","st04.002#st14.001","st04.002#st14.002","st21.007#st21.001","st34.001#st34.002","st26.001#st34.002","st30.003#st34.006","st30.005#st09.001","st31.017#st31.002"}; //терапевтическая#Хирургическая
+    private static final String[] ksgExceptions = {"st02.008#st02.010","st02.008#st02.011","st02.009#st02.010","st04.002#st14.001","st04.002#st14.002","st21.007#st21.001"
+            ,"st34.001#st34.002","st26.001#st34.002","st30.003#st34.006","st30.005#st09.001","st31.017#st31.002"}; //терапевтическая#Хирургическая
     private GrouperKSGPosition checkIsKsgException(GrouperKSGPosition aSurgicalKsgPosition, GrouperKSGPosition aTherapicalKsgPosition) {
         String key = aTherapicalKsgPosition.getKSGValue().getCode()+"#"+aSurgicalKsgPosition.getKSGValue().getCode();
         //  LOG.warn("ekseption.sql="+key);
@@ -2338,8 +2341,25 @@ public class Expert2ServiceBean implements IExpert2Service {
         return aEntry;
     }
 
-    private BigDecimal calculateExtDispEntryPrice(E2Entry aEntry) { //TODO реализовать!!!
-        return BigDecimal.valueOf(0.3);
+    private void calculateExtDispEntryPrice(E2Entry aEntry) { //TODO реализовать!!!
+        BigDecimal cost = getExtDispPrice(aEntry);
+        aEntry.setCost(cost);
+        aEntry.setBaseTarif(cost);
+
+        theManager.persist(aEntry);
+    }
+
+    /*расчитываем цену ДД по типу, возрасту, полу и дате*/
+    private BigDecimal getExtDispPrice (E2Entry aEntry) {
+        String sql = "select p.cost from ExtDispPrice p " +
+                " left join VocE2FondV016 v016 on v016.id=p.dispType_id" +
+                " left join vocsex vs on vs.id=p.sex_id" +
+                " where v016.code='"+aEntry.getExtDispType()+"' and (p.sex_id is null or vs.code='"+aEntry.getSex()+"')" +
+                " and ',"+aEntry.getExtDispAge()+",' in (p.ages) and '"+aEntry.getFinishDate()+"' between p.dateFrom and coalesce(p.dateTo,current_date)";
+        LOG.info("sql="+sql);
+        List<BigDecimal> list = theManager.createNativeQuery(sql).getResultList();
+
+        return list.isEmpty() ? BigDecimal.valueOf(0.03) : list.get(0);
     }
 
     /**
@@ -3088,25 +3108,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                 aEntry.setMedHelpKind((VocE2FondV008)resultMap.get(key));
             }
         } else if (extDispCase) { // TODО реализовать для ДД
-            //_vidpom
-
-            //for_pom
-
-            //vbr
-
-            //профиль_К
-
-            //<DS1_PR>1</DS1_PR>
+           //расчет возраста ДД
+            aEntry.setExtDispAge(AgeUtil.calculateExtDispAge(aEntry.getStartDate(),aEntry.getBirthDate()));
 
             //Result <RSLT>
-            if (aEntry.getFondResult()==null||forceUpdate) {
-                //Результат = видДД#группа_здоровья
-                String resultCode =aEntry.getSubType().getCode()+"#"+aEntry.getExtDispHealthGroup();
-                /* в зависимости от типа ДД, группа здоровья */
-                key = "EXTDISP#KEY#"+resultCode;
-                if (!resultMap.containsKey(key)) {resultMap.put(key,getActualVocByClassName(VocE2FondV009.class, actualDate, "extDispCodes like '%"+resultCode+"%'"));}
-                aEntry.setFondResult((VocE2FondV009)resultMap.get(key));
-            }
 
             //Исход <ISHOD>
             if (aEntry.getFondIshod()==null||forceUpdate) {
@@ -3117,14 +3122,14 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
             //Профиль мед. помощи
-            if (aEntry.getMedHelpProfile()==null||forceUpdate) {
+    /*        if (aEntry.getMedHelpProfile()==null||forceUpdate) {
                 if (aEntry.getFondDoctorSpecV021()!=null) { //Обновляем профиль мед. помощи по профилю врача
                     aEntry.setMedHelpProfile(aEntry.getFondDoctorSpecV021().getPolicProfile());
                 }
             }
-
+*/
             //Вид медицинской помощи
-            if (aEntry.getMedHelpKind()==null||forceUpdate) {
+  /*          if (aEntry.getMedHelpKind()==null||forceUpdate) {
                 String v008Code = "12"; //ПЕРВИЧНАЯ ВРАЧЕБНАЯ МЕДИКО-САНИТАРНАЯ ПОМОЩЬ
                 key = "V008#"+v008Code;
                 if (!resultMap.containsKey(key)) {
@@ -3132,7 +3137,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
                 aEntry.setMedHelpKind((VocE2FondV008)resultMap.get(key));
             }
-
+*/
             //Условия оказания мед. помощи (V006)
             //    if (aEntry.getMedHelpUsl()==null||forceUpdate) {
             VocE2EntrySubType entrySubType =aEntry.getSubType();
@@ -3142,13 +3147,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 aEntry.setMedHelpUsl(entrySubType.getUslOk());
             }
 
-            //Способ оплаты медицинской помощи
- /*           if (aEntry.getIDSP()==null||forceUpdate) {
-                String idspCode="11";
-                key = "IDSP#"+idspCode;
-                if (!resultMap.containsKey(key)) {resultMap.put(key, getActualVocByClassName(VocE2FondV010.class,actualDate ," code='"+idspCode+"'"));}
-                aEntry.setIDSP((VocE2FondV010)resultMap.get(key));
-            }*/
 
         } else {
             //   usl="4"; //скорая помощь
@@ -3165,7 +3163,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         // serviceList = new HashMap<String, VocMedService>();
         ksgMap = new HashMap<>();
         tariffMap = new HashMap<>();
-        //  cusmoMap = new HashMap<String, BigDecimal>();
+        cusmoMap = new HashMap<String, BigDecimal>();
         //  hospitalCostMap = new HashMap<String, BigDecimal>();
         difficultyHashMap = new HashMap<>();
         polyclinicCasePrice = new HashMap<>();

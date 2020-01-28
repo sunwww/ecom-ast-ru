@@ -65,10 +65,6 @@ public class LpuServiceBean implements ILpuService {
         		createOrFindUser(lpu) ;
     		}
     	}
-//    	if(!"user".equals(aParam)) {
-//			long monitorId = theMonitorService.createMonitor() ;
-//			theJaasMisService.updateJaasPolicy(monitorId);
-//    	}
     }
 
     private SecUser createOrFindUser(MisLpu lpu) {
@@ -115,27 +111,16 @@ public class LpuServiceBean implements ILpuService {
     	if(role==null) {
     		if(policy==null) {
     			throw new IllegalStateException("Нужно синхронихва") ;
-    			//policy = QueryResultUtil.getFirst(SecPolicy.class, theManager.createQuery("from SecPolicy where key=:key")
-    	    	//		.setParameter("key", lpu.getId()+""));
-    			//theManager.refresh(policy) ;
     		}
     		role = findRoleWithPolicy(policy, lpu) ;
     	} else {
-		LOG.info("finding policy ="+role.getSecPolicies()) ;
-		for(SecPolicy pol : policy.getChildsSecPolicies()) {
-		    if(!role.getSecPolicies().contains(pol)) {
-	        	    LOG.info("addng policy policy ="+pol) ;
-			    role.getSecPolicies().add(pol) ;
-		    }
-		}
-		
-    		//if(!role.getSecPolicies().contains(policy)) {
-        	//	LOG.info("addng policy policy ="+policy) ;
-		//	for(SecPolicy pol : policy.getChildsSecPolicies()) {
-		//	    role.getSecPolicies().add(policy) ;
-		//	}
-    		//	
-    		//}
+			LOG.info("finding policy ="+role.getSecPolicies()) ;
+			for(SecPolicy pol : policy.getChildsSecPolicies()) {
+				if(!role.getSecPolicies().contains(pol)) {
+						LOG.info("addng policy policy ="+pol) ;
+					role.getSecPolicies().add(pol) ;
+				}
+			}
     	}
     	return role ;
 	}
@@ -157,7 +142,6 @@ public class LpuServiceBean implements ILpuService {
     	theManager.flush() ;
     	theManager.clear() ;
     	LOG.info("role created "+role) ;
-    	//theManager.refresh(role) ;
     	return role ;
     }
 
@@ -185,16 +169,13 @@ public class LpuServiceBean implements ILpuService {
 	public void onRemoveLpu(long aLpu) {
 		theManager.createQuery("delete from RepMisLpuChild where lpu_id=:lpu or childLpu_id=:lpu")
 			.setParameter("lpu", aLpu).executeUpdate();
-		//theManager.flush();
 	}
 	public void createOtherEquipment(long aLpu, long aEquipment) {
 		theManager.createNativeQuery("insert into equipment_mislpu (equipment_id, otherLpu_id) values ( :equipment, :lpu )")
 			.setParameter("lpu", aLpu).setParameter("equipment", aEquipment).executeUpdate();
-		//theManager.flush();
 	}
 	public void removeOtherEquipment(long aLpu, long aEquipment) {
 		theManager.createNativeQuery("delete from equipment_mislpu where equipment_id=:equipment and otherLpu_id=:lpu")
 			.setParameter("lpu", aLpu).setParameter("equipment", aEquipment).executeUpdate();
-		//theManager.flush();
 	}
 }

@@ -63,7 +63,6 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			sql.append("select id from Diagnosis where medCase_id=").append(aMedCase)
 					.append(" and registrationType_id='").append(vocDRT.getId())
 					.append("' and priority_id='").append(vocPrior.getCode()).append("' order by id") ;
-			LOG.info("sql = "+sql);
 			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList() ;
     		String[] otherServs = aListDiags.split("#@#");
     		if (otherServs.length>0) {

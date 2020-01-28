@@ -287,65 +287,9 @@ public class ParameterServiceBean implements IParameterService{
 	    param.setName(name);
 	    param.setType(type) ;
 	    return param ;
-	        
-	        /*
-	        if ("AllValueHelper".equals(type)) {
-	            Element iAllValueElement = aElement.getChild("IAllValue");
-	            if (iAllValueElement == null) throw new IllegalStateException("Нет элемента IAllValue у справочника " + key);
-	            String clazz = iAllValueElement.getTextTrim();
-	            if (StringUtil.isNullOrEmpty(clazz)) throw new IllegalStateException("Пустой элемент IAllValue");
-	            IAllValue iAllValueObject = (IAllValue) theClassLoaderHelper.loadClass(clazz).newInstance() ;
-	            AllValueHelper allValueHelper = new AllValueHelper(iAllValueObject);
-	            put(aHash, key, allValueHelper);
-	        } else if("AllValueHelperEntityVoc".equals(type)) {
-	            Element vocValueElement = aElement.getChild("vocValue") ;
-	            if(vocValueElement==null) throw new IllegalStateException("Нет элемента vocValue у "+key) ;
-
-	            AllValueHelper allValueHelper = new AllValueHelper(new EntityVocAllValue(
-	                    vocValueElement.getAttributeValue("entity")
-	                    , vocValueElement.getAttributeValue("id")
-	                    , vocValueElement.getAttributeValue("names")
-	                    , vocValueElement.getAttributeValue("sortBy")
-	            ));
-	            put(aHash, key, allValueHelper) ;
-	        } else if("IVocService".equals(type)) {
-
-//	            Element iVocServiceElement = aElement.getChild("IVocService");
-//	            if(iVocServiceElement==null) throw new IllegalStateException("Нет элемента IVocService") ;
-	            String className = aElement.getAttributeValue("class") ;
-	            if(StringUtil.isNullOrEmpty(className)) throw new IllegalStateException("Нет аттрибута class в справочнике "+key) ;
-	            Class clazz = theClassLoaderHelper.loadClass(className) ;
-	            IVocContextService service = (IVocContextService) clazz.newInstance() ;
-	            if(service instanceof IVocConfigXmlService) {
-	                IVocConfigXmlService iVocConfigXmlService = (IVocConfigXmlService) service ;
-	                try {
-	                    iVocConfigXmlService.config(aElement);
-	                } catch (Exception e) {
-	                    throw new IllegalStateException("Ошибка инициализации справочника "+key+": "+e.getMessage(), e) ;
-	                }
-	            }
-	            put(aHash, key, service) ;
-	        } else if("EntityVocService".equals(type)) {
-	            Element elm = aElement.getChild("EntityVocService") ;
-	            String className = elm.getAttributeValue("entity") ;
-	            String[] names = getAsArray(elm.getAttributeValue("names")) ;
-	            String[] queried = getAsArray(elm.getAttributeValue("queried")) ;
-	            String parent = elm.getAttributeValue("parent") ;
-	            if(StringUtil.isNullOrEmpty(parent)) {
-	                parent = elm.getAttributeValue("parentProperty") ;
-	            }
-	            String queryAppend = elm.getAttributeValue("queryAppend") ;
-	            String queryConvertType = elm.getAttributeValue("queryConvertType") ;
-	            EntityVocService service = new EntityVocService(className, names, queried,parent, queryAppend,queryConvertType);
-	            put(aHash, key, service) ;
-	        } else {
-	            throw new IllegalStateException("Не поддерживается тип " + type);
-	        }
-	        */
 	    }
 	
 	private InputStream getInputStream(String aResourceString) throws FileNotFoundException {
-		//return theEcomConfig.getInputStream(aResourceString, "diary.dir.prefix",true);
     	return theEcomConfig.getInputStream(aResourceString, "",true);
     }
 	private Boolean toBoolean(String aString) {

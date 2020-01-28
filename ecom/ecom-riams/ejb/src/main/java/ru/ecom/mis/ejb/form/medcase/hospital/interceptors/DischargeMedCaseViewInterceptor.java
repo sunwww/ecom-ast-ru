@@ -27,10 +27,8 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 		if (medCase.getDateFinish()==null || medCase.getDischargeTime()==null){
 			if (medCase instanceof ExtHospitalMedCase) {}else{
 			if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/CheckPrintAllProtocol")) {
-				StringBuilder sql = new StringBuilder() ;
-				sql.append("select count(*) from diary p left join medcase m on m.id=p.medcase_id where ((m.id='").append(id).append("' and m.dtype='HospitalMedCase') or (m.parent_id='").append(id).append("' and m.dtype='DepartmentMedCase')) and p.printDate is null and p.dtype='Protocol'");
 				Object obj = manager
-					.createNativeQuery(sql.toString()).getSingleResult() ;
+					.createNativeQuery("select count(*) from diary p left join medcase m on m.id=p.medcase_id where ((m.id='" + id + "' and m.dtype='HospitalMedCase') or (m.parent_id='" + id + "' and m.dtype='DepartmentMedCase')) and p.printDate is null and p.dtype='Protocol'").getSingleResult() ;
 				Long count = ConvertSql.parseLong(obj) ;
 				if (count>0){
 					throw new IllegalArgumentException("Необходимо перед выпиской распечатать все протоколы! <a href='printProtocolsBySLS.do?stNoPrint=selected&id="+id+"'>Есть "+(count.intValue())+" нераспечатанный(х) протокол(ов)</a>");

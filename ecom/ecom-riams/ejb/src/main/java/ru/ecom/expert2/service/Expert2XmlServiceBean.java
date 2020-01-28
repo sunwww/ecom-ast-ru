@@ -294,6 +294,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     isPoliclinic=true;
                     isPoliclinicKdp=true;
                     break;
+                case EXTDISPTYPE:
+                    isExtDisp = true;
+                    break;
                 default:
                     throw new IllegalStateException("UNKNOWN ENTRYTYPE"+entryType);
             }
@@ -546,15 +549,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
                     sl.addContent(ksgKpg);
                 }
-                // * REAB * //TODO медиал
+                if (isHosp && Boolean.TRUE.equals(aEntry.getIsRehabBed())) add(sl,"REAB","1"); // * REAB * //TODO медиал
                 String prvs = currentEntry.getFondDoctorSpecV021()!=null ? currentEntry.getFondDoctorSpecV021().getCode() : "ERROR_"+currentEntry.getDoctorWorkfunction();
                 add(sl,"PRVS",prvs); //Специальность лечащего врача
                 add(sl,"VERS_SPEC",vers);
                 add(sl,"IDDOKT",currentEntry.getDoctorSnils()); // СНИЛС лечащего врача
-                if (a3){
-                    add(sl,"NAZ","currentEntry.getDoctorSnils()"); // назначения в ДД
+             /*   if (a3){
+                    add(sl,"NAZ",""); // назначения в ДД
                 }
-                add(sl,"ED_COL",edCol);
+              */  add(sl,"ED_COL",edCol);
                 if (isPoliclinicKdp) {
                     add(sl,"TARIF",aEntry.getCost());
                     add(sl,"SUM_M",aEntry.getCost());
@@ -641,27 +644,16 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                         //   isKdoServicesSet = true;
                     } */
-                }  /* else if (isExtDisp) { //TODO
-                  List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id) as cnt from EntryMedService where entry_id=:id group by medservice_id").setParameter("id",aEntry.getId()).getResultList();
-                    if (list.size()>0) {
-                        for (Object[] ms: list) {
-                            VocMedService medService = theManager.find(VocMedService.class,Long.valueOf(ms[0].toString()));
-                            Element usl = new Element("USL");
-                            usl.addContent(new Element("IDSERV").setText(""+uslCnt));
-                            usl.addContent(new Element("PROFIL_U").setText(profileK));
-                            usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
-                            usl.addContent(new Element("IDDOKT_U").setText(aEntry.getDoctorSnils()));
-                            usl.addContent(new Element("DATE_1_U").setText(startDate));
-                            usl.addContent(new Element("DATE_2_U").setText(startDate));
-                            usl.addContent(new Element("DS_U").setText(sluch.getChildText("DS1")));
-                            usl.addContent(new Element("COD_DUSL_U").setText(medService.getCode()));
-                            usl.addContent(new Element("ED_COL_U").setText(ms[1].toString()));
-                            usl.addContent(new Element("PRVS_U").setText("0"));
-                            sluch.addContent(usl);
+                } else if (isExtDisp) { //TODO
+                  //List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id) as cnt from EntryMedService where entry_id=:id group by medservice_id").setParameter("id",aEntry.getId()).getResultList();
+                    List<EntryMedService> serviceList = aEntry.getMedServices();
+                        for (EntryMedService ms: serviceList) {
+                            sl.addContent(createUsl(""+uslCnt,mainLpu,"0",ms.getMedService().getCode(),isChild
+                            ,ms.getServiceDate()+"",ms.getServiceDate()+"",sl.getChildText("DS1")
+                            ,"1","PRVS",isNotNull(ms.getDoctorSnils()) ? ms.getDoctorSnils() : aEntry.getDoctorSnils(),ms.getCost()));
                             uslCnt++;
                         }
-                    }
-                } */ else { //стационар
+                }  else { //стационар
                     List<Object[]> list = theManager.createNativeQuery("select vms.code as ms, cast(count(ems.id) as varchar) as cnt" +
                             ", coalesce(cast(case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end as varchar(10)),'') as serviceDate" +
                             " from EntryMedService ems" +

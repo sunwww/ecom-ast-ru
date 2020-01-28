@@ -17,8 +17,8 @@ import javax.persistence.Table;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(unique= false, properties = {"accountMedService"})
-	,@AIndex(unique= false, properties = {"accountOperation"})
+	@AIndex(properties = {"accountMedService"})
+	,@AIndex(properties = {"accountOperation"})
 })
 public class ContractAccountOperationByService extends BaseEntity {
 	/** Операция договорного счета */

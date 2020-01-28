@@ -6,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryListForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
+        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryListForm" />
 
     </tiles:put>
     <tiles:put name="body" type="string">
@@ -24,7 +24,7 @@
         <tags:E2ImportFile name="ImportFile"/>
             <tags:E2UnionListEntry name="Union"/>
         </msh:ifFormTypeIsView>
-        <msh:form action="/entitySaveGoView-e2_entryList.do" defaultField="name" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+        <msh:form action="/entitySaveGoView-e2_entryList.do" defaultField="name">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
             <msh:hidden property="isClosed"/>
@@ -55,12 +55,12 @@
                     <msh:textArea property="historyNumbers" fieldColSpan="5"/>
                 </msh:row>
                 </msh:ifFormTypeIsCreate>
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+                <msh:submitCancelButtonsRow colSpan="4" />
                 <msh:ifFormTypeIsView formName="e2_entryListForm">
 
                 <ecom:webQuery name="entries" nameFldSql="entries_sql" nativeSql="select '${param.id}&entryType='||e.entryType||'&billDate='||
                     coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'') ||'&serviceStream='||e.serviceStream
-                    ||'&isForeign='||case when e.isForeign='1' then '1' else '0' end||'&billComment='||coalesce(bill.comment,'')||'&fileType='||e.fileType as id
+                    ||'&isForeign='||case when e.isForeign='1' then '1' else '0' end||'&billComment='||coalesce(bill.comment,'')||'&fileType='||coalesce(e.fileType,'') as id
                 ,e.entryType as f2
                 ,e.billDate as f3
                 ,e.billNumber||max(case when vocbill.id is not null then ' ('||vocbill.name||')' else '' end ) as f4
@@ -100,8 +100,8 @@
     </tiles:put>
 
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="e2_entryListForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-            <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
+        <msh:ifFormTypeIsView formName="e2_entryListForm">
+            <msh:sideMenu>
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_entryList" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink params="id" action="/entityParentList-e2_entry" name="Записи" roles="/Policy/E2/View" />
                 <msh:sideLink params="id" action="/e2_errorsByList" name="Список ошибок" roles="/Policy/E2/View" />

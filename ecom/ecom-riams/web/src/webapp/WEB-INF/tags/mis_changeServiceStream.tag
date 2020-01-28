@@ -67,7 +67,7 @@
      		alert("Поле поток обслуживания является обязательным") ;
      		$("${name}ChangeServiceStreamName").focus() ;
      	}  else {
-         	${service}.changeServiceStreamBySmo(
+         	TicketService.changeServiceStreamBySmo(
              		'${param.id}', $('${name}ChangeServiceStream').value, {
              			callback: function(aString) {
              				alert(aString) ;

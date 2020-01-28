@@ -147,7 +147,7 @@
 	</NativeVocService>
     </voc> 
     
-<!--  Список гарантийных писем по потоку обслуживания  -->
+<!--  Список гарантийных писем по пациенту  -->
 <voc id='guaranteeByPatient' type='NativeVocService'>
        <NativeVocService
 	from="contractguarantee cg"

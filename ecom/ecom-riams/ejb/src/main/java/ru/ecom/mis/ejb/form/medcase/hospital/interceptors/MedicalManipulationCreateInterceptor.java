@@ -65,7 +65,7 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
             form.setLpu(parentSSL.getLpu().getId());
         }
         if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction")
-                &&form.getDepartment()!=null&&form.getDepartment()>Long.valueOf(0)) {
+                &&form.getDepartment()!=null&&form.getDepartment()> 0L) {
             String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
             List<Object[]> listwf =  manager.createNativeQuery("select wf.id as wfid,w.id as wid from WorkFunction wf left join Worker w on w.id=wf.worker_id left join SecUser su on su.id=wf.secUser_id where su.login = :login and w.lpu_id=:lpu and wf.id is not null and wf.isSurgical='1'")
                     .setParameter("login", username)

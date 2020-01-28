@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 
 @Entity
 /**Таблица соответствия услуги в доп. диспансеризации и услуги по справочнику V001*/
+@Deprecated
 public class E2ExtDispMedServiceLink extends BaseEntity {
    /** Код VocExtDispService */
    @Comment("Код VocExtDispService")

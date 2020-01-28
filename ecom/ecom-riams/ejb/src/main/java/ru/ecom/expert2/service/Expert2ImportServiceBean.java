@@ -7,14 +7,13 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.expert2.domain.E2Bill;
-import ru.ecom.expert2.domain.E2Entry;
-import ru.ecom.expert2.domain.E2EntrySanction;
-import ru.ecom.expert2.domain.E2ListEntry;
+import ru.ecom.expert2.domain.*;
 import ru.ecom.expert2.domain.voc.VocE2BillStatus;
+import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
 import ru.ecom.expert2.domain.voc.federal.*;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -89,6 +88,115 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         }
         return "ФЛК: Импортировано " + cnt + " записей из "+defs.size();
 
+    }
+
+    /*Импортируем файл с элмед*/
+    public String importElmed(String aXmlFilename) {
+        try { //делаем только ДД
+            LOG.info("i1");
+            Document doc = getDocumentFromFile(XMLDIR+"/",aXmlFilename,false);
+            if (doc == null) return "Не удается открыть файл "+aXmlFilename;
+            E2ListEntry le = new E2ListEntry();
+            le.setName("ELMED_"+aXmlFilename);
+            String lpuCode="300052";
+            le.setLpuOmcCode(lpuCode);
+            theManager.persist(le);
+            LOG.info("i2");
+            Element root = doc.getRootElement();
+            SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
+            int i = 0;
+
+            List<Element> zaps = root.getChildren("ZAP");
+            E2Entry e;
+            LOG.info("start import elmed "+aXmlFilename+", found "+zaps.size()+" records");
+            for (Element zap : zaps) {
+                try {
+                    i++;
+                    if (i%100==0) {LOG.info("improt " +i+" records");}
+                    e = new E2Entry();
+                    Element sl = zap.getChild("SL");
+                    e.setListEntry(le);
+                    e.setLpuCode(lpuCode);
+                    e.setMedPolicyType(zap.getChildText("VPOLIS"));
+                    e.setMedPolicyNumber(zap.getChildText("NPOLIS"));
+                    e.setInsuranceCompanyCode(zap.getChildText("SMO"));
+                    Date startDate = toDate(zap.getChildText("DATE_Z_1"));
+                    Date finishDate = toDate(zap.getChildText("DATE_Z_2"));
+                    e.setLastname(zap.getChildText("FAM"));
+                    e.setFirstname(zap.getChildText("IM"));
+                    e.setMiddlename(zap.getChildText("OT"));
+                    e.setBirthDate(toDate(zap.getChildText("DR")));
+                    e.setSex(zap.getChildText("W"));
+                    if (isNotNull(zap.getChildText("FAM_P"))) {
+                        e.setKinsmanLastname(zap.getChildText("FAM_P"));
+                        e.setKinsmanFirstname(zap.getChildText("IM_P"));
+                        e.setKinsmanMiddlename(zap.getChildText("OT_P"));
+                        e.setKinsmanBirthDate(toDate(zap.getChildText("DR_P")));
+                        e.setKinsmanSex(zap.getChildText("W_P"));
+                        e.setKinsmanSnils(zap.getChildText("SNILS"));
+                    } else {
+                        e.setPatientSnils(zap.getChildText("SNILS"));
+                    }
+                    e.setOkatoReg(zap.getChildText("OKATOG"));
+                    e.setCommonNumber(zap.getChildText("ENP"));
+                    e.setPassportType(zap.getChildText("DOCTYPE"));
+                    e.setPassportSeries(zap.getChildText("DOCSER"));
+                    e.setPassportNumber(zap.getChildText("DOCNUM"));
+
+                    e.setStartDate(startDate);
+                    e.setFinishDate(finishDate);
+                    e.setServiceStream("OBLIGATORYINSURANCE");
+                    e.setMedHelpUsl(getVocByCode(VocE2FondV006.class, finishDate, zap.getChildText("USL_OK")));
+                    e.setMedHelpKind(getVocByCode(VocE2FondV008.class, finishDate, zap.getChildText("VIDPOM")));
+                    e.setIsEmergency(!zap.getChildText("FOR_POM").equals("3"));
+                    e.setIsMobilePolyclinic(false);
+                    e.setHistoryNumber(sl.getChildText("NHISTORY"));
+                    e.setMainMkb(sl.getChildText("DS1"));
+                    e.setFondResult(getVocByCode(VocE2FondV009.class, finishDate, zap.getChildText("RSLT")));
+                    e.setFondIshod(getVocByCode(VocE2FondV012.class, finishDate, zap.getChildText("ISHOD")));
+                    VocE2FondV021 medSpec =getVocByCode(VocE2FondV021.class, finishDate, sl.getChildText("PRVS"));
+                    e.setMedHelpProfile(medSpec.getPolicProfile());
+                    e.setFondDoctorSpecV021(medSpec);
+                    e.setDoctorSnils(sl.getChildText("IDDOKT"));
+                    /*new flds*/
+                    e.setDoctorName(sl.getChildText("TABNOM"));
+                    e.setVisitPurpose(getVocByCode(VocE2FondV025.class, finishDate, sl.getChildText("P_CEL")));
+                    e.setIDSP(getVocByCode(VocE2FondV010.class, finishDate, sl.getChildText("IDSP"))); //TODO
+                    //    e.setTotalCoefficient(new BigDecimal(sluch.getChildText("KOEF")));
+                    //    e.setCost(new BigDecimal(sluch.getChildText("SUMV")));
+                    String entryTypeCode = "EXTDISP_"+zap.getChildText("VID_SLUCH");
+                    //VocE2VidSluch vidSluch = getVocByCode(VocE2VidSluch.class,finishDate,);
+                    VocE2EntrySubType subType = getActualVocByCode(VocE2EntrySubType.class,null,"code='"+entryTypeCode+"'");
+                    e.setSubType(subType);
+                    e.setFileType(subType.getFileType());
+                    e.setVidSluch(subType.getVidSluch());
+                    e.setIDSP(getVocByCode(VocE2FondV010.class, finishDate,zap.getChildText("IDSP")));
+                    theManager.persist(e);
+                    List<Element> uslList = sl.getChildren("USL");
+                    for (Element usl: uslList) {
+                        VocMedService vms = getVocByCode(VocMedService.class,finishDate,usl.getChildText("VID_VME"));
+                        EntryMedService ms = new EntryMedService(e, vms);
+                        ms.setDoctorSnils(usl.getChildText("IDDOKT_U"));
+                        try{
+                            ms.setServiceDate(toDate(usl.getChildText("DATE_IN")));
+                        } catch (NullPointerException | ParseException ee ) {
+                            LOG.warn("no serviceDate");
+                        }
+                        ms.setDoctorSpeciality(isNotNull(usl.getChildText("PRVS_U")) && !"0".equals(usl.getChildText("PRVS_U"))
+                                ? getVocByCode(VocE2FondV021.class, finishDate, usl.getChildText("PRVS_U")) : medSpec);
+                        theManager.persist(ms);
+                    }
+
+                } catch (Exception e1) {
+                    LOG.error(i+" Не удалось загрузить запись:"+new XMLOutputter().outputString(zap));
+                }
+            }
+                return "ok: " + i;
+
+        } catch (Exception e){
+            LOG.error(e.getMessage(),e);
+            return null;
+        }
     }
 
     /*Создаем заполнение из MP файла*/
@@ -185,8 +293,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
                 }
                 return "ok: " + i;
-
-            } else if (ver.equals("3.1")) { //импорт ответа в новом формате
 
             } else {
                 LOG.error("Unknown version to import");

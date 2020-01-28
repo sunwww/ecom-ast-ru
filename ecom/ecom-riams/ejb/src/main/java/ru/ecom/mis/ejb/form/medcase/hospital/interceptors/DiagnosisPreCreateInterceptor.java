@@ -36,7 +36,7 @@ public class DiagnosisPreCreateInterceptor implements IParentFormInterceptor {
         }
         //Запрет на создание в СЛО и СЛС, если случай закрыт. Админ может создавать.
 		if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut") &&
-				(parent instanceof DepartmentMedCase || parent instanceof HospitalMedCase)) {
+				parent instanceof HospitalMedCase) {
         	MedCase hmc = (parent instanceof DepartmentMedCase)? parent.getParent() : parent;
         	if (hmc.getDateFinish()!=null) throw new IllegalStateException("Пациент выписан. Нельзя добавлять диагноз в закрытый СЛС!");
 		}
