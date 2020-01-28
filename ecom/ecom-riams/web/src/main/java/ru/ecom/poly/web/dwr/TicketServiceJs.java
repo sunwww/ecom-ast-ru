@@ -399,7 +399,6 @@ public class TicketServiceJs {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.changeServiceStreamBySmo(aSmo, aServiceStream) ;
 		HospitalMedCaseServiceJs.createAdminChangeMessageBySmo(aSmo, "CHANGE_SERVICE_STREAM", "Изменение потока обслуживания: "+aSmo, aRequest) ;
-
 		return "Поток обслуживания изменен" ;
 	}
 	public String changeLpuBySmo(Long aSmo, Long aLpu, HttpServletRequest aRequest) throws NamingException {
