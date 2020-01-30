@@ -86,4 +86,12 @@ public class ExtDispPriceForm extends IdEntityForm {
     public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
     /** Дата окончания действия */
     private String theDateTo ;
+
+    /** Возраста  */
+    @Comment("Возраста ")
+    @Persist
+    public String getAges() {return theAges;}
+    public void setAges(String aAges) {theAges = aAges;}
+    /** Возраста  */
+    private String theAges ;
 }

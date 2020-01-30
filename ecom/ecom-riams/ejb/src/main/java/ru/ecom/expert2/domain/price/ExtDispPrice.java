@@ -72,4 +72,11 @@ public class ExtDispPrice extends BaseEntity {
     public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
     /** Дата окончания действия */
     private Date theDateTo ;
+
+    /** Возраста  */
+    @Comment("Возраста ")
+    public String getAges() {return theAges;}
+    public void setAges(String aAges) {theAges = aAges;}
+    /** Возраста  */
+    private String theAges ;
 }

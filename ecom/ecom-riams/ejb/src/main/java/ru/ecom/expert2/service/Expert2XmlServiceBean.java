@@ -676,7 +676,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             ,isChild,finishDate,finishDate,sl.getChildText("DS1"),"1"
                             ,prvs,currentEntry.getDoctorSnils(),BigDecimal.ZERO));
                 }
-                if (uslSum.compareTo(BigDecimal.ZERO)==1) sl.getChild("SUM_M").setText(currentEntry.getCost().add(uslSum).toString());
+             //   if (uslSum.compareTo(BigDecimal.ZERO)==1) sl.getChild("SUM_M").setText(currentEntry.getCost().add(uslSum).toString());
                 // USL finish
                 zSl.addContent(indSl,sl);
                 indSl++;
