@@ -30,10 +30,6 @@
                     <msh:textField property="ageGroup"  />
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="ageFrom" />
-                    <msh:textField property="ageTo" />
-                </msh:row>
-                <msh:row>
                     <msh:textField property="dateFrom" />
                     <msh:textField property="dateTo" />
                 </msh:row>

@@ -453,6 +453,7 @@ public class E2Entry extends BaseEntity {
 
      /** ОКАТО регистрации */
      @Comment("ОКАТО регистрации")
+     @Deprecated // нафиг не нужно
      public String getOkatoReg() {return theOkatoReg;}
      public void setOkatoReg(String aOkatoReg) {theOkatoReg = aOkatoReg;}
      /** ОКАТО регистрации */
@@ -460,6 +461,7 @@ public class E2Entry extends BaseEntity {
 
      /** ОКАТО проживания */
      @Comment("ОКАТО проживания")
+     @Deprecated // нафиг не нужно
      public String getOkatoReal() {return theOkatoReal;}
      public void setOkatoReal(String aOkatoReal) {theOkatoReal = aOkatoReal;}
      /** ОКАТО проживания */

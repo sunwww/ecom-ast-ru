@@ -70,11 +70,13 @@
                 ,case when e.isForeign='1' then 'ИНОГ' else '' end as f8_isFor
                 ,bill.comment as f9_billComment
                 ,coalesce(e.fileType,'') as f10_fileType
-                 from e2entry e
+                ,e.billNumber||''','''||to_char(e.billDate,'dd.MM.yyyy')||''','''||to_char(le.startDate,'dd.MM.yyyy')||' - '||to_char(le.finishDate,'dd.MM.yyyy')||''','||bill.sum||','''||split_part(bill.billnumber,'/',2)||'' as f11_printBill
+                 from e2listEntry le
+                 left join e2entry e on e.listentry_id=le.id
                  left join e2bill bill on bill.id=e.bill_id
                  left join voce2billstatus vocbill on vocbill.id=bill.status_id
-                where e.listentry_id =${param.id} and (e.isDeleted is null or e.isDeleted='0')
-                group by e.entryType, e.billDate, e.billNumber ,e.serviceStream, e.isForeign,bill.comment, e.fileType
+                where le.id =${param.id} and (e.isDeleted is null or e.isDeleted='0')
+                group by e.entryType, e.billDate, e.billNumber ,e.serviceStream, e.isForeign,bill.comment, e.fileType, le.startDate , le.finishDate, bill.billNumber,bill.sum
                  order by e.entryType, e.serviceStream, e.billDate, e.billNumber  "/>
 
                 <msh:table idField="1" name="entries" action="entityParentList-e2_entry.do"  noDataMessage="Нет записей по заполнению" >
@@ -84,6 +86,7 @@
                     <msh:tableColumn columnName="Источник финансирования" property="7"/>
                     <msh:tableColumn columnName="Дата счета" property="3"/>
                     <msh:tableColumn columnName="Номер счета" property="4"/>
+                    <msh:tableButton property="11" hideIfEmpty="true" buttonShortName="©" buttonFunction="printBill"/>
                     <msh:tableColumn columnName="Примечание" property="9"/>
                     <msh:tableColumn columnName="записей" property="5"/>
                     <msh:tableColumn columnName="дефектов" property="6" addParam="&defect=1"/>
@@ -134,6 +137,12 @@
             <script type="text/javascript">
                 var monitor = {};
                 checkIsRunning();
+
+                function printBill(num,date,period,cost,insCode) {
+                    window.location.href = "print-omc_bill_"+insCode+".do?billNumber="+num+"&s=OmcPrintService&m=printOmcBill"+
+                    "&billDate="+date+"&billCost="+cost+"&billPeriod="+period;
+
+                }
                 function deleteAllDeletedEntries() {
                     Expert2Service.deleteAllDeletedEntries();
                 }

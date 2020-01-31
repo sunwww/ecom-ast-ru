@@ -111,33 +111,30 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         Element pers = new Element("PERS");
         pers.addContent(new Element("ID_PAC").setText(aEntry.getExternalPatientId().toString()));
         if (isKinsman) { //Заполняем данные о представителе
-            pers.addContent(new Element("FAM").setText("НЕТ"));
-            pers.addContent(new Element("IM").setText("НЕТ"));
-            pers.addContent(new Element("OT").setText("НЕТ"));
-            pers.addContent(new Element("W").setText(aEntry.getSex()));
-            pers.addContent(new Element("DR").setText(dateToString(aEntry.getBirthDate())));
-            pers.addContent(new Element("FAM_P").setText(aEntry.getKinsmanLastname()));
-            pers.addContent(new Element("IM_P").setText(aEntry.getKinsmanFirstname()));
-            pers.addContent(new Element("OT_P").setText(aEntry.getKinsmanMiddlename()));
-            pers.addContent(new Element("W_P").setText(aEntry.getKinsmanSex()));
-            pers.addContent(new Element("DR_P").setText(dateToString(aEntry.getKinsmanBirthDate())));
+            add(pers,"FAM","НЕТ");
+            add(pers,"IM","НЕТ");
+            add(pers,"OT","НЕТ");
+            add(pers,"W",aEntry.getSex());
+            add(pers,"DR",dateToString(aEntry.getBirthDate()));
+            add(pers,"FAM_P",aEntry.getKinsmanLastname());
+            add(pers,"IM_P",aEntry.getKinsmanFirstname());
+            add(pers,"OT_P",aEntry.getKinsmanMiddlename());
+            add(pers,"W_P",aEntry.getKinsmanSex());
+            add(pers,"DR_P",dateToString(aEntry.getKinsmanBirthDate()));
 
         } else {
-            pers.addContent(new Element("FAM").setText(aEntry.getLastname()));
-            pers.addContent(new Element("IM").setText(aEntry.getFirstname()));
+            add(pers,"FAM",aEntry.getLastname());
+            add(pers,"IM",aEntry.getFirstname());
             addIfNotNull(pers, "OT", aEntry.getMiddlename());
-            pers.addContent(new Element("W").setText(aEntry.getSex()));
-            pers.addContent(new Element("DR").setText(dateToString(aEntry.getBirthDate())));
+            add(pers,"W",aEntry.getSex());
+            add(pers,"DR",dateToString(aEntry.getBirthDate()));
         }
         //MR
-      //  log.info("Добавляем данные о пациенте OTHER_DATA " + aEntry.getExternalPatientId() + " в L файле");
         addIfNotNull(pers,"DOCTYPE",aEntry.getPassportType());
         addIfNotNull(pers,"DOCSER",aEntry.getPassportSeries());
         addIfNotNull(pers, "DOCNUM", aEntry.getPassportNumber());
         addIfNotNull(pers,"SNILS",isKinsman ? aEntry.getKinsmanSnils() : aEntry.getPatientSnils());
-        addIfNotNull(pers,"ENP",aEntry.getCommonNumber());
-     //   pers=addIfNotNull(pers,"OKATOG",aEntry.getOkatoReg()); //код места жительства
-     //   pers=addIfNotNull(pers,"OKATOP",aEntry.getOkatoReal()); //код места пребывания
+       // addIfNotNull(pers,"ENP",aEntry.getCommonNumber());
         return pers;
     }
 
@@ -412,7 +409,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     theManager.persist(new E2EntryError(currentEntry,"NO_MAIN_DIAGNOSIS"));
                     return null;
                 }
-                if (a2||a3) add(sl,"DS_ONK",(cancerEntry!=null && cancerEntry.getMaybeCancer()) ? "1" : "0");
+                if (!a1) add(sl,"DS_ONK",(cancerEntry!=null && cancerEntry.getMaybeCancer()) ? "1" : "0");
                 //*DN дисп. наблюдение !! только для терр.
                 //if (a3) *PR_D_N взят-состоит
                 //if (a3) *DS2_N
@@ -1777,6 +1774,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         }
 
         List<String> otherDiagnosis = findDiagnosisCodes(list,null,"3"); // Сопутствующие
+        List<String> heavyDiagnosis = findDiagnosisCodes(list,null,"4"); // Осложнения
         List<String> napravitDiagnosis = findDiagnosisCodes(list,"1,2","3"); // Направительные
         if (!napravitDiagnosis.isEmpty() && !a3) {
             add(aElement,"DS0",napravitDiagnosis.get(0));
@@ -1786,7 +1784,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             EntryDiagnosis ds = mainDiagnosis.get(0);
             String mainMkb = ds.getMkb().getCode();
             add(aElement,"DS1",mainMkb);
-            /*if (a3)*/ add(aElement,"DS1_PR","0"); //TODO сделать для ДД
+            if (a3) add(aElement,"DS1_PR","0"); //TODO сделать для ДД
             if (isNotNull(ds.getDopMkb())) {
                 otherDiagnosis.add(0,ds.getDopMkb());
             }
@@ -1799,12 +1797,13 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
                 }
                 add(aElement,"DS2",otherDiagnosis.get(0));
-                if (otherDiagnosis.size()>1) {
+/*                if (otherDiagnosis.size()>1) { //с 2020 года 1 сопутствующий диагноз
                     for (int i=1;i<otherDiagnosis.size() && i<4;i++) {
                         addIfNotNull(aElement,"DS2_"+i,otherDiagnosis.get(i));
                     }
                 }
-            }
+  */          }
+            if (!heavyDiagnosis.isEmpty()) add(aElement,"DS3",heavyDiagnosis.get(0));
             if (!a3 &&!mainMkb.startsWith("Z")) { //C_ZAB * Характер заболевания, если USL_OK!=4 || DS1!=Z*
                 VocE2FondV027 vip = ds.getVocIllnessPrimary();
                 if (vip==null) {
@@ -1818,7 +1817,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     /**Выводим сообщение в монитор. Возвращаем - отменен ли монитор*/
-    public boolean isMonitorCancel(IMonitor aMonitor, String aMonitorText) {
+    private boolean isMonitorCancel(IMonitor aMonitor, String aMonitorText) {
         aMonitor.setText(aMonitorText);
         LOG.info(aMonitorText);
         if (aMonitor.isCancelled()) {

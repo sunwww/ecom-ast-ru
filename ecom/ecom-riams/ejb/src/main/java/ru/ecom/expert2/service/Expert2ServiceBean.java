@@ -1095,11 +1095,13 @@ public class Expert2ServiceBean implements IExpert2Service {
             } else {
                 code="UNKNOWNTIMEHOSP";
             }
-        } else if (entryType.equals(POLYCLINICTYPE) ) {
+        } else if (entryType.equals(POLYCLINICTYPE) || SERVICETYPE.equals(entryType)) {
             fileType="H";
             String workPlace = aEntry.getWorkPlace();
             Boolean isMobilePolyclinic = isNotNull(aEntry.getIsMobilePolyclinic());
-            if (isNotNull(aEntry.getIsDiagnosticSpo())) {
+            if ("60".equals(aEntry.getDoctorWorkfunction())) { //КТ-МРТ подаем типом записи УСЛУГА //TODO говнокод
+                code = "SERVICE";
+            } else if (isNotNull(aEntry.getIsDiagnosticSpo())) {
                 code = "POL_KDO";
             } else {
                 if (isNotNull(aEntry.getIsEmergency())) { // Случай НМП
@@ -2273,9 +2275,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         String key ;
 
         VocE2PolyclinicCoefficient coefficient = null;
-        boolean isKdo =isNotNull(aEntry.getIsDiagnosticSpo()) || aEntry.getEntryType().equals(KDPTYPE);
-        boolean isEmergency = isNotNull(aEntry.getIsEmergency());
-        boolean isMobilePolyclinic = isNotNull(aEntry.getIsMobilePolyclinic());
+        boolean isKdo =Boolean.TRUE.equals(aEntry.getIsDiagnosticSpo()) || aEntry.getEntryType().equals(KDPTYPE);
+        boolean isEmergency = Boolean.TRUE.equals(aEntry.getIsEmergency());
+        boolean isMobilePolyclinic = Boolean.TRUE.equals(aEntry.getIsMobilePolyclinic());
         //находим Кз
         if (isKdo) { //Находим Кз обращения
             key="KZ#KDO#";
@@ -2330,6 +2332,22 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (tariff==null||kz==null||km==null) {
             LOG.warn("Не удалось расчитать цену случая");
         } else {
+            if (Boolean.TRUE.equals(aEntry.getIsEmergency()) || subType.getCode().equals("SERVICE")) {
+                BigDecimal serviceCost = BigDecimal.ZERO;
+                if (aEntry.getMedServices() != null) {
+                    for (EntryMedService ems : aEntry.getMedServices()) {
+                        if (ems.getCost() != null && ems.getCost().compareTo(BigDecimal.ZERO) == 1) {
+                            serviceCost = serviceCost.add(ems.getCost());
+                        }
+                    }
+                    if (subType.getCode().equals("SERVICE")) {
+                        tariff = serviceCost;
+                    } else {
+                        tariff = tariff.add(serviceCost);
+                    }
+                }
+            }
+
             BigDecimal coeff = kz.multiply(kp).multiply(km);
             BigDecimal cost = tariff.multiply(coeff); //
             aEntry.setTotalCoefficient(coeff);
@@ -2539,7 +2557,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         makeCheckEntry(entry,true, true);
                     }
                 }
-            } else if (listEntryCode.equals(POLYCLINICTYPE) ) {
+            } else if (listEntryCode.equals(POLYCLINICTYPE) ||SERVICETYPE.equals(listEntryCode) ) {
                 //Проверка поликлинических случаев
                 monitor.setText("Удаляем дубли в поликлинике");
                 deletePolyclinicDoubles(listEntryId ); //Удалим дубли при первой проверке
@@ -2573,6 +2591,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                     makeCheckEntry(entry,false, true);
                 }
+            } else {
+                LOG.error("Невозможно выполнить проверку заполнения, неизвестный тип '"+listEntryCode+"'");
             }
             long minutes = (System.currentTimeMillis()-startStartDate.getTime())/60000;
             LOG.info("Время выполнения проверки (минут) TOTAL_TIME = "+minutes);
