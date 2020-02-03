@@ -20,9 +20,9 @@
     <tiles:put name='body' type='string'>
 
         <msh:hideException>
-            <ecom:webQuery name="entryList" nativeSql="select edp.id, ,v016.name as f2_dName
+            <ecom:webQuery name="entryList" nativeSql="select edp.id ,v016.name as f2_dName
             , vs.name as sex
-                 edp.ages as ages
+                 ,edp.ages as ages
                 ,edp.cost as cost
                 ,edp.dateFrom, edp.dateTo as dateTo
                 ,case when edp.dateTo is not null and edp.dateTo>current_date then 'color:red' else '' end as color
