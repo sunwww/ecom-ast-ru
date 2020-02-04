@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -353,7 +354,9 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
         }
     }
-    /** Загружаем MP файл (ответ от фонда)*/
+    /** Загружаем MP файл (ответ от фонда)
+     * импорт версии от 2020 года
+     * */
 
     private HashMap<String, VocE2Sanction> sanctionMap = new HashMap<>();
 
@@ -400,10 +403,10 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 boolean isComplexCase=false;
                 for (Element sl: slList) {
                     if (isComplexCase) break;
-                    Element slId = sl.getChild("SL_IDCASE");
+                    Element slId = sl.getChild("SL_ID");
                     Long entryId = Long.parseLong(slId.getText());
                     E2Entry entry= theManager.find(E2Entry.class,entryId);
-                    if (entry==null) {LOG.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
+                    if (entry==null || Boolean.TRUE.equals(entry.getIsDeleted())) {LOG.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
                     if (entry.getParentEntry()!=null) {
                         entry=entry.getParentEntry();
                         isComplexCase=true;
@@ -438,14 +441,19 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     //Добавляем сведения о санкциях
                     if (zsl.getChild("SANK_IT")!=null && !zsl.getChildText("SANK_IT").equals("0.00")) { //
                         List<Element> sanks =zsl.getChildren("SANK") ;
+                        ArrayList<String> sanks1 = new ArrayList<>();
                         for (Element sank: sanks) {
                             String key = sank.getChildText("S_OSN") ;
-                            if (!sanctionMap.containsKey(key)) {
-                                sanctionMap.put(key,getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
+                            String dopCode = sank.getChildText("S_DOP");
+                            if (!sanks1.contains(dopCode)) {
+                                if (!sanctionMap.containsKey(key)) {
+                                    sanctionMap.put(key,getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
+                                }
+                                String comment = sank.getChildText("SL_ID")+" "+ sank.getChildText("S_COM");
+                                //   boolean isMain =  false; // sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true; // 27-08-2018
+                                theManager.persist(new E2EntrySanction(entry,sanctionMap.get(key),dopCode,false,comment));
+                                sanks1.add(dopCode);
                             }
-                         String comment = sank.getChildText("S_SL_ID")+" "+ sank.getChildText("S_COM");
-                            //   boolean isMain =  false; // sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true; // 27-08-2018
-                            theManager.persist(new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),false,comment));
                         }
                         entry.setIsDefect(true);
                     } else {

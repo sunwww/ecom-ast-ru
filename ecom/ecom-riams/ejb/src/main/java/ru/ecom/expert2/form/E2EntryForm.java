@@ -1026,8 +1026,13 @@ public class E2EntryForm extends IdEntityForm {
     @Comment("Добавить услугу к случаю")
     public Long getNewMedService() {return theNewMedService;}
     public void setNewMedService(Long aNewMedService) {theNewMedService = aNewMedService;}
-    /** Добавить услугу к случаю */
     private Long theNewMedService ;
+
+    /** Особенность случая */
+    @Comment("Особенность случая")
+    public Long getNewFactor() {return theNewFactor;}
+    public void setNewFactor(Long aNewFactor) {theNewFactor = aNewFactor;}
+    private Long theNewFactor ;
 
 
 

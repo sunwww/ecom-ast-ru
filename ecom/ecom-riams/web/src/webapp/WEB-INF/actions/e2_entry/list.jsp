@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name='title' type='string'>
-        <ecom:titleTrail beginForm="e2_entryListForm" mainMenu="Expert2" title="Записи по заполнению" guid="3c259ba8-b962-4333-9aab-3316f984fdde" />
+        <ecom:titleTrail beginForm="e2_entryListForm" mainMenu="Expert2" title="Записи по заполнению" />
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -17,7 +17,6 @@
 
     <tiles:put name='body' type='string'>
 <%
-    //String entryType = request.getParameter("entryType");
     String orderBy = request.getParameter("orderBy");
     String filter = request.getParameter("filter");
     StringBuilder filterSql= new StringBuilder();
@@ -62,6 +61,7 @@
         listId=null;
     }
     String billDate = request.getParameter("billDate");
+    boolean showServices = "1".equals(request.getParameter("showServices"));
     StringBuilder sqlAdd = new StringBuilder();
     //if (entryType!=null&&!entryType.equals("")) {sqlAdd.append(" and e.entryType='").append(entryType).append("'");}
     //if (serviceStream!=null&&!serviceStream.equals("")) {sqlAdd.append(" and e.serviceStream='").append(serviceStream).append("'");}
@@ -81,7 +81,7 @@
     request.setAttribute("filterSql",filterSql.toString());
 String defectColumnName = "Дефект";
 //String entryType = request.getParameter("entryType");
-    if (errorCode!=null&&!errorCode.equals("")) {
+    if (errorCode!=null && !errorCode.equals("")) {
         searchFromSql=", list(err.comment) as errComment from e2entryerror err left join e2entry e on e.id=err.entry_id";
         searchWhereSql=(listId!=null?" err.listentry_id="+listId:"")+" and err.errorCode='"+errorCode+"'";
         request.setAttribute("searchTitle"," по ошибке: "+errorCode);
@@ -90,15 +90,7 @@ String defectColumnName = "Дефект";
             searchFromSql=" ,e.billNumber||' от '||to_char(e.billDate,'dd.MM.yyyy') as f13_billNumber from e2entry e";
             defectColumnName="Счет";
         } else {
-            searchFromSql=" ,list (es.dopCode) as f13_defects from e2entry e";
-   /*         switch (entryType) {
-                case "STACKDP":
-                    searchFromSql=",vdv.code||' '||vdv.name as f13_kdpName from e2entry e";
-                    break;
-                default:
-                    searchFromSql=" ,list (es.dopCode) as f13_defects from e2entry e";
-            }*/
-
+            searchFromSql=" ,list (es.dopCode) as f13_defects "+ (showServices ? ", list(vms.code ||' '||vms.name||' ('||ems.cost||')') as f14_servicess" : "")+" from e2entry e";
         }
 
         searchWhereSql=(listId!=null ? " e.listentry_id="+listId : "")
@@ -120,35 +112,43 @@ String defectColumnName = "Дефект";
     request.setAttribute("searchWhereSql",searchWhereSql);
 %>
         <msh:panel>
+            <table><tr><td>
             <input type="text" name="searchField" id="lastname" placeholder="Фамилия пациента">
-            <input type="text" name="searchField" id="historyNumber" placeholder="Номер ИБ">
-            <br>
-            <input type="text" name="searchField" id="startDate" placeholder="Дата начала случая">
-            <input type="radio" name="typeSearchStartDate" value="more#">
-            <input type="radio" name="typeSearchStartDate" value="less#">
-            <input type="radio" name="typeSearchStartDate" value="equals#">
-            <input type="text" name="searchField" id="finishDate" placeholder="Дата окончания случая">
-            <input type="radio" name="typeSearchFinishDate" value="more#">
-            <input type="radio" name="typeSearchFinishDate" value="less#">
-            <input type="radio" name="typeSearchFinishDate" value="equals#">
-            <br>
-            <input type="button" value="Найти" onclick="findAndSubmit()">
-            <input type="button" value="Сортировать по ФИО" onclick="setOrderBy('e.lastname,e.firstname, e.middlename')">
-            <input type="button" value="Сортировать по № ИБ" onclick="setOrderBy('historyNumber')">
-            <label><input type="checkbox" id="chkDefect" name="chkDefect">Только дефекты</label>
-            <br>
+            </td><td>
+                <input type="text" name="searchField" id="historyNumber" placeholder="Номер ИБ">
+            </td></tr>
+                <tr><td>
+                <label><input type="checkbox" id="chkDefect" name="chkDefect">Только дефекты</label>
+                </td>
+                <td>
+            <label><input type="checkbox" id="showServices" name="showServices">Отобразить услуги</label>
+                </td>
+                </tr>
+                <tr><td>
+                    <input type="button" value="Найти" onclick="findAndSubmit()">
+                </td><td>
+                    <input type="button" value="Сортировать по ФИО" onclick="setOrderBy('e.lastname,e.firstname, e.middlename')">
+                </td><td>
+                    <input type="button" value="Сортировать по № ИБ" onclick="setOrderBy('historyNumber')">
+                </td></tr>
+                <tr> <td>
             <select id="replaceSelect">
                 <option value="SERVICESTREAM">Поток обслуживания</option>
                 <option value="SNILS_DOCTOR">СНИЛС лечащего врача</option>
             </select>
+                </td><td colspan="3">
             <input type="text" name="replaceFrom" id="replaceFrom" placeholder="Заменить с">
             <input type="text" name="replaceTo" id="replaceTo" placeholder="Заменить на">
             <input type="button" id="replaceClick" value="Заменить" onclick="replaceValue(this)">
-            <input type="checkbox" id="dontShowComplexCase" name="dontShowComplexCase" onclick="dontShow(this)">
-            <br>
+                </td></tr>
+            <tr>
+                <td colspan="3">
+                <input type="checkbox" id="dontShowComplexCase" name="dontShowComplexCase" onclick="dontShow(this)">
+
             <input type="button" onclick="exportErrorsNewListEntry()" value="Перенести ошибки в новое заполнение">
             <input type="button" onclick="fixSomeError()" value="Поправить 503">
-
+                </td></tr>
+            </table>
 
         </msh:panel>
         <ecom:webQuery nameFldSql="entriesSql" name="entries" nativeSql="
@@ -171,6 +171,8 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         left join e2bill bill on bill.id=e.bill_id
         left join voce2billstatus vbs on vbs.id=bill.status_id
         left join VocDiagnosticVisit vdv on vdv.id=e.kdpVisit_id
+        left join entrymedservice ems on ems.entry_id=e.id
+        left join vocmedservice vms on vms.id=ems.medservice_id
  where ${searchWhereSql} ${fileTypeSql}
  and (e.isDeleted is null or e.isDeleted='0')
  group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
@@ -179,19 +181,20 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         <msh:hideException>
             <msh:section title='Результат поиска ${searchTitle}'>
                 <msh:table name="entries" printToExcelButton="в excel" action="entityParentView-e2_entry.do" idField="1" disableKeySupport="true" styleRow="12" cellFunction="true" openNewWindow="true">
-                    <msh:tableColumn columnName="№" property="sn" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="ИД" property="1" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Фамилия Имя Отчество" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="ИБ" property="7" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Отделение" property="5" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Дата начала"  property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Дата окончания"  property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="КСГ" property="6" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Диагноз" property="10" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Цена случая" property="8" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Профиль" property="9" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Результат" property="11" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="${defectColumnName}" property="13" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="№" property="sn" />
+                    <msh:tableColumn columnName="ИД" property="1" />
+                    <msh:tableColumn columnName="Фамилия Имя Отчество" property="2" />
+                    <msh:tableColumn columnName="ИБ" property="7" />
+                    <msh:tableColumn columnName="Отделение" property="5" />
+                    <msh:tableColumn columnName="Дата начала"  property="3" />
+                    <msh:tableColumn columnName="Дата окончания"  property="4" />
+                    <msh:tableColumn columnName="КСГ" property="6" />
+                    <msh:tableColumn columnName="Диагноз" property="10" />
+                    <msh:tableColumn columnName="Цена случая" property="8" />
+                    <msh:tableColumn columnName="Профиль" property="9" />
+                    <msh:tableColumn columnName="Результат" property="11" />
+                    <msh:tableColumn columnName="${defectColumnName}" property="13" />
+                    <msh:tableColumn columnName="Услуги" property="14" />
                 </msh:table>
             </msh:section>
         </msh:hideException>
@@ -242,11 +245,11 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
             }
 
             function setOrderBy(fld) {
-                alert('orderBy='+fld);
+              //  alert('orderBy='+fld);
                 window.location.href = setGetParameter("orderBy",fld)
             }
-            new dateutil.DateField($('startDate'));
-            new dateutil.DateField($('finishDate'));
+            //new dateutil.DateField($('startDate'));
+            //new dateutil.DateField($('finishDate'));
 
             function findAndSubmit() {
                 var url = window.location.href;
@@ -258,6 +261,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
                 })
                 url=setGetParameter("filter",filter,url);
                 url=setGetParameter("defect",$('chkDefect').checked?"1":"",url);
+                url=setGetParameter("showServices",$('showServices').checked?"1":"",url);
                 window.location.href = url;
             }
 

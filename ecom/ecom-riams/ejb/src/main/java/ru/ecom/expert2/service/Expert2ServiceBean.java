@@ -74,6 +74,320 @@ public class Expert2ServiceBean implements IExpert2Service {
             return new JSONObject().put("status","ok");
     }
 
+
+    /**
+     * Запускаем процесс формирования заполнения
+     *
+     * @param aListEntry - Заполнение
+     * @throws NamingException
+     * @throws SQLException
+     */
+
+    public void fillListEntry(E2ListEntry aListEntry, String aHistoryNumbers, long aMonitorId) throws NamingException, SQLException {
+        String listEntryType = aListEntry.getEntryType() != null ? aListEntry.getEntryType().getCode() : null;
+
+        if (listEntryType == null) {
+            LOG.error("Не указан тип заполнения NO_ENTRYLIST_TYPE");
+            return;
+        }
+
+        String resourceName;
+        switch (listEntryType) {
+            case EXTDISPTYPE:
+                resourceName = "ExtDisp.sql";
+                break;
+            case HOSPITALTYPE:
+                resourceName = "Hospital.sql";
+                break;
+            case POLYCLINICTYPE:
+                resourceName = "Visit.sql";
+                break;
+            case HOSPITALPEREVODTYPE:
+                resourceName = "HospitalPerevod.sql";
+                break;
+            case KDPTYPE:
+                resourceName ="StacKdp.sql";
+                break;
+            case SERVICETYPE:
+                resourceName = "Service.sql";
+                break;
+            default:
+                LOG.error("Неизвесный тип заполнения");
+                throw new IllegalStateException("Неизвестный тип заполнения!!");
+        }
+
+        String searchSql = getFileAsSTring(resourceName);
+        if (searchSql == null) {
+            LOG.error("NO SQL FILE FOUND");
+            throw new IllegalStateException("Не удалось обнаружить файл с запросом! "+resourceName);
+        }
+
+        StringBuilder sqlHistory = new StringBuilder();
+        if (isNotNull(aHistoryNumbers)) {
+            String[] histories = aHistoryNumbers.split(",");
+            sqlHistory.append(" and ss.code in (");
+            boolean isFirst = true;
+            for (String history: histories) {
+                if (!isFirst) {sqlHistory.append(",");} else {isFirst=false;}
+                sqlHistory.append("'").append(history).append("'");
+            }
+            sqlHistory.append(")");
+        } else {
+            sqlHistory.append("");
+        }
+        String lpuCode = getExpertConfigValue("LPU_REG_NUMBER","300001");
+        while(searchSql.indexOf("##dateStart##")>-1) {searchSql=searchSql.replace("##dateStart##", toSQlDateString(aListEntry.getStartDate())); }
+        while(searchSql.indexOf("##dateEnd##")>-1) {searchSql=searchSql.replace("##dateEnd##", toSQlDateString(aListEntry.getFinishDate()));}
+        while(searchSql.contains("##LPU_CODE##")) {searchSql=searchSql.replace("##LPU_CODE##", lpuCode);}
+
+        searchSql+=sqlHistory.toString();
+        LOG.info("SQL = " + searchSql);
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("listEntry", aListEntry);
+        aListEntry.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
+        aListEntry.setCreateTime(new java.sql.Time(System.currentTimeMillis()));
+        theManager.persist(aListEntry);
+        try (Statement statement = createStatement()) {
+            ResultSet foundCases = statement.executeQuery(searchSql);
+            createEntriesByEntryList(foundCases, paramMap, listEntryType, aListEntry, aMonitorId); //Создаем записи по заполнению
+        } catch (ParseException e) {
+            e.printStackTrace();
+            LOG.error("can't parse data",e);
+        }
+        if (aListEntry.getMonitorId()!=null) {
+            aListEntry.setMonitorId(null);
+            theManager.persist(aListEntry);
+        }
+    }
+
+    /**
+     * Создаем записи в заполнении из sql запроса
+     *
+     * @param aResultSet
+     * @param aParamMap
+     * @throws ParseException
+     */
+    private HashMap<String, Method> methodMap = new HashMap<>();
+    private void createEntriesByEntryList(ResultSet aResultSet, Map<String, Object> aParamMap, String aEntryListCode, E2ListEntry aListEntry, long aMonitorId) throws ParseException { //Сохраняем сущности
+        if (aMonitorId==0L) {
+            aMonitorId = theRemoteMonitorService.createMonitor();
+        }
+        IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Формирование нового заполнения",9999);
+        setIsConsultativePolyclinic();
+        try {
+            ResultSetMetaData metaData = aResultSet.getMetaData();
+            int rowsLength = metaData.getColumnCount();
+            String[] fields = new String[rowsLength];
+            int[] types = new int[rowsLength];
+            String defaultOkato = getExpertConfigValue("DEFAULT_OKATO","12401000000");
+            for (int i = 0; i < rowsLength; i++) { //Для каждой строки находим геттер
+                fields[i] = metaData.getColumnName(i + 1);
+                types[i] = metaData.getColumnType(i + 1);
+            }
+            E2Entry entity;
+            int j=0;
+            while (aResultSet.next()) { // Для каждой строки (кортежа)
+                j++;
+                if (j%100==0) {
+                    LOG.info("Creating "+j+" records");
+                    monitor.setText("Формирование заполнения: сформировано "+j+" записей");
+                }
+                entity = new E2Entry();
+                Class aClass = entity.getClass();
+                for (int i = 0; i < rowsLength; i++) { //Для каждого столбца находим геттер
+                    String key = "GETTER#"+fields[i];
+                    Method getterMethod = null;
+                    if (!methodMap.containsKey(key)) {
+                        try {
+                            getterMethod = PropertyUtil.getGetterMethodIgnoreCase(aClass, fields[i]);
+                            methodMap.put(key,getterMethod);
+                        } catch (Exception e) { LOG.warn("Не найдено поле с именем "+fields[i]);    methodMap.put(key,null);continue;
+                        }
+                    } else {getterMethod=methodMap.get(key);}
+
+                    if (getterMethod == null) {continue;} //нет геттера - нет сеттера!
+                    key = "SETTER#"+fields[i];
+                    Method setterMethod;
+                    if (methodMap.containsKey(key)) {
+                        setterMethod=methodMap.get(key);
+                    } else {
+                        setterMethod= PropertyUtil.getSetterMethod(aClass, getterMethod);
+                        methodMap.put(key,setterMethod);
+                    }
+                    Object value = convertResultSetValue(types[i], getterMethod.getReturnType(), aResultSet.getObject(fields[i]));
+                    setterMethod.invoke(entity, value);
+                }
+
+                for (Map.Entry<String, Object> entry : aParamMap.entrySet()) { //Дополняем объект данными НЕ из запроса
+                    String key = "GETTER#"+entry.getKey();
+                    Method getterMethod;
+                    if (methodMap.containsKey(key)) {
+                        getterMethod=methodMap.get(key);
+                    } else {
+                        getterMethod = PropertyUtil.getGetterMethodIgnoreCase(aClass, entry.getKey());
+                        methodMap.put(key,getterMethod);
+                    }
+                    if (getterMethod != null) {
+                        key = "SETTER#"+entry.getKey();
+                        Method setterMethod;
+                        if (methodMap.containsKey(key)) {
+                            setterMethod=methodMap.get(key);
+                        } else {
+                            setterMethod =  PropertyUtil.getSetterMethod(aClass, getterMethod);
+                            methodMap.put(key,setterMethod);
+                        }
+                        setterMethod.invoke(entity, entry.getValue());
+                    } else {
+                        LOG.error("Невозможно получить объект из карты с ключем = " + entry.getKey());
+                    }
+                }
+ //               if (!isNotNull(entity.getOkatoReg())) { entity.setOkatoReg(defaultOkato);} //Устанавливаем ОКАТО регистрации по умолчанию
+ //               if (!isNotNull(entity.getOkatoReal())) { entity.setOkatoReal(defaultOkato);}//Устанавливаем ОКАТО проживания по умолчанию
+                theManager.persist(entity);
+                setEntryType(entity,aEntryListCode);
+                makeMedPolicy(entity); //Запускаем один лишь раз
+                createDiagnosis(entity); //Запускаем один лишь раз
+                createServices(entity); //Запускаем один лишь раз
+                theManager.persist(entity);
+                if (entity.getEntryType().equals(POLYCLINICTYPE)) {
+                    makeCheckEntry(entity,false, false);
+                }
+            }
+            LOG.info("Success!");
+            monitor.finish("Законцено формирование нового заполнения");
+        } catch (Exception e) {
+            isCheckIsRunning=false;
+            monitor.error("Ошибка формирования нового заполнения: "+e.getLocalizedMessage(),e);
+            LOG.error(e.getMessage(),e);
+        }
+        isCheckIsRunning=false;
+    }
+
+    /** При формировании заполнения выполняем расчет КСГ, объединение случаев, повторное нахождение КСГ */
+    private void checkListEntryFirst(E2ListEntry aListEntry, List<E2Entry> aEntryList, long aMonitorId) {
+        Long listEntryId = aListEntry.getId();
+        try {
+            java.util.Date startStartDate = new java.util.Date();
+            LOG.info("start checkListEntryFirst. id="+listEntryId);
+            if (isCheckIsRunning) {
+                LOG.warn("Проверка уже запущена, ничего не проверяем ALREADY_STARTED");
+                //  return;
+            }
+            isCheckIsRunning=true;
+            if (aEntryList==null) {
+                aEntryList = theManager.createNamedQuery("E2ListEntry.findAllEntries").setParameter("list",aListEntry).getResultList();
+            }
+            if (aEntryList.isEmpty()) {
+                LOG.warn("Случаев для проверки не найдено NO_CASES ");
+                return;
+            }
+
+            String listEntryCode = aListEntry.getEntryType().getCode();
+            // theMonitorService.acceptMonitor(aMonitorId, "Расчет цены случаев в звполнении") ;
+            IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Пересчет случаев в заполнении",aEntryList.size());
+            monitor.advice(1);
+            if (listEntryCode.equals(HOSPITALTYPE) || listEntryCode.equals(HOSPITALPEREVODTYPE)) {
+                int i=0;
+                LOG.info("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size="+aEntryList.size());
+                monitor.setText("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size="+aEntryList.size());
+                StringBuilder entriesId = new StringBuilder();
+                for (E2Entry entry : aEntryList) { //Найдем лучшее КСГ
+                    entriesId.append(",").append(entry.getId());
+                    i++;
+                    if (i%100==0) {
+                        if (isMonitorCancel(monitor,"Проверяем стационар. Проверено случаев: "+i)) return;
+                    }
+                    makeCheckEntry(entry,false, false);
+                }
+                if (isMonitorCancel(monitor,"Закончили первичную проверку случаев.FINISH_FIRST_CHECK")) return;
+
+                //теперь объединим все случаи объединим все случаи (только для стационара)
+                List<BigInteger> hospitalIds = theManager.createNativeQuery("select externalparentid from e2entry" +
+                        " where id in ("+entriesId.substring(1)+") and listentry_id=" + listEntryId  + " and (isDeleted is null or isDeleted='0') and (isUnion is null or isUnion='0') group by externalparentid having count(externalparentid)>1").getResultList();//Находис все СЛС, в которых больше 1 СЛО
+                i=0;
+                isMonitorCancel(monitor,"Приступаем к объединению случаев. START_UNION");
+                fillChildBirthMkbs();
+ /*               if (HOSPITALPEREVODTYPE.equals(listEntryCode)) { //Если заполнение - переводы, отметим *не подавать* все СЛС вида: отделение-реанимация-отделение
+
+                }
+ */               for (BigInteger hospId : hospitalIds) {
+                    i++;
+                    if (i%100==0) {
+                        if (isMonitorCancel(monitor,"Идет объединение случаев: "+i))return;
+                    }
+                    unionHospitalMedCase(listEntryId , hospId.longValue());
+                }
+                LOG.info("Объединение случаев завершено.FINISH_UNION");
+                isMonitorCancel(monitor,"Проверяем КСГ после объединения случаев.2ND_CHECK_KSG");
+                i=0;
+                for(E2Entry entry : aEntryList) {
+                    i++;
+                    if (i%100==0) {
+                        if (isMonitorCancel(monitor,"Находим лучшее КСГ-2 после объединения случае. Проверено: "+i))return;
+                    }
+                    //Теперь снова находим КСГ, расчитываем цену и коэффициенты
+                    if (!entry.getServiceStream().equals("COMPLEXCASE")) {
+                        findCancerEntry(entry);
+                        makeCheckEntry(entry,true, true);
+                    }
+                }
+            } else if (listEntryCode.equals(POLYCLINICTYPE)) {
+                //Проверка поликлинических случаев
+                monitor.setText("Удаляем дубли в поликлинике");
+                deletePolyclinicDoubles(listEntryId ); //Удалим дубли при первой проверке
+                aEntryList = theManager.createNamedQuery("E2ListEntry.findAllEntries").setParameter("list",aListEntry).getResultList();
+                int i=0;
+                LOG.info("POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.");
+                if (isMonitorCancel(monitor,"POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.")) return;
+                for(E2Entry entry : aEntryList) {
+                    i++;
+                    if (i%100==0) {
+                        if (isMonitorCancel(monitor,"Проверяем записи по поликлинике: "+i))return;
+                    }
+                    makeCheckEntry(entry,false, true);
+                    findCancerEntry(entry);
+                }
+                if (isMonitorCancel(monitor,"Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев."+(System.currentTimeMillis()-startStartDate.getTime())/60000)) return;
+                Boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO","0").equals("1");
+                unionPolyclinicMedCase(listEntryId ,null,isGroupSpo);
+                monitor.setText("Приступаем к проверке перекрестных случаев.");
+                deleteCrossSpo(aListEntry);
+                monitor.setText("Закончили проверять поликлинику.");
+            } else if (listEntryCode.equals(KDPTYPE))  { //неотложку
+                makeEmergencyEntry(aEntryList);
+            } else if (listEntryCode.equals(EXTDISPTYPE)) { //Пришло время делать ДД
+                LOG.info("Create DD");
+                int i=0;
+                for(E2Entry entry : aEntryList) {
+                    i++;
+                    if (i%100==0) {
+                        if (isMonitorCancel(monitor,"Проверяем записи по доп. диспансеризации: "+i)) return;
+                    }
+                    makeCheckEntry(entry,false, true);
+                }
+            } else  if (SERVICETYPE.equals(listEntryCode)) {
+                for(E2Entry entry : aEntryList) {
+                    makeCheckEntry(entry,false, true);
+                }
+            } else {
+                LOG.error("Невозможно выполнить проверку заполнения, неизвестный тип '"+listEntryCode+"'");
+            }
+            long minutes = (System.currentTimeMillis()-startStartDate.getTime())/60000;
+            LOG.info("Время выполнения проверки (минут) TOTAL_TIME = "+minutes);
+            monitor.finish("Завершено. Время выполнения проверки (минут) TOTAL_TIME = "+minutes);
+            Long currentTime = System.currentTimeMillis();
+            aListEntry.setCheckDate(new java.sql.Date(currentTime));
+            aListEntry.setCheckTime(new java.sql.Time(currentTime));
+            theManager.persist(aListEntry);
+        } catch (Exception e) {
+            isCheckIsRunning=false;
+            LOG.error(e.getMessage(),e);
+        }
+        isCheckIsRunning=false;
+    }
+
+
     /** Присваеваем отдельный счет для определенных иногородних регионов
      * @param aListEntryId - ИД заполнения
      * @param aBillNumber Номер присваемого счета
@@ -367,6 +681,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (!patologyEntry.getIsChildBirthDepartment()
                         && (calendarDays > 5 || (calendarDays > 1 && childBirthMkb.contains(patologyEntry.getMainMkb())))) { //Если длительность случая - больше пяти дней (или диагноз входит в список)- не объединяемъ
                     VocE2FondV009 perevodResult = getActualVocByClassName(VocE2FondV009.class, patologyEntry.getFinishDate(), " code='104'"); //TODO Колхоз - исправить
+                    patologyEntry.setFondIshod((VocE2FondV012)getActualVocByClassName(VocE2FondV012.class, patologyEntry.getFinishDate(), " code='102'")); //TODO Колхоз - исправить
                     patologyEntry.setFondResult(perevodResult); //TODO Колхоз - исправить
                     patologyEntry.setIsUnion(true);
                     theManager.persist(childEntry);
@@ -842,96 +1157,13 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
     }
 
-    /**
-     * Запускаем процесс формирования заполнения
-     *
-     * @param aListEntry - Заполнение
-     * @throws NamingException
-     * @throws SQLException
-     */
-
-    public void fillListEntry(E2ListEntry aListEntry, String aHistoryNumbers, long aMonitorId) throws NamingException, SQLException {
-        String listEntryType = aListEntry.getEntryType() != null ? aListEntry.getEntryType().getCode() : null;
-
-        if (listEntryType == null) {
-            LOG.error("Не указан тип заполнения NO_ENTRYLIST_TYPE");
-            return;
-        }
-
-        String resourceName;
-        switch (listEntryType) {
-            case EXTDISPTYPE:
-                resourceName = "ExtDisp.sql";
-                break;
-            case HOSPITALTYPE:
-                resourceName = "Hospital.sql";
-                break;
-            case POLYCLINICTYPE:
-                resourceName = "Visit.sql";
-                break;
-            case HOSPITALPEREVODTYPE:
-                resourceName = "HospitalPerevod.sql";
-                break;
-            case KDPTYPE:
-                resourceName ="StacKdp.sql";
-                break;
-            case SERVICETYPE:
-                resourceName = "Service.sql";
-                break;
-            default:
-                LOG.error("Неизвесный тип заполнения");
-                throw new IllegalStateException("Неизвестный тип заполнения!!");
-        }
-
-        String searchSql = getFileAsSTring(resourceName);
-        if (searchSql == null) {
-            LOG.error("NO SQL FILE FOUND");
-            throw new IllegalStateException("Не удалось обнаружить файл с запросом! "+resourceName);
-        }
-
-        StringBuilder sqlHistory = new StringBuilder();
-        if (isNotNull(aHistoryNumbers)) {
-            String[] histories = aHistoryNumbers.split(",");
-            sqlHistory.append(" and ss.code in (");
-            boolean isFirst = true;
-            for (String history: histories) {
-                if (!isFirst) {sqlHistory.append(",");} else {isFirst=false;}
-                sqlHistory.append("'").append(history).append("'");
-            }
-            sqlHistory.append(")");
-        } else {
-            sqlHistory.append("");
-        }
-        String lpuCode = getExpertConfigValue("LPU_REG_NUMBER","300001");
-        while(searchSql.indexOf("##dateStart##")>-1) {searchSql=searchSql.replace("##dateStart##", toSQlDateString(aListEntry.getStartDate())); }
-        while(searchSql.indexOf("##dateEnd##")>-1) {searchSql=searchSql.replace("##dateEnd##", toSQlDateString(aListEntry.getFinishDate()));}
-        while(searchSql.contains("##LPU_CODE##")) {searchSql=searchSql.replace("##LPU_CODE##", lpuCode);}
-
-        searchSql+=sqlHistory.toString();
-        LOG.info("SQL = " + searchSql);
-
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("listEntry", aListEntry);
-        aListEntry.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
-        aListEntry.setCreateTime(new java.sql.Time(System.currentTimeMillis()));
-        theManager.persist(aListEntry);
-        try (Statement statement = createStatement()) {
-            ResultSet foundCases = statement.executeQuery(searchSql);
-            createEntriesByEntryList(foundCases, paramMap, listEntryType, aListEntry, aMonitorId); //Создаем записи по заполнению
-        } catch (ParseException e) {
-            e.printStackTrace();
-            LOG.error("can't parse data",e);
-        }
-        if (aListEntry.getMonitorId()!=null) {
-            aListEntry.setMonitorId(null);
-            theManager.persist(aListEntry);
-        }
-    }
-
-    /** Базовая точка для выполнения всех проверок внутри заполнения */
-    public void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId) {
+    private void setIsConsultativePolyclinic() {
         isConsultativePolyclinic = "1".equals(getExpertConfigValue("CONSULTATIVE_LPU","0"));
         LOG.info("isConsultativePolyclinic = "+isConsultativePolyclinic);
+    }
+    /** Базовая точка для выполнения всех проверок внутри заполнения */
+    public void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId) {
+        setIsConsultativePolyclinic();
         checkListEntry(theManager.find(E2ListEntry.class,aListEntryId),updateKsgIfExist, aParams,aMonitorId );
     }
     private void checkListEntry(E2ListEntry aListEntry, final boolean updateKsgIfExist, String aParams, long aMonitorId) {
@@ -1002,10 +1234,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
                 monitor.setText("Идет процесс удаление дублей");
                 checkDoubles(aListEntry);
-            } else if (listEntryCode.equals(POLYCLINICTYPE) || listEntryCode.equals(KDPTYPE)) {
+            } else if (listEntryCode.equals(POLYCLINICTYPE) || listEntryCode.equals(KDPTYPE) || listEntryCode.equals(SERVICETYPE)) {
                 Long listEntryId = aListEntry.getId();
                 if (listEntryCode.equals(POLYCLINICTYPE)){
-                    Boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO","0").equals("1");
+                    boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO","0").equals("1");
                     monitor.setText("Удаление дублей в поликлинике");
                     deletePolyclinicDoubles(listEntryId );
                     monitor.setText("Склеивание случаев поликлинического обслуживания");
@@ -1030,7 +1262,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     makeCheckEntry(theManager.find(E2Entry.class,bi.longValue()),updateKsgIfExist, true);
                 }
                 monitor.setText("Приступаем к проверке перекрестных случаев.");
-                deleteCrossSpo(aListEntry);
+                if (POLYCLINICTYPE.equals(listEntryCode)) deleteCrossSpo(aListEntry);
             }
             Long currentTime = System.currentTimeMillis();
             isMonitorCancel(monitor,"Закончена проверка! Время выполнения проверки (минут) = "+((currentTime-startStartDate))/60000);
@@ -1046,7 +1278,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
     public void makeCheckEntry(Long aEntryId, boolean updateKsgIfExist) {
         if (!theManager.createNativeQuery("select e.id from e2entry e left join e2listentry el on el.id=e.listEntry_id where e.id=:id and el.isClosed='1'").setParameter("id",aEntryId).getResultList().isEmpty()) {throw new IllegalStateException("Заполнение закрыто, проверка невозможна");}
-        isConsultativePolyclinic = "1".equals(getExpertConfigValue("CONSULTATIVE_LPU","0"));
+        setIsConsultativePolyclinic();
         cleanAllMaps();
         makeCheckEntry(theManager.find(E2Entry.class, aEntryId),  updateKsgIfExist, true);
     }
@@ -1099,7 +1331,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             fileType="H";
             String workPlace = aEntry.getWorkPlace();
             Boolean isMobilePolyclinic = isNotNull(aEntry.getIsMobilePolyclinic());
-            if ("60".equals(aEntry.getDoctorWorkfunction())) { //КТ-МРТ подаем типом записи УСЛУГА //TODO говнокод
+            if (SERVICETYPE.equals(entryType)) { //КТ-МРТ подаем типом записи УСЛУГА //TODO говнокод
                 code = "SERVICE";
             } else if (isNotNull(aEntry.getIsDiagnosticSpo())) {
                 code = "POL_KDO";
@@ -2198,6 +2430,15 @@ public class Expert2ServiceBean implements IExpert2Service {
             link.setValue(value.setScale(2,RoundingMode.HALF_UP));
             difficultyEntryLinks.add(link);
         }
+        if (aEntry.getFactorList()!=null) {
+            for (VocE2EntryFactor factor : aEntry.getFactorList()) {
+                if ("KSLP_INFECT".equals(factor.getCode())) {
+                    codes.add("12");
+                    break;
+                }
+            }
+        }
+
         //Пришло время сохранять все сложности пациента
         if (!codes.isEmpty()) {
             //theManager.createNativeQuery("delete from E2CoefficientPatientDifficultyEntryLink where entry_id=:id").setParameter("id",aEntry.getId()).executeUpdate();
@@ -2326,28 +2567,27 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
         BigDecimal kp = coefficient!=null ? coefficient.getValue() : one;
 
-        BigDecimal tariff = calculateTariff(aEntry);
+        BigDecimal tariff ;
         BigDecimal km = calculateKm();
+        if (subType.getCode().equals("SERVICE")) {
+            BigDecimal serviceCost = BigDecimal.ZERO;
+            if (aEntry.getMedServices() != null) {
+                for (EntryMedService ems : aEntry.getMedServices()) {
+                    if (ems.getCost() != null && ems.getCost().compareTo(BigDecimal.ZERO) == 1) {
+                        serviceCost = serviceCost.add(ems.getCost());
+                    }
+                }
+                tariff = serviceCost;
+            } else {
+                tariff = BigDecimal.ZERO;
+            }
+        } else {
+            tariff = calculateTariff(aEntry);
+        }
         String costFormula = "Тариф=" + tariff + ", КЗ=" +kz + ", Кп(Кпд)="+kp+", КМ=" + km;
         if (tariff==null||kz==null||km==null) {
             LOG.warn("Не удалось расчитать цену случая");
         } else {
-            if (Boolean.TRUE.equals(aEntry.getIsEmergency()) || subType.getCode().equals("SERVICE")) {
-                BigDecimal serviceCost = BigDecimal.ZERO;
-                if (aEntry.getMedServices() != null) {
-                    for (EntryMedService ems : aEntry.getMedServices()) {
-                        if (ems.getCost() != null && ems.getCost().compareTo(BigDecimal.ZERO) == 1) {
-                            serviceCost = serviceCost.add(ems.getCost());
-                        }
-                    }
-                    if (subType.getCode().equals("SERVICE")) {
-                        tariff = serviceCost;
-                    } else {
-                        tariff = tariff.add(serviceCost);
-                    }
-                }
-            }
-
             BigDecimal coeff = kz.multiply(kp).multiply(km);
             BigDecimal cost = tariff.multiply(coeff); //
             aEntry.setTotalCoefficient(coeff);
@@ -2380,107 +2620,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         return list.isEmpty() ? BigDecimal.valueOf(0.03) : list.get(0);
     }
 
-    /**
-     * Создаем записи в заполнении из sql запроса
-     *
-     * @param aResultSet
-     * @param aParamMap
-     * @throws ParseException
-     */
-    private HashMap<String, Method> methodMap = new HashMap<>();
-    private void createEntriesByEntryList(ResultSet aResultSet, Map<String, Object> aParamMap, String aEntryListCode, E2ListEntry aListEntry, long aMonitorId) throws ParseException { //Сохраняем сущности
-        if (aMonitorId==0L) {
-            aMonitorId = theRemoteMonitorService.createMonitor();
-        }
-        IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Формирование нового заполнения",9999);
-        try {
-            ResultSetMetaData metaData = aResultSet.getMetaData();
-            int rowsLength = metaData.getColumnCount();
-            String[] fields = new String[rowsLength];
-            int[] types = new int[rowsLength];
-            String defaultOkato = getExpertConfigValue("DEFAULT_OKATO","12401000000");
-            for (int i = 0; i < rowsLength; i++) { //Для каждой строки находим геттер
-                fields[i] = metaData.getColumnName(i + 1);
-                types[i] = metaData.getColumnType(i + 1);
-            }
-            E2Entry entity;
-            int j=0;
-            while (aResultSet.next()) { // Для каждой строки (кортежа)
-                j++;
-                if (j%100==0) {
-                    LOG.info("Creating "+j+" records");
-                    monitor.setText("Формирование заполнения: сформировано "+j+" записей");
-                }
-                entity = new E2Entry();
-                Class aClass = entity.getClass();
-                for (int i = 0; i < rowsLength; i++) { //Для каждого столбца находим геттер
-                    String key = "GETTER#"+fields[i];
-                    Method getterMethod = null;
-                    if (!methodMap.containsKey(key)) {
-                        try {
-                            getterMethod = PropertyUtil.getGetterMethodIgnoreCase(aClass, fields[i]);
-                            methodMap.put(key,getterMethod);
-                        } catch (Exception e) { LOG.warn("Не найдено поле с именем "+fields[i]);    methodMap.put(key,null);continue;
-                        }
-                    } else {getterMethod=methodMap.get(key);}
 
-                    if (getterMethod == null) {continue;} //нет геттера - нет сеттера!
-                    key = "SETTER#"+fields[i];
-                    Method setterMethod;
-                    if (methodMap.containsKey(key)) {
-                        setterMethod=methodMap.get(key);
-                    } else {
-                        setterMethod= PropertyUtil.getSetterMethod(aClass, getterMethod);
-                        methodMap.put(key,setterMethod);
-                    }
-                    Object value = convertResultSetValue(types[i], getterMethod.getReturnType(), aResultSet.getObject(fields[i]));
-                    setterMethod.invoke(entity, value);
-                }
-
-                for (Map.Entry<String, Object> entry : aParamMap.entrySet()) { //Дополняем объект данными НЕ из запроса
-                    String key = "GETTER#"+entry.getKey();
-                    Method getterMethod;
-                    if (methodMap.containsKey(key)) {
-                        getterMethod=methodMap.get(key);
-                    } else {
-                        getterMethod = PropertyUtil.getGetterMethodIgnoreCase(aClass, entry.getKey());
-                        methodMap.put(key,getterMethod);
-                    }
-                    if (getterMethod != null) {
-                        key = "SETTER#"+entry.getKey();
-                        Method setterMethod;
-                        if (methodMap.containsKey(key)) {
-                            setterMethod=methodMap.get(key);
-                        } else {
-                            setterMethod =  PropertyUtil.getSetterMethod(aClass, getterMethod);
-                            methodMap.put(key,setterMethod);
-                        }
-                        setterMethod.invoke(entity, entry.getValue());
-                    } else {
-                        LOG.error("Невозможно получить объект из карты с ключем = " + entry.getKey());
-                    }
-                }
-                if (!isNotNull(entity.getOkatoReg())) { entity.setOkatoReg(defaultOkato);} //Устанавливаем ОКАТО регистрации по умолчанию
-                if (!isNotNull(entity.getOkatoReal())) { entity.setOkatoReal(defaultOkato);}//Устанавливаем ОКАТО проживания по умолчанию
-                theManager.persist(entity);
-                setEntryType(entity,aEntryListCode);
-                makeMedPolicy(entity); //Запускаем один лишь раз
-                createDiagnosis(entity); //Запускаем один лишь раз
-                createServices(entity); //Запускаем один лишь раз
-                //makeCheckEntry(entity);
-                theManager.persist(entity);
-                if (entity.getEntryType().equals(POLYCLINICTYPE)) {
-                    makeCheckEntry(entity,false, false);
-                }
-            }
-            LOG.info("Success!");
-            monitor.finish("Законцено формирование нового заполнения");
-        } catch (Exception e) {
-            monitor.error("Ошибка формирования нового заполнения: "+e.getLocalizedMessage(),e);
-            e.printStackTrace();
-        }
-        isCheckIsRunning=false;
-    }
     /*Список диагнозов, с которыми разрешена подача обсервационного отделения менее 5 дней*/
     private void fillChildBirthMkbs() {
         childBirthMkb.add("O14.1");
@@ -2488,123 +2628,6 @@ public class Expert2ServiceBean implements IExpert2Service {
         childBirthMkb.add("O36.3");
         childBirthMkb.add("O36.4");
         childBirthMkb.add("O42.2");
-    }
-    /** При формировании заполнения выполняем расчет КСГ, объединение случаев, повторное нахождение КСГ */
-    private void checkListEntryFirst(E2ListEntry aListEntry, List<E2Entry> aEntryList, long aMonitorId) {
-        Long listEntryId = aListEntry.getId();
-        try {
-            java.util.Date startStartDate = new java.util.Date();
-            LOG.info("start checkListEntryFirst. id="+listEntryId);
-            if (isCheckIsRunning) {
-                LOG.warn("Проверка уже запущена, ничего не проверяем ALREADY_STARTED");
-                //  return;
-            }
-            isCheckIsRunning=true;
-            if (aEntryList==null) {
-                aEntryList = theManager.createNamedQuery("E2ListEntry.findAllEntries").setParameter("list",aListEntry).getResultList();
-            }
-            if (aEntryList.isEmpty()) {
-                LOG.warn("Случаев для проверки не найдено NO_CASES ");
-                return;
-            }
-
-            String listEntryCode = aListEntry.getEntryType().getCode();
-            // theMonitorService.acceptMonitor(aMonitorId, "Расчет цены случаев в звполнении") ;
-            IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Пересчет случаев в заполнении",aEntryList.size());
-            monitor.advice(1);
-            if (listEntryCode.equals(HOSPITALTYPE) || listEntryCode.equals(HOSPITALPEREVODTYPE)) {
-                int i=0;
-                LOG.info("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size="+aEntryList.size());
-                monitor.setText("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size="+aEntryList.size());
-                StringBuilder entriesId = new StringBuilder();
-                for (E2Entry entry : aEntryList) { //Найдем лучшее КСГ
-                    entriesId.append(",").append(entry.getId());
-                    i++;
-                    if (i%100==0) {
-                        if (isMonitorCancel(monitor,"Проверяем стационар. Проверено случаев: "+i)) return;
-                    }
-                    makeCheckEntry(entry,false, false);
-                }
-                if (isMonitorCancel(monitor,"Закончили первичную проверку случаев.FINISH_FIRST_CHECK")) return;
-
-                //теперь объединим все случаи объединим все случаи (только для стационара)
-                List<BigInteger> hospitalIds = theManager.createNativeQuery("select externalparentid from e2entry" +
-                        " where id in ("+entriesId.substring(1)+") and listentry_id=" + listEntryId  + " and (isDeleted is null or isDeleted='0') and (isUnion is null or isUnion='0') group by externalparentid having count(externalparentid)>1").getResultList();//Находис все СЛС, в которых больше 1 СЛО
-                i=0;
-                isMonitorCancel(monitor,"Приступаем к объединению случаев. START_UNION");
-                fillChildBirthMkbs();
- /*               if (HOSPITALPEREVODTYPE.equals(listEntryCode)) { //Если заполнение - переводы, отметим *не подавать* все СЛС вида: отделение-реанимация-отделение
-
-                }
- */               for (BigInteger hospId : hospitalIds) {
-                    i++;
-                    if (i%100==0) {
-                        if (isMonitorCancel(monitor,"Идет объединение случаев: "+i))return;
-                    }
-                    unionHospitalMedCase(listEntryId , hospId.longValue());
-                }
-                LOG.info("Объединение случаев завершено.FINISH_UNION");
-                isMonitorCancel(monitor,"Проверяем КСГ после объединения случаев.2ND_CHECK_KSG");
-                i=0;
-                for(E2Entry entry : aEntryList) {
-                    i++;
-                    if (i%100==0) {
-                        if (isMonitorCancel(monitor,"Находим лучшее КСГ-2 после объединения случае. Проверено: "+i))return;
-                    }
-                    //Теперь снова находим КСГ, расчитываем цену и коэффициенты
-                    if (!entry.getServiceStream().equals("COMPLEXCASE")) {
-                        findCancerEntry(entry);
-                        makeCheckEntry(entry,true, true);
-                    }
-                }
-            } else if (listEntryCode.equals(POLYCLINICTYPE) ||SERVICETYPE.equals(listEntryCode) ) {
-                //Проверка поликлинических случаев
-                monitor.setText("Удаляем дубли в поликлинике");
-                deletePolyclinicDoubles(listEntryId ); //Удалим дубли при первой проверке
-                aEntryList = theManager.createNamedQuery("E2ListEntry.findAllEntries").setParameter("list",aListEntry).getResultList();
-                int i=0;
-                LOG.info("POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.");
-                if (isMonitorCancel(monitor,"POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.")) return;
-                for(E2Entry entry : aEntryList) {
-                    i++;
-                    if (i%100==0) {
-                       if (isMonitorCancel(monitor,"Проверяем записи по поликлинике: "+i))return;
-                    }
-                    makeCheckEntry(entry,false, true);
-                    findCancerEntry(entry);
-                }
-                if (isMonitorCancel(monitor,"Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев."+(System.currentTimeMillis()-startStartDate.getTime())/60000)) return;
-                Boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO","0").equals("1");
-                unionPolyclinicMedCase(listEntryId ,null,isGroupSpo);
-                monitor.setText("Приступаем к проверке перекрестных случаев.");
-                deleteCrossSpo(aListEntry);
-                monitor.setText("Закончили проверять поликлинику.");
-            } else if (listEntryCode.equals(KDPTYPE))  { //Проверяем КДП (как обращение)
-                makeEmergencyEntry(aEntryList);
-            } else if (listEntryCode.equals(EXTDISPTYPE)) { //Пришло время делать ДД
-                LOG.info("Create DD");
-                int i=0;
-                for(E2Entry entry : aEntryList) {
-                    i++;
-                    if (i%100==0) {
-                       if (isMonitorCancel(monitor,"Проверяем записи по доп. диспансеризации: "+i)) return;
-                    }
-                    makeCheckEntry(entry,false, true);
-                }
-            } else {
-                LOG.error("Невозможно выполнить проверку заполнения, неизвестный тип '"+listEntryCode+"'");
-            }
-            long minutes = (System.currentTimeMillis()-startStartDate.getTime())/60000;
-            LOG.info("Время выполнения проверки (минут) TOTAL_TIME = "+minutes);
-            monitor.finish("Завершено. Время выполнения проверки (минут) TOTAL_TIME = "+minutes);
-            Long currentTime = System.currentTimeMillis();
-            aListEntry.setCheckDate(new java.sql.Date(currentTime));
-            aListEntry.setCheckTime(new java.sql.Time(currentTime));
-            theManager.persist(aListEntry);
-        } catch (Exception e) {
-           LOG.error(e.getMessage(),e);
-        }
-        isCheckIsRunning=false;
     }
 
     /**Список актуальный на сегодняшний день КДП*/
@@ -2655,11 +2678,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     //только для АМОКБ
     private void makeEmergencyEntry(List<E2Entry> aEntryList) {
         LOG.info("Создаем НМП, всего случаев = "+aEntryList.size());
-        VocE2EntrySubType subType = getEntityByCode("CONS_POL_EMERG_POLYCLINIC",VocE2EntrySubType.class,false);
-        if (subType == null) {
-            LOG.warn("Нет типа записи для создания НМП");
-            return;
-        }
+        VocE2EntrySubType subType = getEntityByCode("CONS_POL_EMERG_POLYCLINIC",VocE2EntrySubType.class,true);
+        VocE2EntrySubType serviceSubType = getEntityByCode("SERVICE",VocE2EntrySubType.class,false);
 
         VocE2FondV006 medHelpUsl = subType.getUslOk();
         VocE2VidSluch vidSluch = subType.getVidSluch();
@@ -2679,43 +2699,82 @@ public class Expert2ServiceBean implements IExpert2Service {
             List<EntryMedService> services = entry.getMedServices();
             List<EntryDiagnosis> diagnoses = entry.getDiagnosis();
             List<Long> uniqueSpecList = new ArrayList<>();
-                for(EntryMedService service : services) {
+                for(int i=0; i<services.size() ; i++) {
+                    EntryMedService service = services.get(i);
                     VocE2FondV021 spec = service.getDoctorSpeciality();
-                    if (service.getMkb()!=null && spec!=null) { //Если в услуге есть врач и диагноз
-                        EntryDiagnosis ed = null;
-                        for (EntryDiagnosis d: diagnoses) { //Смотрим, если диагноз совпадает с диагнозом в услуге.
-                            VocIdc10 mkb = d.getMkb();
-                            if (mkb.equals(service.getMkb())) { //Если диагнозы сходятся - то вот тут помечаем entry как хороший НМП
-                                ed = d;
-                                break;
-                            }
+                    if (service.getCost().compareTo(BigDecimal.ZERO)==1) { //если цена услуги больше нуля - подает услугу отдельно
+                        E2Entry serviceEntry = cloneEntity(entry);
+                        serviceEntry.setSubType(serviceSubType);
+                        serviceEntry.setVidSluch(serviceSubType.getVidSluch());
+                        serviceEntry.setVisitPurpose(serviceSubType.getVisitPurpose());
+                        serviceEntry.setEntryType(SERVICETYPE);
+                        serviceEntry.setDoNotSend(false);
+                        serviceEntry.setDirectLpu("300001");
+                        EntryDiagnosis d;
+                        try{
+                            d = new EntryDiagnosis(serviceEntry,diagnoses.get(0));
+
+                        } catch (Exception e) {
+                            d = new EntryDiagnosis();
+                            LOG.warn("No diagnosis NMP"+entry.getId());
                         }
-                        if (ed!=null && !uniqueSpecList.contains(spec.getId())) { // В случае есть подходящий диагноз!
-                            if (!isFirst) {
-                                entry = cloneEntity(entry); //Если 2 и более дненик с диагнозом
-                                diagnoses.remove(ed);
-                                ed.setEntry(entry);
-                                theManager.persist(ed);
+                        ArrayList<EntryDiagnosis> dd = new ArrayList<>();
+                        dd.add(d);
+                        serviceEntry.setDiagnosis(dd);
+                        serviceEntry.setMainMkb(d.getMkb().getCode());
+
+                       try {
+                           serviceEntry.setMedHelpProfile(service.getDoctorSpeciality().getPolicProfile());
+                           serviceEntry.setFondDoctorSpecV021(service.getDoctorSpeciality());
+                           serviceEntry.setDoctorSnils(service.getDoctorSnils());
+                       } catch (Exception e) {
+                           LOG.error("No doctor in service!"+entry.getId());
+                       }
+
+                        theManager.persist(serviceEntry);
+                        service.setEntry(serviceEntry);
+                        theManager.persist(service);
+
+                    } else {
+                        if (service.getMkb()!=null && spec!=null) { //Если в услуге есть врач и диагноз
+                            EntryDiagnosis ed = null;
+                            for (EntryDiagnosis d: diagnoses) { //Смотрим, если диагноз совпадает с диагнозом в услуге.
+                                VocIdc10 mkb = d.getMkb();
+                                if (mkb.equals(service.getMkb())) { //Если диагнозы сходятся - то вот тут помечаем entry как хороший НМП
+                                    ed = d;
+                                    break;
+                                }
                             }
-                            entry.setDoNotSend(ed.getMkb().getCode().startsWith("Z"));
-                            entry.setIsEmergency(true);
-                            entry.setWorkPlace(POLYCLINICTYPE);
-                            entry.setSubType(subType);
-                            entry.setMedHelpUsl(medHelpUsl);
-                            entry.setVidSluch(vidSluch);
-                            entry.setVisitPurpose(visitPurpose);
-                            entry.setIDSP(idsp);
-                            entry.setMainMkb(service.getMkb().getCode());
-                            entry.setEntryType(POLYCLINICTYPE);
-                            entry.setDoctorSnils(service.getDoctorSnils());
-                            entry.setFondDoctorSpecV021(spec);
-                            entry.setMedHelpProfile(spec.getPolicProfile());
-                            theManager.persist(entry);
-                            makeCheckEntry(entry,false,true);
-                            isFirst=false;
-                            uniqueSpecList.add(spec.getId());
+                            if (ed!=null && !uniqueSpecList.contains(spec.getId())) { // В случае есть подходящий диагноз!
+                                if (!isFirst) {
+                                    entry = cloneEntity(entry); //Если 2 и более дненик с диагнозом
+                                    diagnoses.remove(ed);
+                                    ed.setEntry(entry);
+                                    theManager.persist(ed);
+                                }
+                                entry.setDoNotSend(ed.getMkb().getCode().startsWith("Z"));
+                                entry.setIsEmergency(true);
+                                entry.setWorkPlace(POLYCLINICTYPE);
+                                entry.setSubType(subType);
+                                entry.setMedHelpUsl(medHelpUsl);
+                                entry.setVidSluch(vidSluch);
+                                entry.setVisitPurpose(visitPurpose);
+                                entry.setIDSP(idsp);
+                                entry.setMainMkb(service.getMkb().getCode());
+                                entry.setEntryType(POLYCLINICTYPE);
+                                entry.setDoctorSnils(service.getDoctorSnils());
+                                entry.setFondDoctorSpecV021(spec);
+                                entry.setMedHelpProfile(spec.getPolicProfile());
+                                theManager.persist(entry);
+                                makeCheckEntry(entry,false,true);
+                                isFirst=false;
+                                uniqueSpecList.add(spec.getId());
+                            }
                         }
                     }
+
+
+
                 }
             if (isFirst) { //Не нашли подходящих диагнозов/услуг.
                 theManager.persist(entry);
@@ -2744,7 +2803,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         } else if (aCode.equals(EXTDISPTYPE)) {
             aCode=EXTDISPTYPE;
         } else if (aCode.equals(SERVICETYPE)) {
-            aCode=POLYCLINICTYPE;
+            aCode=SERVICETYPE;
         }
         if (isNotNull(aEntry.getInsuranceCompanyCode())) {aCode+="_INOG";} //Если код страх. компании не пустой - иногородний.
         aEntry.setEntryType(aCode);
@@ -2967,7 +3026,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private HashMap<String, Object> resultMap = new HashMap<>(); //результат госпитализации
-    private void calculateFondField(E2Entry aEntry, boolean  forceUpdate) { //Расчитываем поля для подачи в ОМС RSLT, ISHOD, PRVS
+    private void calculateFondField(E2Entry aEntry, boolean forceUpdate) { //Расчитываем поля для подачи в ОМС RSLT, ISHOD, PRVS
         String key;
         StringBuilder sb;
         String entryType = aEntry.getEntryType();
@@ -2976,7 +3035,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         Date actualDate = aEntry.getFinishDate();
         boolean stacCase = entryType.equals(HOSPITALTYPE) || entryType.equals(VMPTYPE);
         boolean vmpCase = entryType.equals(VMPTYPE);
-        boolean polyclinicCase = entryType.equals(POLYCLINICTYPE) ;
+        boolean polyclinicCase = entryType.equals(POLYCLINICTYPE) || entryType.equals(SERVICETYPE) ;
         boolean extDispCase = entryType.equals(EXTDISPTYPE);
       //  boolean kdpCase = entryType.equals(KDPTYPE); //del после сдачи
         if (!isNotNull(aEntry.getResult())) {theManager.persist(new E2EntryError(aEntry,"NO_RESULT"));return;}
@@ -3169,6 +3228,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
 
         } else {
+            LOG.info("ELSEssss");
             //   usl="4"; //скорая помощь
         }
         theManager.persist(aEntry);

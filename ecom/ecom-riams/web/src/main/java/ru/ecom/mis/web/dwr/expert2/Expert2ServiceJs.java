@@ -32,6 +32,15 @@ import java.util.List;
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
+    public void addDeleteEntryFactor (Long entryId, Long vocFactorId, Boolean needDelete, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        if (Boolean.TRUE.equals(needDelete)) {
+            service.executeUpdateNativeSql("delete from e2entry_factor where entry_id ="+entryId+" and factor_id= "+vocFactorId+"");
+        } else {
+            service.executeUpdateNativeSql("insert into e2entry_factor (entry_id, factor_id) values ("+entryId+","+vocFactorId+")");
+        }
+    }
+
     public String getDefaultLpuOmcCode(HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         return service.executeNativeSql("select coalesce(omccode,'0') from softconfig sc" +

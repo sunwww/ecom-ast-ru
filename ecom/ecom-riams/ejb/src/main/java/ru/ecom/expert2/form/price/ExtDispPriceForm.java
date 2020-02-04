@@ -48,14 +48,14 @@ public class ExtDispPriceForm extends IdEntityForm {
 
     /** Возраст с (мес) */
     @Comment("Возраст с (мес)")
-    @Persist @Required
+    @Persist
     public Integer getAgeFrom() {return theAgeFrom;}
     public void setAgeFrom(Integer aAgeFrom) {theAgeFrom = aAgeFrom;}
     private Integer theAgeFrom ;
 
     /** Возраст по (мес) */
     @Comment("Возраст по (мес)")
-    @Persist @Required
+    @Persist
     public Integer getAgeTo() {return theAgeTo;}
     public void setAgeTo(Integer aAgeTo) {theAgeTo = aAgeTo;}
     private Integer theAgeTo ;

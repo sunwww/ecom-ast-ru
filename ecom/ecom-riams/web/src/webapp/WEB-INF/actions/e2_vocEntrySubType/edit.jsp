@@ -37,6 +37,9 @@
                 </msh:row>
                <msh:row>
                    <msh:checkBox  property="isConsultation" />
+                   <msh:checkBox  property="isArchival" />
+                </msh:row>
+                <msh:row>
                    <msh:textField property="fileType" />
                 </msh:row>
 

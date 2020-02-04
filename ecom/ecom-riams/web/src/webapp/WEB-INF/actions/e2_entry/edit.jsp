@@ -395,6 +395,19 @@ where cancer.entry_id=${param.id}"/>
                 </msh:table>
             </msh:tableNotEmpty>
             </msh:section>
+
+            <msh:section title="Особенности случая">
+                <msh:autoComplete label="Добавить особенность" property="newFactor" vocName="vocE2EntryFactor" /><input type="button" value="Д. фактор" onclick="addOrDeleteEntryFactor($('newFactor').value,false)">
+            <ecom:webQuery name="factorList" nativeSql="select ef.factor_id, vef.code ||' '|| vef.name
+            from e2entry_factor ef
+            left join VocE2EntryFactor vef on vef.id=ef.factor_id
+  where ef.entry_id=${param.id} "/>
+            <msh:tableNotEmpty  name="factorList"  >
+                <msh:table idField="1" name="factorList" action="javascript:deleteEntryFactor" >
+                <msh:tableColumn columnName="Фактор" property="2"/>
+                </msh:table>
+            </msh:tableNotEmpty>
+            </msh:section>
         </msh:ifFormTypeIsView>
 
     </tiles:put>
@@ -407,6 +420,21 @@ where cancer.entry_id=${param.id}"/>
         <msh:ifFormTypeIsView formName="e2_entryForm">
 
                 <script type="text/javascript">
+
+                    function deleteEntryFactor(factor) {
+                        addOrDeleteEntryFactor(factor,true);
+                    }
+
+                    function addOrDeleteEntryFactor(factor, isDelete) {
+                        if (+factor>0) {
+                            Expert2Service.addDeleteEntryFactor(${param.id}, factor ,isDelete , {
+                                callback: function () {
+                                    window.document.location.reload();
+                                }
+                            });
+                        }
+                    }
+
                     String.prototype.replaceAt=function(index, replacement) {
                         return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
                     };
