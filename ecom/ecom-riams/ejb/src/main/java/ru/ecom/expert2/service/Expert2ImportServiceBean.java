@@ -154,6 +154,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     e.setHistoryNumber(sl.getChildText("NHISTORY"));
                     e.setMainMkb(sl.getChildText("DS1"));
                     e.setFondResult(getVocByCode(VocE2FondV009.class, finishDate, zap.getChildText("RSLT")));
+                    e.setDispResult(getVocByCode(VocE2FondV017.class, finishDate, zap.getChildText("RSLT_D")));
                     e.setFondIshod(getVocByCode(VocE2FondV012.class, finishDate, zap.getChildText("ISHOD")));
                     VocE2FondV021 medSpec =getVocByCode(VocE2FondV021.class, finishDate, sl.getChildText("PRVS"));
                     e.setMedHelpProfile(medSpec.getPolicProfile());

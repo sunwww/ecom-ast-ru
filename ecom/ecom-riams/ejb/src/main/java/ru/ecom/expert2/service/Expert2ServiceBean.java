@@ -1263,6 +1263,20 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
                 monitor.setText("Приступаем к проверке перекрестных случаев.");
                 if (POLYCLINICTYPE.equals(listEntryCode)) deleteCrossSpo(aListEntry);
+            } else if (EXTDISPTYPE.equals(listEntryCode)) {
+                int i =0;
+                for(BigInteger bi : list) {
+                    i++;
+                    if (i%100==0) {
+                        LOG.info("process disp ... checking entry.... "+i);
+                        if (monitor.isCancelled()) {
+                            LOG.info("Проверка прервана пользователем");
+                            monitor.setText("Проверка прервана пользователем");
+                            return;
+                        }
+                    }
+                    makeCheckEntry(theManager.find(E2Entry.class,bi.longValue()),true, true);
+                }
             }
             Long currentTime = System.currentTimeMillis();
             isMonitorCancel(monitor,"Закончена проверка! Время выполнения проверки (минут) = "+((currentTime-startStartDate))/60000);
@@ -1404,7 +1418,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (Boolean.TRUE.equals(aEntry.getIsCancer()) || aEntry.getCancerEntries()!=null && aEntry.getCancerEntries().size()>0) {
             fileType="C";
         }
-        aEntry.setFileType(fileType);
+        aEntry.setFileType(isNotNull(subType.getFileType()) ? subType.getFileType() : fileType);
         return aEntry;
     }
 
@@ -2614,7 +2628,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 " left join vocsex vs on vs.id=p.sex_id" +
                 " where v016.code='"+aEntry.getExtDispType()+"' and (p.sex_id is null or vs.code='"+aEntry.getSex()+"')" +
                 " and ',"+aEntry.getExtDispAge()+",' in (p.ages) and '"+aEntry.getFinishDate()+"' between p.dateFrom and coalesce(p.dateTo,current_date)";
-        LOG.info("sql="+sql);
+     //   LOG.info("sql="+sql);
         List<BigDecimal> list = theManager.createNativeQuery(sql).getResultList();
 
         return list.isEmpty() ? BigDecimal.valueOf(0.03) : list.get(0);
@@ -3038,7 +3052,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         boolean polyclinicCase = entryType.equals(POLYCLINICTYPE) || entryType.equals(SERVICETYPE) ;
         boolean extDispCase = entryType.equals(EXTDISPTYPE);
       //  boolean kdpCase = entryType.equals(KDPTYPE); //del после сдачи
-        if (!isNotNull(aEntry.getResult())) {theManager.persist(new E2EntryError(aEntry,"NO_RESULT"));return;}
+        if (!isNotNull(aEntry.getResult()) && !extDispCase) {theManager.persist(new E2EntryError(aEntry,"NO_RESULT"));return;}
         String[] dischargeData = aEntry.getResult().split("#", -1); //vho.code||'#'||vrd.code||'#'||vhr.code
     /*    if (kdpCase && forceUpdate) {
             VocDiagnosticVisit kdp = aEntry.getKdpVisit();
@@ -3189,7 +3203,6 @@ public class Expert2ServiceBean implements IExpert2Service {
         } else if (extDispCase) { // TODО реализовать для ДД
            //расчет возраста ДД
             aEntry.setExtDispAge(AgeUtil.calculateExtDispAge(aEntry.getStartDate(),aEntry.getBirthDate()));
-
             //Result <RSLT>
 
             //Исход <ISHOD>
