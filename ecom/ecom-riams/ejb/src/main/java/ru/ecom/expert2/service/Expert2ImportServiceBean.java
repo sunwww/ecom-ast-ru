@@ -481,7 +481,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     private String unZip(String aZipFile){
         StringBuilder sb = new StringBuilder();
         String outputDir = XMLDIR + "/"+aZipFile+"-"+System.currentTimeMillis();
-        sb.append("unzip  ").append(XMLDIR).append("/").append(aZipFile).append(" -d ").append(outputDir) ;
+        sb.append("7z e ").append(XMLDIR).append("/").append(aZipFile).append(" -o").append(outputDir) ;
 
         try {
             Runtime.getRuntime().exec(sb.toString());//arraCmd);
