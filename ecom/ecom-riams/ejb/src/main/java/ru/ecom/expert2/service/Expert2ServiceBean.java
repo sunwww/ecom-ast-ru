@@ -589,7 +589,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private Long toLong(String aString) {
-        return aString!=null && !aString.trim().equals("") ? Long.valueOf(aString.trim()) : null;
+        return isNotNull(aString) ? Long.valueOf(aString.trim()) : null;
     }
 
     /**Добавляем услугу и диагноз в случай */
@@ -2526,7 +2526,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         String tariffCode = subType.getTariffCode();
         if (tariffCode ==null) {/*LOG.warn("Cant calc polyclinic tariff: "+aEntry.getId()+"<>"+subType.getId()+""+subType.getCode());*/return aEntry;}
         Long profileId = aEntry.getMedHelpProfile()!=null?aEntry.getMedHelpProfile().getId():null;
-        if (profileId==null ) {LOG.error("Нет профиля для определения цены, ID: "+aEntry.getId()+"<>"+aEntry.getServiceStream());return aEntry;}
+        if (profileId==null ) {LOG.error("Нет профиля для определения цены, ID: "+aEntry.getId()+"<>"+aEntry.getServiceStream());/*return aEntry;*/}
         String key ;
 
         VocE2PolyclinicCoefficient coefficient = null;
@@ -2703,6 +2703,8 @@ public class Expert2ServiceBean implements IExpert2Service {
         VocE2FondV008 medHelpKind = getEntityByCode("13",VocE2FondV008.class,false); // первичная специализированная медико-санитарная помощь
         VocE2FondV009 fondResult = getEntityByCode("301",VocE2FondV009.class,false); // ЛЕЧЕНИЕ ЗАВЕРШЕНО
         VocE2FondV012 fondIshod = getEntityByCode("303",VocE2FondV012.class,false); // УЛУЧШЕНИЕ
+        VocIdc10 healthMkb = getEntityByCode("Z02.9",VocIdc10.class,false);
+        VocPriorityDiagnosis prior = getEntityByCode("1",VocPriorityDiagnosis.class,false);
 
         for (E2Entry entry : aEntryList) {
             entry.setMedHelpKind(medHelpKind);
@@ -2724,14 +2726,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                         serviceEntry.setEntryType(SERVICETYPE);
                         serviceEntry.setDoNotSend(false);
                         serviceEntry.setDirectLpu("300001");
-                        EntryDiagnosis d;
-                        try{
-                            d = new EntryDiagnosis(serviceEntry,diagnoses.get(0));
-
-                        } catch (Exception e) {
-                            d = new EntryDiagnosis();
-                            LOG.warn("No diagnosis NMP"+entry.getId());
-                        }
+                        serviceEntry.setIsEmergency(true);
+                        EntryDiagnosis d = new EntryDiagnosis(serviceEntry,healthMkb, null, prior, "", "");
                         ArrayList<EntryDiagnosis> dd = new ArrayList<>();
                         dd.add(d);
                         serviceEntry.setDiagnosis(dd);
@@ -2746,6 +2742,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                        }
 
                         theManager.persist(serviceEntry);
+                       makeCheckEntry(serviceEntry,false,true);
                         service.setEntry(serviceEntry);
                         theManager.persist(service);
 
@@ -3238,11 +3235,8 @@ public class Expert2ServiceBean implements IExpert2Service {
             } else {
                 aEntry.setMedHelpUsl(entrySubType.getUslOk());
             }
-
-
         } else {
-            LOG.info("ELSEssss");
-            //   usl="4"; //скорая помощь
+            LOG.info("calc fond field, type = "+entryType);
         }
         theManager.persist(aEntry);
     }
