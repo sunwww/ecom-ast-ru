@@ -613,7 +613,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                         List<EntryMedService> serviceList = child.getMedServices();
                         for (EntryMedService service : serviceList) { //простые услуги в пол-ке
-                            uslCnt++;
+                         //   uslCnt++;
                             String serviceCode = service.getMedService().getCode();
                             BigDecimal cost = service.getCost() ;
                       //      uslSum = uslSum.add(cost);
@@ -867,6 +867,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String selectSqlAdd ,groupSqlAdd;
             boolean isHosp=false;
             boolean isPolic=false;
+
+
+
             if (aType.equals(HOSPITALTYPE) || aType.equals(HOSPITALPEREVODTYPE) || aType.equals(VMPTYPE)) {
                 selectSqlAdd =" list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО
              //   selectSqlAdd =" list(''||e.id) as ids, e.externalparentid, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО //1 Z_SL = 1SL
@@ -874,7 +877,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
              //   groupSqlAdd= "e.externalparentid"; //1 Z_SL = 1SL
                 isHosp=true;
             } else if (aType.equals(POLYCLINICTYPE) || aType.equals(SERVICETYPE)){
-                selectSqlAdd =" list(''||child.id) as ids, e.id, count(distinct child.id) as cnt";//Ищем все комплексные случаи
+                selectSqlAdd =" list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
                 groupSqlAdd="e.id";
                 isPolic=true;
             } else { //ДД (не реализовано)
