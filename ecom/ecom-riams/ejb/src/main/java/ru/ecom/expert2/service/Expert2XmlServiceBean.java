@@ -174,7 +174,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (!isNotNull(aEntry.getIsEmergency())) {
             if ((aEntry.getMainMkb()!=null && aEntry.getMainMkb().startsWith("C")) || !isPoliclinic) {
                 addIfNotNull(z,"NPR_MO",aEntry.getDirectLpu()); //Направившее ЛПУ
-                addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()); //Дата направления на лечение ***
+                addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()!=null ? aEntry.getDirectDate() : aEntry.getStartDate()); //Дата направления на лечение ***
             }
         }
         add(z,"LPU",lpuRegNumber); //ЛПУ лечения F003 //01-01-2020
@@ -582,7 +582,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 int uslCnt = 0;
                 if (currentEntry.getReanimationEntry()!=null && !isVmp) { //Реанимационная услуга
                 //    uslCnt++;
-                    sl.addContent(createUsl(a3,""+(++uslCnt),lpuRegNumber,profileK,"B03.003.005",isChild,startDate,finishDate,sl.getChildText("DS1"),"1",prvs,currentEntry.getDoctorSnils(), BigDecimal.ZERO));
+                    sl.addContent(createUsl(a3,""+(++uslCnt),lpuRegNumber,profileK,"B03.003.005",isChild,startDate,startDate,sl.getChildText("DS1"),"1",prvs,currentEntry.getDoctorSnils(), BigDecimal.ZERO));
                 }
                 //Информация об услугах
           //      BigDecimal uslSum = BigDecimal.ZERO;
@@ -668,8 +668,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     if (!list.isEmpty()) {
                         for (Object[] ms: list) {
                             //uslCnt++;
-                            sl.addContent(createUsl(a3,""+(++uslCnt), lpuRegNumber, profileK, ms[0].toString(),isChild,startDate
-                                    ,finishDate,sl.getChildText("DS1"),ms[1].toString()
+                            sl.addContent(createUsl(a3,""+(++uslCnt), lpuRegNumber, profileK, ms[0].toString(),isChild,ms[2].toString()
+                                    ,ms[2].toString(),sl.getChildText("DS1"),ms[1].toString()
                                     ,prvs,currentEntry.getDoctorSnils(),BigDecimal.ZERO)); //в стационаре КТ-МРТ не оплачивается
 
                         }

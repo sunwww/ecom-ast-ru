@@ -345,10 +345,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                     if (i%100==0) {
                         if (isMonitorCancel(monitor,"Проверяем записи по поликлинике: "+i))return;
                     }
-                    makeCheckEntry(entry,false, true);
+                    makeCheckEntry(entry,false, true);// оченьььь долго
                     findCancerEntry(entry);
                 }
-                if (isMonitorCancel(monitor,"Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев."+(System.currentTimeMillis()-startStartDate.getTime())/60000)) return;
+                if (isMonitorCancel(monitor,"Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев. прошло минут - "+(System.currentTimeMillis()-startStartDate.getTime())/60000)) return;
                 Boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO","0").equals("1");
                 unionPolyclinicMedCase(listEntryId ,null,isGroupSpo);
                 monitor.setText("Приступаем к проверке перекрестных случаев.");
@@ -1299,21 +1299,34 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /** Запустить проверку случая (расчет КСГ, цены, полей для xml) */
     private void makeCheckEntry(E2Entry aEntry, boolean updateKsgIfExist, boolean checkErrors) {
+        long startT = System.currentTimeMillis();
         long bedDays = AgeUtil.calculateDays(aEntry.getStartDate(), aEntry.getFinishDate());
+        LOG.info("make1="+((System.currentTimeMillis()-startT)/1000));
         long calendarDays = bedDays > 0 ? bedDays + 1 : 1;
+        LOG.info("make2="+((System.currentTimeMillis()-startT)/1000));
         if (HOSPITALTYPE.equals(aEntry.getEntryType()) && "2".equals(aEntry.getBedSubType())) { //Для дневного стационара день поступления и день выписки - 2 дня
             bedDays++;
         }
+        LOG.info("make3="+((System.currentTimeMillis()-startT)/1000));
         try {
             aEntry=setEntrySubType(aEntry);
+            LOG.info("make4="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setIsForeign(isNotNull(aEntry.getInsuranceCompanyCode()) && !aEntry.getInsuranceCompanyCode().startsWith("30"));
+            LOG.info("make5="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setBedDays(bedDays > 0 ? bedDays : 1L);
+            LOG.info("make6="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setIsChild(AgeUtil.calcAgeYear(aEntry.getBirthDate(),aEntry.getStartDate())<18);
+            LOG.info("make7="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setCalendarDays(calendarDays);
+            LOG.info("make8="+((System.currentTimeMillis()-startT)/1000));
             getBestKSG(aEntry, updateKsgIfExist,true); //Находим КСГ
+            LOG.info("make9="+((System.currentTimeMillis()-startT)/1000));
             calculateFondField(aEntry,updateKsgIfExist);
+            LOG.info("make10="+((System.currentTimeMillis()-startT)/1000));
             aEntry = calculateEntryPrice(aEntry);
-            if (checkErrors) checkErrors(aEntry);
+            LOG.info("make11="+((System.currentTimeMillis()-startT)/1000));
+            if (checkErrors) {checkErrors(aEntry);LOG.info("make12="+((System.currentTimeMillis()-startT)/1000));}
+            LOG.info("make13="+((System.currentTimeMillis()-startT)/1000));
             theManager.persist(aEntry);
         } catch (Exception e) {
             LOG.error("ERR="+aEntry.getId(),e);
@@ -1669,7 +1682,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             && diagnosis.getPriority()!=null && diagnosis.getPriority().getCode().equals("1")) {
                         aEntry.setMainMkb(mkb);
                         theManager.persist(aEntry);
-                    } else if ((aEntry.getEntryType().equals(POLYCLINICTYPE) || aEntry.getEntryType().equals(KDPTYPE)) && diagnosis.getPriority()!=null && diagnosis.getPriority().getCode().equals("1")) {
+                    } else if ((aEntry.getEntryType().equals(POLYCLINICTYPE) || aEntry.getEntryType().equals(SERVICETYPE)) && diagnosis.getPriority()!=null && diagnosis.getPriority().getCode().equals("1")) {
                         aEntry.setMainMkb(mkb);
                         theManager.persist(aEntry);
                     }
@@ -2627,7 +2640,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 " left join VocE2FondV016 v016 on v016.id=p.dispType_id" +
                 " left join vocsex vs on vs.id=p.sex_id" +
                 " where v016.code='"+aEntry.getExtDispType()+"' and (p.sex_id is null or vs.code='"+aEntry.getSex()+"')" +
-                " and ',"+aEntry.getExtDispAge()+",' in (p.ages) and '"+aEntry.getFinishDate()+"' between p.dateFrom and coalesce(p.dateTo,current_date)";
+                " and position(',"+aEntry.getExtDispAge()+",' in p.ages)>0 and '"+aEntry.getFinishDate()+"' between p.dateFrom and coalesce(p.dateTo,current_date)";
      //   LOG.info("sql="+sql);
         List<BigDecimal> list = theManager.createNativeQuery(sql).getResultList();
 

@@ -31,6 +31,10 @@ import java.util.List;
         , @AIndex(properties= {"parentEntry"})
 
 })
+@NamedQueries({
+        @NamedQuery( name="E2Entry.getAllByBillAndDate"
+                , query="from E2Entry where billNumber=:billNumber and billDate=:billDate and (isDeleted is null or isDeleted='0') ")
+})
 public class E2Entry extends BaseEntity {
 
     @Transient
@@ -791,6 +795,16 @@ public class E2Entry extends BaseEntity {
     /** Номер паспорта */
     private String thePassportNumber ;
 
+    @Transient
+    public String getPassportInfo() {
+        return thePassportSeries+" N "+thePassportNumber;
+    }
+
+    @Transient
+    public String getPolicyInfo() {
+        return theMedPolicySeries+" N "+theMedPolicyNumber;
+    }
+
     /** Дата выдачи паспорта */
     @Comment("Дата выдачи паспорта")
     public Date getPassportDateIssued() {return thePassportDateIssued;}
@@ -1206,6 +1220,13 @@ public class E2Entry extends BaseEntity {
     public List<VocE2EntryFactor> getFactorList() {return theFactorList;}
     public void setFactorList(List<VocE2EntryFactor> aFactorList) {theFactorList = aFactorList;}
     private List<VocE2EntryFactor> theFactorList ;
+
+    /** Место рождения */
+    @Comment("Место рождения")
+    public String getBirthPlace() {return theBirthPlace;}
+    public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
+    private String theBirthPlace ;
+
 
 
 }

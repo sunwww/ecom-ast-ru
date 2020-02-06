@@ -87,6 +87,7 @@
                     <msh:tableColumn columnName="Дата счета" property="3"/>
                     <msh:tableColumn columnName="Номер счета" property="4"/>
                     <msh:tableButton property="11" hideIfEmpty="true" buttonShortName="©" buttonFunction="printBill"/>
+                    <msh:tableButton property="11" hideIfEmpty="true" buttonShortName="©_" buttonFunction="printReestr"/>
                     <msh:tableColumn columnName="Примечание" property="9"/>
                     <msh:tableColumn columnName="записей" property="5"/>
                     <msh:tableColumn columnName="дефектов" property="6" addParam="&defect=1"/>
@@ -138,10 +139,13 @@
                 var monitor = {};
                 checkIsRunning();
 
+                function printReestr(num,date,period,cost,insCode) {
+                    window.location.href = "print-omc_reestr_"+insCode+".do?billNumber="+num+"&s=OmcPrintService&m=printOmcBill"+
+                    "&entry=1&billDate="+date+"&billCost="+cost+"&billPeriod="+period;
+                }
                 function printBill(num,date,period,cost,insCode) {
                     window.location.href = "print-omc_bill_"+insCode+".do?billNumber="+num+"&s=OmcPrintService&m=printOmcBill"+
                     "&billDate="+date+"&billCost="+cost+"&billPeriod="+period;
-
                 }
                 function deleteAllDeletedEntries() {
                     Expert2Service.deleteAllDeletedEntries();
