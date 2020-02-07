@@ -94,7 +94,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     /*Импортируем файл с элмед*/
     public String importElmed(String aXmlFilename) {
         try { //делаем только ДД
-            LOG.info("i1");
             Document doc = getDocumentFromFile(XMLDIR+"/",aXmlFilename,false);
             if (doc == null) return "Не удается открыть файл "+aXmlFilename;
             E2ListEntry le = new E2ListEntry();
@@ -102,7 +101,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             String lpuCode="300052";
             le.setLpuOmcCode(lpuCode);
             theManager.persist(le);
-            LOG.info("i2");
             Element root = doc.getRootElement();
             SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
             int i = 0;
@@ -194,6 +192,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     LOG.error(i+" Не удалось загрузить запись:"+new XMLOutputter().outputString(zap));
                 }
             }
+            LOG.info("finish import elmed");
                 return "ok: " + i;
 
         } catch (Exception e){

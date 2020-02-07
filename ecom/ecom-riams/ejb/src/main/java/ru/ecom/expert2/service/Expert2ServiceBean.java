@@ -1301,32 +1301,35 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void makeCheckEntry(E2Entry aEntry, boolean updateKsgIfExist, boolean checkErrors) {
         long startT = System.currentTimeMillis();
         long bedDays = AgeUtil.calculateDays(aEntry.getStartDate(), aEntry.getFinishDate());
-        LOG.info("make1="+((System.currentTimeMillis()-startT)/1000));
+//        LOG.info("make1="+((System.currentTimeMillis()-startT)/1000));
         long calendarDays = bedDays > 0 ? bedDays + 1 : 1;
-        LOG.info("make2="+((System.currentTimeMillis()-startT)/1000));
+ //       LOG.info("make2="+((System.currentTimeMillis()-startT)/1000));
         if (HOSPITALTYPE.equals(aEntry.getEntryType()) && "2".equals(aEntry.getBedSubType())) { //Для дневного стационара день поступления и день выписки - 2 дня
             bedDays++;
         }
-        LOG.info("make3="+((System.currentTimeMillis()-startT)/1000));
+//        LOG.info("make3="+((System.currentTimeMillis()-startT)/1000));
         try {
             aEntry=setEntrySubType(aEntry);
-            LOG.info("make4="+((System.currentTimeMillis()-startT)/1000));
+ //           LOG.info("make4="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setIsForeign(isNotNull(aEntry.getInsuranceCompanyCode()) && !aEntry.getInsuranceCompanyCode().startsWith("30"));
-            LOG.info("make5="+((System.currentTimeMillis()-startT)/1000));
+ //           LOG.info("make5="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setBedDays(bedDays > 0 ? bedDays : 1L);
-            LOG.info("make6="+((System.currentTimeMillis()-startT)/1000));
+ //           LOG.info("make6="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setIsChild(AgeUtil.calcAgeYear(aEntry.getBirthDate(),aEntry.getStartDate())<18);
-            LOG.info("make7="+((System.currentTimeMillis()-startT)/1000));
+ //           LOG.info("make7="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setCalendarDays(calendarDays);
-            LOG.info("make8="+((System.currentTimeMillis()-startT)/1000));
+ //           LOG.info("make8="+((System.currentTimeMillis()-startT)/1000));
             getBestKSG(aEntry, updateKsgIfExist,true); //Находим КСГ
-            LOG.info("make9="+((System.currentTimeMillis()-startT)/1000));
+ //           LOG.info("make9="+((System.currentTimeMillis()-startT)/1000));
             calculateFondField(aEntry,updateKsgIfExist);
-            LOG.info("make10="+((System.currentTimeMillis()-startT)/1000));
+ //           LOG.info("make10="+((System.currentTimeMillis()-startT)/1000));
             aEntry = calculateEntryPrice(aEntry);
-            LOG.info("make11="+((System.currentTimeMillis()-startT)/1000));
-            if (checkErrors) {checkErrors(aEntry);LOG.info("make12="+((System.currentTimeMillis()-startT)/1000));}
-            LOG.info("make13="+((System.currentTimeMillis()-startT)/1000));
+  //          LOG.info("make11="+((System.currentTimeMillis()-startT)/1000));
+            if (checkErrors) {
+                checkErrors(aEntry);
+   //             LOG.info("make12="+((System.currentTimeMillis()-startT)/1000));
+            }
+  //          LOG.info("make13="+((System.currentTimeMillis()-startT)/1000));
             theManager.persist(aEntry);
         } catch (Exception e) {
             LOG.error("ERR="+aEntry.getId(),e);
@@ -2719,7 +2722,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         VocIdc10 healthMkb = getEntityByCode("Z02.9",VocIdc10.class,false);
         VocPriorityDiagnosis prior = getEntityByCode("1",VocPriorityDiagnosis.class,false);
 
-        for (E2Entry entry : aEntryList) {
+        for (E2Entry entry : aEntryList) { // запись = 1 отказ в госпитализации //TODO делать правильное проставление услуг
             entry.setMedHelpKind(medHelpKind);
             entry.setFondResult(fondResult);
             entry.setFondIshod(fondIshod);
@@ -3165,6 +3168,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (aEntry.getSubType()!=null && aEntry.getSubType().getCode().equals("POLDAYTIMEHOSP")) {
                 v008Code=aEntry.getMedHelpProfile().getProfileK().equals("97") ? "12" : "13"; // TODO = переделать
             }
+            if (Boolean.TRUE.equals(aEntry.getIsRehabBed())) v008Code ="13";
             key = "V008#"+v008Code;
             if (!resultMap.containsKey(key)) {
                 resultMap.put(key,getActualVocByClassName(VocE2FondV008.class, actualDate,"code='"+v008Code+"'"));
