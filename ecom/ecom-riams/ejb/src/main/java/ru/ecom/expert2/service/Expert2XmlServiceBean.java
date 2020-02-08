@@ -1228,7 +1228,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (aVersion==null) {aVersion="3.1";}
         if (a3) {
             add(aElement,"DS1",aEntry.getMainMkb());
-            add(aElement,"DS1_PR","0"); //TODO сделать для ДД
             return;
         }
         List<EntryDiagnosis> list = aEntry.getDiagnosis();
