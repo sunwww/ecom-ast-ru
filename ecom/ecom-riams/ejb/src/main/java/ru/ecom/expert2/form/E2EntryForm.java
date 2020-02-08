@@ -1034,6 +1034,21 @@ public class E2EntryForm extends IdEntityForm {
     public void setNewFactor(Long aNewFactor) {theNewFactor = aNewFactor;}
     private Long theNewFactor ;
 
+    /** Место рождения */
+    @Comment("Место рождения")
+    @Persist
+    public String getBirthPlace() {return theBirthPlace;}
+    public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
+    private String theBirthPlace ;
+
+    /** результат диспансеризации */
+    @Comment("результат диспансеризации")
+    @Persist
+    public Long getDispResult() {return theDispResult;}
+    public void setDispResult(Long aDispResult) {theDispResult = aDispResult;}
+    /** результат диспансеризации */
+    private Long theDispResult ;
+
 
 
 }

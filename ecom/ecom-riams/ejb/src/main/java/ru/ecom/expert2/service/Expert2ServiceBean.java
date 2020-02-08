@@ -2546,15 +2546,13 @@ public class Expert2ServiceBean implements IExpert2Service {
         String key ;
 
         VocE2PolyclinicCoefficient coefficient = null;
-        boolean isKdo =Boolean.TRUE.equals(aEntry.getIsDiagnosticSpo()) || aEntry.getEntryType().equals(KDPTYPE);
+        // boolean isKdo =Boolean.TRUE.equals(aEntry.getIsDiagnosticSpo()) || aEntry.getEntryType().equals(KDPTYPE);
         boolean isEmergency = Boolean.TRUE.equals(aEntry.getIsEmergency());
         boolean isMobilePolyclinic = Boolean.TRUE.equals(aEntry.getIsMobilePolyclinic());
         //находим Кз
-        if (isKdo) { //Находим Кз обращения
-            key="KZ#KDO#";
-        } else {
-            key = isEmergency ? "KZ#EMERGENCY##" : "KZ#" + profileId + "#" + tariffCode;
-        }
+
+        key = isEmergency ? "KZ#EMERGENCY##" : "KZ#" + profileId + "#" + tariffCode;
+
         String sql  = "profile_id="+profileId+" and entryType.tariffCode='"+tariffCode+"'";
         key+=sql;
         if (!polyclinicCasePrice.containsKey(key)) {
@@ -2569,16 +2567,14 @@ public class Expert2ServiceBean implements IExpert2Service {
         boolean needToFindKp = true;
         //Находим Кп/Кпд
         sql = "";
-        if (isKdo) { //находим КДО
-            sql+=" and isDiagnosticSpo='1'";
-        } else if (isEmergency) { //Неотложна
+         if (isEmergency) { //Неотложна
             needToFindKp=false;
             sql+=" and 1=2";
         } else { //поликлиника (мобильная ., консультативная)
             if (isMobilePolyclinic) {
                 sql += " and isMobilePolyclinic='1'";
             }
-            if (isNotNull(subType.getIsConsultation())) {
+            if (Boolean.TRUE.equals(subType.getIsConsultation())) {
                 sql += " and isConsultation='1'";
             }
         }

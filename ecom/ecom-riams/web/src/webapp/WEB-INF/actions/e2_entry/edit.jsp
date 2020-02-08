@@ -16,8 +16,6 @@
             <msh:hidden property="KLADRReal" />
             <msh:hidden property="okatoReg" />
             <msh:hidden property="okatoReal"/>
-            <msh:hidden property="addressRegistration" />
-            <msh:hidden property="addressReal"  />
             <msh:panel>
      <msh:separator colSpan="4" label="Общие"/>
                 <msh:row>
@@ -68,6 +66,13 @@
             <msh:row>
                 <msh:textField property="height" size="10" />
                 <msh:textField property="weigth" size="10" />
+            </msh:row>
+            <msh:row>
+                <msh:textField property="addressRegistration" size="50" />
+                <msh:textField property="addressReal" size="50" />
+            </msh:row>
+            <msh:row>
+                <msh:textField property="birthPlace" size="50" />
             </msh:row>
     <msh:separator colSpan="4" label="Представитель"/>
                 <msh:row>
@@ -283,9 +288,13 @@
                     </msh:row><msh:row>
                     <msh:textField property="extDispHealthGroup" size="50" />
                     <msh:textField property="extDispSocialGroup" size="50" />
-            </msh:row><msh:row>
+                </msh:row>
+                <msh:row>
                 <msh:textField property="extDispAppointments" size="50" />
                     <msh:checkBox property="extDispNextStage"  />
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="dispResult" vocName="vocE2FondV017" />
                 </msh:row>
 
     <msh:separator colSpan="4" label="Служебная информация"/>

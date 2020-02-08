@@ -171,7 +171,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         add(z,"VIDPOM",aEntry.getMedHelpKind().getCode());
         if (!a3) {
             add(z,"FOR_POM",forPom); //форма помощи V014
-            if (Boolean.TRUE.equals(aEntry.getIsEmergency())) {
+            if (!Boolean.TRUE.equals(aEntry.getIsEmergency())) {
                 if ((aEntry.getMainMkb()!=null && aEntry.getMainMkb().startsWith("C")) || !isPoliclinic) {
                     addIfNotNull(z,"NPR_MO",aEntry.getDirectLpu()); //Направившее ЛПУ
                     addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()!=null ? aEntry.getDirectDate() : aEntry.getStartDate()); //Дата направления на лечение ***
@@ -522,10 +522,16 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl,"IDDOKT",currentEntry.getDoctorSnils()); // СНИЛС лечащего врача
                 }
 
-             /*   if (a3){
-                    add(sl,"NAZ",""); // назначения в ДД
+                if (a3 && aEntry.getDispResult()!=null){
+                    if (",3,4,5,19,17,18,".contains(","+aEntry.getDispResult().getCode()+",")) { //нужная нам группа здоровья
+                        Element naz = new Element("NAZ");
+                        add(naz,"NAZ_N","1");
+                        add(naz,"NAZ_R","3");
+                        add(naz,"NAZ_V","1");
+                        sl.addContent(naz);
+                    }
                 }
-              */  add(sl,"ED_COL",edCol);
+                add(sl,"ED_COL",edCol);
                 if (isPoliclinicKdp) {
                     add(sl,"TARIF",aEntry.getCost());
                     add(sl,"SUM_M",aEntry.getCost());

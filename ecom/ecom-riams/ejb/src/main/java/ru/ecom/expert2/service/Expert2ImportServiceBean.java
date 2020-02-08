@@ -178,6 +178,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         VocMedService vms = getVocByCode(VocMedService.class,finishDate,usl.getChildText("VID_VME"));
                         EntryMedService ms = new EntryMedService(e, vms);
                         ms.setDoctorSnils(usl.getChildText("IDDOKT_U"));
+                        ms.setCost(BigDecimal.ZERO);
                         try{
                             ms.setServiceDate(toDate(usl.getChildText("DATE_IN")));
                         } catch (NullPointerException | ParseException ee ) {
@@ -368,8 +369,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         try {
             LOG.info("filename = "+aMpFilename);
             String dir = unZip(aMpFilename);
-            String hFilename = aMpFilename.replace(".MP",".XML");
-            hFilename="H"+hFilename.substring(1);
+            String hFilename ="H"+aMpFilename.substring(aMpFilename.indexOf("M")).replace(".MP",".XML");
             File hFile = new File(dir+"/"+hFilename);
             //LOG.info(hFile.exists()+"##>>"+dir+"/"+hFilename+"<<");
 
