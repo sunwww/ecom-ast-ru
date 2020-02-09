@@ -523,7 +523,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
 
                 if (a3 && aEntry.getDispResult()!=null){
-                    if (",3,4,5,19,17,18,".contains(","+aEntry.getDispResult().getCode()+",")) { //нужная нам группа здоровья
+                    if (",3,4,5,14,15,19,17,18,31,32,".contains(","+aEntry.getDispResult().getCode()+",")) { //нужная нам группа здоровья
                         Element naz = new Element("NAZ");
                         add(naz,"NAZ_N","1");
                         add(naz,"NAZ_R","3");
