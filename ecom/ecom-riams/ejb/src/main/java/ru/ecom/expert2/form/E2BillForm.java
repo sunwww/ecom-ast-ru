@@ -27,7 +27,6 @@ public class E2BillForm extends IdEntityForm {
     @Persist @Required
     public String getBillNumber() {return theBillNumber;}
     public void setBillNumber(String aBillNumber) {theBillNumber = aBillNumber;}
-    /** Номер счета */
     private String theBillNumber ;
 
     /** Дата счета */
@@ -36,7 +35,6 @@ public class E2BillForm extends IdEntityForm {
     @DateString @DoDateString
     public String getBillDate() {return theBillDate;}
     public void setBillDate(String aBillDate) {theBillDate = aBillDate;}
-    /** Дата счета */
     private String theBillDate ;
 
     /** Статус счета */
@@ -44,7 +42,6 @@ public class E2BillForm extends IdEntityForm {
     @Persist @Required
     public Long getStatus() {return theStatus;}
     public void setStatus(Long aStatus) {theStatus = aStatus;}
-    /** Статус счета */
     private Long theStatus ;
 
     /** Страховая компания */
@@ -52,7 +49,6 @@ public class E2BillForm extends IdEntityForm {
     @Persist
     public Long getCompany() {return theCompany;}
     public void setCompany(Long aCompany) {theCompany = aCompany;}
-    /** Страховая компания */
     private Long theCompany ;
 
     /** Сумма счета */
@@ -60,7 +56,6 @@ public class E2BillForm extends IdEntityForm {
     @Persist
     public String getSum() {return theSum;}
     public void setSum(String aSum) {theSum = aSum;}
-    /** Сумма счета */
     private String theSum ;
 
     /** Примечание к счету */
@@ -68,7 +63,13 @@ public class E2BillForm extends IdEntityForm {
     @Persist
     public String getComment() {return theComment;}
     public void setComment(String aComment) {theComment = aComment;}
-    /** Примечание к счету */
     private String theComment ;
+
+    /** Назначение счета */
+    @Comment("Назначение счета")
+    @Persist
+    public String getBillProperty() {return theBillProperty;}
+    public void setBillProperty(String aBillProperty) {theBillProperty = aBillProperty;}
+    private String theBillProperty ;
 
 }
