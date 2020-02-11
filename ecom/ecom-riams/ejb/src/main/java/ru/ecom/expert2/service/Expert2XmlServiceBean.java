@@ -187,7 +187,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (a3) add(z,"P_OTK","0");
         if (!isPoliclinic && !a3)  add(z,"KD_Z",aEntry.getBedDays()+""); // Продолжительность госпитализации
         if (a3) add(z,"RSLT_D",aEntry.getDispResult()!=null ?aEntry.getDispResult().getCode(): "___"); // Результат диспансеризации
-        if (isNedonosh && isNotNull(aEntry.getKinsmanLastname())) add(z,"VNOV_M",aEntry.getNewbornWeight()+"");
+  //      if (isNedonosh && !isNotNull(aEntry.getKinsmanLastname())) add(z,"VNOV_M",aEntry.getNewbornWeight()+"");
         if (!a3) {
             add(z,"RSLT",aEntry.getFondResult().getCode()); // Результат обращения
             add(z,"ISHOD",aEntry.getFondIshod().getCode()); // Исход случая.
@@ -284,9 +284,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 add(pat,"SMO_OGRN",aEntry.getInsuranceCompanyOgrn());
                 add(pat,"SMO_NAM",aEntry.getInsuranceCompanyName());
             }
-            String novorString=makeNovorString(aEntry);
-            add(pat,"NOVOR",novorString);
-            if (a1 && isNedonosh && !isNotNull(aEntry.getKinsmanLastname())) { // && novorString.equals("0")) { //11.10.2018 по согласованию с фондом
+            //String novorString=
+            add(pat,"NOVOR",makeNovorString(aEntry));
+            if (a1 && isNedonosh && isNotNull(aEntry.getKinsmanLastname())) { // && novorString.equals("0")) { //11.10.2018 по согласованию с фондом
                 add(pat,"VNOV_D",aEntry.getNewbornWeight()+"");
             }
 

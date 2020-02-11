@@ -148,6 +148,19 @@ public class ContractServiceJs {
 	}
 
 	/**
+	 * Получаем информацию об остатке денег по гарантийному письму
+	private JSONObject getGuaranteeMoneyInfo(Long aGuaranteeId, IWebQueryService aService) throws NamingException {
+		String sql = "select cg.id as guaranteeid, cg.limitmoney as limitmoney" +
+				",sum(cost*coalesce(countmedservice,1)) as spent" +
+				", case when  cg.isnolimit ='1' then false else true end as islimit" +
+				" from contractguarantee cg" +
+				" left join contractaccountmedservice cams on cams.guarantee_id = cg.id"+
+				" where cg.id="+aGuaranteeId+" and cams.account_id is null"+
+				" group by cg.id, cg.limitmoney";
+		return new JSONObject(aService.executeSqlGetJson(sql));
+	}
+*/
+	/**
 	 * Проверяем, нужно ли гарантийное письмо для выбранного потока обслуживания. Если нужно - находим. 
 	 * @param aPatient  - id пациента 
 	 * @param aServiceStreamId id потока обслуживания
@@ -158,71 +171,60 @@ public class ContractServiceJs {
 	 * @return Гарантийное письмо с остатком ден. средств
 	 * @throws NamingException
 	 */
-	public String checkIfDogovorIsNeeded (String aPatient, String aServiceStreamId, String aDate, String aDatePlanId,String aMedhelpType, HttpServletRequest aRequest) throws NamingException {
+	public String checkIfDogovorIsNeeded (Long aPatient, Long aServiceStreamId, String aDate, Long aDatePlanId,String aMedhelpType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l = service.executeNativeSql("select id from vocserviceStream where id="+aServiceStreamId+" and isCalcDogovor='1'");
-		if (!l.isEmpty()) {
+		if (!l.isEmpty()) { //требуется гарантийное письмо
 			if ("POLYCLINIC".equals(aMedhelpType)) {
 				aMedhelpType = "AMB";
 			} else if ("HOSPITAL".equals(aMedhelpType)) {
 				aMedhelpType = "PLAN_HOSP";
 			} else {
-				return "0Неизвестный тип помощи";
+				return new JSONObject().put("status","error").put("errorName","Неизвестный вид помощи").toString();
 			}
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("select cg.id as id,cg.numberdoc, to_char(cg.issueDate,'dd.MM.yyyy') as guarDate, mc.contractnumber as contractNumber")
-					.append(",cg.limitMoney, mc.pricelist_id as price,  case when  cg.isnolimit ='1' then '1' else '0' end as f7_isNoLimit")
-					.append(" from contractguarantee  cg")
+			sb.append("select cg.id as id,cg.numberdoc as number, to_char(cg.issueDate,'dd.MM.yyyy') as issueDate, mc.contractnumber as contractNumber")
+					.append(",cg.limitMoney, case when cg.isnolimit ='1' then true else false end as f6_noLimit")
+					.append(",coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f7_spent ")
+					.append(",cg.limitMoney - coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f8_ostatok ")
+					.append(" from contractguarantee cg")
 					.append(" left join contractperson cp on cp.id=cg.contractperson_id")
 					.append(" left join medcontract mc on mc.id=cg.contract_id")
 					.append(" left join contractperson cpCustomer on cpCustomer.id=mc.customer_id")
-					.append(" left join medpolicy mp on mp.patient_id=cp.patient_id and mp.company_id=cpCustomer.regcompany_id")
 					.append(" left join vocguaranteekindhelp vgkh on vgkh.id=cg.kindhelp_id")
-					.append(" where mc.servicestream_id='").append(aServiceStreamId).append("'")
-					.append(" and (cg.contractperson_id is null or cp.patient_id='").append(aPatient).append("') and vgkh.code='").append(aMedhelpType).append("'");
+					.append(" left join medpolicy mp on mp.patient_id=cp.patient_id and mp.company_id=cpCustomer.regcompany_id")
+					.append(" left join contractaccountmedservice cams on cams.guarantee_id = cg.id and cams.account_id is null ")
+					.append(" where cp.patient_id=").append(aPatient).append(" and (mc.servicestream_id is null or mc.servicestream_id=").append(aServiceStreamId).append(")")
+					.append(" and vgkh.code='").append(aMedhelpType).append("'");
 			if (aDate!=null&&!aDate.equals("")) {
 				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=to_date('").append(aDate).append("','dd.MM.yyyy'))");
-			} else if (aDatePlanId!=null&&!aDatePlanId.equals("")){
-				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=(select calendardate from workcalendarday where id='").append(aDatePlanId).append("'))");
+			} else if (aDatePlanId!=null && aDatePlanId>0L){
+				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=(select calendardate from workcalendarday where id=").append(aDatePlanId).append("))");
 			} else {
 				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=current_date)");
 			}
-			sb.append(" and case when cpCustomer.regcompany_id is not null and mp.id is not null then 1 when cpCustomer.regcompany_id is null then 1 else 0 end = 1");
+			sb.append(" and ((cpCustomer.regcompany_id is not null and mp.id is not null) or (cpCustomer.regcompany_id is null ))")
+					.append(" group by cg.id, cg.limitmoney,mc.contractnumber");
 		LOG.info("=== Ищем гар. письмо по пациенту. sql="+sb.toString());
 			l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
-				LOG.info("Ищем уже исрасходованную сумму лечения");
 				WebQueryResult r = l.iterator().next();
-				String guaranteeId = r.get1().toString();
-				BigDecimal limit = null , spent = BigDecimal.valueOf(0.0);
-				if ("0".equals(r.get7())) {
-					limit  = BigDecimal.valueOf(Double.parseDouble(r.get5().toString()));
-					String priceListId = r.get6().toString();
-					l = service.executeNativeSql("select list(''||id) from medcase where guarantee_id="+guaranteeId);
-					for (WebQueryResult wqr: l) {
-						String listId =wqr.get2()!=null?wqr.get2().toString():null;
-						if (listId!=null) {
-							String[] ids = listId.split(",");
-							for (String id: ids) {
-								spent = spent.add(calculateMedCaseCost(Long.valueOf(id), Long.valueOf(priceListId), aRequest));
-							}
-						}
-					}
-				}
 
-				sb.setLength(0);
-				//Дата письма
-				sb.append(guaranteeId) //id письма
-						.append("|гар. письмо № ").append(r.get2()) //номер письма
-						.append(" от ").append(r.get3()).append(" Остаток средств: ").append(limit!=null ? limit.subtract(spent) : " без лимита").append(" руб. (Договор №").append(r.get4()).append(")");
-				return "1"+sb.toString();
+				JSONObject ret = new JSONObject();
+				ret.put("status","ok");
+				ret.put("noLimit",r.get6());
+				ret.put("limit",r.get5());
+				ret.put("spent",r.get7());
+				ret.put("ostatok",r.get8());
+				ret.put("guaranteeInfo","№"+r.get2()+" от "+r.get3()+", договор №"+r.get4()+(r.get6().toString().equals("true") ? ". Без лимита" :". Остаток: "+r.get8()));
+				return ret.toString();
 			} else {
-				return "0Не найдено гарантийное письмо";
+				return new JSONObject().put("status","error").put("errorName","Не найдено гарантийное письмо").toString();
 			}
 		}
 		
-		return null;
+		return new JSONObject().put("status","ok").toString();
 	}
 	/**
 	 * Функция нахождения стоимости случая лечения ( визита либо случая лечения в стационаре)
@@ -232,8 +234,7 @@ public class ContractServiceJs {
 	 * @return Стоимость случая
 	 * @throws NamingException
 	 */
-public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServletRequest aRequest) throws NamingException {
-		
+	private BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql;
 		if (aPriceListId==null) {
@@ -252,7 +253,7 @@ public BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpS
 				} else if (r.get2()!=null&&!(""+r.get2()).equals("")) { //Используем прайс-лист по умолчанию 
 					aPriceListId = Long.valueOf(r.get2().toString());
 				} else {
-					LOG.info("Не удалось вычислить прайс-лист для расчета цены случая " +aMedcaseId);
+					LOG.warn("Не удалось вычислить прайс-лист для расчета цены случая " +aMedcaseId);
 					return BigDecimal.ZERO;
 				}
 			}

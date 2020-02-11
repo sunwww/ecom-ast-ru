@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -200,10 +201,7 @@ public class ContractServiceBean implements IContractService {
 			}
 			return "";
 	}
-	/* //unused
-	private Long getMedService(Long aDepartment, Long aBedType, Long aBedSubType, Long aRoomType) {
-		return getMedService(aDepartment, aBedType, aBedSubType, aRoomType, null);
-	}*/
+
 	private Long getMedService(Long aDepartment, Long aBedType, Long aBedSubType, Long aRoomType, String aCompanyType) {
 		/**
 		 *  Для силовиков по умолчанию ищем общие палаты
@@ -908,11 +906,9 @@ public class ContractServiceBean implements IContractService {
 	}
 
 	public void addMedServiceByAccount(Long aAccount,Long aPriceMedService, Integer aCount, BigDecimal aPrice, Long oldid) {
-		StringBuilder sql = new StringBuilder() ;
 		ContractAccount account = theManager.find(ContractAccount.class, aAccount) ;
 		PriceMedService service = theManager.find(PriceMedService.class, aPriceMedService);
-		sql.append("from ContractAccountMedService where id=:CAMS");
-		List<ContractAccountMedService> list = theManager.createQuery(sql.toString())
+		List<ContractAccountMedService> list = theManager.createQuery("from ContractAccountMedService where id=:CAMS")
 				.setParameter("CAMS", oldid)
 				.getResultList() ;
 		if (!list.isEmpty()) {
@@ -928,9 +924,47 @@ public class ContractServiceBean implements IContractService {
 			ms.setMedService(service) ;
 			theManager.persist(ms) ;
 		}
-		
 	}
 
+	/**
+	 * Добавляем (обновляем) информация с CAMS о выполненной услуге
+	 * @param idService идентификатор услуги (операция, назначение)
+	 * @param letterId - гарантийное письмо
+	 * @param medServiceCode - код выполненной медицинской услуги
+	 * @param patientId - Ид пациента
+	 * @param typeService  - тип услуги (операция, назначение)
+	 * */
+	public void addMedServiceAccount(String typeService, Long idService, String medServiceCode, Long patientId, Long letterId) {
+		addMedServiceAccount(typeService, idService, medServiceCode, patientId, theManager.find(ContractGuarantee.class,letterId));
+	}
+	public void addMedServiceAccount(String typeService, Long idService, String medServiceCode, Long patientId, ContractGuarantee letter) {
+		List<ContractAccountMedService> camsList = theManager.createQuery("from ContractAccountMedService where typeService=:typeService and idService=:idService")
+				.setParameter("typeService", typeService).setParameter("idService",idService).getResultList();
+		ContractAccountMedService cams = camsList.isEmpty() ? new ContractAccountMedService() : camsList.get(0); //по идее, не должно быть больше одной записи
+		List<BigInteger> priceMedServiceList = theManager.createNativeQuery("select pms.id as pms_id" +
+				" from medservice ms" +
+				" LEFT JOIN pricemedservice pms on pms.medservice_id=ms.id " +
+				" LEFT JOIN priceposition pp on pp.id=pms.priceposition_id " +
+				" LEFT JOIN pricelist pl on pl.id=pp.pricelist_id" +
+				" where ms.code = :serviceCode and pl.isdefault ='1'").setParameter("serviceCode",medServiceCode).getResultList();
+		if (priceMedServiceList.isEmpty()) {
+			LOG.warn("Услуга должна быть выбрана из платного прейскуранта");
+		//	throw new IllegalStateException("Услуга должна быть выбрана из платного прейскуранта");
+			//Либо писать ошибку, либо придумать что-то еще...
+		} else {
+			PriceMedService pms = theManager.find(PriceMedService.class,priceMedServiceList.get(0).longValue());
+			PricePosition pp = pms.getPricePosition();
+			cams.setCost(pp.getCost());
+			cams.setCountMedService(1);
+			cams.setMedService(pms);
+			cams.setGuarantee(letter);
+			cams.setTypeService(typeService);
+			cams.setServiceIn(pms.getMedService().getId());
+			cams.setPatient(patientId!=null ? patientId : ((NaturalPerson)letter.getContractPerson()).getPatient().getId());
+			cams.setIdService(idService);
+			theManager.persist(cams);
+		}
+	}
 	@PersistenceContext EntityManager theManager ;
 	 private @EJB ILocalMonitorService theMonitorService ;
 	

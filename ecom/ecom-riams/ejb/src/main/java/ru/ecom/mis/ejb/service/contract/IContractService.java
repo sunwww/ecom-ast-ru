@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.service.contract;
 
+import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
@@ -16,4 +18,6 @@ public interface IContractService {
 			, String aServiceType, Long aServiceId, String aMedServiceType);
 	Boolean isMedServicePayedByPatient(Long aPatientId, String aMedserviceCode, Long aMedCaseId
 			, String aServiceType, Long aServiceId);
+	void addMedServiceAccount(String typeService, Long idService, String medServiceCode, Long patientId, ContractGuarantee letter);
+	void addMedServiceAccount(String typeService, Long idService, String medServiceCode, Long patientId, Long letter);
 }

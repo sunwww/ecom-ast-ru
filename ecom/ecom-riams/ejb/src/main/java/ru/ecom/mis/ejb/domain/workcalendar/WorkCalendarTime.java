@@ -24,7 +24,8 @@ import java.sql.Time;
 @Entity
 @AIndexes({
 	@AIndex(properties = {"medCase","workCalendarDay","timeFrom"}),
-	@AIndex(properties = {"workCalendarDay"})
+	@AIndex(properties = {"workCalendarDay"}),
+	@AIndex(properties = {"createDatePreRecord"})
 })
 @Table(schema="SQLUser")
 public class WorkCalendarTime extends BaseEntity{

@@ -472,6 +472,7 @@
                 names   = 'code,name'
                 queried = 'code,name'
                 queryConvertType = 'UPPER_CASE'
+                queryAppend="year='2020'"
         />
     </voc>
 

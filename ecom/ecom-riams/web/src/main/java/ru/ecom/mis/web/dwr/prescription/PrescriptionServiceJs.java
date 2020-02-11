@@ -1300,6 +1300,7 @@ public class PrescriptionServiceJs {
 	 * Подтверждение выполнения лабораторного анализа
 	 * @param aSmoId - ИД 'визита' к врачу лаборатории
 	 * @param aProtocol ИД дневника врача-лаборанта
+	 * @param aPrescriptId ИД назначения
 	 * @param aRequest -
 	 * @return
 	 * @throws NamingException
@@ -1330,6 +1331,34 @@ public class PrescriptionServiceJs {
 		service.executeUpdateNativeSql("update ContractAccountOperationByService set medCase_id="+aSmoId+
 				" where serviceType='PRESCRIPTION' and serviceId in (select id from Prescription where medCase_id = "+aSmoId+")");
 
+	// проставляем информацию о выполненной услуги для ДМС в CAMS
+		sql = new StringBuilder();
+		sql.append("select pat.id as patientId, cg.id as letterId, ms.code as serviceCode" +
+				" from prescription p" +
+				" left join prescriptionlist pl on pl.id=p.prescriptionlist_id" +
+				" left join medcase slo on slo.id = pl.medcase_id" +
+				" left join medcase sls on sls.id = slo.parent_id" +
+				" left join vocservicestream vss on vss.id=slo.servicestream_id" +
+				" left join contractguarantee cg on cg.id=coalesce(sls.guarantee_id, slo.guarantee_id)" +
+				" left join medservice ms on ms.id=p.medservice_id" +
+				" left join patient pat on pat.id=coalesce(sls.patient_id, slo.patient_id)" +
+				" where p.id= "+aPrescriptId+" and vss.iscalcdogovor='1' and cg.id is not null");
+		IContractService contractService =  Injection.find(aRequest).getService(IContractService.class) ;
+		Collection<WebQueryResult> guaranteeList = service.executeNativeSql(sql.toString());
+		if (!guaranteeList.isEmpty()) {
+			LOG.info("find guarantee!! sql = "+sql);
+			//String typeService, Long idService, String medServiceCode, Long patientId, ContractGuarantee letter
+			WebQueryResult guarantee = guaranteeList.iterator().next();
+			String typeService ="PRESCRIPTION";
+			contractService.addMedServiceAccount(typeService,aPrescriptId,guarantee.get3().toString()
+					,Long.parseLong(guarantee.get1().toString()), Long.parseLong(guarantee.get2().toString()));
+
+
+		} else {
+			LOG.info("GGGG not found");
+		}
+
+
 		createEmergencyReferenceMsg(aProtocol,aPrescriptId,aRequest);
 	}
 
@@ -1340,7 +1369,7 @@ public class PrescriptionServiceJs {
 	 * @param aPrescriptId Prescription.id
 	 * @param aRequest HttpServletRequest
 	 */
-	public void createEmergencyReferenceMsg(Long aDiaryId, Long aPrescriptId, HttpServletRequest aRequest) throws NamingException {
+	private void createEmergencyReferenceMsg(Long aDiaryId, Long aPrescriptId, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
 		bean.sendEmergencyReferenceMsg(aDiaryId,aPrescriptId);
 	}

@@ -27,6 +27,9 @@
         <msh:row>
                 <msh:textField property="comment" size="100" />
             </msh:row>
+        <msh:row>
+                <msh:textField property="billProperty" size="100" />
+            </msh:row>
 
 
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1" />

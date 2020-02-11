@@ -2450,9 +2450,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         //calc 10
         List<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = new ArrayList<>();
         long sluchDuration = aEntry.getBedDays()!=null ? aEntry.getBedDays(): 1;
-        long maxDuration = isNotNull(aEntry.getKsg().getLongKsg()) ? 45 : 30;
+        long maxDuration = Boolean.TRUE.equals(aEntry.getKsg().getLongKsg()) ? 45 : 30;
         if (sluchDuration > maxDuration) { //Если случай лечения больше 30 (45) дней, ищем "10" коэффициент
-            BigDecimal value =new BigDecimal(1).add((new BigDecimal(sluchDuration-maxDuration).divide(new BigDecimal(maxDuration),12,RoundingMode.HALF_UP))
+            BigDecimal value =new BigDecimal(1).add((new BigDecimal(sluchDuration-maxDuration).divide(new BigDecimal(maxDuration),2,RoundingMode.HALF_UP))
                     .multiply(BigDecimal.valueOf(aEntry.getReanimationEntry()!=null ? 0.4 : 0.25)));
             link = new E2CoefficientPatientDifficultyEntryLink();
             link.setEntry(aEntry);

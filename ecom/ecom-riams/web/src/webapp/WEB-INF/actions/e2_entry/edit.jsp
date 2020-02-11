@@ -294,7 +294,7 @@
                     <msh:checkBox property="extDispNextStage"  />
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="dispResult" vocName="vocE2FondV017" />
+                    <msh:autoComplete property="dispResult" vocName="vocE2FondV017" fieldColSpan="3" size="100" />
                 </msh:row>
 
     <msh:separator colSpan="4" label="Служебная информация"/>

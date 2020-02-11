@@ -1636,11 +1636,7 @@ public class HospitalMedCaseServiceJs {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.removeDataFromParameterConfig(aDepartment, aIds) ;
 	}
-	public String changeServiceStreamBySmo(Long aSmo, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-		service.changeServiceStreamBySmo(aSmo, aServiceStream) ;
-		return "Поток обслуживания изменен" ;
-	}
+
 	public String unionSloWithNextSlo(Long aSlo,HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.unionSloWithNextSlo(aSlo) ;

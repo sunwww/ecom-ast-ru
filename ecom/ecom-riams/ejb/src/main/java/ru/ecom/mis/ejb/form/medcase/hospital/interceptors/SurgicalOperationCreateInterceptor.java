@@ -113,7 +113,7 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
 
 		String dateTime = aOperation.getOperationDate()+" "+aOperation.getOperationTime();
 		List<BigInteger> ids = aManager.createNativeQuery(sql.toString()).setParameter("id",hospitalId).setParameter("operationDateTime",dateTime).getResultList();
-		if (ids.isEmpty()||ids.size()>1) {
+		if (ids.size() != 1) {
 			return;
 		}
 		aOperation.setMedCase(aManager.find(MedCase.class,ids.get(0).longValue()));
