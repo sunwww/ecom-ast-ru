@@ -195,7 +195,9 @@
                           roles="/Policy/Mis/Pharmacy/Administration" title="Аптека"/>
             <msh:sideLink params="" styleId="mainMenuConfig" action="/riams_config.do" name="Настройки"
                           roles="/Policy/MainMenu/Config" title="Настройки"/>
-	
+            <msh:sideLink params="" styleId="mainMenuConfig" action="/http://keo.amokb.ru/keo?ggg" name="Порядки, стандарты,<br>клин. рекомендации"
+                          roles="/Policy/MainMenu/Standards" title="Настройки"/>
+
         </ul>
 
     </div>
