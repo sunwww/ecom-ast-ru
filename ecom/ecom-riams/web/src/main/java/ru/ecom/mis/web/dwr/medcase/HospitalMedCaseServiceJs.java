@@ -478,7 +478,8 @@ public class HospitalMedCaseServiceJs {
 	/**Возвращаем список дневников, исследований, лаб. анализов по госпитализации */
 	public String getDiariesByHospital(Long aMedcaseId, String aServiceType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String addSql = "LABSURVEY".equalsIgnoreCase(aServiceType) ? " and vst.code='LABSURVEY'" : "" ;
+		String addSql = "LAB".equals(aServiceType) ? " and vst.code='LABSURVEY'" :
+						("DIAG".equals(aServiceType) ? " and vst.code in ('SERVICE', 'DIAGNOSTIC','SURVEY')" : "") ;
 		String sql = "select d.id as id, to_char(d.dateregistration,'dd.MM.yyyy') as recordDate"+
 			" ,to_char(d.timeregistration,'HH24:MI') as recordTime,"+
 			" list(mc.code) as serviceCode, list(mc.name) as serviceName"+
@@ -1787,12 +1788,14 @@ public class HospitalMedCaseServiceJs {
     	Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString()) ;
 		StringBuilder result = new StringBuilder() ;
 		result.append("\n") ;
-		result.append("ХИРУРГИЧЕСКИЕ ОПЕРАЦИИ:");
-		result.append("\n") ;
-		for (WebQueryResult wqr :list1) {
-			result.append(wqr.get1()).append(" ") ;
-			result.append(wqr.get4()).append("\n") ;
-			result.append(wqr.get5()!=null?wqr.get5():"") ;
+		if (!list1.isEmpty()) {
+			result.append("ХИРУРГИЧЕСКИЕ ОПЕРАЦИИ:");
+			result.append("\n") ;
+			for (WebQueryResult wqr :list1) {
+				result.append(wqr.get1()).append(" ") ;
+				result.append(wqr.get4()).append("\n") ;
+				result.append(wqr.get5()!=null?wqr.get5():"") ;
+			}
 		}
 		return result.toString() ;
     	
@@ -1870,11 +1873,6 @@ public class HospitalMedCaseServiceJs {
 		//if (aType==2) return result.toString().toLowerCase().replaceAll("\n\n", ",").replaceAll("\n", ", ").replaceAll("  ", " ") ;
 		return aIsLowerCase==1?result.substring(1).trim().toLowerCase():result.substring(1).trim() ;
 		//return result.toString() ;
-    }
-    public String getLabInvestigations(Long aPatient, String aDateStart
-			,String aDateFinish,boolean aLabsIs,boolean aFisioIs,boolean aFuncIs,boolean aConsIs, boolean aLuchIs, HttpServletRequest aRequest) throws NamingException {
-    	IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-    	return service.getnvestigationsTextDTM(aPatient, aDateStart, aDateFinish,aLabsIs,aFisioIs,aFuncIs,aConsIs, aLuchIs);
     }
 
     public String setPatientByExternalMedservice(String aNumberDoc, String aOrderDate, String aPatient, HttpServletRequest aRequest) throws NamingException {

@@ -148,6 +148,7 @@ left join worker w on w.id=wf.worker_id
 left join mislpu ml on ml.id=coalesce(wf.lpu_id,w.lpu_id)
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 and (wct.isdeleted is null or wct.isdeleted=false)
+ and wct.createdateprerecord is not null
 ${sqlAddNew}
 ${dateStartMedcaseSql}
 group by wct.createprerecord, vvr.code
@@ -178,6 +179,7 @@ left join worker w on w.id=wf.worker_id
 left join secuser su on su.login=wct.createprerecord
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') ${sqlAddNew}
 and (wct.isdeleted is null or wct.isdeleted='0') and (wcd.isdeleted is null or wcd.isdeleted='0')
+ and wct.createdateprerecord is not null
 ${dateStartMedcaseSql}
 " />
             <msh:sectionTitle>
@@ -196,7 +198,7 @@ ${dateStartMedcaseSql}
         } else { %>
         <msh:section>
             <ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
-select t.fldName,
+select coalesce(t.fldName,'нет информации'),
 sum(t.total) as total,
 sum(t.cnt1) as promedCnt
 ,case when sum(t.total)<>0 then round(sum(t.cnt1)/sum(t.total)*100.0,2)||'%' else '0%' end as promedPerc,
@@ -219,7 +221,9 @@ left join workfunction wf on wf.id=wc.workfunction_id
 left join worker w on w.id=wf.worker_id
 left join mislpu ml on ml.id=coalesce(wf.lpu_id,w.lpu_id)
 left join secuser su on su.login=wct.createprerecord
-where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') ${sqlAddNew}
+where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+ and wct.createdateprerecord is not null
+ ${sqlAddNew}
 and (wct.isdeleted is null or wct.isdeleted=false)
 ${dateStartMedcaseSql}
 group by ${selectSql},wct.createprerecord, vvr.code) as t
