@@ -427,7 +427,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     public E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate) {return getBillEntryByDateAndNumber(aBillNumber, new SimpleDateFormat("dd.MM.yyy").format(aBillDate),null);}
     public Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate) {return  getBillEntryByDateAndNumber(aBillNumber,aBillDate,null).getId();}
     public E2Bill getBillEntryByDateAndNumber(String aBillNumber, String aBillDate, String aComment) {
-        E2Bill bill = null;
+        E2Bill bill ;
         String sql = "select id from e2bill where billNumber=:number and billDate=to_date(:date,'dd.MM.yyyy') ";
         List<BigInteger> list = theManager.createNativeQuery(sql).setParameter("number",aBillNumber).setParameter("date",aBillDate).getResultList();
         if (list.isEmpty()) { //Создаем новый счет. статус - черновик
@@ -437,10 +437,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                 bill.setBillDate(DateFormat.parseSqlDate(aBillDate,"dd.MM.yyyy"));
                 bill.setStatus((VocE2BillStatus)getActualVocByClassName(VocE2BillStatus.class,null,"code='DRAFT'"));
             } catch (ParseException e) {
+                bill = null;
                 LOG.error(e.getMessage(),e);
             }
         } else if (list.size()>1) {
             LOG.error("Найдено более 1 счета с указанным номером и датой!!");
+            bill = null;
         } else {
             bill = theManager.find(E2Bill.class,list.get(0).longValue());
         }

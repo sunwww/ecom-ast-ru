@@ -175,6 +175,9 @@ public class FondCheckUtil {
             System.out.println("Try check by policy");
             rz = FondCheckUtil.getRzbyPolis(series,number);
         }
+        if (!is(rz) && is(number)) {
+            rz=number;
+        }
 
         if(is(rz)){
             JSONObject json = new JSONObject();

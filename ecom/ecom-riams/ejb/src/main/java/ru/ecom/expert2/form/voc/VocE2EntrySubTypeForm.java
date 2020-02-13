@@ -103,4 +103,11 @@ public class VocE2EntrySubTypeForm extends IdEntityForm {
     public void setFileType(String aFileType) {theFileType = aFileType;}
     private String theFileType ;
 
+    /** Назначение платежа в счете */
+    @Comment("Назначение платежа в счете")
+    @Persist
+    public String getBillProperty() {return theBillProperty;}
+    public void setBillProperty(String aBillProperty) {theBillProperty = aBillProperty;}
+    private String theBillProperty ;
+
 }

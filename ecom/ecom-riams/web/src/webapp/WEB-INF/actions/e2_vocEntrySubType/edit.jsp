@@ -41,6 +41,8 @@
                 </msh:row>
                 <msh:row>
                    <msh:textField property="fileType" />
+                </msh:row><msh:row>
+                   <msh:textField property="billProperty" fieldColSpan="3" size="100"/>
                 </msh:row>
 
 

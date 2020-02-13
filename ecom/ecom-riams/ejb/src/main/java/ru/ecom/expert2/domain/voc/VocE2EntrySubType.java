@@ -78,4 +78,10 @@ public class VocE2EntrySubType extends VocBaseEntity {
   public String getFileType() {return theFileType;}
   public void setFileType(String aFileType) {theFileType = aFileType;}
   private String theFileType ;
+
+  /** Назначение платежа в счете */
+  @Comment("Назначение платежа в счете")
+  public String getBillProperty() {return theBillProperty;}
+  public void setBillProperty(String aBillProperty) {theBillProperty = aBillProperty;}
+  private String theBillProperty ;
 }
