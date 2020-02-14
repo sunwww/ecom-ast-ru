@@ -20,7 +20,7 @@
             </msh:row>   <msh:row>
                    <msh:autoComplete label="Отделение" property="department" vocName="lpu" size="100"/>
             </msh:row>   <msh:row>
-                   <msh:autoComplete label="Профиль помощи" property="helpProfile" vocName="vocE2MedHelpProfile" size="100"/>
+                   <msh:autoComplete label="Профиль помощи" property="profile" vocName="vocE2MedHelpProfile" size="100"/>
                 </msh:row>
 
 

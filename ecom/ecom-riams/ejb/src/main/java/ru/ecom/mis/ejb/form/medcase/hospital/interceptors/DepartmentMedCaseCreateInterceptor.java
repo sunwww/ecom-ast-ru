@@ -129,7 +129,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		if (aMedCase.getDepartment()!=null && aMedCase.getDepartment().getIsMaternityWard()!=null && aMedCase.getDepartment().getIsMaternityWard()){
 			String sql = "select count(id) from robsonclass where medcase_id= "+aMedCase.getId();
 			Object list = aManager.createNativeQuery(sql).getSingleResult();
-			return Long.valueOf(list.toString())>0;
+			return Long.parseLong(list.toString())>0;
 		} else {
 			return true;
 		}
@@ -141,7 +141,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
 			String sql = "select count(id) from misbirth where medcase_id=:medcaseId";
 			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCaseId).getSingleResult();
-			return Long.valueOf(list.toString())>0;
+			return Long.parseLong(list.toString())>0;
 		} else {
 			return true;
 		}

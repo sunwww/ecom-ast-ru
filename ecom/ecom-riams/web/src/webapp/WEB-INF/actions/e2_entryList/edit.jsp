@@ -6,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryListForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
+        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryListForm" />
 
     </tiles:put>
     <tiles:put name="body" type="string">
@@ -24,7 +24,7 @@
         <tags:E2ImportFile name="ImportFile"/>
             <tags:E2UnionListEntry name="Union"/>
         </msh:ifFormTypeIsView>
-        <msh:form action="/entitySaveGoView-e2_entryList.do" defaultField="name" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+        <msh:form action="/entitySaveGoView-e2_entryList.do" defaultField="name">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
             <msh:hidden property="isClosed"/>
@@ -55,12 +55,12 @@
                     <msh:textArea property="historyNumbers" fieldColSpan="5"/>
                 </msh:row>
                 </msh:ifFormTypeIsCreate>
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+                <msh:submitCancelButtonsRow colSpan="4" />
                 <msh:ifFormTypeIsView formName="e2_entryListForm">
 
                 <ecom:webQuery name="entries" nameFldSql="entries_sql" nativeSql="select '${param.id}&entryType='||e.entryType||'&billDate='||
                     coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'') ||'&serviceStream='||e.serviceStream
-                    ||'&isForeign='||case when e.isForeign='1' then '1' else '0' end||'&billComment='||coalesce(bill.comment,'')||'&fileType='||e.fileType as id
+                    ||'&isForeign='||case when e.isForeign='1' then '1' else '0' end||'&billComment='||coalesce(bill.comment,'')||'&fileType='||coalesce(e.fileType,'') as id
                 ,e.entryType as f2
                 ,e.billDate as f3
                 ,e.billNumber||max(case when vocbill.id is not null then ' ('||vocbill.name||')' else '' end ) as f4
@@ -70,11 +70,13 @@
                 ,case when e.isForeign='1' then 'ИНОГ' else '' end as f8_isFor
                 ,bill.comment as f9_billComment
                 ,coalesce(e.fileType,'') as f10_fileType
-                 from e2entry e
+                ,e.bill_Id||''','''||to_char(le.startDate,'dd.MM.yyyy')||' - '||to_char(le.finishDate,'dd.MM.yyyy')||''','''||split_part(bill.billnumber,'/',2)||'' as f11_printBill
+                 from e2listEntry le
+                 left join e2entry e on e.listentry_id=le.id
                  left join e2bill bill on bill.id=e.bill_id
                  left join voce2billstatus vocbill on vocbill.id=bill.status_id
-                where e.listentry_id =${param.id} and (e.isDeleted is null or e.isDeleted='0')
-                group by e.entryType, e.billDate, e.billNumber ,e.serviceStream, e.isForeign,bill.comment, e.fileType
+                where le.id =${param.id} and (e.isDeleted is null or e.isDeleted='0')
+                group by e.entryType, e.billDate, e.billNumber ,e.serviceStream, e.isForeign,e.bill_id,bill.comment, e.fileType, le.startDate , le.finishDate, bill.billNumber,bill.sum
                  order by e.entryType, e.serviceStream, e.billDate, e.billNumber  "/>
 
                 <msh:table idField="1" name="entries" action="entityParentList-e2_entry.do"  noDataMessage="Нет записей по заполнению" >
@@ -84,6 +86,8 @@
                     <msh:tableColumn columnName="Источник финансирования" property="7"/>
                     <msh:tableColumn columnName="Дата счета" property="3"/>
                     <msh:tableColumn columnName="Номер счета" property="4"/>
+                    <msh:tableButton property="11" hideIfEmpty="true" buttonShortName="©" buttonFunction="printBill"/>
+                    <msh:tableButton property="11" hideIfEmpty="true" buttonShortName="©_" buttonFunction="printReestr"/>
                     <msh:tableColumn columnName="Примечание" property="9"/>
                     <msh:tableColumn columnName="записей" property="5"/>
                     <msh:tableColumn columnName="дефектов" property="6" addParam="&defect=1"/>
@@ -100,8 +104,8 @@
     </tiles:put>
 
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="e2_entryListForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-            <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
+        <msh:ifFormTypeIsView formName="e2_entryListForm">
+            <msh:sideMenu>
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_entryList" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink params="id" action="/entityParentList-e2_entry" name="Записи" roles="/Policy/E2/View" />
                 <msh:sideLink params="id" action="/e2_errorsByList" name="Список ошибок" roles="/Policy/E2/View" />
@@ -134,6 +138,15 @@
             <script type="text/javascript">
                 var monitor = {};
                 checkIsRunning();
+
+                function printReestr(num,date,period,cost,insCode) {
+                    window.location.href = "print-omc_reestr_"+insCode+".do?billNumber="+num+"&s=OmcPrintService&m=printOmcBill"+
+                    "&entry=1&billDate="+date+"&billCost="+cost+"&billPeriod="+period;
+                }
+                function printBill(id,period,insCode) {
+                    window.location.href = "print-omc_bill_"+insCode+".do?billId="+id+"&s=OmcPrintService&m=printOmcBill"+
+                    "&billPeriod="+period;
+                }
                 function deleteAllDeletedEntries() {
                     Expert2Service.deleteAllDeletedEntries();
                 }
@@ -275,10 +288,9 @@
                     var billNumber=a[3].split("=")[1];
                     var billDate=a[2].split("=")[1];
                     var useAllListEntry = confirm("Формировать файл по счету по всем заполнениям?");
-                    var ver = "3.1.1";
+                    var ver = "3.2";
                     var fileType=a[7].split("=")[1];
-                    if (confirm("2020?")) ver = "3.2";
-                    alert(fileType);
+               //     if (confirm("2020?")) ver = "3.2";
                     Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,ver,
                         fileType,{
                         callback: function(monitorId) {

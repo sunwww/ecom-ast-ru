@@ -42,4 +42,12 @@ public class VocCoefficient extends BaseEntity {
     /** Вид случая */
     private VocE2VidSluch theVidSluch ;
 
+    /** Профиль мед. помощи */
+    @Comment("Профиль мед. помощи")
+    @OneToOne
+    public VocE2MedHelpProfile getProfile() {return theProfile;}
+    public void setProfile(VocE2MedHelpProfile aProfile) {theProfile = aProfile;}
+    /** Медицинская специальность */
+    private VocE2MedHelpProfile theProfile ;
+
 }

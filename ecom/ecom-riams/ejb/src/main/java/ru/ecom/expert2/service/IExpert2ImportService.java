@@ -9,5 +9,6 @@ public interface IExpert2ImportService {
     String importFondMPAnswer(String aMpFilename);
     String importN5File(Document doc, Long aListEntryId);
     String importFlkAnswer(String aFilename, Long aListEntryId);//, String aBillNumber, Date aBillDate);
+    String importElmed(String aXmlFilename);
 
 }

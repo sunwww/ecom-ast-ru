@@ -9,14 +9,6 @@ import javax.persistence.OneToOne;
 /** Поправочные коэффициенты для поликлиники*/
 public class VocE2PolyclinicCoefficient extends VocCoefficient {
 
-    /** Профиль мед. помощи */
-    @Comment("Профиль мед. помощи")
-    @OneToOne
-    public VocE2MedHelpProfile getProfile() {return theProfile;}
-    public void setProfile(VocE2MedHelpProfile aProfile) {theProfile = aProfile;}
-    /** Медицинская специальность */
-    private VocE2MedHelpProfile theProfile ;
-
     /** Тип случая */
     @Comment("Тип случая")
     @OneToOne

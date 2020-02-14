@@ -16,8 +16,6 @@
             <msh:hidden property="KLADRReal" />
             <msh:hidden property="okatoReg" />
             <msh:hidden property="okatoReal"/>
-            <msh:hidden property="addressRegistration" />
-            <msh:hidden property="addressReal"  />
             <msh:panel>
      <msh:separator colSpan="4" label="Общие"/>
                 <msh:row>
@@ -68,6 +66,13 @@
             <msh:row>
                 <msh:textField property="height" size="10" />
                 <msh:textField property="weigth" size="10" />
+            </msh:row>
+            <msh:row>
+                <msh:textField property="addressRegistration" size="50" />
+                <msh:textField property="addressReal" size="50" />
+            </msh:row>
+            <msh:row>
+                <msh:textField property="birthPlace" size="50" />
             </msh:row>
     <msh:separator colSpan="4" label="Представитель"/>
                 <msh:row>
@@ -283,9 +288,13 @@
                     </msh:row><msh:row>
                     <msh:textField property="extDispHealthGroup" size="50" />
                     <msh:textField property="extDispSocialGroup" size="50" />
-            </msh:row><msh:row>
+                </msh:row>
+                <msh:row>
                 <msh:textField property="extDispAppointments" size="50" />
                     <msh:checkBox property="extDispNextStage"  />
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="dispResult" vocName="vocE2FondV017" fieldColSpan="3" size="100" />
                 </msh:row>
 
     <msh:separator colSpan="4" label="Служебная информация"/>
@@ -351,6 +360,7 @@
                 <ecom:webQuery name="servicesList" nativeSql="select ms.id, vms.code ||' '|| coalesce(vms.name,'Нет наименования')
                 , ms.serviceDate as name
                 ,ms.doctorsnils as dsnils
+                ,ms.cost as f5_cost
                 from entryMedService ms left join VocMedService vms on vms.id=ms.medservice_id
                      where ms.entry_id=${param.id}"/>
                 <msh:table idField="1" name="servicesList" action="jabascript:void()" noDataMessage="Нет услуг по случаю"
@@ -359,6 +369,7 @@
                     <msh:tableColumn columnName="Услуга" property="2"/>
                     <msh:tableColumn columnName="Дата оказания" property="3"/>
                     <msh:tableColumn columnName="СНИЛС" property="4"/>
+                    <msh:tableColumn columnName="Цена" property="5"/>
                 </msh:table>
 
             <msh:separator colSpan="4" label="Сложности лечения пациента"/>
@@ -393,6 +404,19 @@ where cancer.entry_id=${param.id}"/>
                 </msh:table>
             </msh:tableNotEmpty>
             </msh:section>
+
+            <msh:section title="Особенности случая">
+                <msh:autoComplete label="Добавить особенность" property="newFactor" vocName="vocE2EntryFactor" /><input type="button" value="Д. фактор" onclick="addOrDeleteEntryFactor($('newFactor').value,false)">
+            <ecom:webQuery name="factorList" nativeSql="select ef.factor_id, vef.code ||' '|| vef.name
+            from e2entry_factor ef
+            left join VocE2EntryFactor vef on vef.id=ef.factor_id
+  where ef.entry_id=${param.id} "/>
+            <msh:tableNotEmpty  name="factorList"  >
+                <msh:table idField="1" name="factorList" action="javascript:deleteEntryFactor" >
+                <msh:tableColumn columnName="Фактор" property="2"/>
+                </msh:table>
+            </msh:tableNotEmpty>
+            </msh:section>
         </msh:ifFormTypeIsView>
 
     </tiles:put>
@@ -405,6 +429,21 @@ where cancer.entry_id=${param.id}"/>
         <msh:ifFormTypeIsView formName="e2_entryForm">
 
                 <script type="text/javascript">
+
+                    function deleteEntryFactor(factor) {
+                        addOrDeleteEntryFactor(factor,true);
+                    }
+
+                    function addOrDeleteEntryFactor(factor, isDelete) {
+                        if (+factor>0) {
+                            Expert2Service.addDeleteEntryFactor(${param.id}, factor ,isDelete , {
+                                callback: function () {
+                                    window.document.location.reload();
+                                }
+                            });
+                        }
+                    }
+
                     String.prototype.replaceAt=function(index, replacement) {
                         return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
                     };
@@ -439,8 +478,7 @@ where cancer.entry_id=${param.id}"/>
             }
             function makeMPFromRecord() {
                 //Long aEntryListId, String aType, String aBillNumber, String aBillDate, Long aEntryId,
-                var ver = "3.1.1";
-                if (confirm("2020?")) ver = "3.2";
+                var ver = "3.2";
                 Expert2Service.makeMPFIle(null,$('entryType').value,$('billNumber').value, $('billDate').value
                     ,${param.id},false,ver,$('fileType').value,{
                     callback: function (monitorId) {

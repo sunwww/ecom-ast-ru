@@ -4194,34 +4194,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		}
 		return res.toString() ;
 	}
-	public String getnvestigationsTextDTM(Long aPatient, String aDateStart
-			,String aDateFinish,boolean aLabsIs,boolean aFisioIs,boolean aFuncIs,boolean aConsIs
-			, boolean aLuchIs) {
-		try {
-			if (aDateFinish==null || aDateFinish.equals("")) {
-				aDateFinish = "CURRENT_DATE";
-			} else {
-				aDateFinish = new StringBuilder().append("convert(DATE,'").append(aDateFinish).append("',104)").toString();
-			}
-			StringBuilder sql = new StringBuilder() ;
-			sql.append("select top 1 code,$$getUslByPatient^ZLinkPol('")
-					.append(aPatient)
-					.append("',TO_DATE(convert(DATE,'").append(aDateStart).append("',104),'YYYYMMDD'),TO_DATE(").append(aDateFinish).append(",'YYYYMMDD')")
-					.append(",").append(aLabsIs?1:0)
-					.append(",").append(aFisioIs?1:0)
-					.append(",").append(aFuncIs?1:0)
-					.append(",").append(aConsIs?1:0)
-					.append(",").append(aLuchIs?1:0)
-					.append(") ")
-
-					.append("from VocSex") ;
-			List<Object[]> usls  = theManager.createNativeQuery(sql.toString()).getResultList() ;
-
-			return !usls.isEmpty() ? usls.get(0)[1].toString() : "" ;
-		} catch (Exception e) {
-			return "" ;
-		}
-	}
 
 	public String getTypeDiagByAccoucheur() {
 		StringBuilder ret= new StringBuilder() ;

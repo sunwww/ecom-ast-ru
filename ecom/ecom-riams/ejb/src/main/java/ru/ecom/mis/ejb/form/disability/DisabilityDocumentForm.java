@@ -9,7 +9,6 @@ import ru.ecom.mis.ejb.form.disability.interceptors.DocumentPreCreate;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
@@ -86,7 +85,7 @@ public class DisabilityDocumentForm extends IdEntityForm{
 
 	/** Серия */
 	@Comment("Серия")
-	@Persist @DoUpperCase
+	@Persist
 	public String getSeries() {return theSeries;}
 	public void setSeries (String aCloseSeries) {theSeries = aCloseSeries;}
 	
@@ -147,7 +146,7 @@ public class DisabilityDocumentForm extends IdEntityForm{
 
 	/** Серия документа нетрудоспособности по основному месту работы */
 	@Comment("Серия документа нетрудоспособности по основному месту работы")
-	@Persist @DoUpperCase
+	@Persist
 	public String getMainWorkDocumentSeries() {return theMainWorkDocumentSeries;}
 	public void setMainWorkDocumentSeries(String aSeries) {theMainWorkDocumentSeries = aSeries;}
 	/** Серия документа нетрудоспособности по основному месту работы */
@@ -459,7 +458,7 @@ public class DisabilityDocumentForm extends IdEntityForm{
 	
 	/** Место работы */
 	@Comment("Место работы")
-	@Persist @DoUpperCase
+	@Persist
 	public String getJob() {return theJob;}
 	public void setJob(String aJob) {theJob = aJob;}
 

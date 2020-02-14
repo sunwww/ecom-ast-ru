@@ -535,24 +535,27 @@
   		
   	}
   	hideGuaranteeDiv(true);
-  	function checkIfDogovorNeeded() {
-  		if (+$('serviceStream').value>0) {
-  			ContractService.checkIfDogovorIsNeeded($('patient').value, $('serviceStream').value, null,$('datePlan').value,'POLYCLINIC', {
-  	  			callback: function (res) {
-  	  				if (res!=null&&res!='') {
-  	  					if (res.startsWith("0")) {
-  	  						alert ("Ошибка: "+res.substring(1));
-  	  					} else {
-  	  						var arr = res.substring(1).split("|");
-  	  						$('guarantee').value = arr[0];
-  	  						$('guaranteeName').value = arr[1];
-  	  					}	 
-  	  				}
-  	  			$('guaranteeName').disabled=true;
-  	  			}
-  	  		});
-  		}
-  	}
+
+     function checkIfDogovorNeeded() {
+         if (+$('serviceStream').value>0 && $('guaranteeName')) {
+             ContractService.checkIfDogovorIsNeeded($('patient').value, $('serviceStream').value, null,$('datePlan').value,'POLYCLINIC', {
+                 callback: function (letter) {
+                     letter = JSON.parse(letter);
+                     if (letter.status=="ok") {
+                         console.log("2"+letter.guaranteeInfo);
+                         if (letter.guaranteeInfo) { //нашли г. письмо
+                             $('guarantee').value = letter.id;
+                             $('guaranteeName').value = letter.guaranteeInfo;
+                         }
+                     } else {
+                         showToastMessage(letter.errorName);
+                     }
+                     $('guaranteeName').disabled=true;
+                 }
+             });
+         }
+
+     }
       </script>
     </msh:ifFormTypeIsNotView>
       <script type="text/javascript">

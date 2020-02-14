@@ -4,7 +4,6 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -147,7 +146,7 @@
     	 || request.getParameter("id")!=null && !request.getParameter("id").equals("")
     	) {
     	    String view = (String)request.getAttribute("typeView") ;
-        	if (view!=null && (view.equals("1"))) {
+        	if ("1".equals(view)) {
 
     		%>
     
@@ -187,7 +186,7 @@ ${queryTextEnd}
 
 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="в excel"
          name="journal_reestr" viewUrl="entityShortView-smo_visit.do" action="entityView-smo_visit.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Направлен ЛПУ" property="6"/>
@@ -208,7 +207,7 @@ ${queryTextEnd}
             <msh:tableColumn columnName="Место обслуживания" property="5"/>
             <msh:tableColumn columnName="Без полиса" property="14"/>
             <msh:tableColumn columnName="Более 1 полиса " property="15"/>
-        </msh:table>${qqq}
+        </msh:table>
     </msh:sectionContent>
 
     </msh:section>
@@ -248,7 +247,7 @@ ${queryTextEnd}
 ${groupBy}
 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="excel"
          name="journal_swod" action="visit_journal_direction.do" idField="1" noDataMessage="Не найдено">
              <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
@@ -310,7 +309,7 @@ ${queryTextEnd}
 ${groupBy}
 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="excel"
          name="journal_swod_rayon" action="visit_journal_direction.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            

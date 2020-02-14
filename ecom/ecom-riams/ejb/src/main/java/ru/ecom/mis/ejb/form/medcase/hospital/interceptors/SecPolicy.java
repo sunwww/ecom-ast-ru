@@ -60,20 +60,12 @@ public class SecPolicy {
      * Проверка на текущую дату и дату поступления
      *
      * @param aContext
-     * @param aPolicy
      * @param aSls
      * @throws IllegalStateException
      */
     public static void checkPolicyEditHour(SessionContext aContext , HospitalMedCase aSls) {
-        if(CAN_TRACE) {
-            LOG.debug("aContext = " + aContext);
-            LOG.debug("aPolicy = " + StatisticStubStac.EditHour);
-        }
-
         if (aContext.isCallerInRole(StatisticStubStac.EditHour)) {
-            if (CAN_TRACE) LOG.debug(" У пользователя есть роль = " + StatisticStubStac.EditHour);
             Date admissionDate = DateConverter.createDateTime(aSls.getDateStart(), DateFormat.formatToTime(aSls.getEntranceTime()));
-            if (CAN_TRACE) LOG.debug(" Дата поступления = " + admissionDate);
             if (admissionDate != null) {
                 if(!isDateLessThen24Hour(admissionDate)) {
                     throw new IllegalStateException("Дата поступления меньше 24 часа, чем текущая. Изменять информацию нельзя") ;

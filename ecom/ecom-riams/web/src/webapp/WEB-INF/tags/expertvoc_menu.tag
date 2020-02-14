@@ -25,24 +25,29 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 }
 
 </style>
-	    <msh:sideMenu title="Перейти" >
-			<msh:sideLink action="/entityList-e2_vocCofficientLpuLevel.do" name="Коэффициент уровня ЛПУ (отделения)" title="Коэффициент уровня ЛПУ (отделения)" roles="/Policy/E2"/>
-			<msh:sideLink action="/entityList-e2_vocMedHelpProfile.do" name="Справочник профилей мед. помощи" title="Справочник профилей мед. помощи" roles="/Policy/E2"/>
+	    <msh:sideMenu title="Тарифы" >
 			<msh:sideLink action="/entityList-e2_vocBaseTariff.do" name="Справочник базовых тарифов" title="Справочник базовых тарифов" roles="/Policy/E2"/>
-			<msh:sideLink action="/entityList-e2_config.do" name="Справочник настроек экспертизы" title="Справочник настроек экспертизы" roles="/Policy/E2"/>
-			<msh:sideLink action="/entityList-e2_vocFondV012.do" name="Справочник V012" title="Справочник настроек экспертизы" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocCofficientLpuLevel.do" name="Коэффициент уровня ЛПУ (отделения)" title="Коэффициент уровня ЛПУ (отделения)" roles="/Policy/E2"/>
+			<msh:sideLink action="/entityList-e2_vocMedServiceCost.do" name="Цены услуг" title="Цены услуг" roles="/Policy/E2"/>
+		</msh:sideMenu>
+		<msh:sideMenu title="Справочники" >
+			<msh:sideLink action="/entityList-e2_vocMedHelpProfile.do" name="Справочник профилей мед. помощи" title="Справочник профилей мед. помощи" roles="/Policy/E2"/>
 			<msh:sideLink action="/entityList-e2_vocFondV009.do" name="Справочник V009" title="Справочник настроек экспертизы" roles="/Policy/E2" />
-			<msh:sideLink action="/entityList-e2_vocFondV020.do" name="Справочник V020" title="Справочник V020" roles="/Policy/E2" />
-			<msh:sideLink action="/entityList-e2_vocFondV021.do" name="Справочник V021" title="Справочник V021" roles="/Policy/E2" />
-			<msh:sideLink action="/entityList-e2_vocFondV025.do" name="Справочник V025" title="Справочник V025" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocFondV012.do" name="Справочник V012" title="Исход случая" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocFondV020.do" name="Справочник V020" title="Результат обращения" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocFondV021.do" name="Справочник V021" title="Медицинская специальность" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocFondV025.do" name="Справочник V025" title="Цель посещения" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_extDispPrice.do" name="Цены ДД" title="Цены ДД" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocEntrySubType.do" name="Подтипы случая" title="Подтипы случая" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocKsg.do" name="Справочник КСГ" title="Справочник КСГ" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocKdp.do" name="Справочник КДП" title="Справочник КДП" roles="/Policy/E2" />
+		</msh:sideMenu>
+		<msh:sideMenu title="Настройки">
+			<msh:sideLink action="/entityList-e2_config.do" name="Справочник настроек экспертизы" title="Справочник настроек экспертизы" roles="/Policy/E2"/>
 			<msh:sideLink action="/e2_stacFinancePlan.do?type=PolyclinicFinancePlan" name="Финансовый планы по пол-ке" title="Финансовый планы по пол-ке" roles="/Policy/E2" />
 			<msh:sideLink action="/e2_stacFinancePlan.do?type=VmpFinancePlan" name="Финансовый планы по ВМП" title="Финансовый планы по ВМП" roles="/Policy/E2" />
 			<msh:sideLink action="/e2_stacFinancePlan.do" name="Финансовый планы по стационару" title="Финансовый планы по стационару" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_litteAmountMonth.do" name="Настроечная табличка" title="Настроечная табличка" roles="/Policy/E2" />
-			<msh:sideLink action="/entityList-e2_vocKsg.do" name="Справочник КСГ" title="Справочник КСГ" roles="/Policy/E2" />
-			<msh:sideLink action="/entityList-e2_vocKdp.do" name="Справочник КДП" title="Справочник КДП" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_bill.do" name="Список счетов" title="Список счетов" roles="/Policy/E2" />
 			<msh:sideLink action="/javascript:findPersonByCommonnumber()" name="Поиск по RZ (оплаченые счета)" title="Поиск по RZ" roles="/Policy/E2" />
 	    </msh:sideMenu>
@@ -52,6 +57,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    var txt = prompt("Введите RZ или ФИО_ДР");
 	    if (txt) {
             txt = txt.split(" ");
+            let href;
             if (txt.length>3) {
                 href="lastname:"+txt[0]+" "+txt[1]+" "+txt[2]+" "+txt[3];
             } else {

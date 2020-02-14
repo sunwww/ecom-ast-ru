@@ -56,7 +56,6 @@ public class LoginSaveAction extends LoginExitAction {
 		try {
 			Integer passwordLifetime = Integer.valueOf(service.executeNativeSql("select sc.KeyValue from SoftConfig sc where sc.key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
 			Date passwordStartDate  = DateFormat.parseDate(service.executeNativeSql("select case when su.passwordChangedDate is not null then to_char(su.passwordChangedDate,'dd.MM.yyyy') else to_char(coalesce(su.editdate,su.createdate),'dd.MM.yyyy') end as sudate from secuser su where su.login='"+username+"'").iterator().next().get1().toString());
-				//System.out.println("PasswordAAAA , passLT = "+passwordLifetime+", passAge = "+passwordAge+", passStartdate = "+passwordStartDate);
 			passwordAge= (int)(passwordLifetime - ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null));
 			if (passwordAge<0) {
 				passwordAge = 0;
@@ -101,8 +100,7 @@ public class LoginSaveAction extends LoginExitAction {
             	return aMapping.findForward("new_password") ;
             }
         } catch (Exception e) {
-            LOG.error("Ошибка при входе: "+getErrorMessage(e),e);
-            e.printStackTrace() ;
+            LOG.error("Ошибка при входе: "+getErrorMessage(e)+": "+username);
             LoginErrorMessage.setMessage(aRequest, getErrorMessage(e));
             return aMapping.getInputForward() ;
         }

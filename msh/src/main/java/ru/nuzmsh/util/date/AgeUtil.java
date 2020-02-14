@@ -99,9 +99,8 @@ public class AgeUtil {
         int day1 = d1.get(Calendar.DAY_OF_MONTH) ;
         int day2 = d2.get(Calendar.DAY_OF_MONTH) ;
     	int day = day1 - day2 ;
-    	int tst;
-    	int month ;
-    	tst=0 ; 
+    	int tst=0 ;
+		int month ;
     	if (day<0){
     		Calendar d3 = Calendar.getInstance() ;
     		d3.setTime(d1.getTime()) ;
@@ -128,11 +127,11 @@ public class AgeUtil {
      
 
     public static String calculateAge(GregorianCalendar initDate, GregorianCalendar actualDate) { 
-    	int ageYears, ageMonths, ageDays; Calendar bd = initDate; 
-    	//new GregorianCalendar(year, month, day); 
-    	Calendar cd = actualDate; 
-    	//Calendar.getInstance(); 
-    	ageYears = cd.get(Calendar.YEAR) - bd.get(Calendar.YEAR); 
+    	int ageYears, ageMonths, ageDays; Calendar bd = initDate;
+ //   	new GregorianCalendar(year, month, day);
+    	Calendar cd = actualDate;
+ //   	Calendar.getInstance();
+    	ageYears = cd.get(Calendar.YEAR) - bd.get(Calendar.YEAR);
     	if (bd.get(Calendar.MONTH) > cd.get(Calendar.MONTH)){ 
     		ageYears --; ageMonths = 12 - bd.get(Calendar.MONTH) + cd.get(Calendar.MONTH); 
     	} else{ 
@@ -156,4 +155,30 @@ public class AgeUtil {
     	//System.out.print("Age of the person : " + ageYears + " year, " + ageMonths + " months and " + ageDays + " days.");
     	return ageYears + ". " + ageMonths + "." + ageDays; 
     }
+
+    /*
+    * Расчитываем возраст доп. диспансеризации
+    * до года - помесячно, до 3х лет - интервалами. Остальное - полных лет на конец года.*/
+    public static String calculateExtDispAge(Date aDispdate, Date aBirthdate) {
+		String age = getAgeCache(aDispdate,aBirthdate, 1);
+		int sb1 = age.indexOf('.');
+		int sb2 = age.indexOf('.', sb1 + 1);
+		String ageGroup;
+		int yearDif = Integer.parseInt(age.substring(0, sb1));
+		int monthDif = Integer.parseInt(age.substring(sb1 + 1, sb2));
+		if (yearDif == 0) {
+			ageGroup = yearDif + "." + monthDif;
+		} else if (yearDif == 1) {
+			if (monthDif >= 6) ageGroup = "1.6";
+			else if (monthDif >= 3) ageGroup = "1.3";
+			else ageGroup = "1";
+		} else {
+			int year1 = Integer.parseInt(DateFormat.formatToDate(aBirthdate).substring(6));
+			int year2 = Integer.parseInt(DateFormat.formatToDate(aDispdate).substring(6));
+			if (year2 < 25) year2 = year2 + 2000;
+			if (year2 < 100) year2 = year2 + 1900;
+			ageGroup = "" + (year2 - year1);
+		}
+		return ageGroup;
+	}
 }

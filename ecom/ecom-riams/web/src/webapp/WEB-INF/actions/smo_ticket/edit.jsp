@@ -492,14 +492,11 @@
   <msh:ifFormTypeIsCreate formName="smo_ticketForm">
   <script type="text/javascript">
   
-  TicketService.getWorkFunction(
-    		 {
-                   callback: function(aResult) {
-                      //$('workFunction').value=aResult ;
-                      workFunctionExecuteAutocomplete.setParentId(aResult) ;
-                      //workFunctionExecuteAutocomplete.setVocId(aResult) ;                   }
-	        	}}
-	        	);
+  TicketService.getWorkFunction({
+      callback: function(aResult) {
+          workFunctionExecuteAutocomplete.setParentId(aResult) ;
+          }}
+	);
   </script>
   </msh:ifFormTypeIsCreate>
   <msh:ifFormTypeIsNotView formName="smo_ticketForm">
@@ -552,10 +549,6 @@
   </script>
   	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
   	 <script type="text/javascript">
-  	 
-  	
-  		
-
 		TicketService.isEditCheck($('id').value, $('workFunctionExecute').value,
 			{
 				callback: function(aResult) {
@@ -630,17 +623,21 @@
   		}
     	if ($('workFunctionExecuteName')) workFunctionExecuteAutocomplete.addOnChangeCallback(function() {
     		setAdditionParam() ;
-    		
-    	});
+            changeParentMedService();
+        });
+        serviceStreamAutocomplete.addOnChangeCallback(function() {
+            changeParentMedService();
+        });
 	    
 	      	eventutil.addEventListener($('dateStart'),'blur',function(){
-		  		if (oldValue!=$('dateStart').value) {
-		  			var wf = +$("workFunctionExecute").value;
-		    		if (wf=='') {wf=0;}
-		  			 medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value+"#"+$('serviceStream').value) ;
-		  		}
+                changeParentMedService();
 		  	}) ;
 		function changeParentMedService() {
+            if (oldValue!=$('dateStart').value) {
+                var wf = +$("workFunctionExecute").value;
+                if (wf=='') {wf=0;}
+                medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value+"#"+$('serviceStream').value) ;
+            }
 		}
   		function checkIsHoliday() {
   			var v =$('emergency').checked;  			
@@ -655,7 +652,6 @@
 		  						} else {
 	  							document.getElementById('submitButton').disabled=false;
 	  							document.getElementById('submitButton').value='Создать';
-	  							return;
 	  						}
 	  					}  else {
 	  						isExistTicket();

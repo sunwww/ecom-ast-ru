@@ -76,7 +76,6 @@ import java.util.List;
 	 void addressClear() ;
 	 long addressUpdate(long id) ;
 	 String getOperationsText(Long aPatient, String aDateStart,String aDateFinish) ;
-	 String getnvestigationsTextDTM(Long aPatient, String aDateStart,String aDateFinish,boolean aLabsIs,boolean aFisioIs,boolean aFuncIs,boolean aConsIs, boolean aLuchIs) ;
 	//Получить данные диагноза по умолчанию для акушерства
 	 String getTypeDiagByAccoucheur() ;
 	//Удаление данных по выписке пациента

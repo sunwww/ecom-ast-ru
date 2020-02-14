@@ -65,7 +65,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 		String address = parameters.get("address");
 		String ogrn = parameters.get("ogrn");
 
-		if (aMethod!=null&&aMethod.equals("import")) {
+		if ("import".equals(aMethod)) {
 			aMethod="sImportLNN";
 		} else {
 			aMethod="sLnDate";
@@ -122,7 +122,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 		return  list.isEmpty() ? aDefaultValue : list.get(0)[1].toString();
 	}
 
-	public Map<String, String> getDefaultParametersForFSS() {
+	private Map<String, String> getDefaultParametersForFSS() {
 		String address = getSoftConfigValue("FSS_PROXY_SERVICE", null);
 		String lpuId = getSoftConfigValue("DEFAULT_LPU", null);
 		String ogrn = null;

@@ -94,7 +94,7 @@ public class ActRVKVisitForm extends IdEntityForm {
 
     /** Номер акта */
     @Comment("Номер акта")
-    @Persist @Required
+    @Persist
     public String getNumAct() {return theNumAct;}
     public void setNumAct(String aNumAct) {theNumAct = aNumAct;}
     /** Номер акта */

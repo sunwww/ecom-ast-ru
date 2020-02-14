@@ -18,7 +18,7 @@ public class OncologyCaseReestrSaveInterceptor implements IFormInterceptor {
         OncologyCaseReestrForm form = (OncologyCaseReestrForm) aForm;
         MedCase parent = aContext.getEntityManager().find(MedCase.class, form.getMedCase());
         if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/Oncology/Case/EditOncoAfterOut") &&
-                (parent instanceof DepartmentMedCase || parent instanceof HospitalMedCase)) {
+                (parent instanceof HospitalMedCase)) {
             MedCase hmc = (parent instanceof DepartmentMedCase) ? parent.getParent() : parent;
             if (hmc.getDateFinish() != null)
                 throw new IllegalStateException("Пациент выписан. Нельзя редактировать онкологический случай в закрытом СЛС!");

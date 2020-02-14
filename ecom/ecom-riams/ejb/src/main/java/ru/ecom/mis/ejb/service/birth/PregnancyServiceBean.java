@@ -65,15 +65,14 @@ public class PregnancyServiceBean implements IPregnancyService {
 	public Long calcApgarEstimation(Long aMuscleTone, Long aPalpitation
   			, Long aReflexes, Long aRespiration
   			, Long aSkinColor)  {
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("select") 
-		.append("     (select case when max(ball) is not null then max(ball) else 0 end from VocApgarSkinColor where id=:skinColor)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarRespiration where id=:respiration)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarReflexes where id=:reflexes)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarPalpitation where id=:palpitation)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarMuscleTone where id=:muscleTone)")
-		.append(" 	,id	 from VocSex") ;
-		List<Object[]> row = theManager.createNativeQuery(sql.toString())
+		String sql = "select" +
+				"     (select case when max(ball) is not null then max(ball) else 0 end from VocApgarSkinColor where id=:skinColor)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarRespiration where id=:respiration)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarReflexes where id=:reflexes)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarPalpitation where id=:palpitation)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarMuscleTone where id=:muscleTone)" +
+				" 	,id	 from VocSex";
+		List<Object[]> row = theManager.createNativeQuery(sql)
 			.setParameter("skinColor",aSkinColor)
 			.setParameter("respiration",aRespiration)
 			.setParameter("reflexes",aReflexes)
@@ -93,15 +92,14 @@ public class PregnancyServiceBean implements IPregnancyService {
 	public String calcDownesEstimation(Long aRespirationRate, Long aCyanosis
   			, Long aIntercostalRetraction, Long aDifficultExhalation
   			, Long aAuscultation) {
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("select") 
-		.append("     (select case when max(ball) is not null then max(ball) else 0 end from VocDownesRespirationRate where id=:respirationRate)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesCyanosis where id=:cyanosis)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesIntercostalRet where id=:intercostalRetraction)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesDifExhalation where id=:difficultExhalation)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesAuscultation where id=:auscultation)")
-		.append(" 	,id	 from VocSex") ;
-		List<Object[]> row = theManager.createNativeQuery(sql.toString())
+		String sql = "select" +
+				"     (select case when max(ball) is not null then max(ball) else 0 end from VocDownesRespirationRate where id=:respirationRate)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesCyanosis where id=:cyanosis)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesIntercostalRet where id=:intercostalRetraction)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesDifExhalation where id=:difficultExhalation)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesAuscultation where id=:auscultation)" +
+				" 	,id	 from VocSex";
+		List<Object[]> row = theManager.createNativeQuery(sql)
 			.setParameter("respirationRate",aRespirationRate)
 			.setParameter("cyanosis",aCyanosis)
 			.setParameter("intercostalRetraction",aIntercostalRetraction)

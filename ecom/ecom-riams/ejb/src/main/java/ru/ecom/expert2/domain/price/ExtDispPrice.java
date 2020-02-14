@@ -40,12 +40,17 @@ public class ExtDispPrice extends BaseEntity {
     /** Цена полного случая */
     private BigDecimal theCost ;
 
-    /** Возраста  */
-    @Comment("Возраста ")
-    public String getAges() {return theAges;}
-    public void setAges(String aAges) {theAges = aAges;}
-    /** Возраста  */
-    private String theAges ;
+    /** Возраст с (мес) */
+    @Comment("Возраст с (мес)")
+    public Integer getAgeFrom() {return theAgeFrom;}
+    public void setAgeFrom(Integer aAgeFrom) {theAgeFrom = aAgeFrom;}
+    private Integer theAgeFrom ;
+
+    /** Возраст по (мес) */
+    @Comment("Возраст по (мес)")
+    public Integer getAgeTo() {return theAgeTo;}
+    public void setAgeTo(Integer aAgeTo) {theAgeTo = aAgeTo;}
+    private Integer theAgeTo ;
 
     /** Ценовая (социальная) группа */
     @Comment("Ценовая (социальная) группа")
@@ -68,5 +73,10 @@ public class ExtDispPrice extends BaseEntity {
     /** Дата окончания действия */
     private Date theDateTo ;
 
-
+    /** Возраста  */
+    @Comment("Возраста ")
+    public String getAges() {return theAges;}
+    public void setAges(String aAges) {theAges = aAges;}
+    /** Возраста  */
+    private String theAges ;
 }

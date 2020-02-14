@@ -20,7 +20,7 @@ import java.sql.Date;
 @Entity
 @Table(schema="SQLUser")
 	@AIndexes({
-		@AIndex(unique= false, properties = {"contract"})
+		@AIndex(properties = {"contract"})
 	})
 public abstract class ContractGuarantee extends BaseEntity{
 	/**

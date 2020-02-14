@@ -1,6 +1,5 @@
-<%@page import="java.util.StringTokenizer"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -47,8 +46,7 @@
 		</msh:form>
 		<script type='text/javascript'>
     checkFieldUpdate('typeDate','${typeDate}',1) ;
-    //checkFieldUpdate('typeContractAccount','${typeContractAccount}',3) ;
-    
+
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
@@ -59,32 +57,27 @@
    		chk[+aValue-1].checked='checked' ;
    	}
    }
-	    
-			 
+
     </script>
 	<% 
 	String dateFrom = request.getParameter("dateFrom") ;
-	String contractNumber  = request.getParameter("contractNumber")!=null?request.getParameter("contractNumber").toUpperCase():null ;
-	String accountNumber  = request.getParameter("accountNumber")!=null?request.getParameter("accountNumber").toUpperCase() :null;
+//	String contractNumber  = request.getParameter("contractNumber")!=null?request.getParameter("contractNumber").toUpperCase():null ;
+//	String accountNumber  = request.getParameter("accountNumber")!=null?request.getParameter("accountNumber").toUpperCase() :null;
 	  	if (dateFrom !=null) {
-			StringBuilder fio = new StringBuilder() ;
+		//	StringBuilder fio = new StringBuilder() ;
 			String dateTo = request.getParameter("dateTo")!=null?request.getParameter("dateTo"):dateFrom ;
 			String prefix = "juridical" ;
 			StringBuilder paramSql= new StringBuilder() ;
-		  	StringBuilder paramHref= new StringBuilder() ;
+		//  	StringBuilder paramHref= new StringBuilder() ;
 			
-		
-			if (typeDate!=null&&typeDate.equals("1")){
-				paramSql.append(" cg.issueDate between to_date('"+dateFrom+"','dd.MM.yyyy') and to_date('"+dateTo+"','dd.MM.yyyy')") ;
-			} else if (typeDate!=null&&typeDate.equals("2")) {
-				paramSql.append(" cg.actionDate <=to_date('"+dateFrom+"','dd.MM.yyyy') and cg.actionDateTo >=to_date('"+dateTo+"','dd.MM.yyyy')") ;
+			if ("1".equals(typeDate)){
+				paramSql.append(" cg.issueDate between to_date('").append(dateFrom).append("','dd.MM.yyyy') and to_date('").append(dateTo).append("','dd.MM.yyyy')") ;
+			} else if ("2".equals(typeDate)) {
+				paramSql.append(" cg.actionDate <=to_date('").append(dateFrom).append("','dd.MM.yyyy') and cg.actionDateTo >=to_date('").append(dateTo).append("','dd.MM.yyyy')") ;
 			}
-			
-			
-			
 		request.setAttribute("paramSql", paramSql.toString()) ;
-	  	request.setAttribute("paramHref", paramHref.toString()) ;
-		request.setAttribute("fiocp", fio.toString()) ;
+//	  	request.setAttribute("paramHref", paramHref.toString()) ;
+//		request.setAttribute("fiocp", fio.toString()) ;
 		request.setAttribute("prefix", prefix) ;
 		
 	%>
@@ -98,9 +91,9 @@
 			left join medcase smc on smc.parent_id=vis.id 
 			left join pricemedservice pms on pms.medservice_id=smc.medservice_id
 			left join priceposition pp on pp.id=pms.priceposition_id and pp.pricelist_id=mc.pricelist_id
-			left join contractPerson cp on cp.id = cg.contractperson_id left join patient pat on pat.id=cp.patient_id 
+			left join contractPerson cp on cp.id = cg.contractperson_id
+			left join patient pat on pat.id=cp.patient_id
 			where  
-			
 			${paramSql}
 			group by cg.id ,cg.numberdoc  ,pat.patientinfo ,cg.limitmoney
 			order by pat.patientinfo
@@ -114,8 +107,32 @@
 					<msh:tableColumn columnName="Остаток" property="6" />
 					
 				</msh:table>
-				
-				<%} %>	
+
+		<msh:sectionTitle>Расчет остатка по гар. письму по новому алгоритму</msh:sectionTitle>
+		<ecom:webQuery name="lettersListNews" nameFldSql="lettersListNewsSql" nativeSql="
+			select cg.id ,cg.numberdoc as f2 , pat.patientinfo as f3, cg.limitmoney as f4
+			,sum(cams.cost*coalesce(cams.countmedservice,1)) as f5_spent, cg.limitmoney - sum(cams.cost*coalesce(cams.countmedservice,1)) as f6_ostatok
+			, case when sum(cams.cost*coalesce(cams.countmedservice,1))*100/cg.limitmoney >90 then 'background:red' else '' end as f7_style
+			from ContractGuarantee cg
+			left join medcontract mc on mc.id=cg.contract_id
+			left join ContractAccountMedService cams on cams.guarantee_id=cg.id
+			left join pricemedservice pms on pms.id=cams.medservice_id
+			left join contractPerson cp on cp.id = cg.contractperson_id
+			left join patient pat on pat.id=cp.patient_id
+			where
+			${paramSql}
+			group by cg.id, cg.numberdoc, pat.patientinfo, cg.limitmoney
+			order by pat.patientinfo
+			"/>${lettersListNewsSql}
+
+		<msh:table styleRow="7" name="lettersListNews" action="entityParentView-contract_guaranteeLetter.do" idField="1" disableKeySupport="true" >
+			<msh:tableColumn columnName="№ гар. письма" property="2" />
+			<msh:tableColumn columnName="ФИО персоны" property="3" />
+			<msh:tableColumn columnName="Лимит письма" property="4" />
+			<msh:tableColumn columnName="Израсховано по письму" property="5" />
+			<msh:tableColumn columnName="Остаток" property="6" />
+		</msh:table>
+				<%} %>
 	
 	</tiles:put>
 	

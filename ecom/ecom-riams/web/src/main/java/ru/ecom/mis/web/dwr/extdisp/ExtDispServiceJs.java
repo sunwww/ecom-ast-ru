@@ -33,29 +33,11 @@ public class ExtDispServiceJs {
 				String birthDayS = wqr.get2() != null ? "" + wqr.get2() : "";
 				java.sql.Date birthday = DateFormat.parseSqlDate(birthDayS);
 				java.sql.Date finishDate = DateFormat.parseSqlDate(aFinishDate);
-				Calendar calB = Calendar.getInstance();
-				calB.setTime(birthday);
-				Calendar calF = Calendar.getInstance();
-				calF.setTime(finishDate);
-				String age = AgeUtil.getAgeCache(finishDate, birthday, 1);
-				int sb1 = age.indexOf('.');
-				int sb2 = age.indexOf('.', sb1 + 1);
-				String ageGroup;
-				int yearDif = Integer.parseInt(age.substring(0, sb1));
-				int monthDif = Integer.parseInt(age.substring(sb1 + 1, sb2));
-				if (yearDif == 0) {
-					ageGroup = yearDif + "." + monthDif;
-				} else if (yearDif == 1) {
-					if (monthDif >= 6) ageGroup = "1.6";
-					else if (monthDif >= 3) ageGroup = "1.3";
-					else ageGroup = "1";
-				} else {
-					int year1 = Integer.parseInt(birthDayS.substring(6));
-					int year2 = Integer.parseInt(aFinishDate.substring(6));
-					if (year2 < 20) year2 = year2 + 2000;
-					if (year2 < 100) year2 = year2 + 1900;
-					ageGroup = "" + (year2 - year1);
-				}
+			//	Calendar calB = Calendar.getInstance();
+		//		calB.setTime(birthday);
+		//		Calendar calF = Calendar.getInstance();
+		//		calF.setTime(finishDate);
+				String ageGroup = AgeUtil.calculateExtDispAge(finishDate, birthday);
 				if (aExtDispId != null) {
 					boolean calcAge = !service.executeNativeSql("select ved.id from VocExtDisp ved where ved.id=" + aExtDispId + " and ved.autoCalcAge='1'").isEmpty();
 					ret.put("autoCalcAge", calcAge);

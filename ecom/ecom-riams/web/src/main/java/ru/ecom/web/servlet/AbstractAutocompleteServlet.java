@@ -14,9 +14,6 @@ import java.io.PrintWriter;
  */
 public abstract class AbstractAutocompleteServlet extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(AbstractAutocompleteServlet.class) ;
-    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
-
-
 
     public abstract void printFindByQuery(HttpServletRequest aRequest, String aQuery, int aCount, PrintWriter aOut) throws Exception ;
 
@@ -51,14 +48,8 @@ public abstract class AbstractAutocompleteServlet extends HttpServlet {
 
         String direction = aRequest.getParameter("direction") ;
         String id = aRequest.getParameter("id") ;
-//        if(aRequest.getParameter("parent")!=null) {
-//            id=id+";"+aRequest.getParameter("parent") ;
-//        }
-        if (CAN_TRACE) LOG.info("id = " + id);
         String query = aRequest.getParameter("query");
-        if (CAN_TRACE) LOG.info("query = " + query);
         boolean isForward = !"backward".equals(direction) ;
-        if (CAN_TRACE) LOG.info("isForward = " + isForward);
         int COUNT = 10 ;
         PrintWriter out = aResponse.getWriter() ;
 

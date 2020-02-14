@@ -39,7 +39,11 @@ public class Expert2FileImportAction extends BaseAction {
 			Long entryListId = form.getObjectId();
 			switch (action) {
 				case "createEntry":
-					if (fileName.toUpperCase().endsWith(".MP")) {
+					if (fileName.startsWith("ELMED")) { //импорт файлов с элмеда
+						saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
+						result = expert2service.importElmed(fileName);
+
+					} else if (fileName.toUpperCase().endsWith(".MP")) {
 						saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
 						LOG.info("Создаем заполнение из файла");
 						result = expert2service.createEntryByFondXml(fileName);

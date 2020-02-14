@@ -4,10 +4,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.expert2.domain.voc.VocDiagnosticVisit;
-import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
-import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
-import ru.ecom.expert2.domain.voc.VocE2VidSluch;
+import ru.ecom.expert2.domain.voc.*;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -33,6 +30,10 @@ import java.util.List;
         , @AIndex(properties= {"serviceStream"})
         , @AIndex(properties= {"parentEntry"})
 
+})
+@NamedQueries({
+        @NamedQuery( name="E2Entry.getAllByBillAndDate"
+                , query="from E2Entry where billNumber=:billNumber and billDate=:billDate and (isDeleted is null or isDeleted='0') ")
 })
 public class E2Entry extends BaseEntity {
 
@@ -453,6 +454,7 @@ public class E2Entry extends BaseEntity {
 
      /** ОКАТО регистрации */
      @Comment("ОКАТО регистрации")
+     @Deprecated // нафиг не нужно
      public String getOkatoReg() {return theOkatoReg;}
      public void setOkatoReg(String aOkatoReg) {theOkatoReg = aOkatoReg;}
      /** ОКАТО регистрации */
@@ -460,6 +462,7 @@ public class E2Entry extends BaseEntity {
 
      /** ОКАТО проживания */
      @Comment("ОКАТО проживания")
+     @Deprecated // нафиг не нужно
      public String getOkatoReal() {return theOkatoReal;}
      public void setOkatoReal(String aOkatoReal) {theOkatoReal = aOkatoReal;}
      /** ОКАТО проживания */
@@ -791,6 +794,16 @@ public class E2Entry extends BaseEntity {
     public void setPassportNumber(String aPassportNumber) {thePassportNumber = aPassportNumber;}
     /** Номер паспорта */
     private String thePassportNumber ;
+
+    @Transient
+    public String getPassportInfo() {
+        return thePassportSeries+" N "+thePassportNumber;
+    }
+
+    @Transient
+    public String getPolicyInfo() {
+        return theMedPolicySeries+" N "+theMedPolicyNumber;
+    }
 
     /** Дата выдачи паспорта */
     @Comment("Дата выдачи паспорта")
@@ -1198,5 +1211,22 @@ public class E2Entry extends BaseEntity {
     public Boolean getIsRehabBed() {return theIsRehabBed;}
     public void setIsRehabBed(Boolean aIsRehabBed) {theIsRehabBed = aIsRehabBed;}
     private Boolean theIsRehabBed ;
+
+    @Comment("Особенности подачи")
+    @ManyToMany
+    @JoinTable(name = "e2entry_factor", joinColumns = @JoinColumn(name="entry_id")
+            ,inverseJoinColumns = @JoinColumn(name = "factor_id"))
+    /** Особенности подачи */
+    public List<VocE2EntryFactor> getFactorList() {return theFactorList;}
+    public void setFactorList(List<VocE2EntryFactor> aFactorList) {theFactorList = aFactorList;}
+    private List<VocE2EntryFactor> theFactorList ;
+
+    /** Место рождения */
+    @Comment("Место рождения")
+    public String getBirthPlace() {return theBirthPlace;}
+    public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
+    private String theBirthPlace ;
+
+
 
 }
