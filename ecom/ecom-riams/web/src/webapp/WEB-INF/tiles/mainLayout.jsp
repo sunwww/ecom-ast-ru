@@ -236,8 +236,9 @@
 
     <div id="footer" class="rightAlign">
 
-        <tags:UnreadMessages name="UnreadMessages" />
         <div id='gotoUpDown'><a class="gotoTop" href="#header">Вверх</a><a class="gotoBottom" href="#copyright">Вниз</a></div>
+        <msh:ifInRole roles="/Policy/Config/CornerMessage">
+        <tags:UnreadMessages name="UnreadMessages" />
         <div class="msgBox">
                 <h3>Сообщения</h3>
                 <table>
@@ -255,6 +256,7 @@
                     </tr>
                 </table>
         </div>
+        </msh:ifInRole>
         <msh:ifInRole roles="/Policy/WebSocket/Queue">
            <div class='ws_workerDiv'>
                 <p id='ws_windowWorkDiv' title="Нажмите для изменения номера окна" onclick="ws_setNewWindowNumber()"></p><hr/>
@@ -306,10 +308,12 @@
 <msh:ifInRole roles="/Policy/Config/EmergencyMessage">
 <script type="text/javascript">
 theDefaultTimeOut = setTimeout(funcemergencymessage.func,12000) ;
-
-getCountUnreadMessages();
-
 </script>
+</msh:ifInRole>
+<msh:ifInRole roles="/Policy/Config/CornerMessage">
+    <script type="text/javascript">
+        getCountUnreadMessages();
+    </script>
 </msh:ifInRole>
 <!-- ClaimService нужен для создания скриншота ошибки-->
 <script type='text/javascript' src='./dwr/interface/ClaimService.js'></script>

@@ -101,5 +101,9 @@
         if (!table)
             return;
         table.deleteRow(row.rowIndex);
+        if (table.rows.length==1) {  //если, помимо заголовка, нет сообщений
+            the${name}CloseDocumentDialog.hide() ;
+            show${name}();
+        }
     }
 </script>

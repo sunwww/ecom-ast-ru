@@ -3,7 +3,7 @@ var theDefaultTimeOut ;
 var theDefaultTimeOutCnt=4 ;
 var theDefaultFieldName ;
 var theDefaultEvt ;
-var theDefaultTimeOutCountMsg =180000;
+var theDefaultTimeOutCountMsg =10000;  //интервал в 10 сек
 
 /*Преобразуем данные html формы в объект json*/
 function getFormDataAsJson(form){
