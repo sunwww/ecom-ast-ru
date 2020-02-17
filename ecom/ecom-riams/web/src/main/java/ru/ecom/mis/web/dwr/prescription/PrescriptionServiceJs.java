@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -620,13 +621,73 @@ public class PrescriptionServiceJs {
 		JSONObject res = getPrescriptionInfo(aPrescripts, service);
 		StringBuilder msgTitle=new StringBuilder();
 		msgTitle.append(res.getString("date")).append(" пациент ").append(res.getString("patFio")).append(" услуга ").append(res.getString("medService"));
-		for (int i=0; i<2; i++)
-			bean.sendMessageCurrentDate("Брак биоматериала: "+reasonText,msgTitle.toString(),res.getString("usernameO"),username
-					,"entityView-pres_prescriptList.do?id="+res.get("plId"),i<1);
+		String lpuString = getLpuForDefectMessage(aPrescripts,aRequest);
+		if (!lpuString.equals("0")) {
+            ArrayList<String> usersToSend = getAllUsersWithLpu(lpuString,aRequest);
+            for (String user : usersToSend) {
+                for (int i=0; i<2; i++)
+                    bean.sendMessageCurrentDate("Брак биоматериала: "+reasonText,msgTitle.toString(),res.getString("usernameO"),user
+                            ,"entityView-pres_prescriptList.do?id="+res.get("plId"),i<1);
+            }
+        }
 		//Обновление текста дневника в случае отметки о браке после подтверждения врачом КДЛ
 		String wfCnsl = bean.getRealLabTechUsername(Long.valueOf(aPrescripts.split(",")[0]),"");
 		updateDiaryWhileCancelPrescription(null,aPrescripts,"Брак биоматериала: "+reasonText,wfCnsl,service);
 	}
+
+	/* Получить всех пользователей отделений
+	 * @param lpu Список отделений через запятую для запоса
+	 * @param aRequest
+	 * @return ArrayList Список пользователей
+	 * @throws NamingException
+	 * */
+	private ArrayList<String> getAllUsersWithLpu(String lpu, HttpServletRequest aRequest) throws NamingException {
+		ArrayList<String> resListUsers = new ArrayList<>();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select su.login from secuser su")
+				.append(" left join workfunction wf on su.id=wf.secuser_id")
+				.append(" left join worker w on w.id=wf.worker_id")
+				.append(" where w.lpu_id in (").append(lpu).append(") and wf.archival<>'1'")
+				.append(" and su.id is not null");
+		Collection<WebQueryResult> listUsers = service.executeNativeSql(sql.toString()) ;
+		for (WebQueryResult wqr : listUsers)
+			resListUsers.add(wqr.get1().toString());
+		return resListUsers;
+	}
+
+    /* Получить отделения, пользователям которых надо отправить сообщение о браке назначения
+     * @param aPrescripts Назначения
+     * @param aRequest
+     * @return String Отделения через запятую
+     * @throws NamingException
+     * */
+	private String getLpuForDefectMessage(String aPrescripts, HttpServletRequest aRequest) throws NamingException {
+	    String lpu="";
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        StringBuilder sql = new StringBuilder() ;
+        /*
+        Если ЛН сделан в приёмнике, то, если создан СЛО, вернуть ЛПУ последнего СЛО
+        Если нет СЛО (это мб в случае отказа от госпитализации или ещё не создали)
+        то никому - вернуть 0.
+        Если ЛН сделан в СЛО, то, если нет перевода, вернуть ЛПУ этого СЛО
+        Если есть перевод, вернуть через запятую ЛПУ изначального СЛО и перевода.
+        * */
+        sql.append("select case when mc.dtype='HospitalMedCase' then")
+                .append(" case when cast((select max(id) from medcase")
+                .append(" where dtype='DepartmentMedCase' and parent_id=mc.id) as varchar) is null then '0'")
+                .append(" else cast((select department_id from medcase where dtype='DepartmentMedCase' and parent_id=mc.id and id=(select max(id) from medcase")
+				.append(" where dtype='DepartmentMedCase' and parent_id=mc.id)) as varchar) end")
+				.append(" else case when mc.dtype='DepartmentMedCase' then")
+                .append(" case when mc.transferdepartment_id is null then cast (mc.department_id as varchar)")
+                .append(" else cast(mc.department_id as varchar)||','||cast(mc.transferdepartment_id as varchar) end end end")
+                .append(" from prescription p")
+                .append(" left join prescriptionlist pl on pl.id=p.prescriptionlist_id")
+                .append(" left join medcase mc on mc.id=pl.medcase_id")
+                .append(" where p.id in (").append(aPrescripts).append(")");
+        Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+        return list.isEmpty() ? "0": list.iterator().next().get1().toString();
+    }
 
 	/* Отметка патологии назначений. Заполняет поля о том, кто и когда поставил патологию
 	 * @param aPrescriptId ИД назначения
