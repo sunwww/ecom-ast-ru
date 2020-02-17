@@ -182,10 +182,8 @@ public class FormTag extends org.apache.struts.taglib.html.FormTag implements IG
             setFormPermissions(validatorForm, pageContext.getRequest()) ;
 
             if(!validatorForm.getFormMessages().isEmpty()) {
-                Iterator it = validatorForm.getFormMessages().iterator() ;
-                while (it.hasNext()) {
-                    FormMessage message = (FormMessage) it.next();
-                	new InfoMessage(pageContext.getRequest(),message.getMessage()) ;
+                for (FormMessage message : validatorForm.getFormMessages()) {
+                    new InfoMessage(pageContext.getRequest(), message.getMessage(), message.getAutoHide());
                 }
             }
         }

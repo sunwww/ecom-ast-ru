@@ -1,14 +1,13 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
+import ru.nuzmsh.web.messages.InfoMessage;
+import ru.nuzmsh.web.tags.helper.JavaScriptContext;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import ru.nuzmsh.web.messages.InfoMessage;
-import ru.nuzmsh.web.tags.helper.JavaScriptContext;
+import java.io.IOException;
 
 /**
  * Печать информационного сообщения
@@ -26,7 +25,7 @@ public class InfoMessageTag extends SimpleTagSupport {
         InfoMessage message = InfoMessage.findMessage(ctx.getRequest()) ;
         if(message!=null) {
             JspWriter out = getJspContext().getOut() ;
-            out.println("<div id='formInfoMessageTemp' onclick='hideInfoMessage()'>") ;
+            out.println("<div id='formInfoMessageTemp'"+(message.getAutoHide() ? "onclick='hideInfoMessage()'" : "")+" >") ;
             out.println("  <table style='margin-left: 4em'><tr><td>");
             out.println("    <div class='formInfoMessage'>") ;
             out.println(removeExceptionText(message.getMessage())) ;
@@ -34,11 +33,13 @@ public class InfoMessageTag extends SimpleTagSupport {
             out.println("  </td></tr></table>") ;
             out.println("</div>") ;
 
-            JavaScriptContext js = JavaScriptContext.getContext(ctx, this) ;
-            js.println("function hideInfoMessage() {");
-            js.println("  $('formInfoMessageTemp').style.display = 'none' ;");
-            js.println("}");
-            js.println("window.setTimeout(hideInfoMessage, 20000);");
+            if (message.getAutoHide()) {
+                JavaScriptContext js = JavaScriptContext.getContext(ctx, this) ;
+                js.println("function hideInfoMessage() {");
+                js.println("  $('formInfoMessageTemp').style.display = 'none' ;");
+                js.println("}");
+                js.println("window.setTimeout(hideInfoMessage, 20000);");
+            }
 
             InfoMessage.removeFromSession(ctx.getSession()) ;
 

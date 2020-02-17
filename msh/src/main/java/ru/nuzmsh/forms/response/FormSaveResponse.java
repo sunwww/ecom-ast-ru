@@ -1,7 +1,5 @@
 package ru.nuzmsh.forms.response;
 
-import ru.nuzmsh.forms.response.FormMessage;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,7 +22,7 @@ public class FormSaveResponse implements Serializable {
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (FormMessage message : theFormMessages) {
             sb.append(message.getMessage()) ;
             sb.append("\n") ;
@@ -42,5 +40,5 @@ public class FormSaveResponse implements Serializable {
         return r ;
     }
     
-    private ArrayList<FormMessage> theFormMessages = new ArrayList<FormMessage>();
+    private ArrayList<FormMessage> theFormMessages = new ArrayList<>();
 }
