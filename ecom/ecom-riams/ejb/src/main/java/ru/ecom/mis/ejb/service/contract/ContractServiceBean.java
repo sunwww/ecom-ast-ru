@@ -13,6 +13,7 @@ import ru.nuzmsh.util.format.DateFormat;
 import javax.annotation.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.BufferedReader;
@@ -33,6 +34,33 @@ import java.util.List;
 @Remote(IContractService.class)
 public class ContractServiceBean implements IContractService {
 	private static final Logger LOG = Logger.getLogger(ContractServiceBean.class);
+
+	/*Возвращаем лимит по гарантийному письму, остаток и израсходованную сумму*/
+	public String getGuaranteeLimit(Long letterId, EntityManager manager) throws NamingException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select cg.id as id,cg.numberdoc as number, to_char(cg.issueDate,'dd.MM.yyyy') as issueDate")
+				.append(",cg.limitMoney, case when cg.isnolimit ='1' then true else false end as f6_noLimit")
+				.append(",coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f7_spent ")
+				.append(",cg.limitMoney - coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f8_ostatok ")
+				.append(" from contractguarantee cg")
+				.append(" left join contractaccountmedservice cams on cams.guarantee_id = cg.id and cams.account_id is null ")
+				.append(" where cg.id=").append(letterId)
+				.append(" group by cg.id, cg.limitmoney");
+		List<Object[]> guaraneeList = manager.createNativeQuery(sb.toString()).getResultList();
+		JSONObject g = new JSONObject();
+		if (!guaraneeList.isEmpty()) {
+			Object[] o = guaraneeList.get(0);
+			g.put("number",o[1]);
+			g.put("issueDate",o[2]);
+			g.put("limit",o[3]);
+			g.put("isNoLimit","TRUE".equalsIgnoreCase(o[4].toString()));
+			g.put("spent",o[5]);
+			g.put("ostatok",o[6]);
+
+		}
+		return g.toString();
+
+	}
 
 	/**
 	 *
@@ -99,8 +127,8 @@ public class ContractServiceBean implements IContractService {
 			List<Object[]> l = aManager.createNativeQuery(sb.toString()).getResultList();
 			//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
-				BigDecimal totalSum = BigDecimal.valueOf(0.00);
-				BigDecimal taxSum = BigDecimal.valueOf(0.00);
+				BigDecimal totalSum = BigDecimal.ZERO;
+				BigDecimal taxSum = BigDecimal.ZERO;
 				JSONObject root = new JSONObject();
 				root.put("function", isRefund?"makeRefund":"makePayment");
 				root.put("gotId", aAccountId); //Milamesher #106 10072018 - для проверки со стороны ККМ на печать одинаковых чеков
@@ -967,5 +995,5 @@ public class ContractServiceBean implements IContractService {
 	}
 	@PersistenceContext EntityManager theManager ;
 	 private @EJB ILocalMonitorService theMonitorService ;
-	
+
 }
