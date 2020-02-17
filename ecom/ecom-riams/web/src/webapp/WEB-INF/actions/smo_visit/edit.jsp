@@ -515,26 +515,6 @@
   </msh:ifFormTypeIsNotView>
 
   <script type="text/javascript">
-   function printReference() {
-		TicketService.getDataByReference(
-			'${param.id}','SPO',{
-				callback: function(aResult) {
-					if (aResult!=null) {
-						window.location.href = "print-doc_reference.do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
-						
-					}
-				}, errorHandler: function(aMessage) {
-					if (aMessage!=null) {
-						alert(aMessage);
-					} else {
-				    	alert("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
-					}
-				}
-			
-			}
-		);
-		//print-discharge_reference.do?m=printReference&s=HospitalPrintService
-	}
 	  function printDischarge() {
 		  if (confirm('Вы хотите распечатать выписку по заключению без изменений?')) {
 			  window.location.href = "print-discharge.do?s=VisitPrintService&m=printVisit&id=${param.id}" ;
@@ -694,7 +674,6 @@
   										if (url[0]==0) {
   											window.location = url[1] ;
   										} else {eval(url[1]) ;}
-  										return ;
   									}
   								}
   							);
@@ -702,7 +681,6 @@
   						PatientService.setAddParamByMedCase(url[3],'${param.id}',1,
   								{callback: function(aReturn) {
   									goPriem(index) ;
-  									return ;
   								}}
   							);	  						
   					}

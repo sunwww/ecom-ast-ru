@@ -214,9 +214,7 @@ public class TicketServiceJs {
         }
         return result;
     }
-	public String getDataByReference(Long aMedCase,String aType, HttpServletRequest aRequest) throws Exception {
-		return HospitalMedCaseServiceJs.getDataByReference(aMedCase, aType, aRequest) ;
-	}
+
 	public String getInfoByTicket(Long aTicket, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(" select vss.id as vssid,vss.name as vssname,vwpt.id as vwptid") ;
