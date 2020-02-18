@@ -316,7 +316,7 @@ public class PrescriptionServiceJs {
 	}
 
 	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,  
-		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId,Long aCountDays, HttpServletRequest aRequest )throws NamingException {
+		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId,Long aCountDays, Long aGuaranteeId, HttpServletRequest aRequest )throws NamingException {
 		if (aTimePlanId==null || aTimePlanId.equals(0L)) {return "";}
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -353,11 +353,11 @@ public class PrescriptionServiceJs {
 				 aTimePlanId = Long.parseLong(r.get1().toString());
 				 aDatePlanId = Long.parseLong(r.get2().toString());
 				 visit = service.createNewDirectionFromPrescription(aPrescriptListId, aWorkFunctionPlanId
-							,aDatePlanId, aTimePlanId, aMedServiceId, username, wf);
+							,aDatePlanId, aTimePlanId, aMedServiceId, username, wf,aGuaranteeId);
 			}
 		} else {
 			visit = service.createNewDirectionFromPrescription(aPrescriptListId, aWorkFunctionPlanId
-					,aDatePlanId, aTimePlanId, aMedServiceId, username, wf);
+					,aDatePlanId, aTimePlanId, aMedServiceId, username, wf, aGuaranteeId);
 		}
 		return visit;
 	}
