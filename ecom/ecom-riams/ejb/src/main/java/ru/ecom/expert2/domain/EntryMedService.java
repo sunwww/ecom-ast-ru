@@ -3,7 +3,6 @@ package ru.ecom.expert2.domain;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.expert2.domain.voc.VocE2ExtDispService;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
@@ -80,14 +79,6 @@ public class EntryMedService extends BaseEntity {
     /** Диагноз, выявленный при оказании услуги */
     private VocIdc10 theMkb ;
 
-    /** Услуга доп. диспансеризации */
-    @Comment("Услуга доп. диспансеризации")
-    @OneToOne
-    public VocE2ExtDispService getExtDispService() {return theExtDispService;}
-    public void setExtDispService(VocE2ExtDispService aExtDispService) {theExtDispService = aExtDispService;}
-    /** Услуга доп. диспансеризации */
-    private VocE2ExtDispService theExtDispService ;
-
     /** Цена */
     @Comment("Цена")
     public BigDecimal getCost() {return theCost;}
@@ -97,5 +88,10 @@ public class EntryMedService extends BaseEntity {
 
     public EntryMedService(){}
 
+    /** Коммент */
+    @Comment("Коммент")
+    public String getComment() {return theComment;}
+    public void setComment(String aComment) {theComment = aComment;}
+    private String theComment ;
 
 }

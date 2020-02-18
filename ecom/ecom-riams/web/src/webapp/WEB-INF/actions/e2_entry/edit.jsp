@@ -7,7 +7,7 @@
 
     <tiles:put name="body" type="string">
         <tags:E2ServiceAdd name="Diagnosis"/>
-        <msh:form action="/entityParentSaveGoView-e2_entry.do" defaultField="lastname" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+        <msh:form action="/entityParentSaveGoView-e2_entry.do" defaultField="lastname">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
             <msh:hidden property="listEntry" />
@@ -311,7 +311,7 @@
                     <msh:textField property="externalParentId" size="50" />
                 </msh:row>
 
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1" />
+                <msh:submitCancelButtonsRow colSpan="1" />
             </msh:panel>
         </msh:form>
         <msh:ifFormTypeIsView formName="e2_entryForm">
@@ -357,13 +357,15 @@
             </msh:section>
 
             <msh:separator colSpan="4" label="Услуги по случаю"/>
-                <ecom:webQuery name="servicesList" nativeSql="select ms.id, vms.code ||' '|| coalesce(vms.name,'Нет наименования')
+                <ecom:webQuery name="servicesList" nativeSql="select ms.id, coalesce(vms.code ||' '|| coalesce(vms.name,'Нет наименования')||coalesce(' ('|| ms.comment||')',''),'Нет услуги '||ms.comment) as f2
                 , ms.serviceDate as name
                 ,ms.doctorsnils as dsnils
                 ,ms.cost as f5_cost
+                ,case when ms.medservice_id is null then 'color: red'
+                  when ms.comment!='' then 'color: #8B4513' else '' end as f6_styleRow
                 from entryMedService ms left join VocMedService vms on vms.id=ms.medservice_id
                      where ms.entry_id=${param.id}"/>
-                <msh:table idField="1" name="servicesList" action="jabascript:void()" noDataMessage="Нет услуг по случаю"
+                <msh:table idField="1" styleRow="6" name="servicesList" action="jabascript:void()" noDataMessage="Нет услуг по случаю"
                            deleteUrl="entityParentDeleteGoParentView-e2_entryMedService.do" >
                     <msh:tableColumn columnName="ИД" property="1"/>
                     <msh:tableColumn columnName="Услуга" property="2"/>
@@ -421,7 +423,7 @@ where cancer.entry_id=${param.id}"/>
 
     </tiles:put>
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
+        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryForm" />
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <msh:ifFormTypeAreViewOrEdit formName="e2_entryForm">
@@ -571,8 +573,8 @@ where cancer.entry_id=${param.id}"/>
     </tiles:put>
 
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="e2_entryForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-            <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
+        <msh:ifFormTypeIsView formName="e2_entryForm">
+            <msh:sideMenu>
                 <msh:sideLink action="/javascript:window.history.back()" name="Назад" roles="/Policy/E2/Edit" />
                  <%--<msh:IfPropertyIsFalse formName="some_shit" propertyName="doNotSend">--%>
                 <msh:sideLink params="id" action="/entityParentEdit-e2_entry" name="Изменить" roles="/Policy/E2/Edit" />

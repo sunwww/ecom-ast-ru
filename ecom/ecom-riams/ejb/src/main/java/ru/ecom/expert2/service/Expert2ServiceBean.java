@@ -10,6 +10,8 @@ import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expert2.domain.*;
+import ru.ecom.expert2.domain.price.ExtDispPrice;
+import ru.ecom.expert2.domain.price.ExtDispPriceMedService;
 import ru.ecom.expert2.domain.voc.*;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
@@ -961,47 +963,6 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     }
 
-    /*Делаем все дочерние случаи от дочернего случая дочерними случаями главного случая*/
-    private void setRightParent (E2Entry aMainEntry, List<E2Entry> aChildEntries) {
-        if (1==1) {LOG.info("NE nado "+aMainEntry.getId());return;}
-  /*      if (aChildEntries==null) {
-            aChildEntries = theManager.createQuery("from E2Entry where parentEntry_id=:parent").setParameter("parent",aMainEntry.getId()).getResultList();
-            LOG.info("sze = "+aChildEntries.size());
-        }
-        if (aChildEntries!=null && !aChildEntries.isEmpty()) {
-            for (E2Entry childEntry : aChildEntries) {
-                List<E2Entry> subChildren = theManager.createQuery("from E2Entry where parentEntry_id=:parent").setParameter("parent",childEntry.getId()).getResultList();
-                if (!childEntry.getParentEntry().equals(aMainEntry)) {
-                    childEntry.setParentEntry(aMainEntry);
-                    theManager.persist(childEntry);
-                }
-                if (!subChildren.isEmpty()) {
-                    LOG.info("subChild size = "+subChildren.size());
-                    setRightParent(aMainEntry,subChildren);
-                }
-
-
-            }
-        }*/
-    }
-    /** Делаем правильных родителей для комплексных случаев */
- /*   private void setRightParent(Long aListEntryId, Long aHospitalMedCaseId) { //находим все "комплексные" случаи, у которых есть дочерние случаи и делаем дочерние случаи дочерними случаями родителя "комплексного" случая
-        StringBuilder sql = new StringBuilder();
-        sql.append("select eChild.id, e.parentEntry_id ")
-                .append(" from e2entry e")
-                .append(" left join e2entry eChild on eChild.parentEntry_id=e.id")
-                .append(" where e.listentry_id=").append(aListEntryId).append(" and e.externalParentId=").append(aHospitalMedCaseId)
-                .append(" and eChild.id is not null and e.serviceStream='COMPLEXCASE' and (e.isDeleted is null or e.isDeleted='0')");
-        List<Object[]> res = theManager.createNativeQuery(sql.toString()).getResultList();
-        if (res.isEmpty()) {return;}
-        for (Object[] o:res) {
-            theManager.createNativeQuery("update e2entry set parentEntry_id="+o[1].toString()+" where id="+o[0].toString()).executeUpdate();
-        }
-        setRightParent(aListEntryId,aHospitalMedCaseId);
-    }
-
-*/
-
  /**переносим информацию об услугах из комплексного случая в главный*/
  private List<EntryMedService> moveMedServiceToMainEntry(E2Entry aNotMainEntry, E2Entry aMainEntry) {
      List<EntryMedService> serviceList1 =aNotMainEntry.getMedServices();
@@ -1339,6 +1300,50 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
     }
 
+    /*запускаем проверку случая ДД (расчет услуг)*/
+    private void checkExtDisp(E2Entry aEntry, ExtDispPrice aPrice) {
+        if (EXTDISPTYPE.equals(aEntry.getEntryType()) && aPrice!=null) {
+            theManager.createNativeQuery("delete from entrymedservice where entry_id=:id and medservice_id is null").setParameter("id",aEntry.getId()).executeUpdate(); //удаляем пустые услуги
+            List<EntryMedService> serviceList = aEntry.getMedServices();
+            List<ExtDispPriceMedService> dispPriceMedServices = aPrice.getServiceList();
+            List<String> goodList = new ArrayList<>();
+          //  LOG.info(serviceList.size()+"<>"+dispPriceMedServices.size());
+            if (dispPriceMedServices.isEmpty()) return;
+            for (EntryMedService medService: serviceList) { //TODO да, мне стыдно, переделать на лямды в меосе 2.0
+                boolean found = false;
+                if (medService.getMedService()!=null) {
+                    for (ExtDispPriceMedService dispPriceMedService: dispPriceMedServices) {
+                        if (dispPriceMedService.getMedService().equals(medService.getMedService().getCode())) {
+                            found = true;
+                            goodList.add(dispPriceMedService.getMedService());
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        medService.setComment("Услуга не требуется по возрасту");
+                        theManager.persist(medService);
+                    }
+                }
+            }
+            if (dispPriceMedServices.size()>goodList.size()) { //не все услуги оказаны
+                for (ExtDispPriceMedService dispPriceMedService : dispPriceMedServices) {
+                    if (!goodList.contains(dispPriceMedService.getMedService())) {
+                        EntryMedService medService = new EntryMedService();
+                        medService.setEntry(aEntry);
+                        medService.setComment(dispPriceMedService.getMedService());
+                        medService.setCost(BigDecimal.ZERO);
+                        LOG.warn("no service in disp: " + dispPriceMedService.getMedService());
+                        theManager.persist(new E2EntryError(aEntry,"MALO_DISP_SERVICE"));
+                        theManager.persist(medService);
+                    }
+                }
+
+            } else {
+                LOG.info("good 1-2");
+            }
+        }
+        LOG.info("finished!");
+    }
     /** Найдем подтип случая (посещение, обращение, НМП */
     private HashMap<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();
     private E2Entry setEntrySubType(E2Entry aEntry){
@@ -2539,7 +2544,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         return tariff.multiply(coef);
     }
     private E2Entry calculatePolyclinicEntryPrice(E2Entry aEntry) {
-        BigDecimal one = new BigDecimal(1);
+        BigDecimal one = BigDecimal.ONE;
         VocE2EntrySubType subType =aEntry.getSubType();
         String tariffCode = subType.getTariffCode();
         if (tariffCode ==null) {/*LOG.warn("Cant calc polyclinic tariff: "+aEntry.getId()+"<>"+subType.getId()+""+subType.getCode());*/return aEntry;}
@@ -2566,33 +2571,23 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         coefficient = polyclinicCasePrice.get(key);
         BigDecimal kz = coefficient!=null ? coefficient.getValue() : one;
-        boolean needToFindKp = true;
+
         //Находим Кп/Кпд
-        sql = "";
-         if (isEmergency) { //Неотложна
-            needToFindKp=false;
-            sql+=" and 1=2";
-        } else { //поликлиника (мобильная ., консультативная)
-            if (isMobilePolyclinic) {
-                sql += " and isMobilePolyclinic='1'";
-            }
-            if (Boolean.TRUE.equals(subType.getIsConsultation())) {
-                sql += " and isConsultation='1'";
-            }
-        }
-        sql="profile_id="+profileId+sql+" and entryType is null ";
-        key ="KP#"+sql; //Находим коэффициент для конс. поликлиники
-        if (needToFindKp) {
+        sql="profile_id="+profileId;
+        if (isMobilePolyclinic) {
+            sql += " and entryType is null and isMobilePolyclinic='1'";
+            key ="KP#"+sql;
             if (!polyclinicCasePrice.containsKey(key)) {
                 coefficient=getActualVocByClassName(VocE2PolyclinicCoefficient.class,aEntry.getFinishDate(),sql);
                 polyclinicCasePrice.put(key,coefficient);
-
             } else {
                 coefficient = polyclinicCasePrice.get(key);
             }
         } else {
+            key ="KP#"+sql; //Находим коэффициент для конс. поликлиники
             coefficient = null;
         }
+
         BigDecimal kp = coefficient!=null ? coefficient.getValue() : one;
 
         BigDecimal tariff ;
@@ -2628,7 +2623,10 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private void calculateExtDispEntryPrice(E2Entry aEntry) { //TODO реализовать!!!
-        BigDecimal cost = getExtDispPrice(aEntry);
+        LOG.info("calc disp");
+        ExtDispPrice price = getExtDispPrice(aEntry);
+        BigDecimal cost = price==null ? BigDecimal.valueOf(0.03) : price.getCost();
+        checkExtDisp(aEntry,price);
         aEntry.setCost(cost);
         aEntry.setBaseTarif(cost);
 
@@ -2636,16 +2634,17 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /*расчитываем цену ДД по типу, возрасту, полу и дате*/
-    private BigDecimal getExtDispPrice (E2Entry aEntry) {
-        String sql = "select p.cost from ExtDispPrice p " +
+    private ExtDispPrice getExtDispPrice (E2Entry aEntry) {
+        String sql = "select p.id from ExtDispPrice p " +
                 " left join VocE2FondV016 v016 on v016.id=p.dispType_id" +
                 " left join vocsex vs on vs.id=p.sex_id" +
                 " where v016.code='"+aEntry.getExtDispType()+"' and (p.sex_id is null or vs.code='"+aEntry.getSex()+"')" +
                 " and position(',"+aEntry.getExtDispAge()+",' in p.ages)>0 and '"+aEntry.getFinishDate()+"' between p.dateFrom and coalesce(p.dateTo,current_date)";
      //   LOG.info("sql="+sql);
-        List<BigDecimal> list = theManager.createNativeQuery(sql).getResultList();
+        List<BigInteger> list = theManager.createNativeQuery(sql).getResultList();
 
-        return list.isEmpty() ? BigDecimal.valueOf(0.03) : list.get(0);
+
+        return list.isEmpty() ? null : theManager.find(ExtDispPrice.class,list.get(0).longValue());
     }
 
 
@@ -3372,7 +3371,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     sloEntry.setFinishDate(spo.getDateFinish() != null ? spo.getDateFinish() : new Date(System.currentTimeMillis())); //если открытое СПО - будет разовый визит, не должно произойти.
                     sloEntry.setIsMobilePolyclinic(wf.getWorker().getLpu().getIsMobilePolyclinic());
                     sloEntry.setWorkPlace(visit.getWorkPlaceType()!=null ? visit.getWorkPlaceType().getCode() : "1");
-                    sloEntry.setIsDiagnosticSpo(spo.getIsDiagnosticSpo());
+         //           sloEntry.setIsDiagnosticSpo(spo.getIsDiagnosticSpo()); //deprecated 01-01-2020
                     sloEntry.setMainMkb(visit.getDiagnoses().isEmpty() ? "Z00.0" : visit.getDiagnoses().get(0).getIdc10().getCode());
                     sloEntry = setEntrySubType(sloEntry);
                     VocWorkFunction vwf = wf.getWorkFunction(); //не считаем цену по поликлинике если врач - не ОМС

@@ -149,7 +149,7 @@ function checkHospitBetween2VisitsAt1Spo(aForm,aEntity, aCtx) {
                 "left join patient pat on pat.id=hmc.patient_id\n" +
                 "where hmc.datefinish is not null and hmc.datestart between to_date('"+spoDateStart+"','yyyy-MM-dd') and to_date('"+dateNow+"','yyyy-MM-dd')\n" +
                 "and hmc.deniedHospitalizating_id is null and hmc.dtype='HospitalMedCase' and pat.id="+patId).getResultList() ;
-            if (list.size()>0) throw "С момента начала выбранного СПО у пациента была госпитализация, необходимо открыть новый СПО!";
+            if (!list.isEmpty()) throw "С момента начала выбранного СПО у пациента была госпитализация, необходимо открыть новый СПО!";
 		}
 	}
 }

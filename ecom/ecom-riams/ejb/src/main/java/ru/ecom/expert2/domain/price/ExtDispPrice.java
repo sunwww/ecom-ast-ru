@@ -5,11 +5,10 @@ import ru.ecom.expert2.domain.voc.federal.VocE2FondV016;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 
@@ -79,4 +78,11 @@ public class ExtDispPrice extends BaseEntity {
     public void setAges(String aAges) {theAges = aAges;}
     /** Возраста  */
     private String theAges ;
+
+    /** Услуги по цене */
+    @Comment("Услуги по цене")
+    @OneToMany(mappedBy = "price", cascade = CascadeType.ALL)
+    public List<ExtDispPriceMedService> getServiceList() {return theServiceList;}
+    public void setServiceList(List<ExtDispPriceMedService> aServiceList) {theServiceList = aServiceList;}
+    private List<ExtDispPriceMedService> theServiceList ;
 }
