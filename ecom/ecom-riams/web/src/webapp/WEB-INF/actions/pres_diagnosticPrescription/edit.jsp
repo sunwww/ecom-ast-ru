@@ -210,7 +210,7 @@ function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, 
 
 function createVisitByPrescription(addRowType,addRowNum) {
     PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
-        ,$('surgServicies').value, $('countDays').value, {
+        ,$('surgServicies').value, $('countDays').value, $('guaranteeId').value, {
             callback: function(a) {
                 if (a==null) {
                     alert("Ошибка при назначении услуги!!! Выбранное время уже занято!");
@@ -457,6 +457,7 @@ function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId
         <msh:hidden property="patient"/>
         <msh:hidden property="allowOnlyPaid"/>
         <msh:hidden property="unpaidConfirmation"/>
+        <msh:hidden property="guaranteeId"/>
         <input type="hidden" id = "caosId">
       <msh:hidden property="saveType" />
         <msh:hidden property="comments"  />

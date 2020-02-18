@@ -43,6 +43,7 @@ public class PrescriptionPreCreateInterceptor implements IParentFormInterceptor 
         if (Boolean.TRUE.equals(serviceStream.getIsCalcDogovor()) ) { // находим остаток по г. письму
             ContractGuarantee guarantee = medCase.getGuarantee()!=null ? medCase.getGuarantee() : medCase.getParent().getGuarantee();
             if (guarantee!=null) {
+                form.setGuaranteeId(guarantee.getId());
                 try {
                     JSONObject guar = new JSONObject(new ContractServiceBean().getGuaranteeLimit(guarantee.getId(), manager));
                     if (guar.has("number")) {

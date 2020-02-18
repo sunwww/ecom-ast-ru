@@ -64,8 +64,11 @@
 </msh:ifInRole>
         <msh:separator colSpan="4" label="Направлен" />
         <msh:row>
-          <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" horizontalFill="true" fieldColSpan="3" viewOnlyField="true" />
+          <msh:autoComplete vocName="mainLpu" property="orderLpu" label="Внешний направитель" horizontalFill="true" fieldColSpan="3" viewOnlyField="true" />
         </msh:row>
+          <msh:row>
+              <msh:textField property="orderDate" label="Дата направления" viewOnlyField="true" labelColSpan="3"/>
+          </msh:row>
         <msh:row>
           <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunctionByDirect" property="workFunctionPlan" label="Куда" fieldColSpan="3" size="50" viewOnlyField="true" />
         </msh:row>
@@ -134,9 +137,6 @@
        	<msh:row>
        		<msh:separator label="Госпитализация" colSpan="4"/>
        	</msh:row>
-        <msh:row>
-        	<msh:textField property="orderDate" label="Планируемая дата госпитализации" labelColSpan="3"/>
-        </msh:row>
         <msh:row>
         	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" vocName="lpu"/>
         </msh:row>

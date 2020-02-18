@@ -9,8 +9,10 @@ import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperationByService;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
+import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.form.medcase.poly.VisitMedCaseForm;
+import ru.ecom.mis.ejb.service.contract.ContractServiceBean;
 import ru.ecom.mis.ejb.service.contract.IContractService;
 
 import javax.persistence.EntityManager;
@@ -22,7 +24,7 @@ public class VisitSaveInterceptor implements IFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 
         Visit visit = (Visit) aEntity;
-        if (visit.getServiceStream().getIsPaidConfirmation()!=null && visit.getServiceStream().getIsPaidConfirmation()) {
+        if (Boolean.TRUE.equals(visit.getServiceStream().getIsPaidConfirmation())) {
             EntityManager manager = aContext.getEntityManager();
             VisitMedCaseForm form = (VisitMedCaseForm) aForm;
             JSONArray servicesList = new JSONObject(form.getMedServices()).getJSONArray("childs");
@@ -55,6 +57,13 @@ public class VisitSaveInterceptor implements IFormInterceptor {
             }
             if (errorList.length()>0 && !aContext.getSessionContext().isCallerInRole("/Policy/Mis/Contract/MakeUnpaidServices")) {
                 throw new IllegalStateException(errorList.toString());
+            }
+        } else if (visit.getGuarantee()!=null) {
+            EntityManager manager = aContext.getEntityManager();
+            List<ServiceMedCase> serviceList = manager.createQuery("from ServiceMedCase where parent=:par").setParameter("par",visit).getResultList();
+            for (ServiceMedCase smc :serviceList) {
+                new ContractServiceBean().addMedServiceAccount("MEDCASE",smc.getId(),smc.getMedService().getCode()
+                        ,visit.getPatient().getId(), visit.getGuarantee(), manager);
             }
         }
 
