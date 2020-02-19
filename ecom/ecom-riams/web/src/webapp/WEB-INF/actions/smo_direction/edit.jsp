@@ -20,7 +20,8 @@
       		<td colspan="4"><div id='medPolicyInformation' style="display: none;" class="errorMessage"/></td>
       	</msh:row>
         <msh:row>
-          <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" fieldColSpan="1"  size="70"/>
+          <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" horizontalFill="true" fieldColSpan="3"/>
+          </msh:row><msh:row>
             <msh:textField property="orderDate" />
         </msh:row>
         <msh:row>

@@ -139,7 +139,7 @@
             <msh:sideMenu title="Администрирование">
                 <msh:sideLink name="Ориентировочная цена по ОМС" action=".javascript:getMedcaseCost()" roles="/Policy/E2/Admin"/>
                 <msh:sideLink confirm="Вы точно хотите объединить несколько СЛО?" name="Объединить со след. СЛО" action=".javascript:unionSloWithNextSlo()" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/UnionSlo"/>
-                <tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/ChangeServiceStream" />
+                <tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/ChangeServiceStream" />
             </msh:sideMenu>
             <msh:sideMenu title="Перейти">
                 <msh:sideLink styleId="viewShort" action='/javascript:getDefinition("js-smo_draftProtocol-list.do?short=Short", null);' name='Черновики' title="Просмотр черновиков специалиста" key="ALT+4" roles="/Policy/Mis/MedCase/Protocol/View" />

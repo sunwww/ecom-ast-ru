@@ -170,7 +170,7 @@
         <%-- <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_case" name="Нетрудоспособность" title="Добавить случай нетрудоспособности" guid="ae605283-4519-488c-9d9e-715d1978def2" /> --%>
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
-	   	<tags:mis_changeServiceStream name="CSS" service="TicketService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
+	   	<tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
       	
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
