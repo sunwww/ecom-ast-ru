@@ -1,16 +1,9 @@
 package ru.ecom.report.rtf;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-
 import ru.ecom.report.replace.IValueGetter;
 import ru.ecom.report.replace.ReplaceHelper;
-import ru.nuzmsh.util.filesystem.IFileListener;
+
+import java.io.*;
 
 public class RtfPrintFileDriver implements IPrintFileDriver {
 

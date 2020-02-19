@@ -106,8 +106,6 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 		File dir = new File(theWorkDir,getTempFileName().append(aDirSuffix).toString()) ;
 		dir.mkdirs() ;
 		try {
-			LOG.info(archiveFile.getPath()) ;
-			LOG.info(dir.getPath()) ;
 			JarUtil.extract(archiveFile,dir) ;
 		} catch (IOException e) {
 			throw new RuntimeException(e) ;
@@ -301,10 +299,10 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 			return "ОШИБКА !!!: "+aText+" ->"+e;
 		}    	
     }
-    public static boolean isBeginFor(String aValue) {
+    private static boolean isBeginFor(String aValue) {
 		return aValue != null && aValue.startsWith("$$FOR") && aValue.endsWith("$$");
 	}
-    public static boolean isEndFor(String aValue) { return "$$FOREND".equals(aValue);}
+	private static boolean isEndFor(String aValue) { return "$$FOREND".equals(aValue);}
 
 	/** Логин */
 	public String getLogin() {return theLogin;}
