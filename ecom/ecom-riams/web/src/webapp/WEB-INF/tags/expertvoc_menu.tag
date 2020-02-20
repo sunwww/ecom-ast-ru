@@ -42,6 +42,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 			<msh:sideLink action="/entityList-e2_vocKsg.do" name="Справочник КСГ" title="Справочник КСГ" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocKdp.do" name="Справочник КДП" title="Справочник КДП" roles="/Policy/E2" />
 		</msh:sideMenu>
+		<msh:sideMenu title="Отчеты">
+			<msh:sideLink action="/e2_report_paid.do" name="Отчет по оплаченным случаям" title="Отчет по оплаченным случаям" roles="/Policy/E2/View"/>
+		</msh:sideMenu>
 		<msh:sideMenu title="Настройки">
 			<msh:sideLink action="/entityList-e2_config.do" name="Справочник настроек экспертизы" title="Справочник настроек экспертизы" roles="/Policy/E2"/>
 			<msh:sideLink action="/e2_stacFinancePlan.do?type=PolyclinicFinancePlan" name="Финансовый планы по пол-ке" title="Финансовый планы по пол-ке" roles="/Policy/E2" />

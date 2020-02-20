@@ -1,9 +1,12 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+    <tiles:put name="title" type="string">
+        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryForm" />
+    </tiles:put>
 
     <tiles:put name="body" type="string">
         <tags:E2ServiceAdd name="Diagnosis"/>
@@ -363,7 +366,8 @@
                 ,ms.cost as f5_cost
                 ,case when ms.medservice_id is null then 'color: red'
                   when ms.comment!='' then 'color: #8B4513' else '' end as f6_styleRow
-                from entryMedService ms left join VocMedService vms on vms.id=ms.medservice_id
+                from entryMedService ms
+                left join VocMedService vms on vms.id=ms.medservice_id
                      where ms.entry_id=${param.id}"/>
                 <msh:table idField="1" styleRow="6" name="servicesList" action="jabascript:void()" noDataMessage="Нет услуг по случаю"
                            deleteUrl="entityParentDeleteGoParentView-e2_entryMedService.do" >
@@ -422,9 +426,7 @@ where cancer.entry_id=${param.id}"/>
         </msh:ifFormTypeIsView>
 
     </tiles:put>
-    <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryForm" />
-    </tiles:put>
+
     <tiles:put name="javascript" type="string">
         <msh:ifFormTypeAreViewOrEdit formName="e2_entryForm">
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>

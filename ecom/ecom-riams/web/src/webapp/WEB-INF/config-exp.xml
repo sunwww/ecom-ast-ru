@@ -91,6 +91,14 @@
     <action-mappings>
 
         <!-- ЭКСПЕРТИЗА -->
+        <action path='/e2_report_paid' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+        >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/e2_entry/report_paid.jsp" />
+        </action>
+
         <action path="/e2-ImportFile" type='ru.ecom.mis.web.action.expert2.Expert2FileImportAction'
                 scope='request' validate="false" name="e2_importFileForm">
             <forward name="success" path="/WEB-INF/actions/e2_entryList/list.jsp"/>
