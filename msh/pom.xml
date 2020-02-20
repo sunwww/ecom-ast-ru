@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <build.plugins.plugin.version>1</build.plugins.plugin.version>
+
+    </properties>
+    <parent>
+        <groupId>ru.ecom</groupId>
+        <artifactId>pom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>msh</artifactId>
+    <version>RELEASE</version>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
+        <!-- JSTL -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ltd.getahead</groupId>
+            <artifactId>dwr</artifactId>
+            <version>3.0.2-RELEASE</version>
+            <systemPath>${libdir}/dwr/dwr.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.5</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>rs</artifactId>
+            <systemPath>${libdir}/jersey/javax.ws.rs-api-2.1.jar</systemPath>
+            <scope>system</scope>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-servlet</artifactId>
+            <systemPath>${libdir}/gwt/gwt-servlet.jar</systemPath>
+            <scope>system</scope>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <systemPath>${libdir}/gwt/gwt-dev-linux.jar</systemPath>
+            <scope>system</scope>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache</groupId>
+            <artifactId>axis</artifactId>
+            <systemPath>${libdir}/axis/axis.jar</systemPath>
+            <scope>system</scope>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.ecom</groupId>
+            <artifactId>gwt-idemode</artifactId>
+            <systemPath>${libdir}/ecom/gwt/idemode/ecom-gwt-idemode.jar</systemPath>
+            <scope>system</scope>
+            <version>RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.ecom</groupId>
+            <artifactId>gwt-document</artifactId>
+            <systemPath>${libdir}/ecom/gwt/document/ecom-gwt-document.jar</systemPath>
+            <scope>system</scope>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.ecom</groupId>
+            <artifactId>gwt-clazz</artifactId>
+            <systemPath>${libdir}/ecom/gwt/clazz/ecom-gwt-clazz.jar</systemPath>
+            <scope>system</scope>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>websocket</artifactId>
+            <systemPath>${libdir}/javax/javax.websocket-api-1.1.jar</systemPath>
+            <scope>system</scope>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.media</groupId>
+            <artifactId>imageioimpl</artifactId>
+            <systemPath>${libdir}/image/jai_imageio.jar</systemPath>
+            <scope>system</scope>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.ecom</groupId>
+            <artifactId>report</artifactId>
+            <systemPath>${libdir}/ecom/report/ecom-report.jar</systemPath>
+            <scope>system</scope>
+            <version>1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>5.1.5.RELEASE</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <finalName>msh-maven</finalName>
+        <sourceDirectory>src/main/java</sourceDirectory>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+
+            </plugin>
+            <!--            <plugin>
+                             <groupId>com.pvsstudio</groupId>
+                             <artifactId>pvsstudio-maven-plugin</artifactId>
+                             <version>7.03.32667</version>
+                             <configuration>
+                                 <analyzer>
+                                     <outputType>text</outputType>
+                                     <outputFile>pvs-output.txt</outputFile>
+                                 </analyzer>
+                             </configuration>
+                             <executions>
+                                 <execution>
+                                     <phase>compile</phase>
+                                     <goals>
+                                         <goal>pvsAnalyze</goal>
+                                     </goals>
+                                 </execution>
+                             </executions>
+                         </plugin> -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webXml>src/webapp/WEB-INF/web.xml</webXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -16,7 +16,6 @@
         <msh:row guid="row1">
           <msh:row guid="e6d5b1ac-787d-4a77-b571-81f9ce83c8b8">
             <msh:checkBox property="noActuality" label="Недействительность" guid="816475aa-6ff1-4743-93b7-a6399addd548" />
-            <msh:checkBox property="isDiagnosticSpo" label="Консультативно-диагностическое обращение" guid="816475aa-6ff1-4743-93b7-a6399addd548" />
           </msh:row>
           <msh:textField guid="textFieldHello" property="dateStart" label="Дата начала" />
           <msh:textField property="dateFinish" label="Дата окончания" guid="e71fa83a-c6c2-4221-bb72-77067f879971" />
@@ -271,7 +270,7 @@ order by vis.dateStart
         <%-- <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_case" name="Нетрудоспособность" title="Добавить случай нетрудоспособности" guid="ae605283-4519-488c-9d9e-715d1978def2" /> --%>
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
-	   	<tags:mis_changeServiceStream name="CSS" service="TicketService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
+	   	<tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
       	
       </msh:sideMenu>
     </msh:ifFormTypeIsView>

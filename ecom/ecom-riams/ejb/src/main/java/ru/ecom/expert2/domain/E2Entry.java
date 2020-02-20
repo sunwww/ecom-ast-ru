@@ -33,7 +33,8 @@ import java.util.List;
 })
 @NamedQueries({
         @NamedQuery( name="E2Entry.getAllByBillAndDate"
-                , query="from E2Entry where billNumber=:billNumber and billDate=:billDate and (isDeleted is null or isDeleted='0') ")
+                , query="from E2Entry where billNumber=:billNumber and billDate=:billDate" +
+                " and (isDeleted is null or isDeleted='0') order by lastname, firstname, middlename ")
 })
 public class E2Entry extends BaseEntity {
 

@@ -37,6 +37,7 @@
         <form-bean name="e2_vocKdpMedServiceForm" type="ru.ecom.expert2.form.voc.VocDiagnosticVisitMedCaseForm"/>
         <form-bean name="e2_vocMedServiceCostForm" type="ru.ecom.expert2.form.voc.VocOmcMedServiceCostForm"/>
         <form-bean name="e2_extDispPriceForm" type="ru.ecom.expert2.form.price.ExtDispPriceForm"/>
+        <form-bean name="e2_extDispPriceMedServiceForm" type="ru.ecom.expert2.form.price.ExtDispPriceMedServiceForm"/>
 
         <form-bean name="e2_cancerEntryForm" type="ru.ecom.expert2.form.E2CancerEntryForm"/>
         <form-bean name="e2_cancerDirectionForm" type="ru.ecom.expert2.form.E2CancerDirectionForm"/>

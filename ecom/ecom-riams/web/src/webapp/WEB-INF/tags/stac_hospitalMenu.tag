@@ -217,7 +217,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		roles="/Policy/Jaas/Permission/User/Create" 
 	/>
     	<tags:stac_deniedHospitalizating name="DH" title="Оформить отказ больного" roles="/Policy/Mis/MedCase/Stac/Ssl/DeniedHospitalizatingSls" />
-    	<tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/ChangeServiceStream" />
+    	<tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/ChangeServiceStream" />
 		<tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
 		<tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
 		<tags:birthNosologyCard  name="birthNosologyCard"  />

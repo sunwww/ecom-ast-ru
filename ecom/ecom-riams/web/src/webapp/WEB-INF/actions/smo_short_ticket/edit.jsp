@@ -72,31 +72,6 @@
     <ecom:titleTrail mainMenu="Medcard" beginForm="smo_short_ticketForm" guid="5c4f3682-e66b-4e0d-b448-4e6a2961a943" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
-  	<msh:ifFormTypeIsView formName="smo_short_ticketForm">
-  	<script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
-        <script type="text/javascript">
-        function printReference(aFormat) {
-    		TicketService.getDataByReference(
-    			'${param.id}','PREVISIT',{
-    				callback: function(aResult) {
-    					if (aResult!=null) {
-    						window.location.href = "print-doc_reference"+aFormat+".do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
-    						
-    					}
-    				}, errorHandler: function(aMessage) {
-    					if (aMessage!=null) {
-    						alert(aMessage);
-    					} else {
-    				    	alert("Ошибка в обработке данных!!!") ;
-    					}
-    				}
-    			
-    			}
-    		);
-    	}
-      	
-      	</script>
-  	</msh:ifFormTypeIsView>
     <msh:ifFormTypeIsNotView formName="smo_short_ticketForm">
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
     <script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>

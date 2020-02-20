@@ -139,13 +139,13 @@
                 var monitor = {};
                 checkIsRunning();
 
-                function printReestr(num,date,period,cost,insCode) {
-                    window.location.href = "print-omc_reestr_"+insCode+".do?billNumber="+num+"&s=OmcPrintService&m=printOmcBill"+
-                    "&entry=1&billDate="+date+"&billCost="+cost+"&billPeriod="+period;
-                }
                 function printBill(id,period,insCode) {
                     window.location.href = "print-omc_bill_"+insCode+".do?billId="+id+"&s=OmcPrintService&m=printOmcBill"+
                     "&billPeriod="+period;
+                }
+                function printReestr(id,period,insCode) {
+                    window.location.href = "print-omc_reestr_"+insCode+".do?billId="+id+"&s=OmcPrintService&m=printOmcBill"+
+                    "&entry=1&billPeriod="+period;
                 }
                 function deleteAllDeletedEntries() {
                     Expert2Service.deleteAllDeletedEntries();

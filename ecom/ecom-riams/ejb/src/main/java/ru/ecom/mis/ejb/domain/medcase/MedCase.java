@@ -54,6 +54,7 @@ abstract public class MedCase extends BaseEntity {
 
 	/** Признак консультативно-диагностического обращения */
 	@Comment("Признак консультативно-диагностического обращения")
+	@Deprecated
 	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
 	public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
 	/** Признак консультативно-диагностического обращения */

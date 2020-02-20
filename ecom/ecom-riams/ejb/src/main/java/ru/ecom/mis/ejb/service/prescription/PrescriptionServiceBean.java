@@ -18,6 +18,7 @@ import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.live.domain.CustomMessage;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.*;
 import ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient;
@@ -345,7 +346,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		}
 		return ret;
 	}
-	public String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction) {
+	public String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId
+			, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction, Long aGuaranteeId) {
 		MedService sms = theManager.find(MedService.class, aMedServiceId);
 		if (sms!=null) {
 			long date = new java.util.Date().getTime() ;
@@ -368,7 +370,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				}
 				VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
 				vis.setWorkPlaceType(wpt) ;
-
+				if (aGuaranteeId!=null && aGuaranteeId>0L) vis.setGuarantee(theManager.find(ContractGuarantee.class,aGuaranteeId));
 				vis.setPatient(pat);
 				vis.setCreateDate(new java.sql.Date(date));
 				vis.setCreateTime(new java.sql.Time(date));

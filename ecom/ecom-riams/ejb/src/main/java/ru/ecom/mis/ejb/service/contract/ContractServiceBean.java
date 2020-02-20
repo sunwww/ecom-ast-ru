@@ -13,6 +13,7 @@ import ru.nuzmsh.util.format.DateFormat;
 import javax.annotation.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.BufferedReader;
@@ -33,6 +34,33 @@ import java.util.List;
 @Remote(IContractService.class)
 public class ContractServiceBean implements IContractService {
 	private static final Logger LOG = Logger.getLogger(ContractServiceBean.class);
+
+	/*Возвращаем лимит по гарантийному письму, остаток и израсходованную сумму*/
+	public String getGuaranteeLimit(Long letterId, EntityManager manager) throws NamingException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select cg.id as id,cg.numberdoc as number, to_char(cg.issueDate,'dd.MM.yyyy') as issueDate")
+				.append(",cg.limitMoney, case when cg.isnolimit ='1' then true else false end as f6_noLimit")
+				.append(",coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f7_spent ")
+				.append(",cg.limitMoney - coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f8_ostatok ")
+				.append(" from contractguarantee cg")
+				.append(" left join contractaccountmedservice cams on cams.guarantee_id = cg.id and cams.account_id is null ")
+				.append(" where cg.id=").append(letterId)
+				.append(" group by cg.id, cg.limitmoney");
+		List<Object[]> guaraneeList = manager.createNativeQuery(sb.toString()).getResultList();
+		JSONObject g = new JSONObject();
+		if (!guaraneeList.isEmpty()) {
+			Object[] o = guaraneeList.get(0);
+			g.put("number",o[1]);
+			g.put("issueDate",o[2]);
+			g.put("limit",o[3]);
+			g.put("isNoLimit","TRUE".equalsIgnoreCase(o[4].toString()));
+			g.put("spent",o[5]);
+			g.put("ostatok",o[6]);
+
+		}
+		return g.toString();
+
+	}
 
 	/**
 	 *
@@ -99,8 +127,8 @@ public class ContractServiceBean implements IContractService {
 			List<Object[]> l = aManager.createNativeQuery(sb.toString()).getResultList();
 			//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
-				BigDecimal totalSum = BigDecimal.valueOf(0.00);
-				BigDecimal taxSum = BigDecimal.valueOf(0.00);
+				BigDecimal totalSum = BigDecimal.ZERO;
+				BigDecimal taxSum = BigDecimal.ZERO;
 				JSONObject root = new JSONObject();
 				root.put("function", isRefund?"makeRefund":"makePayment");
 				root.put("gotId", aAccountId); //Milamesher #106 10072018 - для проверки со стороны ККМ на печать одинаковых чеков
@@ -938,10 +966,14 @@ public class ContractServiceBean implements IContractService {
 		addMedServiceAccount(typeService, idService, medServiceCode, patientId, theManager.find(ContractGuarantee.class,letterId));
 	}
 	public void addMedServiceAccount(String typeService, Long idService, String medServiceCode, Long patientId, ContractGuarantee letter) {
-		List<ContractAccountMedService> camsList = theManager.createQuery("from ContractAccountMedService where typeService=:typeService and idService=:idService")
+		addMedServiceAccount(typeService, idService, medServiceCode, patientId, letter, null);
+	}
+	public void addMedServiceAccount(String typeService, Long idService, String medServiceCode, Long patientId, ContractGuarantee letter, EntityManager manager) {
+		if (manager == null) manager = theManager;
+		List<ContractAccountMedService> camsList = manager.createQuery("from ContractAccountMedService where typeService=:typeService and idService=:idService")
 				.setParameter("typeService", typeService).setParameter("idService",idService).getResultList();
 		ContractAccountMedService cams = camsList.isEmpty() ? new ContractAccountMedService() : camsList.get(0); //по идее, не должно быть больше одной записи
-		List<BigInteger> priceMedServiceList = theManager.createNativeQuery("select pms.id as pms_id" +
+		List<BigInteger> priceMedServiceList = manager.createNativeQuery("select pms.id as pms_id" +
 				" from medservice ms" +
 				" LEFT JOIN pricemedservice pms on pms.medservice_id=ms.id " +
 				" LEFT JOIN priceposition pp on pp.id=pms.priceposition_id " +
@@ -952,7 +984,7 @@ public class ContractServiceBean implements IContractService {
 		//	throw new IllegalStateException("Услуга должна быть выбрана из платного прейскуранта");
 			//Либо писать ошибку, либо придумать что-то еще...
 		} else {
-			PriceMedService pms = theManager.find(PriceMedService.class,priceMedServiceList.get(0).longValue());
+			PriceMedService pms = manager.find(PriceMedService.class,priceMedServiceList.get(0).longValue());
 			PricePosition pp = pms.getPricePosition();
 			cams.setCost(pp.getCost());
 			cams.setCountMedService(1);
@@ -962,10 +994,10 @@ public class ContractServiceBean implements IContractService {
 			cams.setServiceIn(pms.getMedService().getId());
 			cams.setPatient(patientId!=null ? patientId : ((NaturalPerson)letter.getContractPerson()).getPatient().getId());
 			cams.setIdService(idService);
-			theManager.persist(cams);
+			manager.persist(cams);
 		}
 	}
 	@PersistenceContext EntityManager theManager ;
 	 private @EJB ILocalMonitorService theMonitorService ;
-	
+
 }

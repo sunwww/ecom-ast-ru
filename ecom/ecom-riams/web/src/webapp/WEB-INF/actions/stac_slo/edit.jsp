@@ -48,10 +48,10 @@
         </style>
     </tiles:put>
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="stac_sloForm" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
-            <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="СЛО">
-                <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_slo" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
-                <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_slo" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+        <msh:ifFormTypeIsView formName="stac_sloForm">
+            <msh:sideMenu title="СЛО">
+                <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_slo" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Edit" />
+                <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_slo" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Delete" />
                 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Create"  key="CTRL+1"
                               name="Перевод &larr;"   action="/javascript:goTransfer('.do')"
                               title='Перевод' styleId="stac_sloTransfer" />
@@ -59,15 +59,15 @@
                               name="Выписка &larr;"   action="/javascript:goDischarge('.do')"
                               title='Выписка' styleId="stac_sslDischarge" />
             </msh:sideMenu>
-            <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc9" title="Добавить">
-                <msh:sideLink guid="helloSideLinkNew" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/Create"
+            <msh:sideMenu title="Добавить">
+                <msh:sideLink roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/Create"
                               action="/entityParentPrepareCreate-expert_ker_direct" name="Направление на ВК" params="id" />
                 <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService">
-                    <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" name="Дневник специалиста" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" title="Дневник специалиста" guid="11cc057f-b309-4193-9d22-199373cfd28d" />
+                    <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" name="Дневник специалиста" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" title="Дневник специалиста" />
                 </msh:ifNotInRole>
-                <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/Create" name="Диагноз" params="id" action="/entityParentPrepareCreate-stac_diagnosis" title="Диагноз" guid="c3e59a04-8858-4523-9370-74b16ec784e6" />
-                <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/Create" name="Лист назначений" action="/javascript:showCreatePrescriptList('${param.id}','.do')" title="Лист назначений" guid="abd8a59e-4968-4a55-adac-c257c1e8a899" />
-                <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист"  action="/javascript:showNewCurve()" title="Добавить температурный лист" guid="df23-45a-43cc-826d-5hfd" />
+                <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/Create" name="Диагноз" params="id" action="/entityParentPrepareCreate-stac_diagnosis" title="Диагноз" />
+                <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/Create" name="Лист назначений" action="/javascript:showCreatePrescriptList('${param.id}','.do')" title="Лист назначений" />
+                <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист"  action="/javascript:showNewCurve()" title="Добавить температурный лист" />
 
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Переливание донорской крови и её компонентов" title="Добавить донорской крови и её компонентов" />
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Other/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-trans_other" name="Переливание кровезамещающих растворов" title="Добавить переливание кровезамещающих растворов" />
@@ -86,19 +86,19 @@
                 <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" name="Кардио-скрининг нов. (II этап)" action="/entityParentPrepareCreate-stac_screeningCardiacSecond" params="id" title="Добавить кардио-скрининг нов. (II этап)"/>
             </msh:sideMenu>
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
-                <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
-                    <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
-                    <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
-                    <msh:sideLink styleId="viewShort" action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации' title="Просмотр госпитазиций по пациенту" key="ALT+6" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
-                    <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" guid="2156670f-b32c-4634-942b-2f8a4467567c" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
-                    <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
+                <msh:sideMenu title="Показать">
+                    <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+                    <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
+                    <msh:sideLink styleId="viewShort" action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации' title="Просмотр госпитазиций по пациенту" key="ALT+6" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
+                    <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
+                    <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
                     <msh:sideLink styleId="viewShort" roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/javascript:getDefinition('entityParentList-expert_card.do?short=Short&id=${param.id}',null)"/>
-                    <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Сводный лист назначений" params="" action="/javascript:showSvod()" title="Показать все назначения СЛС" guid="7b0b69ae-3b9c-47d9-ab3c-5055fbe6fa9f" />
-                    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" name="Диагнозы" params="id" action="/entityParentList-stac_diagnosis" title="Показать все диагнозы СЛО" guid="4ac8c095-3853-4150-9e4a-d01b4abc8061" />
-                    <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневники специалистов" params="id" action="/entityParentList-smo_visitProtocol" title="Показать все дневники специалиста" guid="d43123-45ca-43cc-826d-bc85" />
-                    <msh:sideLink name="Температурные листы" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные листы" guid="df23-45ca-43cc-826d-5hf5dd" params="id" />
-                    <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Услуги" styleId="viewShort"  action="/javascript:getDefinition('entityParentList-smo_medService.do?short=Short&id=${param.id}')" title="Показать все услуги" guid="df23-45a26d-5hfd" />
-                    <msh:sideLink name="Случаи ВМП" action="/entityParentList-stac_vmpCase" title="Показать все случаи ВМП" guid="df23-45ca-43cc-826d-5hf5dd" roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/View" params="id" />
+                    <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Сводный лист назначений" params="" action="/javascript:showSvod()" title="Показать все назначения СЛС" />
+                    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" name="Диагнозы" params="id" action="/entityParentList-stac_diagnosis" title="Показать все диагнозы СЛО" />
+                    <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневники специалистов" params="id" action="/entityParentList-smo_visitProtocol" title="Показать все дневники специалиста" />
+                    <msh:sideLink name="Температурные листы" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные листы" params="id" />
+                    <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Услуги" styleId="viewShort"  action="/javascript:getDefinition('entityParentList-smo_medService.do?short=Short&id=${param.id}')" title="Показать все услуги" />
+                    <msh:sideLink name="Случаи ВМП" action="/entityParentList-stac_vmpCase" title="Показать все случаи ВМП" roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/View" params="id" />
 
                     <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/View" name="Переливание"
                                   params="id"  action='/entityParentList-trans_transfusion'  key='Alt+8'
@@ -139,12 +139,12 @@
             <msh:sideMenu title="Администрирование">
                 <msh:sideLink name="Ориентировочная цена по ОМС" action=".javascript:getMedcaseCost()" roles="/Policy/E2/Admin"/>
                 <msh:sideLink confirm="Вы точно хотите объединить несколько СЛО?" name="Объединить со след. СЛО" action=".javascript:unionSloWithNextSlo()" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/UnionSlo"/>
-                <tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/ChangeServiceStream" />
+                <tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/ChangeServiceStream" />
             </msh:sideMenu>
-            <msh:sideMenu title="Перейти" guid="ad80d37d-5a0b-44e3-a4ae-3df85de3d1c3">
+            <msh:sideMenu title="Перейти">
                 <msh:sideLink styleId="viewShort" action='/javascript:getDefinition("js-smo_draftProtocol-list.do?short=Short", null);' name='Черновики' title="Просмотр черновиков специалиста" key="ALT+4" roles="/Policy/Mis/MedCase/Protocol/View" />
                 <msh:sideLink action='/js-stac_slo-list_edit_protocol.do' name='На редакцию' title="Просмотр дневников для редакции" roles="/Policy/Mis/MedCase/Protocol/View" />
-                <msh:sideLink params="id" action="/entityParentListRedirect-stac_slo" name="⇧Cписок СЛО" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" guid="f6a4b395-ccee-4db6-aad7-9bc15aa2f7b8" title="Перейти к списку случаев лечения в отделении" />
+                <msh:sideLink params="id" action="/entityParentListRedirect-stac_slo" name="⇧Cписок СЛО" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" title="Перейти к списку случаев лечения в отделении" />
                 <msh:sideLink
                         roles="/Policy/Mis/MedCase/Stac/Journal/ByDepartmentAdmission"
                         action="/stac_journalByDepartmentAdmission" name="Журнал по направленным в отделение" />
@@ -162,15 +162,16 @@
         <!--
         - Случай стационарного лечения в отделении
         -->
-        <msh:form action="/entityParentSaveGoView-stac_slo.do" defaultField="dateStart" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
-            <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
-            <msh:hidden property="prevMedCase" guid="710eb92b-fc3f-4390-b32df6837280" />
-            <msh:hidden property="parent" guid="710eb92b-fc3f-4b44-9390-b32df6837280" />
-            <msh:hidden property="patient" guid="9d908e88-e051-4d0a-8da6-3f5f4b226493" />
-            <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
-            <msh:hidden property="lpuAndDate" guid="9cc5ff9f-b68c-423a-be34-50ebeecf4b18" />
-            <msh:hidden property="lpu" guid="756525c0-3c91-41da-b2ba-27ebdbdc001b" />
+        <msh:form action="/entityParentSaveGoView-stac_slo.do" defaultField="dateStart">
+            <msh:hidden property="id"/>
+            <msh:hidden property="prevMedCase"/>
+            <msh:hidden property="parent"/>
+            <msh:hidden property="patient"/>
+            <msh:hidden property="saveType"/>
+            <msh:hidden property="lpuAndDate"/>
+            <msh:hidden property="lpu" />
             <msh:hidden property="dateFinish"/>
+            <msh:hidden property="guarantee"/>
             <msh:hidden property="dischargeTime"/>
             <msh:hidden property="transferDate"/>
             <msh:hidden property="transferTime"/>
@@ -190,7 +191,7 @@
                 <msh:hidden property="diet"/>
                 <msh:hidden property="mode"/>
             </msh:ifNotInRole>
-            <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="5%,5%,5%,75%,5%,5%">
+            <msh:panel colsWidth="5%,5%,5%,75%,5%,5%">
                 <msh:ifFormTypeAreViewOrEdit formName="stac_sloForm">
                     <msh:row >
                         <msh:label property="statCardBySLS" label="Номер стат.карты" labelColSpan="1"/>
@@ -199,27 +200,27 @@
                         </td>
                     </msh:row>
                 </msh:ifFormTypeAreViewOrEdit>
-                <msh:separator label="Переведен из отделения" colSpan="6" guid="d4313623-45ca-43cc-826d-bc1b66526744" />
-                <msh:row guid="f244aba5-68fb-4ccc-9982-7b4480cca147">
-                    <msh:autoComplete viewAction="entityParentView-stac_slo.do" shortViewAction="entityShortView-stac_slo.do" parentId="stac_sloForm.parent" viewOnlyField="true"  vocName="sloBySls" property="prevMedCase" label="СЛО" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
+                <msh:separator label="Переведен из отделения" colSpan="6" />
+                <msh:row>
+                    <msh:autoComplete viewAction="entityParentView-stac_slo.do" shortViewAction="entityShortView-stac_slo.do" parentId="stac_sloForm.parent" viewOnlyField="true"  vocName="sloBySls" property="prevMedCase" label="СЛО" fieldColSpan="6" horizontalFill="true" size="30" />
                 </msh:row>
-                <msh:separator label="Поступление в отделение" colSpan="6" guid="d4313623-45ca-43cc-826d-bc1b66526744" />
-                <msh:row guid="d6321f29-4e95-42a5-9063-96df480e55a8">
+                <msh:separator label="Поступление в отделение" colSpan="6" />
+                <msh:row>
                     <msh:textField property="dateStart" label="Дата поступления" />
                     <msh:textField property="entranceTime" label="время" />
                 </msh:row>
 
-                <msh:row guid="f244aba5-68fb-4ccc-9982-7b4480cca147">
-                    <msh:autoComplete parentId="stac_sloForm.lpu" vocName="vocLpuHospOtd" property="department" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" size="30" />
+                <msh:row>
+                    <msh:autoComplete parentId="stac_sloForm.lpu" vocName="vocLpuHospOtd" property="department" label="Отделение" fieldColSpan="6" horizontalFill="true" size="30" />
                 </msh:row>
-                <msh:row guid="f2-68fb-4ccc-9982-7b4480cca147">
-                    <msh:autoComplete vocName="serviceStreamByDepAndDate" property="serviceStream" label="Поток обслуживания" fieldColSpan="6" horizontalFill="true" guid="109f7264-23b216c"/>
+                <msh:row>
+                    <msh:autoComplete vocName="serviceStreamByDepAndDate" property="serviceStream" label="Поток обслуживания" fieldColSpan="6" horizontalFill="true"/>
                 </msh:row>
-                <msh:row guid="f2aba5-68fb-4ccc-9982-7b4480cmca147">
-                    <msh:autoComplete vocName="bedFundByDepAndStreamAndDate" property="bedFund" label="Профиль коек" fieldColSpan="6" horizontalFill="true" guid="1064-23b2-42c0-ba47-65d90747816c" size="30" />
+                <msh:row>
+                    <msh:autoComplete vocName="bedFundByDepAndStreamAndDate" property="bedFund" label="Профиль коек" fieldColSpan="6" horizontalFill="true" size="30" />
                 </msh:row>
                 <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
-                    <msh:row guid="9b781235-66ad-4f9d-991b-afb9aedfb7a8">
+                    <msh:row>
                         <msh:autoComplete property="roomNumber" vocName="hospitalRoomByLpu" label="№палаты" parentId="stac_sloForm.department"/>
                         <msh:autoComplete property="bedNumber" vocName="hospitalBedByRoom" label="№ койки" parentAutocomplete="roomNumber"/>
                     </msh:row>
@@ -233,10 +234,10 @@
                 </msh:ifInRole>
                 <msh:ifFormTypeIsView formName="stac_sloForm">
                     <msh:row>
-                        <msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" viewOnlyField="true" />
+                        <msh:checkBox label="Экстренно" property="emergency" viewOnlyField="true" />
                     </msh:row>
                 </msh:ifFormTypeIsView>
-                <msh:ifFormTypeIsCreate formName="stac_sloForm" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
+                <msh:ifFormTypeIsCreate formName="stac_sloForm">
                     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Slo/ForceCreatePrescriptionList">
                         <msh:row>
                             <msh:autoComplete property="diet" vocName="Diet" />
@@ -244,8 +245,8 @@
                         </msh:row>
                     </msh:ifInRole>
                 </msh:ifFormTypeIsCreate>
-                <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
-                    <msh:autoComplete vocName="workFunctionByLpu" parentId="stac_sloForm.department" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" size="30" />
+                <msh:row>
+                    <msh:autoComplete vocName="workFunctionByLpu" parentId="stac_sloForm.department" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" viewAction="entitySubclassView-work_workFunction.do" size="30" />
                 </msh:row>
                 <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/OmcStandart">
 
@@ -304,22 +305,22 @@
 
                 <msh:ifFormTypeIsView formName="stac_sloForm">
                     <msh:row>
-                        <msh:separator label="Перевод в другое отделение" colSpan="6" guid="dd7185d0-e499-4307-9e58-6ef41d83c2b0" />
+                        <msh:separator label="Перевод в другое отделение" colSpan="6" />
                     </msh:row>
-                    <msh:row guid="a3509d1f-9324-4997-a7c3-6ca8f12a9347">
-                        <msh:textField viewOnlyField="true"  property="transferDate" label="Дата" guid="f8f5c912-00b8-4fd8-87b9-abe417212d78" />
-                        <msh:textField viewOnlyField="true" property="transferTime" label="Время" guid="c04ab410-42df-4f5b-b365-b4acf17a2616" />
+                    <msh:row>
+                        <msh:textField viewOnlyField="true"  property="transferDate" label="Дата" />
+                        <msh:textField viewOnlyField="true" property="transferTime" label="Время" />
                     </msh:row>
-                    <msh:row guid="72adfc11-ef9b-47c0-8eb4-a23ee9e84ed8">
-                        <msh:autoComplete viewOnlyField="true" vocName="vocLpuHospOtd" property="transferDepartment" label="Отделение" fieldColSpan="6" horizontalFill="true" guid="f793944a-6afe-4c26-82f3-50532049a8bc" />
+                    <msh:row>
+                        <msh:autoComplete viewOnlyField="true" vocName="vocLpuHospOtd" property="transferDepartment" label="Отделение" fieldColSpan="6" horizontalFill="true" />
                     </msh:row>
-                    <msh:row guid="f2a5-68fb-4ccc-9982-7b4447">
-                        <msh:autoComplete viewOnlyField="true" vocName="vocHospType" property="targetHospType" label="Куда переведен" fieldColSpan="6" horizontalFill="true" guid="10964-23b2-42c0-ba47-6547816c" />
+                    <msh:row>
+                        <msh:autoComplete viewOnlyField="true" vocName="vocHospType" property="targetHospType" label="Куда переведен" fieldColSpan="6" horizontalFill="true" />
                     </msh:row>
-                    <msh:separator label="Выписка (производится по СЛС)" colSpan="" guid="a5bd9711-b033-4104-b794-0ca3ebc8b827" />
-                    <msh:row guid="21b4ac48-1773-410d-b85f-537680420aa4">
-                        <msh:textField property="dateFinish" label="Дата" viewOnlyField="true" guid="bb7b87a8-c542-47ef-93b6-91106abf9f19" />
-                        <msh:textField property="dischargeTime" label="Время" viewOnlyField="true" guid="a8bfc5ac-8d19-4656-a30b-bd87da1918df" />
+                    <msh:separator label="Выписка (производится по СЛС)" colSpan="" />
+                    <msh:row>
+                        <msh:textField property="dateFinish" label="Дата" viewOnlyField="true" />
+                        <msh:textField property="dischargeTime" label="Время" viewOnlyField="true" />
                     </msh:row>
                 </msh:ifFormTypeIsView>
                 <msh:row>
@@ -330,12 +331,12 @@
                 <msh:row>
                     <msh:label property="createDate" label="Дата создания"/>
                     <msh:label property="createTime" label="время"/>
-                    <msh:label property="username" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+                    <msh:label property="username" label="пользователь" />
                 </msh:row>
                 <msh:row>
                     <msh:label property="editDate" label="Дата редак."/>
                     <msh:label property="editTime" label="время"/>
-                    <msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+                    <msh:label property="editUsername" label="пользователь" />
                 </msh:row>
                 <msh:submitCancelButtonsRow colSpan="3" functionSubmit="check_diags('') ;" />
             </msh:panel>
@@ -357,18 +358,18 @@
 
 
         %>
-        <msh:ifFormTypeIsView formName="stac_sloForm" guid="48eb9700-d07d-4115-a476-a5a5e">
+        <msh:ifFormTypeIsView formName="stac_sloForm">
             <tags:temperatureCurve name="New"  />
 
             <tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
 
-            <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View" guid="932601e0-0d99-4b63-8f44-2466f6e91c0f">
+            <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View">
                 <msh:section title="Дневники специалистов (последние 50).
         <a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id }'>Добавить</a>&nbsp;&nbsp;
         <a href='entityParentList-smo_visitProtocol.do?id=${param.id }'>Полный список дневников</a>&nbsp;&nbsp;
         <a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stAll=selected'>Печать (весь список)</a>&nbsp;&nbsp;
         <a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stNoPrint=selected'>Печать (список нераспеч.)</a>
-        " guid="1f21294-8ea0-4b66-a0f3-62713c1">
+        ">
 
                     <ecom:webQuery maxResult="50"  name="protocols" nameFldSql="protocols_sql"  nativeSql="
       select d.id as did, to_char(d.dateRegistration,'dd.mm.yyyy') ||' '|| cast(d.timeRegistration as varchar(5)) as dtimeRegistration, d.record 
@@ -408,7 +409,7 @@
                         </table>
                     </msh:tableNotEmpty>
                     <div id='divprotocolslo${param.id}'>
-                        <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
+                        <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do">
                             <msh:tableButton property="5" buttonFunction="checkErrorProtocol"
                                              buttonName="На редакцию врачу" buttonShortName="На редак."
                                              hideIfEmpty="true" role="/Policy/Mis/MedCase/Stac/Journal/Control"/>
@@ -423,7 +424,7 @@
                 </msh:section>
 
             </msh:ifInRole>
-            <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" guid="b0ceb3e4-a6a2-41fa-be6b-ea222196a33d">
+            <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View">
                 <ecom:webQuery name='diagnosis' nativeSql="select d.id as did, d.establishDate as destablishDate, vrt.name as vrtinfo
 		, vpd.name as vpdname, d.name as dname, mkb.code
 		,vwf.name|| ' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
@@ -445,14 +446,14 @@
 		"/>
 
 
-                <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'> Добавить новый диагноз</a>" guid="1f214-8ea0-4b66-a0f3-62713c1">
-                    <msh:table name="diagnosis" action="entityParentView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d916" styleRow="8">
+                <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'> Добавить новый диагноз</a>">
+                    <msh:table name="diagnosis" action="entityParentView-stac_diagnosis.do" idField="1" styleRow="8">
                         <msh:tableColumn property="sn" columnName="#"/>
-                        <msh:tableColumn columnName="Тип регистрации" property="3" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-                        <msh:tableColumn columnName="Приоритет" property="4" guid="6682eeef-12" />
-                        <msh:tableColumn columnName="Наименование" property="5" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-                        <msh:tableColumn columnName="Код МКБ" property="6" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-                        <msh:tableColumn columnName="Специалист" property="7" guid="-3392-4978-b31f-5e54ff2e45" />
+                        <msh:tableColumn columnName="Тип регистрации" property="3" />
+                        <msh:tableColumn columnName="Приоритет" property="4" />
+                        <msh:tableColumn columnName="Наименование" property="5" />
+                        <msh:tableColumn columnName="Код МКБ" property="6" />
+                        <msh:tableColumn columnName="Специалист" property="7" />
                     </msh:table>
                 </msh:section>
             </msh:ifInRole>
@@ -548,13 +549,13 @@ left join Patient pat on pat.id=wan.person_id
       	where tr.medcase_id=${param.id}"/>
                     <msh:section title="Переливание">
                         <msh:table name="transfusions" action="entitySubclassView-trans_transfusion.do" idField="1">
-                            <msh:tableColumn columnName="Номер в журнале" property="2" guid="ed7e6ec7-524e-4b87-8b2c-5a722792a123" />
-                            <msh:tableColumn columnName="Трансфузионная среда" property="3" guid="c4b30e10-9ca0-42b1-94fb-88cf0f7afa2e" />
-                            <msh:tableColumn columnName="Дата приготовления" property="" guid="1ef2e314-6eb6-4c85-be47-ca392566d371" />
-                            <msh:tableColumn columnName="Изготовитель" property="4" guid="dk29-5653-4920-bb78-168ha34" />
-                            <msh:tableColumn columnName="Дата начала" property="5" guid="2976f5c7-3844-4ae2-be91-2a395cae0f1f" />
-                            <msh:tableColumn columnName="Доза" property="6" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-                            <msh:tableColumn columnName="Исполнитель" property="7" guid="8e832f90-6905-44cf-952e-76495689c35b" />
+                            <msh:tableColumn columnName="Номер в журнале" property="2" />
+                            <msh:tableColumn columnName="Трансфузионная среда" property="3" />
+                            <msh:tableColumn columnName="Дата приготовления" property="" />
+                            <msh:tableColumn columnName="Изготовитель" property="4" />
+                            <msh:tableColumn columnName="Дата начала" property="5" />
+                            <msh:tableColumn columnName="Доза" property="6" />
+                            <msh:tableColumn columnName="Исполнитель" property="7" />
                         </msh:table>
                     </msh:section>
                 </msh:tableNotEmpty>
@@ -570,10 +571,10 @@ left join Patient pat on pat.id=wan.person_id
 	          ,pl.comments as plcomments,pl.date as dldate
 	          ,(select coalesce(to_char(min(p.planStartDate),'DD.MM.YYYY'),'нет даты начала')||'-'||coalesce(to_char(max(p.planEndDate),'dd.mm.yyyy'),'нет даты окончания') as pldatend 
 	          from prescription p where prescriptionList_id=pl.id) from PrescriptionList pl left join WorkFunction wf on wf.id = pl.workFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id where pl.medCase_id =  '${param.id}'"/>
-                        <msh:table name="presLists" action="entityParentView-pres_prescriptList.do" idField="1" guid="3c4adc65-cfce-4205-a2dd-91ba8ba87543">
-                            <msh:tableColumn columnName="Назначил" property="2" guid="44482100-2200-4c8b-9df5-4f5cc0e3fe68" />
-                            <msh:tableColumn columnName="Комментарии" property="3" guid="5c893448-9084-4b1a-b301-d7aca8f6307c" />
-                            <msh:tableColumn columnName="Дата создания" property="4" guid="dbe4fc52-03f7-42af-9555-a4bee397a800" />
+                        <msh:table name="presLists" action="entityParentView-pres_prescriptList.do" idField="1">
+                            <msh:tableColumn columnName="Назначил" property="2" />
+                            <msh:tableColumn columnName="Комментарии" property="3" />
+                            <msh:tableColumn columnName="Дата создания" property="4" />
                             <msh:tableColumn columnName="Период актуальности" property="5"/>
                         </msh:table>
                     </msh:sectionContent>
@@ -629,9 +630,9 @@ left join Patient pat on pat.id=wan.person_id
                     </msh:sectionTitle>
                     <msh:sectionContent>
                         <msh:table name="asCard" action="entityParentView-mis_assessmentCard.do" idField="1">
-                            <msh:tableColumn columnName="Название" property="2" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
-                            <msh:tableColumn columnName="Дата приема" property="3" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
-                            <msh:tableColumn columnName="Сумма баллов" property="4" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                            <msh:tableColumn columnName="Название" property="2" />
+                            <msh:tableColumn columnName="Дата приема" property="3" />
+                            <msh:tableColumn columnName="Сумма баллов" property="4" />
                         </msh:table>
                     </msh:sectionContent>
                 </msh:section>
@@ -673,7 +674,7 @@ where m.id ='${param.id}'"/>
         </msh:ifFormTypeIsView>
     </tiles:put>
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Patient" beginForm="stac_sloForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+        <ecom:titleTrail mainMenu="Patient" beginForm="stac_sloForm" />
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <script type="text/javascript">
@@ -1130,7 +1131,7 @@ where m.id ='${param.id}'"/>
                 loadBracelets();
             </script>
         </msh:ifFormTypeIsView>
-        <msh:ifFormTypeIsNotView formName="stac_sloForm" guid="518fe547-aed9-be2229f04ba3">
+        <msh:ifFormTypeIsNotView formName="stac_sloForm">
             <script type="text/javascript">//var theBedFund = $('bedFund').value;
             if ($('dietName')) {
                 $('dietName').style="color: blue ; background-color:#FFFFA0;";

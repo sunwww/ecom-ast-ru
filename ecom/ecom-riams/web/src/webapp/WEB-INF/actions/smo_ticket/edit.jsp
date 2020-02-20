@@ -44,7 +44,6 @@
         </msh:ifInRole>
         </msh:row>
         <msh:row>
-        <msh:row>  <msh:checkBox property="isDiagnosticSpo" label="Диагностическое СПО"/></msh:row>
         	<msh:autoComplete property="kinsman" label="Представитель" viewAction="entityParentView-mis_kinsman.do"
         	parentId="smo_ticketForm.medcard" vocName="kinsmanByTicket" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
@@ -315,18 +314,13 @@
        <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
-	   	<tags:mis_changeServiceStream service="TicketService" name="CSS" title="Изменить поток обслуживания" roles="/Policy/Poly/Ticket/ChangeServiceStream" />
+	   	<tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания" roles="/Policy/Poly/Ticket/ChangeServiceStream" />
       	<tags:mis_choiceSpo method="moveVisitOtherSpo" methodGetPatientByPatient="getOpenSpoBySmo" hiddenNewSpo="0" service="TicketService" name="moveVisit"  roles="/Policy/Poly/Ticket/MoveVisitOtherSpo" title="Перевести визит в другой СПО" />
       </msh:sideMenu>      
       <msh:sideMenu title="Печать">
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" key="SHIFT+8" params="id" 
 	        action="/print-visit.do?s=VisitPrintService&amp;m=printVisit" name="Талона с заключением" title="Печатать талона с заключением" />
-	                <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" 
-    	name="Печать справки" 
-    	action='.javascript:printReference(".do")' title='Печать справки'
-    	/>
         <msh:sideLink roles="/Policy/Poly/Ticket/View" key="SHIFT+8" params="id" action="/print-ticket.do?s=PrintTicketService&amp;m=printInfo" name="Талона" title="Печатать талона" />
-
         <msh:sideLink roles="/Policy/Poly/Ticket/BakExp" params="id" action="/print-BakExp.do?s=PrintTicketService&amp;m=printBakExp" name="Направления на бак.исследование" key="SHIFT+9" title="Печатать направления на бак.исследование" />
         
       </msh:sideMenu>
@@ -525,28 +519,6 @@
   </msh:ifFormTypeIsNotView>
   </msh:ifInRole>
   <msh:ifFormTypeAreViewOrEdit formName="smo_ticketForm">
-  <script type="text/javascript">
-  function printReference() {
-		TicketService.getDataByReference(
-			'${param.id}','SPO',{
-				callback: function(aResult) {
-					if (aResult!=null) {
-						window.location.href = "print-doc_reference.do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
-						
-					}
-				}, errorHandler: function(aMessage) {
-					if (aMessage!=null) {
-						alert(aMessage);
-					} else {
-				    	alert("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
-					}
-				}
-			
-			}
-		);
-		//print-discharge_reference.do?m=printReference&s=HospitalPrintService
-	}
-  </script>
   	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
   	 <script type="text/javascript">
 		TicketService.isEditCheck($('id').value, $('workFunctionExecute').value,
