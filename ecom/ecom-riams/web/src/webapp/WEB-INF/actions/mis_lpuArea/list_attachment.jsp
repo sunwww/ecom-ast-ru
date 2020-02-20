@@ -283,7 +283,6 @@
     	  }
     	  reader.readAsText(input.files[0],'CP1251');
     	  
-    	//  AttachmentService.importDefectsFromXML($'file').value;
       }
 
       function flushTable() {
@@ -351,8 +350,8 @@
 
     
     <%
-    String date = (String)request.getParameter("period") ;
-    String date1 = (String)request.getParameter("periodTo") ;
+    String date = request.getParameter("period") ;
+    String date1 = request.getParameter("periodTo") ;
     String sqlAdd = (String)request.getAttribute("sqlAdd");
     String exportDefects = (String)request.getAttribute("exportDefects");
 
@@ -365,9 +364,7 @@
     	
 
     %>
-
-    
-	 <%    if (typeRead!=null && (typeRead.equals("2"))) {%>
+	 <%    if ("2".equals(typeRead)) {%>
    <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="250" nativeSql="
 		select lp.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'dd.MM.yyyy') as birthday
     	 , p.commonNumber

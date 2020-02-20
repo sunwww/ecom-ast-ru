@@ -206,7 +206,6 @@ public class ContractServiceJs {
 			}
 			sb.append(" and ((cpCustomer.regcompany_id is not null and mp.id is not null) or (cpCustomer.regcompany_id is null ))")
 					.append(" group by cg.id, cg.limitmoney,mc.contractnumber");
-		LOG.info("=== Ищем гар. письмо по пациенту. sql="+sb.toString());
 			l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
 				WebQueryResult r = l.iterator().next();
