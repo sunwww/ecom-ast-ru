@@ -619,15 +619,18 @@ public class PrescriptionServiceJs {
 		reasonText += StringUtil.isNullOrEmpty(aReason) ? "" : " "+aReason;
 		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
 		JSONObject res = getPrescriptionInfo(aPrescripts, service);
-		StringBuilder msgTitle=new StringBuilder();
-		msgTitle.append(res.getString("date")).append(" пациент ").append(res.getString("patFio")).append(" услуга ").append(res.getString("medService"));
 		String lpuString = getLpuForDefectMessage(aPrescripts,aRequest);
 		if (!lpuString.equals("0")) {
             ArrayList<String> usersToSend = getAllUsersWithLpu(lpuString,aRequest);
+			String msgTitle=res.getString("date")+" пациент "+res.getString("patFio")+" услуга "+res.getString("medService");
+            String messageText = "Брак биоматериала: "+reasonText;
+            String sender = res.getString("usernameO"); //спорно, ну да пофиг
             for (String user : usersToSend) {
-                for (int i=0; i<2; i++)
-                    bean.sendMessageCurrentDate("Брак биоматериала: "+reasonText,msgTitle.toString(),res.getString("usernameO"),user
-                            ,"entityView-pres_prescriptList.do?id="+res.get("plId"),i<1);
+                for (int i=0; i<2; i++){
+                	LOG.info("dbg. send brak "+i+", user="+user+", sender="+sender); //Сообщение уходят по 4 раза вместо двух
+					bean.sendMessageCurrentDate(messageText,msgTitle,user, sender
+							,"entityView-pres_prescriptList.do?id="+res.get("plId"),i<1);
+				}
             }
         }
 		//Обновление текста дневника в случае отметки о браке после подтверждения врачом КДЛ
@@ -644,13 +647,12 @@ public class PrescriptionServiceJs {
 	private ArrayList<String> getAllUsersWithLpu(String lpu, HttpServletRequest aRequest) throws NamingException {
 		ArrayList<String> resListUsers = new ArrayList<>();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("select su.login from secuser su")
-				.append(" left join workfunction wf on su.id=wf.secuser_id")
-				.append(" left join worker w on w.id=wf.worker_id")
-				.append(" where w.lpu_id in (").append(lpu).append(") and wf.archival<>'1'")
-				.append(" and su.id is not null");
-		Collection<WebQueryResult> listUsers = service.executeNativeSql(sql.toString()) ;
+		String sql = "select su.login from secuser su" +
+				" left join workfunction wf on su.id=wf.secuser_id" +
+				" left join worker w on w.id=wf.worker_id" +
+				" where w.lpu_id in (" + lpu + ") and wf.archival<>'1'" +
+				" and su.id is not null";
+		Collection<WebQueryResult> listUsers = service.executeNativeSql(sql) ;
 		for (WebQueryResult wqr : listUsers)
 			resListUsers.add(wqr.get1().toString());
 		return resListUsers;
@@ -663,7 +665,6 @@ public class PrescriptionServiceJs {
      * @throws NamingException
      * */
 	private String getLpuForDefectMessage(String aPrescripts, HttpServletRequest aRequest) throws NamingException {
-	    String lpu="";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         StringBuilder sql = new StringBuilder() ;
         /*
@@ -742,7 +743,7 @@ public class PrescriptionServiceJs {
 	 * @throws NamingException
 	 * */
 	private JSONObject getPrescriptionInfo(String aPrescripts,IWebQueryService service) throws NamingException {
-		JSONObject res = new JSONObject();
+		JSONObject res = new JSONObject(); //TODO возвращает информация только по первому анализу.
 		List<Object[]> list = service.executeNativeSqlGetObj("select pat.id as patId,p.createusername,to_char(p.planstartdate,'dd.mm.yyyy')  as dt " +
 				" ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ms.code||' '||ms.name,pl.id as plId, hmc.id as mcId " +
 				" from prescription p " +
