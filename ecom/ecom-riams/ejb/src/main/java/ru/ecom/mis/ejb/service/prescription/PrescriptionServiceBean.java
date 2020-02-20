@@ -561,12 +561,12 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 
 	/**
 	 * Отправить сообщение согласно параметрам
-	 * @param messageText String
-	 * @param messageTitle String
-	 * @param recipient String
-	 * @param username String
-	 * @param messageUrl String
-	 * @param isEmergency Boolean
+	 * @param messageText String тело сообщения
+	 * @param messageTitle String заголовок сообщения
+	 * @param recipient String получатель сообщения
+	 * @param username String отправитель сообщения
+	 * @param messageUrl String ссылка
+	 * @param isEmergency Boolean признак экстренного сообщения
 	 */
 	public void sendMessageCurrentDate(String messageText, String messageTitle, String recipient
 			,String username,String messageUrl, Boolean isEmergency) {

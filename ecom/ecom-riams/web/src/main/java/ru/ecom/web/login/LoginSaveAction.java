@@ -46,7 +46,7 @@ public class LoginSaveAction extends LoginExitAction {
             res = service.executeNativeSql("select case when changePasswordAtLogin='1' then '1' else '0' end" +
                     " from secuser where login='"+aUsername+"'").iterator().next().get1().toString();
         } catch (Exception e) {
-            LOG.error("error login = "+aUsername, e);
+            LOG.error("error login = "+aUsername, e); //почему-то случается java.util.NoSuchElementException, напр mkostenko
         }
         return "1".equals(res);
     }
