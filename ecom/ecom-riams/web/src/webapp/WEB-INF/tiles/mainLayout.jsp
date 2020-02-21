@@ -7,6 +7,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@page import="java.util.Calendar"%>
 
 <%
@@ -195,7 +196,7 @@
                           roles="/Policy/Mis/Pharmacy/Administration" title="Аптека"/>
             <msh:sideLink params="" styleId="mainMenuConfig" action="/riams_config.do" name="Настройки"
                           roles="/Policy/MainMenu/Config" title="Настройки"/>
-            <msh:sideLink params="" styleId="mainMenuConfig" action="/http://keo.amokb.ru/keo?ggg" name="Порядки, стандарты,<br>клин. рекомендации"
+            <msh:sideLink params="" styleId="mainMenuConfig" action="/http://keo.amokb.ru/keo" name="Порядки, стандарты,<br>клин. рекомендации"
                           roles="/Policy/MainMenu/Standards" title="Настройки"/>
 
         </ul>
@@ -236,6 +237,26 @@
     <div id="footer" class="rightAlign">
 
         <div id='gotoUpDown'><a class="gotoTop" href="#header">Вверх</a><a class="gotoBottom" href="#copyright">Вниз</a></div>
+        <msh:ifInRole roles="/Policy/Config/CornerMessage">
+        <tags:UnreadMessages name="UnreadMessages" />
+        <div class="msgBox">
+                <h3>Сообщения</h3>
+                <table>
+                    <tr id="clorRow" onclick="showUnreadMessages();">
+                        <td><img src='/skin/images/msg/new.png' width='25' height="25"
+                                 alt='Новые' title='Непрочитанные сообщения' style="margin-right:3px"/></td>
+                        <td>новые:</td>
+                        <td id="unreadMsg"></td>
+                    </tr>
+                    <tr onclick='getDefinition("js-mis_customMessage-getMessages.do?id=-1&short=Short")'>
+                        <td><img src='/skin/images/msg/all.png' width='25' height="25"
+                                 alt='Все' title='Все сообщения' style="margin-right:3px"/></td>
+                        <td>все</td>
+                        <td id="msgAllTd"></td>
+                    </tr>
+                </table>
+        </div>
+        </msh:ifInRole>
         <msh:ifInRole roles="/Policy/WebSocket/Queue">
            <div class='ws_workerDiv'>
                 <p id='ws_windowWorkDiv' title="Нажмите для изменения номера окна" onclick="ws_setNewWindowNumber()"></p><hr/>
@@ -287,9 +308,12 @@
 <msh:ifInRole roles="/Policy/Config/EmergencyMessage">
 <script type="text/javascript">
 theDefaultTimeOut = setTimeout(funcemergencymessage.func,12000) ;
-
-
 </script>
+</msh:ifInRole>
+<msh:ifInRole roles="/Policy/Config/CornerMessage">
+    <script type="text/javascript">
+        getCountUnreadMessages();
+    </script>
 </msh:ifInRole>
 <!-- ClaimService нужен для создания скриншота ошибки-->
 <script type='text/javascript' src='./dwr/interface/ClaimService.js'></script>

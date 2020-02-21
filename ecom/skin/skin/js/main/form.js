@@ -3,6 +3,7 @@ var theDefaultTimeOut ;
 var theDefaultTimeOutCnt=4 ;
 var theDefaultFieldName ;
 var theDefaultEvt ;
+var theDefaultTimeOutCountMsg =10000;  //интервал в 10 сек
 
 /*Преобразуем данные html формы в объект json*/
 function getFormDataAsJson(form){
@@ -143,7 +144,7 @@ function hideMessage(){
 var funcemergencymessage = {
 		func: function() {
 			clearTimeout(theDefaultTimeOut) ;
-			VocService.getEmergencyMessages( {
+			VocService.getUnreadMessages('1',10,false,{
 		        callback: function(aName) {
 		        	
 		        	viewEmergencyUserMessage(aName) ;
@@ -528,3 +529,38 @@ function sortMshTable(th,num) {
             th.getElementsByTagName('i')[0].className = direct == 0 ? 'arrow arrowUp' : 'arrow arrowDown';
     }
 }
+
+//мерцание строки с непрочитанными сообщениями
+var colorArrays=new Array("#CD5C5C", "#7CFC00", "#00FFFF", "#7B68EE", "#00008B", "#2F4F4F	");
+var numColor=0;
+// эта функция будет менять цвет текста
+function blinkUnreadMsgs() {
+    if (+document.getElementById('unreadMsg').innerText > 0) {
+        document.getElementById("clorRow").style.backgroundColor = colorArrays[numColor++];
+        if (numColor > colorArrays.length) numColor = 0;
+        setTimeout("blinkUnreadMsgs()", 300);
+    }
+    else
+        document.getElementById("clorRow").style="";
+}
+
+//получить и проставить кол-во непрочитанных сообщений
+function getCountUnreadMessages() {
+    VocService.getCountUnreadMessages('', {
+        callback: function(aCnt) {
+            document.getElementById('unreadMsg').innerText=aCnt;
+            if (aCnt>0) {
+                blinkUnreadMsgs();
+                jQuery('clorRow').click(function() {
+                    showUnreadMessages();
+                });
+            }
+        }
+        , errorHandler:function(message) {
+            document.getElementById('unreadMsg').innerText='-1';
+            jQuery('clorRow').click(function() {
+                return false;
+            });
+        }
+    } ) ;
+    setTimeout("getCountUnreadMessages()",theDefaultTimeOutCountMsg);}
