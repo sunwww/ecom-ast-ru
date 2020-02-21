@@ -100,8 +100,9 @@ public class LoginSaveAction extends LoginExitAction {
             	return aMapping.findForward("new_password") ;
             }
         } catch (Exception e) {
-            LOG.error("Ошибка при входе: "+getErrorMessage(e)+": "+username);
+            LOG.error("Ошибка при входе: "+getErrorMessage(e)+": "+username,e);
             LoginErrorMessage.setMessage(aRequest, getErrorMessage(e));
+            e.printStackTrace();
             return aMapping.getInputForward() ;
         }
         checkMessage(aRequest,username) ;
