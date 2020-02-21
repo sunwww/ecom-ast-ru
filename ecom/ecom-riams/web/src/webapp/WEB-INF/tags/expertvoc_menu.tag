@@ -60,7 +60,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    var txt = prompt("Введите RZ или ФИО_ДР");
 	    if (txt) {
             txt = txt.split(" ");
-            let href;
+            var href;
             if (txt.length>3) {
                 href="lastname:"+txt[0]+" "+txt[1]+" "+txt[2]+" "+txt[3];
             } else {
