@@ -66,7 +66,7 @@ public class SurgicalOperationSaveInterceptor implements IFormInterceptor {
 				if (letter == null) {
 					LOG.error("Не указано гарантийное письмо для случая ДМС");
 				} else {
-					new ContractServiceBean().addMedServiceAccount(typeService, oper.getId(), medServiceCode, patientId, letter);
+					new ContractServiceBean().addMedServiceAccount(typeService, oper.getId(), medServiceCode, patientId, letter, manager);
 				}
 			}
 		}

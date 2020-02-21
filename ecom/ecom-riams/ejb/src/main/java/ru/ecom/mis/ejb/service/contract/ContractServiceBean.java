@@ -28,6 +28,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Stateless
@@ -970,8 +971,8 @@ public class ContractServiceBean implements IContractService {
 	}
 	public void addMedServiceAccount(String typeService, Long idService, String medServiceCode, Long patientId, ContractGuarantee letter, EntityManager manager) {
 		if (manager == null) manager = theManager;
-		List<ContractAccountMedService> camsList = manager.createQuery("from ContractAccountMedService where typeService=:typeService and idService=:idService")
-				.setParameter("typeService", typeService).setParameter("idService",idService).getResultList();
+		List<ContractAccountMedService> camsList = idService!=null ?  manager.createQuery("from ContractAccountMedService where typeService=:typeService and idService=:idService")
+				.setParameter("typeService", typeService).setParameter("idService",idService).getResultList() : new ArrayList<>();
 		ContractAccountMedService cams = camsList.isEmpty() ? new ContractAccountMedService() : camsList.get(0); //по идее, не должно быть больше одной записи
 		List<BigInteger> priceMedServiceList = manager.createNativeQuery("select pms.id as pms_id" +
 				" from medservice ms" +
