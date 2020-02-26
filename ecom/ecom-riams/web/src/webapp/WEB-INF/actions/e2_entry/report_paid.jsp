@@ -20,6 +20,7 @@
             String typeGroup =ActionUtil.updateParameter("Form039Action","typeGroup","POLYCLINIC", request) ;
             String typeView =ActionUtil.updateParameter("Form039Action","typeView","1", request) ;
             String typeDefect =ActionUtil.updateParameter("Form039Action","typeDefect","NO", request) ;
+            String typeInog =ActionUtil.updateParameter("Form039Action","typeInog","ALL", request) ;
 
         %>
         <msh:form action="/e2_report_paid.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
@@ -33,6 +34,19 @@
                     <msh:textField property="dateEnd" label="по" />
                 </msh:row>
 
+                <msh:row>
+                    <td class="label" title="Группировака (typePatient)" colspan="1">
+                        <label for="typeInogName" id="typeInogLabel">Группировка по:</label></td>
+                    <td onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeInog" value="NO" checked>Без иногородних
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeInog" value="YES">Только иногородние
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeInog" value="ALL">Всё вместе
+                    </td>
+                </msh:row>
                 <msh:row>
                     <td class="label" title="Группировака (typePatient)" colspan="1">
                         <label for="typeDefectName" id="typeDefectLabel">Группировка по:</label></td>
@@ -62,6 +76,9 @@
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';">
                         <input type="radio" name="typeView" value="4">  профиль+врач
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeView" value="5">  профиль+отделение+врач+услуга
                     </td>
                 </msh:row>
                 <msh:row>
@@ -118,6 +135,13 @@
                         groupBySql = "e.bedsubtype, vmhp.name, e.doctorname, e.doctorsnils";
                         orderBySql = "e.bedsubtype, vmhp.name, e.doctorname, e.doctorsnils";
                         break;
+                    case "5": //для ДД: отделение-врач-услуга
+                        selectSql = ",case when e.bedsubtype ='1' then 'КРУГЛОСУТОЧНЫЙ СТАЦ' when e.bedsubtype ='2' then 'ДНЕВНОЙ СТАЦ' else cast('' as varchar) end as f2_stacType" +
+                                ",vms.name as f3_depname, vmhp.name as f4_helpKind, case when coalesce(e.doctorname,'')!='' then e.doctorname else coalesce(e.doctorsnils ,'') end as f5_doctorName ";
+                        groupBySql = "e.bedsubtype, vmhp.name, e.doctorname, e.doctorsnils,  vms.id, vms.code, vms.name";
+                        sumCostSql=" ,count(distinct ems.id) as f6_cnt, sum(e.cost) as f7_cost";
+                        orderBySql = "e.bedsubtype, vmhp.name, e.doctorname, e.doctorsnils";
+                        break;
                     default:
                         selectSql = ",case when e.bedsubtype ='1' then 'КРУГЛОСУТОЧНЫЙ СТАЦ' when e.bedsubtype ='2' then 'ДНЕВНОЙ СТАЦ' else cast('' as varchar) end as f2_stacType" +
                                 ",cast('' as varchar) as f3_depname, cast('' as varchar)  as f4_helpKind, cast('' as varchar)  as f5_doctorName ";
@@ -125,7 +149,8 @@
                         orderBySql = "e.bedsubtype";
                 }
                 StringBuilder sql = new StringBuilder();
-                String defectSql = "NO".equals(typeDefect) ? " and (e.isDefect is null or e.isDefect='0')" : ("YES".equals(typeDefect) ? " and e.isDefect='1'" : "");
+                String defectSql = ("NO".equals(typeDefect) ? " and (e.isDefect is null or e.isDefect='0')" : ("YES".equals(typeDefect) ? " and e.isDefect='1'" : ""))+
+                        ("NO".equals(typeInog) ? " and (e.isForeign is null or e.isForeign='0')" : ("YES".equals(typeInog) ? " and e.isForeign='1'" : ""));
                 switch (typeGroup) {
                     case "POLYCLINIC": //
                         sql.append("select cast('' as varchar) as id").append(selectSql).append(sumCostSql).append(
@@ -155,8 +180,9 @@
                                 ", st.name as f8_dispType"+
                                 " from e2entry e" +
                                         " left join e2bill  bill on bill.id=e.bill_id " +
-                                        " left join VocE2EntrySubType st on st.id=e.subtype_id" +
-                                        " left join voce2medhelpprofile vmhp on vmhp.id=e.medhelpprofile_id" +
+                                        " left join VocE2EntrySubType st on st.id=e.subtype_id").append(
+                                        "5".equals(typeView) ? " left join entrymedservice ems on ems.entry_id = e.id left join vocmedservice vms on vms.id=ems.medservice_id" : "")
+                                .append(" left join voce2medhelpprofile vmhp on vmhp.id=e.medhelpprofile_id" +
                                         " where bill.status_id =3 and e.entryType='").append(typeGroup).append("' and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
                                 " and to_date('").append(dateEnd).append("','dd.MM.yyyy') and (e.isDeleted is null or e.isDeleted='0') and (e.doNotSend is null or e.doNotSend='0')").append(defectSql)
                                 .append(" group by ").append(groupBySql).append( ", st.id, st.name " ).append(" order by ").append(orderBySql);
@@ -292,6 +318,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
             checkFieldUpdate('typeGroup','${typeGroup}',"") ;
             checkFieldUpdate('typeView','${typeView}',1) ;
             checkFieldUpdate('typeDefect','${typeDefect}',"NO") ;
+            checkFieldUpdate('typeInog','${typeInog}',"ALL") ;
 
 
             function checkFieldUpdate(aField,aValue,aDefaultValue) {
