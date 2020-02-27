@@ -346,7 +346,8 @@
                         case when coalesce(gkp.sex,'')!='' then ', Пол:'||gkp.sex else '' end ||
                         case when gkp.age is not null then ', Возраст: '||gkp.age else '' end ||
                         case when gkp.duration is not null then ', Длит:'||gkp.duration else '' end ||
-                        case when coalesce(gkp.anothermkb,'')!='' then ', Доп.МКБ:'||gkp.anothermkb else '' end"
+                        case when coalesce(gkp.anothermkb,'')!='' then ', Доп.МКБ:'||gkp.anothermkb else '' end ||
+                        case when coalesce(gkp.doppriznak,'')!='' then ', доп. крит: '||gkp.doppriznak else '' end "
                 nameId=" gkp.id "
                 queried=" ( upper(gkp.mainmkb) like upper(:query) or upper(gkp.servicecode) like upper(:query) )"
                 queryAppend=""

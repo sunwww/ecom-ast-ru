@@ -310,10 +310,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 i=0;
                 isMonitorCancel(monitor,"Приступаем к объединению случаев. START_UNION");
                 fillChildBirthMkbs();
- /*               if (HOSPITALPEREVODTYPE.equals(listEntryCode)) { //Если заполнение - переводы, отметим *не подавать* все СЛС вида: отделение-реанимация-отделение
-
-                }
- */               for (BigInteger hospId : hospitalIds) {
+                for (BigInteger hospId : hospitalIds) {
                     i++;
                     if (i%100==0) {
                         if (isMonitorCancel(monitor,"Идет объединение случаев: "+i))return;
@@ -369,8 +366,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                     makeCheckEntry(entry,false, true);
                 }
             } else  if (SERVICETYPE.equals(listEntryCode)) {
+                monitor.setText("Находим несколько услуг в одном визите в УСЛУГах");
+                LOG.info("found doubleService");
                 for(E2Entry entry : aEntryList) {
-                    makeCheckEntry(entry,false, true);
+                    checkServiceEntryFirst(entry);
                 }
             } else {
                 LOG.error("Невозможно выполнить проверку заполнения, неизвестный тип '"+listEntryCode+"'");
@@ -387,6 +386,32 @@ public class Expert2ServiceBean implements IExpert2Service {
             LOG.error(e.getMessage(),e);
         }
         isCheckIsRunning=false;
+    }
+
+    /* Если в 1 визите было оказано несколько услуг - для каждой услуги делаем отдельный случай
+    * */
+    private void checkServiceEntryFirst(E2Entry entry) {
+        List<EntryMedService> serviceList = entry.getMedServices();
+        if (serviceList!=null && serviceList.size()>1) {
+            for (EntryMedService medService : serviceList) {
+                if (medService.getCost().longValue()>0L){
+                //    LOG.info("found doubleService");
+                    E2Entry newEntry = cloneEntity(entry);
+                    newEntry.setDiagnosis(entry.getDiagnosis().subList(0,0));
+                    ArrayList<EntryMedService> ms = new ArrayList<>();
+                    ms.add(new EntryMedService(newEntry, medService));
+                    newEntry.setMedServices(ms);
+                    newEntry.setMainService(medService.getMedService().getCode());
+                    theManager.persist(newEntry);
+                    makeCheckEntry(newEntry, false, true);
+                }
+            }
+            entry.setIsDeleted(true);
+            theManager.persist(entry);
+        } else {
+            makeCheckEntry(entry, false, true);
+        }
+
     }
 
 
@@ -1192,8 +1217,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                             return;
                         }
                     }
-                    //Теперь снова находим КСГ, расчитываем цену и коэффициенты
-//                    makeCheckEntry(theManager.find(E2Entry.class,bi.longValue()),updateKsgIfExist);
                 }
                 monitor.setText("Идет процесс удаление дублей");
                 checkDoubles(aListEntry);
@@ -1205,10 +1228,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     deletePolyclinicDoubles(listEntryId );
                     monitor.setText("Склеивание случаев поликлинического обслуживания");
                     unionPolyclinicMedCase(listEntryId ,null,isGroupSpo);
-                } else if (listEntryCode.equals(KDPTYPE)) {
-                    monitor.setText("Проверяем случаи КДП");
                 }
-
                 int i=0;
                 monitor.setText("Расчет цены случая (поликлиника)"+i);
                 for(BigInteger bi : list) {
@@ -1262,7 +1282,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /** Запустить проверку случая (расчет КСГ, цены, полей для xml) */
     private void makeCheckEntry(E2Entry aEntry, boolean updateKsgIfExist, boolean checkErrors) {
-        long startT = System.currentTimeMillis();
+    //    long startT = System.currentTimeMillis();
         long bedDays = AgeUtil.calculateDays(aEntry.getStartDate(), aEntry.getFinishDate());
 //        LOG.info("make1="+((System.currentTimeMillis()-startT)/1000));
         long calendarDays = bedDays > 0 ? bedDays + 1 : 1;
@@ -1369,7 +1389,12 @@ public class Expert2ServiceBean implements IExpert2Service {
             String workPlace = aEntry.getWorkPlace();
             Boolean isMobilePolyclinic = isNotNull(aEntry.getIsMobilePolyclinic());
             if (SERVICETYPE.equals(entryType)) { //КТ-МРТ подаем типом записи УСЛУГА //TODO говнокод
-                code = "SERVICE";
+                if (aEntry.getDepartmentId().equals(416L)) {
+                    code = "TELEMED_"+aEntry.getMainService();
+                }  else {
+                    code = "SERVICE";
+                }
+
             } else if (isNotNull(aEntry.getIsDiagnosticSpo())) {
                 code = "POL_KDO";
             } else {
@@ -1455,15 +1480,15 @@ public class Expert2ServiceBean implements IExpert2Service {
     /** Проверка на дубли с другими заполнениями */
     private void checkDoubles(E2ListEntry aListEntry) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" select distinct new.id ")
-                .append(" from e2entry  new")
-                .append(" left join e2entry old on old.historyNumber=new.historyNumber and old.listentry_id!=:listEntryId and (old.isDeleted is null or old.isDeleted='0') and (old.doNotSend is null or old.doNotSend='0')")
-                .append(" left join e2listentry listOld on listOld.id=old.listentry_id")
-                .append(" left join e2bill bill on bill.id=old.bill_id")
+        sql.append(" select distinct nw.id ")
+                .append(" from e2entry nw")
+                .append(" left join e2entry ol on ol.historyNumber=nw.historyNumber and ol.listentry_id!=:listEntryId and (ol.isDefect is null or ol.isDefect='0') and (ol.isDeleted is null or ol.isDeleted='0') and (ol.doNotSend is null or ol.doNotSend='0')")
+                .append(" left join e2listentry listOld on listOld.id=ol.listentry_id")
+                .append(" left join e2bill bill on bill.id=ol.bill_id")
                 .append(" left join voce2billstatus bs on bs.id=bill.status_id")
-                .append(" where new.listentry_id=:listEntryId and (new.isDeleted is null or new.isDeleted='0') and (new.doNotSend is null or new.doNotSend='0') and (listOld.isDeleted is null or listOld.isDeleted='0')")
-                .append(" and new.startDate<old.finishDate and old.servicestream!='COMPLEXCASE' and new.servicestream!='COMPLEXCASE'")
-                .append(" and old.medhelpprofile_id=new.medhelpprofile_id and bs.code='PAID'");
+                .append(" where nw.listentry_id=:listEntryId and (nw.isDeleted is null or nw.isDeleted='0') and (nw.doNotSend is null or nw.doNotSend='0') and (listOld.isDeleted is null or listOld.isDeleted='0')")
+                .append(" and nw.startDate<ol.finishDate and ol.servicestream!='COMPLEXCASE' and nw.servicestream!='COMPLEXCASE'")
+                .append(" and ol.medhelpprofile_id=nw.medhelpprofile_id and bs.code='PAID'");
         List<BigInteger> list = theManager.createNativeQuery(sql.toString()).setParameter("listEntryId",aListEntry.getId()).getResultList();
         for(BigInteger id: list) {
             theManager.persist(new E2EntryError(theManager.find(E2Entry.class,id.longValue()),"DOUBLE_WITH_PREVIOUS Дубль с пред. заполнением!!"));
@@ -1494,13 +1519,15 @@ public class Expert2ServiceBean implements IExpert2Service {
      * @param aEntry
      */
     public E2Entry calculateEntryPrice(E2Entry aEntry) {
-        String entryType = aEntry.getEntryListType() !=null ? aEntry.getEntryListType() : aEntry.getEntryType();
-        if (entryType.equals(HOSPITALTYPE) || entryType.equals(HOSPITALPEREVODTYPE)) {
+        String entryType = aEntry.getEntryType()!=null ? aEntry.getEntryType() : aEntry.getEntryListType();
+        if (entryType.equals(HOSPITALTYPE) || entryType.equals(HOSPITALPEREVODTYPE) || "VMP".equals(entryType)) {
             aEntry = calculateHospitalEntryPrice(aEntry);
-        } else if (entryType.equals(SERVICETYPE) || entryType.equals(POLYCLINICTYPE) || entryType.equals(KDPTYPE)) {
+        } else if ( entryType.equals(POLYCLINICTYPE) || entryType.equals(KDPTYPE)) {
             calculatePolyclinicEntryPrice(aEntry);
         } else if (entryType.equals(EXTDISPTYPE)) {
             calculateExtDispEntryPrice(aEntry);
+        } else if (entryType.equals(SERVICETYPE)) {
+            calculateServiceEntryPrice(aEntry);
         } else {
             throw new IllegalStateException("Неизвестный тип реестра : "+entryType);
         }
@@ -1530,7 +1557,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
             }
             theManager.persist(ret);
-            LOG.warn("crate new voc+"+ret);
         }
         return ret;
     }
@@ -2592,7 +2618,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         BigDecimal tariff ;
         BigDecimal km = calculateKm();
-        if (subType.getCode().equals("SERVICE")) {
+  /*      if (subType.getCode().equals("SERVICE")) { //не встретится
             BigDecimal serviceCost = BigDecimal.ZERO;
             if (aEntry.getMedServices() != null) {
                 for (EntryMedService ems : aEntry.getMedServices()) {
@@ -2604,9 +2630,9 @@ public class Expert2ServiceBean implements IExpert2Service {
             } else {
                 tariff = BigDecimal.ZERO;
             }
-        } else {
+        } else { */
             tariff = calculateTariff(aEntry);
-        }
+        //}
         String costFormula = "Тариф=" + tariff + ", КЗ=" +kz + ", Кп(Кпд)="+kp+", КМ=" + km;
         if (tariff==null||kz==null||km==null) {
             LOG.warn("Не удалось расчитать цену случая");
@@ -2622,8 +2648,24 @@ public class Expert2ServiceBean implements IExpert2Service {
         return aEntry;
     }
 
+    private void calculateServiceEntryPrice(E2Entry aEntry) { //Цена случая с типом услуга = цене услуги!
+        List<EntryMedService> medServices = aEntry.getMedServices();
+        if (medServices==null || medServices.isEmpty() || medServices.size()>1) {
+            LOG.warn("в случае несколько услуг!! нельзя посчитать цену");
+            return;
+        }
+        EntryMedService medService = medServices.get(0); //1 случай = 1 услуга
+        BigDecimal cost = medService.getCost();
+        aEntry.setCost(cost);
+        aEntry.setBaseTarif(cost);
+        if (cost.compareTo(BigDecimal.ZERO)==0) {
+            aEntry.setCostFormulaString("Не удалось найти цену услуги "+medService.getMedService().getCode());
+            aEntry.setDoNotSend(true);
+        }
+        theManager.persist(aEntry);
+    }
+
     private void calculateExtDispEntryPrice(E2Entry aEntry) { //TODO реализовать!!!
-        LOG.info("calc disp");
         ExtDispPrice price = getExtDispPrice(aEntry);
         BigDecimal cost = price==null ? BigDecimal.valueOf(0.03) : price.getCost();
         checkExtDisp(aEntry,price);
@@ -2824,9 +2866,11 @@ public class Expert2ServiceBean implements IExpert2Service {
             aCode=VMPTYPE;
         } else if (aCode.equals(HOSPITALPEREVODTYPE)) {
             aCode=HOSPITALTYPE;
-        } else if (aCode.equals(EXTDISPTYPE)) {
+        } /*else if (aCode.equals(EXTDISPTYPE)) {
             aCode=EXTDISPTYPE;
         } else if (aCode.equals(SERVICETYPE)) {
+            aCode=SERVICETYPE;
+        } */else if (aCode.equals(POLYCLINICTYPE) && (aEntry.getDepartmentId()!=null &&aEntry.getDepartmentId().equals(416L))) { //телемедицина амокб
             aCode=SERVICETYPE;
         }
         if (isNotNull(aEntry.getInsuranceCompanyCode())) {aCode+="_INOG";} //Если код страх. компании не пустой - иногородний.
@@ -3001,9 +3045,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private BigDecimal calculateNoFullMedCaseCoefficient (E2Entry aEntry) { //Считаем коэффициент Кпр.+    //  LOG.info("start calculateNoFullMedCaseCoefficient");
         String  npl = aEntry.getNotFullPaymentReason();
         BigDecimal ret = new BigDecimal(1); //По умолчанию - полный случай
-        //     String[] resultData = aEntry.getResult().split("#",-1);
         boolean isPrerSluch = false;
-        // boolean shortCase = false;
         if (aEntry.getFondResult() == null) {
             return ret;
         }
@@ -3062,8 +3104,17 @@ public class Expert2ServiceBean implements IExpert2Service {
         boolean polyclinicCase = entryType.equals(POLYCLINICTYPE) || entryType.equals(SERVICETYPE) ;
         boolean extDispCase = entryType.equals(EXTDISPTYPE);
       //  boolean kdpCase = entryType.equals(KDPTYPE); //del после сдачи
-        if (!isNotNull(aEntry.getResult()) && !extDispCase) {theManager.persist(new E2EntryError(aEntry,"NO_RESULT"));return;}
-        String[] dischargeData = aEntry.getResult().split("#", -1); //vho.code||'#'||vrd.code||'#'||vhr.code
+        String result = aEntry.getResult();
+        if (!isNotNull(result)) {
+            if (extDispCase) {
+                result="1#1#1";
+            } else {
+                theManager.persist(new E2EntryError(aEntry,"NO_RESULT"));return;
+            }
+
+        }
+
+        String[] dischargeData = result.split("#", -1); //vho.code||'#'||vrd.code||'#'||vhr.code
     /*    if (kdpCase && forceUpdate) {
             VocDiagnosticVisit kdp = aEntry.getKdpVisit();
             if (kdp == null) {return;}
@@ -3133,7 +3184,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 .append(" and v009.usl='").append(bedSubType).append("'");
                         list = theManager.createNativeQuery(sb.toString()).getResultList(); //Находим результат обращения (V009 RSLT)
                         if (list.isEmpty()) {
-                            LOG.error("can't find RSLT = " + aEntry.getResult() + "____ result find sql string = " + sb);
+                            LOG.error("can't find RSLT = " + result + "____ result find sql string = " + sb);
                         }
                     }
                     resultMap.put(key, list.isEmpty() ? null : theManager.find(VocE2FondV009.class, list.get(0).longValue()));
@@ -3150,7 +3201,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             .append(hospResult).append("' and link.bedSubType='").append(bedSubType).append("'");
                     list = theManager.createNativeQuery(sb.toString()).getResultList(); //Находим исход случая (V012 ISHOD)
                     if (list.isEmpty()) {
-                        LOG.error("can't find ISHOD = " + aEntry.getResult() + "____ ishod find sql string = " + sb);
+                        LOG.error("can't find ISHOD = " + aEntry.getFondIshod() + "____ ishod find sql string = " + sb);
                     }
                     resultMap.put(key, list.isEmpty() ? null : theManager.find(VocE2FondV012.class, list.get(0).longValue()));
                 }
@@ -3161,11 +3212,15 @@ public class Expert2ServiceBean implements IExpert2Service {
 
 
             //Вид медицинской помощи (для расчета нужен профиль МП)
-            String v008Code = vmpCase ? "32" : "31";
-            if (aEntry.getSubType()!=null && aEntry.getSubType().getCode().equals("POLDAYTIMEHOSP")) {
+            String v008Code ;
+            if (Boolean.TRUE.equals(aEntry.getIsRehabBed()))  {
+                v008Code ="13";
+            } else if (aEntry.getSubType()!=null && aEntry.getSubType().getCode().equals("POLDAYTIMEHOSP")) {
                 v008Code=aEntry.getMedHelpProfile().getProfileK().equals("97") ? "12" : "13"; // TODO = переделать
+            } else {
+                v008Code = vmpCase ? "32" : "31";
             }
-            if (Boolean.TRUE.equals(aEntry.getIsRehabBed())) v008Code ="13";
+
             key = "V008#"+v008Code;
             if (!resultMap.containsKey(key)) {
                 resultMap.put(key,getActualVocByClassName(VocE2FondV008.class, actualDate,"code='"+v008Code+"'"));
@@ -3173,10 +3228,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             aEntry.setMedHelpKind((VocE2FondV008)resultMap.get(key));
 /*            final String sqlAdd = "code='"+v008Code+"'"; //4 джей босс так не умеет
             aEntry.setMedHelpKind((VocE2FondV008)resultMap.computeIfAbsent(key,k->getActualVocByClassName(VocE2FondV008.class, actualDate,sqlAdd)));
-*/
-
-
-/*            final String sqlAddIdsp = " code='"+idspCode+"'";
+            final String sqlAddIdsp = " code='"+idspCode+"'";
             aEntry.setIDSP((VocE2FondV010)resultMap.computeIfAbsent(key,k->getActualVocByClassName(VocE2FondV010.class,actualDate ,sqlAddIdsp)));
 */
         } else if (polyclinicCase) { //Заполняем поля для пол-ки
@@ -3204,7 +3256,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             //Вид медицинской помощи
             if (aEntry.getMedHelpKind()==null || forceUpdate) {
-                String v008Code = "13"; //первичная специализированная медико-санитарная помощь
+                String v008Code = "206".equals(aEntry.getDoctorWorkfunction()) ? "11" : "13"; //первичная специализированная медико-санитарная помощь *фельдшер - доврачебная МП
                 key = "V008#"+v008Code;
                 if (!resultMap.containsKey(key)) {
                     resultMap.put(key,getActualVocByClassName(VocE2FondV008.class, actualDate,"code='"+v008Code+"'"));
@@ -3213,7 +3265,12 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
         } else if (extDispCase) { // TODО реализовать для ДД
            //расчет возраста ДД
-            aEntry.setExtDispAge(AgeUtil.calculateExtDispAge(aEntry.getStartDate(),aEntry.getBirthDate()));
+            try{
+                aEntry.setExtDispAge(AgeUtil.calculateExtDispAge(aEntry.getStartDate(),aEntry.getBirthDate()));
+            } catch (IllegalArgumentException e) {
+                theManager.persist(new E2EntryError(aEntry,"Ошибка расчета возраста ДД:"+e.getMessage()));
+                LOG.warn("Ошибка расчета возраста ДД:"+e.getMessage());
+            }
             //Result <RSLT>
 
             //Исход <ISHOD>

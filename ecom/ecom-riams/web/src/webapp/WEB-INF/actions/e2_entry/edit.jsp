@@ -448,8 +448,8 @@ where cancer.entry_id=${param.id}"/>
                         }
                     }
 
-                    String.prototype.replaceAt=function(index, replacement) {
-                        return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
+                    String.prototype.replaceAt=function(iFrom, iTo, replacement) {
+                        return this.substr(0, iFrom+1) + replacement+ this.substr(iTo + replacement.length);
                     };
 
                     function splitLongCase() {
@@ -513,7 +513,8 @@ where cancer.entry_id=${param.id}"/>
                                     if (aStatus.finish) {
                                         txt="Завеpшено!";
                                         if (aStatus.finishedParameters) {
-                                            var hName =  aStatus.finishedParameters.replace(".MP",".xml");hName=hName.replaceAt(16,"H");
+                                            var hName =  aStatus.finishedParameters.replace(".MP",".xml");
+                                            hName=hName.replaceAt(hName.lastIndexOf('/'),hName.indexOf('M30'),'H');
                                             //var hName =  filename.replace(".MP",".xml");hName=hName.replaceAt(16,"H");
                                             window.open("http://"+window.location.host+""+hName);
                                             //txt+=" <a href='"+aStatus.finishedParameters+"'>ПЕРЕЙТИ</a>";
