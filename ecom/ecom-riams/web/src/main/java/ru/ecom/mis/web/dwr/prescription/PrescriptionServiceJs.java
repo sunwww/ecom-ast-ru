@@ -621,7 +621,7 @@ public class PrescriptionServiceJs {
 		JSONObject res = getPrescriptionInfo(aPrescripts, service);
 		String lpuString = getLpuForDefectMessage(aPrescripts,aRequest);
 		if (!lpuString.equals("0")) {
-            ArrayList<String> usersToSend = getAllUsersWithLpu(lpuString,aRequest);
+            ArrayList<String> usersToSend = getAllUsersToSendMessageCancel(lpuString,aPrescripts,aRequest);
 			String msgTitle=res.getString("date")+" пациент "+res.getString("patFio")+" услуга "+res.getString("medService");
             String messageText = "Брак биоматериала: "+reasonText;
             String sender = res.getString("usernameO"); //спорно, ну да пофиг
@@ -638,21 +638,38 @@ public class PrescriptionServiceJs {
 		updateDiaryWhileCancelPrescription(null,aPrescripts,"Брак биоматериала: "+reasonText,wfCnsl,service);
 	}
 
-	/* Получить всех пользователей отделений
-	 * @param lpu Список отделений через запятую для запоса
+	/* Получить всех пользователей для отправки сообщения о браке
+	 * @param lpu Список отделений через запятую для запроса (выборка только с ролью Специалист стационара - врачи)
+	 * @param aPrescripts Список назначений через запятую (выборка только с той же должностью, что и назначивший исследования)
 	 * @param aRequest
 	 * @return ArrayList Список пользователей
 	 * @throws NamingException
 	 * */
-	private ArrayList<String> getAllUsersWithLpu(String lpu, HttpServletRequest aRequest) throws NamingException {
+	private ArrayList<String> getAllUsersToSendMessageCancel(String lpu, String aPrescripts, HttpServletRequest aRequest) throws NamingException {
 		ArrayList<String> resListUsers = new ArrayList<>();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select su.login from secuser su" +
-				" left join workfunction wf on su.id=wf.secuser_id" +
-				" left join worker w on w.id=wf.worker_id" +
-				" where w.lpu_id in (" + lpu + ") and wf.archival<>'1'" +
-				" and su.id is not null";
-		Collection<WebQueryResult> listUsers = service.executeNativeSql(sql) ;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select distinct su.login")
+				.append(" from workfunction wf1")
+				.append(" left join worker w1 on w1.id=wf1.worker_id")
+				.append(" left join worker w on w.lpu_id=w1.lpu_id")
+				.append(" left join workfunction wfDep on wfDep.worker_id = w.id and wfDep.workfunction_id  = wf1.workfunction_id and (wfDep.archival is null or wfDep.archival ='0')")
+				.append(" left join worker wall on wall.id  = wfDep.worker_id")
+				.append(" left join worker wall2 on wall2.person_id = wall.person_id")
+				.append(" left join workfunction  wfall2 on wfall2.worker_id  = wall2.id")
+				.append(" left join secuser su on su.id=wfall2.secuser_id");
+		if (lpu.split(",").length > 1) { //если был перевод (СЛО1-СЛО2)
+			sql.append(" left join secuser_secrole sur on sur.secuser_id=su.id")
+					.append(" left join secrole sr on sr.id=sur.roles_id")
+					.append(" where w.lpu_id in (").append(lpu).append(")")
+					.append(" and su.id is not null")
+					.append(" group by su.login,sr.id having (sr.id=1)");
+		}
+		else { //если перевода не было и всё в одном отделении (приёмник-СЛО или просто в СЛО)
+			sql.append(" where wf1.id=ANY(select prescriptspecial_id from prescription where id in (").append(aPrescripts)
+				.append(")) and su.id is not null");
+		}
+		Collection<WebQueryResult> listUsers = service.executeNativeSql(sql.toString()) ;
 		for (WebQueryResult wqr : listUsers)
 			resListUsers.add(wqr.get1().toString());
 		return resListUsers;
@@ -753,8 +770,7 @@ public class PrescriptionServiceJs {
 				" left join patient pat on pat.id=mc.patient_id " +
 				" left join medcase hmc on hmc.id=case when mc.dtype='DepartmentMedCase' then mc.parent_id else mc.id end" +
 				" where p.id in("+aPrescripts+")") ;
-		if (!list.isEmpty()) {
-			Object[] obj = list.get(0);
+		for (Object[] obj : list) {
 			res.put("usernameO","" + obj[1])
 					.put("patId",obj[0])
 					.put("date",obj[2])
