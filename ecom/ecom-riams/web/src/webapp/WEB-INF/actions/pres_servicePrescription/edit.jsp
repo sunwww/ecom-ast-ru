@@ -360,7 +360,10 @@
                         num = surgNum;
                     } else if (type == 'hosp') {
                         num = hospNum;
-                    } else {
+                    } else if (type.substring(0,8) == 'COMMENT@') {
+                        return;
+                    }
+                    else {
                         alert('Неизвестный тип: ' + type);
                     }
                     num += 1;
