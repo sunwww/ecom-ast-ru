@@ -1135,6 +1135,13 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/report203.jsp" />
 		</action>
+		<action path='/expertKMP' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/expertKMP.jsp" />
+		</action>
 		<action path='/journal_onco' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'

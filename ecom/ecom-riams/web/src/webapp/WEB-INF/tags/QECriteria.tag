@@ -85,7 +85,7 @@
             callback: function (res2) {
                 if (res2) { //Выписан позднее дней в настройке/Ещё лежит как обычно
                     QualityEstimationService.createDraftEK(
-                        ID, {
+                        ID, 'PR203', {
                             callback: function (res) {
                                 if (res != null) window.location = 'entityEdit-expert_qualityEstimationDraft.do?id=' + res + '&type=BranchManager';
                                 else {
