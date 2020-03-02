@@ -907,7 +907,8 @@
 		from="VocTransfusionReason vtr"
 		parent="vpb.id = :parent"
 		nameId="vtr.id"
-		queryAppend="" join="left join VocBloodPreparation vpb on vpb.code=vtr.codePreparation" order=""
+		queryAppend=" (vtr.dateFinish is null or vtr.dateFinish>current_date) "
+		join="left join VocBloodPreparation vpb on vpb.code=vtr.codePreparation" order=""
 		names="vtr.name"
 		queried="upper(vtr.name) like upper(:query)"
 	/>

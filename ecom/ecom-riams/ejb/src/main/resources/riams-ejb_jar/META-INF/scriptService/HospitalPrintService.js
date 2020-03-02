@@ -2812,3 +2812,14 @@ function printDirectionHIV(aCtx, aParams) {
     map.put("listPat",ret) ;
     return map;
 }
+
+
+//Печать cогласия на операцию переливания компонентов крови
+function printTransfusionAgreement(aCtx, aParams) {
+	var patId = new java.lang.Long(aParams.get("patId"));
+	if (patId==null||patId==0) {return;}
+	var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient, patId) ;
+	if (patient!=null)
+		map.put("fio",patient.lastname + ' ' + patient.firstname + ' ' + patient.middlename) ;
+	return map;
+}
