@@ -299,10 +299,10 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 			return "ОШИБКА !!!: "+aText+" ->"+e;
 		}    	
     }
-    private static boolean isBeginFor(String aValue) {
+    static boolean isBeginFor(String aValue) {
 		return aValue != null && aValue.startsWith("$$FOR") && aValue.endsWith("$$");
 	}
-	private static boolean isEndFor(String aValue) { return "$$FOREND".equals(aValue);}
+	static boolean isEndFor(String aValue) { return "$$FOREND".equals(aValue);}
 
 	/** Логин */
 	public String getLogin() {return theLogin;}
