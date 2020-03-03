@@ -2821,5 +2821,8 @@ function printTransfusionAgreement(aCtx, aParams) {
 	var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient, patId) ;
 	if (patient!=null)
 		map.put("fio",patient.lastname + ' ' + patient.firstname + ' ' + patient.middlename) ;
+	var arr  = aCtx.manager.createNativeQuery("select to_char(current_date,'dd.MM.yyyy') as curDate").getResultList();
+	if (!arr.isEmpty())
+		map.put("currentDate",arr.get(0));
 	return map;
 }
