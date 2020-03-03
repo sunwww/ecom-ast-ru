@@ -69,6 +69,7 @@
                 <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/Create" name="Лист назначений" action="/javascript:showCreatePrescriptList('${param.id}','.do')" title="Лист назначений" />
                 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист"  action="/javascript:showNewCurve()" title="Добавить температурный лист" />
 
+                <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/javascript:window.open('print-transfusionAgreement.do?s=HospitalPrintService&m=printTransfusionAgreement&patId='+$('patient').value);" name="Печать согласия на переливание" title="Печать согласия на переливание" />
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Переливание донорской крови и её компонентов" title="Добавить донорской крови и её компонентов" />
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Other/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-trans_other" name="Переливание кровезамещающих растворов" title="Добавить переливание кровезамещающих растворов" />
 
@@ -124,8 +125,9 @@
                     <msh:sideLink styleId="viewShort" action="/javascript:showCardiacScreening(${param.id})" name='Кардиоскрининги новорождённых' title="Кардио-скрининги нов." params="" roles="/Policy/Mis/Pregnancy/CardiacScreening/View" />
                     <tags:identityPatient name="identityPatient" />
                     <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit/PatientSet" name="Браслеты" styleId="viewShort" action="/javascript:showidentityPatient($('parent').value,true)"  title='Браслеты'/>
-                    <msh:sideLink roles="/Policy/Mis/MedCase/ActRVK" name="Акт РВК" params="" action="/javascript:showOrCreateAktRvk();" title="Акт РВК"
-                    />
+                    <msh:sideLink roles="/Policy/Mis/MedCase/ActRVK" name="Акт РВК" params="" action="/javascript:showOrCreateAktRvk();" title="Акт РВК"/>
+                    <msh:sideLink styleId="viewShort" action="/javascript:showExpertKMP(${param.id})" name='Экспертиза KMP' title="Экспертиза KMP" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+
                 </msh:sideMenu>
                 <msh:sideMenu title="Печать">
 
@@ -713,6 +715,28 @@ where m.id ='${param.id}'"/>
                 }
                 saveIdentityWithAsk();
                 </msh:ifInRole>
+                function showExpertKMP(id) {
+                    //лучше сначала проверить, нужна ли карта KMP
+                    QualityEstimationService.getIfKMPNecessary(id, {
+                        callback: function (a) {
+                            if (a) {
+                                QualityEstimationService.createDraftEK(
+                                    id, 'KMP', {
+                                        callback: function (res) {
+                                            if (res != null && +res != 0) window.location = 'entityEdit-expert_qualityEstimationDraft.do?id=' + res + '&type=BranchManager';
+                                            else if (+res != 0) {
+                                                alert("Заведующий отделением уже заполнил эту карту, врачу больше редактировать нельзя!");
+                                            } else
+                                                alert("Не найдено совпадений по диагнозам в СЛО для экспертизы KMP!");
+                                        }
+                                    }
+                                );
+                            }
+                            else
+                                alert("Нет диагнозов в СЛО для экспертизы KMP!");
+                        }
+                });
+                }
             </script>
         </msh:ifFormTypeIsView>
         <tags:CreateDiagnoseCriteria name="CreateDiagnoseCriteria" />
@@ -1093,6 +1117,7 @@ where m.id ='${param.id}'"/>
         <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+        <script type="text/javascript" src="./dwr/interface/QualityEstimationService.js"></script>
         <msh:ifFormTypeIsView formName="stac_sloForm">
             <script type="text/javascript">
                 function unionSloWithNextSlo() {

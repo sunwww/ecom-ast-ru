@@ -72,6 +72,9 @@
                    if (+k==1) {
                        voc="vocQualityEstimationMarkYesNo";
                    }
+                   else if (+k==-1) {
+                       voc="vocQualityEstimationMarkKMP";
+                   }
                    else
                        voc="vocQualityEstimationMark";
                     //alert(voc);

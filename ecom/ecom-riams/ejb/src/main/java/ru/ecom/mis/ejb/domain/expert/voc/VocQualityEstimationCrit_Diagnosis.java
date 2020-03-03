@@ -55,4 +55,14 @@ public class VocQualityEstimationCrit_Diagnosis extends BaseEntity {
     public void setIsObserv(Boolean aIsObserv) {
         this.theIsObserv = aIsObserv;
     }
+
+    /** Сопутствующий? */
+    private Boolean theIsConcomitant;
+    public Boolean getIsConcomitant() {
+        return theIsConcomitant;
+    }
+    public void setIsConcomitant(Boolean aIsConcomitant) {
+        this.theIsConcomitant = aIsConcomitant;
+    }
+
 }

@@ -87,7 +87,7 @@
           <msh:separator label="Данные с этикетки контейнера" colSpan="10" />
         </msh:row>
         <msh:row>
-          <msh:autoComplete property="bloodPreparation" label="Препарат крови (компонентов)" horizontalFill="true" vocName="vocBloodPreparation" fieldColSpan="5" />
+          <msh:autoComplete property="bloodPreparation" label="Наименование компонента крови" horizontalFill="true" vocName="vocBloodPreparation" fieldColSpan="5" />
         </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocPreparatorBlood" property="preparator" label="Изготовитель" horizontalFill="true" fieldColSpan="1" size="35"/>
@@ -165,10 +165,6 @@
            	<msh:autoComplete size="4" property="stateBT"  vocName="vocYesNo" label="Состояние изменилось?" />
            	<msh:textField property="lamentBT" label="Жалобы" fieldColSpan="9" horizontalFill="true"/>
         </msh:row>
-        <!--msh:row styleId="row21">
-           	<!--msh:autoComplete fieldColSpan="9" property="serumColorBT" horizontalFill="true" vocName="vocTransfusionTestSerumColor" label="Цвет сыворотки" />
-        <!--/msh:row>
-        <!--/msh:ifFormTypeIsNotView-->
             <msh:row styleId="row20">
                 <msh:row styleId="row22"><td colspan="10">Изменилось без видимой причины:</td></msh:row>
                 <msh:row styleId="row23">
@@ -202,7 +198,7 @@
 		</msh:row>
         
         <msh:row>
-          <msh:separator label="Наблюдение за состоянием реципиента. Сразу после переливания" colSpan="10"/>
+          <msh:separator label="Наблюдение за состоянием реципиента. До начала трансфузии" colSpan="10"/>
         </msh:row>
         <msh:row>
         	<msh:textField size="4" property="monitorForm0.bloodPressureTop" label="АД сис."/>
@@ -282,13 +278,14 @@
 
     //если поле prop имеет значение из vals или не имеет значение из notVals, все поля в req сделать обязательными
     //если другое значение - убрать обязательность, снимать значения не надо
-    var masReq = [{prop: 'bloodPreparation', vals:[1,2,3,4,5,6,7,8,9,10,11], notVals: [], req: [{field: 'patBloodGroupCheckName', cmnt: 'группа крови реципиента'}
+    var masReq = [{prop: 'bloodPreparation', vals:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], notVals: [], req: [{field: 'patBloodGroupCheckName', cmnt: 'группа крови реципиента'}
             ,{field: 'reagentForm1.reagentName',cmnt: 'реактив 1'}
             ,{field: 'reagentForm1.series',cmnt: 'серия 1'}
             ,{field: 'reagentForm1.expirationDate',cmnt: 'срок годности 1'}
             ,{field: 'reagentForm2.reagentName',cmnt: 'реактив 2'}
             ,{field: 'reagentForm2.series',cmnt: 'серия 2'}
-            ,{field: 'reagentForm2.expirationDate',cmnt: 'срок годности 2'}]}];
+            ,{field: 'reagentForm2.expirationDate',cmnt: 'срок годности 2'}]}
+        , {prop: 'bloodPreparation', vals:[1,2,3,4,5,6,7,8,9,10,11,12,13,14], notVals: [], req: [{field: 'bloodBioProbProcedureName', cmnt: 'биологическая проба'}]}];
 
     //ф-я настраивает обязательность полей req в masReq
     function checkMasReq() {

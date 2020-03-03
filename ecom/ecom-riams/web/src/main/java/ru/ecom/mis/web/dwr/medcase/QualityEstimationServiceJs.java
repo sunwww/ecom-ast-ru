@@ -291,7 +291,7 @@ public class QualityEstimationServiceJs {
 	public String IsQECardKindBoolean(Long aCardId, HttpServletRequest aRequest) throws Exception {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
+		String sql = "select case when vqec.code='PR203' then '1' else case when vqec. code='KMP' then '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql,1) ;
 		if (list.size()!=0) {
 			WebQueryResult wqr = list.iterator().next() ;
@@ -489,9 +489,9 @@ public class QualityEstimationServiceJs {
      * @param aRequest HttpServletRequest
      * @return Long id созданного черновика
      */
-	public Long createDraftEK(Long aMcaseId, HttpServletRequest aRequest) throws NamingException {
+	public Long createDraftEK(Long aMcaseId, String aCode, HttpServletRequest aRequest) throws NamingException {
 		IQualityEstimationService service = Injection.find(aRequest).getService(IQualityEstimationService.class);
-		return service.createDraftEK(aMcaseId);
+		return service.createDraftEK(aMcaseId, aCode);
 	}
 
     /**
@@ -728,5 +728,65 @@ public class QualityEstimationServiceJs {
 				.append(" where slo.id=").append(aSloId).append(" or slo.parent_id=").append(aSloId);
 		Collection<WebQueryResult> list = service.executeNativeSql( sql.toString());
 		return list.isEmpty() || RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut",aRequest) || list.iterator().next().get1().equals("0");
+	}
+
+	/**
+	 * Получить, есть ли необходимость делать эксертизу KMP
+	 * @param aSloId Slo.id
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean есть ли необходимость делать эксертизу KMP
+	 */
+	public Boolean getIfKMPNecessary(Long aSloId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select distinct vocidc10_id,isconcomitant from")
+				.append(" vocqualityestimationcrit_diagnosis")
+                .append(" where vqecrit_id=ANY(select distinct vqecrit.id")
+                .append(" from vocqualityestimationcrit vqecrit")
+                .append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id")
+                .append(" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id")
+                .append(" left join diagnosis ds on ds.idc10_id=d.id")
+                .append(" left join medcase mc on mc.id=ds.medcase_id")
+                .append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id")
+                .append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id")
+                .append(" left join patient pat on pat.id=mc.patient_id")
+                .append(" left join vocqualityestimationkind kind on kind.id=vqecrit.kind_id")
+                .append(" where mc.id=").append(aSloId)
+                .append(" and kind.code='KMP'")
+                .append(" and reg.code='4' and (prior.code='1' and (vqecrit_d.isconcomitant is null or vqecrit_d.isconcomitant=false)")
+                .append(" or prior.code='3' and vqecrit_d.isconcomitant=true))");
+        List<Object[]> list = service.executeNativeSqlGetObj(sql.toString()) ;
+        //если есть соп. диагнозы, то необходимо, чтобы были все
+		//если нет соп., то достаточно одного
+		Boolean existsConc=false, yesMain=false, yesConc=false;
+		for (Object[] o: list) {
+			Boolean isConc = o[1]!=null? Boolean.valueOf(o[1].toString()) : false;
+			if (isConc) existsConc=isConc;
+		}
+        for (Object[] o: list) {
+            Long id = Long.valueOf(o[0].toString());
+            Boolean isConc = o[1]!=null? Boolean.valueOf(o[1].toString()) : false;
+
+            StringBuilder sql2 = new StringBuilder();
+            sql2.append(" select ds.id from diagnosis ds")
+                    .append(" left join medcase mc on mc.id=ds.medcase_id")
+                    .append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id")
+                    .append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id")
+                    .append(" where mc.id=").append(aSloId).append(" and reg.code='4' and prior.code='");
+            if (isConc) sql2.append("3");
+            else sql2.append("1");
+            sql2.append("' and ds.idc10_id='").append(id).append("'");
+            if (!service.executeNativeSql( sql2.toString()).isEmpty()) {
+            	if (!existsConc)
+            		return true;  //просто основной есть и соп не нужен
+            	if (!isConc) yesMain=true;
+            	if (isConc) yesConc=true;
+
+            	if (yesMain && yesConc){ //один осн. есть, один соп есть
+					return true;
+				}
+			}
+        }
+		return false;
 	}
 }

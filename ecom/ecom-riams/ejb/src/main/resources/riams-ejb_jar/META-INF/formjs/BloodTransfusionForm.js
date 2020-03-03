@@ -16,12 +16,14 @@ function onPreDelete(aId, aCtx) {
  */
 //milamesher 30.03.2018 no requirements so i need to check reagents #95
 function checkReagentsAndChecks(aForm, aEntity) {
-    if (!aEntity.getBloodPreparation().getCode().equals("PLAZMA") && !aEntity.getBloodPreparation().getCode().equals("TROMB") &&
+    if (!aEntity.getBloodPreparation().getCode().equals("PLAZMA") &&
+		!aEntity.getBloodPreparation().getCode().equals("KRIO") &&
+		!aEntity.getBloodPreparation().getCode().equals("TROMB") &&
         (aForm.getReagentForm1().getReagent()=='0' || aForm.getReagentForm1().getSeries()=='' ||  aForm.getReagentForm1().getExpirationDate()==''
             || aForm.getReagentForm2().getReagent()=='0' || aForm.getReagentForm2().getSeries()==''
             ||  aForm.getReagentForm2().getExpirationDate()=='' ))
         throw "Не вся информация по реактивам заполнена!";
-    if (!aEntity.getBloodPreparation().getCode().equals("PLAZMA") && !aEntity.getBloodPreparation().getCode().equals("TROMB")
+    if (!aEntity.getBloodPreparation().getCode().equals("PLAZMA") && !aEntity.getBloodPreparation().getCode().equals("TROMB") && !aEntity.getBloodPreparation().getCode().equals("KRIO")
         && (aForm.getPatBloodGroupCheck()=='0'))
         throw "Не вся информация по контрольным проверкам заполнена! Группа крови реципиента обязательна для заполнения!";
 }

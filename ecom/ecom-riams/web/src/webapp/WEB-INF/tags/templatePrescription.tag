@@ -106,7 +106,7 @@
   					id ,$('prescriptType').value, {
   						callback: function(aLabList) {
   						the${name}TempPrescriptionDialog.hide() ;
-  						if (aLabList!="" && aLabList!=null){
+  						if (aLabList!="" && aLabList!=null && !aLabList.substring(0,8) == 'COMMENT@'){
   							var resultList = aLabList.split('#');
 	       					if (resultList.length>0) {
 	       						for (var i=0; i<resultList.length;i++) {
@@ -117,8 +117,8 @@
 	       						}
 	       					}
   						}
-  						}
-  					}
+                        }
+                 }
   					); 
     	 } else {
     	 
