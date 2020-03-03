@@ -76,7 +76,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             		if ( line.startsWith("cntSymbol=")) {
 	            		line = line.replace("cntSymbol=", "") ;
 	            		try {
-	            			theMaxLineLength = Integer.valueOf(line) ;
+	            			theMaxLineLength = Integer.parseInt(line) ;
 	            		} catch (Exception e) {
 	            			theMaxLineLength = 77 ;
 						}
@@ -87,7 +87,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
             	} 
             	if (next) {
                 boolean isBeginFor = OdtPrintFileDriver.isBeginFor(line) ;
-        		boolean isEndFor = OdtPrintFileDriver.isEndFor(line) ;
+				boolean isEndFor = OdtPrintFileDriver.isEndFor(line) ;
             	if (forCount==0 && !isBeginFor) {
             		recordLine(out,aReplaceHelper, aValueGetter, line);
             	} else {
