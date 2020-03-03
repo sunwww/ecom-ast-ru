@@ -710,7 +710,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (!patologyEntry.getIsChildBirthDepartment()
                         && (calendarDays > 5 || (calendarDays > 1 && childBirthMkb.contains(patologyEntry.getMainMkb())))) { //Если длительность случая - больше пяти дней (или диагноз входит в список)- не объединяемъ
                     VocE2FondV009 perevodResult = getActualVocByClassName(VocE2FondV009.class, patologyEntry.getFinishDate(), " code='104'"); //TODO Колхоз - исправить
-                    patologyEntry.setFondIshod((VocE2FondV012)getActualVocByClassName(VocE2FondV012.class, patologyEntry.getFinishDate(), " code='102'")); //TODO Колхоз - исправить
+                    patologyEntry.setFondIshod((VocE2FondV012)getActualVocByClassName(VocE2FondV012.class, patologyEntry.getFinishDate(), " code='103'")); //TODO Колхоз - исправить
                     patologyEntry.setFondResult(perevodResult); //TODO Колхоз - исправить
                     patologyEntry.setIsUnion(true);
                     theManager.persist(childEntry);
@@ -954,18 +954,15 @@ public class Expert2ServiceBean implements IExpert2Service {
                                     mainEntry = entry;
                                 }
                             }
-                        } else { //Если классы МКБ не сходятся, текущее СЛО становится главным
+                        } else { //Если классы МКБ не сходятся, текущее СЛО становится главным *01.03.2020 исход случая - без перемен, ТФОМС
                             String ss = mainEntry.getBedSubType(); //Текущему случаю ставим результат - перевод на другой профиль коек
-                            mainEntry.setFondResult(getActualVocByClassName(VocE2FondV009.class,mainEntry.getFinishDate()," code='"+ss+"04'")); //TODO Колхоз - исправить
+                            mainEntry.setFondResult(getActualVocByClassName(VocE2FondV009.class,mainEntry.getFinishDate()," code='"+ss+"04'"));
+                            mainEntry.setFondIshod(getActualVocByClassName(VocE2FondV012.class,mainEntry.getFinishDate()," code='"+ss+"03'"));
                             theManager.persist(mainEntry);
-                   /*         if (entriesList.size()>2) {
-                                setRightParent(mainEntry,null);
-                            }*/
                             mainEntry = entry;
                         }
                     }
                 }
-              //  if (entriesList.size()>2) {setRightParent(aListEntryId,aHospitalMedCaseId);}
             }
         } catch (IllegalStateException e) {
             LOG.error(">>"+aListEntryId+"<><>"+ aHospitalMedCaseId,e);
@@ -1357,12 +1354,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                         theManager.persist(medService);
                     }
                 }
-
             } else {
                 LOG.info("good 1-2");
             }
         }
-        LOG.info("finished!");
+     //   LOG.info("finished!");
     }
     /** Найдем подтип случая (посещение, обращение, НМП */
     private HashMap<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();

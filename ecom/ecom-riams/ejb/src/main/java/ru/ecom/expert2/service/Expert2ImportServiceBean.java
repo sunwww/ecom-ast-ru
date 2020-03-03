@@ -13,7 +13,9 @@ import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
 import ru.ecom.expert2.domain.voc.federal.*;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
+import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -67,7 +69,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
 
     /*Импортируем ответ ФЛК от фонда*/
-    public String importFlkAnswer(String aFilename, Long aListEntryId) {//, String aBillNumber, Date aBillDate) {
+    public String importFlkAnswer(String aFilename, Long aListEntryId) {
         LOG.info("start import FLK="+aFilename);
         Document root = getDocumentFromFile(XMLDIR+"/",aFilename,true);
         XMLOutputter out = new XMLOutputter();
@@ -115,6 +117,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     e = new E2Entry();
                     Element sl = zap.getChild("SL");
                     e.setListEntry(le);
+                    e.setEntryType("EXTDISP");
                     e.setLpuCode(lpuCode);
                     e.setExternalPatientId(Long.parseLong(zap.getChildText("ID_PAC")));
                     e.setMedPolicyType(zap.getChildText("VPOLIS"));
@@ -160,7 +163,18 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     e.setFondDoctorSpecV021(medSpec);
                     e.setDoctorSnils(sl.getChildText("IDDOKT"));
                     /*new flds*/
-                    e.setDoctorName(sl.getChildText("TABNOM"));
+                    String doctorCode = sl.getChildText("TABNOM");
+                    PersonalWorkFunction doctor = getWorkFuntionByDoctorCode(doctorCode);
+                    if (doctor!=null) {
+                        e.setDoctorName(doctor.getWorkFunctionInfo());
+                        MisLpu dep = doctor.getWorker().getLpu();
+                        e.setDepartmentId(dep.getId());
+                        e.setDepartmentName(dep.getName());
+                        e.setDepartmentCode(dep.getCodeDepartment());
+                    } else {
+                        e.setDoctorName(doctorCode);
+                    }
+
                     e.setVisitPurpose(getVocByCode(VocE2FondV025.class, finishDate, sl.getChildText("P_CEL")));
                     e.setIDSP(getVocByCode(VocE2FondV010.class, finishDate, sl.getChildText("IDSP"))); //TODO
                     //    e.setTotalCoefficient(new BigDecimal(sluch.getChildText("KOEF")));
@@ -200,6 +214,18 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             LOG.error(e.getMessage(),e);
             return null;
         }
+    }
+
+    private HashMap<String, PersonalWorkFunction> DOCTORLIST = new HashMap<>();
+    private PersonalWorkFunction getWorkFuntionByDoctorCode(String tabnom) {
+        //находим рабочую функцию по табельному номеру
+        if (DOCTORLIST.containsKey(tabnom)) {
+            return DOCTORLIST.get(tabnom);
+        }
+        List<PersonalWorkFunction> personalWorkFunctions =  theManager.createQuery("from PersonalWorkFunction where code=:code").setParameter("code",tabnom).getResultList();
+        PersonalWorkFunction workFunction = personalWorkFunctions.isEmpty() ? null : personalWorkFunctions.get(0);
+        DOCTORLIST.put(tabnom,workFunction);
+        return workFunction;
     }
 
     /*Создаем заполнение из MP файла*/

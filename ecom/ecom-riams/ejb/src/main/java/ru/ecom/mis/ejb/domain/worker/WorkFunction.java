@@ -76,6 +76,7 @@ abstract public class WorkFunction extends BaseEntity {
 	public String getWorkFunctionInfo() {
 		return getName() ;
 	}
+
 	@Transient @Comment("Информация по коду ОМС врача")
 	public String getOmcCodeInfo() {
 		String ret="" ;

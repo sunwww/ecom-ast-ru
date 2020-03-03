@@ -5,7 +5,6 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.util.StringUtil;
 
 import javax.persistence.*;
 /**
@@ -55,12 +54,7 @@ public class PersonalWorkFunction extends WorkFunction {
 	public String getWorkerInfo() {
 		return theWorker!=null ? theWorker.getDoctorInfo() : "" ;
 	}
-    private static void add(StringBuilder aSb, String aStr, String aPre) {
-        if(!StringUtil.isNullOrEmpty(aStr)) {
-            if(aSb.length()!=0) aSb.append(aPre) ;
-            aSb.append(aStr) ;
-        }
-    }
+
 	@Transient @Comment("Информация")
 	public String getWorkFunctionInfo() {
 		return getName() + " " + getWorkerInfo();

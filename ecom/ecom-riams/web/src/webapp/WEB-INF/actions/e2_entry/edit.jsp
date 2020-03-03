@@ -449,7 +449,7 @@ where cancer.entry_id=${param.id}"/>
                     }
 
                     String.prototype.replaceAt=function(iFrom, iTo, replacement) {
-                        return this.substr(0, iFrom+1) + replacement+ this.substr(iTo + replacement.length);
+                        return this.substr(0, iFrom+1) + replacement+ this.substr((iTo-1) + replacement.length);
                     };
 
                     function splitLongCase() {
