@@ -77,6 +77,7 @@ public class MedcaseMedpolicy {
         JSONArray arr = new JSONArray();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         for (WebQueryResult wqr:list) {
+            String lastname = wqr.get7().toString();
                 boolean isActualPolicy = false;
                 String polSeries = wqr.get3().toString();
                 String polNumber = wqr.get4().toString();
@@ -91,6 +92,10 @@ public class MedcaseMedpolicy {
                    JSONObject policy = null;
                    for (int i=0;i<policies.length();i++) {
                        JSONObject pol = policies.getJSONObject(i);
+                       if (!pol.has("isActual")) {
+                           LOG.info(lastname+" no Actual!"+pol.toString());
+                           continue;
+                       }
                        if ("1".equals(pol.getString("isActual")) && pol.getString("seriesAndNumber").equals(polSeries+" "+polNumber)) {
                            policy = pol;
                            break;
@@ -98,6 +103,7 @@ public class MedcaseMedpolicy {
                    }
                    if (policy == null ){
                        jsonObject.put("status","error_no_pol");
+                       LOG.warn(lastname+" Нет полиса!!");
                    } else {
                        long hospStartDate = sdf.parse(wqr.get5().toString()).getTime();
                        long hospFinishDate = sdf.parse(wqr.get6().toString()).getTime();
@@ -106,7 +112,7 @@ public class MedcaseMedpolicy {
                        if (policyStartDate<=hospFinishDate && policyExpireDate>=hospStartDate ) { //Полис действует на момент госпитализации, смотрим - сходятся ли данные пациента по полису с данными МЕДОСа
                            JSONObject patient = fondInfo.getJSONArray("Person").getJSONObject(0);
                            long birthday = sdf.parse(wqr.get10().toString()).getTime();
-                           if (patient.getString("lastname").equalsIgnoreCase(wqr.get7().toString())
+                           if (patient.getString("lastname").equalsIgnoreCase(lastname)
                                    && patient.getString("firstname").equalsIgnoreCase(wqr.get8().toString())
                                    && patient.getString("middlename").equalsIgnoreCase(wqr.get9().toString())
                                    && sdf.parse(patient.getString("birthday")).getTime()==birthday) {
@@ -115,9 +121,9 @@ public class MedcaseMedpolicy {
 
                            } else {
                                LOG.warn("Пациент не сходится: "+
-                                       patient.getString("lastname")+" : "+ wqr.get7().toString() +" \n  " +
-                                       patient.getString("firstname")+" : "+ wqr.get8().toString()+" \n  " +
-                                       patient.getString("middlename")+" : "+wqr.get9().toString()+" \n  " +
+                                       patient.getString("lastname")+" : "+ lastname +" > " +
+                                       patient.getString("firstname")+" : "+ wqr.get8().toString()+" > " +
+                                       patient.getString("middlename")+" : "+wqr.get9().toString()+" > " +
                                        patient.getString("birthday")+" : "+wqr.get10().toString());
                            }
                        } else {
@@ -135,7 +141,8 @@ public class MedcaseMedpolicy {
                }
                // дата начала действия полиса ранее даты окончания госпитализации - хорошо
             } catch (ParserConfigurationException | SAXException | IOException | ParseException e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(),e);
+                //e.printStackTrace();
             }
 
                 if (isActualPolicy) {
