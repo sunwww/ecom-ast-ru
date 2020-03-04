@@ -1,10 +1,12 @@
 package ru.ecom.mis.ejb.domain.prescription.voc;
 
+import ru.ecom.ejb.domain.simple.VocBaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.VocBaseEntity;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Справочник причин отмены назначений
@@ -15,6 +17,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Справочник причин отмены назначений")
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+		@AIndex(properties = {"serviceType","biomaterial"})
+})
 public class VocPrescriptCancelReason extends VocBaseEntity{
 	/** Код типа */
 	@Comment("Код типа")

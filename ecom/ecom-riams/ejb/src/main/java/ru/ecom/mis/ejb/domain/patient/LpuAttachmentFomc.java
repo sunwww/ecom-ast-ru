@@ -6,8 +6,6 @@ package ru.ecom.mis.ejb.domain.patient;
  */
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.ejb.services.index.annotation.AIndex;
-import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -17,9 +15,6 @@ import java.sql.Date;
 
 
 @Entity
-@AIndexes({
-	@AIndex(properties={"id"})
-})
 @Table(schema="SQLUser")
 public class LpuAttachmentFomc extends BaseEntity implements IImportData {
 

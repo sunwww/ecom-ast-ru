@@ -1,7 +1,8 @@
 package ru.ecom.expert2.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -11,7 +12,11 @@ import javax.persistence.OneToOne;
 
 /** Санкции к случаю*/
 @Entity
-@UnDeletable
+@AIndexes({
+        @AIndex(properties= {"entry"}),
+        @AIndex(properties= {"dopCode"})
+
+})
 public class E2EntrySanction extends BaseEntity {
     /** Запись */
     @Comment("Запись")
@@ -36,12 +41,12 @@ public class E2EntrySanction extends BaseEntity {
     /** Доп. код */
     private String theDopCode ;
 
-    public E2EntrySanction(){theIsDeleted=false;}
+    public E2EntrySanction(){}
     public E2EntrySanction (E2Entry aEntry, VocE2Sanction aSanction, String aDopCode, Boolean aIsMainDefect) {
-        theEntry=aEntry;theSanction=aSanction;theDopCode=aDopCode;theIsDeleted=false;theIsMainDefect=aIsMainDefect;
+        theEntry=aEntry;theSanction=aSanction;theDopCode=aDopCode;theIsMainDefect=aIsMainDefect;
     }
     public E2EntrySanction (E2Entry aEntry, VocE2Sanction aSanction, String aDopCode, Boolean aIsMainDefect, String aComment) {
-        theEntry=aEntry;theSanction=aSanction;theDopCode=aDopCode;theIsDeleted=false;theIsMainDefect=aIsMainDefect;theComment=aComment;
+        theEntry=aEntry;theSanction=aSanction;theDopCode=aDopCode;theIsMainDefect=aIsMainDefect;theComment=aComment;
     }
 
     /** Примечание */
@@ -50,13 +55,6 @@ public class E2EntrySanction extends BaseEntity {
     public void setComment(String aComment) {theComment = aComment;}
     /** Примечание */
     private String theComment ;
-
-    /** Удаленная запись */
-    @Comment("Удаленная запись")
-    public Boolean getIsDeleted() {return theIsDeleted;}
-    public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
-    /** Удаленная запись */
-    private Boolean theIsDeleted ;
 
     /** Главыный дефект случая */
     @Comment("Главыный дефект случая")

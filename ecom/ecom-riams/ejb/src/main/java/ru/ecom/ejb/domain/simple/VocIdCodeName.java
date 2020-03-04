@@ -10,8 +10,8 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 @AIndexes
 ({
-@AIndex(unique = false, properties = {"code"}),
-@AIndex(unique = false, properties = {"name"})
+@AIndex(properties = {"code"}),
+@AIndex(properties = {"name"})
         })
 public class VocIdCodeName extends BaseEntity {
     /** Название */

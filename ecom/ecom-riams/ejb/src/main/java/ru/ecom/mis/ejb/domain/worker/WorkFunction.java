@@ -24,9 +24,7 @@ import java.sql.Time;
 @Entity
 @Comment("Рабочая функция")
 @AIndexes({
-	//@AIndex(properties="archival")
 	@AIndex(properties="workFunction")
-	//,@AIndex(properties={"archival","workFunction"})
 	,@AIndex(properties={"code"})
 })
 @Table(schema="SQLUser")

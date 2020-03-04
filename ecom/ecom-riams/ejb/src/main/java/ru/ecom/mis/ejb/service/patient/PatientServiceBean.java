@@ -534,10 +534,10 @@ public class PatientServiceBean implements IPatientService {
 	private String toStr(Object o) {
 		return o==null || o.toString().trim().equals("") ? null : o.toString();
 	}
-	public String prepSql(String aField, String aValue) {
+	private String prepSql(String aField, String aValue) {
 		return prepSql (aField, aValue,"","");
 	}
-	public String prepSql(String aField, String aValue, String aPrefix, String aPostfix) {
+	private String prepSql(String aField, String aValue, String aPrefix, String aPostfix) {
 		if (aValue==null) {aValue="";}
 			return aField+"="+aPrefix+"'"+aValue+"'"+aPostfix;
 
