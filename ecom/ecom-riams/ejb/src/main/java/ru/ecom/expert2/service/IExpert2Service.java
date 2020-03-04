@@ -23,7 +23,7 @@ public interface IExpert2Service {
     E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate);
     Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate);
     boolean exportDefectNewListEntry(Long aListEntryId);
-    void exportErrorsNewListEntry(Long aListEntryId, String[] aErrorCodes);
+    void exportErrorsNewListEntry(Long aListEntryId, String[] aErrorCodes, String[] aSanctionCodes);
     void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId);
     void makeCheckEntry (Long aEntryId, boolean updateKsgIfExist);
     E2Entry calculateEntryPrice(E2Entry  aEntry);

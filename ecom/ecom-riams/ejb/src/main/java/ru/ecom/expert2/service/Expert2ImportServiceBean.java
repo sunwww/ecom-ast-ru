@@ -84,6 +84,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 E2Entry entry = theManager.find(E2Entry.class, Long.valueOf(entryId));
                 entry.setFondComment(out.outputString(el));
                 entry.setIsDefect(true);
+                theManager.persist(new E2EntrySanction(entry,null, "FLK_ERR",true,"ФЛК"));
                 theManager.persist(entry);
                 cnt++;
             }
@@ -164,16 +165,23 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     e.setDoctorSnils(sl.getChildText("IDDOKT"));
                     /*new flds*/
                     String doctorCode = sl.getChildText("TABNOM");
-                    PersonalWorkFunction doctor = getWorkFuntionByDoctorCode(doctorCode);
-                    if (doctor!=null) {
-                        e.setDoctorName(doctor.getWorkFunctionInfo());
-                        MisLpu dep = doctor.getWorker().getLpu();
-                        e.setDepartmentId(dep.getId());
-                        e.setDepartmentName(dep.getName());
-                        e.setDepartmentCode(dep.getCodeDepartment());
+                    if (isNotNull(doctorCode)){
+                        PersonalWorkFunction doctor = getWorkFuntionByDoctorCode(doctorCode);
+                        if (doctor!=null) {
+                            e.setDoctorName(doctor.getWorkFunctionInfo());
+                            MisLpu dep = doctor.getWorker().getLpu();
+                            e.setDepartmentId(dep.getId());
+                            e.setDepartmentName(dep.getName());
+                            e.setDepartmentCode(dep.getCodeDepartment());
+                        } else {
+                            e.setDoctorName(doctorCode);
+                        }
                     } else {
-                        e.setDoctorName(doctorCode);
+                        LOG.error("Нет докутора в ДД");
+                        theManager.persist(e);
+                        theManager.persist(new E2EntryError(e,"NO_DISP_DOCTOR"));
                     }
+
 
                     e.setVisitPurpose(getVocByCode(VocE2FondV025.class, finishDate, sl.getChildText("P_CEL")));
                     e.setIDSP(getVocByCode(VocE2FondV010.class, finishDate, sl.getChildText("IDSP"))); //TODO

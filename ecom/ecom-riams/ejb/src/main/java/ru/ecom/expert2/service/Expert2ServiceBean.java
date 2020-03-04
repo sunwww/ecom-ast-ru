@@ -515,7 +515,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     @Override
     /**
      * Переносим записи с ошибками из одного заполнения в новое*/
-    public void exportErrorsNewListEntry(Long aListEntryId, String[] aErrorCodes) {
+    public void exportErrorsNewListEntry(Long aListEntryId, String[] aErrorCodes, String[] aSanctionCodes) {
         try {
             E2ListEntry currentListEntry= theManager.find(E2ListEntry.class,aListEntryId);
             E2ListEntry newListEntry = new E2ListEntry(currentListEntry, "Ошибки_"+currentListEntry.getName());
@@ -527,6 +527,23 @@ public class Expert2ServiceBean implements IExpert2Service {
                         " where err.listEntry_id=:id and err.errorCode=:errorCode")
                         .setParameter("id",aListEntryId).setParameter("errorCode",errorCode.trim()).getResultList();
                 LOG.info("creating errors ["+errorCode+"]... defect list size = "+list.size());
+                for (BigInteger entryId: list) {
+                    E2Entry newEntry = theManager.find(E2Entry.class,entryId.longValue());
+                    if (newEntry==null) {continue;}
+                    newEntry.setListEntry(newListEntry);
+                    List<E2Entry> children = theManager.createQuery("from E2Entry where parentEntry=:e").setParameter("e",newEntry).getResultList();
+                    for (E2Entry child: children) {
+                        child.setListEntry(newListEntry);
+                        theManager.persist(child);
+                    }
+                    theManager.persist(newEntry);
+                }
+            }
+            for (String dopCode : aSanctionCodes) {
+                List<BigInteger> list = theManager.createNativeQuery("select es.entry_id from e2entrysanction es " +
+                        " where es.listEntry_id=:id and es.dopcode=:dopCode")
+                        .setParameter("id",aListEntryId).setParameter("dopCode",dopCode.trim()).getResultList();
+                LOG.info("creating sanctions ["+dopCode+"]... defect list size = "+list.size());
                 for (BigInteger entryId: list) {
                     E2Entry newEntry = theManager.find(E2Entry.class,entryId.longValue());
                     if (newEntry==null) {continue;}
@@ -1896,7 +1913,11 @@ public class Expert2ServiceBean implements IExpert2Service {
             JSONObject policy = medPolicy.getJSONObject(0);
             aEntry.setCommonNumber(policy.getString("commonNumber"));
             aEntry.setInsuranceCompanyTerritory(policy.getString("companyCity"));
+            if (!policy.has("smoCode") || !isNotNull(policy.getString("smoCode"))){
+                theManager.persist(new E2EntryError(aEntry,"NO_MED_POLICY"));
+            }
             aEntry.setInsuranceCompanyCode(policy.getString("smoCode"));
+
             aEntry.setInsuranceCompanyName(policy.getString("companyName"));
             aEntry.setInsuranceCompanyOgrn(policy.getString("smoOgrn"));
             String polType = policy.getString("polType");

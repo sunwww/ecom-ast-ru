@@ -565,7 +565,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     boolean isFirst = true;
                     for (E2Entry child: children) {
                         boolean isFoundPriemService = false;
-                        String visitService = null; //находим - есть ли первичный/повторный прием врача или создавать самим
+                        String visitService ; //находим - есть ли первичный/повторный прием врача или создавать самим
                     //    uslCnt++;
                         String uslDate = dateToString(child.getStartDate());
                         VocE2MedHelpProfile childProfile =child.getMedHelpProfile();
@@ -578,10 +578,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
  //                       prvs = child.getFondDoctorSpecV021()!=null ? child.getFondDoctorSpecV021().getCode() : childProfile.getMedSpecV021().getCode();
 
                         try {
-                            VocMedService vms = isFirst? spec.getDefaultMedService() : spec.getRepeatMedService();
+                            VocMedService vms = isFirst ? spec.getDefaultMedService() : spec.getRepeatMedService();
                             visitService = vms.getCode();
                         } catch (Exception e) {
-                            LOG.error(" У врача "+spec.getCode()+" нет услуги по умолчанию");
+                            visitService = null;
+                            //LOG.error(" У врача "+spec.getCode()+" нет услуги по умолчанию");
                         }
                         List<EntryMedService> serviceList = child.getMedServices();
                         for (EntryMedService service : serviceList) { //простые услуги в пол-ке
@@ -700,7 +701,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             add(usl,"KOL_USL",kolUsl);
         }
     //  add(usl,"TARIF","1");
-        add(usl,"SUMV_USL",cost);
+        add(usl,"SUMV_USL",cost!=null ? cost : BigDecimal.ZERO);
         add(usl,"PRVS",prvs);
         add(usl,"CODE_MD",codeMd);
      //   add(usl,"NPL","0");
