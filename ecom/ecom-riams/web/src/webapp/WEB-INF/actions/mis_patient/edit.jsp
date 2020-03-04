@@ -1003,10 +1003,10 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
-    function checkIsAttachedOrDead(isDead, isAttached) {
-    	PatientService.checkPatientAttachedOrDead($('id').value,isDead, isAttached, {
+    function checkIsAttachedOrDead() {
+    	PatientService.checkPatientAttachedOrDead($('id').value, {
     		callback: function (aResult) {
-    			if (aResult && aResult!=null){
+    			if (aResult){
     			    aResult = JSON.parse(aResult);
     			if (aResult.statusCode=='1') {
     				$('syncRow').style.backgroundColor="green";
@@ -1110,17 +1110,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondAttachment">
       	<script type="text/javascript">
-			onload=checkIsAttachedOrDead(0,1);
-		</script>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondDead">
-      	<script type="text/javascript">
-			onload=checkIsAttachedOrDead(1,0);
-		</script>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondAttachmentAndDead">
-      	<script type="text/javascript">
-			onload=checkIsAttachedOrDead(1,1);
+			onload=checkIsAttachedOrDead();
 		</script>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet">
