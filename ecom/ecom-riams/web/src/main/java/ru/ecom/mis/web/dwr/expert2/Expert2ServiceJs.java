@@ -32,6 +32,11 @@ import java.util.List;
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
+    public void deleteAllDrugByCancer(Long aCancerEntryId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        service.executeUpdateNativeSql("delete from e2cancerdrugdate where drug_id in (select id from E2CancerDrug where  cancerEntry_id="+aCancerEntryId+")");
+        service.executeUpdateNativeSql("delete from E2CancerDrug where cancerEntry_id="+aCancerEntryId);
+    }
     public void addDeleteEntryFactor (Long entryId, Long vocFactorId, Boolean needDelete, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         if (Boolean.TRUE.equals(needDelete)) {
@@ -303,8 +308,10 @@ public class Expert2ServiceJs {
         return Injection.find(aRequest).getService(IExpert2Service.class).addDiagnosisAndServiceToEntry(aEntryId, aData);
     }
 
-    public void exportErrorsNewListEntry(Long aListEntryId, String aErrorCodes, HttpServletRequest aRequest) throws NamingException {
-        Injection.find(aRequest).getService(IExpert2Service.class).exportErrorsNewListEntry(aListEntryId,aErrorCodes.split(","));
+    public void exportErrorsNewListEntry(Long aListEntryId, String aErrorCodes, String aSanctionDopCodes, HttpServletRequest aRequest) throws NamingException {
+        Injection.find(aRequest).getService(IExpert2Service.class)
+                .exportErrorsNewListEntry(aListEntryId,aErrorCodes!=null ? aErrorCodes.split(",") : new String[0]
+                        , aSanctionDopCodes!=null? aSanctionDopCodes.split(","): new String[0]);
     }
 
     /** Выгрузить дефекты в новое заполнение */

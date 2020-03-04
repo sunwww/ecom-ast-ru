@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -11,13 +11,11 @@
             <msh:hidden property="saveType" />
             <msh:hidden property="entry" />
             <msh:panel>
-
                 <msh:row>
                     <msh:checkBox property="maybeCancer"/>
                 </msh:row>
                 <msh:ifFormTypeIsCreate formName="e2_cancerEntryForm">
                 <msh:separator label="Направление" colSpan="4"/>
-
                     <msh:row>
                         <msh:textField property="directionDate"/>
                         <msh:autoComplete property="directionType" vocName="vocOncologyTypeDirectionCode" size="50"/>
@@ -28,7 +26,6 @@
                     <msh:row>
                         <msh:autoComplete property="directionSurveyMethod" vocName="vocOncologyMethodDiagTreatCode" size="50"/>
                         <msh:autoComplete property="directionMedService" vocName="vocMedServiceCode" size="50"/>
-
                     </msh:row>
                 </msh:ifFormTypeIsCreate>
                 <msh:separator colSpan="4" label="Общие"/>
@@ -128,7 +125,7 @@
         left join VocOncologyN020 v020 on v020.id=d.drug_id
   where d.cancerentry_id=${param.id} "/>
         <msh:tableNotEmpty  name="drugList"  >
-            <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDrug.do" idField="1" name="drugList" action="entityEdit-e2_cancerDrug.do" >
+            <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDrug.do" idField="1" name="drugList" action="entityEdit-e2_cancerDrug.do" ><input type="button" onclick="deleteAllDrugs()" value="Удалить все лекарства">
                 <msh:tableColumn columnName="Лекарство" property="2"/>
             </msh:table>
         </msh:tableNotEmpty>
@@ -140,10 +137,10 @@
         <ecom:titleTrail mainMenu="Expert2" beginForm="e2_cancerEntryForm" />
     </tiles:put>
     <tiles:put name="javascript" type="string">
+        <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <msh:ifFormTypeIsCreate formName="e2_cancerEntryForm">
-            <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
-
                 <script type="text/javascript">
+
                     diagnosticTypeAutocomplete.addOnChangeCallback(function() {
                         if ($('diagnosticType') && $('diagnosticType').value==1) {
                             diagnosticCodeAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN007Code');
@@ -153,11 +150,18 @@
                             diagnosticResultAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN011Code');
                         }
                     });
-                    //if diagnosticType==1 DiagnosticCode = vocOncologyN007Code , DiagnosticResult = VocOncologyN008Code
-                    //if diagnosticType==2 DiagnosticCode = VocOncologyN010Code , DiagnosticResult = VocOncologyN011Code
                 </script>
 
           </msh:ifFormTypeIsCreate>
+        <script type="text/javascript">
+            function deleteAllDrugs() {
+                Expert2Service.deleteAllDrugByCancer(${param.id},{
+                    callback: function () {
+                    alert('Удаолено');
+                    }
+                });
+            }
+        </script>
 
     </tiles:put>
 

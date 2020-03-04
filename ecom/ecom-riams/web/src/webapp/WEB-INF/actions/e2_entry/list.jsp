@@ -39,8 +39,10 @@
                     if (fio.length>2) {filterSql.append(" and e.middlename like upper('").append(fio[2]).append("%')");}
                     if (fio.length>3) {filterSql.append(" and e.birthdate =to_date('").append(fio[3]).append("','dd.MM.yyyy')");}
                 } else if (fldName.equals("billStatus")) {
-               //     filterSql.append(" and vbs.code='").append(fldValue).append("'");
                     filterSql.append(" vbs.code='").append("PAID").append("'");
+                } else if ("sanctionDopCode".equals(fldName)) {
+                    filterSql.append(" es.dopCode='").append(fldValue).append("'");
+
                 } else {
                     filterSql.append(" e.").append(fldName).append("='").append(fldValue).append("'");
                 }
@@ -83,7 +85,7 @@ String defectColumnName = "Дефект";
 //String entryType = request.getParameter("entryType");
     if (errorCode!=null && !errorCode.equals("")) {
         searchFromSql=", list(err.comment) as errComment from e2entryerror err left join e2entry e on e.id=err.entry_id";
-        searchWhereSql=(listId!=null?" err.listentry_id="+listId:"")+" and err.errorCode='"+errorCode+"'";
+        searchWhereSql=(listId!=null ? " err.listentry_id="+listId : "")+" and err.errorCode='"+errorCode+"'";
         request.setAttribute("searchTitle"," по ошибке: "+errorCode);
     } else {
         if (listId==null) {
@@ -115,7 +117,7 @@ String defectColumnName = "Дефект";
             <table><tr><td>
             <input type="text" name="searchField" id="lastname" placeholder="Фамилия пациента">
             </td><td>
-                <input type="text" name="searchField" id="historyNumber" placeholder="Номер ИБ">
+                <input type="text" name="searchField" id="sanctionDopCode" placeholder="Код дефекта">
             </td></tr>
                 <tr><td>
                 <label><input type="checkbox" id="chkDefect" name="chkDefect">Только дефекты</label>
@@ -167,7 +169,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         left join vocksg ksg on ksg.id=e.ksg_id
         left join entrydiagnosis d on d.entry_id=e.id and d.priority_id=1
         left join vocidc10 mkb on mkb.id=d.mkb_id
-        left join e2entrysanction es on es.entry_id=e.id and (es.isDeleted is null or es.isDeleted='0')
+        left join e2entrysanction es on es.entry_id=e.id
         left join e2bill bill on bill.id=e.bill_id
         left join voce2billstatus vbs on vbs.id=bill.status_id
         left join VocDiagnosticVisit vdv on vdv.id=e.kdpVisit_id
@@ -216,14 +218,14 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
          //       }
             }
             function exportErrorsNewListEntry() {
-                if (errorCode) {
-                    Expert2Service.exportErrorsNewListEntry(${param.id},errorCode, {
+                if (errorCode || $('sanctionDopCode').value) {
+                    Expert2Service.exportErrorsNewListEntry(${param.id},errorCode,$('sanctionDopCode').value, {
                        callback: function () {
                            alert('Кажется, перенесены!');
                        }
                     });
                 } else {
-                    alert ('Нет ошибки, нельзя так делать!');
+                    alert ('Нет ошибки, нет дефекта, нельзя так делать!');
                 }
 
 

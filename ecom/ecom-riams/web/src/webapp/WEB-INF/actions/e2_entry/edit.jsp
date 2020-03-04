@@ -366,8 +366,10 @@
                 ,ms.cost as f5_cost
                 ,case when ms.medservice_id is null then 'color: red'
                   when ms.comment!='' then 'color: #8B4513' else '' end as f6_styleRow
+                  ,v021.code as f7_doctorWf
                 from entryMedService ms
                 left join VocMedService vms on vms.id=ms.medservice_id
+                left join voce2fondv021 v021 on v021.id=ms.doctorspeciality_id
                      where ms.entry_id=${param.id}"/>
                 <msh:table idField="1" styleRow="6" name="servicesList" action="jabascript:void()" noDataMessage="Нет услуг по случаю"
                            deleteUrl="entityParentDeleteGoParentView-e2_entryMedService.do" >
@@ -375,6 +377,7 @@
                     <msh:tableColumn columnName="Услуга" property="2"/>
                     <msh:tableColumn columnName="Дата оказания" property="3"/>
                     <msh:tableColumn columnName="СНИЛС" property="4"/>
+                    <msh:tableColumn columnName="Должность" property="7"/>
                     <msh:tableColumn columnName="Цена" property="5"/>
                 </msh:table>
 
@@ -402,7 +405,7 @@ where cancer.entry_id=${param.id}"/>
             <ecom:webQuery name="sanctionList" nativeSql="select es.dopcode , coalesce(es.comment,'')
             , case when es.ismainDefect='1' then 'background-color:red' else '' end as f3_style
   from e2entrysanction es
-  where es.entry_id=${param.id} and es.isDeleted='0'"/>
+  where es.entry_id=${param.id} "/>
             <msh:tableNotEmpty  name="sanctionList"  >
                 <msh:table  idField="1" name="sanctionList" styleRow="3" action="/javascript:void()" >
                 <msh:tableColumn columnName="Код" property="1"/>
