@@ -1005,8 +1005,8 @@ public class PrescriptionServiceJs {
 		ret.append("<table>") ;
 		for (WebQueryResult wqr:l) {			
 			ret.append("<tr>") ;
-			ret.append("<td onclick=\"this.childNodes[1].checked=\'checked\';this.childNodes[1].onchange()\" colspan=\"4\">");
-    		ret.append("	<input name=\"typeDefect\" value=\"5\" type=\"radio\" onchange=\"cancel").append(aPrefixMethod).append("InLab('").append(aPrescript).append("','").append(wqr.get1()).append("','").append(wqr.get3() != null ? "1" : "0").append("')\">  ").append(wqr.get2());
+			ret.append("<td onclick=\"cancel").append(aPrefixMethod).append("InLab('").append(aPrescript).append("','").append(wqr.get1()).append("','").append(wqr.get3() != null ? "1" : "0").append("');\" colspan=\"4\">");
+    		ret.append("	<input name=\"typeDefect\" value=\"5\" type=\"radio\">").append(wqr.get2());
     		ret.append("</td>") ;
     		ret.append("</tr>") ;
 		}

@@ -166,7 +166,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			.append("(select max(qecC.id) from qualityestimationcrit qecC")
 			.append("	left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("' and qecC.estimation_id=qeC.id") 
 			.append("	where qecC.mark_id=vqem.id and qeC.expertType='Coeur'")
-			.append(") as Coeur") 
+			.append(") as Coeur")
 			.append(",")
 			.append(" (select max(qecC.mark_id) from qualityestimationcrit qecC")
 			.append("	left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("' and qecC.estimation_id=qeC.id") 
@@ -246,13 +246,13 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		 table.append("<tr>") ;
 		 table.append("<th rowspan=2>№№п/п</th>") ;
 		 table.append("<th rowspan=2 colspan=2>Критерии качества медицинской помощи</th>") ;
-		 table.append("<th colspan=3>Оценочные баллы</th>") ;
+		 table.append("<th colspan=2>Оценочные баллы</th>") ;
 		 if (ifTypeBool) table.append("<th>Комментарии</th>") ;
 		 table.append("</tr>") ;
 		 table.append("<tr>") ;
 		 table.append("<th>зав. отд</th>") ;
-		 table.append("<th>эксперт</th>") ;
-		 table.append("<th>КЭР</th>") ;
+		 table.append("<th>эксперт (КР)</th>") ;
+		 //table.append("<th>КЭР</th>") ;
 		 if (ifTypeBool) table.append("<th>Комм. зав.</th>") ;
 		 table.append("</tr>") ;
 		 List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
@@ -267,7 +267,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 cntSubsection = ConvertSql.parseLong(row[4]).intValue() ;
 					 cntPart++;
 					 table.append("<td rowspan='").append((cntSubsection+1)).append("' valign='top'><b><i>").append(row[1]).append(".</i></b></td>") ;
-					 int tmp=(ifTypeBool)? 6:5;
+					 int tmp=(ifTypeBool)? 5:4;
 					 table.append("<td colspan=").append(tmp).append(" align='center'><b><i>").append(row[2]).append("</i></b></td>") ;
 					 table.append("</tr>") ;
 					 table.append("<tr>") ;
@@ -294,11 +294,11 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
 					 }				 
 					 table.append(recordExpert(row[0],row[8], valMarkId, row[10],cntPart, cntSection, cntSubsection, "Expert", aTypeSpecialist, firststr, aView,aVocName)) ;
-					 valMarkId =  row[14];
+					/* valMarkId =  row[14];
 					 if (replaceValue &&!aView && aTypeSpecialist.equals("Coeur")) {
 						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
 					 }				 
-					 table.append(recordExpert(row[0],row[8], valMarkId, row[11],cntPart, cntSection, cntSubsection, "Coeur", aTypeSpecialist, firststr, aView, aVocName) );
+					 table.append(recordExpert(row[0],row[8], valMarkId, row[11],cntPart, cntSection, cntSubsection, "Coeur", aTypeSpecialist, firststr, aView, aVocName) );*/
 
 
 				 }
@@ -463,13 +463,13 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 table.append("<th rowspan=2 colspan=1>Критерии качества медицинской помощи.</th>") ;
 			 }
 		 	 table.append("<th rowspan=2>№№п/п</th>") ;
-			 table.append("<th colspan=3>Оценочные баллы</th>") ;
+			 table.append("<th colspan=2>Оценочные баллы</th>") ;
 			 table.append("</tr>") ;
 			 table.append("<tr>") ;
 			 
 			 table.append("<th>зав. отд</th>") ;
-			 table.append("<th>эксперт</th>") ;
-			 table.append("<th>КЭР</th>") ;
+			 table.append("<th>эксперт (КР)</th>") ;
+			 //table.append("<th>КЭР</th>") ;
 			 
 			 table.append("</tr>") ;
 			 int cntPart =1 ;
@@ -552,11 +552,11 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						 valMark = aValueMap.get(String.valueOf(cntPart - 1));
 					 }
 					 table.append(recordExpertShort(row[0], row[6], valMark, cntPart, aCntSection, "Expert", aTypeSpecialist, aView,aVocName));
-					 valMark = row[7];
+					/* valMark = row[7];
 					 if (aReplaceValue && !aView && aTypeSpecialist.equals("Coeur")) {
 						 valMark = aValueMap.get(String.valueOf(cntPart - 1));
 					 }
-					 table.append(recordExpertShort(row[0], row[8], valMark, cntPart, aCntSection, "Coeur", aTypeSpecialist, aView,aVocName));
+					 table.append(recordExpertShort(row[0], row[8], valMark, cntPart, aCntSection, "Coeur", aTypeSpecialist, aView,aVocName));*/
 				 }
 			 }
 		 }

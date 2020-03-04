@@ -22,8 +22,7 @@
       <msh:tableColumn columnName="Пациент" property="patient" guid="69-8a75-e825fd37e296" />
       <msh:tableColumn columnName="№мед.карты" property="numberMedCard" guid="698c-d4e3-4be5-8a75-e825fd37e296" />
       <msh:tableColumn columnName="Зав.отд." property="zavMark" guid="6c34a7-4512-90aa-75e4e5ae6d63" />
-      <msh:tableColumn columnName="Эксперт" property="expertMark" guid="6c3be340-b4a7-4512-90aa-75e4e5ae6d63" />
-      <msh:tableColumn columnName="КЭР" property="kepMark" guid="c28f06f0-c64a-4cdd-b84f-b1e081186496" />
+      <msh:tableColumn columnName="Эксперт (КР)" property="expertMark" guid="6c3be340-b4a7-4512-90aa-75e4e5ae6d63" />
       <msh:tableColumn columnName="Пользователь" property="createUsername" guid="c28f06f0-c64a-4cdd-b84f-b1e081186496" />
       <msh:tableColumn columnName="Дата создания" property="createDate" guid="c28f06f0-c64a-4cdd-b84f-b1e081186496" />
     </msh:table>

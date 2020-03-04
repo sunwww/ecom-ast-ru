@@ -12,7 +12,7 @@
 
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="StacJournal">ОТЧЁТ ПО ЭКСПЕРТИЗЕ KMP</msh:title>
+        <msh:title mainMenu="StacJournal">ОТЧЁТ ПО ЭКСПЕРТИЗЕ KP</msh:title>
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -708,7 +708,7 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
 "/>
 
                 <form action="expertKMP.do" method="post" target="_blank">
-                    Пациенты, выписанные из стационара по экспертизе KMP с СЛО в отделении ${param.depname} за период с ${param.dateBegin} ${dateTo}
+                    Пациенты, выписанные из стационара по экспертизе KP с СЛО в отделении ${param.depname} за период с ${param.dateBegin} ${dateTo}
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
@@ -788,7 +788,7 @@ group by mc.id,pat.id,qec.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
 
                 <form action="expertKMP.do" method="post" target="_blank">
-                    Пациенты, выписанные по экспертизе KMP с СЛО в отделении ${param.depname} за период с ${param.dateBegin} ${dateTo}, в СЛС которых созданы экспертные карты ${param.draft}
+                    Пациенты, выписанные по экспертизе KP с СЛО в отделении ${param.depname} за период с ${param.dateBegin} ${dateTo}, в СЛС которых созданы экспертные карты ${param.draft}
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>

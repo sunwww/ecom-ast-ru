@@ -126,7 +126,7 @@
                     <tags:identityPatient name="identityPatient" />
                     <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit/PatientSet" name="Браслеты" styleId="viewShort" action="/javascript:showidentityPatient($('parent').value,true)"  title='Браслеты'/>
                     <msh:sideLink roles="/Policy/Mis/MedCase/ActRVK" name="Акт РВК" params="" action="/javascript:showOrCreateAktRvk();" title="Акт РВК"/>
-                    <msh:sideLink styleId="viewShort" action="/javascript:showExpertKMP(${param.id})" name='Экспертиза KMP' title="Экспертиза KMP" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+                    <msh:sideLink styleId="viewShort" action="/javascript:showExpertKMP(${param.id})" name='Экспертиза КР' title="Экспертиза КР" params="" roles="/Policy/Mis/MedCase/Visit/View" />
 
                 </msh:sideMenu>
                 <msh:sideMenu title="Печать">
@@ -727,13 +727,13 @@ where m.id ='${param.id}'"/>
                                             else if (+res != 0) {
                                                 alert("Заведующий отделением уже заполнил эту карту, врачу больше редактировать нельзя!");
                                             } else
-                                                alert("Не найдено совпадений по диагнозам в СЛО для экспертизы KMP!");
+                                                alert("Не найдено совпадений по диагнозам в СЛО для экспертизы KP!");
                                         }
                                     }
                                 );
                             }
                             else
-                                alert("Нет диагнозов в СЛО для экспертизы KMP!");
+                                alert("Нет диагнозов в СЛО для экспертизы KP!");
                         }
                 });
                 }

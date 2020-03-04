@@ -128,6 +128,7 @@
 		            }
 				});
 	    	} else {
+                $('BioIntakeRootPane').removeAttribute("hidden");
 	    		cancelBioIntakeInfo();
 	    	}	
 		}
