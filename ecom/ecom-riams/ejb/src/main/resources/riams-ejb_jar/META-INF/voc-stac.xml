@@ -548,8 +548,20 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 order=""
 	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
-     </voc> 
+     </voc>
 
+	<voc id='vocLpuHospOtdOnlyKMP' type='NativeVocService'>
+		<NativeVocService
+				from="MisLpu ml"
+				names="ml.name||' ('||mlP.name||')'"
+				parent=''
+				nameId="ml.id"
+				queryAppend=" ml.isreportkmp=true "
+				join="left join VocLpuFunction vlf ON vlf.id = ml.lpuFunction_id left join MisLpu mlP on mlP.id=ml.parent_id "
+				order=""
+				queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
+		/>
+	</voc>
            <!--  queryAppend = 'dateFinish is null' -->
            
            <!-- Справочник типов стационара при выписке, поступлении -->
