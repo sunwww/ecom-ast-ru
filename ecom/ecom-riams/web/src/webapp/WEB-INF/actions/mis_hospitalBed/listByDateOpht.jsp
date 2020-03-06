@@ -27,14 +27,14 @@ left join MedCase mc on mc.id=wct.medcase_id
 left join vocworkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
-where wct.createDate between to_date('${param.startDate}','dd.mm.yyyy')
+where wct.dateFrom between to_date('${param.startDate}','dd.mm.yyyy')
 	 and to_date('${param.finishDate}','dd.mm.yyyy')
   ${statusSql}
   and e.id is not null
-group by wct.id,wct.createDate,pat.id
+group by wct.id,wct.dateFrom,pat.id
 ,wct.createDate,mc.dateStart,mc.dateFinish,wct.phone,e.name
 ,vwf.name,wp.lastname,wp.firstname,wp.middlename
-order by wct.createDate,pat.lastname,pat.firstname,pat.middlename
+order by wct.dateFrom,pat.lastname,pat.firstname,pat.middlename
     "
     />
     <msh:table printToExcelButton="Сохранить в excel" name="stac_planHospitalOpht" action="entityView-stac_planOphtHospital.do"

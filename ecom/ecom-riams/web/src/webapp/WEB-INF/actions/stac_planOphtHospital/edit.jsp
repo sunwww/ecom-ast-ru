@@ -24,6 +24,9 @@
                 <msh:autoComplete property="eye" label="Глаз" fieldColSpan="3" horizontalFill="true" vocName="vocEye"/>
             </msh:row>
             <msh:row>
+                <msh:textField property="dateFrom" label="Предварительная дата госпитализации"/>
+            </msh:row>
+            <msh:row>
                 <msh:textArea property="comment" fieldColSpan="3" horizontalFill="true" label="Замечания"/>
             </msh:row>
             <msh:row>

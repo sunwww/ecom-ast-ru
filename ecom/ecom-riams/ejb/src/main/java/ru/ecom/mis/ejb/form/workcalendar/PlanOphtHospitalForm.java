@@ -122,6 +122,14 @@ public class PlanOphtHospitalForm extends IdEntityForm {
     public Long getWorkFunction() {return theWorkFunction;}
     public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
 
+    /** Предполагаемая дата начала госпитализации */
+    @Comment("Предполагаемая дата начала госпитализации")
+    @Persist @DateString
+    @DoDateString
+    @Required
+    public String getDateFrom() {return theDateFrom;}
+    public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+
     /** Отделение */
     private Long theDepartment;
     /** Телефон пациента */
@@ -152,4 +160,6 @@ public class PlanOphtHospitalForm extends IdEntityForm {
     private Long theMedCase;
     /** Рабочая функция */
     private Long theWorkFunction;
+    /** Предполагаемая дата начала госпитализации */
+    private String theDateFrom;
 }
