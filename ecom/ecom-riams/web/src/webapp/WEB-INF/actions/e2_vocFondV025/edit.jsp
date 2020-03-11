@@ -5,7 +5,6 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
-
     <tiles:put name="body" type="string">
         <msh:form action="/entitySaveGoView-e2_vocFondV025.do" defaultField="code">
             <msh:hidden property="id" />
@@ -17,7 +16,6 @@
                 </msh:row><msh:row>
                    <msh:textField property="name" size="100"/>
             </msh:row>
-
                 <msh:submitCancelButtonsRow colSpan="4" />
             </msh:panel>
         </msh:form>
@@ -40,7 +38,6 @@
             <msh:sideMenu>
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_vocFondV025" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-e2_v015Link" name="Создать привязку" roles="/Policy/E2/Edit" />
-
             </msh:sideMenu>
             <tags:expertvoc_menu currentAction="main"/>
         </msh:ifFormTypeIsView>

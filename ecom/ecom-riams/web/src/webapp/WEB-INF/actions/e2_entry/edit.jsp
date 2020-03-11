@@ -9,6 +9,7 @@
     </tiles:put>
 
     <tiles:put name="body" type="string">
+        <tags:enter_date name="2" functionSave="changeServiceDate"/>
         <tags:E2ServiceAdd name="Diagnosis"/>
         <msh:form action="/entityParentSaveGoView-e2_entry.do" defaultField="lastname">
             <msh:hidden property="id" />
@@ -371,11 +372,12 @@
                 left join VocMedService vms on vms.id=ms.medservice_id
                 left join voce2fondv021 v021 on v021.id=ms.doctorspeciality_id
                      where ms.entry_id=${param.id}"/>
-                <msh:table idField="1" styleRow="6" name="servicesList" action="jabascript:void()" noDataMessage="Нет услуг по случаю"
+                <msh:table idField="1" styleRow="6" name="servicesList" action="entityParentEdit-e2_entryMedService.do" noDataMessage="Нет услуг по случаю"
                            deleteUrl="entityParentDeleteGoParentView-e2_entryMedService.do" >
                     <msh:tableColumn columnName="ИД" property="1"/>
-                    <msh:tableColumn columnName="Услуга" property="2"/>
+                    <msh:tableColumn columnName="Услуга" property="2" />
                     <msh:tableColumn columnName="Дата оказания" property="3"/>
+                    <msh:tableButton buttonShortName="ДТ" buttonFunction="show2EnterDate" property="1"/>
                     <msh:tableColumn columnName="СНИЛС" property="4"/>
                     <msh:tableColumn columnName="Должность" property="7"/>
                     <msh:tableColumn columnName="Цена" property="5"/>
@@ -436,6 +438,18 @@ where cancer.entry_id=${param.id}"/>
         <msh:ifFormTypeIsView formName="e2_entryForm">
 
                 <script type="text/javascript">
+
+                    // устанавливаем дату для мед. услуги
+                    function changeServiceDate(serviceId, dte) {
+                        if (serviceId && dte) {
+                            Expert2Service.setEntryMedServiceDate(serviceId, dte, {
+                               callback: function() {
+                                   window.document.location.reload();
+                               }
+                            });
+                        }
+
+                    }
 
                     function deleteEntryFactor(factor) {
                         addOrDeleteEntryFactor(factor,true);

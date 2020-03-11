@@ -11,7 +11,7 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-        <tags:expertvoc_menu currentAction="main"/>
+        <tags:expertvoc_menu currentAction="e2_vocFondV020_st"/>
     </tiles:put>
 
     <tiles:put name='body' type='string'>
@@ -27,10 +27,10 @@
                 left join vocmedservice vms on vms.id=voc.defaultStacMedService_id
                 group by voc.id, voc.code, voc.name, vms.id, vms.code, vms.name, voc.finishdate order by cast(voc.code as int)"/>
                 <msh:table  name="listAll" styleRow="5" action="entityView-e2_vocFondV020.do" idField="1" disableKeySupport="true">
-                    <msh:tableColumn columnName="Код"  property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Название" property="3" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Профили помощи V002"  property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Услуга по умолчанию"  property="6" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="Код"  property="2" />
+                    <msh:tableColumn columnName="Название" property="3" />
+                    <msh:tableColumn columnName="Профили помощи V002"  property="4" />
+                    <msh:tableColumn columnName="Услуга по умолчанию"  property="6" />
                 </msh:table>
             </msh:section>
         </msh:hideException>

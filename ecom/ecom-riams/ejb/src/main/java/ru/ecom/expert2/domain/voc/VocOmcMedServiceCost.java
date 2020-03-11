@@ -1,6 +1,7 @@
 package ru.ecom.expert2.domain.voc;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -42,4 +43,11 @@ public class VocOmcMedServiceCost extends BaseEntity {
     public Date getFinishDate() {return theFinishDate;}
     public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
     private Date theFinishDate ;
+
+    /** Рабочая функция врача по умолчанию */
+    @Comment("Рабочая функция врача по умолчанию")
+    @OneToOne
+    public VocE2FondV021 getWorkFunction() {return theWorkFunction;}
+    public void setWorkFunction(VocE2FondV021 aWorkFunction) {theWorkFunction = aWorkFunction;}
+    private VocE2FondV021 theWorkFunction ;
 }

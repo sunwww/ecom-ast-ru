@@ -12,7 +12,7 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-
+        <tags:expertvoc_menu currentAction="e2_report_paid_st"/>
     </tiles:put>
 
     <tiles:put name="body" type="string">

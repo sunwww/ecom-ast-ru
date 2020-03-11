@@ -1,6 +1,8 @@
 package ru.ecom.expert2.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -9,6 +11,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 
 @Entity
+@AIndexes({
+        @AIndex(properties= {"listEntry"})
+        , @AIndex(properties= {"errorCode"})
+})
 public class E2EntryError extends BaseEntity {
 
     /** Заполнение с ошибкой */

@@ -72,7 +72,7 @@
               order by to_char(fp.startDate,'yyyy')"/>
         <msh:section title='Планы по годам'>
             <msh:table  name="entryList" action="e2_stacFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Год" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="Год" property="1" />
             </msh:table>
         </msh:section>
         <%
@@ -146,16 +146,16 @@
              left join vocMethodHighCare vmp on vmp.id=fp.method_id
               where fp.dtype='${dtype}' ${startDateSql} ${sqlAppend}
               order by fp.startDate, vkg.code, cast(mhp.code as int), ml.name, vbt.name "/>
-        <msh:section title='Результат поиска по ${param.year} ${param.month} году'> ${entryListSql}
+        <msh:section title='Результат поиска по ${param.year} ${param.month} году'>
             <msh:table openNewWindow="true" name="entryList" action="entityEdit-${formName}.do" idField="1" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Период" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Вид случая" property="9" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="КСГ" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Профиль" property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Профиль коек" property="10" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Отделение" property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Кол-во случаев" property="6" isCalcAmount="true" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Цена" property="7" isCalcAmount="true" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="Период" property="2" />
+                <msh:tableColumn columnName="Вид случая" property="9" />
+                <msh:tableColumn columnName="КСГ" property="3" />
+                <msh:tableColumn columnName="Профиль" property="4" />
+                <msh:tableColumn columnName="Профиль коек" property="10" />
+                <msh:tableColumn columnName="Отделение" property="5" />
+                <msh:tableColumn columnName="Кол-во случаев" property="6" isCalcAmount="true" />
+                <msh:tableColumn columnName="Цена" property="7" isCalcAmount="true" />
             </msh:table>
         </msh:section>
         <%
@@ -179,7 +179,7 @@
 
         <msh:section title='Финансовый план за ${param.year} ${param.month} '><input type="button" value="Просмор плана" onclick="addHref('reestr',1)">
             <msh:table name="entryList" action="e2_stacFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Период" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6"  />
+                <msh:tableColumn columnName="Период" property="1"  />
             </msh:table>
         </msh:section>
         <%
@@ -193,7 +193,7 @@
         <msh:sideMenu title="Добавить" >
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_${shortType}FinancePlan" name="Сформировать новое" roles="/Policy/E2/Create" />
         </msh:sideMenu>
-        <tags:expertvoc_menu currentAction="main"/>
+        <tags:expertvoc_menu currentAction="${param.type}_st"/>
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>

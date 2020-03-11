@@ -12,7 +12,7 @@
 
     <tiles:put name='side' type='string'>
 
-        <tags:expertvoc_menu currentAction="main"/>
+        <tags:expertvoc_menu currentAction="e2_bill_st"/>
     </tiles:put>
 
     <tiles:put name='body' type='string'>
@@ -32,13 +32,13 @@
             order by billdate desc"/>
             <msh:section title='Результат поиска'>
                 <msh:table  name="billList" action="entityEdit-e2_bill.do" idField="1" disableKeySupport="true" styleRow="6" deleteUrl="entityDelete-e2_bill.do">
-                    <msh:tableColumn columnName="Номер счета" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Дата счета"  property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Статус"  property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Сумма" property="6" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Заполнение" property="8" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Примечание" property="9" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Кол-во случаев" property="7" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="Номер счета" property="2" />
+                    <msh:tableColumn columnName="Дата счета"  property="3" />
+                    <msh:tableColumn columnName="Статус"  property="5" />
+                    <msh:tableColumn columnName="Сумма" property="6" />
+                    <msh:tableColumn columnName="Заполнение" property="8" />
+                    <msh:tableColumn columnName="Примечание" property="9" />
+                    <msh:tableColumn columnName="Кол-во случаев" property="7" />
                 </msh:table>
             </msh:section>
         </msh:hideException>

@@ -52,4 +52,11 @@ public class VocOmcMedServiceCostForm extends IdEntityForm {
     public String getFinishDate() {return theFinishDate;}
     public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
     private String theFinishDate ;
+
+    /** Рабочая функция врача по умолчанию */
+    @Comment("Рабочая функция врача по умолчанию")
+    @Persist
+    public Long getWorkFunction() {return theWorkFunction;}
+    public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+    private Long theWorkFunction ;
 }

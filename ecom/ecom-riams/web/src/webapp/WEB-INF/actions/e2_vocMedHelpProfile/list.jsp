@@ -14,7 +14,7 @@
         <msh:sideMenu title="Добавить">
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_vocMedHelpProfile" name="Сформировать новое" roles="/Policy/E2/Create" />
         </msh:sideMenu>
-        <tags:expertvoc_menu currentAction="main"/>
+        <tags:expertvoc_menu currentAction="e2_vocMedHelpProfile_st"/>
     </tiles:put>
 <%
     request.setAttribute("whereSql",request.getParameter("show")!=null ? "" : " where voc.noActuality is null or voc.noActuality='0'");

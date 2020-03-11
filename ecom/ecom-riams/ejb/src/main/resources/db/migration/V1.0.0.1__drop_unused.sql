@@ -1,0 +1,13 @@
+drop table addressregion;
+ALTER TABLE sqluser.anesthesia DROP COLUMN thebandage_id;
+drop table bandage;
+drop table birthcase_vocnewborncomplication;
+ALTER TABLE sqluser.message DROP COLUMN check_id;
+drop table checker_property;
+drop table checker;
+drop table birthreportrow;
+drop table birthreportdate;
+drop table birthcase_voclivebirthcriterion;
+drop table birthcase_vocobstetricprocedure;
+drop table birthcase_vocpregnancymedfactor;
+drop table birthcase_vocchildbirthcomplication;

@@ -69,8 +69,8 @@ public class Expert2ServiceJs {
         aElement.addContent(new Element(aName).setText(aValue));
     }
 
-    public String fixSomeErrors(Long aListEntryId, String aErrorCode, String aFix, HttpServletRequest aRequest) throws NamingException, SQLException {
-        if ("503".equals(aErrorCode) ) {
+    public String fixSomeErrors(Long aListEntryId, String aErrorCode, HttpServletRequest aRequest) throws NamingException, SQLException {
+       /*  if ("503".equals(aErrorCode) ) { //TODO убрать в марте, если точно будет не нужно
             IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
             String sql = "select case when e.ticket263number='' then '0' else coalesce(e.ticket263Number,'0') end as N_NPR" +
                     ", e.startDate as D_NPR" +
@@ -91,7 +91,7 @@ public class Expert2ServiceJs {
             JSONArray list = new JSONArray(service.executeSqlGetJson(sql));
             Element ZL_LIST;
             String filename;
-            if ("N2".equals(aFix)) {
+           if ("N2".equals(aFix)) {
                 LOG.info("Формируем N2 по ошибкам 503");
 
                 String[] flds = {"N_NPR","D_NPR","FOR_POM","DCODE_MO","NCODE_MO","DATE_1","TIME_1","VPOLIS","SPOLIS","NPOLIS","FAM","IM","OT","W","DR","USL_OK","DET","PROFIL","NHISTORY","DS1"};
@@ -141,10 +141,16 @@ public class Expert2ServiceJs {
             } else {
                 return null;
             }
+
+
             IExpert2XmlService xmlService = Injection.find(aRequest).getService(IExpert2XmlService.class);
             xmlService.createXmlFile(ZL_LIST, filename);
             return "/expert2xml/"+filename+".xml";
 
+        } else  */ if ("223".equals(aErrorCode)) {
+            LOG.info("Проверяем по базе ТФОМС и проставляем действующие полиса на дату начала случая");
+            IExpert2Service xmlService = Injection.find(aRequest).getService(IExpert2Service.class);
+            return xmlService.fixFondAnswerError(aListEntryId,aErrorCode);
         } else {
             return "Я не понял что мне делать!";
         }
@@ -437,5 +443,10 @@ public class Expert2ServiceJs {
     public void cleanAllErrorsByList(Long aEntryList, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         service.executeUpdateNativeSql("delete from e2entryerror where listentry_id="+aEntryList);
+    }
+
+    public void setEntryMedServiceDate(Long aMedServiceId, String aServiceDate, HttpServletRequest aRequest ) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        service.executeUpdateNativeSql("update entrymedservice set serviceDate=to_date('"+aServiceDate+"','dd.MM.yyyy') where id="+aMedServiceId);
     }
 }

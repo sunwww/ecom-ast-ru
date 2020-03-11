@@ -4,9 +4,7 @@ import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -17,6 +15,10 @@ import java.util.Date;
 @Comment("Справочник медицинских услуг")
 @Entity
 @Table(schema="SQLUser")
+@NamedQueries({
+		@NamedQuery( name="VocMedService.vocMedServiceByCode"
+				, query="from VocMedService where code=:code and finishDate is null")
+})
 public class VocMedService extends VocBaseEntity{
 	/** Полное название */
 	@Comment("Полное название")

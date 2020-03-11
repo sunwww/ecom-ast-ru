@@ -51,7 +51,7 @@
     %>
 	<style type="text/css">
 		body {
-			background: url("/customer/images/${curdate_MMdd}/${idimg}.jpg") no-repeat 90px bottom ;
+			background: url("/customer/images/${curdate_MMdd}/${idimg}.jpg") no-repeat 90px top ;
 		}
 		#header {
 			border-bottom: none ;

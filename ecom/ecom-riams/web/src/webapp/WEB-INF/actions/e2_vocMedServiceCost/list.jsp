@@ -14,15 +14,16 @@
         <msh:sideMenu title="Добавить">
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_vocMedServiceCost" name="Создать цену" roles="/Policy/E2/Create" />
         </msh:sideMenu>
-        <tags:expertvoc_menu currentAction="main"/>
+        <tags:expertvoc_menu currentAction="e2_vocMedServiceCost_st"/>
     </tiles:put>
     <tiles:put name='body' type='string'>
         <msh:hideException>
             <msh:section title='Результат поиска'>
                 <ecom:webQuery name="listAll" nativeSql="select voc.id as f1, vms.code||' '||vms.name as f2
-                ,voc.cost, voc.startDate, voc.finishDate
+                ,voc.cost, voc.startDate, voc.finishDate, v021.code||v021.name as f6_v021
                  from VocOmcMedServiceCost voc
   left join vocmedservice vms on vms.id=voc.medservice_id
+  left join VocE2FondV021 v021 on v021.id=voc.workFunction_id
   order by voc.startDate, vms.code
 "/>
 
@@ -31,6 +32,7 @@
                     <msh:tableColumn columnName="Цена" property="3" />
                     <msh:tableColumn columnName="Начало действия"  property="4" />
                     <msh:tableColumn columnName="Окончание действия"  property="5" />
+                    <msh:tableColumn columnName="Должность"  property="6" />
                 </msh:table>
             </msh:section>
         </msh:hideException>

@@ -53,14 +53,12 @@ public class EntryMedService extends BaseEntity {
     @Comment("СНИЛС специалиста, выполневшего услугу")
     public String getDoctorSnils() {return theDoctorSnils;}
     public void setDoctorSnils(String aDoctorSnils) {theDoctorSnils = aDoctorSnils;}
-    /** СНИЛС специалиста, выполневшего услугу */
     private String theDoctorSnils ;
 
     /** Дата оказания мед. услуги */
     @Comment("Дата оказания мед. услуги")
     public Date getServiceDate() {return theServiceDate;}
     public void setServiceDate(Date aServiceDate) {theServiceDate = aServiceDate;}
-    /** Дата оказания мед. услуги */
     private Date theServiceDate ;
 
     /** Специальность врача */
@@ -68,7 +66,6 @@ public class EntryMedService extends BaseEntity {
     @OneToOne
     public VocE2FondV021 getDoctorSpeciality() {return theDoctorSpeciality;}
     public void setDoctorSpeciality(VocE2FondV021 aDoctorSpeciality) {theDoctorSpeciality = aDoctorSpeciality;}
-    /** Специальность врача */
     private VocE2FondV021 theDoctorSpeciality ;
 
     /** Диагноз, выявленный при оказании услуги */
@@ -76,7 +73,6 @@ public class EntryMedService extends BaseEntity {
     @OneToOne
     public VocIdc10 getMkb() {return theMkb;}
     public void setMkb(VocIdc10 aMkb) {theMkb = aMkb;}
-    /** Диагноз, выявленный при оказании услуги */
     private VocIdc10 theMkb ;
 
     /** Цена */

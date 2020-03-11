@@ -7,14 +7,14 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Expert2">Реестры омс</msh:title>
+        <msh:title mainMenu="Expert2">Цена ДД по возрасту и полу</msh:title>
     </tiles:put>
 
     <tiles:put name='side' type='string'>
         <msh:sideMenu title="Добавить">
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_extDispPrice" name="Сформировать новое" roles="/Policy/E2/Create" />
         </msh:sideMenu>
-        <tags:expertvoc_menu currentAction="main"/>
+        <tags:expertvoc_menu currentAction="e2_extDispPrice_st"/>
     </tiles:put>
 
     <tiles:put name='body' type='string'>

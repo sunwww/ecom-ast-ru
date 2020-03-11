@@ -19,6 +19,9 @@
                    <msh:textField property="cost"/>
                 </msh:row>
                 <msh:row>
+                    <msh:autoComplete vocName="vocE2FondV021" property="workFunction" size="100"/>
+                </msh:row>
+                <msh:row>
                     <msh:autoComplete vocName="vocMedServiceActual" property="medService" size="100"/>
                 </msh:row>
                 <msh:submitCancelButtonsRow colSpan="4" />

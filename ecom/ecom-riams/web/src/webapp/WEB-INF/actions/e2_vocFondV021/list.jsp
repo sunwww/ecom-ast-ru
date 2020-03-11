@@ -15,7 +15,7 @@
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_vocFondV021" name="Создать (не надо нажимать)" roles="/Policy/E2/Create" />
             <msh:sideLink key="ALT+2"  action="/entityList-e2_vocFondV021.do?typeFilter=all&" name="Показать все" roles="/Policy/E2/Create" />
         </msh:sideMenu>
-        <tags:expertvoc_menu currentAction="main"/>
+        <tags:expertvoc_menu currentAction="e2_vocFondV021_st"/>
     </tiles:put>
 <%
     String typeFilter = request.getParameter("typeFilter");

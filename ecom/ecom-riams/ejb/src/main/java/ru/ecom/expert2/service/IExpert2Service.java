@@ -37,4 +37,5 @@ public interface IExpert2Service {
     <T> T getActualVocBySqlString(Class aClass, String aSql);
     E2Entry cloneEntity(E2Entry aSourceObject);
     BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry);
+    String fixFondAnswerError(Long aListEntryId, String aSanctionCode);
 }
