@@ -208,7 +208,7 @@ public class HospitalMedCaseServiceJs {
 	/*Количество пред. госпитализаций за месяц*/
 	public String getPreHospByMonth(Integer aYear, Integer aMonth, Long aDepartment, Boolean isOpht, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String date = "dateFrom";
+		String date = isOpht? "createDate" : "dateFrom";
 		String sql = "select to_char(pre."+date+",'dd.MM.yyyy'), cast(to_char(pre."+date+",'dd') as int) as dat, count(pre.id) as cnt" +
 				" from workcalendarhospitalbed pre" +
 				" left join voceye e on e.id=pre.eye_id" +

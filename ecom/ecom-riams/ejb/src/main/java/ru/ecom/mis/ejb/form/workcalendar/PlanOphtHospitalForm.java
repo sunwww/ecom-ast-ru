@@ -126,7 +126,6 @@ public class PlanOphtHospitalForm extends IdEntityForm {
     @Comment("Предполагаемая дата начала госпитализации")
     @Persist @DateString
     @DoDateString
-    @Required
     public String getDateFrom() {return theDateFrom;}
     public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
 
