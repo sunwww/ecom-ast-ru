@@ -37,9 +37,73 @@
             var val = jQuery('#historyNumber').val();
             if (val) window.document.location="entityList-e2_entry.do?id=&orderBy=firstNew&filter=historyNumber:"+val;
         }
-        let result = '${importResult}';
-        if (result) {
-            showToastMessage(result);
+        let monitor={};
+        var statusToast;
+        let monitorId = '${monitorId}';
+        if (monitorId) {
+            monitor ={};
+            monitor.id=monitorId;
+            jQuery.toast("Подождите");
+            updateStatus();
+        }
+        function updateStatus() {
+            var id=monitor.id;
+            if (id){ //Если есть действующий монитор
+                if (statusToast) {
+                } else {
+                    statusToast =jQuery.toast({
+                        heading:"Формирование"
+                        ,text:"Идет расчет..."
+                        ,icon:"info"
+                        ,hideAfter:false
+                    });
+                }
+                RemoteMonitorService.getMonitorStatus(id, {
+                    callback: function(aStatus) {
+                        var txt;
+                        if (aStatus.finish) {
+                            txt="Завеpшено!";
+                            if (aStatus.finishedParameters) {
+                                txt+=" <a href='"+aStatus.finishedParameters+"'>ПЕРЕЙТИ</a>";
+                            }
+                            monitor = {};
+                        } else {
+                            txt=aStatus.text;
+                            txt+="<a href='javascript:stopCheckAndMonitor()'>ПРЕРВАТЬ ЗАГРУЗКУ</a>";
+                            setTimeout(updateStatus,4000) ;
+                        }
+                        statusToast.update({
+                            text:txt
+                        });
+                    },
+                    errorHandler:function(message) {
+                        setTimeout(updateStatus,4000) ;
+                    },
+                    warningHandler:function(message) {
+                        setTimeout(updateStatus,4000) ;
+                    }
+                });
+            }
+
+        }
+        function stopCheckAndMonitor() {
+            if (monitor.id) {
+                if (confirm("Желаете прервать что-то?")) {
+                    RemoteMonitorService.cancel(monitor.id, {
+                        callback: function () {
+                            if (!statusToast) {
+                                statusToast =jQuery.toast({
+                                    heading:""
+                                    ,text:""
+                                    ,icon:"info"
+                                    ,hideAfter:false
+                                });
+                            }
+                            statusToast.update({text:"Формирование чето-то прервано!"});
+                        }
+                    });
+                }
+            }
         }
         </script>
     </tiles:put>
