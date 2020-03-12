@@ -1021,6 +1021,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     		}
     	});
     }
+    onload=checkIsAttachedOrDead();
+
     function checkPatientByCommonNumber(a) {
     		showPatientFindPatientByFond("Подождите идет поиск...") ;
     		PatientButtonView(0) ;
@@ -1106,11 +1108,6 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
       		});
       	}
 			onload=checkPatientInList();
-		</script>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondAttachment">
-      	<script type="text/javascript">
-			onload=checkIsAttachedOrDead();
 		</script>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet">

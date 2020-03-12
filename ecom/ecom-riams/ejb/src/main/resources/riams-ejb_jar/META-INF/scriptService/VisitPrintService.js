@@ -299,6 +299,7 @@ function printDocument(aCtx,aParams) {
 	map.put("id", medCase.getId()) ;
 	map.put("medCase", medCase) ;
 	map.put("document",doc) ;
+	map.put("healthGroup",doc.healthGroup!=null ? doc.healthGroup.name : "");
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;

@@ -10,6 +10,7 @@ import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentObjectBiologAnalysis;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocHealthGroup;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.poly.ejb.domain.Ticket;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -161,5 +162,12 @@ public class InternalDocuments extends Document {
 	public VocBedSubType getBedSubType() {return theBedSubType;}
 	public void setBedSubType(VocBedSubType aBedSubType) {theBedSubType = aBedSubType;}
 	private VocBedSubType theBedSubType;
+
+	/** Группа здоровья */
+	@Comment("Группа здоровья")
+	@OneToOne
+	public VocHealthGroup getHealthGroup() {return theHealthGroup;}
+	public void setHealthGroup(VocHealthGroup aHealthGroup) {theHealthGroup = aHealthGroup;}
+	private VocHealthGroup theHealthGroup ;
 
 }
