@@ -1,8 +1,5 @@
 <%@page import="ru.ecom.mis.ejb.service.patient.HospitalLibrary"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="java.util.Calendar"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="java.util.Date"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -31,8 +28,7 @@
 	String typeView =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeView","2", request) ;
 	String typeEmergency =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeEmergency","3", request) ;
 	String typeResult =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeResult","3", request) ;
-  %>
-  <%
+
   	String shortI = request.getParameter("short") ;
 	ActionUtil.setParameterFilterSql("department","d.id", request) ;
 	ActionUtil.setParameterFilterSql("serviceStream","vss.id", request) ;
@@ -43,12 +39,12 @@
 
   if (shortI==null || shortI.equals("")) {
   %>
-    <msh:form action="/stac_groupByBedFundList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/stac_groupByBedFundList.do" defaultField="department" disableFormDataConfirm="true" method="GET" >
+    <msh:panel >
+      <msh:row >
+        <msh:separator label="Параметры поиска" colSpan="7"  />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row >
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="1">  поступления
@@ -84,7 +80,7 @@
 	        	<input type="radio" name="typeEmergency" value="3">  все
 	        </td>
         </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row >
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  региональные
@@ -99,7 +95,7 @@
         	<input type="radio" name="typePatient" value="4">  все
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row >
         <td class="label" title="Поиск по полисам (typePolicy)" colspan="1"><label for="typePolicyName" id="typePolicyLabel">Полис:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePolicy" value="1">  региональные
@@ -163,8 +159,8 @@
         	label="Пол" horizontalFill="true" vocName="vocSex"/>
         </msh:row>
         <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с"  />
+        <msh:textField property="dateEnd" label="по"  />
 		<td>
             <input type="submit" onclick="find()" value="Найти" />
           </td>
@@ -202,9 +198,9 @@
     </script>
     <%
   }
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
-    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	String dateEnd = request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("dateEnd", date) ;
     	} else {
@@ -212,22 +208,22 @@
     	}
     	request.setAttribute("dateBegin", date) ;
     	
-    	if (typeEmergency!=null && typeEmergency.equals("1")) {
+    	if ("1".equals(typeEmergency)) {
     		request.setAttribute("emergencySql", " and hmc.emergency='1' ") ;
-    	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
+    	} else if ("2".equals(typeEmergency)) {
     		request.setAttribute("emergencySql", " and (hmc.emergency is null or hmc.emergency='0') ") ;
     	} 
-    	if (typeResult!=null && typeResult.equals("1")) {
+    	if ("1".equals(typeResult)) {
     		request.setAttribute("result_dateSql"," and hmc.moveToAnotherLPU_id is not null") ;
-    	} else if (typeResult!=null && typeResult.equals("2")) {
+    	} else if ("2".equals(typeResult)) {
     		request.setAttribute("result_dateSql"," and vhr.code='11'") ;
     	}
     			
-    	if (typePolicy.equals("2")) {
+    	if ("2".equals(typePolicy)) {
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			request.setAttribute("policySql", " and upper(mp.dtype) like '%FOREIGN'") ;
 			request.setAttribute("infoTypePolicy", "иногородние") ;
-		} else if (typePolicy.equals("1")){
+		} else if ("1".equals(typePolicy)){
 			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			request.setAttribute("policySql", " and upper(mp.dtype) not like '%FOREIGN'") ;
 			request.setAttribute("infoTypePolicy", "региональные") ;
@@ -248,16 +244,16 @@
 			request.setAttribute("patientSql", "") ;
 			request.setAttribute("infoTypePat", "Поиск по всем") ;
 		}
-    	String dateSql = "transferDate" ;
-    	if (typeDate!=null && typeDate.equals("1")) {
+    	String dateSql ;
+    	if ("1".equals(typeDate)) {
     		dateSql="dateStart" ;
-    	} else if (typeDate!=null && typeDate.equals("2")) {
+    	} else if ("2".equals(typeDate)) {
     		dateSql="dateFinish" ;
     	} else {
     		dateSql="transferDate" ;
     	}
     	request.setAttribute("dateSql",dateSql) ;
-    	if (typeViewAddStatus!=null && typeViewAddStatus.equals("1")) {
+    	if ("1".equals(typeViewAddStatus)) {
     		request.setAttribute("viewAddStatusSql", "vas.name as vasname ") ;
     		request.setAttribute("viewAddStatusGroup", " p.additionStatus_id, vas.name ,") ;
     		request.setAttribute("viewAddStatusOrder", " vas.name, ") ;
@@ -268,9 +264,8 @@
     		request.setAttribute("viewAddStatusOrder", "") ;
     		request.setAttribute("viewAddStatusSqlId", "''") ;
     		request.setAttribute("viewAddStatusStyle", " td.noAddStatus,th.noAddStatus{display:none;}") ;
-    		
     	}
-    	if (typeViewServiceStream!=null && typeViewServiceStream.equals("1")) {
+    	if ("1".equals(typeViewServiceStream)) {
     		request.setAttribute("viewServiceStreamSql", " vss.name as vssname ") ;
     		request.setAttribute("viewServiceStreamGroup", " vss.id, vss.name ,") ;
     		request.setAttribute("viewServiceStreamOrder", " vss.name, ") ;
@@ -291,9 +286,9 @@
 		</style>
    		</msh:ifInRole>    	
     	<%
-    	if (typeView!=null && typeView.equals("1")) {
+    	if ("1".equals(typeView)) {
     	%>
-    		<ecom:webQuery name="swod_by_standart" maxResult="1500" nameFldSql="swod_by_standart_sql" nativeSql="
+    		<ecom:webQuery name="swod_by_standart" maxResult="15000" nameFldSql="swod_by_standart_sql" nativeSql="
         select m.id
         ,d.name as depname,ss.code as sscode
         ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -348,18 +343,18 @@ left join VocSex vs on vs.id=p.sex_id
     <input type="submit" value="Печать всего" onclick="this.form.action='print-stac_report_bedFund_reestr.do'"> 
     <input type="submit" value="Печать для проверки" onclick="this.form.action='print-stac_report_bedFund_reestr_inog.do'"> 
     </form>
-    	<msh:table name="swod_by_standart" selection="multiply" 
+    	<msh:table name="swod_by_standart" selection="multiply" printToExcelButton="Сохранить в excel"
     	action="entityParentView-stac_slo.do" viewUrl="entityShortView-stac_slo.do" idField="1">
-		      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-		      <msh:tableColumn columnName="Отделение" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-		      <msh:tableColumn columnName="№ИБ" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-		      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-		      <msh:tableColumn columnName="Год рождения" property="5" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-		      <msh:tableColumn columnName="Дата пост. (отд)" property="6" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-		      <msh:tableColumn columnName="Дата выписки / перевода (отд)" property="7" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+		      <msh:tableColumn columnName="#" property="sn"  />
+		      <msh:tableColumn columnName="Отделение" property="2"  />
+		      <msh:tableColumn columnName="№ИБ" property="3"  />
+		      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4"  />
+		      <msh:tableColumn columnName="Год рождения" property="5"  />
+		      <msh:tableColumn columnName="Дата пост. (отд)" property="6"  />
+		      <msh:tableColumn columnName="Дата выписки / перевода (отд)" property="7"  />
 		      <msh:tableColumn columnName="К.Д по отд" property="8"/>
-		      <msh:tableColumn cssClass="NotViewInfoStac" columnName="Дата пост. (стац)" property="9" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-		      <msh:tableColumn cssClass="NotViewInfoStac" columnName="Дата выписки (стац)" property="10" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+		      <msh:tableColumn cssClass="NotViewInfoStac" columnName="Дата пост. (стац)" property="9"  />
+		      <msh:tableColumn cssClass="NotViewInfoStac" columnName="Дата выписки (стац)" property="10"  />
 		      <msh:tableColumn cssClass="NotViewInfoStac" columnName="К.Д по стац" property="11"/>
 		      <msh:tableColumn columnName="Диагноз" property="12"/>
 		      <msh:tableColumn columnName="Результат госпитализации" property="13"/>
@@ -369,7 +364,7 @@ left join VocSex vs on vs.id=p.sex_id
     	} else {
     		//Начинается свод
     		
-    	if (typeView!=null && typeView.equals("3")) {
+    	if ("3".equals(typeView)) {
     		request.setAttribute("viewDateSql", " to_char(m."+dateSql+",'dd.mm.yyyy') as dateViewS ") ;
     		request.setAttribute("viewDateGroup", " m."+dateSql+" ,") ;
     		request.setAttribute("viewDateOrder", " m."+dateSql+", ") ;
@@ -450,7 +445,7 @@ left join VocSex vs on vs.id=p.sex_id
 	 vbt.id , vbt.name,vbst.id,vbst.name
     order by  ${viewDateOrder} d.name,${viewServiceStreamOrder} ${viewAddStatusOrder} vbt.name,vbst.name
     	"/>
-    	<msh:table name="swod_by_standart"  selection="multiply"
+    	<msh:table name="swod_by_standart"  selection="multiply" printToExcelButton="Сохранить в excel"
     	viewUrl="stac_groupByBedFundList.do?short=Short&typeResult=${typeResult}&typeEmergency=${typeEmergency}&typePatient=${typePatient}&typePolicy=${typePolicy}&typeView=1"
     	action="stac_groupByBedFundList.do?typeEmergency=${typeEmergency}&typePatient=${typePatient}&typePolicy=${typePolicy}&typeView=1" idField="1">
     		<msh:tableColumn property="2" cssClass="noDate" columnName="Дата"/>
@@ -469,11 +464,7 @@ left join VocSex vs on vs.id=p.sex_id
 		//Заканчивается свод
     	}
     	} else {%>
-    
     	<i>Выберите параметры и нажмите найти </i>
     	<% }   %>
-     
-
   </tiles:put>
-
 </tiles:insert>
