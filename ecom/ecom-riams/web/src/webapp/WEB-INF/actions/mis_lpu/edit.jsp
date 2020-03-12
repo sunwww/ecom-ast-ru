@@ -104,6 +104,7 @@
         	<msh:checkBox property="isMaternityWard" label="Родильное отделение"/>
             <msh:checkBox property="isPatologyPregnant" label="Отделение патологии беременности"/>
             <msh:checkBox property="isOphthalmic" label="Офтальмологическое отделение"/>
+            <msh:checkBox property="isReportKMP" label="Учитывать в отчёте по экспертизе КР"/>
         </msh:row>
         <msh:row>
             <msh:checkBox property="isMobilePolyclinic" label="Мобильная поликлиника"/>

@@ -309,11 +309,23 @@
         <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
         <script type="text/javascript">
 
-            function unattachEln(aTemplate) {
+            function unattachEln() {
                 DisabilityService.unattachEln(${param.id},{
                     callback: function(aString) {
                         showToastMessage(aString,null,true);
                         jQuery("#mainForm").load("entityParentView-dis_document.do?id=${param.id} #mainForm");
+                    }});
+            }
+
+            function updateEln() {
+                DisabilityService.updateEln(${param.id},{
+                    callback: function(res) {
+                        if (res==true) {
+                            alert("ЭЛН был обновлён");
+                            window.location.reload();
+                        }
+                        else
+                            showToastMessage('Не удалось обновить ЭЛН!',null,true);
                     }});
             }
 
@@ -524,6 +536,7 @@
                                             name="duplicate" title="Дубликат (испорчен)" confirm="Вы действительно хотите создать дубликат текущего документа нетрудоспособности?" />
                 <tags:dis_workComboDocument roles="/Policy/Mis/Disability/Case/Document/Create" key="ALT+5"
                                             name="workCombo" title="Бланк по совместительству" confirm="Вы действительно хотите создать документ по совместительству на основе текущего документа нетрудоспособности?" />
+                <msh:sideLink confirm="Действительно?" params="id" action="/javascript:updateEln()" name="Обновить ЭЛН" roles="/Policy/Mis/Disability/ElectronicDisability/UpdateEln"/>
                 <tags:toAnotherDisCase name="toAnotherDisCase"  documentId="${param.id}"/>
             </msh:sideMenu>
             <msh:sideMenu title="Печать">

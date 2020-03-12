@@ -617,4 +617,13 @@ public class MisLpuForm extends IdNameEntityForm {
 	public void setIsOphthalmic(Boolean aIsOphthalmic) {theIsOphthalmic = aIsOphthalmic;}
 	/** Офтальмологическое? */
 	private Boolean theIsOphthalmic;
+
+
+	/** Учитывать в отчёте по КР? */
+	@Comment("Учитывать в отчёте по КР?")
+	@Persist
+	public Boolean getIsReportKMP() {return theIsReportKMP;}
+	public void setIsReportKMP(Boolean aIsReportKMP) {theIsReportKMP = aIsReportKMP;}
+	/** Учитывать в отчёте по КР? */
+	private Boolean theIsReportKMP;
 }

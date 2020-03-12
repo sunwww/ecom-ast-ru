@@ -741,6 +741,7 @@ public class QualityEstimationServiceJs {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select distinct vocidc10_id,isconcomitant from")
 				.append(" vocqualityestimationcrit_diagnosis")
+				.append(" left join mislpu lpu on lpu.id=(select department_id from medcase where id=").append(aSloId).append(")")
                 .append(" where vqecrit_id=ANY(select distinct vqecrit.id")
                 .append(" from vocqualityestimationcrit vqecrit")
                 .append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id")
@@ -751,10 +752,11 @@ public class QualityEstimationServiceJs {
                 .append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id")
                 .append(" left join patient pat on pat.id=mc.patient_id")
                 .append(" left join vocqualityestimationkind kind on kind.id=vqecrit.kind_id")
+				.append(" left join mislpu lpu on lpu.id=mc.department_id")
                 .append(" where mc.id=").append(aSloId)
                 .append(" and kind.code='KMP'")
                 .append(" and reg.code='4' and (prior.code='1' and (vqecrit_d.isconcomitant is null or vqecrit_d.isconcomitant=false)")
-                .append(" or prior.code='3' and vqecrit_d.isconcomitant=true))");
+                .append(" or prior.code='3' and vqecrit_d.isconcomitant=true)) and lpu.isreportkmp=true");
         List<Object[]> list = service.executeNativeSqlGetObj(sql.toString()) ;
         //если есть соп. диагнозы, то необходимо, чтобы были все
 		//если нет соп., то достаточно одного

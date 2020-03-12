@@ -8,6 +8,11 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import ru.ecom.api.IApiService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -19,14 +24,17 @@ import ru.nuzmsh.util.format.DateConverter;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.StringReader;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 import static ru.ecom.api.util.ApiUtil.cretePostRequest;
+import static ru.ecom.api.util.ApiUtil.creteGetRequest;
 
 /**
  * Сервис для работы с нетрудоспособностью
@@ -869,5 +877,104 @@ public class DisabilityServiceJs {
         IWebQueryService service = Injection.find(aRequest, null).getService(IWebQueryService.class);
         Collection<WebQueryResult> list = service.executeNativeSql("select id from disabilityrecord where disabilitydocument_id="+documentId+" and workfunctionadd_id is not null");
         return !list.isEmpty();
+    }
+
+    /**
+     * Обновить лист нетрудоспособности: ФИО+ДР, место работы, выгружен период/нет, хэш.
+     *
+     *@param documentId DisabilityDocument.id
+     * @param aRequest HttpServletRequest
+     * @return Boolean true если обновлено, false - если не удалось обновить
+     * @throws NamingException
+     */
+    public Boolean updateEln(Long documentId, HttpServletRequest aRequest) throws NamingException, ParserConfigurationException, IOException, SAXException {
+        IDisabilityService serviceDis = Injection.find(aRequest).getService(IDisabilityService.class);
+        IWebQueryService serviceSql = Injection.find(aRequest, null).getService(IWebQueryService.class);
+
+        String endpoint = serviceDis.getSoftConfigValue("FSS_PROXY_SERVICE", "null");
+        String ogrn_lpu = serviceDis.getSoftConfigValue("ogrn_lpu", "null");
+
+        Collection<WebQueryResult> list = serviceSql.executeNativeSql("select dd.number,replace(replace(p.snils,'-',''),' ','')" +
+                " from patient p" +
+                " left join disabilitycase dc on p.id=dc.patient_id" +
+                " left join disabilitydocument dd on dc.id=dd.disabilitycase_id" +
+                " where dd.id="+documentId);
+        if (!list.isEmpty() && endpoint!=null && ogrn_lpu!=null) {
+            String eln = list.iterator().next().get1()!=null? list.iterator().next().get1().toString() : "";
+            String snils = list.iterator().next().get2()!=null? list.iterator().next().get2().toString() : "";
+            Map<String,String> params = new HashMap<>();
+            params.put("ogrn",ogrn_lpu);
+            params.put("eln",eln);
+            params.put("snils",snils);
+            String xml = creteGetRequest(endpoint,  "api/import", "application/json", params);
+
+            parseDisabilityXML(xml,documentId,aRequest);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Распарсить xml с информацией о листке нетрудоспособности и актуализировать данные.
+     *
+     * @param xml xml для парсера
+     * @param documentId DisabilityDocument.id
+     * @param aRequest HttpServletRequest
+     * @throws NamingException
+     */
+    private void parseDisabilityXML(String xml,Long documentId, HttpServletRequest aRequest) throws NamingException, ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource is = new InputSource(new StringReader(xml));
+        Document document = builder.parse(is);
+        String surName = document.getElementsByTagName("ns1:SURNAME").item(0).getTextContent();
+        String name = document.getElementsByTagName("ns1:NAME").item(0).getTextContent();
+        String patronimic = document.getElementsByTagName("ns1:PATRONIMIC").item(0).getTextContent();
+        String hash = document.getElementsByTagName("ns1:LN_HASH").item(0).getTextContent();
+        String job = document.getElementsByTagName("ns1:LPU_EMPLOYER").item(0).getTextContent();
+        String bday = document.getElementsByTagName("ns1:BIRTHDAY").item(0).getTextContent();
+
+        IWebQueryService serviceSql = Injection.find(aRequest, null).getService(IWebQueryService.class);
+        StringBuilder sql = new StringBuilder();
+        sql.append("update disabilitydocument")
+                .append(" set lnhash='").append(hash).append("'")
+                .append(",job='").append(job).append("'")
+                .append(" where id = ").append(documentId);
+        serviceSql.executeUpdateNativeSql(sql.toString());
+        sql = new StringBuilder();
+        sql.append("update patient set")
+                .append(" firstname='").append(name).append("'")
+                .append(" ,lastname='").append(surName).append("'")
+                .append(" ,middlename='").append(patronimic).append("'")
+                .append(" ,birthday=to_date('").append(bday).append("','yyyy-mm-dd')")
+                .append(" where id=(select p.id")
+                .append(" from patient p")
+                .append(" left join disabilitycase dc on p.id=dc.patient_id")
+                .append(" left join disabilitydocument dd on dc.id=dd.disabilitycase_id")
+                .append(" where dd.id=").append(documentId).append(")");
+        serviceSql.executeUpdateNativeSql(sql.toString());
+        //update disabilityrecord export
+        NodeList nodeList = document.getElementsByTagName("ns1:TREAT_PERIOD");
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node period = nodeList.item(i);
+
+            NodeList children = period.getChildNodes();
+            String datefrom="",dateto="";
+            for (int j=0; j<children.getLength(); j++) {
+                if (children.item(j).getNodeName().equals("ns1:TREAT_DT1"))
+                    datefrom = children.item(j).getTextContent();
+                if (children.item(j).getNodeName().equals("ns1:TREAT_DT2"))
+                    dateto = children.item(j).getTextContent();
+            }
+            if (!datefrom.equals("") && !dateto.equals("")) {
+                sql = new StringBuilder();
+                sql.append("update disabilityrecord")
+                        .append(" set isexport=true")
+                        .append(" where disabilitydocument_id=").append(documentId)
+                        .append(" and datefrom=to_date('").append(datefrom)
+                        .append("','yyyy-mm-dd') and dateto=to_date('").append(dateto).append("','yyyy-mm-dd')");
+                serviceSql.executeUpdateNativeSql(sql.toString());
+            }
+        }
     }
 }
