@@ -1,6 +1,3 @@
-<%@page import="java.util.Calendar"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="java.util.Date"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -18,12 +15,12 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" >
+    <msh:panel >
+      <msh:row >
+        <msh:separator label="Параметры поиска" colSpan="7"  />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row >
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="1">  поступления
@@ -35,7 +32,7 @@
         	<input type="radio" name="typeDate" value="3">  перевода
         </td>
         </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row >
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  региональные
@@ -91,8 +88,8 @@
         	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
         </msh:row>
         <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с"  />
+        <msh:textField property="dateEnd" label="по"  />
 		<td>
             <input type="submit" onclick="find()" value="Найти" />
           </td>
@@ -101,7 +98,7 @@
     </msh:form>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
     	String dateEnd = (String)request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
@@ -111,32 +108,27 @@
     	}
     	String period = date+":"+dateEnd ;
     	
-    	String stat = (String)request.getParameter("typeStatus") ;
-    	String swod = (String)request.getParameter("typeSwod") ;
-    	String typeView = (String)request.getParameter("typeView") ;
-    	boolean isStat = true ;
-    	if (stat!=null && stat.equals("2")) {
-    		isStat = false ;
-    	}
-    	boolean isSwod = true ;
-    	if (swod!=null && swod.equals("2")) {
-    		isSwod = false ;
-    	}
-    	String dep = (String)request.getParameter("department") ;
+    	String stat = request.getParameter("typeStatus") ;
+    	String swod = request.getParameter("typeSwod") ;
+    	String typeView = request.getParameter("typeView") ;
+    	boolean isStat = !"2".equals(stat);
+    	boolean isSwod = !"2".equals(swod);
+
+    	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("dep", " and d.id="+dep) ;
     		request.setAttribute("department",dep) ;
     	} else {
     		request.setAttribute("department","0") ;
     	}
-    	String servStream = (String)request.getParameter("serviceStream") ;
+    	String servStream = request.getParameter("serviceStream") ;
     	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
     		request.setAttribute("servStream", " and vss.id="+servStream) ;
     		request.setAttribute("serviceStream", servStream) ;
     	} else {
     		request.setAttribute("serviceStream", "0") ;
     	}
-    	String bedSubType = (String)request.getParameter("bedSubType") ;
+    	String bedSubType = request.getParameter("bedSubType") ;
     	if (bedSubType!=null && !bedSubType.equals("") && !bedSubType.equals("0")) {
     		request.setAttribute("bedSubTypeSql", " and bf.bedSubType_id="+bedSubType);
     		request.setAttribute("bedSubType", bedSubType) ;
@@ -153,11 +145,7 @@
     		period="'||to_char("+dateT+",'dd.mm.yyyy')||':'||to_char("+dateT+",'dd.mm.yyyy')||'" ;
     	}
     	request.setAttribute("period", period) ;
-    	
-    	%>
-		<% 
-		//typeView="2" ;
-		
+
 		  if (isStat) {
 			//
 			if (isSwod) {
@@ -208,7 +196,7 @@
     ${dep} ${servStream} ${bedSubTypeSql}
     group by ${addGroup} m.department_id,m.bedfund_id,vbst.id,p.additionStatus_id,vbt.name,vbst.name,vss.name,vas.name,d.name
     order by ${addGroup} d.name,vss.name,vas.name,vbt.name,vbst.name 
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    "  />
     <%} else { %>
 			    <ecom:webQuery name="journal_ticket_swod" nativeSql="select  
     	list(''||m.bedFund_id)||':${period}:${dateT}:${param.typePatient }:'||
@@ -256,7 +244,7 @@
     ${dep} ${servStream } ${bedSubTypeSql}
     group by ${addGroup} m.department_id,vbt.id,vbst.id,p.additionStatus_id,vbt.name,vbst.name,vas.name,d.name
     order by ${addGroup} d.name,vas.name,vbt.name,vbst.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    "  />
 			
 			<%
     	}
@@ -311,7 +299,7 @@
     ${dep} ${servStream } ${bedSubTypeSql}
     group by ${addGroup} m.department_id,m.bedfund_id,vbst.id,vbt.name,vbst.name,vss.name,d.name
     order by ${addGroup} d.name,vss.name,vbt.name,vbst.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    "  />
     <%} else { %>
     <ecom:webQuery name="journal_ticket_swod" nativeSql="select  
     	list(''||m.bedFund_id)||':${period}:${dateT}:${param.typePatient }:-'
@@ -355,7 +343,7 @@
     ${dep} ${servStream } ${bedSubTypeSql}
     group by ${addGroup} m.department_id,vbst.id,vbt.id,vbt.name,vbst.name,d.name
     order by ${addGroup} d.name,vbt.name,vbst.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    "  />
 		   
 		<%} }%>
 <% 
@@ -411,11 +399,6 @@ if (typeView.equals("2")) {
 	
 } else {
     	%>
-    	
-    	
-    	
-    	
-    	
     	реестр по дням в разработке
     	<%
     	if (isSwod) { %>    
@@ -476,16 +459,9 @@ if (typeView.equals("2")) {
     
     	<i>Выберите параметры и нажмите найти </i>
     	<% }   %>
-    <%--
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
-    <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
-     --%>
+ 
      
     <script type='text/javascript'>
-    //var typePatient = document.forms[0].typePatient ;
-    //var typeDate = document.forms[0].typeDate ;
     checkFieldUpdate('typeSwod','${typeSwod}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
     checkFieldUpdate('typePatient','${typePatient}',4) ;
