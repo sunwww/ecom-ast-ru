@@ -943,8 +943,8 @@ public class DisabilityServiceJs {
         serviceSql.executeUpdateNativeSql(sql.toString());
         sql = new StringBuilder();
         sql.append("update patient set")
-                .append(" firstname='").append(surName).append("'")
-                .append(" ,lastname='").append(name).append("'")
+                .append(" firstname='").append(name).append("'")
+                .append(" ,lastname='").append(surName).append("'")
                 .append(" ,middlename='").append(patronimic).append("'")
                 .append(" ,birthday=to_date('").append(bday).append("','yyyy-mm-dd')")
                 .append(" where id=(select p.id")
