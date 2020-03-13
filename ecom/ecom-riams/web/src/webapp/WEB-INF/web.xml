@@ -27,16 +27,6 @@
         <url-pattern>/kiosk.nl</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>GetMessageFromFile</servlet-name>
-        <servlet-class>ru.ecom.web.GetMessageFromFile</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>GetMessageFromFile</servlet-name>
-        <url-pattern>/GetMessageFromFile</url-pattern>
-    </servlet-mapping>
-
     <filter>
         <filter-name>caching</filter-name>
         <filter-class>ru.nuzmsh.web.filter.caching.CacheFilter</filter-class>

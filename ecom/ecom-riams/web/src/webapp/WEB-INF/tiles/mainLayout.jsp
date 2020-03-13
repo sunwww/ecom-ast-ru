@@ -45,19 +45,6 @@
 
      <script type="text/javascript">
          var ws_socketServerStorageName;
- /*        jQuery(document).ready(function() {
-             var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'GetMessageFromFile?username=${username}', false);
-             xhr.send();
-             if (xhr.status != 200) {
-                 alert( xhr.status + ': ' + xhr.statusText ); // пример вывода: 404: Not Found
-             } else {
-                 //alert(xhr.responseText); // responseText -- текст ответа.
-                 var t = document.getElementById('message');
-                 t.innerHTML=xhr.responseText
-             }
-         });
-*/
 
      </script>
      <msh:ifInRole roles="/Policy/WebSocket">
