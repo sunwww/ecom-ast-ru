@@ -458,7 +458,6 @@ public class Expert2ServiceBean implements IExpert2Service {
     public E2Bill getBillEntryByDateAndNumber(String aBillNumber, String aBillDate, String aComment) {
         E2Bill bill ;
         String sql = "select id from e2bill where billNumber=:number and billDate=to_date(:date,'dd.MM.yyyy') ";
-        LOG.info("e2>"+aBillDate+">"+aBillDate+">"+theManager+"<");
         List<BigInteger> list = theManager.createNativeQuery(sql).setParameter("number",aBillNumber).setParameter("date",aBillDate).getResultList();
         if (list.isEmpty()) { //Создаем новый счет. статус - черновик
             try {

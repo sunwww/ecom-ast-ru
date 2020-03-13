@@ -415,28 +415,23 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     * Добавляем импорт целиком пакета (*.paket)
     * */
     public void importFondMPAnswer(long monitorId, String aMpFilename) {
-        IMonitor monitor ;
-        boolean needCloseMonitor;
-        try {
-            monitor = startMonitor(monitorId,"Импорт дефектов. Файл: "+aMpFilename);
-            needCloseMonitor = true;
-        } catch (Exception e) {
-            monitor = theMonitorService.getMonitor(monitorId);
-            monitor.advice(1);
-            needCloseMonitor = false;
-        }
+        IMonitor monitor = startMonitor(monitorId,"Импорт дефектов. Файл: "+aMpFilename);
+        importFondMPAnswer(monitorId,aMpFilename,monitor);
+        monitor.finish("Закончили импорт дефектов");
+    }
+
+    private void importFondMPAnswer(long monitorId, String aMpFilename, IMonitor monitor) {
         try {
             LOG.info("filename = " + aMpFilename);
             if (aMpFilename.toUpperCase().endsWith(".PAKET")) { //like B300026_200205.paket
-                //распаковываем в папку. Потом проходимся по каждому файлу в папке, кроме 00000
+                //распаковываем в папку. Потом проходимся по каждому файлу в папке
                 File unpackedDir = new File(unZip(aMpFilename));
                 LOG.info("unpack paket " + unpackedDir.getAbsolutePath());
                 for (File mpFile : unpackedDir.listFiles()) {
                     String filename = mpFile.getName();
                     if (filename.toUpperCase().endsWith(".MP")) {
-                        LOG.info("Импортируем файл " + filename);
                         monitor.setText("Импорт дефектов. Импортируем файл: "+filename);
-                        importFondMPAnswer(monitorId, unpackedDir.getName() + "/" + filename);
+                        importFondMPAnswer(monitorId, unpackedDir.getName() + "/" + filename, monitor);
                     }
                 }
             } else {
@@ -456,12 +451,10 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
                 SimpleDateFormat toFormat = new SimpleDateFormat("dd.MM.yyyy");
                 java.sql.Date billDate = new java.sql.Date(fromFormat.parse(dSchet).getTime());
-                LOG.info("man>"+theManager+">>"+theExpertService+">>"+nSchet+">"+dSchet);
                 E2Bill bill = theManager.find(E2Bill.class, theExpertService.getBillIdByDateAndNumber(nSchet, toFormat.format(billDate)));
                 bill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
 
                 int i = 0;
-                LOG.info("Найдено " + zaps.size() + " записей. Обновляем!");
                 monitor.setText("Найдено записей для импорта: " + zaps.size());
                 BigDecimal totalSum = new BigDecimal("0");
 
@@ -488,18 +481,11 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             entry = entry.getParentEntry();
                             isComplexCase = true;
                         }
-                        //LOG.info(j+" record id "+entry.getId()+" ");
                         theManager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId", entryId).executeUpdate();
                         entry.setBillNumber(nSchet);
                         entry.setBillDate(billDate);
                         entry.setBill(bill);
 
-                        //Проставляем данные о мед. полисе
-             /*           entry.setMedPolicyType(pac.getChildText("VPOLIS"));
-                        if (pac.getChild("SPOLIS")!=null) {entry.setMedPolicySeries(pac.getChildText("SPOLIS"));} else {entry.setMedPolicySeries("");}
-                        entry.setMedPolicyNumber(pac.getChildText("NPOLIS"));
-                        entry.setInsuranceCompanyCode(pac.getChildText("SMO"));
-    `*/
                         //Расчет цены случая ФОМС
                         Element commentCalc = sl.getChild("D_COMMENT_CALC");
                         if (commentCalc != null && commentCalc.getChild("root") != null) {
@@ -546,17 +532,11 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 theManager.persist(bill);
                 LOG.info("Обновление закончено!");
         }
-            if (needCloseMonitor) {
-                monitor.finish("Закончили импорт дефектов");
-            } else {
-                monitor.advice(-1);
-            }
 
         }  catch (Exception e) {
             monitor.error(e.getMessage(),e);
             LOG.error(e.getMessage(),e);
         }
-        LOG.info("finish. "+aMpFilename);
     }
 
     /** распаковка архива */
@@ -686,6 +666,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     EntityManager theManager;
     private @EJB
     IExpert2Service theExpertService;
+
     private @EJB
     ILocalMonitorService theMonitorService;
 }

@@ -3,7 +3,6 @@ package ru.ecom.expomc.ejb.services.importservice;
 import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.util.EntityNameUtil;
 import ru.ecom.expomc.ejb.domain.format.Field;
 import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
@@ -41,9 +40,8 @@ public class ImportServiceBean implements IImportService {
 
 
      private static final Logger LOG = Logger.getLogger(ImportServiceBean.class) ;
-     private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
-     public ImportFileResult importFile(String aOriginalFilename, long aMonitorId, String aFilename, ImportFileForm aImportForm) throws ImportException {
+     public ImportFileResult importFile(String aOriginalFilename, long aMonitorId, String aFilename, ImportFileForm aImportForm) {
     	 IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
     	 try {
              Format format = theManager.find(Format.class, aImportForm.getImportFormat()) ;
@@ -61,7 +59,6 @@ public class ImportServiceBean implements IImportService {
         		 ImportFileResult result = null ;
         		 for( File f : files) {
         			 monitor.setText(f.getName()) ;
-        			 if(CAN_DEBUG) LOG.debug("Imprting file "+f.getName()) ;
         			 long subMonitorId = System.currentTimeMillis() ; // FIXME
         			 result = importFileDbf(subMonitorId, f.getAbsolutePath(), time, format) ;
         			 monitor.advice(1) ;
@@ -101,8 +98,6 @@ public class ImportServiceBean implements IImportService {
      */
     private ImportFileResult importFileDbf(long aMonitorId, String aFilename
     		, ImportTime time, Format format) throws ImportException {
-        if (CAN_DEBUG) LOG.debug("aMonitorId = " + aMonitorId);
-        if (CAN_DEBUG) LOG.debug("aFilename = " + aFilename);
         DbfFileReader in = null ;
 
         IMonitor monitor = null ;
@@ -118,22 +113,15 @@ public class ImportServiceBean implements IImportService {
             ImportDocument document = format.getDocument();
             Class entityClass = Class.forName(document.getEntityClassName()) ;
             final boolean isImportTimeSupport = document.isTimeSupport() ;
-
-            //if(!isImportTimeSupport) deleteNotTimeSupports(entityClass, document) ;
-            // отркрываем файл DBF и перебираем все записи
             in =  new DbfFileReader(new File(aFilename));
             HashMap<String, Object> map = new HashMap<>();
             boolean firstPassed = false ;
             ImportFileResult ret = new ImportFileResult(time.getId());
             int i = 0 ;
-//            EntityManager manager = theFactory.createEntityManager();
-//            theManager.setFlushMode(FlushModeType.COMMIT);
 
             while(in.next() && !monitor.isCancelled()) {
                 monitor.advice(1);
                 i++ ;
-
-//                theUserTransaction.begin();
                 try {
                 	in.load(map) ;
                 } catch (Exception e) {
@@ -147,31 +135,19 @@ public class ImportServiceBean implements IImportService {
                 }
 
                 copyMapToEntity(fields, map, data);
-
-//                manager.getTransaction().begin();
                 theManager.persist(data);
-//                manager.getTransaction().commit();
 
                 if(!firstPassed) {
                     checkFormat(ret, format, new File(aFilename)) ;
                 }
-//                doImport(map, format, data) ;
-
                 map.clear() ;
                 firstPassed = true ;
                 if(i%300==0) {
-//                    LOG.info(i+" ...") ;
-//                    theUserTransaction.commit();
-//                    LOG.info("commited") ;
-//                    theUserTransaction.begin() ;
-//                    LOG.info(" beggined ") ;
                     monitor.setText("Импортировано "+i);
                     theManager.flush();
                     theManager.clear();
                 }
             }
-//            in.close() ;
-//            theUserTransaction.commit();
             monitor.setText("Импортировано "+i);
             monitor.finish(String.valueOf(time.getId()));
 
@@ -189,25 +165,11 @@ public class ImportServiceBean implements IImportService {
         }
     }
 
-    private void deleteNotTimeSupports(Class aEntityClass, ImportDocument aDocument) {
-        String entityName = EntityNameUtil.getInstance().getEntityName(aEntityClass);
-
-        int count = theManager.createQuery("delete from "+ entityName).executeUpdate();
-
-        if (CAN_DEBUG) LOG.debug("deleted "+entityName+" = " + count);
-
-        count = theManager.createQuery("delete from ImportTime where document = :document")
-                .setParameter("document", aDocument).executeUpdate();
-        
-        if (CAN_DEBUG) LOG.debug("deleted ImportTime = " + count);
-    }
-
-    public void checkFormat(ImportFileResult aResult, Format aFormat, File aDbfFile) throws IOException, ParseException {
+    private void checkFormat(ImportFileResult aResult, Format aFormat, File aDbfFile) throws IOException, ParseException {
         DbfFile dbfFile = new DbfFile();
         try (FileInputStream in = new FileInputStream(aDbfFile)) {
             dbfFile.load(in);
             int index = 0 ;
-            //Collection<DbfField> dbfFields = dbfFile.getDbfFields() ;
             Iterator<DbfField> dbfIterator = dbfFile.getDbfFields().iterator() ;
             for (Field field : aFormat.getFields()) {
                 index++ ;
@@ -218,16 +180,10 @@ public class ImportServiceBean implements IImportService {
                     }
                     if(field.getDbfType()!=Field.DATE && dbfField.getLength() != field.getDbfSize()) {
                         addMessage(index, aResult, dbfField, field, "Hеправильная длина поля");
-                        //
                     }
                     if(field.getDbfType()!=Field.DATE && dbfField.getDecimalLength() != field.getDbfDecimal()) {
                         addMessage(index, aResult, dbfField, field, "Hеправильнок количество десятичных знаков");
-                        //
                     }
-//                if(dbfField.getType() != field.getDbfType()) {
-//                    addMessage(index, aResult, dbfField, field, "неправильный тип поля");
-
-//                }
                 } else {
                     aResult.addMessage("нет полей в файле dbf");
                 }
@@ -250,35 +206,13 @@ public class ImportServiceBean implements IImportService {
         aResult.addMessage(sb);
     }
 
-    /**
-     * Импорт строки
-     * @param aMap           данные для импорта
-     * @param aActualFormat  формат, куда писать
-     * @param aFactory       создание нового экземпляра
-     * @return
-     * @throws ImportException
-     */
-    public ImportRowResult doImport(Map<String, Object> aMap
-            , Format aActualFormat, IImportEntityFactory aFactory) throws ImportException {
-        try {
-            Object entity = aFactory.createNewEntity();
-            copyMapToEntity(aActualFormat.getFields(), aMap, entity ) ;
-            theManager.persist(entity);
-            return new ImportRowResult();
-        } catch (Exception e) {
-            throw new ImportException("Ошибка импорта",e);
-        }
-    }
-
     public static void copyMapToEntity(Collection<Field> aFields, Map<String, Object> aMap, Object aEntity) throws NoSuchMethodException {
         Class entityClass = aEntity.getClass();
         for (Field field : aFields) {
-//        for (Field field : aActualFormat.getFields()) {
             if(!StringUtil.isNullOrEmpty(field.getProperty()) ) {
                 String key = field.getName();
-                //String getterMethodName = PropertyUtil.getGetterMethodNameForProperty(field.getProperty()) ;
-                Method getterMethod = PropertyUtil.getGetterMethod(entityClass, field.getProperty()) ; //getentityClass.getMethod(getterMethodName) ;
-                Method setterMethod = PropertyUtil.getSetterMethod(entityClass, getterMethod) ; //getSetterMethodForProperty(entityClass, field.getProperty());
+                Method getterMethod = PropertyUtil.getGetterMethod(entityClass, field.getProperty()) ;
+                Method setterMethod = PropertyUtil.getSetterMethod(entityClass, getterMethod) ;
                 Object value = aMap.get(key) ;
                 if(value==null && !StringUtil.isNullOrEmpty(field.getDefaultValue())) {
                 	value = field.getDefaultValue() ;
@@ -297,43 +231,8 @@ public class ImportServiceBean implements IImportService {
         }
     }
 
-    public static Object convertValue(Class aInClass, Class aOutClass, Object aValue) throws ParseException {
+    private static Object convertValue(Class aInClass, Class aOutClass, Object aValue) throws ParseException {
     	return PropertyUtil.convertValue(aInClass, aOutClass, aValue) ;
-    	
-/*        if(aValue==null) {
-            return null ;
-        } else if(aInClass.equals(aOutClass)) {
-            return aValue ;
-        } else if (aInClass.equals(java.sql.Date.class) && aOutClass.equals(String.class)) {
-            return DateFormat.formatToDate((Date) aValue) ;
-        } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Date.class)) {
-            java.util.Date utilDate = DateFormat.parseDate((String) aValue) ;
-            return utilDate!=null ? new java.sql.Date(utilDate.getTime()) : null ;
-        } else if(aInClass.equals(Long.TYPE) && aOutClass.equals(Long.class)) {
-            return (Long) aValue ;
-        } else if(aInClass.equals(Long.class) && aOutClass.equals(Long.TYPE)) {
-            return aValue ;
-        } else if (aInClass.equals(java.util.Date.class) && aOutClass.equals(String.class)) {
-            return DateFormat.formatToDate((Date) aValue) ;
-        } else if (aInClass.equals(String.class) && aOutClass.equals(BigDecimal.class)) {
-            String str = (String) aValue ;
-            return !StringUtil.isNullOrEmpty(str) ? new BigDecimal((String) aValue) : null ;
-        } else if (aInClass.equals(String.class) && aOutClass.equals(Integer.TYPE)) {
-            String str = (String) aValue ;
-            return StringUtil.isNullOrEmpty(str) ? 0 : (int)Double.parseDouble(str) ;
-        } else if (aInClass.equals(String.class) && aOutClass.equals(Long.TYPE)) {
-            String str = (String) aValue ;
-            return StringUtil.isNullOrEmpty(str) ? 0 : Long.parseLong(str) ;
-        }
-        throw new IllegalArgumentException("Нет преобразования из "+aInClass+" в "+aOutClass+ " для значения "+aValue) ;
-        */
-    }
-
-
-    private static Method getSetterMethodForProperty(Class aClass, String aPropertyName) throws NoSuchMethodException {
-        //String getterMethodName = PropertyUtil.getGetterMethodNameForProperty(aPropertyName) ;
-        Method getterMethod = PropertyUtil.getGetterMethod(aClass, aPropertyName) ; //aClass.getMethod(getterMethodName) ;
-        return PropertyUtil.getSetterMethod(aClass, getterMethod) ;
     }
 
     /**
@@ -345,15 +244,8 @@ public class ImportServiceBean implements IImportService {
         return aEntity.getFormats().iterator().next() ;
     }
 
-
-//    @Resource UserTransaction theUserTransaction;
-
     @EJB ILocalMonitorService theMonitorService ;
     @PersistenceContext
     public EntityManager theManager;
-
-
-//    @PersistenceUnit
-//    EntityManagerFactory theFactory ;
 
 }
