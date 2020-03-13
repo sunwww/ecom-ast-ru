@@ -45,10 +45,10 @@ public class HospitalQueueResource {
                 ",cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) as minutesCount " +
                 (isDoctor ? ", dep.name as departmentName" : ", cast('' as varchar)")+
                 ",list (case when p.dtype='WfConsultation' and p.diary_id is not null then 'Консультация: '||consVwf.name||'<br>' " +
-                "   when vis.datestart is not null then coalesce(vcms.name,ms.name)||'<br>' end) || list('Осмотр: '||vwf.name||'<br>') as madeServices" +
+                "   when vis.datestart is not null then coalesce(ms.name,'')||'<br>' end) || list('Осмотр: '||vwf.name||'<br>') as madeServices" +
                 (isDoctor ? ",list ( case when p.dtype='WfConsultation' then" +
                         " case when p.diary_id is not null then '<s>Консультация: '||consVwf.name||'</s><br>' else 'Консультация: '||consVwf.name||'<br>' end  " +
-                        " when vis.datestart is not null then '<s>'||coalesce(vcms.name,ms.name)||'</s>' else coalesce(vcms.name,ms.name) end ||'<br>') " : ", cast('' as varchar) ") +" as planServices" +
+                        " when vis.datestart is not null then '<s>'||coalesce(ms.name','')||'</s>' else coalesce(ms.name,'') end ||'<br>') " : ", cast('' as varchar) ") +" as planServices" +
                 " from medcase sls " +
                 " left join patient pat on pat.id=sls.patient_id" +
                 " left join mislpu dep on dep.id=sls.department_id" +
@@ -62,7 +62,6 @@ public class HospitalQueueResource {
                 " left join medcase vis on vis.id=coalesce(wct.medcase_id, p.medcase_id)" +
                 " left join medcase smc on smc.parent_id=vis.id" +
                 " left join medservice ms on ms.id=smc.medservice_id" +
-                " left join VocClassificationMedService vcms on vcms.id=ms.classification_id" +
                 " left join diary d on d.medcase_id=sls.id" +
                 " left join workfunction wf on wf.id=d.specialist_id" +
                 " left join vocWorkFunction vwf on vwf.id=wf.workfunction_id" +
