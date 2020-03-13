@@ -60,7 +60,6 @@
 			<fileset file='${libdir}/jersey/ext/persistence-api-1.0.jar' />
 			<fileset file='${libdir}/jersey/ext/validation-api-1.1.0.Final.jar' />
 			<fileset file='${libdir}/jersey/ext/yasson-1.0.jar' />
-			<fileset file='${libdir}/apache-commons/commons-beanutils.jar' />
 
 
 			<fileset file='${libdir}/image/jai_codec.jar' />
