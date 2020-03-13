@@ -92,7 +92,7 @@
     }
     String style="background: url('/customer/images/top_images/"+path_curdate+".jpg') no-repeat left top ;" ;
     request.setAttribute("style_addition_body", style) ;
-    %>/customer/image
+    %>
     <body>
     <div id='header' style="${style_addition_body}">
         <h1>МедОС</h1>
