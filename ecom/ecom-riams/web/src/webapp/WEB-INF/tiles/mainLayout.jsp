@@ -166,8 +166,6 @@
             <msh:sideLink params="" styleId="mainMenuTemplate" action="/entityList-diary_template.do" name="Шаблоны"
                           title="Шаблоны" roles="/Policy/MainMenu/Template"/>
 
-
-                          
             <msh:sideLink params="" styleId="mainMenuContract" action="/contract_find_by_number.do" name="Договоры"
                           title="Договоры" roles="/Policy/MainMenu/Contract,/Policy/Mis/Contract/MedContract/View"/>
 
@@ -183,8 +181,8 @@
                           roles="/Policy/Mis/Pharmacy/Administration" title="Аптека"/>
             <msh:sideLink params="" styleId="mainMenuConfig" action="/riams_config.do" name="Настройки"
                           roles="/Policy/MainMenu/Config" title="Настройки"/>
-            <msh:sideLink params="" styleId="mainMenuConfig" action="/http://keo.amokb.ru/keo?" name="Порядки, стандарты,<br>клин. рекомендации"
-                          roles="/Policy/MainMenu/Standards" title="Настройки"/>
+            <msh:sideLink params="" styleId="mainMenuConfig" action="/http://keo.amokb.ru/keo?" name="НСИ"
+                          roles="/Policy/MainMenu/Standards" title="Нормативно-справочная информация"/>
 
         </ul>
 
