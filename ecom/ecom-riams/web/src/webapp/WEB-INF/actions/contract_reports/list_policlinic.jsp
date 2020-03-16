@@ -38,44 +38,15 @@
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
         </msh:row>		
         <msh:row>
-        	<input type="submit" onclick="this.form.action='js-contract_medContract-updateCAOSbyCharged.do'" value="Обновить соответствия"/></td>
+        	<input type="submit" onclick="this.form.action='js-contract_medContract-updateCAOSbyCharged.do'" value="Обновить соответствия"/>
         </msh:row>
 			</msh:panel>
 		</msh:form>
 		
 <%
-  } else{
-	  %>
-		<msh:form action="/contract_policlinic_render.do" defaultField="dateFrom">
-			<msh:panel>
-				<msh:row>
-				<msh:textField viewOnlyField="true" property="dateFrom" label="c"/>
-				<msh:textField viewOnlyField="true" property="dateTo" label="по"/>
-				</msh:row>
-				<msh:row>
-					<msh:autoComplete viewOnlyField="true" property="department" label="Отделение" vocName="lpu" horizontalFill="true" fieldColSpan="3"/>
-				</msh:row>
-				<msh:row>
-					<msh:autoComplete viewOnlyField="true" property="nationality" fieldColSpan="4" label="Гражданство" vocName="omcOksm" horizontalFill="true"/>
-				</msh:row>
-				<msh:row>
-					<msh:autoComplete viewOnlyField="true" property="operator" fieldColSpan="4" label="Оператор" vocName="workFunction" horizontalFill="true"/>
-				</msh:row>
-				<msh:row>
-					<msh:autoComplete viewOnlyField="true" property="positionType" fieldColSpan="4" label="Тип услуги" vocName="vocPositionType" horizontalFill="true"/>
-				</msh:row>
-				<msh:row>
-					<msh:autoComplete viewOnlyField="true" property="priceList" label="Прейскурант" fieldColSpan="4"  vocName="priceList" horizontalFill="true" />
-				</msh:row>
-				<msh:row>
-					<msh:autoComplete viewOnlyField="true" property="priceMedService" parentAutocomplete="priceList" label="Медицинская услуга" vocName="priceMedServiceByPriceList" horizontalFill="true" fieldColSpan="4"/>
-				</msh:row>
-			</msh:panel>
-		</msh:form>
-		
-<%  }
+  }
 	String dateFrom = request.getParameter("dateFrom") ;
-		String dFrom = "" ;
+		String dFrom ;
 		if (dateFrom==null ||dateFrom.equals("") ) {
 			dFrom=" is null " ;
 		} else {
@@ -84,7 +55,7 @@
 		request.setAttribute("dFrom",dFrom) ;
 		
 		String dateTo = request.getParameter("dateTo") ;
-		String dTo = "" ;
+		String dTo ;
 		if (dateTo==null ||dateTo.equals("") ) {
 			dTo=" is null " ;
 		} else {
@@ -92,60 +63,56 @@
 		}
 		request.setAttribute("dTo",dTo) ;
 		
-		String fromTo = "";
-		if  (dateTo==null ||dateTo.equals("") ) {}
-		else if (dateFrom==null ||dateFrom.equals("") ) {}
-		else fromTo=" c "+dateFrom+" по "+dateTo;
-		/*
-		if (typeGroup.equals("1")||typeGroup.equals("2")) {
-			// Группировка по услугам 
-   			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
-   			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
-   			request.setAttribute("groupName", "Услуга") ;
-       		request.setAttribute("groupGroupNext", "5") ;
-   			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat,lpu.name") ;
-   			request.setAttribute("groupOrder", "lpu.name,pp.code") ;
-		} else if (typeGroup.equals("3")){
-			// Группировка по отделению 
-   			request.setAttribute("groupSql", "lpu.name") ;
-   			request.setAttribute("groupSqlId", "'&department='||lpu.id") ;
-   			request.setAttribute("groupName", "Отделение") ;
-       		request.setAttribute("groupGroupNext", "2") ;
-   			request.setAttribute("groupGroup", "lpu.id,lpu.name") ;
-   			request.setAttribute("groupOrder", "lpu.name") ;
-		} else if (typeGroup.equals("4")){
-			// Группировка по типу услуг 
-   			request.setAttribute("groupSql", "vpt.name") ;
-   			request.setAttribute("groupSqlId", "'&department='||lpu.id||'&positionType='||vpt.id") ;
-   			request.setAttribute("groupName", "Тип услуги") ;
-       		request.setAttribute("groupGroupNext", "2") ;
-   			request.setAttribute("groupGroup", "lpu.id,lpu.name,vpt.id,vpt.name") ;
-   			request.setAttribute("groupOrder", "lpu.name,vpt.name") ;
+		String fromTo ;
+		if  (dateTo!=null && dateFrom!=null ) {
+			fromTo=" c "+dateFrom+" по "+dateTo;
 		} else {
-		
-			//Реестр
-   			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
-   			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
-   			request.setAttribute("groupName", "Сотрудник") ;
-   			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat") ;
-   			request.setAttribute("groupOrder", "pp.code") ;
+			fromTo = "";
 		}
-		ActionUtil.setParameterFilterSql("operator","cao.workFunction_id", request) ;
-		ActionUtil.setParameterFilterSql("priceMedService","pms.id", request) ;
-		ActionUtil.setParameterFilterSql("priceList","pp.priceList_id", request) ;
-		ActionUtil.setParameterFilterSql("nationality","ccp.nationality_id", request) ;
-		ActionUtil.setParameterFilterSql("department","lpu.id", request) ;
-		ActionUtil.setParameterFilterSql("positionType","pp.positionType_id", request) ;
-		ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
-		*/
+
 		request.setAttribute("fromTo", fromTo);
+		String isReestr = request.getParameter("isReestr");
+		if ("1".equals(isReestr)) {
 		%>
-		<% if ("1".equals(typeGroup)) {%>
+		<msh:section title="Реестр по пациентам ">
+			<ecom:webQuery name="finansReportReestr" nameFldSql="finansReportReestr_sql" nativeSql="
+select caos.id as caosid,p.patientSync,p.lastname||' '||p.firstname||' '||p.middlename as fiopat
+,to_char(cao.operationdate,'dd.mm.yyyy') as operdate
+,pp.code||' '||pp.name as rendername
+,sum(round(cams.cost*((100-coalesce(cao.discount,0))/100),2)) as sumRender
+,p.id as f7_pid
+from ContractAccountOperationByService caos
+left join ContractAccountOperation cao on caos.accountOperation_id=cao.id and cao.dtype='OperationAccrual' and cao.repealOperation_id is null
+left join ContractAccountMedService cams on cams.id=caos.accountMedService_id
+left join ServedPerson sp on cao.account_id=sp.account_id
+left join ContractPerson cp on sp.person_id=cp.id
+left join Patient p on cp.patient_id=p.id
+left join pricemedservice pms on cams.medService_id=pms.id
+left join priceposition pp on pms.priceposition_id=pp.id
+where caos.id in (${param.id})
+group by caos.id,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,pp.code,pp.name
+,cao.operationdate
+order by p.lastname,p.firstname,p.middlename,pp.name
+			"/>
+
+			<msh:table name="finansReportReestr" action="entityView-mis_patient.do" idField="7" openNewWindow="true">
+				<msh:tableColumn columnName="Код пациента" property="2"/>
+				<msh:tableColumn columnName="ФИО" property="3" />
+				<msh:tableColumn columnName="Дата услуги"  property="4" />
+				<msh:tableColumn columnName="Код услуги" property="5" />
+				<msh:tableColumn columnName="Сумма" isCalcAmount="true" property="6" />
+			</msh:table>
+
+		</msh:section>
+		<%
+			} else {
+			if ("1".equals(typeGroup)) {%>
 			<msh:section title="Финасовый отчет по услугам за период ${fromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
 select pp.id as ppid,pp.code as ppcode,pp.name as ppname
-,vwf.name as vwfnam,wp.lastname,count(distinct caos.id) as cnt,
-sum(round(1*(cams.cost*(100-coalesce(cao.discount,0))/100),2)) as sumRender
+,vwf.name as vwfnam,wp.lastname,count(distinct caos.id) as cnt
+,sum(round(1*(cams.cost*(100-coalesce(cao.discount,0))/100),2)) as sumRender
+,list(caos.id||'') as f8_caoses
 from ContractAccountOperationByService caos
 left join ContractAccountOperation cao on caos.accountOperation_id=cao.id and cao.dtype='OperationAccrual' and cao.repealOperation_id is null
 left join medcase mc on mc.id=caos.medcase_id
@@ -157,7 +124,6 @@ left join ContractAccountMedService cams on cams.id=caos.accountMedService_id
 left join ServedPerson sp on cao.account_id=sp.account_id
 left join ContractPerson cp on sp.person_id=cp.id
 left join Patient p on cp.patient_id=p.id
-
 left join pricemedservice pms on cams.medService_id=pms.id
 left join priceposition pp on pms.priceposition_id=pp.id
 left join priceposition ppG on ppG.id=pp.parent_id
@@ -165,16 +131,15 @@ left join mislpu ml on ml.id=ppG.lpu_id
 left join medservice ms on pms.medservice_id=ms.id
 where cao.operationdate
 between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
-and ppG.lpu_id in (184,180 )
-
+and ppG.lpu_id in (184,180,246)
 group by ppG.lpu_id,pp.id,pp.code,pp.name,wp.lastname,vwf.name
 order by pp.name
 
 			"/>
 
-				<msh:table name="finansReport" 
-				action="javascript:void(0)" 
-				idField="1">
+				<msh:table name="finansReport" cellFunction="true"
+				action="contract_policlinic_render.do?isReestr=1&short=Short"
+				idField="8">
 					<msh:tableColumn columnName="Код услуги" property="2" />
 					<msh:tableColumn columnName="Наименование" property="3" />
 					<msh:tableColumn columnName="Должность"  property="4" />
@@ -219,7 +184,7 @@ order by p.lastname,p.firstname,p.middlename,pp.name
 
 			<msh:sectionTitle> 
 	    <form action="print-contract_reports_services_2_4.do" method="post" target="_blank">
-	    Финасовый отчет по услугам за период ${FromTo}
+	    Ошибки соответствий за период ${FromTo}
 	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Финасовый отчет по услугам за период ${FromTo}">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
@@ -241,7 +206,7 @@ order by p.lastname,p.firstname,p.middlename,pp.name
 
 			</msh:section>	
 	
-	<%} %>
+	<%} }%>
 	</tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">
