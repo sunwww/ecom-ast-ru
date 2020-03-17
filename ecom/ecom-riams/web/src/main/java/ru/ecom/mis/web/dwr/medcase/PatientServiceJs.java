@@ -508,11 +508,10 @@ public class PatientServiceJs {
         }
     }
 
-	public String editColorType(Long aPatient,String aColorTypeCurrent, HttpServletRequest aRequest) throws NamingException  {
+	public void editColorType(Long aPatient,String aColorTypeCurrent, HttpServletRequest aRequest) throws NamingException  {
 		String colorType = aColorTypeCurrent!=null && aColorTypeCurrent.trim().equals("1") ? "0" : "1" ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("update Patient set colorType='"+colorType+"' where id='"+aPatient+"'") ;
-		return "сохранено" ;
 	}
 
 	public String checkPolicy(String aRoles,HttpServletRequest aRequest) throws JspException {

@@ -15,6 +15,7 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.xml.XmlUtil;
+import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
 import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.jaas.ejb.domain.SoftConfig;
 import ru.ecom.jaas.ejb.service.SoftConfigServiceBean;
@@ -26,10 +27,7 @@ import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
-import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.PatientFond;
-import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
+import ru.ecom.mis.ejb.domain.patient.*;
 import ru.ecom.mis.ejb.domain.patient.voc.*;
 import ru.ecom.mis.ejb.form.lpu.interceptors.LpuAreaDynamicSecurity;
 import ru.ecom.mis.ejb.form.patient.MedPolicyOmcForm;
@@ -1883,5 +1881,87 @@ private @EJB
 	public String getConfigValue(String aConfigName, String aDefaultValue) {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		return config.get(aConfigName, aDefaultValue);
+	}
+
+	/**Находим либо создаем пациента*/
+	public Patient getPatient(String aLastname, String aFirstname, String aMiddlename, Date aBirthDay, String aSexCode, String aCommonNumber
+			,String addDataString)  {
+		JSONObject addData = new JSONObject(addDataString);
+		List<Patient> patients = theManager.createQuery("from Patient where lastname=:lastname and firstname=:firstname" +
+				" and middlename=:middlename  and birthday=:birthday" +
+				" and (commonNumber is null or commonNumber=:commonNumber)")
+				.setParameter("lastname",aLastname).setParameter("firstname",aFirstname).setParameter("middlename",aMiddlename)
+				.setParameter("birthday",aBirthDay).setParameter("commonNumber",aCommonNumber)
+				.getResultList();
+		if (patients.isEmpty()) { //Создаем нового пациента
+			Patient patient = new Patient();
+			patient.setLastname(aLastname.toUpperCase());
+			patient.setFirstname(aFirstname.toUpperCase());
+			patient.setMiddlename(aMiddlename.toUpperCase());
+			patient.setBirthday(aBirthDay);
+			patient.setCommonNumber(aCommonNumber);
+			patient.setSnils(getStr(addData,"snils"));
+			patient.setBirthPlace(getStr(addData, "birthPlace"));
+			patient.setSex(getByCode(VocSex.class, aSexCode));
+			theManager.persist(patient);
+			if (addData.has("ogrn")) {
+				String okato = addData.getString("okato");
+				String ogrn = getStr(addData,"ogrn");
+				try {
+					List<RegInsuranceCompany> regInsuranceCompanies = theManager.createQuery("from RegInsuranceCompany where ogrn=:ogrn" +
+							" and (deprecated is null or deprecated is false)").setParameter("ogrn",ogrn).getResultList();
+					if ("12000".equals(okato)) { //местный полис
+						MedPolicyOmc policy = new MedPolicyOmc();
+						policy.setActualDateFrom(DateFormat.parseSqlDate(addData.getString("policyStartDate"), "ddMMyyyy"));
+						policy.setLastname(aLastname);
+						policy.setFirstname(aFirstname);
+						policy.setMiddlename(aMiddlename);
+						policy.setBirthday(aBirthDay);
+						policy.setPatient(patient);
+						policy.setCommonNumber(aCommonNumber);
+						policy.setPolNumber(aCommonNumber);
+						if (!regInsuranceCompanies.isEmpty()) policy.setCompany(regInsuranceCompanies.get(0));
+						policy.setType(getByCode(VocMedPolicyOmc.class,"3")); //врядли будет другое
+						theManager.persist(policy);
+					} else if (okato!=null){ //ОМС иногорднего
+						MedPolicyOmcForeign policy = new MedPolicyOmcForeign();
+						policy.setActualDateFrom(DateFormat.parseSqlDate(addData.getString("policyStartDate"), "ddMMyyyy"));
+						if (!regInsuranceCompanies.isEmpty()) policy.setCompany(regInsuranceCompanies.get(0));
+						policy.setLastname(aLastname);
+						policy.setFirstname(aFirstname);
+						policy.setMiddlename(aMiddlename);
+						policy.setBirthday(aBirthDay);
+						policy.setPatient(patient);
+						policy.setCommonNumber(aCommonNumber);
+						policy.setPolNumber(aCommonNumber);
+						policy.setType(getByCode(VocMedPolicyOmc.class,"3")); //врядли будет другое
+						policy.setInsuranceCompanyOgrn(ogrn);
+						policy.setInsuranceCompanyRegion(getByCode(OmcKodTer.class,okato,"okato"));
+						theManager.persist(policy);
+					}
+				} catch (ParseException e) {
+					LOG.error("some error",e);
+				}
+
+			}
+			return patient;
+		} else if (patients.size()==1) {
+			return patients.get(0);
+		} else { //Найдено более 1 пациента, возвращаем ссылку на страницу с поиском пациента
+			return null;
+		}
+	}
+
+	private String getStr(JSONObject obj, String aFldName) {
+		return obj.has(aFldName) ? obj.getString(aFldName) : null;
+	}
+
+	private <T> T getByCode(Class aClass, String aCode) {
+		return getByCode(aClass,aCode,null);
+	}
+	private <T> T getByCode(Class aClass, String aCode, String aFldName) {
+		List<T> list = theManager.createQuery("from "+aClass.getName()+" where "+(aFldName!=null?aFldName:"code")+"=:code")
+				.setParameter("code",aCode).getResultList();
+		return list.isEmpty() ? null : list.get(0);
 	}
 }

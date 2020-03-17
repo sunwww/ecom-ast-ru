@@ -7,10 +7,12 @@ import ru.ecom.ejb.services.login.ILoginService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.web.messages.ClaimMessage;
@@ -18,23 +20,41 @@ import ru.nuzmsh.web.messages.UserMessage;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
+import java.text.ParseException;
 import java.util.Collection;
 
 /**
  * Для aucotomplete
  */
 public class VocServiceJs {
-	public Patient getTestPatient(HttpServletRequest aRequest) {
-		Patient patient = new Patient();
-		patient.setLastname("TEST");
-		return patient;
-	}
-	public String getTestPatientLastname(HttpServletRequest aRequest) {
-		Patient patient = new Patient();
-		patient.setLastname("TEST");
-		return patient.getLastname();
+
+	/** Создаем либо находим пациента по ФИО + ДР + полис
+	 * находится здесь, ибо этот serviceJs есть на каждой странице
+	 * */
+	public String createOrGetPatient(String aPatientJson, HttpServletRequest aRequest) throws NamingException, ParseException {
+		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
+		JSONObject pat = new JSONObject(aPatientJson);
+		String lastname = pat.getString("lastname");
+		String firstname = pat.getString("firstname");
+		String middlename = pat.getString("middlename");
+		String commonNumber = pat.getString("commonNumber");
+		String sex = pat.getString("sex");
+		if (sex.startsWith("0")) sex = sex.substring(1);
+		Date birthday = DateFormat.parseSqlDate(pat.getString("birthday"),"ddMMyyyy");
+		Patient patient = service.getPatient(lastname,firstname,middlename,birthday,sex,commonNumber,pat.toString());
+		JSONObject ret = new JSONObject();
+		if (patient==null) { // Нашли более 1 подходящего пациента - переходим на страницу поиска персоны
+			ret.put("status","search");
+			ret.put("link","mis_patients.do?lastname="+lastname+"+"+firstname+"+"+middlename);
+		} else {
+			ret.put("status","found");
+			ret.put("link","entityView-mis_patient.do?id="+patient.getId());
+		}
+		return ret.toString();
 	}
 
+	@Deprecated
 	public String getWebSocketServer(HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;

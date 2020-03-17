@@ -15,6 +15,8 @@ import java.util.List;
 /**
  */
 public interface IPatientService {
+	Patient getPatient(String aLastname, String aFirstname, String aMiddlename, Date aBirthDay, String aSexCode, String aCommonNumber
+			, String addData);
 	String exportDispensaryCard(java.util.Date aDateFrom, java.util.Date aDateTo, java.util.Date aDateChanged, String aPacketNumber);
 	String getAddressByOkato (String aOkato, String aStreet);
 	void changeMedPolicyType (Long aPolicyId, Long aNewPolicyTypeId);

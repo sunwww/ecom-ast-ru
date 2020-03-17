@@ -564,3 +564,16 @@ function getCountUnreadMessages() {
         }
     } ) ;
     setTimeout("getCountUnreadMessages()",theDefaultTimeOutCountMsg);}
+
+    //поиск или создание человека по данным, полученным с эл. полиса ОМС
+    function findOrCreatePatientEveryWhere(jsonData) {
+        VocService.createOrGetPatient(jsonData, {
+            callback: function (ret) {
+                ret = JSON.parse(ret);
+                if (ret.status==='error') {
+                    return;
+                }
+                window.document.location = ret.link;
+            }
+        });
+    }
