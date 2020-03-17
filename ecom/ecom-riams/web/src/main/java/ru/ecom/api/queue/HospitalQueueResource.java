@@ -48,7 +48,7 @@ public class HospitalQueueResource {
                 "   when vis.datestart is not null then coalesce(ms.name,'')||'<br>' end) || list('Осмотр: '||vwf.name||'<br>') as madeServices" +
                 (isDoctor ? ",list ( case when p.dtype='WfConsultation' then" +
                         " case when p.diary_id is not null then '<s>Консультация: '||consVwf.name||'</s><br>' else 'Консультация: '||consVwf.name||'<br>' end  " +
-                        " when vis.datestart is not null then '<s>'||coalesce(ms.name','')||'</s>' else coalesce(ms.name,'') end ||'<br>') " : ", cast('' as varchar) ") +" as planServices" +
+                        " when vis.datestart is not null then '<s>'||coalesce(ms.name,'')||'</s>' else coalesce(ms.name,'') end ||'<br>') " : ", cast('' as varchar) ") +" as planServices" +
                 " from medcase sls " +
                 " left join patient pat on pat.id=sls.patient_id" +
                 " left join mislpu dep on dep.id=sls.department_id" +
@@ -76,7 +76,7 @@ public class HospitalQueueResource {
                 " group by sls.id, pat.id,dep.id"+
                 " order by sls.dateStart, sls.entranceTime ";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-//        LOG.info("sql = "+sql);
+        LOG.info("sql = "+sql);
         String[] fields = {"id","patientInfo","waitTime","startTime","minutes", "departmentName", "madeServices", "planServices"};
         JSONArray ret = new JSONArray(service.executeNativeSqlGetJSON(fields,sql,null));
         return ret.toString();
