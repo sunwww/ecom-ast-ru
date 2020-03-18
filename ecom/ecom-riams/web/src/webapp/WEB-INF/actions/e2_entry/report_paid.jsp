@@ -110,7 +110,7 @@
             String dateEnd = request.getParameter("dateEnd");
             String billNumbers = request.getParameter("filterAdd1");
             StringBuilder addSql = new StringBuilder();
-            if (billNumbers!=null) {
+            if (billNumbers!=null && !billNumbers.equals("")) {
                 String[] bilNums = billNumbers.split(",");
 
                 addSql.append(" and bill.billnumber in (");
@@ -204,7 +204,6 @@
                                 .append(" group by ").append(groupBySql).append( ", st.id, st.name " ).append(" order by ").append(orderBySql);
                 }
                 request.setAttribute("mainSql",sql.toString());
-              //  out.print("ssssl = "+sql.toString());
 
                 if (isReestr) {
         %>
