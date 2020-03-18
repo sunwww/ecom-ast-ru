@@ -33,6 +33,9 @@
                     <msh:textField property="dateBegin" label="Период с" />
                     <msh:textField property="dateEnd" label="по" />
                 </msh:row>
+                <msh:row>
+                    <msh:textField property="filterAdd1" label="Номера счетов" horizontalFill="true" fieldColSpan="4" />
+                </msh:row>
 
                 <msh:row>
                     <td class="label" title="Группировака (typePatient)" colspan="1">
@@ -105,6 +108,19 @@
         <%
             String dateBegin = request.getParameter("dateBegin");
             String dateEnd = request.getParameter("dateEnd");
+            String billNumbers = request.getParameter("filterAdd1");
+            StringBuilder addSql = new StringBuilder();
+            if (billNumbers!=null) {
+                String[] bilNums = billNumbers.split(",");
+
+                addSql.append(" and bill.billnumber in (");
+                for (int i=0;i<bilNums.length;i++) {
+                    if (i>0) addSql.append(",");
+                    addSql.append("'").append(bilNums[i]).append("'");
+                }
+                addSql.append(")");
+                request.setAttribute("addSql",addSql.toString());
+            }
             if (dateBegin!=null && dateEnd!=null) {
                 boolean isReestr = "1".equals(request.getParameter("typeReestr"));
                 request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
@@ -159,7 +175,7 @@
                                         " left join e2bill  bill on bill.id=e.bill_id " +
                                         " left join voce2medhelpprofile vmhp on vmhp.id=e.medhelpprofile_id" +
                                         " LEFT JOIN VocE2FondV025 v025 on v025.id=e.visitPurpose_id" +
-                                        " where bill.status_id =3 and e.entryType in ('SERVICE','POLYCLINIC') and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
+                                        " where bill.status_id =3 ").append(addSql).append(" and e.entryType in ('SERVICE','POLYCLINIC') and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
                                 " and to_date('").append(dateEnd).append("','dd.MM.yyyy') and (e.isDeleted is null or e.isDeleted='0') and (e.doNotSend is null or e.doNotSend='0')").append(defectSql)
                                 .append(" group by ").append(groupBySql).append(",v025.id, v025.name order by ").append(orderBySql).append(", v025.name ");
                         break;
@@ -170,7 +186,7 @@
                                 " from e2entry e" +
                                 " left join e2bill  bill on bill.id=e.bill_id " +
                                 " left join voce2medhelpprofile vmhp on vmhp.id=e.medhelpprofile_id" +
-                                " where bill.status_id =3 and e.entryType='").append(typeGroup).append("' and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
+                                " where bill.status_id =3").append(addSql).append(" and e.entryType='").append(typeGroup).append("' and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
                                 " and to_date('").append(dateEnd).append("','dd.MM.yyyy') and (e.isDeleted is null or e.isDeleted='0') and (e.doNotSend is null or e.doNotSend='0')").append(defectSql)
                         .append(" group by ").append(groupBySql).append(("VMP".equals(typeGroup) ? ", e.vmpkind " : "")).append(" order by ").append(orderBySql);
 
@@ -183,7 +199,7 @@
                                         " left join VocE2EntrySubType st on st.id=e.subtype_id").append(
                                         "5".equals(typeView) ? " left join entrymedservice ems on ems.entry_id = e.id left join vocmedservice vms on vms.id=ems.medservice_id" : "")
                                 .append(" left join voce2medhelpprofile vmhp on vmhp.id=e.medhelpprofile_id" +
-                                        " where bill.status_id =3 and e.entryType='").append(typeGroup).append("' and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
+                                        " where bill.status_id =3 ").append(addSql).append(" and e.entryType='").append(typeGroup).append("' and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
                                 " and to_date('").append(dateEnd).append("','dd.MM.yyyy') and (e.isDeleted is null or e.isDeleted='0') and (e.doNotSend is null or e.doNotSend='0')").append(defectSql)
                                 .append(" group by ").append(groupBySql).append( ", st.id, st.name " ).append(" order by ").append(orderBySql);
                 }
@@ -251,7 +267,7 @@ LEFT JOIN VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
 LEFT JOIN Worker ow on ow.id=owf.worker_id
 left join mislpu owflpu on owflpu.id=ow.lpu_id
 LEFT JOIN Patient owp on owp.id=ow.person_id
-WHERE  ${dtypeSql}
+WHERE  ${dtypeSql} ${addSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy')
 and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
