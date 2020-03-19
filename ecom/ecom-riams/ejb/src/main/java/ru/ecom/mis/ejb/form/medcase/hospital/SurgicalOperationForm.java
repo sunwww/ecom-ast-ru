@@ -107,13 +107,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	@Persist
 	public Long getPatient() {return thePatient;}
 	public void setPatient(Long aPatient) {thePatient = aPatient;}
-	
-	/** Осложнения */
-	@Comment("Осложнения")
-	@Persist @PersistManyToManyOneProperty(collectionGenericType=VocComplication.class)
-	public String getComplications() {return theComplications;	}
-	public void setComplications(String aComplications) {theComplications = aComplications;}
-	
+
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@Persist
@@ -332,8 +326,6 @@ public class SurgicalOperationForm extends IdEntityForm{
 	
 	/** Лечебное учреждение */
 	private Long theLpu;
-	/** Осложнения */
-	private String theComplications;
 	/** Пациент */
 	private Long thePatient;
 	/** Случай медицинского обслуживания */
@@ -552,4 +544,12 @@ public class SurgicalOperationForm extends IdEntityForm{
 	public void setSecondDoseTime(String aSecondDoseTime) {theSecondDoseTime = aSecondDoseTime;	}
 	/** Время повторной (при необходимости) дозы */
 	private String theSecondDoseTime;
+
+	/** данные для сохранения осложнений*/
+	public String getAllComps() {
+		return theAllComps;
+	}
+	public void setAllComps(String aAllComps) { theAllComps = aAllComps; }
+	/** данные для сохранения осложнений*/
+	private String theAllComps;
 }

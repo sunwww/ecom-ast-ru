@@ -402,16 +402,16 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 				queryAppend="ms.finishDate is null and (code='A16.01.029' or code='A16.01.003' or code like 'A16.01.010.%' or code='A16.01.004' or code='A16.01.004.996')"
 		/>
 	</voc>
-    
-    <!-- Справочник осложнений -->
-    <voc id='vocComplication' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocComplication'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    <!-- Справочник отказов при госпитализации -->
+
+	<!-- Осложнение -->
+	<voc id='vocComplication' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocComplication'
+				names   = 'name'
+				queried = 'code,name'
+		/>
+	</voc>
+	<!-- Справочник отказов при госпитализации -->
     <voc id='vocDeniedHospitalizating' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizating'

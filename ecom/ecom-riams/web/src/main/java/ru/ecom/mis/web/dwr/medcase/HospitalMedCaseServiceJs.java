@@ -18,6 +18,7 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -1961,5 +1962,21 @@ public class HospitalMedCaseServiceJs {
 			res.put(o);
 		}
 		return res.toString();
+	}
+
+	/**
+	 * Получить все осложнения в json.
+	 *
+	 * @param surgOperId SurgicalOperation.id
+	 * @return String Выборка в json
+	 * @throws NamingException,SQLException
+	 */
+	public String getCompJson(String surgOperId,HttpServletRequest aRequest) throws NamingException, SQLException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		return service.executeSqlGetJson("select to_char(c.datecomp,'dd.mm.yyyy') as date,c.compreasonstring as rtext" +
+				" ,c.complicationstring as ctext,c.complication_id as cid" +
+				" , vc.name as cname from surgcomplication c" +
+				" left join voccomplication vc on vc.id=c.complication_id" +
+				" where surgicaloperation_id="+surgOperId);
 	}
 }

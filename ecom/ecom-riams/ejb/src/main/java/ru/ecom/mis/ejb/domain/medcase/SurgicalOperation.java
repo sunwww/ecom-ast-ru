@@ -94,13 +94,6 @@ public class SurgicalOperation extends BaseEntity {
 	public Patient getPatient() {return thePatient;}
 	public void setPatient(Patient aPatient) {thePatient = aPatient;}
 	
-	/** Осложнения */
-	@Comment("Осложнения")
-	@ManyToMany
-	public List<VocComplication> getComplications() {return theComplications;	}
-	public void setComplications(List<VocComplication> aComplications) {theComplications = aComplications;	}
-	
-	
 	/** Кол-во  анастезии */
 	@Comment("Кол-во  анастезии")
 	public BigDecimal getAnesthesiaAmount() {return theAnesthesiaAmount;}
@@ -324,8 +317,6 @@ public class SurgicalOperation extends BaseEntity {
 
 	/** Лечебное учреждение */
 	private MisLpu theLpu;
-	/** Осложнения */
-	private List<VocComplication> theComplications;
 	/** Пациент */
 	private Patient thePatient;
 	/** Случай медицинского обслуживания */

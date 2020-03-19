@@ -38,6 +38,7 @@ function onCreate(aForm, aSurgOper, aCtx) {
 		}
 	}
     checkParent(aSurgOper,aCtx); //Находим родителя по дате и времени операции
+	saveComplications(aForm, aSurgOper, aCtx);
 }
 function onPreSave(aForm,aEntity, aCtx) {
 	var date = new java.util.Date();
@@ -91,6 +92,8 @@ function checkPeriod(aForm,aCtx) {
 }
 function onSave(aForm, aEntity, aCtx) {
 	checkParent(aEntity,aCtx);
+	aCtx.manager.createNativeQuery("delete from surgcomplication where surgicaloperation_id="+aEntity.id).executeUpdate() ;
+	saveComplications(aForm, aEntity, aCtx);
 }
 function checkParent(aEntity, aCtx) {
 	//Находим родителя по дате и времени операции
@@ -110,4 +113,32 @@ function onPreDelete(aEntityId, aCtx) {
     }
     //очищение в ContractAccountOperationByService, чтобы потом вновь можно было увидеть операцию в списке оплаченных
     aCtx.manager.createNativeQuery("update ContractAccountOperationByService set serviceid=null where serviceid="+aEntityId).executeUpdate() ;
+    //удаление осложнений
+	aCtx.manager.createNativeQuery("delete from surgcomplication where surgicaloperation_id="+aEntityId).executeUpdate() ;
+}
+//сохранение осложнений
+function saveComplications(aForm, aEntity, aCtx) {
+	var allComps = aForm.getAllComps();
+	if (allComps != '') {
+		var obj = new Packages.org.json.JSONObject(allComps);
+		var comps = obj.getJSONArray("list");
+		for (var i = 0; i < comps.length(); i++) {
+			var child = comps.get(i);
+			var surgComp = new Packages.ru.ecom.mis.ejb.domain.medcase.SurgComplication();
+			surgComp.setSurgicalOperation(aEntity);
+			surgComp.setComplicationString(''+child.get("compString"));
+			surgComp.setCompReasonString(''+child.get("reasonString"));
+
+			var format = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+			surgComp.setDateComp(new java.sql.Date(format.parse(java.lang.String.valueOf(child.get("date"))).getTime()));
+
+			var vocCompId = java.lang.Long.valueOf(child.get("comp"));
+			var vocComp = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocComplication, vocCompId);
+
+			if (vocComp != null) {
+				surgComp.setComplication(vocComp);
+				aCtx.manager.persist(surgComp);
+			}
+		}
+	}
 }
