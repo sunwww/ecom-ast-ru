@@ -94,4 +94,11 @@ public class ExtDispPriceForm extends IdEntityForm {
     public void setAges(String aAges) {theAges = aAges;}
     /** Возраста  */
     private String theAges ;
+
+    /** Минимальное кол-во услуг */
+    @Comment("Минимальное кол-во услуг")
+    @Persist @Required
+    public Integer getMinServices() {return theMinServices;}
+    public void setMinServices(Integer aMinServices) {theMinServices = aMinServices;}
+    private Integer theMinServices ;
 }

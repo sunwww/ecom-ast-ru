@@ -1345,52 +1345,8 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
     }
 
-    /*запускаем проверку случая ДД (расчет услуг)*/
-    private void checkExtDisp(E2Entry aEntry, ExtDispPrice aPrice) {
-        if (EXTDISPTYPE.equals(aEntry.getEntryType()) && aPrice!=null) {
-            theManager.createNativeQuery("delete from entrymedservice where entry_id=:id and medservice_id is null").setParameter("id",aEntry.getId()).executeUpdate(); //удаляем пустые услуги
-            List<EntryMedService> serviceList = aEntry.getMedServices();
-            List<ExtDispPriceMedService> dispPriceMedServices = aPrice.getServiceList();
-            List<String> goodList = new ArrayList<>();
-            if (dispPriceMedServices.isEmpty()) return;
-            for (EntryMedService medService: serviceList) { //TODO да, мне стыдно, переделать на лямды в меосе 2.0
-                boolean found = false;
-                if (medService.getMedService()!=null) {
-                    for (ExtDispPriceMedService dispPriceMedService: dispPriceMedServices) {
-                        if (dispPriceMedService.getMedService().equals(medService.getMedService().getCode())) {
-                            found = true;
-                            goodList.add(dispPriceMedService.getMedService());
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        medService.setComment("Услуга не требуется по возрасту");
-                        theManager.persist(medService);
-                    }
-                }
-            }
-            if (dispPriceMedServices.size()>goodList.size()) { //не все услуги оказаны
-                for (ExtDispPriceMedService dispPriceMedService : dispPriceMedServices) {
-                    String medserviceCode = dispPriceMedService.getMedService();
-                    if (!goodList.contains(medserviceCode)) {
-                        VocMedService vms ;
-                        if (!SERVICE_LIST.containsKey(medserviceCode)) {
-                            vms =  getEntityByCode(medserviceCode, VocMedService.class, false);
-                            SERVICE_LIST.put(medserviceCode,vms);
-                        } else {
-                            vms =SERVICE_LIST.get(medserviceCode);
-                        }
-                        EntryMedService medService = new EntryMedService(aEntry,vms);
-                        medService.setEntry(aEntry);
-                        medService.setComment("НЕ УКАЗАНА ДАТА УСЛУГИ");
-                        medService.setCost(BigDecimal.ZERO);
-                        LOG.warn("no service in disp: " + dispPriceMedService.getMedService());
-                        theManager.persist(new E2EntryError(aEntry,"MALO_DISP_SERVICE"));
-                        theManager.persist(medService);
-                    }
-                }
-            }
-        }
+    private void saveError(E2Entry entry, String errorCode) {
+        theManager.persist(new E2EntryError(entry,errorCode));
     }
     /** Найдем подтип случая (посещение, обращение, НМП */
     private HashMap<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();
@@ -2706,10 +2662,103 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private void calculateExtDispEntryPrice(E2Entry aEntry) { //TODO реализовать!!!
+         /*
+        а. Если оказано менее 85% услуг или нет хоть одной обязательной услуги - формируем сообщение об ошибке
+        б. Иначе если в период выполнения ДД выполнено менее 85% услуг - считаем цену по услугам
+        б. Иначе - расчет цены полным случаем
+        * услуга считается выполненной, если указана дата выполнения услуги
+        * */
         ExtDispPrice price = getExtDispPrice(aEntry);
-        BigDecimal cost = price==null ? BigDecimal.valueOf(0.03) : price.getCost();
+        BigDecimal cost ;
+        if (price!=null) {
+            theManager.createNativeQuery("delete from entrymedservice where entry_id=:id and medservice_id is null").setParameter("id",aEntry.getId()).executeUpdate(); //удаляем пустые услуги
+            List<EntryMedService> serviceList = aEntry.getMedServices();
+            int mustBeServices = price.getMinServices();
+            int foundGoodService = 0;
+            int serviceInPeriod = 0;
+            List<ExtDispPriceMedService> dispPriceMedServices = price.getServiceList();
+            List<String> goodList = new ArrayList<>();
+            long startDispTime = aEntry.getStartDate().getTime();
+            long finishDispTime = aEntry.getFinishDate().getTime();
+            if (dispPriceMedServices.isEmpty()) {
+                saveError(aEntry,"NO_DISP_PRICE_SERVICES_ADMIN");
+                return;
+            }
+            for (EntryMedService medService: serviceList) { //TODO да, мне стыдно, переделать на лямды в меосе 2.0
+                boolean found = false;
+                if (medService.getMedService()!=null) {
+                    for (ExtDispPriceMedService dispPriceMedService: dispPriceMedServices) {
+                        if (dispPriceMedService.getMedService().equals(medService.getMedService().getCode())) {
+                            found = true;
+                            if (medService.getServiceDate()!=null) {
+                                foundGoodService++;
+                                long serviceTime =medService.getServiceDate().getTime();
+                                if (startDispTime<=serviceTime && serviceTime<=finishDispTime) {
+                                    serviceInPeriod++;
+                                }
+                            }
+                            goodList.add(dispPriceMedService.getMedService());
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        medService.setComment("Услуга не требуется по возрасту");
+                        theManager.persist(medService);
+                    }
+                }
+            }
+            if (dispPriceMedServices.size() > foundGoodService) { //не все услуги оказаны, смотрим чего нет и считаем цену по услугам
+                LOG.info(aEntry.getId()+" > "+dispPriceMedServices.size() +" > malo disp > "+mustBeServices+" > "+foundGoodService+" > "+serviceInPeriod);
+                boolean lostRequired = false;
+                cost = BigDecimal.ZERO;
+                for (ExtDispPriceMedService dispPriceMedService : dispPriceMedServices) {
+                    String medserviceCode = dispPriceMedService.getMedService();
+                    if (!goodList.contains(medserviceCode)) {
+                        VocMedService vms ;
+                        if (!SERVICE_LIST.containsKey(medserviceCode)) {
+                            vms =  getEntityByCode(medserviceCode, VocMedService.class, false);
+                            SERVICE_LIST.put(medserviceCode,vms);
+                        } else {
+                            vms =SERVICE_LIST.get(medserviceCode);
+                        }
+                        if (Boolean.TRUE.equals(dispPriceMedService.getIsRequired())) lostRequired = true;
+                        EntryMedService medService = new EntryMedService(aEntry,vms);
+                        medService.setEntry(aEntry);
+                        medService.setComment("НЕ УКАЗАНА ДАТА УСЛУГИ");
+                        VocOmcMedServiceCost medServiceCost = getMedServiceOmc(vms,aEntry.getFinishDate());
+                        BigDecimal serviceCost = medServiceCost.getCost();
+                        medService.setDoctorSpeciality(medServiceCost.getWorkFunction());
+                        medService.setCost(serviceCost);
+                        cost = cost.add(serviceCost);
+                        LOG.warn(aEntry.getId()+" no service in disp: " + medserviceCode);
+                        saveError(aEntry,"MALO_DISP_SERVICE");
+                        theManager.persist(medService);
+                    }
+                }
+                if (lostRequired || foundGoodService < mustBeServices) { //нет хоть одной обязательной услуги сообщение об ошибке.
+                    saveError(aEntry,E2EntryErrorCode.NOT_FULL_DISP);
+                } else if (serviceInPeriod>=mustBeServices) {  //в период ДД сделали >85% - полный случай
+                    cost = price.getCost();
+                    LOG.info("85% услуг сделано в рамках ДД");
+                } else {//иначе - по услугам
+                    LOG.info("DISP calc by service: "+aEntry.getId());
+                    for (EntryMedService medService : serviceList) {
+                        if (medService.getServiceDate()!=null) {
+                            cost = cost.add(medService.getCost());
+                        }
+                    }
+                    LOG.info("DISP COST by service: "+aEntry.getId()+">>"+cost);
+                }
+            } else {
+                LOG.info("Считаем цену по полному случаю");
+                cost = price.getCost();
+            }
+        } else {
+            saveError(aEntry,"NO_DISPPRICE_ADMIN");
+            cost = BigDecimal.ZERO;
+        }
+
         if (DateFormat.isHoliday(aEntry.getStartDate(), true)) cost= cost.multiply(new BigDecimal("1.07")); //повышающий коэффициент на выходных
-        checkExtDisp(aEntry,price);
         aEntry.setCost(cost);
         aEntry.setBaseTarif(cost);
 

@@ -85,4 +85,10 @@ public class ExtDispPrice extends BaseEntity {
     public List<ExtDispPriceMedService> getServiceList() {return theServiceList;}
     public void setServiceList(List<ExtDispPriceMedService> aServiceList) {theServiceList = aServiceList;}
     private List<ExtDispPriceMedService> theServiceList ;
+
+    /** Минимальное кол-во услуг */
+    @Comment("Минимальное кол-во услуг")
+    public Integer getMinServices() {return theMinServices;}
+    public void setMinServices(Integer aMinServices) {theMinServices = aMinServices;}
+    private Integer theMinServices ;
 }

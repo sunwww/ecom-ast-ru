@@ -78,7 +78,7 @@
                     ,contentType : false,
                 }).done (function(htm) {
                     console.log(htm);
-                    jQuery('#fileInfo').html("Файл загружен. <input type='button' value='Синхронизировать' onclick='makeImport(\""+htm.fileName+"\")'><br>");
+                    jQuery('#fileInfo').html("Файл загружен. <input type='button' value='Синхронизировать' onclick='this.disabled=true;makeImport(\""+htm.fileName+"\")'><br>");
                 }).fail( function (err) {
                     console.log("ERROR "+JSON.stringify(err));
                 });

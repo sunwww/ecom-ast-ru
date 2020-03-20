@@ -24,6 +24,7 @@
                 </msh:row>
                 <msh:row>
                     <msh:textField property="cost" label="Цена полного случая" />
+                    <msh:textField property="minServices" label="Минимальное кол-во услуг" />
                 </msh:row>
                 <msh:row>
                     <msh:textField property="ages" label="Возраста (через запятую)" />

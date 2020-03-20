@@ -455,7 +455,8 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 bill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
 
                 int i = 0;
-                monitor.setText("Найдено записей для импорта: " + zaps.size());
+                if (isMonitorCancel(monitor, "Найдено записей для импорта: " + zaps.size())) return;
+
                 BigDecimal totalSum = new BigDecimal("0");
 
                 for (Element zap : zaps) {
