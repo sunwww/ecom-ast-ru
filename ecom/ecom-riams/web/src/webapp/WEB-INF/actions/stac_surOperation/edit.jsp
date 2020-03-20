@@ -32,56 +32,57 @@
         	request.setAttribute("medcase", frm.getMedCase()) ;
         	
         %>
-    <msh:form action="/entityParentSaveGoSubclassView-stac_surOperation.do" defaultField="" guid="137f576d-2283-4edd-9978-74290e04b873" editRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
-      <msh:panel guid="80209fa0-fbd4-45d0-be90-26ca4219af2e" colsWidth="15px,250px,15px">
-        <msh:hidden property="id" />
-        <msh:hidden property="patient" />
-        <msh:hidden property="saveType" />
-        <msh:hidden property="medCase" />
-        <msh:hidden property="lpu" />
+    <msh:form action="/entityParentSaveGoSubclassView-stac_surOperation.do" defaultField=""  editRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
+      <msh:panel  colsWidth="15px,250px,15px">
+        <msh:hidden property="id"/>
+        <msh:hidden property="patient"/>
+        <msh:hidden property="saveType"/>
+        <msh:hidden property="medCase"/>
+        <msh:hidden property="lpu"/>
+          <msh:hidden property="allComps"/>
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
-        <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
+        <msh:row>
           <msh:textField property="numberInJournal" label="Номер протокола"  labelColSpan="1" fieldColSpan="3"/>
         </msh:row>
-        <msh:separator label="Сведения до операции" colSpan="5"  />
-        <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
-          <msh:autoComplete property="idc10Before" label="МКБ до операции" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocIdc10" />
+        <msh:separator label="Сведения до операции" colSpan="5"/>
+        <msh:row>
+          <msh:autoComplete property="idc10Before" label="МКБ до операции"  fieldColSpan="3" horizontalFill="true" vocName="vocIdc10"/>
         </msh:row>
         </msh:ifNotInRole>
-        <msh:separator label="Сведения об операции" colSpan="5" guid="a7a51c304-335b4ade6f66" />
- 	        <msh:row guid="f7540b-4474-46c6-b162-828">
-	          <msh:textField property="operationDate" label="Начало дата" guid="e8636a99-31e6-4c99-a6f5-825da2a35caf" />
-	          <msh:textField property="operationTime" label="время" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
+        <msh:separator label="Сведения об операции" colSpan="5"/>
+ 	        <msh:row>
+	          <msh:textField property="operationDate" label="Начало дата"/>
+	          <msh:textField property="operationTime" label="время"/>
 	        </msh:row>
-	        <msh:row guid="f7b4a40b-4474-46c6-b162-80be1590e1a8">
-	          <msh:textField property="operationDateTo" label="Окончание дата" guid="e8599-31e6-4c99-a6f5-885caf" />
-	          <msh:textField property="operationTimeTo" label="время" guid="496b-8a35-f89732" />
+	        <msh:row>
+	          <msh:textField property="operationDateTo" label="Окончание дата"/>
+	          <msh:textField property="operationTimeTo" label="время"/>
 	        </msh:row>
-        <msh:row guid="a03a1e02-5a44-4403-bb71-fb8e5afcec43">
-          <msh:autoComplete property="department" label="Отделение" guid="cfc50051-15f6-4b6f-a382-9c5387482c60" fieldColSpan="3" horizontalFill="true" vocName="vocLpuOtd" />
+        <msh:row>
+          <msh:autoComplete property="department" label="Отделение"  fieldColSpan="3" horizontalFill="true" vocName="vocLpuOtd"/>
         </msh:row>
         <msh:row>
-          <msh:autoComplete property="serviceStream" label="Поток обслуживания" fieldColSpan="3" horizontalFill="true" vocName="vocServiceStream" />
+          <msh:autoComplete property="serviceStream" label="Поток обслуживания" fieldColSpan="3" horizontalFill="true" vocName="vocServiceStream"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete label="Хирург" property="surgeon" horizontalFill="true" fieldColSpan="3" vocName="workFunctionIsSurgical" />
+        	<msh:autoComplete label="Хирург" property="surgeon" horizontalFill="true" fieldColSpan="3" vocName="workFunctionIsSurgical"/>
         </msh:row>
         <msh:ifFormTypeIsView formName="stac_surOperationForm">
-        <msh:row guid="1221-2e6b-425a-a14e-1c02959">
-          <msh:autoComplete property="operation" label="Операция" size="60" guid="e22-9d6f-4c39-a6a1-302f14f" fieldColSpan="3" horizontalFill="true" vocName="vocOperation" />
+        <msh:row>
+          <msh:autoComplete property="operation" label="Операция" size="60"  fieldColSpan="3" horizontalFill="true" vocName="vocOperation"/>
         </msh:row>
         </msh:ifFormTypeIsView>
-        <msh:row guid="1221-2e6b-425a-a14e-1c02959">
-          <msh:autoComplete property="medService" label="Операция (услуга)" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceOperation" />
+        <msh:row>
+          <msh:autoComplete property="medService" label="Операция (услуга)" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceOperation"/>
 	        </msh:row>
         <mis:ifPatientIsWoman classByObject="MedCase" idObject="${medcase}">
 
         <msh:row>
-        <msh:autoComplete property="profile" label="Профиль" guid="e22-9d6f-4c39-a6a1-302f14f" horizontalFill="true" vocName="vocSurgicalProfile" />
-        <msh:autoComplete property="method" label="Метод" guid="e22-9d6a1-302f14f" horizontalFill="true" vocName="vocOperationMethod" />
+        <msh:autoComplete property="profile" label="Профиль"  horizontalFill="true" vocName="vocSurgicalProfile"/>
+        <msh:autoComplete property="method" label="Метод"  horizontalFill="true" vocName="vocOperationMethod"/>
         </msh:row>
 
-        <msh:row guid="1221-2e6b-425a-a14e-1c02959">
+        <msh:row>
    		<msh:autoComplete property="abortion" vocName="vocAbortationByProfile" parentAutocomplete="profile" fieldColSpan="3" horizontalFill="true" label="Тип аборта"/>
        	</msh:row>
         </mis:ifPatientIsWoman>
@@ -97,8 +98,8 @@
         </msh:ifInRole>
 
 
-          <msh:separator label="Периоперационная антибиотикопрофилактика" colSpan="5"  />
-          <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+          <msh:separator label="Периоперационная антибиотикопрофилактика" colSpan="5"/>
+          <msh:row>
               <td class="label" title="Поиск по промежутку  (antibio)" colspan="1"><label for="antibioName" id="tantibioLabel">Периоперационная антибиотикопрофилактика?</label></td>
               <td onclick="this.childNodes[1].checked='checked'; checkАntibioRb();" colspan="1">
                   <input type="radio" name="antibio" value="1"> Нет
@@ -107,131 +108,127 @@
                   <input type="radio" name="antibio" value="2"> Да
               </td>
           </msh:row>
-          <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
-              <msh:autoComplete property="classWound" label="Класс раны" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocClassWound" />
+          <msh:row>
+              <msh:autoComplete property="classWound" label="Класс раны"  fieldColSpan="3" horizontalFill="true" vocName="vocClassWound"/>
           </msh:row>
-          <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
-              <msh:autoComplete property="antibioticDrug" label="Препарат" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocAntibioticDrug" />
+          <msh:row>
+              <msh:autoComplete property="antibioticDrug" label="Препарат"  fieldColSpan="3" horizontalFill="true" vocName="vocAntibioticDrug"/>
           </msh:row>
-          <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
-              <msh:textField property="dose" label="Доза" guid="26df1de7-4d5b-4ef3-a1d0-8521a33b8078" />
+          <msh:row>
+              <msh:textField property="dose" label="Доза"/>
           </msh:row>
-          <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
-              <msh:autoComplete property="methodsDrugAdm" label="Путь введения" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocMethodsDrugAdm" />
+          <msh:row>
+              <msh:autoComplete property="methodsDrugAdm" label="Путь введения"  fieldColSpan="3" horizontalFill="true" vocName="vocMethodsDrugAdm"/>
           </msh:row>
-          <msh:row guid="f7540b-4474-46c6-b162-828">
-              <msh:textField property="firstDoseTime" label="Время первой дозы" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
-              <msh:textField property="secondDoseTime" label="Время повторной дозы (при необходимости)" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
+          <msh:row>
+              <msh:textField property="firstDoseTime" label="Время первой дозы"/>
+              <msh:textField property="secondDoseTime" label="Время повторной дозы (при необходимости)"/>
           </msh:row>
-          <msh:separator label="Протокол" colSpan="5"  />
+          <msh:separator label="Протокол" colSpan="5"/>
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
-        <msh:row guid="ca8a7727-42ac-4c64-8e52-23d4f84dfe43">
-          <msh:textArea rows="6" hideLabel="false" property="operationText" viewOnlyField="false" guid="e-5833-4bc3-80df-52fdd237fce9" fieldColSpan="3" label="Протокол операции" />
+        <msh:row>
+          <msh:textArea rows="6" hideLabel="false" property="operationText" viewOnlyField="false"  fieldColSpan="3" label="Протокол операции"/>
         </msh:row>
         <msh:row>
-          <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="1c1ec646-5-b9d5-177a7324aa7f">
+          <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
             <td colspan="4" align="center">
-              <input type="button" value="Шаблон" onClick="showOperationTextTempTemplateProtocol()" />
+              <input type="button" value="Шаблон" onClick="showOperationTextTempTemplateProtocol()"/>
               <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
             </td>
           </msh:ifFormTypeIsNotView>
         </msh:row>
         </msh:ifNotInRole>
-        <msh:row guid="203625bc-d215-4f48-8ee3-44f48785755d">
-          <msh:autoComplete horizontalFill="true" property="aspect" label="Показания" vocName="vocHospitalAspect" />
+        <msh:row>
+          <msh:autoComplete horizontalFill="true" property="aspect" label="Показания" vocName="vocHospitalAspect"/>
           <msh:autoComplete horizontalFill="true" vocName="vocOperationTechnology" property="technology" label="С испол. ВМТ"/>
         </msh:row>
 
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
 	       <msh:row>
-	          <msh:checkBox property="base" label="Основная" guid="35bdec3d-2c23-47df-b8c7-4fb706224994" fieldColSpan="1" />
-	          <msh:checkBox property="minor" label="Малая операция" guid="a8774c57-1b50-4358-916d-ba51249357e7" />
+	          <msh:checkBox property="base" label="Основная"  fieldColSpan="1"/>
+	          <msh:checkBox property="minor" label="Малая операция"/>
 	       </msh:row>
         </msh:ifNotInRole>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
 
-        <msh:row guid="f0851bc5-6ac2-4e6f-bfab-90593e637799">
-          <ecom:oneToManyOneAutocomplete colSpan="3" label="Ассистенты" property="surgeonFunctions" vocName="workFunctionIsSurgical" guid="e68271bf-c384-4022-9fb6-6ba7eeedb6fe" />
+        <msh:row>
+          <ecom:oneToManyOneAutocomplete colSpan="3" label="Ассистенты" property="surgeonFunctions" vocName="workFunctionIsSurgical"/>
         </msh:row>
-        <msh:row guid="12721-2e6b-425a-a14e-1c0298959">
-          <msh:autoComplete property="operatingNurse" label="Опер. медсестра" guid="e282-9d6f-4c39-a6a1-30g2f14f" fieldColSpan="3" horizontalFill="true" vocName="workFunctionIsInstrumentNurse" />
+        <msh:row>
+          <msh:autoComplete property="operatingNurse" label="Опер. медсестра"  fieldColSpan="3" horizontalFill="true" vocName="workFunctionIsInstrumentNurse"/>
         </msh:row>
         </msh:ifNotInRole>
 
         <msh:ifFormTypeIsCreate formName="stac_surOperationForm">
         		<msh:separator label="Анестезия" colSpan="5"/>
 	        <msh:row>
-	          <msh:autoComplete property="isAnesthesia" label="Анестезия проводилась?" horizontalFill="true" vocName="vocYesNo" fieldColSpan="3" />
+	          <msh:autoComplete property="isAnesthesia" label="Анестезия проводилась?" horizontalFill="true" vocName="vocYesNo" fieldColSpan="3"/>
 	        </msh:row>
 	        <msh:row>
-	          <msh:autoComplete property="anesthesia" label="Метод" horizontalFill="true" vocName="vocAnesthesiaMethod" fieldColSpan="3" />
+	          <msh:autoComplete property="anesthesia" label="Метод" horizontalFill="true" vocName="vocAnesthesiaMethod" fieldColSpan="3"/>
 	        </msh:row>
 	        <msh:row>
-	          <msh:autoComplete property="anesthesiaService" label="Услуга" horizontalFill="true" vocName="medServiceAnesthesia" fieldColSpan="3" />
+	          <msh:autoComplete property="anesthesiaService" label="Услуга" horizontalFill="true" vocName="medServiceAnesthesia" fieldColSpan="3"/>
 	        </msh:row>
 	        <msh:row>
-	          <msh:autoComplete property="anesthesiaType" label="Вид" horizontalFill="true" vocName="vocAnesthesia" fieldColSpan="3" />
+	          <msh:autoComplete property="anesthesiaType" label="Вид" horizontalFill="true" vocName="vocAnesthesia" fieldColSpan="3"/>
 	        </msh:row>
 	        <msh:row>
-	          <msh:textField property="anesthesiaDuration" label="Длительность (мин)"  fieldColSpan="3" />
+	          <msh:textField property="anesthesiaDuration" label="Длительность (мин)"  fieldColSpan="3"/>
 	        </msh:row>
-	        <msh:row >
-	          <msh:autoComplete property="anaesthetist" label="Анестезиолог" vocName="workFunction" fieldColSpan="3" horizontalFill="true" />
+	        <msh:row>
+	          <msh:autoComplete property="anaesthetist" label="Анестезиолог" vocName="workFunction" fieldColSpan="3" horizontalFill="true"/>
 	        </msh:row>
         </msh:ifFormTypeIsCreate>
          <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
-        <msh:separator label="Использование специальной аппаратуры" colSpan="5" guid="78d9-74f0-401c-ab10-01bdf544acd8" />
-	        <msh:row guid="c065ec29-09d7-49de-adbb-516655c251c1">
-	          <msh:checkBox property="endoscopyUse" label="Эндоскопия" guid="35f35cdf-4b7e-45f7-af9f-252d656e10d7" />
-	          <msh:checkBox property="laserUse" label="Лазерная аппаратура" guid="8a4372de-f324-4206-9369-adaa25ffa23e" />
+        <msh:separator label="Использование специальной аппаратуры" colSpan="5"/>
+	        <msh:row>
+	          <msh:checkBox property="endoscopyUse" label="Эндоскопия"/>
+	          <msh:checkBox property="laserUse" label="Лазерная аппаратура"/>
 	        </msh:row>
-	        <msh:row guid="738f9c05-0052-41af-ba25-28e72a055b1e">
-	          <msh:checkBox property="cryogenicUse" label="Криогенная аппаратура" guid="99f18eb4-ad41-4d24-8e21-5a5df64e0d07"  fieldColSpan="3"/>
+	        <msh:row>
+	          <msh:checkBox property="cryogenicUse" label="Криогенная аппаратура"   fieldColSpan="3"/>
 	        </msh:row>
-        <msh:separator label="Сведения после операции" colSpan="5" guid="a7a51c30-4065-4ab8-ac94-335b4ade6f66" />
-
-        <msh:row guid="ad5ec-5754-4cbd-bcb5-a592">
-          <ecom:oneToManyOneAutocomplete vocName="vocComplication" colSpan="3" label="Осложнения" property="complications" guid="652c9b95-2724-4086-87f5-aefd67b01e8c" />
-        </msh:row>
-        <msh:row guid="1aaf301e-9bae-462b-9e03-e9c5f3aa5162">
-          <msh:textArea hideLabel="false" property="histologicalStudy" viewOnlyField="false" label="Гистол. исследование" guid="535c0b96-277f-4f60-bd03-19421447bcd0" fieldColSpan="3" horizontalFill="true" rows="6" />
+        <msh:separator label="Сведения после операции" colSpan="5"/>
+        <msh:row>
+          <msh:textArea hideLabel="false" property="histologicalStudy" viewOnlyField="false" label="Гистол. исследование"  fieldColSpan="3" horizontalFill="true" rows="6"/>
         </msh:row>
         <msh:row>
-          <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="1c1ec646-5-b9d5-177a7324aa7f">
+          <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
             <td colspan="4" align="center">
-              <input type="button" value="Шаблон" onClick="showHistologicalStudyTempTemplateProtocol()" />
+              <input type="button" value="Шаблон" onClick="showHistologicalStudyTempTemplateProtocol()"/>
               <input type="button" id="changeSizeHistButton" value="Увеличить" onclick="changeSizeHist()">
             </td>
           </msh:ifFormTypeIsNotView>
         </msh:row>
 
-        <msh:row guid="13-2e6b-425a-a14e-1359">
-          <msh:autoComplete property="idc10After" label="МКБ после операции" guid="ef192-9d6f-4c39-a6a1-304f" fieldColSpan="3" horizontalFill="true" vocName="vocIdc10" />
+        <msh:row>
+          <msh:autoComplete property="idc10After" label="МКБ после операции"  fieldColSpan="3" horizontalFill="true" vocName="vocIdc10"/>
         </msh:row>
         <msh:row>
-          <msh:autoComplete property="outcome" label="Исход операции" fieldColSpan="3" horizontalFill="true" vocName="vocOperationOutcome" />
+          <msh:autoComplete property="outcome" label="Исход операции" fieldColSpan="3" horizontalFill="true" vocName="vocOperationOutcome"/>
         </msh:row>
         </msh:ifNotInRole>
           <msh:row>
-              <msh:autoComplete property="leftRight" label="Сторона (для парных органов)" fieldColSpan="3" horizontalFill="true" vocName="vocLeftRight" />
+              <msh:autoComplete property="leftRight" label="Сторона (для парных органов)" fieldColSpan="3" horizontalFill="true" vocName="vocLeftRight"/>
           </msh:row>
                 <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
-          <msh:label property="createUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+          <msh:label property="createUsername" label="пользователь"/>
         </msh:row>
         <msh:row>
         	<msh:label property="editDate" label="Дата редак."/>
-          	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+          	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>
         <msh:row>
         	<msh:label property="printDate" label="Дата печати"/>
         	<msh:hidden property="printTime"/>
         	<msh:label property="printUsername" label="пользователь"/>
         </msh:row>
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3"  functionSubmit="save();"/>
       </msh:panel>
+        <div id="compDiv"></div>
         <div>
-            <a id='noteH' href="#bottom" onclick="showNote();" >Показать примечание</a><br>
+            <a id='noteH' href="#bottom" onclick="showNote();">Показать примечание</a><br>
             <div id="note" style="display:none;">
                 <b>Класс I: чистая</b>: неинфицированная послеоперационная рана при отсутствии воспаления, при этом не затрагивались дыхательный,
                 пищеварительный, половой или неинфицированный мочевыводящий тракты. Чистые раны закрываются первичным натяжением и в случае необходимости
@@ -246,24 +243,30 @@
                 присутствовали в области оперативного вмешательства до операции.<br>
             </div>
         </div>
+        <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
+        <table><tbody><tr><td class="buttons" colspan="3">
+            <input id="cancelButton" type="button" onclick="this.disabled=true; window.history.back()" title="Отменить изменения [SHIFT+ESC]" value="Отменить">
+            <input id="submitButton" class="default" type="button" value="Сохранить изменения     " onclick="this.value='Сохранение изменений ...'; this.disabled=true; save();  return true ;" title="Сохранить изменения      [CTRL+ENTER]" autocomplete="off"></td>
+        </tr></tbody></table>
+        </msh:ifFormTypeIsNotView>
     </msh:form>
-    <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="6ea7dcbb-d32c-4230-b6b0-a662dcc9f568">
+    <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
       <tags:templateProtocol property="histologicalStudy" name="HistologicalStudyTemp"
       idSmo="stac_surOperationForm.medCase" version="Visit" voc="protocolVisitByPatient"
-      />
+   />
       <tags:templateProtocol property="operationText" name="OperationTextTemp"
       idSmo="stac_surOperationForm.medCase" version="Visit" voc="protocolVisitByPatient"
-      />
+   />
     </msh:ifFormTypeIsNotView>
-    <msh:ifFormTypeIsView formName="stac_surOperationForm" guid="e71c21cc-2a77-4d16-9ee0-ba293d19a42b">
-      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia/View" guid="9a06820c-3f3b-4744-880d-06aa1745888d">
-        <ecom:parentEntityListAll attribute="anesthesies" formName="stac_anesthesiaForm" guid="af9854a8-f5a7-45b6-859b-ecbaec1ef3b9" />
-        <msh:tableNotEmpty name="anesthesies" guid="cc93a3d4-7e22-4b2f-a16c-46b56c963753">
-          <msh:section title="Анестезия" guid="8ac85b8f-45f3-439b-979d-f7ce88a54dbd">
-            <msh:table name="anesthesies" action="entityParentView-stac_anesthesia.do" idField="id" guid="d89b3a7c-2689-48fb-be75-3da899826749">
-              <msh:tableColumn columnName="Анестезиолог" property="anesthesistInfo" guid="8e832f90-6905-44cf-952e-76495689c35b" />
-              <msh:tableColumn columnName="Длительность (мин)" property="duration" guid="8e832f90-6905-44cf-952e-76495689c35b" />
-              <msh:tableColumn columnName="Метод" property="methodInfo" guid="8e832f90-6905-44cf-952e-76495689c35b" />
+    <msh:ifFormTypeIsView formName="stac_surOperationForm">
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia/View">
+        <ecom:parentEntityListAll attribute="anesthesies" formName="stac_anesthesiaForm"/>
+        <msh:tableNotEmpty name="anesthesies">
+          <msh:section title="Анестезия">
+            <msh:table name="anesthesies" action="entityParentView-stac_anesthesia.do" idField="id">
+              <msh:tableColumn columnName="Анестезиолог" property="anesthesistInfo"/>
+              <msh:tableColumn columnName="Длительность (мин)" property="duration"/>
+              <msh:tableColumn columnName="Метод" property="methodInfo"/>
             </msh:table>
           </msh:section>
         </msh:tableNotEmpty>
@@ -277,17 +280,17 @@
 
     </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="StacJournal" beginForm="stac_surOperationForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+    <ecom:titleTrail mainMenu="StacJournal" beginForm="stac_surOperationForm"/>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="stac_surOperationForm" guid="c7cae1b4-31ca-4b76-ab51-7f75b52d11b6">
-      <msh:sideMenu title="Хир. операция" guid="edd9bfa6-e6e7-4998-b4c2-08754057b0aa">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_surOperation" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-stac_surOperation" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
-        <msh:sideLink key="ALT+3" params="id" action="/entityParentListRedirect-stac_surOperation" name="⇧Cписок операций" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" guid="a604af1f-cdbe-447b-f6ef8209698f" title="Перейти к списку операций" />
+    <msh:ifFormTypeIsView formName="stac_surOperationForm">
+      <msh:sideMenu title="Хир. операция">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_surOperation" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit"/>
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-stac_surOperation" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Delete"/>
+        <msh:sideLink key="ALT+3" params="id" action="/entityParentListRedirect-stac_surOperation" name="⇧Cписок операций" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View"  title="Перейти к списку операций"/>
       </msh:sideMenu>
-      <msh:sideMenu title="Добавить" guid="a28f403f-54ac-4982-8133-2b10d91ea770">
-        <msh:sideLink key="CTRT+1" params="id" action="/entityParentPrepareCreate-stac_anesthesia" name="Анестезию" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia/View" guid="a604af1f-cdbe-418a-947b-f6ef8209698f" title="Добавить анестезию" />
+      <msh:sideMenu title="Добавить">
+        <msh:sideLink key="CTRT+1" params="id" action="/entityParentPrepareCreate-stac_anesthesia" name="Анестезию" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia/View"  title="Добавить анестезию"/>
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink key="CTRL+2" params="id" action="/print-surgicalOperation.do?m=printSurOperation&s=HospitalPrintService" name="Протокола операции"/>
@@ -501,10 +504,44 @@
             }
         }
     	function save() {
+            <msh:ifInRole roles="/Policy/Mis/MedCase/QualityEstimationCard/View">
+            saveAllComps();
+            </msh:ifInRole>
             if (checkDateTime())
                 checkAntibioticSave();
         }
 
+    <msh:ifInRole roles="/Policy/Mis/MedCase/QualityEstimationCard/View">
+        //сохранение осложнений
+        function saveAllComps() {
+            var table = document.getElementById('allCompTble');
+            $('allComps').value = "";
+            var mas = {
+                list: []
+            };
+            for (var i = 0; i < table.rows.length; i++) {
+                var ii = table.rows[i].id.replace('row', '');
+                if (typeof $('' + voc1 + ii) !== 'undefined'
+                && $('' + voc1 + ii).value!='' && $('dateComp' + ii).value!=''
+                    && $('reasonName'+ii).value!='' &&
+                    (($(voc1+ii+'Name').value.indexOf('Другое')==0 && $('compName'+ii).value!='') ||
+                        ($(voc1+ii+'Name').value.indexOf('Другое')!=0))
+                      && $('dateComp'+ii).title.indexOf('Неправильно')==-1) {
+                    var compName=$(voc1+ii+'Name').value.indexOf('Другое')==0?
+                        $('compName'+ii).value : "";
+                    var reasonName=$('reasonName'+ii).value;
+                    var obj = {
+                        comp: $('' + voc1 + ii).value,
+                        compString: compName,
+                        reasonString: reasonName,
+                        date: $('dateComp' + ii).value
+                    };
+                    mas.list.push(obj);
+                }
+            }
+            $('allComps').value = JSON.stringify(mas);
+        }
+    </msh:ifInRole>
         //ф-я проверяет, выбрали ли препарат (или выбрано 'Нет') и делает доступными/недоступными элементы из массива объектов masAntibioElements
         function checkDrugRequired(checkEmpty) { //checkEmpty - обнулять ли значения
     	    var disabled=$('antibioticDrugName').value.trim()=='Нет' || $('antibioticDrugName').value.trim()=='';
@@ -528,7 +565,7 @@
 
   </msh:ifFormTypeIsNotView>
 
-    <msh:ifFormTypeIsNotView formName="stac_surOperationForm" guid="8b68bb61-7bc0-425e-b09c-7361891144b1">
+    <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
     	  <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
     	  <script type="text/javascript">
     	  	$('numberInJournal').focus() ;
@@ -653,6 +690,164 @@
             }
         </style>
     </msh:ifFormTypeIsCreate>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/QualityEstimationCard/View">
+      <script type="text/javascript">
+
+          var voc1='vocComplication';
+
+          //Добавление строки с осложнением
+          function createRowComp(ii) {
+              ii=+ii;
+              ii=getNextId(ii);
+              var table = document.getElementById('allCompTble');
+              var tr = document.createElement('tr');
+              tr.id='row'+ii;
+              var td0 = document.createElement('td');
+              var td1 = document.createElement('td');
+              var td2 = document.createElement('td');
+              var td2_5 = document.createElement('td');
+              var td3 = document.createElement('td');
+              var td5 = document.createElement('td');
+              //текст, если выбрано "Другое"
+              var td6 = document.createElement('td');
+              var td7 = document.createElement('td');
+              td1.innerHTML=createHtmlForVoc(voc1,ii,35);
+              td2.innerHTML="<label id=\"dateComp"+ii+"Label\" for=\"dateComp"+ii+"\">Дата&nbsp;осложнения:</label>" +
+                  "<input title=\"Дата&nbsp;осложненияNoneField\" class=\"\" id=\"dateComp"+ii+"\" name=\"dateComp"+ii+"\" size=\"10\" value=\"\" type=\"text\" autocomplete=\"off\">";
+              if (ii!=0) td5.innerHTML="<input id=\"btnDel"+ii+"\" type=\"button\" value=\"-\" onclick=\"delRow(this);\">";
+              td5.setAttribute("width","25px");
+              td5.setAttribute("align","right");
+              td2_5.innerHTML="<label>Причина:</label>";
+              td3.innerHTML="<input  disabled=\"true\" id=\"btnAdd"+ii+"\" type=\"button\" value=\"+\" onclick=\"addRowAfter(this);\">";
+              td6.innerHTML="<label>Осложнение:</label><input disabled id=\"compName"+ii+"\" size=\"10\" type=\"text\" >";
+              td7.innerHTML="<label>Причина:</label><input id=\"reasonName"+ii+"\" size=\"10\" type=\"text\" >";
+              tr.appendChild(td0);tr.appendChild(td1); tr.appendChild(td2);tr.appendChild(td2_5);
+              tr.appendChild(td6);tr.appendChild(td7); tr.appendChild(td5);tr.appendChild(td3);
+              table.appendChild(tr);
+              evalVoc(voc1,ii);
+              if ($('dateComp'+ii)) {
+                  new dateutil.DateField($('dateComp'+ii)) ;
+                  eventutil.addEventListener($('dateComp'+ii), "keyup", function(){checkEnableAdd(this.id.replace('dateComp',''));}) ;
+                  eventutil.addEventListener($('dateComp'+ii), "input", function(){checkEnableAdd(this.id.replace('dateComp',''));}) ;
+                  eventutil.addEventListener($('dateComp'+ii), "blur", function(){checkEnableAdd(this.id.replace('dateComp',''));}) ;
+                  eventutil.addEventListener($('dateComp'+ii), "paste", function(){checkEnableAdd(this.id.replace('dateComp',''));});
+                  eventutil.addEventListener($('dateComp'+ii), "dblclick", function(){checkEnableAdd(this.id.replace('dateComp',''));});
+                  eventutil.addEventListener($('dateComp'+ii), "focus", function(){checkEnableAdd(this.id.replace('dateComp',''));});
+              }
+                setEvents('compName',ii);
+                setEvents('reasonName',ii);
+              return ii;
+          }
+          //получение следующего id для вставк:
+          //+1 - если не удаляли и +/++ с последнего элемента
+          //rowcount - если +/++ с любого элемента, но не удаляли
+          //первый свободный после rowcount - если +/++ с любого элемента и удаляли
+          //можно просто max(id)+1
+          function getNextId(ii) {
+              var max=ii;
+              //if (ii<document.getElementById('allCompTble').rows.length) ii=document.getElementById('allCompTble').rows.length;
+              for (var i=0; i<document.getElementById('allCompTble').rows.length; i++) {
+                  var id=document.getElementById('allCompTble').rows[i].id.replace('row','');
+                  if (id>max) max=id;
+              }
+              return ++max;
+          }
+
+          function setEvents(name,ii) {
+              eventutil.addEventListener($(name+ii), "keyup", function(){checkEnableAdd(this.id.replace(name,''));}) ;
+              eventutil.addEventListener($(name+ii), "input", function(){checkEnableAdd(this.id.replace(name,''));}) ;
+              eventutil.addEventListener($(name+ii), "blur", function(){checkEnableAdd(this.id.replace(name,''));}) ;
+              eventutil.addEventListener($(name+ii), "paste", function(){checkEnableAdd(this.id.replace(name,''));});
+              eventutil.addEventListener($(name+ii), "dblclick", function(){checkEnableAdd(this.id.replace(name,''));});
+              eventutil.addEventListener($(name+ii), "focus", function(){checkEnableAdd(this.id.replace(name,''));});
+          }
+
+          //создать voc
+          function evalVoc(voc,ii) {
+              eval("var "+voc+ii+"Autocomplete = new msh_autocomplete.Autocomplete()") ;
+              eval(voc+ii+"Autocomplete.setUrl('simpleVocAutocomplete/"+voc+"') ");
+              eval(voc+ii+"Autocomplete.setIdFieldId('"+voc+ii+"') ");
+              eval(voc+ii+"Autocomplete.setNameFieldId('"+voc+ii+"Name') ");
+              eval(voc+ii+"Autocomplete.setDivId('"+voc+ii+"Div') ");
+              eval(voc+ii+"Autocomplete.setVocKey('"+voc+"') ");
+              eval(voc+ii+"Autocomplete.setVocTitle('Осложнение')") ;
+              eval(voc+ii+"Autocomplete.build() ");
+              eval(voc+ii+"Autocomplete.addOnChangeCallback(function() { checkEnableAdd("+ii+"); })") ;
+          }
+
+          //создать html для voc
+          function createHtmlForVoc(voc,ii,size) {
+              return "<div><input type=\"hidden\" size=\"1\" name=\""+voc+"\" id=\"" + voc +
+                  +ii+"\" value=\"\"><input title=\""+voc+ii+"\" type=\"text\" name=\"" + voc +
+                  +ii+"Name\" id=\""+voc+ii+"Name\" size=\""+size+"\" class=\"autocomplete horizontalFill\" " +
+                  "autocomplete=\"off\"><div id=\""+voc+ii+"Div\" style=\"visibility: hidden; display: none;\" " +
+                  "class=\"autocomplete\"></div></div>";
+          }
+          function delRow(btn) {
+              document.getElementById('allCompTble').deleteRow(document.getElementById('row'+btn.id.replace("btnDel","")).rowIndex);
+          }
+          function addRowAfter(btn) {
+              createRowComp(+btn.id.replace("btnAdd",""));
+          }
+          function checkEnableAdd(id) {
+              if ($(voc1+id+'Name').value.indexOf('Другое')==0)
+                    document.getElementById('compName'+id).removeAttribute('disabled');
+              else {
+                    document.getElementById('compName'+id).setAttribute('disabled', true);
+              }
+              var ii=(''+id).replace('dateComp','');
+              if ($(''+voc1+ii) && $('dateComp'+ii) && $(''+voc1+ii).value!='' && $('dateComp'+ii).value!=''
+                  && $('dateComp'+ii).title.indexOf('Неправильно')==-1
+                && $('reasonName'+id).value!='' &&
+                  (($(voc1+id+'Name').value.indexOf('Другое')==0 && $('compName'+id).value!='') ||
+                  ($(voc1+id+'Name').value.indexOf('Другое')!=0))) {
+                  document.getElementById('btnAdd' + ii).removeAttribute('disabled');
+              }
+              else {
+                  document.getElementById('btnAdd' + ii).setAttribute('disabled', true);
+              }
+          }
+        document.getElementById("compDiv").innerHTML=" <label><b>Осложнения:</b></label>" +
+            "<table id=\"allCompTble\"></table>";
+          //Осложнения
+          <msh:ifFormTypeIsCreate formName="stac_surOperationForm">
+          createRowComp(-1);
+          </msh:ifFormTypeIsCreate>
+          <msh:ifFormTypeAreViewOrEdit formName="stac_surOperationForm">
+              function loadComps() {
+              HospitalMedCaseService.getCompJson(${param.id}, {
+              callback: function (aResult) {
+                var res=JSON.parse(aResult);
+                  for (var ind1 = 0; ind1 < res.length; ind1++) {
+                      var comp = res[ind1];
+                      createRowComp(ind1-1);
+                      $(voc1+ind1).value=comp.cid;
+                      $(voc1+ind1+'Name').value=comp.cname;
+                      $('dateComp'+ind1).value=comp.date;
+                      $('reasonName'+ind1).value=comp.rtext;
+                      $('compName'+ind1).value=comp.ctext;
+                      <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
+                            checkEnableAdd(ind1);
+                      </msh:ifFormTypeIsNotView>
+                      <msh:ifFormTypeIsView formName="stac_surOperationForm">
+                          $(voc1+ind1).setAttribute("disabled",true);
+                          $(voc1+ind1+'Name').setAttribute("disabled",true);
+                          $('dateComp'+ind1).setAttribute("disabled",true);
+                          $('reasonName'+ind1).setAttribute("disabled",true);
+                          $('compName'+ind1).setAttribute("disabled",true);
+                      </msh:ifFormTypeIsView>
+              }
+              <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
+                  if (res.length==0)
+                    createRowComp(-1);
+              </msh:ifFormTypeIsNotView>
+              }
+              });
+              }
+              loadComps();
+          </msh:ifFormTypeAreViewOrEdit>
+          </msh:ifInRole>
+      </script>
   </tiles:put>
 </tiles:insert>
 
