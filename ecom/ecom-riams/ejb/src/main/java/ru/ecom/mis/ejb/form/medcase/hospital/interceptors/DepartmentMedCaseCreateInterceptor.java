@@ -178,7 +178,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 					" left join childBirth cb on cb.medcase_id=slos.id" +
 					" where slo.id=:medcaseId and cb.pangsStartDate is not null";
 			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
-` `			return Long.parseLong(list.toString())>0;
+			return Long.parseLong(list.toString())>0;
 		} else {
     		return true;
 		}
