@@ -22,11 +22,9 @@ import java.util.List;
 public class DepartmentSaveInterceptor  implements IFormInterceptor{
 
 	private static final Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-    
+
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		DepartmentMedCaseForm form=(DepartmentMedCaseForm)aForm ;
-		if (CAN_DEBUG) LOG.debug("Проверка правильности введенных данных");
 		EntityManager manager = aContext.getEntityManager() ;
 		DepartmentMedCase medCase = (DepartmentMedCase)aEntity ;
 		String dateFinish = "null" ;
@@ -37,17 +35,14 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		if (medCase.getDischargeTime()!=null) {
 			timeFinish = "'"+DateFormat.formatToTime(medCase.getDischargeTime())+"'" ;
 		}
-		StringBuilder sqlupdate = new StringBuilder() ;
-		
+
 		if (!isDiagnosisAllowed(form.getClinicalMkb(), form.getDepartment(), form.getPatient(), form.getServiceStream(), null,null,manager)) {
 			throw new IllegalStateException ("Данный диагноз запрещен в отделении!");
 		}
-		sqlupdate.append("update MedCase set dateFinish=").append(dateFinish).append(", dischargeTime=").append(timeFinish).append(" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))");
-		manager.createNativeQuery(sqlupdate.toString())
+		if (medCase.getParent()!=null) medCase.setServiceStream(medCase.getParent().getServiceStream());// всегда поток обслуживания = потоку родителя.
+		manager.createNativeQuery("update MedCase set dateFinish=" + dateFinish + ", dischargeTime=" + timeFinish + " where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))")
 			.setParameter("parent", form.getId())
 			.executeUpdate() ;
-		
-		
 	}
 	public static void setDiagnosis(EntityManager aManager, Long aMedCase, String aListDiags, String aRegistrationType, String aPriority) {
 		setDiagnosis(aManager, aMedCase, aListDiags, aRegistrationType, aPriority,null, null) ;

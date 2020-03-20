@@ -166,7 +166,9 @@ function checkAllDiagnosis (aCtx, aSlsId) {
 				slo = slo+" <a href='entitySubclassView-mis_medCase.do?id="+list.get(0)[0]+"' onclick='return  msh.util.FormData.getInstance().isChangedForLink() ;'>" +list.get(0)[1]+"</a>" ;
 			}
 			throw "Не полностью заполнены данные по диагнозам в отделениях!!! "+ slo ;
-		}	
+		}	else {
+
+		}
 	}
 }
 //выписной диагноз должен быть уникальным
