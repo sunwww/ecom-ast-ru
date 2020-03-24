@@ -41,14 +41,15 @@ public class LoginSaveAction extends LoginExitAction {
 
     private static boolean needChangePasswordAtLogin (String aUsername, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String res = null;
+        String res ;
         try {
             res = service.executeNativeSql("select case when changePasswordAtLogin='1' then '1' else '0' end" +
                     " from secuser where login='"+aUsername+"'").iterator().next().get1().toString();
         } catch (Exception e) {
             LOG.error("error login = "+aUsername, e); //почему-то случается java.util.NoSuchElementException, напр mkostenko
+			res = null;
         }
-        return "1".equals(res);
+		return "1".equals(res);
     }
     private static int getPasswordAge (String username, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -81,10 +82,10 @@ public class LoginSaveAction extends LoginExitAction {
             ILoginService service = Injection.find(aRequest).getService(ILoginService.class) ;
             if(service==null) throw new IllegalStateException("Невозможно получить сервис "+ILoginService.class.getSimpleName()) ;
             String[] urls=service.getConfigUrl() ;
-            loginInfo.setUrlMainBase(urls[0],session) ;
-            loginInfo.setUrlReportBase(urls[1],session) ;
+			service.createRecordInAuthJournal(username, aRequest.getRemoteAddr(), aRequest.getLocalAddr(), aRequest.getServerName(), true,null,null) ;
 
-            logLoginUserInvironment(aRequest) ;
+			loginInfo.setUrlMainBase(urls[0],session) ;
+            loginInfo.setUrlReportBase(urls[1],session) ;
 
             Set<String> roles = service.getUserRoles() ;
 
@@ -102,7 +103,6 @@ public class LoginSaveAction extends LoginExitAction {
         } catch (Exception e) {
             LOG.error("Ошибка при входе: "+getErrorMessage(e)+": "+username,e);
             LoginErrorMessage.setMessage(aRequest, getErrorMessage(e));
-            e.printStackTrace();
             return aMapping.getInputForward() ;
         }
         checkMessage(aRequest,username) ;
@@ -156,12 +156,8 @@ public class LoginSaveAction extends LoginExitAction {
                     aRequest.setAttribute("next", param) ;
                     aRequest.getRequestDispatcher("ecom_redirectMany.do").forward(aRequest, aResponse) ;
                 }
-
-
             }
-
             return new ActionForward(next,true) ;
-
         }
     }
     
@@ -491,24 +487,4 @@ public class LoginSaveAction extends LoginExitAction {
             }
         }
     }
-
-	private void logLoginUserInvironment(HttpServletRequest aRequest) {
-    	//Уберем для тестов 31-05-2018
-        //System.out.println("Login user env : {") ;
-    //    for(Map.Entry entry : createUserEnvironmentInfo(aRequest).entrySet() ) {
-      //  	System.out.println("    "+entry.getKey()+" = "+entry.getValue()) ;
-     //   }
-        //System.out.println("}") ;
-		
-	}
-/* //unused
-    private Properties createUserEnvironmentInfo(HttpServletRequest aRequest) {
-    	Properties prop = new Properties() ;
-    	Enumeration headers = aRequest.getHeaderNames();
-    	while(headers.hasMoreElements()) {
-    		String header = (String) headers.nextElement() ;
-    		prop.setProperty(header, aRequest.getHeader(header));
-    	}
-    	return prop ;
-    }*/
 }

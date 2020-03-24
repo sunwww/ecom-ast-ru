@@ -13,7 +13,7 @@ import java.sql.Time;
 
 @Entity
 @AIndexes({
-    @AIndex(unique = false, properties= {"username"}) 
+    @AIndex(properties= {"username"})
 })
 @Table(schema="SQLUser")
 public class AuthenticationJournal extends BaseEntity {

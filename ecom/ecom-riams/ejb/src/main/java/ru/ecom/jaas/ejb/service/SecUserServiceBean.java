@@ -37,21 +37,19 @@ public class SecUserServiceBean implements ISecUserService {
 		LOG.info("==== exportPropertiesOtherServer sb="+sb);
 		Runtime.getRuntime().exec(sb);
 		} catch (Exception e) {
-		//	e.printStackTrace();
+			LOG.error(e);
 		}
 	}
 	
-	public String setDefaultPassword(String aNewPassword, String aUsername, String aUsernameChange) throws IOException {
+	public void setDefaultPassword(String aNewPassword, String aUsername, String aUsernameChange) throws IOException {
 		String hashPassword = getHashPassword(aUsername, aNewPassword);
 
 		theManager.createNativeQuery("update secuser set password =:password, editDate=current_date,editTime=current_time,editUsername=:editUsername, changePasswordAtLogin='1' where login = :login")
 				.setParameter("editUsername",aUsernameChange).setParameter("password",hashPassword).setParameter("login",aUsername)
 				.executeUpdate();
 		exportUsersProperties();
-		return "1Пароль успешно обновлен";
 	}
 	public String changePassword(String aNewPassword, String aOldPassword, String aUsername) throws IOException {
-
 		if (aOldPassword.equals(aNewPassword)){
 			return "0Новый пароль ничем не отличается от старого";
 		}
@@ -94,7 +92,7 @@ public class SecUserServiceBean implements ISecUserService {
         exportUsersProperties(Config.getConfigDir()+"/users.properties");
     }
 
-    public static String getHashPassword(String aUsername, String aPassword) {
+    private static String getHashPassword(String aUsername, String aPassword) {
     	String hash = String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
     	return "F" + hash;
     }
@@ -108,7 +106,6 @@ public class SecUserServiceBean implements ISecUserService {
             		user.setPassword(getHashPassword(user.getLogin(), user.getPassword())) ;
             		user.setIsHash(true) ;
             	}
-            	//log(user.getFullname()) ;
                 out.print("#") ;
                 out.println(user.getFullname()) ;
                 out.print(user.getLogin()) ;
@@ -169,18 +166,9 @@ public class SecUserServiceBean implements ISecUserService {
 
     private String createPoliciesString(SecUser aUser, SecRole aRole, Map<SecPolicy,String> aPoliciesHash) {
         TreeSet<String> policies = new TreeSet<>();
-       // List <SecRole> roles = theManager.createQuery("from SecRole where id in ("+aRolesId+")").getResultList() ;
-        //List<Object> listPolicies = theManager.createNativeQuery("select sp.id from SecPolicy as sp where sp.id in (select rp.secPolicies_id from SecRole_SecPolicy rp where rp.SecRole_id in ("+aRolesId+")) group by sp.id").getResultList() ;
-        //for (SecRole role: roles) {
         	for(SecPolicy policy:aRole.getSecPolicies()) {
         		policies.add(getPolicyFullKey(policy,aPoliciesHash)) ;
         	}
-        //}
-        /*for (Object pol_id : listPolicies) {
-            	SecPolicy policy = theManager.find(SecPolicy.class, ConvertSql.parseLong(pol_id)) ;
-                policies.add(getPolicyFullKey(policy)) ;
-            }
-        */
         StringBuilder sb = new StringBuilder();
         for (String key : policies) {
             sb.append(key) ;
@@ -240,13 +228,6 @@ public class SecUserServiceBean implements ISecUserService {
     }
 
     public void addRoles(long aUserId, long[] aRoles) {
-        /*SecUser user = theManager.find(SecUser.class, aUserId) ;
-        List<SecRole> roles = user.getRoles();
-        for (long roleId : aRoles) {
-            roles.add(theManager.find(SecRole.class, roleId)) ;
-        }
-        theManager.persist(user);
-        */
     	for (long role:aRoles) {
 			Object check = theManager.createNativeQuery("select count(*) from SecUser_SecRole where roles_id=:idRole and secuser_id=:idUser")
 			.setParameter("idRole", role)
@@ -270,7 +251,6 @@ public class SecUserServiceBean implements ISecUserService {
 				jour.setSerializationAfter("user:"+aUserId) ;
 				jour.setSerializationBefore("role:"+role) ;
 				theManager.persist(jour) ;
-				//LOG.info("result for insert:"+result) ;
 			}
 		}
     }
@@ -298,5 +278,4 @@ public class SecUserServiceBean implements ISecUserService {
 
     @PersistenceContext private EntityManager theManager ;
     @Resource SessionContext theContext ;
-
 }
