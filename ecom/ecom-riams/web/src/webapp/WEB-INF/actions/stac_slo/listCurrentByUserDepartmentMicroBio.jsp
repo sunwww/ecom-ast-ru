@@ -16,6 +16,9 @@
   </tiles:put>
   <tiles:put name="body" type="string">
       <msh:form action="/stac_journalCurrentByUserDepartmentMicroBio.do" defaultField="dateBegin" disableFormDataConfirm="true" method="POST">
+        <%
+          if (request.getParameter("short")==null) {
+        %>
         <msh:panel>
           <msh:row>
             <msh:separator label="Параметры поиска" colSpan="6"/>
@@ -30,6 +33,7 @@
             </td>
           </msh:row>
         </msh:panel>
+        <%}%>
       </msh:form>
     <%
       Long department = (Long)request.getAttribute("department") ;
