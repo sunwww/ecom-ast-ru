@@ -75,11 +75,11 @@ left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
     left join VocQualityEstimationCrit qec on qec.id=qd.vqecrit_id
   	left join vocqualityestimationkind qek on qek.id=qec.kind_id
   	    left join medcase hmc on hmc.id=mc.parent_id
-where mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+where mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
     and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -110,8 +110,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -123,7 +123,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='KMP' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and (select min(qecC.mark_id)
@@ -152,8 +152,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -165,7 +165,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='KMP' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and (select min(qecC.mark_id)
@@ -193,8 +193,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -206,7 +206,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='KMP' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and (select min(qecC.mark_id)
@@ -227,11 +227,11 @@ left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
     left join VocQualityEstimationCrit qec on qec.id=qd.vqecrit_id
   	left join vocqualityestimationkind qek on qek.id=qec.kind_id
   	    left join medcase hmc on hmc.id=mc.parent_id
-where mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+where mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
     and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -262,8 +262,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
   	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -275,7 +275,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='KMP' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
  and (select min(qecC.mark_id)
@@ -303,8 +303,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
   	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -316,7 +316,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='KMP' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
  and (select min(qecC.mark_id)
@@ -344,8 +344,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
   	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -357,7 +357,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='KMP' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
  and (select min(qecC.mark_id)
@@ -385,8 +385,8 @@ left join patient pat on pat.id=mc.patient_id
   	left join vocqualityestimationkind qek on qek.id=qec.kind_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
  	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -398,7 +398,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null) as numeric),2)
 end  as per2
 ,(select count(distinct mc.id) as noqueExpert
@@ -420,8 +420,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -433,7 +433,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and qe.experttype='Expert' and qek.code='KMP' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and (select min(qecC.mark_id)
@@ -461,8 +461,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -474,7 +474,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and qe.experttype='Expert' and qek.code='KMP' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and (select min(qecC.mark_id)
@@ -502,8 +502,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -515,7 +515,7 @@ ${department}
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and qe.experttype='Expert' and qek.code='KMP' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and (select min(qecC.mark_id)
@@ -536,11 +536,11 @@ left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
     left join VocQualityEstimationCrit qec on qec.id=qd.vqecrit_id
   	left join vocqualityestimationkind qek on qek.id=qec.kind_id
   	    left join medcase hmc on hmc.id=mc.parent_id
-where mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+where mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
     and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -556,10 +556,10 @@ from medcase mc
 left join MisLpu dep on dep.id=mc.department_id
 left join medcase as hmc on hmc.id=mc.parent_id
 where mc.DTYPE='DepartmentMedCase' and dep.name is not null
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 ${department}
 group by dep.id
 order by dep.name
@@ -616,11 +616,11 @@ left join medcase as hmc on hmc.id=mc.parent_id
 left join MisLpu dep on dep.id=mc.department_id
 left join patient pat on mc.patient_id=pat.id
 where mc.DTYPE='DepartmentMedCase' and dep.id=${param.depId}
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 group by mc.id,pat.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename
   "/>
@@ -748,11 +748,11 @@ and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconco
     left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
-and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and dep.id=${param.depId}
 and dep.name is not null
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 group by mc.id,pat.id
 order by pat.lastname||' '||pat.firstname||' '||pat.middlename
 "/>
@@ -800,8 +800,8 @@ from medcase mc1
 left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where mc1.id=mc.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
  and qe.experttype='${param.expertType}' and qek.code='KMP' and dep.name is not null
  ${param.isDraft}
@@ -826,13 +826,13 @@ where vqemC.criterion_id=vqecrit.id and qeC.expertType='${param.expertType}') is
 left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
   	    left join medcase hmc on hmc.id=mc.parent_id
   where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
  and qe.experttype='${param.expertType}' and qek.code='KMP' and dep.name is not null
  ${param.isDraft}
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
  and (select min(qecC.mark_id)
 from qualityestimationcrit qecC
 left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
@@ -883,12 +883,12 @@ left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
     left join VocQualityEstimationCrit qec on qec.id=qd.vqecrit_id
   	left join vocqualityestimationkind qek on qek.id=qec.kind_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
-where mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+where mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department} and dep.id=${param.depId}
 and mcinner.ownerFunction_id=mc.ownerFunction_id
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 	and dep2.id=dep.id and mcinner.DTYPE='DepartmentMedCase' and dep.name is not null
     and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -919,10 +919,10 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -962,10 +962,10 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1005,10 +1005,10 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1041,11 +1041,11 @@ left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
     left join VocQualityEstimationCrit qec on qec.id=qd.vqecrit_id
   	left join vocqualityestimationkind qek on qek.id=qec.kind_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
-where mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+where mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department} and dep.id=${param.depId}
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 and mcinner.ownerFunction_id=mc.ownerFunction_id
 	and dep2.id=dep.id and mcinner.DTYPE='DepartmentMedCase' and dep.name is not null
     and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
@@ -1077,10 +1077,10 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
   	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1119,10 +1119,10 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
   	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1161,10 +1161,10 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
   	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1196,12 +1196,12 @@ left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
     left join VocQualityEstimationCrit qec on qec.id=qd.vqecrit_id
   	left join vocqualityestimationkind qek on qek.id=qec.kind_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
-where mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+where mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department} and dep.id=${param.depId}
 and mcinner.ownerFunction_id=mc.ownerFunction_id
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 	and dep2.id=dep.id and mcinner.DTYPE='DepartmentMedCase' and dep.name is not null
     and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -1232,10 +1232,10 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1274,10 +1274,10 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1317,10 +1317,10 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
 where qd.vocidc10_id=ds.idc10_id
-and mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1352,12 +1352,12 @@ left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
     left join VocQualityEstimationCrit qec on qec.id=qd.vqecrit_id
   	left join vocqualityestimationkind qek on qek.id=qec.kind_id
   	    left join medcase hmc on hmc.id=mcinner.parent_id
-where mcinner.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mcinner.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+where mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department} and dep.id=${param.depId}
 and mcinner.ownerFunction_id=mc.ownerFunction_id
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id)>1
-        then mcinner.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
+        then mcinner.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mcinner.department_id) else 1=1 end
 	and dep2.id=dep.id and mcinner.DTYPE='DepartmentMedCase' and dep.name is not null
     and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
@@ -1377,11 +1377,11 @@ left join medcase as hmc on hmc.id=mc.parent_id
     left join Worker ow on ow.id=owf.worker_id
     left join Patient owp on owp.id=ow.person_id
  where mc.DTYPE='DepartmentMedCase' and dep.name is not null
-  and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+  and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
   ${department} and dep.id=${param.depId}
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
  group by dep.id,mc.ownerfunction_id,ovwf.name,owp.id
  order by ovwf.name||' '||owp.lastname||' '||substring(owp.firstname,1,1)||' '||coalesce(substring(owp.middlename,1,1),'')
   "/>
@@ -1423,12 +1423,12 @@ left join medcase as hmc on hmc.id=mc.parent_id
 left join MisLpu dep on dep.id=mc.department_id
 left join patient pat on mc.patient_id=pat.id
 where mc.DTYPE='DepartmentMedCase' and dep.id=${param.depId}
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department}
 and mc.ownerFunction_id=${param.wfId}
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 group by mc.id,pat.id
 order by mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
   "/>
@@ -1556,12 +1556,12 @@ where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
     left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
     where mc.id=mcase.id and ds.idc10_id=qd_conc.vocidc10_id)>0 else 1=1 end
     and qek.code='KMP'
-and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and dep.id=${param.depId}
 and dep.name is not null
 and mc.ownerFunction_id=${param.wfId}
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 group by mc.id,pat.id
 order by mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 "/>
@@ -1612,8 +1612,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where mc1.id=mc.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1649,8 +1649,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
     left join vocidc10 d on d.id=qd.vocidc10_id
   	    left join medcase hmc on hmc.id=mc.parent_id
 where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
-and mc.dateStart >= to_date('${dateBegin}','dd.mm.yyyy')
-and mc.dateStart <= to_date('${dateEnd}','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 	and reg.code='4' and (prior.code='1' and (qd.isconcomitant is null or qd.isconcomitant=false)
     or prior.code='3' and qd.isconcomitant=true)
     and ds.idc10_id=qd.vocidc10_id and d.id=ds.idc10_id
@@ -1670,7 +1670,7 @@ left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id
 left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
 where vqemC.criterion_id=vqecrit.id and qeC.expertType='${param.expertType}') is not null
         and case when (select count(distinct mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id)>1
-        then mc.id=(select min(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
+        then mc.id=(select max(mcc.id) from medcase mcc where mcc.parent_id=hmc.id and mcc.dtype='DepartmentMedCase' and mcc.department_id=mc.department_id) else 1=1 end
 group by mc.id,pat.id,qec.id
 order by mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
 
