@@ -1,2 +1,0 @@
-1531898829#
-    update medservice set printcodelabreestr=true where (code like 'A26.06.036' or code like 'A26.06.041' or code like 'A26.06.082.001' or code like 'A26.06.082.005' or code like 'A26.06.082.996') and finishdate is null
