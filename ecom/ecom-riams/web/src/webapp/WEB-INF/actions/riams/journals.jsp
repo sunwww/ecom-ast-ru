@@ -152,6 +152,9 @@
 						<li><msh:link  isReport="false" action="actRVKReport.do" roles="/Policy/Mis/MedCase/ActRVK/View">
 							Отчёт по актам РВК
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="arrivedAO.do" roles="/Policy/Mis/MedCase/Coronavirus/ReportArrivedView">
+							Отчёт по лицам, въехавшим в АО, с СЛС либо направлением в ГБУЗ АО АМОКБ
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>

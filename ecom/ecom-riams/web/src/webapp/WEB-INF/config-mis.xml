@@ -492,6 +492,13 @@
 			<forward name="success" redirect="false" path="/WEB-INF/actions/rvk_aktVisit/rvkReport.jsp" />
 		</action>
 
+		<action path='/arrivedAO' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session">
+			<forward name="success" redirect="false" path="/WEB-INF/actions/COVID19/arrivedAO.jsp" />
+		</action>
+
 		<action path='/gener_ticket' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
