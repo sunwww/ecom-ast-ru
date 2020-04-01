@@ -78,22 +78,21 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         Element rootElement = root.getRootElement();
         List<Element> defs = rootElement.getChildren("PR");
         theManager.createNativeQuery("update e2entry set isdefect='0' where listentry_id=:id and (isdeleted is null or isdeleted='0')").setParameter("id",aListEntryId).executeUpdate();
-        LOG.info("clean defect before flk");
+        LOG.info("clean defect before flk "+defs.size());
         int cnt = 0;
         for (Element el:defs) {
-            String entryId =el.getChildText("N_ZAP");
+            String entryId = el.getChildText("N_ZAP");
             if (isNotNull(entryId)) {
-                E2Entry entry = theManager.find(E2Entry.class, Long.valueOf(entryId));
+                E2Entry entry = theManager.find(E2Entry.class, Long.parseLong(entryId));
                 entry.setFondComment(out.outputString(el));
                 entry.setIsDefect(true);
-                theManager.persist(new E2EntrySanction(entry,null, "FLK_ERR",true,"ФЛК"));
                 theManager.persist(entry);
+                theManager.persist(new E2EntrySanction(entry,null, "FLK_ERR",true,"ФЛК"));
                 cnt++;
             }
 
         }
         return "ФЛК: Импортировано " + cnt + " записей из "+defs.size();
-
     }
 
     /*Импортируем файл с элмед*/

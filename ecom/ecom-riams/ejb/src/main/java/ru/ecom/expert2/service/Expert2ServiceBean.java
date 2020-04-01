@@ -542,8 +542,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
             }
             for (String dopCode : aSanctionCodes) {
-                List<BigInteger> list = theManager.createNativeQuery("select es.entry_id from e2entrysanction es " +
-                        " where es.listEntry_id=:id and es.dopcode=:dopCode")
+                List<BigInteger> list = theManager.createNativeQuery("select es.entry_id from e2entrysanction es" +
+                        " left join e2entry ee on es.entry_id=ee.id " +
+                        " where ee.listEntry_id=:id and es.dopcode=:dopCode")
                         .setParameter("id",aListEntryId).setParameter("dopCode",dopCode.trim()).getResultList();
                 LOG.info("creating sanctions ["+dopCode+"]... defect list size = "+list.size());
                 for (BigInteger entryId: list) {
