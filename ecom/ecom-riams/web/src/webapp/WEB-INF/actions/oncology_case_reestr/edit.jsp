@@ -222,11 +222,11 @@
                 var href = document.getElementById("noteH");
                 if (note.style.display=="none") {
                     note.style.display="block";
-                    href.innerText="Скрыть примечание";
+                    jQuery(href).text("Скрыть примечание");
                 }
                 else {
                     note.style.display="none";
-                    href.innerText="Показать примечание";
+                    jQuery(href).text("Показать примечание");
                 }
             }
             //удалить ненужные элементы, если мы во фрейме

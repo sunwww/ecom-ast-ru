@@ -81,8 +81,9 @@
                 callback: function() {
                     deleteRow("row${name}"+aMsgId);
                     showToastMessage('Отмечено прочитанным',null,true,false,1000);
-                    document.getElementById('unreadMsg').innerText=--document.getElementById('unreadMsg').innerText;
-                    if (+document.getElementById('unreadMsg').innerText==0)
+                    var val=jQuery('unreadMsg').text()-1;
+                    jQuery('unreadMsg').text(val);
+                    if (+jQuery('unreadMsg').text()==0)
                         the${name}CloseDocumentDialog.hide() ;
                 }
             }

@@ -535,7 +535,7 @@ var colorArrays=new Array("#CD5C5C", "#7CFC00", "#00FFFF", "#7B68EE", "#00008B",
 var numColor=0;
 // эта функция будет менять цвет текста
 function blinkUnreadMsgs() {
-    if (+document.getElementById('unreadMsg').innerText > 0) {
+    if (+jQuery('#unreadMsg').text() > 0) {
         document.getElementById("clorRow").style.backgroundColor = colorArrays[numColor++];
         if (numColor > colorArrays.length) numColor = 0;
         setTimeout("blinkUnreadMsgs()", 300);
@@ -548,7 +548,7 @@ function blinkUnreadMsgs() {
 function getCountUnreadMessages() {
     VocService.getCountUnreadMessages('', {
         callback: function(aCnt) {
-            document.getElementById('unreadMsg').innerText=aCnt;
+            jQuery('#unreadMsg').text(aCnt);
             if (aCnt>0) {
                 blinkUnreadMsgs();
                 jQuery('clorRow').click(function() {
@@ -557,7 +557,7 @@ function getCountUnreadMessages() {
             }
         }
         , errorHandler:function(message) {
-            document.getElementById('unreadMsg').innerText='-1';
+            jQuery('#unreadMsg').text('-1');
             jQuery('clorRow').click(function() {
                 return false;
             });
