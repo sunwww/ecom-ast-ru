@@ -20,7 +20,7 @@ import java.util.List;
  * Time: 10:23:02
  */
  public interface IHospitalMedCaseService {
-	 String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode);
+	 String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode, String aReportType);
 	 String getAllServicesByMedCase(Long aMedcaseId);
      void finishMonitor(long aMonitorId) ;
      void startMonitor(long aMonitorId) ;

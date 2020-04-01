@@ -259,9 +259,9 @@ public class HospitalMedCaseServiceJs {
 
 	}
 
-	public String getMedcaseCost(String aDateFrom, String aDateTo, String aType, String aLpuCode, HttpServletRequest aRequest ) throws NamingException {
+	public String getMedcaseCost(String aDateFrom, String aDateTo, String aType, String aLpuCode, String aReportType, HttpServletRequest aRequest ) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
-		return service.makeReportCostCase(aDateFrom,aDateTo,aType,aLpuCode);
+		return service.makeReportCostCase(aDateFrom,aDateTo,aType,aLpuCode, aReportType);
 	}
 	public String getAllServicesByMedCase(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);

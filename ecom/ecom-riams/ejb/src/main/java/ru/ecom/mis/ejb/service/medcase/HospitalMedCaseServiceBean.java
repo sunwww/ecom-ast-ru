@@ -115,7 +115,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		policProfiles.put("31","лечебная физкультура и спортивная медицина");
 		policProfiles.put("32","лечебная физкультура и спортивная медицина");
 		policProfiles.put("34","мануальная терапия");
-//		policProfiles.put("17","медицинская генетика");
 		policProfiles.put("35","неврология");
 		policProfiles.put("36","нейрохирургия");
 		policProfiles.put("37","нефрология");
@@ -401,21 +400,25 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	 * @param aDateTo
 	 * @param aType
 	 * @param aServiceStream
+	 * @param aReportType тип отчета (МИАЦ либо ЦБРФ)
 	 * @return
 	 */
-	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode) {
+	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode, String aReportType) {
 		//Начинаем стационар
- 		StringBuilder sqlSelect = new StringBuilder();
- 		StringBuilder sqlAppend = new StringBuilder();
- 		HashMap<String, String> regionOrCountry ;
- 		HashMap<String, String> profileMap = getStacProfileMap();
- 		HashMap<String, String> sredstvaMap = getMiacServiceStreamMap();
-		if (aLpuCode==null||aLpuCode.equals("")) {return "Не указан код ЛПУ";}
- 		if ("inog".equals(aType)) {
- 			sqlAppend.append(" and a.addressid is not null and a.kladr not like '30%' ");
+		try {
+		StringBuilder sqlSelect = new StringBuilder();
+		StringBuilder sqlAppend = new StringBuilder();
+		HashMap<String, String> regionOrCountry;
+		HashMap<String, String> profileMap = getStacProfileMap();
+		HashMap<String, String> sredstvaMap = getMiacServiceStreamMap();
+		if (aLpuCode == null || aLpuCode.equals("")) {
+			return "Не указан код ЛПУ";
+		}
+		if ("inog".equals(aType)) {
+			sqlAppend.append(" and a.addressid is not null and a.kladr not like '30%' ");
 			sqlSelect.append(",substring(a.kladr,0,3)");
 			regionOrCountry = getRegions();
-		} else if ("inos".equals(aType)){
+		} else if ("inos".equals(aType)) {
 			sqlSelect.append(",nat.voc_code");
 			sqlAppend.append(" and nat.id is not null and nat.voc_code!='643' ");
 			regionOrCountry = getCountries();
@@ -423,12 +426,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			LOG.error("NO VALID TYPE");
 			return "---1";
 		}
-		List<Object[]> list = theManager.createNativeQuery("select id, id from PriceList where isdefault='1'").setMaxResults(1).getResultList();
+		List<Object[]> list = theManager.createNativeQuery("select id from PriceList where isdefault='1'").setMaxResults(1).getResultList();
 		String priceListId = null;
 		if (!list.isEmpty()) {
-			priceListId=list.get(0)[0].toString();
+			priceListId = list.get(0)[0].toString();
 		}
-		StringBuilder sql = new StringBuilder()
+		StringBuilder sql = new StringBuilder() //считаем стационар
 				.append(" select to_char(sls.datefinish,'yyyy-MM') as f0_date")
 				.append(" ,count(distinct pat.id) as f1_person_count")
 				.append(sqlSelect).append(" as f2_address")
@@ -449,115 +452,118 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.append(sqlAppend)
 				.append(" group by vss.financesource, vbt.code, to_char(sls.datefinish,'yyyy-MM')").append(sqlSelect)
 				.append(" order by to_char(sls.datefinish,'yyyy-MM')");
-		//LOG.info("repotr_stac = "+sql);
+		LOG.info("repotr_stac = " + sql);
 		list = theManager.createNativeQuery(sql.toString()).getResultList();
-		LOG.info("repotr_stac found "+list.size()+" records");
+		LOG.info("repotr_stac found " + list.size() + " records");
 		String region, profile, financeSource, patientCount;
 		String[] period, hosps;
 		double totalSum;
 		String uslovia = "стационар"; //AMOKB
 		StringBuilder txtFile = new StringBuilder();
 		HashMap<String, JSONObject> allRecords = new HashMap<>();
-			//1 строка = 9 строчек
-		int i=0;
+		//1 строка = 9 строчек
+		int i = 0;
 		try {
 			for (Object[] row : list) {
 				i++;
-				if (1%100==0) {LOG.info("report_stac make "+i+" records");}
-					period = s(row[0]).split("-");
-					patientCount = s(row[1]);
-					region = regionOrCountry.get(s(row[2]))!=null ? regionOrCountry.get(s(row[2])) : "REGION_CODE="+s(row[2]);
-					profile = profileMap.get(s(row[3]))!=null ? profileMap.get(s(row[3])) : "PROFILE_CODE="+s(row[3]);
-					financeSource = s(row[4]);
-					hosps = s(row[5]).split(",");
-					totalSum = 0;
-					if (financeSource.equals("CHARGED")) { //Платные случаи
-						for (String hosp : hosps) {
-							JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim()),priceListId));
-							totalSum += hospitalInfo.getDouble("totalSum");
-						}
-					} else if (financeSource.equals("OBLIGATORY")) { //ОМС
-						for (String hosp : hosps) {
-							try {
-								JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(hosp.trim())));
-								if (costJson.has("price")) {
-									double cost  = costJson.getDouble("price");
-									totalSum += cost;
-								}
-							} catch (Exception e) {
-								LOG.warn("Не удалось расчитать цену OMC "+e);
-								totalSum=0.0;
-							}
-						}
-					} else {
-						continue;
-					}
-					if (totalSum>0.0) {
-						period[1] = period[1].startsWith("0")?period[1].substring(1):period[1];
-						String recordHash = (period[0]+""+period[1]).hashCode()+"#"+region.hashCode()+""+uslovia.hashCode()+""+profile.hashCode()+""+financeSource.hashCode();
-						JSONObject rec =allRecords.get(recordHash);
-						if (rec!=null) {
-							totalSum += rec.getDouble("sum");
-							patientCount=""+(Long.valueOf(patientCount)+Long.valueOf(rec.getString("patientCount")));
-							rec.remove("sum");rec.remove("patientCount");
-							rec.put("patientCount",patientCount).put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
-						} else {
-							rec = new JSONObject();
-							rec.put("hash",recordHash).put("period0",period[0]).put("period1",period[1]).put("region",region).put("uslovia",uslovia).put("profile",profile).put("financeSource",sredstvaMap.get(financeSource))
-									.put("patientCount",patientCount).put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
-						}
-						allRecords.put(recordHash,rec);
-					} else {
-					//	LOG.error("HOSP, price = null");
-					}
+				if (1 % 100 == 0) {
+					LOG.info("report_stac make " + i + " records");
 				}
+				period = s(row[0]).split("-");
+				patientCount = s(row[1]);
+				region = regionOrCountry.get(s(row[2])) != null ? regionOrCountry.get(s(row[2])) : "REGION_CODE=" + s(row[2]);
+				profile = profileMap.get(s(row[3])) != null ? profileMap.get(s(row[3])) : "PROFILE_CODE=" + s(row[3]);
+				financeSource = s(row[4]);
+				hosps = s(row[5]).split(",");
+				totalSum = 0;
+				if (financeSource.equals("CHARGED")) { //Платные случаи
+					for (String hosp : hosps) {
+						JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim()), priceListId));
+						totalSum += hospitalInfo.getDouble("totalSum");
+					}
+				} else if (financeSource.equals("OBLIGATORY")) { //ОМС
+					for (String hosp : hosps) {
+						try {
+							JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(hosp.trim())));
+							if (costJson.has("price")) {
+								double cost = costJson.getDouble("price");
+								totalSum += cost;
+							}
+						} catch (Exception e) {
+							LOG.warn("Не удалось расчитать цену OMC " + e);
+							totalSum = 0.0;
+						}
+					}
+				} else {
+					continue;
+				}
+				if (totalSum > 0.0) {
+					period[1] = period[1].startsWith("0") ? period[1].substring(1) : period[1];
+					String recordHash = (period[0] + "" + period[1]).hashCode() + "#" + region.hashCode() + "" + uslovia.hashCode() + "" + profile.hashCode() + "" + financeSource.hashCode();
+					JSONObject rec = allRecords.get(recordHash);
+					if (rec != null) {
+						totalSum += rec.getDouble("sum");
+						patientCount = "" + (Long.valueOf(patientCount) + Long.valueOf(rec.getString("patientCount")));
+						rec.remove("sum");
+						rec.remove("patientCount");
+						rec.put("patientCount", patientCount).put("sum", BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+					} else {
+						rec = new JSONObject();
+						rec.put("hash", recordHash).put("period0", period[0]).put("period1", period[1]).put("region", region).put("uslovia", uslovia).put("profile", profile).put("financeSource", sredstvaMap.get(financeSource))
+								.put("patientCount", patientCount).put("sum", BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+					}
+					allRecords.put(recordHash, rec);
+				} else {
+					//	LOG.error("HOSP, price = null");
+				}
+			}
 			LOG.info("report_stac_finished");
 		} catch (JSONException e) {
-			LOG.error("JSONEXEPTION HAPP",e);
+			LOG.error("JSONEXEPTION HAPP", e);
 		}
-			//Начинаем искать пол-ку
+		//Начинаем искать пол-ку
 		sql = new StringBuilder();
 		LOG.warn("Start search policlinic");
 		sql.append("select to_char(spo.datefinish,'yyyy-MM') as f0_date")
-            .append(" ,count(distinct pat.id) as f1_person_count")
-            .append(sqlSelect).append(" as f2_address")
-            .append(" ,vwf.code as f3_profile")
-            .append(" , vss.financesource as f4_financesource")
-            .append(" ,sum (coalesce(smc.medserviceamount ,1)*pp.cost) as f5_totalSum")
-            .append(",list(''||vis.id) as f6_listVisits")
-			.append(", list(distinct (vis.parent_id) ||'') as f7_listSpo")
-            .append(" from medcase spo")
-            .append(" left join medcase vis on vis.parent_id=spo.id")
-            .append(" left join medcase smc on smc.parent_id=vis.id and smc.dtype='ServiceMedCase'")
-            .append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
-            .append(" left join priceposition pp on pp.id=pms.priceposition_id ").append( priceListId!=null ? " and pp.pricelist_id="+priceListId : "")
-            .append(" left join patient pat on pat.id=vis.patient_id")
-            .append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
-            .append(" left join address2 a on a.addressid=pat.address_addressid")
-            .append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
-            .append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
-            .append(" left join vocservicestream vss on vss.id=vis.servicestream_id")
-            .append(" where spo.dtype='PolyclinicMedCase' and (vis.dtype='Visit' or vis.dtype='ShortMedCase') ")
-            .append(" and spo.datefinish between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
-            .append(" and vss.financesource is not null and vss.financesource!='' ")
-            .append(sqlAppend)
-            .append(" group by to_char(spo.datefinish,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect);
-			LOG.info("===========repotr_pol = "+sql);
-			list = theManager.createNativeQuery(sql.toString()).getResultList();
-		LOG.info("repotr_pol found "+list.size()+" records");
-		uslovia="амбулаторно";
-		profileMap=getPolicProfileMap();
+				.append(" ,count(distinct pat.id) as f1_person_count")
+				.append(sqlSelect).append(" as f2_address")
+				.append(" ,vwf.code as f3_profile")
+				.append(" , vss.financesource as f4_financesource")
+				.append(" ,sum (coalesce(smc.medserviceamount ,1)*pp.cost) as f5_totalSum")
+				.append(",list(''||vis.id) as f6_listVisits")
+				.append(", list(distinct (vis.parent_id) ||'') as f7_listSpo")
+				.append(" from medcase spo")
+				.append(" left join medcase vis on vis.parent_id=spo.id")
+				.append(" left join medcase smc on smc.parent_id=vis.id and smc.dtype='ServiceMedCase'")
+				.append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
+				.append(" left join priceposition pp on pp.id=pms.priceposition_id ").append(priceListId != null ? " and pp.pricelist_id=" + priceListId : "")
+				.append(" left join patient pat on pat.id=vis.patient_id")
+				.append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
+				.append(" left join address2 a on a.addressid=pat.address_addressid")
+				.append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
+				.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
+				.append(" left join vocservicestream vss on vss.id=vis.servicestream_id")
+				.append(" where spo.dtype='PolyclinicMedCase' and (vis.dtype='Visit' or vis.dtype='ShortMedCase') ")
+				.append(" and spo.datefinish between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
+				.append(" and vss.financesource is not null and vss.financesource!='' ")
+				.append(sqlAppend)
+				.append(" group by to_char(spo.datefinish,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect);
+		LOG.info("===========repotr_pol = " + sql);
+		list = theManager.createNativeQuery(sql.toString()).getResultList();
+		LOG.info("repotr_pol found " + list.size() + " records");
+		uslovia = "амбулаторно";
+		profileMap = getPolicProfileMap();
 		try {
-			i=0;
+			i = 0;
 			for (Object[] row : list) {
-                i++;
-                if (i%100==0) {
-                    LOG.info("making "+i+" records pol");
-                }
+				i++;
+				if (i % 100 == 0) {
+					LOG.info("making " + i + " records pol");
+				}
 				period = s(row[0]).split("-");
 				patientCount = s(row[1]);
-				region = regionOrCountry.get(s(row[2]))!=null?regionOrCountry.get(s(row[2])):"REGION_CODE="+s(row[2]);
-				profile = profileMap.get(s(row[3]))!=null?profileMap.get(s(row[3])):"PROFILE_CODE="+s(row[3]);
+				region = regionOrCountry.get(s(row[2])) != null ? regionOrCountry.get(s(row[2])) : "REGION_CODE=" + s(row[2]);
+				profile = profileMap.get(s(row[3])) != null ? profileMap.get(s(row[3])) : "PROFILE_CODE=" + s(row[3]);
 				financeSource = s(row[4]);
 				totalSum = 0;
 				if (financeSource.equals("OBLIGATORY") || financeSource.equals("BUDGET")) { //считаем цену за ОМС
@@ -565,7 +571,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 					for (String spoId : spoIds) {
 						JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(spoId.trim())));
 						if (costJson.has("price")) {
-							double cost  = costJson.getDouble("price");
+							double cost = costJson.getDouble("price");
 							totalSum += cost;
 						}
 					}
@@ -573,13 +579,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 					try {
 						totalSum = Double.valueOf(s(row[5]));
 					} catch (NumberFormatException e) {
-						LOG.error("Не удалось посчитать цену поликлинического случая: "+s(row[5]));
-						totalSum=0.0;
+						LOG.error("Не удалось посчитать цену поликлинического случая: " + s(row[5]));
+						totalSum = 0.0;
 					}
 				}
 				if (totalSum > 0.0) {
 					period[1] = period[1].startsWith("0") ? period[1].substring(1) : period[1];
-					String recordHash = (period[0] + "" + period[1]).hashCode() + "#" + (region!=null?region.hashCode():"_NULL_REGION") + "" + uslovia.hashCode() + "" + profile.hashCode() + "" + financeSource.hashCode();
+					String recordHash = (period[0] + "" + period[1]).hashCode() + "#" + (region != null ? region.hashCode() : "_NULL_REGION") + "" + uslovia.hashCode() + "" + profile.hashCode() + "" + financeSource.hashCode();
 					JSONObject rec = allRecords.get(recordHash);
 					if (rec != null) {
 						totalSum += rec.getDouble("sum");
@@ -597,33 +603,37 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				}
 			}
 			//Закончили искать пол-ку
-            //Начинаем формировать файл.
-            i=0;
-            LOG.warn("====start make file "+i);
-            for (JSONObject rec: allRecords.values()) {
-                i++;
-                if (i%100==0) {
-                    LOG.info("making "+i+" records");
-                }
-                if (rec!=null) {
-                    txtFile.append(aLpuCode).append("\n")
-                        .append(rec.getString("period0")).append("\n")
-                        .append(rec.getString("period1")).append("\n")
-                        .append(rec.getString("region")).append("\n")
-                        .append(rec.getString("uslovia")).append("\n")
-                        .append(rec.getString("profile")).append("\n")
-                        .append(rec.getString("financeSource")).append("\n")
-                        .append(rec.getString("patientCount")).append("\n")
-                        .append(String.valueOf(BigDecimal.valueOf(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".",",")).append("\n");
-                } else {
-                    LOG.error("make file object = NULL!!!");
-                }
-		    }
+			//Начинаем формировать файл.
+			i = 0;
+			LOG.warn("====start make file " + i);
+			for (JSONObject rec : allRecords.values()) {
+				i++;
+				if (i % 100 == 0) {
+					LOG.info("making " + i + " records");
+				}
+				if (rec != null) {
+					txtFile.append(aLpuCode).append("\n")
+							.append(rec.getString("period0")).append("\n")
+							.append(rec.getString("period1")).append("\n")
+							.append(rec.getString("region")).append("\n")
+							.append(rec.getString("uslovia")).append("\n")
+							.append(rec.getString("profile")).append("\n")
+							.append(rec.getString("financeSource")).append("\n")
+							.append(rec.getString("patientCount")).append("\n")
+							.append(String.valueOf(BigDecimal.valueOf(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".", ",")).append("\n");
+				} else {
+					LOG.error("make file object = NULL!!!");
+				}
+			}
 		} catch (Exception e) {
 			LOG.error("some exception");
 			e.printStackTrace();
 		}
-		return createFile(txtFile,aType);
+		return createFile(txtFile, aType);
+	}catch(Exception e) {
+			LOG.error(e.getMessage(), e);
+			return null;
+		}
 	}
 
 	public String createFile (StringBuilder aText, String aFileName) {
@@ -3259,7 +3269,9 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	}
 
 	public void changeServiceStreamBySmo(Long aSmo,Long aServiceStream) {
-		List<Object[]> list = theManager.createNativeQuery("select sls.dtype,count(distinct slo.id) from medcase sls left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' where sls.id="+aSmo+" group by sls.id,sls.dtype").getResultList() ;
+		List<Object[]> list = theManager.createNativeQuery("select sls.dtype,count(distinct slo.id) from medcase sls" +
+				" left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'" +
+				" where sls.id="+aSmo+" group by sls.id,sls.dtype").getResultList() ;
 		if (!list.isEmpty()) {
 			Object[] obj =list.get(0) ;
 			if (obj[0]!=null) {
@@ -3284,7 +3296,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					} else {
 						throw new IllegalArgumentException("По данному потоку обслуживания не во всех отделениях, в которых производилось лечение, заведен коечный фонд");
 					}
-				} else if (dtype.equals("DepartmentMedCase")) {
+				} else if (dtype.equals("DepartmentMedCase")) { // не будет случаться, убрать
 					List<Object[]> listBedFund = theManager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo"
 							+" left join BedFund bf on bf.id=slo.bedFund_id"
 							+" left join BedFund bfNew on bfNew.lpu_id=bf.lpu_id"
@@ -3639,7 +3651,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append("update MedCase set dischargeTime=null,dateFinish=null")
 				.append(" where (id=:idMC and DTYPE='HospitalMedCase')")
 				.append(" or (parent_id=:idMC and DTYPE='DepartmentMedCase' and dateFinish is not null)");
-		//LOG.info("SQL delete discharge: "+sql) ;
 		int result = theManager.createNativeQuery(sql.toString()).setParameter("idMC", aMedCaseId).executeUpdate() ;
 		return "Запрос выполнен: "+result ;
 	}
