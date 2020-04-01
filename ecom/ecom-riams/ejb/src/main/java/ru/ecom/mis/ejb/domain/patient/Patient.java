@@ -30,26 +30,18 @@ import java.util.List;
 @Entity
 //@EntityListeners(PatientListener.class) // теперь вызывается при сохранении формы
 @AIndexes({
-		@AIndex(unique = false, properties= {"patientSync"})
-		, @AIndex(unique = false, properties= {"snils"})
-		, @AIndex(unique = false, properties= {"passportNumber","passportSeries"})
-		, @AIndex(unique = false, properties= {"editDate"})
-		, @AIndex(unique = false, properties= {"createDate"})
-		//, @AIndex(unique = false, properties= {"sex"})
-		, @AIndex(unique = false, properties= {"lastname","firstname","middlename", "birthday"})
-		, @AIndex(unique = false, properties= ("lpuArea"))
-		, @AIndex(unique = false, properties= ("lpuAreaAddressText"))
-		, @AIndex(unique = false, properties= ("lpu"))
-		, @AIndex(unique = false, properties= ("address"))
-		, @AIndex(unique = false, properties= ("nationality"))
-		// используется при прикреплении при изменении LpuAreaText в AddressPointServiceBean
-   	    /*
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","birthday"})
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","birthday"})
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","flatNumber","birthday"})
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","houseBuilding","birthday"})
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","houseBuilding","flatNumber","birthday"})
-      */
+		  @AIndex(properties= {"patientSync"})
+		, @AIndex(properties= {"snils"})
+		, @AIndex(properties= {"passportNumber","passportSeries"})
+		, @AIndex(properties= {"editDate"})
+		, @AIndex(properties= {"createDate"})
+		, @AIndex(properties= {"lastname","firstname","middlename", "birthday"})
+		, @AIndex(properties= ("lpuArea"))
+		, @AIndex(properties= ("lpuAreaAddressText"))
+		, @AIndex(properties= ("lpu"))
+		, @AIndex(properties= ("address"))
+		, @AIndex(properties= ("nationality"))
+
 })
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")

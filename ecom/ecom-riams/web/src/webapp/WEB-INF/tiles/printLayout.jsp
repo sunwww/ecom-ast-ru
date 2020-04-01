@@ -10,7 +10,6 @@
 <html:html xhtml="true" locale="true">
  <head>
    <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=utf-8"/>
-	<link title='Поиск в МИАЦ' rel='search' type='application/opensearchdescription+xml' href='opensearch.jsp?tmp=6'/>
  </head>
 <body>
     <tiles:insert attribute="body"/>

@@ -92,7 +92,7 @@ public class SecUserServiceBean implements ISecUserService {
         exportUsersProperties(Config.getConfigDir()+"/users.properties");
     }
 
-    private static String getHashPassword(String aUsername, String aPassword) {
+    public static String getHashPassword(String aUsername, String aPassword) { //именно паблик!
     	String hash = String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
     	return "F" + hash;
     }

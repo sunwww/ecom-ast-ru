@@ -3,6 +3,8 @@
  * Не использовать, неактуально
  */
 function createNewEmergencySpec(aCtx,aLpu,aGroup) {
+	throw "Не используется";
+	/*
 	var sql="insert into worker (person_id,lpu_id,createusername,createdate,createtime)"
 		+" (select w.person_id"
 		+" ,(select gr.lpu_id from workfunction gr where gr.id="+aGroup+")"
@@ -44,11 +46,12 @@ function createNewEmergencySpec(aCtx,aLpu,aGroup) {
 		
 		+")";
 	aCtx.manager.createNativeQuery(sql).executeUpdate() ;
+	*/
 }
 
 function deleteEmptySpo(aCtx,aParams) {
 	var sql="delete from medcase spo where"
-		+" spo.dtype='PolyclinicMedCase' and (select count(*) from MedCase v where v.parent_id=spo.id)=0"
+		+" spo.dtype='PolyclinicMedCase' and (select count(*) from MedCase v where v.parent_id=spo.id)=0";
 		aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 }
 
@@ -488,7 +491,7 @@ function createNewVisitByDenied(aContext,aDepartment,aBeginDate,aFinishDate,aDep
 				+",'"+visitResult+"','"+visitReason+"','"+workPlaceType+"','0'"
 				+")" ;
 			aContext.manager.createNativeQuery(sql).executeUpdate() ;
-			var sql = "select id from medcase where parent_id='"+idspo+"' and dtype='ShortMedCase' and workFunctionExecute_id='"+obj[4]+"'"
+			sql = "select id from medcase where parent_id='"+idspo+"' and dtype='ShortMedCase' and workFunctionExecute_id='"+obj[4]+"'"
 			+" and patient_id='"+obj[6]+"' and dateStart=to_date('"+obj[2]+"','dd.mm.yyyy')" ;
 			var listvis = aContext.manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
 			var idvis=0 ;
@@ -509,9 +512,9 @@ function closeSpoByCurrentDate(aContext,aSpoId) {
 			+" ,vis.dateStart as mkbid"
 			+" from MedCase vis"
 			+" where vis.parent_id="+aSpoId
-			+" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
+			+" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase') and (vis.noactuality is null or vis.noactuality='0')"
 			+" and vis.dateStart is null"
-			).setMaxResults(1).getResultList() ;
+			).setMaxResults(1).getResultList() ; //активные направления
 	var listVisLast = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id "
 			+" from MedCase vis"
@@ -532,7 +535,7 @@ function closeSpoByCurrentDate(aContext,aSpoId) {
 			+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 			+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
 			+" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
-	if (listOpenVis.size()==0&&listVisLast.size()>0) {
+	if (listOpenVis.isEmpty() && !listVisLast.isEmpty()) { //нет направлений и есть визиты
 		var listVisFirst = aContext.manager.createNativeQuery("select vis.id as visid"
 				+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
 				+" from MedCase vis"
@@ -553,7 +556,7 @@ function closeSpoByCurrentDate(aContext,aSpoId) {
 				+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 				+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
 				+" order by vis.dateStart, vis.timeExecute").setMaxResults(1).getResultList() ;		
-		var visFirst = listVisFirst.get(0)[0];
+	//	var visFirst = listVisFirst.get(0)[0];
 		var visLast = listVisLast.get(0)[0];
 		var mkb = listVisLast.get(0)[1];
 		if (mkb==null) {
@@ -577,12 +580,10 @@ function closeSpoByCurrentDate(aContext,aSpoId) {
 					+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 					+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
 					+" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
-			var mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
-
-			
+			 mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
 		}
 		var dateStart = listVisFirst.get(0)[2];
-		var dateFinish = listVisLast.get(0)[2];
+	//	var dateFinish = listVisLast.get(0)[2];
 		var startWF = listVisFirst.get(0)[3];
 		var finishWF = listVisLast.get(0)[3];
 		aContext.manager.createNativeQuery("update medcase set dateFinish=CURRENT_DATE,dateStart=to_date('"+dateStart

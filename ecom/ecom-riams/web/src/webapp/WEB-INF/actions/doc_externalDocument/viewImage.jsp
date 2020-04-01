@@ -5,8 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru"><head>
    <title>МедОС</title>
    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-	<link title='Поиск в МИАЦ' rel='search' type='application/opensearchdescription+xml' href='opensearch.jsp?tmp=6'/>
-	
+
 <!-- CSS  -->
 <link rel='stylesheet' type='text/css' href='/skin/css/css/main/main-CA11fcb11d2c8.css' /><style type="text/css">
 	@import url("/skin/css/css/main/main_fo-CA11fcb11d2c8.css") all;

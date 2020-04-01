@@ -354,14 +354,6 @@
                      path = '/entityParentList-exp_field.do' />
         </action>
 
-        <action
-                path="/exp_reg"
-                type="ru.ecom.expomc.web.actions.base.ForwardAction">
-            <forward
-                    name="success"
-                    path="/WEB-INF/actions/exp_registry/start.jsp"
-                    />
-        </action>
 
         <action path='/exp_sync' type='ru.ecom.expomc.web.actions.sync.SyncAction'
                 name=''

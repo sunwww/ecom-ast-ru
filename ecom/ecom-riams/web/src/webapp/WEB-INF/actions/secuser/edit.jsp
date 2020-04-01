@@ -176,11 +176,11 @@
       var limit = confirm("Отобразить все входы?") ? 0 : 50;
       RolePoliciesService.getUserLoginJounal($('login').value, limit, {
         callback: function (ret) {
-          var html ="<table border='1'><tr><th>Дата входа</th><th>Адрес клиента</th><th>Внешний адрес клиента?</th><th>Сервер</th><th></tr>";
+          var html ="<table border='1'><tr><th>Дата входа</th><th>Адрес клиента</th><th>Сервер</th><th></tr>";
           ret = JSON.parse(ret);
           for (var i=0;i<ret.length;i++) {
             var el = ret[i];
-            html+="<tr><td>"+el.authdate+"</td><td>"+el.localaddress+"</td><td>"+el.remoteaddress+"</td><td>"+el.servername+"</td></tr>";
+            html+="<tr><td>"+el.authdate+"</td><td>"+el.remoteaddress+"</td><td>"+el.servername+"</td></tr>";
           }
           jQuery('#journalDataDiv').html(html);
           var journalDiv = jQuery('#journalDiv');

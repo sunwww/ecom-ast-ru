@@ -67,7 +67,7 @@ import java.util.StringTokenizer;
 public class PatientServiceBean implements IPatientService {
 
 	private static final Logger LOG = Logger.getLogger(PatientServiceBean.class);
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
+
 	/**Выгружаем список карт Д наблюдения */
 	public String exportDispensaryCard(java.util.Date aDateFrom, java.util.Date aDateTo, java.util.Date aDateChanged, String aPacketNumber)  {
 		JSONObject ret = new JSONObject();
@@ -1358,9 +1358,7 @@ public class PatientServiceBean implements IPatientService {
 					builder.addParameter("nextid", fiIdprev);
 				}
 
-				Query query = builder.buildNative(theManager, new StringBuilder().append(sqlFld)
-						.append(" from patient p ").append(sql)
-						.append(" and ").append(p1).toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
+				Query query = builder.buildNative(theManager, sqlFld+" from patient p "+sql+" and "+p1," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
 				appendNativeToList(query, ret1,null,aNext);
 				sqlFld = new StringBuilder() ;
 				sqlFld.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname");
@@ -1383,17 +1381,15 @@ public class PatientServiceBean implements IPatientService {
 				if (ret1.isEmpty() && aIdNext!=null && !aIdNext.equals("")) return findPatient( aLpuId, aLpuAreaId, aLastname, aYear, !aNext, null) ;
 			}
 		} else {
-			if (CAN_DEBUG) {
-				LOG.debug("findPatient() aLpuId = " + aLpuId + ", aLpuAreaId = "
-						+ aLpuAreaId + ", aLastname = " + aLastname);
-			}
 			StringBuilder sql = new StringBuilder() ;
 			StringBuilder sqlFld1 = new StringBuilder() ;
 			sqlFld1.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname");
 			sqlFld1.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end) firstname");
 			sqlFld1.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end) as middlename");
 			sqlFld1.append(" ,p.birthday") ;
-			sqlFld1.append(" ,p.patientSync,case when p.colorType='1' then cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType ") ;
+			sqlFld1.append(" ,p.patientSync,case when p.colorType='1' then cast('color: red' as varchar(200)) else coalesce((select coalesce((select 'color: '||max(pl.colorText) " +
+					" from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id)" +
+					",(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType ") ;
 			sqlFld1.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname") ;
 			sqlFld1.append(" ,list(case when att.dateto is null then ma.number else null end) as areaname") ;
 			sqlFld1.append(" ,(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||") ;
@@ -1447,14 +1443,11 @@ public class PatientServiceBean implements IPatientService {
 					}
 					builder.addParameter("nextid", fiIdprev);
 				}
-				//sql.append(" ((").append(p1).append(") or (").append(p2).append("))") ;
 			}
 
 			builder.add("att.lpu_id", aLpuId);
 			builder.add("att.area_id", aLpuAreaId);
-			Query query = builder.buildNative(theManager, new StringBuilder().append(sqlFld)
-					.append(" from patient p ").append(sql)
-					.append(p1).toString(),
+			Query query = builder.buildNative(theManager,sqlFld+" from patient p "+sql+p1,
 					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by  p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
 			appendNativeToList(query, ret1,null,aNext);
 			if (ret1.isEmpty() && aIdNext!=null && !aIdNext.equals("")) return findPatient( aLpuId, aLpuAreaId, aLastname, aYear, !aNext, null) ;
@@ -1603,9 +1596,9 @@ public class PatientServiceBean implements IPatientService {
 			PatientForm f = new PatientForm();
 			f.setId(((Number) arr[0]).longValue());
 			if (arr.length>6 && arr[6]!=null) {
-				f.setLastname("<font color='" + arr[6] + "'>" + arr[1] + "</font>");
-				f.setFirstname("<font color='" + arr[6] + "'>" + arr[2] + "</font>");
-				f.setMiddlename("<font color='" + arr[6] + "'>" + arr[3] + "</font>");
+				f.setLastname("<font style='" + arr[6] + "'>" + arr[1] + "</font>");
+				f.setFirstname("<font style='" + arr[6] + "'>" + arr[2] + "</font>");
+				f.setMiddlename("<font style='" + arr[6] + "'>" + arr[3] + "</font>");
 				if(arr[4]!=null) {
 					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
 				}
@@ -1694,10 +1687,6 @@ public class PatientServiceBean implements IPatientService {
 	 */
 	public LpuAreaAddressPoint findPoint(Address aAddress, String aNumber,
 			String aBuilding, Date aBirthday, String aFlat) {
-		if (CAN_DEBUG) {
-			LOG.debug("findPoint() aAddress = " + aAddress.getId()
-					+ ", aNumber=" + aNumber + ", aBuilding = " + aBuilding);
-		}
 		// ребенок, если < 18 и есть дата рождения
 		boolean isChild = aBirthday != null && AgeUtil.calcAgeYear(aBirthday, new java.util.Date()) < 18;
 		EntityManager manager = theManager; // theFactory.createEntityManager();
@@ -1717,8 +1706,6 @@ public class PatientServiceBean implements IPatientService {
 		sb.append(" and flat ").append(
 				StringUtil.isNullOrEmpty(aFlat) ? " is null "
 						: " = :flat ");
-
-		if (CAN_DEBUG) LOG.debug("query = "+sb);
 
 		Query query = manager.createQuery(sb.toString());
 		if (!StringUtil.isNullOrEmpty(aNumber))

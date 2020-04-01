@@ -1091,7 +1091,7 @@ order by wcd.calendarDate, wct.timeFrom" />
       		PatientService.getIsPatientInList($('id').value, {
       			callback: function(a) {
       				if (a!=null&&a!=''){
-      				$('patientInfoDiv').innerHTML=a;
+      				    $('patientInfoDiv').innerHTML=a;
       				}
       			}
       		});

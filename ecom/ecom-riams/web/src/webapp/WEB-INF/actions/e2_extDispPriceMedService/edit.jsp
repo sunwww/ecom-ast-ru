@@ -18,7 +18,9 @@
                 <msh:separator colSpan="8" label="Общие"/>
                 <msh:row>
                     <msh:autoComplete property="medService" vocName="vocMedServiceCode" size="100" />
-                    </msh:row><msh:row>
+                    </msh:row>
+                <msh:row>
+                    <msh:textField property="cost" />
                     <msh:checkBox property="isRequired" />
                 </msh:row>
 

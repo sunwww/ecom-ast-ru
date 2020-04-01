@@ -12,8 +12,7 @@
    <title>МедОС</title>
    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
    <meta content="text/javascript; charset=utf-8" />
-	<link title='Поиск в МИАЦ' rel='search' type='application/opensearchdescription+xml' href='opensearch.jsp?tmp=6'/>
-	
+
 
  		<script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js" ></script>
  		<msh:stylesheet src='/skin/css/css/main/main.css'/>

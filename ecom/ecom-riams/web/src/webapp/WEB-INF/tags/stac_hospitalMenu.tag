@@ -268,24 +268,24 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
             aId, {
                 callback: function(res) {
                     if (res==true) {
-                        deleteDischarge(${param.id});
+                        deleteDischarge();
                     }
                     else {
                         HospitalMedCaseService.checkUserIsAdminToDeleteDischarge(
                             {
                                 callback: function(res) {
                                     if (res==true) {
-                                        deleteDischarge(${param.id});
+                                        deleteDischarge();
                                     }
                                     else alert("Невозможно удалить данные! Удалить её может только лечаший врач в течение 1го календарного дня после выписки или администратор системы.");
                                 }}) ;
                     }
                 }}) ;
     }
-    function deleteDischarge(aId) {
+    function deleteDischarge() {
         HospitalMedCaseService.deleteDischarge(
             '${param.id}', {
-                callback: function(aString) {
+                callback: function() {
                     if ($('dateFinish')) $('dateFinish').value="" ;
                     if ($('dateFinishReadOnly')) $('dateFinishReadOnly').value="" ;
                     if ($('dischargeTime')) $('dischargeTime').value="" ;

@@ -66,8 +66,9 @@
      		alert("Поле поток обслуживания является обязательным") ;
      		$("${name}ChangeServiceStreamName").focus() ;
      	}  else {
+     	    var hospId = $('parent') && $('parent').value>0 ? $('parent').value :  '${param.id}';
          	TicketService.changeServiceStreamBySmo(
-             		'${param.id}', $('${name}ChangeServiceStream').value, {
+             		hospId, $('${name}ChangeServiceStream').value, {
              			callback: function(aString) {
              				alert(aString) ;
              				window.location.reload() ;

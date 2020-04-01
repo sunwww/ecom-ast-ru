@@ -145,10 +145,10 @@ from Medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
 left join Prescription p on p.prescriptionList_id =pl.id
-left join workfunction wf on wf.id=p.prescriptcabinet_id
-left join workcalendartime wct on wct.id=p.calendartime_id
 left join medservice ms on ms.id=p.medService_id
 left join vocservicetype as vms on vms.id=ms.serviceType_id
+left join workfunction wf on wf.id=p.prescriptcabinet_id
+left join workcalendartime wct on wct.id=p.calendartime_id
  where ${field}
   and p.DTYPE='ServicePrescription' and vms.code='OPERATION' order by p.planStartDate"/>
     	<msh:sectionContent>
@@ -160,29 +160,6 @@ left join vocservicetype as vms on vms.id=ms.serviceType_id
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>
-
-<msh:ifInRole roles="/NOTEXISTROLE/Policy/Mis/Pharmacy/CreateDrugPrescription" guid="*Не назначают койко дни">
-    <msh:section title="Список койко-дней">
-    	<ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,ms.name as drname ,p.planStartDate,p.planEndDate
-from Medcase sls
-left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
-left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
-left join Prescription p on p.prescriptionList_id =pl.id
-left join mislpu ml on ml.id=p.department_id
-left join medservice ms on ms.id=p.medService_id
-left join vocservicetype as vms on vms.id=ms.serviceType_id
-left join vocprescripttype vpt on vpt.id=p.prescriptType_id
-where ${field}
- and p.DTYPE='ServicePrescription' and vms.code='к/д' order by p.planStartDate"/>
-    	<msh:sectionContent>
-    		<msh:table name="pres" action="entityView-pres_servicePrescription.do" idField="1">
-    			<msh:tableColumn property="3" columnName="Тип услуги"/>
-    			<msh:tableColumn property="4" columnName="Дата начала"/>
-    			<msh:tableColumn property="5" columnName="Дата окончания"/>
-    		</msh:table>
-    	</msh:sectionContent>
-    </msh:section>
-</msh:ifInRole>
 
 <msh:section title="Список консультаций">
 	<ecom:webQuery name="pres" nativeSql="select scg.id,vtype.code||' '||vtype.name as f00,
@@ -201,7 +178,7 @@ left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
 left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
-where ${field} and scg.canceldate is null and scg.dtype='WfConsultation'"/>
+where ${field} and scg.dtype='WfConsultation' and scg.canceldate is null "/>
 	<msh:sectionContent>
 		<msh:table name="pres" action="entityParentView-pres_wfConsultation.do" idField="1">
 			<msh:tableColumn columnName="#" property="sn"/>

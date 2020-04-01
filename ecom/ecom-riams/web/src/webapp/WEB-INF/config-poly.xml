@@ -85,12 +85,6 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/list_by_user.jsp" />
         </action>
 
-        <action path='/poly_start' type='ru.ecom.web.actions.base.ForwardAction'
-                name='poly_medcardForm'
-                validate='false'
-                scope="request">
-            <forward name="success" redirect="false" path="/WEB-INF/actions/polyStart.jsp" />
-        </action>
         <action path='/smo_journal_openSpo' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'
                 validate='false'

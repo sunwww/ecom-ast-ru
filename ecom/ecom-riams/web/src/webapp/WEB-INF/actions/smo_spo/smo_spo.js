@@ -42,8 +42,7 @@ function spoClosedDateLastVisit(aForm, aCtx) {
 	
 	for (var i=0;i<ids.length;i++) {
 		try {
-			var id=ids[i] ;
-			aCtx.invokeScript("SmoVisitService", "closeSpo", id) ;
+			aCtx.invokeScript("SmoVisitService", "closeSpo", ids[i]) ;
 		} catch(e) {
 			
 		}

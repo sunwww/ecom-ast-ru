@@ -1,18 +1,17 @@
 package ru.ecom.mis.ejb.domain.patient;
 
-import javax.persistence.Entity;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Entity;
+
 @Entity
 @AIndexes({
-	   @AIndex(unique = false, properties= {"patient"})	
+	   @AIndex(properties= {"patient"})
 })
-public class
-PatientListRecord extends BaseEntity{
+public class PatientListRecord extends BaseEntity{
 
 	
 	/** Список */

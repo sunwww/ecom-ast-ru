@@ -346,18 +346,17 @@ public class PatientServiceJs {
 			sb.append("<div style='").append(wqr.get2().toString()).append("'>");
 			sb.append(wqr.get3().toString());
 			sb.append("</div>");
-			//sb.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3());
 		 }
 		 return sb.toString();
 	}
 
-	public String showPatientCheckByFondHistory(String aPatientId, String aType, HttpServletRequest aRequest) throws NamingException {
+	public String showPatientCheckByFondHistory(Long aPatientId, String aType, HttpServletRequest aRequest) throws NamingException {
 		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		 StringBuilder ret = new StringBuilder();
 		 try {
 			 Object[] re = service.executeNativeSqlGetObj("select lastname, firstname, middlename, birthday, commonnumber from patient where id = "+aPatientId).get(0);
 			 String whereSql ;
-			 if (aType!=null&&aType.equals("1")) {
+			 if ("1".equals(aType)) {
 				 whereSql = "pf.lastname = '"+re[0]+"' and pf.firstname = '"+re[1]+"' and middlename = '"+re[2]+"' and pf.birthday = '"+re[3]+"'";
 			 } else {
 				 whereSql = "pf.commonnumber='"+re[4]+"'";

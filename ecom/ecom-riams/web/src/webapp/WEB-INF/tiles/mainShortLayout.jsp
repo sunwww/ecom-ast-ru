@@ -11,8 +11,7 @@
  <head>
    <title>МедОС</title>
    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-	<link title='Поиск в МИАЦ' rel='search' type='application/opensearchdescription+xml' href='opensearch.jsp?tmp=6'/>
-	
+
 
 <%@ include file="/WEB-INF/tiles/libscache.jsp" %>
 <!-- Дополнительное определение стиля -->
