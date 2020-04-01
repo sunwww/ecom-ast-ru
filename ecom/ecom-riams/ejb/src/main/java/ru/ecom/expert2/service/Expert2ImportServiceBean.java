@@ -121,7 +121,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 try {
                     i++;
                     if (i%100==0) {
-                        LOG.info("improt " +i+" records");
                         if (isMonitorCancel(monitor,"Импорт "+i+" записей")) break;
                     }
                     e = new E2Entry();
