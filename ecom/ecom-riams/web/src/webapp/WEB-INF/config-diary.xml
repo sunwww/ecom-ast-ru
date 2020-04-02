@@ -10,11 +10,7 @@
         <form-bean name="diary_parameterRefForm" type="ru.ecom.diary.ejb.form.protocol.parameter.ParameterReferenceValueForm"/>
         <form-bean name="diary_templatewordForm" type="ru.ecom.diary.ejb.form.TemplateWordForm"/>
         <form-bean name="diary_protocolForm" type="ru.ecom.diary.ejb.form.DiaryForm"/>
-<!--         <form-bean name="diary_templateProtocolForm" type="ru.ecom.diary.ejb.form.TemplateProtocolForm"/> -->
-        <form-bean name="diary_templateProtocolTypeForm" type="ru.ecom.diary.ejb.form.TemplateProtocolTypeForm"/>
-        <form-bean name="diary_templateClassifForm" type="ru.ecom.diary.ejb.form.TemplateClassifForm"/>
-        <form-bean name="diary_templateProtocolCategoryForm" type="ru.ecom.diary.ejb.form.TemplateProtocolCategoryForm"/>
-        
+
         <form-bean name="diary_formInputProtocolForm" type="ru.ecom.diary.ejb.form.protocol.FormInputProtocolForm"/>
         <form-bean name="diary_templateForm" type="ru.ecom.diary.ejb.form.protocol.TemplateProtocolForm"/>
         <form-bean name="diary_parameterForm" type="ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm"/>

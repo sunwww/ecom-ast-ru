@@ -15,6 +15,9 @@
         </create>
 
 	<!-- Voc -->
+        <create creator="new" javascript="DynamicService" scope="application">
+            <param name="class" value="ru.ecom.template.web.dwr.DynamicServiceJs"/>
+        </create>
         <create creator="new" javascript="VocService" scope="application">
             <param name="class" value="ru.ecom.web.dwr.VocServiceJs"/>
         </create>
