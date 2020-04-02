@@ -365,7 +365,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 if (a2) {
                     add(sl,"TAL_D",currentEntry.getVMPTicketDate()); // Дата выдачи талона ВМП
                     add(sl,"TAL_NUM",currentEntry.getVMPTicketNumber()); // Номер выдачи ВМП
-                    add(sl,"TAL_P",dateToString(currentEntry.getVMPPlanHospDate())); // Дата планируемой госпитализации
+                    addIfNotNull(sl,"TAL_P",dateToString(currentEntry.getVMPPlanHospDate())); // Дата планируемой госпитализации
                 }
                 add(sl,"NHISTORY",currentEntry.getHistoryNumber()); //Номер истории болезни
                 if (isHosp) {

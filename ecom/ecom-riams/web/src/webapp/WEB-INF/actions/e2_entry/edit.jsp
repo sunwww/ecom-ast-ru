@@ -275,7 +275,7 @@
                 <msh:textField property="reanimationEntry"/>
             </msh:row>
             <msh:row>
-                <msh:autoComplete vocName="vocE2EntrySubType" property="subType" fieldColSpan="6"/>
+                <msh:autoComplete vocName="vocE2EntrySubType" property="subType" fieldColSpan="6" horizontalFill="true"/>
                 </msh:row>
     <msh:separator colSpan="6" label="Доп. диспансеризация"/>
                 <msh:row>

@@ -344,19 +344,26 @@ public class Expert2ServiceJs {
             //Обновляем СНИЛС в мед услугах по заполнению
             service.executeUpdateNativeSql("update entrymedservice ems set doctorsnils = '"+aNewValue+"' " +
                     " from e2entry e where e.listentry_id = "+aEntryListId+" and (e.isDeleted is null or e.isDeleted='0') and ems.entry_id = e.id and ems.doctorsnils = '"+aOldValue+"'");
-        } else if (aFieldName.equals("SNILS_REPLACE_STRING")) {
+        } else if ("MEDSERVICE_CODE".equals(aFieldName)) { //замена услуг в заполнении
+                    service.executeUpdateNativeSql("update entrymedservice ems set medservice_id=" +
+                            " (select max(id) from vocmedservice where code='"+aOldValue+"' and finishDate is null) from e2entry e where e.listEntry_id="+aEntryListId+
+                            " and (e.isDeleted is null or e.isDeleted='0') and ems.entry_id = e.id and ems.medservice_id in (select id from vocmedservice where code ='"+aOldValue+"')");
+                    LOG.info("Услуга "+aOldValue+" заменена на "+aNewValue);
+                    return "Услуга "+aOldValue+" заменена на "+aNewValue;
+
+        } else if (aFieldName.equals("SNILS_REPLACE_STRING") || aFieldName.equals("MEDSERVICE_REPLACE_STRING")) {
             try {
-                WebQueryResult wqr = service.executeNativeSql("select value from Expert2Config where code='SNILS_REPLACE_STRING'").iterator().next();
-                String[] snilses = wqr.get1().toString().split(";");
-                for (String p : snilses) {
+                WebQueryResult wqr = service.executeNativeSql("select value from Expert2Config where code='"+aFieldName+"'").iterator().next();
+                String[] replaceString = wqr.get1().toString().split(";");
+                for (String p : replaceString) {
                     String[] pair = p.trim().split(":");
-                    String snilsFrom = pair[0].trim();
-                    String snilsTo = pair[1].trim();
-                    replaceFieldByError(aEntryListId, aErrorCode,"SNILS_DOCTOR",snilsFrom,snilsTo, aRequest);
+                    String stringFrom = pair[0].trim();
+                    String stringTo = pair[1].trim();
+                    replaceFieldByError(aEntryListId, aErrorCode,aFieldName.equals("SNILS_REPLACE_STRING") ? "SNILS_DOCTOR" : "MEDSERVICE_CODE",stringFrom,stringTo, aRequest);
                 }
-                return "СНИЛСЫ заменены: "+ Arrays.toString(snilses);
+                return aFieldName+ " заменены: "+ Arrays.toString(replaceString);
             } catch (Exception e) {
-                return "Не удалось заменить СНИЛСы = "+e;
+                return "Не удалось заменить "+aFieldName+" = "+e;
             }
         } else {
             return "BAD_FIELD_NAME!";

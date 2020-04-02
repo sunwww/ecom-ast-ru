@@ -704,8 +704,8 @@ public class Expert2ServiceBean implements IExpert2Service {
         14-12-2018. Логика поменялась. Первым может быть как паталогия, так и родовое. а, может даже и обсервационное отделение.
         делаем так: берем СЛО. Если роды, то склеиваем со след. СЛО. если отделения след. СЛО = отделению пред СЛО (пред. родовому), то и их склеиваем.
          */
-         //  LOG.warn("unionChildBirth1");
-        E2Entry mainEntry = null; //theManager.find(E2Entry.class,Long.valueOf(entriesIds.get(0)[0].toString()));
+
+        E2Entry mainEntry = null;
         boolean childBirthFound=false;
         E2Entry childEntry = null;
         E2Entry patologyEntry = null;
@@ -748,9 +748,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 } else {
                     unionEntries(childEntry,patologyEntry);
                 }
-        } /* else {
-            LOG.warn("Чтото непонятное, похоже нет патологии");
-        }*/
+        }
     }
 
     /** Удаляем дубли по поликлинике
@@ -2708,12 +2706,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
             }
             if (dispPriceMedServices.size() > foundGoodService) { //не все услуги оказаны, смотрим чего нет и считаем цену по услугам
-                LOG.info(aEntry.getId()+" > "+dispPriceMedServices.size() +" > malo disp > "+mustBeServices+" > "+foundGoodService+" > "+serviceInPeriod);
+              //  LOG.info(aEntry.getId()+" > "+dispPriceMedServices.size() +" > malo disp > "+mustBeServices+" > "+foundGoodService+" > "+serviceInPeriod);
                 boolean lostRequired = false;
                 cost = BigDecimal.ZERO;
                 for (ExtDispPriceMedService dispPriceMedService : dispPriceMedServices) {
                     String medserviceCode = dispPriceMedService.getMedService();
-                    if (!goodList.contains(medserviceCode)) {
+                    if (!StringUtil.isNullOrEmpty(medserviceCode) && !goodList.contains(medserviceCode)) {
                         VocMedService vms ;
                         if (!SERVICE_LIST.containsKey(medserviceCode)) {
                             vms =  getEntityByCode(medserviceCode, VocMedService.class, false);
@@ -2721,15 +2719,20 @@ public class Expert2ServiceBean implements IExpert2Service {
                         } else {
                             vms =SERVICE_LIST.get(medserviceCode);
                         }
+                        if (vms == null) LOG.error("VMS is null "+medserviceCode);
                         if (Boolean.TRUE.equals(dispPriceMedService.getIsRequired())) lostRequired = true;
                         EntryMedService medService = new EntryMedService(aEntry,vms);
                         medService.setEntry(aEntry);
                         medService.setComment("НЕ УКАЗАНА ДАТА УСЛУГИ");
                         VocOmcMedServiceCost medServiceCost = getMedServiceOmc(vms,aEntry.getFinishDate());
-                        BigDecimal serviceCost = medServiceCost.getCost();
-                        medService.setDoctorSpeciality(medServiceCost.getWorkFunction());
-                        medService.setCost(serviceCost);
-                        cost = cost.add(serviceCost);
+                        if (medServiceCost!=null) {
+                            BigDecimal serviceCost = medServiceCost.getCost();
+                            medService.setDoctorSpeciality(medServiceCost.getWorkFunction());
+                            medService.setCost(serviceCost);
+                            cost = cost.add(serviceCost);
+                        } else {
+                            LOG.warn("No medServiceCost" +medserviceCode);
+                        }
                         LOG.warn(aEntry.getId()+" no service in disp: " + medserviceCode);
                         saveError(aEntry,"MALO_DISP_SERVICE");
                         theManager.persist(medService);
@@ -3239,7 +3242,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
             //calculateFondISHOD VocE2FondV012
-            if (aEntry.getFondIshod() == null || forceUpdate) {
+            if (aEntry.getFondIshod() == null ) {
                 key = "HOSP#ISHOD#" + hospResult + "#" + bedSubType; //Добавим справочник исходов, если в карте нет исхода - добавим
                 if (!resultMap.containsKey(key)) {
                     sb = new StringBuilder();
@@ -3643,6 +3646,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private VocOmcMedServiceCost getMedServiceOmc(VocMedService vms, Date medServiceDate) {
+        if (vms==null || medServiceDate == null) return null;
         String key = "MEDSERVICECOST#"+ vms.getCode();
         List<VocOmcMedServiceCost> costs = theManager.createNamedQuery("VocOmcMedServiceCost.getByCodeAndDate").setParameter("code",vms.getCode())
                 .setParameter("finishDate", medServiceDate).getResultList();
