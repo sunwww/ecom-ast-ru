@@ -107,7 +107,7 @@
                     <msh:textField property="medPolicySeries" size="10" />
                     <msh:textField property="medPolicyNumber" size="30" />
                 </msh:row><msh:row>
-                    <msh:autoComplete vocName="vocInsuranceCompanySmoCode" property="insuranceCompanyCode"   fieldColSpan="4"/>
+                    <msh:autoComplete vocName="vocInsuranceCompanySmoCode" property="insuranceCompanyCode" horizontalFill="true" fieldColSpan="4"/>
             </msh:row><msh:row>
                     <msh:textField property="insuranceCompanyName" size="30"/>
                 </msh:row>
@@ -249,7 +249,7 @@
                 </msh:row><msh:row>
                 <msh:checkBox property="isRehabBed" />
             </msh:row><msh:row>
-                <msh:autoComplete property="vidSluch" vocName="vocE2VidSluch" fieldColSpan="6" hideLabel="true"/>
+                <msh:autoComplete property="vidSluch" vocName="vocE2VidSluch" fieldColSpan="6" horizontalFill="true"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="entryType" size="30"/>

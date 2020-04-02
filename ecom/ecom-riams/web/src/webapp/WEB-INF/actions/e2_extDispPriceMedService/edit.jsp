@@ -10,7 +10,7 @@
 
     </tiles:put>
     <tiles:put name="body" type="string">
-        <msh:form action="/entityParentSaveGoView-e2_extDispPriceMedService.do" defaultField="medService">
+        <msh:form action="/entityParentSaveGoParentView-e2_extDispPriceMedService.do" defaultField="medService">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
             <msh:hidden property="price" />
@@ -20,12 +20,9 @@
                     <msh:autoComplete property="medService" vocName="vocMedServiceCode" size="100" />
                     </msh:row>
                 <msh:row>
-                    <msh:textField property="cost" />
                     <msh:checkBox property="isRequired" />
                 </msh:row>
-
                 <msh:submitCancelButtonsRow colSpan="4" />
-
             </msh:panel>
         </msh:form>
     </tiles:put>
@@ -34,7 +31,7 @@
         <msh:ifFormTypeIsView formName="e2_extDispPriceMedServiceForm">
             <msh:sideMenu>
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_extDispPriceMedService" name="Изменить" roles="/Policy/E2/Edit" />
-                <msh:sideLink key="ALT+2" params="id" action="/entityDelete-e2_extDispPriceMedService" name="Изменить" roles="/Policy/E2/Delete" />
+                <msh:sideLink key="ALT+2" params="id" action="/entityDelete-e2_extDispPriceMedService" name="Удалить" roles="/Policy/E2/Delete" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
