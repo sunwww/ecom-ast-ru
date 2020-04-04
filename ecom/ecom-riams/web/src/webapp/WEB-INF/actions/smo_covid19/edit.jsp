@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="title" type="string">
-    <msh:title title="Covid 2019" />
+      <ecom:titleTrail title="Covid 2019" mainMenu="Patient" beginForm="smo_covid19Form" />
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:form action="entityParentSaveGoParentView-smo_covid19.do" defaultField="cardNumber">
@@ -27,7 +27,7 @@
       </msh:row><msh:row>
          <msh:textField property="labOrganization" horizontalFill="true" />
       </msh:row><msh:row>
-         <msh:textField property="labResult" horizontalFill="true" />
+         <msh:autoComplete vocName="positiveNegative" property="labResult" horizontalFill="true" />
       </msh:row><msh:row>
         <msh:autoComplete property="vacPnKok" vocName="vocYesNoMaybe" horizontalFill="true" />
       </msh:row><msh:row>
@@ -71,6 +71,7 @@
         </msh:row><msh:row>
             <msh:label property="exportUsername" label="пользователь выгрузки"/>
           </msh:row>
+            <msh:ifFormTypeIsView formName="smo_covid19Form">
           <msh:panel title="Добавление контактного лица"/>
           <table>
           <tr><td>
@@ -88,6 +89,7 @@
         </td></tr><tr><td>
             <input type="button" value="Добавить контактное лицо" onclick="createContactPatient()">
         </td></tr></table>
+            </msh:ifFormTypeIsView>
         </msh:ifFormTypeAreViewOrEdit>
         <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
@@ -100,7 +102,6 @@
           	<ecom:webQuery name="contacts" nativeSql="select co.id,co.lastname||' '||co.firstname||' '||co.middlename||' '||to_char(co.birthdate,'dd.MM.yyyy') as fio
           	,co.phone, co.address from covid19Contact co
           	 where co.card_id=${param.id}"/>
-            <input type="button" onclick="entityPrepareCreate-smo_covid19contact.do?id=${param.id}" value="Добавить контакт">
             <msh:table name="contacts" action="void()" idField="1" noDataMessage="Нет ролей">
               <msh:tableColumn columnName="ФИО человека" property="2" />
               <msh:tableColumn columnName="Телефон" property="3" />
@@ -115,7 +116,6 @@
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="smo_covid19Form">
       <msh:sideMenu>
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentList-smo_covid19" name="К списку" roles="/Policy/Mis/MedCase/Covid19/View" />
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-smo_covid19" name="Изменить" roles="/Policy/Mis/MedCase/Covid19/Edit" />
         <msh:sideLink key="ALT+3"  action="/javascript:exportCard()" name="Карта выгружена" roles="/Policy/Mis/MedCase/Covid19/Export" />
       </msh:sideMenu>

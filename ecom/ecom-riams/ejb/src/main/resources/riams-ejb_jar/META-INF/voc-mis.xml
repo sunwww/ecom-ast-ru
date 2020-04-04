@@ -1,4 +1,12 @@
 <vocconfig>
+	<voc id="vocYesNoMaybe" type="NativeVocService">
+		<NativeVocService
+				from="vocYesNoMaybe as voc"
+				names="voc.name"
+				nameId="voc.id"
+				queried ="(voc.name like :query)"
+		/>
+	</voc>
 	<voc id="vocTicketQueue" type="NativeVocService">
 		<NativeVocService
 				from="VocQueue as voc"

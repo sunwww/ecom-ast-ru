@@ -8,6 +8,9 @@ function onCreate(aForm, aEntity, aContext) {
     aContext.manager.createNativeQuery("update Covid19 set noActual='1' where patient_id="+aForm.patient).executeUpdate();
     aEntity.setNoActual(false);
     aEntity.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().getName()) ;
+    aEntity.setExportUsername(null) ;
+    aEntity.setExportDate(null) ;
+    aEntity.setExportTime(null) ;
 }
 
 /**

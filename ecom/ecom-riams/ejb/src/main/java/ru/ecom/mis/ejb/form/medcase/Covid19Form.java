@@ -18,8 +18,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityForm
 @EntityFormPersistance(clazz = Covid19.class)
 @Comment("Карта коронавируса")
-@WebTrail(comment = "Карта коронавируса", list = "entityParentList-mis_covid19"
-        , nameProperties = "id", view = "entityParentView-mis_covid19.do")
+@WebTrail(comment = "Карта коронавируса", list = "entityParentList-smo_covid19.do"
+        , nameProperties = "cardNumber", view = "entityParentView-smo_covid19.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Covid19")
 @Parent(parentForm = PatientForm.class,  property = "patient")
 public class Covid19Form extends IdEntityForm {

@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -13,12 +14,43 @@
   <tiles:put name='side' type='string'>
     <tags:ticket_finds currentAction="ticketsByResident"/>
   </tiles:put>
-
+<%
+  String typeView = ActionUtil.updateParameter("Form039Action","typeView","3", request) ;
+  String sqlAdd;
+  switch (typeView) {
+    case "noExport":
+    sqlAdd=" where (cv.noActual is null or cv.noActual='0') and cv.exportDate is null ";
+    break;
+    case "actual":
+      sqlAdd=" where (cv.noActual is null or cv.noActual='0') ";
+      break;
+    default:
+      sqlAdd="";
+  }
+  request.setAttribute("sqlAdd", sqlAdd);
+%>
   <tiles:put name="body" type="string">
     <msh:form action="/covid19_journal.do" defaultField="department" disableFormDataConfirm="true" method="GET">
       <msh:panel>
         <msh:row>
           <msh:separator label="Параметры поиска" colSpan="7"/>
+        </msh:row>
+          <msh:row>
+            <td></td>
+            <td onclick="this.childNodes[1].checked='checked';">
+              <input type="radio" name="typeView" checked value="noExport">  Актуальные невыгруженные
+            </td>
+            <td colspan="2" onclick="this.childNodes[1].checked='checked';">
+              <input type="radio" name="typeView" value="actual">  Все актуальные
+            </td>
+            <td colspan="2" onclick="this.childNodes[1].checked='checked';">
+              <input type="radio" name="typeView" value="all">  Все
+            </td>
+          </msh:row>
+        <msh:row>
+          <td>
+            <input type="submit" value="Найти" />
+          </td>
         </msh:row>
 
       </msh:panel>
@@ -28,10 +60,11 @@
       <msh:sectionTitle>Результаты поиска COVID 19</msh:sectionTitle>
       <msh:sectionContent>
         <ecom:webQuery name="list_covid" nativeSql="select  
-        cv.id, pat.patientinfo,  cv.createdate||' '|| cast(cv.createtime as varchar(5))
+        cv.id, pat.patientinfo,  to_char(cv.createdate,'dd.MM.yyyy')||' '|| cast(cv.createtime as varchar(5))
         ,case when cv.exportDate is not null then 'color:green' when cv.noActual='1' then 'color:gray' else '' end as f9_styleRow
     from Covid19 cv
     left join Patient pat on pat.id=cv.patient_id
+    ${sqlAdd}
     order by cv.createdate, cv.createtime" />
         <msh:table name="list_covid" action="entityParentView-smo_covid19.do" idField="1" styleRow="4" noDataMessage="Не найдено">
           <msh:tableColumn columnName="#" property="sn"/>
@@ -42,18 +75,14 @@
     </msh:section>
 
     <script type='text/javascript'>
-     // checkFieldUpdate('typePatient','${typePatient}',4) ;
-    //  checkFieldUpdate('typeDtype','${typeDtype}',3) ;
-      function checkFieldUpdate(aField,aValue,aDefault) {
-        eval('var chk =  document.forms[0].'+aField) ;
-        eval('var aMax =  chk.length') ;
-        if (aMax>aDefault) {aDefault=aMax}
-        if ((+aValue)>aMax) {
-          chk[+aDefault-1].checked='checked' ;
-        } else {
-          chk[+aValue-1].checked='checked' ;
-        }
-      }
+      checkFieldUpdate('typeView','${typeView}','noExport') ;
+     function checkFieldUpdate(aField,aValue,aDefaultValue) {
+       if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
+         jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);
+       } else {
+         jQuery(":radio[name="+aField+"][value='"+aDefaultValue+"']").prop('checked',true);
+       }
+     }
 
     </script>
   </tiles:put>

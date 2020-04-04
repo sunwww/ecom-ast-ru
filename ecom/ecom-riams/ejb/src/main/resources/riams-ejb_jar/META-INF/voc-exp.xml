@@ -465,6 +465,9 @@
     <voc id='visible' type='AllValueHelper'>
         <IAllValue>ru.ecom.ejb.services.voc.allvalues.YesNoAllValues</IAllValue>
     </voc>
+    <voc id='positiveNegative' type='AllValueHelper'>
+        <IAllValue>ru.ecom.ejb.services.voc.allvalues.PositiveNegativeAllValues</IAllValue>
+    </voc>
 
     <!-- КСГ -->
     <voc id='vocKsg' type='EntityVocService'>
