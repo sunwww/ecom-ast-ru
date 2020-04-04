@@ -3127,7 +3127,7 @@ public class Expert2ServiceBean implements IExpert2Service {
    //    ksgFullPaymentChildsList.add("st17.001");ksgFullPaymentChildsList.add("st17.002");//при переводе детей в другое ЛПУ не считаем прерванным случаем *30-05-2018
         VocKsg ksg = aEntry.getKsg();
         if (otherLpuResult.indexOf(result) > -1) { //Переведен в другой стационар
-            isPrerSluch = ksg == null || !ksg.getCode().startsWith("st17");
+            isPrerSluch = true; //ksg == null || !ksg.getCode().startsWith("st17");
         } else if (deadResult.indexOf(result) > -1 || patientLikeResult.indexOf(result) > -1 || lpuLikeResult.indexOf(result) > -1) { //выписан по желанию ЛПУ
             isPrerSluch = true;
         }  //Плановая выписка

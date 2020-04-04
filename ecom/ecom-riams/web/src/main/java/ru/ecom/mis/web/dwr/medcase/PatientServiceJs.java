@@ -28,6 +28,13 @@ public class PatientServiceJs {
 
 	private static final Logger LOG = Logger.getLogger(PatientServiceJs.class);
 
+	public String markCovidAsSent(Long aCard, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		return "обновлено " +service.executeUpdateNativeSql("update Covid19 set exportDate=current_date, exportTime=current_time" +
+				",exportUsername='"+username+"' where id="+aCard) +" карт";
+	}
+
 	public String getPhoneByPatientId(Long aPatientid, HttpServletRequest request) throws NamingException {
 		IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
 		Collection<WebQueryResult> list = service.executeNativeSql("select coalesce(phone,'') from patient where id="+aPatientid);

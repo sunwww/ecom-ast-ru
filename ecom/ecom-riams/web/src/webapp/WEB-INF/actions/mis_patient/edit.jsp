@@ -851,6 +851,7 @@ order by wcd.calendarDate, wct.timeFrom" />
         </msh:sideMenu>
 </msh:ifInRole>
       <msh:sideMenu title="Добавить">
+        <msh:sideLink roles="/Policy/Mis/MedCase/Covid19/Create" params="id" action="/entityParentList-smo_covid19" name="Карту COVID-19" />
         <msh:sideLink roles="/Policy/Mis/MedPolicy/Omc/Create" key="CTRL+1" params="id" action="/entityParentPrepareCreate-mis_medPolicyOmc" name="Полис ОМС" />
         <msh:sideLink roles="/Policy/Mis/MedPolicy/OmcForeign/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-mis_medPolicyOmcForeign" name="Полис ОМС иногороднего" />
         <msh:sideLink roles="/Policy/Mis/MedPolicy/Dmc/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-mis_medPolicyDmc" name="Полис ДМС" />
