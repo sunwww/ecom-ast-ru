@@ -53,15 +53,19 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </msh:sideMenu>
   
    <msh:sideMenu title="Показать">
+    <msh:sideLink roles="/Policy/Mis/MedCase/Covid19/View" name="Карты COVID-19"
+				  action="/javascript:createCovidCard()"/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="онкологическая карта выписки"
+				  params="id" action="/entityPrepareCreate-mis_dynamicDocument.do?type=1"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
- 
+
  <%--    <mis:sideLinkForWoman classByObject="MedCase" id="${param.id}"  params=""
     	action="/javascript:gotoPregHistory('${param.id}','.do')" name="История родов" 
     	title="История родов" roles="/Policy/Mis/Pregnancy/History/View" styleId="preg_pregHistory" />
     	--%>
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View,/Policy/Mis/MedCase/Ssl/Diagnosis/View" />
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4"  params="" roles="/Policy/Mis/MedCase/Visit/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5"  params="" roles="/Policy/Mis/MedCase/Diagnosis/View,/Policy/Mis/MedCase/Ssl/Diagnosis/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5"  params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-stac_sslAllInfo-list_fond_direct_by_sls.do?short=Short&id=${param.id}','.do')" name='Направления из фонда' title="Просмотр прикрепленных направлений из фонда" 
         	roles="" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-stac_ssl-cost_case.do?short=Short&id=${param.id}','.do')" name='Цена' title="Просмотр стоимости услуг" 
@@ -82,15 +86,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	title='Регистрация инфекционных заболеваний'
     	styleId="stac_infectiousMessage"
     	/> 
-<%-- 	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" 
-		action="/javascript:getDefinition('entityParentList-pres_prescriptList.do?short=Short&id=${param.id}','.do')" title='Показать листы назначений'
-		styleId="viewShort"
-		
-		/> --%>
 	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Лист назначений"
 		action="/javascript:showCreatePrescriptList('${param.id}','.do')" title='Показать/добавить лист назначений'
 		/>
-	   <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Сводный лист назначений" params="" action="/javascript:getDefinition('entityParentList-pres_prescriptList.do?short=Short&id=${param.id}')" title="Показать все назначения СЛС" guid="7b0b69ae-3b9c-47d9-ab3c-5055fbe6fa9f" />
+	   <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Сводный лист назначений" params="" action="/javascript:getDefinition('entityParentList-pres_prescriptList.do?short=Short&id=${param.id}')" title="Показать все назначения СЛС"  />
 	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"
     	 styleId="viewShort" action="/javascript:getDefinition('entityParentList-stac_surOperation.do?short=Short&id=${param.id}','.do')"  title='Операции'
     	
@@ -261,8 +260,14 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
   }
   </script>
 
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script> 
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 <script type="text/javascript">
+
+	function createCovidCard() {
+		if ($('patient')) window.location.href="entityParentList-smo_covid19.do?id="+$('patient').value;
+		console.log("no patient");
+
+	}
     function deleteDischargeCheck(aId) {
         HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess(
             aId, {

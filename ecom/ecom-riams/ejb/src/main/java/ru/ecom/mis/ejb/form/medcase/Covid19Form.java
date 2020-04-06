@@ -225,10 +225,27 @@ public class Covid19Form extends IdEntityForm {
     public Boolean getNoActual() {return theNoActual;}
     public void setNoActual(Boolean aNoActual) {theNoActual = aNoActual;}
     private Boolean theNoActual ;
+
+    /** Дата исхода */
+    @Comment("Дата исхода")
+    @Persist
+    @DateString @DoDateString
+    public String getIshodDate() {return theIshodDate;}
+    public void setIshodDate(String aIshodDate) {theIshodDate = aIshodDate;}
+    private String theIshodDate ;
+
+    /** Результат исхода */
+    @Comment("Результат исхода")
+    @Persist
+    public String getIshodResult() {return theIshodResult;}
+    public void setIshodResult(String aIshodResult) {theIshodResult = aIshodResult;}
+    private String theIshodResult ;
     
     /** Форма контакта */
     @Comment("Форма контакта")
     public Covid19ContactForm getContactForm() {return theContactForm;}
     public void setContactForm(Covid19ContactForm aContactForm) {theContactForm = aContactForm;}
     private Covid19ContactForm theContactForm = new Covid19ContactForm() ;
+
+
 }

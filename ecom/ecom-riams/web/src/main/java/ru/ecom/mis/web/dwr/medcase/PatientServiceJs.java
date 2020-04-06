@@ -28,6 +28,16 @@ public class PatientServiceJs {
 
 	private static final Logger LOG = Logger.getLogger(PatientServiceJs.class);
 
+	public String getOpenHospByPatient(Long aPatientId, HttpServletRequest aRequest) throws NamingException {
+		String sql = "select sls.id, ss.code from medcase sls " +
+				" left join statisticstub ss on ss.medcase_id = sls.id" +
+				" where sls.patient_id="+aPatientId+" and sls.dtype = 'HospitalMedCase'" +
+				" and sls.deniedhospitalizating_id is null and sls.dateFinish is null order by sls.id desc";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		return list.isEmpty() ? "" : list.iterator().next().get2().toString();
+	}
+
 	public String markCovidAsSent(Long aCard, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;

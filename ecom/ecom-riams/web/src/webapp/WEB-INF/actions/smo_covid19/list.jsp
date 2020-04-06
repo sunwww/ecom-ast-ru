@@ -12,7 +12,8 @@
   <tiles:put name="body" type="string">
     <ecom:webQuery name="cardList" nativeSql="select c.id, c.cardNumber,c.diagnosis, c.diagnosisDate
     ,c.createDate, c.createTime
-    ,case when c.exportDate is not null then 'color:green' when c.noActual='1' then 'color:gray' else '' end as f9_styleRow
+    ,case when c.exportDate is not null then 'background-color:green' when c.noActual='1' then 'background-color:gray'
+     when (c.labResult is not null and c.labResult!='') then 'background-color: orange' else '' end as f9_styleRow
 from Covid19 c where patient_id=${param.id} order by c.createDate, c.createTime" />
     <msh:table styleRow="7" name="cardList" action="entityView-smo_covid19.do" idField="1">
       <msh:tableColumn columnName="Номер ИБ" property="2" />

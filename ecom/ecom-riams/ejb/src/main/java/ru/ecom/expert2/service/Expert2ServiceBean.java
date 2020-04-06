@@ -3445,6 +3445,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         for (E2Entry child: entries) {
             child.setServiceStream(serviceStream);
             child.setParentEntry(null);
+            child.setBill(entry.getBill());
+            child.setBillNumber(entry.getBillNumber());
+            child.setBillDate(entry.getBillDate());
             theManager.persist(child);
             makeCheckEntry(child,true,true);
             child.setComment(child.getComment()+"; Случай расклеян из обращения");

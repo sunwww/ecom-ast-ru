@@ -192,6 +192,18 @@ public class Covid19 extends BaseEntity {
     public void setNoActual(Boolean aNoActual) {theNoActual = aNoActual;}
     private Boolean theNoActual ;
 
+    /** Дата исхода */
+    @Comment("Дата исхода")
+    public Date getIshodDate() {return theIshodDate;}
+    public void setIshodDate(Date aIshodDate) {theIshodDate = aIshodDate;}
+    private Date theIshodDate ;
+
+    /** Результат исхода */
+    @Comment("Результат исхода")
+    public String getIshodResult() {return theIshodResult;}
+    public void setIshodResult(String aIshodResult) {theIshodResult = aIshodResult;}
+    private String theIshodResult ;
+
     @PrePersist
     void onPrePersist() {
         long createTime = System.currentTimeMillis();

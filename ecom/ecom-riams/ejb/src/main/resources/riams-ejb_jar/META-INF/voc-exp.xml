@@ -468,6 +468,9 @@
     <voc id='positiveNegative' type='AllValueHelper'>
         <IAllValue>ru.ecom.ejb.services.voc.allvalues.PositiveNegativeAllValues</IAllValue>
     </voc>
+    <voc id='covidResultAllValues' type='AllValueHelper'>
+        <IAllValue>ru.ecom.ejb.services.voc.allvalues.CovidResultAllValues</IAllValue>
+    </voc>
 
     <!-- КСГ -->
     <voc id='vocKsg' type='EntityVocService'>

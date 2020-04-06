@@ -55,6 +55,11 @@
       </msh:row><msh:row>
           <msh:textField property="saturationLevel" horizontalFill="true" />
         </msh:row>
+        <msh:row>
+            <msh:textField property="ishodDate" />
+        </msh:row><msh:row>
+            <msh:autoComplete vocName="covidResultAllValues" property="ishodResult" horizontalFill="true" />
+        </msh:row>
         <msh:ifFormTypeAreViewOrEdit formName="smo_covid19Form">
             <msh:separator label="Дополнительная информация" colSpan="4"/>
           <msh:row>
@@ -100,8 +105,10 @@
           <msh:sectionTitle>Контакты</msh:sectionTitle>
           <msh:sectionContent>
           	<ecom:webQuery name="contacts" nativeSql="select co.id,co.lastname||' '||co.firstname||' '||co.middlename||' '||to_char(co.birthdate,'dd.MM.yyyy') as fio
-          	,co.phone, co.address from covid19Contact co
-          	 where co.card_id=${param.id}"/>
+          	,co.phone, co.address from covid19 c
+          	 left join covid19 allC on allC.patient_id=c.patient_id
+          	 left join covid19Contact co on co.card_id=allC.id
+          	 where c.id=${param.id} and co.id is not null "/>
             <msh:table name="contacts" action="void()" idField="1" noDataMessage="Нет ролей">
               <msh:tableColumn columnName="ФИО человека" property="2" />
               <msh:tableColumn columnName="Телефон" property="3" />
@@ -123,11 +130,19 @@
 
  </tiles:put>
   <tiles:put name="javascript" type="string">
+      <script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
     <script type="text/javascript">
     </script>
+      <msh:ifFormTypeIsCreate formName="smo_covid19Form">
+          <script type='text/javascript'>
+              PatientService.getOpenHospByPatient($('patient').value, {
+                  callback: function(statNumber) {$('cardNumber').value=statNumber;}
+              });
+          </script>
+      </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeAreViewOrEdit formName="smo_covid19Form">
 
-    <script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
+
     
     <script type="text/javascript">
       onload = function() {
