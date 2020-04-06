@@ -124,6 +124,7 @@
     <msh:ifFormTypeIsView formName="smo_covid19Form">
       <msh:sideMenu>
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-smo_covid19" name="Изменить" roles="/Policy/Mis/MedCase/Covid19/Edit" />
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-smo_covid19" name="Изменить" roles="/Policy/Mis/MedCase/Covid19/Delete" />
         <msh:sideLink key="ALT+3"  action="/javascript:exportCard()" name="Карта выгружена" roles="/Policy/Mis/MedCase/Covid19/Export" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>

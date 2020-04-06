@@ -19,10 +19,10 @@
   String sqlAdd;
   switch (typeView) {
     case "noExport":
-    sqlAdd=" where (cv.noActual is null or cv.noActual='0') and cv.exportDate is null ";
+    sqlAdd=" where (c.noActual is null or c.noActual='0') and c.exportDate is null ";
     break;
     case "actual":
-      sqlAdd=" where (cv.noActual is null or cv.noActual='0') ";
+      sqlAdd=" where (c.noActual is null or c.noActual='0') ";
       break;
     default:
       sqlAdd="";
@@ -60,12 +60,13 @@
       <msh:sectionTitle>Результаты поиска COVID 19</msh:sectionTitle>
       <msh:sectionContent>
         <ecom:webQuery name="list_covid" nativeSql="select  
-        cv.id, pat.patientinfo,  to_char(cv.createdate,'dd.MM.yyyy')||' '|| cast(cv.createtime as varchar(5))
-        ,case when cv.exportDate is not null then 'color:green' when cv.noActual='1' then 'color:gray' else '' end as f9_styleRow
-    from Covid19 cv
-    left join Patient pat on pat.id=cv.patient_id
+        c.id, pat.patientinfo,  to_char(c.createdate,'dd.MM.yyyy')||' '|| cast(c.createtime as varchar(5))
+        ,case when c.exportDate is not null then 'background-color:green' when c.noActual='1' then 'background-color:gray'
+     when (c.labResult is not null and c.labResult!='') then 'background-color: orange' else '' end as f9_styleRow
+    from Covid19 c
+    left join Patient pat on pat.id=c.patient_id
     ${sqlAdd}
-    order by cv.createdate, cv.createtime" />
+    order by c.createdate, c.createtime" />
         <msh:table name="list_covid" action="entityParentView-smo_covid19.do" idField="1" styleRow="4" noDataMessage="Не найдено">
           <msh:tableColumn columnName="#" property="sn"/>
           <msh:tableColumn columnName="Пациент" property="2"/>
