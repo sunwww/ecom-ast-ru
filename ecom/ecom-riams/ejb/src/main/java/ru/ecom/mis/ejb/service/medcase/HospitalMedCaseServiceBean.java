@@ -159,6 +159,80 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	}
 
 	/**
+	 * Формируем "справочник" с профилями поликлинических специалистов
+	 * @return map со странами в виде (Код специальности, Код ЦБРФ)
+	 */
+	private HashMap getPolicProfileMapBank() {
+		HashMap<String, String> policProfiles = new HashMap<>();
+
+		policProfiles.put("80","CMP48");
+		policProfiles.put("0S","CMP48");
+		policProfiles.put("11","CMP02");
+		policProfiles.put("13","CMP03");
+		policProfiles.put("14","CMP04");
+		policProfiles.put("15","CMP05");
+		policProfiles.put("16","CMP07");
+		policProfiles.put("17","CMP48");
+		policProfiles.put("18","CMP08");
+		policProfiles.put("19","CMP09"); //Дерматология, в ЦБРФ отдельно дерматология и венерология
+		policProfiles.put("20","CMP10");
+		policProfiles.put("21","CMP13");
+		policProfiles.put("22","CMP14");
+		policProfiles.put("23","CMP44");  //Диабетология => эндокринология
+		policProfiles.put("24","CMP05"); //Диетология => гастро
+		policProfiles.put("25","CMP15");
+		policProfiles.put("26","CMP16");
+		policProfiles.put("27","CMP48"); //КДЛ - прочее
+		policProfiles.put("29","CMP17");
+		policProfiles.put("30","CMP48");  //лаб. генетика - прочее
+		policProfiles.put("31","CMP46");  //лечебная физкультура и спортивная медицина => мед. реаб.
+		policProfiles.put("32","CMP46");
+		policProfiles.put("34","CMP46");  //мануальная терапия => мед. реаб.
+		policProfiles.put("35","CMP18");
+		policProfiles.put("36","CMP19");
+		policProfiles.put("37","CMP21");
+		policProfiles.put("39","CMP22");
+		policProfiles.put("103","CMP3301");
+		policProfiles.put("40","CMP23");
+		policProfiles.put("41","CMP24");
+		policProfiles.put("49","CMP26");
+		policProfiles.put("51","CMP27");
+		policProfiles.put("57","CMP28");
+		policProfiles.put("50","CMP48"); //психотерапия - прочее
+		policProfiles.put("58","CMP29");
+		policProfiles.put("59","CMP2203"); //1103 в начале списка с "детскими" кодами
+		policProfiles.put("61","CMP40");
+		policProfiles.put("60","CMP48");  //рентгенология - прочее
+		policProfiles.put("62","CMP46"); //рефлексотерапия => мед. реаб.
+		policProfiles.put("64","CMP31");
+		policProfiles.put("105","CMP32");
+		//СТОМАТОЛОГИЯ
+		policProfiles.put("107","CMP33"); //ортопедическая
+		policProfiles.put("106","CMP33"); //терапевтическая
+		policProfiles.put("113","CMP33"); //зубной врач (стоматолог)
+		policProfiles.put("108","CMP33"); //хирургическая
+		policProfiles.put("77","CMP35");
+		policProfiles.put("78","CMP36");
+		policProfiles.put("79","CMP37");
+		policProfiles.put("81","CMP48"); //ультразвуковая диагностика => прочее
+		policProfiles.put("82","CMP38");
+		policProfiles.put("83","CMP46"); //физиотерапия => мед. реаб.
+		policProfiles.put("84","CMP39");
+		policProfiles.put("86","CMP48");  //функциональная диагностика => прочее
+		policProfiles.put("87","CMP40");
+		policProfiles.put("109","CMP43");
+		policProfiles.put("88","CMP44");
+		policProfiles.put("89","CMP48");  //эндоскопия => прочее
+		policProfiles.put("71","CMP34");
+		policProfiles.put("72","CMP34");
+		policProfiles.put("44","CMP25");
+		policProfiles.put("45","CMP25");
+		policProfiles.put("38","CMP25");  //общая врачебная практика (семейная медицина)=> терапия
+		policProfiles.put("65","CMP48"); //скорая медицинская помощь => прочее
+		return policProfiles;
+	}
+
+	/**
 	 * Формируем "справочник" с профилями коек в стационаре
 	 * @return map со странами в виде (профиль койки, Название_МИАЦа)
 	 */
@@ -195,6 +269,47 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		stacProfiles.put("61","педиатрия");
 		stacProfiles.put("81","педиатрия");
 		stacProfiles.put("29","другое");
+		return stacProfiles;
+	}
+
+
+	/**
+	 * Формируем "справочник" с профилями коек в стационаре
+	 * @return map со странами в виде (профиль койки, код ЦБРФ)
+	 */
+	private HashMap getStacProfileMapBank() {
+		HashMap<String, String> stacProfiles = new HashMap<>();
+		stacProfiles.put("38","CMP02");
+		stacProfiles.put("40","CMP02");
+		stacProfiles.put("39","CMP02");
+		stacProfiles.put("8","CMP03");
+		stacProfiles.put("801","CMP04");
+		stacProfiles.put("80","CMP04");
+		stacProfiles.put("6","CMP05");
+		stacProfiles.put("16","CMP07");
+		stacProfiles.put("3","CMP16");
+		stacProfiles.put("63","CMP17");
+		stacProfiles.put("48","CMP18");
+		stacProfiles.put("22","CMP19");
+		stacProfiles.put("18","CMP20");
+		stacProfiles.put("37","CMP22");
+		stacProfiles.put("56","CMP23");
+		stacProfiles.put("54","CMP24");
+		stacProfiles.put("69","CMP29");
+		stacProfiles.put("65","CMP40");
+		stacProfiles.put("26","CMP31");
+		stacProfiles.put("24","CMP36");
+		stacProfiles.put("31","CMP37");
+		stacProfiles.put("28","CMP37");
+		stacProfiles.put("33","CMP38");
+		stacProfiles.put("20","CMP40");
+		stacProfiles.put("41","CMP40");
+		stacProfiles.put("35","CMP43");
+		stacProfiles.put("12","CMP44");
+		stacProfiles.put("2","CMP34");
+		stacProfiles.put("61","CMP25");
+		stacProfiles.put("81","CMP25");
+		stacProfiles.put("29","CMP48");
 		return stacProfiles;
 	}
 
@@ -369,7 +484,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		countries.put("77","Москва");
 		countries.put("78","Санкт-Петербург");
 		countries.put("92","Севастополь");
-		countries.put("79","Еврейская автономная область");
+		countries.put("79","Еврейская автономнаяа область");
 		countries.put("83","Ненецкий автономный округ");
 		countries.put("86","Ханты-Мансийский автономный округ - Югра");
 		countries.put("87","Чукотский автономный округ");
@@ -399,17 +514,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	 * @param aDateFrom
 	 * @param aDateTo
 	 * @param aType
-	 * @param aServiceStream
 	 * @param aReportType тип отчета (МИАЦ либо ЦБРФ)
 	 * @return
 	 */
 	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode, String aReportType) {
 		//Начинаем стационар
 		try {
+			Integer findDays=10; //дни д огоспитализации/СПО, в течение которых надо искать договор
 		StringBuilder sqlSelect = new StringBuilder();
 		StringBuilder sqlAppend = new StringBuilder();
 		HashMap<String, String> regionOrCountry;
-		HashMap<String, String> profileMap = getStacProfileMap();
+		HashMap<String, String> profileMap = "BANK".equals(aReportType)?
+				getStacProfileMapBank() : getStacProfileMap();
 		HashMap<String, String> sredstvaMap = getMiacServiceStreamMap();
 		if (aLpuCode == null || aLpuCode.equals("")) {
 			return "Не указан код ЛПУ";
@@ -426,10 +542,33 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			LOG.error("NO VALID TYPE");
 			return "---1";
 		}
-		List<Object[]> list = theManager.createNativeQuery("select id from PriceList where isdefault='1'").setMaxResults(1).getResultList();
+		String ageSelect="",ageGroup="",vbtSelect="",emSelect="",highTechSelect="",emGroup="",perGroup="", vssGroup="";
+		StringBuilder highTechJoin = new StringBuilder();
+		StringBuilder periodSelect = new StringBuilder();
+		StringBuilder vssSelect = new StringBuilder();
+		if ("BANK".equals(aReportType)) {
+			ageSelect = " ,case when EXTRACT(YEAR from AGE(pat.birthday))>=18 then 'AGE02' else 'AGE01' end as f_age ";
+			ageGroup = ", pat.birthday";
+			highTechSelect = " ,case when count(h.id)>0 then 'TMC03' else 'TMC02' end as f7_code_vid_mp";
+			highTechJoin.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'")
+					.append(" left join hitechmedicalcase h on h.medcase_id=slo.id ");
+			vbtSelect = " ,case when (vbt.code='78') then 'CMC02 в дневном стационаре' else 'CMC03 стационарно' end as f8_code_usl_mp";
+			emSelect = " ,case when sls.emergency then 'FMC01 экстренная' else 'FMC03 плановая' end as f9_code_form_ok";
+			emGroup = " ,sls.emergency";
+			periodSelect.append(" ,case when sls.datefinish-sls.datestart <=1 then 'DMC01' else")
+					.append(" case when sls.datefinish-sls.datestart between 2 and 5 then 'DMC02' else")
+					.append(" case when sls.datefinish-sls.datestart between 6 and 14 then 'DMC03' else")
+					.append(" case when sls.datefinish-sls.datestart between 15 and 30 then 'DMC04' else")
+					.append(" case when sls.datefinish-sls.datestart >31 then 'DMC05' end end end end end as f10_count");
+			perGroup=",sls.datefinish-sls.datestart";
+			vssSelect.append(",case when vss.code='CHARGED' then 'SFC05' else case when vss.code in ('OBLIGATORYINSURANCE','BUDGET') then 'SFC03'")
+					.append(" else case when vss.code='PRIVATEINSURANCE' then 'SFC04' else 'SFC06' end end end as f11_code_fin_md");
+			vssGroup=" ,vss.code";
+        }
+		List<Object> listPr = theManager.createNativeQuery("select id from PriceList where isdefault='1'").setMaxResults(1).getResultList();
 		String priceListId = null;
-		if (!list.isEmpty()) {
-			priceListId = list.get(0)[0].toString();
+		if (!listPr.isEmpty()) {
+			priceListId = listPr.get(0).toString();
 		}
 		StringBuilder sql = new StringBuilder() //считаем стационар
 				.append(" select to_char(sls.datefinish,'yyyy-MM') as f0_date")
@@ -438,6 +577,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.append(" ,vbt.code as f3_profile")
 				.append(" , vss.financesource as f4_financesource")
 				.append(" ,list(sls.id||'') as f5_list")
+                .append(ageSelect).append(highTechSelect).append(vbtSelect)
+				.append(emSelect).append(periodSelect).append(vssSelect)
 				.append(" from medcase sls")
 				.append(" left join medcase dep1 on dep1.parent_id=sls.id and dep1.prevmedcase_id is null and dep1.dtype='DepartmentMedCase'")
 				.append(" left join bedfund bf on bf.id=dep1.bedfund_id")
@@ -447,13 +588,16 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
 				.append(" left join address2 a on a.addressid=pat.address_addressid")
 				.append(" left join vocservicestream vss on vss.id=sls.servicestream_id")
+				.append(highTechJoin)
 				.append(" where sls.dateFinish between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
 				.append(" and sls.dtype='HospitalMedCase'")
 				.append(sqlAppend)
 				.append(" group by vss.financesource, vbt.code, to_char(sls.datefinish,'yyyy-MM')").append(sqlSelect)
+                .append(ageGroup).append(emGroup)
+				.append(perGroup).append(vssGroup)
 				.append(" order by to_char(sls.datefinish,'yyyy-MM')");
 		LOG.info("repotr_stac = " + sql);
-		list = theManager.createNativeQuery(sql.toString()).getResultList();
+		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
 		LOG.info("repotr_stac found " + list.size() + " records");
 		String region, profile, financeSource, patientCount;
 		String[] period, hosps;
@@ -461,6 +605,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		String uslovia = "стационар"; //AMOKB
 		StringBuilder txtFile = new StringBuilder();
 		HashMap<String, JSONObject> allRecords = new HashMap<>();
+		String pay = "PAY01"; //по умолчанию - наличка
 		//1 строка = 9 строчек
 		int i = 0;
 		try {
@@ -471,16 +616,22 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				}
 				period = s(row[0]).split("-");
 				patientCount = s(row[1]);
-				region = regionOrCountry.get(s(row[2])) != null ? regionOrCountry.get(s(row[2])) : "REGION_CODE=" + s(row[2]);
+				region=getRegion(row[2].toString(),aReportType,regionOrCountry);
 				profile = profileMap.get(s(row[3])) != null ? profileMap.get(s(row[3])) : "PROFILE_CODE=" + s(row[3]);
 				financeSource = s(row[4]);
 				hosps = s(row[5]).split(",");
 				totalSum = 0;
 				if (financeSource.equals("CHARGED")) { //Платные случаи
+					String firstHosp="";
 					for (String hosp : hosps) {
+						if (firstHosp.equals(""))
+							firstHosp=hosp.trim();
 						JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim()), priceListId));
 						totalSum += hospitalInfo.getDouble("totalSum");
 					}
+					if (!firstHosp.equals("") && "BANK".equals(aReportType))
+						pay = getPayType(firstHosp,findDays);
+
 				} else if (financeSource.equals("OBLIGATORY")) { //ОМС
 					for (String hosp : hosps) {
 						try {
@@ -511,6 +662,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 						rec = new JSONObject();
 						rec.put("hash", recordHash).put("period0", period[0]).put("period1", period[1]).put("region", region).put("uslovia", uslovia).put("profile", profile).put("financeSource", sredstvaMap.get(financeSource))
 								.put("patientCount", patientCount).put("sum", BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+						if ("BANK".equals(aReportType)) {
+							rec.put("age", row[6]);
+							rec.put("code_vid_mp",row[7]);
+							rec.put("code_usl_mp",row[8]);
+							rec.put("code_form_ok",row[9]);
+							rec.put("code_prod",row[10]);
+							rec.put("code_fin_md",row[11]);
+							rec.put("profile",profile);
+							rec.put("pay",pay);
+							//rec.put("patientCount",patientCount);
+							//rec.put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+						}
 					}
 					allRecords.put(recordHash, rec);
 				} else {
@@ -532,6 +695,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.append(" ,sum (coalesce(smc.medserviceamount ,1)*pp.cost) as f5_totalSum")
 				.append(",list(''||vis.id) as f6_listVisits")
 				.append(", list(distinct (vis.parent_id) ||'') as f7_listSpo")
+				.append(ageSelect)
+                .append(periodSelect.toString().replaceAll("sls.datefinish-sls.datestart","spo.datefinish-spo.datestart"))
+				.append(vssSelect)
 				.append(" from medcase spo")
 				.append(" left join medcase vis on vis.parent_id=spo.id")
 				.append(" left join medcase smc on smc.parent_id=vis.id and smc.dtype='ServiceMedCase'")
@@ -547,12 +713,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.append(" and spo.datefinish between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
 				.append(" and vss.financesource is not null and vss.financesource!='' ")
 				.append(sqlAppend)
-				.append(" group by to_char(spo.datefinish,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect);
+				.append(" group by to_char(spo.datefinish,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect)
+				.append(ageGroup)
+                .append(perGroup.replaceAll("sls.datefinish-sls.datestart","spo.datefinish-spo.datestart"))
+				.append(vssGroup);
+
 		LOG.info("===========repotr_pol = " + sql);
 		list = theManager.createNativeQuery(sql.toString()).getResultList();
 		LOG.info("repotr_pol found " + list.size() + " records");
 		uslovia = "амбулаторно";
-		profileMap = getPolicProfileMap();
+		profileMap = "BANK".equals(aReportType)?
+				getPolicProfileMapBank() : getPolicProfileMap();
 		try {
 			i = 0;
 			for (Object[] row : list) {
@@ -562,19 +733,24 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				}
 				period = s(row[0]).split("-");
 				patientCount = s(row[1]);
-				region = regionOrCountry.get(s(row[2])) != null ? regionOrCountry.get(s(row[2])) : "REGION_CODE=" + s(row[2]);
+				region=getRegion(row[2].toString(),aReportType,regionOrCountry);
 				profile = profileMap.get(s(row[3])) != null ? profileMap.get(s(row[3])) : "PROFILE_CODE=" + s(row[3]);
 				financeSource = s(row[4]);
 				totalSum = 0;
 				if (financeSource.equals("OBLIGATORY") || financeSource.equals("BUDGET")) { //считаем цену за ОМС
 					String[] spoIds = row[7].toString().split(",");
+					String firstSpo="";
 					for (String spoId : spoIds) {
+						if (firstSpo.equals(""))
+							firstSpo=spoId.trim();
 						JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(spoId.trim())));
 						if (costJson.has("price")) {
 							double cost = costJson.getDouble("price");
 							totalSum += cost;
 						}
 					}
+					if (!firstSpo.equals("") && "BANK".equals(aReportType))
+						pay = getPayType(firstSpo,findDays);
 				} else {
 					try {
 						totalSum = Double.valueOf(s(row[5]));
@@ -597,6 +773,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 						rec = new JSONObject();
 						rec.put("hash", recordHash).put("period0", period[0]).put("period1", period[1]).put("region", region).put("uslovia", uslovia).put("profile", profile).put("financeSource", sredstvaMap.get(financeSource))
 								.put("patientCount", patientCount).put("sum", BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+                        if ("BANK".equals(aReportType)) {
+							rec.put("age", row[8].toString());
+							rec.put("code_vid_mp", "TMC02"); //только специализированная в поликлинике
+							rec.put("code_usl_mp", "CMC01 амбулаторно"); //только амбулаторно
+							rec.put("code_form_ok", "FMC03 плановая"); //только плановая
+							//rec.put("patientCount",patientCount);
+							rec.put("code_prod", row[9]);
+							rec.put("code_fin_md", row[10]);
+							rec.put("profile", profile);
+							rec.put("pay",pay);
+							//rec.put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+						}
 					}
 					allRecords.put(recordHash, rec);
 
@@ -612,15 +800,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 					LOG.info("making " + i + " records");
 				}
 				if (rec != null) {
-					txtFile.append(aLpuCode).append("\n")
-							.append(rec.getString("period0")).append("\n")
-							.append(rec.getString("period1")).append("\n")
-							.append(rec.getString("region")).append("\n")
-							.append(rec.getString("uslovia")).append("\n")
-							.append(rec.getString("profile")).append("\n")
-							.append(rec.getString("financeSource")).append("\n")
-							.append(rec.getString("patientCount")).append("\n")
-							.append(String.valueOf(BigDecimal.valueOf(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".", ",")).append("\n");
+					if ("MIAC".equals(aReportType)) {
+						txtFile.append(aLpuCode).append("\n")
+								.append(rec.getString("period0")).append("\n")
+								.append(rec.getString("period1")).append("\n")
+								.append(rec.getString("region")).append("\n")
+								.append(rec.getString("uslovia")).append("\n")
+								.append(rec.getString("profile")).append("\n")
+								.append(rec.getString("financeSource")).append("\n")
+								.append(rec.getString("patientCount")).append("\n")
+								.append(String.valueOf(BigDecimal.valueOf(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".", ",")).append("\n");
+					}
 				} else {
 					LOG.error("make file object = NULL!!!");
 				}
@@ -629,11 +819,65 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			LOG.error("some exception");
 			e.printStackTrace();
 		}
-		return createFile(txtFile, aType);
+		return "BANK".equals(aReportType)? allRecords.values().toString() : createFile(txtFile, aType);
 	}catch(Exception e) {
 			LOG.error(e.getMessage(), e);
 			return null;
 		}
+	}
+
+	/**
+	 * Получить форму оплаты случая лечения (в случае, если CHARGED) - первая оплата
+	 *
+	 * @param aMedcaseId Случай лечения
+	 * @param findDays За сколько дней до операции искать договор
+	 * @return String Тип оплаты PAY01 (нал) / PAY03 (безнал)
+	 */
+	private String getPayType(String aMedcaseId, Integer findDays) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select case when co.ispaymentterminal =true then '1' else '0' end")
+				.append(" from contractaccount c")
+				.append(" left join contractaccountoperation co on co.account_id =c.id")
+				.append(" where c.datefrom between (select datestart from medcase where id=")
+				.append(aMedcaseId).append(")-").append(findDays).append(" and")
+				.append(" (select datestart from medcase where id=").append(aMedcaseId)
+				.append(") limit 1");
+		List<Object> list = theManager.createNativeQuery(sql.toString()).getResultList();
+		//первая оплата
+		return !list.isEmpty() && list.get(0).equals("1")?
+				"PAY03" : "PAY01";
+	}
+
+	/**
+	 * Получить код страны для банка (всегда трёхзначный)
+	 *
+	 * @param regCode Код региона/страны
+	 * @return String Регион для отчёта
+	 */
+	private String getRegionForBank(String regCode) {
+		while (regCode.length()<3)
+			regCode="0"+regCode;
+		return regCode;
+	}
+
+	/**
+	 * Получить регион для разных типов отчёта
+	 *
+	 * @param regCode Код региона/страны
+	 * @param aReportType Тип отчёта
+	 * @param regionOrCountry Соответствие код-регион/страна
+	 * @return String Регион для отчёта
+	 */
+	private String getRegion(String regCode,String aReportType,HashMap<String, String> regionOrCountry) {
+		String region=null;
+		if ("MIAC".equals(aReportType))
+			region = regionOrCountry.get(s(regCode)) != null ? regionOrCountry.get(s(regCode)) : "REGION_CODE=" + s(regCode);
+		else if ("BANK".equals(aReportType))
+			region = getRegionForBank(s(regCode));
+		else {
+			LOG.info("unknown type report");
+		}
+		return region;
 	}
 
 	public String createFile (StringBuilder aText, String aFileName) {
