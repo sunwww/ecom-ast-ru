@@ -60,7 +60,14 @@
     ,coalesce(vic.name,'')||' сер. '||pat.passportSeries||' №'||pat.passportNumber||' выдан '||to_char(pat.passportDateIssued,'dd.mm.yyyy')||' '||pat.passportWhomIssued as passport
     ,vbt.name as bedType
     ,pat.passportSeries||' '||pat.passportNumber as passportshort
-,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
+,case when dep.isnewborn then case when (select count(vcid.isfornewborn) from VocColorIdentityPatient vcid
+left join ColorIdentityPatient cid on vcid.id=cid.voccoloridentity_id
+left join medcase_coloridentitypatient mcidinner on cid.id=mcidinner.colorsidentity_id
+left join voccolor vcrinner on vcrinner.id=vcid.color_id
+where mcidinner.medcase_id =mcid.medcase_id and vcid.isfornewborn=true
+)>0 then 'background:'||(select vc.code from voccolor vc
+left join VocColorIdentityPatient vcipin on vcipin.color_id =vc.id
+where isfornewborn =true) else '' end end as styleRow
     ,cast('-' as varchar(1)) as tempId
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
@@ -103,7 +110,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
 	       ,ost.name,pat.StreetNonresident
               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name
 
-       , pat.foreignRegistrationAddress
+       , pat.foreignRegistrationAddress,dep.isnewborn ,mcid.medcase_id
     order by pat.lastname,pat.firstname,pat.middlename
     "
       />
@@ -252,53 +259,8 @@ left join voccolor vcr on vcr.id=vcid.color_id
     <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
     <script type="text/javascript">
-        //Milamesher #151 - вывод браслетов в Журнале обращений
-        //на js, т.к. неохота возиться с хранимыми + по ролям можно отключить
-        //реализовано через механизм замыканий, чтобы передавать параметр в callback
-        var closure2 = function(td) {
-            return function(res) {
-                var str="";
-                if (res != null && res != '[]') {
-                    var aResult = JSON.parse(res);
-                    str = '<table><tr>';
-                    for (var i = 0; i < aResult.length; i++) {
-                        var style = 'style="width: 10px;height: 10px;outline: 1px solid gray; border:2px;';
-                        style+=typeof aResult[i].picture !=='undefined' && aResult[i].picture!=''? '">':' background: '+aResult[i].colorCode +';">';
-                        if (typeof aResult[i].picture !=='undefined' && aResult[i].picture!='')
-                            style+='<img src="/skin/images/patology.png" title="Патология" height="10px" width="10px">';
-                        str += '<td><div title="' + aResult[i].vsipnameJust + '" '+style+'</div></td>';
-                    }
-                    str += "</tr></table>";
-                }
-                td.innerHTML = str==''? '-' : str;
-            };
-        };
-
-        var closure1 = function(td) {
-            return function(slsId) {
-                if (slsId != null && slsId != '') {
-                    HospitalMedCaseService.selectIdentityPatient(
-                        slsId, true, closure2(td)
-                    );
-                }
-            };
-        };
-
-        function setBr(table) {
-            if (typeof table !== 'undefined') {
-                for (var i = 1; i < table.rows.length; i++) {
-                    var row = table.rows[i];
-                    var td = row.cells[row.cells.length - 1];
-                    //получить parent
-                    var sloId = row.className.replace('datelist', '').replace('selected', '').replace('_r', '');
-                    HospitalMedCaseService.getParentId(
-                        sloId, closure1(td)
-                    );
-                }
-            }
-        }
-        setBr(document.getElementsByTagName('table')[0]);
-        setBr(document.getElementsByTagName('table')[1]);
+        setBr(document.getElementsByTagName('table')[0],'datelist');
+        setBr(document.getElementsByTagName('table')[1],'datelist_r');
     </script>
     </tiles:put>
   <%}%>

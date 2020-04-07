@@ -32,6 +32,7 @@
 					<li><msh:link action="ecom_release-202001.do">январь 2020 года </msh:link></li>
 					<li><msh:link action="ecom_release-202002.do">февраль 2020 года </msh:link></li>
 					<li><msh:link action="ecom_release-202003.do">март 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202004.do">апрель 2020 года </msh:link></li>
 
 
 					<% if (1==2) { %>
