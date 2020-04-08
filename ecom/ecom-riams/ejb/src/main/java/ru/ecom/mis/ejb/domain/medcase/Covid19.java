@@ -19,11 +19,25 @@ public class Covid19 extends BaseEntity {
     public void setPatient(Patient aPatient) {thePatient = aPatient;}
     private Patient thePatient ;
 
+    /** СМО */
+    @Comment("СМО")
+    @OneToOne
+    public MedCase getMedCase() {return theMedCase;}
+    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+    private MedCase theMedCase ;
+
     /** Номер ИБ */
     @Comment("Номер ИБ")
     public String getCardNumber() {return theCardNumber;}
     public void setCardNumber(String aCardNumber) {theCardNumber = aCardNumber;}
     private String theCardNumber ;
+
+    /** Место работы */
+    @Comment("Место работы")
+    public String getWorkPlace() {return theWorkPlace;}
+    public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
+    private String theWorkPlace ;
+
     
     /** Дата появления клинических диагнозов */
     @Comment("Дата появления клинических диагнозов")

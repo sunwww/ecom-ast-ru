@@ -851,7 +851,6 @@ order by wcd.calendarDate, wct.timeFrom" />
         </msh:sideMenu>
 </msh:ifInRole>
       <msh:sideMenu title="Добавить">
-        <msh:sideLink roles="/Policy/Mis/MedCase/Covid19/Create" params="id" action="/entityParentList-smo_covid19" name="Карту COVID-19" />
         <msh:sideLink roles="/Policy/Mis/MedPolicy/Omc/Create" key="CTRL+1" params="id" action="/entityParentPrepareCreate-mis_medPolicyOmc" name="Полис ОМС" />
         <msh:sideLink roles="/Policy/Mis/MedPolicy/OmcForeign/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-mis_medPolicyOmcForeign" name="Полис ОМС иногороднего" />
         <msh:sideLink roles="/Policy/Mis/MedPolicy/Dmc/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-mis_medPolicyDmc" name="Полис ДМС" />
@@ -1328,7 +1327,14 @@ order by wcd.calendarDate, wct.timeFrom" />
                           var aResult = JSON.parse(res);
                           var str='<table style="margin-left:45%"><tr>';
                           for (var i=0; i<aResult.length; i++) {
-                              str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
+
+                              var brace = aResult[i];
+                              var msg = brace.info ? brace.info : brace.vsipnameJust;
+                              var style = 'width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;';
+                              style+= brace.picture ? 'background-image: url(\'/skin/images/bracelet/'+brace.picture+'\'); '
+                                  :' background-color: '+brace.colorCode +';';
+                              str+='<td><div onclick="showToastMessage(\''+msg+'\',null,true,false);" title="'+msg+'" style="'+style+'"></div></td>';
+
                           }
                           str+="</tr></table>";
                           document.getElementById('identityDiv').innerHTML=str;

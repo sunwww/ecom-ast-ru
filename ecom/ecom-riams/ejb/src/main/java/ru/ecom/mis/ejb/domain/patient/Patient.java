@@ -333,12 +333,6 @@ public class Patient extends BaseEntity{
 	public List<Kinsman> getKinsmen() {return theKinsmen;}
 	public void setKinsmen(List<Kinsman> aKinsmen) {theKinsmen = aKinsmen;}
 
-	///** Чей родственник */
-	//@Comment("Чей родственник")
-	//@OneToMany(mappedBy="kinsman", cascade=CascadeType.ALL)
-	//public List<Kinsman> getKinsmanOf() {return theKinsmanOf;}
-	//public void setKinsmanOf(List<Kinsman> aKinsmanOf) {theKinsmanOf = aKinsmanOf;}
-
 	@Transient
 	public String getAddressRegistration() {
 		if (theAddress!=null ) return theAddress.getAddressInfo(theHouseNumber, theHouseBuilding, theFlatNumber)  ;

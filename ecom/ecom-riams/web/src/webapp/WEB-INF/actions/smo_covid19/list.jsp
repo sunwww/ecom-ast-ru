@@ -6,16 +6,26 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="mis_patientForm" title="Карты COVID"/>
+    <ecom:titleTrail mainMenu="Patient" beginForm="mis_medCaseForm" title="Карты COVID"/>
+<%
+  String patientId = request.getParameter("patient");
+  String sqlAdd;
+  if (patientId!=null) {
+    sqlAdd = " c.patient_id="+patientId;
+  } else {
+    sqlAdd = " c.medCase_id="+request.getParameter("id");
+  }
+  request.setAttribute("sqlAdd",sqlAdd);
 
+%>
   </tiles:put>
   <tiles:put name="body" type="string">
     <ecom:webQuery name="cardList" nativeSql="select c.id, c.cardNumber,c.diagnosis, c.diagnosisDate
     ,c.createDate, c.createTime
-    ,case when c.exportDate is not null then 'background-color:green' when c.noActual='1' then 'background-color:gray'
-     when (c.labResult is not null and c.labResult!='') then 'background-color: orange' else '' end as f9_styleRow
-from Covid19 c where patient_id=${param.id} order by c.createDate, c.createTime" />
-    <msh:table styleRow="7" name="cardList" action="entityView-smo_covid19.do" idField="1">
+    ,case when c.exportDate is not null then 'background-color:#8ee68e; color:black' when c.noActual='1' then 'background-color:#979090; color:black'
+     when (c.labResult is not null and c.labResult!='') then 'background-color: #f0ba57; color:black' else '' end as f9_styleRow
+from Covid19 c where ${sqlAdd} order by c.createDate, c.createTime" />
+    <msh:table styleRow="7" name="cardList" action="entityParentView-smo_covid19.do" idField="1">
       <msh:tableColumn columnName="Номер ИБ" property="2" />
       <msh:tableColumn columnName="Диагноз" property="3" />
       <msh:tableColumn columnName="Дата диагноза" property="4" />

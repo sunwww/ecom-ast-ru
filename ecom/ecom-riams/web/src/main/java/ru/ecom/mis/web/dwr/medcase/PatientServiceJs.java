@@ -20,6 +20,7 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
@@ -28,14 +29,16 @@ public class PatientServiceJs {
 
 	private static final Logger LOG = Logger.getLogger(PatientServiceJs.class);
 
-	public String getOpenHospByPatient(Long aPatientId, HttpServletRequest aRequest) throws NamingException {
-		String sql = "select sls.id, ss.code from medcase sls " +
+	public String getOpenHospByPatient(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException, SQLException {
+		String sql = "select sls.id as hospId, coalesce(ss.code,'') as cardNumber, coalesce(pat.works,'') as workplace" +
+				" ,sls.patient_id as patient" +
+				" from medcase sls " +
 				" left join statisticstub ss on ss.medcase_id = sls.id" +
-				" where sls.patient_id="+aPatientId+" and sls.dtype = 'HospitalMedCase'" +
-				" and sls.deniedhospitalizating_id is null and sls.dateFinish is null order by sls.id desc";
+				" left join patient pat on pat.id=sls.patient_id" +
+				" where sls.id="+aMedCaseId ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		return list.isEmpty() ? "" : list.iterator().next().get2().toString();
+		return service.executeSqlGetJsonObject(sql);
+
 	}
 
 	public String markCovidAsSent(Long aCard, HttpServletRequest aRequest) throws NamingException {

@@ -3,7 +3,7 @@ package ru.ecom.mis.ejb.form.medcase;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Covid19;
-import ru.ecom.mis.ejb.form.patient.PatientForm;
+import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -21,7 +21,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Карта коронавируса", list = "entityParentList-smo_covid19.do"
         , nameProperties = "cardNumber", view = "entityParentView-smo_covid19.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Covid19")
-@Parent(parentForm = PatientForm.class,  property = "patient")
+@Parent(parentForm = HospitalMedCaseForm.class,  property = "medCase")
 public class Covid19Form extends IdEntityForm {
     /** Пациент */
     @Comment("Пациент")
@@ -29,6 +29,13 @@ public class Covid19Form extends IdEntityForm {
     public Long getPatient() {return thePatient;}
     public void setPatient(Long aPatient) {thePatient = aPatient;}
     private Long thePatient ;
+
+    /** СМО */
+    @Comment("СМО")
+    @Persist
+    public Long getMedCase() {return theMedCase;}
+    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    private Long theMedCase ;
 
     /** Номер ИБ */
     @Comment("Номер ИБ")
@@ -240,6 +247,13 @@ public class Covid19Form extends IdEntityForm {
     public String getIshodResult() {return theIshodResult;}
     public void setIshodResult(String aIshodResult) {theIshodResult = aIshodResult;}
     private String theIshodResult ;
+
+    /** Место работы */
+    @Comment("Место работы")
+    @Persist
+    public String getWorkPlace() {return theWorkPlace;}
+    public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
+    private String theWorkPlace ;
     
     /** Форма контакта */
     @Comment("Форма контакта")

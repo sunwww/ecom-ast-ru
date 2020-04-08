@@ -531,7 +531,7 @@
                 from = ' vocQualityEstimationChangeReason v '
                 names=" v.name "
                 nameId=" v.id "
-                queried=" ( upper(v.id) like upper(:query) or upper(v.name) like upper(:query) )"
+                queried=" ( cast(v.id as varchar) like cast(:query as varchar) or upper(v.name) like upper(:query) )"
                 join= ""
                 order=""
         />

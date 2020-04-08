@@ -54,7 +54,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
   
    <msh:sideMenu title="Показать">
     <msh:sideLink roles="/Policy/Mis/MedCase/Covid19/View" name="Карты COVID-19"
-				  action="/javascript:createCovidCard()"/>
+				  action="/entityParentList-smo_covid19" params="id"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="онкологическая карта выписки"
 				  params="id" action="/entityPrepareCreate-mis_dynamicDocument.do?type=1"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
@@ -263,11 +263,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 <script type="text/javascript">
 
-	function createCovidCard() {
-		if ($('patient')) window.location.href="entityParentList-smo_covid19.do?id="+$('patient').value;
-		console.log("no patient");
-
-	}
     function deleteDischargeCheck(aId) {
         HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess(
             aId, {

@@ -18,7 +18,7 @@
   <tiles:put name="body" type="string">
   
   <msh:section>
-     
+
 		       <msh:sectionTitle>Список проверок:</msh:sectionTitle>
 		       <msh:sectionContent>
 		       <ecom:webQuery name="fondCheck" 

@@ -13,10 +13,13 @@
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="patient" />
+      <msh:hidden property="medCase" />
       <msh:panel>
         <msh:row>
          <msh:textField property="cardNumber" size="50" />
         </msh:row><msh:row>
+              <msh:textField property="workPlace" horizontalFill="true" />
+          </msh:row><msh:row>
          <msh:textField property="symptomsDate" />
       </msh:row><msh:row>
          <msh:textField property="diagnosis" horizontalFill="true" />
@@ -122,10 +125,12 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="smo_covid19Form">
-      <msh:sideMenu>
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-smo_covid19" name="Изменить" roles="/Policy/Mis/MedCase/Covid19/Edit" />
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-smo_covid19" name="Изменить" roles="/Policy/Mis/MedCase/Covid19/Delete" />
-        <msh:sideLink key="ALT+3"  action="/javascript:exportCard()" name="Карта выгружена" roles="/Policy/Mis/MedCase/Covid19/Export" />
+      <msh:sideMenu title="COVID">
+        <msh:sideLink params="id" action="/entityParentEdit-smo_covid19" name="Изменить" roles="/Policy/Mis/MedCase/Covid19/Edit" />
+        <msh:sideLink params="id" action="/entityParentDelete-smo_covid19" name="Удалить" roles="/Policy/Mis/MedCase/Covid19/Delete" />
+        <msh:sideLink action="/javascript:exportCard()" name="Карта выгружена" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink params="id" action="/print-covid_058.do?m=printCovid&s=PatientPrintService" name="Форма 058"/>
+
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
 
@@ -136,8 +141,16 @@
     </script>
       <msh:ifFormTypeIsCreate formName="smo_covid19Form">
           <script type='text/javascript'>
-              PatientService.getOpenHospByPatient($('patient').value, {
-                  callback: function(statNumber) {$('cardNumber').value=statNumber;}
+              PatientService.getOpenHospByPatient($('medCase').value, {
+                  callback: function(hosp) {
+                      if (hosp!=null) {
+                          hosp = JSON.parse(hosp);
+                          $('cardNumber').value=hosp.cardnumber;
+                          $('medCase').value=hosp.hospid;
+                          $('workPlace').value=hosp.workplace;
+                          $('patient').value=hosp.patient;
+                      }
+                  }
               });
           </script>
       </msh:ifFormTypeIsCreate>
@@ -148,14 +161,12 @@
     <script type="text/javascript">
       onload = function() {
         $('saveType').value='1';
-        console.log("allways create new form");
         if ($('contactBirthDate')) new dateutil.DateField($('contactBirthDate'));
       };
 
       function exportCard() { // отметка о выгрузке карты на портал
         PatientService.markCovidAsSent($('id').value, {
-          callback: function (ret) {
-            alert(ret);
+          callback: function () {
             window.document.location.reload();
           }
         });

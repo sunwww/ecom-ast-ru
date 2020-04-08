@@ -61,8 +61,8 @@
       <msh:sectionContent>
         <ecom:webQuery name="list_covid" nativeSql="select  
         c.id, pat.patientinfo,  to_char(c.createdate,'dd.MM.yyyy')||' '|| cast(c.createtime as varchar(5))
-        ,case when c.exportDate is not null then 'background-color:green' when c.noActual='1' then 'background-color:gray'
-     when (c.labResult is not null and c.labResult!='') then 'background-color: orange' else '' end as f9_styleRow
+        ,case when c.noActual='1' then 'background-color:#979090; color:black' when c.exportDate is not null then 'background-color:#8ee68e; color:black'
+     when (c.labResult is not null and c.labResult!='') then 'background-color: #f0ba57; color:black' else '' end as f9_styleRow
     from Covid19 c
     left join Patient pat on pat.id=c.patient_id
     ${sqlAdd}
@@ -74,6 +74,12 @@
         </msh:table>
       </msh:sectionContent>
     </msh:section>
+
+    <table>
+      <tr style="background-color:#8ee68e; color:black"><td><p>Выгруженные на портал</p></td></tr>
+      <tr style="background-color:#f0ba57; color:black"><td><p>С лаб. результатом, невыгруженные</p></td></tr>
+      <tr style="background-color:#979090; color:black"><td><p>Неактуальные</p></td></tr>
+    </table>
 
     <script type='text/javascript'>
       checkFieldUpdate('typeView','${typeView}','noExport') ;
