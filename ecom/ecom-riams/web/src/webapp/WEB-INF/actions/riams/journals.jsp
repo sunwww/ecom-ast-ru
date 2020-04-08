@@ -406,6 +406,9 @@
 						<li><msh:link  isReport="false" action="journal_noIdentSls.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 							Отчёт по неидентифицированным госпитализациям
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_bracelets.do" roles="/Policy/Mis/MedCase/Stac/Journal/BraceletsJournal">
+							Журнал браслетов
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>
