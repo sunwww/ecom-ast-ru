@@ -3139,7 +3139,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (ksg.getIsOperation()) { //Если у КСГ признак "операционного"
                 ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.85 : 0.9);
             } else {
-                ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.5 : 0.75);
+                ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.5 : ksg.getCode().startsWith("st17") ? 0.7 : 0.75);
             }
 /*            if (planDischarge && ksg.getCode().equals("233")) { //Если политравма и есть любая операция, то Кпр=1 *07.05.2018 //убрали 22-10-2019
                 if (!theManager.createNativeQuery("select id from entrymedservice where entry_id=:id").setParameter("id",aEntry.getId()).getResultList().isEmpty()) {

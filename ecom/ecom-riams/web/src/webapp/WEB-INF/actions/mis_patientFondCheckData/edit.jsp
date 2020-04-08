@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -7,9 +6,9 @@
 
 <tiles:insert page = '/WEB-INF/tiles/mainLayout.jsp' flush = 'true'>
   <tiles:put name="body" type="string">
-    <msh:form action="entitySaveGoView-mis_patientFondCheckData.do" defaultField="id" guid="10826cd9-7e71-480c-9d53-c96e6805ce24">
-      <msh:hidden property="id" guid="332d968f-182e-4108-b1de-df71738d7b8a" />
-      <msh:panel guid="070b9d1e-c50f-4423-9d72-274f6b1dc045">
+    <msh:form action="entitySaveGoView-mis_patientFondCheckData.do" defaultField="id">
+      <msh:hidden property="id" />
+      <msh:panel>
         <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
         <msh:row>
 	        <td class="label" title="Обновлять данных пациентов (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Обновлять данные:</label></td>
@@ -72,7 +71,7 @@
       </msh:row>
     </msh:ifFormTypeAreViewOrEdit>
       <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
-       	<msh:submitCancelButtonsRow colSpan="2" guid="a332e241-83f4-4e61-ad6f-d0f69cc6076e" />
+       	<msh:submitCancelButtonsRow colSpan="2" />
        </msh:ifFormTypeIsCreate>
        </msh:panel>
     </msh:form>
@@ -153,7 +152,6 @@ order by jpfc.lastname, jpfc.firstname, jpfc.middlename
     <msh:ifFormTypeIsView formName="mis_patientFondCheckDataForm">
     <script type='text/javascript'>
      checkFieldUpdate('typeView','${typeView}',1) ;
-    // checkFieldUpdate('typePatient','${typePatient}',2) ;
      checkMode();
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
   	   	eval('var chk =  document.forms[0].'+aField) ;
@@ -189,39 +187,23 @@ order by jpfc.lastname, jpfc.firstname, jpfc.middlename
  	}
     
     function updatePatient(aPatientFondId, updatePat, updateDoc, updatePol, updateAtt) {
-	    	PatientService.updateDataByFondAutomatic(aPatientFondId, $('id').value, ""+updatePat=='1'?true:false, ""+updateDoc=='1'?true:false, ""+updatePol=='1'?true:false, ""+updateAtt=='1'?true:false,{
-	    		callback: function(aResult) {
-	    			//alert(aResult);
-	    			//window.document.location.reload();
-	    		}
-	    	});
+	    	PatientService.updateDataByFondAutomatic(aPatientFondId, $('id').value, +updatePat==1, +updateDoc==1
+                , +updatePol==1, +updateAtt==1);
 	    }
 	    </script>
  	</msh:ifFormTypeIsView>
     <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
     <script type="text/javascript">
- 
-   
     document.forms['mis_patientFondCheckDataForm'].action="javascript:checkAllPatients()";
 	
      function showHideDiv (aName, aStatus) {
     	 if ($(aName)) {
-    		 if (aStatus==1) {
-    			 $(aName).style.display='block';
-    		 } else {
-    			 $(aName).style.display='none';
-    		 }
+             $(aName).style.display=aStatus==1 ? 'block' : 'none';
     	 }
-    	 
      }
 	 function checkAllPatients() {
-		 var typePat='1';
-		 var p=document.forms[0].typePatient;
-			for (var i=0; i<p.length;i++) {
-				if (p[i].checked) {
-					typePat=p[i].value;
-				}
-			} 
+		 var typePat= jQuery('input:radio[name=typePatient]:checked').val();
+
 	    	PatientService.checkAllPatients($('needUpdatePatient').checked, 
 	    		$('needUpdateDocument').checked, $('needUpdatePolicy').checked, 
 	    		$('needUpdateAttachment').checked, typePat, $('patientList').value, {

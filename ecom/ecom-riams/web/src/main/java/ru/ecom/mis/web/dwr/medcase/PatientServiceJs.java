@@ -441,12 +441,12 @@ public class PatientServiceJs {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
 		service.changeMedPolicyType(aPolicyId, aNewPolicyTypeId);
 	}
-	public boolean updateDataByFondAutomatic(String aPatientFondId, String aCheckId
+	public boolean updateDataByFondAutomatic(Long aPatientFondId, Long aCheckId
 			, boolean isUpdatePatient, boolean isUpdateDocument, boolean isUpdatePolicy, boolean isUpdateAttachment
 			, HttpServletRequest aRequest) throws NamingException {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
-		return service.updateDataByFondAutomatic(Long.valueOf(aPatientFondId)
-				, Long.valueOf(aCheckId), isUpdatePatient, isUpdateDocument
+		return service.updateDataByFondAutomatic(aPatientFondId
+				, aCheckId, isUpdatePatient, isUpdateDocument
 				, isUpdatePolicy, isUpdateAttachment);
 		
 	}
