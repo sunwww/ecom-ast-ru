@@ -1775,7 +1775,8 @@ public class HospitalMedCaseServiceJs {
     public String selectIdentityPatient(Long aSlsOrPatId, Boolean aSlsOrPat, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         StringBuilder sql = new StringBuilder();
-        sql.append("select cip.id,vc.name||' ('||vcip.name||')',vc.code as colorCode,vcip.name as vsipnameJust,vc.picture as pic, cip.info as inf ")
+        sql.append("select cip.id,vc.name||' ('||vcip.name||')',vc.code as colorCode,vcip.name as vsipnameJust")
+				.append(",vc.picture as pic, cip.info as inf,case when vcip.isforpatology then '1' else '0' end as isforpat ")
 				.append("from vocColorIdentityPatient vcip ")
 				.append("left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id ")
 				.append("left join voccolor vc on vcip.color_id=vc.id ")
@@ -1792,7 +1793,8 @@ public class HospitalMedCaseServiceJs {
 					.put("colorCode", w.get3())
 					.put("vsipnameJust", w.get4())
 					.put("picture", w.get5()!=null? w.get5() : "")
-					.put("info", w.get6()!=null? w.get6() : "");
+					.put("info", w.get6()!=null? w.get6() : "")
+					.put("isforpat", w.get7());
 			res.put(o);
 		}
         return res.toString();

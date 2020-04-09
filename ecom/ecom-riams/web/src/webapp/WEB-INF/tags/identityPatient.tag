@@ -77,7 +77,7 @@
                     if (res!=null && res!='[]') {
                         var aResult = JSON.parse(res);
                         for (var i=0; i<aResult.length; i++) {
-                            if (aResult[i].picture=='') { //только цветные браслеты, не патология
+                            if (aResult[i].isforpat=='0') { //только цветные браслеты, не патология
                                 var tr = document.createElement('tr');
                                 var td = document.createElement('td');
                                 var td2 = document.createElement('td');

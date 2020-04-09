@@ -1143,9 +1143,10 @@ where m.id ='${param.id}'"/>
                                         var brace = aResult[i];
                                         var msg = brace.info ? brace.info : brace.vsipnameJust;
                                         var style = 'width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;';
-                                        style+= brace.picture ? 'background-image: url(\'/skin/images/bracelet/'+brace.picture+'\'); '
-                                            :' background-color: '+brace.colorCode +';';
-                                        str+='<td><div onclick="showToastMessage(\''+msg+'\',null,true,false);" title="'+msg+'" style="'+style+'"></div></td>';
+                                        style+=brace.picture? '">':' background: '+brace.colorCode +';">';
+                                        if (brace.picture) style+='<img src="/skin/images/bracelet/'+brace.picture+'" title="'+brace.vsipnameJust +
+                                            '" height="30px" width="30px">';
+                                        str+='<td><div onclick="showToastMessage(\''+msg+'\',null,true,false);" title="'+brace.vsipnameJust+'" style="'+style+'</div></td>';
                                     }
                                     str+="</tr></table>";
                                     document.getElementById('mainFormLegend').parentNode.innerHTML=document.getElementById('mainFormLegend').parentNode.innerHTML.replace('<h2 id="mainFormLegend">Лечение в отделении</h2>',"<h2 id=\"mainFormLegend\">Лечение в отделении</h2>"+str);

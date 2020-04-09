@@ -586,12 +586,16 @@ var closure2 = function(td) {
         if (res != null && res != '[]') {
             var aResult = JSON.parse(res);
             str = '<table><tr>';
+            var size=25;
             for (var i = 0; i < aResult.length; i++) {
-                var style = 'style="width: 10px;height: 10px;outline: 1px solid gray; border:2px;';
-                style+=typeof aResult[i].picture !=='undefined' && aResult[i].picture!=''? '">':' background: '+aResult[i].colorCode +';">';
-                if (typeof aResult[i].picture !=='undefined' && aResult[i].picture!='')
-                    style+='<img src="/skin/images/patology.png" title="Патология" height="10px" width="10px">';
-                str += '<td><div title="' + aResult[i].vsipnameJust + '" '+style+'</div></td>';
+                var brace = aResult[i];
+                var msg = brace.info ? brace.info : brace.vsipnameJust;
+                var style = 'style="width:'+size+'px;height: '+ size + 'px;outline: 1px solid gray; border:2px;';
+                style+=brace.picture? '">':' background: '+aResult[i].colorCode +';">';
+                if (brace.picture)
+                    style+='<img src="/skin/images/bracelet/'+ aResult[i].picture + '" title="'+aResult[i].vsipnameJust +
+                        '" height="'+size+'px" width="'+size+'px">';
+                str += '<td><div title="' + msg + '" '+style+'</div></td>';
             }
             str += "</tr></table>";
         }
