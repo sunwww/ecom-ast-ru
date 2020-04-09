@@ -5,7 +5,6 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.*;
-import ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -13,7 +12,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 
 /**
  * Стационарный случай медицинского обслуживания
@@ -37,17 +35,10 @@ public class HospitalMedCase extends LongMedCase {
 	public Time getTransferTime() {return theTransferTime;	}
 	public void setTransferTime(Time aTransferTime) {theTransferTime = aTransferTime;}
 
-
 	/** Время перевода */
 	private Time theTransferTime;
 	/** Дата перевода */
 	private Date theTransferDate;
-
-	///** Сообщения об инфекции */
-	//@Comment("Сообщения об инфекции")
-	//@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
-	//public List<PhoneMessage> getMessages() {return theMessages;}
-	//public void setMessages(List<PhoneMessage> aNewProperty) {theMessages = aNewProperty;}
 
 	/** Дефекты догоспитального этапа */
 	@Comment("Дефекты догоспитального этапа")
@@ -89,16 +80,6 @@ public class HospitalMedCase extends LongMedCase {
 	public VocHospitalizationResult getResult() {return theResult;}
 	public void setResult(VocHospitalizationResult aResult) {theResult = aResult;}
 
-	///** Обследован на RW */
-	//@Comment("Обследован на RW")
-	//public Boolean getRwExamination() {return theRwExamination;}
-	//public void setRwExamination(Boolean aRwExamination) {theRwExamination = aRwExamination;}
-
-	///** Обследован на ВИЧ */
-	//@Comment("Обследован на ВИЧ")
-	//public Boolean getAidsExamination() {return theAidsExamination;}
-	//public void setAidsExamination(Boolean aAidsExamination) {theAidsExamination = aAidsExamination;}
-
 	/** Кем доставлен */
 	@Comment("Кем доставлен")
 	@OneToOne
@@ -111,11 +92,6 @@ public class HospitalMedCase extends LongMedCase {
 	public VocDeniedHospitalizating getDeniedHospitalizating() {return theDeniedHospitalizating;}
 	public void setDeniedHospitalizating(VocDeniedHospitalizating aDeniedHospitalizating) {theDeniedHospitalizating = aDeniedHospitalizating;}
 
-	///** Дата RW */
-	//@Comment("Дата RW")
-	//public Date getRwDate() {return theRwDate;}
-	//public void setRwDate(Date aRwDate) {theRwDate = aRwDate;}
-
 	/** Амбулаторное лечение */
 	@Comment("Амбулаторное лечение")
 	public Boolean getAmbulanceTreatment() {return theAmbulanceTreatment;}
@@ -127,11 +103,6 @@ public class HospitalMedCase extends LongMedCase {
 	public StatisticStubExist getStatisticStub() {return theStatisticStub;}
 	public void setStatisticStub(StatisticStubExist aStatisticStub) {theStatisticStub = aStatisticStub;}
 
-	///** Номер RW */
-	//@Comment("Номер RW")
-	//public String getRwNumber() {return theRwNumber;}
-	//public void setRwNumber(String aRwNumber) {theRwNumber = aRwNumber;}
-
 	/** Сообщение родственникам */
 	@Comment("Сообщение родственникам")
 	public Boolean getRelativeMessage() {return theRelativeMessage;}
@@ -140,6 +111,7 @@ public class HospitalMedCase extends LongMedCase {
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@OneToOne
+	@Deprecated //unused
 	public VocBedType getBedType() {return theBedType;}
 	public void setBedType(VocBedType aBedType) {theBedType = aBedType;}
 
@@ -147,30 +119,6 @@ public class HospitalMedCase extends LongMedCase {
 	@Comment("Оказана мед. помощь в приемном отделении")
 	public Boolean getMedicalAid() {return theMedicalAid;}
 	public void setMedicalAid(Boolean aMedicalAid) {theMedicalAid = aMedicalAid;}
-
-	///** Полисы */
-	//@Comment("Полисы")
-	//@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
-	//public List<MedCaseMedPolicy> getPolicies() {return thePolicies;}
-	//public void setPolicies(List<MedCaseMedPolicy> aPolicies) {thePolicies = aPolicies;}
-
-	/** Характер заболевания */
-//	@Comment("Характер заболевания")
-//	@OneToOne
-//	public OmcQz getIllessCharacter() {return theIllessCharacter;}
-//	public void setIllessCharacter(OmcQz aIllessCharacter) {theIllessCharacter = aIllessCharacter;}
-
-	///** Причина смерти */
-	//@Comment("Причина смерти")
-	//@OneToOne
-	//public VocDeathCause getDeathCause() {return theDeathCause;}
-	//public void setDeathCause(VocDeathCause aDeathCause) {theDeathCause = aDeathCause;}
-
-	///** Результат RW */
-	//@Comment("Результат RW")
-	//@OneToOne
-	//public VocRWresult getRWresult() {return theRWresult;}
-	//public void setRWresult(VocRWresult aRWresult) {theRWresult = aRWresult;}
 
 	/** Рабочая функция направителя */
 	@Comment("Рабочая функция направителя")
@@ -473,16 +421,6 @@ public class HospitalMedCase extends LongMedCase {
 	private Integer theHeight;
 	/** Индекс массы тела */
 	private Double theIMT;
-
-	/** Цвета браслета пациента в госпитализации */
-	@Comment("Цвета браслета пациента в госпитализации")
-	@ManyToMany
-	public List<ColorIdentityPatient> getColorsIdentity() {return theColorsIdentity;}
-	public void setColorsIdentity(List<ColorIdentityPatient> aColorsIdentity) {theColorsIdentity = aColorsIdentity;}
-
-	/** Цвета браслета пациента в госпитализации  */
-	private List<ColorIdentityPatient> theColorsIdentity;
-
 
 	/** Была ли проведена идентификация пациента */
 	@Comment("Была ли проведена идентификация пациента")

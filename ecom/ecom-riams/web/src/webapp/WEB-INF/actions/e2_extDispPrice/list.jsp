@@ -32,8 +32,8 @@
                 order by edp.dateFrom, v016.name desc "/>
             <msh:section title='Результат поиска'>
                 <msh:table  name="entryList" action="entityView-e2_extDispPrice.do" idField="1" disableKeySupport="true" styleRow="6">
-                    <msh:tableColumn columnName="Тип ДД" property="1" />
-                    <msh:tableColumn columnName="Тип ДД" property="2" />
+                    <msh:tableColumn columnName="id" property="1"  />
+                    <msh:tableColumn columnName="Тип ДД" property="2" width="50" />
                     <msh:tableColumn columnName="Пол" identificator="false" property="3" />
                     <msh:tableColumn columnName="Возраста" identificator="false" property="4" />
                     <msh:tableColumn columnName="Цена" identificator="false" property="5" />

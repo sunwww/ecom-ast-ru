@@ -175,7 +175,6 @@ public class PatientServiceBean implements IPatientService {
 		String aPolicyNumber = fond.getPolicyNumber();
 		String aCompanyCode = fond.getCompanyCode();
 
-		//	try {
 				if (aLpuAttached!=null&&aAttachedDate!=null&&aAttachedType!=null) {
 					String aSql = "select " +
 							" case when (select max(sc.keyvalue) from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE')!='"+aLpuAttached+"' then 1" +
@@ -200,13 +199,10 @@ public class PatientServiceBean implements IPatientService {
 					if (mp.toString().equals("0")) {isDifference = true;}
 				}
 
-			/*} catch (Exception e) {
-				e.printStackTrace();
-			}*/
 			return isDifference;
 	}
 
-	public boolean needChangeValue (Object aOldValue, Object aNewValue) {
+	private boolean needChangeValue(Object aOldValue, Object aNewValue) {
 		if (toStr(aOldValue)==null && toStr(aNewValue)!=null) {return true;} //Старое значение пустое, новое - нет, обновляем.
 		if (toStr(aNewValue)==null) {return false;} //На пустое значение не обновляем.
 		return !toStr(aOldValue).equals(toStr(aNewValue));
@@ -532,121 +528,85 @@ public class PatientServiceBean implements IPatientService {
 	private String toStr(Object o) {
 		return o==null || o.toString().trim().equals("") ? null : o.toString();
 	}
-	private String prepSql(String aField, String aValue) {
-		return prepSql (aField, aValue,"","");
-	}
-	private String prepSql(String aField, String aValue, String aPrefix, String aPostfix) {
-		if (aValue==null) {aValue="";}
-			return aField+"="+aPrefix+"'"+aValue+"'"+aPostfix;
-
-	}
-	public boolean updateDataByFondAutomaticByFIO (String aLastName, String aFirstName, String aMiddleName, String aBirthday, Long aCheckTimeId,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment) {
-		Object list = theManager.createNativeQuery("select max(pf.id) from patientfond pf where pf.lastname='"+aLastName+"' and " +
-				"pf.firstname = '"+aFirstName+"' and pf.middlename = '"+aMiddleName+"' and pf.birthday=to_date('"+aBirthday +
-				"','dd.MM.yyyy') and pf.checkTime_id='"+aCheckTimeId+"'").getSingleResult();
-		if (list!=null) {
-			Long patF = Long.valueOf(list.toString());
-			return updateDataByFondAutomatic(patF, aCheckTimeId, needUpdatePatient, needUpdateDocuments, needUpdatePolicy, needUpdateAttachment);
-		}
-		return false;
-	}
 
 	public boolean updateDataByFondAutomatic (Long aPatientFondId, Long aCheckId
 			,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment) {
 		try{
-		if (needUpdateAttachment||needUpdateDocuments||needUpdatePatient||needUpdatePolicy) {
-			StringBuilder str = new StringBuilder();
-			//String curDate = DateFormat.formatToDate(new java.util.Date()) ;
-			str.append("update Patient p set ");
-			int o=0;
-			List<Object[]> listZ = theManager.createNativeQuery("select pf.id" +
-					", pf.lastname, pf.firstname, pf.middlename, pf.commonnumber, pf.snils" +
-					" ,pf.documentnumber as f6_docnumber,pf.documentseries, pf.documenttype, pf.documentdateissued, documentwhomissued" +
-					" ,pf.lpuattached, pf.attachedtype, to_char(pf.attacheddate,'dd.MM.yyyy') as attDate " +
-					" ,pf.policyseries, pf.policynumber, to_char(pf.policydatefrom,'dd.MM.yyyy') as polFrom, to_char(pf.policydateto,'dd.MM.yyyy') as polTo, pf.companycode, to_char(pf.birthday,'dd.MM.yyyy')as birthday, pf.patient" +
-					" ,to_char(pf.checkDate,'dd.MM.yyyy') as checkDate " +
-					" ,pf.street as f22_street, pf.okato as f23_okato, pf.doctorsnils as f24_docsnils" +
-					" from patientfond pf where pf.id='"+aPatientFondId+"' ").getResultList();
-			if (!listZ.isEmpty()) {
-			Object[] arr = listZ.get(0);
+		if ( aPatientFondId!=null && (needUpdateAttachment || needUpdateDocuments
+				|| needUpdatePatient || needUpdatePolicy)) {
+			SimpleDateFormat ddMMyyyy = new SimpleDateFormat("dd.MM.yyyy");
 			PatientFond patF = theManager.find(PatientFond.class, aPatientFondId);
-			String aLastname = toStr(arr[1]), aFirstname = toStr(arr[2]), aMiddlename=toStr(arr[3]),aRz = toStr(arr[4])
-					,aSnils = toStr(arr[5]),aDocNumber = toStr(arr[6]),aDocSeries = toStr(arr[7]),aDocType = toStr(arr[8])
-					,aDocDateIssued = toStr(arr[9]), aDocWhomIssued =toStr(arr[10])
-					,aAttachedLpu=toStr(arr[11]),aAttachedType=toStr(arr[12]),aAttachedDate=toStr(arr[13])
-					,aPolicySeries=toStr(arr[14]),aPolicyNumber=toStr(arr[15]),aPolicyDateFrom=toStr(arr[16])
-					,aPolicyDateTo=toStr(arr[17]),aCompany=toStr(arr[18]), aBirthday=toStr(arr[19]), aCheckDate = toStr(arr[21])
-					, doctorSnils = toStr(arr[24]);
+			String rz = patF.getCommonNumber()
 
-			Long aPatientId =toStr(arr[20])!=null?Long.valueOf(toStr(arr[20])):null;
-			String aStreet = toStr(arr[22]), aOkato = toStr(arr[23]);
-
-			String address = getAddressByOkato(aOkato, aStreet);
+					,aPolicyNumber=patF.getPolicyNumber(),aCompany=patF.getCompanyCode() , doctorSnils = patF.getDoctorSnils();
+			Long patientId =patF.getPatient();
+			if (patientId == null) return false;
+			Patient patient = theManager.find(Patient.class,patientId);
 
 			if (needUpdatePatient) {
-				o=1;
-				if (aSnils!=null&&!aSnils.equals("")) {
-					str.append(prepSql("snils",aSnils));
+				String snils = patF.getSnils();
+				if (!StringUtil.isNullOrEmpty(snils)) {
+					patient.setSnils(snils);
 				}
-				str.append(prepSql((str.length()>23?", commonnumber":"commonnumber"),aRz));
-				if (address!=null) { str.append(prepSql(", address_addressid", address));}
-				patF.setIsPatientUpdate(true);
-			} else {patF.setIsPatientUpdate(false);}
+				patient.setCommonNumber(rz);
+				String aStreet = patF.getStreet(), aOkato = patF.getOkato();
+				String address = getAddressByOkato(aOkato, aStreet);
+				if (address != null) {
+					patient.setAddress(theManager.find(Address.class, Long.parseLong(address)));
+					patient.setHouseBuilding(patF.getHouseBuilding());
+					patient.setFlatNumber(patF.getFlat());
+					patient.setHouseNumber(patF.getHouse());
+				}
+			}
+			patF.setIsPatientUpdate(needUpdatePatient);
 
 			if (needUpdateDocuments) {
-				if (aDocNumber!=null&&aDocSeries!=null&&aDocType!=null&&aDocDateIssued!=null) {
-					if (o==1) {
-						str.append(",");
-					}
-					str.append(prepSql("passportnumber",aDocNumber)).append(prepSql(",passportseries",aDocSeries,"",","))
-					.append(prepSql("passporttype_id",aDocType,"(select v.id from vocidentitycard v where v.omccode=",")"))
-					.append(prepSql(",passportdateissued",aDocDateIssued,"to_date(",",'dd.MM.yyyy')"))
-					.append(prepSql(",passportwhomissued",aDocWhomIssued));
-					o=1;
+				String docType = patF.getDocumentType(),docNumber = patF.getDocumentNumber();
+				if (!StringUtil.isNullOrEmpty(docType) && !StringUtil.isNullOrEmpty(docNumber)) {
+					patient.setPassportNumber(docNumber);
+					patient.setPassportSeries(patF.getDocumentSeries());
+					patient.setPassportWhomIssued(patF.getDocumentWhomIssued());
+					patient.setPassportDateIssued(DateFormat.parseSqlDate(patF.getDocumentDateIssued()));
+					List<VocIdentityCard> cards = theManager.createNamedQuery("VocIdentityCard.findByOmcCode")
+							.setParameter("code", docType).getResultList();
+					patient.setPassportType(cards.isEmpty() ? null : cards.get(0));
 					patF.setIsDocumentUpdate(true);
-				} else {patF.setIsDocumentUpdate(false);}
-
-			} else {patF.setIsDocumentUpdate(false);}
-			if (o==1) {
-				str.append(" where id=").append(aPatientId);
-
+				} else {
+					patF.setIsDocumentUpdate(false);
+				}
+			} else {
+				patF.setIsDocumentUpdate(false);
 			}
+
 			if (needUpdatePolicy) {
-				patF.setIsPolicyUpdate(updateOrCreatePolicyByFond(aPatientId, aRz, aLastname, aFirstname, aMiddlename, aBirthday, aCompany
-						, aPolicySeries, aPolicyNumber, aPolicyDateFrom, aPolicyDateTo, aCheckDate));
+				patF.setIsPolicyUpdate(updateOrCreatePolicyByFond(patientId, rz, patF.getLastname(), patF.getFirstname(), patF.getMiddlename()
+						, DateFormat.formatToDate(patF.getBirthday()), aCompany, patF.getPolicySeries()
+						, patF.getPolicyNumber(), DateFormat.formatToDate(patF.getPolicyDateFrom()), DateFormat.formatToDate(patF.getPolicyDateTo())
+						, DateFormat.formatToDate(patF.getCheckDate())));
 
 
 			} else {patF.setIsPolicyUpdate(false);}
 			if (needUpdateAttachment) {
-				String s = updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate, doctorSnils,true, false);
+				String s = updateOrCreateAttachment(patientId, aCompany, patF.getLpuAttached(), patF.getAttachedType()
+						, DateFormat.formatToDate(patF.getAttachedDate())
+						, doctorSnils,true, false);
 				patF.setIsAttachmentUpdate((s!=null && s.length()>0));
 
 			} else {patF.setIsAttachmentUpdate(false);}
 			theManager.persist(patF);
 
-			if (patF.getIsPatientUpdate()&&patF.getIsDocumentUpdate()&&patF.getIsPolicyUpdate()&&patF.getIsAttachmentUpdate()) {
+			if (patF.getIsPatientUpdate() && patF.getIsDocumentUpdate() && patF.getIsPolicyUpdate() && patF.getIsAttachmentUpdate()) {
 				patF.setIsDifference(false);
 			} else {
-				patF.setIsDifference(needUpdatePatient(aPatientId, aPatientFondId));
+				patF.setIsDifference(needUpdatePatient(patientId, aPatientFondId));
 			}
-
-
 			theManager.persist(patF);
 			return true;
-
-			} else {
-				return false;
-			}
-
 		}
 	} catch (Exception e) {
 		e.printStackTrace();
-
 	}
 		return false;
-
-
-
 	}
 	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate, String aDoctorSnils
 			, boolean ignoreType, boolean updateEditDate) {
@@ -1006,43 +966,16 @@ public class PatientServiceBean implements IPatientService {
 		}
 		return true ;
 	}
-	/*public void insertCheckFondData(
-			String aLastname,String aFirstname,String aMiddlename,String aBirthday
-			,String aSnils
-			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
-			,String aPolicyDateFrom, String aPolicyDateTo
-			,String aUsername, String aCheckType
-			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
-			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
-			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
-			,String aLpuAttached, String aAttachedDate, String aAttachedType
-			) throws ParseException {
-		insertCheckFondData(aLastname,aFirstname,aMiddlename,aBirthday,aSnils,aCommonNumber,aPolicySeries,aPolicyNumber
-				,aPolicyDateFrom,aPolicyDateTo,aUsername,aCheckType,aCompanyCode,aCompabyCodeF,aCompanyOgrn, aCompanyOkato
-				,aDocumentType,aDocumentSeries,aDocumentNumber, aKladr,aHouse,aHouseBuilding,aFlat
-				,aLpuAttached,aAttachedDate,aAttachedType,null);
-	}
-	public void insertCheckFondData(
-			String aLastname,String aFirstname,String aMiddlename,String aBirthday
-			,String aSnils
-			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
-			,String aPolicyDateFrom, String aPolicyDateTo
-			,String aUsername, String aCheckType
-			,String aCompanyCode ,String aCompabyCodeF,String aCompanyOgrn, String aCompanyOkato
-			,String aDocumentType, String aDocumentSeries,String aDocumentNumber
-			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
-			,String aLpuAttached, String aAttachedDate, String aAttachedType, String dateDeath
-			) throws ParseException {
-		insertCheckFondData(aLastname,aFirstname,aMiddlename,aBirthday,aSnils,aCommonNumber,aPolicySeries,aPolicyNumber
-				,aPolicyDateFrom,aPolicyDateTo,aUsername,aCheckType,aCompanyCode,aCompabyCodeF,aCompanyOgrn, aCompanyOkato
-				,aDocumentType,aDocumentSeries,aDocumentNumber, aKladr,aHouse,aHouseBuilding,aFlat
-				,aLpuAttached,aAttachedDate,aAttachedType,null,null,null,null,null,null,null,null,null);
-	}*/
-
-	public void insertCheckFondData(String aLastname, String aFirstname, String aMiddlename, String aBirthday, String aSnils, String aCommonNumber, String aPolicySeries, String aPolicyNumber, String aPolicyDateFrom, String aPolicyDateTo, String aUsername, String aCheckType, String aCompanyCode, String aCompabyCodeF, String aCompanyOgrn, String aCompanyOkato, String aPatientId)
-			throws ParseException
-	{
-		insertCheckFondData(aLastname, aFirstname, aMiddlename, aBirthday, aSnils, aCommonNumber, aPolicySeries, aPolicyNumber, aPolicyDateFrom, aPolicyDateTo, aUsername, aCheckType, aCompanyCode, aCompabyCodeF, aCompanyOgrn, aCompanyOkato, aPatientId, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+	public void insertCheckFondData(String aLastname, String aFirstname, String aMiddlename, String aBirthday, String aSnils
+			, String aCommonNumber, String aPolicySeries, String aPolicyNumber, String aPolicyDateFrom, String aPolicyDateTo
+			, String aUsername, String aCheckType, String aCompanyCode, String aCompabyCodeF, String aCompanyOgrn
+			, String aCompanyOkato, String aPatientId) throws ParseException {
+		insertCheckFondData(aLastname, aFirstname, aMiddlename, aBirthday, aSnils, aCommonNumber, aPolicySeries, aPolicyNumber
+				, aPolicyDateFrom, aPolicyDateTo, aUsername, aCheckType, aCompanyCode, aCompabyCodeF, aCompanyOgrn, aCompanyOkato
+				, aPatientId, null, null, null, null, null
+				, null, null, null, null, null, null
+				, null, null, null, null, null
+				, null, null);
 	}
 	public Long insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday

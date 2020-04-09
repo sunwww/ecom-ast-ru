@@ -39,7 +39,6 @@ public class OncologyCase extends BaseEntity {
     /**Подозрение на онкологию*/
     private Boolean isSuspicionOncologist;
 
-    /**Сведения об услуге при онкологического заболевания */
     /**Сведения о проведении консилиума*/
     private VocOncologyConsilium consilium;
     /**Тип услуги*/

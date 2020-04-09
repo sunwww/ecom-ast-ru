@@ -1041,8 +1041,8 @@ public class E2EntryForm extends IdEntityForm {
     public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
     private String theBirthPlace ;
 
-    /** результат диспансеризации */
-    @Comment("результат диспансеризации")
+    /** Результат диспансеризации */
+    @Comment("Результат диспансеризации")
     @Persist
     public Long getDispResult() {return theDispResult;}
     public void setDispResult(Long aDispResult) {theDispResult = aDispResult;}

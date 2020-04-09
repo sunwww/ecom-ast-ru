@@ -42,7 +42,7 @@
         table2${name}.innerHTML="<tr><td></td></tr><tr><td align=\"center\"><input type=\"button\" value=\'Закрыть\' id=\"${name}Cancel\" onclick=\'javascript:the${name}CloseDocumentDialog.hide()\'/></td></tr><tr><td></td></tr>";
         HospitalMedCaseService.getPatientFIOStat(id, {
                 callback: function(res) {
-                    document.getElementById("info").innerText=res;
+                    jQuery("#info").text(res)
                 }
             }
         );

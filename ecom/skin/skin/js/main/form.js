@@ -535,7 +535,7 @@ var colorArrays=new Array("#CD5C5C", "#7CFC00", "#00FFFF", "#7B68EE", "#00008B",
 var numColor=0;
 // эта функция будет менять цвет текста
 function blinkUnreadMsgs() {
-    if (+document.getElementById('unreadMsg').innerText > 0) {
+    if (+jQuery('#unreadMsg').text() > 0) {
         document.getElementById("clorRow").style.backgroundColor = colorArrays[numColor++];
         if (numColor > colorArrays.length) numColor = 0;
         setTimeout("blinkUnreadMsgs()", 300);
@@ -548,7 +548,7 @@ function blinkUnreadMsgs() {
 function getCountUnreadMessages() {
     VocService.getCountUnreadMessages('', {
         callback: function(aCnt) {
-            document.getElementById('unreadMsg').innerText=aCnt;
+            jQuery('#unreadMsg').text(aCnt);
             if (aCnt>0) {
                 blinkUnreadMsgs();
                 jQuery('clorRow').click(function() {
@@ -557,7 +557,7 @@ function getCountUnreadMessages() {
             }
         }
         , errorHandler:function(message) {
-            document.getElementById('unreadMsg').innerText='-1';
+            jQuery('#unreadMsg').text('-1');
             jQuery('clorRow').click(function() {
                 return false;
             });
@@ -577,3 +577,48 @@ function getCountUnreadMessages() {
             }
         });
     }
+
+//Milamesher #151 - вывод браслетов
+//реализовано через механизм замыканий, чтобы передавать параметр в callback
+var closure2 = function(td) {
+    return function(res) {
+        var str="";
+        if (res != null && res != '[]') {
+            var aResult = JSON.parse(res);
+            str = '<table><tr>';
+            for (var i = 0; i < aResult.length; i++) {
+                var style = 'style="width: 10px;height: 10px;outline: 1px solid gray; border:2px;';
+                style+=typeof aResult[i].picture !=='undefined' && aResult[i].picture!=''? '">':' background: '+aResult[i].colorCode +';">';
+                if (typeof aResult[i].picture !=='undefined' && aResult[i].picture!='')
+                    style+='<img src="/skin/images/patology.png" title="Патология" height="10px" width="10px">';
+                str += '<td><div title="' + aResult[i].vsipnameJust + '" '+style+'</div></td>';
+            }
+            str += "</tr></table>";
+        }
+        td.innerHTML = str==''? '-' : str;
+    };
+};
+
+var closure1 = function(td) {
+    return function(slsId) {
+        if (slsId != null && slsId != '') {
+            HospitalMedCaseService.selectIdentityPatient(
+                slsId, true, closure2(td)
+            );
+        }
+    };
+};
+
+function setBr(table, nameList) {
+    if (typeof table !== 'undefined') {
+        for (var i = 1; i < table.rows.length; i++) {
+            var row = table.rows[i];
+            var td = row.cells[row.cells.length - 1];
+            //получить parent
+            var sloId = row.className.replace(nameList, '').replace('selected', '').replace(' ','');
+            HospitalMedCaseService.getParentId(
+                sloId, closure1(td)
+            );
+        }
+    }
+}

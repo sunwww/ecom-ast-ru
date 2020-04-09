@@ -542,8 +542,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
             }
             for (String dopCode : aSanctionCodes) {
-                List<BigInteger> list = theManager.createNativeQuery("select es.entry_id from e2entrysanction es " +
-                        " where es.listEntry_id=:id and es.dopcode=:dopCode")
+                List<BigInteger> list = theManager.createNativeQuery("select es.entry_id from e2entrysanction es" +
+                        " left join e2entry ee on es.entry_id=ee.id " +
+                        " where ee.listEntry_id=:id and es.dopcode=:dopCode")
                         .setParameter("id",aListEntryId).setParameter("dopCode",dopCode.trim()).getResultList();
                 LOG.info("creating sanctions ["+dopCode+"]... defect list size = "+list.size());
                 for (BigInteger entryId: list) {
@@ -703,8 +704,8 @@ public class Expert2ServiceBean implements IExpert2Service {
         14-12-2018. Логика поменялась. Первым может быть как паталогия, так и родовое. а, может даже и обсервационное отделение.
         делаем так: берем СЛО. Если роды, то склеиваем со след. СЛО. если отделения след. СЛО = отделению пред СЛО (пред. родовому), то и их склеиваем.
          */
-         //  LOG.warn("unionChildBirth1");
-        E2Entry mainEntry = null; //theManager.find(E2Entry.class,Long.valueOf(entriesIds.get(0)[0].toString()));
+
+        E2Entry mainEntry = null;
         boolean childBirthFound=false;
         E2Entry childEntry = null;
         E2Entry patologyEntry = null;
@@ -747,9 +748,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 } else {
                     unionEntries(childEntry,patologyEntry);
                 }
-        } /* else {
-            LOG.warn("Чтото непонятное, похоже нет патологии");
-        }*/
+        }
     }
 
     /** Удаляем дубли по поликлинике
@@ -1323,8 +1322,12 @@ public class Expert2ServiceBean implements IExpert2Service {
  //           LOG.info("make5="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setBedDays(bedDays > 0 ? bedDays : 1L);
  //           LOG.info("make6="+((System.currentTimeMillis()-startT)/1000));
-            aEntry.setIsChild(AgeUtil.calcAgeYear(aEntry.getBirthDate(),aEntry.getStartDate())<18);
- //           LOG.info("make7="+((System.currentTimeMillis()-startT)/1000));
+            try {
+                aEntry.setIsChild(AgeUtil.calcAgeYear(aEntry.getBirthDate(),aEntry.getStartDate())<18);
+            } catch (Exception e) {
+                aEntry.setIsChild(false);
+            }
+            //           LOG.info("make7="+((System.currentTimeMillis()-startT)/1000));
             aEntry.setCalendarDays(calendarDays);
  //           LOG.info("make8="+((System.currentTimeMillis()-startT)/1000));
             getBestKSG(aEntry, updateKsgIfExist,true); //Находим КСГ
@@ -2680,81 +2683,100 @@ public class Expert2ServiceBean implements IExpert2Service {
             long startDispTime = aEntry.getStartDate().getTime();
             long finishDispTime = aEntry.getFinishDate().getTime();
             if (dispPriceMedServices.isEmpty()) {
-                saveError(aEntry,"NO_DISP_PRICE_SERVICES_ADMIN");
-                return;
-            }
-            for (EntryMedService medService: serviceList) { //TODO да, мне стыдно, переделать на лямды в меосе 2.0
-                boolean found = false;
-                if (medService.getMedService()!=null) {
-                    for (ExtDispPriceMedService dispPriceMedService: dispPriceMedServices) {
-                        if (dispPriceMedService.getMedService().equals(medService.getMedService().getCode())) {
-                            found = true;
-                            if (medService.getServiceDate()!=null) {
-                                foundGoodService++;
-                                long serviceTime =medService.getServiceDate().getTime();
-                                if (startDispTime<=serviceTime && serviceTime<=finishDispTime) {
-                                    serviceInPeriod++;
-                                }
-                            }
-                            goodList.add(dispPriceMedService.getMedService());
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        medService.setComment("Услуга не требуется по возрасту");
-                        theManager.persist(medService);
-                    }
-                }
-            }
-            if (dispPriceMedServices.size() > foundGoodService) { //не все услуги оказаны, смотрим чего нет и считаем цену по услугам
-                LOG.info(aEntry.getId()+" > "+dispPriceMedServices.size() +" > malo disp > "+mustBeServices+" > "+foundGoodService+" > "+serviceInPeriod);
-                boolean lostRequired = false;
-                cost = BigDecimal.ZERO;
-                for (ExtDispPriceMedService dispPriceMedService : dispPriceMedServices) {
-                    String medserviceCode = dispPriceMedService.getMedService();
-                    if (!goodList.contains(medserviceCode)) {
-                        VocMedService vms ;
-                        if (!SERVICE_LIST.containsKey(medserviceCode)) {
-                            vms =  getEntityByCode(medserviceCode, VocMedService.class, false);
-                            SERVICE_LIST.put(medserviceCode,vms);
-                        } else {
-                            vms =SERVICE_LIST.get(medserviceCode);
-                        }
-                        if (Boolean.TRUE.equals(dispPriceMedService.getIsRequired())) lostRequired = true;
-                        EntryMedService medService = new EntryMedService(aEntry,vms);
-                        medService.setEntry(aEntry);
-                        medService.setComment("НЕ УКАЗАНА ДАТА УСЛУГИ");
-                        VocOmcMedServiceCost medServiceCost = getMedServiceOmc(vms,aEntry.getFinishDate());
-                        BigDecimal serviceCost = medServiceCost.getCost();
-                        medService.setDoctorSpeciality(medServiceCost.getWorkFunction());
-                        medService.setCost(serviceCost);
-                        cost = cost.add(serviceCost);
-                        LOG.warn(aEntry.getId()+" no service in disp: " + medserviceCode);
-                        saveError(aEntry,"MALO_DISP_SERVICE");
-                        theManager.persist(medService);
-                    }
-                }
-                if (lostRequired || foundGoodService < mustBeServices) { //нет хоть одной обязательной услуги сообщение об ошибке.
-                    saveError(aEntry,E2EntryErrorCode.NOT_FULL_DISP);
-                } else if (serviceInPeriod>=mustBeServices) {  //в период ДД сделали >85% - полный случай
-                    cost = price.getCost();
-                    LOG.info("85% услуг сделано в рамках ДД");
-                } else {//иначе - по услугам
-                    LOG.info("DISP calc by service: "+aEntry.getId());
-                    for (EntryMedService medService : serviceList) {
-                        if (medService.getServiceDate()!=null) {
-                            cost = cost.add(medService.getCost());
-                        }
-                    }
-                    LOG.info("DISP COST by service: "+aEntry.getId()+">>"+cost);
-                }
-            } else {
-                LOG.info("Считаем цену по полному случаю");
+                saveError(aEntry,"NO_DISP_PRICE_SERVICES_ADMIN_SKIP");
                 cost = price.getCost();
+            } else {
+                for (EntryMedService medService: serviceList) { //TODO да, мне стыдно, переделать на лямды в меосе 2.0
+                    boolean found = false;
+                    if (medService.getMedService()!=null) {
+                        for (ExtDispPriceMedService dispPriceMedService: dispPriceMedServices) {
+                            if (dispPriceMedService.getMedService().equals(medService.getMedService().getCode())) {
+                                found = true;
+                                if (medService.getServiceDate()!=null) {
+                                    foundGoodService++;
+                                    long serviceTime =medService.getServiceDate().getTime();
+                                    if (startDispTime<=serviceTime && serviceTime<=finishDispTime) {
+                                        serviceInPeriod++;
+                                    }
+                                }
+                                goodList.add(dispPriceMedService.getMedService());
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            medService.setComment("Услуга не требуется по возрасту");
+                            theManager.persist(medService);
+                        }
+                    }
+                }
+                if (dispPriceMedServices.size() > foundGoodService) { //не все услуги оказаны, смотрим чего нет и считаем цену по услугам
+                    boolean lostRequired = false;
+                    cost = BigDecimal.ZERO;
+                    for (ExtDispPriceMedService dispPriceMedService : dispPriceMedServices) {
+                        String medserviceCode = dispPriceMedService.getMedService();
+                        if (!StringUtil.isNullOrEmpty(medserviceCode) && !goodList.contains(medserviceCode)) {
+                            VocMedService vms ;
+                            if (!SERVICE_LIST.containsKey(medserviceCode)) {
+                                vms =  getEntityByCode(medserviceCode, VocMedService.class, false);
+                                SERVICE_LIST.put(medserviceCode,vms);
+                            } else {
+                                vms =SERVICE_LIST.get(medserviceCode);
+                            }
+                            if (vms == null) LOG.error("VMS is null "+medserviceCode);
+                            if (Boolean.TRUE.equals(dispPriceMedService.getIsRequired())) lostRequired = true;
+                            EntryMedService medService = new EntryMedService(aEntry,vms);
+                            medService.setEntry(aEntry);
+                            medService.setComment("НЕ УКАЗАНА ДАТА УСЛУГИ");
+                            VocOmcMedServiceCost medServiceCost = getMedServiceOmc(vms,aEntry.getFinishDate());
+                            if (medServiceCost!=null) {
+                                BigDecimal serviceCost = medServiceCost.getCost();
+                                medService.setDoctorSpeciality(medServiceCost.getWorkFunction());
+                                medService.setCost(serviceCost);
+                                cost = cost.add(serviceCost);
+                            } else {
+                                LOG.warn("No medServiceCost" +medserviceCode);
+                            }
+                            LOG.warn(aEntry.getId()+" no service in disp: " + medserviceCode);
+                            saveError(aEntry,"MALO_DISP_SERVICE");
+                            theManager.persist(medService);
+                        }
+                    }
+                    if (lostRequired || foundGoodService < mustBeServices) { //нет хоть одной обязательной услуги сообщение об ошибке.
+                        saveError(aEntry,E2EntryErrorCode.NOT_FULL_DISP);
+                    } else if (serviceInPeriod>=mustBeServices) {  //в период ДД сделали >85% - полный случай
+                        cost = price.getCost();
+                        LOG.info("85% услуг сделано в рамках ДД");
+                    } else {//иначе - по услугам
+                        LOG.info("DISP calc by service: "+aEntry.getId());
+                        for (EntryMedService medService : serviceList) {
+                            if (medService.getServiceDate()!=null) {
+                                VocOmcMedServiceCost medServiceCost = getMedServiceOmc(medService.getMedService(), medService.getServiceDate());
+                                if (medServiceCost!=null) {
+                                    medService.setCost(medServiceCost.getCost());
+                                    theManager.persist(medService);
+                                    cost = cost.add(medService.getCost());
+                                }
+
+                            }
+                        }
+                        LOG.info("DISP COST by service: "+aEntry.getId()+">>"+cost);
+                    }
+                } else {
+                    cost = price.getCost();
+                }
             }
-        } else {
-            saveError(aEntry,"NO_DISPPRICE_ADMIN");
+        } else { //2 этап - считаем цену по услугам
             cost = BigDecimal.ZERO;
+            for (EntryMedService medService: aEntry.getMedServices()) {
+                if (medService.getServiceDate()!=null && medService.getMedService()!=null) {
+                    VocOmcMedServiceCost medServiceCost = getMedServiceOmc(medService.getMedService(),aEntry.getFinishDate());
+                    if (medServiceCost!=null) {
+                        medService.setCost(medServiceCost.getCost());
+                        theManager.persist(medService);
+                        cost = cost.add(medServiceCost.getCost());
+                    }
+                }
+            }
         }
 
         if (DateFormat.isHoliday(aEntry.getStartDate(), true)) cost= cost.multiply(new BigDecimal("1.07")); //повышающий коэффициент на выходных
@@ -3105,7 +3127,7 @@ public class Expert2ServiceBean implements IExpert2Service {
    //    ksgFullPaymentChildsList.add("st17.001");ksgFullPaymentChildsList.add("st17.002");//при переводе детей в другое ЛПУ не считаем прерванным случаем *30-05-2018
         VocKsg ksg = aEntry.getKsg();
         if (otherLpuResult.indexOf(result) > -1) { //Переведен в другой стационар
-            isPrerSluch = ksg == null || !ksg.getCode().startsWith("st17");
+            isPrerSluch = true; //ksg == null || !ksg.getCode().startsWith("st17");
         } else if (deadResult.indexOf(result) > -1 || patientLikeResult.indexOf(result) > -1 || lpuLikeResult.indexOf(result) > -1) { //выписан по желанию ЛПУ
             isPrerSluch = true;
         }  //Плановая выписка
@@ -3117,7 +3139,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (ksg.getIsOperation()) { //Если у КСГ признак "операционного"
                 ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.85 : 0.9);
             } else {
-                ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.5 : 0.75);
+                ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.5 : ksg.getCode().startsWith("st17") ? 0.7 : 0.75);
             }
 /*            if (planDischarge && ksg.getCode().equals("233")) { //Если политравма и есть любая операция, то Кпр=1 *07.05.2018 //убрали 22-10-2019
                 if (!theManager.createNativeQuery("select id from entrymedservice where entry_id=:id").setParameter("id",aEntry.getId()).getResultList().isEmpty()) {
@@ -3238,7 +3260,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
             //calculateFondISHOD VocE2FondV012
-            if (aEntry.getFondIshod() == null || forceUpdate) {
+            if (aEntry.getFondIshod() == null ) {
                 key = "HOSP#ISHOD#" + hospResult + "#" + bedSubType; //Добавим справочник исходов, если в карте нет исхода - добавим
                 if (!resultMap.containsKey(key)) {
                     sb = new StringBuilder();
@@ -3423,6 +3445,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         for (E2Entry child: entries) {
             child.setServiceStream(serviceStream);
             child.setParentEntry(null);
+            child.setBill(entry.getBill());
+            child.setBillNumber(entry.getBillNumber());
+            child.setBillDate(entry.getBillDate());
             theManager.persist(child);
             makeCheckEntry(child,true,true);
             child.setComment(child.getComment()+"; Случай расклеян из обращения");
@@ -3642,6 +3667,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private VocOmcMedServiceCost getMedServiceOmc(VocMedService vms, Date medServiceDate) {
+        if (vms==null || medServiceDate == null) return null;
         String key = "MEDSERVICECOST#"+ vms.getCode();
         List<VocOmcMedServiceCost> costs = theManager.createNamedQuery("VocOmcMedServiceCost.getByCodeAndDate").setParameter("code",vms.getCode())
                 .setParameter("finishDate", medServiceDate).getResultList();

@@ -47,12 +47,12 @@
             select ms.id, ms.medservice||' '||coalesce(vms.name,'') as name, case when ms.isRequired='1' then true else false end as isReq
             from ExtDispPriceMedService ms
             left join vocmedservice vms on vms.code=ms.medservice and vms.finishDate is null
-            where ms.price_id=${param.id}" />
+            where ms.price_id=${param.id} order by ms.medservice" />
             <msh:table
                     idField="1" name="medServices" action="javascript:void()"
                     deleteUrl="entityParentDeleteGoParentView-e2_extDispPriceMedService.do"
                     noDataMessage="Нет услуг">
-                <msh:tableColumn columnName="ИД" property="1"/>
+                <msh:tableColumn columnName="#" property="sn"/>
                 <msh:tableColumn columnName="Услуга" property="2"/>
                 <msh:tableColumn columnName="Обязательная" property="3"/>
             </msh:table>

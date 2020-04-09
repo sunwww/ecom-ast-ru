@@ -24,16 +24,16 @@ function onCreate(aForm, aEntity, aCtx){
             diagn.setVocOncologyDiagType(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyDiagType, java.lang.Long.valueOf(vals[0])));
             if (vals[0] == '1') {
                 //получаем тип гистологии из ненормализованной таблицы
-                var histRes = aCtx.manager.createNativeQuery("select id from VocOncologyN007 where code=(select histology from VocOncologyN008 where code='"+vals[2]+"')").getResultList();
+                var histRes = aCtx.manager.createNativeQuery("select id from VocOncologyN007 where (finishdate is null or finishdate>=current_date) and code=(select histology from VocOncologyN008 where (finishdate is null or finishdate>=current_date) and code='"+vals[2]+"')").getResultList();
                 if (histRes.size()>0)
                     diagn.setHistiology(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN007, java.lang.Long.valueOf(histRes.get(0))));
-                var res = aCtx.manager.createNativeQuery("select id from VocOncologyN008 where code='"+vals[2]+"'").getResultList();
+                var res = aCtx.manager.createNativeQuery("select id from VocOncologyN008 where (finishdate is null or finishdate>=current_date) and  code='"+vals[2]+"'").getResultList();
                 if (res.size()>0)
                     diagn.setResultHistiology(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN008, java.lang.Long.valueOf(res.get(0))));
             }
             else if (vals[0] == '2') {
                 diagn.setMarkers(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN010, java.lang.Long.valueOf(vals[1])));
-                var res = aCtx.manager.createNativeQuery("select id from VocOncologyN011 where code='"+vals[2]+"'").getResultList();
+                var res = aCtx.manager.createNativeQuery("select id from VocOncologyN011 where (finishdate is null or finishdate>=current_date) and  code='"+vals[2]+"'").getResultList();
                 if (res.size()>0)
                     diagn.setValueMarkers(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN011, java.lang.Long.valueOf(res.get(0))));
             }
@@ -58,14 +58,14 @@ function onCreate(aForm, aEntity, aCtx){
     //vocOncologyReasonTreat - повод обращения
     var rt = aForm.getVocOncologyReasonTreat();
     if (rt!=null) {
-        var res = aCtx.manager.createNativeQuery("select id from vocOncologyReasonTreat where code='"+rt+"'").getResultList();
+        var res = aCtx.manager.createNativeQuery("select id from vocOncologyReasonTreat where (finishdate is null or finishdate>=current_date) and code='"+rt+"'").getResultList();
         if (res.size()>0)
             aEntity.setVocOncologyReasonTreat(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat, java.lang.Long.valueOf(res.get(0))));
     }
     //consilium
     var consilium = aForm.getConsilium();
     if (consilium!=null) {
-        var res = aCtx.manager.createNativeQuery("select id from voconcologyconsilium where code='"+consilium+"'").getResultList();
+        var res = aCtx.manager.createNativeQuery("select id from voconcologyconsilium where (finishdate is null or finishdate>=current_date) and  code='"+consilium+"'").getResultList();
         if (res.size()>0)
             aEntity.setConsilium(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium, java.lang.Long.valueOf(res.get(0))));
     }

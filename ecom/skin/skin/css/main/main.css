@@ -1,6 +1,7 @@
 @charset "utf-8";
 @import "../jquery/jquerytoast.css";
 @import "../jquery/jquery-ui.css";
+/*@import "../bootstrap.css"; */
 @media print {
 	div#header ul#mainMenu,div#header ul#user,div#side { display: none; }
 	div#content {margin-left: 0;}

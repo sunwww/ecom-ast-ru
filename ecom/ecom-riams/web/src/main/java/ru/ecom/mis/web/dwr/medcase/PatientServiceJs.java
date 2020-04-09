@@ -20,6 +20,7 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +28,25 @@ import java.util.List;
 public class PatientServiceJs {
 
 	private static final Logger LOG = Logger.getLogger(PatientServiceJs.class);
+
+	public String getOpenHospByPatient(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException, SQLException {
+		String sql = "select sls.id as hospId, coalesce(ss.code,'') as cardNumber, coalesce(pat.works,'') as workplace" +
+				" ,sls.patient_id as patient" +
+				" from medcase sls " +
+				" left join statisticstub ss on ss.medcase_id = sls.id" +
+				" left join patient pat on pat.id=sls.patient_id" +
+				" where sls.id="+aMedCaseId ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		return service.executeSqlGetJsonObject(sql);
+
+	}
+
+	public String markCovidAsSent(Long aCard, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		return "обновлено " +service.executeUpdateNativeSql("update Covid19 set exportDate=current_date, exportTime=current_time" +
+				",exportUsername='"+username+"' where id="+aCard) +" карт";
+	}
 
 	public String getPhoneByPatientId(Long aPatientid, HttpServletRequest request) throws NamingException {
 		IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
@@ -424,12 +444,12 @@ public class PatientServiceJs {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
 		service.changeMedPolicyType(aPolicyId, aNewPolicyTypeId);
 	}
-	public boolean updateDataByFondAutomatic(String aPatientFondId, String aCheckId
+	public boolean updateDataByFondAutomatic(Long aPatientFondId, Long aCheckId
 			, boolean isUpdatePatient, boolean isUpdateDocument, boolean isUpdatePolicy, boolean isUpdateAttachment
 			, HttpServletRequest aRequest) throws NamingException {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
-		return service.updateDataByFondAutomatic(Long.valueOf(aPatientFondId)
-				, Long.valueOf(aCheckId), isUpdatePatient, isUpdateDocument
+		return service.updateDataByFondAutomatic(aPatientFondId
+				, aCheckId, isUpdatePatient, isUpdateDocument
 				, isUpdatePolicy, isUpdateAttachment);
 		
 	}

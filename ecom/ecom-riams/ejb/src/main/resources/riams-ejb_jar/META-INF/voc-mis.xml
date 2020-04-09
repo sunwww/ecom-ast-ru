@@ -1,4 +1,12 @@
 <vocconfig>
+	<voc id="vocYesNoMaybe" type="NativeVocService">
+		<NativeVocService
+				from="vocYesNoMaybe as voc"
+				names="voc.name"
+				nameId="voc.id"
+				queried ="(voc.name like :query)"
+		/>
+	</voc>
 	<voc id="vocTicketQueue" type="NativeVocService">
 		<NativeVocService
 				from="VocQueue as voc"
@@ -3144,6 +3152,16 @@ left join patient wp on wp.id=w.person_id "
 				names="vc.name||' ('||vcip.name||')'"
 				queried=" upper(vc.name||' ('||vcip.name||')') like upper(:query) "
 				queryAppend = ' (isforpatology is null or isforpatology=false)'
+		/>
+	</voc>
+	<!-- Браслеты с патологией-->
+	<voc id="vocColorIdentityPatientWithPat" type="NativeVocService">
+		<NativeVocService
+				from="vocColorIdentityPatient vcip "
+				nameId="vcip.id"
+				join=" left join voccolor vc on vcip.color_id=vc.id " order=""
+				names="vc.name||' ('||vcip.name||')'"
+				queried=" upper(vc.name||' ('||vcip.name||')') like upper(:query) "
 		/>
 	</voc>
 	<!-- Браслеты, которые могут быть заполнены в родах и инф. по новорожд. -->

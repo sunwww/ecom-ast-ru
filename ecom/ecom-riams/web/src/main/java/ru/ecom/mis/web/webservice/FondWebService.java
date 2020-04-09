@@ -137,22 +137,21 @@ public class FondWebService {
 		// Создаем список пациентов
 		if (aType==null) {return new StringBuilder();}
         StringBuilder patSql = new StringBuilder().append("select p.id, p.lastname, p.firstname, p.middlename, p.birthday ");
-		if (aType.equals("1")) {
+		if ("1".equals(aType)) {
 			patSql.append(" from patient p" +
 					" where (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
-		} else if (aType.equals("2")) {
+		} else if ("2".equals(aType)) {
 			patSql.append("from lpuattachedbydepartment att " +
 					" left join patient p on p.id=att.patient_id" +
 					" where att.dateto is null and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
-		} else if (aType.equals("3")) {
-			patSql.append(" from patient p" + " where p.id in (").append(aPatientList).append(") and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
+		} else if ("3".equals(aType)) {
+			patSql.append(" from patient p where p.id in (").append(aPatientList).append(") and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
 		}
-	//	System.out.println("updPatient ="+updPatient +":"+updDocument);
-		boolean updatePatient=false, updatePolicy=false, updateDocument = false, updateAttachment=false;
-		if (updPatient!=null&&(updPatient.equals("1")||updPatient.equalsIgnoreCase("true")||updPatient.equalsIgnoreCase("on"))) {updatePatient=true; }
-		if (updDocument!=null&&(updDocument.equals("1")||updDocument.equalsIgnoreCase("true")||updDocument.equalsIgnoreCase("on"))) {updateDocument=true; }
-		if (updPolicy!=null&&(updPolicy.equals("1")||updPolicy.equalsIgnoreCase("true")||updPolicy.equalsIgnoreCase("on"))) {updatePolicy=true; }
-		if (updAttachment!=null&&(updAttachment.equals("1")||updAttachment.equalsIgnoreCase("true")||updAttachment.equalsIgnoreCase("on"))) {updateAttachment=true; }
+		boolean updatePatient, updatePolicy, updateDocument , updateAttachment;
+		updatePatient = updPatient!=null&&(updPatient.equals("1")||updPatient.equalsIgnoreCase("true")||updPatient.equalsIgnoreCase("on"));
+		updateDocument = updDocument!=null&&(updDocument.equals("1")||updDocument.equalsIgnoreCase("true")||updDocument.equalsIgnoreCase("on"));
+		updatePolicy = updPolicy!=null&&(updPolicy.equals("1")||updPolicy.equalsIgnoreCase("true")||updPolicy.equalsIgnoreCase("on"));
+		updateAttachment = updAttachment!=null&&(updAttachment.equals("1")||updAttachment.equalsIgnoreCase("true")||updAttachment.equalsIgnoreCase("on"));
 		try {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -160,16 +159,15 @@ public class FondWebService {
 		Collection<WebQueryResult> pats = serviceWQS.executeNativeSql(patSql.toString());
 		if (!pats.isEmpty()) {
 			PatientFondCheckData pfc = service.getNewPFCheckData(updatePatient, updateDocument, updatePolicy, updateAttachment);
-			if (aType.equals("2")) {
-				pfc.setComment(pfc.getComment()+"Проверка только прикрепленного населения");
-			} else if (aType.equals("1")) {
-				pfc.setComment(pfc.getComment()+"Проверка всей базы пациентов");
-			} else if (aType.equals("3")) {
-				pfc.setComment(pfc.getComment()+"Выборочная проверка пациентов");
+			if ("2".equals(aType)) {
+				pfc.setComment(pfc.getComment()+" Проверка только прикрепленного населения");
+			} else if ("1".equals(aType)) {
+				pfc.setComment(pfc.getComment()+" Проверка всей базы пациентов");
+			} else if ("3".equals(aType)) {
+				pfc.setComment(pfc.getComment()+" Выборочная проверка пациентов");
 			}
 			int i=0;
 			for (WebQueryResult pat: pats) {
-				//if (i==10)break; 
 				i++;
 				String pid = pat.get1().toString(); String lastname = pat.get2().toString(); String firstname = pat.get3().toString();
 				String middlename = pat.get4().toString(); String birthday = pat.get5().toString();
@@ -219,9 +217,6 @@ public class FondWebService {
 			root = doc.getRootElement();
 			@SuppressWarnings("unchecked")
 			List<Element> list_cur = root.getChildren("cur1");
-		//	StringBuilder fiodr = new StringBuilder();
-		//	StringBuilder policy = new StringBuilder();
-			//StringBuilder docs = new StringBuilder();
 			for (Element e:list_cur) {
 				//F:I:O:DR:RZ:DEAD:SNILS:DATEPRIK:SP_PRIK:LPU:SSD:KODPODR
 				lastname = e.getChildText("f"); firstname = e.getChildText("i"); middlename =e.getChildText("o");
@@ -229,19 +224,7 @@ public class FondWebService {
 				attachedType=e.getChildText("sp_prik");attachedLpu=e.getChildText("lpu");
 				doctorSnils=e.getChildText("ssd"); codeDepartment=e.getChildText("kodpodr");
 				dateDeath = e.getChildText("datedead");
-/*				fiodr.append(lastname).append(":") ;
-				fiodr.append(firstname).append(":") ;
-				fiodr.append(middlename).append(":") ;
-				fiodr.append(birthday).append(":") ;
-				fiodr.append(aRz).append(":");
-				fiodr.append(dateDeath).append(":") ;
-				fiodr.append(snils).append(":") ;
-				fiodr.append(attachedDate).append(":");
-				fiodr.append(attachedType).append(":");
-				fiodr.append(attachedLpu).append(":");
-				fiodr.append(doctorSnils).append(":");
-				fiodr.append(codeDepartment);
-*/			}
+			}
 			
 			in.close() ;
 			result = (String)aSoap.get_POLIS_from_RZ(aRz, theLpu) ;
@@ -252,11 +235,8 @@ public class FondWebService {
 			doc = new SAXBuilder().build(in);
 			root = doc.getRootElement();
 			list_cur.clear() ;
-			//@SuppressWarnings("unchecked")
 			list_cur = root.getChildren("cur1");
 			String companyCode = null, policySeries = null, policyNumber = null, policyDateFrom = null, policyDateTo = null;
-	//		sb.append("<h2>Список полисов</h2><table border=1 width=100%>") ;
-			
 			try {
 				for (Element el:list_cur) {
 					//System.out.println(result);
@@ -285,7 +265,7 @@ public class FondWebService {
 					String current = el.getChildText("pz_actual") ;
 					String ac = "" ;
 					
-					if (current.equals("1")) {
+					if ("1".equals(current)) {
 	            		companyCode=sk; policySeries=serPol;policyNumber=numPol;policyDateFrom=dpp; policyDateTo= ddosr;
 					}
 				}
@@ -293,33 +273,17 @@ public class FondWebService {
 			}catch(Exception e) {
 				e.printStackTrace() ;
 			}
-			//System.out.println(sb) ;
-			result = (String)aSoap.get_DOCS_from_RZ(aRz, theLpu) ;
-			//System.out.println("result document:") ;
-			//System.out.println(result) ;
-			result = updateXml(result) ;
-			//System.out.println(result) ;
+			result = updateXml((String)aSoap.get_DOCS_from_RZ(aRz, theLpu)) ;
 			in = new ByteArrayInputStream(result.getBytes());
 			doc = new SAXBuilder().build(in);
 			root = doc.getRootElement();
 			list_cur.clear() ;
 			
-			//@SuppressWarnings("unchecked")
 			list_cur = root.getChildren("cur1");
 			String documentType = null, documentSeries = null, documentNumber = null ;
 			String documentDateIssued = null; String documentWhomIssued = null;
-/*			sb.append("<h2>Список документов</h2><table border=1 width=100%>") ;
-			sb.append("<tr>");
-			sb.append("<th>").append("</th>") ;
-			sb.append("<th>").append("Тип").append("</th>") ;
-			sb.append("<th>").append("Серия").append("</th>") ;
-			sb.append("<th>").append("Номер").append("</th>") ;
-			sb.append("<th>").append("Дата выдачи").append("</th>") ;
-			sb.append("<th>").append("Кем выдан").append("</th>") ;
-			sb.append("</tr>") ;
-*/			Date maxDate = null;
+			Date maxDate = null;
 			for (Element el:list_cur) {
-	//			sb.append("<tr>") ;
 				Date currentDocDate = DateFormat.parseDate(el.getChildText("doc_d"), "yyyy-MM-dd");
 				if (maxDate==null||currentDocDate.getTime()>maxDate.getTime()) {
 					maxDate = currentDocDate;
@@ -340,50 +304,33 @@ public class FondWebService {
 			root = doc.getRootElement();
 			list_cur.clear() ;
 			list_cur = root.getChildren("cur1");
-//			sb.append("<h2>Список адресов</h2><table border=1 width=100%>") ;
 			String kladr = null, house = null, houseBuilding = null, flat = null , okato = null, street = null;
-/*			sb.append("<tr>") ;
-			sb.append("<th></th>") ;
-			sb.append("<th>").append("КЛАДР").append("</th>") ;
-			sb.append("<th>").append("Индекс").append("</th>") ;
-			sb.append("<th>").append("Регион").append("</th>") ;
-			sb.append("<th>").append("Район").append("</th>") ;
-			sb.append("<th>").append("Город").append("</th>") ;
-			sb.append("<th>").append("Улица").append("</th>") ;
-			sb.append("<th>").append("Дом").append("</th>") ;
-			sb.append("<th>").append("Корп").append("</th>") ;
-			sb.append("<th>").append("Кв").append("</th>") ;
-			sb.append("</tr>") ;
-*/			for (Element el:list_cur) {
-				//System.out.println(result);
-//				sb.append("<tr>") ;
-				//String ac = "" ;
+			for (Element el:list_cur) {
 				String hn = el.getChildText("house") ;
 				String hb = el.getChildText("section") ;
 				String fn = el.getChildText("apartment") ;
 				String kl = el.getChildText("street_gni") ;
-				//String r = el.getChildText("rayon") ; 
-				//String sity = el.getChildText("sity") ;
 				street = el.getChildText("street");
-				//String streetT = el.getChildText("street_t");
-				//String provance = el.getChildText("province") ;
-				//String index = el.getChildText("ssity") ;
 				okato = el.getChildText("region");
 				kladr=kl; house=hn; houseBuilding=hb; flat =fn;
 					
 			}
 			in.close() ;
-			service.insertCheckFondData(lastname, firstname, middlename, birthday, snils
-					, aRz
-					, policySeries, policyNumber, policyDateFrom, policyDateTo
-					, username, PatientFond.STATUS_CHECK_TYPE_AUTOMATIC
-					, companyCode, "", "", "", pid
-					, documentType, documentSeries, documentNumber
-					, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath
-					, documentDateIssued, documentWhomIssued, doctorSnils, codeDepartment, pfc, street, okato);
-			service.updateDataByFondAutomaticByFIO(lastname,firstname, middlename, birthday, pfc.getId(), updatePatient, updateDocument
-					,updatePolicy, updateAttachment);
-			
+			try {
+				long patFondId = service.insertCheckFondData(lastname, firstname, middlename, birthday, snils
+						, aRz
+						, policySeries, policyNumber, policyDateFrom, policyDateTo
+						, username, PatientFond.STATUS_CHECK_TYPE_AUTOMATIC
+						, companyCode, "", "", "", pid
+						, documentType, documentSeries, documentNumber
+						, kladr, house, houseBuilding, flat, attachedLpu, attachedDate, attachedType, dateDeath
+						, documentDateIssued, documentWhomIssued, doctorSnils, codeDepartment, pfc, street, okato);
+				service.updateDataByFondAutomatic(patFondId, pfc.getId(), updatePatient, updateDocument
+						,updatePolicy, updateAttachment);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
 		} else {
 			System.out.println("Пациент не найден №= "+i +" "+ aa);
 			try {

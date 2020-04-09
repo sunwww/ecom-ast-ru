@@ -1,9 +1,9 @@
 package ru.ecom.diary.ejb.domain.protocol.template;
 
+import ru.ecom.ejb.domain.simple.VocBaseEntity;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.VocBaseEntity;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,5 +14,6 @@ import ru.ecom.ejb.domain.simple.VocBaseEntity;
  */
 @Entity
 @Table(schema="SQLUser")
+@Deprecated //unused 03-2020
 public class TemplateProtocolType extends VocBaseEntity {
 }

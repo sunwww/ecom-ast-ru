@@ -8,6 +8,7 @@ import ru.ecom.mis.ejb.domain.birth.Pregnancy;
 import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.*;
+import ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
@@ -33,7 +34,15 @@ import java.util.List;
 @EntityListeners(DeleteListener.class)
 abstract public class MedCase extends BaseEntity {
 
-
+	/** Цвета браслета пациента в госпитализации */
+	@Comment("Цвета браслета пациента в госпитализации")
+	@ManyToMany
+	public List<ColorIdentityPatient> getColorsIdentity() {return theColorsIdentity;}
+	public void setColorsIdentity(List<ColorIdentityPatient> aColorsIdentity) {theColorsIdentity = aColorsIdentity;}
+	private List<ColorIdentityPatient> theColorsIdentity;
+	public void addColorsIdentity(ColorIdentityPatient colorIdentityPatient) {
+		theColorsIdentity.add(colorIdentityPatient);
+	}
 
 	/** Случаи ВМП */
 	@Comment("Случаи ВМП")

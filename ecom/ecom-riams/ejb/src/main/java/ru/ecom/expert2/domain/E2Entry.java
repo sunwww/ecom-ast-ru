@@ -173,8 +173,8 @@ public class E2Entry extends BaseEntity {
     /** Направлен на след. этап ДД */
     private Boolean theExtDispNextStage ;
 
-    /** результат диспансеризации */
-    @Comment("результат диспансеризации")
+    /** Результат диспансеризации */
+    @Comment("Результат диспансеризации")
     @OneToOne
     public VocE2FondV017 getDispResult() {return theDispResult;}
     public void setDispResult(VocE2FondV017 aDispResult) {theDispResult = aDispResult;}
@@ -1122,6 +1122,7 @@ public class E2Entry extends BaseEntity {
 
     /** Достигнутый результат */
     @Comment("Достигнутый результат")
+    @Deprecated //unused
     public String getReachedResult() {return theReachedResult;}
     public void setReachedResult(String aReachedResult) {theReachedResult = aReachedResult;}
     /** Достигнутый результат */
@@ -1129,6 +1130,7 @@ public class E2Entry extends BaseEntity {
 
     /** Повторная госпитализация */
     @Comment("Повторная госпитализация")
+    @Deprecated //unused
     public String getReHospitalization() {return theReHospitalization;}
     public void setReHospitalization(String aReHospitalization) {theReHospitalization = aReHospitalization;}
     /** Повторная госпитализация */

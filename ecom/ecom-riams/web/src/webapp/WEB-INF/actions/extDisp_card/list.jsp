@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 	<tiles:put name='title' type='string'>
-		<ecom:titleTrail mainMenu="Lpu" beginForm="mis_patientForm" title="Список карт учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)"/>
+		<ecom:titleTrail mainMenu="Patient" beginForm="mis_patientForm" title="Список карт учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)"/>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">

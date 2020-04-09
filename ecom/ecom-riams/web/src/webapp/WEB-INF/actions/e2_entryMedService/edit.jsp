@@ -16,14 +16,13 @@
             <msh:hidden property="entry" />
             <msh:panel>
      <msh:separator colSpan="4" label="Общие"/>
-
                 <msh:row>
                     <msh:textField property="serviceDate"  size="10"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="medService" vocName="vocMedService" size="50" horizontalFill="true"/>
+                    <msh:autoComplete property="medService" vocName="vocMedService" size="50" horizontalFill="true" fieldColSpan="3"/>
                 </msh:row><msh:row>
-                    <msh:autoComplete property="mkb" vocName="vocIdc10" />
+                    <msh:autoComplete property="mkb" vocName="vocIdc10" fieldColSpan="3"/>
                 </msh:row>
 
     <msh:separator colSpan="4" label="Служебная информация"/>
@@ -31,7 +30,9 @@
                 <msh:textField property="doctorSnils" size="20"  />
                 <msh:textField property="cost" />
             </msh:row><msh:row>
-                    <msh:textField property="comment" size="50" />
+                <msh:autoComplete property="doctorSpeciality" vocName="vocE2FondV021" fieldColSpan="3" size="50"/>
+            </msh:row><msh:row>
+                    <msh:textField property="comment" size="50" fieldColSpan="3" />
             </msh:row>
                 <msh:submitCancelButtonsRow colSpan="1" />
             </msh:panel>

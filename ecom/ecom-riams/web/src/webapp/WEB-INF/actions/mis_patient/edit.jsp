@@ -1327,7 +1327,14 @@ order by wcd.calendarDate, wct.timeFrom" />
                           var aResult = JSON.parse(res);
                           var str='<table style="margin-left:45%"><tr>';
                           for (var i=0; i<aResult.length; i++) {
-                              str+='<td><div title="'+aResult[i].vsipnameJust+'" style="background: '+aResult[i].colorCode+';width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;"></div></td>';
+
+                              var brace = aResult[i];
+                              var msg = brace.info ? brace.info : brace.vsipnameJust;
+                              var style = 'width: 30px;height: 30px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;';
+                              style+= brace.picture ? 'background-image: url(\'/skin/images/bracelet/'+brace.picture+'\'); '
+                                  :' background-color: '+brace.colorCode +';';
+                              str+='<td><div onclick="showToastMessage(\''+msg+'\',null,true,false);" title="'+msg+'" style="'+style+'"></div></td>';
+
                           }
                           str+="</tr></table>";
                           document.getElementById('identityDiv').innerHTML=str;

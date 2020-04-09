@@ -6,14 +6,15 @@ import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(schema="SQLUser")
 @Comment("Доп. информация о пациенте (для браслета)")
+@NamedQueries({
+        @NamedQuery( name="VocColorIdentityPatient.getByCode"
+                , query="from VocColorIdentityPatient where code=:code ")
+})
 public class VocColorIdentityPatient extends VocBaseEntity {
     /** Может ли заполняться в родах? */
     @Comment("Может ли заполняться в родах?")
