@@ -60,14 +60,7 @@
     ,coalesce(vic.name,'')||' сер. '||pat.passportSeries||' №'||pat.passportNumber||' выдан '||to_char(pat.passportDateIssued,'dd.mm.yyyy')||' '||pat.passportWhomIssued as passport
     ,vbt.name as bedType
     ,pat.passportSeries||' '||pat.passportNumber as passportshort
-,case when dep.isnewborn then case when (select count(vcid.isfornewborn) from VocColorIdentityPatient vcid
-left join ColorIdentityPatient cid on vcid.id=cid.voccoloridentity_id
-left join medcase_coloridentitypatient mcidinner on cid.id=mcidinner.colorsidentity_id
-left join voccolor vcrinner on vcrinner.id=vcid.color_id
-where mcidinner.medcase_id =mcid.medcase_id and vcid.isfornewborn=true
-)>0 then 'background:'||(select vc.code from voccolor vc
-left join VocColorIdentityPatient vcipin on vcipin.color_id =vc.id
-where isfornewborn =true) else '' end end as styleRow
+,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
     ,cast('-' as varchar(1)) as tempId
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
@@ -110,7 +103,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
 	       ,ost.name,pat.StreetNonresident
               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name
 
-       , pat.foreignRegistrationAddress,dep.isnewborn ,mcid.medcase_id
+       , pat.foreignRegistrationAddress
     order by pat.lastname,pat.firstname,pat.middlename
     "
       />
