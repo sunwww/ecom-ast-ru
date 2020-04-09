@@ -591,10 +591,11 @@ var closure2 = function(td) {
                 var brace = aResult[i];
                 var msg = brace.info ? brace.info : brace.vsipnameJust;
                 var style = 'style="width:'+size+'px;height: '+ size + 'px;outline: 1px solid gray; border:2px;';
-                style+=brace.picture? '">':' background: '+aResult[i].colorCode +';">';
-                if (brace.picture)
-                    style+='<img src="/skin/images/bracelet/'+ aResult[i].picture + '" title="'+aResult[i].vsipnameJust +
+                style+= brace.picture ? '">':' background: '+brace.colorCode +';">';
+                if (brace.picture) {
+                    style+='<img src="/skin/images/bracelet/'+brace.picture+ '" title="'+msg +
                         '" height="'+size+'px" width="'+size+'px">';
+                }
                 str += '<td><div title="' + msg + '" '+style+'</div></td>';
             }
             str += "</tr></table>";
