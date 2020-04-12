@@ -578,52 +578,52 @@ function getCountUnreadMessages() {
         });
     }
 
-//Milamesher #151 - вывод браслетов
-//реализовано через механизм замыканий, чтобы передавать параметр в callback
-var closure2 = function(td) {
-    return function(res) {
-        var str="";
-        if (res != null && res != '[]') {
-            var aResult = JSON.parse(res);
-            str = '<table><tr>';
-            var size=25;
-            for (var i = 0; i < aResult.length; i++) {
-                var brace = aResult[i];
-                var msg = brace.info ? brace.info : brace.vsipnameJust;
-                var style = 'style="width:'+size+'px;height: '+ size + 'px;outline: 1px solid gray; border:2px;';
-                style+= brace.picture ? '">':' background: '+brace.colorCode +';">';
-                if (brace.picture) {
-                    style+='<img src="/skin/images/bracelet/'+brace.picture+ '" title="'+msg +
-                        '" height="'+size+'px" width="'+size+'px">';
-                }
-                str += '<td><div title="' + msg + '" '+style+'</div></td>';
-            }
-            str += "</tr></table>";
-        }
-        td.innerHTML = str==''? '-' : str;
-    };
-};
-
-var closure1 = function(td) {
-    return function(slsId) {
-        if (slsId != null && slsId != '') {
-            HospitalMedCaseService.selectIdentityPatient(
-                slsId, true, closure2(td)
-            );
-        }
-    };
-};
-
-function setBr(table, nameList) {
+/**
+ * Вывести браслеты в таблице #151
+ * @param table Таблица
+ * @param tdNumRes Номер столбца для вывода результата
+ * @param tdJsonNum Номер столбца с json
+ */
+function setBr(table, tdResNum, tdJsonNum) {
     if (typeof table !== 'undefined') {
         for (var i = 1; i < table.rows.length; i++) {
             var row = table.rows[i];
-            var td = row.cells[row.cells.length - 1];
-            //получить parent
-            var sloId = row.className.replace(nameList, '').replace('selected', '').replace(' ','');
-            HospitalMedCaseService.getParentId(
-                sloId, closure1(td)
-            );
+            var tdRes=row.cells[tdResNum];
+            var td=row.cells[tdJsonNum];
+            var json = jQuery(td).text();
+            var str = "";
+            if (+json!=0) {
+                var aResult = JSON.parse(json);
+                str = '<table><tr>';
+                var size = 25;
+                for (var j = 0; j < aResult.length; j++) {
+                    var brace = aResult[j];
+                    var msg = brace.info ? brace.info : brace.vsipnamejust;
+                    var style = 'style="width:' + size + 'px;height: ' + size + 'px;outline: 1px solid gray; border:2px;';
+                    style += brace.picture ? '">' : ' background: ' + brace.colorcode + ';">';
+                    if (brace.picture)
+                        style += '<img src="/skin/images/bracelet/' + brace.picture + '" title="' + brace.vsipnamejust +
+                            '" height="' + size + 'px" width="' + size + 'px">';
+                    str += '<td><div title="' + msg + '" ' + style + '</div></td>';
+                }
+                str += "</tr></table>";
+            }
+            tdRes.innerHTML = str == '' ? '-' : str
         }
     }
+}
+
+/**
+ * Получить таблицу по className строки (название sql-запроса) #151
+ * @param sqlListName
+ * @return Таблица
+ */
+function getTableToSetBracelets(sqlListName) {
+    var tables = document.getElementsByTagName('table');
+    for (var i=0; i<tables.length; i++) {
+        var table = tables[i];
+        if (table.rows.length>1 && table.rows[1].className.indexOf(sqlListName)!=-1)
+            return table;
+    }
+    return null;
 }

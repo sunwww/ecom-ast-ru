@@ -115,17 +115,19 @@
     ||case when m.datestart!=sls.dateStart then '(госп. с '||to_char(sls.dateStart,'dd.mm.yyyy')||')' else '' end
     ||case when m.dateFinish is not null then ' выписка '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestar
     	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
-   ,dep.name as depn
+   ,max(dep.name) as depn
     ,list(vdrt.name||' '||vpd.name||' '||mkb.code) as diag
-,case when dep.isnewborn then case when (select count(vcid.isfornewborn) from VocColorIdentityPatient vcid
-left join ColorIdentityPatient cid on vcid.id=cid.voccoloridentity_id
-left join medcase_coloridentitypatient mcidinner on cid.id=mcidinner.colorsidentity_id
-left join voccolor vcrinner on vcrinner.id=vcid.color_id
-where mcidinner.medcase_id =mcid.medcase_id and vcid.isfornewborn=true
-)>0 then 'background:'||(select vc.code from voccolor vc
-left join VocColorIdentityPatient vcipin on vcipin.color_id =vc.id
-where isfornewborn =true) else '' end end as styleRow
-    ,cast('-' as varchar(1)) as tempId
+,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
+     ,cast('-' as varchar(1)) as tempId
+       ,cast ((select to_json(array_agg(t)) from	(select cip.id,vc.name||' ('||vcip.name||')' as colName
+    ,vc.code as colorCode,vcip.name as vsipnameJust,vc.picture as picture, substring(cip.info from 0 for 30) as info
+,case when vcip.isforpatology then '1' else '0' end as isforpat
+				from vocColorIdentityPatient vcip
+				left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id
+				left join voccolor vc on vcip.color_id=vc.id
+				 left join medcase_coloridentitypatient
+				 ss on ss.colorsidentity_id=cip.id where
+				medcase_id=sls.id  and cip.startdate<=current_date and (cip.finishdate is null or cip.finishdate>=current_date)) as t) as varchar) as jsonAr
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -148,9 +150,10 @@ left join voccolor vcr on vcr.id=vcid.color_id
     where m.DTYPE='DepartmentMedCase' ${department}
     and m.transferDate is null ${sqlDate}  ${brSql}
     and mcid.colorsidentity_id is not null
+    and (cid.finishdate is null or cid.finishdate>=current_date)
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
-    ,bf.addCaseDuration,m.dateFinish,m.dischargeTime,dep.isnewborn ,mcid.medcase_id,dep.name
+    ,bf.addCaseDuration,m.dateFinish,m.dischargeTime,sls.id
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
             <msh:sectionTitle>
@@ -168,6 +171,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
                     <msh:tableColumn columnName="Отделение" property="7"/>
                     <msh:tableColumn columnName="Диагноз" property="8"/>
                     <msh:tableColumn columnName="Браслеты пациента" property="10"/>
+                    <msh:tableColumn columnName="Браслеты пациента hidden" property="11" hidden="true"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -232,11 +236,10 @@ left join voccolor vcr on vcr.id=vcid.color_id
 
             setValOrNull('department',false);
             setValOrNull('filterAdd1',false);
-            var table = document.getElementsByTagName('table')[1];
-            var nameList = 'brList';
-            if (typeof table !=='undefined'
-                && table.rows[1].className.indexOf(nameList)!=-1)
-                setBr(table,nameList);
+
+            var tableBr = getTableToSetBracelets('brList');
+            if (tableBr!=null)
+                setBr(tableBr,9,10);
         </script>
     </tiles:put>
 </tiles:insert>

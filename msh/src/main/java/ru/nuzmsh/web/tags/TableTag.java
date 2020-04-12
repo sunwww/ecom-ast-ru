@@ -204,7 +204,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
                         new Column(tag.getProperty(), tag.getColumnName()
                                 , tag.isIdentificator(), tag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth(),theEscapeSymbols)
+                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth(),theEscapeSymbols, tag.getHidden())
 
                 );
             } else if (aTag instanceof TableButtonTag) {
@@ -549,9 +549,9 @@ public class TableTag extends AbstractGuidSupportTag {
                                 Column column = (Column) obj;
                                 Object valueC ;
                                 if (theCellFunction) {
-                                    valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName,column.theWidth);
+                                    valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName,column.theWidth,column.theHidden);
                                 } else {
-                                    valueC = column.printCell(out, row, goFunctionMainName, currentId,null,column.theWidth);
+                                    valueC = column.printCell(out, row, goFunctionMainName, currentId,null,column.theWidth,column.theHidden);
                                 }
                                 if (!isFirstRow) {
                                     if (valueC!=null) {
@@ -926,7 +926,7 @@ public class TableTag extends AbstractGuidSupportTag {
     }
 
     static final class Column {
-        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth,boolean aEscapeSymbols) {
+        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth,boolean aEscapeSymbols, boolean aHidden) {
             theProperty = aProperty;
             theColumnName = aColumnname;
             theIdColumn = aIdColumn;
@@ -938,6 +938,7 @@ public class TableTag extends AbstractGuidSupportTag {
             theAddParam =aAddParam ;
             theWidth=aWidth;
             theEscapeSymbols=aEscapeSymbols;
+            theHidden = aHidden;
         }
 
         @SuppressWarnings("unused")
@@ -947,6 +948,8 @@ public class TableTag extends AbstractGuidSupportTag {
 
         private void printHeader(JspWriter aOut, int i, boolean theSortInner) throws IOException {
             aOut.print("<th");
+            if (theHidden)
+                aOut.print(" hidden");
             if (theCssClass != null) {
                 aOut.print(" class='");
                 aOut.print(theCssClass);
@@ -984,7 +987,7 @@ public class TableTag extends AbstractGuidSupportTag {
             aOut.println("</td>");
         }
 
-        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle,String aWidth) throws IOException {
+        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle,String aWidth, Boolean aHidden) throws IOException {
             String styleClass = "";
 
             Object value;
@@ -1031,6 +1034,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 styleClass += " " + theCssClass;
             }
             aOut.print("<td ");
+            if (aHidden) aOut.print("hidden ");
             if (aWidth!=null && !aWidth.equals(""))
                 aOut.print(" width=\""+aWidth+"%\"");
             if (aTitle!=null) {
@@ -1145,6 +1149,8 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theWidth;
         // Milamesher 25102018 экранировать символы
         private boolean theEscapeSymbols=true;
+        // прятать столбец
+        private boolean theHidden=false;
     }
 
 

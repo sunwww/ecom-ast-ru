@@ -1837,17 +1837,6 @@ public class HospitalMedCaseServiceJs {
 		service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date-1,editusername='"+login+"' where id="+aColorIdentityId);
 	}
 
-    /**
-     * Получить parent СЛС в СЛО #151
-     * @param aSloId HDeparetmentMedCase.id
-     * @return String parent СЛС
-     */
-    public String getParentId(String aSloId, HttpServletRequest aRequest) throws NamingException {
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-        Collection<WebQueryResult> l= service.executeNativeSql("select parent_id from medcase where id="+aSloId) ;
-        return (!l.isEmpty() && l.iterator().next().get1()!=null)? l.iterator().next().get1().toString():"";
-    }
-
 	/**
 	 * Получить, была ли проведена идентификация #173
 	 * @param aMedCaseId Medcase.id (СЛС или СЛО)

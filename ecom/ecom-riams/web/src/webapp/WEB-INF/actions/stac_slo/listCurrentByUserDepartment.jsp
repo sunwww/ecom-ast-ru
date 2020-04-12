@@ -61,8 +61,17 @@
     ,vbt.name as bedType
     ,pat.passportSeries||' '||pat.passportNumber as passportshort
 ,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
-    ,cast('-' as varchar(1)) as tempId
-    from medCase m
+		  ,cast('-' as varchar(1)) as tempId
+    , cast ((select to_json(array_agg(t)) from	(select cip.id,vc.name||' ('||vcip.name||')' as colName
+    ,vc.code as colorCode,vcip.name as vsipnameJust,vc.picture as picture, substring(cip.info from 0 for 30) as info
+,case when vcip.isforpatology then '1' else '0' end as isforpat
+				from vocColorIdentityPatient vcip
+				left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id
+				left join voccolor vc on vcip.color_id=vc.id
+				 left join medcase_coloridentitypatient
+				 ss on ss.colorsidentity_id=cip.id where
+				medcase_id=sls.id  and cip.startdate<=current_date and (cip.finishdate is null or cip.finishdate>=current_date)) as t) as varchar) as jsonAr
+				 from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
 	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
@@ -103,7 +112,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
 	       ,ost.name,pat.StreetNonresident
               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name
 
-       , pat.foreignRegistrationAddress
+       , pat.foreignRegistrationAddress,sls.id
     order by pat.lastname,pat.firstname,pat.middlename
     "
       />
@@ -118,7 +127,16 @@ left join voccolor vcr on vcr.id=vcid.color_id
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-sls.dateStart)+1)
 			else (CURRENT_DATE-sls.dateStart)
 		  end as cnt1
-    ,cast('-' as varchar(1)) as tempId
+		  ,cast('-' as varchar(1)) as tempId
+     , cast ((select to_json(array_agg(t)) from	(select cip.id,vc.name||' ('||vcip.name||')' as colName
+    ,vc.code as colorCode,vcip.name as vsipnameJust,vc.picture as picture, substring(cip.info from 0 for 30) as info
+    ,case when vcip.isforpatology then '1' else '0' end as isforpat
+				from vocColorIdentityPatient vcip
+				left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id
+				left join voccolor vc on vcip.color_id=vc.id
+				 left join medcase_coloridentitypatient
+				 ss on ss.colorsidentity_id=cip.id where
+				medcase_id=sls.id  and cip.startdate<=current_date and (cip.finishdate is null or cip.finishdate>=current_date)) as t) as varchar) as jsonAr
     from medCase m
 
     left join MedCase as prev1 on prev1.id=m.prevMedCase_id
@@ -147,7 +165,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
     	)
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
-    ,bf.addCaseDuration,m.dateFinish,m.dischargeTime
+    ,bf.addCaseDuration,m.dateFinish,m.dischargeTime,sls.id
     order by pat.lastname,pat.firstname,pat.middlename
     "
       />
@@ -191,6 +209,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
       <msh:tableColumn columnName="Паспортные данные" property="11"/>
       <msh:tableColumn columnName="Профиль койки" property="12"/>
       <msh:tableColumn columnName="Браслеты пациента" property="15"/>
+        <msh:tableColumn columnName="Браслеты пациента hidden" property="16" hidden="true"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -209,6 +228,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
       <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
       <msh:tableColumn columnName="Операции" property="6"/>
       <msh:tableColumn columnName="Браслеты пациента" property="9"/>
+        <msh:tableColumn columnName="Браслеты пациента hidden" property="10" hidden="true"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -253,8 +273,12 @@ left join voccolor vcr on vcr.id=vcid.color_id
     <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
     <script type="text/javascript">
-        setBr(document.getElementsByTagName('table')[0],'datelist');
-        setBr(document.getElementsByTagName('table')[1],'datelist_r');
+        var table = getTableToSetBracelets('datelist');
+        if (table!=null)
+          setBr(table,13,14);
+        var table_r = getTableToSetBracelets('datelist_r');
+        if (table_r!=null)
+          setBr(table_r,9,10);
     </script>
     </tiles:put>
   <%}%>
