@@ -39,8 +39,8 @@ public class Covid19 extends BaseEntity {
     private String theWorkPlace ;
 
     
-    /** Дата появления клинических диагнозов */
-    @Comment("Дата появления клинических диагнозов")
+    /** Дата появления клинических симптомов */
+    @Comment("Дата появления клинических симптомов")
     public Date getSymptomsDate() {return theSymptomsDate;}
     public void setSymptomsDate(Date aSymptomsDate) {theSymptomsDate = aSymptomsDate;}
     private Date theSymptomsDate ;

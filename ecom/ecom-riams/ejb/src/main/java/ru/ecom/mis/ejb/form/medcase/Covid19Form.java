@@ -44,8 +44,8 @@ public class Covid19Form extends IdEntityForm {
     public void setCardNumber(String aCardNumber) {theCardNumber = aCardNumber;}
     private String theCardNumber ;
 
-    /** Дата появления клинических диагнозов */
-    @Comment("Дата появления клинических диагнозов")
+    /** Дата появления клинических симптомов */
+    @Comment("Дата появления клинических симптомов")
     @Persist
     @DateString @DoDateString
     public String getSymptomsDate() {return theSymptomsDate;}
