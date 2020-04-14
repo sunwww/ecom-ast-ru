@@ -19,43 +19,15 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/mis_mortality_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/mis_mortality_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
      <%if (request.getParameter("short")==null ||request.getParameter("short").equals(""))  {%>
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:panel>
     <input type="hidden" value="printDeathList" name="m">
     <input type="hidden" value="HospitalReportService" name="s">
-<%--       <msh:row>
-        <msh:separator label="Дополнительные параметры для реестра (в своде не учитываются)" colSpan="7"/>
-       </msh:row>
-        <msh:row styleId="noswod">
-	        <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeEmergency" value="1">  экстренные
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeEmergency" value="2" >  плановые
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeEmergency" value="3">  все
-	        </td>
-        </msh:row> --%>
-     <%--    <msh:row styleId="noswod">
-	        <td class="label" title="Поиск по проведена ли была операция (typeOperation)" colspan="1"><label for="typeOperationName" id="typeOperationLabel">Была ли операция:</label></td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeOperation" value="1">  да
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeOperation" value="2"  >  нет
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeOperation" value="3">  все
-	        </td>
-        </msh:row> --%>
-      
       <msh:row>
         <msh:separator label="Основные параметры" colSpan="7"/>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="1">  поступления
@@ -76,7 +48,7 @@
 	        	<input type="radio" name="typeNewborn" value="3"  >  Все
 	        </td>
 	      </msh:row>
-    <%--   <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+    <%--   <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  иностранцы
@@ -121,11 +93,10 @@
         	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
         </msh:row>
         <msh:row>
-	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+	        <msh:textField property="dateBegin" label="Период с" />
+	        <msh:textField property="dateEnd" label="по" />
 		<td>
             <input type="submit" onclick="find()" value="Найти" />
-           <!--  <input type="submit" onclick="print()" value="Печать" /> -->
           </td>
          </msh:row>
         
@@ -134,17 +105,14 @@
     </msh:form>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
-    String result = (String)request.getParameter("result") ;
+    String date = request.getParameter("dateBegin") ;
     String view = (String)request.getAttribute("typeView") ;
-    String department=(String) request.getAttribute("department");
-    String dateT = (String) request.getAttribute("dateT"); 
-    String sex = (String) request.getParameter("sex");
+    String dateT = (String) request.getAttribute("dateT");
+    String sex =  request.getParameter("sex");
     
     
     if (date!=null && !date.equals(""))  {
-    //	ActionUtil.setParameterFilterSql("result","vhr.id", request) ;
-    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	String dateEnd = request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		dateEnd=date ;
     	}
@@ -153,8 +121,8 @@
     	} else {sex="";}
     	request.setAttribute("dateEnd", dateEnd) ;
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
-    	String dep = (String) request.getParameter("department") ; 
-    	String cellF = (String) request.getParameter("addCell");
+    	String dep = request.getParameter("department") ;
+    	String cellF = request.getParameter("addCell");
     	if (cellF!=null) {
     		if (cellF.equals("dead")) {
     			request.setAttribute("cellAdd", ") "+sex);
@@ -227,7 +195,7 @@
     	if (bedSubType!=null&&!bedSubType.equals("")&&!bedSubType.equals("0")) {
     		request.setAttribute("bedSubTypeSql", " and vbst.id='"+bedSubType+"'");
     	}
-    	if (view!=null && view.equals("2")) { 
+    	if ("2".equals(view)) {
     %>
     <msh:section title="Свод по отделениям без учета отд., которые не входят в ОМС">
     <msh:sectionContent>
@@ -264,8 +232,8 @@ else cast(((cast((count(distinct case when dc.categoryDifference_id is not null 
 	group by case when (d.isnoomc='1') then pd.id else d.id end , case when (d.isnoomc='1') then pd.name else d.name end 
 	
 	order by f5_percentOtdel desc , f2_lpuName
-   " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_swod" cellFunction="true"
+   " />
+        <msh:table name="journal_list_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
          action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="3" />
@@ -279,8 +247,7 @@ else cast(((cast((count(distinct case when dc.categoryDifference_id is not null 
         </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <%} 
-    	if (view != null && view.equals("1") ) { 
+    <%}  else if ("1".equals(view)) {
     %>
     <msh:section title="Реестр пациентов">
     <msh:sectionContent>
@@ -325,7 +292,7 @@ else cast(((cast((count(distinct case when dc.categoryDifference_id is not null 
      ${addNewborn} ${bedSubTypeSql}
     group by hmc.id,ss.code, pat.lastname,pat.firstname,pat.middlename,pat.birthday
     order by pat.lastname,pat.firstname,pat.middlename "/>
-        <msh:table name="journal_surOperation"
+        <msh:table name="journal_surOperation" printToExcelButton="Сохранить в excel"
         viewUrl="entityShortView-stac_ssl.do"
          action="entityView-stac_ssl.do" idField="1">
          
@@ -341,7 +308,7 @@ else cast(((cast((count(distinct case when dc.categoryDifference_id is not null 
         </msh:sectionContent>
         </msh:section>  
  
-    <% } else if (view!=null&&view.equals("3")) {
+    <% } else if ("3".equals(view)) {
     	%>
     	 <msh:section title="Свод по типам госпитализации">
     <msh:sectionContent>
@@ -366,7 +333,7 @@ where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and $
     	${depIsNoOmc} ${addNewborn}
     
 "/>
-        <msh:table name="journal_hospType" cellFunction="true"
+        <msh:table name="journal_hospType" cellFunction="true" printToExcelButton="Сохранить в excel"
           action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}"  idField="7" >
           <msh:tableColumn columnName="Всего госпитализаций" property="1" />
           <msh:tableColumn columnName="Умершие" property="2" addParam="&addCell=dead" />
@@ -378,7 +345,7 @@ where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and $
         </msh:table>
         </msh:sectionContent>
         </msh:section>  
-    	<%  } else if (view!=null&&view.equals("4")) {
+    	<%  } else if ("4".equals(view)) {
     		%>
  <msh:section title="Свод по срокам смерти с момента госпитализации">
     <msh:sectionContent>
@@ -404,8 +371,8 @@ from medcase hmc
 	and hmc.deniedhospitalizating_id is null
 	and vhr.omccode='11'	 ${depIsNoOmc} ${addNewborn}
 
-   " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_swod" cellFunction="true"
+   " />
+        <msh:table name="journal_list_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
          action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="5" noDataMessage="Не найдено" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Умерло в первые 6 часов" property="1" addParam="&addCell=dead6"/>
@@ -416,7 +383,7 @@ from medcase hmc
     </msh:sectionContent>
     </msh:section>    		
     		<%
-    	} else if (view!=null&&view.equals("5")) {
+    	} else if ("5".equals(view)) {
     		%>
     		<msh:section title="Свод по возрастным группам">
     <msh:sectionContent>
@@ -483,8 +450,8 @@ from medcase hmc
 	and hmc.deniedhospitalizating_id is null
 	and vhr.omccode='11'	 ${depIsNoOmc} ${addNewborn}
 group by vs.name, vs.id
-   " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_swod" cellFunction="true"
+   " />
+        <msh:table name="journal_list_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
          action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="12" noDataMessage="Не найдено" >
             <msh:tableColumn columnName="#" property="sn"/>
                <msh:tableColumn columnName="Пол" property="13" addParam=""/>
@@ -504,7 +471,7 @@ group by vs.name, vs.id
     </msh:sectionContent>
     </msh:section>   
     	<%
-    	} else if (view.equals("6")) {
+    	} else if ("6".equals(view)) {
     	%>
     	<msh:section title="Свод по иногородним и иностранным гражданам">
     <msh:sectionContent>
@@ -532,8 +499,8 @@ group by vs.name, vs.id
 	group by case when (d.isnoomc='1') then pd.id else d.id end , case when (d.isnoomc='1') then pd.name else d.name end 
 	
 	order by f3_lpuName
-   " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_swod" cellFunction="true"
+   " />
+        <msh:table name="journal_list_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
          action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="3"/>
@@ -552,8 +519,7 @@ group by vs.name, vs.id
     <script type='text/javascript'>
     
      checkFieldUpdate('typeDate','${typeDate}',2) ;
-    // checkFieldUpdate('typePatient','${typePatient}',3) ;
-    checkFieldUpdate('typeView','${typeView}',6); 
+    checkFieldUpdate('typeView','${typeView}',6);
     checkFieldUpdate('typeNewborn','${typeNewborn}',3); 
      
      
@@ -586,7 +552,6 @@ group by vs.name, vs.id
 			+":"+$('department').value
 			+":"+$('result').value
 			;
-			//alert(args) ;
 		$('param').value = args ;
     }
     function find() {

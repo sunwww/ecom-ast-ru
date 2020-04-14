@@ -172,10 +172,7 @@ public class FondWebService {
 				String pid = pat.get1().toString(); String lastname = pat.get2().toString(); String firstname = pat.get3().toString();
 				String middlename = pat.get4().toString(); String birthday = pat.get5().toString();
 				String aa =  lastname+" "+ firstname+" "+middlename+" "+birthday+" "+pid;
-				System.out.println("Проверка по базе ФОМС. Запись №= "+i +" "+ aa);
-				//Для отладки
-				
-		
+
 		//------------------
 		String resultRZ;
 		WSLocator serviceLocator = new WSLocator() ;
@@ -204,8 +201,7 @@ public class FondWebService {
 		if (!aRz.equals("")) {		
 			String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
 			result = updateXml(result) ;
-			
-			
+
 			String snils = null;
 			String attachedDate = null; String attachedType = null; String attachedLpu = null;
 			String doctorSnils=null; String codeDepartment=null;

@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import org.mozilla.javascript.*;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -91,7 +90,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 		}
 			
 			
-		return res.length()>0?res.substring(0,res.length()-3):"" ;
+		return res.length()>3?res.substring(0,res.length()-3):"" ;
     }
 	public Object invoke(EntityManager aManager,SessionContext aContext ,String aServiceName, String aMethodName, Object[] aArgs) {
 		
