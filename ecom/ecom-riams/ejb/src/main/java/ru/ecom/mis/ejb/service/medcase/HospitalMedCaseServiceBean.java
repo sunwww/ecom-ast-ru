@@ -310,6 +310,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		stacProfiles.put("61","CMP25");
 		stacProfiles.put("81","CMP25");
 		stacProfiles.put("29","CMP48");
+		stacProfiles.put("45","CMP22");
 		return stacProfiles;
 	}
 
@@ -520,7 +521,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode, String aReportType) {
 		//Начинаем стационар
 		try {
-			Integer findDays=10; //дни д огоспитализации/СПО, в течение которых надо искать договор
+			Integer findDays=10; //дни до госпитализации/СПО, в течение которых надо искать договор
 		StringBuilder sqlSelect = new StringBuilder();
 		StringBuilder sqlAppend = new StringBuilder();
 		HashMap<String, String> regionOrCountry;
@@ -632,7 +633,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 					if (!firstHosp.equals("") && "BANK".equals(aReportType))
 						pay = getPayType(firstHosp,findDays);
 
-				} else if (financeSource.equals("OBLIGATORY")) { //ОМС
+				} else if (financeSource.equals("OBLIGATORY") || "BANK".equals(aReportType)) { //ОМС
 					for (String hosp : hosps) {
 						try {
 							JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(hosp.trim())));
@@ -671,8 +672,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 							rec.put("code_fin_md",row[11]);
 							rec.put("profile",profile);
 							rec.put("pay",pay);
-							//rec.put("patientCount",patientCount);
-							//rec.put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
 						}
 					}
 					allRecords.put(recordHash, rec);
@@ -777,30 +776,29 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 							rec.put("age", row[8].toString());
 							rec.put("code_vid_mp", "TMC02"); //только специализированная в поликлинике
 							rec.put("code_usl_mp", "CMC01 амбулаторно"); //только амбулаторно
-							rec.put("code_form_ok", "FMC03 плановая"); //только плановая
-							//rec.put("patientCount",patientCount);
+							rec.put("code_form_ok", "FMC03 плановая"); //только плановая\
 							rec.put("code_prod", row[9]);
 							rec.put("code_fin_md", row[10]);
 							rec.put("profile", profile);
 							rec.put("pay",pay);
-							//rec.put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
 						}
 					}
 					allRecords.put(recordHash, rec);
 
 				}
 			}
-			//Закончили искать пол-ку
-			//Начинаем формировать файл.
-			i = 0;
-			LOG.warn("====start make file " + i);
-			for (JSONObject rec : allRecords.values()) {
-				i++;
-				if (i % 100 == 0) {
-					LOG.info("making " + i + " records");
-				}
-				if (rec != null) {
-					if ("MIAC".equals(aReportType)) {
+
+			if ("MIAC".equals(aReportType)) {
+				//Закончили искать пол-ку
+				//Начинаем формировать файл.
+				i = 0;
+				LOG.warn("====start make file " + i);
+				for (JSONObject rec : allRecords.values()) {
+					i++;
+					if (i % 100 == 0) {
+						LOG.info("making " + i + " records");
+					}
+					if (rec != null) {
 						txtFile.append(aLpuCode).append("\n")
 								.append(rec.getString("period0")).append("\n")
 								.append(rec.getString("period1")).append("\n")
@@ -810,9 +808,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 								.append(rec.getString("financeSource")).append("\n")
 								.append(rec.getString("patientCount")).append("\n")
 								.append(String.valueOf(BigDecimal.valueOf(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".", ",")).append("\n");
+					} else {
+						LOG.error("make file object = NULL!!!");
 					}
-				} else {
-					LOG.error("make file object = NULL!!!");
 				}
 			}
 		} catch (Exception e) {

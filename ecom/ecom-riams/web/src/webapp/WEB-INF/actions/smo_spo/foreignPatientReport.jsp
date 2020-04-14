@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -69,11 +70,12 @@
       </table>
     </msh:panel>
     </msh:form>
-
+<% request.setAttribute("numCBRF", ActionUtil.getDefaultParameterByConfig("numCBRF","",request));%>
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
   <script type="text/javascript">
+    const numCBRF = "${numCBRF}";
     function makeReport() {
         $('submitButton').disabled=true;
         var lpu = $('lpuDirect').value;
@@ -117,7 +119,7 @@
                               "<td align='center'>"+el.patientCount+"</td>" +
                               "<td align='center'>"+el.code_fin_md+"</td>" +
                               "<td align='center'>"+el.pay+"</td>" +
-                              "<td align='center'>"+el.sum+"</td>"
+                              "<td align='center'>"+(''+(el.sum*numCBRF).toFixed(2)).replace('.',",")+"</td>"
                       );
                     }
                     if (reportType=='BANK')

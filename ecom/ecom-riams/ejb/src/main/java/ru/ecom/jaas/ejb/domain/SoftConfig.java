@@ -40,4 +40,11 @@ public class SoftConfig extends BaseEntity {
 	private String theKeyValue;
 	/** Ключ */
 	private String theKey;
+
+	/** Невидимость в системе */
+	@Comment("Невидимость в системе")
+	public Boolean getInVisible() {return theInVisible;}
+	public void setInVisible(Boolean aInVisible) {theInVisible = aInVisible;}
+	/** Невидимость в системе */
+	private Boolean theInVisible;
 }
