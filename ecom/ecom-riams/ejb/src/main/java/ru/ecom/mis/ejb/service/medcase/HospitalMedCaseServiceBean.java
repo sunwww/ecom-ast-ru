@@ -307,9 +307,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		stacProfiles.put("35","CMP43");
 		stacProfiles.put("12","CMP44");
 		stacProfiles.put("2","CMP34");
-		stacProfiles.put("61","CMP25");
-		stacProfiles.put("81","CMP25");
-		stacProfiles.put("29","CMP48");
+		stacProfiles.put("61","CMP20");
+		stacProfiles.put("81","CMP20");
+		stacProfiles.put("29","CMP42");
 		stacProfiles.put("45","CMP22");
 		return stacProfiles;
 	}
@@ -547,6 +547,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		StringBuilder highTechJoin = new StringBuilder();
 		StringBuilder periodSelect = new StringBuilder();
 		StringBuilder vssSelect = new StringBuilder();
+		String vbtSelect2 = "";
 		if ("BANK".equals(aReportType)) {
 			ageSelect = " ,case when EXTRACT(YEAR from AGE(pat.birthday))>=18 then 'AGE02' else 'AGE01' end as f_age ";
 			ageGroup = ", pat.birthday";
@@ -565,6 +566,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			vssSelect.append(",case when vss.code='CHARGED' then 'SFC05' else case when vss.code in ('OBLIGATORYINSURANCE','BUDGET') then 'SFC03'")
 					.append(" else case when vss.code='PRIVATEINSURANCE' then 'SFC04' else 'SFC06' end end end as f11_code_fin_md");
 			vssGroup=" ,vss.code";
+			vbtSelect2 = ", vbt.name as vbtNameNote ";
         }
 		List<Object> listPr = theManager.createNativeQuery("select id from PriceList where isdefault='1'").setMaxResults(1).getResultList();
 		String priceListId = null;
@@ -579,7 +581,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.append(" , vss.financesource as f4_financesource")
 				.append(" ,list(sls.id||'') as f5_list")
                 .append(ageSelect).append(highTechSelect).append(vbtSelect)
-				.append(emSelect).append(periodSelect).append(vssSelect)
+				.append(emSelect).append(periodSelect).append(vssSelect).append(vbtSelect2)
 				.append(" from medcase sls")
 				.append(" left join medcase dep1 on dep1.parent_id=sls.id and dep1.prevmedcase_id is null and dep1.dtype='DepartmentMedCase'")
 				.append(" left join bedfund bf on bf.id=dep1.bedfund_id")
@@ -593,7 +595,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.append(" where sls.dateFinish between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
 				.append(" and sls.dtype='HospitalMedCase'")
 				.append(sqlAppend)
-				.append(" group by vss.financesource, vbt.code, to_char(sls.datefinish,'yyyy-MM')").append(sqlSelect)
+				.append(" group by vss.financesource, vbt.code, vbt.name, to_char(sls.datefinish,'yyyy-MM')").append(sqlSelect)
                 .append(ageGroup).append(emGroup)
 				.append(perGroup).append(vssGroup)
 				.append(" order by to_char(sls.datefinish,'yyyy-MM')");
@@ -671,6 +673,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 							rec.put("code_prod",row[10]);
 							rec.put("code_fin_md",row[11]);
 							rec.put("profile",profile);
+							rec.put("note",row[12]);
 							rec.put("pay",pay);
 						}
 					}
@@ -684,6 +687,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			LOG.error("JSONEXEPTION HAPP", e);
 		}
 		//Начинаем искать пол-ку
+		String vwfSelect = "";
+		if ("BANK".equals(aReportType))
+			vwfSelect = " , vwf.name ";
 		sql = new StringBuilder();
 		LOG.warn("Start search policlinic");
 		sql.append("select to_char(spo.datefinish,'yyyy-MM') as f0_date")
@@ -697,6 +703,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.append(ageSelect)
                 .append(periodSelect.toString().replaceAll("sls.datefinish-sls.datestart","spo.datefinish-spo.datestart"))
 				.append(vssSelect)
+				.append(vwfSelect)
 				.append(" from medcase spo")
 				.append(" left join medcase vis on vis.parent_id=spo.id")
 				.append(" left join medcase smc on smc.parent_id=vis.id and smc.dtype='ServiceMedCase'")
@@ -715,7 +722,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.append(" group by to_char(spo.datefinish,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect)
 				.append(ageGroup)
                 .append(perGroup.replaceAll("sls.datefinish-sls.datestart","spo.datefinish-spo.datestart"))
-				.append(vssGroup);
+				.append(vssGroup)
+				.append(vwfSelect);
 
 		LOG.info("===========repotr_pol = " + sql);
 		list = theManager.createNativeQuery(sql.toString()).getResultList();
@@ -776,9 +784,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 							rec.put("age", row[8].toString());
 							rec.put("code_vid_mp", "TMC02"); //только специализированная в поликлинике
 							rec.put("code_usl_mp", "CMC01 амбулаторно"); //только амбулаторно
-							rec.put("code_form_ok", "FMC03 плановая"); //только плановая\
+							rec.put("code_form_ok", "FMC03 плановая"); //только плановая
 							rec.put("code_prod", row[9]);
 							rec.put("code_fin_md", row[10]);
+							rec.put("note", row[11]);
 							rec.put("profile", profile);
 							rec.put("pay",pay);
 						}

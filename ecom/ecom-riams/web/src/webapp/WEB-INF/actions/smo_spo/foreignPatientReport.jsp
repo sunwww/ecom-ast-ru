@@ -52,20 +52,21 @@
       <div style="font-size: 40px; color: #00aa00" id="resultDiv"></div>
     </msh:row>
       <table hidden id="resultTable" border="1px">
-        <th width="6%">Номер строки</th>
-        <th width="7%">Код территории</th>
-        <th width="7%">Месяц отчетного квартала</th>
-        <th width="7%">Код страны регистрации нерезидентов</th>
-        <th width="7%">Код возрастной регистрации нерезидентов</th>
-        <th width="7%">Код вида МП</th>
-        <th width="7%">Код условия оказания МП</th>
-        <th width="7%">Код формы оказания МП</th>
-        <th width="7%">Код продолжительности осуществления МП</th>
-        <th width="7%">Код профиля МП</th>
-        <th width="7%">Число обращений нерезидентов</th>
-        <th width="7%">Код истоничка финансирования МД</th>
-        <th width="7%">Код формы оплаты МД</th>
-        <th width="10%">Стоимость МД</th>
+        <th width="5%">Номер строки</th>
+        <th width="6%">Код территории</th>
+        <th width="5%">Месяц отчетного квартала</th>
+        <th width="6%">Код страны регистрации нерезидентов</th>
+        <th width="6%">Код возрастной регистрации нерезидентов</th>
+        <th width="6%">Код вида МП</th>
+        <th width="6%">Код условия оказания МП</th>
+        <th width="6%">Код формы оказания МП</th>
+        <th width="6%">Код продолжительности осуществления МП</th>
+        <th width="6%">Код профиля МП</th>
+        <th width="6%">Число обращений нерезидентов</th>
+        <th width="6%">Код истоничка финансирования МД</th>
+        <th width="6%">Код формы оплаты МД</th>
+        <th width="12%">Стоимость МД</th>
+        <th width="12%">Примечание</th>
         <tbody id="resultTableBody" name="resultTableBody"></tbody>
       </table>
     </msh:panel>
@@ -119,7 +120,8 @@
                               "<td align='center'>"+el.patientCount+"</td>" +
                               "<td align='center'>"+el.code_fin_md+"</td>" +
                               "<td align='center'>"+el.pay+"</td>" +
-                              "<td align='center'>"+(''+(el.sum*numCBRF).toFixed(2)).replace('.',",")+"</td>"
+                              "<td align='center'>"+(''+(el.sum*numCBRF).toFixed(2)).replace('.',",")+"</td>" +
+                              "<td align='center'>"+el.note+"</td>"
                       );
                     }
                     if (reportType=='BANK')
