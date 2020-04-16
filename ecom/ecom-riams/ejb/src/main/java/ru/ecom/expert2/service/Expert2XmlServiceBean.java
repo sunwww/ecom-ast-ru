@@ -1238,7 +1238,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         List<String> otherDiagnosis = findDiagnosisCodes(list,null,"3"); // Сопутствующие
         List<String> heavyDiagnosis = findDiagnosisCodes(list,null,"4"); // Осложнения
         List<String> napravitDiagnosis = findDiagnosisCodes(list,"1,2","3"); // Направительные
-        if (!napravitDiagnosis.isEmpty() && !a3) {
+        if (!napravitDiagnosis.isEmpty()) {
             add(aElement,"DS0",napravitDiagnosis.get(0));
         }
 
@@ -1266,7 +1266,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
   */          }
             if (!heavyDiagnosis.isEmpty()) add(aElement,"DS3",heavyDiagnosis.get(0));
-            if (!a3 &&!mainMkb.startsWith("Z")) { //C_ZAB * Характер заболевания, если USL_OK!=4 || DS1!=Z*
+            if (!mainMkb.startsWith("Z")) { //C_ZAB * Характер заболевания, если USL_OK!=4 || DS1!=Z*
                 VocE2FondV027 vip = ds.getVocIllnessPrimary();
                 if (vip==null) {
                     theManager.persist(new E2EntryError(aEntry,"NO_HARAKTER"));
