@@ -9,7 +9,7 @@
       <ecom:titleTrail title="Covid 2019" mainMenu="Patient" beginForm="smo_covid19Form" />
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:form action="entityParentSaveGoParentView-smo_covid19.do" defaultField="cardNumber">
+    <msh:form action="entityParentSaveGoView-smo_covid19.do" defaultField="cardNumber">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="patient" />
