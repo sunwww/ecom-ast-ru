@@ -36,7 +36,7 @@
 
 	<tiles:put name='body' type='string'>
 		<msh:form action="entityParentSaveGoSubclassView-smo_visitProtocol.do"
-			defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07"
+			defaultField="dateRegistration"
 			fileTransferSupports="true">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
@@ -89,12 +89,11 @@
 					<msh:row  styleId="rwCreateDiagnosis2">
 						<msh:autoComplete property="diagnosisRegistrationType" label="Тип регистрации" horizontalFill="true" fieldColSpan="1" 
 
-vocName="vocDiagnosisRegistrationType" guid="1ecf26b7-d071-4abc-93ae-c52af4ae368b" />
-						<msh:autoComplete vocName="vocPriorityDiagnosis" property="diagnosisPriority" label="Приоритет" guid="e28f35fc-fe25-4968-
-bf2f-d1fe4661349e" horizontalFill="true" />
+vocName="vocDiagnosisRegistrationType"/>
+						<msh:autoComplete vocName="vocPriorityDiagnosis" property="diagnosisPriority" label="Приоритет" horizontalFill="true" />
 					</msh:row>
 				<msh:row styleId="rwCreateDiagnosis3">
-					<msh:autoComplete vocName="vocIdc10" property="diagnosisIdc10" label="Код МКБ-10" guid="e36df3bf-fe77-4096-a082-51016fc2baad" 
+					<msh:autoComplete vocName="vocIdc10" property="diagnosisIdc10" label="Код МКБ-10"
 fieldColSpan="3" horizontalFill="true" />
 				</msh:row>
 				<msh:row styleId="rwCreateDiagnosis4">
@@ -102,7 +101,7 @@ fieldColSpan="3" horizontalFill="true" />
 fieldColSpan="3"/>
 				</msh:row>
 				<msh:row  styleId="rwCreateDiagnosis5">
-					<msh:textArea property="diagnosisText" label="Наименование" guid="c0a86a5e-34ff-46f3-984b-5ecbd2749760" fieldColSpan="5" rows="2" 
+					<msh:textArea property="diagnosisText" label="Наименование" fieldColSpan="5" rows="2"
 
 horizontalFill="true" />
 				</msh:row>
@@ -126,7 +125,7 @@ horizontalFill="true" />
 				</msh:ifFormTypeIsNotView>
 				<msh:row>
 					<msh:textArea property="record" label="Текст:" size="100" rows="25"
-						fieldColSpan="8" guid="b6ehb-b971-441e-9a90-519c07"/>
+						fieldColSpan="8"/>
 
 				</msh:row>
 
@@ -228,6 +227,11 @@ horizontalFill="true" />
 							  name="Печать дневника"
 							  action='/javascript:showPrintProtocolTemplate()'
 							  title='Печать дневника' />
+
+				<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol"
+							  name="Печать дневника с проверкой"
+							  action='/javascript:checkPrint()'
+							  title='Печать дневника с проверкой' />
 
 				<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol"
 							  name="Добавить внешний документ"
@@ -551,9 +555,31 @@ horizontalFill="true" />
                     setTimeout(checktime,600000) ;
 				</script>
 			</msh:ifNotInRole>
-
-
 		</msh:ifFormTypeIsNotView>
+
+		<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
+			<tags:replaceUnprintSymbols name="replaceUnprintSymbols" />
+			<script type="text/javascript">
+				//ф-я проверки непечатных символов на матричном принтере
+				function checkPrint() {
+					var result=false;
+					var record = $('record').value;
+					for (var i=0; i<record.length; i++) {
+						var code=record.charCodeAt(i);
+						if (!checkCode(code)) {
+							result = true;
+							break;
+						}
+					}
+					if (!result) {
+						if (confirm("В дневнике нет непечатных на матричном принтере символов. Распечатать дневник?"))
+							showPrintProtocolTemplate();
+					}
+					else
+						showreplaceUnprintSymbols();
+				}
+			</script>
+		</msh:ifFormTypeIsView>
 
 		<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
 			<script type="text/javascript">
