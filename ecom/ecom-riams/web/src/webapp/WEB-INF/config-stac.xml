@@ -592,6 +592,18 @@
                      path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
             />
         </action>
+
+        <action path='/stac_directionCovidByUserDepartment'
+                type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
+                name='stac_departmentJournalForm' validate='false' scope='request'
+                input='/WEB-INF/actions/stac_slo/directionCovidByUserDepartment.jsp'
+        >
+            <forward name="success" redirect="false"
+                     path='/WEB-INF/actions/stac_slo/directionCovidByUserDepartment.jsp'
+            />
+        </action>
+
+
         <action path='/stac_directionHIVByUserDepartment'
                 type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
                 name='stac_departmentJournalForm' validate='false' scope='request'

@@ -2813,6 +2813,28 @@ function printDirectionHIV(aCtx, aParams) {
     return map;
 }
 
+//todo - гавно, переделать
+function printDirectionCovid(aCtx, aParams) {
+    var ret = new java.util.ArrayList() ;
+	var info = new java.lang.String(aParams.get("info"));
+	var infoMas=info.split('!');
+    for (var i=0; i<infoMas.length; i++) {
+        var row = infoMas[i].split('-');
+                var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult();
+                par.set1("" + (i + 1));  //#
+                par.set2(row[0]);	//фио
+                par.set3(row[1]);	//дата начала
+                par.set4(row[2]);	//возраст
+                par.set5(row[3]);	//хз
+                par.set6(row[4]);	//хз
+                par.set7(row[5]);	//хз
+                par.set8(row[6]);	//хз
+                ret.add(par);
+    }
+    map.put("listPat",ret) ;
+    return map;
+}
+
 
 //Печать cогласия на операцию переливания компонентов крови
 function printTransfusionAgreement(aCtx, aParams) {
