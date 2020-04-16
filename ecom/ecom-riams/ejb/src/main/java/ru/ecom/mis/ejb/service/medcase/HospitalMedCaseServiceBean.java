@@ -307,9 +307,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		stacProfiles.put("35","CMP43");
 		stacProfiles.put("12","CMP44");
 		stacProfiles.put("2","CMP34");
-		stacProfiles.put("61","CMP25");
-		stacProfiles.put("81","CMP25");
-		stacProfiles.put("29","CMP48");
+		stacProfiles.put("61","CMP20");
+		stacProfiles.put("81","CMP20");
+		stacProfiles.put("29","CMP42");
 		stacProfiles.put("45","CMP22");
 		return stacProfiles;
 	}

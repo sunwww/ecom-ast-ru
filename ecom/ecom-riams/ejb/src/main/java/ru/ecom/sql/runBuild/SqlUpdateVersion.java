@@ -1,7 +1,7 @@
 package ru.ecom.sql.runBuild;
 
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,7 +15,7 @@ import java.util.List;
  * Created by rkurbanov on 11.07.2018.
  */
 public class SqlUpdateVersion {
-    private static final Logger LOG = Logger.getLogger(SqlUpdateVersion.class);
+    //private static final Logger LOG = Logger.getLogger(SqlUpdateVersion.class);
 
     public static void main(String[] args) throws IOException {
 
@@ -23,7 +23,7 @@ public class SqlUpdateVersion {
         path= path.replace("%20"," ");
         path= path.replace("file:/","");
         path= path.replace("target/sqlUpdater","src/main/resources/riams-ejb_jar/META-INF/sql");
-        LOG.info(path);
+        //LOG.info(path);
 
         List<File> list = getResourceFiles(path);
 
@@ -34,11 +34,11 @@ public class SqlUpdateVersion {
                 String file = readFile(path+"/"+f.getName());
                 if(file.contains("{version}")){
                     try (FileOutputStream fileOut = new FileOutputStream(path+"/"+f.getName())){
-                        LOG.info(filename+" - is update");
+                        //LOG.info(filename+" - is update");
                         file =file.replace("{version}",""+getUnixTime()+"#");
                         fileOut.write(file.getBytes());
                     } catch (Exception e) {
-                        LOG.error(e);
+                        //LOG.error(e);
                     }
 
                 }
@@ -66,7 +66,7 @@ public class SqlUpdateVersion {
             }
         }
         catch(IOException ex){
-           LOG.error(ex.getMessage());
+           //LOG.error(ex.getMessage());
         }
         return stringBuilder.toString();
     }
