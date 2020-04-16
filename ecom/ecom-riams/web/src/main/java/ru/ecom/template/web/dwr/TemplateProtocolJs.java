@@ -954,4 +954,17 @@ public class TemplateProtocolJs {
 		Collection<WebQueryResult> res = service.executeNativeSql("select record from diary where id = " + aProtocolId);
 		return !res.isEmpty()? res.iterator().next().get1().toString() : "";
 	}
+
+	/**
+	 * Сохранить текст протокола с печатными символами
+	 * @param aProtocolId Diary.id
+	 * @param record Текст
+	 */
+	public void saveRecordUnprint(Long aProtocolId, String record, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		service.executeUpdateNativeSql("update diary set record='" + record + "' where id = " + aProtocolId);
+		//отметка о редактировании
+        String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+        service.executeUpdateNativeSql("update diary set editusername='" + username + "',editdate=current_date,edittime=current_time where id = " + aProtocolId);
+	}
 }
