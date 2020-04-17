@@ -254,6 +254,13 @@ public class Covid19Form extends IdEntityForm {
     public String getWorkPlace() {return theWorkPlace;}
     public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
     private String theWorkPlace ;
+
+    /** Диагноз */
+    @Comment("Диагноз")
+    @Persist
+    public Long getMkb() {return theMkb;}
+    public void setMkb(Long aMkb) {theMkb = aMkb;}
+    private Long theMkb ;
     
     /** Форма контакта */
     @Comment("Форма контакта")

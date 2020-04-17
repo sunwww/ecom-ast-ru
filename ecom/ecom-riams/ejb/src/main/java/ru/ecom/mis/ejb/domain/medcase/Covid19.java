@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNoMaybe;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -217,6 +218,14 @@ public class Covid19 extends BaseEntity {
     public String getIshodResult() {return theIshodResult;}
     public void setIshodResult(String aIshodResult) {theIshodResult = aIshodResult;}
     private String theIshodResult ;
+
+    /** Диагноз */
+    @Comment("Диагноз")
+    @OneToOne
+    public VocIdc10 getMkb() {return theMkb;}
+    public void setMkb(VocIdc10 aMkb) {theMkb = aMkb;}
+    private VocIdc10 theMkb ;
+
 
     @PrePersist
     void onPrePersist() {

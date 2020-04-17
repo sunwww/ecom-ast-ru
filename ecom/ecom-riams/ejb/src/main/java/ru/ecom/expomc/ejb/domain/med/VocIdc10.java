@@ -147,4 +147,10 @@ public class VocIdc10 extends VocIdCodeName {
 	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
 	/** Дата окончания актуальности */
 	private Date theDateTo ;
+
+	/** Резрешен для COVID-19 */
+	@Comment("Резрешен для COVID-19")
+	public Boolean getAllowCovid() {return theAllowCovid;}
+	public void setAllowCovid(Boolean aAllowCovid) {theAllowCovid = aAllowCovid;}
+	private Boolean theAllowCovid ;
 }

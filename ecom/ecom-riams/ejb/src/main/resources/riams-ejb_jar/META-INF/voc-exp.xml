@@ -462,6 +462,16 @@
                 queryConvertType="FIRST_LAT_UPPER"
         />
     </voc>
+    <!--  МКБ для формы COVID-->
+    <voc id='vocIdc10Covid' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expomc.ejb.domain.med.VocIdc10'
+                names   = 'code,name'
+                queried = 'code,name'
+                queryAppend = "allowCovid='1'"
+                queryConvertType="FIRST_LAT_UPPER"
+        />
+    </voc>
     <voc id='visible' type='AllValueHelper'>
         <IAllValue>ru.ecom.ejb.services.voc.allvalues.YesNoAllValues</IAllValue>
     </voc>

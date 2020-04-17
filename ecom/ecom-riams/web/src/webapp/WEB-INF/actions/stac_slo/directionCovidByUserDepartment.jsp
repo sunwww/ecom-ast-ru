@@ -43,6 +43,7 @@
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" />
       <msh:tableColumn columnName="Возраст" property="3" />
       <msh:tableColumn columnName="Дата поступления" property="4" />
+      <msh:tableColumn columnName="Номер пробирки" property="1" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -89,9 +90,14 @@
         var table=document.getElementsByTagName('table')[0];
 
 
+        //создать checkbox
+        function createChkBox(td,ii) {
+            td.innerHTML="<input id=\"chk_"+ii+"\" name=\"chk_"+ii+"\" type=\"checkbox\" >";
+        }
+
         //создать текстовое поле
         function createTextField(td,ii) {
-            td.innerHTML="<input id=\"chk_"+ii+"\" name=\"chk_"+ii+"\" type=\"checkbox\" >";
+            td.innerHTML="<input title=\"номер пробирки\" id=\"regNum_"+ii+"\" name=\"regNum_"+ii+"\" size=\"10\" value=\"\" type=\"text\" autocomplete=\"off\">";
         }
 
         //Milamesher #179 - вывод списка кода обследуемого
@@ -99,7 +105,8 @@
             table.className='';
             if (typeof table !== 'undefined') {
                 for (var ii = 1; ii < table.rows.length; ii++) {
-                    createTextField(table.rows[ii].cells[2],ii);
+                    createChkBox(table.rows[ii].cells[2],ii);
+                    createTextField(table.rows[ii].cells[6],ii);
                 }
             }
         }
@@ -113,7 +120,8 @@
                     var row = table.rows[ii];
                     if ($('chk_'+ii).checked) {
                       if (params.length>0) params+="!";
-                        params += $(row).children[3].textContent+'-'+$(row).children[5].textContent+'-'+$(row).children[4].textContent;
+                        params += $(row).children[3].textContent+'-'+$(row).children[5].textContent+'-'+$(row).children[4].textContent
+                            +'-'+($('regNum_'+ii).value?$('regNum_'+ii).value:"_");
                     }
                 }
             }

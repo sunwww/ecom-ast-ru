@@ -24,6 +24,8 @@
       </msh:row><msh:row>
          <msh:textField property="diagnosis" horizontalFill="true" />
       </msh:row><msh:row>
+         <msh:autoComplete property="mkb" vocName="vocIdc10Covid" horizontalFill="true" />
+      </msh:row><msh:row>
          <msh:textField property="diagnosisDate" />
       </msh:row><msh:row>
          <msh:textField property="covidResearchDate" />
@@ -130,6 +132,7 @@
         <msh:sideLink params="id" action="/entityParentDelete-smo_covid19" name="Удалить" roles="/Policy/Mis/MedCase/Covid19/Delete" />
         <msh:sideLink action="/javascript:exportCard()" name="Карта выгружена" roles="/Policy/Mis/MedCase/Covid19/Export" />
           <msh:sideLink params="id" action="/print-covid_058.do?m=printCovid&s=PatientPrintService" name="Форма 058"/>
+          <msh:sideLink params="id" action="/print-covid_direct2.do?m=printCovid&s=PatientPrintService" name="Направление"/>
 
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
