@@ -22,6 +22,8 @@
           </msh:row><msh:row>
          <msh:textField property="symptomsDate" />
       </msh:row><msh:row>
+         <msh:textField property="brigadeNumber"  horizontalFill="true"/>
+      </msh:row><msh:row>
          <msh:textField property="diagnosis" horizontalFill="true" />
       </msh:row><msh:row>
          <msh:autoComplete property="mkb" vocName="vocIdc10Covid" horizontalFill="true" />

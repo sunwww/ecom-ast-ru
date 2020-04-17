@@ -225,6 +225,12 @@ public class Covid19 extends BaseEntity {
     public VocIdc10 getMkb() {return theMkb;}
     public void setMkb(VocIdc10 aMkb) {theMkb = aMkb;}
     private VocIdc10 theMkb ;
+    
+    /** Номер бригады СМП */
+    @Comment("Номер бригады СМП")
+    public String getBrigadeNumber() {return theBrigadeNumber;}
+    public void setBrigadeNumber(String aBrigadeNumber) {theBrigadeNumber = aBrigadeNumber;}
+    private String theBrigadeNumber ;
 
 
     @PrePersist

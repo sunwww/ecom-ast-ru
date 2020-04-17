@@ -261,6 +261,13 @@ public class Covid19Form extends IdEntityForm {
     public Long getMkb() {return theMkb;}
     public void setMkb(Long aMkb) {theMkb = aMkb;}
     private Long theMkb ;
+
+    /** Номер бригады СМП */
+    @Comment("Номер бригады СМП")
+    @Persist
+    public String getBrigadeNumber() {return theBrigadeNumber;}
+    public void setBrigadeNumber(String aBrigadeNumber) {theBrigadeNumber = aBrigadeNumber;}
+    private String theBrigadeNumber ;
     
     /** Форма контакта */
     @Comment("Форма контакта")
