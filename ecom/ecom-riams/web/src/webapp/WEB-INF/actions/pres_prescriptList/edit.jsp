@@ -91,13 +91,14 @@
         <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentPrepareCreate-pres_diagnosticPrescription" name="Назначение на диаг. услугу" />
         <msh:sideLink roles="/Policy/Mis/Prescription/ModePrescription/View" params="id" action="/entityParentPrepareCreate-pres_modePrescription" name="Режим" />
         <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentPrepareCreate-pres_wfConsultation" name="Консультацию" />
+          <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentPrepareCreate-pres_drugPrescription" name="Лекарственный препарат" />
       </msh:sideMenu>
       <msh:sideMenu title="Перейти">
         <msh:sideLink key="ALT+9" action="/entityParentListRedirect-pres_prescriptList" name="⇧К списку сводных листов назначений" params="id" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
         <msh:sideLink action='/javascript:initSelectPrinter("print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id=${param.id}",1)' name="Листа назначений" />
-        <msh:sideLink action='/print-prescriptListDrug.do?s=HospitalPrintService&m=printDrugPrescriptList&id=${param.id}' name="Листа назначений нарКотиков" />
+        <msh:sideLink action='/javascript:initSelectPrinter("print-prescriptListDrug.do?s=HospitalPrintService&m=printDrugPrescriptList&id=${param.id}",1)' name="Листа назначений нарКотиков" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

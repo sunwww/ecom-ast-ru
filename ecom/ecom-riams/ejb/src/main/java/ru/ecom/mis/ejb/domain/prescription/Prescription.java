@@ -64,7 +64,7 @@ public abstract class Prescription extends BaseEntity{
 	
 	/** Выполнения */
 	@Comment("Выполнения")
-	@OneToMany(mappedBy="prescription", cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="prescription", cascade=CascadeType.ALL)
 	public List<PrescriptionFulfilment> getFulfilments() {return theFulfilments;}
 	public void setFulfilments(List<PrescriptionFulfilment> aFulfilments) {theFulfilments = aFulfilments;}
 

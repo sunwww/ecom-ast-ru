@@ -17,7 +17,22 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    	<ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,dr.name as drname,p.planStartDate,p.planStartTime,p.planEndDate,p.planEndTime,vdm.name as vdmname , p.frequency ||' '||ifnull(p.frequencyUnit_id,'',vfu.name), p.orderTime ||' '||ifnull(p.orderType_id,'',vpot.name), p.amount ||' '||ifnull(p.amountUnit_id,'',vdau.name), p.duration ||' '||ifnull(p.durationUnit_id,'',vdu.name) from Prescription p left join PrescriptionList pl on pl.id=p.prescriptionList_id left join vocdrugclassify as dr on dr.id=p.drug_id left join vocdrugmethod as vdm on vdm.id=p.method_id left join vocfrequencyunit as vfu on vfu.id=p.frequencyunit_id left join vocPrescriptOrderType as vpot on vpot.id=p.orderType_id left join vocDrugAmountUnit as vdau on vdau.id=p.amountUnit_id left join vocDurationUnit as vdu on vdu.id=p.durationUnit_id where pl.id=${param.id} and p.DTYPE='DrugPrescription' order by p.planStartDate"/>
+    	<ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,dr.name as drname
+    	,p.planStartDate,p.planStartTime
+	,p.planEndDate,p.planEndTime,vdm.name as vdmname
+	, p.frequency ||' '||coalesce(cast(p.frequencyUnit_id as varchar),vfu.name,'') as pfrec
+	, p.orderTime ||' '||coalesce(cast(p.orderType_id as varchar),vpot.name,'') as pord
+	, p.amount ||' '||coalesce(cast(p.amountUnit_id as varchar),vdau.name,'') as pam
+	, p.duration ||' '||coalesce(cast(p.durationUnit_id as varchar),vdu.name,'') as pdur
+	from Prescription p
+	left join PrescriptionList pl on pl.id=p.prescriptionList_id
+	left join vocdrug as dr on dr.id=p.vocDrug_id
+	left join vocdrugmethod as vdm on vdm.id=p.method_id
+	left join vocfrequencyunit as vfu on vfu.id=p.frequencyunit_id
+	left join vocPrescriptOrderType as vpot on vpot.id=p.orderType_id
+	left join vocDrugAmountUnit as vdau on vdau.id=p.amountUnit_id
+	left join vocDurationUnit as vdu on vdu.id=p.durationUnit_id
+	where pl.id=${param.id} and p.DTYPE='DrugPrescription' order by p.planStartDate"/>
   	<msh:tableNotEmpty name="pres">
   	<msh:toolbar >
 	                	<tbody>
