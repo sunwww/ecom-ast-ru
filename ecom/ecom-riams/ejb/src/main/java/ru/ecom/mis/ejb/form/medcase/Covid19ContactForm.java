@@ -3,10 +3,7 @@ package ru.ecom.mis.ejb.form.medcase;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Covid19Contact;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
@@ -19,8 +16,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = Covid19Contact.class)
 @Comment("Контактное лицо")
-@WebTrail(comment = "Контактное лицо", nameProperties = "id", view = "entityView-smo_covid19Contact.do")
+@WebTrail(comment = "Контактное лицо", nameProperties = "lastname", view = "entityParentView-smo_covid19Contact.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Covid19")
+@Parent(parentForm = Covid19ContactForm.class,  property = "card")
 public class Covid19ContactForm extends IdEntityForm {
     /** Карта коронавируса 19 */
     @Comment("Карта коронавируса 19")

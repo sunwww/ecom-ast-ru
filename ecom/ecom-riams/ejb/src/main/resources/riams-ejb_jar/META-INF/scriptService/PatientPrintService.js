@@ -201,6 +201,8 @@ function printCovid(aCtx, aParams) {
 	map.put("isLabConfirmed",covidCard.labResult=="1" ? "да":"нет");
 	var age = Packages.ru.nuzmsh.util.date.AgeUtil.calcAgeYear(covidCard.patient.birthday,hosp.dateStart) ;
 	map.put("age",age+"");
+	map.put("contactList",aCtx.manager.createNamedQuery("Covid19Contact.getAllByPatient")
+		.setParameter("patient",covidCard.getPatient()).getResultList());
 
 	return map;
 

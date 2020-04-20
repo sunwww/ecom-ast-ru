@@ -20,11 +20,14 @@
 %>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <ecom:webQuery name="cardList" nativeSql="select c.id, c.cardNumber,c.diagnosis, c.diagnosisDate
+    <ecom:webQuery name="cardList" nativeSql="select c.id, c.cardNumber
+    ,coalesce(mkb.code||' '||mkb.name,c.diagnosis) as diagnosis, c.diagnosisDate
     ,c.createDate, c.createTime
     ,case when c.exportDate is not null then 'background-color:#8ee68e; color:black' when c.noActual='1' then 'background-color:#979090; color:black'
      when (c.labResult is not null and c.labResult!='') then 'background-color: #f0ba57; color:black' else '' end as f9_styleRow
-from Covid19 c where ${sqlAdd} order by c.createDate, c.createTime" />
+from Covid19 c
+left join vocidc10 mkb on mkb.id=c.mkb_id
+ where ${sqlAdd} order by c.createDate, c.createTime" />
     <msh:table styleRow="7" name="cardList" action="entityParentView-smo_covid19.do" idField="1">
       <msh:tableColumn columnName="Номер ИБ" property="2" />
       <msh:tableColumn columnName="Диагноз" property="3" />

@@ -87,17 +87,17 @@
           <msh:panel title="Добавление контактного лица"/>
           <table>
           <tr><td>
-            Фамилия контакта: <input type="text" id="contactLastname" />
+              <label>Фамилия контакта: <input type="text" id="contactLastname" /></label>
           </td></tr><tr><td>
-            Имя: <input type="text" id="contactFirstname" />
+              <label> Имя: <input type="text" id="contactFirstname" /></label>
         </td></tr><tr><td>
-            Отчество: <input type="text" id="contactMiddlename" />
+              <label>Отчество: <input type="text" id="contactMiddlename" /></label>
         </td></tr><tr><td>
-            Дата рождения: <input type="text" id="contactBirthDate"  />
+              <label>Дата рождения: <input type="text" id="contactBirthDate"  /></label>
         </td></tr><tr><td>
-            Телефон: <input type="text" id="contactPhone" />
+              <label>Телефон: <input type="text" id="contactPhone" /></label>
         </td></tr><tr><td>
-            Адрес: <input type="text" id="contactAddress" />
+            <label>Адрес: <input type="text" id="contactAddress" /></label>
         </td></tr><tr><td>
             <input type="button" value="Добавить контактное лицо" onclick="createContactPatient()">
         </td></tr></table>
@@ -111,12 +111,14 @@
         <msh:section>
           <msh:sectionTitle>Контакты</msh:sectionTitle>
           <msh:sectionContent>
-          	<ecom:webQuery name="contacts" nativeSql="select co.id,co.lastname||' '||co.firstname||' '||co.middlename||' '||to_char(co.birthdate,'dd.MM.yyyy') as fio
+          	<ecom:webQuery name="contacts" nativeSql="select co.id,coalesce(co.lastname,'')||' '||coalesce(co.firstname,'')||' '||coalesce(co.middlename,'')||' '||COALESCE(to_char(co.birthdate,'dd.MM.yyyy'),'') as fio
           	,co.phone, co.address from covid19 c
           	 left join covid19 allC on allC.patient_id=c.patient_id
           	 left join covid19Contact co on co.card_id=allC.id
-          	 where c.id=${param.id} and co.id is not null "/>
-            <msh:table name="contacts" action="void()" idField="1" noDataMessage="Нет ролей">
+          	 where c.id=${param.id} and co.id is not null
+             order by co.lastname, co.firstname, co.middlename"/>
+            <msh:table name="contacts" action="void()" idField="1" noDataMessage="Нет контактов"
+                       deleteUrl="entityDelete-smo_covid19Contact.do">
               <msh:tableColumn columnName="ФИО человека" property="2" />
               <msh:tableColumn columnName="Телефон" property="3" />
               <msh:tableColumn columnName="Адрес" property="4" />

@@ -5,9 +5,16 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import java.sql.Date;
 
 @Entity
+@NamedQueries({
+        @NamedQuery( name="Covid19Contact.getAllByPatient"
+                , query="from Covid19Contact where card.patient=:patient" +
+                " order by lastname, firstname, middlename ")
+})
 public class Covid19Contact extends BaseEntity {
 
     /** Карта коронавируса 19 */
