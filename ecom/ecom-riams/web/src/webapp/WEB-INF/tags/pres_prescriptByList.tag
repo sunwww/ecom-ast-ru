@@ -40,35 +40,38 @@
 </msh:section>
 
 
-<msh:ifInRole roles="/Policy/Mis/Pharmacy/CreateDrugPrescription">
 	<msh:section>
-		<ecom:webQuery name="pres" nativeSql="select pres.id,vd.name as nm,
-to_char(pres.planstartdate,'dd.MM.yyyy') as start,
-to_char(pres.planenddate,'dd.MM.yyyy') as end,
-vdm.name as method,
-pres.frequency||' раз в день' as freq,
-'по '||pres.amount as count
-,(pres.planenddate-pres.planstartdate)||' дней/день' as longtime
-from prescription pres
-left join prescriptionList pl on pl.id = pres.prescriptionlist_id
-left join pharmdrug pd on pd.id = pres.drug_id
-left join vocdrug vd on vd.id = pd.drug_id
-left join vocdrugmethod vdm on vdm.id = pres.method_id
-where ${field} and pres.dtype = 'DrugPrescription'"/>
+		<ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,dr.name as drname
+    	,p.planStartDate,p.planStartTime
+	,p.planEndDate,p.planEndTime,vdm.name as vdmname
+	, p.frequency ||' '||coalesce(cast(p.frequencyUnit_id as varchar),vfu.name,'') as pfrec
+	, p.orderTime ||' '||coalesce(cast(p.orderType_id as varchar),vpot.name,'') as pord
+	, p.amount ||' '||coalesce(cast(p.amountUnit_id as varchar),vdau.name,'') as pam
+	, p.duration ||' '||coalesce(cast(p.durationUnit_id as varchar),vdu.name,'') as pdur
+	from Prescription p
+	left join PrescriptionList pl on pl.id=p.prescriptionList_id
+	left join vocdrug as dr on dr.id=p.vocDrug_id
+	left join vocdrugmethod as vdm on vdm.id=p.method_id
+	left join vocfrequencyunit as vfu on vfu.id=p.frequencyunit_id
+	left join vocPrescriptOrderType as vpot on vpot.id=p.orderType_id
+	left join vocDrugAmountUnit as vdau on vdau.id=p.amountUnit_id
+	left join vocDurationUnit as vdu on vdu.id=p.durationUnit_id
+	where ${field} and p.DTYPE='DrugPrescription' order by p.planStartDate"/>
 		<msh:sectionTitle>Список лекарственных назначений</msh:sectionTitle>
 		<msh:sectionContent>
 			<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
-				<msh:tableColumn property="2" columnName="Лек.средство"/>
-				<msh:tableColumn property="3" columnName="Дата начала"/>
-				<msh:tableColumn property="4" columnName="Дата окончания"/>
-				<msh:tableColumn property="5" columnName="Способ введения"/>
-				<msh:tableColumn property="6" columnName="Частота"/>
-				<msh:tableColumn property="7" columnName="Кол-во на один прием"/>
-				<msh:tableColumn property="8" columnName="Продолжительность"/>
+				<msh:tableColumn property="3" columnName="Лек.средство"/>
+				<msh:tableColumn property="4" columnName="Дата начала"/>
+				<msh:tableColumn property="6" columnName="Дата окончания"/>
+				<msh:tableColumn property="8" columnName="Способ введения"/>
+				<msh:tableColumn property="9" columnName="Частота"/>
+				<msh:tableColumn property="10" columnName="Время приема"/>
+				<msh:tableColumn property="11" columnName="Кол-во на один прием"/>
+				<msh:tableColumn property="12" columnName="Продолжительность"/>
 			</msh:table>
 		</msh:sectionContent>
 	</msh:section>
-</msh:ifInRole>
+
 <msh:section>
 	<ecom:webQuery name="pres" nativeSql="select
     	p.id as pid,pl.id as plid,ms.code||' '||ms.name as drname

@@ -16,6 +16,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -63,9 +64,19 @@ public abstract class Prescription extends BaseEntity{
 	
 	/** Выполнения */
 	@Comment("Выполнения")
-	@OneToMany(mappedBy="prescription", cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="prescription", cascade=CascadeType.ALL)
 	public List<PrescriptionFulfilment> getFulfilments() {return theFulfilments;}
 	public void setFulfilments(List<PrescriptionFulfilment> aFulfilments) {theFulfilments = aFulfilments;}
+
+	@Transient
+	//Берем информацию о первом выполнении
+	public String getFulfilmentDateTime() {
+		if (getFulfilments()!=null && !getFulfilments().isEmpty()) {
+			PrescriptionFulfilment fulfilment = getFulfilments().get(0);
+			return DateFormat.formatToDate(fulfilment.getFulfilDate())+" "+DateFormat.formatToTime(fulfilment.getFulfilTime());
+		}
+		return "";
+	}
 	
 	/** Дата и время регистрации */
 	@Comment("Дата и время регистрации")

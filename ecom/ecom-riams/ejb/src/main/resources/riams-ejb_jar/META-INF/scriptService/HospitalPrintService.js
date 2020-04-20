@@ -254,6 +254,22 @@ function printCheckList (aCtx, aParams) {
 function unNull (aStr) {
 	return aStr!=null ? ""+aStr : "";
 }
+
+//печать листа назначений наркотиков
+function printDrugPrescriptList(aCtx, aParams) {
+	var username = aCtx.sessionContext.callerPrincipal.name ;
+	var id = new java.lang.Long(aParams.get("id"));
+	var list = aCtx.manager.createQuery("from DrugPrescription where prescriptionList_id=:id and createUsername=:username")
+		.setParameter("id",id).setParameter("username",username).getResultList();
+	map.put("presList",list);
+	map.put("presListSize",+list.size());
+	var prescriptionList = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList,id);
+	var patient = prescriptionList.medCase.patient;
+	map.put("pat",patient);
+	return map;
+
+}
+
 function printPrescriptList(aCtx, aParams) {
     var mapTmp = new java.util.HashMap() ;
 	var id = new java.lang.Long(aParams.get("id"));
@@ -283,7 +299,7 @@ function printPrescriptList(aCtx, aParams) {
 				" ,vdm.name as f11_drugMethod" +
 				" from prescription p" +
 				" left join medservice ms on ms.id=p.medservice_id" +
-				" left join vocdrugclassify as dr on dr.id=p.drug_id" +
+				" left join vocdrug as dr on dr.id=p.vocDrug_id" +
 				" left join vocdrugmethod as vdm on vdm.id=p.method_id" +
 				" left join vocfrequencyunit as vfu on vfu.id=p.frequencyunit_id" +
 				" left join vocPrescriptOrderType as vpot on vpot.id=p.orderType_id" +
