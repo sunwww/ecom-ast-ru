@@ -97,6 +97,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
         <msh:sideLink action='/javascript:initSelectPrinter("print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id=${param.id}",1)' name="Листа назначений" />
+        <msh:sideLink action='/print-prescriptListDrug.do?s=HospitalPrintService&m=printDrugPrescriptList&id=${param.id}' name="Листа назначений нарКотиков" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

@@ -254,6 +254,20 @@ function printCheckList (aCtx, aParams) {
 function unNull (aStr) {
 	return aStr!=null ? ""+aStr : "";
 }
+
+//печать листа назначений наркотиков
+function printDrugPrescriptList(aCtx, aParams) {
+	var username = aCtx.sessionContext.callerPrincipal.name ;
+	var id = new java.lang.Long(aParams.get("id"));
+	var list = aCtx.manager.createQuery("from DrugPrescription where prescriptionList.id=:id and createUsername=:username")
+		.setParameter("id",id).setParameter("username",username).getResultList();
+	map.put("presList",list);
+	map.put("presListSize",list.size());
+	printPrescriptList(aCtx, aParams);
+	return map;
+
+}
+
 function printPrescriptList(aCtx, aParams) {
     var mapTmp = new java.util.HashMap() ;
 	var id = new java.lang.Long(aParams.get("id"));

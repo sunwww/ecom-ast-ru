@@ -1,11 +1,10 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
 import ru.ecom.mis.ejb.domain.pharmacy.PharmDrug;
-import ru.ecom.mis.ejb.domain.pharmacy.PharmDrugNomenklatr;
+import ru.ecom.mis.ejb.domain.pharmacy.VocDrug;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocDrugAmountUnit;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocFrequencyUnit;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptOrderType;
-import ru.ecom.mis.ejb.uc.privilege.domain.VocDrugClassify;
 import ru.ecom.mis.ejb.uc.privilege.domain.voc.VocDrugMethod;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -25,6 +24,7 @@ import javax.persistence.Transient;
 @Table(schema="SQLUser")
 public class DrugPrescription extends Prescription{
 
+	//unused временно не используется.
 	private PharmDrug theDrug;
 	private VocDrugMethod theMethod;
 	private VocFrequencyUnit theFrequencyUnit;
@@ -33,6 +33,7 @@ public class DrugPrescription extends Prescription{
 	private Integer theOrderTime;
 	private VocDrugAmountUnit theAmountUnit;
 	private Float theAmount;
+	private VocDrug theVocDrug;
 
 	@Comment("Лекарство")
 	@OneToOne
@@ -163,4 +164,10 @@ public class DrugPrescription extends Prescription{
 		}
 		return sb.toString();
 	}
+
+	/** Лекарство */
+	@Comment("Лекарство")
+	@OneToOne
+	public VocDrug getVocDrug() {return theVocDrug;}
+	public void setVocDrug(VocDrug aVocDrug) {theVocDrug = aVocDrug;}
 }
