@@ -28,6 +28,8 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.prescription.*;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.worker.GroupWorkFunction;
+import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 import ru.ecom.poly.ejb.domain.protocol.Protocol;
@@ -982,7 +984,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			list.setLength(0);
 			list.append("DRUG@");
 			list.append(presNew.getDrug().getId()).append(":");
-			//list.append(presNew.getDrug().getName()).append("::"); //: Date
 			list.append(presNew.getMethod().getId()).append(":");
 			list.append(presNew.getMethod().getName()).append(":");
 			if (presNew.getFrequency()!=null){
@@ -1000,18 +1001,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			}
 			catch (Exception e) {
 				LOG.error("catch Drug ",e);
-			}
-		} else if (aPresc instanceof DietPrescription) {
-			try{
-				DietPrescription presNew = (DietPrescription) aPresc;
-				list.setLength(0);
-				list.append("DIET@");
-				list.append(presNew.getDiet()!=null ? presNew.getDiet().getId() : "").append(":") ;
-				list.append(presNew.getDiet()!=null ? presNew.getDiet().getName() : "").append("#") ;
-				return list.toString();
-			}
-			catch (Exception e) {
-				LOG.error("catch DIET ",e);
 			}
 		} else if (aPresc instanceof ServicePrescription) {
 			try {
