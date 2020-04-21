@@ -5,7 +5,6 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
 import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocComplication;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor;
@@ -37,8 +36,8 @@ import javax.persistence.Id;
 public class SurgicalOperationForm extends IdEntityForm{
 	/** Дата операции */
 	@Comment("Дата операции")
-	@Persist @Required @MaxDateCurrent
-	@DateString @DoDateString
+	@Persist @Required
+	@DateString @DoDateString @MaxDateCurrent
 	public String getOperationDate() {return theOperationDate;}
 	public void setOperationDate(String aOperationDate) {theOperationDate = aOperationDate;	}
 
@@ -120,17 +119,10 @@ public class SurgicalOperationForm extends IdEntityForm{
 	public String getAnesthesiaAmount() {return theAnesthesiaAmount;}
 	public void setAnesthesiaAmount(String aAnesthesiaAmount) {theAnesthesiaAmount = aAnesthesiaAmount;}
 
-	///** Рабочая функция врача, проводившего операцию */
-	//@Comment("Рабочая функция врача, проводившего операцию")
-	//@Persist @Required
-	//public Long getSurgeonFunction() {return theSurgeonFunction;}
-	//public void setSurgeonFunction(Long aSurgeonFunction) {theSurgeonFunction = aSurgeonFunction;}
-	
 	/** Дата операции по */
 	@Comment("Дата операции по")
-	@DateString
-	@DoDateString
-	@Persist  @MaxDateCurrent @Required
+	@DateString @DoDateString @MaxDateCurrent
+	@Persist
 	public String getOperationDateTo() {return theOperationDateTo;}
 	public void setOperationDateTo(String aOperationDateTo) {theOperationDateTo = aOperationDateTo;}
 
@@ -194,8 +186,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	/** Время операции по */
 	@Comment("Время операции по")
 	@Persist
-	@TimeString
-	@DoTimeString @Required
+	@TimeString @DoTimeString
 	public String getOperationTimeTo() {return theOperationTimeTo;}
 	public void setOperationTimeTo(String aOperationTimeTo) {theOperationTimeTo = aOperationTimeTo;}
 
