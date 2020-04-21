@@ -25,7 +25,7 @@
                 <msh:row>
                     <msh:textArea property="comment" label="Комментарий" fieldColSpan="3" horizontalFill="true"/>
                 </msh:row>
-		        <msh:row guid="ad5ec-5754-4cbd-bcb5-a592">
+		        <msh:row>
 		          <ecom:oneToManyOneAutocomplete viewAction="userView.do" vocName="secUser" colSpan="3" label="Пользователи" property="secUsers" />
 		        </msh:row>
                 <msh:submitCancelButtonsRow colSpan="2"/>

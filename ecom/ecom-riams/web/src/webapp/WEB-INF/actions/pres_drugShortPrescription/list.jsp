@@ -6,14 +6,14 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="pres_prescriptListForm" mainMenu="Patient" title="Лекарственное средство" guid="610fe86e-69f6-4ad0-a1dd-14423082c0c3" />
+    <ecom:titleTrail beginForm="pres_prescriptListForm" mainMenu="Patient" title="Лекарственное средство"  />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="Добавить" title="Добавить">
-      <msh:sideLink guid="helloSideLinkNew" params="id" roles="/Policy/Mis/Prescription/DrugPrescription/Create" key="ALT+N" action="/entityParentPrepareCreate-pres_drugPrescription" name="Назначение лекарства" />
+      <msh:sideLink  params="id" roles="/Policy/Mis/Prescription/DrugPrescription/Create" key="ALT+N" action="/entityParentPrepareCreate-pres_drugPrescription" name="Назначение лекарства" />
     </msh:sideMenu>
-    <msh:sideMenu title="Показать" guid="7fd7a5d3-45f2-4551-a7e3-01528a0a9c00" >
-      <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentList-pres_prescription" name="К списку назначений" title="Список назначений" guid="3jg7-f85c-4e87-b447-419887e" />
+    <msh:sideMenu title="Показать"  >
+      <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentList-pres_prescription" name="К списку назначений" title="Список назначений"  />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">

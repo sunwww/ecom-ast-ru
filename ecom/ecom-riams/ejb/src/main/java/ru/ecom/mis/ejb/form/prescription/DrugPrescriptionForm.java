@@ -27,6 +27,7 @@ import javax.persistence.Transient;
 public class DrugPrescriptionForm extends PrescriptionForm{
 
 	private Long theDrug;
+	private Long theVocDrug;
 	private Long theMethod;
 	private Long theFrequencyUnit;
 	private String theFrequency;
@@ -42,18 +43,18 @@ public class DrugPrescriptionForm extends PrescriptionForm{
 
 	/** Плановая дата окончания */
 	@Comment("Плановая дата окончания")
-	@Persist @DateString @DoDateString @Required
+	@Persist @DateString @DoDateString
 	public String getPlanEndDate() {return thePlanEndDate;}
 	public void setPlanEndDate(String aPlanEndDate) {thePlanEndDate = aPlanEndDate;}
 
 	/** Плановое время окончания */
 	@Comment("Плановое время окончания")
-	@Persist @TimeString @DoTimeString @Required
+	@Persist @TimeString @DoTimeString
 	public String getPlanEndTime() {return thePlanEndTime;}
 	public void setPlanEndTime(String aPlanEndTime) {thePlanEndTime = aPlanEndTime;}
 
 	@Comment("Лекарство")
-	@Persist @Required
+	@Persist
 	public Long getDrug() {
 		return theDrug;
 	}
@@ -62,7 +63,7 @@ public class DrugPrescriptionForm extends PrescriptionForm{
 	}
 
 	@Comment("Метод введения")
-	@Persist @Required
+	@Persist
 	public Long getMethod() {
 		return theMethod;
 	}
@@ -144,6 +145,19 @@ public class DrugPrescriptionForm extends PrescriptionForm{
 		return theDescriptionInfo;
 	}
 	public void setDescriptionInfo (String aDescriptionInfo) { theDescriptionInfo = aDescriptionInfo;}
+
+
+	/** Лекарство */
+	@Comment("Лекарство")
+	@Persist @Required
+	public Long getVocDrug() {return theVocDrug;}
+	public void setVocDrug(Long aVocDrug) {theVocDrug = aVocDrug;}
+
+	/** форма выполнения */
+	@Comment("форма выполнения")
+	public PrescriptionFulfilmentForm getFulfilmentForm() {return theFulfilmentForm;}
+	public void setFulfilmentForm(PrescriptionFulfilmentForm aFulfilmentForm) {theFulfilmentForm = aFulfilmentForm;}
+	private PrescriptionFulfilmentForm theFulfilmentForm = new PrescriptionFulfilmentForm();
 
 
 }

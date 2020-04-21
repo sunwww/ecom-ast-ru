@@ -146,4 +146,11 @@ public class CustomMessageForm extends IdEntityForm{
 
 	/** Время действия */
 	private String theValidityTime;
+
+	/** Список отделений */
+	@Comment("Список отделений")
+	public String getLpus() {return theLpus;}
+	public void setLpus(String aLpus) {theLpus = aLpus;}
+	/** Список отделений */
+	private String theLpus;
 }

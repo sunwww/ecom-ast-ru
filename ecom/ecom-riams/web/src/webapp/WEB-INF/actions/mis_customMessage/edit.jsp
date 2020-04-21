@@ -8,11 +8,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="entitySaveGoView-mis_customMessage.do" defaultField="name" guid="17f720e4-3690-4ae5-961b-6d69348757b6">
-      <msh:hidden property="id" guid="df46ed12-bbf3-4f90-9046-dcf1b595541c" />
-      <msh:hidden property="saveType" guid="12fee02b-f848-4039-b3f6-35cbf5f3a629" />
-      <msh:panel guid="eb62e08a-d34a-4af0-9f13-d23197a33fef">
-        <msh:row guid="2df6f0d2-a60d-44a5-b64b-3aeb3f298d04">
+    <msh:form action="entitySaveGoView-mis_customMessage.do" defaultField="name">
+      <msh:hidden property="id"/>
+      <msh:hidden property="saveType"/>
+      <msh:panel>
+        <msh:row>
           <msh:textField property="messageTitle" label="Название" fieldColSpan="3" size="50" />
         </msh:row>
         <msh:row>
@@ -28,6 +28,9 @@
 	        <msh:row>
 	        	<msh:autoComplete property="secRole" label="Пол-лям, у которых есть роль" fieldColSpan="3" vocName="role" horizontalFill="true"/>
 	        </msh:row>
+            <msh:row>
+                <ecom:oneToManyOneAutocomplete viewAction="mis_lpu.do" vocName="vocLpuHospOtdAll" colSpan="3" label="Сотрудникам отделений" property="lpus" />
+            </msh:row>
 	        <msh:row>
 	        	<msh:checkBox property="isAllUsers" label="Отправить всем пользователям" fieldColSpan="3" horizontalFill="true"/>
 	        </msh:row>
@@ -41,13 +44,13 @@
         		<msh:textField property="recipient"/>
         	</msh:ifFormTypeAreViewOrEdit>
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="2" guid="fe0172d0-16e6-490d-9bf2-ab6ac96e7402" />
+        <msh:submitCancelButtonsRow colSpan="2"/>
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="mis_customMessageForm" guid="441c731d-212d-45e8-9964-dde5c8db0a4b">
-      <msh:sideMenu title="Добавить" guid="f692ef30-e3cb-4cb7-9f0f-1e0a38e4b08d">
+    <msh:ifFormTypeIsView formName="mis_customMessageForm">
+      <msh:sideMenu title="Добавить">
         <msh:sideLink key="ALT+2" params="id" roles="/Policy/Mis/CustomMessage/Create" action="/entityPrepareCreate-mis_customMessage" name="Сообщение" title="Добавить сообщение" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
