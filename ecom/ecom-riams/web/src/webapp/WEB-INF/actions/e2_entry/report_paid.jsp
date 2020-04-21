@@ -70,7 +70,6 @@
                     <td onclick="this.childNodes[1].checked='checked';">
                         <input type="radio" name="typeView" value="1">  профилю помощи
                     </td>
-
                     <td onclick="this.childNodes[1].checked='checked';">
                         <input type="radio" name="typeView" value="2"> профиль+отделение
                     </td>
@@ -82,6 +81,9 @@
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';">
                         <input type="radio" name="typeView" value="5">  профиль+отделение+врач+услуга
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeView" value="6">  КСГ
                     </td>
                 </msh:row>
                 <msh:row>
@@ -158,6 +160,11 @@
                         sumCostSql=" ,count(distinct ems.id) as f6_cnt, sum(e.cost) as f7_cost";
                         orderBySql = "e.bedsubtype, vmhp.name, e.doctorname, e.doctorsnils";
                         break;
+                    case "6":
+                        selectSql = ", ksg.code, ksg.name, cast('' as varchar)"; //4 field
+                        groupBySql = orderBySql ="ksg.code, ksg.name";
+                        sumCostSql =", cast(sum(e.beddays)/count(e.id) as int),count(e.id), sum(e.cost)";
+                        break;
                     default:
                         selectSql = ",case when e.bedsubtype ='1' then 'КРУГЛОСУТОЧНЫЙ СТАЦ' when e.bedsubtype ='2' then 'ДНЕВНОЙ СТАЦ' else cast('' as varchar) end as f2_stacType" +
                                 ",cast('' as varchar) as f3_depname, cast('' as varchar)  as f4_helpKind, cast('' as varchar)  as f5_doctorName ";
@@ -186,6 +193,7 @@
                                 " from e2entry e" +
                                 " left join e2bill  bill on bill.id=e.bill_id " +
                                 " left join voce2medhelpprofile vmhp on vmhp.id=e.medhelpprofile_id" +
+                                " left join vocksg ksg on ksg.id=e.ksg_id" +
                                 " where bill.status_id =3").append(addSql).append(" and e.entryType='").append(typeGroup).append("' and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
                                 " and to_date('").append(dateEnd).append("','dd.MM.yyyy') and (e.isDeleted is null or e.isDeleted='0') and (e.doNotSend is null or e.doNotSend='0')").append(defectSql)
                         .append(" group by ").append(groupBySql).append(("VMP".equals(typeGroup) ? ", e.vmpkind " : "")).append(" order by ").append(orderBySql);
@@ -211,7 +219,7 @@
         <msh:section>
             <msh:sectionTitle>Период с ${beginDate} по ${finishDate}</msh:sectionTitle>
             <msh:sectionContent>
-                <ecom:webQuery isReportBase="${isReportBase}" maxResult="1500"  name="journal_ticket" nativeSql="
+                <ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" nameFldSql="journal_ticket_sql"  name="journal_ticket" nativeSql="
 select smo.id as name
 ,smo.dateStart as nameFld
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -275,7 +283,7 @@ group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,
 ,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
 
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
-" />
+" />${journal_ticket_sql}
                 <msh:table printToExcelButton="Сохранить в excel"
                            name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -306,7 +314,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
             <msh:sectionContent>
 
                 <msh:table printToExcelButton="Сохранить в excel"
-                           name="journal_ticket" action="visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}"
+                           name="journal_ticket" action="/javascript(void);visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}"
                            idField="1" noDataMessage="Не найдено">
 
                     <msh:tableColumn columnName="#" property="sn"/>

@@ -459,10 +459,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
                 for (Element zap : zaps) {
                     i++;
-                    if (i % 100 == 0) {
-                        LOG.info("Обработано " + i + " записей");
-                        if (isMonitorCancel(monitor, "Загружено записей: " + i)) break;
-                    }
+                    if (i % 100 == 0 && isMonitorCancel(monitor, "Загружено записей: " + i)) break;
                     Element zsl = zap.getChild("Z_SL");
                     List<Element> slList = zsl.getChildren("SL");
                     Element pac = zap.getChild("PACIENT");
@@ -480,7 +477,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             entry = entry.getParentEntry();
                             isComplexCase = true;
                         }
-                        theManager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId", entryId).executeUpdate();
+                    //    theManager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId", entryId).executeUpdate();
                         entry.setBillNumber(nSchet);
                         entry.setBillDate(billDate);
                         entry.setBill(bill);
