@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -63,14 +64,30 @@ import java.util.*;
 public class PrescriptionServiceBean implements IPrescriptionService {
 	private static final Logger LOG = Logger.getLogger(PrescriptionServiceBean.class);
 
-	public void checkXmlFiles() throws ParserConfigurationException, SAXException, IOException {
+	//создание назначения в листе назначений
+	public Long createServicePrescription(Long aMedServiceId, Long aPrescriptionId) {
+		ServicePrescription prescription = new ServicePrescription();
+		String username = theContext.getCallerPrincipal().getName();
+		prescription.setPrescriptionList(theManager.find(AbstractPrescriptionList.class,aPrescriptionId));
+		prescription.setMedService(theManager.find(MedService.class, aMedServiceId));
+		long date = System.currentTimeMillis();
+		prescription.setCreateDate(new java.sql.Date(date));
+		prescription.setCreateTime(new Time(date));
+		prescription.setCreateUsername(username);
+		prescription.setPlanStartDate(new java.sql.Date(date));
+		PersonalWorkFunction wf = getWorkfuntctionByUsername(username);
+		prescription.setPrescriptSpecial(wf);
+		prescription.setPrescriptCabinet(wf); //неверно? а куда?
+		theManager.persist(prescription);
+		return prescription.getId();
 
+	}
+	//проверяем папку с файлами на наличие данных с лаб. анализаторов
+	public void checkXmlFiles() throws ParserConfigurationException, SAXException, IOException {
 		String homeDirectory  =  getDir("jboss.lab.xmldir","/opt/lab");
 		String xmlDirectory = homeDirectory + "/xml/";
         String xmlArchDirectory = homeDirectory + "/archive/";
-        
         File[] fileList = getFiles(xmlDirectory);
-        
         if (fileList.length>0) {
         	LOG.debug("Найдено "+fileList.length+" файлов");
         	
@@ -156,14 +173,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	        }
 	    }
 
-	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) {
-		if (parsedPdfInfo==null) {
+	    //заполняем результат анализа полученными с аппарата данными
+	private void setDefaultDiary(ParsedPdfInfo parsedPdfInfo) {
+		if (parsedPdfInfo==null || StringUtil.isNullOrEmpty(parsedPdfInfo.getBarcode())) {
 			LOG.error("NO_RESULT");
-			return "";
+			return;
 		}
 		String barcode = parsedPdfInfo.getBarcode();
-		if (!StringUtil.isNullOrEmpty(barcode)) {
-		
+
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder err = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
@@ -193,7 +210,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			for (Object[] obj: list) {
 				try {
 					Long pid = Long.parseLong(obj[0].toString());
-				//	String msid = res.get2().toString();
 					Long templateId = Long.parseLong(obj[2].toString());
 					sql = new StringBuilder() ;
 					sql.append("select p.id as p1id,p.name as p2name"+
@@ -276,21 +292,13 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					LOG.error(e.getMessage(),e);
 				} 
 			}
-			}
-
-		return sb.toString();
-		
-		} else {
-			LOG.info("Штрих код пустой, либо это нет");
-			return null;
 		}
-				
 	}
 	
 	 private String createSQLQuery (ParsedPdfInfo parsedPdfInfo) {
-	        StringBuilder s = new StringBuilder();
+	    	StringBuilder s = new StringBuilder();
 	        s.append("case");
-	       List<ParsedPdfInfoResult> r = parsedPdfInfo.getResults(); 
+	        List<ParsedPdfInfoResult> r = parsedPdfInfo.getResults();
 	        for (ParsedPdfInfoResult p: r) {
 	            s.append(" when p.externalcode='").append(p.getCode()).append("' then '").append(p.getValue()).append("' ");
 	        }
@@ -305,47 +313,45 @@ public class PrescriptionServiceBean implements IPrescriptionService {
     	return aValue ;
     }
 
+    //дублируем лабораторную услугу
 	public Long clonePrescription(Long aPrescriptionId, Long aMedServiceId, Long aWorkFunctionId, String aCreateUsername) {
 		ServicePrescription p = theManager.find(ServicePrescription.class, aPrescriptionId);
-		
-		Long ret = null;
 		if (p!=null) { //Дублируем лаб. назначение (для бак. лаборатории)
 			WorkFunction workFunction = theManager.find(WorkFunction.class, aWorkFunctionId);
 			MedService medService = theManager.find(MedService.class, aMedServiceId);
 			long currentDate = new java.util.Date().getTime();
-			ServicePrescription presOld = p;
 			ServicePrescription presNew = new ServicePrescription();
 			presNew.setCreateDate(new java.sql.Date(currentDate));
-			presNew.setPrescriptionList(presOld.getPrescriptionList());
-			presNew.setPlanStartDate(presOld.getPlanStartDate());
+			presNew.setPrescriptionList(p.getPrescriptionList());
+			presNew.setPlanStartDate(p.getPlanStartDate());
 			presNew.setPrescriptSpecial(workFunction); 
 			presNew.setMedService(medService);
 			presNew.setCreateTime(new java.sql.Time(currentDate));
 			presNew.setCreateUsername(aCreateUsername);
-			presNew.setPrescriptType(presOld.getPrescriptType());
-			presNew.setIntakeDate(presOld.getIntakeDate());
-			
-			presNew.setIntakeTime(presOld.getIntakeTime());
-			presNew.setIntakeUsername(presOld.getIntakeUsername());
-			presNew.setMaterialId(presOld.getMaterialId());
-			presNew.setPrescriptCabinet(presOld.getPrescriptCabinet());
-			presNew.setTransferDate(presOld.getTransferDate());
-			presNew.setTransferTime(presOld.getTransferTime());
-			presNew.setTransferUsername(presOld.getTransferUsername());
-			presNew.setIntakeSpecial(presOld.getIntakeSpecial());
+			presNew.setPrescriptType(p.getPrescriptType());
+			presNew.setIntakeDate(p.getIntakeDate());
+			presNew.setIntakeTime(p.getIntakeTime());
+			presNew.setIntakeUsername(p.getIntakeUsername());
+			presNew.setMaterialId(p.getMaterialId());
+			presNew.setPrescriptCabinet(p.getPrescriptCabinet());
+			presNew.setTransferDate(p.getTransferDate());
+			presNew.setTransferTime(p.getTransferTime());
+			presNew.setTransferUsername(p.getTransferUsername());
+			presNew.setIntakeSpecial(p.getIntakeSpecial());
 			//проставляет отделение, чтобы в отчёте по чувствительности к антибиотикам всё разбивалось по отделениям, а не в лаборатории
 			String sql = "select w.lpu_id from prescription p" +
 					" left join workfunction wf on wf.id = p.intakespecial_id" +
 					" left join worker w on w.id = wf.worker_id" +
-					" where p.id=" + presOld.getId();
+					" where p.id=" + p.getId();
 			List<Object> list = theManager.createNativeQuery(sql).getResultList() ;
 			if (!list.isEmpty())
 				presNew.setDepartment(theManager.find(MisLpu.class, Long.valueOf(list.get(0).toString())));
 			theManager.persist(presNew);
-			ret = presNew.getId();
+			return presNew.getId();
 		}
-		return ret;
+		return null;
 	}
+
 	public String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId
 			, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction, Long aGuaranteeId) {
 		MedService sms = theManager.find(MedService.class, aMedServiceId);
@@ -402,7 +408,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 
 	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) {
 		try {
-			StringBuilder infoToSend = new StringBuilder();
+		//	StringBuilder infoToSend = new StringBuilder();
 			Protocol d =null;
 			JSONObject obj = new JSONObject(aParams) ;
 			String wf = String.valueOf(obj.get("workFunction"));
@@ -475,7 +481,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 										value + " " +
 										param.get("unitname") + " " +
 										msg;
-								infoToSend.append(allmsg).append("<br>");
+					//			infoToSend.append(allmsg).append("<br>");
 							}
 							sb.append(msg);
 						}
@@ -542,17 +548,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	private void sendMesgOutOfReferenceInterval(String msg, Long aPrescriptId) {
 		JSONObject obj = getOwnerfunctionUsernameAndExtraInfo(aPrescriptId);
 		if (obj.has("username")) {
-			/*CustomMessage mes = new CustomMessage() ;
-			mes.setMessageTitle("Выход за границы референсного интервала в лаб. анализе") ;
-			mes.setMessageText("Результат анализа пациента: " + obj.getString("patient") + ":<br>" + msg) ;
-			mes.setUsername("system_message") ;
-			long date = new java.util.Date().getTime() ;
-			mes.setDispatchDate(new java.sql.Date(date)) ;
-			mes.setDispatchTime(new Time(date)) ;
-			mes.setRecipient(obj.getString("username")) ;
-			mes.setMessageUrl("entityParentView-stac_slo.do?id=" + obj.get("dmcId"));
-			mes.setIsEmergency(true) ;
-			theManager.persist(mes) ;*/
 			sendMessageCurrentDate("Результат анализа пациента: " + obj.getString("patient") + ":<br>" + msg
 					,"Выход за границы референсного интервала в лаб. анализе",obj.getString("username"),"system_message"
 					,"entityParentView-stac_slo.do?id=" + obj.get("dmcId"),true);
@@ -674,15 +669,18 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		return obj;
 	}
 	public String getWorkfuntctionInfoByLabTechUsername(String aUsername) {
-		List<Object> labExec = theManager.createNativeQuery("select vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename" +
+		PersonalWorkFunction wf = getWorkfuntctionByUsername(aUsername);
+		if (wf== null) return "";
+		Patient pat = wf.getWorker().getPerson();
+		return wf.getWorkFunction().getName()+" "+pat.getLastname()+" "+pat.getFirstname()+" "+pat.getMiddlename();
+	}
+
+	private PersonalWorkFunction getWorkfuntctionByUsername(String aUsername) {
+		List<BigInteger> labExec = theManager.createNativeQuery("select wf.id" +
 				" from WorkFunction wf" +
 				" left join SecUser su on wf.secUser_id=su.id" +
-				" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" +
-				" left join Worker as w on w.id=wf.worker_id" +
-				" left join Patient as p on p.id=w.person_id" +
 				" where su.login=:login").setParameter("login",aUsername).getResultList();
-		return !labExec.isEmpty() && labExec.get(0)!=null?
-				String.valueOf(labExec.get(0)) : "";
+		return labExec.isEmpty() ? null : theManager.find(PersonalWorkFunction.class, labExec.get(0).longValue());
 	}
 
 	//Если был брак, вернёт того, кто отбраковал.
@@ -785,13 +783,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 
 	public Long checkLabAnalyzed(Long aPrescriptId,String aUsername) {
 		List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login=:login").setParameter("login",aUsername).getResultList() ;
-		if ( wf.isEmpty()) {
-			return null ;
-		} else {
-			return checkLabAnalyzed(aPrescriptId,ConvertSql.parseLong(wf.get(0)), aUsername) ;
-		}
-		
-		
+		return wf.isEmpty() ? null : checkLabAnalyzed(aPrescriptId,ConvertSql.parseLong(wf.get(0)), aUsername) ;
 	}
 	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups) {
 		PrescriptListTemplate temp = new PrescriptListTemplate() ;
@@ -1072,16 +1064,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 
 		AbstractPrescriptionList list  ;
 		if (medCase!=null) {
-			 list = new PrescriptList() ;
-			
+			list = new PrescriptList() ;
 			list.setMedCase(medCase) ;
 			list.setCreateDate(new java.sql.Date(new Date().getTime())) ;
-			list.setCreateUsername(theContext.getCallerPrincipal().toString());
-			if (aName!=null&&!aName.equals("")) {
-				list.setName(aName) ;
-			} else {
-				list.setName(template.getName()) ;
-			}
+			list.setCreateUsername(theContext.getCallerPrincipal().getName());
+			list.setName(aName!=null && !aName.equals("") ? aName : template.getName()) ;
 			list.setComments(template.getComments());
 			list.setWorkFunction(wf) ;
 			theManager.persist(list) ;
@@ -1089,18 +1076,13 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		} else  {
 			list =  new PrescriptListTemplate() ;
 			list.setCreateDate(new java.sql.Date(new Date().getTime())) ;
-			list.setCreateUsername(theContext.getCallerPrincipal().toString());
-			if (aName!=null&&!aName.equals("")) {
-				list.setName(aName) ;
-			} else {
-				list.setName(template.getName()) ;
-			}
-
-		list.setComments(template.getComments());
-		list.setWorkFunction(wf);
-		theManager.persist(list) ;
-		theManager.flush() ;
-		addPrescription(template,list,null) ;
+			list.setCreateUsername(theContext.getCallerPrincipal().getName());
+			list.setName(aName!=null && !aName.equals("") ? aName : template.getName()) ;
+			list.setComments(template.getComments());
+			list.setWorkFunction(wf);
+			theManager.persist(list) ;
+			theManager.flush() ;
+			addPrescription(template,list,null) ;
 		}
 		return list.getId() ;
 	}
@@ -1111,7 +1093,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			if (listNew==null) listNew =new ArrayList<>() ;
 			for (Prescription presc:aTemplate.getPrescriptions()) {
 				Prescription prescNew = newPrescriptionOnTemplate(presc, aSpecialist);
-
 				prescNew.setPrescriptionList(aList) ;
 				listNew.add(prescNew);
 				theManager.flush() ;

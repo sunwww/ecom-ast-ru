@@ -1,8 +1,7 @@
-<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
-<%@page import="java.util.Date"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.nuzmsh.util.format.DateFormat"%>
+<%@page import="java.util.Date"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -397,7 +396,7 @@
   		
   		function removeService(aListPrescript, aMaterialId) {
   				PrescriptionService.intakeServiceRemove(aListPrescript, { 
-		            callback: function(aResult) {
+		            callback: function() {
 		            	window.document.location.reload();
 		            }
 				}); 

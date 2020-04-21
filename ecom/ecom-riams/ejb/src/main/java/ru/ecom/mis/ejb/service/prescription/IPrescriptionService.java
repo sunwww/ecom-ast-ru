@@ -13,7 +13,8 @@ import java.text.ParseException;
  * @author STkacheva
  */
 public interface IPrescriptionService {
-	
+
+	Long createServicePrescription(Long aMedServiceId, Long aPrescriptionId);
 	void checkXmlFiles() throws ParserConfigurationException, SAXException, IOException;
 
 	void setPatientDateNumber(String aPrescriptions, String aDate, String aTime, String aUsername, Long aSpec ) throws ParseException ;

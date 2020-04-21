@@ -45,9 +45,7 @@
 			}
 		}
 		str=str.substring(0,str.length-1);
-		PrescriptionService.getMedcaseByPrescriptionList($('prescriptionList').value, {
-			callback: function (aMedCase) {
-				PrescriptionService.getDuplicatePrescriptions(""+aMedCase, str,{
+				PrescriptionService.getDuplicatePrescriptions($("medcaseId").value, str,{
 					callback: function(aResult) {
 						if (aResult.length>0){
 							var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту в этой истории болезни, все равно назначить?";
@@ -58,9 +56,7 @@
 						}
 					}
 				});		
-			}
-		});
-		 
+
 	
 
 	}

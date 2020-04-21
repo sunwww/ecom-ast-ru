@@ -1,39 +1,37 @@
 
 function onPreDelete(aId, aCtx) {
-	
-	var startedPres = aCtx.manager.createNativeQuery("select p.id from prescription p where id = "+aId+" and p.intakedate is not null").getResultList();
-	if (startedPres.size()>0) {
+	var manager =  aCtx.manager;
+	if (!manager.createNativeQuery("select p.id from prescription p where id = "+aId+" and p.intakedate is not null")
+		.getResultList().isEmpty()) {
 		throw "Удаление назначения невозможно, т.к. был произведен забор биоматериала";
 	}
 	//При удалении назначения, если не оформлен визит, удаляем его. Если оформлен - не удаляем назначение
-	startedPres = aCtx.manager.createNativeQuery("select case when vis.datestart is not null then 1 else 0 end as pid, vis.id as visit,p.calendartime_id as cal " +
+	startedPres = manager.createNativeQuery("select case when vis.datestart is not null then 1 else 0 end as pid, vis.id as visit,p.calendartime_id as cal " +
 			" from prescription p " +
 			" left join medcase vis on vis.timeplan_id=p.calendartime_id" +
 			" where p.id="+aId ).getResultList();
-	if (startedPres.size()>0){
+	if (!startedPres.isEmpty()){
 		var ids = startedPres.get(0);
 		if (+ids[0]>0) {
 			throw "По данному направлению был произведен прием, удаление невозможно!";
 		} else {
 			if (+ids[2]>0){
-			aCtx.manager.createNativeQuery("update workcalendartime set medcase_id=null where id="+ids[2]).executeUpdate();
-			aCtx.manager.createNativeQuery("delete from medcase where parent_id="+ids[1]+"  or (id='"+ids[1]+"' and datestart is null)").executeUpdate();
+			manager.createNativeQuery("update workcalendartime set medcase_id=null where id="+ids[2]).executeUpdate();
+			manager.createNativeQuery("delete from medcase where parent_id="+ids[1]+"  or (id='"+ids[1]+"' and datestart is null)").executeUpdate();
 			}
 		}
-		
-	} 
-		aCtx.manager.createNativeQuery("update workcalendartime set prescription=null where prescription="+aId).executeUpdate();
+	}
+	manager.createNativeQuery("update workcalendartime set prescription=null where prescription="+aId).executeUpdate();
 }
 
 /**
  * Перед сохранением
  */
 function onSave(aForm, aEntity, aCtx) {
-	var date = new java.util.Date() ;
-	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
-	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
-	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-
+	var date = new java.util.Date().getTime() ;
+	aEntity.setEditDate(new java.sql.Date(date)) ;
+	aEntity.setEditTime(new java.sql.Time (date)) ;
+	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().getName()) ;
 }
 
 /**
@@ -91,13 +89,7 @@ function onCreate(aForm, aEntity, aCtx) {
 					} else {
 						adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					}
-					//Перенесли время создания кода биоматериала на момент забора крови
-					/* *if (medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
-						var key =""+pat.id+"#"+par2;
-						matId = Packages.ru.ecom.mis.ejb.service.prescription.PrescriptionServiceBean.getPatientDateNumber(labMap, key, pat.id, par2, aCtx.manager); 
-						labMap.put(key, matId);
-						
-					}*/
+
 					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ;
 					adMedService.setPrescriptSpecial(aEntity.getPrescriptSpecial()) ;
 					adMedService.setMedService(medService) ;
@@ -147,8 +139,6 @@ function onCreate(aForm, aEntity, aCtx) {
 							}
 						}
 					}
-
-					
 				}
 			}
 		}

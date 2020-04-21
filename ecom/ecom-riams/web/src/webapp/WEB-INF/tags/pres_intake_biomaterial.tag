@@ -92,7 +92,6 @@
 				}
 			}
 			var str = JSON.stringify(fldJson);
-			//alert(str) ;
 			if (!isError) {
 			    PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, aTemplateId, {
 				callback: function () {
@@ -134,7 +133,7 @@
 		}
 	    function uncancel${name}Intake(aId) {
         	PrescriptionService.uncancelService(aId, { 
-	            callback: function(aResult) {
+	            callback: function() {
 	            	window.document.location.reload();
 	            }
 			});
@@ -369,7 +368,7 @@
  		PrescriptionService.intakeService($('${name}List').value, textDay+'.'+textMonth+'.'+textYear
       			,(textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute)
   				, { 
-	            callback: function(aResult) {
+	            callback: function() {
 	            	window.document.location.reload();
 	            }
 			});
