@@ -307,4 +307,12 @@ public class MedServiceForm extends IdEntityForm  {
 	public void setIsShowSiteAsDefault(Boolean aIsShowSiteAsDefault) {theIsShowSiteAsDefault = aIsShowSiteAsDefault;}
 	/** Отображать на сайте как услугу по умолчанию у специалиста */
 	private Boolean theIsShowSiteAsDefault =false;
+
+	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
+	@Comment("Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии")
+	@Persist
+	public Long getVocColorIdentity() {return theVocColorIdentity;}
+	public void setVocColorIdentity(Long aVocColorIdentity) {theVocColorIdentity = aVocColorIdentity;}
+	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
+	private Long theVocColorIdentity ;
 }

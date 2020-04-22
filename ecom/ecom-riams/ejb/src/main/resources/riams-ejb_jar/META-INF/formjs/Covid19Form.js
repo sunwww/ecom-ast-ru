@@ -20,6 +20,7 @@ function onCreate(aForm, aEntity, aContext) {
         cip.setVocColorIdentity(cipTypes.isEmpty() ? null :  cipTypes.get(0));
         cip.setCreateUsername(username);
         cip.setStartDate(aEntity.medCase.dateStart);
+        cip.setStartTime(aEntity.medCase.createTime);
         manager.persist(cip);
 
         aEntity.medCase.addColorsIdentity(cip);

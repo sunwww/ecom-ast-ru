@@ -39,6 +39,7 @@ function onCreate(aForm, aSurgOper, aCtx) {
 	}
     checkParent(aSurgOper,aCtx); //Находим родителя по дате и времени операции
 	saveComplications(aForm, aSurgOper, aCtx);
+	createBraceletIfNeed(aForm, aSurgOper, aCtx);
 }
 function onPreSave(aForm,aEntity, aCtx) {
 	var date = new java.util.Date();
@@ -94,6 +95,7 @@ function onSave(aForm, aEntity, aCtx) {
 	checkParent(aEntity,aCtx);
 	aCtx.manager.createNativeQuery("delete from surgcomplication where surgicaloperation_id="+aEntity.id).executeUpdate() ;
 	saveComplications(aForm, aEntity, aCtx);
+	checkBraceleteAndClose(aForm, aEntity, aCtx);
 }
 function checkParent(aEntity, aCtx) {
 	//Находим родителя по дате и времени операции
@@ -138,6 +140,43 @@ function saveComplications(aForm, aEntity, aCtx) {
 			if (vocComp != null) {
 				surgComp.setComplication(vocComp);
 				aCtx.manager.persist(surgComp);
+			}
+		}
+	}
+}
+
+//Проверка, нужно ли создавать браслет и, если нужно, его создание
+function createBraceletIfNeed(aForm, aSurgOper, aCtx) {
+	if (aForm.operationDateTo==''  && aForm.operationTimeTo=='') {  //если не стоят дата-время окончания
+		var list = aCtx.manager.createNativeQuery("select VocColorIdentity_id from medservice where id=" + aForm.medService).getResultList();
+		if (list.size() > 0) {
+			if (list.get(0) != null) { //если есть браслет у услуги
+				var idB = new java.lang.Long(list.get(0));
+				var cip = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
+				cip.setVocColorIdentity(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient,idB));
+				cip.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+				cip.setStartDate(aSurgOper.operationDate);
+				cip.setStartTime(aSurgOper.operationTime);
+				cip.setSurgOperation(aSurgOper);
+				aCtx.manager.persist(cip);
+
+				aSurgOper.medCase.parent.addColorsIdentity(cip);
+				aCtx.manager.persist(aSurgOper.medCase.parent);
+			}
+		}
+	}
+}
+
+//Проверка, нужно ли закрывать браслет (если есть браслет у услуги и проставили дату-время окончания
+function checkBraceleteAndClose(aForm, aEntity, aCtx) {
+	if (aForm.operationDateTo!=''  && aForm.operationTimeTo!='') {  //если стоят дата-время окончания
+		var list = aCtx.manager.createNativeQuery("select id from ColorIdentityPatient where surgoperation_id=" + aEntity.id).getResultList();
+		if (list.size() > 0) {
+			if (list.get(0) != null) { //если есть браслет с такой id операции (который может быть уже снят, но дату-время окончания операции могут менять
+				var idB = new java.lang.Long(list.get(0));
+				aCtx.manager.createNativeQuery("update ColorIdentityPatient set editusername='" +
+					aCtx.getSessionContext().getCallerPrincipal().toString() + "',finishdate = '" + aEntity.operationDateTo
+					+ "', finishtime = '" + aEntity.operationTimeTo + "' where id=" + idB).executeUpdate();
 			}
 		}
 	}

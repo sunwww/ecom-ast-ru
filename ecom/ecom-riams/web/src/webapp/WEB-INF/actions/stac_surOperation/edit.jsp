@@ -379,7 +379,7 @@
       </msh:ifFormTypeAreViewOrEdit>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
-    <script type="text/javascript">// <![CDATA[//
+    <script type="text/javascript">
     checkDrugRequired();
 	var isChangeSizeEpicrisis=1 ;
 	var isChangeSizeHist=1 ;
@@ -449,28 +449,50 @@
     	}
         //проверка даты-времени начала/окончания
     	function checkDateTime() {
-    	    var flag=false;
+            var flag=false;
+    	    //если дата-время окончания необязательны
+            if ($('operationDateTo').className.indexOf('required')==-1) {
+                if ($('operationDateTo').value == '' && $('operationTimeTo').value == '') //и ничего не заполнено
+                    return true;//проверка пройдена
+                else if ($('operationDateTo').value != '' && $('operationTimeTo').value == '' ||
+                    $('operationDateTo').value == '' && $('operationTimeTo').value != '') {  //если одно из полей не заполнено
+                    $('submitButton').disabled = false;
+                    showToastMessage('Нельзя заполнить только дату или только время окончания операции!',null,true,true,3000);
+                }
+                else
+                    flag=checkDates(); //если необязатльно, но оба заполнены, проверяем
+            }
+            else {  //если поля обязательны - проверяем
+                flag=checkDates();
+            }
+            return flag;
+        }
+
+        //проверка на то, что дата+время окончания > дата+время начала
+        function checkDates() {
+            var flag=false;
             if ($('operationDate').value!='' && $('operationTime').value!=''
                 && $('operationDateTo').value!='' && $('operationTimeTo').value!='') {
-                var date1=Date.parse($('operationDate').value.replace(".","/").replace(".","/")+' '+$('operationTime').value);
-                var date2=Date.parse($('operationDateTo').value.replace(".","/").replace(".","/")+' '+$('operationTimeTo').value);
+                var date1 = Date.parse($('operationDate').value.replace(".", "/").replace(".", "/") + ' ' + $('operationTime').value);
+                var date2 = Date.parse($('operationDateTo').value.replace(".", "/").replace(".", "/") + ' ' + $('operationTimeTo').value);
                 if (isNaN(date1) || isNaN(date2)) {
-                    date1=new Date($('operationDate').value.split(".").reverse().join("-")+' '+$('operationTime').value);
-                    date2=new Date($('operationDateTo').value.split(".").reverse().join("-")+' '+$('operationTimeTo').value);
+                    date1 = new Date($('operationDate').value.split(".").reverse().join("-") + ' ' + $('operationTime').value);
+                    date2 = new Date($('operationDateTo').value.split(".").reverse().join("-") + ' ' + $('operationTimeTo').value);
                 }
-                if (date2>date1)
-                    flag=true;
+                if (date2 > date1)
+                    flag = true;
                 else {
                     $('submitButton').disabled = false;
-                    showToastMessage('Дата и время окончания должны быть больше даты и времени начала!',null,true);
+                    showToastMessage('Дата и время окончания должны быть больше даты и времени начала!', null, true, true, 3000);
                 }
             }
             else {
                 $('submitButton').disabled = false;
-                showToastMessage('Поля дата и время начала и окончания обязательны для заполнения!',null,true);
+                showToastMessage('Поля дата и время начала и окончания обязательны для заполнения!', null, true, true, 3000);
             }
-            return flag;
+                return flag;
         }
+
         //проверка заполнения антибиотикотерапии
     	function checkAntibioticSave() {
     	    $('dose').value = $('dose').value.replace(new RegExp(",","g"),".").replace(/[^.\d]/g, '');
@@ -500,7 +522,7 @@
                 document.forms["mainForm"].submit();
     	    else  {
                 $('submitButton').disabled = false;
-                showToastMessage('Выберите, проводилась ли периоперационная антибиотикопрофилактика!', null, true);
+                showToastMessage('Выберите, проводилась ли периоперационная антибиотикопрофилактика!', null, true, false,3000);
             }
         }
     	function save() {
@@ -641,7 +663,30 @@
   	  		});
   	} catch(e) {}
 
+  	//Обязательны ли дата-время окончания операции
+  	function checkIfDateTimeRequired() {
+        //ф-я проверки, есть ли браслет у услуги.
+        //Если есть - дата-время окончания необязательный
+        //Если нет - дата-время окончания обязательны
+        if ($('medService').value != '') {
+            HospitalMedCaseService.isMedServiceGotBracelet($('medService').value, {
+                callback: function (isGotBracelet) {
+                    if (false == isGotBracelet) {
+                        document.getElementById("operationDateTo").className += " required";
+                        document.getElementById("operationTimeTo").className += " required";
+                    } else {
+                        document.getElementById("operationDateTo").className
+                            = document.getElementById("operationDateTo").className.replace(new RegExp("required", "g"), "");
+                        document.getElementById("operationTimeTo").className
+                            = document.getElementById("operationTimeTo").className.replace(new RegExp("required", "g"), "");
+                    }
+                }
+            });
+        }
+    }
+
       medServiceAutocomplete.addOnChangeCallback(function() {
+          checkIfDateTimeRequired();
         HospitalMedCaseService.isAbortRequiredByOperation($('medService').value, {
             callback: function(isAbort) {
                 jQuery('#abortionName').css('background-color',true==isAbort ? '#FFFFA0': '#FFFFFF');
@@ -649,6 +694,7 @@
         });
       });
   	 changeParentMedService() ;
+      checkIfDateTimeRequired();
   	</script>
     </msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsCreate formName="stac_surOperationForm">

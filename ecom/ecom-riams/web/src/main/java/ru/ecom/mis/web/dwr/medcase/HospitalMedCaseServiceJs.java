@@ -1781,9 +1781,14 @@ public class HospitalMedCaseServiceJs {
 				.append("left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id ")
 				.append("left join voccolor vc on vcip.color_id=vc.id ")
 				.append(aSlsOrPat? "left join medcase_coloridentitypatient " : "left join patient_coloridentitypatient ")
-				.append(" ss on ss.colorsidentity_id=cip.id where ")
-				.append(aSlsOrPat? "medcase_id='" : "patient_id='")
-				.append(aSlsOrPatId).append("' and cip.startdate<=current_date and (cip.finishdate is null or cip.finishdate>=current_date)");
+				.append(" ss on ss.colorsidentity_id=cip.id ")
+				.append(" where ")
+				.append(aSlsOrPat? "(ss.medcase_id='" : "ss.patient_id='")
+				.append(aSlsOrPatId).append("'")
+				.append(aSlsOrPat? "or ss.medcase_id=(select parent_id from medcase where id='" : "")
+				.append(aSlsOrPat? aSlsOrPatId : "").append(aSlsOrPat? "'))" : "")
+				.append(" and (cip.startdate<=current_date and cip.finishdate is null ")
+				.append(" or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))");
         JSONArray res = new JSONArray() ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		for (WebQueryResult w :list) {
@@ -1812,7 +1817,9 @@ public class HospitalMedCaseServiceJs {
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		StringBuilder sql = new StringBuilder() ;
 		String id="";
-		Collection<WebQueryResult> res = service.executeNativeSql("insert into coloridentitypatient(startdate,finishdate,voccoloridentity_id,createusername) values(current_date,null,"+idP+",'"+login+"') returning id") ;
+		Collection<WebQueryResult> res = service.executeNativeSql
+				("insert into coloridentitypatient(startdate,starttime,finishdate,finishtime,voccoloridentity_id,createusername) values(current_date,current_time,null,null,"
+						+idP+",'"+login+"') returning id") ;
 		for (WebQueryResult wqr : res) {
 			id = wqr.get1().toString();
 		}
@@ -1834,7 +1841,7 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		//закрывается вчерашним днём, чтобы сразу снимался браслет
-		service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date-1,editusername='"+login+"' where id="+aColorIdentityId);
+		service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date, finishtime=current_time,editusername='"+login+"' where id="+aColorIdentityId);
 	}
 
 	/**
@@ -1969,5 +1976,23 @@ public class HospitalMedCaseServiceJs {
 				" , vc.name as cname from surgcomplication c" +
 				" left join voccomplication vc on vc.id=c.complication_id" +
 				" where surgicaloperation_id="+surgOperId);
+	}
+
+	/**
+	 * Получить, есть ли браслет у услуги для операции.
+	 *
+	 * @param aMedServiceId MedService.id
+	 * @return Boolean true - если есть
+	 * @throws NamingException
+	 */
+	public boolean isMedServiceGotBracelet(Long aMedServiceId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String ret ;
+		try {
+			ret=service.executeNativeSql("select case when VocColorIdentity_id is not null then '1' else '0' end from medservice where id="+aMedServiceId).iterator().next().get1().toString();
+		} catch (Exception e) {
+			ret = null;
+		}
+		return "1".equals(ret);
 	}
 }
