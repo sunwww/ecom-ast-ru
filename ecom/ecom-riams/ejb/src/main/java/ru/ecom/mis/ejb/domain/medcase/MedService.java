@@ -8,6 +8,7 @@ import ru.ecom.mis.ejb.domain.contract.ContractPerson;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceType;
+import ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
@@ -300,4 +301,12 @@ public class MedService extends BaseEntity {
 	public void setIsShowSiteAsDefault(Boolean aIsShowSiteAsDefault) {theIsShowSiteAsDefault = aIsShowSiteAsDefault;}
 	/** Отображать на сайте как услугу по умолчанию у специалиста */
 	private Boolean theIsShowSiteAsDefault =false;
+
+	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
+	@Comment("Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии")
+	@OneToOne
+	public VocColorIdentityPatient getVocColorIdentity() {return theVocColorIdentity;}
+	public void setVocColorIdentity(VocColorIdentityPatient aVocColorIdentity) {theVocColorIdentity = aVocColorIdentity;}
+	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
+	private VocColorIdentityPatient theVocColorIdentity ;
 }

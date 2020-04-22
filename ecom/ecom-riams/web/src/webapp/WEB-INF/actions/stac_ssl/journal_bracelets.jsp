@@ -127,7 +127,8 @@
 				left join voccolor vc on vcip.color_id=vc.id
 				 left join medcase_coloridentitypatient
 				 ss on ss.colorsidentity_id=cip.id where
-				medcase_id=sls.id  and cip.startdate<=current_date and (cip.finishdate is null or cip.finishdate>=current_date)) as t) as varchar) as jsonAr
+				medcase_id=sls.id  and (cip.startdate<=current_date and cip.finishdate is null
+				 or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))) as t) as varchar) as jsonAr
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
