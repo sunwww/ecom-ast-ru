@@ -104,7 +104,7 @@ var fldJson = {};
      function goTo(aValue) {
 		 if (aValue=='view') window.location=viewWay;
 		 else if (aValue=="cons") window.location='entityParentPrepareCreate-pres_wfConsultation.do?id='+plId;
-		 window.location = 'entityParentPrepareCreate-pres_'+aValue+'Prescription.do?id='+plId;
+		 else window.location = 'entityParentPrepareCreate-pres_'+aValue+'Prescription.do?id='+plId;
      }
 
      //получаем шаблоны по анализу
