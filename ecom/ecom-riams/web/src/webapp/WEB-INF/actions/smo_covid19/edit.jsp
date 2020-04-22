@@ -117,8 +117,8 @@
           	 left join covid19Contact co on co.card_id=allC.id
           	 where c.id=${param.id} and co.id is not null
              order by co.lastname, co.firstname, co.middlename"/>
-            <msh:table name="contacts" action="void()" idField="1" noDataMessage="Нет контактов"
-                       deleteUrl="entityDelete-smo_covid19Contact.do">
+            <msh:table name="contacts" action="/javascript:void()" idField="1" noDataMessage="Нет контактов"
+                       deleteUrl="entityParentDeleteGoParentView-smo_covid19Contact.do">
               <msh:tableColumn columnName="ФИО человека" property="2" />
               <msh:tableColumn columnName="Телефон" property="3" />
               <msh:tableColumn columnName="Адрес" property="4" />
@@ -180,9 +180,10 @@
       }
 
       function createContactPatient() { //создаем информацию о контактном пациенте
-        var url = 'entityParentSaveGoParentView-smo_covid19Contact.do';
+        var url = 'entityParentSave-smo_covid19Contact.do';
         jQuery.ajax({
           url:url
+            ,type: "POST"
           ,data: {
             id:0 //При создании всегда ноль
             ,saveType:1
@@ -194,7 +195,11 @@
             ,phone:$('contactPhone').value
             ,address:$('contactAddress').value
           }
-        }).done (function(ret) {console.log(ret); alert("Добавлено!"); window.document.location.reload()});
+        }).done (function() {
+            document.location.reload();
+        });
+          alert("Добавлено!");
+          document.location.reload();
       }
       </script>
     </msh:ifFormTypeAreViewOrEdit>

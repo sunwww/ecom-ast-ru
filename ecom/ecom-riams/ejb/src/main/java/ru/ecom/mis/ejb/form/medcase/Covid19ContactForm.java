@@ -18,7 +18,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Контактное лицо")
 @WebTrail(comment = "Контактное лицо", nameProperties = "lastname", view = "entityParentView-smo_covid19Contact.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Covid19")
-@Parent(parentForm = Covid19ContactForm.class,  property = "card")
+@Parent(parentForm = Covid19Form.class,  property = "card")
 public class Covid19ContactForm extends IdEntityForm {
     /** Карта коронавируса 19 */
     @Comment("Карта коронавируса 19")
