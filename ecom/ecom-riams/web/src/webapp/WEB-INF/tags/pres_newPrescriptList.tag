@@ -77,13 +77,13 @@
 					<input name="cancel" type='button' onclick="javascript:cancel${name}PrescriptList()" value='Ничего не надо, я передумал'>
 				</td>
 			</tr>
-				<msh:ifNotInRole roles="/Policy/Mis/Prescription/ServicePrescription/CreateAndExecute">
+		<msh:ifInRole roles="/Policy/Mis/Prescription/ServicePrescription/CreateAndExecute">
 		   <tr>
 				<td>
 					<input name="cancel" type='button' onclick="javascript:createAndExecutePrescription()" value='Ввести результат анализа'>
 				</td>
 			</tr>
-				</msh:ifNotInRole>
+		</msh:ifInRole>
 			</table>
 
 		</form>
