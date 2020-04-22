@@ -24,6 +24,7 @@
 			</tr>
 			<tr><td colspan="2" style="alignment: center">
 				<input type="button" value="Выбрать и внести данные" onclick="this.disabled=true;createNewPrescription()">
+                <input type="button" value="Отмена" onclick="cancel${name}PrescriptList()">
 			</td></tr>
 		</table>
 		<div id="BioIntakeRootPane"></div>
