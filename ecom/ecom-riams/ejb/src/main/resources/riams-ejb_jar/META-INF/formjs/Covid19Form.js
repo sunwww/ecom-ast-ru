@@ -16,16 +16,22 @@ function onCreate(aForm, aEntity, aContext) {
     if ("1".equals(aEntity.labResult)) { //создаем КВ браслет
         var cipTypes = manager.createNamedQuery("VocColorIdentityPatient.getByCode")
             .setParameter("code","COVID19").getResultList();
-        var cip = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
-        cip.setVocColorIdentity(cipTypes.isEmpty() ? null :  cipTypes.get(0));
-        cip.setCreateUsername(username);
-        cip.setStartDate(aEntity.medCase.dateStart);
-        cip.setStartTime(aEntity.medCase.createTime);
-        manager.persist(cip);
-
-        aEntity.medCase.addColorsIdentity(cip);
-        manager.persist(aEntity.medCase);
-
+        if (!cipTypes.isEmpty()) {
+            var cipType = cipTypes.get(0);
+            //Только если нет браслета
+            if (manager.createNativeQuery("select b.medcase_id  from medcase_coloridentitypatient b " +
+                " left join colorIdentityPatient cip on cip.id=b.colorsidentity_id where b.medcase_id=:id and cip.voccoloridentity_id=:colorId")
+                .setParameter("id",aEntity.medCase.id).setParameter("colorId",cipType.getId()).getResultList().isEmpty()) {
+                var cip = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
+                cip.setVocColorIdentity(cipType);
+                cip.setCreateUsername(username);
+                cip.setStartDate(aEntity.medCase.dateStart);
+                cip.setStartTime(aEntity.medCase.createTime);
+                manager.persist(cip);
+                aEntity.medCase.addColorsIdentity(cip);
+                manager.persist(aEntity.medCase);
+            }
+        }
     }
 }
 

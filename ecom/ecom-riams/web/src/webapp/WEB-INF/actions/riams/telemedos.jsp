@@ -60,12 +60,6 @@
                         </msh:link>
                         </li>
                      </msh:ifInRole>
-						<li>
-	                        <mis:linkCsp roles='/Policy/Mis/Worker/WorkCalendar/Edit'
-	                        	 action="/impdoclist.csp">
-                            Экспертиза
-                        </mis:linkCsp>
-                        </li>
 					<li><msh:link action="ecom_hibernateCacheConfig.do">
                             Кэш для persistence.properties
                         </msh:link></li>
