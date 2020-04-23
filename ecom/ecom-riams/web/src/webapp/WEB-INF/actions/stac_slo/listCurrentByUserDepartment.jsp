@@ -172,6 +172,75 @@ left join voccolor vcr on vcr.id=vcid.color_id
     "
       />
      <msh:sectionTitle>
+
+       <ecom:webQuery name="covid_journal" nameFldSql="covid_journal_sql" nativeSql="
+     select m.id
+     ,dep.name
+     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
+     ,to_char(pat.birthday,'dd.mm.yyyy') as birthday
+     , case when pat.address_addressId is not null
+          then coalesce(adr.fullname,adr.name)
+               ||case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end
+               ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end
+	       ||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end
+       when pat.territoryRegistrationNonresident_id is not null
+	  then okt.name||' '||pat.RegionRegistrationNonresident||' '||oq.name||' '||pat.SettlementNonresident
+	       ||' '||ost.name||' '||pat.StreetNonresident
+               ||case when pat.HouseNonresident is not null and pat.HouseNonresident!='' then ' д.'||pat.HouseNonresident else '' end
+	       ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end
+	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
+       else  pat.foreignRegistrationAddress end as address
+     ,case when m.department_id =500 then 'Средней тяжести' else 'Тяжелое' end as tyajest
+       ,to_char(sls.dateStart,'dd.mm.yyyy') as datestart
+,       cast('' as varchar) as enddate
+       ,(select list(d.record) from medcase vis
+       		left join medcase smc on smc.parent_id =vis.id
+       		left join diary d on d.medcase_id =vis.id
+       		left join medservice  ms on ms.id=smc.medservice_id
+       		where vis.parent_id=sls.id and vis.dtype ='Visit' and ms.code='A26.08.027.999' and upper(d.record) like '%ПОЛОЖИТЕЛЬН%'
+       		)
+     			 from medCase m
+     left join Diagnosis diag on diag.medcase_id=m.id
+     left join vocidc10 mkb on mkb.id=diag.idc10_id
+ 	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+ 	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+     left join MedCase as sls on sls.id = m.parent_id
+     left join Mislpu dep on dep.id=m.department_id
+     left join bedfund as bf on bf.id=m.bedfund_id
+     left join vocbedtype vbt on vbt.id=bf.bedType_id
+     left join StatisticStub as sc on sc.medCase_id=sls.id
+     left join WorkFunction wf on wf.id=m.ownerFunction_id
+     left join Worker w on w.id=wf.worker_id
+     left join Patient wp on wp.id=w.person_id
+     left join Patient pat on m.patient_id = pat.id
+     left join Address2 adr on adr.addressid = pat.address_addressid
+     left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id
+     left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id
+     left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id
+     where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'
+     and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
+     group by  m.id,m.dateStart,pat.lastname,pat.firstname
+     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
+     ,bf.addCaseDuration,m.dateFinish,m.dischargeTime
+     ,pat.passportSeries,pat.passportNumber,pat.passportDateIssued,pat.passportWhomIssued
+    , pat.address_addressId ,adr.fullname,adr.name
+                , pat.houseNumber , pat.houseBuilding ,pat.flatNumber
+                , pat.territoryRegistrationNonresident_id , okt.name,pat.RegionRegistrationNonresident,oq.name,pat.SettlementNonresident
+ 	       ,ost.name,pat.StreetNonresident
+               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name
+
+        , pat.foreignRegistrationAddress,sls.id, dep.name, dep.id
+     order by pat.lastname,pat.firstname,pat.middlename
+"/>
+    <form action="print-stac_current_department_covid.do" method="post" target="_blank">
+    Журнал COVID
+    <input type='hidden' name="sqlText" id="sqlText" value="${covid_journal_sql}">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделении  ${departmentInfo} COVID">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать">
+    </form>
     <form action="print-stac_current_department.do" method="post" target="_blank">
     Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент
     <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
