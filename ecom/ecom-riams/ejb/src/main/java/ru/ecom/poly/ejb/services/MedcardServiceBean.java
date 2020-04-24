@@ -28,15 +28,11 @@ import java.util.List;
 public class MedcardServiceBean implements IMedcardService{
 
     private static final Logger LOG = Logger.getLogger(MedcardServiceBean.class);
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
     /**
      * Поиск мед. карты по номеру
      */
     public List<MedcardForm> findMedCard(String aNumber, boolean aIsExactMatch) {
-        if (CAN_DEBUG) {
-            LOG.debug("findMedcard() Number = " + aNumber );
-        }
         QueryClauseBuilder builder = new QueryClauseBuilder();
         if (aIsExactMatch) {
         	builder.addLike("number", "%"+aNumber+"%");
@@ -69,22 +65,15 @@ public class MedcardServiceBean implements IMedcardService{
 		Query query = theManager.createNativeQuery("SELECT * from Medcard WHERE id = (SELECT max(id) from Medcard)", Medcard.class);
 		List<Medcard> list = query.setMaxResults(1).getResultList();
 		if(list.size() == 1){
-			try{
+			try {
 				Medcard medcard = list.get(0);
 				Long n = Long.valueOf( medcard.getNumber() );
 				n += 1;
-				if (CAN_DEBUG) {
-					LOG.debug("Default Medcard number " + n );
-				}
 				return String.valueOf(n);
-			}catch (Exception e) {
-				if (CAN_DEBUG) {
-					LOG.debug("Medcard number is NAN" );
-				}
+			} catch (Exception e) {
 				return "";
 			}			
-		}
-		else{
+		} else {
 			return "1";
 		}
 	}

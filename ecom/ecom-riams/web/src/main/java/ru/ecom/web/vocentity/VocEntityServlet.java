@@ -59,8 +59,6 @@ public class VocEntityServlet extends HttpServlet {
 		} catch (NamingException e) {
 			LOG.error(e.getMessage(),e);
 		}
-//		out
-//				.print("{\"totalCount\":\"1\",    \"topics\":[{\"post_id\":\"53657\"                ,\"topic_title\":\"Visibility Problem in 1.1\"                ,\"topic_id\":\"10890\"                ,\"author\":\"mystix\"                ,\"post_time\":\"1186816484\"                ,\"post_text\":\"firstly, i think the correct format for the tag menus ...\"                ,\"forum_title\":\"Bugs\"                ,\"forumid\":\"3\"                ,\"reply_count\":\"4\"               }            ]}               ");
 		if(callback!=null) {
 			out.println(");") ;
 		}

@@ -45,9 +45,7 @@ import java.util.List;
 public class TicketServiceBean implements ITicketService {
 
     private static final Logger LOG = Logger.getLogger(MedcardServiceBean.class);
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-    
-    
+
     public Long createMedcase (String aType) {
     	if (aType==null) return null;
 		switch (aType) {
@@ -144,7 +142,6 @@ public class TicketServiceBean implements ITicketService {
     		.append(dat).append("','yyyy-mm-dd'))) and ms.vocMedService_id is not null and ms.isPoliclinic='1'") ;
     	LOG.info(sqlMain) ;
     	List<Object[]> list = theManager.createNativeQuery(sqlMain.toString())
-//    		.setParameter("date", )
     		.getResultList() ;
     	if (!list.isEmpty()) {
     		try {
@@ -227,58 +224,13 @@ public class TicketServiceBean implements ITicketService {
     }
     /** Поиск открытых талонов по мед. карте */
     public List<TicketForm> findActiveMedcardTickets(Long aMedcard) {
-        if (CAN_DEBUG) {
-            LOG.debug("findActiveMedcardTickets() aMedcard = " + aMedcard);
-        }
         QueryClauseBuilder builder = new QueryClauseBuilder();
         builder.add("medcard_id", aMedcard);
-
         Query query = builder.build(theManager, "from Ticket where status="+Ticket.STATUS_OPEN, " order by date, time");
-
         return createList(query);
     }
-    /*
-    public List<TicketForm> findTicketByNonresident(String aTypePat, String aDate,String aDateTo) {
-        QueryClauseBuilder builder = new QueryClauseBuilder();
-        Date date = null;
-        Date dateTo = null;
-        if(!StringUtil.isNullOrEmpty(aDate)) {
-            try {
-                date = DateFormat.parseSqlDate(aDate);
-            } catch (Exception e) {
-                LOG.warn("Ошибка преобразования даты "+aDate, e);
-            }
-        }
-        if(!StringUtil.isNullOrEmpty(aDateTo)) {
-            try {
-                dateTo = DateFormat.parseSqlDate(aDateTo);
-            } catch (Exception e) {
-                LOG.warn("Ошибка преобразования даты "+aDate, e);
-            }
-        }
-        if (date != null){
-        	builder.addBetween("t.date", date,dateTo);
-        } else {
-        	throw new IllegalDataException("Неправильная дата") ;
-        }
-        String add ;
-		if (aTypePat.equals("2")) {
-			add="where $$isForeignPatient^ZExpCheck(m.person_id,t.date)>0" ;
-		} else if (aTypePat.equals("1")){
-			add="where $$isForeignPatient^ZExpCheck(m.person_id,t.date)=0" ;
-		} else {
-			add= "" ;
-		}
 
-        Query query = builder.build(theManager, "from Ticket as t left join Medcard as m on m.id=t.medcard_id "+add, " order by t.date,t.time, t.status");
-       
-        //LOG.info("Запрос по ticket: from Ticket where "+aDateInfo
-        //		+" =:date and usernameCreate='"+aUsername+"' order by date,time, status");
-        LOG.info(query.toString()) ;
-        return createList(query);    	
-    }*/
     public List<TicketForm> findTicketBySpecialistByDate(String aTypePat, String aDate, String aSpecialist) {
-    	//QueryClauseBuilder builder = new QueryClauseBuilder();
     	Date date = null;
     	if(!StringUtil.isNullOrEmpty(aDate)) {
     		try {
@@ -297,14 +249,10 @@ public class TicketServiceBean implements ITicketService {
     		add=" and $$isForeignPatient^ZExpCheck(m.person_id,t.date)=0" ;
     	} else {
     		add= " " ;
-    		//Query query = theManager.createQuery("from Ticket t  where t.date=:tdate  "+add);
-    		//query.setParameter("tdate", date) ;
-    		//return createList(query) ;
     	}
     	Query query = theManager.createNativeQuery("select t.id from Ticket t  left join medcard m on m.id=t.medcard_id " +
 				"where t.date=:tdate  and t.workFunction_id=:workFunction"+add);
     	query.setParameter("tdate", date).setParameter("workFunction",aSpecialist) ;
-    	//		+" =:date and usernameCreate='"+aUsername+"' order by date,time, status");
     	LOG.info(query.toString()) ;
     	return createNativeList(query);    	
     }
@@ -331,8 +279,6 @@ public class TicketServiceBean implements ITicketService {
         }
         Query query = builder.build(theManager, "from Ticket where "
         		+"usernameCreate"+aUsername, " order by date,time, status");
-        //LOG.info("Запрос по ticket: from Ticket where "+aDateInfo
-        //		+" =:date and usernameCreate='"+aUsername+"' order by date,time, status");
         LOG.info(query.toString()) ;
         return createList(query);
     }
@@ -386,13 +332,9 @@ public class TicketServiceBean implements ITicketService {
      * Все талоны по мед. карте
      */
     public List<TicketForm> findAllMedcardTickets(Long aMedcard) {
-        if (CAN_DEBUG) {
-            LOG.debug("findAllMedcardTickets() aMedcard = " + aMedcard);
-        }
         QueryClauseBuilder builder = new QueryClauseBuilder();
         builder.add("medcard_id", aMedcard);
         Query query = builder.build(theManager, "from Ticket where", " order by date");
-
         return createList(query);
     }
 
@@ -400,9 +342,6 @@ public class TicketServiceBean implements ITicketService {
      * Талоны по специалисту
      */
     public List<TicketForm> findAllSpecialistTickets(Long aSpecialist) {
-        if (CAN_DEBUG) {
-            LOG.debug("findAllSpecialistTickets() aSpecialist = " + aSpecialist);
-        }
         QueryClauseBuilder builder = new QueryClauseBuilder();
         builder.add("workFunction_id", aSpecialist);
         Query query = builder.build(theManager, "from Ticket where", " order by date, status");
