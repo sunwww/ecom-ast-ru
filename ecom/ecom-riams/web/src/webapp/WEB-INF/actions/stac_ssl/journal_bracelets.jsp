@@ -173,6 +173,13 @@
                     " and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)";
             request.setAttribute("sqlDate", sqlDate) ;
 
+            String timeStampSql = date!=null && !date.equals("") && typeDate.equals("3") ?
+                    //если есть даты и учитываем регистрацию браслета
+                    " and (cip.startdate<=to_date('" + date + "','dd.mm.yyyy') and cip.finishdate<=to_date('" + dateEnd + "','dd.mm.yyyy') " :
+                    //если всё по текущий момент (в периоде будут выведены все браслеты)
+                    " and (cip.startdate<=current_date and cip.finishdate is null" +
+                            " or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp)) " ;
+            request.setAttribute("timeStampSql",timeStampSql);
             String brs = request.getParameter("brs");
 
             String brString = "";
@@ -187,46 +194,30 @@
             }
             else
                 brString=brs;
-            String totalBrString="";
               if (!brString.isEmpty()) {
                   if (typeViewBr.equals("1")) {
                       brSql = " and vcid.id in (" + brString + ")";
-                      totalBrString=brString;
-                  }
-                  else { //2 или 3
+                  } else if (typeViewBr.equals("2")) { //только выбранные
                       /*
                       Сравниваю list(id voc-браслетов), отсортированные по возрастанию, как и массив
                       т.е., например "1, 2, 3".
                       Если такая же строка получена после сортировки выбранных на форме
                       - в слс есть исключительно браслеты, которые указаны на форме
-                      Это частный случай более общего 3го варианта
                       * */
-                      String selectSql="", eqSql="";
-                      if (typeViewBr.equals("2")) {
-                          selectSql= " list(cast(t.ids as varchar)) ";
-                          eqSql = " = '" + brString + "'";
-                          totalBrString=brString;
-                      }
-                      else if (typeViewBr.equals("3")) { //включая выбранные - использу рег. выражения
-                          selectSql= " ' ,'||list(cast(t.ids as varchar))||', ' ";
-                          totalBrString=brString;
-                          brString = brString.replaceAll(",","%,%") //для рег. выражения
-                                  .replaceAll(" ","");  //пробелы не нужны
-                          brString = "%" + brString + "%";
-                          eqSql = " like '" + brString + "'";
-                      }
-                      StringBuilder tmp = new StringBuilder();
-                      tmp.append(" and (select ").append(selectSql).append(" from (")
-                              .append(" select list(cast(vcid.id as varchar)) as ids from medcase_coloridentitypatient mcid ")
-                              .append(" left join ColorIdentityPatient cid on cid.id=mcid.colorsidentity_id")
-                              .append(" left join VocColorIdentityPatient vcid on vcid.id=cid.voccoloridentity_id")
-                              .append(" where mcid.medcase_id=sls.id group by vcid.id order by vcid.id) as t) ")
-                              .append(eqSql);
-                      brSql = tmp.toString();
+                      brSql = " and (select list(cast(t.ids as varchar)) from (" +
+                              " select list(cast(vcid.id as varchar)) as ids from medcase_coloridentitypatient mcid " +
+                              " left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id" +
+                              " left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id" +
+                              " where mcid.medcase_id=sls.id " + timeStampSql + "group by vcid.id order by vcid.id) as t) = '" + brString + "'";
+                  } else if (typeViewBr.equals("3")){ //включая все выбранные
+                      brSql = " and (select sqluser.checkBracelet('" + brString + "',list(cast(vcid.id as varchar))) from medcase_coloridentitypatient mcid" +
+                              " left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id" +
+                              " left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id" +
+                              " where mcid.medcase_id=sls.id "+ timeStampSql + ")=true ";
                   }
               }
             request.setAttribute("brSql", brSql);
-            request.setAttribute("brs", totalBrString);
+            request.setAttribute("brs", brString);
 
             String title = "Журнал браслетов пациентов";
             title += " в отделении " + request.getParameter("departmentName");
@@ -258,8 +249,7 @@
 				left join voccolor vc on vcip.color_id=vc.id
 				 left join medcase_coloridentitypatient
 				 ss on ss.colorsidentity_id=cip.id where
-				medcase_id=sls.id  and (cip.startdate<=current_date and cip.finishdate is null
-				 or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))) as t) as varchar) as jsonAr
+				medcase_id=sls.id  ${timeStampSql}) as t) as varchar) as jsonAr
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -276,13 +266,12 @@ left join Mislpu dep on dep.id=sloAll.department_id
     left join Patient wp on wp.id=w.person_id
     left join Patient pat on m.patient_id = pat.id
    left join medcase_coloridentitypatient mcid on mcid.medcase_id=sls.id
-left join ColorIdentityPatient cid on cid.id=mcid.colorsidentity_id
-left join VocColorIdentityPatient vcid on vcid.id=cid.voccoloridentity_id
+left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id
+left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id
 left join voccolor vcr on vcr.id=vcid.color_id
     where m.DTYPE='DepartmentMedCase' ${department}
     and m.transferDate is null ${sqlDate}  ${brSql}
     and mcid.colorsidentity_id is not null
-    and (cid.finishdate is null or cid.finishdate>=current_date)
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
     ,bf.addCaseDuration,m.dateFinish,m.dischargeTime,sls.id
@@ -323,8 +312,8 @@ left join voccolor vcr on vcr.id=vcid.color_id
     left join MisLpu ml on ml.id=m.department_id
     left join patient pat on pat.id=sls.patient_id
     left join medcase_coloridentitypatient mci on mci.medcase_id = sls.id or mci.medcase_id = m.id
-    left join ColorIdentityPatient cid on cid.id=mci.colorsidentity_id
-    left join VocColorIdentityPatient vcid on vcid.id=cid.voccoloridentity_id
+    left join ColorIdentityPatient cip on cip.id=mci.colorsidentity_id
+    left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id
     where m.DTYPE='DepartmentMedCase'
     and m.transferDate is null ${sqlDate} ${brSql} ${department}
     and mci.colorsidentity_id is not null
