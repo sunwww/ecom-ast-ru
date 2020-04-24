@@ -346,7 +346,7 @@ public class Expert2ServiceJs {
     }
 
     public boolean saveBillDateAndNumber(Long aListEntryId, String aType, String aServiceStream, String aOldBillNumber, String aOldBillDate,String aBillNumber
-            , String aBillDate, String isForeign, String aComment, String aFileType, HttpServletRequest aRequest) throws NamingException {
+            , String aBillDate, String isForeign, String aComment, String aFileType,String aAddGroupFld, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         IExpert2Service expert2Service= Injection.find(aRequest).getService(IExpert2Service.class);
         StringBuilder sql = new StringBuilder();
@@ -363,8 +363,9 @@ public class Expert2ServiceJs {
 
         }
          sql.append(" where listEntry_id=")
-                    .append(aListEntryId).append(" and entryType='").append(aType).append("' and serviceStream='")
-                    .append(aServiceStream).append("' and isForeign='").append(isForeign).append("' and fileType='").append(aFileType).append("'");
+                 .append(aListEntryId).append(" and entryType='").append(aType).append("' and serviceStream='")
+                 .append(aServiceStream).append("' and isForeign='").append(isForeign).append("' and fileType='").append(aFileType).append("'")
+                 .append(" and addGroupFld='").append(aAddGroupFld!=null ? aAddGroupFld : "").append("'");
         if (!StringUtil.isNullOrEmpty(aOldBillDate)) {sql.append(" and billDate=to_date('").append(aOldBillDate).append("','dd.MM.yyyy')");} else {sql.append(" and billDate is null");}
         sql.append(" and billNumber='").append(aOldBillNumber == null ? "" : aOldBillNumber).append("'").append(" and (isDeleted is null or isDeleted='0')");
         service.executeUpdateNativeSql(sql.toString());

@@ -59,6 +59,7 @@ import java.util.*;
 public class Expert2ServiceBean implements IExpert2Service {
     private Boolean isCheckIsRunning = false;
     private Boolean isConsultativePolyclinic = true;
+    private Boolean isNeedSplitDayTimeHosp = false;
     private static final Logger LOG = Logger.getLogger(Expert2ServiceBean.class);
     private static final String KDPTYPE="POL_KDP"; //КДП более нету, теперь всё - неотложка. Передалеть на поликлинику
     private static final String HOSPITALTYPE="HOSPITAL";
@@ -1171,7 +1172,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     private void setIsConsultativePolyclinic() {
         isConsultativePolyclinic = "1".equals(getExpertConfigValue("CONSULTATIVE_LPU","0"));
-        LOG.info("isConsultativePolyclinic = "+isConsultativePolyclinic);
+        isNeedSplitDayTimeHosp = "1".equals(getExpertConfigValue("SPLIT_DAYTIME_HOSP","0"));
     }
     /** Базовая точка для выполнения всех проверок внутри заполнения */
     public void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId) {
@@ -1359,6 +1360,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         String entryType=aEntry.getEntryType();
         if ((entryType==null||entryType.equals("")) && aEntry.getListEntry()!=null) {entryType=aEntry.getListEntry().getEntryType().getCode();aEntry.setEntryType(entryType);}
         if (entryType.equals(HOSPITALTYPE)) {
+            if (isNeedSplitDayTimeHosp) {
+                aEntry.setAddGroupFld("1".equals(aEntry.getBedSubType()) ? "КС" : "ДС");
+            }
             fileType="H";
             if (isNotNull(aEntry.getVMPKind())) {
                 code="STAC_VMP";

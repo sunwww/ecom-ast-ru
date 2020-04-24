@@ -519,8 +519,18 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             entry.setFondComment(null);
                         }
                         totalSum = totalSum.add(entry.getCost());
+                        Element prikMo = zsl.getChild("D_PRIK_MO");
+                        if (prikMo!=null && isNotNull(prikMo.getText())) { //Проставляем информацию о прик. ЛПУ для формирования МУР
+                            entry.setAttachedLpu(prikMo.getText());
+                            entry.setAddGroupFld("МУР");
+
+                        } else {
+                            entry.setAttachedLpu("");
+                            entry.setAddGroupFld("");
+                        }
                         theManager.persist(entry);
                     }
+
                 }
                 LOG.info("По счету №" + bill.getBillNumber() + " сумма = " + totalSum);
                 monitor.setText("По счету №" + bill.getBillNumber() + " сумма = " + totalSum);

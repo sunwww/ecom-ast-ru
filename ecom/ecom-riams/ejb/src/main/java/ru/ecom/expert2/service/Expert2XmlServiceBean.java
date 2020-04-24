@@ -748,7 +748,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
     private boolean EXPORT_DISP_SERVICE_NO_DATE = false;
     /**  Создаем MP файл с данными по стационару/поликлинике */
-    public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, Boolean calcAllListEntry, long aMonitorId, String aVersion, String aFileType) {
+    public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId
+            , Boolean calcAllListEntry, long aMonitorId, String aVersion, String aFileType) {
         LOG.info("Формирование файла версии "+aVersion);
         IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Формирование xml файла. Размер: ",999);
         try {
