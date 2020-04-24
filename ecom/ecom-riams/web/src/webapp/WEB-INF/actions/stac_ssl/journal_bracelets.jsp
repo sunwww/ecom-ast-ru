@@ -1,4 +1,10 @@
 <%@ page import="ru.ecom.web.util.ActionUtil" %>
+<%@ page import="com.google.gson.JsonParser" %>
+<%@ page import="com.google.gson.JsonObject" %>
+<%@ page import="com.google.gson.JsonArray" %>
+<%@ page import="com.google.gson.JsonElement" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -9,6 +15,7 @@
     <%
         String typeDate = ActionUtil.updateParameter("BrList","typeDate","1", request) ;
         String typeView = ActionUtil.updateParameter("BrList","typeView","1", request) ;
+        String typeViewBr = ActionUtil.updateParameter("BrList","typeViewBr","1", request) ;
     %>
     <tiles:put name="title" type="string">
         <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Отчет по браслетам пациентов"></msh:title>
@@ -24,20 +31,33 @@
                         <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
                     </msh:row>
                     <msh:row>
-                        <msh:autoComplete property="filterAdd1" fieldColSpan="16" horizontalFill="true" label="Браслет" vocName="vocColorIdentityPatientWithPat"/>
+                        <ecom:oneToManyOneAutocomplete label="Браслеты" vocName="vocColorIdentityPatientWithPat" property="filterAdd1" colSpan="16"/>
                     </msh:row>
-                    <msh:textField property="dateBegin" label="Период с" />
-                    <msh:textField property="dateEnd" label="по" />
-
                     <msh:row>
-                        <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
-                        <td onclick="this.childNodes[1].checked='checked';">
+                        <td></td>
+                        <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
+                            <input type="radio" name="typeViewBr" value="1">  хотя бы один
+                        </td>
+                        <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
+                            <input type="radio" name="typeViewBr" value="2">  только выбранные
+                        </td>
+                        <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
+                            <input type="radio" name="typeViewBr" value="3">  включая все выбранные
+                        </td>
+                    </msh:row>
+                    <msh:row>
+                        <msh:textField property="dateBegin" label="Период с" />
+                        <msh:textField property="dateEnd" label="по" />
+                    </msh:row>
+                    <msh:row>
+                        <td class="label" title="Поиск по дате  (typeDate)"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
+                        <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
                             <input type="radio" name="typeDate" value="1">  поступления
                         </td>
-                        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
                             <input type="radio" name="typeDate" value="2">  выписки
                         </td>
-                        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
                             <input type="radio" name="typeDate" value="3">  регистрации браслета
                         </td>
                     </msh:row>
@@ -45,11 +65,11 @@
 
                     <msh:row>
                         <td></td>
-                        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-                            <input type="radio" name="typeView" value="1"  >  свод по отделениям
+                        <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
+                            <input type="radio" name="typeView" value="1">  свод по отделениям
                         </td>
-                        <td onclick="this.childNodes[1].checked='checked';" colspan="5">
-                            <input type="radio" name="typeView" value="2"  >  реестр пациентов
+                        <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
+                            <input type="radio" name="typeView" value="2">  реестр пациентов
                         </td>
                     </msh:row>
                     <td>
@@ -62,6 +82,7 @@
 
             checkFieldUpdate('typeDate','${typeDate}',1) ;
             checkFieldUpdate('typeView','${typeView}',1) ;
+            checkFieldUpdate('typeViewBr','${typeViewBr}',1) ;
             function checkFieldUpdate(aField,aValue,aDefault) {
 
                 eval('var chk =  document.forms[0].'+aField) ;
@@ -73,6 +94,66 @@
                 }
             }
         </script>
+        <%!
+            /**
+             * Получить массив из json
+             * @param brs String json
+             * @return Long[] массив с id
+             */
+            public Long[] getMasFromJson(String brs){
+                List<Long> list = new ArrayList<>();
+                JsonParser parser = new JsonParser();
+                JsonObject jparsr = parser.parse(brs).getAsJsonObject();
+                JsonArray brEls = jparsr.getAsJsonArray("childs");
+                for (JsonElement el : brEls) {
+                    JsonObject elo = el.getAsJsonObject();
+                    String val = elo.get("value").toString().replaceAll("\"", "");
+                    if (!val.equals("")) {
+                        Long l=0L;
+                        try {
+                            l = Long.parseLong(val);
+                        } catch (NumberFormatException e) { }
+                        if (l>0L)
+                            list.add(l);
+                    }
+                }
+                return list.toArray(new Long[list.size()]);
+            }
+        %>
+        <%!
+            /**
+             * Получить строку в формате, удобном для сравнения с list(varchar) в postgres
+             * @param arr Long[] отсортированный массив
+             * @return String id через запятую
+             */
+            public String getStrWithChoosenIds(Long[] arr){
+                StringBuilder brSb = new StringBuilder();
+                String brString="";
+                for (long c : arr) {
+                    brSb.append(c).append(", ");
+                }
+                brString = brSb.toString();
+                if (brSb.length() > 1)
+                    brString = brString.substring(0, brString.length() - 2);
+                return brString;
+            }
+        %>
+        <%!
+            /**
+             * Сортировка массива
+             */
+            public void bubbleSort(Long[] arr) {
+                for (int i = arr.length - 1; i > 0; i--) {
+                    for (int j = 0; j < i; j++) {
+                        if (arr[j] > arr[j + 1]) {
+                            Long tmp = arr[j];
+                            arr[j] = arr[j + 1];
+                            arr[j + 1] = tmp;
+                        }
+                    }
+                }
+            }
+        %>
         <%
             String department = request.getParameter("department") ;
             if (department!=null && !department.equals("")) request.setAttribute("department"," and m.department_id="+department);
@@ -92,14 +173,64 @@
                     " and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)";
             request.setAttribute("sqlDate", sqlDate) ;
 
-            String bracelet = (String)request.getParameter("filterAdd1");
-            String brSql = bracelet!=null && !bracelet.equals("")?
-                " and vcid.id=" + bracelet : "";
-            request.setAttribute("brSql",brSql);
+            String brs = request.getParameter("brs");
+
+            String brString = "";
+            String brSql = "";
+            if (brs==null || brs.isEmpty()) {
+                brs = request.getParameter("filterAdd1");
+                if (brs != null && !brs.equals("") && !brs.equals("null")) {
+                    Long[] mas = getMasFromJson(brs);
+                    bubbleSort(mas);
+                    brString = getStrWithChoosenIds(mas);
+                }
+            }
+            else
+                brString=brs;
+            String totalBrString="";
+              if (!brString.isEmpty()) {
+                  if (typeViewBr.equals("1")) {
+                      brSql = " and vcid.id in (" + brString + ")";
+                      totalBrString=brString;
+                  }
+                  else { //2 или 3
+                      /*
+                      Сравниваю list(id voc-браслетов), отсортированные по возрастанию, как и массив
+                      т.е., например "1, 2, 3".
+                      Если такая же строка получена после сортировки выбранных на форме
+                      - в слс есть исключительно браслеты, которые указаны на форме
+                      Это частный случай более общего 3го варианта
+                      * */
+                      String selectSql="", eqSql="";
+                      if (typeViewBr.equals("2")) {
+                          selectSql= " list(cast(t.ids as varchar)) ";
+                          eqSql = " = '" + brString + "'";
+                          totalBrString=brString;
+                      }
+                      else if (typeViewBr.equals("3")) { //включая выбранные - использу рег. выражения
+                          selectSql= " ' ,'||list(cast(t.ids as varchar))||', ' ";
+                          totalBrString=brString;
+                          brString = brString.replaceAll(",","%,%") //для рег. выражения
+                                  .replaceAll(" ","");  //пробелы не нужны
+                          brString = "%" + brString + "%";
+                          eqSql = " like '" + brString + "'";
+                      }
+                      StringBuilder tmp = new StringBuilder();
+                      tmp.append(" and (select ").append(selectSql).append(" from (")
+                              .append(" select list(cast(vcid.id as varchar)) as ids from medcase_coloridentitypatient mcid ")
+                              .append(" left join ColorIdentityPatient cid on cid.id=mcid.colorsidentity_id")
+                              .append(" left join VocColorIdentityPatient vcid on vcid.id=cid.voccoloridentity_id")
+                              .append(" where mcid.medcase_id=sls.id group by vcid.id order by vcid.id) as t) ")
+                              .append(eqSql);
+                      brSql = tmp.toString();
+                  }
+              }
+            request.setAttribute("brSql", brSql);
+            request.setAttribute("brs", totalBrString);
+
             String title = "Журнал браслетов пациентов";
-            String brName = (String)request.getParameter("filterAdd1Name");
             title += " в отделении " + request.getParameter("departmentName");
-            if (brName!=null && !brName.equals("")) title += " с браслетом " + brName;
+            if (brs!=null && !brs.equals("")) title += " с выбранными браслетами ";
             title += date!=null && !date.equals("")?
                     " за период " + date + " - " + dateEnd : " на текущий момент";
             request.setAttribute("title",title);
@@ -117,7 +248,7 @@
     	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
    ,max(dep.name) as depn
     ,list(vdrt.name||' '||vpd.name||' '||mkb.code) as diag
-,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background:'||max(vcr.code) else '' end as styleRow
+,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background-color:'||max(vcr.code)||'; color:black' else '' end as styleRow
      ,cast('-' as varchar(1)) as tempId
        ,cast ((select to_json(array_agg(t)) from	(select cip.id,vc.name||' ('||vcip.name||')' as colName
     ,vc.code as colorCode,vcip.name as vsipnameJust,vc.picture as picture, substring(cip.info from 0 for 30) as info
@@ -201,7 +332,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
     order by ml.name
     " />
             <msh:table name="braceletsListAll"
-                       action="journal_bracelets.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&filterAdd1=${param.filterAdd1}&filterAdd1Name=${param.filterAdd1Name}"
+                       action="journal_bracelets.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&brs=${brs}"
                        idField="4">
                 <msh:tableColumn property="sn" columnName="#"/>
                 <msh:tableColumn columnName="Отделение" property="2"/>
@@ -222,7 +353,6 @@ left join voccolor vcr on vcr.id=vcid.color_id
                 }
             }
             setValOrNull('department',true);
-            setValOrNull('filterAdd1',true);
             <%
             if (request.getParameter("departmentName")!=null && request.getParameter("department")!=null)
             %>
@@ -230,13 +360,11 @@ left join voccolor vcr on vcr.id=vcid.color_id
             $('departmentName').value='<%= request.getParameter("departmentName")%>';
 
             <%
-           if (request.getParameter("filterAdd1Name")!=null && request.getParameter("filterAdd1")!=null)
+           if (request.getParameter("filterAdd1")!=null)
            %>
             $('filterAdd1').value='<%= request.getParameter("filterAdd1") %>';
-            $('filterAdd1Name').value='<%= request.getParameter("filterAdd1Name")%>';
 
             setValOrNull('department',false);
-            setValOrNull('filterAdd1',false);
 
             var tableBr = getTableToSetBracelets('brList');
             if (tableBr!=null)
