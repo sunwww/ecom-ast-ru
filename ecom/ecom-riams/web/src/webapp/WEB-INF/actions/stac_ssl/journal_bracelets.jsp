@@ -166,7 +166,7 @@
 
             if (typeDate.equals("1")) {typeDate="sls.dateStart";}
             else if (typeDate.equals("2")) {typeDate="sls.dateFinish";}
-            else if (typeDate.equals("3")) {typeDate="cid.startdate";}
+            else if (typeDate.equals("3")) {typeDate="cip.startdate";}
 
             String sqlDate = date!=null && !date.equals("")?
                     " and " + typeDate + " between to_date('"+date+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy')" :
@@ -269,7 +269,7 @@ left join Mislpu dep on dep.id=sloAll.department_id
 left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id
 left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id
 left join voccolor vcr on vcr.id=vcid.color_id
-    where m.DTYPE='DepartmentMedCase' ${department}
+    where m.DTYPE='DepartmentMedCase' ${department} ${timeStampSql}
     and m.transferDate is null ${sqlDate}  ${brSql}
     and mcid.colorsidentity_id is not null
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
@@ -315,7 +315,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
     left join ColorIdentityPatient cip on cip.id=mci.colorsidentity_id
     left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id
     where m.DTYPE='DepartmentMedCase'
-    and m.transferDate is null ${sqlDate} ${brSql} ${department}
+    and m.transferDate is null ${sqlDate} ${brSql} ${department} ${timeStampSql}
     and mci.colorsidentity_id is not null
     group by m.department_id,ml.name
     order by ml.name
