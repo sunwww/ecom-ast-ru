@@ -8,13 +8,14 @@
 
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="mis_medService" />
-      <tags:medserviceTemplatesCopy name="medserviceTemplatesCopy" />
+      <tags:medserviceInfoCopy name="medserviceInfoCopy" />
     <msh:sideMenu title="Медицинская услуга">
       <msh:ifFormTypeIsView formName="mis_medServiceForm">
         <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medService" name="Изменить" roles="/Policy/Mis/MedService/Edit" />
-      </msh:ifFormTypeIsView>
+            </msh:ifFormTypeIsView>
       <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm">
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_medService" name="Удалить" roles="/Policy/Mis/MedService/Delete" />
+        <msh:sideLink params="" action="/javascript:showmedserviceInfoCopy(${param.id },3)" name="Создать дубль" title="Создать дубль этой услуги" roles="/Policy/Mis/MedService/Create" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
     <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm">
@@ -120,7 +121,7 @@
     <msh:ifInRole roles="/Policy/Mis/MedService/VocWorkFunction/View">
     	<msh:section createRoles="/Policy/Mis/MedService/VocWorkFunction/Create"
     		createUrl="entityParentPrepareCreate-mis_medService_workFunction.do?id=${param.id}"
-    		title="Прикрепление к рабочим функциям по отделениям" >
+    		title="Прикрепление к рабочим функциям по отделениям <a href='javascript:void(0)' onclick='showmedserviceInfoCopy(${param.id },2)'> Копировать в услугу</a>" >
     	<ecom:webQuery name="workFunc" nativeSql="
     	select wfs.id as wfsid,vwf.name as vwfname,lpu.name as lpuname
     	,vbt.name as vbtname,vbst.name as vbstname
@@ -158,7 +159,7 @@
     	</msh:section>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Diary/Template/View">
-        <msh:section title="Шаблоны заключений <a href='javascript:void(0)' onclick='showmedserviceTemplatesCopy(${param.id })'> Копировать в услугу</a>" createRoles="/Policy/Diary/Template/Create" createUrl="entityParentPrepareCreate-diary_template.do?id=${param.id}">
+        <msh:section title="Шаблоны заключений <a href='javascript:void(0)' onclick='showmedserviceInfoCopy(${param.id },1)'> Копировать в услугу</a>" createRoles="/Policy/Diary/Template/Create" createUrl="entityParentPrepareCreate-diary_template.do?id=${param.id}">
           <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm"/>
           <msh:table name="templates" action="diary_templateView.do" idField="id">
             <msh:tableColumn property="title" columnName="Заголовок"/>
