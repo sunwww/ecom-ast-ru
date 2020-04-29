@@ -43,7 +43,7 @@ var map = new java.util.HashMap() ;
 /* Печать протокола КИЛИ */
 function printKiliProtocol (aCtx, aParams) {
 	//var id = new java.lang.Long(aParams.get("id"));
-	var protocolNumber = new java.lang.Long(aParams.get("protocolNumber"));
+	var protocolNumber = new java.lang.String(aParams.get("protocolNumber"));
 	var protocolDate = new java.lang.String(aParams.get("protocolDate"));
 	var profileName = "";
 	map.put("protocolNumber", protocolNumber);
