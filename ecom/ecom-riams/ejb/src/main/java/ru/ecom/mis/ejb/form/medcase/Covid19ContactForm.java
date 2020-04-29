@@ -37,7 +37,7 @@ public class Covid19ContactForm extends IdEntityForm {
 
     /** Имя */
     @Comment("Имя")
-    @Persist @Required
+    @Persist
     @DoUpperCase
     public String getFirstname() {return theFirstname;}
     public void setFirstname(String aFirstname) {theFirstname = aFirstname;}
