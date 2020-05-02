@@ -17,7 +17,6 @@ public class E2CancerDrug extends BaseEntity {
     @ManyToOne
     public E2CancerEntry getCancerEntry() {return theCancerEntry;}
     public void setCancerEntry(E2CancerEntry aCancerEntry) {theCancerEntry = aCancerEntry;}
-    /** Онкологический случай */
     private E2CancerEntry theCancerEntry ;
 
     /** Дата введения препарата */
@@ -25,7 +24,6 @@ public class E2CancerDrug extends BaseEntity {
     @OneToMany(mappedBy = "drug", cascade = CascadeType.ALL)
     public List<E2CancerDrugDate> getDates() {return theDates;}
     public void setDates(List<E2CancerDrugDate> aDates) {theDates= aDates;}
-    /** Дата введения препарата */
     private List<E2CancerDrugDate> theDates ;
 
     /** Лекарственный препарат */
@@ -33,7 +31,6 @@ public class E2CancerDrug extends BaseEntity {
     @OneToOne
     public VocOncologyN020 getDrug() {return theDrug;}
     public void setDrug(VocOncologyN020 aDrug) {theDrug = aDrug;}
-    /** Лекарственный препарат */
     private VocOncologyN020 theDrug ;
 
     public E2CancerDrug() {}

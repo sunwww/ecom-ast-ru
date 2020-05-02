@@ -5,6 +5,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.expert2.service.IExpert2ImportService;
 import ru.ecom.expert2.web.form.ImportFileForm;
@@ -32,7 +33,6 @@ public class Expert2FileImportAction extends BaseAction {
 				return aMapping.findForward(SUCCESS) ;
 			}
 			String fileName=ffile.getFileName();
-			LOG.info("filename = "+fileName);
 			String action = form.getDirName();
 			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi/server/default/data");
 			Long entryListId = form.getObjectId();
@@ -48,40 +48,22 @@ public class Expert2FileImportAction extends BaseAction {
 								try {
 									expert2service.importElmed(monitorId,fileName);
 								} catch (Exception e) {
-									throw new IllegalStateException(e) ;
-								}
-							}
-						}.start() ;
-
-
-					} else if (fileName.toUpperCase().endsWith(".MP")) {
-						saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
-						LOG.info("Создаем заполнение из файла, monitor="+monitorId);
-						new Thread() {
-							public void run() {
-								try {
-									expert2service.createEntryByFondXml(monitorId, fileName);
-								} catch (Exception e) {
+									monitorService.cancel(monitorId);
 									throw new IllegalStateException(e) ;
 								}
 							}
 						}.start() ;
 					} else {
-						LOG.warn("Создания заполнения возможно только из МР пакета!");
+						LOG.warn("Создания заполнения возможно только для ELMED!");
+						monitorService.cancel(monitorId);
 					}
 					break;
-				/*case "importN5":
-					LOG.warn("import N5 deprecated!");
-					if ((fileName.startsWith("N2") || fileName.startsWith("N5")) && fileName.toUpperCase().endsWith(".XML")) { //Импортируем файл для проставления номеров направления фонда
-						LOG.info("start import N5");
-						 //expert2service.importN5File(new SAXBuilder().build(ffile.getInputStream()),entryListId);
-					} else {
-						result="Неверное имя файла для импорта N5 (xml файл должен начинаться с N5)!";
-					}
-					break; */
 				case "importFlk":
 					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
-					LOG.info(expert2service.importFlkAnswer(fileName, entryListId));
+					new Thread() {
+						public void run() {
+							expert2service.importFlkAnswer(monitorId, fileName, entryListId);
+						}}.start();
 					break;
 				case "importDefect":
 					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
@@ -90,19 +72,27 @@ public class Expert2FileImportAction extends BaseAction {
 							try {
 								expert2service.importFondMPAnswer(monitorId, fileName) ;
 							} catch (Exception e) {
+								monitorService.cancel(monitorId);
 								throw new IllegalStateException(e) ;
 							}
 						}
 					}.start() ;
-
 
 					break;
 					default:
 						LOG.warn("Я не понимаю, чего вы от меня хотите!!!"+action);
 			}
 
-			aRequest.setAttribute("monitorId",monitorId);
-    		return aMapping.findForward(SUCCESS) ;
+			if (form.isViewOnly()) { //return json
+				JSONObject JSONObject = new JSONObject();
+				JSONObject.put("monitorId",monitorId);
+				aResponse.setContentType("application/x-json;charset=utf-8");
+				aResponse.getWriter().print(JSONObject);
+				return null;
+			} else {
+				aRequest.setAttribute("monitorId",monitorId);
+				return aMapping.findForward(SUCCESS) ;
+			}
 
     	} catch(Exception e) {
 			LOG.error("Ошибочка = ",e);

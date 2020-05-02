@@ -29,7 +29,6 @@
                     <td colspan="2">
                         <input type="button" value="Создать заполнение из файла" onclick="setAction('createEntry','СОЗДАЕМ НОВОЕ ЗАПОЛНЕНИЕ')">
                         <input type="button" value="Импорт дефектов" onclick="setAction('importDefect','ИМПОРТ ДЕФЕКТОВ')">
-                        <input type="button" value="Импорт N5" onclick="setAction('importN5','ИМПОРТ N5')">
                     </td>
                 </tr>
                 <tr><td colspan="2">

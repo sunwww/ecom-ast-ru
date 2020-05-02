@@ -71,7 +71,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final String COMPLEXSERVICESTREAM = "COMPLEXCASE";
     private static final SimpleDateFormat SQLDATE = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat MONTHYEARDATE = new SimpleDateFormat("yyyy-MM");
-    private static final ArrayList<String> childBirthMkb = new ArrayList<>();
+    private static final ArrayList<String> CHILD_BIRTH_MKB = new ArrayList<>();
 
     public E2Entry getEntryJson(Long aEntryId) { return theManager.find(E2Entry.class,aEntryId);}
 
@@ -130,15 +130,13 @@ public class Expert2ServiceBean implements IExpert2Service {
         StringBuilder sqlHistory = new StringBuilder();
         if (isNotNull(aHistoryNumbers)) {
             String[] histories = aHistoryNumbers.split(",");
-            sqlHistory.append(" and ss.code in (");
+            sqlHistory.append(HOSPITALTYPE.equals(listEntryType) ? " and ss.code": " and p.patientSync").append(" in (");
             boolean isFirst = true;
             for (String history: histories) {
                 if (!isFirst) {sqlHistory.append(",");} else {isFirst=false;}
                 sqlHistory.append("'").append(history).append("'");
             }
             sqlHistory.append(")");
-        } else {
-            sqlHistory.append("");
         }
         String lpuCode = getExpertConfigValue("LPU_REG_NUMBER","300001");
         while(searchSql.indexOf("##dateStart##")>-1) {searchSql=searchSql.replace("##dateStart##", toSQlDateString(aListEntry.getStartDate())); }
@@ -738,7 +736,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 //Если текущий случай - обсервационное отделение. Допускаем что до него может быть только патология беременности(+роды). Все операции с пред. отделений переносим в это отделение.
                 Long calendarDays = isNotNull(patologyEntry.getCalendarDays()) ? patologyEntry.getCalendarDays() : 0;
                 if (!patologyEntry.getIsChildBirthDepartment()
-                        && (calendarDays > 5 || (calendarDays > 1 && childBirthMkb.contains(patologyEntry.getMainMkb())))) { //Если длительность случая - больше пяти дней (или диагноз входит в список)- не объединяемъ
+                        && (calendarDays > 5 || (calendarDays > 1 && CHILD_BIRTH_MKB.contains(patologyEntry.getMainMkb())))) { //Если длительность случая - больше пяти дней (или диагноз входит в список)- не объединяемъ
                     VocE2FondV009 perevodResult = getActualVocByClassName(VocE2FondV009.class, patologyEntry.getFinishDate(), " code='104'"); //TODO Колхоз - исправить
                     patologyEntry.setFondIshod((VocE2FondV012)getActualVocByClassName(VocE2FondV012.class, patologyEntry.getFinishDate(), " code='103'")); //TODO Колхоз - исправить
                     patologyEntry.setFondResult(perevodResult); //TODO Колхоз - исправить
@@ -2497,9 +2495,11 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
         if (aEntry.getFactorList()!=null) {
             for (VocE2EntryFactor factor : aEntry.getFactorList()) {
-                if ("KSLP_INFECT".equals(factor.getCode())) {
+                String factorCode = factor.getCode();
+                if ("KSLP_INFECT".equals(factorCode)) {
                     codes.add("12");
-                    break;
+                } else if ("COVID1.7".equals(factorCode)) { //КСЛП 1.7 у всех коронавирусных
+                    codes.add("18");
                 }
             }
         }
@@ -2807,11 +2807,11 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /*Список диагнозов, с которыми разрешена подача обсервационного отделения менее 5 дней*/
     private void fillChildBirthMkbs() {
-        childBirthMkb.add("O14.1");
-        childBirthMkb.add("O34.2");
-        childBirthMkb.add("O36.3");
-        childBirthMkb.add("O36.4");
-        childBirthMkb.add("O42.2");
+        CHILD_BIRTH_MKB.add("O14.1");
+        CHILD_BIRTH_MKB.add("O34.2");
+        CHILD_BIRTH_MKB.add("O36.3");
+        CHILD_BIRTH_MKB.add("O36.4");
+        CHILD_BIRTH_MKB.add("O42.2");
     }
 
     /** Создаем случаи НМП в поликлинике для отказных госпитализаций*/

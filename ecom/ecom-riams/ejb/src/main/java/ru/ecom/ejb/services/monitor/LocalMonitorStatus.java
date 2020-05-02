@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 public class LocalMonitorStatus implements IMonitor {
 
     private static final Logger LOG = Logger.getLogger(LocalMonitorStatus.class) ;
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     public LocalMonitorStatus(String aName, double aMaximum) {
         theName = aName ;
@@ -38,8 +37,7 @@ public class LocalMonitorStatus implements IMonitor {
     /** Текст */
     public String getText() { return theText ; }
     public void setText(String aText) {
-    	if(CAN_DEBUG) LOG.debug(aText) ;
-    	theText = aText ; 
+    	theText = aText ;
     }
 
     public void finish(String aParameters) {

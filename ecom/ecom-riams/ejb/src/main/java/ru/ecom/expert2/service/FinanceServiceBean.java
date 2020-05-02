@@ -47,7 +47,6 @@ public class FinanceServiceBean implements IFinanceService {
             theManager.createNativeQuery(sql).executeUpdate();
             FinancePlan yearPlan;
             Calendar startFromCalendar = Calendar.getInstance();
-            //   Calendar lastCalendar = Calendar.getInstance();
             HashMap<Long, String> littleAmountMonth = new HashMap<>();
            HashMap<String, BigDecimal> caseCost= new HashMap<>();
             List<MonthLittleAmountTable> monthLittleAmountTables = theManager.createQuery("from MonthLittleAmountTable").getResultList();

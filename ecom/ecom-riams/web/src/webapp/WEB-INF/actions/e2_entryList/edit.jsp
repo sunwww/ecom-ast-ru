@@ -5,12 +5,42 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+    <style>
+        #dropZone {
+            color: #555;
+            font-size: 18px;
+            text-align: center;
+
+            padding: 10px 0;
+            margin: 10px auto;
+
+            background: #eee;
+            border: 1px solid #ccc;
+
+            border-radius: 5px;
+        }
+
+        #dropZone.hover {
+            background: #ddd;
+            border-color: #aaa;
+        }
+
+        #dropZone.error {
+            background: #faa;
+            border-color: #f00;
+        }
+
+        #dropZone.drop {
+            background: #afa;
+            border-color: #0f0;
+        }
+    </style>
     <tiles:put name="title" type="string">
         <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryListForm" />
-
     </tiles:put>
     <tiles:put name="body" type="string">
         <msh:ifFormTypeIsView formName="e2_entryListForm">
+            <div style="display: none" id="dropZone"><p>Перетащите сюда файл для импорта</p></div>
         <select id="replaceSelect">
             <option value="SERVICESTREAM">Поток обслуживания</option>
             <option value="SNILS_DOCTOR">СНИЛС лечащего врача</option>
@@ -137,7 +167,82 @@
     <tiles:put name="javascript" type="string">
         <msh:ifFormTypeIsView formName="e2_entryListForm">
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
-            <script type="text/javascript">
+                <script type="text/javascript">
+                    jQuery(document).ready(function() {
+                        var dropZone = jQuery('#dropZone');
+                        var maxFileSize=30000000; //30Mb for test
+
+                        if (typeof(window.FileReader)=='undefined') {
+                            dropZone.html("Не поддерживается браузером");
+                            dropZone.addClass("error");
+                        } else {
+                            dropZone.show();
+                            dropZone[0].ondragover = function() {
+                                dropZone.addClass('hover');
+                                return false;
+                            };
+
+                            dropZone[0].ondragleave = function() {
+                                dropZone.removeClass('hover');
+                                return false;
+                            };
+                            dropZone[0].ondrop = function(event) {
+                                event.preventDefault();
+                                if (event.dataTransfer.files.length>1) {
+                                    alert("Импорт нескольких файлов пока невозможен. Загружайте по одному.");
+                                    return false;
+                                }
+                                let file = event.dataTransfer.files[0];
+                                dropZone.removeClass('hover');
+                                console.log("filename ="+file.name);
+                                let frm = new FormData();
+                                frm.append("file",file);
+                                let dirName ;
+                                let fileName = file.name.toUpperCase();
+                                if (fileName.startsWith("FLK_")) {
+                                    dirName = "importFlk";
+                                    console.log("import FLK");
+                                } else if (fileName.endsWith(".PAKET") || fileName.endsWith(".MP")) {
+                                    dirName="importDefect";
+                                } else if (fileName.startsWith("ELMED")) {
+                                    dirName="createEntry";
+                                } else {
+                                    alert("Неизвестный тип/имя файла:"+fileName);
+                                    return false;
+                                }
+
+                                dropZone.addClass('drop');
+                                frm.append("dirName",dirName);
+                                frm.append("objectId","${param.id}");
+                                frm.append("saveType","3");
+                                importFile("e2-ImportFile.do",frm, dropZone);
+
+                            };
+                        }
+                    });
+
+                function importFile(url, frm, dropZone) {
+
+                    jQuery.ajax({ //создаем сущность
+                        type: "POST"
+                        ,url:url
+                        ,data: frm
+                        ,processData: false
+                        ,dataType    : 'json'
+                        ,contentType : false,
+                    }).done (function(ret) {
+                        if (ret.monitorId) {
+                            dropZone.removeClass('drop');
+                            dropZone.addClass('hover');
+                            monitor.id=ret.monitorId;
+                            updateStatus();
+                        }
+                    }).fail( function (err) {
+                        console.error("ERROR ="+JSON.stringify(err));
+                    });
+                }
+
+
                 var monitor = {};
                 checkIsRunning();
 
@@ -339,7 +444,11 @@
                                 if (aStatus.finish) {
                                  txt="Завеpшено!";
                                  if (aStatus.finishedParameters) {
-                                     txt+=" <a href='"+aStatus.finishedParameters+"'>ПЕРЕЙТИ</a>";
+                                     if (aStatus.finishedParameters.startsWith("/")) {
+                                         txt+=" <a href='"+aStatus.finishedParameters+"'>ПЕРЕЙТИ</a>";
+                                     } else {
+                                         txt+=" > "+aStatus.finishedParameters;
+                                     }
                                  }
                                  monitor = {};
                                     isRun=false;

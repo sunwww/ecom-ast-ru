@@ -33,6 +33,7 @@
             </msh:section>
         </msh:hideException>
         <script type="text/javascript">
+
         function findByNumber() {
             var val = jQuery('#historyNumber').val();
             if (val) window.document.location="entityList-e2_entry.do?id=&orderBy=firstNew&filter=historyNumber:"+val;

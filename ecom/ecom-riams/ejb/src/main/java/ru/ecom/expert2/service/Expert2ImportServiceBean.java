@@ -12,7 +12,6 @@ import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expert2.domain.*;
 import ru.ecom.expert2.domain.voc.VocE2BillStatus;
 import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
-import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -71,17 +70,21 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
 
     /*Импортируем ответ ФЛК от фонда*/
-    public String importFlkAnswer(String aFilename, Long aListEntryId) {
+    public void importFlkAnswer(long monitorId, String aFilename, Long aListEntryId) {
         LOG.info("start import FLK="+aFilename);
+        IMonitor monitor = startMonitor(monitorId,"Импортируем ФЛК "+aFilename+".");
         Document root = getDocumentFromFile(XMLDIR+"/",aFilename,true);
         XMLOutputter out = new XMLOutputter();
         Element rootElement = root.getRootElement();
         List<Element> defs = rootElement.getChildren("PR");
-        theManager.createNativeQuery("update e2entry set isdefect='0' where listentry_id=:id and (isdeleted is null or isdeleted='0')").setParameter("id",aListEntryId).executeUpdate();
+        theManager.createNativeQuery("update e2entry set isdefect='0' where listentry_id=:id and (isdeleted is null or isdeleted='0')")
+                .setParameter("id",aListEntryId).executeUpdate();
         LOG.info("clean defect before flk "+defs.size());
+        monitor.setText("ФЛК "+aFilename+", записей для расчета: "+defs.size());
         int cnt = 0;
         for (Element el:defs) {
             String entryId = el.getChildText("N_ZAP");
+            if(cnt%100 == 0 && isMonitorCancel(monitor,"Импортировано записей: "+cnt)) return ;
             if (isNotNull(entryId)) {
                 E2Entry entry = theManager.find(E2Entry.class, Long.parseLong(entryId));
                 entry.setFondComment(out.outputString(el));
@@ -90,9 +93,8 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 theManager.persist(new E2EntrySanction(entry,null, "FLK_ERR",true,"ФЛК"));
                 cnt++;
             }
-
         }
-        return "ФЛК: Импортировано " + cnt + " записей из "+defs.size();
+        monitor.finish("Импорт ФЛК закончен: "+cnt + " записей из "+defs.size());
     }
 
     /*Импортируем файл с элмед*/
@@ -120,9 +122,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             for (Element zap : zaps) {
                 try {
                     i++;
-                    if (i%100==0) {
-                        if (isMonitorCancel(monitor,"Импорт "+i+" записей")) break;
-                    }
+                    if (i%100==0 && isMonitorCancel(monitor,"Импорт "+i+" записей")) break;
                     e = new E2Entry();
                     Element sl = zap.getChild("SL");
                     e.setListEntry(le);
@@ -242,116 +242,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         PersonalWorkFunction workFunction = personalWorkFunctions.isEmpty() ? null : personalWorkFunctions.get(0);
         DOCTORLIST.put(tabnom,workFunction);
         return workFunction;
-    }
-
-    /*Создаем заполнение из MP файла*/
-    public void createEntryByFondXml(long monitorId, String aMpFilename) {
-        try {
-            E2ListEntry le = new E2ListEntry();
-            le.setName("IMPORT_"+aMpFilename);
-            IMonitor monitor = startMonitor(monitorId," Начинаем создавать записи с файла с фонда.");
-            theManager.persist(le);
-            String dir = unZip(aMpFilename);
-            String hFilename = aMpFilename.replace(".MP",".XML");
-            String lFilename="L"+hFilename.substring(1);
-            hFilename="H"+hFilename.substring(1);
-            Document doc = getDocumentFromFile(dir+"/",hFilename,false);
-            if (doc == null) {
-                LOG.error("Не удается открыть файл "+hFilename);
-                monitor.error("Не удается открыть файл "+hFilename, new NullPointerException());
-            }
-            Element root = doc.getRootElement();
-            String ver = root.getChild("ZGLV").getChildText("VERSION");
-            SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Document patDoc = new SAXBuilder().build(new File(dir+"/"+lFilename));
-            List<Element> patients = patDoc.getRootElement().getChildren("PERS");
-            int i = 0;
-            if (ver.equals("3.0")) { //Импорт ответа в старом формате
-                //Только поликлиника.
-                Element eBill = root.getChild("SCHET");
-                String billDate = eBill.getChildText("DSCHET");
-                String billNumber = eBill.getChildText("NSCHET");
-                E2Bill bill = theExpertService.getBillEntryByDateAndNumber(billNumber, toFormat.parse(billDate));
-                if (eBill.getChild("SUMMAP")!=null) {
-                    BigDecimal sum = new BigDecimal(eBill.getChildText("SUMMAP"));
-                    bill.setSum(sum);
-                    theManager.persist(bill);
-                }
-
-                List<Element> zaps = root.getChildren("ZAP");
-                E2Entry e;
-                monitor.setText("Начинаем импорт файла "+hFilename+", всего записей"+zaps.size());
-                for (Element zap : zaps) {
-                    if (i%100==0) {
-                        LOG.info("improt " +i+" records");
-                        if(isMonitorCancel(monitor,"Импортировано записей: "+i)) break;
-                    }
-                    i++;
-                    e = new E2Entry();
-                    e.setListEntry(le);
-                    Element pat = zap.getChild("PACIENT");
-                    Element sluch = zap.getChild("SLUCH");
-                    e.setMedPolicyType(pat.getChildText("VPOLIS"));
-                    e.setMedPolicyNumber(pat.getChildText(pat.getChildText("NPOLIS")));
-                    e.setInsuranceCompanyCode(pat.getChildText("SMO"));
-                    Date startDate = toDate(sluch.getChildText("DATE_1"));
-                    Date finishDate = toDate(sluch.getChildText("DATE_2"));
-                    pat = getPatient(patients, pat.getChildText("ID_PAC"));
-                    if (pat == null) continue;
-                    e.setLastname(pat.getChildText("FAM"));
-                    e.setFirstname(pat.getChildText("IM"));
-                    e.setMiddlename(pat.getChildText("OT"));
-                    e.setBirthDate(toDate(pat.getChildText("DR")));
-                    e.setSex(pat.getChildText("W"));
-                    if (isNotNull(sluch.getChildText("FAM_P"))) {
-                        e.setKinsmanLastname(pat.getChildText("FAM_P"));
-                        e.setKinsmanFirstname(pat.getChildText("IM_P"));
-                        e.setKinsmanMiddlename(pat.getChildText("OT_P"));
-                        e.setKinsmanBirthDate(toDate(pat.getChildText("DR_P")));
-                        e.setKinsmanSex(pat.getChildText("W_P"));
-                        e.setKinsmanSnils(pat.getChildText("SNILS"));
-                    } else {
-                        e.setPatientSnils(pat.getChildText("SNILS"));
-                    }
-                    e.setOkatoReg(pat.getChildText("OKATOG"));
-                    e.setCommonNumber(pat.getChildText("ENP"));
-                    e.setPassportType(pat.getChildText("DOCTYPE"));
-                    e.setPassportSeries(pat.getChildText("DOCSER"));
-                    e.setPassportNumber(pat.getChildText("DOCNUM"));
-
-                    e.setStartDate(startDate);
-                    e.setFinishDate(finishDate);
-                    e.setServiceStream("OBLIGATORYINSURANCE");
-                    e.setBill(bill);
-                    e.setBillNumber(bill.getBillNumber());
-                    e.setBillDate(bill.getBillDate());
-                    e.setMedHelpUsl(getVocByCode(VocE2FondV006.class, finishDate, sluch.getChildText("USL_OK")));
-                    e.setMedHelpKind(getVocByCode(VocE2FondV008.class, finishDate, sluch.getChildText("VIDPOM")));
-                    e.setIsEmergency(!sluch.getChildText("FOR_POM").equals("3"));
-                    e.setDirectLpu(sluch.getChildText("NPR_MO"));
-                    e.setIsMobilePolyclinic(sluch.getChildText("VBR").equals("1"));
-                    VocE2MedHelpProfile profile = getActualVocByCode(VocE2MedHelpProfile.class, finishDate, "profilek='" + sluch.getChildText("PROFIL_K") + "'");
-                    e.setMedHelpProfile(profile);
-                    e.setHistoryNumber(sluch.getChildText("NHISTORY"));
-                    e.setMainMkb(sluch.getChildText("DS1"));
-                    e.setFondResult(getVocByCode(VocE2FondV009.class, finishDate, sluch.getChildText("RSLT")));
-                    e.setFondIshod(getVocByCode(VocE2FondV012.class, finishDate, sluch.getChildText("ISHOD")));
-                    e.setFondDoctorSpecV021(getVocByCode(VocE2FondV021.class, finishDate, sluch.getChildText("PRVS")));
-                    e.setDoctorSnils(sluch.getChildText("IDDOKT"));
-                    e.setIDSP(getVocByCode(VocE2FondV010.class, finishDate, sluch.getChildText("IDSP")));
-                    e.setTotalCoefficient(new BigDecimal(sluch.getChildText("KOEF")));
-                    e.setCost(new BigDecimal(sluch.getChildText("SUMV")));
-                    theManager.persist(e);
-
-                }
-                monitor.finish("Импорт успешно завершен");
-
-            } else {
-                LOG.error("Unknown version to import: "+ver);
-            }
-        } catch (Exception e){
-            LOG.error(e.getMessage(),e);
-        }
     }
 
     public String getConfigValue (String aKeyName, String aDefaultName) {

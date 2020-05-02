@@ -63,8 +63,6 @@ public class Expert2FondUtil {
             }
         }
         //TODO сделать признак ДТП
-        //if (ret!=null) log.info("calc OSLUCH. ID = "+aEntry.getId()+", sluch="+ret);
         return ret.length()>0 ? ret.substring(0,ret.length()-1) : null; //формат 2020
-       // return ret.length()>0 ? ret.substring(0,ret.length()-1) : "0"; //формат 2020
     }
 }
