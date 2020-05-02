@@ -1105,6 +1105,35 @@ public class ContractServiceJs {
 	}
 
 	/**
+	 * Копировать прикрепления к раб. функции из одной услуги в другую.
+	 *
+	 * @param aMedServiceIdFrom MedService.id копировать из
+	 * @param aMedServiceIdTo MedService.id в
+	 * @param aRequest HttpServletRequest
+	 * @return String сообщение
+	 */
+	public String copyWFuncsToMedService(String aMedServiceIdFrom, String aMedServiceIdTo, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeNativeSql("select copymedservicewfuncs (" + aMedServiceIdFrom + "," + aMedServiceIdTo + ",'" +
+				LoginInfo.find(aRequest.getSession(true)).getUsername() + "'"+")");
+		return "Прикрепления к рабочим функциям скопированы!" ;
+	}
+
+	/**
+	 * Создать полный дубль услуги.
+	 *
+	 * @param aMedServiceIdFrom MedService.id копировать из
+	 * @param aRequest HttpServletRequest
+	 * @return String сообщение
+	 */
+	public String copyDoubleMedService(String aMedServiceIdFrom, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> res = service.executeNativeSql("select copydoublemedservice (" + aMedServiceIdFrom + ",'" +
+				LoginInfo.find(aRequest.getSession(true)).getUsername() + "'"+")");
+		return res.isEmpty()? "-1" : res.iterator().next().get1().toString();
+	}
+
+	/**
 	 * Изменить родителя услуги.
 	 *
 	 * @param aMedServiceId MedService.id
@@ -1114,7 +1143,7 @@ public class ContractServiceJs {
 	 */
 	public String changeParentMedService(String aMedServiceId, String aMedServiceGroupId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		service.executeUpdateNativeSql("update medservice set parent_id='"+aMedServiceGroupId+"' where id='"+aMedServiceId+"'");
+		service.executeUpdateNativeSql("update medservice set parent_id='" + aMedServiceGroupId + "' where id='" + aMedServiceId + "'");
 		return "Услуга перенесена в группу!" ;
 	}
 }
