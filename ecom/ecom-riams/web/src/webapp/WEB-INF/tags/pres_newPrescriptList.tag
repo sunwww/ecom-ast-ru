@@ -186,7 +186,6 @@ function save${name}Result(aButton, aSmoId,aPrescriptId,aProtocolId, aTemplateId
 	if (!isError) {
 		PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, aTemplateId, {
 			callback: function () {
-				console.log("start check")
 				checkLabControl(aPrescriptId);
 				//делаем подтверждение
 
@@ -230,6 +229,9 @@ function enter${name}Result(aSmoId,aPrescriptId,aServiceId,aServiceName,aProtoco
 			$('BioIntakeRootPane').innerHTML =txt
 					+ "<br><input type=\"button\" id=\"paramOK\" name=\"paramOK\" value=\"Сохранить\" onclick=\" "+aFunctionSave+"(this,"+(+aSmoId)+","+(+aPrescriptId)+","+(+aProtocolId)+","+(+aTempId)+")\">"
 					+ "<input type=\"button\" value=\"Отмена\" onclick=\"the${name}PrescriptListDialog.hide() ;\">";
+					if (eval${name}String) {
+						eval(eval${name}String);
+					}
 			the${name}PrescriptListDialog.hide() ;
 			the${name}PrescriptListDialog.show() ;
 
@@ -294,6 +296,7 @@ function enter${name}Result(aSmoId,aPrescriptId,aServiceId,aServiceName,aProtoco
 	}) ;
 }
 
+var eval${name}String = "";
 function ${name}getFieldTxtByParam(aParam) {
 	var txt = "<tr>" ;
 	var type=+aParam.type;
@@ -306,7 +309,8 @@ function ${name}getFieldTxtByParam(aParam) {
 		txt += '(число зн. '+aParam.cntdecimal+')' ;
 	} else if (type==5) {
 		txt += '(текст с огр. '+aParam.cntdecimal+')' ;
-
+	} else if (type==8) {
+		txt+='(дата)';
 	}
 	txt += "'>" ;
 	txt += aParam.shortname ;
@@ -317,12 +321,12 @@ function ${name}getFieldTxtByParam(aParam) {
 		txt += "<div>";
 		txt += "<input id=\"param"+aParam.idEnter+"\" name=\"param"+aParam.idEnter+"\" type=\"text\" value=\""+aParam.valueVoc+"\" title=\""+aParam.vocname+"\" class=\"autocomplete horizontalFill\" autocomplete=\"on\">";
 		txt += "<div id=\"param"+aParam.id+"Div\">";
-		txt += "<span></span>";
-		//txt += ;
-		txt += "</div>";
-		txt += "</div>";
+		txt += "<span></span></div></div>";
 	} else {
 		txt += "<input onblur='checkFieldValue(this, "+aParam.id+")' id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+		if (type==8) {
+			eval${name}String +=" new dateutil.DateField($('param"+aParam.id+"'));"
+		}
 
 	}
 	txt += "</td>" ;

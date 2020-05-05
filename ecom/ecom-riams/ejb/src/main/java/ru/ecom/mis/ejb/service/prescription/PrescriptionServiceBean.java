@@ -28,7 +28,6 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.prescription.*;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
-import ru.ecom.mis.ejb.domain.worker.GroupWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
@@ -503,7 +502,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					}
 					//3-текстовый
 					//5-текстовый с ограничением
-				} else if (type.equals("3")||type.equals("5")) {
+					//8 - дата (текст. поле)
+				} else if (type.equals("3")||type.equals("5")||"8".equals(type)) {
 					if (!StringUtil.isNullOrEmpty(value)) {
 						fip.setValueText(value) ;
 						if (sb.length()>0) sb.append("\n") ;

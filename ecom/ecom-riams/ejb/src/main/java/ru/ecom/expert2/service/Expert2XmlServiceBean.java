@@ -131,7 +131,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             add(pers,"DR",dateToString(aEntry.getBirthDate()));
         }
         //MR
-        addIfNotNull(pers,"DOCTYPE",aEntry.getPassportType());
+        add(pers,"DOCTYPE",isNotNull(aEntry.getPassportType()) ? aEntry.getPassportType() : "14");
         addIfNotNull(pers,"DOCSER",aEntry.getPassportSeries());
         addIfNotNull(pers, "DOCNUM", aEntry.getPassportNumber());
         if (Boolean.TRUE.equals(aEntry.getIsForeign())) {
@@ -139,7 +139,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             addIfNotNull(pers,"DOCORG",aEntry.getPassportWhomIssued());
         }
         addIfNotNull(pers,"SNILS",isKinsman ? aEntry.getKinsmanSnils() : aEntry.getPatientSnils());
-       // addIfNotNull(pers,"ENP",aEntry.getCommonNumber());
         return pers;
     }
 
@@ -191,7 +190,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (a3) add(z,"P_OTK","0");
         if (!isPoliclinic && !a3)  add(z,"KD_Z",aEntry.getBedDays()+""); // Продолжительность госпитализации
         if (a3) add(z,"RSLT_D",aEntry.getDispResult()!=null ?aEntry.getDispResult().getCode(): "___"); // Результат диспансеризации
-        if (isNedonosh && isNotNull(aEntry.getKinsmanLastname())) add(z,"VNOV_M",aEntry.getNewbornWeight()+"");
+        //if (isNedonosh && isNotNull(aEntry.getKinsmanLastname())) add(z,"VNOV_M",aEntry.getNewbornWeight()+""); //нах с 1 апреля
         if (!a3) {
             add(z,"RSLT",aEntry.getFondResult().getCode()); // Результат обращения
             add(z,"ISHOD",aEntry.getFondIshod().getCode()); // Исход случая.
@@ -296,7 +295,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
             zap.addContent(pat); //Добавили данные по пациенту
             List<E2Entry> children = new ArrayList<>();
-            String isChild = isNotNull(aEntry.getIsChild()) ? "1" : "0";
+            String isChild = Boolean.TRUE.equals(aEntry.getIsChild()) ? "1" : "0";
 
             String[] slIds = entriesString.split(",");
             Element zSl = createZSl2020(aEntry,isPoliclinic,slIds.length,cnt, isExport263, isNedonosh, lpuRegNumber
@@ -738,7 +737,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         } else if (aField instanceof Date) {
             return true;
         } else if (aField instanceof BigDecimal) {
-            return ((BigDecimal) aField).compareTo(new BigDecimal(0))==1;
+            return ((BigDecimal) aField).compareTo(BigDecimal.ZERO) > 0;
         } else if (aField instanceof BaseEntity) {
             return true;
         } else {

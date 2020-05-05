@@ -129,15 +129,10 @@ public class ParameterServiceBean implements IParameterService{
 		}catch(Exception e) {
 			LOG.error(e.getMessage());
 		}
-	//	LOG.info("Done.") ;
-		
-		
 		return null ;
 	}
 	private ParameterPage loadParameterFromFile(String aResourceString,Long aId,
 			ParameterForm aParameterForm, ActionErrors aErrors) throws IOException {
-     //   LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
-
         try (InputStream in = getInputStream(aResourceString)){
                	Document doc = new SAXBuilder().build(in);
                 Element parConfigElement = doc.getRootElement();
@@ -146,8 +141,6 @@ public class ParameterServiceBean implements IParameterService{
                     if("parameter".equals(parElement.getName())) {
                     	Long key = Long.valueOf(parElement.getAttributeValue("id"));
                 	    if (key.equals(aId)) return loadParameter(parElement, aParameterForm, aErrors) ;
-                    //} else if("vocFile".equals(vocElement.getName())) {
-                        //loadFile(aHash, vocElement.getTextTrim());
                     } else {
                         LOG.warn("Нет поддержки элемента "+parElement.getName());
                     }

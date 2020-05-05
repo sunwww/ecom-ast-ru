@@ -62,7 +62,8 @@
       <msh:ifFormTypeIsView formName="diary_parameterGroupForm" guid="9f1dd6a4-a7b7-43e7-b6968">
         <msh:section title="Список параметров" guid="e681be03-dea7-4bce-56" createRoles="/Policy/Diary/ParameterGroup/Parameter/Create" createUrl="javascript:showtypeCreateType()"> 
          <ecom:webQuery name="parameters" nativeSql="select p.id,p.name
-         ,case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='7' then 'Пользовательский справочник (с текстом): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='6' then 'Пользовательский справочник (множественный выбор): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end as typeinfo
+         ,case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='7' then 'Пользовательский справочник (с текстом): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='6' then 'Пользовательский справочник (множественный выбор): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!')
+          when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' when p.type='8' then 'Дата' else 'неизвестный' end as typeinfo
          ,vmu.name as vmuname
          ,case when p.type='2' or p.type='6' or p.type='7' then vd.id else null end as vdid
          ,p.code
