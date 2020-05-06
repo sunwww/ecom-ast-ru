@@ -100,7 +100,7 @@
       ,aslo.department_id,slo.patient_id 
             	order by  d.dateRegistration desc,  d.timeRegistration desc
             	"/>
-                <msh:table hideTitle="false" styleRow="6" idField="1" name="protocols" action="javascript:void(0)" guid="d0267-9aec-4ee0-b20a-4f26b37" escapeSymbols="false">
+                <msh:table hideTitle="false" styleRow="6" idField="1" name="protocols" action="javascript:void(0)" escapeSymbols="false">
                     <msh:tableButton property="8" hideIfEmpty="true" buttonFunction="goToPage" buttonName="Перейти" buttonShortName="Перейти"/>
                     <msh:tableButton property="7" hideIfEmpty="true" buttonFunction="getDefinition" buttonName="Текст" buttonShortName="Текст"/>
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -114,12 +114,12 @@
     %><a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stAll=selected&type=${param.type}'>Печать: ${title}</a>
 		<a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stNoPrint=selected&type=${param.type}'>Печать: ${title} (нераспеч.)</a>
             	<ecom:webQuery nameFldSql="protocols_sql" name="protocols"  nativeSql="select d.id as did, to_char(d.dateRegistration,'dd.mm.yyyy') ||' '|| cast(d.timeRegistration as varchar(5)) as dtimeRegistration
-            	,case when count (mc.id)>0 then list(mc.code||' '||mc.name) ||'<'||'br'||'/>' else '' end || d.record 
+            	,case when aslo.dtype!='DepartmentMedCase' and count (mc.id)>0 then list(mc.code||' '||mc.name) ||'<'||'br'||'/>' else '' end || d.record
       ||'<'||'br'||'/>'|| vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
       ,case when aslo.dtype='Visit' then 'background:#F6D8CE;' 
       when aslo.dtype='DepartmentMedCase' and '${department}'!=aslo.department_id then 'background:#E0F8EC;'
       else '' end as record
-      ,case when count (mc.id)>0 then list(mc.code||' '||mc.name) else vtp.name end as service
+      ,case when count (mc.id)>0 and aslo.dtype!='DepartmentMedCase' then list(mc.code||' '||mc.name) else vtp.name end as service
       ,case when '${param.service}' = '' and count (mc.id)>0 then 'js-stac_slo-list_protocols.do?id=${param.id}&short=Short&patient='||slo.patient_id||'&service='||replace(list(''||mc.id),' ','') else null end servjs
       from Diary as d
       left join MedCase aslo on aslo.id=d.medCase_id
@@ -140,7 +140,7 @@
       ,aslo.department_id,slo.patient_id 
             	order by  d.dateRegistration desc,  d.timeRegistration desc
             	"/>
-                <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
+                <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do">
                     <msh:tableButton property="6" hideIfEmpty="true" buttonFunction="getDefinition" buttonName="Динамика исследования" buttonShortName="Дин."/>
                     <msh:tableColumn columnName="#" property="sn" width="1"/>
                     <msh:tableColumn columnName="Дата и время" property="2" width="5"/>
