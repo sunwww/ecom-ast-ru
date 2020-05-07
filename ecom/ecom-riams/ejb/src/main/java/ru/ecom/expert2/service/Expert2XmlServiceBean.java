@@ -175,11 +175,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (!a3) {
             add(z,"FOR_POM",forPom); //форма помощи V014
             if (!Boolean.TRUE.equals(aEntry.getIsEmergency())) {
-                if ((aEntry.getMainMkb()!=null && aEntry.getMainMkb().startsWith("C")) || !isPoliclinic) {
+   //             if ((aEntry.getMainMkb()!=null && aEntry.getMainMkb().startsWith("C")) || !isPoliclinic) {
                     addIfNotNull(z,"NPR_MO",aEntry.getDirectLpu()!=null ? aEntry.getDirectLpu() : lpuRegNumber); //Направившее ЛПУ
                     addIfNotNull(z,"NPR_DATE",aEntry.getDirectDate()!=null ? aEntry.getDirectDate() : aEntry.getStartDate()); //Дата направления на лечение ***
                 }
-            }
+    //        }
         }
 
 
@@ -289,7 +289,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
             //String novorString=
             add(pat,"NOVOR",makeNovorString(aEntry));
-            if (a1 && isNedonosh && !isNotNull(aEntry.getKinsmanLastname())) { // && novorString.equals("0")) { //11.10.2018 по согласованию с фондом
+            if (a1 && isNedonosh) { // && novorString.equals("0")) { //11.10.2018 по согласованию с фондом
                 add(pat,"VNOV_D",aEntry.getNewbornWeight()+"");
             }
 

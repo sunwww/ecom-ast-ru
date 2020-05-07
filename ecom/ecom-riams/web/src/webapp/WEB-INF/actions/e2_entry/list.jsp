@@ -48,12 +48,12 @@
                 }
             }
         }
-      //  if (!filterFound) {filterSql.append("and 1=2");}
     }
 
     ActionUtil.setParameterFilterSql("entryType","e.entryType",request);
     ActionUtil.setParameterFilterSql("serviceStream","e.serviceStream",request);
     ActionUtil.setParameterFilterSql("fileType","e.fileType",request);
+    ActionUtil.setParameterFilterSql("addGroupFld","e.addGroupFld",request);
     String billNumber = request.getParameter("billNumber");
         String isForeign = request.getParameter("isForeign");
 
@@ -65,9 +65,6 @@
     String billDate = request.getParameter("billDate");
     boolean showServices = "1".equals(request.getParameter("showServices"));
     StringBuilder sqlAdd = new StringBuilder();
-    //if (entryType!=null&&!entryType.equals("")) {sqlAdd.append(" and e.entryType='").append(entryType).append("'");}
-    //if (serviceStream!=null&&!serviceStream.equals("")) {sqlAdd.append(" and e.serviceStream='").append(serviceStream).append("'");}
-   // if (billNumber!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billNumber='").append(billNumber).append("'");}
     if (billDate!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billDate=to_date('").append(billDate).append("','dd.MM.yyyy')");}
     if ("firstNew".equals(orderBy)) {
         orderBy="id desc";
@@ -79,7 +76,6 @@
 
 
     request.setAttribute("orderBySql",orderBy);
-    //request.setAttribute("sqlAdd",sqlAdd.toString());
     request.setAttribute("filterSql",filterSql.toString());
 String defectColumnName = "Дефект";
 //String entryType = request.getParameter("entryType");
@@ -175,7 +171,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         left join VocDiagnosticVisit vdv on vdv.id=e.kdpVisit_id
         left join entrymedservice ems on ems.entry_id=e.id
         left join vocmedservice vms on vms.id=ems.medservice_id
- where ${searchWhereSql} ${fileTypeSql}
+ where ${searchWhereSql} ${fileTypeSql} ${addGroupFldSql}
  and (e.isDeleted is null or e.isDeleted='0')
  group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
         , e.departmentName, ksg.code, ksg.name, e.historyNumber, e.cost, vbt.code,vbt.name, rslt.code,rslt.name,e.doNotSend,e.birthdate,e.isdefect,e.servicestream
@@ -245,11 +241,8 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
             }
 
             function setOrderBy(fld) {
-              //  alert('orderBy='+fld);
                 window.location.href = setGetParameter("orderBy",fld)
             }
-            //new dateutil.DateField($('startDate'));
-            //new dateutil.DateField($('finishDate'));
 
             function findAndSubmit() {
                 var url = window.location.href;

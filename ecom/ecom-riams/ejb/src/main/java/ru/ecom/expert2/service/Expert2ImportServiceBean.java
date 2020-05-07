@@ -17,8 +17,6 @@ import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -248,51 +246,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         return CONFIG.get(aKeyName,aDefaultName);
     }
 
-    /** Загружаем файл для проставления номеров направления ФОМС */
-    @Deprecated //неактуально с 2020 года. убрать когда-нибудь
-    public String importN5File(Document doc, Long aListEntryId) {
-        try {
-            //Document doc = new SAXBuilder().build(aStream);
-            List<Element> npr = doc.getRootElement().getChildren("NPR");
-            LOG.info("Найдено "+npr.size()+" случаев");
-            int i=0;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            for (Element el:npr) {
-                i++;
-                if (i%100==0) {LOG.info("Обработано "+i+" записей");}
-                String num = el.getChildText("N_NPR");
-                String planHospDate = el.getChildText("DATE_1");
-                String directDate = el.getChildText("D_NPR");
-                String historyNumber = el.getChildText("NHISTORY");
-                String sql = "from E2Entry where listentry_id=:listEntryId and historyNumber=:historyNumber and serviceStream='OBLIGATORYINSURANCE' and (isDeleted is null or isDeleted='0')";
-                List<E2Entry> list = theManager.createQuery(sql).setParameter("listEntryId",aListEntryId).setParameter("historyNumber",historyNumber).getResultList();
-                for (E2Entry entry: list) {
-                    if (sdf.format(entry.getStartDate()).equals(planHospDate)) {
-                        boolean persist = false;
-                        if (StringUtil.isNullOrEmpty(entry.getTicket263Number())) {
-                            entry.setTicket263Number(num);
-                            persist=true;
-                        }
-                        if (null==entry.getPlanHospDate()) {
-                            entry.setPlanHospDate(DateFormat.parseSqlDate(planHospDate,"yyyy-MM-dd"));
-                            persist=true;
-                        }
-                        if (null==entry.getDirectDate()) {
-                            entry.setDirectDate(DateFormat.parseSqlDate(directDate,"yyyy-MM-dd"));
-                            persist=true;
-                        }
-                        if (persist)theManager.persist(entry);
-                    }
-                }
-            }
-            LOG.info("Закончили импортировать N5");
-            return "success";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
-
-        }
-    }
     /** Загружаем MP файл (ответ от фонда)
      * импорт версии от 2020 года
      * */
@@ -367,7 +320,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             entry = entry.getParentEntry();
                             isComplexCase = true;
                         }
-                    //    theManager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId", entryId).executeUpdate();
+                        theManager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId", entryId).executeUpdate();
                         entry.setBillNumber(nSchet);
                         entry.setBillDate(billDate);
                         entry.setBill(bill);

@@ -2326,17 +2326,17 @@ public class Expert2ServiceBean implements IExpert2Service {
                 aEntry.setCostFormulaString("tarif=T ("+cost+")");
                 theManager.persist(aEntry);
             } else { //Если не ВМП, считаем цену как обычно
-                VocKsg aKsg = aEntry.getKsg();
-                if (aKsg==null){return aEntry;} //Нет КСГ - нечего расчитывать всё остальное
+                VocKsg ksg = aEntry.getKsg();
+                if (ksg==null){return aEntry;} //Нет КСГ - нечего расчитывать всё остальное
                 BigDecimal kz, tarif, cusmo, kslp, km, kpr, kuksg ;
-                kz = BigDecimal.valueOf(aEntry.getKsg().getKZ());
-                kuksg = getActualKsgUprCoefficient(aKsg,aEntry.getFinishDate());
+                kz = BigDecimal.valueOf(ksg.getKZ());
+                kuksg = getActualKsgUprCoefficient(ksg,aEntry.getFinishDate());
                 tarif = calculateTariff(aEntry);
                 cusmo = calculateCusmo(aEntry);
                 km = calculateKm();
                 kslp = calculateResultDifficultyCoefficient(aEntry);
                 kpr = calculateNoFullMedCaseCoefficient(aEntry);
-                if (tarif == null || kuksg==null || cusmo == null || km == null || kslp == null || kpr == null ) {
+                if (tarif == null || kuksg==null || cusmo == null || kslp == null || kpr == null ) {
                     String err = "Для случая с ИД=" + aEntry.getId() + " не удалось расчитать цену: Тариф=" + tarif + ", КЗ=" + kz + ", КУксг="+kuksg+", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr ;
                     aEntry.setCostFormulaString(err);
                     LOG.error(err);
@@ -3128,15 +3128,13 @@ public class Expert2ServiceBean implements IExpert2Service {
         String otherLpuResult = "102,103,202,203";
         String lpuLikeResult = "108,208";
         String patientLikeResult = "107,207";
-        boolean isDeadCase = deadResult.indexOf(result) > -1;
+        boolean isDeadCase = deadResult.contains(result) ;
+        boolean isOtherLpu = otherLpuResult.contains(result);
    //    ksgFullPaymentChildsList.add("st17.001");ksgFullPaymentChildsList.add("st17.002");//при переводе детей в другое ЛПУ не считаем прерванным случаем *30-05-2018
         VocKsg ksg = aEntry.getKsg();
-        if (otherLpuResult.indexOf(result) > -1) { //Переведен в другой стационар
-            isPrerSluch = true; //ksg == null || !ksg.getCode().startsWith("st17");
-        } else if (isDeadCase || patientLikeResult.indexOf(result) > -1 || lpuLikeResult.indexOf(result) > -1) { //выписан по желанию ЛПУ
+        if (isDeadCase || patientLikeResult.indexOf(result) > -1 || isOtherLpu) { //выписан по желанию ЛПУ
             isPrerSluch = true;
-        }  //Плановая выписка
-        if (!isPrerSluch && aEntry.getCalendarDays() < 4) {  //Если плановая выписки и длительность случая менее 4 дней. //28-02-2018 4 целых дня.
+        } else if (aEntry.getCalendarDays() < 4) {  //Если плановая выписки и длительность случая менее 4 дней. //28-02-2018 4 целых дня.
             isPrerSluch =  ksg == null || !isNotNull(ksg.getIsFullPayment());
         }
         if (isPrerSluch) {
@@ -3144,7 +3142,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (ksg.getIsOperation()) { //Если у КСГ признак "операционного"
                 ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.85 : 0.9);
             } else {
-                ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.5 : ksg.getCode().startsWith("st17") && !isDeadCase ? 0.7 : 0.75);
+                ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.5 : ksg.getCode().startsWith("st17") && isOtherLpu ? 0.7 : 0.75);
             }
         }
 
