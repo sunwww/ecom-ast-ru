@@ -62,12 +62,12 @@
                callback: function(aResult) {
                    aResult = JSON.parse(aResult)
             	   $('serviceStream').value=aResult.serviceStreamId;
-            	   $('serviceStreamName').value=aResult.serviceStreamName;;
+            	   $('serviceStreamName').value=aResult.serviceStreamName;
             	   $('serviceStreamName').disabled=true ;
 
             	   $('idc10').value=aResult.mkbId ;
             	   $('idc10Name').value=aResult.mkbName ;
-            	   if (aResult.medcaseType==='DepartmentMedCase' ||aResult.medcaseType==='HospitaltMedCase' ) {
+            	   if (aResult.medcaseType==='DepartmentMedCase' ||aResult.medcaseType==='HospitalMedCase' ) {
                        medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForStac');
                        medServiceAutocomplete.setParentId(aResult.serviceStreamId);
                    } else {
