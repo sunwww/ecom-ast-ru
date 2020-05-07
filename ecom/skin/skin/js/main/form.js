@@ -458,76 +458,80 @@ function sortMshTable(th,num) {
     var rows, switching, i, x, y, shouldSwitch;
     switching = true;
     rows = table.rows;
-    if (rows.length < 100 || confirm('Таблица содержит много строк! Сортировка может занять много времени. Вы уверены?')) {
-        var j= rows[rows.length - 1].getElementsByTagName("TD").length>1 ? 1 : 0; //первый столбец мб пустым
-        var last = rows[rows.length - 1].getElementsByTagName("TD")[j].className.indexOf('sumTd') != -1 ? 2 : 1;
-        while (switching) {
-            switching = false;
-            for (i = 1; i < (rows.length - last); i++) {
-                shouldSwitch = false;
-                x = rows[i].getElementsByTagName("TD")[num];
-                y = rows[i + 1].getElementsByTagName("TD")[num];
-                if (x != null && y != null && typeof x !== 'undefined' && typeof y !== 'undefined') {
-                    if (x.innerHTML==' ' && y.innerHTML!=' ' && direct==0 || x.innerHTML!=' ' && y.innerHTML==' ' && direct!=0) {
-                        shouldSwitch = true;
-                        break;
-                    }
-                    if (isNaN(x.innerHTML)) {
-                        if (direct == 0) {
-                            if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты
-                                if (compareDates(x.innerHTML, y.innerHTML) == -1) {
-                                    shouldSwitch = true;
-                                    break;
+    VocService.getSoftConfigByValue("smallSortMshTableLength",100, {
+        callback: function (smallSortLength) {
+            if (rows.length < smallSortLength || confirm('Таблица содержит много строк! Сортировка может занять много времени. Вы уверены?')) {
+                var j= rows[rows.length - 1].getElementsByTagName("TD").length>1 ? 1 : 0; //первый столбец мб пустым
+                var last = rows[rows.length - 1].getElementsByTagName("TD")[j].className.indexOf('sumTd') != -1 ? 2 : 1;
+                while (switching) {
+                    switching = false;
+                    for (i = 1; i < (rows.length - last); i++) {
+                        shouldSwitch = false;
+                        x = rows[i].getElementsByTagName("TD")[num];
+                        y = rows[i + 1].getElementsByTagName("TD")[num];
+                        if (x != null && y != null && typeof x !== 'undefined' && typeof y !== 'undefined') {
+                            if (x.innerHTML==' ' && y.innerHTML!=' ' && direct==0 || x.innerHTML!=' ' && y.innerHTML==' ' && direct!=0) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                            if (isNaN(x.innerHTML)) {
+                                if (direct == 0) {
+                                    if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты
+                                        if (compareDates(x.innerHTML, y.innerHTML) == -1) {
+                                            shouldSwitch = true;
+                                            break;
+                                        }
+                                    }
+                                    else if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                }
+                                else {
+                                    if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты
+                                        if (compareDates(x.innerHTML, y.innerHTML) == 1) {
+                                            shouldSwitch = true;
+                                            break;
+                                        }
+                                    }
+                                    else if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
                                 }
                             }
-                            else if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                                shouldSwitch = true;
-                                break;
-                            }
-                        }
-                        else {
-                            if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты
-                                if (compareDates(x.innerHTML, y.innerHTML) == 1) {
-                                    shouldSwitch = true;
-                                    break;
+                            else if (!isNaN(x.innerHTML)) {
+                                if (direct == 0) {
+                                    if (+x.innerHTML < (+y.innerHTML)) {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                }
+                                else {
+                                    if (+x.innerHTML > (+y.innerHTML)) {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
                                 }
                             }
-                            else if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                                shouldSwitch = true;
-                                break;
-                            }
                         }
                     }
-                    else if (!isNaN(x.innerHTML)) {
-                        if (direct == 0) {
-                            if (+x.innerHTML < (+y.innerHTML)) {
-                                shouldSwitch = true;
-                                break;
-                            }
+                    if (shouldSwitch) {
+                        if (th.className.indexOf('thSorted')==-1) {
+                            th.className += ' thSorted ';
+                            uncheckTh(th,num);
                         }
-                        else {
-                            if (+x.innerHTML > (+y.innerHTML)) {
-                                shouldSwitch = true;
-                                break;
-                            }
-                        }
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
                     }
                 }
-            }
-            if (shouldSwitch) {
-                if (th.className.indexOf('thSorted')==-1) {
-                    th.className += ' thSorted ';
-                    uncheckTh(th,num);
-                }
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
+                direct = direct == 0 ? 1 : 0;
+                th.setAttribute('name', direct);
+                if (th.getElementsByTagName('i').length > 0)
+                    th.getElementsByTagName('i')[0].className = direct == 0 ? 'arrow arrowUp' : 'arrow arrowDown';
             }
         }
-        direct = direct == 0 ? 1 : 0;
-        th.setAttribute('name', direct);
-        if (th.getElementsByTagName('i').length > 0)
-            th.getElementsByTagName('i')[0].className = direct == 0 ? 'arrow arrowUp' : 'arrow arrowDown';
-    }
+    });
 }
 
 //мерцание строки с непрочитанными сообщениями
