@@ -33,8 +33,13 @@
     "
      />
      <msh:sectionTitle>
-     Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент
+       <form action="print-dirCovid.do" method="post" target="_blank" id="printForm">
+         Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент
+         <input type='hidden' name="info" id="info" value="">
+         <input type='hidden' name="s" id="s" value="HospitalPrintService">
+         <input type='hidden' name="m" id="m" value="printDirectionCovid">
          <input type="button" value="ПЕЧАТЬ НАПРАВЛЕНИЯ" onclick="print()">
+       </form>
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="datelist" viewUrl="entityShortView-mis_patient.do" action="javascript:void()" idField="1">
@@ -80,10 +85,11 @@
      </msh:section>
      </msh:ifInRole>
     <% } %>
+
   </tiles:put>
   <%
     Long department = (Long)request.getAttribute("department") ;
-    if (department!=null && department.intValue()>0 )  {
+    if (department!=null && department>0L )  {
   %>
   <tiles:put name="javascript" type="string">
     <script type="text/javascript">
@@ -126,8 +132,8 @@
                 }
             }
             if (params.length>0){
-              console.log(params);
-              window.open('print-dirCovid.do?m=printDirectionCovid&s=HospitalPrintService&info='+params);
+                $('info').value = params;
+              document.forms[0].submit();
             }
 
             else
