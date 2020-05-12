@@ -306,8 +306,7 @@ return "good";
             Object newEntity = aClass.newInstance();
             for (Method setterMethod: methodList) {
                 if (setterMethod.getName().startsWith("set")) {
-                    if (setterMethod.getName().equals("setId")) {
-                    } else if (setterMethod.isAnnotationPresent(OneToMany.class)) {
+                    if (setterMethod.getName().equals("setId") || setterMethod.isAnnotationPresent(OneToMany.class)) {
                     } else {
                         String propertyName = PropertyUtil.getPropertyName(setterMethod);
                         try {

@@ -220,24 +220,19 @@
     	}
     			
     	if ("2".equals(typePolicy)) {
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			request.setAttribute("policySql", " and upper(mp.dtype) like '%FOREIGN'") ;
 			request.setAttribute("infoTypePolicy", "иногородние") ;
 		} else if ("1".equals(typePolicy)){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			request.setAttribute("policySql", " and upper(mp.dtype) not like '%FOREIGN'") ;
 			request.setAttribute("infoTypePolicy", "региональные") ;
 		}
-    	if (typePatient.equals("2")) {
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
+    	if (typePatient.equals("2")) { //иногородние
 			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp","ok")) ;
 			request.setAttribute("infoTypePat", "Поиск по иногородним") ;
-		} else if (typePatient.equals("1")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+		} else if (typePatient.equals("1")){ //региональные
 			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, false, "m.Datestart", "p", "pvss", "pmp","ok")) ;
 			request.setAttribute("infoTypePat", "Поиск по региональным") ;
-		} else if (typePatient.equals("3")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+		} else if (typePatient.equals("3")){ //иностранцы
 			request.setAttribute("patientSql", HospitalLibrary.getSqlGringo(true, "ok")) ;
 			request.setAttribute("infoTypePat", "Поиск по иностранцам") ;
 		} else {

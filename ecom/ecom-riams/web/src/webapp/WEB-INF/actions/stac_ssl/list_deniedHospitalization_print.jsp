@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/printLayout.jsp" flush="true" >
   <tiles:put name="body" type="string">
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
     	%>
     
@@ -38,9 +38,7 @@
             <msh:tableColumn columnName="Причина отказа" property="7"/>
         </msh:table>
 
-    <% } else {%>
-
-    	<% }   %>
+    <% } %>
   </tiles:put>
 </tiles:insert>
 

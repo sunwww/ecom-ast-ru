@@ -116,6 +116,9 @@ public class Expert2ServiceBean implements IExpert2Service {
             case SERVICETYPE:
                 resourceName = "Service.sql";
                 break;
+            case "COVID_TEMP": //временно, состоящие в отделениях ковид
+                resourceName = "HospitalCovid.sql";
+                break;
             default:
                 LOG.error("Неизвесный тип заполнения");
                 throw new IllegalStateException("Неизвестный тип заполнения!!");
@@ -1389,28 +1392,37 @@ public class Expert2ServiceBean implements IExpert2Service {
             } else {
                 if (Boolean.TRUE.equals(aEntry.getIsEmergency())) { // Случай НМП
                     code = "POL_EMERG";
-                } else if (aEntry.getStartDate().getTime() == aEntry.getFinishDate().getTime()) { //разовый случай
-                    String mainMkb = aEntry.getMainMkb();
-                    if (isNotNull(mainMkb)) {
-                        code = mainMkb.startsWith("Z") ? "VISIT_PROF" : "VISIT_ILL";
+                } else { //поликлиника. либо Н либо Р в зависимости от настроек и профиля
+                    if (isConsultativePolyclinic) {
+                        fileType = "P";
                     } else {
-                        if (aEntry.getId()>0) {
-                            List<String> mkbs = findDiagnosisCodes(theManager.createQuery("from EntryDiagnosis where entry_id=:id").setParameter("id", aEntry.getId()).getResultList(), null, "1");
-                            boolean isProf = false;
-                            for (String mkb : mkbs) {
-                                if (mkb.startsWith("Z")) {
-                                    isProf = true;
-                                    break;
-                                }
-                            }
-                            code = isProf ? "VISIT_PROF" : "VISIT_ILL";
-                        } else {
-                            code="NO_CODE";
-                        }
+                        VocE2FondV021 spec = aEntry.getFondDoctorSpecV021();
+                        fileType = Boolean.TRUE.equals(spec.getIsPodushevoy()) ? "P" : "H";
                     }
-                } else { //Обращение
-                    code = "POL_LONGCASE";
+                    if (aEntry.getStartDate().getTime() == aEntry.getFinishDate().getTime()) { //разовый случай
+                        String mainMkb = aEntry.getMainMkb();
+                        if (isNotNull(mainMkb)) {
+                            code = mainMkb.startsWith("Z") ? "VISIT_PROF" : "VISIT_ILL";
+                        } else {
+                            if (aEntry.getId()>0) {
+                                List<String> mkbs = findDiagnosisCodes(theManager.createQuery("from EntryDiagnosis where entry_id=:id").setParameter("id", aEntry.getId()).getResultList(), null, "1");
+                                boolean isProf = false;
+                                for (String mkb : mkbs) {
+                                    if (mkb.startsWith("Z")) {
+                                        isProf = true;
+                                        break;
+                                    }
+                                }
+                                code = isProf ? "VISIT_PROF" : "VISIT_ILL";
+                            } else {
+                                code="NO_CODE";
+                            }
+                        }
+                    } else { //Обращение
+                        code = "POL_LONGCASE";
+                    }
                 }
+
                 code = (isMobilePolyclinic ? "MOBILE_" : isConsultativePolyclinic ? "CONS_" : "TERR_") +code;
                 code += "_" + (workPlace != null ? workPlace : "NO_WORKPLACE");
             }
@@ -1452,7 +1464,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         aEntry.setMedHelpUsl(subType.getUslOk()); //Условия оказания находим согласно подтипу записи (V006)
         aEntry.setIDSP(subType.getIdsp());
         if (Boolean.TRUE.equals(aEntry.getIsCancer()) || aEntry.getCancerEntries()!=null && !aEntry.getCancerEntries().isEmpty()) {
-            fileType="C";
+            fileType=fileType.equals("P") ? "PC" : "C";
         }
         aEntry.setFileType(isNotNull(subType.getFileType()) ? subType.getFileType() : fileType);
         return aEntry;
