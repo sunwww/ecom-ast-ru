@@ -15,11 +15,9 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-    
-
         <msh:sideMenu>
-                <tags:laboratory_menu currentAction="pres_find"/>
-                <tags:prescriptionReportTag name="My" roles="/Policy/Mis/Prescription/ViewInformation"/>
+            <tags:laboratory_menu currentAction="pres_cabinetFio"/>
+            <tags:prescriptionReportTag name="My" roles="/Policy/Mis/Prescription/ViewInformation"/>
         </msh:sideMenu>
     </tiles:put>
 
