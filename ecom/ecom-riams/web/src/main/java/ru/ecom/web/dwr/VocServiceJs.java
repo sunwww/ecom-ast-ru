@@ -7,6 +7,7 @@ import ru.ecom.ejb.services.login.ILoginService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.service.disability.IDisabilityService;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.EntityInjection;
@@ -257,4 +258,17 @@ public class VocServiceJs {
 		sb.append("]}") ;
     	return sb.toString();
     }
+
+	/**
+	 * Получить настройку
+	 *
+	 * @param key Ключ настройки
+	 * @param defaultValue Значение по умолчанию, если настройки нет
+	 * @param aRequest HttpServletRequest
+	 * @return String значение настройки
+	 */
+    public String getSoftConfigByValue(String key, String defaultValue, HttpServletRequest aRequest) throws NamingException {
+		IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
+		return service1.getSoftConfigValue(key, defaultValue);
+	}
 }
