@@ -185,9 +185,6 @@
 	if ($('tdPreRecord')) { $('tdPreRecord').innerHTML=""; }
 	if ($('divReserve')) { $('divReserve').innerHTML=""; }
 	
-	
-	
-	//alert("ALERT!!"+$('Servicies').value);
 	addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value, type+":"+ar[0],1);
 	
 }
@@ -406,31 +403,13 @@ function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId
         jQuery('#surgServicesName').val("");
         surgCabinetAutocomplete.setUrl('simpleVocAutocomplete/workFunctionByDirect');
     }
-/*
-    onload = function() {
-        if ($('allowOnlyPaid').value=="true") {
-            showToastMessage("ВНИМАНИЕ! Возможно создание только оплаченных назначений!");
-            PrescriptionService.getAllowedLabServiciesByPatient($('patient').value, null, {
-                callback: function (servList) {
-                    console.log(servList);
-                    paidServiceList = JSON.parse(servList);
-                    if (paidServiceList.length===0) {
-                        showToastMessage("У пациента нет оплаченных услуг!");
-                    }
-                }
-            });
-        }
-    };
-*/
-    //fillServiceListVocId();
-				</script>
+	</script>
 			</msh:ifFormTypeIsNotView>
 			
-			<!--  скрипт отмены -->
 	<msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm">
 	<script type="text/javascript">
 	function cancelDiagnostic() {
-		var reason = ''+ prompt('Введите причину отмены');
+		var reason = prompt('Введите причину отмены');
 		if (""+reason.trim()!="") {
             PrescriptionService.cancelPrescription($('id').value, reason, {
                 callback:function (a) {
