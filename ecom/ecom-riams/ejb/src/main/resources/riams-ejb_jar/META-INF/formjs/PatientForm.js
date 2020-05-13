@@ -6,7 +6,6 @@ function onPreDelete(aEntityId, aContext) {
 		,"медицинские карты"
 		,"случаи медицинского обслуживания"
 		,"ведомственные прикрепления"
-		,"награды"
 		,"случаи нетрудоспособности"
 		,"данные об образовании"
 		,"данные о его родственниках"
@@ -22,13 +21,11 @@ function onPreDelete(aEntityId, aContext) {
 		,"план диспансеризации"
 		] ;
 		
-		//throw medCase.getId() + "  getStatisticStub()="+medCase.getStatisticStub() ;
 		var err_list = aContext.manager.createNativeQuery("select"
 		+" (select count(*) from Diagnosis as d where d.patient_id=p.id) as v0"
 		+",(select count(*) from Medcard as ms1 where ms1.person_id=p.id) as v1"
 		+",(select count(*) from MedCase as so where so.patient_id=p.id) as v2"
 		+",(select count(*) from LpuAttachedByDepartment as tr where tr.patient_id=p.id) as v3"
-		+",(select count(*) from Award as v where v.person_id=p.id) as v4"
 		+",(select count(*) from DisabilityCase as dc where dc.patient_id=p.id) as v5"
 		+",(select count(*) from Education as e where e.person_id=p.id) as v6"
 		+",(select count(*) from Kinsman as k1 where k1.person_id=p.id) as v7"
