@@ -29,10 +29,10 @@
     	  - Экспертная карта
     	  -->
     <msh:form  action="/entityParentSaveGoView-expert_card.do" defaultField="kindName">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="medcase" property="medcase" />
-      <msh:panel guid="panel" colsWidth="10%,20%,10%,50%">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="medcase" />
+      <msh:panel colsWidth="10%,20%,10%,50%">
           <msh:ifFormTypeAreViewOrEdit formName="expert_cardForm">
               <msh:ifFormTypeIsNotView formName="expert_cardForm">
                   <msh:row>
@@ -84,7 +84,7 @@
         	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
         	<msh:textField property="createDate" label="Дата создания" viewOnlyField="true"/>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
     
@@ -96,7 +96,7 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Expert" beginForm="expert_cardForm" />
+    <ecom:titleTrail mainMenu="Expert" beginForm="expert_cardForm" />
   </tiles:put>
     <msh:ifFormTypeAreViewOrEdit formName="expert_cardForm">
     <tiles:put name="side" type="string">

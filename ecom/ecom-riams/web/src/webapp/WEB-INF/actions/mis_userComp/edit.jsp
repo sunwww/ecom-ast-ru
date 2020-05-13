@@ -42,7 +42,7 @@
       <msh:ifFormTypeIsView formName="mis_userCompForm">
         <msh:sideLink key="ALT+2" roles="/Policy/Mis/WorkPlace/UserComputer/Edit" params="id" action="/entityEdit-mis_userComp" name="Изменить" />
       </msh:ifFormTypeIsView>
-      <msh:ifFormTypeAreViewOrEdit formName="mis_userCompForm" guid="de889210-1aba-4447-96ab-a729de7a2c8a">
+      <msh:ifFormTypeAreViewOrEdit formName="mis_userCompForm">
         <msh:sideLink key="ALT+DEL" params="id" roles="/Policy/Mis/WorkPlace/UserComputer/Delete" action="/entityParentDeleteGoParentView-mis_userComp" name="Удалить" confirm="Удалить палату?" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
@@ -54,7 +54,7 @@
     <ecom:titleTrail mainMenu="Lpu" beginForm="mis_userCompForm" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
-  <msh:ifFormTypeIsCreate formName="mis_userCompForm" insideJavascript="true" guid="c49dd20d-c406-466d-9904-f62c2be7a636">
+  <msh:ifFormTypeIsCreate formName="mis_userCompForm" insideJavascript="true">
         <script type="text/javascript">// <![CDATA[//
         		$('remoteAddress').value = '${remote_address}' ;
 	    	//]]></script>

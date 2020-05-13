@@ -13,7 +13,7 @@
         
             <msh:hidden property="id"/>
             <msh:hidden property="saveType"/>
-            <msh:panel guid="panel" colsWidth="10% 20% 15%">
+            <msh:panel colsWidth="10% 20% 15%">
         
         
          <msh:row>
@@ -87,9 +87,9 @@ where p.assessmentCard=${param.id} order by p.position
     <tiles:put name='side' type='string'>
       <msh:ifFormTypeAreViewOrEdit formName="mis_assessmentCardTemplateForm">
         <msh:sideMenu>
-	        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityPrepareDelete-mis_assessmentCardTemplate" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
-	        <msh:sideLink guid="sideLinkEdit" key="ALT+3" params="id" action="/mis_assessmentParamsEdit" name="Работа с параметрами" roles="/Policy/Mis/AssessmentCard" />
-	         <msh:sideLink key="ALT+M" params="id" action='/entityParentPrepareCreate-mis_assessment.do' name="Создать оценку" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
+	        <msh:sideLink key="ALT+2" params="id" action="/entityPrepareDelete-mis_assessmentCardTemplate" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
+	        <msh:sideLink key="ALT+3" params="id" action="/mis_assessmentParamsEdit" name="Работа с параметрами" roles="/Policy/Mis/AssessmentCard" />
+	         <msh:sideLink key="ALT+M" params="id" action='/entityParentPrepareCreate-mis_assessment.do' name="Создать оценку" />
 	   </msh:sideMenu>
       </msh:ifFormTypeAreViewOrEdit>
        

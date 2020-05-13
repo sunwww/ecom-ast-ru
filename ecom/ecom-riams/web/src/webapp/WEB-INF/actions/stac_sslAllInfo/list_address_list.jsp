@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Адресный листок"></msh:title>
+    <msh:title mainMenu="StacJournal" title="Адресный листок"></msh:title>
   </tiles:put>
   <tiles:put name="style" type="string">
       <style type="text/css">td.tdradio {
@@ -22,10 +22,10 @@
     	<tags:stac_journal currentAction="stac_addressList"/>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:form action="/stac_address_list.do" defaultField="dischargeIs" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/stac_address_list.do" defaultField="dischargeIs" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
       	<msh:autoComplete property="hospType" fieldColSpan="2" 
@@ -88,7 +88,7 @@
         	<input type="radio" name="typeCntDays" value="2">  без ограничения
         </td>
       </msh:row>      
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         
         <msh:textField property="dateBegin" label="Период с" />
         <msh:textField property="dateEnd" label="по" />
@@ -183,8 +183,8 @@
 	${hospType} and m.deniedHospitalizating_id is null and (ok.voc_code is null or ok.voc_code='643')
 	${pigeonHole} ${status} ${department} ${serviceStreamSql} ${addAdrSql} ${addDaysSql}
 	order by pat.lastname
-	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
-    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" printToExcelButton="Сохранить в excel">
+	" />
+    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" printToExcelButton="Сохранить в excel">
                     <msh:tableNotEmpty>
                                 <msh:toolbar>
                         <msh:row>
@@ -200,15 +200,15 @@
                     </msh:tableNotEmpty>
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn property="11" columnName="Представитель"/>                  
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Год рождения" property="7" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Отделение" property="8" guid="e9g8f5-8b9e-4a3e-966f-4d435g76bbc96" />
-      <msh:tableColumn columnName="Экстренность" property="9" guid="e9g8f5-8b9e-4a3e-966f-4d435g76bbc96" />
-      <msh:tableColumn columnName="Дата открытия" property="2" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Кем открыт" property="4" guid="35347247-b552-4154-a82a-ee484a1714ad" />
-      <msh:tableColumn columnName="Стат.карта" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Дата закрытия" property="3" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Недействителен" property="10" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" />
+      <msh:tableColumn columnName="Год рождения" property="7" />
+      <msh:tableColumn columnName="Отделение" property="8" />
+      <msh:tableColumn columnName="Экстренность" property="9" />
+      <msh:tableColumn columnName="Дата открытия" property="2" />
+      <msh:tableColumn columnName="Кем открыт" property="4" />
+      <msh:tableColumn columnName="Стат.карта" property="5" />
+      <msh:tableColumn columnName="Дата закрытия" property="3" />
+      <msh:tableColumn columnName="Недействителен" property="10" />
             <msh:tableColumn columnName="К/дней" property="12" />
       
     </msh:table>
@@ -249,8 +249,8 @@
 	${hospType} and m.deniedHospitalizating_id is null and (ok.voc_code is not null and ok.voc_code != '643' or adr.kladr is not null and adr.kladr not like  '30%')
 	${pigeonHole} ${status} ${serviceStreamSql} ${addDaysSql}
 	order by pat.lastname
-	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
-    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" printToExcelButton="Сохранить в excel">
+	" />
+    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" printToExcelButton="Сохранить в excel">
                     <msh:tableNotEmpty>
                                 <msh:toolbar>
                         <msh:row>
@@ -261,16 +261,16 @@
                                 </msh:toolbar>
                     </msh:tableNotEmpty>
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Гражданство" property="12" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Год рождения" property="7" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Отделение" property="8" guid="e9g8f5-8b9e-4a3e-966f-4d435g76bbc96" />
-      <msh:tableColumn columnName="Экстренность" property="9" guid="e9g8f5-8b9e-4a3e-966f-4d435g76bbc96" />
-      <msh:tableColumn columnName="Дата открытия" property="2" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Кем открыт" property="4" guid="35347247-b552-4154-a82a-ee484a1714ad" />
-      <msh:tableColumn columnName="Стат.карта" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Дата закрытия" property="3" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Недействителен" property="10" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="Гражданство" property="12" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" />
+      <msh:tableColumn columnName="Год рождения" property="7" />
+      <msh:tableColumn columnName="Отделение" property="8" />
+      <msh:tableColumn columnName="Экстренность" property="9" />
+      <msh:tableColumn columnName="Дата открытия" property="2" />
+      <msh:tableColumn columnName="Кем открыт" property="4" />
+      <msh:tableColumn columnName="Стат.карта" property="5" />
+      <msh:tableColumn columnName="Дата закрытия" property="3" />
+      <msh:tableColumn columnName="Недействителен" property="10" />
       <msh:tableColumn columnName="К/дней" property="13" />
     </msh:table>
 
@@ -312,8 +312,8 @@
 	${hospType} and m.deniedHospitalizating_id is null and ok.voc_code is not null and ok.voc_code != '643'
 	${pigeonHole} ${status} ${serviceStreamSql} ${addDaysSql}
 	order by pat.lastname
-	" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
-    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" printToExcelButton="Сохранить в excel">
+	" />
+    <msh:table viewUrl="entityShortView-stac_ssl.do" selection="multiply" name="datelist" idField="1" action="entityView-stac_ssl.do" printToExcelButton="Сохранить в excel">
                     <msh:tableNotEmpty>
                                 <msh:toolbar>
                         <msh:row>
@@ -324,18 +324,18 @@
                                 </msh:toolbar>
                     </msh:tableNotEmpty>
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Гражданство" property="12" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Год рождения" property="7" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Отделение" property="8" guid="e9g8f5-8b9e-4a3e-966f-4d435g76bbc96" />
-      <msh:tableColumn columnName="Экстренность" property="9" guid="e9g8f5-8b9e-4a3e-966f-4d435g76bbc96" />
-      <msh:tableColumn columnName="Дата открытия" property="2" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Кем открыт" property="4" guid="35347247-b552-4154-a82a-ee484a1714ad" />
-      <msh:tableColumn columnName="Стат.карта" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Дата закрытия" property="3" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Поток обслуживания" property="13" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="Гражданство" property="12" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" />
+      <msh:tableColumn columnName="Год рождения" property="7" />
+      <msh:tableColumn columnName="Отделение" property="8" />
+      <msh:tableColumn columnName="Экстренность" property="9" />
+      <msh:tableColumn columnName="Дата открытия" property="2" />
+      <msh:tableColumn columnName="Кем открыт" property="4" />
+      <msh:tableColumn columnName="Стат.карта" property="5" />
+      <msh:tableColumn columnName="Дата закрытия" property="3" />
+      <msh:tableColumn columnName="Поток обслуживания" property="13" />
       <msh:tableColumn columnName="К/дней" property="14" />
-      <msh:tableColumn columnName="Недействителен" property="10" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="Недействителен" property="10" />
     </msh:table>
 
     </msh:sectionContent>

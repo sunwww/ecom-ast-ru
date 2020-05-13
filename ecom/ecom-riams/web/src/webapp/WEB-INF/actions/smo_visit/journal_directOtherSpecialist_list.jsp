@@ -18,14 +18,14 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-  <msh:form action="/poly_directOtherSpecialist.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+  <msh:form action="/poly_directOtherSpecialist.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <msh:panel colsWidth="1%,1%,1%">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
-        	<msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        	<msh:textField property="finishDate" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        	<msh:textField property="beginDate" label="Период с" />
+        	<msh:textField property="finishDate" label="по" />
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="workFunction" vocName="vocWorkFunction" 
@@ -128,10 +128,10 @@ and (v.noActuality is null or v.noActuality='0')
 order by p.lastname,p.firstname,p.middlename"/>
 <msh:table viewUrl="entityShortView-smo_visit.do" name="list" 
 	action="entityView-smo_visit.do" idField="1" >
-	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Дата приема" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="4" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+	      <msh:tableColumn columnName="Пациент" property="3" />
+	      <msh:tableColumn columnName="Дата приема" identificator="false" property="2" />
+	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="4" />
 	      <msh:tableColumn property="5" columnName="Диагноз"/>
 	      <msh:tableColumn property="6" columnName="Заключение" cssClass="preCell"/>
 	    </msh:table>

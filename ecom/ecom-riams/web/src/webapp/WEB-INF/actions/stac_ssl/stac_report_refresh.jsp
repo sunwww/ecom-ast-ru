@@ -8,15 +8,15 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Пересчет отчетов по стационару"/>
+    <msh:title mainMenu="StacJournal" title="Пересчет отчетов по стационару"/>
   </tiles:put>
   <tiles:put name="side" type="string">
 
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:form action="/stac_report_refresh_save.do"  defaultField="dateBegin" method="GET">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+    <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры запуска" colSpan="5"/>
         
       </msh:row>

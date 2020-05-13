@@ -14,17 +14,17 @@
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="parameterType" />
-      <msh:panel guid="panel">
+      <msh:panel>
         <msh:row>
         	<msh:textField label="Код с" property="codeFrom" />
         	<msh:textField label="по" property="codeTo" />
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="rep_parameterVarietyForm" />
+    <ecom:titleTrail mainMenu="Voc" beginForm="rep_parameterVarietyForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Диапазоны МКБ">

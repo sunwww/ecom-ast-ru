@@ -14,11 +14,11 @@
         <msh:form action="/registriesForSMO.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
             <msh:panel>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                 </msh:row>
 
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td  id="gtd0" class="label" title="Поиск по промежутку  (typeGroup)" colspan="1"><label for="typeGroupName" id="ttypeGroupLabel">Вид группировки:</label></td>
                     <td id="gtd1" onclick="this.childNodes[1].checked='checked';" colspan="2">
                         <input type="radio" name="typeGroup" value="1" checked> По ФИО

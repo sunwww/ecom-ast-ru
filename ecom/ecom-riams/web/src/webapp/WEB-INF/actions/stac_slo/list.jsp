@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Список всех CЛО" guid="c951c449-0ed2-489d-9163-da1263effaa3" />
+    <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Список всех CЛО" />
   </tiles:put>
   <tiles:put name="side" type="string" >
 	<msh:sideMenu title="Дополнительно">
@@ -50,8 +50,8 @@
            and MedCase.DTYPE='DepartmentMedCase'
            order by MedCase.dateStart,MedCase.entranceTime
            " />
-    <msh:table name="list" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+    <msh:table name="list" action="entityParentView-stac_slo.do" idField="1">
+            <msh:tableNotEmpty>
               <tr>
                 <th colspan="1" />
                 <th colspan="4" class="rightBold">Поступление</th>
@@ -60,24 +60,24 @@
                 <th colspan="1" />
               </tr>
             </msh:tableNotEmpty>
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-            <msh:tableColumn columnName="Дата" property="2" guid="024d14d9-7e0b-484a-ad93-7db35046b351" />
+      <msh:tableColumn columnName="#" property="sn" />
+            <msh:tableColumn columnName="Дата" property="2" />
             <msh:tableColumn columnName="Время" property="10" />
-            <msh:tableColumn columnName="Отделение" property="3" cssClass="rightBold" guid="e52974a2-76d9-404c-bd22-78f28d3456ed" />
+            <msh:tableColumn columnName="Отделение" property="3" cssClass="rightBold" />
             <msh:tableColumn columnName="Поток" property="13" cssClass="rightBold" />
-            <msh:tableColumn columnName="Дата" property="4" guid="26ab551e-5512-4c99-91bd-ea0e083e98cb" />
+            <msh:tableColumn columnName="Дата" property="4" />
             <msh:tableColumn columnName="Время" property="11" />
-            <msh:tableColumn columnName="Отделение" property="5" cssClass="rightBold" guid="cedd2007-2476-48d1-b24c-92a4606d2eca" />
-            <msh:tableColumn columnName="Дата" property="6" guid="5b3627ee-362b-4923-a1d9-f0213cd89480" />
+            <msh:tableColumn columnName="Отделение" property="5" cssClass="rightBold" />
+            <msh:tableColumn columnName="Дата" property="6" />
             <msh:tableColumn columnName="Время" property="12" />
-            <msh:tableColumn columnName="Койко-дни" property="9" guid="8110d88e-6422-47c8-b13d-9e7720250627" />
+            <msh:tableColumn columnName="Койко-дни" property="9" />
     </msh:table>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Добавить" guid="b33faf64-b72e-4845-bf32-5fda8e274fc3">
+    <msh:sideMenu title="Добавить">
       <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_slo" name="Новый СЛО" title="Добавить случай стационарного лечения в отделении" 
       roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Create" key="ALT+2"
-      guid="dc488234-9da8-4290-9e71-3b4558d27ec7" />
+      />
     </msh:sideMenu>
     
   </tiles:put>

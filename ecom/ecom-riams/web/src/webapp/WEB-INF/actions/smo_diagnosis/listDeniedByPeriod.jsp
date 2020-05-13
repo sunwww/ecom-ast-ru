@@ -30,7 +30,7 @@
 
 
   %>
-    <msh:form action="/stac_journal_denied_without_diagnosis.do" defaultField="beginDate" disableFormDataConfirm="true" method="POST" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_journal_denied_without_diagnosis.do" defaultField="beginDate" disableFormDataConfirm="true" method="POST">
     <msh:panel>
 		<msh:row>
         	<msh:separator label="Выбор режима" colSpan="7" />
@@ -48,8 +48,8 @@
 
 		</msh:panel>
 	<msh:panel styleId="pnlDiary">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       		<msh:row>
 			<td class="label" title="Поиск по параметрам (typeDiag)" colspan="1"><label for="typeModeName" id="typeModeLabel">Диагнозы (для реестра):</label></td>
@@ -85,8 +85,8 @@
 		</msh:row>
 	</msh:panel>
     <msh:panel styleId="pnlDepartment">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
 
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
@@ -366,15 +366,15 @@ and sls.department_id='${department}' and sls.medicalAid='1'
  ${serviceStreamSql}
 and diag.id is null
 order by sls.dateStart,p.lastname,p.firstname,p.middlename
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" printToExcelButton="сохранить в Excel"
     viewUrl="entityParentView-stac_sslAdmission.do?short=Short"
-    action="entityParentView-stac_sslAdmission.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-stac_sslAdmission.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Дата обращения" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Деж. врач" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Дата обращения" property="2" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="Деж. врач" property="5" />
       <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
       <msh:tableColumn columnName="Отделение" property="7"/>
     </msh:table>
@@ -470,15 +470,15 @@ and sls.deniedHospitalizating_id is not null
  ${serviceStreamSql}
 ${diagSql}
 order by to_char(sls.datestart,'dd.mm.yyyy'),p.lastname||' '||p.firstname||' '||p.middlename
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" printToExcelButton="сохранить в Excel"
     viewUrl="entityParentView-stac_sslAdmission.do?short=Short"
-    action="entityParentView-stac_sslAdmission.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-stac_sslAdmission.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Дата обращения" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Деж. врач (создал дневник)" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Дата обращения" property="2" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="Деж. врач (создал дневник)" property="5" />
       <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
       <msh:tableColumn columnName="Диагноз" property="7"/>
 		<msh:tableColumn columnName="Отделение" property="8"/>

@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Список СЛО </msh:title>
+    <msh:title mainMenu="StacJournal">Список СЛО </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
     	<tags:stac_journal currentAction="stac_journalByBedFund"/>
@@ -51,19 +51,19 @@
     where m.DTYPE='DepartmentMedCase' and ${dateType } between to_date('${dateBegin }','dd.mm.yyyy') and to_date('${dateEnd }','dd.mm.yyyy') 
     ${bedFund} ${addStatus} ${add } ${dep} ${servStream}
     order by p.lastname,p.firstname" 
-    guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    />
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund/NotViewInfoStac">
-		    <msh:table selection="multiply" name="journal_admission" action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-		      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-		      <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-		      <msh:tableColumn columnName="Отделение" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-		      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-		      <msh:tableColumn columnName="Год рождения" property="5" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-		      <msh:tableColumn columnName="Дата пост. (отд)" property="6" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-		      <msh:tableColumn columnName="Дата выписки / перевода (отд)" property="7" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+		    <msh:table selection="multiply" name="journal_admission" action="entitySubclassView-mis_medCase.do" idField="1">
+		      <msh:tableColumn columnName="#" property="sn" />
+		      <msh:tableColumn columnName="Стат.карта" property="4" />
+		      <msh:tableColumn columnName="Отделение" property="3" />
+		      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" />
+		      <msh:tableColumn columnName="Год рождения" property="5" />
+		      <msh:tableColumn columnName="Дата пост. (отд)" property="6" />
+		      <msh:tableColumn columnName="Дата выписки / перевода (отд)" property="7" />
 		      <msh:tableColumn columnName="К.Д по отд" property="10"/>
-		      <msh:tableColumn columnName="Дата пост. (стац)" property="8" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-		      <msh:tableColumn columnName="Дата выписки (стац)" property="9" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+		      <msh:tableColumn columnName="Дата пост. (стац)" property="8" />
+		      <msh:tableColumn columnName="Дата выписки (стац)" property="9" />
 		      <msh:tableColumn columnName="К.Д по стац" property="11"/>
 		      <msh:tableColumn columnName="Диагноз" property="12"/>
 		      <msh:tableColumn columnName="Результат госпитализации" property="13"/>
@@ -71,14 +71,14 @@
 		     </msh:table>
       </msh:ifNotInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ReestrByBedFund/NotViewInfoStac">
-	    <msh:table selection="multiply" name="journal_admission" action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-	      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-	      <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-	      <msh:tableColumn columnName="Отделение" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-	      <msh:tableColumn columnName="Год рождения" property="5" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-	      <msh:tableColumn columnName="Дата пост. (отд)" property="6" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-	      <msh:tableColumn columnName="Дата выписки / перевода (отд)" property="7" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+	    <msh:table selection="multiply" name="journal_admission" action="entitySubclassView-mis_medCase.do" idField="1">
+	      <msh:tableColumn columnName="#" property="sn" />
+	      <msh:tableColumn columnName="Стат.карта" property="4" />
+	      <msh:tableColumn columnName="Отделение" property="3" />
+	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" />
+	      <msh:tableColumn columnName="Год рождения" property="5" />
+	      <msh:tableColumn columnName="Дата пост. (отд)" property="6" />
+	      <msh:tableColumn columnName="Дата выписки / перевода (отд)" property="7" />
 	      <msh:tableColumn columnName="К.Д по отд" property="10"/>
 	      <msh:tableColumn columnName="Диагноз" property="12"/>
 	      <msh:tableColumn columnName="Результат госпитализации" property="13"/>

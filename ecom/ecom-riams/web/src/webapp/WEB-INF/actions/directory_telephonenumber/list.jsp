@@ -7,8 +7,8 @@
 	flush="true">
 	 
 	<tiles:put name="side" type="string">
-		<msh:sideMenu guid="helloSideMenu-123">
-			<msh:sideLink guid="helloSideLinkNew"
+		<msh:sideMenu>
+			<msh:sideLink
 				roles="/Policy/Mis/Directory/Department/CreateRecord" key="ALT+N"
 				action="/directory_createEntry.do"
 				name="Создать" />
@@ -16,9 +16,9 @@
 	</tiles:put>
 	
 	<tiles:put name="body" type="string">
-		<msh:form guid="formHello" action="/directory_search.do"
+		<msh:form action="/directory_search.do"
 			defaultField="hello">
-			<msh:panel guid="panel">
+			<msh:panel>
 				<msh:row>
 					<msh:row>
 						<msh:autoComplete vocName="vocBuildingShort" property="building"

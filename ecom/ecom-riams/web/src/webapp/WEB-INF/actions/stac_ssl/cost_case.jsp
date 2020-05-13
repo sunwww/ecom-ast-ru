@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Стоимость госпитализации (СЛС)" />
+    <msh:title mainMenu="StacJournal" title="Стоимость госпитализации (СЛС)" />
   </tiles:put>
   <tiles:put name="side" type="string">
    
@@ -35,13 +35,13 @@
   </msh:sectionTitle>
   </msh:section>
 <msh:ifInRole roles="/Policy/Mis/MedPolicy/View">
-        <ecom:webQuery nativeSql="select mp.id, case when (mp.DTYPE='MedPolicyOmc') then 'ОМС' when (mp.DTYPE='MedPolicyDmcForeign') then 'ДМС иногороднего' when (mp.DTYPE='MedPolicyDmc') then 'ДМС' else 'ОМС иногороднего' end, ri.name as riname,mp.polnumber,mp.series,mp.actualDateFrom,mp.actualDateTo from MedCase_MedPolicy as mc left join MedPolicy as mp on mp.id=mc.policies_id left join reg_ic as ri on ri.id=mp.company_id where mc.MedCase_id=${param.id}" name="policies" guid="12ed9815-1a16-441a-8d89-36bb94761f9b" />
-          <msh:section guid="746b6d8a-b92f-4bd0-9899-d32855f3aa95">
+        <ecom:webQuery nativeSql="select mp.id, case when (mp.DTYPE='MedPolicyOmc') then 'ОМС' when (mp.DTYPE='MedPolicyDmcForeign') then 'ДМС иногороднего' when (mp.DTYPE='MedPolicyDmc') then 'ДМС' else 'ОМС иногороднего' end, ri.name as riname,mp.polnumber,mp.series,mp.actualDateFrom,mp.actualDateTo from MedCase_MedPolicy as mc left join MedPolicy as mp on mp.id=mc.policies_id left join reg_ic as ri on ri.id=mp.company_id where mc.MedCase_id=${param.id}" name="policies" />
+          <msh:section>
           <msh:sectionTitle>
           <msh:link action="stac_policiesEdit.do?id=${param.id}"  >Прикрепленные полисы к случаю</msh:link>
           </msh:sectionTitle>
           <msh:sectionContent>
-            <msh:table name="policies" hideTitle="false" action="entitySubclassView-mis_medPolicy.do" idField="1" guid="86ef8e69-6d58-4e49-961a-f2f463e02f80">
+            <msh:table name="policies" hideTitle="false" action="entitySubclassView-mis_medPolicy.do" idField="1">
               <msh:tableColumn property="sn" columnName="#" />
               <msh:tableColumn property="2" columnName="Тип" />
               <msh:tableColumn property="3" columnName="Страховая компания" />
@@ -90,7 +90,7 @@ where slo.parent_id='${param.id}'
  group by slo.id,ml.name,vbt.name,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code
  having count(pp.id)=0
       "/>
-    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Информация о СЛО" property="2" />
       <msh:tableColumn columnName="Наименование услуги" property="7" />
@@ -137,7 +137,7 @@ where slo.parent_id='${param.id}'
  and ms.servicetype_id='${idsertypebed}' and pp.priceList_id='${priceList}'
  group by slo.id,ml.name,vbt.name,vbst.code,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code
       "/>
-    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Информация о СЛО" property="2" />
       <msh:tableColumn columnName="Наименование услуги" property="7" />
@@ -165,7 +165,7 @@ where slo.parent_id='${param.id}'
       "/>
 
 
-    <msh:table name="list1" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list1" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата" property="2" />
       <msh:tableColumn columnName="Специалист" property="3" />
@@ -203,7 +203,7 @@ where slo.parent_id='${param.id}'
       "/>
 
 
-    <msh:table name="list1" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list1" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Информация о визите" property="2" />
       <msh:tableColumn columnName="Наименование услуги" property="3" />
@@ -236,7 +236,7 @@ where slo.parent_id='${param.id}'
       "/>
 
 
-    <msh:table name="list1" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list1" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Информация о визите" property="2" />
       <msh:tableColumn columnName="Наименование услуги" property="3" />
@@ -335,7 +335,7 @@ select
       (slo.parent_id='${param.id}' or slo.id='${param.id}')
       and pp.id is not null and (pms.dateto is null or pms.dateto>=so.operationDate)
       "/>
-    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Наименование услуги" property="2" />
       <msh:tableColumn columnName="Наименование услуги по прейскуранту" property="3" />
@@ -366,7 +366,7 @@ select
      
         having count(pp.id)=0
       "/>
-    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Наименование услуги" property="2" />
      
@@ -403,7 +403,7 @@ select
       (slo.parent_id='${param.id}' or slo.id='${param.id}') and (pms.id is null or  pp.priceList_id='${priceList}')
       
       "/>
-    <msh:table name="listA" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="listA" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Операция" property="2" />
       <msh:tableColumn columnName="Наименование услуги" property="3" />
@@ -438,7 +438,7 @@ select
       and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT'
       and pp.id is not null
       "/>
-    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Наименование услуги" property="2" />
       <msh:tableColumn columnName="Кол-во" property="6" />
@@ -471,7 +471,7 @@ select
       group by so.id,so.dateStart,ms.code,ms.name,vwf.name,wp.lastname ,mkb.code
       having count(pp.id)=0
       "/>
-    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Наименование услуги" property="1" />
       <msh:tableColumn columnName="Кол-во" property="2" />

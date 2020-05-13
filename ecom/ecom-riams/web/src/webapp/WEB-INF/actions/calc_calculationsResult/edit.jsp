@@ -25,10 +25,10 @@
 	<tiles:put name="side" type="string">
 		<msh:ifFormTypeAreViewOrEdit formName="calc_calculationsResultForm">
 			<msh:sideMenu title="Управление">
-				<msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id"
+				<msh:sideLink key="ALT+2" params="id"
 					action="/entityEdit-calc_calculationsResult" name="Изменить"
 					roles="/Policy/Mis/Calc/Calculation/Edit" />
-				<msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?"
+				<msh:sideLink key="ALT+DEL" confirm="Удалить?"
 					params="id"
 					action="/entityParentDeleteGoParentView-calc_calculationsResult"
 					name="Удалить" roles="/Policy/Mis/Calc/Calculation/Edit" />

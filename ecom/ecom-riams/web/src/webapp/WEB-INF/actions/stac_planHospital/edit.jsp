@@ -22,12 +22,12 @@
 
     </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:form action="/entitySaveGoView-stac_planHospital.do" defaultField="patientName" guid="137f576d-2283-4edd-9978-74290e04b873" editRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
-      <msh:panel guid="80209fa0-fbd4-45d0-be90-26ca4219af2e">
-        <msh:hidden property="id" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
-        <msh:hidden property="saveType" guid="c409dfd8-f4e7-469f-9322-1982b666a087" />
-        <msh:row guid="1e6e2aa0-b434-4025-b877-58993d9b320d">
-          	<msh:autoComplete showId="false" vocName="patient" property="patient" viewOnlyField="false"  label="Персона" guid="e4a238b3-0a19-4405-adcf-8b7ef8fad03f" horizontalFill="true" viewAction="entityView-mis_patient.do" fieldColSpan="2"/>
+    <msh:form action="/entitySaveGoView-stac_planHospital.do" defaultField="patientName" editRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
+      <msh:panel>
+        <msh:hidden property="id" />
+        <msh:hidden property="saveType" />
+        <msh:row>
+          	<msh:autoComplete showId="false" vocName="patient" property="patient" viewOnlyField="false"  label="Персона" horizontalFill="true" viewAction="entityView-mis_patient.do" fieldColSpan="2"/>
 			<td align="right" width="1px"><div id="personButton"></div></td>
         </msh:row>
         <msh:row>
@@ -81,7 +81,7 @@
         	/>
         </msh:row>
         <msh:row>
-          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunction" label="Функция" guid="010e3a75-ba7e-45da-a82a-9c618a0ffcd2" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
+          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunction" label="Функция" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -101,7 +101,7 @@
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>                
 
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
+                <msh:submitCancelButtonsRow colSpan="3" />
       </msh:panel>
       
     </msh:form>
@@ -109,13 +109,13 @@
 
 </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="StacJournal" beginForm="stac_planHospitalForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+    <ecom:titleTrail mainMenu="StacJournal" beginForm="stac_planHospitalForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="stac_planHospitalForm" guid="c7cae1b4-31ca-4b76-ab51-7f75b52d11b6">
-      <msh:sideMenu title="Планирование госпитализаций" guid="edd9bfa6-e6e7-4998-b4c2-08754057b0aa">
-        <msh:sideLink key="ALT+2" params="id" action="/entityEdit-stac_planHospital" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-stac_planHospital" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+    <msh:ifFormTypeIsView formName="stac_planHospitalForm">
+      <msh:sideMenu title="Планирование госпитализаций">
+        <msh:sideLink key="ALT+2" params="id" action="/entityEdit-stac_planHospital" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-stac_planHospital" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Delete" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink key="CTRL+2" params="id" action="/print-documentDirection1.do?m=printPlanHospital&s=VisitPrintService" name="Предварительной госпитализации"/>

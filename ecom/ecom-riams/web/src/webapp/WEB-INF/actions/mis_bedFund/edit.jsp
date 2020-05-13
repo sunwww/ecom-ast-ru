@@ -9,20 +9,20 @@
     <!-- 
     	  - Проба
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-mis_bedFund.do" defaultField="hello">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenParent" property="lpu" />
-      <msh:panel guid="panel">
-        <msh:row guid="row1">
-          <msh:autoComplete vocName="vocBedType" property="bedType" label="Профиль коек" guid="a5-4caf-4e14-aa70-287c" horizontalFill="true" fieldColSpan="3" />
+    <msh:form action="/entityParentSaveGoView-mis_bedFund.do" defaultField="hello">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="lpu" />
+      <msh:panel>
+        <msh:row>
+          <msh:autoComplete vocName="vocBedType" property="bedType" label="Профиль коек" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="f53-2cae-4795-93e8-9cd1">
-          <msh:textField property="amount" label="Количество коек" size="20" fieldColSpan="3" guid="e4d1b-8802-467d-b205-70" />
+        <msh:row>
+          <msh:textField property="amount" label="Количество коек" size="20" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="f53-2cae-4795-93e8-9cd1">
-          <msh:checkBox property="forChild" label="Для детей" guid="1b-8802-467d-b205-70" />
-          <msh:checkBox property="noFood" label="Без питания" guid="1b-8802-467d-b205-70" />
+        <msh:row>
+          <msh:checkBox property="forChild" label="Для детей" />
+          <msh:checkBox property="noFood" label="Без питания" />
         </msh:row>
         <msh:row>
           <msh:checkBox property="isRehab" label="Реабилитационные койки" fieldColSpan="3"/>
@@ -31,44 +31,44 @@
         
         	<msh:checkBox property="addCaseDuration" fieldColSpan="3" label="День выписки и день поступления считать разными днями"/>
         </msh:row>
-        <msh:row guid="b6eb-b971-44-9a90-5107">
-          <msh:autoComplete vocName="vocBedSubType" property="bedSubType" label="Тип коек" guid="3d-88-467d-b205-715fb3b018" horizontalFill="true" fieldColSpan="3" />
+        <msh:row>
+          <msh:autoComplete vocName="vocBedSubType" property="bedSubType" label="Тип коек" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="b6eb-b971-441e-9a90-5107">
-          <msh:autoComplete vocName="vocBedReductionType" property="reductionType" label="" guid="3d1b-8802-467d-b205-715fb379b018" horizontalFill="true" fieldColSpan="3" />
+        <msh:row>
+          <msh:autoComplete vocName="vocBedReductionType" property="reductionType" label="" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="b6gteb-b971-441e-9a90-5107">
-          <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" guid="5dfb6-b2c3-44be-9d10-d8d4" fieldColSpan="3" horizontalFill="true" />
+        <msh:row>
+          <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="07fbe7a5-4caf-4e14-aa70-287cf4ca610d">
-          <msh:textField property="dateStart" label="Дата начала актуальности" guid="e4d1b-8802-467d-b205-70jgh5" />
-          <msh:textField property="timeStart" label="Время начала актуальности" guid="e4d1b-8802-467d-b205-75765" />
+        <msh:row>
+          <msh:textField property="dateStart" label="Дата начала актуальности" />
+          <msh:textField property="timeStart" label="Время начала актуальности" />
         </msh:row>
-        <msh:row guid="07fbe7a5-4caf-4e14-aa70-287246">
-          <msh:textField property="dateFinish" label="Дата окончания актуальности" guid="e1b-8802-467d-b205-75765" />
-          <msh:textField property="timeFinish" label="Время окончания актуальности" guid="e4d1b-8802-467d-b205-757876" />
+        <msh:row>
+          <msh:textField property="dateFinish" label="Дата окончания актуальности" />
+          <msh:textField property="timeFinish" label="Время окончания актуальности" />
         </msh:row>
         <msh:row>
         	<msh:textField fieldColSpan="3" property="snilsDoctorDirect263"/>
         </msh:row>
-        <msh:row guid="855de982-5baf-46f1-9f8b-f48" />
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:row />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Lpu" beginForm="mis_bedFundForm" />
+    <ecom:titleTrail mainMenu="Lpu" beginForm="mis_bedFundForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
   <msh:ifFormTypeIsView formName="mis_bedFundForm">
-    <msh:sideMenu guid="sideMenu-123">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_bedFund" name="Изменить" roles="/Policy/Mis/BedFund/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_bedFund" name="Удалить" roles="/Policy/Mis/BedFund/Delete" />
+    <msh:sideMenu>
+      <msh:sideLink key="ALT+2" params="id" action="/entityEdit-mis_bedFund" name="Изменить" roles="/Policy/Mis/BedFund/Edit" />
+      <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_bedFund" name="Удалить" roles="/Policy/Mis/BedFund/Delete" />
     </msh:sideMenu>
     
-    <msh:sideMenu title="Перейти" guid="sideMenu-123">
-      <msh:sideLink guid="7a5-4caf-4e14-aa70-287" action="/entityParentListRedirect-mis_bedFund" name="К списку" params="id" />
-      <msh:sideLink guid="7a5-4caf-4e14-aa70-287" roles="/Policy/Mis/Journal/263injunction" action="/stac_direct_in_fond.do" name="263 приказ" params="id" />
+    <msh:sideMenu title="Перейти">
+      <msh:sideLink action="/entityParentListRedirect-mis_bedFund" name="К списку" params="id" />
+      <msh:sideLink roles="/Policy/Mis/Journal/263injunction" action="/stac_direct_in_fond.do" name="263 приказ" params="id" />
     </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

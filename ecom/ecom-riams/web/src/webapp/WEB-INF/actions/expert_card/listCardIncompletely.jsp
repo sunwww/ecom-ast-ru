@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Expert" guid="a79e22af-e87a-45dd-9743-59a1f8f3d66a">Список экспертных карт не полностью заполненных</msh:title>
+    <msh:title mainMenu="Expert">Список экспертных карт не полностью заполненных</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
     <tags:expert_menu currentAction="expert_cardIncompletely"/>

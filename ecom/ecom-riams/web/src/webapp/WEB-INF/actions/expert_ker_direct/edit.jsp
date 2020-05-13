@@ -10,10 +10,10 @@
     	  - Направление на ВК
     	  -->
     <msh:form action="/entityParentSaveGoView-expert_ker_direct.do" defaultField="patientStatusName">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenParent" property="medCase" />
-      <msh:hidden guid="hiddenParent" property="patient" />
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="medCase" />
+      <msh:hidden property="patient" />
       <msh:panel colsWidth="1%,1%,1%,1%,96%">
         <msh:row>
         	<msh:autoComplete vocName="vocExpertType" property="type" label="Тип ВК" 
@@ -90,7 +90,7 @@
 	        	<msh:label property="editTime" label="время"/>
 	        	<msh:label property="editUsername" label="пользователь"/>
 	        </msh:row>  
-	        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
+	        <msh:submitCancelButtonsRow colSpan="3" />
       </msh:panel>
     </msh:form>
   </tiles:put>
@@ -127,13 +127,13 @@
   	</script>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Disability" beginForm="expert_ker_directForm" />
+    <ecom:titleTrail mainMenu="Disability" beginForm="expert_ker_directForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
   <msh:ifFormTypeIsView formName="expert_ker_directForm">
-    <msh:sideMenu guid="sideMenu-123">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-expert_ker_direct" name="Изменить" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-expert_ker_direct" name="Удалить" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/Delete" />
+    <msh:sideMenu>
+      <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-expert_ker_direct" name="Изменить" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/Edit" />
+      <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-expert_ker_direct" name="Удалить" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/Delete" />
     </msh:sideMenu>
     
     <msh:sideMenu title="Печать" >
@@ -142,8 +142,8 @@
         <msh:sideLink params="id" action="/print-directVKresult.do?s=HospitalPrintService&amp;m=printDirectVK"  
         	name="Протокол" title="Печать протокола направления на ВК" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/PrintDirect" />
     </msh:sideMenu>
-    <msh:sideMenu title="Перейти" guid="sideMenu-123">
-      <msh:sideLink guid="7a5-4caf-4e14-aa70-287" action="/entityParentListRedirect-expert_ker_direct" name="К списку" params="id" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/View"/>
+    <msh:sideMenu title="Перейти">
+      <msh:sideLink action="/entityParentListRedirect-expert_ker_direct" name="К списку" params="id" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/View"/>
     </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

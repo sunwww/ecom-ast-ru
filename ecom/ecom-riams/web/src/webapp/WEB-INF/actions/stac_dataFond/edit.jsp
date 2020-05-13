@@ -9,8 +9,8 @@
 
   <tiles:put name="body" type="string">
     <msh:form action="/entityParentSaveGoView-stac_dataFond.do" defaultField="transfusionDate">
-      <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
-      <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
 	    <msh:panel>
 	    <msh:row>
 	    	<msh:textField property="numberFond" label="Номер фонда"/>
@@ -92,7 +92,7 @@
 	      	<msh:textField property="dateImport5" label="Дата импорта"/>
 	      </msh:row>
 	    </msh:panel>
-        <msh:submitCancelButtonsRow colSpan="" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
+        <msh:submitCancelButtonsRow colSpan="" />
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string"> 
@@ -100,9 +100,9 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="stac_dataFondForm">
-      <msh:sideMenu title="СCО" guid="03e79b31-7afd-4187-b53c-b3539d313ce2">
-        <msh:sideLink key="" params="id" action="/entityEdit-stac_dataFond" name="Изменить " title="Изменить информацию о переливании крови" roles="/Policy/Mis/MedCase/Stac/Ssl/Blood/Edit" guid="e7826847-dfe9-45cc-9f2c-cf2637f2d423" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-stac_dataFond" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Blood/Delete" guid="79e30880-7a1a-4a4b-9def-ab27702f74e3" />
+      <msh:sideMenu title="СCО">
+        <msh:sideLink key="" params="id" action="/entityEdit-stac_dataFond" name="Изменить " title="Изменить информацию о переливании крови" roles="/Policy/Mis/MedCase/Stac/Ssl/Blood/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-stac_dataFond" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Blood/Delete" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

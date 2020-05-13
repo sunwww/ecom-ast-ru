@@ -13,10 +13,10 @@
     	  - <h1>Переливание крови: <span><stac:patientInfo/></span></h1>
     	  -->
     <msh:form action="/entityParentSaveGoView-stac_blood.do" defaultField="transfusionDate">
-      <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
-      <msh:hidden property="medCase" guid="710eb92b-fc3f-4b44-9390-b32df6837280" />
-      <msh:hidden property="patient" guid="9d908e88-e051-4d0a-8da6-3f5f4b226493" />
-      <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
+      <msh:hidden property="id" />
+      <msh:hidden property="medCase" />
+      <msh:hidden property="patient" />
+      <msh:hidden property="saveType" />
 	    <msh:panel>
 	      <msh:row>
 	        <msh:textField label="Дата" property="transfusionDate" />
@@ -110,18 +110,18 @@
 	        <msh:textField label="Кpовозаменители всего" property="bloodSubstitutes" />
 	      </msh:row>
 	    </msh:panel>
-        <msh:submitCancelButtonsRow colSpan="" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
+        <msh:submitCancelButtonsRow colSpan="" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string"> 
-    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sloForm" guid="638ddd30-b48e-4058-b3ad-866c0c70ee1f" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sloForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="stac_bloodForm">
-      <msh:sideMenu title="СCО" guid="03e79b31-7afd-4187-b53c-b3539d313ce2">
-        <msh:sideLink key="" params="id" action="/entityParentEdit-stac_blood" name="Изменить " title="Изменить информацию о переливании крови" roles="/Policy/Mis/MedCase/Stac/Ssl/Blood/Edit" guid="e7826847-dfe9-45cc-9f2c-cf2637f2d423" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-stac_blood" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Blood/Delete" guid="79e30880-7a1a-4a4b-9def-ab27702f74e3" />
+      <msh:sideMenu title="СCО">
+        <msh:sideLink key="" params="id" action="/entityParentEdit-stac_blood" name="Изменить " title="Изменить информацию о переливании крови" roles="/Policy/Mis/MedCase/Stac/Ssl/Blood/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-stac_blood" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Blood/Delete" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

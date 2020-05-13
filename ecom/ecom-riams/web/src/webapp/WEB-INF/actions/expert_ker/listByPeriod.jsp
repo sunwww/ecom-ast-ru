@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал врачебной комиссии"/>
+    <msh:title mainMenu="Journals" title="Журнал врачебной комиссии"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:style_currentMenu currentAction="stac_criminalMessages" />
@@ -22,14 +22,14 @@
 	String typeLpu = ActionUtil.updateParameter("Expert_Ker","typeLpu","3", request) ;
   %>
   
-    <msh:form action="/expert_journal_ker.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/expert_journal_ker.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
     <input type="hidden" name="id" id="id" value=""/>
     
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
@@ -70,8 +70,8 @@
 	        </td>
         </msh:row>
       <msh:row>
-        <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
       </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocExpertPatientStatus" property="patientStatus" label="Статус пациента" 
@@ -242,7 +242,7 @@ left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
 ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
 ${lpuSql} ${typeSql}
     order by cast('0'||cec.numberinjournal as int), cec.expertDate
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-expert_journalKer.do" method="post" target="_blank">
@@ -317,7 +317,7 @@ ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDire
 ${lpuSql} ${typeSql}
 	group by ml.id,ml.name
     order by ml.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="journal_militia"
     viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&type=${param.type}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}" 
      action="expert_journal_ker.do?dateBegin=${param.dateBegin}&type=${param.type}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}&typeLpu=${typeLpu}" idField="1" >

@@ -73,7 +73,7 @@
                 <msh:sideLink roles="/Policy/Mis/MedPolicy/Dmc/Delete" key='ALT+DEL' params="id" action="/entityParentDeleteGoParentView-mis_medPolicyDmc" name="Удалить"
                               confirm="Удалить полис?"/>
                 <msh:ifFormTypeIsNotView formName="mis_medPolicyDmcForm">
-	    		<msh:sideLink roles="/Policy/Mis/MedPolicy/Dmc/Edit" action="/javascript:{$('changeType').style.display='block';}" name="Изменить тип полиса" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
+	    		<msh:sideLink roles="/Policy/Mis/MedPolicy/Dmc/Edit" action="/javascript:{$('changeType').style.display='block';}" name="Изменить тип полиса" />
       </msh:ifFormTypeIsNotView>
             </msh:ifFormTypeAreViewOrEdit>
         </msh:sideMenu>

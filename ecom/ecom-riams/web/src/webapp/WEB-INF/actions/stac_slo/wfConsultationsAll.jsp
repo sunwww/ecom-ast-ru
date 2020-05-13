@@ -25,10 +25,10 @@
                     <msh:autoComplete property="refreshType" fieldColSpan="16" horizontalFill="true" label="Направлен к" vocName="workFunctionCons"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Показать  (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Показать:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeGroup" value="1" checked> все
@@ -40,7 +40,7 @@
                         <input type="radio" name="typeGroup" value="3"> НЕ выполненные
                     </td>
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Показать  (typeGroup3)" colspan="1"><label for="typeGroup3Name" id="typeGroup3Label"></label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeGroup3" value="1" checked> все
@@ -52,7 +52,7 @@
                         <input type="radio" name="typeGroup3" value="3"> plan
                     </td>
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Показать  (typeGroup4)" colspan="1"><label for="typeGroup4Name" id="typeGroup4Label"></label></td>
                     <td id="td1" onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeGroup4" value="1" checked> все
@@ -71,7 +71,7 @@
                     </td>
                 </msh:row>
                 <msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Показать  (typeGroup5)" colspan="1"><label for="typeGroup5Name" id="typeGroup5Label"></label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeGroup5" value="1" checked> все

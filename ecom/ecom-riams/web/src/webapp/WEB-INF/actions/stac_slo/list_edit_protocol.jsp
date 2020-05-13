@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал на редактирование дневников </msh:title>
+    <msh:title mainMenu="StacJournal">Журнал на редактирование дневников </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_journalDraftByCurator"/>
@@ -83,7 +83,7 @@ left join Worker ow on owf.worker_id=ow.id
     and dm.validitytime>=current_time
     )
 	group by ml.id,ml.name order by ml.name
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="js-smo_draftProtocol-list.do?short=Short"
     action="js-smo_draftProtocol-list.do" idField="1">
@@ -115,7 +115,7 @@ where ow.lpu_id='${department}' and slo.dtype='DepartmentMedCase'
     )
 group by owf.id,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="js-smo_draftProtocol-list.do?short=Short"
     action="js-smo_draftProtocol-list.do" idField="1">
@@ -160,7 +160,7 @@ left join diary d on d.id=dm.diary_id
     and dm.validitytime>=current_time
     )
    order by pat.lastname,dm.validitydate
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="entityView-smo_visitProtocol.do?short=Short" 
     action="entityParentEdit-smo_visitProtocol.do" idField="1" styleRow="13">

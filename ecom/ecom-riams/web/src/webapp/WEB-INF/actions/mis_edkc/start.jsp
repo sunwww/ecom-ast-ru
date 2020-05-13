@@ -15,9 +15,9 @@
             <div>
                 <form action="/javascript:void()">
                     <msh:panel>
-                        <msh:row guid="1e6e2aa0-b434-4025-b877-58993d9b320d">
+                        <msh:row>
                             <msh:autoComplete showId="false" vocName="patient" property="patient" viewOnlyField="false"  label="Персона"
-                                              guid="e4a238b3-0a19-4405-adcf-8b7ef8fad03f" size="50" viewAction="entityView-mis_patient.do" fieldColSpan="2"/>
+                                              size="50" viewAction="entityView-mis_patient.do" fieldColSpan="2"/>
                             <td align="right" width="1px"><div id="personButton" style="margin-left:5px"></div></td>
                         </msh:row>
                     </msh:panel>

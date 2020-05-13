@@ -31,14 +31,14 @@
 	String typeEmergency = ActionUtil.updateParameter("DiagnosisBySlo","typeEmergency","3", request) ;
 	String typeReestr = request.getParameter("typeReestr") ;
   %>
-    <msh:form action="/stac_diagnosis_hospital.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/stac_diagnosis_hospital.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     	<input type="hidden" name="m" id="m" value="printDiagnosisJournal"/>
     	<input type="hidden" name="s" id="s" value="HospitalPrintReport"/>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="1">  поступления
@@ -86,8 +86,8 @@
         	<td><i>Пример: <b>A0</b>, <b>N</b>, <b>A00-B87</b></i></td>
         </msh:row>
         <msh:row>
-	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+	        <msh:textField property="dateBegin" label="Период с" />
+	        <msh:textField property="dateEnd" label="по" />
 			<td>
 	            <input type="submit" onclick="find()" value="Найти" />
 	          </td>
@@ -360,28 +360,28 @@
     <input type="submit" value="Печать"> 
     </form>
 	${infoDepartment}
-    <msh:table name="datelist" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table name="datelist" action="entitySubclassView-mis_medCase.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата рождения" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Стат.карта" property="6" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4" />
+      <msh:tableColumn columnName="Дата рождения" property="5" />
       <msh:tableColumn columnName="Пол" property="18" />
-      <msh:tableColumn columnName="Возраст" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Район" property="16" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Возраст" property="9" />
+      <msh:tableColumn columnName="Район" property="16" />
       
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Дата выписки" property="3" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Госпитализация" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Адрес" role="/Policy/Mis/Journal/ViewInfoPatient" property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Кол-во к.дней" isCalcAmount="true" property="10" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Диагноз направ. СЛС" property="11" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Диагноз клин СЛО" property="12" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Диагноз выпис. СЛС" property="13" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Диагноз выпис. СЛС сопут." property="19" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
+      <msh:tableColumn columnName="Дата выписки" property="3" />
+      <msh:tableColumn columnName="Госпитализация" property="7" />
+      <msh:tableColumn columnName="Адрес" role="/Policy/Mis/Journal/ViewInfoPatient" property="8" />
+      <msh:tableColumn columnName="Кол-во к.дней" isCalcAmount="true" property="10" />
+      <msh:tableColumn columnName="Диагноз направ. СЛС" property="11" />
+      <msh:tableColumn columnName="Диагноз клин СЛО" property="12" />
+      <msh:tableColumn columnName="Диагноз выпис. СЛС" property="13" />
+      <msh:tableColumn columnName="Диагноз выпис. СЛС сопут." property="19" />
       
-      <msh:tableColumn columnName="Отделение пост." property="14" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Отделение выписки" property="15" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Исход" property="17" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Отделение пост." property="14" />
+      <msh:tableColumn columnName="Отделение выписки" property="15" />
+      <msh:tableColumn columnName="Исход" property="17" />
     </msh:table>
     	
     		

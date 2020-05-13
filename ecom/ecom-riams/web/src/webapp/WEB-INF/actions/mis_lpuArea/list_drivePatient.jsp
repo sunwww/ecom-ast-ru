@@ -20,8 +20,8 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="psych_listByArea.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="psych_listByArea.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
 	<input type="hidden" id="check" name="check" />
 	<input type="hidden" id="m" value="printArea" name="m"/>
 	<input type="hidden" id="s" value="PsychiatricService" name="s"/>
@@ -46,8 +46,8 @@
 	        	<input type="radio" name="typeAddress" value="2">  проживания
 	        </td>
        </msh:row>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <td class="label" title="Список  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Список:</label></td>
@@ -195,8 +195,8 @@
         	<msh:textField property="ageTo" label="по"/>
         </msh:row>
         <msh:row styleId="rwDel">
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
         <td>
             <input type="submit" onclick="find()" value="Найти" />
             <input type="submit" onclick="print()" value="Печать" />
@@ -340,7 +340,7 @@ as age
    ${suicide} 
    ${group} ${sexT} ${ageFrom} ${ageTo}
    group by area.id 
-   order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+   order by p.lastname,p.firstname,p.middlename" />
         <msh:table viewUrl="entityShortView-psych_careCard.do" editUrl="entityParentEdit-psych_careCard.do" deleteUrl="entityParentDeleteGoParentView-psych_careCard.do" name="journal_ticket" action="entityView-psych_careCard.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>
 			<msh:tableColumn columnName="ФИО пациента" property="3"/>

@@ -32,7 +32,7 @@
         <msh:row>
           <msh:autoComplete vocName="workFunction" property="workFunction" fieldColSpan="3" horizontalFill="true" size="150" />
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
   </tiles:put>

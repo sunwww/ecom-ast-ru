@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал по коротким дневникам</msh:title>
+    <msh:title mainMenu="StacJournal">Журнал по коротким дневникам</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_journalByCurator"/>
@@ -85,8 +85,8 @@
       </msh:row>
       </msh:ifInRole>
       <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
      </msh:row>
      <msh:row>
      	<msh:textField property="cntSymbols"/>
@@ -137,7 +137,7 @@
 	left join MisLpu ml on w.lpu_id=ml.id 
 	where ${paramSql}
 	group by ml.id,ml.name order by ml.name
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="stac_report_cases_short_protocol.do?${paramHref}&short=Short"
     action="stac_report_cases_short_protocol.do?${paramHref}" idField="1">
@@ -165,7 +165,7 @@ left join Patient wp on w.person_id=wp.id
 where ${paramSql} and w.lpu_id=${department}
 group by wf.id,wp.lastname,wp.middlename,wp.firstname 
 order by wp.lastname,wp.middlename,wp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="stac_report_cases_short_protocol.do?${paramHref}&short=Short"
     action="stac_report_cases_short_protocol.do?${paramHref}" idField="1">
@@ -197,14 +197,14 @@ select pr.id,to_char(pr.dateRegistration,'dd.mm.yyyy')||' '||cast(pr.timeRegistr
     ,bf.addCaseDuration,slo.dateStart,sls.dateStart
     ,pr.record
     order by pat.lastname,pat.firstname,pat.middlename
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="entityShortView-smo_visitProtocol.do"
-    action="entityParentView-smo_visitProtocol.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-smo_visitProtocol.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата и время протокола" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Стат.карта" property="4" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Дата и время протокола" property="2" />
       <msh:tableColumn columnName="Протокол" property="5"/>
     </msh:table>
     </msh:sectionContent>

@@ -15,15 +15,15 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/cal_generate.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="4" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/cal_generate.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="4" />
       </msh:row>
 
         <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
         </msh:row>
         <msh:row>
         <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>

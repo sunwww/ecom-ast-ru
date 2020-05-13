@@ -684,7 +684,7 @@
             <input type="hidden" id="labCaosService" value="">
             <input type="hidden" id="funcDepartment" value="">
             <input type="hidden" id="labCabinet" value="">
-            <msh:panel guid="panel" colsWidth="3">
+            <msh:panel colsWidth="3">
 
 
                 <msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
@@ -701,13 +701,13 @@
                                           fieldColSpan="3" size="100"/>
                     </msh:row>
                 </msh:ifFormTypeIsNotView>
-                <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
+                <msh:row>
                     <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction"
                                       fieldColSpan="3" viewOnlyField="true"
                                       horizontalFill="true"/>
                 </msh:row>
                 <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm">
-                    <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
+                    <msh:row>
                         <msh:autoComplete vocName="vocPrescriptType" property="prescriptType" label="Тип назначения"
                                           horizontalFill="true"
                                           fieldColSpan="1" size="30"/>
@@ -810,14 +810,14 @@
                 <msh:row>
                     <msh:label property="editUsername" label="пользователь"/>
                 </msh:row>
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4"/>
+                <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
         </msh:form>
         <tags:dir_medService name="1" table="MEDSERVICE" title="Услуги" functionAdd="prepare1Row" addParam="id"/>
         <tags:enter_date name="2" functionSave="prepare1RowByDate"/>
         <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm">
             <msh:section title="Исполнения">
-                <ecom:parentEntityListAll guid="parentEntityListChilds" formName="pres_prescriptionFulfilmentForm"
+                <ecom:parentEntityListAll formName="pres_prescriptionFulfilmentForm"
                                           attribute="fulfilments"/>
                 <msh:table name="fulfilments"
                            action="entityParentView-pres_prescriptionFulfilment.do" idField="id">
@@ -837,7 +837,7 @@
 
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm">
-            <msh:sideMenu title="Назначения" guid="eb3f54-b971-441e-9a90-51jhf">
+            <msh:sideMenu title="Назначения">
                 <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id"
                               action="/javascript:cancelService()" name="Отменить" key="ALT+2"/>
                 <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" params="id"

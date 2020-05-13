@@ -19,7 +19,7 @@
         </msh:sideMenu>
         <msh:sideMenu title="Перейти">
 	      <msh:sideLink key="ALT+1" action="/entityParentList-mis_buildingPlace.do?id=-1" name="Список зданий" roles="/Policy/Mis/WorkPlace/View"/>
-        <msh:sideLink roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment" action="/entityList-mis_copyingEquipment" name="Копировальное оборудование" title="Показать сведения по копировальному оборудованию" guid="27fe8bc3-ae8d-4e8b-88f2-d23a337f614b" />
+        <msh:sideLink roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment" action="/entityList-mis_copyingEquipment" name="Копировальное оборудование" title="Показать сведения по копировальному оборудованию" />
         </msh:sideMenu>
     </tiles:put>
      <tiles:put name='body' type='string' >

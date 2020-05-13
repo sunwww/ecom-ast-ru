@@ -11,22 +11,22 @@
     	  - Справочник дефектов оценки качества
     	  -->
     <msh:form  action="/entityParentSaveGoView-exp_vocCritDefect.do" defaultField="name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenKind" property="kind" />
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="kind" />
       <msh:hidden property="criterion" />
-      <msh:panel guid="panel">
+      <msh:panel>
       	<msh:row>
         	<msh:textField  label="Код" property="code" />
         	<msh:textField label="Наименование" property="name" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
   
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="exp_vocCritDefectForm" />
+    <ecom:titleTrail mainMenu="Voc" beginForm="exp_vocCritDefectForm" />
   </tiles:put>
   
 	<tiles:put name="javascript" type="string">

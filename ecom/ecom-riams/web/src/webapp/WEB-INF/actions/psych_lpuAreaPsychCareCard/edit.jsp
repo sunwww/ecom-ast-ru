@@ -46,24 +46,24 @@
         </msh:row>
         <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
-            <msh:label property="createUsername" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+            <msh:label property="createUsername" label="Пользователь" />
         </msh:row>
         <msh:row>
         	<msh:label property="editDate" label="Дата редак."/>
-          	<msh:label property="editUsername" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+          	<msh:label property="editUsername" label="Пользователь" />
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="psych_lpuAreaPsychCareCardForm">
-      <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/View" guid="be0c3268-8280-4e65-b73a-e5933fea4741">
-        <msh:section guid="dd25b30d-69eb-481e-9ef7-618969f45592">
-          <msh:sectionTitle guid="1b230c85-7789-4aca-b05b-b645a24867a9">
+      <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/View">
+        <msh:section>
+          <msh:sectionTitle>
             Динамика наблюдений по участку.
             <a href="entityParentPrepareCreate-psych_observation.do?id=${param.id}">Добавить</a>
             <a href="entityParentList-psych_observation.do?id=${param.id}">Перейти к списку по пациенту</a>
           </msh:sectionTitle>
-          <msh:sectionContent guid="252153e1-1c93-469a-8184-4d61f6fa08e3">
+          <msh:sectionContent>
             <ecom:webQuery name="observations" nativeSql="select o.id,o.startdate
             ,vac.name as vacname,vdg.name as vdgname 
             from PsychiaticObservation o 
@@ -71,8 +71,8 @@
             left join VocPsychAmbulatoryCare vac on vac.id=o.AmbulatoryCare_id  
             where o.lpuAreaPsychCareCard_id='${param.id}' 
              
-            order by o.startDate" guid="d2316e2f-aafe-44ad-9dda-aa73f1506131" />
-            <msh:table name="observations" idField="1" action="entityParentView-psych_observation.do" guid="c3767948-f614-492c-ba65-560430eb7646">
+            order by o.startDate" />
+            <msh:table name="observations" idField="1" action="entityParentView-psych_observation.do">
               <msh:tableColumn property="sn" columnName="#"/>
               <msh:tableColumn property="2" columnName="Дата начала наблюдения"/>
               <msh:tableColumn property="3" columnName="Вид амбулаторного наблюдения"/>
@@ -83,14 +83,14 @@
       </msh:ifInRole>    </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="psych_lpuAreaPsychCareCardForm" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="psych_lpuAreaPsychCareCardForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
   <msh:ifFormTypeAreViewOrEdit formName="psych_lpuAreaPsychCareCardForm">
   
     <msh:sideMenu title="Карта обратившегося за психиатрической помощью по участку">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-psych_lpuAreaPsychCareCard" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" params="id" action="/entityParentDelete-psych_lpuAreaPsychCareCard" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/Delete"  />
+      <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-psych_lpuAreaPsychCareCard" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/Edit" />
+      <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-psych_lpuAreaPsychCareCard" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/Delete"  />
     </msh:sideMenu>
         <msh:sideMenu title="Дополнительно">
      <msh:sideLink roles="/Policy/Mis/Psychiatry/CareCard/LpuAreaPsychCareCard/Create"  key="ALT+2"

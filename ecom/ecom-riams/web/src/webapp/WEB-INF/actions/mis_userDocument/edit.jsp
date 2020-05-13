@@ -31,7 +31,7 @@
       <msh:ifFormTypeIsView formName="mis_userDocumentForm">
         <msh:sideLink key="ALT+2" roles="/Policy/Mis/UserDocument/Edit" params="id" action="/entityEdit-mis_userDocument" name="Изменить" />
       </msh:ifFormTypeIsView>
-      <msh:ifFormTypeAreViewOrEdit formName="mis_userDocumentForm" guid="de889210-1aba-4447-96ab-a729de7a2c8a">
+      <msh:ifFormTypeAreViewOrEdit formName="mis_userDocumentForm">
         <msh:sideLink key="ALT+DEL" params="id" roles="/Policy/Mis/UserDocument/Delete" action="/entityDeleteGoList-mis_userDocument" name="Удалить" confirm="Удалить?" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>

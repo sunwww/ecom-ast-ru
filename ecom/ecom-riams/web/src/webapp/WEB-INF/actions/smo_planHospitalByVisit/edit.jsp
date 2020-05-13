@@ -108,7 +108,7 @@
         	/>
         </msh:row>
         <msh:row>
-          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunction" label="Функция" guid="010e3a75-ba7e-45da-a82a-9c618a0ffcd2" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
+          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunction" label="Функция" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -131,7 +131,7 @@
       </msh:panel>
      
         <msh:panel> 
-		<msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />   
+		<msh:submitCancelButtonsRow colSpan="3" />
         </msh:panel>
     </msh:form>
 

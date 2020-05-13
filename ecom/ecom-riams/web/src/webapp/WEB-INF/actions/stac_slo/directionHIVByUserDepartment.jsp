@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Направление на исследование образцов крови в ИФА на ВИЧ</msh:title>
+    <msh:title mainMenu="StacJournal">Направление на исследование образцов крови в ИФА на ВИЧ</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_directionHIVByUserDepartment"/>
@@ -55,22 +55,22 @@ left join Mislpu dep on dep.id=sloAll.department_id
     ,bf.addCaseDuration,m.dateFinish,m.dischargeTime
     order by pat.lastname,pat.firstname,pat.middlename
     "
-     guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+     />
      <msh:sectionTitle>
      Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент
      <br>ВНИМАНИЕ! Необходимо ввести <u>код контингента</u>, <u>дату забора крови</u> и <u>рег. номер</u>, чтобы пациент попал в направление!
          <input type="button" value="ПЕЧАТЬ НАПРАВЛЕНИЯ" onclick="print()">
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table name="datelist" viewUrl="entityShortView-mis_patient.do" action="/javascript:void()" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table name="datelist" viewUrl="entityShortView-mis_patient.do" action="/javascript:void()" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Код контингента" property="7"/>
       <msh:tableColumn columnName="Дата забора крови" property="7"/>
       <msh:tableColumn columnName="Регистрац. номер" property="7"/>
-      <msh:tableColumn columnName="Стат.карта" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата поступления" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Стат.карта" property="2" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="Дата поступления" property="5" />
       <msh:tableColumn columnName="Леч.врач" property="6"/>
     </msh:table>
     </msh:sectionContent>
@@ -96,13 +96,13 @@ left join Mislpu dep on dep.id=sloAll.department_id
     group by m.department_id,ml.name
     order by ml.name
     "
-     guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" viewUrl="stac_directionHIVByUserDepartment.do?s=Short&" action="stac_directionHIVByUserDepartment.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+     />
+    <msh:table name="datelist" viewUrl="stac_directionHIVByUserDepartment.do?s=Short&" action="stac_directionHIVByUserDepartment.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Отделение" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Кол-во состоящих" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="кол-во экстренных" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="кол-во опер. пациентов" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Отделение" property="2" />
+      <msh:tableColumn columnName="Кол-во состоящих" property="3" />
+      <msh:tableColumn columnName="кол-во экстренных" property="4" />
+      <msh:tableColumn columnName="кол-во опер. пациентов" property="5" />
     </msh:table>
      </msh:sectionContent>
      </msh:section>

@@ -30,7 +30,7 @@
     	<tags:templateProtocol idSmo="smo_draftProtocolForm.medCase" version="Visit" name="tmp" property="record" voc="protocolVisitByPatient"/>
     </msh:ifFormTypeIsNotView>
     <msh:form action="entityParentSaveGoSubclassView-smo_draftProtocol.do" 
-    defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07" >
+    defaultField="dateRegistration" >
         <msh:hidden property="id"/>
         <msh:hidden property="saveType"/>
         <msh:hidden property="username"/>
@@ -46,8 +46,8 @@
             </msh:ifFormTypeIsView>
             <msh:panel colsWidth="1%,1%,1%,1%,1%,1%,65%">
                 <msh:row>
-                    <msh:textField label="Дата" property="dateRegistration" fieldColSpan="1" guid="b58ehb-b971-441e-9a90-58019c07" />
-                    <msh:textField label="Время" property="timeRegistration" fieldColSpan="1"  guid="b3hb-b971-441e-9a90-8019c07" />
+                    <msh:textField label="Дата" property="dateRegistration" fieldColSpan="1" />
+                    <msh:textField label="Время" property="timeRegistration" fieldColSpan="1"  />
                 </msh:row >
                 	<msh:row>
                 		<msh:autoComplete property="type" fieldColSpan="3" label="Тип протокола" horizontalFill="true"
@@ -63,7 +63,7 @@
 	                </msh:row>
                 <msh:row>
                     <msh:textArea property="record" label="Текст:"
-                                      size="100" rows="25" fieldColSpan="8"  guid="b6ehb-b971-441e-9a90-519c07" />
+                                      size="100" rows="25" fieldColSpan="8"  />
                     
                 </msh:row>
                 <msh:ifFormTypeIsNotView formName="smo_draftProtocolForm">
@@ -84,7 +84,7 @@
                 </msh:row>
         <msh:row>
         	<msh:label property="editDate" label="Дата редак."/>
-          	<msh:label property="editUsername" label="Пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+          	<msh:label property="editUsername" label="Пользователь" />
         </msh:row>
                 </msh:ifFormTypeIsView>
                 <msh:ifFormTypeIsNotView formName="smo_draftProtocolForm">
@@ -123,7 +123,7 @@
 </tiles:put>
 
     <tiles:put name='title' type='string'>
-        <ecom:titleTrail mainMenu="Patient" beginForm="smo_draftProtocolForm" guid="444ehb-b971-441e-9a90-5194a8019c07" />
+        <ecom:titleTrail mainMenu="Patient" beginForm="smo_draftProtocolForm" />
     </tiles:put>
     
 

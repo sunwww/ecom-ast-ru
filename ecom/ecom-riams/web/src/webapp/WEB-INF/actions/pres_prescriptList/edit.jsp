@@ -67,7 +67,7 @@
         	<msh:label property="editTime" label="время"/>
         	<msh:label property="editUsername" label="пол-ль"/>
         </msh:row>                
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
     <tags:stac_selectPrinter name="Select" roles="/Policy/Config/SelectPrinter" />

@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="/entityParentSaveGoView-doc_direction.do" defaultField="phonePatient" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+    <msh:form action="/entityParentSaveGoView-doc_direction.do" defaultField="phonePatient">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="medCase" />
@@ -51,12 +51,12 @@
         
 
 
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Disability" beginForm="doc_directionForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
+    <ecom:titleTrail mainMenu="Disability" beginForm="doc_directionForm" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsView formName="doc_directionForm">
@@ -83,8 +83,8 @@
   </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="doc_directionForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-      <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
+    <msh:ifFormTypeIsView formName="doc_directionForm">
+      <msh:sideMenu>
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-doc_direction" name="Изменить" roles="/Policy/Mis/MedCase/Document/Internal/Direction/Edit" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-doc_direction" name="Удалить" roles="/Policy/Mis/MedCase/Document/Internal/Direction/Delete" />
       </msh:sideMenu>

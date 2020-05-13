@@ -19,9 +19,9 @@
     <tiles:put name="body" type="string">
         <ecom:webQuery name="kkmList" nameFldSql="kkmList_sql" nativeSql="select id,name,url from equipment where lpu_id=${param.id} and dtype='KkmEquipment'"/>
         <msh:section title="Все ККМ">
-            <msh:table name="kkmList" action="entityParentView-mis_kkmequipment.do" idField="1" guid="e699b892-d71e-4622-ae5e-eaec3ed85bb4">
-                <msh:tableColumn columnName="Название" property="2" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableColumn columnName="URL" property="3" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+            <msh:table name="kkmList" action="entityParentView-mis_kkmequipment.do" idField="1">
+                <msh:tableColumn columnName="Название" property="2" />
+                <msh:tableColumn columnName="URL" property="3" />
             </msh:table>
         </msh:section>
     </tiles:put>

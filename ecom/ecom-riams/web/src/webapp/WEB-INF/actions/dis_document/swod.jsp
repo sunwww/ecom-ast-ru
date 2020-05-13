@@ -19,10 +19,10 @@
   	
   	String typeReport =ActionUtil.updateParameter("DIS_DOCUMENT","typeReport","1", request) ;
   	%>
-    <msh:form action="/dis_swod.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/dis_swod.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       
       	<msh:row>
@@ -35,7 +35,7 @@
         </td>
       </msh:row>
       <msh:row>
-          <msh:autoComplete vocName="vocDisabilityDocumentType" property="documentType" label="Документ" guid="c431085f-265a-40ab-958a1c8b5babeff" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete vocName="vocDisabilityDocumentType" property="documentType" label="Документ" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
       <msh:row>
       	<msh:autoComplete property="sex" fieldColSpan="3" size="6" horizontalFill="true"
@@ -242,7 +242,7 @@ group by dd.issueDate order by dd.issueDate "/>
     <msh:sectionTitle>Сводная таблица по документам нетрудоспособности (общая)</msh:sectionTitle>
     <msh:sectionContent>
     <msh:table printToExcelButton="Сохранить в excel" name="journal_swod" action="dis_documentClose.do" idField="1">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+            <msh:tableNotEmpty>
               <tr>
                 <th />
                 <th colspan=4>Всего</th>
@@ -312,7 +312,7 @@ and dd.anotherlpu_id is null ${addSql}
     <msh:sectionTitle>ИТОГ по документам нетрудоспособности (общая)</msh:sectionTitle>
     <msh:sectionContent>
     <msh:table printToExcelButton="Сохранить в excel" name="journal_itog" action="dis_documentClose.do" idField="1">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+            <msh:tableNotEmpty>
               <tr>
                 <th colspan=4>Всего</th>
                 <th colspan=2>Кол-во амб.</th>
@@ -380,7 +380,7 @@ and dd.anotherlpu_id is null ${addSql}
 group by dd.issueDate order by dd.issueDate"
     />
     <msh:table printToExcelButton="Сохранить в excel" name="journal_issueDuplicate" action="dis_documentClose.do" idField="1">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+            <msh:tableNotEmpty>
               <tr>
                 <th />
                 <th />
@@ -439,7 +439,7 @@ and dd.anotherlpu_id is null ${addSql}
 "
     />
     <msh:table printToExcelButton="Сохранить в excel" name="journal_issueDuplicate_itog" action="dis_documentClose.do" idField="1">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+            <msh:tableNotEmpty>
               <tr>
                 <th />
                 <th colspan=3>Всего выданных взамен</th>
@@ -495,7 +495,7 @@ and dd.anotherlpu_id is null ${addSql}
 group by dd.issueDate order by dd.issueDate"
     />
     <msh:table printToExcelButton="Сохранить в excel" name="journal_duplicate" action="dis_documentClose.do" idField="1">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+            <msh:tableNotEmpty>
               <tr>
                 <th />
                 <th />
@@ -553,7 +553,7 @@ and dd.anotherlpu_id is null ${addSql}
 " 
     />
     <msh:table printToExcelButton="Сохранить в excel" name="journal_duplicate_itog" action="dis_documentClose.do" idField="1">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+            <msh:tableNotEmpty>
               <tr>
                 <th />
                 <th colspan=3>Всего испор(дубл)</th>

@@ -9,66 +9,66 @@
     <!-- 
     	  - Назначение медицинской услуги
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoParentView-pres_template_servicePrescription.do" defaultField="id" title="Назначение медицинской услуги">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:panel guid="panel" colsWidth="3">
-        <msh:row guid="b5srehb-b971-441e-9a90-53217">
-          <msh:autoComplete vocName="medService" property="medService" label="Медицинская услуга" guid="3a3eg4d1b-8802-467d-b205-711tre18" horizontalFill="true" fieldColSpan="3" size="50" />
+    <msh:form action="/entityParentSaveGoParentView-pres_template_servicePrescription.do" defaultField="id" title="Назначение медицинской услуги">
+      <msh:hidden property="id" />
+      <msh:hidden property="prescriptionList" />
+      <msh:hidden property="saveType" />
+      <msh:panel colsWidth="3">
+        <msh:row>
+          <msh:autoComplete vocName="medService" property="medService" label="Медицинская услуга" horizontalFill="true" fieldColSpan="3" size="50" />
         </msh:row>
-        <msh:row guid="bwhb-b971-441e-9a90-53217">
-          <msh:separator colSpan="6" label="График приема" guid="5r7v-7fee-45e5-96ec-7753b" />
+        <msh:row>
+          <msh:separator colSpan="6" label="График приема" />
         </msh:row>
-        <msh:row guid="breb-b971-441e-9a90-5258c07">
-          <msh:textField label="Дата начала" property="planStartDate" guid="3at4d1b-8802-467d-b205-714658" horizontalFill="true" />
-          <msh:textField label="Время" property="planStartTime" guid="3eb-8802-467d-b205-71r5fb3" horizontalFill="true" />
+        <msh:row>
+          <msh:textField label="Дата начала" property="planStartDate" horizontalFill="true" />
+          <msh:textField label="Время" property="planStartTime" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="byb-b971-441e-9a90-58257">
-          <msh:textField label="Дата окончания" property="planEndDate" guid="3a357b-8802-467d-b205-7f18" horizontalFill="true" />
-          <msh:textField label="Время" property="planEndTime" guid="3d5b-8802-467d-b205-71r5fb3" horizontalFill="true" />
+        <msh:row>
+          <msh:textField label="Дата окончания" property="planEndDate" horizontalFill="true" />
+          <msh:textField label="Время" property="planEndTime" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="3deb-b971-441e-9a90-513217">
-          <msh:autoComplete vocName="vocWorker" label="Назначил" property="prescriptor" guid="30gfn-8802-467d-b205-798518" horizontalFill="true" fieldColSpan="3" size="50" />
+        <msh:row>
+          <msh:autoComplete vocName="vocWorker" label="Назначил" property="prescriptor" horizontalFill="true" fieldColSpan="3" size="50" />
         </msh:row>
-        <msh:row guid="33d4b-b971-441e-9a90-5951">
-          <msh:textField label="Дата отмены" property="cancelDate" guid="34sd1b-8802-467d-b205-764518" horizontalFill="true" />
-          <msh:textField label="Время" property="cancelTime" guid="3aa3-8802-467d-b205-7312" horizontalFill="true" />
+        <msh:row>
+          <msh:textField label="Дата отмены" property="cancelDate" horizontalFill="true" />
+          <msh:textField label="Время" property="cancelTime" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="06efb-b971-441e-9a90-591507">
-          <msh:autoComplete vocName="vocPrescriptCancelReason" label="Причина" property="cancelReason" guid="d35f495n-8802-467d-b205-7159b018" horizontalFill="true" fieldColSpan="3" size="50" />
+        <msh:row>
+          <msh:autoComplete vocName="vocPrescriptCancelReason" label="Причина" property="cancelReason" horizontalFill="true" fieldColSpan="3" size="50" />
         </msh:row>
-        <msh:row guid="32fvs6eb-b971-441e-9a90-584627">
-          <msh:autoComplete vocName="worker" label="Отменил" property="cancelWorker" guid="303s6541n-8802-467d-b205-715f18" horizontalFill="true" fieldColSpan="3" size="50" />
+        <msh:row>
+          <msh:autoComplete vocName="worker" label="Отменил" property="cancelWorker" horizontalFill="true" fieldColSpan="3" size="50" />
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
     
-    <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="pres_template_servicePrescriptionForm">
-      <msh:section guid="sectionChilds" title="Исполнения">
-        <ecom:parentEntityListAll guid="parentEntityListChilds" formName="pres_prescriptionFulfilmentForm" attribute="fulfilments" />
-        <msh:table guid="tableChilds3434" name="fulfilments" action="entityParentView-pres_prescriptionFulfilment.do" idField="id">
-          <msh:tableColumn columnName="Дата исполнения" property="fulfilDate" guid="8c2s9b-89d7-46a9-a8c3-c08527e" />
-          <msh:tableColumn columnName="Время исполнения" property="fulfilTime" guid="d6dd49-a94d-4cf2-af1b-02581f" />
-          <msh:tableColumn columnName="Исполнитель" property="executorInfo" guid="bfv1-0967-45f2-a6af-f654e" />
+    <msh:ifFormTypeIsView formName="pres_template_servicePrescriptionForm">
+      <msh:section title="Исполнения">
+        <ecom:parentEntityListAll formName="pres_prescriptionFulfilmentForm" attribute="fulfilments" />
+        <msh:table name="fulfilments" action="entityParentView-pres_prescriptionFulfilment.do" idField="id">
+          <msh:tableColumn columnName="Дата исполнения" property="fulfilDate" />
+          <msh:tableColumn columnName="Время исполнения" property="fulfilTime" />
+          <msh:tableColumn columnName="Исполнитель" property="executorInfo" />
         </msh:table>
       </msh:section>
     </msh:ifFormTypeIsView>
     
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Prescription" beginForm="pres_template_servicePrescriptionForm" />
+    <ecom:titleTrail mainMenu="Prescription" beginForm="pres_template_servicePrescriptionForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="pres_template_servicePrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
-      <msh:sideMenu title="Назначения" guid="eb3f54-b971-441e-9a90-51jhf">
-        <msh:sideLink roles="/Policy/Mis/Prescription/Template/ServicePrescription/Edit" params="id" action="/entityParentEdit-pres_template_servicePrescription" name="Изменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+2"/>
-        <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/Template/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_template_servicePrescription" name="Удалить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+DEL"/>
+    <msh:ifFormTypeIsView formName="pres_template_servicePrescriptionForm">
+      <msh:sideMenu title="Назначения">
+        <msh:sideLink roles="/Policy/Mis/Prescription/Template/ServicePrescription/Edit" params="id" action="/entityParentEdit-pres_template_servicePrescription" name="Изменить" key="ALT+2"/>
+        <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/Template/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_template_servicePrescription" name="Удалить" key="ALT+DEL"/>
       </msh:sideMenu>
-      <msh:sideMenu title="Показать" guid="67aa758-3ad2-4e6f-a791-4839460955" >
-        <msh:sideLink roles="/Policy/Mis/Prescription/Template/ServicePrescription/View" params="id" action="/entityParentListRedirect-pres_template_servicePrescription" name="К списку назначений на услугу" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
-        <msh:sideLink roles="/Policy/Mis/Prescription/Template/View" params="id" action="/entityParentListRedirect-pres_prescription" name="К списку назначений" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
+      <msh:sideMenu title="Показать" >
+        <msh:sideLink roles="/Policy/Mis/Prescription/Template/ServicePrescription/View" params="id" action="/entityParentListRedirect-pres_template_servicePrescription" name="К списку назначений на услугу" key="ALT+4"/>
+        <msh:sideLink roles="/Policy/Mis/Prescription/Template/View" params="id" action="/entityParentListRedirect-pres_prescription" name="К списку назначений" key="ALT+4"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

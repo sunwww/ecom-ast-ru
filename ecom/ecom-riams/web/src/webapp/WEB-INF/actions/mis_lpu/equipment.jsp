@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
 <tiles:put name='title' type='string'>
-	<ecom:titleTrail beginForm="mis_lpuForm" mainMenu="Lpu" title="Список исп. оборудования" guid="e51b1bad-82ba-4906-9829-7d9148b1174a" />
+	<ecom:titleTrail beginForm="mis_lpuForm" mainMenu="Lpu" title="Список исп. оборудования" />
         </tiles:put>
 
     <tiles:put name='side' type='string'>

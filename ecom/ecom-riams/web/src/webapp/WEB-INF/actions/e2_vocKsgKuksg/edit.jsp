@@ -6,12 +6,12 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_vocKsgKuksgForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
+        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_vocKsgKuksgForm" />
     </tiles:put>
     <tiles:put name="body" type="string">
         <msh:ifFormTypeIsView formName="e2_vocKsgKuksgForm">
         </msh:ifFormTypeIsView>
-        <msh:form action="/entityParentSaveGoParentView-e2_vocKsgKuksg.do" defaultField="startDate" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+        <msh:form action="/entityParentSaveGoParentView-e2_vocKsgKuksg.do" defaultField="startDate">
             <msh:hidden property="id" />
             <msh:hidden property="ksg" />
             <msh:hidden property="saveType" />
@@ -25,7 +25,7 @@
                 <msh:textField property="value"/>
                 </msh:row>
 
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+                <msh:submitCancelButtonsRow colSpan="4" />
 
             </msh:panel>
         </msh:form>
@@ -34,8 +34,8 @@
 
 
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="e2_vocKsgKuksgForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-            <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
+        <msh:ifFormTypeIsView formName="e2_vocKsgKuksgForm">
+            <msh:sideMenu>
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>

@@ -22,13 +22,13 @@
 	String typeDepartment =ActionUtil.updateParameter("Report_nationality","typeDepartment","2", request) ;
 	//String typeView =ActionUtil.updateParameter("Report_nationality","typeView","3", request) ;
   %>
-    <msh:form action="/journal_nationality_new.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/journal_nationality_new.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="m" id="m" value="categoryForeignNationals"/>
     <input type="hidden" name="s" id="s" value="VisitPrintService"/>
     <input type="hidden" name="id" id="id"/>
     <msh:panel>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
               <msh:row>
 	        <td class="label" title="Поиск по дате (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Дата поиска:</label></td>
@@ -40,7 +40,7 @@
 	        </td>
 
         </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  иностранцы
@@ -49,7 +49,7 @@
         	<input type="radio" name="typePatient" value="2">  иногородние
         </td>
       </msh:row>
-        <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <msh:row>
             <td class="label" title="Поиск по пациентам (typeDepartment)" colspan="1"><label for="typePatientName" id="typeDepartmentLabel">Группировать по отделению:</label></td>
             <td onclick="this.childNodes[1].checked='checked';">
                 <input type="radio" name="typeDepartment" value="1">  да
@@ -61,8 +61,8 @@
         <msh:autoComplete property="serviceStream" vocName="vocServiceStream" label="Поток обслуживания" fieldColSpan="5"/>
    
       <msh:row>
-        	<msh:textField property="beginDate"  label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        	<msh:textField property="finishDate" fieldColSpan="7" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        	<msh:textField property="beginDate"  label="Период с" />
+        	<msh:textField property="finishDate" fieldColSpan="7" label="по" />
       </msh:row>
         <msh:row>
         <td colspan="1" class="buttons">

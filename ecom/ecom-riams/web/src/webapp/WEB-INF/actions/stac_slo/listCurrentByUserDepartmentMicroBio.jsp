@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал результатов микробиологических исследований по отделению</msh:title>
+    <msh:title mainMenu="StacJournal">Журнал результатов микробиологических исследований по отделению</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
     <tags:stac_journal currentAction="stac_journalCurrentByUserDepartmentMicroBio"/>
@@ -139,7 +139,7 @@ select m.id as mid
     group by mid ,sccode,patfio,birthday,datestart,worker,cnt1,oper,cnt2,diag, passport,address,passportshort
  order by patfio
     "
-                     guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+                     />
       <ecom:webQuery name="datelist_r" nameFldSql="datelist_r_sql" nativeSql="
         select distinct mid,sccode,patfio,birthday,datestart,worker,cnt1,oper
         ,case when max(plusCase)>0 then '+' else '-' end from
@@ -195,7 +195,7 @@ select m.id as mid
     group by mid ,sccode,patfio,birthday,datestart,worker,cnt1,oper
  order by patfio
     "
-                     guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+                     />
       <msh:sectionTitle>
         <form action="print-stac_current_department.do" method="post" target="_blank">
           Журнал результатов микробиологических исследований пациентов  ${departmentInfo}, состоящих в отделении
@@ -222,12 +222,12 @@ select m.id as mid
       </msh:sectionTitle>
       <msh:sectionContent>
 
-        <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+        <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
           <msh:tableColumn property="sn" columnName="#"/>
-          <msh:tableColumn columnName="Стат.карта" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-          <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-          <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-          <msh:tableColumn columnName="Дата поступления" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+          <msh:tableColumn columnName="Стат.карта" property="2" />
+          <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+          <msh:tableColumn columnName="Год рождения" property="4" />
+          <msh:tableColumn columnName="Дата поступления" property="5" />
           <msh:tableColumn columnName="Леч.врач" property="6"/>
           <msh:tableColumn columnName="Кол-во к.дней СЛС" property="7"/>
           <msh:tableColumn columnName="Операции" property="8"/>
@@ -245,12 +245,12 @@ select m.id as mid
       </msh:sectionTitle>
       <msh:sectionContent>
 
-        <msh:table name="datelist_r" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+        <msh:table name="datelist_r" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
           <msh:tableColumn property="sn" columnName="#"/>
-          <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-          <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-          <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-          <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+          <msh:tableColumn columnName="Стат.карта" property="5" />
+          <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+          <msh:tableColumn columnName="Год рождения" property="4" />
+          <msh:tableColumn columnName="Дата поступления" property="2" />
           <msh:tableColumn columnName="Леч.врач" property="7"/>
           <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
           <msh:tableColumn columnName="Операции" property="6"/>
@@ -285,16 +285,16 @@ select m.id as mid
     group by m.department_id,ml.name
     order by ml.name
     "
-                         guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+                         />
           <msh:table name="datelist" viewUrl="stac_journalCurrentByUserDepartmentMicroBio.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
                      action="stac_journalCurrentByUserDepartmentMicroBio.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
-                     idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30" cellFunction="true">
+                     idField="1" cellFunction="true">
             <msh:tableColumn property="sn" columnName="#"/>
-            <msh:tableColumn columnName="Отделение" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-            <msh:tableColumn columnName="Кол-во состоящих" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-            <msh:tableColumn columnName="кол-во экстренных" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-            <msh:tableColumn columnName="кол-во опер. пациентов" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-            <msh:tableColumn columnName="кол-во пациентов c + микробиол. иссл." property="6" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" addParam="&p=Plus"/>
+            <msh:tableColumn columnName="Отделение" property="2" />
+            <msh:tableColumn columnName="Кол-во состоящих" property="3" />
+            <msh:tableColumn columnName="кол-во экстренных" property="4" />
+            <msh:tableColumn columnName="кол-во опер. пациентов" property="5" />
+            <msh:tableColumn columnName="кол-во пациентов c + микробиол. иссл." property="6" addParam="&p=Plus"/>
           </msh:table>
         </msh:sectionContent>
       </msh:section>

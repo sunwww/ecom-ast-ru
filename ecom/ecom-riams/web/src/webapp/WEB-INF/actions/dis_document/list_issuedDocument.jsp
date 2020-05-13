@@ -13,10 +13,10 @@
         <tags:dis_menu currentAction="issuedDNT"/>
     </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:form action="/dis_issuedDocument.do" defaultField="dischargeIs" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/dis_issuedDocument.do" defaultField="dischargeIs" disableFormDataConfirm="true" method="GET">
     <msh:panel>
       <msh:row>
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <msh:checkBox property="dischargeIs" label="Искать по дате закрытия" />
@@ -38,10 +38,10 @@
     <msh:section>
     <msh:sectionTitle>Результаты поиска обращений за период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_priem" nativeSql="select ${dateGroup}  ,count(dd.id) from disabilitydocument as dd where dd.isclose =1 group by ${dateGroup} having ${dateGroup } between cast('${param.dateBegin}' as date) and isnull(cast('${param.dateEnd}' as date),cast('${param.dateBegin}' as date))" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" action="dis_documentByDate.do?info=закрытых&type=close&dateSearch=${dateSearch}&infoSearch=${infoSearch}&" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="Дата" property="1" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn columnName="Количество" property="2" guid="8410185d-711a-4851-bca4-913a77381989" />
+    <ecom:webQuery name="journal_priem" nativeSql="select ${dateGroup}  ,count(dd.id) from disabilitydocument as dd where dd.isclose =1 group by ${dateGroup} having ${dateGroup } between cast('${param.dateBegin}' as date) and isnull(cast('${param.dateEnd}' as date),cast('${param.dateBegin}' as date))" />
+    <msh:table name="journal_priem" action="dis_documentByDate.do?info=закрытых&type=close&dateSearch=${dateSearch}&infoSearch=${infoSearch}&" idField="1">
+      <msh:tableColumn columnName="Дата" property="1" />
+      <msh:tableColumn columnName="Количество" property="2" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>

@@ -9,35 +9,35 @@
 
   <tiles:put name="body" type="string">
   
-    <msh:form guid="formHello" action="entityParentSaveGoView-smo_spo_ticket_stream.do"  defaultField="dateStart" > 
+    <msh:form action="entityParentSaveGoView-smo_spo_ticket_stream.do"  defaultField="dateStart" >
     
-      <msh:hidden property="id" guid="e862851f-7390-4fe6-9a37-3b22306138b4" />
-      <msh:hidden property="saveType" guid="3e3fb7b5-258e-4194-9dbe-5093382cf627" />
-      <msh:hidden property="isTalk" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
-      <msh:hidden property="medcard" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="isTalk" />
+      <msh:hidden property="medcard" />
       <msh:hidden property="dateFinish"/>
-      <msh:hidden property="patient" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
+      <msh:hidden property="patient" />
 
       <msh:panel colsWidth="1%,1%,1%,97%">
       <msh:row>
-          <msh:autoComplete  vocName="patient" property="patient" label="Пациент" guid="cbab0829-c896-4b74-9a68-c9f95676cc3b" horizontalFill="true" fieldColSpan="3" />
+          <msh:autoComplete  vocName="patient" property="patient" label="Пациент" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         
         <msh:row>
-          <msh:autoComplete parentAutocomplete="patient"  vocName="medcardByPatient" property="medcard" label="Мед.карта" guid="cbab0829-c896-4b74-9a68-c9f95676cc3b" horizontalFill="true" fieldColSpan="3" />
+          <msh:autoComplete parentAutocomplete="patient"  vocName="medcardByPatient" property="medcard" label="Мед.карта" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         
-        <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
-          <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" guid="cbab0829-c896-4b74-9a68-c9f95676cc3b" horizontalFill="true" fieldColSpan="3" />
+        <msh:row>
+          <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
      
-        <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
+        <msh:row>
            <msh:autoComplete property="categoryChild" fieldColSpan="1" label="Кат. ребенка" horizontalFill="true" vocName="vocCategoryChild" />
         </msh:row>
      
-        <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">
-          <msh:textField label="Дата приема" property="dateStart" fieldColSpan="1" guid="9e3a8e0d-cd82-4158-b764-e15cb16b4fca" />
-          <msh:textField label="Время" property="timeExecute" fieldColSpan="1" guid="ed78c5e3-5e2c-4d8c-b64e-75767dcf0775" />
+        <msh:row>
+          <msh:textField label="Дата приема" property="dateStart" fieldColSpan="1" />
+          <msh:textField label="Время" property="timeExecute" fieldColSpan="1" />
         </msh:row>
         <msh:row>
         	<msh:checkBox label="Неотложная помощь" property="emergency" />
@@ -53,8 +53,8 @@
         </msh:row>
 	        <msh:ifNotInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
 		       
-		     <msh:row guid="47073a0b-da87-49e0-9ff0-711dc597ce07">
-		          <msh:autoComplete parentAutocomplete="patient" vocName="workFunctionByTicket" property="workFunctionExecute" label="Специалист" fieldColSpan="3"  horizontalFill="true" guid="a8404201-1bae-467e-b3e9-5cef63411d01" />
+		     <msh:row>
+		          <msh:autoComplete parentAutocomplete="patient" vocName="workFunctionByTicket" property="workFunctionExecute" label="Специалист" fieldColSpan="3"  horizontalFill="true" />
 		        </msh:row>
 		       
 		      
@@ -62,13 +62,13 @@
 		        
 	        </msh:ifNotInRole>
 	        <msh:ifInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
-			        <msh:row guid="47073a0b-da87-49e0-9ff0-711dc597ce07">
-			          <msh:autoComplete vocName="workFunctionByDoctor" property="workFunctionExecute" label="Специалист" fieldColSpan="3"  horizontalFill="true" guid="a8404201-1bae-467e-b3e9-5cef63411d01" />
+			        <msh:row>
+			          <msh:autoComplete vocName="workFunctionByDoctor" property="workFunctionExecute" label="Специалист" fieldColSpan="3"  horizontalFill="true" />
 			        </msh:row>
 	        </msh:ifInRole>
         <msh:row>
-          <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Вид оплаты" horizontalFill="true" guid="e5ac1267-bc69-44b2-8aba-b7455ac064c4" />
-          <msh:autoComplete vocName="vocWorkPlaceType" property="workPlaceType" label="Место обслуживания" horizontalFill="true" guid="18063077-15e8-4e4a-8679-ff79de589a72" />
+          <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Вид оплаты" horizontalFill="true" />
+          <msh:autoComplete vocName="vocWorkPlaceType" property="workPlaceType" label="Место обслуживания" horizontalFill="true" />
         </msh:row>
         <msh:row>
           <msh:autoComplete viewAction="entityParentView-smo_spo.do" property="parent" 
@@ -76,12 +76,12 @@
           	horizontalFill="true" vocName="vocOpenedSpoByPatient" parentId="smo_spo_ticket_streamForm.patient" />
         </msh:row>
         
-        <msh:row guid="6d8642e8-756a-482f-a561-a9b474ef6c50">
-          <msh:autoComplete vocName="vocReason" property="visitReason" label="Цель посещения" horizontalFill="true" guid="3632a2ed-6ecb-446f-8ae3-fe047f091076" />
-          <msh:autoComplete vocName="vocVisitResult" property="visitResult" label="Результат обращения" horizontalFill="true" guid="4346bd08-5fe2-4f01-9065-93a66cdfc1dd" />
+        <msh:row>
+          <msh:autoComplete vocName="vocReason" property="visitReason" label="Цель посещения" horizontalFill="true" />
+          <msh:autoComplete vocName="vocVisitResult" property="visitResult" label="Результат обращения" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="16f1e99-4017-4385-87c1-bf5895e2">
-          <msh:autoComplete labelColSpan="3" property="hospitalization" label="Посещение в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
+        <msh:row>
+          <msh:autoComplete labelColSpan="3" property="hospitalization" label="Посещение в данном году по данному заболевания" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         	<msh:ifFormTypeIsCreate formName="smo_spo_ticket_streamForm">
@@ -90,18 +90,18 @@
 	        </msh:row>
 	        </msh:ifFormTypeIsCreate>
         </msh:ifInRole>
-        <msh:row guid="0489132a-531c-47bc-abfc-1528e774bbfe">
-          <msh:autoComplete vocName="vocIdc10" property="concludingMkb" label="Код МКБ" fieldColSpan="3" horizontalFill="true" guid="9818fb43-33d1-4fe9-a0b4-2b04a9eee955" />
+        <msh:row>
+          <msh:autoComplete vocName="vocIdc10" property="concludingMkb" label="Код МКБ" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="0489132a-531c-47bc-abfc-1528e774bbfe">
+        <msh:row>
           <msh:textField property="concludingDiagnos" label="Диагноз" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocIllnesPrimary" property="concludingActuity" label="Характер заболевания" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
-        <msh:row guid="4bd126b5-2316-42c4-bcb7-ccf5108b2c27">
-          <msh:autoComplete vocName="vocDispanseryRegistration" property="dispRegistration" label="Диспансерный учет" horizontalFill="true" guid="bf850705-5557-438e-b56e-33d59b1618e4" />
-          <msh:autoComplete vocName="vocTraumaType" property="concludingTrauma" label="Травма" horizontalFill="true" guid="eedb1042-1861-426e-a0ec-6151c3933dd1" />
+        <msh:row>
+          <msh:autoComplete vocName="vocDispanseryRegistration" property="dispRegistration" label="Диспансерный учет" horizontalFill="true" />
+          <msh:autoComplete vocName="vocTraumaType" property="concludingTrauma" label="Травма" horizontalFill="true" />
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
 	        <msh:row>
@@ -118,11 +118,11 @@
         </msh:ifFormTypeIsNotView>
         	<msh:checkBox fieldColSpan="2" property="isDirectHospital" label="Направлен на стационарное лечение" horizontalFill="true"/>
         </msh:row>
-        <msh:row guid="7dfb3b2c-407d-48f1-9e70-76cb3328f5f5">
+        <msh:row>
         	<msh:autoComplete property="mkbAdc" vocName="vocMkbAdc" parentAutocomplete="concludingMkb" label="Доп.код"/>
         </msh:row>
         <msh:row>
-          <ecom:oneToManyOneAutocomplete vocName="vocIdc10" label="Соп. заболевания" property="concomitantDiseases" colSpan="6" guid="1204d6c4-a3ff-44aa-a698-b99816d10337" />
+          <ecom:oneToManyOneAutocomplete vocName="vocIdc10" label="Соп. заболевания" property="concomitantDiseases" colSpan="6" />
         </msh:row>
         </msh:panel>
         <msh:panel>
@@ -152,13 +152,13 @@
         
        </msh:ifFormTypeIsNotView> 
         <msh:ifFormTypeAreViewOrEdit formName="smo_spo_ticket_streamForm">
-        <msh:separator label="Выдан талон" colSpan="4" guid="d9a7ec35-7893-48b3-aa08-f2e04d9a9400" />
+        <msh:separator label="Выдан талон" colSpan="4" />
         <msh:row>
         	<msh:textField label="Дата" property="createDate" fieldColSpan="1" viewOnlyField="true"/>
         	<msh:textField label="Время" property="createTime" fieldColSpan="1" viewOnlyField="true"/>
         </msh:row>
         
-        <msh:separator label="Редакция талона" colSpan="4" guid="d9a7ec35-7893-48b3-aa08-f2e04d9a9400" />
+        <msh:separator label="Редакция талона" colSpan="4" />
         <msh:row>
         	<msh:textField label="Пользователь" property="editUsername" fieldColSpan="1" viewOnlyField="true"/>
         	<msh:textField label="Дата" property="editDate" fieldColSpan="1" viewOnlyField="true"/>
@@ -185,52 +185,52 @@
   </tiles:put>
   <tiles:put name="side" type="string">
   		<msh:sideMenu title="Дополнительно">
-	        <msh:sideLink action="/javascript:viewProtocolByMedcard(1,'.do')" name='Заключения диаг. служб<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
-	        <msh:sideLink action="/javascript:viewProtocolByMedcard(0,'.do')" name='Заключения<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
-	        <msh:sideLink action="/javascript:infoDiagByMedcard('.do')" name='Диагнозы<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
+	        <msh:sideLink action="/javascript:viewProtocolByMedcard(1,'.do')" name='Заключения диаг. служб<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
+	        <msh:sideLink action="/javascript:viewProtocolByMedcard(0,'.do')" name='Заключения<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
+	        <msh:sideLink action="/javascript:infoDiagByMedcard('.do')" name='Диагнозы<img src="/skin/images/main/view1.png" alt="Просмотр записи" title="Просмотр записи" height="16" width="16">' title="Просмотр визитов по пациенту" key="ALT+4" params="" roles="/Policy/Mis/MedCase/Protocol/Create" />
   		</msh:sideMenu>
-    <msh:ifFormTypeIsView formName="smo_spo_ticket_streamForm" guid="8f-4d80-856b-ce3095ca1d">
-      <msh:sideMenu guid="e6c81315-888f-4d80-856b-ce3095ca1d55" title="Талон" >
-        <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+2" params="id" action="/entityEdit-smo_spo_ticket_stream" name="Изменить" guid="89585df8-aadb-4d59-abd9-c0d16a6170a9" title="Изменить талон" />
+    <msh:ifFormTypeIsView formName="smo_spo_ticket_streamForm">
+      <msh:sideMenu title="Талон" >
+        <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+2" params="id" action="/entityEdit-smo_spo_ticket_stream" name="Изменить" title="Изменить талон" />
 		<msh:sideLink params="id" action="/js-smo_visit-closeSpo" 
 		name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" 
 			key="ALT+4" roles="/Policy/Poly/Ticket/Edit" />        
-			<msh:sideLink roles="/Policy/Poly/Ticket/CreateTalk" key="ALT+4" params="id" action="/js-smo_spo_ticket_stream-addTalk" name="Беседа с родственниками" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
-        <msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Poly/Ticket/TalkDelete,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_spo_ticket_stream-doNotAddTalk" name="Сделать обычным посещением" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Беседа с родственниками" />
+			<msh:sideLink roles="/Policy/Poly/Ticket/CreateTalk" key="ALT+4" params="id" action="/js-smo_spo_ticket_stream-addTalk" name="Беседа с родственниками" title="Беседа с родственниками" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/Edit,/Policy/Poly/Ticket/TalkDelete,/Policy/Mis/MisLpu/Psychiatry" key="ALT+4" params="id" action="/js-smo_spo_ticket_stream-doNotAddTalk" name="Сделать обычным посещением" title="Беседа с родственниками" />
         
-        <msh:ifFormTypeAreViewOrEdit formName="smo_spo_ticket_streamForm" guid="7f581b0a-a8b3-4d57-9cff-6dc6db1c85e3">
-          <msh:sideLink roles="/Policy/Poly/Ticket/Delete" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-smo_spo_ticket_stream" name="Удалить" confirm="Вы действительно хотите удалить талон?" guid="8b9de89f-3b99-414e-b4af-778ccbb70edf" title="Удалить талон" />
+        <msh:ifFormTypeAreViewOrEdit formName="smo_spo_ticket_streamForm">
+          <msh:sideLink roles="/Policy/Poly/Ticket/Delete" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-smo_spo_ticket_stream" name="Удалить" confirm="Вы действительно хотите удалить талон?" title="Удалить талон" />
         </msh:ifFormTypeAreViewOrEdit>
       </msh:sideMenu>
-      <msh:sideMenu title="Добавить" guid="3d94cf79-f341-469e-863e-5e28bd16aabe">
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Create" key="ALT+7" />
-        <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
+      <msh:sideMenu title="Добавить">
+        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить протокол" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Create" key="ALT+7" />
+        <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" title="Добавить протокол" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+4" 
          action="/javascript:window.location='entityParentPrepareCreate-smo_spo_ticket_stream.do?id='+$('medcard').value" name="Талон на пациента"
          title="Добавить талон" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create"
          action="/javascript:window.location='entityParentPrepareCreate-smo_spo_ticket_stream.do?id='+$('medcard').value+'&prevTicket='+$('id').value" name="Талон на основе текущего"
          title="Добавить талон пациента на основе текущего" />
-       <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" guid="2156670f-b32c-4634-942b-2f8a4467567c" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
+       <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
 	   	<tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания" roles="/Policy/Poly/Ticket/ChangeServiceStream" />
       	<tags:mis_choiceSpo method="moveVisitOtherSpo" methodGetPatientByPatient="getOpenSpoBySmo" hiddenNewSpo="0" service="TicketService" name="moveVisit"  roles="/Policy/Poly/Ticket/MoveVisitOtherSpo" title="Перевести визит в другой СПО" />
       </msh:sideMenu>      
-      <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
+      <msh:sideMenu title="Печать">
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" key="SHIFT+8" params="id" 
-	        action="/print-visit.do?s=VisitPrintService&amp;m=printVisit" name="Талона с заключением" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона с заключением" />
+	        action="/print-visit.do?s=VisitPrintService&amp;m=printVisit" name="Талона с заключением" title="Печатать талона с заключением" />
 
-        <msh:sideLink roles="/Policy/Poly/Ticket/View" key="SHIFT+8" params="id" action="/print-ticket.do?s=PrintTicketService&amp;m=printInfo" name="Талона" guid="97e65138-f936-45d0-ac70-05e1ec87866c" title="Печатать талона" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/View" key="SHIFT+8" params="id" action="/print-ticket.do?s=PrintTicketService&amp;m=printInfo" name="Талона" title="Печатать талона" />
 
-        <msh:sideLink roles="/Policy/Poly/Ticket/BakExp" params="id" action="/print-BakExp.do?s=PrintTicketService&amp;m=printBakExp" name="Направления на бак.исследование" guid="5138-f936-45d0-ac70-066c" key="SHIFT+9" title="Печатать направления на бак.исследование" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/BakExp" params="id" action="/print-BakExp.do?s=PrintTicketService&amp;m=printBakExp" name="Направления на бак.исследование" key="SHIFT+9" title="Печатать направления на бак.исследование" />
         
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
         <tags:ticket_finds currentAction="ticket"/>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Medcard" beginForm="smo_spo_ticket_streamForm" guid="5c4f3682-e66b-4e0d-b448-4e6a2961a943" />
+    <ecom:titleTrail mainMenu="Medcard" beginForm="smo_spo_ticket_streamForm" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>

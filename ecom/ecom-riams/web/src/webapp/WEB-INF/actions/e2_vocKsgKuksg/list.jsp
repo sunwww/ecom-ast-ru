@@ -37,13 +37,13 @@
               order by vbst.id, cast(ksg.code as int)"/>
         <msh:section title='Результат поиска'>
             <msh:table  name="entryList" action="entityView-e2_vocKsg.do" idField="1" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="КСГ" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="KZ" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Профиль" property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Тип коек" property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Операционное КСГ" property="8" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Сверхдлительное КСГ" property="6" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="ПРизнак полной оплаты" property="7" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="КСГ" property="2" />
+                <msh:tableColumn columnName="KZ" property="3" />
+                <msh:tableColumn columnName="Профиль" property="4" />
+                <msh:tableColumn columnName="Тип коек" property="5" />
+                <msh:tableColumn columnName="Операционное КСГ" property="8" />
+                <msh:tableColumn columnName="Сверхдлительное КСГ" property="6" />
+                <msh:tableColumn columnName="ПРизнак полной оплаты" property="7" />
             </msh:table>
         </msh:section>
 

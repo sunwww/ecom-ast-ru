@@ -129,7 +129,7 @@
          	<msh:textField property="${name}DateFinish" label="по"/>
          	<td width="100%"></td>
          </msh:row>
-         <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
+         <msh:row>
          	 <msh:autoComplete vocName="vocWorkFunction" property="${name}VocWorkFunction" label="Должность" horizontalFill="true" fieldColSpan="5"/>
          	         <td><input type="button" value='Поиск' id='${name}ButtonFind' name='${name}ButtonFind' onclick='load${name}Data()' title="Поиск"/></td>
          	 

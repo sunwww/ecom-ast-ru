@@ -64,10 +64,10 @@ if (typeStatus==null) {
     </tiles:put>
 
     <tiles:put name='body' type='string' >
-   <msh:form  action="/pda_claims.do" defaultField="typeStatus" disableFormDataConfirm="true" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f" > 
-  <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+   <msh:form  action="/pda_claims.do" defaultField="typeStatus" disableFormDataConfirm="true" >
+  <msh:panel>
 
-    <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:separator label="Параметры поиска" colSpan="7" />
       
    
     <msh:row>

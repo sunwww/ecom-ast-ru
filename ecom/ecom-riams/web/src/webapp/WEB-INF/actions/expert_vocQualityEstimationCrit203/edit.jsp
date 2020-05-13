@@ -9,8 +9,8 @@
 -->
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
     <tiles:put name="side" type="string">
-    <msh:ifFormTypeAreViewOrEdit formName="expert_vocQualityEstimationCrit203Form" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
-        <msh:sideMenu title="Действия" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
+    <msh:ifFormTypeAreViewOrEdit formName="expert_vocQualityEstimationCrit203Form">
+        <msh:sideMenu title="Действия">
             <tags:AddEditDiagnoseCriteria203 name="AddDs"/>
             <msh:sideLink action="/javascript:showAddDs(${param.id})" name='Диагнозы' title="Просмотр диагнозов" params="" roles="/Policy/Mis/Order203/EditVocs"/>
             <tags:AddEditMedServCriteria203 name="AddEditMedServCriteria203"/>
@@ -22,9 +22,9 @@
     <tiles:put name="body" type="string">
 
         <msh:form  action="/entitySaveGoView-expert_vocQualityEstimationCrit203.do" defaultField="name">
-            <msh:hidden guid="hiddenId" property="id" />
-            <msh:hidden guid="hiddenSaveType" property="saveType" />
-            <msh:hidden guid="hiddenKind" property="kind" />
+            <msh:hidden property="id" />
+            <msh:hidden property="saveType" />
+            <msh:hidden property="kind" />
             <msh:hidden property="parent" />
             <msh:hidden property="type" />
             <msh:hidden property="kind" />
@@ -33,7 +33,7 @@
             <msh:hidden property="medServiceCodes" />
             <msh:hidden property="isBoolean" />
             <msh:hidden property="medServiceCodes" />
-            <msh:panel guid="panel">
+            <msh:panel>
 
                 <msh:row>
                     <msh:textArea label="Наименование" property="name" horizontalFill="true"/>
@@ -42,13 +42,13 @@
                     <msh:checkBox label="Взрослые" property="isGrownup" horizontalFill="true"/>
                     <msh:checkBox label="Дети" property="isChild" horizontalFill="true"/>
                 </msh:row>
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+                <msh:submitCancelButtonsRow colSpan="2" />
             </msh:panel>
         </msh:form>
     </tiles:put>
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="expert_vocQualityEstimationCrit203Form" />
+        <ecom:titleTrail mainMenu="Voc" beginForm="expert_vocQualityEstimationCrit203Form" />
     </tiles:put>
     <tiles:put name="javascript" type="string">
 

@@ -8,11 +8,11 @@
 
   <tiles:put name="body" type="string">
     <msh:form action="/entityParentSaveGoParentView-mis_kinsman.do" defaultField="kinsmanName" title="Родственник (представитель)">
-      <msh:hidden guid ="hiddenId" property="id" />
-      <msh:hidden guid ="hiddenPerson" property="person" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenParent" property="person" />
-      <msh:panel guid="panel" title="Родственник (представитель)" colsWidth="5%,25%,25%,25%,15%,15%">
+      <msh:hidden property="id" />
+      <msh:hidden property="person" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="person" />
+      <msh:panel title="Родственник (представитель)" colsWidth="5%,25%,25%,25%,15%,15%">
           <msh:row>
           	<msh:autoComplete viewAction="entityView-mis_patient.do" property="kinsman" vocName="patient"
           		fieldColSpan="2" label="Родственник" horizontalFill="true"/>
@@ -24,16 +24,16 @@
           		fieldColSpan="3" label="Статус" 
           		/>
           </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
     <tags:mis_patient_new divForButton="kinsmanButton" name='Kinsman' title='Создание новой персоны' autoComplitePatient="kinsman"/>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="mis_kinsmanForm" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="mis_kinsmanForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="mis_kinsmanForm" guid="6bbc76de-ccbc-44ff-be63-f6e5fa7ff415">
+    <msh:ifFormTypeIsView formName="mis_kinsmanForm">
       <msh:sideMenu>
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-mis_kinsman" name="Изменить" roles="/Policy/Mis/Patient/Kinsman/Edit" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_kinsman" name="Удалить" roles="/Policy/Mis/Patient/Kinsman/Delete" />

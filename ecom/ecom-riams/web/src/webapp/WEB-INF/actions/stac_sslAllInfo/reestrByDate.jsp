@@ -114,7 +114,7 @@
 	        	<input type="radio" name="typeView" value="2"  >  свод по отделениям
 	        </td>
         </msh:row>
-        <msh:row guid="Дата">
+        <msh:row>
         <msh:textField fieldColSpan="2" property="dateBegin" label="Дата" />
       </msh:row>
       <msh:row>

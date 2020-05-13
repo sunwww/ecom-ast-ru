@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Журнал обращений по стационару"></msh:title>
+    <msh:title mainMenu="StacJournal" title="Журнал обращений по стационару"></msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
     	<tags:stac_journal currentAction="stac_journalByHospital"/>
@@ -21,16 +21,16 @@
  %>
    <ecom:webQuery name="sex_woman_sql" nativeSql="select id,name from VocSex where omccode='2'"/>
  
-    <msh:form action="/stac_journalByHospital.do" defaultField="pigeonHoleName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/stac_journalByHospital.do" defaultField="pigeonHoleName" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
     <input type="hidden" name="id" id="id" value=""/>
     
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
       	<msh:autoComplete property="pigeonHole" fieldColSpan="7" 
       		horizontalFill="true" label="Приемник"
       		vocName="vocPigeonHole"
@@ -91,7 +91,7 @@
         </td>
        </msh:row>
       
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeDate" value="1" >  поступления
@@ -122,8 +122,8 @@
 	        </td>        	
         </msh:row>
       <msh:row>
-        <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
       </msh:row>
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" label="Отделение" vocName="lpu"/>
@@ -375,7 +375,7 @@ ${period}
 ${emerIs} ${pigeonHole} ${department} ${age_sql}
 group by m.${dateI}
 order by m.${dateI}
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     <form action="print-stac_journalByHospital_1.do" method="post" target="_blank">
         Результаты поиска обращений за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
@@ -389,8 +389,8 @@ order by m.${dateI}
     <msh:sectionContent>
     <msh:table name="journal_priem" cellFunction="true"
     viewUrl="js-stac_sslAllInfo-findByDate.do?short=Short"
-    action="js-stac_sslAllInfo-findByDate.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+    action="js-stac_sslAllInfo-findByDate.do" idField="1">
+            <msh:tableNotEmpty>
               <tr>
                 <th />
                 <th />
@@ -443,7 +443,7 @@ ${period}
 ${emerIs} ${pigeonHole} ${department} ${age_sql}
 group by m.${dateI}
 order by m.${dateI}
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
           <msh:sectionTitle>
               <form action="print-stac_journalByHospital_1_short.do" method="post" target="_blank">
                   Общий результат поиска обращений за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
@@ -457,7 +457,7 @@ order by m.${dateI}
           <msh:sectionContent>
               <msh:table name="journal_priem_general" cellFunction="true"
                          viewUrl="js-stac_sslAllInfo-findByDate.do?short=Short"
-                         action="js-stac_sslAllInfo-findByDate.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+                         action="js-stac_sslAllInfo-findByDate.do" idField="1">
                   <msh:tableColumn columnName="Дата" property="2"/>
                   <msh:tableColumn isCalcAmount="true" columnName="Всего обращений" property="3"/>
                   <msh:tableColumn isCalcAmount="true" columnName="Всего госпитализированы" property="4" addParam="&typeEmergency=${typeEmergency}&typeHosp=1"/>
@@ -507,7 +507,7 @@ ${period}
 ${emerIs} ${pigeonHole} ${department} ${age_sql}
 group by m.department_id,dep.name
 order by dep.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <form action="print-stac_journalByHospital_2_3.do" method="post" target="_blank">
         Госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
         <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_otd_sql}"> 
@@ -521,8 +521,8 @@ order by dep.name
     <msh:table name="journal_priem_otd" cellFunction="true" 
     viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1&short=Short"
     action="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1"
-     idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+     idField="1">
+            <msh:tableNotEmpty>
               <tr>
                 <th colspan=1></th>
                 <th colspan=1></th>
@@ -596,7 +596,7 @@ ${period}
 ${emerIs} ${pigeonHole1} ${department} ${age_sql}
 group by m.deniedHospitalizating_id,vdh.name
 order by vdh.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
         <form action="print-stac_journalByHospital_2_3.do" method="post" target="_blank">
             Отказы от госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
@@ -611,8 +611,8 @@ order by vdh.name
     <msh:sectionContent>
     <msh:table name="journal_priem_denied" cellFunction="true"  
     viewUrl="js-stac_sslAllInfo-findDeniedByPeriod.do?short=Short&typeHosp=2"
-    action="js-stac_sslAllInfo-findDeniedByPeriod.do?typeHosp=2" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+    action="js-stac_sslAllInfo-findDeniedByPeriod.do?typeHosp=2" idField="1">
+            <msh:tableNotEmpty>
               <tr>
                 <th />
                 <th />
@@ -674,7 +674,7 @@ ${period}
 ${emerIs} ${pigeonHole} ${department} ${age_sql}
 group by m.department_id,dep.name
 order by dep.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
           <msh:sectionTitle>
               <form action="print-stac_journalByHospital_2_3.do" method="post" target="_blank">
                   Отказы от госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
@@ -689,8 +689,8 @@ order by dep.name
           <msh:table name="journal_priem_otcaz" cellFunction="true"
                      viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1&short=Short&otkaz=1"
                      action="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1&otkaz=1"
-                     idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-              <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+                     idField="1">
+              <msh:tableNotEmpty>
                   <tr>
                       <th colspan=1></th>
                       <th colspan=1></th>
@@ -750,7 +750,7 @@ ${period}
 ${emerIs} ${pigeonHole} ${department} ${age_sql}
 group by m.department_id,dep.name
 order by dep.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <form action="print-stac_journalByHospital_4.do" method="post" target="_blank">
         Госпитализации за период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
         <input type='hidden' name="sqlText" id="sqlText" value="${journal_priem_otd_sql}"> 
@@ -764,8 +764,8 @@ order by dep.name
     <msh:table name="journal_priem_otd"  cellFunction="true"
     viewUrl="js-stac_sslAllInfo-findHospByPeriod.do?short=Short&typeHosp=1"
     action="js-stac_sslAllInfo-findHospByPeriod.do?typeHosp=1"
-     idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-            <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+     idField="1">
+            <msh:tableNotEmpty>
               <tr>
                 <th colspan=1></th>
                 <th colspan=1></th>

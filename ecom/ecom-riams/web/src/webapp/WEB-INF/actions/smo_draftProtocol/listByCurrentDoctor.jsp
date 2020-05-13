@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал черновиков дневников </msh:title>
+    <msh:title mainMenu="StacJournal">Журнал черновиков дневников </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_journalDraftByCurator"/>
@@ -78,7 +78,7 @@
 	where p.dtype='RoughDraft'
 	and slo.dtype='DepartmentMedCase'
 	group by ml.id,ml.name order by ml.name
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="js-smo_draftProtocol-list.do?short=Short"
     action="js-smo_draftProtocol-list.do" idField="1">
@@ -107,7 +107,7 @@ where slo.department_id='${department}' and slo.dtype='DepartmentMedCase'
  and p.dtype='RoughDraft'
 group by owf.id,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="js-smo_draftProtocol-list.do?short=Short"
     action="js-smo_draftProtocol-list.do" idField="1">
@@ -137,7 +137,7 @@ select p.id,slo.dateStart
     
     where  p.dtype='RoughDraft' and p.specialist_id='${curator}'
    
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     deleteUrl="entityParentDelete-smo_draftProtocol.do"
     viewUrl="entityView-smo_draftProtocol.do?short=Short" 

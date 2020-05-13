@@ -16,14 +16,14 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     	<input type="hidden" name="s" value="HospitalPrintService"/>
     	<input type="hidden" name="m" value="receivedWithoutPolicy"/>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+      <msh:row>
         <msh:separator label="Дополнительные параметры для реестра (в своде не учитываются)" colSpan="7"/>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typeDurationName" id="typeDurationLabel">Длительность:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDuration" value="1">  более 3х дней
@@ -56,7 +56,7 @@
 	        	<input type="radio" name="typeEmergency" value="3">  все
 	        </td>
         </msh:row>      
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  иностранцы
@@ -115,8 +115,8 @@
         	<msh:autoComplete property="department" horizontalFill="true" label="Отделение" vocName="lpu" fieldColSpan="7"/>
         </msh:row>
         <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" onclick="find()" value="Найти" />
             <input type="submit" onclick="print()" value="Печать" />

@@ -13,7 +13,7 @@
                 <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-diary_parameterRef" name="Изменить" roles="/Policy/Diary/ParameterGroup/Parameter/Edit" />
             </msh:ifFormTypeIsView>
             <msh:ifFormTypeAreViewOrEdit formName="diary_parameterRefForm" >
-                <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-diary_parameterRef" name="Удалить" roles="/Policy/Diary/ParameterGroup/Parameter/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+                <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-diary_parameterRef" name="Удалить" roles="/Policy/Diary/ParameterGroup/Parameter/Delete" />
             </msh:ifFormTypeAreViewOrEdit>
         </msh:sideMenu>
     </tiles:put>

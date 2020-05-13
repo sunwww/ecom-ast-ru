@@ -8,11 +8,11 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="StacJournal" guid="f6e72e89-0ba7-4f9e-97f6-0a1ecaf5b162">Отчет по КИЛИ</msh:title>
+    <msh:title mainMenu="StacJournal">Отчет по КИЛИ</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="677746d8-d63e-44a3-8e8b-e227dea8decb">
-      <msh:sideLink roles="/Policy/MedCase" key="ALT+N" action="/" name="По отделению" guid="b6f99225-3f13-4e39-91a4-3b371f8dce53" />
+    <msh:sideMenu>
+      <msh:sideLink roles="/Policy/MedCase" key="ALT+N" action="/" name="По отделению" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
@@ -21,9 +21,9 @@
   String typeSearch = ActionUtil.updateParameter("GroupByBedFund", "typeSearch", "2", request);
 	  if (shor==null|| shor.equals("")){
   %>
-	  <msh:form action="/protocolReport.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-		  <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-			  <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+	  <msh:form action="/protocolReport.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+		  <msh:panel>
+			  <msh:row>
 				  <msh:separator label="Параметры поиска" colSpan="7" />
 			  </msh:row><msh:row>
 			  <msh:textField property="dateBegin" label="Период с" />
@@ -32,7 +32,7 @@
 			  <msh:autoComplete property="department" fieldColSpan="5"
 								label="Профиль" horizontalFill="true" vocName="vocKiliProfile"/>
 		  </msh:row>
-			  <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+			  <msh:row>
 				  <td class="label" title="Поиск по дате  (typeSearch)" colspan="1"><label for="typeSearchName" id="typeSearchLabel">Отобразить:</label></td>
 				  <td onclick="this.childNodes[1].checked='checked';">
 					  <input type="radio" name="typeSearch" value="1">  свод по отделениям
@@ -154,16 +154,16 @@
 
 		if ((shor==null|| shor.equals("")) && typeSearch!=null && (typeSearch.equals("1") || typeSearch.equals("2"))) {
 %>
-	  <ecom:webQuery isReportBase="true"  name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
+	  <ecom:webQuery isReportBase="true"  name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" />
 	  <msh:section>
 		  <msh:sectionContent>
-			  <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=${param.department}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
-				  <msh:tableColumn columnName="${tableName}" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-				  <msh:tableColumn columnName="Умерших всего" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				  <msh:tableColumn columnName="Случаев смерти" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=1" />
-				  <msh:tableColumn columnName="Протоколов КИЛИ" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=2"/>
-				  <msh:tableColumn columnName="% от умерших" property="6" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				  <msh:tableColumn columnName="% от оформленных" property="7" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+			  <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=${param.department}">
+				  <msh:tableColumn columnName="${tableName}" property="2" />
+				  <msh:tableColumn columnName="Умерших всего" property="3" />
+				  <msh:tableColumn columnName="Случаев смерти" property="4" addParam="&addParam=1" />
+				  <msh:tableColumn columnName="Протоколов КИЛИ" property="5" addParam="&addParam=2"/>
+				  <msh:tableColumn columnName="% от умерших" property="6" />
+				  <msh:tableColumn columnName="% от оформленных" property="7" />
 			  </msh:table>
 		  </msh:sectionContent>
 	  </msh:section>
@@ -190,16 +190,16 @@
 		left join Patient p on p.id=sls.patient_id
 		where sls.deniedhospitalizating_id is null
 		and sls.dateFinish between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
-		 and dc.isneonatologic = true " guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
+		 and dc.isneonatologic = true " />
 	  <msh:section>
 		  <msh:sectionContent>
-			  <msh:table name="datelist1" idField="1" cellFunction="true" action="protocolReport.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=16" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
-				  <msh:tableColumn columnName="${tableName}" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-				  <msh:tableColumn columnName="Умерших всего" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				  <msh:tableColumn columnName="Случаев смерти" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=1" />
-				  <msh:tableColumn columnName="Протоколов КИЛИ" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=2"/>
-				  <msh:tableColumn columnName="% от умерших" property="6" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				  <msh:tableColumn columnName="% от оформленных" property="7" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+			  <msh:table name="datelist1" idField="1" cellFunction="true" action="protocolReport.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=16">
+				  <msh:tableColumn columnName="${tableName}" property="2" />
+				  <msh:tableColumn columnName="Умерших всего" property="3" />
+				  <msh:tableColumn columnName="Случаев смерти" property="4" addParam="&addParam=1" />
+				  <msh:tableColumn columnName="Протоколов КИЛИ" property="5" addParam="&addParam=2"/>
+				  <msh:tableColumn columnName="% от умерших" property="6" />
+				  <msh:tableColumn columnName="% от оформленных" property="7" />
 			  </msh:table>
 		  </msh:sectionContent>
 	  </msh:section>
@@ -208,15 +208,15 @@
 	      }
 	  else if ((shor==null|| shor.equals("")) && typeSearch!=null && typeSearch.equals("3")) {
 	  %>
-	  <ecom:webQuery isReportBase="true" name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
+	  <ecom:webQuery isReportBase="true" name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" />
 	  <msh:section>
 		  <msh:sectionContent>
 			  <msh:table cellFunction="true" name="datelist" idField="5" noDataMessage="Не найдено"
-						 action="protocolReport.do?typeSearch=3&short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=${param.department}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
-				  <msh:tableColumn columnName="Протокол КИЛИ" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-				  <msh:tableColumn columnName="Дата протокола" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				  <msh:tableColumn columnName="Пациентов" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				  <msh:tableColumn columnName="Профиль" property="6" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+						 action="protocolReport.do?typeSearch=3&short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=${param.department}">
+				  <msh:tableColumn columnName="Протокол КИЛИ" property="2" />
+				  <msh:tableColumn columnName="Дата протокола" property="3" />
+				  <msh:tableColumn columnName="Пациентов" property="4" />
+				  <msh:tableColumn columnName="Профиль" property="6" />
 			  </msh:table>
 		  </msh:sectionContent>
 	  </msh:section>

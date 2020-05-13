@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="StacJournal" title="Список всех хир.операций в ССЛ" guid="d65a8cc3-3360-43fb-bac7-0d7dde1057ae" />
+    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="StacJournal" title="Список всех хир.операций в ССЛ" />
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
@@ -51,8 +51,8 @@ left join Patient pat on pat.id=wan.person_id
     </msh:ifInRole>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Добавить" guid="73fe6c01-daa2-49fb-af12-20402ea5695b">
-      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_surOperation" name="Хир. операцию" title="Добавить хирургическую операцию в случай стационарного лечения" guid="1eb84508-a862-4de8-b2a9-c447c2cf7cd1" />
+    <msh:sideMenu title="Добавить">
+      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_surOperation" name="Хир. операцию" title="Добавить хирургическую операцию в случай стационарного лечения" />
     </msh:sideMenu>
     
   </tiles:put>

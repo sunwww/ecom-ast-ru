@@ -20,7 +20,7 @@
     </tiles:put>
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail guid="titleTrail-123" mainMenu="MedCase" beginForm="oncology_case_reestrForm" />
+        <ecom:titleTrail mainMenu="MedCase" beginForm="oncology_case_reestrForm" />
     </tiles:put>
 
     <tiles:put name="body" type="string">
@@ -31,18 +31,18 @@
             <h2><label id="ds"/></h2>
             <msh:checkBox property="suspicionOncologist" label="Подозрение на ЗНО:"/><br>
             <div class="borderedDiv" id="oncologyCase">
-                <msh:hidden guid="hiddenParent" property="medCase" />
-                <msh:hidden guid="hiddenId" property="id" />
-                <msh:hidden guid="hiddenSaveType" property="saveType" />
-                <msh:hidden guid="vocOncologyReasonTreat" property="vocOncologyReasonTreat" />
-                <msh:hidden guid="histString" property="histString" />
-                <msh:hidden guid="surgTreatment" property="surgTreatment" />
-                <msh:hidden guid="lineDrugTherapy" property="lineDrugTherapy" />
-                <msh:hidden guid="cycleDrugTherapy" property="cycleDrugTherapy" />
-                <msh:hidden guid="typeTreatment" property="typeTreatment" />
-                <msh:hidden guid="contraString" property="contraString" />
-                <msh:hidden guid="methodDiagTreat" property="typeTreatment" />
-                <msh:hidden guid="medService" property="contraString" />
+                <msh:hidden property="medCase" />
+                <msh:hidden property="id" />
+                <msh:hidden property="saveType" />
+                <msh:hidden property="vocOncologyReasonTreat" />
+                <msh:hidden property="histString" />
+                <msh:hidden property="surgTreatment" />
+                <msh:hidden property="lineDrugTherapy" />
+                <msh:hidden property="cycleDrugTherapy" />
+                <msh:hidden property="typeTreatment" />
+                <msh:hidden property="contraString" />
+                <msh:hidden property="typeTreatment" />
+                <msh:hidden property="contraString" />
                 <msh:hidden property="isFirst" />
                 <msh:hidden property="isNauseaAndGagReflexPrev" />
                 <msh:hidden property="MKB" />
@@ -1931,9 +1931,9 @@
 
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
-            <msh:sideMenu guid="sideMenu-123" title="Действия">
-                <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-oncology_case_reestr" name="Изменить" roles="/Policy/Mis/Oncology/Case/Edit" />
-                <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-oncology_case_reestr" name="Удалить" roles="/Policy/Mis/Oncology/Case/Delete" />
+            <msh:sideMenu title="Действия">
+                <msh:sideLink key="ALT+2" params="id" action="/entityEdit-oncology_case_reestr" name="Изменить" roles="/Policy/Mis/Oncology/Case/Edit" />
+                <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-oncology_case_reestr" name="Удалить" roles="/Policy/Mis/Oncology/Case/Delete" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>

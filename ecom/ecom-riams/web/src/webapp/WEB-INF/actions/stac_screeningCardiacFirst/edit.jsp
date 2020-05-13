@@ -5,11 +5,11 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="stac_screeningCardiacFirstForm" guid="e20545-4285-a21c-3bb9b4569efc">
-      <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Скрининг новорождённых">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_screeningCardiacFirst" name="Изменить" roles="/Policy/Mis/Pregnancy/CardiacScreening/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_screeningCardiacFirst" name="Удалить" roles="/Policy/Mis/Pregnancy/CardiacScreening/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
-        <msh:sideLink key="ALT+N" action="/javascript:window.location.href='entityParentPrepareCreate-stac_screeningCardiacSecond.do?id='+$('medCase').value;" name="Кардио-скрининг нов. (II этап)" roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+    <msh:ifFormTypeIsView formName="stac_screeningCardiacFirstForm">
+      <msh:sideMenu title="Скрининг новорождённых">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_screeningCardiacFirst" name="Изменить" roles="/Policy/Mis/Pregnancy/CardiacScreening/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_screeningCardiacFirst" name="Удалить" roles="/Policy/Mis/Pregnancy/CardiacScreening/Delete" />
+        <msh:sideLink key="ALT+N" action="/javascript:window.location.href='entityParentPrepareCreate-stac_screeningCardiacSecond.do?id='+$('medCase').value;" name="Кардио-скрининг нов. (II этап)" roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
 </tiles:put>
@@ -88,7 +88,7 @@
   </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="stac_screeningCardiacFirstForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="stac_screeningCardiacFirstForm" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <script>

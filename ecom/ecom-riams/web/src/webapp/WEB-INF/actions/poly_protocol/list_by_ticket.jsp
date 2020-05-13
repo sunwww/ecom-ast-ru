@@ -7,13 +7,13 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="helloItle-123" beginForm="poly_ticketForm" mainMenu="Patient" title="Просмотр информации по посещениям"/>
+    <ecom:titleTrail beginForm="poly_ticketForm" mainMenu="Patient" title="Просмотр информации по посещениям"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   <tags:style_currentMenu currentAction='informByTicket'/>
     <msh:sideMenu title="Талон">
-      <msh:sideLink key="ALT+2" params="id" guid="Перейти к просмотру талона" action="/entityParentView-poly_ticket" name="Просмотр талона" />
-      <msh:sideLink key="ALT+3" params="id" guid="Перейти к редактированию талона" action="/entityParentEdit-poly_ticket" name="Изменить талон" />
+      <msh:sideLink key="ALT+2" params="id" action="/entityParentView-poly_ticket" name="Просмотр талона" />
+      <msh:sideLink key="ALT+3" params="id" action="/entityParentEdit-poly_ticket" name="Изменить талон" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
@@ -34,7 +34,7 @@ left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
 
 where t1.id='${param.id}'  and t.date is not null and t.status='2'"/>
-    <msh:table name="listByMedcard" action="entityView-poly_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="listByMedcard" action="entityView-poly_ticket.do" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата приема" property="2" />
       <msh:tableColumn columnName="Специалист" property="3"/>

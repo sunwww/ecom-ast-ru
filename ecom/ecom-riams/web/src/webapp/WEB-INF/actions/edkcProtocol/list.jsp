@@ -6,12 +6,12 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" title="Протоколы ЕДКЦ" beginForm="edkcObsSheetForm" guid="b6v61-1e0b-4ebd-9f58-bdb45bd6" />
+        <ecom:titleTrail mainMenu="Expert2" title="Протоколы ЕДКЦ" beginForm="edkcObsSheetForm" />
     </tiles:put>
     <tiles:put name="side" type="string">
-        <msh:sideMenu guid="0d13c843-c26a-4ae2-ae97-d61b44618bae" title="Добавить">
-            <msh:sideLink key="ALT+2" action="/entityParentPrepareCreate-edkcProtocol.do?id=${param.id}&type=edkc_1" name="Протокол консультации" guid="dc51a550-1158-41b8-89a4-bf3a90ffeedb" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet/Create" />
-            <msh:sideLink key="ALT+3" action="/entityParentPrepareCreate-edkcProtocol.do?id=${param.id}&type=edkc_ev" name="Протокол ежесуточного наблюдения" guid="dc51a550-1158-41b8-89a4-bf3a90ffeedb" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet/Create" />
+        <msh:sideMenu title="Добавить">
+            <msh:sideLink key="ALT+2" action="/entityParentPrepareCreate-edkcProtocol.do?id=${param.id}&type=edkc_1" name="Протокол консультации" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet/Create" />
+            <msh:sideLink key="ALT+3" action="/entityParentPrepareCreate-edkcProtocol.do?id=${param.id}&type=edkc_ev" name="Протокол ежесуточного наблюдения" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet/Create" />
         </msh:sideMenu>
     </tiles:put>
     <tiles:put name="body" type="string">
@@ -30,7 +30,7 @@
             	order by d.dateRegistration,d.timeRegistration"/>
 
             <msh:table hideTitle="false" selection="multiply" idField="1" name="protocols" action="entityParentView-edkcProtocol.do"
-                       guid="d0267-9aec-4ee0-b20a-4f26b37" noDataMessage="Нет протоколов">
+                       noDataMessage="Нет протоколов">
                 <msh:tableNotEmpty>
                     <tr>
                         <th colspan='8'>

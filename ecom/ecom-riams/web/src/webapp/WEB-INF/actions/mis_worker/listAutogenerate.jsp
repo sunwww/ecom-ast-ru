@@ -62,12 +62,12 @@
   	 order by coalesce(ml.name,ml1.name),wf.groupName, wp.lastname,wp.middlename,wp.firstname
   	 "/>
   	 
-    <msh:table selection="true" viewUrl="entitySubclassShortView-work_workFunction.do" name="listPerson" action="entitySubclassView-work_workFunction.do" idField="1" guid="d20ae6f6-f534-4d56-affe-ff02d3034d32">
-      <msh:tableColumn columnName="#" property="sn" guid="4797" />
-      <msh:tableColumn columnName="Код" property="5" guid="4ceb96e" />
+    <msh:table selection="true" viewUrl="entitySubclassShortView-work_workFunction.do" name="listPerson" action="entitySubclassView-work_workFunction.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Код" property="5" />
       <msh:tableColumn columnName="Подразделение" property="10" />
       
-      <msh:tableColumn columnName="ФИО (Название группы)" property="2" guid="4ceb96e" />
+      <msh:tableColumn columnName="ФИО (Название группы)" property="2" />
       <msh:tableColumn columnName="Должностные обязанности" property="3"/>
       <msh:tableColumn columnName="Рабочий календарь" property="4"/>
       <msh:tableButton property="7" hideIfEmpty="true" buttonFunction="setAutogenerate" addParam="'0'" buttonName="Снять автоматическую генерацию по календарю" buttonShortName="СА" role="/Policy/Mis/Worker/WorkCalendar/Edit"/>

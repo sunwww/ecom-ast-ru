@@ -14,10 +14,10 @@
         <msh:form action="/finPlan.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
             <msh:panel>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Поиск по типу  (typeGroup2)" colspan="1"><label for="typeGroup2Name" id="ttypeGroupLabel2">Выберите:</label></td>
                     <td id="vmtd1" colspan="1">
                         <input type="radio" name="typeGroup2" value="1" checked> Стационар
@@ -29,7 +29,7 @@
                         <input type="radio" name="typeGroup2" value="3"> Поликлиника
                     </td>
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td  id="gtd0" class="label" title="Поиск по промежутку  (typeGroup)" colspan="1"><label for="typeGroupName" id="ttypeGroupLabel">Группировка:</label></td>
                     <td id="gtd1" onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeGroup" value="1" checked> по профилям
@@ -50,7 +50,7 @@
                 <msh:row>
                     <msh:autoComplete property="department" fieldColSpan="5" label="Отделение" horizontalFill="true" vocName="lpu"/>
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td  id="mbd0" class="label" title="Поиск по  (typeGroup3)" colspan="1"><label for="typeGroup3Name" id="ttypeGroup3Label">Мобильная поликлиника:</label></td>
                     <td id="mbd1" onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeGroup3" value="1" checked> всё

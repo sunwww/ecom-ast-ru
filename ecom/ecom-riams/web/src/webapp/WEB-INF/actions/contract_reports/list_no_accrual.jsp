@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Contract" title="Анализ услуг"/>
+    <msh:title mainMenu="Contract" title="Анализ услуг"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   	
@@ -71,7 +71,7 @@ select ca.id,
 			and cao.id is null  and caos.id is null
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-contact_analisis_no_accrual.do" method="post" target="_blank">

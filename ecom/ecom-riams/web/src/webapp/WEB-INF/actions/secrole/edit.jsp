@@ -40,8 +40,8 @@
                 <msh:row>
                     <msh:textArea property="comment" label="Комментарий" fieldColSpan="3" horizontalFill="true"/>
                 </msh:row>
-        <msh:row guid="ad5ec-5754-4cbd-bcb5-a592">
-          <ecom:oneToManyOneAutocomplete viewAction="entityView-secrole.do" vocName="role" colSpan="3" label="Дочерние роли" property="children" guid="652c9b95-2724-4086-87f5-aefd67b01e8c" />
+        <msh:row>
+          <ecom:oneToManyOneAutocomplete viewAction="entityView-secrole.do" vocName="role" colSpan="3" label="Дочерние роли" property="children" />
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -106,7 +106,7 @@
         		name="Экспорт списка ролей" key="ALT+5"/>
 			<msh:sideLink action="/serviceRole-importEdit.do" roles="/Policy/Jaas/SecRole/Import" 
 				name="Импорт списка ролей" key="ALT+6"/>
-			      <msh:sideLink key="ALT+7" params="id" action="/roleUserEdit" name="Изменить пользователей у роли" roles="/Policy/Jaas/SecUser/EditRoles" guid="c81c676b-39ab-4ad3-b55d-946012bf258d" />
+			      <msh:sideLink key="ALT+7" params="id" action="/roleUserEdit" name="Изменить пользователей у роли" roles="/Policy/Jaas/SecUser/EditRoles" />
 
         </msh:sideMenu>
         <tags:menuJaas currentAction="roles"/>

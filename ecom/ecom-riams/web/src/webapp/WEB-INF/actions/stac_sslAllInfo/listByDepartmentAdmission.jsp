@@ -7,16 +7,16 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал направленных пациентов в отделение ${departmentInfo} (неоформленных) </msh:title>
+    <msh:title mainMenu="StacJournal">Журнал направленных пациентов в отделение ${departmentInfo} (неоформленных) </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
     	<tags:stac_journal currentAction="stac_journalByDepartmentAdmission"/>
   </tiles:put>
   <tiles:put name="body" type="string">
-		    <msh:form action="/stac_journalByDepartmentAdmission.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-		    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff"  colsWidth="10%,90%">
-		      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9" >
-		        <msh:separator label="Параметры поиска" colSpan="4" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+		    <msh:form action="/stac_journalByDepartmentAdmission.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+		    <msh:panel  colsWidth="10%,90%">
+		      <msh:row >
+		        <msh:separator label="Параметры поиска" colSpan="4" />
 		      </msh:row>
     <msh:row>
     <td colspan="1" class='label'>
@@ -62,15 +62,15 @@ select m.id,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varch
 	 
 	order by pat.lastname,pat.firstname,pat.middlename
      "/>
-    <msh:table name="journal_admission1" viewUrl="entityShortView-stac_ssl.do" action="entityParentPrepareCreate-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="journal_admission1" viewUrl="entityShortView-stac_ssl.do" action="entityParentPrepareCreate-stac_slo.do" idField="1">
     	<msh:tableColumn columnName="#" property="sn"/>
-      <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Статус пациента" property="7" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Год рождения" property="6" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Диагноз" property="8" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Кем открыт" property="3" guid="37-b552-4154-a82a-ee484a1714ad" />
+      <msh:tableColumn columnName="Стат.карта" property="4" />
+      <msh:tableColumn columnName="Статус пациента" property="7" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" />
+      <msh:tableColumn columnName="Год рождения" property="6" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
+      <msh:tableColumn columnName="Диагноз" property="8" />
+      <msh:tableColumn columnName="Кем открыт" property="3" />
       <msh:tableColumn property="9" columnName="Поток обслуживания"/>
     </msh:table>
     </msh:sectionContent>
@@ -99,16 +99,16 @@ where d.DTYPE='DepartmentMedCase'
  and n.dateStart is null  ${onlyMonthD} and sls.dateFinish is null
  and sls.deniedHospitalizating_id is null
     "/>
-    <msh:table viewUrl="entityShortView-stac_ssl.do" name="journal_admission" action="entityParentPrepareCreate-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table viewUrl="entityShortView-stac_ssl.do" name="journal_admission" action="entityParentPrepareCreate-stac_slo.do" idField="1">
     	<msh:tableColumn columnName="#" property="sn"/>
-      <msh:tableColumn columnName="Перевод из отделения" property="7" guid="fc26523a-eb9c-4ca9ac5b" />
+      <msh:tableColumn columnName="Перевод из отделения" property="7" />
       <msh:tableColumn property="10" columnName="Поток обслуживания"/>
-      <msh:tableColumn columnName="Дата перевода" property="8" guid="fc26523a-eb9c-44bc-b12e-42cb7" />
-      <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Статус пациента" property="9" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Год рождения" property="6" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Дата перевода" property="8" />
+      <msh:tableColumn columnName="Стат.карта" property="4" />
+      <msh:tableColumn columnName="Статус пациента" property="9" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" />
+      <msh:tableColumn columnName="Год рождения" property="6" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -135,7 +135,7 @@ select ml.id,ml.name,count(distinct m.id) as cntAll
 	     "/>
 	     <%-- --%>
 	    <msh:table name="journal_admission1" viewUrl="stac_journalByDepartmentAdmission.do?s=Short&" 
-	     action="stac_journalByDepartmentAdmission.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	     action="stac_journalByDepartmentAdmission.do" idField="1">
 	    	<msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Отделение" property="2"/>
 	      <msh:tableColumn columnName="Кол-во поступивших" property="3"/>
@@ -161,7 +161,7 @@ where d.DTYPE='DepartmentMedCase'
     "/>
     <msh:table 
     viewUrl="stac_journalByDepartmentAdmission.do?s=Short&"
-    name="journal_admission" action="entityParentPrepareCreate-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    name="journal_admission" action="entityParentPrepareCreate-stac_slo.do" idField="1">
     	  <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Отделение" property="2"/>
 	      <msh:tableColumn columnName="Кол-во переведенных" property="3"/> 

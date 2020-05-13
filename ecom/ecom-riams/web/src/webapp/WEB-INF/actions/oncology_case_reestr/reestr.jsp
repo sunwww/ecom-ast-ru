@@ -30,11 +30,11 @@
                     <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="filterAdd1" label="Номер стат. карты" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+                    <msh:textField property="filterAdd1" label="Номер стат. карты" />
                 </msh:row>
                 <msh:row>
                     <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>

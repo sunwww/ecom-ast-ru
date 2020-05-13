@@ -32,13 +32,13 @@
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="psych_publicDangerousEffectForm" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="psych_publicDangerousEffectForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
   <msh:ifFormTypeAreViewOrEdit formName="psych_publicDangerousEffectForm">
     <msh:sideMenu title="Общественно опасное действие">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-psych_publicDangerousEffect" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" params="id" action="/entityParentDelete-psych_publicDangerousEffect" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Delete"  />
+      <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-psych_publicDangerousEffect" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Edit" />
+      <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-psych_publicDangerousEffect" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation/Delete"  />
     </msh:sideMenu>
     </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>

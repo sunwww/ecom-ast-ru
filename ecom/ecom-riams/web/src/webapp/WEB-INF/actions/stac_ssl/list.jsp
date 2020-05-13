@@ -103,19 +103,19 @@
     <msh:table name="list" action="entitySubclassView-mis_medCase.do" 
     viewUrl="entitySubclassView-mis_medCase.do?short=Short"
     idField="1" styleRow="13">
-      <msh:tableColumn columnName="#" property="sn" guid="ce16c32c-9459-4673-9ce8-d6e646f969ff" />
-      <msh:tableColumn columnName="Стат.карта" property="7" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Дата выписки" property="3" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-      <msh:tableColumn columnName="Кол-во дней" property="10" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />
-      <msh:tableColumn columnName="Экстр.?" property="6" guid="e98f6bbc96" />
-      <msh:tableColumn columnName="Отделение пост." property="8" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />
-      <msh:tableColumn columnName="Отделение выписки (текущее)" property="9" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-      <msh:tableColumn columnName="Диагноз клин. посл. отд." property="12" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-      <msh:tableColumn columnName="Диагноз выписной" property="11" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-      <msh:tableColumn columnName="Кем открыт" property="5" guid="35347247-b552-4154-a82a-ee484a1714ad" />
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Стат.карта" property="7" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
+      <msh:tableColumn columnName="Дата выписки" property="3" />
+      <msh:tableColumn columnName="Кол-во дней" property="10" />
+      <msh:tableColumn columnName="Экстр.?" property="6" />
+      <msh:tableColumn columnName="Отделение пост." property="8" />
+      <msh:tableColumn columnName="Отделение выписки (текущее)" property="9" />
+      <msh:tableColumn columnName="Диагноз клин. посл. отд." property="12" />
+      <msh:tableColumn columnName="Диагноз выписной" property="11" />
+      <msh:tableColumn columnName="Кем открыт" property="5" />
     </msh:table>
-    <msh:tableNotEmpty name="list" guid="189caa95-f200-4b88-ae0f-5669effa19ce">
+    <msh:tableNotEmpty name="list">
       <div class="h3">
         <h3>Легенда</h3>
       </div>
@@ -136,14 +136,14 @@
     </msh:tableNotEmpty>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Добавить" guid="6372e109-9e1b-49dc-840b-9b38f524efeb">
-      <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" params="id" action="/entityParentPrepareCreate-stac_sslAdmission" name="Госпитализацию" title="Добавить случай лечения в стационаре" key="ALT+2" guid="436bbb7b-497c-4b10-ba0e-c5601675a713" />
+    <msh:sideMenu title="Добавить">
+      <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" params="id" action="/entityParentPrepareCreate-stac_sslAdmission" name="Госпитализацию" title="Добавить случай лечения в стационаре" key="ALT+2" />
       <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create,/Policy/Mis/MedCase/Stac/Ssl/ShortEnter" params="id" action="/entityParentPrepareCreate-stac_sslAdmissionShort" name="Госпитализацию (короткая)" title="Добавить случай лечения в стационаре" key="ALT+4" />
       <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Ext/Create" params="id" action="/entityParentPrepareCreate-stac_extssl" name="Госпитализацию в другом стационаре" title="Зарегистрировать госпитализацию в другом стационаре" key="ALT+3"/>
     </msh:sideMenu>
-    <msh:sideMenu title="Перейти" guid="b43f7427-60be-4539-8b79-38a6882a8512">
-      <msh:sideLink key="ALT+2" params="id" action="/entityView-mis_patient" name="⇧ Пациент" guid="f07e71b2-bfbe-4137-8bba-b347b8056561" />
-      <msh:sideLink roles="/Policy/XZ" params="id" action="/entityParentListRedirect-pres_prescriptList" name="⇧К списку назначений" guid="b1195713-54a1-49f3-9dbf-31751203b6b0" />
+    <msh:sideMenu title="Перейти">
+      <msh:sideLink key="ALT+2" params="id" action="/entityView-mis_patient" name="⇧ Пациент" />
+      <msh:sideLink roles="/Policy/XZ" params="id" action="/entityParentListRedirect-pres_prescriptList" name="⇧К списку назначений" />
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

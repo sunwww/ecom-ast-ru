@@ -7,9 +7,9 @@
 
 
   <tiles:put name="body" type="string">
-          <ecom:parentEntityListAll formName="pres_prescriptionForm" attribute="prescription" guid="8399625f-d21d-4cf3-b87f-2f48b2f43626" />
-          <msh:table name="prescription" action="entitySubclassView-pres_prescription.do" idField="id" guid="95f63378-5b89-4f15-ad12-ba3f87976c52">
-            <msh:tableColumn columnName="Назначение" property="descriptionInfo" guid="e2842846-7904-4038-8209-5a296f56f0fe" />
+          <ecom:parentEntityListAll formName="pres_prescriptionForm" attribute="prescription" />
+          <msh:table name="prescription" action="entitySubclassView-pres_prescription.do" idField="id">
+            <msh:tableColumn columnName="Назначение" property="descriptionInfo" />
             <msh:tableColumn columnName="Дата и время назначения" property="prescriptTimeStamp"  />
             <msh:tableColumn columnName="Роспись врача" property="signature"  />
             <msh:tableColumn columnName="Роспись мед.сестры" property="signature"  />

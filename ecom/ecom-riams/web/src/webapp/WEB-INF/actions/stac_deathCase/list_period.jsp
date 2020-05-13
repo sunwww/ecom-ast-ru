@@ -27,10 +27,10 @@
 	String typeCertificate =ActionUtil.updateParameter("Report_DEATHCASE","typeCertificate","3", request) ;
   
   %>
-    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
         <input type='hidden' id="sqlText" name="sqlText">
         <input type='hidden' id="infoText" name="infoText">
         <input type='hidden' id="m" name="m">
@@ -115,8 +115,8 @@
         	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
         </msh:row>
         <msh:row>
-	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-    	    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+	        <msh:textField property="dateBegin" label="Период с" />
+    	    <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" onclick="find()" value="Найти" />
           </td>
@@ -280,7 +280,7 @@ then -1 else 0 end)
     ,ss.code  ,vdcL.name,vdcC.name,dcvpd.name
     ,m.dateStart,m.entranceTime,pml.name,dml.name,dml.isNoOmc,bf.addCaseDuration
     ,dc.commentCategory,rmkb.code,dc.isAutopsy,dc.isPresenceDoctorAutopsy,dc.dateForensic
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <script type="text/javascript">
     function print() {
     	var frm = document.forms[0] ;

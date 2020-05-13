@@ -9,36 +9,36 @@
     <!-- 
     	  - Журнал шаблона календаря
     	  -->
-    <msh:form action="/entityParentSaveGoParentView-cal_journalPatternCalendar.do" defaultField="hello" guid="05410aab-fb9e-4fb2-8194-3e9a1f38354a">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenParent" property="pattern" />
-      <msh:panel guid="panel">
-        <msh:row guid="00237e8b-4ca9-40a6-af95-6b44444">
-          <msh:autoComplete shortViewAction="entityShortView-cal_patternBySpec.do" parentId="cal_journalPatternCalendarForm.workCalendar" vocName="workCalendarPattern" property="pattern" guid="3a3e4d1b-8802-467d-b205-715fb379b018" horizontalFill="true" fieldColSpan="3" viewAction="entitySubclassView-cal_pattern.do" />
+    <msh:form action="/entityParentSaveGoParentView-cal_journalPatternCalendar.do" defaultField="hello">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="pattern" />
+      <msh:panel>
+        <msh:row>
+          <msh:autoComplete shortViewAction="entityShortView-cal_patternBySpec.do" parentId="cal_journalPatternCalendarForm.workCalendar" vocName="workCalendarPattern" property="pattern" horizontalFill="true" fieldColSpan="3" viewAction="entitySubclassView-cal_pattern.do" />
         </msh:row>
-        <msh:row guid="00237e8b-4ca9-40a6-af95-6b44444">
+        <msh:row>
           <msh:autoComplete  vocName="vocWorkBusy" property="workBusy" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="00237e8b-4ca9-40a6-af95-6b4e14bb9b74">
-          <msh:checkBox property="noActive" label="Недействует" guid="65519dd8-f032-4a80-a311-e8df67b0c5ae" />
+        <msh:row>
+          <msh:checkBox property="noActive" label="Недействует" />
         </msh:row>
-        <msh:row guid="64713a7e-aa81-41ec-a822-c1accce38fe0">
-          <msh:textField property="dateFrom" label="Действует с" guid="f75a90ab-ec2c-4ab1-aff5-f8d937dd4b5d" />
-          <msh:textField property="dateTo" label="по" guid="01fc9aba-0cec-4c02-b21b-a6cd7adacce2" />
+        <msh:row>
+          <msh:textField property="dateFrom" label="Действует с" />
+          <msh:textField property="dateTo" label="по" />
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Lpu" beginForm="cal_patternForm" />
+    <ecom:titleTrail mainMenu="Lpu" beginForm="cal_patternForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="cal_journalPatternCalendarForm" guid="f23df5de-8741-4611-bcbb-951011f2a19d">
-      <msh:sideMenu title="Журнал шаблона календаря" guid="81da5897-a667-43f3-9eca-830e380b6e44">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-cal_journalPatternCalendar" name="Изменить" roles="/Policy/Mis/Worker/WorkCalendar/JournalPattern/Edit" guid="e4b8061b-28f5-4429-ba7d-0b00cf4ad3d0" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-cal_journalPatternCalendar" name="Удалить" roles="/Policy/Mis/Worker/WorkCalendar/JournalPattern/Delete" guid="01fbfbe3-3dff-4766-a299-f9d4f634aff0" />
+    <msh:ifFormTypeIsView formName="cal_journalPatternCalendarForm">
+      <msh:sideMenu title="Журнал шаблона календаря">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-cal_journalPatternCalendar" name="Изменить" roles="/Policy/Mis/Worker/WorkCalendar/JournalPattern/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-cal_journalPatternCalendar" name="Удалить" roles="/Policy/Mis/Worker/WorkCalendar/JournalPattern/Delete" />
       </msh:sideMenu>
 
     </msh:ifFormTypeIsView>

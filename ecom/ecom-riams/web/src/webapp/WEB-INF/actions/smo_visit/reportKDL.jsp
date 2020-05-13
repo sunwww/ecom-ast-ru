@@ -102,12 +102,12 @@
                     <ecom:oneToManyOneAutocomplete label="Отделения" vocName="vocLpuHospOtdAll" property="departments" colSpan="10"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Поиск по промежутку  (typeStacOrNot)" colspan="1"><label for="typeStacOrNotName" id="ttypeStacOrNotLabel">Группировать по:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeStacOrNot" value="1"> типу исследования
@@ -122,7 +122,7 @@
                         <input type="radio" name="typeStacOrNot" value="4" id="radio4"> группировка по пациентам, вывод по ВМП за период
                     </td>
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Поиск по промежутку  (typeVMPOrNot)" colspan="1"><label for="typeVMPOrNotName" id="typeVMPOrNotLabel">Отобразить ВМП:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';radio();" colspan="1">
                         <input type="radio" name="typeVMPOrNot" value="1"> Всё

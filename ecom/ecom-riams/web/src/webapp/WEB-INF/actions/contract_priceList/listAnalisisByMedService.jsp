@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Contract" title="Анализ услуг"/>
+    <msh:title mainMenu="Contract" title="Анализ услуг"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   	
@@ -154,7 +154,7 @@ left join MedService ms on ${findMedSql} and ms.finishdate is null
 where (pp.dtype='PricePosition' and pp.priceList_id = '${param.priceList}' or pp.dtype is null) ${viewSql} ${findMedAddSql}
 ${filterByCodeSql} ${filterByNameSql} and ms1.finishdate is null
 order by ms1.code
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-contract_analisis_PMservices.do" method="post" target="_blank">
@@ -219,7 +219,7 @@ left join PriceList pl on pl.id=pp.pricelist_id
 where ${priceListSql} ${viewSql}
 ${filterByCodeSql} ${filterByNameSql}
 order by ms1.code
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-contract_analisis_PMservices.do" method="post" target="_blank">

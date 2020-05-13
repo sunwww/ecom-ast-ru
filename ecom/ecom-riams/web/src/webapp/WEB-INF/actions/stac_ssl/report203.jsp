@@ -40,8 +40,8 @@
                     <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
                 </msh:row>
                 <msh:row>
-                <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                <msh:textField property="dateBegin" label="Период с" />
+                <msh:textField property="dateEnd" label="по" />
                 </msh:row>
                 <msh:row>
                     <td colspan="2">
@@ -1045,7 +1045,7 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
             <msh:sectionContent>
                 <msh:table name="observdep"
                            action="report203.do" idField="1" cellFunction="true" >
-                    <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+                    <msh:tableNotEmpty>
                         <tr>
                             <th colspan=1></th>
                             <th colspan=7>АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ</th>

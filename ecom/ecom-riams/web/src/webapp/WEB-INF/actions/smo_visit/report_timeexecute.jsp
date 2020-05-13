@@ -8,9 +8,9 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
 		<% String typeDate=ActionUtil.updateParameter("BloodReport","typeDate","1", request); %>
-		<msh:form guid="formHello" action="/report_timeexecute.do"
+		<msh:form action="/report_timeexecute.do"
 				  defaultField="hello">
-			<msh:panel guid="panel">
+			<msh:panel>
 				<msh:row>
 					<msh:row>
 						<msh:autoComplete vocName="vocWorkFunctionShort"
