@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал операций" />
+    <msh:title mainMenu="Journals" title="Журнал операций" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="stac_surOperation" />
@@ -87,8 +87,8 @@
 	ActionUtil.setParameterFilterSql("additionStatus", "sls.result_id", request) ;
 
   %>
-    <msh:section guid="863b6d75-fded-49ba-8eab-108bec8e092a">
-      <msh:sectionTitle guid="1dcd4d93-235d-4141-a7ee-eca528858925">
+    <msh:section>
+      <msh:sectionTitle>
 		<ecom:webQuery name="journal_surOperation1" nameFldSql="journal_surOperation1_sql" nativeSql="select so.id as id
 	    ,coalesce(to_char(so.operationDate,'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')||' - '||to_char(so.operationDateTo,'DD.MM.YYYY')||' '||to_char(so.operationTimeTo,'HH24:MI'),to_char(so.operationDate,'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')) as operDate
 	    , vo.code||' '||vo.name as voname
@@ -135,7 +135,7 @@
 	          ${department} ${spec} ${medService}
 	           ${addParamSql} ${serviceStreamSql} ${typeEmergencySql} ${typeEndoscopyUseSql} ${typeAnaesthesUseSql} ${additionStatusSql}
 	          order by p.lastname,p.firstname,p.middlename
-	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	        " />
 	        
 	            	    <form action="print-journal_surOperationByDate_r.do" method="post" target="_blank">
         Результаты поиска за дату с ${beginDate} по ${endDate}.
@@ -154,10 +154,10 @@
 	    action="entityView-stac_surOperation.do" idField="1" 
 	    viewUrl="entityShortView-stac_surOperation.do"
 	    >
-	      <msh:tableColumn columnName="#" property="sn" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="Статус пациента" property="7"/>
 	      <msh:tableColumn columnName="Пациент" property="5"/>
-	      <msh:tableColumn columnName="Период операции" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+	      <msh:tableColumn columnName="Период операции" property="2" />
 	      <msh:tableColumn columnName="Хирург" property="8"/>
 	      <msh:tableColumn columnName="Ассистенты" property="4"/>
 	      <msh:tableColumn columnName="Операции" property="3"/>

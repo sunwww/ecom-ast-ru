@@ -12,7 +12,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Poly">Журнал по пациентам, у которых есть открытые СПО</msh:title>
+    <msh:title mainMenu="Poly">Журнал по пациентам, у которых есть открытые СПО</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:visit_finds currentAction="smo_journal_openSpo"/>
@@ -76,7 +76,7 @@
 	left join MisLpu ml on w.lpu_id=ml.id 
 	where spo.dtype='PolyclinicMedCase' and spo.dateFinish is null  
 	group by ml.id,ml.name order by ml.name
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" nameFldSql="dateListSQL"/>
+    " nameFldSql="dateListSQL"/>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <form action="print-openSPO1.do" method="post" target="_blank">
     <input type='hidden' name="sqlText" id="sqlText" value="${dateListSQL}"> 
@@ -118,7 +118,7 @@ and spo.dateFinish is null and ow.lpu_id='${department}'
 and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
 group by owf.id,owp.lastname,owp.middlename,owp.firstname,ovwf.name 
 order by owp.lastname,owp.middlename,owp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" nameFldSql="dateListSQL"/>
+    " nameFldSql="dateListSQL"/>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <form action="print-openSPO2.do" method="post" target="_blank">
     <input type='hidden' name="sqlText" id="sqlText" value="${dateListSQL}"> 
@@ -167,7 +167,7 @@ select spo.id,spo.dateStart
     group by  spo.id,spo.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday
     order by pat.lastname,pat.firstname,pat.middlename,spo.dateStart
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <form action="print-openSPO3.do" method="post" target="_blank">
     <input type='hidden' name="sqlText" id="sqlText" value="${dateListSQL}"> 
@@ -181,7 +181,7 @@ select spo.id,spo.dateStart
    
     <msh:table name="datelist" 
     viewUrl="entityParentView-smo_spo.do?short=Short"
-    action="entityParentView-smo_spo.do" idField="1" selection="multiply" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-smo_spo.do" idField="1" selection="multiply">
                     <msh:tableNotEmpty>
                         <tr>
                             <th colspan='14'>
@@ -194,9 +194,9 @@ select spo.id,spo.dateStart
                         </tr>
                     </msh:tableNotEmpty>    
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата начала СПО" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="Дата начала СПО" property="2" />
       <msh:tableColumn columnName="Кол-во дней" property="5"/>
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во визитов" property="11" />
       <msh:tableColumn columnName="Диагнозы" property="10"/>

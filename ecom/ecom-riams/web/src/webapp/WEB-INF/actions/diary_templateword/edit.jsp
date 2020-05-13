@@ -27,15 +27,15 @@
                 <msh:row>
                     <msh:textArea property="decryption" label="Расшифрока" horizontalFill="true"/>
                 </msh:row>
-                        <msh:row guid="b9051979-4115-40c0-8d63-4fce097d9a72">
+                        <msh:row>
           <ecom:oneToManyOneAutocomplete  viewAction="entityView-secgroup.do" label="Довер. группы" vocName="secGroup" property="secGroups" colSpan="4" />
         </msh:row>
-        <msh:row guid="fdcf0100-ab1c-4900-b7d6-cb08c77924b0">
-          <msh:textField property="createUsername" label="Пользователь" viewOnlyField="true" guid="b3fd6145-7072-4065-accc-73fc37fb20ac" />
-          <msh:textField property="createDate" label="Дата создания" viewOnlyField="true" guid="7162d626-b2a7-4928-ab70-adb244c07d5d" />
+        <msh:row>
+          <msh:textField property="createUsername" label="Пользователь" viewOnlyField="true" />
+          <msh:textField property="createDate" label="Дата создания" viewOnlyField="true" />
         </msh:row>
-        <msh:row guid="fdcf0100-ab1c-4900-b7d6-cb08c77924b0">
-          <msh:textField property="editDate" label="Дата редактирование" viewOnlyField="true" guid="7162d626-b2a7-4928-ab70-adb244c07d5d" />
+        <msh:row>
+          <msh:textField property="editDate" label="Дата редактирование" viewOnlyField="true" />
         </msh:row>
             <msh:submitCancelButtonsRow colSpan="6"/>
         </msh:panel>

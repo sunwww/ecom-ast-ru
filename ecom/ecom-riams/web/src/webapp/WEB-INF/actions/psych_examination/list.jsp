@@ -22,7 +22,7 @@
     <ecom:titleTrail mainMenu="Patient" beginForm="${form}" title="Список психиатрических экспертиз по пациенту"/>
   </tiles:put>
   <tiles:put name="side" type="string">
-      <msh:sideMenu title="Перейти" guid="46a542d6-da04-4268-bb9a-5ebddf3baea2">
+      <msh:sideMenu title="Перейти">
         <msh:sideLink action="/entityParentList${dopCareCard}-psych_careCard${addParam}" name="Карты, обратившегося за психиатрической помощью" params="id" roles="/Policy/Mis/Psychiatry/CareCard/View"/>
         <msh:sideLink action="/entityParentList-psych_compulsoryTreatment${addParam}" name="Список принудительных лечений по пациенту" params="id" roles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/View"/>
         <msh:sideLink styleId="selected_menu" action="/entityParentList-psych_examination${addParam}" name="Список судебно-психиатрических экспертиз по пациенту" params="id" roles="/Policy/Mis/Psychiatry/CareCard/PsychiatricExamination/View"/>
@@ -45,7 +45,7 @@
   		left join PsychiatricCareCard pcc on pcc.id=pe.careCard_id   	where ${queryDop}	"/>
         <msh:sideMenu>
     </msh:sideMenu>
-    <msh:table name="listd" action="entityParentView-psych_examination.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="listd" action="entityParentView-psych_examination.do" idField="1">
               <msh:tableColumn property="sn" columnName="#"/>
               <msh:tableColumn property="1" columnName="ИД"/>
               <msh:tableColumn property="2" columnName="№карты"/>

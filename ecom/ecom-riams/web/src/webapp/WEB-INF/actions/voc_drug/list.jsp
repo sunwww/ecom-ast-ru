@@ -11,7 +11,7 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-    <msh:sideMenu title="Добавить" guid="dcf2e072-d44e-47ca-ad16-db0ec61e35c8" >
+    <msh:sideMenu title="Добавить" >
       <msh:sideLink  params="name" key="ALT+N" action="/entityPrepareCreate-voc_drug" name="Лек.Ср" />
     </msh:sideMenu>
     <tags:voc_menu currentAction="drugTrade"/>

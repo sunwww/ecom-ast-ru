@@ -7,12 +7,12 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Poly" title="Рабочий календарь" property="worker" />
+    <msh:title mainMenu="Poly" title="Рабочий календарь" property="worker" />
     
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="helloSideMenu-123">
-      <!--<msh:sideLink action="/js-smo_visit-findByAllPlanDates" name="Выбрать дату" title="Выбор даты" guid="4c13d371-c72a-4bc0-b2cd-c0bcfce1be6f" />-->
+    <msh:sideMenu>
+      <!--<msh:sideLink action="/js-smo_visit-findByAllPlanDates" name="Выбрать дату" title="Выбор даты" />-->
       <tags:smo_workDay name="calendarWork" action="js-smo_visit-findPolyAdmissions.do" title="Выбрать дату"/>
     </msh:sideMenu>
     <tags:visit_finds currentAction="workCalendar"/>
@@ -67,14 +67,14 @@ group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,vvr.name,v.visitResult_id,mlo.name
 having (v.dateStart is null or (count(d.id)=0 and (vwfe.isNoDiagnosis is null or vwfe.isNoDiagnosis='0')))
 order by ${orderBy1}"/>
-	    <msh:table name="list_no" action="entitySubclassEdit-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-	      <msh:tableColumn columnName="Доп. инф." property="6" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-	      <msh:tableColumn columnName="Направлен" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-	      <msh:tableColumn columnName="Пациент" property="5" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Услуги" property="7" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-	      <msh:tableColumn columnName="Кто направил" property="3" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-	      <msh:tableColumn columnName="Кем направлен" property="4" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+	    <msh:table name="list_no" action="entitySubclassEdit-mis_medCase.do" idField="1">
+	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+	      <msh:tableColumn columnName="Доп. инф." property="6" />
+	      <msh:tableColumn columnName="Направлен" property="2" />
+	      <msh:tableColumn columnName="Пациент" property="5" />
+	      <msh:tableColumn columnName="Услуги" property="7" />
+	      <msh:tableColumn columnName="Кто направил" property="3" />
+	      <msh:tableColumn columnName="Кем направлен" property="4" />
 	    </msh:table>
   	</msh:section>
     <msh:section title="Кол-во пациентов по предварительной записи">
@@ -132,16 +132,16 @@ group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,vvr.name,v.visitResult_id,mlo.name
 having (count(d.id)>0 or vwfe.isNoDiagnosis='1')
 order by ${orderBy2}"/>
-<msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-	      <msh:tableColumn columnName="Пациент" property="6" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Услуги" property="9" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-	      <msh:tableColumn columnName="Направлен" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-	      <msh:tableColumn columnName="Исполнен" identificator="false" property="3" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-	      <msh:tableColumn columnName="Кто направил" property="4" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-	      <msh:tableColumn columnName="Кем направлен" property="5" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+<msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1">
+	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+	      <msh:tableColumn columnName="Пациент" property="6" />
+	      <msh:tableColumn columnName="Услуги" property="9" />
+	      <msh:tableColumn columnName="Направлен" property="2" />
+	      <msh:tableColumn columnName="Исполнен" identificator="false" property="3" />
+	      <msh:tableColumn columnName="Кто направил" property="4" />
+	      <msh:tableColumn columnName="Кем направлен" property="5" />
 	      <msh:tableColumn columnName="Результат" identificator="false" property="8"/>
-	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="7" />
 	    </msh:table>
   	</msh:section>
   	<msh:section title="Не явились на прием">
@@ -171,15 +171,15 @@ left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
 where  v.datePlan_id='${calenDayId}' and v.DTYPE='Visit' and v.noActuality='1'
 order by ${orderBy2}"/>
-<msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_no_other" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-	      <msh:tableColumn columnName="Пациент" property="6" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Направлен" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-	      <msh:tableColumn columnName="Исполнен" identificator="false" property="3" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-	      <msh:tableColumn columnName="Кто направил" property="4" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-	      <msh:tableColumn columnName="Кем направлен" property="5" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+<msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_no_other" action="entityView-smo_visit.do" idField="1">
+	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+	      <msh:tableColumn columnName="Пациент" property="6" />
+	      <msh:tableColumn columnName="Направлен" property="2" />
+	      <msh:tableColumn columnName="Исполнен" identificator="false" property="3" />
+	      <msh:tableColumn columnName="Кто направил" property="4" />
+	      <msh:tableColumn columnName="Кем направлен" property="5" />
 	      <msh:tableColumn columnName="Результат" identificator="false" property="8"/>
-	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="7" />
 	    </msh:table>
   	</msh:section>
     

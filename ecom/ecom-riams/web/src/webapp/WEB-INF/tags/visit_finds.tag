@@ -33,7 +33,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	action="/js-smo_visit-findOtherDaysPolyAdmissions.do" />    
 </msh:sideMenu>
 
-<msh:sideMenu title="Прием" guid="fsdfsdf-dfsf">
+<msh:sideMenu title="Прием">
     <msh:sideLink action="/smo_goingToSmo.do" name="Переход к визиту"
     	 styleId="smo_goingToSmo" roles="/Policy/Mis/MedCase/Visit/View"/>
     	 

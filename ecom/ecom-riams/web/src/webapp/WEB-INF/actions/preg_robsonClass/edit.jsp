@@ -7,21 +7,21 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="preg_robsonClassForm" guid="0908a638-fd02-4b94-978b-18ab86829e08">
-            <msh:sideMenu title="Классификация Робсона" guid="bc6ceef3-4709-47d9-ba37-d68540cffc61">
-                <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_robsonClass" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" guid="a8d1a1fa-aa31-408a-b1f6-6b9ba1ff18e8" />
-                <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-preg_robsonClass" name="Удалить" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" guid="91460b8b-80a7-46b3-bc95-a53cd320f687" />
+        <msh:ifFormTypeIsView formName="preg_robsonClassForm">
+            <msh:sideMenu title="Классификация Робсона">
+                <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_robsonClass" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" />
+                <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-preg_robsonClass" name="Удалить" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
     <tiles:put name="body" type="string">
-        <msh:form action="/entityParentSaveGoView-preg_robsonClass.do" defaultField="durationPregnancy" guid="93666922-7bed-42a7-be5e-b2d52e41d39b">
-            <msh:hidden property="id" guid="2821496c-bc8e-4cbe-ba14-ac9a7f019ead" />
-            <msh:hidden property="medCase" guid="2104232f-62fa-4f0b-84de-7ec4b5f306b3" />
-            <msh:hidden property="saveType" guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
+        <msh:form action="/entityParentSaveGoView-preg_robsonClass.do" defaultField="durationPregnancy">
+            <msh:hidden property="id" />
+            <msh:hidden property="medCase" />
+            <msh:hidden property="saveType" />
             <msh:hidden property="robsonType" />
             <msh:hidden property="robsonSub" />
-            <msh:panel guid="0a4989f1-a793-45e4-905f-4ac4f46d7815">
+            <msh:panel>
                 <div id="classRobsonsDiv"></div>
                 <div id="subRobsonsDiv"></div>
                 <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm">
@@ -43,12 +43,12 @@
                         <msh:label property="editUsername" label="пользователь"/>
                     </msh:row>
                 </msh:ifFormTypeAreViewOrEdit>
-                <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="save();"/>
+                <msh:submitCancelButtonsRow colSpan="3"  functionSubmit="save();"/>
             </msh:panel>
         </msh:form>
     </tiles:put>
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Patient" beginForm="preg_robsonClassForm" guid="d16befe8-59da-47d9-9c54-ee0d13e97be2" />
+        <ecom:titleTrail mainMenu="Patient" beginForm="preg_robsonClassForm" />
     </tiles:put>
     <script type="text/javascript" src="./dwr/interface/PregnancyService.js" >/**/</script>
     <tiles:put name="javascript" type="string">
@@ -76,7 +76,7 @@
                             var vocVal = vocRes.values[ind1];
                             txt+="<tr><td><label  id='" + voc + vocVal.id + "'>"+vocVal.name+"</label></td>";
                             txt+="<td><select id='yesNo" + vocVal.id + "'";
-                            <msh:ifFormTypeIsView formName="preg_robsonClassForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                            <msh:ifFormTypeIsView formName="preg_robsonClassForm">
                             txt+=" disabled='true' ";
                             </msh:ifFormTypeIsView>
                             txt+=" onchange='loadSubs();' ";
@@ -86,7 +86,7 @@
                         }
                         txt+="</tbody></table>";
                         document.getElementById('classRobsonsDiv').innerHTML+=txt;
-                        <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                        <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm">
                         document.getElementById('yesNo'+$('robsonType').value).selectedIndex=1;
                         </msh:ifFormTypeAreViewOrEdit>
                         loadSubs();
@@ -129,7 +129,7 @@
                             var res=JSON.parse(aResult);
                             txt+="<table><tbody>";
                             txt+="<tr><td><label><b>Выберите:</b></label><td><td><select id='sub'";
-                            <msh:ifFormTypeIsView formName="preg_robsonClassForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                            <msh:ifFormTypeIsView formName="preg_robsonClassForm">
                             txt+=" disabled='true' ";
                             </msh:ifFormTypeIsView>
                             txt+=" onchange='changeSub();' style=\"background-color:#fcffa7\">";
@@ -140,7 +140,7 @@
                             txt+="</select><td></tr></tbody></table>";
                         }
                         document.getElementById('subRobsonsDiv').innerHTML=txt;
-                        <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                        <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm">
                         if ($('robsonSub').value) selectItemById(document.getElementById('sub'),$('robsonSub').value);
                         </msh:ifFormTypeAreViewOrEdit>
                         changeSub();

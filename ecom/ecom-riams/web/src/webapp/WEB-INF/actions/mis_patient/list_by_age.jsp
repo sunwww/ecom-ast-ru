@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Разбивка пациентов по возрастам</msh:title>
+    <msh:title mainMenu="StacJournal">Разбивка пациентов по возрастам</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_everyday"/>
@@ -31,13 +31,13 @@
 		String typeView =ActionUtil.updateParameter("mis_patient_by_age","typeView","2", request) ;
     
   	%>
-    <msh:form action="/mis_patient_by_age.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-      <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/mis_patient_by_age.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+      <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
-        <msh:textField fieldColSpan="2" property="dateBeginYear" label="Год" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+        <msh:textField fieldColSpan="2" property="dateBeginYear" label="Год" />
       </msh:row>
 
       <msh:row><td><br></td></msh:row>

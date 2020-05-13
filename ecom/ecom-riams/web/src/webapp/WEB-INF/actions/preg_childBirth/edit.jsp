@@ -26,13 +26,13 @@
 	<msh:ifFormTypeIsNotView formName="preg_childBirthForm">
     	<tags:templateProtocol idSmo="preg_childBirthForm.medCase" version="Visit" name="tmp" property="histology" voc="protocolVisitByPatient"/>
     </msh:ifFormTypeIsNotView>  
-    <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="0908a638-fd02-4b94-978b-18ab86829e08">
-      <msh:sideMenu title="Роды" guid="bc6ceef3-4709-47d9-ba37-d68540cffc61">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_childBirth" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" guid="a8d1a1fa-aa31-408a-b1f6-6b9ba1ff18e8" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-preg_childBirth" name="Удалить" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" guid="91460b8b-80a7-46b3-bc95-a53cd320f687" />
+    <msh:ifFormTypeIsView formName="preg_childBirthForm">
+      <msh:sideMenu title="Роды">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_childBirth" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-preg_childBirth" name="Удалить" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" />
           <msh:sideLink key="ALT+3" params="id" action="/javascript:addEmptyChild()" name="Добавить пустого ребёнка" roles="/Policy/Mis/MedCase/Stac/Ssl/Delete" />
       </msh:sideMenu>
-      <msh:sideMenu title="Печать" guid="3f5cf55a-2ae6-4367-b9b9-1ce75e0938c4">
+      <msh:sideMenu title="Печать">
          <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.medcase}"
      	action="/javascript:printPregHistory()" name="Истории родов" title="Печать истории родов"/>
       </msh:sideMenu>
@@ -48,18 +48,18 @@
  	String dead_born = (String)request.getAttribute("dead_born") ;
  	request.setAttribute("dead_born", dead_born);
    %>
-    <msh:form action="/entityParentSaveGoView-preg_childBirth.do" defaultField="durationPregnancy" guid="93666922-7bed-42a7-be5e-b2d52e41d39b">
-      <msh:hidden property="id" guid="2821496c-bc8e-4cbe-ba14-ac9a7f019ead" />
-      <msh:hidden property="medCase" guid="2104232f-62fa-4f0b-84de-7ec4b5f306b3" />
-      <msh:hidden property="saveType" guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
-      <msh:hidden property="newBornsInfo"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
-      <msh:hidden property="isECO"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
-      <msh:hidden property="isRegisteredWithWomenConsultation"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
-      <msh:hidden property="robsonClass"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
-      <msh:hidden property="robsonSub"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
-      <input type='hidden' name='deadBorn' id="deadBorn" value='${dead_born}' guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
-      <msh:panel guid="0a4989f1-a793-45e4-905f-4ac4f46d7815">
-        <msh:row guid="4bbea36b-255f-441f-8617-35cb54eaf9d0">
+    <msh:form action="/entityParentSaveGoView-preg_childBirth.do" defaultField="durationPregnancy">
+      <msh:hidden property="id" />
+      <msh:hidden property="medCase" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="newBornsInfo"  />
+      <msh:hidden property="isECO"  />
+      <msh:hidden property="isRegisteredWithWomenConsultation"  />
+      <msh:hidden property="robsonClass"  />
+      <msh:hidden property="robsonSub"  />
+      <input type='hidden' name='deadBorn' id="deadBorn" value='${dead_born}' />
+      <msh:panel>
+        <msh:row>
           <td width="1px" />
           <td width="1px" />
         </msh:row>
@@ -78,15 +78,15 @@
         	<msh:autoComplete property="emergency" parentAutocomplete="childBirthType" label="Показания" vocName="vocChildEmergency" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-          <msh:textField property="pangsStartDate" label="Дата начала родов" guid="eec0820e-6990-40f8-aa50-f48b8034d7f3" />
-          <msh:textField property="pangsStartTime" label="Время" guid="360cc928-1178-46ee-b5c0-5710ff873e3c" />
+          <msh:textField property="pangsStartDate" label="Дата начала родов" />
+          <msh:textField property="pangsStartTime" label="Время" />
         </msh:row>
-        <msh:row guid="84d7a910-53ad-48b2-8582-294aef3497e6">
+        <msh:row>
           <msh:autoComplete property="watersPrematurity" vocName="vocBirthWatesPrematurity" label="Преждевременность отхождения вод" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="1e548b4d-8b56-42e2-9b51-c116784c92a3">
-          <msh:textField property="watersDate" label="Дата отхождения вод" guid="34fc13d6-0618-42ac-96e8-d8717302f0bd" />
-          <msh:textField property="watersTime" label="Время" guid="ffcc4f9d-05fc-4b65-8def-78adc1c0b908" />
+        <msh:row>
+          <msh:textField property="watersDate" label="Дата отхождения вод" />
+          <msh:textField property="watersTime" label="Время" />
         </msh:row>
         <msh:row>
           <msh:textField property="upperWatersAmount" label="Кол-во передних вод (мл)"  />
@@ -103,7 +103,7 @@
               <msh:autoComplete property="paritet" label="Паритет родов" horizontalFill="true" vocName="vocParitet" fieldColSpan="1"/>
           </msh:row>
           <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
-              <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+              <msh:row>
                   <td class="label" title="Поиск по промежутку  (ecoGroup)" colspan="1"><label for="ecoGroupName" id="tecoGroupLabel">Выберите:</label></td>
                   <td onclick="this.childNodes[1].checked='checked';" colspan="1">
                       <input type="radio" name="ecoGroup" value="1"> ЭКО
@@ -112,7 +112,7 @@
                       <input type="radio" name="ecoGroup" value="2"> Без ЭКО
                   </td>
               </msh:row>
-              <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+              <msh:row>
                   <td class="label" title="Поиск по промежутку  (gkGroup)" colspan="1"><label for="gkGroupName" id="tgkGroupLabel">Выберите:</label></td>
                   <td onclick="this.childNodes[1].checked='checked'; checkWomenConsult();" colspan="1">
                       <input type="radio" name="gkGroup" value="1"> Состояла на учёте в ЖК
@@ -122,7 +122,7 @@
                   </td>
                   <msh:autoComplete property="womenConsult" fieldColSpan="3" horizontalFill="true" label="" vocName="vocWomenConsult"/>
               </msh:row>
-              <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+              <msh:row>
                   <td class="label" title="Поиск по промежутку  (water)" colspan="1"><label for="waterName" id="twaterLabel">Длительный безводный период:</label></td>
                   <td onclick="this.childNodes[1].checked='checked'; checkWater();" colspan="1">
                       <input type="radio" name="water" value="1"> Нет
@@ -133,7 +133,7 @@
                   <msh:textField property="waterlessDurationHour" label="Длительность безводного периода (часы)" />
                   <msh:textField property="waterlessDurationMin" label="Длительность безводного периода (минуты)" />
               </msh:row>
-              <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+              <msh:row>
                   <td class="label" title="Поиск по промежутку  (diabetIdentity)" colspan="1"><label for="diabetIdentityName" id="tdiabetIdentityLabel">Диабет у матери:</label></td>
                   <td onclick="this.childNodes[1].checked='checked'; checkdiabetIdentity();" colspan="1">
                       <input type="radio" name="diabetIdentityRad" value="1"> Нет
@@ -146,10 +146,10 @@
           </msh:ifFormTypeIsNotView>
           <msh:ifFormTypeIsView formName="preg_childBirthForm">
               <msh:row>
-                  <msh:checkBox property="isECO" label="ЭКО?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="1"/>
+                  <msh:checkBox property="isECO" label="ЭКО?" fieldColSpan="1"/>
               </msh:row>
               <msh:row>
-                  <msh:checkBox property="isRegisteredWithWomenConsultation" label="Учёт в ЖК?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="1"/>
+                  <msh:checkBox property="isRegisteredWithWomenConsultation" label="Учёт в ЖК?" fieldColSpan="1"/>
                   <msh:autoComplete property="womenConsult" fieldColSpan="1" horizontalFill="true" label="Консультация" vocName="vocWomenConsult"  viewOnlyField="true"/>
               </msh:row>
               <msh:row>
@@ -163,12 +163,12 @@
         <msh:row styleId="rwSam1"><msh:separator label="Второй период родовой деятельности" colSpan="4"/>
         </msh:row>
         <msh:row styleId="rwSam6">
-          <msh:textField property="fullOpenDate" label="Дата полного открытия" guid="10d048cc-6dd3-4e6c-8ef2-3b580a02ec7e" />
-          <msh:textField property="fullOpenTime" label="Время" guid="683fa920-9a2c-4f8a-a223-4e59c6f55f85" />
+          <msh:textField property="fullOpenDate" label="Дата полного открытия" />
+          <msh:textField property="fullOpenTime" label="Время" />
         </msh:row>
         <msh:row styleId="rwSam2">
-          <msh:textField property="travailStartDate" label="Дата начала потуг" guid="10d048cc-6dd3-4e6c-8ef2-3b580a02ec7e" />
-          <msh:textField property="travailStartTime" label="Время" guid="683fa920-9a2c-4f8a-a223-4e59c6f55f85" />
+          <msh:textField property="travailStartDate" label="Дата начала потуг" />
+          <msh:textField property="travailStartTime" label="Время" />
         </msh:row>
 
        <msh:row>
@@ -186,37 +186,37 @@
         
 
         <msh:row styleId="rwSam7">
-        	<msh:separator label="Третий период родовой деятельности" colSpan="9" guid="32379f0e-c12d-43ea-b5b7-8e29e524c0ff" />
+        	<msh:separator label="Третий период родовой деятельности" colSpan="9" />
         </msh:row>
         <msh:row styleId="rwKes1">
-        	<msh:separator label="Окончание родовой деятельности" colSpan="9" guid="32379f0e-c12d-43ea-b5b7-8e29e524c0ff" />
+        	<msh:separator label="Окончание родовой деятельности" colSpan="9" />
         </msh:row>
          <msh:row>
-          <msh:textField property="birthFinishDate" label="Дата окончания родов" guid="4ca102af-a7eb-4b61-95f3-8eba8ae25ac6" />
-          <msh:textField property="birthFinishTime" label="Время" guid="bd37fba9-cb02-4966-9301-1a03d62e551e" />
+          <msh:textField property="birthFinishDate" label="Дата окончания родов" />
+          <msh:textField property="birthFinishTime" label="Время" />
         </msh:row>
         <msh:row  styleId="rwSam8">
           <msh:autoComplete label="Послед выделился" property="placentaSeparation" vocName="vocPlacentaSeparation" />
           <msh:textField property="placentaMinute" label="Через (мин)"/>
         </msh:row>
         <msh:row  styleId="rwSam9">
-          <msh:textField property="placentaWeight" label="Вес плаценты (гр.)" guid="0b31bed6-d06e-48c0-aaac-b16e54959b53" />
-          <msh:textField property="placentaSize" label="Размеры плаценты" guid="d245643c-f2ba-4e98-a764-0a3c51792866" />
+          <msh:textField property="placentaWeight" label="Вес плаценты (гр.)" />
+          <msh:textField property="placentaSize" label="Размеры плаценты" />
         </msh:row>
         <msh:row styleId="rwSam10">
-          <msh:autoComplete fieldColSpan="3" vocName="vocPlacentaIntegrity" property="placentaIntegrity" label="Детское место" guid="bcac0c74-7fb5-49f8-beaa-917a584a812e" horizontalFill="true" />
+          <msh:autoComplete fieldColSpan="3" vocName="vocPlacentaIntegrity" property="placentaIntegrity" label="Детское место" horizontalFill="true" />
         </msh:row>
         <msh:row  styleId="rwSam11">
-          <msh:autoComplete property="membranesIntegrity" label="Целостность оболочек" vocName="vocFetalMembranesIntegrity" fieldColSpan="3" horizontalFill="true" guid="308af9c9-080f-486f-af92-d2be2d0b6e0d" />
+          <msh:autoComplete property="membranesIntegrity" label="Целостность оболочек" vocName="vocFetalMembranesIntegrity" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row>
         	<msh:textField property="cordLength" label="Длина пуповины"/>
         </msh:row>
         <msh:row  styleId="rwSam13">
-          <msh:textArea rows="3" property="placentaFeatures" label="Особенности плаценты" guid="f817f39f-82a1-4dca-b2e8-136f15069658" horizontalFill="true" fieldColSpan="3"/>
+          <msh:textArea rows="3" property="placentaFeatures" label="Особенности плаценты" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
          <msh:row  styleId="rwSam14">
-          <msh:textField property="hemorrhageVolume" label="Объем кровопотери (мл)" guid="e613e17e-0fad-4dcb-bca5-0261d03cd28c" />
+          <msh:textField property="hemorrhageVolume" label="Объем кровопотери (мл)" />
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="anesthesiaMedication" label="Медикаментозное обезболивание" vocName="vocChildAnesthesiaMedication" fieldColSpan="3" horizontalFill="true"/>
@@ -225,7 +225,7 @@
         	<msh:autoComplete property="anesthesiaMedicationEffect" label="Эффект" vocName="vocChildAnesthesiaMedicationEffect" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-          <msh:checkBox property="placentaHistologyOrder" label="Направление плаценты на гистологию" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="3"/>
+          <msh:checkBox property="placentaHistologyOrder" label="Направление плаценты на гистологию" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="histology" fieldColSpan="3" horizontalFill="true" label="Гистология плацента" vocName="vocHistologyResult"/>
@@ -234,18 +234,18 @@
         <msh:separator label="Общая продолжительность родов" colSpan="9"/>
         </msh:row>
         <msh:row  styleId="rwSam4">
-          <msh:textField property="period1Duration" label="1 периода (час)" guid="1fc59e7b-1423-4249-9bec-e7131f2221e0" />
-          <msh:textField property="period2Duration" label="2 периода (час)" guid="b8f27f6b-bed2-43a0-b0a3-e3eed5f58544" />
+          <msh:textField property="period1Duration" label="1 периода (час)" />
+          <msh:textField property="period2Duration" label="2 периода (час)" />
         </msh:row>
         <msh:row  styleId="rwSam5">
-          <msh:textField property="period3Duration" label="3 периода (мин)" guid="79931dee-fefe-480e-b976-f39afd0d003c" />
+          <msh:textField property="period3Duration" label="3 периода (мин)" />
         </msh:row>
        
-        <msh:row guid="21aa5b55-367d-404d-b8c5-03ce63e32329">
-          <msh:autoComplete property="childTook" label="Ребенка принял" vocName="workFunction" fieldColSpan="3" horizontalFill="true" guid="9429d5cb-cf05-42e1-8df8-ec5545f3a198" />
+        <msh:row>
+          <msh:autoComplete property="childTook" label="Ребенка принял" vocName="workFunction" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="21aa5b55-367d-404d-b8c5-03ce63e32329">
-          <msh:autoComplete property="placentaInspector" label="Послед осматривал" vocName="workFunction" fieldColSpan="3" horizontalFill="true" guid="9429d5cb-cf05-42e1-8df8-ec5545f3a198" />
+        <msh:row>
+          <msh:autoComplete property="placentaInspector" label="Послед осматривал" vocName="workFunction" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:ifFormTypeIsView formName="preg_childBirthForm">
         <msh:row>
@@ -269,24 +269,24 @@
           <h3><b>Классификация Робсона</b></h3>
           <div id="classRobsonsDiv"></div>
           <div id="subRobsonsDiv"></div>
-        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK() && checkRobson() && checkWaterBeforeSafe() && checkSaveIdentity() && checkSaveWomenConsult()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
+        <msh:submitCancelButtonsRow colSpan="3"  functionSubmit="if (chekECOAndGK() && checkRobson() && checkWaterBeforeSafe() && checkSaveIdentity() && checkSaveWomenConsult()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
       </msh:panel>
     </msh:form>
      <tags:preg_childBirthYesNo name="DeadBorn" field="DeadBeforeLabors"/>
-    <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
-      <msh:ifInRole roles="/Policy/Mis/NewBorn/View" guid="187f5083-94a7-42fd-a428-7f9d4720bfd1">
-        <%-- <ecom:parentEntityListAll attribute="newBorns" formName="preg_newBornForm" guid="35b71f42-e1fc-40f2-93e5-0908ea385878" /> --%>
+    <msh:ifFormTypeIsView formName="preg_childBirthForm">
+      <msh:ifInRole roles="/Policy/Mis/NewBorn/View">
+        <%-- <ecom:parentEntityListAll attribute="newBorns" formName="preg_newBornForm" /> --%>
         <ecom:webQuery name = "newBorns" nameFldSql="newBorns_sql" nativeSql="select nb.id as id, nb.birthDate as bDate, nb.birthTime as bTime, vs.name as sexName, pat.firstname as patName
          from newBorn nb left join patient pat on pat.id=nb.patient_id
          left join vocSex vs on vs.id=nb.sex_id
          where nb.childBirth_id='${param.id}'" />
-        <msh:tableNotEmpty name="newBorns" guid="bd28e321-5e07-4e52-95dc-9851c96a0007">
-          <msh:section title="Данные о новорожденных" guid="7aee16b5-d063-4868-8891-313de24ca013">
-            <msh:table name="newBorns" action="entityParentView-preg_newBorn.do" idField="1" guid="e5ff27a4-e8ae-44ef-a20f-7a6f71f42f3a">
-              <msh:tableColumn columnName="Дата рождения" property="2" guid="724d2c83-221e-4a44-9144-5346fa8fefd2" />
-              <msh:tableColumn columnName="Время рождения" property="3" guid="17991748-77de-4b16-8c94-740bbfa10e7a" />
-              <msh:tableColumn columnName="Пол" property="4" guid="17991748-77de-4b16-8c94-740bbfa10e7a" />
-              <msh:tableColumn columnName="Имя" property="5" guid="17991748-77de-4b16-8c94-740bbfa10e7a" />
+        <msh:tableNotEmpty name="newBorns">
+          <msh:section title="Данные о новорожденных">
+            <msh:table name="newBorns" action="entityParentView-preg_newBorn.do" idField="1">
+              <msh:tableColumn columnName="Дата рождения" property="2" />
+              <msh:tableColumn columnName="Время рождения" property="3" />
+              <msh:tableColumn columnName="Пол" property="4" />
+              <msh:tableColumn columnName="Имя" property="5" />
             </msh:table>
           </msh:section>
         </msh:tableNotEmpty>
@@ -294,7 +294,7 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="preg_childBirthForm" guid="d16befe8-59da-47d9-9c54-ee0d13e97be2" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="preg_childBirthForm" />
   </tiles:put>
     <script type="text/javascript" src="./dwr/interface/PregnancyService.js" >/**/</script>
   <tiles:put name="javascript" type="string">
@@ -417,7 +417,7 @@
       }
       else return true;
   }
-  <msh:ifFormTypeIsNotView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+  <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
   checkdiabetIdentity();
   $('womenConsultName').className = "autocomplete horizontalFill required";
   </msh:ifFormTypeIsNotView>
@@ -442,7 +442,7 @@
                   var vocVal = vocRes.values[ind1];
                   txt+="<tr><td><label  id='" + voc + vocVal.id + "'>"+vocVal.name+"</label></td>";
                   txt+="<td><select id='yesNo" + vocVal.id + "'";
-                  <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                  <msh:ifFormTypeIsView formName="preg_childBirthForm">
                   txt+=" disabled='true' ";
                   </msh:ifFormTypeIsView>
                   txt+=" onchange='loadSubs();' ";
@@ -452,7 +452,7 @@
               }
               txt+="</tbody></table>";
               document.getElementById('classRobsonsDiv').innerHTML+=txt;
-              <msh:ifFormTypeAreViewOrEdit formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+              <msh:ifFormTypeAreViewOrEdit formName="preg_childBirthForm">
               if (document.getElementById('yesNo'+$('robsonClass').value)) document.getElementById('yesNo'+$('robsonClass').value).selectedIndex=1;
               </msh:ifFormTypeAreViewOrEdit>
               loadSubs();
@@ -472,11 +472,11 @@
                       var res = JSON.parse(aResult);
                       txt += "<table><tbody>";
                       txt += "<tr><td><label><b>Подгруппа:</b></label><td><td><select id='sub'";
-                      <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                      <msh:ifFormTypeIsView formName="preg_childBirthForm">
                       txt += " disabled='true' ";
                       </msh:ifFormTypeIsView>
                       txt += "";
-                      <msh:ifFormTypeIsNotView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                      <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
                       txt += "  style=\"background-color:#fcffa7\"' ";
                       </msh:ifFormTypeIsNotView>
                       txt+=">";
@@ -498,7 +498,7 @@
                           changeSub();
                       };
                       document.getElementById('sub').selectedIndex = -1;
-                      <msh:ifFormTypeIsNotView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+                      <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
                       $('robsonSub').value='';
                       </msh:ifFormTypeIsNotView>
                   }

@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Список случаев медицинского обслуживания </msh:title>
+    <msh:title mainMenu="StacJournal">Список случаев медицинского обслуживания </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
     	<tags:stac_journal currentAction="stac_journalRepeatCaseByHospital"/>
@@ -50,16 +50,16 @@
     ${addSql} ${departmentSql}
     and  (m.noActuality='0' or m.noActuality is null)
     order by m.dateStart" />
-    <msh:table name="journal_repeatCase" action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Стат.карта" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+    <msh:table name="journal_repeatCase" action="entitySubclassView-mis_medCase.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Стат.карта" property="4" />
       
-      <msh:tableColumn columnName="Отделение" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Амб.случаи" property="9" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Отказ от госпитализации" property="8" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Дата пост. " property="6" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Дата выписки" property="7" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Отделение" property="3" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" />
+      <msh:tableColumn columnName="Амб.случаи" property="9" />
+      <msh:tableColumn columnName="Отказ от госпитализации" property="8" />
+      <msh:tableColumn columnName="Дата пост. " property="6" />
+      <msh:tableColumn columnName="Дата выписки" property="7" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -88,11 +88,11 @@ left join patient wp on wp.id=w.person_id
     and m.dateStart between to_date('${startDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
     ${addSql}  ${departmentSql}
     order by m.dateStart" />
-    <msh:table name="journal_repeatCase" action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Дата приема" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Рабочая функция" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Специалист" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+    <msh:table name="journal_repeatCase" action="entitySubclassView-mis_medCase.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Дата приема" property="2" />
+      <msh:tableColumn columnName="Рабочая функция" property="3" />
+      <msh:tableColumn columnName="Специалист" property="4" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>

@@ -94,7 +94,7 @@
   	left join PsychiatricCareCard pcc on pcc.id=s.careCard_id   
   	where s.suiMessage_id=${param.id}
   		"/>
-    <msh:table name="listd" action="entityParentView-psych_suicide.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="listd" action="entityParentView-psych_suicide.do" idField="1">
               <msh:tableColumn property="sn" columnName="#"/>
               <msh:tableColumn property="1" columnName="ИД"/>
               <msh:tableColumn property="2" columnName="№карты"/>
@@ -108,12 +108,12 @@
     
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="psych_suicideMessageForm" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="psych_suicideMessageForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Суицид">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-psych_suicideMessage" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/SuicideMessage/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" params="id" action="/entityParentDelete-psych_suicideMessage" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/SuicideMessage/Delete"  />
+      <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-psych_suicideMessage" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/SuicideMessage/Edit" />
+      <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-psych_suicideMessage" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/SuicideMessage/Delete"  />
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

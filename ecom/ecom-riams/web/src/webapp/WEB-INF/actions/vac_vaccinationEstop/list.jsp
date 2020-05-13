@@ -6,19 +6,19 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Patient" title="Список медотводов">Проба</msh:title>
+    <msh:title mainMenu="Patient" title="Список медотводов">Проба</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="helloSideMenu-123">
-      <msh:sideLink guid="helloSideLinkNew" roles="/Policy/Mis/Vaccination/VaccinationEstop/Create" key="ALT+N" action="/entityParentPrepareCreate-vac_vaccinationEstop" name="Создать новое" params="id"/>
+    <msh:sideMenu>
+      <msh:sideLink roles="/Policy/Mis/Vaccination/VaccinationEstop/Create" key="ALT+N" action="/entityParentPrepareCreate-vac_vaccinationEstop" name="Создать новое" params="id"/>
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="entityParentView-vac_vaccinationEstop.do" idField="id" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="ИД" property="id" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-      <msh:tableColumn columnName="Недействительность" property="noActuality" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn columnName="Дата начала" property="estopDate" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn columnName="Дата окончания" property="dateFinish" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+    <msh:table name="list" action="entityParentView-vac_vaccinationEstop.do" idField="id">
+      <msh:tableColumn columnName="ИД" property="id" />
+      <msh:tableColumn columnName="Недействительность" property="noActuality" />
+      <msh:tableColumn columnName="Дата начала" property="estopDate" />
+      <msh:tableColumn columnName="Дата окончания" property="dateFinish" />
     </msh:table>
   </tiles:put>
 </tiles:insert>

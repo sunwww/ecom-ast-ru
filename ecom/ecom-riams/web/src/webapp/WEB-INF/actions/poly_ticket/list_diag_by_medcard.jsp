@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainShortLayout.jsp" flush="true">
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Medcard" guid="4b11dc98-30fc-413e-8bc6-976f292e704f">Список талонов</msh:title>
+    <msh:title mainMenu="Medcard">Список талонов</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
 
@@ -68,15 +68,15 @@
 		    where  m.id=${param.id} 
 		    group by d.idc10_id,d.priority_id,vi.code,vi.name,vad.name,vk.code,vk.name
 			,visit.DTYPE,vpd.name 
-			order by max(d.establishDate)" guid="2d59a9bf-327f-4f4f-8336-531458b6caed" />
-		    <msh:table name="list" action="entityView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-		      <msh:tableColumn columnName="№" property="sn" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4-1" />
+			order by max(d.establishDate)" />
+		    <msh:table name="list" action="entityView-stac_diagnosis.do" idField="1">
+		      <msh:tableColumn columnName="№" property="sn" />
 		      <msh:tableColumn columnName="ПО" property="7" />
-		      <msh:tableColumn columnName="1 раз регистр." property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-		      <msh:tableColumn columnName="Послед. раз регистр." property="3" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-		      <msh:tableColumn columnName="Код МКБ" property="4" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-		      <msh:tableColumn columnName="Приоритет" property="8" guid="7f7d011d-624c-4003-9c7d-4db6e3dda647" />
-		      <msh:tableColumn columnName="Кол-во" property="9" guid="7f7d011d-624c-4003-9c7d-4db6e3dda647" />
+		      <msh:tableColumn columnName="1 раз регистр." property="2" />
+		      <msh:tableColumn columnName="Послед. раз регистр." property="3" />
+		      <msh:tableColumn columnName="Код МКБ" property="4" />
+		      <msh:tableColumn columnName="Приоритет" property="8" />
+		      <msh:tableColumn columnName="Кол-во" property="9" />
 		    </msh:table>
     	</msh:sectionContent>
 

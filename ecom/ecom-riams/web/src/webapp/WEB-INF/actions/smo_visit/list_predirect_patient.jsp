@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainShortLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Patient">Предварительно записанные пациенты на день</msh:title>
+    <msh:title mainMenu="Patient">Предварительно записанные пациенты на день</msh:title>
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/ViewSelfDirection">

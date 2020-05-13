@@ -28,8 +28,8 @@
     
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Добавить" guid="d05af144-f458-45dd-a3eb-94bb77eb2007">
-      <msh:sideLink params="id" action="/entityParentPrepareCreate-preg_childBirth" name="Создать" roles="/Policy/Mis/Pregnancy/ChildBirth/Create" guid="71d2536e-c475-4b91-975c-a3440b2a6afa" />
+    <msh:sideMenu title="Добавить">
+      <msh:sideLink params="id" action="/entityParentPrepareCreate-preg_childBirth" name="Создать" roles="/Policy/Mis/Pregnancy/ChildBirth/Create" />
       <msh:sideLink params="id" action="/entityParentPrepareCreate-preg_neonatalNewBorn" name="Добавить информацию о новорожденном" roles="/Policy/Mis/NewBorn/Create"/>
     </msh:sideMenu>    
   </tiles:put>

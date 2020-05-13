@@ -23,13 +23,13 @@
 	String typeView =ActionUtil.updateParameter("Report_nationality","typeView","3", request) ;
 
   %>
-    <msh:form action="/journal_nationality_smo.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/journal_nationality_smo.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="m" id="m" value="categoryForeignNationals"/>
     <input type="hidden" name="s" id="s" value="VisitPrintService"/>
     <input type="hidden" name="id" id="id"/>
     <msh:panel>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
         <msh:row styleId="noswod">
 	        <td class="label" title="Поиск по показаниям поступления (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
@@ -67,7 +67,7 @@
         	<input type="radio" name="typeView" value="3">  свод
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  иностранцы
@@ -79,7 +79,7 @@
         	<input type="radio" name="typePatient" value="3">  иногородние
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="4">  без адреса
@@ -101,8 +101,8 @@
         	label="Поток облуживания" horizontalFill="true" vocName="vocServiceStream"/>
         </msh:row>
       <msh:row>
-        	<msh:textField property="beginDate"  label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        	<msh:textField property="finishDate" fieldColSpan="7" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        	<msh:textField property="beginDate"  label="Период с" />
+        	<msh:textField property="finishDate" fieldColSpan="7" label="по" />
         </msh:row>
         <msh:row>
         <td colspan="3" class="buttons">
@@ -236,12 +236,12 @@ group by m.id,m.dateStart,m.timeExecute
 order by p.lastname,p.firstname,p.middlename"/>
 <msh:table printToExcelButton="Сохранить в excel" viewUrl="entityView-mis_medCase.do?short=Short" name="list_yes" action="entitySubclassView-mis_medCase.do"
 	idField="1">
-	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Дата рождения" property="4" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Дата обращения" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-	      <msh:tableColumn columnName="Диагноз" identificator="false" property="6" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+	      <msh:tableColumn columnName="Пациент" property="3" />
+	      <msh:tableColumn columnName="Дата рождения" property="4" />
+	      <msh:tableColumn columnName="Дата обращения" identificator="false" property="2" />
+	      <msh:tableColumn columnName="Диагноз" identificator="false" property="6" />
+	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" />
     	  <msh:tableColumn columnName="Поток обслуживания" property="7"/>
 	    </msh:table>
   	</msh:section>
@@ -367,14 +367,14 @@ ${groupSqlAdd}
     <msh:table printToExcelButton="Сохранить в excel" name="list_yes" action="entityView-mis_patient.do"
     	viewUrl="entityShortView-mis_patient.do" 
     	idField="1">
-    	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-    	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-    	      <msh:tableColumn columnName="Дата рождения" property="4" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-    	      <msh:tableColumn columnName="Кол-во обращения" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-    	      <msh:tableColumn columnName="Диагноз" property="8" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="6" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+    	      <msh:tableColumn columnName="Пациент" property="3" />
+    	      <msh:tableColumn columnName="Дата рождения" property="4" />
+    	      <msh:tableColumn columnName="Кол-во обращения" property="2" />
+    	      <msh:tableColumn columnName="Диагноз" property="8" />
+    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="6" />
+    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="7" />
+    	      <msh:tableColumn columnName="Специалист" identificator="false" property="5" />
     	      <msh:tableColumn columnName="Поток обслуживания" property="9"/>
     	    </msh:table>
       	</msh:section>
@@ -417,8 +417,8 @@ ${groupSqlAdd}
     	      <msh:tableColumn columnName="№№ стат.карт" property="5" />
     	      <msh:tableColumn columnName="Пациент" property="2" />
     	      <msh:tableColumn columnName="Дата рождения" property="3" />
-    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="7" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
-    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="8" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+    	      <msh:tableColumn columnName="Гражданство" identificator="false" property="7" />
+    	      <msh:tableColumn columnName="Адрес проживания" identificator="false" property="8" />
     	      <msh:tableColumn columnName="Отделения" identificator="false" property="4" />
     	      <msh:tableColumn property="6" columnName="Потоки обслуживания"/>
     	    </msh:table>
@@ -533,7 +533,7 @@ and (m.noActuality is null or m.noActuality='0') ${emergencySql}
  ${serviceStreamSql} ${patientSql} ${nationalitySql} ${regionSql} 
 group by ${groupSqlId},${groupSql}
 
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+" />
 
 
     <msh:sectionTitle>Период с ${param.beginDate} по ${param.finishDate}${emergencyInfo}

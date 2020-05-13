@@ -84,11 +84,11 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
     </tiles:put>
 
     <tiles:put name='body' type='string' >
-   <msh:form  action="/all_claims.do" defaultField="typeStatus" disableFormDataConfirm="true" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f" > 
-  <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+   <msh:form  action="/all_claims.do" defaultField="typeStatus" disableFormDataConfirm="true" >
+  <msh:panel>
      
        <a href='js-mis_claim-list_pda.do'><input type='button' value='pda'></a>
-    <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:separator label="Параметры поиска" colSpan="7" />
      <msh:row>
      <msh:autoComplete label="Исполнитель" property="number" parentId="${login}" vocName="executorsByCurrentUserName" size="50" fieldColSpan="10"/>  
    </msh:row>

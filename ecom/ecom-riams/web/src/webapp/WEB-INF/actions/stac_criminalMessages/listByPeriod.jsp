@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал сообщений в полицию"></msh:title>
+    <msh:title mainMenu="Journals" title="Журнал сообщений в полицию"></msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:style_currentMenu currentAction="stac_criminalMessages" />
@@ -22,16 +22,16 @@
   String typeDuration=ActionUtil.updateParameter("Report_criminal","typeDuration","4", request) ;
   if (request.getParameter("short")==null) {
   %>
-    <msh:form action="/journal_militiaMessage.do" defaultField="pigeonHoleName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/journal_militiaMessage.do" defaultField="pigeonHoleName" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
     <input type="hidden" name="id" id="id" value=""/>
     
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
       	<msh:autoComplete property="pigeonHole" fieldColSpan="7" 
       		horizontalFill="true" label="Приемник"
       		vocName="vocPigeonHole"
@@ -76,7 +76,7 @@
         	<input type="radio" name="typeAge" value="3">  все
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по дате  (typeDate1)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeDate1" value="1">  поступления
@@ -130,8 +130,8 @@
 	        
         </msh:row>
       <msh:row>
-        <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
       </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocCriminalPhoneMessageType" property="phoneMessageType" label="Тип" fieldColSpan="5" horizontalFill="true"/>
@@ -348,7 +348,7 @@
             group by m.id,p.lastname,p.firstname,p.middlename,p.birthday,ss.code,vdh.name
             ,m.dateFinish,m.dischargeTime,m.dateStart,m.entranceTime,rayon.name
             order by p.lastname
-            " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+            " />
             
             
             <form action="print-stac_criminalMessage_1_pat.do" method="post" target="_blank">
@@ -423,7 +423,7 @@ and ( m.noActuality is null or m.noActuality='0')
 ${period}
 ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql} ${rayonSql}
     order by ${paramDate}
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <form action="print-stac_criminalMessage_1.do" method="post" target="_blank">
     Реестр с ${param.dateBegin} по ${param.dateEnd}.
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_militia_sql}"> 
@@ -541,7 +541,7 @@ and ( m.noActuality is null or m.noActuality='0')
 ${period}
 ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     order by ${paramDate}
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-stac_criminalMessage_pr42.do" method="post" target="_blank">
@@ -608,7 +608,7 @@ ${period}
 ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by ${paramDate}
     order by ${paramDate}
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="journal_militia"
     cellFunction="true"
      action="journal_militiaMessage.do?typeView1=1&typeDate1=${typeDate1}&department=${param.department}&pigeonHole=${param.pigeonHole}&phoneMessageType=${param.phoneMessageType}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}&typeDate1=${typeDate1}" idField="1">
@@ -643,9 +643,9 @@ ${period}
 ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="journal_militia" cellFunction="true"
-    action="journal_militiaMessage.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&typeHosp=1&typeView1=1&typeDate1=${typeDate1}&pigeonHole=${param.pigeonHole}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    action="journal_militiaMessage.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&typeHosp=1&typeView1=1&typeDate1=${typeDate1}&pigeonHole=${param.pigeonHole}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}" idField="1">
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Тип" property="3" />
       <msh:tableColumn columnName="Кол-во сообщений" property="4" addParam=""/>
@@ -677,10 +677,10 @@ ${period}
 ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="journal_militia"
     cellFunction="true"
-    action="journal_militiaMessage.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&typeHosp=2&typeView1=1&typeDate1=${typeDate1}&pigeonHole=${param.pigeonHole}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}&typeDate1=${typeDate1}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    action="journal_militiaMessage.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&typeHosp=2&typeView1=1&typeDate1=${typeDate1}&pigeonHole=${param.pigeonHole}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}&typeDate1=${typeDate1}" idField="1">
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Тип" property="3"/>
       <msh:tableColumn columnName="Кол-во сообщений" property="4" />
@@ -711,11 +711,11 @@ ${period}
 ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="journal_militia"
         cellFunction="true"
     action="journal_militiaMessage.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&typeView1=1&typeDate1=${typeDate1}&department=${param.department}&pigeonHole=${param.pigeonHole}&phoneMessageType=${param.phoneMessageType}&phoneMessageSubType=${param.phoneMessageSubType}&typeEmergency=${typeEmergency}&typeAge=${typeAge}&typeDate1=${typeDate1}" 
-	idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	idField="1">
       <msh:tableColumn columnName="Отделение" property="2" addParam=""/>
       <msh:tableColumn columnName="Тип" property="3" addParam=""/>
       <msh:tableColumn columnName="Кол-во сообщений" property="4" addParam=""/>
@@ -779,7 +779,7 @@ and m.deniedHospitalizating_id is null and ( m.noActuality is null or m.noActual
 ${period}
 ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     order by ${paramDate}
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-stac_criminalMessage_pr_mdgp.do" method="post" target="_blank">
@@ -854,7 +854,7 @@ ${period}
 ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by vpmt.id,vpmt.name
     order by vpmt.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <form action="print-stac_criminalMessage_8.do" method="post" target="_blank">
     Свод по возрастам с ${param.dateBegin} по ${param.dateEnd}.
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_militia_sql}"> 
@@ -870,7 +870,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     <msh:table name="journal_militia"
       
     action="journal_militiaMessage.do?short=Short&typeView1=1&typeGroup=patient" cellFunction="true" 
-	idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	idField="1">
 	<msh:tableNotEmpty>
 		<tr>
                 <th colspan="1" />

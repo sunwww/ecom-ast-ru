@@ -88,27 +88,27 @@
             			"
             	/>
                 <msh:table viewUrl="entityShortView-stac_ssl.do" name="list" action="entityParentView-stac_ssl.do" idField="1" disableKeySupport="true">
-				      <msh:tableColumn columnName="Год" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				      <msh:tableColumn columnName="Стат.карта" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				      <msh:tableColumn columnName="К/дни" property="4" guid="bb789d76-55bb-46b1-9438-9b4e408779dd" />
-				      <msh:tableColumn columnName="Наличие СЛО" property="5" guid="bb789d76-55bb-46b1-9438-9b4e408779dd" />
-				      <msh:tableColumn columnName="Пациент" property="6" guid="4370bd26-12ec-4ad1-bffe-46159824c0f0" />
-				      <msh:tableColumn columnName="Отделение" property="7" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
+				      <msh:tableColumn columnName="Год" property="2" />
+				      <msh:tableColumn columnName="Стат.карта" property="3" />
+				      <msh:tableColumn columnName="К/дни" property="4" />
+				      <msh:tableColumn columnName="Наличие СЛО" property="5" />
+				      <msh:tableColumn columnName="Пациент" property="6" />
+				      <msh:tableColumn columnName="Отделение" property="7" />
 				      <msh:tableColumn columnName="Дата поступления" property="10"/>
 				      <msh:tableColumn columnName="Дата выписки" property="11"/>
 				      <msh:tableColumn columnName="Экстренность" property="8"/>
-				      <msh:tableColumn columnName="Отказ от госпитализации" property="9" guid="b00c3a27-82cd-4d68-8a12-6f71bc8a7867" />
+				      <msh:tableColumn columnName="Отказ от госпитализации" property="9" />
                 </msh:table>
                 <%-- 
                 <msh:table name="list" action="entityParentView-stac_ssl.do" idField="id" disableKeySupport="true">
-				      <msh:tableColumn columnName="Стат.карта" property="statCardNumber" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				      <msh:tableColumn columnName="К/дни" property="daysCount" guid="bb789d76-55bb-46b1-9438-9b4e408779dd" />
-				      <msh:tableColumn columnName="Наличие СЛО" property="isDepartmentMedCase" guid="bb789d76-55bb-46b1-9438-9b4e408779dd" />
-				      <msh:tableColumn columnName="Пациент" property="patientInfo" guid="4370bd26-12ec-4ad1-bffe-46159824c0f0" />
-				      <msh:tableColumn columnName="Кем открыт" property="username" guid="35347247-b552-4154-a82a-ee484a1714ad" />
-				      <msh:tableColumn columnName="Отделение" property="departmentInfo" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-				      <msh:tableColumn columnName="Экстренность" property="emergency" guid="b00c3a27-82cd-4d68-8a12-6f71bc8a7867" />
-				      <msh:tableColumn columnName="Отказ от госпитализации" property="deniedHospitalizatingInfo" guid="b00c3a27-82cd-4d68-8a12-6f71bc8a7867" />
+				      <msh:tableColumn columnName="Стат.карта" property="statCardNumber" />
+				      <msh:tableColumn columnName="К/дни" property="daysCount" />
+				      <msh:tableColumn columnName="Наличие СЛО" property="isDepartmentMedCase" />
+				      <msh:tableColumn columnName="Пациент" property="patientInfo" />
+				      <msh:tableColumn columnName="Кем открыт" property="username" />
+				      <msh:tableColumn columnName="Отделение" property="departmentInfo" />
+				      <msh:tableColumn columnName="Экстренность" property="emergency" />
+				      <msh:tableColumn columnName="Отказ от госпитализации" property="deniedHospitalizatingInfo" />
                 </msh:table>
                 --%>
             </msh:section>

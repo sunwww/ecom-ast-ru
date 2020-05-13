@@ -62,7 +62,7 @@
                         <msh:label property="editUsername" label="пользователь"/>
                     </msh:row>
                 </msh:ifFormTypeAreViewOrEdit>
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
+                <msh:submitCancelButtonsRow colSpan="3" />
             </msh:panel>
         </msh:form>
     </tiles:put>

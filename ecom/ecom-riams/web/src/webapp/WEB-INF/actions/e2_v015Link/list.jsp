@@ -11,7 +11,7 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-        <msh:sideMenu title="Добавить" guid="fdcda21a-c1c6-4e0e-a74e-1bf843a8c1c8">
+        <msh:sideMenu title="Добавить">
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_vocMedHelpProfile" name="Сформировать новое" roles="/Policy/E2/Create" />
         </msh:sideMenu>
         <tags:expertvoc_menu currentAction="main"/>
@@ -22,9 +22,9 @@
         <msh:hideException>
             <msh:section title='Результат поиска'>
                 <msh:table  name="list" action="entityView-e2_vocMedHelpProfile.do" idField="id" disableKeySupport="true">
-                    <msh:tableColumn columnName="Название" property="name" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Код" identificator="false" property="code" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="profileK" identificator="false" property="profileK" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="Название" property="name" />
+                    <msh:tableColumn columnName="Код" identificator="false" property="code" />
+                    <msh:tableColumn columnName="profileK" identificator="false" property="profileK" />
                 </msh:table>
             </msh:section>
         </msh:hideException>

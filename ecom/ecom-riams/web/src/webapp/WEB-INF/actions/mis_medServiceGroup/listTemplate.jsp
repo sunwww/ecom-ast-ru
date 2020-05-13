@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Voc" title="Список шаблонов по услугам" guid="dd8765db-fd78-4593-98ff-d87a7a48d574" />
+    <msh:title mainMenu="Voc" title="Список шаблонов по услугам" />
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
@@ -32,7 +32,7 @@ order by ms1.name,ms.code
 
   
   "/>
-    <msh:table name="list" action="entityParentView-mis_medService.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table name="list" action="entityParentView-mis_medService.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Категория" property="2" />
       <msh:tableColumn columnName="Код" property="3" />

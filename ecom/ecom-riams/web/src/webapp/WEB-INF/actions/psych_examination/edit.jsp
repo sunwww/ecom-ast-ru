@@ -46,12 +46,12 @@
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="psych_examinationForm" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="psych_examinationForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Психиатрическая экспертиза">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-psych_examination" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/PsychiatricExamination/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" params="id" action="/entityParentDelete-psych_examination" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/PsychiatricExamination/Delete"  />
+      <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-psych_examination" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/PsychiatricExamination/Edit" />
+      <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-psych_examination" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/PsychiatricExamination/Delete"  />
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

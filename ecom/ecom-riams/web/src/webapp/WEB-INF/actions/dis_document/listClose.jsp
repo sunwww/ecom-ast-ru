@@ -15,10 +15,10 @@
     </tiles:put>
   <tiles:put name="body" type="string">
       <% String orderByType= ActionUtil.updateParameter("BloodReport","orderByType","1", request); %>
-    <msh:form action="/dis_documentClose.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/dis_documentClose.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Поиск по дате:</label></td>

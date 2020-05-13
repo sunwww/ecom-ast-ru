@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" title="Листы наблюдения" beginForm="mis_patientForm" guid="b6v61-1e0b-4ebd-9f58-bdb45bd6" />
+        <ecom:titleTrail mainMenu="Expert2" title="Листы наблюдения" beginForm="mis_patientForm" />
     </tiles:put>
     <tiles:put name="body" type="string">
         <msh:section title="Список листов наблюдения">
@@ -36,13 +36,13 @@
             order by o.id
   	"/>
             <msh:table name="list" action="entityView-edkcObsSheet.do" idField="1" >
-                <msh:tableColumn columnName="#" property="sn" guid="06d94f6a7-ed40-4ebf-a274-1efd69d01cfe4" />
-                <msh:tableColumn columnName="Дата открытия" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-                <msh:tableColumn columnName="Открыл" property="3" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-                <msh:tableColumn columnName="Дата закрытия" property="4" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableColumn columnName="Закрыл" property="5" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-                <msh:tableColumn columnName="Длительность наблюдения" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-                <msh:tableColumn columnName="Исход наблюдения" property="7" guid="6682eeef-105f-43a0-be61-30a865f27972" />
+                <msh:tableColumn columnName="#" property="sn" />
+                <msh:tableColumn columnName="Дата открытия" property="2" />
+                <msh:tableColumn columnName="Открыл" property="3" />
+                <msh:tableColumn columnName="Дата закрытия" property="4" />
+                <msh:tableColumn columnName="Закрыл" property="5" />
+                <msh:tableColumn columnName="Длительность наблюдения" property="6" />
+                <msh:tableColumn columnName="Исход наблюдения" property="7" />
             </msh:table>
         </msh:section>
     </tiles:put>

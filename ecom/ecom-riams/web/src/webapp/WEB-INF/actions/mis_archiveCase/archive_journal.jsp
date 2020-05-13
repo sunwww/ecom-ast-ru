@@ -12,11 +12,11 @@
   	String typeDate =ActionUtil.updateParameter("ExtDispAction","typeDate","1", request) ;
   	String typeView =ActionUtil.updateParameter("ExtDispAction","typeView","1", request) ;
     	 %>
-    <msh:form guid="formHello" action="/mis_archive_journal.do" defaultField="hello">
+    <msh:form action="/mis_archive_journal.do" defaultField="hello">
 
-      <msh:panel guid="panel">
-        <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
-          <msh:autoComplete vocName="vocLpuHospOtdAll" property="department" size="50" fieldColSpan="3" label="Отделение выписки" guid="5dda7fb6-b2c3-44be-9d10-d8d428637b32" />
+      <msh:panel>
+        <msh:row>
+          <msh:autoComplete vocName="vocLpuHospOtdAll" property="department" size="50" fieldColSpan="3" label="Отделение выписки" />
         </msh:row>
         <msh:row>
 			<msh:textField property="dateBegin" label="c"/>
@@ -64,7 +64,7 @@
 				<input type="radio" name="typeView" value="4"> Журнал переданных историй болезни
 			</td>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" labelSave="Поиск" labelSaving="Поиск..." colSpan="4" />
+        <msh:submitCancelButtonsRow labelSave="Поиск" labelSaving="Поиск..." colSpan="4" />
       </msh:panel>
     </msh:form>
     <%
@@ -192,7 +192,7 @@ order by ${orderBySql}
     <% }}%>
   </tiles:put>
     <tiles:put name='side' type='string'> 
-  <msh:sideLink key="ALT+1" params="" roles="/Policy/Mis/ArchiveCase/Create" action="/move_to_archive" name="Передача карт в архив" guid="31e83931-c7ab-4040-8f46-3306ac07cb26" />
+  <msh:sideLink key="ALT+1" params="" roles="/Policy/Mis/ArchiveCase/Create" action="/move_to_archive" name="Передача карт в архив" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">

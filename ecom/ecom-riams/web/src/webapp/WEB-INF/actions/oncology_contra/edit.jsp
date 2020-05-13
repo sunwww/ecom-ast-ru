@@ -20,15 +20,15 @@
     </tiles:put>
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="oncology_contraForm" />
+        <ecom:titleTrail mainMenu="Patient" beginForm="oncology_contraForm" />
     </tiles:put>
 
     <tiles:put name="body" type="string">
         <msh:form action="/entitySaveGoView-oncology_contra.do" defaultField="hello" title="Противопоказания и отказы">
 
-            <msh:hidden guid="hiddenId" property="id" />
-            <msh:hidden guid="hiddenSaveType" property="saveType" />
-            <msh:hidden guid="hiddenParent" property="oncologyCase" />
+            <msh:hidden property="id" />
+            <msh:hidden property="saveType" />
+            <msh:hidden property="oncologyCase" />
 
             <div class="borderedDiv" id="oncologyCase">
                 <msh:textField property="date" label="Дата регистрации противопоказания/отказа"/>
@@ -36,15 +36,15 @@
                 <msh:autoComplete  property="contraindicationAndRejection" label="Повод обращения" vocName="vocOncologyN001" fieldColSpan="3" horizontalFill="true" />
             </div>
             <br>
-            <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+            <msh:submitCancelButtonsRow colSpan="4" />
         </msh:form>
     </tiles:put>
 
 
       <tiles:put name="side" type="string">
-            <msh:sideMenu guid="sideMenu-123" title="Действия">
-                <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-oncology_contra" name="Изменить" roles="/Policy/Mis/Oncology/Case/Delete" />
-                <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-oncology_contra" name="Удалить" roles="/Policy/Mis/Oncology/Case/Delete" />
+            <msh:sideMenu title="Действия">
+                <msh:sideLink key="ALT+2" params="id" action="/entityEdit-oncology_contra" name="Изменить" roles="/Policy/Mis/Oncology/Case/Delete" />
+                <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-oncology_contra" name="Удалить" roles="/Policy/Mis/Oncology/Case/Delete" />
             </msh:sideMenu>
         </tiles:put>
 </tiles:insert>

@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
+    <msh:title mainMenu="LaboratoryJournal" title="Забор биоматериала для лабораторных исследований" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -31,8 +31,8 @@
   	String isAdministrator = request.getAttribute("isAdministrator").toString();
   	%>
   	  <msh:form action="/pres_doctor_lab_journal.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+    <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>

@@ -20,7 +20,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 }
 </style>
 <msh:sideMenu></msh:sideMenu>
-<msh:sideMenu title="Поиск документов нетрудоспособности" guid="fsdfsdf-dfsf">
+<msh:sideMenu title="Поиск документов нетрудоспособности">
 	<msh:sideLink name="По серии и номеру" action="/dis_documents.do" key="ALT+7" 
 		title="Поиск документов нетрудоспособности по серии и номеру" roles="/Policy/Mis/Disability/Case/Document/View"
 		styleId="find_number"/>

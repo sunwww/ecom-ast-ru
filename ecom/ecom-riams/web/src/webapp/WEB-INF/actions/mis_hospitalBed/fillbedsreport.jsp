@@ -23,7 +23,7 @@
     </tiles:put>
     <tiles:put name="body" type="string">
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View">
-            <msh:form action="/fillbedsreport.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+            <msh:form action="/fillbedsreport.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
                 <msh:panel>
                     <msh:row>
                         <msh:autoComplete property="department" vocName="vocLpuHospOtdAll" fieldColSpan="3" horizontalFill="true" size="200"/>
@@ -154,7 +154,7 @@ group by wp.id,wp.name,vcbihr.name
 order by case when length(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(wp.name,'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9',''))=0 then cast(wp.name as int) else 100 end
  " />
                 <msh:table name="journal_pat"
-                           action="javascript:void(0)" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6" escapeSymbols="false">
+                           action="javascript:void(0)" idField="1" escapeSymbols="false">
                     <msh:tableColumn columnName="Палата" property="2" />
                     <msh:tableColumn columnName="Вместимость" property="3" />
                     <msh:tableColumn columnName="Список пациентов, которые лежат" property="4" />

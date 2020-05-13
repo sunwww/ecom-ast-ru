@@ -9,10 +9,10 @@
     <!-- 
     	  - Проба
     	  -->
-    <msh:form guid="formHello" action="/entitySaveGoView-mis_bedFundCapacity.do" defaultField="hello">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:panel guid="panel">
+    <msh:form action="/entitySaveGoView-mis_bedFundCapacity.do" defaultField="hello">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:panel>
        <msh:row>
 					<msh:textField property="startDate" label="Дата начала"/>
 					<msh:textField property="finishDate" label="окончания"/>
@@ -66,7 +66,7 @@
 				
 				</hello> -->
         
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
   </tiles:put>

@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="/entityParentSaveGoView-doc_requitDirection.do" defaultField="diagnosis" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+    <msh:form action="/entityParentSaveGoView-doc_requitDirection.do" defaultField="diagnosis">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="medCase" />
@@ -53,7 +53,7 @@
                size="40" rows="6" fieldColSpan="2" />
                
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
   </tiles:put>
@@ -62,10 +62,10 @@
     <ecom:titleTrail mainMenu="Poly" beginForm="doc_requitDirectionForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="doc_requitDirectionForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-      <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-doc_requitDirection" name="Изменить" roles="/Policy/Mis/MedCase/Document/Internal/Discharge/Edit" guid="609c81cf-05e5-4e07-90b7-87b38863114c" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-doc_requitDirection" name="Удалить" roles="/Policy/Mis/MedCase/Document/Internal/Discharge/Delete" guid="1a3265b4-cebb-4536-a471-c79003ccf548" />
+    <msh:ifFormTypeIsView formName="doc_requitDirectionForm">
+      <msh:sideMenu>
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-doc_requitDirection" name="Изменить" roles="/Policy/Mis/MedCase/Document/Internal/Discharge/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-doc_requitDirection" name="Удалить" roles="/Policy/Mis/MedCase/Document/Internal/Discharge/Delete" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

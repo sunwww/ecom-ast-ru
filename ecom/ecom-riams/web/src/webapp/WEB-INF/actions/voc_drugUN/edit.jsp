@@ -11,21 +11,21 @@
     	  - Справочник Лек.Ср
     	  -->
     <msh:form  action="/entitySaveGoView-voc_drugUN.do" defaultField="code">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:panel guid="panel" colsWidth="5%,60%,5%,1%">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:panel colsWidth="5%,60%,5%,1%">
         <msh:row>
         	<msh:textField  label="Код" property="code" />
         </msh:row>
         <msh:row>
         	<msh:textField label="Наименование" property="name" horizontalFill="true" fieldColSpan="1"/>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="voc_drugUNForm" />
+    <ecom:titleTrail mainMenu="Voc" beginForm="voc_drugUNForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Лек. средства">

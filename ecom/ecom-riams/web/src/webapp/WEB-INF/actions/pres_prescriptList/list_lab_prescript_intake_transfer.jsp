@@ -27,8 +27,8 @@
 
   	%>
   	  <msh:form  action="/pres_journal_intake_transfer.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+    <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
             <msh:row>

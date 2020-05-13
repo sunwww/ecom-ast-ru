@@ -124,7 +124,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			<msh:sideMenu title="Печать" >
 	 <msh:sideLink action="/javascript:window.location.href='print-immig.do?s=PatientPrintService&m=printInfo&id='+$('patient').value" 
         name="Карты осмотра (иммигранта)" title="Печать карты осмотра (иммигранта)" 
-        guid="783bad66-e5a6-44a8-9046-23921d00121e" roles="/Policy/Mis/Patient/View" />
+        roles="/Policy/Mis/Patient/View" />
         </msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 		

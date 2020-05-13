@@ -54,7 +54,7 @@ background: #eee;
 
 </tiles:put>
 <tiles:put name='title' type='string'>
-    <ecom:titleTrail mainMenu="Config" beginForm="mis_assessmentCardTemplateForm" guid="4399c99f-8801-4a73-b168-c25c23f8b0ba" />
+    <ecom:titleTrail mainMenu="Config" beginForm="mis_assessmentCardTemplateForm" />
     <h1>Параметры шаблона </h1>
 </tiles:put>
 

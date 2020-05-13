@@ -28,8 +28,8 @@
     </msh:section>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Добавить" guid="b1b57fd2-b9ed-4760-b54e-f59b245e755a">
-      <msh:sideLink params="" action="/entityPrepareCreate-sec_softConfig" name="Новую настройку" title="Добавить новую настройку" guid="cd3d23c1-1cfe-42ec-b53d-6e45f7555073" />
+    <msh:sideMenu title="Добавить">
+      <msh:sideLink params="" action="/entityPrepareCreate-sec_softConfig" name="Новую настройку" title="Добавить новую настройку" />
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

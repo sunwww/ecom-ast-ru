@@ -7,21 +7,21 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <msh:title guid="helloItle-123" mainMenu="Expert2" title="Отчет по листам наблюдений"></msh:title>
+        <msh:title mainMenu="Expert2" title="Отчет по листам наблюдений"></msh:title>
     </tiles:put>
     <tiles:put name="side" type="string">
         <tags:observSheet name="observSheet"/>
         <tags:vocObservRes name="vocObservRes"/>
     </tiles:put>
     <tiles:put name="body" type="string">
-        <msh:form action="/riams_edkc_patientList.do" defaultField="dateBegin" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-            <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-                <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-                    <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+        <msh:form action="/riams_edkc_patientList.do" defaultField="dateBegin" method="GET">
+            <msh:panel>
+                <msh:row>
+                    <msh:separator label="Параметры поиска" colSpan="7" />
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                <msh:row>
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                     <td>
                         <input type="submit" value="Найти" />
                     </td>
@@ -77,7 +77,7 @@
                 left join vocObservationResult vrt on vrt.id=o.observresult_id
                 where o.patient_id is not null ${sqlDate}
                " />
-                <msh:table printToExcelButton="сохранить в excel" name="journal_patientList" action="/javascript:void()" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+                <msh:table printToExcelButton="сохранить в excel" name="journal_patientList" action="/javascript:void()" idField="1">
                     <msh:tableColumn property="sn" columnName="#"/>
                     <msh:tableColumn property="3" columnName="Пациент"/>
                     <msh:tableColumn property="4" columnName="Дата установки"/>

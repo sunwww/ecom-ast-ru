@@ -21,7 +21,7 @@
 		  	left join VocWorkCalendarType vwct on vwct.id=wcp.calendarType_id
 		  	where wcp.dtype='WorkCalenPatternBySpec'
 		  	"/>
-		    <msh:table  name="list" editUrl="entityEdit-cal_patternBySpec.do" deleteUrl="entityDelete-cal_pattern.do" viewUrl="entityShortView-cal_patternBySpec.do" action="entitySubclassView-cal_pattern.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+		    <msh:table  name="list" editUrl="entityEdit-cal_patternBySpec.do" deleteUrl="entityDelete-cal_pattern.do" viewUrl="entityShortView-cal_patternBySpec.do" action="entitySubclassView-cal_pattern.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn" />
 					<msh:tableColumn columnName="Название" property="2" />
 					<msh:tableColumn columnName="Тип календаря" property="4" />

@@ -18,15 +18,15 @@
             String typeDate=ActionUtil.updateParameter("leanClinicReport","typeDate","1", request);
             String typeRemote =ActionUtil.updateParameter("leanClinicReport","typeRemote","1", request) ;
         %>
-        <msh:form action="/leanClinicReport.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+        <msh:form action="/leanClinicReport.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
             <%if (request.getParameter("short")==null ||request.getParameter("short").equals(""))  {%>
             <msh:panel>
-                <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-                    <msh:separator label="Параметры поиска" colSpan="9" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+                <msh:row>
+                    <msh:separator label="Параметры поиска" colSpan="9" />
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="serviceStream" label="Способ записи" vocName="vocWayOfRecord" horizontalFill="true" size="20"/>
@@ -118,7 +118,7 @@
         and (pat.id is not null or wct.prepatient_id is not null or wct.prepatientinfo is not null)
         and (wct.isdeleted is null or wct.isdeleted=false)
         group by lpu.id,lpu.name"
-                           guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+                           />
             <form action="leanClinicReport.do" method="post" target="_blank">
                 Результат за период с ${param.dateBegin} по ${dateEnd}.
             </form>
@@ -126,8 +126,8 @@
         <msh:sectionContent>
             <msh:table printToExcelButton="Сохранить в excel" name="leanClinicReport" cellFunction="true"
                        action="leanClinicReport.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}&typeDate=${param.typeDate}&typeRemote=${param.typeRemote}"
-                       idField="14" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-                <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+                       idField="14">
+                <msh:tableNotEmpty>
                     <tr>
                         <th colspan=1></th>
                         <th colspan=1></th>
@@ -196,7 +196,7 @@
         ${sqlAddNew} and case when ${param.lpuId}!=0 then lpu.id=${param.lpuId} else lpu.id is null end
         and (pat.id is not null or wct.prepatient_id is not null or wct.prepatientinfo is not null)
         and (wct.isdeleted is null or wct.isdeleted=false)"
-                           guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+                           />
             <form action="void" method="post" target="_blank">
                 Результат ${tViewName} за период с ${param.dateBegin} по ${dateEnd} (${param.lpuName}).
             </form>
@@ -204,7 +204,7 @@
         <msh:sectionContent>
             <msh:table printToExcelButton="Сохранить в excel" name="leanClinicReportt_pats" cellFunction="true"
                        action="javascript:void(0)"
-                       idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+                       idField="1">
                 <msh:tableColumn columnName="#" property="sn" />
                 <msh:tableColumn columnName="Предварительная информация о пациенте" property="2" />
                 <msh:tableColumn columnName="Информация о пациенте" property="4" />

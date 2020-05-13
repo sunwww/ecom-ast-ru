@@ -28,7 +28,7 @@
 	String typeLoad="1" ;
   %>
   
-    <msh:form action="/stac_direct_in_fond.do" defaultField="lpu" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_direct_in_fond.do" defaultField="lpu" disableFormDataConfirm="true" method="GET">
     <msh:panel>
    
       <msh:row>
@@ -36,7 +36,7 @@
       </msh:row>
       <msh:row>
       	<msh:textField property="lpu"/>
-        <msh:textField property="numberReestr" label="Реестровый номер" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="numberReestr" label="Реестровый номер" />
       </msh:row>
       <msh:row>
         <msh:textField  property="period" label="Период с" />

@@ -19,10 +19,10 @@
     <tiles:put name="body" type="string">
         <ecom:webQuery name="colorList" nameFldSql="colorList_sql" nativeSql="select vcip.id,vc.name as vcname,vcip.name as vsipname,case when isfornewborn=true then 'Да' else 'Нет' end from voccoloridentitypatient vcip  left join voccolor vc on vc.id=vcip.color_id where lpu_id=${param.id}"/>
         <msh:section title="Все цвета">
-            <msh:table name="colorList" action="entityParentView-mis_colorIdentity.do" idField="1" guid="e699b892-d71e-4622-ae5e-eaec3ed85bb4">
-                <msh:tableColumn columnName="Цвет" property="2" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableColumn columnName="Болезнь/примечание" property="3" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableColumn columnName="Заполнение в родах" property="4" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+            <msh:table name="colorList" action="entityParentView-mis_colorIdentity.do" idField="1">
+                <msh:tableColumn columnName="Цвет" property="2" />
+                <msh:tableColumn columnName="Болезнь/примечание" property="3" />
+                <msh:tableColumn columnName="Заполнение в родах" property="4" />
             </msh:table>
         </msh:section>
     </tiles:put>

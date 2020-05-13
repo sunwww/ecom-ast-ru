@@ -11,7 +11,7 @@
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-        <msh:sideMenu title="Добавить" guid="fdcda21a-c1c6-4e0e-a74e-1bf843a8c1c8">
+        <msh:sideMenu title="Добавить">
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_entryList" name="Сформировать новое" roles="/Policy/E2/Create" />
         </msh:sideMenu>
         <tags:expertvoc_menu currentAction="main"/>
@@ -25,10 +25,10 @@
              from e2listentry where isDeleted='0' or isDeleted is null order by createDate,createtime "/>
             <msh:section title='Результат поиска'>
                 <msh:table  name="entryList" action="entityView-e2_entryList.do" idField="1" disableKeySupport="true" styleRow="6">
-                    <msh:tableColumn columnName="Название" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Дата начала" identificator="false" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Дата окончания" identificator="false" property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Дата формирования" identificator="false" property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="Название" property="2" />
+                    <msh:tableColumn columnName="Дата начала" identificator="false" property="3" />
+                    <msh:tableColumn columnName="Дата окончания" identificator="false" property="4" />
+                    <msh:tableColumn columnName="Дата формирования" identificator="false" property="5" />
                 </msh:table>
             </msh:section>
         </msh:hideException>

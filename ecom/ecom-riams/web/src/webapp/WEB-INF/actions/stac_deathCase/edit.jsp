@@ -34,14 +34,14 @@
     </tiles:put>
 
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="stac_deathCaseForm" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
-      <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Случай смерти">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_deathCase" name="Изменить" roles="/Policy/Mis/MedCase/DeathCase/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_deathCase" name="Удалить" roles="/Policy/Mis/MedCase/DeathCase/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+    <msh:ifFormTypeIsView formName="stac_deathCaseForm">
+      <msh:sideMenu title="Случай смерти">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_deathCase" name="Изменить" roles="/Policy/Mis/MedCase/DeathCase/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-stac_deathCase" name="Удалить" roles="/Policy/Mis/MedCase/DeathCase/Delete" />
       </msh:sideMenu>
-      <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc9" title="Добавить">
-        <msh:sideLink roles="/Policy/Mis/Certificate/Death/Create" name="Свидетельство о смерти" params="id" action="/entityParentPrepareCreate-stac_deathCertificate" title="Добавить свидетельство о смерти" guid="11cc0-b309-4193-9d22-199373cfd28d" />
-        <msh:sideLink roles="/Policy/Mis/MedCase/ProtocolKili/Create" name="Протокол КИЛИ" params="id" action="/entityParentPrepareCreate-mis_protocolKili" title="Добавить протокол КИЛИ" guid="11cc0-b309-4193-9d22-199373cfd28d" />
+      <msh:sideMenu title="Добавить">
+        <msh:sideLink roles="/Policy/Mis/Certificate/Death/Create" name="Свидетельство о смерти" params="id" action="/entityParentPrepareCreate-stac_deathCertificate" title="Добавить свидетельство о смерти" />
+        <msh:sideLink roles="/Policy/Mis/MedCase/ProtocolKili/Create" name="Протокол КИЛИ" params="id" action="/entityParentPrepareCreate-mis_protocolKili" title="Добавить протокол КИЛИ" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
@@ -83,10 +83,10 @@
           <msh:checkBox property="isNeonatologic" labelColSpan="3" label="Мертворождение" viewOnlyField="true"/>
         </msh:row>
         <msh:row>
-          <msh:autoComplete vocName="vocDeathPlace" property="deathPlace" label="Место смерти" fieldColSpan="3" horizontalFill="true" guid="109f7264-23b216c" />
+          <msh:autoComplete vocName="vocDeathPlace" property="deathPlace" label="Место смерти" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row>
-          <msh:autoComplete showId="false" vocName="vocDeathReason" hideLabel="false" property="deathReason" viewOnlyField="false" label="Смерть произошла от:" guid="9eb66c69-6860-4464-b671-48494ec2dc85" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete showId="false" vocName="vocDeathReason" hideLabel="false" property="deathReason" viewOnlyField="false" label="Смерть произошла от:" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
 
         <msh:row>
@@ -159,47 +159,47 @@
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MedCase/DeathCase/Child">
         <msh:separator label="Для детей, умерших в возрасте до 1 года" colSpan=""/>
-        <msh:row guid="d62f29-4e95-42a5-9063-9255a8">
-          <msh:textField property="birthPlace" label="Место рождения" guid="80346725-7478-4afa-bc1d-f6e331bbff19" horizontalFill="true" fieldColSpan="3" />
+        <msh:row>
+          <msh:textField property="birthPlace" label="Место рождения" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="d59-4e95-42a5-9063-988">
-          <msh:textField property="birthPlaceAdress" label="Адрес места рождения" guid="af4416bc-eff1-438c-b393-371c35ce6c98" fieldColSpan="3" horizontalFill="true" />
+        <msh:row>
+          <msh:textField property="birthPlaceAdress" label="Адрес места рождения" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="f244ab-4ccc-9982-7b4480cca147">
-          <msh:autoComplete vocName="patient" property="mother" label="Мать" fieldColSpan="3" horizontalFill="true" guid="109f7264-23b2-42cd90747816c" />
+        <msh:row>
+          <msh:autoComplete vocName="patient" property="mother" label="Мать" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:separator label="Для детей, умерших в возрасте от 6 дней до 1 месяца" colSpan="" guid="d43136ca-43cc-826d-bc1b6" />
-        <msh:row guid="f244aba5-68fb-4ccc480cca147">
-          <msh:autoComplete vocName="vocIsPrematurity" property="isPrematurity" label="Доношенность" fieldColSpan="3" horizontalFill="true" guid="109f7264-23b2-42c0-ba47-65d90747816c" />
+        <msh:separator label="Для детей, умерших в возрасте от 6 дней до 1 месяца" colSpan="" />
+        <msh:row>
+          <msh:autoComplete vocName="vocIsPrematurity" property="isPrematurity" label="Доношенность" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:separator label="Для детей, умерших в возрасте от 6 дней до 1 года" colSpan="" guid="d4ca-43cc-826d-bc1b6" />
-        <msh:row guid="21b4ac48-1773-410d-b85f-537680420aa4">
-          <msh:textField property="babyNumber" label="Какой ребенок по счету у матери" guid="bb7b87a8-c542-47ef-93b6-91106abf9f19" labelColSpan="2" horizontalFill="true" />
+        <msh:separator label="Для детей, умерших в возрасте от 6 дней до 1 года" colSpan="" />
+        <msh:row>
+          <msh:textField property="babyNumber" label="Какой ребенок по счету у матери" labelColSpan="2" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="a3509d1f-9324-4997-a7c3-6ca8f12a9347">
-          <msh:textField property="birthWeight" guid="c04ab410-42df-4f5b-b365-b4acf17a2616" labelColSpan="2" label="Масса (вес) при рождении, гр." />
+        <msh:row>
+          <msh:textField property="birthWeight" labelColSpan="2" label="Масса (вес) при рождении, гр." />
         </msh:row>
         </msh:ifInRole>
-        <msh:separator label="В случае смерти, не от заболевания" colSpan="" guid="d4313623-45ca-43cc-821b6" />
-        <msh:row guid="9b781b-afb9aedfb7a8">
-          <msh:textField label="Дата (травмы) отравления" property="accidentDate" guid="fff1dd9f3fad" />
-          <msh:textField label="Место" property="accidentPlace" guid="fff1dd1d-b7a5-4fe2-899b-3292ec9f3fad" fieldColSpan="1" horizontalFill="true" />
+        <msh:separator label="В случае смерти, не от заболевания" colSpan="" />
+        <msh:row>
+          <msh:textField label="Дата (травмы) отравления" property="accidentDate" />
+          <msh:textField label="Место" property="accidentPlace" fieldColSpan="1" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="a3509d1f-9324-49ca8f12a9347">
-          <msh:textField property="accidentCircumstance" label="Обстоятельства" guid="f8f5c912-00b8-4fd8-87b9-abe417212d78" fieldColSpan="3" horizontalFill="true" />
+        <msh:row>
+          <msh:textField property="accidentCircumstance" label="Обстоятельства" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:separator label="Причина смерти установлена" colSpan="" guid="d43132a-43c" />
-        <msh:row guid="72adfc17c0-8eb4-a23ee9e84ed8">
-          <msh:autoComplete vocName="vocDeathWitnessFunction" property="deathWitnessFunction" label="Кем установлена" fieldColSpan="3" horizontalFill="true" guid="fa-6afe-4c26-82f3-50532049a8bc" />
+        <msh:separator label="Причина смерти установлена" colSpan="" />
+        <msh:row>
+          <msh:autoComplete vocName="vocDeathWitnessFunction" property="deathWitnessFunction" label="Кем установлена" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
-          <msh:autoComplete vocName="workFunction" property="deathWitness" label="Врач" fieldColSpan="3" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" />
+        <msh:row>
+          <msh:autoComplete vocName="workFunction" property="deathWitness" label="Врач" fieldColSpan="3" horizontalFill="true" viewAction="entitySubclassView-work_workFunction.do" />
         </msh:row>
-        <msh:row guid="f221de2e-c742-4c2a-af1c-135daf9d2d7f">
-          <ecom:oneToManyOneAutocomplete property="deathEvidence" vocName="vocDeathEvidence" label="На основании" colSpan="4" guid="d9257246-a9f6-4ecc-8d3d-ff10abb2b64c" />
+        <msh:row>
+          <ecom:oneToManyOneAutocomplete property="deathEvidence" vocName="vocDeathEvidence" label="На основании" colSpan="4" />
         </msh:row>
-        <msh:row guid="f2a5-68fb-4ccc-9982-7b4447">
-          <msh:autoComplete vocName="vocAfterPregnance" property="afterPregnance" label="Умерла после окончания беременности" fieldColSpan="2" horizontalFill="true" guid="10964-23b2-42c0-ba47-6547816c" labelColSpan="2" />
+        <msh:row>
+          <msh:autoComplete vocName="vocAfterPregnance" property="afterPregnance" label="Умерла после окончания беременности" fieldColSpan="2" horizontalFill="true" labelColSpan="2" />
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -218,26 +218,26 @@
         <msh:row>
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>                
-        <msh:submitCancelButtonsRow colSpan="" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
+        <msh:submitCancelButtonsRow colSpan="" />
       </msh:panel>
     </msh:form>
-    <msh:ifFormTypeIsView formName="stac_deathCaseForm" guid="48eb9700-d07d-4115-a476-a5a5e">
-      <msh:ifInRole roles="/Policy/Mis/Certificate/Death/View" guid="b0ceb3e4-a6a2-41fa-be6b-ea222196a33d">
-        <msh:section title="Свидетельства о смерти" guid="1f214-8ea0-4b66-a0f3-62713c1">
-          <ecom:parentEntityListAll formName="stac_deathCertificateForm" attribute="deathCertificate" guid="302c-7369-4ec7-a67c-882abcf" />
-          <msh:table name="deathCertificate" action="entityParentView-stac_deathCertificate.do" idField="id" guid="b621e361-1e0b-4ebd-9f58-b7d916">
-            <msh:tableColumn columnName="Дата выдачи" property="dateIssue" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
-            <msh:tableColumn columnName="Серия" property="series" guid="b5fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
-            <msh:tableColumn columnName="Номер" property="number" guid="bfe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
+    <msh:ifFormTypeIsView formName="stac_deathCaseForm">
+      <msh:ifInRole roles="/Policy/Mis/Certificate/Death/View">
+        <msh:section title="Свидетельства о смерти">
+          <ecom:parentEntityListAll formName="stac_deathCertificateForm" attribute="deathCertificate" />
+          <msh:table name="deathCertificate" action="entityParentView-stac_deathCertificate.do" idField="id">
+            <msh:tableColumn columnName="Дата выдачи" property="dateIssue" cssClass="preCell" />
+            <msh:tableColumn columnName="Серия" property="series" cssClass="preCell" />
+            <msh:tableColumn columnName="Номер" property="number" cssClass="preCell" />
           </msh:table>
         </msh:section>
       </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/Certificate/Death/View" guid="b0ceb3e4-a6a2-41fa-be6b-ea222196a33d">
-        <msh:section title="КИЛИ о смерти" guid="1f214-8ea0-4b66-a0f3-62713c1">
-          <ecom:parentEntityListAll formName="mis_protocolKiliForm" attribute="deathKilis" guid="302c-7369-4ec7-a67c-882abcf" />
-           <msh:table name="deathKilis" action="entityParentView-mis_protocolKili.do" idField="id" guid="b621e361-1e0b-4ebd-9f58-b7d916">
-            <msh:tableColumn columnName="Дата протокола" property="protocolDate" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
-            <msh:tableColumn columnName="Номер протокола" property="protocolNumber" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
+      <msh:ifInRole roles="/Policy/Mis/Certificate/Death/View">
+        <msh:section title="КИЛИ о смерти">
+          <ecom:parentEntityListAll formName="mis_protocolKiliForm" attribute="deathKilis" />
+           <msh:table name="deathKilis" action="entityParentView-mis_protocolKili.do" idField="id">
+            <msh:tableColumn columnName="Дата протокола" property="protocolDate" cssClass="preCell" />
+            <msh:tableColumn columnName="Номер протокола" property="protocolNumber" cssClass="preCell" />
             </msh:table>  
         </msh:section>
       </msh:ifInRole>
@@ -246,10 +246,10 @@
     <tags:addressNewTag form="stac_deathCaseForm" name="deathPlaceAddress" zipcode="" flatNumber="deathPlaceFlatNumber" houseNumber="deathPlaceHouseNumber" houseBuilding="deathPlaceHouseBuilding" addressField="deathPlaceAddressField" />
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="stac_deathCaseForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="stac_deathCaseForm" />
   </tiles:put>
   <tiles:put name="javascript" type="string" >
-          <msh:ifFormTypeIsNotView formName="stac_deathCaseForm" guid="518fe547-aed9-be2229f04ba3">
+          <msh:ifFormTypeIsNotView formName="stac_deathCaseForm">
           <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
       <script type="text/javascript">//var theBedFund = $('bedFund').value;
        try {

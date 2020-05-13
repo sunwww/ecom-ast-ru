@@ -87,7 +87,7 @@
         		where mp.policies_id='${param.id}' and m.DTYPE='HospitalMedCase'  order by m.dateStart"/>
         		<msh:tableNotEmpty name="list_sls">
 	        		<msh:section title="Прикрепленные случаи лечения госпитализации">
-		        		<msh:table guid="listSLS" name="list_sls" action="entityParentView-stac_ssl.do" idField="1">
+		        		<msh:table name="list_sls" action="entityParentView-stac_ssl.do" idField="1">
 		        			<msh:tableColumn property="2" columnName="Пациент" />
 		        			<msh:tableColumn property="3" columnName="Отделение" />
 		        			<msh:tableColumn property="4" columnName="Номер стат.карты" />
@@ -119,7 +119,7 @@
 	    			styleId="stac_receivedWithoutPolicy"
 	    		/>
 	    		<msh:ifFormTypeIsNotView formName="mis_medPolicyOmcForm">
-	    		<msh:sideLink roles="/Policy/Mis/MedPolicy/Omc/Edit" action="/javascript:{$('changeType').style.display='block';}" name="Изменить тип полиса" guid="d3d19781-f1b0-42b3-a314-f5e6a2b55584" />
+	    		<msh:sideLink roles="/Policy/Mis/MedPolicy/Omc/Edit" action="/javascript:{$('changeType').style.display='block';}" name="Изменить тип полиса" />
       </msh:ifFormTypeIsNotView>
             </msh:ifFormTypeAreViewOrEdit>
         </msh:sideMenu>

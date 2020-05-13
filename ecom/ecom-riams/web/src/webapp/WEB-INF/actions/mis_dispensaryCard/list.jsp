@@ -6,11 +6,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-            <ecom:titleTrail beginForm="mis_patientForm" mainMenu="Patient" title="Карты диспансерного наблюдения" guid="3c259ba8-b962-4333-9aab-3316f984fdde" />
+            <ecom:titleTrail beginForm="mis_patientForm" mainMenu="Patient" title="Карты диспансерного наблюдения" />
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-        <msh:sideMenu title="Добавить" guid="fdcda21a-c1c6-4e0e-a74e-1bf843a8c1c8">
+        <msh:sideMenu title="Добавить">
              <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_dispensaryCard" name="Карту Д учета"  title="Добавить карту Д учета" roles="/Policy/Mis/Patient/Dispensary/Create" />
         </msh:sideMenu>
         <msh:sideMenu>

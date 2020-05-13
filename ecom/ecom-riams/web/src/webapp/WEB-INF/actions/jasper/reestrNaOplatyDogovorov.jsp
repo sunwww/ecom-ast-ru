@@ -14,8 +14,8 @@
         <msh:form action="/reestrNaOplatyDogovorov.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
         <msh:panel>
             <msh:row>
-                <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                <msh:textField property="dateBegin" label="Период с" />
+                <msh:textField property="dateEnd" label="по" />
             </msh:row>
             <msh:row>
                 <msh:autoComplete property="serviceStream" fieldColSpan="4" horizontalFill="true" label="Поток обслуживания" vocName="vocSstreamE2Entry"/>

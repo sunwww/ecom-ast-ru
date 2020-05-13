@@ -7,15 +7,15 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="helloItle-123" beginForm="mis_patientForm" mainMenu="Patient" title="Просмотр информации по посещениям"/>
+    <ecom:titleTrail beginForm="mis_patientForm" mainMenu="Patient" title="Просмотр информации по посещениям"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   <tags:style_currentMenu currentAction='inform'/>
-    <msh:sideMenu guid="helloSideMenu-123">
-      <msh:sideLink params="id" guid="Перейти к пациенту" action="/entityView-mis_patient" name="Пациент" />
-        <msh:sideLink styleId="inform" params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
-        <msh:sideLink  params="id" action="/js-smo_diagnosis-infoByPatient" name="Диагнозы" title="Показать все диагнозы" guid="68b36632-8d07-4a87-b469-6695694b2bab" roles="/Policy/Mis/MedCase/Diagnosis/View" />
-        <msh:sideLink  params="id" action="/js-smo_visitProtocol-infoByPatient" name="Заключения" title="Показать все заключения" guid="68b36632-8d07-4a87-b469-6695694b2bab" roles="/Policy/Mis/MedCase/Diagnosis/View" />
+    <msh:sideMenu>
+      <msh:sideLink params="id" action="/entityView-mis_patient" name="Пациент" />
+        <msh:sideLink styleId="inform" params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" roles="/Policy/Mis/MedCase/Spo/View" />
+        <msh:sideLink  params="id" action="/js-smo_diagnosis-infoByPatient" name="Диагнозы" title="Показать все диагнозы" roles="/Policy/Mis/MedCase/Diagnosis/View" />
+        <msh:sideLink  params="id" action="/js-smo_visitProtocol-infoByPatient" name="Заключения" title="Показать все заключения" roles="/Policy/Mis/MedCase/Diagnosis/View" />
         
     </msh:sideMenu>
   </tiles:put>
@@ -40,7 +40,7 @@ and mc.dateStart is not null and (mc.noActuality is null or mc.noActuality='0')
 order by mc.dateStart desc,mc.timeExecute desc
 "/>
 	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Visit/PrintAllInfoByPatient">
-    <msh:table name="listByPatient" viewUrl="entitySubclassView-mis_medCase.do?short=Short" action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="listByPatient" viewUrl="entitySubclassView-mis_medCase.do?short=Short" action="entitySubclassView-mis_medCase.do" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата приема" property="2" />
       <msh:tableColumn columnName="Специалист" property="3"/>
@@ -54,7 +54,7 @@ order by mc.dateStart desc,mc.timeExecute desc
     </msh:ifNotInRole>
     <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/PrintAllInfoByPatient">
     <msh:table  selection="multiply" 
-    name="listByPatient" viewUrl="entitySubclassView-mis_medCase.do?short=Short" action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    name="listByPatient" viewUrl="entitySubclassView-mis_medCase.do?short=Short" action="entitySubclassView-mis_medCase.do" idField="1">
                     <msh:tableNotEmpty>
                         <tr>
                             <th colspan='11'>

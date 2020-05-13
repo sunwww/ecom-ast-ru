@@ -70,7 +70,7 @@
               order by to_char(fp.startDate,'yyyy')"/>
         <msh:section title='Планы по годам'>
             <msh:table  name="entryList" action="e2_vmpFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Год" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="Год" property="1" />
             </msh:table>
         </msh:section>
         <%
@@ -133,13 +133,13 @@
               order by fp.startDate, cast(ksg.code as int), ml.name, vbt.name "/>
         <msh:section title='Результат поиска по ${param.year} ${param.month} году'>
             <msh:table  name="entryList" action="entityView-${formName}.do" idField="1" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Период" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Вид случая" property="9" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="КСГ" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Профиль" property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Отделение" property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Кол-во случаев" property="6" isCalcAmount="true" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Цена" property="7" isCalcAmount="true" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="Период" property="2" />
+                <msh:tableColumn columnName="Вид случая" property="9" />
+                <msh:tableColumn columnName="КСГ" property="3" />
+                <msh:tableColumn columnName="Профиль" property="4" />
+                <msh:tableColumn columnName="Отделение" property="5" />
+                <msh:tableColumn columnName="Кол-во случаев" property="6" isCalcAmount="true" />
+                <msh:tableColumn columnName="Цена" property="7" isCalcAmount="true" />
             </msh:table>
         </msh:section>
 
@@ -166,7 +166,7 @@
 
         <msh:section title='Финансовый план за ${param.year} ${param.month} '><input type="button" value="Просмор плана" onclick="addHref('reestr',1)">
             <msh:table  name="entryList" action="e2_vmpFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Период" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6"  />
+                <msh:tableColumn columnName="Период" property="1"  />
             </msh:table>
         </msh:section>
         <%

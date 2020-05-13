@@ -30,10 +30,10 @@
 	String typeDtype = ActionUtil.updateParameter("DiagnosisBySlo","typeDtype","3", request) ;
   	
   	%>
-    <msh:form action="/journal_visit_diagnosis.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/journal_visit_diagnosis.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
     
          <msh:row>
@@ -59,7 +59,7 @@
 	        	<input type="radio" name="typeAge" value="2" >  на конец периода
 	        </td>
         </msh:row>        
-     <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+     <msh:row>
         <td class="label" title="Поиск по МКБ (typeMKB)" colspan="1"><label for="typeMKbName" id="typeMkbLabel">МКБ:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeMKB" value="1">  перв. симв.
@@ -122,8 +122,8 @@
         	<msh:textField property="filterAdd" label="Фильтр МКБ" fieldColSpan="3" horizontalFill="true"/>
         	<td><i>Пример: <b>A0</b>, <b>N</b>, <b>A00-B87</b></i></td>
         </msh:row>        <msh:row>
-	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+	        <msh:textField property="dateBegin" label="Период с" />
+	        <msh:textField property="dateEnd" label="по" />
 			<td>
 	            <input type="submit" onclick="find()" value="Найти" />
 	          </td>
@@ -285,15 +285,15 @@
     <input type="submit" value="Печать"> 
     </form></msh:sectionTitle>
 	<msh:sectionContent>
-    <msh:table printToExcelButton="Сохранить в excel"  name="datelist" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table printToExcelButton="Сохранить в excel"  name="datelist" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn property="2" columnName="Дата приема"/>
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="МКБ 10" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Характер заболевания" property="6" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-      <msh:tableColumn columnName="Специалист" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Адрес" property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="МКБ 10" property="5" />
+      <msh:tableColumn columnName="Характер заболевания" property="6" />
+      <msh:tableColumn columnName="Специалист" property="7" />
+      <msh:tableColumn columnName="Адрес" property="8" />
     </msh:table>    
     </msh:sectionContent>		
     		</msh:section>

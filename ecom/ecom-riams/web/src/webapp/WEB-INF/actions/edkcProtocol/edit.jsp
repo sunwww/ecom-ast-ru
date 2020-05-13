@@ -13,7 +13,7 @@
         request.setAttribute("basis",basis);
     %>
     <tiles:put name='body' type='string'>
-        <msh:form action="entityParentSaveGoView-edkcProtocol.do" defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07"
+        <msh:form action="entityParentSaveGoView-edkcProtocol.do" defaultField="dateRegistration"
                   fileTransferSupports="true">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
@@ -51,7 +51,7 @@
                 </msh:row>
                 <msh:row>
                     <msh:textArea property="record" label="Текст:" size="100" rows="25"
-                                  fieldColSpan="8" guid="b6ehb-b971-441e-9a90-519c07"/>
+                                  fieldColSpan="8"/>
 
                 </msh:row>
                 <msh:ifFormTypeIsView formName="edkcProtocolForm">

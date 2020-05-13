@@ -41,8 +41,8 @@
           <msh:autoComplete vocName="vocWeekDay" property="${name}newWeekDay" label="День недели" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row>
-          <msh:textField property="${name}newDateFrom" label="Дата начала действия" guid="83a-c6c2-4221-bb72-7706" />
-          <msh:textField property="${name}newDateTo" label="Дата окончания действия" guid="73e32-d378-4206-896e-a6472dc7222f" />
+          <msh:textField property="${name}newDateFrom" label="Дата начала действия" />
+          <msh:textField property="${name}newDateTo" label="Дата окончания действия" />
         </msh:row>
     </msh:panel>
         <msh:row>

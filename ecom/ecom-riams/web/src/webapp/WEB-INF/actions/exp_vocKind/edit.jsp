@@ -11,16 +11,16 @@
     	  - Справочник видов оценок качества
     	  -->
     <msh:form  action="/entitySaveGoView-exp_vocKind.do" defaultField="name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:panel guid="panel">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:panel>
         <msh:row>
         	<msh:textField label="Код" property="code" />
         </msh:row>
         <msh:row>
         	<msh:textField label="Наименование" property="name" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
     
@@ -42,7 +42,7 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="exp_vocKindForm" />
+    <ecom:titleTrail mainMenu="Voc" beginForm="exp_vocKindForm" />
   </tiles:put>
 
   

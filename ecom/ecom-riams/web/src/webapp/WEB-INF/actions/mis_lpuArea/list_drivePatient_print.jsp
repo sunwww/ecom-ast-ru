@@ -44,7 +44,7 @@
    ${suicide} 
    ${group} ${sexT} ${ageFrom} ${ageTo}
    group by area.id 
-   order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+   order by p.lastname,p.firstname,p.middlename" />
         <msh:table viewUrl="entityShortView-psych_careCard.do" editUrl="entityParentEdit-psych_careCard.do" deleteUrl="entityParentDeleteGoParentView-psych_careCard.do" name="journal_ticket" action="entityView-psych_careCard.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>
 			<msh:tableColumn columnName="№карты" property="2"/>

@@ -276,7 +276,6 @@
 				<!--  IDE MODE -->
 				<msh:ifInIdeMode>
 						<li><a id='ideModeHideIdeTags' href='javascript:msh.idemode.hideIdeTags();'>Скрыть тэги</a></li>
-						<li><a href='javascript:msh.idemode.addGuids();'>Добавить GUIDs</a></li>
 						<li><a href='javascript:msh.idemode.addNewForm();'>Добавить форму</a></li>
 				</msh:ifInIdeMode>
            </ul>

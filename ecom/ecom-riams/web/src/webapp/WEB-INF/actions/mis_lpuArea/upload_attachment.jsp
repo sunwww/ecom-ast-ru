@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал прикрепленного населения"/>
+    <msh:title mainMenu="Journals" title="Журнал прикрепленного населения"/>
   </tiles:put>
 
   <tiles:put name="body" type="string">
@@ -27,8 +27,8 @@
 
   %>
   
-    <msh:form action="/mis_attachmentUpload.do" defaultField="lpuName" disableFormDataConfirm="true" method="POST" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f" fileTransferSupports="true">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/mis_attachmentUpload.do" defaultField="lpuName" disableFormDataConfirm="true" method="POST" fileTransferSupports="true">
+    <msh:panel>
       
        </msh:panel>
        <msh:panel colsWidth="fondTable">

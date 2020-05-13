@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Medcard" guid="4b11dc98-30fc-413e-8bc6-976f292e704f">Список талонов</msh:title>
+    <msh:title mainMenu="Medcard">Список талонов</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
 
@@ -73,14 +73,14 @@
 		    group by  t.id ,t.dateStart
 		    ,vwf.name,wp.lastname, wp.firstname,wp.middlename
 		    ,vr.name 
-		    order by t.dateStart" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-		    <msh:table name="list" action="entityParentEdit-poly_ticket.do" idField="1" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">
-		      <msh:tableColumn columnName="#" property="sn" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
-		      <msh:tableColumn columnName="№талона" property="1" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
-		      <msh:tableColumn columnName="Дата приема" property="2" guid="ee9ce01d-4924-4e76-bc93-3ecb73d8b18f" />
-		      <msh:tableColumn columnName="Специалист" property="3" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
-		      <msh:tableColumn columnName="Диагноз" property="4" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
-		      <msh:tableColumn columnName="Цель посещения" property="5" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
+		    order by t.dateStart" />
+		    <msh:table name="list" action="entityParentEdit-poly_ticket.do" idField="1" noDataMessage="Не найдено">
+		      <msh:tableColumn columnName="#" property="sn" />
+		      <msh:tableColumn columnName="№талона" property="1" />
+		      <msh:tableColumn columnName="Дата приема" property="2" />
+		      <msh:tableColumn columnName="Специалист" property="3" />
+		      <msh:tableColumn columnName="Диагноз" property="4" />
+		      <msh:tableColumn columnName="Цель посещения" property="5" />
 		    </msh:table>
   		</msh:sectionContent>
   	</msh:section>

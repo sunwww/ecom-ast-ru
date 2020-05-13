@@ -39,7 +39,7 @@
                     <msh:tableColumn columnName="Форма" property="3" />
                     <msh:tableColumn columnName="Цена за упаковку" property="4" />
                     <msh:tableColumn columnName="Кол-во упаковок" property="5" identificator="aeCount" />
-                    <msh:tableColumn columnName="Кол-во единиц" property="6" guid="count" identificator="aCount" />
+                    <msh:tableColumn columnName="Кол-во единиц" property="6" identificator="aCount" />
                     <msh:tableColumn columnName="Срок годности" property="7"/>
                     <msh:tableTextfield textfieldShortName="0" textfieldName="text" property="8"/>
                 </msh:table>

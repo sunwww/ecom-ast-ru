@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="mis_patientForm" mainMenu="Patient" title="Список всех СПО" guid="3c259ba8-b962-4333-9aab-3316f984fdde" />
+    <ecom:titleTrail beginForm="mis_patientForm" mainMenu="Patient" title="Список всех СПО" />
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
@@ -39,7 +39,7 @@
   	"/>
     <msh:table name="listSpo" action="entityView-smo_spo.do" viewUrl="entityView-smo_spo.do?short=Short" idField="1"
     >
-      <msh:tableColumn columnName="Номер" property="1" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
+      <msh:tableColumn columnName="Номер" property="1" />
       <msh:tableColumn columnName="Дата открытия" property="2"/>
       <msh:tableColumn columnName="Дата закрытия" property="3"/>
       <msh:tableColumn columnName="Длит-ть" property="4" />

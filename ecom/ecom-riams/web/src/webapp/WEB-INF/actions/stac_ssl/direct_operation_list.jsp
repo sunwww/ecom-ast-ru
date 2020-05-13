@@ -20,8 +20,8 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/direct_operation_list.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/direct_operation_list.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     <input type="hidden" value="printDeathList" name="m">
     <input type="hidden" value="HospitalReportService" name="s">
     <input type="hidden" value="" name="param">
@@ -33,8 +33,8 @@
         	<msh:autoComplete property="roomType" fieldColSpan="6" horizontalFill="true" size="50" label="Операционная" vocName="operationRoom"/>
         </msh:row>
         <msh:row>
-	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+	        <msh:textField property="dateBegin" label="Период с" />
+	        <msh:textField property="dateEnd" label="по" />
 		<td colspan="3">
             <input type="submit" onclick="find()" value="Найти" />
           </td>

@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name='title' type='string'>
-        <ecom:titleTrail beginForm="e2_entryListForm" mainMenu="Expert2" title="Записи по заполнению" guid="3c259ba8-b962-4333-9aab-3316f984fdde" />
+        <ecom:titleTrail beginForm="e2_entryListForm" mainMenu="Expert2" title="Записи по заполнению" />
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -141,19 +141,19 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         <msh:hideException>${entriesSql}
             <msh:section title='Результат поиска ${searchTitle}'>
                 <msh:table name="entries" printToExcelButton="в excel" action="entityParentView-e2_entry.do" idField="1" disableKeySupport="true" styleRow="12" cellFunction="true" openNewWindow="true">
-                    <msh:tableColumn columnName="№" property="sn" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="ИД" property="1" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Фамилия Имя Отчество" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="ИБ" property="7" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Отделение" property="5" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Дата начала"  property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Дата окончания"  property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="КСГ" property="6" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Диагноз" property="10" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Цена случая" property="8" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Профиль" property="9" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Результат" property="11" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Дефект" property="13" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="№" property="sn" />
+                    <msh:tableColumn columnName="ИД" property="1" />
+                    <msh:tableColumn columnName="Фамилия Имя Отчество" property="2" />
+                    <msh:tableColumn columnName="ИБ" property="7" />
+                    <msh:tableColumn columnName="Отделение" property="5" />
+                    <msh:tableColumn columnName="Дата начала"  property="3" />
+                    <msh:tableColumn columnName="Дата окончания"  property="4" />
+                    <msh:tableColumn columnName="КСГ" property="6" />
+                    <msh:tableColumn columnName="Диагноз" property="10" />
+                    <msh:tableColumn columnName="Цена случая" property="8" />
+                    <msh:tableColumn columnName="Профиль" property="9" />
+                    <msh:tableColumn columnName="Результат" property="11" />
+                    <msh:tableColumn columnName="Дефект" property="13" />
                 </msh:table>
             </msh:section>
         </msh:hideException>

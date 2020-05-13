@@ -9,17 +9,17 @@
     <!-- 
     	  - Проба
     	  -->
-    <msh:form guid="formHello" action="/entitySaveGoView-mis_workPlace.do" defaultField="hello" title="Трудовая книжка">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenParent" property="person" />
-      <msh:panel guid="panel">
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+    <msh:form action="/entitySaveGoView-mis_workPlace.do" defaultField="hello" title="Трудовая книжка">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="person" />
+      <msh:panel>
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="mis_workPlaceForm" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="mis_workPlaceForm" />
   </tiles:put>
 </tiles:insert>
 

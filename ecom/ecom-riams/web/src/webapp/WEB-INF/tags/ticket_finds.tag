@@ -20,7 +20,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 }
 </style>
 <msh:sideMenu></msh:sideMenu>
-<msh:sideMenu title="Поиск талонов" guid="fsdfsdf-dfsf">
+<msh:sideMenu title="Поиск талонов">
 	<msh:sideLink name="По номеру" action="/smo_goingToSmo.do" key="ALT+7" 
 		title="По талону" roles="/Policy/Poly/Ticket/View"
 		styleId="tickets"/>
@@ -62,7 +62,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </msh:sideMenu>
     <msh:sideMenu title="Поиск">
       <msh:sideLink key="CTRL+7" params="" action="/poly_medcards" name="⇧ Мед.карты" 
-      	styleId="medcardfind"
-      	guid="e9346501-00ea-4b6b-bd25-7fdab4803413" />
-      <msh:sideLink key="CTRL+8" params="" action="/mis_patients" name="⇧ Персоны" guid="e9346501-00ea-4b6b-bd25-7fdab4803413" />
+      	styleId="medcardfind" />
+      <msh:sideLink key="CTRL+8" params="" action="/mis_patients" name="⇧ Персоны" />
     </msh:sideMenu>

@@ -13,7 +13,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals">Экстренная хирургическая помощь и злокачественные новообразования</msh:title>
+    <msh:title mainMenu="Journals">Экстренная хирургическая помощь и злокачественные новообразования</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_report016"/>
@@ -31,13 +31,13 @@
   if (sh) {
 	 
   %>
-    <msh:form action="/stac_journal_surgical_help.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_journal_surgical_help.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="s" id="s" value="HospitalPrintReport" />
     <input type="hidden" name="m" id="m" value="printReport016" />
     <input type="hidden" name="id" id="id" value=""/>
     <msh:panel>
       <msh:row>
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
@@ -57,7 +57,7 @@
         	<input type="radio" name="typeView" value="3"  >  операции по поводу злокачественных новообразований
         </td>
        </msh:row>
-      <msh:row guid="Дата">
+      <msh:row>
         <msh:textField property="dateBegin" label="Дата начала" />
         <msh:textField property="dateEnd" label="Дата окончания" />
       </msh:row>

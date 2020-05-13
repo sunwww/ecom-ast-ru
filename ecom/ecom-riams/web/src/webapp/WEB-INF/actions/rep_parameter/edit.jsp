@@ -11,9 +11,9 @@
     	  - Справочник параметров для отчета
     	  -->
     <msh:form  action="/entitySaveGoView-rep_parameter.do" defaultField="name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:panel guid="panel">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:panel>
         <msh:row>
         	<msh:textField property="className" label="ОТЧЕТ" size="20"/>
         	<msh:textField label="Код строки" property="strCode"/>
@@ -25,7 +25,7 @@
         	<msh:textField label="Код" property="code" size="20"/>
         	<msh:autoComplete label="Пол" property="sex" vocName="vocSex"/>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="rep_parameterForm">
@@ -48,7 +48,7 @@ order by tpt.codeFrom
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="rep_parameterForm" />
+    <ecom:titleTrail mainMenu="Voc" beginForm="rep_parameterForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Параметр">

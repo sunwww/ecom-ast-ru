@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-        <ecom:titleTrail beginForm="mis_lpuForm" mainMenu="Lpu" title="Оснащение по стандарту" guid="e51b1bad-82ba-4906-9829-7d9148b1174a" />
+        <ecom:titleTrail beginForm="mis_lpuForm" mainMenu="Lpu" title="Оснащение по стандарту" />
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -15,7 +15,7 @@
         </msh:sideMenu>
         <msh:sideMenu title="Перейти">
 	      <msh:sideLink key="ALT+1" action="/entityParentList-mis_buildingPlace.do?id=-1" name="Список зданий" roles="/Policy/Mis/WorkPlace/View"/>
-        <msh:sideLink roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment" action="/entityList-mis_copyingEquipment" name="Копировальное оборудование" title="Показать сведения по копировальному оборудованию" guid="27fe8bc3-ae8d-4e8b-88f2-d23a337f614b" />
+        <msh:sideLink roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment" action="/entityList-mis_copyingEquipment" name="Копировальное оборудование" title="Показать сведения по копировальному оборудованию" />
         <msh:sideLink roles="/Policy/Mis/Voc/VocTypeEquip" params="id" action="/js-mis_lpu-addOtherEquipment" name="Добавить аренд. оборудование" title="Добавить аренд. оборудование" />
         </msh:sideMenu>
     </tiles:put>

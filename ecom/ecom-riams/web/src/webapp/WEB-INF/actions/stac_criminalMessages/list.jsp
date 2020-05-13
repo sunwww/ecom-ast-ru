@@ -6,15 +6,15 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Сообщения в полицию" guid="7c2f862e-0345-431a-a391-39b33538ad1b" />
+    <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Сообщения в полицию" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Дополнительно" guid="0ddb2181-a1e1-4f7c-93f6-aa77081d080b">
-      <msh:sideLink action="/mis_patients" name="Новая госпитализация" guid="78548581-88f4-46e3-bad5-ec71ea02dc72" />
+    <msh:sideMenu title="Дополнительно">
+      <msh:sideLink action="/mis_patients" name="Новая госпитализация" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View" guid="2ccd6a7e-21cc-45b9-8e22-6f0b911309b1">
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View">
     <msh:section>
     <msh:sectionTitle>Список сообщений по случаю</msh:sectionTitle>
     <msh:sectionContent>
@@ -48,7 +48,7 @@
     where pm.dtype='CriminalPhoneMessage'
     and pm.medCase_id=${param.id}
     order by pm.phoneDate
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="journal_militia"
     viewUrl="entityShortView-stac_criminalMessages.do" 
      action="entityParentView-stac_criminalMessages.do" idField="1" >
@@ -67,8 +67,8 @@
     </msh:ifInRole>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Добавить" guid="6372e109-9e1b-49dc-840b-9b38f524efeb">
-      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_criminalMessages" name="Сообщение" title="Добавить сообщение в полицию" guid="436bbb7b-497c-4b10-ba0e-c5601675a713" roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Create" />
+    <msh:sideMenu title="Добавить">
+      <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_criminalMessages" name="Сообщение" title="Добавить сообщение в полицию" roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Create" />
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

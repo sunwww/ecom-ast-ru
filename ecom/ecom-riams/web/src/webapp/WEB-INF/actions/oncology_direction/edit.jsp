@@ -20,22 +20,22 @@
     </tiles:put>
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="oncology_directionForm" />
+        <ecom:titleTrail mainMenu="Patient" beginForm="oncology_directionForm" />
     </tiles:put>
 
     <tiles:put name="body" type="string">
         <msh:form action="/entitySaveGoView-oncology_direction.do" defaultField="hello" title="Онкологическое направление">
             <div class="borderedDiv" id="oncologyCase">
-            <msh:hidden guid="hiddenId" property="id" />
-            <msh:hidden guid="hiddenSaveType" property="saveType" />
-            <msh:hidden guid="hiddenParent" property="oncologyCase" />
+            <msh:hidden property="id" />
+            <msh:hidden property="saveType" />
+            <msh:hidden property="oncologyCase" />
             <msh:textField property="date" label="Дата направления"/><br>
             <msh:autoComplete  property="typeDirection" label="Вид направления" vocName="vocOncologyTypeDirection" fieldColSpan="3" horizontalFill="true" />
             <msh:autoComplete  property="methodDiagTreat" label="Метод диагностического лечения" vocName="vocOncologyMethodDiagTreat" fieldColSpan="3" horizontalFill="true" />
             <msh:autoComplete  property="medService" label="Мед услуга" vocName="vocMedService" fieldColSpan="3" horizontalFill="true" />
             </div>
             <br>
-            <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+            <msh:submitCancelButtonsRow colSpan="4" />
         </msh:form>
     </tiles:put>
 
@@ -86,9 +86,9 @@
     </tiles:put>
 
     <tiles:put name="side" type="string">
-        <msh:sideMenu guid="sideMenu-123" title="Действия">
-            <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-oncology_direction" name="Изменить" roles="/Policy/Mis/Oncology/Case/Delete" />
-            <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-oncology_direction" name="Удалить" roles="/Policy/Mis/Oncology/Case/Delete" />
+        <msh:sideMenu title="Действия">
+            <msh:sideLink key="ALT+2" params="id" action="/entityEdit-oncology_direction" name="Изменить" roles="/Policy/Mis/Oncology/Case/Delete" />
+            <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-oncology_direction" name="Удалить" roles="/Policy/Mis/Oncology/Case/Delete" />
         </msh:sideMenu>
     </tiles:put>
 </tiles:insert>

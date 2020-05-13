@@ -16,7 +16,7 @@
 
             <msh:panel>
                 <msh:row>
-                    <msh:textField guid='name123' property="name" label="Название" fieldColSpan="3" horizontalFill="true"/>
+                    <msh:textField property="name" label="Название" fieldColSpan="3" horizontalFill="true"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="sn" label="Порядковый номер" fieldColSpan="1"/>

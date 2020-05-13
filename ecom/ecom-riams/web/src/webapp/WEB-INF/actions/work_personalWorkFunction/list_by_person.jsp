@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="mis_patientForm" mainMenu="Patient" guid="14568ace-1821-4897-841f-b9b42d93026d" title="Список рабочих функций по персоне" />
+    <ecom:titleTrail beginForm="mis_patientForm" mainMenu="Patient" title="Список рабочих функций по персоне" />
   </tiles:put>
   <tiles:put name="body" type="string">
   	<ecom:webQuery name="list" nativeSql="
@@ -21,14 +21,14 @@
   		left join SecUser su on su.id=wf.secUser_id
   		where w.person_id=${param.id}
   	"/>
-    <msh:table name="list" styleRow="7" action="entityView-work_personalWorkFunction.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-      <msh:tableColumn columnName="ИД" property="1" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-      <msh:tableColumn columnName="Код специалиста" property="5" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-      <msh:tableColumn columnName="Функция" property="2" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn columnName="Подразделение" property="4" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-      <msh:tableColumn columnName="Групповая раб. функция" property="6" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-      <msh:tableColumn columnName="Вход в систему" property="3" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+    <msh:table name="list" styleRow="7" action="entityView-work_personalWorkFunction.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="ИД" property="1" />
+      <msh:tableColumn columnName="Код специалиста" property="5" />
+      <msh:tableColumn columnName="Функция" property="2" />
+      <msh:tableColumn columnName="Подразделение" property="4" />
+      <msh:tableColumn columnName="Групповая раб. функция" property="6" />
+      <msh:tableColumn columnName="Вход в систему" property="3" />
     </msh:table>
   </tiles:put>
 </tiles:insert>

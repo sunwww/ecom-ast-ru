@@ -5,18 +5,18 @@
 <tiles:insert page="/WEB-INF/tiles/graphLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Температурные листы" guid="c951cf449-0ed2-489d-9163-fa3" />
+    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Температурные листы" />
 		<div class='titleTrail'>
 			<span> Температурный лист </span>
 		</div>    
     </tiles:put>
 
     <tiles:put name='side' type='string'>
-    	<msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc9" title="Добавить">
-    	    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист" params="id" action="/entityParentPrepareCreate-stac_temperatureCurve" title="Добавить параметр" guid="df23-45a-43cc-826d-5hfd" />
+    	<msh:sideMenu title="Добавить">
+    	    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист" params="id" action="/entityParentPrepareCreate-stac_temperatureCurve" title="Добавить параметр" />
     	</msh:sideMenu>
-        <msh:sideMenu title="Просмотр" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
-	        <msh:sideLink name="Список параметров" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные параметры" guid="df23-45ca-43cc-826d-5hf5dd" params="id" />
+        <msh:sideMenu title="Просмотр">
+	        <msh:sideLink name="Список параметров" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные параметры" params="id" />
         </msh:sideMenu>
         <msh:sideMenu title="Печать" >
         	<msh:sideLink params="id" action="/js-stac_temperatureCurve-printgraph" name="Печать" title="температурного листа"/>

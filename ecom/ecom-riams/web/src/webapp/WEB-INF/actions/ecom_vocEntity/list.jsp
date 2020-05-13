@@ -23,7 +23,7 @@
             <msh:tableColumn columnName="<a href='js-ecom_vocEntity-list.do?sort=classname'>Класс</a>" property="classname" />
             <msh:tableColumn columnName="<a href='js-ecom_vocEntity-list.do?sort=count'>Количество</a>" property="count" cssClass="countColumn"/>
         </msh:table>
-        <msh:tableNotEmpty name="list" guid="189caa95-f200-4b88-ae0f-5669effa19ce">
+        <msh:tableNotEmpty name="list">
       <div class="h3">
         <h3>Легенда</h3>
       </div>

@@ -5,8 +5,8 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
  <tiles:put name="body" type="string">
-  <msh:form guid="formHello" action="/eln_count.do" defaultField="hello">
-      <msh:panel guid="panel">
+  <msh:form action="/eln_count.do" defaultField="hello">
+      <msh:panel>
       <msh:row>
        <td>
             Период

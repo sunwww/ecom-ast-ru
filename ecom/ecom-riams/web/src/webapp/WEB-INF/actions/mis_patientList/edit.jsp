@@ -9,9 +9,9 @@
     <!-- 
     	  - Проба
     	  -->
-    <msh:form guid="formHello" action="/entitySaveGoView-mis_patientList.do" defaultField="name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:panel guid="panel">
+    <msh:form action="/entitySaveGoView-mis_patientList.do" defaultField="name">
+      <msh:hidden property="id" />
+      <msh:panel>
          <msh:hidden property="saveType"/>
       <msh:row>
       <msh:autoComplete property="type" vocName="patientListType" fieldColSpan="3" horizontalFill="true"/>
@@ -19,7 +19,7 @@
         <msh:row>
           <msh:textField property="name" label="Название списка" />
         </msh:row>
-        <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
+        <msh:row>
           <msh:textField property="colorName" label="Цвет фона" size="100" />
             </msh:row>
           <msh:row>
@@ -29,13 +29,13 @@
         	<msh:checkBox property="isViewWhenSeaching" label="Отображать в поиске"/>
         	<msh:checkBox property="isViewInWebTrail" label="Отображать в WebTrail"/>
         </msh:row>
-        <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
+        <msh:row>
           <msh:textField property="message" label="Сообщение" size="50" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
-       <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+       <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
-    <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="mis_patientListForm">
+    <msh:ifFormTypeIsView formName="mis_patientListForm">
         <msh:section title="Пациенты в списке" >
     <ecom:webQuery name="patients" nativeSql="select plr.id, pat.patientinfo, plr.message 
      from patientlistrecord plr
@@ -46,8 +46,8 @@
 		          <msh:table name="patients" action="entityView-mis_patientListRecord.do" idField="1" 
 			          
 			         >
-		            <msh:tableColumn columnName="Пациент" property="2" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
-		            <msh:tableColumn columnName="Сообщение" property="3" guid="6d12646caf2-c76d-4e99-a8d2-afc6ef8bcdf6" />
+		            <msh:tableColumn columnName="Пациент" property="2" />
+		            <msh:tableColumn columnName="Сообщение" property="3" />
 		          </msh:table>
         </msh:section>
     </msh:ifFormTypeIsView>
@@ -56,7 +56,7 @@
    <ecom:titleTrail mainMenu="Voc" beginForm="mis_patientListForm"/>
    </tiles:put>
   <tiles:put name="side" type="string">
- <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="mis_patientListForm">
+ <msh:ifFormTypeIsView formName="mis_patientListForm">
    <msh:sideMenu>
             <msh:sideLink key='ALT+E' params="id" action="/entityEdit-mis_patientList" name="Изменить" />
             <msh:sideLink key='ALT+DEL' params="id" action="/entityDelete-mis_patientList" name="Удалить" confirm="Удалить список?" />

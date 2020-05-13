@@ -18,7 +18,7 @@
         String typeViewBr = ActionUtil.updateParameter("BrList","typeViewBr","1", request) ;
     %>
     <tiles:put name="title" type="string">
-        <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Отчет по браслетам пациентов"></msh:title>
+        <msh:title mainMenu="StacJournal" title="Отчет по браслетам пациентов"></msh:title>
     </tiles:put>
     <tiles:put name="body" type="string">
         <msh:form action="/journal_bracelets.do" defaultField="department" method="GET">

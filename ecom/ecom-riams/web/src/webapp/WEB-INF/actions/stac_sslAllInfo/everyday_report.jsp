@@ -14,7 +14,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Ежедневный отчет по стационару</msh:title>
+    <msh:title mainMenu="StacJournal">Ежедневный отчет по стационару</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_everyday"/>
@@ -69,7 +69,7 @@
 		
     
   	%>
-    <msh:form action="/stac_everyday_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_everyday_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
     <input type="hidden" name="id" id="id" value=""/>
@@ -77,11 +77,11 @@
         <input type='hidden' id="sqlText2" name="sqlText2">
         <input type='hidden' id="infoText1" name="infoText1">
         <input type='hidden' id="infoText2" name="infoText2">
-      <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
       	<msh:autoComplete property="pigeonHole" fieldColSpan="3" 
       		horizontalFill="true" label="Приемник"
       		vocName="vocPigeonHole"
@@ -117,8 +117,8 @@
 	        </td>
         </msh:row>
          
-        <msh:row guid="Дата">
-        <msh:textField fieldColSpan="2" property="dateBegin" label="Дата" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+        <msh:row>
+        <msh:textField fieldColSpan="2" property="dateBegin" label="Дата" />
       </msh:row>
       <msh:row>
         <msh:autoComplete property="serviceStream" fieldColSpan="4"
@@ -546,19 +546,19 @@ ${pigeonHoleSql}
  ${serviceStreamSql} 
 group by vph.id,vph.name
 order by vph.name
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
       
     <msh:table cellFunction="true" name="journal_priem" 
-    action="stac_everyday_report.do?${paramHref}&dtype=Hosp&dateinfo=dateCurrent&denied=0" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Приемник" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во новорожд." addParam="&age=0" property="4" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во детей" addParam="&age=0-14" property="5" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во с.ж." addParam="&patient=village" property="6" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во гор." addParam="&patient=city" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иног." addParam="&patient=inog" property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иноcт." addParam="&patient=inostr" property="9" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+    action="stac_everyday_report.do?${paramHref}&dtype=Hosp&dateinfo=dateCurrent&denied=0" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Приемник" property="2" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="3" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во новорожд." addParam="&age=0" property="4" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во детей" addParam="&age=0-14" property="5" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во с.ж." addParam="&patient=village" property="6" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во гор." addParam="&patient=city" property="7" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иног." addParam="&patient=inog" property="8" />
+      <msh:tableColumn isCalcAmount="true" columnName="Кол-во иноcт." addParam="&patient=inostr" property="9" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -614,14 +614,14 @@ and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality
     	 ${serviceStreamSql} 
     	group by vph.id,vph.name
     	order by vph.name
-    	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    	      " />
     	          <msh:section>
     	    <msh:sectionTitle>Список, поступивших пациентов по приемному отделению</msh:sectionTitle>
     	    <msh:sectionContent>
     	    <msh:table cellFunction="true" name="journal_priem" 
     	    action="stac_everyday_report.do?${paramHref}&dtype=Hosp&dateinfo=dateStart" idField="1">
     	    
-    	    <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
+    	    <msh:tableNotEmpty>
               <tr>
                 <th colspan="1" />
                 <th colspan="1" />
@@ -647,7 +647,7 @@ and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality
                 
               </tr>
             </msh:tableNotEmpty>
-    	      <msh:tableColumn columnName="#" property="sn" addParam="" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
+    	      <msh:tableColumn columnName="#" property="sn" addParam="" />
     	      <msh:tableColumn columnName="Приемник" addParam="" property="2"/>
     	      <msh:tableColumn isCalcAmount="true" columnName="Всего" addParam="" property="3"/>
     	      <msh:tableColumn isCalcAmount="true" columnName="всего" addParam="&emergency=1" property="4" />
@@ -698,7 +698,7 @@ and ( sls.noActuality is null or sls.noActuality='0')
     	${serviceStreamSql}
     	group by vph.id,vph.name
     	order by vph.name
-    	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    	      " />
     	      ${journal_priem_sql}
     	    <msh:table cellFunction="true" name="journal_priem" action="stac_everyday_report.do?${paramHref}&dtype=Hosp&dateinfo=dateFinish" idField="1">
     	      <msh:tableColumn columnName="#" property="sn" addParam="&dateinfo=dateFinish"/>
@@ -833,7 +833,7 @@ and slo.deniedHospitalizating_id is null
 ${pigeonHoleSql} ${departmentSql} ${serviceStreamSql} 
 group by ml.id,ml.name
 order by ml.name
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
       
     		<%
     		if (typeView.equals("3")) {
@@ -989,7 +989,7 @@ and ${periodSmo}
 
 group by vn.id,vn.name
 order by vn.name
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
       
     <msh:table cellFunction="true" name="journal_priem" 
      action="stac_everyday_report.do?${paramHref}" idField="1">

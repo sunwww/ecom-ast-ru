@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Случай смерти" guid="c951c449-0ed2-489d-9163-da1263effaa3" />
+        <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Случай смерти" />
     </tiles:put>
     <tiles:put name="side" type="string" >
         <msh:sideMenu title="Дополнительно">
@@ -19,7 +19,7 @@
         where c.medcase_id=${param.id}" />
         <msh:section title="Критерии" createUrl="entityParentPrepareCreate-stac_omcCriterion.do?id=${param.id}">
             <msh:table name="listCrit" action="entityParentView-stac_omcCriterion.do" idField="1" >
-                <msh:tableColumn columnName="Название" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+                <msh:tableColumn columnName="Название" property="2" />
             </msh:table>
             </msh:section>
 

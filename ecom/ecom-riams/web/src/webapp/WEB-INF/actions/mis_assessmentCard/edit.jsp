@@ -10,43 +10,43 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form guid="formHello" action="/entityParentSaveGoView-mis_assessmentCard.do" defaultField="template">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenParent" property="patient" />
-      <msh:hidden guid="hidden" property="params" />
-      <msh:hidden guid="hidden" property="medcase" />
-      <msh:panel guid="panel">
+    <msh:form action="/entityParentSaveGoView-mis_assessmentCard.do" defaultField="template">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="patient" />
+      <msh:hidden property="params" />
+      <msh:hidden property="medcase" />
+      <msh:panel>
       
-        <msh:row guid="row1">
-          <msh:textField property="startDate" label="Дата приема" size="10" guid="a5-4caf-4e14-aa70-287c" />
+        <msh:row>
+          <msh:textField property="startDate" label="Дата приема" size="10" />
         </msh:row>
       
       
         <msh:row >
-          <msh:autoComplete vocName="vocAssessmentCard" property="template" label="Тип карты" guid="a5-4caf-4e14-aa70-287c" size='50' horizontalFill="true" fieldColSpan="3" />
+          <msh:autoComplete vocName="vocAssessmentCard" property="template" label="Тип карты" size='50' horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         
       
-        <msh:row guid="f53-2cae-4795-93e8-9cd1">
-          <msh:textField property="ballSum" label="Сумма баллов" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
+        <msh:row>
+          <msh:textField property="ballSum" label="Сумма баллов" size="20" fieldColSpan="3"  />
         </msh:row>
-                <msh:row guid="f53-2cae-4795-93e8-9cd1">
-          <msh:textArea property="comment" label="Описание" fieldColSpan="3" size='50' guid="e4d1b-8802-467d-b205-70" />
+                <msh:row>
+          <msh:textArea property="comment" label="Описание" fieldColSpan="3" size='50' />
         </msh:row>
         <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
         <msh:row>
-        <msh:textField property="createUsername" label="Пользователь" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
-        <msh:textField property="createDate" label="Дата создания" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
+        <msh:textField property="createUsername" label="Пользователь" size="20" fieldColSpan="3"  />
+        <msh:textField property="createDate" label="Дата создания" size="20" fieldColSpan="3"  />
         </msh:row>
         <msh:row>
-        <msh:autoComplete property="workFunction" label="Создал" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
+        <msh:autoComplete property="workFunction" label="Создал" size="100" vocName="workFunction" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
         </msh:row>
         </msh:ifFormTypeIsView>
       
-        <msh:row guid="855de982-5baf-46f1-9f8b-f48" />
+        <msh:row />
           
-        <msh:submitCancelButtonsRow functionSubmit="saveIntakeInfo();" guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow functionSubmit="saveIntakeInfo();" colSpan="4" />
       </msh:panel>
       <div id='dataFieldTitle'> </div>
         <div id='dataField'> </div>
@@ -159,18 +159,18 @@
     </form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Lpu" beginForm="mis_assessmentCardForm" />
+    <ecom:titleTrail mainMenu="Lpu" beginForm="mis_assessmentCardForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
   <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
-    <msh:sideMenu guid="sideMenu-123">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/AssessmentCard/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/AssessmentCard/View" />
-      <msh:sideLink guid="sideLinkEdit" action="/javascript:goBackSloOrVisit()" name="СЛС/СЛО/Визит/Пациент" roles="/Policy/Mis/AssessmentCard/View" />
+    <msh:sideMenu>
+      <msh:sideLink key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/AssessmentCard/Edit" />
+      <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
+      <msh:sideLink key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/AssessmentCard/View" />
+      <msh:sideLink action="/javascript:goBackSloOrVisit()" name="СЛС/СЛО/Визит/Пациент" roles="/Policy/Mis/AssessmentCard/View" />
     </msh:sideMenu>
     
-    <msh:sideMenu title="Перейти" guid="sideMenu-123">
+    <msh:sideMenu title="Перейти">
       
     </msh:sideMenu>
     </msh:ifFormTypeIsView>

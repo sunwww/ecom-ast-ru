@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Переводы по отделения"/>
+    <msh:title mainMenu="Journals" title="Переводы по отделения"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   	 <tags:stac_journal currentAction="transfer"/>
@@ -164,7 +164,7 @@ and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
  ${viewSql} 
 ${filterByCodeSql} ${filterByNameSql} ${sloPrevSql} ${daysSql}
 order by pat.lastname
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-stac_journal_transfer_department.do" method="post" target="_blank">
@@ -259,7 +259,7 @@ order by pat.lastname
             else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)
           end
     		order by ml.name
-    		    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    		    " />
     		    <msh:sectionTitle>
     		    
     		    <form action="print-stac_journal_transfer_department.do" method="post" target="_blank">
@@ -324,7 +324,7 @@ ${filterByCodeSql} ${filterByNameSql}
  ${sloPrevSql} ${daysSql}
 and slo.prevMedCase_id is null
 order by pat.lastname
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-contract_analisis_PMservices.do" method="post" target="_blank">
@@ -415,7 +415,7 @@ group by ml.id,ml1.id,ml2.id
             else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)
           end
 order by ml.name
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+" />
 <msh:sectionTitle>
 
 <form action="print-.do" method="post" target="_blank">

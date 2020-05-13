@@ -56,9 +56,9 @@
             <msh:tableNotEmpty name="policies">
               <msh:section title="Список вложенных политик">
                 <msh:table name="policies" action="entityParentView-secpolicy.do" idField="id">
-                    <msh:tableColumn columnName="Ключ" property="key"  guid="dsadad"/>
-                    <msh:tableColumn columnName="Название" property="name"  guid="fdsfsf"/>
-                    <msh:tableColumn columnName="Комментарий" property="comment"  guid="fdsgggs"/>
+                    <msh:tableColumn columnName="Ключ" property="key" />
+                    <msh:tableColumn columnName="Название" property="name" />
+                    <msh:tableColumn columnName="Комментарий" property="comment" />
                 </msh:table>
               </msh:section>
             </msh:tableNotEmpty>

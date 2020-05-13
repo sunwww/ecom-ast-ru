@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <msh:title guid="helloItle-123" mainMenu="StacJournal" title="" />
+        <msh:title mainMenu="StacJournal" title="" />
     </tiles:put>
     <tiles:put name="side" type="string">
 
@@ -36,11 +36,11 @@
       "/>
                 <msh:table name="list" action="entityView-stac_planOphtHospital.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn" />
-                    <msh:tableColumn columnName="Дата ОКТ" property="2" guid="5905cf65-048f-4ce1-8301-5aef1e9ac80e" />
-                    <msh:tableColumn columnName="Глаз" property="3" guid="2bab495e-eadb-4cd9-b2e9-140bf7a5f43f" />
-                    <msh:tableColumn columnName="Замечания" property="4" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-                    <msh:tableColumn columnName="Создал" property="5" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-                    <msh:tableColumn columnName="Дата и время создания" property="6" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
+                    <msh:tableColumn columnName="Дата ОКТ" property="2" />
+                    <msh:tableColumn columnName="Глаз" property="3" />
+                    <msh:tableColumn columnName="Замечания" property="4" />
+                    <msh:tableColumn columnName="Создал" property="5" />
+                    <msh:tableColumn columnName="Дата и время создания" property="6" />
                 </msh:table>
             </msh:sectionContent>
         </msh:section>

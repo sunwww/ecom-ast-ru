@@ -15,13 +15,13 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
 
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  региональные
@@ -34,8 +34,8 @@
         </td>
         </msh:row>
         <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
         </msh:row>
         <msh:row>
         <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
@@ -84,7 +84,7 @@
     where m.DTYPE='DepartmentMedCase' and ${dateT} between cast('${param.dateBegin}' as date)  and cast('${param.dateEnd}' as date) ${add} 
     
     group by m.department_id,m.bedfund_id,vbst.id
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
         <msh:table printToExcelButton="Сохранить в excel" name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2"/>

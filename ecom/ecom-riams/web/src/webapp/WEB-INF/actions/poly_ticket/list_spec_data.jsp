@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Medcard" guid="4b11dc98-30fc-413e-8bc6-976f292e704f">
+    <msh:title mainMenu="Medcard">
    	Список талонов за ${date} по специалисту ${specInfo}
     </msh:title>
   </tiles:put>
@@ -34,37 +34,37 @@
     where t.date  =to_date('${date}','dd.mm.yyyy')  
     and t.status='2'  and t.workFunction_id='${spec}' ${add} 
     
-       order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+       order by p.lastname,p.firstname,p.middlename" />
   
 	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
     <msh:table name="journal_priem" viewUrl="entityShortView-poly_ticket.do" 
     editUrl="entityParentEdit-poly_ticket.do"
-     action="entityParentEdit-poly_ticket.do" idField="1" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="№мед.карты" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="ФИО пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />      
-      <msh:tableColumn columnName="№талона" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата приема" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Специалист" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Диагноз" property="8" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Цель посещения" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Беседа с родс." property="10" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+     action="entityParentEdit-poly_ticket.do" idField="1" noDataMessage="Не найдено">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="№мед.карты" property="2" />
+      <msh:tableColumn columnName="ФИО пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="№талона" property="5" />
+      <msh:tableColumn columnName="Дата приема" property="6" />
+      <msh:tableColumn columnName="Специалист" property="7" />
+      <msh:tableColumn columnName="Диагноз" property="8" />
+      <msh:tableColumn columnName="Цель посещения" property="9" />
+      <msh:tableColumn columnName="Беседа с родс." property="10" />
     </msh:table>
 	</msh:ifInRole>
 	<msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
     <msh:table name="journal_priem" viewUrl="entityShortView-poly_ticket.do" 
     editUrl="entityParentEdit-poly_ticket.do"
-     action="entityParentEdit-poly_ticket.do" idField="1" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="№мед.карты" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="ФИО пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />      
-      <msh:tableColumn columnName="№талона" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата приема" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Специалист" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Диагноз" property="8" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Цель посещения" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+     action="entityParentEdit-poly_ticket.do" idField="1" noDataMessage="Не найдено">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="№мед.карты" property="2" />
+      <msh:tableColumn columnName="ФИО пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="№талона" property="5" />
+      <msh:tableColumn columnName="Дата приема" property="6" />
+      <msh:tableColumn columnName="Специалист" property="7" />
+      <msh:tableColumn columnName="Диагноз" property="8" />
+      <msh:tableColumn columnName="Цель посещения" property="9" />
     </msh:table>
 	</msh:ifNotInRole>
   </tiles:put>

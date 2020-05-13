@@ -16,7 +16,7 @@
             String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
             request.setAttribute("cntDays", cntDays) ;
         %>
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал по пациентам, у которых не заполнялись данные более ${cntDays} дней </msh:title>
+    <msh:title mainMenu="StacJournal">Журнал по пациентам, у которых не заполнялись данные более ${cntDays} дней </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
       <tags:stac_journal currentAction="stac_journalByCurator"/>
@@ -131,7 +131,7 @@ and ${equalsSql }
 ))>${cntDays}
 
     group by ml.id,ml.name order by ml.name
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist"
     viewUrl="stac_report_cases_not_filled.do?short=Short&typeIsOtherDocFromLpu=${param.typeIsOtherDocFromLpu}"
     action="stac_report_cases_not_filled.do?typeIsOtherDocFromLpu=${param.typeIsOtherDocFromLpu}" idField="1">
@@ -167,7 +167,7 @@ and ${equalsSql}
 
 group by owf.id,owp.lastname,owp.middlename,owp.firstname
 order by owp.lastname,owp.middlename,owp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist"
     viewUrl="stac_report_cases_not_filled.do?short=Short&typeIsOtherDocFromLpu=${param.typeIsOtherDocFromLpu}"
     action="stac_report_cases_not_filled.do?typeIsOtherDocFromLpu=${param.typeIsOtherDocFromLpu}" idField="1">
@@ -224,15 +224,15 @@ and ${equalsSql}
     ,bf.addCaseDuration,slo.dateStart,sls.dateStart
 
     order by pat.lastname,pat.firstname,pat.middlename
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist"
     viewUrl="entityShortView-stac_slo.do"
-    action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-stac_slo.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Стат.карта" property="5" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
       <msh:tableColumn columnName="Кол-во к.дней СЛС" property="7"/>
       <msh:tableColumn columnName="Операции" property="6"/>
       <msh:tableColumn columnName="Кол-во к.дней СЛО" property="8"/>

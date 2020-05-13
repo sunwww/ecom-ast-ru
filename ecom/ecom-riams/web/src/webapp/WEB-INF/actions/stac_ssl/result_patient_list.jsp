@@ -19,8 +19,8 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/stac_resultPatient_list.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/stac_resultPatient_list.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     <input type="hidden" value="printDeathList" name="m">
     <input type="hidden" value="HospitalReportService" name="s">
     <msh:hidden property="param"/>
@@ -55,7 +55,7 @@
       <msh:row>
         <msh:separator label="Основные параметры" colSpan="7"/>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="1">  поступления
@@ -64,7 +64,7 @@
         	<input type="radio" name="typeDate" value="2">  выписки
         </td>
         </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  иностранцы
@@ -104,8 +104,8 @@
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
         </msh:row>
         <msh:row>
-	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+	        <msh:textField property="dateBegin" label="Период с" />
+	        <msh:textField property="dateEnd" label="по" />
 		<td>
             <input type="submit" onclick="find()" value="Найти" />
             <input type="submit" onclick="print()" value="Печать" />
@@ -213,7 +213,7 @@ then -1 else 0 end) as age
     ,d.name,d.isNoOmc,pd.name, oml.name,vof.name,vhtS.name
     ${hav} ${addOperation}
     order by pat.lastname,pat.firstname,pat.middlename
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
         <msh:table name="journal_list" printToExcelButton="Сохранить в excel"
         viewUrl="entitySubclassShortView-mis_medCase.do"
          action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
@@ -284,7 +284,7 @@ then -1 else 0 end) as age
     group by d.id,d.name,vhr.id,vhr.name
     order by d.name,vhr.name
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
         <msh:table name="journal_list_swod"  printToExcelButton="Сохранить в excel"
          action="stac_resultPatient_list.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
@@ -356,7 +356,7 @@ then -1 else 0 end) as age
     order by case when d.isNoOmc='1' and pd.id is not null then pd.name else d.name end
     ,vhr.name
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
         <msh:table name="journal_list_swod"  printToExcelButton="Сохранить в excel"
          action="stac_resultPatient_list.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
@@ -417,7 +417,7 @@ then -1 else 0 end) as age
     group by vhr.id,vhr.name
 
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
         <msh:table name="journal_list_swod_all"  printToExcelButton="Сохранить в excel"
          action="stac_resultPatient_list.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Результат госпитализации" property="2"/>

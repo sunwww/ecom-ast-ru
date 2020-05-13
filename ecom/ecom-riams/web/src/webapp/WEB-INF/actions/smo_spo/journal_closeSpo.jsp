@@ -26,13 +26,13 @@
   String shortParam = request.getParameter("short") ;
   if (shortParam==null || !shortParam.equals("Short")) {
   %>
-    <msh:form action="/smo_journal_closeSpo.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/smo_journal_closeSpo.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
  
-     <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+     <msh:row>
         <td class="label" title="Просмотр (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отчет:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="1">  2 и более случаев
@@ -44,7 +44,7 @@
         	<input type="radio" name="typeView" value="3">  реестр СПО
         </td>
         </msh:row>
-     <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+     <msh:row>
         <td class="label" title="Просмотр СПО (typeCntVisit)" colspan="1"><label for="typeCntVisitName" id="typeCntVisitLabel">Кол-во посещ. в СПО:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeCntVisit" value="1">  2 и более посещ.
@@ -66,8 +66,8 @@
         	<msh:autoComplete property="serviceStream" fieldColSpan="5" label="Поток обслуживания" horizontalFill="true" vocName="vocServiceStream"/>
         </msh:row>
         <msh:row>
-	        <msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-	        <msh:textField property="finishDate" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+	        <msh:textField property="beginDate" label="Период с" />
+	        <msh:textField property="finishDate" label="по" />
 			<td>
 	            <input type="submit" onclick="find()" value="Найти" />
 	          </td>
@@ -238,7 +238,7 @@ and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${
  ${additionWhereSql}  ${typeCntVisitSql}
 group by owf.id,ovwf.name,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" nameFldSql="datelist_sql" />
+    " nameFldSql="datelist_sql" />
     <msh:table name="datelist" 
     viewUrl="smo_journal_closeSpo.do?short=Short&typeView=${typeView}&serviceStream=${param.serviceStream}&beginDate=${beginDate}&finishDate=${finishDate}"
     action="smo_journal_closeSpo.do?typeView=${typeView}&serviceStream=${param.serviceStream}&beginDate=${beginDate}&finishDate=${finishDate}" idField="1">
@@ -288,15 +288,15 @@ select spo.id,spo.dateStart,spo.dateFinish
     group by  spo.id,spo.dateStart,spo.dateFinish,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday
     order by pat.lastname,pat.firstname,pat.middlename,spo.dateStart
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="entityParentView-smo_spo.do?short=Short"
-    action="entityParentView-smo_spo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-smo_spo.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата начала СПО" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Дата окончания СПО" property="3" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4" />
+      <msh:tableColumn columnName="Год рождения" property="5" />
+      <msh:tableColumn columnName="Дата начала СПО" property="2" />
+      <msh:tableColumn columnName="Дата окончания СПО" property="3" />
       <msh:tableColumn columnName="Кол-во дней" property="6"/>
       <msh:tableColumn columnName="Диагнозы" property="11"/>
       <msh:tableColumn columnName="Цель визита" property="12"/>

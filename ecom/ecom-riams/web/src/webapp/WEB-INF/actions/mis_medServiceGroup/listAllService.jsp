@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Voc" title="Кодификатор" guid="dd8765db-fd78-4593-98ff-d87a7a48d574" />
+    <msh:title mainMenu="Voc" title="Кодификатор" />
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
@@ -22,7 +22,7 @@ group by ms.id,pmeds.name,ms.code,ms.name,ms.additionCode,vms.code
 order by pmeds.name,ms.code
   
   "/>
-    <msh:table name="list" action="entityParentView-mis_medService.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table name="list" action="entityParentView-mis_medService.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Категория" property="2" />
       <msh:tableColumn columnName="Код" property="3" />

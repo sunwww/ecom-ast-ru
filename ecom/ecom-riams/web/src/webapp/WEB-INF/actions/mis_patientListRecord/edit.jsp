@@ -10,10 +10,10 @@
     	  - Проба
     	  -->
     <msh:form  action="/entityParentSaveGoParentView-mis_patientListRecord.do" defaultField="patient">
-      <msh:hidden guid="hiddenId" property="id" />
+      <msh:hidden property="id" />
       <msh:hidden property="patientList"/>
          <msh:hidden property="saveType"/>
-      <msh:panel guid="panel">
+      <msh:panel>
       <msh:autoComplete property="patient" vocName="patient" label = "Пациент" size="50"/>
         <msh:row>
           <msh:textField property="message" label="Отображаемое сообщение" size="100"/>
@@ -21,7 +21,7 @@
           <msh:row>
               <msh:textField property="phoneNumber" label="Телефон" size="100"/>
           </msh:row>
-       <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+       <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
 

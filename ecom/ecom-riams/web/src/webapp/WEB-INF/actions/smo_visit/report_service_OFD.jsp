@@ -20,15 +20,15 @@
 <%
 String typeGroup="";
 %>
-    <msh:form action="/visit_report_service_OFD.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/visit_report_service_OFD.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     
     <msh:panel>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="9" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="9" />
       </msh:row>
       <msh:row>
-        	<msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        	<msh:textField property="finishDate" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        	<msh:textField property="beginDate" label="Период с" />
+        	<msh:textField property="finishDate" label="по" />
       </msh:row>
         <%-- <msh:row>
         	<msh:autoComplete property="serviceStream" vocName="vocServiceStream"
@@ -92,7 +92,7 @@ and smc.medservice_id is not null and (smo.noActuality is null or smo.noActualit
 and w.lpu_id='273'
 group by ms.name, owflpu.lpufunction_id, owflpu.name
 order by owflpu.name, owflpu.lpufunction_id
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
+" />
     <msh:sectionTitle>
     <form action="" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. <%-- ${serviceStreamInfo} --%>

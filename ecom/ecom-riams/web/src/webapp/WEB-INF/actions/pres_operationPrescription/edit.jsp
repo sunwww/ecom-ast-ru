@@ -166,17 +166,17 @@
 			</tiles:put>
 
   <tiles:put name="body" type="string">
-    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_operationPrescription.do" defaultField="id" title="Назначение операции">
-      <msh:hidden guid="hiddenId" property="id" />
+    <msh:form action="/entityParentSaveGoView-pres_operationPrescription.do" defaultField="id" title="Назначение операции">
+      <msh:hidden property="id" />
       <msh:hidden property="prescriptionList" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
+      <msh:hidden property="saveType" />
       <msh:hidden property="labList" />
       <msh:hidden property="medcaseId" />
       <msh:hidden property="serviceStream" />
       <msh:hidden property="labDepartment" />
         <msh:hidden property="calendarTime" />
         <msh:hidden property="planStartDate" />
-      <msh:panel guid="panel" colsWidth="3">
+      <msh:panel colsWidth="3">
          <msh:row>
           <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
         </msh:row>
@@ -264,7 +264,7 @@
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>  
         </msh:ifFormTypeAreViewOrEdit>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
     <tags:enter_date name="2" functionSave="prepare1RowByDate"/>
@@ -272,7 +272,7 @@
     
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="StacJournal" beginForm="pres_operationPrescriptionForm" />
+    <ecom:titleTrail mainMenu="StacJournal" beginForm="pres_operationPrescriptionForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_operationPrescriptionForm">
@@ -280,10 +280,10 @@
         <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/entityParentEdit-pres_operationPrescription" name="Изменить" key="ALT+2"/>
         <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_operationPrescription" name="Удалить" key="ALT+DEL"/>
       </msh:sideMenu>
-      <msh:sideMenu title="Добавить" guid="0e2ac7-5361-434d-a8a7-1284796f">
+      <msh:sideMenu title="Добавить">
         <msh:sideLink roles="/Policy/Mis/Prescription/PrescriptionFulfilment/Create" params="id" action="/entityParentPrepareCreate-pres_prescriptionFulfilment" name="Исполнение назначения" key="ALT+3"/>
       </msh:sideMenu>
-      <msh:sideMenu title="Показать" guid="67aa758-3ad2-4e6f-a791-4839460955" >
+      <msh:sideMenu title="Показать" >
         <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentListRedirect-pres_operationPrescription" name="К списку назначений на операцию" key="ALT+4"/>
         <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentListRedirect-pres_prescription" name="К списку назначений" />
       </msh:sideMenu>

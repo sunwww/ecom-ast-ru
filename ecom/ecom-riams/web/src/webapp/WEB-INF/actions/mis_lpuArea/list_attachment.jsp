@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал прикрепленного населения"/>
+    <msh:title mainMenu="Journals" title="Журнал прикрепленного населения"/>
   </tiles:put>
   <tiles:put name="body" type="string">
   <%
@@ -25,19 +25,19 @@
 
   %>
   
-    <msh:form  action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f" >
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+    <msh:form  action="/mis_attachment.do" defaultField="lpuName" disableFormDataConfirm="true" >
+    <msh:panel>
+      <msh:row>
        <a href='mis_bypass_report.do'> 
        		<input type="button" value="Работа с прик. населением" /> 
        </a>
        <a href='mis_attachmentUpload.do'> 
        		<input type="button" value="Импорт населения" /> 
        </a>
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-       <msh:row guid="a7a62505-2bfe-41b6-a54f-217b970dc0c3">
-        <msh:autoComplete property="lpu" vocName="lpu" label="ЛПУ" viewAction="entityEdit-mis_lpu.do" fieldColSpan="7" guid="67d2a4af-71bc-4a19-8844-4a59b97fabda" horizontalFill="true" />
+       <msh:row>
+        <msh:autoComplete property="lpu" vocName="lpu" label="ЛПУ" viewAction="entityEdit-mis_lpu.do" fieldColSpan="7" horizontalFill="true" />
       </msh:row>
 		        <msh:row styleId='rowCompany'>
 		            <msh:autoComplete fieldColSpan="3" property="company" label="Страховая&nbsp;компания" horizontalFill="true"
@@ -48,8 +48,8 @@
 		                              parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
 		        </msh:row>		
      <msh:row>
-        <msh:textField fieldColSpan="2" property="numberPackage" label="№пакета" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="numberReestr" label="Реестровый номер" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField fieldColSpan="2" property="numberPackage" label="№пакета" />
+        <msh:textField property="numberReestr" label="Реестровый номер" />
       </msh:row>
       <msh:row>
         <msh:textField  property="period" label="Период с" />
@@ -384,7 +384,7 @@
 
    		where (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ${sqlAdd} group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code, lp.defectperiod
          , lp.defecttext, smo.name
-    	 order by p.lastname,p.firstname,p.middlename,p.birthday  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    	 order by p.lastname,p.firstname,p.middlename,p.birthday  " />
     
         <msh:table   viewUrl="entityParentView-mis_lpuAttachedByDepartment.do" editUrl="entityParentView-mis_lpuAttachedByDepartment.do" deleteUrl="entityParentDeleteGoParentView-mis_lpuAttachedByDepartment.do" name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>

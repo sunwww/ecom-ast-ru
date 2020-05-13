@@ -27,13 +27,13 @@
                     <msh:autoComplete label="МКБ" property="${name}MkbId" vocName="vocIdc10"  size="50"   horizontalFill="true" fieldColSpan="3"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="${name}RegistrationType" label="Тип регистрации" horizontalFill="true" fieldColSpan="1" vocName="vocDiagnosisRegistrationType" guid="1ecf26b7-d071-4abc-93ae-c52af4ae368b" />
+                    <msh:autoComplete property="${name}RegistrationType" label="Тип регистрации" horizontalFill="true" fieldColSpan="1" vocName="vocDiagnosisRegistrationType" />
                 </msh:row><msh:row>
 
                 </msh:row><msh:row>
                     <msh:autoComplete vocName="vocE2FondV027" property="${name}IllnesPrimary" label="Характер заболевания" horizontalFill="true" fieldColSpan="3"/>
                 </msh:row><msh:row>
-                    <msh:autoComplete vocName="vocPriorityDiagnosis" property="${name}Priority" label="Приоритет" guid="e28f35fc-fe25-4968-bf2f-d1fe4661349e" horizontalFill="true" />
+                    <msh:autoComplete vocName="vocPriorityDiagnosis" property="${name}Priority" label="Приоритет" horizontalFill="true" />
                 </msh:row>
                 <tr>
                     <td align="right" width="100">Доп. код МКБ</td>

@@ -11,9 +11,9 @@
     	  - Справочник должностей
     	  -->
     <msh:form  action="/entitySaveGoView-voc_post.do" defaultField="code">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:panel guid="panel">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:panel>
       	<msh:row>
       		<msh:textField label="Код" property="code"/>
         </msh:row>
@@ -26,7 +26,7 @@
         <msh:row>
         	<msh:autoComplete horizontalFill="true" property="omcDepType" vocName="vocOmcDepType" label="Код профиля отд. для стац. (спец. для пол-ки)" fieldColSpan="3"/>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
     
@@ -61,7 +61,7 @@ left join VocPost vp on vp.id=vwf.vocpost_id where vp.id=${param.id} and wf.id i
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="voc_postForm" />
+    <ecom:titleTrail mainMenu="Voc" beginForm="voc_postForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Справочник должностей">

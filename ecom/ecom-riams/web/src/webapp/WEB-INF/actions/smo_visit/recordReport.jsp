@@ -29,7 +29,7 @@
         <msh:form action="/recordReport.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
             <msh:panel>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Дата" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+                    <msh:textField property="dateBegin" label="Дата" />
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="serviceStream"

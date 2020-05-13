@@ -12,12 +12,12 @@
     	  - Экспертная карта
     	  -->
     <msh:form  action="/entityParentSaveGoView-expert_qualityEstimationDraft.do" defaultField="criterion1Name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenSavefgdfs" property="expertType" />
-      <msh:hidden guid="hiddenSavegfdsgfd" property="card" />
-      <msh:hidden guid="hiddenSavefd" property="criterions" />
-      <msh:panel guid="panel" colsWidth="5%,5%,10%">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="expertType" />
+      <msh:hidden property="card" />
+      <msh:hidden property="criterions" />
+      <msh:panel colsWidth="5%,5%,10%">
         <msh:row>
 	        <td colspan="6">
 	        	<div id='loadCriterion'>
@@ -43,7 +43,7 @@
           </msh:row>
         <msh:row>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel"   colSpan="3" />
+        <msh:submitCancelButtonsRow   colSpan="3" />
       </msh:panel>
     </msh:form>
 

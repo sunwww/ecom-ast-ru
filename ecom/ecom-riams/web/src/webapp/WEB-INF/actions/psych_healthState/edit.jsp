@@ -30,12 +30,12 @@
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="psych_healthStateForm" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="psych_healthStateForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Принудительное лечение">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-psych_healthState" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/HealthState/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" params="id" action="/entityParentDelete-psych_healthState" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/HealthState/Delete"  />
+      <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-psych_healthState" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/HealthState/Edit" />
+      <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-psych_healthState" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/HealthState/Delete"  />
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

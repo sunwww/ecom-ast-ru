@@ -23,7 +23,7 @@
 		   	<msh:autoComplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medService" vocName="medService" fieldColSpan="6" horizontalFill="true"/>
           	<td><input type="button" value="..." onclick="showServiceChangeServiceFind(0,'MedService','MedService')"></td>
         </msh:row>
-        <msh:row guid="47073a0b-da87-49e0-9ff0-711dc597ce07">
+        <msh:row>
           <msh:autoComplete vocName="workFunction" property="workFunctionExecute" label="Специалист" fieldColSpan="7"  horizontalFill="true"  />
         </msh:row>
         <msh:row>

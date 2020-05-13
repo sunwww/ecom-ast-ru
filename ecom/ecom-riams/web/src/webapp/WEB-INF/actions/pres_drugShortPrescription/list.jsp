@@ -9,7 +9,7 @@
     <ecom:titleTrail beginForm="pres_prescriptListForm" mainMenu="Patient" title="Лекарственное средство"  />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="Добавить" title="Добавить">
+    <msh:sideMenu title="Добавить">
       <msh:sideLink  params="id" roles="/Policy/Mis/Prescription/DrugPrescription/Create" key="ALT+N" action="/entityParentPrepareCreate-pres_drugPrescription" name="Назначение лекарства" />
     </msh:sideMenu>
     <msh:sideMenu title="Показать"  >

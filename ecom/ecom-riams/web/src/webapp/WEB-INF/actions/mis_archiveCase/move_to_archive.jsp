@@ -9,17 +9,17 @@
     <!-- 
     	  - Проба
     	  -->
-    <msh:form guid="formHello" action="/move_to_archive.do" defaultField="hello">
+    <msh:form action="/move_to_archive.do" defaultField="hello">
       
-      <msh:panel guid="panel">
-        <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07"><td></td>
-          <msh:autoComplete vocName="vocLpuHospOtdAll" property="department" size="50" fieldColSpan="3" label="Отделение выписки" guid="5dda7fb6-b2c3-44be-9d10-d8d428637b32" />
+      <msh:panel>
+        <msh:row><td></td>
+          <msh:autoComplete vocName="vocLpuHospOtdAll" property="department" size="50" fieldColSpan="3" label="Отделение выписки" />
         </msh:row>
         <msh:row><td>Дата выписки:</td>
 			<msh:textField property="dateBegin" label="c"/>
 			<msh:textField property="dateEnd" label="по"/>
 		</msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" labelSave="Поиск" labelSaving="Поиск..." colSpan="4" />
+        <msh:submitCancelButtonsRow labelSave="Поиск" labelSaving="Поиск..." colSpan="4" />
       </msh:panel>
     </msh:form>
     <%
@@ -75,7 +75,7 @@ order by ${orderBySql}
   </tiles:put>
   <tiles:put name='side' type='string'> 
   
-  <msh:sideLink  params="" roles="/Policy/Mis/ArchiveCase/View" action="/mis_archive_journal" name="Перейти к журналу переданных карт" guid="31e83931-c7ab-4040-8f46-3306ac07cb26" />
+  <msh:sideLink  params="" roles="/Policy/Mis/ArchiveCase/View" action="/mis_archive_journal" name="Перейти к журналу переданных карт" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript" src="./dwr/interface/ArchiveService.js"></script>

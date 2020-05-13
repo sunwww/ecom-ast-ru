@@ -195,9 +195,9 @@
     </tiles:put>
     <tiles:put name="body" type="string">
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View">
-            <msh:form action="/stac_planning_OphtHospitalizations.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+            <msh:form action="/stac_planning_OphtHospitalizations.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
                 <msh:panel>
-                    <msh:hidden property="department" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
+                    <msh:hidden property="department" />
                     <msh:row>
                         <msh:separator label="ПЕРИОД" colSpan="4"/>
                     </msh:row>
@@ -284,14 +284,14 @@ order by wct.createDate,pat.lastname,pat.firstname,pat.middlename
             <msh:table printToExcelButton="Сохранить в excel" name="stac_planOphtHospital" action="entityParentView-stac_planHospital.do"
                        idField="1" styleRow="9" >
                 <msh:tableColumn columnName="#" property="sn"/>
-                <msh:tableColumn columnName="ФИО" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-                <msh:tableColumn columnName="Телефон" property="3" guid="781559cd-fd34-40f5-a214-cec404fe19e3" />
-                <msh:tableColumn columnName="Дата ОКТ" property="4" guid="5905cf65-048f-4ce1-8301-5aef1e9ac80e" />
-                <msh:tableColumn columnName="Глаз" property="5" guid="2bab495e-eadb-4cd9-b2e9-140bf7a5f43f" />
-                <msh:tableColumn columnName="Замечания" property="6" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableColumn columnName="Создал" property="7" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableColumn columnName="Дата и время создания" property="8" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
-                <msh:tableColumn columnName="Дата предв. госп" property="11" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
+                <msh:tableColumn columnName="ФИО" property="2" />
+                <msh:tableColumn columnName="Телефон" property="3" />
+                <msh:tableColumn columnName="Дата ОКТ" property="4" />
+                <msh:tableColumn columnName="Глаз" property="5" />
+                <msh:tableColumn columnName="Замечания" property="6" />
+                <msh:tableColumn columnName="Создал" property="7" />
+                <msh:tableColumn columnName="Дата и время создания" property="8" />
+                <msh:tableColumn columnName="Дата предв. госп" property="11" />
                 <msh:tableButton property="10" buttonShortName="Уст. дату" buttonFunction="setDate" hideIfEmpty="true" />
 
             </msh:table>

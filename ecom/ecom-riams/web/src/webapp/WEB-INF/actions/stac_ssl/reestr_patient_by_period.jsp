@@ -98,7 +98,7 @@ hosp.id
 ,vof.voc_code
 ,vof.name
 ,olpu.name,olpu.omcCode ,vht.code
- " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+ " />
         <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="nam_otd" property="1"/>
             <msh:tableColumn columnName="fio" property="2"/>

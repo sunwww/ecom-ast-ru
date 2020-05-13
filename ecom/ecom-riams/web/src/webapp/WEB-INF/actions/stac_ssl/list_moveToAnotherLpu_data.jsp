@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Просмотр данных о выписанных в другое ЛПУ" />
+    <msh:title mainMenu="StacJournal" title="Просмотр данных о выписанных в другое ЛПУ" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <tags:stac_journal currentAction="stac_journalByMoveToAnotherLpu" />
@@ -30,13 +30,13 @@
   	left join Omc_Oksm ok on p.nationality_id=ok.id
   	where m.DTYPE='HospitalMedCase' and m.dateFinish between to_date('${dateBegin }','dd.mm.yyyy') and to_date('${dateEnd }','dd.mm.yyyy') 
     and m.moveToAnotherLpu_id=${anotherLpu} ${addStatus} ${add}"/>
-    <msh:table name="list" action="entityParentView-stac_ssl.do" idField="1" noDataMessage="Не найдено" guid="03092441-0d8d-421d-95ea-b110dd539b50">
-      <msh:tableColumn columnName="Стат.карта" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Дата начала" property="3" guid="4370bd26-12ec-4ad1-bffe-46159824c0f0" />
-      <msh:tableColumn columnName="Дата окончания" property="4" guid="4370bd26-12ec-4ad1-bffe-46159824c0f0" />
-      <msh:tableColumn columnName="Пациент" property="5" guid="4370bd26-12ec-4ad1-bffe-46159824c0f0" />
-      <msh:tableColumn columnName="Отделение" property="7" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
-      <msh:tableColumn columnName="Экстренность" property="8" guid="b00c3a27-82cd-4d68-8a12-6f71bc8a7867" />
+    <msh:table name="list" action="entityParentView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
+      <msh:tableColumn columnName="Стат.карта" property="2" />
+      <msh:tableColumn columnName="Дата начала" property="3" />
+      <msh:tableColumn columnName="Дата окончания" property="4" />
+      <msh:tableColumn columnName="Пациент" property="5" />
+      <msh:tableColumn columnName="Отделение" property="7" />
+      <msh:tableColumn columnName="Экстренность" property="8" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
