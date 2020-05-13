@@ -16,7 +16,7 @@
   <tiles:put name="body" type="string">
     <msh:sectionTitle>Отчет для Эллы</msh:sectionTitle>
     <ecom:webQuery name="datelist" nativeSql="select d.id, pat.patientinfo, d.dateregistration, d.timeregistration
-      ,coalesce (substring(d.record,case when position('SPO2' in upper(d.record))>0 then position('SP' in upper(d.record))
+      ,coalesce (substring(d.record,case when position('SP' in upper(d.record))>0 then position('SP' in upper(d.record))
       else position('САТУРАЦИ' in upper(d.record)) end,20),'') as f5
       ,dep.name
       ,d.record
@@ -26,8 +26,7 @@
       left join medcase sls on sls.id=slo.parent_id
       left join mislpu  dep on dep.id=slo.department_id
       left join patient pat on pat.id=slo.patient_id
-      where d.dateregistration =current_date
-and (upper(d.record) like ('%SP%') or upper(d.record) like ('%САТУРАЦ%'))
+      where d.dateregistration =current_date and slo.department_id in (499,500,501,503,504)
 order by pat.patientinfo, d.dateregistration desc , d.timeregistration  desc "
     />
     <msh:table printToExcelButton="Excel" name="datelist" action="entityParentView-smo_visitProtocol.do" idField="1">

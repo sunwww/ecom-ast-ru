@@ -190,7 +190,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
 	       ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end
 	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
        else  pat.foreignRegistrationAddress end as address
-     ,case when m.department_id =500 then 'Средней тяжести' else 'Тяжелое' end as tyajest
+     ,case when m.department_id =501 then  'Тяжелое' else 'Средней тяжести' end as tyajest
        ,to_char(sls.dateStart,'dd.mm.yyyy') as datestart
 ,       cast('' as varchar) as enddate
        ,(select list(d.record) from medcase vis
