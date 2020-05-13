@@ -55,14 +55,7 @@
        queryConvertType = 'FIRST_UPPER'
                 />
     </voc>
- <!--   <voc id='TemplateProtocolType' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocolType'
-                names   = 'name'
-                queried = 'name'
-       queryConvertType = 'FIRST_UPPER'
-                />
-    </voc> -->
+
     <voc id='KeyWord' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateWord'
