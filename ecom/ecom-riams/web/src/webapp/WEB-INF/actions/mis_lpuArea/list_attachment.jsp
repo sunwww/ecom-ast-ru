@@ -1,6 +1,5 @@
-
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/WEB-INF/tiles/header.jsp" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 
@@ -209,15 +208,10 @@
       	 <td colspan="11">  <label>Импорт дефектов: </label>    	
             <input type="file"  name="filenameDefect" id="filenameDefect" size="50" value="Импорт дефектов" onchange="importDefects(event)">
           
-           <!--  <input type="button" name="run_import" value="Импорт дефектов"  onclick="this.form.submit()" /> -->
        	 </td>
        	
        </msh:row>
-     <%--   <msh:row>
-       <td>
-         <html:file property="attachmentFile" />
-         </td>
-       </msh:row> --%>
+
        <msh:row>
        	<msh:hidden property="filename" />
        	<td colspan="4">
@@ -325,8 +319,7 @@
         }
         td3.innerHTML = "<a href='/riams/entityView-mis_lpuAttachedByDepartment.do?id="+aData[3]+"' target='_blank'><span>\t"+aData[3]+"</span></a>";
         td4.innerHTML = "<span> "+aData[4]+"</span>";
-       	//td4.innerHTML = "<span> "+aData[3]+"</span>";
-       
+
       }
 
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -353,18 +346,10 @@
     String date = request.getParameter("period") ;
     String date1 = request.getParameter("periodTo") ;
     String sqlAdd = (String)request.getAttribute("sqlAdd");
-    String exportDefects = (String)request.getAttribute("exportDefects");
 
-    if (sqlAdd!=null &&date!=null && !date.equals("") && typeRead!=null)  {
-    	if (date1==null ||date1.equals("")) {
-    		request.setAttribute("periodTo", date);
-    	} else {
-    		request.setAttribute("periodTo", date1) ;
-    	}
-    	
-
+    if ("2".equals(typeRead) && sqlAdd!=null &&date!=null && !date.equals("") )  {
+        request.setAttribute("periodTo", date1==null ||date1.equals("") ? date : date1);
     %>
-	 <%    if ("2".equals(typeRead)) {%>
    <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="250" nativeSql="
 		select lp.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'dd.MM.yyyy') as birthday
     	 , p.commonNumber
@@ -402,7 +387,7 @@
 			<msh:tableColumn columnName="Страх. компания" property="13"/>
         </msh:table>
     <% 
-    }} else {%>
+    } else {%>
     	<i>Введите данные </i>
    <%}%>
      
