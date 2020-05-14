@@ -463,8 +463,8 @@ public class LoginSaveAction extends LoginExitAction {
 						
 						.append("<br>");
 				}
-				Long id = serviceLogin.createSystemMessage("Отчет по выполнению иссделований", ret.toString(), aUsername) ;
-				UserMessage.addMessage(aRequest,id,"Отчет по выполнению иссделований",ret.toString(),"");    		
+				Long id = serviceLogin.createSystemMessage("Отчет по выполнению исследований", ret.toString(), aUsername) ;
+				UserMessage.addMessage(aRequest,id,"Отчет по выполнению исследований",ret.toString(),"");
 			} 
 		}
 
