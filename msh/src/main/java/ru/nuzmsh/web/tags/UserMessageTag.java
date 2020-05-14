@@ -93,8 +93,8 @@ public class UserMessageTag  extends SimpleTagSupport {
 
 			sql.append("function quickDelMessage(e){ ");
 			sql.append("if(e.keyCode=='27'){" +
-					"document.getElementsByClassName('jq-toast-wrap')[0].style.display = 'none';" +
-					"document.getElementById(\"fadeEffect\").remove(); " +
+					"jQuery(\"div.jq-toast-wrap\").remove();" +
+					"for (var i=0; i<2; i++) " +
 					"if (document.getElementById(\"fadeEffect\")!=null) " +
 					//при входе в систему и выводе одновременно планового и экстренного надо закрывать 2 эффекта
 					"	document.getElementById(\"fadeEffect\").remove();}}");

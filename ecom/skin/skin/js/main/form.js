@@ -168,8 +168,6 @@ function showToastMessage(aMessage,aJson,aAutoClose,aError, aMs) {
 	}
 }
 function viewEmergencyUserMessage(aJsonId) {
-    if (typeof document.getElementsByClassName('jq-toast-wrap')[0] !=='undefined')
-        document.getElementsByClassName('jq-toast-wrap')[0].style.display = '';  //если нажали esc - вывести обратно
 	var fldJson = JSON.parse(aJsonId) ;
 	var cnt = fldJson.params.length ;
 	if (cnt>0) {
