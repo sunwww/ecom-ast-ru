@@ -91,6 +91,7 @@
                                 <msh:toolbar>
                                     <a href='javascript:printProtocols("protocols")'>Печать протоколов</a>
                                     <a href='javascript:printProtocols("protocols1")'>Печать протоколов (шаблон 2)</a>
+                                    <a href='javascript:printProtocols("protocols_no_sign")'>Печать протоколов (без подписи)</a>
                                 </msh:toolbar>
                             </th>
                         </tr>

@@ -447,17 +447,13 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 	map.put("pat",patient) ;
 	map.put("statCard",medCase.parent.statisticStub.code) ;
 	//Биологический тест
-	//lastrelease milamesher 02.04.2018 #95
+	//lastrelease milamesher 15.05.2020 #95
 	var biolTest = new java.lang.StringBuilder() ;
-    if (trans.getBloodBioProbProcedure()!=null) {
+	if (trans.getBloodBioProbProcedure()!=null)
 		biolTest.append(trans.getBloodBioProbProcedure().getName()).append(" ");
-	}
-
-	if (true==trans.getIsIllPatientsBT()) {
-		//biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
+	if (trans.getIsIllPatientsBT()!=null&&trans.getIsIllPatientsBT().booleanValue()==true) {
 		biolTest.append(trans.getSerumColorBT()!=null?trans.getSerumColorBT().getName():"_________") ;
 	} else {
-		//biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
 		biolTest.append(" PS: ").append(trans.getPulseRateBT()) ;
 		biolTest.append(", AD: ").append(trans.getBloodPressureTopBT()).append("/").append(trans.getBloodPressureLowerBT()) ;
 		biolTest.append(", PS: ").append(trans.getRespiratoryRateBT()!=null?trans.getRespiratoryRateBT():"____") ;

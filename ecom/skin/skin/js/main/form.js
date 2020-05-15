@@ -183,7 +183,6 @@ function viewEmergencyUserMessage(aJsonId) {
 				,beforeShow: function () {checkEmergencyMessage(param.id);}
 				,stack:cnt
 			});
-	    	//alert("close json id = "+param.id);
 	    }
 	}
 }

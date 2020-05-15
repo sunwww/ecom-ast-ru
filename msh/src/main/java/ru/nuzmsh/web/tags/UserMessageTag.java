@@ -48,14 +48,11 @@ public class UserMessageTag  extends SimpleTagSupport {
         if(messages!=null&&!messages.isEmpty()) {
 			JspWriter out = getJspContext().getOut() ;
 			StringBuilder sql = new StringBuilder();
-			//out.println("<script type='text/javascript'>");
 			sql.append("<script type='text/javascript'>");
 
 			sql.append("function showUserMessageTagOnce() {msh.effect.FadeEffect.putFade();}")
 				.append("function closeUserMessageTagOnce() {msh.effect.FadeEffect.pushFade();}");
-			//System.out.println("user_messages size = "+messages.size());
 			for (UserMessage message:messages) {
-				 //sql = new StringBuilder();
 				sql.append(" jQuery.toast({")
 					.append(" position: 'top-center'")
 					.append(",heading:'").append(toHtmlString(message.getTitle())).append("'")
@@ -63,38 +60,19 @@ public class UserMessageTag  extends SimpleTagSupport {
 					.append(",hideAfter: false")
 						.append(",beforeShow:function(){showUserMessageTagOnce() ;checkUserMessage(").append(message.getId()).append(");}")
 						.append(",afterHidden:function(){closeUserMessageTagOnce() ;}")
-				//	.append(",bgColor: '#ff0000'")
 					.append(",stack:").append(messages.size())
 					.append(",icon:'info'")
 				.append("});");
-
-			//	out.println(sql.toString());
-					//.append(",afterHidden:function(){checkEmergencyMessage(param.id);}")
-
-	            /* //переделываем на jQuery.toast
-	            out.println("<table id='userMessageContainer"+message.getId()+"' class='userMessageContainer' style='margin-left: 4em'><tr><td>");
-	            out.println(" <div class='userMessage'>") ;
-	            out.println(" <a href='javascript:void(0)' class='userMessageClose' title='Убрать сообщение' onclick='checkUserMessage("+message.getId()+")'>Убрать</a>") ;
-	            out.println(" <a href='javascript:void(0)' class='userMessageCloseAll' title='Убрать все сообщения' onclick='checkAllMessages(\"userMessageContainer\")'>Убрать все сообщения</a>") ;
-	            out.println(message.getInfo()) ;
-	            out.println("<br/>") ;
-	            out.println("<u>"+message.getTitle()+"</u>") ;
-	            out.println("<br/>") ;
-	            out.println(message.getMessage()) ;
-	            if (message.getUrl()!=null) {
-	            	out.println("<a href='javascript:void(0)' onclick='checkUserMessage("+message.getId()+");window.location=\""+message.getUrl()+"\";'>Подробно...</a>") ;
-	            }
-	            out.println(" </div>") ;
-	            out.println("</td></tr></table>") ;
-	            */
-	            //viewEmergencyUserMessage(aJsonId)
 	        }
 
 
 			sql.append("function quickDelMessage(e){ ");
 			sql.append("if(e.keyCode=='27'){" +
-					"document.getElementsByClassName('jq-toast-wrap')[0].style.display = 'none';" +
-					"document.getElementById(\"fadeEffect\").remove();}}");
+					"jQuery(\"div.jq-toast-wrap\").remove();" +
+					"for (var i=0; i<2; i++) " +
+					"if (document.getElementById(\"fadeEffect\")!=null) " +
+					//при входе в систему и выводе одновременно планового и экстренного надо закрывать 2 эффекта
+					"	document.getElementById(\"fadeEffect\").remove();}}");
 			sql.append(" addEventListener(\"keydown\", quickDelMessage);");
 			sql.append("</script>");
 			out.println(sql.toString());
