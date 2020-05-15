@@ -235,7 +235,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
     <form action="print-stac_current_department_covid.do" method="post" target="_blank">
     Журнал COVID
     <input type='hidden' name="sqlText" id="sqlText" value="${covid_journal_sql}">
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделении  ${departmentInfo} COVID">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Журнал состоящих пациентов в отделении  ${departmentInfo} COVID'>
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -244,7 +244,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
     <form action="print-stac_current_department.do" method="post" target="_blank">
     Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент
     <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент'>
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -253,7 +253,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
     <form action="print-stac_current_department_adr.do" method="post" target="_blank">
 
     <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент'>
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
