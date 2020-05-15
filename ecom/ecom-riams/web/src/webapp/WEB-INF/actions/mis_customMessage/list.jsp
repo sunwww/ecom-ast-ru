@@ -10,8 +10,6 @@
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить">
       <msh:sideLink roles="/Policy/Mis/CustomMessage/Create" key="ALT+N" action="/entityPrepareCreate-mis_customMessage.do" name="Создать новое" />
-      <msh:sideLink roles="/Policy/Mis/CustomMessage/Create" action="/default_message_update.do?emergency=1" name="Отправить Экстренное сообщение об обновлении через 10 минут" />
-      <msh:sideLink roles="/Policy/Mis/CustomMessage/Create" action="/default_message_update.do" name="Отправить Обычное сообщение после обновления" />
     </msh:sideMenu>
   	<msh:sideMenu title="Список сообщений">
   	  <msh:sideLink action="/js-mis_customMessage-sendMessages.do?id=-1&short=${param.short}" name="Список отправленных сообщений" />
@@ -31,8 +29,7 @@
   	/>
   	<msh:section createUrl="entityPrepareCreate-mis_customMessage.do" 
   	createRoles="/Policy/Mis/CustomMessage/Create" title="${title}">
-  	<msh:sectionTitle><msh:sideLink roles="/Policy/Mis/CustomMessage/Emergency/Create" action="/default_message_update.do?emergency=1" name="Отправить Экстренное сообщение об обновлении через 10 минут" />
-      <msh:sideLink roles="/Policy/Mis/CustomMessage/Emergency/Create" action="/default_message_update.do" name="Отправить Обычное сообщение после обновления" />
+  	<msh:sectionTitle><msh:sideLink roles="/Policy/Mis/CustomMessage/Emergency/Create" action="/default_message_update.do" name="Отправить Экстренное сообщение об обновлении через 5 минут" />
   	</msh:sectionTitle>
   	<msh:sectionContent >
   	<table>

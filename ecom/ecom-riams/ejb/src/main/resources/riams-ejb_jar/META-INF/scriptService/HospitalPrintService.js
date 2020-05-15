@@ -449,9 +449,11 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 	//Биологический тест
 	//lastrelease milamesher 02.04.2018 #95
 	var biolTest = new java.lang.StringBuilder() ;
-    var bioprobe = aCtx.manager.createNativeQuery(new java.lang.StringBuilder().append(" select name from vocbloodbioprobprocedure vbp left join transfusion t on t.bloodbioprobprocedure_id=vbp.id where t.id=").append(id)).getResultList().get(0);
-    biolTest.append(bioprobe);
-	if (trans.getIsIllPatientsBT()!=null&&trans.getIsIllPatientsBT().booleanValue()==true) {
+    if (trans.getBloodBioProbProcedure()!=null) {
+		biolTest.append(trans.getBloodBioProbProcedure().getName()).append(" ");
+	}
+
+	if (true==trans.getIsIllPatientsBT()) {
 		//biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
 		biolTest.append(trans.getSerumColorBT()!=null?trans.getSerumColorBT().getName():"_________") ;
 	} else {
