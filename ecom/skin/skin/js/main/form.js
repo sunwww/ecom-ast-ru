@@ -584,7 +584,7 @@ function getCountUnreadMessages() {
 /**
  * Вывести браслеты в таблице #151
  * @param table Таблица
- * @param tdNumRes Номер столбца для вывода результата
+ * @param tdResNum Номер столбца для вывода результата
  * @param tdJsonNum Номер столбца с json
  */
 function setBr(table, tdResNum, tdJsonNum) {

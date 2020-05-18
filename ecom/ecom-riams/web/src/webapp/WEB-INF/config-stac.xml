@@ -613,6 +613,15 @@
             />
         </action>
 
+        <action path='/stac_analysisCovid'
+                type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
+                name='stac_departmentJournalForm' validate='false' scope='request'
+                input='/WEB-INF/actions/stac_slo/analysisCovid.jsp'
+        >
+            <forward name="success" redirect="false"
+                     path='/WEB-INF/actions/stac_slo/analysisCovid.jsp'
+            />
+        </action>
 
         <action path='/stac_directionHIVByUserDepartment'
                 type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
