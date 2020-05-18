@@ -249,7 +249,7 @@
 				left join voccolor vc on vcip.color_id=vc.id
 				 left join medcase_coloridentitypatient
 				 ss on ss.colorsidentity_id=cip.id where
-				medcase_id=sls.id  ${timeStampSql}) as t) as varchar) as jsonAr
+				(medcase_id=sls.id or medcase_id=m.id)  ${timeStampSql}) as t) as varchar) as jsonAr
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id

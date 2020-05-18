@@ -125,6 +125,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 					styleId="stac_directionCovidByUserDepartment"
 					roles="/Policy/Mis/MedCase/Covid19/View/EllaJournal"
 					action="/stac_reportForElla" name="Отчет только для Эллы" />
+			<msh:sideLink
+					styleId="stac_directionCovidByUserDepartment"
+					roles="/Policy/Mis/MedCase/Covid19/View"
+					action="/stac_analysisCovid" name="По анализам на Covid19" />
 	    </msh:sideMenu>
 	    <msh:sideMenu title="Журналы">
 	    	<msh:sideLink
