@@ -26,7 +26,7 @@
       left join medcase sls on sls.id=slo.parent_id
       left join mislpu  dep on dep.id=slo.department_id
       left join patient pat on pat.id=slo.patient_id
-      where d.dateregistration =current_date and slo.department_id in (499,500,501,503,504)
+      where d.dateregistration =current_date and slo.department_id in (499,500,501,502,503,504)
 order by pat.patientinfo, d.dateregistration desc , d.timeregistration  desc "
     />
     <msh:table printToExcelButton="Excel" name="datelist" action="entityParentView-smo_visitProtocol.do" idField="1">

@@ -48,6 +48,11 @@
   <global-forwards />
 
   <action-mappings>
+        <action path='/covid19_reg_journal' type='ru.ecom.web.actions.base.ForwardAction'
+                name='poly_journalBySpecForm' validate='true' scope="session" input='/WEB-INF/actions/smo_covid19/journal_by_region.jsp'>
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/journal_by_region.jsp" />
+        </action>
+
         <action path='/covid19_journal' type='ru.ecom.web.actions.base.ForwardAction'
                 name='mis_searchForm'
                 validate='true'
