@@ -15,15 +15,12 @@ import javax.persistence.PersistenceContext;
 public class ApiServiceBean implements IApiService{
 
     public void persistEntity(Object object){
-        if (object!=null && theManager!=null) {
-            theManager.persist(object);
-        }
+        persistEntityObj(object);
     }
 
     public Object persistEntityObj(Object object){
         if (object!=null && theManager!=null) {
             theManager.persist(object);
-            return object;
         }
         return object;
     }

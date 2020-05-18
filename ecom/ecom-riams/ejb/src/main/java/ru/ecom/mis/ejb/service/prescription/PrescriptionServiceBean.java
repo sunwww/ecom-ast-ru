@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.service.prescription;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -11,6 +12,7 @@ import org.xml.sax.SAXException;
 import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
+import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfo;
 import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfoResult;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
@@ -407,6 +409,48 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		return null ;
 	}
 
+	/**
+	 * Создаем браслет в госпитализации при выполнении некоторых анализов. Для каждого анализа пишем свою логику
+	 *
+	 */
+	private void createBraceletByPrescription(TemplateProtocol protocol,JSONArray params, MedCase medCase) {
+		try {
+			MedService medService = protocol.getMedService();
+			if (medService!=null && "A26.08.027.999".equals(medService.getCode())) {
+				//анализ на ковид. Делаем браслет с положительным/отрицательным анализом.
+				ColorIdentityPatient cip = new ColorIdentityPatient();
+				StringBuilder info = new StringBuilder();
+				String vocCode ="";
+				String zbr = "", rslt = "";
+				for (int i=0;i<params.length();i++) {
+					JSONObject par = params.getJSONObject(i);
+					String id= par.getString("id");
+					switch (id) {
+						case "1284": //результат
+							vocCode = "ОТРИЦАТЕЛЬНЫЙ".equals(par.getString("valueVoc").trim()) ? "LAB_COVID_MINUS" : "LAB_COVID_PLUS";
+							break;
+						case "1286": //дата забора
+							zbr ="Забор: "+par.getString("value");
+							break;
+						case "1287": //Дата результата
+							rslt="Результат: "+par.getString("value");
+							break;
+						default:break; //остальные - не нужны
+					}
+				}
+				VocColorIdentityPatient vcip = (VocColorIdentityPatient) theManager.createNamedQuery("VocColorIdentityPatient.getByCode").setParameter("code", vocCode).getSingleResult();
+				cip.setVocColorIdentity(vcip);
+				cip.setInfo(zbr+"\n"+rslt);
+				theManager.persist(cip);
+				medCase.addColorsIdentity(cip);
+		 } else {
+			 LOG.warn("template id="+protocol.getId()+", no bracelet for medservice. Call developers");
+		 }
+		} catch (JSONException e) {
+			LOG.error("Не смог создать браслет: "+e.getMessage(),e);
+		}
+	}
+
 	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) {
 		try {
 		//	StringBuilder infoToSend = new StringBuilder();
@@ -415,6 +459,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			String wf = String.valueOf(obj.get("workFunction"));
 			StringBuilder sql ;
 			Visit m = theManager.find(Visit.class, aSmoId) ;
+			TemplateProtocol template = theManager.find(TemplateProtocol.class, aTemplateId);
+			JSONArray params = obj.getJSONArray("params");
+			Prescription pres = theManager.find(Prescription.class,aPrescriptId) ;
+			if (Boolean.TRUE.equals(template.getCreateBracelet())) {
+				MedCase medCase = pres.getPrescriptionList().getMedCase().getParent()!=null ? pres.getPrescriptionList().getMedCase().getParent()
+						: pres.getPrescriptionList().getMedCase();
+				createBraceletByPrescription(template, params, medCase);
+			}
 
 			if (m!=null) {
 				List<Object> l = null;
@@ -443,14 +495,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				d.setTemplateProtocol(aTemplateId);
 				theManager.persist(d) ;
 			}
-			Prescription pres = theManager.find(Prescription.class,aPrescriptId) ;
-			JSONArray params = obj.getJSONArray("params");
+
+
 			StringBuilder sb = new StringBuilder() ;
 			sb.append("Забор биоматериала произведен: ").append(pres.getIntakeDate()!=null? DateFormat.formatToDate(pres.getIntakeDate()) : "");
 			sb.append(" ").append(pres.getIntakeTime()!=null? DateFormat.formatToTime(pres.getIntakeTime()) : "").append("\n") ;
             NumberFormat numberFormat =new DecimalFormat("#.######");
 			for (int i = 0; i < params.length(); i++) {
-				JSONObject param = (JSONObject) params.get(i);
+				JSONObject param = params.getJSONObject(i);
 				FormInputProtocol fip = new FormInputProtocol() ;
 				fip.setDocProtocol(d) ;
 				Parameter p = theManager.find(Parameter.class, ConvertSql.parseLong(param.get("id"))) ;
@@ -592,15 +644,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			HospitalMedCase hmc = theManager.find(HospitalMedCase.class, Long.valueOf(info.get("mcId").toString()));
 			if (vocColorIdentity != null && hmc != null) {
 				ColorIdentityPatient colorIdentity = new ColorIdentityPatient();
-				colorIdentity.setStartDate(new java.sql.Date(new java.util.Date().getTime()));
 				colorIdentity.setCreateUsername(info.getString("usernameO"));
 				colorIdentity.setVocColorIdentity(vocColorIdentity);
 				colorIdentity.setInfo("Критическая патология анализа: " + info.getString("medService") + " " + info.getString("date"));
 				theManager.persist(colorIdentity);
-				ArrayList colIds = new java.util.ArrayList();
-				colIds.addAll(hmc.getColorsIdentity());
-				colIds.add(colorIdentity);
-				hmc.setColorsIdentity(colIds);
+				hmc.addColorsIdentity(colorIdentity);
 			}
 		}
 		else {

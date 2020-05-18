@@ -79,4 +79,10 @@ public class ColorIdentityPatient extends BaseEntity {
     public void setFinishTime(Time aFinishTime) {theFinishTime = aFinishTime;	}
     /** Время снятия с регистрации */
     private Time theFinishTime;
+
+    public ColorIdentityPatient() {
+        long current = System.currentTimeMillis();
+        this.theStartDate = new Date(current);
+        this.theStartTime = new Time(current);
+    }
 }

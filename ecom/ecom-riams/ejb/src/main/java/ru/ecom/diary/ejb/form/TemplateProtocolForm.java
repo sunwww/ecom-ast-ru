@@ -25,6 +25,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property="medService", parentForm=MedServiceForm.class)
 public class TemplateProtocolForm  extends IdEntityForm {
 
+	/** Создавать браслет по шаблону */
+	@Comment("Создавать браслет по шаблону")
+	@Persist
+	public Boolean getCreateBracelet() {return theCreateBracelet;}
+	public void setCreateBracelet(Boolean aCreateBracelet) {theCreateBracelet = aCreateBracelet;}
+	private Boolean theCreateBracelet ;
+
 	/** Запрет на ручное редактирование */
 	@Comment("Запрет на ручное редактирование")
 	@Persist

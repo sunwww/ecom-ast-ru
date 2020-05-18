@@ -1359,7 +1359,6 @@ public class PrescriptionServiceJs {
 		return ret.toString() ;
 	}
 
-	//public String 
 	public void saveParameterByProtocol(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;

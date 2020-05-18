@@ -29,6 +29,12 @@ import java.util.List;
     }) 
 @EntityListeners(DeleteListener.class)
 public class TemplateProtocol extends BaseEntity {
+
+	/** Создавать браслет по шаблону */
+	@Comment("Создавать браслет по шаблону")
+	public Boolean getCreateBracelet() {return theCreateBracelet;}
+	public void setCreateBracelet(Boolean aCreateBracelet) {theCreateBracelet = aCreateBracelet;}
+	private Boolean theCreateBracelet ;
 	
 	/** Создавать дневник по умолчанию при приеме в лабораторию */
 	@Comment("Создавать дневник по умолчанию при приеме в лабораторию")

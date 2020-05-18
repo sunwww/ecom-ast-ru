@@ -33,7 +33,6 @@ import java.util.List;
 public class HospitalMedCaseServiceJs {
 	private static final Logger LOG = Logger.getLogger(HospitalMedCaseServiceJs.class);
 
-
 	/**Календарь с предварительной госпитализацией*/
 
 	public String getPreHospCalendar( Integer aYear, Integer aMonth, Long aDepartment, Boolean isOpht, HttpServletRequest aRequest) throws NamingException {
@@ -1774,35 +1773,23 @@ public class HospitalMedCaseServiceJs {
      */
     public String selectIdentityPatient(Long aSlsOrPatId, Boolean aSlsOrPat, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-        StringBuilder sql = new StringBuilder();
-        sql.append("select cip.id,vc.name||' ('||vcip.name||')',vc.code as colorCode,vcip.name as vsipnameJust")
-				.append(",vc.picture as pic, cip.info as inf,case when vcip.isforpatology then '1' else '0' end as isforpat ")
-				.append("from vocColorIdentityPatient vcip ")
-				.append("left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id ")
-				.append("left join voccolor vc on vcip.color_id=vc.id ")
-				.append(aSlsOrPat? "left join medcase_coloridentitypatient " : "left join patient_coloridentitypatient ")
-				.append(" ss on ss.colorsidentity_id=cip.id ")
-				.append(" where ")
-				.append(aSlsOrPat? "(ss.medcase_id='" : "ss.patient_id='")
-				.append(aSlsOrPatId).append("'")
-				.append(aSlsOrPat? "or ss.medcase_id=(select parent_id from medcase where id='" : "")
-				.append(aSlsOrPat? aSlsOrPatId : "").append(aSlsOrPat? "'))" : "")
-				.append(" and (cip.startdate<=current_date and cip.finishdate is null ")
-				.append(" or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))");
-        JSONArray res = new JSONArray() ;
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
-		for (WebQueryResult w :list) {
-			JSONObject o = new JSONObject() ;
-			o.put("vcipId", w.get1())
-					.put("vsipName", w.get2())
-					.put("colorCode", w.get3())
-					.put("vsipnameJust", w.get4())
-					.put("picture", w.get5()!=null? w.get5() : "")
-					.put("info", w.get6()!=null? w.get6() : "")
-					.put("isforpat", w.get7());
-			res.put(o);
-		}
-        return res.toString();
+		String sql = "select cip.id,vc.name||' ('||vcip.name||')',vc.code as colorCode,vcip.name as vsipnameJust" +
+				",vc.picture as pic, cip.info as inf,case when vcip.isforpatology then '1' else '0' end as isforpat " +
+				"from vocColorIdentityPatient vcip " +
+				"left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id " +
+				"left join voccolor vc on vcip.color_id=vc.id " +
+				(aSlsOrPat ? "left join medcase_coloridentitypatient " : "left join patient_coloridentitypatient ") +
+				" ss on ss.colorsidentity_id=cip.id " +
+				" where " +
+				(aSlsOrPat ? "(ss.medcase_id='" : "ss.patient_id='") +
+				aSlsOrPatId + "'" +
+				(aSlsOrPat ? "or ss.medcase_id=(select parent_id from medcase where id='" : "") +
+				(aSlsOrPat ? aSlsOrPatId : "") + (aSlsOrPat ? "'))" : "") +
+				" and (cip.startdate<=current_date and cip.finishdate is null " +
+				" or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))" +
+				"order by cip.id";
+		return service.executeNativeSqlGetJSON(new String[] {"vcipId","vsipName","colorCode","vsipnameJust"
+				,"picture","info","isforpat"}, sql,null);
     }
 
 	/**
