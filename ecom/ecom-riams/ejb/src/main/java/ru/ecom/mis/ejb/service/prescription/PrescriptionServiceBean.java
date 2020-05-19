@@ -430,7 +430,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 							vocCode = "ОТРИЦАТЕЛЬНЫЙ".equals(par.getString("valueVoc").trim()) ? "LAB_COVID_MINUS" : "LAB_COVID_PLUS";
 							break;
 						case "1286": //дата забора
-							zbr ="Забор: "+par.getString("value");
+                            String zbrDate = par.getString("value");
+                            if (!StringUtil.isNullOrEmpty(zbrDate)) {
+                                cip.setStartDate(DateFormat.parseSqlDate(zbrDate));
+                            }
+							zbr ="Забор: "+zbrDate;
 							break;
 						case "1287": //Дата результата
 							rslt="Результат: "+par.getString("value");
@@ -446,7 +450,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		 } else {
 			 LOG.warn("template id="+protocol.getId()+", no bracelet for medservice. Call developers");
 		 }
-		} catch (JSONException e) {
+		} catch (JSONException | ParseException e) {
 			LOG.error("Не смог создать браслет: "+e.getMessage(),e);
 		}
 	}
