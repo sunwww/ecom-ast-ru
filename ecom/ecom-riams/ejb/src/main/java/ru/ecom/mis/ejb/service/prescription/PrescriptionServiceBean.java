@@ -462,7 +462,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			TemplateProtocol template = theManager.find(TemplateProtocol.class, aTemplateId);
 			JSONArray params = obj.getJSONArray("params");
 			Prescription pres = theManager.find(Prescription.class,aPrescriptId) ;
-			if (Boolean.TRUE.equals(template.getCreateBracelet())) {
+			if (template!=null && Boolean.TRUE.equals(template.getCreateBracelet())) {
 				MedCase medCase = pres.getPrescriptionList().getMedCase().getParent()!=null ? pres.getPrescriptionList().getMedCase().getParent()
 						: pres.getPrescriptionList().getMedCase();
 				createBraceletByPrescription(template, params, medCase);
