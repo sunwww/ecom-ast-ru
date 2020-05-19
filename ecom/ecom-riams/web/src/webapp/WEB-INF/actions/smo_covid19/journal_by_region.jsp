@@ -65,10 +65,10 @@
           pat.lastname ||' '||pat.firstname ||' '||pat.middlename as f2_fio
           , adr.fullname ||case when coalesce(pat.housenumber,'')!='' then ' д.'||pat.housenumber else '' end ||
               case when coalesce(pat.housebuilding ,'')!='' then ' корп.'||pat.housebuilding else '' end ||
-              case when coalesce(pat.flatnumber ,'')!='' then ' кв.'||pat.housenumber else '' end as f3_regaddress
+              case when coalesce(pat.flatnumber ,'')!='' then ' кв.'||pat.flatnumber else '' end as f3_regaddress
           , rea.fullname ||case when coalesce(pat.realhousenumber,'')!='' then ' д.'||pat.realhousenumber else '' end ||
               case when coalesce(pat.realhousebuilding ,'')!='' then ' корп.'||pat.realhousebuilding else '' end ||
-              case when coalesce(pat.realflatnumber ,'')!='' then ' кв.'||pat.realhousenumber else '' end as f4_realaddress
+              case when coalesce(pat.realflatnumber ,'')!='' then ' кв.'||pat.realflatnumber else '' end as f4_realaddress
           ,to_char(sls.datestart,'dd.MM.yyyy') ||' - '|| coalesce(to_char(sls.dateFinish,'dd.MM.yyyy'),' по текущий момент') as f5_datestart
           , case when sls.deniedhospitalizating_id is not null then '-'
             when sls.datefinish is null then '+' else '-' end as f6_provodista
@@ -82,7 +82,7 @@
           left join OMC_OKSM nat on nat.id=pat.nationality_id
           left join address2 rea on rea.addressid  = pat.realaddress_addressid
           where sls.datestart between to_date('${startDate}','dd.MM.yyyy') and  to_date('${finishDate}','dd.MM.yyyy')
-          and sls.dtype ='HospitalMedCase' and sls.department_id in (500,501,502,503,504)
+          and sls.dtype ='HospitalMedCase' and sls.department_id in (500,501,502,503,504,505,506)
            ${typeRegionSql}" />
         <msh:table printToExcelButton="Сохранить в excel" name="list_covid" action="entityParentView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
           <msh:tableColumn columnName="#" property="sn"/>

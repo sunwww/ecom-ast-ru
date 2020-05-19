@@ -190,7 +190,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
 	       ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end
 	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
        else  pat.foreignRegistrationAddress end as address
-     ,case when m.department_id =501 then  'Тяжелое' else 'Средней тяжести' end as tyajest
+     ,case when m.department_id =501 then  'Тяжелое' else 'Средней тяжести' end as f6_tyajest
        ,to_char(sls.dateStart,'dd.mm.yyyy') as datestart
 ,       cast('' as varchar) as enddate
        ,(select list(d.record) from medcase vis
@@ -198,7 +198,8 @@ left join voccolor vcr on vcr.id=vcid.color_id
        		left join diary d on d.medcase_id =vis.id
        		left join medservice  ms on ms.id=smc.medservice_id
        		where vis.parent_id=sls.id and vis.dtype ='Visit' and ms.code='A26.08.027.999' and upper(d.record) like '%ПОЛОЖИТЕЛЬН%'
-       		)
+       		) as f9_rec
+       		, vs.name as f10
      			 from medCase m
      left join Diagnosis diag on diag.medcase_id=m.id
      left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -213,13 +214,14 @@ left join voccolor vcr on vcr.id=vcid.color_id
      left join Worker w on w.id=wf.worker_id
      left join Patient wp on wp.id=w.person_id
      left join Patient pat on m.patient_id = pat.id
+     left join vocsex vs on vs.id=pat.sex_id
      left join Address2 adr on adr.addressid = pat.address_addressid
      left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id
      left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id
      left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id
      where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'
      and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
-     group by  m.id,m.dateStart,pat.lastname,pat.firstname
+     group by pat.id, m.id,m.dateStart,pat.lastname,pat.firstname
      ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
      ,bf.addCaseDuration,m.dateFinish,m.dischargeTime
      ,pat.passportSeries,pat.passportNumber,pat.passportDateIssued,pat.passportWhomIssued
@@ -229,11 +231,20 @@ left join voccolor vcr on vcr.id=vcid.color_id
  	       ,ost.name,pat.StreetNonresident
                , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name
 
-        , pat.foreignRegistrationAddress,sls.id, dep.name, dep.id
+        , pat.foreignRegistrationAddress,sls.id, dep.name, dep.id, vs.id, vs.name
      order by pat.lastname,pat.firstname,pat.middlename
 "/>
     <form action="print-stac_current_department_covid.do" method="post" target="_blank">
     Журнал COVID
+    <input type='hidden' name="sqlText" id="sqlText" value="${covid_journal_sql}">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Журнал состоящих пациентов в отделении  ${departmentInfo} COVID'>
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать">
+    </form>
+    <form action="print-stac_current_department_covid_lab.do" method="post" target="_blank">
+    Журнал COVID для Иванова
     <input type='hidden' name="sqlText" id="sqlText" value="${covid_journal_sql}">
     <input type='hidden' name="sqlInfo" id="sqlInfo" value='Журнал состоящих пациентов в отделении  ${departmentInfo} COVID'>
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">

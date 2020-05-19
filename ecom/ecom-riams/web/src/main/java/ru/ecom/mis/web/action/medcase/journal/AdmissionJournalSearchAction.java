@@ -23,10 +23,10 @@ public class AdmissionJournalSearchAction extends BaseAction {
 		String typeView1 =ActionUtil.updateParameter("AdmissionJournalSearch","typeView1","1", aRequest) ;
 		//String emer= request.getParameter("emergancyIs") ;
 		if (form!=null && form.getDateBegin()!=null && !form.getDateBegin().equals("")) {
-			if (typeEmergency!=null && typeEmergency.equals("1")) {
+			if ("1".equals(typeEmergency)) {
 				aRequest.setAttribute("emerIs"," and m.emergency='1'") ;
 				aRequest.setAttribute("emerInfo","экстренно") ;
-			} else if (typeEmergency!=null && typeEmergency.equals("2")) {
+			} else if ("2".equals(typeEmergency)) {
 				aRequest.setAttribute("emerIs"," and (m.emergency is null or m.emergency = '0')") ;
 				aRequest.setAttribute("emerInfo","планово") ;
 			} else {
@@ -34,20 +34,17 @@ public class AdmissionJournalSearchAction extends BaseAction {
 				aRequest.setAttribute("emerInfo","все") ;
 			}
 			String dateI;
-			//String timeI = null ;
-			if (typeDate!=null && typeDate.equals("1")) {
-	    		//aRequest.setAttribute("dateIs"," and m.dateStart between to_date('"+form.getDateBegin()+"','dd.mm.yyyy') and to_date('"+form.getDateBegin()+"','dd.mm.yyyy') ") ;
+			if ("1".equals(typeDate)) {
 				dateI = "dateStart"  ;
 				aRequest.setAttribute("dateI", dateI) ;
 	    		aRequest.setAttribute("dateInfo","поступившим") ;
-	    	} else if (typeDate!=null && typeDate.equals("2")) {
+	    	} else if ("2".equals(typeDate)) {
 	    		dateI = "dateFinish"  ;
 	    		aRequest.setAttribute("dateI", dateI) ;
 	    		aRequest.setAttribute("dateInfo","выписанным") ;
 	    	} else {
 	    		aRequest.setAttribute("dateI", "dateStart") ;
 	    		aRequest.setAttribute("period"," and m.dateFinish is null ") ;
-	    		
 	    		aRequest.setAttribute("dateInfo","состоящим") ;
 	    	}
 		}
