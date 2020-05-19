@@ -271,7 +271,7 @@
 					<h2>Стационар</h2>
 					<ul style='list-style: none outside none; '>
 						<li><msh:link isReport="true" action="/covid19_reg_journal.do" roles="/Policy/Mis/MedCase/Covid19/View">
-							Журнал пациентов, осмотренных врачами приемного отделения
+							Отчет - коронавирусные иногородние/иностранцы
 	                        </msh:link></li>
 						<li><msh:link isReport="true" action="/stac_admissionDoctorDiaryList.do" roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod">
 							Журнал пациентов, осмотренных врачами приемного отделения

@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -19,7 +20,16 @@
         <msh:row>
           <msh:separator label="Параметры поиска" colSpan="7"/>
         </msh:row>
+        <msh:row>
+          <td></td>
+          <td onclick="this.childNodes[1].checked='checked';">
+            <input type="radio" name="typeRegion" checked value="dag">  Дагестанцы
+          </td>
+          <td colspan="2" onclick="this.childNodes[1].checked='checked';">
+            <input type="radio" name="typeRegion" value="foreign">  Иностранцы
+          </td>
 
+        </msh:row>
           <msh:row>
             <msh:textField property="beginDate" label="Начало СЛС с "/>
             <msh:textField property="finishDate" label="Начало СЛС по"/>
@@ -37,6 +47,14 @@
   String finishDate = request.getParameter("finishDate");
   request.setAttribute("startDate", startDate);
   request.setAttribute("finishDate", finishDate!=null && !finishDate.equals("") ? finishDate : startDate);
+  String typeRegion = ActionUtil.updateParameter("journal_cardiacScreening","typeRegion", "dag",request); // request.getParameter("typeRegion");
+  if ("foreign".equals(typeRegion)) {
+    request.setAttribute("typeRegionSql"," and pat.nationality_id is not null and nat.voc_code!='643' ");
+    request.setAttribute("selectRegionSql"," ,nat.name as region");
+  } else {
+    request.setAttribute("typeRegionSql"," and adr.kladr like '05%'");
+    request.setAttribute("selectRegionSql"," ,cast('' as varchar) as region");
+  }
 
 
 %>
@@ -57,16 +75,19 @@
             , case when sls.deniedhospitalizating_id is not null then '-'
             when sls.datefinish is null then '-' else '+' end as f7_zakoncheno
           ,case when sls.deniedhospitalizating_id is not null then (select list(d.record) from diary d where d.medcase_id =sls.id) end as f7_diaries
+              ${selectRegionSql}
               from medcase sls
           left join patient pat on pat.id=sls.patient_id
           left join address2 adr on adr.addressid  = pat.address_addressid
+          left join OMC_OKSM nat on nat.id=pat.nationality_id
           left join address2 rea on rea.addressid  = pat.realaddress_addressid
           where sls.datestart between to_date('${startDate}','dd.MM.yyyy') and  to_date('${finishDate}','dd.MM.yyyy')
           and sls.dtype ='HospitalMedCase' and sls.department_id in (500,501,502,503,504)
-          and adr.kladr like '05%'" />
-        <msh:table name="list_covid" action="entityParentView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
+           ${typeRegionSql}" />
+        <msh:table printToExcelButton="Сохранить в excel" name="list_covid" action="entityParentView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
           <msh:tableColumn columnName="#" property="sn"/>
           <msh:tableColumn columnName="Пациент" property="2"/>
+          <msh:tableColumn columnName="Регион" property="9"/>
           <msh:tableColumn columnName="Адрес регистрации" property="3"/>
           <msh:tableColumn columnName="Адрес проживания" property="4"/>
           <msh:tableColumn columnName="Начало случая" property="5"/>
@@ -80,7 +101,7 @@
 
     <script type='text/javascript'>
       $('startDate').value = getCurrentDate();
-  //    checkFieldUpdate('typeView','${typeView}','noExport') ;
+      checkFieldUpdate('typeRegion','${typeRegion}','dag') ;
      function checkFieldUpdate(aField,aValue,aDefaultValue) {
        if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
          jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);
