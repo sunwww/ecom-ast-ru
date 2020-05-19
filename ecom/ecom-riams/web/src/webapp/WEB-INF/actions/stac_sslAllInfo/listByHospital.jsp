@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="StacJournal" title="Журнал обращений по стационару"></msh:title>
+    <msh:title mainMenu="StacJournal" title="Журнал обращений по стационару"/>
   </tiles:put>
   <tiles:put name="side" type="string">
     	<tags:stac_journal currentAction="stac_journalByHospital"/>
@@ -17,7 +17,6 @@
   <%  	
   String typeAge=ActionUtil.updateParameter("Report_journalByHosp","typeAge","10", request) ;
   String view=ActionUtil.updateParameter("Report_journalByHosp","typeView","1", request) ;
- 
  %>
    <ecom:webQuery name="sex_woman_sql" nativeSql="select id,name from VocSex where omccode='2'"/>
  
@@ -128,6 +127,9 @@
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" label="Отделение" vocName="lpu"/>
         </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="bedType" fieldColSpan="7" horizontalFill="true" label="Профиль коек" vocName="vocBedType"/>
+        </msh:row>
       <msh:row>
            <td colspan="11">
             <input type="submit" onclick="find()" value="Найти" />
@@ -145,7 +147,6 @@
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
-   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
    	if ((+aValue)==0 || (+aValue)>(+aMax)) {
    		chk[+aDefaultValue-1].checked='checked' ;
    	} else {
@@ -168,7 +169,8 @@
     		+getCheckedRadio(frm,"typeDate")+":"
     		+$('dateBegin').value+":"
     		+$('pigeonHole').value+":"
-    		+$('department').value;
+    		+$('department').value+":"
+            +$('bedType').value;
     }
     </script>
     <%
@@ -183,141 +185,78 @@
     	}
     	ActionUtil.getValueByList("sex_woman_sql", "sex_woman", request) ;
       	String sexWoman = (String)request.getAttribute("sex_woman") ;
-      	String dateAge="dateStart" ;
+
       	String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
-    	if (typeDate!=null && typeDate.equals("2")) {
-    		dateAge="dateFinish" ;
-    	}
-    	if (typeAge!=null &&typeAge.equals("3")) {
-      		StringBuilder age = new StringBuilder() ;
-      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-      				.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-      				.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-      				.append(" -cast(to_char(p.birthday, 'mm') as int)")
-      				.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-      				.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-      				.append(" <0)")
-      				.append(" then -1 else 0 end) < 18 ") ;
-      		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("age_info", "Дети") ;
-      	} else if (typeAge!=null &&typeAge.equals("2")) {
-      		StringBuilder age = new StringBuilder() ;
-      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-    			.append(" <0)")
-    			.append(" then -1 else 0 end) >= case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
-    		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "Взрослые старше трудоспособного возраста") ;
-      	} else if (typeAge!=null &&typeAge.equals("1")) {
-      		StringBuilder age = new StringBuilder() ;
-      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-    			.append(" <0)")
-    			.append(" then -1 else 0 end) >= 18 ") ;
-      		//.append(" then -1 else 0 end) between 18 and case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
-    		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "Взрослые") ;
-      	} else if (typeAge!=null &&typeAge.equals("7")) {
-      		StringBuilder age = new StringBuilder() ;
-      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-    			.append(" <0)")
-      			.append(" then -1 else 0 end) between 16 and case when p.sex_id='")
-      			.append(sexWoman).append("' then 54 else 59 end ") ;
-    		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "Взрослые трудоспособного возраста c 16 лет") ;
-      	} else if (typeAge!=null &&typeAge.equals("8")) {
-      		StringBuilder age = new StringBuilder() ;
-      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-    			.append(" <0)")
-      			.append(" then -1 else 0 end) between 18 and case when p.sex_id='")
-      			.append(sexWoman).append("' then 54 else 59 end ") ;
-    		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "Взрослые трудоспособного возраста с 18 лет") ;
-      	} else if (typeAge!=null &&typeAge.equals("9")) {
-      		StringBuilder age = new StringBuilder() ;
-      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-    			.append(" <0)")
-      			.append(" then -1 else 0 end) >= 60 ") ;
-    		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "Взрослые старше 60 лет (вкл)") ;
-      	} else if (typeAge!=null &&typeAge.equals("4")) {
-      		StringBuilder age = new StringBuilder() ;
-      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-    			.append(" <0)")
-    			.append(" then -1 else 0 end) < 1 ") ;
-    		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "до года") ;
-      	} else if (typeAge!=null &&typeAge.equals("5")) {
-      		StringBuilder age = new StringBuilder() ;
-      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-    			.append(" <0)")
-    			.append(" then -1 else 0 end) between 0 and 14 ") ;
-    		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "0-14") ;
-      	} else if (typeAge!=null &&typeAge.equals("6")) {
-      		StringBuilder age = new StringBuilder() ;
-      		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-    			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-    			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-    			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-    			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-    			.append(" <0)")
-    			.append(" then -1 else 0 end) between 15 and 17 ") ;
-    		request.setAttribute("age_sql", age.toString()) ;
-      		request.setAttribute("reportInfo", "15-17") ;
-      	}
-    	
-    	
-    	//String view = (String)request.getAttribute("typeView") ;
-    	String pigeonHole1="" ;
-    	String pigeonHole="" ;
+        String dateAge = "2".equals(typeDate) ? "dateFinish" : "dateStart" ;
+        String ageSql = " and cast(to_char(m." + dateAge + ",'yyyy') as int)" +
+                " -cast(to_char(p.birthday,'yyyy') as int)" +
+                " +(case when (cast(to_char(m." + dateAge + ", 'mm') as int)" +
+                " -cast(to_char(p.birthday, 'mm') as int)" +
+                " +(case when (cast(to_char(m." + dateAge + ",'dd') as int)" +
+                " - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)" +
+                " <0)" +
+                " then -1 else 0 end)";
+        if ("3".equals(typeAge)) {
+            request.setAttribute("age_sql", ageSql+" < 18 ");
+            request.setAttribute("age_info", "Дети") ;
+        } else if ("2".equals(typeAge)) {
+            request.setAttribute("age_sql", ageSql+" >= case when p.sex_id='" + sexWoman + "' then 55 else 60 end ");
+            request.setAttribute("reportInfo", "Взрослые старше трудоспособного возраста") ;
+        } else if ("1".equals(typeAge)) {
+            request.setAttribute("age_sql", ageSql+" >= 18 ");
+            request.setAttribute("reportInfo", "Взрослые") ;
+        } else if ("7".equals(typeAge)) {
+            request.setAttribute("age_sql", ageSql+ " between 16 and case when p.sex_id='" +
+                    sexWoman + "' then 54 else 59 end ");
+            request.setAttribute("reportInfo", "Взрослые трудоспособного возраста c 16 лет") ;
+        } else if ("8".equals(typeAge)) {
+            request.setAttribute("age_sql", ageSql+" between 18 and case when p.sex_id='" +
+                    sexWoman + "' then 54 else 59 end ");
+            request.setAttribute("reportInfo", "Взрослые трудоспособного возраста с 18 лет") ;
+        } else if ("9".equals(typeAge)) {
+            request.setAttribute("age_sql", ageSql+" >= 60 ");
+            request.setAttribute("reportInfo", "Взрослые старше 60 лет (вкл)") ;
+        } else if ("4".equals(typeAge)) {
+            request.setAttribute("age_sql", ageSql+ " < 1 ");
+            request.setAttribute("reportInfo", "до года") ;
+        } else if ("5".equals(typeAge)) {
+            request.setAttribute("age_sql", ageSql+" between 0 and 14 ");
+            request.setAttribute("reportInfo", "0-14") ;
+        } else if ("6".equals(typeAge)) {
+            request.setAttribute("age_sql", ageSql+" between 15 and 17 ");
+            request.setAttribute("reportInfo", "15-17") ;
+        }
+
+    	String pigeonHole1 ;
+    	String pigeonHole ;
     	String pHole = request.getParameter("pigeonHole") ;
     	if (pHole!=null && !pHole.equals("") && !pHole.equals("0")) {
     		pigeonHole1= " and (ml.pigeonHole_id='"+pHole+"' or ml1.pigeonHole_id='"+pHole+"')" ;
     		pigeonHole= " and ml.pigeonHole_id='"+pHole+"'" ;
-    	}
+    	} else {
+            pigeonHole1="";
+            pigeonHole="";
+        }
     	request.setAttribute("pigeonHole", pigeonHole) ;
     	request.setAttribute("pigeonHole1", pigeonHole1) ;
     	
-    	String department="" ;
+    	String department;
     	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
-    		department= " and ml.id="+dep+"" ;
+    		department= " and ml.id="+dep ;
+    	} else {
+    	    department="";
     	}
+
+    	String bedType = request.getParameter("bedType");
+    	String bedTypeSql ;
+    	if (bedType!=null && !bedType.equals("")) {
+    	    bedTypeSql=" and vbt.id="+bedType;
+        } else {
+    	    bedTypeSql="";
+        }
+
+    	request.setAttribute("bedType", bedTypeSql) ;
     	request.setAttribute("department", department) ;
     	if ("1".equals(view)) { //свод по дням
     %>
@@ -326,7 +265,7 @@
     <ecom:webQuery isReportBase="true" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="
     
     select  
-    '&pigeonHole=${param.pigeonHole}&department=${param.department}&typeDate=${typeDate}&dateI=${dateI}&dateBegin='
+    '&pigeonHole=${param.pigeonHole}&department=${param.department}&bedType=${param.bedType}&typeAge=${typeAge}&typeDate=${typeDate}&dateI=${dateI}&dateBegin='
     ||to_char(m.${dateI},'dd.mm.yyyy')||'&dateEnd='||to_char(m.${dateI},'dd.mm.yyyy'),
     m.${dateI} 
 ,count(distinct case when (m.emergency is null or m.emergency='0') and m.deniedHospitalizating_id is null then m.id else null end) as pl
@@ -362,7 +301,10 @@ and oo.voc_code!='643' then m.id else null  end) as deniedInost
 and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3) then m.id else null  end) as deniedOther
 , count(distinct m.id) as all1
 
-from medcase m 
+from medcase m
+left join medcase slo on slo.parent_id = m.id and slo.dtype='DepartmentMedCase' and slo.prevmedcase_id is null
+left join bedFund bf on bf.id=slo.bedFund_id
+left join vocbedtype vbt on vbt.id= bf.bedType_id
 left join MisLpu as ml on ml.id=m.department_id
 left join Patient p on p.id=m.patient_id
 left join Address2 a on p.address_addressid=a.addressid
@@ -372,7 +314,7 @@ between to_date('${param.dateBegin}','dd.mm.yyyy')
 and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department} ${age_sql}
+${emerIs} ${pigeonHole} ${department} ${bedType} ${age_sql}
 group by m.${dateI}
 order by m.${dateI}
     " />
@@ -423,7 +365,7 @@ order by m.${dateI}
           <ecom:webQuery isReportBase="true" name="journal_priem_general" nameFldSql="journal_priem_general_sql" nativeSql="
 
     select
-    '&pigeonHole=${param.pigeonHole}&department=${param.department}&typeDate=${typeDate}&dateI=${dateI}&dateBegin='
+    '&pigeonHole=${param.pigeonHole}&department=${param.department}&bedType=${param.bedType}&typeDate=${typeDate}&dateI=${dateI}&dateBegin='
     ||to_char(m.${dateI},'dd.mm.yyyy')||'&dateEnd='||to_char(m.${dateI},'dd.mm.yyyy'),
     m.${dateI}
 , count(distinct m.id) as all1
@@ -431,6 +373,9 @@ order by m.${dateI}
 , count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end) as denied
 
 from medcase m
+left join medcase slo on slo.parent_id = m.id and slo.dtype='DepartmentMedCase' and slo.prevmedcase_id is null
+left join bedFund bf on bf.id=slo.bedFund_id
+left join vocbedtype vbt on vbt.id= bf.bedType_id
 left join MisLpu as ml on ml.id=m.department_id
 left join Patient p on p.id=m.patient_id
 left join Address2 a on p.address_addressid=a.addressid
@@ -440,7 +385,7 @@ between to_date('${param.dateBegin}','dd.mm.yyyy')
 and to_date('${dateEnd}','dd.mm.yyyy')
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${emerIs} ${pigeonHole} ${department} ${age_sql}
+${emerIs} ${pigeonHole} ${department} ${bedType} ${age_sql}
 group by m.${dateI}
 order by m.${dateI}
     " />
@@ -472,8 +417,7 @@ order by m.${dateI}
     <msh:section>
     <msh:sectionTitle>
     <ecom:webQuery isReportBase="true" name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
-    
-    select '&pigeonHole=${param.pigeonHole}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&department='
+    select '&pigeonHole=${param.pigeonHole}&typeDate=${typeDate}&dateI=${dateI}&bedType=${param.bedType}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&department='
     ||m.department_id 
 ,dep.name
 ,count(distinct case when (m.emergency is null or m.emergency='0') then m.id else null end) as pl
@@ -491,7 +435,10 @@ then m.id else null end) as obrCity
 then m.id else null end) as obrInog
 ,count(distinct case when oo.voc_code!='643'  then m.id else null end) as obrInost
 ,count(distinct case when (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3)  then m.id else null end) as obrOther
-from medcase m 
+from medcase m
+left join medcase slo on slo.parent_id = m.id and slo.dtype='DepartmentMedCase' and slo.prevmedcase_id is null
+left join bedFund bf on bf.id=slo.bedFund_id
+left join vocbedtype vbt on vbt.id= bf.bedType_id
 left join mislpu dep on dep.id=m.department_id
 left join Omc_Frm of1 on of1.id=m.orderType_id
 left join MisLpu as ml on ml.id=m.department_id 
@@ -504,7 +451,7 @@ and to_date('${dateEnd}','dd.mm.yyyy')
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is null
 ${period}
-${emerIs} ${pigeonHole} ${department} ${age_sql}
+${emerIs} ${pigeonHole} ${department} ${bedType} ${age_sql}
 group by m.department_id,dep.name
 order by dep.name
     " />
@@ -590,7 +537,7 @@ left join Omc_Oksm oo on oo.id=p.nationality_id
 where m.dtype='HospitalMedCase' 
 and m.${dateI} between to_date('${param.dateBegin}','dd.mm.yyyy')  
 and to_date('${dateEnd}','dd.mm.yyyy')  
-and ( m.noActuality is null or m.noActuality='0')
+and (m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is not null
 ${period}
 ${emerIs} ${pigeonHole1} ${department} ${age_sql}
@@ -723,7 +670,7 @@ order by dep.name
     <msh:sectionTitle>
     <ecom:webQuery isReportBase="true"  name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
     
-    select '&typeEmergency=${typeEmergency}&pigeonHole=${param.pigeonHole}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&department='
+    select '&typeEmergency=${typeEmergency}&pigeonHole=${param.pigeonHole}&bedType=${param.bedType}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&department='
     ||m.department_id 
 ,dep.name
 ,count(distinct case when (m.emergency is null or m.emergency='0') then m.id else null end) as pl
@@ -733,7 +680,10 @@ order by dep.name
 ,count(distinct case when m.emergency='1' and vpat.code='1' then m.id else null end) as em1
 ,count(distinct case when m.emergency='1' and vpat.code='2' then m.id else null end) as em2
 ,count(distinct case when m.emergency='1' and vpat.code='3' then m.id else null end) as em3
-from medcase m 
+from medcase m
+left join medcase slo on slo.parent_id = m.id and slo.dtype='DepartmentMedCase' and slo.prevmedcase_id is null
+left join bedFund bf on bf.id=slo.bedFund_id
+left join vocbedtype vbt on vbt.id= bf.bedType_id
 left join VocPreAdmissionTime vpat on vpat.id=m.preAdmissionTime_id
 left join mislpu dep on dep.id=m.department_id
 left join Omc_Frm of1 on of1.id=m.orderType_id
@@ -747,7 +697,7 @@ and to_date('${dateEnd}','dd.mm.yyyy')
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is null
 ${period}
-${emerIs} ${pigeonHole} ${department} ${age_sql}
+${emerIs} ${pigeonHole} ${department} ${bedType} ${age_sql}
 group by m.department_id,dep.name
 order by dep.name
     " />
