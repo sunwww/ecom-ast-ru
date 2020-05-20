@@ -374,6 +374,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 for(E2Entry entry : aEntryList) {
                     checkServiceEntryFirst(entry);
                 }
+                deleteCrossSpo(aListEntry);
             } else {
                 LOG.error("Невозможно выполнить проверку заполнения, неизвестный тип '"+listEntryCode+"'");
             }
@@ -1271,7 +1272,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     makeCheckEntry(theManager.find(E2Entry.class,bi.longValue()),updateKsgIfExist, true);
                 }
                 monitor.setText("Приступаем к проверке перекрестных случаев.");
-                if (POLYCLINICTYPE.equals(listEntryCode)) deleteCrossSpo(aListEntry);
+                if (!KDPTYPE.equals(listEntryCode)) deleteCrossSpo(aListEntry);
             } else if (EXTDISPTYPE.equals(listEntryCode)) {
                 int i =0;
                 for(BigInteger bi : list) {
