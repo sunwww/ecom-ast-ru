@@ -531,4 +531,11 @@ public class MisLpu extends BaseEntity {
 	public void setIsReportKMP(Boolean aIsReportKMP) {theIsReportKMP = aIsReportKMP;}
 	/** Учитывать в отчёте по КР? */
 	private Boolean theIsReportKMP;
+
+	/** Инфекционное? */
+	@Comment("Инфекционное?")
+	public Boolean getIsForCovid() {return theIsForCovid;}
+	public void setIsForCovid(Boolean aIsForCovid) {theIsForCovid = aIsForCovid;}
+	/** Инфекционное? */
+	private Boolean theIsForCovid;
 }

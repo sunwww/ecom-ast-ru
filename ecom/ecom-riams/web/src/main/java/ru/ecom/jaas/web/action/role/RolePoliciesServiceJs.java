@@ -63,4 +63,15 @@ public class RolePoliciesServiceJs  {
     	service.standartPolicyByParent(aParentPolicy) ;
     	return "Добавлено" ;
     }
+
+	/**
+	 * Добавить пользователя в отделение с должностью
+	 * @param aUserId Long Пользователь
+	 * @param aLpuId Long Госпиталь
+	 * @param avWfId Long VocWorkFunction
+	 */
+	public String addUserToCovidHosp(Long aUserId, Long aLpuId, Long avWfId, HttpServletRequest aRequest) throws NamingException, IOException {
+		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
+		return service.addUserToCovidHosp(aUserId, aLpuId, avWfId) ;
+	}
 }

@@ -48,12 +48,12 @@
     }
     // Отменить консультацию
     function wfCancel${name}() {
-        var reason=document.getElementById('chooseCnslReasonWfvocWfConsultationCancelReasonName').value;
+        var reason=document.getElementById('${name}vocWfConsultationCancelReason').value;
         if (reason==null || reason=='-' || reason=='') alert('Выберите причину!'); else {
             reason=reason.replace(/[-0-9 ][ ]/gim,'');
             PrescriptionService.cancelWFPrescription(ID, reason, {
                 callback:function (a) {
-                    alert(a);
+                    showToastMessage(a,null,true,false,2000);
                     the${name}CloseDocumentDialog.hide() ;
                 }
             }) ;

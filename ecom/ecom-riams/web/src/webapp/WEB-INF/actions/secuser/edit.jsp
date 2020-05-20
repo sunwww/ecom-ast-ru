@@ -2,6 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <%@page import="java.util.Collection"%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
@@ -150,6 +151,9 @@
       <msh:sideLink key="ALT+3" params="id" action="/userRoleEdit" name="Изменить роли пользователя" roles="/Policy/Jaas/SecUser/EditRoles" />
       <msh:sideLink action="/javascript:setDefaultPassword('.do')" name="Установить пароль по умолчанию" roles="/Policy/Jaas/SecUser/Edit" />
       <msh:sideLink action="/javascript:getUserLoginJounal()" name="Просмотреть журнал входов" roles="/Policy/Jaas/SecUser/Edit" />
+      <!-- Для быстрого добавления-->
+      <msh:sideLink action="/javascript:showAddToCovidHosp(${param.id})" name="Добавить в отделение" roles="/Policy/Jaas/SecUser/Edit" />
+      <tags:AddToCovidHosp  name="AddToCovidHosp"  />
     </msh:sideMenu>
     <msh:sideMenu title="Списки пользователей">
       <msh:sideLink action="/entityList-secuser.do?list=all" name="Все пользователи" styleId="listall" roles="/Policy/Jaas/SecUser/View" />

@@ -172,8 +172,8 @@ public class DisabilityServiceBean implements IDisabilityService {
 
 		}
 		if (address == null ) {
-			LOG.error("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = NULL, ЛПУ = " + lpuId);
-			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = NULL, ЛПУ = " + lpuId;
+			LOG.error("Нет необходимых данных для экспорта ЭЛН: Адрес сервиса = NULL, ЛПУ = " + lpuId);
+			return "Нет необходимых данных для экспорта ЭЛН: Адрес сервиса = NULL, ЛПУ = " + lpuId;
 		}
 
 		if (ogrn.equals("0")) {

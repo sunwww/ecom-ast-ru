@@ -8,6 +8,11 @@ import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.jaas.ejb.form.SecRoleForm;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
+import ru.ecom.mis.ejb.domain.worker.Worker;
+import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -275,6 +280,133 @@ public class SecUserServiceBean implements ISecUserService {
         }
         theManager.persist(user);
     }
+
+
+	/**
+	 * Получить персону по работнику
+	 * @param aUserId Long Пользователь
+	 * @return Patient.id
+	 */
+	private Long getPersonByWorker(Long aUserId) {
+		try {
+			Object obPersonId = theManager.createNativeQuery("select w.person_id" +
+					" from SecUser su" +
+					" left join WorkFunction wf on su.id=wf.secUSer_id" +
+					" left join Worker w on wf.worker_id=w.id" +
+					" where su.id=:userId")
+					.setParameter("userId", aUserId)
+					.getSingleResult();
+
+			Long personId = PersistList.parseLong(obPersonId);
+			return personId;
+		}
+		catch(javax.persistence.NoResultException e) {
+			throw new IllegalArgumentException("Не найдена персона у пользователя!");
+		}
+	}
+
+	/**
+	 * Проверить, существует ли работник с такими параметрами
+	 * @param aPatId Long Персона
+	 * @param aLpuId Long Госпиталь
+	 * @return  Worker.id or OL (если не существует)
+	 */
+	private Worker getIfWorkerExists(Long aPatId, Long aLpuId) {
+		List<Object> list = theManager.createQuery("from Worker where" +
+				" person_id=:person" +
+				" and lpu_id = :lpu")
+				.setParameter("person", aPatId)
+				.setParameter("lpu", aLpuId)
+				.getResultList();
+		return !list.isEmpty()?
+				(Worker)list.get(0)
+				: null;
+	}
+
+	/**
+	 * Проверить, существует ли раб. функция с такими параметрами
+	 * @param aWorkerId Long Работник
+	 * @param avWfId Long Должность
+	 * @return  WorkFunction.id or OL (если не существует)
+	 */
+	private Long getIfWorkFunctionExists(Long aWorkerId, Long avWfId) {
+		List<Object> list = theManager.createNativeQuery("select wf.id" +
+				" from SecUser su" +
+				" left join WorkFunction wf on su.id=wf.secUser_id" +
+				" left join Worker w on wf.worker_id=w.id" +
+				" left join VocWorkFunction vwf on vwf.id=wf.workfunction_id" +
+				" where w.id=:wId and vwf.id=:vwfId")
+				.setParameter("wId", aWorkerId)
+				.setParameter("vwfId", avWfId)
+				.getResultList();
+		return !list.isEmpty() && !list.get(0).equals(0)?
+				Long.valueOf(list.get(0).toString())
+				: 0L;
+	}
+
+
+	/**
+	 * Добавить пользователя в отделение с должностью
+	 * @param aUserId Long Пользователь
+	 * @param aLpuId Long Госпиталь
+	 * @param avWfId Long VocWorkFunction
+	 * @return Сообщение
+	 */
+	public String addUserToCovidHosp(Long aUserId, Long aLpuId, Long avWfId) throws IOException {
+		String msgResult = "";
+		SecUser secUser = theManager.find(SecUser.class,aUserId);
+		MisLpu misLpu = theManager.find(MisLpu.class,aLpuId);
+		java.util.Date date = new java.util.Date() ;
+		java.sql.Date dd = new java.sql.Date(date.getTime());
+		java.sql.Time tt = new java.sql.Time(date.getTime());
+		String username = theContext.getCallerPrincipal().getName() ;
+		if (secUser!=null && misLpu!=null) {
+			Long patId = getPersonByWorker(aUserId);
+			Worker w = getIfWorkerExists(patId,aLpuId);
+			Long wId=0L;
+			if (w==null) {
+				w = new Worker();
+				w.setLpu(misLpu);
+				w.setPerson(theManager.find(Patient.class,patId ));
+				w.setCreateDate(dd);
+				w.setCreateTime(tt);
+				w.setCreateUsername(username);
+				theManager.persist(w);
+				wId = w.getId();
+				msgResult += "Создан новый сотрудник<br>";
+			}
+			else {
+				wId = w.getId();
+				w = theManager.find(Worker.class, wId);
+				msgResult += "Сотрудник с заданными параметрами (персона, ЛПУ) уже существует<br>";
+			}
+			Long wfId=getIfWorkFunctionExists(wId,avWfId);
+			if (wfId==0L) {
+				PersonalWorkFunction pwf = new PersonalWorkFunction();
+				pwf.setWorkFunction(theManager.find(VocWorkFunction.class, avWfId));
+				pwf.setWorker(w);
+				pwf.setRegistrationInterval(0);
+				pwf.setCreateDate(dd);
+				pwf.setCreateTime(tt);
+				pwf.setCreateUsername(username);
+				theManager.persist(pwf);
+				msgResult += "Создана новая рабочая функция<br>";
+			}
+			else
+				msgResult += "Рабочая функция с заданными параметрами (работник, должность) уже существует<br>";
+			//установка пароля
+			setDefaultPassword("1",secUser.getLogin(),username);
+			changePassword("Covid-19", "1", secUser.getLogin());
+			secUser.setEditDate(dd);
+			secUser.setPasswordChangedDate(dd);
+			secUser.setEditUsername(username);
+			secUser.setEditTime(tt);
+			msgResult += "Пароль успешно установлен.";
+		}
+		else
+			msgResult += "Неверные параметры!";
+		return msgResult;
+	}
 
     @PersistenceContext private EntityManager theManager ;
     @Resource SessionContext theContext ;
