@@ -143,12 +143,13 @@ function onSave(aForm, aEntity, aCtx) {
         throw "У Вас стоит ограничение на редактрование данного протокола!"+
         "<br><br> Текущий пользователь: "+username+", протокол был создан пользователем: "+aForm.username ;
     }
-    var protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.id='" + aEntity.id + "' and d.dtype='Protocol'").getResultList();
+    var manager = aCtx.manager;
+    var protocols = manager.createNativeQuery("select d.id,d.record from Diary d where d.id='" + aEntity.id + "' and d.dtype='Protocol'").getResultList();
     if (protocols.isEmpty()) {
-        aCtx.manager.createNativeQuery("update Diary set dtype='Protocol' where id='" + aEntity.id + "'").executeUpdate();
+        manager.createNativeQuery("update Diary set dtype='Protocol' where id='" + aEntity.id + "'").executeUpdate();
     }
     if (aForm.getParams() != null && aForm.getParams() != '') {
-        Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(), aEntity, aForm.getParams(), username, aCtx.manager);
+        Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(), aEntity, aForm.getParams(), username, manager);
     }
     createServiceMedCase(aForm, aEntity, aCtx);
     checkPrescription(aForm, aEntity, aCtx,true);

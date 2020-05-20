@@ -58,16 +58,7 @@ function checkFields(aForm, aCtx) {
 }
     function onCreate(aForm, aEntity, aCtx) {
     throw "Создание запрещено системой! обратитесь к разработчикам"; //Отключаем личный кабинет пациента
-        /*var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
-        var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
-        bean.registerPatientExternalResource(aEntity.getId(), aCtx.manager, username);
-        if (aEntity.getExportAllHistory()) {
-            if (aEntity.getExternalCode()!=null){
-                bean.sendPatientMedicalHistoryToExternalResource(aEntity.getId(), aCtx.manager);
-            } else {
-                throw "Нет кода пациента, выгрузка невозможна";
-            }
-        }*/
+
     }
     function onSave(aForm, aEntity, aCtx) {
         throw "Создание запрещено системой! обратитесь к разработчикам"; //Отключаем личный кабинет пациента
@@ -76,16 +67,6 @@ function checkFields(aForm, aCtx) {
          * TODO
          * При изменении номера телефона необходимо отвязать старый номер, на этого же пациента привязать новый номер. Вести журнал изменения номеров
          */
-     /*   var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
-        if (aEntity.getDateTo()!=null) {
-            bean.registerPatientExternalResource(aEntity.getId(), aCtx.manager, username);
-        } else if (aForm.getSendHistoryAgain()!=null&&aForm.getSendHistoryAgain()=="1") {
-            if (aEntity.getExternalCode()!=null){
-                bean.sendPatientMedicalHistoryToExternalResource(aEntity.getId(), aCtx.manager);
-            } else {
-                throw "Не указан код пациента";
-            }
-    }*/
 }
 
     function onPreDelete (aEntityId, aCtx) {

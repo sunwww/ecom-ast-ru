@@ -411,14 +411,20 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 
 	/**
 	 * Создаем браслет в госпитализации при выполнении некоторых анализов. Для каждого анализа пишем свою логику
+     * При необходимости удаляем существующий браслет (при редактировании результата
 	 *
 	 */
-	private void createBraceletByPrescription(TemplateProtocol protocol,JSONArray params, MedCase medCase) {
+	public void createBraceletByPrescription(TemplateProtocol protocol, Long protocolId, JSONArray params, MedCase medCase, String username, EntityManager manager) {
 		try {
 			MedService medService = protocol.getMedService();
 			if (medService!=null && "A26.08.027.999".equals(medService.getCode())) {
 				//анализ на ковид. Делаем браслет с положительным/отрицательным анализом.
+                String entityName = "Protocol";
+                deleteBraceletByEntity(entityName,protocolId, manager);
 				ColorIdentityPatient cip = new ColorIdentityPatient();
+				cip.setCreateUsername(username);
+                cip.setEntityName(entityName);
+                cip.setEntityId(protocolId);
 				StringBuilder info = new StringBuilder();
 				String vocCode ="";
 				String zbr = "", rslt = "";
@@ -442,10 +448,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 						default:break; //остальные - не нужны
 					}
 				}
-				VocColorIdentityPatient vcip = (VocColorIdentityPatient) theManager.createNamedQuery("VocColorIdentityPatient.getByCode").setParameter("code", vocCode).getSingleResult();
+				VocColorIdentityPatient vcip = (VocColorIdentityPatient) manager.createNamedQuery("VocColorIdentityPatient.getByCode").setParameter("code", vocCode).getSingleResult();
 				cip.setVocColorIdentity(vcip);
 				cip.setInfo(zbr+"\n"+rslt);
-				theManager.persist(cip);
+				manager.persist(cip);
 				medCase.addColorsIdentity(cip);
 		 } else {
 			 LOG.warn("template id="+protocol.getId()+", no bracelet for medservice. Call developers");
@@ -455,9 +461,15 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		}
 	}
 
+	private void deleteBraceletByEntity(String name, Long code, EntityManager manager) {
+	    String sql = " ColorIdentityPatient where entityName='"+name+"' and entityId='"+code+"'";
+	    manager.createNativeQuery("delete from medcase_coloridentitypatient where colorsidentity_id = (select id from "+sql+")").executeUpdate();
+	    manager.createNativeQuery("delete from "+sql).executeUpdate();
+
+    }
+
 	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) {
 		try {
-		//	StringBuilder infoToSend = new StringBuilder();
 			Protocol d =null;
 			JSONObject obj = new JSONObject(aParams) ;
 			String wf = String.valueOf(obj.get("workFunction"));
@@ -466,11 +478,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			TemplateProtocol template = theManager.find(TemplateProtocol.class, aTemplateId);
 			JSONArray params = obj.getJSONArray("params");
 			Prescription pres = theManager.find(Prescription.class,aPrescriptId) ;
-			if (template!=null && Boolean.TRUE.equals(template.getCreateBracelet())) {
-				MedCase medCase = pres.getPrescriptionList().getMedCase().getParent()!=null ? pres.getPrescriptionList().getMedCase().getParent()
-						: pres.getPrescriptionList().getMedCase();
-				createBraceletByPrescription(template, params, medCase);
-			}
+
 
 			if (m!=null) {
 				List<Object> l = null;
@@ -497,8 +505,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				d = new RoughDraft() ;
 				d.setMedCase(m) ;
 				d.setTemplateProtocol(aTemplateId);
+				d.setUsername(aUsername);
 				theManager.persist(d) ;
 			}
+            if (template!=null && Boolean.TRUE.equals(template.getCreateBracelet())) {
+                MedCase medCase = pres.getPrescriptionList().getMedCase().getParent()!=null ? pres.getPrescriptionList().getMedCase().getParent()
+                        : pres.getPrescriptionList().getMedCase();
+                createBraceletByPrescription(template, d.getId(), params, medCase, aUsername, theManager);
+            }
 
 
 			StringBuilder sb = new StringBuilder() ;

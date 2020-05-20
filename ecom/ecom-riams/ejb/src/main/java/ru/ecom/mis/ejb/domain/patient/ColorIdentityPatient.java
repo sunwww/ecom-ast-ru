@@ -85,4 +85,18 @@ public class ColorIdentityPatient extends BaseEntity {
         this.theStartDate = new Date(current);
         this.theStartTime = new Time(current);
     }
+
+    /** Код сущности для привязки */
+    @Comment("Код сущности для привязки")
+    public String getEntityName() {return theEntityName;}
+    public void setEntityName(String aEntityName) {theEntityName = aEntityName;}
+    private String theEntityName ;
+
+    /** ИД сущности */
+    @Comment("ИД сущности")
+    public Long getEntityId() {return theEntityId;}
+    public void setEntityId(Long aEntityId) {theEntityId = aEntityId;}
+    private Long theEntityId ;
+
+
 }

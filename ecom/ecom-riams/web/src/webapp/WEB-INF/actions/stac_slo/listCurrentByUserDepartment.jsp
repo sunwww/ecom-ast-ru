@@ -200,6 +200,8 @@ left join voccolor vcr on vcr.id=vcid.color_id
        		where vis.parent_id=sls.id and vis.dtype ='Visit' and ms.code='A26.08.027.999' and upper(d.record) like '%ПОЛОЖИТЕЛЬН%'
        		) as f9_rec
        		, vs.name as f10
+       		,sc.code as f11_ss
+       		,to_char(sls.datestart,'dd.MM.yyyy') as f12_slsStart
      			 from medCase m
      left join Diagnosis diag on diag.medcase_id=m.id
      left join vocidc10 mkb on mkb.id=diag.idc10_id
