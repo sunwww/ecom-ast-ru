@@ -2,7 +2,6 @@ package ru.ecom.mis.web.dwr.claim;
 
 import org.jdom.IllegalDataException;
 import org.json.JSONObject;
-import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
@@ -18,7 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 
@@ -79,24 +77,6 @@ public class ClaimServiceJs {
 
 		return aStatus+" : "+ service.executeUpdateNativeSql(sql.toString());
 		
-	}
-	@Deprecated //отключили СМС-ки
-	private static void sendClaimToExecutorBySMS(String aClaimId, String aUsername, HttpServletRequest aRequest, IWebQueryService aService) throws NamingException {
-		String sql = "select pesa.phoneNumber,pesa.id from secuser su left join workfunction wf on wf.secuser_id=su.id " +
-				" left join worker w on w.id=wf.worker_id left join PatientExternalServiceAccount pesa on pesa.patient_id=w.person_id " +
-				" where su.login='"+aUsername+"' and pesa.newClaimNotification='1' ";
-		List<Object[]> list = aService.executeNativeSqlGetObj(sql);
-		if (!list.isEmpty()) {
-			String phone = list.get(0)[0].toString();
-			sql = "select cl.description||' в'||cl.address||' от '||vwf.name||' '||wpat.lastname as text,cl.id from claim cl " +
-					" left join workfunction wf on wf.id=cl.workFunction left join worker w on w.id=wf.worker_id" +
-					" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
-					" left join patient wpat on wpat.id=w.person_id where cl.id="+aClaimId;
-			list = aService.executeNativeSqlGetObj(sql);
-			String text = list.get(0)[0].toString();
-			ITemplateProtocolService bean = Injection.find(aRequest).getService(ITemplateProtocolService.class);
-				bean.sendSms(phone,text);
-		}
 	}
 
 	public static String setViewed (String aId, HttpServletRequest aRequest) throws NamingException {
