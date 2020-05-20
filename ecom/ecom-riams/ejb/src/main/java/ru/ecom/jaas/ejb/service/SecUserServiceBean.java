@@ -350,61 +350,67 @@ public class SecUserServiceBean implements ISecUserService {
 	 * @param aUserId Long Пользователь
 	 * @param aLpuId Long Госпиталь
 	 * @param avWfId Long VocWorkFunction
+     * @param newPsw String Пароль
 	 * @return Сообщение
 	 */
-	public String addUserToCovidHosp(Long aUserId, Long aLpuId, Long avWfId) throws IOException {
+	public String addUserToCovidHosp(Long aUserId, Long aLpuId, Long avWfId, String newPsw) throws IOException {
+        SecUser secUser = theManager.find(SecUser.class, aUserId);
+        java.util.Date date = new java.util.Date();
+        java.sql.Date dd = new java.sql.Date(date.getTime());
+        java.sql.Time tt = new java.sql.Time(date.getTime());
+        String username = theContext.getCallerPrincipal().getName();
 		String msgResult = "";
-		SecUser secUser = theManager.find(SecUser.class,aUserId);
-		MisLpu misLpu = theManager.find(MisLpu.class,aLpuId);
-		java.util.Date date = new java.util.Date() ;
-		java.sql.Date dd = new java.sql.Date(date.getTime());
-		java.sql.Time tt = new java.sql.Time(date.getTime());
-		String username = theContext.getCallerPrincipal().getName() ;
-		if (secUser!=null && misLpu!=null) {
-			Long patId = getPersonByWorker(aUserId);
-			Worker w = getIfWorkerExists(patId,aLpuId);
-			Long wId=0L;
-			if (w==null) {
-				w = new Worker();
-				w.setLpu(misLpu);
-				w.setPerson(theManager.find(Patient.class,patId ));
-				w.setCreateDate(dd);
-				w.setCreateTime(tt);
-				w.setCreateUsername(username);
-				theManager.persist(w);
-				wId = w.getId();
-				msgResult += "Создан новый сотрудник<br>";
+		if (aLpuId!=0L && avWfId!=0L) {
+            MisLpu misLpu = theManager.find(MisLpu.class, aLpuId);
+            if (secUser != null && misLpu != null) {
+                Long patId = getPersonByWorker(aUserId);
+                Worker w = getIfWorkerExists(patId, aLpuId);
+                Long wId = 0L;
+                if (w == null) {
+                    w = new Worker();
+                    w.setLpu(misLpu);
+                    w.setPerson(theManager.find(Patient.class, patId));
+                    w.setCreateDate(dd);
+                    w.setCreateTime(tt);
+                    w.setCreateUsername(username);
+                    theManager.persist(w);
+                    wId = w.getId();
+                    msgResult += "Создан новый сотрудник<br>";
+                } else {
+                    wId = w.getId();
+                    w = theManager.find(Worker.class, wId);
+                    msgResult += "Сотрудник с заданными параметрами (персона, ЛПУ) уже существует<br>";
+                }
+                Long wfId = getIfWorkFunctionExists(wId, avWfId);
+                if (wfId == 0L) {
+                    PersonalWorkFunction pwf = new PersonalWorkFunction();
+                    pwf.setWorkFunction(theManager.find(VocWorkFunction.class, avWfId));
+                    pwf.setWorker(w);
+                    pwf.setRegistrationInterval(0);
+                    pwf.setCreateDate(dd);
+                    pwf.setCreateTime(tt);
+                    pwf.setCreateUsername(username);
+                    theManager.persist(pwf);
+                    msgResult += "Создана новая рабочая функция<br>";
+                } else
+                    msgResult += "Рабочая функция с заданными параметрами (работник, должность) уже существует<br>";
+            } else
+                msgResult += "Неверные параметры!";
+        }
+		if (!newPsw.equals("")) {
+            //установка пароля
+            setDefaultPassword("1", secUser.getLogin(), username);
+            String res = changePassword(newPsw, "1", secUser.getLogin());
+            if (res.startsWith("1")) {
+				secUser.setEditDate(dd);
+				secUser.setPasswordChangedDate(dd);
+				secUser.setEditUsername(username);
+				secUser.setEditTime(tt);
+				msgResult += "Пароль успешно установлен.";
 			}
-			else {
-				wId = w.getId();
-				w = theManager.find(Worker.class, wId);
-				msgResult += "Сотрудник с заданными параметрами (персона, ЛПУ) уже существует<br>";
-			}
-			Long wfId=getIfWorkFunctionExists(wId,avWfId);
-			if (wfId==0L) {
-				PersonalWorkFunction pwf = new PersonalWorkFunction();
-				pwf.setWorkFunction(theManager.find(VocWorkFunction.class, avWfId));
-				pwf.setWorker(w);
-				pwf.setRegistrationInterval(0);
-				pwf.setCreateDate(dd);
-				pwf.setCreateTime(tt);
-				pwf.setCreateUsername(username);
-				theManager.persist(pwf);
-				msgResult += "Создана новая рабочая функция<br>";
-			}
-			else
-				msgResult += "Рабочая функция с заданными параметрами (работник, должность) уже существует<br>";
-			//установка пароля
-			setDefaultPassword("1",secUser.getLogin(),username);
-			changePassword("Covid-19", "1", secUser.getLogin());
-			secUser.setEditDate(dd);
-			secUser.setPasswordChangedDate(dd);
-			secUser.setEditUsername(username);
-			secUser.setEditTime(tt);
-			msgResult += "Пароль успешно установлен.";
-		}
-		else
-			msgResult += "Неверные параметры!";
+            else
+            	msgResult += res.substring(1);
+        }
 		return msgResult;
 	}
 

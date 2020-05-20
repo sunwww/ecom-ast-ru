@@ -69,9 +69,10 @@ public class RolePoliciesServiceJs  {
 	 * @param aUserId Long Пользователь
 	 * @param aLpuId Long Госпиталь
 	 * @param avWfId Long VocWorkFunction
+	 * @param newPsw String Пароль
 	 */
-	public String addUserToCovidHosp(Long aUserId, Long aLpuId, Long avWfId, HttpServletRequest aRequest) throws NamingException, IOException {
+	public String addUserToCovidHosp(Long aUserId, Long aLpuId, Long avWfId, String newPsw, HttpServletRequest aRequest) throws NamingException, IOException {
 		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
-		return service.addUserToCovidHosp(aUserId, aLpuId, avWfId) ;
+		return service.addUserToCovidHosp(aUserId, aLpuId, avWfId,newPsw) ;
 	}
 }

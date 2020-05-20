@@ -877,24 +877,6 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 				queried = 'id,name'
 		/>
 	</voc>
-	<!-- Справочники инфекционных отделений -->
-	<voc id='vocCovidLpu' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.lpu.MisLpu'
-				names   = 'name'
-				queried = 'id,name'
-				queryAppend=" isforcovid=true "
-		/>
-	</voc>
-	<!-- Справочники рабочих функций для инф. отделения -->
-	<voc id='vocCovidWf' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction'
-				names   = 'name'
-				queried = 'id,name'
-				queryAppend=" (code='999' or code='DOC_SP' or code='27' or code='25' or code='58') "
-		/>
-	</voc>
 	<voc id='vocScreeningArterialPulsation' type='EntityVocService'>
 		<EntityVocService
 				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningArterialPulsation'
