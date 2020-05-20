@@ -28,4 +28,6 @@ public interface ISecUserService {
     void removeRoles(long aUserId, long[] aRoles) ;
     void addRoles(long aUserId, long[] aRoles) ;
     Collection<SecRoleForm> listRolesToAdd(long aUserId, boolean aIsSystemView) ;
+    //Добавить пользователя в госпиталь (убрать после эпидемии)
+    String addUserToCovidHosp(Long aUserId, Long aLpuId, Long avWfId, String newPsw) throws IOException;
 }

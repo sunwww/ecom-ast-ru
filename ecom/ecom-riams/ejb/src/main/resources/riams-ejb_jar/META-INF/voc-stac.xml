@@ -869,7 +869,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 				queried = 'name'
 		/>
 	</voc>
-	<!-- Справочники ппо кардиологическому скринингу -->
+	<!-- Справочники по кардиологическому скринингу -->
 	<voc id='vocScreeningSkin' type='EntityVocService'>
 		<EntityVocService
 				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningSkin'
