@@ -15,6 +15,27 @@
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:sectionTitle>Отчет для Эллы</msh:sectionTitle>
+    <%
+
+      String dateBegin = request.getParameter("dateBegin") ;
+      if (dateBegin!=null && !dateBegin.equals("")) {
+        request.setAttribute("dateBegin","'"+dateBegin+"'");
+      }
+      else
+        request.setAttribute("dateBegin","current_date");
+    %>
+    <msh:form action="/stac_reportForElla.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+      <msh:panel>
+        <msh:row>
+          <msh:textField property="dateBegin" label="Период с" />
+        </msh:row>
+        <msh:row>
+          <td>
+            <input type="button" onclick="document.forms[0].submit();" value="Найти" />
+          </td>
+        </msh:row>
+      </msh:panel>
+    </msh:form>
     <ecom:webQuery name="datelist" nativeSql="select d.id, pat.patientinfo, d.dateregistration, d.timeregistration
       ,coalesce (substring(d.record,case when position('SP' in upper(d.record))>0 then position('SP' in upper(d.record))
       else position('САТУРАЦИ' in upper(d.record)) end,20),'') as f5
@@ -26,7 +47,7 @@
       left join medcase sls on sls.id=slo.parent_id
       left join mislpu  dep on dep.id=slo.department_id
       left join patient pat on pat.id=slo.patient_id
-      where d.dateregistration =current_date and slo.department_id in (499,500,501,502,503,504,505,506)
+      where d.dateregistration =${dateBegin} and slo.department_id in (499,500,501,502,503,504,505,506)
 order by pat.patientinfo, d.dateregistration desc , d.timeregistration  desc "
     />
     <msh:table printToExcelButton="Excel" name="datelist" action="entityParentView-smo_visitProtocol.do" idField="1">

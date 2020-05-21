@@ -604,8 +604,8 @@
         </action>
         <!-- Отчет для Эллы, убрать после эпидемии-->
         <action path='/stac_reportForElla'
-                type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
-                name='stac_departmentJournalForm' validate='false' scope='request'
+                type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm' validate='false' scope='request'
                 input='/WEB-INF/actions/stac_slo/reportForElla.jsp'
         >
             <forward name="success" redirect="false"
