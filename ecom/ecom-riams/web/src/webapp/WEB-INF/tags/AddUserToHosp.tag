@@ -18,6 +18,9 @@
         <form id="${name}">
             <msh:panel>
                 <msh:row>
+                    <br><label><input name="${name}isCovid" id="${name}isCovid" type="checkbox" onclick='javascript:setCovidOrNot${name}();'/>Инфекционное?</label><br>
+                </msh:row>
+                <msh:row>
                     <msh:comboBox size='300' horizontalFill="true" property='${name}vocLpuHospOtdAll' vocName="vocLpuHospOtdAll" label='Отделение:'/>
                 </msh:row>
                 <msh:row>
@@ -56,6 +59,7 @@
     function show${name}(id) {
         ID=id;
         theTableArrow = null ;
+        setCovidOrNot${name}();
         the${name}CloseDocumentDialog.show();
     }
 
@@ -87,5 +91,20 @@
         $('${name}Psw').value="";
         the${name}CloseDocumentDialog.hide() ;
         jQuery("input[name='${name}rad']")[0].checked=jQuery("input[name='${name}rad']")[1].checked=false;
+    }
+
+    //если инфекционное, то проставить parentId
+    function setCovidOrNot${name}() {
+        $('${name}vocLpuHospOtdAll').value='';
+        $('${name}vocLpuHospOtdAllName').value='';
+        $('${name}vocWorkFunction').value='';
+        $('${name}vocWorkFunctionName').value='';
+
+        var vocLpu = jQuery("#${name}isCovid").prop("checked") ?
+            'vocCovidLpu' : 'vocLpuHospOtdAll';
+        var vocWf = jQuery("#${name}isCovid").prop("checked") ?
+            'vocCovidWf' : 'vocWorkFunction';
+        ${name}vocLpuHospOtdAllAutocomplete.setUrl('simpleVocAutocomplete\\'+vocLpu);
+        ${name}vocWorkFunctionAutocomplete.setUrl('simpleVocAutocomplete\\'+vocWf);
     }
 </script>

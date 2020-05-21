@@ -394,7 +394,9 @@ public class SecUserServiceBean implements ISecUserService {
                 } else {
                     wId = w.getId();
                     w = theManager.find(Worker.class, wId);
-                    msgResult += "Сотрудник с заданными параметрами (персона, ЛПУ) уже существует<br>";
+					//changed 21052020
+                    msgResult += "<a href='entityParentView-mis_worker.do?id="+wId+"'>Сотрудник с заданными параметрами (персона, ЛПУ) уже существует</a>";
+					return msgResult;
                 }
                 Long wfId = getIfWorkFunctionExists(wId, avWfId);
                 if (wfId == 0L) {
