@@ -11,6 +11,7 @@
     <h3>Если в выбранном отделении нет работника, он будет создан.</h3>
     <h3>Если работник есть, но нет рабочей функции, она будет создана.</h3>
     <h3>Если указан пароль, он будет сброшен на выбранное значение.</h3>
+    <h3>Если пароль равен 1, то пользователь должен будет сменить пароль после входа.</h3>
     <table width="100%" cellspacing="10" cellpadding="10" border="1" >
     </table>
     <div>
@@ -42,7 +43,7 @@
             </tr>
             <tr><td></td></tr>
             <tr>
-                <td align="right"><input type="button"  style="font-weight:bold" id="${name}203" value='Отменить' id="${name}Cancel" onclick='javascript:the${name}CloseDocumentDialog.hide() ;'/></td>
+                <td align="right"><input type="button"  style="font-weight:bold" id="${name}203" value='Отменить' id="${name}Cancel" onclick='javascript:cancel${name}()'/></td>
             </tr>
         </table>
     </div>
@@ -60,23 +61,31 @@
 
     // Отменить консультацию
     function make${name}() {
-        var lpu=document.getElementById('${name}vocLpuHospOtdAll').value;
-        var vwf=document.getElementById('${name}vocWorkFunction').value;
+        var lpu=+document.getElementById('${name}vocLpuHospOtdAll').value;
+        var vwf=+document.getElementById('${name}vocWorkFunction').value;
 
-        if (!isNaN(lpu) && !isNaN(vwf)) {
-            RolePoliciesService.addUserToCovidHosp(ID, +lpu, +vwf,$('${name}Psw').value, {
+        if (!isNaN(lpu) && !isNaN(vwf) && (lpu!=0 && vwf!=0 || $('${name}Psw').value!='')) {
+            RolePoliciesService.addUserToCovidHosp(ID, lpu, vwf,$('${name}Psw').value, {
                 callback:function (msg) {
                     showToastMessage(msg,null,true,false,6000);
-                    the${name}CloseDocumentDialog.hide() ;
+                    cancel${name}();
                 }
             }) ;
         }
         else
-            showToastMessage('Введите корректные данные!',null,true,true,2000);
+            showToastMessage('Введите корректные данные. Нужно выбрать отделение и должность и/или ввести новый пароль!',null,true,true,5000);
     }
 
     //Проставить текст в пароль
     function setText${name}(text) {
         $('${name}Psw').value=text;
+    }
+
+    //очистить и закрыть
+    function cancel${name}() {
+        //госпиталь и должность удобно не убирать
+        $('${name}Psw').value="";
+        the${name}CloseDocumentDialog.hide() ;
+        jQuery("input[name='${name}rad']")[0].checked=jQuery("input[name='${name}rad']")[1].checked=false;
     }
 </script>

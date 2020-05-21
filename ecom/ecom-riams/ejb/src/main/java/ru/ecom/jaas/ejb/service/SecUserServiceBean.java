@@ -69,6 +69,26 @@ public class SecUserServiceBean implements ISecUserService {
 		if (isGood.equals("")) {
 			return "0Старый пароль указан неверно";			
 		}
+		String msg = checkMatchPassword(aNewPassword);
+		if (msg.equals("")) {
+			String hashPassword = getHashPassword(aUsername, aNewPassword);
+			theManager.createNativeQuery("update secuser set password =:hash, passwordChangedDate=current_date, changePasswordAtLogin='0' where login =:username")
+					.setParameter("username", aUsername).setParameter("hash", hashPassword)
+					.executeUpdate();
+			exportUsersProperties();
+
+			return "1Пароль успешно обновлен";
+		}
+		else
+			return msg;
+	}
+
+	/**
+	 * Проверить пароль на сложность
+	 * @param aNewPassword String Пароль
+	 * @return Сообщение
+	 */
+	private String checkMatchPassword(String aNewPassword) {
 		List<Object[]> l = theManager.createNativeQuery("select sc.KeyValue, sc.description from SoftConfig sc where sc.key='PASSWORDREGEXP'").getResultList() ;
 		if (!l.isEmpty()) {
 			String regexp = l.get(0)[0].toString();
@@ -78,14 +98,9 @@ public class SecUserServiceBean implements ISecUserService {
 				return "0Пароль не удоволетворяет требованиям безопасности!\n"+l.get(0)[1].toString();
 			}
 		}
-		String hashPassword  = getHashPassword(aUsername, aNewPassword);
-		theManager.createNativeQuery("update secuser set password =:hash, passwordChangedDate=current_date, changePasswordAtLogin='0' where login =:username")
-				.setParameter("username",aUsername).setParameter("hash",hashPassword)
-				.executeUpdate();
-		exportUsersProperties();
-		
-		return "1Пароль успешно обновлен";
+		return "";
 	}
+
     public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException {
         MBeanServer SERVER = MBeanServerLocator.locateJBoss();
         String[] signature = {"java.lang.String"};
@@ -395,21 +410,26 @@ public class SecUserServiceBean implements ISecUserService {
                 } else
                     msgResult += "Рабочая функция с заданными параметрами (работник, должность) уже существует<br>";
             } else
-                msgResult += "Неверные параметры!";
+                msgResult += "Неверные параметры!<br>";
         }
 		if (!newPsw.equals("")) {
             //установка пароля
-            setDefaultPassword("1", secUser.getLogin(), username);
-            String res = changePassword(newPsw, "1", secUser.getLogin());
-            if (res.startsWith("1")) {
+			String msg = newPsw.equals("1")?
+					 "" : checkMatchPassword(newPsw);
+			if (msg.equals("")) {
+				String hashPassword = getHashPassword(secUser.getLogin(), newPsw);
+				secUser.setPassword(hashPassword);
+				secUser.setChangePasswordAtLogin(newPsw.equals("1"));
 				secUser.setEditDate(dd);
 				secUser.setPasswordChangedDate(dd);
 				secUser.setEditUsername(username);
 				secUser.setEditTime(tt);
-				msgResult += "Пароль успешно установлен.";
+				theManager.persist(secUser);
+				exportUsersProperties();
+				msgResult += "Пароль успешно установлен";
 			}
-            else
-            	msgResult += res.substring(1);
+		 else
+			msgResult += msg.substring(1);
         }
 		return msgResult;
 	}

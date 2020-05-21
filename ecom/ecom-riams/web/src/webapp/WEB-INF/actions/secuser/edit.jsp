@@ -152,7 +152,7 @@
       <msh:sideLink action="/javascript:setDefaultPassword('.do')" name="Установить пароль по умолчанию" roles="/Policy/Jaas/SecUser/Edit" />
       <msh:sideLink action="/javascript:getUserLoginJounal()" name="Просмотреть журнал входов" roles="/Policy/Jaas/SecUser/Edit" />
       <!-- Для быстрого добавления-->
-      <msh:sideLink action="/javascript:showAddUserToHosp(${param.id})" name="Добавить в отделение" roles="/Policy/Jaas/SecUser/Edit" />
+      <msh:sideLink action="/javascript:showAddUserToHosp(${param.id})" name="Добавить в отделение/настроить пароль" roles="/Policy/Jaas/SecUser/Edit" />
       <tags:AddUserToHosp name="AddUserToHosp"  />
     </msh:sideMenu>
     <msh:sideMenu title="Списки пользователей">
