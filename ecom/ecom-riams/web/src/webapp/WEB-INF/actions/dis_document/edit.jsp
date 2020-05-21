@@ -193,7 +193,7 @@
             from disabilitydocument dd
             left join disabilitysign ds on dd.id = ds.disabilitydocumentid_id and ds.noactual = false and ds.code = 'close'
             where dd.id =  ${param.id}"/>
-                        <msh:table name="list" action="entityParentView-dis_record.do" idField="1">
+                        <msh:table guid="closeTable" name="list" action="entityParentView-dis_record.do" idField="1">
                             <msh:tableButton role="/Policy/Mis/Disability/ElectronicDisability/Doc" hideIfEmpty="true" property="2" addParam="'close'" buttonFunction="javascript:showJournalfssSign" buttonName="Подписать" buttonShortName="&#9997;"/>
                             <msh:tableColumn role="/Policy/Mis/Disability/ElectronicDisability/Doc" columnName="Подпись" property="3"/>
                             <msh:tableColumn columnName="Выгружен" property="4"/>
@@ -256,7 +256,7 @@
                     left join disabilitysign dsdoc on dsdoc.disabilitydocumentid_id = ${param.id} and dsdoc.externalid = dr.id and dsdoc.code = 'doc'
                     left join disabilitysign dsvk on dsvk.disabilitydocumentid_id = ${param.id} and dsvk.externalid = dr.id and dsvk.code = 'vk'
                     where disabilitydocument_id = ${param.id} order by dr.datefrom"/>
-                        <msh:table name="list" action="entityParentView-dis_record.do" idField="1">
+                        <msh:table guid="prolongation" name="list" action="entityParentView-dis_record.do" idField="1">
                             <msh:tableColumn columnName="Дата начала" property="2"/>
                             <msh:tableColumn columnName="Дата окончания" property="3"/>
                             <msh:tableColumn columnName="Леч.врач" property="4"/>
