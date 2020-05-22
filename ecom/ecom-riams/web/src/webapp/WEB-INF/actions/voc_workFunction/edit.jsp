@@ -42,6 +42,9 @@
         <msh:row>
           <msh:autoComplete horizontalFill="true" property="fondSpeciality" vocName="vocE2FondV021" label="Профиль V021" fieldColSpan="3" viewAction="entityView-e2_vocFondV021.do"/>
         </msh:row>
+        <msh:row>
+          <msh:checkBox property="isSuitForCovid" label="Можно назначать в инфекционном?"/>
+        </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>

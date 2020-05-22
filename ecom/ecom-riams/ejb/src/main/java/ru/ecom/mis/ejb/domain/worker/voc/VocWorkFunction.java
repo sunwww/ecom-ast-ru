@@ -155,4 +155,11 @@ public class VocWorkFunction extends VocBaseEntity{
 	public void setMedHelpProfile(VocE2MedHelpProfile aMedHelpProfile) {theMedHelpProfile = aMedHelpProfile;}
 	/** Профиль медицинской помощи */
 	private VocE2MedHelpProfile theMedHelpProfile ;
+
+	/** Можно назначать в инфекционном? */
+	@Comment("Можно назначать в инфекционном?")
+	public Boolean getIsSuitForCovid() {return theIsSuitForCovid;}
+	public void setIsSuitForCovid(Boolean aIsSuitForCovid) {theIsSuitForCovid = aIsSuitForCovid;}
+	/** Можно назначать в инфекционном?? */
+	private Boolean theIsSuitForCovid;
 }

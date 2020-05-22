@@ -892,7 +892,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 				entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction'
 				names   = 'name'
 				queried = 'id,name'
-				queryAppend=" code in('999','DOC_SP','27','25','58') "
+				queryAppend=" isSuitForCovid=true "
 		/>
 	</voc>
 	<voc id='vocScreeningArterialPulsation' type='EntityVocService'>

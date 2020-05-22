@@ -107,4 +107,12 @@ public class VocWorkFunctionForm extends IdEntityForm {
 	public Boolean getIsDiaryTitle() {return theIsDiaryTitle;}
 	public void setIsDiaryTitle(Boolean aIsDiaryTitle) {theIsDiaryTitle = aIsDiaryTitle;}
 	private Boolean theIsDiaryTitle ;
+
+	/** Можно назначать в инфекционном? */
+	@Comment("Можно назначать в инфекционном?")
+	@Persist
+	public Boolean getIsSuitForCovid() {return theIsSuitForCovid;}
+	public void setIsSuitForCovid(Boolean aIsSuitForCovid) {theIsSuitForCovid = aIsSuitForCovid;}
+	/** Можно назначать в инфекционном?? */
+	private Boolean theIsSuitForCovid;
 }
