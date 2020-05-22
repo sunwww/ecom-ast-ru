@@ -878,21 +878,26 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 		/>
 	</voc>
 	<!-- Справочники инфекционных отделений -->
-	<voc id='vocCovidLpu' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.lpu.MisLpu'
-				names   = 'name'
-				queried = 'id,name'
+	<voc id='vocCovidLpu' type='NativeVocService'>
+		<NativeVocService
+				from="MisLpu"
+				names="name"
+				nameId="id"
 				queryAppend=" isforcovid=true "
+				order=""
+				queried=" (cast(id as varchar(10)) like upper(:querId) or upper(name) like upper(:query)) "
 		/>
 	</voc>
+
 	<!-- Справочники рабочих функций для инф. отделения -->
-	<voc id='vocCovidWf' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction'
-				names   = 'name'
-				queried = 'id,name'
+	<voc id='vocCovidWf' type='NativeVocService'>
+		<NativeVocService
+				from = 'VocWorkFunction voc '
+				names="voc.code||' '||voc.name"
+				nameId=" voc.code "
+				queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
 				queryAppend=" isSuitForCovid=true "
+				order="voc.code"
 		/>
 	</voc>
 	<voc id='vocScreeningArterialPulsation' type='EntityVocService'>
