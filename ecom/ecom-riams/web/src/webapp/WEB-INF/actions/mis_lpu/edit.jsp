@@ -103,9 +103,11 @@
         	<msh:checkBox property="isNewBornDep" label="Отд. новорожденных"/>
         	<msh:checkBox property="isMaternityWard" label="Родильное отделение"/>
             <msh:checkBox property="isPatologyPregnant" label="Отделение патологии беременности"/>
-            <msh:checkBox property="isOphthalmic" label="Офтальмологическое отделение"/>
-            <msh:checkBox property="isForCovid" label="Инфекционное"/>
         </msh:row>
+          <msh:row>
+              <msh:checkBox property="isOphthalmic" label="Офтальмологическое отделение"/>
+              <msh:checkBox property="isForCovid" label="Инфекционное"/>
+          </msh:row>
         <msh:row>
             <msh:checkBox property="isMobilePolyclinic" label="Мобильная поликлиника"/>
         	<msh:checkBox property="isArchive" label="Не используется (в архиве)"/>

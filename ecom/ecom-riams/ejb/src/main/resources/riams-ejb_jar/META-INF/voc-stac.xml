@@ -894,7 +894,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 		<NativeVocService
 				from = 'VocWorkFunction voc '
 				names="voc.code||' '||voc.name"
-				nameId=" voc.code "
+				nameId=" voc.id "
 				queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
 				queryAppend=" isSuitForCovid=true "
 				order="voc.code"
