@@ -82,7 +82,7 @@
           left join OMC_OKSM nat on nat.id=pat.nationality_id
           left join address2 rea on rea.addressid  = pat.realaddress_addressid
           where sls.datestart between to_date('${startDate}','dd.MM.yyyy') and  to_date('${finishDate}','dd.MM.yyyy')
-          and sls.dtype ='HospitalMedCase' and sls.department_id in (500,501,502,503,504,505,506)
+          and sls.dtype ='HospitalMedCase' and sls.department_id in (499,500,501,502,503,504,505,506,507,508,509)
            ${typeRegionSql}" />
         <msh:table printToExcelButton="Сохранить в excel" name="list_covid" action="entityParentView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
           <msh:tableColumn columnName="#" property="sn"/>
