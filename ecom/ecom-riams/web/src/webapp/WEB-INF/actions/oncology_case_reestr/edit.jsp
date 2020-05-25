@@ -1871,7 +1871,7 @@
                 var oldII=+btn.id.replace("btnAddDbl","");
                 var ii=createRowMed(oldII);
                 $('vocOncologyN020'+ii).value=$('vocOncologyN020'+(+btn.id.replace("btnAddDbl",""))).value;
-                $('dateSt'+ii).value=getTomorrowDateAfter($('dateSt'+oldII).value,'.');  //проставить следующую дату по умолчанию
+                $('dateSt'+ii).value=getDateAfterOrBeforeCurrent($('dateSt'+oldII).value,'.',1);  //проставить следующую дату по умолчанию
                 $('btnAddDbl'+ii).removeAttribute('disabled');
                 $('btnAdd'+ii).removeAttribute('disabled');
                 $('vocOncologyN020'+ii+'Name').value=$('vocOncologyN020'+(+btn.id.replace("btnAddDbl",""))+'Name').value;
