@@ -92,6 +92,9 @@
 							<li>
 								<msh:link action="/ecom_monitorList.do" >Список фоновых "мониторов"</msh:link>
 							</li>
+							<li>
+								<msh:link action="/javascript:readOldMessages()" >Отметить старые сообщения прочитанными</msh:link>
+							</li>
 
 						</ul>
 					</div>
@@ -247,10 +250,22 @@
                 }
             }
             function syncRecordTomorrow () {
-                var date = prompt('Введите дату направления',getTomorrowDateAfter());
+                var date = prompt('Введите дату направления',getDateAfterOrBeforeCurrent());
                 if (date!=null && date!='' && date!='dd.mm.yyyy') window.open('api/foncCheck/syncRecordTomorrow?dateStart='+date);
                 else window.open('api/foncCheck/syncRecordTomorrow');
             }
+
+            //Отметить сообщения прочитанными #201
+            function readOldMessages() {
+				var date = prompt('Введите дату. Все сообщения, созданные ранее этой даты, будут отмечены прочитанными: ',getDateAfterOrBeforeCurrent(getCurrentDate(),'.',-1));
+				if (date!=null && date!='' && date!='dd.mm.yyyy' && checkDate(date)) {
+					VocService.setMessagesReadBeforeDate(date, {
+						callback: function (num) {
+							showToastMessage("Прочитанными отмечено " + num + " сообщений до даты " + date,null,true,false,3000);
+						}
+					});
+				}
+			}
 		</script>
 	</tiles:put>
 </tiles:insert>

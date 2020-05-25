@@ -271,4 +271,17 @@ public class VocServiceJs {
 		IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
 		return service1.getSoftConfigValue(key, defaultValue);
 	}
+
+	/**
+	 * Отметить сообщения до определённой даты прочитанными #201
+	 *
+	 * @param date Дата отправки сообщения
+	 * @param aRequest HttpServletRequest
+	 * @return String кол-во
+	 */
+	public String setMessagesReadBeforeDate(String date,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select * from setMessagesReadBeforeDate(to_date('"+date+"','dd.mm.yyyy'))".toString());
+		return list.iterator().next()!=null? list.iterator().next().get1().toString() : "0";
+	}
 }

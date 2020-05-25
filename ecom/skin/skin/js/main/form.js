@@ -325,10 +325,18 @@ function toDate(dateStr,sym) {
     var parts = dateStr.split(sym);
     return new Date(parts[2], parts[1] - 1, parts[0])
 }
-//dd - дата, следующую за которой надо получить
-function getTomorrowDateAfter(dateStr,sym) {
+
+/**
+ * Получить дату ранее или позднее полученной или текущей
+ * строка с датой или текущая
+ * sym символ-разделитель в строке
+ * razn разница, которую вычеть/прибавить
+ * @return Boolean true - если есть
+ */
+function getDateAfterOrBeforeCurrent(dateStr,sym,razn) {
     var tomorrow = typeof dateStr=='undefined'? new Date() : toDate(dateStr,sym);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (typeof razn=='undefined') razn=1;
+    tomorrow.setDate(tomorrow.getDate() + razn);
     var dd = tomorrow.getDate();
     var mm = tomorrow.getMonth() + 1;
     var yyyy = tomorrow.getFullYear();
