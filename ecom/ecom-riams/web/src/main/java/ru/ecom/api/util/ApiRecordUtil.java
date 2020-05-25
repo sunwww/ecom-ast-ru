@@ -66,20 +66,18 @@ public class ApiRecordUtil {
         if (aWorkfunctionId==null || aWorkfunctionId.equals(""))
             return getErrorJson("Неверное значение параметра 'Должность'",ERRORWORKFUNCTION);
         else {
-            StringBuilder sqlAdd = new StringBuilder();
-            StringBuilder selectSql = new StringBuilder();
             String[] jsonFields = {"msName", "ppCost"};
-            selectSql.append("select distinct ms.name,pp.cost from priceposition pp")
-                    .append(" left join pricelist pl on pl.id=pp.pricelist_id")
-                    .append(" left join pricemedservice pms on pms.priceposition_id=pp.id")
-                    .append(" left join medservice ms on ms.id=pms.medservice_id")
-                    .append(" left join WorkFunctionService wfs on wfs.medService_id=ms.id")
-                    .append(" left join WorkFunction wf on wf.id=wfs.workfunction_id")
-                    .append(" where wf.id=").append(aWorkfunctionId).append(" and (ms.startDate is null or current_date  >=ms.startDate)")
-                    .append(" and (ms.finishDate is null or ms.finishDate>=current_date)")
-                    .append(" and ms.isShowSiteAsDefault=true")
-                    .append(" and pl.isdefault=true order by pp.cost");
-            return aService.executeNativeSqlGetJSON(jsonFields,selectSql.toString(),30);
+            String selectSql = "select distinct ms.name,pp.cost from priceposition pp" +
+                    " left join pricelist pl on pl.id=pp.pricelist_id" +
+                    " left join pricemedservice pms on pms.priceposition_id=pp.id" +
+                    " left join medservice ms on ms.id=pms.medservice_id" +
+                    " left join WorkFunctionService wfs on wfs.medService_id=ms.id" +
+                    " left join WorkFunction wf on wf.id=wfs.workfunction_id" +
+                    " where wf.id=" + aWorkfunctionId + " and (ms.startDate is null or current_date  >=ms.startDate)" +
+                    " and (ms.finishDate is null or ms.finishDate>=current_date)" +
+                    " and ms.isShowSiteAsDefault=true" +
+                    " and pl.isdefault=true order by pp.cost";
+            return aService.executeNativeSqlGetJSON(jsonFields, selectSql,30);
         }
     }
 
@@ -141,10 +139,8 @@ public class ApiRecordUtil {
             return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
         }
         StringBuilder sqlAdd = new StringBuilder();
-        StringBuilder selectSql = new StringBuilder();
-        String groupBySql, orderBySql;
+
         String[] jsonFields = {"calendarDay_id","calendarDate", "prettyCalendarDate"};
-        selectSql.append(" max(wcd.id) as id, to_char(wcd.calendardate,'yyyy-MM-dd') as calendarDate, to_char(wcd.calendardate,'dd.MM.yyyy') as prettyCalendarDate");
         if (aWorkfunctionId!=null&&!aWorkfunctionId.equals("")) { //Ищем свободные времена по конкретной раб. функции
             sqlAdd.append(" and wf.id=").append(aWorkfunctionId);
         } else { //Ищем свободные времена по любой раб. функции указанной специальности
@@ -160,9 +156,8 @@ public class ApiRecordUtil {
         sqlAdd.append(" and (wcd.calendardate>current_date or wcd.calendardate=current_date and wct.timeFrom>current_time)")
                 .append(aServiceStream);
 
-        groupBySql="wcd.calendardate";
-        orderBySql="wcd.calendardate";
-        return getData(selectSql.toString(),sqlAdd.toString(),orderBySql,groupBySql,jsonFields,30,aService);
+        return getData(" max(wcd.id) as id, to_char(wcd.calendardate,'yyyy-MM-dd') as calendarDate, to_char(wcd.calendardate,'dd.MM.yyyy') as prettyCalendarDate" //Ищем свободные времена по конкретной раб. функции //Ищем свободные времена по любой раб. функции указанной специальности
+                ,sqlAdd.toString(),"wcd.calendardate","wcd.calendardate",jsonFields,30,aService);
     }
 
 /** Находим свободные времени либо по должности (все неврологи), либо по кокретной рабочей функции (невролог Иванов)*/

@@ -33,6 +33,7 @@ public class ApiApplication extends Application {
         set.add(OncoResource.class);
         set.add(PolyclinicResource.class);
         set.add(PolyclinicScheduleResource.class);
+        set.add(CustomMessageResource.class);
         return set;
     }
 }
