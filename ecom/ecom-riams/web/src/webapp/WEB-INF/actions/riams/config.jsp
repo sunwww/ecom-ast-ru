@@ -265,6 +265,10 @@
 						}
 					});
 				}
+				else if (date==null)
+					return;
+				else if (!checkDate(date))
+					showToastMessage("Некорректная дата " + date,null,true,true,3000);
 			}
 		</script>
 	</tiles:put>
