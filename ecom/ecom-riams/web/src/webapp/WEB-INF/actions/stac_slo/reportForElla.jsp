@@ -38,7 +38,7 @@
     </msh:form>
     <ecom:webQuery name="datelist" nativeSql="select d.id, pat.patientinfo, d.dateregistration, d.timeregistration
       ,coalesce (substring(d.record,case when position('SP' in upper(d.record))>0 then position('SP' in upper(d.record))
-      else position('САТУРАЦИ' in upper(d.record)) end,20),'') as f5
+      when position('SР' in upper(d.record))>0 then position('SР' in upper(d.record)) else position('САТУРАЦИ' in upper(d.record)) end,20),'') as f5
       ,dep.name
       ,d.record
       , sls.datestart as satestart

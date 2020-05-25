@@ -19,6 +19,7 @@ function onPreDelete(aEntityId, aContext) {
 		,"карты диспансеризации"
 		,"экспертные карты"
 		,"план диспансеризации"
+		,"карты COVID-19"
 		] ;
 		
 		var err_list = aContext.manager.createNativeQuery("select"
@@ -39,6 +40,7 @@ function onPreDelete(aEntityId, aContext) {
 		+",(select count(*) from ExtDispCard as edc where edc.patient_id=p.id) as v15"
 		+",(select count(*) from QualityEstimationCard qec where qec.patient_id=p.id) as v16"
 		+",(select count(*) from extdispplanpopulationrecord qec where qec.patient_id=p.id) as v17"
+		+",(select count(*) from covid19  qec where qec.patient_id=p.id) as v18"
 		+" from Patient as p where p.id=:id")
 		.setParameter("id",aEntityId).getSingleResult() ;
 		var err_mes="",isErr=false ;
