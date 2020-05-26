@@ -45,11 +45,12 @@ public class SecUserServiceBean implements ISecUserService {
 			LOG.error(e);
 		}
 	}
-	
+
 	public void setDefaultPassword(String aNewPassword, String aUsername, String aUsernameChange) throws IOException {
 		String hashPassword = getHashPassword(aUsername, aNewPassword);
 
-		theManager.createNativeQuery("update secuser set password =:password, editDate=current_date,editTime=current_time,editUsername=:editUsername, changePasswordAtLogin='1' where login = :login")
+		theManager.createNativeQuery("update secuser set password =:password, editDate=current_date,editTime=current_time,editUsername=:editUsername" +
+				", passwordchangeddate= current_date, changePasswordAtLogin="+("1".equals(aNewPassword)?"'1'":"'0'")+" where login = :login")
 				.setParameter("editUsername",aUsernameChange).setParameter("password",hashPassword).setParameter("login",aUsername)
 				.executeUpdate();
 		exportUsersProperties();

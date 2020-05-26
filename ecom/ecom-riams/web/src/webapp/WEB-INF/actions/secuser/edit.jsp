@@ -149,7 +149,8 @@
     <msh:sideMenu>
       <msh:sideLink key="ALT+2" params="id" action="/entityEdit-secuser" name="Редактировать" roles="/Policy/Jaas/SecUser/Edit" />
       <msh:sideLink key="ALT+3" params="id" action="/userRoleEdit" name="Изменить роли пользователя" roles="/Policy/Jaas/SecUser/EditRoles" />
-      <msh:sideLink action="/javascript:setDefaultPassword('.do')" name="Установить пароль по умолчанию" roles="/Policy/Jaas/SecUser/Edit" />
+      <msh:sideLink action="/javascript:setDefaultPassword('1')" name="Установить пароль по умолчанию" roles="/Policy/Jaas/SecUser/Edit" />
+      <msh:sideLink action="/javascript:setDefaultPassword('Covid-19')" name="Установить пароль Covid-19" roles="/Policy/Jaas/SecUser/Edit" />
       <msh:sideLink action="/javascript:getUserLoginJounal()" name="Просмотреть журнал входов" roles="/Policy/Jaas/SecUser/Edit" />
       <!-- Для быстрого добавления-->
       <msh:sideLink action="/javascript:showAddUserToHosp(${param.id})" name="Добавить в отделение/настроить пароль" roles="/Policy/Jaas/SecUser/Edit" />
@@ -204,9 +205,9 @@
         }
       });
     }
-  function setDefaultPassword() {
+  function setDefaultPassword(password) {
   	RolePoliciesService.defaultPassword(
-			$('login').value, {
+			$('login').value, password ? password : null, {
 				callback: function() {
                       window.location.reload() ;
 				}

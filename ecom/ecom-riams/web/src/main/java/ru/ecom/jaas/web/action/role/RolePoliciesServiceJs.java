@@ -41,10 +41,10 @@ public class RolePoliciesServiceJs  {
 		return service.changePassword(aNewPassword, aOldPassword, username);
 		
 	}
-	public void defaultPassword (String aUsername,  HttpServletRequest aRequest) throws NamingException, IOException {
+	public void defaultPassword (String aUsername,  String password, HttpServletRequest aRequest) throws NamingException, IOException {
 		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
 		String whoChangeUser = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		service.setDefaultPassword("1", aUsername,whoChangeUser);
+		service.setDefaultPassword(password!=null && !password.equals("") ? password : "1", aUsername,whoChangeUser);
 	}
 
     public void savePolicies(long aRoleId, String[] aAdds, String[] aRemoves, HttpServletRequest aRequest) throws Exception {
