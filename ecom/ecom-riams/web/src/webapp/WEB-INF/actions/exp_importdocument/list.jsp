@@ -11,7 +11,6 @@
     <tiles:put name='side' type='string'>
         <msh:sideMenu>
             <msh:sideLink key='ALT+N' params="" action="/entityPrepareCreate-exp_importdocument.do" name="Создать документ" />
-            <msh:sideLink key='ALT+4' params="" action="/entityList-exp_iterate.do" name="Переборы" />
         </msh:sideMenu>
     </tiles:put>
 

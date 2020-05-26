@@ -48,9 +48,6 @@
 							<li><msh:link roles="/Policy/Exp/Document/Edit" action="entityList-exp_importdocument.do">
 								Импорт
 							</msh:link></li>
-							<li><msh:link roles='/Policy/Exp/FillTime/View' action="entityList-exp_iterate.do">
-								Переборы
-							</msh:link></li>
 
 
 							<msh:ifInRole roles="/Policy/Stac/CustomizeMode/Edit">

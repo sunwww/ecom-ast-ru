@@ -42,7 +42,6 @@
     ,to_char(m.dateStart,'dd.mm.yyyy')
     ||case when m.datestart!=sls.dateStart then '(госп. с '||to_char(sls.dateStart,'dd.mm.yyyy')||')' else '' end
     ||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart
-
     	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
     ,	  case
 			when (CURRENT_DATE-sls.dateStart)=0 then 1
@@ -55,7 +54,6 @@
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-m.dateStart)+1)
 			else (CURRENT_DATE-m.dateStart)
 		  end as cnt2
-
     ,list(vdrt.name||' '||vpd.name||' '||mkb.code) as diag
     ,coalesce(vic.name,'')||' сер. '||pat.passportSeries||' №'||pat.passportNumber||' выдан '||to_char(pat.passportDateIssued,'dd.mm.yyyy')||' '||pat.passportWhomIssued as passport
     ,vbt.name as bedType
@@ -71,13 +69,12 @@
 				 left join medcase_coloridentitypatient
 				 ss on ss.colorsidentity_id=cip.id where
 				(medcase_id=sls.id or medcase_id=m.id) and (cip.startdate<=current_date and cip.finishdate is null
-				 or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))) as t) as varchar) as jsonAr
+				 or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp)) order by cip.startdate) as t) as varchar) as jsonAr
 				 from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
 	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-
     left join MedCase as sls on sls.id = m.parent_id
     left join medcase sloAll on sloAll.parent_id=sls.id and sloAll.dtype='DepartmentMedCase'
 left join Mislpu dep on dep.id=sloAll.department_id
@@ -112,7 +109,6 @@ left join voccolor vcr on vcr.id=vcid.color_id
                , pat.territoryRegistrationNonresident_id , okt.name,pat.RegionRegistrationNonresident,oq.name,pat.SettlementNonresident
 	       ,ost.name,pat.StreetNonresident
               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name
-
        , pat.foreignRegistrationAddress,sls.id
     order by pat.lastname,pat.firstname,pat.middlename
     "
