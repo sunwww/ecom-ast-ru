@@ -1,11 +1,11 @@
-<%@page import="ru.ecom.diary.web.action.protocol.template.TemplateViewAction"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="ru.ecom.diary.ejb.form.protocol.TemplateProtocolForm"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ page import="ru.ecom.diary.ejb.service.protocol.tree.CheckNode"%>
 <%@ page import="ru.ecom.diary.web.action.protocol.template.TemplateEditAction"%>
-<%@ page import="ru.ecom.diary.ejb.form.protocol.TemplateProtocolForm" %>
+<%@ page import="ru.ecom.diary.web.action.protocol.template.TemplateViewAction" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
@@ -24,6 +24,9 @@
         </msh:row>
         <msh:row>
           <msh:checkBox property="createDiaryByDefault" label="Создавать заключения автоматически при приеме в лабораторию"/>
+        </msh:row>
+        <msh:row>
+          <msh:checkBox property="createBracelet" label="Создавать браслет"/>
         </msh:row>
         <msh:row>
           <msh:textField property="username" label="Пользователь" viewOnlyField="true" />
@@ -139,7 +142,7 @@ where p.template_id=${param.id} order by p.position
         %>
             var gLogger;
             var tree;
-            var nodes = new Array();
+            var nodes = [];
             var nodeIndex;
 
 
@@ -191,13 +194,9 @@ where p.template_id=${param.id} order by p.position
     			  for (var i=0;i<rows.length;i++) {
     				  a+=rows[i]+'\n';
     			  }
-    			  
-    			  alert (a);  
-    		  } else {
-    			  alert (a);
     		  }
-    		  
-    	  }
+              alert (a);
+          }
       });
       }
       

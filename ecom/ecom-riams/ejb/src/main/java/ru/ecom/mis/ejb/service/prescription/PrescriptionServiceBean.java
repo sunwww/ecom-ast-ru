@@ -2,7 +2,6 @@ package ru.ecom.mis.ejb.service.prescription;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -417,8 +416,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	public void createBraceletByPrescription(TemplateProtocol protocol, Long protocolId, JSONArray params, MedCase medCase, String username, EntityManager manager) {
 		try {
 			MedService medService = protocol.getMedService();
-			if (medService!=null && "A26.08.027.999".equals(medService.getCode())) {
-				//анализ на ковид. Делаем браслет с положительным/отрицательным анализом.
+			String medServiceCode = medService!=null ? medService.getCode() : "";
+			if ("A26.08.027.999".equals(medServiceCode)) { //анализ на ковид. Делаем браслет с положительным/отрицательным анализом.
                 String entityName = "Protocol";
                 deleteBraceletByEntity(entityName,protocolId, manager);
 				ColorIdentityPatient cip = new ColorIdentityPatient();
@@ -453,10 +452,40 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				cip.setInfo(zbr+"\n"+rslt);
 				manager.persist(cip);
 				medCase.addColorsIdentity(cip);
-		 } else {
+		 } else if ("A26.06.041.002".equals(medServiceCode)||"A26.06.041.999".equals(medServiceCode)
+			||"A26.06.036.001".equals(medServiceCode)||"A26.06.036.002".equals(medServiceCode)){ //браслет с гепатитом
+				boolean isGepatit = false;
+				for (int i=0;i<params.length();i++) {
+					JSONObject par = params.getJSONObject(i);
+					String id = par.getString("id");
+					String val = par.getString("value");
+					if (("1045".equals(id) && "813".equals(val))
+					|| ("1044".equals(id) && "811".equals(val))) {
+						isGepatit = true; //нашли гепатит
+						break;
+					}
+				}
+				if (isGepatit) {
+					LOG.info("Нашли гепатит");
+					String entityName = "Protocol";
+					deleteBraceletByEntity(entityName,protocolId, manager);
+					ColorIdentityPatient cip = new ColorIdentityPatient();
+					cip.setCreateUsername(username);
+					cip.setEntityName(entityName);
+					cip.setEntityId(protocolId);
+					StringBuilder info = new StringBuilder();
+					String vocCode ="LAB_HEPATITIS";
+					VocColorIdentityPatient vcip = (VocColorIdentityPatient) manager.createNamedQuery("VocColorIdentityPatient.getByCode").setParameter("code", vocCode).getSingleResult();
+					cip.setVocColorIdentity(vcip);
+					cip.setInfo("Лабораторно обнаружен гепатит");
+					manager.persist(cip);
+					medCase.addColorsIdentity(cip);
+				}
+
+			} else {
 			 LOG.warn("template id="+protocol.getId()+", no bracelet for medservice. Call developers");
 		 }
-		} catch (JSONException | ParseException e) {
+		} catch (Exception e) {
 			LOG.error("Не смог создать браслет: "+e.getMessage(),e);
 		}
 	}
@@ -846,7 +875,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		theManager.persist(vis) ;
 		theManager.persist(smc) ;
 		theManager.persist(pres) ;
-		return  vis.getId();
+		return vis.getId();
 	}
 
 	public Long checkLabAnalyzed(Long aPrescriptId,String aUsername) {

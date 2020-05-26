@@ -274,7 +274,6 @@ public class PrescriptionServiceJs {
 			}
 		}
 		if (aPrescriptionId != null && aPrescriptionId > 0L) { //Аннулируем по ИД назначения
-			String medcaseId = null;
 			if (aReason == null || aReason.trim().equals("")) {
 				return "Необходимо указать причину аннулирование!";
 			}
@@ -289,7 +288,7 @@ public class PrescriptionServiceJs {
 			WebQueryResult wqrAnnul = service.executeNativeSql(canAnnulSql).iterator().next();
 			isAnnulPermitted = wqrAnnul.get2().toString().equals("1");
 			if (isAnnulPermitted) {
-				medcaseId = wqrAnnul.get1() != null ? wqrAnnul.get1().toString() : null;
+                String medcaseId  = wqrAnnul.get1() != null ? wqrAnnul.get1().toString() : null;
 				aWorkCalendarTime = wqrAnnul.get3() != null ? Long.valueOf(wqrAnnul.get3().toString()) : null;
 				aMedService = wqrAnnul.get4() != null ? Long.valueOf(wqrAnnul.get4().toString()) : null;
 				canAnnulSql = "update prescription " +
@@ -794,12 +793,8 @@ public class PrescriptionServiceJs {
 	 * @return Long WorkFunction.id
 	 * */
 	private Long getWorkFunction(String username,IWebQueryService service) {
-		Long wfId=null;
 		Collection<WebQueryResult> specP = service.executeNativeSql("select wf.id from secuser su left join workFunction wf on wf.secuser_id=su.id where su.login='"+username+"'",1) ;
-		if (!specP.isEmpty()) {
-			wfId = ConvertSql.parseLong(specP.iterator().next().get1()) ;
-		}
-		return wfId;
+		return specP.isEmpty() ? null : ConvertSql.parseLong(specP.iterator().next().get1());
 	}
 
 	public void uncancelService(String aPrescripts, HttpServletRequest aRequest) throws NamingException {
@@ -980,11 +975,7 @@ public class PrescriptionServiceJs {
 	 */
 	public String getDescription(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
-		if (aIdTemplateList!=null&& !aIdTemplateList.equals(0L)) {
-			return service.getDescription(aIdTemplateList) ;
-		} 
-		return "";
-		
+		return aIdTemplateList!=null && !aIdTemplateList.equals(0L) ? service.getDescription(aIdTemplateList) : "";
 	}
 
 	public String getDefectByBiomaterial(String aPrescript, String aBiomaterialType, String aPrefixMethod,HttpServletRequest aRequest) throws NamingException {
@@ -1215,23 +1206,6 @@ public class PrescriptionServiceJs {
 			sql.append(" where id in (").append(aListPrescript).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		service2.setPatientDateNumber(aListPrescript,aDate,aTime,username,spec);
-		return "1" ;
-	}
-
-	//шо такое? нигде не используется
-	@Deprecated
-	public String receptionIntakeService(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
-		if (1==1) return "Ошибка возникновения коллизии! Обратитесь к разработчикам"; //точно не используется?
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder sql = new StringBuilder() ;
-		Date date = new Date() ;
-		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
-		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
-		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
-		Long spec  = getWorkFunction(username,service);
-		if (spec==null) throw new IllegalDataException("У пользователя "+username+" нет соответствия с рабочей функцией") ;
-		sql.append("update Prescription set transferSpecial_id='").append(spec).append("',transferDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),transferTime=cast('").append(formatT.format(date)).append("' as time),transferUsername='").append(username).append("' where id in (").append(aListPrescript).append(")");
-		service.executeUpdateNativeSql(sql.toString()) ;
 		return "1" ;
 	}
 
