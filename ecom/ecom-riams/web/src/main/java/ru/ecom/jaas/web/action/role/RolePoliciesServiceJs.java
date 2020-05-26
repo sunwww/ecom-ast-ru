@@ -70,9 +70,24 @@ public class RolePoliciesServiceJs  {
 	 * @param aLpuId Long Госпиталь
 	 * @param avWfId Long VocWorkFunction
 	 * @param newPsw String Пароль
+	 * @param userCopy Long Пользователь, у которого скопировать роли
 	 */
-	public String addUserToCovidHosp(Long aUserId, Long aLpuId, Long avWfId, String newPsw, HttpServletRequest aRequest) throws NamingException, IOException {
+	public String addUserToHosp(Long aUserId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, HttpServletRequest aRequest) throws NamingException, IOException {
 		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
-		return service.addUserToCovidHosp(aUserId, aLpuId, avWfId,newPsw) ;
+		return service.addUserToHosp(aUserId, aLpuId, avWfId,newPsw,userCopy,null) ;
+	}
+
+	/**
+	 * Добавить пользователя в отделение с должностью через персону
+	 * @param aPatientId Long Пользователь
+	 * @param aLpuId Long Госпиталь
+	 * @param avWfId Long VocWorkFunction
+	 * @param userCopy Long Пользователь, у которого скопировать роли
+	 * @param newPsw String Пароль
+	 * @param username String Логин
+	 */
+	public String addUserToHospFromPerson(Long aPatientId, Long aLpuId, Long avWfId, String newPsw,  Long userCopy, String username, HttpServletRequest aRequest) throws NamingException, IOException {
+		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
+		return service.addUserToHospFromPerson(aPatientId, aLpuId, avWfId, newPsw, userCopy, username);
 	}
 }

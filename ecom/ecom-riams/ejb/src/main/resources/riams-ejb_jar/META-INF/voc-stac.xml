@@ -885,7 +885,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 				nameId="id"
 				queryAppend=" isforcovid=true "
 				order=""
-				queried=" (cast(id as varchar(10)) like upper(:querId) or upper(name) like upper(:query)) "
+				queried=" (upper(name) like upper(:query)) "
 		/>
 	</voc>
 

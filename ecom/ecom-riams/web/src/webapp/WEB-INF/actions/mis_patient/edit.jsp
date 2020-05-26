@@ -822,9 +822,13 @@ order by wcd.calendarDate, wct.timeFrom" />
     <msh:ifFormTypeIsView formName="mis_patientForm">
       <msh:sideMenu title="Администрирование">
       	<tags:mis_moveDoublePatient name="Data" title="Перенести данные пациента" roles="/Policy/Mis/Patient/MoveDoublePatient"/>
+          <tags:AddUserToHosp name="AddUserToHosp" alreadyUser="0"/>
       	<msh:sideLink action="/js-work_personalWorkFunction-listByPerson" params="id" roles="/Policy/Mis/Worker/WorkFunction/View"
       		name="Рабочие функции" title="Просмотреть рабочие функции по персоне"
       	/>
+          <msh:sideLink action=".javascript:showAddUserToHosp(${param.id})" params="id" roles="/Policy/Jaas/SecUser/Create"
+                        name="Добавить рабочую функцию" title="Добавить рабочую функцию"
+          />
       	<msh:sideLink action=".javascript:updateColorPatient(${param.id})" roles="/Policy/Mis/Patient/EditColorType"
       		name="Изменить цвет" title="Изменить цвет "
       	/>
