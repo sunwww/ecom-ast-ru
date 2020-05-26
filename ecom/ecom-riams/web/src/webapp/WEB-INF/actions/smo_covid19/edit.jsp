@@ -136,6 +136,7 @@
         <msh:sideLink params="id" action="/entityParentDelete-smo_covid19" name="Удалить" roles="/Policy/Mis/MedCase/Covid19/Delete" />
         <msh:sideLink action="/javascript:exportCard()" name="Карта выгружена" roles="/Policy/Mis/MedCase/Covid19/Export" />
           <msh:sideLink params="id" action="/print-covid_058.do?m=printCovid&s=PatientPrintService" name="Форма 058"/>
+          <msh:sideLink params="id" action="/print-covid_058_gep.do?m=printCovid&s=PatientPrintService" name="Форма 058 (Гепатит)"/>
           <msh:sideLink params="id" action="/print-covid_direct2.do?m=printCovid&s=PatientPrintService" name="Направление"/>
 
       </msh:sideMenu>
