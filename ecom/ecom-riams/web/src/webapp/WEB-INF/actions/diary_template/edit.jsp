@@ -16,9 +16,6 @@
       <msh:hidden property="saveType" />
       <msh:hidden property="medService" />
       <msh:panel>
-        <msh:row>	
-        	<msh:autoComplete property="type" vocName="templateProtocolType" label="Тип протокола" />
-        </msh:row>
         <msh:row>
           <msh:textField property="title" label="Заголовок шаблона" horizontalFill="true" fieldColSpan="3" />
         </msh:row>

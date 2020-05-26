@@ -55,11 +55,6 @@ public class TemplateProtocolForm  extends IdEntityForm {
     public String getKeyWord() {    return theKeyWord ;}
     public void setKeyWord(String aKeyWord ) {  theKeyWord = aKeyWord ; }
 
-    /** Тип шаблона */
-    @Persist @Comment("Тип шаблона")
-    public Long getType() {    return theType ;}    
-    public void setType(Long aType ) {  theType = aType ; }
-
     /** Категории, в которые входит протокол */
 	@Comment("Категории, в которые входит протокол")
 	@PersistManyToManyOneProperty(collectionGenericType=TemplateCategory.class)
@@ -116,8 +111,6 @@ public class TemplateProtocolForm  extends IdEntityForm {
 	private String theUsername;
 	/** Категории, в которые входит протокол */
 	private String theCategories;
-    /** Тип шаблона */
-    private Long theType ;
     /** Ключевые слова */
     private String theKeyWord ;
     /** Текст */

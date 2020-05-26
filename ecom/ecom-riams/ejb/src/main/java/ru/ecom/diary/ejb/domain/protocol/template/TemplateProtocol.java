@@ -63,11 +63,6 @@ public class TemplateProtocol extends BaseEntity {
     public String getKeyWord() { return theKeyWord ; }
     public void setKeyWord(String aKeyWord) { theKeyWord = aKeyWord ; }
 
-    /** Тип шаблона */
-    @OneToOne
-    public TemplateProtocolType getType() { return theType ; }
-    public void setType(TemplateProtocolType aType) { theType = aType ; }
-
     /** Категории шаблона */
 	@Comment("Категории шаблона")
 	@ManyToMany
@@ -124,8 +119,6 @@ public class TemplateProtocol extends BaseEntity {
 	private String theUsername;
 	/** Категории шаблона */
 	private List<TemplateCategory> theCategories;
-    /** Тип шаблона */
-    private TemplateProtocolType theType ;
     /** Ключевые слова */
     private String theKeyWord ;
     /** Текст */    
