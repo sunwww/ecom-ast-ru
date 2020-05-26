@@ -153,7 +153,7 @@
       <msh:sideLink action="/javascript:getUserLoginJounal()" name="Просмотреть журнал входов" roles="/Policy/Jaas/SecUser/Edit" />
       <!-- Для быстрого добавления-->
       <msh:sideLink action="/javascript:showAddUserToHosp(${param.id})" name="Добавить в отделение/настроить пароль" roles="/Policy/Jaas/SecUser/Edit" />
-      <tags:AddUserToHosp name="AddUserToHosp"  />
+      <tags:AddUserToHosp name="AddUserToHosp" alreadyUser="1" />
     </msh:sideMenu>
     <msh:sideMenu title="Списки пользователей">
       <msh:sideLink action="/entityList-secuser.do?list=all" name="Все пользователи" styleId="listall" roles="/Policy/Jaas/SecUser/View" />
