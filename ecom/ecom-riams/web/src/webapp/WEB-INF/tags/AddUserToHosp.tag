@@ -77,11 +77,21 @@
         theTableArrow = null ;
         setCovidOrNot${name}();
         $('${name}Username').disabled=(+'${alreadyUser}');
-        the${name}CloseDocumentDialog.show();
-    }
-
-    function checkAndDo${name}() {
-
+        if (!(+'${alreadyUser}')) { //если создание через Персону
+            RolePoliciesService.checkUserExistsAndGenLogin(ID, {
+                callback:function (res) {
+                   if (res)
+                       $('${name}Username').value = res;
+                   else {
+                       $('${name}Username').disabled=true;
+                       showToastMessage('Пользователь у персоны уже есть, можно добавить рабочую функцию/скопировать роли/изменить пароль',null,true,false,6000);
+                   }
+                    the${name}CloseDocumentDialog.show();
+                }
+            }) ;
+        }
+        else
+            the${name}CloseDocumentDialog.show();
     }
 
     // Выполнить
@@ -138,7 +148,7 @@
         $('${name}Psw').value=text;
     }
 
-    //очистить и закрыть
+    //Очистить и закрыть
     function cancel${name}() {
         $('${name}Add').disabled=false;
         //госпиталь и должность удобно не убирать
@@ -150,7 +160,7 @@
         jQuery("input[name='${name}rad']")[0].checked=jQuery("input[name='${name}rad']")[1].checked=false;
     }
 
-    //если инфекционное, то проставить parentId
+    //Если инфекционное, то проставить parentId
     function setCovidOrNot${name}() {
         $('${name}vocLpuHospOtdAll').value='';
         $('${name}vocLpuHospOtdAllName').value='';

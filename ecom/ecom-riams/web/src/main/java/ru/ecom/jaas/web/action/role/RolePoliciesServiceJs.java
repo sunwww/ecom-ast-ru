@@ -2,6 +2,7 @@ package ru.ecom.jaas.web.action.role;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
 import ru.ecom.jaas.ejb.service.ISecRoleService;
 import ru.ecom.jaas.ejb.service.ISecUserService;
@@ -80,7 +81,6 @@ public class RolePoliciesServiceJs  {
 		return service.addUserToHospShort(aPatientId, aLpuId, avWfId, newPsw, userCopy, username);
 	}
 
-
 	/**
 	 * Получить персону по пользователю #200
 	 * @param secUserId SecUser.id
@@ -93,5 +93,33 @@ public class RolePoliciesServiceJs  {
 				" left join Worker w on wf.worker_id=w.id" +
 				" where su.id=" + secUserId) ;
 		return l.isEmpty()? "" : l.iterator().next().get1().toString();
+	}
+
+	/**
+	 * Есть ли пользователь у персоны #200 (true - если есть)
+	 * @param aPatientId Персона
+	 * @return Новый логин для создания или пустая строка, если уже есть пользователь
+	 */
+	public String checkUserExistsAndGenLogin(Long aPatientId,HttpServletRequest aRequest) throws Exception {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login="";
+		Collection<WebQueryResult> l = service.executeNativeSql("select su.id from SecUser su" +
+				" left join WorkFunction swf on su.id=swf.secUser_id" +
+				" left join Worker sw on swf.worker_id=sw.id" +
+				" left join Worker w on sw.person_id=w.person_id" +
+				" left join WorkFunction wf on w.id=wf.worker_id" +
+				" left join Patient pat on pat.id=w.person_id" +
+				" where (wf.archival is null or wf.archival='0') and su.login is not null" +
+				" and pat.id=" + aPatientId);
+		if (l.isEmpty()) {
+			l = service.executeNativeSql("select lastname,firstname,middlename from patient where id=" + aPatientId, 1);
+			if (!l.isEmpty()) {
+				WebQueryResult res = l.iterator().next();
+				String lastname = "" + res.get1();
+				String firstname = "" + res.get2();
+				login = ConvertSql.translate(firstname.substring(0, 1) + lastname);
+			}
+		}
+		return login;
 	}
 }
