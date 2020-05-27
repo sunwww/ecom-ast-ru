@@ -23,8 +23,8 @@
     	  		<ecom:webQuery name="directOtherLpuQ" nativeSql="select 
     	  		wchb.id as i1d
     	  		, to_char(wchb.createDate,'yyyy-MM-dd') as w2chbcreatedate
- ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as l3puSent
- ,case when olpu.codef is null or olpu.codef='' then oplpu.codef else olpu.codef end as l4puDirect
+ , lpu.codef as l3puSent
+ , olpu.codef as l4puDirect
  ,mkb.code as m5kbcode
  ,vbt.name as v6btcodef
  ,wchb.dateFrom as w7chbdatefrom
@@ -33,7 +33,7 @@
  left join VocBedType vbt on vbt.id=wchb.bedType_id
  left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id
  left join VocIdc10 mkb on mkb.id=wchb.idc10_id
- left join MisLpu ml on ml.id=wchb.department_id
+ left join MisLpu lpu on lpu.id=wchb.department_id
  left join mislpu olpu on olpu.id=wchb.orderLpu_id
  where wchb.visit_id =${param.id}
     	"/>
