@@ -1,6 +1,7 @@
 package ru.ecom.jaas.web.action.role;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
 import ru.ecom.jaas.ejb.service.ISecRoleService;
 import ru.ecom.jaas.ejb.service.ISecUserService;
@@ -11,6 +12,7 @@ import ru.nuzmsh.util.format.DateFormat;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 
 
@@ -65,19 +67,6 @@ public class RolePoliciesServiceJs  {
     }
 
 	/**
-	 * Добавить пользователя в отделение с должностью
-	 * @param aUserId Long Пользователь
-	 * @param aLpuId Long Госпиталь
-	 * @param avWfId Long VocWorkFunction
-	 * @param newPsw String Пароль
-	 * @param userCopy Long Пользователь, у которого скопировать роли
-	 */
-	public String addUserToHosp(Long aUserId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, HttpServletRequest aRequest) throws NamingException, IOException {
-		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
-		return service.addUserToHosp(aUserId, aLpuId, avWfId,newPsw,userCopy,null) ;
-	}
-
-	/**
 	 * Добавить пользователя в отделение с должностью через персону
 	 * @param aPatientId Long Пользователь
 	 * @param aLpuId Long Госпиталь
@@ -86,8 +75,23 @@ public class RolePoliciesServiceJs  {
 	 * @param newPsw String Пароль
 	 * @param username String Логин
 	 */
-	public String addUserToHospFromPerson(Long aPatientId, Long aLpuId, Long avWfId, String newPsw,  Long userCopy, String username, HttpServletRequest aRequest) throws NamingException, IOException {
+	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw,  Long userCopy, String username, HttpServletRequest aRequest) throws NamingException, IOException {
 		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
-		return service.addUserToHospFromPerson(aPatientId, aLpuId, avWfId, newPsw, userCopy, username);
+		return service.addUserToHospShort(aPatientId, aLpuId, avWfId, newPsw, userCopy, username);
+	}
+
+
+	/**
+	 * Получить персону по пользователю #200
+	 * @param secUserId SecUser.id
+	 * @return patientId
+	 */
+	public String getPatientBySecUser(Long secUserId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select w.person_id from SecUser su" +
+				" left join WorkFunction wf on su.id=wf.secUSer_id" +
+				" left join Worker w on wf.worker_id=w.id" +
+				" where su.id=" + secUserId) ;
+		return l.isEmpty()? "" : l.iterator().next().get1().toString();
 	}
 }

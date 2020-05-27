@@ -28,8 +28,6 @@ public interface ISecUserService {
     void removeRoles(long aUserId, long[] aRoles) ;
     void addRoles(long aUserId, long[] aRoles) ;
     Collection<SecRoleForm> listRolesToAdd(long aUserId, boolean aIsSystemView) ;
-    //Добавить пользователя в госпиталь
-    String addUserToHosp(Long aUserId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, Long aPatientId)  throws IOException;
-    //Добавить пользователя в госпиталь через персонуa
-    String addUserToHospFromPerson(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, String username)  throws IOException;
+    //Точка входа в короткое создание пользователя в отделение с должностью, логином, паролем, ролями через Персону
+    String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, String username)  throws IOException;
 }
