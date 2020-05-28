@@ -62,14 +62,20 @@
         <ecom:webQuery name="list_covid" nativeSql="select  
         c.id, pat.patientinfo,  to_char(c.createdate,'dd.MM.yyyy')||' '|| cast(c.createtime as varchar(5))
         ,case when c.noActual='1' then 'background-color:#979090; color:black' when c.exportDate is not null then 'background-color:#8ee68e; color:black'
-     when (c.labResult is not null and c.labResult!='') then 'background-color: #f0ba57; color:black' else '' end as f9_styleRow
+     when (c.labResult is not null and c.labResult!='') then 'background-color: #f0ba57; color:black' else '' end as f4_styleRow
+     ,dep.name as f5_dep
+     ,sls.datestart as f5_datestart
     from Covid19 c
     left join Patient pat on pat.id=c.patient_id
+    left join medcase sls on sls.id=c.medcase_id
+    left join mislpu dep on dep.id=sls.department_id
     ${sqlAdd}
     order by c.createdate, c.createtime" />
         <msh:table name="list_covid" action="entityParentView-smo_covid19.do" idField="1" styleRow="4" noDataMessage="Не найдено">
           <msh:tableColumn columnName="#" property="sn"/>
           <msh:tableColumn columnName="Пациент" property="2"/>
+          <msh:tableColumn columnName="Отделение поступления" property="5"/>
+          <msh:tableColumn columnName="Дата поступления" property="6"/>
           <msh:tableColumn columnName="Дата и время создания карты" property="3"/>
         </msh:table>
       </msh:sectionContent>
