@@ -68,17 +68,18 @@ public class RolePoliciesServiceJs  {
     }
 
 	/**
-	 * Добавить пользователя в отделение с должностью через персону
-	 * @param aPatientId Long Пользователь
+	 * Добавить пользователя в отделение с должностью
+	 * @param aPatientId Long Персона
 	 * @param aLpuId Long Госпиталь
 	 * @param avWfId Long VocWorkFunction
 	 * @param userCopy Long Пользователь, у которого скопировать роли
 	 * @param newPsw String Пароль
 	 * @param username String Логин
+     * @param aUserId Long Пользователь (при добавлении раб функций через Пользователей)
 	 */
-	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw,  Long userCopy, String username, HttpServletRequest aRequest) throws NamingException, IOException {
+	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw,  Long userCopy, String username, Long aUserId, HttpServletRequest aRequest) throws NamingException, IOException {
 		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
-		return service.addUserToHospShort(aPatientId, aLpuId, avWfId, newPsw, userCopy, username);
+		return service.addUserToHospShort(aPatientId, aLpuId, avWfId, newPsw, userCopy, username, aUserId);
 	}
 
 	/**

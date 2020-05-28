@@ -29,5 +29,5 @@ public interface ISecUserService {
     void addRoles(long aUserId, long[] aRoles) ;
     Collection<SecRoleForm> listRolesToAdd(long aUserId, boolean aIsSystemView) ;
     //Точка входа в короткое создание пользователя в отделение с должностью, логином, паролем, ролями через Персону
-    String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, String username)  throws IOException;
+    String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, String username, Long aUserId)  throws IOException;
 }

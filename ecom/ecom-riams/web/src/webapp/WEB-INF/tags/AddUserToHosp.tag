@@ -107,8 +107,14 @@
             if (!isNaN(lpu) && !isNaN(vwf) && (lpu!=0 && vwf!=0 || psw!='' || userCopy!='')) {
                 RolePoliciesService.getPatientBySecUser(ID, {
                     callback:function (patientId) {
-                        showToastMessage(msg,null,true,false,6000);
-                        cancel${name}();
+                        if (patientId) {
+                            RolePoliciesService.addUserToHospShort(patientId, lpu, vwf,psw,userCopy,'',ID, {//пустой логин, т.к. он тут не нужен
+                                callback:function (msg) {
+                                    showToastMessage(msg,null,true,false,6000);
+                                    cancel${name}();
+                                }
+                            }) ;
+                        }
                     }
                 }) ;
             }
@@ -130,7 +136,7 @@
                 return;
             }
             else if (login!='' || lpu!=0 || psw!='' || userCopy!=0) {
-                RolePoliciesService.addUserToHospShort(ID, lpu, vwf,psw,userCopy,login, {
+                RolePoliciesService.addUserToHospShort(ID, lpu, vwf,psw,userCopy,login,null, {
                 callback:function (msg) {
                     showToastMessage(msg,null,true,false,6000);
                     cancel${name}();

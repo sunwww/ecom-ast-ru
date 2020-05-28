@@ -561,14 +561,20 @@ public class SecUserServiceBean implements ISecUserService {
 	 * @param username String Логин
 	 * @return Сообщение
 	 */
-	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopyId, String username)  throws IOException {
+	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopyId, String username, Long aUserId)  throws IOException {
 		Patient patient = theManager.find(Patient.class, aPatientId);
 		MisLpu misLpu = theManager.find(MisLpu.class, aLpuId);
 		VocWorkFunction vocWorkFunction = theManager.find(VocWorkFunction.class, avWfId);
 		java.util.Date date = new java.util.Date();
 		java.sql.Date dd = new java.sql.Date(date.getTime());
 		java.sql.Time tt = new java.sql.Time(date.getTime());
-	    if (freeUserName(username)) { //если логин свободен (пустой логин всегда свободен)
+		if (aUserId!=null) {
+            SecUser secUser = theManager.find(SecUser.class, aUserId);
+            return secUser!=null?
+                    addWorkFunctionToUser(secUser, misLpu, vocWorkFunction, newPsw, userCopyId, patient,dd,tt) :
+                    "Произошла ошибка, попробуйте снова.";
+        }
+	    else if (freeUserName(username)) { //если логин свободен (или пустой логин)
             SecUser secUser = getIfSecUserExists(aPatientId);
             if (secUser == null && misLpu!=null && patient!=null)
 				secUser=createSecUser(patient, misLpu, username, dd,tt);
