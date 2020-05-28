@@ -248,8 +248,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                         LOG.error("Невозможно получить объект из карты с ключем = " + entry.getKey());
                     }
                 }
- //               if (!isNotNull(entity.getOkatoReg())) { entity.setOkatoReg(defaultOkato);} //Устанавливаем ОКАТО регистрации по умолчанию
- //               if (!isNotNull(entity.getOkatoReal())) { entity.setOkatoReal(defaultOkato);}//Устанавливаем ОКАТО проживания по умолчанию
                 theManager.persist(entity);
                 setEntryType(entity,aEntryListCode);
                 makeMedPolicy(entity); //Запускаем один лишь раз
@@ -271,7 +269,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /** При формировании заполнения выполняем расчет КСГ, объединение случаев, повторное нахождение КСГ */
-    private void checkListEntryFirst(E2ListEntry aListEntry, List<E2Entry> aEntryList, long aMonitorId) {
+    private void checkListEntryFirst(E2ListEntry aListEntry, long aMonitorId) {
         Long listEntryId = aListEntry.getId();
         try {
             java.util.Date startStartDate = new java.util.Date();
@@ -281,24 +279,21 @@ public class Expert2ServiceBean implements IExpert2Service {
                 //  return;
             }
             isCheckIsRunning=true;
-            if (aEntryList==null) {
-                aEntryList = theManager.createNamedQuery("E2ListEntry.findAllEntries").setParameter("list",aListEntry).getResultList();
-            }
-            if (aEntryList.isEmpty()) {
+            List<E2Entry> e2Entries = theManager.createNamedQuery("E2ListEntry.findAllEntries").setParameter("list",aListEntry).getResultList();
+            if (e2Entries.isEmpty()) {
                 LOG.warn("Случаев для проверки не найдено NO_CASES ");
                 return;
             }
 
             String listEntryCode = aListEntry.getEntryType().getCode();
-            // theMonitorService.acceptMonitor(aMonitorId, "Расчет цены случаев в звполнении") ;
-            IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Пересчет случаев в заполнении",aEntryList.size());
+            IMonitor monitor = theMonitorService.startMonitor(aMonitorId,"Пересчет случаев в заполнении",e2Entries.size());
             monitor.advice(1);
             if (listEntryCode.equals(HOSPITALTYPE) || listEntryCode.equals(HOSPITALPEREVODTYPE)) {
                 int i=0;
-                LOG.info("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size="+aEntryList.size());
-                monitor.setText("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size="+aEntryList.size());
+                LOG.info("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size="+e2Entries.size());
+                monitor.setText("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size="+e2Entries.size());
                 StringBuilder entriesId = new StringBuilder();
-                for (E2Entry entry : aEntryList) { //Найдем лучшее КСГ
+                for (E2Entry entry : e2Entries) { //Найдем лучшее КСГ
                     entriesId.append(",").append(entry.getId());
                     i++;
                     if (i%100==0) {
@@ -324,7 +319,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 LOG.info("Объединение случаев завершено.FINISH_UNION");
                 isMonitorCancel(monitor,"Проверяем КСГ после объединения случаев.2ND_CHECK_KSG");
                 i=0;
-                for(E2Entry entry : aEntryList) {
+                for(E2Entry entry : e2Entries) {
                     i++;
                     if (i%100==0) {
                         if (isMonitorCancel(monitor,"Находим лучшее КСГ-2 после объединения случае. Проверено: "+i))return;
@@ -339,10 +334,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                 //Проверка поликлинических случаев
                 monitor.setText("Удаляем дубли в поликлинике");
                 deletePolyclinicDoubles(listEntryId ); //Удалим дубли при первой проверке
-                aEntryList = theManager.createNamedQuery("E2ListEntry.findAllEntries").setParameter("list",aListEntry).getResultList();
                 int i=0;
                 if (isMonitorCancel(monitor,"POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.")) return;
-                for(E2Entry entry : aEntryList) {
+                for(E2Entry entry : e2Entries) {
                     i++;
                     if (i%100==0) {
                         if (isMonitorCancel(monitor,"Проверяем записи по поликлинике: "+i))return;
@@ -357,23 +351,22 @@ public class Expert2ServiceBean implements IExpert2Service {
                 deleteCrossSpo(aListEntry);
                 monitor.setText("Закончили проверять поликлинику.");
             } else if (listEntryCode.equals(KDPTYPE))  { //неотложку
-                makeEmergencyEntry(aEntryList);
+                makeEmergencyEntry(e2Entries);
             } else if (listEntryCode.equals(EXTDISPTYPE)) { //Пришло время делать ДД
                 LOG.info("Create DD");
                 int i=0;
-                for(E2Entry entry : aEntryList) {
+                for(E2Entry entry : e2Entries) {
                     i++;
-                    if (i%100==0) {
-                        if (isMonitorCancel(monitor,"Проверяем записи по доп. диспансеризации: "+i)) return;
-                    }
+                    if (i%100==0 && isMonitorCancel(monitor,"Проверяем записи по доп. диспансеризации: "+i)) return;
                     makeCheckEntry(entry,false, true);
                 }
-            } else  if (SERVICETYPE.equals(listEntryCode)) {
+            } else if (SERVICETYPE.equals(listEntryCode)) {
                 monitor.setText("Находим несколько услуг в одном визите в УСЛУГах");
-                LOG.info("found doubleService");
-                for(E2Entry entry : aEntryList) {
+                LOG.info("finding doubleService");
+                for(E2Entry entry : e2Entries) {
                     checkServiceEntryFirst(entry);
                 }
+                monitor.setText("Запускаем поиск перекрестных случаев/дублей с другими заполнениями");
                 deleteCrossSpo(aListEntry);
             } else {
                 LOG.error("Невозможно выполнить проверку заполнения, неизвестный тип '"+listEntryCode+"'");
@@ -399,7 +392,6 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (serviceList!=null && serviceList.size()>1) {
             for (EntryMedService medService : serviceList) {
                 if (medService.getCost().longValue()>0L){
-                //    LOG.info("found doubleService");
                     E2Entry newEntry = cloneEntity(entry);
                     createDiagnosis(newEntry);
                     newEntry.setDiagnosis(entry.getDiagnosis().subList(0,0));
@@ -1191,7 +1183,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             LOG.info("start checkListEntry");
             cleanAllMaps(); //очистим карты перед началом новой проверки
             if (null == aListEntry.getCheckDate()) { //Запускаем первичную проверку всех записей
-                checkListEntryFirst(aListEntry,null, aMonitorId);
+                checkListEntryFirst(aListEntry, aMonitorId);
                 return;
             }
             if (isCheckIsRunning) {
@@ -1309,7 +1301,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /** Запустить проверку случая (расчет КСГ, цены, полей для xml) */
     private void makeCheckEntry(E2Entry aEntry, boolean updateKsgIfExist, boolean checkErrors) {
-    //    long startT = System.currentTimeMillis();
+//        long startT = System.currentTimeMillis();
         long bedDays = AgeUtil.calculateDays(aEntry.getStartDate(), aEntry.getFinishDate());
 //        LOG.info("make1="+((System.currentTimeMillis()-startT)/1000));
         long calendarDays = bedDays > 0 ? bedDays + 1 : 1;
@@ -2666,7 +2658,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void calculateServiceEntryPrice(E2Entry aEntry) { //Цена случая с типом услуга = цене услуги!
         List<EntryMedService> medServices = aEntry.getMedServices();
         if (medServices==null || medServices.isEmpty() || medServices.size()>1) {
-            LOG.warn("в случае несколько услуг!! нельзя посчитать цену");
+            LOG.warn(aEntry.getId()+" : в случае несколько услуг!! нельзя посчитать цену "+(medServices!=null ? medServices.size() : -1));
             return;
         }
         EntryMedService medService = medServices.get(0); //1 случай = 1 услуга
@@ -3128,8 +3120,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      */
     private BigDecimal calculateNoFullMedCaseCoefficient (E2Entry aEntry) { //Считаем коэффициент Кпр.+    //  LOG.info("start calculateNoFullMedCaseCoefficient");
         String  npl = aEntry.getNotFullPaymentReason();
-        BigDecimal ret = new BigDecimal(1); //По умолчанию - полный случай
-        boolean isPrerSluch = false;
+        BigDecimal ret =BigDecimal.ONE; //По умолчанию - полный случай
         if (aEntry.getFondResult() == null) {
             return ret;
         }
@@ -3137,21 +3128,24 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (aEntry.getDepartmentId() == 182 && !result.equals("107") && !result.equals("108") && !result.equals("102")) { //Если патология, если НЕ выписан по желанию ЛПУ или желанию пациента, Кпр=1 * 03.10.2018 Результат - Не перевод в другое ЛПУ
             return ret;
         }
-        String deadResult = "105,106,205,206";
-        String otherLpuResult = "102,103,202,203";
-        String lpuLikeResult = "108,208";
-        String patientLikeResult = "107,207";
+        String deadResult = "105,106,205,206"; //смерть
+        String otherLpuResult = "102,103,202,203"; //перевод в другое ЛПУ
+        String lpuLikeResult = "108,208"; //по желанию ЛПУ
+        String patientLikeResult = "107,207"; //по желанию пациента
         boolean isDeadCase = deadResult.contains(result) ;
         boolean isOtherLpu = otherLpuResult.contains(result);
-   //    ksgFullPaymentChildsList.add("st17.001");ksgFullPaymentChildsList.add("st17.002");//при переводе детей в другое ЛПУ не считаем прерванным случаем *30-05-2018
+        boolean isLpuLike = lpuLikeResult.contains(result);
+        boolean isPatientLike = patientLikeResult.contains(result);
         VocKsg ksg = aEntry.getKsg();
-        if (isDeadCase || patientLikeResult.indexOf(result) > -1 || isOtherLpu) { //выписан по желанию ЛПУ
+        boolean isPrerSluch ;
+        if (isDeadCase || isPatientLike || isOtherLpu ||isLpuLike) { //не стандартная выписка
             isPrerSluch = true;
         } else if (aEntry.getCalendarDays() < 4) {  //Если плановая выписки и длительность случая менее 4 дней. //28-02-2018 4 целых дня.
             isPrerSluch =  ksg == null || !isNotNull(ksg.getIsFullPayment());
+        } else {
+            isPrerSluch = false;
         }
-        if (isPrerSluch) {
-            // если прерванный случай - ставим причину неполной оплаты
+        if (isPrerSluch) { // если прерванный случай - ставим причину неполной оплаты
             if (ksg.getIsOperation()) { //Если у КСГ признак "операционного"
                 ret = BigDecimal.valueOf(aEntry.getCalendarDays() < 4 ? 0.85 : 0.9);
             } else {
