@@ -297,30 +297,6 @@ public class SecUserServiceBean implements ISecUserService {
         theManager.persist(user);
     }
 
-
-	/**
-	 * Получить персону по работнику
-	 * @param aUserId Long Пользователь
-	 * @return Patient.id
-	 */
-	private Long getPersonByWorker(Long aUserId) {
-		try {
-			Object obPersonId = theManager.createNativeQuery("select w.person_id" +
-					" from SecUser su" +
-					" left join WorkFunction wf on su.id=wf.secUSer_id" +
-					" left join Worker w on wf.worker_id=w.id" +
-					" where su.id=:userId")
-					.setParameter("userId", aUserId)
-					.getSingleResult();
-
-			Long personId = PersistList.parseLong(obPersonId);
-			return personId;
-		}
-		catch(javax.persistence.NoResultException e) {
-			throw new IllegalArgumentException("Не найдена персона у пользователя!");
-		}
-	}
-
 	/**
 	 * Проверить, существует ли работник с такими параметрами
 	 * @param aPatId Long Персона
@@ -397,89 +373,126 @@ public class SecUserServiceBean implements ISecUserService {
 	}
 
 	/**
+	 * Создать работника пользователю
+	 * @param patient Персона
+	 * @param misLpu Отделение
+	 * @param username String Создатель
+	 * @param dd Date Дата создания
+	 * @param tt Time Время создания
+	 * @return SecUser
+	 */
+	private Worker createWorker(Patient patient, MisLpu misLpu, String username, java.sql.Date dd,java.sql.Time tt) {
+		Worker w = new Worker();
+		w.setLpu(misLpu);
+		w.setPerson(patient);
+		w.setCreateDate(dd);
+		w.setCreateTime(tt);
+		w.setCreateUsername(username);
+		theManager.persist(w);
+		return w;
+	}
+
+	/**
+	 * Создать рабочую функцию пользователю
+	 * @param secUser SecUser
+	 * @param w Worker Работник
+	 * @param vocWorkFunction VocWorkFunction Должность
+	 * @param patient Patient Пациент
+	 * @param username String Создатель
+	 * @param dd Date Дата создания
+	 * @param tt Time Время создания
+	 * @return SecUser
+	 */
+	private PersonalWorkFunction createPersonalWorkFunction(SecUser secUser, Worker w, VocWorkFunction vocWorkFunction, Patient patient,String username, java.sql.Date dd, java.sql.Time tt) {
+		PersonalWorkFunction pwf = new PersonalWorkFunction();
+		pwf.setWorkFunction(vocWorkFunction);
+		pwf.setWorker(w);
+		pwf.setRegistrationInterval(0);
+		pwf.setCreateDate(dd);
+		pwf.setCreateTime(tt);
+		pwf.setCreateUsername(username);
+		if (patient!=null && !getIfAnotherPwfWithSecUserExists(secUser.getId())) //проверка, если не проставлена связь в другой раб функции
+			pwf.setSecUser(secUser); //проставить связь с юзером
+		theManager.persist(pwf);
+		return pwf;
+	}
+
+	/**
 	 * Добавить пользователя в отделение с должностью
-	 * @param aUserId Long Пользователь
-	 * @param aLpuId Long Госпиталь
-	 * @param avWfId Long VocWorkFunction
+	 * @param newPsw String Пароль
+	 * @param secUser SecUser Редактор
+	 * @param newPsw String Пароль
+	 * @param dd Date Дата создания
+	 * @param tt Time Время создания
+	 * @return
+	 */
+	public void setPasswordShort(String newPsw, SecUser secUser, String aUsernameChange, java.sql.Date dd,java.sql.Time tt) throws IOException {
+		String hashPassword = getHashPassword(secUser.getLogin(), newPsw);
+		secUser.setPassword(hashPassword);
+		secUser.setChangePasswordAtLogin(newPsw.equals("1"));
+		secUser.setEditDate(dd);
+		secUser.setPasswordChangedDate(dd);
+		secUser.setEditUsername(aUsernameChange);
+		secUser.setEditTime(tt);
+		secUser.setIsHash(true);
+		theManager.persist(secUser);
+		exportUsersProperties();
+	}
+
+	/**
+	 * Добавить пользователя в отделение с должностью
+	 * @param secUser SecUser Пользователь
+	 * @param misLpu MisLpu Отделение
+	 * @param vocWorkFunction VocWorkFunction Должность
      * @param newPsw String Пароль
-	 * @param userCopy Long Пользователь, у которого скопировать роли
+	 * @param userCopyId Long SecUser.id пользователь, у которого скопировать роли
+	 *                   чтобы избежать Eager
+	 * @param patient Patient Персона
+	 * @param dd Date Дата создания
+	 * @param tt Time Время создания
 	 * @return Сообщение
 	 */
-	public String addUserToHosp(Long aUserId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, Long aPatientId) throws IOException {
-        SecUser secUser = theManager.find(SecUser.class, aUserId);
-        java.util.Date date = new java.util.Date();
-        java.sql.Date dd = new java.sql.Date(date.getTime());
-        java.sql.Time tt = new java.sql.Time(date.getTime());
+	private String addWorkFunctionToUser(SecUser secUser, MisLpu misLpu, VocWorkFunction vocWorkFunction, String newPsw, Long userCopyId, Patient patient, java.sql.Date dd,java.sql.Time tt) throws IOException {
         String username = theContext.getCallerPrincipal().getName();
 		String msgResult = "";
-		if (aLpuId!=0L && avWfId!=0L) {
-            MisLpu misLpu = theManager.find(MisLpu.class, aLpuId);
-            if (secUser != null && misLpu != null) {
-                Long patId = aPatientId==null?
-						getPersonByWorker(aUserId) : aPatientId;
-                Worker w = getIfWorkerExists(patId, aLpuId);
+		if (misLpu!=null && vocWorkFunction!=null) {
+            if (secUser != null) {
+                Worker w = getIfWorkerExists(patient.getId(), misLpu.getId());
                 Long wId = 0L;
                 if (w == null) {
-                    w = new Worker();
-                    w.setLpu(misLpu);
-                    w.setPerson(theManager.find(Patient.class, patId));
-                    w.setCreateDate(dd);
-                    w.setCreateTime(tt);
-                    w.setCreateUsername(username);
-                    theManager.persist(w);
+					w = createWorker(patient, misLpu, username, dd,tt);
                     wId = w.getId();
                     msgResult += "Создан новый сотрудник<br>";
                 } else {
                     wId = w.getId();
-                    w = theManager.find(Worker.class, wId);
-					//changed 21052020
                     msgResult += "<a href='entityParentView-mis_worker.do?id="+wId+"'>Сотрудник с заданными параметрами (персона, ЛПУ) уже существует</a>";
 					return msgResult;
                 }
-                Long wfId = getIfWorkFunctionExists(wId, avWfId);
+                Long wfId = getIfWorkFunctionExists(wId, vocWorkFunction.getId());
                 if (wfId == 0L) {
-                    PersonalWorkFunction pwf = new PersonalWorkFunction();
-                    pwf.setWorkFunction(theManager.find(VocWorkFunction.class, avWfId));
-                    pwf.setWorker(w);
-                    pwf.setRegistrationInterval(0);
-                    pwf.setCreateDate(dd);
-                    pwf.setCreateTime(tt);
-                    pwf.setCreateUsername(username);
-                    if (aPatientId!=null && !getIfAnotherPwfWithSecUserExists(secUser.getId())) {
-                    	//проверка, если не проставлена связь в другой раб функции
-						pwf.setSecUser(secUser); //проставить связь с юзером
-					}
-                    theManager.persist(pwf);
+                    createPersonalWorkFunction(secUser, w,vocWorkFunction,patient, username, dd,tt);
                     msgResult += "Создана новая рабочая функция<br>";
                 } else
                     msgResult += "Рабочая функция с заданными параметрами (работник, должность) уже существует<br>";
             } else
                 msgResult += "Неверные параметры!<br>";
         }
-		SecUser oldUser = theManager.find(SecUser.class,userCopy);
-		if (userCopy!=null && oldUser!=null) {
+		//копирование ролей
+		SecUser oldUser = theManager.find(SecUser.class,userCopyId);
+		if (oldUser!=null) {
 			msgResult += copyRolesFromUser(secUser, oldUser);
 			exportRolesProperties();
 		}
+		//установка пароля
 		if (!newPsw.equals("")) {
-            //установка пароля
 			String msg = newPsw.equals("1")?
-					 "" : checkMatchPassword(newPsw);
+					"" : checkMatchPassword(newPsw);
 			if (msg.equals("")) {
-				String hashPassword = getHashPassword(secUser.getLogin(), newPsw);
-				secUser.setPassword(hashPassword);
-				secUser.setChangePasswordAtLogin(newPsw.equals("1"));
-				secUser.setEditDate(dd);
-				secUser.setPasswordChangedDate(dd);
-				secUser.setEditUsername(username);
-				secUser.setEditTime(tt);
-				secUser.setIsHash(true);
-				theManager.persist(secUser);
-				exportUsersProperties();
+				setPasswordShort(newPsw,secUser,username,dd,tt);
 				msgResult += "Пароль успешно установлен";
 			}
-		 else
-			msgResult += msg.substring(1);
+			else
+				msgResult += msg.substring(1);
         }
 		return msgResult;
 	}
@@ -494,7 +507,7 @@ public class SecUserServiceBean implements ISecUserService {
 		List<SecRole> roles = oldUser.getRoles();
 		List<SecRole> newRoles = newUser.getRoles();
 		for (SecRole sr : roles) {
-			if (newRoles.indexOf(sr)==-1)
+			if (!newRoles.contains(sr))
 				newRoles.add(sr);
 		}
 		theManager.persist(newUser);
@@ -515,47 +528,62 @@ public class SecUserServiceBean implements ISecUserService {
     }
 
 	/**
-	 * Добавить пользователя в отделение с должностью через персону
+	 * Создать пользователя через персону
+	 * @param patient Персона
+	 * @param misLpu Отделение
+	 * @param username String Создатель
+	 * @param dd Date Дата создания
+	 * @param tt Time Время создания
+	 * @return SecUser
+	 */
+    private SecUser createSecUser(Patient patient, MisLpu misLpu, String username, java.sql.Date dd,java.sql.Time tt) {
+		SecUser secUser = new SecUser();
+		secUser.setLogin(username);
+		secUser.setFullname(patient.getFio());
+		secUser.setComment(patient.getFio() + " " + misLpu.getName());
+		secUser.setCreateDate(dd);
+		secUser.setCreateTime(tt);
+		secUser.setCreateUsername(theContext.getCallerPrincipal().getName());
+		theManager.persist(secUser);
+		theManager.flush();
+		theManager.clear();
+		theManager.refresh(secUser);
+		return secUser;
+	}
+
+	/**
+	 * Точка входа в короткое создание пользователя в отделение с должностью, логином, паролем, ролями через Персону
 	 * @param aPatientId Long Персона
 	 * @param aLpuId Long Госпиталь
 	 * @param avWfId Long VocWorkFunction
-	 * @param userCopy Long Пользователь, у которого скопировать роли
+	 * @param userCopyId Long Пользователь, у которого скопировать роли
 	 * @param newPsw String Пароль
 	 * @param username String Логин
 	 * @return Сообщение
 	 */
-	public  String addUserToHospFromPerson(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, String username)  throws IOException {
+	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopyId, String username, Long aUserId)  throws IOException {
+		Patient patient = theManager.find(Patient.class, aPatientId);
+		MisLpu misLpu = theManager.find(MisLpu.class, aLpuId);
+		VocWorkFunction vocWorkFunction = theManager.find(VocWorkFunction.class, avWfId);
 		java.util.Date date = new java.util.Date();
 		java.sql.Date dd = new java.sql.Date(date.getTime());
 		java.sql.Time tt = new java.sql.Time(date.getTime());
-	    if (freeUserName(username)) {
+		if (aUserId!=null) {
+            SecUser secUser = theManager.find(SecUser.class, aUserId);
+            return secUser!=null?
+                    addWorkFunctionToUser(secUser, misLpu, vocWorkFunction, newPsw, userCopyId, patient,dd,tt) :
+                    "Произошла ошибка, попробуйте снова.";
+        }
+	    else if (freeUserName(username)) { //если логин свободен (или пустой логин)
             SecUser secUser = getIfSecUserExists(aPatientId);
-            Long suId = 0L;
-            if (secUser == null) {
-            	if (aLpuId==null || aLpuId==0L || avWfId==null || avWfId==0L)
-					return "Нет пользователя у персоны!";
-                MisLpu misLpu = theManager.find(MisLpu.class, aLpuId);
-                if (misLpu != null) {
-                    secUser = new SecUser();
-                    secUser.setLogin(username);
-                    Patient patient = theManager.find(Patient.class, aPatientId);
-                    secUser.setFullname(patient.getFio());
-                    secUser.setComment(patient.getFio() + " " + misLpu.getName());
-					secUser.setCreateDate(dd);
-					secUser.setCreateTime(tt);
-					secUser.setCreateUsername(theContext.getCallerPrincipal().getName());
-                    theManager.persist(secUser);
-                    theManager.flush();
-                    theManager.clear();
-                    theManager.refresh(secUser);
-                }
-            }
-            suId = secUser.getId();
-            //Далее - обычное создание, как было
-            return addUserToHosp(suId, aLpuId, avWfId, newPsw, userCopy, aPatientId);
+            if (secUser == null && misLpu!=null && patient!=null)
+				secUser=createSecUser(patient, misLpu, username, dd,tt);
+			else if (secUser == null)
+				return "Нет пользователя у персоны! В этом случае нужно указывать ЛПУ и должность.";
+            return addWorkFunctionToUser(secUser, misLpu, vocWorkFunction, newPsw, userCopyId, patient,dd,tt);
         }
 	    else
-	        return "Такой логин уже существует в системе! Придумайте другой";
+	        return "Такой логин уже существует в системе! Придумайте другой.";
 	}
 
     @PersistenceContext private EntityManager theManager ;

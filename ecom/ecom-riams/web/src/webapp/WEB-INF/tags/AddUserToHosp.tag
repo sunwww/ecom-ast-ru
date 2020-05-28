@@ -19,6 +19,7 @@
     <h4>(можно просто сбросить пароль/создать рабочую функцию/всё вместе)</h4>
     <h4>При создании через <i>Персону</i> обязательные поля <u>Логин, ЛПУ, рабочая функция</u> и/или <u>пароль</u> и/или <u>роли</u>.</h4>
     <h4>(можно просто сбросить пароль/скопировать роли/создать пользователя/создать рабочую функцию/всё вместе)</h4>
+    <h4>Экспорт ролей может занять некоторое время</h4>
     <table width="100%" cellspacing="10" cellpadding="10" border="1" >
     </table>
     <div>
@@ -76,7 +77,21 @@
         theTableArrow = null ;
         setCovidOrNot${name}();
         $('${name}Username').disabled=(+'${alreadyUser}');
-        the${name}CloseDocumentDialog.show();
+        if (!(+'${alreadyUser}')) { //если создание через Персону
+            RolePoliciesService.checkUserExistsAndGenLogin(ID, {
+                callback:function (res) {
+                   if (res)
+                       $('${name}Username').value = res;
+                   else {
+                       $('${name}Username').disabled=true;
+                       showToastMessage('Пользователь у персоны уже есть, можно добавить рабочую функцию/скопировать роли/изменить пароль',null,true,false,6000);
+                   }
+                    the${name}CloseDocumentDialog.show();
+                }
+            }) ;
+        }
+        else
+            the${name}CloseDocumentDialog.show();
     }
 
     // Выполнить
@@ -90,10 +105,16 @@
 
         if (+'${alreadyUser}') {  //создание через пользователя
             if (!isNaN(lpu) && !isNaN(vwf) && (lpu!=0 && vwf!=0 || psw!='' || userCopy!='')) {
-                RolePoliciesService.addUserToHosp(ID, lpu, vwf,psw,userCopy,{
-                    callback:function (msg) {
-                        showToastMessage(msg,null,true,false,6000);
-                        cancel${name}();
+                RolePoliciesService.getPatientBySecUser(ID, {
+                    callback:function (patientId) {
+                        if (patientId) {
+                            RolePoliciesService.addUserToHospShort(patientId, lpu, vwf,psw,userCopy,'',ID, {//пустой логин, т.к. он тут не нужен
+                                callback:function (msg) {
+                                    showToastMessage(msg,null,true,false,6000);
+                                    cancel${name}();
+                                }
+                            }) ;
+                        }
                     }
                 }) ;
             }
@@ -103,8 +124,7 @@
                 return;
             }
         }
-        else { //создание через персону
-            if (login!='' && (isNaN(lpu) || lpu==0 || isNaN(vwf) || vwf==0)) {
+            else if (login!='' && (isNaN(lpu) || lpu==0 || isNaN(vwf) || vwf==0)) {
                 showToastMessage('Если введён логин, то необходимо выбрать отделение и должность!',null,true,true,5000);
                 $('${name}Add').disabled=false;
                 return;
@@ -116,7 +136,7 @@
                 return;
             }
             else if (login!='' || lpu!=0 || psw!='' || userCopy!=0) {
-                RolePoliciesService.addUserToHospFromPerson(ID, lpu, vwf,psw,userCopy,login, {
+                RolePoliciesService.addUserToHospShort(ID, lpu, vwf,psw,userCopy,login,null, {
                 callback:function (msg) {
                     showToastMessage(msg,null,true,false,6000);
                     cancel${name}();
@@ -127,7 +147,6 @@
                 showToastMessage('Заполните данные!',null,true,true,2000);
                 $('${name}Add').disabled=false;
             }
-        }
     }
 
     //Проставить текст в пароль
@@ -135,7 +154,7 @@
         $('${name}Psw').value=text;
     }
 
-    //очистить и закрыть
+    //Очистить и закрыть
     function cancel${name}() {
         $('${name}Add').disabled=false;
         //госпиталь и должность удобно не убирать
@@ -147,7 +166,7 @@
         jQuery("input[name='${name}rad']")[0].checked=jQuery("input[name='${name}rad']")[1].checked=false;
     }
 
-    //если инфекционное, то проставить parentId
+    //Если инфекционное, то проставить parentId
     function setCovidOrNot${name}() {
         $('${name}vocLpuHospOtdAll').value='';
         $('${name}vocLpuHospOtdAllName').value='';

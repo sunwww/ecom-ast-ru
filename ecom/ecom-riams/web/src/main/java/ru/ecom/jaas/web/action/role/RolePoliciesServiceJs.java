@@ -1,6 +1,8 @@
 package ru.ecom.jaas.web.action.role;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.ejb.service.ISecPolicyImportService;
 import ru.ecom.jaas.ejb.service.ISecRoleService;
 import ru.ecom.jaas.ejb.service.ISecUserService;
@@ -11,6 +13,7 @@ import ru.nuzmsh.util.format.DateFormat;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 
 
@@ -66,28 +69,58 @@ public class RolePoliciesServiceJs  {
 
 	/**
 	 * Добавить пользователя в отделение с должностью
-	 * @param aUserId Long Пользователь
-	 * @param aLpuId Long Госпиталь
-	 * @param avWfId Long VocWorkFunction
-	 * @param newPsw String Пароль
-	 * @param userCopy Long Пользователь, у которого скопировать роли
-	 */
-	public String addUserToHosp(Long aUserId, Long aLpuId, Long avWfId, String newPsw, Long userCopy, HttpServletRequest aRequest) throws NamingException, IOException {
-		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
-		return service.addUserToHosp(aUserId, aLpuId, avWfId,newPsw,userCopy,null) ;
-	}
-
-	/**
-	 * Добавить пользователя в отделение с должностью через персону
-	 * @param aPatientId Long Пользователь
+	 * @param aPatientId Long Персона
 	 * @param aLpuId Long Госпиталь
 	 * @param avWfId Long VocWorkFunction
 	 * @param userCopy Long Пользователь, у которого скопировать роли
 	 * @param newPsw String Пароль
 	 * @param username String Логин
+     * @param aUserId Long Пользователь (при добавлении раб функций через Пользователей)
 	 */
-	public String addUserToHospFromPerson(Long aPatientId, Long aLpuId, Long avWfId, String newPsw,  Long userCopy, String username, HttpServletRequest aRequest) throws NamingException, IOException {
+	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw,  Long userCopy, String username, Long aUserId, HttpServletRequest aRequest) throws NamingException, IOException {
 		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
-		return service.addUserToHospFromPerson(aPatientId, aLpuId, avWfId, newPsw, userCopy, username);
+		return service.addUserToHospShort(aPatientId, aLpuId, avWfId, newPsw, userCopy, username, aUserId);
+	}
+
+	/**
+	 * Получить персону по пользователю #200
+	 * @param secUserId SecUser.id
+	 * @return patientId
+	 */
+	public String getPatientBySecUser(Long secUserId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select w.person_id from SecUser su" +
+				" left join WorkFunction wf on su.id=wf.secUSer_id" +
+				" left join Worker w on wf.worker_id=w.id" +
+				" where su.id=" + secUserId) ;
+		return l.isEmpty()? "" : l.iterator().next().get1().toString();
+	}
+
+	/**
+	 * Есть ли пользователь у персоны #200 (true - если есть)
+	 * @param aPatientId Персона
+	 * @return Новый логин для создания или пустая строка, если уже есть пользователь
+	 */
+	public String checkUserExistsAndGenLogin(Long aPatientId,HttpServletRequest aRequest) throws Exception {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login="";
+		Collection<WebQueryResult> l = service.executeNativeSql("select su.id from SecUser su" +
+				" left join WorkFunction swf on su.id=swf.secUser_id" +
+				" left join Worker sw on swf.worker_id=sw.id" +
+				" left join Worker w on sw.person_id=w.person_id" +
+				" left join WorkFunction wf on w.id=wf.worker_id" +
+				" left join Patient pat on pat.id=w.person_id" +
+				" where (wf.archival is null or wf.archival='0') and su.login is not null" +
+				" and pat.id=" + aPatientId);
+		if (l.isEmpty()) {
+			l = service.executeNativeSql("select lastname,firstname,middlename from patient where id=" + aPatientId, 1);
+			if (!l.isEmpty()) {
+				WebQueryResult res = l.iterator().next();
+				String lastname = "" + res.get1();
+				String firstname = "" + res.get2();
+				login = ConvertSql.translate(firstname.substring(0, 1) + lastname);
+			}
+		}
+		return login;
 	}
 }

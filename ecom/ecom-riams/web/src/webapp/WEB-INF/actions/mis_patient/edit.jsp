@@ -826,7 +826,7 @@ order by wcd.calendarDate, wct.timeFrom" />
       	<msh:sideLink action="/js-work_personalWorkFunction-listByPerson" params="id" roles="/Policy/Mis/Worker/WorkFunction/View"
       		name="Рабочие функции" title="Просмотреть рабочие функции по персоне"
       	/>
-          <msh:sideLink action=".javascript:showAddUserToHosp(${param.id})" params="id" roles="/Policy/Jaas/SecUser/Create"
+          <msh:sideLink action=".javascript:showAddUserToHosp(${param.id})" roles="/Policy/Jaas/SecUser/Create"
                         name="Добавить рабочую функцию" title="Добавить рабочую функцию"
           />
       	<msh:sideLink action=".javascript:updateColorPatient(${param.id})" roles="/Policy/Mis/Patient/EditColorType"
