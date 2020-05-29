@@ -13,6 +13,7 @@
 	<properties>
 		<appname>riams</appname>
 		<dirname>ecom/riams</dirname>
+		<pvsstudio.version>7.06.37377</pvsstudio.version>
 	</properties>
 	<artifactId>riams-ejb</artifactId>
 	<version>RELEASE</version>

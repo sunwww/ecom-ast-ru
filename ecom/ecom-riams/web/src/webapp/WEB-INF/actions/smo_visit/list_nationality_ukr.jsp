@@ -505,7 +505,7 @@ order by p.lastname,p.firstname,p.middlename"/>
     	    ,a.fullname as afullname
     	    ,m.id
     	    ,cast('' as varchar) as f10
-    	    ,list(to_char(smo.datestart,'dd.MM.yyyy')) as f11_datestart
+    	    ,list(to_char(smo.datestart,'dd.MM.yyyy')||' - '||coalesce(to_char(smo.dateFinish,'dd.MM.yyyy'),'')) as f11_datestart
 			from medcase m
 			left join medcase smo on smo.id=m.parent_id
 			left join patient p on p.id=m.patient_id

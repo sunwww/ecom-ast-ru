@@ -13,6 +13,8 @@
         </msh:ifFormTypeIsView>
         <msh:form action="/entitySaveGoView-e2_vocKsg.do" defaultField="name">
             <msh:hidden property="id" />
+            <msh:hidden property="year" />
+            <msh:hidden property="profile" />
             <msh:hidden property="saveType" />
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
@@ -24,8 +26,20 @@
                 <msh:textField property="name" size="100"/>
             </msh:row>
                 <msh:row>
+                    <msh:checkBox property="longKsg"/>
+                    <msh:checkBox property="isOperation" />
+            </msh:row>
+                <msh:row>
+                    <msh:checkBox property="isFullPayment"/>
+            </msh:row>
+                <msh:row>
                     <msh:textField property="KZ"/>
                     <msh:textField property="bedSubType" />
+            </msh:row>
+            <msh:row>
+
+                <msh:checkBox property="doNotUseCusmo"/>
+                <msh:checkBox property="isCovid19"/>
             </msh:row>
 
                 <msh:submitCancelButtonsRow colSpan="4" />

@@ -22,32 +22,20 @@ public class VocKsgForm extends IdEntityForm {
     @Persist
     public Long getGroup() {return theGroup;}
     public void setGroup(Long aGroup) {theGroup = aGroup;}
-    /** Группа КСГ */
     private Long theGroup ;
 
-    /** Код */
-    @Comment("Код")
+    /** Год КСГ */
+    @Comment("Год КСГ")
     @Persist
-    public String getCode() { return theCode ; }
-    public void setCode(String aCode) { theCode = aCode ; }
+    public Integer getYear() {return theYear;}
+    public void setYear(Integer aYear) {theYear = aYear;}
+    private Integer theYear ;
 
-    /** Название */
-    private String theCode ;
-
-    /** Название */
-    @Comment("Название")
-    @Persist
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-
-    /** Название */
-    private String theName ;
     /** Сверхдлительный КСГ (45 дней)	*/
     @Comment("Длительный срок лечения КСГ")
     @Persist
     public Boolean getLongKsg() {return theLongKsg;}
     public void setLongKsg(Boolean aLongKsg) {theLongKsg = aLongKsg;}
-    /** Длительный срок лечения КСГ */
     private Boolean theLongKsg ;
 
     /** Является операцией */
@@ -55,7 +43,6 @@ public class VocKsgForm extends IdEntityForm {
     @Persist
     public Boolean getIsOperation() {return theIsOperation;}
     public void setIsOperation(Boolean aIsOperation) {theIsOperation = aIsOperation;}
-    /** Является операцией */
     private Boolean theIsOperation ;
 
     /** Оплачивать в полном объеме */
@@ -63,7 +50,6 @@ public class VocKsgForm extends IdEntityForm {
     @Persist
     public Boolean getIsFullPayment() {return theIsFullPayment;}
     public void setIsFullPayment(Boolean aIsFullPayment) {theIsFullPayment = aIsFullPayment;}
-    /** Оплачивать в полном объеме */
     private Boolean theIsFullPayment ;
 
     /** Коэффициент затрат */
@@ -71,7 +57,6 @@ public class VocKsgForm extends IdEntityForm {
     @Persist @Required
     public Double getKZ() {return theKZ;}
     public void setKZ(Double aKZ) {theKZ = aKZ;}
-    /** Коэффициент затрат */
     private Double theKZ ;
 
     /** Профиль помощи */
@@ -79,66 +64,41 @@ public class VocKsgForm extends IdEntityForm {
     @Persist
     public String getProfile() {return theProfile;}
     public void setProfile(String aProfile) {theProfile = aProfile;}
-    /** Профиль помощи */
     private String theProfile ;
-
-    /** Расширение для МКБ */
-    @Comment("Расширение для МКБ")
-    @Persist
-    public Long getExtendsForIdc10() {
-        return theExtendsForIdc10;
-    }
-
-    public void setExtendsForIdc10(Long aExtendsForIdc10) {
-        theExtendsForIdc10 = aExtendsForIdc10;
-    }
-
-    /** МКБ10 */
-    @Comment("МКБ10")
-    @Persist
-    public Long getIdc10() {
-        return theIdc10;
-    }
-    public void setIdc10(Long aIdc10) {
-        theIdc10 = aIdc10;
-    }
-    /** МКБ10 */
-    private Long theIdc10;
-    /** Расширение для МКБ */
-    private Long theExtendsForIdc10;
-
-    /** Ср. количество дней для детей */
-    @Comment("Ср. количество дней для детей")
-    public String getChildDays() {
-        return theChildDays;
-    }
-
-    public void setChildDays(String aChildDays) {
-        theChildDays = aChildDays;
-    }
-
-    /** Ср. кол-во дней для взрослых */
-    @Comment("Ср. кол-во дней для взрослых")
-    public String getAdultDays() {
-        return theAdultDays;
-    }
-
-    public void setAdultDays(String aAdultDays) {
-        theAdultDays = aAdultDays;
-    }
-
-    /** Ср. кол-во дней для взрослых */
-    private String theAdultDays;
-    /** Ср. количество дней для детей */
-    private String theChildDays;
-
 
     /** Тип коек */
     @Comment("Тип коек")
     @Persist @Required
     public Long getBedSubType() {return theBedSubType;}
     public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
-    /** Тип коек */
     private Long theBedSubType ;
+
+    /** Не учитывать КУСмо */
+    @Comment("Не учитывать КУСмо")
+    @Persist
+    public Boolean getDoNotUseCusmo() {return theDoNotUseCusmo;}
+    public void setDoNotUseCusmo(Boolean aDoNotUseCusmo) {theDoNotUseCusmo = aDoNotUseCusmo;}
+    private Boolean theDoNotUseCusmo ;
+
+    /** Covid-19 КСГ */
+    @Comment("Covid-19 КСГ")
+    @Persist
+    public Boolean getIsCovid19() {return theIsCovid19;}
+    public void setIsCovid19(Boolean aIsCovid19) {theIsCovid19 = aIsCovid19;}
+    private Boolean theIsCovid19 ;
+
+    /** Код */
+    @Comment("Код")
+    @Persist
+    public String getCode() { return theCode ; }
+    public void setCode(String aCode) { theCode = aCode ; }
+    private String theCode ;
+
+    /** Название */
+    @Comment("Название")
+    @Persist
+    public String getName() { return theName ; }
+    public void setName(String aName) { theName = aName ; }
+    private String theName ;
 
 }

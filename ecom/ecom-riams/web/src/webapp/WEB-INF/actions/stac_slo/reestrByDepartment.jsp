@@ -63,7 +63,7 @@
     where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'  and m.${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy')
     order by vbst.name, m.${dateSearch}
     "  />
-    <input type="button" value="Печать экс. карт по выбранным ИБ" onclick="printExpCard('stac_expcards_empty')"> 
+    <input type="button" value="Печать экс. карт по выбранным ИБ" onclick="printExpCard('stac_expcards_empty')">
     <msh:table selection="multiply" name="journal_priem" action="entityParentView-stac_ssl.do" idField="1" >
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="7"  />

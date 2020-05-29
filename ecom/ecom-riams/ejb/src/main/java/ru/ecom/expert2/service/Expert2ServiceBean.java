@@ -2452,27 +2452,12 @@ public class Expert2ServiceBean implements IExpert2Service {
             for (EntryMedService ems: medServiceList) {
                 String serviceCode = ems.getMedService().getCode();
                 if (!serviceList.contains(serviceCode)) {
-                    // Отключили 10.01.2020 из-за невозможности определить парность операции //TODO
-                    //                  doubleServiceCodes.append("'").append(serviceCode).append("',");
-                    //LOG.info("depr found double service: "+serviceCode);
-                /*} else { */
                     serviceList.add(serviceCode);
                     serviceCodes.append("'").append(serviceCode).append("',");
                 }
 
             }
             serviceCodes.delete(serviceCodes.length()-1,serviceCodes.length());
-/*            if (doubleServiceCodes.length()>0) {
-                doubleServiceCodes.delete(doubleServiceCodes.length()-1,doubleServiceCodes.length());
-                if (! theManager.createNativeQuery("select ''||op.id from VocPairOperations op " +
-                        " left join VocMedService vms on vms.id=op.medservice_id" +
-                        " where vms.code in ("+doubleServiceCodes.toString()+") and coalesce(op.finishDate,current_date)>=:actualDate ")
-                        .setParameter("actualDate", actualDate)
-                        .getResultList().isEmpty()) {
-                    codes.add("11");
-                }
-            }
-*/
             if (!theManager.createNativeQuery("select vco.id from VocCombinedOperations vco" +
                     " left join vocmedservice vms1 on vms1.id=vco.medservice1_id " +
                     " left join vocmedservice vms2 on vms2.id=vco.medservice2_id " +
@@ -2508,6 +2493,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
             }
         }
+        if (Boolean.TRUE.equals(ksg.getIsCovid19())) codes.add("18");
 
         //Пришло время сохранять все сложности пациента
         if (!codes.isEmpty()) {

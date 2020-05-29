@@ -453,7 +453,7 @@ public class PatientServiceJs {
 				, isUpdatePolicy, isUpdateAttachment);
 		
 	}
-	public String checkAllPatients(String updPatient, String updDocument, String updPolicy,String updAttachment, String aType, String aPatientList,  HttpServletRequest aRequest) throws Exception {
+	public String checkAllPatients(String updPatient, String updDocument, String updPolicy,String updAttachment, String aType, String aPatientList,  HttpServletRequest aRequest) {
 		return FondWebService.checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment, aType, aPatientList, aRequest).toString();
 	}
 	public String checkDispAttached (Long aDispTypeId, Long aPatientId, HttpServletRequest aRequest) throws NamingException {
