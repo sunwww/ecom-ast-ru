@@ -329,7 +329,7 @@
 	    ,ml.name as mlname,vss.name as vssname, res.name as resname
 	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
 	    ,mkb.code || ' ' ||mkb.name as f10_diagnosis
-	    ,case when vsst.omccode='66' then '+' else '-' end 
+	    ,case when vsst.omccode='66' then '+' else '-' end
 		from medcase smo
 		left join vochospitalizationresult res on res.id=smo.result_id
 		left join patient p on p.id=smo.patient_id
@@ -504,6 +504,8 @@ order by p.lastname,p.firstname,p.middlename"/>
     	    ,vn.name as vnname
     	    ,a.fullname as afullname
     	    ,m.id
+    	    ,cast('' as varchar) as f10
+    	    ,list(to_char(smo.datestart,'dd.MM.yyyy')) as f11_datestart
 			from medcase m
 			left join medcase smo on smo.id=m.parent_id
 			left join patient p on p.id=m.patient_id
@@ -550,6 +552,7 @@ order by p.lastname,p.firstname,p.middlename"/>
      action="entityView-mis_patient.do" idField="1" >
     	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
     	      <msh:tableColumn columnName="№№ стат.карт" property="5" />
+    	      <msh:tableColumn columnName="дата поступления" property="11" />
     	      <msh:tableColumn columnName="Пациент" property="2" />
     	      <msh:tableColumn columnName="Дата рождения" property="3" />
     	      <msh:tableColumn columnName="Гражданство" identificator="false" property="7" />
@@ -704,7 +707,6 @@ group by ${groupSqlId},${groupSql}
 					}
 				}
 				wqr.set20(cost.setScale(2, RoundingMode.HALF_UP));
-				System.out.println("pol cost = "+cost);
 
 				String[] stacIds =  wqr.get21().toString().split(",");
 				cost = BigDecimal.ZERO;
