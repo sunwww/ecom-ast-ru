@@ -583,7 +583,7 @@ public class SecUserServiceBean implements ISecUserService {
             return addWorkFunctionToUser(secUser, misLpu, vocWorkFunction, newPsw, userCopyId, patient,dd,tt);
         }
 	    else
-	        return "Такой логин уже существует в системе! Придумайте другой.";
+	        return "Этот логин уже существует в системе! ЗАНЯТ КЕМ-ТО ДРУГИМ. Придумайте НОВЫЙ.";
 	}
 
     @PersistenceContext private EntityManager theManager ;

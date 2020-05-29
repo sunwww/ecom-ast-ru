@@ -506,6 +506,7 @@ public class PatientServiceJs {
                 if (deathDate.length()==10) {
                     statusCode="2";
                     statusName= "По данным ФОМС на "+checkDate+" пациент умер "+deathDate;
+					service.executeUpdateNativeSql("update Patient set deathDate=to_date('"+deathDate+"','dd.mm.yyyy') where id='"+aPatientId+"'") ;
                 }
 			} else {
                 statusCode="0";

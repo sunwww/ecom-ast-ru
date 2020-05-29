@@ -21,7 +21,9 @@ public class PatientViewInterceptor implements IFormInterceptor {
 		EntityManager manager = aContext.getEntityManager();
 
 		if (form.getBirthday()!=null && !form.getBirthday().equals("")) {
-			String age = AgeUtil.getAgeCache(new java.util.Date(),pat.getBirthday(), 2) ;
+			java.util.Date dateTo = form.getDeathDate()!=null && !form.getDeathDate().equals("")?
+					pat.getDeathDate() : new java.util.Date();
+			String age = AgeUtil.getAgeCache( dateTo,pat.getBirthday(), 2) ;
 			form.setAge(age) ;
 		}
 /*		List<Object[]> pesas = manager.createNativeQuery("select id, phonenumber from PatientExternalServiceAccount where patient_id = "+pat.getId()+" and dateto is null and phonenumber is not null and phonenumber!=''").getResultList();
