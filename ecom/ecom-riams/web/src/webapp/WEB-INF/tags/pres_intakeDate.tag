@@ -46,6 +46,7 @@
      var the${name}IntakeInfoDialog = new msh.widget.Dialog($('${name}IntakeInfoDialog')) ;
      // Показать
      function show${name}IntakeInfo(aListPrescript) {
+         //поле времени недоступно для редактирования
          <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/IntakeByCurrentDepartment/NoEditTimeIntake">
          jQuery('#${name}Time').prop("disabled",true);
          </msh:ifInRole>
