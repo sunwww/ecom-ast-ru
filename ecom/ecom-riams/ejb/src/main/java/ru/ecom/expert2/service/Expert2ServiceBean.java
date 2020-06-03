@@ -73,6 +73,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final SimpleDateFormat MONTHYEARDATE = new SimpleDateFormat("yyyy-MM");
     private static final ArrayList<String> CHILD_BIRTH_MKB = new ArrayList<>();
 
+    private static final BigDecimal MAX_KSLP_COEFF = new BigDecimal(1.8); //максимально возможный коэффициент КСЛП
+
     public E2Entry getEntryJson(Long aEntryId) { return theManager.find(E2Entry.class,aEntryId);}
 
     private JSONObject getOKJson() {
@@ -1390,7 +1392,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         fileType = "P";
                     } else {
                         VocE2FondV021 spec = aEntry.getFondDoctorSpecV021();
-                        fileType = Boolean.TRUE.equals(spec.getIsPodushevoy()) ? "P" : "H";
+                        fileType = spec!=null && Boolean.TRUE.equals(spec.getIsPodushevoy()) ? "P" : "H";
                     }
                     if (aEntry.getStartDate().getTime() == aEntry.getFinishDate().getTime()) { //разовый случай
                         String mainMkb = aEntry.getMainMkb();
@@ -2214,8 +2216,8 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (aRegType==null&&aPriority==null) {return diagnosisList;}
         for (EntryDiagnosis diagnosis : aList) {
             if ( //проверить!
-                    (aRegType==null || (aRegType.indexOf(diagnosis.getRegistrationType().getCode())>-1))
-                            && (aPriority==null || aPriority.indexOf(diagnosis.getPriority().getCode())>-1)
+                    (aRegType==null || (diagnosis.getRegistrationType()!=null && aRegType.indexOf(diagnosis.getRegistrationType().getCode())>-1))
+                            && (aPriority==null || diagnosis.getPriority()!=null && aPriority.indexOf(diagnosis.getPriority().getCode())>-1)
                     ) {
                 diagnosisList.add(diagnosis.getMkb().getCode());
             }
@@ -2517,22 +2519,28 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
     /** Считаем коэффициент сложности лечения пациента */
     public BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry) {
-        BigDecimal one = new BigDecimal(1);
+        BigDecimal one = BigDecimal.ONE;
         if(aEntry.getEntryType().equals(HOSPITALTYPE)&&!aEntry.getBedSubType().equals("1")) { return one;}
         List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
-        BigDecimal ret = new BigDecimal(1);
+        BigDecimal ret = BigDecimal.ONE;
         if (list!=null && !list.isEmpty()) { //Нет КСЛП - возвращаем 1.
             if (list.size()==1) { //Если один - возвращаем его.
                 ret = list.get(0).getValue();
             } else {
                 boolean first = true;
+                BigDecimal tooLongCoeff = BigDecimal.ZERO; //коэффициент сверхдлительности
                 for (E2CoefficientPatientDifficultyEntryLink link: list) { //Если несколько, возвращаем К1+(К2-1)+(Кн-1)
+                    if ("9".equals(link.getDifficulty().getCode())) tooLongCoeff = link.getValue();
                     if (first){
                         ret = link.getValue();
                         first=false;
                     } else {
                         ret=ret.add(link.getValue()).add(one.negate());
                     }
+                }
+
+                if (ret.compareTo(MAX_KSLP_COEFF)>0) { //если коэфф > 1.7 - коэфф = 1.7+коэф по сверхдлит. операции.
+                    ret = MAX_KSLP_COEFF.add(tooLongCoeff);
                 }
             }
         }
@@ -2546,7 +2554,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         VocE2BaseTariff baseTariff = getActualVocByClassName(VocE2BaseTariff.class,aFinishDate,"vidSluch_id="+aVidSluch.getId());
         if (baseTariff ==null) {
             LOG.warn("Cant calc polyclinic tariff: "+aVidSluch.getCode()+" <> "+aFinishDate);
-            return new BigDecimal(0);
+            return BigDecimal.ZERO;
         }
         List<VocE2PolyclinicCoefficient> coefficients ;
         //находим Кз
