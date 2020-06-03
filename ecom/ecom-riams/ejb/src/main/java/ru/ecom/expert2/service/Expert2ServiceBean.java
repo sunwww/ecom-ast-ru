@@ -73,7 +73,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final SimpleDateFormat MONTHYEARDATE = new SimpleDateFormat("yyyy-MM");
     private static final ArrayList<String> CHILD_BIRTH_MKB = new ArrayList<>();
 
-    private static final BigDecimal MAX_KSLP_COEFF = new BigDecimal(1.8); //максимально возможный коэффициент КСЛП
+    private static final BigDecimal MAX_KSLP_COEFF = BigDecimal.valueOf(1.8); //максимально возможный коэффициент КСЛП
 
     public E2Entry getEntryJson(Long aEntryId) { return theManager.find(E2Entry.class,aEntryId);}
 
