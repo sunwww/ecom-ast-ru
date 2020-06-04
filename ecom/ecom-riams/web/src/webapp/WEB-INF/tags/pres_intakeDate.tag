@@ -41,11 +41,15 @@
 </div>
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}IntakeInfoDialogInitialized = false ;
      var the${name}IntakeInfoDialog = new msh.widget.Dialog($('${name}IntakeInfoDialog')) ;
      // Показать
      function show${name}IntakeInfo(aListPrescript) {
+         //поле времени недоступно для редактирования
+         <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/IntakeByCurrentDepartment/NoEditTimeIntake">
+         jQuery('#${name}Time').prop("disabled",true);
+         </msh:ifInRole>
          // устанавливается инициализация для диалогового окна
          $('${name}List').value=aListPrescript;
       //   if (!theIs${name}IntakeInfoDialogInitialized) {
