@@ -1389,7 +1389,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     code = "POL_EMERG";
                 } else { //поликлиника. либо Н либо Р в зависимости от настроек и профиля
                     if (isConsultativePolyclinic) {
-                        fileType = "P";
+                        fileType = "H";
                     } else {
                         VocE2FondV021 spec = aEntry.getFondDoctorSpecV021();
                         fileType = spec!=null && Boolean.TRUE.equals(spec.getIsPodushevoy()) ? "P" : "H";
@@ -2495,7 +2495,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
             }
         }
-        if (Boolean.TRUE.equals(ksg.getIsCovid19())) codes.add("18");
+        if (Boolean.TRUE.equals(ksg.getIsCovid19()) && !codes.contains("18")) codes.add("18");
 
         //Пришло время сохранять все сложности пациента
         if (!codes.isEmpty()) {
@@ -2530,7 +2530,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 boolean first = true;
                 BigDecimal tooLongCoeff = BigDecimal.ZERO; //коэффициент сверхдлительности
                 for (E2CoefficientPatientDifficultyEntryLink link: list) { //Если несколько, возвращаем К1+(К2-1)+(Кн-1)
-                    if ("9".equals(link.getDifficulty().getCode())) tooLongCoeff = link.getValue();
+                    if ("9".equals(link.getDifficulty().getCode())) tooLongCoeff = link.getValue().subtract(one);
                     if (first){
                         ret = link.getValue();
                         first=false;
@@ -2539,7 +2539,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                 }
 
-                if (ret.compareTo(MAX_KSLP_COEFF)>0) { //если коэфф > 1.7 - коэфф = 1.7+коэф по сверхдлит. операции.
+                if (ret.compareTo(MAX_KSLP_COEFF)>0) { //если коэфф > 1.8 - коэфф = 1.8+коэф по сверхдлит. операции.
                     ret = MAX_KSLP_COEFF.add(tooLongCoeff);
                 }
             }

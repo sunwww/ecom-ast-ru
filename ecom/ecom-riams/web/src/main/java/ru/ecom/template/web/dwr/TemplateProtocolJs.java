@@ -317,7 +317,15 @@ public class TemplateProtocolJs {
         	return service.getDischargeEpicrisis(Long.parseLong(aId)) ;
         }
     }
-    public String listCategProtocolsByUsername(String aSmoId,String aType, String aFunction,HttpServletRequest aRequest) throws NamingException {
+
+    //категории шаблонов
+    public String listCategProtocolsByUsername(String aSmoId,String aType, String aFunction, String diaryDate, HttpServletRequest aRequest) throws NamingException {
+		String diarySql ;
+		if (diaryDate!=null && !diaryDate.equals("")) {
+			diarySql=" and d.dateRegistration=to_date('"+diaryDate+"','dd.mm.yyyy')";
+		} else {
+			diarySql="";
+		}
     	StringBuilder sql = new StringBuilder() ;
     	String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -412,6 +420,7 @@ public class TemplateProtocolJs {
     			.append(" left join Diary as d on m.id=d.medCase_id")         
     			.append(" where   m.patient_id='").append(patient)
     			.append("' and upper(d.dtype)='PROTOCOL'")
+				.append(diarySql)
     			.append("    group by d.dateRegistration,d.username having upper(d.username)='").append(login.toUpperCase()).append("'") 
     			.append("  order by d.dateRegistration desc") ;
     			list = service.executeNativeSql(sql.toString(),30);
@@ -434,7 +443,8 @@ public class TemplateProtocolJs {
     			sql.append(" left join worker w on wf.worker_id=w.id");
     			sql.append(" left join patient wp on wp.id=w.person_id");
     			sql.append(" where smo.patient_id='").append(patient).append("'");
-    			sql.append(" and upper(smo.dtype) in ('VISIT' , 'SHORTMEDCASE') and upper(d.dtype)='PROTOCOL'");
+    			sql.append(" and upper(smo.dtype) in ('VISIT' , 'SHORTMEDCASE') and upper(d.dtype)='PROTOCOL'")
+				.append(diarySql);
     			sql.append(" group by vwf.id,vwf.name");
     			sql.append(" order by vwf.name");
     			sql.append(" ") ;
@@ -502,8 +512,16 @@ public class TemplateProtocolJs {
     	res.append("</td></tr></table>") ;
     	return res.toString() ;
     }
-    public String listProtocolsByUsername(String aSmoId,String aParent,String aType,String aFunctionTemp, String aFunctionProt,String aSearchText,HttpServletRequest aRequest) throws NamingException {
+    public String listProtocolsByUsername(String aSmoId,String aParent,String aType,String aFunctionTemp, String aFunctionProt,String aSearchText,
+										  String diaryDate, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
+		String diarySql ;
+		if (diaryDate!=null && !diaryDate.equals("")) {
+			diarySql=" and d.dateRegistration=to_date('"+diaryDate+"','dd.mm.yyyy')";
+		} else {
+			diarySql="";
+		}
+
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res = new StringBuilder() ;
@@ -511,7 +529,7 @@ public class TemplateProtocolJs {
 		Long patient = null ;
 		res.append("<table>");
 		res.append("<tr><td colspan='2' valign='top'>") ;
-		if ("temp".equals(aType)) { //TODO слишком долгий запрос! Переделать!
+		if ("temp".equals(aType)) { //TODO слишком долгий запрос! Переделать! //все шаблоны
 			sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile")
 			.append(" ,(select count(*) from parameterByForm where template_id=tp.id) as cntInput") ; 
 			sql.append(" from TemplateProtocol tp");
@@ -548,6 +566,7 @@ public class TemplateProtocolJs {
 			} else {sql.append("tptc.categories_id is null ");}
 			sql.append(" group by tp.id,tp.title,su.login");
 			sql.append(" order by tp.title") ;
+			LOG.info("long sql = "+sql);
 			if (isGo) {
 				if (aSearchText!=null && aSearchText.length()>0) {
 					
@@ -579,7 +598,7 @@ public class TemplateProtocolJs {
 				
 				res.append("</ul></td>") ;
 			}
-		} else if ("my".equals(aType)) {
+		} else if ("my".equals(aType)) { //свои шаблоны
 			sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile" +
 					" ,(select count(*) from parameterByForm where template_id=tp.id) as cntInput") ; 
 			sql.append(" from TemplateProtocol tp");
@@ -599,9 +618,7 @@ public class TemplateProtocolJs {
 					sql.append(" is null ");
 				} else {
 					sql.append("='").append(aParent).append("'");
-					StringBuilder sql1 = new StringBuilder() ;
-					sql1.append("select name from templatecategory where id=").append(aParent) ;
-					list=service.executeNativeSql(sql1.toString()) ;
+					list=service.executeNativeSql("select name from templatecategory where id="+aParent) ;
 					if (!list.isEmpty()) name_cat=""+list.iterator().next().get1() ;
 				}
 			} 
@@ -625,7 +642,6 @@ public class TemplateProtocolJs {
 				.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionTemp).append("('")
 				.append(wqr.get1()).append("',1)\">") ;
 				res.append(wqr.get2()) ;
-				//res.append("</li>") ;
 				if (wqr.get3()!=null&&!(""+wqr.get3()).equals("0")) {
 				res.append("<input type=\"button\" onclick=\"showTemplateForm('").append(wqr.get1()).append("')\" value=\"Ф\">");
 				}
@@ -636,7 +652,7 @@ public class TemplateProtocolJs {
 			list = service.executeNativeSql("select mc.id,mc.patient_id from medcase mc where mc.id="+aSmoId,1);
 			if (!list.isEmpty()) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
 
-			if ("mydiary".equals(aType)  && patient!=null) {
+			if ("mydiary".equals(aType)  && patient!=null) { //свои заключения по пациенту //ищем по дате
 				res.append("<h2>заключения</h2>") ;
 				res.append("<ul>");
 				sql = new StringBuilder() ;
@@ -650,13 +666,11 @@ public class TemplateProtocolJs {
 					.append(" left join VocWorkFunction vwf1 on vwf1.id=wf1.workFunction_id")         
 					.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id")         
 					.append(" left join Patient p on p.id=w.person_id ")
-					.append(" where  m.patient_id='").append(patient).append("' and upper(d.dtype)='PROTOCOL'") ;
-					if (aParent!=null && !aParent.equals("") && !aParent.equals("0")) {
-						sql.append(" and d.dateRegistration");
-						if (aParent.equals("-1")) {sql.append(" is null ");}else{sql.append("=to_date('").append(aParent).append("','dd.mm.yyyy')");}
-					}
+					.append(" where  m.patient_id='").append(patient).append("' and upper(d.dtype)='PROTOCOL'")
+					.append(diarySql);
+
 					sql.append(" group by d.id,vwf.name,vwf1.name,m.dtype,m.datestart,m.patient_id,d.dateregistration,d.username having upper(d.username)='").append(login.toUpperCase()).append("'  order by d.dateRegistration desc") ;
-				list = service.executeNativeSql(sql.toString(),10);
+				list = service.executeNativeSql(sql.toString(),diarySql.equals("") ? 10 : 100); //все дневники по дате
 				for (WebQueryResult wqr:list) {
 					res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("('")
 					.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionProt).append("('")
@@ -665,7 +679,7 @@ public class TemplateProtocolJs {
 					res.append("</li>") ;
 				}
 				res.append("</ul></td>");
-			} else if ("polyc".equals(aType) && patient!=null) {
+			} else if ("polyc".equals(aType) && patient!=null) { //все заключения по пациенту (поликлиника)
 				res.append("<h2>Поликлиника</h2>");
 					sql=new StringBuilder() ;
 					sql.append("select d.id,to_char(d.dateRegistration,'dd.mm.yyyy') as dateReg,vwf.name||' '||wp.lastname as spec,substring(d.record,1,150)||'...' as rec ") ;
@@ -681,10 +695,11 @@ public class TemplateProtocolJs {
 						sql.append(" and vwf.id");
 						if (aParent.equals("-1")) {sql.append(" is null ");}else{sql.append("='").append(aParent).append("'");}
 					}
+					sql.append(diarySql);
 					sql.append(" order by d.dateRegistration desc");
 					sql.append(" ") ;
 					res.append("<ul>");
-					list = service.executeNativeSql(sql.toString(),10);
+					list = service.executeNativeSql(sql.toString(),diarySql.equals("") ? 10 : 100);
 					for (WebQueryResult wqr:list) {
 						res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("('")
 						.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionProt).append("('")
@@ -695,7 +710,7 @@ public class TemplateProtocolJs {
 					res.append("</ul>");
 					
 				
-			} else if ("hospit".equals(aType) && patient!=null) {
+			} else if ("hospit".equals(aType) && patient!=null) { //осмотры врачей в стационаре
 				res.append("<h2>Cтационар осмотры</h2>") ;
 				sql=new StringBuilder() ;
 				sql.append("select d.id,to_char(d.dateRegistration,'dd.mm.yyyy') as dateReg,vwf.name||' '||wp.lastname as spec,substring(d.record,1,150)||'...' as rec from diary d") ;
@@ -710,6 +725,7 @@ public class TemplateProtocolJs {
 					sql.append(" and vwf.id");
 					if (aParent.equals("-1")) {sql.append(" is null ");}else{sql.append("='").append(aParent).append("'");}
 				}
+				sql.append(diarySql);
 				sql.append(" order by d.dateRegistration desc");
 				sql.append(" ") ;
 				res.append("<ul>");
@@ -723,7 +739,7 @@ public class TemplateProtocolJs {
 				}
 				res.append("</ul>");
 				
-			} else if ("disch".equals(aType) && patient!=null) {
+			} else if ("disch".equals(aType) && patient!=null) { //выписки (госпитализации
 				res.append("<h2>Cтационар выписки</h2>") ;
 				sql = new StringBuilder() ;
 				sql.append("select sls.id,to_char(sls.dateStart,'dd.mm.yyyy')||'-'||to_char(sls.dateFinish,'dd.mm.yyyy') as dateReg")

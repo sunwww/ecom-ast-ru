@@ -55,7 +55,10 @@
 	        	<input type="radio" name="${name}typeReestr" value="2">  свод
 	        </td>
         </msh:row>
-		
+        <msh:row>
+			<msh:textField property="${name}ProtocolDate" label="Дата дневника"/>
+        </msh:row>
+
 		<tr>
 		<td valign="top" style="width:300px">
 			<div id="${name}divListCategs"></div>
@@ -478,6 +481,13 @@ var eval${name}String = "";
          if (!theIs${name}TempProtDialogInitialized) {
 			init${name}TemplateProtocol() ;
 			document.forms['frm${name}TemplateProt'].${name}typeReestr[1].checked='checked' ;
+			if ($('${name}ProtocolDate')) { //при изменении даты дневника - перезагружаем протоколы
+				new dateutil.DateField($('${name}ProtocolDate')) ;
+				var valu = $('${name}ProtocolDate').value;
+				eventutil.addEventListener($('${name}ProtocolDate'),'blue',function(){
+					if(valu==""||valu.length==10) load${name}ListProtocols('mydiary');
+				}) ;
+			}
          }
          the${name}TempProtDialog.show() ;
 
@@ -546,8 +556,6 @@ var eval${name}String = "";
 
              theIs${name}TempProtDialogInitialized = true ;
              $("${name}IsClose").checked=true ;
-             //load${name}ListProtocolsByUsername() ;
-             /*setFocusOnField('${name}tempProtCategoryName') ;*/
      }
      function ${name}showRow(aRowId, aCanShow, aField ) {
  			try {
@@ -563,6 +571,7 @@ var eval${name}String = "";
      }
      
      function load${name}ListProtocolsAll(aType,aParent,aSearchText) {
+		 var diaryDate = $('${name}ProtocolDate').value;
     	 edit${name}StyleA(aType) ;
     	 theIs${name}TempProtLastFunction=aType;
     	 var idSmo = '${idSmo}' ;
@@ -572,13 +581,14 @@ var eval${name}String = "";
     		 idSmo= $(idSmo.substring(pos+1)).value ;
     	 }
     		 $('${name}divListCategs').innerHTML = "Загрузка..." ;
+		 var diaryDate = $('${name}ProtocolDate').value;
         	 TemplateProtocolService.listCategProtocolsByUsername( aParent, aType
-        			 , 'load${name}ListProtocols',{
+        			 , 'load${name}ListProtocols',diaryDate,{
                  callback: function(aString) {
                      $('${name}divListCategs').innerHTML = aString ;
             		 $('${name}divListProtocols').innerHTML = "Загрузка..." ;
             	 	 TemplateProtocolService.listProtocolsByUsername( idSmo,aParent, aType
-        			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,{
+        			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,diaryDate, {
                  		callback: function(aString) {
                      		$('${name}divListProtocols').innerHTML = aString ;
                   		}
@@ -589,6 +599,7 @@ var eval${name}String = "";
      function load${name}ListProtocols(aType,aParent,aSearchText) {
     	 edit${name}StyleA(aType) ;
     	 theIs${name}TempProtLastFunction=aType;
+    	 var diaryDate = $('${name}ProtocolDate').value;
     	 var idSmo = '${idSmo}' ;
     	 var pos = idSmo.indexOf('.') ;
     	 if (aParent==null||+aParent==0) {aParent=0}
@@ -616,7 +627,7 @@ var eval${name}String = "";
     		  
     		 $('${name}divListProtocols').innerHTML = "Загрузка..." ;
         	 	 TemplateProtocolService.listProtocolsByUsername( idSmo,aParent, aType
-    			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,{
+    			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,diaryDate, {
              callback: function(aString) {
                  $('${name}divListProtocols').innerHTML = aString ;
                  if (document.forms['frm${name}TemplateProt'].${name}typeReestr[0].checked) {
@@ -626,8 +637,9 @@ var eval${name}String = "";
           } ) ;
     	 }else{
     		 $('${name}divListCategs').innerHTML = "Загрузка..." ;
+			 var diaryDate = $('${name}ProtocolDate').value;
         	 TemplateProtocolService.listCategProtocolsByUsername( idSmo, aType
-        			 , 'load${name}ListProtocols',{
+        			 , 'load${name}ListProtocols',diaryDate,{
                  callback: function(aString) {
                      $('${name}divListCategs').innerHTML = aString ;
                      if ((aType=='temp'||aType=="my")) {
