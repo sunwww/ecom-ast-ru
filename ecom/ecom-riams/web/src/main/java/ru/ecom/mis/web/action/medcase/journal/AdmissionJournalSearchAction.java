@@ -33,14 +33,12 @@ public class AdmissionJournalSearchAction extends BaseAction {
 				aRequest.setAttribute("emerIs","") ;
 				aRequest.setAttribute("emerInfo","все") ;
 			}
-			String dateI;
 			if ("1".equals(typeDate)) {
-				dateI = "dateStart"  ;
-				aRequest.setAttribute("dateI", dateI) ;
+				aRequest.setAttribute("dateI", "dateStart") ;
 	    		aRequest.setAttribute("dateInfo","поступившим") ;
 	    	} else if ("2".equals(typeDate)) {
-	    		dateI = "dateFinish"  ;
-	    		aRequest.setAttribute("dateI", dateI) ;
+	    		aRequest.setAttribute("dateI", "dateFinish") ;
+				aRequest.setAttribute("period"," and m.dischargeTime is not null ") ;
 	    		aRequest.setAttribute("dateInfo","выписанным") ;
 	    	} else {
 	    		aRequest.setAttribute("dateI", "dateStart") ;

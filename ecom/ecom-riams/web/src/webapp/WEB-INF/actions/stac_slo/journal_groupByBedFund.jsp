@@ -18,7 +18,6 @@
     
   <tiles:put name="body" type="string">
   <%
-	//String typeView =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeView","1", request) ;
 	String typePolicy =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typePolicy","3", request) ;
 	String typePatient =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typePatient","4", request) ;
 	String typeDate =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeDate","2", request) ;
@@ -168,12 +167,10 @@
     </msh:panel>
     </msh:form>
         <script type='text/javascript'>
-  //checkFieldUpdate('typeSwod','${typeSwod}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
     checkFieldUpdate('typePatient','${typePatient}',4) ;
     checkFieldUpdate('typePolicy','${typePolicy}',3) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',4) ;
-    //checkFieldUpdate('typeStandart','${typeStandart}',2) ;
     checkFieldUpdate('typeViewAddStatus','${typeViewAddStatus}',2) ;
     checkFieldUpdate('typeViewServiceStream','${typeViewServiceStream}',1) ;
     checkFieldUpdate('typeView','${typeView}',2) ;
@@ -227,27 +224,32 @@
 			request.setAttribute("infoTypePolicy", "региональные") ;
 		}
     	if (typePatient.equals("2")) { //иногородние
-			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp","ok")) ;
-			request.setAttribute("infoTypePat", "Поиск по иногородним") ;
+				request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp", "ok"));
+				request.setAttribute("infoTypePat", "Поиск по иногородним");
 		} else if (typePatient.equals("1")){ //региональные
-			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, false, "m.Datestart", "p", "pvss", "pmp","ok")) ;
-			request.setAttribute("infoTypePat", "Поиск по региональным") ;
+				request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, false, "m.Datestart", "p", "pvss", "pmp", "ok"));
+				request.setAttribute("infoTypePat", "Поиск по региональным");
 		} else if (typePatient.equals("3")){ //иностранцы
-			request.setAttribute("patientSql", HospitalLibrary.getSqlGringo(true, "ok")) ;
-			request.setAttribute("infoTypePat", "Поиск по иностранцам") ;
+				request.setAttribute("patientSql", HospitalLibrary.getSqlGringo(true, "ok"));
+				request.setAttribute("infoTypePat", "Поиск по иностранцам");
 		} else {
-			request.setAttribute("patientSql", "") ;
-			request.setAttribute("infoTypePat", "Поиск по всем") ;
+				request.setAttribute("patientSql", "");
+				request.setAttribute("infoTypePat", "Поиск по всем");
 		}
     	String dateSql ;
+    	String dischargeDateSql ;
     	if ("1".equals(typeDate)) {
     		dateSql="dateStart" ;
+			dischargeDateSql="";
     	} else if ("2".equals(typeDate)) {
     		dateSql="dateFinish" ;
+			dischargeDateSql=" and hmc.dischargeTime is not null";
     	} else {
     		dateSql="transferDate" ;
+			dischargeDateSql="";
     	}
     	request.setAttribute("dateSql",dateSql) ;
+    	request.setAttribute("dischargeDateSql",dischargeDateSql) ;
     	if ("1".equals(typeViewAddStatus)) {
     		request.setAttribute("viewAddStatusSql", "vas.name as vasname ") ;
     		request.setAttribute("viewAddStatusGroup", " p.additionStatus_id, vas.name ,") ;
@@ -323,7 +325,7 @@ left join VocSex vs on vs.id=p.sex_id
 	left join medpolicy mp on mp.id=mcmp.policies_id  
 
     where m.DTYPE='DepartmentMedCase' and m.${dateSql} between
-    to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
+    to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') ${dischargeDateSql}
     ${departmentSql} ${emergencySql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
     ${patientSql} ${additionStatusSql} ${result_dateSql}
     ${policySql} ${sexSql}
@@ -430,7 +432,7 @@ left join VocSex vs on vs.id=p.sex_id
 	left join MedPolicy mp on mp.id=mcmp.policies_id  
     
     where m.DTYPE='DepartmentMedCase' and m.${dateSql} between 
-    to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') 
+    to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') ${dischargeDateSql}
     ${departmentSql}  ${emergencySql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} 
     ${patientSql} ${additionStatusSql} ${result_dateSql}
     ${policySql} ${sexSql}
