@@ -117,6 +117,10 @@ function onPreDelete(aEntityId, aCtx) {
     aCtx.manager.createNativeQuery("update ContractAccountOperationByService set serviceid=null where serviceid="+aEntityId).executeUpdate() ;
     //удаление осложнений
 	aCtx.manager.createNativeQuery("delete from surgcomplication where surgicaloperation_id="+aEntityId).executeUpdate() ;
+	//запрет на удаление, если есть браслет, связанный с операцией
+	var list = aCtx.manager.createNativeQuery("select id from coloridentitypatient where surgoperation_id=" + aEntityId).getResultList();
+	if (list.size() > 0)
+		throw "К операции привязан браслет! Удалить операцию нельзя.";
 }
 //сохранение осложнений
 function saveComplications(aForm, aEntity, aCtx) {
