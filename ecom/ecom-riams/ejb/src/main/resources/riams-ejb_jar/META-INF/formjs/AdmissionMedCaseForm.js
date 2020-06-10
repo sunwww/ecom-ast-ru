@@ -141,10 +141,6 @@ function closeSpo(aContext, aSpoId) {
             +" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
             +" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
             +" order by vis.dateStart, vis.timeExecute").setMaxResults(1).getResultList() ;
-      //  var visFirst = listVisFirst.get(0)[0];
-        //var visFirstO = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
-        //		, java.lang.Long.valueOf(visFirst)) ;
-   //     var visLast = listVisLast.get(0)[0];
         var mkb = listVisLast.get(0)[1];
         if (mkb==null) {
             var listMkb = aContext.manager.createNativeQuery("select vis.id as visid"
@@ -181,9 +177,7 @@ function closeSpo(aContext, aSpoId) {
             +"','dd.mm.yyyy'),dateStart=to_date('"+dateStart
             +"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
             +"'"+(mkb!=null?(",idc10_id='"+mkb+"'"):"")+" where id="+aSpoId).executeUpdate() ;
-    } /*else {
-        if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
-    }*/
+    }
     return aSpoId;
 }
 function onPreDelete(aMedCaseId, aContext) {
@@ -211,7 +205,8 @@ function onPreSave(aForm,aEntity, aCtx) {
 	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
 	var deathDate = pat.getDeathDate();
 	if (deathDate != null) {
-		if (aEntity.dateStart.getTime() > deathDate.getTime()) {
+		var startDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.dateStart);
+		if (startDate.getTime() > deathDate.getTime()) {
 		throw "Невозможно создать СЛС позже даты смерти пациента: "
 			+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate);
 		}
@@ -257,7 +252,6 @@ function onPreSave(aForm,aEntity, aCtx) {
 			}
 		}
 	} else {
-		
 		var sql = "select m.id, ss.code from MedCase  m "
 			+" left join StatisticStub ss on ss.id=m.statisticStub_id "
 			+" where m.patient_id='"+aForm.patient
@@ -296,9 +290,9 @@ function onPreSave(aForm,aEntity, aCtx) {
 	}
 	if (aForm.dateFinish!=null && aForm.dateFinish!=""
 		  &&aForm.dischargeTime!=null &&aForm.dischargeTime!="") {
-			var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
+			var dateStart1 = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
 			var dateFinish = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateFinish,aForm.dischargeTime);
-			if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки "+
+			if (!(dateFinish.getTime() > dateStart1.getTime())) throw "Дата выписки "+
 			aForm.dateFinish+" "+aForm.dischargeTime+" должна быть больше, чем дата поступления "+aForm.dateStart+" "
 			+aForm.entranceTime;
 			
