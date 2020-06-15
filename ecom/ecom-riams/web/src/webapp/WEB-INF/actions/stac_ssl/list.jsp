@@ -1,5 +1,5 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -47,7 +47,6 @@
   }
   %>
   <ecom:webQuery name="list" nativeSql="
-  
   select sls.id as f1slsid
     ,to_char(sls.dateStart,'dd.mm.yyyy') as f2dateStart
       ,to_char(sls.dateFinish,'dd.mm.yyyy') as f3dateFinish
@@ -71,7 +70,7 @@
                        left join VocDiagnosisRegistrationType vdrt1 on vdrt1.id=diag1.registrationType_id and vdrt1.code='4'
                          left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id 
                          where sloLast.parent_id=sls.id
-                         and (sloLast.dtype)='DEPARTMENTMEDCASE' and  case when sloLast.transferDate is null then 1 else 0 end=1
+                         and UPPER(sloLast.dtype)='DEPARTMENTMEDCASE' and  case when sloLast.transferDate is null then 1 else 0 end=1
                          ) as diaglast
                              ,case when vdh.id is not null then 'color: red ;'
                                when UPPER(sls.DTYPE) ='EXTHOSPITALMEDCASE' then 'color: blue ;'
@@ -147,4 +146,3 @@
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>
-
