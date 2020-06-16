@@ -44,15 +44,10 @@ function onCreate(aForm, aEntity, aContext) {
 	aEntity.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 
     saveCabinet(aForm, aEntity, aContext);
-	//throw aEntity.worker.doctorInfo+""
+	stayAdminUnique(aForm, aEntity, aContext);
 }
 
 function onSave(aForm, aEntity, aContext) {
-	//if(aWorkFunction.workCalendar==null) {
-	//	onCreate(aForm, aWorkFunction, aContext) ;
-	//}
-	//aContext.serviceInvoke("Hello", "helll", "asdf") ;
-	//throw "asdf";
 	var date = new java.util.Date() ;
 	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
@@ -60,6 +55,7 @@ function onSave(aForm, aEntity, aContext) {
 
     aContext.manager.createNativeQuery("delete from workplace_workfunction where workfunctions_id="+aEntity.id).executeUpdate() ;
     saveCabinet(aForm, aEntity, aContext);
+	stayAdminUnique(aForm, aEntity, aContext);
 }
 function errorThrow(aList) {
 	if (aList!=null && aList.size()>0) {
@@ -85,28 +81,21 @@ function delCal(calendar,aCtx) {
 	var workFunction = calendar.workFunction ;
 	calendar.workFunction = null ;
 	workFunction.workCalendar = null ;
-	//aCtx.manager.remove(workFunction) ;
 }
 
 function onPreDelete(aFunctionId, aCtx) {
 	var workFunction = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, new java.lang.Long(aFunctionId)) ;
 	var workCalendar = workFunction.workCalendar ;
 	workFunction.workCalendar = null ;
-	//if(workCalendar!=null) {
-	//	workCalendar.workFunction = null ;
-	//	delCal(workCalendar) ;
-	//	aCtx.manager.remove(workCalendar) ;
-	//} else {
-		var list = aCtx.manager.createQuery("from WorkCalendar where workFunction=:f")
-			.setParameter("f", workFunction)
-			.getResultList()  ;
-		for(var i = 0 ;i < list.size(); i++) {
-			var cal = list.get(i) ;
-			delCal(cal, aCtx) ;
-			cal.workFunction = null ;
-			aCtx.manager.remove(cal) ;
-		}	
-	//}
+	var list = aCtx.manager.createQuery("from WorkCalendar where workFunction=:f")
+		.setParameter("f", workFunction)
+		.getResultList()  ;
+	for(var i = 0 ;i < list.size(); i++) {
+		var cal = list.get(i) ;
+		delCal(cal, aCtx) ;
+		cal.workFunction = null ;
+		aCtx.manager.remove(cal) ;
+	}
 }
 //Сохранение кабинета
 function saveCabinet(aForm, aEntity, aCtx) {
@@ -126,4 +115,14 @@ function saveCabinet(aForm, aEntity, aCtx) {
 			}
         }
     }
+}
+//Начальник ЛПУ может быть только один
+function stayAdminUnique(aForm, aEntity, aCtx) {
+	if (+aForm.getIsAdministrator()==1) {
+		aCtx.manager.createNativeQuery("update workfunction set isadministrator=false" +
+			" where id in (select wf.id from workfunction wf" +
+			" left join worker w on wf.worker_id=w.id" +
+			" left join worker wnow on wnow.id=" + aForm.getWorker() +
+			" where w.lpu_id =wnow.lpu_id and w.id<>wnow.id)").executeUpdate() ;
+	}
 }
