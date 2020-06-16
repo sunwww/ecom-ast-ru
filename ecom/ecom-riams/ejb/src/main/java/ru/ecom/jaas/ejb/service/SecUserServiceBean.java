@@ -143,13 +143,11 @@ public class SecUserServiceBean implements ISecUserService {
 		} 
     }
 
-    public void exportRolesProperties() throws IOException {
+    public void exportRolesProperties() {
         exportRolesProperties(Config.getConfigDir()+"/roles.properties");
     }
 
     public void exportRolesProperties(String aFilename) {
-
-        LOG.info("---Begin ExportRoles");
         Map<SecPolicy, String> hash = new HashMap<>() ;
         try ( PrintWriter out = new PrintWriter(new FileWriter(aFilename))) {
             List<SecUser> users = theManager.createQuery("from SecUser where disable is null or cast(disable as integer)=0").getResultList();
@@ -158,19 +156,18 @@ public class SecUserServiceBean implements ISecUserService {
                 out.println(user.getFullname()) ;
                 out.print(user.getLogin()) ;
                 out.print("=") ;
-                 //String rolesIds = getRolesByUser(user.getId()) ;
                 List<Long> listRole = new ArrayList<>() ;
                 for (SecRole role : user.getRoles()) {
                 	Long idP = role.getId() ;
                 	if (!listRole.contains(idP)) {
                 	//	log("Добавление..") ;
                 		listRole.add(idP) ;
-                		out.print(createPoliciesString(user,role,hash)) ;
+                		out.print(createPoliciesString(role,hash)) ;
                         for (SecRole childRole: role.getChildren()) {
                         	Long idC = childRole.getId() ;
                         	if (!listRole.contains(idC)) {
                         		listRole.add(idC) ;
-                        		out.print(createPoliciesString(user,childRole,hash)) ;
+                        		out.print(createPoliciesString(childRole,hash)) ;
                         	}
                         }
                 	}
@@ -181,11 +178,10 @@ public class SecUserServiceBean implements ISecUserService {
         }catch(Exception e) {
         	LOG.error(e);
         }
-    	//return aRoles ;
         exportPropertiesOtherServer(aFilename);
     }
 
-    private String createPoliciesString(SecUser aUser, SecRole aRole, Map<SecPolicy,String> aPoliciesHash) {
+    private String createPoliciesString(SecRole aRole, Map<SecPolicy,String> aPoliciesHash) {
         TreeSet<String> policies = new TreeSet<>();
         	for(SecPolicy policy:aRole.getSecPolicies()) {
         		policies.add(getPolicyFullKey(policy,aPoliciesHash)) ;

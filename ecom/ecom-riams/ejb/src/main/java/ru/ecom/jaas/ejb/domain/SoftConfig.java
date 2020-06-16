@@ -1,12 +1,12 @@
 package ru.ecom.jaas.ejb.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Настройка приложения
@@ -15,7 +15,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 	    @AIndex(unique = true, properties= {"key"})
-	    	    //,@AIndex(unique = true, properties= {"keyValue"})
 })
 @Table(schema="SQLUser")
 public class SoftConfig extends BaseEntity {

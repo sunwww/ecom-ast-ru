@@ -8,7 +8,7 @@ import ru.ecom.mis.ejb.uc.privilege.form.interceptor.ListPersist;
 
 import javax.persistence.EntityManager;
 
-public class SecPolicyViewInterceptor   implements IFormInterceptor {
+public class SecPolicyViewInterceptor implements IFormInterceptor {
 
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
     	SecPolicyForm frm = (SecPolicyForm) aForm ;

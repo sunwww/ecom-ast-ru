@@ -1,14 +1,14 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.PrePersist;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Журнал аннулирования результатов лабораторных исследований
@@ -17,6 +17,17 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 public class AdminChangeJournal extends BaseEntity {
+
+	public AdminChangeJournal() {}
+	public AdminChangeJournal(String cType) {
+		setCType(cType);
+	}
+	@PrePersist
+	void onPrePersist() {
+		long currentTime = System.currentTimeMillis();
+		theCreateDate=new java.sql.Date(currentTime);
+		theCreateTime=new java.sql.Time(currentTime);
+	}
 	
 	/** Назначение, результаты которого аннулированы  */
 	@Comment("Назначение, результаты которого аннулированы ")
