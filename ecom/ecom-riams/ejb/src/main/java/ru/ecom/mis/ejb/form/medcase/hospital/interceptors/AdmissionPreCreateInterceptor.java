@@ -21,7 +21,7 @@ public class AdmissionPreCreateInterceptor  implements IParentFormInterceptor {
     		);
     	}
     	AdmissionMedCaseForm form = (AdmissionMedCaseForm)aForm ;
-    	form.setUsername(aContext.getSessionContext().getCallerPrincipal().toString());
+    	form.setUsername(aContext.getSessionContext().getCallerPrincipal().getName());
         Date date = new Date();
         if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/ShortEnter")) {
         	form.setDateStart(DateFormat.formatToDate(date));

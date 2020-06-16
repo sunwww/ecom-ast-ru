@@ -7,7 +7,6 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.VisitProtocolForm;
-import ru.ecom.poly.ejb.form.protocol.ProtocolForm;
 
 import java.util.List;
 
@@ -15,10 +14,8 @@ public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
 
 	public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
 		MedCase parent = aContext.getEntityManager().find(MedCase.class, aParentId);
-		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService")) {
-			if (!(parent instanceof ServiceMedCase)) {
-				throw new IllegalArgumentException("У Вас стоит ограничение!! Создать заключения можно только в созданной услуге!!!");
-			}
+		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService") && !(parent instanceof ServiceMedCase)) {
+			throw new IllegalArgumentException("У Вас стоит ограничение!! Создать заключения можно только в созданной услуге!!!");
 		}
 		String username = aContext.getSessionContext().getCallerPrincipal().getName();
 		VisitProtocolForm form = (VisitProtocolForm) aForm;
@@ -33,14 +30,11 @@ public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
 		//это - отделение новорождённых
 		//первый дневник
 		//скрининг ещё не был создан
-		if (aForm instanceof ProtocolForm) {
-			ProtocolForm protocolForm = (ProtocolForm) aForm;
-			Object val = aContext.getEntityManager().createNativeQuery("select case when ml.IsCreateCardiacScreening='1' " +
-					"and (select count(id) from diary where medcase_id='" + protocolForm.getMedCase() + "')=0 " +
-					"and (select count(id) from screeningcardiac where dtype='ScreeningCardiacFirst' and medcase_id='" + protocolForm.getMedCase() + "')=0 then '1' else '0' end " +
-					"from medcase slo left join mislpu ml on ml.id=slo.department_id where  slo.id='" + protocolForm.getMedCase() + "'").getSingleResult();
-			if (String.valueOf(val).equals("1"))
-				throw new IllegalStateException("<a href='entityParentPrepareCreate-stac_screeningCardiacFirst.do?id=" + protocolForm.getMedCase() + "'>I этап кардиоскрининга</a> в отд. новорождённых должен быть создан до создания первого дневника!");
-		}
+		Object val = aContext.getEntityManager().createNativeQuery("select case when ml.IsCreateCardiacScreening='1' " +
+				"and (select count(id) from diary where medcase_id='" + form.getMedCase() + "')=0 " +
+				"and (select count(id) from screeningcardiac where dtype='ScreeningCardiacFirst' and medcase_id='" + form.getMedCase() + "')=0 then '1' else '0' end " +
+				"from medcase slo left join mislpu ml on ml.id=slo.department_id where  slo.id='" + form.getMedCase() + "'").getSingleResult();
+		if (String.valueOf(val).equals("1"))
+			throw new IllegalStateException("<a href='entityParentPrepareCreate-stac_screeningCardiacFirst.do?id=" + form.getMedCase() + "'>I этап кардиоскрининга</a> в отд. новорождённых должен быть создан до создания первого дневника!");
 	}
 }

@@ -23,7 +23,7 @@ function onPreCreate(aForm, aCtx) {
 	cal.setTime(date) ;
 	var year = cal.get(java.util.Calendar.YEAR) ;
 	var aStatCardNumber = aForm.statCardNumber ;
-	if (aStatCardNumber!=null && aStatCardNumber!="") {
+	if (aStatCardNumber!=null && aStatCardNumber.trim()!="") {
 		if (!aCtx.manager.createQuery("from StatisticStub where code=:number and year=:year and DTYPE='StatisticStubExist'")
 			.setParameter("number", aStatCardNumber)
 			.setParameter("year",java.lang.Long.valueOf(year)).getResultList().isEmpty()
@@ -41,17 +41,13 @@ function onCreate(aForm, aEntity, aCtx) {
 		mp1.setPolicies(medPolicyOmc) ;
 		mp1.setMedCase(aEntity) ;
 		manager.persist(mp1) ;
-		//var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicies+"'" ;
-		//aCtx.manager.createNativeQuery(sql).executeUpdate() ;
-	}	
+	}
 	if (aForm.attachedPolicyDmc!="" && aForm.attachedPolicyDmc>0) {
 		var medPolicyDmc = manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicyDmc) ;
 		var mp2 = new Packages.ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy() ;
 		mp2.setPolicies(medPolicyDmc) ;
 		mp2.setMedCase(aEntity) ;
 		manager.persist(mp2) ;
-		//var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicyDmc+"'" ;
-		//aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 	}
 	if (aForm.pregnancyOrderNumber!=null && aForm.pregnancyOrderNumber>0) {
 		var list = manager.createQuery("from Pregnancy where patient=:pat and orderNumber=:number")
@@ -67,7 +63,6 @@ function onCreate(aForm, aEntity, aCtx) {
 			preg.setChildbirthAmount(aForm.childbirthAmount) ;
 			preg.setPatient(aEntity.patient) ;
 			manager.persist(preg) ;
-			//aEntity.setPregnancy(preg) ;
 		}
 		aEntity.setPregnancy(preg) ;
 	}
@@ -261,8 +256,6 @@ function onPreSave(aForm,aEntity, aCtx) {
 		if (+aForm.id>0) {
 			sql = sql+" and m.id!='"+aForm.id+"'" ;
 		}	
-			;
-		//throw sql ;
 		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 		if (!list.isEmpty()) {
 			var obj = list.get(0) ;
@@ -332,11 +325,11 @@ function onPreSave(aForm,aEntity, aCtx) {
     		&&+aForm.getDeniedHospitalizating()==0) {
     	var statCardNumber = aForm.statCardNumber ;
     	if (aEntity.statisticStub!=null) {
-	    	if (statCardNumber==null || statCardNumber=="") {
+	    	if (statCardNumber==null || statCardNumber.trim()=="") {
 	    		var hand = aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CreateStatCardBeforeDeniedByHand) ;
 	    		
 	    		if (hand) throw "Не указан номер стат. карты" ;
-	    	} else{
+	    	} else {
 	    		var year = aForm.getDateStart().substring(6) ;
 	    		if (!aCtx.getManager()
 	    				.createNativeQuery("select id from StatisticStub where medCase_id='"+aForm.getId()+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")

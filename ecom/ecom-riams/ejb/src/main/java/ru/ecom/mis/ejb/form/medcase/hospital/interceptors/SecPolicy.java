@@ -31,7 +31,7 @@ public class SecPolicy {
      * @throws IllegalStateException 
      */
     public static void checkPolicyCreateHour(SessionContext aContext, String aDateString, String aTimeString) {
-        if (aContext.isCallerInRole(StatisticStubStac.CreateHour)) {
+        if (aContext.isCallerInRole(StatisticStubStac.CREATE_HOUR)) {
         	try {
                 Date enteredDate = DateConverter.createDateTime(aDateString, aTimeString);
                 checkPolicyCreateHour(enteredDate);
@@ -64,7 +64,7 @@ public class SecPolicy {
      * @throws IllegalStateException
      */
     public static void checkPolicyEditHour(SessionContext aContext , HospitalMedCase aSls) {
-        if (aContext.isCallerInRole(StatisticStubStac.EditHour)) {
+        if (aContext.isCallerInRole(StatisticStubStac.EDIT_HOUR)) {
             Date admissionDate = DateConverter.createDateTime(aSls.getDateStart(), DateFormat.formatToTime(aSls.getEntranceTime()));
             if (admissionDate != null) {
                 if(!isDateLessThen24Hour(admissionDate)) {

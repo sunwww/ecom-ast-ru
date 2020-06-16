@@ -29,7 +29,7 @@ public class HospitalMedCaseViewInterceptor implements IFormInterceptor {
 			}
 			
 		}
-        if (!aContext.getSessionContext().isCallerInRole(StatisticStubStac.ChangeStatCardNumber)) {
+        if (!aContext.getSessionContext().isCallerInRole(StatisticStubStac.CHANGE_STAT_CARD_NUMBER)) {
             form.addDisabledField("statCardNumber");
         }
 		List<Diagnosis> diagList = aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;

@@ -188,16 +188,13 @@ function checkPrescription(aForm, aEntity, aCtx, flagIfSave) {
 }
 function check(aForm, aCtx,isCreate) {
     var manager = aCtx.manager;
-    if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowCreateDiaryFutureTime")) {
-        // Дата регистрации дневника не должна быть больше текущей даты
-        var dateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateRegistration, aForm.timeRegistration);
-        var currentDate = new java.util.Date();
-        if (dateTime.getTime() > currentDate.getTime()) {
-            throw "Дата регистрации дневника не может быть больше текущего времени!";
-        }
-
+    // Дата регистрации дневника не должна быть больше текущей даты
+    var dateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateRegistration, aForm.timeRegistration);
+    var currentDate = new java.util.Date();
+    if (dateTime.getTime() > currentDate.getTime() && !aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowCreateDiaryFutureTime")) {
+        throw "Дата регистрации дневника не может быть больше текущего времени!";
     }
-    if (aForm.medCase != null && (+aForm.medCase) > 0) {
+    if (aForm.medCase != null && +aForm.medCase > 0) {
         var lother = manager.createNativeQuery("select case when mc.dtype='ShortMedCase' then mc.dtype else null end as dtype,case when mc.datestart=to_date('" + aForm.getDateRegistration() + "','dd.mm.yyyy') and mc.workfunctionexecute_id='" + aForm.specialist + "' then mc.id end as agrmc,to_char(mc.datefinish,'dd.mm.yyyy') as mcfinish,mc.id as mcid from medcase mc where mc.id='" + aForm.medCase + "'").getResultList();
         if (!lother.isEmpty()) {
             var lobj = lother.get(0);
@@ -205,18 +202,21 @@ function check(aForm, aCtx,isCreate) {
                 throw "Протокол в талоне может быть создан только датой талона и врачом, за которым зарегистрирован талон!!!";
         }
 
-        var t = manager.createNativeQuery("select m1.dtype,case when m1.dtype='DepartmentMedCase' and m2.dischargeTime is not null then m2.dateFinish else null end as datefinish from medcase m1 left join medcase m2 on m2.id=m1.parent_id where m1.id=" + aForm.medCase).getResultList();
+        var t = manager.createNativeQuery("select m1.dtype,case when m1.dtype='DepartmentMedCase' and m2.dischargeTime is not null then m2.dateFinish else null end as datefinish" +
+            ", to_char(coalesce(m2.dateStart, m1.dateStart),'dd.MM.yyyy') as dteStart, cast(coalesce(m2.entranceTime,m1.entranceTime) as varchar(5)) as entTime from medcase m1 left join medcase m2 on m2.id=m1.parent_id where m1.id=" + aForm.medCase).getResultList();
         if (!t.isEmpty()) {
             var dtype = "" + t.get(0)[0];
+            var slsStartDateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(t.get(0)[2], t.get(0)[3]);
             if (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') {
                 if (aForm.type == null || (+aForm.type === 0)) throw "Необходимо заполнить поле Тип протокола";
                 if (aForm.state == null || (+aForm.state === 0)) throw "Необходимо заполнить поле Состояние больного";
+                if (slsStartDateTime.getTime() > dateTime.getTime()) throw "Дата регистрации дневника не может быть ранее даты начала госпитализации";
             }
-            if (dtype === 'HospitalMedCase' && (aForm.journalText == null || aForm.journalText.equals(""))) {
+            if (dtype === 'HospitalMedCase' && (aForm.journalText == null || aForm.journalText.trim().equals(""))) {
                 throw "Необходимо заполнить поле Принятые меры для журнала. Если их нет, необходимо ставить: -";
             }
             //при сохранении шаблона как оригинал нужно заполнять услугу, если она обязательна
-            if (getMedServiceNecessaryInDiary(aForm.medCase,aCtx)=="1" && (aForm.medService == null || (+aForm.medService === 0))) {
+            if (getMedServiceNecessaryInDiary(aForm.medCase,aCtx)=="1" && (aForm.medService == null || +aForm.medService === 0)) {
                 throw "Заполнение услуги обязательно при создании дневника в СЛО (с потоком обслуживания ДМС/Платный) врачом - не сотрудником текущего отделения!";
             }
             //Milamesher 16102018 - создание дневника специалиста приёмного отделения по времени - только ДО создания СЛО

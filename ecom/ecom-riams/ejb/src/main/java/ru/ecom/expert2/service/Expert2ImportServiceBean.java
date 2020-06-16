@@ -379,7 +379,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 monitor.setText("По счету №" + bill.getBillNumber() + " сумма = " + totalSum);
                 bill.setSum(totalSum);
                 theManager.persist(bill);
-                LOG.info("Обновление закончено!");
+                LOG.info("Обновление MP закончено!");
         }
 
         }  catch (Exception e) {
@@ -433,7 +433,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         } else if (aField instanceof java.sql.Date) {
             return true;
         } else if (aField instanceof BigDecimal) {
-            return ((BigDecimal) aField).compareTo(BigDecimal.valueOf(0))==1;
+            return ((BigDecimal) aField).compareTo(BigDecimal.ZERO) > 0;
         }else {
             throw new IllegalStateException("Нет преобразования для объекта " + aField);
         }
@@ -477,24 +477,20 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         if (aActualDate!=null) {
             sql += " :actualDate between startDate and finishDate and";
         }
-            sql+=" code='"+aCode+"'";
-            list = theManager.createQuery(sql).setParameter("actualDate",aActualDate).getResultList();
-            if (list.isEmpty()){
-                list = theManager.createQuery("from " + aClass.getName() + " where finishDate is null and code=:code").setParameter("code",aCode).getResultList();
-            }
+        sql+=" code='"+aCode+"'";
+        list = theManager.createQuery(sql).setParameter("actualDate",aActualDate).getResultList();
+        if (list.isEmpty()){
+            list = theManager.createQuery("from " + aClass.getName() + " where finishDate is null and code=:code").setParameter("code",aCode).getResultList();
+        }
 
         if (list.isEmpty()) {
             LOG.error("Не удалось найти действующее значение справочника " + aClass.getCanonicalName() + " с условием "+sql);
             return null;
-            //throw new IllegalStateException("Не удалось найти действующее значение справочника " + aClass.getCanonicalName() + " с условием "+sql);
         } else if (list.size() > 1) {
             LOG.error("Найдено несколько действующих значений справочника " + aClass.getCanonicalName()+" с условием "+sql);
             return null;
-            //throw new IllegalStateException("Найдено несколько действующих значений справочника " + aClass.getCanonicalName()+" с условием "+sql);
         }
         return list.get(0);
-
-
     }
 
     /**Выводим сообщение в монитор. Возвращаем - отменен ли монитор*/
