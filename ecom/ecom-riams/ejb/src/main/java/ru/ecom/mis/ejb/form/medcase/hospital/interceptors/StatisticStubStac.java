@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.live.domain.journal.ChangeJournal;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.StatisticStubExist;
@@ -32,8 +31,6 @@ import java.util.List;
  */
 public class StatisticStubStac {
 	
-    private static final Logger LOG = Logger.getLogger(StatisticStubStac.class);
-    private static final String THE_DISCARGE_ONLY_CURRENT_DAY = "/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay" ;
 	public StatisticStubStac(HospitalMedCase aMedCase, SessionContext aContext, EntityManager aManager) {
 		setMedCase(aMedCase);
 		setEntityManager(aManager);
@@ -504,7 +501,8 @@ public class StatisticStubStac {
 	public static final String CREATE_HOUR = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateHour" ;
 	public static final String EDIT_HOUR = "/Policy/Mis/MedCase/Stac/Ssl/Admission/EditHour" ;
 	public static final String CHANGE_STAT_CARD_NUMBER = "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber" ;
-	public static final String CreateStatCardBeforeDeniedByHand = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardBeforeDeniedByHand" ;
+	public static final String CREATE_STAT_CARD_BEFORE_DENIED_BY_HAND = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardBeforeDeniedByHand" ;
+	private static final String THE_DISCARGE_ONLY_CURRENT_DAY = "/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay" ;
 	
 	/** Экстренная госпитализация */
 	private boolean theIsEmergency;

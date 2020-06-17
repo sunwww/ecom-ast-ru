@@ -291,7 +291,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 			
 		}
 	
-	var stat=aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CreateHour) ;
+	var stat=aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CREATE_HOUR) ;
 	var psych=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/IsPsychiatry") ;
 	var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
 	
@@ -326,7 +326,7 @@ function onPreSave(aForm,aEntity, aCtx) {
     	var statCardNumber = aForm.statCardNumber ;
     	if (aEntity.statisticStub!=null) {
 	    	if (statCardNumber==null || statCardNumber.trim()=="") {
-	    		var hand = aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CreateStatCardBeforeDeniedByHand) ;
+	    		var hand = aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CREATE_STAT_CARD_BEFORE_DENIED_BY_HAND) ;
 	    		
 	    		if (hand) throw "Не указан номер стат. карты" ;
 	    	} else {
