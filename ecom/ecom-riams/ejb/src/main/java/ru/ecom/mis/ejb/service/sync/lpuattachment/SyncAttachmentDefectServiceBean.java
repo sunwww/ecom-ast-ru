@@ -21,6 +21,7 @@ import javax.persistence.Query;
 import java.io.StringReader;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -88,14 +89,13 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 		}
 		return lpu;
 	}
-	public String importDefectFromXML (String aFileName) {
+	public String importDefectFromXML (String aFileText) {
 		try {
-			if (aFileName!=null && !aFileName.equals("")) {
-				LOG.info("in ImportDefect, start. hashcode="+aFileName);
+			if (aFileText!=null && aFileText.startsWith("<")) {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 				SimpleDateFormat formatOutput = new SimpleDateFormat("dd.MM.yyyy");
 				SAXBuilder saxBuilder = new SAXBuilder();
-				Document xdoc = saxBuilder.build(new StringReader(aFileName));
+				Document xdoc = saxBuilder.build(new StringReader(aFileText));
 				org.jdom.Element rootElement = xdoc.getRootElement();
 				List<org.jdom.Element> elements =rootElement.getChildren("ZAP"); 
 				int i=0;
@@ -103,68 +103,67 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 				for (org.jdom.Element el: elements) {
 					i++;
 					StringBuilder refrSB = new StringBuilder();
-					List<org.jdom.Element> refresions =el.getChildren("REFREASON");	
+					List<org.jdom.Element> refresions =el.getChildren("REFREASON");
+					List<String> goodDef = Arrays.asList(new String[]{"3", "4", "5", "6"}); //некритичные дефекты
 					for (org.jdom.Element r: refresions) {
-						if (r.getText().equalsIgnoreCase("включен в регистр")){
+						String refText = r.getText();
+						if ("включен в регистр".equalsIgnoreCase(refText)){
 							refrSB.setLength(0); break;
 						}
-						if (r.getText()==null||r.getText().equals("")||r.getText().equals("3")||r.getText().equals("4")||r.getText().equals("5")||r.getText().equals("6")) {
-							
-						} else {
-							refrSB.append(r.getText()).append(",");
+						if (refText!=null && !goodDef.contains(refText)) {
+							refrSB.append(refText).append(",");
 						}
-						
 					}
-							String refreason =refrSB.length()>0?refrSB.substring(0,refrSB.length()-1):"";
-							String lastname = el.getChildText("FAM");
-							String firstname = el.getChildText("IM");
-							String middlename = el.getChildText("OT");
-							String birthday = el.getChildText("DR");
-							String spPrik= el.getChildText("SP_PRIK");
-							String tPrik= el.getChildText("T_PRIK");
-							String datePrik= el.getChildText("DATE_1");
-							String prikName = "Прикрепление";
-							if ("2".equals(tPrik)) { //При дефекте случая, поданного на открепление, не учитываем дефект(МАКС-М - 14 -открепление неправомерно, когда пациент уже откреплен)
-								refreason="";
-								prikName = "Открепление"; 
+					String refreason ;
+					String lastname = el.getChildText("FAM");
+					String firstname = el.getChildText("IM");
+					String middlename = el.getChildText("OT");
+					String birthday = el.getChildText("DR");
+					String spPrik= el.getChildText("SP_PRIK");
+					String tPrik= el.getChildText("T_PRIK");
+					String datePrik= el.getChildText("DATE_1");
+					String prikName ;
+					if ("2".equals(tPrik)) { //При дефекте случая, поданного на открепление, не учитываем дефект(МАКС-М - 14 -открепление неправомерно, когда пациент уже откреплен)
+						refreason="";
+						prikName = "Открепление";
+					} else {
+						refreason = refrSB.length()>0?refrSB.substring(0,refrSB.length()-1):"";
+						prikName = "Прикрепление";
+					}
+					String birthday2 = formatOutput.format(format.parse(birthday))+" г.р.";
+					Long patientId = theSyncService.findPatientId(lastname, firstname, middlename, new java.sql.Date(format.parse(birthday).getTime()));
+					if (patientId!=null&&patientId!=0) {
+						LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik,tPrik);
+						if (att==null) {
+							sb.append("blue:").append(i).append(":").append(patientId).append("::").append(prikName).append(" не найдено в базе. Данные пациента= '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'#");
+						} else {
+							if (!refreason.equals("")) { //Дефект
+								sb.append("red:").append(i).append(":").append(patientId).append(":").append(att.getId()).append(":").append(prikName).append(" пациента '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'обновлено. Дефект='").append(refreason).append("'#");
+							} else { //Не дефект
+								sb.append("green:").append(i).append(":").append(patientId).append("::").append(prikName).append(" принято без дефектов. Данные пациента= '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'#");
 							}
-							String birthday2 = formatOutput.format(format.parse(birthday))+" г.р.";
-							Long patientId = theSyncService.findPatientId(lastname, firstname, middlename, new java.sql.Date(format.parse(birthday).getTime()));
-							if (patientId!=null&&patientId!=0) {
-								LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik,tPrik);
-								if (!refreason.equals("")) { //Дефект
-					    			if (att!=null) {
-										sb.append("red:").append(i).append(":").append(patientId).append(":").append(att.getId()).append(":").append(prikName).append(" пациента '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'обновлено. Дефект='").append(refreason).append("'#");
-					    			} else {
-					    				sb.append("blue:").append(i).append(":").append(patientId).append("::").append(prikName).append(" не найдено в базе. Данные пациента= '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'#");
-					    			}									 
-								} else { //Не дефект
-									if (att!=null) {
-										sb.append("green:").append(i).append(":").append(patientId).append("::").append(prikName).append(" принято без дефектов. Данные пациента= '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'#");
-									}								
-								}
-								if (att!=null) {
-			    					att.setDefectText(refreason);
-			    					att.setDefectPeriod(formatOutput.format(new Date(new java.util.Date().getTime())));  
-									theManager.persist(att);
-								}
-							} else {
-								sb.append("black:").append(i).append(":::Пациент не найден в базе. Данные пациента= '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'#");
-							}
+							att.setDefectText(refreason);
+							att.setDefectPeriod(formatOutput.format(new Date(new java.util.Date().getTime())));
+							theManager.persist(att);
+						}
+					} else {
+						sb.append("black:").append(i).append(":::Пациент не найден в базе. Данные пациента= '").append(lastname).append(" ").append(firstname).append(" ").append(middlename).append(" ").append(birthday2).append("'#");
+					}
 				}
 				return sb.toString();
 			} else {
 				return "Нет такого файла";
 			}
 		} catch (Exception e) {
-			LOG.error("------------"+aFileName);
-			e.printStackTrace();
+			LOG.error("------------"+aFileText,e);
 			return "ERROR";
 		}
 		
 		
 	}
 	//Работает неправильно, вместо синхронизации использовать импорт дефектов!
+	//кажися, не используется.
+	@Deprecated
 	public void sync(long aMonitorId, long aTimeId) {
 
 		Patient patient;
@@ -179,7 +178,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 			int i =0;
 			while (lafd.hasNext()) {
 				i++;
-				if (monitor.isCancelled()) {
+				if (i%50==0 && monitor.isCancelled()) {
                     LOG.warn("Прервано пользователем");
                     return;
                 }

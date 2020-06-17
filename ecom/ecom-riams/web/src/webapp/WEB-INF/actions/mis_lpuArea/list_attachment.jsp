@@ -259,7 +259,6 @@
     	  var reader = new FileReader();
     	  reader.onload = function() {
     		  text = reader.result;
-    	//	  alert(text);
     		  AttachmentService.importDefectsFromXML (text, {
     			  callback: function(aResult) {
     				  if (aResult!=null & aResult!="") {

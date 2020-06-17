@@ -16,6 +16,7 @@ import java.sql.Date;
 
 @Entity
 @Table(schema="SQLUser")
+@Deprecated
 public class LpuAttachmentFomc extends BaseEntity implements IImportData {
 
 	/** СНИЛС */

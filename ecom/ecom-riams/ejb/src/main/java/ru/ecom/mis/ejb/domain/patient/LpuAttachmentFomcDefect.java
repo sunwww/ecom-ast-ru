@@ -13,6 +13,7 @@ import javax.persistence.Table;
 @Comment("Дефекты прикрепленного населения -из фонда")
 @Entity
 @Table(schema="SQLUser")
+@Deprecated
 public class LpuAttachmentFomcDefect extends LpuAttachmentFomc {
 
 	/** Код дефекта */

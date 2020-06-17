@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 @Comment("Открепленное население -из фонда")
 @Entity
 @Table(schema="SQLUser")
+@Deprecated
 public class LpuAttachmentFomcDetach extends LpuAttachmentFomc {
 
 /** ФИО пациента */

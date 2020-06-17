@@ -1,10 +1,10 @@
 package ru.ecom.mis.ejb.service.sync.lpuattachment;
 
-import javax.naming.InitialContext;
-
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.expomc.ejb.services.sync.ISync;
 import ru.ecom.expomc.ejb.services.sync.SyncContext;
+
+import javax.naming.InitialContext;
 
 /**
  * 
@@ -12,6 +12,7 @@ import ru.ecom.expomc.ejb.services.sync.SyncContext;
  * 
  *
  */
+@Deprecated
 public class LpuAttachmentDefect implements ISync {
 
 	public void sync(SyncContext aContext) throws Exception {

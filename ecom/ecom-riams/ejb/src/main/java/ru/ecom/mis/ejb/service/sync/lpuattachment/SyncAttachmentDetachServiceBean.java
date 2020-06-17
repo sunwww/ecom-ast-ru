@@ -25,6 +25,7 @@ import java.util.Iterator;
  */
 @Stateless
 @Local(ISyncAttachmentDetachService.class)
+@Deprecated
 public class SyncAttachmentDetachServiceBean implements ISyncAttachmentDetachService {
 	/*
 	 * 1. Берем ФИО человека, находим его в базе. 

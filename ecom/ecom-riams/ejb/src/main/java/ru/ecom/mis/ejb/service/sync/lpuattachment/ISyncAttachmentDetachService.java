@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.service.sync.lpuattachment;
 
+@Deprecated
 public interface ISyncAttachmentDetachService {
-    public void sync(long aMonitorId, long aTimeId) ;
+    void sync(long aMonitorId, long aTimeId) ;
 }
