@@ -412,6 +412,9 @@
 						<li><msh:link  isReport="false" action="journal_bracelets.do" roles="/Policy/Mis/MedCase/Stac/Journal/BraceletsJournal">
 							Журнал браслетов
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_analysisUpdate.do" roles="/Policy/Mis/MedCase/Covid19/Report">
+							Обновление анализов по COVID
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>
