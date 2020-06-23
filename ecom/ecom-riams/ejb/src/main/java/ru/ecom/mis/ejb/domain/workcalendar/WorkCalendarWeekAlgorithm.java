@@ -1,22 +1,19 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocDayParity;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkCalendarParity;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkWeek;
-import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDayPattern;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 	/**
 	 * Алгоритм шаблона рабочего календаря по неделям
 	 */
 	@Comment("Алгоритм шаблона рабочего календаря по неделям")
 @Entity
-@Table(schema="SQLUser")
 public class WorkCalendarWeekAlgorithm extends WorkCalendarAlgorithm{
 		/** infoClass */
 		@Comment("infoClass")

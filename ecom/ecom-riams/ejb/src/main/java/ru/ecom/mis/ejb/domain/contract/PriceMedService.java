@@ -15,8 +15,8 @@ import java.sql.Date;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(unique= false, properties = {"pricePosition"})
-	, @AIndex(unique= false, properties = {"medService"})
+	@AIndex(properties = {"pricePosition"})
+	, @AIndex(properties = {"medService"})
 })
 public class PriceMedService extends BaseEntity{
 	/**
@@ -30,9 +30,6 @@ public class PriceMedService extends BaseEntity{
 	public void setPricePosition(PricePosition aPricePosition) {
 		thePricePosition = aPricePosition;
 	}
-	/**
-	 * Позиция прейскуранта
-	 */
 	private PricePosition thePricePosition;
 	/**
 	 * Медицинская услуга

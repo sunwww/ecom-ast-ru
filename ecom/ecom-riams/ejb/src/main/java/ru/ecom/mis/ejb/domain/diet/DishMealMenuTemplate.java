@@ -1,9 +1,8 @@
 package ru.ecom.mis.ejb.domain.diet;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
 
 /**
  *  Шаблон блюда меню приема пищи
@@ -13,7 +12,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment(" Шаблон блюда меню приема пищи")
 @Entity
-@Table(schema="SQLUser")
-public class DishMealMenuTemplate extends DishMealMenu{
+public class DishMealMenuTemplate extends DishMealMenu {
 
 }

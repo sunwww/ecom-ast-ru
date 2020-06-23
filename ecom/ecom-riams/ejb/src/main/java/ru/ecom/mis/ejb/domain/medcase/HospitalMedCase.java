@@ -9,7 +9,10 @@ import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import java.sql.Date;
 import java.sql.Time;
 
@@ -22,7 +25,6 @@ import java.sql.Time;
 	@AIndex(properties="statisticStub", table="MedCase")
     ,@AIndex(properties="result", table="MedCase")
 }) 
-@Table(schema="SQLUser")
 public class HospitalMedCase extends LongMedCase {
 
 	/** Дата перевода */

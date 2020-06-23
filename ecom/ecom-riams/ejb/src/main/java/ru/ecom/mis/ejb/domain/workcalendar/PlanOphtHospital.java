@@ -7,7 +7,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import java.sql.Date;
 
 /**
@@ -18,7 +17,6 @@ import java.sql.Date;
  */
 
 @Entity
-@Table(schema="SQLUser")
 public class PlanOphtHospital extends WorkCalendarHospitalBed {
     /** Дата ОКТ */
     @Comment("Дата ОКТ")

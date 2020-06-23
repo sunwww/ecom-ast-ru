@@ -12,7 +12,10 @@ import ru.ecom.poly.ejb.domain.voc.VocTypeProtocol;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.format.DateFormat;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import java.sql.Date;
 import java.sql.Time;
 
@@ -30,7 +33,6 @@ import java.sql.Time;
 	@AIndex(properties="dateRegistration",table="Diary"),
 	@AIndex(properties="obsSheet",table="Diary")
     })
-@Table(schema="SQLUser")
 public class Protocol extends Diary {
 
 	/** Медицинская услуга */

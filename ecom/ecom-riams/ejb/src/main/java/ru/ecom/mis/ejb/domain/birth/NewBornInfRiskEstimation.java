@@ -5,7 +5,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
@@ -16,20 +15,16 @@ import javax.persistence.Transient;
 
 @Comment("Оценка риска бактериальной инфекции у новорожденных")
 @Entity
-@Table(schema="SQLUser")
-public class NewBornInfRiskEstimation extends Inspection{
+public class NewBornInfRiskEstimation extends Inspection {
 	/** Длительность безводного периода */
 	@Comment("Длительность безводного периода")
 	@OneToOne
 	public VocInfRiskWaterless getWaterlessDuration() {
 		return theWaterlessDuration;
 	}
-
 	public void setWaterlessDuration(VocInfRiskWaterless aWaterlessDuration) {
 		theWaterlessDuration = aWaterlessDuration;
 	}
-
-	/** Длительность безводного периода */
 	private VocInfRiskWaterless theWaterlessDuration;
 	
 	/** Температура матери в родах */
@@ -38,12 +33,9 @@ public class NewBornInfRiskEstimation extends Inspection{
 	public VocInfRiskMotherTemperature getMotherTemperature() {
 		return theMotherTemperature;
 	}
-
 	public void setMotherTemperature(VocInfRiskMotherTemperature aMotherTemperature) {
 		theMotherTemperature = aMotherTemperature;
 	}
-
-	/** Температура матери в родах */
 	private VocInfRiskMotherTemperature theMotherTemperature;
 	
 	/** Характер амниотических вод */
@@ -52,12 +44,9 @@ public class NewBornInfRiskEstimation extends Inspection{
 	public VocInfRiskWaterNature getWaterNature() {
 		return theWaterNature;
 	}
-
 	public void setWaterNature(VocInfRiskWaterNature aWaterNature) {
 		theWaterNature = aWaterNature;
 	}
-
-	/** Характер амниотических вод */
 	private VocInfRiskWaterNature theWaterNature;
 	
 	/** Оценка по Апгар */
@@ -66,12 +55,9 @@ public class NewBornInfRiskEstimation extends Inspection{
 	public VocInfRiskApgar getApgar() {
 		return theApgar;
 	}
-
 	public void setApgar(VocInfRiskApgar aApgar) {
 		theApgar = aApgar;
 	}
-
-	/** Оценка по Апгар */
 	private VocInfRiskApgar theApgar;
 	
 	/** Хронические очаги инфекции или острые инфекции, перенесенные за месяц до родов или выявленные у матери в течение 1-х суток после родов  */
@@ -80,12 +66,9 @@ public class NewBornInfRiskEstimation extends Inspection{
 	public VocInfRiskMotherDiseases getMotherInfectiousDiseases() {
 		return theMotherInfectiousDiseases;
 	}
-
 	public void setMotherInfectiousDiseases(VocInfRiskMotherDiseases aMotherInfectiousDiseases) {
 		theMotherInfectiousDiseases = aMotherInfectiousDiseases;
 	}
-
-	/** Хронические очаги инфекции или острые инфекции, перенесенные за месяц до родов или выявленные у матери в течение 1-х суток после родов*/
 	private VocInfRiskMotherDiseases theMotherInfectiousDiseases;
 	
 	/** Масса тела ребенка, гр. */
@@ -94,12 +77,9 @@ public class NewBornInfRiskEstimation extends Inspection{
 	public VocInfRiskNewBornWeight getNewBornWeight() {
 		return theNewBornWeight;
 	}
-
 	public void setNewBornWeight(VocInfRiskNewBornWeight aNewBornWeight) {
 		theNewBornWeight = aNewBornWeight;
 	}
-
-	/** Масса тела ребенка, гр. */
 	private VocInfRiskNewBornWeight theNewBornWeight;
 	
 	/** Общая оценка (балл) */
@@ -108,12 +88,9 @@ public class NewBornInfRiskEstimation extends Inspection{
 	public VocCommonMask getCommonMark() {
 		return theCommonMark;
 	}
-
 	public void setCommonMark(VocCommonMask aCommonMark) {
 		theCommonMark = aCommonMark;
 	}
-
-	/** Общая оценка (балл) */
 	private VocCommonMask theCommonMark;
 	
 	@Transient

@@ -1,13 +1,11 @@
 package ru.ecom.mis.ejb.domain.licence;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
 
 @Entity
 @Comment("Выписки")
-@Table(schema="SQLUser")
 public class DischargeDocument extends InternalDocuments {
 	
 }

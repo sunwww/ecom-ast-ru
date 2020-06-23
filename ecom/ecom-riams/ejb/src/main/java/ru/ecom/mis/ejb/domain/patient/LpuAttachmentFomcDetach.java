@@ -8,12 +8,10 @@ package ru.ecom.mis.ejb.domain.patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Comment("Открепленное население -из фонда")
 @Entity
-@Table(schema="SQLUser")
 @Deprecated
 public class LpuAttachmentFomcDetach extends LpuAttachmentFomc {
 

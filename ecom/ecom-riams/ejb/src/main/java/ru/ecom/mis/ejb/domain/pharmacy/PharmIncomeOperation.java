@@ -4,7 +4,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 /**
  * Created by rkurbanov on 05.09.2017.
@@ -12,7 +11,6 @@ import javax.persistence.Table;
 
 @Comment("Приходная операция")
 @Entity
-@Table(schema="SQLUser")
 public class PharmIncomeOperation extends PharmOperation {
 
     private Integer countPack;

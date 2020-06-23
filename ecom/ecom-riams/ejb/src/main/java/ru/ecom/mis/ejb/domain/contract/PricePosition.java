@@ -20,9 +20,9 @@ import java.util.List;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(unique= false, properties = {"name"})
-	,@AIndex(unique= false, properties = {"priceList"})
-	,@AIndex(unique= false, properties = {"parent"})
+	@AIndex(properties = {"name"})
+	,@AIndex(properties = {"priceList"})
+	,@AIndex(properties = {"parent"})
 })
 public class PricePosition extends BaseEntity{
 	/**

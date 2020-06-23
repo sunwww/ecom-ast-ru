@@ -1,17 +1,15 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.mis.ejb.domain.lpu.voc.VocCountBedInHospitalRoom;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+
 @Entity
-@Table(schema="SQLUser")
 public class HospitalRoom extends WorkPlace {
 	/**
 	 * Количество коек

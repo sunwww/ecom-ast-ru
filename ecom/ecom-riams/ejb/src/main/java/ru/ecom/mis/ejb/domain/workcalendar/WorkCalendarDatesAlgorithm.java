@@ -4,7 +4,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.sql.Date;
 
@@ -13,7 +12,6 @@ import java.sql.Date;
 	 */
 	@Comment("Алгоритм шаблона рабочего календаря по датам")
 @Entity
-@Table(schema="SQLUser")
 public class WorkCalendarDatesAlgorithm extends WorkCalendarAlgorithm{
 
 		/** infoClass */

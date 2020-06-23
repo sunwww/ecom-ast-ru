@@ -10,7 +10,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.sql.Time;
 
@@ -21,11 +20,10 @@ import java.sql.Time;
  */
 @Comment("Длительный СМО")
 @Entity
-@Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(properties="ownerFunction", table="MedCase")
 }) 
-public abstract class LongMedCase extends MedCase{
+public abstract class LongMedCase extends MedCase {
 
 	/** МКБ10*/
 	@Comment("МКБ10")
@@ -39,13 +37,6 @@ public abstract class LongMedCase extends MedCase{
 	public WorkFunction getFinishFunction() {return theFinishFunction;	}
 	public void setFinishFunction(WorkFunction aFinishWorker) {theFinishFunction = aFinishWorker;}
 
-
-	/** Случаи нетрудоспособности */
-	//@Comment("Случаи нетрудоспособности")
-	//@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	//public List<DisabilityCase> getDisabilityCases() {return theDisabilityCases;}
-	//public void setDisabilityCases(List<DisabilityCase> aDisabilityCases) {theDisabilityCases = aDisabilityCases;}
-
 	/** Время поступления */
 	@Comment("Время поступления")
 	public Time getEntranceTime() {	return theEntranceTime;	}
@@ -55,10 +46,6 @@ public abstract class LongMedCase extends MedCase{
 	@Comment("Время выписки")
 	public Time getDischargeTime() {return theDischargeTime;}
 	public void setDischargeTime(Time aDischargeTime) {theDischargeTime = aDischargeTime;	}
-	
-	
-	
-
 
 	/** Рабочая функция лечащего врача */
 	@Comment("Рабочая функция лечащего врача")
@@ -74,15 +61,11 @@ public abstract class LongMedCase extends MedCase{
 	private Time theDischargeTime;
 	/** Время поступления */
 	private Time theEntranceTime;
-	///** Случаи нетрудоспособности */
-	//private List<DisabilityCase> theDisabilityCases;
 
 	/** Кто завершил */
 	private WorkFunction theFinishFunction;
 	/** МКБ10 */
 	private VocIdc10 theIdc10;
-	
-	
 	
 	/** Откуда поступил */
 	@Comment("Откуда поступил")
@@ -90,12 +73,9 @@ public abstract class LongMedCase extends MedCase{
 	public VocHospType getSourceHospType() {
 		return theSourceHospType;
 	}
-
 	public void setSourceHospType(VocHospType aSourceHospType) {
 		theSourceHospType = aSourceHospType;
 	}
-
-	/** Откуда поступил */
 	private VocHospType theSourceHospType;
 	
 	/** Куда переведен */
@@ -104,12 +84,9 @@ public abstract class LongMedCase extends MedCase{
 	public VocHospType getTargetHospType() {
 		return theTargetHospType;
 	}
-
 	public void setTargetHospType(VocHospType aTargetHospType) {
 		theTargetHospType = aTargetHospType;
 	}
-
-	/** Куда переведен */
 	private VocHospType theTargetHospType;
 
 	
@@ -127,5 +104,4 @@ public abstract class LongMedCase extends MedCase{
 	public String getDaysCount() {
 		return DurationUtil.getDuration(getDateStart(), getDateFinish());
 	}
-
 }

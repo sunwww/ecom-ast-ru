@@ -3,7 +3,6 @@ package ru.ecom.mis.ejb.domain.birth;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
@@ -14,8 +13,7 @@ import javax.persistence.Transient;
 
 @Comment("Скрининг на наследственные заболевания ")
 @Entity
-@Table(schema="SQLUser")
-public class HereditaryScreening extends Inspection{
+public class HereditaryScreening extends Inspection {
 	@Transient
 	public String getTypeInformation() {
 		return  "Скрининг на наследственные заболевания" ;

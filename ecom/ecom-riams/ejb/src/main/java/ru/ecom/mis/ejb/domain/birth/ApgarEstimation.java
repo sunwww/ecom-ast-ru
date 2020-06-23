@@ -5,7 +5,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
@@ -16,36 +15,31 @@ import javax.persistence.Transient;
 
 @Comment("Оценка новорожденного по Апгар")
 @Entity
-@Table(schema="SQLUser")
-public class ApgarEstimation extends Inspection{
+public class ApgarEstimation extends Inspection {
 	
 	/** Время после рождения (мин) */
 	@Comment("Время после рождения (мин)")
 	public Integer getPostNatalTime() {return thePostNatalTime;}
 	public void setPostNatalTime(Integer aPostNatalTime) {thePostNatalTime = aPostNatalTime;}
 
-	
 	/** Сердцебиение */
 	@Comment("Сердцебиение")
 	@OneToOne
 	public VocApgarPalpitation getPalpitation() {return thePalpitation;}
 	public void setPalpitation(VocApgarPalpitation aPalpitation) {thePalpitation = aPalpitation;}
 
-	
 	/** Дыхание */
 	@Comment("Дыхание")
 	@OneToOne
 	public VocApgarRespiration getRespiration() {return theRespiration;}
 	public void setRespiration(VocApgarRespiration aRespiration) {theRespiration = aRespiration;}
 
-	
 	/** Окраска кожи */
 	@Comment("Окраска кожи")
 	@OneToOne
 	public VocApgarSkinColor getSkinColor() {return theSkinColor;}
 	public void setSkinColor(VocApgarSkinColor aSkinColor) {theSkinColor = aSkinColor;}
 
-	
 	/** Тонус мышц */
 	@Comment("Тонус мышц")
 	@OneToOne
@@ -58,7 +52,6 @@ public class ApgarEstimation extends Inspection{
 	public VocApgarReflexes getReflexes() {return theReflexes;}
 	public void setReflexes(VocApgarReflexes aReflexes) {theReflexes = aReflexes;}
 
-	
 	/** Общая оценка (балл) */
 	@Comment("Общая оценка (балл)")
 	public Integer getCommonMark() {return theCommonMark;}

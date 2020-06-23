@@ -15,7 +15,6 @@ import java.util.Date;
 
 @Comment("Лист назначений")
 @Entity
-@Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
 public class PrescriptList extends AbstractPrescriptionList {
 

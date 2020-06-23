@@ -1,16 +1,14 @@
 package ru.ecom.mis.ejb.domain.patient;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 /**
  * Полис ДМС иногороднего
  * @author oegorova
  */
 @Entity
-@Table(schema="SQLUser")
 public class MedPolicyDmcForeign  extends MedPolicyOmcForeign {
 	///Вычисляемые поля
     @Transient

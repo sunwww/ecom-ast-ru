@@ -1,17 +1,14 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
-import javax.persistence.Entity;
-
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+
 @Entity
-@Table(schema="SQLUser")
 @AIndexes({
   @AIndex(properties="diary", table="Prescription")
 })

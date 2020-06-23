@@ -6,7 +6,10 @@ import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 /**
  * Персональная рабочая функция
  * @author stkacheva,azviagin
@@ -19,7 +22,6 @@ import javax.persistence.*;
 	,@AIndex(properties={"group"},table="WorkFunction")
 	
 })
-@Table(schema="SQLUser")
 public class PersonalWorkFunction extends WorkFunction {
 	/** Сотрудник */
 	@Comment("Сотрудник")

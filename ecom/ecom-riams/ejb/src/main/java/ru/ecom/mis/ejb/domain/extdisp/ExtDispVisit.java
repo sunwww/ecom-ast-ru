@@ -5,7 +5,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.util.List;
 
 	/**
@@ -13,8 +12,7 @@ import java.util.List;
 	 */
 	@Comment("Визит по дополнительной диспансеризации")
 @Entity
-@Table(schema="SQLUser")
-public class ExtDispVisit extends ExtDispService{
+public class ExtDispVisit extends ExtDispService {
 
 	@OneToMany(mappedBy="visit", cascade=CascadeType.ALL)
 	public List<ExtDispServiceIndication> getServiceIndications() {return theServiceIndications;}

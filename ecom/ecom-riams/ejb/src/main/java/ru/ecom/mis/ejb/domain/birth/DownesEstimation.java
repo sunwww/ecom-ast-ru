@@ -5,7 +5,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
@@ -16,8 +15,7 @@ import javax.persistence.Transient;
 
 @Comment("Оценка респираторного дистресса новорожденного по Downes")
 @Entity
-@Table(schema="SQLUser")
-public class DownesEstimation extends Inspection{
+public class DownesEstimation extends Inspection {
 	
 	/** Частота дыхательных движений */
 	@Comment("Частота дыхательных движений")
@@ -25,12 +23,9 @@ public class DownesEstimation extends Inspection{
 	public VocDownesRespirationRate getRespirationRate() {
 		return theRespirationRate;
 	}
-
 	public void setRespirationRate(VocDownesRespirationRate aRespirationRate) {
 		theRespirationRate = aRespirationRate;
 	}
-
-	/** Частота дыхательных движений */
 	private VocDownesRespirationRate theRespirationRate;
 	
 	/** Цианоз */
@@ -39,12 +34,9 @@ public class DownesEstimation extends Inspection{
 	public VocDownesCyanosis getCyanosis() {
 		return theCyanosis;
 	}
-
 	public void setCyanosis(VocDownesCyanosis aCyanosis) {
 		theCyanosis = aCyanosis;
 	}
-
-	/** Цианоз */
 	private VocDownesCyanosis theCyanosis;
 	
 	/** Втяжение межреберных промежутков */
@@ -53,12 +45,9 @@ public class DownesEstimation extends Inspection{
 	public VocDownesIntercostalRet getIntercostalRetraction() {
 		return theIntercostalRetraction;
 	}
-
 	public void setIntercostalRetraction(VocDownesIntercostalRet aIntercostalRetraction) {
 		theIntercostalRetraction = aIntercostalRetraction;
 	}
-
-	/** Втяжение межреберных промежутков */
 	private VocDownesIntercostalRet theIntercostalRetraction;
 	
 	/** Затрудненный выдох */
@@ -67,12 +56,9 @@ public class DownesEstimation extends Inspection{
 	public VocDownesDifExhalation getDifficultExhalation() {
 		return theDifficultExhalation;
 	}
-
 	public void setDifficultExhalation(VocDownesDifExhalation aDifficultExhalation) {
 		theDifficultExhalation = aDifficultExhalation;
 	}
-
-	/** Затрудненный выдох */
 	private VocDownesDifExhalation theDifficultExhalation;
 	
 	/** Аускультация */
@@ -81,12 +67,9 @@ public class DownesEstimation extends Inspection{
 	public VocDownesAuscultation getAuscultation() {
 		return theAuscultation;
 	}
-
 	public void setAuscultation(VocDownesAuscultation aAuscultation) {
 		theAuscultation = aAuscultation;
 	}
-
-	/** Аускультация */
 	private VocDownesAuscultation theAuscultation;
 	
 	/** Общая оценка */
@@ -95,12 +78,9 @@ public class DownesEstimation extends Inspection{
 	public VocCommonMask getCommonMark() {
 		return theCommonMark;
 	}
-
 	public void setCommonMark(VocCommonMask aCommonMark) {
 		theCommonMark = aCommonMark;
 	}
-
-	/** Общая оценка */
 	private VocCommonMask theCommonMark;
 	
 	@Transient

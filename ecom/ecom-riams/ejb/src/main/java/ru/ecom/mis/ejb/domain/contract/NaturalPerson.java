@@ -7,23 +7,21 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 	/**
 	 * Физическое лицо
 	 */
 	@Comment("Физическое лицо")
 @Entity
-@Table(schema="SQLUser")
-@AIndexes(value = { 
+@AIndexes(value = {
 		@AIndex(properties = { "patient" },table="ContractPerson")
 		}
 )
-public class NaturalPerson extends ContractPerson{
+public class NaturalPerson extends ContractPerson {
 	/**
 	 * Пациента
 	 */
-	@Comment("Пациента")
+	@Comment("Пациент")
 	@OneToOne
 	public Patient getPatient() {
 		return thePatient;
@@ -31,9 +29,6 @@ public class NaturalPerson extends ContractPerson{
 	public void setPatient(Patient aPatient) {
 		thePatient = aPatient;
 	}
-	/**
-	 * Пациента
-	 */
 	private Patient thePatient;
 	
 	@Transient

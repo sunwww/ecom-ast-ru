@@ -1,17 +1,14 @@
 package ru.ecom.mis.ejb.domain.licence;
 
-import java.sql.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import java.sql.Date;
+
 @Entity
 @Comment("Акт в военкомат")
-@Table(schema="SQLUser")
 public class RequitDirectionDocument extends InternalDocuments {
 	/** Номер направления */
 	@Comment("Номер направления")

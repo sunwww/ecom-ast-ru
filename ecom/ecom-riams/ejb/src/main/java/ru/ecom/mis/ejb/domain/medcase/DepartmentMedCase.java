@@ -13,11 +13,13 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 @Comment("Случай лечения в отделении")
 @Entity
-@Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(properties="bedNumber", table="MedCase")
 	,@AIndex(properties="department", table="MedCase")

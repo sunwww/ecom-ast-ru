@@ -3,7 +3,6 @@ package ru.ecom.mis.ejb.domain.workcalendar;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.sql.Time;
 
 	/**
@@ -11,7 +10,6 @@ import java.sql.Time;
 	 */
 	@Comment("Шаблон времен рабочего календаря")
 @Entity
-@Table(schema="SQLUser")
 public class WorkCalendarTimeInterval extends WorkCalendarTimePattern {
 
 	/** Начиная с времени */

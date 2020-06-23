@@ -6,11 +6,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Entity
 @Comment("Профосмотр")
-@Table(schema="SQLUser")
 public class BaseMedicalExamination extends InternalDocuments {
 	/** Профессия */
 	@Comment("Профессия")

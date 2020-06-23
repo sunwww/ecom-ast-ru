@@ -7,7 +7,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import java.util.List;
  * @author stkacheva, azviagin
  */
 @Entity
-@Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(properties="groupName",table="WorkFunction")
 })

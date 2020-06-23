@@ -8,14 +8,12 @@ import ru.nuzmsh.util.format.DateFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
  * Полис ОМС
  */
 @Entity
-@Table(schema="SQLUser")
 public class MedPolicyOmc extends MedPolicy {
 
 	/** Город нахождения СМО */

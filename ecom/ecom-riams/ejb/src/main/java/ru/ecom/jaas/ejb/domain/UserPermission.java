@@ -7,7 +7,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
@@ -17,7 +16,6 @@ import javax.persistence.Transient;
 	,@AIndex(properties= {"dateFrom","dateTo","username","object","permission"},table="Permission")
     //,@AIndex(properties= {"dateFrom","dateTo","username","object","permission","idObject"},table="Permission")
 })
-@Table(schema="SQLUser")
 @UnDeletable
 public class UserPermission extends Permission {
 	/** Пользователь */
@@ -25,13 +23,12 @@ public class UserPermission extends Permission {
 	@OneToOne
 	public SecUser getUsername() {return theUsername;}
 	public void setUsername(SecUser aUsername) {theUsername = aUsername;}
+	private SecUser theUsername;
 
 	/** Пользователь инфо */
 	@Comment("Пользователь инфо")
 	@Transient
 	public String getUserInfo() {
 		return theUsername!=null?theUsername.getLogin():"";
-	}	/** Пользователь */
-	private SecUser theUsername;
-
+	}
 }

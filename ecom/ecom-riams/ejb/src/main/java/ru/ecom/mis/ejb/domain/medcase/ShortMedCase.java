@@ -17,7 +17,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.sql.Date;
 import java.sql.Time;
@@ -31,7 +30,6 @@ import java.sql.Time;
 
 @Comment("Короткий СМО")
 @Entity
-@Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(properties="datePlan", table="MedCase"),
     @AIndex(properties="workFunctionExecute", table="MedCase")

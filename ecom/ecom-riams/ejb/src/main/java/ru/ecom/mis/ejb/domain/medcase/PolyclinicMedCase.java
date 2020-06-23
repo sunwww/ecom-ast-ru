@@ -3,7 +3,6 @@ package ru.ecom.mis.ejb.domain.medcase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
@@ -13,8 +12,7 @@ import javax.persistence.Transient;
  */
 @Comment("Случай поликлинического обслуживания")
 @Entity
-@Table(schema="SQLUser")
-public class PolyclinicMedCase extends LongMedCase{
+public class PolyclinicMedCase extends LongMedCase {
 	/** Количество визитов */
 	@Comment("Количество визитов")
 	@Transient

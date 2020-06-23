@@ -6,7 +6,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 /**
  * Краткий родовый сертификат
@@ -14,7 +13,6 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(schema="SQLUser")
 public class ShortConfinementCertificate extends Certificate {
 
     private MedCase medCase;

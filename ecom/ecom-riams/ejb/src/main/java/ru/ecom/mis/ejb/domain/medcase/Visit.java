@@ -1,10 +1,9 @@
 
 package ru.ecom.mis.ejb.domain.medcase;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
 
 
 /**
@@ -14,8 +13,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Comment("Визит")
 @Entity
-@Table(schema="SQLUser")
-public class Visit extends ShortMedCase{
+public class Visit extends ShortMedCase {
 	
 
 }

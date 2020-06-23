@@ -8,11 +8,9 @@ package ru.ecom.mis.ejb.domain.patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 @Comment("Дефекты прикрепленного населения -из фонда")
 @Entity
-@Table(schema="SQLUser")
 @Deprecated
 public class LpuAttachmentFomcDefect extends LpuAttachmentFomc {
 
