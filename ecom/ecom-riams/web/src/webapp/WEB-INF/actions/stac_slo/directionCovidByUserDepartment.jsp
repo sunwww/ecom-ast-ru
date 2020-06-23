@@ -124,10 +124,11 @@
             if (table) {
                 for (var ii = 1; ii < table.rows.length; ii++) {
                     var row = table.rows[ii];
-                    if ($('chk_'+ii).checked) {
+                    var ch = $(row).children[2].children[0];
+                    if ($(row).children[2].children[0].checked) {
                       if (params.length>0) params+="!";
                         params += $(row).children[3].textContent+'-'+$(row).children[5].textContent+'-'+$(row).children[4].textContent
-                            +'-'+($('regNum_'+ii).value?$('regNum_'+ii).value:"_");
+                            +'-'+($(row).children[6].children[0].value?$(row).children[6].children[0].value:"_");
                     }
                 }
             }

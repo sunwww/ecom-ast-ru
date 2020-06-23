@@ -477,45 +477,50 @@ function sortMshTable(th,num) {
                         x = rows[i].getElementsByTagName("TD")[num];
                         y = rows[i + 1].getElementsByTagName("TD")[num];
                         if (x != null && y != null && typeof x !== 'undefined' && typeof y !== 'undefined') {
-                            if (x.innerHTML==' ' && y.innerHTML!=' ' && direct==0 || x.innerHTML!=' ' && y.innerHTML==' ' && direct!=0) {
+                            var xFldValue, yFldValue ; //если в столбце есть input - берем его значения
+                            if (x.children.length>0 && x.children[0] instanceof HTMLInputElement) {
+                                xFldValue = x.children[0].value;
+                                yFldValue = y.children[0].value;
+                            } else {
+                                xFldValue = x.innerHTML;
+                                yFldValue = y.innerHTML;
+                            }
+                            if (xFldValue==' ' && yFldValue!=' ' && direct==0 || xFldValue!=' ' && yFldValue==' ' && direct!=0) {
                                 shouldSwitch = true;
                                 break;
                             }
-                            if (isNaN(x.innerHTML)) {
+                            if (isNaN(xFldValue)) {
                                 if (direct == 0) {
-                                    if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты
-                                        if (compareDates(x.innerHTML, y.innerHTML) == -1) {
+                                    if (checkDate(xFldValue) && checkDate(yFldValue)) { //если даты
+                                        if (compareDates(xFldValue, yFldValue) == -1) {
                                             shouldSwitch = true;
                                             break;
                                         }
                                     }
-                                    else if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                    else if (xFldValue.toLowerCase() < yFldValue.toLowerCase()) {
                                         shouldSwitch = true;
                                         break;
                                     }
-                                }
-                                else {
-                                    if (checkDate(x.innerHTML) && checkDate(y.innerHTML)) { //если даты
-                                        if (compareDates(x.innerHTML, y.innerHTML) == 1) {
+                                } else {
+                                    if (checkDate(xFldValue) && checkDate(yFldValue)) { //если даты
+                                        if (compareDates(xFldValue, yFldValue) == 1) {
                                             shouldSwitch = true;
                                             break;
                                         }
                                     }
-                                    else if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                    else if (xFldValue.toLowerCase() > yFldValue.toLowerCase()) {
                                         shouldSwitch = true;
                                         break;
                                     }
                                 }
-                            }
-                            else if (!isNaN(x.innerHTML)) {
+                            } else if (!isNaN(xFldValue)) {
                                 if (direct == 0) {
-                                    if (+x.innerHTML < (+y.innerHTML)) {
+                                    if (+xFldValue < +yFldValue) {
                                         shouldSwitch = true;
                                         break;
                                     }
-                                }
-                                else {
-                                    if (+x.innerHTML > (+y.innerHTML)) {
+                                } else {
+                                    if (+xFldValue > +yFldValue) {
                                         shouldSwitch = true;
                                         break;
                                     }
@@ -542,7 +547,7 @@ function sortMshTable(th,num) {
 }
 
 //мерцание строки с непрочитанными сообщениями
-var colorArrays=new Array("#CD5C5C", "#7CFC00", "#00FFFF", "#7B68EE", "#00008B", "#2F4F4F	");
+var colorArrays=["#CD5C5C", "#7CFC00", "#00FFFF", "#7B68EE", "#00008B", "#2F4F4F"];
 var numColor=0;
 // эта функция будет менять цвет текста
 function blinkUnreadMsgs() {
