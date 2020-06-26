@@ -23,6 +23,5 @@ public class GetFileAction extends BaseAction {
 		String relative = "../export/" + service.getRelativeFilename(id);
 		aRequest.setAttribute("url", relative);
 		return aMapping.findForward(SUCCESS);
-		// return new ActionForward(relative, true) ;
 	}
 }

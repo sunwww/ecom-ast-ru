@@ -1,11 +1,18 @@
 package ru.ecom.diary.ejb.service.protocol;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.helpers.DefaultHandler;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.mis.ejb.domain.external.ExternalCovidAnalysis;
 import ru.ecom.mis.ejb.domain.licence.DocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.ExternalMedservice;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
@@ -21,6 +28,8 @@ import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
@@ -31,28 +40,57 @@ import java.util.Map.Entry;
 @Remote(IKdlDiaryService.class)
 public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryService {
 	private static final Logger LOG = Logger.getLogger(KdlDiaryServiceBean.class);
-	
+
+	//Импорт csv файла с результатами лаб. анализов на ковид
+	@Override
+	public void importCovidAnalysis(String filename, String username) throws FileNotFoundException {
+		try {
+			File file = new File(filename);
+			HeaderColumnNameMappingStrategy<ExternalCovidAnalysis> strategy = new HeaderColumnNameMappingStrategy<>();
+			strategy.setType(ExternalCovidAnalysis.class);
+			CsvToBean<ExternalCovidAnalysis> bean = new CsvToBean<>();
+			CSVParser parser = new CSVParserBuilder()
+					.withSeparator(';')
+					.withIgnoreQuotations(true)
+					.build();
+
+			CSVReader csvReader = new CSVReaderBuilder(new FileReader(file))
+					.withSkipLines(0)
+					.withCSVParser(parser)
+					.build();
+
+			bean.setMappingStrategy(strategy);
+			bean.setCsvReader(csvReader);
+			List<ExternalCovidAnalysis> anaList = bean.parse();
+			for (ExternalCovidAnalysis a : anaList) {
+				if (!StringUtil.isNullOrEmpty(a.getLastname())) {
+					a.setCreateUsername(username);
+					theManager.persist(a);
+				}
+
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(),e);
+		}
+	}
+
+	@Override
 	public String getDir(String aKey, String aDefaultValue) {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		return config.get(aKey, aDefaultValue) ;
 	}
-	
-	public void parseFile(String aUri) throws Exception 
-	{
-		ExternalMedservice externalMedservice;
+
+	@Override
+	public void parseFile(String aUri) throws Exception {
 		@SuppressWarnings("unchecked")
-		List<ExternalMedservice> list = theManager == null? null : theManager.createQuery("FROM Document WHERE dtype='ExternalMedservice' AND referenceTo='"+aUri+"'").getResultList();
-		if (list != null && !list.isEmpty()) {
-			externalMedservice = list.get(0) ;			
-		} else {
-			externalMedservice = new ExternalMedservice();
-		}
+		List<ExternalMedservice> list = theManager == null? new ArrayList<>() : theManager.createQuery("FROM Document WHERE dtype='ExternalMedservice' AND referenceTo='"+aUri+"'").getResultList();
+		ExternalMedservice externalMedservice = list.isEmpty() ? new ExternalMedservice() : list.get(0) ;
         theComment = new StringBuilder();
         theDocumentParameterGroups = new TreeMap<>();
     	theDocumentParametersTree = new TreeMap<>();
         theDocumentParameterObj = new HashMap<>();
     	theDocumentParameterGroupsObj = new HashMap<>();
-    	try{
+    	try {
     		printVariable("Start parse",aUri);
 	    	File in = new File(aUri);
 	        theFileUri = aUri;
@@ -72,8 +110,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			prepareComment(externalMedservice);
 			
 			persist(externalMedservice);
-    	}
-    	catch(Exception e){
+    	} catch(Exception e){
     		e.printStackTrace() ;
     	    printVariable("FileException", e.getMessage());
     	    throw e;
@@ -81,6 +118,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
     	
 	printVariable("EndParse", toString(externalMedservice.getId()));    
 	}
+
 	private void parseHeader(Element aHeader, ExternalMedservice aExternalMedservice) {
 		Date fileDate = toDate(aHeader.getChildText("FileDate"));
 		Time fileTime = toTime(aHeader.getChildText("FileTime"));
@@ -374,17 +412,11 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				message = message + " ("+(DateFormat.parseSqlTime(value)+")");
 			}
 
-			println(message);
+			LOG.info(message);
 		} catch (Exception e) {}
 	}
-	public static void print(String aString){
-		LOG.info(aString);
-	}		
-	public static void println(String aString){
-		LOG.info(aString);
-	}		
 	private void persist(Object object){
-		if ((object!=null)&&(theManager!=null)) {
+		if (object!=null && theManager!=null) {
 			theManager.persist(object);
 			
 		}

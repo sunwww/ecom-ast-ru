@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
  * Action
  */
 public abstract class BaseAction extends Action {
-
 	public static final String SUCCESS = "success";
 	
     public ActionForward execute(ActionMapping aMapping

@@ -16,6 +16,9 @@
 				<div class='menu'>
 				<h2>Сообщения</h2>
 				<ul style='list-style: none outside none; '>
+					<li><msh:link roles='/Policy/Mis/MedCase/Covid19/Report' action="covidImportJournal_journal.do">
+						Журнал с портала COVID
+					</msh:link></li>
 					<li><msh:link roles='/Policy/Mis/MedCase/Covid19/Report' action="covid19_journal.do">
 						отчет по картам COVID
 					</msh:link></li>
@@ -411,6 +414,9 @@
 						</msh:link></li>
 						<li><msh:link  isReport="false" action="journal_bracelets.do" roles="/Policy/Mis/MedCase/Stac/Journal/BraceletsJournal">
 							Журнал браслетов
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_analysisUpdate.do" roles="/Policy/Mis/MedCase/Covid19/Report">
+							Обновление анализов по COVID
 						</msh:link></li>
 					</ul>
 					</div>

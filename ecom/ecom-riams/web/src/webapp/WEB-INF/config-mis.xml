@@ -314,6 +314,16 @@
 
 
 	<action-mappings>
+		<action path="/covidImportJournal_journal" type='ru.ecom.web.actions.base.ForwardAction'
+				scope='request' validate="false" name='stac_admissionJournalForm' >
+			<forward name="success" path="/WEB-INF/actions/smo_covid19/journal_analysisUpdate.jsp"/>
+		</action>
+
+		<action path="/covidImportJournal_import" type='ru.ecom.mis.web.action.kdl.CovidAnalysisImportAction'
+				scope='request' validate="false" name="e2_importFileForm">
+			<forward name="success" path="/WEB-INF/actions/smo_covid19/journal_analysisUpdate.jsp"/>
+		</action>
+
 		<action path='/journal_econom_pol' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				scope="request"
@@ -1177,6 +1187,14 @@
 				scope="session"
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/journal_bracelets.jsp" />
+		</action>
+
+		<action path='/journal_analysisUpdate' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/journal_analysisUpdate.jsp" />
 		</action>
 		<action path='/journal_cardiacScreening' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'

@@ -1,6 +1,5 @@
 package ru.nuzmsh.web.tags;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.config.ActionConfig;
@@ -29,11 +28,7 @@ import java.util.Iterator;
  */
 public class FormTag extends org.apache.struts.taglib.html.FormTag implements IGuidSupport {
 
-
-	private static final Logger LOG = Logger.getLogger(FormTag.class);
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
-	/** 
+	/**
 	 * Название формы
 	 * @jsp.attribute   description = "Название формы"
 	 *                     required = "false"
@@ -218,26 +213,15 @@ public class FormTag extends org.apache.struts.taglib.html.FormTag implements IG
     private void printJavaScript(PageContext aPageContext) {
             JavaScriptContext js = JavaScriptContext.getContext(aPageContext, this);
             long unique = Math.round(Math.random() * 1000.0) ;
-
             ActionForm form = findForm() ; //(ActionForm) pageContext.getAttribute(Constants.BEAN_KEY, PageContext.REQUEST_SCOPE);
-            if (CAN_DEBUG)
-				LOG.debug("printJavaScript: form = " + form); 
-
             if(form instanceof BaseValidatorForm) {
                 BaseValidatorForm validatorForm = (BaseValidatorForm) form ;
-                if (CAN_DEBUG)
-					LOG.debug("printJavaScript: validatorForm.isViewOnly() = " + validatorForm.isViewOnly()); 
-
                 if(!validatorForm.isViewOnly()) {
                     js.println(String.format("   setFocusOnField('%1$s') ;", getFocusFieldName())) ;
                 }
             }
             js.println("       Event.observe(window, 'load', _formInit_"+unique+", true);") ;
             js.println("       function _formInit_"+unique+"() {") ;
-//        JavaScriptContext js = JavaScriptContextLast.getContext(pageContext, this) ;
-
-//        js.println("msh.util.FormData.getInstance().init($('mainForm'))");
-
 
             // FIXME перенести код в AbstractFieldTag
             if(form instanceof BaseValidatorForm) {
@@ -246,15 +230,6 @@ public class FormTag extends org.apache.struts.taglib.html.FormTag implements IG
                     if(!theDisableFormDataConfirm) {
                     	js.println("msh.util.FormData.getInstance().init($('mainForm')) ;");
                     }
-//                    Iterator it = ((BaseValidatorForm)form).getDisabledFieldsIterator() ;
-//                    while (it.hasNext()) {
-//                        String fieldName = (String) it.next();
-//                        js.println(String.format("  if($('%1$s')!=null) $('%1$s').readOnly = true ;",fieldName)) ;
-//                        js.println(String.format("  if($('%1$sName')!=null) $('%1$sName').readOnly = true ;",fieldName)) ;
-//                        if(fieldName.endsWith("Pk")) {
-//                            js.println(String.format("  $('%1$sName').readOnly = true ;",fieldName)) ; // todo
-//                        }
-//                    }
                 } else {
                         js.println("Element.addClassName($('mainForm'), 'viewOnly');");
                 }

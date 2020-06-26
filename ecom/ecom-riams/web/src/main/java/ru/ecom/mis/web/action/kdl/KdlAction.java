@@ -63,30 +63,23 @@ public class KdlAction extends BaseAction {
 		    		}
 			    }
 		}
-	    if (!aRootDir)	
-	    {
+	    if (!aRootDir) {
 	    	try {
-	    	aDir.delete();
+	    		aDir.delete();
 	    	}catch (Exception e) 
 	    	{}
 	    }
 	}
 	public String getKdlDir() {
-		//EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		String workDir =theService.getDir("kdl.dir", "/opt/kdl/test");
-		System.out.println(workDir) ;
 		return workDir ;
 	}
 	public String getKdlArcDir() {
-		//EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		String workDir =theService.getDir("kdl.arcdir", "/opt/kdl/testArc");
-		System.out.println(workDir) ;
 		return workDir ;
 	}
 	public String getKdlErrorDir() {
-		//EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		String workDir = theService.getDir("kdl.errordir", "/opt/kdl/testError");
-		System.out.println(workDir) ;
 		return workDir ;  //Ex?
 	}
 	public void setPermissions(File aFile){
@@ -102,13 +95,13 @@ public class KdlAction extends BaseAction {
 	}
 	public String run(String Command){
 		try{
-		Runtime.getRuntime().exec(Command);
-		return("0");
+			Runtime.getRuntime().exec(Command);
+			return("0");
 		}
 		catch (Exception e){
-		System.out.println("Error running command: " + Command +
-		"\n" + e.getMessage());
-		return(e.getMessage());
+			System.out.println("Error running command: " + Command +
+			"\n" + e.getMessage());
+			return(e.getMessage());
 		}
 	} 
 	public static void println(String aString){
@@ -120,8 +113,7 @@ public class KdlAction extends BaseAction {
 	public static void printVariable(String variable, String value, String type )
 	{
 		try {
-			String message ;
-			message = variable+": "+(value==null?"":value);
+			String message = variable+": "+(value==null?"":value);
 			if (type.equals("D")) {
 				message = message + " ("+ DateFormat.parseDate(value, "yyyy-MM-dd") +")";
 			}
