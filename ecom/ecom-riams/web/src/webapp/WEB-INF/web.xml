@@ -80,15 +80,6 @@
         <url-pattern>*.do</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>UpdateAnalysisCovidServlet</servlet-name>
-        <servlet-class>ru.ecom.web.servlet.UpdateAnalysisCovidServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>UpdateAnalysisCovidServlet</servlet-name>
-        <url-pattern>/UpdateAnalysisCovid</url-pattern>
-    </servlet-mapping>
-
     <!-- Voc -->
     <servlet>
         <servlet-name>simpleVocAutocomplete</servlet-name>

@@ -1,7 +1,10 @@
 package ru.ecom.diary.ejb.service.protocol;
 
+import java.io.FileNotFoundException;
+
 public interface IKdlDiaryService {
-	public void parseFile(String aUri) throws Exception;
-	public String getDir(String aKey, String aDefaultDir) ;
-	public String run(String Command) ;
+	void importCovidAnalysis(String filename, String username) throws FileNotFoundException;
+	void parseFile(String aUri) throws Exception;
+	String getDir(String aKey, String aDefaultDir) ;
+	String run(String Command) ;
 	}

@@ -48,7 +48,7 @@
 <input type='hidden' name='m' id='m' value="printGroup3NativeQuery"/>
 <input type='hidden' name='s' id='s' value="PrintService"/>
 <%
-request.setAttribute("fldDate", "08.09.2019"); //Дата выборов
+request.setAttribute("fldDate", "01.07.2020"); //Дата выборов
 %>
 <input type='hidden' name="groupField" id="groupField" value="11,2,3">
 <input type='hidden' name='sqlText' id='sqlText' value=''>
