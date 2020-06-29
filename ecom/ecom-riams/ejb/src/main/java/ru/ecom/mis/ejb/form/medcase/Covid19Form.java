@@ -89,6 +89,13 @@ public class Covid19Form extends IdEntityForm {
     public void setLabResult(String aLabResult) {theLabResult = aLabResult;}
     private String theLabResult ;
 
+    /** Номер анализа */
+    @Comment("Номер анализа")
+    @Persist
+    public String getLabResultNumber() {return theLabResultNumber;}
+    public void setLabResultNumber(String aLabResultNumber) {theLabResultNumber = aLabResultNumber;}
+    private String theLabResultNumber ;
+
     /** Вакцинация пневмококком */
     @Comment("Вакцинация пневмококком")
     @Persist

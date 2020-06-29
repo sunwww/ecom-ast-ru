@@ -1,4 +1,15 @@
 <vocconfig>
+	<!-- Справочник значений из пользовательского справочника-->
+	<voc id="vocUserDomainNameById" type="NativeVocService">
+		<NativeVocService
+				from="uservalue as voc"
+				names="voc.name"
+				nameId="voc.name"
+				queried ="(voc.name like :query)"
+				parent="domain_id=:parent"
+		/>
+	</voc>
+
 	<voc id="vocYesNoMaybe" type="NativeVocService">
 		<NativeVocService
 				from="vocYesNoMaybe as voc"
@@ -64,17 +75,7 @@
 	queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like UPPER(:quer1) or (p.lastname like UPPER(:quer1) and (UPPER(:quer2) is null or p.firstname like UPPER(:quer2)) and (UPPER(:quer3) is null or p.middlename like UPPER(:quer3))) )"
 />	
 </voc>
-<!-- unused 29-10-19
-<voc id="vocDepartmentShort" type="NativeVocService">
-	<NativeVocService 
-	from="department as d"
-	join="left join mislpu m on m.id = d.department_id" 
-	nameId="d.id"
-	names="m.name" 
-	queriedSplitCount="1"
-	queried ="(cast(d.id as varchar(20))= :querInd or m.name like :quer1)"/>
-</voc>
--->
+
 <voc id="vocDepartmentFull" type="NativeVocService">
 	<NativeVocService 
 	from="department as d"

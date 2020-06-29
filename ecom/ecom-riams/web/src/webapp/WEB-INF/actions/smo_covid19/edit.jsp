@@ -32,7 +32,9 @@
       </msh:row><msh:row>
          <msh:textField property="covidResearchDate" />
       </msh:row><msh:row>
-         <msh:textField property="labOrganization" horizontalFill="true" />
+         <msh:autoComplete property="labOrganization" horizontalFill="true" vocName="vocUserDomainNameById" parentId="269" />
+      </msh:row><msh:row>
+          <msh:textField property="labResultNumber" horizontalFill="true" />
       </msh:row><msh:row>
          <msh:autoComplete vocName="positiveNegative" property="labResult" horizontalFill="true" />
       </msh:row><msh:row>

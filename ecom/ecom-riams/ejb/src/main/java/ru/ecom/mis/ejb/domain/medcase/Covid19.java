@@ -76,6 +76,12 @@ public class Covid19 extends BaseEntity {
    public void setLabResult(String aLabResult) {theLabResult = aLabResult;}
    private String theLabResult ;
 
+    /** Номер анализа */
+    @Comment("Номер анализа")
+    public String getLabResultNumber() {return theLabResultNumber;}
+    public void setLabResultNumber(String aLabResultNumber) {theLabResultNumber = aLabResultNumber;}
+    private String theLabResultNumber ;
+
    /** Вакцинация пневмококком */
    @Comment("Вакцинация пневмококком")
    @OneToOne

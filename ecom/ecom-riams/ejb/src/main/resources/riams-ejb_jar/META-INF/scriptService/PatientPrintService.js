@@ -50,15 +50,13 @@ function printInfoByPatient(aPatient,aCtx) {
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	var psychDate = null ;
-	//if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MisLpu/Psychiatry")) {
-		var psa=aCtx.manager.createNativeQuery("select pcc.id,to_char(pcc.firstPsychiatricVisitDate,'dd.mm.yyyy')"+
-				" from PsychiatricCareCard pcc where pcc.patient_id="+aPatient.id).getResultList() ;
-		if (psa.isEmpty()) {
-			map.put("currentDate",FORMAT_2.format(currentDate)) ;
-		} else {
-			psychDate = psa.get(0)[1] ;
-		}
-	//} 
+	var psa=aCtx.manager.createNativeQuery("select pcc.id,to_char(pcc.firstPsychiatricVisitDate,'dd.mm.yyyy')"+
+			" from PsychiatricCareCard pcc where pcc.patient_id="+aPatient.id).getResultList() ;
+	if (psa.isEmpty()) {
+		map.put("currentDate",FORMAT_2.format(currentDate)) ;
+	} else {
+		psychDate = psa.get(0)[1] ;
+	}
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
 	map.put("psychDate",psychDate) ;
 	var cal = java.util.Calendar.getInstance() ;
@@ -81,7 +79,7 @@ function printInfoByPatient(aPatient,aCtx) {
 	map.put("priv.info","") ;
 	map.put("priv.obj",priv) ;
 	map.put("priv.doc",priv!=null?priv.document:null) ;
-	map.put("priv.code",priv!=null?(priv.privilegeCode!=null?priv.privilegeCode:null):null) ;
+	map.put("priv.code",priv!=null?priv.privilegeCode:null) ;
 	var listPolicy = aCtx.manager.createQuery("from MedPolicy where patient=:pat and (actualDateTo is null or actualDateTo>=current_date)")
 		.setParameter("pat",aPatient).setMaxResults(1).getResultList() ;
 	if (listPolicy.size()>0) {
@@ -184,11 +182,8 @@ function printInfo(aCtx, aParams) {
 	var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient
 		, new java.lang.Long(aParams.get("id"))) ;
 	return printInfoByPatient(patient,aCtx) ;
-	//throw aParams+"" ;
 }
 function printAgreement(aCtx, aParams) {
-	//var map = new java.util.HashMap() ;
-	//return map ;
 	return printInfo(aCtx, aParams);
 }
 
@@ -198,12 +193,12 @@ function printCovid(aCtx, aParams) {
 	map.put("pat", covidCard.patient);
 	var hosp = covidCard.medCase;
 	map.put("hosp", hosp);
-	map.put("isLabConfirmed",covidCard.labResult=="1" ? "да":"нет");
+	map.put("isLabConfirmed",(covidCard.labResult=="1" ? "да":"нет")+" №"
+		+ (covidCard.labResultNumber!=null?covidCard.labResultNumber:"")+" от "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(covidCard.getCovidResearchDate()));
 	var age = Packages.ru.nuzmsh.util.date.AgeUtil.calcAgeYear(covidCard.patient.birthday,hosp.dateStart) ;
 	map.put("age",age+"");
 	map.put("contactList",aCtx.manager.createNamedQuery("Covid19Contact.getAllByPatient")
 		.setParameter("patient",covidCard.getPatient()).getResultList());
-
 	return map;
 
 
