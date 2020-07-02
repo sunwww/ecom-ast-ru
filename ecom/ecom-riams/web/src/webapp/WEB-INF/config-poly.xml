@@ -461,14 +461,6 @@
             <forward name="success" redirect="true" path="/poly_tickets.do"/>
         </action>
 
-        <action path='/poly_ticketExcelExport' type='ru.ecom.poly.web.action.ticketexport.TicketExcelExportAction'
-                name=''
-                validate='false'
-                scope="request"
-        >
-            <forward name="success" redirect="false" path="/ecom_getfile.do?id=" />
-        </action>
-
         <action path='/pharm_outcome' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pharmnet_outcomeForm'
                 validate='false'

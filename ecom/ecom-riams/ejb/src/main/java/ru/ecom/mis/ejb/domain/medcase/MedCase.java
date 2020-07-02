@@ -423,4 +423,10 @@ abstract public class MedCase extends BaseEntity {
 	public void setPromedCode(String promedCode) {
 		this.promedCode = promedCode;
 	}
+
+	@PrePersist
+	void prePersist() {
+		setCreateDate(new Date(System.currentTimeMillis()));
+		setCreateTime(new Time(System.currentTimeMillis()));
+	}
 }

@@ -4,11 +4,7 @@ import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
-import ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDefect;
-import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
 
 import javax.annotation.EJB;
@@ -17,12 +13,10 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.io.StringReader;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -160,50 +154,6 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 		}
 		
 		
-	}
-	//Работает неправильно, вместо синхронизации использовать импорт дефектов!
-	//кажися, не используется.
-	@Deprecated
-	public void sync(long aMonitorId, long aTimeId) {
-
-		Patient patient;
-		Long patientId;
-		LpuAttachedByDepartment attachment;
-		LpuAttachmentFomcDefect defect;
-		SimpleDateFormat formatOutput = new SimpleDateFormat("dd.MM.yyyy");
-		IMonitor monitor = theMonitorService.startMonitor(aMonitorId, "Импорт дефектов прикрепленного населения", getCount(aTimeId));
-		try {
-			Query query = theManager.createQuery("from LpuAttachmentFomcDefect lafd where time = :time").setParameter("time", aTimeId);
-			Iterator<LpuAttachmentFomcDefect> lafd = QueryIteratorUtil.iterate(LpuAttachmentFomcDefect.class, query);
-			int i =0;
-			while (lafd.hasNext()) {
-				i++;
-				if (i%50==0 && monitor.isCancelled()) {
-                    LOG.warn("Прервано пользователем");
-                    return;
-                }
-				defect =  lafd.next();
-				patientId = theSyncService.findPatientId(defect.getLastname(), defect.getFirstname(), defect.getMiddlename(), defect.getBirthday());
-				if (patientId!=null){ 
-					patient = theManager.find(Patient.class, patientId);
-					attachment=getAttachment(patientId, defect.getAttachDate(), defect.getMethodType(), "1");
-					if (attachment!=null) {
-						attachment.setDefectText(defect.getRefreason());
-						attachment.setDefectPeriod(formatOutput.format(new Date(System.currentTimeMillis()))); // Изменить !!!
-						attachment.setEditUsername("fond_base");
-						theManager.persist(attachment);
-						monitor.setText(i+" Запись обновлена, пациент= "+patient.getPatientInfo()+", код дефекта = "+attachment.getDefectText());
-					} else {
-						monitor.setText(i+" Не найдено прикреплений, изменений не произведено, пациент = "+patient.getPatientInfo());
-					}
-				}
-			}
-			monitor.finish(""+aTimeId);
-		} catch (Exception e) {
-			monitor.error("Ошибка при импорте открепленных: ", e);
-			monitor.finish(""+aTimeId);
-			LOG.error(e);
-		}
 	}
 	 private Long getCount(long aTimeId) {
 	    	return (Long) theManager.createQuery("select count(*) from LpuAttachmentFomc where time = :time")

@@ -68,6 +68,20 @@ public class PatientServiceBean implements IPatientService {
 
 	private static final Logger LOG = Logger.getLogger(PatientServiceBean.class);
 
+	@Override
+	/**Возвращаем предполагаемый пол человека по его имени
+	 * */
+	public VocSex getSexByName(String firstname) {
+		VocSex sex;
+		try {
+			sex = ((VocSexName) theManager.createNamedQuery("VocSexName.getByName")
+					.setParameter("name",firstname.trim().toUpperCase()).getSingleResult()).getSex();
+		} catch (Exception e) {
+			LOG.warn("no vocSex for name "+firstname,e);
+			sex = null;
+		}
+		return sex;
+	}
 	/**Выгружаем список карт Д наблюдения */
 	public String exportDispensaryCard(java.util.Date aDateFrom, java.util.Date aDateTo, java.util.Date aDateChanged, String aPacketNumber)  {
 		JSONObject ret = new JSONObject();
@@ -1517,7 +1531,6 @@ public class PatientServiceBean implements IPatientService {
 
 		return b.buildNative(theManager, sql.toString()
 				, "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname,p.middlename,p.id") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
-		// from MedPolicy where series = :series and
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1560,34 +1573,6 @@ public class PatientServiceBean implements IPatientService {
 			ret.add(f);
 		}
 
-	}
-
-
-
-	/**
-	 * Обновление прикрепления
-	 */
-	@RolesAllowed("/Policy/Mis/Patient/Edit")
-	public void updatePatientLpuByAddress(Patient aPatient) {
-		/*
-		// если не прикреплен по полису и все-таки есть адрес
-		if (aPatient.getAttachedOmcPolicy() == null && aPatient.getAddress() != null) {
-				// берем первую попавшуюся точку прикрепления
-				LpuAreaAddressPoint p = findPoint(aPatient.getAddress(),
-						aPatient.getHouseNumber(), aPatient.getHouseBuilding()
-						, aPatient.getBirthday(), aPatient.getFlatNumber());
-				if (CAN_DEBUG)	LOG.debug("point = " + p);
-
-				// из этой точки последовательно выбираем ЛПУ, участок и адрес участка
-				LpuAreaAddressText text = p != null ? p.getLpuAreaAddressText()	: null;
-				LpuArea area = text != null ? text.getArea() : null;
-				MisLpu lpu = area != null ? area.getLpu() : null;
-
-				// и устанавливаем их
-				aPatient.setLpu(lpu);
-				aPatient.setLpuArea(area);
-				aPatient.setLpuAreaAddressText(text);
-		}*/
 	}
 
 	@RolesAllowed("/Policy/Mis/Patient/Edit")

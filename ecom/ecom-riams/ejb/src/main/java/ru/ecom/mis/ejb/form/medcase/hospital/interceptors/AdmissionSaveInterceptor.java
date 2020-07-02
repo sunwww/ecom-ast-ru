@@ -117,42 +117,6 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 		}
 	}
 
-	/*PatientForm form = (PatientForm) aForm ;
-		Patient patient = (Patient) aEntity ;
-
-		if(form.isAttachedByPolicy()) {
-			if(form.getCreateNewOmcPolicy()) {
-				// новый полис
-				MedPolicyOmcForm polForm = form.getPolicyOmcForm() ;
-				polForm.setPatient(patient.getId());
-				try {
-					long policyId = EjbInjection.getInstance().getLocalService(IParentEntityFormService.class)
-						.create(polForm);
-					MedPolicyOmc medPolicyOmc = aManager.find(MedPolicyOmc.class, policyId) ;
-					patient.setAttachedOmcPolicy(medPolicyOmc);
-					if(patient.getMedPolicies()!=null) {
-						patient.getMedPolicies().add(medPolicyOmc);
-					}
-				} catch (Exception e) {
-					throw new IllegalStateException(e);
-				}
-			}			
-			
-		} else {
-			// прикреплен по адресу
-			try {
-				patient.setAddress(aManager.find(Address.class, form.getAddress())) ;
-				patient.setHouseNumber(form.getHouseNumber());
-				patient.setHouseBuilding(form.getHouseBuilding());
-				patient.setFlatNumber(form.getFlatNumber());
-				new PatientListener().onUpdate(patient) ;
-			} catch (Exception e) {
-				throw new IllegalStateException(e);
-			}
-		}*/
-		//if (CAN_DEBUG)
-		//	LOG.debug("intercept: form.getPolicyOmcForm().getSeries() = " + form.getPolicyOmcForm().getSeries());
-	
 	private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager) {
 		boolean resault = false ;
 		if (!aNewIs) {

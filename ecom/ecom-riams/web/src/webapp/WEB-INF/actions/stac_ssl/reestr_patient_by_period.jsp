@@ -6,11 +6,11 @@
 <tiles:insert page="/WEB-INF/tiles/printLayout.jsp" flush="true" >
   <tiles:put name="body" type="string">
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     
     
     if (date!=null && !date.equals(""))  {
-    	String date1 = (String)request.getParameter("dateEnd") ;
+    	String date1 = request.getParameter("dateEnd") ;
     	if (date1==null || date1.equals("")) {
     		request.setAttribute("dateEnd",date) ;
     	} else {

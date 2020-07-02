@@ -10,7 +10,6 @@ import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.entityform.PersistList;
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
@@ -46,6 +45,7 @@ public class TicketServiceBean implements ITicketService {
 
     private static final Logger LOG = Logger.getLogger(MedcardServiceBean.class);
 
+    @Override
     public Long createMedcase (String aType) {
     	if (aType==null) return null;
 		switch (aType) {
@@ -86,7 +86,6 @@ public class TicketServiceBean implements ITicketService {
 				theManager.persist(vis) ;
 			}
 			theManager.persist(spoNew) ;
-			//spoOld.setChildMedCase(new ArrayList<MedCase>()) ;
 			theManager.remove(spoOld) ;
     	}
     }
@@ -127,7 +126,8 @@ public class TicketServiceBean implements ITicketService {
     		}
     	}
     }
-    
+
+    @Override
     public String getMedServiceBySpec(Long aSpec, String aDate) throws ParseException  {
     	StringBuilder sqlMain = new StringBuilder() ;
     	Date date =  DateFormat.parseSqlDate(aDate) ;
@@ -150,16 +150,13 @@ public class TicketServiceBean implements ITicketService {
 				j.object();
 				j.key("childs").array();
 				Object[] child = list.get(0) ;
-	    					//for (Object child[] : list) {
-	    						j.object();
-	    						j.key("value").value(PersistList.parseLong(child[0]));
-	    						j.key("name").value(child[1]);
-	    						j.endObject();
-	    					//}
+				j.object();
+				j.key("value").value(PersistList.parseLong(child[0]));
+				j.key("name").value(child[1]);
+				j.endObject();
 				j.endArray();
 		
 				j.endObject();
-				LOG.info(out.toString()) ;
 				return out.toString() ;
 			} catch (JSONException e) {
 				LOG.error(e.getMessage(),e);
@@ -180,10 +177,6 @@ public class TicketServiceBean implements ITicketService {
                 LOG.warn("Ошибка преобразования даты "+aDate, e);
             }
         }
-    	LOG.info("id="+aId) ;
-    	LOG.info("medcard="+aMedcard) ;
-    	LOG.info("spec="+aSpecialist) ;
-    	LOG.info("date="+aDate) ;
     	
         StringBuilder sql = new StringBuilder() ;
         sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||to_char(p.birthday,'dd.mm.yyyy'),to_char(coalesce(t.dateStart,t.dateFinish),'dd.mm.yyyy'),t.createTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename")
@@ -230,33 +223,6 @@ public class TicketServiceBean implements ITicketService {
         return createList(query);
     }
 
-    public List<TicketForm> findTicketBySpecialistByDate(String aTypePat, String aDate, String aSpecialist) {
-    	Date date = null;
-    	if(!StringUtil.isNullOrEmpty(aDate)) {
-    		try {
-    			date = DateFormat.parseSqlDate(aDate);
-    		} catch (Exception e) {
-    			LOG.warn("Ошибка преобразования даты "+aDate, e);
-    		}
-    	}
-    	if (date == null){
-    		throw new IllegalDataException("Неправильная дата") ;
-    	}
-    	String add ;
-    	if (aTypePat.equals("2")) {
-    		add=" and $$isForeignPatient^ZExpCheck(m.person_id,t.date)>0" ;
-    	} else if (aTypePat.equals("1")){
-    		add=" and $$isForeignPatient^ZExpCheck(m.person_id,t.date)=0" ;
-    	} else {
-    		add= " " ;
-    	}
-    	Query query = theManager.createNativeQuery("select t.id from Ticket t  left join medcard m on m.id=t.medcard_id " +
-				"where t.date=:tdate  and t.workFunction_id=:workFunction"+add);
-    	query.setParameter("tdate", date).setParameter("workFunction",aSpecialist) ;
-    	LOG.info(query.toString()) ;
-    	return createNativeList(query);    	
-    }
-    
     public List<TicketForm> findStatTicketByDateAndUsername(String aDateInfo, String aDate,String aUsername) {
         QueryClauseBuilder builder = new QueryClauseBuilder();
         Date date = null;
@@ -364,45 +330,31 @@ public class TicketServiceBean implements ITicketService {
     		}
     	}
     	if (date != null) builder.add("date", date);
-    	String stat;
-    	if (aStatus>0) {
-    		stat = " and status=2" ;
-    	} else {
-    		stat = " and (status is null or status<2)" ;
-    	}
-    	Query query = builder.build(theManager, "from Ticket where workFunction_id in (" + obj + ") " + stat, " order by date,time, status");
+		String stat = aStatus>0 ? " and status=2" : " and (status is null or status<2)" ;
+		Query query = builder.build(theManager, "from Ticket where workFunction_id in (" + obj + ") " + stat, " order by date,time, status");
     	return createList(query);
     }
     /**
      * Талоны по специалисту за определенную дату
      */
-    public List<TicketForm> findAllSpecialistTickets(Long aSpecialist, String aDate,int aStatus) {
-        QueryClauseBuilder builder = new QueryClauseBuilder();
-
-        // IKO 070424 ***
-        builder.add("workFunction_id", aSpecialist);
-        // ==============
-
-    	String stat;
-    	if (aStatus>0) {
-    		stat = " status=2" ;
-    	} else {
-    		stat = " (status is null or status<2)" ;
-    	}
-        Date date = null;
-        if(!StringUtil.isNullOrEmpty(aDate)) {
-            try {
-                date = DateFormat.parseSqlDate(aDate);
-            } catch (Exception e) {
-                LOG.warn("Ошибка преобразования даты "+aDate, e);
-            }
-        }
-        if (date != null) builder.add("date", date);
-        Query query = builder.build(theManager, "from Ticket where "+stat, " order by date,time, status");
-        LOG.info("Запрос по ticket: ");
-        LOG.info(query.toString()) ;
-        return createList(query);
-    }
+	public List<TicketForm> findAllSpecialistTickets(Long aSpecialist, String aDate,int aStatus) {
+		QueryClauseBuilder builder = new QueryClauseBuilder();
+		builder.add("workFunction_id", aSpecialist);
+		String stat = aStatus>0 ? " status=2" : " (status is null or status<2)" ;
+		Date date = null;
+		if(!StringUtil.isNullOrEmpty(aDate)) {
+			try {
+				date = DateFormat.parseSqlDate(aDate);
+			} catch (Exception e) {
+				LOG.warn("Ошибка преобразования даты "+aDate, e);
+			}
+		}
+		if (date != null) builder.add("date", date);
+		Query query = builder.build(theManager, "from Ticket where "+stat, " order by date,time, status");
+		LOG.info("Запрос по ticket: ");
+		LOG.info(query.toString()) ;
+		return createList(query);
+	}
 
     /**
      * Закрыть талон
@@ -434,7 +386,6 @@ public class TicketServiceBean implements ITicketService {
         if (!listId.isEmpty()) {
         	StringBuilder ids = new StringBuilder() ;
 			for (Object obj:listId) {
-	        	//Long iddoc = ConvertSql.parseLong(obj) ;
 	        	ids.append(",").append(obj) ;
 	        }
 			List<Ticket> list =theManager.createQuery("from Ticket where id in (" + ids.substring(1) + ")").getResultList() ;
@@ -450,32 +401,6 @@ public class TicketServiceBean implements ITicketService {
     }
 
 
-    /**
-     * Печать талонов (ничего на самом деле не печатает)
-     */
-    @Deprecated
-    public void printTicket(long aMonitorId, long aTicketId, long aFileId) {
-
-        IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к экспорту талона");
-       // Ticket ticket = theManager.find(Ticket.class, aTicketId);
-
-        theJbossGetFileLocalService.createFile(aFileId, "ticket.rtf");
-
-        try {
-            monitor = theMonitorService.startMonitor(aMonitorId, "Экспорт стат. талона", 1);
-
-         //   File template = JBossConfigUtil.getDataFile("ticket.rtf");
-         //   TicketValueInit tvi = new TicketValueInit(ticket);
-          //  RtfPrintServiceHelper service = new RtfPrintServiceHelper();
-            //service.print(template, file,  tvi) ;
-
-            monitor.finish(aMonitorId + "");
-        } catch (Exception e) {
-            monitor.error("Ошибка экспорта", e);
-            throw new IllegalArgumentException(e);
-        }
-
-    }
 
     private @EJB ILocalEntityFormService theEntityFormService;
     private @EJB IJbossGetFileLocalService theJbossGetFileLocalService;

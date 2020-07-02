@@ -1,11 +1,9 @@
 package ru.ecom.poly.ejb.services;
 
+import ru.ecom.poly.ejb.form.TicketForm;
+
 import java.text.ParseException;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-
-import ru.ecom.poly.ejb.form.TicketForm;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,16 +14,16 @@ import ru.ecom.poly.ejb.form.TicketForm;
  */
 public interface ITicketService {
 	
-	public Long createMedcase (String aType) ;
+	Long createMedcase (String aType) ;
 	
 	// Перенос визита (короткого талона) в другое СПО
-	public void moveVisitInOtherSpo(Long aVisit,Long aNewSpo) ;
+	void moveVisitInOtherSpo(Long aVisit,Long aNewSpo) ;
 	// Объединение СПО
-	public void unionSpos(Long aOldSpo,Long aNewSpo) ;
+	void unionSpos(Long aOldSpo,Long aNewSpo) ;
 	// Получить список в json мед. услуг по специалисту и дате оказания услуги
-	public String getMedServiceBySpec(Long aSpec, String aDate) throws ParseException;
+	String getMedServiceBySpec(Long aSpec, String aDate) throws ParseException;
 	// Поиск дублей по специалисту и дате оказания услуги
-	public String findDoubleBySpecAndDate(Long aId, Long aMedcard, Long aSpecialist, String aDate);
+	String findDoubleBySpecAndDate(Long aId, Long aMedcard, Long aSpecialist, String aDate);
 	// Поиск незакрытых талонов по медкарте
     List<TicketForm> findActiveMedcardTickets(Long aMedcard);
     // Поиск всех талонов по медкарте
@@ -42,12 +40,5 @@ public interface ITicketService {
     List<TicketForm> findOpenTicketByDate(String aDate) ;
     List<TicketForm> findStatTicketByDateAndUsername(String aDateInfo, String aDate,String aUsername) ;
 
-    
-    //public List<TicketForm> findTicketByNonresident(String aTypePat, String aDate,String aDateTo);
-    //public List<TicketForm> findTicketByNonresidentByDate(String aTypePat, String aDate);
-    
-    public List<TicketForm> findTicketBySpecialistByDate(String aTypePat, String aDate, String aSpecialist) ;
     void closeTicket(Long aTicketForm);
-	void printTicket(long aMonitorId, long aTicketId, long aFileId) ;
-	
 }

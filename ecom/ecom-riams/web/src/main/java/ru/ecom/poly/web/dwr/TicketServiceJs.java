@@ -43,7 +43,7 @@ public class TicketServiceJs {
 		} 
 		return aDefaultValue;
 	}
-	public String[] getDiagnosisId (String[] diagnosis, HttpServletRequest aRequest) throws NamingException {
+	private String[] getDiagnosisId (String[] diagnosis, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sb = new StringBuilder();
 		for (int i=0;i<diagnosis.length;i++) {
@@ -63,12 +63,12 @@ public class TicketServiceJs {
 	}
 	private Collection<WebQueryResult> getPatients (String aAgeFrom, String aAgeTo, String aDateTo, String aSexId, String aLpu, String ids, int maxResults, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String sql="select pat.id as patId, mc.id as medId from medcard mc" +
+		StringBuilder sql = new StringBuilder().append("select pat.id as patId, mc.id as medId from medcard mc" +
 				" left join patient pat on pat.id=mc.person_id" +
 				" left join lpuattachedbydepartment att on att.patient_id=pat.id" +
-				" where ";
+				" where ");
 		if (ids!=null && !ids.equals("")) {
-			sql+=" pat.id in ("+ids+")";
+			sql.append(" pat.id in (").append(ids).append(")");
 		} else {
 			String sexSql = (aSexId!=null&&!aSexId.equals(""))?" and pat.sex_id="+aSexId:"";
 			if (aDateTo!=null && !aDateTo.equals("")) {
@@ -79,15 +79,16 @@ public class TicketServiceJs {
 			if (aLpu!=null&&!aLpu.equals("")) {
 				sexSql+=" and att.lpu_id="+aLpu+" and att.dateto is null";
 			}
-			sql += " cast(to_char("+aDateTo+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char("+aDateTo+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char("+aDateTo+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between "+aAgeFrom + " and "+aAgeTo
-					+" and pat.deathdate is null and (pat.noactuality is null or pat.noactuality='0')"+sexSql+" order by random()";
-			//	System.out.println("==Find persons: "+sql);
+			sql.append(" cast(to_char(").append(aDateTo).append(",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(")
+					.append(aDateTo).append(", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(").append(aDateTo)
+					.append(",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between ")
+					.append(aAgeFrom).append(" and ").append(aAgeTo).append(" and pat.deathdate is null and (pat.noactuality is null or pat.noactuality='0')")
+					.append(sexSql).append(" order by random()");
 		}
-
-		return service.executeNativeSql(sql,maxResults);
+		return service.executeNativeSql(sql.toString(),maxResults);
 	}
 	
-	public String generateTalons (String aWorkFunctionIds,String aDateFrom, String aDateTo, String times, Long serviceStream, Long workplace
+	public String generateTalons (String aWorkFunctionIds,String aDateFrom, String aDateTo,  Long serviceStream, Long workplace
 			, Long visitReason, Long visitResult, String diagnosis, Long concludingActuity
 			, Long recordCount, String aAgeFrom, String aAgeTo, String aSexId, String aLpu, String aPatientIds, boolean isProfOsmotr, HttpServletRequest aRequest) throws ParseException, NamingException {
 		Date startDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateFrom);
@@ -112,9 +113,8 @@ public class TicketServiceJs {
 				cal.add(Calendar.DATE, 1);
 				if (cal.getTime().after(finishDate)) break;			
 			}
-			if (allDates.length()>0) {}else {return "" ;}
-			//System.out.println("DATES = "+allDates);
-			Collection<WebQueryResult> pats = getPatients(aAgeFrom, aAgeTo, aDateTo, aSexId, aLpu, aPatientIds, recordCount.intValue(), aRequest);
+			if (allDates.length()==0) return "" ;
+		Collection<WebQueryResult> pats = getPatients(aAgeFrom, aAgeTo, aDateTo, aSexId, aLpu, aPatientIds, recordCount.intValue(), aRequest);
 			if (pats.isEmpty()) return "";
 			String mainPriority = service.executeNativeSql("select id from vocprioritydiagnosis where code='1'").iterator().next().get1().toString();
 			
@@ -122,7 +122,6 @@ public class TicketServiceJs {
 			String[] workFunctions = aWorkFunctionIds.replace(" ", "").split(",");
 			String[] dates = allDates.toString().split("#"); 
 			String[] diagnos = getDiagnosisId(diagnosis.replace(" ","").split(","), aRequest);
-		//	String[] time = times.split(",");
 			StringBuilder ids = new StringBuilder();
 			for (WebQueryResult pat: pats) {
 				String date = dates[rnd.nextInt(dates.length)];

@@ -93,7 +93,7 @@
 		   val = $('wfList').value;
 	   }
 	   var isProfOsmotr = confirm("Формировать профосмотры (все визиты будут в рамках одного СПО)?");
-	   TicketService.generateTalons (val,$('dateStart').value, $('dateFinish').value, "", $('serviceStream').value
+	   TicketService.generateTalons (val,$('dateStart').value, $('dateFinish').value, $('serviceStream').value
 			   ,$('workPlaceType').value, $('visitReason').value,$('visitResult').value
 			   ,$('diagnosisList').value, $('concludingActuity').value, $('recordCount').value
 			   ,$('ageFrom').value,$('ageTo').value, $('sex').value,$('lpu').value,$('patientIds').value, isProfOsmotr,{

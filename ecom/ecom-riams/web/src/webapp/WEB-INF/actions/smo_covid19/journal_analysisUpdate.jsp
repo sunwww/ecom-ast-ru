@@ -52,7 +52,26 @@
                 </td>
                 <td><input type="submit" value="Загрузить CSV с результатами"></td>
             </msh:row>
+                <msh:ifInRole roles="/Policy/Mis/Config/Elmed">
+                    <msh:row><td><input type="button" value="Показать магию" onclick="jQuery('#hiddenDiv').style.display='block';"></td></msh:row>
+                </msh:ifInRole>
             </msh:panel>
+            <div id="hiddenDiv" style="display: none">
+                <msh:panel>
+                    <msh:row>
+                        <msh:autoComplete vocName="vocWorkPlaceType" property="workPlaceId" label="Место обслуживания" horizontalFill="true" />
+                        <msh:autoComplete vocName="workFunction" property="workFunctionId" label="Специалист"  fieldColSpan="4" size="100"/>
+                    </msh:row>
+                    <msh:row>
+                        <msh:autoComplete vocName="vocReason" property="visitReasonId" label="Цель посещения" horizontalFill="true" />
+                        <msh:autoComplete vocName="vocVisitResult" property="visitResultId" label="Результат обращения" horizontalFill="true" />
+                    </msh:row>
+                    <msh:row>
+                        <msh:autoComplete vocName="vocIdc10" property="mkbId" label="Диагноз" horizontalFill="true" fieldColSpan="3"/>
+                        <msh:autoComplete vocName="vocIllnesPrimary" property="primaryId" label="Характер заболевания" horizontalFill="true" fieldColSpan="3"/>
+                    </msh:row>
+                </msh:panel>
+            </div>
         </form>
         <% }
         String id = request.getParameter("id");
@@ -123,6 +142,18 @@
                 } else {
                     chk[+aValue-1].checked='checked' ;
                 }
+            }
+
+            function generTickets() {
+                //only for ***52
+                TicketService.generateTalons (val,$('dateStart').value, $('dateFinish').value, $('serviceStream').value
+                    ,$('workPlaceType').value, $('visitReason').value,$('visitResult').value
+                    ,$('diagnosisList').value, $('concludingActuity').value, $('recordCount').value
+                    ,$('ageFrom').value,$('ageTo').value, $('sex').value,$('lpu').value,$('patientIds').value, isProfOsmotr,{
+                        callback: function (a) {
+                            alert (a);
+                        }
+                    });
             }
 
         </script>

@@ -12,12 +12,24 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.helpers.DefaultHandler;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.external.ExternalCovidAnalysis;
 import ru.ecom.mis.ejb.domain.licence.DocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.ExternalMedservice;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterGroup;
+import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
+import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
+import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocSexName;
+import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
+import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
+import ru.ecom.poly.ejb.domain.voc.VocReason;
+import ru.ecom.poly.ejb.domain.voc.VocVisitResult;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -28,7 +40,6 @@ import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Date;
 import java.sql.Time;
@@ -41,9 +52,15 @@ import java.util.Map.Entry;
 public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryService {
 	private static final Logger LOG = Logger.getLogger(KdlDiaryServiceBean.class);
 
+	@Override
+	public void importCovidAnalysis(String filename, String username) {
+		importCovidAnalysis(filename, username,null, null,null,null, null,null);
+	}
 	//Импорт csv файла с результатами лаб. анализов на ковид
 	@Override
-	public void importCovidAnalysis(String filename, String username) throws FileNotFoundException {
+	public void importCovidAnalysis(String filename, String username
+	,Long workFunctionId, Long visitResultId
+			, Long visitReasonId, Long primaryId, Long mkbId, Long workPlaceId)  {
 		try {
 			File file = new File(filename);
 			HeaderColumnNameMappingStrategy<ExternalCovidAnalysis> strategy = new HeaderColumnNameMappingStrategy<>();
@@ -66,12 +83,108 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				if (!StringUtil.isNullOrEmpty(a.getLastname())) {
 					a.setCreateUsername(username);
 					theManager.persist(a);
+
 				}
 
 			}
+			if (workFunctionId!=null) generateVisitByCovidAnalysis(anaList,workFunctionId, visitResultId, visitReasonId, primaryId, mkbId, workPlaceId, username);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(),e);
 		}
+	}
+
+	/** Находит либо создает пациента по ФИО
+	 * */
+	private Patient getOrCreatePatient(String lastname, String firstname, String middlename, Date birthday) {
+		List<Patient> pats = theManager.createNamedQuery("Patient.getByLastAndFirstAndMiddleAndBirthday").setParameter("lastname", lastname)
+				.setParameter("firstname", firstname).setParameter("middlename", middlename).setParameter("birthday", birthday).getResultList();
+		if (pats.isEmpty()) {
+			Patient patient = new Patient();
+			patient.setLastname(lastname);
+			patient.setFirstname(firstname);
+			patient.setMiddlename(middlename);
+			patient.setBirthday(birthday);
+			try {
+				VocSexName sexx = (VocSexName) theManager.createNamedQuery("VocSexName.getByName").setParameter("name",firstname).getSingleResult();
+				patient.setSex(sexx.getSex());
+			} catch (Exception e) {
+				LOG.warn("no vocSex for name "+firstname,e);
+			}
+			theManager.persist(patient);
+			patient.setPatientSync("К"+patient.getId());
+			theManager.persist(patient);
+			return patient;
+		}
+		return pats.size()==1 ? pats.get(0) : null;
+	}
+
+	//Имеются ли дубли по пациенту, врачу и дате визита
+	private boolean hasDoubleByPatientAndDoctorAndDate(Long patientId, Long doctorId, Date visitDate ) {
+		List list = theManager.createNativeQuery("select id from medcase where patient_id =:patientId and datestart=:visitDate" +
+				" and workfunctionexecute_id=:doctorId").setParameter("patientId", patientId).setParameter("doctorId", doctorId)
+				.setParameter("visitDate", visitDate).getResultList();
+		return !list.isEmpty();
+	}
+	//генерируем визит к врачу лаборатории
+	private void generateVisitByCovidAnalysis(List<ExternalCovidAnalysis> analyses, Long workFunctionId, Long visitResultId
+	, Long visitReasonId, Long primaryId, Long mkbId, Long workPlaceId,String username) {
+		PolyclinicMedCase pmc;
+		ShortMedCase ticket;
+		Diagnosis diagnosis;
+		PersonalWorkFunction wf = theManager.find(PersonalWorkFunction.class, workFunctionId);
+		VocServiceStream vss = theManager.find(VocServiceStream.class,1L); //ОМС
+		VocVisitResult result = theManager.find(VocVisitResult.class, visitResultId);
+		VocReason reason = theManager.find(VocReason.class, visitReasonId);
+		VocPriorityDiagnosis priorityDiagnosis = theManager.find(VocPriorityDiagnosis.class, 1L) ; //всегда - основной.
+		VocIllnesPrimary primary = theManager.find(VocIllnesPrimary.class, primaryId);
+		VocWorkPlaceType workPlace = theManager.find(VocWorkPlaceType.class, workPlaceId);
+		VocIdc10 mkb = theManager.find(VocIdc10.class,mkbId);
+		int i=0;
+		for (ExternalCovidAnalysis a : analyses) {
+			if (!StringUtil.isNullOrEmpty(a.getLastname())) {
+				Patient patient = getOrCreatePatient(a.getLastname(), a.getFirstname(), a.getMiddlename(),a.getBirthday());
+				Date visitDate = a.getDateResult();
+				if (patient!=null && !hasDoubleByPatientAndDoctorAndDate(patient.getId(), workFunctionId, visitDate) ) {
+					pmc = new PolyclinicMedCase();
+					pmc.setPatient(patient);
+					pmc.setStartFunction(wf);
+					pmc.setOwnerFunction(wf);
+					pmc.setFinishFunction(wf);
+					pmc.setServiceStream(vss);
+					pmc.setDateStart(visitDate);
+					pmc.setDateFinish(visitDate);
+					pmc.setUsername(username);
+					pmc.setLpu(wf.getWorker().getLpu());
+					pmc.setIdc10(mkb);
+					theManager.persist(pmc);
+
+					ticket = new ShortMedCase();
+					ticket.setParent(pmc);
+					ticket.setPatient(patient);
+					ticket.setUsername(username);
+					ticket.setDateStart(visitDate);
+					ticket.setServiceStream(vss);
+					ticket.setWorkFunctionExecute(wf);
+					ticket.setVisitResult(result);
+					ticket.setVisitReason(reason);
+					ticket.setWorkPlaceType(workPlace);
+					theManager.persist(ticket);
+
+					diagnosis = new Diagnosis();
+					diagnosis.setEstablishDate(visitDate);
+					diagnosis.setPriority(priorityDiagnosis);
+					diagnosis.setIdc10(mkb);
+					diagnosis.setName(mkb.getName());
+					diagnosis.setMedCase(ticket);
+					diagnosis.setIllnesPrimary(primary);
+					diagnosis.setCreateUsername(username);
+					theManager.persist(diagnosis);
+					i++;
+				}
+			}
+		}
+		LOG.info("created visit = "+i);
+
 	}
 
 	@Override

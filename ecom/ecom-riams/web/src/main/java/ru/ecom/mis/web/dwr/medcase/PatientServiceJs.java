@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
 import org.jdom.IllegalDataException;
 import org.json.JSONArray;
@@ -29,6 +30,11 @@ public class PatientServiceJs {
 
 	private static final Logger LOG = Logger.getLogger(PatientServiceJs.class);
 
+	public String getSexByName (String aFirstname, HttpServletRequest aRequest) throws NamingException {
+		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
+		return new GsonBuilder().create().toJson(service.getSexByName(aFirstname));
+
+	}
 	public String getOpenHospByPatient(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException, SQLException {
 		String sql = "select sls.id as hospId, coalesce(ss.code,'') as cardNumber, coalesce(pat.works,'') as workplace" +
 				" ,sls.patient_id as patient" +
@@ -454,7 +460,7 @@ public class PatientServiceJs {
 		
 	}
 	public String checkAllPatients(String updPatient, String updDocument, String updPolicy,String updAttachment, String aType, String aPatientList,  HttpServletRequest aRequest) {
-		return FondWebService.checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment, aType, aPatientList, aRequest).toString();
+		return FondWebService.checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment, aType, aPatientList, aRequest);
 	}
 	public String checkDispAttached (Long aDispTypeId, Long aPatientId, HttpServletRequest aRequest) throws NamingException {
 		if (aDispTypeId==null || aDispTypeId==0 || aPatientId==null) return "1";

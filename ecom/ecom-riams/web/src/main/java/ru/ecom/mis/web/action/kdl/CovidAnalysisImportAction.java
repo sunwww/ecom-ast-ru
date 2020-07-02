@@ -34,9 +34,13 @@ public class CovidAnalysisImportAction extends BaseAction {
             String uploadDir = expert2service.getConfigValue("tomcat.data.dir","/opt/tomcat/webapps/rtf");
             String filename =uploadDir+"/"+ System.currentTimeMillis()+"#"+form.getFile().getFileName();
             saveFile(form.getFile().getInputStream(),filename);
-            service.importCovidAnalysis(filename, username);
+            if (form.getWorkFunctionId()!=null && form.getWorkFunctionId()>0L) {
+                service.importCovidAnalysis(filename, username, form.getWorkFunctionId(), form.getVisitResultId(),form.getVisitReasonId()
+                ,form.getPrimaryId(), form.getMkbId(), form.getWorkPlaceId());
+            } else {
+                service.importCovidAnalysis(filename, username);
+            }
         }
-
         return aMapping.findForward(SUCCESS);
     }
 

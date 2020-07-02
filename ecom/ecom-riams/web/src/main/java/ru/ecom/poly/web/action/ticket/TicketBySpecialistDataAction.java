@@ -45,7 +45,6 @@ public class TicketBySpecialistDataAction  extends BaseAction {
 		if (date.indexOf('.')>0) {
 			spec = idString.substring(ind2+1) ;
 			aRequest.setAttribute("date", date);
-			//aRequest.setAttribute("list", service.findTicketBySpecialistByDate(typePat,date,spec));
 		} else {
 			int ind3 = idString.indexOf(':',ind2+1);
 			int ind4 = idString.indexOf(':',ind3+1);

@@ -5,6 +5,7 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
+import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.form.patient.VocOrgForm;
 
@@ -15,6 +16,7 @@ import java.util.List;
 /**
  */
 public interface IPatientService {
+	VocSex getSexByName(String firstname);
 	Patient getPatient(String aLastname, String aFirstname, String aMiddlename, Date aBirthDay, String aSexCode, String aCommonNumber
 			, String addData);
 	String exportDispensaryCard(java.util.Date aDateFrom, java.util.Date aDateTo, java.util.Date aDateChanged, String aPacketNumber);
@@ -75,12 +77,6 @@ public interface IPatientService {
     		, Boolean aNext, String aIdNext) ;
     
     String findPatientLpuInfo(Long aAddressId, String aNumber, String aBuilding, Date aBirthday, String aFlat) ;
-
-    /**
-     * Прикрепление пациента к ЛПУ
-     * @param aPatientId
-     */
-    void updatePatientLpuByAddress(Patient aPatientId) ;
 
     String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportType, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) throws ParseException;

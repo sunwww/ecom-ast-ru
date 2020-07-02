@@ -1213,6 +1213,7 @@ order by wcd.calendarDate, wct.timeFrom" />
     	var oldaction = document.forms[0].action ;
     	document.forms[0].action = 'javascript:isExistPatient()';
 			eventutil.addEventListener($('birthday'),'change',function(){updateAge() ;}) ;
+			eventutil.addEventListener($('firstname'),'change',function(){getSexByName();}) ;
 		if ($('passportDivision')) {
 			passportDivisionAutocomplete.addOnChangeCallback(function() {
 				if ((+$('passportDivision').value)>0) {
@@ -1222,14 +1223,7 @@ order by wcd.calendarDate, wct.timeFrom" />
 	            	$('passportWhomIssued').value = divName.substring(ind+1) ;
 				}
             }) ;
-		}/*
-		if ($('passportBirthPlace')) {
-			passportBirthPlaceAutocomplete.addOnChangeCallback(function() {
-				if ((+$('passportBirthPlace').value)>0) {
-	            	$('birthPlace').value = $('passportBirthPlaceName').value ;
-				}
-            }) ;
-		}*/
+		}
     	function updateAge() {
     		PatientService.getAge($('birthday').value, {
         		callback: function(aResult) {
@@ -1237,6 +1231,27 @@ order by wcd.calendarDate, wct.timeFrom" />
         		}
         	});
     	}
+        getSexByName(); //проверим при открытии редактирования
+    	function getSexByName() {
+    	    if ($('firstname').value) {
+                PatientService.getSexByName($('firstname').value, {
+                    callback: function(ret) {
+                        console.log(">>"+$('firstname').value+">"+ret);
+                        if (ret!=null && ret!='null') {
+                            ret = JSON.parse(ret);
+                            if (!$('sex').value) {
+                                $('sex').value = ret.theId;
+                                $('sexName').value = ret.theName;
+                            } else if ($('sex').value != ret.theId && confirm('Пол человека, возможно, указан неверно. Заменить пол на '+ret.theName+"? ")) {
+                                $('sex').value = ret.theId;
+                                $('sexName').value = ret.theName;
+                            }
+                        }
+                    }
+                });
+            }
+
+        }
     	function isExistPatient() {
     		if (!checkPassportSeriesAndNumber()) {
     			document.getElementById('submitButton').disabled=false;
@@ -1313,14 +1328,6 @@ order by wcd.calendarDate, wct.timeFrom" />
 		$('buttonShowAddress').style.display = 'none';
     	showRow('tableNewOmcPolicy',false) ;
     	showRow('tableNewAttachedByDepartment',false) ;
-    	/*
-      		$('buttonShowAddress').style.display = 'none';
-        	showRow('rowCreateNewOmcPolicy',false) ;
-        	$('attachedByDepartment').style.display = 'none' ;
-        	$('attachedByDepartmentLabel').style.display = 'none' ;
-        	//alert(!$('attachedByPolicy').checked) ;
-        	showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
-        	*/
 
     	function loadBracelets() {
           //вывод браслетов #151
