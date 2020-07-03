@@ -76,8 +76,8 @@ public class PatientServiceBean implements IPatientService {
 		try {
 			sex = ((VocSexName) theManager.createNamedQuery("VocSexName.getByName")
 					.setParameter("name",firstname.trim().toUpperCase()).getSingleResult()).getSex();
-		} catch (Exception e) {
-			LOG.warn("no vocSex for name "+firstname,e);
+		} catch (NoResultException e) {
+			LOG.warn("no vocSex for name "+firstname);
 			sex = null;
 		}
 		return sex;
