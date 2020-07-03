@@ -1236,7 +1236,6 @@ order by wcd.calendarDate, wct.timeFrom" />
     	    if ($('firstname').value) {
                 PatientService.getSexByName($('firstname').value, {
                     callback: function(ret) {
-                        console.log(">>"+$('firstname').value+">"+ret);
                         if (ret!=null && ret!='null') {
                             ret = JSON.parse(ret);
                             if (!$('sex').value) {

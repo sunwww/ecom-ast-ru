@@ -193,8 +193,10 @@ function printCovid(aCtx, aParams) {
 	map.put("pat", covidCard.patient);
 	var hosp = covidCard.medCase;
 	map.put("hosp", hosp);
-	map.put("isLabConfirmed",(covidCard.labResult=="1" ? "да":"нет")+ (covidCard.getCovidResearchDate()!=null ? " №"
-		+ (covidCard.labResultNumber!=null?covidCard.labResultNumber:"")+" от "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(covidCard.getCovidResearchDate()):""));
+	map.put("isLabConfirmed",(covidCard.labResult=="1" ? "да":"нет")+
+		(covidCard.getCovidResearchDate()!=null
+			? " №" + (covidCard.labResultNumber!=null ? covidCard.labResultNumber : "")+" от "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(covidCard.getCovidResearchDate())
+			: ""));
 	var age = Packages.ru.nuzmsh.util.date.AgeUtil.calcAgeYear(covidCard.patient.birthday,hosp.dateStart) ;
 	map.put("age",age+"");
 	map.put("contactList",aCtx.manager.createNamedQuery("Covid19Contact.getAllByPatient")

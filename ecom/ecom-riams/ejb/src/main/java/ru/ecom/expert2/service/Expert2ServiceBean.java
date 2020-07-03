@@ -298,9 +298,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 for (E2Entry entry : e2Entries) { //Найдем лучшее КСГ
                     entriesId.append(",").append(entry.getId());
                     i++;
-                    if (i%100==0) {
-                        if (isMonitorCancel(monitor,"Проверяем стационар. Проверено случаев: "+i)) return;
-                    }
+                    if (i%100==0 && isMonitorCancel(monitor,"Проверяем стационар. Проверено случаев: "+i)) return;
                     makeCheckEntry(entry,false, false);
                 }
                 if (isMonitorCancel(monitor,"Закончили первичную проверку случаев.FINISH_FIRST_CHECK")) return;
@@ -313,9 +311,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 fillChildBirthMkbs();
                 for (BigInteger hospId : hospitalIds) {
                     i++;
-                    if (i%100==0) {
-                        if (isMonitorCancel(monitor,"Идет объединение случаев: "+i))return;
-                    }
+                    if (i%100==0 && isMonitorCancel(monitor,"Идет объединение случаев: "+i)) return;
                     unionHospitalMedCase(listEntryId , hospId.longValue());
                 }
                 LOG.info("Объединение случаев завершено.FINISH_UNION");
@@ -323,9 +319,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 i=0;
                 for(E2Entry entry : e2Entries) {
                     i++;
-                    if (i%100==0) {
-                        if (isMonitorCancel(monitor,"Находим лучшее КСГ-2 после объединения случае. Проверено: "+i))return;
-                    }
+                    if (i%100==0 && isMonitorCancel(monitor,"Находим лучшее КСГ-2 после объединения случае. Проверено: "+i)) return;
                     //Теперь снова находим КСГ, расчитываем цену и коэффициенты
                     if (!entry.getServiceStream().equals("COMPLEXCASE")) {
                         findCancerEntry(entry);
@@ -340,9 +334,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (isMonitorCancel(monitor,"POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.")) return;
                 for(E2Entry entry : e2Entries) {
                     i++;
-                    if (i%100==0) {
-                        if (isMonitorCancel(monitor,"Проверяем записи по поликлинике: "+i))return;
-                    }
+                    if (i%100==0 && isMonitorCancel(monitor,"Проверяем записи по поликлинике: "+i))return;
                     makeCheckEntry(entry,false, true);// оченьььь долго
                     findCancerEntry(entry);
                 }
@@ -1963,14 +1955,19 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
             String bedType = aEntry.getBedSubType();
-            String dopmkb = null;
+            StringBuilder dopmkb = new StringBuilder();
             boolean isCancer=false;
             for (EntryDiagnosis ed: diagnosisList) {
-                if (ed!=null && ed.getPriority()!=null && "1".equals(ed.getPriority().getCode())) {
-                    if(isNotNull(ed.getDopMkb())) {
-                        dopmkb=ed.getDopMkb();
+                if (ed!=null && ed.getPriority()!=null) {
+                    String priorityCode = ed.getPriority().getCode();
+                    if ("1".equals(priorityCode)) {
+                        if(isNotNull(ed.getDopMkb())) {
+                            dopmkb.append("'").append(ed.getDopMkb()).append("',");
+                        }
+                        isCancer=ed.getMkb().getCode().startsWith("C") || ed.getMkb().getCode().startsWith("D");
+                    } else if ("2".equals(priorityCode)||"3".equals(priorityCode)) { //доп. коды для группировщика
+                        dopmkb.append("'").append(ed.getMkb().getCode()).append("',");
                     }
-                    isCancer=ed.getMkb().getCode().startsWith("C") || ed.getMkb().getCode().startsWith("D");
                 }
             }
 
@@ -2043,7 +2040,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             } else {
                 sql.append(" and (gkp.mainmkb is null or gkp.mainmkb ='')");
             }
-            sql.append(" and ((gkp.anothermkb is null or gkp.anothermkb ='') ").append(isNotNull(dopmkb) ? " or gkp.anothermkb='"+dopmkb+"')" : ")"); //Ищем по доп. коду
+            sql.append(" and ((gkp.anothermkb is null or gkp.anothermkb ='') ").append(dopmkb.length()>0 ? " or gkp.anothermkb in ("+dopmkb.substring(0,dopmkb.length()-1)+"))" : ")"); //Ищем по доп. коду
 
             StringBuilder serviceSql = new StringBuilder();
             if (!serviceCodes.isEmpty()) {
@@ -2059,7 +2056,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 serviceSql.append(" and (gkp.servicecode is null or gkp.servicecode='')");
             }
             sql.append(serviceSql);
-            //   LOG.info("sql for best KSG = "+sql.toString());
+           //    LOG.info("sql for best KSG = "+sql.toString());
             List<BigInteger> results;
             String key = mainDiagnosis.hashCode()+"#SQL#"+sql.toString().hashCode(); //bedType+"#"+aEntry.getMainMkb()+"#"+(dopmkb!=null?dopmkb:"");
             //   LOG.warn("sql for ksg = "+sql.toString());
