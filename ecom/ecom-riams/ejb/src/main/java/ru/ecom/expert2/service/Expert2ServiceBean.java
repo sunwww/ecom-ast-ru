@@ -1965,7 +1965,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             dopmkb.append("'").append(ed.getDopMkb()).append("',");
                         }
                         isCancer=ed.getMkb().getCode().startsWith("C") || ed.getMkb().getCode().startsWith("D");
-                    } else if ("2".equals(priorityCode)||"3".equals(priorityCode)) { //доп. коды для группировщика
+                    } else if ("3".equals(priorityCode)||"4".equals(priorityCode)) { //доп. коды для группировщика
                         dopmkb.append("'").append(ed.getMkb().getCode()).append("',");
                     }
                 }
@@ -2059,7 +2059,6 @@ public class Expert2ServiceBean implements IExpert2Service {
            //    LOG.info("sql for best KSG = "+sql.toString());
             List<BigInteger> results;
             String key = mainDiagnosis.hashCode()+"#SQL#"+sql.toString().hashCode(); //bedType+"#"+aEntry.getMainMkb()+"#"+(dopmkb!=null?dopmkb:"");
-            //   LOG.warn("sql for ksg = "+sql.toString());
             if (!ksgMap.containsKey(key)) {
              //     LOG.info(key+" not found new sql ="+sql);
                 LocalDate date = aEntry.getFinishDate().toLocalDate();
