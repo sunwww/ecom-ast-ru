@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
@@ -18,13 +18,12 @@
     <tiles:put name='body' type='string'>
 
         <msh:hideException>
-            <ecom:webQuery name="entriesList" nativeSql="select '${param.id}&errorCode='||e.errorcode, e.errorcode||' '||coalesce(ve.name,'') as error , count( distinct e.entry_id) as cnt
+            <ecom:webQuery name="entriesList" nativeSql="select '${param.id}&errorCode='||e.errorcode, e.errorcode as error , count( distinct e.entry_id) as cnt
                 from e2entryerror e
-                left join VocE2EntryError ve on ve.code=e.errorcode
-                where e.listentry_id=${param.id} and isdeleted='0' group by e.errorcode, ve.name"/>
+                where e.listentry_id=${param.id} and isdeleted='0' group by e.errorcode"/>
             <msh:table idField="1" name="entriesList" action="entityParentList-e2_entry.do" noDataMessage="Нет ошибок по заполнению">
                 <msh:tableColumn columnName="Ошибка" property="2" />
-                <msh:tableColumn columnName="Кол-во записей с ощшибкой1" property="3"/>
+                <msh:tableColumn columnName="Кол-во записей с ошшбкой" property="3"/>
             </msh:table>
         </msh:hideException>
     </tiles:put>
