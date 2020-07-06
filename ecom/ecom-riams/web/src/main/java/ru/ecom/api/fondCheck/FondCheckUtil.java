@@ -38,19 +38,19 @@ import java.util.*;
  */
 public class FondCheckUtil {
 
-    private static String theAddress = "http://192.168.4.3" ;
+    private static String theAddress = "vipnet" ;
     private static String theLpu = "1";
 
     public static JSONArray syncByHospitalDenied(HttpServletRequest aRequest, String dateStart, String dateEnd)
             throws NamingException, ParserConfigurationException, SAXException, JSONException, IOException {
 
-        String sql="select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils\n" +
-                "from medcase m\n" +
-                "left join patient p on p.id = m.patient_id\n" +
-                "where m.dtype = 'HospitalMedCase' \n" +
-                "and m.deniedhospitalizating_id is not null \n" +
-                "and m.datestart between '"+dateStart+"' and '"+dateEnd+"'\n" +
-                "and p.patientfond_id is null";
+        String sql="select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils" +
+                " from medcase m" +
+                " left join patient p on p.id = m.patient_id" +
+                " where m.dtype = 'HospitalMedCase'" +
+                " and m.deniedhospitalizating_id is not null" +
+                " and m.datestart between '"+dateStart+"' and '"+dateEnd+"'" +
+                " and p.patientfond_id is null";
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         List<Patient> patients = getPatients(service.executeNativeSql(sql));
