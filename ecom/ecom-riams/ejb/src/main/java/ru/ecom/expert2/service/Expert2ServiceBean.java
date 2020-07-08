@@ -2147,6 +2147,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                 }
                 return ksg;
+            } else if (needPersist) {
+                aEntry.setKsgPosition(null);
+                aEntry.setKsg(null);
+                aEntry.setCostFormulaString("");
+                aEntry.setCost(null);
+                theManager.persist(aEntry);
             }
             return null;
         } catch (Exception e) {
@@ -3166,25 +3172,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         boolean polyclinicCase = entryType.equals(POLYCLINICTYPE) || entryType.equals(SERVICETYPE) ;
         boolean extDispCase = entryType.equals(EXTDISPTYPE);
       //  boolean kdpCase = entryType.equals(KDPTYPE); //del после сдачи
-        String result = aEntry.getResult();
-        if (!isNotNull(result)) {
-            if (extDispCase) {
-                result="1#1#1";
-            } else {
-                theManager.persist(new E2EntryError(aEntry,"NO_RESULT"));return;
-            }
 
-        }
-
-        String[] dischargeData = result.split("#", -1); //vho.code||'#'||vrd.code||'#'||vhr.code
-    /*    if (kdpCase && forceUpdate) {
-            VocDiagnosticVisit kdp = aEntry.getKdpVisit();
-            if (kdp == null) {return;}
-            VocE2FondV021 medSpeciality = kdp.getSpeciality();
-            aEntry.setMedHelpProfile(medSpeciality.getPolicProfile());
-            aEntry.setFondDoctorSpecV021(medSpeciality);
-        }
-*/
         if (stacCase) {   //Расчет профиля мед. помощи по профилю коек для стационара
             if (aEntry.getBedProfile()==null) {
                 String bedType = aEntry.getHelpKind(); //V020
@@ -3225,6 +3213,19 @@ public class Expert2ServiceBean implements IExpert2Service {
                 aEntry.setFondDoctorSpecV021(aEntry.getMedHelpProfile().getMedSpecV021());
             }
         }
+        String result ;
+        if (!isNotNull(aEntry.getResult())) {
+            if (extDispCase) {
+                result="1#1#1";
+            } else {
+                theManager.persist(new E2EntryError(aEntry,"NO_RESULT"));
+                return;
+            }
+        } else {
+            result = aEntry.getResult();
+        }
+        String[] dischargeData = result.split("#", -1); //vho.code||'#'||vrd.code||'#'||vhr.code
+
         if (stacCase) { //Заполняем поля для стационара
 
             String reasonDischarge = dischargeData[1];
@@ -3288,11 +3289,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 resultMap.put(key,getActualVocByClassName(VocE2FondV008.class, actualDate,"code='"+v008Code+"'"));
             }
             aEntry.setMedHelpKind((VocE2FondV008)resultMap.get(key));
-/*            final String sqlAdd = "code='"+v008Code+"'"; //4 джей босс так не умеет
-            aEntry.setMedHelpKind((VocE2FondV008)resultMap.computeIfAbsent(key,k->getActualVocByClassName(VocE2FondV008.class, actualDate,sqlAdd)));
-            final String sqlAddIdsp = " code='"+idspCode+"'";
-            aEntry.setIDSP((VocE2FondV010)resultMap.computeIfAbsent(key,k->getActualVocByClassName(VocE2FondV010.class,actualDate ,sqlAddIdsp)));
-*/
         } else if (polyclinicCase) { //Заполняем поля для пол-ки
             String resultCode=dischargeData[0], ishodCode=dischargeData[1];
             //Результат
@@ -3343,25 +3339,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 aEntry.setFondIshod((VocE2FondV012) resultMap.get(key));
             }
 
-            //Профиль мед. помощи
-    /*        if (aEntry.getMedHelpProfile()==null||forceUpdate) {
-                if (aEntry.getFondDoctorSpecV021()!=null) { //Обновляем профиль мед. помощи по профилю врача
-                    aEntry.setMedHelpProfile(aEntry.getFondDoctorSpecV021().getPolicProfile());
-                }
-            }
-*/
-            //Вид медицинской помощи
-  /*          if (aEntry.getMedHelpKind()==null||forceUpdate) {
-                String v008Code = "12"; //ПЕРВИЧНАЯ ВРАЧЕБНАЯ МЕДИКО-САНИТАРНАЯ ПОМОЩЬ
-                key = "V008#"+v008Code;
-                if (!resultMap.containsKey(key)) {
-                    resultMap.put(key,getActualVocByClassName(VocE2FondV008.class, actualDate,"code='"+v008Code+"'"));
-                }
-                aEntry.setMedHelpKind((VocE2FondV008)resultMap.get(key));
-            }
-*/
-            //Условия оказания мед. помощи (V006)
-            //    if (aEntry.getMedHelpUsl()==null||forceUpdate) {
             VocE2EntrySubType entrySubType =aEntry.getSubType();
             if (entrySubType==null) {
                 theManager.persist(new E2EntryError(aEntry,"NO_ENTRY_SUBTYPE"));
