@@ -17,6 +17,9 @@
         <msh:form action="/covidImportJournal_journal.do" defaultField="beginDate">
             <msh:panel>
                 <msh:row>
+                    <msh:textField property="filterAdd" label="Фамилия" />
+                </msh:row>
+                <msh:row>
                     <msh:separator label="Параметры поиска" colSpan="7" />
                 </msh:row>
                 <msh:row>
@@ -82,6 +85,11 @@
                         : "2".equals(typeResult) ? "ОТРИЦАТЕЛЬНЫЙ" : "ПОЛОЖИТЕЛЬНЫЙ")+"'";
             } else filterSql="";
             request.setAttribute("filterSql", filterSql);
+
+            String lastnameSql = request.getParameter("filterAdd")!=null && !request.getParameter("filterAdd").equals("")?
+                    " where upper( l.lastname) like upper('" + request.getParameter("filterAdd") + "')"
+                    : "";
+            request.setAttribute("lastnameSql", lastnameSql);
         %>
         <ecom:webQuery name="labList" nativeSql="
             select l.uniqNumber, l.lastname||' '||l.firstname ||' '|| l.middlename||' '||to_char(l.birthday,'dd.MM.yyyy')
@@ -89,7 +97,7 @@
             , coalesce(l.protocolNumber,'')||' от '||to_char(l.dateProtocol,'dd.MM.yyyy') as protInfo
             ,l.laboratory
             from ExternalCovidAnalysis l
-            ${filterSql}
+            ${filterSql} ${lastnameSql}
             order by l.createDate desc , l.lastname, l.firstname, l.middlename, l.createTime desc
         " />
         <msh:table name="labList" action="covidImportJournal_journal.do?short=Short" idField="1" cellFunction="true">
