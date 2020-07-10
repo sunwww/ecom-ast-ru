@@ -614,7 +614,7 @@ function setBr(table, tdResNum, tdJsonNum) {
                 var size = 25;
                 for (var j = 0; j < aResult.length; j++) {
                     var brace = aResult[j];
-                    var msg = brace.info ? brace.info : brace.vsipnamejust;
+                    var msg = brace.info ? brace.info.replace(new RegExp('\n','g'),'<br>') : brace.vsipnameJust;
                     var style = 'style="width:' + size + 'px;height: ' + size + 'px;outline: 1px solid gray; border:2px;';
                     style += brace.picture ? '">' : ' background: ' + brace.colorcode + ';">';
                     if (brace.picture)

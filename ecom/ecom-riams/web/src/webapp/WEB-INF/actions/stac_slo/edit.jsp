@@ -1140,7 +1140,7 @@ where m.id ='${param.id}'"/>
                                     var str='<table style="margin-left:45%"><tr>';
                                     for (var i=0; i<aResult.length; i++) {
                                         var brace = aResult[i];
-                                        var msg = brace.info ? brace.info : brace.vsipnameJust;
+                                        var msg = brace.info ? brace.info.replace(new RegExp('\n','g'),'<br>') : brace.vsipnameJust;
                                         var style = 'width: 40px;height: 40px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;';
                                         style+= brace.picture ? 'background-image: url(\'/skin/images/bracelet/'+brace.picture+'\');background-size: 40px 40px; '
                                             :' background-color: '+brace.colorCode +';';
