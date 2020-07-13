@@ -45,6 +45,11 @@
                 </msh:row>
 
                 <msh:submitCancelButtonsRow colSpan="4" notDisplayCancel="true" labelSave="Найти" labelSaving="Поиск..."/>
+                <msh:ifInRole roles="/Policy/Mis/MedCase/Covid19/Export">
+                    <msh:row>
+                        <td><input type="button" onclick="deleteAllInmportedAnalyses();" value="Очистить данные по импорту в БД"></td>
+                    </msh:row>
+                </msh:ifInRole>
             </msh:panel>
         </msh:form>
         <form action="covidImportJournal_import.do" method="post" enctype="multipart/form-data" >
@@ -138,6 +143,7 @@
 
             if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
         %>
+        <script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
         <script type='text/javascript'>
 
             checkFieldUpdate('typeResult','${typeResult}',4) ;
@@ -162,6 +168,14 @@
                             alert (a);
                         }
                     });
+            }
+
+            //очистить данные по импорту в бд
+            function deleteAllInmportedAnalyses() {
+                PatientService.deleteAllInmpirtedAnalyses( {callback: function(msg) {
+                        showToastMessage(msg, null, true);
+                        setTimeout(() => {  window.location.reload(); }, 1500);
+                }});
             }
 
         </script>

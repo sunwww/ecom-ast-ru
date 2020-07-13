@@ -902,4 +902,15 @@ public class PatientServiceJs {
 		}
 		return o.toString();
 	}
+
+	/**
+	 * Очистить таблицу с импортированными анализами
+	 * @return Сообщение
+	 */
+	public String deleteAllInmpirtedAnalyses(HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String msg =  "Удалено " +service.executeUpdateNativeSql("delete from ExternalCovidAnalysis") +" результатов";
+		service.executeNativeSql("select 1"); //для персиста
+		return msg;
+	}
 }
