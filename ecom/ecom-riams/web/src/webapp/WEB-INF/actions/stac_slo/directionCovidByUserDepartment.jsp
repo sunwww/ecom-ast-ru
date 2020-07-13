@@ -21,7 +21,7 @@
     <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
     select pat.id
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
-    ,cast(date_part('year',age(m.dateStart, pat.birthday)) as int) as birthday
+    , to_char(pat.birthday,'dd.mm.yyyy') as birthday
     ,to_char(m.dateStart,'dd.mm.yyyy')  as datestart
     from medCase m
     left join Patient pat on m.patient_id = pat.id
