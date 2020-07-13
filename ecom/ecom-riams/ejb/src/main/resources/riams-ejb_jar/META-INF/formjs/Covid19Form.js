@@ -19,6 +19,9 @@ function onCreate(aForm, aEntity, aContext) {
     if (true == aEntity.isPregnant) {
         addBracelet(manager,"PREGNANT", aEntity, username);
     }
+    if (true == aEntity.isDoctor) {
+        addBracelet(manager,"DOCTOR", aEntity, username);
+    }
 }
 
 function addBracelet(manager, code,aEntity, username) {

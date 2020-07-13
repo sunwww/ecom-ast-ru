@@ -282,5 +282,11 @@ public class Covid19Form extends IdEntityForm {
     public void setContactForm(Covid19ContactForm aContactForm) {theContactForm = aContactForm;}
     private Covid19ContactForm theContactForm = new Covid19ContactForm() ;
 
+    /** Мед. работник */
+    @Comment("Мед. работник")
+    @Persist
+    public Boolean getIsDoctor() {return theIsDoctor;}
+    public void setIsDoctor(Boolean aIsDoctor) {theIsDoctor = aIsDoctor;}
+    private Boolean theIsDoctor ;
 
 }

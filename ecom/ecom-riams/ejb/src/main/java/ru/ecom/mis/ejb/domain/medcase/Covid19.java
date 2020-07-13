@@ -239,6 +239,12 @@ public class Covid19 extends BaseEntity {
     private String theBrigadeNumber ;
 
 
+    /** Мед. работник */
+    @Comment("Мед. работник")
+    public Boolean getIsDoctor() {return theIsDoctor;}
+    public void setIsDoctor(Boolean aIsDoctor) {theIsDoctor = aIsDoctor;}
+    private Boolean theIsDoctor ;
+
     @PrePersist
     void onPrePersist() {
         long createTime = System.currentTimeMillis();

@@ -20,6 +20,9 @@
         </msh:row><msh:row>
               <msh:textField property="workPlace" horizontalFill="true" />
           </msh:row><msh:row>
+          <msh:row>
+          <<msh:checkBox property="isDoctor"  />
+      </msh:row>
          <msh:textField property="symptomsDate" />
       </msh:row><msh:row>
          <msh:textField property="brigadeNumber"  horizontalFill="true"/>
