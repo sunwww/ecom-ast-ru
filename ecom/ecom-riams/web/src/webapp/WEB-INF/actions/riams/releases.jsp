@@ -35,6 +35,7 @@
 					<li><msh:link action="ecom_release-202004.do">апрель 2020 года </msh:link></li>
 					<li><msh:link action="ecom_release-202005.do">май 2020 года </msh:link></li>
 					<li><msh:link action="ecom_release-202006.do">июнь 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202007.do">июль 2020 года </msh:link></li>
 
 					<% if (1==2) { %>
 					<li><msh:link  action="ecom_release-201712.do">
