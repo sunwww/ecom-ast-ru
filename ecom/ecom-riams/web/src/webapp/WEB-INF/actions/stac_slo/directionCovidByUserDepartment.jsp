@@ -46,7 +46,7 @@
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Выгрузить" property="1"/>
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" />
-      <msh:tableColumn columnName="Возраст" property="3" />
+      <msh:tableColumn columnName="Дата рождения" property="3" />
       <msh:tableColumn columnName="Дата поступления" property="4" />
       <msh:tableColumn columnName="Номер пробирки" property="1" />
     </msh:table>

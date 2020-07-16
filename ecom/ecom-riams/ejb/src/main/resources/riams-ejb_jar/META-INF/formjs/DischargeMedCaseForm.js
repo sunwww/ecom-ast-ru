@@ -27,11 +27,6 @@ function onSave(aForm,aEntity, aCtx) {
 		aEntity.statisticStub.setResultDischarge(resultDischarge) ;
 		aCtx.manager.persist(aEntity) ;
 	}
-	/*if (+aForm.childBirth>0 && aEntity.statisticStub!=null) {
-		var childBirth = getObject(aCtx, aForm.resultDischarge, Packages.ru.ecom.mis.ejb.domain.birth.voc.VocChildBirth);
-		aEntity.statisticStub.setChildBirth(childBirth) ;
-		aCtx.manager.persist(aEntity) ;
-	}*/
 	closePrescriptions(aForm, aCtx);
     checkPaidServicesExecuted(aEntity, aCtx);
 }
@@ -68,28 +63,15 @@ function onPreSave(aForm,aEntity, aCtx) {
 
 	if (aForm.concludingDiagnos!=null &&aForm.concludingDiagnos!="" && (aForm.concludingMkb==null || aForm.concludingMkb==0)) throw "Не указан код МКБ заключительного диагноза!" ;
 	if ((aForm.concludingMkb!=null && aForm.concludingMkb>0)&&(aForm.concludingDiagnos==null||aForm.concludingDiagnos=="")) throw "Не сформулирован заключительный диагноз!" ;
-	//var d=aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,aForm.concludingMkb) ;
-	//if (d!=null) {d=d.code ;} else {d=""} ;
-	//if ((d>='O60.0' && d<='O60.9' || d>='O80.0' && d<='O80.9' ||
-	 //		d>='O82.0' && d<='O82.9' || d>='O84.0' && d<='O84.9') && +aForm.childBirth<1) throw "Необходимо указать тип родов" ;
-	// var dateFsql = new java.sql.Date(dateFinish.getTime()) ;
+
 	if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки должна быть больше, чем дата поступления";
-	//if ((((dateFsql.getTime()-dateCur.getTime())/1000/60/60)%24)>6) throw "Максимальная дата выписки - сегодняшняя" ;
 	
 	var ldate = aCtx.manager.createNativeQuery("select transferDate,transferTime from MedCase where parent_id=:parent and DTYPE='DepartmentMedCase' and transferDate is not null order by transferDate desc,transferTime desc")
 		.setParameter("parent",aForm.id)
 		.setMaxResults(1)
 		.getResultList() ;
-	//var stat = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.isDischargeOnlyCurrentDay(context) ;
-	//throw "date="+dmax[0] ;
 	if (!ldate.isEmpty()) {
 		var dmax=ldate.get(0) ;
-		//var vmax = aCtx.manager.createNativeQuery("select max() from MedCase where parent_id=:parent and DTYPE='DepartmentMedCase' and transferDate=:dmax")
-	     //  	.setParameter("parent",aForm.id)
-	      // 	.setParameter("dmax",dmax)
-	       	
-		//	.getSingleResult() ;
-		//throw "time="+dmax[0]+" "+dmax[1];
 			var dateMax = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(dmax[0],dmax[1]);
 			if ((dateFinish.getTime() < dateMax.getTime())) {
 				var cal = java.util.Calendar.getInstance() ;
@@ -231,13 +213,6 @@ function checkNewBornScreeningSecondExists(aForm,aCtx) {
 //проверка на наличие экспертной карты по критериям. Если нет - выписку запретить
 function checkIfIsQECard(aForm,aCtx) {
     if (aForm.id != null) {
-        /*var sql = "select id from qualityestimationcard where medcase_id=" + aForm.id + " and  kind_id=(select id from vocqualityestimationkind where code='PR203')";
-        var size1=aCtx.manager.createNativeQuery(sql).getResultList().size();
-        var sql2 = "select id from qualityestimationcard where medcase_id=(select id from medcase where parent_id=" + aForm.id+") and  kind_id=(select id from vocqualityestimationkind where code='PR203')";
-        var size2=aCtx.manager.createNativeQuery(sql2).getResultList().size();
-        throw ""+size1+" ; " +size2;
-        //if (size1==0 && size2==0) throw ("Выписка пациента разрешена только после создания экспертной карты!")*/
-
         var sql="select qe.id from qualityestimation qe" +
             " left join qualityestimationcard qec on qec.id=qe.card_id" +
             " left join medcase mc on mc.id=qec.medcase_id or mc.parent_id=qec.medcase_id " +
