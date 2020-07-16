@@ -2833,7 +2833,7 @@ function printDirectionCovid(aCtx, aParams) {
 	var info = new java.lang.String(aParams.get("info"));
 	var infoMas=info.split('!');
     for (var i=0; i<infoMas.length; i++) {
-        var row = infoMas[i].split('-');
+        var row = infoMas[i].split('--');
                 var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult();
                 par.set1("" + (i + 1));  //#
                 par.set2(row[0]);	//фио

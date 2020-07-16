@@ -127,8 +127,8 @@
                     var ch = $(row).children[2].children[0];
                     if ($(row).children[2].children[0].checked) {
                       if (params.length>0) params+="!";
-                        params += $(row).children[3].textContent+'-'+$(row).children[5].textContent+'-'+$(row).children[4].textContent
-                            +'-'+($(row).children[6].children[0].value?$(row).children[6].children[0].value:"_");
+                        params += $(row).children[3].textContent+'--'+$(row).children[5].textContent+'--'+$(row).children[4].textContent
+                            +'--'+($(row).children[6].children[0].value?$(row).children[6].children[0].value:"_");
                     }
                 }
             }
