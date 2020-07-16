@@ -2,6 +2,7 @@ package ru.ecom.mis.web.dwr.medcase;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -1981,5 +1982,75 @@ public class HospitalMedCaseServiceJs {
 			ret = null;
 		}
 		return "1".equals(ret);
+	}
+
+	/**
+	 * Получить информацию о свободных местах в госпитале.
+	 *
+	 * @param aRequest HttpServletRequest
+	 * @return String json c результатом
+	 */
+	public String getFreeHospBedInfo(HttpServletRequest aRequest) throws NamingException, JspException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		boolean isWatchAll = RolesHelper.checkRoles("/Policy/Mis/Journal/ShowHospitalFreeInfo/All",aRequest) ;
+		String sql = "select distinct fhb.lpu as id, ml.name as lpu, fhb.meno2 as meno2" +
+				" ,fhb.mennoo2 as mennoo2,fhb.womeno2 as womeno2,fhb.womennoo2 as womennoo2" +
+				" from worker w" +
+				" left join workfunction wf on wf.worker_id =w.id " +
+				" left join secuser su on su.id=wf.secuser_id" +
+				" left join freehospbed fhb on fhb.lpu=w.lpu_id" +
+				" left join mislpu ml on ml.id=w.lpu_id where ";
+		 sql += isWatchAll?
+				 " ml.isforcovid=true and ml.id not in(512,501,507,499)":
+				" login='"+login+"'";
+		 sql += " order by fhb.lpu";
+		return service.executeNativeSqlGetJSON(new String[] {"id","lpu","meno2","mennoo2","womeno2","womennoo2"},sql,100);
+	}
+
+
+	/**
+	 * Преобразовать элемент в json в строку.
+	 *
+	 * @param obj JSONObject
+	 * @param Alias Название элемента
+	 * @return String Строковое представление/null
+	 * @throws NamingException
+	 */
+	private String getString(JSONObject obj, String Alias) throws JSONException {
+
+		return obj.has(Alias)
+				?(obj.get(Alias).toString().equals("")?null:obj.get(Alias).toString()):null;
+	}
+
+	/**
+	 * Удалить все направления к подозрению на ЗНО. При редактировании подозрения: удалить имеющиеся, добавить новые.
+	 *
+	 * @param json значения
+	 * @throws NamingException,JSONException
+	 */
+	public void saveFreeHospBedInfo(String json, HttpServletRequest aRequest) throws JSONException, NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		JSONObject obj = new JSONObject(json);
+		String js = getString(obj,"list");
+		JSONArray arr = new JSONArray(js);
+		for (int i=0; i<arr.length(); i++) {
+			obj = arr.getJSONObject(i);
+			String id = getString(obj,"id");
+			String meno2 = getString(obj,"meno2");
+			String mennoo2 = getString(obj,"mennoo2");
+			String womeno2 = getString(obj,"womeno2");
+			String womennoo2 = getString(obj,"womennoo2");
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE freehospbed set meno2=").append(meno2)
+					.append(", mennoo2=").append(mennoo2)
+					.append(", womeno2=").append(womeno2)
+					.append(", womennoo2=").append(womennoo2)
+					.append(", editdate=current_date, edittime=current_time, editusername = '").append(login).append("'")
+					.append(" where lpu = ").append(id);
+			service.executeUpdateNativeSql(sql.toString());
+		}
 	}
 }

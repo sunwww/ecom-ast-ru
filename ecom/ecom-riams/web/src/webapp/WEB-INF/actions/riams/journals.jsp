@@ -52,6 +52,9 @@
 					<li><msh:link  isReport="false" action="journal_analysisUpdate.do">
 						Обновление анализов по COVID
 					</msh:link></li>
+					<li><msh:link  isReport="false" roles="/Policy/Mis/Journal/ShowHospitalFreeInfo" action="journal_hospFreeInfo.do">
+						Информация о свободных местах в госпитале
+					</msh:link></li>
 
 				</ul>
 				</div>
