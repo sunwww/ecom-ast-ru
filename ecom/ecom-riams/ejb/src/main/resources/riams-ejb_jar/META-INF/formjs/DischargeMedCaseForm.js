@@ -30,7 +30,22 @@ function onSave(aForm,aEntity, aCtx) {
 	closePrescriptions(aForm, aCtx);
     checkPaidServicesExecuted(aEntity, aCtx);
 }
+
+function totalDenialToEditDischargeAfter(aForm, aCtx) {
+	//Полный запрет на редактирование после выписки!
+	//Если уже есть дата и время выписки (не в будущем), запретить
+	var isDeniedList = aCtx.manager.createNativeQuery("select case when (datefinish is not null and dischargetime is not null" +
+		" and current_timestamp>cast((datefinish||' '||dischargetime) as TIMESTAMP)) then '1' else '0' end from medcase where id=:aId")
+		.setParameter("aId",aForm.id)
+		.getResultList();
+	var isDenied = !isDeniedList.isEmpty() ? +isDeniedList.get(0) : null ;
+	if (isDenied!=null && +isDenied==1)
+		throw "Изменение выписки невозможно, т.к. пациент уже выписан! Обратитесь в КЭО.";
+}
+
 function onPreSave(aForm,aEntity, aCtx) {
+	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotCheckDatesTimesAdmin"))
+		totalDenialToEditDischargeAfter(aForm, aCtx);
     //checkUniqueDiagnosis(aForm,aCtx);
     checkDeathThenPlan(aCtx, +aForm.result, +aForm.reasonDischarge);
     checkNewBornScreeningSecondExists(aForm,aCtx);
@@ -57,6 +72,8 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	var stat=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay") ;
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotCheckDatesTimesAdmin"))
+		stat=false;
 	var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
 	var dateFinish = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateFinish,aForm.dischargeTime);
 	var dateCur = new java.sql.Date(new java.util.Date().getTime()) ;

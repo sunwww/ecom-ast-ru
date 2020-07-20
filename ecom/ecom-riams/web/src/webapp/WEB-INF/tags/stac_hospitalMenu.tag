@@ -207,7 +207,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="Удалить данные выписки"
 		title="Удалить данные выписки"
 		confirm="Вы действительно желаете удалить данные выписки?"
-		roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
+		roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin"
 		styleId="deleteDischarge"
 	/>
 	<msh:sideLink action="/entityPrepareCreate-sec_userPermission.do?type=2&ido=${param.id}"
@@ -264,23 +264,24 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <script type="text/javascript">
 
     function deleteDischargeCheck(aId) {
-        HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess(
+        /*HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess(
             aId, {
                 callback: function(res) {
                     if (res==true) {
                         deleteDischarge();
                     }
-                    else {
+                    else {*/
                         HospitalMedCaseService.checkUserIsAdminToDeleteDischarge(
                             {
                                 callback: function(res) {
                                     if (res==true) {
                                         deleteDischarge();
                                     }
-                                    else alert("Невозможно удалить данные! Удалить её может только лечаший врач в течение 1го календарного дня после выписки или администратор системы.");
+									else alert("Невозможно удалить данные! Удалить её может только администратор системы.");
+                                    //else alert("Невозможно удалить данные! Удалить её может только лечаший врач в течение 1го календарного дня после выписки или администратор системы.");
                                 }}) ;
-                    }
-                }}) ;
+                    /*}
+                }}) ;*/
     }
     function deleteDischarge() {
         HospitalMedCaseService.deleteDischarge(
