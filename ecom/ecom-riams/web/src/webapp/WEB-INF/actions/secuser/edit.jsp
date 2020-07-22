@@ -155,6 +155,7 @@
       <!-- Для быстрого добавления-->
       <msh:sideLink action="/javascript:showAddUserToHosp(${param.id})" name="Добавить в отделение/настроить пароль" roles="/Policy/Jaas/SecUser/Edit" />
       <tags:AddUserToHosp name="AddUserToHosp" alreadyUser="1" />
+      <msh:sideLink action="/javascript:goToPatient()" name="⇧К персоне" styleId="listall" roles="/Policy/Jaas/SecUser/View" />
     </msh:sideMenu>
     <msh:sideMenu title="Списки пользователей">
       <msh:sideLink action="/entityList-secuser.do?list=all" name="Все пользователи" styleId="listall" roles="/Policy/Jaas/SecUser/View" />
@@ -177,6 +178,16 @@
     <script type='text/javascript' src='./dwr/interface/RolePoliciesService.js'></script>
     
   <script type="text/javascript">
+    function goToPatient() {
+      RolePoliciesService.getPatientBySecUser(${param.id}, {
+        callback:function (patientId) {
+          if (patientId) {
+            window.location.href="entityView-mis_patient.do?id="+patientId;
+          }
+        }
+      }) ;
+    }
+
     function getUserLoginJounal() {
       var limit = confirm("Отобразить все входы?") ? 0 : 50;
       RolePoliciesService.getUserLoginJounal($('login').value, limit, {

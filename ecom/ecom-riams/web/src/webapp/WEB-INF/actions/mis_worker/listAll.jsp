@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -9,6 +10,16 @@
     <ecom:titleTrail beginForm="mis_lpuForm" mainMenu="Lpu" title="Список сотрудников" />
   </tiles:put>
   <tiles:put name="side" type="string">
+    <%
+      ActionUtil.getValueBySql("select wp.id as id,wp.lastname||' '||wp.firstname||' '||wp.middlename as fio from worker w" +
+              " left join workfunction wf on wf.worker_id=w.id" +
+              " left join Patient wp on wp.id=w.person_id" +
+              " where  wf.isadministrator =true and w.lpu_id=" + (String)request.getParameter("id"),"id","fio",request);
+      Object fio = request.getAttribute("fio") ;
+      if (fio==null || (fio+"").equals("")) {
+        request.setAttribute("fio", "") ;
+      }
+    %>
     <msh:sideMenu title="Добавить">
       <msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-mis_worker" name="Добавить сотрудника" roles="/Policy/Mis/Worker/Worker/Create" />
     </msh:sideMenu>
@@ -22,10 +33,14 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
+    <h1><%="Начальник (зав): " + request.getAttribute("fio")%></h1>
   	<ecom:webQuery name="listArch" nativeSql="select w.id,wp.lastname||' '||wp.firstname||' '||wp.middlename as fio
   	, case when wf.workFunction_id is not null then (select vwf.name from VocWorkFunction vwf where vwf.id=wf.workFunction_id) else '' end,case when wf.group_id is not null then (select gr.groupname from workfunction gr where gr.id=wf.group_id) else '' end as groufunc
   	, case when wf.archival='1' then 'Да' else 'Нет' end as isarch
-  	, case when wf.archival='1' then 'color:red' else '' end as isarchStyle
+  	, case when wf.isadministrator='1' then 'Да' else '' end as isadm
+  	, case when wf.archival='1' and wf.isadministrator='1' then 'color:red; background-color:#FFFFA0;'
+  	  else case when wf.isadministrator='1' then 'background-color:#FFFFA0;'
+  	  else case when wf.archival='1' then 'color:red;' else '' end end end as isarchStyle
   	, wpl.name as cab
   	from worker w 
   	left join workFunction wf on w.id=wf.worker_id 
@@ -35,14 +50,14 @@
   	where w.lpu_id=${param.id}
   	order by wp.lastname,wp.firstname,wp.middlename
   	"/>
-    <msh:table styleRow="6" name="listArch" action="entityParentView-mis_worker.do" idField="1">
+    <msh:table styleRow="7" name="listArch" action="entityParentView-mis_worker.do" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="ФИО" property="2" />
       <msh:tableColumn columnName="Должностные обязанности" property="3"/>
       <msh:tableColumn columnName="Групповая функция" property="4"/>
       <msh:tableColumn columnName="Архив" property="5"/>
-      <msh:tableColumn columnName="Кабинет" property="7"/>
+      <msh:tableColumn columnName="Начальник (зав.) отделения" property="6"/>
+      <msh:tableColumn columnName="Кабинет" property="8"/>
     </msh:table>
   </tiles:put>
 </tiles:insert>
-
