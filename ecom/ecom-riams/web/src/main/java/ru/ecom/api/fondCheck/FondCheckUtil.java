@@ -174,7 +174,6 @@ public class FondCheckUtil {
         if(!is(rz) && is(number) && is(series)){
             System.out.println("Try check by policy");
             rz = FondCheckUtil.getRzbyPolis(series,number);
-            //return new JSONObject().put("error","1").toString();
         }
         if (!is(rz) && is(number)) {
             rz=number;
@@ -325,7 +324,6 @@ public class FondCheckUtil {
     }
 
     protected static String getPersoninfo(String rz) throws IOException, ParserConfigurationException, SAXException, JSONException {
-        System.out.println(rz);
         String result = ((String)createRequest().get_FIODR_from_RZ(rz, theLpu))
                 .replace("Windows-1252", "utf-8") ;
 
