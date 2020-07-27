@@ -43,6 +43,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 				if (dep.getParent() instanceof HospitalMedCase
 						&& ((HospitalMedCase)dep.getParent()).getDischargeTime()!=null
 						&&aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay")
+						&& !aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin")
 						) {
 					boolean isOpen;
 					try {
