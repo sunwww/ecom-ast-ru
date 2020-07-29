@@ -158,7 +158,8 @@ function onPreSave(aForm,aEntity, aContext) {
 		}
 		
 	}
-	stat=aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay") ;
+	stat=aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay")
+	&& !aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin");
 	
 	
 	if (stat && hosp.dischargeTime!=null) {
@@ -172,7 +173,7 @@ function onPreSave(aForm,aEntity, aContext) {
 		cal3.setTime(dateCur) ;		
 		cal2.setTime(dateCur) ;		
 		cal1.setTime(dateFin) ;
-		var cntHour = +getDefaultParameterByConfig("edit_slsDischarge_after_discharge", 24, aCtx) ;
+		var cntHour = +getDefaultParameterByConfig("edit_slsDischarge_after_discharge", 24, aContext) ;
 		cal3.add(java.util.Calendar.HOUR_OF_DAY,(-1*cntHour)) ;
 		
 		if (cal1.after(cal3)) {
