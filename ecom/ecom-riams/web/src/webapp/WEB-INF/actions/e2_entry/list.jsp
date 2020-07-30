@@ -144,7 +144,8 @@ String defectColumnName = "Дефект";
                 <input type="checkbox" id="dontShowComplexCase" name="dontShowComplexCase" onclick="dontShow(this)">
 
             <input type="button" onclick="exportErrorsNewListEntry()" value="Перенести ошибки в новое заполнение">
-            <input type="button" onclick="fixSomeError()" value="Поправить 223">
+            <input type="button" onclick="fixSomeError('223')" value="Поправить 223">
+            <input type="button" onclick="fixSomeError('CV_DEATH')" value="Поправить смерь от ковида">
                 </td></tr>
             </table>
 
@@ -201,15 +202,12 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <script type="text/javascript">
             var errorCode = '${param.errorCode}';
-            function fixSomeError() {
-                    let err = prompt("Выберите ошибку для исправления","223");
-                    if (err) {
-                        Expert2Service.fixSomeErrors(${param.id}, err, {
-                            callback: function (res) {
-                                alert(res);
-                            }
-                        })
+            function fixSomeError(errCode) {
+                Expert2Service.fixSomeErrors(${param.id}, errCode, {
+                    callback: function (res) {
+                        alert(res);
                     }
+                });
             }
             function exportErrorsNewListEntry() {
                 if (errorCode || $('sanctionDopCode').value) {
