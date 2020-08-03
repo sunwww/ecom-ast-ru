@@ -3468,7 +3468,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                     sloEntry.setIsEmergency(visit.getEmergency());
                     sloEntry.setStartDate(spo.getDateStart());
                     sloEntry.setFinishDate(spo.getDateFinish() != null ? spo.getDateFinish() : new Date(System.currentTimeMillis())); //если открытое СПО - будет разовый визит, не должно произойти.
-                    sloEntry.setIsMobilePolyclinic(wf.getWorker().getLpu().getIsMobilePolyclinic());
+                    try {
+                        sloEntry.setIsMobilePolyclinic(wf.getWorker().getLpu().getIsMobilePolyclinic());
+                    } catch (Exception e) {
+                        sloEntry.setIsMobilePolyclinic(false);
+                        //e.printStackTrace();
+                    }
                     sloEntry.setWorkPlace(visit.getWorkPlaceType()!=null ? visit.getWorkPlaceType().getCode() : "1");
          //           sloEntry.setIsDiagnosticSpo(spo.getIsDiagnosticSpo()); //deprecated 01-01-2020
                     sloEntry.setMainMkb(visit.getDiagnoses().isEmpty() ? "Z00.0" : visit.getDiagnoses().get(0).getIdc10().getCode());
