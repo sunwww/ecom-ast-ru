@@ -347,7 +347,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
                 add(sl,"LPU_1",currentEntry.getDepartmentCode()!=null ? currentEntry.getDepartmentCode() : "30000101");
                 //PODR
- //               add(sl,"TELEMED",currentEntry.getDepartmentId()==416 ? "1" : "0");
                 if (!a3) add(sl,"PROFIL",profile.getCode()); //Профиль специальностей V002 * 12.12.2018
                 if (isHosp || isVmp) {
                     if (currentEntry.getBedProfile()==null) {
@@ -1212,6 +1211,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private void setSluchDiagnosis(Element aElement, E2Entry aEntry, String aVersion, boolean a3) {
         /** Нюансы
          * 30.01.2018 Если есть диабет - указываем его как главный сопутствующий
+         * 03.08.2020 Если ковид - он становится осложнением, а другой - основным
          */
         if (aVersion==null) {aVersion="3.1";}
         if (a3) {
@@ -1265,7 +1265,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
                 }
   */          }
-            if (!heavyDiagnosis.isEmpty()) add(aElement,"DS3",heavyDiagnosis.get(0));
+            if (!heavyDiagnosis.isEmpty()) {
+                if (mainMkb.startsWith("U07")) { //если ковид - он - ослжнение, а осложнение - главный
+                    aElement.getChild("DS0").setText(heavyDiagnosis.get(0));
+                    add(aElement,"DS3",mainMkb);
+                } else {
+                    add(aElement,"DS3",heavyDiagnosis.get(0));
+                }
+
+            }
             if (!mainMkb.startsWith("Z")) { //C_ZAB * Характер заболевания, если USL_OK!=4 || DS1!=Z*
                 VocE2FondV027 vip = ds.getVocIllnessPrimary();
                 if (vip==null) {
