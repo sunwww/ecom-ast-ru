@@ -49,6 +49,7 @@ import java.util.List;
 @Remote(IExpert2XmlService.class)
 public class Expert2XmlServiceBean implements IExpert2XmlService {
     private Boolean isCheckIsRunning = false;
+    private Boolean EXCHANGE_COVID_DS = false;
     private static final Logger LOG = Logger.getLogger(Expert2XmlServiceBean.class);
     private static final String HOSPITALTYPE="HOSPITAL";
     private static final String HOSPITALPEREVODTYPE="HOSPITALPEREVOD";
@@ -833,6 +834,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 groupSqlAdd= "e.id";
                 isDisp = isPolic = false;
                 isHosp=true;
+                EXCHANGE_COVID_DS = "1".equals(getExpertConfigValue("EXCHANGE_COVID_DS", "0"));
             } else if (aType.equals(POLYCLINICTYPE) || aType.equals(SERVICETYPE)){
                 selectSqlAdd =" list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
                 groupSqlAdd="e.id";
@@ -1266,8 +1268,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
   */          }
             if (!heavyDiagnosis.isEmpty()) {
-                if (mainMkb.startsWith("U07")) { //если ковид - он - ослжнение, а осложнение - главный
-                    aElement.getChild("DS0").setText(heavyDiagnosis.get(0));
+                if (EXCHANGE_COVID_DS && mainMkb.startsWith("U07")) { //если ковид - он - ослжнение, а осложнение - главный
+                    aElement.getChild("DS1").setText(heavyDiagnosis.get(0));
                     add(aElement,"DS3",mainMkb);
                 } else {
                     add(aElement,"DS3",heavyDiagnosis.get(0));
