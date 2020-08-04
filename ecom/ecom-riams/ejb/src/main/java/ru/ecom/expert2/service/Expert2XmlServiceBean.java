@@ -1272,6 +1272,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     aElement.removeChild("DS2");
                     aElement.getChild("DS1").setText(heavyDiagnosis.get(0));
                     add(aElement,"DS2",mainMkb);
+                    if (!otherDiagnosis.isEmpty()) add(aElement,"DS2",otherDiagnosis.get(0));
                 } else {
                     add(aElement,"DS3",heavyDiagnosis.get(0));
                 }
