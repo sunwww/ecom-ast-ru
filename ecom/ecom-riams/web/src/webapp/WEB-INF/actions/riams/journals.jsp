@@ -421,6 +421,9 @@
 						<li><msh:link  isReport="false" action="journal_bracelets.do" roles="/Policy/Mis/MedCase/Stac/Journal/BraceletsJournal">
 							Журнал браслетов
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_searchTextDiary.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Поиск дневников по тексту
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>

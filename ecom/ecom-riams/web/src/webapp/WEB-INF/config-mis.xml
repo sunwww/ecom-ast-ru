@@ -1189,6 +1189,14 @@
 			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/journal_bracelets.jsp" />
 		</action>
 
+		<action path='/journal_searchTextDiary' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/journal_searchTextDiary.jsp" />
+		</action>
+
 		<action path='/journal_analysisUpdate' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
