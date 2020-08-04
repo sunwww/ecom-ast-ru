@@ -207,6 +207,12 @@
           alert("Добавлено!");
           document.location.reload();
       }
+      <msh:ifFormTypeIsView formName="smo_covid19Form">
+        document.getElementById('labOrganization').removeAttribute('type');
+      </msh:ifFormTypeIsView>
+      <msh:ifFormTypeIsNotView formName="smo_covid19Form">
+        $('labOrganizationName').value=$('labOrganization').value
+      </msh:ifFormTypeIsNotView>
       </script>
     </msh:ifFormTypeAreViewOrEdit>
 
