@@ -11,10 +11,10 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <%
-      ActionUtil.getValueBySql("select 1 as id,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as fio from worker w" +
+      ActionUtil.getValueBySql("select 1 as idd,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as fio from worker w" +
               " left join workfunction wf on wf.worker_id=w.id" +
               " left join Patient wp on wp.id=w.person_id" +
-              " where  wf.isadministrator =true and w.lpu_id=" + (String)request.getParameter("id"),"id","fio",request);
+              " where  wf.isadministrator =true and w.lpu_id=" + (String)request.getParameter("id"),"idd","fio",request);
       Object fio = request.getAttribute("fio") ;
       if (fio==null || (fio+"").equals("")) {
         request.setAttribute("fio", "") ;
