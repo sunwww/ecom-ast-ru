@@ -1269,8 +1269,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
   */          }
             if (!heavyDiagnosis.isEmpty()) {
                 if (EXCHANGE_COVID_DS && mainMkb.startsWith("U07")) { //если ковид - он - ослжнение, а осложнение - главный
+                    aElement.removeChild("DS2");
                     aElement.getChild("DS1").setText(heavyDiagnosis.get(0));
-                    add(aElement,"DS3",mainMkb);
+                    add(aElement,"DS2",mainMkb);
                 } else {
                     add(aElement,"DS3",heavyDiagnosis.get(0));
                 }
