@@ -18,7 +18,8 @@
             String typeDate = ActionUtil.updateParameter("typeDate","typeDate","2", request) ;
             if (typeDate!=null) {
                 if (typeDate.equals("1")) {fldDate="sls.dateStart" ;}
-                else if (typeDate.equals("3")) {fldDate="sls.finishDate" ;}
+                else if (typeDate.equals("2")) {fldDate="sls.dateFinish" ;}
+                else if (typeDate.equals("3")) {fldDate="di.dateregistration" ;}
             }
 
             String department = request.getParameter("department") ;
@@ -34,6 +35,10 @@
             String workFunction = request.getParameter("workFunction") ;
             if (workFunction!=null && !workFunction.equals(""))
                 request.setAttribute("workFunction"," and wf.id="+workFunction);
+
+            String login = request.getParameter("filterAdd2") ;
+            if (login!=null && !login.equals(""))
+                request.setAttribute("login"," and su.id="+login);
 
             String bedType = request.getParameter("bedType") ;
             if (bedType!=null && !bedType.equals(""))
@@ -68,6 +73,9 @@
                     <td onclick="this.childNodes[1].checked='checked';">
                         <input type="radio" name="typeDate" value="2">  выписки
                     </td>
+                    <td onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeDate" value="3">  дате регистрации дневника
+                    </td>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="dateBegin" label="Период с" />
@@ -78,6 +86,9 @@
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="workFunction" fieldColSpan="16" horizontalFill="true" label="Автор дневника" vocName="workFunction"/>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete vocName="secUser" property="filterAdd2"  fieldColSpan="16" label="Логин" horizontalFill="true" />
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete vocName="vocBedType" property="bedType" label="Профиль коек" horizontalFill="true" fieldColSpan="5" />
@@ -123,14 +134,16 @@
                 left join Mislpu dep on dep.id=slo.department_id
                 left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
                 left join vochospitalizationresult vhr on vhr.id=sls.result_id
+                left join secuser su on su.login=di.username
                 where ${fldDate} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
                 ${department}
                 ${workFunction}
+                ${login}
                 ${bedType}
-                ${diaryLike}
-                ${diaryNotLike}
                 ${hospitalizationResult}
                 ${hospitalizationOutcome}
+                ${diaryLike}
+                ${diaryNotLike}
                 order by dep.name" />
                 <msh:table name="journal_DiaryText"  noDataMessage="Нет данных"
                            action="entityParentView-stac_slo.do" idField="1">
