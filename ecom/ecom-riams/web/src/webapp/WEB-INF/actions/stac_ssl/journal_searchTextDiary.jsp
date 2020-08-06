@@ -39,6 +39,14 @@
             if (bedType!=null && !bedType.equals(""))
                 request.setAttribute("bedType"," and vbt.id="+bedType);
 
+            String hospitalizationResult = request.getParameter("hospitalizationResult") ;
+            if (hospitalizationResult!=null && !hospitalizationResult.equals(""))
+                request.setAttribute("hospitalizationResult"," and vhr.id="+hospitalizationResult);
+
+            String hospitalizationOutcome = request.getParameter("hospitalizationOutcome") ;
+            if (hospitalizationOutcome!=null && !hospitalizationOutcome.equals(""))
+                request.setAttribute("hospitalizationOutcome"," and vho.id="+hospitalizationOutcome);
+
             String diaryLike = request.getParameter("filterAdd") ;
             if (diaryLike!=null && !diaryLike.equals(""))
                 request.setAttribute("diaryLike"," and upper(di.record) like upper('%"+diaryLike + "%')");
@@ -75,15 +83,19 @@
                     <msh:autoComplete vocName="vocBedType" property="bedType" label="Профиль коек" horizontalFill="true" fieldColSpan="5" />
                 </msh:row>
                 <msh:row>
-                    <td>
-                        <input type="submit" value="Найти" />
-                    </td>
+                    <msh:autoComplete property="hospitalizationResult" fieldColSpan="16" horizontalFill="true" label="Результат госпитализации" vocName="vocHospitalizationResult"/>
+                    <msh:autoComplete property="hospitalizationOutcome" fieldColSpan="16" horizontalFill="true" label="Исход" vocName="vocHospitalizationOutcome"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="filterAdd" label="Содержит текст" />
                 </msh:row>
                 <msh:row>
                     <msh:textField property="filterAdd1" label="Не содержит текст" />
+                </msh:row>
+                <msh:row>
+                    <td>
+                        <input type="submit" value="Найти" />
+                    </td>
                 </msh:row>
             </msh:panel>
         </msh:form>
@@ -109,12 +121,16 @@
                 left join WorkFunction wf on wf.id=di.specialist_id
                 left join Patient pat on sls.patient_id = pat.id
                 left join Mislpu dep on dep.id=slo.department_id
+                left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
+                left join vochospitalizationresult vhr on vhr.id=sls.result_id
                 where ${fldDate} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
                 ${department}
                 ${workFunction}
                 ${bedType}
                 ${diaryLike}
                 ${diaryNotLike}
+                ${hospitalizationResult}
+                ${hospitalizationOutcome}
                 order by dep.name" />
                 <msh:table name="journal_DiaryText"  noDataMessage="Нет данных"
                            action="entityParentView-stac_slo.do" idField="1">
