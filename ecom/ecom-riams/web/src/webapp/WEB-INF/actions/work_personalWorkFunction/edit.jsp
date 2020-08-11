@@ -11,6 +11,7 @@
       <msh:hidden property="saveType" />
       <msh:hidden property="lpuRegister" />
       <msh:hidden property="worker" />
+      <msh:hidden property="allGroups" />
       <msh:panel>
         <msh:row>
           <msh:textField property="code" horizontalFill="true" fieldColSpan="3" label="Код"/>
@@ -97,7 +98,7 @@
         <msh:row>
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>                
-        <msh:submitCancelButtonsRow colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" functionSubmit="save();"/>
       </msh:panel>
     </msh:form>
     
@@ -152,7 +153,9 @@
   		</script>
   	</msh:ifFormTypeIsView>
     <msh:ifFormTypeIsNotView formName="work_personalWorkFunctionForm">
-      <script type="text/javascript">groupAutocomplete.setParentId(getWorkerAndFunction()) ;
+      <script type="text/javascript">
+        var groupII=0;  //кол-во групповых рабочих функций
+        groupAutocomplete.setParentId(getWorkerAndFunction()) ;
       	workFunctionAutocomplete.addOnChangeCallback(function() {
       	 	updateGroup() ;
       	 });
@@ -164,7 +167,58 @@
       	 function getWorkerAndFunction() {
       	 	return $('workFunction').value+"#"+$('worker').value ;
       	 }
+    <msh:ifFormTypeIsCreate formName="work_personalWorkFunctionForm">
+      	 //кнопка для добавления нескольких групповых фнукций
+      	 jQuery(document).ready(function() {
+      	    var groupDiv = jQuery('#groupDiv');
+            groupDiv.detach();
+            jQuery('#groupName').parent().append("<input style='margin-left:10px' type='button' onclick='addAnotherGroup();' value='+'>");
+            jQuery('#groupName').parent().append(groupDiv);
+         });
 
+      	 //возможность добавить несколько групповых рабочих функций
+      	 function addAnotherGroup() {
+           var voc = 'groupWorkFunction';
+           var html="<div><input type=\"hidden\" size=\"1\" name=\""+voc+"\" id=\"" + voc +
+                   +groupII+"\" value=\"\"><input title=\""+voc+groupII+"\" type=\"text\" name=\"" + voc +
+                   +groupII+"Name\" id=\"nnn"+voc+groupII+"Name\" size=\"70\" class=\"autocomplete horizontalFill\" " +
+                   "autocomplete=\"off\"><div id=\""+voc+groupII+"Div\" style=\"visibility: hidden; display: none;\" " +
+                   "class=\"autocomplete\"></div></div>";
+           jQuery('#groupName').parent().parent().append(html);
+           eval("var "+voc+groupII+"Autocomplete = new msh_autocomplete.Autocomplete()") ;
+           eval(voc+groupII+"Autocomplete.setUrl('simpleVocAutocomplete/"+voc+"') ");
+           eval(voc+groupII+"Autocomplete.setIdFieldId('"+voc+groupII+"') ");
+           eval(voc+groupII+"Autocomplete.setNameFieldId('nnn"+voc+groupII+"Name') ");
+           eval(voc+groupII+"Autocomplete.setDivId('"+voc+groupII+"Div') ");
+           eval(voc+groupII+"Autocomplete.setVocKey('"+voc+"') ");
+           eval(voc+groupII+"Autocomplete.setVocTitle('Групповая рабочая функция')") ;
+           eval(voc+groupII+"Autocomplete.build() ");
+           eval(voc+groupII+"Autocomplete.setParentId(getWorkerAndFunction()) ");
+           groupII++;
+         }
+        </msh:ifFormTypeIsCreate>
+         //сохранение
+          function save() {
+            <msh:ifFormTypeIsCreate formName="work_personalWorkFunctionForm">
+              $('allGroups').value = "";
+              var mas = {
+                list: []
+              };
+              var voc = 'groupWorkFunction';
+
+              var totalTd = jQuery('#groupName').parent().parent();
+              jQuery('#groupName').parent().parent().find('input[id*="nnn'+voc+'"]').each(function (ind, el) {
+                if ($('' + voc + el.id.replace('nnn'+voc,'').replace('Name','')).value!='') {
+                  var obj = {
+                    group: $('' + voc + el.id.replace('nnn'+voc,'').replace('Name','')).value
+                  };
+                  mas.list.push(obj);
+                }
+              });
+              $('allGroups').value = JSON.stringify(mas);
+            </msh:ifFormTypeIsCreate>
+            document.forms[0].submit();
+          }
       	 </script>
     </msh:ifFormTypeIsNotView>
       <script type="text/javascript">

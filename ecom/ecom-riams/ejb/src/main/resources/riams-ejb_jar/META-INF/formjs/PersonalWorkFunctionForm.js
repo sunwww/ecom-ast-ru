@@ -45,6 +45,7 @@ function onCreate(aForm, aEntity, aContext) {
 
     saveCabinet(aForm, aEntity, aContext);
 	stayAdminUnique(aForm, aEntity, aContext);
+	saveGroupWorkFunctions(aForm, aEntity, aContext);
 }
 
 function onSave(aForm, aEntity, aContext) {
@@ -124,5 +125,27 @@ function stayAdminUnique(aForm, aEntity, aCtx) {
 			" left join worker w on wf.worker_id=w.id" +
 			" left join worker wnow on wnow.id=" + aForm.getWorker() +
 			" where w.lpu_id =wnow.lpu_id and w.id<>wnow.id)").executeUpdate() ;
+	}
+}
+//Сохранение дополнительных групповых функций
+function saveGroupWorkFunctions(aForm, aEntity, aCtx) {
+	var allGroups=aForm.getAllGroups();
+	if (allGroups!='') {
+		var obj = new Packages.org.json.JSONObject(allGroups) ;
+		var groups = obj.getJSONArray("list");
+		for (var i=0; i<groups.length(); i++) {
+			var child = groups.get(i);
+			var vocId = java.lang.Long.valueOf(child.get("group"));
+			var newGwf = new Packages.ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction();
+			newGwf.setWorkFunction(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction, aForm.getWorkFunction()));
+			newGwf.setWorker(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.Worker,aForm.getWorker()));
+			var vocGroup = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.GroupWorkFunction, vocId);
+			newGwf.setGroup(vocGroup);
+			var date = new java.util.Date() ;
+			newGwf.setCreateDate(new java.sql.Date(date.getTime())) ;
+			newGwf.setCreateTime(new java.sql.Time (date.getTime())) ;
+			newGwf.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+			aCtx.manager.persist(newGwf);
+		}
 	}
 }
