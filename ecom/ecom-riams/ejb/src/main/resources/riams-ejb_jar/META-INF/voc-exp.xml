@@ -507,7 +507,7 @@
                 parent='  vqem.criterion_id = :parent '
                 names=" vqem.mark "
                 nameId=" vqem.id "
-                queried=" ( upper(vqem.id) like upper(:query) or upper(vqem.mark) like upper(:query) )"
+                queried=" ( upper(cast (vqem.id as varchar)) like upper(cast(:query as varchar)) or upper(cast (vqem.mark as varchar)) like upper(cast(:query as varchar)) )"
                 queryAppend=""
                 join= ""
                 order=""
@@ -519,7 +519,7 @@
                 parent='  vqem.criterion_id = :parent '
                 names=" vqem.name "
                 nameId=" vqem.id "
-                queried=" ( upper(vqem.id) like upper(:query) or upper(vqem.mark) like upper(:query) )"
+                queried=" ( upper(cast (vqem.id as varchar)) like upper(cast(:query as varchar)) or upper(cast (vqem.mark as varchar)) like upper(cast(:query as varchar)) )"
                 queryAppend=""
                 join= ""
                 order=""
@@ -531,7 +531,7 @@
                 parent='  vqem.criterion_id = :parent '
                 names=" vqem.name "
                 nameId=" vqem.id "
-                queried=" ( upper(vqem.id) like upper(:query) or upper(vqem.name) like upper(:query) )"
+                queried=" ( upper(cast (vqem.id as varchar)) like upper(cast(:query as varchar)) or upper(vqem.name) like upper(cast(:query as varchar)) )"
                 join= ""
                 order=" vqem.id "
         />
