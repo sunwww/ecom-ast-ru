@@ -103,7 +103,7 @@
         var psw = $('${name}Psw').value;
         var userCopy = $('${name}userCopy').value;
 
-        if (+'${alreadyUser}') {  //создание через пользователя
+        if (+'${alreadyUser}') {  //создание
             if (!isNaN(lpu) && !isNaN(vwf) && (lpu!=0 && vwf!=0 || psw!='' || userCopy!='')) {
                 RolePoliciesService.getPatientBySecUser(ID, {
                     callback:function (patientId) {
@@ -111,6 +111,8 @@
                             RolePoliciesService.addUserToHospShort(patientId, lpu, vwf,psw,userCopy,'',ID, {//пустой логин, т.к. он тут не нужен
                                 callback:function (msg) {
                                     showToastMessage(msg,null,true,false,6000);
+                                    if (typeof checkLogin !== 'undefined')  //вывод логина
+                                        checkLogin();
                                     cancel${name}();
                                 }
                             }) ;
@@ -139,6 +141,8 @@
                 RolePoliciesService.addUserToHospShort(ID, lpu, vwf,psw,userCopy,login,null, {
                 callback:function (msg) {
                     showToastMessage(msg,null,true,false,6000);
+                    if (typeof checkLogin !== 'undefined')  //вывод логина
+                        checkLogin();
                     cancel${name}();
                     }
                 }) ;

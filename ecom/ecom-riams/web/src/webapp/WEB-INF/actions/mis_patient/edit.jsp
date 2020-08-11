@@ -18,6 +18,7 @@
     <msh:ifFormTypeIsView formName="mis_patientForm">
     <div id='identityDiv'></div>
     <div id='patientInfoDiv'></div>
+    <div id='loginInfoDiv'></div>
     <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     	<msh:separator label="Проверка пациента по базе фонда" colSpan="4"/>
     	<msh:link action="javascript:checkPatientBySnils()">Проверка по СНИЛСу</msh:link>
@@ -1102,6 +1103,21 @@ order by wcd.calendarDate, wct.timeFrom" />
       	}
 			onload=checkPatientInList();
 		</script>
+
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Jaas/SecUser/View">
+          <script type="text/javascript">
+              function checkLogin() {
+                  PatientService.checkLogin($('id').value, {
+                      callback: function(a) {
+                          if (a!=null&&a!=''){
+                              $('loginInfoDiv').innerHTML=a;
+                          }
+                      }
+                  });
+              }
+              checkLogin();
+          </script>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet">
           <script type="text/javascript">

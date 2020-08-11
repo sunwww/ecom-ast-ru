@@ -913,4 +913,19 @@ public class PatientServiceJs {
 		service.executeNativeSql("select 1"); //для персиста
 		return msg;
 	}
+
+	/**
+	 * Получить логин, если пользователь зарегистрирован в системе
+	 * @param aPatientId Patient.id
+	 * @return html
+	 */
+	public String checkLogin(Long aPatientId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql ="select su.login from SecUser su" +
+				" left join WorkFunction wf on su.id=wf.secUSer_id" +
+				" left join Worker w on wf.worker_id=w.id" +
+				" where w.person_id="+aPatientId;
+		Collection <WebQueryResult> l = service.executeNativeSql(sql);
+		return l.isEmpty()? "" : "<div>Логин в МедОСе: <b>"+l.iterator().next().get1().toString()+"</b></div>";
+	}
 }
