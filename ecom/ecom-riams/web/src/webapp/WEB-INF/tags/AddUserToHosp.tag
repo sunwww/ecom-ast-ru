@@ -176,12 +176,18 @@
         $('${name}vocLpuHospOtdAllName').value='';
         $('${name}vocWorkFunction').value='';
         $('${name}vocWorkFunctionName').value='';
+        $('${name}userCopy').value='';
+        $('${name}userCopyName').value='';
 
         var vocLpu = jQuery("#${name}isCovid").prop("checked") ?
             'vocCovidLpu' : 'vocLpuHospOtdAll';
         var vocWf = jQuery("#${name}isCovid").prop("checked") ?
             'vocCovidWf' : 'vocWorkFunction';
+        var vocSecUser = jQuery("#${name}isCovid").prop("checked") ?
+            'secUserEnabledCopy' : 'secUser';
         ${name}vocLpuHospOtdAllAutocomplete.setUrl('simpleVocAutocomplete\\'+vocLpu);
         ${name}vocWorkFunctionAutocomplete.setUrl('simpleVocAutocomplete\\'+vocWf);
+        ${name}vocLpuHospOtdAllAutocomplete.setUrl('simpleVocAutocomplete\\'+vocLpu);
+        ${name}userCopyAutocomplete.setUrl('simpleVocAutocomplete\\'+vocSecUser);
     }
 </script>

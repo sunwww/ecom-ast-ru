@@ -17,6 +17,7 @@
     <msh:form action="entitySaveGoView-secuser.do" defaultField="login">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
+      <msh:hidden property="enabledForCopy" />
       <msh:ifFormTypeIsCreate formName="secuserForm">
       <msh:hidden property="workFunction"/>
       </msh:ifFormTypeIsCreate>

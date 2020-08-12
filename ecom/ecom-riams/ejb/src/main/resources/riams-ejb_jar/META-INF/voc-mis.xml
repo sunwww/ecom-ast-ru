@@ -2461,7 +2461,17 @@ left join patient wp on wp.id=w.person_id "
                 names   = 'login, fullname'
                 queried = 'login, fullname'
         />
-    </voc> 
+    </voc>
+
+	<voc id='secUserEnabledCopy' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.jaas.ejb.domain.SecUser'
+				names   = 'login, fullname'
+				queried = 'login, fullname'
+				queryAppend="enabledForCopy='1'"
+		/>
+	</voc>
+
     <voc id='secGroup' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.jaas.ejb.domain.SecGroup'
