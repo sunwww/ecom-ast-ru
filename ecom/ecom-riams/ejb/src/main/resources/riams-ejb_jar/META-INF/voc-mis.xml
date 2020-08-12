@@ -313,6 +313,7 @@
 	from="vocQualityEstimationKind vqek"
 	nameId="vqek.id"
 	names="vqek.name"
+	queryAppend=" (vqek.code='1' or vqek.code='2') "
 	>
 	</NativeVocService>
 	</voc>
