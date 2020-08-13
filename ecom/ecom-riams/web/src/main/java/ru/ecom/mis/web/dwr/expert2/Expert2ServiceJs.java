@@ -74,7 +74,16 @@ public class Expert2ServiceJs {
             LOG.info("Проверяем по базе ТФОМС и проставляем действующие полиса на дату начала случая");
             IExpert2Service xmlService = Injection.find(aRequest).getService(IExpert2Service.class);
             return xmlService.fixFondAnswerError(aListEntryId,aErrorCode);
-        } else {
+        }  else if ("CV_DEATH".equals(aErrorCode)) {
+           LOG.info("Перенос диагнозов из реанимации в род. отделение");
+           String sql = "update EntryDiagnosis ed set entry_id =child.parentEntry_id from " +
+                   " e2entry child where child.listEntry_id="+aListEntryId+" and (child.isDeleted is null or child.isDeleted='0') and child.serviceStream='COMPLEXCASE'" +
+                   " and child.parentEntry_id is not null and ed.entry_id=child.id";
+           IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+           service.executeUpdateNativeSql(sql);
+           return "All OK";
+
+       } else {
             return "Я не понял что мне делать!";
         }
     }
