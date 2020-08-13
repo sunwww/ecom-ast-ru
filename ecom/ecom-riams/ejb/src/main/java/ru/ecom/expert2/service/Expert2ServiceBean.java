@@ -2521,7 +2521,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
     /** Считаем коэффициент сложности лечения пациента */
     public BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry) {
-        BigDecimal one = BigDecimal.ONE;
+        final BigDecimal one = BigDecimal.ONE;
         if(aEntry.getEntryType().equals(HOSPITALTYPE)&&!aEntry.getBedSubType().equals("1")) { return one;}
         List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
         BigDecimal ret = BigDecimal.ONE;
@@ -2530,19 +2530,25 @@ public class Expert2ServiceBean implements IExpert2Service {
                 ret = list.get(0).getValue();
             } else {
                 boolean first = true;
-                BigDecimal tooLongCoeff = BigDecimal.ZERO; //коэффициент сверхдлительности
+                BigDecimal tooLongCoeff = BigDecimal.ONE; //коэффициент сверхдлительности
                 for (E2CoefficientPatientDifficultyEntryLink link: list) { //Если несколько, возвращаем К1+(К2-1)+(Кн-1)
-                    if ("9".equals(link.getDifficulty().getCode())) tooLongCoeff = link.getValue().subtract(one);
-                    if (first){
-                        ret = link.getValue();
-                        first=false;
+                    if ("9".equals(link.getDifficulty().getCode())) {
+                        tooLongCoeff = link.getValue();
                     } else {
-                        ret=ret.add(link.getValue()).add(one.negate());
+                        if (first) {
+                            ret = link.getValue();
+                            first = false;
+                        } else {
+                            ret = ret.add(link.getValue()).subtract(one);
+                        }
                     }
                 }
 
-                if (ret.compareTo(MAX_KSLP_COEFF)>0) { //если коэфф > 1.8 - коэфф = 1.8+коэф по сверхдлит. операции.
-                    ret = MAX_KSLP_COEFF.add(tooLongCoeff);
+
+                if (ret.compareTo(MAX_KSLP_COEFF)>0) { //если коэфф без длит > 1.8 - коэфф = 1.8+коэф по сверхдлит. операции.
+                    ret = MAX_KSLP_COEFF.add(tooLongCoeff).subtract(one);
+                } else {
+                    ret = ret.add(tooLongCoeff).subtract(one);
                 }
             }
         }
@@ -2558,19 +2564,24 @@ public class Expert2ServiceBean implements IExpert2Service {
             LOG.warn("Cant calc polyclinic tariff: "+aVidSluch.getCode()+" <> "+aFinishDate);
             return BigDecimal.ZERO;
         }
-        List<VocE2PolyclinicCoefficient> coefficients ;
-        //находим Кз
-        coefficients = theManager.createQuery(" from VocE2PolyclinicCoefficient where vidSluch_id=:vidSluchId and profile_id=:profileId and :actualDate between startDate and coalesce(finishDate,current_date)")
-                .setParameter("vidSluchId",aVidSluch.getId()).setParameter("actualDate",aFinishDate)
-                .setParameter("profileId",aMedHelpProfile.getId()).getResultList();
-        BigDecimal coef = new BigDecimal(1);
-        if (!coefficients.isEmpty()) {
-            for (VocE2PolyclinicCoefficient coefficient: coefficients) {
-                coef = coef.multiply(coefficient.getValue());
+        try {
+            List<VocE2PolyclinicCoefficient> coefficients ;
+            //находим Кз
+            coefficients = theManager.createQuery(" from VocE2PolyclinicCoefficient where vidSluch_id=:vidSluchId and profile_id=:profileId and :actualDate between startDate and coalesce(finishDate,current_date)")
+                    .setParameter("vidSluchId",aVidSluch.getId()).setParameter("actualDate",aFinishDate)
+                    .setParameter("profileId",aMedHelpProfile.getId()).getResultList();
+            BigDecimal coef = new BigDecimal(1);
+            if (!coefficients.isEmpty()) {
+                for (VocE2PolyclinicCoefficient coefficient: coefficients) {
+                    coef = coef.multiply(coefficient.getValue());
+                }
             }
+            BigDecimal tariff = baseTariff.getValue();
+            return tariff.multiply(coef);
+        } catch (Exception e) {
+            LOG.error(e);
+            return BigDecimal.ZERO;
         }
-        BigDecimal tariff = baseTariff.getValue();
-        return tariff.multiply(coef);
     }
     private E2Entry calculatePolyclinicEntryPrice(E2Entry aEntry) {
         BigDecimal one = BigDecimal.ONE;
@@ -3464,6 +3475,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                         visit = shortMedCases.get(0);
                     }
                     PersonalWorkFunction wf = (PersonalWorkFunction) visit.getWorkFunctionExecute();
+                    if (wf == null) {
+                        ret.put("status","error");
+                        ret.put("errorName1","Не удалось посчитать цену");
+                        return ret.toString();
+                    }
                     sloEntry.setEntryType(POLYCLINICTYPE);
                     sloEntry.setIsEmergency(visit.getEmergency());
                     sloEntry.setStartDate(spo.getDateStart());
