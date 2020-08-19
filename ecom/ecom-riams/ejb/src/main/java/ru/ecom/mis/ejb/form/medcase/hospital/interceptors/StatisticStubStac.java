@@ -251,10 +251,10 @@ public class StatisticStubStac {
         	return ;
         }
 
-        if (aMedCase.getIsAmbulanseDialis()) {
+        /*if (aMedCase.getIsAmbulanseDialis()) {
            aManager.remove(aMedCase.getStatisticStub());
            aMedCase.setStatisticStub(null);
-        } else {
+        } else {*/
         	StatisticStubExist stubexist = aMedCase.getStatisticStub() ;
         	StatisticStubRestored stubrestored = new StatisticStubRestored();
         	stubrestored.setCode(stubexist.getCode());
@@ -265,7 +265,7 @@ public class StatisticStubStac {
         	aMedCase.setStatisticStub(null);
         	aManager.persist(stubrestored);
         	aManager.remove(stubexist);
-        }
+        //}
     }
 
     /**
@@ -350,14 +350,14 @@ public class StatisticStubStac {
 	    	String nextStatCardNumber;
 	    	SimpleDateFormat format = new SimpleDateFormat("yyyy") ;
 	        Long year = Long.valueOf(format.format(medCase.getDateStart())) ;
-	        if (medCase.getIsAmbulanseDialis()) {
+	        /*if (medCase.getIsAmbulanseDialis()) {
 	            nextStatCardNumber = String.valueOf(medCase.getPatient().getId());
 	            StatisticStubExist statstub = new StatisticStubExist();
 	            statstub.setCode(nextStatCardNumber);
 	            statstub.setYear(year);
 	            statstub.setMedCase(medCase);
 	            medCase.setStatisticStub(statstub);
-	        } else {
+	        } else {*/
 	            StatisticStubRestored restored =null ;
 	            boolean next ;
 	            do {
@@ -447,7 +447,7 @@ public class StatisticStubStac {
 	            	medCase.setStatisticStub(stubexist);
 	            	
 	            }
-	        }
+	        //}
         }
 		//ИМТ рост вес
 		int height = form.getHeight();
