@@ -137,7 +137,7 @@
         <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" >
           <msh:row >
             <td colspan="9">
-              <div id="formInfoMessage2" onclick="this.style.display = &quot;none&quot;">
+              <div id="formInfoMessage2" onclick="this.style.display = 'none'">
                 <table style="margin-left: 4em">
                   <tr>
                     <td>
@@ -234,21 +234,6 @@
 	        	<msh:autoComplete parentId="stac_sslAdmissionForm.patient" property="attachedPolicyDmc" label="Прик.полис ДМС" horizontalFill="true" fieldColSpan="3" vocName="dmcPolicyByPatient"/>
 	        </msh:row>
         </msh:ifFormTypeIsCreate>
-        <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" >
-          <msh:row >
-            <td colspan="9">
-              <div id="formInfoMessage1" onclick="this.style.display = &quot;none&quot;">
-                <table style="margin-left: 4em">
-                  <tr>
-                    <td>
-                      <div class="formInfoMessage">* Поле отделение является обязательным. При отказе госпитализации не заполняется!!!</div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </td>
-          </msh:row>
-        </msh:ifFormTypeIsNotView>
         <mis:ifPatientIsWoman classByObject="Patient" idObject="stac_sslAdmissionForm.patient" roles="/Policy/Mis/Pregnancy/History/View">
         <msh:separator label="Беременность" colSpan="9"/>
         <msh:row>
@@ -512,62 +497,75 @@
   		}
   		</script> 
       <script type="text/javascript">// при отказе в госпитализации ставим признак "Амбулаторное лечение"
-      eventutil.addEventListener($('emergency'), "change",function(){
-            if (+$('emergency').checked) {
-                $('orderTypeName').className="autocomplete horizontalFill required";
-                $('preAdmissionTimeName').className="autocomplete horizontalFill required";
-                $('height').className=" ";
-                $('weight').className=" ";
-            } else {
-                $('orderTypeName').className="autocomplete horizontalFill";
-                $('preAdmissionTimeName').className="autocomplete horizontalFill";
-                $('height').className=" required";
-                $('weight').className=" required";
 
-        	}
+      //и настраиваем доступность роста-веса в зависимости от наличия отказа
+      function checkWheight() {
+          if (+$('deniedHospitalizating').value>0) {
+              //если есть отказ, рост и вес не сохраняются
+              $('height').value = $('weight').value = "";
+              $('theIMT').value="0.0";
+              $('height').disabled = $('weight').disabled = true;
+              $('height').className=" ";
+              $('weight').className=" ";
+          }
+          else {
+              $('height').disabled = $('weight').disabled = false;
+              if (+$('emergency').checked==0) {
+                  $('height').className=" required";
+                  $('weight').className=" required";
+              }
+          }
+      }
+      checkWheight();
 
-        }) ;
-		 if (+$('emergency').checked) {
-             $('orderTypeName').className="autocomplete horizontalFill required";
-             $('preAdmissionTimeName').className="autocomplete horizontalFill required";
-             $('height').className=" ";
-             $('weight').className=" ";
-         } else {
-             $('orderTypeName').className="autocomplete horizontalFill";
-             $('preAdmissionTimeName').className="autocomplete horizontalFill";
-             $('height').className=" required";
-             $('weight').className=" required";
-     	}
+      //настройка обязательности полей для экстренной и плановой госпит
+      var chEm = function checkEmergency() {
+          if (+$('emergency').checked) {
+              $('orderTypeName').className="autocomplete horizontalFill required";
+              $('preAdmissionTimeName').className="autocomplete horizontalFill required";
+              $('orderMkbName').className='autocomplete horizontalFill';
+              $('orderLpuName').className='autocomplete horizontalFill';
+              $('sourceHospTypeName').className='autocomplete horizontalFill';
+              $('height').className=" ";
+              $('weight').className=" ";
+          } else {
+              $('orderTypeName').className="autocomplete horizontalFill";
+              $('preAdmissionTimeName').className="autocomplete horizontalFill";
+              //при плановой госпитализации необходимо заполнить раздел Направлен
+              $('orderMkbName').className='autocomplete horizontalFill required';
+              $('orderLpuName').className='autocomplete horizontalFill required';
+              $('sourceHospTypeName').className='autocomplete horizontalFill required';
+              if (+$('deniedHospitalizating').value==0) {
+                  $('height').className=" required";
+                  $('weight').className=" required";
+              }
+          }
+      };
+      eventutil.addEventListener($('emergency'), "change",chEm) ;
+      chEm();
+
 		if ($('deniedHospitalizatingName')) {
-            var ch = function ch() {
-            
+            var chDenied = function ch() {
+
                 if (+$('deniedHospitalizating').value>0) {
                     $('ambulanceTreatment').checked = true;
                     $('medicalAid').checked = true;
-                    $('departmentName').className="autocomplete horizontalFill";
+                    //при отказе от госпитализации всё равно заполняется
+                    //$('departmentName').className="autocomplete horizontalFill";
                     $('hospitalizationName').className="autocomplete horizontalFill";
                     $('serviceStreamName').className="autocomplete horizontalFill";
                 } else {
                 	$('ambulanceTreatment').checked = false;
                     $('medicalAid').checked = false;
-                    $('departmentName').className="autocomplete horizontalFill required";
+                    //$('departmentName').className="autocomplete horizontalFill required";
                     $('hospitalizationName').className="autocomplete horizontalFill required";
                     $('serviceStreamName').className="autocomplete horizontalFill required";
             	}
-            }              
-       		eventutil.addEventListener($('deniedHospitalizatingName'),'blur',ch);
-       		if (+$('deniedHospitalizating').value>0) {
-                $('ambulanceTreatment').checked = true;
-                $('departmentName').className="autocomplete horizontalFill";
-                $('hospitalizationName').className="autocomplete horizontalFill";
-                $('serviceStreamName').className="autocomplete horizontalFill";
-            } else {
-            	$('ambulanceTreatment').checked = false;
-                $('departmentName').className="autocomplete horizontalFill required";
-                $('hospitalizationName').className="autocomplete horizontalFill required";
-                $('serviceStreamName').className="autocomplete horizontalFill required";
-        	}
-        }
+                checkWheight();
+            };
+       		eventutil.addEventListener($('deniedHospitalizatingName'),'blur',chDenied);
+            chDenied();
+        };
 
 		</script>
     </msh:ifFormTypeIsNotView>

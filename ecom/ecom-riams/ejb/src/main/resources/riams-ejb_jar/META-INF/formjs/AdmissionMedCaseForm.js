@@ -195,8 +195,8 @@ function onSave(aForm,aEntity,aCtx) {
 		.executeUpdate() ;
 	aCtx.manager.createNativeQuery("update medcase set emergency='"+(aForm.emergency ? "1" : "0")+"' where parent_id="+aForm.id+" and dtype='DepartmentMedCase'").executeUpdate();
 
-	//fix после отпуска
-	/*if (aEntity.statisticStub!=null) {
+	//Сохранение роста и веса при редактировании поступления в стационар (когда уже есть стат карта)
+	if (aEntity.statisticStub!=null) {
 		var stat = aEntity.statisticStub;
 		var w = parseInt(+aForm.weight);
 		var h = parseInt(+aForm.height);
@@ -208,7 +208,7 @@ function onSave(aForm,aEntity,aCtx) {
 		}
 		aCtx.manager.persist(stat);
 
-	}*/
+	}
 }
 
 function onPreSave(aForm,aEntity, aCtx) {
