@@ -62,6 +62,7 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
       <tags:CreateDiagnoseCriteria name="CreateDiagnoseCriteria" />
+      <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   	<msh:ifFormTypeIsNotView formName="stac_diagnosisForm">
 	  	<script type="text/javascript">
 	  		idc10Autocomplete.addOnChangeCallback(function() {
@@ -76,7 +77,13 @@
 	  				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
 	  			}
 	  		}
-
+            HospitalMedCaseService.getMedcaseDtypeById(${param.id}, {
+                callback: function (resType) {
+                    var voc = resType == '0'?
+                        'vocIdc10AllPermitted' : 'vocIdc10';
+                    idc10Autocomplete.setUrl('simpleVocAutocomplete/'+voc);
+                    backgroundDiseaseAutocomplete.setUrl('simpleVocAutocomplete/'+voc);
+                }});
 	  	</script>
         <msh:ifInRole roles="/Policy/Mis/Order203">
             <script type="text/javascript">
@@ -97,7 +104,6 @@
   	</msh:ifFormTypeIsNotView>
   	<msh:ifFormTypeIsCreate formName="stac_diagnosisForm">
   		<msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/Accoucheur">
-		    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   			<script type="text/javascript">
   				
   				HospitalMedCaseService.getTypeDiagByAccoucheur( {

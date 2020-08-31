@@ -183,7 +183,7 @@
           <msh:textField property="orderDate" label="Дата"  />
         </msh:row>
         <msh:row >
-          <msh:autoComplete property="orderMkb" label="Код МКБ направителя"  vocName="vocIdc10" horizontalFill="true" fieldColSpan="3" />
+          <msh:autoComplete property="orderMkb" label="Код МКБ направителя"  vocName="vocIdc10AllPermitted" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row >
           <msh:textField property="orderDiagnos" label="ДИАГНОЗ напр. учреждения"  fieldColSpan="3" horizontalFill="true" />
