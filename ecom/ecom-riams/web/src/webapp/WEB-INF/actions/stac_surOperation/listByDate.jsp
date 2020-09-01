@@ -110,6 +110,7 @@
 	     cast('Класс раны: ' as varchar(12))||vcw.name||cast(', препарат: ' as varchar(12))
 	    ||vab.name||' '||so.dose||' '||vmd.name||cast(' в 1). ' as varchar(7))||so.firstdosetime||cast(' 2). ' as varchar(5))
 	    ||case when so.seconddosetime is not null then cast(so.seconddosetime as varchar) else '-' end as ant
+	    ,st.code as stcode
 	     from SurgicalOperation so
 
 	    left join anesthesia an on an.surgicaloperation_id=so.id
@@ -129,6 +130,7 @@
      left join vocclasswound vcw on vcw.id=so.classwound_id
      left join vocmethodsdrugadm vmd on vmd.id=so.methodsdrugadm_id
      left join vocantibioticdrug vab on vab.id=so.antibioticdrug_id
+     left join statisticstub st on st.medcase_id =sls.id
 	       where ${typeDateSql} 
 	        between to_date('${beginDate}','dd.mm.yyyy')
 	          and to_date('${endDate}','dd.mm.yyyy') 
@@ -153,9 +155,11 @@
 	    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation1"
 	    action="entityView-stac_surOperation.do" idField="1" 
 	    viewUrl="entityShortView-stac_surOperation.do"
+				   openNewWindow="true"
 	    >
 	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="Статус пациента" property="7"/>
+			<msh:tableColumn columnName="Номер истории" property="10"/>
 	      <msh:tableColumn columnName="Пациент" property="5"/>
 	      <msh:tableColumn columnName="Период операции" property="2" />
 	      <msh:tableColumn columnName="Хирург" property="8"/>
