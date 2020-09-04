@@ -251,7 +251,7 @@ public class LoginSaveAction extends LoginExitAction {
     			//System.out.println("get id message") ;
     			Long id=serviceLogin.createSystemMessage("Не заполнялись данные по пациентам более "+cntDays+" дней:", res1.toString(), aUsername) ;
     			//System.out.println("id="+id) ;
-    			UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более "+cntDays+" дней:", res1.toString(),"stac_report_cases_not_filled.do") ;
+    			UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более "+cntDays+" дней:", res1.toString(),"stac_report_cases_not_filled.do?typeIsOtherDocFromLpu=2") ;
     		}
     	}
     	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/DirectMedicalCommission", aRequest)) { //Превышены сроки ожидания направления на ВК
