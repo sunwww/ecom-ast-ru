@@ -379,65 +379,7 @@
         } else {
             alert("Нет выделенных данных");
         }
-	}    /*
-    function printAdmission() {
-        	var status = '${status}'; 
-	    	
-            var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
-            if (ids) {
-                window.location = 'print-listAdmission.do?s=HospitalPrintService&m=printAddressSheetArrival&id='+ ids +'&spec='+$('spec').value+'&department='+$('department').value+'&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value+"&status="+status;
-                
-            } else {
-                alert("Нет выделенных данных");
-            }
-
-	    }
-	    function printDischarge() {
-        	var status = '${status}'; 
-	    	
-            var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
-            if (ids) {
-                window.location = 'print-listDischarge.do?s=HospitalPrintService&m=printAddressSheetArrival&id='+ ids+'&spec='+$('spec').value+'&department='+$('department').value+'&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value+"&status="+status;
-                
-            } else {
-                alert("Нет выделенных данных");
-            }
-
-	    }
-	    function printAdmission1() {
-	    	
-        	var status = '${status}'; 
-          var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
-            if (ids) {
-                window.location = 'print-reestrAdmission.do?s=HospitalPrintService&m=printAddressSheetArrival&id='+ ids +'&spec='+$('spec').value+'&department='+$('department').value+'&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value+"&status="+status;
-                
-            } else {
-                alert("Нет выделенных данных");
-            }
-
-	    }
-	    function printDischarge1() {
-	    	
-            var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
-            if (ids) {
-            	var status = '${status}'; 
-                window.location = 'print-reestrDischarge.do?s=HospitalPrintService&m=printAddressSheetArrival&id='+ ids+'&spec='+$('spec').value+'&department='+$('department').value+'&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value+"&status="+status;
-                
-            } else {
-                alert("Нет выделенных данных");
-            }
-
-	    }
-	    function printInogReestr() {
-	    	var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
-            if (ids) {
-            	var status = '${status}'; 
-                window.location = 'print-reestrInogByHospital.do?s=HospitalPrintService&m=printAddressSheetArrival&id='+ ids+'&spec='+$('spec').value+'&department='+$('department').value+'&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value+"&status="+status;
-                
-            } else {
-                alert("Нет выделенных данных");
-            }
-	    }*/
+	}
     </script>
     
   </tiles:put>

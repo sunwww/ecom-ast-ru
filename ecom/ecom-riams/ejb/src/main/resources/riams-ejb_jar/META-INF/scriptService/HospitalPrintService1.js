@@ -231,20 +231,11 @@ function getMedServiceNameByProtocol (aCtx, aProtocolId) {
 function printProtocols(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var ids = ids1.split(",") ;
-	//infoSmo(aCtx,ids[0]) ;
 	infoPrint(aCtx,ids[0]) ;
-	//var ret = new java.lang.StringBuilder () ;
-	//ret.append(ids) ;
-	//var list = new 
-	//throw ids ;
-	
-	
+
 	var ret = new java.util.ArrayList() ;
-//	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
     var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
-	//var startDate =  FORMAT_2.parse(obj[0])) ;
-	//var finishDate = FORMAT_1.format( FORMAT_2.parse(obj[1])) ;
 	var current = new java.util.Date() ;
 	var curDate = new java.sql.Date(current.getTime()) ;
 	
@@ -253,8 +244,6 @@ function printProtocols(aCtx, aParams) {
 		var id1=ids[i] ;
 		var indlast = id1.lastIndexOf("!") ;
 		var id = id1.substring(indlast+1) ;
-		//throw indlast+"--"+id1 +"----"+id;
-		
 		
 		var protocol = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol
 		, new java.lang.Long(id)) ;

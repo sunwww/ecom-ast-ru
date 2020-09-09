@@ -8,7 +8,7 @@
 
   <tiles:put name="title" type="string">
     <msh:title mainMenu="StacJournal">Журнал СЛО (открытых) по лечащему врачу
-     &nbsp; <a href='stac_report_cases_not_filled.do'>Не заполнялись данные по пациентам более 2х дней</a>
+     &nbsp; <a href='stac_report_cases_not_filled.do'>Не заполнялись данные по пациентам более N дней</a>
      &nbsp; <a href='stac_report_direct_medical_commission.do'>Пациентам, которым надо будет делать направления на ВК</a> 
      &nbsp; <a href='js-stac_slo-list_edit_protocol.do'>Дневники на редактирование</a> 
      </msh:title>
