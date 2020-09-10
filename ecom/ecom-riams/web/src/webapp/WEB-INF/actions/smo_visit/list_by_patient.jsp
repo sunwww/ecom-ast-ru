@@ -76,19 +76,25 @@ order by mc.dateStart desc,mc.timeExecute desc
     </msh:table>
     <script type="text/javascript">
     function printProtocols(aFile) {
-    	var ids = theTableArrow.getInsertedIdsAsParams("id","listByPatient") ;
-    	
-    	if(ids) {
-    		//alert(ids) ;
-    		window.location = 'print-'+aFile+'.do?multy=1&m=printVisits&s=VisitPrintService&'+ids ;
-    		
-    	} else {
-    		alert("Нет выделенных протоколов");
-    	}
-    	
+      var ids = theTableArrow.getInsertedIdsAsParams("id", "listByPatient");
+      if (ids.indexOf('id=') == 0) ids = ids.substring(3); //замена (нужна в случае post-запроса)
+      ids = ids.replace(new RegExp('&id=', 'g'), ',');
+      if (ids) {
+        var myform = document.createElement("form");
+        myform.action = 'print-' + aFile + '.do?multy=1&m=printVisits&s=VisitPrintService&';
+        myform.method = "post";
+
+        var body = document.createElement("input");
+        body.value = ids;
+        body.name = "id";
+        document.body.appendChild(myform);
+        myform.appendChild(body);
+        myform.submit();
+      } else {
+        alert("Нет выделенных протоколов");
+      }
     }
     </script>
     </msh:ifInRole>
   </tiles:put>
 </tiles:insert>
-

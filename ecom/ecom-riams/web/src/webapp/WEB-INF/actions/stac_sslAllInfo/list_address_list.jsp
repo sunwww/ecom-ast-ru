@@ -347,8 +347,6 @@
     	<% }   %>
     
     <script type='text/javascript'>
-	    //new dateutil.DateField($('dateBegin'));
-	    //new dateutil.DateField($('dateEnd'));
 	 checkFieldUpdate('typeStatus','${typeStatus}',1) ;
      checkFieldUpdate('typeView','${typeView}',1) ;
      checkFieldUpdate('typeDate','${typeDate}',1) ;
@@ -369,7 +367,6 @@
     	}
     }
 	function printList(aFilename) {
-		//listAdmission,listDischarge
     	var status = '${status}'; 
     	
         var ids = theTableArrow.getInsertedIdsAsParams("","datelist") ;
