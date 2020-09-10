@@ -140,8 +140,13 @@ function onPreSave(aForm, aEntity, aCtx) {
 function onSave(aForm, aEntity, aCtx) {
     var username = aCtx.getSessionContext().getCallerPrincipal().getName();
     if (aForm.username!=null && aForm.username!="" && !aForm.username.equals(username)) {
-        throw "У Вас стоит ограничение на редактрование данного протокола!"+
-        "<br><br> Текущий пользователь: "+username+", протокол был создан пользователем: "+aForm.username ;
+        if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowEditAllProtocols"))
+            throw "У Вас стоит ограничение на редактрование данного протокола!" +
+            "<br><br> Текущий пользователь: " + username + ", протокол был создан пользователем: " + aForm.username;
+        else {
+            //регистрация события
+            aCtx.manager.createNativeQuery("insert into ChangeJournal (classname,changedate,changetime,SerializationBefore,objectid) values ('VISITPROTOCOL',current_date,current_time,'"+aForm.username+"- -"+aForm.editUsername+"','"+aForm.id+"')").executeUpdate() ;
+        }
     }
     var manager = aCtx.manager;
     var protocols = manager.createNativeQuery("select d.id,d.record from Diary d where d.id='" + aEntity.id + "' and d.dtype='Protocol'").getResultList();
