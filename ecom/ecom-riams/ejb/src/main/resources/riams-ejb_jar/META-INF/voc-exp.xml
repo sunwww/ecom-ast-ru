@@ -32,7 +32,7 @@
                 entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV010'
                 names   = 'code, name'
                 queried = 'code, name'
-                queryAppend="finishDate is null"
+                queryAppend="(finishDate is null or finishDate>=current_date)"
         />
     </voc>
     <voc id='vocE2FondV027' type='EntityVocService'>
@@ -155,7 +155,7 @@
                 names="voc.smocode|| ' '||voc.name||' '||coalesce(t.name,'') "
                 join="left join Omc_KodTer t on t.okato=voc.fondokato"
                 queried="voc.smocode like :querId or upper(voc.name) like upper(:query) "
-                queryAppend="voc.finishDate is null"
+                queryAppend="(voc.finishDate is null or voc.finishDate>=current_date)"
         />
     </voc>
     <voc id="vocNationalityCode" type="NativeVocService">

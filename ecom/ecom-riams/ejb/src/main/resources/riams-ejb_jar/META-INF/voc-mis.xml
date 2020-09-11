@@ -415,22 +415,6 @@
 		queried="cast(vct.id as varchar(2)) like :querId or upper(vct.name) like upper(:query) "
 	/>
 </voc>
-<!--
-<voc id="medServiceByWorkfunction" type="NativeVocService">
-	<NativeVocService
-		from="medservice ms"
-		parent="wf.id=:parent"
-		nameId="ms.id"
-		order="ms.name, ms.code"
-		groupBy="ms.id, ms.name, ms.code"
-		names="ms.code||' '||ms.name"
-		queryAppend="vst.code='OPERATION' and ms.finishDate is null"
-		queried="cast(wf.id as varchar(2)) like :querId or upper(wf.groupname) like upper(:query) "
-		join="left join workfunctionservice wfs on  ms.id=wfs.medservice_id
-			left join Workfunction wf on wfs.lpu_id=wf.lpu_id
-			left join vocservicetype vst on vst.id=ms.servicetype_id"
-	/>
-</voc> -->
 
 <voc id="operationRoom" type="NativeVocService">
 	<NativeVocService
@@ -543,7 +527,7 @@
 		nameId="ms.id"
 		order="ms.name"
 		names="ms.code||' '|| ms.name"
-		queryAppend="ms.finishDate is null"
+		queryAppend="(ms.finishDate is null or ms.finishDate>=current_date)"
 		queried=" upper(ms.name) like upper(:query) "
 	/>
 </voc>
@@ -572,22 +556,11 @@
 	/>
 </voc>
 
-	<!-- unused
-<voc id="hospServicies" type="NativeVocService">
-	<NativeVocService
-		from="MedService ms"
-		nameId="ms.id"
-		queryAppend="vst.code = 'к/д' and ms.finishDate is null" 
-		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
-		names="ms.code||' '|| ms.name"
-		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
-	/>
-</voc> -->
 <voc id="medServiceAnesthesia" type="NativeVocService">
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="vst.code = 'ANESTHESIA' and ms.finishDate is null" 
+		queryAppend="vst.code = 'ANESTHESIA' and (ms.finishDate is null or ms.finishDate>=current_date)"
 		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
@@ -598,7 +571,7 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="vst.code = 'OPERATION'  and (ms.finishDate is null or ms.finishDate>current_date)"
+		queryAppend="vst.code = 'OPERATION'  and (ms.finishDate is null or ms.finishDate>=current_date)"
 		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
@@ -732,7 +705,7 @@
 		parent=" wf.id = :par1 and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
 					  (vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0'))
 					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))"
-		queryAppend="MS.DTYPE='MedService'  and ms.finishDate is null"
+		queryAppend="MS.DTYPE='MedService'  and (ms.finishDate is null or ms.finishDate>=current_date)"
 		join="
 		left join WorkFunctionService wfs on wfs.medservice_id =ms.id
 		left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id
@@ -756,7 +729,7 @@
 				parent=" wf.id = :par1 and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
 					  (vss.code in ('BUDGET','OBLIGATORYINSURANCE') and (ms.isNoOmc is null or ms.isNoOmc='0'))
 					  or (vss.code not in ('BUDGET','OBLIGATORYINSURANCE') and pl.id is not null)))"
-				queryAppend="MS.DTYPE='MedService'  and ms.finishDate is null"
+				queryAppend="MS.DTYPE='MedService'  and (ms.finishDate is null or ms.finishDate>=current_date)"
 				join="
 		left join WorkFunctionService wfs on wfs.medservice_id =ms.id
 		left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id
@@ -779,7 +752,7 @@
 		from="MedService ms"
 		nameId="ms.id"
 		parent=" wf.id = :parent "
-		queryAppend="MS.DTYPE='MedService'  and ms.finishDate is null"
+		queryAppend="MS.DTYPE='MedService'  and (ms.finishDate is null or ms.finishDate>=current_date)"
 		join="
 		left join WorkFunctionService wfs on wfs.medservice_id =ms.id
 		left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id
@@ -804,7 +777,7 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId=" ms.id"
-		queryAppend="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null and ms.isForLabDoctor='1'" 
+		queryAppend="vst.code = 'LABSURVEY' and ms.dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date) and ms.isForLabDoctor='1'" 
 		join=" left join workfunctionservice wfs on wfs.medservice_id=ms.id 
 				left join vocprescripttype vpt on vpt.id=wfs.prescripttype_id 
 				left join vocservicetype vst on vst.id=ms.servicetype_id " 
@@ -819,7 +792,7 @@
 <voc id="labMedService" type="NativeVocService">
 	<NativeVocService
 		from="MedService ms"
-		parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null and ms.id not in (select mss.id from medservice mss
+		parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date) and ms.id not in (select mss.id from medservice mss
 	left join workfunctionservice wfss on wfss.medservice_id=mss.id
 	left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id
 	left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= :parent 
@@ -841,7 +814,7 @@
 	<voc id="labMedServiceByServiceStreamPol" type="NativeVocService">
 		<NativeVocService
 				from="MedService ms"
-				parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null
+				parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date)
 				and ms.id not in (select mss.id from medservice mss
 	left join workfunctionservice wfss on wfss.medservice_id=mss.id
 	left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id
@@ -872,7 +845,7 @@
 	<voc id="labMedServiceByServiceStreamStac" type="NativeVocService">
 		<NativeVocService
 				from="MedService ms"
-				parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null
+				parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date)
 				and ms.id not in (select mss.id from medservice mss
 	left join workfunctionservice wfss on wfss.medservice_id=mss.id
 	left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id
@@ -1366,7 +1339,7 @@
     			parent=""
     			names = "code||' '||name"
     			nameId="id"
-    			queryAppend="dtype='MedService' and finishdate is null"
+    			queryAppend="dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date)"
     			join=''
     			order=''
     			queried = "(cast(id as varchar(10)) like :query or upper(name) like UPPER(:query) or code like UPPER(:query) or replace(code,'.','') like UPPER(:query))"
@@ -1381,7 +1354,7 @@
     			parent=""
     			names = "code||' '||name"
     			nameId="id"
-    			queryAppend="dtype='MedService' and finishDate is null"
+    			queryAppend="dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date)"
     			join=''
     			order=''
     			queried = "((cast(id as varchar(10)) like :query or name like UPPER(:query)) or (replace(upper(code),'.','') like (upper(:query))) or upper(name) like upper(:query) or upper(code) like upper(:query))"
@@ -1547,20 +1520,6 @@
     	/>
     
     </voc>
-
-	<!-- unused
-    <voc id='medServiceDop' type='NativeVocService'>
-    	<NativeVocService
-    			from = 'MedService'
-    			names = "name||'(' || COALESCE(to_char(startDate,'DD.MM.YYYY'),'нет даты')
-||'-'||COALESCE(TO_CHAR(finishDate,'DD.MM.YYYY'),'нет даты') ||')'"
-    			nameId="id"
-    			queryAppend="dtype='MedService'"
-    			join=''
-    			order=''
-    			queried = "(id like :querId or name like UPPER(:query))"
-    	/>
-    </voc> -->
 
     <voc id='pregnancyByWoman' type='AllValueHelper'>
         <IAllValue>ru.ecom.mis.ejb.service.birth.PregnancyByWomanVoc</IAllValue>
@@ -2379,27 +2338,13 @@
 		    	parent='okt.id=:parent'
 		    	nameId="oss.id"
 		    	join=" left join Omc_KodTer as okt on oss.smocode like okt.voc_code||'%' "
-		    	queryAppend=" oss.smoCode is not null and oss.finishDate is null"
+		    	queryAppend=" oss.smoCode is not null and (oss.finishDate is null or oss.finishDate>=current_date)"
 		    	order=""
 		    	queried=" oss.name like UPPER(:query) "
 		    	names = " oss.name"
 		    />
 
     </voc>
-
-	<!--
-    <voc id='mainSMO' type="NativeVocService">
-    	<NativeVocService
-    		from = ' MedCase as smo '
-    		parent=' smo.patient_id=:parent '
-    		names=" case when smo.dtype='POLYCLINICMEDCASE' then 'СПО: '||smo.id when smo.dtype='HOSPITALMEDCASE' and smo.statisticstub_id is not null then 'СЛС: '||ss.code else 'СЛС: нет №стат.карты' end" 
-    		nameId=" smo.id "
-    		queried=" ss.code like :query or smo.id like :query"
-    		queryAppend=" (smo.DTYPE='HOSPITALMEDCASE' or smo.DTYPE='POLYCLINICMEDCASE') "
-    		join=' left join statisticstub ss on smo.statisticstub_id=ss.id'
-    		order=""
-    		/>
-    </voc> -->
 
     <voc id='allSMO' type="NativeVocService">
     	<NativeVocService
@@ -2852,7 +2797,7 @@ left join patient wp on wp.id=w.person_id "
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocMedService'
                 names   = 'code,name'
                 queried = 'code,name'
-				queryAppend="finishDate is null"
+				queryAppend="(finishDate is null or finishDate>=current_date)"
         />
     </voc>
     
