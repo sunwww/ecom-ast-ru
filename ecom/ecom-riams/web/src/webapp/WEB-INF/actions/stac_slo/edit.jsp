@@ -135,6 +135,7 @@
                     <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
                     <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/View" name="Кардиоскрининг" action="/javascript:window.open('print-cardiacScreeningForm.do?s=PrintNewBornHistoryService&m=printCardiacScreeningForm&id='+${param.id});" params="id"/>
                     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintAnestResPatient" name="Печать перс. данных А4" action="/javascript:window.open('print-anestResStat.do?m=printAnestResPatient&s=HospitalPrintService&id=${param.id}');" params="id"/>
+                    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" name="Направление на микроб. иссл-е" action="/javascript:window.open('print-microbio.do?m=printMiсrobio&s=HospitalPrintService&id=${param.id}');" params="id"/>
                 </msh:sideMenu>
             </msh:ifNotInRole>
             <msh:sideMenu title="Администрирование">

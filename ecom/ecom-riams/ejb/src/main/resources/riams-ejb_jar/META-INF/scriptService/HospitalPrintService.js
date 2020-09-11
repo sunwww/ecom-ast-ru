@@ -2771,6 +2771,36 @@ function printAnestResPatient(aCtx, aParams) {
     return map;
 }
 
+//печать направления на микробиологическое исследование
+function printMiсrobio(aCtx, aParams) {
+	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
+		, new java.lang.Long(aParams.get("id"))) ;
+	var sql = "select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio" +
+		" ,to_char(current_date,'dd.mm.yyyy г. ')||to_char(current_timestamp,'HH24 час. MM мин') as dt" +
+		" ,adr.fullname as adr" +
+		" ,(select vwf.name||' '||p.lastname||' '||p.firstname||' '||p.middlename " +
+		" from SecUser su" +
+		" left join WorkFunction wf on wf.secuser_id=su.id" +
+		" left join VocWorkFunction vwf on vwf.id = wf.workFunction_id" +
+		" left join Worker w on w.id=wf.worker_id" +
+		" left join Patient p on p.id=w.person_id" +
+		" where login = 'kmeshkov' and p.id is not null" +
+		" ) as doc" +
+		" from patient pat" +
+		" left join medcase slo on slo.patient_id =pat.id " +
+		" left join address2 adr on adr.addressId = pat.address_addressId" +
+		" where slo.id="+medCase.id;
+	var arr  = aCtx.manager.createNativeQuery(sql).getResultList();
+	if (!arr.isEmpty()) {
+		var data = arr.get(0);
+		map.put("fio",""+data[0]);
+		map.put("dt",""+data[1]);
+		map.put("adr",""+data[2]);
+		map.put("doc",""+data[3]);
+	}
+	return map;
+}
+
 //Получить информацию по пациенту (patId) для печати в направлении
 function getPatientHIVDirectionInfo(aCtx,patId) {
 	return aCtx.manager.createNativeQuery("select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio" +
