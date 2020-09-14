@@ -22,6 +22,9 @@
 					<li><msh:link roles='/Policy/Mis/MedCase/Covid19/Report' action="covid19_journal.do">
 						отчет по картам COVID
 					</msh:link></li>
+					<li><msh:link  isReport="false" action="journal_searchEmptyCovid.do" roles="/Policy/Mis/MedCase/Covid19/Report">
+						Поиск госпитализаций, в которых не создана карта COVID
+					</msh:link></li>
 					<li><msh:link roles='/Policy/Mis/MedCase/Visit/Report039' action="journal_foreignPatients.do">
 						Отчет об оказанной помощи иногородними и иностранцам
 					</msh:link></li>
