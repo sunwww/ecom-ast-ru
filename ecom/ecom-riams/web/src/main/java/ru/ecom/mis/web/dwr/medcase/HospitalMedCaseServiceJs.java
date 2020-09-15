@@ -1788,7 +1788,7 @@ public class HospitalMedCaseServiceJs {
 				(aSlsOrPat ? aSlsOrPatId : "") + (aSlsOrPat ? "'))" : "") +
 				" and (cip.startdate<=current_date and cip.finishdate is null " +
 				" or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))" +
-				" order by cip.startDate";
+				" order by cip.startDate,cip.id";
 		return service.executeNativeSqlGetJSON(new String[] {"vcipId","vsipName","colorCode","vsipnameJust"
 				,"picture","info","isforpat"}, sql,null);
     }

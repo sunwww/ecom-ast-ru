@@ -173,5 +173,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 						  roles="/Policy/Mis/MedCase/Stac/Ssl/View"
 						  action="/pres_doctor_lab_journal.do" name="Журнал лабораторных назначений"
 			/>
+			<msh:sideLink styleId="journal_doc_externalMedService"
+						  roles="/Policy/Mis/MedCase/Covid19/Report"
+						  action="/journal_searchEmptyCovid.do" name="Поиск госпитализаций, в которых не создана карта COVID"
+			/>
 	    </msh:sideMenu>
 </msh:sideMenu>
