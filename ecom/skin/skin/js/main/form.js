@@ -167,6 +167,16 @@ function showToastMessage(aMessage,aJson,aAutoClose,aError, aMs) {
 		});
 	}
 }
+//вывести сообщение с табуляцией для критической патологии
+function showMsgWithTab(totalMsg,aJson,aAutoClose,aError, aMs) {
+    showToastMessage(totalMsg,aJson,aAutoClose,aError, aMs);
+    var mas = jQuery( ".jq-toast-single.jq-has-icon.jq-icon-info" );
+    for (var i=0; i<mas.length; i++) {
+        if (mas[i].innerHTML.indexOf('Критическая патология')!=-1) {
+            mas[i].innerHTML = mas[0].innerHTML.replace(new RegExp('<br>','g'),'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+        }
+    }
+}
 function viewEmergencyUserMessage(aJsonId) {
 	var fldJson = JSON.parse(aJsonId) ;
 	var cnt = fldJson.params.length ;
@@ -614,7 +624,7 @@ function setBr(table, tdResNum, tdJsonNum) {
                 var size = 25;
                 for (var j = 0; j < aResult.length; j++) {
                     var brace = aResult[j];
-                    var msg = brace.info ? brace.info.replace(new RegExp('\n','g'),'<br>') : brace.vsipnameJust;
+                    var msg = brace.info ? brace.info.replace(new RegExp('\n','g'),'<br>') : brace.vsipnamejust;
                     var style = 'style="width:' + size + 'px;height: ' + size + 'px;outline: 1px solid gray; border:2px;';
                     style += brace.picture ? '">' : ' background: ' + brace.colorcode + ';">';
                     if (brace.picture)
