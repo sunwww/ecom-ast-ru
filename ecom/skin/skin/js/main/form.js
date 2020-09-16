@@ -167,16 +167,6 @@ function showToastMessage(aMessage,aJson,aAutoClose,aError, aMs) {
 		});
 	}
 }
-//вывести сообщение с табуляцией для критической патологии
-function showMsgWithTab(totalMsg,aJson,aAutoClose,aError, aMs) {
-    showToastMessage(totalMsg,aJson,aAutoClose,aError, aMs);
-    var mas = jQuery( ".jq-toast-single.jq-has-icon.jq-icon-info" );
-    for (var i=0; i<mas.length; i++) {
-        if (mas[i].innerHTML.indexOf('Критическая патология')!=-1) {
-            mas[i].innerHTML = mas[0].innerHTML.replace(new RegExp('<br>','g'),'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-        }
-    }
-}
 function viewEmergencyUserMessage(aJsonId) {
 	var fldJson = JSON.parse(aJsonId) ;
 	var cnt = fldJson.params.length ;

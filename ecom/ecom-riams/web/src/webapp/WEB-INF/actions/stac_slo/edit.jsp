@@ -1142,11 +1142,13 @@ where m.id ='${param.id}'"/>
                                     for (var i=0; i<aResult.length; i++) {
                                         var brace = aResult[i];
                                         var toastMsg = brace.info ? brace.info.replace(new RegExp('\n','g'),'<br>') : brace.vsipnameJust;  //для вывода в toast
-                                        var msg = brace.info ? brace.info.replace(new RegExp('<br>','g'),'\n\t\t\t\t\t\t       ') : brace.vsipnameJust;
+                                        var msg = brace.info ? brace.info.replace(new RegExp('<br>','g'),'\n') : brace.vsipnameJust; //при наведении
+                                        msg = msg.replace('Критическая патология анализа: ','Критическая патология анализа:\n');
+                                        toastMsg = toastMsg.replace('Критическая патология анализа: ','Критическая патология анализа:<br>');
                                         var style = 'width: 40px;height: 40px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;';
                                         style+= brace.picture ? 'background-image: url(\'/skin/images/bracelet/'+brace.picture+'\');background-size: 40px 40px; '
                                             :' background-color: '+brace.colorCode +';';
-                                        str+='<td><div onclick="showMsgWithTab(\''+toastMsg+'\',null,true,false);" title="'+msg+'" style="'+style+'"></div></td>';
+                                        str+='<td><div onclick="showToastMessage(\''+toastMsg+'\',null,true,false);" title="'+msg+'" style="'+style+'"></div></td>';
                                     }
                                     str+="</tr></table>";
                                     document.getElementById('mainFormLegend').parentNode.innerHTML=document.getElementById('mainFormLegend').parentNode.innerHTML.replace('<h2 id="mainFormLegend">Лечение в отделении</h2>',"<h2 id=\"mainFormLegend\">Лечение в отделении</h2>"+str);
