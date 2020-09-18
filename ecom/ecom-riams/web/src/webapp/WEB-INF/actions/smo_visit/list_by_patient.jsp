@@ -77,9 +77,10 @@ order by mc.dateStart desc,mc.timeExecute desc
     <script type="text/javascript">
     function printProtocols(aFile) {
       var ids = theTableArrow.getInsertedIdsAsParams("id", "listByPatient");
-      if (ids.indexOf('id=') == 0) ids = ids.substring(3); //замена (нужна в случае post-запроса)
-      ids = ids.replace(new RegExp('&id=', 'g'), ',');
       if (ids) {
+        if (ids.indexOf('id=') == 0) ids = ids.substring(3); //замена (нужна в случае post-запроса)
+        ids = ids.replace(new RegExp('&id=', 'g'), ',');
+
         var myform = document.createElement("form");
         myform.action = 'print-' + aFile + '.do?multy=1&m=printVisits&s=VisitPrintService&';
         myform.method = "post";

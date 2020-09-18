@@ -449,7 +449,7 @@ function uncheckTh(th,num) {
     if (table.rows.length>0) {
         //если есть чекбоксы для печати списка, пропустить первую пустую строку с кнопкой
         var startRow=table.rows.length>1 && table.rows[1].getElementsByTagName('th').length>0
-            && table.rows[1].getElementsByTagName('th')[0].innerHTML.indexOf("onclick=\"theTableArrow.onCheckBoxClickAll(this)\"")!=-1?
+            && table.rows[1].getElementsByTagName('th')[0].innerHTML.indexOf("onclick=\"theTableArrow.onCheckBox\"")!=-1?
             1 : 0;
         var cols = table.rows[startRow].getElementsByTagName('th');
         for (var i = 0; i < cols.length; i++) {

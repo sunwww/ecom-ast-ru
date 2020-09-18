@@ -168,9 +168,9 @@ order by d.dateRegistration,d.timeRegistration
         <script type="text/javascript">
             function printProtocols(aFile) {
             	var ids1 = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
-                if (ids1.indexOf('id=')==0) ids1=ids1.substring(3); //замена (нужна в случае post-запроса)
-                ids1 = ids1.replace(new RegExp('&id=','g'),',');
                 if (ids1) {
+                    if (ids1.indexOf('id=')==0) ids1=ids1.substring(3); //замена (нужна в случае post-запроса)
+                    ids1 = ids1.replace(new RegExp('&id=','g'),',');
                     var myform = document.createElement("form");
                     myform.action = "print-"+aFile+".do?multy=1&m=printProtocols&s=HospitalPrintService1";
                     myform.method = "post";
