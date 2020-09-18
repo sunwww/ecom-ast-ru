@@ -33,8 +33,8 @@ public class Covid19 extends BaseEntity {
     public void setCardNumber(String aCardNumber) {theCardNumber = aCardNumber;}
     private String theCardNumber ;
 
-    /** Место работы */
-    @Comment("Место работы")
+    /** Место работы, должность */
+    @Comment("Место работы, должность")
     public String getWorkPlace() {return theWorkPlace;}
     public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
     private String theWorkPlace ;
@@ -177,8 +177,8 @@ public class Covid19 extends BaseEntity {
    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
    private Date theCreateDate ;
 
-   /** Дата создания */
-   @Comment("Дата создания")
+   /** Время создания */
+   @Comment("Время создания")
    public Time getCreateTime() {return theCreateTime;}
    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
    private Time theCreateTime ;

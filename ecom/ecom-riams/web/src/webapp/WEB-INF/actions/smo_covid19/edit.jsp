@@ -215,7 +215,6 @@
       </msh:ifFormTypeIsNotView>
       </script>
     </msh:ifFormTypeAreViewOrEdit>
-
   </tiles:put>
 </tiles:insert>
 
