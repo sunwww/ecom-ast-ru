@@ -1136,15 +1136,6 @@
                 }
                 </msh:ifFormTypeIsNotView>
             }
-            //увеличение размеров рб
-            function transform() {
-                var radios = document.getElementsByTagName('input');
-                for (i = 0; i < radios.length; i++) {
-                    if (radios[i].type == 'radio'  || radios[i].type == 'checkbox') {
-                        if (radios[i].style.margin=='') radios[i].style.margin='5px'; if (radios[i].style.transform=='') radios[i].style.transform = "scale(1.5)";
-                    }
-                }
-            }
             function loadvocOncologyReasonTreat() {
                 if ($('isFirst').value == 'true') document.getElementsByName("typeFirstOrNot")[0].checked = 'checked';
                 else document.getElementsByName("typeFirstOrNot")[1].checked = 'checked';
@@ -1228,7 +1219,8 @@
                         for(var i=1; i<=6; i++) checkDateContra(document.getElementById("c"+i));
                         transform();
                         <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
-                        disableAll();
+                        var divToDisable = (suspicionOncologist.checked)? '#oncologyDirection' : '#oncologyCase';
+                        disableAll(divToDisable);
                         </msh:ifFormTypeIsView>
                     }});
             }
@@ -1263,7 +1255,8 @@
                         transform();
                         setDateBiopsRequired();
                         <msh:ifFormTypeIsView formName="oncology_case_reestrForm">
-                        disableAll();
+                        var divToDisable = (suspicionOncologist.checked)? '#oncologyDirection' : '#oncologyCase';
+                        disableAll(divToDisable);
                         </msh:ifFormTypeIsView>
                     }
                 });
@@ -1349,24 +1342,6 @@
                     for (var i = 0; i < document.getElementsByName("ploskoklet").length; i++) (document.getElementsByName("ploskoklet")[i]).removeAttribute("disabled");
                 }
                 else if (t=='3') for (var i = 0; i < document.getElementsByName("diff").length; i++) (document.getElementsByName("diff")[i]).removeAttribute("disabled");
-            }
-            //получить значения группы радиобаттонов
-            function getValueVocRadiooncoT(name,voc) {
-                eval('var chk =  document.forms[0].'+name) ;
-                var res=-1;
-                for (var i=0; i<chk.length; i++) {
-                    if (chk[i].checked) res=chk[i].id.replace(voc,'');
-                }
-                return res;
-            }
-            //получить значения группы чекбоксов
-            function getValueVocChboncoT(voc) {
-                eval('var chk =  document.forms[0].'+voc) ;
-                var res=[];
-                for (var i=0; i<chk.length; i++) {
-                    if (chk[i].checked) res.push(chk[i].id.replace(voc,''));
-                }
-                return res;
             }
             /*
             * Зашитое в код ввиду нецелесообразности остальных вариантов
@@ -1794,12 +1769,6 @@
                 else document.getElementsByName("typeNauseaOrNot")[1].checked = 'checked';
                 if (document.getElementById("vocOncologyN013_4").checked && $('vocOncologyN0200')==null)
                     createRowMed(-1);
-            }
-            //Скрыть див для редактирования
-            function disableAll() {
-                var divToDisable = (suspicionOncologist.checked)? '#oncologyDirection' : '#oncologyCase';
-                jQuery(divToDisable).fadeTo('slow',.6);
-                jQuery(divToDisable).append('<div style="position: absolute;bottom:0;left:0;width: 100%;height:98%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
             }
             //Добавление строки с медикаментом
             function createRowMed(ii) {

@@ -45,6 +45,12 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 				  name="Создать онкологический случай"
 				  roles="/Policy/Mis/Oncology/Case/Create"/>
 
+	<msh:sideLink
+			params="id"
+			action="/entityParentPrepareCreate-smo_covidMark.do"
+			name="Форма оценки тяжести коронавируса"
+			roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+
 	<msh:sideLink key="ALT+6"
 				  params="id"
 				  action="/entityParentPrepareCreate-preg_shortConfCertificate.do"

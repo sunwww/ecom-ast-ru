@@ -439,6 +439,7 @@
         </msh:ifFormTypeIsView>
 
         <script type="text/javascript" src="./dwr/interface/OncologyService.js"></script>
+        <script type="text/javascript" src="./dwr/interface/CovidService.js"></script>
         <script type="text/javascript">
             function trim(aStr) {
                 return aStr.replace(/|\s+|\s+$/gm,'') ;
@@ -538,7 +539,31 @@
                                                     document.forms["mainForm"].action = old_action;
                                                 }
                                                 removeFromStorage();
-                                                document.forms["mainForm"].submit();
+                                                CovidService.checkSlsU(${param.id}, {
+                                                    callback: function (resU) {
+                                                        var umas = resU.split('#');
+                                                        //если диагноз U и нет формы оценки или
+                                                        //если в выписке добавили U, а в СЛС оценки нет
+                                                        if (umas[0]=='1' || ($('concludingMkbName').value[0]=='U' && umas[1]==0)) {
+                                                            savePreRecord();
+                                                            if (aPrefix=='') {
+                                                                if (confirm("Внимание! Не сооздана форма оценки тяжести заболевания COVID-19. Продолжить?"))
+                                                                    document.forms["mainForm"].submit();
+                                                                else {
+                                                                    $('submitButton').disabled = false;
+                                                                    $('submitPreDischrge1').disabled = false;
+                                                                    $('submitPreDischrge2').disabled = false;
+                                                                }
+                                                            }
+                                                            else {
+                                                                $('submitButton').disabled = false;
+                                                                $('submitPreDischrge1').disabled = false;
+                                                                $('submitPreDischrge2').disabled = false;
+                                                            }
+                                                        }
+                                                        else
+                                                            document.forms["mainForm"].submit();
+                                                    }});
                                             } else {
                                                 try {
                                                     $('submitPreDischrge2').disabled = false;
