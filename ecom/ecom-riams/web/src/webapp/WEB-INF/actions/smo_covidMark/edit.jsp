@@ -245,6 +245,12 @@
                         }
                         if (cnt3<2 && cnt2<2 && cnt1<2)
                             $('sost').value=0;
+                        $('sost').value++;//т.к. код с 0 начинается
+                    }
+
+                    //перейти к выписке
+                    function goToDischarge() {
+                        window.location.href = 'entityParentEdit-stac_sslDischarge.do?id=' + $('medCase').value;
                     }
                 </script>
             </tiles:put>
@@ -256,7 +262,7 @@
                     <msh:sideLink key="ALT+2" params="id" action="/entityEdit-smo_covidMark" name="Изменить" />
                     <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-smo_covidMark" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin" />
                     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
-                                  name="Выписка &larr;"   params="id"  action='/entityParentEdit-stac_sslDischarge'
+                                  name="Выписка &larr;"   params=""  action='/javascript:goToDischarge();'
                                   key='Alt+9' title='Выписка' styleId="stac_sslDischarge" />
                 </msh:sideMenu>
             </msh:ifFormTypeIsView>

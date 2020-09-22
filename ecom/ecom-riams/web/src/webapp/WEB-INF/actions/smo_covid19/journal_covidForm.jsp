@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="StacJournal">Поиск госпитализаций, в которых не создана форма оценки тяжести COVID</msh:title>
+        <msh:title mainMenu="StacJournal">Поиск госпитализаций, в которых нет <u><i>формы оценки тяжести COVID</i></u></msh:title>
     </tiles:put>
     <tiles:put name='side' type='string'>
     </tiles:put>
@@ -68,14 +68,13 @@
                 left join MedCase as sls on sls.id = m.parent_id
                 left join Patient pat on m.patient_id = pat.id
                 left join mislpu dep on dep.id=sls.department_id
-                left join diagnosis ds on ds.medcase_id = sls.id
-                left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+                left join diagnosis ds on ds.medcase_id = sls.id or ds.medcase_id = m.id
                 left join vocidc10 idc on idc.id=ds.idc10_id
                 left join covidmark cv on cv.medcase_id = sls.id
                 where m.DTYPE='DepartmentMedCase'
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-                and sls.dtype='HospitalMedCase' and reg.code='3' and idc.code like 'U%' and cv.id is null
-                order by dep.name" />
+                and sls.dtype='HospitalMedCase' and idc.code like 'U%' and cv.id is null
+                order by dep.name,pat.patientinfo" />
                 <msh:table name="journal_covidForm"  noDataMessage="Нет данных"
                            action="entityParentView-stac_ssl.do" idField="1">
                     <msh:tableColumn property="sn" columnName="#" />
