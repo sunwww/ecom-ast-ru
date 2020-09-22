@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Comment("Справочник нарушений сознания в оценке ковида")
+@Comment("Справочник признаков тяжёлого состояния")
 @Table(schema = "SQLUser")
-public class VocSozn extends VocBaseEntity {
+public class VocBadSost extends VocBaseEntity {
 }

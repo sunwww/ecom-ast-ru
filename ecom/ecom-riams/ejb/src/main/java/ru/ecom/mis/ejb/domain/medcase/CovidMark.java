@@ -93,6 +93,12 @@ public class CovidMark  extends BaseEntity {
     public void setTemp(VocTemp aTemp) {theTemp = aTemp;}
     private VocTemp theTemp ;
 
+    /** Нарушение сознания (3) */
+    @Comment("Нарушение сознания (3)")
+    public Boolean getIsBadSozn() {return theIsBadSozn;}
+    public void setIsBadSozn(Boolean aIsBadSozn) {theIsBadSozn = aIsBadSozn;}
+    private Boolean theIsBadSozn ;
+
     /** Тяжесть заболевания в оценке ковида */
     @Comment("Тяжесть заболевания в оценке ковида")
     @OneToOne

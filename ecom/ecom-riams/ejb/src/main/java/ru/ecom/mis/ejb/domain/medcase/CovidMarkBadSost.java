@@ -1,7 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.mis.ejb.domain.medcase.voc.covidMarcVocs.VocSozn;
+import ru.ecom.mis.ejb.domain.medcase.voc.covidMarcVocs.VocBadSost;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.*;
@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(schema="SQLUser")
-public class CovidMarkSozn extends BaseEntity {
+public class CovidMarkBadSost extends BaseEntity {
     @Comment("Форма оценки сознания")
     @ManyToOne(fetch = FetchType.LAZY)
     public CovidMark getCovidMark() {
@@ -28,7 +28,7 @@ public class CovidMarkSozn extends BaseEntity {
     /** Нарушение сознания в оценке ковида */
     @Comment("Нарушение сознания в оценке ковида")
     @OneToOne
-    public VocSozn getSozn() {return theSozn;}
-    public void setSozn(VocSozn aSozn) {theSozn = aSozn;}
-    private VocSozn theSozn ;
+    public VocBadSost getBadSost() {return theBadSost;}
+    public void setBadSost(VocBadSost aBadSost) {theBadSost = aBadSost;}
+    private VocBadSost theBadSost ;
 }

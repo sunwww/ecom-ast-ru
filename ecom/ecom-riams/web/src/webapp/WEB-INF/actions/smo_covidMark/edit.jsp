@@ -32,7 +32,7 @@
             <msh:hidden property="chdd" />
             <msh:hidden property="puls" />
             <msh:hidden property="temp" />
-            <msh:hidden property="soznString" />
+            <msh:hidden property="badSostString" />
             <msh:ifFormTypeIsNotView formName="smo_covidMarkForm">
                 <msh:hidden property="createDate" />
                 <msh:hidden property="createTime" />
@@ -56,8 +56,12 @@
             <label><b>Температура тела:</b></label><br>
             <div class="borderedDiv" id="tempDiv"></div>
             <br>
-            <label><b>Нарушение сознания:</b></label><br>
-            <div class="borderedDiv" id="soznDiv"></div>
+            
+            <label><b>Признаки тяжелого состояния:</b></label><br>
+            <div class="borderedDiv" id="badSostDiv"></div>
+            <br>
+            
+            <msh:checkBox property="isBadSozn" label="Нарушение сознания"/><br>
             <br>
             <msh:panel>
                 <msh:row>
@@ -81,6 +85,9 @@
             </msh:panel>
             <msh:ifFormTypeIsNotView formName="smo_covidMarkForm">
                 <msh:submitCancelButtonsRow colSpan="4" functionSubmit="this.disabled=true; save(this) ;"/>
+                <td>
+                    <input value="Рассчитать" onclick="calc();" type="button">
+                </td>
             </msh:ifFormTypeIsNotView>
         </msh:form>
             <tiles:put name="javascript" type="string">
@@ -137,12 +144,12 @@
                         jQuery('#chddDiv').html('');
                         jQuery('#changeLurgeDiv').html('');
                         jQuery('#tempDiv').html('');
-                        jQuery('#soznDiv').html('');
+                        jQuery('#badSostDiv').html('');
                         loadDivFromVoc('vocPuls', jQuery('#pulsDiv')[0], 'radio');
                         loadDivFromVoc('vocChdd', jQuery('#chddDiv')[0], 'radio');
                         loadDivFromVoc('vocChangeLungs', jQuery('#changeLurgeDiv')[0], 'radio');
                         loadDivFromVoc('vocTemp', jQuery('#tempDiv')[0], 'radio');
-                        loadDivFromVoc('vocSozn', jQuery('#soznDiv')[0], 'checkbox');
+                        loadDivFromVoc('vocBadSost', jQuery('#badSostDiv')[0], 'checkbox');
                         <msh:ifFormTypeIsView formName="smo_covidMarkForm">
                         disableAll('#mainForm');
                         </msh:ifFormTypeIsView>
@@ -165,8 +172,8 @@
                                 if (res != '') {
                                     var mas = res.replace(new RegExp(' ','g'),'').split(',');
                                     for (var i=0; i<mas.length; i++) {
-                                        if ($('vocSozn'+mas[i]))
-                                            $('vocSozn'+mas[i]).checked=true;
+                                        if ($('vocBadSost'+mas[i]))
+                                            $('vocBadSost'+mas[i]).checked=true;
                                     }
                                 }
                             }
@@ -184,7 +191,7 @@
                         var chdd = getValueVocRadiooncoT('vocChdd', 'vocChdd');
                         var changeLungs = getValueVocRadiooncoT('vocChangeLungs', 'vocChangeLungs');
                         var temp = getValueVocRadiooncoT('vocTemp', 'vocTemp');
-                        var vocSozn=getValueVocChboncoT('vocSozn');
+                        var vocBadSost=getValueVocChboncoT('vocBadSost');
                         if (puls == -1) {
                             alert("Заполните пульоксиметрию!");
                             btn.removeAttribute("disabled");
@@ -205,8 +212,8 @@
                             btn.removeAttribute("disabled");
                             btn.value = 'Создать';
                         }
-                        else if (vocSozn.length==0) {
-                            alert("Заполните нарушение сознания!");
+                        else if (vocBadSost.length==0) {
+                            alert("Заполните признаки тяжёлого состояния!");
                             btn.removeAttribute("disabled");
                             btn.value='Создать';
                         }
@@ -215,7 +222,7 @@
                             $('chdd').value = chdd;
                             $('changeLungs').value = changeLungs;
                             $('temp').value = temp;
-                            $('soznString').value = vocSozn;
+                            $('badSostString').value = vocBadSost;
                             calc();
                              document.forms[0].submit();
                         }
@@ -243,9 +250,25 @@
                                     $('sost').value=1;
                                 }
                         }
+                        //признаки тяжёлого состояния - если выбран любой (т.е. не выбран Ничего из этого), то тяжёлое
+                        if (!jQuery('#vocBadSost1').prop('checked')) {
+                            cnt2=2;
+                            $('sost').value=2;
+                        }
+                        //нарушение сознания - 3
+                        if (jQuery('#isBadSozn').prop('checked')) {
+                            cnt3 = 2;
+                            $('sost').value = 3;
+                        }
                         if (cnt3<2 && cnt2<2 && cnt1<2)
                             $('sost').value=0;
                         $('sost').value++;//т.к. код с 0 начинается
+                        CovidService.getSostById($('sost').value, {
+                            callback: function (aResult) {
+                                if (aResult != '')
+                                    $('sostReadOnly').value = aResult;
+                            }
+                        });
                     }
 
                     //перейти к выписке

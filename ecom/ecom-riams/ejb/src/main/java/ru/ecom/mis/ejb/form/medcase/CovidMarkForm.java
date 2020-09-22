@@ -122,12 +122,19 @@ public class CovidMarkForm  extends IdEntityForm {
     public void setSost(Long aSost) {theSost = aSost;}
     private Long theSost ;
 
-    /** Строка с нарушениями сознания */
-    public String getSoznString() {
-        return soznString;
+    /** Нарушение сознания (3) */
+    @Comment("Нарушение сознания (3)")
+    @Persist
+    public Boolean getIsBadSozn() {return theIsBadSozn;}
+    public void setIsBadSozn(Boolean aIsBadSozn) {theIsBadSozn = aIsBadSozn;}
+    private Boolean theIsBadSozn ;
+
+    /** Строка с признаками тяжёлого состояния */
+    public String getBadSostString() {
+        return badSostString;
     }
-    public void setSoznString(String soznString) {
-        this.soznString = soznString;
+    public void setBadSostString(String badSostString) {
+        this.badSostString = badSostString;
     }
-    private String soznString ;
+    private String badSostString ;
 }
