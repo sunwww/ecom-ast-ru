@@ -29,43 +29,40 @@ tablearrow.TableArrow = function(aTableId) {
         selectFirst() ;
     }
 
-    /**
-     * Все ли строки в массиве rows имеют класс inserted
-     * @return true - все, false - не все
-     */
-    function checkAllRowsChecked(rows,clazz) {
-        for(var i=0; i<rows.length; i++) {
-            var aRow = rows[i] ;
-            if (aRow!=null && Element.hasClassName(aRow, clazz) ) {
-                if (aRow.className.indexOf("inserted")==-1)
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    this.onCheckBoxClickInvert = function(aIdParamName) {
+    this.onCheckBoxClickAll = function(aIdParamName) {
     	var check = aIdParamName.checked ;
     	aIdParamName.checked = false ;
     	var clazz = aIdParamName.id ;
     	var rows = getRows() ;
-
-    	var isDeselect = checkAllRowsChecked(rows,clazz);
-
+    	var atr ;
         for(var i=0; i<rows.length; i++) {
             var row = rows[i] ;
+
             if(row!=null && Element.hasClassName(row, clazz) ) {
-                if (isDeselect)
-                    deinsert(row);
-	             else if ((check && Element.hasClassName(row, "inserted"))
+	             if ((check && Element.hasClassName(row, "inserted"))
 		            || (!check && !Element.hasClassName(row, "inserted"))) {
-                     insert(row,true) ;
 	            } else {
 	            	insert(row) ;
 	            }
             }
         }
-    };
+        //aIdParamName.checked = false;
+    }
+    this.onCheckBoxClickInvert = function(aIdParamName) {
+    	var check = aIdParamName.checked ;
+     	aIdParamName.checked = false ;
+    	var clazz = aIdParamName.id ;
+    	var rows = getRows() ;
+    	var atr ;
+        for(var i=0; i<rows.length; i++) {
+            var row = rows[i] ;
+
+            if(row!=null && Element.hasClassName(row, clazz) ) {
+	            	insert(row) ;
+            }
+        }
+        //aIdParamName.checked = false;
+    }
 
     /**
      * Получение строки параметров
@@ -146,22 +143,16 @@ tablearrow.TableArrow = function(aTableId) {
     	Element.removeClassName(aRow, "selected") ;
     }
 
-    function deinsert(aRow) {
-        Element.removeClassName(aRow, "inserted") ;
-        jQuery(aRow).find('input:checkbox').prop("checked", false);
-    }
-
-    function insert(aRow,selectAll) {
+    function insert(aRow) {
         var classes = aRow.className.split(' ');
         var checkBox = $(classes[0]+'_'+classes[1]) ;
 
-        if (selectAll || !Element.hasClassName(aRow, "inserted")) {
-            Element.addClassName(aRow, "inserted") ;
-            if(checkBox) checkBox.checked = true ;
-        }
-        else {
+        if(Element.hasClassName(aRow, "inserted")) {
             Element.removeClassName(aRow, "inserted") ;
             if(checkBox) checkBox.checked = false ;
+        } else {
+            Element.addClassName(aRow, "inserted") ;
+            if(checkBox) checkBox.checked = true ;
         }
     }
 

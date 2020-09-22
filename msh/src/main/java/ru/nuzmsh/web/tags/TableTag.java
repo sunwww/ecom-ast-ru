@@ -420,7 +420,8 @@ public class TableTag extends AbstractGuidSupportTag {
 
                             out.println("<th>") ;
                             String typeId = theName ;
-                            out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClickInvert(this)' title='Выделить все'/>") ;
+                            out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClickAll(this)' title='Выделить все'/>") ;
+                            out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClickInvert(this)' title='Инвертировать все'/>") ;
                             out.println("</th>") ;
                             i++;
                         }
