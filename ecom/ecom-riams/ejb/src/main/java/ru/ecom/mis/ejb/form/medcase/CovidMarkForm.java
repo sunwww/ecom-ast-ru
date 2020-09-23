@@ -18,8 +18,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
  */
 @EntityForm
 @EntityFormPersistance(clazz = CovidMark.class)
-@Comment("Форма оценки тяжести коронавируса")
-@WebTrail(comment = "Форма оценки тяжести коронавируса"
+@Comment("Форма оценки тяжести COVID-19")
+@WebTrail(comment = "Форма оценки тяжести COVID-19"
         , nameProperties = "id", view = "entityParentView-smo_covidMark.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase")
 @Parent(parentForm = HospitalMedCaseForm.class,  property = "medCase")

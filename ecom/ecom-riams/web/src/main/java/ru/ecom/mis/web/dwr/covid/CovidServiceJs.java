@@ -33,10 +33,10 @@ public class CovidServiceJs {
      *
      * @param markId CovidMark.id
      * @param aRequest HttpServletRequest
-     * @return String Нарушения сознания
+     * @return String Признаки тяжёлого состояния
      * @throws NamingException
      */
-    public String getSozns(String markId,HttpServletRequest aRequest) throws NamingException {
+    public String getBadSosts(String markId,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> list = service.executeNativeSql(
                 "select list(cast (voc.id as varchar)) from CovidMarkBadSost c" +

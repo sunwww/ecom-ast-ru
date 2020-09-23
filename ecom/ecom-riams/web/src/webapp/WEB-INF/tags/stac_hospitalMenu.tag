@@ -48,7 +48,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideLink
 			params="id"
 			action="/entityParentPrepareCreate-smo_covidMark.do"
-			name="Форма оценки тяжести коронавируса"
+			name="Форма оценки тяжести COVID-19"
 			roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
 
 	<msh:sideLink key="ALT+6"

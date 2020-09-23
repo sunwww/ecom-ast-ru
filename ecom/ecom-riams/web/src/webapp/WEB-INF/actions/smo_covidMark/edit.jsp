@@ -18,12 +18,12 @@
         </style>
     </tiles:put>
     <tiles:put name="title" type="string">
-        <ecom:titleTrail title="Форма оценки тяжести коронавируса" mainMenu="MedCase" beginForm="smo_covidMarkForm" />
+        <ecom:titleTrail title="Форма оценки тяжести COVID-19" mainMenu="MedCase" beginForm="smo_covidMarkForm" />
     </tiles:put>
     <tiles:put name="body" type="string">
-        <msh:form action="entitySaveGoView-smo_covidMark.do" defaultField="id">
-            <msh:title>Отметьте <u><i>максимальные по тяжести</i></u> критерии,
-                которые наблюдались во время лечения пациента
+        <msh:form action="entityParentSaveGoParentView-smo_covidMark.do" defaultField="id">
+            <msh:title>Выберите <u><i>максимальное значение</i></u>, которое наблюдалось за время лечения,
+                или пункт "Ничего из этого"
             </msh:title>
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
@@ -33,6 +33,8 @@
             <msh:hidden property="puls" />
             <msh:hidden property="temp" />
             <msh:hidden property="badSostString" />
+            <msh:hidden property="isBadSozn" />
+            <msh:hidden property="sost" />
             <msh:ifFormTypeIsNotView formName="smo_covidMarkForm">
                 <msh:hidden property="createDate" />
                 <msh:hidden property="createTime" />
@@ -41,10 +43,23 @@
                 <msh:hidden property="editTime" />
                 <msh:hidden property="editUsername" />
             </msh:ifFormTypeIsNotView>
+            <table class="viewOnly">
+                <tbody>
+                    <tr>
+                        <td colspan="1" title="Тяжесть&nbsp;заболевания (sostEl)" class="label">
+                            <span style="font-size:20px;" id="sostElLabel" class="viewOnlyLabel">Тяжесть&nbsp;заболевания:</span></td>
+                        <td colspan="3" class="sostEl">
+                            <span style="font-size:20px;">
+                                <input class="viewOnly horizontalFill maxHorizontalSize" id="sostElReadOnly" name="sostElReadOnly" size="100" readonly="readonly">
+                                <input id="sostEl" value="3" name="sostEl" type="hidden">
+                            </span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
             <label><b>Пульсоксиметрия:</b></label><br>
             <div class="borderedDiv" id="pulsDiv"></div>
             <br>
-
             <label><b>Частота дыхательных движений:</b></label><br>
             <div class="borderedDiv" id="chddDiv"></div>
             <br>
@@ -57,16 +72,17 @@
             <div class="borderedDiv" id="tempDiv"></div>
             <br>
             
-            <label><b>Признаки тяжелого состояния:</b></label><br>
+            <label><b>Признаки тяжёлого состояния:</b></label><br>
             <div class="borderedDiv" id="badSostDiv"></div>
             <br>
-            
-            <msh:checkBox property="isBadSozn" label="Нарушение сознания"/><br>
+
+            <label><b>Нарушение сознания:</b></label><br>
+            <div class="borderedDiv" id="badSostDiv" onclick = 'calc();'>
+                <input id="isBadSoznChb" name="isBadSoznChb" type="checkbox" autocomplete="off">
+                <label id="isBadSoznChbLabel" for="isBadSoznChb">Нарушение&nbsp;сознания</label>
+            </div>
             <br>
             <msh:panel>
-                <msh:row>
-                    <msh:autoComplete vocName="vocSost" property="sost" label="Тяжесть заболевания" fieldColSpan="3" size="100" horizontalFill="true" viewOnlyField="true"/>
-                </msh:row>
                 <msh:ifFormTypeIsView formName="smo_covidMarkForm">
                     <msh:row>
                         <msh:separator label="Дополнительно" colSpan="4"/>
@@ -85,9 +101,6 @@
             </msh:panel>
             <msh:ifFormTypeIsNotView formName="smo_covidMarkForm">
                 <msh:submitCancelButtonsRow colSpan="4" functionSubmit="this.disabled=true; save(this) ;"/>
-                <td>
-                    <input value="Рассчитать" onclick="calc();" type="button">
-                </td>
             </msh:ifFormTypeIsNotView>
         </msh:form>
             <tiles:put name="javascript" type="string">
@@ -122,7 +135,7 @@
                                     txt + "<tr>";
                                     var vocVal = vocRes[ind1];
                                     txt += "<td id='td" + voc + vocVal.id + "' colspan=\"1\">";
-                                    txt += "<label><input type='" + type + "' name='" + voc + "' id='" + voc + vocVal.id;
+                                    txt += "<label onclick='checkNothingChb(this); calc(); '><input type='" + type + "' name='" + voc + "' id='" + voc + vocVal.id;
                                     txt += "' value='" + vocVal.code + "'";
                                     txt += ">";
                                     txt += vocVal.name;
@@ -150,6 +163,7 @@
                         loadDivFromVoc('vocChangeLungs', jQuery('#changeLurgeDiv')[0], 'radio');
                         loadDivFromVoc('vocTemp', jQuery('#tempDiv')[0], 'radio');
                         loadDivFromVoc('vocBadSost', jQuery('#badSostDiv')[0], 'checkbox');
+                        //jQuery("#isBadSoznChb").click(function(){ calc(); });
                         <msh:ifFormTypeIsView formName="smo_covidMarkForm">
                         disableAll('#mainForm');
                         </msh:ifFormTypeIsView>
@@ -167,7 +181,10 @@
                             $('vocChangeLungs'+$('changeLungs').value).checked=true;
                         if ($('vocTemp'+$('temp').value))
                             $('vocTemp'+$('temp').value).checked=true;
-                        CovidService.getSozns($('id').value, {
+                        jQuery('#isBadSoznChb').prop('checked',$('isBadSozn').value=="true");
+                        $('sostEl').value = $('sost').value;
+                        setSostName();
+                        CovidService.getBadSosts($('id').value, {
                             callback: function (res) {
                                 if (res != '') {
                                     var mas = res.replace(new RegExp(' ','g'),'').split(',');
@@ -223,50 +240,106 @@
                             $('changeLungs').value = changeLungs;
                             $('temp').value = temp;
                             $('badSostString').value = vocBadSost;
+                            $('isBadSozn').value = $('isBadSoznChb').checked;
+                            $('sost').value = $('sostEl').value;
                             calc();
                              document.forms[0].submit();
                         }
                     }
 
+                    //Если Ничего из этого - снять остальное, и наоборот
+                    function checkNothingChb(btn) {
+                        if (btn.childNodes[0].name=='vocBadSost') {
+                            if (btn.childNodes[0].value=='0') {
+                                var vocBadSost = getValueVocChboncoT('vocBadSost');
+                                for (var i=0; i<vocBadSost.length; i++) {
+                                    if (vocBadSost[i]!=1)
+                                        jQuery('#vocBadSost'+(i+1)).prop('checked',false)
+                                }
+                            }
+                            else if (btn.childNodes[0].value!='0')
+                                jQuery('#vocBadSost1').prop('checked',false)
+                        }
+                    }
+
+                    //проставить степень
+                    function setEl(cnt) {
+                        $('sostEl').value=++cnt;//т.к. код с 0 начинается
+                        setSostName();
+                    }
+
+                    //проверка, является ли 3 уровнем
+                    function getCnt3(inputs) {
+                        var cnt3 = 0;
+                        for (var i = 0; i < inputs.length; i++)
+                            if ((inputs[i].type == 'checkbox' || inputs[i].type == 'radio')
+                                && inputs[i].name.indexOf('voc') != -1 && inputs[i].name.indexOf('vocBadSost')==-1
+                                && inputs[i].checked && inputs[i].value == 3)
+                                    cnt3++;
+                        //если хоть 1 3его уровня и чекбокс проставлен
+                        if (cnt3>0  && jQuery('#isBadSoznChb').prop('checked') || cnt3>=2) {
+                            setEl(3);
+                            cnt3=2;
+                        }
+                        return cnt3;
+                    }
+
+                    //Вернуть кол-во критериев 2го уровня
+                    function getCnt2(inputs) {
+                        var cnt2 = 0;
+                        for (var i = 0; i < inputs.length; i++)
+                            if ((inputs[i].type == 'checkbox' || inputs[i].type == 'radio')
+                                && inputs[i].name.indexOf('voc') != -1 && inputs[i].name.indexOf('vocBadSost') == -1
+                                && inputs[i].checked && (inputs[i].value == 3 || inputs[i].value == 2))
+                                cnt2++;
+                        var vocBadSost = getValueVocChboncoT('vocBadSost');
+                        //если чекбокс или признак тяжёлого состояния (не "Ничего из этого")
+                        if (jQuery('#isBadSoznChb').prop('checked') || (vocBadSost.length > 0 && !jQuery('#vocBadSost1').prop('checked')))
+                            cnt2++;
+                        if (cnt2 >= 2) {
+                            setEl(2);
+                            cnt2=2;
+                        }
+                        return cnt2;
+                    }
+
+                    //Проверка 1го уровня
+                    function getCnt1(inputs,cnt2) {
+                        var cnt1 = cnt2;
+                        for (var i = 0; i < inputs.length; i++)
+                            if ((inputs[i].type == 'checkbox' || inputs[i].type == 'radio')
+                                && inputs[i].name.indexOf('voc') != -1 && inputs[i].name.indexOf('vocBadSost') == -1
+                                && inputs[i].checked && inputs[i].value == 1)
+                                cnt1++;
+                        if (cnt1 >= 2)
+                            setEl(1);
+                        return cnt1;
+                    }
+
+
                     //Рассчитать степень
                     function calc() {
+                        $('sostEl').value = 0;
+                        $('sostElReadOnly').value = '';
                         var inputs = document.getElementsByTagName('input');
-                        var cnt3=0,cnt2=0,cnt1=0;
-                        for (var i = 0; i < inputs.length; i++) {
-                            if ((inputs[i].type == 'checkbox' || inputs[i].type == 'radio')
-                                && inputs[i].name.indexOf('voc') != -1 && inputs[i].checked)
-                                if (inputs[i].value == 3) {
-                                    cnt3++;
-                                    if (cnt3>=2) {
-                                        $('sost').value=3;
-                                    }
-                                }
-                                else if (inputs[i].value == 2) {
-                                    cnt2++;
-                                    $('sost').value=2;
-                                }
-                                else if (inputs[i].value == 1) {
-                                    cnt1++;
-                                    $('sost').value=1;
-                                }
+                        var cnt2 = 0, cnt1 = 0, cnt3 = getCnt3(inputs);
+                        if (cnt3<2) {
+                            cnt2 = getCnt2(inputs);
+                            if (cnt2<2)
+                                cnt1 = getCnt1(inputs,cnt2);
+                            if ($('sostEl').value==0) {
+                                $('sostEl').value=1;
+                                setSostName();
+                            }
                         }
-                        //признаки тяжёлого состояния - если выбран любой (т.е. не выбран Ничего из этого), то тяжёлое
-                        if (!jQuery('#vocBadSost1').prop('checked')) {
-                            cnt2=2;
-                            $('sost').value=2;
-                        }
-                        //нарушение сознания - 3
-                        if (jQuery('#isBadSozn').prop('checked')) {
-                            cnt3 = 2;
-                            $('sost').value = 3;
-                        }
-                        if (cnt3<2 && cnt2<2 && cnt1<2)
-                            $('sost').value=0;
-                        $('sost').value++;//т.к. код с 0 начинается
-                        CovidService.getSostById($('sost').value, {
+                    }
+
+                    //проставить текст состояния
+                    function setSostName() {
+                        CovidService.getSostById($('sostEl').value, {
                             callback: function (aResult) {
                                 if (aResult != '')
-                                    $('sostReadOnly').value = aResult;
+                                    $('sostElReadOnly').value = aResult;
                             }
                         });
                     }
