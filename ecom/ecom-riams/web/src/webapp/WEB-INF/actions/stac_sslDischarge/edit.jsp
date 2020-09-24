@@ -468,16 +468,20 @@
                             //если диагноз U и нет формы оценки или
                             //если в выписке добавили U, а в СЛС оценки нет
                             if (umas[0] == '1' || ($('concludingMkbName').value[0] == 'U' && umas[1] == 0)) {
-                                if (confirm("Внимание! Не создана форма оценки тяжести заболевания COVID-19. Продолжить?"))
+                                if (confirm("Внимание! Не создана форма оценки тяжести заболевания COVID-19. Продолжить?")) {
                                     saveNext(aPrefix);
+                                }
                                 else {
                                     $('submitButton').disabled = false;
                                     $('submitPreDischrge1').disabled = false;
                                     $('submitPreDischrge2').disabled = false;
                                 }
                             }
-                        }
-                    });
+                                else {
+                                saveNext(aPrefix);
+                                }
+                            }
+                        });
                 }
                 else
                     saveNext(aPrefix);
