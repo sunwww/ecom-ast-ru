@@ -145,7 +145,7 @@
                 group by dep.id,dep.name
                 order by dep.name
                 " />
-                <msh:table name="journal_emptyCovid"  noDataMessage="Нет данных"
+                <msh:table printToExcelButton="Сохранить в Excel" name="journal_emptyCovid"  noDataMessage="Нет данных"
                            action="journal_searchEmptyCovid.do?&short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
                            idField="7" cellFunction="true">
                     <msh:tableColumn property="sn" columnName="#" />
@@ -189,7 +189,7 @@
                 ${sqlAdd}
                 and dep.id=${param.depId}
                 order by dep.name" />
-                <msh:table name="journal_emptyCovidPat"  noDataMessage="Нет данных"
+                <msh:table printToExcelButton="Сохранить в Excel" name="journal_emptyCovidPat"  noDataMessage="Нет данных"
                            action="entityParentView-stac_ssl.do" idField="1">
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="2" columnName="Отделение"/>
