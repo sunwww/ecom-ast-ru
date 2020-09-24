@@ -150,10 +150,10 @@
                            idField="7" cellFunction="true">
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="1" columnName="Отделение" addParam="&nul=nul"/>
-                    <msh:tableColumn property="2" columnName="Всего пациентов" addParam="&type=total"/>
-                    <msh:tableColumn property="3" columnName="Карт создано" addParam="&type=create"/>
+                    <msh:tableColumn property="2" isCalcAmount="true" columnName="Всего пациентов" addParam="&type=total"/>
+                    <msh:tableColumn property="3" isCalcAmount="true" columnName="Карт создано" addParam="&type=create"/>
                     <msh:tableColumn property="4" columnName="% создано" addParam="&nul=nul"/>
-                    <msh:tableColumn property="5" columnName="Карт не создано" addParam="&type=notCreate"/>
+                    <msh:tableColumn property="5" isCalcAmount="true" columnName="Карт не создано" addParam="&type=notCreate"/>
                     <msh:tableColumn property="6" columnName="% не создано" addParam="&nul=nul"/>
                 </msh:table>
             </msh:sectionContent>

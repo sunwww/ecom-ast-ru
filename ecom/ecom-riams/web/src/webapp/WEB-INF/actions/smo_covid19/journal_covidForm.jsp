@@ -78,67 +78,20 @@
             <msh:sectionContent>
                 <ecom:webQuery isReportBase="true" name="journal_covidForm" nativeSql="
                 select dep.name, count (distinct sls.id) as total
-                ,(select count(distinct sls.id)  from medCase m
-                left join MedCase as sls on sls.id = m.parent_id
-                left join bedfund as bf on bf.id=m.bedfund_id
-                left join vocbedtype vbt on vbt.id=bf.bedType_id
-                left join Patient pat on m.patient_id = pat.id
-                left join CovidMark c on sls.id=c.medcase_id
-                left join mislpu depinner on depinner.id=sls.department_id
-                where m.DTYPE='DepartmentMedCase'
-                and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-                and vbt.code='14'
-                and depinner.id=dep.id
-                and c.id is not null
-                ) as cntCard
-                ,round(100*cast((select count(distinct sls.id)  from medCase m
-                left join MedCase as sls on sls.id = m.parent_id
-                left join bedfund as bf on bf.id=m.bedfund_id
-                left join vocbedtype vbt on vbt.id=bf.bedType_id
-                left join Patient pat on m.patient_id = pat.id
-                left join CovidMark c on sls.id=c.medcase_id
-                left join mislpu depinner on depinner.id=sls.department_id
-                where m.DTYPE='DepartmentMedCase'
-                and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-                and vbt.code='14'
-                and depinner.id=dep.id
-                and c.id is not null
-                ) as numeric)/cast(count (distinct sls.id)  as numeric),2) as per
-                ,(select count(distinct sls.id)  from medCase m
-                left join MedCase as sls on sls.id = m.parent_id
-                left join bedfund as bf on bf.id=m.bedfund_id
-                left join vocbedtype vbt on vbt.id=bf.bedType_id
-                left join Patient pat on m.patient_id = pat.id
-                left join CovidMark c on sls.id=c.medcase_id
-                left join mislpu depinner on depinner.id=sls.department_id
-                where m.DTYPE='DepartmentMedCase'
-                and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-                and vbt.code='14'
-                and depinner.id=dep.id
-                and c.id is null
-                ) as cntNotCard
-                ,round(100*cast((select count(distinct sls.id)  from medCase m
-                left join MedCase as sls on sls.id = m.parent_id
-                left join bedfund as bf on bf.id=m.bedfund_id
-                left join vocbedtype vbt on vbt.id=bf.bedType_id
-                left join Patient pat on m.patient_id = pat.id
-                left join CovidMark c on sls.id=c.medcase_id
-                left join mislpu depinner on depinner.id=sls.department_id
-                where m.DTYPE='DepartmentMedCase'
-                and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-                and vbt.code='14'
-                and depinner.id=dep.id
-                and c.id is null
-                ) as numeric)/cast(count (distinct sls.id)  as numeric),2) as perNot
+				 ,sum(case when (select id from covidmark where medcase_id=sls.id) is not null then 1 else 0 end) as cntCard
+	             ,round(100*cast(sum(case when c.id is not null then 1 else 0 end) as numeric)/cast(count (distinct sls.id)  as numeric),2) as per
+                ,sum(case when c.id is null then 1 else 0 end) as cntNotCard
+                ,round(100*cast(sum(case when c.id is null then 1 else 0 end) as numeric)/cast(count (distinct sls.id)  as numeric),2) as perNot
                 ,'&depId='||coalesce(dep.id,0)||'&depname='||coalesce(dep.name,'')
-                from medCase m
-                left join MedCase as sls on sls.id = m.parent_id
-                left join bedfund as bf on bf.id=m.bedfund_id
+
+                from medCase sls
+                left join bedfund as bf on bf.id=(select bedfund_id from medcase where dtype='DepartmentMedCase' and parent_id=sls.id limit 1)
                 left join vocbedtype vbt on vbt.id=bf.bedType_id
-                left join Patient pat on m.patient_id = pat.id
+                left join Patient pat on sls.patient_id = pat.id
                 left join CovidMark c on sls.id=c.medcase_id
                 left join mislpu dep on dep.id=sls.department_id
-                where m.DTYPE='DepartmentMedCase'
+                left join vocsost vs on vs.id=c.sost_id
+                where sls.DTYPE='HospitalMedCase'
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 and vbt.code='14'
            		${department}
@@ -150,11 +103,11 @@
                            idField="7" cellFunction="true">
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="1" columnName="Отделение" addParam="&nul=nul"/>
-                    <msh:tableColumn property="2" columnName="Всего пациентов" addParam="&type=total"/>
-                    <msh:tableColumn property="3" columnName="Форм создано" addParam="&type=create"/>
-                    <msh:tableColumn property="4" columnName="% создано" addParam="&nul=nul"/>
-                    <msh:tableColumn property="5" columnName="Форм не создано" addParam="&type=notCreate"/>
-                    <msh:tableColumn property="6" columnName="% не создано" addParam="&nul=nul"/>
+                    <msh:tableColumn property="2" isCalcAmount="true" columnName="Всего пациентов" addParam="&type=total"/>
+                    <msh:tableColumn property="3" isCalcAmount="true" columnName="Форм создано" addParam="&type=create"/>
+                    <msh:tableColumn property="4" isCalcAmount="true" columnName="% создано" addParam="&nul=nul"/>
+                    <msh:tableColumn property="5" isCalcAmount="true" columnName="Форм не создано" addParam="&type=notCreate"/>
+                    <msh:tableColumn property="6" isCalcAmount="true" columnName="% не создано" addParam="&nul=nul"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -170,21 +123,20 @@
                 request.setAttribute("sqlAdd",sqlAdd);
         %>
         <msh:section>
-            <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+            <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd} в отделении ${depname}.</msh:sectionTitle>
         </msh:section>
         <msh:section>
             <msh:sectionContent>
                 <ecom:webQuery isReportBase="true" name="journal_covidFormPat" nativeSql="
                 select distinct sls.id,dep.name as depname, pat.patientinfo as info, vs.name as vsname
-                from medCase m
-                left join MedCase as sls on sls.id = m.parent_id
-                left join bedfund as bf on bf.id=m.bedfund_id
+                from medCase sls
+                left join bedfund as bf on bf.id=(select bedfund_id from medcase where dtype='DepartmentMedCase' and parent_id=sls.id limit 1)
                 left join vocbedtype vbt on vbt.id=bf.bedType_id
-                left join Patient pat on m.patient_id = pat.id
+                left join Patient pat on sls.patient_id = pat.id
                 left join CovidMark c on sls.id=c.medcase_id
                 left join mislpu dep on dep.id=sls.department_id
                 left join vocsost vs on vs.id=c.sost_id
-                where m.DTYPE='DepartmentMedCase'
+                where sls.DTYPE='HospitalMedCase'
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 and vbt.code='14'
                 ${sqlAdd}
