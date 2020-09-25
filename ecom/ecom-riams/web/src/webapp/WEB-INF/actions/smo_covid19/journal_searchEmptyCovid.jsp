@@ -117,19 +117,6 @@
                 and depinner.id=dep.id
                 and c.id is null
                 ) as cntNotCard
-                ,round(100*cast((select count(distinct sls.id)  from medCase m
-                left join MedCase as sls on sls.id = m.parent_id
-                left join bedfund as bf on bf.id=m.bedfund_id
-                left join vocbedtype vbt on vbt.id=bf.bedType_id
-                left join Patient pat on m.patient_id = pat.id
-                left join Covid19 c on sls.id=c.medcase_id
-                left join mislpu depinner on depinner.id=sls.department_id
-                where m.DTYPE='DepartmentMedCase'
-                and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-                and vbt.code='14'
-                and depinner.id=dep.id
-                and c.id is null
-                ) as numeric)/cast(count (distinct sls.id)  as numeric),2) as perNot
                 ,'&depId='||coalesce(dep.id,0)||'&depname='||coalesce(dep.name,'')
                 from medCase m
                 left join MedCase as sls on sls.id = m.parent_id
@@ -147,14 +134,13 @@
                 " />
                 <msh:table printToExcelButton="Сохранить в Excel" name="journal_emptyCovid"  noDataMessage="Нет данных"
                            action="journal_searchEmptyCovid.do?&short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
-                           idField="7" cellFunction="true">
+                           idField="6" cellFunction="true">
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="1" columnName="Отделение" addParam="&nul=nul"/>
                     <msh:tableColumn property="2" isCalcAmount="true" columnName="Всего пациентов" addParam="&type=total"/>
                     <msh:tableColumn property="3" isCalcAmount="true" columnName="Карт создано" addParam="&type=create"/>
                     <msh:tableColumn property="4" columnName="% создано" addParam="&nul=nul"/>
                     <msh:tableColumn property="5" isCalcAmount="true" columnName="Карт не создано" addParam="&type=notCreate"/>
-                    <msh:tableColumn property="6" columnName="% не создано" addParam="&nul=nul"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -175,7 +161,7 @@
         <msh:section>
             <msh:sectionContent>
                 <ecom:webQuery isReportBase="true" name="journal_emptyCovidPat" nativeSql="
-                select distinct sls.id,dep.name, pat.patientinfo
+                select distinct sls.id,dep.name, pat.patientinfo,st.code
                 from medCase m
                 left join MedCase as sls on sls.id = m.parent_id
                 left join bedfund as bf on bf.id=m.bedfund_id
@@ -183,6 +169,7 @@
                 left join Patient pat on m.patient_id = pat.id
                 left join Covid19 c on sls.id=c.medcase_id
                 left join mislpu dep on dep.id=sls.department_id
+                left join statisticstub st on st.medcase_id=sls.id
                 where m.DTYPE='DepartmentMedCase'
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 and vbt.code='14'
@@ -194,6 +181,7 @@
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="2" columnName="Отделение"/>
                     <msh:tableColumn property="3" columnName="Пациент"/>
+                    <msh:tableColumn property="4" columnName="Номер истории"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
