@@ -4,11 +4,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-<%
-    String nul = request.getParameter("nul") ;
-    if (nul==null) {
 
-%>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -159,7 +155,8 @@
             <msh:sectionContent>
                 <ecom:webQuery isReportBase="true" name="journal_covidFormPat" nativeSql="
                 select distinct sls.id,dep.name as depname, st.code as stc,pat.patientinfo as info
-                , vs.name as vsname, vhr.name as vhrname, vho.name as vhoname
+                , vs.name as vsname, vhr.name as vhrname
+                ,getChosenCovidFormPars(c.id) as pars
                  from medCase m
                 left join MedCase as sls on sls.id = m.parent_id
                 left join Patient pat on m.patient_id = pat.id
@@ -170,13 +167,12 @@
                 left join statisticstub st on st.medcase_id=sls.id
                 left join vocsost vs on vs.id=c.sost_id
                 left join vochospitalizationresult vhr on vhr.id=sls.result_id
-                left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
                 where m.DTYPE='DepartmentMedCase'
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 ${sqlAdd}
                 ${depSql}
                 ${department}
-                group by sls.id,dep.name, st.code,pat.patientinfo, vs.name, idc.code, vhr.name, vho.name
+                group by sls.id,dep.name, st.code,pat.patientinfo, vs.name, idc.code, vhr.name, c.id
                 having (idc.code like 'U%')
                 order by dep.name,pat.patientinfo" />
                 <msh:table printToExcelButton="Сохранить в Excel" name="journal_covidFormPat"  noDataMessage="Нет данных"
@@ -187,7 +183,7 @@
                     <msh:tableColumn property="2" columnName="Отделение"/>
                     <msh:tableColumn property="5" columnName="Степень тяжести COVID-19"/>
                     <msh:tableColumn property="6" columnName="Результат госпитализации"/>
-                    <msh:tableColumn property="7" columnName="Исход госпитализации"/>
+                    <msh:tableColumn property="7" columnName="Выбранные параметры"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -207,6 +203,3 @@
         </script>
     </tiles:put>
 </tiles:insert>
-<%
-    }
-%>
