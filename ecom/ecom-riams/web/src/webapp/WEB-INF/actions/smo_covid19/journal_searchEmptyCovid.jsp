@@ -15,6 +15,7 @@
     <tiles:put name="body" type="string">
         <%
             String typeDate = ActionUtil.updateParameter("typeDate","typeDate","2", request) ;
+            String typeType = ActionUtil.updateParameter("typeType","typeType","2", request) ;
             String department = request.getParameter("department") ;
             if (department!=null && !department.equals("")) request.setAttribute("department"," and dep.id="+department);
             String date="",dateEnd="", dateTo="";
@@ -57,6 +58,15 @@
                     </td>
                 </msh:row>
                 <msh:row>
+                    <td class="label" title="Поиск по  (typeType)" colspan="1"><label for="typeTypeName" id="typeTypeLabel">Группировать:</label></td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <input type="radio" name="typeType" value="1">  реестр пациентов
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeType" value="2">  свод по отделениям
+                    </td>
+                </msh:row>
+                <msh:row>
                     <td>
                         <input type="submit" value="Найти" />
                     </td>
@@ -64,7 +74,9 @@
             </msh:panel>
         </msh:form>
         <%
+            }
             if (request.getParameter("dateBegin")!=null &&  !request.getParameter("dateBegin").equals("")) {
+                if ("2".equals(typeType) && request.getParameter("short")==null) {
 
         %>
         <msh:section>
@@ -116,7 +128,7 @@
                 order by dep.name
                 " />
                 <msh:table printToExcelButton="Сохранить в Excel" name="journal_emptyCovid"  noDataMessage="Нет данных"
-                           action="journal_searchEmptyCovid.do?&short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
+                           action="journal_searchEmptyCovid.do?&short=Short&typeType=1&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
                            idField="5" cellFunction="true">
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="1" columnName="Отделение" addParam="&type=total"/>
@@ -126,17 +138,21 @@
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
-        <%    }}
-            else {
+        <%    }
+            else if (request.getParameter("short")==null || "1".equals(typeType)) {
                 String type = request.getParameter("type");
                 String sqlAdd="";
-                if (type!=null) {
+                if (type!=null || "1".equals(typeType)) {
                     if ("create".equals(type))
                         sqlAdd = " and c.id is not null";
                     else if ("notCreate".equals(type))
                         sqlAdd = " and c.id is null";
                     request.setAttribute("sqlAdd",sqlAdd);
-                    %>
+                    String depId = request.getParameter("depId");
+                    String depSql = depId!=null?
+                            "and dep.id = " + depId : "";
+                    request.setAttribute("depSql",depSql);
+        %>
         <msh:section>
             <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
         </msh:section>
@@ -144,6 +160,7 @@
             <msh:sectionContent>
                 <ecom:webQuery isReportBase="true" name="journal_emptyCovidPat" nativeSql="
                 select distinct sls.id,dep.name, pat.patientinfo,st.code
+                ,case when c.id is null then '-' else '+' end as exC
                 from medCase m
                 left join MedCase as sls on sls.id = m.parent_id
                 left join bedfund as bf on bf.id=m.bedfund_id
@@ -156,20 +173,23 @@
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 and vbt.code='14'
                 ${sqlAdd}
-                and dep.id=${param.depId}
-                order by dep.name" />
+                ${depSql}
+           		${department}
+                order by case when c.id is null then '-' else '+' end,dep.name, pat.patientinfo" />
                 <msh:table printToExcelButton="Сохранить в Excel" name="journal_emptyCovidPat"  noDataMessage="Нет данных"
                            action="entityParentView-stac_ssl.do" idField="1" openNewWindow="true">
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="2" columnName="Отделение"/>
                     <msh:tableColumn property="3" columnName="Пациент"/>
                     <msh:tableColumn property="4" columnName="Номер истории"/>
+                    <msh:tableColumn property="5" columnName="Есть карта?"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
-        <%} }%>
+        <%} } }%>
         <script type='text/javascript'>
             checkFieldUpdate('typeDate','${typeDate}',1) ;
+            checkFieldUpdate('typeType','${typeType}',2) ;
             function checkFieldUpdate(aField,aValue,aDefaultValue) {
                 eval('var chk =  document.forms[0].'+aField) ;
                 var aMax=chk.length ;

@@ -60,10 +60,10 @@
                 <msh:row>
                     <td class="label" title="Поиск по  (typeType)" colspan="1"><label for="typeTypeName" id="typeTypeLabel">Группировать:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-                        <input type="radio" name="typeType" value="1">  реестр
+                        <input type="radio" name="typeType" value="1">  реестр пациентов
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="3">
-                        <input type="radio" name="typeType" value="2">  по отделениям
+                        <input type="radio" name="typeType" value="2">  свод по отделениям
                     </td>
                 </msh:row>
                 <msh:row>
