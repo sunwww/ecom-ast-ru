@@ -117,7 +117,7 @@
                 jQuery.ajax({
                     url:elmedUrl+"/importFile?file="+fileName
                 }).done(function(res) {
-                    var dt = JSON.parse(res.result);
+                    var dt = JSON.parse(res);
                         let str = "";
                         jQuery.each(dt.data, function (ind, el) {
                             str+="<br><p style=\"color: "+(el.status=="ok" ?"green\">"+el.recordId +" УСПЕШНО": "red\">"+el.recordId+" "+el.statusName)+"</p>";

@@ -2015,7 +2015,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         sb.append(",");
                     }
                     sb.append("'").append(d).append("'");
-                    if ((d.startsWith("C") && Integer.valueOf(d.substring(1,3))<81) || (d.startsWith("D") && Integer.valueOf(d.substring(1,3))<9))  {
+                    if ((d.startsWith("C") && Integer.parseInt(d.substring(1,3))<81) || (d.startsWith("D") && Integer.parseInt(d.substring(1,3))<9))  {
                         cancerDiagnosis = d;
                     } else if (d.startsWith("C")) {
                         findCDiagnosis = true;
@@ -2475,7 +2475,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         E2CoefficientPatientDifficultyEntryLink link;
         //calc 10
-        List<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = new ArrayList<>();
+        Set<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = new HashSet<>();
         long sluchDuration = aEntry.getBedDays()!=null ? aEntry.getBedDays(): 1;
         long maxDuration = Boolean.TRUE.equals(aEntry.getKsg().getLongKsg()) ? 45 : 30;
         if (sluchDuration > maxDuration) { //Если случай лечения больше 30 (45) дней, ищем "10" коэффициент
@@ -2497,11 +2497,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
             }
         }
-        if (Boolean.TRUE.equals(ksg.getIsCovid19()) && !codes.contains("18")) codes.add("18");
+
+        if (Boolean.TRUE.equals(ksg.getIsCovid19())) codes.add("18");
+        if (aEntry.getDopKritKSG().equals("IT25")) codes.add("19"); //крайнетяжелое состояние - доп крит
 
         //Пришло время сохранять все сложности пациента
         if (!codes.isEmpty()) {
-            //theManager.createNativeQuery("delete from E2CoefficientPatientDifficultyEntryLink where entry_id=:id").setParameter("id",aEntry.getId()).executeUpdate();
             for (String code : codes) {
                 if (!difficultyHashMap.containsKey(code)) {
                     difficultyHashMap.put(code,(VocE2CoefficientPatientDifficulty)getActualVocByClassName(VocE2CoefficientPatientDifficulty.class,null," code='"+code+"'"));
@@ -2515,7 +2516,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
         }
         if (!difficultyEntryLinks.isEmpty()) {
-            aEntry.setPatientDifficulty(difficultyEntryLinks);
+            aEntry.setPatientDifficulty(new ArrayList<>().addAll(difficultyEntryLinks));
             theManager.persist(aEntry);
         }
     }
