@@ -56,7 +56,7 @@
 	
 	    where slo1.id=${param.id} and cec.expertDate is not null
 	    order by cec.expertDate
-	    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	    " />
 	   
 	    <msh:table name="journal_expert"
 	    viewUrl="entityParentView-expert_ker.do?short=Short" 

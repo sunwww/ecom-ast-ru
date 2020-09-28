@@ -42,11 +42,10 @@ public class MedServiceAllValueVoc  implements IAllValue {
 				java.util.Date date = DateFormat.parseDate(addSql) ;
 				SimpleDateFormat FORMAT_1 = new SimpleDateFormat("yyyy-MM-dd");
 				addSql = FORMAT_1.format(date) ;
-				addSql = new StringBuilder()
-					.append(" and dtype='MedServiceGroup'")
-					.append(" and (startDate is null or startDate <= to_date('")
-					.append(addSql).append("','yyyy-mm-dd') ) and (finishDate is null or finishDate >=to_date('")
-					.append(addSql).append("','yyyy-mm-dd'))").toString() ;
+				addSql = " and dtype='MedServiceGroup'" +
+						" and (startDate is null or startDate <= to_date('" +
+						addSql + "','yyyy-mm-dd') ) and (finishDate is null or finishDate >=to_date('" +
+						addSql + "','yyyy-mm-dd'))";
 				//LOG.info(addSql) ;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -57,11 +56,9 @@ public class MedServiceAllValueVoc  implements IAllValue {
 			addSql = " and dtype='MedServiceGroup'"+
 			" and (startDate is null or startDate <= CURRENT_DATE ) and (finishDate is null or finishDate >=CURRENT_DATE)";
 		}
-		StringBuilder sql = new StringBuilder () ;
-		sql.append("from MedService where parent_id is null ").append(addSql).append(" order by name") ;
-			
+
 		//LOG.info("SQL medService"+sql) ;
-		List<MedService> medServs = aContext.getEntityManager().createQuery(sql.toString()).getResultList() ;
+		List<MedService> medServs = aContext.getEntityManager().createQuery("from MedService where parent_id is null " + addSql + " order by name").getResultList() ;
 		List<VocValue> ret = new ArrayList<>() ;
 		
 		//InterceptorContext context = new InterceptorContext(aContext.getEntityManager(), aContext.getSessionContext()) ;

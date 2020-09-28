@@ -39,6 +39,6 @@ public class ListAction extends AbstractEntityAction {
         
         //aRequest.setAttribute("list", service.listAll(form.getClass(), id));
 
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 }

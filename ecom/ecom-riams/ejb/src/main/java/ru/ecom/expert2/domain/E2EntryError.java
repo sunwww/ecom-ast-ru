@@ -1,7 +1,8 @@
 package ru.ecom.expert2.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.expert2.domain.voc.VocE2EntryError;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -10,6 +11,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 
 @Entity
+@AIndexes({
+        @AIndex(properties= {"listEntry"})
+        , @AIndex(properties= {"errorCode"})
+})
 public class E2EntryError extends BaseEntity {
 
     /** Заполнение с ошибкой */
@@ -28,13 +33,6 @@ public class E2EntryError extends BaseEntity {
     /** Случай */
     private E2Entry theEntry ;
 
-    /** Ошибка */
-    @Comment("Ошибка")
-    @OneToOne
-    public VocE2EntryError getError() {return theError;}
-    public void setError(VocE2EntryError aError) {theError = aError;}
-    /** Ошибка */
-    private VocE2EntryError theError ;
     /** Удаленная запись */
     @Comment("Удаленная запись")
     public Boolean getIsDeleted() {return theIsDeleted;}
@@ -72,6 +70,4 @@ public class E2EntryError extends BaseEntity {
     public void setComment(String aComment) {theComment = aComment;}
     /** Примечание */
     private String theComment ;
-
-
 }

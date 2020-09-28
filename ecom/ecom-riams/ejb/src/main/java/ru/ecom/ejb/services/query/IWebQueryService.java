@@ -11,7 +11,7 @@ public interface IWebQueryService {
 
 	String executeSqlGetJson(String aQuery,Integer limit,String nameArray) throws NamingException, SQLException;
 	String executeSqlGetJson(String aQuery,Integer limit) throws NamingException, SQLException;
-	//JSONArray executeSqlGetJsonArray(String aQuery) throws SQLException, NamingException;
+	String executeSqlGetJson(String aQuery) throws NamingException;
 	String executeSqlGetJsonObject(String aQuery) throws NamingException, SQLException, JSONException;
 	String executeNativeSqlGetJSON(String[] aFieldNames, String aQuery, Integer aMaxResult);
 	Collection<WebQueryResult> executeHql(String aQuery) ;

@@ -49,7 +49,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         for (String s : driverConfig.split(";")) {
             String[] keys = (s+"==~").split("=");
             String keyName = keys[0];
-            String keyValue = keys.length>0 ? keys[1] : "";
+            String keyValue = keys[1];
             theDriverConfig.put(keyName,keyValue);
         }
     }
@@ -119,17 +119,14 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         }
         if (clazz.equals(Object[].class)) {
             cols = ((Object []) resultList.get(0)).length;
-            s.append("<result type='sql' entityClass='" + clazz.getCanonicalName()+
-                    "' rows='" + rows + "' cols='" + cols + "' >\n");
+            s.append("<result type='sql' entityClass='").append(clazz.getCanonicalName()).append("' rows='").append(rows).append("' cols='").append(cols).append("' >\n");
         } else {
             methods = BeanPropertyUtil.getBeanPropertyGetMethods(clazz);
             cols = methods.size();
             String className = clazz.getCanonicalName();
             String classTag = clazz.getSimpleName().toLowerCase();
 
-            s.append("<result type='entity' entityClass='" + className +
-                    "' rows='" + rows + "' fields='" + cols + "' entityClassTag='" + classTag +
-                    "' tag='" + classTag + "'>\n");
+            s.append("<result type='entity' entityClass='").append(className).append("' rows='").append(rows).append("' fields='").append(cols).append("' entityClassTag='").append(classTag).append("' tag='").append(classTag).append("'>\n");
         }
     }
 
@@ -161,7 +158,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         String expand = ","+theDriverConfig.get("expand")+",";
         String levelString = ""+level;
 //        LOG.info("CheckExpand:"+levelString+"/"+name+" From:"+expand);
-        return expand.indexOf(","+levelString+",")>=0 || expand.indexOf(","+name+",")>=0 ||
+        return expand.contains("," + levelString + ",") || expand.indexOf(","+name+",")>=0 ||
                 expand.indexOf(","+levelString+"/"+name+",")>=0;
     }
 
@@ -189,9 +186,9 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
                         boolean isExpandChild =  checkExpand(level+1,name);
                         if (value instanceof Collection && !isExpandChild) continue;
 
-                        s.append("\t\t<" + name + ">");
+                        s.append("\t\t<").append(name).append(">");
                         saveObject(value,s,level+1,isExpandChild);
-                        s.append("</" + name + ">\n");
+                        s.append("</").append(name).append(">\n");
                     } catch (IllegalAccessException | InvocationTargetException e) {
                     }
                 }
@@ -201,7 +198,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
                 try {
                     Method meth = clazz.getMethod("getId", noclass);
                     Object val = meth.invoke(o,noargs);
-                    s.append("<id class='" + clazz.getCanonicalName()+"'>"+val.toString()+"</id>");
+                    s.append("<id class='").append(clazz.getCanonicalName()).append("'>").append(val.toString()).append("</id>");
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 }
             }
@@ -217,7 +214,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         } else if (clazz.equals(Object[].class)) {
             Object [] row = (Object[]) o;
             for (int i = 0; i < row.length; i++) {
-                s.append("\t\t<col c='" + (i+1) + "'>");
+                s.append("\t\t<col c='").append(i + 1).append("'>");
                 saveObject(row[i],s,level+1,true);
                 s.append("</col>\n");
             }

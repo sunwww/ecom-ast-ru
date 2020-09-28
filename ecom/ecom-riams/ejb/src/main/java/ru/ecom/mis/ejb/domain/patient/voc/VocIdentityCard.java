@@ -1,9 +1,10 @@
 package ru.ecom.mis.ejb.domain.patient.voc;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  * Тип удостоверения личности
@@ -11,6 +12,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Тип удостоверения личности")
 @Table(schema="SQLUser")
+@NamedQuery(name="VocIdentityCard.findByOmcCode", query="from VocIdentityCard where omcCode=:code")
+
 public class VocIdentityCard extends VocIdNameOmcCode {
     /**Код в промеде**/
     private String promedCode;

@@ -50,13 +50,13 @@
 	</msh:table>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="ContractAccount" beginForm="smo_contract_directionForm" />
+    <ecom:titleTrail mainMenu="ContractAccount" beginForm="smo_contract_directionForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="smo_contract_directionForm" >
-      <msh:sideMenu guid="sideMenu-123" title="Направление">
-        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-smo_contract_direction" name="Изменить" roles="/Policy/Mis/MedCase/Direction/Edit" />
-        <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-smo_contract_direction" name="Удалить" roles="/Policy/Mis/MedCase/Direction/Delete" />
+      <msh:sideMenu title="Направление">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-smo_contract_direction" name="Изменить" roles="/Policy/Mis/MedCase/Direction/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-smo_contract_direction" name="Удалить" roles="/Policy/Mis/MedCase/Direction/Delete" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

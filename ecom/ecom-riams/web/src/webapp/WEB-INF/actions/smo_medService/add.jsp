@@ -23,7 +23,7 @@
 		   	<msh:autoComplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medService" vocName="medService" fieldColSpan="6" horizontalFill="true"/>
           	<td><input type="button" value="..." onclick="showServiceChangeServiceFind(0,'MedService','MedService')"></td>
         </msh:row>
-        <msh:row guid="47073a0b-da87-49e0-9ff0-711dc597ce07">
+        <msh:row>
           <msh:autoComplete vocName="workFunction" property="workFunctionExecute" label="Специалист" fieldColSpan="7"  horizontalFill="true"  />
         </msh:row>
         <msh:row>
@@ -51,7 +51,8 @@
   <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
     
-      	<script type="text/javascript"> 
+      	<script type="text/javascript">
+
       	onload=function(){
       		$('id').value='${param.id}' ;
       		new dateutil.DateField($('dateStart')) ;
@@ -59,11 +60,28 @@
       		HospitalMedCaseService.getServiceStreamAndMkbByMedCase('${param.id}',
      				 {
                callback: function(aResult) {
-            	   var str = aResult.split("@@") ;
-            	   $('serviceStream').value=str[0] ;
-            	   $('serviceStreamName').value=str[1] ;
-            	   $('idc10').value=str[2] ;
-            	   $('idc10Name').value=str[3] ;
+                   aResult = JSON.parse(aResult)
+            	   $('serviceStream').value=aResult.serviceStreamId;
+            	   $('serviceStreamName').value=aResult.serviceStreamName;
+            	   $('serviceStreamName').disabled=true ;
+
+            	   $('idc10').value=aResult.mkbId ;
+            	   $('idc10Name').value=aResult.mkbName ;
+            	   if (aResult.medcaseType==='DepartmentMedCase' ||aResult.medcaseType==='HospitalMedCase' ) {
+                       medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForStac');
+                       medServiceAutocomplete.setParentId(aResult.serviceStreamId);
+                   } else {
+            	       //TODO разделить на ОМС/платно. скорее всего это не используется.
+                       alert('Ошибка переполнения пневмобуфферов! Инициализация не пройдена');
+                       //Если где-то используется, мы об этом узнаем
+                       medServiceAutocomplete.setUrl('simpleVocAutocomplete/medService');
+            	       /*if (aResult.serviceStreamCode=='OBLIGATORY' || aResult.serviceStreamCode=='BUDGET') {
+
+                       } else {
+
+                       }*/
+                   }
+
                
       		
       		HospitalMedCaseService.getServiceByMedCase('${param.id}',

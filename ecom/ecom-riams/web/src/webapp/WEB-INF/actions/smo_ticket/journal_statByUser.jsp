@@ -94,7 +94,7 @@
     from MedCase 
     where dtype='ShortMedCase' and ${dateSearch}  between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy')
-    	 ${add} group by ${dateSearch},${usernameSearch}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    	 ${add} group by ${dateSearch},${usernameSearch}" />
         <msh:table name="journal_ticket" action="smo_ticketsByUser.do?dateBegin=${param.dateBegin}" 
         viewUrl="smo_ticketsByUser.do?dateBegin=${param.dateBegin}&short=Short"
         idField="1" noDataMessage="Не найдено">
@@ -150,7 +150,7 @@
     	left join patient wp1 on wp1.id=w1.person_id
     	where m.dtype='ShortMedCase'
     	and ${add} 
-		" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+		" />
         <msh:table name="journal_ticket" action="entityView-smo_ticket.do" viewUrl="entityView-smo_ticket.do?short=Short" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Номер" property="1"/>

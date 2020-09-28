@@ -1,4 +1,3 @@
-// http://localhost:8080/mis/entityEdit-mis_lpuArea.do?id=3214519&#
 var theTagsDialog = null ;
 var theIdeModeJspPath = null ;
 

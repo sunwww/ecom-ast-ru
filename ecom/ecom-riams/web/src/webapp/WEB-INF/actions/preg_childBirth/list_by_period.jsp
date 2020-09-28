@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Отчет по родам"></msh:title>
+    <msh:title mainMenu="Journals" title="Отчет по родам"></msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:style_currentMenu currentAction="preg_histology" />
@@ -22,30 +22,19 @@
 	  ActionUtil.updateParameter("ChildBirth","typePhatology","3", request) ;
   }
   %>
-    <msh:form action="/preg_child_birth_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/preg_child_birth_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="s" id="s" value="HospitalPrintReport" />
     <input type="hidden" name="m" id="m" value="printReport007" />
     <input type="hidden" name="id" id="id" value=""/>
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-    <%--
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="1">  свод по датам
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="2">  реестр
-        </td>
-      </msh:row> --%>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+      <msh:row>
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" value="Найти" />
-            <%--<input type="submit" onclick="print()" value="Печать" /> --%>
           </td>
       </msh:row>
     </msh:panel>
@@ -59,7 +48,6 @@
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
-   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
    	if ((+aValue)==0 || (+aValue)>(+aMax)) {
    		chk[+aDefaultValue-1].checked='checked' ;
    	} else {
@@ -129,9 +117,10 @@
     , case when cb.isRegisteredWithWomenConsultation=true then '+' else '-' end as f14_gk
     , place.name as f15_pl
     , vocem.name as f15_em
-    , vrb.name as vrbname
+    , case when vsr.name is not null then vrb.name||' ('||vsr.name||')' else vrb.name end as vrbname
     , paritet_pregn.code as f9_paritet_2
     , case when cb.createusername is not null then cb.createusername else cb.editusername end as creator
+    ,cons.name as f19_consName
      from ChildBirth cb
      left join MedCase slo  on cb.medcase_id = slo.id
      left join MedCase sls on sls.id=slo.parent_id
@@ -146,13 +135,16 @@
      left join vocchildemergency vocem on vocem.id=cb.emergency_id
      left join robsonclass rb on rb.medcase_id=cb.medcase_id
      left join vocrobsonclass vrb on vrb.id=rb.robsontype_id
+     left join vocsubrobson vsr on vsr.id=rb.robsonsub_id
+     left join vocwomenconsult cons on cons.id=cb.womenConsult_id
      where 
     cb.birthFinishDate between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
     group by slo.id, ss.code, pat.lastname, pat.firstname, pat.middlename, pat.birthday, sls.datestart, 
     sls.entrancetime, slo.datestart, cb.birthfinishdate,paritet_chb.code,cb.pangsstartdate,cb.id,rayon.name,place.name,vocem.name,vrb.name,paritet_pregn.code
+    ,vsr.name,cons.name
     order by slo.datestart, pat.lastname, pat.firstname, pat.middlename" />
-    <msh:table printToExcelButton="сохранить в excel" name="journal_surOperation" viewUrl="entitySubclassView-mis_medCase.do?short=Short"  action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table printToExcelButton="сохранить в excel" name="journal_surOperation" viewUrl="entitySubclassView-mis_medCase.do?short=Short"  action="entitySubclassView-mis_medCase.do" idField="1">
     <msh:tableColumn property="sn" columnName="#"/>
     <msh:tableColumn property="2" columnName="№ и/б"/>
     <msh:tableColumn property="3" columnName="Пациент"/>
@@ -167,6 +159,7 @@
     <msh:tableColumn property="11" columnName="Район"/>
     <msh:tableColumn property="12" columnName="ЭКО"/>
     <msh:tableColumn property="13" columnName="Учёт в ЖК"/>
+    <msh:tableColumn property="19" columnName="Поликлиника"/>
     <msh:tableColumn property="14" columnName="Место родов"/>
     <msh:tableColumn property="15" columnName="Показания"/>
     <msh:tableColumn property="16" columnName="Класификация Робсона"/>

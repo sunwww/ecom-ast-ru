@@ -1,31 +1,29 @@
 package ru.ecom.template.web.dwr;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import org.jboss.ejb3.dd.Inject;
-import org.json.JSONException;
-import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.web.tags.helper.RolesHelper;
-import ru.ecom.web.login.LoginInfo;
-import ru.ecom.web.util.Injection;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.diary.ejb.service.protocol.IDiaryService;
 import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.diary.web.action.protocol.template.TemplateSaveAction;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
-import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
+import ru.ecom.web.login.LoginInfo;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.naming.NamingException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,20 +33,16 @@ import javax.naming.NamingException;
  * To change this template use File | Settings | File Templates.
  */
 public class TemplateProtocolJs {
-	public String sendService(Long aProtocolId, Long aMedCaseId, HttpServletRequest aRequest) throws NamingException, IOException, JSONException {
-		ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
+    private static final Logger LOG = Logger.getLogger(TemplateProtocolJs.class);
 
-		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
-	//	System.out.println("sending service, templateprotocolJs, usename = "+username);
-		service.sendProtocolToExternalResource(aProtocolId, aMedCaseId, null, null);
-	//	System.out.println("2sending service, templateprotocolJs, usename = "+username);
-		return "";
+    public Long getPatientSex(Long aPatientId, HttpServletRequest aRequest) throws NamingException {
+    	return Long.valueOf(Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSql("select sex_id from patient where id ="+aPatientId).iterator().next().get1().toString());
 	}
-	public String getSummaryBallsByNewCard (String aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {
+	public String getSummaryBallsByNewCard (Long aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {
 		if (aParams==null||aParams.equals("")) {aParams="0";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res = new StringBuilder();
-		String sql = "select pg.id, pg.name,cast(coalesce(sum(uv.cntBall),0) as decimal(11,0))" +
+		String sql = "select pg.id, pg.name,cast(coalesce(sum(uv.cntBall),0) as decimal(11,2))" +
 				" from  parameterbyform pf" +
 				" left join parameter p on p.id=pf.parameter_id" +
 				" left join parametergroup pg on pg.id=p.group_id" +
@@ -68,10 +62,10 @@ public class TemplateProtocolJs {
 		return res.toString();
 		
 	}
-	public String getParameterBallId(String aParameterId, HttpServletRequest aRequest) throws NamingException {
-		if (aParameterId==null||aParameterId.equals("")) {return "";}
+	public String getParameterBallId(Long aParameterId, HttpServletRequest aRequest) throws NamingException {
+		if (aParameterId==null||aParameterId.equals(0L)) {return "";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> res = service.executeNativeSql("select coalesce(cast(cntBall as decimal(11,0)),0) as cntBall, coalesce(comment,'') as comment from uservalue  where id = "+aParameterId);
+		Collection<WebQueryResult> res = service.executeNativeSql("select coalesce(cast(cntBall as decimal(11,2)),0) as cntBall, coalesce(comment,'') as comment from uservalue  where id = "+aParameterId);
 		if (!res.isEmpty()) {
 			WebQueryResult r =res.iterator().next(); 
 			return r.get1().toString()+"#"+r.get2().toString();
@@ -125,46 +119,36 @@ public class TemplateProtocolJs {
 		return service.saveParametersByProtocol(aSmoId,aProtocolId, aParams, username);
 	}*/
 	public String getTemplateDisableEdit (Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
-		if (aTemplateId==null||aTemplateId.equals(Long.valueOf(0))) return "0";
+		if (aTemplateId==null||aTemplateId.equals(0L)) return "0";
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
-		return service.executeNativeSql("select case when disableEdit is null or disableEdit = '0' then '0' else '1' end" +
+		return service.executeNativeSql("select case when disableEdit='1' then '1' else '0' end" +
 				" from templateprotocol where id = "+aTemplateId).iterator().next().get1().toString();
 	}
-	public String changeTypeByParameter(Long aParam, Long aType, HttpServletRequest aRequest) throws NamingException {
+	public void changeTypeByParameter(Long aParam, Long aType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("update Parameter set type='").append(aType).append("' where id='").append(aParam).append("'") ;
-		service.executeUpdateNativeSql(sql.toString()) ;
-		
-		return "" ;
+		service.executeUpdateNativeSql("update Parameter set type='"+aType+"' where id="+aParam) ;
 	}
-	public String getParameterAndPersmissionByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
-		
-		String parameters = getParameterByTemplate(aProtocolId, aTemplateId, aRequest);
-		String permission = "";
-		if (aTemplateId!=null&&!aTemplateId.equals(Long.valueOf(0))) {
-		permission = getTemplateDisableEdit(aTemplateId, aRequest);
-		}
-		return parameters+"#"+permission;
+
+	public String getParameterAndPermissionByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
+		if (aTemplateId==null || aTemplateId.equals(0L)) return "{}";
+			JSONObject parameters = new JSONObject(getParameterByObject(aProtocolId, aTemplateId,"Template", aRequest));
+			parameters.put("disableEditProtocol",getTemplateDisableEdit(aTemplateId, aRequest));
+		return parameters.toString();
 	}
-	public String getParameterByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
-		return getParameterByObject(aProtocolId, aTemplateId, "Template", aRequest);
-		
-	}
-	public String getParameterByObject(Long aProtocolId, Long aTemplateId, String aObjectName, HttpServletRequest aRequest) throws NamingException, JspException {
+
+	public String getParameterByObject(Long aProtocolId, Long aTemplateId, String aObjectName, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		Collection<WebQueryResult> lwqr = null ;
+		Collection<WebQueryResult> lwqr = new LinkedList<>();
 		String fieldName = "";
 		 if (aObjectName.equals("AssessmentCard")){
 			fieldName = "pf.assessmentCard";
 		}
-		Long wfId = Long.valueOf(0) ;
+		Long wfId = 0L;
 		String wfName = "" ;
-		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+		if (aProtocolId!=null && !aProtocolId.equals(0L)) {
 			if (aObjectName.equals("Template")) {
 				fieldName = "d.id";
 			} 
@@ -179,7 +163,7 @@ public class TemplateProtocolJs {
 			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
 			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
 			sql.append(" , ''||p.id||case when  p.type in ('2','7') then 'Name'  when p.type='6' then '_'||(select min(uv.id) from uservalue uv where uv.domain_id=vd.id) else '' end as p18enterid") ;
-			sql.append(" , case when p.type in ('3','5')  then pf.valueText") ; 
+			sql.append(" , case when p.type in ('3','5','8')  then pf.valueText") ;
 			sql.append(" when p.type ='4' then case when pf.valuetext is null or pf.valuetext='' then replace(''||round(pf.valueBD,cast(p.cntdecimal as int)),'.',',') else pf.valuetext end"); 
 			sql.append(" when p.type ='1' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990') ");
 			sql.append(" when p.type ='6' then pf.ListValues ");
@@ -196,17 +180,17 @@ public class TemplateProtocolJs {
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join userValue vv on vv.id=pf.valueVoc_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
-			sql.append(" where "+fieldName+"='").append(aProtocolId).append("'") ;
+			sql.append(" where ").append(fieldName).append("='").append(aProtocolId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
 			
 		} 
-		if (lwqr==null || lwqr.isEmpty()) {
+		if (lwqr.isEmpty()) {
 			if (aObjectName.equals("Template")) {
 				fieldName = "tp.id";
 			}
 			sql = new StringBuilder() ;
-			sql.append("select p.id as p1id,p.name as p2name") ;
+			sql.append("select distinct p.id as p1id,p.name as p2name") ;
 			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
 			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
 			sql.append(" , p.maximum as p7maximum, p.normmaximum as p8normmaximum") ;
@@ -216,46 +200,31 @@ public class TemplateProtocolJs {
 			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
 			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
 			sql.append(" , ''||p.id||case when p.type in ('2','7') then 'Name' when p.type='6' then '_'||(select min(uv.id) from uservalue uv where uv.domain_id=vd.id) else '' end as p18enterid") ;
-			sql.append(" , case when p.type in ('3','5')  then p.valueTextDefault else '' end as p19valuetextdefault") ;
-			//sql.append(", null as d18val1v,null as d19val2v,null as d20val3v,null as d21val4v") ;
-			
+			sql.append(" , case when p.type in ('3','5','8')  then p.valueTextDefault else '' end as p19valuetextdefault") ;
 			sql.append(" ,cast('' as varchar) as f20defvalue");
 			sql.append(" ,pg.id as f21GroupId");
 			sql.append(" ,pg.name as f22GroupIName");
 			sql.append(" ,case when p.type='7' then p.valueTextDefault else '' end as f23AddVal");
+			sql.append(" ,case when (uv.usebydefault) then uv.id else null end as f24_usebydefault");
+			sql.append(" ,case when (uv.usebydefault) then uv.name else null end as f25_usedefval");
+			sql.append(" ,pf.position as f26"); //необходимо, т.к. находится в order by при distinct
+			sql.append(" ,p.forSex_id as f27_sexId");
 			sql.append(" from parameterbyform pf") ;
 			sql.append(" left join templateprotocol tp on pf.template_id = tp.id") ;
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
 			sql.append(" left join parametergroup pg on pg.id=p.group_id");
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
-			sql.append(" where "+fieldName+"='").append(aTemplateId).append("'") ;
+			sql.append(" left join userValue uv on uv.domain_id=vd.id and uv.usebydefault") ;
+			sql.append(" where ").append(fieldName).append("='").append(aTemplateId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
-		} else {
-			sql = new StringBuilder() ;
-			
-			//sql.append("select mc.workFunctionexecute_id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as vwfname from diary d left join medcase mc on mc.id=d.medcase_id left join workfunction wf on wf.id=mc.workfunctionexecute_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id where "+fieldName+"="+aProtocolId+" and mc.workFunctionExecute_id is not null") ;
-			//Collection<WebQueryResult> lwf=service.executeNativeSql(sql.toString()) ;
-			//if (!lwf.isEmpty()) {
-				//WebQueryResult wqr = lwf.iterator().next() ;
-				//wfId = ConvertSql.parseLong(wqr.get1()) ;
-				//wfName = ""+wqr.get2() ;
-			//}
 		}
-			
-			
-		StringBuilder sb = new StringBuilder() ;
-		StringBuilder err = new StringBuilder() ;
-			sb.append("{");
-			sb.append("\"workFunction\":\""+wfId+"\",") ;
-			sb.append("\"workFunctionName\":\""+wfName+"\",") ;
-			/*if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
-				sb.append("\"isdoctoredit\":\"1\",") ;
-			} else {
-				sb.append("\"isdoctoredit\":\"0\",") ;
-			}*/
-			sb.append("\"params\":[") ;
+		JSONArray errArr = new JSONArray();
+		JSONObject js = new JSONObject();
+		js.put("workFunction",wfId);
+		js.put("workFunctionName",wfName);
+		JSONArray params = new JSONArray();
 			boolean firstPassed = false ;
 			boolean firstError = false ;
 			String[][] props = {{"1","id"},{"2","name"},{"3","shortname"}
@@ -264,105 +233,67 @@ public class TemplateProtocolJs {
 			,{"13","unitid"},{"14","unitname"}
 			,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
 			,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
-			,{"21","groupId"}, {"22","groupName"},{"23","addValue"}
+			,{"21","groupId"}, {"22","groupName"},{"23","addValue"},{"24","usebydefault"},{"25","usedefval"},{"27","sex"}
 			} ;
 			for(WebQueryResult wqr : lwqr) {
-				
-				StringBuilder par = new StringBuilder() ;
-				par.append("{") ;
-				boolean isFirtMethod = false ;
+				JSONObject parJs = new JSONObject();
 				boolean isError = false ;
-				//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
-				String parType =String.valueOf(wqr.get4()); 
+				String parType =String.valueOf(wqr.get4());
 				String vocId = String.valueOf(wqr.get15()) ;
-				if (parType.equals("2")||parType.equals("6")||parType.equals("7")) {
-					//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
-					if (vocId==null||vocId.equals("")) {
-						isError = true ;
-						//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
-					}
+				if ((parType.equals("2")||parType.equals("6")||parType.equals("7")) && vocId.equals("")) {
+					isError = true ;
 				}
 				try {
 					for(String[] prop : props) {
 						Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
 						String strValue = value!=null?value.toString():"";
-						
-						if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
-						par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
-						
+						parJs.put(prop[1],strValue);
 					}
-					
+
+					JSONArray vocArr = new JSONArray();
 					if (parType.equals("6")) {
-						par.append(",\"voc\":[");
-						StringBuilder sqlVoc = new StringBuilder() ;
-						sqlVoc.append("select id,name from UserValue where domain_id=").append(vocId).append(" order by id") ;
-						List<Object[]> vocVals = service.executeNativeSqlGetObj(sqlVoc.toString()) ;
-						boolean isFirtMethodVoc = false ;
-						String valList = ""+(wqr.get19()!=null?wqr.get19():""); 
-						for (Object[]vocVal:vocVals) {
-							if(isFirtMethodVoc) par.append(", ") ;else isFirtMethodVoc=true;
-							par.append("{\"id\":\"").append(str(""+vocVal[0])).append("\"") ;
-							par.append(",\"name\":\"").append(str(""+vocVal[1])).append("\"") ;
-							par.append(",\"checked\":\"").append(valList.indexOf(","+vocVal[0]+",")>-1?"1":"0").append("\"") ;
-							par.append("}") ;
+						List<Object[]> vocVals = service.executeNativeSqlGetObj("select id,name from UserValue where domain_id=" + vocId + " order by id") ;
+						String valList = ""+(wqr.get19()!=null?wqr.get19():"");
+						for (Object[] vocVal : vocVals) {
+							JSONObject voc = new JSONObject();
+							voc.put("id",vocVal[0]);
+							voc.put("name",vocVal[1]);
+							voc.put("checked",valList.contains("," + vocVal[0] + ",") ?"1":"0");
+							vocArr.put(voc);
 						}
-						par.append("]") ;
-					} else {
-						par.append(",\"voc\":[{");
-						par.append("}]") ;
 					}
+					parJs.put("voc",vocArr);
 					
 				} catch (Exception e) {
 					throw new IllegalStateException(e);
 				}
-				par.append("}") ;
 				if (isError) {
-					if(firstError) err.append(", ") ;else firstError=true;
-					err.append(par) ;
-				}else{
-					if(firstPassed) sb.append(", ") ;else firstPassed=true;
-					sb.append(par) ;
+					errArr.put(parJs);
+				} else {
+					params.put(parJs);
 				}
 			}
-			sb.append("]") ;
-			sb.append(",\"errors\":[").append(err).append("]") ;
-			sb.append(",\"template\":\"").append(aTemplateId).append("\"") ;
-			sb.append(",\"protocol\":\"").append(aProtocolId).append("\"") ;
-			sb.append("}") ;
-			return sb.toString();
+			js.put("params",params);
+			js.put("template",aTemplateId);
+			js.put("protocol",aProtocolId);
+			js.put("errors",errArr);
+			return js.toString();
 		
 	}
-	private String str(String aValue) {
-    	if (aValue.indexOf("\"")!=-1) {
-    		aValue = aValue.replaceAll("\"", "\\\\\"") ;
-    	}
-    	return aValue ;
-    }
-	
-	public String createProtocolDrForCreateParam(Long aSmoId, Long aTemplate, HttpServletRequest aRequest) {
-		return "" ;
-	}
+
 	//Milamesher changed
 	public String getDtypeMedCase(Long aIdMedCase, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res = new StringBuilder();
+		JSONObject res = new JSONObject();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> list = service.executeNativeSql("select ms.dtype,vss.code from MedCase ms,vocservicestream vss where vss.id=ms.servicestream_id and  ms.id="+aIdMedCase) ;
-		if (list.isEmpty()) {
-			res.append("null") ;
-		} else {
-			res.append(list.iterator().next().get1()).toString() ;
-			res.append("#");
-			res.append(list.iterator().next().get2()).toString() ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select ms.dtype,vss.code from MedCase ms,vocservicestream vss where  ms.id="+aIdMedCase+" and vss.id=ms.servicestream_id") ;
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next();
+			res.put("msDtype",wqr.get1());
+			res.put("vssCode",wqr.get2());
 		}
 		return res.toString();
 	}
-	/** Получить список параметров с номерами полей по шаблону */
-	public String getParameterByTemplate000(Long aIdTemp, HttpServletRequest aRequest) throws NamingException {
-		//IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		//List<Object[]> list = service.executeNativeSqlGetObj("select id,name,code from VocSex") ;
-		
-		return "";
-	}
+
 	public String getText(String aId, HttpServletRequest aRequest) throws NamingException {
 		if (StringUtil.isNullOrEmpty(aId)) {
 			return "" ;
@@ -376,10 +307,8 @@ public class TemplateProtocolJs {
 			return "" ;
 		} else {
 			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-			StringBuilder sql = new StringBuilder() ;
-			sql.append("select em.id,to_char(em.orderDate,'dd.mm.yyyy')||' '||em.comment as comment from Document em where em.id=").append(aId).append(" and dtype='ExternalMedservice'") ;
-			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
-			return list.isEmpty()?"":""+list.iterator().next().get2() ;
+			Collection<WebQueryResult> list = service.executeNativeSql("select em.id,to_char(em.orderDate,'dd.mm.yyyy')||' '||em.comment as comment from Document em where em.id=" + aId + " and dtype='ExternalMedservice'",1) ;
+			return list.isEmpty() ? "" : ""+list.iterator().next().get2() ;
 		}
 	}
     public String getTextDischarge(String aId, HttpServletRequest aRequest) throws NamingException {
@@ -390,7 +319,15 @@ public class TemplateProtocolJs {
         	return service.getDischargeEpicrisis(Long.parseLong(aId)) ;
         }
     }
-    public String listCategProtocolsByUsername(String aSmoId,String aType, String aFunction,HttpServletRequest aRequest) throws NamingException, JspException {
+
+    //категории шаблонов
+    public String listCategProtocolsByUsername(String aSmoId,String aType, String aFunction, String diaryDate, HttpServletRequest aRequest) throws NamingException {
+		String diarySql ;
+		if (diaryDate!=null && !diaryDate.equals("")) {
+			diarySql=" and d.dateRegistration=to_date('"+diaryDate+"','dd.mm.yyyy')";
+		} else {
+			diarySql="";
+		}
     	StringBuilder sql = new StringBuilder() ;
     	String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -400,7 +337,7 @@ public class TemplateProtocolJs {
     	res.append("<table>");
     	//res.append("<tr><td colspan='3'><h2>Выбор осуществляется двойным нажатием мыши</h2></td></tr>") ;
     	res.append("<tr><td colspan='2' valign='top'>") ;
-    	if (aType!=null && aType.equals("temp")) {
+    	if ("temp".equals(aType)) {
     		sql.append(" select coalesce(tc.id,-1) as tid") ;
     		sql.append(" , coalesce(tc.name,'без категории')  as ttile") ; 
     		sql.append(" from TemplateCategory tc ") ;
@@ -409,10 +346,9 @@ public class TemplateProtocolJs {
     		String name_categ = null ;
 			if (aSmoId!=null && !aSmoId.equals("") && !aSmoId.equals("0")) {
 				if (aSmoId.equals("-1")) {sql.append(" is null ");}
-				else{sql.append("='").append(aSmoId).append("'");
-		    		StringBuilder sql1 = new StringBuilder() ;
-		    		sql1.append("select tc.parent_id from templatecategory tc where tc.id =").append(aSmoId).append(" and tc.parent_id is not null") ;
-		    		list = service.executeNativeSql(sql1.toString());
+				else {
+					sql.append("='").append(aSmoId).append("'");
+		    		list = service.executeNativeSql("select tc.parent_id from templatecategory tc where tc.id ="+aSmoId+" and tc.parent_id is not null");
 		    		if (!list.isEmpty()) name_categ = ""+list.iterator().next().get1() ;
 				}
 			} else {
@@ -442,7 +378,7 @@ public class TemplateProtocolJs {
     			res.append("</li>") ;
     		}
     		res.append("</ul></td>") ;
-    	} else if (aType!=null && aType.equals("my")) {
+		} else if ("my".equals(aType)) {
     		sql.append(" select coalesce(tc.id,-1) as tid") ;
     		sql.append(" , coalesce(tc.name||'('||list(distinct case when su.login!='").append(login).append("' then 'общ' else 'свои' end)||')' ,'без категории')  as ttile") ; 
     		sql.append(" from TemplateProtocol tp ") ;
@@ -470,10 +406,9 @@ public class TemplateProtocolJs {
     		res.append("</ul></td>") ;
     	} else if (aSmoId!=null && !aSmoId.equals("") && !aSmoId.equals("0")){
     		list = service.executeNativeSql("select mc.id,mc.patient_id from medcase mc where mc.id="+aSmoId,1);
-    		if (list.size()>0) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
-    		list.clear() ;
-    		
-    		if (aType!=null && aType.equals("mydiary")  && patient!=null) {
+    		if (!list.isEmpty()) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
+
+    		if ("mydiary".equals(aType) && patient!=null) {
     			res.append("<h2>заключения</h2>") ;
     			sql = new StringBuilder() ;
     			sql.append("select to_char(d.dateRegistration,'DD.MM.YYYY'),  list(distinct " +
@@ -487,9 +422,9 @@ public class TemplateProtocolJs {
     			.append(" left join Diary as d on m.id=d.medCase_id")         
     			.append(" where   m.patient_id='").append(patient)
     			.append("' and upper(d.dtype)='PROTOCOL'")
+				.append(diarySql)
     			.append("    group by d.dateRegistration,d.username having upper(d.username)='").append(login.toUpperCase()).append("'") 
     			.append("  order by d.dateRegistration desc") ;
-    			list=null ;
     			list = service.executeNativeSql(sql.toString(),30);
         		res.append("<ul>");
         		for (WebQueryResult wqr:list) {
@@ -500,7 +435,7 @@ public class TemplateProtocolJs {
         			res.append("</li>") ;
         		}
     			res.append("</ul></td>");
-    		} else if (aType!=null && aType.equals("polyc") && patient!=null) {
+    		} else if ("polyc".equals(aType) && patient!=null) {
     			res.append("<h2>Поликлиника</h2>");
     			sql=new StringBuilder() ;
     			sql.append("select vwf.id,vwf.name from MedCase smo ") ;
@@ -510,11 +445,11 @@ public class TemplateProtocolJs {
     			sql.append(" left join worker w on wf.worker_id=w.id");
     			sql.append(" left join patient wp on wp.id=w.person_id");
     			sql.append(" where smo.patient_id='").append(patient).append("'");
-    			sql.append(" and upper(smo.dtype) in ('VISIT' , 'SHORTMEDCASE') and upper(d.dtype)='PROTOCOL'");
+    			sql.append(" and upper(smo.dtype) in ('VISIT' , 'SHORTMEDCASE') and upper(d.dtype)='PROTOCOL'")
+				.append(diarySql);
     			sql.append(" group by vwf.id,vwf.name");
     			sql.append(" order by vwf.name");
     			sql.append(" ") ;
-    			list=null ;
     			list = service.executeNativeSql(sql.toString(),30);
         		res.append("<ul>");
         		for (WebQueryResult wqr:list) {
@@ -527,7 +462,7 @@ public class TemplateProtocolJs {
     			res.append("</ul>");
     			
     			
-    		} else if (aType!=null && aType.equals("hospit") && patient!=null) {
+    		} else if ("hospit".equals(aType) && patient!=null) {
     			res.append("<h2>Cтационар осмотры</h2>") ;
     			sql=new StringBuilder() ;
     			sql.append("select vwf.id,vwf.name from MedCase smo") ;
@@ -541,7 +476,6 @@ public class TemplateProtocolJs {
     			sql.append(" group by vwf.id,vwf.name");
     			sql.append(" order by vwf.name");
     			sql.append(" ") ;
-    			list=null;
     			list = service.executeNativeSql(sql.toString(),30);
         		res.append("<ul>");
         		for (WebQueryResult wqr:list) {
@@ -553,7 +487,7 @@ public class TemplateProtocolJs {
     			}
     			res.append("</ul>");
     			
-    		} else if (aType!=null && aType.equals("disch") && patient!=null) {
+    		} else if ("disch".equals(aType) && patient!=null) {
     			res.append("<h2>Cтационар выписки</h2>") ;
     			sql = new StringBuilder() ;
     			sql.append("select ml.id,ml.name as rec from MedCase sls") ;
@@ -564,7 +498,6 @@ public class TemplateProtocolJs {
     			sql.append(" group by ml.id,ml.name");
     			sql.append(" order by ml.name");
     			sql.append(" ") ;
-    			list=null;
     			list = service.executeNativeSql(sql.toString(),30);
         		res.append("<ul>");
         		for (WebQueryResult wqr:list) {
@@ -581,17 +514,24 @@ public class TemplateProtocolJs {
     	res.append("</td></tr></table>") ;
     	return res.toString() ;
     }
-    public String listProtocolsByUsername(String aSmoId,String aParent,String aType,String aFunctionTemp, String aFunctionProt,String aSearchText,HttpServletRequest aRequest) throws NamingException, JspException {
+    public String listProtocolsByUsername(String aSmoId,String aParent,String aType,String aFunctionTemp, String aFunctionProt,String aSearchText,
+										  String diaryDate, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
+		String diarySql ;
+		if (diaryDate!=null && !diaryDate.equals("")) {
+			diarySql=" and d.dateRegistration=to_date('"+diaryDate+"','dd.mm.yyyy')";
+		} else {
+			diarySql="";
+		}
+
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res = new StringBuilder() ;
 		Collection<WebQueryResult> list ;
 		Long patient = null ;
 		res.append("<table>");
-		//res.append("<tr><td colspan='3'><h2>Выбор осуществляется двойным нажатием мыши</h2></td></tr>") ;
 		res.append("<tr><td colspan='2' valign='top'>") ;
-		if (aType!=null && aType.equals("temp")) {
+		if ("temp".equals(aType)) { //TODO слишком долгий запрос! Переделать! //все шаблоны
 			sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile")
 			.append(" ,(select count(*) from parameterByForm where template_id=tp.id) as cntInput") ; 
 			sql.append(" from TemplateProtocol tp");
@@ -618,9 +558,7 @@ public class TemplateProtocolJs {
 					if (aSearchText!=null && aSearchText.length()>1) {
 						sql.append(" and upper(tp.title) like '%").append(aSearchText.toUpperCase()).append("%'");
 					}
-					StringBuilder sql1 = new StringBuilder() ;
-					sql1.append("select name from templatecategory where id=").append(aParent) ;
-					list=service.executeNativeSql(sql1.toString()) ;
+					list=service.executeNativeSql("select name from templatecategory where id=" + aParent) ;
 					if (!list.isEmpty()) name_cat=""+list.iterator().next().get1() ;
 				}
 				name_cat = name_cat+"<form action='javascript:"+aFunctionProt+"Search(\""+aType+"\",\""+aParent+"\")'>" ;
@@ -630,6 +568,7 @@ public class TemplateProtocolJs {
 			} else {sql.append("tptc.categories_id is null ");}
 			sql.append(" group by tp.id,tp.title,su.login");
 			sql.append(" order by tp.title") ;
+			LOG.info("long sql = "+sql);
 			if (isGo) {
 				if (aSearchText!=null && aSearchText.length()>0) {
 					
@@ -661,7 +600,7 @@ public class TemplateProtocolJs {
 				
 				res.append("</ul></td>") ;
 			}
-		} else if (aType!=null && aType.equals("my")) {
+		} else if ("my".equals(aType)) { //свои шаблоны
 			sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile" +
 					" ,(select count(*) from parameterByForm where template_id=tp.id) as cntInput") ; 
 			sql.append(" from TemplateProtocol tp");
@@ -681,9 +620,7 @@ public class TemplateProtocolJs {
 					sql.append(" is null ");
 				} else {
 					sql.append("='").append(aParent).append("'");
-					StringBuilder sql1 = new StringBuilder() ;
-					sql1.append("select name from templatecategory where id=").append(aParent) ;
-					list=service.executeNativeSql(sql1.toString()) ;
+					list=service.executeNativeSql("select name from templatecategory where id="+aParent) ;
 					if (!list.isEmpty()) name_cat=""+list.iterator().next().get1() ;
 				}
 			} 
@@ -698,7 +635,7 @@ public class TemplateProtocolJs {
 			name_cat = name_cat+"<input type='text' id='fldSearch"+aFunctionProt+"' name='fldSearch"+aFunctionProt+"' value='"+(aSearchText!=null?aSearchText:"")+"'>" ;
 			name_cat = name_cat+"<input  type='submit' value='Поиск' onclick='"+aFunctionProt+"Search(\""+aType+"\",\""+aParent+"\")'>" ;
 			name_cat = name_cat+"</form>" ;
-			res.append("<h2>Список своих шаблонов").append(name_cat!=null&&!name_cat.equals("")?" КАТЕГОРИИ: "+name_cat:"---").append(" </h2>") ;
+			res.append("<h2>Список своих шаблонов").append(" КАТЕГОРИИ: ").append(name_cat).append(" </h2>") ;
 			res.append("</td>") ;
 			res.append("</tr><tr><td colspan='2' valign='top'>") ;
 			res.append("<ul>");
@@ -707,7 +644,6 @@ public class TemplateProtocolJs {
 				.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionTemp).append("('")
 				.append(wqr.get1()).append("',1)\">") ;
 				res.append(wqr.get2()) ;
-				//res.append("</li>") ;
 				if (wqr.get3()!=null&&!(""+wqr.get3()).equals("0")) {
 				res.append("<input type=\"button\" onclick=\"showTemplateForm('").append(wqr.get1()).append("')\" value=\"Ф\">");
 				}
@@ -716,10 +652,9 @@ public class TemplateProtocolJs {
 			res.append("</ul></td>") ;
 		} else {
 			list = service.executeNativeSql("select mc.id,mc.patient_id from medcase mc where mc.id="+aSmoId,1);
-			if (list.size()>0) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
-			list.clear() ;
+			if (!list.isEmpty()) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
 
-			if (aType!=null && aType.equals("mydiary")  && patient!=null) {
+			if ("mydiary".equals(aType)  && patient!=null) { //свои заключения по пациенту //ищем по дате
 				res.append("<h2>заключения</h2>") ;
 				res.append("<ul>");
 				sql = new StringBuilder() ;
@@ -733,14 +668,11 @@ public class TemplateProtocolJs {
 					.append(" left join VocWorkFunction vwf1 on vwf1.id=wf1.workFunction_id")         
 					.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id")         
 					.append(" left join Patient p on p.id=w.person_id ")
-					.append(" where  m.patient_id='").append(patient).append("' and upper(d.dtype)='PROTOCOL'") ;
-					if (aParent!=null && !aParent.equals("") && !aParent.equals("0")) {
-						sql.append(" and d.dateRegistration");
-						if (aParent.equals("-1")) {sql.append(" is null ");}else{sql.append("=to_date('").append(aParent).append("','dd.mm.yyyy')");}
-					}
+					.append(" where  m.patient_id='").append(patient).append("' and upper(d.dtype)='PROTOCOL'")
+					.append(diarySql);
+
 					sql.append(" group by d.id,vwf.name,vwf1.name,m.dtype,m.datestart,m.patient_id,d.dateregistration,d.username having upper(d.username)='").append(login.toUpperCase()).append("'  order by d.dateRegistration desc") ;
-				list=null ;
-				list = service.executeNativeSql(sql.toString(),10);
+				list = service.executeNativeSql(sql.toString(),diarySql.equals("") ? 10 : 100); //все дневники по дате
 				for (WebQueryResult wqr:list) {
 					res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("('")
 					.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionProt).append("('")
@@ -749,7 +681,7 @@ public class TemplateProtocolJs {
 					res.append("</li>") ;
 				}
 				res.append("</ul></td>");
-			} else if (aType!=null && aType.equals("polyc") && patient!=null) {
+			} else if ("polyc".equals(aType) && patient!=null) { //все заключения по пациенту (поликлиника)
 				res.append("<h2>Поликлиника</h2>");
 					sql=new StringBuilder() ;
 					sql.append("select d.id,to_char(d.dateRegistration,'dd.mm.yyyy') as dateReg,vwf.name||' '||wp.lastname as spec,substring(d.record,1,150)||'...' as rec ") ;
@@ -765,11 +697,11 @@ public class TemplateProtocolJs {
 						sql.append(" and vwf.id");
 						if (aParent.equals("-1")) {sql.append(" is null ");}else{sql.append("='").append(aParent).append("'");}
 					}
+					sql.append(diarySql);
 					sql.append(" order by d.dateRegistration desc");
 					sql.append(" ") ;
 					res.append("<ul>");
-					list=null ;
-					list = service.executeNativeSql(sql.toString(),10);
+					list = service.executeNativeSql(sql.toString(),diarySql.equals("") ? 10 : 100);
 					for (WebQueryResult wqr:list) {
 						res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("('")
 						.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionProt).append("('")
@@ -780,7 +712,7 @@ public class TemplateProtocolJs {
 					res.append("</ul>");
 					
 				
-			} else if (aType!=null && aType.equals("hospit") && patient!=null) {
+			} else if ("hospit".equals(aType) && patient!=null) { //осмотры врачей в стационаре
 				res.append("<h2>Cтационар осмотры</h2>") ;
 				sql=new StringBuilder() ;
 				sql.append("select d.id,to_char(d.dateRegistration,'dd.mm.yyyy') as dateReg,vwf.name||' '||wp.lastname as spec,substring(d.record,1,150)||'...' as rec from diary d") ;
@@ -795,10 +727,10 @@ public class TemplateProtocolJs {
 					sql.append(" and vwf.id");
 					if (aParent.equals("-1")) {sql.append(" is null ");}else{sql.append("='").append(aParent).append("'");}
 				}
+				sql.append(diarySql);
 				sql.append(" order by d.dateRegistration desc");
 				sql.append(" ") ;
 				res.append("<ul>");
-				list=null;
 				list = service.executeNativeSql(sql.toString(),10);
 				for (WebQueryResult wqr:list) {
 					res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("('")
@@ -809,7 +741,7 @@ public class TemplateProtocolJs {
 				}
 				res.append("</ul>");
 				
-			} else if (aType!=null && aType.equals("disch") && patient!=null) {
+			} else if ("disch".equals(aType) && patient!=null) { //выписки (госпитализации
 				res.append("<h2>Cтационар выписки</h2>") ;
 				sql = new StringBuilder() ;
 				sql.append("select sls.id,to_char(sls.dateStart,'dd.mm.yyyy')||'-'||to_char(sls.dateFinish,'dd.mm.yyyy') as dateReg")
@@ -829,7 +761,6 @@ public class TemplateProtocolJs {
 				sql.append(" order by sls.dateStart desc");
 				sql.append(" ") ;
 				res.append("<ul>");
-				list=null;
 				list = service.executeNativeSql(sql.toString(),10);
 				for (WebQueryResult wqr:list) {
 					res.append("<li class='liTemp' onclick=\"").append(aFunctionProt).append("Discharge('")
@@ -861,7 +792,6 @@ public class TemplateProtocolJs {
     	long[] adds = TemplateSaveAction.getLongs(ad);
     	long[] removes = TemplateSaveAction.getLongs(aRemoves);
     	IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService");
-    	System.out.println("adds->"+aAdds+"--"+aAdds.split(",").length+" adds="+adds.length) ;
     	service.saveParametersByTemplateProtocol(aIdFieldName,aProtocol, adds, removes) ;
     }
     public Long getCountSymbolsInProtocol(long aVisit,  HttpServletRequest aRequest) throws NamingException {
@@ -870,50 +800,100 @@ public class TemplateProtocolJs {
     }
     public static String getUsername(HttpServletRequest aRequest) {
     	 LoginInfo loginInfo = LoginInfo.find(aRequest.getSession()) ;
-    	return loginInfo!=null?loginInfo.getUsername():"" ;
+    	return loginInfo!=null ? loginInfo.getUsername() : "" ;
     }
-    public boolean isCanEditProtocol(Long aIdProt, String aUserCreate, HttpServletRequest aRequest) throws NamingException {
-    	if (getUsername(aRequest).equals(aUserCreate)) {
-    		return true ;
-    	}
-    	IScriptService service = (IScriptService)Injection.find(aRequest).getService("ScriptService") ;
-    	
-    	HashMap param = new HashMap() ;
-		param.put("obj","Protocol") ;
-		param.put("permission" ,"editOtherUser") ;
-		param.put("id", aIdProt) ;
-		
-    	Object res = service.invoke("WorkerService", "checkPermission", new Object[]{param});
-    	//System.out.println("res="+res) ;
-    	long res1 =  parseLong(res);
-    	if (res1==0) {
-    		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    		String slsId = wqs.executeNativeSql("select case when mc.dtype='HospitalMedCase' or mc.dtype='PolyclinicMedCase' then mc.id else mc.parent_id end from diary d " +
-    				" left join medcase mc on mc.id=d.medcase_id " +
-    				" where d.id = "+aIdProt).iterator().next().get1().toString();
-
-    		param.put("obj","DischargeMedCase") ;
-    		param.put("permission" ,"editOtherUserAllHosp") ;
-    		param.put("id", slsId) ;
-    	//	System.out.println( "===== sls "+slsId);
-    		 res = service.invoke("WorkerService", "checkPermission", new Object[]{param});
-    		// System.out.println( "===== sls "+slsId+":"+res);
-    		  res1 =  parseLong(res);
- 
-    		if(res1==0){
-    		} else {
-    			return true; 
-    		}
-    		
-			 //return false;
-		} else {
-			return true ;
+	/**
+	 * Проверить, может ли пользователь редактировать протокол (может, если он и есть создатель дневника)
+	 * или если он имеет роль на редактирование любых дневников.
+	 *
+	 * @param aUserCreate Создатель дневника
+	 * @param aRequest HttpServletRequest
+	 * @return boolean true - может, false - не может
+	 */
+    public boolean isCanEditProtocol(String aUserCreate, HttpServletRequest aRequest) throws JspException {
+    	return (getUsername(aRequest).equals(aUserCreate))
+				|| RolesHelper.checkRoles(" /Policy/Mis/MedCase/Protocol/AllowEditAllProtocols", aRequest) ;
+    }
+	/**
+	 * Получает единственное возможное значение разрешения по коду, в случае, если оно - единственное в справочнике
+	 *
+	 * @param objectPermission Объект, на который даётся разрешение
+	 * @param aRequest HttpServletRequest
+	 * @return String Json с результатом или пустой
+	 */
+	public String getDefaultValueForPermission(String objectPermission, HttpServletRequest aRequest) throws NamingException {
+		JSONObject ret = new JSONObject();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select case when \n" +
+				"(select count(distinct vp.id) from vocPermission vp\n" +
+				"left join vocobjectpermission vop on vop.code=vp.objectcode \n" +
+				"where vop.id=vopmain.id)=1\n" +
+				"then vp.id||'#'||vp.name\n" +
+				"end from vocobjectpermission vopmain\n" +
+				"left join vocpermission vp on vopmain.code=vp.objectcode \n" +
+				"where vopmain.id="+objectPermission);
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next();
+			if (wqr.get1()!=null) {
+				String[] vals = wqr.get1().toString().split("#") ;
+				ret.put("id",vals[0]);
+				ret.put("name",vals[1]);
+			}
 		}
-    	return false ;
-    }
+		return ret.toString();
+	}
+
+	/**
+	 * Получает период редактирования по умолчанию. Выписка - период госпитализации, дневник - дата регистрации
+	 *
+	 * @param objectCode Тип объекта (протокол/выписка)
+	 * @param objectPermission Объект, на который даётся разрешение
+	 * @param aRequest HttpServletRequest
+	 * @return String Json с результатом или пустой
+	 */
+	public String getPeriodForPermission(String objectCode,String objectPermission, HttpServletRequest aRequest) throws NamingException {
+		JSONObject ret = new JSONObject();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder();
+		sql.append("select case when vop.code='Protocol' then")
+				.append(" to_char(d.dateRegistration,'dd.mm.yyyy')||'#'||to_char(d.dateRegistration,'dd.mm.yyyy')")
+				.append("||'#'||su.id||'#'||d.username||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
+				.append(" end from Diary d")
+				.append(" left join vocobjectpermission vop on vop.id=").append(objectCode)
+				.append(" left join secuser su on su.login=d.username")
+				.append(" left join workfunction wf on wf.secuser_id=su.id")
+				.append(" left join worker w on w.id = wf.worker_id")
+				.append(" left join patient wp on wp.id=w.person_id")
+				.append(" where d.id=").append(objectPermission);
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		if (list.isEmpty()) {
+			sql = new StringBuilder();
+			sql.append("select case when vop.code='DischargeMedCase' then")
+					.append(" to_char(mc.dateStart,'dd.mm.yyyy')||'#'||to_char(mc.dateFinish,'dd.mm.yyyy')")
+					.append("||'#'||su.id||'#'||mc.editusername||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
+					.append(" end from Medcase mc")
+					.append(" left join vocobjectpermission vop on vop.id=").append(objectCode)
+					.append(" left join secuser su on su.login=mc.editusername")
+					.append(" left join workfunction wf on wf.secuser_id=su.id")
+					.append(" left join worker w on w.id = wf.worker_id")
+					.append(" left join patient wp on wp.id=w.person_id")
+					.append(" where mc.id=").append(objectPermission);
+			list = service.executeNativeSql(sql.toString());
+		}
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next();
+			if (wqr.get1()!=null) {
+				String[] vals = wqr.get1().toString().split("#") ;
+				ret.put("dateStart",vals[0]);
+				ret.put("dateFinish",vals[1]);
+				ret.put("suId",vals[2]);
+				ret.put("suLogin",vals[3]);
+			}
+		}
+		return ret.toString();
+	}
 	public static Long parseLong(Object aValue) {
-		Long ret =null;
-		if (aValue==null) return ret ;
+		if (aValue==null) return null ;
 		if (aValue instanceof Integer) {
 			
 			return Long.valueOf((Integer) aValue) ;
@@ -921,15 +901,52 @@ public class TemplateProtocolJs {
 		if(aValue instanceof BigInteger) {
 			BigInteger bigint = (BigInteger) aValue ;
 			
-			return bigint!=null?bigint.longValue() : null;
+			return bigint.longValue() ;
 		} 
 		if (aValue instanceof Number) {
 			Number number = (Number) aValue ;
-			return number!=null?number.longValue() : null ;
+			return number.longValue() ;
 		}
 		if (aValue instanceof String) {
 			return Long.valueOf((String) aValue);
 		}
-		return ret ;
+		return null ;
+	}
+	/**
+	 * Получить риск по баллам
+	 * @param aCardTypeId Тип карты оценки
+	 * @param val Long Результат (баллы)
+	 * @return String
+	 */
+	public String getRisk(String aCardTypeId, BigDecimal val, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql
+				("select name from assessment" +
+						" where "+ val + " between minball and maxball and assessmentcard=" + aCardTypeId);
+		return !res.isEmpty()? res.iterator().next().get1().toString() : "";
+	}
+
+	/**
+	 * Получить текст протокола
+	 * @param aProtocolId Diary.id
+	 * @return String
+	 */
+	public String getBasisProtocolRecord(Long aProtocolId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql("select record from diary where id = " + aProtocolId);
+		return !res.isEmpty()? res.iterator().next().get1().toString() : "";
+	}
+
+	/**
+	 * Сохранить текст протокола с печатными символами
+	 * @param aProtocolId Diary.id
+	 * @param record Текст
+	 */
+	public void saveRecordUnprint(Long aProtocolId, String record, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		service.executeUpdateNativeSql("update diary set record='" + record + "' where id = " + aProtocolId);
+		//отметка о редактировании
+        String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+        service.executeUpdateNativeSql("update diary set editusername='" + username + "',editdate=current_date,edittime=current_time where id = " + aProtocolId);
 	}
 }

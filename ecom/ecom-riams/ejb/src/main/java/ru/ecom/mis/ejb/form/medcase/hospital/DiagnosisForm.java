@@ -2,16 +2,15 @@ package ru.ecom.mis.ejb.form.medcase.hospital;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DiagnosisPreCreateInterceptor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DiagnosisViewInterceptor;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
@@ -33,6 +32,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Diagnosis")
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(DiagnosisPreCreateInterceptor.class)
+)
+@AViewInterceptors(
+		@AEntityFormInterceptor(DiagnosisViewInterceptor.class)
 )
 public class DiagnosisForm extends IdEntityForm {
 	
@@ -219,14 +221,6 @@ public class DiagnosisForm extends IdEntityForm {
 	public String getPrimaryInfo() {return thePrimaryInfo;}
 	public void setPrimaryInfo(String aPrimaryInfo) {thePrimaryInfo = aPrimaryInfo;}
 
-	/** Диагноз текст */
-	@Comment("Диагноз текст")
-	@Persist
-	public Long getDocDiagnosis() {return theDocDiagnosis;}
-	public void setDocDiagnosis(Long aDocDiagnosis) {theDocDiagnosis = aDocDiagnosis;}
-
-	/** Диагноз текст */
-	private Long theDocDiagnosis;
 	/** Перичность инфо */
 	private String thePrimaryInfo;
 	/** Приоритет(ИНФО) */

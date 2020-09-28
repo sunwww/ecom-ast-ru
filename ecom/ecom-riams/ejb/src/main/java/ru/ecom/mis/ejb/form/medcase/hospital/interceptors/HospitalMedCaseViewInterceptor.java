@@ -29,49 +29,46 @@ public class HospitalMedCaseViewInterceptor implements IFormInterceptor {
 			}
 			
 		}
-        if (!aContext.getSessionContext().isCallerInRole(StatisticStubStac.ChangeStatCardNumber)) {
+        if (!aContext.getSessionContext().isCallerInRole(StatisticStubStac.CHANGE_STAT_CARD_NUMBER)) {
             form.addDisabledField("statCardNumber");
         }
-		if (medCase!=null ) {
-			List<Diagnosis> diagList = aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ; 
-			for(Diagnosis diag:diagList) {
-				String regType = diag.getRegistrationType()!=null?diag.getRegistrationType().getCode():"" ;
-				String prior = diag.getPriority()!=null?diag.getPriority().getCode():"" ;
-				Long mkb = diag.getIdc10()!=null?diag.getIdc10().getId():null ;
-				// Order
-				if (regType.equals("2")) {
-					form.setOrderDiagnos(diag.getName());
-					if (diag.getIdc10()!=null) form.setOrderMkb(mkb);
-				}
-				// Enter
-				if (regType.equals("1")) {
-					form.setEntranceDiagnos(diag.getName());
-					if (diag.getIdc10()!=null) form.setEntranceMkb(mkb);
-				}
-				//Concomitant
-				if (regType.equals("4") && prior.equals("3")) {
-					form.setConcomitantDiagnos(diag.getName());
-					if (mkb!=null) form.setConcomitantMkb(mkb) ;
-				}	
-//				 Concluding
-				if (regType.equals("3")&& prior.equals("1")){
-					form.setConcludingDiagnos(diag.getName());
-					if (mkb!=null) form.setConcludingMkb(mkb) ;
-				}
-			    //Clinical
-				if ( regType.equals("4") && prior.equals("1")){
-					form.setClinicalDiagnos(diag.getName());
-					if (mkb!=null) form.setClinicalMkb(mkb) ;
-				}
-			    //Pathanatomical
-				if (regType.equals("5") && prior.equals("1")) {
-					form.setPathanatomicalDiagnos(diag.getName());
-					if (mkb!=null) form.setPathanatomicalMkb(mkb) ;
-				}	
-				
+		List<Diagnosis> diagList = aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
+		for(Diagnosis diag:diagList) {
+			String regType = diag.getRegistrationType()!=null ? diag.getRegistrationType().getCode() : "" ;
+			String prior = diag.getPriority()!=null ? diag.getPriority().getCode() : "" ;
+			Long mkb = diag.getIdc10()!=null ? diag.getIdc10().getId() : null ;
+			// Order
+			if (regType.equals("2")) {
+				form.setOrderDiagnos(diag.getName());
+				if (mkb!=null) form.setOrderMkb(mkb);
 			}
+			// Enter
+			if (regType.equals("1")) {
+				form.setEntranceDiagnos(diag.getName());
+				if (mkb!=null) form.setEntranceMkb(mkb);
+			}
+			//Concomitant
+			if (regType.equals("4") && prior.equals("3")) {
+				form.setConcomitantDiagnos(diag.getName());
+				if (mkb!=null) form.setConcomitantMkb(mkb) ;
+			}
+//				 Concluding
+			if (regType.equals("3")&& prior.equals("1")){
+				form.setConcludingDiagnos(diag.getName());
+				if (mkb!=null) form.setConcludingMkb(mkb) ;
+			}
+			//Clinical
+			if ( regType.equals("4") && prior.equals("1")){
+				form.setClinicalDiagnos(diag.getName());
+				if (mkb!=null) form.setClinicalMkb(mkb) ;
+			}
+			//Pathanatomical
+			if (regType.equals("5") && prior.equals("1")) {
+				form.setPathanatomicalDiagnos(diag.getName());
+				if (mkb!=null) form.setPathanatomicalMkb(mkb) ;
+			}
+
 		}
-		
 	}
 	public static String getDischargeEpicrisis(long aMedCaseId,EntityManager aManager) {
 		List<Object[]> l2=aManager.createNativeQuery("select id,DischargeEpicrisis from medcase where id= "+aMedCaseId).getResultList() ;

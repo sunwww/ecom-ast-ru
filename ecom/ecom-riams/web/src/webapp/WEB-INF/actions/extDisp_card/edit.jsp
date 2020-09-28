@@ -57,6 +57,9 @@
 					<msh:autoComplete property="healthGroup" label="Группа здоровья" parentAutocomplete="dispType" vocName="vocExtDispHealthGroupByDispType" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
+					<msh:textField property="nextDispDate"/>
+				</msh:row>
+				<msh:row>
 					<msh:checkBox property="isServiceIndication" label="Направлен на след. этап" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
@@ -123,15 +126,17 @@
 			<ecom:webQuery name="examQuery" nativeSql="
 select eds.card_id as adscard,coalesce(veds.code,'') ||' '||coalesce(veds.name,'') as vedsname
 ,eds.servicedate,eds.isPathology as edsIsPathology
+,eds.deniedService as а5_otkaz
 from ExtDispService eds 
 left join VocExtDispService veds on veds.id=eds.serviceType_id
-where eds.card_id=${param.id} and eds.dtype='ExtDispExam'
+where eds.card_id=${param.id} and eds.dtype='ExtDispExam' order by veds.name
 			"/>
 			
 				<msh:table name="examQuery" action="js-extDisp_service-edit.do" idField="1">
 					<msh:tableColumn columnName="Услуга" property="2"/>
 					<msh:tableColumn columnName="Дата" property="3"/>
 					<msh:tableColumn columnName="Выявлена патология" property="4"/>
+					<msh:tableColumn columnName="Отказ от прохождения услуги" property="5"/>
 				</msh:table>
 			</msh:section>
 			<msh:section title="Посещения">
@@ -150,7 +155,7 @@ left join worker wrk on wrk.id=wf.worker_id
 left join patient pw on pw.id=wrk.person_id
 left join vocIdc10 mkb on mkb.id=eds.idc10_id
 left join VocExtDispService veds on veds.id=eds.servicetype_id
-where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
+where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit' order by veds.name
 			"/>
 				<msh:table  name="examQuery" action="js-extDisp_service-edit.do" idField="1">
 					<msh:tableColumn columnName="Услуга" property="2"/>
@@ -192,7 +197,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		var oldaction = document.forms['extDisp_cardForm'].action ;
 		document.forms['extDisp_cardForm'].action="javascript:checkDisableAgeDoubles()";
 		
-		function checkDisp(aStartDate, aFinishDate) {
+		function checkDisp(aStartDate, aFinishDate, needSubmit) {
 			if (aStartDate!='' && aFinishDate!='' && +$('workFunction').value>0) {
 				ExtDispService.checkDispService(aFinishDate, 0,$('patient').value, $('workFunction').value,aStartDate,aFinishDate,{
 					callback: function(aResult) {
@@ -200,7 +205,6 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 							if (!confirm("ВНИМАНИЕ!\n"+aResult.substring(1)+".\nВы хотите продолжить?")){
 								document.getElementById('submitButton').disabled=false;
 								document.getElementById('submitButton').value='Создать';
-								return;
 							} else {
 								document.forms['extDisp_cardForm'].action=oldaction ;
 	    						document.forms['extDisp_cardForm'].submit();
@@ -215,74 +219,93 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 						}
 					}
 				});
+			} else if (needSubmit) {
+				document.forms['extDisp_cardForm'].action=oldaction ;
+				document.forms['extDisp_cardForm'].submit();
 			}
 		}
-		function checkDispAttached(r) {
+		function checkDispAttached(needSubmit) {
     		PatientService.checkDispAttached($('dispType').value, $('patient').value,{
     			callback: function (aResult) {
-    				if (aResult=='0') {
+    				if (aResult==='0') {
     					alert ("Данный вид ДД оказывается только прикрепленному населению,"+
     							"\nпо данным последней проверке ФОМС пациент не прикреплен."+
     							"\nСоздание карты невозможно");
-    					if (r=='1') {
+    					if (needSubmit) {
 	    					document.getElementById('submitButton').disabled=false;
 							document.getElementById('submitButton').value='Создать';
     					}
-    				} else {
-    					if (r=='1') {
-    						checkDisp($('startDate').value, $('finishDate').value);
-    						
-    					}
-    					
-    				} 
-    					
+    				} else if (needSubmit) {
+    						checkDisp($('startDate').value, $('finishDate').value, true);
+    				}
     			}
     		});
     	}
 		
-		function checkDisableAgeDoubles()		{		
-			ExtDispService.checkDisableAgeDoubles($('id').value,$('dispType').value, $('patient').value, $('ageGroup').value, {
-				callback: function (aResult) {
-					if (aResult=='1'){
-						alert("У пациента уже существует карта с выбранной возрастной группой. Создание карты невозможно!");
-						document.getElementById('submitButton').disabled=false;
-						document.getElementById('submitButton').value='Создать';
-					} else { 
-						checkDispAttached('1');
-				}
-				}});
-		
-		
+		function checkDisableAgeDoubles()		{
+			if ($('ageGroup').value) {
+				ExtDispService.checkDisableAgeDoubles($('id').value,$('dispType').value, $('patient').value, $('ageGroup').value, {
+					callback: function (aResult) {
+						if (aResult=='1'){
+							alert("У пациента уже существует карта с выбранной возрастной группой. Создание карты невозможно!");
+							document.getElementById('submitButton').disabled=false;
+							document.getElementById('submitButton').value='Создать';
+						} else {
+							checkDispAttached(true);
+						}
+					}});
+			} else {
+				checkDispAttached(true);
+			}
 		}
-		</script>
-		
-		</msh:ifFormTypeIsNotView>
-		
-		<script type="text/javascript">
-    	function updateAge() {
-    		PatientService.getAgeForDisp($('patient').value, $('finishDate').value, {
-        		callback: function(aResult) {
-       				$('ageReadOnly').value=aResult ;
-        		}
-        	});
-    	}
-    	updateAge() ;
-    	try {
-    		dispTypeAutocomplete.addOnChangeCallback(function() {$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';checkDispAttached('0');});
-    		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('startDate').value, $('finishDate').value);}) ;
-    		eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('startDate').value, $('finishDate').value);}) ;
-    		eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
-    		} catch(e) {
 
-    	}
-		</script>
-		
+		function updateAge() {
+			//Обновляем возраст и проверяем - можно ли выбирать возраст вручную
+			ExtDispService.getAgeForDisp($('patient').value, $('finishDate').value,$('dispType').value, {
+				callback: function(aResult) {
+					console.log(aResult);
+					aResult = JSON.parse(aResult);
+					if (aResult.status==="ok") {
+						$('ageReadOnly').value=aResult.ageGroup ;
+						if (aResult.autoCalcAge===true) {
+							if (aResult.autoCalcAgeId) {
+								jQuery('#ageGroup').val(aResult.autoCalcAgeId);
+								jQuery('#ageGroupName').val(aResult.autoCalcAgeName);
+							} else {
+								jQuery('#ageGroup').val("");
+								jQuery('#ageGroupName').val("Нет подходящей возрастной группы!!");
+							}
+
+							$('ageGroupName').disabled=true;
+
+						} else {
+							$('ageGroup').value=0;
+							$('ageGroupName').value="";
+							$('ageGroupName').disabled=false;
+						}
+					} else {
+						console.log("some error"+aResult.errorCode);
+					}
+				}
+			});
+		}
+		updateAge() ;
+		try {
+			dispTypeAutocomplete.addOnChangeCallback(function() {updateAge() ;$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';checkDispAttached(false);});
+			eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('startDate').value, $('finishDate').value, false);}) ;
+			eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('startDate').value, $('finishDate').value, false);}) ;
+			eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
+		} catch(e) {}
+			</script>
+
+		</msh:ifFormTypeIsNotView>
+
 		<script type="text/javascript">
     	function doDispCardNotReal() {
 
-    		if(document.getElementById('notPaid').checked==true)
-    		{ alert("Карта уже отмечена как недействительная!")} 
-    		else{
+    		if(document.getElementById('notPaid').checked===true) {
+    			alert("Карта уже отмечена как недействительная!")
+    		} else {
 		document.getElementById('notPaid').checked = true;
 		document.getElementById('isNoOmc').checked = true;
 		ExtDispService.dispCardNotReal($('id').value,{

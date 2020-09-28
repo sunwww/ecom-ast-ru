@@ -19,26 +19,22 @@ import java.util.List;
 public class AdmissionSaveInterceptor implements IFormInterceptor {
 
     private static final Logger LOG = Logger.getLogger(AdmissionSaveInterceptor.class);
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		AdmissionMedCaseForm form=(AdmissionMedCaseForm)aForm ;
 		EntityManager manager = aContext.getEntityManager();
-		if (CAN_DEBUG) LOG.debug("Проверка правильности введенных данных");
-		
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
-		Long id = medCase.getId() ;
+		long id = medCase.getId() ;
 		
 		StatisticStubStac stub = new StatisticStubStac(medCase,aContext.getSessionContext(),manager);
 		
 		String statCardNumber = form.getStatCardNumber() ;
 		String stubCode = medCase.getStatisticStub()!=null?medCase.getStatisticStub().getCode():null;
-		if (statCardNumber!=null && !statCardNumber.equals("") && (id>Long.valueOf(0))
+		if (statCardNumber!=null && !statCardNumber.equals("") && (id>0L)
 				&& stubCode!=null&&!stubCode.equals(statCardNumber)
 				) {
 			
 			String year = form.getDateStart().substring(6) ;
-			//throw ""+year ;
 			List<Object[]> list = manager
 					.createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
 				.setParameter("number", statCardNumber).setParameter("year",java.lang.Long.valueOf(year)).getResultList() ;
@@ -46,7 +42,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			if (list.isEmpty()) {
 				boolean alwaysCreate = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber") ;
 				if (!alwaysCreate) {
-	    			if (form.getDeniedHospitalizating()!=null && form.getDeniedHospitalizating()>Long.valueOf(0)) {
+	    			if (form.getDeniedHospitalizating()!=null && form.getDeniedHospitalizating()> 0L) {
 	    				//throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
 	    				StatisticStubStac.removeStatCardNumber(manager, aContext.getSessionContext(),medCase);
 	    			} else {
@@ -57,7 +53,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 	    		}
 				
 			} else {
-				if (form.getDeniedHospitalizating().equals(Long.valueOf(0))) {
+				if (form.getDeniedHospitalizating().equals(0L)) {
 					StatisticStubStac.createStacCardNumber(id,statCardNumber, manager, aContext.getSessionContext(),form);
 				} else {
 					
@@ -88,8 +84,8 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			if (!adding1is) adding1 = true ; 
 			boolean adding2 = false ;
 			if (!adding2is) adding2 = true ;
-			VocDiagnosisRegistrationType vocTypeOrder = manager.find(VocDiagnosisRegistrationType.class, Long.valueOf(1));
-			VocDiagnosisRegistrationType vocTypeEnter = manager.find(VocDiagnosisRegistrationType.class, Long.valueOf(2));
+			VocDiagnosisRegistrationType vocTypeOrder = manager.find(VocDiagnosisRegistrationType.class, 1L);
+			VocDiagnosisRegistrationType vocTypeEnter = manager.find(VocDiagnosisRegistrationType.class, 2L);
 			List<Diagnosis> diagList = manager.createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
 			if (diagList==null) diagList = new ArrayList<>();
 			for(Diagnosis diag:diagList){
@@ -115,48 +111,12 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 
 		if (medCase.getDeniedHospitalizating()==null && medCase.getTransferDate()==null) {
 			//При отказе от госпитализации считаем что пациент выбыл из приемника (сразу направлен в отделение)
-			Long currentDate = new Date().getTime();
+			long currentDate = new Date().getTime();
 			medCase.setTransferDate(new java.sql.Date(currentDate));
 			medCase.setTransferTime(new java.sql.Time(currentDate));
 		}
 	}
 
-	/*PatientForm form = (PatientForm) aForm ;
-		Patient patient = (Patient) aEntity ;
-
-		if(form.isAttachedByPolicy()) {
-			if(form.getCreateNewOmcPolicy()) {
-				// новый полис
-				MedPolicyOmcForm polForm = form.getPolicyOmcForm() ;
-				polForm.setPatient(patient.getId());
-				try {
-					long policyId = EjbInjection.getInstance().getLocalService(IParentEntityFormService.class)
-						.create(polForm);
-					MedPolicyOmc medPolicyOmc = aManager.find(MedPolicyOmc.class, policyId) ;
-					patient.setAttachedOmcPolicy(medPolicyOmc);
-					if(patient.getMedPolicies()!=null) {
-						patient.getMedPolicies().add(medPolicyOmc);
-					}
-				} catch (Exception e) {
-					throw new IllegalStateException(e);
-				}
-			}			
-			
-		} else {
-			// прикреплен по адресу
-			try {
-				patient.setAddress(aManager.find(Address.class, form.getAddress())) ;
-				patient.setHouseNumber(form.getHouseNumber());
-				patient.setHouseBuilding(form.getHouseBuilding());
-				patient.setFlatNumber(form.getFlatNumber());
-				new PatientListener().onUpdate(patient) ;
-			} catch (Exception e) {
-				throw new IllegalStateException(e);
-			}
-		}*/
-		//if (CAN_DEBUG)
-		//	LOG.debug("intercept: form.getPolicyOmcForm().getSeries() = " + form.getPolicyOmcForm().getSeries());
-	
 	private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager) {
 		boolean resault = false ;
 		if (!aNewIs) {

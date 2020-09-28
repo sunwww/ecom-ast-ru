@@ -9,13 +9,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 
 @Entity
 @Comment("Осмотр беременной")
-@Table(schema="SQLUser")
 public class PregnanInspection extends Inspection {
 	
 	/** Размер таза DSp */
@@ -122,21 +120,17 @@ public class PregnanInspection extends Inspection {
 
 	@Transient
 	public String getInformation() {
-		StringBuilder ret = new StringBuilder() ;
 		// Размеры таза
-		ret.append("Размеры таза: D Sp").append(thePelvisDSp)
-			.append(" D Cr ").append(thePelvisDCr)
-			.append(" D Tr ").append(thePelvisDTr)
-			.append("C ext ").append(thePelvisCExt)
-			.append("C diag ").append(thePelvisCDiag)
-			.append("C later ").append(thePelvisCLater) ;
-		//Ромб Михаэлиса
-		ret.append(". Ромб Михаэлиса прод.").append(theRhombLongitudinal).append(" попер. ").append(theRhombTransversal) ;
-		//Индекс Соловьева
-		ret.append(". Индекс Соловьева ").append(theSolovievIndex);
-		
-		
-		return ret.toString() ;
+		return "Размеры таза: D Sp" + thePelvisDSp +
+				" D Cr " + thePelvisDCr +
+				" D Tr " + thePelvisDTr +
+				"C ext " + thePelvisCExt +
+				"C diag " + thePelvisCDiag +
+				"C later " + thePelvisCLater +
+				//Ромб Михаэлиса
+				". Ромб Михаэлиса прод." + theRhombLongitudinal + " попер. " + theRhombTransversal +
+				//Индекс Соловьева
+				". Индекс Соловьева " + theSolovievIndex;
 	}
 	@Transient
 	public String getTypeInformation() {

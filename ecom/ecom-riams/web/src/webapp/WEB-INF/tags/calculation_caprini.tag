@@ -185,7 +185,7 @@
             </td>
         </tr>
     </div>
-    <tags:calculation_extra name="calculation_extra"/>
+
     <script type="text/javascript" src="./dwr/interface/CalculateService.js"></script>
     <script type="text/javascript">
         var theIs${name}NewCalculationDialogInitialized = false ;
@@ -430,9 +430,8 @@
         function getTextVocRadiooncoT${name}(name) {
             var chk = document.getElementsByName(name);
             var res=[];
-            for (var i=0; i<chk.length; i++) {
-                res.push(chk[i].parentNode.innerText);
-            }
+            for (var i=0; i<chk.length; i++)
+                res.push(jQuery(chk[i]).parent().text());
             return res;
         }
         //текст для чекбокса
@@ -451,7 +450,8 @@
             var chk = document.getElementsByName(name);
             var res=0;
             for (var i=0; i<chk.length; i++) {
-                if (chk[i].checked) res=chk[i].parentNode.innerText;
+                if (chk[i].checked)
+                    res=jQuery(chk[i]).parent().text();
             }
             return res;
         }

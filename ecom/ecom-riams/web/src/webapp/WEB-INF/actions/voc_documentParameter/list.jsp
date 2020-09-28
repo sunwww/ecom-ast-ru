@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="Voc" title="Кодификатор" guid="dd8765db-fd78-4593-98ff-d87a7a48d574" />
+    <msh:title mainMenu="Voc" title="Кодификатор" />
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
@@ -97,15 +97,15 @@ order by vdpg.name,vdp.id"/>
 			                	</tbody>
 		  	</msh:toolbar>
   	</msh:tableNotEmpty>
-      <msh:tableColumn columnName="Название группы" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Название группы" property="2" />
       <msh:tableColumn property="3" columnName="Название параметра" />
       <msh:tableColumn columnName="Размерность" property="4"/>
       <msh:tableColumn columnName="Привязка к отделениям" property="5"/>
     </msh:table>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Добавить" guid="b33faf64-b72e-4845-bf32-5fda8e274fc3">
-      <msh:sideLink params="" action="/entityPrepareCreate-voc_documentParameter" name="Создать" title="Создать" guid="dc488234-9da8-4290-9e71-3b4558d27ec7" roles="/Policy/Mis/MedService/Create" />
+    <msh:sideMenu title="Добавить">
+      <msh:sideLink params="" action="/entityPrepareCreate-voc_documentParameter" name="Создать" title="Создать" roles="/Policy/Mis/MedService/Create" />
     </msh:sideMenu>
     <tags:voc_menu currentAction="diary_param_list"/>
   </tiles:put>

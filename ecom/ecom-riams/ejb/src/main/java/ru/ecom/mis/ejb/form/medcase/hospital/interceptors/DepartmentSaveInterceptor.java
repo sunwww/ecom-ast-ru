@@ -22,11 +22,9 @@ import java.util.List;
 public class DepartmentSaveInterceptor  implements IFormInterceptor{
 
 	private static final Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-    
+
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		DepartmentMedCaseForm form=(DepartmentMedCaseForm)aForm ;
-		if (CAN_DEBUG) LOG.debug("Проверка правильности введенных данных");
 		EntityManager manager = aContext.getEntityManager() ;
 		DepartmentMedCase medCase = (DepartmentMedCase)aEntity ;
 		String dateFinish = "null" ;
@@ -37,17 +35,14 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		if (medCase.getDischargeTime()!=null) {
 			timeFinish = "'"+DateFormat.formatToTime(medCase.getDischargeTime())+"'" ;
 		}
-		StringBuilder sqlupdate = new StringBuilder() ;
-		
+
 		if (!isDiagnosisAllowed(form.getClinicalMkb(), form.getDepartment(), form.getPatient(), form.getServiceStream(), null,null,manager)) {
 			throw new IllegalStateException ("Данный диагноз запрещен в отделении!");
 		}
-		sqlupdate.append("update MedCase set dateFinish="+dateFinish+", dischargeTime="+timeFinish+" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))") ;
-		manager.createNativeQuery(sqlupdate.toString())
+		if (medCase.getParent()!=null) medCase.setServiceStream(medCase.getParent().getServiceStream());// всегда поток обслуживания = потоку родителя.
+		manager.createNativeQuery("update MedCase set dateFinish=" + dateFinish + ", dischargeTime=" + timeFinish + " where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))")
 			.setParameter("parent", form.getId())
 			.executeUpdate() ;
-		
-		
 	}
 	public static void setDiagnosis(EntityManager aManager, Long aMedCase, String aListDiags, String aRegistrationType, String aPriority) {
 		setDiagnosis(aManager, aMedCase, aListDiags, aRegistrationType, aPriority,null, null) ;
@@ -63,7 +58,6 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			sql.append("select id from Diagnosis where medCase_id=").append(aMedCase)
 					.append(" and registrationType_id='").append(vocDRT.getId())
 					.append("' and priority_id='").append(vocPrior.getCode()).append("' order by id") ;
-			LOG.info("sql = "+sql);
 			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList() ;
     		String[] otherServs = aListDiags.split("#@#");
     		if (otherServs.length>0) {
@@ -149,7 +143,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 
 	
 	public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long aPatient, Long serviceStream, Long diagnosisRegistrationType, Long diagnosisPriority, EntityManager manager) {
-		if (clinicalMkb==null || clinicalMkb.equals(Long.valueOf(0))) return true ;
+		if (clinicalMkb==null || clinicalMkb.equals(0L)) return true ;
 		if (diagnosisRegistrationType==null) {
 			diagnosisRegistrationType = Long.valueOf(manager.createNativeQuery("select id from vocdiagnosisregistrationtype where code='4'").getResultList().get(0).toString());  //4
 		}

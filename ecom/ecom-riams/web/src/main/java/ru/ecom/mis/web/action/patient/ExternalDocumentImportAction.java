@@ -59,7 +59,7 @@ public class ExternalDocumentImportAction extends BaseAction {
         	IIORegistry registry = IIORegistry.getDefaultInstance() ;
         	registry.registerServiceProvider(new TIFFImageWriterSpi()) ;
         	registry.registerServiceProvider(new TIFFImageReaderSpi()) ;
-    		boolean isCompress = false ;
+    		boolean isCompress;
     		boolean isRecord = false ;
         	Date dat = new Date() ;
         	String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -124,7 +124,7 @@ public class ExternalDocumentImportAction extends BaseAction {
             	isCompress=true;
             	mcomp = 0.25f ;
 	    	} else {
-	    		return aMapping.findForward("success") ;
+	    		return aMapping.findForward(SUCCESS) ;
 	    	}
 	    		try {
 	    			//image = Scalr.resize(image, image.getWidth()/2,image.getHeight()/2) ;
@@ -134,19 +134,12 @@ public class ExternalDocumentImportAction extends BaseAction {
             			file.mkdirs() ;
             			}catch (Exception e){}
             		}
-            		//save(image, dirmain+"proba/");
             		diradd=diradd+"/"+urlImage ;
-            		//ImageIO.write(image, "jpg", new File(dirmain+diradd+".jpg")) ;
-            		//ImageIO.write(image, "jpg", new File(dirmain+diradd+".jpg")) ;
-	            	//ImageIO.write(image, "TIFF", new File(dirmain+diradd+".tif")) ;
-            		if (parentType.equals("Template")) {
-            			//saveNotImage(ffile.getInputStream(),dirmain+"/"+diradd+".pdf");
-            		}
-            		else if (contentType!=null&&contentType.equals("application/pdf")) { //Сохраняем ПДФ как есть
-            			LOG.info("=== "+ffile.getFileSize()+" <>"+dirmain+"/"+diradd+".pdf");
+            		if ("application/pdf".equals(contentType)) { //Сохраняем ПДФ как есть
+            //			LOG.info("=== "+ffile.getFileSize()+" <>"+dirmain+"/"+diradd+".pdf");
             			
             			saveNotImage(ffile.getInputStream(),dirmain+"/"+diradd+".pdf");
-            				LOG.info("=== DOC_TYPE= "+form.getType()+"<>"+form.getObjectId());
+            //				LOG.info("=== DOC_TYPE= "+form.getType()+"<>"+form.getObjectId());
             				if (form.getType()!=null) service.insertExternalDocumentByObject(parentType, form.getObjectId() , form.getType(), diradd+".pdf", diradd+".pdf", "", username) ;
             				aRequest.setAttribute("url_image", diradd+".pdf") ;
     		            	aRequest.setAttribute("url_image_comp", "") ;
@@ -164,12 +157,10 @@ public class ExternalDocumentImportAction extends BaseAction {
 						String newName = dirmain+diradd+"-comp.jpg" ;
 						if (isCompress) {
 							float comp = service.getImageCompress()*mcomp ;
-							LOG.info("compress...");
+			//				LOG.info("compress...");
 							//image = Scalr.resize(image, image.getWidth()/2,image.getHeight()/2) ;
 							save(image,comp,newName,dirmain+diradd+".jpg",serviceKdl) ;
 						} else {
-							LOG.info(newName);
-							LOG.info(path1);
 							new File(dirmain+path1).renameTo(new File(newName));
 						}
 						if(isRecord) {
@@ -192,7 +183,7 @@ public class ExternalDocumentImportAction extends BaseAction {
     		aRequest.setAttribute("result_image", "Ошибка при обработке") ;
     	}
     	
-    	return aMapping.findForward("success") ;
+    	return aMapping.findForward(SUCCESS) ;
     }
 	public void save(BufferedImage aImage, Float aCompress, String aFileName,String aFileMainName,IKdlDiaryService aService) throws IOException  {
 		
@@ -201,10 +192,8 @@ public class ExternalDocumentImportAction extends BaseAction {
 			cmd = cmd.replaceAll("_", " ");
 			cmd = cmd.replace("ORIGFILE", aFileMainName) ;
 			cmd = cmd.replace("NEWFILE", aFileName) ;
-			System.out.println("cmd="+cmd) ;
 			String run=aService.run(cmd) ;
-			if (run!=null &&run.equals("0")) {
-			} else {
+			if (!"0".equals(run)) {
 				LOG.error("    ---->> ERROR-->"+run);
 				save(aImage, aCompress, aFileName,null,aService) ;
 			}
@@ -220,7 +209,6 @@ public class ExternalDocumentImportAction extends BaseAction {
 						ImageWriteParam iwp = writer.getDefaultWriteParam();
 						iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT) ;
 						iwp.setCompressionQuality(aCompress) ;
-						printlist(iwp.getCompressionTypes()) ;
 						//iwp.setCompressionType("BI_RGB") ;
 
 						writer.setOutput(output) ;
@@ -247,12 +235,4 @@ public class ExternalDocumentImportAction extends BaseAction {
 			e.printStackTrace();
 		}
 	}
-	
-	private void printlist(String[] aList) {
-		for(String l:aList) {
-			LOG.info("    "+l);
-		}
-	}
-	
-
 }

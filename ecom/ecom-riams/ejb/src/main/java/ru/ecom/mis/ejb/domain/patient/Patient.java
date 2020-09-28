@@ -28,32 +28,42 @@ import java.util.List;
  * Пациент
  **/
 @Entity
-//@EntityListeners(PatientListener.class) // теперь вызывается при сохранении формы
 @AIndexes({
-		@AIndex(unique = false, properties= {"patientSync"})
-		, @AIndex(unique = false, properties= {"snils"})
-		, @AIndex(unique = false, properties= {"passportNumber","passportSeries"})
-		, @AIndex(unique = false, properties= {"editDate"})
-		, @AIndex(unique = false, properties= {"createDate"})
-		//, @AIndex(unique = false, properties= {"sex"})
-		, @AIndex(unique = false, properties= {"lastname","firstname","middlename", "birthday"})
-		, @AIndex(unique = false, properties= ("lpuArea"))
-		, @AIndex(unique = false, properties= ("lpuAreaAddressText"))
-		, @AIndex(unique = false, properties= ("lpu"))
-		, @AIndex(unique = false, properties= ("address"))
-		, @AIndex(unique = false, properties= ("nationality"))
-		// используется при прикреплении при изменении LpuAreaText в AddressPointServiceBean
-   	    /*
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","birthday"})
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","birthday"})
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","flatNumber","birthday"})
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","houseBuilding","birthday"})
-      , @AIndex(unique = false, properties= {"attachedOmcPolicy","address","houseNumber","houseBuilding","flatNumber","birthday"})
-      */
+		  @AIndex(properties= {"patientSync"})
+		, @AIndex(properties= {"snils"})
+		, @AIndex(properties= {"passportNumber","passportSeries"})
+		, @AIndex(properties= {"editDate"})
+		, @AIndex(properties= {"createDate"})
+		, @AIndex(properties= {"lastname","firstname","middlename", "birthday"})
+		, @AIndex(properties= ("lpuArea"))
+		, @AIndex(properties= ("lpuAreaAddressText"))
+		, @AIndex(properties= ("lpu"))
+		, @AIndex(properties= ("address"))
+		, @AIndex(properties= ("nationality"))
+
+})
+@NamedQueries({
+		@NamedQuery( name="Patient.getByLastAndFirstAndMiddleAndBirthday"
+				, query="from Patient where lastname=:lastname and firstname=:firstname" +
+				" and middlename=:middlename and birthday=:birthday order by lastname, firstname, middlename ")
 })
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")
-public class Patient extends BaseEntity{
+public class Patient extends BaseEntity {
+
+    /** Голосует в палате */
+    @Comment("Голосует в палате")
+    public Boolean getVoteInRoom() {return theVoteInRoom;}
+    public void setVoteInRoom(Boolean aVoteInRoom) {theVoteInRoom = aVoteInRoom;}
+    /** Голосует в палате */
+    private Boolean theVoteInRoom ;
+
+	/** ППЗ */
+	@Comment("ППЗ")
+	public Boolean getPpz() {return thePpz;}
+	public void setPpz(Boolean aPpz) {thePpz = aPpz;}
+	/** ППЗ */
+	private Boolean thePpz ;
 
 	/** Не голосует */
 	@Comment("Не голосует")
@@ -71,31 +81,24 @@ public class Patient extends BaseEntity{
 	/** Телефон */
 	private String thePhone;
 
-	public static String medcaseMedpolicy_id;
-
-	@Comment("Последняя синхронизация с фондом")
-	public static String getMedcaseMedpolicy_id() {
-		return medcaseMedpolicy_id;
-	}
-	public static void setMedcaseMedpolicy_id(String medcaseMedpolicy_id) {
-		Patient.medcaseMedpolicy_id = medcaseMedpolicy_id;
-	}
-
 	/** Участок основного прикрепления*/
 	@Comment("Участок основного прикрепления")
 	@OneToOne
+	@Deprecated
 	public LpuArea getLpuArea() { return theLpuArea ; }
 	public void setLpuArea(LpuArea aLpuArea) { theLpuArea = aLpuArea ; }
 
 	/** Адрес участка основного прикрепления */
 	@Comment("Адрес участка основного прикрепления")
 	@OneToOne
+	@Deprecated
 	public LpuAreaAddressText getLpuAreaAddressText() { return theLpuAreaAddressText ; }
 	public void setLpuAreaAddressText(LpuAreaAddressText aLpuAreaAddressText) { theLpuAreaAddressText = aLpuAreaAddressText ; }
 
 	/** ЛПУ основного прикрепления*/
 	@Comment("ЛПУ основного прикрепления")
 	@OneToOne
+	@Deprecated
 	public MisLpu getLpu() { return theLpu ; }
 	public void setLpu(MisLpu aLpu) { theLpu = aLpu ; }
 
@@ -109,53 +112,11 @@ public class Patient extends BaseEntity{
 	public String getLpuAreaName() { return theLpuArea!=null ? theLpuArea.getName() : ""; }
 	public void setLpuAreaName(String aLpuAreaName) {}
 
-	/** Полис прикрепления */
-	//@Comment("Полис прикрепления")
-	//@OneToOne
-	//public MedPolicyOmc getAttachedOmcPolicy() {return theAttachedOmcPolicy;}
-	//public void setAttachedOmcPolicy(MedPolicyOmc aAttachedOmcPolicy) {theAttachedOmcPolicy = aAttachedOmcPolicy;}
-
-	/** Ведомственное прикрепление */
-	//@Comment("Ведомственное прикрепление")
-	//@OneToMany(cascade=ALL, mappedBy="patient")
-	//public List<LpuAttachedByDepartment> getAttachedByDepartments() {return theAttachedByDepartments;}
-	//public void setAttachedByDepartments(List<LpuAttachedByDepartment> aAttachedByDepartments) {theAttachedByDepartments = aAttachedByDepartments;}
-
-
-//    /** Инвалидность */
-//    private Invalidity theInvalidity ;
-
-	/** Случаи нетрудоспособности */
-	//@Comment("Случаи нетрудоспособности")
-	//@OneToMany(mappedBy="patient", cascade=CascadeType.ALL)
-	//public List<DisabilityCase> getDisabilityCases() {return theDisabilityCases;}
-	//public void setDisabilityCases(List<DisabilityCase> aDisabilityCases) {theDisabilityCases = aDisabilityCases;}
-
-
-	/** Квалификации */
-	//@Comment("Квалификации")
-	//@OneToMany(mappedBy = "person", cascade= ALL)
-	//public List<Qualification> getQualifications() { return theQualifications ; }
-	//public void setQualifications(List<Qualification> aQualifications) { theQualifications = aQualifications ; }
-
-	/** Награды */
-	//@Comment("Награды")
-	//@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
-	//public List<Award> getAwards() {return theAwards;}
-	//public void setAwards(List<Award> aAwards) {theAwards = aAwards;}
-
-
 	/** Район города и области для фонда */
 	@Comment("Район города и области для фонда")
 	@OneToOne
 	public VocRayon getRayon() {return theRayon;}
 	public void setRayon(VocRayon aRayon) {theRayon = aRayon;}
-
-	/** Синхронизация адресов */
-	@PostPersist @PostUpdate
-	protected void syncAddresses() {
-		// адрес проживания пустой
-	}
 
 	/** Имя */
 	@Comment("Имя")
@@ -206,27 +167,6 @@ public class Patient extends BaseEntity{
 	public VocSocialStatus getSocialStatus() { return theStatusSocial ; }
 	public void setSocialStatus(VocSocialStatus aStatusSocial) { theStatusSocial = aStatusSocial ; }
 
-//    /** Инвалидность */
-//    @OneToOne(mappedBy = "patient", cascade= ALL)
-//    public Invalidity getInvalidity() { return theInvalidity ; }
-//    public void setInvalidity(Invalidity aInvalidity) { theInvalidity = aInvalidity ; }
-
-//    /** Документы */
-//    @OneToMany(mappedBy = "patient", cascade= ALL)
-//    public List<IdentityCard> getIdentityCard() { return theIdentityCard ; }
-//    public void setIdentityCard(List<IdentityCard> aIdentityCard) { theIdentityCard = aIdentityCard ; }
-
-
-//    /** Место проживания */
-//    @OneToOne(cascade = CascadeType.ALL)
-//    public PatientAddress getRegistrationPlace() { return theRegistrationPlace ; }
-//    public void setRegistrationPlace(PatientAddress aRegistrationPlace) { theRegistrationPlace = aRegistrationPlace ; }
-
-//    /** Место проживания */
-//    private PatientAddress theRegistrationPlace ;
-//    /** Документы */
-//    private List<IdentityCard> theIdentityCard ;
-
 	/** Номер паспорта */
 	@Comment("Номер паспорта")
 	public String getPassportNumber() { return thePassportNumber ; }
@@ -268,7 +208,6 @@ public class Patient extends BaseEntity{
 	@Comment("Дом по адресу проживания")
 	public String getRealHouseNumber() {return theRealHouseNumber;}
 	public void setRealHouseNumber(String aRealHouseNumber) {theRealHouseNumber = aRealHouseNumber;}
-
 
 	/** Корпус по адресу проживания */
 	@Comment("Корпус по адресу проживания")
@@ -351,12 +290,6 @@ public class Patient extends BaseEntity{
 	public List<Kinsman> getKinsmen() {return theKinsmen;}
 	public void setKinsmen(List<Kinsman> aKinsmen) {theKinsmen = aKinsmen;}
 
-	///** Чей родственник */
-	//@Comment("Чей родственник")
-	//@OneToMany(mappedBy="kinsman", cascade=CascadeType.ALL)
-	//public List<Kinsman> getKinsmanOf() {return theKinsmanOf;}
-	//public void setKinsmanOf(List<Kinsman> aKinsmanOf) {theKinsmanOf = aKinsmanOf;}
-
 	@Transient
 	public String getAddressRegistration() {
 		if (theAddress!=null ) return theAddress.getAddressInfo(theHouseNumber, theHouseBuilding, theFlatNumber)  ;
@@ -394,15 +327,7 @@ public class Patient extends BaseEntity{
 	/** Информация о пациенте */
 	@Comment("Информация о пациенте")
 	public String getPatientInfo() {
-		StringBuilder sb = new StringBuilder();
-		add(sb, theLastname,"");
-		add(sb, theFirstname," ");
-		add(sb, theMiddlename," ");
-		if(getBirthday()!=null) {
-			add(sb, " г.р.", " ");
-			add(sb, DateFormat.formatToDate(getBirthday())," ") ;
-		}
-		return sb.toString();
+		return getFio();
 	}
 	/** Информация о пациенте */
 	@Transient
@@ -418,24 +343,15 @@ public class Patient extends BaseEntity{
 		}
 		return sb.toString();
 	}
-	// IKO 070430 +++
 	private String thePatientSync;
 	@Comment("Синхронизация пациента")
 	public String getPatientSync() {
 		return thePatientSync;
 	}
-
 	public void setPatientSync(String aPatientSync) {
 		thePatientSync = aPatientSync;
 	}
 
-	// IKO 070430 ===
-
-	@Comment("Название пола")
-	@Transient
-	public String getSexName() {
-		return "" ;
-	}
 	private static void add(StringBuilder aSb, String aStr, String aPre) {
 		if(!StringUtil.isNullOrEmpty(aStr)) {
 			if(aSb.length()!=0) aSb.append(aPre) ;
@@ -443,30 +359,6 @@ public class Patient extends BaseEntity{
 		}
 	}
 	public void setPatientInfo(String aPatientInfo) { }
-
-    /*@Comment("Информация паспорта")
-    @Transient
-    public String getPassportInfo() {
-        final SimpleDateFormat FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-        StringBuilder sb = new StringBuilder();
-        if (thePassportType!=null) sb.append(thePassportType.getName()).append(" ") ;
-        addNotEmpty(sb, thePassportSeries) ;
-        sb.append(" ") ;
-        addNotEmpty(sb, thePassportNumber) ;
-        if(thePassportDateIssue!=null) {
-            sb.append(", выдан ") ;
-        }
-        addNotEmpty(sb, thePassportDateIssue!=null ? FORMAT.format(thePassportDateIssue) : "") ;
-        sb.append(" ") ;
-        addNotEmpty(sb, thePassportWhomIssued) ;
-        return sb.toString() ;
-    }*/
-
-	//private static void addNotEmpty(StringBuilder aSb, String aValue) {
-	//    if(!StringUtil.isNullOrEmpty(aValue)) {
-	//        aSb.append(aValue) ;
-	//    }
-	//}
 	@Comment("Информация по адресу")
 	@Transient
 	public String getAddressInfo() {
@@ -482,7 +374,6 @@ public class Patient extends BaseEntity{
 		}
 		return ret.toString() ;
 	}
-	// [end]
 
 	/** Гражданство */
 	@Comment("Гражданство")
@@ -490,15 +381,12 @@ public class Patient extends BaseEntity{
 	public OmcOksm getNationality() {return theNationality;}
 	public void setNationality(OmcOksm aNationality) {theNationality = aNationality;}
 
-
-
 	/** Территория регистрации  (иногороднего) */
 	@Comment("Территория регистрации")
 	@OneToOne
 	public OmcKodTer getTerritoryRegistrationNonresident() {
 		return theTerritoryRegistrationNonresident;
 	}
-
 	public void setTerritoryRegistrationNonresident(OmcKodTer aTerritoryRegistrationNonresident) {
 		theTerritoryRegistrationNonresident = aTerritoryRegistrationNonresident;
 	}
@@ -508,7 +396,6 @@ public class Patient extends BaseEntity{
 	public String getRegionRegistrationNonresident() {
 		return theRegionRegistrationNonresident;
 	}
-
 	public void setRegionRegistrationNonresident(String aRegionRegistrationNonresident) {
 		theRegionRegistrationNonresident = aRegionRegistrationNonresident;
 	}
@@ -519,7 +406,6 @@ public class Patient extends BaseEntity{
 	public OmcQnp getTypeSettlementNonresident() {
 		return theTypeSettlementNonresident;
 	}
-
 	public void setTypeSettlementNonresident(OmcQnp aTypeSettlementNonresident) {
 		theTypeSettlementNonresident = aTypeSettlementNonresident;
 	}
@@ -529,7 +415,6 @@ public class Patient extends BaseEntity{
 	public String getSettlementNonresident() {
 		return theSettlementNonresident;
 	}
-
 	public void setSettlementNonresident(String aSettlementNonresident) {
 		theSettlementNonresident = aSettlementNonresident;
 	}
@@ -540,7 +425,6 @@ public class Patient extends BaseEntity{
 	public OmcStreetT getTypeStreetNonresident() {
 		return theTypeStreetNonresident;
 	}
-
 	public void setTypeStreetNonresident(OmcStreetT aTypeStreetNonresident) {
 		theTypeStreetNonresident = aTypeStreetNonresident;
 	}
@@ -550,7 +434,6 @@ public class Patient extends BaseEntity{
 	public String getStreetNonresident() {
 		return theStreetNonresident;
 	}
-
 	public void setStreetNonresident(String aStreetNonresident) {
 		theStreetNonresident = aStreetNonresident;
 	}
@@ -560,7 +443,6 @@ public class Patient extends BaseEntity{
 	public String getHouseNonresident() {
 		return theHouseNonresident;
 	}
-
 	public void setHouseNonresident(String aHouseNonresident) {
 		theHouseNonresident = aHouseNonresident;
 	}
@@ -570,7 +452,6 @@ public class Patient extends BaseEntity{
 	public String getBuildingHousesNonresident() {
 		return theBuildingHousesNonresident;
 	}
-
 	public void setBuildingHousesNonresident(String aBuildingHousesNonresident) {
 		theBuildingHousesNonresident = aBuildingHousesNonresident;
 	}
@@ -580,7 +461,6 @@ public class Patient extends BaseEntity{
 	public String getApartmentNonresident() {
 		return theApartmentNonresident;
 	}
-
 	public void setApartmentNonresident(String aApartmentNonresident) {
 		theApartmentNonresident = aApartmentNonresident;
 	}
@@ -646,42 +526,14 @@ public class Patient extends BaseEntity{
 	/** Гражданство */
 	private OmcOksm theNationality;
 
-	/** DTYPE */
-	//private String theDTYPE;
-	/** Вакцинации */
-	//private List<Vaccination> theVaccinations;
-	/** Сотрудники */
-	//private List<Worker> theWorkers;
 	/** Участок основного прикрепления */
 	private LpuArea theLpuArea ;
 	/** Адрес участка основного прикрепления */
 	private LpuAreaAddressText theLpuAreaAddressText ;
 	/** ЛПУ основного прикрепления */
 	private MisLpu theLpu ;
-	/** Ведомственное прикрепление */
-	//private List<LpuAttachedByDepartment> theAttachedByDepartments;
-	/** СМО */
-	//private List<MedCase> theMedCases;
-	/** Полис прикрепления */
-	//private MedPolicyOmc theAttachedOmcPolicy;
-	/** Случаи нетрудоспособности */
-	//private List<DisabilityCase> theDisabilityCases;
-	/** Трудовые книги */
-	//private List<WorkBook> theWorkBook ;
-	/** Знание языков */
-	//private List<LanguageSkill> theLanguageSkills;
-	/** Образования */
-	//private List<Education> theEducations ;
-	///** Квалификации */
-	//private List<Qualification> theQualifications ;
-	/** Награды */
-	//private List<Award> theAwards;
-	/** Медицинские карты */
-	//private List<Medcard> theMedcard;
 	/** Район города и области для фонда */
 	private VocRayon theRayon;
-	/** Льготы */
-	//private List<Privilege> thePrivileges;
 	/** Имя */
 	private String theFirstname ;
 	/** Фамилия */
@@ -698,8 +550,6 @@ public class Patient extends BaseEntity{
 	private Long theInn ;
 	/** Тип удостоверения личности */
 	private VocIdentityCard thePassportType ;
-	/** Полисы */
-	//private List<MedPolicy> theMedPolicies ;
 	/** Социальный статус, в т.ч. и занятость */
 	private VocSocialStatus theStatusSocial ;
 	/** Номер паспорта */
@@ -746,11 +596,6 @@ public class Patient extends BaseEntity{
 	private String theForeignRegistrationAddress;
 	/** Родственники */
 	private List<Kinsman> theKinsmen;
-	/** Чей родственник */
-	//private List<Kinsman> theKinsmanOf;
-
-
-
 	/**
 	 * Горожанин
 	 */
@@ -984,7 +829,7 @@ public class Patient extends BaseEntity{
 
 	private PatientFond patientFond;
 
-	@Comment("Актуальая проверка по фонду")
+	@Comment("Актуальная проверка по фонду")
 	@OneToOne
 	public PatientFond getPatientFond() {
 		return patientFond;
@@ -1002,4 +847,14 @@ public class Patient extends BaseEntity{
 	public void setIsCheckFondError(Boolean isCheckFondError) {
 		this.isCheckFondError = isCheckFondError;
 	}
+
+	/** Цвета браслета пациента */
+	private List<ColorIdentityPatient> theColorsIdentity;
+
+	/** Цвета браслета пациента */
+	@Comment("Цвета браслета пациента")
+	@ManyToMany
+	public List<ColorIdentityPatient> getColorsIdentity() {return theColorsIdentity;}
+	public void setColorsIdentity(List<ColorIdentityPatient> aColorsIdentity) {theColorsIdentity = aColorsIdentity;}
+
 }

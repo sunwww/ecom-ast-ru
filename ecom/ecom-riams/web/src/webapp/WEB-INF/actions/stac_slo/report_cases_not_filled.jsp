@@ -16,7 +16,7 @@
             String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
             request.setAttribute("cntDays", cntDays) ;
         %>
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал по пациентам, у которых не заполнялись данные более ${cntDays} дней </msh:title>
+    <msh:title mainMenu="StacJournal">Журнал по пациентам, у которых не заполнялись данные более ${cntDays} дней </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
       <tags:stac_journal currentAction="stac_journalByCurator"/>
@@ -29,10 +29,12 @@
             String cntDays=ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",request) ;
             request.setAttribute("cntDays", cntDays) ;
         	String typeIsOtherDocFromLpu =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeIsOtherDocFromLpu","1", request) ;
-        	if (typeIsOtherDocFromLpu!=null &&typeIsOtherDocFromLpu.equals("1")) {
+        	if ("1".equals(typeIsOtherDocFromLpu)) {
         		request.setAttribute("equalsSql", "p.specialist_id=slo.ownerfunction_id") ;
+                request.setAttribute("equalsLechSql", "p.specialist_id=slo.ownerfunction_id") ;
         	} else {
         		request.setAttribute("equalsSql", "pw.lpu_id=ow.lpu_id") ;
+                request.setAttribute("equalsLechSql", "1=1") ;
         	}
         %>
         <ecom:webQuery name="infoByLogin"
@@ -49,10 +51,10 @@
          <msh:row>
 	        <td class="label" title="Записи других врачей из отделения (typeIsOtherDocFromLpu)" colspan="1"><label for="typeIsOtherDocFromLpuName" id="typeIsOtherDocFromLpuLabel">Записи других врачей из отделения:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';checkfrm();">
-	        	<input type="radio" name="typeIsOtherDocFromLpu" value="1">  не учитывать 
+	        	<input type="radio" name="typeIsOtherDocFromLpu" value="1">  не учитывать
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';checkfrm();"  colspan="2">
-	        	<input type="radio" name="typeIsOtherDocFromLpu" value="2"  >  учитывать 
+	        	<input type="radio" name="typeIsOtherDocFromLpu" value="2"  >  учитывать
 	        </td>
         </msh:row>
         </msh:panel>
@@ -74,7 +76,6 @@
            		chk[+aValue-1].checked='checked' ;
            	}
         }
-        fun
         </script>
         <%
             boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments",request) ;
@@ -83,13 +84,13 @@
             String department = request.getParameter("department") ;
             String curator = request.getParameter("curator") ;
             String workFunc = wqr!=null?""+wqr.get1():"0" ;
-            boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
+            boolean isBossDepartment= wqr != null && wqr.get3() != null;
 
  
             int type=0 ;
             if (curator!=null && !curator.equals("0")) {
                 type=3 ;
-                if (!isViewAllDepartment&&!isBossDepartment&&!curator.equals(workFunc)) {
+                if (!isViewAllDepartment && !isBossDepartment && !curator.equals(workFunc)) {
                     curator=workFunc ;
                 }
             } else if (department!=null && !department.equals("0") && (isViewAllDepartment || isBossDepartment)) {
@@ -120,7 +121,7 @@
 left join Worker ow on ow.id=owf.worker_id
     left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol'
     left join MisLpu ml on slo.department_id=ml.id
-    where slo.dateFinish is null 
+    where slo.dateFinish is null
     and slo.dtype='DepartmentMedCase'
     and slo.transferDate is null
 and (current_date-(select coalesce(max(p.dateRegistration),slo.datestart) from diary p 
@@ -132,7 +133,7 @@ and ${equalsSql }
 ))>${cntDays}
 
     group by ml.id,ml.name order by ml.name
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist"
     viewUrl="stac_report_cases_not_filled.do?short=Short&typeIsOtherDocFromLpu=${param.typeIsOtherDocFromLpu}"
     action="stac_report_cases_not_filled.do?typeIsOtherDocFromLpu=${param.typeIsOtherDocFromLpu}" idField="1">
@@ -142,8 +143,7 @@ and ${equalsSql }
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% } %>
-    <%   if (type==2 )  {    %>
+    <% } else if (type==2 )  {    %>
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <msh:sectionContent>
@@ -169,7 +169,7 @@ and ${equalsSql}
 
 group by owf.id,owp.lastname,owp.middlename,owp.firstname
 order by owp.lastname,owp.middlename,owp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist"
     viewUrl="stac_report_cases_not_filled.do?short=Short&typeIsOtherDocFromLpu=${param.typeIsOtherDocFromLpu}"
     action="stac_report_cases_not_filled.do?typeIsOtherDocFromLpu=${param.typeIsOtherDocFromLpu}" idField="1">
@@ -179,8 +179,7 @@ order by owp.lastname,owp.middlename,owp.firstname
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-         <%}%>
-         <%if (type==3 )  {    %>
+         <%} else if (type==3 )  {    %>
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
@@ -208,7 +207,7 @@ left join Worker ow on owf.worker_id=ow.id
     left join bedfund as bf on bf.id=slo.bedfund_id
     left join StatisticStub as sc on sc.medCase_id=sls.id
     left join Patient pat on slo.patient_id = pat.id
-    left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol' and p.specialist_id=slo.ownerfunction_id
+    left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol' and ${equalsLechSql}
 
     left join Diagnosis diag on diag.medcase_id=slo.id
     left join SurgicalOperation so on so.medCase_id in (slo.id,sls.id)
@@ -227,15 +226,16 @@ and ${equalsSql}
     ,bf.addCaseDuration,slo.dateStart,sls.dateStart
 
     order by pat.lastname,pat.firstname,pat.middlename
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist"
+               openNewWindow="true"
     viewUrl="entityShortView-stac_slo.do"
-    action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-stac_slo.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Стат.карта" property="5" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
       <msh:tableColumn columnName="Кол-во к.дней СЛС" property="7"/>
       <msh:tableColumn columnName="Операции" property="6"/>
       <msh:tableColumn columnName="Кол-во к.дней СЛО" property="8"/>

@@ -54,6 +54,7 @@ order by d.dateRegistration,d.timeRegistration
                                 <msh:toolbar>
                                     <a href='javascript:printProtocols("protocols")'>Печать протоколов</a>
                                     <a href='javascript:printProtocols("protocols1")'>Печать протоколов (шаблон 2)</a>
+                                    <a href='javascript:printProtocols("protocols_no_sign")'>Печать протоколов (без подписи)</a>
                                     <a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id }'>Добавить протокол</a>
                                 </msh:toolbar>
                             </th>
@@ -81,8 +82,8 @@ order by d.dateRegistration,d.timeRegistration
     	}
     	
     	List l = ActionUtil.getListObjFromNativeQuery("select sls.dtype,sls.patient_id,to_char(sls.datestart,'dd.mm.yyyy') as dat1,to_char(coalesce(sls.datefinish,current_date),'dd.mm.yyyy') as dat2 from medcase slo left join medcase sls on sls.id=slo.parent_id where slo.id="+request.getParameter("id")+" and slo.dtype='DepartmentMedCase'", request) ;
-		if (l.size()>0) {
-			if (type!=null&&!type.equals("")&&!type.equals("0"))  {
+		if (!l.isEmpty()) {
+			if (type!=null && !type.equals("") && !type.equals("0"))  {
 				if (type.equals("1")) {
 					request.setAttribute("whereSQL", "slo.id='"+request.getParameter("id")+"'");
 					request.setAttribute("title",": Дневники") ;
@@ -139,6 +140,7 @@ order by d.dateRegistration,d.timeRegistration
                                 <msh:toolbar>
                                     <a href='javascript:printProtocols("protocols")'>Печать протоколов</a>
                                     <a href='javascript:printProtocols("protocols1")'>Печать протоколов (шаблон 2)</a>
+                                    <a href='javascript:printProtocols("protocols_no_sign")'>Печать протоколов (без подписи)</a>
                                     <a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id }'>Добавить протокол</a>
                                 </msh:toolbar>
                             </th>
@@ -165,21 +167,24 @@ order by d.dateRegistration,d.timeRegistration
     <tiles:put name="javascript" type="string">
         <script type="text/javascript">
             function printProtocols(aFile) {
-            	var ids = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
-            	if(ids) {
-            		
-            		//alert(ids) ;
-            		//window.location = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
-            		var p = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
-            		initSelectPrinter(p,0);
-            		
-            		
-            	} else {
-            		alert("Нет выделенных протоколов");
-            	}
-            	
-            }
+            	var ids1 = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
+                if (ids1) {
+                    if (ids1.indexOf('id=')==0) ids1=ids1.substring(3); //замена (нужна в случае post-запроса)
+                    ids1 = ids1.replace(new RegExp('&id=','g'),',');
+                    var myform = document.createElement("form");
+                    myform.action = "print-"+aFile+".do?multy=1&m=printProtocols&s=HospitalPrintService1";
+                    myform.method = "post";
 
+                    var body = document.createElement("input");
+                    body.value = ids1;
+                    body.name = "id";
+                    document.body.appendChild(myform); myform.appendChild(body);
+
+                    initSelectPrinter(myform.action,0, myform);
+                } else {
+                    alert("Нет выделенных протоколов");
+                }
+            }
         </script>
     </tiles:put>
 

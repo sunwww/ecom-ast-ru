@@ -4,7 +4,6 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocFormHelp;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocReasonDischarge;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocResultDischarge;
@@ -42,7 +41,7 @@ public abstract class StatisticStub extends BaseEntity {
 	@Transient
 	@Comment("Информация")
 	public String getInfo() {
-		return new StringBuilder().append("Номер стат.карты ").append(getCode()).append("-").append(getYear()).toString() ;
+		return "Номер стат.карты " + getCode() + "-" + getYear();
 	}
 	
 	/** Лечебное учреждение */
@@ -114,20 +113,6 @@ public abstract class StatisticStub extends BaseEntity {
 	public void setArchiveCase(Long aArchiveCase) {theArchiveCase = aArchiveCase;}
 	/** Номер архивного дела */
 	private Long theArchiveCase;
-	
-	/** Справочник по форма помощи */
-	@Comment("Справочник по форма помощи")
-	@OneToOne
-	public VocFormHelp getFormHelp() {
-		return theFormHelp;
-	}
-
-	public void setFormHelp(VocFormHelp aFormHelp) {
-		theFormHelp = aFormHelp;
-	}
-
-	/** Справочник по форма помощи */
-	private VocFormHelp theFormHelp;
 
 	/** Рост */
 	@Comment("Рост")
@@ -172,4 +157,5 @@ public abstract class StatisticStub extends BaseEntity {
 
 	/** Визит оформлен диетологом */
 	private Boolean theDietDone;
+
 }

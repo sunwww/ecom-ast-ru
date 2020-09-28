@@ -1,6 +1,5 @@
 package ru.ecom.address.ejb.service;
 
-import org.apache.log4j.Logger;
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.address.ejb.domain.kladr.Kladr;
 import ru.ecom.address.ejb.domain.kladr.KladrDoma;
@@ -12,11 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class AstrkhanReginHelper {
-
-	private static final Logger LOG = Logger
-			.getLogger(AstrkhanReginHelper.class);
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
 	public AstrkhanReginHelper() {
 		// заполнение ОКАТО
 		theOkatoHash.put("12401367", "К") ; // Киров
@@ -61,16 +55,8 @@ public class AstrkhanReginHelper {
 	 */
 	public String getOmcRayon(Address aAddress, String aHouse, EntityManager aManager) {
 		if(aAddress==null) return null ;
-		if (CAN_DEBUG)
-			LOG.debug("getOmcRayon: aAddress = " + aAddress); 
-
 		String ret = findByKladr(aAddress) ;
-		if (CAN_DEBUG)
-			LOG.debug("getOmcRayon: findByAddress = " + ret); 
-
 		if(ret==null) {
-			if (CAN_DEBUG)
-				LOG.debug("getOmcRayon: findBySoato = " + ret); 
 			ret = findBySoato(aAddress, aManager) ;
 		}
 		if(StringUtil.isNullOrEmpty(ret)) {
@@ -81,7 +67,7 @@ public class AstrkhanReginHelper {
 	
 	public String getOmcRayonName(Address aAddress, String aHouse, EntityManager aManager) {
 		String key = getOmcRayon(aAddress, aHouse, aManager);
-		return key!=null ? theNameHash.get(key) : key ;
+		return key!=null ? theNameHash.get(key) : null ;
 	}	
 	public String getOmcRayonNameKey(Address aAddress, String aHouse, EntityManager aManager) {
 		return getOmcRayon(aAddress, aHouse, aManager);
@@ -89,10 +75,6 @@ public class AstrkhanReginHelper {
 	
 	private String findBySoato(Address address, EntityManager aManager) {
 		if(address.getKladr()==null) return null;
-		
-		if (CAN_DEBUG)
-			LOG.debug("findBySoato: address.getKladr() = " + address.getKladr()); 
-
 		Kladr kladr = QueryResultUtil.getFirst(Kladr.class, aManager
 				.createNamedQuery("kladr.findByKladrcode")
 				.setParameter("code", address.getKladr())
@@ -100,9 +82,6 @@ public class AstrkhanReginHelper {
 		
 		if(kladr!=null) {
 			String okato = kladr.getOkatd() ;
-			if (CAN_DEBUG)
-				LOG.debug("findBySoato: okato = " + okato); 
-
 			return getRayonCodeBySoato(okato);
 		}
 		return null ;
@@ -111,9 +90,6 @@ public class AstrkhanReginHelper {
 	private String getRayonCodeBySoato(String okato) {
 		if(!StringUtil.isNullOrEmpty(okato) && okato.length()>7) {
 			okato = okato.substring(0,8);
-			if (CAN_DEBUG)
-				LOG.debug("findBySoato: okatoStripped = " + okato); 
-
 			if(theOkatoHash.containsKey(okato)) {
 				return theOkatoHash.get(okato) ; 
 			}
@@ -126,26 +102,17 @@ public class AstrkhanReginHelper {
 		if(aAddress==null) return null ;
 		if(StringUtil.isNullOrEmpty(aAddress.getKladr())) return null ;
 		if(StringUtil.isNullOrEmpty(aHouse)) return null ;
-		if (CAN_DEBUG)
-			LOG.debug("findByKladrDoma: aAddress.getKladr() = " + aAddress.getKladr()); 
 
 		KladrDoma doma = QueryResultUtil.getFirst(KladrDoma.class
 					,aManager.createNamedQuery("KladrDoma.findByKladrCode")
 			.setParameter("code", aAddress.getKladr()));
 		String ret = null;
 		if(doma!=null && !StringUtil.isNullOrEmpty(doma.getName())) {
-			if (CAN_DEBUG)
-				LOG.debug("findByKladrDoma: doma.getName() = " + doma.getName()); 
 
 			List<AddressPointCheck> checks = thePointHelper.parsePoints(doma.getName()) ;
-			if (CAN_DEBUG)
-				LOG.debug("findByKladrDoma: checks = " + checks); 
-			if(checks!=null && !checks.isEmpty()) {
+			if(!checks.isEmpty()) {
 				for(AddressPointCheck check : checks) {
 					if(check.getNumber()!=null && check.getNumber().equals(aHouse)) {
-						if (CAN_DEBUG)
-							LOG.debug("findByKladrDoma: check.getNumber() = " + check.getNumber()); 
-
 						String rayon = getRayonCodeBySoato(doma.getOcatd());
 						if(rayon!=null) {
 							ret = rayon ;
@@ -160,18 +127,10 @@ public class AstrkhanReginHelper {
 	}
 	
 	private String findByKladr(Address address) {
-		
-		if (CAN_DEBUG)
-			LOG.debug("findByKladr: address.getKladr() = " + address.getKladr()); 
-
 		if(address.getKladr()!=null && theKladrHash.containsKey(address.getKladr())) {
 			return theKladrHash.get(address.getKladr()) ;
 		} else {
-			if(address.getParent()!=null) {
-				return findByKladr(address.getParent());
-			} else {
-				return null ;
-			}
+			return address.getParent()!=null ? findByKladr(address.getParent()) : null;
 		}
 	}
 

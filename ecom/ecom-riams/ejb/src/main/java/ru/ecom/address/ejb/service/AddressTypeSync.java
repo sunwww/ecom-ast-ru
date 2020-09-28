@@ -1,14 +1,13 @@
 package ru.ecom.address.ejb.service;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.address.ejb.domain.address.AddressType;
 import ru.ecom.address.ejb.domain.kladr.KladrSocr;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.expomc.ejb.services.sync.ISync;
 import ru.ecom.expomc.ejb.services.sync.SyncContext;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 /**
  * Синхронизация типов адреса из кладр
@@ -24,7 +23,7 @@ public class AddressTypeSync implements ISync {
 
 
     @SuppressWarnings("unchecked")
-	public void sync(SyncContext aContext) throws Exception {
+	public void sync(SyncContext aContext) {
         theEntityManager = aContext.getEntityManager();
 //        aContext.getTransactionManager().begin();
         List<KladrSocr> list = theEntityManager.createQuery("from KladrSocr").getResultList();

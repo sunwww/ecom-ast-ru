@@ -165,6 +165,13 @@ public class E2CancerEntryForm extends IdEntityForm {
     /** Вид направление */
     private String theDirectionType ;
 
+    /** ЛПУ направления */
+    @Comment("ЛПУ направления")
+    public String getDirectionDirectLpu() {return theDirectionDirectLpu;}
+    public void setDirectionDirectLpu(String aDirectionDirectLpu) {theDirectionDirectLpu = aDirectionDirectLpu;}
+    /** ЛПУ направления */
+    private String theDirectionDirectLpu ;
+
     /** Метод диагностического исследования */
     @Comment("Метод диагностического исследования")
     public String getDirectionSurveyMethod() {return theDirectionSurveyMethod;}

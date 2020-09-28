@@ -4,68 +4,52 @@
  */
 package ru.ecom.expomc.ejb.domain.format;
 
-import java.sql.Date;
-
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
 
 @SuppressWarnings("serial")
 @Entity
 @Table(name="EFFORMAT",schema="SQLUser")
 @Inheritance(strategy= InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(
-name="formatProvider",
-discriminatorType=DiscriminatorType.STRING
+    name="formatProvider",
+    discriminatorType=DiscriminatorType.STRING
 )
 @DiscriminatorValue("-")
 public class AbstractImportFormat extends BaseEntity {
     /** Дата с которой начинает действовать формат */
     public Date getActualDateFrom() { return theActualDateFrom ; }
     public void setActualDateFrom(Date aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
+    private Date theActualDateFrom ;
 
     /** Дата, до которой формат действует */
     public Date getActualDateTo() { return theActualDateTo ; }
     public void setActualDateTo(Date aActualDateTo) { theActualDateTo = aActualDateTo ; }
+    private Date theActualDateTo ;
 
     /** Комментарий к формату */
     public String getComment() { return theComment ; }
     public void setComment(String aComment) { theComment = aComment ; }
+    private String theComment ;
 
     /** Отключен */
     public boolean isDisabled() { return theDisabled ; }
     public void setDisabled(boolean aDisabled) { theDisabled = aDisabled ; }
+    private boolean theDisabled ;
 
     /** Документ импорта */
     @ManyToOne
     public ImportDocument getDocument() { return theDocument ; }
     public void setDocument(ImportDocument aDocument) { theDocument = aDocument ; }
-
-    /** Документ импорта */
     private ImportDocument theDocument ;
-    /** Отключен */
-    private boolean theDisabled ;
 
-    /** Комментарий к формату */
-    private String theComment ;
-    /** Дата, до которой формат действует */
-    private Date theActualDateTo ;
-    /** Дата с которой начинает действовать формат */
-    private Date theActualDateFrom ;
-    
-    /** Служебный формат импорта */
-	@Comment("Служебный формат импорта")
+    /** Системный формат импорта */
+	@Comment("Системный формат импорта")
 	public Boolean getSystemFormat() {return theSystemFormat;}
 	public void setSystemFormat(Boolean aSystemFormat) {theSystemFormat = aSystemFormat;}
-	/** Служебный формат импорта */
 	private Boolean theSystemFormat;
 }

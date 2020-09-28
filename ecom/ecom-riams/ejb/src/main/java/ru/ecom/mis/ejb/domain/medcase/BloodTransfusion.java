@@ -1,15 +1,13 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import java.math.BigDecimal;
+import java.sql.Date;
 
 /**
  * Переливание крови и кровезаменителей
@@ -19,8 +17,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment("Переливание крови и кровезаменителей")
 @Entity
-@Table(schema="SQLUser")
-public class BloodTransfusion extends Transfusion{
+public class BloodTransfusion extends Transfusion {
 	
 	/** Препарат крови */
 	@Comment("Препарат крови")

@@ -476,7 +476,6 @@ order by veds.id,veds.name"
 		} else {
 			out.println(" eventutil.addEnterSupport('"+fldVisit[fldVisit.length-1]+(sizeVisit-1)+"', 'submitButton') ;") ;
 		}
-		//out.println("Event.observe(window, 'load', _formInit_938, true);function _formInit_938() {msh.util.FormData.getInstance().init($('mainForm')) ;}") ;
 		out.println("</script>") ;
 		
 	} else {%>

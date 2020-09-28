@@ -14,8 +14,8 @@
         <msh:form action="/reestrNaOplatyDogovorov.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
         <msh:panel>
             <msh:row>
-                <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                <msh:textField property="dateBegin" label="Период с" />
+                <msh:textField property="dateEnd" label="по" />
             </msh:row>
             <msh:row>
                 <msh:autoComplete property="serviceStream" fieldColSpan="4" horizontalFill="true" label="Поток обслуживания" vocName="vocSstreamE2Entry"/>
@@ -35,13 +35,16 @@
     </msh:form>
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
         <script type="text/javascript">
+            $('serviceStreamName').className += " required";
+            $('hospTypeName').className += " required";
+            $('dateEnd').className += " required";
             function report() {
                 if (document.getElementById("serviceStreamName").value!=null && document.getElementById("serviceStreamName").value!=""
                 && $('dateBegin').value!=null && $('dateBegin').value!="" && $('dateEnd').value!=null && $('dateEnd').value!="") {
                     HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
                         callback: function (res) {
                             var resMas = res.split("#");
-                            if (res != "##") {
+                            if (res != "") {
                                 var sstream=document.getElementById("serviceStreamName").value;
                                 if (sstream[sstream.length-1]==' ') sstream=sstream.substring(0,sstream.length-1);
                                 var billnumtext=($('pigeonHole').value=='')? '':'&billnumtext='+$('pigeonHole').value;
@@ -61,7 +64,7 @@
                     });
                 }
                 else
-                    alert("Необходимо заполнить все поля!");
+                    alert("Необходимо заполнить поток обслуживания, тип помощи и период!");
             }
         </script>
     </tiles:put>

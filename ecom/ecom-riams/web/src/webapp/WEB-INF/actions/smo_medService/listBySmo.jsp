@@ -6,15 +6,15 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Список всех услуг по СМО" guid="40efbd1b-4177-47a8-9aad-1971732f3f98" />
+    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Список всех услуг по СМО" />
   </tiles:put>
   <tiles:put name="side" type="string">
         <msh:sideMenu title="Случай медицинского обслуживания">
             <msh:sideLink key='ALT+1' action="/entitySubclassView-mis_medCase.do?id=${param.medcase}"
                           name="Текущий СМО"/>
         </msh:sideMenu>
-        <msh:sideMenu guid="helloSideMenu-123" title="Добавить">
-      			<msh:sideLink params="id" action="/entityParentPrepareCreate-smo_medService" name="Услугу" title="Добавить услугу" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/MedService/Create" key="ALT+N" />
+        <msh:sideMenu title="Добавить">
+      			<msh:sideLink params="id" action="/entityParentPrepareCreate-smo_medService" name="Услугу" title="Добавить услугу" roles="/Policy/Mis/MedCase/MedService/Create" key="ALT+N" />
     	</msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
@@ -31,7 +31,7 @@
     	where 
     	sm.parent_id=${param.id } and sm.DTYPE='ServiceMedCase'  "/>
 	    	<msh:ifInRole roles="/Policy/Mis/MedCase/MedService/Print">
-			    <msh:table selection="multiply" name="allInfo" action="entityParentView-smo_medService.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+			    <msh:table selection="multiply" name="allInfo" action="entityParentView-smo_medService.do" idField="1">
 		
 		                    <msh:tableNotEmpty>
 		                        <tr>
@@ -53,7 +53,7 @@
 			    </msh:table>
 	    </msh:ifInRole>
 	    <msh:ifNotInRole roles="/Policy/Mis/MedCase/MedService/Print">
-			    <msh:table name="allInfo" action="entityParentView-smo_medService.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+			    <msh:table name="allInfo" action="entityParentView-smo_medService.do" idField="1">
 		  	   		<msh:tableColumn columnName="#" property="sn"/>
 			   		<msh:tableColumn columnName="Дата" property="2"/>
 			   		<msh:tableColumn columnName="Время" property="3"/>

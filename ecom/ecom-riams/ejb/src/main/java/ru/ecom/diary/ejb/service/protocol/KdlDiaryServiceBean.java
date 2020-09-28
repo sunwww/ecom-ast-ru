@@ -1,16 +1,35 @@
 package ru.ecom.diary.ejb.service.protocol;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.helpers.DefaultHandler;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
+import ru.ecom.mis.ejb.domain.external.ExternalCovidAnalysis;
 import ru.ecom.mis.ejb.domain.licence.DocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.ExternalMedservice;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterGroup;
+import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
+import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
+import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocSexName;
+import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
+import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
+import ru.ecom.poly.ejb.domain.voc.VocReason;
+import ru.ecom.poly.ejb.domain.voc.VocVisitResult;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -21,6 +40,7 @@ import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
+import java.io.FileReader;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
@@ -31,28 +51,159 @@ import java.util.Map.Entry;
 @Remote(IKdlDiaryService.class)
 public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryService {
 	private static final Logger LOG = Logger.getLogger(KdlDiaryServiceBean.class);
-	
+
+	@Override
+	public void importCovidAnalysis(String filename, String username) {
+		importCovidAnalysis(filename, username,null, null,null,null, null,null);
+	}
+	//Импорт csv файла с результатами лаб. анализов на ковид
+	@Override
+	public void importCovidAnalysis(String filename, String username
+	,Long workFunctionId, Long visitResultId
+			, Long visitReasonId, Long primaryId, Long mkbId, Long workPlaceId)  {
+		try {
+			File file = new File(filename);
+			HeaderColumnNameMappingStrategy<ExternalCovidAnalysis> strategy = new HeaderColumnNameMappingStrategy<>();
+			strategy.setType(ExternalCovidAnalysis.class);
+			CsvToBean<ExternalCovidAnalysis> bean = new CsvToBean<>();
+			CSVParser parser = new CSVParserBuilder()
+					.withSeparator(';')
+					.withIgnoreQuotations(true)
+					.build();
+
+			CSVReader csvReader = new CSVReaderBuilder(new FileReader(file))
+					.withSkipLines(0)
+					.withCSVParser(parser)
+					.build();
+
+			bean.setMappingStrategy(strategy);
+			bean.setCsvReader(csvReader);
+			List<ExternalCovidAnalysis> anaList = bean.parse();
+			for (ExternalCovidAnalysis a : anaList) {
+				if (!StringUtil.isNullOrEmpty(a.getLastname())) {
+					a.setCreateUsername(username);
+					theManager.persist(a);
+
+				}
+
+			}
+			if (workFunctionId!=null) generateVisitByCovidAnalysis(anaList,workFunctionId, visitResultId, visitReasonId, primaryId, mkbId, workPlaceId, username);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(),e);
+		}
+	}
+
+	/** Находит либо создает пациента по ФИО
+	 * */
+	private Patient getOrCreatePatient(String lastname, String firstname, String middlename, Date birthday) {
+		List<Patient> pats = theManager.createNamedQuery("Patient.getByLastAndFirstAndMiddleAndBirthday").setParameter("lastname", lastname)
+				.setParameter("firstname", firstname).setParameter("middlename", middlename).setParameter("birthday", birthday).getResultList();
+		if (pats.isEmpty()) {
+			Patient patient = new Patient();
+			patient.setLastname(lastname);
+			patient.setFirstname(firstname);
+			patient.setMiddlename(middlename);
+			patient.setBirthday(birthday);
+			try {
+				VocSexName sexx = (VocSexName) theManager.createNamedQuery("VocSexName.getByName").setParameter("name",firstname).getSingleResult();
+				patient.setSex(sexx.getSex());
+			} catch (Exception e) {
+				LOG.warn("no vocSex for name "+firstname,e);
+			}
+			theManager.persist(patient);
+			patient.setPatientSync("К"+patient.getId());
+			theManager.persist(patient);
+			return patient;
+		}
+		return pats.size()==1 ? pats.get(0) : null;
+	}
+
+	//Имеются ли дубли по пациенту, врачу и дате визита
+	private boolean hasDoubleByPatientAndDoctorAndDate(Long patientId, Long doctorId, Date visitDate ) {
+		List list = theManager.createNativeQuery("select id from medcase where patient_id =:patientId and datestart=:visitDate" +
+				" and workfunctionexecute_id=:doctorId").setParameter("patientId", patientId).setParameter("doctorId", doctorId)
+				.setParameter("visitDate", visitDate).getResultList();
+		return !list.isEmpty();
+	}
+	//генерируем визит к врачу лаборатории
+	private void generateVisitByCovidAnalysis(List<ExternalCovidAnalysis> analyses, Long workFunctionId, Long visitResultId
+	, Long visitReasonId, Long primaryId, Long mkbId, Long workPlaceId,String username) {
+		PolyclinicMedCase pmc;
+		ShortMedCase ticket;
+		Diagnosis diagnosis;
+		PersonalWorkFunction wf = theManager.find(PersonalWorkFunction.class, workFunctionId);
+		VocServiceStream vss = theManager.find(VocServiceStream.class,1L); //ОМС
+		VocVisitResult result = theManager.find(VocVisitResult.class, visitResultId);
+		VocReason reason = theManager.find(VocReason.class, visitReasonId);
+		VocPriorityDiagnosis priorityDiagnosis = theManager.find(VocPriorityDiagnosis.class, 1L) ; //всегда - основной.
+		VocIllnesPrimary primary = theManager.find(VocIllnesPrimary.class, primaryId);
+		VocWorkPlaceType workPlace = theManager.find(VocWorkPlaceType.class, workPlaceId);
+		VocIdc10 mkb = theManager.find(VocIdc10.class,mkbId);
+		int i=0;
+		for (ExternalCovidAnalysis a : analyses) {
+			if (!StringUtil.isNullOrEmpty(a.getLastname())) {
+				Patient patient = getOrCreatePatient(a.getLastname(), a.getFirstname(), a.getMiddlename(),a.getBirthday());
+				Date visitDate = a.getDateResult();
+				if (patient!=null && !hasDoubleByPatientAndDoctorAndDate(patient.getId(), workFunctionId, visitDate) ) {
+					pmc = new PolyclinicMedCase();
+					pmc.setPatient(patient);
+					pmc.setStartFunction(wf);
+					pmc.setOwnerFunction(wf);
+					pmc.setFinishFunction(wf);
+					pmc.setServiceStream(vss);
+					pmc.setDateStart(visitDate);
+					pmc.setDateFinish(visitDate);
+					pmc.setUsername(username);
+					pmc.setLpu(wf.getWorker().getLpu());
+					pmc.setIdc10(mkb);
+					theManager.persist(pmc);
+
+					ticket = new ShortMedCase();
+					ticket.setParent(pmc);
+					ticket.setPatient(patient);
+					ticket.setUsername(username);
+					ticket.setDateStart(visitDate);
+					ticket.setServiceStream(vss);
+					ticket.setWorkFunctionExecute(wf);
+					ticket.setVisitResult(result);
+					ticket.setVisitReason(reason);
+					ticket.setWorkPlaceType(workPlace);
+					theManager.persist(ticket);
+
+					diagnosis = new Diagnosis();
+					diagnosis.setEstablishDate(visitDate);
+					diagnosis.setPriority(priorityDiagnosis);
+					diagnosis.setIdc10(mkb);
+					diagnosis.setName(mkb.getName());
+					diagnosis.setMedCase(ticket);
+					diagnosis.setIllnesPrimary(primary);
+					diagnosis.setCreateUsername(username);
+					theManager.persist(diagnosis);
+					i++;
+				}
+			}
+		}
+		LOG.info("created visit = "+i);
+
+	}
+
+	@Override
 	public String getDir(String aKey, String aDefaultValue) {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		return config.get(aKey, aDefaultValue) ;
 	}
-	
-	public void parseFile(String aUri) throws Exception 
-	{
-		ExternalMedservice externalMedservice;
+
+	@Override
+	public void parseFile(String aUri) throws Exception {
 		@SuppressWarnings("unchecked")
-		List<ExternalMedservice> list = theManager == null? null : theManager.createQuery("FROM Document WHERE dtype='ExternalMedservice' AND referenceTo='"+aUri+"'").getResultList();
-		if (list != null && list.isEmpty()) {
-			externalMedservice = list.get(0) ;			
-		} else {
-			externalMedservice = new ExternalMedservice();
-		}
+		List<ExternalMedservice> list = theManager == null? new ArrayList<>() : theManager.createQuery("FROM Document WHERE dtype='ExternalMedservice' AND referenceTo='"+aUri+"'").getResultList();
+		ExternalMedservice externalMedservice = list.isEmpty() ? new ExternalMedservice() : list.get(0) ;
         theComment = new StringBuilder();
         theDocumentParameterGroups = new TreeMap<>();
     	theDocumentParametersTree = new TreeMap<>();
         theDocumentParameterObj = new HashMap<>();
     	theDocumentParameterGroupsObj = new HashMap<>();
-    	try{
+    	try {
     		printVariable("Start parse",aUri);
 	    	File in = new File(aUri);
 	        theFileUri = aUri;
@@ -72,8 +223,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			prepareComment(externalMedservice);
 			
 			persist(externalMedservice);
-    	}
-    	catch(Exception e){
+    	} catch(Exception e){
     		e.printStackTrace() ;
     	    printVariable("FileException", e.getMessage());
     	    throw e;
@@ -81,6 +231,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
     	
 	printVariable("EndParse", toString(externalMedservice.getId()));    
 	}
+
 	private void parseHeader(Element aHeader, ExternalMedservice aExternalMedservice) {
 		Date fileDate = toDate(aHeader.getChildText("FileDate"));
 		Time fileTime = toTime(aHeader.getChildText("FileTime"));
@@ -115,9 +266,9 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	        String lastname = upperCase(aPatient.getChildText("LastName"));
 	        String fmn = upperCase(aPatient.getChildText("FirstMiddleName")) ;
 	        String syncPat = upperCase(aPatient.getChildText("InsuranceNumber")) ;
-	        String[] firstMiddleName = fmn==null? null: fmn.split(" ") ;
-	        String firstname = (firstMiddleName==null||firstMiddleName.length<1)?"":firstMiddleName[0];
-	        String middlename = (firstMiddleName==null||firstMiddleName.length<2)?"":firstMiddleName[1];
+	        String[] firstMiddleName = fmn.split(" ");
+	        String firstname = firstMiddleName.length < 1 ?"":firstMiddleName[0];
+	        String middlename = firstMiddleName.length < 2 ?"":firstMiddleName[1];
 	        Date birthday = toDate(aPatient.getChildText("DOB"));
         
 	        //Long sex = ConvertSql.parseLong(patient.getChildText("Sex")=="M"?1:2);
@@ -242,7 +393,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		persist(documentParameter);
 		
 		if (theDocumentParametersTree.get(sectionID)==null){
-			theDocumentParametersTree.put(sectionID, new TreeMap<String, Object>());
+			theDocumentParametersTree.put(sectionID, new TreeMap<>());
 		}
 		
 		theDocumentParametersTree.get(sectionID).put(toString(100+sectionItem).substring(1), documentParameter);
@@ -275,7 +426,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		Entry<String, TreeMap<String, Object>> tm;
 		Entry<String, Object> pm;
 		String groupKey;
-		String norm="";
+		String norm;
 		
 		Iterator<Entry<String, TreeMap<String, Object>>> ti = parametersTree.iterator();		
 		int i=0;
@@ -295,7 +446,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				VocDocumentParameter vocDocumentParameter =  documentParameter.getParameter();
 				norm="";
 				if (vocDocumentParameter.getNormMinimum()!=null){
-					norm=new StringBuilder().append(vocDocumentParameter.getNormMinimum()).append("-").append(vocDocumentParameter.getNormMaximum()).toString();
+					norm= vocDocumentParameter.getNormMinimum() + "-" + vocDocumentParameter.getNormMaximum();
 					norm = substring(norm, 255);
 				}
 				else  if (vocDocumentParameter.getNorm()!=null){
@@ -329,7 +480,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		return String.valueOf(aInt);
 	}
 	public static String substring(String aString, int aLength){
-		if (aString!=null && aString.length()>aLength) return new StringBuilder().append(aString.trim().substring(0, aLength-4)).append("...").toString() ;
+		if (aString!=null && aString.length()>aLength) return aString.trim().substring(0, aLength - 4) + "...";
 		return aString==null?"":aString;
 	}
 	public static String upperCase(String aString){
@@ -368,23 +519,17 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			String message ;
 			message = variable+": "+(value==null?"":value);
 			if (type.equals("D")) {
-				message = message + " ("+((java.util.Date) DateFormat.parseDate(value, "yyyy-MM-dd"))+")";
+				message = message + " ("+(DateFormat.parseDate(value, "yyyy-MM-dd"))+")";
 			}
 			if (type.equals("T")) {
-				message = message + " ("+((java.sql.Time) DateFormat.parseSqlTime(value)+")");
+				message = message + " ("+(DateFormat.parseSqlTime(value)+")");
 			}
 
-			println(message);
+			LOG.info(message);
 		} catch (Exception e) {}
 	}
-	public static void print(String aString){
-		LOG.info(aString);
-	}		
-	public static void println(String aString){
-		LOG.info(aString);
-	}		
 	private void persist(Object object){
-		if ((object!=null)&&(theManager!=null)) {
+		if (object!=null && theManager!=null) {
 			theManager.persist(object);
 			
 		}
@@ -398,7 +543,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			AttributeOverride attributeOverride = (AttributeOverride) aClass.getAnnotation(AttributeOverride.class);
 			if (attributeOverride!=null){
 				Column column = attributeOverride.column();
-				if (column!=null) ret=column.name();
+				ret=column.name();
 			}
 		}
 		return ret;

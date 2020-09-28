@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал по коротким дневникам</msh:title>
+    <msh:title mainMenu="StacJournal">Журнал по коротким дневникам</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_journalByCurator"/>
@@ -35,7 +35,7 @@
         <%
         	boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments",request) ;
 	    	List list= (List)request.getAttribute("infoByLogin");
-	    	WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
+	    	WebQueryResult wqr = list.isEmpty() ? null : (WebQueryResult)list.get(0) ;
         	String department = request.getParameter("department") ;
         	if (department==null || department.equals("")) {
         		department = "0" ;
@@ -45,16 +45,16 @@
         		spec = "0" ;
         	}
         	String workFunc = wqr!=null?""+wqr.get1():"0" ;
-        	boolean isBossDepartment=(wqr!=null&&wqr.get3()!=null)?true:false ;
+        	boolean isBossDepartment= wqr != null && wqr.get3() != null;
 
  
         	int type=0 ;
-        	if (spec!=null && !spec.equals("0")) {
+        	if (!spec.equals("0")) {
         		type=3 ;
         		if (!isViewAllDepartment&&!isBossDepartment&&!spec.equals(workFunc)) {
         			spec=workFunc ;
         		}
-        	} else if (department!=null && !department.equals("0") && (isViewAllDepartment || isBossDepartment)) {
+        	} else if (!department.equals("0") && (isViewAllDepartment || isBossDepartment)) {
         		type=2 ;
        		} else if (isViewAllDepartment) {
        			type=1 ;
@@ -85,8 +85,8 @@
       </msh:row>
       </msh:ifInRole>
       <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
      </msh:row>
      <msh:row>
      	<msh:textField property="cntSymbols"/>
@@ -98,7 +98,7 @@
     <%
     String dateBegin = request.getParameter("dateBegin") ;
     if (dateBegin!=null && !dateBegin.equals("")) {
-    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	String dateEnd = request.getParameter("dateEnd") ;
     	String cntSymbols = request.getParameter("cntSymbols") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("finishDate", dateBegin) ;
@@ -137,7 +137,7 @@
 	left join MisLpu ml on w.lpu_id=ml.id 
 	where ${paramSql}
 	group by ml.id,ml.name order by ml.name
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="stac_report_cases_short_protocol.do?${paramHref}&short=Short"
     action="stac_report_cases_short_protocol.do?${paramHref}" idField="1">
@@ -147,8 +147,7 @@
     </msh:table>
     </msh:sectionContent>
     </msh:section> 
-    <% } %>
-    <%   if (type==2 )  {	%>
+    <% } else if (type==2 )  {	%>
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <msh:sectionContent>
@@ -166,7 +165,7 @@ left join Patient wp on w.person_id=wp.id
 where ${paramSql} and w.lpu_id=${department}
 group by wf.id,wp.lastname,wp.middlename,wp.firstname 
 order by wp.lastname,wp.middlename,wp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="stac_report_cases_short_protocol.do?${paramHref}&short=Short"
     action="stac_report_cases_short_protocol.do?${paramHref}" idField="1">
@@ -176,8 +175,7 @@ order by wp.lastname,wp.middlename,wp.firstname
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-         <%}%>
-         <%if (type==3 )  {	%>
+         <%} else if (type==3 )  {	%>
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
@@ -199,14 +197,14 @@ select pr.id,to_char(pr.dateRegistration,'dd.mm.yyyy')||' '||cast(pr.timeRegistr
     ,bf.addCaseDuration,slo.dateStart,sls.dateStart
     ,pr.record
     order by pat.lastname,pat.firstname,pat.middlename
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="entityShortView-smo_visitProtocol.do"
-    action="entityParentView-smo_visitProtocol.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-smo_visitProtocol.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата и время протокола" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Стат.карта" property="4" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Дата и время протокола" property="2" />
       <msh:tableColumn columnName="Протокол" property="5"/>
     </msh:table>
     </msh:sectionContent>

@@ -51,7 +51,7 @@
 	  			var ind = val.indexOf(' ') ;
 	  			//alert(ind+' '+val)
 	  			if (ind!=-1) {
-	  				//if ($(aFieldText).value=="") $(aFieldText).value=val.substring(0,ind) ;
+	  				$(aFieldText).value=val.substring(0,ind) ;
 	  			}
 	  		}
 			

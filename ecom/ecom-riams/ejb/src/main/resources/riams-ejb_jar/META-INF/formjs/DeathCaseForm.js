@@ -14,8 +14,14 @@ function onCreate(aForm, aEntity, aCtx) {
 function makePersonDead(aEntity, aCtx) {
     if (aEntity.getIsNeonatologic()==null || aEntity.getIsNeonatologic()==false) {
         var patient = aEntity.getPatient();
-        patient.setDeathDate(aEntity.getDeathDate());
-        aCtx.manager.persist(patient);
+        if (patient==null) {
+        	var medcase = aEntity.getMedCase();
+        	patient=medcase.getPatient();
+		}
+        if (patient!=null) {
+        	patient.setDeathDate(aEntity.getDeathDate());
+            aCtx.manager.persist(patient);
+        }
     }
 }
 /**

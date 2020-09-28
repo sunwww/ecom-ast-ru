@@ -66,12 +66,12 @@
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="psych_compulsoryTreatmentForm" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="psych_compulsoryTreatmentForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Принудительное лечение">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-psych_compulsoryTreatment" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL"  params="id" action="/entityParentDelete-psych_compulsoryTreatment" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/Delete"  />
+      <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-psych_compulsoryTreatment" name="Изменить" roles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/Edit" />
+      <msh:sideLink key="ALT+DEL"  params="id" action="/entityParentDelete-psych_compulsoryTreatment" name="Удалить" confirm="Вы точно хотите удалить?"  roles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/Delete"  />
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

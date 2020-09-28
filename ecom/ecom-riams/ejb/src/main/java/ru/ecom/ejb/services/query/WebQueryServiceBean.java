@@ -32,10 +32,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 	 * */
 	public String executeSqlGetJson(String aQuery,Integer limit,String nameArray) throws NamingException {
 
-		//if(limit==null || limit==0 || limit>100 ) limit=100;
-
 		DataSource ds =findDataSource();
-
 		try (Connection connection = ds.getConnection();
              Statement statement = connection.createStatement()){
 			if (limit!=null) statement.setMaxRows(limit);
@@ -50,30 +47,21 @@ public class WebQueryServiceBean implements IWebQueryService {
                     }
                     array.put(temp);
                 }
-
-                if(nameArray==null || nameArray.equals("")){
-                    return array.toString();
-                }else {
-                    return new JSONObject().put(nameArray, array).toString();
-                }
+				return nameArray==null || nameArray.equals("") ?  array.toString() : new JSONObject().put(nameArray, array).toString();
             }
 		} catch (SQLException e){
-			e.printStackTrace();
+			LOG.error(e);
 		}
 		return null;
 	}
 	/** Возвращаем json массив с результатом запроса*/
-	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException {
-		return executeSqlGetJson(aQuery,limit,"");
-	}
+	public String executeSqlGetJson(String aQuery) throws NamingException {return executeSqlGetJson(aQuery,null,null);}
+	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException {return executeSqlGetJson(aQuery,limit,null);}
 
 	/** Возвращаем первый результат запроса в качестве json объекта*/
 	public String executeSqlGetJsonObject(String aQuery) throws NamingException {
-		JSONArray arr = new JSONArray(executeSqlGetJson(aQuery,null,null));
-		if (arr.length()>0) {
-			return arr.getJSONObject(0).toString();
-		}
-		return null;
+		JSONArray arr = new JSONArray(executeSqlGetJson(aQuery,1,null));
+		return arr.isEmpty() ? null :  arr.getJSONObject(0).toString();
 	}
 
 	private DataSource findDataSource() throws NamingException {
@@ -106,7 +94,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 						JSONObject el = new JSONObject();
 						int fldId=0;
 						for (Object val:row){
-							el.put(aFieldNames.length>fldId?aFieldNames[fldId]:"fldValue_"+fldId,val!=null?val.toString():null);
+							el.put(aFieldNames.length>fldId?aFieldNames[fldId]:"fldValue_"+fldId,val!=null?val.toString():"");
 							fldId++;
 						}
 						ret.put(el);
@@ -120,9 +108,10 @@ public class WebQueryServiceBean implements IWebQueryService {
 		}
 		return null;
 	}
-	public Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult) {
-
-		return executeQuery(theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")),aMaxResult) ;
+	public Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult) {return executeNativeSql(aQuery,aMaxResult,null);}
+	public Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult, EntityManager aManager) {
+		if (aManager == null) aManager = theManager;
+	 return executeQuery(aManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")), aMaxResult);
 	}
 	public Collection<WebQueryResult> executeNativeSql(String aQuery) {
 
@@ -132,6 +121,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 	public Collection<WebQueryResult> executeQuery(Query aQuery) {
 		return executeQuery(aQuery,null) ;
 	}
+
 	@SuppressWarnings("unchecked")
 	public Collection<WebQueryResult> executeQuery(Query aQuery,Integer aMaxResult) {
 		List<Object> list ;
@@ -202,6 +192,4 @@ public class WebQueryServiceBean implements IWebQueryService {
 	public List<Object[]> executeNativeSqlGetObj(String aQuery) {
 		return executeNativeSqlGetObj(aQuery,null) ;
 	}
-
-
 }

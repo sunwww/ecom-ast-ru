@@ -30,25 +30,23 @@ import java.util.List;
 @Local(IFinanceService.class)
 @Remote(IFinanceService.class)
 public class FinanceServiceBean implements IFinanceService {
-    private final Logger log = Logger.getLogger(FinanceServiceBean.class);
+    private static final Logger LOG = Logger.getLogger(FinanceServiceBean.class);
 
     /**Разбиваем годовой финансовый план помесячно*/
     public void splitFinancePlan(String aType, String aYearPlan) {
        try {
-            //TODO учитывать тип плана (стационар, поликлиника, ВМП
             String sql = "select id from FinancePlan fp where dtype='" + aType + "' and to_char(fp.startDate,'MM.yyyy')='01." + aYearPlan + "' and to_char(fp.finishDate,'MM.yyyy')='12." + aYearPlan + "'";
-            log.info("sql0=" + sql);
+            LOG.info("sql0=" + sql);
             List<Long> plans = theManager.createQuery(sql).getResultList();
             if (plans == null || plans.isEmpty()) {
-                log.error("Не найдено планов на год");
+                LOG.error("Не найдено планов на год");
                 return;
             }
             sql = "delete from FinancePlan where  dtype='" + aType + "' and to_char(startDate,'MM.yyyy')= to_char(finishDate,'MM.yyyy') and to_char(startDate,'yyyy')='" + aYearPlan + "'";
-            log.info("sql1=" + sql);
+            LOG.info("sql1=" + sql);
             theManager.createNativeQuery(sql).executeUpdate();
             FinancePlan yearPlan;
             Calendar startFromCalendar = Calendar.getInstance();
-            //   Calendar lastCalendar = Calendar.getInstance();
             HashMap<Long, String> littleAmountMonth = new HashMap<>();
            HashMap<String, BigDecimal> caseCost= new HashMap<>();
             List<MonthLittleAmountTable> monthLittleAmountTables = theManager.createQuery("from MonthLittleAmountTable").getResultList();
@@ -57,10 +55,9 @@ public class FinanceServiceBean implements IFinanceService {
             }
             SimpleDateFormat month = new SimpleDateFormat("MM");
             int planCnt=0;
-            log.info("planCnt="+plans.size());
-        boolean hospPlan = aType.equals("HospitalFinancePlan");
-        boolean polPlan = aType.equals("PolyclinicFinancePlan");
-        boolean vmpPlan = aType.equals("VmpFinancePlan");
+            boolean hospPlan = aType.equals("HospitalFinancePlan");
+            boolean polPlan = aType.equals("PolyclinicFinancePlan");
+            boolean vmpPlan = aType.equals("VmpFinancePlan");
             for (Long planId : plans) {
                 planCnt++;
                 //   boolean first = true;
@@ -68,7 +65,6 @@ public class FinanceServiceBean implements IFinanceService {
                 String priceKey;
                 BigDecimal cost;
                 startFromCalendar.setTimeInMillis(yearPlan.getStartDate().getTime());
-                log.info(planCnt+"<<>>"+planId);
 
                 Date currentMonth;
                 Long yearCount = yearPlan.getCount();
@@ -85,7 +81,7 @@ public class FinanceServiceBean implements IFinanceService {
                         try {
                             count += littleAmountMonth.get(cnt12).contains(month.format(currentMonth)) ? 1L : 0L;
                         } catch (Exception e) {
-                           log.error(e);
+                           LOG.error(e.getMessage(),e);
                         }
                     }
 
@@ -96,24 +92,30 @@ public class FinanceServiceBean implements IFinanceService {
                         monthPlan.setFinishDate(currentMonth);
                         monthPlan.setCount(count);
 
+
                         sql="stacType_id=" +monthPlan.getBedSubType().getId();
                         VocKsg ksg=monthPlan.getKsg();
-                        priceKey=ksg.getId()+"#"+sql+"#"+currentMonth.getTime();
-
-                        if (!caseCost.containsKey(priceKey)){
-                            VocE2BaseTariff tariff = expert2ServiceBean.getActualVocByClassName(VocE2BaseTariff.class, currentMonth, sql);
-                            BigDecimal baseTariff = tariff.getValue();
-                            cost=baseTariff
-                                    .multiply(BigDecimal.valueOf(ksg.getKZ())
-                                            .multiply(expert2ServiceBean.getActualKsgUprCoefficient(ksg,currentMonth))
-                                            .multiply(expert2ServiceBean.calculateCusmo(monthPlan.getBedSubType().getCode(),monthPlan.getDepartment().getId(),monthPlan.getProfile().getId(),currentMonth)));
-                            cost=cost.setScale(2,RoundingMode.HALF_UP);
-                            caseCost.put(priceKey,cost);
-                        } else {
-                            cost=caseCost.get(priceKey);
+                       if (yearPlan.getCost()!=null) {
+                           cost=yearPlan.getCost().divide(BigDecimal.valueOf(12.0),2, RoundingMode.UP);
+                       } else if (ksg!=null) {
+                            priceKey=ksg.getId()+"#"+sql+"#"+currentMonth.getTime();
+                            if (!caseCost.containsKey(priceKey)){
+                                VocE2BaseTariff tariff = expert2ServiceBean.getActualVocByClassName(VocE2BaseTariff.class, currentMonth, sql);
+                                BigDecimal baseTariff = tariff.getValue();
+                                cost=baseTariff
+                                        .multiply(BigDecimal.valueOf(ksg.getKZ())
+                                                .multiply(expert2ServiceBean.getActualKsgUprCoefficient(ksg,currentMonth))
+                                                .multiply(expert2ServiceBean.calculateCusmo(monthPlan.getBedSubType().getCode(),monthPlan.getDepartment().getId(),monthPlan.getProfile().getId(),currentMonth)));
+                                cost=cost.setScale(2,RoundingMode.HALF_UP);
+                                caseCost.put(priceKey,cost);
+                            } else {
+                                cost=caseCost.get(priceKey);
+                            }
+                            cost=cost.multiply(new BigDecimal(count)).setScale(2,RoundingMode.HALF_UP);
+                        } else { //Нет КСГ, цена = 0 рублей
+                            cost = BigDecimal.valueOf(0.0);
                         }
 
-                        cost=cost.multiply(new BigDecimal(count)).setScale(2,RoundingMode.HALF_UP);
                         monthPlan.setCost(cost);
                         theManager.persist(monthPlan);
                     } else if (polPlan) { //Считаем цену для плана по поликлиники
@@ -142,6 +144,10 @@ public class FinanceServiceBean implements IFinanceService {
                         if (!caseCost.containsKey(priceKey)){
                             VocKindHighCare kind =  expert2ServiceBean.getActualVocBySqlString(VocKindHighCare.class,"select id from VocKindHighCare where code='"+monthPlan.getMethod().getKindHighCare()+"' " +
                                             "and to_date('" +DateFormat.formatToDate(monthPlan.getFinishDate()) +"','dd.MM.yyyy') between datefrom and coalesce(dateTo,current_date) and serviceStreamCode='OBLIGATORYINSURANCE'");
+                            if (kind==null) {
+                                LOG.error("Невозможно найти вид ВМП "+monthPlan.getMethod().getKindHighCare());
+                                return;
+                            }
                             cost=kind.getCost();
                             cost=cost.setScale(2,RoundingMode.HALF_UP);
                             caseCost.put(priceKey,cost);
@@ -152,16 +158,16 @@ public class FinanceServiceBean implements IFinanceService {
                         monthPlan.setCost(cost);
                         theManager.persist(monthPlan);
                     } else {
-                        log.warn("Неизвестный тип финансового плана, доделать: "+yearPlan.getId());
+                        LOG.warn("Неизвестный тип финансового плана, доделать: "+yearPlan.getId());
                         //sql="1==2";
                     }
 
                     startFromCalendar.add(Calendar.MONTH, 1);
                 }
             }
-            log.info("Finished!");
+            LOG.info("Finished!");
         } catch (Exception e) {
-       log.error(e);
+       LOG.error(e.getMessage(),e);
        }
 
     }
@@ -169,20 +175,20 @@ public class FinanceServiceBean implements IFinanceService {
     /** Копируем финансовый план с одного месяца на несколько */
     public String copyFinancePlanNextMonth (String aType, Date aMonthPlan, Date aStartMonth, Date aFinishMonth) {
         /* Находим все планы по всем отделениям на выбранный месяц и копируем их на следующие месяцы. Проще простого) */
-        log.info("monthPlan = "+aMonthPlan+", startFrom "+aStartMonth+", finish = "+aFinishMonth);
+        LOG.info("monthPlan = "+aMonthPlan+", startFrom "+aStartMonth+", finish = "+aFinishMonth);
         List<HospitalFinancePlan> plans = theManager.createQuery("from HospitalFinancePlan where :date between startDate and finishDate").setParameter("date",aMonthPlan).getResultList();
-        log.info("plans for date = "+aMonthPlan+" found = "+plans.size());
+        LOG.info("plans for date = "+aMonthPlan+" found = "+plans.size());
         if (plans.isEmpty()) {return "null, no data";}
         Calendar startFromCalendar = Calendar.getInstance();
         Calendar lastCalendar = Calendar.getInstance();
         startFromCalendar.setTime(aStartMonth);
         lastCalendar.setTime(aFinishMonth);
-        log.info("1 startMonth = "+startFromCalendar.getTime());
-        log.info("1 finishMonth = "+lastCalendar.getTime());
+        LOG.info("1 startMonth = "+startFromCalendar.getTime());
+        LOG.info("1 finishMonth = "+lastCalendar.getTime());
 
         HospitalFinancePlan clonedPlan;
         while (!startFromCalendar.after (lastCalendar)) {
-            log.info("while last="+lastCalendar.getTime()+", start="+startFromCalendar.getTime());
+            LOG.info("while last="+lastCalendar.getTime()+", start="+startFromCalendar.getTime());
             Date currentMonth = new java.sql.Date(startFromCalendar.getTimeInMillis());
             for (HospitalFinancePlan plan:plans) {
                 clonedPlan = (HospitalFinancePlan) cloneEntity(plan,false);
@@ -207,90 +213,89 @@ return "good";
         int ret=0;
         String entryType;
         StringBuilder sqlAdd = new StringBuilder();
+        boolean isHosp, isVmp, isPol;
         switch (aType) {
             case "HospitalFinancePlan":
+                isHosp = true;
+                isPol=isVmp=false;
                 entryType="='HOSPITAL'";
-                sqlAdd.append( " and e.ksg_id=plan.ksg_id" );
+                sqlAdd.append( " and plan.ksgGroup_id=(select group_id from vocksg where id=e.ksg_id)" );
                 break;
-
             case "PolyclinicFinancePlan":
                 entryType=" in ('POLYCLINIC','POLYCLINICKDO')";
-
+                isPol = true;
+                isHosp=isVmp=false;
                 break;
             case "VmpFinancePlan":
+                isVmp = true;
+                isPol=isHosp=false;
                 entryType="='VMP'";
                 sqlAdd.append( " and e.vmpMethod=vmp.code " );
-
                 break;
-                default:
+            default:
+                isVmp=isPol=isHosp=false;
                     entryType=" is null";
         }
         while (calendar.getTimeInMillis()<=aFinishDate.getTime()) {
             sql = new StringBuilder();
             String finishDate =yyyyMM.format(calendar.getTime());
-            log.info("Ищем данные за месяц"+finishDate+" > "+calendar.getTimeInMillis());
+            LOG.info("Ищем данные за месяц "+finishDate);
             if (aServiceStream==null) {aServiceStream="OBLIGATORYINSURANCE";}
-            sql.append("insert into aggregatevolumesfinanceplan (type, vidSluch_id, month, year,medhelpprofile, department, bedsubtype, ksg, plancount, plancost, factcount, factcost, vmp, vmpName)( ");
-            sql.append("select '"+aType+"',plan.vidSluch_id, cast(date_part('month',plan.startdate) as int) as d1, cast (date_part('year',plan.startdate) as int) as d2, plan.profile_id, plan.department_id" +
-                    ", plan.bedsubtype_id, plan.ksg_id as f5_ksg" +
-                    ", plan.count as planCount, plan.cost as planCost " +
-                    " ,count(case when bill.status_id=3 then e.id else null end)  as factCount" +
-                    " ,sum(case when bill.status_id=3 then e.cost else null end) as f9_factCost" +
-                    " ,vmp.code as f10_vmpCode " +
-                    " ,vmp.name as f11_vmpName " +
-                    " from financeplan plan" +
-                    " left join vocmethodhighcare vmp on vmp.id=plan.method_id" +
-                    " left join e2entry e on e.medhelpprofile_id=plan.profile_id" +
-                    " and (plan.department_id is null or plan.department_id=e.departmentid)" +
-                    " and e.vidSluch_id = plan.vidSluch_id" +
-                    sqlAdd.toString() +
-                    " and (e.isDeleted is null or e.isDeleted='0')" +
-                    " and (e.doNotSend is null or e.doNotSend='0')" +
-                    " and (e.isDefect is null or e.isDefect='0')" +
-                    " and (e.isForeign is null or e.isForeign='0')" +
-                    " and e.servicestream='"+aServiceStream+"'" +
-                    " and to_char(e.finishdate,'yyyy-MM') ='" + finishDate+"'" +
-                    " left join e2bill bill on bill.id=e.bill_id" +
-                    " where to_char(plan.startdate,'mm.yyyy') = to_char(plan.finishdate,'mm.yyyy')" +
-                    " and plan.dtype='"+aType+"'" +
-                    " and to_char(plan.startdate,'yyyy-MM')='"+finishDate+"' " +
-                    " group by plan.vidSluch_id, cast(date_part('month',plan.startdate) as int),cast (date_part('year',plan.startdate) as int), plan.profile_id, plan.department_id, plan.bedsubtype_id, plan.ksg_id, plan.count, plan.cost, vmp.code, vmp.name" +
+            sql.append("insert into aggregatevolumesfinanceplan (type, vidSluch_id, month, year,medhelpprofile, department, bedsubtype, plancount, plancost, factcount, factcost, vmp, vmpName, ksgGroup)( ");
+            sql.append("select '").append(aType).append("',plan.vidSluch_id, cast(date_part('month',plan.startdate) as int) as d1, cast (date_part('year',plan.startdate) as int) as d2, plan.profile_id, plan.department_id")
+                    .append(", plan.bedsubtype_id")
+                    .append(", plan.count as planCount, plan.cost as planCost ")
+                    .append(" ,count(case when bill.status_id=3 then e.id else null end)  as factCount")
+                    .append(" ,sum(case when bill.status_id=3 then e.cost else null end) as f9_factCost")
+                    .append(" ,vmp.code as f10_vmpCode ").append(" ,vmp.name as f11_vmpName , plan.ksgGroup_id as f12_ksgGroupId")
+                    .append(" from financeplan plan")
+                    .append(" left join vocmethodhighcare vmp on vmp.id=plan.method_id")
+                    .append(" left join e2entry e on e.medhelpprofile_id=plan.profile_id")
+                        .append(" and e.vidSluch_id = plan.vidSluch_id and (plan.department_id is null or plan.department_id=e.departmentid) ")
+                        .append(" and to_char(e.finishdate,'yyyy-MM') ='").append(finishDate).append("'")
+                        .append(sqlAdd).append(" and (e.isDeleted is null or e.isDeleted='0')")
+                        .append(" and (e.doNotSend is null or e.doNotSend='0')").append(" and (e.isDefect is null or e.isDefect='0')").append(" and (e.isForeign is null or e.isForeign='0')")
+                        .append(" and e.servicestream='").append(aServiceStream).append("'")
+                    .append(" left join e2bill bill on bill.id=e.bill_id")
+                    .append(" left join vocksg ksg on ksg.id=e.ksg_id")
+                    .append(" where to_char(plan.startdate,'mm.yyyy') = to_char(plan.finishdate,'mm.yyyy')")
+                    .append(" and plan.dtype='").append(aType).append("'")
+                    .append(" and to_char(plan.startdate,'yyyy-MM')='").append(finishDate).append("' ")
+                    .append(" group by plan.vidSluch_id, cast(date_part('month',plan.startdate) as int),cast (date_part('year',plan.startdate) as int), plan.profile_id, plan.department_id, plan.bedsubtype_id, plan.ksgGroup_id ,plan.count, plan.cost, vmp.code, vmp.name")
 
-                    " union select '"+aType+"', e.vidSluch_id, cast(date_part('month',e.finishDate)as int) , cast(date_part('year',e.finishDate)as int), e.medhelpprofile_id, cast('0'||e.departmentid as int), cast('0'||e.bedsubtype as int), e.ksg_id,0,0, count(e.id), sum(e.cost)" +
-                    " ,vmp.code as f10_vmpCode "  +
-                    " ,vmp.name as f11_vmpName " +
-                    " from e2entry e" +
-                    " left join e2bill bill on bill.id=e.bill_id" +
-                    " left join financeplan plan on e.medhelpprofile_id=plan.profile_id and plan.vidsluch_id=e.vidsluch_id and (plan.department_id is null or plan.department_id=e.departmentid)" +
-                    " left join vocmethodhighcare vmp on vmp.id=plan.method_id" +
-                    sqlAdd.toString() +
-                    " where to_char(e.finishdate,'yyyy-MM') ='" + finishDate+"'" +
-                    " and e.entrytype " +entryType+ " and (e.isDeleted is null or e.isDeleted='0')" +
-                    " and (e.doNotSend is null or e.doNotSend='0')" +
-                    " and (e.isDefect is null or e.isDefect='0')" +
-                    " and (e.isForeign is null or e.isForeign='0')" +
-                    " and e.servicestream='"+aServiceStream+"'" +
-                    " and bill.status_id=3 and plan.id is null" +
-                    " group by e.vidSluch_id, cast(date_part('month',e.finishDate)as int) , cast(date_part('year',e.finishDate)as int), e.medhelpprofile_id, cast('0'||e.departmentid as int), cast('0'||e.bedsubtype as int), e.ksg_id, vmp.code, vmp.name");
+                    .append(" union select '") //Находим фактические случаи без плана
+                    .append(aType).append("', e.vidSluch_id, cast(date_part('month',e.finishDate)as int) , cast(date_part('year',e.finishDate)as int), e.medhelpprofile_id, cast('0'||e.departmentid as int), cast('0'||e.bedsubtype as int)")
+                    .append(", 0,0, count(e.id), sum(e.cost)")
+                    .append(" ,vmp.code as f10_vmpCode ").append(" ,vmp.name as f11_vmpName ,ksg.group_id as f12_ksgGroupId")
+                    .append(" from e2entry e")
+                    .append(" left join vocksg ksg on ksg.id=e.ksg_id")
+                    .append(" left join e2bill bill on bill.id=e.bill_id")
+                    .append(" left join vocmethodhighcare vmp on e.vmpMethod=vmp.code and vmp.dateto is null")
+                    .append(" left join financeplan plan on e.medhelpprofile_id=plan.profile_id and plan.vidsluch_id=e.vidsluch_id and to_char(plan.startdate,'mm.yyyy') = to_char(plan.finishdate,'mm.yyyy') " +
+                            " and (plan.department_id is null or plan.department_id=e.departmentid) and to_char(plan.startdate,'yyyy-MM')='").append(finishDate).append("'");
+                       if (isHosp) sql.append(" and plan.ksgGroup_id=ksg.group_id ");
+                       else if (isVmp) sql.append(" and plan.method_id=vmp.id");
+
+                    sql.append(" where to_char(e.finishdate,'yyyy-MM') ='").append(finishDate).append("'")
+                    .append(" and e.entrytype ").append(entryType)
+                    .append(" and (e.isDeleted is null or e.isDeleted='0')").append(" and (e.doNotSend is null or e.doNotSend='0')").append(" and (e.isDefect is null or e.isDefect='0')").append(" and (e.isForeign is null or e.isForeign='0')")
+                    .append(" and e.servicestream='").append(aServiceStream).append("'").append(" and bill.status_id=3 and plan.id is null")
+                    .append(" group by ksg.group_id, e.vidSluch_id, cast(date_part('month',e.finishDate)as int) , cast(date_part('year',e.finishDate)as int), e.medhelpprofile_id, cast('0'||e.departmentid as int), cast('0'||e.bedsubtype as int), vmp.code, vmp.name");
             sql.append(")");
-            log.info("sql="+sql.toString());
+            LOG.info("sql="+sql.toString());
             cleanAggregateTable(aType, calendar.getTime());
              ret += theManager.createNativeQuery(sql.toString()).executeUpdate();
              calendar.add(Calendar.MONTH,1);
         }
-log.info("Закончили формировать факты/планы");
-
+        LOG.info("Закончили формировать факты/планы");
         return new JSONObject().put("status","ok").put("count",ret).toString();
 
     }
-    public void cleanAggregateTable(String aType, java.util.Date aMonthDate) {
+    private void cleanAggregateTable(String aType, java.util.Date aMonthDate) {
         SimpleDateFormat mm = new SimpleDateFormat("MM");
         SimpleDateFormat yyyy= new SimpleDateFormat("yyyy");
-        log.info("Очищаем сведения о факте-плане за "+aMonthDate+" месяц");
-        String sql = "delete from aggregatevolumesfinanceplan where type='"+aType+"' and  month="+mm.format(aMonthDate)+" and year="+yyyy.format(aMonthDate);
-        log.info("sqql="+sql);
-        theManager.createNativeQuery(sql).executeUpdate();
-
+        LOG.info("Очищаем сведения о факте-плане за "+aMonthDate+" месяц");
+        theManager.createNativeQuery("delete from aggregatevolumesfinanceplan where type='"+aType+"' and  month="+mm.format(aMonthDate)+" and year="+yyyy.format(aMonthDate)).executeUpdate();
     }
 
     /** Клонируем запись*/
@@ -301,10 +306,7 @@ log.info("Закончили формировать факты/планы");
             Object newEntity = aClass.newInstance();
             for (Method setterMethod: methodList) {
                 if (setterMethod.getName().startsWith("set")) {
-                    if (setterMethod.getName().equals("setId")) {
-                        continue;
-                    } else if (setterMethod.isAnnotationPresent(OneToMany.class)) {
-                        continue;
+                    if (setterMethod.getName().equals("setId") || setterMethod.isAnnotationPresent(OneToMany.class)) {
                     } else {
                         String propertyName = PropertyUtil.getPropertyName(setterMethod);
                         try {
@@ -318,7 +320,7 @@ log.info("Закончили формировать факты/планы");
             if (needPersist) {theManager.persist(newEntity);}
             return newEntity;
         } catch (Exception e) {
-           log.error(e);
+           LOG.error(e.getMessage(),e);
             return null;
         }
 

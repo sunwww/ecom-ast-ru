@@ -1,12 +1,12 @@
 package ru.ecom.mis.ejb.service.lpu;
 
-import java.util.List;
-
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.quickquery.IWhereClause;
 import ru.ecom.ejb.services.quickquery.QuickQueryContext;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
+
+import java.util.List;
 
 public class LpuWhereClause implements IWhereClause {
 
@@ -25,7 +25,7 @@ public class LpuWhereClause implements IWhereClause {
 				} else {
 					sb.append(" or ") ;
 				}
-				sb.append("mislpu.id="+lpu.getId()) ;
+				sb.append("mislpu.id=").append(lpu.getId());
 			} catch (IllegalStateException e) {
 				//e.printStackTrace();
 			}

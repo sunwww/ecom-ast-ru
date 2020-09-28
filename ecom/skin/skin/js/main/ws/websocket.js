@@ -2,10 +2,9 @@
 
 var ws_socket;
 function ws_exit(){
-    try{ws_sendMessage({method:"exit"});ws_removeFromLocalStorage(ws_socketServerStorageName+"_"+jQuery('#current_username_li').html())} catch (e) {console.log("cant exit websocket "+e);}
+    try{ws_sendMessage({method:"exit"});ws_removeFromLocalStorage(ws_socketServerStorageName+"_"+jQuery('#current_username_li').html())} catch (e) {}
 }
 function connectWebSocket() {
-    console.log("connectWebSocket");
     if (window.ws_socketServerStorageName) {
         var username= jQuery('#current_username_li').html();
         //Если находим в localStorage информация о сервере WS - работаем. Иначе - запрашиваем у *ServiveJs и заносим результат в localStorage
@@ -18,18 +17,14 @@ function connectWebSocket() {
             });
             return;
         }
-        console.log("prewsServer="+wsServer);
         wsServer = JSON.parse(wsServer);
         if (wsServer.server!=null) {
             var url = wsServer.server+"/"+wsServer.username;
             ws_socket = new WebSocket(url);
-            ws_socket.onopen=function(){console.log('opened');};
             ws_socket.onmessage=function(event) {ws_onMessage(event.data);}
             ws_socket.onerror = function(event) {ws_onError(event);};
             ws_socket.onclose = function(event) {ws_onClose(event);};
         }
-    } else {
-        console.log("no webSocketRoles");
     }
 }
 function ws_onClose(event) {
@@ -44,20 +39,19 @@ function ws_onError(event) {
     jQuery('#ws_nextTicketDiv').unbind("click");
     jQuery('#ws_nextTicketDiv').html("Переподключиться");
     jQuery('#ws_nextTicketDiv').on('click',function(){connectWebSocket();});
-    showToastMessage(event.type+" Неизвестная Ошибка",null,null,true);
     console.log("reconnect in 10 sec");
     ws_onClose(event);
 }
 //Заканчиваем работу с очередью или начинаем работу
 function ws_setStartWorking(isStart) {
     if (confirm(isStart?"Приступить к работе?":"Прекратить работу?")){
-        ws_sendMessage({method:true==isStart?"startWork":"stopWork"});
+        ws_sendMessage({method:true===isStart?"startWork":"stopWork"});
     }
 }
 function ws_getStartWorking(isStart) {
     var fwd =jQuery('#ws_finishWorkDiv');
     fwd.unbind("click");
-    if (true==isStart) {
+    if (true===isStart) {
         fwd.html("СТАТУС - РАБОТАЕМ");
         fwd.on('click',function(){ws_setStartWorking(false);});
     } else {
@@ -79,7 +73,6 @@ function ws_getNewWindowNumber(msg) {
 }
 //Отмечаем текущий талон как выполненный и запрашиваем новый талон
 function ws_setNewTicket() {
-    console.log("ws_setNewTicket===========");
     var msg = {method:"getNextTicket"};
     ws_sendMessage(msg);
 }
@@ -98,29 +91,24 @@ function ws_getNewTicket(msg) {
     }
     jQuery('#ws_ticketNumberDiv').html(number);
     if (msg.windowNumber) {ws_getNewWindowNumber(msg);}
-    try{ws_getStartWorking(false==msg.isOffline);}catch (e) {console.log("e=="+e);}
+    try{ws_getStartWorking(false===msg.isOffline);}catch (e) {console.log("e=="+e);}
 }
 
 //Вызываемся при получении сообщения от ws сервера
 function ws_onMessage(msg) {
-    console.log("ws_onMessage. Получили мессадж = "+msg);
     msg = JSON.parse(msg);
     if (msg.status=='ok') {
         switch(msg.function) {
             case "changeWindowNumber": //Сменили номер окна
-                console.log("Новый номер окна: "+msg.windowNumber);
                 ws_getNewWindowNumber(msg);
                 break;
             case "showAllTickets": //Отобразим все талоны на экране
-                console.log("ws_onMessage_"+msg.function);
                 showTheMovie(msg);
                 break;
             case "showTicket": //Отобразим новый талон
-                console.log("ws_onMessage_"+msg.function);
                 showTheMovie(msg);
                 break;
             case "hideTicket": //Спрячем старый талон
-                console.log("ws_onMessage_"+msg.function);
                 showTheMovie(msg);
                 break;
             case "getNextTicket" :
@@ -149,7 +137,6 @@ function ws_onMessage(msg) {
     }
 }
 function ws_sendMessage(json) {
-    console.log("ws_sendMessage="+JSON.stringify(json));
     ws_socket.send(JSON.stringify(json));
 }
 

@@ -1,5 +1,4 @@
 <%@page import="java.util.List"%>
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -105,6 +104,7 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 				action="entityParentPrepareCreate-contract_accountOperationAccrual.do"
 				idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableButton property="1" buttonFunction="showPrintClaimStart" buttonShortName="ПД" buttonName="Печать документов" />
 					<msh:tableColumn columnName="Информация" property="2"/>
 					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
 					<msh:tableColumn columnName="Дата окончания" property="4"/>
@@ -134,6 +134,7 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 				<msh:table name="serverPerson" action="entityParentView-contract_account.do" idField="1"
 				viewUrl="entityParentView-contract_account.do?short=Short" >
 					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableButton property="1" buttonFunction="showPrintClaimStart" buttonShortName="ПД" buttonName="Печать документов" />
 					<msh:tableColumn columnName="Счет" property="1"/>
 					<msh:tableColumn columnName="Информация" property="2"/>
 					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
@@ -301,11 +302,20 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 		<tags:contractChangeServedPerson name="C" contract="${param.id}"/>
 		<tags:contractMenu currentAction="medContract"/>
 		<tags:printLabAnalysis name="printLabAnalysis" />
+		<tags:mis_userDocumentList name="Print" type="DOGOVOR" s="CertificatePersonPrintService" m="printDogovogByNoPrePaidServicesMedServise"/>
 		<script type='text/javascript' src="ContractService.js" />
 		<script type='text/javascript'>
             function printLabAnalysis() {
 				showprintLabAnalysisCloseDocument($('id').value);
             }
+
+		</script>
+	</tiles:put>
+	<tiles:put name="javascript" type="string">
+		<script type="text/javascript">
+			function printAmbulanceCard(aPatientId) {
+				window.document.location='print-ambcard.do?s=PatientPrintService&m=printInfo&id='+aPatientId;
+			}
 
 		</script>
 	</tiles:put>

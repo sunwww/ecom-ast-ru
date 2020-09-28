@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Contract" title="Списки договор по физическим лицам"/>
+    <msh:title mainMenu="Contract" title="Списки договор по физическим лицам"/>
   </tiles:put>
   <tiles:put name="side" type="string">
     	<tags:contractMenu currentAction="naturalPerson"/>
@@ -18,14 +18,14 @@
 	String typeDtype =ActionUtil.updateParameter("Contract_NaturalPerson","typeView","3", request) ;
   %>
   
-    <msh:form action="/contract_journal_natural_person_by period.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/contract_journal_natural_person_by period.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     <input type="hidden" name="s" id="s" value="HospitalPrintService" />
     <input type="hidden" name="m" id="m" value="printReestrByDay" />
     <input type="hidden" name="id" id="id" value=""/>
     
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
@@ -37,8 +37,8 @@
 	        </td>
         </msh:row>
       <msh:row>
-        <msh:textField fieldColSpan="2" property="dateFrom" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateTo" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField fieldColSpan="2" property="dateFrom" label="Период с" />
+        <msh:textField property="dateTo" label="по" />
       </msh:row>
       <msh:row>
            <td colspan="11">
@@ -153,7 +153,7 @@ left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 ${emerIs} ${department}
     order by cec.expertDate
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-contract_naturalPerson.do" method="post" target="_blank">
@@ -224,7 +224,7 @@ left join VocExpertDeviationStandards veds on veds.id=cec.deviationStandards_id
 ${emerIs} ${department}
 	group by ml.id,ml.name
     order by ml.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="journal_militia"
     viewUrl="contract_journal_natural_person_by period.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
      action="contract_journal_natural_person_by period.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >

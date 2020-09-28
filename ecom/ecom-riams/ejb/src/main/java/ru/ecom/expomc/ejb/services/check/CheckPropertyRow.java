@@ -33,7 +33,7 @@ public class CheckPropertyRow implements Serializable {
     public void setValue(String aValue) { theValue = aValue ; }
 
     public String getCheckAndProperty() {
-        return new StringBuilder().append(theCheck).append(",").append(theProperty).toString() ;
+        return theCheck + "," + theProperty;
     }
     /** Значение */
     private String theValue ;

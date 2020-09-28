@@ -1,21 +1,19 @@
 package ru.ecom.mis.web.action.patient;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.medcase.IPolyclinicMedCaseService;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.messages.ErrorMessage;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FindPersonBySocialCardAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -26,15 +24,14 @@ public class FindPersonBySocialCardAction extends BaseAction {
         String spec_middlename = getAttributeSocialCard(aRequest,"sm") ;
         String spec_firstname = getAttributeSocialCard(aRequest,"sf") ;
         IPolyclinicMedCaseService servicePol = Injection.find(aRequest).getService(IPolyclinicMedCaseService.class) ;
-        String fio = new StringBuilder().append(lname).append(" ").append(fname).append(" ").append(mname).toString() ;
+        String fio = lname+" "+fname+" "+mname;
         String specfio = servicePol.getFioBySpec() ;
-        String specfioByCard = new StringBuilder().append(spec_lastname).append(" ").append(spec_firstname).append(" ").append(spec_middlename).toString() ;
-        if (specfio==null || specfio.equals("") || specfioByCard==null || !specfio.equals(specfioByCard)) {
+        String specfioByCard = spec_lastname+" "+spec_firstname+" "+spec_middlename;
+        if (specfio==null || specfio.equals("") || !specfio.equals(specfioByCard)) {
         	if (spec_lastname==null) {
         		new ErrorMessage(aRequest, "Вставьте карточку специалиста") ;
-        	} if (specfio.equals("")) {
+        	} if ("".equals(specfio)) {
         		new ErrorMessage(aRequest, "Нет соответствия рабочей функции и пользователя") ;
-        		
         	} else {
         		new ErrorMessage(aRequest, "Не совпадают ФИО специалиста зарегистрированного в системе с ФИО специалиста по карточке") ;
         	}
@@ -47,7 +44,7 @@ public class FindPersonBySocialCardAction extends BaseAction {
           aRequest.setAttribute("list3" , wqr.get3());
         }
         //form.validate(aMapping, aRequest) ;
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
     private String getAttributeSocialCard(HttpServletRequest aRequest, String aKey) {
     	String ret = aRequest.getParameter(aKey) ;
@@ -71,7 +68,7 @@ public class FindPersonBySocialCardAction extends BaseAction {
     }
     
     public Map<String,String> enrusCreate() {
-    	Map <String,String> map = new HashMap<String, String>();
+    	Map <String,String> map = new HashMap<>();
     	map.put( "Q" ,"Й") ;
     	map.put("W","Ц" ) ;
     	map.put("E","У"  ) ;

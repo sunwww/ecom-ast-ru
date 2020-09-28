@@ -1,19 +1,17 @@
 package ru.ecom.web.poly.actions.visit.prerecord;
 
-import java.util.Calendar;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Calendar;
+import java.util.Collection;
 
 public class ListDaysAction  extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -22,10 +20,9 @@ public class ListDaysAction  extends BaseAction {
 		StringBuilder sql = new StringBuilder() ;
 		String addParam=PreRecordAction.saveData(aRequest) ;
 		String vocWorkFunction= aRequest.getParameter("vocWorkFunction") ;
-		String department= aRequest.getParameter("department") ;
 		String workCalendar = aRequest.getParameter("workCalendar") ;
-		String year=aRequest.getParameter("year") ; ;
-		String month=aRequest.getParameter("month") ; ;
+		String year=aRequest.getParameter("year") ;
+		String month=aRequest.getParameter("month") ;
 		sql.append(" select  wcd.id as wcdid, to_char(wcd.calendardate,'dd.mm.yyyy') as wcdcalendardate");
 		sql.append(" ,to_char(wcd.calendardate,'dd') as CDday");
 		sql.append(" ,count(case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 1 else null end) as cntFree");
@@ -76,7 +73,7 @@ public class ListDaysAction  extends BaseAction {
 			res.append("<a href=\"javascript:step4('")
 			.append("month=").append(getMonth(monthInt+1,false))
 			.append("&year=").append(Integer.valueOf(year)).append(addParam);
-			res.append("');\">").append("")
+			res.append("');\">")
 			//.append(getMonth(month+1,true)).append(" ").append(Integer.valueOf(aYear))
 			.append("-></a> ") ;
 		}
@@ -93,8 +90,6 @@ public class ListDaysAction  extends BaseAction {
 		//System.out.println(cal.toString()) ;
 		if (week==0) {
 			week=7;
-		} else{
-			
 		}
 		week-- ;
 		
@@ -120,7 +115,7 @@ public class ListDaysAction  extends BaseAction {
 			if (week>7) {
 				res.append("</tr><tr>") ;
 			}
-			boolean isBusy = Integer.valueOf(""+wqr.get4())==0?true:false ;
+			boolean isBusy = Integer.valueOf(""+wqr.get4())==0 ;
 			res.append("<td id='tdDay").append(wqr.get3()).append("'");
 			//if (true) {
 				res.append("onclick=\"step5('workCalendarDay=").append(wqr.get1())
@@ -129,20 +124,11 @@ public class ListDaysAction  extends BaseAction {
 				res.append(addParam);
 				
 				res.append("')\"");	
-			//}else {
-				
-			//}
 			res.append(" class='").append(isBusy?"busyDay":"visitDay").append("'>") ;
 			res.append(isBusy?"":"<b>").append(Integer.valueOf(""+wqr.get3())) ;
 			res.append(" <br>(").append(wqr.get5()).append("/").append(wqr.get6()).append(")") ;
 			res.append(isBusy?"":"</b>").append("</td>") ;
 			day = oldday+1 ;
-			//res.append("<li onclick=\"this.childNodes[1].checked='checked';\">") ;
-			//res.append(" <input type='radio' name='rdDate' id='rdDate' checked='true' value='").append(aWorkCalendar).append("#").append(wqr.get1())
-			//.append("#").append(wqr.get2()).append("#").append(wqr.get4()).append("#").append(wqr.get6()).append("'>") ;
-			//res.append(wqr.get2()) ;
-			//res.append(" (").append(wqr.get4()).append(" из ").append(wqr.get6()).append(")") ;
-			//res.append("</li>") ;
 		}
 		int max = cal.getActualMaximum(Calendar.DAY_OF_MONTH) ;
 		//System.out.println("act="+cal.getActualMaximum(Calendar.DAY_OF_MONTH)) ;
@@ -159,7 +145,7 @@ public class ListDaysAction  extends BaseAction {
 		res.append("</tr>") ;
 		if (vocWorkFunction!=null) {
 			res.append("<tr>") ;
-			res.append("<td colspan='7' valign='top'><div id='rowStep6Time_").append("").append(vocWorkFunction).append("' >Выберите дату</div></td>") ;
+			res.append("<td colspan='7' valign='top'><div id='rowStep6Time_").append(vocWorkFunction).append("' >Выберите дату</div></td>") ;
 			res.append("</tr>") ;
 		}	
 		res.append("</table></form>") ;

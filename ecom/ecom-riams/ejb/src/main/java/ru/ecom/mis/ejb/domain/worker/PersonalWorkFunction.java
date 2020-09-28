@@ -4,11 +4,12 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.util.StringUtil;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 /**
  * Персональная рабочая функция
  * @author stkacheva,azviagin
@@ -21,7 +22,6 @@ import javax.persistence.*;
 	,@AIndex(properties={"group"},table="WorkFunction")
 	
 })
-@Table(schema="SQLUser")
 public class PersonalWorkFunction extends WorkFunction {
 	/** Сотрудник */
 	@Comment("Сотрудник")
@@ -54,23 +54,9 @@ public class PersonalWorkFunction extends WorkFunction {
 	private Worker theWorker;
 	@Transient @Comment("Информация о работнике")
 	public String getWorkerInfo() {
-		StringBuilder res = new StringBuilder() ;
-		Patient pat = theWorker.getPerson() ;
-		if (pat!=null) {
-            add(res, pat.getLastname(),"");
-            add(res, pat.getFirstname()," ");
-            add(res, pat.getMiddlename()," ");
-            //add(res, pat.getSnils()," ");
-		}
-		//theWorker.getDoctorInfo() : "" ;
 		return theWorker!=null ? theWorker.getDoctorInfo() : "" ;
 	}
-    private static void add(StringBuilder aSb, String aStr, String aPre) {
-        if(!StringUtil.isNullOrEmpty(aStr)) {
-            if(aSb.length()!=0) aSb.append(aPre) ;
-            aSb.append(aStr) ;
-        }
-    }
+
 	@Transient @Comment("Информация")
 	public String getWorkFunctionInfo() {
 		return getName() + " " + getWorkerInfo();
@@ -83,7 +69,7 @@ public class PersonalWorkFunction extends WorkFunction {
 
 	@Transient
 	public String getInfo() {
-		return new StringBuilder().append("ПО СПЕЦИАЛИСТУ ").append(getWorkerInfo()).toString() ;
+		return "ПО СПЕЦИАЛИСТУ "+getWorkerInfo();
 	}
 	@Transient
 	public String getGroupInfo() {

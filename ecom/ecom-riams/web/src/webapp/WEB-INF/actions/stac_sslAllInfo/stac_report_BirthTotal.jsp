@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <msh:title guid="helloItle-123" mainMenu="MainJournal" title="Анализ работы родового отделения"/>
+        <msh:title mainMenu="MainJournal" title="Анализ работы родового отделения"/>
     </tiles:put>
     <tiles:put name="side" type="string">
 
@@ -19,10 +19,10 @@
 
             if (request.getParameter("short")==null||request.getParameter("short").equals("")) {
         %>
-        <msh:form action="/stac_report_BirthTotal.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+        <msh:form action="/stac_report_BirthTotal.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
             <input type="hidden" name="id" id="id" value=""/>
-            <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-                <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+            <msh:panel>
+                <msh:row>
                     <msh:separator label="Параметры поиска" colSpan="7" />
                 </msh:row>
                 <msh:row>

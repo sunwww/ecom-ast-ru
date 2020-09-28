@@ -122,4 +122,15 @@ public class TableColumnTag extends AbstractGuidSupportTag {
 
     /** Ширина столбца */
     private String theWidth;
+
+    /** Является ли столбец hidden
+     * @jsp.attribute   description="Является ли столбец hidden"
+     *                  required="false"
+     *                  rtexprvalue="true"
+     * */
+    public boolean getHidden() { return theHidden ; }
+    public void setHidden(boolean aHidden) { theHidden = aHidden ; }
+
+    /** Является ли поле идентификатором */
+    private boolean theHidden = false ;
 }

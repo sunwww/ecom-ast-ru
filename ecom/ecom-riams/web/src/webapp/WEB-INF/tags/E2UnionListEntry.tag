@@ -21,7 +21,7 @@
         <form action="javascript:void(0) ;" id="formId">
             <table width="100%" cellspacing="0" cellpadding="4">
                 <tr>
-                    <msh:autoComplete property="${name}MainListEntry" vocName="vocListEntry" label="Главное заполнение" fieldColSpan="2" size="100"/>
+                    <msh:autoComplete property="${name}MainListEntry" vocName="vocOpenListEntry" label="Главное заполнение" fieldColSpan="2" size="100"/>
                 </tr>
                 <tr>
                     <td><input type="button" value='Объединить' id="${name}Save" onclick='javascript:save${name}UnionDialog()'/></td>

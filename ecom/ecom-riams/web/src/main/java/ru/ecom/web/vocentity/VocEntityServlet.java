@@ -6,7 +6,6 @@ import ru.ecom.web.servlet.AbstractAutocompleteServlet;
 import ru.ecom.web.util.Injection;
 
 import javax.naming.NamingException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +19,7 @@ public class VocEntityServlet extends HttpServlet {
 
 	
 	@Override
-	public void doGet(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
+	public void doGet(HttpServletRequest arg0, HttpServletResponse arg1) throws IOException {
 		// TODO Auto-generated method stub
 		service(arg0, arg1);
 	}
@@ -45,8 +44,6 @@ public class VocEntityServlet extends HttpServlet {
 		
 		try {
 			start = Integer.parseInt(aRequest.getParameter("start"));
-		} catch (Exception e) {}
-		try {
 			limit = Integer.parseInt(aRequest.getParameter("limit"));
 		} catch (Exception e) {}
 		
@@ -62,8 +59,6 @@ public class VocEntityServlet extends HttpServlet {
 		} catch (NamingException e) {
 			LOG.error(e.getMessage(),e);
 		}
-//		out
-//				.print("{\"totalCount\":\"1\",    \"topics\":[{\"post_id\":\"53657\"                ,\"topic_title\":\"Visibility Problem in 1.1\"                ,\"topic_id\":\"10890\"                ,\"author\":\"mystix\"                ,\"post_time\":\"1186816484\"                ,\"post_text\":\"firstly, i think the correct format for the tag menus ...\"                ,\"forum_title\":\"Bugs\"                ,\"forumid\":\"3\"                ,\"reply_count\":\"4\"               }            ]}               ");
 		if(callback!=null) {
 			out.println(");") ;
 		}

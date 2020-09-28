@@ -30,17 +30,17 @@
     left join vocreason vr on vr.id=t.vocreason_id    
     left join Omc_Oksm ok on p.nationality_id=ok.id
     where t.date  between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${param.dateEnd}','dd.mm.yyyy')  
-    and t.status='2' ${add}     order by p.lastname,p.firstname,p.middlename" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem" action="entityParentView-poly_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="№мед.карты" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="ФИО пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />      
-      <msh:tableColumn columnName="№талона" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата приема" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Специалист" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Диагноз" property="8" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Цель посещения" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+    and t.status='2' ${add}     order by p.lastname,p.firstname,p.middlename" />
+    <msh:table name="journal_priem" action="entityParentView-poly_ticket.do" idField="1">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="№мед.карты" property="2" />
+      <msh:tableColumn columnName="ФИО пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="№талона" property="5" />
+      <msh:tableColumn columnName="Дата приема" property="6" />
+      <msh:tableColumn columnName="Специалист" property="7" />
+      <msh:tableColumn columnName="Диагноз" property="8" />
+      <msh:tableColumn columnName="Цель посещения" property="9" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>

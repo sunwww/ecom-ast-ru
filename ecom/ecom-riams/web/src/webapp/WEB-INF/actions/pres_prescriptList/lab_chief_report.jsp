@@ -1,5 +1,5 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Журнал назначений" />
+    <msh:title mainMenu="LaboratoryJournal" title="Журнал назначений" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -25,9 +25,9 @@
   if (request.getParameter("short")==null ||request.getParameter("short").equals(""))  {
 	 %>
 	 
-  <msh:form action="/lab_chief_report.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+  <msh:form action="/lab_chief_report.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
 	
@@ -109,7 +109,7 @@
 			var aReason = getCancelReason() ;
 			if (aReason!=null) {
 				PrescriptionService.cancelService(aListPrescript, aReason, { 
-	            callback: function(aResult) {
+	            callback: function() {
 	            	window.document.location.reload();
 	            }
 			}); 

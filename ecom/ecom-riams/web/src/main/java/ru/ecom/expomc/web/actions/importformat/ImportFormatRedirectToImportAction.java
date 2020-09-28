@@ -4,13 +4,13 @@
 
 package ru.ecom.expomc.web.actions.importformat;
 
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.ecom.ejb.services.entityform.IParentEntityFormService;
-import ru.ecom.web.util.EntityInjection;
-import ru.ecom.expomc.ejb.services.form.importformat.ImportFormatForm;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import ru.ecom.ejb.services.entityform.IParentEntityFormService;
+import ru.ecom.expomc.ejb.services.form.importformat.ImportFormatForm;
+import ru.ecom.web.util.EntityInjection;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,11 +21,8 @@ public class ImportFormatRedirectToImportAction extends BaseAction  {
         long id = getLongId(aRequest, "Формат");
         IParentEntityFormService service = EntityInjection.find(aRequest).getParentEntityFormService() ;
         ImportFormatForm form = service.load(ImportFormatForm.class, id) ;
-
-        ActionForward forward = new ActionForward(
-                aMapping.findForward("success").getPath()+"?id="+form.getDocument()+"&format="+id, true
-        );
-        return forward;
+        return new ActionForward(
+                aMapping.findForward(SUCCESS).getPath()+"?id="+form.getDocument()+"&format="+id, true);
 
     }
 }

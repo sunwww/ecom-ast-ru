@@ -2,12 +2,12 @@
  * SIDE
  */
 #side ul li {
-    margin: 0px ;
-    padding: 0px ;
+    margin: 0 ;
+    padding: 0 ;
 }
 
 #side ul li a {
-    margin: 0px ;
+    margin: 0 ;
     padding: 1px 1px 2px 7px ;
 }
 

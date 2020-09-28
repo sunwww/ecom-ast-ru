@@ -1,18 +1,17 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 	/**
 	 * Шаблон услуги рабочего календаря
 	 */
 	@Comment("Шаблон услуги рабочего календаря")
 @Entity
-@Table(schema="SQLUser")
 public class WorkCalendarServicePattern extends WorkCalendarReservePattern{
 	/**
 	 * Медицинская услуга

@@ -15,7 +15,7 @@ msh.widget.OneToManyAuto = function(theSerial, theChild, theTr, theTitle
     // идентфикикатор элемента
     this.getSerial = function() {
         return theSerial;
-    }
+    };
 
     // создание
     function ce(aName) {
@@ -26,8 +26,7 @@ msh.widget.OneToManyAuto = function(theSerial, theChild, theTr, theTitle
     this.add = function() {
         var tdLabel = ce("td") ;
         tdLabel.style.className = "label";
-        var label = ce("label") ;
-        theTitleLabel = label;
+        theTitleLabel = ce("label");
 
         var tdField = ce("td") ;
         var input = ce("input") ;
@@ -73,32 +72,19 @@ msh.widget.OneToManyAuto = function(theSerial, theChild, theTr, theTitle
         tdLink.appendChild(a);
         theActionLink = a;
 
-        //tdLabel.appendChild(label);
         theTr.appendChild(tdLabel);
         theTr.appendChild(tdField);
         if(!theIsView) theTr.appendChild(tdLink);
-        //label.innerHTML = theTitle;
         theActionLink.onclick = onClick;
 
         theHidden.value = "" ;
         theHidden.value = theChild.value ? theChild.value : "" ;
-        if (theIsView) {
-        	//theInput.className = 'viewOnly horizontalFill' ;
-        	
-        }else{
+        if (!theIsView) {
         	theInput.value = theChild.name ? theChild.name : "" ;
         }
-        
-
         addAutocomlete(div) ;
-
-
-        if(theIsView) {
-
-        }
         eventutil.addEventListener(theInput, eventutil.EVENT_BLUR, theRecalcFunction);
-
-    }
+    };
 
     function addAutocomlete(aDiv) {
     	if (!theIsView) {
@@ -113,7 +99,6 @@ msh.widget.OneToManyAuto = function(theSerial, theChild, theTr, theTitle
 	        if (theParentId!=null && theParentId!=""  && theParentId!="null")  {
 	        	//alert("parent="+theParentId);
 	        	theAutocomplete.setParentId(theParentId) ;
-	        	
 	        }
 	        if (theParentAutocomplete!=null && theParentAutocomplete!="" && theParentAutocomplete!="null") {
 	        	theAutocomplete.setParent(theParentAutocomplete+"Autocomplete") ;
@@ -151,39 +136,39 @@ msh.widget.OneToManyAuto = function(theSerial, theChild, theTr, theTitle
         theActionLink.title = aIsRemove ? "Убрать "+theTitle : "Добавить еще один "+theTitle ;
         theActionLink.className = "manyToManyActionLink" ;
 
-    }
+    };
     // показывать метку
     this.setTitleVisibled = function(aVisibled) {
         theTitleLabel.innerHTML = aVisibled ? theTitle : "";
         //        alert(theTitleLabel.innerHTML +" "+aVisibled)
-    }
+    };
 
     // фокус
     this.focus = function() {
 		   theInput.focus() ;
 		   theInput.select() ;
-    }
+    };
     // Очистить данные
     this.clearData = function() {
         theInput.value="" ;
         theHidden.value="" ;
-    }
+    };
     this.setValue = function(aId,aValue) {
         theInput.value=aValue ;
         theHidden.value=aId ;
-    }
+    };
     // Присвоить Родителя Id
     this.setParentId = function(aParentId) {
     	theParentId = aParentId ;
         theAutocomplete.setParentId(theParentId) ;
-    }
+    };
 
     this.getJson = function() {
         theChild["value"] = theHidden.value;
         return theChild ;
     }
 
-}
+};
 
 // Несколько элементов Autocomplete
 msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldName, theTitle, theVocName, theIsView
@@ -191,31 +176,30 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
 
     var theTbody = null ;
     var theLegend = null ;
-    var theAutos = new Array() ;
+    var theAutos = [] ;
     var theLastSerial = 1 ;
-	//alert("many="+theVocName+"#"+theParentId) ;
 
     // установка
     this.install = function() {
         // поиск полей в форме
-//        var hiddens = Form.getInputs(theForm, "hidden", theFieldName) ;
         buildSurroundView();
 
         // через json
         var value = $(theFieldName).value ;
-        //alert(value) ;
         if(value!=null && value!="null" && value!="") {
-	        var json = eval('(' + $(theFieldName).value + ')') ;
+	        var json = eval('(' + value + ')') ;
 	        //alert(theFieldName.value) ;
 	        var childs = json.childs ;
 	        for (var i = 0; i < childs.length; i++) {
-	            var tr = ce("tr") ;
-	            theTbody.appendChild(tr);
-	            var one = new msh.widget.OneToManyAuto(getNextSerial(), childs[i], tr, theTitle
-	                    , onRemove, onAdd,recalc
-	                    , theVocName, theIsView,theParentId, theParentAutocomplete, theViewAction) ;
-	            one.add();
-	            theAutos.push(one);
+	            if (childs[i]) {
+                    var tr = ce("tr") ;
+                    theTbody.appendChild(tr);
+                    var one = new msh.widget.OneToManyAuto(getNextSerial(), childs[i], tr, theTitle
+                        , onRemove, onAdd,recalc
+                        , theVocName, theIsView,theParentId, theParentAutocomplete, theViewAction) ;
+                    one.add();
+                    theAutos.push(one);
+                }
 	        }
 	        if(childs.length==0) {
 	            onAdd() ;
@@ -224,7 +208,7 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
             onAdd() ;
         }
         onUpdate();
-    }
+    };
     this.setIds = function(aJson) {
     	//alert(aJson) ;
         if(aJson!=null && aJson!="null" && aJson!="") {
@@ -248,7 +232,7 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
 	        }
         } 
         onUpdate();
-    }
+    };
     
     this.setParentId = function(aParentId) {
     	//alert(aParentId) ;
@@ -257,13 +241,13 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
         	//alert(theAutos[i]) ;
             theAutos[i].setParentId(theParentId);
         }
-    }
+    };
     this.clearData = function() {
         for (var i = 0; i < theAutos.length ; i++) {
             theAutos[i].clearData() ;
         }
         
-    }
+    };
 
     function getNextSerial() {
         return ++theLastSerial;
@@ -272,7 +256,7 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
 
     // при удалении строки
     function onRemove(aAutoId) {
-        var ar = new Array() ;
+        var ar = [] ;
         var remotedIndex = 0 ;
 
         for (var i = 0; i < theAutos.length; i++) {
@@ -286,17 +270,18 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
         onUpdate();
     }
 
+    this.addRow = function(id, name) {
+      onAdd(id,name);
+    };
+
     // при добавлении
-    function onAdd() {
-        //var hidden = ce("hidden") ;
-        //hidden.name = theFieldName;
-        //theForm.appendChild(hidden);
+    function onAdd(id, name) {
         var tr = ce("tr") ;
         theTbody.appendChild(tr);
-        var child = new Object() ;
+        var child = {} ;
         child["id"] = "" ;
-        child["value"] = "" ;
-
+        child["value"] =  id ? id : "" ;
+        child["name"] =  name ? name : "" ;
         var one = new msh.widget.OneToManyAuto(getNextSerial(), child, tr, theTitle
                 , onRemove, onAdd, recalc
                 , theVocName, theIsView, theParentId, theParentAutocomplete) ;
@@ -318,9 +303,9 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
     }
 
     function recalc() {
-        var json = new Object() ;
+        var json = {} ;
 
-        var childs = new Array() ;
+        var childs = [] ;
         for (var i = 0; i < theAutos.length ; i++) {
             childs.push(theAutos[i].getJson()) ;
         }
@@ -360,4 +345,4 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
         theTbody = tbody;
         theLegend = legend;
     }
-}
+};

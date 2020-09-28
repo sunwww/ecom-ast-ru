@@ -1,15 +1,14 @@
 package ru.ecom.poly.web.action.ticket;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class JournalRegisterVisitAction extends BaseAction {
 
@@ -45,7 +44,7 @@ public class JournalRegisterVisitAction extends BaseAction {
 			aRequest.setAttribute("listCount",new java.util.ArrayList()) ;
 		}
 		
-		return aMapping.findForward("success") ;
+		return aMapping.findForward(SUCCESS) ;
 	}
 	
 

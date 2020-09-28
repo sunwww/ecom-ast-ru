@@ -1,14 +1,14 @@
 package ru.ecom.report.rtf;
 
+import bsh.EvalError;
+import ru.ecom.report.replace.IValueInit;
+import ru.ecom.report.replace.ReplaceHelper;
+import ru.ecom.report.util.ClassLoaderServiceHelper;
+
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import ru.ecom.report.replace.IValueInit;
-import ru.ecom.report.replace.ReplaceHelper;
-import ru.ecom.report.util.ClassLoaderServiceHelper;
-import bsh.EvalError;
 
 /**
  * Печать RTF
@@ -62,26 +62,10 @@ public class RtfPrintServiceHelper {
     	driver.setLogin(theLogin) ;
     	DefaultRtfValueGetter valueGetter = new DefaultRtfValueGetter();
          try {
-             //IValueInit valueInit = (IValueInit) theClassLoaderService.load(aClass);
              aValueInit.init(aParams, valueGetter);
-             //log("Prepare") ;
              driver.prepare() ;
-             
-             //File templateFile = driver.getInputFile() ; //new File(theTemplateDir+"/"+aKey+".rtf") ;
-             //log("InputFile = "+templateFile.getAbsolutePath()) ;
-             
-            // File outFile = driver.getOutputFile() ; //putFilename() ; //aKey+"-"+System.currentTimeMillis()+".rtf" ;
-             //log("outFile = "+outFile.getAbsolutePath()) ;
-             //File outFile = new File(theWorkDir+"/"+filename) ;
-             
-             //driver.print(templateFile, outFile, valueGetter, driver.getEncoding()) ;
              driver.print(theReplaceHelper, valueGetter) ;
              driver.buildFile(getRemovedTempFile()) ;
-             //log("BuildFile") ;
-             
-             //log("result file = "+driver.getResultFilename()) ;
-
-
 			 //Milamesher #120 24092018 вставка qr-кода
 			 try {
 			 	if (driver instanceof OdtPrintFileDriver) {
@@ -111,9 +95,8 @@ public class RtfPrintServiceHelper {
      * @param aClass   IValueInit драйвер
      * @param aParams  значения параметров
      * @return путь к файлы
-     * @throws RtfPrintException
      */
-    public String print(String aKey, String aClass, Map<String,String> aParams) throws RtfPrintException {
+    public String print(String aKey, String aClass, Map<String,String> aParams) {
 		try {
 	        IValueInit valueInit = (IValueInit) theClassLoaderService.load(aClass);
 	        return print(aKey, valueInit, aParams) ;
@@ -138,7 +121,7 @@ public class RtfPrintServiceHelper {
     	return driver ;
     }
 
-    private final List<IPrintFileDriver> theDrivers = new LinkedList<IPrintFileDriver>() ; 
+    private final List<IPrintFileDriver> theDrivers = new LinkedList<>() ;
     private final ClassLoaderServiceHelper theClassLoaderService = new ClassLoaderServiceHelper();
     private final ReplaceHelper theReplaceHelper = new ReplaceHelper();
     /** Каталог для хранения шаблонов */

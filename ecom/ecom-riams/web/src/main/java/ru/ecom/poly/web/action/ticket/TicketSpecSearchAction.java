@@ -1,22 +1,18 @@
 package ru.ecom.poly.web.action.ticket;
 
-import java.util.Date;
-
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
-import ru.ecom.mis.web.action.medcase.journal.DepartmentJournalForm;
 import ru.ecom.poly.ejb.services.ITicketService;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,6 +44,6 @@ public class TicketSpecSearchAction extends BaseAction {
         }
         
         
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

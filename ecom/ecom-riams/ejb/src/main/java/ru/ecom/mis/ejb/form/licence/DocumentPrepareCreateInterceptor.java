@@ -43,6 +43,7 @@ public class DocumentPrepareCreateInterceptor implements IParentFormInterceptor 
         for (Object[] obj:list) {
         	if (isFirst) {
         		form.setIdc10(ConvertSql.parseLong(obj[2])) ;
+        		isFirst=false;
         	}
         	res.append(obj[0]).append(". ").append(obj[1]).append("\n") ;
         }

@@ -16,14 +16,14 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     	<input type="hidden" name="s" value="HospitalPrintService"/>
     	<input type="hidden" name="m" value="receivedWithoutPolicy"/>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+      <msh:row>
         <msh:separator label="Дополнительные параметры для реестра (в своде не учитываются)" colSpan="7"/>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typeDurationName" id="typeDurationLabel">Длительность:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDuration" value="1">  более 3х дней
@@ -56,7 +56,7 @@
 	        	<input type="radio" name="typeEmergency" value="3">  все
 	        </td>
         </msh:row>      
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  иностранцы
@@ -115,8 +115,8 @@
         	<msh:autoComplete property="department" horizontalFill="true" label="Отделение" vocName="lpu" fieldColSpan="7"/>
         </msh:row>
         <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" onclick="find()" value="Найти" />
             <input type="submit" onclick="print()" value="Печать" />
@@ -127,14 +127,10 @@
     
     <%
     
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     String view = ActionUtil.updateParameter("ExtDispAction","typeView","1", request) ;
     String typeDischargePatientIs = ActionUtil.updateParameter("ExtDispAction","typeDischargePatientIs","1", request) ; 
 	String typePatientIs = ActionUtil.updateParameter("ExtDispAction","typePatientIs","1", request) ;
-	//String typePatientIs = (String) request.getAttribute("typePatientIs") ;
-	//out.print("<H1>PATIENT_IS="+typePatientIs+"</H1>");
-	
-	//out.print("<H1>PATIENT_IS="+"</H1>");
 	String typeDuration = ActionUtil.updateParameter("ExtDispAction","typeDuration","1", request) ;
 	String typeEmergency = ActionUtil.updateParameter("ExtDispAction","typeEmergency","1", request) ;
 	request.setAttribute("typeView", view);
@@ -142,12 +138,8 @@
 	request.setAttribute("typeDuration", typeDuration);
 	request.setAttribute("typeEmergency", typeEmergency);
     if (date!=null && !date.equals(""))  {
-    	String dateEnd = (String)request.getParameter("dateEnd") ;
-    	 
-    	 
-    	
+    	String dateEnd = request.getParameter("dateEnd") ;
     	String department = request.getParameter("department") ;
-    	
     	if (department!=null && !department.equals("")) {
     		request.setAttribute("departmentSql", " and hmc.department_id="+department) ;
     		request.setAttribute("department1Sql", " and case when dmc.id is not null then ml1.id else ml.id end="+department) ;
@@ -157,15 +149,15 @@
     	} else {
     		request.setAttribute("dateEnd", dateEnd) ;
     	}
-    	if (typePatientIs!=null && typePatientIs.equals("1")) {
+    	if ("1".equals(typePatientIs)) {
     		request.setAttribute("isPat", " or hmc.dateFinish is null") ;
     	}
-    	if (typeDischargePatientIs!=null && typeDischargePatientIs.equals("1")) {
+    	if ("1".equals(typeDischargePatientIs)) {
     		request.setAttribute("isDischarge", " and hmc.dateFinish is not null") ;
-    	} else if (typeDischargePatientIs!=null && typeDischargePatientIs.equals("2")) {
+    	} else if ("2".equals(typeDischargePatientIs)) {
     		request.setAttribute("isDischarge", " and hmc.dateFinish is null") ;
     	} 
-    	if (view!=null && (view.equals("1") || view.equals("7"))) {
+    	if (view.equals("1") || view.equals("7")) {
     	%>
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -246,7 +238,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
 
     </msh:section>
     
-    <%} if (view!=null && (view.equals("2") || view.equals("7"))) {
+    <%} if (view.equals("2") || view.equals("7")) {
     	%>
     
     <msh:section title="По безполисным по состоящим или направленным в отделение по ОМС+ДРУГИМ. ${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -330,11 +322,10 @@ order by coalesce(ml.name,ml1.name),vss.name,pat.lastname,pat.firstname,pat.midd
     
     </msh:section>
     
-    <%} if (view!=null && (view.equals("3") || view.equals("7"))) {
+    <%} if (view.equals("3") || view.equals("7")) {
     	%>
     <msh:section>
     <msh:sectionTitle>Не была произведена проверка по базе фонда. ${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
-    <a href="javascript:checkPolicyBySls(0)">Запустить проверку по полисам</a>
     </msh:sectionTitle>
     
     <msh:sectionContent>
@@ -379,8 +370,7 @@ left join PatientFond pf on pf.commonNumber=polI.commonNumber
       and hmc.DTYPE='HospitalMedCase'
       ${departmentSql}
  and (vss.code = 'OBLIGATORYINSURANCE') 
-
-and hmc.deniedHospitalizating_id is null and polI.confirmationDate is null
+and hmc.deniedHospitalizating_id is null and pol.dateSync is null
 and polI.dtype='MedPolicyOmc'
 ${addPat} ${addEmergency}  ${isDischarge}
 group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
@@ -388,15 +378,10 @@ group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code
     , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
     ,hmc.dateFinish,vht.code
 having count(pol.medCase_id)>0 ${addDuration}
-and count(case when (pf.lastname=polI.lastname and pf.firstname=polI.firstname and pf.middlename=polI.middlename
-and pf.birthday=polI.birthday) or
-(pf.lastname=pat.lastname and pf.firstname=pat.firstname and pf.middlename=pat.middlename
-and pf.birthday=pat.birthday)
-then polI.id else null end)=0
 order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
 
 
-        "  />
+        " nameFldSql="journal_hosp_sql" />
         <msh:table name="journal_hosp"
         viewUrl="entitySubclassShortView-mis_medCase.do" 
         action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
@@ -410,14 +395,12 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
             <msh:tableColumn columnName="К.дни" property="10" isCalcAmount="true"/>
             <msh:tableColumn columnName="Тип" property="8"/>
             <msh:tableColumn columnName="ФИО пациента" property="7"/>
-            
-            
-        </msh:table>
+        </msh:table>${journal_hosp_sql}
     </msh:sectionContent>
 
     </msh:section>
         <%	}
-    if (view!=null && (view.equals("4") || view.equals("7"))) {
+    if (view.equals("4") || view.equals("7")) {
     	%>
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -500,7 +483,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
     </msh:section>
     
     <%} 
-    if (view!=null && (view.equals("5") || view.equals("7"))) {
+    if (view.equals("5") || view.equals("7")) {
     	%>
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -585,7 +568,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
     </msh:section>
     
     <%} 
-    if (view==null || view.equals("6") || view.equals("7")) { 
+    if (view.equals("6") || view.equals("7")) {
     %>
     <msh:section title="Свод">
     <msh:sectionContent>

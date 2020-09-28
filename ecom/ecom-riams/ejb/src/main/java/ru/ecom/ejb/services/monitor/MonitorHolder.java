@@ -33,7 +33,11 @@ public class MonitorHolder {
     boolean isExists(long aMonitorId) {
         return theHash.get(aMonitorId)!=null ;
     }
-    
+
+    HashMap<Long, LocalMonitorStatus> getAllMonitors() {
+        return theHash;
+
+    }
     private long theLastId = 0 ;
-    private final HashMap<Long, LocalMonitorStatus> theHash = new HashMap<Long, LocalMonitorStatus>();
+    private final HashMap<Long, LocalMonitorStatus> theHash = new HashMap<>();
 }

@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
@@ -18,14 +17,9 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
-	 
-		private static final Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
-	    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-		
 	    public void intercept(IEntityForm aForm, Object aEntity, EntityManager aManager) {
 			HospitalMedCaseForm form=(HospitalMedCaseForm)aForm ;
-			if (CAN_DEBUG) LOG.debug("Проверка правильности введенных данных");
-			
+
 			HospitalMedCase medCase = (HospitalMedCase)aEntity ;
 			boolean adding4is = (!isEmpty(form.getClinicalDiagnos()) || (!isEmpty(form.getClinicalMkb()))) ;	
 			boolean adding5is = (!isEmpty(form.getPathanatomicalDiagnos()) || (!isEmpty(form.getPathanatomicalMkb()))) ;	

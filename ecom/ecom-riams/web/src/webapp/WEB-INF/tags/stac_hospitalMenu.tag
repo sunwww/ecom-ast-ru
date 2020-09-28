@@ -45,29 +45,33 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 				  name="Создать онкологический случай"
 				  roles="/Policy/Mis/Oncology/Case/Create"/>
 
+	<msh:sideLink
+			params="id"
+			action="/entityParentPrepareCreate-smo_covidMark.do"
+			name="Форма оценки тяжести COVID-19"
+			roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+
 	<msh:sideLink key="ALT+6"
 				  params="id"
 				  action="/entityParentPrepareCreate-preg_shortConfCertificate.do"
 				  name="Добавить родовый сертификат"
 				  roles="/Policy/Mis/Pregnancy/ConfinementCertificate"/>
-
-	<msh:sideLink key="ALT+7"
-				  params=""
-				  action=".javascript:setOutOfReceivingDep('${param.id}','.do')"
-				  name="Пациент выбыл из приёмника"
-				  roles="/NOEXTIST/Policy/Mis/MedCase/Stac/Ssl/View"/>
 </msh:sideMenu>
   
    <msh:sideMenu title="Показать">
+    <msh:sideLink roles="/Policy/Mis/MedCase/Covid19/View" name="Карты COVID-19"
+				  action="/entityParentList-smo_covid19" params="id"/>
+    <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="онкологическая карта выписки"
+				  params="id" action="/entityPrepareCreate-mis_dynamicDocument.do?type=1"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
- 
+
  <%--    <mis:sideLinkForWoman classByObject="MedCase" id="${param.id}"  params=""
     	action="/javascript:gotoPregHistory('${param.id}','.do')" name="История родов" 
     	title="История родов" roles="/Policy/Mis/Pregnancy/History/View" styleId="preg_pregHistory" />
     	--%>
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View,/Policy/Mis/MedCase/Ssl/Diagnosis/View" />
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4"  params="" roles="/Policy/Mis/MedCase/Visit/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5"  params="" roles="/Policy/Mis/MedCase/Diagnosis/View,/Policy/Mis/MedCase/Ssl/Diagnosis/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5"  params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-stac_sslAllInfo-list_fond_direct_by_sls.do?short=Short&id=${param.id}','.do')" name='Направления из фонда' title="Просмотр прикрепленных направлений из фонда" 
         	roles="" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-stac_ssl-cost_case.do?short=Short&id=${param.id}','.do')" name='Цена' title="Просмотр стоимости услуг" 
@@ -88,15 +92,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	title='Регистрация инфекционных заболеваний'
     	styleId="stac_infectiousMessage"
     	/> 
-<%-- 	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" 
-		action="/javascript:getDefinition('entityParentList-pres_prescriptList.do?short=Short&id=${param.id}','.do')" title='Показать листы назначений'
-		styleId="viewShort"
-		
-		/> --%>
-	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" 
+	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Лист назначений"
 		action="/javascript:showCreatePrescriptList('${param.id}','.do')" title='Показать/добавить лист назначений'
 		/>
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"  
+	   <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Сводный лист назначений" params="" action="/javascript:getDefinition('entityParentList-pres_prescriptList.do?short=Short&id=${param.id}')" title="Показать все назначения СЛС"  />
+	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/ShowSls,/Policy/Mis/MedCase/Stac/Ssl/SurOper/View" name="Операции"
     	 styleId="viewShort" action="/javascript:getDefinition('entityParentList-stac_surOperation.do?short=Short&id=${param.id}','.do')"  title='Операции'
     	
     	/>
@@ -133,14 +133,23 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="263 приказ" 
     	 action='/javascript:showorder263CloseDocument()' title='263 приказ' styleId="stac_slo"
     	/>
-    
-              <msh:sideLink roles="/Policy/Mis/Document/Flow/View" styleId="viewShort" action="/javascript:getDefinition('js-doc_flow-infoByPatient.do?id=${param.id}&medcase=${param.id}&short=Short')" name="Передача документов" title="Передача документов" />
-
 	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="Изменить рост/вес/ИМТ"
 					 action='/javascript:showIMTCloseDocument()' title='Изменить рост/вес/ИМТ' styleId="stac_slo"
 	   />
 	   <msh:sideLink roles="/Policy/Mis/Journal/JasperReports" name="Справка о стоимости"
 					 action='/javascript:showReferenceFSS()' title='Справка о стоимости' styleId="stac_slo"
+	   />
+	   <msh:sideLink roles="/Policy/Mis/ColorIdentityEdit/PatientSet" name="Браслеты"
+					 styleId="viewShort" action="/javascript:showidentityPatient(${param.id},true)"  title='Браслеты'
+	   />
+	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/OmcCriterion" name="Клас. критерии" params="id"
+					 styleId="viewShort" action="/entityParentList-stac_omcCriterion"  title="Клас. критерии"
+	   />
+	   <msh:sideLink roles="/Policy/Mis/Pregnancy/BirthNosologyCard/View" name="Карта по нозологиям" params=""
+					 styleId="viewShort" action="/javascript:showbirthNosologyCard(${param.id},null,0)"  title="Карта по нозологиям"
+	   />
+	   <msh:sideLink roles="/Policy/Mis/Pregnancy/BirthNosologyCard/View" name="Карта по нозологиям: отмеченные" params=""
+					 styleId="viewShort" action="/javascript:showOnlyCheckedbirthNosologyCard(${param.id})"  title="Карта по нозологиям: отмеченные"
 	   />
 </msh:sideMenu>
 
@@ -190,11 +199,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-stac_deathCase.do?short=Short&id=${param.id}','.do')" name='Случай смерти' title="Просмотр случая смерти"
         	roles="/Policy/Mis/MedCase/DeathCase/View" />
-		
-		<msh:sideLink roles="/Policy/Mis/MedCase/BirthCase/View"  name="Случай рождения"   
-		params="id"  action='/entityParentList-stac_birthCase' title='Просмотр случая рождения'
-		styleId="stac_birthCase"
-		/>
+
 		<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View"  name="Направления на госпитализацию"
 		params="id"  action='/entityParentList-smo_planHospitalByHosp' title='Список направлений на госпитализацию'
 		styleId="smo_planHospitalByHosp"
@@ -208,7 +213,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="Удалить данные выписки"
 		title="Удалить данные выписки"
 		confirm="Вы действительно желаете удалить данные выписки?"
-		roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
+		roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin"
 		styleId="deleteDischarge"
 	/>
 	<msh:sideLink action="/entityPrepareCreate-sec_userPermission.do?type=2&ido=${param.id}"
@@ -217,9 +222,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		roles="/Policy/Jaas/Permission/User/Create" 
 	/>
     	<tags:stac_deniedHospitalizating name="DH" title="Оформить отказ больного" roles="/Policy/Mis/MedCase/Stac/Ssl/DeniedHospitalizatingSls" />
-    	<tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/ChangeServiceStream" />
+    	<tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/ChangeServiceStream" />
 		<tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
 		<tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
+		<tags:birthNosologyCard  name="birthNosologyCard"  />
 </msh:sideMenu>
 <msh:sideMenu title="Перейти">
 	    <msh:sideLink 
@@ -235,6 +241,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
  <msh:sideMenu title="Дополнительно">
         <msh:sideLink action="/stac_sslList.do?sslid=${param.id}" name="⇧Все госпитализации пациента" title="Все госпитализации пациента" />
         <msh:sideLink action="/mis_patients" name="Новая госпитализация" roles="/Mis/MainMenu/Patient,/Policy/Mis/MedCase/Stac/Ssl/Admission/Create"/>
+        <msh:sideLink action="/javascript:makeTimurHappy()" name="Расчитать вероятность диабета" roles="/Policy/Mis/Journal/CheckDiabetes"/>
 </msh:sideMenu>
 
 <msh:sideMenu title = "Добавить">
@@ -243,6 +250,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <tags:contract_getAccount name="ACCOUNT"  />
 <tags:order263 name="order263" />
 <tags:IMT name="IMT" />
+<tags:identityPatient name="identityPatient" title="в госпитализации"/>
   <script type='text/javascript' src='./dwr/interface/PregnancyService.js'></script>
   <script type="text/javascript">
   function viewOtherVisitsByPatient(d) {
@@ -258,31 +266,33 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
   }
   </script>
 
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script> 
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 <script type="text/javascript">
+
     function deleteDischargeCheck(aId) {
-        HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess(
+        /*HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess(
             aId, {
                 callback: function(res) {
                     if (res==true) {
-                        deleteDischarge(${param.id});
+                        deleteDischarge();
                     }
-                    else {
+                    else {*/
                         HospitalMedCaseService.checkUserIsAdminToDeleteDischarge(
                             {
                                 callback: function(res) {
                                     if (res==true) {
-                                        deleteDischarge(${param.id});
+                                        deleteDischarge();
                                     }
-                                    else alert("Невозможно удалить данные! Удалить её может только лечаший врач в течение 1го календарного дня после выписки или администратор системы.");
+									else alert("Невозможно удалить данные! Удалить её может только администратор системы.");
+                                    //else alert("Невозможно удалить данные! Удалить её может только лечаший врач в течение 1го календарного дня после выписки или администратор системы.");
                                 }}) ;
-                    }
-                }}) ;
+                    /*}
+                }}) ;*/
     }
-    function deleteDischarge(aId) {
+    function deleteDischarge() {
         HospitalMedCaseService.deleteDischarge(
             '${param.id}', {
-                callback: function(aString) {
+                callback: function() {
                     if ($('dateFinish')) $('dateFinish').value="" ;
                     if ($('dateFinishReadOnly')) $('dateFinishReadOnly').value="" ;
                     if ($('dischargeTime')) $('dischargeTime').value="" ;
@@ -353,7 +363,7 @@ function gotoNewBornHistory(aMedCase,aUrl) {
       HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
           callback: function (res) {
               var resMas = res.split("#");
-              if (res != "##") {
+              if (res != "") {
                   var stat=$('statCardNumber').value;
                   var year=$('dateFinish').value.substring(6,11);
                   window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2FCostCertificate&standAlone=true&decorate=no"
@@ -364,21 +374,4 @@ function gotoNewBornHistory(aMedCase,aUrl) {
           }
       });
   }
-  //Milamesher #118 06092018 - проставить отметку, что пациент выбыл из приёмника
-	function setOutOfReceivingDep(aMedCase) {
-        HospitalMedCaseService.setOutOfReceivingDep(aMedCase, {
-            callback: function (res) {
-                if (res!="##") {
-                    var resMas = res.split("#");
-                    if (resMas[0]!=null && resMas[0]!='' && resMas[1]!=null && resMas[1]!='') {
-                        if ($('transferDate')) $('transferDate').value=resMas[0];
-                        if ($('transferDateReadOnly')) $('transferDateReadOnly').value=resMas[0];
-                        if ($('transferTime')) $('transferTime').value=resMas[1];
-                        if ($('transferTimeReadOnly')) $('transferTimeReadOnly').value=resMas[1];
-                        if (!$('transferDate')) alert("Отмечено: пациент выбыл из приёмника"); //если из СЛС, чтобы видно было
-					}
-				}
-            }
-        });
-	}
 </script>

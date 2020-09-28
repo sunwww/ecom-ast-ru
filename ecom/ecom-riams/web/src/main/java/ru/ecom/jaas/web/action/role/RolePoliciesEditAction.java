@@ -1,12 +1,12 @@
 package ru.ecom.jaas.web.action.role;
 
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.ecom.web.util.Injection;
-import ru.ecom.jaas.ejb.service.ISecRoleService;
-import ru.ecom.jaas.ejb.service.CheckNode;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import ru.ecom.jaas.ejb.service.CheckNode;
+import ru.ecom.jaas.ejb.service.ISecRoleService;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +23,7 @@ public class RolePoliciesEditAction extends BaseAction {
 //        CheckNodesUtil.removeUnchecked(root);
         aRequest.setAttribute("policies", root);
 
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 
 

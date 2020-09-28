@@ -4,11 +4,7 @@ import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.form.medcase.MedServiceForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
@@ -21,6 +17,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Diary/Template")
 @Parent(property="medService", parentForm=MedServiceForm.class)
 public class TemplateProtocolForm extends IdEntityForm{
+
+	/** Создавать браслет по шаблону */
+	@Comment("Создавать браслет по шаблону")
+	@Persist
+	public Boolean getCreateBracelet() {return theCreateBracelet;}
+	public void setCreateBracelet(Boolean aCreateBracelet) {theCreateBracelet = aCreateBracelet;}
+	private Boolean theCreateBracelet ;
 	
 	/** Создавать дневник по умолчанию при приеме в лабораторию */
 	@Comment("Создавать дневник по умолчанию при приеме в лабораторию")
@@ -78,13 +81,4 @@ public class TemplateProtocolForm extends IdEntityForm{
 	private Long theMedService;
 	/** Заголовок */
 	private String theTitle;
-	
-	/** Тип шаблона */
-	@Comment("Тип шаблона")
-	@Persist
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
-
-	/** Тип шаблона */
-	private Long theType;
 }

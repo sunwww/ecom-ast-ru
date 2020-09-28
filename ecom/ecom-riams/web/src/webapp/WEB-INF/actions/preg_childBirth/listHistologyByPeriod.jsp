@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал гистологий плаценты"></msh:title>
+    <msh:title mainMenu="Journals" title="Журнал гистологий плаценты"></msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:style_currentMenu currentAction="preg_histology" />
@@ -22,12 +22,12 @@
 	  ActionUtil.updateParameter("ChildBirth","typePhatology","3", request) ;
   }
   %>
-    <msh:form action="/journal_roddom_histology.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/journal_roddom_histology.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="s" id="s" value="HospitalPrintReport" />
     <input type="hidden" name="m" id="m" value="printReport007" />
     <input type="hidden" name="id" id="id" value=""/>
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+    <msh:panel>
+      <msh:row>
         <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="1">  свод по датам
@@ -36,7 +36,7 @@
         	<input type="radio" name="typeView" value="2">  реестр
         </td>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Гистология (typePhatology)" colspan="1"><label for="typePhatologyName" id="typePhatologyLabel">Гистология:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePhatology" value="1">  с патологией
@@ -48,15 +48,15 @@
         	<input type="radio" name="typePhatology" value="3">  все
         </td>
       </msh:row>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
       	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" vocName="lpu"/>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+      <msh:row>
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" value="Найти" />
             <input type="submit" onclick="print()" value="Печать" />
@@ -173,10 +173,10 @@
     and cb.placentaHistologyOrder='1'
     group by cb.birthFinishDate 
     order by cb.birthFinishDate" />
-    <msh:table name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-      <msh:tableColumn columnName="Дата" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
-      <msh:tableColumn columnName="Кол-во направлений на гистологию" identificator="false" property="3" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
-      <msh:tableColumn columnName="Кол-во c патологией" identificator="false" property="4" guid="7f73955-a5cb-4497-bd0b-f4d05848f049" />
+    <msh:table name="journal_surOperation" viewUrl="journal_surOperationByDate.do?short=Short"  action="journal_surOperationByDate.do?dateSearch=${dateSearch}" idField="1">
+      <msh:tableColumn columnName="Дата" property="2" />
+      <msh:tableColumn columnName="Кол-во направлений на гистологию" identificator="false" property="3" />
+      <msh:tableColumn columnName="Кол-во c патологией" identificator="false" property="4" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -219,19 +219,19 @@
     		,pat.birthday,preg.orderNumber ,cons.name 
         	,pec.notes,vms.name,pec.pregnancyFeatures,pec.previousPregnancies
     order by cb.birthFinishDate
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_reestr" viewUrl="entityParentView-preg_childBirth.do?short=Short" action="entityParentView-preg_childBirth.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-              <msh:tableColumn property="2" columnName="ФИО" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
-              <msh:tableColumn property="3" columnName="Дата рождения" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
-              <msh:tableColumn property="4" columnName="Окончания родов" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
+    " />
+    <msh:table name="journal_reestr" viewUrl="entityParentView-preg_childBirth.do?short=Short" action="entityParentView-preg_childBirth.do" idField="1">
+              <msh:tableColumn property="2" columnName="ФИО" />
+              <msh:tableColumn property="3" columnName="Дата рождения" />
+              <msh:tableColumn property="4" columnName="Окончания родов" />
               <msh:tableColumn property="8" columnName="Какая беременность по счету"/>
               <msh:tableColumn property="9" columnName="Жен. консультация"/>
               <msh:tableColumn property="10" columnName="Особенности течения прежних беременностей, родов, послеродового периода (акушерский анамнез)"/>
               <msh:tableColumn property="11" columnName="Семейное положение"/>
               <msh:tableColumn property="12" columnName="Течение настоящей беременности"/>
-              <msh:tableColumn property="5" columnName="Кем доставлен" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
-              <msh:tableColumn property="6" columnName="Роды" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
-              <msh:tableColumn property="7" columnName="Гистология плаценты" cssClass="preCell" guid="b4473fa2-67da-4b78-83d4-a1598a9cce0a" />
+              <msh:tableColumn property="5" columnName="Кем доставлен" />
+              <msh:tableColumn property="6" columnName="Роды" />
+              <msh:tableColumn property="7" columnName="Гистология плаценты" cssClass="preCell" />
     </msh:table>
     </msh:sectionContent>    
     </msh:section>

@@ -71,34 +71,7 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Не входит в оплату по ОМС */
 	private Boolean theIsNoOmc;
-	
-	/** Вид собственности */
-	@Comment("Вид собственности")
-	@Persist
-	public Long getPropertyAdmin() {
-		return thePropertyAdmin;
-	}
 
-	public void setPropertyAdmin(Long aPropertyAdmin) {
-		thePropertyAdmin = aPropertyAdmin;
-	}
-
-	/** Вид собственности */
-	private Long thePropertyAdmin;
-	/** Подчиненность */
-	@Comment("Подчиненность")
-	@Persist
-	public Long getSubordination() {
-		return theSubordination;
-	}
-
-	public void setSubordination(Long aSubordination) {
-		theSubordination = aSubordination;
-	}
-
-	/** Подчиненность */
-	private Long theSubordination;
-	
     /** Участки */
 //    @PersistOneToManyOneProperty(valueProperty="type", parentProperty="lpu")
     public String getAreas() { return theAreas ; }
@@ -295,24 +268,9 @@ public class MisLpuForm extends IdNameEntityForm {
 	public void setLpuFunction(Long aLpuFunction) {
 		theLpuFunction = aLpuFunction;
 	}
-	
-	/** Профиль отделения */
-	@Comment("Профиль отделения")
-	@Persist
-	public Long getProfile() {
-		return theProfile;
-	}
-
-	public void setProfile(Long aProfile) {
-		theProfile = aProfile;
-	}
-
-	/** Профиль отделения */
-	private Long theProfile;
 
 	/** Функция ЛПУ */
 	private Long theLpuFunction;
-
 
     /**
      * Телефон
@@ -588,7 +546,21 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Родильное отделение */
 	private Boolean theIsMaternityWard;
-	
+
+	/** Отделение патологии беременности */
+	@Comment("Отделение патологии беременности")
+	@Persist
+	public Boolean getIsPatologyPregnant() {
+		return theIsPatologyPregnant;
+	}
+
+	public void setIsPatologyPregnant(Boolean aIsPatologyPregnant) {
+		theIsPatologyPregnant = aIsPatologyPregnant;
+	}
+
+	/** Отделение патологии беременности */
+	private Boolean theIsPatologyPregnant;
+
 	/** Уровень оказания медицинской помощи */
 	@Comment("Уровень оказания медицинской помощи")
 	@Persist
@@ -637,4 +609,29 @@ public class MisLpuForm extends IdNameEntityForm {
 	public void setIsCreateCardiacScreening(Boolean aIsCreateCardiacScreening) {theIsCreateCardiacScreening = aIsCreateCardiacScreening;}
 	/** Создают ли кадриоскрининг новорождённым? */
 	private Boolean theIsCreateCardiacScreening;
+
+	/** Офтальмологическое? */
+	@Comment("Офтальмологическое?")
+	@Persist
+	public Boolean getIsOphthalmic() {return theIsOphthalmic;}
+	public void setIsOphthalmic(Boolean aIsOphthalmic) {theIsOphthalmic = aIsOphthalmic;}
+	/** Офтальмологическое? */
+	private Boolean theIsOphthalmic;
+
+
+	/** Учитывать в отчёте по КР? */
+	@Comment("Учитывать в отчёте по КР?")
+	@Persist
+	public Boolean getIsReportKMP() {return theIsReportKMP;}
+	public void setIsReportKMP(Boolean aIsReportKMP) {theIsReportKMP = aIsReportKMP;}
+	/** Учитывать в отчёте по КР? */
+	private Boolean theIsReportKMP;
+
+	/** Инфекционное? */
+	@Comment("Инфекционное?")
+	@Persist
+	public Boolean getIsForCovid() {return theIsForCovid;}
+	public void setIsForCovid(Boolean aIsForCovid) {theIsForCovid = aIsForCovid;}
+	/** Инфекционное? */
+	private Boolean theIsForCovid;
 }

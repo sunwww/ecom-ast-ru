@@ -45,7 +45,7 @@
 </div>
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}ClaimStartDialogInitialized = false ;
      var claimId =0;
     

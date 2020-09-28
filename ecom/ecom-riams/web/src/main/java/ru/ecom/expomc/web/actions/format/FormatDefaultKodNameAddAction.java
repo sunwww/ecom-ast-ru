@@ -1,18 +1,17 @@
 package ru.ecom.expomc.web.actions.format;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.entityform.IParentEntityFormService;
 import ru.ecom.expomc.ejb.domain.format.Field;
 import ru.ecom.expomc.ejb.services.form.format.FieldForm;
 import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.ForwardUtil;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author esinev
@@ -48,6 +47,6 @@ public class FormatDefaultKodNameAddAction extends BaseAction {
 
         service.create(form) ;
 
-        return ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), aRequest) ;
+        return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), aRequest) ;
     }
 }

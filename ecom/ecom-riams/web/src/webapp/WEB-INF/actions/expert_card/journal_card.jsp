@@ -41,11 +41,11 @@ div#header{display:none;}
    %>
     <msh:form action="quality_card_journal.do" defaultField="estimationKindName"  method="get" >
     <msh:panel>
-          <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+          <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
        <msh:row>
-        <msh:autoComplete property="estimationKind" vocName="vocQualityEstimationKind" label="Тип оценки качества" fieldColSpan="30" size="50" />
+        <msh:autoComplete property="estimationKind" vocName="vocQualityEstimationKindReport" label="Тип оценки качества" fieldColSpan="30" size="50" />
       </msh:row> 
        <msh:row>
         <msh:autoComplete property="department" vocName="lpu" label="Отделение" fieldColSpan="30" size="50" />
@@ -105,9 +105,12 @@ div#header{display:none;}
       </msh:row>
        <msh:row>
            <td colspan="11">
-            <input type="submit"  value="Найти" />
+            <input type="submit"  value="Найти"  onclick="find()"/>
+			<input type="submit" onclick="printQuarterlyReport()" value="Печать ежеквартального отчёта" />
           </td>
       </msh:row>
+		<input type="hidden" value="HospitalPrintService" name="s"/>
+		<input type="hidden" value="printQuarterlyReport" name="m"/>
       </msh:panel>
       </msh:form>
           <script type='text/javascript'>
@@ -127,6 +130,19 @@ div#header{display:none;}
    		chk[+aValue-1].checked='checked' ;
    	}
    }
+
+    function find() {
+        var frm = document.forms[0] ;
+        frm.target='' ;
+        frm.action='quality_card_journal.do' ;
+    }
+
+    function printQuarterlyReport() {
+        var frm = document.forms[0] ;
+        frm.target='_blank' ;
+        frm.m.value='printQuarterlyReport' ;
+        frm.action='print-quarterlyReport.do' ;
+    }
       </script>
     	<% 
     	StringBuilder sqlAdd = new StringBuilder();

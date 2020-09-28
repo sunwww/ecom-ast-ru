@@ -16,7 +16,7 @@
 	var currentDate = new Date;
 	var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
 	var textMonth = currentDate.getMonth()+1;
-	var textMonth = textMonth<10?'0'+textMonth:textMonth;
+	textMonth = textMonth<10?'0'+textMonth:textMonth;
 	var textYear =currentDate.getFullYear();
 	var textDate = textDay+'.'+textMonth+'.'+textYear;
 	
@@ -73,18 +73,9 @@
 		 }			
 		 $('1ListIds').value=list;
 	 }
- 	//onload =
-	function startLoad () {
-		var date = new Date();
-		var month = date.getMonth()+1; if (month<10) {month="0"+month;}
-		var day = date.getDate(); if (day<10) {day="0"+day;}
-		var year = date.getFullYear();
-	}	
 
 	function checkDoubles () {
 		labList="";
-		var i=0;
-		// Id from aList 
 		var str="";
 		var aList =labList;
 		aList = aList.substring(0,aList.length-1);
@@ -96,23 +87,19 @@
 			}
 		}
 		str=str.substring(0,str.length-1);
-		PrescriptionService.getMedcaseByPrescriptionList($('prescriptionList').value, {
-			callback: function (aMedCase) {
-				PrescriptionService.getDuplicatePrescriptions(""+aMedCase, str,{
-					callback: function(aResult) {
-						if (aResult.length>0){
-							var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту в этой истории болезни, все равно назначить?";
-								if (!confirm (aText)) {							
-									document.getElementById('submitButton').disabled=false;
-									document.getElementById('submitButton').value='Создать';
-									return;
-									}
-						}
-						checkLabs();
-					}
-				});		
-			}
-		});
+        PrescriptionService.getDuplicatePrescriptions($('medcaseId').value, str,{
+            callback: function(aResult) {
+                if (aResult.length>0){
+                    var aText = "Данные назначения\n "+aResult+"\nуже назначены пациенту в этой истории болезни, все равно назначить?";
+                        if (!confirm (aText)) {
+                            document.getElementById('submitButton').disabled=false;
+                            document.getElementById('submitButton').value='Создать';
+                            return;
+                            }
+                }
+                checkLabs();
+            }
+        });
 	}
 
 	function removeRows(type) {
@@ -198,9 +185,6 @@
 	if ($('tdPreRecord')) { $('tdPreRecord').innerHTML=""; }
 	if ($('divReserve')) { $('divReserve').innerHTML=""; }
 	
-	
-	
-	//alert("ALERT!!"+$('Servicies').value);
 	addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value, type+":"+ar[0],1);
 	
 }
@@ -223,7 +207,7 @@ function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, 
 
 function createVisitByPrescription(addRowType,addRowNum) {
     PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
-        ,$('surgServicies').value, $('countDays').value, {
+        ,$('surgServicies').value, $('countDays').value, $('guaranteeId').value, {
             callback: function(a) {
                 if (a==null) {
                     alert("Ошибка при назначении услуги!!! Выбранное время уже занято!");
@@ -237,7 +221,7 @@ function createVisitByPrescription(addRowType,addRowNum) {
         });
 }
 function deletePrescription(aMedService, aWCT) {
-	PrescriptionService.removePrescriptionFromListWCT($('prescriptionList').value,aMedService,aWCT);
+	PrescriptionService.removePrescriptionFromList($('prescriptionList').value,aMedService,aWCT);
 }
 
 function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId) {
@@ -348,50 +332,30 @@ function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId
 		  $('surgCalTime').value="" ;
 		  $('surgCalTimeName').value="" ;
   	  	  getPreRecord() ;
-  	  	  
-  	  	  //alert("==="+$('surgCabinet').value+"#"+$('person').value);
-  	  	 
-  	  	  
-
   	 });
 	surgCabinetAutocomplete.addOnChangeCallback(function(){
 		updateDefaultDate() ;
+		surgServiciesAutocomplete.setParentId($('surgCabinet').value+"#"+$('serviceStream').value);
 	}) ;
-	function getPatientId() {
-	
-		PrescriptionService.getPatientIdByPrescriptionList($('prescriptionList').value,
-				{
-			callback:function(aResult){
-				$('person').value = aResult;
-				//alert($('person').value);
-			}
-			
-		});
-	}
-	getPatientId();
-function getPreRecord() {
-  		
+
+	function fillServiceListVocId() {
+	    if ($('medcaseType').value==='POLYCLINIC') {
+	        surgServiciesAutocomplete.setUrl('simpleVocAutocomplete/funcMedServicePolByServiceStream');
+        }
+    }
+    fillServiceListVocId();
+    function getPreRecord() {
   		if ($('tdPreRecord')) {
-  			
   			if ($('surgCalDate') && +$('surgCalDate').value>0) {
-  	  			WorkCalendarService.getPreRecord($('surgCalDate').value,
-  	  		  			{
-  	  		  				callback:function(aResult) {
-  	  		  					if (aResult!=null) {
-  	  		  						$('tdPreRecord').innerHTML=aResult;
-  	  		  					}
-  	  			  				else {
-  	  			  					$('tdPreRecord').innerHTML="";
-  	  			  				}
-  	  		  				
-  	  		  					updateTime() ;
-  	  		  					
-  	  			  			}
-  	  		  			}
-  	  		  			) ;
-  	  			} else {
-  	  				$('tdPreRecord').innerHTML="";
-  	  			}
+  	  			WorkCalendarService.getPreRecord($('surgCalDate').value, {
+  	  			    callback:function(aResult) {
+  	  			        $('tdPreRecord').innerHTML= aResult!=null ? aResult : "";
+  	  		  			updateTime() ;
+  	  			  	}
+  	  		  	}) ;
+  	  		} else {
+                $('tdPreRecord').innerHTML="";
+            }
   		} else {
   			updateTime() ;
   		}
@@ -401,61 +365,51 @@ function getPreRecord() {
         $('surgCalTime').value="" ;
         $('surgCalTimeName').value = "";
    		if (+$('surgCalDate').value>0 ) {
-   			surgCalTimeAutocomplete.setParentId($('surgCalDate').value+"#"+$('person').value);
-   			WorkCalendarService.getReserveByDateAndServiceByPrescriptionList($('surgCalDate').value,$('prescriptionList').value
-	    			  
-	  		, {
-	                 callback: function(aResult) {
-	                	 //alert(aResult) ;
-	                	 $('divReserve').innerHTML = aResult ;
-	                 }
-		        	}
-		        	); 
-    }
+   			surgCalTimeAutocomplete.setParentId($('surgCalDate').value+"#"+$('patient').value);
+   			WorkCalendarService.getReserveByDateAndServiceByPrescriptionList($('surgCalDate').value,$('prescriptionList').value, {
+   			    callback: function(aResult) {
+                     $('divReserve').innerHTML = aResult ;
+                }
+            });
+        }
    	}
+
 	function updateDefaultDate() {
-			WorkCalendarService.getDefaultDate($('surgCabinet').value,
-			{
-				callback:function(aDateDefault) {
-					if (aDateDefault!=null) {
-						//alert(aDateDefault) ;
-  					var calDayId, calDayInfo,ind1 ;
-  					ind1 = aDateDefault.indexOf("#") ;
-						calDayInfo = aDateDefault.substring(0,ind1) ;
-						calDayId = aDateDefault.substring(ind1+1) ;
-						
-  					$('surgCalDate').value=calDayId ;
-			        $('surgCalDateName').value = calDayInfo;
-			        getPreRecord();
-					} else {
-  					$('surgCalDate').value=0 ;
-			        $('surgCalDateName').value = "";
-			        getPreRecord();
-  				}
-					
-				    
-  			}
-			}
-			) ;
-			$('surgCalTime').value="" ;
-		$('surgCalTimeName').value = "";
-		 
-		}
-	function  changeToPolyclinicDoctor() {
+        WorkCalendarService.getDefaultDate($('surgCabinet').value,{
+            callback:function(aDateDefault) {
+                if (aDateDefault!=null) {
+                    //alert(aDateDefault) ;
+                    var calDayId, calDayInfo,ind1 ;
+                    ind1 = aDateDefault.indexOf("#") ;
+                    calDayInfo = aDateDefault.substring(0,ind1) ;
+                    calDayId = aDateDefault.substring(ind1+1) ;
+                    $('surgCalDate').value=calDayId ;
+                    $('surgCalDateName').value = calDayInfo;
+                    getPreRecord();
+                } else {
+                    $('surgCalDate').value=0 ;
+                    $('surgCalDateName').value = "";
+                    getPreRecord();
+                }
+            }
+        }) ;
+        $('surgCalTime').value="" ;
+        $('surgCalTimeName').value = "";
+	}
+	function changeToPolyclinicDoctor() {
         jQuery('#surgCabinet').val("");
         jQuery('#surgServices').val("");
         jQuery('#surgCabinetName').val("");
         jQuery('#surgServicesName').val("");
         surgCabinetAutocomplete.setUrl('simpleVocAutocomplete/workFunctionByDirect');
     }
-				</script>
+	</script>
 			</msh:ifFormTypeIsNotView>
 			
-			<!--  скрипт отмены -->
 	<msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm">
 	<script type="text/javascript">
 	function cancelDiagnostic() {
-		var reason = ''+ prompt('Введите причину отмены');
+		var reason = prompt('Введите причину отмены');
 		if (""+reason.trim()!="") {
             PrescriptionService.cancelPrescription($('id').value, reason, {
                 callback:function (a) {
@@ -473,20 +427,28 @@ function getPreRecord() {
     <!-- 
     	  - Назначение медицинской услуги
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_diagnosticPrescription.do" defaultField="surgCabinetName" title="Назначение диагностического исследования/консультации">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
+    <msh:form action="/entityParentSaveGoView-pres_diagnosticPrescription.do" defaultField="surgCabinetName" title="Назначение диагностического исследования/консультации">
+      <msh:hidden property="id" />
+      <msh:hidden property="prescriptionList" />
+      <msh:hidden property="serviceStream" />
+      <msh:hidden property="medcaseType" />
+        <msh:hidden property="medcaseId"/>
+        <msh:hidden property="patient"/>
+        <msh:hidden property="allowOnlyPaid"/>
+        <msh:hidden property="unpaidConfirmation"/>
+        <msh:hidden property="guaranteeId"/>
+        <input type="hidden" id = "caosId">
+      <msh:hidden property="saveType" />
         <msh:hidden property="comments"  />
-      <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" /> <input type="hidden" name="person" id="person"> 
+      <msh:hidden property="labList" />
        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
         <msh:hidden property="countDays"/>
       </msh:ifNotInRole>
 		
-      <msh:panel guid="panel" colsWidth="3">  
+      <msh:panel colsWidth="3">  
          <msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm">
-             <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
-                 <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
+             <msh:row>
+                 <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
              </msh:row>
              <msh:row>
     			<msh:autoComplete property="medService" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90"  />
@@ -524,7 +486,7 @@ function getPreRecord() {
         </msh:row>
         </msh:ifInRole>
           <msh:row>
-    			<msh:autoComplete parentAutocomplete="surgCabinet" property="surgServicies" label="Исследование" vocName="funcMedService"  horizontalFill="true" size="90" fieldColSpan="4" />
+    			<msh:autoComplete property="surgServicies" label="Исследование" vocName="funcMedServiceStacByServiceStream"  horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>
 
 			<msh:row>
@@ -534,8 +496,8 @@ function getPreRecord() {
 	        </msh:row>
 	        
         <tr><td colspan="10"><table><tr><td valign="top"><table>
-        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
-          <msh:separator label="Резервы" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+        <msh:row>
+          <msh:separator label="Резервы" colSpan="4" />
         </msh:row>
         <msh:row>
         	<td colspan="4">
@@ -544,27 +506,15 @@ function getPreRecord() {
         </msh:row></table>
         </td><td valign="top"><table>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/PreRecord">
-        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
-          <msh:separator label="Предварительная запись" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+        <msh:row>
+          <msh:separator label="Предварительная запись" colSpan="4" />
         </msh:row>
         <msh:row>
         	<td colspan="4" id="tdPreRecord"></td>
         </msh:row>
         </msh:ifInRole></table>
         </td></tr></table></td></tr>
-        
-    		<%-- 
-    		<tr>
-    		
-			<msh:textField property="funcDate" label="Дата " size="10"/>
-			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
-			<td>        	
-            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
-            </td>
-			</tr>
-			<tr>
-			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" /></tr>
-       		 --%>
+
        		 </tbody>
     		</table>
     		</td></tr></msh:row>
@@ -598,19 +548,19 @@ function getPreRecord() {
   </tiles:put>
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="StacJournal" beginForm="pres_diagnosticPrescriptionForm" />
+    <ecom:titleTrail mainMenu="StacJournal" beginForm="pres_diagnosticPrescriptionForm" />
   </tiles:put>
 
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
-      <msh:sideMenu title="Назначения" guid="eb3f54-b971-441e-9a90-51jhf">
-      <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/javascript:cancelDiagnostic()" name="Отменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+1"/>
-        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/entityParentEdit-pres_diagnosticPrescription" name="Изменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+2"/>
-        <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_diagnosticPrescription" name="Удалить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+DEL"/>
+    <msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm">
+      <msh:sideMenu title="Назначения">
+      <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/javascript:cancelDiagnostic()" name="Отменить" key="ALT+1"/>
+        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/entityParentEdit-pres_diagnosticPrescription" name="Изменить" key="ALT+2"/>
+        <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_diagnosticPrescription" name="Удалить" key="ALT+DEL"/>
       </msh:sideMenu>
-      <msh:sideMenu title="Показать" guid="67aa758-3ad2-4e6f-a791-4839460955" >
-        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentListRedirect-pres_servicePrescription" name="К списку назначений на услугу" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
-        <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentListRedirect-pres_prescription" name="К списку назначений" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
+      <msh:sideMenu title="Показать" >
+        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentListRedirect-pres_servicePrescription" name="К списку назначений на услугу" key="ALT+4"/>
+        <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentListRedirect-pres_prescription" name="К списку назначений" key="ALT+4"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsCreate formName="pres_diagnosticPrescriptionForm">
@@ -618,7 +568,3 @@ function getPreRecord() {
     </msh:ifFormTypeIsCreate>
   </tiles:put>
 </tiles:insert>
-
- 
- 
- 

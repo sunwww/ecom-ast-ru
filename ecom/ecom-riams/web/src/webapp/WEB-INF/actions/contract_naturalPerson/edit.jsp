@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -7,11 +7,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="/entitySaveGoView-contract_naturalPerson.do" defaultField="patientName" guid="6f65ff8f-8528-410f-96ac-cc08872b5901">
-      <msh:hidden property="id" guid="e6bcfe59-6541-4e49-afb8-15a0f7059230" />
-      <msh:hidden property="saveType" guid="81d410cd-ac37-4309-9fe7-a8d0943c5ae1" />
-      <msh:panel guid="41b857b2-e843-401e-8a0f-33f2fbd66417">
-        <msh:row guid="b18bbff8-d1ea-4681-bd11-5a712a9fac54">
+    <msh:form action="/entitySaveGoView-contract_naturalPerson.do" defaultField="patientName">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:panel>
+        <msh:row>
           <msh:autoComplete property="patient" 
           viewAction="entityView-mis_patient.do" shortViewAction="entityShortView-mis_patient.do"
           label="Пациент" vocName="patient" horizontalFill="true" size="150" />
@@ -20,7 +20,7 @@
       </msh:panel>
       
       <msh:section createRoles="/Policy/Mis/Contract/MedContract/Create" createUrl="entityParentPrepareCreate-contract_medContract_person.do?id=${param.id}" 
-      	shortList="js-contract_medContract-list_accrual_by_customer.do?short=Short&id=${param.id}" title="Список последних 10 договоров заказчика">
+      	shortList="js-contract_medContract-list_accrual_by_customer.do?short=Short&id=${param.id}" title="Список последних 30 договоров заказчика">
       	<ecom:webQuery name="medContracts" nativeSql="
       	select mc.id as mcid ,mc.contractNumber as mccontractNumber
 ,mc.dateFrom as mcdateFrom 
@@ -38,7 +38,7 @@ left join PriceList pl on pl.id=mc.priceList_id
 where (mc.customer_id='${param.id}' or sp1.person_id='${param.id}') and (mc.isDeleted is null or mc.isDeleted='0')
 group by mc.id,mc.dateFrom,mc.dateTo,mc.contractNumber,pl.name 
 order by mc.dateFrom desc
-      	" maxResult="10"/>
+      	" maxResult="30"/>
       	<msh:table name="medContracts" viewUrl="entityView-contract_medContract.do?short=Short" action="entityView-contract_medContract.do" idField="1">
       		<msh:tableColumn property="7" columnName="Роль персоны"/>
       		<msh:tableColumn property="2" columnName="№ договора"/>
@@ -83,11 +83,10 @@ order by mc.dateFrom desc
     <ecom:titleTrail mainMenu="Contract" beginForm="contract_naturalPersonForm"  />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="dea2e8ca-c7db-4592-a9ec-727f6d330ad1">
-      <msh:sideLink key="ALT+2" params="id" action="/entityEdit-contract_naturalPerson" name="Изменить" title="Изменить" roles="" guid="6050d629-20dd-4945-83f5-f0821ad67497" />
-      <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-contract_naturalPerson" name="Удалить" title="Удалить" roles="" guid="91812d50-84d8-428a-a624-d1c59d868dfa" />
+    <msh:sideMenu>
+      <msh:sideLink key="ALT+2" params="id" action="/entityEdit-contract_naturalPerson" name="Изменить" title="Изменить" roles="" />
+      <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-contract_naturalPerson" name="Удалить" title="Удалить" roles="" />
     </msh:sideMenu>
     <tags:contractMenu currentAction="naturalPerson" />
   </tiles:put>
 </tiles:insert>
-

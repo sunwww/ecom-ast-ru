@@ -4,7 +4,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
@@ -14,8 +13,7 @@ import javax.persistence.Transient;
  */
 @Comment("Услуга как случай медицинского обслуживания")
 @Entity
-@Table(schema="SQLUser")
-public class ServiceMedCase extends ShortMedCase{
+public class ServiceMedCase extends ShortMedCase {
 	/** Номер направления */
 	@Comment("Номер направления")
 	public String getOrderNumber() {return theOrderNumber;}
@@ -77,5 +75,15 @@ public class ServiceMedCase extends ShortMedCase{
 		return getMedService()!=null ? getMedService().getParent():null;
 	}
 
+	/** Комментарий по услуге */
+	@Comment("Комментарий по услуге")
+	public String getServiceComment() {
+		return theServiceComment;
+	}
+	public void setServiceComment(String aServiceComment) {
+		theServiceComment = aServiceComment;
+	}
 
+	/** Комментарий по услуге */
+	private String theServiceComment;
 }

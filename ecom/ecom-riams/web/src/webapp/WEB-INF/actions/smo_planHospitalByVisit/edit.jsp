@@ -22,17 +22,13 @@
 
     </tiles:put>
   <tiles:put name="body" type="string">
-    <!-- 
-    	  - Хирургическая операция
-    	  -->
-
-    <msh:form action="/entityParentSaveGoView-smo_planHospitalByVisit.do" defaultField="phone" guid="137f576d-2283-4edd-9978-74290e04b873" editRoles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Create">
-      <msh:panel guid="80209fa0-fbd4-45d0-be90-26ca4219af2e" colsWidth="15px,250px,15px">
-        <msh:hidden property="id" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
-        <msh:hidden property="visit" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
-        <msh:hidden property="patient" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
-        <msh:hidden property="saveType" guid="c409dfd8-f4e7-469f-9322-1982b666a087" />
-        <msh:hidden property="internalCode" guid="c409dfd8-f4e7-469f-9322-1982b666a087" />
+    <msh:form action="/entityParentSaveGoView-smo_planHospitalByVisit.do" defaultField="phone" editRoles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Create">
+      <msh:panel colsWidth="15px,250px,15px">
+        <msh:hidden property="id" />
+        <msh:hidden property="visit" />
+        <msh:hidden property="patient" />
+        <msh:hidden property="saveType" />
+        <msh:hidden property="internalCode" />
           <msh:ifFormTypeIsView formName="smo_planHospitalByVisitForm">
               <msh:row>
                   <msh:textField property="internalCode" label="Внутренний номер направления" horizontalFill="true" fieldColSpan="3"/>
@@ -81,13 +77,15 @@
         <msh:row>
         	<msh:textField horizontalFill="true" property="diagnosis" fieldColSpan="3" label="Диагноз"/>
         </msh:row>
-        <msh:ifFormTypeIsCreate formName="smo_planHospitalByVisitForm">
+        <msh:ifFormTypeIsNotView formName="smo_planHospitalByVisitForm">
             <msh:row><td></td>
         	<td colspan="3" align="center">
-        	<input type="button" onclick="getTextDiaryByMedCase(this);return false;" value="Вставить данные дневниковой записи"/><input type="button" value="Вставить данные из шаблона" onClick="showtmpTemplateProtocol()"/>
+                <input type="button" onclick="getTextDiaryByMedCase(this);return false;"
+                       value="Вставить данные дневниковой записи"/>
+                <input type="button" value="Вставить данные из шаблона" onClick="showtmpTemplateProtocol()"/>
         	</td>
         </msh:row>  
-        </msh:ifFormTypeIsCreate>
+        </msh:ifFormTypeIsNotView>
         <msh:row>
         	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
@@ -95,48 +93,11 @@
         <msh:checkBox property="isOperation" label="Назначить операцию?"/>
         </msh:row>
         </msh:panel>
-         <msh:panel styleId='createOperationDiv'> 
-          <msh:row>
-        	<msh:separator label="Назначение на операцию" colSpan="4"/>
-        </msh:row>
-		<msh:row>
-    			<msh:autoComplete property="surgService" label="Исследование" vocName="surgicalOperations" horizontalFill="true" size="90" fieldColSpan="4" />
-   		</msh:row>
-   		<msh:row>
-				 <msh:autoComplete property="surgCabinet" label="Операционная"  fieldColSpan="4" parentAutocomplete="surgService" vocName="operatingRoomsByMedService" size='20' horizontalFill="true" />
-			</msh:row>
-		<msh:row>
-				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
-			</msh:row>
-			<msh:row>
-    			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
-    		</msh:row> 
-    		 <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
-         </msh:row>
-         <tr><td colspan="10"><table><tr><td valign="top"><table>
-        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
-          <msh:separator label="Резервы" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
-        </msh:row>
-        <msh:row>
-        	<td colspan="4">
-        	<div id="divReserve"></div>
-        	</td>
-        </msh:row></table>
-        </td><td valign="top"><table>
-        <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/PreRecord">
-        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
-          <msh:separator label="Предварительная запись" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
-        </msh:row>
-        <msh:row>
-        	<td colspan="4" id="tdPreRecord"></td>
-        </msh:row>
-        </msh:ifInRole></table>
-        </td></tr></table></td></tr>
-        </msh:panel>
+
         <msh:panel>
         <msh:row>
         	<td colspan="3" align="center">
-        	<input type="button" onclick="infoPlanHospital()" value="Другие предварительные госпитализации"/>
+        	<input type="button" onclick="showinfoPlanHospitalCloseDocument()" value="Другие предварительные госпитализации"/>
         	</td>
         </msh:row>
         <msh:row>
@@ -147,7 +108,7 @@
         	/>
         </msh:row>
         <msh:row>
-          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunction" label="Функция" guid="010e3a75-ba7e-45da-a82a-9c618a0ffcd2" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
+          <msh:autoComplete viewAction="entitySubclassView-work_workFunction.do" vocName="workFunction" property="workFunction" label="Функция" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" />
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -170,19 +131,19 @@
       </msh:panel>
      
         <msh:panel> 
-		<msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />   
+		<msh:submitCancelButtonsRow colSpan="3" />
         </msh:panel>
     </msh:form>
 
 </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="smo_planHospitalByVisitForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="smo_planHospitalByVisitForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="smo_planHospitalByVisitForm" guid="c7cae1b4-31ca-4b76-ab51-7f75b52d11b6">
-      <msh:sideMenu title="Планирование госпитализаций" guid="edd9bfa6-e6e7-4998-b4c2-08754057b0aa">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-smo_planHospitalByVisit" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-smo_planHospitalByVisit" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+    <msh:ifFormTypeIsView formName="smo_planHospitalByVisitForm">
+      <msh:sideMenu title="Планирование госпитализаций">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-smo_planHospitalByVisit" name="Изменить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-smo_planHospitalByVisit" name="Удалить" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Delete" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink key="CTRL+2" params="id" action="/print-documentDirection1.do?m=printPlanHospital&s=VisitPrintService" name="Предварительной госпитализации"/>
@@ -223,110 +184,8 @@
 <script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>
   	
   	<script type="text/javascript">
-	
-	surgCalDateAutocomplete.addOnChangeCallback(function(){
-		 $('surgCalTime').value="" ;
-		  $('surgCalTimeName').value="" ;
-	  	  getPreRecord() ;
- 	 });
-	surgCabinetAutocomplete.addOnChangeCallback(function(){
-		updateDefaultDate() ;
-	}) ;
-	function checkRecord(aId,aValue,aIdService,aService) {
-    	$('surgCalTime').value = aId; 
-    	$('surgCalTimeName').value = aValue ;
-    
-    }
-  	function getPreRecord() {
-  	  		
-  	  		if ($('tdPreRecord')) {
-  	  			
-  	  			if ($('surgCalDate') && +$('surgCalDate').value>0) {
-  	  	  			WorkCalendarService.getPreRecord($('surgCalDate').value,
-  	  	  		  			{
-  	  	  		  				callback:function(aResult) {
-  	  	  		  					if (aResult!=null) {
-  	  	  		  						$('tdPreRecord').innerHTML=aResult;
-  	  	  		  					}
-  	  	  			  				else {
-  	  	  			  					$('tdPreRecord').innerHTML="";
-  	  	  			  				}
-  	  	  		  				
-  	  	  		  					updateTime() ;
-  	  	  		  					
-  	  	  			  			}
-  	  	  		  			}
-  	  	  		  			) ;
-  	  	  			} else {
-  	  	  				$('tdPreRecord').innerHTML="";
-  	  	  			}
-  	  		} else {
-  	  			updateTime() ;
-  	  		}
-  		}
-  		
-  		function updateTime() {
-  	   		if (+$('surgCalDate').value>0 ) {
-  	   			WorkCalendarService.getReserveByDateAndService($('surgCalDate').value,$('serviceStream').value,$('patient').value
-  		    			  
-  		  		, {
-  		                 callback: function(aResult) {
-  		                	 //alert(aResult) ;
-  		                	 $('divReserve').innerHTML = aResult ;
-  		                 }
-  			        	}
-  			        	); 
-  	    }
-  	   	}
-  			//Milamesher 19.04.2017 
-  			function infoPlanHospital() {
-  				showinfoPlanHospitalCloseDocument();
-  			}
-  	function updateDefaultDate() {
-		WorkCalendarService.getDefaultDate($('surgCabinet').value,
-		{
-			callback:function(aDateDefault) {
-				if (aDateDefault!=null) {
-					//alert(aDateDefault) ;
-					var calDayId, calDayInfo,ind1 ;
-					ind1 = aDateDefault.indexOf("#") ;
-					calDayInfo = aDateDefault.substring(0,ind1) ;
-					calDayId = aDateDefault.substring(ind1+1) ;
-					
-					$('surgCalDate').value=calDayId ;
-		        $('surgCalDateName').value = calDayInfo;
-		        getPreRecord();
-				} else {
-					$('surgCalDate').value=0 ;
-		        $('surgCalDateName').value = "";
-		        getPreRecord();
-				}
-				
-			    
-			}
-		}
-		) ;
-		$('surgCalTime').value="0" ;
-	$('surgCalTimeName').value = "";
-	 
-	}
-  	
-  	eventutil.addEventListener($('isOperation'), 'click', function () {showTable('createOperationDiv', 'isOperation');}) ;
-  	showTable('createOperationDiv', 'isOperation');
-  	function showTable(aTableId, aCheckFld) {
-    	//alert(aTableId+"--" + aCheckFld) ;
-    	var aCanShow = $(aCheckFld).checked ;
-		//try {
-			//alert( aCanShow ? 'table-row' : 'none') ;
-			$(aTableId).style.display = aCanShow ? 'block' : 'none' ;
-		//} catch (e) {
-			// for IE
-			//alert(aCanShow ? 'block' : 'none') ;
-		//	try{
-		//	$(aTableId).style.display = aCanShow ? 'block' : 'none' ;
-		//	}catch(e) {}
-		//}	
-	}
+  	eventutil.addEventListener($('isOperation'), 'click', function () {alert('Создание назначения на операцию перенесено в лист назначения!');}) ;
+
   	//Milamesher 20.04.2017 проверка даты - текущий и следующий года только
   	eventutil.addEventListener($('dateFrom'),'blur', function() {checkDate();}); 
   	function checkDate() {
@@ -336,12 +195,11 @@
   			var d=$(dateFrom).value.substring(0,2); 
  			var m=$(dateFrom).value.substring(3,5); 
  			var y=date.substring(6); 
- 			date=""; date=y.toString()+m.toString()+d.toString();  
+ 			date=y.toString()+m.toString()+d.toString();
  			
  			var now=new Date();
- 			var today=""; 
- 			year=now.getFullYear()
- 			today=year.toString();
+ 			year=now.getFullYear();
+            var today=year.toString();
  			var month=now.getMonth()+1;
 			if (month<10) month="0"+month; 
 			var day=now.getDate();
@@ -401,7 +259,7 @@
      			callback: function(aResult) {
      				var res = aResult.split('#') ;
 
-     				if (+res[0]!=0) {
+     				if (+res[0]>0) {
      					$('bedSubType').value = res[0] ; 
      					$('bedSubTypeName').value = res[1] ;
      				} else {

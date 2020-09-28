@@ -16,11 +16,11 @@
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="pharmnet_complectRowForm">
             <msh:sideMenu title="Управление">
-                <msh:sideLink guid="sideLinkEdit" key="ALT+1" params="id"
+                <msh:sideLink key="ALT+1" params="id"
                               action="/entityEdit-pharmnet_complectRow" name="Изменить"
                               roles="/Policy/Mis/Pharmacy/Administration/Edit" />
 
-                <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?"
+                <msh:sideLink key="ALT+DEL" confirm="Удалить?"
                               params="id"
                               action="/entityParentDeleteGoParentView-pharmnet_complectRow" name="Удалить"
                               roles="/Policy/Mis/Pharmacy/Administration/Edit" />
@@ -42,7 +42,7 @@
             <msh:row>
                 <msh:autoComplete  property="regid" label="Наименование" vocName="vocRegids" fieldColSpan="3" horizontalFill="true" />
             </msh:row>
-            <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+            <msh:submitCancelButtonsRow colSpan="4" />
            <%-- <input id="cancelButton" onclick="this.disabled=true; window.history.back()" title="Отменить изменения [SHIFT+ESC]" value="Отменить" type="button">
             <input id="submitButton" class="default" value="Создать" onclick="createComplectRow()" autocomplete="off" type="button">--%>
         </msh:form>

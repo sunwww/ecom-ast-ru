@@ -77,6 +77,11 @@ public class PersonalWorkFunctionForm extends WorkFunctionForm {
 	/** Номер окна в электронной очереди */
 	private String theWindowNumber ;
 
+	public String getAllGroups() {
+		return theAllGroups;
+	}
+	public void setAllGroups(String aAllGroups) { theAllGroups = aAllGroups; }
+
 	/** Категория специалиста */
 	private Long theDegrees;
 	/** Создавать календарь */
@@ -94,4 +99,6 @@ public class PersonalWorkFunctionForm extends WorkFunctionForm {
 	private Long theSecUser;
 	/** Сотрудник */
 	private Long theWorker;
+	/** Дополнительные групповые рабочие функции */
+	private String theAllGroups;
 }

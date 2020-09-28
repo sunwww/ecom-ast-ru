@@ -24,9 +24,9 @@
 	</div>
 </div>
 
-<script type="text/javascript"><!--
-     var theIs${name}IntakeInfoDialogInitialized = false ;
-     var the${name}IntakeInfoDialog = new msh.widget.Dialog($('${name}IntakeInfoDialog')) ;
+<script type="text/javascript">
+    var theIs${name}IntakeInfoDialogInitialized = false ;
+    var the${name}IntakeInfoDialog = new msh.widget.Dialog($('${name}IntakeInfoDialog')) ;
      // Показать
      function show${name}IntakeCancel(aPrescipt,aBiomatType) {
          $('${name}IntakeInfoTitle').innerHTML = "ВЫБОР ДЕФЕКТА" ;
@@ -43,17 +43,12 @@
     	 save${name}Result(null, aSmoId,aPrescriptId,aProtocolId, aTemplateId) 
      }
      function save${name}Result(aButton, aSmoId,aPrescriptId,aProtocolId, aTemplateId) {
-    	 if (aButton &&aButton!=null ) aButton.disabled=true;
+    	 if (aButton ) aButton.disabled=true;
 			var isError = false ;
 			for (var ind=0;ind<fldJson.params.length;ind++) {
 				var val = $('param'+fldJson.params[ind].id).value ;
 				var par = fldJson.params[ind] ; 
 				errorutil.HideError($('param'+par.idEnter)) ;
-				/*if (val=="") {
-					errorutil.ShowFieldError($('param'+par.idEnter),"Пустое значение") ;
-					isError= true ;
-				} */
-				
 				if (+par.type==2) {
 					if (+val<1) {val='0' ;} else {
 						par.valueVoc = $('param'+fldJson.params[ind].id+'Name').value ;
@@ -63,30 +58,30 @@
 					val = val.replace(",",".") ;
 					val = val.replace("-",".") ;
 					var v = val.split(".") ;
+					var decimalRegexp=/^(-?\d+(\.?\d+)?|\d+)$/g;
 					var cntdecimal = +par.cntdecimal
 					if (val!="") {
-						if (v.length==2 && v[1].length!=cntdecimal) {
-							errorutil.ShowFieldError($('param'+par.idEnter),"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
-							isError= true ;
-						}
-						
-		  					if (cntdecimal>0 ) {
-		  						if (v.length==1) {
-		  							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
-		  							isError= true ;
-		  						} else if (v.length>1 && !isNaN(v[2])) {
-		 							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
-		 							isError= true ;
-								}
-		  					} else {
-		  						
-		  					}
-						}
+                        if (decimalRegexp.test(val)) {
+                            if (v.length==2 && v[1].length!=cntdecimal) {
+                                errorutil.ShowFieldError($('param'+par.idEnter),"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
+                                isError= true ;
+                            }
+                            if (cntdecimal>0 ) {
+                                if (v.length==1) {
+                                    errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
+                                    isError= true ;
+                                } else if (v.length>1 && !isNaN(v[2])) {
+                                    errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
+                                    isError= true ;
+                                }
+                            }
+                        } else {
+                            errorutil.ShowFieldError($('param' + par.idEnter), "Указанное значение не является числом!");
+                            isError = true;
+                        }
+                    }
 				}
-				
 				par.value = val ;
-				
-				
 			}
 			if (+fldJson.isdoctoredit==0) {
 				if (+$('paramWF').value==0) {
@@ -95,16 +90,15 @@
 				} else {
 					fldJson.workFunction=$('paramWF').value
 				}
-				
 			}
 			var str = JSON.stringify(fldJson);
-			//alert(str) ;
-			if (!isError) { PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, aTemplateId, {
-				callback: function (aResult) {
-					window.document.location.reload();
+			if (!isError) {
+			    PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, aTemplateId, {
+				callback: function () {
+					cancel${name}IntakeInfo();// убираем reload страницы. //window.document.location.reload();
 				}}) ;
 			} else {
-				 if (aButton &&aButton!=null ) aButton.disabled=false;
+				 if (aButton ) aButton.disabled=false;
 			}
 		}
 	    
@@ -124,22 +118,22 @@
 			}
 		}
 	    function cancel${name}InLab(aId,aReasonId,aReason) {
+            $('BioIntakeRootPane').setAttribute("hidden",true);
 	    	aReason = get${name}Reason(aReason) ;
 	    	if (aReason!=null) {
-	    		//alert(123) ;
-	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
-		            callback: function(aResult) {
+	        	PrescriptionService.cancelService(aId,aReasonId,aReason, {
+		            callback: function() {
 		            	window.document.location.reload();
 		            }
 				});
 	    	} else {
-	    		//alert(321) ;
+                $('BioIntakeRootPane').removeAttribute("hidden");
 	    		cancelBioIntakeInfo();
 	    	}	
 		}
 	    function uncancel${name}Intake(aId) {
         	PrescriptionService.uncancelService(aId, { 
-	            callback: function(aResult) {
+	            callback: function() {
 	            	window.document.location.reload();
 	            }
 			});
@@ -237,15 +231,15 @@
 				        		
 				        	}
 				        	if (+param1.type==2) {
-				        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
-				        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;")
-				        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;")
-				        		eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;")
-				        		eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;")
-				        		eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;")
-				        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;")
-				        		eval("param"+param1.id+"Autocomlete.build() ;")
-				        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
+				        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;");
+				        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;");
+				        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;");
+				        		eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;");
+				        		eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;");
+				        		eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;");
+				        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;");
+				        		eval("param"+param1.id+"Autocomlete.build() ;");
+				        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;");
 				        	}
 				        } 
 		             } else {
@@ -298,7 +292,7 @@
 		        txt += "</div>";
 		        txt += "</div>";
 	        } else {
-		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+		        txt += "<input onblur='checkFieldValue(this, "+aParam.id+")' id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
 		        
 	        }
 	        txt += "</td>" ;
@@ -309,6 +303,34 @@
 	        txt += "</tr>" ;
 			return txt ;
 		}
+
+
+		/*Проверяем на минимальные / максимальные значения*/
+		function checkFieldValue(txtField, id) {
+		    var val = +jQuery(txtField).val().replace(",",".").trim();
+		    if (val){
+                var el = getParameterById(id);
+                if (el.nmin || el.nmax) {
+                    if (val < el.min || val > el.max) { //выходит вообще за всякие рамки
+                        if (! confirm ("Значение "+val +(val <el.nmin ? " меньше минимального значения "+(+el.min) : " превышает максимальное значение "+(+el.max))+", вы уверены? ")) {
+                            jQuery(txtField).val("");
+                            return;
+                        }
+                    }
+                    if (val < el.nmin || val > el.nmax) { //выход за пределы реф. значений
+                        jQuery(jQuery(txtField).parent().parent().children()[2]).html((val < el.nmin ? "<img src='/skin/images/arrow/green-down.png'>" : "<img src='/skin/images/arrow/red-up.png'>")+"" +
+                            " (норм "+(+el.nmin)+" - "+(+el.nmax)+")");
+                    } else { //значение в норме
+                        jQuery(jQuery(txtField).parent().parent().children()[2]).html("("+el.cntdecimal+") "+el.unitname);
+                    }
+                }
+            }
+        }
+
+        function getParameterById(id) {
+		    var ret = jQuery.grep(fldJson.params, function(el) {return el.id==id;});
+		    return ret ? ret[0] : {} ;
+        }
 
      // Отмена
      function cancel${name}IntakeInfo() {
@@ -346,7 +368,7 @@
  		PrescriptionService.intakeService($('${name}List').value, textDay+'.'+textMonth+'.'+textYear
       			,(textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute)
   				, { 
-	            callback: function(aResult) {
+	            callback: function() {
 	            	window.document.location.reload();
 	            }
 			});

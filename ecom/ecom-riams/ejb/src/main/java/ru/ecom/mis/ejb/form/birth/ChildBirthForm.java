@@ -634,4 +634,52 @@ public class ChildBirthForm extends IdEntityForm {
 
 	/** Паритет беременностей */
 	private Long theParitetPregn;
+
+	/** Классификация Робсона */
+	@Comment("Классификация Робсона")
+	public Long getRobsonClass() {return theRobsonClass;}
+	public void setRobsonClass(Long aRobsonClass) {theRobsonClass = aRobsonClass;}
+	/** Классификация Робсона */
+	private Long theRobsonClass;
+
+	/** Подгруппа классификации */
+	@Comment("Подгруппа классификации")
+	public Long getRobsonSub() {return theRobsonSub;}
+	public void setRobsonSub(Long aRobsonSub) {theRobsonSub = aRobsonSub;}
+	/** Подгруппа классификации */
+	private Long theRobsonSub;
+
+
+	/** Длительность безводного периода (часы)*/
+	@Comment("Длительность безводного периода (часы)")
+	@Persist
+	public Long getWaterlessDurationHour() {return theWaterlessDurationHour;}
+	public void setWaterlessDurationHour(Long aWaterlessDurationHour) {theWaterlessDurationHour = aWaterlessDurationHour;}
+	/** Длительность безводного периода (часы)*/
+	private Long theWaterlessDurationHour;
+
+	/** Длительность безводного периода (минуты)*/
+	@Comment("Длительность безводного периода (минуты)")
+	@Persist
+	public Long getWaterlessDurationMin() {return theWaterlessDurationMin;}
+	public void setWaterlessDurationMin(Long aWaterlessDurationMin) {theWaterlessDurationMin = aWaterlessDurationMin;}
+	/** Длительность безводного периода (минуты)*/
+	private Long theWaterlessDurationMin;
+
+	/** Диабет (браслет)*/
+	@Comment("Диабет (браслет)")
+	@Persist
+	public Long getDiabetIdentity() {return theDiabetIdentity;}
+	public void setDiabetIdentity(Long aDiabetIdentity) {theDiabetIdentity = aDiabetIdentity;}
+	/** Диабет (браслет)*/
+	private Long theDiabetIdentity;
+
+	/** Женская консультация */
+	@Comment("Женская консультация")
+	@Persist
+	public Long getWomenConsult() {return theWomenConsult;}
+	public void setWomenConsult(Long aWomenConsult) {theWomenConsult = aWomenConsult;}
+
+	/** Женская консультация */
+	private Long theWomenConsult;
 }

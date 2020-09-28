@@ -14,9 +14,6 @@ import java.io.PrintWriter;
  */
 public abstract class AbstractAutocompleteServlet extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(AbstractAutocompleteServlet.class) ;
-    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
-
-
 
     public abstract void printFindByQuery(HttpServletRequest aRequest, String aQuery, int aCount, PrintWriter aOut) throws Exception ;
 
@@ -46,28 +43,27 @@ public abstract class AbstractAutocompleteServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest aRequest, HttpServletResponse aResponse) throws ServletException, IOException {
         aRequest.setCharacterEncoding("UTF-8");
-        aResponse.setContentType("text/xml; charset=utf-8");
+        boolean isJson = "json".equalsIgnoreCase(aRequest.getParameter("type"));
+        aResponse.setContentType(isJson? "application/json; charset=utf-8" : "text/xml; charset=utf-8");
 
         String direction = aRequest.getParameter("direction") ;
         String id = aRequest.getParameter("id") ;
-//        if(aRequest.getParameter("parent")!=null) {
-//            id=id+";"+aRequest.getParameter("parent") ;
-//        }
-        if (CAN_TRACE) LOG.info("id = " + id);
         String query = aRequest.getParameter("query");
-        if (CAN_TRACE) LOG.info("query = " + query);
         boolean isForward = !"backward".equals(direction) ;
-        if (CAN_TRACE) LOG.info("isForward = " + isForward);
         int COUNT = 10 ;
         PrintWriter out = aResponse.getWriter() ;
-        out.println("<?xml version='1.0' encoding='utf-8'  ?>") ;
-        out.println("<result>") ;
-        out.print("<requestId>") ;
-        out.print(id) ;
-        out.println("</requestId>") ;
+
+        if (isJson) {
+            out.print("{\"requestId\":\""+id+"\",");
+        } else { //xml
+            out.println("<?xml version='1.0' encoding='utf-8'  ?>") ;
+            out.println("<result>") ;
+            out.print("<requestId>") ;
+            out.print(id) ;
+            out.println("</requestId>") ;
+        }
 
         try {
-
             if(query!=null) {
                 printFindByQuery(aRequest, query, COUNT, out) ;
             } else {
@@ -78,15 +74,13 @@ public abstract class AbstractAutocompleteServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace() ;
+            LOG.error(e.getMessage(),e) ;
             throw new ServletException("ERROR: "+e, e) ;
         }
-        out.println("</result>") ;
+        out.println(isJson? "}" : "</result>") ;
     }
 
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         doPost(httpServletRequest, httpServletResponse);
     }
-
-
 }

@@ -41,9 +41,6 @@
             <include name="servlet/*.jar"/>
             <include name="struts/*.jar"/>
             <include name="jsp/*.jar"/>
-         <!--   <include name="msh/designer/*.jar"/> -->
-            <!--<include name="msh/util/*.jar"/>-->
-            <!--<include name="msh/forms/*.jar"/>-->
         </fileset>
     </path>
 

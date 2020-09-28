@@ -71,7 +71,6 @@
 			<fileset file='${libdir}/gwt/gwt-servlet.jar' />
 			<fileset file='${libdir}/axis/axis.jar' />
 			<fileset file='${libdir}/axis/commons-discovery-0.2.jar' />
-		<!--	<fileset file='${libdir}/axis/commons-logging-1.0.4.jar' /> -->
 		</copy>
 
 		<delete dir='./target/webapp/ru.ecom.gwt.idemode.Main' />

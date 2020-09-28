@@ -282,6 +282,7 @@ ul.listTimes li.first {
    <div id="rowStep3Functions"><i>Ждите идет поиск...</i></div>
   </tiles:put>
   <tiles:put name="javascript" type="string">
+      <tags:chooseWayOfRecord name="chooseWayOfRecord" />
   <script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
   
   	<script type="text/javascript">
@@ -626,9 +627,9 @@ ul.listTimes li.first {
 					return ;
   			}
   			//alert(2) ;
-  			record(patInfo,idPat,aTime);
+            if (typeof (aTime)!=='undefined') showchooseWayOfRecord(patInfo,idPat,aTime);
   		}
-  		function record(aPatInfo,aPat,aTime) {
+  		function recordMany(aPatInfo,aPat,aTime,preWayOfRecord) {
   			/*
   			var pat = 0;
   			if (aPat!='') {
@@ -637,7 +638,7 @@ ul.listTimes li.first {
   			} */
   			//alert(aPatInfo+"#"+aPat+"#"+aTime);
   			WorkCalendarService.preRecordByTimeAndPatient(
-  					aPatInfo,aPat,aTime,
+  					aPatInfo,aPat,aTime,preWayOfRecord,
 					
 			     {
 						callback: function(aResult) {

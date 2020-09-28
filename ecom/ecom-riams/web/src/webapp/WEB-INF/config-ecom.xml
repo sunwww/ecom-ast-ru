@@ -8,7 +8,6 @@
         <form-bean name="ecom_loginForm"    type="ru.ecom.web.login.LoginForm" />
         <form-bean name="idStringForm"      type="ru.ecom.web.actions.formcustomize.IdStringForm" />
 		<form-bean name="formCustomizeForm" type="ru.ecom.web.actions.formcustomize.FormCustomizeForm" />
-		<form-bean name="ecom_helloForm"    type="ru.ecom.ejb.form.hello.HelloForm" />
     </form-beans>
 
     <global-forwards>

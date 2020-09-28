@@ -30,16 +30,11 @@ public class ContractAccountOperationForm extends IdEntityForm {
 	/** Номер телефона для чека */
 	private String theCustomerPhone ;
 
-	/**
-	 * Тип операции
-	 */
+	/** Тип операции */
 	@Comment("Тип операции")
-	
 	public Long getType() {return theType;}
 	public void setType(Long aType) {theType = aType;}
-	/**
-	 * Тип операции
-	 */
+	/** Тип операции*/
 	private Long theType;
 	
 	/** Договорной счет */
@@ -147,7 +142,6 @@ public class ContractAccountOperationForm extends IdEntityForm {
 	@Comment("Услуги")
 	public String getMedServicies() {return theMedServicies;}
 	public void setMedServicies(String aMedServicies) {theMedServicies = aMedServicies;}
-
 	/** Услуги */
 	private String theMedServicies;
 	
@@ -155,8 +149,27 @@ public class ContractAccountOperationForm extends IdEntityForm {
 	@Persist
 	public Boolean getIsPaymentTerminal() {return theIsPaymentTerminal;}
 	public void setIsPaymentTerminal(Boolean aIsPaymentTerminal) {theIsPaymentTerminal = aIsPaymentTerminal;}
-
 	/** Оплата терминалом */
 	private Boolean theIsPaymentTerminal;
 
+	/** Номер договора */
+	@Comment("Номер договора")
+	public String getContractNumber() {return theContractNumber;}
+	public void setContractNumber(String aContractNumber) {theContractNumber=aContractNumber;}
+	/** Номер договора */
+	private String theContractNumber;
+
+	/** Дата договора */
+	@Comment("Дата договора")
+	public String getContractDate() {return theContractDate;}
+	public void setContractDate(String aContractDate) {theContractDate = aContractDate;}
+	/** Дата договора */
+	private String theContractDate ;
+
+	/** Заказчик */
+	@Comment("Заказчик")
+	public String getContractCustomer() {return theContractCustomer;}
+	public void setContractCustomer(String aContractCustomer) {theContractCustomer = aContractCustomer;}
+	/** Заказчик */
+	private String theContractCustomer ;
 }

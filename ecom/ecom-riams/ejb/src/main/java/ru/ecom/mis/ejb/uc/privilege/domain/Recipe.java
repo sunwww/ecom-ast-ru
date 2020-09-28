@@ -1,16 +1,15 @@
 package ru.ecom.mis.ejb.uc.privilege.domain;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.uc.privilege.domain.voc.VocRecipeStatus;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.sql.Date;
 
 /**
  * Рецепт
@@ -85,23 +84,11 @@ abstract public class Recipe extends BaseEntity {
 		theDrugQuantity = aDrugQuantity;
 	}
 	
-	/** Статус */
-	@Comment("Статус")
-	@OneToOne
-	public VocRecipeStatus getStatus() {
-		return theStatus;
-	}
-
-	public void setStatus(VocRecipeStatus aStatus) {
-		theStatus = aStatus;
-	}
-
 	/** Количество лекарства на прием */
 	@Comment("Количество лекарства на прием")
 	public BigDecimal getTakingDoseAmount() {
 		return theTakingDoseAmount;
 	}
-
 	public void setTakingDoseAmount(BigDecimal aTakingDoseAmount) {
 		theTakingDoseAmount = aTakingDoseAmount;
 	}
@@ -111,7 +98,6 @@ abstract public class Recipe extends BaseEntity {
 	public Integer getDayTakingAmount() {
 		return theDayTakingAmount;
 	}
-
 	public void setDayTakingAmount(Integer aDayTakingAmount) {
 		theDayTakingAmount = aDayTakingAmount;
 	}
@@ -121,7 +107,6 @@ abstract public class Recipe extends BaseEntity {
 	public String getUseDuration() {
 		return theUseDuration;
 	}
-
 	public void setUseDuration(String aUseDuration) {
 		theUseDuration = aUseDuration;
 	}
@@ -140,7 +125,7 @@ abstract public class Recipe extends BaseEntity {
 	/** Количество лекарства на прием */
 	private BigDecimal theTakingDoseAmount;
 	/** Статус */
-	private VocRecipeStatus theStatus;
+//	private VocRecipeStatus theStatus;
 	/** Количество ЛС по рецепту */
 	private BigDecimal theDrugQuantity;
 	/** МКБ10 */

@@ -31,7 +31,7 @@
     left join Patient pat on pat.id=jcp.patient_id
     left join Address2 a1 on a1.addressid = jcp.address_addressid
     left join Address2 a2 on a2.addressid = jcp.realaddress_addressid
-    where jcp.patient_id = ${param.id}
+    where jcp.patient_id = ${param.id} order by jcp.changedate desc,jcp.changetime desc
     "/>
     <msh:table name="changePatient" action=" javascript:void(0)" idField="1">
     	<msh:tableColumn property="2" columnName="Изменения"/>

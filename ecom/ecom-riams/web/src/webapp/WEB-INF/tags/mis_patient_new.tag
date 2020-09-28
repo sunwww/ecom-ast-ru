@@ -70,7 +70,7 @@
 </div>
 
 <script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}PatientDialogInitialized = false ;
      var the${name}PatientDialog = new msh.widget.Dialog($('${name}PatientDialog')) ;
 
@@ -116,8 +116,7 @@
      function check${name}Patient(aLastname,aFirstname,aMiddlename,aBirthday, aSex, aSocialStatus,aSnils) {
      	PatientService.getDoubleByFio(
 		     		null,aLastname,aFirstname,aMiddlename,aSnils,aBirthday
-		     			,'','javascript:updatePatient',false
-		     		 ,{
+		     			,'','','','javascript:updatePatient' ,{
 		     		 callback: function(aString) {
 		     		 	if (aString==null || aString=="") {
 		     		 		add${name}Patient(aLastname,aFirstname,aMiddlename,aBirthday, aSex, aSocialStatus,aSnils) ;
@@ -148,8 +147,9 @@
 			     					+" "+ $('${name}Middlename').value+" "+ $('${name}Birthday').value ;
 			     				var ind = aString.indexOf("#") ;
 			     				updatePatient(aString.substring(0,ind),aString.substring(ind+1)) ;
-			     				
+
 		                        cancel${name}Patient() ;
+                               	if (typeof checkObservStatus !== 'undefined') checkObservStatus();
 		                    }
 		                }
 		         ) ;
@@ -161,7 +161,7 @@
      }
      function checkRequered(aField,aFieldView) {
      	if ($(aField).value=="" || $(aField).value==0) {
-	     	alert("Поле дата является обязательным") ;
+	     	alert("Все жёлтые поля являются обязательными") ;
 	     	if (aFieldView==null || aFieldView=="") {
 		     	$(aField).focus() ;
 		     	$(aField).select() ;

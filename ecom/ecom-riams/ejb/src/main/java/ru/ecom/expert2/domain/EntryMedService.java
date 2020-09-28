@@ -3,8 +3,7 @@ package ru.ecom.expert2.domain;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.expert2.domain.voc.VocE2ExtDispService;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -12,6 +11,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
@@ -44,49 +44,50 @@ public class EntryMedService extends BaseEntity {
         theEntry=aEntry;
         theMedService=aMedService.getMedService();
         theServiceDate=aMedService.getServiceDate();
-        theSpeciality=aMedService.getSpeciality();
+        theDoctorSpeciality=aMedService.getDoctorSpeciality();
         theMkb=aMedService.getMkb();
+        theCost = aMedService.getCost();
     }
 
     /** СНИЛС специалиста, выполневшего услугу */
     @Comment("СНИЛС специалиста, выполневшего услугу")
     public String getDoctorSnils() {return theDoctorSnils;}
     public void setDoctorSnils(String aDoctorSnils) {theDoctorSnils = aDoctorSnils;}
-    /** СНИЛС специалиста, выполневшего услугу */
     private String theDoctorSnils ;
 
     /** Дата оказания мед. услуги */
     @Comment("Дата оказания мед. услуги")
     public Date getServiceDate() {return theServiceDate;}
     public void setServiceDate(Date aServiceDate) {theServiceDate = aServiceDate;}
-    /** Дата оказания мед. услуги */
     private Date theServiceDate ;
 
-    /** Специальность врача, оказавшего услугу */
-    @Comment("Специальность врача, оказавшего услугу")
+    /** Специальность врача */
+    @Comment("Специальность врача")
     @OneToOne
-    public VocE2FondV015 getSpeciality() {return theSpeciality;}
-    public void setSpeciality(VocE2FondV015 aSpeciality) {theSpeciality = aSpeciality;}
-    /** Специальность врача, оказавшего услугу */
-    private VocE2FondV015 theSpeciality ;
+    public VocE2FondV021 getDoctorSpeciality() {return theDoctorSpeciality;}
+    public void setDoctorSpeciality(VocE2FondV021 aDoctorSpeciality) {theDoctorSpeciality = aDoctorSpeciality;}
+    private VocE2FondV021 theDoctorSpeciality ;
 
     /** Диагноз, выявленный при оказании услуги */
     @Comment("Диагноз, выявленный при оказании услуги")
     @OneToOne
     public VocIdc10 getMkb() {return theMkb;}
     public void setMkb(VocIdc10 aMkb) {theMkb = aMkb;}
-    /** Диагноз, выявленный при оказании услуги */
     private VocIdc10 theMkb ;
 
-    /** Услуга доп. диспансеризации */
-    @Comment("Услуга доп. диспансеризации")
-    @OneToOne
-    public VocE2ExtDispService getExtDispService() {return theExtDispService;}
-    public void setExtDispService(VocE2ExtDispService aExtDispService) {theExtDispService = aExtDispService;}
-    /** Услуга доп. диспансеризации */
-    private VocE2ExtDispService theExtDispService ;
+    /** Цена */
+    @Comment("Цена")
+    public BigDecimal getCost() {return theCost;}
+    public void setCost(BigDecimal aCost) {theCost = aCost;}
+    /** Цена */
+    private BigDecimal theCost ;
 
     public EntryMedService(){}
 
+    /** Коммент */
+    @Comment("Коммент")
+    public String getComment() {return theComment;}
+    public void setComment(String aComment) {theComment = aComment;}
+    private String theComment ;
 
 }

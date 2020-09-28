@@ -5,14 +5,12 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.Table;
 
 /**
  * Created by Администратор on 13.09.2017.
  */
 @Entity
 @Comment("Перевязка")
-@Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
 public class Bandage extends MedicalManipulation {
 }

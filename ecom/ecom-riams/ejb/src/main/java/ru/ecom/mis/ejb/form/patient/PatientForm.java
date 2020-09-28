@@ -50,6 +50,22 @@ import ru.nuzmsh.forms.validator.validators.*;
 )
 public class PatientForm extends IdEntityForm {
 
+    /** Голосует в палате */
+    @Comment("Голосует в палате")
+    @Persist
+    public Boolean getVoteInRoom() {return theVoteInRoom;}
+    public void setVoteInRoom(Boolean aVoteInRoom) {theVoteInRoom = aVoteInRoom;}
+    /** Голосует в палате */
+    private Boolean theVoteInRoom ;
+
+	/** ППЗ */
+	@Persist
+	@Comment("ППЗ")
+	public Boolean getPpz() {return thePpz;}
+	public void setPpz(Boolean aPpz) {thePpz = aPpz;}
+	/** ППЗ */
+	private Boolean thePpz ;
+
 	/** Номер телефона для мобильного приложения */
 	@Comment("Номер телефона для мобильного приложения")
 	public String getMobileAppPhoneNumber() {return theMobileAppPhoneNumber;}

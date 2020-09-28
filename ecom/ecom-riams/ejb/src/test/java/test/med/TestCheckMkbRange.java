@@ -1,17 +1,19 @@
 package test.med;
 
-import junit.framework.TestCase;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
 import ru.nuzmsh.util.med.CheckMkbRangeHelper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author esinev
  * Date: 31.10.2006
  * Time: 13:07:14
  */
-public class TestCheckMkbRange extends TestCase {
+class TestCheckMkbRange {
 
-    public void test() {
+    @Test
+    void test() {
 
         check("A21", "A00","T98",true) ;
         check("A21", "A00","A19",false) ;
@@ -24,7 +26,6 @@ public class TestCheckMkbRange extends TestCase {
 
     private static void check(String aMkb, String aFrom, String aTo, boolean isTrue) {
         CheckMkbRangeHelper check = new CheckMkbRangeHelper() ;
-        System.out.println(aMkb + " "+aFrom+" - "+aTo+" "+check.isIn(aMkb, aFrom, aTo));
-        Assert.assertEquals(check.isIn(aMkb, aFrom, aTo),isTrue);
+        assertEquals(check.isIn(aMkb, aFrom, aTo),isTrue);
     }
 }

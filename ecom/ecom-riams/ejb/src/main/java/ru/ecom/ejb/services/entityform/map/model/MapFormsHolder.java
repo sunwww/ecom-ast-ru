@@ -4,8 +4,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 import ru.ecom.ejb.services.entityform.map.model.forclass.EntityFormPersistanceAnnotation;
 import ru.ecom.ejb.services.entityform.map.model.forclass.ParentAnnotation;
 import ru.ecom.ejb.services.entityform.map.model.forclass.WebTrailAnnotation;
@@ -31,8 +29,8 @@ public class MapFormsHolder {
 	}
 	
 	public void save(OutputStream aOut) throws IOException {
-		if(true) throw new IllegalStateException("Еще не поддерживается") ;
-		Document doc = new Document() ;
+		throw new IllegalStateException("Еще не поддерживается") ;
+/*		Document doc = new Document() ;
 		
 		Element root = new Element("forms") ;
 		for(MapFormInfo form : theForms.values()) {
@@ -53,7 +51,7 @@ public class MapFormsHolder {
 		
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
 		OutputStreamWriter out = new OutputStreamWriter(aOut, "utf-8") ;
-		xmlOut.output(doc, out) ;
+		xmlOut.output(doc, out) ; */
 	}
 
 	public void load(InputStream aIn) throws UnsupportedEncodingException, JDOMException, IOException {

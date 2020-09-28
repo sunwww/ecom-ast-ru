@@ -27,10 +27,10 @@
 	String typeCertificate =ActionUtil.updateParameter("Report_DEATHCASE","typeCertificate","3", request) ;
   
   %>
-    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
         <input type='hidden' id="sqlText" name="sqlText">
         <input type='hidden' id="infoText" name="infoText">
         <input type='hidden' id="m" name="m">
@@ -115,8 +115,8 @@
         	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
         </msh:row>
         <msh:row>
-	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-    	    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+	        <msh:textField property="dateBegin" label="Период с" />
+    	    <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" onclick="find()" value="Найти" />
           </td>
@@ -159,7 +159,7 @@
     </script>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
         String dateEnd = request.getParameter("dateEnd") ;
         //String id = (String)request.getParameter("id") ;
@@ -167,17 +167,17 @@
         request.setAttribute("dateEnd", dateEnd) ;
         request.setAttribute("emerSql", ReportParamUtil.getEmergencySql(typeEmergency, "m")) ;
 		request.setAttribute( "emerInfo",ReportParamUtil.getEmergencyInfo(typeEmergency)) ;
-		if (typeAutopsy!=null && typeAutopsy.equals("1")) {
+		if ("1".equals(typeAutopsy)) {
 			request.setAttribute("autopsySql", " and dc.isAutopsy='1' ") ;
 			request.setAttribute("autopsyInfo", "производилось вскрытие") ;
-		} else if (typeAutopsy!=null && typeAutopsy.equals("2")) {
+		} else if ("2".equals(typeAutopsy)) {
 			request.setAttribute("autopsyInfo", "не производилось вскрытие") ;
 			request.setAttribute("autopsySql", " and (dc.isAutopsy is null or dc.isAutopsy='0') ") ;
 		}
-		if (typeDifference!=null && typeDifference.equals("1")) {
+		if ("1".equals(typeDifference)) {
 			request.setAttribute("differenceSql", " and dc.categoryDifference_id is not null") ;
 			request.setAttribute("differenceInfo", " были расхождения по диагнозу ") ;
-		} else if (typeDifference!=null && typeDifference.equals("2")) {
+		} else if ("2".equals(typeDifference)) {
 			request.setAttribute("differenceInfo", "не было расхождений по диагнозу ") ;
 			request.setAttribute("differenceSql", " and dc.categoryDifference_id is null ") ;
 		}
@@ -185,17 +185,17 @@
     	if (deathReson!=null&&!deathReson.equals("")) {
     		request.setAttribute("deathReasonSql", " and upper(dc.commentReason) like '%"+deathReson.toUpperCase()+"%'") ;
     	}
-		if (typeOperation!=null && typeOperation.equals("1")) {
+		if ("1".equals(typeOperation)) {
 			request.setAttribute("operationSql", " and (so1.id is not null or so2.id is not null) ") ;
 			request.setAttribute("operationInfo", " были произведены хирургические вмешательства ") ;
-		} else if (typeOperation!=null && typeOperation.equals("2")) {
+		} else if ("2".equals(typeOperation)) {
 			request.setAttribute("operationInfo", "не было хирургических вмешательств ") ;
 			request.setAttribute("operationSql", " and (so1.id is null and so2.id is null) ") ;
 		}
-		if (typeCertificate!=null && typeCertificate.equals("1")) {
+		if ("1".equals(typeCertificate)) {
 			request.setAttribute("certificateSql", " and c.id is not null ") ;
 			request.setAttribute("certificateInfo", " были выданы свидетельства о смерти ") ;
-		} else if (typeCertificate!=null && typeCertificate.equals("2")) {
+		} else if ("2".equals(typeCertificate)) {
 			request.setAttribute("certificateInfo", " нет свидетельств о смерти ") ;
 			request.setAttribute("certificateSql", " and c.id is null ") ;
 		}
@@ -280,7 +280,7 @@ then -1 else 0 end)
     ,ss.code  ,vdcL.name,vdcC.name,dcvpd.name
     ,m.dateStart,m.entranceTime,pml.name,dml.name,dml.isNoOmc,bf.addCaseDuration
     ,dc.commentCategory,rmkb.code,dc.isAutopsy,dc.isPresenceDoctorAutopsy,dc.dateForensic
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <script type="text/javascript">
     function print() {
     	var frm = document.forms[0] ;
@@ -299,7 +299,7 @@ then -1 else 0 end)
     </msh:sectionTitle>
     <msh:sectionContent>
     	<input type="button" value="Печать экс. карт по выбранным ИБ" onclick="printExpCard('stac_expcards_death_empty')"> 
-        <msh:table selection="multiply" name="journal_ticket" action="entityView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
+        <msh:table printToExcelButton="Сохранить в excel" selection="multiply" name="journal_ticket" action="entityView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="№ИБ" property="2"/>
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
@@ -331,13 +331,10 @@ then -1 else 0 end)
             function printExpCard(aFile) {
             	var ids = theTableArrow.getInsertedIdsAsParams("id","journal_ticket") ;
             	if(ids) {
-            		//alert(ids) ;
             		window.location = 'print-'+aFile+'.do?multy=1&m=printStatCards&s=HospitalPrintService1&'+ids ;
-            		
             	} else {
             		alert("Нет выделенных случаев");
             	}
-            	
             }
        </script>
    </tiles:put>  

@@ -1,11 +1,10 @@
 package ru.nuzmsh.forms.validator.validators;
 
-import java.lang.annotation.Annotation;
-
-import javax.servlet.http.HttpServletRequest;
-
 import ru.nuzmsh.forms.validator.IValidator;
 import ru.nuzmsh.forms.validator.ValidateException;
+
+import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 
 public class MaxValidator implements IValidator {
 	public void validate(final Object aValue, final Annotation aAnnotation, HttpServletRequest aRequest)
@@ -14,7 +13,7 @@ public class MaxValidator implements IValidator {
 			Max max = (Max) aAnnotation ;
 			int maxValue = Integer.parseInt(max.value()) ;
 			int value = Integer.parseInt(aValue.toString()) ;
-			if(aValue!=null && value>maxValue ) {
+			if(value>maxValue ) {
 				throw new ValidateException("Поле должно не больше "
 						+ max.value()  +".") ;
 			}

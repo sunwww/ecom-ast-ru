@@ -27,7 +27,6 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     ) {
        // theSelect = aNames;
     	theSplitQueriedCount = (aFieldsSplitCount!=null && !aFieldsSplitCount.equals("")) ?Long.valueOf(aFieldsSplitCount):null ;
-    	LOG.debug("theSplitQueriedCount="+theSplitQueriedCount) ;
     	theSplitParentCount = aParentSplitCount!=null && !aParentSplitCount.equals("") ?Long.valueOf(aParentSplitCount):null ;
         theNames = getAsArray(aNames) ;
         StringBuilder sb = new StringBuilder () ;
@@ -40,6 +39,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
         } else {
         	theSelect = aNameId ;
         }
+        theOrder = aOrder !=null && !"".equals(aOrder) ? aOrder : null;
         theNameId = aNameId ;
         theJoin = aJoin!=null?aJoin:"" ;
         theGroupBy = aGroupBy!=null&&aGroupBy.trim().equals("")?null:aGroupBy ;
@@ -63,7 +63,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
         //throw new VocServiceException("Нет идентификатора ");
         
         //LOG.info("id="+aId) ;
-    	LOG.debug(sql) ;
+    	//LOG.debug(sql) ;
         //Object obj = aContext.getEntityManager().find(theEntityClass, theEntityHelper.convertId(theEntityClass, aId)) ;
         try {
         	List<Object[]> obj =aContext.getEntityManager().createNativeQuery(sql.toString()).getResultList() ;
@@ -77,7 +77,6 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
         			.append(theNameId).append("='").append(aId).append("'") ;
         	    	sql.append(" and ");
         	    	sql.append(getParent(theParentField,aAdditional.getParentId(),theSplitParentCount)) ;
-        	    	LOG.debug("===parent=="+sql) ;
         	    	List<Object[]> obj1 =aContext.getEntityManager().createNativeQuery(sql.toString()).getResultList() ;
                 	if (!obj1.isEmpty()) {
                 		return getNameFromEntity(obj1.get(0)) ;
@@ -124,7 +123,6 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	    	}
     	    	if (theGroupBy!=null) sql.append(" group by ").append(theGroupBy) ;
     	    	aQuery = aQuery.toUpperCase() ;
-    	    	//LOG.debug("query="+aQuery) ;
     	    	Query query  = aContext.getEntityManager().createNativeQuery(sql.toString()) ;
     	    	//LOG.debug(aQuery) ;
     	    	if (theSplitQueriedCount!=null && theSplitQueriedCount>0) {
@@ -135,7 +133,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     				for (int i=0; i<cnt;i++) {
     					String querI = "quer"+(i+1) ;
     					//LOG.debug("quer="+querI) ;
-    					if (sql.toString().indexOf(querI)>0) {
+    					if (sql.toString().contains(querI)) {
 	    					if (i<split.length) {
 	    						//LOG.debug(split[i]) ;
 	    						query.setParameter(querI, split[i]+"%") ;
@@ -144,16 +142,14 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
 	    					}
     					}
     				}
-    	    	} else {
-    	    		LOG.debug("splitQuery="+theSplitQueriedCount);
     	    	}
-    	    	if (sql.toString().indexOf("query")>0) {
+    	    	if (sql.toString().contains("query")) {
         			query.setParameter("query", "%"+aQuery+"%") ;
     	    	}
-    	    	if (sql.toString().indexOf("querId")>0) {
+    	    	if (sql.toString().contains("querId")) {
     	    		query.setParameter("querId", aQuery+"%") ;
     	    	}
-    	    	if (sql.toString().indexOf("querInd")>0) {
+    	    	if (sql.toString().contains("querInd")) {
     	    		query.setParameter("querInd", aQuery) ;
     	    	}
         		
@@ -168,7 +164,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	
     }
 
-    public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
+    public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) {
         // уще не установлен родитель
     	//LOG.info("-------ПРЕДЫДУЩИЙ СПИСОК");
         if(theParentField!=null && StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
@@ -191,8 +187,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
        		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
        		sql.append(theQueryAppend);
     		appendIs=true ;
-    	}	
-    	//LOG.info("-------sql2"+sql);
+    	}
     	if (!StringUtil.isNullOrEmpty(aId)) {
     		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
     		sql.append(theNameId).append("<='").append(aId).append("' ");
@@ -210,7 +205,6 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     }
 
     public Collection<VocValue> findVocValueNext(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) {
-    	//LOG.info("-------СЛЕДЮЩИЙ СПИСОК");
     	if (theParentField!=null && StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
     		return new LinkedList<>() ;
     	} 
@@ -238,8 +232,8 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	//	appendIs = true ;
     	}
     	if (theGroupBy!=null) sql.append(" group by ").append(theGroupBy) ;
-    	sql.append(" order by ").append(theNameId) ;
-    //	LOG.info("id="+aId) ;
+
+    	sql.append(" order by ").append( theOrder!=null ? theOrder : theNameId) ;
     	Query query = aContext.getEntityManager().createNativeQuery(sql.toString()) ;
     	/*if (!StringUtil.isNullOrEmpty(aId)){
     		query.setParameter("id", Long.valueOf(aId)) ;
@@ -247,10 +241,14 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	/*
     	if (theParentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
     		query.setParameter("parent",aAdditional.getParentId()) ;
-    		LOG.info("parent==="+aAdditional.getParentId());
     	}*/
-    	List<Object[]> list = query.setMaxResults(aCount).getResultList() ;
-    	//LOG.info("query done");
+
+		List<Object[]> list = null;
+		try {
+			list = query.setMaxResults(aCount).getResultList();
+		} catch (Exception e) {
+			LOG.error("Error execute sql: "+sql,e);
+		}
     	return createValues(list,0) ;
     		// уще не установлен родитель
     	/*
@@ -336,16 +334,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     }
 
     private String getNameFromEntity(Object[] aObj) {
-        StringBuilder sb = new StringBuilder();
-        int i=0 ;
-       // for (String field : theNames) {
-        	//int column = Integer.valueOf(field.trim()) ;
-            //sb.append(aObj[column]) ;
-        	sb.append(aObj[++i]) ;
-            sb.append(" ") ;
-            
-        //}
-        return sb.toString();
+        return aObj[1]+" ";
     }
 
     private VocValue createVocValue(Object[] aObj) {
@@ -374,6 +363,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     private final Long theSplitQueriedCount ;
     private final Long theSplitParentCount ;
     private final String theQueryAppend ;
+    private final String theOrder ;
   //  private final String theOrder ;
     private final String theGroupBy ;
     private final String theFrom ;

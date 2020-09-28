@@ -12,7 +12,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz= KkmEquipment. class)
 @Comment("Оборудование")
-@WebTrail(comment = "Оборудование", nameProperties= "name", view="entityView-mis_kkmequipment.do")
+@WebTrail(comment = "Оборудование", nameProperties= "name", view="entityView-mis_kkmequipment.do", list="entityParentList-mis_kkmequipment.do")
 @Parent(property="lpu", parentForm= MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Equipment/KkmEquipment")
 public class KkmEquipmentForm extends EquipmentForm {

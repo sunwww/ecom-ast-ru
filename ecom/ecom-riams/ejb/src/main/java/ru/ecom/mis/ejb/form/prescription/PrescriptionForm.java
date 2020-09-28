@@ -26,8 +26,29 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses({DrugPrescriptionForm.class, DietPrescriptionForm.class
 	, ServicePrescriptionForm.class, ModePrescriptionForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription")
-public class PrescriptionForm extends IdEntityForm{
-	
+public class PrescriptionForm extends IdEntityForm {
+
+	/** Тип случая СМО */
+	@Comment("Тип случая СМО")
+	public String getMedcaseType() {return theMedcaseType;}
+	public void setMedcaseType(String aMedcaseType) {theMedcaseType = aMedcaseType;}
+	/** Тип случая СМО */
+	private String theMedcaseType ;
+
+	/** ИД случая СМО */
+	@Comment("ИД случая СМО")
+	public Long getMedcaseId() {return theMedcaseId;}
+	public void setMedcaseId(Long aMedcaseId) {theMedcaseId = aMedcaseId;}
+	/** ИД случая СМО */
+	private Long theMedcaseId ;
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Persist
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	private Long theServiceStream ;
+
 	/** Лист назначений */
 	@Comment("Лист назначений")
 	@Persist
@@ -229,10 +250,7 @@ public class PrescriptionForm extends IdEntityForm{
 	/** Кабинет назначения */
 	@Comment("Кабинет назначения")
 	@Persist
-	public Long getPrescriptCabinet() {
-		return thePrescriptCabinet;
-	}
-
+	public Long getPrescriptCabinet() {return thePrescriptCabinet;}
 	public void setPrescriptCabinet(Long aPrescriptCabinet) {
 		thePrescriptCabinet = aPrescriptCabinet;
 	}
@@ -345,34 +363,18 @@ public class PrescriptionForm extends IdEntityForm{
 	private String theRegistratorInfo;
 	/** Описание назначения */
 	private String theDescriptionInfo;
-	
-//	 /** Стационарный? */
-//	@Comment("Стационарный?")
-//	@Persist
-//	public boolean isInHospitalMedCase() {
-//		return theInHospitalMedCase;
-//	}
-//
-//	public void setInHospitalMedCase(boolean aInHospitalMedCase) {
-//		theInHospitalMedCase = aInHospitalMedCase;
-//	}
-//
-//	/** Стационарный? */
-//	private boolean theInHospitalMedCase;
+
 	/** Тип назначения */
 	@Comment("Тип назначения")
 	@Persist 
 	public Long getPrescriptType() {return thePrescriptType;}
 	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
-	/** Тип назначения */
 	private Long thePrescriptType;
 	
 	/** Метка назначения */
 	@Comment("Метка назначения")
 	public String getLabelPrescript() {return theLabelPrescript;}
 	public void setLabelPrescript(String aLabelPrescript) {theLabelPrescript = aLabelPrescript;}
-
-	/** Метка назначения */
 	private String theLabelPrescript;
 	
 	/** Дата забора */
@@ -380,80 +382,67 @@ public class PrescriptionForm extends IdEntityForm{
 	@Persist @DateString @DoDateString
 	public String getIntakeDate() {return theIntakeDate;}
 	public void setIntakeDate(String aIntakeDate) {theIntakeDate = aIntakeDate;}
+    private String theIntakeDate;
 
 	/** Время забора */
 	@Comment("Время забора")
 	@Persist @DoTimeString @TimeString 
 	public String getIntakeTime() {return theIntakeTime;}
 	public void setIntakeTime(String aIntakeTime) {theIntakeTime = aIntakeTime;}
+    private String theIntakeTime;
 
 	/** Пользователь, осуществившей забор */
 	@Comment("Пользователь, осуществившей забор")
 	public String getIntakeUsername() {return theIntakeUsername;}
 	public void setIntakeUsername(String aIntakeUsername) {theIntakeUsername = aIntakeUsername;}
+    private String theIntakeUsername;
 
 	/** Идентификатор материала */
 	@Comment("Идентификатор материала")
 	public String getMaterialId() {return theMaterialId;}
 	public void setMaterialId(String aMaterialId) {theMaterialId = aMaterialId;}
-
-	/** Идентификатор материала */
 	private String theMaterialId;
-	/** Пользователь, осуществившей забор */
-	private String theIntakeUsername;
-	/** Время забора */
-	private String theIntakeTime;
-	/** Дата забора */
-	private String theIntakeDate;
+
 	/** Причина отмены текст */
 	@Comment("Причина отмены текст")
 	@Persist
 	public String getCancelReasonText() {return theCancelReasonText;}
 	public void setCancelReasonText(String aCancelReasonText) {theCancelReasonText = aCancelReasonText;}
+    private String theCancelReasonText;
 
 	/** Пользователь отменивший */
 	@Comment("Пользователь отменивший")
 	@Persist
 	public String getCancelUsername() {return theCancelUsername;}
 	public void setCancelUsername(String aCancelUsername) {theCancelUsername = aCancelUsername;}
-
-	/** Пользователь отменивший */
 	private String theCancelUsername;
-	/** Причина отмены текст */
-	private String theCancelReasonText;
-	
+
 	/** Дата передачи в лабораторию */
 	@Comment("Дата передачи в лабораторию")
 	@Persist @DoDateString @DateString
 	public String getTransferDate() {return theTransferDate;}
 	public void setTransferDate(String aTransferDate) {theTransferDate = aTransferDate;}
+    private String theTransferDate;
 
 	/** Время передачи */
 	@Comment("Время передачи")
 	@Persist @DoTimeString @TimeString
 	public String getTransferTime() {return theTransferTime;}
 	public void setTransferTime(String aTransferTime) {theTransferTime = aTransferTime;}
+    private String theTransferTime;
 
 	/** Пользователь, принявший биоматериал */
 	@Comment("Пользователь, принявший биоматериал")
 	@Persist
 	public String getTransferUsername() {return theTransferUsername;}
 	public void setTransferUsername(String aTransferUsername) {theTransferUsername = aTransferUsername;}
-
-	/** Пользователь, принявший биоматериал */
 	private String theTransferUsername;
-	/** Время передачи */
-	private String theTransferTime;
-	/** Дата передачи в лабораторию */
-	private String theTransferDate;
-	
+
 	/** Время из wct */
 	@Comment("Время из wct")
 	@Persist
 	public Long getCalendarTime() {return theCalendarTime;}
 	public void setCalendarTime(Long aCalendarTime) {theCalendarTime = aCalendarTime;}
-
-	/** Время из wct */
 	private Long theCalendarTime;
 
 	/** Отделение (забора) */
@@ -461,16 +450,12 @@ public class PrescriptionForm extends IdEntityForm{
 	@Persist
 	public Long getDepartment() {return theDepartment;}
 	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
-
-	/** Отделение (забора) */
 	private Long theDepartment;
 
 	/** Отделение для забора крови */
 	@Comment("Отделение для забора крови")
 	public Long getLabDepartment() {return theLabDepartment;}
 	public void setLabDepartment(Long aLabDepartment) {theLabDepartment = aLabDepartment;}
-
-	/** Отделение для забора крови */
 	private Long theLabDepartment;
 	
 	/** Хирургическая операция */
@@ -478,7 +463,59 @@ public class PrescriptionForm extends IdEntityForm{
 	@Persist
 	public Long getSurgicalOperation() {return theSurgicalOperation;}
 	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
-	/** Хирургическая операция */
 	private Long theSurgicalOperation;
+	
+	/** ИД пациента */
+	@Comment("ИД пациента")
+	public Long getPatient() {return thePatient;}
+	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	private Long thePatient ;
+
+	/** Разрешены только оплаченные услуги по потоку обслуживания */
+	@Comment("Разрешены только оплаченные услуги по потоку обслуживания")
+	public Boolean getAllowOnlyPaid() {return theAllowOnlyPaid;}
+	public void setAllowOnlyPaid(Boolean aAllowOnlyPaid) {theAllowOnlyPaid = aAllowOnlyPaid;}
+	private Boolean theAllowOnlyPaid ;
+
+	/** Раб. функция, осущ. забор */
+	@Comment("Раб. функция, осущ. забор")
+	@Persist
+	public Long getIntakeSpecial() {return theIntakeSpecial;}
+	public void setIntakeSpecial(Long aIntakeSpecial) {theIntakeSpecial = aIntakeSpecial;}
+	private Long theIntakeSpecial;
+
+	/** Дата установки патологии */
+	@Comment("Дата установки патологии")
+	@Persist @DateString @DoDateString
+	public String getSetPatologyDate() {return theSetPatologyDate;}
+	public void setSetPatologyDate(String aSetPatologyDate) {theSetPatologyDate = aSetPatologyDate;}
+	private String theSetPatologyDate;
+
+	/** Время установки патологии */
+	@Comment("Время установки патологии")
+	@Persist @TimeString @DoTimeString
+	public String getSetPatologyTime() {return theSetPatologyTime;}
+	public void setSetPatologyTime(String aSetPatologyTime) {theSetPatologyTime = aSetPatologyTime;}
+	private String theSetPatologyTime;
+
+	/** Пользователь, установивший патологию*/
+	@Comment("Пользователь, установивший патологию")
+	@Persist
+	public String getSetPatologyUsername() {return theSetPatologyUsername;}
+	public void setSetPatologyUsername(String aSetPatologyUsername) {theSetPatologyUsername = aSetPatologyUsername;}
+	private String theSetPatologyUsername;
+
+	/** Проставил патологию специалист */
+	@Comment("Проставил патологию специалист")
+	@Persist
+	public Long getSetPatologySpecial() {return theSetPatologySpecial;}
+	public void setSetPatologySpecial(Long aSetPatologySpecial) {theSetPatologySpecial = aSetPatologySpecial;}
+	private Long theSetPatologySpecial;
+
+	/** ИД гарантийного письма */
+	@Comment("ИД гарантийного письма")
+	public Long getGuaranteeId() {return theGuaranteeId;}
+	public void setGuaranteeId(Long aGuaranteeId) {theGuaranteeId = aGuaranteeId;}
+	private Long theGuaranteeId ;
 }
 

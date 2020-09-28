@@ -1,21 +1,19 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.StringTokenizer;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.JavaScriptContext;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import ru.nuzmsh.web.xhtml.Xa;
 import ru.nuzmsh.web.xhtml.Xli;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.StringTokenizer;
 
 /**
  * @jsp.tag name="sideLink"
@@ -168,19 +166,14 @@ public class SideLinkTag extends AbstractGuidSupportTag {
         	
             StringTokenizer st = new StringTokenizer(getParams(), ", ");
             String action = getAction().substring(1) ;
-            StringBuffer sb = new StringBuffer() ;
+            StringBuilder sb = new StringBuilder() ;
             boolean isJavascript= false ;
             String actionJavascript = "" ;
-            if (action.indexOf("javascript")==-1) {
-                String addSb ; 
-                if (theIsReport) {
-                	addSb = (String)pageContext.getSession().getAttribute("LOGININFO_URL_REPORT_BASE") ;
-                } else {
-                	addSb = (String)pageContext.getSession().getAttribute("LOGININFO_URL_MAIN_BASE") ;
-                }
-                if (action.indexOf("http")==-1)sb.append(addSb!=null&&!addSb.equals("null")?addSb:"") ;
+            if (!action.contains("javascript")) {
+                String addSb = (String) pageContext.getSession().getAttribute(theIsReport ? "LOGININFO_URL_REPORT_BASE" : "LOGININFO_URL_MAIN_BASE") ;
+                if (!action.contains("http")) sb.append(addSb!=null&&!addSb.equals("null") ? addSb : "") ;
             	sb.append(action) ;
-            	if(action.indexOf(".do")>=0) {
+                if(action.contains(".do")) {
 	                if(action.indexOf('?')>=0) {
 	                    sb.append("&amp;") ;
 	                } else {
@@ -194,7 +187,6 @@ public class SideLinkTag extends AbstractGuidSupportTag {
             	sb.append("javascript:void(0)") ;
             	actionJavascript = action.substring(11) ;
             }
-//        StringBuffer sb = new StringBuffer(getAction().substring(1) + ".do?");
             boolean canPrint = true;
             while (st.hasMoreTokens()) {
                 String param = st.nextToken();
@@ -222,13 +214,13 @@ public class SideLinkTag extends AbstractGuidSupportTag {
             if (canPrint) {
             	String name = getName() ;
             	if (name.toUpperCase().trim().equals("ИЗМЕНИТЬ")||name.toUpperCase().trim().equals("РЕДАКТИРОВАТЬ")) {
-                	name = new StringBuilder().append("<img src='/skin/images/main/edit.png' alt='Изменить запись' title='Изменить запись' height='14' width='14'/> ").append(name).toString() ;
+                	name = "<img src='/skin/images/main/edit.png' alt='Изменить запись' title='Изменить запись' height='14' width='14'/> "+name ;
                 } else {
 	                if (name.toUpperCase().trim().equals("УДАЛИТЬ")) {
-	                	name=new StringBuilder().append("<img src='/skin/images/main/delete.png' alt='Удалить' title='Удалить' height='14' width='14'/> ").append(name).toString() ;
+	                	name="<img src='/skin/images/main/delete.png' alt='Удалить' title='Удалить' height='14' width='14'/> "+name ;
 	                } 
                 }
-                Xa a = theKey!=null ? new Xa(sb.toString(), new StringBuilder().append(name).append("<sup class='accessKey'>").append(theKey).append("</sup>").toString())
+                Xa a = theKey!=null ? new Xa(sb.toString(), name+"<sup class='accessKey'>"+theKey+"</sup>")
                         : new Xa(sb.toString(), getName()) ;
 
                 if(getStyleId()!=null) {

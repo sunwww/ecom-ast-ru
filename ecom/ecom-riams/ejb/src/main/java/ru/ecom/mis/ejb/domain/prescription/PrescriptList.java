@@ -15,13 +15,12 @@ import java.util.Date;
 
 @Comment("Лист назначений")
 @Entity
-@Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
 public class PrescriptList extends AbstractPrescriptionList {
 
 	@PrePersist
 	void onPrePersist() {
-		Long currentTime = System.currentTimeMillis();
+		long currentTime = System.currentTimeMillis();
 		setCreateDate(new java.sql.Date(currentTime));
 		setCreateTime(new java.sql.Time(currentTime));
 	}
@@ -45,7 +44,7 @@ public class PrescriptList extends AbstractPrescriptionList {
 		Date endDate = null ;
 		for (Prescription pres:getPrescriptions()) {
 			if (pres.getPlanEndDate()!=null ) {
-				if ((endDate==null) || (endDate!=null && pres.getPlanEndDate().getTime()>endDate.getTime())) {
+				if ((endDate==null) || ( pres.getPlanEndDate().getTime()>endDate.getTime())) {
 					endDate=pres.getPlanEndDate() ;
 				}
 			}

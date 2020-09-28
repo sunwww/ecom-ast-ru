@@ -1,5 +1,5 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Журнал назначений" />
+    <msh:title mainMenu="LaboratoryJournal" title="Журнал назначений" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -27,9 +27,9 @@
   String typeService =ActionUtil.updateParameter("PrescriptJournal","typeService","2", request) ;
 
 	 %>
-  <msh:form action="/pres_journal.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+  <msh:form action="/pres_journal.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
@@ -161,7 +161,7 @@
 			var aReason = getCancelReason() ;
 			if (aReason!=null) {
 				PrescriptionService.cancelService(aListPrescript, aReason, { 
-	            callback: function(aResult) {
+	            callback: function() {
 	            	window.document.location.reload();
 	            }
 			}); 
@@ -358,7 +358,7 @@
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:sectionTitle>Реестр пациентов ${title}</msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="reestr" action="javascript:void(0)" idField="1">
+	    <msh:table name="reestr" action="javascript:void(0)" idField="1" escapeSymbols="false">
 	      <msh:tableColumn columnName="Управление" property="9"  />
 	      <msh:tableColumn columnName="Стат.карта" property="2"  />
 	      <msh:tableColumn columnName="Фамилия пациента" property="3"  />

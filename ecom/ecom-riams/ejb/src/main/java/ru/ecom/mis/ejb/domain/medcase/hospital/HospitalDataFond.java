@@ -5,7 +5,6 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizatingFond;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -44,12 +43,6 @@ public class HospitalDataFond extends BaseEntity  implements IImportData {
 	@Comment("Номер направления из фонда")
 	public String getNumberFond() {return theNumberFond;}
 	public void setNumberFond(String aNumberFond) {theNumberFond = aNumberFond;}
-
-	/** Отказ от госпитализации */
-	@Comment("Отказ от госпитализации")
-	@OneToOne
-	public VocDeniedHospitalizatingFond getDeniedHosp() {return theDeniedHosp;}
-	public void setDeniedHosp(VocDeniedHospitalizatingFond aDeniedHosp) {theDeniedHosp = aDeniedHosp;}
 
 	/** Фамилия */
 	@Comment("Фамилия")
@@ -115,8 +108,6 @@ public class HospitalDataFond extends BaseEntity  implements IImportData {
 	private String theFirstname;
 	/** Фамилия */
 	private String theLastname;
-	/** Отказ от госпитализации */
-	private VocDeniedHospitalizatingFond theDeniedHosp;
 	/** Номер направления из фонда */
 	private String theNumberFond;
 	/** Экстренность */

@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @AIndexes({
-	@AIndex(name = "property", unique = false, properties = {"property"})
+    @AIndex(name = "property", properties = {"property"})
 })
 @Table(schema="SQLUser")
 public class LiveProperty {

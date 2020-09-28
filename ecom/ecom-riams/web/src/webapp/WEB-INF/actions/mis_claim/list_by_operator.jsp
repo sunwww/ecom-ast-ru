@@ -1,7 +1,6 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -65,7 +64,7 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 	} else if (typeStatus.equals("9")) {
 		statusSql +=" and cl.freezeDate is not null and (cl.FinishDate is null or cl.cancelDate is null)";
 	}
-	if (typeUser!=null&&typeUser.equals("2")) {
+	if ("2".equals(typeUser)) {
 		statusSql += " and cl.startworkusername ='"+login+"'";
 	}
 	if (executorUserName!=null&&!executorUserName.equals("")) {
@@ -85,11 +84,11 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
     </tiles:put>
 
     <tiles:put name='body' type='string' >
-   <msh:form  action="/all_claims.do" defaultField="typeStatus" disableFormDataConfirm="true" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f" > 
-  <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+   <msh:form  action="/all_claims.do" defaultField="typeStatus" disableFormDataConfirm="true" >
+  <msh:panel>
      
        <a href='js-mis_claim-list_pda.do'><input type='button' value='pda'></a>
-    <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:separator label="Параметры поиска" colSpan="7" />
      <msh:row>
      <msh:autoComplete label="Исполнитель" property="number" parentId="${login}" vocName="executorsByCurrentUserName" size="50" fieldColSpan="10"/>  
    </msh:row>
@@ -238,12 +237,12 @@ order by ${orderBySql}
             <msh:tableColumn columnName="Дата и время создания" property="4" />
             <msh:tableColumn columnName="Статус" property="5" />
             <msh:tableColumn columnName="Комментарий исполнителя" property="14" />
-            <msh:tableButton hideIfEmpty="true" property="10" buttonFunction="setView" buttonShortName='Просмотрено' buttonName="Просмотрено" />
-            <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setStartWork" buttonShortName="В работу/Переназначить" buttonName="В работу"/>
-            <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setCancel" buttonShortName="Отменить" buttonName="Отменить"/>
-            <msh:tableButton hideIfEmpty="true" property="15" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
-            <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
-            <msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFreeze" buttonShortName="Заморозить" buttonName="Заморозить"/>
+			<msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setStartWork" buttonShortName="В работу/Переназначить" buttonName="В работу"/>
+			<msh:tableButton hideIfEmpty="true" property="15" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
+			<msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
+			<msh:tableButton hideIfEmpty="true" property="10" buttonFunction="setView" buttonShortName='Просмотрено' buttonName="Просмотрено" />
+			<msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setCancel" buttonShortName="Отменить" buttonName="Отменить"/>
+			<msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFreeze" buttonShortName="Заморозить" buttonName="Заморозить"/>
             <msh:tableButton role="/Policy/Mis/Claim/Boss" hideIfEmpty="true" property="9" buttonFunction="sendToUser" buttonShortName="Отправить пользователю на подтверждение" buttonName="Отправить пользователю на подтверждение"/>
         </msh:table>${claimListSql}
 	</msh:section>

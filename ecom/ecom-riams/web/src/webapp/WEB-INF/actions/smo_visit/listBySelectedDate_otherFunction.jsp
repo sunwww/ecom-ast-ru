@@ -8,11 +8,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Poly" title="Рабочий календарь" property="worker" />
+    <msh:title mainMenu="Poly" title="Рабочий календарь" property="worker" />
     
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="helloSideMenu-123">
+    <msh:sideMenu>
       <tags:smo_workDay name="calendarWork" action="js-smo_visit-findOtherFunctionsPolyAdmissions.do" title="Выбрать дату"/>
     </msh:sideMenu>
     <tags:visit_finds currentAction="otherWorkFunction"/>
@@ -66,7 +66,7 @@ group by wcdN.id,wfNG.groupName,vwfN.name,lpuN.name
   	"/>
   	<msh:section title="Направления по другим специализациям">
   		<msh:table name="wf1" action="js-smo_visit-replaceWF.do"
-  		 idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+  		 idField="1">
 	      <msh:tableColumn columnName="специальность" property="2" />
 	      <msh:tableColumn columnName="кол-во направленных" property="3"/>
 	      <msh:tableColumn columnName="кол-во принятых" property="4" />
@@ -76,7 +76,7 @@ group by wcdN.id,wfNG.groupName,vwfN.name,lpuN.name
   	
   	<msh:section title="Направления по другим (групповым) специализациям">
   		<msh:table name="wf3" action="js-smo_visit-replaceWF.do"
-  		 idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+  		 idField="1">
 	      <msh:tableColumn columnName="специальность" property="2" />
 	      <msh:tableColumn columnName="название группы" property="3" />
 	      <msh:tableColumn columnName="кол-во направленных" property="4"/>

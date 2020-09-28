@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameterconfig>
+        <parameter id="20" name="20 мин"/>
+        <parameter id="40" name="40 мин"/>
+        <parameter id="60" name="1 час"/>
+        <parameter id="80" name="80 мин (1 ч 20 мин)"/>
+        <parameter id="100" name="100 мин (1 ч 40 мин)"/>
+        <parameter id="120" name="120 мин (2 часа)"/>
+        <parameter id="160" name="160 мин (2 ч 40 мин)"/>
+        <parameter id="180" name="180 мин (3 часа)"/>
+        <parameter id="220" name="220 мин (3 ч 40 мин)"/>
+        <parameter id="240" name="240 мин (4 часа)"/>
+        <parameter id="280" name="280 мин (4 ч 40 мин)"/>
+        <parameter id="300" name="300 мин (5 часов)"/>
+        <parameter id="340" name="340 мин (5 ч 40 мин)"/>
+        <parameter id="360" name="360 мин (6 часов)"/>
+</parameterconfig>

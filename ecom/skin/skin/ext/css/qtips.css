@@ -31,12 +31,10 @@
 .x-tip .x-tip-top-left {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat 0 0;
 	padding-left:6px;
-    zoom:1;
 }
 .x-tip .x-tip-top-right {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat right 0;
 	padding-right:6px;
-    zoom:1;
 }
 .x-tip .x-tip-ft {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat 0 -18px;
@@ -46,12 +44,10 @@
 .x-tip .x-tip-ft-left {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat 0 -6px;
 	padding-left:6px;
-    zoom:1;
 }
 .x-tip .x-tip-ft-right {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat right -6px;
 	padding-right:6px;
-    zoom:1;
 }
 .x-tip .x-tip-bd {
     border:0 none;
@@ -60,12 +56,10 @@
 .x-tip .x-tip-bd-left {
 	background: #fff url(../images/default/qtip/tip-sprite.gif) no-repeat 0 -24px;
 	padding-left:6px;
-    zoom:1;
 }
 .x-tip .x-tip-bd-right {
 	background: transparent url(../images/default/qtip/tip-sprite.gif) no-repeat right -24px;
 	padding-right:6px;
-    zoom:1;
 }
 
 .x-tip h3 {

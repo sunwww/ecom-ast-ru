@@ -14,13 +14,41 @@
   </tiles:put>
   <tiles:put name="body" type="string">
 <form action="print-mis_area_patient_address_primer.do" method="post" target="_blank">
+    <table>
+        <tr>
+
+            <td class="label" title="ППР"><label id="typePpzLabel">ППР:</label></td>
+            <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                <input type="radio" name="typePpz" value="1"> Ушли в ППР
+            </td>
+            <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                <input type="radio" name="typePpz" value="2"> Без ППР
+            </td>
+            <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                <input type="radio" name="typePpz" value="3"> Не учитывать
+            </td>
+        </tr>
+        <tr>
+
+            <td class="label" title="ППР"><label id="typeRoomLabel">Голосует в палате:</label></td>
+            <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                <input type="radio" name="typeRoom" value="1"> Да
+            </td>
+            <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                <input type="radio" name="typeRoom" value="2"> Нет
+            </td>
+            <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                <input type="radio" name="typeRoom" value="3"> Не важно
+            </td>
+        </tr>
+    </table>
  <input type="button" onclick="goPrintRegion('dao_mis_area_patient_address')" value="Печать список ДАО">
  <input type="button" onclick="goPrint('gd_mis_area_patient_address')" value="Печать список ГДРФ">
  <input type="button" onclick="goPrintNative('main_big_report')" value="Большая важная таблица">
 <input type='hidden' name='m' id='m' value="printGroup3NativeQuery"/>
 <input type='hidden' name='s' id='s' value="PrintService"/>
 <%
-request.setAttribute("fldDate", "18.09.2016"); //Дата выборов
+request.setAttribute("fldDate", "01.07.2020"); //Дата выборов
 %>
 <input type='hidden' name="groupField" id="groupField" value="11,2,3">
 <input type='hidden' name='sqlText' id='sqlText' value=''>
@@ -92,31 +120,49 @@ where sls.datefinish is null and sls.dtype='HospitalMedCase'
 and sls.deniedhospitalizating_id is null
 and (pat.nationality_id is null or pat.nationality_id=171)
 and ml.id!=382
+{ppz}
 {onlyAstrakhan}
 and slo.dtype='DepartmentMedCase'
 and cast(to_char(to_date('${fldDate}','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(pat.birthday,'yyyy') as int)
  +(case when (cast(to_char(to_date('${fldDate}','dd.mm.yyyy'), 'mm') as int)
  -cast(to_char(pat.birthday, 'mm') as int)+(case when (cast(to_char(to_date('${fldDate}','dd.mm.yyyy'),'dd') as int)
  - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) >= 18
-and sls.datestart<to_date('15.09.2016','dd.MM.yyyy')
+and sls.datestart<to_date('${fldDate}','dd.MM.yyyy')
 and (pat.notvote is null or pat.notvote='0')
  order by {orderNumber}
  "/>
  </form>
      <script type="text/javascript">
      var orderByDAO = "case when (ml.isnoomc is null or ml.isnoomc='0') then ml.booknumer else prevMl.booknumer end,case when (ml.isnoomc is null or ml.isnoomc='0') then case when ml.id !=203 then ml.name else 'АКУШЕРСКОЕ ОТДЕЛЕНИЕ ПАТОЛОГИИ БЕРЕМЕННОСТИ' end else case when prevml.id !=203 then prevml.name else 'АКУШЕРСКОЕ ОТДЕЛЕНИЕ ПАТОЛОГИИ БЕРЕМЕННОСТИ' end end ,pat.lastname,pat.firstname,pat.middlename,pat.birthday";
-     var orderByExample = "pat.lastname,pat.firstname,pat.middlename,pat.birthday"
+     var orderByExample = "pat.lastname,pat.firstname,pat.middlename,pat.birthday";
      function goPrint(name) {
+         var ppz = jQuery("[name='typePpz']:checked").val();
+         if (+ppz===1) {
+             ppz = " and pat.ppz='1'"
+         } else if (+ppz===2) {
+             ppz = " and (pat.ppz is null or pat.ppz='0')"
+         } else {
+             ppz = "";
+         }
+
+         var isRoom = jQuery("[name='typeRoom']:checked").val();
+         if (+isRoom===1) {
+             ppz+=" and pat.voteInRoom='1'"
+         } else if (+isRoom===2) {
+             ppz+=" and (pat.voteInRoom is null or pat.voteInRoom='0')"
+         }
+
     	 if ($('sqlText').value=='') {
     		 $('sqlText').value = $('originText').value;
     	 }
-    	 	 $('sqlText').value = $('sqlText').value.replace("{orderNumber}",orderByDAO).replace("{orderNumber}",orderByDAO);
-    	 	 $('sqlText').value=$('sqlText').value.replace("{onlyAstrakhan}",""); 
+    	 	 $('sqlText').value = $('sqlText').value.replace("{orderNumber}",orderByDAO).replace("{orderNumber}",orderByDAO)
+                 .replace("{onlyAstrakhan}"," and (adr.kladr is null or adr.kladr like '300%')").replace("{ppz}",ppz);
+
     	 
     	 var frm = document.forms[0] ;
-    	 alert ("M= "+$('m').value);
-    	 alert ("Group= "+$('groupField').value);
-    	 alert ($('sqlText').value);
+    //	 alert ("M= "+$('m').value);
+   // 	 alert ("Group= "+$('groupField').value);
+    	 alert (jQuery('#sqlText').val());
     	 frm.action="print-"+name+".do";
     	 frm.submit();
     	 $('sqlText').value = "";

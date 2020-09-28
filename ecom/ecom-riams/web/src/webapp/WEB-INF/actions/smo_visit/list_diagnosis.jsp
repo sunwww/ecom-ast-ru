@@ -30,10 +30,10 @@
 	String typeDtype = ActionUtil.updateParameter("DiagnosisBySlo","typeDtype","3", request) ;
   	
   	%>
-    <msh:form action="/journal_visit_diagnosis.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/journal_visit_diagnosis.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
     
          <msh:row>
@@ -59,7 +59,7 @@
 	        	<input type="radio" name="typeAge" value="2" >  на конец периода
 	        </td>
         </msh:row>        
-     <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+     <msh:row>
         <td class="label" title="Поиск по МКБ (typeMKB)" colspan="1"><label for="typeMKbName" id="typeMkbLabel">МКБ:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeMKB" value="1">  перв. симв.
@@ -122,8 +122,8 @@
         	<msh:textField property="filterAdd" label="Фильтр МКБ" fieldColSpan="3" horizontalFill="true"/>
         	<td><i>Пример: <b>A0</b>, <b>N</b>, <b>A00-B87</b></i></td>
         </msh:row>        <msh:row>
-	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+	        <msh:textField property="dateBegin" label="Период с" />
+	        <msh:textField property="dateEnd" label="по" />
 			<td>
 	            <input type="submit" onclick="find()" value="Найти" />
 	          </td>
@@ -132,9 +132,9 @@
     </msh:form>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
-    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	String dateEnd = request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("dateEnd", date) ;
     	} else {
@@ -152,12 +152,9 @@
     		request.setAttribute("ageSql", "to_date('"+dateEnd+"','dd.mm.yyyy')") ;
     	}
     	request.setAttribute("dtypeSql", dtypeSql);
-    	String stat = (String)request.getParameter("typeStatus") ;
-    	//String typeMKB = (String)request.getAttribute("typeMKB") ;
-    	//String typeDate = (String)request.getAttribute("typeDate") ;
+    //	String stat = request.getParameter("typeStatus") ;
     	String mkbCode = "mkb.code" ;
     	String mkbName = "mkb.name" ;
-    	//String mkbLike = "0" ;
     	if (typeMKB!=null) {
     		if (typeMKB.equals("1")) {mkbName="substring(mkb.code,1,1)";mkbCode="substring(mkb.code,1,1)" ;} 
     		else if (typeMKB.equals("2")) {mkbName="substring(mkb.code,1,2)";mkbCode="substring(mkb.code,1,2)" ;}
@@ -168,84 +165,80 @@
     	request.setAttribute("mkbCode",mkbCode) ;
     	//request.setAttribute("mkbLike",mkbLike) ;
 
-    	boolean isStat = true ;
+/*    	boolean isStat = true ;
     	if (stat!=null && stat.equals("2")) {
     		isStat = false ;
     	}
-
-    	String dep = (String)request.getParameter("department") ;
+*/
+    	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("departmentSql", " and w.lpu_id="+dep) ;
     		request.setAttribute("department",dep) ;
     	} else {
     		request.setAttribute("department","0") ;
     	}
-    	String spec = (String)request.getParameter("spec") ;
+    	String spec = request.getParameter("spec") ;
     	if (spec!=null && !spec.equals("") && !spec.equals("0")) {
     		request.setAttribute("specSql", " and vis.workFunctionExecute_id="+spec) ;
     		request.setAttribute("spec",spec) ;
     	} else {
     		request.setAttribute("workFunction","0") ;
     	}
-    	String workFunction = (String)request.getParameter("workFunction") ;
+    	String workFunction = request.getParameter("workFunction") ;
     	if (workFunction!=null && !workFunction.equals("") && !workFunction.equals("0")) {
     		request.setAttribute("workFunctionSql", " and wf.workFunction_id="+workFunction) ;
     		request.setAttribute("workFunction",spec) ;
     	} else {
     		request.setAttribute("workFunction","0") ;
     	}
-    	String servStream = (String)request.getParameter("serviceStream") ;
+    	String servStream = request.getParameter("serviceStream") ;
     	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
     		request.setAttribute("serviceStreamSql", " and vss.id="+servStream) ;
     		request.setAttribute("serviceStream", servStream) ;
     	} else {
     		request.setAttribute("serviceStream", "0") ;
     	}
-    	String priority = (String)request.getParameter("priority") ;
+    	String priority = request.getParameter("priority") ;
     	if (priority!=null && !priority.equals("") && !priority.equals("0")) {
     		request.setAttribute("prioritySql", " and diag.priority_id="+priority) ;
     	} 
-    	String illnesPrimary = (String)request.getParameter("illnesPrimary") ;
+    	String illnesPrimary = request.getParameter("illnesPrimary") ;
     	if (illnesPrimary!=null && !illnesPrimary.equals("") && !illnesPrimary.equals("0")) {
     		request.setAttribute("illnesPrimarySql", " and diag.illnesPrimary_id="+illnesPrimary) ;
     	} 
     	
-    	if (typeEmergency!=null && typeEmergency.equals("1")) {
+    	if ("1".equals(typeEmergency)) {
     		request.setAttribute("emergencySql", " and vis.emergency='1' ") ;
-    	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
+    	} else if ("2".equals(typeEmergency)) {
     		request.setAttribute("emergencySql", " and (vis.emergency is null or vis.emergency='0') ") ;
     	} 
-    	String filter = (String)request.getParameter("filterAdd") ;
+    	String filter = request.getParameter("filterAdd") ;
     	if (filter!=null && !filter.equals("")) {
     		filter = filter.toUpperCase() ;
     		request.setAttribute("filterAdd",filter) ;
     		//filter = filter.replaceAll(" ", "") ;
     		String[] fs1=filter.split(",") ;
     		StringBuilder filtOr = new StringBuilder() ;
-    		
-    		for (int i=0;i<fs1.length;i++) {
-    			String filt1 = fs1[i].trim() ;
-    			String[] fs=filt1.split("-") ;
-    			if (filt1.length()>0) {
-	    			if (filtOr.length()>0) filtOr.append(" or ") ;
-		    		if (fs.length>1) {
-		    			filtOr.append(" mkb.code between '"+fs[0].trim()+"' and '"+fs[1].trim()+"'") ;
-		    		} else {
-		    			filtOr.append(" substring(mkb.code,1,"+filt1.length()+") = '"+filt1+"'") ;
-		    		}
-    			}
-    		}
+
+			for (String s : fs1) {
+				String filt1 = s.trim();
+				String[] fs = filt1.split("-");
+				if (filt1.length() > 0) {
+					if (filtOr.length() > 0) filtOr.append(" or ");
+					if (fs.length > 1) {
+						filtOr.append(" mkb.code between '").append(fs[0].trim()).append("' and '").append(fs[1].trim()).append("'");
+					} else {
+						filtOr.append(" substring(mkb.code,1,").append(filt1.length()).append(") = '").append(filt1).append("'");
+					}
+				}
+			}
     		request.setAttribute("filterSql", filtOr.insert(0, " and (").append(")").toString()) ;
     		
     	} 
-    	
-    	
-    	
-    	if (typeReestr!=null && typeReestr.equals("1")) {
+    	if ("1".equals(typeReestr)) {
     		String mkbCodeP = request.getParameter("mkbcode") ;
-    		String mkbCodeA = "and mkb.code = '"+mkbCodeP+"'" ;
-    		mkbCodeA=" and mkb.code = '"+mkbCodeP+"'" ;
-    		if (!typeMKB.equals("4")) {
+    		String mkbCodeA = " and mkb.code = '"+mkbCodeP+"'" ;
+    		if (!"4".equals(typeMKB)) {
     			mkbCodeA=" and mkb.code like '"+mkbCodeP+"%'" ;
     		}
     		request.setAttribute("mkbCodeSql",mkbCodeA) ;
@@ -292,15 +285,15 @@
     <input type="submit" value="Печать"> 
     </form></msh:sectionTitle>
 	<msh:sectionContent>
-    <msh:table printToExcelButton="Сохранить в excel"  name="datelist" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table printToExcelButton="Сохранить в excel"  name="datelist" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn property="2" columnName="Дата приема"/>
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="МКБ 10" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Характер заболевания" property="6" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
-      <msh:tableColumn columnName="Специалист" property="7" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
-      <msh:tableColumn columnName="Адрес" property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="МКБ 10" property="5" />
+      <msh:tableColumn columnName="Характер заболевания" property="6" />
+      <msh:tableColumn columnName="Специалист" property="7" />
+      <msh:tableColumn columnName="Адрес" property="8" />
     </msh:table>    
     </msh:sectionContent>		
     		</msh:section>

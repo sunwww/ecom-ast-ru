@@ -1,15 +1,14 @@
 package ru.ecom.mis.web.action.medcase.journal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.mis.ejb.service.patient.HospitalLibrary;
 import ru.ecom.web.util.ActionUtil;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class HospitalByAmbulanceTreatmentAction  extends BaseAction {
 
@@ -63,7 +62,7 @@ public class HospitalByAmbulanceTreatmentAction  extends BaseAction {
 			aRequest.setAttribute("hospInfo", "исключая случаи отказа от госпитализации") ;
 		}
 		
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 	
 	

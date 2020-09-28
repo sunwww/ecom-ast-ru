@@ -5,10 +5,7 @@ import ru.nuzmsh.commons.auth.ILoginInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
@@ -65,19 +62,18 @@ public class ApiUtil {
         return  response.readEntity(String.class);
     }
 
-    public static String creteGetRequest(String endpoint,String path, String mediaType){
+    public static String creteGetRequest(String endpoint,String path, String mediaType, Map<String,String> params){
 
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(endpoint);
         target = target.path(path);
-
+        for (Map.Entry<String,String> param : params.entrySet())
+            target=target.queryParam(param.getKey(), param.getValue());
         Response response = target.request(mediaType)
-                .header("Access-Control-Allow-Headers","X-Requested-With, content-type")
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                .header("Accept","application/xml")
                 .get();
 
-        System.out.println(response);
+        //System.out.println(response);
         return  response.readEntity(String.class);
     }
 

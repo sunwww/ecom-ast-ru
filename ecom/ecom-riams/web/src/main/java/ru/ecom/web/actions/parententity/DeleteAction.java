@@ -56,8 +56,8 @@ public class DeleteAction extends ru.ecom.web.actions.entity.DeleteAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         Long parentId = save(aMapping, aForm, aRequest, aResponse);
 
-        return ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), parentId);
+        return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), parentId);
     }
 
-    StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
+    final StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
 }

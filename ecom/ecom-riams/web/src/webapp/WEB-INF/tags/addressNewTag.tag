@@ -241,7 +241,7 @@
 
 </script>
 
-    <msh:ifFormTypeIsView formName="${form}" guid="b8c4d74b-4db5-433e-982c-e3133e4993ea">
+    <msh:ifFormTypeIsView formName="${form}">
       <script type="text/javascript">
       		$('buttonShow${name}Address').style.display = 'none';
 		</script>

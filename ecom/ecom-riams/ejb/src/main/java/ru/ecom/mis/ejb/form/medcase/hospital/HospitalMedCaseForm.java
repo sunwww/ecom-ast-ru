@@ -171,7 +171,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 	///** Дата RW */
 	//@Comment("Дата RW")
-	//@DateString @DoDateString 
+	//@DateString @DoDateString
 	//@Persist
 	//public String getRwDate() {return theRwDate;}
 	//public void setRwDate(String aRwDate) {theRwDate = aRwDate;}
@@ -257,7 +257,7 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public void setLpu(Long aLpu) {theLpu = aLpu;	}
 
 	@Comment("Провизорность")
-	@Persist
+	@Persist @Deprecated
 	public Boolean getProvisional() {return theProvisional;}
 	public void setProvisional(Boolean aProvisional) {theProvisional = aProvisional;}
 
@@ -677,4 +677,36 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private Integer theHeight;
 	/** Индекс массы тела */
 	private Double theIMT;
+
+	/** Дата идентификации */
+	@Comment("Дата идентификации")
+	@DateString @DoDateString
+	@MaxDateCurrent
+	public String getIdentDate() {return theIdentDate;	}
+	public void setIdentDate(String aIdentDate) {theIdentDate = aIdentDate;}
+
+	/** Время идентификации */
+	@Comment("Время идентификации")
+	@DoTimeString @TimeString
+	public String getIdentTime() {return theIdentTime;	}
+	public void setIdentTime(String aIdentTime) {theIdentTime = aIdentTime;}
+
+	/** Кто провёл идентификацию */
+	@Comment("Кто провёл идентификацию")
+	public String getIdentUsername() {return theIdentUsername;}
+	public void setIdentUsername(String aIdentUsername) {theIdentUsername = aIdentUsername;}
+
+	/** Была ли проведена идентификация пациента? */
+	@Comment("Была ли проведена идентификация пациента?")
+	public Boolean getIsIdentified() { return theIsIdentified; }
+	public void setIsIdentified(Boolean aIsIdentified) { theIsIdentified = aIsIdentified; }
+
+	/** Дата идентификации */
+	private String theIdentDate;
+	/** Время идентификации */
+	private String theIdentTime;
+	/** Кто провёл идентификацию */
+	private String theIdentUsername;
+	/** Была ли проведена идентификация пациента */
+	private Boolean theIsIdentified;
 }

@@ -27,19 +27,31 @@ function onSave(aForm,aEntity, aCtx) {
 		aEntity.statisticStub.setResultDischarge(resultDischarge) ;
 		aCtx.manager.persist(aEntity) ;
 	}
-	/*if (+aForm.childBirth>0 && aEntity.statisticStub!=null) {
-		var childBirth = getObject(aCtx, aForm.resultDischarge, Packages.ru.ecom.mis.ejb.domain.birth.voc.VocChildBirth);
-		aEntity.statisticStub.setChildBirth(childBirth) ;
-		aCtx.manager.persist(aEntity) ;
-	}*/
 	closePrescriptions(aForm, aCtx);
+    checkPaidServicesExecuted(aEntity, aCtx);
 }
+
+function totalDenialToEditDischargeAfter(aForm, aCtx) {
+	//Полный запрет на редактирование после выписки!
+	//Если уже есть дата и время выписки (не в будущем), запретить
+	var isDeniedList = aCtx.manager.createNativeQuery("select case when (datefinish is not null and dischargetime is not null" +
+		" and current_timestamp>cast((datefinish||' '||dischargetime) as TIMESTAMP)) then '1' else '0' end from medcase where id=:aId")
+		.setParameter("aId",aForm.id)
+		.getResultList();
+	var isDenied = !isDeniedList.isEmpty() ? +isDeniedList.get(0) : null ;
+	if (isDenied!=null && +isDenied==1)
+		throw "Изменение выписки невозможно, т.к. пациент уже выписан! Обратитесь в КЭО.";
+}
+
 function onPreSave(aForm,aEntity, aCtx) {
+	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotCheckDatesTimesAdmin"))
+		totalDenialToEditDischargeAfter(aForm, aCtx);
     //checkUniqueDiagnosis(aForm,aCtx);
     checkDeathThenPlan(aCtx, +aForm.result, +aForm.reasonDischarge);
     checkNewBornScreeningSecondExists(aForm,aCtx);
     //проверка на наличие ЭК по критериям
     //checkIfIsQECard(aForm, aCtx);
+    checkIfExistingActRVKClosed(aForm,aCtx);
 	var manager = aCtx.manager;
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
 	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy")) {
@@ -60,34 +72,23 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	var stat=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay") ;
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotCheckDatesTimesAdmin"))
+		stat=false;
 	var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
 	var dateFinish = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateFinish,aForm.dischargeTime);
 	var dateCur = new java.sql.Date(new java.util.Date().getTime()) ;
 
 	if (aForm.concludingDiagnos!=null &&aForm.concludingDiagnos!="" && (aForm.concludingMkb==null || aForm.concludingMkb==0)) throw "Не указан код МКБ заключительного диагноза!" ;
 	if ((aForm.concludingMkb!=null && aForm.concludingMkb>0)&&(aForm.concludingDiagnos==null||aForm.concludingDiagnos=="")) throw "Не сформулирован заключительный диагноз!" ;
-	//var d=aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,aForm.concludingMkb) ;
-	//if (d!=null) {d=d.code ;} else {d=""} ;
-	//if ((d>='O60.0' && d<='O60.9' || d>='O80.0' && d<='O80.9' ||
-	 //		d>='O82.0' && d<='O82.9' || d>='O84.0' && d<='O84.9') && +aForm.childBirth<1) throw "Необходимо указать тип родов" ;
-	// var dateFsql = new java.sql.Date(dateFinish.getTime()) ;
+
 	if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки должна быть больше, чем дата поступления";
-	//if ((((dateFsql.getTime()-dateCur.getTime())/1000/60/60)%24)>6) throw "Максимальная дата выписки - сегодняшняя" ;
 	
 	var ldate = aCtx.manager.createNativeQuery("select transferDate,transferTime from MedCase where parent_id=:parent and DTYPE='DepartmentMedCase' and transferDate is not null order by transferDate desc,transferTime desc")
 		.setParameter("parent",aForm.id)
 		.setMaxResults(1)
 		.getResultList() ;
-	//var stat = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.isDischargeOnlyCurrentDay(context) ;
-	//throw "date="+dmax[0] ;
 	if (!ldate.isEmpty()) {
 		var dmax=ldate.get(0) ;
-		//var vmax = aCtx.manager.createNativeQuery("select max() from MedCase where parent_id=:parent and DTYPE='DepartmentMedCase' and transferDate=:dmax")
-	     //  	.setParameter("parent",aForm.id)
-	      // 	.setParameter("dmax",dmax)
-	       	
-		//	.getSingleResult() ;
-		//throw "time="+dmax[0]+" "+dmax[1];
 			var dateMax = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(dmax[0],dmax[1]);
 			if ((dateFinish.getTime() < dateMax.getTime())) {
 				var cal = java.util.Calendar.getInstance() ;
@@ -131,7 +132,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 			} else{
 				var param = new java.util.HashMap() ;
 				param.put("obj","DischargeMedCase") ;
-				param.put("permission" ,"backdate") ;
+				param.put("permission" ,"editAfterDischarge") ;
 				param.put("id", aForm.id) ;
 				var check=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
 				
@@ -156,7 +157,7 @@ function checkAllDiagnosis (aCtx, aSlsId) {
 		 +" left join vocprioritydiagnosis vpd on vpd.id=d.priority_id"
 		 +" where sls.id='"+aSlsId+"' and (ml.isnoomc is null or ml.isnoomc='0') "
 		 +" group by sls.id,slo.id,ml.name,slo.dateStart,slo.transferDate	"
-		 +" having count(case when (vdrt.code='3' or vdrt.code='4') and (vpd.code='1') and d.idc10_id is not null then 1 else null end)=0  "
+		 +" having count(case when (vdrt.code='3' or vdrt.code='4') and (vpd.code='1') and d.idc10_id is not null then 1 else null end)=0  ";
 		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 		if (!list.isEmpty()) {
 			var slo ="" ;
@@ -164,7 +165,9 @@ function checkAllDiagnosis (aCtx, aSlsId) {
 				slo = slo+" <a href='entitySubclassView-mis_medCase.do?id="+list.get(0)[0]+"' onclick='return  msh.util.FormData.getInstance().isChangedForLink() ;'>" +list.get(0)[1]+"</a>" ;
 			}
 			throw "Не полностью заполнены данные по диагнозам в отделениях!!! "+ slo ;
-		}	
+		}	else {
+
+		}
 	}
 }
 //выписной диагноз должен быть уникальным
@@ -205,32 +208,28 @@ function checkDeathThenPlan(aCtx,resultId,reasonId) {
  * Проверить наличие II этапа кардиоскрининга перед выпиской (только при выписке из отделения новорождённых).
  */
 function checkNewBornScreeningSecondExists(aForm,aCtx) {
-    var sql = "select slo.id\n" +
-        "from medcase sls\n" +
-        "left join mislpu lpu on lpu.id=sls.department_id\n" +
-        "left join medcase slo on slo.parent_id=sls.id\n" +
-        "left join medcase allslo on allslo.parent_id=sls.id\n" +
-        "left join mislpu lpuslo on lpuslo.id=slo.department_id\n" +
-        "left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
-        "where lpu.IsCreateCardiacScreening=true  and lpuslo.IsCreateCardiacScreening=true and\n" +
-        "sls.dtype='HospitalMedCase'  and slo.dtype='DepartmentMedCase'  and allslo.dtype='DepartmentMedCase'\n" +
-        "and sls.id='" + aForm.id + "'\n"+
-        "group by slo.id\n" +
-        "having count(distinct allslo.id)=1 and count(distinct scrII.id)=0";
-    var list = aCtx.manager.createNativeQuery(sql).getResultList();
-    if (!list.isEmpty())
-		throw ("<a href='entityParentPrepareCreate-stac_screeningCardiacSecond.do?id=" + list.get(0) + "' target='_blank'>II этап кардиоскрининга</a> в отд. новорождённых должен быть создан до выписки!");
+	try { //fix cache
+		var sql = "select slo.id" +
+			" from medcase sls" +
+			" left join mislpu lpu on lpu.id=sls.department_id" +
+			" left join medcase slo on slo.parent_id=sls.id" +
+			" left join medcase allslo on allslo.parent_id=sls.id" +
+			" left join mislpu lpuslo on lpuslo.id=slo.department_id" +
+			" left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'" +
+			" where sls.id=" + aForm.id + " and sls.dtype='HospitalMedCase' and lpu.IsCreateCardiacScreening='1'  and lpuslo.IsCreateCardiacScreening='1' " +
+			" and slo.dtype='DepartmentMedCase'  and allslo.dtype='DepartmentMedCase'" +
+			" group by slo.id" +
+			" having count(distinct allslo.id)=1 and count(distinct scrII.id)=0";
+		var list = aCtx.manager.createNativeQuery(sql).getResultList();
+		if (!list.isEmpty()) {
+			throw ("<a href='entityParentPrepareCreate-stac_screeningCardiacSecond.do?id=" + list.get(0) + "' target='_blank'>II этап кардиоскрининга</a> в отд. новорождённых должен быть создан до выписки!");
+		}
+	} catch (e) {
+	}
 }
-//првоерка на наличие экспертной карты по критериям. Если нет - выписку запретить
+//проверка на наличие экспертной карты по критериям. Если нет - выписку запретить
 function checkIfIsQECard(aForm,aCtx) {
     if (aForm.id != null) {
-        /*var sql = "select id from qualityestimationcard where medcase_id=" + aForm.id + " and  kind_id=(select id from vocqualityestimationkind where code='PR203')";
-        var size1=aCtx.manager.createNativeQuery(sql).getResultList().size();
-        var sql2 = "select id from qualityestimationcard where medcase_id=(select id from medcase where parent_id=" + aForm.id+") and  kind_id=(select id from vocqualityestimationkind where code='PR203')";
-        var size2=aCtx.manager.createNativeQuery(sql2).getResultList().size();
-        throw ""+size1+" ; " +size2;
-        //if (size1==0 && size2==0) throw ("Выписка пациента разрешена только после создания экспертной карты!")*/
-
         var sql="select qe.id from qualityestimation qe" +
             " left join qualityestimationcard qec on qec.id=qe.card_id" +
             " left join medcase mc on mc.id=qec.medcase_id or mc.parent_id=qec.medcase_id " +
@@ -239,5 +238,75 @@ function checkIfIsQECard(aForm,aCtx) {
             " (mc.id=" + aForm.id + " or mc.parent_id=" + aForm.id + " ) and " +
         	" vqk.code='PR203' and qe.experttype='BranchManager'";
         if (aCtx.manager.createNativeQuery(sql).getResultList().isEmpty() ) throw ("Выписка пациента разрешена только после создания заведующим экспертной карты по 203 приказу!")
+    }
+}
+
+/**
+ * Отметить оплаченные назначения выполненными #178
+ * @param aEntity сущность
+ * @param aCtx контекст
+ */
+function checkPaidServicesExecuted(aEntity, aCtx) {
+	/* Если поток обслуживания - платный,
+	в течение days дней до госпитализации по текущий день (настройка приложения)
+	получить все CAOS, которые являются частью комплексной услуги (но не самой комплексной услугой)
+	и которые не были выполнены в СЛС/СЛО.
+	Проставить отметку о выполнении (medcase_id - СЛС)
+	 */
+	if (aEntity.getServiceStream()!=null && aEntity.getServiceStream().getCode()=='CHARGED') {
+		var days = getSettingDaysByKey('checkContractsServicesInSls', 7, aCtx);
+        updateListIdCAOS(days,aEntity.id,aCtx);
+	}
+}
+
+/**
+ * Получить настройку кол-ва дней по ключу #178
+ * @param aKey ключ
+ * @param aCtx контекст
+ * @return настройка String
+ */
+function getSettingDaysByKey(aKey, aDefault, aCtx) {
+    var resSet = aCtx.manager.createNativeQuery("select keyvalue from softconfig where key='"+aKey+"'").getResultList();
+    return resSet.isEmpty() || +resSet.get(0)==0? aDefault: +resSet.get(0);
+}
+
+/**
+ * Проставить medcase всем CAOS, которые являются частью комплексной услуги (но не самой комплексной услугой)
+ * и которые не были выполнены в СЛС/СЛО #178
+ * @param days в течение какого кол-ва дней проверять счета
+ * @param aMedcaseId СЛС
+ * @param aCtx контекст
+ */
+function updateListIdCAOS(days,aMedcaseId,aCtx) {
+    return aCtx.manager.createNativeQuery("update contractaccountoperationbyservice set medcase_id = " + aMedcaseId +
+		" where id=ANY(select caos.id" +
+        " from medcase sls" +
+        " left join vocservicestream sstream on sstream.id=sls.servicestream_id" +
+        " left join patient pat on sls.patient_id=pat.id " +
+        " left join contractperson cp on pat.id=cp.patient_id" +
+        " left join servedperson sp on cp.id=sp.person_id" +
+        " left join contractaccount ca on ca.id=sp.account_id" +
+        " left join contractaccountmedservice cams on ca.id=cams.account_id" +
+        " left join contractaccountoperationbyservice caos on cams.id=caos.accountmedservice_id" +
+        " where sls.datefinish is null" +
+        " and sls.id='" + aMedcaseId +
+        "' and sstream.code='CHARGED'" +
+        " and cams.fromcomplexmedserviceid is not null" +
+        " and caos.medcase_id is null and caos.serviceid is null  " +
+        " and (ca.createdate between sls.datestart and sls.datestart-" + days + " or ca.createdate=sls.datestart" +
+        " or ca.createdate=sls.datestart-"+days+"))").executeUpdate();
+}
+
+/**
+ * Проверка на наличие открытого акта РВК. Если есть - выписку запретить #183
+ * @param aForm форма
+ * @param aCtx контекст
+ */
+function checkIfExistingActRVKClosed(aForm,aCtx) {
+    if (aForm.id != null) {
+        var sql="select id from actrvk where datefinish is null and medcase_id=ANY(select id from medcase where parent_id=" + aForm.id + ")";
+        var list = aCtx.manager.createNativeQuery(sql).getResultList();
+        if (!list.isEmpty())
+            throw ("<a href='entityEdit-rvk_aktSlo.do?id=" + list.get(0) + "' target='_blank'>Акт РВК</a> необходимо закрыть до выписки!");
     }
 }

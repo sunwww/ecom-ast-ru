@@ -8,8 +8,8 @@
 
 
     <tiles:put name="side" type="string">
-        <msh:sideMenu guid="helloSideMenu-123">
-            <msh:sideLink guid="helloSideLinkNew"
+        <msh:sideMenu>
+            <msh:sideLink
                           roles="/Policy/Mis/Directory/Department/DeleteRecord" key="ALT+D"
                           action="/javascript:deleteRecord('.do')"
                           name="Удалить" />
@@ -42,7 +42,7 @@
 
 
         <msh:ifInRole roles="/Policy/Mis/Directory/Department/EditRecord">
-        <msh:panel guid="panel">
+        <msh:panel>
             <div class="content">
                 <msh:row>
                     <msh:row>

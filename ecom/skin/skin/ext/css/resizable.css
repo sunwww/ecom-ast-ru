@@ -16,7 +16,6 @@
 	 background:white;
 	 filter:alpha(opacity=0);
 	 opacity:0;
-	 zoom:1;
 }
 .x-resizable-handle-east{
     width:6px;

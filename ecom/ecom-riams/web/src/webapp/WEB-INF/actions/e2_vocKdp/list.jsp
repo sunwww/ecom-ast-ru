@@ -13,7 +13,7 @@
         <msh:sideMenu title="Добавить" >
             <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_vocKdp" name="Новый КДП" roles="/Policy/E2/Create" />
         </msh:sideMenu>
-        <tags:expertvoc_menu currentAction="main"/>
+        <tags:expertvoc_menu currentAction="e2_vocKdp_st"/>
     </tiles:put>
 
     <tiles:put name='body' type='string'>
@@ -22,7 +22,7 @@
             ,list(ms.code||' '||ms.name) as services
             ,pr.code|| ' '|| pr.name as profile
              from VocDiagnosticVisit kdp
-             left join VocE2FondV015 pr on pr.id=kdp.profile_id
+             left join VocE2FondV021 pr on pr.id=kdp.speciality_id
              left join VocDiagnosticVisitMedService vis on vis.visit_id=kdp.id
              left join vocMedService ms on ms.id=vis.medservice_id
              group by kdp.id, kdp.code, kdp.name, pr.code, pr.name
@@ -30,17 +30,20 @@
 "/>
         <msh:section title='Результат поиска'>
             <msh:table  name="entryList" action="entityView-e2_vocKdp.do" idField="1" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="КПГ" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Профиль" property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Услуги" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="КПГ" property="2" />
+                <msh:tableColumn columnName="Профиль" property="4" />
+                <msh:tableColumn columnName="Услуги" property="3" />
             </msh:table>
         </msh:section>
 
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
-        <script type="text/javascript">
 
+        <script type="text/javascript">
+            alert('НЕ используется!!!!');
+            alert('НЕ используется!!!!');
+            alert('НЕ используется!!!!');
         </script>
             </tiles:put>
 </tiles:insert>

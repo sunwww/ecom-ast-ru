@@ -38,11 +38,13 @@
 </div>
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}EnterDateDialogInitialized = false ;
      var the${name}EnterDateDialog = new msh.widget.Dialog($('${name}EnterDateDialog')) ;
+     var someId = 0;
      // Показать
-     function show${name}EnterDate() {
+     function show${name}EnterDate(aSomeId) {
+         if (aSomeId) someId=aSomeId;
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}EnterDateDialogInitialized) {
          	init${name}EnterDateDialog() ;
@@ -63,7 +65,12 @@
      		alert("Поле дата является обязательным") ;
      		$("${name}Date").focus() ;
      	}  else {
-	     	${functionSave}($('${name}Date').value) ;
+     	    if (+someId>0) {
+                ${functionSave}(someId,$('${name}Date').value) ;
+            } else {
+                ${functionSave}($('${name}Date').value) ;
+            }
+
 	     	cancel${name}EnterDate() ;
          }
      }

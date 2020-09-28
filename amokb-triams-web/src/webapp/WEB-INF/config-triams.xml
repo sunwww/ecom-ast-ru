@@ -18,12 +18,7 @@
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/mis_record/step0.jsp" />
 		</action>
-		<action path='/infomat'
-			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
-			scope="request">
-			<forward name="success" redirect="false"
-				path="/WEB-INF/actions/mis_record/infomat.jsp" />
-		</action>
+
 		<action path='/step_gosgarant_*'
 			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
 			scope="request">

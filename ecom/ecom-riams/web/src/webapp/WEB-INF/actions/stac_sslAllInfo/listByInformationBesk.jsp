@@ -9,19 +9,19 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал обращений по отделению</msh:title>
+    <msh:title mainMenu="StacJournal">Журнал обращений по отделению</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_journalByInformationBesk"/>
   </tiles:put>
   <tiles:put name="body" type="string">    
-	    <msh:form action="/stac_journalByInformationBesk.do" defaultField="lastname" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-	    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff"  >
+	    <msh:form action="/stac_journalByInformationBesk.do" defaultField="lastname" disableFormDataConfirm="true" method="GET">
+	    <msh:panel  >
       	  	<msh:hidden property="checkedDischarge" />
       	  	<msh:hidden property="checkedDischargeMonth" />
       	  	<msh:hidden property="checkedDenied" />
-	      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9" >
-	        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+	      <msh:row >
+	        <msh:separator label="Параметры поиска" colSpan="7" />
 	      </msh:row>
 	      <msh:row>
 	      	<msh:textField property="lastname"  label="Фамилия Имя Отчество" size="60" horizontalFill="true" fieldColSpan="6"/>
@@ -111,12 +111,12 @@
       ${isDenied} or sls.DTYPE='HospitalMedCase' and sls.dateStart between current_date-1 and current_date 
       and sls.deniedHospitalizating_id is not null)
       ${lastname} ${firstname} ${middlename} and (sls.noActuality is null or sls.noActuality='0')"
-     guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+     />
     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/InformationBesk">
 	    <msh:table selection="multiply"  
 	    viewUrl="entityParentShortList-stac_slo.do" name="staclist" 
 	    action="entitySubclassView-mis_medCase.do" idField="1" 
-	    guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+	   >
                         <msh:tableNotEmpty >
                                 <msh:toolbar>
                         <msh:row>
@@ -127,24 +127,24 @@
                                 </msh:toolbar>
                     </msh:tableNotEmpty>
 	      <msh:tableColumn property="sn" columnName="#"/>
-	      <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	      <msh:tableColumn columnName="Стат.карта" property="5" />
 	      <msh:tableColumn property="8" columnName="Тип стационара"/>
-	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-	      <msh:tableColumn columnName="Направлен в отделение" property="6" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-	      <msh:tableColumn columnName="Дата выписки" property="7" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+	      <msh:tableColumn columnName="Год рождения" property="4" />
+	      <msh:tableColumn columnName="Дата поступления" property="2" />
+	      <msh:tableColumn columnName="Направлен в отделение" property="6" />
+	      <msh:tableColumn columnName="Дата выписки" property="7" />
 	    </msh:table>
     </msh:ifInRole>
     <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/InformationBesk">
 	    <msh:table disableKeySupport="true" 
-	    viewUrl="entityParentShortList-stac_slo.do" name="staclist" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+	    viewUrl="entityParentShortList-stac_slo.do" name="staclist" action="entitySubclassView-mis_medCase.do" idField="1">
 	      <msh:tableColumn property="sn" columnName="#"/>
-	      <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-	      <msh:tableColumn columnName="Направлен в отделение" property="6" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+	      <msh:tableColumn columnName="Стат.карта" property="5" />
+	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+	      <msh:tableColumn columnName="Год рождения" property="4" />
+	      <msh:tableColumn columnName="Дата поступления" property="2" />
+	      <msh:tableColumn columnName="Направлен в отделение" property="6" />
 	    </msh:table>
     </msh:ifNotInRole>
     </msh:sectionContent>
@@ -160,17 +160,17 @@
     left outer join Patient pat on m.patient_id = pat.id 
     where m.DTYPE='DepartmentMedCase' 
     and m.transferDate is null and m.dateFinish is null ${lastname} ${firstname} ${middlename} and (sls.noActuality is null or cast(sls.noActuality as integer)=0)"
-     guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+     />
     <msh:table disableKeySupport="true" name="datelist" action="entitySubclassView-mis_medCase.do"
     viewUrl="entitySubclassShortView-mis_medCase.do" 
     
-    idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Отделение" property="6" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Стат.карта" property="5" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
+      <msh:tableColumn columnName="Отделение" property="6" />
     </msh:table>
     </msh:sectionContent>
 

@@ -20,66 +20,59 @@ public class PregnancyServiceBean implements IPregnancyService {
 	public Long getPregnanExchangeCard(Long aPregId) {
 		List<PregnanExchangeCard> list = theManager.createQuery("from PregnanExchangeCard where pregnancy_id=:pregId")
 			.setParameter("pregId",aPregId).getResultList() ;
-		return list.size()>0?list.iterator().next().getId(): null;
+		return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	@SuppressWarnings("unchecked")
 	public Long getConfinedExchangeCard(Long aPregId) {
 		List<ConfinedExchangeCard> list = theManager.createQuery("from ConfinedExchangeCard where pregnancy_id=:pregId")
 		.setParameter("pregId",aPregId).getResultList() ;
-	return list.size()>0?list.iterator().next().getId(): null;
+		return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public Long getPregHistoryByMedCase(Long aMedCaseId) {
 		List<PregnancyHistory> list = theManager.createQuery("from PregnancyHistory where medCase_id=:medCaseId")
 		.setParameter("medCaseId",aMedCaseId).getResultList() ;
-	return list.size()>0?list.iterator().next().getId(): null;
+		return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	@SuppressWarnings("unchecked")
 	public Long getNewBornHistoryByMedCase(Long aMedCaseId) {
 		List<NewBorn> list = theManager.createQuery("from NewBorn where medCase_id=:medCaseId")
 		.setParameter("medCaseId",aMedCaseId).getResultList() ;
-	return list.size()>0?list.iterator().next().getId(): null;
+	return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	@SuppressWarnings("unchecked")
 	public Long getConfinementCertificate(Long aPregId) {
 		List<ConfinementCertificate> list = theManager.createQuery("from Certificate where DTYPE='ConfinementCertificate' and pregnancy_id=:pregId")
 		.setParameter("pregId",aPregId).getResultList() ;
-		return list.size()>0?list.iterator().next().getId(): null;
+		return list.isEmpty() ? null : list.iterator().next().getId();
 	}
 	public boolean isWomanByPatient(Long aPatient) {
 		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from patient p left join vocsex vs on vs.id=p.sex_id where p.id='"+aPatient+"' and vs.omcCode='2'").setMaxResults(1).getResultList() ;
-		return res.size()>0 ;
-		//Patient pat = theManager.find(Patient.class, aPatient) ;
-		//return isWomanByPatient(pat) ;
+		return !res.isEmpty() ;
 	}
 	
 	public boolean isWomanByMedCase(Long aMedCase) {
 		//MedCase medCase = theManager.find(MedCase.class, aMedCase) ;
 		//Patient pat = medCase.getPatient() ;
 		//if (pat==null && medCase.getParent()!=null) pat = medCase.getParent().getPatient() ;
-		if (aMedCase==null) aMedCase=Long.valueOf(0) ;
+		if (aMedCase==null) aMedCase=0L ;
 		List<Object[]> res = theManager.createNativeQuery(" select vs.omcCode,vs.id from MedCase m left join patient p on p.id=m.patient_id left join vocsex vs on vs.id=p.sex_id where m.id="+aMedCase+" and vs.omcCode='2'").setMaxResults(1).getResultList() ;
 
-		return res.size()>0 ;
+		return !res.isEmpty();
 	}
 
-	private boolean isWomanByPatient(Object aOmcCode) {
-		return (aOmcCode!=null && String.valueOf(aOmcCode).equals("2") );
-		
-	}
 	public Long calcApgarEstimation(Long aMuscleTone, Long aPalpitation
   			, Long aReflexes, Long aRespiration
   			, Long aSkinColor)  {
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("select") 
-		.append("     (select case when max(ball) is not null then max(ball) else 0 end from VocApgarSkinColor where id=:skinColor)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarRespiration where id=:respiration)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarReflexes where id=:reflexes)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarPalpitation where id=:palpitation)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarMuscleTone where id=:muscleTone)")
-		.append(" 	,id	 from VocSex") ;
-		List<Object[]> row = theManager.createNativeQuery(sql.toString())
+		String sql = "select" +
+				"     (select case when max(ball) is not null then max(ball) else 0 end from VocApgarSkinColor where id=:skinColor)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarRespiration where id=:respiration)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarReflexes where id=:reflexes)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarPalpitation where id=:palpitation)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocApgarMuscleTone where id=:muscleTone)" +
+				" 	,id	 from VocSex";
+		List<Object[]> row = theManager.createNativeQuery(sql)
 			.setParameter("skinColor",aSkinColor)
 			.setParameter("respiration",aRespiration)
 			.setParameter("reflexes",aReflexes)
@@ -87,15 +80,11 @@ public class PregnancyServiceBean implements IPregnancyService {
 			.setParameter("muscleTone",aMuscleTone)
 			.setMaxResults(1)
 			.getResultList() ;
-		StringBuilder ret = new StringBuilder() ;
-		Long value = Long.valueOf(0) ;
-		if(row.size()>0) {
-			ret = new StringBuilder() ;
-			ret.append(row.get(0)[0]) ;
+		Long value = 0L ;
+		if(!row.isEmpty()) {
 			value = ConvertSql.parseLong(row.get(0)[0]) ;
-			if (value==null) value=Long.valueOf(0) ; 
+			if (value==null) value=0L ;
 		} 
-		
 		return value ;
 	
 	}
@@ -103,15 +92,14 @@ public class PregnancyServiceBean implements IPregnancyService {
 	public String calcDownesEstimation(Long aRespirationRate, Long aCyanosis
   			, Long aIntercostalRetraction, Long aDifficultExhalation
   			, Long aAuscultation) {
-		StringBuilder sql = new StringBuilder() ;
-		sql.append("select") 
-		.append("     (select case when max(ball) is not null then max(ball) else 0 end from VocDownesRespirationRate where id=:respirationRate)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesCyanosis where id=:cyanosis)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesIntercostalRet where id=:intercostalRetraction)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesDifExhalation where id=:difficultExhalation)+")
-		.append(" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesAuscultation where id=:auscultation)")
-		.append(" 	,id	 from VocSex") ;
-		List<Object[]> row = theManager.createNativeQuery(sql.toString())
+		String sql = "select" +
+				"     (select case when max(ball) is not null then max(ball) else 0 end from VocDownesRespirationRate where id=:respirationRate)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesCyanosis where id=:cyanosis)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesIntercostalRet where id=:intercostalRetraction)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesDifExhalation where id=:difficultExhalation)+" +
+				" 		(select case when max(ball) is not null then max(ball) else 0 end from VocDownesAuscultation where id=:auscultation)" +
+				" 	,id	 from VocSex";
+		List<Object[]> row = theManager.createNativeQuery(sql)
 			.setParameter("respirationRate",aRespirationRate)
 			.setParameter("cyanosis",aCyanosis)
 			.setParameter("intercostalRetraction",aIntercostalRetraction)
@@ -120,18 +108,16 @@ public class PregnancyServiceBean implements IPregnancyService {
 			.setMaxResults(1)
 			.getResultList() ;
 		
-		Long value = Long.valueOf(0) ;
-		if(row.size()>0) {
+		Long value = 0L ;
+		if(!row.isEmpty()) {
 			value = ConvertSql.parseLong(row.get(0)[0]) ;
 		}
 		StringBuilder ret = new StringBuilder() ;
 		ret.append(value).append("#") ;
-		sql = new StringBuilder() ;
-		sql.append("select id,name,code from VocCommonMask where DTYPE='VocDownesCommonMark' and :valueball between minBall and maxBall");
-		row = theManager.createNativeQuery(sql.toString())
+		row = theManager.createNativeQuery("select id,name,code from VocCommonMask where DTYPE='VocDownesCommonMark' and :valueball between minBall and maxBall")
 			.setParameter("valueball", value)
 			.getResultList() ;
-		if(row.size()>0) {
+		if(!row.isEmpty()) {
 			
 			ret.append(row.get(0)[0]) ;
 			ret.append("#").append(row.get(0)[1]);
@@ -162,8 +148,8 @@ public class PregnancyServiceBean implements IPregnancyService {
 			.setMaxResults(1)
 			.getResultList() ;
 		
-		Long value = Long.valueOf(0) ;
-		if(row.size()>0) {
+		Long value = 0L ;
+		if(!row.isEmpty()) {
 			value = ConvertSql.parseLong(row.get(0)[0]) ;
 		}
 		StringBuilder ret = new StringBuilder() ;
@@ -173,7 +159,7 @@ public class PregnancyServiceBean implements IPregnancyService {
 		row = theManager.createNativeQuery(sql.toString())
 			.setParameter("valueball", value)
 			.getResultList() ;
-		if(row.size()>0) {
+		if(!row.isEmpty()) {
 			
 			ret.append(row.get(0)[0]) ;
 			ret.append("#").append(row.get(0)[1]);

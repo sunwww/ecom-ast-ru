@@ -20,7 +20,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 }
 </style>
 <msh:sideMenu></msh:sideMenu>
-<msh:sideMenu title="Поиск документов нетрудоспособности" guid="fsdfsdf-dfsf">
+<msh:sideMenu title="Поиск документов нетрудоспособности">
 	<msh:sideLink name="По серии и номеру" action="/dis_documents.do" key="ALT+7" 
 		title="Поиск документов нетрудоспособности по серии и номеру" roles="/Policy/Mis/Disability/Case/Document/View"
 		styleId="find_number"/>
@@ -35,10 +35,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
       />
       <msh:sideLink name="Свод" action="/dis_swod.do"
       	roles="/Policy/Mis/Disability/Case/Document/View" styleId="swodNT"
-      />
-        <%--НЕ ИСПОЛЬЗУЕТСЯ--%>
-      <msh:sideLink name="Обмен с ФСС" action="/dis_documentExport"
-      	roles="/DISABLED/Policy/Mis/Disability/Case/Document/View" styleId="exportDNT"
       />
     </msh:sideMenu>
 <msh:sideMenu title="Журналы по КЭР">

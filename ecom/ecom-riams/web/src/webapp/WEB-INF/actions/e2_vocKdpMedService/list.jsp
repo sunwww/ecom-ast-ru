@@ -28,8 +28,8 @@
 "/>
         <msh:section title='Результат поиска'>
             <msh:table  name="entryList" action="entityView-e2_vocKdp.do" idField="1" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="КПГ" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Услуги" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="КПГ" property="2" />
+                <msh:tableColumn columnName="Услуги" property="3" />
             </msh:table>
         </msh:section>
 

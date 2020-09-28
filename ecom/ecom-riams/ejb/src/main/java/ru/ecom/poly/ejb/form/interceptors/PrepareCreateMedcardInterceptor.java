@@ -35,7 +35,7 @@ public class PrepareCreateMedcardInterceptor implements IParentFormInterceptor, 
 	}
 
 	public void intercept(IEntityForm aForm, Object aEntity, EntityManager aManager) {
-		intercept(aForm, aEntity, null, null);
+	//	intercept(aForm, aEntity, null, null); //NPE
 		
 	}
 

@@ -10,12 +10,6 @@ var dateutil =
 
 dateutil.DateField = function(aElement) {
 
-	//var calA = document.createElement("SPAN") ;
-	//calA.innerHTML="<a href=\"javascript:void(0)\" onclick=\"if(self.gfPop2){gfPop2.fPopCalendar($('"+aElement.id+"'));}return false;\">...</a>" ;
-    //	calA.id = 'spanA'+aElement.id;
-    	
-    //aElement.parentNode.appendChild(calA) ;
-   // aElement.parentNode.innerHTML = aElement.parentNode.innerHTML 
     eventutil.addEventListener(aElement, "dblclick", function() {if(self.gfPop2){gfPop2.fPopCalendar($(aElement.id));}}) ;	 
     aElement.onblur = check ;
     var theElement  = aElement;
@@ -66,7 +60,7 @@ dateutil.DateField = function(aElement) {
         }
     }
 
-}
+};
 
 dateutil.PeriodFields = function(aElement, aElementLinker, aPlusYear, aPlusMonth, aPlusDate) {
     try
@@ -81,24 +75,21 @@ dateutil.PeriodFields = function(aElement, aElementLinker, aPlusYear, aPlusMonth
     var theElementLinker = aElementLinker ;
     var thePlusYear = parseInt(aPlusYear,10) ;
     var thePlusMonth = parseInt(aPlusMonth,10) ;
-    var thePlusDate = parseInt(aPlusDate,10)
+    var thePlusDate = parseInt(aPlusDate,10);
 
     // Методы
     function onLinker(aEvent) {
         try {
-//            if(theElementLinker.value=='') {
-                var dateString = parseDate(theElement.value);
+            var dateString = parseDate(theElement.value);
 
-                var yyyy = parseInt(dateString.substring(6,dateString.length),10) ;
-                var dd = parseInt(dateString.substring(0,2),10) ;
-                var mm = parseInt(dateString.substring(3,5),10) ;
+            var yyyy = parseInt(dateString.substring(6,dateString.length),10) ;
+            var dd = parseInt(dateString.substring(0,2),10) ;
+            var mm = parseInt(dateString.substring(3,5),10) ;
             var date = new Date(yyyy, mm-1, dd) ;
-            theElement.value = monthDayFormat(date.getDate())+"."+monthDayFormat(date.getMonth()+1)+"."+ date.getYear()
-
+            theElement.value = monthDayFormat(date.getDate())+"."+monthDayFormat(date.getMonth()+1)+"."+ date.getYear();
             if (thePlusDate!=null && thePlusDate>0) {
                 date.setDate(dd+thePlusDate) ;
             }
-
 
             if (thePlusMonth!=null && thePlusMonth>0) {
                 date.setMonth(mm + thePlusMonth) ;
@@ -107,10 +98,8 @@ dateutil.PeriodFields = function(aElement, aElementLinker, aPlusYear, aPlusMonth
             if (thePlusYear!=null && thePlusYear>0) {
                     date.setYear(yyyy + thePlusYear) ;
             }
-                theElementLinker.value = monthDayFormat(date.getDate())+"."+monthDayFormat(date.getMonth()+1)+"."+ date.getYear() ;
-//            } else {
-//
-//            }
+            theElementLinker.value = monthDayFormat(date.getDate())+"."+monthDayFormat(date.getMonth()+1)+"."+ date.getYear() ;
+
         } catch(e) {
 
         }
@@ -118,7 +107,7 @@ dateutil.PeriodFields = function(aElement, aElementLinker, aPlusYear, aPlusMonth
 
 
 
-}
+};
 dateutil.YearLinkAction = function(aElement, aLinkedElement) {
     // конструктор
     try
@@ -202,7 +191,7 @@ function parseDate(inputStr) {
     }
     if (yyyy < 100)
     {
-        if (yyyy >= 25) {
+        if (yyyy >= 30) {
             yyyy += 1900;
         } else {
             yyyy += 2000;
@@ -220,7 +209,7 @@ function onDateFld(aElementSt, aElementEnd)
     if (isDate(aElementSt))
     {
         var inputStr = aElementSt.value ;
-        var delimfirst=inputStr.indexOf(".")
+        var delimfirst=inputStr.indexOf(".");
         var delimlast=inputStr.lastIndexOf(".");
         var dd = parseInt(inputStr.substring(0,delimfirst),10) ;
         var mm = parseInt(inputStr.substring(delimfirst + 1,delimlast),10) ;

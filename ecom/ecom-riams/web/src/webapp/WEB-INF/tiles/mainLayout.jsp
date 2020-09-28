@@ -7,6 +7,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@page import="java.util.Calendar"%>
 
 <%
@@ -19,8 +20,7 @@
    <title>МедОС</title>
    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
    <meta content="text/javascript; charset=utf-8" />
-	<link title='Поиск в МИАЦ' rel='search' type='application/opensearchdescription+xml' href='opensearch.jsp?tmp=6'/>
-	
+
 <msh:ifInIdeMode>
    <script type='text/javascript' src='ru.ecom.gwt.idemode.Main/ru.ecom.gwt.idemode.Main.nocache.js'></script>
    <script type='text/javascript' src='./dwr/interface/IdeModeService-CA113b8ec45f6.js'></script>   
@@ -35,24 +35,15 @@
          font-size: 30px;
          margin-bottom: 10px;
      }
+    .rightAlign {
+        text-align:right;
+        margin-right:80px
+    }
     </style>
 <!-- Дополнительное определение стиля END -->
 
      <script type="text/javascript">
          var ws_socketServerStorageName;
-         jQuery(document).ready(function() {
-             var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'GetMessageFromFile?username=${username}', false);
-             xhr.send();
-             if (xhr.status != 200) {
-                 alert( xhr.status + ': ' + xhr.statusText ); // пример вывода: 404: Not Found
-             } else {
-                 //alert(xhr.responseText); // responseText -- текст ответа.
-                 var t = document.getElementById('message');
-                 t.innerHTML=xhr.responseText
-             }
-         });
-
 
      </script>
      <msh:ifInRole roles="/Policy/WebSocket">
@@ -75,13 +66,15 @@
     String path_curdate="default" ;
     if (month == Calendar.JANUARY) { 
     	if (day<10) {path_curdate="0101";}
-    	if (day==13) {path_curdate="0113";}
+    	else if (day==13) {path_curdate="0113";}
     } else if (month ==  Calendar.FEBRUARY) {
     	if (day==14) {path_curdate="0214";}
-    	if (day>20 && day<24) {path_curdate="0223";}
+    	else if (day>20 && day<24) {path_curdate="0223";}
     } else if (month == Calendar.MARCH) {
     	if (day>5 && day<9) {path_curdate="0308";}
-    	if (day>20) {path_curdate="1231";}
+    } else if (month==Calendar.DECEMBER) {
+        if (day>23) {path_curdate="ny";}
+        else if (day>10) {path_curdate="1231";}
     }
     String style="background: url('/customer/images/top_images/"+path_curdate+".jpg') no-repeat left top ;" ;
     request.setAttribute("style_addition_body", style) ;
@@ -105,7 +98,7 @@
             <li><a href='ecom_releases.do'>Новости</a></li>
             <msh:ifInRole roles="/Policy/Mis/CustomMessage/View">
             <li class="separator">|</li>
-            <li><a href='javascript:void(0)' onclick='getDefinition("js-mis_customMessage-getSystemMessages.do?id=-1&short=Short")'>Сообщения</a></li>
+            <li><a href='javascript:void(0)' onclick='getDefinition("js-mis_customMessage-getMessages.do?id=-1&short=Short")'>Сообщения</a></li>
             </msh:ifInRole>
              <msh:ifInRole roles="/Policy/Jaas/SecUser/ReplaceWorkFunction">
             <li class="separator">|</li>
@@ -116,7 +109,12 @@
             <li> <a href='javascript:void(0)' onclick='getDefinition("js-riams-instructions.do?short=Short")'>Инструкции</a>
              </li>
              <li class="separator">|</li>
-             
+            <msh:ifInRole roles="/Policy/Config/MakeScreenshortWithout500">
+            <li>
+                <a href='javascript:void(0)' onclick='capture()'>Скриншот проблемы</a>
+            </li>
+            <li class="separator">|</li>
+            </msh:ifInRole>
              <li>
              <% request.setAttribute("servletPath", request.getServletPath()); %>
              <msh:ifNotInRole roles="/Policy/Mis/Help/Edit">
@@ -167,8 +165,6 @@
             <msh:sideLink params="" styleId="mainMenuTemplate" action="/entityList-diary_template.do" name="Шаблоны"
                           title="Шаблоны" roles="/Policy/MainMenu/Template"/>
 
-
-                          
             <msh:sideLink params="" styleId="mainMenuContract" action="/contract_find_by_number.do" name="Договоры"
                           title="Договоры" roles="/Policy/MainMenu/Contract,/Policy/Mis/Contract/MedContract/View"/>
 
@@ -178,11 +174,15 @@
                           roles="/Policy/MainMenu/Expert" title="Экспертиза"/>
 			<msh:sideLink params="" styleId="mainMenuExpert2" action="/entityList-e2_entryList.do" name="Реестры ФОМС"
                           roles="/Policy/MainMenu/Expert2" title="Реестры ФОМС"/>
+            <msh:sideLink params="" styleId="mainMenuExpert2" action="/riams_edkc.do" name="ЕДКЦ"
+                          roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet" title="ЕДКЦ"/>
             <msh:sideLink params="" styleId="mainMenuVoc" action="/pharm_admin" name="Аптека"
                           roles="/Policy/Mis/Pharmacy/Administration" title="Аптека"/>
             <msh:sideLink params="" styleId="mainMenuConfig" action="/riams_config.do" name="Настройки"
                           roles="/Policy/MainMenu/Config" title="Настройки"/>
-	
+            <msh:sideLink params="" styleId="mainMenuConfig" action="/http://keo.amokb.ru/keo?" name="НСИ"
+                          roles="/Policy/MainMenu/Standards" title="Нормативно-справочная информация"/>
+
         </ul>
 
     </div>
@@ -218,9 +218,29 @@
     	<tiles:insert attribute="hotkey" ignore="true"/>
     </div>
 
-    <div id="footer">
+    <div id="footer" class="rightAlign">
 
         <div id='gotoUpDown'><a class="gotoTop" href="#header">Вверх</a><a class="gotoBottom" href="#copyright">Вниз</a></div>
+        <msh:ifInRole roles="/Policy/Config/CornerMessage">
+        <tags:UnreadMessages name="UnreadMessages" />
+        <div class="msgBox">
+                <h3>Сообщения</h3>
+                <table>
+                    <tr id="clorRow" onclick="showUnreadMessages();">
+                        <td><img src='/skin/images/msg/new.png' width='25' height="25"
+                                 alt='Новые' title='Непрочитанные сообщения' style="margin-right:3px"/></td>
+                        <td>новые:</td>
+                        <td id="unreadMsg"></td>
+                    </tr>
+                    <tr onclick='getDefinition("js-mis_customMessage-getMessages.do?id=-1&short=Short")'>
+                        <td><img src='/skin/images/msg/all.png' width='25' height="25"
+                                 alt='Все' title='Все сообщения' style="margin-right:3px"/></td>
+                        <td>все</td>
+                        <td id="msgAllTd"></td>
+                    </tr>
+                </table>
+        </div>
+        </msh:ifInRole>
         <msh:ifInRole roles="/Policy/WebSocket/Queue">
            <div class='ws_workerDiv'>
                 <p id='ws_windowWorkDiv' title="Нажмите для изменения номера окна" onclick="ws_setNewWindowNumber()"></p><hr/>
@@ -235,7 +255,6 @@
 
         <div id='copyright' style="float: right;">&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
         </div>
-    </div>
     <div id="divInstantMessage" class="instant_message">&nbsp;</div>
     
     <msh:javascriptContextWrite/>
@@ -257,7 +276,6 @@
 				<!--  IDE MODE -->
 				<msh:ifInIdeMode>
 						<li><a id='ideModeHideIdeTags' href='javascript:msh.idemode.hideIdeTags();'>Скрыть тэги</a></li>
-						<li><a href='javascript:msh.idemode.addGuids();'>Добавить GUIDs</a></li>
 						<li><a href='javascript:msh.idemode.addNewForm();'>Добавить форму</a></li>
 				</msh:ifInIdeMode>
            </ul>
@@ -273,15 +291,19 @@
 <msh:ifInRole roles="/Policy/Config/EmergencyMessage">
 <script type="text/javascript">
 theDefaultTimeOut = setTimeout(funcemergencymessage.func,12000) ;
-
-
 </script>
 </msh:ifInRole>
-
+<msh:ifInRole roles="/Policy/Config/CornerMessage">
+    <script type="text/javascript">
+        getCountUnreadMessages();
+    </script>
+</msh:ifInRole>
+<!-- ClaimService нужен для создания скриншота ошибки-->
+<script type='text/javascript' src='./dwr/interface/ClaimService.js'></script>
 <iframe width=174 height=189 name="gToday:datetime::gfPop1:plugins_time.js" 
 id="gToday:datetime::gfPop1:plugins_time.js" 
 src="/skin/ext/cal/themes/DateTime/ipopeng.htm" 
-scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; top:-500px; left:-500px;"/>
+scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; top:-500px; left:-500px;">
 </iframe>
 
 <iframe width=174 height=189 name="gToday:normal::gfPop2:plugins.js" 

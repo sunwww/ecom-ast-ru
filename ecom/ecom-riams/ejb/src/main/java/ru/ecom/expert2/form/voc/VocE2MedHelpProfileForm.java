@@ -3,7 +3,10 @@ package ru.ecom.expert2.form.voc;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
-import ru.nuzmsh.commons.formpersistence.annotation.*;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
@@ -66,34 +69,11 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     /** Код */
     private String theCode ;
 
-  /** Профиль койки  */
-  @Comment("Профиль койки ")
-  public Long getNewBedType() {return theNewBedType;}
-  public void setNewBedType(Long aNewBedType) {theNewBedType = aNewBedType;}
-  /** Профиль койки  */
-  private Long theNewBedType ;
-
-  /** Тип койки */
-  @Comment("Тип койки")
-  public Long getNewBedSubType() {return theNewBedSubType;}
-  public void setNewBedSubType(Long aNewBedSubType) {theNewBedSubType = aNewBedSubType;}
-  /** Тип койки */
-  private Long theNewBedSubType ;
-
-
-    /** Мед. специальность по профилю */
-    @Comment("Мед. специальность по профилю")
+    /** Мед. специальность V021 по профилю */
+    @Comment("Мед. специальность V021 по профилю")
     @Persist
-    public Long getMedSpec() {return theMedSpec;}
-    public void setMedSpec(Long aMedSpec) {theMedSpec = aMedSpec;}
+    public Long getMedSpecV021() {return theMedSpecV021;}
+    public void setMedSpecV021(Long aMedSpecV021) {theMedSpecV021 = aMedSpecV021;}
     /** Мед. специальность по профилю */
-    private Long theMedSpec ;
-
-    /** Профиль койки V020 */
-    @Comment("Профиль койки V020 ")
-    @Persist
-    public Long getProfileBed() {return theProfileBed;}
-    public void setProfileBed(Long aProfileBed) {theProfileBed = aProfileBed;}
-    /** Профиль койки V020 */
-    private Long theProfileBed ;
+    private Long theMedSpecV021 ;
 }

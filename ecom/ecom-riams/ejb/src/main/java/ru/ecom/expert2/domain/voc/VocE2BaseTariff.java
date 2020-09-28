@@ -1,6 +1,5 @@
 package ru.ecom.expert2.domain.voc;
 
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -20,14 +19,6 @@ public class VocE2BaseTariff extends VocCoefficient {
     public void setStacType(VocBedSubType aStacType) {theStacType = aStacType;}
     /** Тип стационар (круглосуточный, дневной */
     private VocBedSubType theStacType ;
-
-    /** Профиль медициской специальности */
-    @Comment("Профиль медициской специальности")
-    @OneToOne
-    public VocE2FondV015 getSpeciality() {return theSpeciality;}
-    public void setSpeciality(VocE2FondV015 aSpeciality) {theSpeciality = aSpeciality;}
-    /** Профиль медициской специальности */
-    private VocE2FondV015 theSpeciality ;
     
     /** Тип тарифа */
     @Comment("Тип тарифа")

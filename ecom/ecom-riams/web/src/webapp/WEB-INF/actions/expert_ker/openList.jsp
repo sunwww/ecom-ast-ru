@@ -23,8 +23,8 @@
    %>
     <msh:form action="expert_kersopen.do" defaultField="1" >
     <msh:panel>
-          <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+          <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <td class="label" title="Поиск по параметрам (typeJournal)" colspan="1"><label for="typeJournalName" id="typeJournalLabel">Группировать:</label></td>
@@ -40,6 +40,9 @@
         <td onclick="this.childNodes[1].checked='checked';document.location.href='expert_kersopen.do?typeJournal=4'"  colspan="2">
         	<input type="radio" name="typeJournal" value="4">  по специалистам
         </td>
+	  <td onclick="this.childNodes[1].checked='checked';document.location.href='expert_kersopen.do?typeJournal=5'"  colspan="2">
+		  <input type="radio" name="typeJournal" value="5">  по типу ВК
+	  </td>
       </msh:row>
       <msh:row>
         <td class="label" title="Тип ЛПУ (typeLpu)" colspan="1"><label for="typeLpuName" id="typeLpuLabel">ЛПУ:</label></td>
@@ -104,6 +107,9 @@
     			request.setAttribute("queryFld", "ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename");
     			request.setAttribute("queryTitle", "Специалист");
     		}
+    		if (typeJournal.equals("5")) {
+				request.setAttribute("queryOrder", "vet.name");
+			}
     	%>
     	<ecom:webQuery name="list"
     	nativeSql="select 
@@ -138,6 +144,9 @@
     		} else {
     			request.setAttribute("queryOrder", "cec.orderDate,p.lastname||' '||p.firstname||' '||p.middlename");
     		}
+			if (typeJournal.equals("5")) {
+				request.setAttribute("queryOrder", "vet.name");
+			}
         %>
 	       	<ecom:webQuery name="list"
 		    	nativeSql="select 
@@ -148,6 +157,7 @@ cec.id,cec.orderDate,cec.disabilitydate
 left join medcase slo1 on slo1.id=cec1.medcase_id
 left join medcase sls1 on sls1.id=slo1.parent_id
 where sls1.id=sls.id) as con1Sls
+,vet.name as vetname
 from ClinicExpertCard cec
 left join WorkFunction owf on owf.id=cec.orderFunction_id
 left join Worker ow on ow.id=owf.worker_id
@@ -157,6 +167,7 @@ left join Patient p on p.id=cec.patient_id
 			    	left join medcase slo on slo.id=cec.medcase_id
 			    	left join mislpu ml on ml.id=slo.department_id
 left join medcase sls on sls.id=slo.parent_id
+left join vocexperttype vet on cec.type_id=vet.id
 where cec.expertDate is null ${queryWhere} ${lpuSql}
 order by ${queryOrder}
 "
@@ -169,6 +180,7 @@ order by ${queryOrder}
 		      <msh:tableColumn columnName="Дата посл. продления по госпитализации" property="6"/>
 		      <msh:tableColumn columnName="Специалист" property="4"/>
 		      <msh:tableColumn columnName="Пациент" property="5"/>
+				<msh:tableColumn columnName="Тип ВК" property="7"/>
 		    </msh:table>
         <% 
         }

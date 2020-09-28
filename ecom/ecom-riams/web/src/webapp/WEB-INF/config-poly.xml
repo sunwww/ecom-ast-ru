@@ -16,9 +16,6 @@
         <form-bean name="poly_ticketForm"      type="ru.ecom.poly.ejb.form.TicketForm" />
         <form-bean name="poly_short_ticketForm"      type="ru.ecom.poly.ejb.form.ShortTicketForm" />
         <form-bean name="poly_drugPrescriptionForm"      type="ru.ecom.mis.ejb.form.prescription.DrugPrescriptionByTicketForm" />
-        <form-bean name="poly_prescriptionBlankForm"      type="ru.ecom.poly.ejb.form.PrescriptionBlankForm" />
-        <form-bean name="poly_concomitantDiseaseForm"      type="ru.ecom.poly.ejb.form.ConcomitantDiseaseForm" />
-        <form-bean name="poly_renderedServiceForm"      type="ru.ecom.poly.ejb.form.RenderedServiceForm" />
 
         <form-bean name="poly_medcardSearchForm"      type="ru.ecom.poly.web.action.medcard.MedcardSearchForm" />
         <form-bean name="voc_orgSearchForm"      type="ru.ecom.mis.web.action.patient.VocOrgSearchForm" />
@@ -88,12 +85,6 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/list_by_user.jsp" />
         </action>
 
-        <action path='/poly_start' type='ru.ecom.web.actions.base.ForwardAction'
-                name='poly_medcardForm'
-                validate='false'
-                scope="request">
-            <forward name="success" redirect="false" path="/WEB-INF/actions/polyStart.jsp" />
-        </action>
         <action path='/smo_journal_openSpo' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'
                 validate='false'
@@ -468,14 +459,6 @@
                 scope="session"
         >
             <forward name="success" redirect="true" path="/poly_tickets.do"/>
-        </action>
-
-        <action path='/poly_ticketExcelExport' type='ru.ecom.poly.web.action.ticketexport.TicketExcelExportAction'
-                name=''
-                validate='false'
-                scope="request"
-        >
-            <forward name="success" redirect="false" path="/ecom_getfile.do?id=" />
         </action>
 
         <action path='/pharm_outcome' type='ru.ecom.web.actions.base.ForwardAction'

@@ -7,10 +7,13 @@ import ru.ecom.ejb.services.login.ILoginService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.service.disability.IDisabilityService;
+import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.web.messages.ClaimMessage;
@@ -18,23 +21,41 @@ import ru.nuzmsh.web.messages.UserMessage;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
+import java.text.ParseException;
 import java.util.Collection;
 
 /**
  * Для aucotomplete
  */
 public class VocServiceJs {
-	public Patient getTestPatient(HttpServletRequest aRequest) {
-		Patient patient = new Patient();
-		patient.setLastname("TEST");
-		return patient;
-	}
-	public String getTestPatientLastname(HttpServletRequest aRequest) {
-		Patient patient = new Patient();
-		patient.setLastname("TEST");
-		return patient.getLastname();
+
+	/** Создаем либо находим пациента по ФИО + ДР + полис
+	 * находится здесь, ибо этот serviceJs есть на каждой странице
+	 * */
+	public String createOrGetPatient(String aPatientJson, HttpServletRequest aRequest) throws NamingException, ParseException {
+		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
+		JSONObject pat = new JSONObject(aPatientJson);
+		String lastname = pat.getString("lastname");
+		String firstname = pat.getString("firstname");
+		String middlename = pat.getString("middlename");
+		String commonNumber = pat.getString("commonNumber");
+		String sex = pat.getString("sex");
+		if (sex.startsWith("0")) sex = sex.substring(1);
+		Date birthday = DateFormat.parseSqlDate(pat.getString("birthday"),"ddMMyyyy");
+		Patient patient = service.getPatient(lastname,firstname,middlename,birthday,sex,commonNumber,pat.toString());
+		JSONObject ret = new JSONObject();
+		if (patient==null) { // Нашли более 1 подходящего пациента - переходим на страницу поиска персоны
+			ret.put("status","search");
+			ret.put("link","mis_patients.do?lastname="+lastname+"+"+firstname+"+"+middlename);
+		} else {
+			ret.put("status","found");
+			ret.put("link","entityView-mis_patient.do?id="+patient.getId());
+		}
+		return ret.toString();
 	}
 
+	@Deprecated
 	public String getWebSocketServer(HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -100,7 +121,17 @@ public class VocServiceJs {
     	serviceLogin.hideMessage(aIdMessage) ;
     	return true ;
     }
-    public String getEmergencyMessages(HttpServletRequest aRequest) throws NamingException {
+
+	/**
+	 * Получить непрочитанные сообщения #187
+	 *
+	 * @param isEmergency true - экстренные
+	 * @param aMaxCount макс. кол-во
+	 * @param isOrderByDesc сначала самые новые
+	 * @param aRequest HttpServletRequest
+	 * @return String json с результатом
+	 */
+    public String getUnreadMessages(String isEmergency, Integer aMaxCount, Boolean isOrderByDesc, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	StringBuilder sqlA = new StringBuilder() ;
     	java.util.Date date = new java.util.Date() ;
@@ -109,10 +140,15 @@ public class VocServiceJs {
 		sqlA.append("select id,messagetitle,messageText as messageText,to_char(dispatchdate,'dd.mm.yyyy')||' '||cast(dispatchtime as varchar(5)) as inforeceipt,messageUrl from CustomMessage") ;
 		sqlA.append(" where recipient='").append(username).append("'") ;
 		sqlA.append(" and readDate is null");
-		sqlA.append(" and isEmergency='1' and ((validitydate>current_date or validitydate=current_date and validitytime>=cast('")
+		String isEmergencyStr = "";
+		if (!isEmergency.equals(""))
+			isEmergencyStr = isEmergency.equals("1")? " and isEmergency='1' " : " and (isEmergency is null or isEmergency='0') ";
+		sqlA.append(isEmergencyStr)
+		.append(" and ((validitydate>current_date or validitydate=current_date and validitytime>=cast('")
 		.append(dispatchTime)
 		.append("' as time)) or validitydate is null)");
-    	Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),10);
+		if (isOrderByDesc) sqlA.append(" order by id desc");
+    	Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),aMaxCount);
 		JSONArray params = new JSONArray() ;
 		String[][] props = {{"1","id"},{"2","messageTitle"},{"3","messageText"},{"4","infoReceipt"},{"5","messageUrl"}} ;
 		for(WebQueryResult wqr : list) {
@@ -137,6 +173,34 @@ public class VocServiceJs {
 		}
     	return root.toString() ;
     }
+
+	/**
+	 * Получить кол-во непрочитанных сообщений #187
+	 *
+	 * @param isEmergency true - экстренные
+	 * @param aRequest HttpServletRequest
+	 * @return String кол-во
+	 */
+	public String getCountUnreadMessages(String isEmergency,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sqlA = new StringBuilder() ;
+		java.util.Date date = new java.util.Date() ;
+		java.sql.Time dispatchTime = new java.sql.Time(date.getTime()) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		sqlA.append("select count(id) from CustomMessage") ;
+		sqlA.append(" where recipient='").append(username).append("'") ;
+		sqlA.append(" and readDate is null");
+		String isEmergencyStr = "";
+		if (!isEmergency.equals(""))
+			isEmergencyStr = isEmergency.equals("1")? " and isEmergency='1' " : " and (isEmergency is null or isEmergency='0') ";
+		sqlA.append(isEmergencyStr)
+		.append(" and ((validitydate>current_date or validitydate=current_date and validitytime>=cast('")
+		.append(dispatchTime)
+		.append("' as time)) or validitydate is null)");
+		Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),10);
+		return list.iterator().next()!=null? list.iterator().next().get1().toString() : "0";
+	}
+
     private String str(String aValue) {
     	if (aValue.indexOf('\"')!=-1) {
     		aValue = aValue.replaceAll("\"", "\\\"") ;
@@ -153,8 +217,8 @@ public class VocServiceJs {
     	return aValue ;
     }
     
-    public String getAllValueByVocs(String aVocs,Boolean isCode,HttpServletRequest aRequest) throws NamingException {
-    	String sql=(isCode)? "select code,name from ":"select id,name from ";
+    public String getAllValueByVocs(String aVocs,HttpServletRequest aRequest) throws NamingException {
+    	String sql="select id,name from ";
     	StringBuilder sb = new StringBuilder() ;
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	sb.append("{");
@@ -165,8 +229,7 @@ public class VocServiceJs {
 		boolean isFistrVoc = true ;
 		for(String voc : vocs) {
 			//System.out.println("voc"+voc) ;
-			String tmpOrder=(isCode)? "  order by cast(code as integer)":"";
-			Collection<WebQueryResult> list= service.executeNativeSql(sql+voc+tmpOrder) ;
+			Collection<WebQueryResult> list= service.executeNativeSql(sql+voc) ;
 			if (isFistrVoc) {isFistrVoc=false ;} else {sb.append(", ");}
 			sb.append("{\"name\":\"").append(voc).append("\",\"values\":[");
 			boolean firstPassed = true ;
@@ -195,4 +258,30 @@ public class VocServiceJs {
 		sb.append("]}") ;
     	return sb.toString();
     }
+
+	/**
+	 * Получить настройку
+	 *
+	 * @param key Ключ настройки
+	 * @param defaultValue Значение по умолчанию, если настройки нет
+	 * @param aRequest HttpServletRequest
+	 * @return String значение настройки
+	 */
+    public String getSoftConfigByValue(String key, String defaultValue, HttpServletRequest aRequest) throws NamingException {
+		IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
+		return service1.getSoftConfigValue(key, defaultValue);
+	}
+
+	/**
+	 * Отметить сообщения до определённой даты прочитанными #201
+	 *
+	 * @param date Дата отправки сообщения
+	 * @param aRequest HttpServletRequest
+	 * @return String кол-во
+	 */
+	public String setMessagesReadBeforeDate(String date,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select * from setMessagesReadBeforeDate(to_date('"+date+"','dd.mm.yyyy'))".toString());
+		return list.iterator().next()!=null? list.iterator().next().get1().toString() : "0";
+	}
 }

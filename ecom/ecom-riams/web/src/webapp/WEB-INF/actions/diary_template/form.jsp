@@ -21,17 +21,17 @@
   </tiles:put>
   <tiles:put name="side" type="string">
   <tags:style_currentMenu currentAction="mis_medService" />
-    <msh:sideMenu title="Заключение" guid="5db0db09-9993-44cb-8477-a3fee5037b42">
-      <msh:ifFormTypeIsView formName="diary_templateForm" guid="dd63e5e4-f81c-43f2-b50a-f12b1d8e026b">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-diary_template" name="Изменить" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8d1be735e97e" />
-        <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-diary_template" name="Удалить" confirm="Удалить шаблон заключения?" guid="bc31c499-00cd-4cf8-94f0-fcdf1c9915ff" />
+    <msh:sideMenu title="Заключение">
+      <msh:ifFormTypeIsView formName="diary_templateForm">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-diary_template" name="Изменить" roles="/Policy/Diary/Template/Edit" />
+        <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-diary_template" name="Удалить" confirm="Удалить шаблон заключения?" />
       </msh:ifFormTypeIsView>
     </msh:sideMenu>
     <%-- 
     <msh:sideMenu title="Работа с заключением">
-        <msh:sideLink key="ALT+3" params="id" action="/diary_templateParamsEdit" name="Параметры" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8d1be735e9e" />
-        <msh:sideLink key="ALT+4" params="id" action="/diary_templateForm" name="Форма ввода" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8de" />
-        <msh:sideLink key="ALT+5" params="id" action="/diary_templatePrint" name="Форма печати" roles="/Policy/Diary/Template/Edit" guid="05503c33-989d1be735e97e" />
+        <msh:sideLink key="ALT+3" params="id" action="/diary_templateParamsEdit" name="Параметры" roles="/Policy/Diary/Template/Edit" />
+        <msh:sideLink key="ALT+4" params="id" action="/diary_templateForm" name="Форма ввода" roles="/Policy/Diary/Template/Edit" />
+        <msh:sideLink key="ALT+5" params="id" action="/diary_templatePrint" name="Форма печати" roles="/Policy/Diary/Template/Edit" />
     </msh:sideMenu>--%>
     <msh:sideMenu title="Дополнительно">
                   <tags:voc_menu currentAction="mis_medService" />
@@ -39,7 +39,7 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Config" beginForm="diary_templateForm" guid="4399c99f-8801-4a73-b168-c25c23f8b0ba" />
+    <ecom:titleTrail mainMenu="Config" beginForm="diary_templateForm" />
   </tiles:put>
     <tiles:put name="javascript" type="string">
 

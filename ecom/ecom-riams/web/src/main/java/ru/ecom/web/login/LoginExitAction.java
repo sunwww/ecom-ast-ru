@@ -22,6 +22,6 @@ public class LoginExitAction extends BaseAction {
                 session.removeAttribute(key);
             }
         }
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 }

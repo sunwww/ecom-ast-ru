@@ -6,10 +6,10 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Список всех услуг" guid="40efbd1b-4177-47a8-9aad-1971732f3f98" />
+    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Список всех услуг" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="helloSideMenu-123" title="Добавить">
+    <msh:sideMenu title="Добавить">
       <msh:sideLink params="id" action="/js-smo_medService-add.do" name="Добавить услугу" title="Добавить услугу" roles="/Policy/Mis/MedCase/MedService/Create" key="ALT+N" />
     </msh:sideMenu>
   </tiles:put>

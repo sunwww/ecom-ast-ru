@@ -2,7 +2,10 @@ package ru.ecom.oncological.ejb.form;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.OncologyCaseReestrPreCreateInterceptor;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.OncologyCaseReestrSaveInterceptor;
 import ru.ecom.oncological.ejb.domain.OncologyCase;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
@@ -20,6 +23,12 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 )
 @Parent(property="medCase", parentForm=MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Oncology/Case")
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(OncologyCaseReestrPreCreateInterceptor.class)
+)
+@ASaveInterceptors(
+        @AEntityFormInterceptor(OncologyCaseReestrSaveInterceptor.class)
+)
 public class OncologyCaseReestrForm extends IdEntityForm {
 
     private Long medCase;
@@ -54,6 +63,10 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     private Long cycleDrugTherapy;
     /**Тип лучевой терапии*/
     private Long typeRadTherapy;
+    /** диагноз, с которым создана онкологическая форма*/
+    private String theMKB;
+    /**Признак проведения профилактики тошноты и рвотного рефлекса*/
+    private Boolean isNauseaAndGagReflexPrev;
 
     @Persist
     public Long getMedCase() {
@@ -205,6 +218,8 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     private String histString;
     /** данные для сохранения противопоказаний и отказов*/
     private String contraString;
+    /** данные для сохранения медикаментов*/
+    private String theAllMeds;
 
     public Long getMethodDiagTreat() {
         return methodDiagTreat;
@@ -312,4 +327,22 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     public void setContraString(String contraString) {
         this.contraString = contraString;
     }
+
+    @Persist
+    public String getMKB() {
+        return theMKB;
+    }
+    public void setMKB(String aMKB) {
+        theMKB = aMKB;
+    }
+
+    @Persist
+    public Boolean getIsNauseaAndGagReflexPrev() { return isNauseaAndGagReflexPrev; }
+    public void setIsNauseaAndGagReflexPrev(Boolean nauseaAndGagReflexPrev) { isNauseaAndGagReflexPrev = nauseaAndGagReflexPrev; }
+
+
+    public String getAllMeds() {
+        return theAllMeds;
+    }
+    public void setAllMeds(String aAllMeds) { theAllMeds = aAllMeds; }
 }

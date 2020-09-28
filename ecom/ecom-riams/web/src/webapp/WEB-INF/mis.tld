@@ -45,50 +45,6 @@
         
     </tag>
    <tag>
-      <description>A href element</description>
-      <display-name>A href element</display-name>
-      <icon>    
-      </icon>
-      <name>linkCsp</name>
-      <tag-class>ru.ecom.web.tags.LinkCspTag</tag-class>
-      <body-content>scriptless</body-content>
-
-      <attribute>
-         <description>A href element</description>
-         <name>requestFocus</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <description>A href element</description>
-         <name>action</name>
-         <required>true</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <description>A href element</description>
-         <name>roles</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <description>A href element</description>
-         <name>guid</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-
-   </tag>
-   
-   <tag>
 
       <description>If For Woman</description>
       <display-name>ifPatientIsWoman</display-name>

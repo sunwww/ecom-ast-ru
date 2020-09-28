@@ -1,14 +1,11 @@
 package ru.nuzmsh.web.tags;
 
-import java.util.Iterator;
+import org.apache.struts.action.ActionErrors;
+import ru.nuzmsh.web.tags.helper.JavaScriptContext;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import org.apache.struts.action.ActionErrors;
-
-import ru.nuzmsh.web.tags.helper.JavaScriptContext;
+import java.util.Iterator;
 
 /**
  * @author ESinev
@@ -48,7 +45,7 @@ public class SetDefaultFocusTag extends TagSupport {
 
 
     public int doStartTag() throws JspException {
-        JspWriter out = pageContext.getOut();
+//        JspWriter out = pageContext.getOut();
         String id = (String) pageContext.getRequest().getAttribute("firstErrorId");
         if (id == null) id = findFirstIdError();
         if (id == null) id = theId;

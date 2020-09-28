@@ -57,8 +57,7 @@ public class QueryClauseBuilder {
         sb.append(aSuffix) ;
 
 
-        String q2 = new StringBuilder().append(q).append(" ").append(aSuffix).toString() ;
-        if (CAN_DEBUG) LOG.debug("query = " + q2);
+        String q2 = q + " " + aSuffix;
 
         Query query = aNative ? aManager.createNativeQuery(q2) : aManager.createQuery(q2);
 

@@ -1,20 +1,18 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 @Entity
 @AIndexes({
 	@AIndex(properties={"remoteAddress"},table="WorkPlace"),
 	@AIndex(properties={"user"},table="WorkPlace")
 })
-@Table(schema="SQLUser")
 public class UserComputer extends WorkPlace {
 	/** Адрес */
 	@Comment("Адрес")

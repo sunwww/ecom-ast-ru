@@ -71,7 +71,7 @@
      	} else {
      		if (the${name}IdChangeTypeParameter>0) {
      			TemplateProtocolService.changeTypeByParameter(the${name}IdChangeTypeParameter,$('${name}Type').value, {
-   	    		 callback: function(aResult) {
+   	    		 callback: function() {
    	    			 alert("Тип изменен") ;
    	    			cancel${name}CreateType() ;
    	    			window.location.reload() ;

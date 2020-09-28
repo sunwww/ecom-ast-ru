@@ -55,7 +55,10 @@
 	        	<input type="radio" name="${name}typeReestr" value="2">  свод
 	        </td>
         </msh:row>
-		
+        <msh:row>
+			<msh:textField property="${name}ProtocolDate" label="Дата дневника"/>
+        </msh:row>
+
 		<tr>
 		<td valign="top" style="width:300px">
 			<div id="${name}divListCategs"></div>
@@ -165,10 +168,7 @@ var fldJson = null ;
 			try{
 			errorutil.HideError($('param'+par.idEnter)) ;
 			}catch(e){}
-			/*if (val=="") {
-				errorutil.ShowFieldError($('param'+par.idEnter),"Пустое значение") ;
-				isError= true ;
-			} */
+
 			
 			if (+par.type==2) {
 				if (+val<1) {val='0' ;par.valueVoc="";} else {
@@ -243,7 +243,6 @@ var fldJson = null ;
 			
 		}
 		var str = JSON.stringify(fldJson);
-		//alert(str) ;
 		$('params').value = str;
 		if (!isError) {
 			save${name}Result();
@@ -252,14 +251,11 @@ var fldJson = null ;
 	} 
     
     function isEditable () {
-    	    	
     	TemplateProtocolService.getTemplateDisableEdit($('templateProtocol').value,{
     		callback: function (a) {
-    			
     			if (+a==1) {
     				eventutil.addEventListener($('record'),eventutil.EVENT_CLICK, 
     	    	  		  	function() {
-    	    			
     	    					$('record').disabled=true;
     	    					if ($('id').value!='') {
     	    						//alert ('Редактирование данного протокола возможно только через форму!'); 
@@ -267,17 +263,6 @@ var fldJson = null ;
     	    					showTemplateForm($('templateProtocol').value);
     	    				//	$('record').disabled=false;
     	    	  		  	}) ;
-    	    		/*
-    				eventutil.addEventListener($('record'),eventutil.EVENT_KEY_PRESS, 
-    	    	  		  	function() {
-    	    			if ($('id').value!='') {	
-    	    				//alert ('Редактирование данного протокола возможно только через форму!'); 
-    	    			}
-    	    					$('record').disabled=true;
-    	    					showTemplateForm($('templateProtocol').value);
-    	    				//	$('record').disabled=false;
-    	    	  		  	}) ;*/
-    				
     	    	} else {
     	    		try {
     	    			$('record').removeEventListener('click');
@@ -301,23 +286,27 @@ var fldJson = null ;
     		the${name}IntakeInfoDialog.show() ;
 		       $('${name}IntakeRootPane').innerHTML ="Загрузка..." ;
 
-    				TemplateProtocolService.getParameterAndPersmissionByTemplate($('id').value,aTemplateId,{
+    				TemplateProtocolService.getParameterAndPermissionByTemplate($('id').value,aTemplateId,{
     					callback: function (aResults) {
-    						var arr = aResults.split("#");
-    						var aResult = arr[0];
-    						var editable = arr[1];
+    						var editable = true;
     					
     						$('${name}IntakeInfoTitle').innerHTML = "ВВОД ДАННЫХ" ;
-    					      //  $('BioList').value=aSmoId;
-    					      if ($('params')&&$('params').value!=''&&$('templateProtocol').value == aTemplateId) {
+    					      if ($('params') && $('params').value!='' && $('templateProtocol').value == aTemplateId) {
     					    	fldJson = JSON.parse($('params').value);  
     					      }  else {
-    					      fldJson = JSON.parse(aResult) ;
+    					      fldJson = JSON.parse(aResults);
+								  editable = fldJson.disableEditProtocol=="0";
     					      }
     					      $('templateProtocol').value = +aTemplateId;
     					        var cnt = +fldJson.params.length ;
     					    	
-    					        if (cnt<=0) return;
+    					        if (cnt<=0) {
+									the${name}IntakeInfoDialog.hide();
+									if (!editable) {
+										alert("Отсутствуют параметры для редактирования и стоит запрет на ручное изменение дневника, снимите запрет в шаблоне для редактирования дневника!");
+									}
+    					        	return;
+								}
     					        var txt = "<form><table id='tblParamProtocol'>" ;
     					        if (+fldJson.isdoctoredit==0) {
     					        	
@@ -390,17 +379,20 @@ var fldJson = null ;
     					        	}
     					        	param1.idEnter=idEnter ;
     					        	if (+param1.type==2||+param1.type==7) {
-    					        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
-    					        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;")
-    					        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;")
-    					        		eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;")
-    					        		eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;")
-    					        		eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;")
-    					        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;")
-    					        		eval("param"+param1.id+"Autocomlete.build() ;")
-    					        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
+    					        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;");
+    					        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;");
+    					        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;");
+    					        		eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;");
+    					        		eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;");
+    					        		eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;");
+    					        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;");
+    					        		eval("param"+param1.id+"Autocomlete.build() ;");
+    					        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;");
     					        	}
-    					        } 
+    					        }
+								 if (eval${name}String) {
+									 eval(eval${name}String);
+								 }
     			             } else {
     			            	var txt ="<form name='frmTemplate' id='frmTemplate'>" ;
     			 				txt += "<a target='_blank' href='diary_templateView.do?id="+fldJson.template+"'>НЕПРАВИЛЬНО ЗАПОЛНЕНЫ ДАННЫЕ ПАРАМЕНТОВ ШАБЛОНА</a>" ;
@@ -408,18 +400,6 @@ var fldJson = null ;
     			 				$('${name}IntakeRootPane').innerHTML =txt 
     					       	+ "<input type=\"button\" value=\"ОК\" onclick=\"cancelBioIntakeInfo()\">";
     					     }
-    			             
-    			    /*         if (+fldJson.isdoctoredit>0) {
-
-    		            		 $("param"+fldJson.params[0].idEnter).select() ;
-    				        	 $("param"+fldJson.params[0].idEnter).focus() ;
-    		           	 } else {
-    		            		 $("param"+p+"Name").select() ;
-    				        		$("param"+p+"Name").focus() ;
-    				        		$('param'+p+'Name').className="autocomplete horizontalFill required" ;
-    				        		eventutil.addEnterSupport("param"+p+"Name","param"+fldJson.params[0].idEnter) ;
-    				        		
-    		            	 } */ 
     					}
     				}) ;
     			
@@ -434,6 +414,7 @@ var fldJson = null ;
        $('record').disabled=false;
          msh.effect.FadeEffect.pushFadeAll();
      }
+var eval${name}String = "";
      function ${name}getFieldTxtByParam(aParam) {
 			var txt = "<tr>" ;
 			var type=+aParam.type;
@@ -481,6 +462,9 @@ var fldJson = null ;
 	        	}
 	        } else {
 		        txt += "<input size=\"80\" id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+				if (type==8) {
+					eval${name}String +=" new dateutil.DateField($('param"+aParam.id+"'));"
+				}
 		        
 	        }
 	        txt += "</td>" ;
@@ -497,6 +481,13 @@ var fldJson = null ;
          if (!theIs${name}TempProtDialogInitialized) {
 			init${name}TemplateProtocol() ;
 			document.forms['frm${name}TemplateProt'].${name}typeReestr[1].checked='checked' ;
+			if ($('${name}ProtocolDate')) { //при изменении даты дневника - перезагружаем протоколы
+				new dateutil.DateField($('${name}ProtocolDate')) ;
+				var valu = $('${name}ProtocolDate').value;
+				eventutil.addEventListener($('${name}ProtocolDate'),'blue',function(){
+					if(valu==""||valu.length==10) load${name}ListProtocols('mydiary');
+				}) ;
+			}
          }
          the${name}TempProtDialog.show() ;
 
@@ -522,7 +513,6 @@ var fldJson = null ;
    			} else {
    				alert('Добавлено в заключение') ;
    			}
-	         //$(prop).select() ;
          //Milamesher localStorage
          if (document.getElementsByName("stac_sslDischargeForm") !=null) {
              try {
@@ -566,8 +556,6 @@ var fldJson = null ;
 
              theIs${name}TempProtDialogInitialized = true ;
              $("${name}IsClose").checked=true ;
-             //load${name}ListProtocolsByUsername() ;
-             /*setFocusOnField('${name}tempProtCategoryName') ;*/
      }
      function ${name}showRow(aRowId, aCanShow, aField ) {
  			try {
@@ -583,6 +571,7 @@ var fldJson = null ;
      }
      
      function load${name}ListProtocolsAll(aType,aParent,aSearchText) {
+		 var diaryDate = $('${name}ProtocolDate').value;
     	 edit${name}StyleA(aType) ;
     	 theIs${name}TempProtLastFunction=aType;
     	 var idSmo = '${idSmo}' ;
@@ -592,13 +581,14 @@ var fldJson = null ;
     		 idSmo= $(idSmo.substring(pos+1)).value ;
     	 }
     		 $('${name}divListCategs').innerHTML = "Загрузка..." ;
+		 var diaryDate = $('${name}ProtocolDate').value;
         	 TemplateProtocolService.listCategProtocolsByUsername( aParent, aType
-        			 , 'load${name}ListProtocols',{
+        			 , 'load${name}ListProtocols',diaryDate,{
                  callback: function(aString) {
                      $('${name}divListCategs').innerHTML = aString ;
             		 $('${name}divListProtocols').innerHTML = "Загрузка..." ;
             	 	 TemplateProtocolService.listProtocolsByUsername( idSmo,aParent, aType
-        			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,{
+        			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,diaryDate, {
                  		callback: function(aString) {
                      		$('${name}divListProtocols').innerHTML = aString ;
                   		}
@@ -609,6 +599,7 @@ var fldJson = null ;
      function load${name}ListProtocols(aType,aParent,aSearchText) {
     	 edit${name}StyleA(aType) ;
     	 theIs${name}TempProtLastFunction=aType;
+    	 var diaryDate = $('${name}ProtocolDate').value;
     	 var idSmo = '${idSmo}' ;
     	 var pos = idSmo.indexOf('.') ;
     	 if (aParent==null||+aParent==0) {aParent=0}
@@ -636,7 +627,7 @@ var fldJson = null ;
     		  
     		 $('${name}divListProtocols').innerHTML = "Загрузка..." ;
         	 	 TemplateProtocolService.listProtocolsByUsername( idSmo,aParent, aType
-    			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,{
+    			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,diaryDate, {
              callback: function(aString) {
                  $('${name}divListProtocols').innerHTML = aString ;
                  if (document.forms['frm${name}TemplateProt'].${name}typeReestr[0].checked) {
@@ -646,8 +637,9 @@ var fldJson = null ;
           } ) ;
     	 }else{
     		 $('${name}divListCategs').innerHTML = "Загрузка..." ;
+			 var diaryDate = $('${name}ProtocolDate').value;
         	 TemplateProtocolService.listCategProtocolsByUsername( idSmo, aType
-        			 , 'load${name}ListProtocols',{
+        			 , 'load${name}ListProtocols',diaryDate,{
                  callback: function(aString) {
                      $('${name}divListCategs').innerHTML = aString ;
                      if ((aType=='temp'||aType=="my")) {

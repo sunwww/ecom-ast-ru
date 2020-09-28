@@ -16,10 +16,9 @@
        <form-bean name="e2_v009LinkForm" type="ru.ecom.expert2.form.E2FondResultLinkForm"/>
        <form-bean name="e2_v010LinkForm" type="ru.ecom.expert2.form.E2FondResultLinkForm"/>
        <form-bean name="e2_v012LinkForm" type="ru.ecom.expert2.form.E2FondIshodLinkForm"/>
-       <form-bean name="e2_v015LinkForm" type="ru.ecom.expert2.form.E2FondMedSpecLinkForm"/>
         <form-bean name="e2_vocFondV009Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV009Form"/>
         <form-bean name="e2_vocFondV012Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV012Form"/>
-        <form-bean name="e2_vocFondV015Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV015Form"/>
+        <form-bean name="e2_vocFondV020Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV020Form"/>
         <form-bean name="e2_vocFondV021Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV021Form"/>
         <form-bean name="e2_vocFondV025Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV025Form"/>
         <form-bean name="e2_entryMedServiceForm" type="ru.ecom.expert2.form.EntryMedServiceForm"/>
@@ -36,12 +35,16 @@
         <form-bean name="e2_billForm" type="ru.ecom.expert2.form.E2BillForm"/>
         <form-bean name="e2_vocKdpForm" type="ru.ecom.expert2.form.voc.VocDiagnosticVisitForm"/>
         <form-bean name="e2_vocKdpMedServiceForm" type="ru.ecom.expert2.form.voc.VocDiagnosticVisitMedCaseForm"/>
-    <!--    <form-bean name="e2_extDispPriceForm" type="ru.ecom.expert2.form.price.ExtDispPriceForm"/> -->
+        <form-bean name="e2_vocMedServiceCostForm" type="ru.ecom.expert2.form.voc.VocOmcMedServiceCostForm"/>
+        <form-bean name="e2_extDispPriceForm" type="ru.ecom.expert2.form.price.ExtDispPriceForm"/>
+        <form-bean name="e2_extDispPriceMedServiceForm" type="ru.ecom.expert2.form.price.ExtDispPriceMedServiceForm"/>
 
         <form-bean name="e2_cancerEntryForm" type="ru.ecom.expert2.form.E2CancerEntryForm"/>
         <form-bean name="e2_cancerDirectionForm" type="ru.ecom.expert2.form.E2CancerDirectionForm"/>
         <form-bean name="e2_cancerRefusalForm" type="ru.ecom.expert2.form.E2CancerRefusalForm"/>
         <form-bean name="e2_cancerDiagnosticForm" type="ru.ecom.expert2.form.E2CancerDiagnosticForm"/>
+        <form-bean name="e2_cancerDrugForm" type="ru.ecom.expert2.form.E2CancerDrugForm"/>
+        <form-bean name="e2_cancerDrugDateForm" type="ru.ecom.expert2.form.E2CancerDrugDateForm"/>
         <form-bean name="e2_importFileForm" type="ru.ecom.expert2.web.form.ImportFileForm"/>
 
        <form-bean name="exp_vocKindForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationKindForm"/>
@@ -66,8 +69,6 @@
        <form-bean name='exp_importTimeUploadForm' type='ru.ecom.expomc.web.actions.importtime.ImportTimeUploadForm' />
        <form-bean name='exp_formatImportFromDbfForm' type='ru.ecom.expomc.web.actions.format.importfromdbf.DbfImportForm' />
 
-       <form-bean name='exp_regPreImportForm' type='ru.ecom.expomc.web.actions.registry.PreImportRegistryForm' />
-       <form-bean name='exp_regperiodForm' type='ru.ecom.expomc.ejb.services.form.registry.RegPeriodForm' />
        <form-bean name='exp_exportForm' type='ru.ecom.expomc.ejb.services.exportservice.ExportForm' />
 
        <form-bean name='exp_regCreateForm' type='ru.ecom.expomc.ejb.services.registry.CreateRegistryForm' />
@@ -78,13 +79,6 @@
         <form-bean name="exp_importformatForm" type="ru.ecom.expomc.ejb.services.form.importformat.ImportFormatForm"/>
         <form-bean name='exp_importformatUploadForm' type='ru.ecom.expomc.web.actions.importformat.ImportFormatUploadForm' />
         <!-- IKO 070228 ===  -->
-		
-		<!-- Заполнение -->
-        <form-bean name='exp_fillTimeForm' type='ru.ecom.expomc.ejb.uc.filltime.form.FillTimeForm' />
-        <form-bean name='exp_fillTimePropertyForm' type='ru.ecom.expomc.ejb.uc.filltime.form.FillTimePropertyForm' />
-		
-		<!-- Перебор -->
-        <form-bean name='exp_iterateForm' type='ru.ecom.expomc.ejb.uc.iterate.form.IterateForm' />
 
 		<!-- Последовательности -->
 		<form-bean name='exp_sequenceInfoForm' type='$$map$$exp_sequenceInfoForm' />
@@ -97,6 +91,14 @@
     <action-mappings>
 
         <!-- ЭКСПЕРТИЗА -->
+        <action path='/e2_report_paid' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+        >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/e2_entry/report_paid.jsp" />
+        </action>
+
         <action path="/e2-ImportFile" type='ru.ecom.mis.web.action.expert2.Expert2FileImportAction'
                 scope='request' validate="false" name="e2_importFileForm">
             <forward name="success" path="/WEB-INF/actions/e2_entryList/list.jsp"/>
@@ -257,20 +259,6 @@
         </action>
 
 
-        <!-- Сообщения -->
-        <action path='/exp_messageList' type='ru.ecom.expomc.web.actions.messages.MessageListAction'>
-            <forward name="success" path="/WEB-INF/actions/exp_messages/list.jsp" />
-        </action>
-
-        <action path='/exp_messageView' type='ru.ecom.expomc.web.actions.messages.MessageViewAction'>
-            <forward name="success" path="/WEB-INF/actions/exp_messages/view.jsp" />
-        </action>
-        <action path='/exp_policyAccept' type='ru.ecom.expomc.web.actions.messages.AcceptPolicyAction'>
-            <forward name="success" path="/exp_messageView.do" />
-        </action>
-        <action path='/exp_nextMessage' type="ru.ecom.expomc.web.actions.messages.NextMessageAction">
-            <forward name="success" path="/exp_messageView.do" />
-        </action>
 
         <!-- Проверки -->
         <action path='/exp_checkPropertyList' type='ru.ecom.expomc.web.actions.checkproperty.CheckPropertyListAction'>
@@ -366,37 +354,6 @@
                      path = '/entityParentList-exp_field.do' />
         </action>
 
-        <!-- Импорт реестров -->
-        <action path='/exp_regPreImportEdit'
-                type='ru.ecom.expomc.web.actions.registry.PreImportRegistryEditAction'
-                scope="request"
-                name='exp_regPreImportForm'
-                input=""
-                validate="false">
-            <forward name='success' path='/WEB-INF/actions/exp_registry/preImport.jsp' />
-        </action>
-
-        <action path='/exp_regPreImportSave' type='ru.ecom.expomc.web.actions.registry.PreImportRegistrySaveAction'
-                scope="request"
-                name='exp_regPreImportForm'
-                input="/WEB-INF/actions/exp_registry/preImport.jsp"
-                >
-            <forward name='success' redirect="true" path='/exp_regImportEdit.do' />
-        </action>
-
-        <action path='/exp_regImportEdit' type='ru.ecom.expomc.web.actions.registry.ImportRegistryEditAction'
-                scope="request">
-            <forward name='success' path='/WEB-INF/actions/exp_registry/importEdit.jsp' />
-        </action>
-
-        <action
-                path="/exp_reg"
-                type="ru.ecom.expomc.web.actions.base.ForwardAction">
-            <forward
-                    name="success"
-                    path="/WEB-INF/actions/exp_registry/start.jsp"
-                    />
-        </action>
 
         <action path='/exp_sync' type='ru.ecom.expomc.web.actions.sync.SyncAction'
                 name=''
@@ -408,6 +365,9 @@
 
         <action path="/ecom_monitor" type='ru.ecom.web.actions.base.ForwardAction'>
             <forward name='success' path='/WEB-INF/actions/ecom_monitor/monitor.jsp' />
+        </action>
+        <action path="/ecom_monitorList" type='ru.ecom.web.actions.base.ForwardAction'>
+            <forward name='success' path='/WEB-INF/actions/ecom_monitor/list.jsp' />
         </action>
 
         <action path="/exp_exportEdit" type='ru.ecom.expomc.web.actions.export.ExportEditAction'
@@ -422,20 +382,7 @@
            <!-- <forward name='success' path='/entityView-exp_importdocument.do?id=' /> -->
         </action>
 
-        <action path='/exp_reg' type='ru.ecom.web.actions.base.ForwardAction'>
-            <forward name='success' path='/exp_regCreateEdit.do' />
-        </action>
 
-        <action path="/exp_regCreateEdit" type='ru.ecom.expomc.web.actions.regcreate.RegCreateEditAction'
-                name='exp_regCreateForm' validate='false' scope="session">
-            <forward name='success' path='/WEB-INF/actions/exp_regcreate/edit.jsp' />
-        </action>
-
-        <action path="/exp_regCreateSave" type='ru.ecom.expomc.web.actions.regcreate.RegCreateSaveAction'
-                name='exp_regCreateForm' validate='true' scope="session"
-                input="/WEB-INF/actions/exp_regcreate/edit.jsp">
-            <forward name="success" redirect="false" path="/ecom_getfile.do?id=" />
-        </action>
         
         <action path="/exp_messagesByCheck" type='ru.ecom.web.actions.base.ForwardAction'
             scope='request' validate="false" name="">
@@ -458,35 +405,7 @@
             scope='request' validate="false" >
             <forward name="success" redirect='true' path="/entityList-exp_importdocument.do" />
         </action>
-        
-        <!-- Запуск заполнения -->
-        <action path = "/exp_fillTimeExecute" 
-        		type = 'ru.ecom.expomc.web.actions.filltime.ExecuteFillTimeServiceAction'
-               scope = 'request' 
-            validate = "false" >
-            <forward name="success" 
-            	 redirect='true' 
-            	     path="/entityParentView-exp_importtime.do?id=" />
-        </action>
-        
-        <!-- Свойство заполнения по формату -->
-        <action path = "/exp_fillTimePropertyByFormat" 
-        		type = 'ru.ecom.expomc.web.actions.filltime.FillTimePropertyByFormatAction'
-               scope = 'request' 
-            validate = "false" 
-                name = "exp_fillTimePropertyForm"
-            >
-        </action>
 
-        <!-- Запуск перебора -->
-        <action path = "/exp_iterateExecute" 
-        		type = 'ru.ecom.expomc.web.actions.iterate.ExecuteIterateServiceAction'
-               scope = 'request' 
-            validate = "false" >
-            <forward name="success" 
-            	 redirect='true' 
-            	     path="/entityView-exp_iterate.do?id=" />
-        </action>
         <!-- Редактирование связей по 203 приказу -->
         <action path='/listCrits203'
                 type='ru.ecom.web.actions.base.ForwardAction'

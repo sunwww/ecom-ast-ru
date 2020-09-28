@@ -173,7 +173,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
 
             importStatistics.addTotalRecords(count);
             LOG.info("match entity '" +entity.getEntityName());
-            sb.append(entity.getEntityName()+" ");
+            sb.append(entity.getEntityName()).append(" ");
         }
         log(sb.toString());
         monitor.setValue(5);
@@ -430,7 +430,6 @@ public class ImportFormatServiceBean implements IImportFormatService {
         inclev();
 
         DbfFile dbfFile = new DbfFile();
-        InputStream inFile = new FileInputStream(aFilename);
 
 /*
         byte[] buf = new byte[5];
@@ -439,14 +438,11 @@ public class ImportFormatServiceBean implements IImportFormatService {
         LOG.info(">"+(new String(buf))+";");
         if (true) return;
 */
-
-        long count = 0;
-        try {
+        long count;
+        try (InputStream inFile = new FileInputStream(aFilename)) {
             dbfFile.load(inFile);
             monitor.setText("Расчет общего кол-ва записей");
             count = dbfFile.getRecordsCount();
-        } finally {
-            inFile.close();
         }
 
      //   Collection<DbfField> fields = dbfFile.getDbfFields();
@@ -592,8 +588,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                     if (data != null) {
                         String oldValue = getEntityPropertyAsString(importMap,data);
                         
-                        if( (!importMap.getUpdateIfEmpty() && !isEmpty(value))
-                        		|| importMap.getUpdateIfEmpty()) {
+                        if(importMap.getUpdateIfEmpty() || !isEmpty(value)) {
                             if (oldValue == null) oldValue = "";
                             
                             if ((value==null && oldValue.equals("")) || (value!=null && value.toString().equals(oldValue))) {
@@ -729,7 +724,6 @@ public class ImportFormatServiceBean implements IImportFormatService {
             }
             monitor.dump();
             in.close();
-            in = null;
         }
 
         declev();
@@ -764,7 +758,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
         }
         monitor.setValue(3);
 
-        long i = 0;
+        long i;
         HashMap<String, Object> map = new HashMap<>();
         monitor.setText("Построение конфигурации импорта");
         List<ImportEntity> entities = importConfig.getEntities();
@@ -777,7 +771,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
             importStatistics.addTotalRecords(c);
             if (c>0) {
                 LOG.info("match entity '" +entity.getEntityName()+"':"+c);
-                sb.append(entity.getEntityName()+" ");
+                sb.append(entity.getEntityName()).append(" ");
             }
         }
         log(sb.toString());
@@ -918,11 +912,11 @@ public class ImportFormatServiceBean implements IImportFormatService {
 
 //                        if (i<=debugCount) LOG.info("REPLACE ID:"+id);
 
-                } else if (id!=null && id.equals("0")) {
+                } else if (id!=null) {
                 	log("("+i+") Пропущено, несколько объектов имеют одинаковый ключ");
                 	importStatistics.incSyncEntity();
                 	isModified = false;
-                }else {
+                } else {
                     importStatistics.incAddEntity();
                     log("("+i+") Запись  добавлена");
                     isModified = true;
@@ -1229,10 +1223,7 @@ LOG.info("File= "+file.getAbsolutePath());
 
         } catch (Exception e) {
             LOG.error("SomeError",e);
-            if (monitor != null) {
-                monitor.error(e.getMessage(),e);
-            }
-
+            monitor.error(e.getMessage(),e);
             throw new ImportException("Ошибка импорта файла " + aFilename, e);
         } finally {
             new File(aFilename).delete() ;

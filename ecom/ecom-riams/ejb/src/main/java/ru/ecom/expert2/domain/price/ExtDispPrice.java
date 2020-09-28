@@ -5,11 +5,10 @@ import ru.ecom.expert2.domain.voc.federal.VocE2FondV016;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 
@@ -40,12 +39,17 @@ public class ExtDispPrice extends BaseEntity {
     /** Цена полного случая */
     private BigDecimal theCost ;
 
-    /** Возраста  */
-    @Comment("Возраста ")
-    public String getAges() {return theAges;}
-    public void setAges(String aAges) {theAges = aAges;}
-    /** Возраста  */
-    private String theAges ;
+    /** Возраст с (мес) */
+    @Comment("Возраст с (мес)")
+    public Integer getAgeFrom() {return theAgeFrom;}
+    public void setAgeFrom(Integer aAgeFrom) {theAgeFrom = aAgeFrom;}
+    private Integer theAgeFrom ;
+
+    /** Возраст по (мес) */
+    @Comment("Возраст по (мес)")
+    public Integer getAgeTo() {return theAgeTo;}
+    public void setAgeTo(Integer aAgeTo) {theAgeTo = aAgeTo;}
+    private Integer theAgeTo ;
 
     /** Ценовая (социальная) группа */
     @Comment("Ценовая (социальная) группа")
@@ -68,5 +72,23 @@ public class ExtDispPrice extends BaseEntity {
     /** Дата окончания действия */
     private Date theDateTo ;
 
+    /** Возраста  */
+    @Comment("Возраста ")
+    public String getAges() {return theAges;}
+    public void setAges(String aAges) {theAges = aAges;}
+    /** Возраста  */
+    private String theAges ;
 
+    /** Услуги по цене */
+    @Comment("Услуги по цене")
+    @OneToMany(mappedBy = "price", cascade = CascadeType.ALL)
+    public List<ExtDispPriceMedService> getServiceList() {return theServiceList;}
+    public void setServiceList(List<ExtDispPriceMedService> aServiceList) {theServiceList = aServiceList;}
+    private List<ExtDispPriceMedService> theServiceList ;
+
+    /** Минимальное кол-во услуг */
+    @Comment("Минимальное кол-во услуг")
+    public Integer getMinServices() {return theMinServices;}
+    public void setMinServices(Integer aMinServices) {theMinServices = aMinServices;}
+    private Integer theMinServices ;
 }

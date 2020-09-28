@@ -24,21 +24,4 @@
         <tag-class>ru.ecom.expomc.web.tags.MessageUrlEditTag</tag-class>
         <body-content>scriptless</body-content>
     </tag>
-
-    <tag>
-        <description>Поля, на которые следует обратить внимание</description>
-        <display-name>Поля, на которые следует обратить внимание</display-name>
-        <name>messageBadProperties</name>
-        <tag-class>ru.ecom.expomc.web.tags.MessageBadPropertiesTag</tag-class>
-        <body-content>scriptless</body-content>
-    </tag>
-
-    <tag>
-        <description>Список свойств по формату</description>
-        <display-name>Список свойств по формату</display-name>
-        <name>fillTimePropertiesByFormat</name>
-        <tag-class>ru.ecom.expomc.web.tags.ListFillTimePropertyByFormat</tag-class>
-        <body-content>scriptless</body-content>
-    </tag>
-    
 </taglib>

@@ -26,6 +26,11 @@
 		<form-bean name="calc_prescForm"	type="ru.ecom.mis.ejb.form.calc.PrescCalcForm" />
 		<form-bean name="calc_contraForm"	type="ru.ecom.mis.ejb.form.calc.ContraCalcForm" />
 	<!-- /Калькулятор -->
+
+	<!-- Акты РВК -->
+		<form-bean name="rvk_aktSloForm"			type="ru.ecom.mis.ejb.form.medcase.ActRVKSloForm" />
+		<form-bean name="rvk_aktVisitForm"			type="ru.ecom.mis.ejb.form.medcase.ActRVKVisitForm" />
+	<!-- /Акты РВК -->
 		<form-bean name="mis_patientExternalServiceAccountForm"			type="ru.ecom.mis.ejb.form.patient.PatientExternalServiceAccountForm" />
 		<form-bean name="work_attorneyForm"			type="ru.ecom.mis.ejb.form.worker.AttorneyForm" />
 		<form-bean name="stac_vmpCaseForm"			type="ru.ecom.mis.ejb.form.medcase.hospital.HitechMedicalCaseForm" />
@@ -42,6 +47,8 @@
 		<form-bean name="mis_patientListForm"		type="ru.ecom.mis.ejb.form.patient.PatientListForm" />
 		<form-bean name="mis_patientListRecordForm"	type="ru.ecom.mis.ejb.form.patient.PatientListRecordForm" />
 		<form-bean name="mis_userDocumentForm" 		type="ru.ecom.mis.ejb.form.userdocument.UserDocumentForm" />
+		<form-bean name="mis_dynamicDocumentForm" 		type="ru.ecom.mis.ejb.form.userdocument.DynamicDocumentForm" />
+		<form-bean name="voc_dynamicDocumentForm" 		type="ru.ecom.mis.ejb.form.userdocument.voc.VocDynamicDocumentForm" />
 		<form-bean name="mis_workFunctionClaimTypeForm" type="ru.ecom.mis.ejb.form.claim.WorkFunctionClaimTypeForm" />
 		<form-bean name="mis_claimForm" type="ru.ecom.mis.ejb.form.claim.ClaimForm" />
 		<form-bean name="mis_lpuDiagnosisRuleForm" type="ru.ecom.mis.ejb.form.lpu.LpuDiagnosisRuleForm" />
@@ -71,11 +78,11 @@
         <form-bean name="mis_helpForm" type="ru.ecom.mis.web.action.util.HelpForm" />
         <form-bean name="smo_draftProtocolForm" type="ru.ecom.mis.ejb.form.medcase.RoughDraftForm" />
         <form-bean name="smo_visitProtocolForm" type="ru.ecom.mis.ejb.form.medcase.VisitProtocolForm" />
+		<form-bean name="edkcProtocolForm" type="ru.ecom.mis.ejb.form.patient.EdkcProtocolForm" />
+		<form-bean name="edkcObsSheetForm" type="ru.ecom.mis.ejb.form.patient.ObservationSheetForm" />
 	    <form-bean name="smo_directionForm" type="ru.ecom.mis.ejb.form.medcase.poly.DirectionMedCaseForm" />
 	    <form-bean name="smo_direction_medserviceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCase20ForDirect" />
 
-		<form-bean name="doc_flow_searchForm" type="ru.ecom.mis.web.action.patient.FlowDocumentSearchForm"/>
-		<form-bean name="doc_flowForm" type="ru.ecom.document.ejb.form.FlowDocumentForm"/>
 		<form-bean name="doc_baseMedicalExaminationForm" type="ru.ecom.mis.ejb.form.licence.BaseMedicalExaminationForm"/>
 		<form-bean name="doc_documentForm" type="ru.ecom.mis.ejb.form.licence.DocumentForm"/>
 		<form-bean name="doc_directionMicrobiologForm" type="ru.ecom.mis.ejb.form.licence.DirectionToMicrobiologAnalysisForm"/>
@@ -87,7 +94,6 @@
 		<form-bean name="diary_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentByMedCaseForm"/>
 		<form-bean name="medcase_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentByMedCaseForm"/>
 		<form-bean name="doc_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentForm"/>
-	    <form-bean name="cal_patternByOperRoomForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternByOperatingRoomForm" />
 	    <form-bean name="cal_patternBySpecForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternBySpecialistForm" />
 	    
 		<!-- Рабочий календарь -->
@@ -109,7 +115,6 @@
 		<form-bean name="cal_weekDaysAlgorithmForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarWeekDaysAlgorithmForm" />
 
 		<!-- Медкарта -->
-		<form-bean name="voc_cardIndexForm" type="ru.ecom.poly.ejb.form.VocCardIndexForm" />
 		<form-bean name="voc_documentParameterForm" type="ru.ecom.mis.ejb.form.licence.VocDocumentParameterForm" />
 		<!-- Договора -->
 		<form-bean name="contract_account_contractForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
@@ -147,7 +152,6 @@
 		<form-bean name="contract_juridicalAccountMedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountMedServiceJuridicalForm" />
 		<form-bean name="contract_contractAccount20MedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccount20MedServiceForm" />
 		<form-bean name="contract_reportsForm" type="ru.ecom.mis.web.action.contract.ContractReportsForm" />
-		<form-bean name="mis_encodingAccordanceForm" type="ru.ecom.mis.ejb.form.identification.EncodingAccordanceForm"/>
 		<form-bean name="ecom_deleteJournalForm" type="ru.ecom.ejb.form.live.DeleteJournalForm"/>
 		<form-bean name="mis_kinsmanForm" type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>
 		<form-bean name="mis_lpuForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
@@ -176,12 +180,6 @@
 		
 		<form-bean name="mis_patientForm"
 			type="ru.ecom.mis.ejb.form.patient.PatientForm" />
-		<form-bean name="mis_identityCardForm"
-			type="ru.ecom.mis.ejb.form.patient.IdentityCardForm" />
-		<form-bean name="mis_identityCardPassportForm"
-			type="ru.ecom.mis.ejb.form.patient.IdentityCardPassportForm" />
-		<form-bean name="mis_identityCardPensionCertificateForm"
-			type="ru.ecom.mis.ejb.form.patient.IdentityCardPensionCertificateForm" />
 
 		<form-bean name="mis_medPolicyForm"
 			type="ru.ecom.mis.ejb.form.patient.MedPolicyForm" />
@@ -197,14 +195,7 @@
 		
 		<form-bean name="mis_patientSearchForm"
 			type="ru.ecom.mis.web.action.patient.PatientSearchForm" />
-		
-		<!-- Лицензии ЛПУ -->
-		
-		<form-bean name="mis_licenceForm"
-			type="ru.ecom.mis.ejb.form.licence.LicenceForm" />
-		<form-bean name="mis_prilogenieForm"
-			type="ru.ecom.mis.ejb.form.licence.PrilogenieForm" />
-			
+
 		<!-- Диетология -->
 		
 		<form-bean name="diet_dishFoodStuffForm" type="ru.ecom.mis.ejb.form.diet.DishFoodStuffForm" />
@@ -228,10 +219,6 @@
 			type="ru.ecom.mis.ejb.form.diet.DishMealMenuOrderForm" />
 		<form-bean name="diet_dishMealMenuTemplateForm"
 			type="ru.ecom.mis.ejb.form.diet.DishMealMenuTemplateForm" />
-		<form-bean name="diet_mealQualityControlForm"
-			type="ru.ecom.mis.ejb.form.diet.MealQualityControlForm" />
- 		<form-bean name="diet_mealWorkerHealthControlForm"
-			type="ru.ecom.mis.ejb.form.diet.MealWorkerHealthControlForm" />
 		<form-bean name="diet_foodStuffSearchForm"
 			type="ru.ecom.mis.web.action.diet.FoodStuffSearchForm" />
 
@@ -240,17 +227,12 @@
 		<!-- Кадры -->
 		
 		<form-bean name="mis_workerForm" type="$$map$$mis_workerForm" />
-		<form-bean name="mis_stateListForm" type="$$map$$mis_stateListForm" />
-		<form-bean name="mis_educationForm" type="$$map$$mis_educationForm" />
-		<form-bean name="mis_qualificationForm" type="$$map$$mis_qualificationForm" />
-		<form-bean name="mis_workBookForm" type="$$map$$mis_workBookForm" />
-		
 
 		<form-bean name="mis_equipmentForm" type="ru.ecom.mis.ejb.form.equipment.EquipmentForm" />
+		<form-bean name="mis_colorIdentityForm" type="ru.ecom.mis.ejb.form.patient.VocColorIdentityPatientForm" />
 		<form-bean name="mis_kkmequipmentForm" type="ru.ecom.mis.ejb.form.equipment.KkmEquipmentForm" />
 		<form-bean name="mis_invalidityForm" type="ru.ecom.mis.ejb.form.patient.InvalidityForm" />
 		<form-bean name="mis_privilegeForm" type="ru.ecom.mis.ejb.uc.privilege.form.PrivilegeForm" />
-		<form-bean name="mis_drugNeedForm"  type="ru.ecom.mis.ejb.uc.privilege.form.DrugNeedForm" />
 		<form-bean name="mis_recipeForm" 	type="ru.ecom.mis.ejb.uc.privilege.form.RecipeForm" />
 		<form-bean name="mis_privilegeRecipeForm" 	type="ru.ecom.mis.ejb.uc.privilege.form.PrivilegeRecipeForm" />
 		
@@ -287,10 +269,11 @@
         <form-bean name="pres_journalFindForm" type="ru.ecom.mis.web.action.medcase.PrescriptionFindForm" />
         <form-bean name="pres_modePrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.ModePrescriptionForm" />
         <form-bean name="pres_drugPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.DrugPrescriptionForm" />
+        <form-bean name="pres_drugShortPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.DrugPrescriptionForm" />
         <form-bean name="pres_dietPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.DietPrescriptionForm" />
         <form-bean name="pres_diagnosticPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.ServicePrescriptionForm" />
         <form-bean name="pres_servicePrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.ServicePrescriptionForm" />
-        <form-bean name="pres_operationPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.ServicePrescriptionForm" />
+        <form-bean name="pres_operationPrescriptionForm" type="ru.ecom.mis.ejb.form.prescription.OperationPrescriptionForm" />
         <form-bean name="pres_prescriptionFulfilmentForm" type="ru.ecom.mis.ejb.form.prescription.PrescriptionFulfilmentForm" />
         <form-bean name="pres_prescriptionForm" type="ru.ecom.mis.ejb.form.prescription.PrescriptionForm" />
         <form-bean name="pres_abstractPrescriptionListForm" type="ru.ecom.mis.ejb.form.prescription.AbstractPrescriptionListForm" />
@@ -300,11 +283,12 @@
         		
         <!-- Медицинские услуги -->  		
         <form-bean name="mis_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceForm" />
+		<form-bean name="mis_medServiceComplexLinkForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceComplexLinkForm" />
+		<form-bean name="mis_medServiceBySpecialityForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceComplexLinkBySpecialityForm" />
         <form-bean name="mis_medServiceGroupForm" type="ru.ecom.mis.ejb.form.medcase.MedServiceGroupForm" />
         <form-bean name="mis_medService_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceGroupForm" />
         <form-bean name="mis_medServiceGroup_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceForm" />
         <form-bean name="smo_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCaseForm" />
-        <form-bean name="smo_visitPrescriptionBlankForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitPrescriptionBlankForm" />
 		<form-bean name="stac_bandageForm" type="ru.ecom.mis.ejb.form.medcase.hospital.BandageForm" />
 
         <!-- Лекарсвенные средства -->
@@ -330,6 +314,22 @@
 
 
 	<action-mappings>
+		<action path="/covidImportJournal_journal" type='ru.ecom.web.actions.base.ForwardAction'
+				scope='request' validate="false" name='stac_admissionJournalForm' >
+			<forward name="success" path="/WEB-INF/actions/smo_covid19/journal_analysisUpdate.jsp"/>
+		</action>
+
+		<action path="/covidImportJournal_import" type='ru.ecom.mis.web.action.kdl.CovidAnalysisImportAction'
+				scope='request' validate="false" name="e2_importFileForm">
+			<forward name="success" path="/WEB-INF/actions/smo_covid19/journal_analysisUpdate.jsp"/>
+		</action>
+
+		<action path='/journal_econom_pol' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				scope="request"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/pol_journals/econom_pol.jsp" />
+		</action>
 		<action path='/queueKiosk' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				scope="request"
@@ -355,6 +355,13 @@
 				scope="request"
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/riams/kiosk.jsp" />
+		</action>
+		<action path='/sls_listAdmissionWait' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAdmission/sls_listAdmissionWait.jsp" />
 		</action>
 
 		<action path='/extDispPlanAdd' type='ru.ecom.web.actions.base.ForwardAction'
@@ -394,13 +401,6 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/contract_guaranteeLetter/list_by_period.jsp" />
         </action>
 
-	 <action path='/lab_checkImportPDF' type='ru.ecom.mis.web.action.kdl.ImportPdfAction'
-                name='diet_journalForm'
-                validate='false'
-                scope="request"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/riams/config.jsp" />
-        </action>
 	 <action path='/diet_dietJournal' type='ru.ecom.mis.web.action.diet.DietJournalAction'
                 name='diet_journalForm'
                 validate='false'
@@ -482,6 +482,13 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/journal_robson.jsp" />
 		</action>
+		<action path='/preg_nosology' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/preg_nosology.jsp" />
+		</action>
 
 		<action path='/smo_deniedHospitelByAttach' type='ru.ecom.web.actions.base.ForwardAction'
 				name='stac_admissionJournalForm'
@@ -490,6 +497,20 @@
 			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/smo_deniedHospitalByAttach.jsp" />
 		</action>
 
+
+		<action path='/actRVKReport' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session">
+			<forward name="success" redirect="false" path="/WEB-INF/actions/rvk_aktVisit/rvkReport.jsp" />
+		</action>
+
+		<action path='/arrivedAO' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session">
+			<forward name="success" redirect="false" path="/WEB-INF/actions/COVID19/arrivedAO.jsp" />
+		</action>
 
 		<action path='/gener_ticket' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
@@ -513,28 +534,6 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_claim/list_by_operator_pda.jsp" />
         </action>
- 		<action path='/doc_flow_sending' type='ru.ecom.web.actions.base.ForwardAction'
-                name='doc_flow_searchForm'
-                validate='false'
-                scope="session"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_flow/list_sending_documents.jsp" />
-        </action>
- 		<action path='/doc_flow_receit' type='ru.ecom.web.actions.base.ForwardAction'
-                name='doc_flow_searchForm'
-                validate='false'
-                scope="session"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_flow/list_receit_documents.jsp" />
-        </action>
- 		<action path='/doc_flow_backtrace' type='ru.ecom.web.actions.base.ForwardAction'
-                name='doc_flow_searchForm'
-                validate='false'
-                scope="session"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_flow/list_backtrace.jsp" />
-        </action>
-        
  		<action path='/all_claims' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'
@@ -628,12 +627,30 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/find_prescription.jsp" />
         </action>
+		<action path='/pres_prescription_findFIO' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/find_prescriptionFIO.jsp" />
+		</action>
+        <action path='/pres_doctor_lab_journal' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pres_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/doctor_lab_journal.jsp" />
+        </action>
         <action path='/pres_lab_print' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'
                 scope="session"
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/list_lab_print.jsp" />
+        </action>
+        <action path='/pres_annul_journal' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pres_journalForm' validate='false' scope="session">
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/pres_annul_journal.jsp" />
         </action>
         <action path='/pres_journal' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
@@ -1142,6 +1159,13 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/report203.jsp" />
 		</action>
+		<action path='/expertKMP' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/expertKMP.jsp" />
+		</action>
 		<action path='/journal_onco' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
@@ -1149,6 +1173,62 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/oncology_case_reestr/reestr.jsp" />
 		</action>
+		<action path='/journal_noIdentSls' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/journal_noIdentSls.jsp" />
+		</action>
+
+		<action path='/journal_bracelets' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/journal_bracelets.jsp" />
+		</action>
+
+		<action path='/journal_searchTextDiary' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/journal_searchTextDiary.jsp" />
+		</action>
+
+		<action path='/journal_analysisUpdate' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/journal_analysisUpdate.jsp" />
+		</action>
+
+		<action path='/journal_hospFreeInfo' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/journal_hospFreeInfo.jsp" />
+		</action>
+
+		<action path='/journal_searchEmptyCovid' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/journal_searchEmptyCovid.jsp" />
+		</action>
+
+		<action path='/journal_covidForm' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/journal_covidForm.jsp" />
+		</action>
+
 		<action path='/journal_cardiacScreening' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
@@ -1190,6 +1270,13 @@
 				scope="session"
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/reestrNaOplatyDogovorov.jsp" />
+		</action>
+		<action path='/registriesForSMO' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/registriesForSMO.jsp" />
 		</action>
 		<action path='/finPlan' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'

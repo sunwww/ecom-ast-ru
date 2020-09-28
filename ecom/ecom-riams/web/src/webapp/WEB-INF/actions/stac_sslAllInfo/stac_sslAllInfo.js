@@ -31,8 +31,6 @@ function findHospByPeriod(aForm, aCtx) {
 	} else {
 		aCtx.request.setAttribute("paramPeriod"," and m."+dateI+" between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy')")
 	}
-	//var dep = +aCtx.request.getParameter("department") ;
-	//if (dep>0) aCtx.request.setAttribute("addParam", " and m.department_id='"+dep+"' and m.deniedHospitalizating_id is null") ;
 	return listRecord(aCtx) ;
 }
 function findDeniedByPeriod(aForm, aCtx) {
@@ -54,12 +52,14 @@ function findDeniedByPeriod(aForm, aCtx) {
 }
 function listRecord(aCtx) {
 	var dep = aCtx.request.getParameter("department") ;
+	var bedType = aCtx.request.getParameter("bedType") ;
 	var pHole = aCtx.request.getParameter("pigeonHole") ;
 	var typeEmergency = aCtx.request.getParameter("typeEmergency") ;
 	var typeHosp = +aCtx.request.getParameter("typeHosp") ;
 	var typeDost = +aCtx.request.getParameter("typeDost") ;
 	var typePatient = aCtx.request.getParameter("typePatient") ;
 	var typeFrm = aCtx.request.getParameter("typeFrm") ;
+    var otkaz = aCtx.request.getParameter("otkaz") ;
 	if (+typeEmergency==1) {
 		aCtx.request.setAttribute("emergency"," and m.emergency='1'") ;
 	} else if (+typeEmergency==2) {
@@ -73,7 +73,10 @@ function listRecord(aCtx) {
 		aCtx.request.setAttribute("dostSql"," and vpat.code='3'") ;
 	}
 	if (+typeHosp==1) {
-		aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is null") ;
+		if (+otkaz!=1)
+			aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is null") ;
+		else
+            aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is not null") ;
 	} else if (+typeHosp==2) {
 		aCtx.request.setAttribute("hospSql"," and m.deniedHospitalizating_id is not null") ;
 	}
@@ -95,13 +98,14 @@ function listRecord(aCtx) {
 		aCtx.request.setAttribute("patientSql"," and (oo.voc_code='643' or oo.id is null) and (a.addressid is null or a.domen<3) ") ;
 	}
 	
-	//throw typeFrm+"---"+aCtx.request.getAttribute("frmSql") ;
 	if (dep>0) {
 		aCtx.request.setAttribute("department", " and ml.id='"+dep+"'") ;
 	}	
 	if (+pHole>0) {
 		aCtx.request.setAttribute("pigeonHole"," and (m.department_id is not null and ml.pigeonHole_id='"+pHole+"' or m.department_id is null and ml1.pigeonHole_id='"+pHole+"')") ;
 	}
-	//request.setAttribute("dateI",) ;
+	if (bedType>0) {
+		aCtx.request.setAttribute("bedtype", " and vbt.id="+bedType) ;
+	}
 	return aCtx.createForward("/WEB-INF/actions/stac_sslAllInfo/listByDate.jsp") ;
 }

@@ -14,7 +14,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals">Форма 16у-02</msh:title>
+    <msh:title mainMenu="Journals">Форма 16у-02</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_report016"/>
@@ -33,13 +33,13 @@
   if (sh) {
 	 
   %>
-    <msh:form action="/stac_report_016.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_report_016.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="s" id="s" value="HospitalPrintReport" />
     <input type="hidden" name="m" id="m" value="printReport016" />
     <input type="hidden" name="id" id="id" value=""/>
     <msh:panel>
       <msh:row>
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <td class="label" title="Начало суток (typeeHour)" colspan="1"><label for="typeHourName" id="typeHourLabel">Начало суток:</label></td>
@@ -90,9 +90,9 @@
         	<input type="radio" name="typeView" value="8"  >  анализ работы учреждения 
         </td>
        </msh:row>
-      <msh:row guid="Дата">
-        <msh:textField property="dateBegin" label="Дата начала периода" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="Дата окончания периода" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+      <msh:row>
+        <msh:textField property="dateBegin" label="Дата начала периода" />
+        <msh:textField property="dateEnd" label="Дата окончания периода" />
       </msh:row>
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="5" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
@@ -489,7 +489,7 @@ if (date!=null && !date.equals("")) {
 	and slo.bedfund_id=${param.bedFund} ${bedTypeSql} ${bedSubTypeSql}
 	order by pat.lastname,pat.firstname,pat.middlename
 	      " />
-	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn property="2" columnName="№СК"/>
 	      <msh:tableColumn property="3" columnName="ФИО пациента"/>
@@ -818,7 +818,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:sectionContent>
 	    <msh:table name="journal_priem" 
 	    viewUrl="stac_report_016.do?short=Short" 
-	    action="stac_report_016.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    action="stac_report_016.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="профиль коек" property="2" />
 	      <msh:tableColumn columnName="поток обслуживания" property="3" />
@@ -883,8 +883,8 @@ if (date!=null && !date.equals("")) {
 	slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}' as time))
 
 	order by pat.lastname,pat.firstname,pat.middlename
-	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table  printToExcelButton="Сохранить в excel" name="journal_priem01" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      " />
+	    <msh:table  printToExcelButton="Сохранить в excel" name="journal_priem01" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -940,8 +940,8 @@ if (date!=null && !date.equals("")) {
 
 	order by pat.lastname,pat.firstname,pat.middlename
 
-	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem02" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      " />
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem02" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -983,8 +983,8 @@ if (date!=null && !date.equals("")) {
 	and slo.prevMedCase_id is null
 	and (vht.code is null or vht.code!='ALLTIMEHOSP')
 	order by pat.lastname,pat.firstname,pat.middlename
-	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem1" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      " />
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem1" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1021,8 +1021,8 @@ if (date!=null && !date.equals("")) {
 	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime)
 	and slo.prevMedCase_id is not null
 	order by pat.lastname,pat.firstname,pat.middlename
-	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem1" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      " />
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem1" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1060,8 +1060,8 @@ if (date!=null && !date.equals("")) {
 	and slo.prevMedCase_id is null  
 	and vht.code='ALLTIMEHOSP'
 	order by pat.lastname,pat.firstname,pat.middlename
-	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem2" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      " />
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem2" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1104,8 +1104,8 @@ if (date!=null && !date.equals("")) {
 	
 	and vhr.code!='11'
 	order by pat.lastname,pat.firstname,pat.middlename
-	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem3" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      " />
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem3" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1147,8 +1147,8 @@ if (date!=null && !date.equals("")) {
 	or slo.transferDate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transferTime)
 	
 	order by pat.lastname,pat.firstname,pat.middlename
-	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem4" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      " />
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem4" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1190,8 +1190,8 @@ if (date!=null && !date.equals("")) {
 	
 	and vhr.code='11'
 	order by pat.lastname,pat.firstname,pat.middlename
-	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem4" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      " />
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem4" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn"/>
 	      <msh:tableColumn columnName="Стат.карта" property="2"/>
 	      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -1530,7 +1530,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:sectionContent>
 	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem"
 	    viewUrl="stac_report_016.do?short=Short" 
-	    action="stac_report_016.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    action="stac_report_016.do" idField="1">
 	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="${queryName}" property="2" />
 	      <msh:tableColumn columnName="тип коек" property="3" />
@@ -1850,7 +1850,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:sectionContent>
 	    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem"
 	    viewUrl="stac_report_016.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}" 
-	    action="stac_report_016.do?&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    action="stac_report_016.do?&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}" idField="1">
 	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="${queryName}" property="2" />
 <%--	      <msh:tableColumn columnName="тип коек" property="3" />
@@ -2187,7 +2187,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Отчет о деятельности отделений стационара</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <msh:table printToExcelButton="Сохранить в excel" name="list_newform" action="${typeGroupNext}" idField="19" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table printToExcelButton="Сохранить в excel" name="list_newform" action="${typeGroupNext}" idField="19">
 	      
 	      <msh:tableColumn property="18" columnName="Профиль коек"/>
 	      <msh:tableColumn property="1" columnName="Факт коек"/>
@@ -2215,7 +2215,7 @@ if (date!=null && !date.equals("")) {
 	    <%-- <msh:section>
 	    <msh:sectionTitle>HELLLLO</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <msh:table  name="list_newform" action="javascript:void()" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table  name="list_newform" action="javascript:void()" idField="1">
 	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn property="18" columnName="f0_Профиль коек"/>
 	      <msh:tableColumn property="1" columnName="f1_Факт коек"/>

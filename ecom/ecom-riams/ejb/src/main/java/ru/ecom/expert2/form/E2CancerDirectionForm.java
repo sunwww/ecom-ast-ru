@@ -18,6 +18,15 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityFormSecurityPrefix("/Policy/E2")
 @Parent(property = "cancerEntry", parentForm = E2CancerEntryForm.class)
 public class E2CancerDirectionForm extends IdEntityForm {
+
+    /** ЛПУ, куда сделали направление */
+    @Comment("ЛПУ, куда сделали направление")
+    @Persist
+    public String getDirectLpu() {return theDirectLpu;}
+    public void setDirectLpu(String aDirectLpu) {theDirectLpu = aDirectLpu;}
+    /** ЛПУ, куда сделали направление */
+    private String theDirectLpu ;
+
     /** Случай рака */
     @Comment("Случай рака")
     @Persist

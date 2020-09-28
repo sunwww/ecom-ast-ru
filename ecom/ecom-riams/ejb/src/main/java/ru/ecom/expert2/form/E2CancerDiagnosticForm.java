@@ -5,6 +5,8 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2CancerDiagnostic;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 
 /**
  *
@@ -21,7 +23,6 @@ public class E2CancerDiagnosticForm extends IdEntityForm {
     @Persist
     public Long getCancerEntry() {return theCancerEntry;}
     public void setCancerEntry(Long aCancerEntry) {theCancerEntry = aCancerEntry;}
-    /** Случай рака */
     private Long theCancerEntry ;
 
     /** Тип показателя */
@@ -29,7 +30,6 @@ public class E2CancerDiagnosticForm extends IdEntityForm {
     @Persist
     public String getType() {return theType;}
     public void setType(String aType) {theType = aType;}
-    /** Тип показателя */
     private String theType ;
 
     /** Код показателя */
@@ -37,7 +37,6 @@ public class E2CancerDiagnosticForm extends IdEntityForm {
     @Persist
     public String getCode() {return theCode;}
     public void setCode(String aCode) {theCode = aCode;}
-    /** Код показателя */
     private String theCode ;
 
     /** Результат показателя */
@@ -45,6 +44,13 @@ public class E2CancerDiagnosticForm extends IdEntityForm {
     @Persist
     public String getResult() {return theResult;}
     public void setResult(String aResult) {theResult = aResult;}
-    /** Результат показателя */
     private String theResult ;
+
+    /** Дата взятия биопсийного материала * Олег */
+    @Comment("Дата взятия биопсийного материала * Олег")
+    @DateString @DoDateString
+    @Persist
+    public String getBiopsyDate() {return theBiopsyDate;}
+    public void setBiopsyDate(String aBiopsyDate) {theBiopsyDate = aBiopsyDate;}
+    private String theBiopsyDate ;
 }

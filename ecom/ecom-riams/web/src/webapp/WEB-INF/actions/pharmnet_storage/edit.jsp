@@ -17,19 +17,19 @@
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="pharmnet_storageForm">
             <msh:sideMenu title="Управление">
-                <msh:sideLink guid="sideLinkEdit" key="ALT+1" params="id"
+                <msh:sideLink key="ALT+1" params="id"
                               action="/entityEdit-pharmnet_storage" name="Изменить"
                               roles="/Policy/Mis/Pharmacy/Administration/Edit" />
 
-                <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id"
+                <msh:sideLink key="ALT+2" params="id"
                               action="/entityPrepareCreate-pharmnet_storage" name="Добавить новый склад"
                               roles="/Policy/Mis/Pharmacy/Administration/Create" />
 
-                <msh:sideLink styleId="viewShort" guid="sideLinkEdit" params="id"
+                <msh:sideLink styleId="viewShort" params="id"
                               action="/entityList-pharmnet_storage.do" name="К списку складов"
                               roles="/Policy/Mis/Pharmacy/Administration/Create" />
 <%--
-                <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?"
+                <msh:sideLink key="ALT+DEL" confirm="Удалить?"
                               params="id"
                               action="/entityParentDeleteGoParentView-pharmnet_storage" name="Удалить"
                               roles="/Policy/Mis/Pharmacy/Administration/Edit" />--%>
@@ -48,7 +48,7 @@
             <msh:row>
                 <msh:autoComplete  property="groupWorkfuncId" label="Групповая раб. функция" vocName="funcMedServiceRoom" fieldColSpan="3" horizontalFill="true" />
             </msh:row>
-            <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+            <msh:submitCancelButtonsRow colSpan="4" />
         </msh:form>
     </tiles:put>
     <!-- Scripts -->

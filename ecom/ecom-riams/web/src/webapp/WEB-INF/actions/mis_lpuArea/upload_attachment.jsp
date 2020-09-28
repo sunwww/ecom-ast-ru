@@ -8,27 +8,12 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал прикрепленного населения"/>
+    <msh:title mainMenu="Journals" title="Журнал прикрепленного населения"/>
   </tiles:put>
 
   <tiles:put name="body" type="string">
-  <%
-    /* String typeRead =ActionUtil.updateParameter("PatientAttachment","typeRead","1", request) ;
-	String typeView=ActionUtil.updateParameter("PatientAttachment","typeView","1", request) ;
-	String typeAge=ActionUtil.updateParameter("PatientAttachment","typeAge","3", request) ;
-	String typeAttachment=ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", request) ;
-	String typeChange=ActionUtil.updateParameter("PatientAttachment","typeChange","1", request) ;
-	String typeDefect=ActionUtil.updateParameter("PatientAttachment","typeDefect","3", request) ;
-	String typeCompany=ActionUtil.updateParameter("PatientAttachment","typeCompany","3", request) ;
-	String typeAreaCheck=ActionUtil.updateParameter("PatientAttachment","typeAreaCheck","3", request) ;
-	String typeWork=ActionUtil.updateParameter("PatientAttachment","typeWork","1", request) ;
-	String typeDivide=ActionUtil.updateParameter("PatientAttachemnt","typeDivide","1",request) ; */
-	//String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "2", request);
-
-  %>
-  
-    <msh:form action="/mis_attachmentUpload.do" defaultField="lpuName" disableFormDataConfirm="true" method="POST" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f" fileTransferSupports="true">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/mis_attachmentUpload.do" defaultField="lpuName" disableFormDataConfirm="true" method="POST" fileTransferSupports="true">
+    <msh:panel>
       
        </msh:panel>
        <msh:panel colsWidth="fondTable">
@@ -59,7 +44,6 @@
        
       <script type="text/javascript" src="./dwr/interface/AttachmentService.js"></script>
       <script type="text/javascript">
-      //checkFieldUpdate('typeXmlFormat', '${typeXmlFormat}',1);
       $('aView').innerHTML=$('filename').value ;
      
     	var text="";
@@ -93,8 +77,8 @@
       
       }
       
-    String date = (String)request.getParameter("period") ;
-    String date1 = (String)request.getParameter("periodTo") ;
+    String date = request.getParameter("period") ;
+    String date1 = request.getParameter("periodTo") ;
     String sqlAdd = (String)request.getAttribute("sqlAdd");
     String exportDefects = (String)request.getAttribute("exportDefects");
    

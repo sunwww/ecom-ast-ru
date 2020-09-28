@@ -1,40 +1,40 @@
-<%@page import="ru.ecom.diary.web.action.protocol.template.TemplateViewAction"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="ru.ecom.diary.ejb.form.protocol.TemplateProtocolForm"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ page import="ru.ecom.diary.ejb.service.protocol.tree.CheckNode"%>
 <%@ page import="ru.ecom.diary.web.action.protocol.template.TemplateEditAction"%>
-<%@ page import="ru.ecom.diary.ejb.form.protocol.TemplateProtocolForm" %>
+<%@ page import="ru.ecom.diary.web.action.protocol.template.TemplateViewAction" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="entityParentSaveGoView-diary_template" defaultField="title" guid="34dc6e2d-dfa9-41a2-b8e1-3a0bdbb24d36">
-      <msh:hidden property="id" guid="b13af088-2be6-4450-8c05-aaa9971111bf" />
-      <msh:hidden property="saveType" guid="4f251d39-a1c1-46cc-b8a8-6c641aadad7d" />
-      <msh:hidden property="medService" guid="ea9befb6-d884-4f43-b90e-f45eb4a310f4" />
-      <msh:panel guid="4b44ca53-2bd6-4bdf-9e54-0ea38d8fb582">
-        <msh:row>	
-        	<msh:autoComplete property="type" vocName="templateProtocolType" label="Тип протокола" />
+    <msh:form action="entityParentSaveGoView-diary_template" defaultField="title">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="medService" />
+      <msh:panel>
+        <msh:row>
+          <msh:textField property="title" label="Заголовок шаблона" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="d40cb3bf-d3e7-4544-a6ca-9db18a786f47">
-          <msh:textField property="title" label="Заголовок шаблона" horizontalFill="true" guid="83e6d295-6ea7-4010-8845-c1f694f8fc2d" fieldColSpan="3" />
-        </msh:row>
-        <msh:row guid="d40cb3bf-d3e7-4544-a6ca-9db18a786f47">
+        <msh:row>
           <msh:checkBox property="createDiaryByDefault" label="Создавать заключения автоматически при приеме в лабораторию"/>
         </msh:row>
-        <msh:row guid="fdcf0100-ab1c-4900-b7d6-cb08c77924b0">
-          <msh:textField property="username" label="Пользователь" viewOnlyField="true" guid="b3fd6145-7072-4065-accc-73fc37fb20ac" />
-          <msh:textField property="date" label="Дата создания" viewOnlyField="true" guid="7162d626-b2a7-4928-ab70-adb244c07d5d" />
+        <msh:row>
+          <msh:checkBox property="createBracelet" label="Создавать браслет"/>
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="4" guid="4a71ff37-bc99-4d73-a6a4-80c15f1c29e8" />
+        <msh:row>
+          <msh:textField property="username" label="Пользователь" viewOnlyField="true" />
+          <msh:textField property="date" label="Дата создания" viewOnlyField="true" />
+        </msh:row>
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
 
     </msh:form>
 
-    <msh:ifFormTypeIsView formName="diary_templateForm" guid="4a81e464-1352-415f-9286-596451caf264">
+    <msh:ifFormTypeIsView formName="diary_templateForm">
         <msh:section title="Список параметров у шаблона" viewRoles="/Policy/Diary/Template/Edit" listUrl="diary_templateParamsEdit.do?id=${param.id}">
             <msh:sectionContent>
             <table><tr><td>
@@ -75,12 +75,12 @@ where p.template_id=${param.id} order by p.position
         </msh:section>
         
     </msh:ifFormTypeIsView>
-      <msh:ifFormTypeIsView formName="diary_templateForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
-      <msh:section title="Печатные формы шаблона" guid="712b744d-be86-4dc1-9d3a-0ab52eb1bed9">
+      <msh:ifFormTypeIsView formName="diary_templateForm">
+      <msh:section title="Печатные формы шаблона">
         <ecom:webQuery name="protocolPrints" nativeSql="select ud.id ,ud.name,ud.fileName from userDocument ud where ud.template='${param.id}' order by ud.name" />
-        <msh:table name="protocolPrints" action="entityParentView-temp_protocolPrint.do" idField="1" noDataMessage="Нет данных" guid="123c019a-f668-4454-af88-4897d27728ab">
-          <msh:tableColumn property="2" columnName="Название шаблона для печати" guid="4d4c6566-75c9-4ef5-931c-723e88d4efbb" />
-          <msh:tableColumn property="3" columnName="Название файла" guid="f6c2e5ba-4045-4dbe-b8fb-bb5d8386e9c4" />
+        <msh:table name="protocolPrints" action="entityParentView-temp_protocolPrint.do" idField="1" noDataMessage="Нет данных">
+          <msh:tableColumn property="2" columnName="Название шаблона для печати" />
+          <msh:tableColumn property="3" columnName="Название файла" />
         </msh:table>
       </msh:section>
     </msh:ifFormTypeIsView>   
@@ -88,18 +88,18 @@ where p.template_id=${param.id} order by p.position
   </tiles:put>
   <tiles:put name="side" type="string">
   <tags:style_currentMenu currentAction="mis_medService" />
-    <msh:sideMenu title="Заключение" guid="5db0db09-9993-44cb-8477-a3fee5037b42">
-      <msh:ifFormTypeIsView formName="diary_templateForm" guid="dd63e5e4-f81c-43f2-b50a-f12b1d8e026b">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-diary_template" name="Изменить" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8d1be735e97e" />
-        <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-diary_template" name="Удалить" confirm="Удалить шаблон заключения?" guid="bc31c499-00cd-4cf8-94f0-fcdf1c9915ff" />
+    <msh:sideMenu title="Заключение">
+      <msh:ifFormTypeIsView formName="diary_templateForm">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-diary_template" name="Изменить" roles="/Policy/Diary/Template/Edit" />
+        <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-diary_template" name="Удалить" confirm="Удалить шаблон заключения?" />
       </msh:ifFormTypeIsView>
     </msh:sideMenu>
     <msh:sideMenu title="Работа с заключением">
         <msh:sideLink key="ALT+3" params="id" action="/diary_templateParamsEdit" name="Параметры" roles="/Policy/Diary/Template/Edit"/>
          <msh:sideLink key="ALT+4" action="/javascript:showParametersToPrint()" name="Показать параметры для печати" roles="/Policy/Diary/Template/View"/>
     </msh:sideMenu>
-    <msh:sideMenu guid="0d13c843-c26a-4ae2-ae97-d61b44618bae" title="Добавить">
-      <msh:sideLink key="ALT+N" action="/entityParentPrepareCreate-temp_protocolPrint" params="id" name="Шаблон для печати" guid="dc51a550-1158-41b8-89a4-bf3a90ffeedb" roles="/Policy/Diary/Template/Create" />
+    <msh:sideMenu title="Добавить">
+      <msh:sideLink key="ALT+N" action="/entityParentPrepareCreate-temp_protocolPrint" params="id" name="Шаблон для печати" roles="/Policy/Diary/Template/Create" />
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно">
             <tags:voc_menu currentAction="medService" />
@@ -107,7 +107,7 @@ where p.template_id=${param.id} order by p.position
      
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Config" beginForm="diary_templateForm" guid="4399c99f-8801-4a73-b168-c25c23f8b0ba" />
+    <ecom:titleTrail mainMenu="Config" beginForm="diary_templateForm" />
   </tiles:put>
     <tiles:put name="javascript" type="string">
      <link rel="stylesheet" type="text/css" href="css/folders/tree.css">
@@ -139,7 +139,7 @@ where p.template_id=${param.id} order by p.position
         %>
             var gLogger;
             var tree;
-            var nodes = new Array();
+            var nodes = [];
             var nodeIndex;
 
 
@@ -191,13 +191,9 @@ where p.template_id=${param.id} order by p.position
     			  for (var i=0;i<rows.length;i++) {
     				  a+=rows[i]+'\n';
     			  }
-    			  
-    			  alert (a);  
-    		  } else {
-    			  alert (a);
     		  }
-    		  
-    	  }
+              alert (a);
+          }
       });
       }
       

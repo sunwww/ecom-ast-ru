@@ -38,19 +38,19 @@ import java.util.*;
  */
 public class FondCheckUtil {
 
-    private static String theAddress = "http://192.168.4.3" ;
+    private static String theAddress = "http://vipnet" ;
     private static String theLpu = "1";
 
     public static JSONArray syncByHospitalDenied(HttpServletRequest aRequest, String dateStart, String dateEnd)
             throws NamingException, ParserConfigurationException, SAXException, JSONException, IOException {
 
-        String sql="select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils\n" +
-                "from medcase m\n" +
-                "left join patient p on p.id = m.patient_id\n" +
-                "where m.dtype = 'HospitalMedCase' \n" +
-                "and m.deniedhospitalizating_id is not null \n" +
-                "and m.datestart between '"+dateStart+"' and '"+dateEnd+"'\n" +
-                "and p.patientfond_id is null";
+        String sql="select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils" +
+                " from medcase m" +
+                " left join patient p on p.id = m.patient_id" +
+                " where m.dtype = 'HospitalMedCase'" +
+                " and m.deniedhospitalizating_id is not null" +
+                " and m.datestart between '"+dateStart+"' and '"+dateEnd+"'" +
+                " and p.patientfond_id is null";
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         List<Patient> patients = getPatients(service.executeNativeSql(sql));
@@ -90,6 +90,7 @@ public class FondCheckUtil {
             if(!mainObject.has("error")){
                 String patientFond_id = mainObject.get("patientFond_id").getAsString();
                 service.executeUpdateNativeSql("update patient set patientfond_id="+patientFond_id+" where id="+patient.getId());
+                service.executeUpdateNativeSql("update patientfond set patient="+patient.getId()+" where id="+patientFond_id);
                 jsonArray.put(new JSONObject().put("patient_id",patient.getId()));
 
             }else {
@@ -173,6 +174,9 @@ public class FondCheckUtil {
         if(!is(rz) && is(number) && is(series)){
             System.out.println("Try check by policy");
             rz = FondCheckUtil.getRzbyPolis(series,number);
+        }
+        if (!is(rz) && is(number)) {
+            rz=number;
         }
 
         if(is(rz)){
@@ -319,8 +323,7 @@ public class FondCheckUtil {
         return parseXml((String)createRequest().get_RZ_from_DOCS(type,serial,number,theLpu),"rz");
     }
 
-    protected static String getPersoninfo(String rz) throws IOException, NamingException, ParserConfigurationException, SAXException, JSONException {
-
+    protected static String getPersoninfo(String rz) throws IOException, ParserConfigurationException, SAXException, JSONException {
         String result = ((String)createRequest().get_FIODR_from_RZ(rz, theLpu))
                 .replace("Windows-1252", "utf-8") ;
 
@@ -338,10 +341,10 @@ public class FondCheckUtil {
         params.put("ssd","docSnils");
         params.put("kodpodr","codeAttach");
 
-        return parseXmltoJSONArray(result,params).toString();
+        return parseXmltoJSONArray(result,params);
     }
 
-    protected static String getPolis(String rz) throws IOException, NamingException,
+    protected static String getPolis(String rz) throws IOException,
             ParserConfigurationException, SAXException, JSONException {
 
 
@@ -360,11 +363,11 @@ public class FondCheckUtil {
         params.put("data_izgot","dateCreate");
         params.put("blank","blank");
 
-        return parseXmltoJSONArray(result,params).toString();
+        return parseXmltoJSONArray(result,params);
     }
 
 
-    protected static String getDocuments(String rz) throws IOException, NamingException,
+    protected static String getDocuments(String rz) throws IOException,
             ParserConfigurationException, SAXException, JSONException {
 
         String result = ((String)createRequest().get_DOCS_from_RZ(rz, theLpu))
@@ -378,10 +381,10 @@ public class FondCheckUtil {
         params.put("doc_v","issued");
 
 
-        return parseXmltoJSONArray(result,params).toString();
+        return parseXmltoJSONArray(result,params);
     }
 
-    protected static String getAddress(String rz) throws IOException, NamingException,
+    private static String getAddress(String rz) throws IOException,
             ParserConfigurationException, SAXException, JSONException {
 
         String result = ((String)createRequest().get_ADRES_from_RZ(rz, theLpu))
@@ -400,7 +403,7 @@ public class FondCheckUtil {
         params.put("apartment","aparment");
         params.put("street_t","streetT");
 
-        return parseXmltoJSONArray(result,params).toString();
+        return parseXmltoJSONArray(result,params);
     }
 
 
@@ -418,7 +421,7 @@ public class FondCheckUtil {
         return soap;
     }
 
-    protected static Document stringToDoc(String xml) throws ParserConfigurationException, IOException, SAXException {
+    private static Document stringToDoc(String xml) throws ParserConfigurationException, IOException, SAXException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -427,7 +430,7 @@ public class FondCheckUtil {
         return builder.parse(new ByteArrayInputStream(xml.getBytes()));
     }
 
-    protected static String parseXml(String xml,String param) throws IOException, SAXException,
+    private static String parseXml(String xml,String param) throws IOException, SAXException,
             ParserConfigurationException {
 
         Element root = stringToDoc(xml).getDocumentElement();
@@ -436,7 +439,7 @@ public class FondCheckUtil {
         }else return "0";
     }
 
-    protected static String parseXmltoJSONArray(String xml, Map<String,String> params) throws IOException, SAXException,
+    private static String parseXmltoJSONArray(String xml, Map<String,String> params) throws IOException, SAXException,
             ParserConfigurationException, JSONException {
 
         Element root = stringToDoc(xml).getDocumentElement();
@@ -468,17 +471,17 @@ public class FondCheckUtil {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return new Date(parsedDate.getTime());
+        return parsedDate ==null ? null : new Date(parsedDate.getTime());
     }
 
-    protected static Date getDateShort(String datetime){
+    private static Date getDateShort(String datetime){
         java.util.Date parsedDate=null;
         try {
             parsedDate = new SimpleDateFormat("yyyy-MM-dd").parse(datetime);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return new Date(parsedDate.getTime());
+        return parsedDate ==null ? null : new Date(parsedDate.getTime());
     }
 
     protected static String get(JsonObject obj, String name){
@@ -488,5 +491,21 @@ public class FondCheckUtil {
             }
         }
         return null;
+    }
+
+    public static JSONArray syncRecordTomorrow(HttpServletRequest aRequest, String dateStart)
+            throws NamingException, ParserConfigurationException, SAXException, JSONException, IOException {
+
+        String sql="select distinct pat.id,pat.lastname,pat.firstname,pat.middlename,pat.birthday,pat.snils\n" +
+                "from workcalendartime wct \n" +
+                "left join patient pat on pat.id=wct.prepatient_id \n" +
+                "left join patientfond pf on pf.patient=pat.id  \n" +
+                "left join workcalendarday wcd on wcd.id=wct.workcalendarday_id \n" +
+                "where wcd.calendardate='" + dateStart + "'\n" +
+                "and pat.id is not null and (pf.checkdate is null or pf.checkdate<current_date-7)\n" +
+                "and (wct.isdeleted is null or wct.isdeleted=false)";
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        List<Patient> patients = getPatients(service.executeNativeSql(sql));
+        return FondCheckUtil.sync(aRequest,patients);
     }
 }

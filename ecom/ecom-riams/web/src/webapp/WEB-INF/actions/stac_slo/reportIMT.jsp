@@ -1,5 +1,3 @@
-<%@page import="java.util.Calendar"%>
-<%@page import="java.util.Date"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -54,7 +52,7 @@
                 <msh:row>
                     <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="2">
                         <input type="radio" name="typeDate" value="1">  поступления
@@ -64,10 +62,10 @@
                     </td>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Поиск по промежутку  (typeInterval)" colspan="1"><label for="typeIntervalName" id="typeIntervalLabel">Искать по промежутку:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="2">
                         <input type="radio" name="typeInterval" value="1"> Все ИМТ, требующие консультации
@@ -83,7 +81,7 @@
                     </td>
                 </msh:row>
                 <msh:row>
-                    <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                    <msh:row>
                         <td class="label" title="Поиск по консультациям  (typeDone)" colspan="1"><label for="typeDoneName" id="typeDoneLabel">Искать по консультациям:</label></td>
                         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
                             <input type="radio" name="typeDone" value="1">  консультация оказана
@@ -113,7 +111,6 @@
             function checkFieldUpdate(aField,aValue,aDefaultValue) {
                 eval('var chk =  document.forms[0].'+aField) ;
                 var aMax=chk.length ;
-                //alert(aField+" "+aValue+" "+aMax+" "+chk) ;
                 if ((+aValue)==0 || (+aValue)>(+aMax)) {
                     chk[+aDefaultValue-1].checked='checked' ;
                 } else {
@@ -162,9 +159,7 @@ left join MedCase dmc2 on dmc2.parent_id=m2.id
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
     <script type='text/javascript'>
         function setDietVisitIsDoneReportIMT(id) {
-            //alert(id);
-            HospitalMedCaseService.setDietVisitIsDoneReportIMT(
-                id, {
+            HospitalMedCaseService.setDietVisitIsDoneReportIMT(id, {
                     callback: function () {
                         location.reload();
                     }

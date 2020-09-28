@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,10 +31,10 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 	}
 	public void saveContextHelp(String aUrl,String aContext) {
 		File file = getFile(aUrl, true) ;
-		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "utf8"))) {
+		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
             out.println(aContext) ;
-		} catch (FileNotFoundException | UnsupportedEncodingException  e) {
-			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			LOG.error(e);
 		}
 	}
 	private File getFile(String aUrl,boolean aIsCreateDir) {
@@ -58,13 +59,12 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 		StringBuilder sb =new StringBuilder() ;
 		File file = getFile(aUrl, false) ;
 		if (file.exists()) {
-			try (LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(file), "utf8"))) {
+			try (LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
 				String line;
 				while ((line = in.readLine()) != null) {
 					sb.append(line);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
 				LOG.error(e);
 			}
 		}
@@ -73,42 +73,12 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 	}
 	public void addConfigDefaults() {
 		Map<String,String> defaultConfig = create() ;
-		//findOrCreateSoftConfig("csp_base_url", defaultConfig) ;
 		findOrCreateSoftConfig("data_base_namespace", defaultConfig) ;
 	}
 
-	public String getCspBaseUrl() {
-		Map<String,String> defaultConfig = create() ;
-		SoftConfig configUrl = findOrCreateSoftConfig("csp_base_url", defaultConfig) ;
-		int len = configUrl!=null ? configUrl.getKeyValue().length()-1 :0;
-		if (len>0&&configUrl.getKeyValue().substring(len).equals("\\") || configUrl.getKeyValue().substring(len).equals("/")) {
-			configUrl.setKeyValue(configUrl.getKeyValue().substring(0, len)) ;
-			theManager.persist(configUrl) ;
-		}
-		SoftConfig configNspace = findOrCreateSoftConfig("data_base_namespace",defaultConfig) ;
-		return configUrl.getKeyValue()+"/csp/"+configNspace.getKeyValue();
-	}
-
-	public String getCspBaseUrl(String aTomcatUrl) {
-		Map<String,String> defaultConfig = create() ;
-		SoftConfig configUrl = findOrCreateSoftConfig(aTomcatUrl, defaultConfig) ;
-		if (configUrl.getKeyValue()!=null && !configUrl.getKeyValue().equals("")) {
-		int len = configUrl.getKeyValue().length()-1 ;
-		if (len>0 && configUrl.getKeyValue().substring(len).equals("\\") || configUrl.getKeyValue().substring(len).equals("/")) {
-			configUrl.setKeyValue(configUrl.getKeyValue().substring(0, len)) ;
-			theManager.persist(configUrl) ;
-		}
-		
-		SoftConfig configNspace = findOrCreateSoftConfig("data_base_namespace",defaultConfig) ;
-		return configUrl.getKeyValue()+"/csp/"+configNspace.getKeyValue();
-		} else {
-			throw new IllegalStateException("Настройте приложение ключ(\""+aTomcatUrl+"\")");
-		}
-	}
-
 	private SoftConfig findOrCreateSoftConfig(String aKey, Map<String,String> aDefault) {
-		SoftConfig config = null ;
 		if (aKey!=null && !aKey.equals("")) {
+			SoftConfig config ;
 			List<SoftConfig> list = theManager.createQuery("from SoftConfig sc where sc.key=:key")
 				.setParameter("key", aKey)
 				.getResultList();
@@ -124,8 +94,9 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 			} else {
 				config= list.get(0) ;
 			}
+			return config;
 		}
-		return config ;
+		return null ;
 	}
 	
 	private Map<String, String> create() {

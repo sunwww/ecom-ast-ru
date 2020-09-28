@@ -7,16 +7,16 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал сообщений в полицию" />
+    <msh:title mainMenu="Journals" title="Журнал сообщений в полицию" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="stac_criminalMessages" />
     <tags:mis_journal />
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:section guid="863b6d75-fded-49ba-8eab-108bec8e092a">
-      <msh:sectionTitle guid="1dcd4d93-235d-4141-a7ee-eca528858925">Список сообщений<msh:link action="journal_militiaMessage.do">Выбрать другую дату</msh:link></msh:sectionTitle>
-      <msh:sectionContent guid="ab8e5a72-aadd-4c65-8691-2205506e63dc">
+    <msh:section>
+      <msh:sectionTitle>Список сообщений<msh:link action="journal_militiaMessage.do">Выбрать другую дату</msh:link></msh:sectionTitle>
+      <msh:sectionContent>
         <ecom:webQuery name="journal_militia" nativeSql="
     select pm.id, pm.phoneDate
     ,vpht.name||coalesce(' '||vpmst.name,'')

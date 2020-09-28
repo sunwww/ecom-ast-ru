@@ -21,7 +21,7 @@
     	<print filename='directionDocument'/>
     	
 	</parameter>
-	    <parameter id='3' type='BaseMedicalExamination' name='Паспорт здоровья' 
+	    <parameter id='3' type='BaseMedicalExamination' name='Предварительный (периодический) медосмотр'
     	action='entityParentPrepareCreate-doc_baseMedicalExamination' roles='/Policy/Mis/MedCase/Document/Internal/BaseMedicalExamination/Create'>
     	<fields>
     		<field type='row' open='1'/>

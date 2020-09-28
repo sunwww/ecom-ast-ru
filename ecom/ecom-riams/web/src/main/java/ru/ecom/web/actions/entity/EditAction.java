@@ -30,7 +30,7 @@ public class EditAction extends AbstractEntityAction {
 
         BeanUtils.copyProperties(aForm, loadedForm);
 
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 
     private StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();

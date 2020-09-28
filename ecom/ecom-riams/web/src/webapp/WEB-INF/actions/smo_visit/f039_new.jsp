@@ -2,7 +2,6 @@
 <%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
-<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -49,19 +48,19 @@
         "
         />
   
-    <msh:form action="/visit_f039_list.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/visit_f039_list.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="id" id="id"/>
     <input type="hidden" name="ticketIs" id="ticketIs" value="0"/>
     <input type="hidden" name="typeReestr" id="typeReestr" value="2"/>
     <input type="hidden" name="person" id="person" value="${param.person}"/>
     <%if (request.getParameter("short")==null ||request.getParameter("short").equals(""))  {%>
     <msh:panel>
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="9" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="9" />
       </msh:row>
       <msh:row>
-        	<msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        	<msh:textField property="finishDate" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        	<msh:textField property="beginDate" label="Период с" />
+        	<msh:textField property="finishDate" label="по" />
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="workFunction" vocName="vocWorkFunction" 
@@ -272,14 +271,13 @@ if (RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll", request)) {
 	ActionUtil.setParameterFilterSql("person","wp.id", request) ;
 } else {
 	List list= (List)request.getAttribute("infoByLogin");
-    WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
-	request.setAttribute("personSql"," and wp.id="+(wqr!=null?wqr.get2():"0")) ;	
-	request.setAttribute("personInfo",""+(wqr!=null?wqr.get4():"НЕТ СООТВЕТСТВИЯ ПОЛЬЗОВАТЕЛЯ И РАБОЧЕЙ ФУНКЦИИ")) ;
+    WebQueryResult wqr = list.isEmpty() ? null  : (WebQueryResult)list.get(0);
+	request.setAttribute("personSql"," and wp.id="+(wqr!=null ? wqr.get2() : "0")) ;
+	request.setAttribute("personInfo",""+(wqr!=null ? wqr.get4() : "НЕТ СООТВЕТСТВИЯ ПОЛЬЗОВАТЕЛЯ И РАБОЧЕЙ ФУНКЦИИ")) ;
 	
 }
 ActionUtil.setParameterFilterSql("visitReason","vr.id", request) ;
 String age =null;
-SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
 String ageTo = request.getParameter("ageTo") ;
 String ageFrom = request.getParameter("ageFrom") ;
 if (ageFrom!=null && !ageFrom.equals("")) {
@@ -413,13 +411,13 @@ if (typeGroup.equals("1")) {
 %>
 ${personInfo}
 <%
-if (typeReestr!=null && (typeReestr.equals("1"))) {
+if ("1".equals(typeReestr)) {
 	
 	StringBuilder sqlAppend = new StringBuilder();
-	String place= request.getParameter("place"); if (place!=null) { sqlAppend.append(" and vwpt.code='"+place+"'"); }
-	String payment= request.getParameter("payment"); if (payment!=null) { sqlAppend.append(" and vss.code='"+payment+"'"); }
+	String place= request.getParameter("place"); if (place!=null) { sqlAppend.append(" and vwpt.code='").append(place).append("'"); }
+	String payment= request.getParameter("payment"); if (payment!=null) { sqlAppend.append(" and vss.code='").append(payment).append("'"); }
 	String isVillage = request.getParameter("isVillage"); if (isVillage!=null) { sqlAppend.append(" and ad1.addressIsVillage='1'"); }
-	String reason= request.getParameter("reason"); if (reason!=null) { sqlAppend.append(" and vr.code='"+reason+"'"); }
+	String reason= request.getParameter("reason"); if (reason!=null) { sqlAppend.append(" and vr.code='").append(reason).append("'"); }
 String ageToR = request.getParameter("ageToR") ;
 String ageFromR = request.getParameter("ageFromR") ;
 String ageR=null;
@@ -442,10 +440,7 @@ if (ageR!=null) {
 	asR.append(ageR) ;
 	sqlAppend.append(asR) ;
 }
-
 	request.setAttribute("appendSQL", sqlAppend.toString() );
-	
-	
     	%>
     
     <msh:section>
@@ -520,7 +515,7 @@ group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,
 ,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
 ,vwf.name,wp.lastname,wp.firstname,wp.middlename,lpu.name,smo.uet
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
+" />
     <msh:sectionTitle>
         <form action="print-f039_reestr.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${orderLpuInfo} ${serviceStreamInfo}
@@ -559,7 +554,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 
     </msh:section>
     <% } else {
-    	if (typeView!=null && (typeView.equals("1"))) {
+    	if ("1".equals(typeView)) { //039 форма
     
     	%>
     	
@@ -660,7 +655,7 @@ and CASE WHEN (smo.noActuality is null or smo.noActuality='0') THEN '0' ELSE '1'
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
+" />
     <msh:sectionTitle>
     <form action="print-f039_stand${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -719,7 +714,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     	<%
-    } else if (typeView!=null && (typeView.equals("2"))) {
+    } else if ("2".equals(typeView)) { //039 по возрастам - заб.
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -854,7 +849,7 @@ and CASE WHEN (smo.noActuality is null or smo.noActuality='0') THEN '0' ELSE '1'
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql" /> 
+" nameFldSql="journal_ticket_sql" />
     <msh:sectionTitle>
     <form action="print-f039_bis${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -921,7 +916,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("3"))) {
+    } else if ("3".equals(typeView)) { //039 cons
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1047,7 +1042,7 @@ and CASE WHEN (smo.noActuality is null or smo.noActuality='0')  THEN '0' ELSE '1
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
+" nameFldSql="journal_ticket_sql"/>
     <msh:sectionTitle>
     <form action="print-f039_bis${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -1105,7 +1100,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("4"))) {
+    } else if ("4".equals(typeView)) { //30 форма
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1188,7 +1183,7 @@ and CASE WHEN (smo.noActuality is null or smo.noActuality='0')   THEN '0' ELSE '
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
+" nameFldSql="journal_ticket_sql"/>
     <msh:sectionTitle>
     <form action="print-f039_30rep.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -1236,7 +1231,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("5"))) {
+    } else if ("5".equals(typeView)) { //30 - ст. трудосп.
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1345,7 +1340,7 @@ and case when (smo.noActuality is null or smo.noActuality='0') then '0' else '1'
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
+" nameFldSql="journal_ticket_sql"/>
     <msh:sectionTitle>
     <form action="print-f039_30rep_bis${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -1395,7 +1390,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("6"))) {
+    } else if ("6".equals(typeView)) { //30 - дети
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1504,7 +1499,7 @@ and case when (smo.noActuality is null or smo.noActuality='0') then '0' else '1'
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
+" nameFldSql="journal_ticket_sql"/>
     <msh:sectionTitle>
     <form action="print-f039_30rep_bis${printPrefix}.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -1554,10 +1549,10 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 
     </msh:section>    	
     <%
-    } else if (typeView!=null && (typeView.equals("7"))) {
+    } else if ("7".equals(typeView)) { //62 форма
     	%>
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}"  name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1572,7 +1567,7 @@ select
 ,count(distinct case when vr.code='CONSULTATION' then smo.patient_id else null end) as cntConsPat
 ,count(distinct case when vr.code='CONSULTATION' and spo.dateStart!=spo.dateFinish then spo.id else null end) as cntConsSpo
 ,count(distinct case when vr.code='CONSULTATION' and spo.dateStart=spo.dateFinish then spo.id else null end) as cntConsSpo1
-FROM MedCase smo  
+FROM MedCase smo
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
 LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
@@ -1592,7 +1587,7 @@ and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql} and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
+" nameFldSql="journal_ticket_sql"/>
     <msh:sectionTitle>
     <form action="print-f039_62rep.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -1633,7 +1628,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionContent>
 
     </msh:section>    	
-    <%} else if (typeView!=null && (typeView.equals("8"))) {
+    <%} else if ("8".equals(typeView)) { //свод по пациентам
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1708,7 +1703,7 @@ and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql} and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
+" nameFldSql="journal_ticket_sql"/>
     <msh:sectionTitle>
     <form action="print-f039_patient.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -1741,7 +1736,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionContent>
 
     </msh:section>    	
-    <%} else if (typeView!=null && (typeView.equals("9"))) {
+    <%} else if ("9".equals(typeView)) { //свод по у.е
     	%>
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
@@ -1779,7 +1774,7 @@ and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
 ${personSql} and smo.dateStart is not null ${emergencySql} ${ageSql}
 GROUP BY ${groupGroup} ORDER BY ${groupOrder}
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
+" nameFldSql="journal_ticket_sql"/>
     <msh:sectionTitle>
     <form action="print-f039_patient.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
@@ -1860,7 +1855,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
 	}
   	function getCheckedValue(radioGrp) {
   		var radioValue ;
-  		for(i=0; i < radioGrp.length; i++) {
+  		for(var i=0; i < radioGrp.length; i++) {
   		  if (radioGrp[i].checked == true){
   		    radioValue = radioGrp[i].value;
   		    break ;

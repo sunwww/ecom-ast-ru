@@ -1,40 +1,31 @@
 package ru.ecom.mis.ejb.domain.patient;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+
 /**
  * Полис ОМС
  */
 @Entity
-@Table(schema="SQLUser")
 public class MedPolicyOmc extends MedPolicy {
-	
-	
 
-	
 	/** Город нахождения СМО */
 	@Comment("Город нахождения СМО")
 	public String getInsuranceCompanyCity() {
 		return theInsuranceCompanyCity;
 	}
-
 	public void setInsuranceCompanyCity(String aInsuranceCompanyCity) {
 		theInsuranceCompanyCity = aInsuranceCompanyCity;
 	}
-
 	/** Город нахождения СМО */
 	private String theInsuranceCompanyCity;
-	
-
 
     @Transient
     public String getText() {
@@ -64,16 +55,17 @@ public class MedPolicyOmc extends MedPolicy {
 
     /** Предприятие */
     @OneToOne
+    @Deprecated
     public VocOrg getOrg() { return theOrg ; }
     public void setOrg(VocOrg aOrg) { theOrg = aOrg ; }
 
     /** Прикрепленное ЛПУ */
 	@Comment("Прикрепленное ЛПУ")
 	@OneToOne
+    @Deprecated
 	public MisLpu getAttachedLpu() {
 		return theAttachedLpu;
 	}
-
 	public void setAttachedLpu(MisLpu aAttachedLpu) {
 		theAttachedLpu = aAttachedLpu;
 	}

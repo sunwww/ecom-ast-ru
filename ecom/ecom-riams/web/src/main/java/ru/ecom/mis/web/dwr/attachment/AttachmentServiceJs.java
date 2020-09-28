@@ -1,23 +1,16 @@
 package ru.ecom.mis.web.dwr.attachment;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.jdom.JDOMException;
-
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.expomc.ejb.services.sync.ISyncService;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
-import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 import ru.ecom.mis.ejb.service.sync.lpuattachment.ISyncAttachmentDefectService;
 import ru.ecom.web.util.Injection;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 /**
  * 
@@ -26,7 +19,8 @@ import ru.ecom.web.util.Injection;
  *
  */
 public class AttachmentServiceJs {
-	
+
+	//Импорт населения с фонда
 	public String syncUpload(String aEntity, HttpServletRequest aRequest) throws NamingException {
 		 IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
 		 IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -98,10 +92,9 @@ public class AttachmentServiceJs {
 			return "Ошибка: "+e.toString();
 		}
 	}
-	public String importDefectsFromXML(String aFileName, HttpServletRequest aRequest) throws NamingException {
-		ISyncAttachmentDefectService service = Injection.find(aRequest).getService(ISyncAttachmentDefectService.class) ;
+	public String importDefectsFromXML(String aFileText, HttpServletRequest aRequest) throws NamingException {
 		try {
-			return service.importDefectFromXML(aFileName);
+			return Injection.find(aRequest).getService(ISyncAttachmentDefectService.class).importDefectFromXML(aFileText);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -11,9 +11,9 @@
     	  - Справочник хир.операций
     	  -->
     <msh:form  action="/entitySaveGoView-voc_operation.do" defaultField="name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:panel guid="panel">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:panel>
         <msh:row>
         	<msh:textField label="Код операции" property="code" />
         	<msh:textField label="Ур.сложности" property="complexity" />
@@ -31,12 +31,12 @@
         	<msh:textField label="Начало" property="startActualDate" />
         	<msh:textField label="Окончание" property="finishActualDate" />
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="voc_operationForm" />
+    <ecom:titleTrail mainMenu="Voc" beginForm="voc_operationForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Хир.операция">

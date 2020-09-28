@@ -1,8 +1,5 @@
 <%@page import="ru.ecom.mis.ejb.service.patient.HospitalLibrary"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="java.util.Calendar"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="java.util.Date"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -21,24 +18,21 @@
     
   <tiles:put name="body" type="string">
   <%
-	//String typeView =ActionUtil.updateParameter("Report_hospital_standart","typeView","1", request) ;
-	String typePatient =ActionUtil.updateParameter("Report_hospital_standart","typePatient","4", request) ;
+	String typePatient =ActionUtil.updateParameter("Report_hospital_standart","typePatient","5", request) ;
 	String typeDate =ActionUtil.updateParameter("Report_hospital_standart","typeDate","2", request) ;
 	String typeStandart =ActionUtil.updateParameter("Report_hospital_standart","typeStandart","1", request) ;
 	String typeViewDepartment =ActionUtil.updateParameter("Report_hospital_standart","typeViewDepartment","1", request) ;
 	String typeViewBed =ActionUtil.updateParameter("Report_hospital_standart","typeViewBed","1", request) ;
 	String typeView =ActionUtil.updateParameter("Report_hospital_standart","typeView","2", request) ;
 	String typeEmergency =ActionUtil.updateParameter("Report_hospital_standart","typeEmergency","3", request) ;
-  
-
   %>
   
-    <msh:form action="/stac_report_standartOmc.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/stac_report_standartOmc.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="1">  поступления
@@ -62,19 +56,22 @@
 	        	<input type="radio" name="typeEmergency" value="3">  все
 	        </td>
         </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  региональные
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="2">  иногородные
+        	<input type="radio" name="typePatient" value="2">  иногородные (МЖ)
+        </td>
+	  <td onclick="this.childNodes[1].checked='checked';">
+		  <input type="radio" name="typePatient" value="3">  иногородные (полис)
+	  </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typePatient" value="4">  иностранцы
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  иностранцы
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="4">  все
+        	<input type="radio" name="typePatient" value="5">  все
         </td>
       </msh:row>
       <msh:row>
@@ -134,8 +131,8 @@
         	label="ВМП" horizontalFill="true" vocName="vocKindHighCare"/>
         </msh:row>
         <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
 		<td>
             <input type="submit" onclick="find()" value="Найти" />
           </td>
@@ -144,9 +141,9 @@
     </msh:form>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
-    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	String dateEnd = request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		request.setAttribute("dateEnd", date) ;
     	} else {
@@ -154,29 +151,30 @@
     	}
     	request.setAttribute("dateBegin", date) ;
     	
-    	if (typeEmergency!=null && typeEmergency.equals("1")) {
+    	if ("1".equals(typeEmergency)) {
     		request.setAttribute("emergencySql", " and hmc.emergency='1' ") ;
-    	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
+    	} else if ("2".equals(typeEmergency)) {
     		request.setAttribute("emergencySql", " and (hmc.emergency is null or hmc.emergency='0') ") ;
     	} 
     	if (typePatient.equals("2")) {
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp","ok")) ;
-			request.setAttribute("infoTypePat", "Поиск по иногородним") ;
+			request.setAttribute("infoTypePat", "Поиск по иногородним (МЖ)") ;
 		} else if (typePatient.equals("1")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			request.setAttribute("patientSql", HospitalLibrary.getSqlForPatient(true, false, "m.Datestart", "p", "pvss", "pmp","ok")) ;
 			request.setAttribute("infoTypePat", "Поиск по региональным") ;
-		} else if (typePatient.equals("3")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+		} else if (typePatient.equals("4")){
 			request.setAttribute("patientSql", HospitalLibrary.getSqlGringo(true, "ok")) ;
 			request.setAttribute("infoTypePat", "Поиск по иностранцам") ;
-		} else {
+		} else if (typePatient.equals("3")){
+			request.setAttribute("patientSql", " and mp.actualDateFrom <=CURRENT_DATE and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE) and (mp.DTYPE='MedPolicyDmcForeign' or mp.DTYPE='MedPolicyOmcForeign')") ;
+			request.setAttribute("infoTypePat", "Поиск по иногородним (полис)") ;
+		}
+		else {
 			request.setAttribute("patientSql", "") ;
 			request.setAttribute("infoTypePat", "Поиск по всем") ;
 		}
-    	
-    	String dep = (String)request.getParameter("department") ;
+
+    	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		request.setAttribute("departmentSqlId", "'&deparment="+dep+"'") ;
     		request.setAttribute("departmentSql", " and d.id="+dep) ;
@@ -185,7 +183,7 @@
     		request.setAttribute("department","0") ;
     		request.setAttribute("departmentSqlId", "''") ;
     	}
-    	String servStream = (String)request.getParameter("serviceStream") ;
+    	String servStream = request.getParameter("serviceStream") ;
     	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
     		request.setAttribute("serviceStreamSqlId", "'&serviceStream="+servStream+"'") ;
     		request.setAttribute("serviceStreamSql", " and vss.id="+servStream) ;
@@ -194,43 +192,38 @@
     		request.setAttribute("serviceStream", "0") ;
     		request.setAttribute("serviceStreamSqlId", "'&serviceStream='||vss.id") ;
     	}
-    	String bedSubType = (String)request.getParameter("bedSubType") ;
+    	String bedSubType = request.getParameter("bedSubType") ;
     	if (bedSubType!=null && !bedSubType.equals("") && !bedSubType.equals("0")) {
     		request.setAttribute("bedSubTypeSqlId", "'&bedSubType="+bedSubType+"'");
     		request.setAttribute("bedSubTypeSql", " and bf.bedSubType_id="+bedSubType);
     	} else {
     		request.setAttribute("bedSubTypeSqlId", "'&bedSubType='||vbst.id");
     	}
-    	String standart = (String)request.getParameter("standart") ;
+    	String standart = request.getParameter("standart") ;
     	if (standart!=null && !standart.equals("") && !standart.equals("0")) {
     		request.setAttribute("standartSqlId", "'&standart="+standart+"'");
     		request.setAttribute("standartSql", " and os.id="+standart);
     	} else {
     		request.setAttribute("standartSqlId", "'&standart='||os.id");
     	}
-    	String bedType = (String)request.getParameter("bedType") ;
+    	String bedType = request.getParameter("bedType") ;
     	if (bedType!=null && !bedType.equals("") && !bedType.equals("0")) {
     		request.setAttribute("bedTypeSqlId", "'&bedType="+bedType+"'");
     		request.setAttribute("bedTypeSql", " and bf.bedType_id="+bedType);
     	} else {
     		request.setAttribute("bedTypeSqlId", "''") ;
-    		//request.setAttribute("bedTypeSqlId", "'&bedType='||bf.bedType_id");
     	}
     	
-    //	if (typeStandart!=null && typeStandart.equals("1")) {
     		request.setAttribute("fldStandart", "kindHighCare_id") ;
-    //	} else {
-    //		request.setAttribute("fldStandart", "kindHighCare_id") ;
-    //	}
-    	if (typeDate!=null && typeDate.equals("1")) {
+    	if ("1".equals(typeDate)) {
     		request.setAttribute("dateSql","dateStart") ;
-    	} else if (typeDate!=null && typeDate.equals("2")) {
+    	} else if ("2".equals(typeDate)) {
     		request.setAttribute("dateSql","dateFinish") ;
     	} else {
     		request.setAttribute("dateSql","transferDate") ;
     	}
     	
-    	if (typeViewDepartment!=null && typeViewDepartment.equals("1")) {
+    	if ("1".equals(typeViewDepartment)) {
     		request.setAttribute("viewDepartmentSql", "d.name as mlname ") ;
     		request.setAttribute("viewDepartmentGroup", " d.id, d.name ,") ;
     		request.setAttribute("viewDepartmentOrder", " d.name, ") ;
@@ -243,7 +236,7 @@
     		request.setAttribute("viewDepartmentStyle", " td.noDepartment,th.noDepartment{display:none;}") ;
     		
     	}
-    	if (typeViewBed!=null && typeViewBed.equals("1")) {
+    	if ("1".equals(typeViewBed)) {
     		request.setAttribute("viewBedSql", " vbt.name as vbtname ") ;
     		request.setAttribute("viewBedGroup", " vbt.id, vbt.name ,") ;
     		request.setAttribute("viewBedOrder", " vbt.name, ") ;
@@ -255,7 +248,7 @@
     		request.setAttribute("viewBedSqlId", "''") ;
     		request.setAttribute("viewBedStyle", " td.noBed,th.noBed{display:none;}") ;
     	}
-    	if (typeView!=null && typeView.equals("1")) {
+    	if ("1".equals(typeView)) {
     	%>
     		<ecom:webQuery nameFldSql="swod_by_standart_sql" name="swod_by_standart" nativeSql="
     	select  m.id as mid, p.lastname||' '||p.firstname||' '||p.middlename as fio,to_char(p.birthday,'dd.mm.yyyy') as birthday
@@ -306,6 +299,9 @@
     left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
     left join mislpu as d on d.id=m.department_id 
     left join patient p on p.id=hmc.patient_id
+    left join MedPolicy mp on mp.patient_id=p.id
+	left join reg_ic as ri on ri.id=mp.company_id
+	left join vocmedpolicyomc vmo on vmo.id=mp.type_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
     left join Omc_Oksm ok on p.nationality_id=ok.id
@@ -345,8 +341,7 @@
 			<msh:tableColumn property="16" columnName="Дата планируемой госпитализации"/>
     	</msh:table>
     	<%
-    	} else {
-    		//Начинается свод
+    	} else { //Начинается свод
     	%>
     	<style type="text/css">
     		${viewBedStyle}
@@ -368,8 +363,6 @@
 			when bf.addCaseDuration='1' then ((coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)+1) 
 			else (coalesce(m.dateFinish,m.transferDate,CURRENT_DATE)-m.dateStart)
 		  end
-    	
-    	
     	) as sum1
     	,sum(
     	  case 
@@ -377,9 +370,7 @@
 			when bf.addCaseDuration='1' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
 			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		  end
-    	
     	) as sum2
-    	
     	    	,count(
     		case when vhr.code='11' then hmc.id else null end
     	) as deathCnt
@@ -403,6 +394,9 @@
     left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
     left join mislpu as d on d.id=m.department_id 
     left join patient p on p.id=hmc.patient_id
+    left join MedPolicy mp on mp.patient_id=p.id
+	left join reg_ic as ri on ri.id=mp.company_id
+	left join vocmedpolicyomc vmo on vmo.id=mp.type_id
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
     left join Omc_Oksm ok on p.nationality_id=ok.id
@@ -441,38 +435,17 @@
     <script type='text/javascript'>
   //checkFieldUpdate('typeSwod','${typeSwod}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
-    checkFieldUpdate('typePatient','${typePatient}',4) ;
+    checkFieldUpdate('typePatient','${typePatient}',5) ;
     checkFieldUpdate('typeEmergency','${typeEmergency}',4) ;
     checkFieldUpdate('typeStandart','${typeStandart}',2) ;
     checkFieldUpdate('typeViewDepartment','${typeViewDepartment}',1) ;
     checkFieldUpdate('typeViewBed','${typeViewBed}',1) ;
     checkFieldUpdate('typeView','${typeView}',2) ;
-    /*
-    kindHighCareAutocomplete.addOnChangeCallback(function() {
-  		updateMethod() ;
-  	}) ;
-  	
-  	serviceStreamAutocomplete.addOnChangeCallback(function() {
-  	 	updateMethod() ;
-  	 });
-  	methodParam = "" ;
-  	updateMethod() ;
-  	function updateMethod() {
-  		methodParam1 = (+$('kindHighCare').value)+"#"+(+$('serviceStream').value)  ;
-      	if (methodParam1!=methodParam) {
-      		
-      		if (methodParam!="") {
-	      		$('methodHighCare').value="" ;
-	      		$('methodHighCareName').value="" ;
-      		}
-      		methodParam=methodParam1 ;
-      		methodHighCareAutocomplete.setParentId(methodParam1) ;
-      	}
-  	}*/
+
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
        	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
-       	aValue=+aValue ;
+       	aValue = +aValue ;
        	var max=chk.length ;
        	if (aValue==0 || (aValue)>(max)) {
        		chk[+aDefaultValue-1].checked='checked' ;

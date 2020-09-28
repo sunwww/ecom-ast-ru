@@ -1,5 +1,7 @@
 package ru.ecom.poly.web.dwr;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
@@ -15,11 +17,23 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TicketServiceJs {
+
+	public String showSimpleServiceBySpecialist(Long aWorkfunctionId, HttpServletRequest aRequest) throws SQLException, NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String sql = "select ms.id as serviceid, ms.code||' '||ms.name as servicename, case when link.isDefault='1' then 'true' else 'false' end as isDefault " +
+				" from workfunction wf" +
+				" left join vocworkfunction vwf on vwf.id=wf.workfunction_id " +
+				" left join MedServiceComplexLink link on link.speciality_id=vwf.fondSpeciality_id" +
+				" left join medservice ms on ms.id=link.innerMedService_id" +
+				" where wf.id="+aWorkfunctionId+" and ms.id is not null order by link.weight";
+		return service.executeSqlGetJson(sql);
+	}
 	
 	public String getDefaultParameter(String aKey, String aDefaultValue, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -29,7 +43,7 @@ public class TicketServiceJs {
 		} 
 		return aDefaultValue;
 	}
-	public String[] getDiagnosisId (String[] diagnosis, HttpServletRequest aRequest) throws NamingException {
+	private String[] getDiagnosisId (String[] diagnosis, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sb = new StringBuilder();
 		for (int i=0;i<diagnosis.length;i++) {
@@ -49,12 +63,12 @@ public class TicketServiceJs {
 	}
 	private Collection<WebQueryResult> getPatients (String aAgeFrom, String aAgeTo, String aDateTo, String aSexId, String aLpu, String ids, int maxResults, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String sql="select pat.id as patId, mc.id as medId from medcard mc" +
+		StringBuilder sql = new StringBuilder().append("select pat.id as patId, mc.id as medId from medcard mc" +
 				" left join patient pat on pat.id=mc.person_id" +
 				" left join lpuattachedbydepartment att on att.patient_id=pat.id" +
-				" where ";
+				" where ");
 		if (ids!=null && !ids.equals("")) {
-			sql+=" pat.id in ("+ids+")";
+			sql.append(" pat.id in (").append(ids).append(")");
 		} else {
 			String sexSql = (aSexId!=null&&!aSexId.equals(""))?" and pat.sex_id="+aSexId:"";
 			if (aDateTo!=null && !aDateTo.equals("")) {
@@ -65,15 +79,16 @@ public class TicketServiceJs {
 			if (aLpu!=null&&!aLpu.equals("")) {
 				sexSql+=" and att.lpu_id="+aLpu+" and att.dateto is null";
 			}
-			sql += " cast(to_char("+aDateTo+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char("+aDateTo+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char("+aDateTo+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between "+aAgeFrom + " and "+aAgeTo
-					+" and pat.deathdate is null and (pat.noactuality is null or pat.noactuality='0')"+sexSql+" order by random()";
-			//	System.out.println("==Find persons: "+sql);
+			sql.append(" cast(to_char(").append(aDateTo).append(",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(")
+					.append(aDateTo).append(", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(").append(aDateTo)
+					.append(",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between ")
+					.append(aAgeFrom).append(" and ").append(aAgeTo).append(" and pat.deathdate is null and (pat.noactuality is null or pat.noactuality='0')")
+					.append(sexSql).append(" order by random()");
 		}
-
-		return service.executeNativeSql(sql,maxResults);
+		return service.executeNativeSql(sql.toString(),maxResults);
 	}
 	
-	public String generateTalons (String aWorkFunctionIds,String aDateFrom, String aDateTo, String times, Long serviceStream, Long workplace
+	public String generateTalons (String aWorkFunctionIds,String aDateFrom, String aDateTo,  Long serviceStream, Long workplace
 			, Long visitReason, Long visitResult, String diagnosis, Long concludingActuity
 			, Long recordCount, String aAgeFrom, String aAgeTo, String aSexId, String aLpu, String aPatientIds, boolean isProfOsmotr, HttpServletRequest aRequest) throws ParseException, NamingException {
 		Date startDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateFrom);
@@ -89,7 +104,7 @@ public class TicketServiceJs {
 			cal.setTime(startDate);
 			StringBuilder allDates = new StringBuilder();
 			for (int i=0;true;i++) {
-				if (cal.get(java.util.Calendar.DAY_OF_WEEK)==1) {
+				if (cal.get(java.util.Calendar.DAY_OF_WEEK)== Calendar.SUNDAY) {
 					cal.add(Calendar.DATE, 1);
 					continue;}
 				//System.out.println("=== i="+i+", date = "+sdf.format(cal.getTime()));
@@ -98,9 +113,8 @@ public class TicketServiceJs {
 				cal.add(Calendar.DATE, 1);
 				if (cal.getTime().after(finishDate)) break;			
 			}
-			if (allDates.length()>0) {}else {return "" ;}
-			//System.out.println("DATES = "+allDates);
-			Collection<WebQueryResult> pats = getPatients(aAgeFrom, aAgeTo, aDateTo, aSexId, aLpu, aPatientIds, recordCount.intValue(), aRequest);
+			if (allDates.length()==0) return "" ;
+		Collection<WebQueryResult> pats = getPatients(aAgeFrom, aAgeTo, aDateTo, aSexId, aLpu, aPatientIds, recordCount.intValue(), aRequest);
 			if (pats.isEmpty()) return "";
 			String mainPriority = service.executeNativeSql("select id from vocprioritydiagnosis where code='1'").iterator().next().get1().toString();
 			
@@ -108,7 +122,6 @@ public class TicketServiceJs {
 			String[] workFunctions = aWorkFunctionIds.replace(" ", "").split(",");
 			String[] dates = allDates.toString().split("#"); 
 			String[] diagnos = getDiagnosisId(diagnosis.replace(" ","").split(","), aRequest);
-		//	String[] time = times.split(",");
 			StringBuilder ids = new StringBuilder();
 			for (WebQueryResult pat: pats) {
 				String date = dates[rnd.nextInt(dates.length)];
@@ -119,8 +132,7 @@ public class TicketServiceJs {
 				if (isProfOsmotr) {
 					spoId = ser.createMedcase("PolyclinicMedCase"); //Если профосмотр - все визиты в рамках одного осмотра
 				}
-				for (int i=0;i<workFunctions.length;i++) {
-					String aWorkFunctionId = workFunctions[i];
+				for (String aWorkFunctionId : workFunctions) {
 					if (!isProfOsmotr) {
 						spoId = ser.createMedcase("PolyclinicMedCase");
 					}
@@ -128,26 +140,26 @@ public class TicketServiceJs {
 					ids.append("Patient=").append(patId).append("&date=").append(date);
 					ids.append("&wf=").append(aWorkFunctionId);
 					String ticketSql = "update medcase set "
-							+ "username='"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), createdate=current_date"
-							+ ", noactuality='0',parent_id="+spoId+", servicestream_id="+serviceStream+", patient_id="+patId
-							+ ",workfunctionexecute_id="+aWorkFunctionId+", visitresult_id="+visitResult+", visitreason_id="+visitReason
-							+ ", workplacetype_id="+workplace
-							+ ", createtime=cast('12:35' as time(5)), medcard_id="+medcardId+" where id="+ticketId+" and dtype='ShortMedCase'";
-					String polSql = "update medcase set username = '"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), datefinish=to_date('"+date+"','dd.MM.yyyy') , createdate=current_date" +
-							" ,noactuality='0', lpu_id=(select coalesce(wf.lpu_id,w.lpu_id) from workfunction wf left join worker w on w.id=wf.worker_id where wf.id="+aWorkFunctionId+")" +
-							" ,servicestream_id="+serviceStream+", patient_id="+patId+", ownerfunction_id="+aWorkFunctionId+"" +
-							" ,startfunction_id="+aWorkFunctionId+", finishfunction_id="+aWorkFunctionId+", idc10_id="+dsId+" where id = "+spoId+" and dtype='PolyclinicMedCase'";
-					ids.append("&ticket = "+ticketId);
+							+ "username='" + username + "', datestart=to_date('" + date + "','dd.MM.yyyy'), createdate=current_date"
+							+ ", noactuality='0',parent_id=" + spoId + ", servicestream_id=" + serviceStream + ", patient_id=" + patId
+							+ ",workfunctionexecute_id=" + aWorkFunctionId + ", visitresult_id=" + visitResult + ", visitreason_id=" + visitReason
+							+ ", workplacetype_id=" + workplace
+							+ ", createtime=cast('12:35' as time(5)), medcard_id=" + medcardId + " where id=" + ticketId + " and dtype='ShortMedCase'";
+					String polSql = "update medcase set username = '" + username + "', datestart=to_date('" + date + "','dd.MM.yyyy'), datefinish=to_date('" + date + "','dd.MM.yyyy') , createdate=current_date" +
+							" ,noactuality='0', lpu_id=(select coalesce(wf.lpu_id,w.lpu_id) from workfunction wf left join worker w on w.id=wf.worker_id where wf.id=" + aWorkFunctionId + ")" +
+							" ,servicestream_id=" + serviceStream + ", patient_id=" + patId + ", ownerfunction_id=" + aWorkFunctionId + "" +
+							" ,startfunction_id=" + aWorkFunctionId + ", finishfunction_id=" + aWorkFunctionId + ", idc10_id=" + dsId + " where id = " + spoId + " and dtype='PolyclinicMedCase'";
+					ids.append("&ticket = ").append(ticketId);
 
 					String diagnosisSql = "insert into diagnosis (name, establishdate, priority_id, idc10_id" +
-							", medcase_id, illnesprimary_id, createusername) (select name , to_date('"+date+"','dd.MM.yyyy') " +
-							", "+mainPriority+","+dsId+","+ticketId+","+concludingActuity+",'"+username+"'"+
-							" from vocidc10 where id = "+dsId+")" ;
+							", medcase_id, illnesprimary_id, createusername) (select name , to_date('" + date + "','dd.MM.yyyy') " +
+							", " + mainPriority + "," + dsId + "," + ticketId + "," + concludingActuity + ",'" + username + "'" +
+							" from vocidc10 where id = " + dsId + ")";
 
 					service.executeUpdateNativeSql(polSql); //Формируем СПО
 					service.executeUpdateNativeSql(ticketSql); //Формируем визит
 					service.executeUpdateNativeSql(diagnosisSql); //Формируем диагноз по визиту
-					ids.append("&ds = "+dsId+"\n");
+					ids.append("&ds = ").append(dsId).append("\n");
 				}
 			}
 		//	System.out.print(ids);
@@ -193,7 +205,7 @@ public class TicketServiceJs {
         String result = "";
         StringBuilder str = new StringBuilder();
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        str.append("select uet from medservice where id="+aService+" and uet is not null");
+        str.append("select uet from medservice where id=").append(aService).append(" and uet is not null");
         Collection<WebQueryResult> res = service.executeNativeSql(str.toString(), 1);
         if (!res.isEmpty()) {
             WebQueryResult r = res.iterator().next();
@@ -201,9 +213,7 @@ public class TicketServiceJs {
         }
         return result;
     }
-	public String getDataByReference(Long aMedCase,String aType, HttpServletRequest aRequest) throws Exception {
-		return HospitalMedCaseServiceJs.getDataByReference(aMedCase, aType, aRequest) ;
-	}
+
 	public String getInfoByTicket(Long aTicket, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(" select vss.id as vssid,vss.name as vssname,vwpt.id as vwptid") ;
@@ -282,7 +292,7 @@ public class TicketServiceJs {
 		StringBuilder res = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder sql1 = new StringBuilder() ;
-		sql1.append("select wf.workFunction_id as vwfid,wf.id as wfid from WorkFunction wf where wf.id="+aWorkFunction) ;
+		sql1.append("select wf.workFunction_id as vwfid,wf.id as wfid from WorkFunction wf where wf.id=").append(aWorkFunction);
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list1 = service.executeNativeSql(sql1.toString(),1) ;
 		WebQueryResult obj1 = list1.isEmpty()?null:list1.iterator().next() ;
@@ -386,7 +396,6 @@ public class TicketServiceJs {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.changeServiceStreamBySmo(aSmo, aServiceStream) ;
 		HospitalMedCaseServiceJs.createAdminChangeMessageBySmo(aSmo, "CHANGE_SERVICE_STREAM", "Изменение потока обслуживания: "+aSmo, aRequest) ;
-
 		return "Поток обслуживания изменен" ;
 	}
 	public String changeLpuBySmo(Long aSmo, Long aLpu, HttpServletRequest aRequest) throws NamingException {
@@ -665,4 +674,30 @@ public class TicketServiceJs {
 		long res1 = TemplateProtocolJs.parseLong(res);
 		return res1>0;
     }
+
+	/**
+	 * Получить примечания к услугам в направлении/визите (с пробелом на конце)
+	 * @param aMedCaseId MedCase.id
+	 * @return String json Услуги с комментариями
+	 */
+	public String getServiceComments(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder();
+		sql.append("select mc.id,ms.code||' '||ms.name||' ',mc.serviceComment ")
+				.append(" from MedCase mc  ")
+				.append(" left join MedService ms on mc.medService_id=ms.id ")
+				.append(" where mc.dtype='ServiceMedCase' and mc.parent_id=' ")
+				.append(aMedCaseId)
+				.append("'");
+		JSONArray res = new JSONArray() ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		for (WebQueryResult w :list) {
+			JSONObject o = new JSONObject() ;
+			o.put("id", w.get1())
+					.put("name", w.get2())
+					.put("cmnt", w.get3());
+			res.put(o);
+		}
+		return res.toString();
+	}
 }

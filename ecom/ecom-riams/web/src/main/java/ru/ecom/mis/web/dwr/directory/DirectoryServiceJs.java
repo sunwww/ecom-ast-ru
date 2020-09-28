@@ -20,18 +20,14 @@ public class DirectoryServiceJs {
 
 
 	private boolean isNotNullObj(JSONObject obj, String Alias){
-		if(obj.has(Alias)){
-            return true;
-        }else return false;
+		return obj.has(Alias);
 	}
 
 
 	private void SQLupdate(HttpServletRequest aRequest, String SQLUpdateString){
 		try {
 			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-			StringBuilder sql = new StringBuilder();
-			sql.append(SQLUpdateString);
-			service.executeUpdateNativeSql(sql.toString());
+			service.executeUpdateNativeSql(SQLUpdateString);
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}
@@ -55,14 +51,11 @@ public class DirectoryServiceJs {
 			buildingId = Long.valueOf(String.valueOf(obj.get("buildingId")));
 			misLpuId = Long.valueOf(String.valueOf(obj.get("misLpuId")));
 			buildingLevelId = Long.valueOf(String.valueOf(obj.get("buildingLevelId")));
-			departmentId = Long.valueOf(String.valueOf(obj.get("departmentId")));
+			//departmentId = Long.valueOf(String.valueOf(obj.get("departmentId")));
 			//System.out.println("Mislpu>>>"+misLpuId+" Department>>>"+departmentId);
 			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 			StringBuilder sql = new StringBuilder();
-			sql.append("select id from department")
-				.append(" where building_id ="+buildingId)
-				.append(" and department_id = "+misLpuId)
-				.append(" and buildinglevel_id = "+buildingLevelId);
+			sql.append("select id from department").append(" where building_id =").append(buildingId).append(" and department_id = ").append(misLpuId).append(" and buildinglevel_id = ").append(buildingLevelId);
 
 			Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 			for (WebQueryResult wqr : res) {
@@ -75,12 +68,12 @@ public class DirectoryServiceJs {
 			//System.out.println(">>>>ID:"+departid);
 		}else return false;
 
-		String entryId="";
+		String entryId;
 		if(isNotNullObj(obj,"comment") && isNotNullObj(obj,"internalNumber")){
 
 			entryId = String.valueOf(obj.get("entryId"));
-			String comment = String.valueOf(obj.get("comment"));
-			String internalNumber = String.valueOf(obj.get("internalNumber"));
+			String comment = obj.getString("comment");
+			String internalNumber = obj.getString("internalNumber");
 			String personId;
 			if(isNotNullObj(obj,"personId")){
 				personId =String.valueOf(obj.get("personId"));
@@ -93,15 +86,18 @@ public class DirectoryServiceJs {
 
 		}else return false;
 		if(obj.has("delId")) params = obj.getJSONArray("delId");
-		String delIds="";boolean tick=false;
-		for (int i = 0; i < params.length(); i++) {
-			JSONObject param = (JSONObject) params.get(i);
-			Long TelNumberIdDel = Long.valueOf((String) param.get("TelNumberIdDel"));
-			if(tick==true)delIds+=",";
-			delIds+=(String) param.get("TelNumberIdDel");
-			tick=true;
+		StringBuilder delIds= new StringBuilder();
+		boolean tick=false;
+		if (params!=null){
+			for (int i = 0; i < params.length(); i++) {
+				JSONObject param = params.getJSONObject(i);
+			//	Long TelNumberIdDel = Long.valueOf((String) param.get("TelNumberIdDel"));
+				if(tick) delIds.append(",");
+				delIds.append(param.getString("TelNumberIdDel"));
+				tick=true;
+			}
 		}
-		if(delIds!=null && !delIds.equals("")) {
+		if(!delIds.toString().equals("")) {
 			SQLupdate(aRequest, "delete from telephonenumber where id in(" + delIds + ")");
 		}
 		insertTelephoneNumbers(aRequest,obj,Long.valueOf(entryId));
@@ -126,63 +122,47 @@ public class DirectoryServiceJs {
 
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sql = new StringBuilder();
-		String JSON="";
-		sql.append("select d.building_id, vb.name as build, d.buildinglevel_id , vbl.name as buildlevel,e.comment, \n" +
-				"e.insidenumber, e.person_id, \n" +
-				"p.lastname||' '||p.firstname||' '||p.middlename as fio,m.id as misLpu,e.department_id depId\n" +
-				",m.name as depname from entry e \n" +
-				"left join department d on d.id = e.department_id\n" +
-				"left join mislpu m on m.id = d.department_id\n" +
-				"left join vocbuilding vb on vb.id =d.building_id\n" +
-				"left join vocbuildinglevel vbl on vbl.id =d.buildinglevel_id\n" +
-				"left join workfunction wf on wf.id = e.person_id\n" +
-				"left join worker w on w.id =wf.worker_id\n" +
-				"left join patient p on p.id = w.person_id\n" +
-				"where e.id = "+entryId);
+		StringBuilder JSON= new StringBuilder();
+		sql.append("select d.building_id, vb.name as build, d.buildinglevel_id , vbl.name as buildlevel,e.comment, \n" + "e.insidenumber, e.person_id, \n" + "p.lastname||' '||p.firstname||' '||p.middlename as fio,m.id as misLpu,e.department_id depId\n" + ",m.name as depname from entry e \n" + "left join department d on d.id = e.department_id\n" + "left join mislpu m on m.id = d.department_id\n" + "left join vocbuilding vb on vb.id =d.building_id\n" + "left join vocbuildinglevel vbl on vbl.id =d.buildinglevel_id\n" + "left join workfunction wf on wf.id = e.person_id\n" + "left join worker w on w.id =wf.worker_id\n" + "left join patient p on p.id = w.person_id\n" + "where e.id = ").append(entryId);
 
 		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 
 		for (WebQueryResult wqr : res) {
 
-			JSON+="{\"buildingId\":\""+wqr.get1()+"\",";
-			JSON+="\"building\":\""+wqr.get2()+"\",";
-			JSON+="\"buildingLevelId\":\""+wqr.get3()+"\",";
-			JSON+="\"buildingLevel\":\""+wqr.get4()+"\",";
-			JSON+="\"comment\":\""+wqr.get5()+"\",";
-			JSON+="\"insidenumber\":\""+wqr.get6()+"\",";
-			JSON+="\"personId\":\""+wqr.get7()+"\",";
-			JSON+="\"person\":\""+wqr.get8()+"\",";
-			JSON+="\"depId\":\""+wqr.get9()+"\",";
-			JSON+="\"departmentId\":\""+wqr.get10()+"\",";
-			JSON+="\"department\":\""+wqr.get11()+"\",";
+			JSON.append("{\"buildingId\":\"").append(wqr.get1()).append("\",");
+			JSON.append("\"building\":\"").append(wqr.get2()).append("\",");
+			JSON.append("\"buildingLevelId\":\"").append(wqr.get3()).append("\",");
+			JSON.append("\"buildingLevel\":\"").append(wqr.get4()).append("\",");
+			JSON.append("\"comment\":\"").append(wqr.get5()).append("\",");
+			JSON.append("\"insidenumber\":\"").append(wqr.get6()).append("\",");
+			JSON.append("\"personId\":\"").append(wqr.get7()).append("\",");
+			JSON.append("\"person\":\"").append(wqr.get8()).append("\",");
+			JSON.append("\"depId\":\"").append(wqr.get9()).append("\",");
+			JSON.append("\"departmentId\":\"").append(wqr.get10()).append("\",");
+			JSON.append("\"department\":\"").append(wqr.get11()).append("\",");
 		}
 
-		JSON+="\"numbers\":[";
+		JSON.append("\"numbers\":[");
 		sql = new StringBuilder();
-		sql.append("select tn.telnumber, tn.typenumber_id, vtn.name, tn.id from telephonenumber tn\n" +
-				"left join voctypenumber vtn on vtn.id = tn.typenumber_id \n" +
-				"where tn.entry_id= "+entryId);
+		sql.append("select tn.telnumber, tn.typenumber_id, vtn.name, tn.id from telephonenumber tn\n" + "left join voctypenumber vtn on vtn.id = tn.typenumber_id \n" + "where tn.entry_id= ").append(entryId);
 		res = service.executeNativeSql(sql.toString());
 		int chk=0;
 		for (WebQueryResult wqr : res) {
-			if(chk>0)JSON+=",";
-			JSON+="{\"telnumber\":\""+wqr.get1()+"\",";
-			JSON+="\"typeId\":\""+wqr.get2()+"\",";
-			JSON+="\"typeName\":\""+wqr.get3()+"\",";
-			JSON+="\"telephonenumberId\":\""+wqr.get4()+"\"}";
+			if(chk>0) JSON.append(",");
+			JSON.append("{\"telnumber\":\"").append(wqr.get1()).append("\",");
+			JSON.append("\"typeId\":\"").append(wqr.get2()).append("\",");
+			JSON.append("\"typeName\":\"").append(wqr.get3()).append("\",");
+			JSON.append("\"telephonenumberId\":\"").append(wqr.get4()).append("\"}");
 			chk++;
 		}
-		JSON+="]}";
-		System.out.println(">>>>>>"+JSON);
-		return JSON;
+		JSON.append("]}");
+		return JSON.toString();
 	}
 
 	//Добавление полной записи (Отделение->Запись->Телефонные номера)
 	public boolean setEntry(String aJson, HttpServletRequest aRequest) throws JSONException, NamingException{
 
 		JSONObject obj = new JSONObject(aJson);
-		JSONArray params= null;
-		if(obj.has("numbers")) params = obj.getJSONArray("numbers");
 
 		Long buildingId,buildingLevelId,personId,departmentId;
 		Long depRetId,entryId =null;
@@ -190,38 +170,34 @@ public class DirectoryServiceJs {
 		String comment,internalNumber;
 		IDirectoryService service = Injection.find(aRequest).getService(IDirectoryService.class);
 
-		System.out.println(">>>Saving");
-
 		if(isNotNullObj(obj,"buildingId") && isNotNullObj(obj,"buildingLevelId")
-				&& isNotNullObj(obj,"departmentId"))
-		{
-			buildingId = Long.valueOf(String.valueOf(obj.get("buildingId")));
-			departmentId = Long.valueOf(String.valueOf(obj.get("departmentId")));
-			buildingLevelId = Long.valueOf(String.valueOf(obj.get("buildingLevelId")));
+				&& isNotNullObj(obj,"departmentId")) {
+			buildingId = obj.getLong("buildingId");
+			departmentId = obj.getLong("departmentId");
+			buildingLevelId = obj.getLong("buildingLevelId");
 			depRetId = service.setDepartment(buildingId,buildingLevelId,departmentId);
-			System.out.println(">>>>>DEP>>>:"+depRetId);
-		}else {
-			System.out.println("FALSE!!!!");return false;}
-
+		} else {
+			return false;
+		}
 		if(depRetId!=null){
 			if(isNotNullObj(obj,"comment") && isNotNullObj(obj,"internalNumber")){
 
-				comment = String.valueOf(obj.get("comment"));
-				internalNumber = String.valueOf(obj.get("internalNumber"));
+				comment = obj.getString("comment");
+				internalNumber = obj.getString("internalNumber");
 
 				if(isNotNullObj(obj,"personId")){
-					personId = Long.valueOf(String.valueOf(obj.get("personId")));
+					personId = obj.getLong("personId");
 					entryId = service.setEntry2(comment,internalNumber,depRetId,personId);
-					System.out.println(">>>>>entryId>>>:"+entryId);
 				}else {
 					entryId = service.setEntry1(comment,internalNumber,depRetId);
-					System.out.println(">>>>>entryId>>>:"+entryId);
 				}
 			}
-		}else return false;
+		} else {
+			return false;
+		}
 
 		if(entryId!=null){
-			insertTelephoneNumbers(aRequest,obj,Long.valueOf(entryId));
+			insertTelephoneNumbers(aRequest,obj, entryId);
 			return true;
 		}
 		return false;
@@ -239,7 +215,7 @@ public class DirectoryServiceJs {
 	String insideNumber = String.valueOf(obj.get("insideNumber"));
 	String comment = String.valueOf(obj.get("comment"));
 	
-	StringBuilder sql = new StringBuilder();
+	StringBuilder sql ;
 	StringBuilder id =EntryExist(aRequest,department,insideNumber,person,comment);
 	
 	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -252,10 +228,9 @@ public class DirectoryServiceJs {
 	    String typeNumber = (String) param.get("typeNumber"), 
 		    number = (String) param.get("number");
 	    
-	   System.out.println("=== Debug: "+number+" | "+typeNumber);
 	   sql = new StringBuilder();
 	   sql.append("insert into telephonenumber (telnumber,entry_id,typenumber_id) ");
-	   sql.append("values('" + number + "'," + id + "," + typeNumber+ ")");
+	   sql.append("values('").append(number).append("',").append(id).append(",").append(typeNumber).append(")");
 	   service.executeUpdateNativeSql(sql.toString());
 	}
 	
@@ -269,31 +244,29 @@ public class DirectoryServiceJs {
 		IWebQueryService.class);
 	StringBuilder sql = new StringBuilder();
 
-	sql.append("select id from entry where insidenumber='"+insideNumber+"' and department_id=" + department);
+	sql.append("select id from entry where insidenumber='").append(insideNumber).append("' and department_id=").append(department);
 	Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 
 	StringBuilder id = new StringBuilder();
 	for (WebQueryResult wqr : res) {
-	    id.append("" + wqr.get1());
+	    id.append(wqr.get1());
 	}
 
-	if (id.equals("") || id.toString().equals("") || id == null) {
+	if (id.toString().equals("") ) {
 
 	    sql = new StringBuilder();
 	    sql.append("INSERT INTO entry (comment,insidenumber,");
-	    if(person.equals("") || person==null){
-		sql.append("department_id)")
-		.append("VALUES ('" + comment + "','" + insideNumber + "'," + department + ") returning id");
+	    if(person==null || person.equals("")){
+		sql.append("department_id)").append("VALUES ('").append(comment).append("','").append(insideNumber).append("',").append(department).append(") returning id");
 		}else{
-		    sql.append("department_id)")
-		    .append("VALUES ('" + comment + "','" + insideNumber + "',"+ person + "," + department + ") returning id");
+		    sql.append("department_id)").append("VALUES ('").append(comment).append("','").append(insideNumber).append("',").append(person).append(",").append(department).append(") returning id");
 		}
 
 	    res = service.executeNativeSql(sql.toString());
 
 	    id = new StringBuilder();
 	    for (WebQueryResult wqr : res) {
-		id.append("" + wqr.get1());
+			id.append(wqr.get1());
 	    }
 
 	    return id;

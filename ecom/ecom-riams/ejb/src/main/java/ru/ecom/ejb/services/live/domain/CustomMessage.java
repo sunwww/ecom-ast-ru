@@ -146,5 +146,28 @@ public class CustomMessage {
 
 	/** Время действия */
 	private Time theValidityTime;
+
+	public CustomMessage() {}
+	public CustomMessage(CustomMessage cm) {
+		this.theUsername=cm.theUsername;
+		this.theRecipient=cm.theRecipient;
+		this.theValidityTime=cm.theValidityTime;
+		this.theValidityDate=cm.theValidityDate;
+		this.theIsEmergency=cm.theIsEmergency;
+		this.theMessageUrl=cm.theMessageUrl;
+		this.theIsHidden=cm.theIsHidden;
+		this.theIsSystem=cm.theIsSystem;
+		this.theMessageTitle=cm.theMessageTitle;
+		this.theMessageText=cm.theMessageText;
+		this.theDispatchTime=cm.theDispatchTime;
+		this.theDispatchDate=cm.theDispatchDate;
+
+	}
+	public CustomMessage(Boolean isEmergency) {
+		long currentTime = System.currentTimeMillis();
+		this.setDispatchDate(new Date(currentTime));
+		this.setDispatchTime(new Time(currentTime));
+		this.setIsEmergency(isEmergency);
+	}
 }
 

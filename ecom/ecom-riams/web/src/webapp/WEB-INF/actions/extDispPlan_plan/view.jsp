@@ -9,7 +9,7 @@
 	</tiles:put>
 
 	<tiles:put name="body" type="string">
-		<msh:form  action="/extDispPlanView.do" defaultField="lastname" disableFormDataConfirm="true">
+		<msh:form action="/extDispPlanView.do" defaultField="lastname" method="get" disableFormDataConfirm="true">
 			<msh:hidden property="id" />
 			<msh:panel>
 				<msh:row>
@@ -17,8 +17,8 @@
 					<td onclick="this.childNodes[1].checked='checked';">
 						<input type="radio" name="typeView" value="1">  План по кварталам
 					</td>
-					<td onclick="this.childNodes[1].checked='checked';" colspan="2">
-						<input type="radio" name="typeView" value="2">  План по месяцам
+					<td>
+						<label><input type="radio" name="typeView" value="2">  План по месяцам</label>
 					</td>
 					<td onclick="this.childNodes[1].checked='checked';" colspan="2">
 						<input type="radio" name="typeView" value="3">  Список пациентов

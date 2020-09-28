@@ -6,10 +6,10 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="trans_bloodForm" guid="e20545-4285-a21c-3bb9b4569efc">
-      <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Переливание крови">
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-trans_blood" name="Изменить" roles="/Policy/Mis/MedCase/Transfusion/Blood/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-trans_blood" name="Удалить" roles="/Policy/Mis/MedCase/Transfusion/Blood/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
+    <msh:ifFormTypeIsView formName="trans_bloodForm">
+      <msh:sideMenu title="Переливание крови">
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-trans_blood" name="Изменить" roles="/Policy/Mis/MedCase/Transfusion/Blood/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-trans_blood" name="Удалить" roles="/Policy/Mis/MedCase/Transfusion/Blood/Delete" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
     <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/View" 
@@ -23,7 +23,7 @@
     <!-- 
     	  - Переливание крови
     	  -->
-    <msh:form action="/entityParentSaveGoView-trans_blood.do" defaultField="journalNumber" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
+    <msh:form action="/entityParentSaveGoView-trans_blood.do" defaultField="journalNumber">
       <msh:hidden property="id" />
       <msh:hidden property="medCase" />
       <msh:hidden property="saveType" />
@@ -87,7 +87,7 @@
           <msh:separator label="Данные с этикетки контейнера" colSpan="10" />
         </msh:row>
         <msh:row>
-          <msh:autoComplete property="bloodPreparation" label="Препарат крови (компонентов)" horizontalFill="true" vocName="vocBloodPreparation" fieldColSpan="5" />
+          <msh:autoComplete property="bloodPreparation" label="Наименование компонента крови" horizontalFill="true" vocName="vocBloodPreparation" fieldColSpan="5" />
         </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocPreparatorBlood" property="preparator" label="Изготовитель" horizontalFill="true" fieldColSpan="1" size="35"/>
@@ -102,13 +102,13 @@
         </msh:row>
         <msh:row>
           <msh:textField property="donor" label="Код донор" horizontalFill="true" size="35"/> 
-          <msh:autoComplete property="preparationBloodGroup" label="Группа крови" vocName="vocBloodGroup" guid="c4581345-c5cd-4934-b99d-a4ba4571f4f8" horizontalFill="true" />
-          <msh:autoComplete property="preparationRhesusFactor" label="Резус-фактор" vocName="vocRhesusFactor" guid="f11b7586-7f17-4dd0-b638-c9ed408cc089" horizontalFill="true" />
+          <msh:autoComplete property="preparationBloodGroup" label="Группа крови" vocName="vocBloodGroup" horizontalFill="true" />
+          <msh:autoComplete property="preparationRhesusFactor" label="Резус-фактор" vocName="vocRhesusFactor" horizontalFill="true" />
         </msh:row>
         </msh:panel>
         <msh:panel>
         <msh:row>
-          <msh:separator label="Информация о контрольных проверках" colSpan="10" guid="43c6f5c7-a52f-4da5-89ac-02b5a5c35986" />
+          <msh:separator label="Информация о контрольных проверках" colSpan="10" />
         </msh:row>
         <msh:row>
           <msh:autoComplete property="patBloodGroupCheck" label="Группа крови реципиента" vocName="vocBloodGroup" horizontalFill="true" />
@@ -136,7 +136,7 @@
         <msh:row>
         	<msh:autoComplete fieldColSpan="9" horizontalFill="true" property="methodPT2" vocName="vocTransfusionMethodPT" label="2. Метод"/>
         </msh:row>
-        <msh:row guid="1234">
+        <msh:row>
         	<msh:textField property="reagentSeriesPT2" label="Серия"/>
         	<msh:textField property="reagentExpDatePT2" label="Срок годности"/>
         	<msh:autoComplete vocName="vocYesNo" property="resultGoodPT2" label="Совместима?"/>
@@ -165,10 +165,6 @@
            	<msh:autoComplete size="4" property="stateBT"  vocName="vocYesNo" label="Состояние изменилось?" />
            	<msh:textField property="lamentBT" label="Жалобы" fieldColSpan="9" horizontalFill="true"/>
         </msh:row>
-        <!--msh:row styleId="row21">
-           	<!--msh:autoComplete fieldColSpan="9" property="serumColorBT" horizontalFill="true" vocName="vocTransfusionTestSerumColor" label="Цвет сыворотки" />
-        <!--/msh:row>
-        <!--/msh:ifFormTypeIsNotView-->
             <msh:row styleId="row20">
                 <msh:row styleId="row22"><td colspan="10">Изменилось без видимой причины:</td></msh:row>
                 <msh:row styleId="row23">
@@ -202,7 +198,7 @@
 		</msh:row>
         
         <msh:row>
-          <msh:separator label="Наблюдение за состоянием реципиента. Сразу после переливания" colSpan="10"/>
+          <msh:separator label="Наблюдение за состоянием реципиента. До начала трансфузии" colSpan="10"/>
         </msh:row>
         <msh:row>
         	<msh:textField size="4" property="monitorForm0.bloodPressureTop" label="АД сис."/>
@@ -236,14 +232,14 @@
         </msh:row>
 
         <msh:row>
-          <msh:autoComplete property="executor" label="Исполнитель" vocName="workFunction" guid="56067cb3-f8bd-4c07-9330-ad6ffee3e83a" fieldColSpan="9" horizontalFill="true" />
+          <msh:autoComplete property="executor" label="Исполнитель" vocName="workFunction" fieldColSpan="9" horizontalFill="true" />
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="5" />
+        <msh:submitCancelButtonsRow colSpan="5" functionSubmit="save(this);"/>
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="trans_bloodForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="trans_bloodForm" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsNotView formName="trans_bloodForm">
@@ -255,6 +251,9 @@
   	eventutil.addEventListener($('phenotypeD'), 'click', phenotype) ;
     eventutil.addEventListener($('phenotypeNone'), 'click', phenotype) ;
   	eventutil.addEventListener($('isIllPatientsBT'), 'click', biologTest) ;
+    bloodPreparationAutocomplete.addOnChangeCallback(function() {
+        checkMasReq() ;
+    }) ;
   	function phenotype() {
   		$('phenotype').value="C"+check("phenotypeC")+"c"+check("phenotypec1")+"D"+check("phenotypeD")+"E"+check("phenotypeE")+"e"+check("phenotypee1") + "Не опр"+check("phenotypeNone");
   		$('phenotypeReadOnly').value=$('phenotype').value ;
@@ -276,8 +275,68 @@
             //alert($("row20").style.display);
   		}
   	}
+
+    //если поле prop имеет значение из vals или не имеет значение из notVals, все поля в req сделать обязательными
+    //если другое значение - убрать обязательность, снимать значения не надо
+    var masReq = [{prop: 'bloodPreparation', vals:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], notVals: [], req: [{field: 'patBloodGroupCheckName', cmnt: 'группа крови реципиента'}
+            ,{field: 'reagentForm1.reagentName',cmnt: 'реактив 1'}
+            ,{field: 'reagentForm1.series',cmnt: 'серия 1'}
+            ,{field: 'reagentForm1.expirationDate',cmnt: 'срок годности 1'}
+            ,{field: 'reagentForm2.reagentName',cmnt: 'реактив 2'}
+            ,{field: 'reagentForm2.series',cmnt: 'серия 2'}
+            ,{field: 'reagentForm2.expirationDate',cmnt: 'срок годности 2'}]}
+        , {prop: 'bloodPreparation', vals:[1,2,3,4,5,6,7,8,9,10,11,12,13,14], notVals: [], req: [{field: 'bloodBioProbProcedureName', cmnt: 'биологическая проба'}]}];
+
+    //ф-я настраивает обязательность полей req в masReq
+    function checkMasReq() {
+        for (var i=0; i<masReq.length; i++) {
+            var el = masReq[i];
+            if ($(el.prop).value!='' && (el.vals.length>0 && el.vals.indexOf(+$(el.prop).value)!=-1 || el.notVals.length>0 && el.notVals.indexOf(+$(el.prop).value)==-1)) {
+                el.req.forEach(function (reqMasEl) {
+                    $(reqMasEl.field).className += " required"
+                });}
+            else {
+                el.req.map(function (reqMasEl) {
+                    $(reqMasEl.field).className = $(reqMasEl.field).className.replace(new RegExp("required", "g"), "");
+                    //$(fieldName).value = '';
+                });
+            }
+        }
+    }
+
+    //ф-я проверяет заполнение masReq
+    function checkSaveMasReq() {
+        var msg = '';
+        for (var i = 0; i < masReq.length; i++) {
+            var el = masReq[i];
+            if ($(el.prop).value!='' && (el.vals.length>0 && el.vals.indexOf(+$(el.prop).value)!=-1 || el.notVals.length>0 && el.notVals.indexOf(+$(el.prop).value)==-1)) {
+                el.req.forEach(function (reqMasEl) {
+                    if ($(reqMasEl.field).value=='') {
+                        if (!msg)
+                            msg = 'Проверьте заполнение следующих полей:';
+                        msg+=' ' + reqMasEl.cmnt + ';';
+                    }
+                });
+            }
+        }
+        return msg;
+    }
   	biologTest();
   	phenotype();
+    checkMasReq();
+
+    //проверка и сохранение
+    function save(btn) {
+        btn.value='Создание...';
+        var msg = checkSaveMasReq();
+        if (msg) {
+            showToastMessage(checkSaveMasReq(),null,true);
+            btn.removeAttribute("disabled");
+            btn.value='Создать';
+        }
+        else
+            document.forms[0].submit();
+    }
   	</script>
   	</msh:ifFormTypeIsNotView>
       <script type="text/javascript">

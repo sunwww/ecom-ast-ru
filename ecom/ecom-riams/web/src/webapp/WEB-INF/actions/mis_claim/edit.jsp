@@ -12,8 +12,10 @@
         <%
             String img = request.getParameter("img");
             String desc = request.getParameter("description");
+            String hist = request.getParameter("hist");
             request.setAttribute("description",desc);
             request.setAttribute("img",img);
+            request.setAttribute("hist",hist);
         %>
         <msh:form action="entitySaveGoView-mis_claim.do" defaultField="id">
 
@@ -22,7 +24,7 @@
                 <msh:hidden property="workfunction"/>
             </msh:ifNotInRole>
             <msh:hidden property="saveType"/>
-            <msh:panel guid="panel" colsWidth="20% 20% 15%">
+            <msh:panel colsWidth="20% 20% 15%">
                 <input type='hidden' id='statusState'>
                 <msh:ifFormTypeIsCreate formName="mis_claimForm">
                     <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
@@ -30,7 +32,7 @@
                             <msh:autoComplete property="workfunction" vocName="workFunction" label="Пользователь" fieldColSpan="3" size="50"/>
                         </msh:row>
                     </msh:ifInRole>
-                    <msh:row guid="row1">
+                    <msh:row>
                         <msh:textArea  property="description" label="Текст заявки" />
                     </msh:row>
                     <msh:row>
@@ -39,7 +41,7 @@
                     <msh:row>
                         <msh:textField property="address" size="20" label="Место исполнения заявки"/>
                     </msh:row>
-                    <msh:row guid="cfba9b91-b2af-4867-aab3-29a1f39833fd">
+                    <msh:row>
                         <msh:autoComplete vocName="vocClaimType" property="claimType" label="Тип заявки" fieldColSpan="3" horizontalFill="true" />
                     </msh:row>
                     <msh:row>
@@ -122,24 +124,27 @@
                 </msh:ifFormTypeAreViewOrEdit>
 
                 <msh:ifFormTypeIsCreate formName="mis_claimForm">
-                    <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1"  />
+                    <msh:submitCancelButtonsRow colSpan="1"  />
                     <script type='text/javascript' src='./dwr/interface/ClaimService.js'></script>
                     <script type="text/javascript">
                         window.onload = function() {
                             ($('screenFileName')).setAttribute("readonly","false"); //чтобы при перезагрузке не терялся скрин
-                            $('description').value='${description}';
-                            $('screenFileName').value='${img}';
-                            ($('screenFileName')).setAttribute("readonly","true")
-                            if ($('description').value!=null && $('description').value!="") {
-                                ClaimService.getSoftType({
-                                    callback: function (res) {
-                                        if (res != null && res != '##') {
-                                            var Result = res.split("#");
-                                            if (Result[0] != null) $('claimType').value = Result[0];
-                                            if (Result[1] != null) $('claimTypeName').value = Result[1];
+                            if ('${img}'!='') {
+                                $('description').value='Описание: ' + '${description}' + '\nСтраница ошибки: ' + document.referrer +
+                                    '\nСтраница перед ошибкой: ' + '${hist}';
+                                $('screenFileName').value='${img}';
+                                ($('screenFileName')).setAttribute("readonly","true");
+                                if ($('description').value!=null && $('description').value!="") {
+                                    ClaimService.getSoftType({
+                                        callback: function (res) {
+                                            if (res != null && res != '{}') {
+                                                var Result = JSON.parse(res);
+                                                if (typeof(Result.id) !=='undefined') $('claimType').value = Result.id;
+                                                if (typeof(Result.name) !=='undefined') $('claimTypeName').value = Result.name;
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
                         }
                     </script>
@@ -182,7 +187,7 @@
     <tiles:put name='side' type='string'>
         <msh:ifFormTypeAreViewOrEdit formName="mis_claimForm">
             <msh:sideMenu>
-                <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_claim" name="Изменить" roles="/Policy/Mis/Claim/Edit" />
+                <msh:sideLink key="ALT+2" params="id" action="/entityEdit-mis_claim" name="Изменить" roles="/Policy/Mis/Claim/Edit" />
             </msh:sideMenu>
         </msh:ifFormTypeAreViewOrEdit>
 
@@ -192,4 +197,3 @@
         <ecom:titleTrail mainMenu="Patient" beginForm="mis_claimForm" />
     </tiles:put>
 </tiles:insert>
-<!-- lastrealease milamesher 15.03.2018 #77 -->

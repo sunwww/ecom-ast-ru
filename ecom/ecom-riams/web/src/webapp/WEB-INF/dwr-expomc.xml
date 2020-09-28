@@ -14,11 +14,7 @@
         <create creator="new" javascript="CreateKeyForClassNameService" scope="application">
             <param name="class" value="ru.ecom.expomc.web.dwr.CreateKeyForClassNameServiceJs"/>
         </create>
-        
-        <!-- Сервис заполнения -->
-        <create creator="new" javascript="FillTimeService" scope="application">
-            <param name="class" value="ru.ecom.expomc.web.dwr.FillTimeServiceJs"/>
-        </create>
+
         
     </allow>
 

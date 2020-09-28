@@ -1,16 +1,5 @@
 package ru.ecom.expomc.ejb.domain.impdoc;
 
-import java.util.Collection;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -18,6 +7,9 @@ import ru.ecom.expomc.ejb.domain.check.Check;
 import ru.ecom.expomc.ejb.domain.format.ExportFormat;
 import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.format.ImportFormat;
+
+import javax.persistence.*;
+import java.util.Collection;
 
 /**
  * Документ.
@@ -31,10 +23,21 @@ import ru.ecom.expomc.ejb.domain.format.ImportFormat;
 @AIndexes(
 		@AIndex(properties="entityClassName")
 )
-@NamedQueries(
-		@NamedQuery(name="ImportDocument.findByName", query="from ImportDocument where entityClassName = :entityClassName")
-		) 
+@NamedQueries({
+        @NamedQuery(name = "ImportDocument.findByName", query = "from ImportDocument where entityClassName = :entityClassName")
+        , @NamedQuery(name = "ImportDocument.findByKey", query = "from ImportDocument where keyName = :key")
+}
+		)
 public class ImportDocument extends BaseEntity {
+
+    /** Системный формат */
+    @Transient
+    public Format getDefaultFormat() {
+        for (Format format: theFormats) {
+            if (Boolean.TRUE.equals(format.getSystemFormat())) return format;
+        }
+        return null;
+    }
 
     /** Клас для сохранения */
     public String getEntityClassName() { return theEntityClassName ; }
@@ -57,26 +60,24 @@ public class ImportDocument extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "document")
     public Collection<Format> getFormats() { return theFormats ; }
     public void setFormats(Collection<Format> aFormats) { theFormats = aFormats ; }
-
-    // IKO 070301 +++
+    private Collection<Format> theFormats ;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "document")
     public Collection<ExportFormat> getExportFormats() { return theExportFormats; }
     public void setExportFormats(Collection<ExportFormat> anExportFormats) { theExportFormats = anExportFormats; }
+    private Collection<ExportFormat> theExportFormats ;
 
-    // 070308
-    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "document")
     public Collection<ImportFormat> getImportFormats() { return theImportFormats; }
     public void setImportFormats(Collection<ImportFormat> anImportFormats) { theImportFormats = anImportFormats; }
-
-    // IKO 070301 ===
+    private Collection<ImportFormat> theImportFormats;
 
     /** Проверки */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "document")
     @OrderBy("sn")
     public Collection<Check> getChecks() { return theChecks ; }
     public void setChecks(Collection<Check> aChecks) { theChecks = aChecks ; }
+    private Collection<Check> theChecks ;
 
 
     @Transient
@@ -89,21 +90,6 @@ public class ImportDocument extends BaseEntity {
         }
     }
 
-    /** Проверки */
-    private Collection<Check> theChecks ;
-    /** Форматы импорта */
-    private Collection<Format> theFormats ;
-
-    // IKO 070301 +++ Форматы экспорта
-
-    private Collection<ExportFormat> theExportFormats ;
-
-    // 070308
-    private Collection<ImportFormat> theImportFormats;
-
-    // IKO 070301 ===
-
-
     /** Время импорта */
     private Collection<ImportTime> theTimes ;
     /** Комментарий */
@@ -112,5 +98,4 @@ public class ImportDocument extends BaseEntity {
     private String theKeyName ;
     /** Клас для сохранения */
     private String theEntityClassName ;
-
 }

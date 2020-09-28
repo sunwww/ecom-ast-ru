@@ -1,5 +1,4 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
-
 import org.mozilla.javascript.*;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
@@ -44,10 +43,11 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 				if (dep.getParent() instanceof HospitalMedCase
 						&& ((HospitalMedCase)dep.getParent()).getDischargeTime()!=null
 						&&aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay")
+						&& !aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin")
 						) {
 					boolean isOpen;
 					try {
-						isOpen = checkPermission("DischargeMedCase", "backdate", dep.getParent().getId(),aContext);
+						isOpen = checkPermission("DischargeMedCase", "editAfterDischarge", dep.getParent().getId(),aContext);
 						if (!isOpen) {
 							form.getPage();
 							form.setTypeViewOnly() ;
@@ -91,7 +91,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 		}
 			
 			
-		return res.length()>0?res.substring(0,res.length()-3):"" ;
+		return res.length()>3?res.substring(0,res.length()-3):"" ;
     }
 	public Object invoke(EntityManager aManager,SessionContext aContext ,String aServiceName, String aMethodName, Object[] aArgs) {
 		
@@ -114,9 +114,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 							ScriptServiceContext ctx = new ScriptServiceContext(aManager, aContext, theEjbInjection) ;
 							Object[] args = new Object[aArgs.length+1] ;
 							args[0] = ctx ;
-							for(int i=0; i<aArgs.length; i++) {
-								args[i+1] = aArgs[i];
-							}
+							System.arraycopy(aArgs, 0, args, 1, aArgs.length);
 							Object result = f.call(jsContext, scope, scope, args);
 							
 							Object ret ;

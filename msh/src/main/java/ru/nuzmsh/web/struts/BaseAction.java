@@ -1,20 +1,18 @@
 package ru.nuzmsh.web.struts;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.nuzmsh.web.messages.ErrorMessage;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Action
  */
 public abstract class BaseAction extends Action {
-
 	public static final String SUCCESS = "success";
 	
     public ActionForward execute(ActionMapping aMapping
@@ -25,7 +23,8 @@ public abstract class BaseAction extends Action {
             //aResponse.setHeader();
             ActionForward ret = myExecute(aMapping, aForm, aRequest, aResponse) ;
             if(ret==null) {
-                throw new Exception("Ошибка: ActionForward не должен быть равен NULL") ;
+                System.out.println("ERROR ret = null");
+   //             throw new Exception("Ошибка: ActionForward не должен быть равен NULL") ;
             }
             return ret ;
         } catch (Exception e) {

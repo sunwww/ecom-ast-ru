@@ -30,14 +30,14 @@ import java.lang.reflect.Method;
  */
 public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
 
-	public String getJson(Object aParentForm, String aProperty) throws JSONException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	public String getJson(Object aParentForm, String aProperty) throws JSONException, IllegalAccessException,  InvocationTargetException {
         return (String) PropertyUtil.getPropertyValue(aParentForm,  aProperty) ;
     }
 
-	public String getJson(Object aParentForm, String aProperty, String aVocName,PageContext aCtx) throws JSONException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	public String getJson(Object aParentForm, String aProperty, String aVocName,PageContext aCtx) throws JSONException, IllegalAccessException, InvocationTargetException {
         String value = (String) PropertyUtil.getPropertyValue(aParentForm,  aProperty) ;
 
-    	if(value!=null && value!="null" && value!="") {
+    	if(value!=null && !value.equals("null") && !value.equals("")) {
             
 	        JSONObject jsonObjOld = new JSONObject(value) ;
 	        StringBuilder  jsonNew = new StringBuilder("{\"childs\":[");
@@ -46,14 +46,14 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
 	        //alert(theFieldName.value) ;
 	        for (int i = 0; i < jsonArray.length(); i++) {
 	        	
-	        	JSONObject child = (JSONObject) jsonArray.get(i);
+	        	JSONObject child = jsonArray.getJSONObject(i);
 				String jsonId = String.valueOf(child.get("value"));
 				
 				if (!StringUtil.isNullOrEmpty(jsonId) || "0".equals(jsonId)) {
 					if (i>0) jsonNew.append(",");
 					jsonNew.append("{\"value\":");
 					jsonNew.append(jsonId);
-					String name = null ;
+					String name ;
 			        try {
 						name = VocHelperDelegate.locateVocHelper().getNameById(aCtx, jsonId, aVocName, null);
 			        } catch (VocHelperLocateException e) {
@@ -77,8 +77,6 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
         PageContext ctx = (PageContext) getJspContext();
-        HttpServletRequest request = (HttpServletRequest) ctx.getRequest();
-
 
         ActionForm form = (ActionForm) ctx.getAttribute(Constants.BEAN_KEY, PageContext.REQUEST_SCOPE);
         out.print("<td class='label' title='");
@@ -95,11 +93,10 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
         try {
         	if(isViewOnly) {
                 out.print("viewOnlyLabel") ;
-            } else {
-            	if(isFieldRequired(form))  out.print("required");
+            } else if(isFieldRequired(form)) {
+        	    out.print("required");
             }
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
         out.print(" label'>");
@@ -136,7 +133,7 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
         out.print("</tr></table></td>");
 
 
-        JavaScriptContext js = JavaScriptContext.getContext((PageContext) getJspContext(), this);
+        JavaScriptContext js = JavaScriptContext.getContext(getJspContext(), this);
         StringBuilder sb = new StringBuilder();
         sb.append("var theOtmoa_") ;
         sb.append(theProperty) ;
@@ -144,11 +141,10 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
         sb.append("$('").append(getDivname()).append("')") ;
         sb.append(", $('mainForm')") ;
         sb.append(", '").append(theProperty).append("'") ;
-        sb.append(", '").append("").append("'") ;
+        sb.append(", '").append("'") ; //gde title?
         sb.append(", '").append(theVocName).append("'") ;
         sb.append(", ").append(isViewOnly) ;
-        String parentId=(theParentId==null)?"":getParentIdValue(ctx) ;
-        sb.append(", '").append(parentId).append("'") ;
+        sb.append(", '").append(theParentId==null ? "" : getParentIdValue(ctx)).append("'") ;
         sb.append(", '").append(theParentAutocomplete).append("'") ;
         sb.append(", '").append(theViewAction).append("'") ;
         sb.append(") ;\n") ;
@@ -158,33 +154,6 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
         sb.append(".install() ;") ;
 
         js.println(sb.toString());
-        /*
-    	String lastDisplayedField  =  (String) ctx.getAttribute(AbstractFieldTag.LAST_DISPLAYED_FIELDNAME, PageContext.REQUEST_SCOPE);
-        Boolean lastDisplayedIsEscField  =  (Boolean) ctx.getAttribute(AbstractFieldTag.LAST_DISPLAYED_FIELDNAME_IsEsc, PageContext.REQUEST_SCOPE);
-        String firstDisplayedField  =  (String) ctx.getAttribute(AbstractFieldTag.FIRST_DISPLAYED_FIELDNAME, PageContext.REQUEST_SCOPE);
-        String currentField = "theOtmoa_"+theProperty+".focus()" ;
-        
-        if(lastDisplayedField!=null && !isViewOnly) {
-            if(firstDisplayedField==null) {
-                ctx.setAttribute(AbstractFieldTag.FIRST_DISPLAYED_FIELDNAME, lastDisplayedField, PageContext.REQUEST_SCOPE) ;
-            }
-            try {
-//                JspWriter out = pageContext.getOut();
-                if (lastDisplayedIsEscField) {
-                	AbstractFieldTag.printEscSupport(ctx, lastDisplayedField, currentField, this);
-                } else {
-                	AbstractFieldTag.printEnterSupport(ctx, lastDisplayedField, currentField, this);
-                }
-            }
-            catch (IOException ioe) {
-                throw new JspException(ioe) ;
-            }
-
-        }
-        if(!isViewOnly) {
-        	ctx.setAttribute(AbstractFieldTag.LAST_DISPLAYED_FIELDNAME, currentField, PageContext.REQUEST_SCOPE) ;
-            ctx.setAttribute(AbstractFieldTag.LAST_DISPLAYED_FIELDNAME_IsEsc, false, PageContext.REQUEST_SCOPE) ;
-        }*/
     }
 
     /** Заголовок */
@@ -197,15 +166,7 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
     private String getDivname() {
         return "otmoa_tag_"+theProperty ;
     }
-    private Object[] getArray() {
-        Long[] ar = new Long[4];
-        ar[0] = 1L;
-        ar[1] = 2L;
-        ar[2] = 3L;
-        ar[3] = 4L;
-        return ar;
-    }
-    
+
 private String getParentIdValue(PageContext aPageContext)  {
     	
     	
@@ -226,7 +187,6 @@ private String getParentIdValue(PageContext aPageContext)  {
             		obj = PropertyUtils.getProperty(form, property) ;
         		} catch(Exception e) {
         			obj = theParentId ;
-        			//LOG.error("Ошибка получение parentId "+theParentId,e) ;
         		}
         	}
     	}
@@ -313,11 +273,6 @@ private String getParentIdValue(PageContext aPageContext)  {
 	private String theParentAutocomplete = null ;
 	/** Справочник */
     private String theVocName;
-
-    public static void main(String[] args) {
-
-    }
-
 
     boolean isFieldRequired(ActionForm aForm) throws Exception {
         Required required = (Required) getAnnotation(aForm, Required.class) ;

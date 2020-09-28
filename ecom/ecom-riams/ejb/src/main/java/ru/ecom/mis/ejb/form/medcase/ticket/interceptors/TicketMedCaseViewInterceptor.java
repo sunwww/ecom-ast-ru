@@ -39,9 +39,9 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 		//TODO
 		//form.getConcomitantDiseases()
 		long aIdEntity = smc.getId() ;
-		if (aIdEntity>Long.valueOf(0)) {
+		if (aIdEntity>0L) {
 			form.setConcomitantDiseases( getArray(manager,"Diagnosis","idc10_id"
-					,new StringBuilder().append("medCase_id='").append(aIdEntity).append("'").append(" and priority_id='").append(vocConcomType.getId()).append("'").toString()
+					, "medCase_id='" + aIdEntity + "'" + " and priority_id='" + vocConcomType.getId() + "'"
 					)) ;
 			/*form.setMedServices(getArray(manager,"MedCase","medService_id"
 					,new StringBuilder().append("parent_id='").append(aIdEntity).append("'").append(" and dtype='ServiceMedCase'").toString()
@@ -74,7 +74,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 		}
 			
 			
-		return res.length()>0?res.substring(0,res.length()-2):"" ;
+		return res.length()>1 ? res.substring(0,res.length()-2) : "" ;
 	}
 	public static String  getArray(EntityManager aManager
 			, String aTableName
@@ -86,9 +86,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 
 			j.key("childs").array();
 
-			StringBuilder sql = new StringBuilder() ;
-			sql.append("select ").append(aFieldChildren).append(" from ").append(aTableName).append(" where ").append(aWhere) ;
-			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList();
+			List<Object> list = aManager.createNativeQuery("select " + aFieldChildren + " from " + aTableName + " where " + aWhere).getResultList();
 			for (Object child : list) {
 				j.object().key("value").value(ConvertSql.parseLong(child));
 				j.endObject();

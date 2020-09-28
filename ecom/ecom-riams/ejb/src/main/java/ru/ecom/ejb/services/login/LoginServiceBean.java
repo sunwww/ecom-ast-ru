@@ -30,8 +30,7 @@ import java.util.*;
 public class LoginServiceBean implements ILoginService {
 
     private static final Logger LOG = Logger.getLogger(LoginServiceBean.class) ;
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
-    
+
     public String[] getConfigUrl() {
     	String ret = null ;
     	String ret1 = null ;
@@ -48,11 +47,9 @@ public class LoginServiceBean implements ILoginService {
     @PermitAll
     public Set getUserRoles() {
         String user = theContext.getCallerPrincipal().getName();
-        if (CAN_DEBUG) LOG.debug("user = " + user);
-        // todo
         Properties prop = new Properties();
         HashSet<String> ret = new HashSet<>();
-        try {
+        try (FileInputStream inputStream = new FileInputStream(JBossConfigUtil.getConfigDirname()+"/roles.properties")) {
             try {
                 MBeanServer SERVER = MBeanServerLocator.locateJBoss();
                 String[] signature = {"java.lang.String"};
@@ -62,7 +59,7 @@ public class LoginServiceBean implements ILoginService {
                 LOG.warn(e.getMessage()) ;
             }
 
-            prop.load(new FileInputStream(JBossConfigUtil.getConfigDirname()+"/roles.properties")) ;
+            prop.load(inputStream) ;
             StringTokenizer st = new StringTokenizer(prop.getProperty(user), ", ");
             while(st.hasMoreTokens()) {
                 ret.add(st.nextToken()) ;
@@ -70,7 +67,6 @@ public class LoginServiceBean implements ILoginService {
         } catch (Exception e) {
             throw new IllegalStateException("Ошибка загрузки ролей пользователя "+user,e) ;
         }
-        if (CAN_DEBUG) LOG.debug("roles = " + ret);
         return ret ;
     }
     
@@ -78,9 +74,9 @@ public class LoginServiceBean implements ILoginService {
     public void createRecordInAuthJournal(String aUsername, String aRemoteAdd, String aLocalAdd
     		,String aServerName,boolean aIsChecked,String aError,String aErrorPassword) {
     	AuthenticationJournal authJour = new AuthenticationJournal() ;
-    	java.util.Date dat = new java.util.Date() ;
-    	authJour.setAuthDate(new java.sql.Date(dat.getTime())) ;
-    	authJour.setAuthTime(new java.sql.Time(dat.getTime())) ;
+    	long dat = new java.util.Date().getTime() ;
+    	authJour.setAuthDate(new java.sql.Date(dat)) ;
+    	authJour.setAuthTime(new java.sql.Time(dat)) ;
     	authJour.setIsChecked(aIsChecked) ;
     	authJour.setUsername(aUsername) ;
     	authJour.setRemoteAdd(aRemoteAdd) ;

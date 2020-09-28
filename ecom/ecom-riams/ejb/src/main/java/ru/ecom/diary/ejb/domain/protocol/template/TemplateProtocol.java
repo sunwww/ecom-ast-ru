@@ -29,6 +29,12 @@ import java.util.List;
     }) 
 @EntityListeners(DeleteListener.class)
 public class TemplateProtocol extends BaseEntity {
+
+	/** Создавать браслет по шаблону */
+	@Comment("Создавать браслет по шаблону")
+	public Boolean getCreateBracelet() {return theCreateBracelet;}
+	public void setCreateBracelet(Boolean aCreateBracelet) {theCreateBracelet = aCreateBracelet;}
+	private Boolean theCreateBracelet ;
 	
 	/** Создавать дневник по умолчанию при приеме в лабораторию */
 	@Comment("Создавать дневник по умолчанию при приеме в лабораторию")
@@ -56,11 +62,6 @@ public class TemplateProtocol extends BaseEntity {
     /** Ключевые слова */
     public String getKeyWord() { return theKeyWord ; }
     public void setKeyWord(String aKeyWord) { theKeyWord = aKeyWord ; }
-
-    /** Тип шаблона */
-    @OneToOne
-    public TemplateProtocolType getType() { return theType ; }
-    public void setType(TemplateProtocolType aType) { theType = aType ; }
 
     /** Категории шаблона */
 	@Comment("Категории шаблона")
@@ -97,8 +98,7 @@ public class TemplateProtocol extends BaseEntity {
 		for (TemplateCategory categ : theCategories) {
 			ret.append(", ").append(categ.getFullname()).append("<br>") ;
 		}
-		
-		return ret.length()>2?ret.substring(2).toString():ret.toString() ;
+		return ret.length()>2 ? ret.substring(2) : ret.toString() ;
 	}
 	
 	/** Группы пользователей */
@@ -119,8 +119,6 @@ public class TemplateProtocol extends BaseEntity {
 	private String theUsername;
 	/** Категории шаблона */
 	private List<TemplateCategory> theCategories;
-    /** Тип шаблона */
-    private TemplateProtocolType theType ;
     /** Ключевые слова */
     private String theKeyWord ;
     /** Текст */    

@@ -6,12 +6,11 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_extDispPriceForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
+        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_extDispPriceForm" />
 
     </tiles:put>
     <tiles:put name="body" type="string">
-       
-        <msh:form action="/entitySaveGoView-e2_extDispPrice.do" defaultField="dispType" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+        <msh:form action="/entitySaveGoView-e2_extDispPrice.do" defaultField="dispType">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
             <msh:panel>
@@ -25,29 +24,46 @@
                 </msh:row>
                 <msh:row>
                     <msh:textField property="cost" label="Цена полного случая" />
+                    <msh:textField property="minServices" label="Минимальное кол-во услуг" />
                 </msh:row>
                 <msh:row>
                     <msh:textField property="ages" label="Возраста (через запятую)" />
                     <msh:textField property="ageGroup"  />
                 </msh:row>
                 <msh:row>
+                    <msh:textField property="ageFrom" />
+                    <msh:textField property="ageTo" />
+                </msh:row>
+                <msh:row>
                     <msh:textField property="dateFrom" />
                     <msh:textField property="dateTo" />
                 </msh:row>
-
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
-
+                <msh:submitCancelButtonsRow colSpan="4" />
             </msh:panel>
         </msh:form>
+        <msh:separator colSpan="4" label="Необходимые услуги по возрасту"/>
+        <msh:section>
+            <ecom:webQuery name="medServices" nativeSql="
+            select ms.id, ms.medservice||' '||coalesce(vms.name,'') as name, case when ms.isRequired='1' then true else false end as isReq
+            from ExtDispPriceMedService ms
+            left join vocmedservice vms on vms.code=ms.medservice and vms.finishDate is null
+            where ms.price_id=${param.id} order by ms.medservice" />
+            <msh:table
+                    idField="1" name="medServices" action="javascript:void()"
+                    deleteUrl="entityParentDeleteGoParentView-e2_extDispPriceMedService.do"
+                    noDataMessage="Нет услуг">
+                <msh:tableColumn columnName="#" property="sn"/>
+                <msh:tableColumn columnName="Услуга" property="2"/>
+                <msh:tableColumn columnName="Обязательная" property="3"/>
+            </msh:table>
+        </msh:section>
     </tiles:put>
 
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="e2_extDispPriceForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-        <ecom:webQuery name="isClosedList" nativeSql="select id from e2listentry where id=${param.id} and (isClosed is null or isClosed='0')"/>
-            <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
+        <msh:ifFormTypeIsView formName="e2_extDispPriceForm">
+            <msh:sideMenu>
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_extDispPrice" name="Изменить" roles="/Policy/E2/Edit" />
-
-                <msh:sideLink action="/javascript:closeListEntry(false)" name="Открыть заполнение" roles="/Policy/E2/Admin" />
+                <msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-e2_extDispPriceMedService" name="Добавить услугу" roles="/Policy/E2/Create" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>

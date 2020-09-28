@@ -1,8 +1,12 @@
 package ru.ecom.ejb.services.monitor;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import java.util.Map;
 
 /**
  * Управление монитором
@@ -66,6 +70,16 @@ public class MonitorServiceBean implements IRemoteMonitorService, ILocalMonitorS
     public IMonitor getMonitor(long aMonitorId) {
         checkExists(aMonitorId) ;
         return theHolder.getMonitor(aMonitorId);
+    }
+    public String getAllMonitors () {
+        JSONArray ret = new JSONArray();
+        for (Map.Entry<Long, LocalMonitorStatus> entry : theHolder.getAllMonitors().entrySet()) {
+            LocalMonitorStatus monitorStatus = entry.getValue();
+            ret.put(new JSONObject().put("id",entry.getKey()).put("name",monitorStatus.getName()).put("text",monitorStatus.getText())
+                .put("finishText",monitorStatus.isFinished() ? monitorStatus.getFinishParameters() :"")
+                .put("status",monitorStatus.isCancelled() ? "отменен" : monitorStatus.isFinished() ? "завершен" : "работает" ));
+        }
+        return ret.toString();
     }
 
     private final MonitorHolder theHolder = MonitorHolder.getInstance();

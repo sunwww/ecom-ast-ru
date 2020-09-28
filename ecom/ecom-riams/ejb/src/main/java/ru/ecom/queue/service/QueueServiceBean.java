@@ -30,6 +30,7 @@ public class QueueServiceBean implements IQueueService {
     }*/
     private static HashMap<Long, Integer> lastTicketNumberMap =new HashMap<>();
     private static final Logger log = Logger.getLogger(QueueServiceBean.class);
+    private static final String OKJSON =  "{\"status\":\"ok\"}";
 
     /**Возвращаем талон по его ИД*/
     public QueueTicket findTicketById(Long aTicketId) {return theManager.find(QueueTicket.class,aTicketId);}
@@ -65,9 +66,9 @@ public class QueueServiceBean implements IQueueService {
                 return null;
             } else {
                 Object[] ret = list.get(0);
-                Long workfunctionId=Long.valueOf(ret[0]!=null?ret[0].toString():null);
+                Long workfunctionId=Long.valueOf(ret[0]!=null ? ret[0].toString() : "0");
                 Long queueId=ret[1]!=null?Long.valueOf(ret[1].toString()):null;
-                if (workfunctionId==null) {
+                if (workfunctionId>0L) {
                     log.error("Нет соответствия между рабочей функцией и именем пользователя");
                     return null;
                 }
@@ -161,7 +162,7 @@ public class QueueServiceBean implements IQueueService {
             ticket.setFinishExecuteDate(new java.util.Date());
             ticket.setFinishExecutor(theManager.find(WorkFunction.class,aWorkfunctionId));
             theManager.persist(ticket);
-            return makeOkJson();
+            return OKJSON;
         }
     }
 
@@ -190,8 +191,8 @@ public class QueueServiceBean implements IQueueService {
     private Integer getFreeNumberByQueue(Queue aQueue){
         Long key = aQueue.getId();
 
-        Integer ret = lastTicketNumberMap.containsKey(key)?lastTicketNumberMap.get(key):0;
-        ret=++ret;
+        Integer ret = lastTicketNumberMap.getOrDefault(key,0);
+        ret++;
         lastTicketNumberMap.put(key,ret);
         return ret;
     }
@@ -207,7 +208,6 @@ public class QueueServiceBean implements IQueueService {
         }
         return err.toString();
     }
-    private String makeOkJson() {return "{\"status\":\"ok\"}";}
 
     @PersistenceContext
     EntityManager theManager ;

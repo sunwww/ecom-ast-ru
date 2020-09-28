@@ -1,25 +1,18 @@
 package ru.ecom.expomc.ejb.services.form.check;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.Map;
+import ru.ecom.expomc.ejb.domain.check.Check;
+import ru.ecom.expomc.ejb.domain.check.CheckProperty;
+import ru.ecom.expomc.ejb.domain.format.Field;
+import ru.ecom.expomc.ejb.domain.format.Format;
+import ru.ecom.expomc.ejb.services.voc.allvalues.AllowedChecksAllValues;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.expomc.ejb.domain.check.Check;
-import ru.ecom.expomc.ejb.domain.check.CheckProperty;
-import ru.ecom.expomc.ejb.domain.format.Field;
-import ru.ecom.expomc.ejb.domain.format.Format;
-import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
-import ru.ecom.expomc.ejb.services.voc.allvalues.AllowedChecksAllValues;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  */
@@ -49,7 +42,6 @@ public class FormCheckServiceBean implements IFormCheckService {
     }
 
     private Long saveOn(ChecksTableFormRowOn on, ChecksTableFormRow row, Format format) {
-        ImportDocument doc = format.getDocument();
         IsOn isOn = isOn(row.getProperty(), format, on.getCheckId()) ;
         Long ret = null  ;
         if(isOn.on) {

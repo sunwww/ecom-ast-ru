@@ -1,6 +1,5 @@
-@import_url("main_ie5.css");
-@import\ url("main_ie55.css");
-@import url\ ("main_ie55.css");
+@import "main_ie5.css";
+@import "main_ie55.css";
 
 @import "form_ie.css";
 

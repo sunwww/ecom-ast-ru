@@ -9,9 +9,9 @@
     <!-- 
     	  - Шаблон календаря
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-cal_patternBySpec.do" defaultField="name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
+    <msh:form action="/entityParentSaveGoView-cal_patternBySpec.do" defaultField="name">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
       <msh:hidden property="lpu"/>
 			<msh:panel>
 				<msh:row>
@@ -535,7 +535,7 @@
   	</msh:ifFormTypeIsCreate>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Lpu" beginForm="cal_patternBySpecForm" />
+    <ecom:titleTrail mainMenu="Lpu" beginForm="cal_patternBySpecForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
    <msh:ifFormTypeIsView formName="cal_patternBySpecForm">

@@ -1,14 +1,13 @@
 package ru.ecom.mis.web.action.medcase;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.mis.ejb.service.patient.HospitalLibrary;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class GroupByBedFundDataAction extends BaseAction {
 
@@ -70,7 +69,7 @@ public class GroupByBedFundDataAction extends BaseAction {
 		aRequest.setAttribute("dateType", dateType);
 		aRequest.setAttribute("dateEnd", dateEnd);
 		aRequest.setAttribute("dateBegin", dateBegin);
-		if (bedFund.indexOf(",")==-1) {
+		if (!bedFund.contains(",")) {
 			aRequest.setAttribute("bedFund", " and m.bedfund_id="+bedFund);
 		} else {
 			aRequest.setAttribute("bedFund", " and (m.bedfund_id="+bedFund.replaceAll(",", " or m.bedfund_id=")+")") ;
@@ -81,6 +80,6 @@ public class GroupByBedFundDataAction extends BaseAction {
 		}
 		aRequest.setAttribute("info", "Поиск по дате "+dateInfo+" за период "+dateBegin+"-"+dateEnd);
 		
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 }

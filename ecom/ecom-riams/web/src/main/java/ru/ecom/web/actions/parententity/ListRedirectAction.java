@@ -31,6 +31,6 @@ public class ListRedirectAction extends AbstractEntityAction {
 
 //        String path = "/entityParentList-"+aRequest.getParameter("parent")+".do?id="+parentId ;
 //        return new ActionForward(path, true) ;
-        return ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), parentId);
+        return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), parentId);
     }
 }

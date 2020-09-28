@@ -61,5 +61,4 @@ public class GroupWorkFunctionForm extends WorkFunctionForm {
 	private Long theLpu;
 	/** Наименование */
 	private String theName;
-
 }

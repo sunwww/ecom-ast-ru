@@ -8,10 +8,10 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslAdmissionForm" guid="638ddd30-b48e-4058-b3ad-866c0c70ee1f" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslAdmissionForm"  />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeAreViewOrEdit formName="stac_sslAdmissionForm" guid="c3694b44-f3ad-44fd-b4ee-a92ded473300">
+    <msh:ifFormTypeAreViewOrEdit formName="stac_sslAdmissionForm" >
       <tags:stac_hospitalMenu currentAction="stac_sslAdmission" />
     </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
@@ -23,8 +23,8 @@
     	  		<ecom:webQuery name="directOtherLpuQ" nativeSql="select 
     	  		wchb.id as i1d
     	  		, to_char(wchb.createDate,'yyyy-MM-dd') as w2chbcreatedate
- ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as l3puSent
- ,case when olpu.codef is null or olpu.codef='' then oplpu.codef else olpu.codef end as l4puDirect
+ , lpu.codef as l3puSent
+ , olpu.codef as l4puDirect
  ,mkb.code as m5kbcode
  ,vbt.name as v6btcodef
  ,wchb.dateFrom as w7chbdatefrom
@@ -33,7 +33,7 @@
  left join VocBedType vbt on vbt.id=wchb.bedType_id
  left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id
  left join VocIdc10 mkb on mkb.id=wchb.idc10_id
- left join MisLpu ml on ml.id=wchb.department_id
+ left join MisLpu lpu on lpu.id=wchb.department_id
  left join mislpu olpu on olpu.id=wchb.orderLpu_id
  where wchb.visit_id =${param.id}
     	"/>
@@ -54,19 +54,19 @@
     <!-- 
     	  - Случай стационарного лечения (поступление)
     	  -->
-    <msh:form action="/entityParentSaveGoView-stac_sslAdmission.do" defaultField="" title="Случай стационарного лечения. Поступление" editRoles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" guid="b37b5d4a-9687-45bf-b42c-613fd9b1739d">
-      <msh:hidden property="id" guid="c5a9c42c-d593-4fae-a685-44586a81938b" />
-      <msh:hidden property="patient" guid="fbedab7b-1153-4f3c-b9d4-14643e32a6f7" />
-      <msh:hidden property="outcome" guid="fbed4-14643e32a6f7" />
-      <msh:hidden property="saveType" guid="7cb7bcb7-2cb3-4e65-92ce-2a4a2cec809f" />
-      <msh:hidden property="dateFinish" guid="526ef07a-eb53-47a9-b145-02a81ede9b25" />
-      <msh:hidden property="dischargeTime" guid="5d563628-c95b-40a5-a3d6-aa2d99fa0e74" />
-      <msh:hidden property="provisional" guid="38fe07ac-6706-4911-a217-65edb3c85dac" />
-      <msh:hidden property="result" guid="156ff02c-61dd-40b9-80f4-d88885db16f8" />
-      <msh:hidden property="moveToAnotherLPU" guid="c0b69264-2081-4952-8c0a-7ea12712f14c" />
-      <msh:hidden property="dischargeEpicrisis" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
-      <msh:hidden property="reasonDischarge" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
+    <msh:form action="/entityParentSaveGoView-stac_sslAdmission.do" defaultField="" title="Случай стационарного лечения. Поступление" editRoles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Edit" createRoles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Create" >
+      <msh:hidden property="id"  />
+      <msh:hidden property="patient"  />
+      <msh:hidden property="outcome"  />
+      <msh:hidden property="saveType"  />
+      <msh:hidden property="dateFinish"  />
+      <msh:hidden property="dischargeTime"  />
+      <msh:hidden property="result"  />
+      <msh:hidden property="moveToAnotherLPU"  />
+      <msh:hidden property="dischargeEpicrisis"  />
+      <msh:hidden property="reasonDischarge"  />
       <msh:hidden property="rareCase"/>
+      <msh:hidden property="preHosp"/>
        <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
        	<msh:hidden property="hotelServices"/>
        </msh:ifNotInRole>
@@ -78,35 +78,36 @@
       <msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
       <msh:hidden property="guarantee"/>
       </msh:ifNotInRole>
+        <msh:hidden property="isIdentified"/>
      
 
-      <msh:panel guid="6e8d827a-d32c-4a05-b4b0-5ff7eed6eedc">
-        <msh:separator label="Приемное отделение" colSpan="9" guid="af11419b-1c80-4025-be30-b7e83df06024" />
+      <msh:panel >
+        <msh:separator label="Приемное отделение" colSpan="9"  />
         
        	<msh:row >
       		<td colspan="6"><div style="display: none;" id='medPolicyInformation' class="errorMessage"/></td>
       	</msh:row>
       	
-      	       <msh:row guid="25f2a536-4fb6-4413-89db-a478145e097e">
-          <msh:textField property="statCardNumber" label="Номер стат.карты" labelColSpan="1" guid="e5f3d524-cca8-4a5a-a408-196ab6b79627" />
-          <msh:ifFormTypeIsView formName="stac_sslAdmissionForm" guid="a780ef5e-7a57-4583-85a5-18a88357a0a1">
-            <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber" guid="951762e7-12b2-4352-a7b7-2ab99be7e601">
+      	       <msh:row >
+          <msh:textField property="statCardNumber" label="Номер стат.карты" labelColSpan="1"  />
+          <msh:ifFormTypeIsView formName="stac_sslAdmissionForm" >
+            <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber" >
               <td colspan="2">
                 <a id="changeStatCardNumber" href="javascript:changeStatCardNumber()">Изменить номер стат. карты</a>
               </td>
             </msh:ifInRole>
           </msh:ifFormTypeIsView>
         </msh:row>
-        <msh:row guid="0e91a1ca-c366-435c-8f2c-274d23d87fd3">
-          <msh:textField property="dateStart" label="Дата поступления" guid="e3fd4642-a532-4510-a528-c6e766328d61" />
-          <msh:textField property="entranceTime" label="время" fieldColSpan="3" guid="f94ff57c-bbf9-44f8-9e8d-f21927edbcff" />
+        <msh:row >
+          <msh:textField property="dateStart" label="Дата поступления"  />
+          <msh:textField property="entranceTime" label="время" fieldColSpan="3"  />
         </msh:row>
-        <msh:row guid="0e91a1ca-c366-435c-8f2c-274d23d87fd3">
-          <msh:textField property="transferDate" label="Выбыт. из приемника" guid="e3fd4642-a532-4510-a528-c6e766328d61" viewOnlyField="true"/>
-          <msh:textField property="transferTime" label="время" fieldColSpan="3" guid="f94ff57c-bbf9-44f8-9e8d-f21927edbcff" viewOnlyField="true"/>
+        <msh:row >
+          <msh:textField property="transferDate" label="Выбыт. из приемника"  viewOnlyField="true"/>
+          <msh:textField property="transferTime" label="время" fieldColSpan="3"  viewOnlyField="true"/>
         </msh:row>
-        <msh:row guid="e101a36c-d874-4d43-9cfe-fff88ff64ffa">
-          <msh:autoComplete property="lpu" label="Лечебное учреждение" vocName="lpu" fieldColSpan="3" horizontalFill="true" guid="ee4b9-2961-42be-9a05-caff23" />
+        <msh:row >
+          <msh:autoComplete property="lpu" label="Лечебное учреждение" vocName="lpu" fieldColSpan="3" horizontalFill="true"  />
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="kinsman" label="Представитель" 
@@ -120,23 +121,23 @@
         <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
         	<msh:hidden property="hotelServices"/>
         </msh:ifNotInRole>
-        <msh:row guid="f2haba5-68fb-4ccc-9982-7b4480cmca147">
-          <msh:autoComplete vocName="vocHospType" property="hospType" label="Тип тек. стационара" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p16c" />
-          <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p8g16c" />
+        <msh:row >
+          <msh:autoComplete vocName="vocHospType" property="hospType" label="Тип тек. стационара" fieldColSpan="1" horizontalFill="true"  />
+          <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" fieldColSpan="1" horizontalFill="true"  />
         </msh:row>
          <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
       <msh:row>
-          <msh:autoComplete  vocName="guaranteeByPatient" parentId="smo_directionForm.patient" property="guarantee" label="Гарантийное письмо" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete  vocName="guaranteeByPatient" parentId="stac_sslAdmissionForm.patient" property="guarantee" label="Гарантийное письмо"  fieldColSpan="3" horizontalFill="true" />
         </msh:row>
       </msh:ifInRole>
-        <msh:row guid="5d9db3cf-010f-463e-a2e6-3bbec49fa646">
-          <msh:autoComplete property="pediculosis" vocName="vocPediculosis" label="Педикулез" horizontalFill="true" guid="30c4f14a-0fa4-4b5b-9c13-4ecfca6000f6" />
-          <msh:autoComplete property="deniedHospitalizating" label="Причина отказа от госп." vocName="vocDeniedHospitalizating" horizontalFill="true" fieldColSpan="1" guid="f1dab596-6c7d-4cb4-848b-71b62bd6bf3a" />
+        <msh:row >
+          <msh:autoComplete property="pediculosis" vocName="vocPediculosis" label="Педикулез" horizontalFill="true"  />
+          <msh:autoComplete property="deniedHospitalizating" label="Причина отказа от госп." vocName="vocDeniedHospitalizating" horizontalFill="true" fieldColSpan="1"  />
         </msh:row>
-        <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="2d66uyt565b-265f-499f-9116-7755ec98c043">
-          <msh:row guid="fafct8638-6d3f-4cf9-bb0a-5c7fhe0b25e53">
+        <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" >
+          <msh:row >
             <td colspan="9">
-              <div id="formInfoMessage2" onclick="this.style.display = &quot;none&quot;">
+              <div id="formInfoMessage2" onclick="this.style.display = 'none'">
                 <table style="margin-left: 4em">
                   <tr>
                     <td>
@@ -148,21 +149,21 @@
             </td>
           </msh:row>
         </msh:ifFormTypeIsNotView>
-        <msh:row guid="b128654b-7eff-41b3-b73f-3cb819122a44">
-          <msh:checkBox property="ambulanceTreatment" label="Амбул. лечение" guid="8aa14ab3-7940-4b9d-aa14-2c3ce9fb4e7b" />
-          <msh:checkBox hideLabel="false" property="emergency" viewOnlyField="false" guid="e3373f9c-ca5f-4aa2-957b-9e7a0cb6cc39" horizontalFill="false" />
+        <msh:row >
+          <msh:checkBox property="ambulanceTreatment" label="Амбул. лечение"  />
+          <msh:checkBox hideLabel="false" property="emergency" viewOnlyField="false"  horizontalFill="false" />
         </msh:row>
-        <msh:row guid="544d70a3-19bf-4793-af89-fc11a5a56837">
-          <msh:checkBox property="relativeMessage" label="Сообщение родственникам" guid="21e6d68e-e0a2-4854-85e7-9344d25e3d46" />
-          <msh:checkBox property="medicalAid" label="Оказана помощь в прием. отделении" guid="a76f672d-6978-4735-bea9-277cc583acae" />
+        <msh:row >
+          <msh:checkBox property="relativeMessage" label="Сообщение родственникам"  />
+          <msh:checkBox property="medicalAid" label="Оказана помощь в прием. отделении"  />
         </msh:row>
-        <msh:row guid="8gaf5-7144-46a4-9015-eg230a2c">
-          <msh:textField property="attendant" label="Сопровождающее лицо" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="true" />
+        <msh:row >
+          <msh:textField property="attendant" label="Сопровождающее лицо"  fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-          <msh:row guid="8gaf5-7144-46a4-9015-eg230a2c">
-              <msh:textField property="height" label="Рост (см)"  guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="1" horizontalFill="false" />
-              <msh:textField property="weight" label="Вес (кг)" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="1" horizontalFill="false" />
-              <msh:textField  property="theIMT" label="ИМТ" guid="7fvd3-3f43-42b7-8c46-ffd05c" viewOnlyField="true" fieldColSpan="1" horizontalFill="false" />
+          <msh:row >
+              <msh:textField property="height" label="Рост (см)"   fieldColSpan="1" horizontalFill="false" />
+              <msh:textField property="weight" label="Вес (кг)"  fieldColSpan="1" horizontalFill="false" />
+              <msh:textField  property="theIMT" label="ИМТ"  viewOnlyField="true" fieldColSpan="1" horizontalFill="false" />
           </msh:row>
         <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm">
         <msh:separator label="Направлен <input type='button' value='Список направлений' onclick='viewTable263narp_byPat()'///>" colSpan="6" />
@@ -171,45 +172,45 @@
         <msh:separator label="Направлен" colSpan="6" />
         </msh:ifFormTypeIsView>
         
-        <msh:row guid="a53d1f37-afe8-4779-9e63-0b2684e14828">
-          <msh:autoComplete property="orderLpu" label="Кем направлен" vocName="mainLpu" guid="c44b474f-6dba-4ba8-9af7-56a0dca363ad" horizontalFill="true" fieldColSpan="3" />
+        <msh:row >
+          <msh:autoComplete property="orderLpu" label="Кем направлен" vocName="mainLpu"  horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="f2aba5-68fb-4ccc-9982-7b44a147">
-          <msh:autoComplete vocName="vocHospTypeInAdmission" property="sourceHospType" label="Тип направившего ЛПУ" fieldColSpan="3" horizontalFill="true" guid="1064-23b2-42c0-ba47-65847816c" />
+        <msh:row >
+          <msh:autoComplete vocName="vocHospTypeInAdmission" property="sourceHospType" label="Тип направившего ЛПУ" fieldColSpan="3" horizontalFill="true"  />
         </msh:row>
-        <msh:row guid="544d70a3-19bf-4793-af89-fc135837">
-          <msh:textField property="orderNumber" label="№ напр" guid="51e5754c-2356-4ef6-91b2-9634893cc329" />
-          <msh:textField property="orderDate" label="Дата" guid="3e74c0ff-d603-4923-b207-b4ce0d665841" />
+        <msh:row >
+          <msh:textField property="orderNumber" label="№ напр"  />
+          <msh:textField property="orderDate" label="Дата"  />
         </msh:row>
-        <msh:row guid="36c67c6c-b817-4863-835d-0c37bcc96d19">
-          <msh:autoComplete property="orderMkb" label="Код МКБ направителя" guid="d956d424-ffa2-4874-ae98-7a26fcc6a49d" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3" />
+        <msh:row >
+          <msh:autoComplete property="orderMkb" label="Код МКБ направителя"  vocName="vocIdc10AllPermitted" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="8036eaf5-7144-46a4-9015-e4f198230a2c">
-          <msh:textField property="orderDiagnos" label="ДИАГНОЗ напр. учреждения" guid="7d5f0ad3-3f43-42b7-8c46-f2fcceead05c" fieldColSpan="3" horizontalFill="true" />
+        <msh:row >
+          <msh:textField property="orderDiagnos" label="ДИАГНОЗ напр. учреждения"  fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:separator label="Доставлен (только для экстренных больных)" colSpan="9" guid="f2136abf-c311-42e4-86ad-c24b7da708d5" />
-        <msh:row guid="e811bd41-db0a-4275-b786-75f958759453">
-          <msh:autoComplete showId="false" vocName="vocOmcFrm" hideLabel="false" property="orderType" viewOnlyField="false" guid="ff2a0045-c4fc-4efd-9bcd-f84951ac74a2" horizontalFill="true" />
-          <msh:textField property="supplyOrderNumber" label="Номер наряда" guid="63f0777e-6c0f-4ea9-b389-8a620004a456" />
+        <msh:separator label="Доставлен (только для экстренных больных)" colSpan="9"  />
+        <msh:row >
+          <msh:autoComplete showId="false" vocName="vocOmcFrm" hideLabel="false" property="orderType" viewOnlyField="false"  horizontalFill="true" />
+          <msh:textField property="supplyOrderNumber" label="Номер наряда"  />
         </msh:row>
-        <msh:row guid="f99e7379-1503-44ae-8d45-184ada064f84">
-          <msh:autoComplete property="intoxication" label="Доставлен в сост. опьян.:" guid="ca12abf3-6c85-4bf8-a4f4-cbfbb8c184a9" vocName="vocIntoxication" fieldColSpan="3" horizontalFill="true" />
+        <msh:row >
+          <msh:autoComplete property="intoxication" label="Доставлен в сост. опьян.:"  vocName="vocIntoxication" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="cff159af-0e93-42de-b29d-b68c05e371d0">
-          <msh:autoComplete property="preAdmissionDefect" label="Дефекты догосп. этапа" vocName="vocPreAdmissionDefect" guid="7d35c85f-1f39-48c1-b48c-0b8fd4da28e3" fieldColSpan="3" horizontalFill="true" />
+        <msh:row >
+          <msh:autoComplete property="preAdmissionDefect" label="Дефекты догосп. этапа" vocName="vocPreAdmissionDefect"  fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row guid="16d11e99-4017-4385-87c1-b2fe485895e2">
-          <msh:autoComplete property="preAdmissionTime" label="Часы заболевания" guid="ddc10e76-a708-4efd-8ef3-f18ee913984f" vocName="vocPreAdmissionTime" horizontalFill="true" />
+        <msh:row >
+          <msh:autoComplete property="preAdmissionTime" label="Часы заболевания"  vocName="vocPreAdmissionTime" horizontalFill="true" />
         </msh:row>
-        <msh:separator label="*Госпитализация" colSpan="9" guid="4909ac97-3ad7-4eab-a657-1d103779ed47" />
-        <msh:row guid="b88b81ab-1b89-4747-ac27-a865e920eb33">
+        <msh:separator label="*Госпитализация" colSpan="9"  />
+        <msh:row >
           <msh:autoComplete property="department" label="Отделение" vocName="vocLpuHospOtd" horizontalFill="true" parentAutocomplete="lpu" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="b88b81ab-1b89-4747-ac27-a865e920eb33">
+        <msh:row >
           <msh:autoComplete property="ownerFunction" label="Деж. врач отд." vocName="workFunctionByLpu" horizontalFill="true" parentAutocomplete="department" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="16f1e99-4017-4385-87c1-bf5895e2">
-          <msh:autoComplete labelColSpan="3" property="hospitalization" label="Госпитализация в данном году по данному заболевания" guid="ddc10e76-8ee913984f" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
+        <msh:row >
+          <msh:autoComplete labelColSpan="3" property="hospitalization" label="Госпитализация в данном году по данному заболевания"  vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
 	        <msh:row>
@@ -233,21 +234,6 @@
 	        	<msh:autoComplete parentId="stac_sslAdmissionForm.patient" property="attachedPolicyDmc" label="Прик.полис ДМС" horizontalFill="true" fieldColSpan="3" vocName="dmcPolicyByPatient"/>
 	        </msh:row>
         </msh:ifFormTypeIsCreate>
-        <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="2d66565b-265f-499f-9116-7755ec98c043">
-          <msh:row guid="fafc8638-6d3f-4cf9-bb0a-5c7fe0b25e53">
-            <td colspan="9">
-              <div id="formInfoMessage1" onclick="this.style.display = &quot;none&quot;">
-                <table style="margin-left: 4em">
-                  <tr>
-                    <td>
-                      <div class="formInfoMessage">* Поле отделение является обязательным. При отказе госпитализации не заполняется!!!</div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </td>
-          </msh:row>
-        </msh:ifFormTypeIsNotView>
         <mis:ifPatientIsWoman classByObject="Patient" idObject="stac_sslAdmissionForm.patient" roles="/Policy/Mis/Pregnancy/History/View">
         <msh:separator label="Беременность" colSpan="9"/>
         <msh:row>
@@ -260,23 +246,28 @@
         </msh:row>
         </msh:ifFormTypeIsCreate>
         </mis:ifPatientIsWoman>
-        <msh:separator label="Дополнительно" colSpan="9" guid="777a7e06-fef8-40cc-ad41-bc3ee2511aab" />
-        <msh:row guid="fa25468-6d3f-4cf9-bb0a-5c7fe0b25e53">
-          <msh:checkBox property="noActuality" label="Недействительность" guid="6299a6be-428f-4a09-9db5-e4c60154b605" />
+        <msh:separator label="Дополнительно" colSpan="9"  />
+        <msh:row >
+          <msh:checkBox property="noActuality" label="Недействительность"  />
         </msh:row>
         </msh:panel>
         <msh:panel>
         <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
         	<msh:label property="createTime" label="время"/>
-            <msh:label property="username" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+            <msh:label property="username" label="пользователь"  />
         </msh:row>
         <msh:row>
         	<msh:label property="editDate" label="Дата редак."/>
         	<msh:label property="editTime" label="время"/>
-          	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+          	<msh:label property="editUsername" label="пользователь"  />
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
+        <msh:row>
+            <msh:label property="identDate" label="Дата идент."/>
+            <msh:label property="identTime" label="время"/>
+            <msh:label property="identUsername" label="пользователь"  />
+        </msh:row>
+        <msh:submitCancelButtonsRow  functionSubmit="saveIdentityWithAsk();" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
       </msh:panel>
     </msh:form>
     <tags:stac_infoBySls form="stac_sslAdmissionForm"/>
@@ -320,6 +311,40 @@
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 
       <script>
+          //сохранить/проставить идентификацию
+          function saveIdentityWithAsk() {
+              <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
+              $('isIdentified').value = confirm('Проведена ли идентификация личности пациента?');
+                  document.forms["mainForm"].submit();
+              </msh:ifFormTypeIsCreate>
+              <msh:ifFormTypeAreViewOrEdit formName="stac_sslAdmissionForm">
+                  <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm">
+                        document.forms["mainForm"].submit();
+                  </msh:ifFormTypeIsNotView>
+                  <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
+              <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/PatientIdentify">
+                  HospitalMedCaseService.getIsPatientIdentified(${param.id}, {
+                      callback: function(aResult) {
+                          if (aResult!='1' && confirm('Проведена ли идентификация личности пациента?')) {
+                              HospitalMedCaseService.setIsPatientIdentified(${param.id}, {
+                                  callback: function() {
+                                      showToastMessage('Отметка об идентификации пациента проставлена',null,true);
+                                      window.location.reload() ;
+                                  }
+                              });
+                          }
+                      }
+                  });
+              </msh:ifInRole>
+                  </msh:ifFormTypeIsView>
+              </msh:ifFormTypeAreViewOrEdit>
+          }
+          <msh:ifFormTypeAreViewOrEdit formName="stac_sslAdmissionForm">
+          <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
+          saveIdentityWithAsk();
+          </msh:ifFormTypeIsView>
+          </msh:ifFormTypeAreViewOrEdit>
+
           eventutil.addEventListener($('weight'), "change",function(){
               $('weight').value=parseInt($('weight').value);
               if ($('weight').value=="NaN") $('weight').value="";
@@ -363,12 +388,9 @@
 	                        //alert(aResult) ;
 	                        if (+aResult==1)  {
 	                        	//alert('Есть действующий полис!') ;
-	                        } else {
-	                        	if (confirm('Нет действующего полиса или корректно заполненного полиса у пациента!!! Вы хотите перевести его на бюджет?')) {
+	                        } else if (confirm('Нет действующего полиса или корректно заполненного полиса у пациента!!! Вы хотите перевести его на бюджет?')) {
 	                        		$('serviceStream').value = aResult.substring(aResult.indexOf('#')+1) ;
-	                        	} else {
-	                        	}
-	                        	
+
 	                        }
 	                        document.forms[0].action = oldURL ;
 	                        document.forms[0].submit() ;
@@ -377,28 +399,52 @@
 	                    );
 	    			
 	    		}
+
+
 	    	</script>
     	</msh:ifInRole>
+         <script type="text/javascript">
+             if (+'${param.preHosp}'>0) {
+                 HospitalMedCaseService.getInfoByPreHosp(+'${param.preHosp}', {
+                     callback: function(ret) {
+                         ret = JSON.parse(ret);
+                         if (ret.length>0) {
+                             ret = ret[0];
+                             $('preHosp').value='${param.preHosp}';
+                             $('serviceStream').value = ret.serviceStream;
+                             $('serviceStreamName').value = ret.serviceStreamName;
+                             $('orderLpu').value=ret.orderLpu;
+                             $('orderLpuName').value=ret.orderLpuName;
+                             $('department').value=ret.department;
+                             $('departmentName').value=ret.departmentName;
+                             $('orderMkb').value=ret.orderMkb;
+                             $('orderMkbName').value=ret.orderMkbName;
+                             $('orderDiagnos').value=ret.orderDiagnos;
+                         }
+
+                     }
+                 });
+             }
+         </script>
     </msh:ifFormTypeIsCreate>
-    <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
+    <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" >
       <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
       <script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
       <script type="text/javascript">
        	function checkIfDogovorNeeded() {
-  		if (+$('serviceStream').value>0&&$('guaranteeName')) {
+  		if (+$('serviceStream').value>0 && $('guaranteeName')) {
   			ContractService.checkIfDogovorIsNeeded($('patient').value, $('serviceStream').value, $('dateStart').value,null,'HOSPITAL', {
-  	  			callback: function (res) {
-  	  				if (res!=null&&res!='') {
-  	  					if (res.startsWith("0")) {
-  	  						alert ("Ошибка: "+res.substring(1));
-  	  					} else {
-  	  						var arr = res.substring(1).split("|");
-  	  						$('guarantee').value = arr[0];
-  	  						$('guaranteeName').value = arr[1];
+  	  			callback: function (letter) {
+  	  			    letter = JSON.parse(letter);
+  	  				if (letter.status=="ok") {
+                        console.log("2"+letter.guaranteeInfo);
+  	  					if (letter.guaranteeInfo) { //нашли г. письмо
+  	  						$('guarantee').value = letter.id;
+  	  						$('guaranteeName').value = letter.guaranteeInfo;
   	  					}	 
   	  				} else {
-  	  				
-  	  				}
+  	  				    showToastMessage(letter.errorName);
+                    }
   	  			$('guaranteeName').disabled=true;
   	  			}
   	  		});
@@ -451,57 +497,79 @@
   		}
   		</script> 
       <script type="text/javascript">// при отказе в госпитализации ставим признак "Амбулаторное лечение"
-      eventutil.addEventListener($('emergency'), "change",function(){
-            if (+$('emergency').checked) {
-                $('orderTypeName').className="autocomplete horizontalFill required";
-                $('preAdmissionTimeName').className="autocomplete horizontalFill required";
-            } else {
-                $('orderTypeName').className="autocomplete horizontalFill";
-                $('preAdmissionTimeName').className="autocomplete horizontalFill";
-        	}
 
-        }) ;
-		 if (+$('emergency').checked) {
-             $('orderTypeName').className="autocomplete horizontalFill required";
-             $('preAdmissionTimeName').className="autocomplete horizontalFill required";
-         } else {
-             $('orderTypeName').className="autocomplete horizontalFill";
-             $('preAdmissionTimeName').className="autocomplete horizontalFill";
-     	}
+      //и настраиваем доступность роста-веса в зависимости от наличия отказа
+      function checkWheight() {
+          if (+$('deniedHospitalizating').value>0) {
+              //если есть отказ, рост и вес не сохраняются
+              $('height').value = $('weight').value = "";
+              $('theIMT').value="0.0";
+              $('height').disabled = $('weight').disabled = true;
+              $('height').className=" ";
+              $('weight').className=" ";
+          }
+          else {
+              $('height').disabled = $('weight').disabled = false;
+              if (+$('emergency').checked==0) {
+                  $('height').className=" required";
+                  $('weight').className=" required";
+              }
+          }
+      }
+      checkWheight();
+
+      //настройка обязательности полей для экстренной и плановой госпит
+      var chEm = function checkEmergency() {
+          if (+$('emergency').checked) {
+              $('orderTypeName').className="autocomplete horizontalFill required";
+              $('preAdmissionTimeName').className="autocomplete horizontalFill required";
+              $('orderMkbName').className='autocomplete horizontalFill';
+              $('orderLpuName').className='autocomplete horizontalFill';
+              $('sourceHospTypeName').className='autocomplete horizontalFill';
+              $('height').className=" ";
+              $('weight').className=" ";
+          } else {
+              $('orderTypeName').className="autocomplete horizontalFill";
+              $('preAdmissionTimeName').className="autocomplete horizontalFill";
+              //при плановой госпитализации необходимо заполнить раздел Направлен
+              $('orderMkbName').className='autocomplete horizontalFill required';
+              $('orderLpuName').className='autocomplete horizontalFill required';
+              $('sourceHospTypeName').className='autocomplete horizontalFill required';
+              if (+$('deniedHospitalizating').value==0) {
+                  $('height').className=" required";
+                  $('weight').className=" required";
+              }
+          }
+      };
+      eventutil.addEventListener($('emergency'), "change",chEm) ;
+      chEm();
+
 		if ($('deniedHospitalizatingName')) {
-            var ch = function ch() {
-            
+            var chDenied = function ch() {
+
                 if (+$('deniedHospitalizating').value>0) {
                     $('ambulanceTreatment').checked = true;
                     $('medicalAid').checked = true;
-                    $('departmentName').className="autocomplete horizontalFill";
+                    //при отказе от госпитализации всё равно заполняется
+                    //$('departmentName').className="autocomplete horizontalFill";
                     $('hospitalizationName').className="autocomplete horizontalFill";
                     $('serviceStreamName').className="autocomplete horizontalFill";
                 } else {
                 	$('ambulanceTreatment').checked = false;
                     $('medicalAid').checked = false;
-                    $('departmentName').className="autocomplete horizontalFill required";
+                    //$('departmentName').className="autocomplete horizontalFill required";
                     $('hospitalizationName').className="autocomplete horizontalFill required";
                     $('serviceStreamName').className="autocomplete horizontalFill required";
             	}
-            }              
-       		eventutil.addEventListener($('deniedHospitalizatingName'),'blur',ch);
-       		if (+$('deniedHospitalizating').value>0) {
-                $('ambulanceTreatment').checked = true;
-                $('departmentName').className="autocomplete horizontalFill";
-                $('hospitalizationName').className="autocomplete horizontalFill";
-                $('serviceStreamName').className="autocomplete horizontalFill";
-            } else {
-            	$('ambulanceTreatment').checked = false;
-                $('departmentName').className="autocomplete horizontalFill required";
-                $('hospitalizationName').className="autocomplete horizontalFill required";
-                $('serviceStreamName').className="autocomplete horizontalFill required";
-        	}
-        }
+                checkWheight();
+            };
+       		eventutil.addEventListener($('deniedHospitalizatingName'),'blur',chDenied);
+            chDenied();
+        };
 
 		</script>
     </msh:ifFormTypeIsNotView>
-    <msh:ifFormTypeIsView formName="stac_sslAdmissionForm" guid="6c59f9b3-c9b2-4822-aff8-9225ca67edb1">
+    <msh:ifFormTypeIsView formName="stac_sslAdmissionForm" >
       <script type="text/javascript">/** функция изменения стат.номера*/
       function changeStatCardNumber() {
             var slsPk = $('id').value ;
@@ -525,7 +593,23 @@
 	
 	            }
 	        }
-        }</script>
+        }
+          <msh:ifInRole roles="/Policy/Mis/Journal/CheckDiabetes">
+          function goCreateAssessmentCard(codeCard) {
+              if (codeCard) {
+                  HospitalMedCaseService.getDiabetCardByCode(
+                      codeCard, {
+                          callback: function(typeCard) {
+                              var way = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&slo="+${param.id};
+                              window.location.href = typeCard? way+"&typeCard="+typeCard : way;
+                          }}
+                  );
+              }
+              else
+                  window.location.href ="entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&slo="+${param.id};
+          }
+      </msh:ifInRole>
+      </script>
         
         
     </msh:ifFormTypeIsView>

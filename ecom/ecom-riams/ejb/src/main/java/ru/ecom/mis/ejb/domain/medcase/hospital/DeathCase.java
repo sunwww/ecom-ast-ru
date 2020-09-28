@@ -1,16 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase.hospital;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.document.ejb.domain.certificate.DeathCertificate;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -19,17 +8,15 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.kili.ProtocolKili;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocAfterPregnance;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCategory;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathEvidence;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathPlace;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathReason;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathWitnessFunction;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocIsPrematurity;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
+import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 /**
  * Случай смерти
  * @author stkacheva
@@ -148,12 +135,6 @@ public class DeathCase extends BaseEntity {
 	public List<VocDeathEvidence> getDeathEvidence() {return theDeathEvidence;}
 	public void setDeathEvidence(List<VocDeathEvidence> aDeathEvidence) {theDeathEvidence = aDeathEvidence;	}
 
-	/** Причины смерти */
-	@Comment("Причины смерти")
-	@OneToMany(mappedBy = "deathCase", cascade = CascadeType.ALL)
-	public List<DeathReason> getDeathReasons() {return theDeathReasons;}
-	public void setDeathReasons(List<DeathReason> aDeathReasons) {theDeathReasons = aDeathReasons;}
-
 	/** Умерла после окончания родов */
 	@Comment("Умерла после окончания родов")
 	@OneToOne
@@ -185,8 +166,6 @@ public class DeathCase extends BaseEntity {
 	private List<DeathCertificate> theDeathCertificate;
 	/** Умерла после окончания родов */
 	private VocAfterPregnance theAfterPregnance;
-	/** Причины смерти */
-	private List<DeathReason> theDeathReasons;
 	/** На основании чего установлена смерть */
 	private List<VocDeathEvidence> theDeathEvidence;
 	/** Причина смерти установлена */

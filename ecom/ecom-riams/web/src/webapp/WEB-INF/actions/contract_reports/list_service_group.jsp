@@ -108,12 +108,11 @@
   
 		String dateFrom = request.getParameter("dateFrom") ;
 		String dateTo = request.getParameter("dateTo") ;
-		if (dateFrom!=null) {
-	if (dateFrom!=null && !dateTo.equals("")) {
-		
+		if (dateFrom!=null && !dateFrom.equals("")) {
 		if (dateTo==null || dateTo.equals("")) {
 			dateTo=dateFrom ;
 		}
+		request.setAttribute("dateTo", dateTo);
 		
 		if (typeGroup.equals("2")) {
 			// Группировка по услугам 
@@ -175,34 +174,34 @@
 		ActionUtil.setParameterFilterSql("positionType","pp.positionType_id", request) ;
 		ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
 		%>
-		<% if (typeGroup!=null&& (typeGroup.equals("1")||typeGroup.equals("5"))) { %>
+		<% if (typeGroup.equals("1")||typeGroup.equals("5")) { %>
 			
 			
 			
-			<ecom:setAttribute name="id_group" value="${groupSqlId1}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}"/>
+			<ecom:setAttribute name="id_group" value="${groupSqlId1}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${dateTo}"/>
 			<ecom:setAttribute name="queryGroup_sql" value="
 SELECT ${selectSql1}
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end) as sumCountMedService
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat
 
 , count(distinct case when cao.dtype='OperationReturn' then mc.id else null end) as cntDogMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+, sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceRet
+, sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat
 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
-- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceItog 
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end)
+- sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceItog
 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, (sum(case when cao.dtype='OperationAccrual' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2) else 0 end)
  )   
 as sumItogWithoutVat
 FROM medcontract MC
@@ -227,7 +226,7 @@ left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
-WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
@@ -236,7 +235,7 @@ order by ${orderSql1}
 			"/>
 			<ecom:webQuery name="department_list" nativeSql="${queryGroup_sql}"/>
 		<input type="button" onclick="mshSaveTableToExcelById('journalTable')" value="Сохранить в excel">
-			<table border='1px solid' id="journalTable">
+			<table border='1px solid' id="journalTable" class="tabview sel tableArrow">
 
 			
 <tr>
@@ -264,8 +263,8 @@ order by ${orderSql1}
 </tr>
 			<% 
 			List list = (List) request.getAttribute("department_list") ;
-			for (int i=0;i<list.size();i++) { 
-				WebQueryResult wqr = (WebQueryResult)list.get(i) ;
+			for (Object o : list) { 
+				WebQueryResult wqr = (WebQueryResult) o ;
 				request.setAttribute("lpu", wqr) ;
 				request.setAttribute("groupDep_id", wqr.get1()!=null?"="+wqr.get1():" is null") ;
 				out.println("<tr>") ;
@@ -286,32 +285,32 @@ order by ${orderSql1}
 			%>
 				<ecom:setAttribute name="queryElement_id"
 value="
-SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
 
 
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat  
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end) as sumCountMedService
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountWithoutVat
 
 , count(distinct case when cao.dtype='OperationReturn' then mc.id else null end) as cntDogMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet 
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet  
-, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat  
+, sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceRet
+, sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)/100,2) else 0 end) sumNoAccraulMedServiceWithDiscountRetWithoutVat
 
-, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) 
-- sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceItog 
+, sum(case when cao.dtype='OperationAccrual' then 1 else 0 end)
+- sum(case when cao.dtype='OperationReturn' then 1 else 0 end) as sumCountMedServiceItog
 
-, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, sum(case when cao.dtype='OperationAccrual' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2) else 0 end)
     
 as sumItog
-, (sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)   
+, (sum(case when cao.dtype='OperationAccrual' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2) else 0 end)
 -
- sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end)*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end)
+ sum(case when cao.dtype='OperationReturn' then round(case when pp.isVat='1' then 0.1*1000/118 else 1 end*(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2) else 0 end)
  )   
 as sumItogWithoutVat
 FROM medcontract MC
@@ -338,7 +337,7 @@ left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
-WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  
 and ${whereSql1} ${groupDep_id}
 ${priceMedServiceSql} ${operatorSql} ${priceListSql}
@@ -347,10 +346,7 @@ ${departmentTypeSql}
 
 group by ${groupGroup}
 order by ${groupOrder}
-			"
-			
-			/>
-			
+			"/>
 			<ecom:webQuery name="patient_list" nativeSql="${queryElement_id}"/>
 <%
 List listPat = (List) request.getAttribute("patient_list") ;
@@ -381,7 +377,7 @@ for (int ii=0;ii<listPat.size();ii++) {
 				<% }%>
 			</table>
 			
-	<%} else if (typeGroup!=null&& typeGroup.equals("2") ) { %>
+	<%} else if (typeGroup.equals("2") ) { %>
 		<ecom:webQuery name="dep_list" nameFldSql="dep_list_sql" nativeSql="
 SELECT lpu.id as sqlId
 ,lpu.name as lpuname
@@ -392,10 +388,10 @@ SELECT lpu.id as sqlId
 ,pp.id as sqlId
 ,pp.positionType_id
 ,pp.code||' '||pp.name as pmsname
-, sum(cams.countMedService) as sumCountMedServiceItog 
-, sum(round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2))   
+, count(cams.countMedService) as sumCountMedServiceItog
+, sum(round(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100,2))
 as sumItog
-, sum(round(cams.countMedService*(case when pp.isVat='1' then 0.1*1000/118 else 1 end) *(cams.cost*(100-coalesce(cao.discount,0))/100),2))   
+, sum(round(case when pp.isVat='1' then 0.1*1000/118 else 1 end *(coalesce(cams.cost,0)*(100-coalesce(cao.discount,0))/100),2))
 as sumItogWithoutVat
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
@@ -417,7 +413,7 @@ left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') 
-AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
+AND to_date('${dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' ) and cao.repealOperation_id is null  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
@@ -426,7 +422,7 @@ group by lpu.id,lpu.name,mc.id,lpu.name,CCP.lastname,CCP.firstname,CCP.middlenam
 order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,pp.code
 			"/>
 		<input type="button" onclick="mshSaveTableToExcelById('journalTable')" value="Сохранить в excel">
-		<table border='1px solid' id="journalTable">
+		<table border='1px solid' id="journalTable" class="tabview sel tableArrow">
 <tr>
 	<th>Наименование</th>
 	<th>Кол-во услуг</th>
@@ -445,23 +441,21 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 			
 			Object vLpu1 = null ;
 			Object vContract = null;
-			Object vService = null;
 			int cntMC = 1 ;
-			BigDecimal sLpu1 = new BigDecimal(0) ;BigDecimal sLpu2 = new BigDecimal(0) ; BigDecimal sLpu3 = new BigDecimal(0) ;BigDecimal sLpu4 = new BigDecimal(0) ;
+			BigDecimal sLpu1 = new BigDecimal(0) ;BigDecimal sLpu2 = new BigDecimal(0) ; BigDecimal sLpu3 = new BigDecimal(0) ;
 			BigDecimal sLpu1d = new BigDecimal(0) ;BigDecimal sLpu2d = new BigDecimal(0) ; BigDecimal sLpu3d = new BigDecimal(0) ;
 			BigDecimal sContract1 = new BigDecimal(0) ;BigDecimal sContract2 = new BigDecimal(0) ; BigDecimal sContract3 = new BigDecimal(0) ;
 			BigDecimal sContract1d = new BigDecimal(0) ;BigDecimal sContract2d = new BigDecimal(0) ; BigDecimal sContract3d = new BigDecimal(0) ;
-			boolean isNewLpu = false; boolean isNewContract=false ;
+			boolean isNewLpu ; boolean isNewContract ;
 			for (int i=0;i<list.size();i++) { 
 				WebQueryResult wqr = (WebQueryResult)list.get(i) ;
-				isNewContract=false ; isNewLpu=false ;
+			//	isNewContract=false ; isNewLpu=false ;
 				if (i>0) {
-					if (vLpu1==null&&wqr.get2()==null || vLpu1!=null&&wqr.get2()!=null&&vLpu1.equals(wqr.get2())) {
+					if (vLpu1==null && wqr.get2()==null || vLpu1.equals(wqr.get2())) {
 						isNewLpu=false ;
 						//vLpu1=wqr.get2() ;
-						if (vContract==null&&wqr.get3()==null || vContract!=null&&wqr.get3()!=null&&vContract.equals(wqr.get3())) {
+						if (vContract==null && wqr.get3()==null || vContract.equals(wqr.get3())) {
 							isNewContract=false;
-							
 						} else {
 							isNewContract=true;
 						}
@@ -469,20 +463,6 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 						isNewLpu=true ;
 						isNewContract=true;
 					}
-					/*if (isNewContract) {
-						out.println("<tr>") ;
-						out.print("<th>"); out.print("ИТОГО по к.дн.:");out.println("</th>") ;
-						out.print("<th>"); out.print(sContract1);out.println("</th>") ;
-						out.print("<th>"); out.print(sContract2);out.println("</th>") ;
-						out.print("<th>"); out.print(sContract3);out.println("</th>") ;
-						out.println("</tr>") ;
-						out.println("<tr>") ;
-						out.print("<td><i>"); out.print("итог опер.:");out.println("</i></td>") ;
-						out.print("<td>"); out.print(sContract1d);out.println("</td>") ;
-						out.print("<td>"); out.print(sContract2d);out.println("</td>") ;
-						out.print("<td>"); out.print(sContract3d);out.println("</td>") ;
-						out.println("<tr>") ;
-					} */
 					
 					if (isNewLpu) {
 						out.println("<tr>") ;
@@ -511,27 +491,21 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 					isNewContract = true ;
 					sContract1 = new BigDecimal(0) ;sContract2 = new BigDecimal(0) ; sContract3 = new BigDecimal(0) ;
 					sContract1d = new BigDecimal(0) ;sContract2d = new BigDecimal(0) ; sContract3d = new BigDecimal(0) ;
-
-					
 				}
-					
-					
-					if (isNewLpu) {
-						sLpu1 = new BigDecimal(0) ;sLpu2 = new BigDecimal(0) ;sLpu3 = new BigDecimal(0) ;
-						sLpu1d = new BigDecimal(0) ;sLpu2d = new BigDecimal(0) ;sLpu3d = new BigDecimal(0) ;
-						out.println("<tr>") ;
-						out.print("<th colspan='4'>"); out.print(wqr.get2());out.println("</th>") ;
-						out.println("</tr>") ;
-						cntMC = 1 ;
-					}
-					if (isNewContract) {
-						out.println("<tr>") ;
-						out.print("<td colspan='4'><i>");out.print(cntMC++);out.print(". "); out.print(wqr.get5());out.println("</i></td>") ;
-						out.println("</tr>") ;
-					} 
-				
-				
-				
+				if (isNewLpu) {
+					sLpu1 = new BigDecimal(0) ;sLpu2 = new BigDecimal(0) ;sLpu3 = new BigDecimal(0) ;
+					sLpu1d = new BigDecimal(0) ;sLpu2d = new BigDecimal(0) ;sLpu3d = new BigDecimal(0) ;
+					out.println("<tr>") ;
+					out.print("<th colspan='4'>"); out.print(wqr.get2());out.println("</th>") ;
+					out.println("</tr>") ;
+					cntMC = 1 ;
+				}
+				if (isNewContract) {
+					out.println("<tr>") ;
+					out.print("<td colspan='4'><i>");out.print(cntMC++);out.print(". "); out.print(wqr.get5());out.println("</i></td>") ;
+					out.println("</tr>") ;
+				}
+
 				if (wqr.get7()!=null && (""+wqr.get7()).equals("7")) {
 					sContract1d=sContract1d.add(new BigDecimal(wqr.get9()!=null?""+wqr.get9():"0")) ;
 					sContract2d=sContract2d.add(new BigDecimal(wqr.get10()!=null?""+wqr.get10():"0")) ;
@@ -548,8 +522,6 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 					sLpu3=sLpu3.add(new BigDecimal(wqr.get11()!=null?""+wqr.get11():"0")) ;
 				}
 				
-				
-				//out.print("<td>"); out.print(wqr.get3());out.println("</td>") ;
 				out.print("<td>"); out.print(wqr.get8());out.println("</td>") ;
 				out.print("<td align='center'>"); out.print(wqr.get9());out.println("</td>") ;
 				out.print("<td align='center'>"); out.print(decimal_formatter.format(wqr.get10()));out.println("</td>") ;
@@ -590,7 +562,7 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 		%>
 		Выберите параметры и нажмите  кнопку "СФОРМИРОВАТЬ"
 		<%
-		}}
+		}
 		%>
 		
 		

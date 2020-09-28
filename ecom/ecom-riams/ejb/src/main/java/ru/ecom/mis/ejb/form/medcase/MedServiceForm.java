@@ -289,4 +289,30 @@ public class MedServiceForm extends IdEntityForm  {
 	/** Указывать тип аборта при создании операции */
 	private Boolean theIsAbortRequired =false;
 
+	/** Отображать код услуги при печати в реестре назначений для лаборатории */
+	private Boolean printCodeLabReestr;
+	@Persist
+	@Comment("Отображать код услуги при печати в реестре назначений для лаборатории")
+	public Boolean getPrintCodeLabReestr() {
+		return printCodeLabReestr;
+	}
+	public void setPrintCodeLabReestr(Boolean printCodeLabReestr) {
+		this.printCodeLabReestr = printCodeLabReestr;
+	}
+
+	/** Отображать на сайте как услугу по умолчанию у специалиста*/
+	@Persist
+	@Comment("Отображать на сайте как услугу по умолчанию у специалиста")
+	public Boolean getIsShowSiteAsDefault() {return theIsShowSiteAsDefault;}
+	public void setIsShowSiteAsDefault(Boolean aIsShowSiteAsDefault) {theIsShowSiteAsDefault = aIsShowSiteAsDefault;}
+	/** Отображать на сайте как услугу по умолчанию у специалиста */
+	private Boolean theIsShowSiteAsDefault =false;
+
+	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
+	@Comment("Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии")
+	@Persist
+	public Long getVocColorIdentity() {return theVocColorIdentity;}
+	public void setVocColorIdentity(Long aVocColorIdentity) {theVocColorIdentity = aVocColorIdentity;}
+	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
+	private Long theVocColorIdentity ;
 }

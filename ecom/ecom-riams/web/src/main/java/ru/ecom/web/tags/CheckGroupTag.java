@@ -30,19 +30,13 @@ public class CheckGroupTag extends AbstractGuidSimpleSupportTag {
             
 	    	try {
 	    		String value=(String) PropertyUtil.getPropertyValue(form,  theProperty) ; 
-	    		//System.out.println("--cg---value="+value) ;
 				IWebQueryService service = Injection.find(request).getService(IWebQueryService.class) ;
 				String valueSql="" ;
 				if (value!=null &&!value.trim().equals("")) {
 					valueSql = ",case when "+theTableId+" in ("+value+") then 1 else null end as eqval" ;
 				}
 				Collection<WebQueryResult> col = service.executeNativeSql("select "+theTableId+" as id, "+theTableField+" as fld "+valueSql+" from "+theTableName);
-				//System.out.println("--cg---col="+col.size()) ;
-				//System.out.println("--cg---sql="+"select "+theTableId+" as id, "+theTableField+" as fld "+valueSql+" from "+theTableName) ;
 		        boolean isEmpty=col.isEmpty();
-		        //boolean isFirst = true ;
-		        if (col == null) {throw new JspException("Нет Collection в request.getAttribute(" + theTableName + ")");} 
-		        
 		        if (!isEmpty) {
 		        	out.println("<td class='label' title='"+(theLabel!=null?theLabel+":":"")+" ("+theProperty+")' colspan='1'>");
 		        	out.println("<label id='"+theProperty+"Label'>"+(theLabel!=null?theLabel+":":"")+":</label>");
@@ -50,50 +44,39 @@ public class CheckGroupTag extends AbstractGuidSimpleSupportTag {
 		        	out.println("</td>");
 		        	out.println("<td colspan="+(theFieldColSpan!=null&&!theFieldColSpan.equals("")?theFieldColSpan:"1")+">");
 		            out.println("<table>");
-	
-	
-	                if (col != null) {
-	                    if (col.size() == 0) {
-	                        return ;
-	                    }
-	                   
-	                    for (WebQueryResult row:col) {
-	                    	Object currentId =  row.get1();
-	                    	Object currentTitle = row.get2() ;
-	                        boolean isChecked = row.get3()!=null?true:false ;
-	                        
-	                        out.print("<tr onclick='' class='") ;
-	                        out.print(theTableName) ;
-	                        out.print(' ') ;
-	                        out.print(currentId) ;
-	                        out.print(' ') ;
-	                        
-	                        out.print("'>");
-	
-	                        out.println("<td >") ;
-	                        //String typeId = theProperty+"_"+currentId ;
-	                        out.println("<input id='"+theProperty+"Temp' name='"+theProperty+"Temp' value='"+currentId+"' type='checkbox' onclick=\"$('"+theProperty+"').value=getCheckedCheckBox(this.form,this.name,',')\"");
-	                        if (isChecked) out.println(" checked='true'") ;
-	                        out.println("/>") ;
-	                        out.println("</td>") ;
-	                        out.println("<td>") ;
-	                        out.println(currentTitle) ;
-	                        out.println("</td>") ;
-	
-	                        out.println("</tr>");
-	                    }
-	    	            out.println("</table");
-	    	        	out.println("</td>");
-	                }
+
+					for (WebQueryResult row:col) {
+						Object currentId =  row.get1();
+						Object currentTitle = row.get2() ;
+						boolean isChecked = row.get3()!=null;
+
+						out.print("<tr onclick='' class='") ;
+						out.print(theTableName) ;
+						out.print(' ') ;
+						out.print(currentId) ;
+						out.print(' ') ;
+
+						out.print("'>");
+
+						out.println("<td >") ;
+						out.println("<input id='"+theProperty+"Temp' name='"+theProperty+"Temp' value='"+currentId+"' type='checkbox' onclick=\"$('"+theProperty+"').value=getCheckedCheckBox(this.form,this.name,',')\"");
+						if (isChecked) out.println(" checked='true'") ;
+						out.println("/>") ;
+						out.println("</td>") ;
+						out.println("<td>") ;
+						out.println(currentTitle) ;
+						out.println("</td>") ;
+
+						out.println("</tr>");
+					}
+					out.println("</table");
+					out.println("</td>");
 		        }
 	        } catch (Exception e) {
 	                showException(e);
-            } finally {
-                
             }
 	        
 	        printIdeEnd();
-	        return ;
 		}
 	    /**
 	     * Название таблицы

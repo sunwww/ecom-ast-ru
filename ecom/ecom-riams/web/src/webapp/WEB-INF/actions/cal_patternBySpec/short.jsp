@@ -8,9 +8,9 @@
 <tiles:insert page="/WEB-INF/tiles/mainShortLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form title="<a href='entityView-cal_patternBySpec.do?id=${param.id}'>Шаблон рабочего календаря по специалисту</a>" guid="formHello" action="/entityParentSaveGoView-cal_patternBySpec.do" defaultField="name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
+    <msh:form title="<a href='entityView-cal_patternBySpec.do?id=${param.id}'>Шаблон рабочего календаря по специалисту</a>" action="/entityParentSaveGoView-cal_patternBySpec.do" defaultField="name">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
       <msh:hidden property="lpu"/>
 			<msh:panel>
 				<msh:row>

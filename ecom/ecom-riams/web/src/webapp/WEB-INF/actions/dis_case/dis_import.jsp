@@ -6,8 +6,8 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name="body" type="string">
-        <msh:form guid="formHello" action="/dis_import.do" defaultField="documentTypeName">
-        <msh:panel guid="panel">
+        <msh:form action="/dis_import.do" defaultField="documentTypeName">
+        <msh:panel>
             <msh:row>
                 <msh:textField property="elnNumber" label="Номер ЭЛН" horizontalFill="true" size="50"/>
             </msh:row>

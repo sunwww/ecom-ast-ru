@@ -99,8 +99,6 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 			.setParameter("username", username)
 			.getResultList() ;
 			if(list.isEmpty()) {
-				list.clear() ;
-				
 				list = theManager.createNativeQuery("select wc.id as wcid, case when wf.group_id is not null then wcg.id else wc.id end as wcname"
 					+" from WorkFunction wf"
 					+" left join Worker w on w.id=wf.worker_id"

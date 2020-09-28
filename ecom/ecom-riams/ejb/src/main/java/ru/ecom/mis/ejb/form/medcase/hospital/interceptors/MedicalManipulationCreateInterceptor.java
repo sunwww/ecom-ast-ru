@@ -26,16 +26,17 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
         MedCase parentSSL = manager.find(MedCase.class, aParentId) ;
         BandageForm form=(BandageForm)aForm;
       //  MedicalManipulationForm mform=(MedicalManipulationForm)aForm;
-        if (parentSSL instanceof HospitalMedCase) {
-            HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
-
-            if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
-            if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
-        } else if (parentSSL instanceof DepartmentMedCase){
+        if (parentSSL instanceof DepartmentMedCase){
             DepartmentMedCase slo = (DepartmentMedCase) parentSSL ;
 
             if (slo.getDepartment()!=null) form.setDepartment(slo.getDepartment().getId()) ;
             if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
+        }
+         else if (parentSSL instanceof HospitalMedCase) {
+            HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
+
+            if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
+            if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
         } else  if (parentSSL instanceof Visit){
             Visit slo = (Visit) parentSSL ;
             if (slo.getWorkFunctionExecute()!=null) {
@@ -64,7 +65,7 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
             form.setLpu(parentSSL.getLpu().getId());
         }
         if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction")
-                &&form.getDepartment()!=null&&form.getDepartment()>Long.valueOf(0)) {
+                &&form.getDepartment()!=null&&form.getDepartment()> 0L) {
             String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
             List<Object[]> listwf =  manager.createNativeQuery("select wf.id as wfid,w.id as wid from WorkFunction wf left join Worker w on w.id=wf.worker_id left join SecUser su on su.id=wf.secUser_id where su.login = :login and w.lpu_id=:lpu and wf.id is not null and wf.isSurgical='1'")
                     .setParameter("login", username)
@@ -87,6 +88,11 @@ public class MedicalManipulationCreateInterceptor implements IParentFormIntercep
             }
 
         }
-        //throw new IllegalStateException("я тут") ;
+        //Запрет на создание в СЛО и СЛС, если случай закрыт. Админ может создавать.
+        if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut") &&
+                parentSSL instanceof HospitalMedCase) {
+            MedCase hmc = (parentSSL instanceof DepartmentMedCase)? parentSSL.getParent() : parentSSL;
+            if (hmc.getDateFinish()!=null) throw new IllegalStateException("Пациент выписан. Нельзя добавлять перевязку в закрытый СЛС!");
+        }
     }
 }

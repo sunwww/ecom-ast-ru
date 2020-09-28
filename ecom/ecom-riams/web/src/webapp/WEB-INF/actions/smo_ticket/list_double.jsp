@@ -35,30 +35,30 @@
     left join vocreason vr on vr.id=t.visitreason_id    
     where t.dateStart=to_date('${param.dateStart}','dd.mm.yyyy') 
     and t.workfunctionExecute_id='${param.workFunction}' 
-    and t.medcard_id='${param.medcard}' order by t.id" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="list" action="entityParentView-smo_ticket.do" idField="1" noDataMessage="Не найдено" guid="6600cebc-4548-4f57-a048-5a3a2e67a673">
-      <msh:tableColumn columnName="#" property="sn" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
-      <msh:tableColumn columnName="№талона" property="1" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
-      <msh:tableColumn columnName="№мед.карты" property="2" guid="612d85fd-ca3a-46a4-9598-a611b83a01ab" />
-      <msh:tableColumn columnName="Пациент" property="3" guid="d7955208-4c68-42ce-85d6-684a4b9076a9" />
-      <msh:tableColumn columnName="Дата создания" property="4" guid="ee9ce01d-4924-4e76-bc93-3ecb73d8b18f" />
-      <msh:tableColumn columnName="Дата приема" property="5" guid="ee9ce01d-4924-4e76-bc93-3ecb73d8b18f" />
-      <msh:tableColumn columnName="Специалист" property="6" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
-      <msh:tableColumn columnName="Цель посещения" property="7" guid="9465992e-5fe3-42ee-b125-63929fda5158" />
+    and t.medcard_id='${param.medcard}' order by t.id" />
+    <msh:table name="list" action="entityParentView-smo_ticket.do" idField="1" noDataMessage="Не найдено">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="№талона" property="1" />
+      <msh:tableColumn columnName="№мед.карты" property="2" />
+      <msh:tableColumn columnName="Пациент" property="3" />
+      <msh:tableColumn columnName="Дата создания" property="4" />
+      <msh:tableColumn columnName="Дата приема" property="5" />
+      <msh:tableColumn columnName="Специалист" property="6" />
+      <msh:tableColumn columnName="Цель посещения" property="7" />
     </msh:table>
     	
     	<%
     } else {
     	
     	%>
-    <msh:form action="/smo_doubleTickets.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/smo_doubleTickets.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
         <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" onclick="find()" value="Найти" />
           </td>

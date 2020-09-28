@@ -35,7 +35,7 @@ public class LoginAction extends BaseAction {
         	}
         }
         
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 
 }

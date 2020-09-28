@@ -46,6 +46,6 @@ public class SaveAction extends AbstractEntityAction {
         }
 
 
-        return ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), id) ;
+        return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), id) ;
     }
 }

@@ -19,6 +19,16 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 public class E2EntryForm extends IdEntityForm {
 
 //----------все поля ниже добавлены на jsp!!!
+    /** Реабилитационная койка*/
+    private Boolean theIsRehabBed ;
+    /** Рост пациента */
+    private Integer theHeight ;
+    /** Вес пациента */
+    private Integer theWeigth ;
+    /** Профиль койки */
+    private Long theBedProfile ;
+    /** Комментарии эксперта */
+    private String theComment ;
     /** КДП */
     private Long theKdpVisit ;
     /** Родовое отделение */
@@ -111,12 +121,12 @@ public class E2EntryForm extends IdEntityForm {
     private Long theFondResult ;
     /** Исход случая */
     private Long theFondIshod ;
-    /** Специальность врача по фонду */
-    private Long theFondDoctorSpec ;
     /** Многоплодная беременность */
     private Boolean theMultiplyBirth ;
     /** ТИп записи */
     private String theEntryType ;
+    /** Тип файла */
+    private String theFileType ;
     /** Способ оплаты медицинской помощи */
     private Long theIDSP ;
     /** Причины неполной оплаты */
@@ -740,11 +750,6 @@ public class E2EntryForm extends IdEntityForm {
     public void setFondIshod(Long theFondIshod) {this.theFondIshod = theFondIshod;}
 
     @Persist
-    @Comment("Специальность врача по фонду")
-    public Long getFondDoctorSpec() {return theFondDoctorSpec;}
-    public void setFondDoctorSpec(Long theFondDoctorSpec) {this.theFondDoctorSpec = theFondDoctorSpec;}
-
-    @Persist
     @Comment("Многоплодная беременность")
     public Boolean getMultiplyBirth() {return theMultiplyBirth;}
     public void setMultiplyBirth(Boolean theMultiplyBirth) {this.theMultiplyBirth = theMultiplyBirth;}
@@ -753,6 +758,17 @@ public class E2EntryForm extends IdEntityForm {
     @Comment("Тип записи")
     public String getEntryType() {return theEntryType;}
     public void setEntryType(String theEntryType) {this.theEntryType = theEntryType;}
+
+    @Persist
+    @Comment("Тип файла") //P, Z, DF, раки
+    public String getFileType() {return theFileType;}
+    public void setFileType(String aFileType) {theFileType = aFileType;}
+
+    /** Реабилитационная койка */
+    @Comment("Реабилитационная койка")
+    @Persist
+    public Boolean getIsRehabBed() {return theIsRehabBed;}
+    public void setIsRehabBed(Boolean aIsRehabBed) {theIsRehabBed = aIsRehabBed;}
 
     @Persist
     @Comment("Способ оплаты медицинской помощи")
@@ -976,12 +992,63 @@ public class E2EntryForm extends IdEntityForm {
     public Long getKdpVisit() {return theKdpVisit;}
     public void setKdpVisit(Long aKdpVisit) {theKdpVisit = aKdpVisit;}
 
+    @Comment("Комментарии эксперта")
+    @Persist
+    public String getComment() {return theComment;}
+    public void setComment(String aComment) {theComment = aComment;}
+
+    @Comment("Профиль койки")
+    @Persist
+    public Long getBedProfile() {return theBedProfile;}
+    public void setBedProfile(Long aBedProfile) {theBedProfile = aBedProfile;}
+
+    @Comment("Рост пациента")
+    @Persist
+    public Integer getHeight() {return theHeight;}
+    public void setHeight(Integer aHeight) {theHeight = aHeight;}
+
+    @Comment("Вес пациента")
+    @Persist
+    public Integer getWeigth() {return theWeigth;}
+    public void setWeigth(Integer aWeigth) {theWeigth = aWeigth;}
+
+    /** Список выполненных назначений*/
+    @Comment(" выполненных назначений")
+    @Persist
+    public String getPrescriptionList() {return thePrescriptionList;}
+    public void setPrescriptionList(String aPrescriptionList) {thePrescriptionList = aPrescriptionList;}
+    /** Список  выполненных назначений */
+    private String thePrescriptionList ;
+
     //Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */
     @Comment("Добавить услугу к случаю")
     public Long getNewMedService() {return theNewMedService;}
     public void setNewMedService(Long aNewMedService) {theNewMedService = aNewMedService;}
-    /** Добавить услугу к случаю */
     private Long theNewMedService ;
+
+    /** Особенность случая */
+    @Comment("Особенность случая")
+    public Long getNewFactor() {return theNewFactor;}
+    public void setNewFactor(Long aNewFactor) {theNewFactor = aNewFactor;}
+    private Long theNewFactor ;
+
+    /** Место рождения */
+    @Comment("Место рождения")
+    @Persist
+    public String getBirthPlace() {return theBirthPlace;}
+    public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
+    private String theBirthPlace ;
+
+    /** Результат диспансеризации */
+    @Comment("Результат диспансеризации")
+    @Persist
+    public Long getDispResult() {return theDispResult;}
+    public void setDispResult(Long aDispResult) {theDispResult = aDispResult;}
+    /** результат диспансеризации */
+    private Long theDispResult ;
+
+
+
 }

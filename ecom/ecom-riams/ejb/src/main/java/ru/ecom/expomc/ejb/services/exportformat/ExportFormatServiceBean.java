@@ -59,13 +59,11 @@ public class ExportFormatServiceBean implements IExportFormatService {
             SimpleDateFormat FORMAT_ODBC = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat FORMAT_ODBCTIME = new SimpleDateFormat("HH:mm:ss.SSS");
             Date date  = new Date();
-            s.append("<results exportdate='" + FORMAT_ODBC.format(date)+
-                    "' exporttime='" + FORMAT_ODBCTIME.format(date)+"' exportdatetime='" +
-                    FORMAT_ODBC.format(date)+" "+FORMAT_ODBCTIME.format(date)+"'>");
+            s.append("<results exportdate='").append(FORMAT_ODBC.format(date)).append("' exporttime='").append(FORMAT_ODBCTIME.format(date)).append("' exportdatetime='").append(FORMAT_ODBC.format(date)).append(" ").append(FORMAT_ODBCTIME.format(date)).append("'>");
 
             boolean activeSql = true;
-            for (int nQuery = 0; nQuery < sqls.length; nQuery++) {
-                String sq = sqls[nQuery].trim();
+            for (String sql1 : sqls) {
+                String sq = sql1.trim();
                 if (!activeSql && sq.endsWith("-->")) {
                     activeSql = true;
                     continue;
@@ -84,11 +82,11 @@ public class ExportFormatServiceBean implements IExportFormatService {
                 if (matcher.matches()) {
                     driverName = matcher.group(1);
                     driverQuery = matcher.group(2);
-                    LOG.info("QUERY driver:`"+driverName+"' qry:`"+driverQuery+"'");
+                    LOG.info("QUERY driver:`" + driverName + "' qry:`" + driverQuery + "'");
                 } else {
-                    driverName = (exportFormat.isNative())?"sql":"";
+                    driverName = (exportFormat.isNative()) ? "sql" : "";
                     driverQuery = sq;
-                    LOG.info("QUERY driver: `default' qry:`"+driverQuery+"'");
+                    LOG.info("QUERY driver: `default' qry:`" + driverQuery + "'");
                 }
 
                 IExportFomatDriver driver = DriverManager.getDriver(driverName, theManager, exportFormat.isNative(), driverQuery);
@@ -124,19 +122,19 @@ public class ExportFormatServiceBean implements IExportFormatService {
                     "' exporttime='" + FORMAT_ODBCTIME.format(date)+"' exportdatetime='" +
                     FORMAT_ODBC.format(date)+" "+FORMAT_ODBCTIME.format(date)+"'>");
 
-            for (int nQuery = 0; nQuery < sqls.length; nQuery++) {
-                String sq = sqls[nQuery].trim();
+            for (String sql1 : sqls) {
+                String sq = sql1.trim();
                 if (sq.startsWith("--")) continue;
                 Matcher matcher = Pattern.compile("^#([^#]*)#(.*)$").matcher(sq);
                 String driverName, params;
                 if (matcher.matches()) {
                     driverName = matcher.group(1);
                     params = matcher.group(2);
-                    LOG.info("QUERY driver:`"+driverName+"' qry:`"+params+"'");
+                    LOG.info("QUERY driver:`" + driverName + "' qry:`" + params + "'");
                 } else {
-                    driverName = (exportFormat.isNative())?"sql":"";
+                    driverName = (exportFormat.isNative()) ? "sql" : "";
                     params = sq;
-                    LOG.info("QUERY driver: `default' qry:`"+params+"'");
+                    LOG.info("QUERY driver: `default' qry:`" + params + "'");
                 }
 
                 IExportFomatDriver driver = DriverManager.getDriver(driverName, theManager, exportFormat.isNative(), params);

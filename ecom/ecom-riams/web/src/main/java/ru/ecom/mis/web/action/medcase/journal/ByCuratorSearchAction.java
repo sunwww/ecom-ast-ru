@@ -1,18 +1,16 @@
 package ru.ecom.mis.web.action.medcase.journal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import ru.ecom.mis.ejb.service.medcase.IPolyclinicMedCaseService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.web.actions.entity.ListAction;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class ByCuratorSearchAction extends ListAction{
 
@@ -28,11 +26,11 @@ public class ByCuratorSearchAction extends ListAction{
             	
             	if (curator==null || curator==0) {
             		curator=Long.valueOf(aRequest.getParameter("id")!=null?aRequest.getParameter("id"):"0") ;
-            		if (curator==null || curator==0) form.addMessage(new FormMessage("Выберите врача для поиска")) ;
+            		if (curator==0) form.addMessage(new FormMessage("Выберите врача для поиска")) ;
             	}
             	
             } else{
-            	 return aMapping.findForward("success") ;
+            	 return aMapping.findForward(SUCCESS) ;
             }
         } else {
                 curator = service.getWorkFunction() ;
@@ -46,6 +44,6 @@ public class ByCuratorSearchAction extends ListAction{
 	        String curatorinfo = service.getWorkFunctionInfo(curator) ;
 	        aRequest.setAttribute("curatorInfo",curatorinfo) ;
         }
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
 	}
 }

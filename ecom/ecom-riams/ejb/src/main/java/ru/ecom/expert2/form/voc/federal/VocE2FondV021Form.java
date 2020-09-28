@@ -15,7 +15,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz = VocE2FondV021.class)
 @Comment("Медицинская специальность V021")
-@WebTrail(comment = "Медицинская специальность V021", nameProperties = "code", view = "entityView-e2_vocFondV021.do")
+@WebTrail(comment = "Медицинская специальность V021", nameProperties = {"code","name"}, view = "entityView-e2_vocFondV021.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 public class VocE2FondV021Form extends VocBaseFederalForm {
 
@@ -50,4 +50,27 @@ public class VocE2FondV021Form extends VocBaseFederalForm {
     public void setRepeatMedService(Long aRepeatMedService) {theRepeatMedService = aRepeatMedService;}
     /** Услуга по умолчания (повторный визит) */
     private Long theRepeatMedService ;
+
+    /** Профиль мед. помощи для подачи по стационару */
+    @Comment("Профиль мед. помощи для подачи по стационару")
+    @Persist
+    public Long getStacProfile() {return theStacProfile;}
+    public void setStacProfile(Long aStacProfile) {theStacProfile = aStacProfile;}
+    /** Профиль мед. помощи для подачи по стационару */
+    private Long theStacProfile ;
+
+    /** Профиль мед. помощи для подачи по поликлинике */
+    @Comment("Профиль мед. помощи для подачи по поликлинике")
+    @Persist
+    public Long getPolicProfile() {return thePolicProfile;}
+    public void setPolicProfile(Long aPolicProfile) {thePolicProfile = aPolicProfile;}
+    /** Профиль мед. помощи для подачи по поликлинике */
+    private Long thePolicProfile ;
+
+    /** Признак подушевого финансирования специальности */
+    @Comment("Признак подушевого финансирования специальности")
+    @Persist
+    public Boolean getIsPodushevoy() {return theIsPodushevoy;}
+    public void setIsPodushevoy(Boolean aIsPodushevoy) {theIsPodushevoy = aIsPodushevoy;}
+    private Boolean theIsPodushevoy ;
 }

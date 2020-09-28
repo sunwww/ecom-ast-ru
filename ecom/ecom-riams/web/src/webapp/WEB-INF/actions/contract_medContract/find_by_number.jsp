@@ -1,6 +1,6 @@
-<%@page import="java.util.StringTokenizer"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="java.util.StringTokenizer"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -11,11 +11,6 @@
 		<msh:title mainMenu="Contract" >Поиск договоров</msh:title>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
-		<%--
-		<msh:sideMenu title="Добавить">
-			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/MedContract/Create" params="" action="/entityPrepareCreate-contract_medContract" title="Добавить медицинский договор" name="Медицинский договор" />
-		</msh:sideMenu>
-		 --%>
 		 <msh:sideMenu title="Добавить">
 			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/MedContract/Create" params="" action="/entityPrepareCreate-contract_medContract" title="Добавить медицинский договор" name="Медицинский договор" />
 		</msh:sideMenu>
@@ -31,7 +26,10 @@
 				<msh:row>
 					<msh:textField property="contractNumber" label="№ контракта или контрагент" fieldColSpan="10" horizontalFill="true"/>
 				</msh:row>
-				
+				<msh:row>
+					<msh:textField property="accountNumber" label="№ счета" fieldColSpan="10" horizontalFill="true"/>
+				</msh:row>
+
         <msh:row>
 	        <td class="label" title="Договорная персона (typeContractPerson)" colspan="1"><label for="typeContractPersonName" id="typeContractPersonLabel">Договорная персона:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';"  title="поиск по всем физическим лицам">
@@ -77,12 +75,19 @@
 		<script type='text/javascript'>
     checkFieldUpdate('typeContractPerson','${typeContractPerson}',1) ;
     checkFieldUpdate('typeContract','${typeContract}',3) ;
-    
+    jQuery('#accountNumber').on('keydown', function(e) {enterSubm(e);});
+    jQuery('#contractNumber').on('keydown', function(e) {enterSubm(e);});
+    function enterSubm(e) {
+		if (e.which==13) {
+			document.forms[0].submit();
+		}
+	}
+
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
    	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
-   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
+   	if (+aValue===0 || +aValue>+aMax) {
    		chk[+aDefaultValue-1].checked='checked' ;
    	} else {
    		chk[+aValue-1].checked='checked' ;
@@ -91,12 +96,18 @@
 	    
 			 
     </script>
-	<% 
-	  	if (request.getParameter("contractNumber")!=null ) {
+	<%
+		String accountNumber = request.getParameter("accountNumber") ;
+		if (accountNumber!=null && !accountNumber.equals("")) { //переходим сразу к счету
+		%>
+		<script type='text/javascript'>
+			window.document.location="entityParentPrepareCreate-contract_accountOperationAccrual.do?id="+${param.accountNumber};
+		</script>
+		<%
+		} else if (request.getParameter("contractNumber")!=null ) {
 			StringBuilder fio = new StringBuilder() ;
 			String prefix = "juridical" ;
 			StringBuilder paramSql= new StringBuilder() ;
-		  	StringBuilder paramHref= new StringBuilder() ;
 			String contractNumber  = request.getParameter("contractNumber").toUpperCase() ;
 			String orderBy = "mc.id" ;
 			if (typeContractPerson.equals("1"))	{
@@ -154,9 +165,9 @@
 						 " left join patient p1 on p1.id=cp1.patient_id";	 
 				request.setAttribute("leftJoin",leftJoinSql);
 			}
-			if (typeContract!=null && typeContract.equals("1")) {
+			if ("1".equals(typeContract)) {
 				paramSql.append(" and mc.isfinished='1'") ;
-			} else if (typeContract!=null && typeContract.equals("1")) {
+			} else if ("0".equals(typeContract)) {
 				paramSql.append(" and (mc.isfinished is null or mc.isfinished='0')") ;
 			}
 
@@ -165,7 +176,7 @@
 		  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("contractLabel", "vcl.id", request)) ;
 		  	
 		request.setAttribute("paramSql", paramSql.toString()) ;
-	  	request.setAttribute("paramHref", paramHref.toString()) ;
+	  	request.setAttribute("paramHref", "") ;
 		request.setAttribute("fiocp", fio.toString()) ;
 		request.setAttribute("prefix", prefix) ;
 		request.setAttribute("orderBy", orderBy) ;
@@ -213,7 +224,6 @@
 					<msh:tableColumn columnName="Период действия" property="3" />
 					<msh:tableColumn columnName="Заказчик тип" property="4" />
 					<msh:tableColumn columnName="Наименование" property="5" />
-					
 					<msh:tableColumn columnName="Обработка правил" property="8" />
 					<msh:tableColumn columnName="Прейскурант" property="9" />
 					<msh:tableColumn columnName="Лимит" property="10" />

@@ -24,6 +24,6 @@ public class DisabilityReportAction  extends BaseAction {
     	} catch (Exception e) {
 			e.printStackTrace() ;
 		}
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

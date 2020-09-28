@@ -1,17 +1,16 @@
 package ru.nuzmsh.web.tags.helper;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
+import ru.nuzmsh.commons.auth.ILoginInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
-
-import ru.nuzmsh.commons.auth.ILoginInfo;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.StringTokenizer;
 
 /**
  * Проверка наличия прав у пользователя
@@ -48,8 +47,8 @@ public class RolesHelper {
     private static Collection getRolesAsCollection(String aRoles) {
         LinkedList list = new LinkedList();
         
-        if(aRoles.indexOf(';')<0 && aRoles.indexOf(',')<0&& aRoles.indexOf(' ')<0) {
-            list.add(aRoles.indexOf(' ')>=0 ? aRoles.trim() : aRoles) ;
+        if(aRoles.indexOf(';')<0 && aRoles.indexOf(',')<0 && aRoles.indexOf(' ')<0) {
+            list.add(aRoles) ;
         } else {
             StringTokenizer st = new StringTokenizer(aRoles, ";, ");
             while(st.hasMoreTokens()) {

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -6,26 +6,26 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name="body" type="string">
-        <msh:form action="/entityParentSaveGoParentView-e2_cancerEntry.do" defaultField="maybeCancer" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+        <msh:form action="/entityParentSaveGoParentView-e2_cancerEntry.do" defaultField="maybeCancer">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
             <msh:hidden property="entry" />
             <msh:panel>
-
                 <msh:row>
                     <msh:checkBox property="maybeCancer"/>
                 </msh:row>
                 <msh:ifFormTypeIsCreate formName="e2_cancerEntryForm">
                 <msh:separator label="Направление" colSpan="4"/>
-
                     <msh:row>
                         <msh:textField property="directionDate"/>
                         <msh:autoComplete property="directionType" vocName="vocOncologyTypeDirectionCode" size="50"/>
                     </msh:row>
                     <msh:row>
+                        <msh:textField property="directionDirectLpu" label="ЛПУ куда направляем"/>
+                    </msh:row>
+                    <msh:row>
                         <msh:autoComplete property="directionSurveyMethod" vocName="vocOncologyMethodDiagTreatCode" size="50"/>
                         <msh:autoComplete property="directionMedService" vocName="vocMedServiceCode" size="50"/>
-
                     </msh:row>
                 </msh:ifFormTypeIsCreate>
                 <msh:separator colSpan="4" label="Общие"/>
@@ -77,7 +77,7 @@
                 <msh:autoComplete property="diagnosticResult" vocName="vocOncologyN008Code" size="50"/>
                 </msh:row>
                 </msh:ifFormTypeIsCreate>
-                <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1" />
+                <msh:submitCancelButtonsRow colSpan="1" />
             </msh:panel>
         </msh:form>
 <msh:ifFormTypeIsView formName="e2_cancerEntryForm">
@@ -107,27 +107,40 @@
     </msh:section>
 
     <msh:section title="Диагностика" createUrl="entityParentPrepareCreate-e2_cancerDiagnostic.do?id=${param.id}">
-        <ecom:webQuery name="diagnosticList" nativeSql="select d.id, d.type, d.code, d.result
+    <ecom:webQuery name="diagnosticList" nativeSql="select d.id, d.type, d.code, d.result
         from e2cancerdiagnostic d
   where d.cancerentry_id=${param.id} "/>
-        <msh:tableNotEmpty  name="diagnosticList"  >
-            <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDiagnostic.do" idField="1" name="diagnosticList" action="entityEdit-e2_cancerDiagnostic.do" >
-                <msh:tableColumn columnName="Тип" property="2"/>
-                <msh:tableColumn columnName="Код" property="3"/>
-                <msh:tableColumn columnName="Результат" property="4"/>
+    <msh:tableNotEmpty  name="diagnosticList"  >
+        <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDiagnostic.do" idField="1" name="diagnosticList" action="entityEdit-e2_cancerDiagnostic.do" >
+            <msh:tableColumn columnName="Тип" property="2"/>
+            <msh:tableColumn columnName="Код" property="3"/>
+            <msh:tableColumn columnName="Результат" property="4"/>
+        </msh:table>
+    </msh:tableNotEmpty>
+</msh:section>
+
+    <msh:section title="Лекарственные препараты" createUrl="entityParentPrepareCreate-e2_cancerDrug.do?id=${param.id}">
+        <ecom:webQuery name="drugList" nativeSql="select d.id, v020.name
+        from e2cancerdrug d
+        left join VocOncologyN020 v020 on v020.id=d.drug_id
+  where d.cancerentry_id=${param.id} "/>
+        <msh:tableNotEmpty  name="drugList"  >
+            <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDrug.do" idField="1" name="drugList" action="entityEdit-e2_cancerDrug.do" ><input type="button" onclick="deleteAllDrugs()" value="Удалить все лекарства">
+                <msh:tableColumn columnName="Лекарство" property="2"/>
             </msh:table>
         </msh:tableNotEmpty>
     </msh:section>
+
 </msh:ifFormTypeIsView>
     </tiles:put>
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_cancerEntryForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
+        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_cancerEntryForm" />
     </tiles:put>
     <tiles:put name="javascript" type="string">
+        <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <msh:ifFormTypeIsCreate formName="e2_cancerEntryForm">
-            <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
-
                 <script type="text/javascript">
+
                     diagnosticTypeAutocomplete.addOnChangeCallback(function() {
                         if ($('diagnosticType') && $('diagnosticType').value==1) {
                             diagnosticCodeAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN007Code');
@@ -137,17 +150,24 @@
                             diagnosticResultAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN011Code');
                         }
                     });
-                    //if diagnosticType==1 DiagnosticCode = vocOncologyN007Code , DiagnosticResult = VocOncologyN008Code
-                    //if diagnosticType==2 DiagnosticCode = VocOncologyN010Code , DiagnosticResult = VocOncologyN011Code
                 </script>
 
           </msh:ifFormTypeIsCreate>
+        <script type="text/javascript">
+            function deleteAllDrugs() {
+                Expert2Service.deleteAllDrugByCancer(${param.id},{
+                    callback: function () {
+                    alert('Удаолено');
+                    }
+                });
+            }
+        </script>
 
     </tiles:put>
 
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeAreViewOrEdit formName="e2_cancerEntryForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-            <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
+        <msh:ifFormTypeAreViewOrEdit formName="e2_cancerEntryForm">
+            <msh:sideMenu>
                 <msh:sideLink params="id" action="/entityParentEdit-e2_cancerEntry" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink params="id" action="/entityParentDelete-e2_cancerEntry" name="Удалить" roles="/Policy/E2/Delete" />
             </msh:sideMenu>

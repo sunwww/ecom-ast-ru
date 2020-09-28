@@ -1,13 +1,9 @@
 package ru.ecom.expomc.web.actions.format.importfromdbf;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.entityform.IParentEntityFormService;
 import ru.ecom.expomc.ejb.domain.format.Field;
 import ru.ecom.expomc.ejb.services.form.format.FieldForm;
@@ -16,9 +12,12 @@ import ru.ecom.expomc.ejb.services.form.format.PropertySuggest;
 import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.ForwardUtil;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.dbf.DbfFile;
 import ru.nuzmsh.util.dbf.DbfField;
+import ru.nuzmsh.util.dbf.DbfFile;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Импорт из DBF
@@ -53,7 +52,7 @@ public class SaveAction extends BaseAction {
             }
         }
 
-        return ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), form.getId()) ;
+        return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), form.getId()) ;
     }
 
     private boolean isWhatWhenEtcField(String aFieldName) {

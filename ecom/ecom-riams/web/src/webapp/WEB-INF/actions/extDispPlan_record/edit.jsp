@@ -17,7 +17,7 @@
 					<msh:autoComplete property="socialGroup" label="Социальная группа" vocName="vocExtDispSocialGroup" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDisp" horizontalFill="true" fieldColSpan="3"/>
+					<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDispAll" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
         		<msh:row>
 					<msh:textField property="startDate" label="Дата начала"/>
@@ -198,17 +198,16 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 					callback: function(aResult) {
 						if (aResult.substring(0,1)=="1") {
 							if (!confirm("ВНИМАНИЕ!\n"+aResult.substring(1)+".\nВы хотите продолжить?")){
-								document.getElementById('submitButton').disabled=false;
-								document.getElementById('submitButton').value='Создать';
-								return;
+								$('submitButton').disabled=false;
+								$('submitButton').value='Создать';
 							} else {
 								document.forms['extDisp_cardForm'].action=oldaction ;
 	    						document.forms['extDisp_cardForm'].submit();
 							}
 						} else if (aResult.substring(0,1)=="2") {
 							alert ("ВНИМАНИЕ!\n "+aResult.substring(1)+" . \nСоздание карты невозможно.");
-							document.getElementById('submitButton').disabled=false;
-							document.getElementById('submitButton').value='Создать';
+							$('submitButton').disabled=false;
+							$('submitButton').value='Создать';
 						} else {
 							document.forms['extDisp_cardForm'].action=oldaction ;
     						document.forms['extDisp_cardForm'].submit();
@@ -222,21 +221,15 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     			callback: function (aResult) {
     				if (aResult=='0') {
     					alert ("Данный вид ДД оказывается только прикрепленному населению,"+
-    							"\nпо данным последней проверке ФОМС пациент не прикреплен."+
-    							"\nСоздание карты невозможно");
+    							" по данным последней проверке ФОМС пациент не прикреплен."+
+    							" Создание карты невозможно");
     					if (r=='1') {
 	    					document.getElementById('submitButton').disabled=false;
 							document.getElementById('submitButton').value='Создать';
     					}
+    				} else if (r=='1') {
+    					checkDisp($('finishDate').value);
     				}
-    				else {
-    					if (r=='1') {
-    						checkDisp($('finishDate').value);
-    						
-    					}
-    					
-    				} 
-    					
     			}
     		});
     	}
@@ -261,9 +254,10 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		
 		<script type="text/javascript">
     	function updateAge() {
-    		PatientService.getAgeForDisp($('patient').value, $('finishDate').value, {
+			ExtDispService.getAgeForDisp($('patient').value, $('finishDate').value, null, {
         		callback: function(aResult) {
-       				$('ageReadOnly').value=aResult ;
+        			aResult = JSON.parse(aResult);
+       				$('ageReadOnly').value=aResult.ageGroup ;
         		}
         	});
     	}
@@ -282,20 +276,16 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		<script type="text/javascript">
     	function DoDispCardNotReal() {
 
-    		if(document.getElementById('notPaid').checked==true)
-    		{ alert("Карта уже отмечена как недействительная!")} 
-    		else{
-		document.getElementById('notPaid').checked = true;
-		document.getElementById('isNoOmc').checked = true;
-		ExtDispService.dispCardNotReal($('id').value,{
-		callback: function (aResult) {
-			if(aResult=='1'){
-				alert("Карта не найдена!")}
-			else
-			{		
-			alert("Карта отмечена как недействительная")
-			}
-			}});
+    		if(document.getElementById('notPaid').checked==true) {
+    			alert("Карта уже отмечена как недействительная!")
+    		} else {
+				document.getElementById('notPaid').checked = true;
+				document.getElementById('isNoOmc').checked = true;
+				ExtDispService.dispCardNotReal($('id').value,{
+				callback: function (aResult) {
+					alert(aResult==='1' ? "Карта не найдена!" : "Карта отмечена как недействительная");
+				}
+    			});
     		}
 	}
 		</script>

@@ -10,8 +10,7 @@ function printBarcodeByPrescription(aCtx, aParams){
 	return map;
 }
 
-function toBarcode(barcode)
-{
+function toBarcode(barcode) {
 	var one = parseInt(barcode.slice(0, 1));
 	var two = parseInt(barcode.slice(1, 2));
 	var three = parseInt(barcode.slice(2, 3));
@@ -36,21 +35,13 @@ function toBarcode(barcode)
 			}
 		}
 	}
-	
-	//inta[0] = "123";
-	//throw inta[0];
-	//recordChar(barcode+"",28,"barcode.barcode") ;
-
-	var resultString = "!"+one+two+three+four+"-"+inta[0]+inta[1]+inta[2]+inta[3]+"!";
-	return resultString;
-	//throw resultString;
-	
+	return "!" + one + two + three + four + "-" + inta[0] + inta[1] + inta[2] + inta[3] + "!";
 }
+
 function recordChar(aStr,aCnt,aKey) {
 	if (aStr==null) aStr="" ;
 	map.put (aKey, aStr);
 	aStr=(""+aStr).toUpperCase() ;
-	//aStr=aStr;
 	for (var i=0;i<aStr.length; i++) {
 		map.put(aKey+(i+1),aStr.substring(i,i+1)) ;
 	}
@@ -449,7 +440,8 @@ function printGroup3NativeQuery(aCtx,aParams) {
             ++cntBegin ;
            if (isupdate) {
                     var print_id = printSql.replace(":id",""+obj[printId-1]) ;
-                    aCtx.manager.createNativeQuery(print_id).executeUpdate() ;
+                    if (!isNaN(print_id))
+                    	aCtx.manager.createNativeQuery(print_id).executeUpdate() ;
             }
             
             var isEquals = false ;
@@ -502,7 +494,7 @@ function printNativeQuery(aCtx,aParams) {
 	var retAll = new java.util.ArrayList() ;
 	var parAll = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 	var oldFieldIdUniq="" ;
-	var isUniqSn = fieldIdUniq<1?false:true ;
+	var isUniqSn = fieldIdUniq >= 1 ;
 	for (var i=0; i < list.size(); i++) {
 		var obj = list.get(i) ;
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;

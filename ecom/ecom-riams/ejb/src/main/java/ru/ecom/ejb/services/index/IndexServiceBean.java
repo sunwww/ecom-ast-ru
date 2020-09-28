@@ -68,7 +68,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 
 	public IndexServiceBean() throws NamingException, SQLException,
 			NoSuchMethodException {
-/*
+
 		DataSource dataSource = findDataSource();
 		Connection con = dataSource.getConnection();
 		try {
@@ -84,7 +84,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 			}
 		} finally {
 			con.close();
-		} */
+		}
 	}
 
 	private DataSource findDataSource() throws NamingException {
@@ -146,7 +146,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 	private void createIndex(Class aEntityClass, String aTableName,
 			AIndex aIndex, Statement aStatement, HashSet<String> indexes)
 			throws NoSuchMethodException {
-		if (!(aIndex.properties() != null && aIndex.properties().length == 1 && aIndex
+		if (!(aIndex.properties().length == 1 && aIndex
 				.properties()[0].equalsIgnoreCase("dtype"))) {
 			createIndex(aEntityClass, aTableName, aIndex, aStatement,
 					canCreateDtype(aEntityClass), indexes);
@@ -227,7 +227,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 //							.indexOf("Field not") >= 0))) {
 //				LOG.error(query, e);
 //			}
-			LOG.error(m);
+			LOG.error(m+" : "+query.toString());
 		}
 	}
 
@@ -243,8 +243,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 			AttributeOverride over = (AttributeOverride) aEntityClass
 					.getAnnotation(AttributeOverride.class);
 			if (aProperty.equals(over.name())) {
-				if (over.column() != null
-						&& !StringUtil.isNullOrEmpty(over.column().name())) {
+				if (!StringUtil.isNullOrEmpty(over.column().name())) {
 					return over.column().name();
 				}
 			}

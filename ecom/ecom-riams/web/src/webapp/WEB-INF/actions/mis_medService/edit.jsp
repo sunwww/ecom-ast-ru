@@ -8,22 +8,23 @@
 
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="mis_medService" />
-      <tags:medserviceTemplatesCopy name="medserviceTemplatesCopy" />
-    <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Медицинская услуга">
-      <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="e2054544-85-a21c-3bb9b4569efc">
+      <tags:medserviceInfoCopy name="medserviceInfoCopy" />
+    <msh:sideMenu title="Медицинская услуга">
+      <msh:ifFormTypeIsView formName="mis_medServiceForm">
         <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medService" name="Изменить" roles="/Policy/Mis/MedService/Edit" />
-      </msh:ifFormTypeIsView>
-      <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm" guid="a6802286-1d60-46ea-b7f4-f588331a09f7">
+            </msh:ifFormTypeIsView>
+      <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm">
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_medService" name="Удалить" roles="/Policy/Mis/MedService/Delete" />
+        <msh:sideLink params="" action="/javascript:showmedserviceInfoCopy(${param.id },3)" name="Создать дубль" title="Создать дубль этой услуги" roles="/Policy/Mis/MedService/Create" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
-    <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm" guid="8db06246-c49c-496a-bb1f-2de391e40631">
-      <msh:sideMenu title="Добавить" guid="adding">
+    <msh:ifFormTypeAreViewOrEdit formName="mis_medServiceForm">
+      <msh:sideMenu title="Добавить">
         <msh:sideLink action="/entityParentPrepareCreate-mis_medService_workFunction" name="Прикрепление раб.функции" params="id" roles="/Policy/Mis/MedService/VocWorkFunction/Create" />
         <msh:sideLink action="/entityParentPrepareCreate-mis_medService" name="Категорию" params="id" roles="/Policy/Mis/MedService/Create"  />
         <msh:sideLink roles="/Policy/Diary/Template/Create" params="id" action="/entityParentPrepareCreate-diary_template" name="Шаблон заключения" title="Добавить шаблон заключения"  />
       </msh:sideMenu>
-      <msh:sideMenu title="Дополнительно" guid="9e0388c8-2666-4d66-b865-419c53ef9f89">
+      <msh:sideMenu title="Дополнительно">
         <tags:voc_menu currentAction="medService" />
       </msh:sideMenu>
       
@@ -34,29 +35,31 @@
     <!-- 
     	  - Медицинских услуг
     	  -->
-    <msh:form action="/entityParentSaveGoView-mis_medService.do" defaultField="vocMedService" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
-      <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
-      <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
-      <msh:hidden property="parent" guid="bd32944-4587-a963-a09db2b93caf" />
-      <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="20% 30%">
-        <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
-          <msh:autoComplete vocName="vocMedService" property="vocMedService" label="Услуга" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f" fieldColSpan="3" />
+    <msh:form action="/entityParentSaveGoView-mis_medService.do" defaultField="vocMedService">
+      <msh:hidden property="id"/>
+      <msh:hidden property="saveType"/>
+      <msh:panel colsWidth="20% 30%">
+          <msh:row>
+              <msh:autoComplete vocName="medServiceGroupAll" property="parent" label="Родитель" horizontalFill="true" fieldColSpan="3" />
+          </msh:row>
+        <msh:row>
+          <msh:autoComplete vocName="vocMedService" property="vocMedService" label="Услуга" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
-        <msh:row guid="1d32ce-a421709f4470">
+        <msh:row>
           <msh:autoComplete vocName="vocServiceType" property="serviceType" label="Тип услуги" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row>
         	<msh:autoComplete parentAutocomplete="serviceType" vocName="vocServiceSubType" property="serviceSubType" label="Подтип" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
-        <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
+        <msh:row>
           <msh:textField property="code" label="Код"  horizontalFill="true" />
           <msh:textField property="additionCode" label="Код доп."   horizontalFill="true" />
         </msh:row>
         <msh:row>
         	<msh:textField property="uet" label="УЕТ"/>
         </msh:row>
-        <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
-          <msh:textField property="name" label="Наименование"  guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" fieldColSpan="3"/>
+        <msh:row>
+          <msh:textField property="name" label="Наименование" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
           <msh:textField property="shortName" label="Короткое наим." horizontalFill="true" fieldColSpan="3"/>
@@ -84,6 +87,15 @@
         <msh:row>
         	<msh:checkBox property="isAbortRequired" label="Обязательно указывать тип аборта при создании операции" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
+      <msh:row>
+          <msh:checkBox property="isShowSiteAsDefault" label="Отображать на сайте как услугу по умолчанию у специалиста" fieldColSpan="3" horizontalFill="true"/>
+      </msh:row>
+      <msh:row>
+          <msh:checkBox property="printCodeLabReestr" label="Отображать код услуги при печати в реестре назначений для лаборатории" fieldColSpan="3" horizontalFill="true"/>
+      </msh:row>
+      <msh:row>
+          <msh:autoComplete property="vocColorIdentity" label="Браслет"  horizontalFill="true" vocName="vocColorIdentityPatientWithPat"/>
+      </msh:row>
         <msh:row>
         	<msh:separator label="Услуга может оказываться:" colSpan="4"/>
         </msh:row>
@@ -102,14 +114,14 @@
          	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
          	<msh:textField property="createDate" label="Дата создания" viewOnlyField="true"/>
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="2" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
+        <msh:submitCancelButtonsRow colSpan="2"/>
       </msh:panel>
     </msh:form>
       <msh:ifFormTypeIsView formName="mis_medServiceForm">
     <msh:ifInRole roles="/Policy/Mis/MedService/VocWorkFunction/View">
     	<msh:section createRoles="/Policy/Mis/MedService/VocWorkFunction/Create"
     		createUrl="entityParentPrepareCreate-mis_medService_workFunction.do?id=${param.id}"
-    		title="Прикрепление к рабочим функциям по отделениям" >
+    		title="Прикрепление к рабочим функциям по отделениям <a href='javascript:void(0)' onclick='showmedserviceInfoCopy(${param.id },2)'> Копировать в услугу</a>" >
     	<ecom:webQuery name="workFunc" nativeSql="
     	select wfs.id as wfsid,vwf.name as vwfname,lpu.name as lpuname
     	,vbt.name as vbtname,vbst.name as vbstname
@@ -146,12 +158,12 @@
     	
     	</msh:section>
     </msh:ifInRole>
-    <msh:ifInRole roles="/Policy/Diary/Template/View" guid="3a4d6eb2-8dac-420a-9dcf-4f47584d9d61">
-        <msh:section title="Шаблоны заключений <a href='javascript:void(0)' onclick='showmedserviceTemplatesCopy(${param.id })'> Копировать в услугу</a>" createRoles="/Policy/Diary/Template/Create" createUrl="entityParentPrepareCreate-diary_template.do?id=${param.id}">
-          <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm" guid="templates" />
-          <msh:table name="templates" action="diary_templateView.do" idField="id" guid="16cdff9b--8997-eebc80ecc49c">
-            <msh:tableColumn property="title" columnName="Заголовок" guid="2fd022ea-59b0-4cc9a3ddc91f" />
-            <msh:tableColumn columnName="Информация" identificator="false" property="information" guid="0c047b7-ae6d-89e52e73b2e5" />
+    <msh:ifInRole roles="/Policy/Diary/Template/View">
+        <msh:section title="Шаблоны заключений <a href='javascript:void(0)' onclick='showmedserviceInfoCopy(${param.id },1)'> Копировать в услугу</a>" createRoles="/Policy/Diary/Template/Create" createUrl="entityParentPrepareCreate-diary_template.do?id=${param.id}">
+          <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm"/>
+          <msh:table name="templates" action="diary_templateView.do" idField="id">
+            <msh:tableColumn property="title" columnName="Заголовок"/>
+            <msh:tableColumn columnName="Информация" identificator="false" property="information"/>
           </msh:table>
         </msh:section>
     </msh:ifInRole>
@@ -181,12 +193,33 @@
 				</msh:table>
 			</msh:section>
 		</msh:ifInRole>
-		
+
+          <msh:ifInRole roles="/Policy/Mis/MedService/View">
+              <msh:section title="Услуги, входящие в данную комплексную программу"
+                           createUrl="entityParentPrepareCreate-mis_medServiceComplexLink.do?id=${param.id}">
+                  <ecom:webQuery name="innerComplex"
+                                 nativeSql="select cmpl.id,ms.code,ms.name,cmpl.countinnermedservice
+                                  from medservice ms
+                                  left join MedServiceComplexLink cmpl on ms.id=cmpl.innermedservice_id
+                                  where cmpl.complexmedservice_id =${param.id}"
+                  />
+                  <msh:table name="innerComplex"
+                             action="entityParentView-mis_medServiceComplexLink.do" idField="1"
+                             editUrl="entityParentEdit-mis_medServiceComplexLink.do"
+                             deleteUrl="entityParentDeleteGoParentView-mis_medServiceComplexLink.do">
+                      <msh:tableColumn columnName="#" property="sn"/>
+                      <msh:tableColumn columnName="Код" property="2"/>
+                      <msh:tableColumn columnName="Услуга" property="3"/>
+                      <msh:tableColumn columnName="Кол-во" property="4"/>
+                  </msh:table>
+              </msh:section>
+          </msh:ifInRole>
+
       </msh:ifFormTypeIsView>
     
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Voc" beginForm="mis_medServiceForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
+    <ecom:titleTrail mainMenu="Voc" beginForm="mis_medServiceForm"/>
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsView formName="mis_medServiceForm">

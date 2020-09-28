@@ -12,7 +12,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
  * Журнал обращений
  * @author stkacheva
  */
-public class AdmissionJournalForm extends BaseValidatorForm{
+public class AdmissionJournalForm extends BaseValidatorForm {
 	/** Дата начала периода */
 	@Comment("Дата начала периода") 
 	@Required @DateString @DoDateString
@@ -451,4 +451,30 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Тип */
 	private Long theType;
+
+	/** Результат госпитализации */
+	@Comment("Результат госпитализации")
+	public Long getHospitalizationResult() {
+		return theHospitalizationResult;
+	}
+
+	public void setHospitalizationResult(Long aHospitalizationResult) {
+		theHospitalizationResult = aHospitalizationResult;
+	}
+
+	/** Результат госпитализации */
+	private Long theHospitalizationResult;
+
+	/** Исход */
+	@Comment("Исход")
+	public Long getHospitalizationOutcome() {
+		return theHospitalizationOutcome;
+	}
+
+	public void setHospitalizationOutcome(Long aHospitalizationOutcome) {
+		theHospitalizationOutcome = aHospitalizationOutcome;
+	}
+
+	/** Исход */
+	private Long theHospitalizationOutcome;
 }

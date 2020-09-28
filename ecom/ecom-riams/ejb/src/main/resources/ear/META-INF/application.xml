@@ -6,7 +6,5 @@
   <module>
     <ejb>riams-ejb.jar</ejb>
   </module>
-
-
 </application>
 

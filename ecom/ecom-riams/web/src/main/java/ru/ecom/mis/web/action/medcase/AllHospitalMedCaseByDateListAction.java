@@ -1,14 +1,8 @@
 package ru.ecom.mis.web.action.medcase;
 
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.IParentEntityFormService;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
@@ -18,6 +12,10 @@ import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.decorator.ITableDecorator;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 
 public class AllHospitalMedCaseByDateListAction extends ListAction {
 	@Override
@@ -31,13 +29,11 @@ public class AllHospitalMedCaseByDateListAction extends ListAction {
 	     //   String dateSearch = aRequest.getParameter("dateSearch") ;
 	        Long id ;
 	        long sslId = -1 ;
-	        System.out.println("sslid="+ssl_id) ;
 	        if (!StringUtil.isNullOrEmpty(ssl_id)){
 	        	//sslId=Long.valueOf(ssl_id);
 	        	sslId = Long.parseLong(ssl_id);
-	        	IHospitalMedCaseService service = (IHospitalMedCaseService)Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
+	        	IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
 	        	id = service.getPatient(sslId) ;
-	        	System.out.println("date = "+date) ;
 	        } else {
 	            if(StringUtil.isNullOrEmpty(date)) {
 	            	throw new IllegalArgumentException("Нет параметра date") ;
@@ -59,7 +55,7 @@ public class AllHospitalMedCaseByDateListAction extends ListAction {
 			aRequest.setAttribute("list"
 					, isMap ? ru.ecom.web.actions.entity.ListAction.transormCollection(list, form.getClass()) : list);
 	        aRequest.setAttribute("decorator", getDecorator(sslId));
-	        return aMapping.findForward("success") ;
+	        return aMapping.findForward(SUCCESS) ;
 	    }
 		
     private ITableDecorator getDecorator(final long aSlsId) {
@@ -71,7 +67,7 @@ public class AllHospitalMedCaseByDateListAction extends ListAction {
         	}
 
         	public String getRowCssClass(Object aRow) {
-        		StringBuffer style = new StringBuffer();
+        		StringBuilder style = new StringBuilder();
         		HospitalMedCaseForm form = (HospitalMedCaseForm) aRow ;
         		if(form.getIsDeniedHospitalizating()) style.append("deniedHospitalizating") ;
         		if (form.getId()==aSlsId) style.append( " current") ; 

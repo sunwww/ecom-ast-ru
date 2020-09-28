@@ -1,14 +1,10 @@
-package ru.ecom.poly.web.action.medcard; 
+package ru.ecom.poly.web.action.medcard;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.IParentEntityFormService;
 import ru.ecom.poly.ejb.form.MedcardForm;
@@ -18,7 +14,10 @@ import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 
-public class  CreateMedcard extends AbstractEntityAction {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class CreateMedcard extends AbstractEntityAction {
 	  
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 
@@ -37,6 +36,6 @@ public class  CreateMedcard extends AbstractEntityAction {
 		IMedcardService mdservice = Injection.find(aRequest).getService(IMedcardService.class);
 		mf.setNumber(mdservice.getNewMedcardNumber());
 
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 }

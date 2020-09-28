@@ -12,10 +12,10 @@
 		<tiles:put name="side" type="string">
 		<msh:ifFormTypeAreViewOrEdit formName="directory_departmentForm">
 			<msh:sideMenu title="Управление">
-				<msh:sideLink guid="sideLinkCreate" key="ALT+2" params="id"
+				<msh:sideLink key="ALT+2" params="id"
 					action="/entityPrepareCreate-directory_department" name="Добавить"
 					roles="/Policy/Mis/Directory/Department" />
-				<msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?"
+				<msh:sideLink key="ALT+DEL" confirm="Удалить?"
 					params="id"
 					action="/entityParentDeleteGoParentView-directory_department"
 					name="Удалить" roles="/Policy/Mis/Directory/Department" />

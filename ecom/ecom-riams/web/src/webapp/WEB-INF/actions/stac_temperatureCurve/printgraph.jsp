@@ -5,7 +5,7 @@
 <tiles:insert page="/WEB-INF/tiles/printGraphLayouts.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Температурные листы" guid="c951cf449-0ed2-489d-9163-fa3" />
+    <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Температурные листы" />
 		<div class='titleTrail'>
 			<span> Температурный лист </span>
 		</div>    

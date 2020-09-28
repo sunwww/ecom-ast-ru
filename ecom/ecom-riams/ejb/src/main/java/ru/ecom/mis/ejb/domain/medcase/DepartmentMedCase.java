@@ -10,13 +10,16 @@ import ru.ecom.mis.ejb.domain.lpu.HospitalBed;
 import ru.ecom.mis.ejb.domain.lpu.HospitalRoom;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
+import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 @Comment("Случай лечения в отделении")
 @Entity
-@Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(properties="bedNumber", table="MedCase")
 	,@AIndex(properties="department", table="MedCase")
@@ -139,9 +142,10 @@ public class DepartmentMedCase extends HospitalMedCase {
 	private String theMotherWard;
 	@Transient
 	public String getInfo() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("СЛО ").append(getId()).append(" номер стат.карты СЛС ").append(getStatCardBySLS()) ;
-		return ret.toString() ;
+		Patient patient = getPatient();
+		return "Пациент " +
+				patient.getLastname()+" "+ patient.getFirstname()
+				+" " +(patient.getMiddlename()!=null ? patient.getMiddlename():"")+ " номер стат.карты " + getStatCardBySLS();
 	}
 	/** Стандарт */
 	@Comment("Стандарт")

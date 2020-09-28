@@ -24,9 +24,7 @@ import java.sql.Time;
 @Entity
 @Comment("Рабочая функция")
 @AIndexes({
-	//@AIndex(properties="archival")
 	@AIndex(properties="workFunction")
-	//,@AIndex(properties={"archival","workFunction"})
 	,@AIndex(properties={"code"})
 })
 @Table(schema="SQLUser")
@@ -76,6 +74,7 @@ abstract public class WorkFunction extends BaseEntity {
 	public String getWorkFunctionInfo() {
 		return getName() ;
 	}
+
 	@Transient @Comment("Информация по коду ОМС врача")
 	public String getOmcCodeInfo() {
 		String ret="" ;
@@ -276,7 +275,7 @@ abstract public class WorkFunction extends BaseEntity {
 
 	/** Категория специалиста */
 	private VocAcademicDegree theDegrees;
-	
+
 	/** Категория специалиста */
 	@Comment("Категория специалиста")
 	@OneToOne
@@ -325,26 +324,27 @@ abstract public class WorkFunction extends BaseEntity {
 	/** Доверенность */
 	private Attorney theAttorney;
 
-	private String promedCode_workstaff;
 	@Comment("Код рабочего места в промеде")
-	public String getPromedCode_workstaff() {
-		return promedCode_workstaff;
+	@Column(name="promedCode_workstaff")
+	public String getPromedCodeWorkstaff() {
+		return thePromedCodeWorkstaff;
 	}
-	public void setPromedCode_workstaff(String promedCode_workstaff) {
-		this.promedCode_workstaff = promedCode_workstaff;
+	public void setPromedCodeWorkstaff(String aPromedCodeWorkstaff) {
+		thePromedCodeWorkstaff = aPromedCodeWorkstaff;
 	}
+	private String thePromedCodeWorkstaff;
 
-	private String promedCode_lpusection;
-	@Comment("Код рабочего места в промеде")
-	public String getPromedCode_lpusection() {
-		return promedCode_lpusection;
+
+	@Comment("Код отделения в промеде")
+	@Column(name="promedCode_lpusection")
+	public String getPromedCodeLpuSection() {
+		return thePromedCodeLpuSection;
 	}
-	public void setPromedCode_lpusection(String promedCode_lpusection) {
-		this.promedCode_lpusection = promedCode_lpusection;
-	}
+	public void setPromedCodeLpuSection(String aPromedCodeLpuSection) {thePromedCodeLpuSection = aPromedCodeLpuSection;}
+	private String thePromedCodeLpuSection;
+
 	/** Разрешено записывать на дату без указания времени */
 	@Comment("Разрешено записывать на дату без указания времени")
-	@Column(nullable=false, columnDefinition="boolean default false")
 	public Boolean getIsDirectionNoTime() {return theIsDirectionNoTime;}
 	public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {theIsDirectionNoTime = aIsDirectionNoTime;}
 	/** Разрешено записывать на дату без указания времени */

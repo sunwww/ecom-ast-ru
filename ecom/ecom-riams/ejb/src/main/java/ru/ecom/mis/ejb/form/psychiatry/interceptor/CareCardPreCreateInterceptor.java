@@ -20,7 +20,7 @@ public class CareCardPreCreateInterceptor implements IParentFormInterceptor, IFo
 		String sql = "select number from Medcard where person_id="+aParentId+" order by id desc" ;
 		List<Object> list = aContext.getEntityManager().createNativeQuery(sql)
 				.setMaxResults(1).getResultList() ;
-		if (list.size()>0 && list.get(0)!=null) {
+		if (!list.isEmpty() && list.get(0)!=null) {
 			form.setCardNumber(""+list.get(0)) ;
 			
 		} else {
@@ -34,7 +34,7 @@ public class CareCardPreCreateInterceptor implements IParentFormInterceptor, IFo
 	}
 
 	public void intercept(IEntityForm aForm, Object aEntity, EntityManager aManager) {
-		intercept(aForm, aEntity, null, null);
+		//intercept(aForm, aEntity, null, null); //Ибо будет NPE!
 		
 	}
 }

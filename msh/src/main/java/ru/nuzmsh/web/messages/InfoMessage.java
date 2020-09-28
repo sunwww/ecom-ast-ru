@@ -12,7 +12,14 @@ public class InfoMessage {
     private static final String ATTRIBUTE = InfoMessage.class.toString() ;
 
     public InfoMessage(ServletRequest aRequest, String aMessage) {
+        theMessage = aMessage;
+        this.isAutoHide = true;
+       new InfoMessage(aRequest,aMessage,true);
+    }
+
+    public InfoMessage(ServletRequest aRequest, String aMessage, boolean isAutoHide) {
         theMessage = aMessage ;
+        this.isAutoHide = isAutoHide;
         aRequest.setAttribute(ATTRIBUTE, this);
         if(aRequest instanceof HttpServletRequest) {
             HttpSession session = ((HttpServletRequest)aRequest).getSession();
@@ -29,8 +36,6 @@ public class InfoMessage {
             HttpSession session = request.getSession();
             if(session!=null) {
                 message = (InfoMessage) session.getAttribute(ATTRIBUTE) ;
-            } else {
-                message = null ;
             }
         }
         return message;
@@ -44,5 +49,10 @@ public class InfoMessage {
         return theMessage ;
     }
 
+    public Boolean getAutoHide() {
+        return isAutoHide ;
+    }
+
     private final String theMessage ;
+    private final boolean isAutoHide;
 }

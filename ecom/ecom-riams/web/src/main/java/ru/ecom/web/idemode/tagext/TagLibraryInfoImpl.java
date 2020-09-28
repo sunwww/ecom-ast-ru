@@ -26,6 +26,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	}
 
 
-	private ArrayList<TagInfo> theInfos = new ArrayList<TagInfo>() ;
+	private ArrayList<TagInfo> theInfos = new ArrayList<>() ;
 	
 }

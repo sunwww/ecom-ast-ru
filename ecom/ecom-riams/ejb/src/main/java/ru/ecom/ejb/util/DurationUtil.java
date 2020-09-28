@@ -6,6 +6,12 @@ import java.util.Date;
 
 public class DurationUtil {
 
+	/**
+	 *
+	 * @param aFrom дата начала
+	 * @param aTo дата окончания
+	 * @return Число дней длительности
+	 */
 	public static String getDuration(Date aFrom, Date aTo) {
 		if(aFrom==null) return "Нет даты начала" ;
 		if(aTo==null) return "Нет даты окончания" ;
@@ -18,8 +24,16 @@ public class DurationUtil {
 		return String.valueOf(1 +( (finish-start) / msecinday));
 		
 	}
-	
-	
+
+
+	/**
+	 *
+	 * @param aFrom дата начала
+	 * @param aTo дата окончания
+	 * @param aFull признак - дата окончания может быть пустой (расчет будет на тек. дату)
+	 * @param aDn признак - добавить день
+	 * @return длительность случая в днях
+	 */
 	public static String getDurationMedCase(Date aFrom, Date aTo, int aFull, int aDn ) {
 		String add ="";
 		if(aFrom==null) return aFull>0?"Нет даты начала":"" ;
@@ -45,33 +59,19 @@ public class DurationUtil {
 		} else {
 			if (aDn>0) durat=durat+1 ;
 		}
-		return new StringBuilder().append(durat).append(add).toString();
+		return durat + add;
 	}
 	
 	public static String getDurationMedCase(Date aFrom, Date aTo, int aFull ) {
-		String add ="";
-		if(aFrom==null) return aFull>0?"Нет даты начала":"" ;
-		if(aTo==null) {
-			if(aFull>0) {
-				add = " (на текущий момент)" ;
-				aTo = new Date() ;
-			} else {
-				return "" ;
-			}
-			
-		}
-		long start = aFrom.getTime();
-		long finish = aTo.getTime();
-		if(finish<start) return aFull>0?"Дата окончания меньше даты начала":"";
-		
-		final int msecinday = 1000 * 60 *  60   * 24 ;
-		final int min = 1000 * 60 * 24 ;
-		long durat = (finish-start) / msecinday ;
-		if (((finish-start) / min)%60>55) ++durat ;
-		if (durat<1) durat=1;
-		return new StringBuilder().append(durat).append(add).toString();
+		return getDurationMedCase(aFrom,aTo,aFull,0);
 	}
-	
+
+	/**
+	 *
+	 * @param aFrom Дата начала
+	 * @param aTo Дата окончания
+	 * @return строку вида дата.начала - дата.окончания в формате дд.мм.гггг
+	 */
 	public static String getDurationFull(Date aFrom, Date aTo) {
 		StringBuilder ret = new StringBuilder() ;
 		if(aFrom==null) {

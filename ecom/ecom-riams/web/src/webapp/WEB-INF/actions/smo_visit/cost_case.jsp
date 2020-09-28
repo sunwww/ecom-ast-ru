@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Стоимость поликлиническго обслуживания (СПО)" />
+    <msh:title mainMenu="StacJournal" title="Стоимость поликлиническго обслуживания (СПО)" />
   </tiles:put>
   <tiles:put name="side" type="string">
    
@@ -89,7 +89,7 @@ select
       (slo.parent_id='${param.id}' or slo.id='${param.id}')
       and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT' and upper(slo.dtype)!='SHORTMEDCASE' 
       "/>
-    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
+    <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Наименование услуги" property="1" />
       <msh:tableColumn columnName="Кол-во" property="2" />

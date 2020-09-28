@@ -2,7 +2,6 @@ package ru.ecom.expert2.form.voc.federal;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV025;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;

@@ -105,7 +105,7 @@ public class StringUtil {
 			int beginIndex=0;
 			int endIndex=0;
 			boolean end=false;
-			while(end==false){
+			while(!end){
 				i = i+1;
 				if(aPosition==i) {
 					endIndex = aString.indexOf(aDelimeter, beginIndex+1);
@@ -132,12 +132,10 @@ public class StringUtil {
 		return res;
 	}
 	public static boolean isTrue(String aValue){
-		boolean ret = false;
-		if (aValue!=null) ret = aValue.equals("1") ? true : false;
-		return ret;
+		return "1".equals(aValue);
 	}
 	public static boolean isTrue(int aValue){
-		return aValue>0? true : false;
+		return aValue>0;
 	}
 	public static boolean isTrue(boolean aValue){
 		return aValue;

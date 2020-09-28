@@ -1,15 +1,12 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
+import ru.nuzmsh.forms.validator.BaseValidatorForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-import ru.nuzmsh.forms.validator.BaseValidatorForm;
+import java.io.IOException;
 
 /**
  *
@@ -41,7 +38,7 @@ public class IfFormTypeIsViewTag extends AbstractGuidSimpleSupportTag {
         
         HttpServletRequest request = (HttpServletRequest) ctx.getRequest() ;
         Object oform = request.getAttribute(theFormName) ;
-        if(oform!=null && oform instanceof BaseValidatorForm ) {
+        if(oform instanceof BaseValidatorForm ) {
             BaseValidatorForm form = (BaseValidatorForm) oform ;
             if(checkForm(form)) {
             	if(getJspBody()==null) {

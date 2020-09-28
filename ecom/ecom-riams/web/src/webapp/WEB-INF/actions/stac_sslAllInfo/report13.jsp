@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -9,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="13 форма"/>
+    <msh:title mainMenu="StacJournal" title="13 форма"/>
   </tiles:put>
   <tiles:put name="side" type="string">
 
@@ -31,13 +30,13 @@
   	} else {
   		
   %>
-    <msh:form action="/stac_report_13.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_report_13.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="s" id="s" value="HospitalPrintReport" />
     <input type="hidden" name="m" id="m" value="printReport13" />
     <input type="hidden" name="id" id="id" value=""/>
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <td class="label" title="Просмотр данных (typeAbort)" colspan="1"><label for="typeAbortName" id="typeAbortLabel">Отобразить:</label></td>
@@ -48,9 +47,9 @@
         	<input type="radio" name="typeAbort" value="2"  >  22-27 недель
         </td>
        </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+      <msh:row>
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" value="Найти" />
           </td>
@@ -111,15 +110,12 @@
     
     String date = request.getParameter("dateBegin") ;
     String dateEnd = request.getParameter("dateEnd") ;
-    //String id = (String)request.getParameter("id") ;
     String period = request.getParameter("period") ;
     String strcode =request.getParameter("strcode") ;
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
-    
-    String view = (String)request.getAttribute("typeView") ;
     
     if (date!=null && !date.equals("")) {
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
@@ -202,9 +198,9 @@ sls.dtype='HospitalMedCase' and sls.dateFinish  between to_date('${dateBegin}','
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
 order by vrspt.strCode
 " />
-    <msh:table name="report13swod" 
+    <msh:table printToExcelButton="Сохранить в excel" name="report13swod"
     viewUrl="stac_report_13.do?typeAbort=${typeAbort}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_13.do?typeAbort=${typeAbort}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+     action="stac_report_13.do?typeAbort=${typeAbort}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1">
       <msh:tableColumn columnName="Наименование" property="2" />
       <msh:tableColumn columnName="№ строки" property="3" />
       <msh:tableColumn columnName="Код МКБ10" property="4" />
@@ -279,7 +275,7 @@ group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
 ,va.code ,va.name,vsp.name
 order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
     viewUrl="entityShortView-stac_surOperation.do" 
      action="entityView-stac_surOperation.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />

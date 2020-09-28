@@ -5,7 +5,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.ecs.Element;
 import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.input;
-import org.apache.ecs.xhtml.script;
 import org.apache.log4j.Logger;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.voc.VocAdditional;
@@ -172,10 +171,6 @@ public class AutoCompleteTag extends AbstractFieldTag {
             } else {
             	return getViewOnlyElement(name) ;
             }
-//                span s = new span(name);
-//                s.setClass("viewOnlyAutocomplete") ;
-//                return s ;
-            
         } else {
 
             StringBuilder styleClass = new StringBuilder("autocomplete");
@@ -190,27 +185,17 @@ public class AutoCompleteTag extends AbstractFieldTag {
                     styleClass.append(" required") ;
                 }
             } catch (Exception e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
-//            String horFill = getHorizontalFill() ? "horizontalFill" : "" ;
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.append(String.format("<input type='hidden' size='1'  name='%1$s' value='%2$s' id='%1$s'/>", getProperty(), id)) ;
-            sb.append(String.format(new StringBuilder().append("<input title='").append(vocname).append("' type='text' name='%1$sName' value='%2$s' id='%1$sName' size='%3$s' class='%4$s'/>").toString()
-                    , getProperty(), name, getSize()+"", styleClass)) ;
-
-            sb.append("<div id='"+divId+"'><span></span></div>") ;
             JavaScriptContext js = JavaScriptContext.getContext(pageContext, this) ;
-//            sb.append("$('"+getProperty()+"').focus = setFocusOnField('"+getProperty()+"Name') ;\n") ;
-            js.println(new StringBuilder().append("var ").append(autoc).append(" = new msh_autocomplete.Autocomplete() ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setUrl('simpleVocAutocomplete/").append(vocname).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setIdFieldId('").append(fieldId).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setNameFieldId('").append(nameId).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setDivId('").append(divId).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setVocKey('").append(vocname).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".setVocTitle('").append(getLabel()).append("') ;").toString()) ;
-            js.println(new StringBuilder().append(autoc).append(".build() ;").toString()) ;
+            js.println("var " + autoc + " = new msh_autocomplete.Autocomplete() ;") ;
+            js.println(autoc + ".setUrl('simpleVocAutocomplete/" + vocname + "') ;") ;
+            js.println(autoc + ".setIdFieldId('" + fieldId + "') ;") ;
+            js.println(autoc + ".setNameFieldId('" + nameId + "') ;") ;
+            js.println(autoc + ".setDivId('" + divId + "') ;") ;
+            js.println(autoc + ".setVocKey('" + vocname + "') ;") ;
+            js.println(autoc + ".setVocTitle('" + getLabel() + "') ;") ;
+            js.println(autoc + ".build() ;") ;
             
             if(!StringUtil.isNullOrEmpty(theParentId)) {
                 js.println(autoc,".setParentId('",getParentIdValue(pageContext),"') ;") ;
@@ -223,7 +208,11 @@ public class AutoCompleteTag extends AbstractFieldTag {
                 js.println(autoc,".setShowIdInName(true) ;") ;
             }
 
-            return new div(sb.toString()) ;
+            String sb = String.format("<input type='hidden' size='1'  name='%1$s' value='%2$s' id='%1$s'/>", getProperty(), id) +
+                    String.format("<input title='" + vocname + "' type='text' name='%1$sName' value='%2$s' id='%1$sName' size='%3$s' class='%4$s'/>"
+                            , getProperty(), name, getSize() + "", styleClass) +
+                    "<div id='" + divId + "'><span></span></div>";
+            return new div(sb) ;
         }
     }
 
@@ -282,52 +271,6 @@ public class AutoCompleteTag extends AbstractFieldTag {
         sb.append("</td></tr></table>") ;
         div d = new div(sb.toString());
         d.setClass("autocompleteSelect") ;
-        if(true) return d ;
-
-
-        // идентификатор
-        input hiddenField = new input();
-        hiddenField.setName(getProperty());
-        hiddenField.setValue(getFormattedValue());
-        hiddenField.setID(getProperty());
-        hiddenField.setType("hidden") ;
-
-        // название
-        input inputField = new input();
-        inputField.setName(getProperty()+"Name");
-        inputField.setID(getProperty()+"Name");
-        // inputField.setValue(getFormattedValue());
-        inputField.setType("text");
-        inputField.setTitle(getLabel() + getDataFieldName() +" "+vocname) ;
-        inputField.setSize(getSize()) ;
-        String styleClass = "form-autocomplete" ;
-        if(getHorizontalFill()) {
-            styleClass += " horizontalFilled" ;
-        }
-        inputField.setClass(styleClass) ;
-//        if(getHorizontalFill()) {
-//            inputField.setSize(50) ;
-//        }
-
-
-        //div d = new div();
-        d.addElement(hiddenField) ;
-
-
-
-        // showAutocomplete (aNameField, aIdField, aUrl)
-        script javaScript = new script(
-                String.format("showAutocomplete('%1$s', '%2$s', '%3$s') ;"
-                        , getProperty()
-                        , getUserInputFieldName()
-                        , "vocAutocomplete/"+vocname)
-        );
-        javaScript.setType("text/javascript") ;
-
-
-        d.addElement(javaScript) ;
-
-
         return d;
     }
 

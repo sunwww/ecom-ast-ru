@@ -1,9 +1,16 @@
 package ru.ecom.web.poly.actions.login;
 
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import ru.ecom.ejb.services.login.ILoginService;
+import ru.ecom.web.login.LoginErrorMessage;
+import ru.ecom.web.login.LoginForm;
+import ru.ecom.web.login.LoginInfo;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.web.util.StringSafeEncode;
 
 import javax.ejb.EJBAccessException;
 import javax.naming.CommunicationException;
@@ -11,26 +18,14 @@ import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-
-import ru.ecom.ejb.services.login.ILoginService;
-import ru.ecom.web.login.LoginErrorMessage;
-import ru.ecom.web.login.LoginForm;
-
-import ru.ecom.web.login.LoginInfo;
-import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.web.util.StringSafeEncode;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 public class LoginSaveAction extends LoginExitAction {
 
-    private final static Log LOG = LogFactory.getLog(LoginSaveAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private static final Logger LOG = Logger.getLogger(LoginSaveAction.class);
 
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -44,16 +39,11 @@ public class LoginSaveAction extends LoginExitAction {
         HttpSession session = aRequest.getSession(true) ;
         loginInfo.saveTo(session) ;
 
-        if (CAN_TRACE) LOG.trace("Сохранение в сесии " + loginInfo.getUsername());
         try {
-
             ILoginService service = Injection.find(aRequest).getService(ILoginService.class) ;
             if(service==null) throw new IllegalStateException("Невозможно получить сервис "+ILoginService.class.getSimpleName()) ;
-
             logLoginUserInvironment(aRequest) ;
-            
             Set<String> roles = service.getUserRoles() ;
-            
             if(roles==null) throw new NullPointerException("Нет ролей у пользователя roles==null") ;
             loginInfo.setUserRoles(service.getUserRoles());
 
@@ -91,9 +81,7 @@ public class LoginSaveAction extends LoginExitAction {
 
 
     public static String getHashPassword(String aUsername, String aPassword) {
-    	String hash = String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
-    	//System.out.println(hash) ;
-    	return hash;
+    	return String.valueOf(aPassword.hashCode() + aUsername.hashCode());
     }
 
 	private String getErrorMessage(Throwable aException) {

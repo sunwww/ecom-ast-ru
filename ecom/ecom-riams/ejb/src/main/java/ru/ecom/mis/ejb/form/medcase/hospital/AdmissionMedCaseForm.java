@@ -1,22 +1,13 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
@@ -44,6 +35,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 	@AEntityFormInterceptor(AdmissionSaveInterceptor.class)
 })
 public class AdmissionMedCaseForm extends HospitalMedCaseForm {
+
+	/** Предварительная госпитализация */
+	@Comment("Предварительная госпитализация")
+	public Long getPreHosp() {return thePreHosp;}
+	public void setPreHosp(Long aPreHosp) {thePreHosp = aPreHosp;}
+	/** Предварительная госпитализация */
+	private Long thePreHosp ;
+
 	/** Дата начала */
 	@Comment("Дата начала") 
 	@DateString @DoDateString 
@@ -169,8 +168,8 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 
 	///** Дата RW */
 	//@Comment("Дата RW")
-	//@DateString @DoDateString 
-	//@Persist 
+	//@DateString @DoDateString
+	//@Persist
 	//public String getRwDate() {return theRwDate;}
 	//public void setRwDate(String aRwDate) {theRwDate = aRwDate;}
 
@@ -330,6 +329,32 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	public Long getAttachedPolicyDmc() {return theAttachedPolicyDmc;}
 	public void setAttachedPolicyDmc(Long aAttachedPolicyDmc) {theAttachedPolicyDmc = aAttachedPolicyDmc;}
 
+	/** Была ли проведена идентификация пациента? */
+	@Comment("Была ли проведена идентификация пациента?")
+	@Persist
+	public Boolean getIsIdentified() { return theIsIdentified; }
+	public void setIsIdentified(Boolean aIsIdentified) { theIsIdentified = aIsIdentified; }
+
+	/** Дата идентификации */
+	@Comment("Дата идентификации")
+	@DateString @DoDateString
+	@Persist @MaxDateCurrent
+	public String getIdentDate() {return theIdentDate;	}
+	public void setIdentDate(String aIdentDate) {theIdentDate = aIdentDate;}
+
+	/** Время идентификации */
+	@Comment("Время идентификации")
+	@Persist
+	@DoTimeString @TimeString
+	public String getIdentTime() {return theIdentTime;	}
+	public void setIdentTime(String aIdentTime) {theIdentTime = aIdentTime;}
+
+	/** Кто провёл идентификацию */
+	@Comment("Кто провёл идентификацию")
+	@Persist
+	public String getIdentUsername() {return theIdentUsername;}
+	public void setIdentUsername(String aIdentUsername) {theIdentUsername = aIdentUsername;}
+
 	/** Прикрепленный полис ДМС */
 	private Long theAttachedPolicyDmc;
 	/** Прикрепленные полисы */
@@ -425,5 +450,14 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	private Integer theHeight;
 	/** Индекс массы тела */
 	private Double theIMT;
+
+	/** Была ли проведена идентификация пациента */
+	private Boolean theIsIdentified;
+	/** Дата идентификации */
+	private String theIdentDate;
+	/** Время идентификации */
+	private String theIdentTime;
+	/** Кто провёл идентификацию */
+	private String theIdentUsername;
 }
 

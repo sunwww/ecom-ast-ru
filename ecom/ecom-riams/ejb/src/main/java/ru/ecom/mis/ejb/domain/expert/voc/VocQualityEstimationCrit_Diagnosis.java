@@ -46,4 +46,23 @@ public class VocQualityEstimationCrit_Diagnosis extends BaseEntity {
 
     /** Диагноз */
     private VocIdc10 vocIdc10;
+
+    /** Относится ли к акушерскому обсервационному отделению? */
+    private Boolean theIsObserv;
+    public Boolean getIsObserv() {
+        return theIsObserv;
+    }
+    public void setIsObserv(Boolean aIsObserv) {
+        this.theIsObserv = aIsObserv;
+    }
+
+    /** Сопутствующий? */
+    private Boolean theIsConcomitant;
+    public Boolean getIsConcomitant() {
+        return theIsConcomitant;
+    }
+    public void setIsConcomitant(Boolean aIsConcomitant) {
+        this.theIsConcomitant = aIsConcomitant;
+    }
+
 }

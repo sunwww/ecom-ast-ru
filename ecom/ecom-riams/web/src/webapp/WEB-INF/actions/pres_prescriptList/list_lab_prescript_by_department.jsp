@@ -1,8 +1,8 @@
+<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@page import="java.util.Date"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -12,7 +12,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Забор биоматериала для лабораторных исследований" />
+    <msh:title mainMenu="LaboratoryJournal" title="Забор биоматериала для лабораторных исследований" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -38,8 +38,8 @@
   		request.setAttribute("endDate", endDate) ;
   	%>
   	  <msh:form action="/pres_journal_by_department.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+    <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
@@ -266,7 +266,7 @@
   		}
   		function removeService(aListPrescript, aMaterialId) {
   				PrescriptionService.intakeServiceRemove(aListPrescript, { 
-		            callback: function(aResult) {
+		            callback: function() {
 		            	window.document.location.reload();
 		            }
 				}); 

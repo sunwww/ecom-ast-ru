@@ -1,5 +1,5 @@
 
-function checkChildDoubles(aForm,aEntity, aCtx) {
+function checkChildDoubles(aForm,aEntity, aContext) {
 	var sql="select nb.id"+
 	" from newborn nb left join vocnewborn vnb on vnb.id=nb.child_id"+
 	" where nb.medcase_id ="+aForm.getMedCase()+" and nb.id!="+aEntity.getId();
@@ -11,13 +11,13 @@ function checkChildDoubles(aForm,aEntity, aCtx) {
 		error="Невозможно создать одноплодного ребенка, т.к. уже созданы новорожденные";
 	}
 	
-	var list =  aCtx.manager.createNativeQuery(sql).getResultList();
+	var list =  aContext.manager.createNativeQuery(sql).getResultList();
 	if (list.size()>0) {
 		throw error;
 	}
 }
 
-function checkBirthDate(aForm, aCtx) {
+function checkBirthDate(aForm, aContext) {
 	var currentDate = new java.util.Date();
 	var birthDateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.birthDate,aForm.birthTime);
 	if (birthDateTime.getTime()>currentDate.getTime()) {
@@ -26,7 +26,7 @@ function checkBirthDate(aForm, aCtx) {
 	var sql = "select case when slo.datestart<to_date('"+aForm.getBirthDate()+"','dd.MM.yyyy') then '1'"+
 		" when slo.datestart=to_date('"+aForm.getBirthDate()+"','dd.MM.yyyy') and slo.entrancetime<=cast('"+aForm.getBirthTime()+":00' as time) then '1' else '0' end" +
 		" from medcase slo where slo.id="+aForm.getMedCase();
-	var res = aCtx.manager.createNativeQuery(sql).getSingleResult();
+	var res = aContext.manager.createNativeQuery(sql).getSingleResult();
 	if (res!=null&&""+res=="1") {		
 	} else {
 		throw "Дата рождения не может быть раньше даты начала СЛО!";
@@ -43,8 +43,8 @@ function onCreate(aForm, aEntity, aContext){
 	var cardPrefix = aEntity.child.isPolycarpous==true?aEntity.child.birthOrder:"";
 	if (aEntity.getLiveBorn().getCode()=='1'){ //Создаем пациента только живому ребенку
 		patient.lastname=mother.lastname ;
-		patient.firstname =  (aEntity.sex!=null?(aEntity.sex.omcCode=="1"?"У":"Х"):"Х") ;
-		patient.middlename =  "X";
+		patient.middlename = aEntity.sex!=null ? (aEntity.sex.omcCode=="1" ? "У" : "Х") : "Х" ;
+		patient.firstname =  "Х";
 		patient.birthday = aEntity.birthDate ;
 		patient.sex = aEntity.sex ;
 		patient.newborn=aEntity.child ;
@@ -106,6 +106,20 @@ function onCreate(aForm, aEntity, aContext){
 		aContext.manager.persist(ss) ;
 		sls.statisticStub = ss ;
 		aContext.manager.persist(sls) ;
+        //диабет у матери в информации о новорождённом будет проставляться только при создании.
+        if (aForm.getDiabetIdentity()!=null && aForm.getDiabetIdentity()!=''){
+            var vocColorIdentity = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient,java.lang.Long.valueOf(aForm.getDiabetIdentity()));
+            if (vocColorIdentity!=null) {
+                var colorIdentity = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
+                colorIdentity.startDate=sls.dateStart;
+                colorIdentity.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
+                colorIdentity.setVocColorIdentity(vocColorIdentity);
+                aContext.manager.persist(colorIdentity) ;
+                var colIds = new java.util.ArrayList() ;
+                colIds.add(colorIdentity);
+                sls.setColorsIdentity(colIds);
+            }
+        }
 }
 	var childBirth = aContext.manager.createQuery(" from ChildBirth where medcase_id="+aEntity.medCase.id).getResultList();
 	if (childBirth.size()>0) {

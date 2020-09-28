@@ -3,7 +3,6 @@ package ru.ecom.ejb.services.voc;
 import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.destroy.DestroyContext;
 import ru.ecom.ejb.services.destroy.IDestroyable;
-import ru.ecom.ejb.services.util.IPersistenceContextRequired;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -18,12 +17,12 @@ public class VocHashHolder implements IDestroyable {
             IVocContextService service = entry.getValue();
             StringBuilder sb = new StringBuilder();
             sb.append(" Destroyed ");
-            if (service instanceof IPersistenceContextRequired) {
+       /*     if (service instanceof IPersistenceContextRequired) {
                 ((IPersistenceContextRequired) service).setEntityManager(null);
                 sb.append(" p ");
             } else {
                 sb.append("   ");
-            }
+            } */
             if (service instanceof IVocServiceManagement) {
                 ((IVocServiceManagement) service).destroy();
                 sb.append(" m ");

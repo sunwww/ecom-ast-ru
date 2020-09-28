@@ -16,6 +16,9 @@
 				<msh:row>
 					<msh:autoComplete property="reserveType" vocName="vocServiceReserveType" size="50" label="Резерв"/>
 				</msh:row>
+				<msh:row>
+					<msh:autoComplete property="workBusy" vocName="vocWorkBusy" size="30" label="Тип занятости"/>
+				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>

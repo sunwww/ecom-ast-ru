@@ -1,20 +1,16 @@
 package ru.ecom.mis.web.action.patient;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.mis.web.action.psych.AreaReportForm;
 import ru.ecom.web.util.ActionUtil;
-import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class PsychCareCardByAreaAction extends BaseAction {
 
@@ -38,34 +34,32 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			addressAdd="real";
 		}
 		aRequest.setAttribute("addressAdd", addressAdd) ;
-		if (form.getAmbulatoryCare()!=null && form.getAmbulatoryCare()>Long.valueOf(0)
-				&& form.getLpuArea()!=null && form.getLpuArea()>Long.valueOf(0)) {
+		if (form.getAmbulatoryCare()!=null && form.getAmbulatoryCare()> 0L
+				&& form.getLpuArea()!=null && form.getLpuArea()> 0L) {
 			aRequest.setAttribute("lpuArea", form.getLpuArea()) ;
 		} else {
 			aRequest.setAttribute("lpuArea", null) ;
 		}
 		
-		boolean isDt = (form!=null) ;
-		
-		if (form.getSex()!=null && form.getSex()>Long.valueOf(0)) {
-			aRequest.setAttribute("sexT", new StringBuilder().append(" and p.sex_id='").append(form.getSex()).append("'").toString()) ;
+		if (form.getSex()!=null && form.getSex()> 0L) {
+			aRequest.setAttribute("sexT", " and p.sex_id='"+form.getSex()+"'");
 			aRequest.setAttribute("sexInfo", " по полу") ;
 		}
 		if (typeAge.equals("1")) {
 			SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
 			Integer ageTo = form.getAgeTo() ;
-			if (ageTo.equals(Integer.valueOf(0))&& ageTo<form.getAgeFrom()) ageTo = null ; 
+			if (ageTo.equals(0)&& ageTo<form.getAgeFrom()) ageTo = null ;
 			if (form.getAgeFrom()!=null) {
 				Calendar cal = Calendar.getInstance() ;
 				
-				cal.add(Calendar.YEAR, form.getAgeFrom().intValue()*(-1)) ;
+				cal.add(Calendar.YEAR, form.getAgeFrom() *(-1)) ;
 				aRequest.setAttribute("ageFrom", " and p.birthday < to_date('"+format.format(cal.getTime())+"','dd.mm.yyyy') ") ;
 				
 			}
 			if (ageTo!=null) {
 				Calendar cal = Calendar.getInstance() ;
 				
-				cal.add(Calendar.YEAR, (ageTo.intValue()*(-1)-1)) ;
+				cal.add(Calendar.YEAR, (ageTo *(-1)-1)) ;
 				aRequest.setAttribute("ageTo", " and p.birthday >=to_date('"+format.format(cal.getTime())+"','dd.mm.yyyy') ") ;
 				
 			}
@@ -84,8 +78,8 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		
 		String careDate = null ;
 		String careInfo = null ;
-		if ((form.getGroup()==null||form.getGroup().equals(Long.valueOf(0)))
-					&&(form.getCompTreatment()==null||form.getCompTreatment().equals(Long.valueOf(0)))) {} 
+		if ((form.getGroup()==null||form.getGroup().equals(0L))
+					&&(form.getCompTreatment()==null||form.getCompTreatment().equals(0L))) {}
 		else if (typeCare.equals("2")) {
 			careDate = " and  fldDateStart <="
 					+dateEnd					
@@ -105,15 +99,13 @@ public class PsychCareCardByAreaAction extends BaseAction {
 					+dateEnd+" " ;
 			careInfo=" (снятые)" ;
 		}
-		
-		
-		
+
 		if (typeSuicide.equals("2")) {
 			StringBuilder sui  ;
 			sui = new StringBuilder().append(" and ").append(typeDateSuicide!=null&&typeDateSuicide.equals("1")?"sui.suicideDate":"sui.regDate").append(" between ")
 			.append(dateBegin).append(" and ")
 			.append(dateEnd).append(" ") ;
-			if (form.getNatureSuicide()!=null && form.getNatureSuicide()>Long.valueOf(0)) {
+			if (form.getNatureSuicide()!=null && form.getNatureSuicide()> 0L) {
 				sui.append(" and sui.type_id='").append(form.getNatureSuicide()).append("'") ;
 			}
 			aRequest.setAttribute("suicide", sui.toString());
@@ -124,7 +116,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			sui = new StringBuilder().append(" and ").append(typeDateSuicide!=null&&typeDateSuicide.equals("1")?"sui.suicideDate":"sui.regDate").append(" between ")
 					.append(dateBegin).append(" and ")
 					.append(dateEnd).append(" and sui.isFinished='1' ") ;
-			if (form.getNatureSuicide()!=null && form.getNatureSuicide()>Long.valueOf(0)) {
+			if (form.getNatureSuicide()!=null && form.getNatureSuicide()> 0L) {
 				sui.append(" and sui.type_id='").append(form.getNatureSuicide()).append("'") ;
 			}
 			aRequest.setAttribute("suicide", sui.toString());
@@ -136,15 +128,13 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		}
 
 		if (typeDate.equals("1")) {
-			if(isDt) {
-				aRequest.setAttribute("dateT"," and  area.startDate<="
-						+dateEnd					
-						+" and (area.finishDate is null or area.finishDate > "
-						+dateEnd
-						+" ) and (area.transferDate is null or area.transferDate > "
-						+dateEnd
-						+" )") ;
-			} 
+			aRequest.setAttribute("dateT"," and  area.startDate<="
+					+dateEnd
+					+" and (area.finishDate is null or area.finishDate > "
+					+dateEnd
+					+" ) and (area.transferDate is null or area.transferDate > "
+					+dateEnd
+					+" )") ;
 			aRequest.setAttribute("dateInfo", "Поиск по состоящим") ;
 		} else if (typeDate.equals("2")) {
 			StringBuilder dateT = new StringBuilder() ;
@@ -157,29 +147,23 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			aRequest.setAttribute("dateInfo", "Поиск по снятым и переведенным") ;
 		} else if (typeDate.equals("3")) {
 			StringBuilder dateT = new StringBuilder() ;
-			
-			if(isDt) {
-				dateT.append(" and area.startDate between ")
-						.append(dateBegin).append(" and ")
-						.append(dateEnd).append("") ;
-				if (form.getReasonBegin()!=null && form.getReasonBegin()>Long.valueOf(0)) {
-					dateT.append(" and area.observationReason_id='")
-						.append(form.getReasonBegin()).append("'") ;
-				}
-				aRequest.setAttribute("dateT",dateT.toString()) ;
-				aRequest.setAttribute("dateInfo", "Поиск по взятым на учет") ;
+			dateT.append(" and area.startDate between ")
+					.append(dateBegin).append(" and ")
+					.append(dateEnd);
+			if (form.getReasonBegin()!=null && form.getReasonBegin()> 0L) {
+				dateT.append(" and area.observationReason_id='")
+					.append(form.getReasonBegin()).append("'") ;
 			}
+			aRequest.setAttribute("dateT",dateT.toString()) ;
+			aRequest.setAttribute("dateInfo", "Поиск по взятым на учет") ;
 		} else if (typeDate.equals("4")) {
 			StringBuilder dateT = new StringBuilder() ;
-			
-			if(isDt) {
-				dateT.append(" and area.startDate between ")
-						.append(dateBegin).append(" and ")
-						.append(dateEnd).append("") ;
-				dateT.append(" and vpor.isPrimary='1'") ;
-				aRequest.setAttribute("dateT",dateT.toString()) ;
-				aRequest.setAttribute("dateInfo", "Поиск по взятым на учет по первичным причинам") ;
-			}
+			dateT.append(" and area.startDate between ")
+					.append(dateBegin).append(" and ")
+					.append(dateEnd);
+			dateT.append(" and vpor.isPrimary='1'") ;
+			aRequest.setAttribute("dateT",dateT.toString()) ;
+			aRequest.setAttribute("dateInfo", "Поиск по взятым на учет по первичным причинам") ;
 		} else if (typeDate.equals("5")) {
 			StringBuilder dateT = new StringBuilder() ;
 			dateT.append(" and (area.finishDate between ")
@@ -188,7 +172,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 					.append(dateBegin).append(" and ").append(dateEnd).append(") and area.stikeOffReason_id is null ");
 
 			
-			if (form.getReasonTransfer()!=null && form.getReasonTransfer().intValue()>Long.valueOf(0)) {
+			if (form.getReasonTransfer()!=null && form.getReasonTransfer().intValue()> 0L) {
 				dateT.append(" and area.transferReason_id='")
 					.append(form.getReasonTransfer()).append("'") ;
 			}
@@ -201,7 +185,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			.append(" or area.transferDate between ")
 			.append(dateBegin).append(" and ").append(dateEnd).append(") and area.transferReason_id is null ");
 			
-			if (form.getReasonEnd()!=null && form.getReasonEnd()>Long.valueOf(0)) {
+			if (form.getReasonEnd()!=null && form.getReasonEnd()> 0L) {
 				dateT.append(" and area.stikeOffReason_id='")
 				.append(form.getReasonEnd()).append("'") ;
 			}
@@ -237,9 +221,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		}
 		aRequest.setAttribute("invAddField", addField("invalidity",0)) ;
 		if (typeInv.equals("1")) {
-			if(isDt) {
-				aRequest.setAttribute("typeI"," ") ;
-			} 
+			aRequest.setAttribute("typeI"," ") ;
 			aRequest.setAttribute("typeInvInfo", " ") ;
 			style=style+" td.invAddField,th.invAddField{display:none;}" ;
 		//} else if (typeInv.equals("2")) {
@@ -254,7 +236,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		
 			StringBuilder str = new StringBuilder() ;
 			String str1 = "" ;
-			if (form.getGroupInv()!=null &&form.getGroupInv()>Long.valueOf(0)) {
+			if (form.getGroupInv()!=null &&form.getGroupInv()> 0L) {
 				str.append(" and inv.group_id=").append(form.getGroupInv()) ;
 				str1 = new StringBuilder().append(" группа " ).append(form.getGroupInv()).toString() ;
 			}
@@ -286,7 +268,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 			aRequest.setAttribute("invAddField", addField("invalidity",1)) ;
 		}
 		if (form.getCompTreatment()!=null&&
-				form.getCompTreatment()>(Long.valueOf(0)) && careDate!=null) {
+				form.getCompTreatment()>(0L) && careDate!=null) {
 			StringBuilder compTreat = new StringBuilder() ;
 			compTreat.append(careDate.replaceAll("fldDateStart", "ct.decisionDate").replaceAll("fldDateFinish", "ct.dateReplace")).append(" and ct.kind_id='").append(form.getCompTreatment()).append("'") ;
 			if (typeCare.equals("3")) {
@@ -314,13 +296,13 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		//System.out.println(careDate.replaceAll("fldDateStart", "ct.decisionDate").replaceAll("fldDateFinish", "ct.dateReplace")) ;
 		//System.out.println(careDate.replaceAll("fldDateFinish", "ct.dateReplace")) ;
 		//System.out.println(careDate.replaceAll("fldDateStart", "ct.decisionDate")) ;
-		if (form.getAmbulatoryCare()!=null &&form.getAmbulatoryCare()>Long.valueOf(0)){
+		if (form.getAmbulatoryCare()!=null &&form.getAmbulatoryCare()> 0L){
 			StringBuilder gr = new StringBuilder() ;
 			//aRequest.setAttribute("lpo", "left join PsychiaticObservation po on po.careCard_id=pcc.id") ;
 			gr.append(" and po.startDate between (cast(area.startDate as integer)-1) and ifnull(area.finishDate,cast(CURRENT_DATE as integer),(cast(area.finishDate as integer)-1))  ") ;
 			gr.append(" and po.ambulatoryCare_id = ").append(form.getAmbulatoryCare()) ;
-			if (form.getGroup()!=null &&!form.getGroup().equals(Long.valueOf(0))&&careDate!=null) {
-				gr.append(careDate.replaceAll("fldDateStart", "po1.startDate").replaceAll("fldDateFinish", "po1.finishDate")+" and po1.dispensaryGroup_id = ").append(form.getGroup());
+			if (form.getGroup()!=null &&!form.getGroup().equals(0L)&&careDate!=null) {
+				gr.append(careDate.replaceAll("fldDateStart", "po1.startDate").replaceAll("fldDateFinish", "po1.finishDate")).append(" and po1.dispensaryGroup_id = ").append(form.getGroup());
 
 				aRequest.setAttribute("groupDopJoin"," left join PsychiaticObservation po1 on po1.careCard_id=pcc.id  left join VocCriminalCodeArticle vccaAdn on vccaAdn.id=po1.criminalCodeArticle_id "); 
 				aRequest.setAttribute("groupDopSql"," and po1.lpuAreaPsychCareCard_id is null") ;
@@ -337,7 +319,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		}
 
 		aRequest.setAttribute("style", style) ;
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 	private String addField(String aType,int aInt) {
 		if (aType.equals("suicide")) {
@@ -345,7 +327,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 				return ",'s1' as s1,'s2' as s2,'s3' as s3" ;
 				//return ",' ' as s1,' ' as s2,' ' as s3" ;
 			} else {
-				return new StringBuilder().append(", to_char(sui.suicideDate,'dd.mm.yyyy') as suifulfilmentdate, case when sui.isFinished='1' then 'Да' else 'Нет' end as suiisfinished, vpsn.name as vpsn ").toString() ;
+				return ", to_char(sui.suicideDate,'dd.mm.yyyy') as suifulfilmentdate, case when sui.isFinished='1' then 'Да' else 'Нет' end as suiisfinished, vpsn.name as vpsn " ;
 			}
 		} else if (aType.equals("group")) {
 			if (aInt==0) {

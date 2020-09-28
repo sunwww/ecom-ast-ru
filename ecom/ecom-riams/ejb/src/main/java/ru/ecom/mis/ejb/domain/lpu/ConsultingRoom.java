@@ -1,16 +1,13 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
-import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import java.util.List;
+
 @Entity
-@Table(schema="SQLUser")
 public class ConsultingRoom extends WorkPlace {
 	/** Специалист */
 	@Comment("Специалист")

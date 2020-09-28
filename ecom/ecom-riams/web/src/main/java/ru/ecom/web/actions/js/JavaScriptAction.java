@@ -31,14 +31,11 @@ public class JavaScriptAction extends BaseAction {
 			String path = "/WEB-INF/actions/" + dir + "/" + dir + ".js";
 			InputStream inputStream = getServlet().getServletContext().getResourceAsStream(path) ;
 			if (inputStream == null) throw new IllegalStateException("Не найден " + path);
-			
-			InputStreamReader in = new InputStreamReader(inputStream, "utf-8");
-			try {
+
+			try (InputStreamReader in = new InputStreamReader(inputStream, "utf-8")) {
 				Script script = jsContext.compileReader(in, dir + ".js", 1,
 						null);
 				script.exec(jsContext, scope);
-			} finally {
-				in.close();
 			}
 
 			ActionJavaScriptContext ctx = new ActionJavaScriptContext(aMapping,

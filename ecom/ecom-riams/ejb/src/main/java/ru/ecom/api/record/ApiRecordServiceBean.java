@@ -2,7 +2,6 @@ package ru.ecom.api.record;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
@@ -12,6 +11,7 @@ import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWayOfRecord;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.util.StringUtil;
@@ -59,24 +59,64 @@ public class ApiRecordServiceBean implements IApiRecordService {
             findSql.append(" and birthday=to_date('").append(DateFormat.formatToDate(aBirthdate)).append("','dd.MM.yyyy')");
         }
         List<BigInteger> list = theManager.createNativeQuery(findSql.toString()).getResultList();
-        if (list.isEmpty() || list.size()>1) {
+        if (list.size() != 1) {
             LOG.warn("search patient sql = "+findSql+" .found = "+list.size());
             return null;
         }
         return theManager.find(Patient.class,list.get(0).longValue());
     }
 
+    /**Запись пациента с промеда
+     * Находим подходящее время
+     * */
+    public String recordPromedPatient(String aPromedDoctorId, String aLastname, String aFirstname, String aMiddlename, Date aBirthdate, Date aCalendarDate, Time aCalendarTime, String aPhone) {
+        List<WorkFunction> workFunctions = theManager.createQuery("from WorkFunction where promedCodeWorkstaff=:promedCode")
+                .setParameter("promedCode",aPromedDoctorId).getResultList();
+        if (workFunctions.size() != 1) {
+            LOG.error("Невозможно записать пациента, т.к. по коду "+aPromedDoctorId+" найдено "+workFunctions.size()+" рабочих функций");
+            return getErrorJson("По коду "+aPromedDoctorId+" не найдено рабочей функции","NO_PROMED_DOCTOR");
+        }
+        WorkFunction doctor = workFunctions.get(0);
+        System.out.println(DateFormat.formatToTime(aCalendarTime)+"=====");
+        List<BigInteger> workCalendarTimeList = theManager.createNativeQuery("select wct.id from workfunction wf" +
+                " left join workcalendar wc on wf.id = wc.workfunction_id" +
+                " left join workcalendarday wcd on wc.id = wcd.workcalendar_id" +
+                " left join workcalendartime wct on wcd.id = wct.workcalendarday_id" +
+                " left join vocservicereservetype vsrt on wct.reservetype_id = vsrt.id " +
+                " where wf.id=:doctorId and wcd.calendardate=:calendarDate and wct.timefrom =:timeFrom " +
+                " and vsrt.code='PROMED'" +
+                " and (wcd.isDeleted is null or wcd.isDeleted='0') and (wct.isDeleted is null or wct.isDeleted='0')" +
+                " and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
+                ).setParameter("doctorId",doctor).setParameter("calendarDate",aCalendarDate).setParameter("timeFrom",aCalendarTime).getResultList();
+        if (workCalendarTimeList.isEmpty()) {
+            workCalendarTimeList = theManager.createNativeQuery("select wct.id from workfunction wf" +
+                    " left join workcalendar wc on wf.id = wc.workfunction_id" +
+                    " left join workcalendarday wcd on wc.id = wcd.workcalendar_id" +
+                    " left join workcalendartime wct on wcd.id = wct.workcalendarday_id" +
+                    " left join vocservicereservetype vsrt on wct.reservetype_id = vsrt.id " +
+                    " where wf.id=:doctorId and wcd.calendardate=:calendarDate " +
+                    " and vsrt.code='PROMED' and wct.timefrom between '"+DateFormat.formatToTime(aCalendarTime)+"' -interval '2 minutes' and '"+DateFormat.formatToTime(aCalendarTime)+"' +interval '2 minutes'" +
+                    " and (wcd.isDeleted is null or wcd.isDeleted='0') and (wct.isDeleted is null or wct.isDeleted='0')" +
+                    " and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
+                    ).setParameter("doctorId",doctor).setParameter("calendarDate",aCalendarDate).getResultList();
+            if (workCalendarTimeList.isEmpty()) {
+                LOG.error("Не найдено подходящего времени");
+                return getErrorJson("Не найдено свободных времен к врачу: "+doctor.getWorkFunctionInfo()+" на "+aCalendarDate+" "+aCalendarTime,"NO_PROMED_FREE_TIME");
+            }
+        }
+        return recordPatient(workCalendarTimeList.get(0).longValue(),aLastname,aFirstname,aMiddlename,aBirthdate,null,null,aPhone);
+    }
+
     /**
      * Запись пациента на прием (если у резерва разрешено записывать без предварит. направление, создаем направление
-     * @param aCalendarTimeId
-     * @param aPatientLastname
-     * @param aPatientFirstname
-     * @param aPatientMiddlename
-     * @param aPatientBirthday
-     * @param aPatientGUID
-     * @return
+     * @param aCalendarTimeId ИД записи
+     * @param aPatientLastname Фамилия пациента
+     * @param aPatientFirstname Имя пациента
+     * @param aPatientMiddlename Отчество пациента
+     * @param aPatientBirthday Дата рождения пациента
+     * @return Информация о записи
      */
-    public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment, String aPhone) {
+    public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aComment, String aPhone, String aRecordType) {
         long currentDateLong = System.currentTimeMillis();
         try {
             if (AgeUtil.calcAgeYear(aPatientBirthday,new Date(currentDateLong))>122) {
@@ -93,14 +133,12 @@ public class ApiRecordServiceBean implements IApiRecordService {
         }
 
         Patient patient ;
-        if (aPatientGUID!=null) { //Считаем, что записываем из приложения
-            patient=getPatientByGuid(aPatientGUID);
-        } else if (!StringUtil.isNullOrEmpty(aPatientLastname) && !StringUtil.isNullOrEmpty(aPatientFirstname)) { //Запись через сайт или другие источники.
+        if (!StringUtil.isNullOrEmpty(aPatientLastname) && !StringUtil.isNullOrEmpty(aPatientFirstname)) { //Запись через сайт или другие источники.
             patient = getPatientByFIO(aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday);
         } else {
-            return getErrorJson("Необходимо указать ФИО либо GUID пациента","NO_PATIENT");
+            return getErrorJson("Необходимо указать ФИО пациента","NO_PATIENT");
         }
-        String prePatientInfo = patient !=null ? patient.getPatientInfo() : aPatientLastname+ " "+aPatientFirstname+" "+(aPatientMiddlename!=null  ? aPatientMiddlename : "")+" "+DateFormat.formatToDate(aPatientBirthday)+(aPhone!=null ? " тел."+aPhone : "");
+        String prePatientInfo =aPatientLastname+ " "+aPatientFirstname+" "+(aPatientMiddlename!=null  ? aPatientMiddlename : "")+" "+DateFormat.formatToDate(aPatientBirthday)+(aPhone!=null ? " тел."+aPhone : "");
 
          if (wct.getPrePatient()!=null
                 || wct.getMedCase()!=null
@@ -115,7 +153,6 @@ public class ApiRecordServiceBean implements IApiRecordService {
                 .append(currentDate).append(" время:").append(currentTime).append(", WCT_ID").append(aCalendarTimeId).append(". Дата записи:").append(wct.getWorkCalendarDay().getCalendarDate())
                 .append(", время:").append(wct.getTimeFrom());
         if (wct.getReserveType()!=null && wct.getReserveType().getIsNoPreRecord()!=null && wct.getReserveType().getIsNoPreRecord() && patient != null) { //Создаем визит
-            LOG.info("TIME_TO_CREATE_VISITI");
             VocServiceStream serviceStream = getServiceStreamByWorkCalendarTime(wct);
             Visit visit = new Visit();
             visit.setUsername(username);
@@ -136,6 +173,17 @@ public class ApiRecordServiceBean implements IApiRecordService {
             wct.setCreatePreRecord(username);
             wct.setCreateDatePreRecord(currentDate);
             wct.setCreateTimePreRecord(currentTime);
+            if (aRecordType!=null ) {
+                try{
+                    wct.setWayOfRecord((VocWayOfRecord)theManager.createQuery("from VocWayOfRecord where code=:way").setParameter("way",aRecordType).getResultList().get(0));
+                } catch (Exception e) {
+                    wct.setWayOfRecord(null);
+                    LOG.error("Не смог определить способ записи по коду: "+aRecordType);
+                }
+
+            } else {
+                wct.setWayOfRecord(null);
+            }
             if (patient!=null) {
                 wct.setPrePatient(patient);
             } else {
@@ -144,7 +192,6 @@ public class ApiRecordServiceBean implements IApiRecordService {
             recordLogInfo.append(". Пациент ").append(prePatientInfo.toUpperCase());
             wct.setPatientComment(aComment);
             recordLogInfo.append(".Создана предварительная запись");
-            LOG.info("RECORD_MAKE!!!");
         }
         theManager.persist(wct);
         theManager.persist(new ApiRecordJournal(recordLogInfo.toString()));
@@ -169,14 +216,13 @@ public class ApiRecordServiceBean implements IApiRecordService {
      * @param aLastname
      * @param aFirstname
      * @param aMiddlename
-     * @param aPatientGUID
      * @return
      */
-    public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID) {
+    public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday) {
               Patient patient ;
-        if (aPatientGUID!=null) { //Аннулируем по ГУИД
+       /* if (aPatientGUID!=null) { //Аннулируем по ГУИД
             patient=getPatientByGuid(aPatientGUID);
-        } else if (aLastname!=null) {
+        } else */if (aLastname!=null) {
             patient=getPatientByFIO(aLastname,aFirstname,aMiddlename,aBirthday);
         } else {
             return getErrorJson("При аннулировании необходимо указать GUID или ФИО + ДР пациента","WRONG_PAR");
@@ -200,12 +246,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
                     wct.setPrePatient(null);
                 }
                 theManager.persist(wct);
-                try {
-                    return new JSONObject().put("status","ok").put("info","Запись успешно аннулирована").put("calendarTimeId",""+wct.getId()).toString();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return "EXCEPTION";
-                }
+                return new JSONObject().put("status","ok").put("info","Запись успешно аннулирована").put("calendarTimeId",""+wct.getId()).toString();
             }
         } else {
             return getErrorJson("Ошибка аннулирования записи, возможно, пациент не идентифицирован ",ANNUL_ERROR);
@@ -218,7 +259,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         //LOG.info("record File "+aFilename+"<>"+aPatientId+"<>"+aMedcaseId+"<>"+aCalendartimeId+"<>"+aDebug);
         aFilename = saveFile(aFilename,base64String);
         if (aFilename!=null) { //Файл сохранен в нужную папку, создаем "сущность"
-            Long currentDateLong = System.currentTimeMillis();
+            long currentDateLong = System.currentTimeMillis();
             String username = "ApiClient "+theContext.getCallerPrincipal().getName();
             ExternalDocument document = new ExternalDocument();
             document.setCreateDate(new Date(currentDateLong));
@@ -250,7 +291,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
             writer.flush();
             return aFilename;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getLocalizedMessage(),e);
             return null;
         }
     }

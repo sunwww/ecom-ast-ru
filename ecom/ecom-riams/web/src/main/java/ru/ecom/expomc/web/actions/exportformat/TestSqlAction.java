@@ -31,7 +31,7 @@ public class TestSqlAction extends BaseAction {
         service.setMaxRecords(500);
         String xresult = service.getResultSet(new Long(aRequest.getParameter("id")));
         aRequest.setAttribute("xresult",xresult);
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }
 

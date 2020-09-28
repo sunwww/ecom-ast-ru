@@ -1,13 +1,13 @@
 package ru.ecom.mis.ejb.domain.worker.voc;
 
-import java.util.List;
-
-import javax.persistence.*;
-
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Рабочая функция
@@ -18,6 +18,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocWorkFunction extends VocBaseEntity{
+
+	/** Специальность по справочнику V021 */
+	@Comment("Специальность по справочнику V021")
+	@OneToOne
+	public VocE2FondV021 getFondSpeciality() {return theFondSpeciality;}
+	public void setFondSpeciality(VocE2FondV021 aFondSpeciality) {theFondSpeciality = aFondSpeciality;}
+	/** Специальность по справочнику V021 */
+	private VocE2FondV021 theFondSpeciality ;
 	
 	/** Должности */
 	@Comment("Должности")
@@ -77,6 +85,13 @@ public class VocWorkFunction extends VocBaseEntity{
 	@Comment("Лучевая диагностика")
 	public Boolean getIsRadiationDiagnosis() {return theIsRadiationDiagnosis;}
 	public void setIsRadiationDiagnosis(Boolean aIsRadiationDiagnosis) {theIsRadiationDiagnosis = aIsRadiationDiagnosis;}
+
+	/** Создавать заголовок в дневнике */
+	@Comment("Создавать заголовок в дневнике")
+	@Column(nullable=false, columnDefinition="boolean default false")
+	public Boolean getIsDiaryTitle() {return theIsDiaryTitle;}
+	public void setIsDiaryTitle(Boolean aIsDiaryTitle) {theIsDiaryTitle = aIsDiaryTitle;}
+	private Boolean theIsDiaryTitle ;
 
 	/** Лучевая диагностика */
 	private Boolean theIsRadiationDiagnosis;
@@ -140,4 +155,11 @@ public class VocWorkFunction extends VocBaseEntity{
 	public void setMedHelpProfile(VocE2MedHelpProfile aMedHelpProfile) {theMedHelpProfile = aMedHelpProfile;}
 	/** Профиль медицинской помощи */
 	private VocE2MedHelpProfile theMedHelpProfile ;
+
+	/** Можно назначать в инфекционном? */
+	@Comment("Можно назначать в инфекционном?")
+	public Boolean getIsSuitForCovid() {return theIsSuitForCovid;}
+	public void setIsSuitForCovid(Boolean aIsSuitForCovid) {theIsSuitForCovid = aIsSuitForCovid;}
+	/** Можно назначать в инфекционном?? */
+	private Boolean theIsSuitForCovid;
 }

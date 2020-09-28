@@ -18,7 +18,10 @@ public class ApiRecordUtil {
 
     /** Формируем json с ошибкой */
     public static String getErrorJson(String aReasonText, String aCode) {
-        String err = createJson(null,null,aCode,aReasonText);
+            return getErrorJsonObj(aReasonText, aCode).toString();
+    }
+    public static JSONObject getErrorJsonObj(String aReasonText, String aCode) {
+        JSONObject err = createJson(null,null,aCode,aReasonText);
         LOG.error("ERROR_JSON "+err);
             return err;
     }
@@ -54,6 +57,29 @@ public class ApiRecordUtil {
         return getData(selectSql,aServiceStream!=null?aServiceStream:"",orderBy,groupBy,jsonFields,100, aService);
     }
 
+    /**
+     * Получаем список услуг с ценами по умолчанию для выбранного врача
+     * @param aWorkfunctionId
+     * @return
+     */
+    private String getDefaultMedServicesAndPrices(String aWorkfunctionId, IWebQueryService aService) {
+        if (aWorkfunctionId==null || aWorkfunctionId.equals(""))
+            return getErrorJson("Неверное значение параметра 'Должность'",ERRORWORKFUNCTION);
+        else {
+            String[] jsonFields = {"msName", "ppCost"};
+            String selectSql = "select distinct ms.name,pp.cost from priceposition pp" +
+                    " left join pricelist pl on pl.id=pp.pricelist_id" +
+                    " left join pricemedservice pms on pms.priceposition_id=pp.id" +
+                    " left join medservice ms on ms.id=pms.medservice_id" +
+                    " left join WorkFunctionService wfs on wfs.medService_id=ms.id" +
+                    " left join WorkFunction wf on wf.id=wfs.workfunction_id" +
+                    " where wf.id=" + aWorkfunctionId + " and (ms.startDate is null or current_date  >=ms.startDate)" +
+                    " and (ms.finishDate is null or ms.finishDate>=current_date)" +
+                    " and ms.isShowSiteAsDefault=true" +
+                    " and pl.isdefault=true order by pp.cost";
+            return aService.executeNativeSqlGetJSON(jsonFields, selectSql,30);
+        }
+    }
 
     /**
      * Получаем спсиок рабочих функций врачей по потоку обслуживания и специальности
@@ -61,8 +87,9 @@ public class ApiRecordUtil {
      * @param aVocWorkfunctionId
      * @return
      */
-    public String getDoctors (String aServiceStream, String aVocWorkfunctionId, IWebQueryService aService) {return getDoctors(aServiceStream,aVocWorkfunctionId,null,aService);}
-    public String getDoctors (String aServiceStream, String aVocWorkfunctionId, String aLpuId,  IWebQueryService aService) {
+    public String getDoctors (String aServiceStream, String aVocWorkfunctionId, IWebQueryService aService) {return getDoctors(aServiceStream,aVocWorkfunctionId,null,null,aService);}
+    public String getDoctors (String aServiceStream, String aVocWorkfunctionId, String aLpuId, String aWantDefMedServices,  IWebQueryService aService) {
+        Boolean isCharged = aServiceStream.equals("CHARGED");
         aServiceStream=getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
             return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
@@ -79,7 +106,21 @@ public class ApiRecordUtil {
         if (aLpuId!=null && !aLpuId.equals("")) {
             sqlAdd+=" and mlGr.id="+aLpuId;
         }
-        return getData(selectSql,sqlAdd,orderBySql,groupBySql,jsonFields,100,aService);
+        String data = getData(selectSql,sqlAdd,orderBySql,groupBySql,jsonFields,100,aService);
+        if (aWantDefMedServices==null || !isCharged)
+            return data;
+        else { //только для платных
+            JSONObject ret = new JSONObject();
+            JSONArray dataBody = new JSONArray();
+            JSONArray arr = new JSONObject(data).getJSONArray("data");
+            for (int i=0; i<arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                obj.put("listMedServices",new JSONArray(getDefaultMedServicesAndPrices(obj.getString("workfunction_id"),aService)));
+                dataBody.put(obj);
+            }
+            ret.put("data",dataBody);
+            return ret.toString();
+        }
     }
 
     /**
@@ -98,10 +139,8 @@ public class ApiRecordUtil {
             return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
         }
         StringBuilder sqlAdd = new StringBuilder();
-        StringBuilder selectSql = new StringBuilder();
-        String groupBySql, orderBySql;
+
         String[] jsonFields = {"calendarDay_id","calendarDate", "prettyCalendarDate"};
-        selectSql.append(" max(wcd.id) as id, to_char(wcd.calendardate,'yyyy-MM-dd') as calendarDate, to_char(wcd.calendardate,'dd.MM.yyyy') as prettyCalendarDate");
         if (aWorkfunctionId!=null&&!aWorkfunctionId.equals("")) { //Ищем свободные времена по конкретной раб. функции
             sqlAdd.append(" and wf.id=").append(aWorkfunctionId);
         } else { //Ищем свободные времена по любой раб. функции указанной специальности
@@ -117,9 +156,8 @@ public class ApiRecordUtil {
         sqlAdd.append(" and (wcd.calendardate>current_date or wcd.calendardate=current_date and wct.timeFrom>current_time)")
                 .append(aServiceStream);
 
-        groupBySql="wcd.calendardate";
-        orderBySql="wcd.calendardate";
-        return getData(selectSql.toString(),sqlAdd.toString(),orderBySql,groupBySql,jsonFields,30,aService);
+        return getData(" max(wcd.id) as id, to_char(wcd.calendardate,'yyyy-MM-dd') as calendarDate, to_char(wcd.calendardate,'dd.MM.yyyy') as prettyCalendarDate" //Ищем свободные времена по конкретной раб. функции //Ищем свободные времена по любой раб. функции указанной специальности
+                ,sqlAdd.toString(),"wcd.calendardate","wcd.calendardate",jsonFields,30,aService);
     }
 
 /** Находим свободные времени либо по должности (все неврологи), либо по кокретной рабочей функции (невролог Иванов)*/
@@ -130,11 +168,9 @@ public class ApiRecordUtil {
             return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
         }
         StringBuilder sqlAdd = new StringBuilder();
-        StringBuilder selectSql = new StringBuilder();
         String groupBySql = "wct.id, wct.timeFrom";
         String orderBySql = "wct.timeFrom";
         String[] jsonFields = {"calendarTime_id","calendarTime"};
-        selectSql.append("wct.id as id, cast(wct.timefrom as varchar(5)) as calendarTime");
         if (aCalendarDayId!=null&&!aCalendarDayId.equals("")) { //Ищем по конкретному специалисту
             sqlAdd.append(" and wcd.id=").append(aCalendarDayId);
         } else if (aVocWorkfunctionId!=null && !aVocWorkfunctionId.equals("") && aCalendarDate!=null) { //Ищем по всем врачам выбранной специальности
@@ -147,7 +183,8 @@ public class ApiRecordUtil {
             }
 
         sqlAdd.append(" and case when wcd.calendardate=current_date and wct.timeFrom>current_time then 1 when wcd.calendardate>current_date then 1 else 0 end =1").append(aServiceStream);
-        return getData(selectSql.toString(),sqlAdd.toString(),orderBySql,groupBySql,jsonFields,50,aService);
+        return getData("wct.id as id, cast(wct.timefrom as varchar(5)) as calendarTime" //Ищем по конкретному специалисту //Ищем по всем врачам выбранной специальности
+                ,sqlAdd.toString(),orderBySql,groupBySql,jsonFields,50,aService);
     }
 
 /**
@@ -155,10 +192,8 @@ public class ApiRecordUtil {
  String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment);
  String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID);
  * */
-public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment, IApiRecordService apiRecordService) {
-    return recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aPatientGUID,aComment,null,apiRecordService);
-}
-public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment,String aPhone, IApiRecordService apiRecordService) {
+public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday
+        , String aComment, String aPhone, IApiRecordService apiRecordService, String aRecordType) {
     try {
         if (AgeUtil.calcAgeYear(aPatientBirthday,new Date(System.currentTimeMillis()))>122) {
             return getErrorJson("Запись пациента старше 122 лет невозможна","TOO_OLD");
@@ -166,12 +201,12 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
     } catch (Exception e) {
         return getErrorJson("Проверьте дату рождения пациента","TOO_YOUNG");
     }
-    return apiRecordService.recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aPatientGUID,aComment,aPhone);
+    return apiRecordService.recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aComment,aPhone, aRecordType);
 }
 
     /** Аннулируем направление (соответствие по пациенту и времени*/
-    public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID, IApiRecordService aService){
-            return aService.annulRecord(aCalendarTimeId,aLastname,aFirstname,aMiddlename,aBirthday, aPatientGUID);
+    public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, IApiRecordService aService){
+            return aService.annulRecord(aCalendarTimeId,aLastname,aFirstname,aMiddlename,aBirthday);
         }
 
     public String getRecordInformation (String aWorkcalendarTimeId, IWebQueryService aService) {
@@ -267,14 +302,14 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
         sql.append(" having count(wct.id)>0");
         if (aOrderBy!=null) {sql.append(" order by ").append(aOrderBy);}
         String jsonData = aService.executeNativeSqlGetJSON(aJsonFields,sql.toString(),aMaxResult);
-        return createJson("data",jsonData);
+        return createJson("data",jsonData).toString();
     }
 
-    public static String createJson(String aElementName, String aJsonData) {
+    public static JSONObject createJson(String aElementName, String aJsonData) {
         return createJson(aElementName,aJsonData,null,null);
 
     }
-    public static String createJson(String aElementName, String aJsonData, String aErrorCode, String aErrorName) {
+    public static JSONObject createJson(String aElementName, String aJsonData, String aErrorCode, String aErrorName) {
         JSONObject ret = new JSONObject();
         if (aElementName!=null) {
             ret.put(aElementName, aJsonData!=null ? new JSONArray(aJsonData) : new JSONArray());
@@ -284,6 +319,6 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
             ret.put("error_code",aErrorCode);
             ret.put("error_name",aErrorName);
        }
-        return ret.toString();
+        return ret;
     }
 }

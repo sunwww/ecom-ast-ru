@@ -1,10 +1,9 @@
 package ru.nuzmsh.util.dbf;
 
-import java.nio.ByteOrder;
-import java.nio.ByteBuffer;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +34,7 @@ public class DbfFile {
     }
 
 
-    public void load(InputStream aIn) throws IOException, ParseException {
+    public void load(InputStream aIn) throws IOException {
         theHeader = new DbfFileHeader();
 
 
@@ -65,11 +64,11 @@ public class DbfFile {
                 if(field.load(buf)) {
                     offset += lastLength ;
                     lastLength = field.getLength() ;
-                    if(offset!=field.getFieldOffset()) {
+            //        if(offset!=field.getFieldOffset()) {
                         //LOG.warn(new StringBuilder("Смещение поля ")
                         //        .append(field.getFieldOffset()).append(" не соответсвует действительному смещению - ")
                         //.append(offset).append(". Будет использоваться смещение: ").append(offset));
-                    }
+            //        }
 //                ru.nuzmsh.log.SystemLog.TRACE(field.getFieldOffset()+ " offset " + offset);
                     field.setFieldOffset((int)offset);
                     theFields.add(field) ;
@@ -91,24 +90,6 @@ public class DbfFile {
         return theFields.toArray() ;
     }
 
-    private void trace(ByteBuffer aByteBuffer) {
-        //ru.nuzmsh.log.SystemLog.TRACE("aByteBuffer = " + aByteBuffer);
-        int oldPosition = aByteBuffer.position() ;
-
-        for(int c=0; c<aByteBuffer.limit(); c++) {
-            if((c % 4)==0 && c!=0) {
-                System.out.print(" | ");
-            } else if((c % 8)==0) {
-                System.out.print("\n");
-            }
-            System.out.print(" ");
-            System.out.print(aByteBuffer.get());
-            c++ ;
-        }
-        aByteBuffer.position(oldPosition) ;
-        System.out.print("\n");
-    }
-
     /**
      * Список полей
      */
@@ -116,7 +97,7 @@ public class DbfFile {
         return Collections.unmodifiableCollection(theFields) ;
     }
 
-    private ArrayList<DbfField> theFields = new ArrayList<DbfField>();
+    private ArrayList<DbfField> theFields = new ArrayList<>();
     private DbfFileHeader theHeader = null;
 
     public DbfFileHeader getHeader() {

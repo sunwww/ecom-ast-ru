@@ -1,9 +1,9 @@
 package ru.ecom.expert2.domain.voc;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV020;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -44,14 +44,6 @@ public class VocE2MedHelpProfile  extends VocBaseEntity{
     /** Профиль ФОМС */
     private String theProfileK ;
 
-    /** Мед. специальность по профилю */
-    @Comment("Мед. специальность по профилю")
-    @OneToOne
-    public VocE2FondV015 getMedSpec() {return theMedSpec;}
-    public void setMedSpec(VocE2FondV015 aMedSpec) {theMedSpec = aMedSpec;}
-    /** Мед. специальность по профилю */
-    private VocE2FondV015 theMedSpec ;
-
     /** Мед. специальность V021 по профилю */
     @Comment("Мед. специальность V021 по профилю")
     @OneToOne
@@ -63,8 +55,18 @@ public class VocE2MedHelpProfile  extends VocBaseEntity{
     /** Профиль койки V020 */
     @Comment("Профиль койки V020 ")
     @OneToOne
+    @Deprecated
     public VocE2FondV020 getProfileBed() {return theProfileBed;}
     public void setProfileBed(VocE2FondV020 aProfileBed) {theProfileBed = aProfileBed;}
     /** Профиль койки V020 */
     private VocE2FondV020 theProfileBed ;
+
+    /** Услуга по профилю для стационар по умолчанию */
+    @Comment("Услуга по профилю для стационар по умолчанию")
+    @OneToOne
+    @Deprecated
+    public VocMedService getDefaultStacMedService() {return theDefaultStacMedService;}
+    public void setDefaultStacMedService(VocMedService aDefaultStacMedService) {theDefaultStacMedService = aDefaultStacMedService;}
+    /** Услуга по профилю для стационар по умолчанию */
+    private VocMedService theDefaultStacMedService ;
 }

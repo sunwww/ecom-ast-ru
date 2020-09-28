@@ -43,21 +43,20 @@ function onCreate(aForm, aEntity, aContext) {
 	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setCreateUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 
-	
-	//throw aEntity.worker.doctorInfo+""
+    saveCabinet(aForm, aEntity, aContext);
+	stayAdminUnique(aForm, aEntity, aContext);
+	saveGroupWorkFunctions(aForm, aEntity, aContext);
 }
 
 function onSave(aForm, aEntity, aContext) {
-	//if(aWorkFunction.workCalendar==null) {
-	//	onCreate(aForm, aWorkFunction, aContext) ;
-	//}
-	//aContext.serviceInvoke("Hello", "helll", "asdf") ;
-	//throw "asdf";
 	var date = new java.util.Date() ;
 	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setEditUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
-	
+
+    aContext.manager.createNativeQuery("delete from workplace_workfunction where workfunctions_id="+aEntity.id).executeUpdate() ;
+    saveCabinet(aForm, aEntity, aContext);
+	stayAdminUnique(aForm, aEntity, aContext);
 }
 function errorThrow(aList) {
 	if (aList!=null && aList.size()>0) {
@@ -83,26 +82,70 @@ function delCal(calendar,aCtx) {
 	var workFunction = calendar.workFunction ;
 	calendar.workFunction = null ;
 	workFunction.workCalendar = null ;
-	//aCtx.manager.remove(workFunction) ;
 }
 
 function onPreDelete(aFunctionId, aCtx) {
 	var workFunction = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, new java.lang.Long(aFunctionId)) ;
 	var workCalendar = workFunction.workCalendar ;
 	workFunction.workCalendar = null ;
-	//if(workCalendar!=null) {
-	//	workCalendar.workFunction = null ;
-	//	delCal(workCalendar) ;
-	//	aCtx.manager.remove(workCalendar) ;
-	//} else {
-		var list = aCtx.manager.createQuery("from WorkCalendar where workFunction=:f")
-			.setParameter("f", workFunction)
-			.getResultList()  ;
-		for(var i = 0 ;i < list.size(); i++) {
-			var cal = list.get(i) ;
-			delCal(cal, aCtx) ;
-			cal.workFunction = null ;
-			aCtx.manager.remove(cal) ;
-		}	
-	//}
+	var list = aCtx.manager.createQuery("from WorkCalendar where workFunction=:f")
+		.setParameter("f", workFunction)
+		.getResultList()  ;
+	for(var i = 0 ;i < list.size(); i++) {
+		var cal = list.get(i) ;
+		delCal(cal, aCtx) ;
+		cal.workFunction = null ;
+		aCtx.manager.remove(cal) ;
+	}
+}
+//Сохранение кабинета
+function saveCabinet(aForm, aEntity, aCtx) {
+    var cabinet=aForm.getCabinet();
+    if (cabinet!='') {
+        var res = aCtx.manager.createNativeQuery("select id from workplace where name='" + cabinet + "'").setMaxResults(1).getResultList();
+        if (res.size() > 0)
+            aCtx.manager.createNativeQuery("insert into workplace_workfunction(workplace_id,workfunctions_id) values(" + java.lang.Long.valueOf(res.get(0)) + "," + aEntity.id + ")").executeUpdate();
+        else {
+            var resId=aCtx.manager.createNativeQuery("insert into workplace(dtype,name) values('ConsultingRoom','"+cabinet+"') returning id").getResultList();
+            if (resId.size()>0) {
+            	var wp = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.ConsultingRoom,java.lang.Long.valueOf(resId.get(0)));
+                var wfs = new java.util.ArrayList() ;
+                wfs.add(aEntity);
+                wp.setWorkFunctions(wfs);
+                aCtx.manager.persist(wp);
+			}
+        }
+    }
+}
+//Начальник ЛПУ может быть только один
+function stayAdminUnique(aForm, aEntity, aCtx) {
+	if (+aForm.getIsAdministrator()==1) {
+		aCtx.manager.createNativeQuery("update workfunction set isadministrator=false" +
+			" where id in (select wf.id from workfunction wf" +
+			" left join worker w on wf.worker_id=w.id" +
+			" left join worker wnow on wnow.id=" + aForm.getWorker() +
+			" where w.lpu_id =wnow.lpu_id and w.id<>wnow.id)").executeUpdate() ;
+	}
+}
+//Сохранение дополнительных групповых функций
+function saveGroupWorkFunctions(aForm, aEntity, aCtx) {
+	var allGroups=aForm.getAllGroups();
+	if (allGroups!='') {
+		var obj = new Packages.org.json.JSONObject(allGroups) ;
+		var groups = obj.getJSONArray("list");
+		for (var i=0; i<groups.length(); i++) {
+			var child = groups.get(i);
+			var vocId = java.lang.Long.valueOf(child.get("group"));
+			var newGwf = new Packages.ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction();
+			newGwf.setWorkFunction(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction, aForm.getWorkFunction()));
+			newGwf.setWorker(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.Worker,aForm.getWorker()));
+			var vocGroup = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.GroupWorkFunction, vocId);
+			newGwf.setGroup(vocGroup);
+			var date = new java.util.Date() ;
+			newGwf.setCreateDate(new java.sql.Date(date.getTime())) ;
+			newGwf.setCreateTime(new java.sql.Time (date.getTime())) ;
+			newGwf.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+			aCtx.manager.persist(newGwf);
+		}
+	}
 }

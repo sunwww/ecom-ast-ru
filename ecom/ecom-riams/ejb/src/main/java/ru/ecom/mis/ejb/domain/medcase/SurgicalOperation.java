@@ -94,13 +94,6 @@ public class SurgicalOperation extends BaseEntity {
 	public Patient getPatient() {return thePatient;}
 	public void setPatient(Patient aPatient) {thePatient = aPatient;}
 	
-	/** Осложнения */
-	@Comment("Осложнения")
-	@ManyToMany
-	public List<VocComplication> getComplications() {return theComplications;	}
-	public void setComplications(List<VocComplication> aComplications) {theComplications = aComplications;	}
-	
-	
 	/** Кол-во  анастезии */
 	@Comment("Кол-во  анастезии")
 	public BigDecimal getAnesthesiaAmount() {return theAnesthesiaAmount;}
@@ -124,27 +117,7 @@ public class SurgicalOperation extends BaseEntity {
 	public String getSurgeonInfo(){
 		return theSurgeon!=null?theSurgeon.getWorkFunctionInfo():"";
 	}
-	/*
-	@Comment("Отделение инфо")
-	@Transient
-	public String getDepartmentInfo() {	return theDepartment!=null ? theDepartment.getName():"";}
-	
-	@Comment("Анестезия инфо")
-	@Transient
-	public String getAnesthesiaInfo(){return theAnesthesia!=null ? theAnesthesia.getName():"";}
-	
-	@Comment("Операция инфо")
-	@Transient
-	public String getOperationInfo(){return theOperation!=null ? theOperation.getName():"";}
-	*/
-	/** Лечебное учреждение 
-	@Comment("Лечебное учреждение")
-	@Transient
-	public MisLpu getLpu() {
-		MisLpu lpu = null ;
-		if (theMedCase!=null && theMedCase.getLpu()!=null) lpu = theMedCase.getLpu() ;
-		return lpu ;
-	}*/
+
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@OneToOne
@@ -220,88 +193,53 @@ public class SurgicalOperation extends BaseEntity {
 	@Comment("Информации")
 	@Transient
 	public String getInformation() {
-		StringBuilder ret = new StringBuilder() ;
-		ret.append("Период: ").append(theOperationDate).append(" ").append(theOperationTime).append(" - ")
-			.append(theOperationDateTo).append(" ").append(theOperationTimeTo);
-		ret.append("Операция: ").append(theOperation);
-		ret.append("Хирург: ").append(getSurgeonInfo());
-		//ret.append("Анестезиолог: ").append(theAnaesthetist) ;
-		//ret.append("Анестезия: ").append(theAnesthesia).append(" кол-во:").append(theAnesthesiaAmount);
-		
-		return ret.toString() ;
+		return "Период: " + theOperationDate + " " + theOperationTime + " - " +
+				theOperationDateTo + " " + theOperationTimeTo +
+				"Операция: " + theOperation +
+				"Хирург: " + getSurgeonInfo();
 	}
 		
 		@Comment("Период")
 		@Transient
 		public String getPeriod() {
-			StringBuilder ret = new StringBuilder() ;
-			ret.append(theOperationDate).append(" ").append(theOperationTime).append(" - ")
-				.append(theOperationDateTo).append(" ").append(theOperationTimeTo);
-			return ret.toString() ;
+			return theOperationDate + " " + theOperationTime + " - " +
+					theOperationDateTo + " " + theOperationTimeTo;
 	}
 		
 		 /** Информация о пациенте */
 	    @Comment("Информация о пациенте")
 	    @Transient
-	    public String getPatientInfo() {
-	        
-	        return thePatient!=null?thePatient.getPatientInfo():"";
-	    }
+	    public String getPatientInfo() {return thePatient!=null ? thePatient.getPatientInfo() : "";}
 	
 	 /** Экстренность */
 	@Comment("Экстренность")
-	public Boolean getEmergency() {
-		return theEmergency;
-	}
+	public Boolean getEmergency() {return theEmergency;}
+	public void setEmergency(Boolean aEmergency) {theEmergency = aEmergency;}
+    private Boolean theEmergency;
 
-	public void setEmergency(Boolean aEmergency) {
-		theEmergency = aEmergency;
-	}
 	/** Показания для операции */
 	@Comment("Показания для операции")
 	@OneToOne
 	public VocHospitalAspect getAspect() {return theAspect;}
 	public void setAspect(VocHospitalAspect aAspect) {theAspect = aAspect;}
-
-	/** Показания для операции */
 	private VocHospitalAspect theAspect;
 
-	/** Экстренность */
-	private Boolean theEmergency;
-	
 	/** Малая */
 	@Comment("Малая")
-	public Boolean getMinor() {
-		return theMinor;
-	}
-
-	public void setMinor(Boolean aMinor) {
-		theMinor = aMinor;
-	}
-
-	/** Малая */
+	public Boolean getMinor() {return theMinor;}
+	public void setMinor(Boolean aMinor) {theMinor = aMinor;}
 	private Boolean theMinor;
 	
 	/** Анестезии */
 	@Comment("Анестезии")
 	@OneToMany(mappedBy="surgicalOperation", cascade=CascadeType.ALL)
-	public List<Anesthesia> getAnesthesies() {
-		return theAnesthesies;
-	}
-
-	public void setAnesthesies(List<Anesthesia> aAnesthesies) {
-		theAnesthesies = aAnesthesies;
-	}
+	public List<Anesthesia> getAnesthesies() {return theAnesthesies;}
+	public void setAnesthesies(List<Anesthesia> aAnesthesies) {theAnesthesies = aAnesthesies;}
 	
 	/** Номер в журнале */
 	@Comment("Номер в журнале")
-	public String getNumberInJournal() {
-		return theNumberInJournal;
-	}
-
-	public void setNumberInJournal(String aNumberInJournal) {
-		theNumberInJournal = aNumberInJournal;
-	}
+	public String getNumberInJournal() {return theNumberInJournal;}
+	public void setNumberInJournal(String aNumberInJournal) {theNumberInJournal = aNumberInJournal;}
 	
 	/** Хирург */
 	@Comment("Хирург")
@@ -379,8 +317,6 @@ public class SurgicalOperation extends BaseEntity {
 
 	/** Лечебное учреждение */
 	private MisLpu theLpu;
-	/** Осложнения */
-	private List<VocComplication> theComplications;
 	/** Пациент */
 	private Patient thePatient;
 	/** Случай медицинского обслуживания */
@@ -492,4 +428,48 @@ public class SurgicalOperation extends BaseEntity {
 	/** На какой конечности была сделана операция */
 	private VocLeftRight theLeftRight ;
 
+	/** Класс раны */
+	@Comment("Класс раны")
+	@OneToOne
+	public VocClassWound getClassWound() {return theClassWound;}
+	public void setClassWound(VocClassWound aClassWound) {theClassWound = aClassWound;}
+	/** Класс раны */
+	private VocClassWound theClassWound ;
+
+	/** Препарат периоперационной антибиотикопрофилактики */
+	@Comment("Препарат периоперационной антибиотикопрофилактики")
+	@OneToOne
+	public VocAntibioticDrug getAntibioticDrug() {return theAntibioticDrug;}
+	public void setAntibioticDrug(VocAntibioticDrug aAntibioticDrug) {theAntibioticDrug = aAntibioticDrug;}
+	/** Препарат периоперационной антибиотикопрофилактики */
+	private VocAntibioticDrug theAntibioticDrug ;
+
+	/** Доза (мл) */
+	@Comment("Доза (мл)")
+	public Double getDose() {return theDose;}
+	public void setDose(Double aDose) {theDose = aDose;}
+	/** Доза (мл) */
+	private Double theDose;
+
+	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
+	@Comment("Способы введения препаратов при периоперационной антибиотикопрофилактике")
+	@OneToOne
+	public VocMethodsDrugAdm getMethodsDrugAdm() {return theMethodsDrugAdm;}
+	public void setMethodsDrugAdm(VocMethodsDrugAdm aMethodsDrugAdm) {theMethodsDrugAdm = aMethodsDrugAdm;}
+	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
+	private VocMethodsDrugAdm theMethodsDrugAdm ;
+	
+	/** Время первой дозы */
+	@Comment("Время первой дозы")
+	public Time getFirstDoseTime() {return theFirstDoseTime;}
+	public void setFirstDoseTime(Time aFirstDoseTime) {theFirstDoseTime = aFirstDoseTime;	}
+	/** Время первой дозы */
+	private Time theFirstDoseTime;
+
+	/** Время повторной (при необходимости) дозы */
+	@Comment("Время повторной (при необходимости) дозы")
+	public Time getSecondDoseTime() {return theSecondDoseTime;}
+	public void setSecondDoseTime(Time aSecondDoseTime) {theSecondDoseTime = aSecondDoseTime;	}
+	/** Время повторной (при необходимости) дозы */
+	private Time theSecondDoseTime;
 }

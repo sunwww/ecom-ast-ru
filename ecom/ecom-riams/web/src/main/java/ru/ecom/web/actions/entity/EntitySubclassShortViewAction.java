@@ -28,7 +28,7 @@ public class EntitySubclassShortViewAction extends AbstractEntityAction {
         } else {
         	sb.append("/entityShortView-");
         }
-        sb.append(name.substring(0, name.length()-"Form".length())) ;
+        sb.append(name, 0, name.length()-"Form".length()) ;
         sb.append(".do?id=") ;
         sb.append(id) ;
         if (shortP!=null) {

@@ -1,24 +1,20 @@
 package ru.ecom.mis.web.dwr.medcase;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.expert.IQualityEstimationService;
 import ru.ecom.mis.ejb.service.expert.QualityEstimationRow;
-import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class QualityEstimationServiceJs {
 	
@@ -29,7 +25,7 @@ public class QualityEstimationServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(sql) ;
 		for (WebQueryResult r: list){
 			if (ret.length()>0){ ret.append("#");}
-			ret.append(""+r.get1()+":"+r.get2());
+			ret.append(r.get1()).append(":").append(r.get2());
 		}
 		
 		
@@ -112,8 +108,8 @@ public class QualityEstimationServiceJs {
 	public String getInfoBySlo(Long aSmo, Long aSlo, HttpServletRequest aRequest) throws Exception {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		if (aSlo==null||aSlo.equals(Long.valueOf(0))||aSlo.equals(aSmo)){
-			sql.append("select id, id from medcase slo where parent_id="+aSmo+" and dtype='DepartmentMedCase'  order by datestart desc");
+		if (aSlo==null||aSlo.equals(0L)||aSlo.equals(aSmo)){
+			sql.append("select id, id from medcase slo where parent_id=").append(aSmo).append(" and dtype='DepartmentMedCase'  order by datestart desc");
 			List<Object[]> slos = service.executeNativeSqlGetObj(sql.toString()) ;
 			if (slos.size()>0){
 				aSlo = Long.valueOf(slos.get(0)[0].toString());
@@ -124,11 +120,11 @@ public class QualityEstimationServiceJs {
 		
 		sql.append("select upper(smo.dtype),count(*) from medcase smo where smo.id='").append(aSmo).append("' group by smo.dtype") ;
 		List<Object[]> list = service.executeNativeSqlGetObj(sql.toString()) ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			String dtype=list.get(0)[0].toString() ;
 			//Стационар
 			StringBuilder ret = new StringBuilder() ;
-			if (dtype!=null && dtype.equals("HOSPITALMEDCASE")) {
+			if ("HOSPITALMEDCASE".equals(dtype)) {
 				kindCode="1";
 				sql = new StringBuilder() ;
 				sql.append("select wf.id as wfid,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
@@ -151,9 +147,8 @@ public class QualityEstimationServiceJs {
 					.append(" left join patient wp on wp.id=w.person_id")
 					.append(" where smoM.id = '").append(aSmo).append("' and smoD.id='").append(aSlo).append("'")
 					.append(" and vdrt.code='4' and vpd.code='1' ");
-				;
 				list = service.executeNativeSqlGetObj(sql.toString()) ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					
 					Object[] row = list.get(0) ;
 					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null?row[1]:"").append("#") ;
@@ -170,11 +165,11 @@ public class QualityEstimationServiceJs {
 							.append("#").append(row[9]!=null?row[9]:"") ;
 						
 					}
-					ret.append("#").append(row[10]!=null?row[10]:"").append("#").append(row[11]!=null?row[11]:"") ;
+					ret.append("#").append(row[10]!=null ? row[10] : "").append("#").append(row[11]!=null ? row[11] : "") ;
 					
 				}
 				//Случай лечения в отделении
-			} else if (dtype!=null && dtype.equals("DEPARTMENTMEDCASE")){
+			} else if ("DEPARTMENTMEDCASE".equals(dtype)){
 				kindCode="1";
 				sql = new StringBuilder() ;
 				sql.append("select wf.id as wfid,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
@@ -197,14 +192,13 @@ public class QualityEstimationServiceJs {
 					.append(" left join patient wp on wp.id=w.person_id")
 					.append(" where smoD.id='").append(aSlo).append("'")
 					.append(" and vdrt.code='4' and vpd.code='1' ");
-				;
 				list = service.executeNativeSqlGetObj(sql.toString()) ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					Object[] row = list.get(0) ;
-					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null?row[1]:"").append("#") ;
+					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null ? row[1] : "").append("#") ;
 					if (row[2]!=null) {
 						ret.append(row[2])
-							.append("#").append(row[3]!=null?row[3]:"").append(" ")
+							.append("#").append(row[3]!=null ? row[3] : "").append(" ")
 							.append(row[4]!=null?row[4]:"").append("#")
 							.append(row[5]!=null?row[5]:"") ;
 						
@@ -219,14 +213,14 @@ public class QualityEstimationServiceJs {
 					
 				}
 					// Поликлинический случай лечения
-			} else if (dtype!=null && dtype.equals("POLYCLINICMEDCASE")) {
+			} else if ("POLYCLINICMEDCASE".equals(dtype)) {
 				kindCode="2";
 				/**
 				 * TODO 
 				 * Доделать
 				 */
 				ret.append("######");
-			} else if (dtype!=null&& dtype.equals("VISIT")) {
+			} else if ("VISIT".equals(dtype)) {
 				//start
 				kindCode="2";
 				sql = new StringBuilder() ;
@@ -245,9 +239,8 @@ public class QualityEstimationServiceJs {
 					.append(" left join patient wp on wp.id=w.person_id")
 					.append(" where vis.id='").append(aSlo).append("'");
 					//.append(" and vdrt.code='4' and vpd.code='1' "); ;
-				;
 				list = service.executeNativeSqlGetObj(sql.toString()) ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					
 					Object[] row = list.get(0) ;
 					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null?row[1]:"").append("#") ;
@@ -267,15 +260,15 @@ public class QualityEstimationServiceJs {
 			}
 		}
 			sql.setLength(0);
-			sql.append("select id, name, code from vocqualityestimationkind where code='"+kindCode+"'");
+			sql.append("select id, name, code from vocqualityestimationkind where code='").append(kindCode).append("'");
 			list = service.executeNativeSqlGetObj(sql.toString());
-			if (list.size()>0) {
+			if (!list.isEmpty()) {
 				Object[] o = list.get(0);
 				ret.append("#").append(o[0]!=null?o[0]:"").append("#").append(o[1]!=null?o[1]:"");
 			}
 			
-			return ret!=null?ret.toString():null;
-			}
+			return ret.toString();
+		}
 		
 		return null ;
 	}
@@ -288,74 +281,89 @@ public class QualityEstimationServiceJs {
 	private boolean IsFullExpertCardEdit(HttpServletRequest aRequest) throws JspException {
 		return RolesHelper.checkRoles(" /Policy/Mis/MedCase/QualityEstimationCard/QualityEstimation/Create,/Policy/Mis/MedCase/QualityEstimationCard/QualityEstimation/FullExpertCard", aRequest) ;
 	}
-//Milamesher булевские ли значения критериев
+
+    /**
+     * Получить, является ли карта картой по 203 приказу (булевские ли значения критериев)
+     * @param aCardId QualityEsimationCard.id экспертная карта
+     * @param aRequest HttpServletRequest
+     * @return String 1 - да, 0 - нет
+     */
 	public String IsQECardKindBoolean(Long aCardId, HttpServletRequest aRequest) throws Exception {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
+		String sql = "select case when vqec.code='PR203' then '1' else case when vqec. code='KMP' then '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql,1) ;
 		if (list.size()!=0) {
 			WebQueryResult wqr = list.iterator().next() ;
 			res.append(wqr.get1());
 		}
-		return res.toString();//.equals("5");
+		return res.toString();
 	}
-	//Milamesher критерии по medcase при диагнозе
-	public String showCriteriasByDiagnosis(Long id,HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res = new StringBuilder();
+
+	/**
+	 * Получить критерии по medcase при диагнозе
+	 * @param medCaseId MedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return String json в списке: Критерии, автоматическая оценка, оценка в карте (если есть)
+	 */
+	public String showCriteriasByDiagnosis(Long medCaseId,HttpServletRequest aRequest) throws NamingException {
+		JSONArray res = new JSONArray() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Long medcase;
-		String query="select parent_id from medcase where id=" +id;
+		long medcase;
+        String query="select parent_id from medcase where id=" +medCaseId;
 		Collection<WebQueryResult> list0 = service.executeNativeSql(query);
 		if (list0.size()!=0) {
-			medcase = Long.parseLong(list0.iterator().next().get1().toString());
-			String json = getAllServicesByMedCase(medcase, aRequest);
-			List<String> allMatches = new ArrayList<String>();
-			Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
-			while (m.find()) {
-				allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
-				//res.append(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", "")).append(" ");
-			}
-			//return res.toString();
-			/*m = Pattern.compile("\"vmscode\":\"\\S*\"},").matcher(json);
-			while (m.find()) {
-				allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"},", ""));
-				res.append(m.group().replace("\"vmscode\":\"", "").replace("\"},", "")).append(";");
-			}*/
-			query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes\n" +
-					" from vocqualityestimationcrit vqecrit\n" +
-					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
-					" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
-					" left join diagnosis ds on ds.idc10_id=d.id \n" +
-					" left join medcase mc on mc.id=ds.medcase_id \n" +
-					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
-					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
-					" left join patient pat on pat.id=mc.patient_id \n" +
-					" where mc.id=" + id + " and reg.code='4' and prior.code='1'\n" +
+		    WebQueryResult wqr = list0.iterator().next();
+			medcase = Long.parseLong(wqr.get1().toString());
+			ArrayList<String> listServicies = getAllServicesByMedCase(medcase, aRequest);
+
+			query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes,coalesce(vqem.name,'') as vqename" +
+					" from vocqualityestimationcrit vqecrit" +
+					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  " +
+					" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id " +
+					" left join diagnosis ds on ds.idc10_id=d.id " +
+					" left join medcase mc on mc.id=ds.medcase_id " +
+					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  " +
+					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id " +
+					" left join patient pat on pat.id=mc.patient_id " +
+					" left join qualityestimationcard qec on qec.medcase_id=mc.id" +
+					" left join qualityestimation qe on qe.card_id=qec.id" +
+					" left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id " +
+					" and vqem.id= (select max(qecC.mark_id) " +
+					" from qualityestimationcrit qecC" +
+					" left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id " +
+					" left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id" +
+					" where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')" +
+					" where mc.id=" + medCaseId + " and reg.code='4' and prior.code='1'" +
 					" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
 			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
-					String mcodes = (w.get3() != null) ? w.get3().toString() : "";
-					Boolean flag = false;
-					res.append(w.get1()).append("#").append(w.get2()).append("#");
-					if (allMatches.size() > 0) {
-						for (int i=0; i<allMatches.size(); i++) {
-							String scode = allMatches.get(i);
-							if (mcodes.contains("'" + scode + "'")) flag = true;
-						}
-					}
-					if (flag) res.append("Да");
-					else res.append("Нет");
-					res.append("!");
+					JSONObject o = new JSONObject() ;
+					String[] mcodes = (w.get3() != null ? w.get3().toString().replaceAll("'","") : "").split(",");
+					o.put("crit",w.get2())
+							.put("mark",w.get4());
+					Boolean flag=false;
+					for (int i=0; i<mcodes.length && !flag; i++)
+                        if (listServicies.indexOf(mcodes[i])!=-1) flag=true;
+					if (flag) o.put("automark","Да");
+					else o.put("automark","Нет");
+					res.put(o);
 				}
 			}
-			else res.append("##");
 		}
-		else res.append("##");
-		return res.toString();//*/}return null;
+		return res.toString();
 	}
-	//Milamesher чисто критерии по диазнозу, список
+
+    /**
+     * Получить критерии чисто по диагнозу
+     * @param idc10_id VocIdc10.id МКБ
+     * @param regID Тип регистрации
+     * @param priorId Приоритет
+     * @param medcaseId СЛО
+     * @param aRequest HttpServletRequest
+     * @return String json в списке: Критерии
+     */
 	public String showJustCriterias(Long idc10_id, Long regID, Long priorId, Long medcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res=new StringBuilder();
@@ -367,8 +375,6 @@ public class QualityEstimationServiceJs {
 						" from vocqualityestimationcrit vqecrit\n" +
 						" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
 						" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
-						//" left join diagnosis ds on ds.idc10_id=d.id \n" +
-						//" left join medcase mc on mc.id=ds.medcase_id \n" +
 						" left join medcase mc on mc.id="+medcaseId + "\n" +
 						" left join vocdiagnosisregistrationtype reg on reg.id=" + regID + "\n" +
 						" left join vocprioritydiagnosis prior on prior.id=" + priorId + "\n" +
@@ -403,16 +409,16 @@ public class QualityEstimationServiceJs {
 		}
 		return res.toString();
 	}
-	public String getAllServicesByMedCase(Long aMedcaseId,HttpServletRequest aRequest) throws NamingException {
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
+	public ArrayList<String> getAllServicesByMedCase(Long aMedcaseId,HttpServletRequest aRequest) throws NamingException {
+		IQualityEstimationService service = Injection.find(aRequest).getService(IQualityEstimationService.class);
 		return service.getAllServicesByMedCase(aMedcaseId);
 	}
 	public String GetIfCommentYesNoNeeded(String type, Long markId, Long qEId, Boolean createEdit,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String res = "";
 		if (type.equals("BranchManager")) {//если оценки проставляет заведующий, может быть разница с автоматическим расчётом
-			Long medcase;
-			String query = "";
+			long medcase;
+			String query;
 			if (createEdit==null) {
 				query = "select m.parent_id from qualityestimationcard qecard\n" +
 						"left join medcase m on m.id=qecard.medcase_id\n" +
@@ -431,12 +437,9 @@ public class QualityEstimationServiceJs {
 			Collection<WebQueryResult> list0 = service.executeNativeSql(query);
 			if (list0.size() != 0) {
 				medcase = Long.parseLong(list0.iterator().next().get1().toString());
-				String json = getAllServicesByMedCase(medcase, aRequest);
-				List<String> allMatches = new ArrayList<String>();
-				Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
-				while (m.find()) {
-					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
-				}
+
+                ArrayList<String> listServicies = getAllServicesByMedCase(medcase, aRequest);
+
 				query = "select vqcrit.medservicecodes,qem.name\n" +
 						"from vocqualityestimationcrit vqcrit\n" +
 						"left join vocqualityestimationmark qem on qem.criterion_id=vqcrit.id\n" +
@@ -444,10 +447,9 @@ public class QualityEstimationServiceJs {
 				WebQueryResult w = service.executeNativeSql(query).iterator().next();
 				String mark = (w.get2() != null) ? w.get2().toString() : "";
 				String mcodes = (w.get1() != null) ? w.get1().toString() : "";
-				Boolean flag = false;
+				boolean flag = false;
 				if (!mcodes.equals("")) {
-					for (int i = 0; i < allMatches.size(); i++) {
-						String scode = allMatches.get(i);
+					for (String scode : listServicies) {
 						if (mcodes.contains("'" + scode + "'")) flag = true;
 						//res+=scode+=" ; ";
 					}
@@ -457,7 +459,7 @@ public class QualityEstimationServiceJs {
 				else res = "false";
 			}
 		} else if (type.equals("Expert")) { //эксперт - пред. этам - зав.
-			String query = "";
+			String query;
 			if (!createEdit) {
 				query = "select qem.name \n" +
 						"from vocqualityestimationmark qem\n" +
@@ -480,12 +482,24 @@ public class QualityEstimationServiceJs {
 		}
 		return res;
 	}
-	//Milamesher создание черновик ЭК
-	public Long createDraftEK(Long aMcaseId, HttpServletRequest aRequest) throws NamingException {
+
+    /**
+     * Создать черновик ЭК.
+     * @param aMcaseId СЛО
+     * @param aRequest HttpServletRequest
+     * @return Long id созданного черновика
+     */
+	public Long createDraftEK(Long aMcaseId, String aCode, HttpServletRequest aRequest) throws NamingException {
 		IQualityEstimationService service = Injection.find(aRequest).getService(IQualityEstimationService.class);
-		return service.createDraftEK(aMcaseId);
+		return service.createDraftEK(aMcaseId, aCode);
 	}
-	//Milamesher получить departmentMedCase
+
+    /**
+     * Получить departmentMedCase.
+     * @param aCardId QualityEstimationCard.id
+     * @param aRequest HttpServletRequest
+     * @return String medcase_id СЛО
+     */
 	public String getDepMedcaseFromDraftEK(Long aCardId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -497,8 +511,15 @@ public class QualityEstimationServiceJs {
 		}
 		return res.toString();
 	}
+
+    /**
+     * Удалить критерий и всё, что на него ссылается.
+     * @param aCritId qualityestimationcrit.id
+     * @param aRequest HttpServletRequest
+     * @return Boolean flag true - удалено, false - не найдено
+     */
 	public Boolean deleteCrit(Long aCritId, HttpServletRequest aRequest) throws NamingException {
-		Boolean flag=false;
+		boolean flag=false;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String query ="select * from qualityestimationcrit where criterion_id=" + aCritId;
 		Collection<WebQueryResult> list = service.executeNativeSql(query,1) ;
@@ -513,20 +534,42 @@ public class QualityEstimationServiceJs {
 		}
 		return flag;
 	}
+
+    /**
+     * Удалить связь критерий-диагноз.
+     * @param aCritId qualityestimationcrit.id
+     * @param aIdc10Id МКБ
+     * @param aRequest HttpServletRequest
+     */
 	public void deleteDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
 		(Injection.find(aRequest).getService(IWebQueryService.class)).executeUpdateNativeSql("delete from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id);
 	}
+
+    /**
+     * Добавить связь критерий-диагноз.
+     * @param aCritId qualityestimationcrit.id
+     * @param aIdc10Id МКБ
+     * @param aRequest HttpServletRequest
+     * @return Boolean flag true - добавлено, false - уже было
+     */
 	public Boolean addDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String query="select * from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id;
 		Collection<WebQueryResult> list = service.executeNativeSql(query,1) ;
-		Boolean flag=false;
+		boolean flag=false;
 		if (list.size()==0) {
 			service.executeUpdateNativeSql("insert into vocqualityestimationcrit_diagnosis(vocidc10_id, vqecrit_id) VALUES (" + aIdc10Id + "," + aCritId + ")");
 			flag=true;
 		}
 		return flag;
 	}
+
+    /**
+     * Получить диагноз по критерию.
+     * @param aCritId qualityestimationcrit.id
+     * @param aRequest HttpServletRequest
+     * @return String данные диагноза
+     */
 	public String selectDiagnoseOfCrit203ById(Long aCritId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -542,6 +585,13 @@ public class QualityEstimationServiceJs {
 		} else res.append("##");
 		return res.toString();
 	}
+
+    /**
+     * Получить услуги по критерию.
+     * @param aCritId qualityestimationcrit.id
+     * @param aRequest HttpServletRequest
+     * @return String данные услуг
+     */
 	public String selectMedServOfCrit203ById(Long aCritId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -554,6 +604,14 @@ public class QualityEstimationServiceJs {
 		} else res.append("##");
 		return res.toString();
 	}
+
+    /**
+     * Удалить связь критерий-услуга.
+     * @param aCritId qualityestimationcrit.id
+     * @param medServ String услуга
+     * @param aRequest HttpServletRequest
+     * @return String 0 - всё ок
+     */
 	public String deleteMedServOfCrit203ById(Long aCritId, String medServ, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -564,7 +622,7 @@ public class QualityEstimationServiceJs {
 				res.append(w.get1());
 			}
 		}
-		if (res!=null && !res.toString().equals("")) {
+		if (!res.toString().equals("")) {
 			String ms=res.toString();
 			ms=ms.replace("'"+medServ+"'","");
 			ms=ms.replace(",,",",");
@@ -572,12 +630,20 @@ public class QualityEstimationServiceJs {
 			if (ms.length()>0 && ms.substring(0,1).equals(",")) ms=ms.substring(1);
 			if (ms.endsWith(",")) ms=ms.substring(0,ms.length()-1);
 			ms="'"+ms+"'";
-			if (ms==null || ms.equals("null") || ms.equals("'")) ms="''";
+			if ( ms.equals("null") || ms.equals("'")) ms="''";
 			service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
 			return ms.replace("''","'").replace("''","'");
 		}
 		return "0";
 	}
+
+    /**
+     * Добавить связь критерий-услуга.
+     * @param aCritId qualityestimationcrit.id
+     * @param medServId MedService.id
+     * @param aRequest HttpServletRequest
+     * @return String 0 - всё ок
+     */
 	public String addMedServOfCrit203ById(Long aCritId, String medServId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -596,7 +662,7 @@ public class QualityEstimationServiceJs {
 				medServ=w.get1().toString();
 			}
 		}
-		if (res!=null && !medServ.equals("")) {
+		if (!medServ.equals("")) {
 			String ms=res.toString();
 			if (!ms.contains(medServ)) {
 				if (res.toString().equals("")) {
@@ -608,18 +674,29 @@ public class QualityEstimationServiceJs {
 					ms=ms.replace("'","''");
 					ms="'"+ms+"'";
 				}
-				if (ms==null || ms.equals("null") || ms.equals("'")) ms="''";
+				if (ms.equals("null") || ms.equals("'")) ms="''";
 				service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
 				return ms.replace("''","'").replace("''","'");
 			}
 		}
 		return "0";
 	}
+
+    /**
+     * Очистить список услуг, привязанных к критерию.
+     * @param aCritId qualityestimationcrit.id
+     * @param aRequest HttpServletRequest
+     */
 	public void setMedServEmptyString(Long aCritId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes='' where id=" + aCritId);
 	}
-	//Milamesher #105 получить отделение, за которым закреплён пациент (для ЭК по отказам от госпитализаций
+
+    /**
+     * Получить отделение, за которым закреплён пациент (для ЭК по отказам от госпитализаций) #105
+     * @param mc MedCase.id СЛО
+     * @param aRequest HttpServletRequest
+     */
 	public String getFixedDepartmentFromMedcase(String mc, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -631,5 +708,87 @@ public class QualityEstimationServiceJs {
 		}
 		else res.append("##");
 		return res.toString();
+	}
+
+	/**
+	 * Получить возможные способы предварительной записи пациентов (выбирает регистратор при создании предварительной записи) #145
+	 * @param aSloId Slo.id
+	 * @param aKindId vocqualityestimationkind.id
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean Можно ли создавать (нельзя в случае, если выписан позднее опред. срока) #150
+	 */
+	public Boolean getIfCanCreateNow(Long aSloId, Long aKindId,HttpServletRequest aRequest) throws NamingException,JspException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select case when hmc.datefinish<current_date-(select cast(keyvalue as int) from softconfig where key='Pr203DaysAfterDischarge')")
+				.append((aKindId!=null) ? " and (select code from vocqualityestimationkind where id="+aKindId+")='PR203'" : "")
+				.append(" then '1' else '0' end")
+				.append(" from medcase hmc")
+				.append(" left join medcase slo on slo.parent_id=hmc.id")
+				.append(" where slo.id=").append(aSloId).append(" or slo.parent_id=").append(aSloId);
+		Collection<WebQueryResult> list = service.executeNativeSql( sql.toString());
+		return list.isEmpty() || RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut",aRequest) || list.iterator().next().get1().equals("0");
+	}
+
+	/**
+	 * Получить, есть ли необходимость делать эксертизу KMP
+	 * @param aSloId Slo.id
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean есть ли необходимость делать эксертизу KMP
+	 */
+	public Boolean getIfKMPNecessary(Long aSloId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select distinct vocidc10_id,isconcomitant from")
+				.append(" vocqualityestimationcrit_diagnosis")
+				.append(" left join mislpu lpu on lpu.id=(select department_id from medcase where id=").append(aSloId).append(")")
+                .append(" where vqecrit_id=ANY(select distinct vqecrit.id")
+                .append(" from vocqualityestimationcrit vqecrit")
+                .append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id")
+                .append(" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id")
+                .append(" left join diagnosis ds on ds.idc10_id=d.id")
+                .append(" left join medcase mc on mc.id=ds.medcase_id")
+                .append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id")
+                .append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id")
+                .append(" left join patient pat on pat.id=mc.patient_id")
+                .append(" left join vocqualityestimationkind kind on kind.id=vqecrit.kind_id")
+				.append(" left join mislpu lpu on lpu.id=mc.department_id")
+                .append(" where mc.id=").append(aSloId)
+                .append(" and kind.code='KMP'")
+                .append(" and reg.code='4' and (prior.code='1' and (vqecrit_d.isconcomitant is null or vqecrit_d.isconcomitant=false)")
+                .append(" or prior.code='3' and vqecrit_d.isconcomitant=true)) and lpu.isreportkmp=true");
+        List<Object[]> list = service.executeNativeSqlGetObj(sql.toString()) ;
+        //если есть соп. диагнозы, то необходимо, чтобы были все
+		//если нет соп., то достаточно одного
+		Boolean existsConc=false, yesMain=false, yesConc=false;
+		for (Object[] o: list) {
+			Boolean isConc = o[1]!=null? Boolean.valueOf(o[1].toString()) : false;
+			if (isConc) existsConc=isConc;
+		}
+        for (Object[] o: list) {
+            Long id = Long.valueOf(o[0].toString());
+            Boolean isConc = o[1]!=null? Boolean.valueOf(o[1].toString()) : false;
+
+            StringBuilder sql2 = new StringBuilder();
+            sql2.append(" select ds.id from diagnosis ds")
+                    .append(" left join medcase mc on mc.id=ds.medcase_id")
+                    .append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id")
+                    .append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id")
+                    .append(" where mc.id=").append(aSloId).append(" and reg.code='4' and prior.code='");
+            if (isConc) sql2.append("3");
+            else sql2.append("1");
+            sql2.append("' and ds.idc10_id='").append(id).append("'");
+            if (!service.executeNativeSql( sql2.toString()).isEmpty()) {
+            	if (!existsConc)
+            		return true;  //просто основной есть и соп не нужен
+            	if (!isConc) yesMain=true;
+            	if (isConc) yesConc=true;
+
+            	if (yesMain && yesConc){ //один осн. есть, один соп есть
+					return true;
+				}
+			}
+        }
+		return false;
 	}
 }

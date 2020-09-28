@@ -5,7 +5,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
-import org.jdom.input.SAXBuilder;
+import org.json.JSONObject;
+import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.expert2.service.IExpert2ImportService;
 import ru.ecom.expert2.web.form.ImportFileForm;
 import ru.ecom.web.util.Injection;
@@ -23,75 +24,97 @@ public class Expert2FileImportAction extends BaseAction {
 
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm,
-			HttpServletRequest aRequest, HttpServletResponse aResponse)
-			throws Exception {
+			HttpServletRequest aRequest, HttpServletResponse aResponse) {
     	try {
 			IExpert2ImportService expert2service = Injection.find(aRequest).getService(IExpert2ImportService.class);
-
-			ImportFileForm form = aForm!=null?(ImportFileForm)aForm:null ;
-    		FormFile ffile = form!=null?form.getFile():null;
+			ImportFileForm form = (ImportFileForm)aForm;
+    		FormFile ffile = form.getFile();
     		if (ffile==null) {
-				return aMapping.findForward("success") ;
+				return aMapping.findForward(SUCCESS) ;
 			}
 			String fileName=ffile.getFileName();
-			LOG.info("filename = "+fileName);
 			String action = form.getDirName();
-			String result ;
-			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/data");
+			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi/server/default/data");
+			Long entryListId = form.getObjectId();
+			IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
+			final long monitorId = monitorService.createMonitor();
+
 			switch (action) {
 				case "createEntry":
-					if (fileName.toUpperCase().endsWith(".MP")) {
+					if (fileName.startsWith("ELMED")) { //импорт файлов с элмеда
 						saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
-						LOG.info("Создаем заполнение из файла");
-						result = expert2service.createEntryByFondXml(fileName);
+						new Thread() {
+							public void run() {
+								try {
+									expert2service.importElmed(monitorId,fileName);
+								} catch (Exception e) {
+									monitorService.cancel(monitorId);
+									throw new IllegalStateException(e) ;
+								}
+							}
+						}.start() ;
 					} else {
-						result="Создания заполнения возможно только из МР пакета!";
-					}
-					break;
-				case "importN5":
-					if (fileName.startsWith("N5") && fileName.toUpperCase().endsWith(".XML")) { //Импортируем файл для проставления номеров направления фонда
-						LOG.info("start import N5");
-						Long entryListId = form.getObjectId();
-						result = expert2service.importN5File(new SAXBuilder().build(ffile.getInputStream()),entryListId);
-					} else {
-						result="Неверное имя файла для импорта N5 (xml файл должен начинаться с N5)!";
+						LOG.warn("Создания заполнения возможно только для ELMED!");
+						monitorService.cancel(monitorId);
 					}
 					break;
 				case "importFlk":
 					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
-					result = expert2service.importFlkAnswer(fileName);
+					new Thread() {
+						public void run() {
+							expert2service.importFlkAnswer(monitorId, fileName, entryListId);
+						}}.start();
 					break;
 				case "importDefect":
 					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
-					result = expert2service.importFondMPAnswer(fileName) ;
+					new Thread() {
+						public void run() {
+							try {
+								expert2service.importFondMPAnswer(monitorId, fileName) ;
+							} catch (Exception e) {
+								monitorService.cancel(monitorId);
+								throw new IllegalStateException(e) ;
+							}
+						}
+					}.start() ;
+
 					break;
 					default:
-						result="Я не понимаю, чего вы от меня хотите!!!"+action;
+						LOG.warn("Я не понимаю, чего вы от меня хотите!!!"+action);
 			}
 
-			LOG.info(result);
-			aRequest.setAttribute("importResult",result);
-    		return aMapping.findForward("success") ;
+			if (form.isViewOnly()) { //return json
+				JSONObject JSONObject = new JSONObject();
+				JSONObject.put("monitorId",monitorId);
+				aResponse.setContentType("application/x-json;charset=utf-8");
+				aResponse.getWriter().print(JSONObject);
+				return null;
+			} else {
+				aRequest.setAttribute("monitorId",monitorId);
+				return aMapping.findForward(SUCCESS) ;
+			}
 
     	} catch(Exception e) {
 			LOG.error("Ошибочка = ",e);
     	}
-    	return aMapping.findForward("success") ;
+    	return aMapping.findForward(SUCCESS) ;
     }
 
-	public void saveFile(InputStream aInputStream, String aFileName) throws IOException  {
-		int count ;
-		LOG.info("filename="+aFileName);
+	private void saveFile(InputStream aInputStream, String aFileName) throws IOException {
 		File outputFile = new File(aFileName);
-		if (!outputFile.exists()) {
-			outputFile.createNewFile();
-		}
-		try (FileOutputStream out = new FileOutputStream(aFileName)) {
-			byte[] buf = new byte[8192] ;
-			while ( (count=aInputStream.read(buf)) > 0) {
-				out.write(buf, 0, count) ;
+		if (outputFile.exists() || outputFile.createNewFile()) {
+			int count;
+			try (FileOutputStream out = new FileOutputStream(aFileName)) {
+				byte[] buf = new byte[8192];
+				while ((count = aInputStream.read(buf)) > 0) {
+					out.write(buf, 0, count);
+				}
+				aInputStream.close();
+			} catch (Exception e) {
+				LOG.error("Невозможно записать файл: "+e.getMessage(),e);
 			}
-			aInputStream.close();
+		} else {
+			LOG.error("Невозможно открыть / создать файл: "+aFileName);
 		}
 	}
 }

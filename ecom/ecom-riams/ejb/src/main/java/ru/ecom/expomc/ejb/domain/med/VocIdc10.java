@@ -7,7 +7,6 @@ import ru.ecom.expomc.ejb.domain.med.voc.VocSexPermission;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.sql.Date;
@@ -16,8 +15,8 @@ import java.sql.Date;
 @Comment("МКБ 10")
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(unique=false, properties={"code"}),
-	@AIndex(unique=false, properties={"code","name"})
+	@AIndex(properties={"code"}),
+	@AIndex(properties={"code","name"})
 })
 public class VocIdc10 extends VocIdCodeName {
 	
@@ -47,20 +46,7 @@ public class VocIdc10 extends VocIdCodeName {
 
 	/** Разрешен в ОМС */
 	private Boolean theOmcPermission;
-	/** Класс МКБ */
-	@Comment("Класс МКБ")
-	@ManyToOne
-	public VocIdc10Class getIdcClass() {
-		return theIdcClass;
-	}
 
-	public void setIdcClass(VocIdc10Class aIdcClass) {
-		theIdcClass = aIdcClass;
-	}
-
-	/** Класс МКБ */
-	private VocIdc10Class theIdcClass;
-	
 	/** Начальный возраст */
 	@Comment("Начальный возраст")
 	public Double getAgeFrom() {
@@ -161,4 +147,10 @@ public class VocIdc10 extends VocIdCodeName {
 	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
 	/** Дата окончания актуальности */
 	private Date theDateTo ;
+
+	/** Резрешен для COVID-19 */
+	@Comment("Резрешен для COVID-19")
+	public Boolean getAllowCovid() {return theAllowCovid;}
+	public void setAllowCovid(Boolean aAllowCovid) {theAllowCovid = aAllowCovid;}
+	private Boolean theAllowCovid ;
 }

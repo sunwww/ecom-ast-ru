@@ -13,11 +13,11 @@
 			<ecom:webQuery name="medicalService" nativeSql="
 select cams.id, pp.code,pp.name,cams.cost,cams.countMedService 
 	, cams.countMedService*cams.cost as sumNoAccraulMedService 
-	, cao.discount,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2)
+	, cao.discount,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as f8
+	, (select list(coalesce(caos.medcase_id,0)||' - ' ||coalesce(caos.serviceType||' '||caos.serviceId,'')) from contractaccountoperationbyservice caos where caos.accountmedservice_id = cams.id) as f10_madeInfo
 			from ContractAccountMedService cams
 			left join ServedPerson sp on cams.servedPerson_id = sp.id
-			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
-			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
+			left join ContractAccountOperation cao on cao.account_id = sp.account_id and cao.dtype='OperationAccrual'
 			left join ContractAccount ca on ca.id=cao.account_id
 			left join ContractPerson cp on cp.id=sp.person_id 
 			left join patient p on p.id=cp.patient_id
@@ -25,7 +25,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			left join PriceMedService pms on pms.id=cams.medService_id
 			left join PricePosition pp on pp.id=pms.pricePosition_id
 			where ca.contract_id='${param.id}'
-			and cao.id is not null
+			and cao.id is not null and cams.fromComplexMedServiceId is null
 			"/>
 				
 				<msh:table selection="multy"  name="medicalService" 
@@ -42,9 +42,10 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 					<msh:tableColumn columnName="Стоимость" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Скидка" property="7" />
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="8" />
-					<msh:tableColumn columnName="Возрат, кол-во" property="9" />
+					<msh:tableColumn columnName="Возрат, кол-во" property="10" />
 					<msh:tableColumn columnName="Возрат, руб" property="10" isCalcAmount="true" />
 					<msh:tableColumn columnName="Итог" isCalcAmount="true" property="11" />
+					<msh:tableColumn columnName="инф" property="9" />
 					
 				</msh:table>
 				</msh:sectionContent>

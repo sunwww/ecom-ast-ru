@@ -136,6 +136,11 @@ public class SecUserForm  extends IdEntityForm {
 	public Long getUserCopy() {return theUserCopy;}
 	public void setUserCopy(Long aUserCopy) {theUserCopy = aUserCopy;}
 
+	/** Можно копировать роли в инфекционное отделение */
+	@Comment("Можно копировать роли в инфекционное отделение")
+	public Boolean getEnabledForCopy() {return theEnabledForCopy;}
+	public void setEnabledForCopy(Boolean aEnabledForCopy) {theEnabledForCopy = aEnabledForCopy;}
+
 	/** Пользователь */
 	private Long theUserCopy;
 	/** Пользователь, который последний редактировал запись */
@@ -170,4 +175,6 @@ public class SecUserForm  extends IdEntityForm {
     private String theFullname ;
     /** Пароль */
     private String thePassword ;
+	/** Можно копировать роли в инфекционное отделение*/
+	private Boolean theEnabledForCopy ;
 }

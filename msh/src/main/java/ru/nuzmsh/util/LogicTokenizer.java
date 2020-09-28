@@ -2,9 +2,9 @@ package ru.nuzmsh.util;
 
 import ru.nuzmsh.util.format.DateConverter;
 
-import java.util.Date;
-import java.text.ParseException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * Разбивает строку на подстроки с помощью разделителя
@@ -20,8 +20,8 @@ public final class LogicTokenizer {
 
         theLine = aLine==null ? "" : aLine;
         theDelim = aDelim;
-        theNext = (theLine != null && theLine.length() > 0);
-        theLineLength = theLine != null ? theLine.length() : -1;
+        theNext = theLine.length() > 0;
+        theLineLength = theLine.length() ;
     }
 
     /**
@@ -45,13 +45,8 @@ public final class LogicTokenizer {
     public final boolean getNextBoolean() {
         String str = getNextString() ;
 //        System.out.println("LogicTokenizer.boolean = " + str +" = "+ (str != null && "1".equals(str)));
-        if(str!=null) {
-            if("1".equals(str) || "2".equals(str)) {
-            } else {
-                //throw new RuntimeException("Значение boolean :"+str) ;
-            }
-        }
-        return str != null && "1".equals(str) ;
+
+        return "1".equals(str) ;
     }
 
     /**

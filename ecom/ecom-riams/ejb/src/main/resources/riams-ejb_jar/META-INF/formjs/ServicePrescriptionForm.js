@@ -1,47 +1,55 @@
 
 function onPreDelete(aId, aCtx) {
-	
-	var startedPres = aCtx.manager.createNativeQuery("select p.id from prescription p where id = "+aId+" and p.intakedate is not null").getResultList();
-	if (startedPres.size()>0) {
+	var manager =  aCtx.manager;
+	if (!manager.createNativeQuery("select p.id from prescription p where id = "+aId+" and p.intakedate is not null")
+		.getResultList().isEmpty()) {
 		throw "Удаление назначения невозможно, т.к. был произведен забор биоматериала";
 	}
 	//При удалении назначения, если не оформлен визит, удаляем его. Если оформлен - не удаляем назначение
-	startedPres = aCtx.manager.createNativeQuery("select case when vis.datestart is not null then 1 else 0 end as pid, vis.id as visit,p.calendartime_id as cal " +
+	startedPres = manager.createNativeQuery("select case when vis.datestart is not null then 1 else 0 end as pid, vis.id as visit,p.calendartime_id as cal " +
 			" from prescription p " +
 			" left join medcase vis on vis.timeplan_id=p.calendartime_id" +
 			" where p.id="+aId ).getResultList();
-	if (startedPres.size()>0){
+	if (!startedPres.isEmpty()){
 		var ids = startedPres.get(0);
 		if (+ids[0]>0) {
 			throw "По данному направлению был произведен прием, удаление невозможно!";
 		} else {
 			if (+ids[2]>0){
-			aCtx.manager.createNativeQuery("update workcalendartime set medcase_id=null where id="+ids[2]).executeUpdate();
-			aCtx.manager.createNativeQuery("delete from medcase where parent_id="+ids[1]+"  or (id='"+ids[1]+"' and datestart is null)").executeUpdate();
+			manager.createNativeQuery("update workcalendartime set medcase_id=null where id="+ids[2]).executeUpdate();
+			manager.createNativeQuery("delete from medcase where parent_id="+ids[1]+"  or (id='"+ids[1]+"' and datestart is null)").executeUpdate();
 			}
 		}
-		
-	} 
-		aCtx.manager.createNativeQuery("update workcalendartime set prescription=null where prescription="+aId).executeUpdate();
+	}
+	manager.createNativeQuery("update workcalendartime set prescription=null where prescription="+aId).executeUpdate();
 }
 
 /**
  * Перед сохранением
  */
 function onSave(aForm, aEntity, aCtx) {
-	var date = new java.util.Date() ;
-	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
-	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
-	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	var date = new java.util.Date().getTime() ;
+	aEntity.setEditDate(new java.sql.Date(date)) ;
+	aEntity.setEditTime(new java.sql.Time (date)) ;
+	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().getName()) ;
+}
 
+/**
+* Перед созданием
+ */
+function onPreCreate(aForm, aCtx) {
+	var ser = aForm.labList!=null && aForm.labList!="" ? aForm.labList.split("#").length : 0;
+	if (ser===0) {
+		throw "Не выбрана услуга!";
+	}
 }
 /**
- * Перед сохранением
+ * После создания
  */
 function onCreate(aForm, aEntity, aCtx) {
-	var date = new java.util.Date() ;
+	var date = new java.util.Date();
 	var username = aCtx.getSessionContext().getCallerPrincipal().toString();
-	var date = new java.sql.Date(date.getTime());
+	date = new java.sql.Date(date.getTime());
 	var time = new java.sql.Time (date.getTime());
 	aEntity.setCreateDate(date) ;
 	aEntity.setCreateTime(time) ;
@@ -49,18 +57,19 @@ function onCreate(aForm, aEntity, aCtx) {
 	var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
 	aEntity.setPrescriptSpecial(wf) ;
 	var check1S = 0 ;
-	var pat = aEntity.prescriptionList.medCase.patient ;
-	//throw ""+aForm.labList;	
+//	var pat = aEntity.prescriptionList.medCase.patient ;
 	if (aForm.labList!=null && aForm.labList !="") {
 		var addMedServicies = aForm.labList.split("#") ;
 	//	var labMap = new java.util.HashMap() ;
 		var prescriptType = null;
+		var manager = aCtx.manager ;
 		if (aForm.prescriptType!=null) {
-			prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
+			prescriptType = manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;
 		}
 		if (addMedServicies.length>0  ) {
+			var vss = manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream, aForm.serviceStream);
+			var isOnlyPayed = vss!=null && vss.getIsPaidConfirmation()!=null && vss.getIsPaidConfirmation();
 			var matId = null;
-//			throw "All OK"+addMedServicies.length;
 			for (var i=0; i<addMedServicies.length; i++) {
 				var param = addMedServicies[i].split(":") ;
 				var par1 = java.lang.Long.valueOf(param[0]) ;
@@ -69,7 +78,8 @@ function onCreate(aForm, aEntity, aCtx) {
 				var par4 = (+param[3]>0)?java.lang.Long.valueOf(param[3]):null ; //Место забора крови
 				var par5 = (+param[4]>0)?java.lang.Long.valueOf(param[4]):null ; //WorkCalendarTime
 				var par6 = (param[5]!=null)?""+param[5]:"" ; //Комментарий
-				var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
+				var caosId = param.length>6 ? java.lang.Long.valueOf(param[6]) : 0;
+				var medService = manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,par1) ;
 				matId = null;
 				if (medService!=null && par2!=null) {
 					var adMedService ;
@@ -79,14 +89,8 @@ function onCreate(aForm, aEntity, aCtx) {
 					} else {
 						adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					}
-					//Перенесли время создания кода биоматериала на момент забора крови
-					/* *if (medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
-						var key =""+pat.id+"#"+par2;
-						matId = Packages.ru.ecom.mis.ejb.service.prescription.PrescriptionServiceBean.getPatientDateNumber(labMap, key, pat.id, par2, aCtx.manager); 
-						labMap.put(key, matId);
-						
-					}*/
-					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ; // ?
+
+					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ;
 					adMedService.setPrescriptSpecial(aEntity.getPrescriptSpecial()) ;
 					adMedService.setMedService(medService) ;
 					adMedService.setPlanStartDate(par2) ;
@@ -97,20 +101,44 @@ function onCreate(aForm, aEntity, aCtx) {
 					adMedService.setCreateDate(date) ;
 					adMedService.setComments(par6) ;
 					if (par3!=null&&!par3.equals(java.lang.Long(0))) { 
-						var medServiceCabinet = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
+						var medServiceCabinet = manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
 						adMedService.setPrescriptCabinet(medServiceCabinet);	
 					}
 					if (par4!=null&&!par4.equals(java.lang.Long(0))) { //А стало так 
-						var department = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,par4) ;
+						var department = manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,par4) ;
 						adMedService.setDepartment(department);	
 					}								
-					aCtx.manager.persist(adMedService) ;
+					manager.persist(adMedService) ;
 					if (par5!=null){
-						var wct = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime,par5) ;
+						var wct = manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime,par5) ;
 						wct.setPrescription(adMedService.getId());
 						adMedService.setCalendarTime(wct);
 					}
-					
+					if (isOnlyPayed) {
+						if (caosId>0) { //Если есть ИД оплаченной услуги - проставим соответствие
+							var caos = manager.find(Packages.ru.ecom.mis.ejb.domain.contract.ContractAccountOperationByService, caosId);
+							caos.setServiceType('PRESCRIPTION');
+							caos.setServiceId(adMedService.getId());
+							manager.persist(caos);
+
+						} else {
+							if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/Contract/MakeUnpaidServices")
+							|| (aForm.getUnpaidConfirmation()!=null && aForm.getUnpaidConfirmation()==true)) {
+								var msg = new Packages.ru.ecom.mis.ejb.domain.prescription.AdminChangeJournal();
+								msg.setCType("PRESCRIPTION_WITHOUT_PAYMENT");
+								msg.setPatient(aEntity.prescriptionList.medCase.patient.id);
+								msg.setAnnulRecord("Назначенная услуга '"+medService.code+" "+medService.name+"' не оплачена пациентом");
+								msg.setPrescriptWorkFunction(aEntity.getPrescriptSpecial().getId());
+								msg.setMedCase(aEntity.prescriptionList.medCase.id);
+								msg.setCreateUsername(username);
+                                msg.setCreateTime(time) ;
+                                msg.setCreateDate(date) ;
+                                manager.persist(msg);
+							} else {
+								throw "Услуга '"+medService.code+" "+medService.name+"' не оплачена пациентом!";
+							}
+						}
+					}
 				}
 			}
 		}

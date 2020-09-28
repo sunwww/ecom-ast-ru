@@ -25,12 +25,15 @@
                size="100" rows="5" fieldColSpan="8" />
                     
         </msh:row>      	
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:row>
+            <msh:autoComplete property="healthGroup" vocName="vocHealthGroup"/>
+        </msh:row>
+        <msh:submitCancelButtonsRow  colSpan="4" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Poly" beginForm="doc_baseMedicalExaminationForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
+    <ecom:titleTrail mainMenu="Poly" beginForm="doc_baseMedicalExaminationForm"  />
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsNotView formName="doc_baseMedicalExaminationForm">
@@ -51,11 +54,7 @@
    <script type="text/javascript">
     function printDocument() {
       	if (confirm('Распечатать документ?')) {
-      		if (confirm('Распечатать полностью?')) {
-	      		window.location.href = "print-documentBaseMedicalExamination.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}" ;
-      		} else {
-      			window.location.href = "print-documentBaseMedicalExamination1.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}" ;
-      		}
+      	  window.location.href = "print-documentProfExamination.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}" ;
       	}
   }
     printDocument();
@@ -65,11 +64,7 @@
   <script type="text/javascript">
     function printDocument() {
       	if (confirm('Распечатать документ?')) {
-      		if (confirm('Распечатать полностью?')) {
-      			window.location.href = "print-documentBaseMedicalExamination.do?s=VisitPrintService&m=printDocument&id=${param.id}" ;
-      		} else {
-      			window.location.href = "print-documentBaseMedicalExamination1.do?s=VisitPrintService&m=printDocument&id=${param.id}" ;
-      		}
+      	  window.location.href = "print-documentProfExamination.do?s=VisitPrintService&m=printDocument&id=${param.id}" ;
       	}
       }
     printDocument();
@@ -78,8 +73,8 @@
   </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="doc_baseMedicalExaminationForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-      <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
+    <msh:ifFormTypeIsView formName="doc_baseMedicalExaminationForm" >
+      <msh:sideMenu >
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-doc_baseMedicalExamination" name="Изменить" roles="/Policy/Mis/MedCase/Document/Internal/BaseMedicalExamination/Edit" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-doc_baseMedicalExamination" name="Удалить" roles="/Policy/Mis/MedCase/Document/Internal/BaseMedicalExamination/Delete" />
       </msh:sideMenu>

@@ -6,18 +6,33 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="pres_prescriptListForm" mainMenu="Patient" title="Лекарственное средство" guid="610fe86e-69f6-4ad0-a1dd-14423082c0c3" />
+    <ecom:titleTrail beginForm="pres_prescriptListForm" mainMenu="Patient" title="Лекарственное средство" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="Добавить" title="Добавить">
-      <msh:sideLink guid="helloSideLinkNew" params="id" roles="/Policy/Mis/Prescription/DrugPrescription/Create" key="ALT+N" action="/entityParentPrepareCreate-pres_drugPrescription" name="Назначение лекарства" />
+    <msh:sideMenu title="Добавить">
+      <msh:sideLink params="id" roles="/Policy/Mis/Prescription/DrugPrescription/Create" key="ALT+N" action="/entityParentPrepareCreate-pres_drugPrescription" name="Назначение лекарства" />
     </msh:sideMenu>
-    <msh:sideMenu title="Показать" guid="7fd7a5d3-45f2-4551-a7e3-01528a0a9c00" >
-      <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentList-pres_prescription" name="К списку назначений" title="Список назначений" guid="3jg7-f85c-4e87-b447-419887e" />
+    <msh:sideMenu title="Показать" >
+      <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentList-pres_prescription" name="К списку назначений" title="Список назначений" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-    	<ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,dr.name as drname,p.planStartDate,p.planStartTime,p.planEndDate,p.planEndTime,vdm.name as vdmname , p.frequency ||' '||ifnull(p.frequencyUnit_id,'',vfu.name), p.orderTime ||' '||ifnull(p.orderType_id,'',vpot.name), p.amount ||' '||ifnull(p.amountUnit_id,'',vdau.name), p.duration ||' '||ifnull(p.durationUnit_id,'',vdu.name) from Prescription p left join PrescriptionList pl on pl.id=p.prescriptionList_id left join vocdrugclassify as dr on dr.id=p.drug_id left join vocdrugmethod as vdm on vdm.id=p.method_id left join vocfrequencyunit as vfu on vfu.id=p.frequencyunit_id left join vocPrescriptOrderType as vpot on vpot.id=p.orderType_id left join vocDrugAmountUnit as vdau on vdau.id=p.amountUnit_id left join vocDurationUnit as vdu on vdu.id=p.durationUnit_id where pl.id=${param.id} and p.DTYPE='DrugPrescription' order by p.planStartDate"/>
+    	<ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,dr.name as drname
+    	,p.planStartDate,p.planStartTime
+	,p.planEndDate,p.planEndTime,vdm.name as vdmname
+	, p.frequency ||' '||coalesce(cast(p.frequencyUnit_id as varchar),vfu.name,'') as pfrec
+	, p.orderTime ||' '||coalesce(cast(p.orderType_id as varchar),vpot.name,'') as pord
+	, p.amount ||' '||coalesce(cast(p.amountUnit_id as varchar),vdau.name,'') as pam
+	, p.duration ||' '||coalesce(cast(p.durationUnit_id as varchar),vdu.name,'') as pdur
+	from Prescription p
+	left join PrescriptionList pl on pl.id=p.prescriptionList_id
+	left join vocdrug as dr on dr.id=p.vocDrug_id
+	left join vocdrugmethod as vdm on vdm.id=p.method_id
+	left join vocfrequencyunit as vfu on vfu.id=p.frequencyunit_id
+	left join vocPrescriptOrderType as vpot on vpot.id=p.orderType_id
+	left join vocDrugAmountUnit as vdau on vdau.id=p.amountUnit_id
+	left join vocDurationUnit as vdu on vdu.id=p.durationUnit_id
+	where pl.id=${param.id} and p.DTYPE='DrugPrescription' order by p.planStartDate"/>
   	<msh:tableNotEmpty name="pres">
   	<msh:toolbar >
 	                	<tbody>

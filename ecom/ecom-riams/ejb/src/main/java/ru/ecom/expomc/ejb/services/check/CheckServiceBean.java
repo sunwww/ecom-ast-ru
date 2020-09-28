@@ -45,7 +45,7 @@ import java.util.Map.Entry;
 @Remote(ICheckService.class)
 @Local(ICheckServiceLocal.class) 
 public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
-
+ /// удалить, нигде не используется
     private static final Logger LOG = Logger.getLogger(CheckServiceBean.class) ;
     private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 

@@ -111,7 +111,7 @@ public class DietServiceBean implements IDietService {
 				addDishInMenu(childMenu, newtemp);
 			}
 		}
-		if (menu instanceof MealMenu) {
+		if (menu != null) {
 			addDishInMenu(temp, menu) ;
 		}
 		return true;
@@ -173,7 +173,7 @@ public class DietServiceBean implements IDietService {
 			List<DishMealMenu> list = aMenu.getDishes() ;
 			if (list==null) list = new ArrayList<>() ;
 			for (DishMealMenu dishMenu:aMenuTemplate.getDishes()) {
-				LOG.info(new StringBuilder().append("Блюдо меню:").append(dishMenu.getId()).toString());
+				LOG.info("Блюдо меню:" + dishMenu.getId());
 //				DishMealMenu newDishMenu = newDishMenuOnTemplate(dishMenu, aMenu);
 				DishMealMenu newDishMenu = new DishMealMenu() ;
 				newDishMenu.setDish(dishMenu.getDish()) ;

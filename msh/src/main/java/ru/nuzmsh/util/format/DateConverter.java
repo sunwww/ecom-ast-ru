@@ -16,10 +16,6 @@ public class DateConverter {
 
     private static final Logger LOG = Logger.getLogger(DateConverter.class) ;
 
-    //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_1 = new SimpleDateFormat("yyyyMMdd");
-    //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_2 = new SimpleDateFormat("dd.MM.yy");
-    //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_3 = new SimpleDateFormat("dd.MM.yyyy");
-
     public static Date getDateFromGlobale(String aStr) throws ParseException {
         try {
         	SimpleDateFormat GLOBALE_DATE_FORMAT_1 = new SimpleDateFormat("yyyyMMdd");
@@ -49,7 +45,6 @@ public class DateConverter {
     	StringBuilder sb = new StringBuilder() ;
     	sb.append(GLOBALE_DATE_FORMAT_2.format(aDate)).append(" ").append(GLOBALE_TIME_FORMAT_2.format(aTime)) ;
     	try {
-            LOG.debug("sb = " + sb);
             return dateTimeFormat.parse(sb.toString());
         } catch (ParseException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -58,11 +53,8 @@ public class DateConverter {
     }
 
     public static Date createDateTime(Date aDate, String aTime) {
-        LOG.debug("aDate = " + aDate);
-        LOG.debug("aTime = " + aTime);
         if (aDate != null) {
             if (aTime == null) {
-                LOG.debug("1 = " + 1);
                 return aDate;
             } else {
                 SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
@@ -71,14 +63,12 @@ public class DateConverter {
                 sb.append(aTime.replace(':', '.'));
                 SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH.mm");
                 try {
-                    LOG.debug("sb = " + sb);
                     return dateTimeFormat.parse(sb.toString());
                 } catch (ParseException e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }
             }
         } else {
-            LOG.debug("2 = " + 2);
             return null;
         }
     }

@@ -10,12 +10,7 @@
         <msh:title mainMenu="Expert2">Финансовый план</msh:title>
     </tiles:put>
 
-    <tiles:put name='side' type='string'>
-        <msh:sideMenu title="Добавить" >
-            <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_stacFinancePlan" name="Сформировать новое" roles="/Policy/E2/Create" />
-        </msh:sideMenu>
-        <tags:expertvoc_menu currentAction="main"/>
-    </tiles:put>
+
 
     <tiles:put name='body' type='string'>
 
@@ -23,18 +18,23 @@
         <%
             String dtype= request.getParameter("type");
             String formType = "e2_nothinToDo";
+            String shortType ="";
             if (dtype==null || dtype.equals("") ) {dtype="HospitalFinancePlan";}
             switch (dtype) {
                 case "HospitalFinancePlan":
                     formType="e2_stacFinancePlan";
+                    shortType ="stac";
                     break;
                 case "PolyclinicFinancePlan":
                     formType="e2_polFinancePlan";
+                    shortType ="pol";
                     break;
                 case "VmpFinancePlan":
                     formType="e2_vmpFinancePlan";
+                    shortType ="vmp";
                     break;
             }
+            request.setAttribute("shortType",shortType);
             request.setAttribute("formName",formType);
             request.setAttribute("dtype",dtype);
         String month = request.getParameter("month");
@@ -48,20 +48,22 @@
                             ,{"method","fp.method_id"}
                             ,{"vidSluch","fp.vidSluch_id"}
                             ,{"type","fp.dtype"}
+                            ,{"ksgGroup","fp.ksgGroup_id"}
+                            ,{"bedProfile","fp.bedProfile_id"}
                     };
-        request.setAttribute("filterJson","['department','profile','ksg','bedSubType','year','month','reestr','method','vidSluch','type']");
+        request.setAttribute("filterJson","['department','profile','ksg','bedSubType','year','month','reestr','method','vidSluch','type','ksgGroup','bedProfile']");
 
         StringBuilder sqlAppend = new StringBuilder();
         for (String[] filter: filters) {
             String par = request.getParameter(filter[0]);
-            if (par!=null&&!par.equals("")) {
+            if (par!=null && !par.equals("")) {
                 sqlAppend.append(" and ").append(filter[1]).append("='").append(par).append("'");
             }
         }
         request.setAttribute("sqlAppend",sqlAppend.toString());
 
 
-            if (year==null||year.equals("")) { //Список планов по годам.
+            if (year==null || year.equals("")) { //Список планов по годам.
             %>
         <ecom:webQuery name="entryList" nativeSql="select to_char(fp.startDate,'yyyy') as year,'&type=${dtype}&year='||to_char(fp.startDate,'yyyy') as url
              from financePlan fp
@@ -70,21 +72,22 @@
               order by to_char(fp.startDate,'yyyy')"/>
         <msh:section title='Планы по годам'>
             <msh:table  name="entryList" action="e2_stacFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Год" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="Год" property="1" />
             </msh:table>
         </msh:section>
         <%
         } else {
             String isReestr = request.getParameter("reestr");
-            if (isReestr!=null &&isReestr.equals("1")) {    //План на год
+            if ("1".equals(isReestr)) {    //План на год
                 String selectDateSql ;
-                if (month==null||month.equals("")) { // Список по месяцу
+                if (month==null||month.equals("")) { // Список по году
                     selectDateSql="to_char(fp.startDate,'yyyy')";
+                    startDateSql+=" and to_char(fp.startDate,'yyyy')='"+year+"'";
                 } else { //Список планов за год
                     selectDateSql="to_char(fp.startDate,'MM.yyyy')";
                     startDateSql =" and '"+month+"'=to_char(fp.startDate,'MM.yyyy') and '"+month+"'=to_char(fp.finishDate,'MM.yyyy')";
-                    request.setAttribute("startDateSql",startDateSql);
                 }
+                request.setAttribute("startDateSql",startDateSql);
                 request.setAttribute("selectDateSql",selectDateSql);
 
         %>
@@ -102,7 +105,14 @@
                 <msh:autoComplete property="department" vocName="lpu" label="Отделение" size="50"/>
             </msh:row><msh:row>
                 <msh:autoComplete property="ksg" vocName="vocKsg" label="КСГ" size="50"/>
-            </msh:row><msh:row>
+            </msh:row>
+            <msh:row>
+                <msh:autoComplete property="ksgGroup" vocName="vocKsgGroup" label="Группа КСГ" size="100" />
+            </msh:row>
+            <msh:row>
+                <msh:autoComplete property="bedProfile" vocName="vocE2FondV020" size="100" />
+            </msh:row>
+            <msh:row>
                 <msh:autoComplete property="profile" vocName="vocE2MedHelpProfile" label="Профиль мед. помощи" size="50"/>
             </msh:row><msh:row>
                 <msh:autoComplete property="bedSubType" vocName="vocBedSubType" label="Тип коек" size="50"/>
@@ -114,40 +124,41 @@
             </msh:row>
         </msh:panel>
         </msh:form>
-        <ecom:webQuery name="entryList" nativeSql="select fp.id
+        <ecom:webQuery name="entryList" nameFldSql="entryListSql" nativeSql="select fp.id
             ,${selectDateSql} as date
             ,case when fp.dtype='VmpFinancePlan' then vmp.kindhighcare||' (метод '||vmp.code||')'
-                when fp.dtype='HospitalFinancePlan' then ksg.code||' '||ksg.name else '' end as f5_ksg
-            , mhp.profilek||' '||mhp.name as profile
+                when fp.dtype='HospitalFinancePlan' then coalesce(vkg.code, ksg.code||' '||ksg.name) else '' end as f5_ksg
+            , mhp.code||' '||cast(mhp.name as varchar(30)) as profile
             ,ml.name as f4_department
             ,fp.count as f6
             ,fp.cost as f7
             ,vbt.name as f8
-            ,vs.name as f9_vidSluch
+            ,vs.code as f9_vidSluch
+            , v020.code||' '||cast(v020.name as varchar(30)) as а10_profileBed
              from financePlan fp
+             left join vocE2FondV020 v020 on v020.id=fp.bedProfile_id
              left join vocksg ksg on ksg.id=fp.ksg_id
+             left join vocksggroup vkg on vkg.id=fp.ksgGroup_id
              left join VocE2MedHelpProfile mhp on mhp.id=fp.profile_id
              left join mislpu ml on ml.id=fp.department_id
              left join vocbedsubtype vbt on vbt.id=fp.bedsubtype_id
              left join voce2vidSluch vs on vs.id=fp.vidsluch_id
              left join vocMethodHighCare vmp on vmp.id=fp.method_id
               where fp.dtype='${dtype}' ${startDateSql} ${sqlAppend}
-              order by fp.startDate, cast(ksg.code as int), ml.name, vbt.name "/>
+              order by fp.startDate, vkg.code, cast(mhp.code as int), ml.name, vbt.name "/>
         <msh:section title='Результат поиска по ${param.year} ${param.month} году'>
-            <msh:table  name="entryList" action="entityView-${formName}.do" idField="1" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Период" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Вид случая" property="9" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="КСГ" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Профиль" property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Отделение" property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Кол-во случаев" property="6" isCalcAmount="true" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="Цена" property="7" isCalcAmount="true" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+            <msh:table openNewWindow="true" name="entryList" action="entityEdit-${formName}.do" idField="1" disableKeySupport="true" styleRow="6">
+                <msh:tableColumn columnName="Период" property="2" />
+                <msh:tableColumn columnName="Вид случая" property="9" />
+                <msh:tableColumn columnName="КСГ" property="3" />
+                <msh:tableColumn columnName="Профиль" property="4" />
+                <msh:tableColumn columnName="Профиль коек" property="10" />
+                <msh:tableColumn columnName="Отделение" property="5" />
+                <msh:tableColumn columnName="Кол-во случаев" property="6" isCalcAmount="true" />
+                <msh:tableColumn columnName="Цена" property="7" isCalcAmount="true" />
             </msh:table>
         </msh:section>
-
-
         <%
-
             } else {
                 //Список по месяцам
         %>
@@ -167,8 +178,8 @@
               order by to_char(fp.startDate,'MM.yyyy')"/>
 
         <msh:section title='Финансовый план за ${param.year} ${param.month} '><input type="button" value="Просмор плана" onclick="addHref('reestr',1)">
-            <msh:table  name="entryList" action="e2_stacFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Период" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6"  />
+            <msh:table name="entryList" action="e2_stacFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
+                <msh:tableColumn columnName="Период" property="1"  />
             </msh:table>
         </msh:section>
         <%
@@ -177,6 +188,12 @@
             //Список месяцов, в которых есть планы
             %>
 
+    </tiles:put>
+    <tiles:put name='side' type='string'>
+        <msh:sideMenu title="Добавить" >
+            <msh:sideLink key="ALT+2" action="/entityPrepareCreate-e2_${shortType}FinancePlan" name="Сформировать новое" roles="/Policy/E2/Create" />
+        </msh:sideMenu>
+        <tags:expertvoc_menu currentAction="${param.type}_st"/>
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>

@@ -152,7 +152,7 @@ public class PropertyUtil {
         } else if (aInClass.equals(String.class) && aOutClass.equals(BigDecimal.class)) {
         	return StringUtil.isNullOrEmpty((String)aValue) ? null : new BigDecimal(((String) aValue).replace(",",".")) ;
         } else if (aInClass.equals(BigDecimal.class) && aOutClass.equals(String.class)) {
-        	return aValue!=null ? aValue.toString() : null ;
+        	return aValue.toString() ;
         } else if (aInClass.equals(String.class) && aOutClass.equals(Integer.TYPE)) {
             String str = (String) aValue ;
             return StringUtil.isNullOrEmpty(str) ? 0 : (int)Double.parseDouble(str) ;
@@ -176,8 +176,7 @@ public class PropertyUtil {
         	 Long l = (Long) aValue ;
         	 return l.intValue() ;
         } else if (aInClass.equals(Integer.class) && aOutClass.equals(Integer.TYPE)) {
-	       	 Integer i = (Integer) aValue ;
-	       	 return i.intValue() ;
+            return aValue;
         } else if (aInClass.equals(String.class) && aOutClass.equals(boolean.class)) {
 	       	 return Boolean.parseBoolean((String)aValue) ;
         } else if (aInClass.equals(String.class) && aOutClass.equals(Boolean.class)) {
@@ -185,13 +184,11 @@ public class PropertyUtil {
         } else if (aInClass.equals(Boolean.class) && aOutClass.equals(String.class)) {
 	       	 return String.valueOf(aValue) ;
         } else if (aInClass.equals(Boolean.class) && aOutClass.equals(Boolean.TYPE)) {
-	       	 return ((Boolean)aValue).booleanValue() ;
+	       	 return aValue ;
         } else if (aInClass.equals(Boolean.TYPE) && aOutClass.equals(Boolean.class)) {
-	       	 return (Boolean)aValue ;
+	       	 return aValue ;
         } else if (aInClass.equals(Integer.TYPE) && aOutClass.equals(Integer.class)) {
-	       	 return (Integer)aValue ;
-        } else if (aInClass.equals(Long.TYPE) && aOutClass.equals(Long.class)) {
-	       	 return (Long)aValue ;
+	       	 return aValue ;
         } else if (aInClass.equals(boolean.class) && aOutClass.equals(String.class)) {
 	       	 return String.valueOf(aValue) ;
         } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Time.class)) {
@@ -220,10 +217,10 @@ public class PropertyUtil {
     	if(propertyName==null) {
             String methodName = aMethod.getName() ;
             if(methodName.length()>2 && methodName.startsWith("is")) {
-                propertyName = new StringBuilder().append(Character.toLowerCase(methodName.charAt(2))).append(methodName.substring(3)).toString() ;
+                propertyName = Character.toLowerCase(methodName.charAt(2))+methodName.substring(3) ;
                 GET_PROPERTY_NAME_HASH.put(aMethod, propertyName) ;
             } else if(methodName.length()>3 && (methodName.startsWith("get")||methodName.startsWith("set"))) {
-                propertyName = new StringBuilder().append(Character.toLowerCase(methodName.charAt(3))).append(methodName.substring(4)).toString() ;
+                propertyName = Character.toLowerCase(methodName.charAt(3))+methodName.substring(4);
                 GET_PROPERTY_NAME_HASH.put(aMethod, propertyName) ;
             } else {
                 throw new IllegalArgumentException("Метод "+aMethod+" не является методом свойcтва") ;
@@ -238,7 +235,7 @@ public class PropertyUtil {
      * @param aObject
      * @param aPropertyName
      */
-    public static Object getPropertyValue(Object aObject, String aPropertyName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object getPropertyValue(Object aObject, String aPropertyName) throws IllegalAccessException, InvocationTargetException {
     	if(aObject!=null) {
 	    	if(aObject instanceof Object[]) {
 	    		Object[]  arr = (Object[]) aObject ;
@@ -262,11 +259,11 @@ public class PropertyUtil {
         }
     }
 
-    public static Method getMethodFormProperty(Class aClass, String aPropertyName) throws NoSuchMethodException {
+    public static Method getMethodFormProperty(Class aClass, String aPropertyName) {
     	return getGetterMethod(aClass, aPropertyName) ;
     }
 
-    public static Method getGetterMethod(Class aClass, String aPropertyName) throws NoSuchMethodException {
+    public static Method getGetterMethod(Class aClass, String aPropertyName) {
     	try {
 	    	Method m ;
 	    	try {
@@ -307,11 +304,11 @@ public class PropertyUtil {
     
     
     private static String getGetterMethodNameForProperty(String aPropertyName) {
-        return new StringBuilder().append("get").append(Character.toUpperCase(aPropertyName.charAt(0))).append(aPropertyName.substring(1)).toString();
+        return "get"+Character.toUpperCase(aPropertyName.charAt(0))+aPropertyName.substring(1);
     }
 
     private static String getIsMethodNameForProperty(String aPropertyName) {
-        return new StringBuilder().append("is").append(Character.toUpperCase(aPropertyName.charAt(0))).append(aPropertyName.substring(1)).toString();
+        return "is"+Character.toUpperCase(aPropertyName.charAt(0))+aPropertyName.substring(1);
 
     }
     
@@ -323,8 +320,8 @@ public class PropertyUtil {
     	GET_SETTER_METHOD_NAME.clear() ;
     }
     // 
-    private static final Map<Method,String> GET_PROPERTY_NAME_HASH = new HashMap<>() ;
+    private static final Map<Method,String> GET_PROPERTY_NAME_HASH = new HashMap<Method,String>() ;
     
     // getSetterMethodName
-    private static final Map<String, String> GET_SETTER_METHOD_NAME = new HashMap<>() ;
+    private static final Map<String, String> GET_SETTER_METHOD_NAME = new HashMap<String, String>() ;
 }

@@ -2,22 +2,15 @@ package ru.ecom.mis.ejb.domain.birth;/**
  * Created by Milamesher on 23.01.2019.
  */
 
-import ru.ecom.ejb.services.index.annotation.AIndex;
-import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.birth.voc.*;
+import ru.ecom.mis.ejb.domain.birth.voc.VocScreeningDiuresis;
+import ru.ecom.mis.ejb.domain.birth.voc.VocScreeningLocalization;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Comment("Скрининг новорождённых на наличие врождённых пороков сердца II этап")
 @Entity
-@Table(schema="SQLUser")
-@AIndexes(value = {
-        @AIndex(properties = { "medCase" })
-}
-)
 public class ScreeningCardiacSecond extends ScreeningCardiacFirst {
     /** Регистрация АД одновременная - правая рука */
     @Comment("Регистрация АД одновременная - правая рука")

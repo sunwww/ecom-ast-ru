@@ -14,10 +14,7 @@ import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * @jsp.tag
@@ -207,7 +204,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
                         new Column(tag.getProperty(), tag.getColumnName()
                                 , tag.isIdentificator(), tag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth(),theEscapeSymbols)
+                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth(),theEscapeSymbols, tag.getHidden())
 
                 );
             } else if (aTag instanceof TableButtonTag) {
@@ -300,7 +297,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     }
                     out.println("<table border='1' class='tabview sel tableArrow'"+(getGuid()!=null?"id='"+getGuid()+"'":"")+">");
                 } catch (Exception e) {
-                    new JspException(e);
+                    throw new JspException(e);
                 }
             }
             theIsEmpty = isEmpty ;
@@ -324,9 +321,7 @@ public class TableTag extends AbstractGuidSupportTag {
         if(attr instanceof Object[]) {
             Object[] arr = (Object[]) attr ;
             ArrayList list = new ArrayList(arr.length) ;
-            for(Object o : arr) {
-                list.add(o);
-            }
+            Collections.addAll(list, arr);
             return list ;
         } else {
             return (Collection) attr ;
@@ -337,10 +332,6 @@ public class TableTag extends AbstractGuidSupportTag {
 
         aOut.print("<td width='14px' onclick=\"");
         aOut.print(aGoFunctionName) ;
-        //aOut.print("('") ;
-        //aOut.print(URLEncoder.encode(aId, "utf-8")) ;
-        //aOut.print(aId) ;
-        //aOut.print("')");
         aOut.print("\"");
         aOut.print(" class='") ;
         aOut.print(styleClass);
@@ -352,15 +343,9 @@ public class TableTag extends AbstractGuidSupportTag {
     }
 
     private String theFunctionGoName = null;
-    //private static int theFunctionGoIndex = 1;
 
-    //private synchronized void createGoFunctionName() {
-    //    theFunctionGoName = "go_" + theFunctionGoIndex++;
-    //}
-
-    private synchronized void createGoFunctionName(String aAction) {createGoFunctionName(aAction,false);}
     private synchronized void createGoFunctionName(String aAction, Boolean aOpenNewWindow) {
-        theFunctionGoName = new StringBuilder().append("goToPage"+((aOpenNewWindow!=null&&aOpenNewWindow)?"NewWindow":"")+"('").append(aAction).append("',").toString();
+        theFunctionGoName = "goToPage"+(Boolean.TRUE.equals(aOpenNewWindow) ? "NewWindow" : "")+"('"+aAction+"',";
     }
 
     private synchronized void createDeleteFunctionName(String aDeleteAction) {
@@ -374,57 +359,48 @@ public class TableTag extends AbstractGuidSupportTag {
     }
     private synchronized void createViewFunctionName(String aAction) {
         if (aAction.indexOf("?")==-1) {
-            theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("?id=").toString();
+            theFunctionViewName="getDefinition('"+aAction+"?id=";
         } else if(aAction.endsWith("&")) {
-            theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("id=").toString();
+            theFunctionViewName="getDefinition('"+aAction+"id=";
         } else {
-            theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("&id=").toString();
+            theFunctionViewName="getDefinition('"+aAction+"&id=";
         }
     }
     private static String getGoFunctionName(String theFunctionGoName, Object aParam,String aAddParam) {
-        return new StringBuilder().append(theFunctionGoName)
-                .append("('").append(aParam).append("'")
-                .append(aAddParam!=null&&!aAddParam.equals("")?","+aAddParam:"")
-                .append(")").toString() ;
+        return theFunctionGoName +
+                "('" + aParam + "'" +
+                (aAddParam != null && !aAddParam.equals("") ? "," + aAddParam : "") +
+                ")";
     }
 
     private String getDeleteFunctionName(String aId) {
-        return new StringBuilder().append(theFunctionDeleteName).append("'").append(aId).append("');").toString();
+        return theFunctionDeleteName + "'" + aId + "');";
     }
     private String getGoFunctionName(String aId) {
-        return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("');").toString();
+        return theFunctionGoName + "'" + aId + "');";
     }
     private String getGoFunctionCellName(String aId,String aCellName) {
-        return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("','").append(aCellName).append("');").toString();
+        return theFunctionGoName + "'" + aId + "','" + aCellName + "');";
     }
 
     private String getViewFunctionName(String aId) {
-        //onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
         if (theFunctionViewName==null) {
             createViewFunctionName(theViewUrl) ;
         }
-        return new StringBuilder().append(theFunctionViewName).append(aId).append("',event); ").toString();
+        return theFunctionViewName + aId + "',event); ";
     }
     private String getEditFunctionName(String aId) {
-        //onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
-        return new StringBuilder().append(theFunctionEditName).append(aId).append("'); ").toString();
+        return theFunctionEditName + aId + "'); ";
     }
     private String getPrintFunctionName(String aId) {
-        //onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
-        return new StringBuilder().append(theFunctionPrintName).append(aId).append("'); ").toString();
+        return theFunctionPrintName + aId + "'); ";
     }
-
-
-    //private String getGoFunctionName() {
-    //    return theFunctionGoName;
-    //}
 
     public int doEndTag() throws JspException {
         if (!isEmpty()) {
 
             try {
                 JspWriter out = pageContext.getOut();
-//            out.println("</thead>") ;
 
                 ITableDecorator decorator = theDecorator!=null ? getDecoratorObject() : null;
 
@@ -435,9 +411,9 @@ public class TableTag extends AbstractGuidSupportTag {
                     if (col.size() == 0) {
                         return EVAL_PAGE;
                     }
-
                     // шапка таблицы
                     if(!theHideTitle) {
+                        int i=0;
                         out.println("<tr>");
                         if(theSelection!=null) {
                             //out.println("<th></th>") ;
@@ -447,43 +423,50 @@ public class TableTag extends AbstractGuidSupportTag {
                             out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClickAll(this)' title='Выделить все'/>") ;
                             out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClickInvert(this)' title='Инвертировать все'/>") ;
                             out.println("</th>") ;
-
+                            i++;
                         }
                         if (theViewUrl!=null) {
                             out.println("<th  width='14px'>") ;
                             out.println("&nbsp;") ;
                             out.println("</th>") ;
                             createViewFunctionName(theViewUrl);
+                            i++;
                         }
                         if (thePrintUrl!=null) {
                             out.println("<th  width='14px'>") ;
                             out.println("&nbsp;") ;
                             out.println("</th>") ;
                             createPrintFunctionName(thePrintUrl);
+                            i++;
                         }
                         if (theEditUrl!=null) {
                             out.println("<th  width='14px'>") ;
                             out.println("&nbsp;") ;
                             out.println("</th>") ;
                             createEditFunctionName(theEditUrl);
+                            i++;
                         }
                         if (theDeleteUrl!=null) {
                             createDeleteFunctionName(theDeleteUrl);
                             out.println("<th  width='14px'>") ;
                             out.println("&nbsp;") ;
                             out.println("</th>") ;
+                            i++;
                         }
                         for (Iterator iterator = theCells.iterator(); iterator.hasNext();) {
                             Object obj = iterator.next();
                             if (obj instanceof Button) {
                                 Button button = (Button) obj;
                                 button.printHeader(out);
+                                i++;
                             } else if (obj instanceof Column) {
                                 Column column = (Column) obj;
-                                column.printHeader(out);
+                                column.printHeader(out,i,theSortable && col.size()>1);
+                                i++;
                             } else if (obj instanceof Textfield){
                                 Textfield textfield = (Textfield) obj;
                                 textfield.printHeader(out);
+                                i++;
                             }
                         }
                         out.println("</tr>");
@@ -509,10 +492,6 @@ public class TableTag extends AbstractGuidSupportTag {
                         }
                         lastId = currentId;
 
-                        // переход по всей строке
-//                        out.print("<tr onclick=\"" + getGoFunctionName() + "(");
-//                        out.print(currentId);
-//                        out.print(")\" class='");
                         out.print("<tr onclick='' ");
                         if (theStyleRow!=null && !theStyleRow.equals("")) {out.print(" style=\"");out.print(getValueByProperty(row,theStyleRow));out.print("\"");} ;
                         out.print(" class='") ;
@@ -570,9 +549,9 @@ public class TableTag extends AbstractGuidSupportTag {
                                 Column column = (Column) obj;
                                 Object valueC ;
                                 if (theCellFunction) {
-                                    valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName,column.theWidth);
+                                    valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName,column.theWidth,column.theHidden);
                                 } else {
-                                    valueC = column.printCell(out, row, goFunctionMainName, currentId,null,column.theWidth);
+                                    valueC = column.printCell(out, row, goFunctionMainName, currentId,null,column.theWidth,column.theHidden);
                                 }
                                 if (!isFirstRow) {
                                     if (valueC!=null) {
@@ -798,12 +777,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     value = DateFormat.formatToDate((Date) value);
 
                 } else if (value instanceof Boolean) {
-                    Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
-                        value = "1" ;
-                    } else {
-                        value = "0" ;
-                    }
+                    value =  (Boolean) value ?  "1" :  "0" ;
                 }
 
             } catch (Exception e) {
@@ -896,12 +870,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     value = DateFormat.formatToDate((Date) value);
 
                 } else if (value instanceof Boolean) {
-                    Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
-                        value = "1" ;
-                    } else {
-                        value = "0" ;
-                    }
+                    value =  (Boolean) value ?  "1" :  "0" ;
                 }
 
             } catch (Exception e) {
@@ -957,7 +926,7 @@ public class TableTag extends AbstractGuidSupportTag {
     }
 
     static final class Column {
-        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth,boolean aEscapeSymbols) {
+        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth,boolean aEscapeSymbols, boolean aHidden) {
             theProperty = aProperty;
             theColumnName = aColumnname;
             theIdColumn = aIdColumn;
@@ -969,6 +938,7 @@ public class TableTag extends AbstractGuidSupportTag {
             theAddParam =aAddParam ;
             theWidth=aWidth;
             theEscapeSymbols=aEscapeSymbols;
+            theHidden = aHidden;
         }
 
         @SuppressWarnings("unused")
@@ -976,20 +946,23 @@ public class TableTag extends AbstractGuidSupportTag {
             return theIdColumn;
         }
 
-        private void printHeader(JspWriter aOut) throws IOException {
+        private void printHeader(JspWriter aOut, int i, boolean theSortInner) throws IOException {
+            aOut.print("<th");
+            if (theHidden)
+                aOut.print(" hidden");
             if (theCssClass != null) {
-                aOut.print("<th");
                 aOut.print(" class='");
                 aOut.print(theCssClass);
-                aOut.print("'>");
-            } else {
-                if (theWidth!=null && !theWidth.equals(""))
-                    aOut.print("<th width=\""+theWidth+"%\">");
-                else aOut.print("<th>");
+                aOut.print("' ");
             }
+            if (theSortInner) aOut.print(" onclick='sortMshTable(this,"+i+")'  name='0'");
+            if (theWidth!=null && !theWidth.equals(""))  aOut.print(" width=\""+theWidth+"%\"");
+            aOut.print(">");
+
             //IdeTagHelper.getInstance().printMarker(, aJspContext)
             aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
             aOut.print(theColumnName);
+            if (theSortInner) aOut.print("<i class='arrow arrowUp'></i>");
             aOut.println("</th>");
         }
 
@@ -1014,7 +987,7 @@ public class TableTag extends AbstractGuidSupportTag {
             aOut.println("</td>");
         }
 
-        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle,String aWidth) throws IOException {
+        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle,String aWidth, Boolean aHidden) throws IOException {
             String styleClass = "";
 
             Object value;
@@ -1033,7 +1006,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     styleClass = "number";
                 } else if (value instanceof Boolean) {
                     Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
+                    if(booleanValue) {
                         value = "Да" ;
                         styleClass = "boolean";
                     } else {
@@ -1047,6 +1020,7 @@ public class TableTag extends AbstractGuidSupportTag {
                         value = value.toString().replace("<br />", "\r\n");
                         value = value.toString().replace("<", "&lt;");
                         value = value.toString().replace(">", "&gt;");
+                        value = value.toString().replace("&lt;div id=\"circle\"&gt;&lt;/div&gt;", "<div id=\"circle\"></div>");
                     }
                     if(DemoModeUtil.isInDemoMode(theServleRequest)) {
                         value = DemoModeUtil.secureValue(value);
@@ -1060,6 +1034,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 styleClass += " " + theCssClass;
             }
             aOut.print("<td ");
+            if (aHidden) aOut.print("hidden ");
             if (aWidth!=null && !aWidth.equals(""))
                 aOut.print(" width=\""+aWidth+"%\"");
             if (aTitle!=null) {
@@ -1103,7 +1078,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     styleClass = "number";
                 } else if (value instanceof Boolean) {
                     Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
+                    if(booleanValue) {
                         value = "Да" ;
                         styleClass = "boolean";
                     } else {
@@ -1145,17 +1120,15 @@ public class TableTag extends AbstractGuidSupportTag {
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
                 BigDecimal val2 ;
                 if (value instanceof Number) {
-                    val2 = new BigDecimal(value!=null?""+value:"0") ;
-                } else if (value instanceof String) {
-                    val2 = new BigDecimal((String)value) ;
+                    val2 = new BigDecimal(""+value) ;
                 } else {
-                    val2 = new BigDecimal((String)value);
+                    val2 = new BigDecimal(value!=null ? (String)value : "0");
                 }
                 //val2 = val1+val2 ;
-                String val3 = new StringBuilder().append(val1.add(val2)).toString() ;
+                String val3 = val1.add(val2).toString() ;
 
                 PropertyUtil.setPropertyValue(aObject, theProperty, val3) ;
-                value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+            //    value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
                 //System.out.println("val1="+val1+" val2="+val2+" val3="+val3+" valSum="+value) ;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1176,6 +1149,8 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theWidth;
         // Milamesher 25102018 экранировать символы
         private boolean theEscapeSymbols=true;
+        // прятать столбец
+        private boolean theHidden=false;
     }
 
 
@@ -1244,4 +1219,15 @@ public class TableTag extends AbstractGuidSupportTag {
     public void setEscapeSymbols(Boolean aEscapeSymbols) {theEscapeSymbols = aEscapeSymbols;}
     /** Milamesher 25102018 экранировать символы */
     private boolean theEscapeSymbols=true;
+
+    /**
+     * Сортировать таблицу
+     * @jsp.attribute   description = "Сортировать таблицу"
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+     */
+    public Boolean getSortable() {return theSortable;}
+    public void setSortable(Boolean aSortable) {theSortable = aSortable;}
+    /** Сортировать таблицу */
+    private boolean theSortable=true;
 }

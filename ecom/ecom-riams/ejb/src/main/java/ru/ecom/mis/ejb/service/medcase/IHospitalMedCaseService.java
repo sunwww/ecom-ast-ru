@@ -19,36 +19,36 @@ import java.util.List;
  * Date: 12.12.2007
  * Time: 10:23:02
  */
-public interface IHospitalMedCaseService {
-	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode);
-	public String getAllServicesByMedCase(Long aMedcaseId);
-    public void finishMonitor(long aMonitorId) ;
-    public void startMonitor(long aMonitorId) ;
-    public void addMonitor(long aMonitorId, int aInt) ;
+ public interface IHospitalMedCaseService {
+	 String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode, String aReportType);
+	 String getAllServicesByMedCase(Long aMedcaseId);
+     void finishMonitor(long aMonitorId) ;
+     void startMonitor(long aMonitorId) ;
+     void addMonitor(long aMonitorId, int aInt) ;
 
-	public String getDischargeEpicrisis(long aMedCaseId) ;
-	public String importFileDataFond(long aMonitorId, String aFilename) throws Exception ;
-	public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) ;
-	public String importDataFondForDBF(long aMonitorId) ;
+	 String getDischargeEpicrisis(long aMedCaseId) ;
+	 String importFileDataFond(long aMonitorId, String aFilename) throws Exception ;
+	 String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) ;
+	 String importDataFondForDBF(long aMonitorId) ;
 	
 	
-	public void refreshReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
-	public void refreshCompTreatmentReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
-	public WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aSaveInFolder) 
+	 void refreshReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
+	 void refreshCompTreatmentReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
+	 WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aSaveInFolder) 
 			throws ParserConfigurationException, TransformerException;
-	public String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aSaveInFolder) 
+	 String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException;
-	public WebQueryResult exportN0(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage
+	 WebQueryResult exportN0(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage
     		, String aVidN, boolean aSaveInFolder) throws TransformerFactoryConfigurationError, TransformerException, ParserConfigurationException ;
-	public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aIsPolyc, boolean aIsHospital, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException ;
-	public WebQueryResult exportN1_planHosp(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
+	 WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aIsPolyc, boolean aIsHospital, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException ;
+	 WebQueryResult exportN1_planHosp(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException; 
-    public WebQueryResult exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException;
-	public WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException;
-	public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException;
-	public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)  throws ParserConfigurationException, TransformerException;
-	public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)  throws ParserConfigurationException, TransformerException, ParseException;
-	public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
+     WebQueryResult exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException;
+	 WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException;
+	 String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException;
+	 String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)  throws ParserConfigurationException, TransformerException;
+	 String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)  throws ParserConfigurationException, TransformerException, ParseException;
+	 WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException ;
 	/**
 	 * Выгрузка xml-файлов по переводам внутри ЛПУ
@@ -62,47 +62,45 @@ public interface IHospitalMedCaseService {
 	 * @throws ParserConfigurationException
 	 * @throws TransformerException
 	 */
-	public WebQueryResult exportN2_trasferInLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
+	 WebQueryResult exportN2_trasferInLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException ;
-	public void createNewDiary(String aTitle, String aText, String aUsername) ;
-	public void updateDataFromParameterConfig(Long aDepartment, boolean aIsLowerCase, String aIds, boolean aIsRemoveExist) ;
-	public void removeDataFromParameterConfig(Long aDepartment, String aIds) ;
-	public void changeServiceStreamBySmo(Long aSmo,Long aServiceStream) ;
-	public void unionSloWithNextSlo(Long aSlo) ;
-	public void deniedHospitalizatingSls(Long aMedCaseId, Long aDeniedHospitalizating) ;
-	public void setPatientByExternalMedservice(String aDocNumber, String aOrderDate, String aPatient) ;
-	public void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) ;
-	public void updateDischargeDateByInformationBesk(String aIds, String aDate) throws ParseException;
-	public void addressClear() ;
-	public long addressUpdate(long id) ;
-	public String getIdc10ByDocDiag(Long aIdDocDiag) ;
-	public String getOperationsText(Long aPatient, String aDateStart,String aDateFinish) ;
-	public String getnvestigationsTextDTM(Long aPatient, String aDateStart,String aDateFinish,boolean aLabsIs,boolean aFisioIs,boolean aFuncIs,boolean aConsIs, boolean aLuchIs) ;
+	 void createNewDiary(String aTitle, String aText, String aUsername) ;
+	 void updateDataFromParameterConfig(Long aDepartment, boolean aIsLowerCase, String aIds, boolean aIsRemoveExist) ;
+	 void removeDataFromParameterConfig(Long aDepartment, String aIds) ;
+	 void changeServiceStreamBySmo(Long aSmo,Long aServiceStream) ;
+	 void unionSloWithNextSlo(Long aSlo) ;
+	 void deniedHospitalizatingSls(Long aMedCaseId, Long aDeniedHospitalizating) ;
+	 void setPatientByExternalMedservice(String aDocNumber, String aOrderDate, String aPatient) ;
+	 void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) ;
+	 void updateDischargeDateByInformationBesk(String aIds, String aDate) throws ParseException;
+	 void addressClear() ;
+	 long addressUpdate(long id) ;
+	 String getOperationsText(Long aPatient, String aDateStart,String aDateFinish) ;
 	//Получить данные диагноза по умолчанию для акушерства
-	public String getTypeDiagByAccoucheur() ;
+	 String getTypeDiagByAccoucheur() ;
 	//Удаление данных по выписке пациента
-	public String deleteDataDischarge(Long aMedCaseId);
+	 String deleteDataDischarge(Long aMedCaseId);
 	//Получить номер пациента по ИД СЛС
-    public Long getPatient(long aIdSsl) ;
+     Long getPatient(long aIdSsl) ;
     //Изменить номер стат.карты
-    public String getChangeStatCardNumber(Long aMedCase, String aNewStatCardNumber, boolean aAlwaysCreate);
+     String getChangeStatCardNumber(Long aMedCase, String aNewStatCardNumber, boolean aAlwaysCreate);
     
     //Получить список полисов по ИД СЛС
-    public Collection<MedPolicyForm> listPolicies(Long aMedCase) ;
-    public Collection<MedPolicyForm> listPoliciesToAdd(Long aMedCase) ;
-    public void removePolicies(long aMedCaseId, long[] aPolicies) ;
-    public void addPolicies(long aMedCaseId, long[] aPolicies) ;
-    public String getTemperatureCurve(long aMedCaseId) ;
-    public List<IEntityForm> listAll(Long aParentId) throws EntityFormException ;
-    public List<SurgicalOperationForm> getSurgicalOperationByDate(String aDate)  ;
-    public List<HospitalMedCaseForm> findOpenHospitalByDate(String aDate) ;
-    public String isOpenningSlo(long aIdSls) ;
+     Collection<MedPolicyForm> listPolicies(Long aMedCase) ;
+     Collection<MedPolicyForm> listPoliciesToAdd(Long aMedCase) ;
+     void removePolicies(long aMedCaseId, long[] aPolicies) ;
+     void addPolicies(long aMedCaseId, long[] aPolicies) ;
+     String getTemperatureCurve(long aMedCaseId) ;
+     List<IEntityForm> listAll(Long aParentId) throws EntityFormException ;
+     List<SurgicalOperationForm> getSurgicalOperationByDate(String aDate)  ;
+     List<HospitalMedCaseForm> findOpenHospitalByDate(String aDate) ;
+     String isOpenningSlo(long aIdSls) ;
     
     
     // Поиск СЛС по номеру стат.карты
-    public List<HospitalMedCaseForm>findSlsByStatCard(String aNumber) ;
+     List<HospitalMedCaseForm>findSlsByStatCard(String aNumber) ;
     
     //Поиск дублей
-    public String findDoubleServiceByPatient(Long aMedService, Long aPatient, Long aService, String aDate) throws ParseException; 
-    public String findDoubleOperationByPatient(Long aSurOperation, Long aPatient, Long aOperation, String aDate) throws ParseException; 
+     String findDoubleServiceByPatient(Long aMedService, Long aPatient, Long aService, String aDate) throws ParseException; 
+     String findDoubleOperationByPatient(Long aSurOperation, Long aPatient, Long aOperation, String aDate) throws ParseException; 
 }

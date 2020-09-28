@@ -21,7 +21,7 @@ public class SaveAction extends ru.ecom.web.actions.entity.SaveAction {
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         super.myExecute(aMapping, aForm, aRequest, aResponse);
-        return createParentActionForward(aMapping, aMapping.findForward("success"), aForm);
+        return createParentActionForward(aMapping, aMapping.findForward(SUCCESS), aForm);
     }
 
 

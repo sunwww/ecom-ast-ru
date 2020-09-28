@@ -5,14 +5,16 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
+import ru.ecom.mis.ejb.domain.patient.ObservationSheet;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.voc.VocProtocolMode;
 import ru.ecom.poly.ejb.domain.voc.VocTypeProtocol;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.sql.Date;
 import java.sql.Time;
@@ -28,10 +30,9 @@ import java.sql.Time;
 @AIndexes({
 	@AIndex(properties="medCase",table="Diary"),
 	@AIndex(properties={"medCase","printDate"},table="Diary"),
-	@AIndex(properties="dateRegistration",table="Diary")
-	//?,@AIndex(properties="specialist",table="Diary")
-    }) 
-@Table(schema="SQLUser")
+	@AIndex(properties="dateRegistration",table="Diary"),
+	@AIndex(properties="obsSheet",table="Diary")
+    })
 public class Protocol extends Diary {
 
 	/** Медицинская услуга */
@@ -59,11 +60,6 @@ public class Protocol extends Diary {
 	/** Дата регистрации талона */
     public Date getDateRegistration() { return theDateRegistration ; }
     public void setDateRegistration(Date aDateRegistration) { theDateRegistration = aDateRegistration ; }
-
-    /** Талон */
-    //@ManyToOne
-    //public Ticket getTicket() { return theTicket ; }
-    //public void setTicket(Ticket aTicket) { theTicket = aTicket ; }
 
     /** Визит */
 	@Comment("Визит")
@@ -108,7 +104,7 @@ public class Protocol extends Diary {
         if (theSpecialist!=null) {
             info.append(" Врач: ").append(theSpecialist.getName()).append(". ") ;
         }
-        return info.append(" Дата: ").append(theDateRegistration).toString() ;
+        return info.append(" Дата: ").append(DateFormat.formatToDate(theDateRegistration)).toString() ;
     }
 
 	@Transient
@@ -147,8 +143,6 @@ public class Protocol extends Diary {
 	private WorkFunction theSpecialist;
 	/** Визит */
 	private MedCase theMedCase;
-    /** Талон */
-    //private Ticket theTicket ;
     /** Дата регистрации талона */
     private Date theDateRegistration ;
     
@@ -168,4 +162,25 @@ public class Protocol extends Diary {
 
 	/** Режим */
 	private VocProtocolMode theMode;
+
+	/** Лист наблюдения (для ЕДКЦ) */
+	@Comment("Лист наблюдения (для ЕДКЦ)")
+	@ManyToOne
+	public ObservationSheet getObsSheet() {return theObsSheet;}
+	public void setObsSheet(ObservationSheet aObsSheet) {theObsSheet = aObsSheet;}
+
+	/** Лист наблюдения (для ЕДКЦ) */
+	private ObservationSheet theObsSheet;
+
+	/** Заголовок дневника */
+	@Comment("Заголовок дневника")
+	public String getTitle() {return theTitle;}
+	public void setTitle(String aTitle) {theTitle = aTitle;}
+	private String theTitle ="";
+
+	/** Подвал */
+	@Comment("Подвал")
+	public String getBottom() {return theBottom;}
+	public void setBottom(String aBottom) {theBottom = aBottom;}
+	private String theBottom ;
 }

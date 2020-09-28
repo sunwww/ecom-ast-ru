@@ -1,6 +1,5 @@
 package ru.ecom.web.util;
 
-import org.apache.log4j.Logger;
 import ru.ecom.web.login.LoginInfo;
 import ru.nuzmsh.util.StringUtil;
 
@@ -24,14 +23,9 @@ import java.util.Properties;
 public class Injection {
 
     private static final ThreadLocal<HashMap<String, Object>> THREAD_SERVICES = new ThreadLocal<>();
-
-    private static final Logger LOG = Logger.getLogger(Injection.class);
-    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
-
     private static String KEY;
 
     private Injection(String aWebName, String aAppName, String aProviderUrl, LoginInfo aLoginInfo, String aInitialContextFactory, String aSecurityProtocol) {
-        //System.out.println("new Injection("+aWebName+"," + aAppName + ", " + aProviderUrl + ", " + aLoginInfo.getUsername() + ", " + aInitialContextFactory + ") ");
         theAppName = aAppName;
         theWebName = aWebName;
         KEY = Injection.class.getName()+aWebName ;
@@ -82,18 +76,12 @@ public class Injection {
 
 
         if (filePropXml.exists()) {
-            FileInputStream in = new FileInputStream(filePropXml) ;
-            try {
+            try (FileInputStream in = new FileInputStream(filePropXml)) {
                 prop.loadFromXML(in);
-            } finally {
-                in.close();
             }
         } else if (fileProp.exists()) {
-            FileInputStream in = new FileInputStream(fileProp);
-            try {
+            try (FileInputStream in = new FileInputStream(fileProp)) {
                 prop.load(in);
-            } finally {
-                in.close();
             }
         } else {
             throw new IllegalStateException("Нет файла с настройками: " + filePropXml.getAbsolutePath()
@@ -131,8 +119,6 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                 } catch (Exception e) {
                     throw new IllegalStateException("Ошибка подключение к серверу: " + e.getMessage(), e);
                 }
-            } else {
-
             }
         } catch (IOException e) {
             throw new IllegalStateException("Ошибка настройки приложения: " + e.getMessage(), e);
@@ -150,11 +136,6 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                 if (session == null) throw new IllegalStateException("Нет сессии");
                 LoginInfo loginInfo = LoginInfo.find(session);
                 if (loginInfo == null) throw new IllegalStateException("Нет информации о пользователе");
-
-
-                    //System.out.println("------webName="+aWebName) ;
-                    //System.out.println("---appName="+prop.getProperty("ejb-app-name")) ;
-
                     injection = new Injection(aWebName, prop.getProperty("ejb-app-name")
                             , prop.getProperty("java.naming.provider.url")
                             , loginInfo
@@ -162,8 +143,6 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                             , prop.getProperty("java.naming.security.protocol", "other")
                     );
                     aRequest.getSession().setAttribute(KEY, injection);
-            } else {
-
             }
         } catch (IOException e) {
             throw new IllegalStateException("Ошибка настройки приложения: " + e.getMessage(), e);
@@ -190,8 +169,6 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
     public Object getService(String aServiceName) throws NamingException {
         Object service ;
         HashMap<String,Object> services = THREAD_SERVICES.get();
-        //System.out.println(" ----get service="+theWebName+" --- ");
-        if(CAN_TRACE) LOG.info(aServiceName+" , services  "+services) ;
         if(services==null) {
             services = new HashMap<>() ;
             THREAD_SERVICES.set(services);
@@ -202,15 +179,12 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
         if(service==null) {
             InitialContext initialContext = new InitialContext(theEnv);
             try {
-                //System.out.println("theAppName="+theAppName+"---"+aServiceName) ;
                 String serviceUrl = theAppName+"/"+aServiceName+"Bean/remote";
                 service = initialContext.lookup(serviceUrl);
                 services.put(aServiceName+theWebName, service);
             } finally {
                 initialContext.close() ;
             }
-        } else {
-            if(CAN_TRACE) LOG.info("Сервис "+aServiceName+" взят из ThreadLocal : "+service) ;
         }
         return service ;
     }
@@ -228,38 +202,3 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
     private final String theAppName;
     private final Properties theEnv;
 }
-
-//private QueueSender createQueueSender(String aQueue) throws NamingException, JMSException {
-//    QueueConnection cnn;
-//    QueueSender sender;
-//    QueueSession session;
-//    InitialContext ctx = new InitialContext();
-//    Queue queue = (Queue) ctx.lookup("queue/tutorial/example");
-//    QueueConnectionFactory factory = (QueueConnectionFactory) ctx.lookup("ConnectionFactory");
-//    cnn = factory.createQueueConnection();
-//    session = cnn.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
-//
-//    sender = session.createSender(queue);
-//    return sender;
-//}
-//
-//
-//public QueueConnectionFactory getQueueConnectionFactory() throws NamingException, JMSException {
-//    InitialContext ctx = new InitialContext(theEnv);
-//    try {
-//        return (QueueConnectionFactory) ctx.lookup("ConnectionFactory");
-//    } finally {
-//        ctx.close();
-//    }
-//}
-//
-//public Queue getQueue(String aQueueName) throws NamingException, JMSException {
-//    InitialContext ctx = new InitialContext(theEnv);
-//    try {
-//        return (Queue) ctx.lookup(aQueueName);
-//    } finally {
-//        ctx.close();
-//    }
-//}
-
-

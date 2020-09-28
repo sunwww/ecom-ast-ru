@@ -8,6 +8,7 @@ import ru.ecom.mis.ejb.domain.contract.ContractPerson;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocServiceType;
+import ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
@@ -33,7 +34,7 @@ import java.util.List;
     @AIndex(properties={"serviceType"})
     }) 
 @Table(schema="SQLUser")
-public class MedService extends BaseEntity{
+public class MedService extends BaseEntity {
 
 	/** Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам */
 	@Comment("Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам")
@@ -253,6 +254,7 @@ public class MedService extends BaseEntity{
 	
 	/** Не федеральный код */
 	@Comment("Не федеральный код")
+	@Deprecated
 	public Boolean getIsNoFederal() {return theIsNoFederal;}
 	public void setIsNoFederal(Boolean aIsNoFederal) {theIsNoFederal = aIsNoFederal;}
 
@@ -292,4 +294,19 @@ public class MedService extends BaseEntity{
 	public void setIsAbortRequired(Boolean aIsAbortRequired) {theIsAbortRequired = aIsAbortRequired;}
 	/** Указывать тип аборта при создании операции */
 	private Boolean theIsAbortRequired =false;
+
+	/** Отображать на сайте как услугу по умолчанию у специалиста*/
+	@Comment("Отображать на сайте как услугу по умолчанию у специалиста")
+	public Boolean getIsShowSiteAsDefault() {return theIsShowSiteAsDefault;}
+	public void setIsShowSiteAsDefault(Boolean aIsShowSiteAsDefault) {theIsShowSiteAsDefault = aIsShowSiteAsDefault;}
+	/** Отображать на сайте как услугу по умолчанию у специалиста */
+	private Boolean theIsShowSiteAsDefault =false;
+
+	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
+	@Comment("Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии")
+	@OneToOne
+	public VocColorIdentityPatient getVocColorIdentity() {return theVocColorIdentity;}
+	public void setVocColorIdentity(VocColorIdentityPatient aVocColorIdentity) {theVocColorIdentity = aVocColorIdentity;}
+	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
+	private VocColorIdentityPatient theVocColorIdentity ;
 }

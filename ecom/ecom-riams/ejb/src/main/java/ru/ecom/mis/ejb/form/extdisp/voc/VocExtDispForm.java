@@ -65,4 +65,12 @@ public class VocExtDispForm extends IdEntityForm {
 	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
 	/** В архиве */
 	private Boolean theIsArchival ;
+
+	/** Автоматически расчитывать возраст */
+	@Comment("Автоматически расчитывать возраст")
+	@Persist
+	public Boolean getAutoCalcAge() {return theAutoCalcAge;}
+	public void setAutoCalcAge(Boolean aAutoCalcAge) {theAutoCalcAge = aAutoCalcAge;}
+	/** Автоматически расчитывать возраст */
+	private Boolean theAutoCalcAge ;
 }

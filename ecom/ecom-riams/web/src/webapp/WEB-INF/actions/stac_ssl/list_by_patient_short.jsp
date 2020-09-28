@@ -11,11 +11,11 @@
   </tiles:put>
   <tiles:put name="side" type="string">
   <tags:style_currentMenu currentAction='inform'/>
-    <msh:sideMenu guid="helloSideMenu-123">
-      <msh:sideLink params="id" guid="Перейти к пациенту" action="/entityView-mis_patient" name="Пациент" />
-        <msh:sideLink params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
-        <msh:sideLink styleId="inform" params="id" action="/js-smo_diagnosis-infoByPatient" name="Диагнозы" title="Показать все диагнозы" guid="68b36632-8d07-4a87-b469-6695694b2bab" roles="/Policy/Mis/MedCase/Diagnosis/View" />
-        <msh:sideLink params="id" action="/js-smo_visitProtocol-infoByPatient" name="Заключения" title="Показать все заключения" guid="68b36632-8d07-4a87-b469-6695694b2bab" roles="/Policy/Mis/MedCase/Diagnosis/View" />
+    <msh:sideMenu>
+      <msh:sideLink params="id" action="/entityView-mis_patient" name="Пациент" />
+        <msh:sideLink params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" roles="/Policy/Mis/MedCase/Spo/View" />
+        <msh:sideLink styleId="inform" params="id" action="/js-smo_diagnosis-infoByPatient" name="Диагнозы" title="Показать все диагнозы" roles="/Policy/Mis/MedCase/Diagnosis/View" />
+        <msh:sideLink params="id" action="/js-smo_visitProtocol-infoByPatient" name="Заключения" title="Показать все заключения" roles="/Policy/Mis/MedCase/Diagnosis/View" />
         
    </msh:sideMenu>
   </tiles:put>
@@ -34,17 +34,17 @@
     where  mc.patient_id=${param.id} and mc.dtype='HospitalMedCase'
     group by mc.id,mc.dateStart,mc.dateFinish,dep.name,vdh.name
     , mc.emergency
-    order by mc.dateStart" guid="2d59a9bf-327f-4f4f-8336-531458b6caed" />
+    order by mc.dateStart" />
 
     <msh:table name="list" action="entityView-stac_ssl.do" idField="1" 
     viewUrl="entityShortView-stac_ssl.do">
-      <msh:tableColumn columnName="№" property="sn" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4-1" />
+      <msh:tableColumn columnName="№" property="sn" />
       <msh:tableColumn columnName="Дата госпит." property="2" />
-      <msh:tableColumn columnName="Дата выписки" property="3" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-      <msh:tableColumn columnName="Отделение госпит." property="4" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn columnName="Показания к госпитализации" property="6" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-      <msh:tableColumn columnName="Диагноз" property="7" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-      <msh:tableColumn columnName="Причина отказа от госпитализации" property="5" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+      <msh:tableColumn columnName="Дата выписки" property="3" />
+      <msh:tableColumn columnName="Отделение госпит." property="4" />
+      <msh:tableColumn columnName="Показания к госпитализации" property="6" />
+      <msh:tableColumn columnName="Диагноз" property="7" />
+      <msh:tableColumn columnName="Причина отказа от госпитализации" property="5" />
     </msh:table>
   </tiles:put>
 </tiles:insert>  

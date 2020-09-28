@@ -21,6 +21,6 @@ public class SaveGoParentViewAction extends ru.ecom.web.actions.entity.SaveActio
         return ForwardUtil.createGoParentForward((ActionForm)castEntityForm(aForm, aMapping), aMapping, aRequest, theStrutsFormUtil, theStrutsConfigUtil) ;
     }
 
-    StrutsConfigUtil theStrutsConfigUtil = new StrutsConfigUtil();
-    StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
+    final StrutsConfigUtil theStrutsConfigUtil = new StrutsConfigUtil();
+    final StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
 }

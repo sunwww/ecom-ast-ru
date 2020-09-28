@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал учета больных в соответствие с поступлением (добровольно, недобровольно, а также состоящих на К или Д наблюдениях)"/>
+    <msh:title mainMenu="Journals" title="Журнал учета больных в соответствие с поступлением (добровольно, недобровольно, а также состоящих на К или Д наблюдениях)"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   	
@@ -25,11 +25,11 @@
 	String typeView =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeView","2", request) ;
   %>
   
-    <msh:form action="/stac_journal_direct_psych.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/stac_journal_direct_psych.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <td class="label" title="Поиск по дате (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Дата:</label></td>
@@ -111,8 +111,8 @@
 	        </td>
         </msh:row>
       <msh:row>
-        <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
       </msh:row>
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" label="Отделение" vocName="lpu"/>
@@ -243,7 +243,7 @@ ${emergencySql} ${departmentSql} ${admissionOrderSql} ${observationSql}
 group by sls.id, ss.code,pat.lastname,pat.firstname,pat.middlename
 , pat.birthday,sls.dateStart,vht.name,ml.name,vao.name, vj.name
 order by ml.name,pat.lastname,pat.firstname,pat.middlename
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:sectionTitle>
     
     <form action="print-stac_journal_direct_psych_r.do" method="post" target="_blank">
@@ -307,7 +307,7 @@ where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBe
 and sls.deniedHospitalizating_id is null ${admissionOrderSql} ${observationSql}
 group by ml.id,ml.name
 order by ml.id,ml.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="swod_department"
     viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" 
      action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" idField="1" >
@@ -346,7 +346,7 @@ where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBe
 and sls.deniedHospitalizating_id is null ${admissionOrderSql} ${observationSql}
 group by vj.id,vj.name
 order by vj.id,vj.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="swod_department"
     viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" 
      action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" idField="1" >
@@ -384,7 +384,7 @@ where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBe
 and sls.deniedHospitalizating_id is null ${admissionOrderSql} ${observationSql}
 group by vao.id,vao.name
 order by vao.id,vao.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="swod_department"
     viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" 
      action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" idField="1" >
@@ -422,7 +422,7 @@ where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBe
 and sls.deniedHospitalizating_id is null ${admissionOrderSql} ${observationSql}
 group by vht.id,vht.name
 order by vht.id,vht.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
     <msh:table name="swod_department"
     viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" 
      action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" idField="1" >

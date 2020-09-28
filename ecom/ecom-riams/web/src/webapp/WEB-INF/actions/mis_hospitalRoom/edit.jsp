@@ -51,7 +51,7 @@
       <msh:ifFormTypeIsView formName="mis_hospitalRoomForm">
         <msh:sideLink key="ALT+2" roles="/Policy/Mis/WorkPlace/HospitalRoom/Edit" params="id" action="/entityEdit-mis_hospitalRoom" name="Изменить" />
       </msh:ifFormTypeIsView>
-      <msh:ifFormTypeAreViewOrEdit formName="mis_hospitalRoomForm" guid="de889210-1aba-4447-96ab-a729de7a2c8a">
+      <msh:ifFormTypeAreViewOrEdit formName="mis_hospitalRoomForm">
         <msh:sideLink key="ALT+DEL" params="id" roles="/Policy/Mis/WorkPlace/HospitalRoom/Delete" action="/entityParentDeleteGoParentView-mis_hospitalRoom" name="Удалить" confirm="Удалить палату?" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>

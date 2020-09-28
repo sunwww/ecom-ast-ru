@@ -43,30 +43,6 @@
                  />
      </voc>
 
-     <voc id='vocEduc' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocEduc'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
-
-     <voc id='vocInstitut' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocInstitut'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
-
-     <voc id='vocLeave' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocLeave'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
-
      <voc id='vocPost' type='EntityVocService'>
          <EntityVocService
                  entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocPost'
@@ -74,23 +50,6 @@
                  queried = 'name'
                  />
      </voc>
-
-     <voc id='vocQualif' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocQualif'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
-
-     <voc id='vocSpec' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocSpec'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
-
 
      <voc id='vocCategory' type='EntityVocService'>
          <EntityVocService
@@ -100,21 +59,6 @@
                  />
      </voc>
 
-     <voc id='vocAcademicStatus' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocAcademicStatus'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
-
-     <voc id='vocAcademicDegree' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocAcademicDegree'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
 	
 	 <!-- Код профиля отделения для стационара или специалиста поликлиники -->
      <voc id='vocOmcDepType' type='EntityVocService'>
@@ -131,31 +75,6 @@
                  entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocOmcDoctorPost'
                  names   = 'code,name'
                  queried = 'code,name'
-                 />
-     </voc>
-     
-     <voc id='vocAwardType' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocAwardType'
-                 names   = 'name'
-                 queried = 'name'
-                 parent = 'group'
-                 />
-     </voc>
-     
-     <voc id='vocAwardGroup' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocAwardGroup'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
-
-	<voc id='vocPostBusyType' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocPostBusyType'
-                 names   = 'name'
-                 queried = 'name'
                  />
      </voc>
 

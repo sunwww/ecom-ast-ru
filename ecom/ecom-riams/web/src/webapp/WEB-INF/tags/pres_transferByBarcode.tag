@@ -99,7 +99,6 @@
         	 if ($('${name}Barcode').value!=null&&$('${name}Barcode').value!=''){
  				PrescriptionService.checkTransferServiceBarcode($('${name}Barcode').value, {
  	  				callback: function(a) {
- 	  					//alert ("AAA"+a);
  	        			 textArea.value=a;
  	                	 BarcodeBarcode.value="";
  	  				}

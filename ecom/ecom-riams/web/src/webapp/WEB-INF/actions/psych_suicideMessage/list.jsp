@@ -15,7 +15,7 @@
   	from SuicideMessage s
   	where s.patient_id=${param.id}	"/>
   	<msh:section createRoles="/Policy/Mis/Psychiatry/CareCard/SuicideMessage/Create" createUrl="entityParentPrepareCreate-psych_suicideMessage.do?id=${param.id}" title="Список сообщений о суицидах по пациенту">
-    <msh:table name="listd" action="entityParentView-psych_suicideMessage.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="listd" action="entityParentView-psych_suicideMessage.do" idField="1">
               <msh:tableColumn property="sn" columnName="#"/>
               <msh:tableColumn property="1" columnName="ИД"/>
               <msh:tableColumn property="2" columnName="Дата суицида"/>

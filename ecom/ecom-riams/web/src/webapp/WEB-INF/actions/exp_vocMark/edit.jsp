@@ -11,10 +11,10 @@
     	  - Справочник баллов критериев оценки качества
     	  -->
     <msh:form  action="/entityParentSaveGoParentView-exp_vocMark.do" defaultField="name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenCriterion" property="criterion" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:panel guid="panel">
+      <msh:hidden property="id" />
+      <msh:hidden property="criterion" />
+      <msh:hidden property="saveType" />
+      <msh:panel>
         <msh:row>
         	<msh:textField property="code" label="Код"/>
         	<msh:textField property="mark" label="Оценочный балл" />
@@ -31,12 +31,12 @@
         <msh:row>
         	<msh:textArea label="Полное название" property="fullname" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="exp_vocMarkForm" />
+    <ecom:titleTrail mainMenu="Voc" beginForm="exp_vocMarkForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Балл критерия оценки качества">

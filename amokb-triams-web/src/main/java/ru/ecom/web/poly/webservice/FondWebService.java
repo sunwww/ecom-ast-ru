@@ -1,22 +1,11 @@
 package ru.ecom.web.poly.webservice;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.rmi.RemoteException;
-import java.text.ParseException;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.tempuri.WS_MES_SERVER.wsdl.WSLocator;
 import org.tempuri.WS_MES_SERVER.wsdl.WS_MES_SERVERSoapPort;
-
 import ru.ecom.mis.ejb.domain.patient.PatientFond;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
@@ -24,11 +13,19 @@ import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.List;
+
 public class FondWebService {
-	private static String theAddress = "192.168.4.2" ;
+	private static final String theAddress = "192.168.4.2" ;
 	//private static String theAddress = "vipnet" ;
 	//private static String theAddress = "192.168.10.179" ;
-	private static String theLpu = "1" ;
+	private static final String theLpu = "1" ;
 	//private final static String theAddress = "srv-kir" ;
 
 	
@@ -85,8 +82,7 @@ public class FondWebService {
         		String current = el.getChildText("pz_actual") ;
         			
             	if (current.equals("1")) {
-            		String datEnd = (ddosr!=null && !ddosr.equals(""))?ddosr:dpe ;
-            		if (datEnd!=null) {
+            		String datEnd = (!ddosr.equals("")) ? ddosr : dpe ;
             			try {
             				java.sql.Date dat = DateFormat.parseSqlDate(datEnd) ;
             				java.util.Date curDat = new java.util.Date() ;
@@ -97,7 +93,6 @@ public class FondWebService {
             				datEnd = "" ;
             			}
             			
-            		}
             		sb.append(sk).append("#")
 	            		.append(serPol).append("#").append(numPol).append("#")
 	            		.append(dpp).append("#").append(datEnd) ;
@@ -169,7 +164,7 @@ public class FondWebService {
     			.append(ss).append("#").append(aRz).append("#")
     			.append("'/>").append("</td>") ;
            	
-            	sb.append("<td").append("").append(">").append(aRz).append("</td>") ;
+            	sb.append("<td").append(">").append(aRz).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getLastname().equals(f)?"":" bgcolor='yellow'"):"").append(">").append(f).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getFirstname().equals(i)?"":" bgcolor='yellow'"):"").append(">").append(i).append("</td>") ;
             	sb.append("<td").append(aPatFrm!=null?(aPatFrm.getMiddlename().equals(o)?"":" bgcolor='yellow'"):"").append(">").append(o).append("</td>") ;
@@ -200,8 +195,8 @@ public class FondWebService {
         	sb.append("<h2>Список полисов</h2><table border=1 width=100%>") ;
         	sb.append("<tr>");
         	//sb.append("<th>").append("").append("</th>") ;
-        	sb.append("<th>").append("").append("</th>") ;
-        	sb.append("<th>").append("").append("</th>") ;
+        	sb.append("<th>").append("</th>") ;
+        	sb.append("<th>").append("</th>") ;
         	sb.append("<th>").append("СК").append("</th>") ;
         	sb.append("<th>").append("Серия").append("</th>") ;
         	sb.append("<th>").append("Номер").append("</th>") ;
@@ -234,10 +229,8 @@ public class FondWebService {
             	sb.append("<td>").append("<input type='checkbox'  onclick=\"patientcheck('policy')\" name='fondPolicy' id='fondPolicy' ");
     				
             	if (current.equals("1")) {
-            		String datEnd = (ddosr!=null && !ddosr.equals(""))?ddosr:dpe ;
+            		String datEnd = !ddosr.equals("") ? ddosr : dpe ;
             		companyCode=sk; policySeries=serPol;policyNumber=numPol;policyDateFrom=dpp; policyDateTo=datEnd;
-                	
-            		if (datEnd!=null) {
             			try {
             				java.sql.Date dat = DateFormat.parseSqlDate(datEnd) ;
             				java.util.Date curDat = new java.util.Date() ;
@@ -247,8 +240,6 @@ public class FondWebService {
             			} catch(Exception e) {
             				datEnd = "" ;
             			}
-            			
-            		}
             		sb.append(" checked='true' value='").append(sk).append("#")
             		.append(serPol).append("#").append(numPol).append("#")
             		.append(dpp).append("#").append(datEnd).append("#") ;
@@ -257,7 +248,7 @@ public class FondWebService {
             	} else {
             		sb.append(" value='").append(sk).append("#")
             		.append(serPol).append("#").append(numPol).append("#")
-            		.append(dpp).append("#").append((ddosr!=null && !ddosr.equals(""))?ddosr:dpe).append("#") ;
+            		.append(dpp).append("#").append( !ddosr.equals("") ? ddosr : dpe).append("#") ;
             	}
     			sb.append(aRz).append("#").append(current).append("#")
     				.append("'/>").append("</td>") ;
@@ -289,7 +280,7 @@ public class FondWebService {
 			isStart=true ;
             sb.append("<h2>Список документов</h2><table border=1 width=100%>") ;
             sb.append("<tr>");
-            sb.append("<th>").append("").append("</th>") ;
+            sb.append("<th>").append("</th>") ;
             sb.append("<th>").append("Тип").append("</th>") ;
             sb.append("<th>").append("Серия").append("</th>") ;
             sb.append("<th>").append("Номер").append("</th>") ;
@@ -384,7 +375,7 @@ public class FondWebService {
         		sb.append("<td").append(aPatFrm!=null?(aPatFrm.getHouseBuilding().equals(hb)?"":" bgcolor='yellow'"):"").append(hb).append("</td>");
         		sb.append("<td").append(aPatFrm!=null?(aPatFrm.getFlatNumber().equals(fn)?"":" bgcolor='yellow'"):"").append(">").append(fn).append("</td>");
             	sb.append("</tr>") ;
-            	if (isStart=true) {
+            	if (isStart) {
         			kladr=kl; house=hn; houseBuilding=hb; flat =fn;
         			isStart=false ;
         		}
@@ -395,9 +386,10 @@ public class FondWebService {
             		, aRz
             		, policySeries, policyNumber, policyDateFrom, policyDateTo
             		, username, PatientFond.STATUS_CHECK_TYPE_MANUAL 
-            		, companyCode, "", "", ""
+            		, companyCode, "", "", "",null
             		, documentType, documentSeries, documentNumber
-            		, kladr, house, houseBuilding, flat,attachedLpu, attachedDate, attachedType);
+            		, kladr, house, houseBuilding, flat,attachedLpu, attachedDate, attachedType
+			,null,null,null,null,null,null,null,null);
             return sb.toString() ;
         }
 		

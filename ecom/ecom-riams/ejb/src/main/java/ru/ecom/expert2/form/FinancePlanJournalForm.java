@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 
 public class FinancePlanJournalForm extends BaseValidatorForm {
@@ -22,6 +23,12 @@ public class FinancePlanJournalForm extends BaseValidatorForm {
     /** КСГ */
     private Long theKsg ;
 
+    /** Группа КСГ */
+    public Long getKsgGroup() {return theKsgGroup;}
+    public void setKsgGroup(Long aKsgGroup) {theKsgGroup = aKsgGroup;}
+    /** Группа КСГ */
+    private Long theKsgGroup ;
+
     /** Тип коек */
     public Long getBedSubType() {return theBedSubType;}
     public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
@@ -33,6 +40,12 @@ public class FinancePlanJournalForm extends BaseValidatorForm {
     public void setVidSluch(Long aVidSluch) {theVidSluch = aVidSluch;}
     /** Вид случая */
     private Long theVidSluch ;
+
+    @Comment("Профиль коек V020")
+    public Long getBedProfile() {return theBedProfile;}
+    public void setBedProfile(Long aBedProfile) {theBedProfile = aBedProfile;}
+    /** Профиль коек V020 */
+    private Long theBedProfile ;
 
 
 }

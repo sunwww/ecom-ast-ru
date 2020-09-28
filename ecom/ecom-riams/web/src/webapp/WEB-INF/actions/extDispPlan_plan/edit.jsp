@@ -1,4 +1,3 @@
-<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -10,7 +9,7 @@
 	</tiles:put>
 
 	<tiles:put name="body" type="string">
-		<msh:form action="/entitySaveGoView-extDispPlan_plan.do" defaultField="lpuName">
+		<msh:form action="/entitySaveGoView-extDispPlan_plan.do" defaultField="year">
 			<msh:hidden property="id" /> 
 			<msh:hidden property="saveType" />
 			<msh:panel >

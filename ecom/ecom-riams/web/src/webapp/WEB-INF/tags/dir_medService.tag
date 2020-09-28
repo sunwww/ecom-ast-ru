@@ -52,7 +52,7 @@
 </div>
 
 <script type='text/javascript' src='./dwr/interface/CategoryTreeService.js'></script>
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}DirMedServiceDialogInitialized = false ;
      var theIs${name}DirMedServiceAddParam = 0 ;
      var the${name}DirMedServiceDialog = new msh.widget.Dialog($('${name}DirMedServiceDialog')) ;

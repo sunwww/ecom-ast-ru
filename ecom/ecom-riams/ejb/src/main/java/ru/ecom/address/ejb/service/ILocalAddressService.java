@@ -10,7 +10,7 @@ import ru.ecom.address.ejb.domain.address.Address;
  * To change this template use File | Settings | File Templates.
  */
 public interface ILocalAddressService {
-    public Address findAddressByKladr(String aKladrCode) ;
+    Address findAddressByKladr(String aKladrCode) ;
     Address getAddressForLevel(long aDomain, Address aAddress) ;
     
 }

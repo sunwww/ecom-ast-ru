@@ -1,13 +1,15 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import ru.ecom.mis.ejb.domain.medcase.MedService;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesia;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocBloodGroup;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocRhesusFactor;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
-
-
-import ru.ecom.mis.ejb.domain.medcase.MedService;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Назначение на услугу
@@ -17,8 +19,20 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment("Назначение на услугу")
 @Entity
-@Table(schema="SQLUser")
-public class ServicePrescription extends Prescription{
+public class ServicePrescription extends Prescription {
+
+	/** Вид наркоза */
+	@Comment("Вид наркоза")
+	@OneToOne
+	public VocAnesthesia getAnesthesiaType() {return theAnesthesiaType;}
+	public void setAnesthesiaType(VocAnesthesia aAnesthesiaType) {theAnesthesiaType = aAnesthesiaType;}
+	private VocAnesthesia theAnesthesiaType ;
+
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Transient
+	public VocServiceStream getServiceStream() {
+		return getPrescriptionList().getServiceStream() ;}
 	
 	/** Номер штрих-кода */
 	@Comment("Номер штрих-кода")
@@ -52,6 +66,18 @@ public class ServicePrescription extends Prescription{
 	    }
 	    	return sb.toString();
 	}
+	/** Группа крови пациента */
+	@Comment("Группа крови пациента")
+	@OneToOne
+	public VocBloodGroup getBloodGroup() {return theBloodGroup;}
+	public void setBloodGroup(VocBloodGroup aBloodGroup) {theBloodGroup = aBloodGroup;}
+	private VocBloodGroup theBloodGroup;
 
+	/** Резус-фактор пациента */
+	@Comment("Резус-фактор пациента")
+	@OneToOne
+	public VocRhesusFactor getRhesusFactor() {return theRhesusFactor;}
+	public void setRhesusFactor(VocRhesusFactor aRhesusFactor) {theRhesusFactor = aRhesusFactor;}
+	private VocRhesusFactor theRhesusFactor;
 	
 }

@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал по пациентам, которым надо делать напрваление на ВК </msh:title>
+    <msh:title mainMenu="StacJournal">Журнал по пациентам, которым надо делать напрваление на ВК </msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_journalByCurator"/>
@@ -85,7 +85,7 @@
 	and slo.transferDate is null 
 	and (current_date - sls.dateStart)>(12)
 	group by ml.id,ml.name order by ml.name
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="stac_report_direct_medical_commission.do?short=Short"
     action="stac_report_direct_medical_commission.do" idField="1">
@@ -124,7 +124,7 @@ and slo.dateFinish is null and slo.transferDate is null
 	and (current_date - sls.dateStart)>(12)
 group by owf.id,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="stac_report_direct_medical_commission.do?short=Short"
     action="stac_report_direct_medical_commission.do" idField="1">
@@ -170,16 +170,16 @@ select slo.id,slo.dateStart
     ,bf.addCaseDuration,slo.dateStart,sls.dateStart, vss.name
 
     order by pat.lastname,pat.firstname,pat.middlename
-    " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
+    " />
     <msh:table name="datelist" 
     viewUrl="entityShortView-stac_slo.do"
-    action="entityParentView-stac_slo.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    action="entityParentView-stac_slo.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Стат.карта" property="6" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Год рождения" property="4" />
       <msh:tableColumn columnName="Соц.статус" property="5"/>
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
       <msh:tableColumn columnName="Кол-во кален.дней СЛС" property="8"/>
       <msh:tableColumn columnName="Операции" property="7"/>
     </msh:table>

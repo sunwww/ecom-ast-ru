@@ -5,6 +5,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import java.sql.Date;
 
 @Entity
 public class E2CancerDiagnostic extends BaseEntity {
@@ -40,5 +41,16 @@ public class E2CancerDiagnostic extends BaseEntity {
 
     public E2CancerDiagnostic(){}
     public E2CancerDiagnostic(E2CancerEntry aCancerEntry){theCancerEntry=aCancerEntry;}
+    public E2CancerDiagnostic(E2CancerDiagnostic aDiag, E2CancerEntry aCancerEntry){
+        theCancerEntry=aCancerEntry;
+        theType = aDiag.theType;
+        theCode=aDiag.theCode;
+        theResult=aDiag.theResult;
+    }
 
+    /** Дата взятия биопсийного материала * Олег */
+    @Comment("Дата взятия биопсийного материала * Олег")
+    public Date getBiopsyDate() {return theBiopsyDate;}
+    public void setBiopsyDate(Date aBiopsyDate) {theBiopsyDate = aBiopsyDate;}
+    private Date theBiopsyDate ;
 }

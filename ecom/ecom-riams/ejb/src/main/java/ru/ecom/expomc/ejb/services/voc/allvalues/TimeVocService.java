@@ -34,39 +34,29 @@ import java.util.StringTokenizer;
 public class TimeVocService implements IVocContextService, IVocServiceManagement, IVocConfigXmlService {
 
     private static final Logger LOG = Logger.getLogger(TimeVocService.class) ;
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     private enum QueryConvertType {NONE, LOWER_CASE, UPPER_CASE}
 
     public TimeVocService() {
-//        setEntityName("OmcOrg");
-//        setNameFields(new String[] {"name", "newCode"});
-//        setCodeField("code");
-//        setQueriedFields(new String[] {"name","code","newCode"});
-//        setQueryConvertType(QueryConvertType.UPPER_CASE);
     }
 
     private Class findEntityClassByName(String aEntityName) throws IOException, JDOMException, ClassNotFoundException {
 
         Class ret = null ;
-        InputStream in = getClass().getResourceAsStream("/META-INF/persistence.xml");
-        try {
+        try (InputStream in = getClass().getResourceAsStream("/META-INF/persistence.xml")) {
             Document doc = new SAXBuilder().build(in);
             Element rootElement = doc.getRootElement();
-            List<Element> persistenceUnits = rootElement.getChildren("persistence-unit") ;
+            List<Element> persistenceUnits = rootElement.getChildren("persistence-unit");
             for (Element persistenceUnit : persistenceUnits) {
-                List<Element> classes = persistenceUnit.getChildren("class") ;
+                List<Element> classes = persistenceUnit.getChildren("class");
                 for (Element classElement : classes) {
-                    Class clazz = theClassLoaderHelper.loadClass(classElement.getTextTrim()) ;
-                    if(aEntityName.equals(theEntityHelper.getEntityName(clazz))) {
-                        ret = clazz ;
-                        break ;
+                    Class clazz = theClassLoaderHelper.loadClass(classElement.getTextTrim());
+                    if (aEntityName.equals(theEntityHelper.getEntityName(clazz))) {
+                        ret = clazz;
+                        break;
                     }
                 }
             }
-
-        } finally {
-            in.close();
         }
         if(ret==null) throw new IllegalStateException("Не найден класс для Entity "+aEntityName) ;
         return ret ;
@@ -227,7 +217,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
         return name ;
     }
 
-    private String getNameFromEntity(Object aEntity) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private String getNameFromEntity(Object aEntity) throws IllegalAccessException, InvocationTargetException {
         StringBuilder sb = new StringBuilder();
         boolean firstPassed = false ;
         for (String field : theNameFields) {
@@ -268,7 +258,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
             Query query  = aContext.getEntityManager().createQuery
                     (sb.toString())
                     .setParameter("time", findActualImport(aContext))
-                    .setParameter("query", new StringBuilder().append("%").append(aQuery).append("%").toString()) ;
+                    .setParameter("query", "%" + aQuery + "%") ;
 
             List list = query.setMaxResults(aCount)
                     .getResultList();

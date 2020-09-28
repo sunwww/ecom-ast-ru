@@ -102,9 +102,9 @@
                 </msh:row>
                 <msh:row>
                     <td></td>
-                    <td onclick="this.childNodes[1].checked='checked';chkchangeChet(3)"> <input class="radio" name="chetnechet" id="chetnechet" value="3" type="radio" >все</td>
-                    <td onclick="this.childNodes[1].checked='checked';chkchangeChet(0)"> <input class="radio" name="chetnechet" id="chetnechet" value="0" type="radio" >четные</td>
-                    <td onclick="this.childNodes[1].checked='checked';chkchangeChet(1)"> <input class="radio" name="chetnechet" id="chetnechet" value="1" type="radio" >нечетные</td>
+                    <td onclick="this.childNodes[1].checked='checked';chkchangeChet(3)"> <input class="radio" name="chetnechet" id="chetnechet3" value="3" type="radio" >все</td>
+                    <td onclick="this.childNodes[1].checked='checked';chkchangeChet(0)"> <input class="radio" name="chetnechet" id="chetnechet0" value="0" type="radio" >четные</td>
+                    <td onclick="this.childNodes[1].checked='checked';chkchangeChet(1)"> <input class="radio" name="chetnechet" id="chetnechet1" value="1" type="radio" >нечетные</td>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="timeFrom" label="Начальное время"/>
@@ -113,8 +113,8 @@
 
                 <msh:row>
                     <td></td>
-                    <td onclick="this.childNodes[1].checked='checked';chkchange(1)"> <input class="radio" name="rdMode" id="rdMode" value="1" type="radio" >длительность визита (минут)</td>
-                    <td onclick="this.childNodes[1].checked='checked';chkchange(2)"> <input class="radio" name="rdMode" id="rdMode" value="2" type="radio" >кол-во визитов</td>
+                    <td onclick="this.childNodes[1].checked='checked';chkchange(1)"> <input class="radio" name="rdMode" id="rdMode1" value="1" type="radio" >длительность визита (минут)</td>
+                    <td onclick="this.childNodes[1].checked='checked';chkchange(2)"> <input class="radio" name="rdMode" id="rdMode2" value="2" type="radio" >кол-во визитов</td>
                     <br>
                     <msh:row>
                         <msh:textField property="countVisits" label="Кол-во"/>
@@ -125,16 +125,22 @@
                     </msh:row>
                 </msh:row>
             </msh:panel>
-                <msh:row>
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek0" value="0" type="checkbox" style="margin-right:10px" onchange="chooseAllDaysOfWeek()">все<br>
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek1" value="1" type="checkbox" style="margin-right:10px" onchange="checkAll()">Понедельник<br>
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek2" value="2" type="checkbox" style="margin-right:10px" onchange="checkAll()">Вторник<br>
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek3" value="3" type="checkbox" style="margin-right:10px" onchange="checkAll()">Среда<br>
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek4" value="4" type="checkbox" style="margin-right:10px" onchange="checkAll()">Четверг<br>
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek5" value="5" type="checkbox" style="margin-right:10px" onchange="checkAll()">Пятница<br>
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek6" value="6" type="checkbox" style="margin-right:10px" onchange="checkAll()">Суббота<br>
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek7" value="7" type="checkbox" style="margin-right:10px" onchange="checkAll()">Воскресенье
-        </msh:row>
+            <input type="checkBox" name="dayOfWeek" id="dayOfWeek0" value="0" type="checkbox" style="margin:2px" onchange="chooseAllDaysOfWeek()">
+            <label onclick="document.getElementById('dayOfWeek0').click()">все</label><br>
+            <input type="checkBox" name="dayOfWeek" id="dayOfWeek1" value="1" type="checkbox" style="margin:2px" onchange="checkAll()">
+            <label onclick="document.getElementById('dayOfWeek1').click()">Понедельник</label><br>
+            <input type="checkBox" name="dayOfWeek" id="dayOfWeek2" value="2" type="checkbox" style="margin:2px" onchange="checkAll()">
+            <label onclick="document.getElementById('dayOfWeek2').click()">Вторник</label><br>
+            <input type="checkBox" name="dayOfWeek" id="dayOfWeek3" value="3" type="checkbox" style="margin:2px" onchange="checkAll()">
+            <label onclick="document.getElementById('dayOfWeek3').click()">Среда</label><br>
+            <input type="checkBox" name="dayOfWeek" id="dayOfWeek4" value="4" type="checkbox" style="margin:2px" onchange="checkAll()">
+            <label onclick="document.getElementById('dayOfWeek4').click()">Четверг</label><br>
+            <input type="checkBox" name="dayOfWeek" id="dayOfWeek5" value="5" type="checkbox" style="margin:2px" onchange="checkAll()">
+            <label onclick="document.getElementById('dayOfWeek5').click()">Пятница</label><br>
+            <input type="checkBox" name="dayOfWeek" id="dayOfWeek6" value="6" type="checkbox" style="margin:2px" onchange="checkAll()">
+            <label onclick="document.getElementById('dayOfWeek6').click()">Суббота</label><br>
+            <input type="checkBox" name="dayOfWeek" id="dayOfWeek7" value="7" type="checkbox" style="margin:2px" onchange="checkAll()">
+            <label onclick="document.getElementById('dayOfWeek7').click()">Воскресенье</label><br>
         </msh:form>
         <input type="button" onclick="createDateTimes(this)" value="Создать" />
         <div id="schedule">

@@ -53,4 +53,16 @@ public abstract class VocBaseFederalForm extends IdEntityForm implements IEntity
     /** Код */
     private String theCode ;
 
+    /** Добавить привязку */
+    @Comment("Добавить привязку")
+    public Long getMedServiceAdd() {return theMedServiceAdd;}
+    public void setMedServiceAdd(Long aMedServiceAdd) {theMedServiceAdd = aMedServiceAdd;}
+    private Long theMedServiceAdd ;
+
+    /** Булево поле на форме */
+    @Comment("Булево поле на форме")
+    public Boolean getBooleanAdd() {return theBooleanAdd;}
+    public void setBooleanAdd(Boolean aBooleanAdd) {theBooleanAdd = aBooleanAdd;}
+    private Boolean theBooleanAdd ;
+
 }

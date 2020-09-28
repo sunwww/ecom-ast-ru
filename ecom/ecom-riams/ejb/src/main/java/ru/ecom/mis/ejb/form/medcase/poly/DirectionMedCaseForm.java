@@ -8,11 +8,7 @@ import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionViewInterceptor;
 import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
@@ -66,6 +62,7 @@ public class DirectionMedCaseForm extends TicketMedCaseForm {
 	@Persist
 	public Long getOrderLpu() {return theOrderLpu;}
 	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+	private Long theOrderLpu;
 
 
 
@@ -111,8 +108,7 @@ public class DirectionMedCaseForm extends TicketMedCaseForm {
 	private Long theVisitReason;
 	/** Результат визита */
 	private Long theVisitResult;
-	/** Внешний направитель (ЛПУ) */
-	private Long theOrderLpu;
+
 	/** Количество выписанных льготных рецептов */
 	private Integer thePrivilegeRecipeAmount;
 	

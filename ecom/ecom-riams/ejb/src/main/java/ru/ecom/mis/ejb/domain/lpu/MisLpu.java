@@ -1,17 +1,16 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
 import ru.ecom.address.ejb.domain.address.Address;
-import ru.ecom.document.ejb.domain.DocumentFormJournal;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.mis.ejb.domain.equipment.Equipment;
-import ru.ecom.mis.ejb.domain.lpu.voc.*;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocLpuAccessEnterOperation;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocLpuFunction;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliProfile;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.domain.medstandard.MedicalStandard;
-import ru.ecom.mis.ejb.domain.worker.Staff;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.ecom.mis.ejb.service.lpu.ILpuService;
@@ -53,65 +52,8 @@ public class MisLpu extends BaseEntity {
 	public void setMedicalStandard(MedicalStandard aMedicalStandard) {theMedicalStandard = aMedicalStandard;}
 	/** Стандарт оказания мед. помощи */
 	private MedicalStandard theMedicalStandard;
-	/** Уровень рабочего места */
-	@Comment("Уровень рабочего места")
-	@OneToOne
-	public VocWorkPlaceLevel getWorkPlaceLevel() {
-		return theWorkPlaceLevel;
-	}
 
-	public void setWorkPlaceLevel(VocWorkPlaceLevel aWorkPlaceLevel) {
-		theWorkPlaceLevel = aWorkPlaceLevel;
-	}
 
-	/** Уровень рабочего места */
-	private VocWorkPlaceLevel theWorkPlaceLevel;
-	
-
-	
-	/** Вид собственности */
-	@Comment("Вид собственности")
-	@OneToOne
-	public VocPropertyAdmin getPropertyAdmin() {
-		return thePropertyAdmin;
-	}
-
-	public void setPropertyAdmin(VocPropertyAdmin aPropertyAdmin) {
-		thePropertyAdmin = aPropertyAdmin;
-	}
-
-	/** Вид собственности */
-	private VocPropertyAdmin thePropertyAdmin;
-	 
-	/** Подчиненность */
-	@Comment("Подчиненность")
-	@OneToOne
-	public VocSubordination getSubordination() {
-		return theSubordination;
-	}
-
-	public void setSubordination(VocSubordination aSubordination) {
-		theSubordination = aSubordination;
-	}
-
-	/** Подчиненность */
-	private VocSubordination theSubordination;
-	
-	/** Журналы учета бланков документов */
-	@Comment("Журналы учета бланков документов")
-	@OneToMany(mappedBy="recieveLpu", cascade=CascadeType.ALL)
-	public List<DocumentFormJournal> getDocumentFormJournals() {
-		return theDocumentFormJournals;
-	}
-
-	public void setDocumentFormJournals(List<DocumentFormJournal> aDocumentFormJournals) {
-		theDocumentFormJournals = aDocumentFormJournals;
-	}
-
-	/** Журналы учета бланков документов */
-	private List<DocumentFormJournal> theDocumentFormJournals;
-
-	
 	/** Рабочие функции */
 	@Comment("Рабочие функции")
 	@OneToMany(mappedBy="lpu", cascade=CascadeType.ALL)
@@ -173,12 +115,6 @@ public class MisLpu extends BaseEntity {
     @OneToMany(mappedBy = "lpu", cascade= ALL)
     public List<Worker> getWorker() { return theWorker ; }
     public void setWorker(List<Worker> aWorker) { theWorker = aWorker ; }
-
-    /** Штатное расписание */
-    @OneToMany(mappedBy = "lpu", cascade= ALL)
-    public List<Staff> getStateList() { return theStateList ; }
-    public void setStateList(List<Staff> aStateList) { theStateList = aStateList ; }
-
 
     /** Код ОМС */
     @Comment("Код ОМС")
@@ -279,18 +215,7 @@ public class MisLpu extends BaseEntity {
 	public void setIsNoOmc(Boolean aIsNoOmc) {
 		theIsNoOmc = aIsNoOmc;
 	}
-	
-	/** Профиль отеделения */
-	@Comment("Профиль отеделения")
-	@OneToOne
-	public VocMzDepType getProfile() {
-		return theProfile;
-	}
 
-	public void setProfile(VocMzDepType aProfile) {
-		theProfile = aProfile;
-	}
-	
 	/** Название для печати */
 	@Comment("Название для печати")
 	public String getPrintName() {return thePrintName;}
@@ -305,9 +230,6 @@ public class MisLpu extends BaseEntity {
 	private String thePrintAddress;
 	/** Название для печати */
 	private String thePrintName;
-
-	/** Профиль отеделения */
-	private VocMzDepType theProfile;
 
 	/** Не входит в оплату по ОМС */
 	private Boolean theIsNoOmc;
@@ -344,8 +266,6 @@ public class MisLpu extends BaseEntity {
 
     /** Комментарий */
     private String theComment ;
-    /** Штатное расписание */
-     private List<Staff> theStateList ;
      /** Работники ЛПУ */
      private List<Worker> theWorker ;
      
@@ -541,6 +461,19 @@ public class MisLpu extends BaseEntity {
 
 	/** Родильное отделение */
 	private Boolean theIsMaternityWard;
+
+	/** Отделение патологии беременности */
+	@Comment("Отделение патологии беременности")
+	public Boolean getIsPatologyPregnant() {
+		return theIsPatologyPregnant;
+	}
+
+	public void setIsPatologyPregnant(Boolean aIsPatologyPregnant) {
+		theIsPatologyPregnant = aIsPatologyPregnant;
+	}
+
+	/** Отделение патологии беременности */
+	private Boolean theIsPatologyPregnant;
 	
 	/** Уровень оказания медицинской помощи */
 	@Comment("Уровень оказания медицинской помощи")
@@ -584,4 +517,25 @@ public class MisLpu extends BaseEntity {
 	public void setIsCreateCardiacScreening(Boolean aIsCreateCardiacScreening) {theIsCreateCardiacScreening = aIsCreateCardiacScreening;}
 	/** Создают ли кадриоскрининг новорождённым? */
 	private Boolean theIsCreateCardiacScreening;
+
+	/** Офтальмологическое? */
+	@Comment("Офтальмологическое?")
+	public Boolean getIsOphthalmic() {return theIsOphthalmic;}
+	public void setIsOphthalmic(Boolean aIsOphthalmic) {theIsOphthalmic = aIsOphthalmic;}
+	/** Офтальмологическое? */
+	private Boolean theIsOphthalmic;
+
+	/** Учитывать в отчёте по КР? */
+	@Comment("Учитывать в отчёте по КР?")
+	public Boolean getIsReportKMP() {return theIsReportKMP;}
+	public void setIsReportKMP(Boolean aIsReportKMP) {theIsReportKMP = aIsReportKMP;}
+	/** Учитывать в отчёте по КР? */
+	private Boolean theIsReportKMP;
+
+	/** Инфекционное? */
+	@Comment("Инфекционное?")
+	public Boolean getIsForCovid() {return theIsForCovid;}
+	public void setIsForCovid(Boolean aIsForCovid) {theIsForCovid = aIsForCovid;}
+	/** Инфекционное? */
+	private Boolean theIsForCovid;
 }

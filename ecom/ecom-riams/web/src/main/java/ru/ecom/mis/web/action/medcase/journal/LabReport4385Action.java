@@ -27,19 +27,16 @@ public class LabReport4385Action extends BaseAction {
 	    	String leftJoinSql = "";
 	    	StringBuilder leftJoinAdd = new StringBuilder();
 	        String department = ""+form.getDepartment();
-	        String materialType = form.getPrescriptType()>0L?""+form.getPrescriptType():"";
+	     //   String materialType = form.getPrescriptType()>0L ? ""+form.getPrescriptType() : "";
 	        String diagnosis = (form.getDiagnosis()!=null&&form.getDiagnosis()>0L)?""+form.getDiagnosis():"" ;
-	    	if (department!=null&&!department.equals("")&&!department.equals("0")) {
-	    		sqlAdd.append(" and coalesce(p.department_id, w.lpu_id)="+department);
+	    	if (!department.equals("") && !department.equals("0")) {
+	    		sqlAdd.append(" and coalesce(p.department_id, w.lpu_id)=").append(department);
 	    	}
-	    	if (materialType!=null&&!materialType.equals("")&&!materialType.equals("0")) {
-	    		//sqlAdd.append(" and fip.valuevoc_id="+materialType);
-	    	}
-	    	if (diagnosis!=null&&!diagnosis.equals("")&&!diagnosis.equals("0")) {
+	    	if (!diagnosis.equals("")&&!diagnosis.equals("0")) {
 	    		leftJoinSql=" left join diagnosis diag on diag.medcase_id=mc.id" ;
 	    	}
 	    	StringBuilder table = new StringBuilder();
-	    	sqlAdd.append(" and p.planstartdate between to_date('"+dateFrom+"','dd.MM.yyyy') and to_date ('"+dateTo+"','dd.MM.yyyy')");
+	    	sqlAdd.append(" and p.planstartdate between to_date('").append(dateFrom).append("','dd.MM.yyyy') and to_date ('").append(dateTo).append("','dd.MM.yyyy')");
     		List<Object[]> titleList = service.executeNativeSqlGetObj("select count (distinct p.id) as cntPrescriptions, count(case when mc.dtype='DepartmentMedCase' then mcP.id else mc.id end) as cntMedCase" +
     			" from  prescription p" +
     			" left join workfunction wf on wf.id=p.prescriptspecial_id" +
@@ -51,12 +48,12 @@ public class LabReport4385Action extends BaseAction {
 		    	" left join parameter par on par.id=fip.parameter_id" +
 	    		leftJoinSql+
 		    	" where p.medservice_id=4385 and par.valuedomain_id=79" +sqlAdd.toString());
-    	if (titleList.size()>0){
+    	if (!titleList.isEmpty()){
     		table.append("<table>");
-    		table.append("<tr><td>Период:</td><td> "+dateFrom+" - "+dateTo+"</td></tr>");
-    		table.append("<tr><td>Отделение:</td><td>"+aRequest.getParameter("departmentName")+"</td><td>Всего больных</td><td>"+titleList.get(0)[1]+"</td></tr>");
-    		table.append("<tr><td>Количество анализов:</td><td>"+titleList.get(0)[0]+"</td></tr>");
-    		table.append("<tr><td>Диагноз:</td><td>"+aRequest.getParameter("diagnosisName")+"</td><td>Биологический материал:</td><td>"+aRequest.getParameter("prescriptTypeName")+"</td></tr>");
+    		table.append("<tr><td>Период:</td><td> ").append(dateFrom).append(" - ").append(dateTo).append("</td></tr>");
+    		table.append("<tr><td>Отделение:</td><td>").append(aRequest.getParameter("departmentName")).append("</td><td>Всего больных</td><td>").append(titleList.get(0)[1]).append("</td></tr>");
+    		table.append("<tr><td>Количество анализов:</td><td>").append(titleList.get(0)[0]).append("</td></tr>");
+    		table.append("<tr><td>Диагноз:</td><td>").append(aRequest.getParameter("diagnosisName")).append("</td><td>Биологический материал:</td><td>").append(aRequest.getParameter("prescriptTypeName")).append("</td></tr>");
     		
     		table.append("</table>");
     	}
@@ -74,7 +71,7 @@ public class LabReport4385Action extends BaseAction {
 		    		
 		    List<Object[]> RISList = service.executeNativeSqlGetObj("select id, name from uservalue where domain_id= '60' ");
 		    StringBuilder RISTD = new StringBuilder();
-		    if (antiBioList.size()>0) {
+		    if (!antiBioList.isEmpty()) {
 		    	
 		    	StringBuilder selectAdd = new StringBuilder();
 		    	
@@ -83,13 +80,13 @@ public class LabReport4385Action extends BaseAction {
 		    	table.append("<table border='1' id='report4385ResultTable' class='tabview sel tableArrow'><tr><td rowspan='3'>Название препарата</td>");
 		    	boolean isFirst = true;
 		    	for (Object[] o: antiBioList) { //Формируем строку для основного запроса
-		    		table.append("<td colspan='3'>"+o[1]+"</td>");
-		    		counts.append("<td colspan='3' align='center'><b>"+o[2]+"</b></td>");		    	
+		    		table.append("<td colspan='3'>").append(o[1]).append("</td>");
+		    		counts.append("<td colspan='3' align='center'><b>").append(o[2]).append("</b></td>");
 		    		for (Object[] oo: RISList) {
 		    			if (isFirst) {
-		    				RISTD.append("<td>"+oo[1].toString().substring(0,1)+"</td>");
+		    				RISTD.append("<td>").append(oo[1].toString(), 0, 1).append("</td>");
 		    			}
-		    			selectAdd.append(", count(case when (select fip1.valuevoc_id from forminputprotocol fip1 left join parameter par1 on par1.id=fip1.parameter_id where fip1.docprotocol_id=d.id and par1.valuedomain_id=79)='"+o[0]+"' and fip.valuevoc_id='"+oo[0]+"' then p.id else null end) as cnt_"+k);
+		    			selectAdd.append(", count(case when (select fip1.valuevoc_id from forminputprotocol fip1 left join parameter par1 on par1.id=fip1.parameter_id where fip1.docprotocol_id=d.id and par1.valuedomain_id=79)='").append(o[0]).append("' and fip.valuevoc_id='").append(oo[0]).append("' then p.id else null end) as cnt_").append(k);
 		    			//tdNames.append(" <msh:tableColumn columnName='"+o[1]+" "+(oo[1].toString().substring(0, 1))+"' property='"+k+"'/>");
 		    			k++;
 		    		}
@@ -115,12 +112,12 @@ public class LabReport4385Action extends BaseAction {
 		    		.append(" where p.medservice_id=4385 and par.valuedomain_id=60 ").append(sqlAdd)
 		    		.append("group by par.id, par.shortname order by par.shortname");
 		    	List<Object[]> resultList = service.executeNativeSqlGetObj(sql.toString());
-		    	if (resultList.size()>0){
+		    	if (!resultList.isEmpty()){
 		    		for (Object[] res: resultList) {
 		    			table.append("<tr>");
 		    			for (Object td: res) {
 		    				
-		    				table.append("<td>").append(""+td).append("</td>");
+		    				table.append("<td>").append(td).append("</td>");
 		    			}
 		    			table.append("</tr>");
 		    		}
@@ -135,6 +132,6 @@ public class LabReport4385Action extends BaseAction {
 		 }
 		    
         
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

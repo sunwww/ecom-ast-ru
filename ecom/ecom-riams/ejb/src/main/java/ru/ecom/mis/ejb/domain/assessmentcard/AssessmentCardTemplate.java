@@ -31,4 +31,11 @@ public class AssessmentCardTemplate extends VocBaseEntity{
 	/** Дата создания */
 	private Date theCreateDate;
 
+	/** В архиве */
+	@Comment("В архиве")
+	public Boolean getIsArchive() {return theIsArchive;}
+	public void setIsArchive(Boolean aIsArchive) {theIsArchive = aIsArchive;}
+	/** В архиве */
+	private Boolean theIsArchive;
+
 }

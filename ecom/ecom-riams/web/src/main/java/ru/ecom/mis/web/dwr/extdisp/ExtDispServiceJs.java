@@ -1,10 +1,13 @@
 package ru.ecom.mis.web.dwr.extdisp;
 
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 import ru.ecom.mis.ejb.service.extdispplan.IExtDispPlanService;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.naming.NamingException;
@@ -17,6 +20,49 @@ import java.util.Collection;
 
 
 public class ExtDispServiceJs {
+	private static final Logger LOG = Logger.getLogger(ExtDispServiceJs.class);
+
+	/**Расчет возраста пациенту для доп. диспансеризации*/
+	public String getAgeForDisp(Long aPatient, String aFinishDate, Long aExtDispId, HttpServletRequest aRequest) {
+		JSONObject ret = new JSONObject();
+		if (aPatient!=null && aFinishDate!=null && !aFinishDate.equals("")) {
+			try {
+				IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+				Collection<WebQueryResult> list = service.executeNativeSql("select pat.id,to_char(pat.birthday,'dd.mm.yyyy'), pat.sex_id from patient pat where pat.id='" + aPatient + "'", 1);
+				WebQueryResult wqr = list.iterator().next();
+				String birthDayS = wqr.get2() != null ? "" + wqr.get2() : "";
+				java.sql.Date birthday = DateFormat.parseSqlDate(birthDayS);
+				java.sql.Date finishDate = DateFormat.parseSqlDate(aFinishDate);
+			//	Calendar calB = Calendar.getInstance();
+		//		calB.setTime(birthday);
+		//		Calendar calF = Calendar.getInstance();
+		//		calF.setTime(finishDate);
+				String ageGroup = AgeUtil.calculateExtDispAge(finishDate, birthday);
+				if (aExtDispId != null) {
+					boolean calcAge = !service.executeNativeSql("select ved.id from VocExtDisp ved where ved.id=" + aExtDispId + " and ved.autoCalcAge='1'").isEmpty();
+					ret.put("autoCalcAge", calcAge);
+					if (calcAge) { //Находим подходящую возрастную группу по возрасту и полу пациента
+						list = service.executeNativeSql("select vedag.id, vedag.name from ExtDispPlanService edps" +
+								" left join extdispplan edp on edp.id=edps.plan_id" +
+								" left join VocExtDispAgeGroup vedag on vedag.id=edps.agegroup_id" +
+								" where edp.disptype_id=" + aExtDispId + " and vedag.code='" + ageGroup + "'" +
+								" and (edps.sex_id is null or edps.sex_id=" + wqr.get3().toString() + ") and (vedag.isarchival is null or vedag.isarchival='0')", 1);
+						if (!list.isEmpty()) {
+							wqr = list.iterator().next();
+							ret.put("autoCalcAgeId", wqr.get1()).put("autoCalcAgeName", wqr.get2());
+						}
+
+					}
+				}
+				ret.put("status", "ok").put("ageGroup", ageGroup);
+				return ret.toString();
+			} catch (Exception e) {
+				LOG.error("ERR", e);
+				ret.put("errorCode", e.getMessage());
+			}
+		}
+		return ret.put("status","error").toString();
+	}
 
     public String countRecordsInPlan(Long aPlanId, HttpServletRequest aRequest) throws NamingException {
         return Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSql("select count(*) from extdispplanpopulationrecord where plan_id="+aPlanId+" and (isDeleted is null or isDeleted='0')").iterator().next().get1().toString();
@@ -53,7 +99,7 @@ public class ExtDispServiceJs {
 			return "";
 		}
 
-		if (aPatientInfo!=null&&!aPatientInfo.trim().equals("")){
+		if (aPatientInfo!=null && !aPatientInfo.trim().equals("")){
 			aPatientInfo=aPatientInfo.toUpperCase();
 			String[] patientInfo = aPatientInfo.split(" ");
 			sql.append(firstWhere?"":" and ").append(" pat.lastname like('%").append(patientInfo[0]).append("%')");
@@ -70,10 +116,8 @@ public class ExtDispServiceJs {
 			String[] years =aYears.split(",");
 			if (years.length==1) {
 				sql.append(firstWhere?"":" and ").append(" to_char(pat.birthday,'yyyy')='").append(aYears).append("'");
-				firstWhere=false;
 			} else {
 				sql.append(firstWhere?"":" and ").append(" to_char(pat.birthday,'yyyy') in (");
-				firstWhere=false;
 				boolean firstYear = true;
 				for (String year: years) {
 					if (!firstYear) {sql.append(",");} else {firstYear=false;}
@@ -84,17 +128,19 @@ public class ExtDispServiceJs {
 			}
 
 		}
-		sql.append(" and att.dateTo is null and pat.deathDate is null and (pat.noActuality='0' or pat.noActuality is null) and (select count(*) from medpolicy where dtype='MedPolicyOmc' and patient_id=pat.id and (actualdateto is null or actualdateto>current_date)>0");
-		sql.append(" order by ").append(aTypeSort!=null&&aTypeSort.equals("2")?" random() ":" pat.patientinfo ");
+		sql.append(" and att.dateTo is null and pat.deathDate is null and (pat.noActuality='0' or pat.noActuality is null)" +
+				" and (select count(*) from medpolicy where dtype='MedPolicyOmc' and patient_id=pat.id and (actualdateto is null or actualdateto>current_date))>0");
+		sql.append(" order by ").append("2".equals(aTypeSort) ?" random() ":" pat.patientinfo ");
 		//if (aLimit!=null&&aYear>0) { sql.append(" and to_char(pat.birthday,'yyyy')='").append(aYear).append("'");}
 		IWebQueryService service= Injection.find(aRequest).getService(IWebQueryService.class);
+		LOG.info("sql = "+sql);
 		String ret =service.executeNativeSqlGetJSON(new String[]{"id", "name","area"},sql.toString(),aLimit);
-		return  ret!=null?ret:"";
+		return  ret!=null ? ret : "";
 	}
 	
 	
 	public String dispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException {
-		if(dispCardId==null||dispCardId.equals(Long.valueOf(0))){
+		if(dispCardId==null||dispCardId.equals(0L)){
 			return "1";
 		}
 		else {
@@ -116,7 +162,7 @@ public class ExtDispServiceJs {
 		 		(aDispCardId!=null&&aDispCardId!=0?(" and edc.id!="+aDispCardId):"")+
 		 		" and vedc.disableAgeDoubles='1' ").iterator().next().get1().toString());
 
-		 return haveDis!=null&&haveDis>0?"1":"0";
+		 return haveDis>0 ? "1" : "0";
 
 	}
 	// Проверка услуги ДД на: выходной день, дубль со стационаром, дубль с визитом, входит в период ДД	
@@ -172,7 +218,7 @@ public class ExtDispServiceJs {
 	private boolean isHoliday (Date aDate) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(aDate);
-		return cal.get(java.util.Calendar.DAY_OF_WEEK)==1;
+		return cal.get(java.util.Calendar.DAY_OF_WEEK)== Calendar.SUNDAY;
 	}
 
 	@Deprecated //Переделали

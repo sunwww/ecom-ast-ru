@@ -1,15 +1,14 @@
 package ru.ecom.mis.ejb.domain.worker;
 
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.voc.VocAttorneyType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+import java.sql.Date;
 
 @Entity
 public class Attorney extends BaseEntity {
@@ -37,8 +36,7 @@ public class Attorney extends BaseEntity {
 			return null;
 		}
 		Patient p =  getPerson();
-		String ret =p.getLastname() +" "+p.getFirstname().substring(0,1)+" "+p.getMiddlename().substring(0,1);
-		return ret;
+		return p.getLastname() +" "+p.getFirstname().substring(0,1)+" "+p.getMiddlename().substring(0,1);
 	}
 	
 	/** Номер доверенности */

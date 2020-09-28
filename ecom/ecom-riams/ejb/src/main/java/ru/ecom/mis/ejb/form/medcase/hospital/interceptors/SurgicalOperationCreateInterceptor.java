@@ -1,58 +1,82 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
 import ru.ecom.mis.ejb.domain.medcase.*;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm;
+import ru.ecom.mis.ejb.service.contract.ContractServiceBean;
+import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import java.math.BigInteger;
 import java.util.List;
 
 public class SurgicalOperationCreateInterceptor implements IParentFormInterceptor {
+	private static final Logger LOG = Logger.getLogger(SurgicalOperationCreateInterceptor.class);
+
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
     	EntityManager manager = aContext.getEntityManager();
     	MedCase parentSSL = manager.find(MedCase.class, aParentId) ;
-    	SurgicalOperationForm form=(SurgicalOperationForm)aForm;
-    	
-    	
-    	if (parentSSL instanceof HospitalMedCase) {
-        	DiagnosisForm frm = getDiagnosis(aContext.getEntityManager(), parentSSL.getId(), "4", "1", true) ;
-    		HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
-    		if (frm!=null) form.setIdc10Before(frm.getIdc10()) ;
-    		if (hosp.getDateFinish()!=null && hosp.getDischargeTime()!=null && !aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateInCloseMedCase")) {
+    	SurgicalOperationForm form= (SurgicalOperationForm) aForm;
+		VocServiceStream serviceStream = parentSSL.getServiceStream();
+		if (serviceStream !=null && Boolean.TRUE.equals(serviceStream.getIsCalcDogovor())) { //Если ДМС - ищем гарантийное письмо.
+			ContractGuarantee letter = parentSSL.getGuarantee() != null ? parentSSL.getGuarantee() : parentSSL.getParent().getGuarantee();
+			if (letter == null) {
+				LOG.warn("Не указано гарантийное письмо для случая ДМС, невозможно высчитать остаток");
+			} else {
+				try {
+					JSONObject guar = new JSONObject(new ContractServiceBean().getGuaranteeLimit(letter.getId(), manager));
+					if (guar.has("number")) {
+						if (guar.getBoolean("isNoLimit")) {
+							form.addMessage(new FormMessage("Гарантийное письмо №"+guar.getString("number")+" без лимита", true));
+						} else {
+							form.addMessage(new FormMessage("Остаток по гарантийному письму №"+guar.getString("number")+" составляет: "+guar.get("ostatok")+" руб", false));
+						}
+					} else {
+						LOG.warn("NO GP");
+					}
+
+				} catch (NamingException e) {
+					LOG.error(e);
+				}
+			}
+
+		}
+		if (serviceStream!=null) form.setServiceStream(serviceStream.getId()) ;
+		if (parentSSL instanceof HospitalMedCase) {
+			DiagnosisForm frm = getDiagnosis(aContext.getEntityManager(), parentSSL.getId(), "4", "1", !(parentSSL instanceof DepartmentMedCase) );
+			HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
+			if (frm!=null) form.setIdc10Before(frm.getIdc10()) ;
+    		/*if (hosp.getDateFinish()!=null && hosp.getDischargeTime()!=null && !aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateInCloseMedCase")) {
     			throw new IllegalStateException("Нельзя добавить хирургическую операцию в закрытый случай стационарного лечения (ССЛ) !!!") ;
-    		}
-    		
-    		if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
-    		if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
-    	} else if (parentSSL instanceof DepartmentMedCase){
-    		DepartmentMedCase slo = (DepartmentMedCase) parentSSL ;
-			
-    		if (slo.getDepartment()!=null) form.setDepartment(slo.getDepartment().getId()) ;
-    		if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
-    	} else  if (parentSSL instanceof Visit){
+    		}*/
+
+			if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
+		} else if (parentSSL instanceof Visit){
     		Visit slo = (Visit) parentSSL ;
     		if (slo.getWorkFunctionExecute()!=null) {
     			if (slo.getWorkFunctionExecute() instanceof PersonalWorkFunction) {
     				PersonalWorkFunction pwf = (PersonalWorkFunction) slo.getWorkFunctionExecute() ;
     				form.setDepartment(pwf.getWorker().getLpu().getId()) ;
-    				if (slo.getWorkFunctionExecute().getIsSurgical()!=null&&slo.getWorkFunctionExecute().getIsSurgical().booleanValue()) {
+    				if (Boolean.TRUE.equals(slo.getWorkFunctionExecute().getIsSurgical())) {
     					form.setSurgeon(slo.getWorkFunctionExecute().getId()) ;
     				}
     			}
     			form.setOperationDate(DateFormat.formatToDate(slo.getDateStart())) ;
     			form.setOperationTime(DateFormat.formatToTime(slo.getTimeExecute())) ;
-    			
     		}
-    		if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
     	} else {
-    		throw new IllegalStateException("Невозможно добавить хирургическую операцию. Сначала надо определить  случай стационарного лечения (ССЛ)") ;
+    		throw new IllegalStateException("Невозможно добавить хирургическую операцию. Сначала надо определить случай стационарного лечения (ССЛ)") ;
     	}
     	
 		if (parentSSL.getDepartment()!=null) {
@@ -64,8 +88,8 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
 			form.setLpu(parentSSL.getLpu().getId());
 		}
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction")
-				&&form.getDepartment()!=null&&form.getDepartment()>Long.valueOf(0)) {
-    		String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
+				&&form.getDepartment()!=null&&form.getDepartment()> 0L) {
+    		String username = aContext.getSessionContext().getCallerPrincipal().getName() ;
         	List<Object[]> listwf =  manager.createNativeQuery("select wf.id as wfid,w.id as wid from WorkFunction wf left join Worker w on w.id=wf.worker_id left join SecUser su on su.id=wf.secUser_id where su.login = :login and w.lpu_id=:lpu and wf.id is not null and wf.isSurgical='1'") 
     				.setParameter("login", username)
     				.setParameter("lpu", form.getDepartment()) 
@@ -86,6 +110,13 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
         		}
     		}
     	}
+		//Запрет на создание в СЛО и СЛС, если случай закрыт. Админ может создавать.
+		if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut") &&
+				!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateInCloseMedCase") &&
+				parentSSL instanceof HospitalMedCase) {
+			MedCase hmc = (parentSSL instanceof DepartmentMedCase)? parentSSL.getParent() : parentSSL;
+			if (hmc.getDateFinish()!=null) throw new IllegalStateException("Пациент выписан. Нельзя добавлять хирургическую операцию в закрытый СЛС!");
+		}
     }
 
     /** находим правильного родителя при создании операции (по дате и времени) */
@@ -106,7 +137,7 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
 
 		String dateTime = aOperation.getOperationDate()+" "+aOperation.getOperationTime();
 		List<BigInteger> ids = aManager.createNativeQuery(sql.toString()).setParameter("id",hospitalId).setParameter("operationDateTime",dateTime).getResultList();
-		if (ids.isEmpty()||ids.size()>1) {
+		if (ids.size() != 1) {
 			return;
 		}
 		aOperation.setMedCase(aManager.find(MedCase.class,ids.get(0).longValue()));
@@ -142,5 +173,4 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
     		}
     		return null ;
     	}
-
 }

@@ -38,6 +38,8 @@ function onCreate(aForm, aSurgOper, aCtx) {
 		}
 	}
     checkParent(aSurgOper,aCtx); //Находим родителя по дате и времени операции
+	saveComplications(aForm, aSurgOper, aCtx);
+	createBraceletIfNeed(aForm, aSurgOper, aCtx);
 }
 function onPreSave(aForm,aEntity, aCtx) {
 	var date = new java.util.Date();
@@ -91,8 +93,95 @@ function checkPeriod(aForm,aCtx) {
 }
 function onSave(aForm, aEntity, aCtx) {
 	checkParent(aEntity,aCtx);
+	aCtx.manager.createNativeQuery("delete from surgcomplication where surgicaloperation_id="+aEntity.id).executeUpdate() ;
+	saveComplications(aForm, aEntity, aCtx);
+	checkBraceleteAndClose(aForm, aEntity, aCtx);
 }
 function checkParent(aEntity, aCtx) {
 	//Находим родителя по дате и времени операции
        var interceptor = new Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor.setParentByOperation(aEntity,aCtx.manager);
+}
+function getMedCaseType (aId, aCtx) {
+    var list = aCtx.manager.createNativeQuery("select dtype from medcase where id="+aId).getResultList() ;
+    return list.size()>0?""+list.get(0):"";
+}
+function onPreDelete(aEntityId, aCtx) {
+    var so = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.SurgicalOperation,new java.lang.Long(aEntityId));
+    var dtype = getMedCaseType(so.getMedCase().getId(),aCtx);
+    if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut")
+        && (dtype=='DepartmentMedCase' || dtype=='HospitalMedCase')) {
+        var parent=(dtype=='DepartmentMedCase')? so.getMedCase().getParent() : so.getMedCase() ;
+        if (parent.getDateFinish()!=null) throw "Пациент выписан. Нельзя удалять операцию в закрытом СЛС!";
+    }
+    //очищение в ContractAccountOperationByService, чтобы потом вновь можно было увидеть операцию в списке оплаченных
+    aCtx.manager.createNativeQuery("update ContractAccountOperationByService set serviceid=null where serviceid="+aEntityId).executeUpdate() ;
+    //удаление осложнений
+	aCtx.manager.createNativeQuery("delete from surgcomplication where surgicaloperation_id="+aEntityId).executeUpdate() ;
+	//запрет на удаление, если есть браслет, связанный с операцией
+	var list = aCtx.manager.createNativeQuery("select id from coloridentitypatient where surgoperation_id=" + aEntityId).getResultList();
+	if (list.size() > 0)
+		throw "К операции привязан браслет! Удалить операцию нельзя.";
+}
+//сохранение осложнений
+function saveComplications(aForm, aEntity, aCtx) {
+	var allComps = aForm.getAllComps();
+	if (allComps != '') {
+		var obj = new Packages.org.json.JSONObject(allComps);
+		var comps = obj.getJSONArray("list");
+		for (var i = 0; i < comps.length(); i++) {
+			var child = comps.get(i);
+			var surgComp = new Packages.ru.ecom.mis.ejb.domain.medcase.SurgComplication();
+			surgComp.setSurgicalOperation(aEntity);
+			surgComp.setComplicationString(''+child.get("compString"));
+			surgComp.setCompReasonString(''+child.get("reasonString"));
+
+			var format = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+			surgComp.setDateComp(new java.sql.Date(format.parse(java.lang.String.valueOf(child.get("date"))).getTime()));
+
+			var vocCompId = java.lang.Long.valueOf(child.get("comp"));
+			var vocComp = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocComplication, vocCompId);
+
+			if (vocComp != null) {
+				surgComp.setComplication(vocComp);
+				aCtx.manager.persist(surgComp);
+			}
+		}
+	}
+}
+
+//Проверка, нужно ли создавать браслет и, если нужно, его создание
+function createBraceletIfNeed(aForm, aSurgOper, aCtx) {
+	if (aForm.operationDateTo==''  && aForm.operationTimeTo=='') {  //если не стоят дата-время окончания
+		var list = aCtx.manager.createNativeQuery("select VocColorIdentity_id from medservice where id=" + aForm.medService).getResultList();
+		if (list.size() > 0) {
+			if (list.get(0) != null) { //если есть браслет у услуги
+				var idB = new java.lang.Long(list.get(0));
+				var cip = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
+				cip.setVocColorIdentity(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient,idB));
+				cip.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+				cip.setStartDate(aSurgOper.operationDate);
+				cip.setStartTime(aSurgOper.operationTime);
+				cip.setSurgOperation(aSurgOper);
+				aCtx.manager.persist(cip);
+
+				aSurgOper.medCase.parent.addColorsIdentity(cip);
+				aCtx.manager.persist(aSurgOper.medCase.parent);
+			}
+		}
+	}
+}
+
+//Проверка, нужно ли закрывать браслет (если есть браслет у услуги и проставили дату-время окончания
+function checkBraceleteAndClose(aForm, aEntity, aCtx) {
+	if (aForm.operationDateTo!=''  && aForm.operationTimeTo!='') {  //если стоят дата-время окончания
+		var list = aCtx.manager.createNativeQuery("select id from ColorIdentityPatient where surgoperation_id=" + aEntity.id).getResultList();
+		if (list.size() > 0) {
+			if (list.get(0) != null) { //если есть браслет с такой id операции (который может быть уже снят, но дату-время окончания операции могут менять
+				var idB = new java.lang.Long(list.get(0));
+				aCtx.manager.createNativeQuery("update ColorIdentityPatient set editusername='" +
+					aCtx.getSessionContext().getCallerPrincipal().toString() + "',finishdate = '" + aEntity.operationDateTo
+					+ "', finishtime = '" + aEntity.operationTimeTo + "' where id=" + idB).executeUpdate();
+			}
+		}
+	}
 }

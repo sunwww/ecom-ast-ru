@@ -3,8 +3,8 @@ package ru.nuzmsh.util.format;
 import ru.nuzmsh.util.StringUtil;
 
 import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,10 +27,16 @@ public static String convertOtherFormat(String aDate, String aFromFormat, String
 }
     /** Проверка дня (строка в формате 25.03.2018) - является ли воскресеньем*/
 	public static Boolean isHoliday (String aDate) throws ParseException {
-    		Calendar cal = Calendar.getInstance();
-    		cal.setTime(parseDate(aDate));
-    		return cal.get(java.util.Calendar.DAY_OF_WEEK)==1;
+    		return isHoliday(parseDate(aDate), false);
     }
+
+    /** Проверка дня (строка в формате 25.03.2018) - является ли воскресеньем*/
+	public static Boolean isHoliday (Date aDate, boolean isSaturdayHoliday) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(aDate);
+		int day = cal.get(java.util.Calendar.DAY_OF_WEEK);
+		return day==Calendar.SUNDAY || isSaturdayHoliday && day==Calendar.SATURDAY;
+	}
 	/** Из строк 2018-03-25, 12:34 в java.util.Date */
     public static Date formatDateFromDateTime(String aSqlDate, String aSqlTime) {
     	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:MI");
@@ -122,7 +128,7 @@ public static String convertOtherFormat(String aDate, String aFromFormat, String
 			    throw new IllegalArgumentException("Дата "+FORMAT_1.format(ret)+" не должна быть меньше "+FORMAT_1.format(minDate)) ;
 			}
 		}
-        return new java.sql.Date(ret.getTime()) ;
+        return ret !=null ? new java.sql.Date(ret.getTime()) : null ;
     }
 
 	/** Из строки 25.03.2018 в java.util.Date */

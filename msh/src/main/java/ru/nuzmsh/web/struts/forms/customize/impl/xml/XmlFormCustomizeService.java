@@ -8,7 +8,6 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import ru.nuzmsh.commons.auth.ILoginInfo;
 import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.web.struts.forms.customize.FormCustomizeException;
 import ru.nuzmsh.web.struts.forms.customize.FormElementInfo;
 import ru.nuzmsh.web.struts.forms.customize.FormInfo;
 import ru.nuzmsh.web.struts.forms.customize.IFormCustomizeService;
@@ -16,10 +15,7 @@ import ru.nuzmsh.web.struts.forms.customize.IFormCustomizeService;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  *
@@ -27,9 +23,6 @@ import java.util.TreeMap;
 public class XmlFormCustomizeService implements IFormCustomizeService {
 
     private static final Logger LOG = Logger.getLogger(XmlFormCustomizeService.class) ;
-    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
-
-
 
     /** Каталог для хранения настроек */
     public String getConfigDir() { return theConfigDir ; }
@@ -83,10 +76,6 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
         } else {
             info = null ;
         }
-//        FormElementInfo info = theHash.get(sb.toString()) ;
-        //if (CAN_TRACE) LOG.info("findFormElementInfo(): key = " + sb);
-        StringBuilder sb = new StringBuilder(aFormName).append('.').append(aElementName);
-        if (CAN_TRACE) LOG.info(new StringBuilder().append("findFormElementInfo(): ").append(sb).append(" = ").append(info).toString());
         return info ;
     }
 
@@ -103,8 +92,6 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
 
 
     private void saveFormElementInfoNoSave(ILoginInfo aLoginInfo, String aFormName, FormElementInfo aInfo) {
-        if (CAN_TRACE) LOG.info("saving " +aFormName+"." + aInfo);
-
         if(aInfo!=null && !canSave(aInfo)) { // удаляем из базы
             TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName) ;
             if(elementsHash!=null) {
@@ -121,7 +108,7 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
                 elementsHash = new TreeMap<>();
                 theHash.put(aFormName, elementsHash) ;
             }
-            elementsHash.put(aInfo.getName(), aInfo) ;
+            elementsHash.put(aInfo!=null ? aInfo.getName() : null, aInfo) ;
         }
     }
 
@@ -140,10 +127,10 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
         try (OutputStreamWriter fileOut = new OutputStreamWriter(tmpOut, "utf-8")){
             Element forms = new Element("forms");
             Document doc = new Document(forms);
-            for (String formKey : theHash.keySet()) {
-                TreeMap<String, FormElementInfo> elementsHash = theHash.get(formKey) ;
+            for (Map.Entry<String, TreeMap<String, FormElementInfo>> entrySet : theHash.entrySet()) {
+                TreeMap<String, FormElementInfo> elementsHash = entrySet.getValue();
                 Element form = new Element("form");
-                form.setAttribute("name",formKey) ;
+                form.setAttribute("name",entrySet.getKey()) ;
                 for (FormElementInfo info : elementsHash.values()) {
                     if(canSave(info)) {
                         form.addContent(createXmlElementFromElement(info)) ;
@@ -177,16 +164,7 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
     }
 
     private boolean canSave(FormElementInfo aInfo) {
-        if (CAN_TRACE) LOG.info("canSave()" + aInfo);
-        boolean canSave = false ;
-        do {
-            if(aInfo==null)  { break ; }
-            if(!StringUtil.isNullOrEmpty(aInfo.getDefaultValue())) { canSave = true ; break ; }
-            if(!StringUtil.isNullOrEmpty(aInfo.getLabel()))        { canSave = true ; break ; }
-            if(aInfo.isVisible()!=null)                            { canSave = true ; break ; }
-        } while(false) ;
-        if (CAN_TRACE) LOG.info("  canSave = " + canSave);
-        return canSave ;
+        return !StringUtil.isNullOrEmpty(aInfo.getDefaultValue()) || !StringUtil.isNullOrEmpty(aInfo.getLabel()) ||aInfo.isVisible()!=null ;
     }
 
     public Collection<FormInfo> listCustomizedForms()  {
@@ -199,7 +177,7 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
         return ret ;
     }
 
-    public Collection<FormElementInfo> listCustomizedElements(String aFormName) throws FormCustomizeException {
+    public Collection<FormElementInfo> listCustomizedElements(String aFormName) {
         TreeMap<String,FormElementInfo> elementsHash = theHash.get(aFormName) ;
         return elementsHash!=null ? elementsHash.values() : null ;
     }

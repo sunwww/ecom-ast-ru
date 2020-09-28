@@ -13,7 +13,7 @@
         
             <msh:hidden property="id"/>
             <msh:hidden property="saveType"/>
-            <msh:panel guid="panel" colsWidth="20% 20% 15%">
+            <msh:panel colsWidth="20% 20% 15%">
        		<input type='hidden' id='statusState'>
         
         <msh:ifFormTypeAreViewOrEdit formName="mis_archiveCaseForm">
@@ -45,7 +45,7 @@
     <tiles:put name='side' type='string'>
       <msh:ifFormTypeAreViewOrEdit formName="mis_archiveCaseForm">
         <msh:sideMenu>
-	        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityPrepareDelete-mis_archiveCase" name="Удалить" roles="/Policy/Mis/Claim/Delete" />
+	        <msh:sideLink key="ALT+2" params="id" action="/entityPrepareDelete-mis_archiveCase" name="Удалить" roles="/Policy/Mis/Claim/Delete" />
 	   </msh:sideMenu>
       </msh:ifFormTypeAreViewOrEdit>
        

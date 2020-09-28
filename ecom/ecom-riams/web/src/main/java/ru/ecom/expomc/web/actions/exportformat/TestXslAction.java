@@ -30,6 +30,6 @@ public class TestXslAction extends BaseAction {
         service.setMaxRecords(500);
         xresult = service.getTransformedXml(new Long(aRequest.getParameter("id")));
         aRequest.setAttribute("xresult",xresult);
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

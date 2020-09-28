@@ -12,10 +12,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Entity
-@Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
 public class WfConsultation extends Prescription {
     /** Тип консультации */

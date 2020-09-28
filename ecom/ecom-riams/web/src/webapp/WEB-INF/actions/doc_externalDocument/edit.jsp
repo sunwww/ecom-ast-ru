@@ -15,7 +15,7 @@
   String ext = arr[arr.length-1];
   //System.out.println("File="+form.getReferenceTo()+" EXT="+ext);
   %>
-    <msh:form action="/entityParentSaveGoView-doc_externalDocument.do" defaultField="dateFrom" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+    <msh:form action="/entityParentSaveGoView-doc_externalDocument.do" defaultField="dateFrom">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="patient" />
@@ -43,7 +43,7 @@
         </msh:row>
         
         
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
     </msh:form>
      <%if (ext!=null&&ext.equals("pdf")) {%>
@@ -67,11 +67,11 @@
     <ecom:titleTrail mainMenu="Poly" beginForm="doc_externalDocumentForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="doc_externalDocumentForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
-      <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
-        <msh:sideLink key="ALT+5" action="/javascript:gotoMedCase()" name="Перейти к случаю лечения" guid="609c81cf-05e5-4e07-90b7-87b38863114c" />
-        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-doc_externalDocument" name="Изменить" roles="/Policy/Mis/MedCase/Document/External/Edit" guid="609c81cf-05e5-4e07-90b7-87b38863114c" />
-        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-doc_externalDocument" name="Удалить" roles="/Policy/Mis/MedCase/Document/External/Delete" guid="1a3265b4-cebb-4536-a471-c79003ccf548" />
+    <msh:ifFormTypeIsView formName="doc_externalDocumentForm">
+      <msh:sideMenu>
+        <msh:sideLink key="ALT+5" action="/javascript:gotoMedCase()" name="Перейти к случаю лечения" />
+        <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-doc_externalDocument" name="Изменить" roles="/Policy/Mis/MedCase/Document/External/Edit" />
+        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-doc_externalDocument" name="Удалить" roles="/Policy/Mis/MedCase/Document/External/Delete" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

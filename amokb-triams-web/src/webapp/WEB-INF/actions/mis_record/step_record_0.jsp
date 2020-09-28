@@ -218,10 +218,12 @@
 	       		if (isNext) {
 	       			var dr = $('birthday').value.split('.') ;
 	       			showwwaitingMessage();
+	       			alert('pre');
 	       			PatientService.getPatient($('lastname').value
 	       					,$('firstname').value,$('middlename').value
 	       					,dr[2]+'-'+dr[1]+'-'+dr[0],{
 	       				callback:function(aResult) {
+							alert('aft');
 	       					var res = aResult.split("#") ;
 	       					var fn=res[0] ;
 	       					
@@ -247,7 +249,6 @@
 	       					}
 	       				}
 	       			}) ;
-	       			//window.location="step_record_1.do?"+info.substring(1)+"${addParam}" ;
 	       		}
 	       	}
 	       	function fn_data_patient(aResult) {
@@ -278,7 +279,7 @@
 	       		var firstname='${param.firstname}' ;
 	       		var middlename='${param.middlename}' ;
 	       		var vocWorkCalendar = '${param.vocWorkCalendar}';
-	       		var workCalendar ='${param.workCalendar}'
+	       		var workCalendar ='${param.workCalendar}';
 	       		window.location="step_record_info.do" ;
 	       		
 	       	}
@@ -448,69 +449,56 @@
 
 	       	// проверка корректности введенной даты
 	       	function parseDate(inputStr) {
-	       	    while (inputStr.indexOf("-") != -1)
-	       	    {
+	       	    while (inputStr.indexOf("-") != -1) {
 	       	        inputStr = replaceString(inputStr,"-","/") ;
 	       	    }
-	       	    while (inputStr.indexOf(",") != -1)
-	       	    {
+	       	    while (inputStr.indexOf(",") != -1) {
 	       	        inputStr = replaceString(inputStr,",","/") ;
 	       	    }
-	       	    while (inputStr.indexOf(".") != -1)
-	       	    {
+	       	    while (inputStr.indexOf(".") != -1) {
 	       	        inputStr = replaceString(inputStr,".","/") ;
 	       	    }
 	       	    var delim1 = inputStr.indexOf("/") ;
 	       	    var delim2 = inputStr.lastIndexOf("/") ;
-	       	    if (delim1 != -1 && delim1 == delim2)
-	       	    {
+	       	    if (delim1 != -1 && delim1 == delim2) {
 	       	        throw errorutil.SetErrorObj("Форма ввода даты: ДД.ММ.ГГГГ. Например: 31.12.2004") ;
 	       	        //throw setErrorObj("Форма ввода даты: ddmmyyyy, dd/mm/yyyy, or dd-mm-yyyy,  dd.mm.yyyy.") ;
 	       	    }
-	       	    if (delim1 != -1)
-	       	    {
+	       	    if (delim1 != -1) {
 	       	        var dd = parseInt(inputStr.substring(0,delim1),10) ;
 	       	        var mm = parseInt(inputStr.substring(delim1 + 1,delim2),10) ;
 	       	        var yyyy = parseInt(inputStr.substring(delim2 + 1, inputStr.length),10) ;
-	       	    } else
-	       	    {
+	       	    } else {
 	       	        var dd = parseInt(inputStr.substring(0,2),10) ;
 	       	        var mm = parseInt(inputStr.substring(2,4),10) ;
 	       	        var yyyy = parseInt(inputStr.substring(4,inputStr.length),10) ;
 	       	    }
-	       	    if (isNaN(mm) || isNaN(dd) || isNaN(yyyy))
-	       	    {
+	       	    if (isNaN(mm) || isNaN(dd) || isNaN(yyyy)) {
 	       	        throw errorutil.SetErrorObj('Неправильно введена дата') ;
 	       	    }
-	       	    if (mm < 1 || mm > 12)
-	       	    {
+	       	    if (mm < 1 || mm > 12) {
 	       	        throw errorutil.SetErrorObj('Неправильно введен месяц') ;
 	       	    }
-	       	    if (dd < 1 || dd > 31)
-	       	    {
+	       	    if (dd < 1 || dd > 31) {
 	       	        throw errorutil.SetErrorObj('Неправильно введен день') ;
 	       	    }
-	       	    if (yyyy < 100)
-	       	    {
+	       	    if (yyyy < 100) {
 	       	        if (yyyy >= 15) {
 	       	            yyyy += 1900;
 	       	        } else {
 	       	            yyyy += 2000;
 	       	        }
 	       	    }
-	       	    if (yyyy > 10000 || yyyy < 1000)
-	       	    {
+	       	    if (yyyy > 10000 || yyyy < 1000) {
 	       	        throw errorutil.SetErrorObj('Неправильно введен год') ;
 	       	    }
 	       	    return monthDayFormat(dd) + "." + monthDayFormat(mm) + "." + yyyy;
 	       	}
 
-	       	function onDateFld(aElementSt, aElementEnd)
-	       	{
-	       	    if (isDate(aElementSt))
-	       	    {
+	       	function onDateFld(aElementSt, aElementEnd) {
+	       	    if (isDate(aElementSt)) {
 	       	        var inputStr = aElementSt.value ;
-	       	        var delimfirst=inputStr.indexOf(".")
+	       	        var delimfirst=inputStr.indexOf(".");
 	       	        var delimlast=inputStr.lastIndexOf(".");
 	       	        var dd = parseInt(inputStr.substring(0,delimfirst),10) ;
 	       	        var mm = parseInt(inputStr.substring(delimfirst + 1,delimlast),10) ;
@@ -520,45 +508,35 @@
 	       	}
 
 	       	// Заменяет символ aSearch в строке aStr на символ aReplaceStr
-	       	function replaceString(aStr,aSearchStr,aReplaceStr)
-	       	{
-	       	        var front = getFront(aStr,aSearchStr);
-	       	        var end = getEnd(aStr,aSearchStr);
-	       	        if (front != null && end != null)
-	       	        {
-	       	                return front + aReplaceStr + end;
-	       	        }
-	       	        return null;
+	       	function replaceString(aStr,aSearchStr,aReplaceStr) {
+				var front = getFront(aStr,aSearchStr);
+				var end = getEnd(aStr,aSearchStr);
+				if (front != null && end != null) {
+					return front + aReplaceStr + end;
+				}
+				return null;
 	       	}
 
-	       	function getFront(aStr,aSearchStr)
-	       	{
-	       	        var foundOffset = aStr.indexOf(aSearchStr);
-	       	        if (foundOffset == -1)
-	       	        {
-	       	                return null;
-	       	        }
-	       	        return aStr.substring(0,foundOffset);
+	       	function getFront(aStr,aSearchStr) {
+				var foundOffset = aStr.indexOf(aSearchStr);
+				if (foundOffset == -1) {
+						return null;
+				}
+				return aStr.substring(0,foundOffset);
 	       	}
 
-	       	function getEnd(aStr,aSearchStr)
-	       	{
-	       	        var foundOffset = aStr.indexOf(aSearchStr);
-	       	        if (foundOffset == -1)
-	       	        {
-	       	                return null;
-	       	        }
-	       	        return aStr.substring(foundOffset+aSearchStr.length,aStr.length);
+	       	function getEnd(aStr,aSearchStr) {
+				var foundOffset = aStr.indexOf(aSearchStr);
+				if (foundOffset == -1) {
+						return null;
+				}
+				return aStr.substring(foundOffset+aSearchStr.length,aStr.length);
 	       	}
 
-	       	function monthDayFormat(val)
-	       	{
-	       		if (isNaN(val) || val == 0)
-	       	    {
+	       	function monthDayFormat(val){
+	       		if (isNaN(val) || val == 0) {
 	       			return "01";
-	       		}
-	       	    else if (val < 10)
-	       	    {
+	       		} else if (val < 10) {
 	       			return "0" + val;
 	       		}
 	       		return "" + val;

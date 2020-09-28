@@ -39,7 +39,6 @@ public class OncologyCase extends BaseEntity {
     /**Подозрение на онкологию*/
     private Boolean isSuspicionOncologist;
 
-    /**Сведения об услуге при онкологического заболевания */
     /**Сведения о проведении консилиума*/
     private VocOncologyConsilium consilium;
     /**Тип услуги*/
@@ -58,6 +57,10 @@ public class OncologyCase extends BaseEntity {
     private Date dateBiops;
     /** дата проведения консилиума*/
     private Date dateCons;
+    /** диагноз, с которым создана онкологическая форма*/
+    private String theMKB;
+    /**Признак проведения профилактики тошноты и рвотного рефлекса*/
+    private Boolean isNauseaAndGagReflexPrev;
 
     @Comment("Подозрение на ЗНО")
     public Boolean getSuspicionOncologist() {
@@ -237,4 +240,25 @@ public class OncologyCase extends BaseEntity {
     public void setDiagnostics(List<OncologyDiagnostic> aDiagnostics) {theDiagnostics = aDiagnostics;}
     /** Диагностические блоки */
     private List<OncologyDiagnostic> theDiagnostics ;
+    
+    /** Лекарственные препараты */
+    @Comment("Лекарственные препараты")
+    @OneToMany(mappedBy = "oncologyCase", cascade = CascadeType.ALL)
+    public List<OncologyDrug> getDrugs() {return theDrugs;}
+    public void setDrugs(List<OncologyDrug> aDrugs) {theDrugs = aDrugs;}
+    /** Лекарственные препараты */
+    private List<OncologyDrug> theDrugs ;
+
+    /** Диагноз, с которым создана онкологическая форма*/
+    @Comment("Диагноз, с которым создана онкологическая форма")
+    public String getMKB() {
+        return theMKB;
+    }
+    public void setMKB(String aMKB) {
+        theMKB = aMKB;
+    }
+
+    @Comment("Признак проведения профилактики тошноты и рвотного рефлекса")
+    public Boolean getIsNauseaAndGagReflexPrev() { return isNauseaAndGagReflexPrev; }
+    public void setIsNauseaAndGagReflexPrev(Boolean nauseaAndGagReflexPrev) { isNauseaAndGagReflexPrev = nauseaAndGagReflexPrev; }
 }

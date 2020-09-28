@@ -225,7 +225,11 @@ function onView (aForm, aEntity, aCtx){ //Если документ отправ
 		}
 	} else {
 		var e = eln.get(0);
-		status = e.getStatus()!=null?(e.getStatus().getName()+" от "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(e.getExportDate())):"Не выгружался в ФСС";
+		try{
+			status = e.getStatus()!=null?(e.getStatus().getName()+" от "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(e.getExportDate())):"Не выгружался в ФСС";
+		} catch (e) { //бывали случаи что статус не нуль, а дата экспорта - пустая
+			status="Неизвестно";
+		}
 
 	}
     aForm.setExportStatus(status);

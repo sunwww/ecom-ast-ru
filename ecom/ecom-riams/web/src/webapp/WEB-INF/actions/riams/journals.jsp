@@ -16,6 +16,18 @@
 				<div class='menu'>
 				<h2>Сообщения</h2>
 				<ul style='list-style: none outside none; '>
+					<li><msh:link roles='/Policy/Mis/MedCase/Covid19/Report' action="covidImportJournal_journal.do">
+						Журнал с портала COVID
+					</msh:link></li>
+					<li><msh:link roles='/Policy/Mis/MedCase/Covid19/Report' action="covid19_journal.do">
+						отчет по картам COVID
+					</msh:link></li>
+					<li><msh:link  isReport="false" action="journal_searchEmptyCovid.do" roles="/Policy/Mis/MedCase/Covid19/Report">
+						Поиск госпитализаций, в которых не создана карта COVID
+					</msh:link></li>
+					<li><msh:link  isReport="false" action="journal_covidForm.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+						Поиск госпитализаций, в которых не определена степень тяжести COVID
+					</msh:link></li>
 					<li><msh:link roles='/Policy/Mis/MedCase/Visit/Report039' action="journal_foreignPatients.do">
 						Отчет об оказанной помощи иногородними и иностранцам
 					</msh:link></li>
@@ -37,7 +49,19 @@
 					<li><msh:link isReport="true" roles="/Policy/Mis/Elections" action="js-mis_lpuArea-elections.do">
                              Отчетные формы к выборам
                         </msh:link></li>
-                        
+					<li><msh:link isReport="true" roles="/Policy/Mis/Journal/ShortDiaryReport" action="stac_report_cases_short_protocol.do">
+                             Отчет по коротким дневникам
+                        </msh:link></li>
+					<li><msh:link isReport="true" roles="/Policy/Mis/Journal/AbsentDiary" action="stac_report_cases_not_filled.do">
+						Журнал по пациентам, у которых не заполнялись дневниковые записи
+                        </msh:link></li>
+					<li><msh:link  isReport="false" action="journal_analysisUpdate.do">
+						Обновление анализов по COVID
+					</msh:link></li>
+					<li><msh:link  isReport="false" roles="/Policy/Mis/Journal/ShowHospitalFreeInfo" action="journal_hospFreeInfo.do">
+						Информация о свободных местах в госпитале
+					</msh:link></li>
+
 				</ul>
 				</div>
 				
@@ -137,8 +161,17 @@
 						<li><msh:link  isReport="false" action="finPlan.do" roles="/Policy/Mis/Journal/JasperReports/ExecutionOfFinancialPlan">
 							Выполнение финансового плана
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="registriesForSMO.do" roles="/Policy/Mis/Journal/JasperReports/RegistriesForSMO">
+							Реестры для СМО
+						</msh:link></li>
 						<li><msh:link  isReport="false" action="smo_deniedHospitelByAttach.do" roles="/Policy/Mis/ArchiveCase/Create">
 							Отказы госпитализации по прикрепленным
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="actRVKReport.do" roles="/Policy/Mis/MedCase/ActRVK/View">
+							Отчёт по актам РВК
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="arrivedAO.do" roles="/Policy/Mis/MedCase/Coronavirus/ReportArrivedView">
+							Отчёт по лицам, въехавшим в АО, с СЛС либо направлением в ГБУЗ АО АМОКБ
 						</msh:link></li>
 					</ul>
 					</div>
@@ -203,6 +236,15 @@
 	                        <li><msh:link isReport="true" action="report_timeexecute.do" roles="/Policy/Mis/TimeExecute/View">
 	                            Отчет "время ожидания мед.помощи"
 	                        </msh:link></li>
+						<li><msh:link isReport="true" action="leanClinicReport.do" roles="/Policy/Mis/MedCase/Visit/Report039">
+							Отчет "Бережливая поликлиника"
+						</msh:link></li>
+						<li><msh:link isReport="true" action="sheduleToday.do" roles="/Policy/Mis/MedCase/Visit/Report039">
+							Расписание специалистов консультативной поликлиники
+						</msh:link></li>
+						<li><msh:link isReport="true" action="recordReport.do?serviceStream=1" roles="/Policy/Mis/MedCase/Visit/Report039">
+							Отчет по записанным на дату
+						</msh:link></li>
 					</ul>
 					</div>
 				<div class='menu'>
@@ -232,6 +274,9 @@
 						<li><msh:link  isReport="false" action="journal_robson.do" roles="/Policy/Mis/Pregnancy/ChildBirth/View">
 							Отчёт по классификации Робсона
 						</msh:link></li>
+						<li><msh:link isReport="true" action="preg_nosology.do" roles="/Policy/Mis/Pregnancy/BirthNosologyCard/View">
+							Отчёт по нозологиям
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>			
@@ -240,8 +285,14 @@
 					<div class='menu'>
 					<h2>Стационар</h2>
 					<ul style='list-style: none outside none; '>
+						<li><msh:link isReport="true" action="/covid19_reg_journal.do" roles="/Policy/Mis/MedCase/Covid19/View">
+							Отчет - коронавирусные иногородние/иностранцы
+	                        </msh:link></li>
+						<li><msh:link isReport="true" action="/stac_admissionDoctorDiaryList.do" roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod">
+							Журнал пациентов, осмотренных врачами приемного отделения
+	                        </msh:link></li>
 						<li><msh:link isReport="true" action="stac_journalByHospital.do" roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod">
-	                            Журнал по поступившим и выбывшим стационара, а также отказам от госпитализаций 
+	                            Журнал по поступившим и выбывшим стационара, а также отказам от госпитализаций
 	                        </msh:link></li>
 						<li><msh:link action="stac_report_007.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report007">
 	                            007/у-02 форма
@@ -307,6 +358,12 @@
 						<li><msh:link  isReport="true" action="stac_planning_hospitalizations.do" roles="/Policy/Mis/MedCase/Stac/Journal/PlanningHospitalizations">
 	                            Планирование госпитализаций
 	                        </msh:link></li>
+						<li><msh:link  isReport="true" action="stac_planning_OphtHospitalizations.do" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Opht/Report">
+							Планирование введения ингибиторов ангиогенеза
+						</msh:link></li>
+						<li><msh:link  isReport="true" action="fillbedsreport.do" roles="/Policy/Mis/MedCase/Stac/Journal/FillBedsReport">
+							Распределение пациентов по палатам
+						</msh:link></li>
 						<li><msh:link  isReport="true" action="stac_journal_denied_without_diagnosis.do" roles="/Policy/Mis/MedCase/Stac/Journal/DeniedWithoutDiagnosis">
 	                            Отказы от госпитализаций без диагнозов
 	                        </msh:link></li>
@@ -349,14 +406,29 @@
 							<li><msh:link  isReport="true" action="report203.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 								Отчет по 203 приказу
 							</msh:link></li>
+						<li><msh:link  isReport="true" action="expertKMP.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Отчет по экспертизе KP
+						</msh:link></li>
 						<li><msh:link  isReport="true" action="reportBandage.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 							Отчет по перевязкам
 						</msh:link></li>
 						<li><msh:link  isReport="false" action="journal_svetofor.do?mode=ADMISSION" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 							Светофор
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="sls_listAdmissionWait.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Свод по светофору
+						</msh:link></li>
 						<li><msh:link  isReport="false" action="journal_onco.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 							Отчёт по онкологическим случаям
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_noIdentSls.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Отчёт по неидентифицированным госпитализациям
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_bracelets.do" roles="/Policy/Mis/MedCase/Stac/Journal/BraceletsJournal">
+							Журнал браслетов
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_searchTextDiary.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Поиск дневников по тексту
 						</msh:link></li>
 					</ul>
 					</div>

@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="LaboratoryJournal" guid="65127a6f-d6d3-4b8e-b436-c6aeeaea35ae" title="Журнал назначений" />
+    <msh:title mainMenu="LaboratoryJournal" title="Журнал назначений" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -24,9 +24,9 @@
   if (request.getParameter("short")==null ||request.getParameter("short").equals(""))  {
 	 %>
 	 
-  <msh:form action="/pres_report4385.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+  <msh:form action="/pres_report4385.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
 	
@@ -60,15 +60,11 @@
     	out.print(request.getAttribute("tableList"));
      } %>
     <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">
-           <script type='text/javascript'>
-       //    checkFieldUpdate('typeIntake','${typeIntake}',1) ;
-           checkFieldUpdate('typeGroup','${typeGroup}',1) ;
-           checkFieldUpdate('typeState','${typeState}',1) ;
-        //   checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
-       //    checkFieldUpdate('typeService','${typeService}',1) ;
-
-  </script>
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
+    <script type='text/javascript'>
+      checkFieldUpdate('typeGroup','${typeGroup}',1) ;
+      checkFieldUpdate('typeState','${typeState}',1) ;
+    </script>
   </tiles:put>
 </tiles:insert>
 

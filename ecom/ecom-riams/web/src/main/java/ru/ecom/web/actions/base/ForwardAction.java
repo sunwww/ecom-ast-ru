@@ -15,6 +15,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ForwardAction extends BaseAction {
     public ActionForward myExecute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        return actionMapping.findForward("success") ;
+        return actionMapping.findForward(SUCCESS) ;
     }
 }

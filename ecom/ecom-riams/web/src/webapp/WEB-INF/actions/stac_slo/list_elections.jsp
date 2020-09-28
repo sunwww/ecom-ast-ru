@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal">Журнал обращений по отделению</msh:title>
+    <msh:title mainMenu="StacJournal">Журнал обращений по отделению</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_elections"/>
@@ -17,10 +17,10 @@
   <%
   String typeView=ActionUtil.updateParameter("Report14","typeView","1", request) ;
   %>
-    <msh:form action="/stac_elections.do" defaultField="departmentName" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/stac_elections.do" defaultField="departmentName" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
       <msh:row>
         <td class="label" title=" (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Реестр:</label></td>
@@ -120,7 +120,7 @@ ${departmentSql} ${addSql}
  order by ml.shortname,ml.name,pat.lastname,pat.firstname,pat.middlename,pat.birthday
 
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
    <msh:sectionTitle>
     
     	    <form action="print-stac_elections.do" method="post" target="_blank">
@@ -134,16 +134,16 @@ ${departmentSql} ${addSql}
 	    </form>     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem" action="entityParentView-stac_ssl.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Отделение" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Район" property="4"/>
       <msh:tableColumn columnName="Фамилия" property="5"/>
-      <msh:tableColumn columnName="Имя" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Отчество" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Год рождения" property="8" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Адрес" property="9" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
-      <msh:tableColumn columnName="Паспортные данные" property="10" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
+      <msh:tableColumn columnName="Имя" property="6" />
+      <msh:tableColumn columnName="Отчество" property="7" />
+      <msh:tableColumn columnName="Год рождения" property="8" />
+      <msh:tableColumn columnName="Адрес" property="9" />
+      <msh:tableColumn columnName="Паспортные данные" property="10" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>

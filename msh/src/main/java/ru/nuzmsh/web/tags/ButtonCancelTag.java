@@ -1,12 +1,11 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
+import org.apache.struts.taglib.TagUtils;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import org.apache.struts.taglib.TagUtils;
+import java.io.IOException;
 
 /**
  * @jsp.tag name="buttonCancel"
@@ -37,7 +36,7 @@ public class ButtonCancelTag extends TagSupport {
             );
         } catch (IOException e) {
             TagUtils.getInstance().saveException(pageContext, e);
-            new JspException(e.getMessage(), e) ;
+            throw new JspException(e.getMessage(), e) ;
         }
         return EVAL_BODY_INCLUDE;
     }

@@ -25,7 +25,7 @@ if (request.getParameter("short")==null) {
 			<msh:textField property="finishDate" label="по"/>
 		</msh:row>
 		<msh:row>
-			<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDisp" horizontalFill="true" fieldColSpan="3"/>
+			<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="vocExtDispAll" horizontalFill="true" fieldColSpan="3"/>
 		</msh:row>
 		 <msh:row>
         <td class="label" title="Пользователь (usernameChange)" colspan="1"><label for="usernameChangeName" id="usernameChangeLabel">Пользователь:</label></td>

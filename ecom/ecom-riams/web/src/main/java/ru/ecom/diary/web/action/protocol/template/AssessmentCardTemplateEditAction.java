@@ -1,17 +1,8 @@
 package ru.ecom.diary.web.action.protocol.template;
 
-import java.io.IOException;
-import java.util.Collection;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspWriter;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.diary.ejb.service.protocol.IDiaryService;
 import ru.ecom.diary.ejb.service.protocol.tree.CheckNode;
 import ru.ecom.diary.ejb.service.protocol.tree.CheckNodeByGroup;
@@ -21,6 +12,13 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
+import java.util.Collection;
 
 
 public class AssessmentCardTemplateEditAction extends BaseAction{
@@ -38,7 +36,7 @@ public class AssessmentCardTemplateEditAction extends BaseAction{
 //        CheckNodesUtil.removeUnchecked(root);
         aRequest.setAttribute("params", root);
         aRequest.setAttribute("params_table", l) ;
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
     public static void getParams(HttpServletRequest aRequest) throws NamingException {
     	IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;

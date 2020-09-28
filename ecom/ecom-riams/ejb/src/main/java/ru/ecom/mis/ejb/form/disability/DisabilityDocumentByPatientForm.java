@@ -6,14 +6,9 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateIntercep
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
 import ru.ecom.mis.ejb.form.disability.interceptors.DocumentByPatientPreCreate;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
@@ -92,7 +87,7 @@ public class DisabilityDocumentByPatientForm extends DisabilityDocumentForm {
 
 	/** Серия */
 	@Comment("Серия")
-	@Persist @DoUpperCase
+	@Persist
 	public String getSeries() {return theSeries;}
 	public void setSeries (String aCloseSeries) {theSeries = aCloseSeries;}
 	
@@ -138,15 +133,9 @@ public class DisabilityDocumentByPatientForm extends DisabilityDocumentForm {
 	public String getIssueDate() {return theIssueDate;}
 	public void setIssueDate(String aIssueDate) {theIssueDate = aIssueDate;}
 
-	/** Разрешение на выдачу документа нетрудоспособности иногороднему */
-	@Comment("Разрешенение на выдачу документа нетрудоспособности иногороднему")
-	@Persist
-	public Long getPermission() {return thePermission;}
-	public void setPermission(Long aOpenPermission) {thePermission = aOpenPermission;}
-
 	/** Серия документа нетрудоспособности по основному месту работы */
 	@Comment("Серия документа нетрудоспособности по основному месту работы")
-	@Persist @DoUpperCase
+	@Persist
 	public String getMainWorkDocumentSeries() {return theMainWorkDocumentSeries;}
 	public void setMainWorkDocumentSeries(String aSeries) {theMainWorkDocumentSeries = aSeries;}
 	/** Серия документа нетрудоспособности по основному месту работы */
@@ -280,8 +269,6 @@ public class DisabilityDocumentByPatientForm extends DisabilityDocumentForm {
 	private Long thePrimarity;
 	/** Дата выдачи */
 	private String theIssueDate;
-	/** Разрешение на выдачу документа нетрудоспособности иногороднему */
-	private Long thePermission;
 	/** Номер документа нетрудоспособности по основному месту работы */
 	private String theMainWorkDocumentNumber;
 	/** Предполагаемая дата родов */

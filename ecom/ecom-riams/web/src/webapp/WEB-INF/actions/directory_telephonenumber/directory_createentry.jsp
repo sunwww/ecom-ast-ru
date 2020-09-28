@@ -25,7 +25,7 @@
     </style>
     </tiles:put>
     <tiles:put name="body" type="string">
-        <msh:panel guid="panel">
+        <msh:panel>
             <div class="content">
                 <msh:row>
                     <msh:row>

@@ -6,7 +6,6 @@
 <%@ attribute name="name" required="true" description="Название" %>
 <%@ attribute name="roles" required="true" description="Роли" %>
 <%@ attribute name="title" required="true" description="Заголовок" %>
-<%@ attribute name="service" required="true" description="Сервис" %>
 
 <msh:ifInRole roles="${roles}">
 <msh:sideLink name="${title}" action=" javascript:show${name}ChangeServiceStream('.do') " 
@@ -40,8 +39,8 @@
 
 </div>
 </div>
-
-<script type="text/javascript"><!--
+    <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+<script type="text/javascript">
      var theIs${name}ChangeServiceStreamDialogInitialized = false ;
      var the${name}ChangeServiceStreamDialog = new msh.widget.Dialog($('${name}ChangeServiceStreamDialog')) ;
      // Показать
@@ -67,8 +66,9 @@
      		alert("Поле поток обслуживания является обязательным") ;
      		$("${name}ChangeServiceStreamName").focus() ;
      	}  else {
-         	${service}.changeServiceStreamBySmo(
-             		'${param.id}', $('${name}ChangeServiceStream').value, {
+     	    var hospId = $('parent') && $('parent').value>0 ? $('parent').value :  '${param.id}';
+         	TicketService.changeServiceStreamBySmo(
+             		hospId, $('${name}ChangeServiceStream').value, {
              			callback: function(aString) {
              				alert(aString) ;
              				window.location.reload() ;

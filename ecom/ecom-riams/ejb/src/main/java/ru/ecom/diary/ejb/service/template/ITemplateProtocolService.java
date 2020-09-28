@@ -1,12 +1,5 @@
 package ru.ecom.diary.ejb.service.template;
 
-
-import org.json.JSONException;
-
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import java.io.IOException;
-
 /**
  * Created by IntelliJ IDEA.
  * User: STkacheva
@@ -16,11 +9,8 @@ import java.io.IOException;
  */
 
 public interface ITemplateProtocolService {
-    public void sendSms(String aPhone, String aMessage);
-    public void registerPatientExternalResource(Long aPatientExternalServiceAccountId, EntityManager aManager, String aUsername);
-    public void sendProtocolToExternalResource(Long aProtocolId, Long aMedCaseId, String aRecord, EntityManager aManager) ;
-    public String getTextTemplate(long aId) ;
-    public String getTextByProtocol(long aProtocolId) ;
-    public String getNameVoc(String aClassif, long aId) ;
-    public Long getCountSymbolsInProtocol(long aVisit) ;
+    String getTextTemplate(long aId) ;
+    String getTextByProtocol(long aProtocolId) ;
+    String getNameVoc(String aClassif, long aId) ;
+    Long getCountSymbolsInProtocol(long aVisit) ;
 }

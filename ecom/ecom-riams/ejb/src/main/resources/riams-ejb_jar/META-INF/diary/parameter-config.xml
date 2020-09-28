@@ -203,5 +203,29 @@
     	</fields>
 	</parameter>
 
+    <parameter id='8' type='String' name='Дата' >
+    	<fields>
+    		<field type='row' open='1'/>
+    		<field type='separator' label='Дата' colSpan='4'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='code' type='textField' label='Код' fieldColSpan='3' />
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='externalCode' type='textField' label='Код для анализатора-' fieldColSpan='3' />
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='shortName' type='textField' label='Короткое название-' size='50' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='name' type='textField' label='Полное название' size='50' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='minimum' type='textField' label='Минимальное длина'/>
+    		<field property='maximum' type='textField' label='Максимальное длина'/>
+    		<field type='row' open='0'/>
+    	</fields>
+	</parameter>
+
 	
 </parameterconfig>

@@ -7,7 +7,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import java.util.List;
  * @author stkacheva, azviagin
  */
 @Entity
-@Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(properties="groupName",table="WorkFunction")
 })
@@ -72,11 +70,9 @@ public class GroupWorkFunction extends WorkFunction {
 	
 	@Transient
 	public String getInfo() {
-		return new StringBuilder().append("ГРУППОВАЯ: ").append(getGroupName()).toString() ;
+		return "ГРУППОВАЯ: " + getGroupName();
 	}
 	/** Рабочие функции входящие в состав группы */
 	private List<PersonalWorkFunction> theFunctions;
-	
-
 
 }

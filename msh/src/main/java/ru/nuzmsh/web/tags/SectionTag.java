@@ -90,7 +90,7 @@ public class SectionTag extends AbstractGuidSimpleSupportTag {
 	
 
     private String shortViewFunctionName(String aAction) {
-    	return new StringBuilder().append(" onclick='getDefinition(\"").append(aAction).append("\",event); '").toString();
+    	return " onclick='getDefinition(\""+aAction+"\",event); '";
     }
 	
     public void doTag() throws JspException, IOException {
@@ -105,7 +105,7 @@ public class SectionTag extends AbstractGuidSimpleSupportTag {
         IdeTagHelper.getInstance().printMarker("Section", this, getJspContext());
         
         if(!StringUtil.isNullOrEmpty(theTitle)) {
-            out.print("<h2 class='section'>") ;
+            out.print("<h2 class='section' onclick='mshHideBlockByElement(this)'>") ;
             out.print(theTitle) ;
             out.print(" ") ;
             if(theCreateUrl!=null && (StringUtil.isNullOrEmpty(theCreateRoles) || RolesHelper.checkRoles(theCreateRoles, request))) {
@@ -139,9 +139,6 @@ public class SectionTag extends AbstractGuidSimpleSupportTag {
         	if(getJspBody()!=null) getJspBody().invoke(out);
         } catch (Exception e) {
         	showException(e);
-//        	LOG.error("Ошибка вызова содержимого sectionTag: "+e.getMessage(), e) ;
-//            //e.printStackTrace() ;
-//            throw new IllegalStateException(e) ;
         }
         if(!StringUtil.isNullOrEmpty(theTitle)) {
             out.println("</div>")  ;

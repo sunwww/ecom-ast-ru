@@ -12,12 +12,12 @@
     	  - Экспертная карта
     	  -->
     <msh:form  action="/entityParentSaveGoView-expert_qualityEstimationDraft.do" defaultField="criterion1Name">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenSavefgdfs" property="expertType" />
-      <msh:hidden guid="hiddenSavegfdsgfd" property="card" />
-      <msh:hidden guid="hiddenSavefd" property="criterions" />
-      <msh:panel guid="panel" colsWidth="5%,5%,10%">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="expertType" />
+      <msh:hidden property="card" />
+      <msh:hidden property="criterions" />
+      <msh:panel colsWidth="5%,5%,10%">
         <msh:row>
 	        <td colspan="6">
 	        	<div id='loadCriterion'>
@@ -43,7 +43,7 @@
           </msh:row>
         <msh:row>
         </msh:row>
-        <msh:submitCancelButtonsRow guid="submitCancel"   colSpan="3" />
+        <msh:submitCancelButtonsRow   colSpan="3" />
       </msh:panel>
     </msh:form>
 
@@ -72,6 +72,9 @@
                    if (+k==1) {
                        voc="vocQualityEstimationMarkYesNo";
                    }
+                   else if (+k==-1) {
+                       voc="vocQualityEstimationMarkKMP";
+                   }
                    else
                        voc="vocQualityEstimationMark";
                     //alert(voc);
@@ -94,14 +97,6 @@
 						 callback: function(aRow) {
 						     //alert(aRow.substring(1000));
 						     	if (aRow!=null) {
-						     	    if (voc=="vocQualityEstimationMarkYesNo") {
-						     	        //вывод других этапов
-						     	        aRow=aRow.replace(new RegExp('\'center\'>1.0<td', 'g'),'\'center\'>Да<td');
-                                        aRow=aRow.replace(new RegExp('\'center\'>0.0<td', 'g'),'\'center\'>Нет<td');
-                                        //вывод текущего этапа
-                                        aRow=aRow.replace(new RegExp('size="10" value="1.0 "', 'g'),'size="10" value="Да"');
-                                        aRow=aRow.replace(new RegExp('size="10" value="0.0 "', 'g'),'size="10" value="Нет"');
-                                    }
 						     		$('loadCriterion').innerHTML = aRow ;
 						     		cntCrit=+$('criterionSize').value ;
 			     					updateVoc();
@@ -155,11 +150,15 @@
 	  			}
 					
 					
-	  			function checkCommentNeeded(aCriterion,ii) {
+	  			function checkCommentNeeded(aCriterion,ii,val) {
 	  				var aMarkId = $(aCriterion).value;
-	  				//alert(aCriterion);
-	  				//var ii=parseInt(aCriterion,10);
-                   // alert(ii);
+                    if (voc=="vocQualityEstimationMarkYesNo") {
+                        aMarkId=val;
+                        if ($('radio'+ii+'1') && $('radio'+ii+'1').checked)
+                            $('criterion'+ii).value=val;
+                        else if ($('radio'+ii+'0') && $('radio'+ii+'0').checked)
+                            $('criterion'+ii).value=val;
+                    }
 	  				if (+aMarkId>0) {
                         if (voc == "vocQualityEstimationMarkYesNo") {
                             var createEdit=null; //всегда
@@ -204,7 +203,7 @@
 	  			}
 	  			function updateCriterions() {
 	  				var rez ="" ;
-	  				
+
 	  				for (var i=0;i<cntCrit; i++) {
 	  					if ($("criterion"+(i+1)) && $("criterion"+(i+1)).value!="") rez=rez+"#"+$("criterion"+(i+1)+"P").value+":"+$("criterion"+(i+1)).value +":"+($("criterion"+(i+1)+"Comment").value);
 	  					if ($('criterion'+(i+1)+'CommentYesNo').value!=null) {
@@ -232,6 +231,12 @@
             //Milamesher просмотр комментария по кнопке 04062018 с сервисбина
             function showYesNoCommentFromBean(ii) {
                 var aMarkId = $('criterion'+ii).value;
+                if (voc=="vocQualityEstimationMarkYesNo") {
+                    if ($('radio'+ii+'1') && $('radio'+ii+'1').checked)
+                        aMarkId=$('radio'+ii+'1').value;
+                    else if ($('radio'+ii+'0') && $('radio'+ii+'0').checked)
+                        aMarkId=$('radio'+ii+'0').value;
+                }
                 if (+aMarkId>0 && voc == "vocQualityEstimationMarkYesNo") {
                     var total = $('criterion' + ii + 'CommentYesNo').value;
                     //alert(total);

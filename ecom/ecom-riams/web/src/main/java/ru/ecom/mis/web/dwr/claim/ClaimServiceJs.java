@@ -1,7 +1,7 @@
 package ru.ecom.mis.web.dwr.claim;
 
 import org.jdom.IllegalDataException;
-import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
@@ -17,7 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 
@@ -53,44 +52,31 @@ public class ClaimServiceJs {
 		} else {
 			aTime = "current_time";
 		}
-		String sql = "update claim set "+aStatus+"Date = "+aDate;
-			sql+=", "+aStatus+"Time =" +aTime;
-			
-			if (aComment!=null&&!aComment.equals("")) {
-				sql+=", executorComment='"+aComment +"'";
-				
-			}
-			if (aUsername!=null&&!aUsername.equals("")) {
-				sql+=", "+aStatus+"Username='"+aUsername+"'";
-						
-			} else if (aStatus.equalsIgnoreCase("FINISH")) {
-				sql +=", finishUsername = startWorkUsername, canceldate=null, cancelusername=null";
-			}
-			if (!aStatus.equalsIgnoreCase("FREEZE")) {
-				sql +=", freezeDate = null, freezeusername = null";
-			}
-			sql+=" where id="+aId;
+		StringBuilder sql = new StringBuilder();
+		sql.append("update claim set ").append(aStatus)
+				.append("Date = ").append(aDate)
+				.append(", ").append(aStatus).append("Time =").append(aTime);
 
-			return aStatus+" : "+ service.executeUpdateNativeSql(sql);
-		
-	}
-	@Deprecated //отключили СМС-ки
-	private static void sendClaimToExecutorBySMS(String aClaimId, String aUsername, HttpServletRequest aRequest, IWebQueryService aService) throws NamingException {
-		String sql = "select pesa.phoneNumber,pesa.id from secuser su left join workfunction wf on wf.secuser_id=su.id " +
-				" left join worker w on w.id=wf.worker_id left join PatientExternalServiceAccount pesa on pesa.patient_id=w.person_id " +
-				" where su.login='"+aUsername+"' and pesa.newClaimNotification='1' ";
-		List<Object[]> list = aService.executeNativeSqlGetObj(sql);
-		if (!list.isEmpty()) {
-			String phone = list.get(0)[0].toString();
-			sql = "select cl.description||' в'||cl.address||' от '||vwf.name||' '||wpat.lastname as text,cl.id from claim cl " +
-					" left join workfunction wf on wf.id=cl.workFunction left join worker w on w.id=wf.worker_id" +
-					" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
-					" left join patient wpat on wpat.id=w.person_id where cl.id="+aClaimId;
-			list = aService.executeNativeSqlGetObj(sql);
-			String text = list.get(0)[0].toString();
-			ITemplateProtocolService bean = Injection.find(aRequest).getService(ITemplateProtocolService.class);
-				bean.sendSms(phone,text);
+		if (aComment!=null&&!aComment.equals(""))
+			sql.append(", executorComment='").append(aComment).append("'");
+
+		if (aUsername!=null&&!aUsername.equals(""))
+			sql.append(", ").append(aStatus).append("Username='").append(aUsername).append("'");
+		else if (aStatus.equalsIgnoreCase("FINISH"))
+			sql.append(", finishUsername = startWorkUsername, canceldate=null, cancelusername=null");
+
+		if (!aStatus.equalsIgnoreCase("FREEZE")) {
+			sql.append(", freezeDate = null, freezeusername = null");
 		}
+		if (aStatus.equalsIgnoreCase("FINISH")) {
+			sql.append(",startworkusername= case when startworkusername is null then '").append(aUsername).append("' else startworkusername end")
+					.append(",startworkdate= case when startworkdate is null then ").append(aDate).append(" else startworkdate end")
+					.append(",startworktime= case when startworktime is null then ").append(aTime).append(" else startworktime end");
+		}
+		sql.append(" where id="+aId);
+
+		return aStatus+" : "+ service.executeUpdateNativeSql(sql.toString());
+		
 	}
 
 	public static String setViewed (String aId, HttpServletRequest aRequest) throws NamingException {
@@ -119,24 +105,31 @@ public class ClaimServiceJs {
 		service.executeUpdateNativeSql(sql);
 		return aId;
 	}
-	//lastrelease milamesher 06.03.2018 #77
-	//Получить текст и id типа заявки soft для скриншотов
+
+	/**
+	 * Получить текст и id типа заявки soft для скриншотов #77.
+	 * @param aRequest HttpServletRequest
+	 */
 	public static String getSoftType (HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res = new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String sql = "select id,name from vocclaimtype where code='SOFT'";
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocclaimtype where code='SOFT'");
+		JSONObject res = new JSONObject();
 		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			res.append(wqr.get1()).append("#").append(wqr.get2());
+			WebQueryResult w = list.iterator().next() ;
+			res.put("id", w.get1())
+					.put("name", w.get2());
 		}
-		else res.append("##");
 		return res.toString();
 	}
-	//lastrealease milamesher 07.05.2018 #77:
-	// Сохранение скриншота ошибки
-	// Переименование папки для единообразия всех настроек
-	// Один метод сохранения файла на сервер (по полному пути из настроек), который возвращает его относительный путь
+
+
+	/**
+	 * Сохранить скриншота ошибки #77.
+	 * Переименование папки для единообразия всех настроек
+	 * Один метод сохранения файла на сервер (по полному пути из настроек), который возвращает его относительный путь
+	 * @param aRequest HttpServletRequest
+	 * @return String путь
+	 */
 	public String postRequestWithErrorScrean(String file,String filename,HttpServletRequest aRequest) throws IOException {
 		String base64Image = file.split(",")[1];
 		BufferedImage image ;

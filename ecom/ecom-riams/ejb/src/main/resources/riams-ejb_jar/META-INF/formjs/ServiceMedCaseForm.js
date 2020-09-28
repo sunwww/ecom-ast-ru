@@ -56,22 +56,23 @@ function checkDateStart(aCtx,aExecuteDate,aExecuteTime,aId) {
 				cal1.get(java.util.Calendar.DATE)==cal2.get(java.util.Calendar.DATE) 
 			) {
 			
-			} else{
-				var param = new java.util.HashMap() ;
-				param.put("obj","ServiceMedCase") ;
-				param.put("permission" ,"backdate") ;
-				param.put("id", aId) ;
-				//param.put("username", username) ;
-				//param.put("ServiceMedCase", "backdate", aId, username) ;
-				var check=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
-				
-				//var check=0 ;
-				if (+check==0) {
-					 throw "У Вас стоит ограничение на дату оказания услуги. Вы можете регистрировать оказанную услугу только текущим числом!";
-				}
-		}
+			} else
+                throw "У Вас стоит ограничение на дату оказания услуги. Вы можете регистрировать оказанную услугу только текущим числом!";
 	}
 }
+
+//очищение caos при удалении услуги
+function freeCaosAfterDeleteServiceMedcase(aEntityId, aCtx) {
+    aCtx.manager.createNativeQuery("update contractaccountoperationbyservice set serviceid=null, servicetype=null, medcase_id=null" +
+        " where id=ANY(select caos.id from contractaccountoperationbyservice caos" +
+        " left join contractaccountmedservice cams on cams.id=caos.accountmedservice_id" +
+        " left join pricemedservice pms on pms.id=cams.medservice_id" +
+        " left join medservice ms on ms.id=pms.medservice_id" +
+        " left join medcase smo on smo.medservice_id=ms.id and smo.parent_id=caos.medcase_id" +
+        " where smo.id="+aEntityId+")").executeUpdate() ;
+}
+
 function onPreDelete(aEntityId, aCtx) {
 	aCtx.manager.createNativeQuery("update diary set servicemedcase_id = null where servicemedcase_id="+aEntityId).executeUpdate(); //Очищаем информацию об услуге в дневнике
+    freeCaosAfterDeleteServiceMedcase(aEntityId, aCtx); //Очищаем информацию о выполнении услуги в caos
 }

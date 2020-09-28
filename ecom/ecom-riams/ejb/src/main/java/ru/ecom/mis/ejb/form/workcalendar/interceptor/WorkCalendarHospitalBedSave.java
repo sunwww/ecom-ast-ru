@@ -22,7 +22,7 @@ public class WorkCalendarHospitalBedSave implements IFormInterceptor {
 			if (defaultLpuId!=null) {
 				List<Object> list = manager.createNativeQuery("select to_char(current_date,'yyyy')||''||lpu.codef from mislpu lpu where lpu.id="+defaultLpuId+" " +
 						" and lpu.codef is not null and lpu.codef!=''").getResultList();
-				if (list!=null) { //Есть код
+				if (!list.isEmpty()) { //Есть код
 					String code = list.get(0).toString();
 					SequenceHelper sequenceHelper = SequenceHelper.getInstance();
 					StringBuilder number= new StringBuilder().append(sequenceHelper.startUseNextValueNoCheck("OMC#DIRECTIONID#"+code,"",manager));

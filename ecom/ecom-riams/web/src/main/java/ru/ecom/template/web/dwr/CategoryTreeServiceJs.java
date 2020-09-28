@@ -1,16 +1,13 @@
 package ru.ecom.template.web.dwr;
 
-import java.util.Collection;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
-import ru.ecom.diary.ejb.service.template.ICategoryTreeService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.StringUtil;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,15 +17,7 @@ import ru.nuzmsh.util.StringUtil;
  * To change this template use File | Settings | File Templates.
  */
 public class CategoryTreeServiceJs {
-    public String getVocabulary(String aIdClassif, HttpServletRequest aRequest) throws NamingException {
-        if (StringUtil.isNullOrEmpty(aIdClassif)) {
-            return "" ;
-        } else {
-            ICategoryTreeService service = Injection.find(aRequest).getService(ICategoryTreeService.class) ;
-            return service.getClazz(Long.parseLong(aIdClassif)) ;
-//            return "Mkb" ;
-        }
-    }
+
 	//lastrelease milamesher 21.03.2018 #31 учитываие prescriptType (aViewButton)
     public String getCategoryMedService(String aName,String aFunction, String aTable, Long aParent,int aLevel, int aAddParam,String aViewButton,String aCheckId, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -114,7 +103,6 @@ public class CategoryTreeServiceJs {
     	}
     	sql.append(" ").append(whereAdd).append(" ") ;
     	sql.append(" order by ").append(fldOrderBy) ;
-    	//System.out.println("======CategoryTreeService, sql= "+sql.toString());
     	Collection<WebQueryResult> list=service.executeNativeSql(sql.toString()) ;
     	StringBuilder rs = new StringBuilder() ;
     	for (WebQueryResult wqr : list) {

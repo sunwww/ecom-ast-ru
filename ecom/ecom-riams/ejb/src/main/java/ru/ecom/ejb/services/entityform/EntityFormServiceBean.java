@@ -2,6 +2,7 @@ package ru.ecom.ejb.services.entityform;
 
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
+import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.nuzmsh.util.PropertyUtil;
 
 import javax.ejb.Local;
@@ -30,9 +31,9 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
 	public <T extends IEntityForm> T loadForm(Class<T> aFormClass, Object aEntity) throws EntityFormException {
         checkPermission(aFormClass, "View") ;
         try {
-            IEntityForm form = aFormClass.newInstance();
+            T form = aFormClass.newInstance();
             copyEntityToForm(aEntity, form);
-            return (T) form ;
+            return form;
         } catch (Exception e) {
             throw new EntityFormException("Ошибка копирования",e);
         }
@@ -61,9 +62,15 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
     	if (CAN_DEBUG) LOG.debug("listAll: checkingPersissions() ..."); 
         checkPermission(type, "View") ;
 
-        if (CAN_DEBUG) LOG.debug("listAll: executing query ..."); 
-        Collection results = theManager.createQuery("from "
-                + findFormPersistance((Class<IEntityForm>) type).clazz().getSimpleName() + " c order by id")
+        if (CAN_DEBUG) LOG.debug("listAll: executing query ...");
+        Class entityClass = findFormPersistance((Class<IEntityForm>) type).clazz();
+        StringBuilder sql = new StringBuilder();
+        sql.append("from ").append(entityClass.getSimpleName()).append(" c ");
+        if (entityClass.isAnnotationPresent(UnDeletable.class)) {
+            UnDeletable a =(UnDeletable) entityClass.getAnnotation(UnDeletable.class);
+            sql.append(" where ").append(a.fieldName()).append(" is null or ").append(a.fieldName()).append(" is false");
+        }
+        Collection results = theManager.createQuery( sql.toString()+ " order by id")
                 .setMaxResults(300).getResultList();
         
     	if (CAN_DEBUG) LOG.debug("listAll: copying ..."); 

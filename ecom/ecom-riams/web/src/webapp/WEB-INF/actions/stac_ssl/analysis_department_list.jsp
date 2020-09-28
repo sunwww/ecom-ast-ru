@@ -22,8 +22,8 @@
         <%
             if (request.getParameter("short")==null) {
         %>
-        <msh:form action="/stac_analysis_department_list.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-            <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+        <msh:form action="/stac_analysis_department_list.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+            <msh:panel>
                 <input type="hidden" value="printDeathList" name="m">
                 <input type="hidden" value="HospitalReportService" name="s">
                 <input type="hidden" value="" name="param">
@@ -46,7 +46,7 @@
                 <msh:row>
                     <msh:separator label="Основные параметры" colSpan="7"/>
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                <msh:row>
                     <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';">
                         <input type="radio" name="typeDate" value="1">  поступления
@@ -103,6 +103,9 @@
                     <td onclick="this.childNodes[1].checked='checked';" colspan="5">
                         <input type="radio" name="typeView" value="11"  >  реестр операций по пациентам
                     </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="5">
+                        <input type="radio" name="typeView" value="12"  >  реестр операций и осложнений
+                    </td>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="department" fieldColSpan="6" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
@@ -111,8 +114,8 @@
                     <msh:autoComplete property="serviceStream" fieldColSpan="6" horizontalFill="true" label="Поток обслуживания" vocName="vocServiceStream"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                     <td colspan="3">
                         <input type="submit" onclick="this.disabled=true;find()" value="Найти" />
                         <!--            <input type="submit" onclick="print()" value="Печать" />-->
@@ -221,7 +224,7 @@ where hmc.DTYPE='HospitalMedCase'
     ,ss.code,vht.code
 	,hmc.dateStart,hmc.dateFinish
  order by dep.name ,pat.lastname   
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
             <msh:sectionTitle>
 
                 <form action="print-stac_analysis_department_11.do" method="post" target="_blank">
@@ -251,6 +254,114 @@ where hmc.DTYPE='HospitalMedCase'
                     <msh:tableColumn columnName="Дата выписки" property="10"/>
                     <msh:tableColumn columnName="Кол-во операций" property="11"/>
                     <msh:tableColumn columnName="Операции (дата, наименование)" property="12"/>
+                    <msh:tableColumn columnName="Диагноз" property="13"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <%
+            }
+            if (view!=null && (view.equals("12"))) {
+        %>
+
+        <msh:section>
+            <ecom:webQuery isReportBase="${isReportBase}" name="journal_list" nameFldSql="journal_list_sql" nativeSql="
+
+select
+hmc.id as soDepid,dep.name as depname
+,ss.code as sscode
+    ,pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'') as fio
+    ,(hmc.dateFinish-pat.birthday)/365 as age
+    ,case when hmc.emergency='1' then 'Э' else 'П' end
+
+    , case
+		when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1
+		when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1)
+		else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		end as countDays
+	,hmc.dateStart as hmcdatestart,hmc.dateFinish as hmcdatefinish
+		,count(distinct sc.id) as cntComp
+		,list(to_char(soDep.operationDate,'dd.mm.yyyy')||' - '||voDep.code||'. '||voDep.name) as operlist
+		,( select list(to_char(c.datecomp,'dd.mm.yyyy')||': '||vc.name||' '||
+        (case when vc.code='OTHER' then c.complicationstring||' '
+        else '' end)||'('||c.compreasonstring||')')
+        from surgcomplication c
+        left join voccomplication vc on vc.id=c.complication_id
+        where surgicaloperation_id=soDep.id) as complications
+    , (select list(mkb.code||' '||mkb.name) from diagnosis diag
+    	left join VocIdc10 mkb on mkb.id=idc10_id
+    	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+    	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+    	where diag.medCase_id=hmc.id
+    	and vpd.code='1' and vdrt.code='4'
+		) as diag
+
+from MedCase hmc
+    left join statisticstub ss on hmc.statisticstub_id=ss.id
+    left join MedCase as dmc on dmc.dtype='DepartmentMedCase' and hmc.id=dmc.parent_id
+    left join MedCase as admc on admc.dtype='DepartmentMedCase' and hmc.id=admc.parent_id
+    left join vocservicestream as vss on vss.id=hmc.servicestream_id
+    left join mislpu as dep on dep.id=dmc.department_id
+    left join patient pat on pat.id=hmc.patient_id
+    left join VocHospType vht on vht.id=hmc.hospType_id
+    left join address2 adr on adr.addressId = pat.address_addressId
+    left join vocHospitalizationResult vhr on vhr.id=hmc.result_id
+    left join SurgicalOperation soHosp on soHosp.medCase_id=hmc.id
+    left join MedService voHosp on soHosp.medService_id=voHosp.id
+    left join SurgicalOperation soDep on soDep.medCase_id=admc.id
+    left join mislpu as soD on soD.id=soDep.department_id
+    left join MedService voDep on soDep.medService_id=voDep.id
+    left join Omc_Oksm ok on pat.nationality_id=ok.id
+    left join VocHospitalAspect vhaHosp on vhaHosp.id=soHosp.aspect_id
+    left join VocHospitalAspect vhaDep on vhaDep.id=soDep.aspect_id
+    left join surgcomplication sc on sc.surgicaloperation_id=soDep.id
+
+where hmc.DTYPE='HospitalMedCase'
+    and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')
+    	and to_date('${dateEnd}','dd.mm.yyyy')
+
+    	and dmc.dateFinish is not null
+    	${dep}
+    	and soDep.id is not null
+
+    ${addEmergency}
+      group by hmc.id,dep.name
+    ,pat.lastname,pat.firstname,pat.middlename
+    ,pat.birthday
+    ,hmc.emergency
+
+    ,ss.code,vht.code
+	,hmc.dateStart,hmc.dateFinish,soDep.id
+ order by dep.name ,pat.lastname
+    " />
+            <msh:sectionTitle>
+
+                <form action="print-stac_analysis_department_11.do" method="post" target="_blank">
+                        ${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}
+                    <input type='hidden' name="sqlText" id="sqlText" value="${journal_list_sql}">
+                    <input type='hidden' name="sqlInfo" id="sqlInfo" value="${infoTypePat} ${infoTypeEmergency} ${infoTypeOperation}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch} ${dateInfo}.">
+                    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                    <input type='hidden' name="s" id="s" value="PrintService">
+                    <input type='hidden' name="m" id="m" value="printNativeQuery">
+                    <input type="submit" value="Печать">
+                </form>
+
+            </msh:sectionTitle>
+            <msh:sectionContent>
+                <msh:table name="journal_list" printToExcelButton="Сохранить в excel"
+                           viewUrl="entityShortView-stac_ssl.do"
+                           action="entityView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
+                    <msh:tableColumn columnName="#" property="sn"/>
+                    <msh:tableColumn columnName="Отделение выписки" property="2"/>
+                    <msh:tableColumn columnName="№ стат. карты" property="3"/>
+                    <msh:tableColumn columnName="ФАМИЛИЯ ИМЯ ОТЧЕСТВО" property="4"/>
+                    <msh:tableColumn columnName="Возраст" property="5"/>
+                    <msh:tableColumn columnName="Поступил" property="6"/>
+                    <msh:tableColumn columnName="Кол-во койко дней" property="7"/>
+                    <msh:tableColumn columnName="Дата поступления" property="8"/>
+                    <msh:tableColumn columnName="Дата выписки" property="9"/>
+                    <msh:tableColumn columnName="Операции (дата, наименование)" property="11"/>
+                    <msh:tableColumn columnName="Кол-во осложнений" property="10"/>
+                    <msh:tableColumn columnName="Осложнения (дата, осложнение, причина)" property="12"/>
                     <msh:tableColumn columnName="Диагноз" property="13"/>
                 </msh:table>
             </msh:sectionContent>
@@ -321,7 +432,7 @@ where hmc.DTYPE='HospitalMedCase'
     
     ${addEmergency} 
 order by dep.name   
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <msh:table name="journal_list" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_surOperation.do"
                            action="entityView-stac_surOperation.do" idField="1" noDataMessage="Не найдено">
@@ -407,7 +518,7 @@ where hmc.DTYPE='HospitalMedCase'
     	and dmc.department_id!=soDep.department_id
     ${addEmergency} 
 order by dep.name   
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <msh:table name="journal_list_suroper" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_surOperation.do"
                            action="entityView-stac_surOperation.do" idField="1" noDataMessage="Не найдено">
@@ -774,7 +885,7 @@ where hmc.DTYPE='HospitalMedCase'
 group by dmc.department_id,dep.name,dmc.department_id
 order by dep.name   
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <msh:table name="journal_list_swod" cellFunction="true"  printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="19" noDataMessage="Не найдено">
                     <msh:tableNotEmpty>
@@ -852,7 +963,7 @@ where ldmc.DTYPE='DepartmentMedCase'
 group by ldmc.department_id,operdep.name,dischdep.name,so.department_id,ldmc.department_id,dischdep.name
 order by operdep.name, dischdep.name
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <msh:table name="journal_list_oper_otd_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="12" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -933,7 +1044,7 @@ where hmc.DTYPE='HospitalMedCase'
 group by dmc.department_id,dep.name 
 order by dep.name   
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
             <msh:sectionTitle>
                 <form action="print-stac_analysis_department_6.do" method="post" target="_blank">
                     Свод по отделениям по районам. Период с ${param.dateBegin} по ${dateEnd}.
@@ -1024,7 +1135,7 @@ group by dmc.department_id,dep.name,dmc.ownerFunction_id,ovwf.name
 order by dep.name   ,ovwf.name 
 ,owp.lastname,owp.firstname,owp.middlename
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <msh:table name="journal_list_otd_owner" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&typeView=3_docOwner&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="8" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -1101,7 +1212,7 @@ group by so.department_id,dep.name,so.surgeon_id,dep.id
 ,svwf.name,swp.lastname,swp.firstname,swp.middlename,swf.id
 order by dep.name,svwf.name,swp.lastname,swp.firstname,swp.middlename
    
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <msh:table name="journal_list_otd_surgeon" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="14" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -1179,7 +1290,7 @@ order by svwf.name,swp.lastname,swp.firstname,swp.middlename
     
     	
    
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <msh:table name="journal_list_surgeon" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="12" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -1231,7 +1342,7 @@ where hmc.DTYPE='HospitalMedCase'
 group by vo.id,vo.code,vo.name
 order by vo.id,vo.code,vo.name
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <msh:table name="journal_list_oper" printToExcelButton="Сохранить в excel"
                            action="entityView-mis_medService.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -1314,7 +1425,7 @@ where hmc.DTYPE='HospitalMedCase'
 group by dmc.department_id,dep.name 
 order by dep.name   
     
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    " />
                 <msh:table name="journal_list_otd_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="9" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>

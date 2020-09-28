@@ -1,19 +1,12 @@
 package ru.ecom.mis.ejb.domain.diet;
 
 
-import java.sql.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekDay;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.util.List;
 
 /**
  * Шаблон меню приема пищи
@@ -23,8 +16,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment("Шаблон меню приема пищи")
 @Entity
-@Table(schema="SQLUser")
-public class MealMenuTemplate extends MealMenu{
+public class MealMenuTemplate extends MealMenu {
 
 	/** Дата окончания действия */
 	@Comment("Дата окончания действия")
@@ -52,7 +44,7 @@ public class MealMenuTemplate extends MealMenu{
 	@Comment("Описание")
 	@Transient
 	public String getDescription() {
-		StringBuffer ret = new StringBuffer() ;
+		StringBuilder ret = new StringBuilder() ;
 		if (getParentMenu()==null)  {
 		if (getWeekDay()!=null) ret.append(getWeekDay().getName()) ;
 			ret.append(" ");
@@ -60,11 +52,8 @@ public class MealMenuTemplate extends MealMenu{
 			ret.append("-") ;
 			ret.append(getDateTo()) ;
 		} else {
-			
 			if (getMealTime()!=null) ret.append(getMealTime().getName());
-			
 		}
-		
 		return ret.toString() ;
 	}
 

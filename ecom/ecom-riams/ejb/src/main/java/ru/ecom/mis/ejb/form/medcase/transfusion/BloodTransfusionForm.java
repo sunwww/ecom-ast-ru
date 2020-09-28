@@ -320,7 +320,7 @@ public class BloodTransfusionForm extends TransfusionForm{
 
 	/** Справочник процедур в биологической пробе при переливаниях */
 	@Comment("Справочник процедур в биологической пробе при переливаниях")
-	@Persist @Required
+	@Persist
 	public Long getBloodBioProbProcedure() {return theBloodBioProbProcedure;}
 	public void setBloodBioProbProcedure(Long aBloodBioProbProcedure) {theBloodBioProbProcedure=aBloodBioProbProcedure;}
 

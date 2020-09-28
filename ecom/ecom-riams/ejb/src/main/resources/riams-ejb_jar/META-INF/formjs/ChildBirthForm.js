@@ -30,9 +30,13 @@ function onPreSave(aForm, aEntity, aCtx) {
  * Перед сохранением
  */
 function onPreCreate(aForm, aCtx) {
-	checkBirthDate(aForm, aCtx)
-	var list=aCtx.manager.createNativeQuery("select cb.id from childbirth cb where  cb.medcase_id='"+aForm.getMedCase()+"'").getResultList() ;
-	if (list.size()>0) throw "В отделении уже заведен случай родов!";
+	checkBirthDate(aForm, aCtx);
+	if (!aCtx.manager.createNativeQuery("select cb.id from medcase slo " +
+		" left join medcase allSlo on allSlo.parent_id=slo.parent_id " +
+		" left join childbirth cb on cb.medcase_id in (allSlo.id)" +
+		" where slo.id=" + aForm.getMedCase() +" and cb.id is not null ").getResultList().isEmpty()) {
+		throw "В госпитализации уже заведен случай родов!";
+	}
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
@@ -191,7 +195,7 @@ function onCreate(aForm, aEntity, aCtx) {
 			var pnb = aCtx.manager.createNativeQuery("select pnb.id from kinsman km left join patient pnb on pnb.id=km.person_id left join vockinsmanrole vkr on km.kinsmanrole_id=vkr.id where km.kinsman_id="+mother.id+" and vkr.omccode='1' and pnb.birthday=to_date('"+child[0]+"','dd.mm.yyyy') and pnb.newborn_id"+(vch!=null?"="+vch.id:" is null")).getResultList() ;
 			//throw ""+pnb.size() ;
 			var patient ;
-			if (pnb.size()>0) {
+			if (!pnb.isEmpty()) {
 				var lPat = aCtx.manager.createQuery("from Patient where id='"+pnb.get(0)+"'").getResultList() ;
 				patient = lPat.get(0) ;
 			} else {
@@ -202,7 +206,7 @@ function onCreate(aForm, aEntity, aCtx) {
 				var addStatus = aCtx.manager.createQuery("from VocAdditionStatus where code='0'").getResultList() ;
 				patient.socialStatus = socStatus.size()>0?socStatus.get(0):null ;
 				patient.additionStatus = addStatus.size()>0?addStatus.get(0):null ;
-				if (lPol.size()>0) {
+				if (!lPol.isEmpty()) {
 					patient.passportType=mother.passportType ;
 					patient.passportSeries=mother.passportSeries ;
 					patient.passportDateIssued=mother.passportDateIssued ;
@@ -213,8 +217,8 @@ function onCreate(aForm, aEntity, aCtx) {
 					patient.passportType = idenCard.size()>0?idenCard.get(0):null ;
 				}
 				patient.lastname=mother.lastname ;
-				patient.firstname = (newBorn.sex!=null?(newBorn.sex.omcCode=="1"?"У":"Х"):"Х") ;
-				patient.middlename =  "Х";
+				patient.firstname = "Х";
+				patient.middlename =  (newBorn.sex!=null ? (newBorn.sex.omcCode=="1" ? "У" : "Х") : "Х") ;
 				patient.birthday = newBorn.birthDate ;
 				patient.sex = newBorn.sex ;
 				patient.newborn=newBorn.child ;
@@ -272,6 +276,20 @@ function onCreate(aForm, aEntity, aCtx) {
 				aCtx.manager.persist(ss) ;
 				sls.statisticStub = ss ;
 				aCtx.manager.persist(sls) ;
+				//диабет у матери в родах будет проставляться только при создании. Если нужно редактировать - путь меняют в СЛС
+                if (aForm.getDiabetIdentity()!=null && aForm.getDiabetIdentity()!=''){
+                	var vocColorIdentity = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient,java.lang.Long.valueOf(aForm.getDiabetIdentity()));
+                	if (vocColorIdentity!=null) {
+                        var colorIdentity = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
+                        colorIdentity.startDate=sls.dateStart;
+                        colorIdentity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+                        colorIdentity.setVocColorIdentity(vocColorIdentity);
+                        aCtx.manager.persist(colorIdentity) ;
+                        var colIds = new java.util.ArrayList() ;
+                        colIds.add(colorIdentity);
+                        sls.setColorsIdentity(colIds);
+					}
+                }
 			}
 			newBorn.setPatient(patient) ;			
 			}
@@ -298,9 +316,30 @@ function onCreate(aForm, aEntity, aCtx) {
 			aCtx.manager.persist(newBorn) ;
 		}
 	}
-	
+    createOrUpdateRobson(aForm, aCtx);
 }
 function onPreDelete(aId, aCtx) {
 	var obj=aCtx.manager.createNativeQuery("select count(*) from newBorn where childBirth_id='"+aId+"'").getSingleResult() ;
 	if (+obj>0) throw "Сначала нужно удалить данные по новорожденным" ;
+}
+//классификация Робсона
+function createOrUpdateRobson(aForm, aCtx) {
+    var robsonClass=aForm.getRobsonClass();
+    if (robsonClass!=null && robsonClass!='') {
+        var rEnt = new Packages.ru.ecom.mis.ejb.domain.birth.RobsonClass;
+        rEnt.setMedCase(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase,java.lang.Long.valueOf(aForm.getMedCase())));
+        rEnt.setRobsonType(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.voc.VocRobsonClass,java.lang.Long.valueOf(robsonClass)));
+        var date = new java.util.Date() ;
+        rEnt.setCreateDate(new java.sql.Date(date.getTime())) ;
+        rEnt.setCreateTime(new java.sql.Time (date.getTime())) ;
+        rEnt.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+        var robsonSub=aForm.getRobsonSub();
+        if (robsonSub!=null && robsonSub!='')
+            rEnt.setRobsonSub(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.voc.VocSubRobson,java.lang.Long.valueOf(robsonSub)));
+        aCtx.manager.persist(rEnt) ;
+    }
+}
+function onSave(aForm, aEntity, aCtx) {
+    aCtx.manager.createNativeQuery("delete from robsonclass where medcase_id="+aForm.getMedCase()).executeUpdate() ;
+    createOrUpdateRobson(aForm, aCtx);
 }

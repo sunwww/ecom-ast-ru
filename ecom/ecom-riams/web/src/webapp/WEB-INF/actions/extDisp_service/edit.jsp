@@ -39,13 +39,12 @@ boolean isCache = ActionUtil.isCacheCurrentLpu( request);
 		<input type="hidden" id="patient" name="patient" value="${patientId}">
 	<ecom:webQuery name="getServiceExam" nativeSql="
 	select 
-	
  max(case when eds.card_id=edc.id then eds.id else null end) as serviceid
 , veds.id as vedsid,veds.code as vedscode,veds.name as vedsname 
 ,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as edsdtype
 , to_char(max(case when eds.card_id=edc.id and eds.serviceType_id=edps.serviceType_id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate
-, case when count(case when eds.card_id=edc.id and eds.isPathology='1' and eds.serviceType_id=edps.serviceType_id then '1' else null end)>0 then 'checked' else null end
-as servcheck
+, case when count(case when eds.card_id=edc.id and eds.isPathology='1' and eds.serviceType_id=edps.serviceType_id then '1' else null end)>0 then 'checked' else null end as servcheck
+, case when count(case when eds.card_id=edc.id and eds.deniedService='1' and eds.serviceType_id=edps.serviceType_id then '1' else null end)>0 then 'checked' else null end as f8_deniedService
  from ExtDispCard edc
 left join Patient pat on pat.id=edc.patient_id
 left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
@@ -191,8 +190,7 @@ order by veds.id,veds.name
 	<%List listExam = (List)request.getAttribute("getServiceExam") ;
 	List listVisit = (List)request.getAttribute("getServiceVisit") ;
 
-	if (listExam!=null && !listExam.isEmpty()) {
-	} else {
+	if (listExam==null || listExam.isEmpty()) {
 		%>
 <ecom:webQuery name="servicePlanExam"
 nativeSql="
@@ -217,8 +215,7 @@ order by veds.id,veds.name"
 		<%
 		listExam = (List)request.getAttribute("servicePlanExam") ;
 	}
-	if (listVisit!=null && !listVisit.isEmpty()) {
-	} else {
+	if (listVisit==null || listVisit.isEmpty()) {
 		%>
 <ecom:webQuery name="servicePlanVisit" 
 nativeSql="
@@ -256,7 +253,6 @@ order by veds.id,veds.name"
 	String[] fldExamDate = {"examServiceDate"} ;
 	String[] fldVisit = {"visitServiceDate","visitRecommendation","visitIsEtdccSuspicion","workFunctionName", "Idc10Name"} ;
 	String[] fldVisitDate = {"visitServiceDate"} ;
-	String[] fldVisitAutocomlete = {"workFunction", "Idc10"} ;
 	out.println("<input type='hidden' id='cntExam' name='cntExam' value='"+listExam.size()+"'>") ;
 	out.println("<input type='hidden' id='cntVisit' name='cntVisit' value='"+listVisit.size()+"'>") ;
 	if (sizeVisit>0 || sizeExam>0) {
@@ -264,9 +260,7 @@ order by veds.id,veds.name"
 <table border=0>
 <%
 		out.println("") ;
-		
-		
-		if (listExam.size()>0) {
+		if (!listExam.isEmpty()) {
 	%>
 		<tr><td><h2>Обследования</h2></td></tr>
 	<%
@@ -278,6 +272,7 @@ order by veds.id,veds.name"
 	out.print("<th>Услуга</th>") ;
 	out.print("<th>Дата оказания</th>") ;
 	out.print("<th>Выявлена патология</th>") ;
+	out.print("<th>Отказ от выполнения услуги</th>") ;
 	out.println("</tr>") ;
 	for (int i=0; i<sizeExam; i++) {
 		WebQueryResult wqr = (WebQueryResult) listExam.get(i) ;
@@ -295,6 +290,8 @@ order by veds.id,veds.name"
 		out.print("'>") ;out.print("</td>") ;
 		out.print("<td>") ;out.println("<input type='checkbox' name='examIsPathology"+i+"' id='examIsPathology"+i+"' ");
 		out.print(wqr.get7()!=null?wqr.get7():"");out.print(">") ;out.print("</td>") ;
+		out.print("<td>") ;out.println("<input type='checkbox' name='deniedService"+i+"' id='deniedService"+i+"' ");
+		out.print(wqr.get8()!=null?wqr.get8():"");out.print(">") ;out.print("</td>") ;
 		out.println("</tr>") ;
 	}
 	out.println("</table>") ;
@@ -379,19 +376,11 @@ order by veds.id,veds.name"
 	out.println("</table>") ;
 	out.println("* Подозрение на ранее перенесенное нарушение мозгового кровообращения");
 	out.println("</td></tr>") ;
-	
-	
-	%>
-
-
-	<% 	
-		}
+	}
 		%>
 		<tr><td class="buttons"><input type="button" value="Отменить" title="Отменить изменения" onclick="this.disabled=true; window.location.href='entityParentView-extDisp_card.do?id=${param.id}';  return true ;" id="cancelButton">
-		<!-- <input type="button" title="Сохранить изменения " id='submButton' onclick="this.disabled=true; this.value=&quot;Сохранение изменений ...&quot;; this.form.action='js-extDisp_service-save.do'; this.form.submit(); return true ;" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr> -->
-		<input type="button" title="Сохранить изменения " id='submButton' onclick="checkServicies(true);" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr>
+		<input type="button" title="Сохранить изменения " onclick="this.disabled=true; checkServicies(true);" value="Сохранить изменения " class="default" id="submitButton" autocomplete="off"></td></tr>
 		</table>
-		
 		<%
 		
 		out.println("<script type='text/javascript'>") ;
@@ -472,7 +461,6 @@ order by veds.id,veds.name"
 		} else {
 			out.println(" eventutil.addEnterSupport('"+fldVisit[fldVisit.length-1]+(sizeVisit-1)+"', 'submitButton') ;") ;
 		}
-		//out.println("Event.observe(window, 'load', _formInit_938, true);function _formInit_938() {msh.util.FormData.getInstance().init($('mainForm')) ;}") ;
 		out.println("</script>") ;
 		
 	} else {%>
@@ -503,6 +491,7 @@ order by veds.id,veds.name"
 			} else {
 				if (subm) {
 					alert ('Исправьте ошибки и попробуйте снова');
+					subm.disabled=false;
 				}
 			}
 		}

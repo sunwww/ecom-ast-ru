@@ -17,8 +17,13 @@
     <h2>Введите пояснение изменению значения оценки</h2>
     <div class='rootPane'>
         <form action="javascript:void(0)">
+            <msh:panel>
+                <msh:row>
+                    <msh:comboBox size='300' horizontalFill="true" property='${name}vocQualityEstimationChangeReason' vocName="vocQualityEstimationChangeReason" label='Выбрать из списка:'/>
+                </msh:row>
+            </msh:panel>
             <msh:row>
-                <textarea rows="8" cols="35" class="area" required id="reasonYesNo"></textarea>
+                <textarea rows="8" cols="95" class="area" required id="reasonYesNo"></textarea>
             </msh:row>
             <msh:row>
             <table width="100%">
@@ -67,8 +72,13 @@
         the${name}CommentYesNoDialog.hide() ;
         the${name}CommentYesNoDialog.hide() ;
         if (the${name}Flag) {
-            $('criterion'+the${name}Ii+'Name').value='';
-            $('criterion'+the${name}Ii).value='';
+            //fix radio.
+            //radio group name = radiothe${name}Ii
+            //radio id - radiothe${name}Ii 0 - Нет, 1 - да
+            if ($('radio'+the${name}Ii+'1').checked)
+                $('radio'+the${name}Ii+'0').checked=true;
+            else
+                $('radio'+the${name}Ii+'1').checked=true;
         }
     }
 
@@ -81,5 +91,13 @@
         the${name}CommentYesNoDialog.show() ;
         document.getElementById('reasonYesNo').value=the${name}Comment;
         the${name}Flag=flag;
+        $('${name}vocQualityEstimationChangeReason').value=$('${name}vocQualityEstimationChangeReasonName').value="";
+        ${name}vocQualityEstimationChangeReasonAutocomplete.addOnChangeCallback(function() {
+            setText();
+        });
+    }
+
+    function setText() {
+        document.getElementById("reasonYesNo").value=$('${name}vocQualityEstimationChangeReasonName').value;
     }
 </script>

@@ -3,8 +3,6 @@ ecom/ecom-riams/ejb/.classpath
 /ecom/ecom-riams/ejb/.settings/
 /ecom/ecom-riams/web/target/
 /ecom/ecom-riams/ejb/target/
-/ecom/ecom-riams/ejb/${jboss_deploy}/
-/ecom/ecom-riams/ejb/${jboss_postgres_deploy}/
 /ecom/ecom-ejbweb/ejb/target/
 /gwt/clazz/bin/
 /gwt/clazz/tomcat/
@@ -34,3 +32,5 @@ ecom/ecom-riams/ejb/.classpath
 /msh/msh-util/build_old.xml
 /msh/msh-web/build_old.xml
 https://github.com/amokb/medos/tree/master/releases
+/ecom/ecom-riams/web/riams-web.iml
+/ecom/ecom-riams/ejb/riams-ejb.iml

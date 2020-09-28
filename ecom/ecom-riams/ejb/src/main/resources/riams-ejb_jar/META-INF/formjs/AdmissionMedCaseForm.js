@@ -10,51 +10,47 @@ function onPreCreate(aForm, aCtx) {
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
-
+	if (aForm.getIsIdentified()!=null && aForm.getIsIdentified()==true) {
+        aForm.setIdentDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+        aForm.setIdentTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
+        aForm.setIdentUsername(aForm.username);
+	}
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.checkPolicyCreateHour(aCtx.getSessionContext()
 	        , aForm.getDateStart(), aForm.getEntranceTime());
-	onPreSave(aForm,null,aCtx)
-    var date = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());
+	onPreSave(aForm,null,aCtx);
+    date = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());
     var cal = java.util.Calendar.getInstance() ;
 	cal.setTime(date) ;
 	var year = cal.get(java.util.Calendar.YEAR) ;
- 	var ret = false ;
 	var aStatCardNumber = aForm.statCardNumber ;
-	if (aStatCardNumber!=null && aStatCardNumber!="") {
-		var list = aCtx.manager.createQuery("from StatisticStub where code=:number and year=:year and DTYPE='StatisticStubExist'")
-			.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year)).getResultList() ;
-		ret = (list==null || list.isEmpty()) ? false : true ;
+	if (aStatCardNumber!=null && aStatCardNumber.trim()!="") {
+		if (!aCtx.manager.createQuery("from StatisticStub where code=:number and year=:year and DTYPE='StatisticStubExist'")
+			.setParameter("number", aStatCardNumber)
+			.setParameter("year",java.lang.Long.valueOf(year)).getResultList().isEmpty()
+		) {
+			throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
+		}
 	}
-	if (ret==true) {
-		throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
-	}
-
-
-
-	
 }
-function onCreate(aForm, aEntity, aCtx) { 
+function onCreate(aForm, aEntity, aCtx) {
+	var manager = aCtx.manager;
 	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 	if (aForm.attachedPolicies!="" && aForm.attachedPolicies>0) {
-		var medPolicyOmc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicies) ;
+		var medPolicyOmc = manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicies) ;
 		var mp1 = new Packages.ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy() ;
 		mp1.setPolicies(medPolicyOmc) ;
 		mp1.setMedCase(aEntity) ;
-		aCtx.manager.persist(mp1) ;
-		//var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicies+"'" ;
-		//aCtx.manager.createNativeQuery(sql).executeUpdate() ;
-	}	
+		manager.persist(mp1) ;
+	}
 	if (aForm.attachedPolicyDmc!="" && aForm.attachedPolicyDmc>0) {
-		var medPolicyDmc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicyDmc) ;
+		var medPolicyDmc = manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicyDmc) ;
 		var mp2 = new Packages.ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy() ;
 		mp2.setPolicies(medPolicyDmc) ;
 		mp2.setMedCase(aEntity) ;
-		aCtx.manager.persist(mp2) ;
-		//var sql="insert into medCase_medPolicy set medCase_id='"+aEntity.id+"',policies_id='"+aForm.attachedPolicyDmc+"'" ;
-		//aCtx.manager.createNativeQuery(sql).executeUpdate() ;
+		manager.persist(mp2) ;
 	}
 	if (aForm.pregnancyOrderNumber!=null && aForm.pregnancyOrderNumber>0) {
-		var list = aCtx.manager.createQuery("from Pregnancy where patient=:pat and orderNumber=:number")
+		var list = manager.createQuery("from Pregnancy where patient=:pat and orderNumber=:number")
 			.setParameter("pat",aEntity.patient)
 			.setParameter("number",aForm.pregnancyOrderNumber)
 			.getResultList() ;
@@ -66,16 +62,13 @@ function onCreate(aForm, aEntity, aCtx) {
 			preg.setOrderNumber(aForm.pregnancyOrderNumber) ;
 			preg.setChildbirthAmount(aForm.childbirthAmount) ;
 			preg.setPatient(aEntity.patient) ;
-			aCtx.manager.persist(preg) ;
-			//aEntity.setPregnancy(preg) ;
-
-			
+			manager.persist(preg) ;
 		}
 		aEntity.setPregnancy(preg) ;
 	}
     //Milamesher 28.08.2018 #108 - дополнение: при госпитализации пациента все открытые СПО закрываются датой последнего визита
 	//Закрытие всех СПО
-    var listSpoByPat = aCtx.manager.createNativeQuery("select id from medcase where dtype='PolyclinicMedCase' and datefinish is null and patient_id="+aEntity.patient.id).getResultList();
+    var listSpoByPat = manager.createNativeQuery("select id from medcase where dtype='PolyclinicMedCase' and datefinish is null and patient_id="+aEntity.patient.id).getResultList();
     for (var ind=0 ; ind< listSpoByPat.size() ; ind++) {
         var opSpoId = listSpoByPat.get(ind);
         closeSpo(aCtx,opSpoId);
@@ -84,6 +77,14 @@ function onCreate(aForm, aEntity, aCtx) {
 		list.setMedCase(aEntity);
 		list.setCreateUsername(aForm.username);
 		aCtx.manager.persist(list);
+
+	if (+aForm.preHosp>0) { //Если есть предварительная госпитализация - связываем её с госпитализацией
+		var preHosp = manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarHospitalBed,aForm.preHosp) ;
+		preHosp.setMedCase(aEntity);
+		manager.persist(preHosp);
+
+	}
+	chekIfOutOfReceivingDep(aForm,aEntity,aCtx);
 }
 //Закрытие СПО по id (взято с SmoVisitService) - датой последнего визита
 function closeSpo(aContext, aSpoId) {
@@ -135,10 +136,6 @@ function closeSpo(aContext, aSpoId) {
             +" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
             +" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
             +" order by vis.dateStart, vis.timeExecute").setMaxResults(1).getResultList() ;
-      //  var visFirst = listVisFirst.get(0)[0];
-        //var visFirstO = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
-        //		, java.lang.Long.valueOf(visFirst)) ;
-   //     var visLast = listVisLast.get(0)[0];
         var mkb = listVisLast.get(0)[1];
         if (mkb==null) {
             var listMkb = aContext.manager.createNativeQuery("select vis.id as visid"
@@ -175,9 +172,7 @@ function closeSpo(aContext, aSpoId) {
             +"','dd.mm.yyyy'),dateStart=to_date('"+dateStart
             +"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
             +"'"+(mkb!=null?(",idc10_id='"+mkb+"'"):"")+" where id="+aSpoId).executeUpdate() ;
-    } /*else {
-        if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
-    }*/
+    }
     return aSpoId;
 }
 function onPreDelete(aMedCaseId, aContext) {
@@ -185,10 +180,11 @@ function onPreDelete(aMedCaseId, aContext) {
 }
 
 function onSave(aForm,aEntity,aCtx) {
+	chekIfOutOfReceivingDep(aForm,aEntity,aCtx);
 	//aEntity.setEditTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 
 
-	var sql = "update MedCase set dateStart=:dateStart,entranceTime=:entranceTime,department_id=:dep, lpu_id=:lpu where parent_id=:idSLS and DTYPE='DepartmentMedCase' and prevMedCase_id is null"
+	var sql = "update MedCase set dateStart=:dateStart,entranceTime=:entranceTime,department_id=:dep, lpu_id=:lpu where parent_id=:idSLS and DTYPE='DepartmentMedCase' and prevMedCase_id is null";
 	
 	aCtx.manager.createNativeQuery(sql)
 		.setParameter("dateStart",aEntity.dateStart)
@@ -197,18 +193,32 @@ function onSave(aForm,aEntity,aCtx) {
 		.setParameter("lpu",aForm.lpu)
 		.setParameter("idSLS",aForm.id)
 		.executeUpdate() ;
-	var aStatCardNumber = aForm.statCardNumber ;
+	aCtx.manager.createNativeQuery("update medcase set emergency='"+(aForm.emergency ? "1" : "0")+"' where parent_id="+aForm.id+" and dtype='DepartmentMedCase'").executeUpdate();
+
+	//Сохранение роста и веса при редактировании поступления в стационар (когда уже есть стат карта)
+	if (aEntity.statisticStub!=null) {
+		var stat = aEntity.statisticStub;
+		var w = parseInt(+aForm.weight);
+		var h = parseInt(+aForm.height);
+		stat.setWeight(w);
+		stat.setHeight(h);
+		if (w!=0 && h!=0) {
+			var imt=(w / (0.0001 * h * h)).toFixed(2);
+			stat.setIMT(+imt);
+		}
+		aCtx.manager.persist(stat);
+
+	}
 }
 
 function onPreSave(aForm,aEntity, aCtx) {
-    chekIfOutOfReceivingDep(aForm,aEntity,aCtx);
 	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
-	if (pat.getDeathDate()!=null) {
-		
-		var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(),"yyyy-MM-dd");
-		if (date.getTime() > deathDate.getTime()) {
+	var deathDate = pat.getDeathDate();
+	if (deathDate != null) {
+		var startDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.dateStart);
+		if (startDate.getTime() > deathDate.getTime()) {
 		throw "Невозможно создать СЛС позже даты смерти пациента: "
-		+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate);
+			+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate);
 		}
 	}
 
@@ -226,7 +236,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 		}
 		//Рост и вес - обязательные поля
         if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/MustFillHeigthAndWeigth")) {
-			if (+aForm.height>0&&+aForm.weight>0) {} else {throw "При плановой госпитализации поля \"рост\", \"вес\" являются обязательными";}
+			if (+aForm.height==0 || +aForm.weight==0) {throw "При плановой госпитализации поля \"рост\", \"вес\" являются обязательными";}
 		}
 	} else {
 		if (+aForm.orderType>0) {} else {throw "При экстренной госпитализации раздел доставлен является обязательным для заполнения!!!" ;}
@@ -252,7 +262,6 @@ function onPreSave(aForm,aEntity, aCtx) {
 			}
 		}
 	} else {
-		
 		var sql = "select m.id, ss.code from MedCase  m "
 			+" left join StatisticStub ss on ss.id=m.statisticStub_id "
 			+" where m.patient_id='"+aForm.patient
@@ -262,25 +271,20 @@ function onPreSave(aForm,aEntity, aCtx) {
 		if (+aForm.id>0) {
 			sql = sql+" and m.id!='"+aForm.id+"'" ;
 		}	
-			;
-		//throw sql ;
-		var list = aCtx.manager.createNativeQuery(sql)
-	//.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year))
-				.getResultList() ;
-		if (list.size()>0) {
+		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+		if (!list.isEmpty()) {
 			var obj = list.get(0) ;
 			throw "Уже оформлена госпитализация за "+aForm.dateStart+" <a href='entitySubclassView-mis_medCase.do?id="+obj[0]+"'>№стат.карты "+obj[1]+"</a>" ;
 		}
 		if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Slo/UnionSlo")||
 				aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/EditDepartment")){
-			
-		}else {
+		} else {
 			list = aCtx.manager.createNativeQuery("select sls.id ,ml.name from medcase sls" +
 	    			" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'" +
 	    			" left join mislpu ml on ml.id=slo.department_id" +
 	    			" where sls.id =:sls" +
 	    			" and slo.prevmedcase_id is null and "+aForm.getDepartment()+"!=slo.department_id").setParameter("sls",aForm.getId()).getResultList();
-	    	if (list.size()>0) {
+	    	if (!list.isEmpty()) {
 	    		throw "Уже создан случай лечение в отделении ("+list.get(0)[1]+"), изменение отделения невозможно";
 	    	}
 		} 
@@ -294,19 +298,15 @@ function onPreSave(aForm,aEntity, aCtx) {
 	}
 	if (aForm.dateFinish!=null && aForm.dateFinish!=""
 		  &&aForm.dischargeTime!=null &&aForm.dischargeTime!="") {
-			var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
+			var dateStart1 = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
 			var dateFinish = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateFinish,aForm.dischargeTime);
-			if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки "+
+			if (!(dateFinish.getTime() > dateStart1.getTime())) throw "Дата выписки "+
 			aForm.dateFinish+" "+aForm.dischargeTime+" должна быть больше, чем дата поступления "+aForm.dateStart+" "
 			+aForm.entranceTime;
 			
 		}
 	
-	//if (ret==true) {
-	//	throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
-	//}
-
-	var stat=aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CreateHour) ;
+	var stat=aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CREATE_HOUR) ;
 	var psych=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/IsPsychiatry") ;
 	var dateStart = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateStart,aForm.entranceTime);
 	
@@ -315,9 +315,6 @@ function onPreSave(aForm,aEntity, aCtx) {
 		if (!check) throw "У Вас стоит ограничение на дату поступления. Дата поступления меньше на 24 часа, чем текущая дата" ;
 	}
 	
-
-
-
 	// Проверка введенных данных
 	if (aForm.getDeniedHospitalizating()!=null && aForm.getDeniedHospitalizating()!=0) {
 		if (aForm.getAmbulanceTreatment()==null || !aForm.getAmbulanceTreatment()) {
@@ -336,33 +333,30 @@ function onPreSave(aForm,aEntity, aCtx) {
            } else if (aForm.getHospitalization()==null || aForm.getHospitalization()==0) {
                throw "При госпитализации пациента нужно указывать первичность госпитализации по данному заболеванию!";
            } else if (psych && (aForm.getPsychReason()==null || aForm.getPsychReason()==0)) {
-               throw "При госпитализации пациента в психиатрический стационар нужно указывать причину!";
-           }/*else if (aForm.getBedType()==null || aForm.getBedType()==0) {
-               throw "При госпитализации пациента нужно указывать отделение и профиль коек!";
-           }*/
+			   throw "При госпитализации пациента в психиатрический стационар нужно указывать причину!";
+		   }
     }
     if (aEntity!=null && aEntity.getDeniedHospitalizating()!=null
     		&&+aForm.getDeniedHospitalizating()==0) {
     	var statCardNumber = aForm.statCardNumber ;
     	if (aEntity.statisticStub!=null) {
-	    	if (statCardNumber==null || statCardNumber=="") {
-	    		var hand = aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CreateStatCardBeforeDeniedByHand) ;
+	    	if (statCardNumber==null || statCardNumber.trim()=="") {
+	    		var hand = aCtx.getSessionContext().isCallerInRole(Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac.CREATE_STAT_CARD_BEFORE_DENIED_BY_HAND) ;
 	    		
 	    		if (hand) throw "Не указан номер стат. карты" ;
-	    	} else{
+	    	} else {
 	    		var year = aForm.getDateStart().substring(6) ;
-	    		//throw ""+year ;
-	    		var list = aCtx.getManager()
+	    		if (!aCtx.getManager()
 	    				.createNativeQuery("select id from StatisticStub where medCase_id='"+aForm.getId()+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
 	    			.setParameter("number", statCardNumber)
 	    			.setParameter("year",java.lang.Long.valueOf(year))
-	    			.getResultList() ;
+	    			.getResultList().isEmpty())  {
+					throw "Номер стат. карты "+statCardNumber+" в "+year+" уже зарегистрирован!!!" ;
+				}
 	    		
-	    		if (list.size()>0) throw "Номер стат. карты "+statCardNumber+" в "+year+" уже зарегистрирован!!!" ;
 	    	}
     	}
     }
-    //sendMsg(aForm,aEntity, aCtx,"lmeshkova");
     sendMsg(aForm,aEntity, aCtx,"dzaharov");
     sendMsg(aForm,aEntity, aCtx,"nkostenko");
 }
@@ -375,7 +369,7 @@ function sendMsg(aForm,aEntity, aCtx,user) {
 	    		
 	    		//здесь код, а потом этот код - в условия n!=171
 	    	//	var listnat =  aCtx.getManager().createNativeQuery("select name from Omc_Oksm where id='" + n + "'").getResultList() ; 
-	    		var list = aCtx.getManager().createNativeQuery("select name from mislpu where id='" + aForm.getDepartment() + "'").getResultList() ;
+	    		var list = aCtx.getManager().createNativeQuery("select name from mislpu where id=" + aForm.getDepartment() ).getResultList() ;
 	    		var m = "Гражданин (" + nationality.getName() + ") " + pat.getPatientInfo() + " госпитализирован в " + list.get(0);
 	    		var mes = new Packages.ru.ecom.ejb.services.live.domain.CustomMessage() ;
 				mes.setMessageText(m) ;
@@ -389,21 +383,23 @@ function sendMsg(aForm,aEntity, aCtx,user) {
 				mes.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString() ) ;  
 				mes.setIsEmergency(false) ;
 				aCtx.manager.persist(mes) ;
-				
 	    	}
 	 }
 }
 //Milamesher 06092018 проверка на выбыл ли пациент из приёмника
 //выбывает в случае, если меняется поле отказа с null на не null и наоборот
 function chekIfOutOfReceivingDep(aForm,aEntity, aCtx) {
-	if (aEntity!=null) {
-        var list = aCtx.manager.createNativeQuery("select deniedhospitalizating_id from medcase where id=" + aEntity.id).setMaxResults(1).getResultList();
-        var oldVal = list.size() > 0 ? list.get(0) : null;
-        var newVal = aForm.deniedHospitalizating;
-        var date = new java.util.Date();
-        if (oldVal == null && newVal != '0' || oldVal != null && newVal == '0') {
-            aForm.setTransferDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
-            aForm.setTransferTime(new java.sql.Time(date.getTime()));
-        }
-    }
+	var date = new java.util.Date().getTime() ;
+		if (aForm.deniedHospitalizating>0
+			&& aCtx.manager.createNativeQuery("select id from VocDeniedHospitalizating where id=" + aForm.deniedHospitalizating+" and code='IN_PIGEON_HOLE'").setMaxResults(1).getResultList().isEmpty()) { //отказ от госпитализации
+			if (aEntity.deniedHospitalizating == null || aForm.deniedHospitalizating !== aEntity.deniedHospitalizating.id ) { //если новая причина отказа != старой причине отказа
+				aEntity.setTransferDate(new java.sql.Date(date));
+				aEntity.setTransferTime(new java.sql.Time(date));
+				aCtx.manager.persist(aEntity);
+			}
+		} else { //нет отказа - нет даты выбытия из приемника
+			aEntity.setTransferDate(null);
+			aEntity.setTransferTime(null);
+			aCtx.manager.persist(aEntity);
+		}
 }

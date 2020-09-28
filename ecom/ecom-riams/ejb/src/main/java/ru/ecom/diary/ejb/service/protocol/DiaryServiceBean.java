@@ -89,7 +89,7 @@ public class DiaryServiceBean implements IDiaryService {
 		for (Object[] group: listChild) {
 			Long id = ConvertSql.parseLong(group[0]) ;
 			CheckNodeByGroup node = new CheckNodeByGroup(
-					"g"+group[0] , new StringBuilder().append(group[1]).toString(),false
+					"g"+group[0] , String.valueOf(group[1]),false
 					) ;
 			aNode.getChilds().add(node) ;
 			addGroups(id,node ,aParameters, aUsername) ;
@@ -101,7 +101,7 @@ public class DiaryServiceBean implements IDiaryService {
 		
 		for (Object[] param: listChild) {
 			CheckNodeByParameter node = new CheckNodeByParameter("p"+param[0],
-					new StringBuilder().append(param[1]).toString()
+					String.valueOf(param[1])
 					,aParameters.contains(ConvertSql.parseLong(param[0])),ConvertSql.parseLong(param[2]));
 			aNode.getChilds().add(node) ;
 		}
@@ -134,11 +134,11 @@ public class DiaryServiceBean implements IDiaryService {
 				} else if (aIdFieldName.equals("assessmentCard")) {
 					frm.setAssessmentCard(aProtocolId);
 				}
-				frm.setPosition(Long.valueOf(i)) ;
+				frm.setPosition((long) i) ;
 				theManager.persist(frm) ;
 			} else {
 				ParameterByForm frm = list.get(0) ;
-				frm.setPosition(Long.valueOf(i)) ;
+				frm.setPosition((long) i) ;
 				theManager.persist(frm) ;
 				if (list.size()>1) {
 					for (int j=1;j<list.size();j++) {

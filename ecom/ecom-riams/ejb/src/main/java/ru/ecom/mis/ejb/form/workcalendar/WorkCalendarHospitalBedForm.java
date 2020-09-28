@@ -2,7 +2,10 @@ package ru.ecom.mis.ejb.form.workcalendar;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarHospitalBed;
+import ru.ecom.mis.ejb.form.workcalendar.interceptor.WorkCalendarHospitalBedSave;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -21,19 +24,22 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 , list="stac_planning_hospitalizations.do"
 , view="entityView-stac_planHospital.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Planning")
+@ACreateInterceptors(
+		@AEntityFormInterceptor(WorkCalendarHospitalBedSave.class)
+)
 public class WorkCalendarHospitalBedForm extends IdEntityForm {
 
-	/** Внутренний номер направлания */
-	@Comment("Внутренний номер направлания")
+	/** Внутренний номер направления */
+	@Comment("Внутренний номер направления")
 	@Persist
 	public String getInternalCode() {return theInternalCode;}
 	public void setInternalCode(String aInternalCode) {theInternalCode = aInternalCode;}
-	/** Внутренний номер направлания */
+	/** Внутренний номер направления */
 	private String theInternalCode ;
 
 	/** Отделение */
 	@Comment("Отделение")
-	@Persist 
+	@Persist @Required
 	public Long getDepartment() {return theDepartment;}
 	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
 
@@ -45,7 +51,7 @@ public class WorkCalendarHospitalBedForm extends IdEntityForm {
 
 	/** Палата */
 	@Comment("Палата")
-	@Persist @Required
+	@Persist
 	public Long getHospitalRoom() {return theHospitalRoom;}
 	public void setHospitalRoom(Long aHospitalRoom) {theHospitalRoom = aHospitalRoom;}
 

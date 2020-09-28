@@ -27,8 +27,8 @@
 
   	%>
   	  <msh:form  action="/pres_journal_intake_transfer.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+    <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
             <msh:row>
@@ -253,7 +253,7 @@
     "/>
     <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
         <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19">
+	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" escapeSymbols="false">
         <msh:tableButton property="16" buttonFunction="goBioService" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Результат" buttonShortName="Ввод результата" hideIfEmpty="true"/>
 	      <msh:tableButton property="17" buttonFunction="showBioIntakeCancel" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Брак биоматериала" buttonShortName="Брак" hideIfEmpty="true"/>
 	      <msh:tableColumn columnName="#" property="sn"  />
@@ -292,7 +292,7 @@
     
     ||'#'||pat.lastname else list(p.materialId) end) as f4material
     ,coalesce(vsst.name,'---') as f5vsstname
-    ,pat.lastname as f6lastname,pat.firstname as f7firstname,pat.middlename as f8middlename
+    ,case when ht.id is not null then '<div id=\"circle\"></div> '||pat.lastname else pat.lastname end as f6lastname,pat.firstname as f7firstname,pat.middlename as f8middlename
     ,to_char(pat.birthday,'dd.mm.yyyy') as f9birthday
    ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||' <b>'||coalesce(vpt.shortname,'')||'</b>' else null end) as f10medServicies
    ,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
@@ -322,6 +322,7 @@
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
+    left join hitechMedicalCase ht on ht.medcase_id=slo.id or ht.medcase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase')
     where p.dtype='ServicePrescription'
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
@@ -332,7 +333,7 @@
     group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
-    ,p.transferDate,p.transferTime,vsst.biomaterial,p.cancelDAte,p.cancelTime,wfCab.groupName, p.barcodeNumber
+    ,p.transferDate,p.transferTime,vsst.biomaterial,p.cancelDAte,p.cancelTime,wfCab.groupName, p.barcodeNumber, ht.id
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     
@@ -340,7 +341,7 @@
 
     </msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void(0)" idField="1" selection="multiply">
+	    <msh:table name="list" action="javascript:void(0)" idField="1" selection="multiply" escapeSymbols="false">
 	     <msh:tableNotEmpty>
 	     <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/IsCheckTransfer">
             <tr>
@@ -412,6 +413,7 @@
   	    		if (val=="") {
   	    			alert("Выберите кабинеты для всех исследований") ;
   	    			list == null ;
+  	    			return;  //fix - если не выбран какой-то кабинет по типу исследований, вернуть на выбор, а не идти дальше
   	    		}
   	    		if (list!="") list += ":" ;
   	    		list += val ;
@@ -419,7 +421,7 @@
   	        if (list!=null) {
   	        	
   	        	PrescriptionService.checkTransferService( list, {
-  		            callback: function(aResult) {
+  		            callback: function() {
   		           	var tmpList = list.split(":");
   		           	var presList = "";
   		           	var serviceList = "";
@@ -468,7 +470,7 @@
   	    	var reason = getReason(aReason) ;
   	    	if (reason!=null) {
   	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
-  		            callback: function(aResult) {
+  		            callback: function() {
   		            	window.document.location.reload();
   		            }
   				});

@@ -72,13 +72,9 @@ public class JbossGetFileServiceBean implements IJbossGetFileService, IJbossGetF
 
     public long register() {
         long id = getNext() ;
-        StringBuilder sb = new StringBuilder();
-        sb.append(theContext.getCallerPrincipal().getName()) ;
-        sb.append('/') ;
-        sb.append(getUniqueString()) ;
-        sb.append('/') ;
-        sb.append(id) ;
-        JbossFileInfoLocal file = new JbossFileInfoLocal(id, getTomcatExportDir(), sb.toString());
+        String sb = theContext.getCallerPrincipal().getName() +
+                '/' + getUniqueString() + '/' + id;
+        JbossFileInfoLocal file = new JbossFileInfoLocal(id, getTomcatExportDir(), sb);
         theHash.put(id, file) ;
         return id ;
     }

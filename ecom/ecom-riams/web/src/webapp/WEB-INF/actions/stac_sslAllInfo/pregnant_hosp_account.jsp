@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -9,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Учёт случаев госпитализации беременных"/>
+    <msh:title mainMenu="StacJournal" title="Учёт случаев госпитализации беременных"/>
   </tiles:put>
   <tiles:put name="side" type="string">
 
@@ -18,10 +17,10 @@
   <%
   	if (request.getParameter("short")==null||request.getParameter("short").equals("")) {	
   %>
-    <msh:form action="/stac_pregnant_hosp_account.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_pregnant_hosp_account.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
 	    <input type="hidden" name="id" id="id" value=""/>
-	    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-	      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+	    <msh:panel>
+	      <msh:row>
 	        <msh:separator label="Параметры поиска" colSpan="7" />
 	      </msh:row>
 	
@@ -84,7 +83,7 @@ select vih.name, count(case when lpu.lpulevel='1' then wchb.id else null end) lv
 count(case when lpu.lpulevel='2' then wchb.id else null end) lvl2,
 count(case when lpu.lpulevel='3' then wchb.id else null end) lvl3
 from vocindicationhospitalization vih 
-left join workcalendarhospitalbed wchb on wchb.indicationtohosp=vih.id
+left join workcalendarhospitalbed wchb on vih.id=coalesce(wchb.indicationtohosp_id,wchb.indicationtohosp)
 left join mislpu dep on dep.id=wchb.department_id
 left join mislpu lpu on lpu.id=dep.parent_id
 where wchb.datefrom is null or wchb.datefrom between 

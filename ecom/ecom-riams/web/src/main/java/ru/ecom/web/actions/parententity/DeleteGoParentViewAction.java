@@ -23,5 +23,5 @@ public class DeleteGoParentViewAction extends DeleteAction {
         return ForwardUtil.createGoParentForward((ActionForm)castEntityForm(aForm, aMapping), aMapping, aRequest, theStrutsFormUtil, theUtil);
     }
 
-    private StrutsConfigUtil theUtil = new StrutsConfigUtil();
+    private final StrutsConfigUtil theUtil = new StrutsConfigUtil();
 }

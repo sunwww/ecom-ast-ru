@@ -36,13 +36,7 @@ public class LiveListener {
 			try {
 				throw new IllegalStateException("TEST") ;
 			} catch (Exception e) {
-				System.err.println("==========================================");
-				System.err.println("");
-				System.err.println("");
-				e.printStackTrace() ;
-				System.err.println("");
-				System.err.println("");
-				System.err.println("==========================================");
+				LOG.error(e.getMessage(),e);
 			}
 			throw new IllegalStateException("LiveTransactionInterceptor не установлен") ;
 		}
@@ -83,11 +77,7 @@ public class LiveListener {
 			
 			for(Method method :  clazz.getMethods()) {
 				String name = method.getName() ;
-				if(        (name.startsWith("get") || name.startsWith("is")) 
-						&& !method.isAnnotationPresent(Transient.class)
-						&& !"getClass".equals(name)
-						&& !method.isAnnotationPresent(OneToMany.class)
-						&& (method.getParameterTypes()==null ||  method.getParameterTypes().length==0)) {
+				if((name.startsWith("get") || name.startsWith("is")) && !method.isAnnotationPresent(Transient.class) && !"getClass".equals(name) && !method.isAnnotationPresent(OneToMany.class) && method.getParameterTypes().length == 0) {
 					String value ;
 					try {
 						Object obj = method.invoke(aObject) ;

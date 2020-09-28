@@ -16,21 +16,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Прейскурант", nameProperties= "name", list="entityList-contract_priceList.do", view="entityView-contract_priceList.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/PriceList")
 public class PriceListForm extends IdEntityForm{
-	/**
-	 * Справочник типов цен
-	 */
-	@Comment("Справочник типов цен")
-	@Persist
-	public Long getVocPrice() {
-		return theVocPrice;
-	}
-	public void setVocPrice(Long aVocPrice) {
-		theVocPrice = aVocPrice;
-	}
-	/**
-	 * Справочник типов цен
-	 */
-	private Long theVocPrice;
+
 	/**
 	 * Название
 	 */
@@ -78,21 +64,7 @@ public class PriceListForm extends IdEntityForm{
 	 * Дата окончания действия
 	 */
 	private String theDateTo;
-	
-	/** Справочник типов цен (информация) */
-	@Comment("Справочник типов цен (информация)")
-	@Persist
-	public String getVocPriceInfo() {
-		return theVocPriceInfo;
-	}
 
-	public void setVocPriceInfo(String aVocPriceInfo) {
-		theVocPriceInfo = aVocPriceInfo;
-	}
-
-	/** Справочник типов цен (информация) */
-	private String theVocPriceInfo;
-	
 	/** Используется по умолчанию */
 	@Comment("Используется по умолчанию")
 	@Persist

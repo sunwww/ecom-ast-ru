@@ -13,10 +13,10 @@
 
             <msh:panel>
                 <msh:row>
-                    <msh:textField property="name" label="Наименование" horizontalFill="true"/>
+                    <msh:textField property="name" label="Наименование" horizontalFill="true" size="100"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="url" label="URL"  horizontalFill="true"/>
+                    <msh:textField property="url" label="URL"  horizontalFill="true" size="100"/>
                 </msh:row>
                 <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>

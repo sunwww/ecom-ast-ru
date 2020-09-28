@@ -3,19 +3,21 @@ package ru.ecom.mis.ejb.form.medcase.hospital;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
-import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocComplication;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationSaveInterceptor;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationViewInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoIntegerString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.*;
+
+import javax.persistence.Id;
 
 @Comment("Хирургическая операция")
 @EntityForm
@@ -26,11 +28,16 @@ import ru.nuzmsh.forms.validator.validators.*;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(SurgicalOperationCreateInterceptor.class)
 )
+@ASaveInterceptors(@AEntityFormInterceptor(SurgicalOperationSaveInterceptor.class))
+@ACreateInterceptors(@AEntityFormInterceptor(SurgicalOperationSaveInterceptor.class))
+@AViewInterceptors(
+		@AEntityFormInterceptor(SurgicalOperationViewInterceptor.class)
+)
 public class SurgicalOperationForm extends IdEntityForm{
 	/** Дата операции */
 	@Comment("Дата операции")
-	@Persist @Required @MaxDateCurrent
-	@DateString @DoDateString
+	@Persist @Required
+	@DateString @DoDateString @MaxDateCurrent
 	public String getOperationDate() {return theOperationDate;}
 	public void setOperationDate(String aOperationDate) {theOperationDate = aOperationDate;	}
 
@@ -99,13 +106,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	@Persist
 	public Long getPatient() {return thePatient;}
 	public void setPatient(Long aPatient) {thePatient = aPatient;}
-	
-	/** Осложнения */
-	@Comment("Осложнения")
-	@Persist @PersistManyToManyOneProperty(collectionGenericType=VocComplication.class)
-	public String getComplications() {return theComplications;	}
-	public void setComplications(String aComplications) {theComplications = aComplications;}
-	
+
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@Persist
@@ -118,17 +119,10 @@ public class SurgicalOperationForm extends IdEntityForm{
 	public String getAnesthesiaAmount() {return theAnesthesiaAmount;}
 	public void setAnesthesiaAmount(String aAnesthesiaAmount) {theAnesthesiaAmount = aAnesthesiaAmount;}
 
-	///** Рабочая функция врача, проводившего операцию */
-	//@Comment("Рабочая функция врача, проводившего операцию")
-	//@Persist @Required
-	//public Long getSurgeonFunction() {return theSurgeonFunction;}
-	//public void setSurgeonFunction(Long aSurgeonFunction) {theSurgeonFunction = aSurgeonFunction;}
-	
 	/** Дата операции по */
 	@Comment("Дата операции по")
-	@DateString
-	@DoDateString
-	@Persist  @MaxDateCurrent
+	@DateString @DoDateString @MaxDateCurrent
+	@Persist
 	public String getOperationDateTo() {return theOperationDateTo;}
 	public void setOperationDateTo(String aOperationDateTo) {theOperationDateTo = aOperationDateTo;}
 
@@ -192,8 +186,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	/** Время операции по */
 	@Comment("Время операции по")
 	@Persist
-	@TimeString
-	@DoTimeString
+	@TimeString @DoTimeString
 	public String getOperationTimeTo() {return theOperationTimeTo;}
 	public void setOperationTimeTo(String aOperationTimeTo) {theOperationTimeTo = aOperationTimeTo;}
 
@@ -324,8 +317,6 @@ public class SurgicalOperationForm extends IdEntityForm{
 	
 	/** Лечебное учреждение */
 	private Long theLpu;
-	/** Осложнения */
-	private String theComplications;
 	/** Пациент */
 	private Long thePatient;
 	/** Случай медицинского обслуживания */
@@ -485,4 +476,71 @@ public class SurgicalOperationForm extends IdEntityForm{
 	public void setLeftRight(Long aLeftRight) {theLeftRight = aLeftRight;}
 	/** На какой конечности была сделана операция */
 	private Long theLeftRight ;
+
+	/** Идентификатор */
+	@Id
+	@Comment("Идентификатор")
+	public long getId() { return theId ; }
+	public void setId(long aId) { theId = aId ; }
+	/** Идентификатор */
+	private long theId ;
+
+
+	/** Класс раны */
+	@Comment("Класс раны")
+	@Persist
+	public Long getClassWound() {return theClassWound;}
+	public void setClassWound(Long aClassWound) {theClassWound = aClassWound;}
+	/** Класс раны */
+	private Long theClassWound ;
+
+	/** Препарат периоперационной антибиотикопрофилактики */
+	@Comment("Препарат периоперационной антибиотикопрофилактики")
+	@Persist
+	public Long getAntibioticDrug() {return theAntibioticDrug;}
+	public void setAntibioticDrug(Long aAntibioticDrug) {theAntibioticDrug = aAntibioticDrug;}
+	/** Препарат периоперационной антибиотикопрофилактики */
+	private Long theAntibioticDrug ;
+
+	/** Доза (мл) */
+	@Comment("Доза (мл)")
+	@Persist
+	public Double getDose() {return theDose;}
+	public void setDose(Double aDose) {theDose = aDose;}
+	/** Доза (мл) */
+	private Double theDose;
+
+	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
+	@Comment("Способы введения препаратов при периоперационной антибиотикопрофилактике")
+	@Persist
+	public Long getMethodsDrugAdm() {return theMethodsDrugAdm;}
+	public void setMethodsDrugAdm(Long aMethodsDrugAdm) {theMethodsDrugAdm = aMethodsDrugAdm;}
+	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
+	private Long theMethodsDrugAdm ;
+
+	/** Время первой дозы */
+	@Comment("Время первой дозы")
+	@TimeString @DoTimeString
+	@Persist
+	public String getFirstDoseTime() {return theFirstDoseTime;}
+	public void setFirstDoseTime(String aFirstDoseTime) {theFirstDoseTime = aFirstDoseTime;	}
+	/** Время первой дозы */
+	private String theFirstDoseTime;
+
+	/** Время повторной (при необходимости) дозы */
+	@Comment("Время повторной (при необходимости) дозы")
+	@TimeString @DoTimeString
+	@Persist
+	public String getSecondDoseTime() {return theSecondDoseTime;}
+	public void setSecondDoseTime(String aSecondDoseTime) {theSecondDoseTime = aSecondDoseTime;	}
+	/** Время повторной (при необходимости) дозы */
+	private String theSecondDoseTime;
+
+	/** данные для сохранения осложнений*/
+	public String getAllComps() {
+		return theAllComps;
+	}
+	public void setAllComps(String aAllComps) { theAllComps = aAllComps; }
+	/** данные для сохранения осложнений*/
+	private String theAllComps;
 }

@@ -13,12 +13,13 @@ import java.text.ParseException;
  * @author STkacheva
  */
 public interface IPrescriptionService {
-	
+
+	Long createServicePrescription(Long aMedServiceId, Long aPrescriptionId);
 	void checkXmlFiles() throws ParserConfigurationException, SAXException, IOException;
 
 	void setPatientDateNumber(String aPrescriptions, String aDate, String aTime, String aUsername, Long aSpec ) throws ParseException ;
 	Long clonePrescription(Long aPrescriptionId, Long aMedServiceId, Long aWorkFunctionId, String aCreateUsername) ;
-	String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction) ;
+	String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction, Long aGuaranteeId) ;
 	String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) throws JSONException  ;
 	Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups) ;
 
@@ -63,6 +64,10 @@ public interface IPrescriptionService {
 	 */
 	String getDescription(Long aIdTemplateList) ;
 
-//	boolean canShowPrescriptionFulfilments(long aPrescriptionId) ;
-
+	String getRealLabTechUsername(Long aPrescriptId,String aUsername);
+	String getWorkfuntctionInfoByLabTechUsername(String aUsername);
+	void sendEmergencyReferenceMsg(Long aDiaryId,Long aPrescriptId);
+	void sendMessageCurrentDate(String messageText, String messageTitle, String recipient
+			,String username,String messageUrl, Boolean isEmergency);
+	void setPatientIdentityBracelet(String infoStr);
 }

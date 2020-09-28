@@ -53,8 +53,8 @@ public class CustomizeFormModeLinkTag extends SimpleTagSupport {
             }
             if (CAN_TRACE) LOG.info("isInCustomeMode = " + isInCustomeMode);
             JspWriter out = getJspContext().getOut() ;
-            StringBuilder sb = new StringBuilder();
-            sb.append(request.getRequestURI()) ;
+     //       StringBuilder sb = new StringBuilder();
+      //      sb.append(request.getRequestURI()) ;
             out.println("<script type='text/javascript'>") ;
             out.println(" var url= new String(window.location) ;") ;
             if(isInCustomeMode) {

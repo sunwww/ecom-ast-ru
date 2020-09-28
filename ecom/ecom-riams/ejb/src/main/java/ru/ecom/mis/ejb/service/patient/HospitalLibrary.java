@@ -25,20 +25,14 @@ public class HospitalLibrary {
 		if (aFieldDate==null || aFieldDate.equals("")) {
 			Date date = new Date() ;
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd" ) ;
-			aFieldDate = new StringBuilder()
-			.append("cast('").append(format.format(date)) 
-			.append("' as varchar(10)").toString() ;
+			aFieldDate = "cast('" + format.format(date) +"' as varchar(10)";
 		}
 		if (aIsForeign) {
 			sql
 			.append("( ")
-			.append(aPatientAtr).append(".territoryRegistrationNonresident_id is not null ")
-			.append("or ")
-			.append("").append(aSocialStatusAtr).append(".omcCode='И0' ")
-			.append("or ")
-			.append(" coalesce(( ")
-			.append("  select ")
-			.append("      count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmcForeign' then 1 else null end) ")
+			.append(aPatientAtr).append(".territoryRegistrationNonresident_id is not null or ")
+			.append(aSocialStatusAtr).append(".omcCode='И0' ")
+			.append("or  coalesce((   select  count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmcForeign' then 1 else null end) ")
 			.append("  from medpolicy ").append(aMedPolicyAtr).append(" ")
 			.append("  where ").append(aPatientAtr).append(".id=").append(aMedPolicyAtr).append(".patient_id and ").append(aMedPolicyAtr).append(".actualDateFrom <=").append(aFieldDate).append(" ")
 			.append("  and coalesce(")

@@ -18,12 +18,12 @@
             if(shor==null || shor.equals(""))
             {%>
         <msh:form action="/allLn_count_report.do" method="GET" defaultField="hello">
-            <msh:panel guid="panel">
+            <msh:panel>
                 <msh:row>
                     <msh:separator label="Параметры поиска" colSpan="7"/>
                 </msh:row>
                 <msh:row>
-                    <msh:hidden guid="hiddenId" property="department" />
+                    <msh:hidden property="department" />
                     <td>
                         Период
                     </td>

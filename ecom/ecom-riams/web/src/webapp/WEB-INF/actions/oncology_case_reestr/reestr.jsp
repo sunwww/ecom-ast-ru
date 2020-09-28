@@ -18,14 +18,23 @@
         <msh:form action="/journal_onco.do" defaultField="department" disableFormDataConfirm="true" method="GET">
             <msh:panel>
                 <msh:row>
+                    <td class="label" title="Представление (typeView0)" colspan="1"><label for="typeView0Name" id="typeView0Label">Отчёт по:</label></td>
+                    <td id="tdRep1">
+                        <input type="radio" name="tdRep" value="0">  стационару
+                    </td>
+                    <td id="tdRep2">
+                        <input type="radio" name="tdRep" value="0">  поликлинике
+                    </td>
+                </msh:row>
+                <msh:row>
                     <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-                    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+                    <msh:textField property="dateBegin" label="Период с" />
+                    <msh:textField property="dateEnd" label="по" />
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="filterAdd1" label="Номер стат. карты" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
+                    <msh:textField property="filterAdd1" label="Номер стат. карты" />
                 </msh:row>
                 <msh:row>
                     <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
@@ -72,6 +81,7 @@
     var id=0;
     var id2=0;
     document.getElementsByName("isCreated")[2].checked='checked';
+    document.getElementsByName("tdRep")[0].checked='checked';
     var tbl =jQuery('#patientTableBody');
     function getList(ID,next) {
         document.getElementById("patientTable").removeAttribute("hidden");
@@ -83,8 +93,9 @@
         var flag1StepRight=(ID==null && next==1);
         if (typeof next=='undefined') next=1;
         if (ID==null) ID=(next>0)? id2:id;
+        var url=(document.getElementsByName("tdRep")[0].checked)? "api/onco/list": "api/onco/listPolyclinic";
         jQuery.ajax({
-            url:"api/onco/list"
+            url:url
             ,data:{
                 id:ID,
                 next:next,
@@ -99,7 +110,7 @@
                 document.getElementById("patientTable").removeAttribute("hidden");
                 if (!array||array.length==0)  {
                     if (!flag1StepLeft && !flag1StepRight) {
-                        tbl.html("Нет СЛС");
+                        tbl.html("Нет случаев");
                         document.getElementById("directionBtns").setAttribute("hidden",true);
                     }
                     else {
@@ -111,7 +122,8 @@
                     for (var i=0;i<array.length;i++) {
                         var el = array[i];
                         if (i==0) id=el.id;
-                        tbl.append("<tr onclick=\"goToPageNewWindow('entityView-stac_ssl.do','"+el.id+"');\"><td align='center'><b>"+el.done+"</b></td><td align='center'>"+el.patinfo+"</td><td align='center'>"+el.depname+"</td><td align='center'>"+el.sccode+"</td><td align='center'>"+el.period+"</td><td align='center'>"+el.worker+"</td><td align='center'>"+el.d+"</td></tr>");
+                        var way=(document.getElementsByName("tdRep")[0].checked)? 'entityView-stac_ssl.do': 'entityParentView-smo_spo.do';
+                        tbl.append("<tr onclick=\"goToPageNewWindow('"+way+"','"+el.id+"');\"><td align='center'><b>"+el.done+"</b></td><td align='center'>"+el.patinfo+"</td><td align='center'>"+el.depname+"</td><td align='center'>"+el.sccode+"</td><td align='center'>"+el.period+"</td><td align='center'>"+el.worker+"</td><td align='center'>"+el.d+"</td></tr>");
                         if (i==array.length-1) id2=el.id;
                     }
                     document.getElementById("directionBtns").removeAttribute("hidden");
@@ -133,4 +145,17 @@
     document.getElementById("td1").onclick=function() { clear();this.childNodes[1].checked='checked';};
     document.getElementById("td2").onclick=function() { clear();this.childNodes[1].checked='checked';};
     document.getElementById("td3").onclick=function() { clear();this.childNodes[1].checked='checked';};
+    document.getElementById("tdRep1").onclick=function() {
+        clear();this.childNodes[1].checked='checked';
+        $('departmentName').disabled=false;
+        $('filterAdd1').disabled=false;
+    };
+    document.getElementById("tdRep2").onclick=function() {
+        clear();this.childNodes[1].checked='checked';
+        $('departmentName').disabled=true;
+        $('department').value='';
+        $('departmentName').value='';
+        $('filterAdd1').disabled=true;
+        $('filterAdd1').value='';
+    };
 </script>

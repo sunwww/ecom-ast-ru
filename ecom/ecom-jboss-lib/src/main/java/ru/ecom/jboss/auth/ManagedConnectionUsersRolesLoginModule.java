@@ -29,7 +29,7 @@ public class ManagedConnectionUsersRolesLoginModule extends UsersRolesLoginModul
 		if(ret) {
 			Set<PasswordCredential> creds = subject.getPrivateCredentials(PasswordCredential.class) ;
 			
-			if(creds==null || creds.isEmpty()) {
+			if(creds.isEmpty()) {
 				String username = getUsername() ;
 				String password = getUsernameAndPassword()[1] ; // very bad ;)
 				                                           
@@ -37,12 +37,8 @@ public class ManagedConnectionUsersRolesLoginModule extends UsersRolesLoginModul
 				cred.setManagedConnectionFactory(new EmptyManagedConnectionFactory());
 				subject.getPrivateCredentials().add(cred) ;
 			} else {
-				if (CAN_DEBUG)
-					LOG.debug("login: creds = " + creds); 
 				throw new IllegalStateException("Кажись их не должно быть") ;
-
 			}
-			
 		}
 		return ret ;
 	}

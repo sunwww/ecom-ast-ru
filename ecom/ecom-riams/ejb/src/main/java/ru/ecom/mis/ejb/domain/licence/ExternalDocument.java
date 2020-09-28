@@ -1,13 +1,5 @@
 package ru.ecom.mis.ejb.domain.licence;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
@@ -17,9 +9,14 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import java.sql.Date;
+import java.sql.Time;
+
 @Entity
 @Comment("Внешние документы")
-@Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "patient" },table="Document") })
 public class ExternalDocument extends Document {
 

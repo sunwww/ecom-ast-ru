@@ -22,6 +22,6 @@ public class ExecuteQuickQueryAction extends BaseAction {
 		IQuickQueryService service = Injection.find(aRequest).getService(
 				IQuickQueryService.class);
 		aRequest.setAttribute("response", service.executeQuery(key)) ;
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 }

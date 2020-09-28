@@ -51,7 +51,7 @@
             String dateFrom = request.getParameter("dateFrom") ;
             String dateTo = request.getParameter("dateTo") ;
 
-            if (dateFrom!=null) {
+            if (dateFrom!=null && dateTo!=null) {
                 String sqlAdd = "(select ca1.id"+
                         " from contractaccount CA1"+
                         " left join ContractAccountOperation CAO1 on CAO1.account_id=CA1.id"+
@@ -66,11 +66,8 @@
 
                 request.setAttribute("stacSqlAdd"," and ca.id in "+sqlAdd);
 
-                if (dateFrom!=null && !dateTo.equals("")) {
+                if (!dateTo.equals("")) {
 
-                    if (dateTo==null || dateTo.equals("")) {
-                        dateTo=dateFrom ;
-                    }
                     if (typeGroup.equals("1")) { //Разбивка по регионам
                         request.setAttribute("stacSelectSql", "ar.name as adrName") ;
                         request.setAttribute("polSelectSql", "ar.addressid,ar.name as adrName") ;
@@ -107,7 +104,7 @@
                     ActionUtil.setParameterFilterSql("positionType","pp.positionType_id", request) ;
                     ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
         %>
-        <% if (typeGroup!=null&& (typeGroup.equals("1")||typeGroup.equals("2"))) { %>
+        <% if (typeGroup.equals("1") || typeGroup.equals("2")) { %>
 
         <ecom:setAttribute name="id_group" value="${groupSqlId1}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}"/>
         <ecom:setAttribute name="queryGroup_sql" value="

@@ -1,22 +1,18 @@
 package ru.ecom.web.poly.actions.table.info;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
 
 public class ListTableTimeAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -101,7 +97,7 @@ public class ListTableTimeAction extends BaseAction {
 				res.append("<td><b>").append(wqrS.get3()).append("</b><br/>")
 				.append(wqrS.get4()).append("<br/>") 
 				.append(wqrS.get6()).append("</td>") ;
-				res.append("<td>").append(wqrS.get5()).append("</td>") ;;
+				res.append("<td>").append(wqrS.get5()).append("</td>") ;
 				res.append("<td>").append(replaceInTable(wqrS.get8())).append("</td>") ;
 				res.append("<td>").append(replaceInTable(wqrS.get9())).append("</td>") ;
 				res.append("<td>").append(replaceInTable(wqrS.get10())).append("</td>") ;
@@ -135,7 +131,7 @@ public class ListTableTimeAction extends BaseAction {
     	ret.append("<table>") ;
     	ret.append("<tr><td>") ;
     	for (String tm:times) {
-    		if (tm.indexOf("занято")!=-1) {
+    		if (tm.contains("занято")) {
     			ret.append("<span class='busyTd'>").append(tm.replace(" занято", "")).append("</span>") ;
     		} else {
     			ret.append(tm) ;

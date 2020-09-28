@@ -36,7 +36,7 @@ public class PatientListRecordForm extends IdEntityForm {
 	
 	/** Сообщение */
 	@Comment("Сообщение")
-	@Persist @Required
+	@Persist
 	public String getMessage() {return theMessage;}
 	public void setMessage(String aMessage) {theMessage = aMessage;}
 	/** Сообщение */

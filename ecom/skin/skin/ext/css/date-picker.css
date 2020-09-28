@@ -105,7 +105,6 @@ table.x-date-inner {
 	text-decoration:none;
     color:black;
     text-align:right;
-    zoom:1;
 }
 .x-date-inner .x-date-active{
 	cursor:pointer;

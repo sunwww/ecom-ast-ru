@@ -13,13 +13,13 @@
       <msh:hidden property="saveType" />
       <msh:panel>
       	<msh:row>
-      	  <msh:textField property="name" label="Наименование" fieldColSpan="3"  horizontalFill="true"/>
+      	  <msh:textField property="name" label="Наименование" fieldColSpan="3"  horizontalFill="true" size="100"/>
       	</msh:row>
         <msh:row>
-          <msh:textField property="fileName" label='Имя файла' fieldColSpan="3"  horizontalFill="true"/>
+          <msh:textField property="fileName" label='Имя файла' fieldColSpan="3"  horizontalFill="true" size="100"/>
         </msh:row>
         <msh:row>
-          <msh:autoComplete property="groupType" vocName="userDocumentGroup" label="Группа" size="20" />
+          <msh:autoComplete property="groupType" vocName="userDocumentGroup" label="Группа" size="100" />
         </msh:row>
         
         <msh:submitCancelButtonsRow colSpan="2"/>
@@ -31,7 +31,7 @@
       <msh:ifFormTypeIsView formName="mis_userDocumentForm">
         <msh:sideLink key="ALT+2" roles="/Policy/Mis/UserDocument/Edit" params="id" action="/entityEdit-mis_userDocument" name="Изменить" />
       </msh:ifFormTypeIsView>
-      <msh:ifFormTypeAreViewOrEdit formName="mis_userDocumentForm" guid="de889210-1aba-4447-96ab-a729de7a2c8a">
+      <msh:ifFormTypeAreViewOrEdit formName="mis_userDocumentForm">
         <msh:sideLink key="ALT+DEL" params="id" roles="/Policy/Mis/UserDocument/Delete" action="/entityDeleteGoList-mis_userDocument" name="Удалить" confirm="Удалить?" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>

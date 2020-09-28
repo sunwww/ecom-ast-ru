@@ -101,7 +101,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
             //WebMapClassLoaderHelper loader = new WebMapClassLoaderHelper() ;
             //loader.setMapClassLoader(request);
             MapClassLoader loader = new MapClassLoader(Thread.currentThread().getContextClassLoader()) ; 
-            JavaScriptContext js = JavaScriptContext.getContext((PageContext) getJspContext(), this);
+            JavaScriptContext js = JavaScriptContext.getContext(getJspContext(), this);
             
             String username = LoginInfo.find(request.getSession(true)).getUsername() ;
             print(service, sb, sbTitle, type, id, true, createState, false, loader, request, js,username,wservice) ;
@@ -251,7 +251,6 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         	sb.append(" ondblclick='javascript:goToPage(") ;
         	sb.append("\"").append(aListShortAction).append("\",\"").append(aId).append("\"") ;
         	sb.append(")'><img src='/skin/images/main/view1.png' alt='Просмотр записи' title='Просмотр записи' height='16' width='16'/></a>");
-        } else {
         }
         //sb.append("<a href='") ;
         //sb.append(aListAction) ;
@@ -275,7 +274,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
     	if (aListStyle!=null && aListStyle.length>0) {
     		StringBuilder st = new StringBuilder() ;
     		for (String s: aListStyle) {
-    			Collection<WebQueryResult> list = aWebService.executeNativeSql(s.replaceAll(":id", ""+aId)) ;
+    			Collection<WebQueryResult> list = aWebService.executeNativeSql(s.replace(":id", ""+aId)) ;
     			if (!list.isEmpty()) {
     				Object obj=list.iterator().next().get1() ;
     				if (obj!=null)st.append(obj).append(";") ;
@@ -308,7 +307,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
             aSb.append("'") ;
             if(aSecond) {
                 aSb.append(" id='ALT_1'") ;
-                JavaScriptContext js = JavaScriptContext.getContext((PageContext) getJspContext(), this);
+                JavaScriptContext js = JavaScriptContext.getContext(getJspContext(), this);
                 js.println("accesskeyutil.registerKey($('ALT_1'), accesskeyutil.ALT_1) ;");
             }
             aSb.append(">");

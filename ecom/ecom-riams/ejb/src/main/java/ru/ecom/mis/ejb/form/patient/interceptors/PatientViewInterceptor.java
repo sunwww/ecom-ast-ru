@@ -19,21 +19,19 @@ public class PatientViewInterceptor implements IFormInterceptor {
 		Patient pat = (Patient) aEntity;
 		PatientForm form = (PatientForm) aForm ;
 		EntityManager manager = aContext.getEntityManager();
-		/*if(pat!=null ){
-			if (pat.getAttachedOmcPolicy()!=null) {
-				form.setAttachedByPolicy(true);
-			}
-		}*/
+
 		if (form.getBirthday()!=null && !form.getBirthday().equals("")) {
-			String age = AgeUtil.getAgeCache(new java.util.Date(),pat.getBirthday(), 2) ;
+			java.util.Date dateTo = form.getDeathDate()!=null && !form.getDeathDate().equals("")?
+					pat.getDeathDate() : new java.util.Date();
+			String age = AgeUtil.getAgeCache( dateTo,pat.getBirthday(), 2) ;
 			form.setAge(age) ;
 		}
-		List<Object[]> pesas = manager.createNativeQuery("select id, phonenumber from PatientExternalServiceAccount where patient_id = "+pat.getId()+" and dateto is null and phonenumber is not null and phonenumber!=''").getResultList();
+/*		List<Object[]> pesas = manager.createNativeQuery("select id, phonenumber from PatientExternalServiceAccount where patient_id = "+pat.getId()+" and dateto is null and phonenumber is not null and phonenumber!=''").getResultList();
 		if (!pesas.isEmpty()) {
 			form.setMobileAppPhoneNumber(pesas.get(0)[1].toString());
 
 		}
-		
+*/
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/Patient/ViewInfoArea")) {
 			List<Object[]> l = manager.createNativeQuery("select pat.id from patient pat  left join LpuAreaAddressText laat on laat.address_addressid=pat.address_addressid left join lpuarea la on la.id=laat.area_id left join LpuAreaAddressPoint laap on laap.lpuAreaAddressText_id=laat.id where pat.id="+form.getId()+" and la.isViewInfoPatient='1' and (laap.id is null or laap.houseNumber='' or laap.houseNumber is null or (laap.houseNumber=pat.houseNumber and (laap.houseBuilding is null or laap.HouseBuilding='' or laap.houseBuilding=pat.houseBuilding) ) )").getResultList() ;
 			if (!l.isEmpty()) {

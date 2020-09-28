@@ -20,12 +20,12 @@
 	String typePatient =ActionUtil.updateParameter("Form039Action","typePatient","4", request) ;
 	String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
   %>
-    <msh:form action="/smo_journal_nonredidentPatient.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/smo_journal_nonredidentPatient.do" defaultField="department" disableFormDataConfirm="true" method="GET">
     <msh:panel>
       <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7"/>
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  региональные
@@ -53,8 +53,8 @@
 	        </td>
         </msh:row>
      <msh:row>
-        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        <msh:textField property="dateBegin" label="Период с" />
+        <msh:textField property="dateEnd" label="по" />
            <td>
             <input type="submit" value="Найти" />
           </td>
@@ -102,7 +102,7 @@
     where t.dateStart  between to_date('${param.dateBegin}','dd.mm.yyyy')
       and to_date('${dateEnd}','dd.mm.yyyy')
      and ${dtypeSql} ${add} 
-    group by t.dateStart" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    group by t.dateStart" />
         <msh:table name="journal_ticket" action="smo_journal_nonredidentPatient.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата" property="2"/>
@@ -158,16 +158,16 @@
     
  	    <msh:table viewUrl="entityParentView-smo_ticket.do?short=Short" editUrl="entityParentEdit-smo_ticket.do" 
 	    deleteUrl="entityParentDeleteGoParentView-smo_ticket.do" 
-	    name="journal_priem" action="entityParentView-smo_ticket.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-	      <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="№мед.карты" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="ФИО пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />      
-	      <msh:tableColumn columnName="№талона" property="5" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Дата приема" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Специалист" property="7" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Диагноз" property="8" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-	      <msh:tableColumn columnName="Цель посещения" property="9" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+	    name="journal_priem" action="entityParentView-smo_ticket.do" idField="1">
+	      <msh:tableColumn columnName="#" property="sn" />
+	      <msh:tableColumn columnName="№мед.карты" property="2" />
+	      <msh:tableColumn columnName="ФИО пациента" property="3" />
+	      <msh:tableColumn columnName="Год рождения" property="4" />
+	      <msh:tableColumn columnName="№талона" property="5" />
+	      <msh:tableColumn columnName="Дата приема" property="6" />
+	      <msh:tableColumn columnName="Специалист" property="7" />
+	      <msh:tableColumn columnName="Диагноз" property="8" />
+	      <msh:tableColumn columnName="Цель посещения" property="9" />
 	      <msh:tableColumn columnName="Беседа с родст." property="10" cssClass="cssPsychiatry" />
 	    </msh:table>
      	<%

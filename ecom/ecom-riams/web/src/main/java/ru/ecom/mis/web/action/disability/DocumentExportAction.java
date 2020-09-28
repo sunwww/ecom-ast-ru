@@ -1,15 +1,14 @@
 package ru.ecom.mis.web.action.disability;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.web.util.ActionUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class DocumentExportAction extends BaseAction {
 
@@ -34,32 +33,32 @@ public class DocumentExportAction extends BaseAction {
         	aRequest.setAttribute("valid", "0") ;
         }
         
-        String dGroup = "" ;
-        if (typeDate!=null && typeDate.equals("1")) {
+        String dGroup;
+        if ("1".equals(typeDate)) {
         	dGroup="(select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)" ;
         	aRequest.setAttribute("dateGroup",dGroup) ;
         	aRequest.setAttribute("dateSearch","max") ;
         	aRequest.setAttribute("infoSearch"," Поиск по дате закрытия") ;
-        } else if (typeDate!=null&&typeDate.equals("2")) {
+        } else if ("2".equals(typeDate)) {
         	dGroup = "dd.issuedate" ;
         	aRequest.setAttribute("dateGroup",dGroup) ;
         	aRequest.setAttribute("dateSearch","min") ;
         	aRequest.setAttribute("infoSearch"," Поиск по дате выдачи") ;
         } 
-		if (orderBy!=null && orderBy.equals("1")) {
+		if ("1".equals(orderBy)) {
 			aRequest.setAttribute("orderByInfo", "по номерам больничных");
 			aRequest.setAttribute("orderBystatus", " dd.number ") ;        	
-		} else if (orderBy!=null && orderBy.equals("2")) {
+		} else if ("2".equals(orderBy)) {
 			aRequest.setAttribute("orderByInfo", "по дате выдачи");
 			aRequest.setAttribute("orderBystatus", " dd.issueDate, dd.number ") ;
 		} else {
 			aRequest.setAttribute("orderByInfo", "по ФИО");
 			aRequest.setAttribute("orderBystatus", "p.lastname,p.firstname,p.middlename,dd.number") ;        	
 		}
-        if (typeDocument!=null && typeDocument.equals("1")) {
+        if ("1".equals(typeDocument)) {
         	aRequest.setAttribute("typeDocumentInfo", "всем экспортированным");
         	aRequest.setAttribute("status", "(dd.exportdate is not null) and ") ;        	
-        } else if (typeDocument!=null && typeDocument.equals("2")) {
+        } else if ("2".equals(typeDocument)) {
         	aRequest.setAttribute("typeDocumentInfo", "успешно экспортированным");
         	aRequest.setAttribute("status", "(dd.exportdate is not null and dd.exportdefect='') and ") ;
         } else {
@@ -67,6 +66,6 @@ public class DocumentExportAction extends BaseAction {
         	aRequest.setAttribute("status", "(dd.exportdate is not null and (dd.exportdefect is not null and dd.exportdefect!='')) and ") ;        	
         }
         
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 }

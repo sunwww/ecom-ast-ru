@@ -10,52 +10,48 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <!-- 
-    	  - Проба
-    	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-mis_assessmentCard.do" defaultField="template">
-      <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden guid="hiddenParent" property="patient" />
-      <msh:hidden guid="hidden" property="params" />
-      <msh:hidden guid="hidden" property="medcase" />
-      <msh:panel guid="panel">
+    <msh:form action="/entityParentSaveGoView-mis_assessmentCard.do" defaultField="template">
+      <msh:hidden property="id" />
+      <msh:hidden property="saveType" />
+      <msh:hidden property="patient" />
+      <msh:hidden property="params" />
+      <msh:hidden property="medcase" />
+      <msh:panel>
       
-        <msh:row guid="row1">
-          <msh:textField property="startDate" label="Дата приема" size="10" guid="a5-4caf-4e14-aa70-287c" />
+        <msh:row>
+          <msh:textField property="startDate" label="Дата приема" size="10" />
         </msh:row>
       
       
         <msh:row >
-          <msh:autoComplete vocName="vocAssessmentCard" property="template" label="Тип карты" guid="a5-4caf-4e14-aa70-287c" size='50' horizontalFill="true" fieldColSpan="3" />
+          <msh:autoComplete vocName="vocAssessmentCard" property="template" label="Тип карты" size='50' horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         
       
-        <msh:row guid="f53-2cae-4795-93e8-9cd1">
-          <msh:textField property="ballSum" label="Сумма баллов" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
+        <msh:row>
+          <msh:textField property="ballSum" label="Сумма баллов" size="20" fieldColSpan="3"  />
         </msh:row>
-                <msh:row guid="f53-2cae-4795-93e8-9cd1">
-          <msh:textArea property="comment" label="Описание" fieldColSpan="3" size='50' guid="e4d1b-8802-467d-b205-70" />
+                <msh:row>
+          <msh:textArea property="comment" label="Описание" fieldColSpan="3" size='50' />
         </msh:row>
         <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
         <msh:row>
-        <msh:textField property="createUsername" label="Пользователь" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
-        <msh:textField property="createDate" label="Дата создания" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
+        <msh:textField property="createUsername" label="Пользователь" size="20" fieldColSpan="3"  />
+        <msh:textField property="createDate" label="Дата создания" size="20" fieldColSpan="3"  />
         </msh:row>
         <msh:row>
-        <msh:autoComplete property="workFunction" label="Создал" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
+        <msh:autoComplete property="workFunction" label="Создал" size="100" vocName="workFunction" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
         </msh:row>
         </msh:ifFormTypeIsView>
       
-        <msh:row guid="855de982-5baf-46f1-9f8b-f48" />
+        <msh:row />
           
-        <msh:submitCancelButtonsRow functionSubmit="saveIntakeInfo();" guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow functionSubmit="saveIntakeInfo();" colSpan="4" />
       </msh:panel>
       <div id='dataFieldTitle'> </div>
         <div id='dataField'> </div>
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
       <%
-          //lastrelease milamesher 09.04.2018 #97
           String typeCard=request.getParameter("typeCard");
           request.setAttribute("typeCard", typeCard);
           String slo=request.getParameter("slo");
@@ -69,9 +65,9 @@
                     window.onload=function load(){
                         HospitalMedCaseService.getVocAssesmentCardById('${typeCard}',{
                             callback: function(res) {
-                                if (res!='##') {
-                                    ${"template"}.value='${typeCard}';
-                                    ${"templateName"}.value=res;
+                                if (res!='') {
+                                    $('template').value='${typeCard}';
+                                    $('templateName').value=res;
                                     fillDataDiv();
                                 }
                             }});
@@ -80,11 +76,14 @@
         </msh:ifFormTypeIsCreate>
         <%
           }
+          %>
+
+        <%
+
       String id = request.getParameter("id");
       if (id!=null&&!id.equals("")) {
     	  
        %>
-
        <ecom:webQuery name="groupList" nativeSql="select distinct pg.id
 	,pg.name as f2_groupName
 	from assessmentCard ac 
@@ -112,7 +111,9 @@
 					" left join forminputprotocol fip on fip.assessmentCard=ac.id"+
 					" left join parameter p on p.id=fip.parameter_id"+
 					" left join uservalue uv on uv.id=valuevoc_id"+
-					" where ac.id='"+request.getParameter("id")+"' and p.group_id="+r.get1();
+					" where ac.id='"+id+"' and p.group_id="+r.get1();
+
+
 					List rows = (List)service.executeNativeSql(sql);
 					if (!rows.isEmpty()) {
 						for (int j=0;j<rows.size();j++) {
@@ -122,21 +123,13 @@
 							out.print("<td>"+(tds.get4()!=null?tds.get4():"")+"</td>");
 							out.print("<td>"+(tds.get5()!=null?tds.get5():"")+"</td>");
 							out.print("</tr>");
-							
 						}
 					}
 					out.print("</tr>");
-					
-			
 		}
 		out.print("</table>");
-	}
-	%>
-	
-
-				 <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
-				</msh:ifFormTypeIsView>
-				<%} %>
+		}
+	} %>
     </msh:form>
       <form action="print-assessment_card.do" method="post" target="_blank">
                 <input type="hidden" name="SSsqlText" id="SSsqlText" value="select p.id as pid
@@ -166,18 +159,18 @@
     </form>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="Lpu" beginForm="mis_assessmentCardForm" />
+    <ecom:titleTrail mainMenu="Lpu" beginForm="mis_assessmentCardForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
   <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
-    <msh:sideMenu guid="sideMenu-123">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/AssessmentCard/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/AssessmentCard/View" />
-      <msh:sideLink guid="sideLinkEdit" action="/javascript:goBackSloOrVisit()" name="СЛО/Визит/Пациент" roles="/Policy/Mis/AssessmentCard/View" />
+    <msh:sideMenu>
+      <msh:sideLink key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/AssessmentCard/Edit" />
+      <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
+      <msh:sideLink key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/AssessmentCard/View" />
+      <msh:sideLink action="/javascript:goBackSloOrVisit()" name="СЛС/СЛО/Визит/Пациент" roles="/Policy/Mis/AssessmentCard/View" />
     </msh:sideMenu>
     
-    <msh:sideMenu title="Перейти" guid="sideMenu-123">
+    <msh:sideMenu title="Перейти">
       
     </msh:sideMenu>
     </msh:ifFormTypeIsView>
@@ -190,10 +183,13 @@
 		//window.document.location="print-ass_card1.do?s=PrintService&m=printAssessmentCard&id=${param.id}&groupFields="+groupFields+"&sqlText"+sql;
   }
   function goBackSloOrVisit() {
-      if ($('medcase').value!=null && $('medcase').value!='' && $('medcase').value!='0') {
+      if ($('medcase').value!=null && $('medcase').value!='' && $('medcase').value!='0'
+          && $('patient').value!=null  && $('patient').value!='' && $('patient').value!='0') {
           HospitalMedCaseService.getMedcaseDtype($('medcase').value,{
               callback: function(res) {
-                  if (res=='1')
+                  if (res=='0')
+                      window.location.href="entityParentView-stac_ssl.do?id="+$('medcase').value;
+                  else if (res=='1')
                       window.location.href="entityParentView-stac_slo.do?id="+$('medcase').value;
                   else if (res=='2')
                       window.location.href="entityParentView-smo_visit.do?id="+$('medcase').value;
@@ -208,9 +204,11 @@
   </msh:ifFormTypeIsView>
   <msh:ifFormTypeIsNotView formName="mis_assessmentCardForm">
   <script type="text/javascript" src="./dwr/interface/TemplateProtocolService.js"></script>
-  
-  <script type = 'text/javascript'> 
-  
+  <script type = 'text/javascript'>
+
+      if ('${typeCard}'!=null && '${typeCard}'!='' && !$('templateName').disabled)  //чтобы не меняли, если передан параметр
+          $('templateName').disabled=$('template').disabled=true;
+
   templateAutocomplete.addOnChangeCallback(function() {fillDataDiv();$('ballSum').value='';});
   //eventutil.addEventListener($('template'),'change',function(){fillDataDiv();}) ;
  //var oldaction = document.forms['mis_assessmentCardForm'].action ;
@@ -218,6 +216,13 @@
   var lastGroupId=0;
   fillDataDiv ();
   var listIds = new Array();
+  var listDefaultVals = new Array();
+  var PATIENTSEX =0;
+  TemplateProtocolService.getPatientSex($('patient').value, {
+      callback: function (sexId) {
+          PATIENTSEX = +sexId;
+      }
+  })
   function fillDataDiv () {
 	    	    	 	 if (!$('template').value>0) {return;}
 	  TemplateProtocolService.getParameterByObject($('id').value, $('template').value, 'AssessmentCard', {
@@ -226,9 +231,10 @@
 	    						var arr = aResults.split("#");
 	    						var aResult = arr[0];
 	    						var editable = arr[1];
-	    						listIds = new Array();	    					
+	    						listIds = new Array();
+                                listDefaultVals = new Array();
 	    					      //  $('BioList').value=aSmoId;
-	    					      if ($('params')&&$('params').value!='') {
+	    					      if ($('params') && $('params').value!='') {
 	    					    	fldJson = JSON.parse($('params').value);  
 	    					      }  else {
 	    					      fldJson = JSON.parse(aResult) ;
@@ -254,27 +260,31 @@
 	    			            	
 	    					        for (var ind=0;ind<fldJson.params.length;ind++) {
 	    					        	var param1 = fldJson.params[ind] ;
-	    					        	
-	    					        	if (ind<cnt-1) {
-	    					        		var param2 = fldJson.params[ind+1] ;
-	    					        		eventutil.addEnterSupport("param"+param1.idEnter,"param"+param2.idEnter) ;
-	    					        	} else {
-	    					        		eventutil.addEnterSupport("param"+param1.idEnter,"paramOK") ;
-	    					        		
-	    					        	}
-	    					        	if (+param1.type==2) {
-	    					        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.build() ;")
-	    					        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
-	    					        		eval("param"+param1.id+"Autocomlete.addOnChangeCallback(function(){getBall("+param1.id+") });");
-	    					        		listIds.push ("param"+param1.id);
-	    					        	}
+                                        if (!param1.sex || param1.sex==PATIENTSEX) {
+                                            if (ind<cnt-1) {
+                                                var param2 = fldJson.params[ind+1] ;
+                                                eventutil.addEnterSupport("param"+param1.idEnter,"param"+param2.idEnter) ;
+                                            } else {
+                                                eventutil.addEnterSupport("param"+param1.idEnter,"paramOK") ;
+
+                                            }
+                                            if (+param1.type==2) {
+                                                eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
+                                                eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;")
+                                                eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;")
+                                                eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;")
+                                                eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;")
+                                                eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;")
+                                                eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;")
+                                                eval("param"+param1.id+"Autocomlete.build() ;")
+                                                eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
+                                                eval("param"+param1.id+"Autocomlete.addOnChangeCallback(function(){getBall("+param1.id+") });");
+                                                if (param1.usebydefault!=null && typeof(param1.usebydefault)!=='undefined' && param1.usebydefault!='')
+                                                    listDefaultVals.push(param1.id+"#"+param1.usebydefault+"#"+param1.usedefval);
+                                                listIds.push ("param"+param1.id);
+                                            }
+                                        }
+
 	    					        } 
 	    			             } else {
 	    			            	var txt ="<form name='frmTemplate' id='frmTemplate'>" ;
@@ -283,20 +293,14 @@
 	    			 				$('dataField').innerHTML =txt 
 	    					       	+ "<input type=\"button\" value=\"ОК\" onclick=\"cancelBioIntakeInfo()\">";
 	    					     }
-	    			             
-	    			    /*         if (+fldJson.isdoctoredit>0) {
-
-	    		            		 $("param"+fldJson.params[0].idEnter).select() ;
-	    				        	 $("param"+fldJson.params[0].idEnter).focus() ;
-	    		           	 } else {
-	    		            		 $("param"+p+"Name").select() ;
-	    				        		$("param"+p+"Name").focus() ;
-	    				        		$('param'+p+'Name').className="autocomplete horizontalFill required" ;
-	    				        		eventutil.addEnterSupport("param"+p+"Name","param"+fldJson.params[0].idEnter) ;
-	    				        		
-	    		            	 } */ 
-	    					}
-	    				}) ;
+	    					     //Milamesher #149 - значения по умолчанию
+                                for(var ind=0;ind<listDefaultVals.length;ind++) {
+                                    var pp = listDefaultVals[ind].split('#');
+                                    document.getElementById('param'+pp[0]).value=pp[1];document.getElementById('param'+pp[0]+'Name').value=pp[2];
+                                    getBall(pp[0]);
+                                }
+                            }}
+	    				) ;
 	    			
 	     }
   function createSumRow( aGroupId) {
@@ -314,114 +318,109 @@
 			txt+="<tr ><td width='40px'></td><td colspan = '2' style='font-size:20px;' align='center' >"+aParam.groupName+"</td><td><label style='font-size:20px;' align='center' id='Group"+aParam.groupId+"Sums'></label></td></tr>";
 			lastGroupId =aParam.groupId; 
 		}
-		 txt += "<tr>" ;
-		var type=+aParam.type;
-		 txt+="<td class='label' width='40px'><label id='Param"+aParam.id+"Ball'></label></td>";
-		txt += "<td>" ;
-	      if (type==2) {
-		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"hidden\" value=\""+aParam.value+"\" title=\"\" autocomplete=\"\">";
-	      	txt += "<div>";
-		        txt += "<input id=\"param"+aParam.idEnter+"\" name=\"param"+aParam.idEnter+"\" type=\"text\" value=\""+aParam.valueVoc+"\" title=\""+aParam.vocname+"\" class=\"autocomplete horizontalFill\" autocomplete=\"on\">";
-	      	txt += "<div id=\"param"+aParam.id+"Div\">";
-	      	txt += "<span></span>";
-		        //txt += ;
-		        txt += "</div>";
-		        txt += "</div>";
-	      } else {
-		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
-		        
-	      }
-	      // Кол-во баллов 
-	     
-	      txt += "</td>" ;
-		
-      txt += "<td align='left' ><label id=\"param"+aParam.id+"Label\" for=\"param"+aParam.idEnter+"\" title='"+aParam.name ;
-      if (type==1) {
-      	txt += '(число)' ;
-      } else if (type==3) {
-      	txt += '(текст)' ;
-      } else if (type==4) {
-      	txt += '(число зн. '+aParam.cntdecimal+')' ;
-      } else if (type==5) {
-      	txt += '(текст с огр. '+aParam.cntdecimal+')' ;
-      	
-      } 
-      txt += "'>" ;
-      txt += aParam.shortname ;
-      txt += "</label></td>" ;
-      
-      txt += "<td>" ;
-      if (+aParam.type==4) {txt += " ("+aParam.cntdecimal+") ";}
-      txt += aParam.unitname ;
-      txt += "</td>" ;
-      txt += "</tr>" ;
-      if (aParam.groupId!=lastGroupId) {
-			//Отспут перед след. группой
-		//	txt+="<tr style='height: 14px'><td colspan='2'><label id='Group"+aParam.groupId+"Label'></label></td><td><label id='Group"+aParam.groupId+"Sum'></label></td></tr>";
-			
-		//	lastGroupId =aParam.groupId; 
-		}
+		if (!aParam.sex || aParam.sex==PATIENTSEX) {
+            txt += "<tr>" ;
+            var type=+aParam.type;
+            txt+="<td class='label' width='40px'><label id='Param"+aParam.id+"Ball'></label></td>";
+            txt += "<td>" ;
+            if (type==2) {
+                txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"hidden\" value=\""+aParam.value+"\" title=\"\" autocomplete=\"\">";
+                txt += "<div>";
+                txt += "<input id=\"param"+aParam.idEnter+"\" name=\"param"+aParam.idEnter+"\" type=\"text\" value=\""+aParam.valueVoc+"\" title=\""+aParam.vocname+"\" class=\"autocomplete horizontalFill\" autocomplete=\"on\">";
+                txt += "<div id=\"param"+aParam.id+"Div\">";
+                txt += "<span></span>";
+                //txt += ;
+                txt += "</div>";
+                txt += "</div>";
+            } else {
+                txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+
+            }
+            // Кол-во баллов
+
+            txt += "</td>" ;
+
+            txt += "<td align='left' ><label id=\"param"+aParam.id+"Label\" for=\"param"+aParam.idEnter+"\" title='"+aParam.name ;
+            if (type==1) {
+                txt += '(число)' ;
+            } else if (type==3) {
+                txt += '(текст)' ;
+            } else if (type==4) {
+                txt += '(число зн. '+aParam.cntdecimal+')' ;
+            } else if (type==5) {
+                txt += '(текст с огр. '+aParam.cntdecimal+')' ;
+
+            }
+            txt += "'>" ;
+            txt += aParam.shortname ;
+            txt += "</label></td>" ;
+
+            txt += "<td>" ;
+            if (+aParam.type==4) {txt += " ("+aParam.cntdecimal+") ";}
+            txt += aParam.unitname ;
+            txt += "</td>" ;
+            txt += "</tr>" ;
+        }
+
 		return txt ;
 	}
   function saveIntakeInfo() {
   	var regexp = /^[\d+.]+$/;
 		var isError = false ;
 		for (var ind=0;ind<fldJson.params.length;ind++) {
-			
-			var val = $('param'+fldJson.params[ind].id).value ;
-			var par = fldJson.params[ind] ; 
-			var err ="";
-			errorutil.HideError($('param'+par.idEnter)) ;
-			/*if (val=="") {
-				errorutil.ShowFieldError($('param'+par.idEnter),"Пустое значение") ;
-				isError= true ;
-			} */
-			
-			if (+par.type==2) {
-				if (+val<1) {val='0' ;} else {
-					par.valueVoc = $('param'+fldJson.params[ind].id+'Name').value ;
-				}
-			}
-			 if (par.type=='4') {
-				val = val.replace(",",".") ;
-				val = val.replace("-",".") ;
-				var v = val.split(".") ;
-				var cntdecimal = +par.cntdecimal
-				
-				
-				if (val!="") {
-					if (!regexp.test(val)){
-						err+="Допускается ввод только чисел! " ;						
-						isError=true;
-					}
-					if (v.length==2 && v[1].length!=cntdecimal) {
-						errorutil.ShowFieldError($('param'+par.idEnter),err+"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
-						isError= true ;
-					}
-					
-	  					if (cntdecimal>0 ) {
-	  						if (v.length==1) {
-	  							errorutil.ShowFieldError($('param'+par.idEnter),err+"Должна быть 1 точка или запятая") ;
-	  							isError= true ;
-	  						} else if (v.length>1 && !isNaN(v[2])) {
-	 							errorutil.ShowFieldError($('param'+par.idEnter),err+"Должна быть 1 точка или запятая") ;
-	 							isError= true ;
-							}
-	  					} else {
-	  						
-	  					}
-					}
-			} 
-			 if (par.type==1) {
-				if (val!='' &&!regexp.test(val)){
-					errorutil.ShowFieldError($('param'+par.idEnter),"Допускается ввод только чисел!") ;	
-					isError=true;
-				}
-			}
-			
-			par.value = val ;
-			
-			
+		  if ($('param' + fldJson.params[ind].id)) {
+            var val = $('param' + fldJson.params[ind].id).value;
+            var par = fldJson.params[ind];
+            var err = "";
+            errorutil.HideError($('param' + par.idEnter));
+
+            if (+par.type == 2) {
+                if (+val < 1) {
+                    val = '0';
+                } else {
+                    par.valueVoc = $('param' + fldJson.params[ind].id + 'Name').value;
+                }
+            }
+            if (par.type == '4') {
+                val = val.replace(",", ".");
+                val = val.replace("-", ".");
+                var v = val.split(".");
+                var cntdecimal = +par.cntdecimal
+
+
+                if (val != "") {
+                    if (!regexp.test(val)) {
+                        err += "Допускается ввод только чисел! ";
+                        isError = true;
+                    }
+                    if (v.length == 2 && v[1].length != cntdecimal) {
+                        errorutil.ShowFieldError($('param' + par.idEnter), err + "Необходимо ввести " + cntdecimal + " знаков после запятой");
+                        isError = true;
+                    }
+
+                    if (cntdecimal > 0) {
+                        if (v.length == 1) {
+                            errorutil.ShowFieldError($('param' + par.idEnter), err + "Должна быть 1 точка или запятая");
+                            isError = true;
+                        } else if (v.length > 1 && !isNaN(v[2])) {
+                            errorutil.ShowFieldError($('param' + par.idEnter), err + "Должна быть 1 точка или запятая");
+                            isError = true;
+                        }
+                    } else {
+
+                    }
+                }
+            }
+            if (par.type == 1) {
+                if (val != '' && !regexp.test(val)) {
+                    errorutil.ShowFieldError($('param' + par.idEnter), "Допускается ввод только чисел!");
+                    isError = true;
+                }
+            }
+
+            par.value = val;
+
+        }
 		}
 		if (+fldJson.isdoctoredit==0) {
             if (+$('paramWF').value == 0) {
@@ -446,7 +445,7 @@
 			document.forms['mis_assessmentCardForm'].submit();
 		}
 	} 
-  
+
   function getBall (aParameterId) {
 	  if (+$('param'+aParameterId).value>0) {} else {
 		  $('Param'+aParameterId+'Ball').innerHTML ="";
@@ -495,24 +494,17 @@
 					  
 				  }
 				  $('ballSum').value = sum;
-				  //Milamesher 06122018 в картах оценки риска в родовом - в причечание добавлять расшифровку риска
-                  if ($('template').value=='7') {
-                      //удалить старые данные
-                      $('comment').value=$('comment').value.replace("Низкий фактор риска развития ВТЭО (0-1 балл): - эластическая компрессия нижних конечностей.","");
-                      $('comment').value=$('comment').value.replace(new RegExp("Средний фактор.{1,}дней."),"");
-                      $('comment').value=$('comment').value.replace(new RegExp("Высокий фактор.{1,}в течение 6 недель."),"");
-                      if (sum <= 1) $('comment').value += "Низкий фактор риска развития ВТЭО (0-1 балл): - эластическая компрессия нижних конечностей.";
-                      else if (sum == 2) $('comment').value += "Средний фактор риска развития ВТЭО (2 балла): - перемежающаяся пневмокомпрессия (ППК), - низкомолекулярные гепарины (НМГ)_________________в дозе_________ в течение 6-7 дней - нефракционированный гепарин (НФГ)________________в дозе_________в течение 6-7 дней.";
-                      else if (sum >= 3) $('comment').value += "Высокий фактор риска развития ВТЭО (3 и более баллов): - ППК, - НМГ____________________в дозе___________в течение 6 недель - НФГ____________________в дозе___________в течение 6 недель.";
-                  }
-				//  alert (a);
+				  //Milamesher проставить оценку из карты
+                  TemplateProtocolService.getRisk($('template').value,sum, {
+                      callback: function (a){
+                          if (a && a!='')
+                              $('comment').value=a;
+                      }
+                  });
 			  }
 		  }); 
-	  
-
   }
   </script>
   </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
-

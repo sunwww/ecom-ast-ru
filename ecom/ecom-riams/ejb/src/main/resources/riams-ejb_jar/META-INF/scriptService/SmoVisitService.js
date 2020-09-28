@@ -3,6 +3,8 @@
  * Не использовать, неактуально
  */
 function createNewEmergencySpec(aCtx,aLpu,aGroup) {
+	throw "Не используется";
+	/*
 	var sql="insert into worker (person_id,lpu_id,createusername,createdate,createtime)"
 		+" (select w.person_id"
 		+" ,(select gr.lpu_id from workfunction gr where gr.id="+aGroup+")"
@@ -44,11 +46,12 @@ function createNewEmergencySpec(aCtx,aLpu,aGroup) {
 		
 		+")";
 	aCtx.manager.createNativeQuery(sql).executeUpdate() ;
+	*/
 }
 
 function deleteEmptySpo(aCtx,aParams) {
 	var sql="delete from medcase spo where"
-		+" spo.dtype='PolyclinicMedCase' and (select count(*) from MedCase v where v.parent_id=spo.id)=0"
+		+" spo.dtype='PolyclinicMedCase' and (select count(*) from MedCase v where v.parent_id=spo.id)=0";
 		aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 }
 
@@ -162,42 +165,46 @@ function printDirectionByPatient(aCtx,aParams) {
 * Не явка пациента на прием
 */
 function visitNoPatient(aContext, aVisitId) {
-	if (!checkIfLabAlreadyTransfered(aContext, aVisitId)) {
-        var startWF= aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
-            .iterator().next();
-        var username = aContext.getSessionContext().getCallerPrincipal().toString();
-        var visit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
-            , java.lang.Long.valueOf(aVisitId));
-        if (visit.timeExecute==null && visit.timePlan!=null) visit.timeExecute = visit.timePlan.timeFrom;
-        if (visit.dateStart==null && visit.datePlan!=null) visit.dateStart = visit.datePlan.calendarDate;
-        var list = aContext.manager.createQuery("from VocVisitResult where omcCode='-1'").getResultList();
-        if (list.size()>0) {
-            visit.visitResult = list.get(0);
-            visit.noActuality = true;
-        } else {
-            visit.noActuality = true;
-        }
+	checkIfLabAlreadyTransfered(aContext, aVisitId);
+	var startWF= aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
+		.iterator().next();
+	var username = aContext.getSessionContext().getCallerPrincipal().toString();
+	var visit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
+		, java.lang.Long.valueOf(aVisitId));
+	if (visit.timeExecute==null && visit.timePlan!=null) visit.timeExecute = visit.timePlan.timeFrom;
+	if (visit.dateStart==null && visit.datePlan!=null) visit.dateStart = visit.datePlan.calendarDate;
+	var list = aContext.manager.createQuery("from VocVisitResult where omcCode='-1'").getResultList();
+	if (!list.isEmpty()) {
+		visit.visitResult = list.get(0);
+	}
+	visit.noActuality = true;
 
-        if (visit.timePlan!=null) {
+	if (visit.timePlan!=null) { //не освобождаем время в записи. Раз не пришел, время прошло и записать нового пациента нельзя. *служебка 05-11-19 *upd получается у меня склероз, сделал какую-то херь сам по себе, вернул всё как было
             visit.timePlan.medCase = null;
-            if (visit.timePlan.prescription!=null) {
-                cancelPrescriptionByVisit(aContext, visit);
-                visit.timePlan.prescription = null;
-            }
-            visit.timePlan = null;
-        }
+		if (visit.timePlan.prescription!=null) {
+			cancelPrescriptionByVisit(aContext, visit);
+			visit.timePlan.prescription = null;
+		}
+          visit.timePlan = null;
+	}
 
-        /*
-        if(visit.startWorker==null) {
-            visit.startWorker = aContext.serviceInvoke("WorkerService", "findLogginedWorker") ;
-        }*/
-        // FIXME определять функцию правильно
-        if (visit.workFunctionExecute == null) {
-            visit.workFunctionExecute = startWF;
-        }
-    }
+	// FIXME определять функцию правильно
+	if (visit.workFunctionExecute == null) {
+		visit.workFunctionExecute = startWF;
+	}
+    freeCaosIfNoVisit(aContext, aVisitId);
 	return visit.getId();
 }
+
+/**
+ * Убираем отметку о выполнении в CAOS при неявке на приём
+ */
+function freeCaosIfNoVisit(aContext, aVisitId) {
+    aContext.manager.createNativeQuery("update contractaccountoperationbyservice set serviceid=null, servicetype= null, medcase_id=null where medcase_id="+aVisitId).executeUpdate();
+    aContext.manager.createNativeQuery("update contractaccountoperationbyservice set serviceid=null, servicetype= null, medcase_id=null where medcase_id = " +
+		" any(select id from medcase where parent_id="+aVisitId + ")").executeUpdate();
+}
+
 /**
  * Отменяем назначение при неявке пациента
  */
@@ -212,7 +219,6 @@ function cancelPrescriptionByVisit (aContext, aVisit) {
 			" ,canceldate = current_date, canceltime = current_time"+
 			" ,planstarttime = '" +aVisit.timePlan.timeFrom +"'"+
 			" where calendartime_id = "+aVisit.timePlan.id).executeUpdate();
-	return;
 }
 
 /**
@@ -220,19 +226,13 @@ function cancelPrescriptionByVisit (aContext, aVisit) {
  */
 
 function checkIfLabAlreadyTransfered(aContext, aVisitId) {
-    var list = aContext.manager.createNativeQuery("\n" +
-        "select case when exists(\n" +
-        "select pr.id from prescription pr\n" +
-        "left join prescriptionlist pl on pl.id=pr.prescriptionlist_id\n" +
-        "left join medcase vis on vis.id=pl.medcase_id\n" +
-        "where vis.id=" + aVisitId + " and pr.transferdate is not null) then '1' else '0' end ").getResultList() ;
-    if (list.size()>0) {
-    	if (+list.get(0)==1) {
-    		throw "Лабораторные направления, сделанные в этом визите, уже переданы в лабораторию. Поставить неявку на приём нельзя.";
-    		return true;
-        }
+    var list = aContext.manager.createNativeQuery(
+        " select pr.id from prescriptionlist pl " +
+        " left join prescription pr on pr.prescriptionlist_id=pl.id" +
+        " where pl.medcase_id=" + aVisitId + " and pr.transferdate is not null ").getResultList() ;
+    if (!list.isEmpty()) {
+		throw "Лабораторные направления, сделанные в этом визите, уже переданы в лабораторию. Поставить неявку на приём нельзя.";
     }
-    return false;
 }
 
 /**
@@ -260,7 +260,7 @@ function trim(aStr) {
 function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction,aFilterMkb,aBeginDate,aFinishDate,aDepartmentPolyclinic) {
 	var username = aContext.getSessionContext().getCallerPrincipal().toString() ;
 //	aDepartmentPolyclinic=256;
-	filterMkbSql = "" ;
+	var filterMkbSql = "" ;
 	var manager = aContext.manager;
 	if (aFilterMkb!=null && aFilterMkb!="") {
 		aFilterMkb = aFilterMkb.toUpperCase() ;
@@ -288,7 +288,7 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 	}
 	// Создание мед.карты //Исключаем создание дублей
 	sql = "insert into Medcard (number,dateregistration,registrator,person_id)"
-		+" select p.patientSync,min(sls.datestart),'admin',p.id as patid"
+		+" select p.patientSync,min(sls.datestart),'"+username+"',p.id as patid"
 		+"  from MedCase sls"
 		+" left join patient p on p.id=sls.patient_id"
 		+" left join medcard mp on mp.person_id=p.id"
@@ -309,7 +309,6 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 	sql+=" and sls.medicalAid='1'"
 		+" and diag.id is not null and mp.id is null "+filterMkbSql
 		+" group by p.patientSync,p.id";
-		//+" order by p.lastname,p.firstname,p.middlename" ;
 	manager.createNativeQuery(sql).executeUpdate() ;
 	// Список талонов
 	sql = "select coalesce(sls.serviceStream_id,1) as serviceStream,case when sls.emergency='1' then '1' else '0' end as emergency"
@@ -361,8 +360,7 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 		+" and patient_id='"+obj[6]+"' and dateStart=to_date('"+obj[2]+"','dd.mm.yyyy')" ;
 		var listspo = manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
 		var idspo=0 ;
-		if (listspo.size()>0) {idspo=listspo.get(0) ;}else {throw 'Проблема с определением СПО по отказу №'+obj  ;}
-		//throw ''+idspo ;
+		if (!listspo.isEmpty()) {idspo=listspo.get(0) ;}else {throw 'Проблема с определением СПО по отказу №'+obj  ;}
 		// создание визита
 		sql = "insert into MedCase (parent_id,dtype,createtime,createdate,username"
 			+",serviceStream_id,emergency,dateStart,timeExecute,workfunctionExecute_id"
@@ -379,14 +377,18 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 		+" and patient_id='"+obj[6]+"' and dateStart=to_date('"+obj[2]+"','dd.mm.yyyy')" ;
 		var listvis = manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
 		var idvis=0 ;
-		if (listvis.size()>0) {idvis=listvis.get(0) ;}else {throw 'Проблема с определением визита по отказу №'+obj  ;}
+		if (!listvis.isEmpty()) {idvis=listvis.get(0) ;}else {throw 'Проблема с определением визита по отказу №'+obj  ;}
 		
 		// создание диагноза
 		sql = "insert into diagnosis (patient_id,priority_id,medcase_id,idc10_id,name,illnesPrimary_id,medicalWorker_id) select patient_id,priority_id,'"+idvis+"',idc10_id,name,illnesPrimary_id,'"+obj[4]+"' from diagnosis where id="+obj[8] ;
 		manager.createNativeQuery(sql).executeUpdate() ;
 	}
 }
+
+//@deprecated
 function createNewVisitByDenied(aContext,aDepartment,aBeginDate,aFinishDate,aDepartmentPolyclinic) {
+	if (1==1) throw "Невозможно!";
+
 	var username = aContext.getSessionContext().getCallerPrincipal().toString() ;
 	aDepartmentPolyclinic=256;
 	//--createNewEmergencySpec(aContext,aDepartment,aGroup);
@@ -489,7 +491,7 @@ function createNewVisitByDenied(aContext,aDepartment,aBeginDate,aFinishDate,aDep
 				+",'"+visitResult+"','"+visitReason+"','"+workPlaceType+"','0'"
 				+")" ;
 			aContext.manager.createNativeQuery(sql).executeUpdate() ;
-			var sql = "select id from medcase where parent_id='"+idspo+"' and dtype='ShortMedCase' and workFunctionExecute_id='"+obj[4]+"'"
+			sql = "select id from medcase where parent_id='"+idspo+"' and dtype='ShortMedCase' and workFunctionExecute_id='"+obj[4]+"'"
 			+" and patient_id='"+obj[6]+"' and dateStart=to_date('"+obj[2]+"','dd.mm.yyyy')" ;
 			var listvis = aContext.manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
 			var idvis=0 ;
@@ -505,13 +507,14 @@ function createNewVisitByDenied(aContext,aDepartment,aBeginDate,aFinishDate,aDep
  * Закрыть СПО
  */
 function closeSpoByCurrentDate(aContext,aSpoId) {
+    checkIfExistingActRVKClosed(aSpoId,aContext);
 	var listOpenVis = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,vis.dateStart as mkbid"
 			+" from MedCase vis"
 			+" where vis.parent_id="+aSpoId
-			+" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
+			+" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase') and (vis.noactuality is null or vis.noactuality='0')"
 			+" and vis.dateStart is null"
-			).setMaxResults(1).getResultList() ;
+			).setMaxResults(1).getResultList() ; //активные направления
 	var listVisLast = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id "
 			+" from MedCase vis"
@@ -532,7 +535,7 @@ function closeSpoByCurrentDate(aContext,aSpoId) {
 			+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 			+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
 			+" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
-	if (listOpenVis.size()==0&&listVisLast.size()>0) {
+	if (listOpenVis.isEmpty() && !listVisLast.isEmpty()) { //нет направлений и есть визиты
 		var listVisFirst = aContext.manager.createNativeQuery("select vis.id as visid"
 				+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
 				+" from MedCase vis"
@@ -553,7 +556,7 @@ function closeSpoByCurrentDate(aContext,aSpoId) {
 				+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 				+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
 				+" order by vis.dateStart, vis.timeExecute").setMaxResults(1).getResultList() ;		
-		var visFirst = listVisFirst.get(0)[0];
+	//	var visFirst = listVisFirst.get(0)[0];
 		var visLast = listVisLast.get(0)[0];
 		var mkb = listVisLast.get(0)[1];
 		if (mkb==null) {
@@ -577,29 +580,30 @@ function closeSpoByCurrentDate(aContext,aSpoId) {
 					+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 					+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
 					+" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
-			var mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
-
-			
+			 mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
 		}
 		var dateStart = listVisFirst.get(0)[2];
-		var dateFinish = listVisLast.get(0)[2];
+	//	var dateFinish = listVisLast.get(0)[2];
 		var startWF = listVisFirst.get(0)[3];
 		var finishWF = listVisLast.get(0)[3];
 		aContext.manager.createNativeQuery("update medcase set dateFinish=CURRENT_DATE,dateStart=to_date('"+dateStart
 				+"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
 				+"'"+(mkb!=null?(",idc10_id='"+mkb+"'"):"")+" where id="+aSpoId).executeUpdate() ;
+        setSpoSstreamLikeLastVisit(aContext,aSpoId,visLast);
 	} else {
 		if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
 	}
 	return aSpoId;
 }
 function closeSpo(aContext, aSpoId) {
+    checkIfExistingActRVKClosed(aSpoId,aContext);
 	var listOpenVis = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,vis.dateStart as mkbid"
 			+" from MedCase vis"
 			+" where vis.parent_id="+aSpoId
 			+" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
 			+" and vis.dateStart is null"
+			+ "  and (vis.noactuality=null or vis.noactuality='0')" //только актуальные визиты надо проверять
 	).setMaxResults(1).getResultList() ;
 	var listVisLast = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
@@ -668,7 +672,7 @@ function closeSpo(aContext, aSpoId) {
 					+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 					+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
 					+" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
-			var mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
+			mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
 
 			
 		}
@@ -680,8 +684,10 @@ function closeSpo(aContext, aSpoId) {
 				+"','dd.mm.yyyy'),dateStart=to_date('"+dateStart
 				+"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
 				+"'"+(mkb!=null?(",idc10_id='"+mkb+"'"):"")+" where id="+aSpoId).executeUpdate() ;
+        setSpoSstreamLikeLastVisit(aContext,aSpoId,visLast);
 	} else {
 		if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
+		if (listOpenVis.size()>0) throw "Есть актуальные направления! <a href='entityParentView-smo_visit.do?id="+listOpenVis.get(0)[0]+"'>Перейти к нему</a>"
 	}
 	return aSpoId;
 }
@@ -689,6 +695,7 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish) {
 	return closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish, null); 
 }
 function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish, aWorkFunctionClose) {
+    checkIfExistingActRVKClosed(aSpoId,aContext);
 	var listOpenVis = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,vis.dateStart as mkbid"
 			+" from MedCase vis"
@@ -781,6 +788,7 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish, aWorkFu
 				+"','dd.mm.yyyy'),dateStart=to_date('"+dateStart
 				+"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
 				+"',idc10_id='"+mkb+"' where id="+aSpoId).executeUpdate() ;
+        setSpoSstreamLikeLastVisit(aContext,aSpoId,visLast);
 	} else {
 		if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
 	}
@@ -806,3 +814,21 @@ function findSpoIdByVisit(aContext, aVisitId) {
 	return visit.parent.id ;	
 }
 
+/**
+ * Проставить поток обслуживания в СПО, как в последнем визите
+ */
+function setSpoSstreamLikeLastVisit(aContext, aSpoId, aVisLastId) {
+    aContext.manager.createNativeQuery("update medcase set  servicestream_id=(select servicestream_id from medcase where id="+aVisLastId+") where id="+aSpoId).executeUpdate() ;
+}
+
+/**
+ * Проверка на наличие открытого акта РВК. Если есть - выписку запретить #183
+ * @param aForm форма
+ * @param aCtx контекст
+ */
+function checkIfExistingActRVKClosed(sSpoId,aCtx) {
+	var sql="select id from actrvk where datefinish is null and medcase_id=ANY(select id from medcase where parent_id=" + sSpoId + ")";
+	var list = aCtx.manager.createNativeQuery(sql).getResultList();
+	if (!list.isEmpty())
+		throw ("<a href='entityEdit-rvk_aktVisit.do?id=" + list.get(0)+"'>Акт РВК</a> необходимо закрыть до закрытия СПО!");
+}

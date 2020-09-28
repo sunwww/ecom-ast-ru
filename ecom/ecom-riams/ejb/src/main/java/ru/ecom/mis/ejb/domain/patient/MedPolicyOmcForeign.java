@@ -1,11 +1,6 @@
 package ru.ecom.mis.ejb.domain.patient;
 
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
@@ -13,13 +8,16 @@ import ru.ecom.expomc.ejb.domain.omcvoc.OmcSprSmo;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 /**
  * Полис ОМС иногороднего
  * @author oegorova
  *
  */
 @Entity
-@Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "insuranceCompanyCode" },table="MedPolicy") })
 public class MedPolicyOmcForeign extends MedPolicy{
 	/** Город Страховщика */

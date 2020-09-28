@@ -93,7 +93,6 @@ function checkIntervalRegistration(aCtx,aWorkFunctionPlan,aDatePlan,aTimePlan,aI
 	return check ;
 }
 function onPreSave(aForm,aEntity, aCtx) {
-	
 	var stat=!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/OnlyTheir") ;
 	if(+aForm.workFunctionExecute==0) {
 		//aForm.workFunctionExecute = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
@@ -150,7 +149,7 @@ function checkHospitBetween2VisitsAt1Spo(aForm,aEntity, aCtx) {
                 "left join patient pat on pat.id=hmc.patient_id\n" +
                 "where hmc.datefinish is not null and hmc.datestart between to_date('"+spoDateStart+"','yyyy-MM-dd') and to_date('"+dateNow+"','yyyy-MM-dd')\n" +
                 "and hmc.deniedHospitalizating_id is null and hmc.dtype='HospitalMedCase' and pat.id="+patId).getResultList() ;
-            if (list.size()>0) throw "С момента начала выбранного СПО у пациента была госпитализация, необходимо открыть новый СПО!";
+            if (!list.isEmpty()) throw "С момента начала выбранного СПО у пациента была госпитализация, необходимо открыть новый СПО!";
 		}
 	}
 }
@@ -223,17 +222,13 @@ function saveArray(aEntity,aManager, aJsonString, aClazz,aMainCmd, aAddCmd,
 		 //, aStringAmount
 		 ) {
 	var obj = new Packages.org.json.JSONObject(aJsonString) ;
-//	var str = aStringAmount.split(",");
-	
 	var ar = obj.getJSONArray("childs");
 	var ids = new Packages.java.lang.StringBuilder() ;
 	
 	for (var j=0;j<aMainCmd.length;j++) {
 		eval(aMainCmd[j]) ;
 	}
-	
-	
-	
+
 	for (var i = 0; i < ar.length(); i++) {
 		var child = ar.get(i);
 		var jsId = java.lang.String.valueOf(child.get("value"));

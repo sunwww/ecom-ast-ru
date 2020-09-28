@@ -3,11 +3,7 @@ package ru.ecom.poly.ejb.form;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.poly.ejb.domain.RenderedService;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
 /**
@@ -20,6 +16,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Медицинская услуга", nameProperties = "medServiceName", view = "entityView-renderedService.do")
 @EntityFormSecurityPrefix("/Policy/Poly/RenderedService")
 @Parent(property = "ticket", parentForm = TicketForm.class)
+@Deprecated
 public class RenderedServiceForm extends IdEntityForm {
      /** @return Услуга **/
     @Persist

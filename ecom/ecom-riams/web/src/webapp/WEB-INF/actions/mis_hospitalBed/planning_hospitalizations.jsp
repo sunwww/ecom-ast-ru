@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -5,25 +6,196 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
-  
+  <%
+      String typeStatus = ActionUtil.updateParameter("ClaimList","typeStatus","1", request) ;
+      %>
   <tiles:put name="style" type="string">
-  	<style type="text/css">
+      <style type="text/css">
 
-  	span.discharge {
-  		list-style:none outside none;
-  		background-color: #33cc66;
-  	}
-  	span.current {
-  		list-style:none outside none;
-  		
-  	}
-  	
+          ul#listSpecialists li,ul#listDates li,ul#listTimes li,ul#listPatients li
+          ,ul#listFunctions li {
+              list-style:none outside none;
+          }
+          li#liTime:HOVER,ul#listPatients li:HOVER,ul#listSpecialists li:HOVER
+          ,ul#listFunctions li:HOVER,.busyDay:HOVER,.selectedVisitDay:HOVER
+          ,.selectedBusyDay:HOVER
+          ,.visitDay:HOVER
+          {
+              cursor: pointer;
 
-  	</style>
+          }
+          .preDirectRemoteUsername {
+              color:#fff ;
+
+          }
+          .directRemoteUsername {
+              color:#fff ;
+          }
+          .freeDay{
+              background-color: #DDD;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+          }
+          .busyDay{
+              background-color: #ff3333;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+          }
+          .selectedVisitDay {
+              background-color: navy;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+              color: white;
+          }
+          .selectedVisitDay:HOVER{
+              background-color: #4D90FE;
+              /*font-size: medium;*/
+              color:black;
+              font-weight: bolder;
+              text-align: center;
+          }
+          .selectedBusyDay {
+              background-color: pink;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+              color: white;
+          }
+          .selectedBusyDay:HOVER{
+              background-color: #4D90FE;
+              /*font-size: medium;*/
+              color:black;
+              font-weight: bolder;
+              text-align: center;
+          }
+          .visitDay {
+              background-color: #0066cc;
+              color:white;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+          }
+          .visitDay:HOVER{
+              background-color: #4D90FE;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+              color:black;
+          }
+          .listDates {
+              border: 2px;
+              padding: 2px;
+              margin: 2px;
+              border: 2px black outset;
+          }
+          .listDates td,.listDates th {
+              border: 2px black outset;
+          }
+          .listDates th {
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+              background-color: #BBCCFF;
+
+          }
+          .spanNavigMonth {
+              /*font-size: medium;*/
+              font-weight: bolder;
+          }
+          .spanNavigMonth a{
+              /*font-size: medium;*/
+              font-weight: bolder;
+          }
+          .spanNavigMonth a:HOVER{
+              /*font-size: medium;*/
+              font-weight: bolder;
+              background-color: yellow;
+          }
+
+          ul li.title {
+              font-weight: bolder;
+          }
+          ul.listTimes {
+              margin-left: 0;
+              padding-left: 0;
+          }
+          ul.listTimes li ul.ulTime {
+              margin-left: 0;
+              padding: 0;
+
+              display: list-item;
+              list-style: none;
+              /*font-size: medium;*/
+          }
+          ul.listTimes li ul.ulTime li#liTimeDirect{
+              margin-left:  0;
+              padding-left:0;
+              list-style: none;
+              /*font-size: medium;*/
+              background-color: #ff3333;
+              font-weight: bold;
+          }
+          ul.listTimes li ul.ulTime li#liTimeBusyForRemoteUser{
+              margin-left:  0;
+              padding-left:0;
+              list-style: none;
+              /*font-size: medium;*/
+              background-color: red;
+              font-weight: bold;
+          }
+          ul#listDirects li.liTimeDirect {
+              background-color: #ff3333;
+              border-top: 1px solid;
+
+          }
+          ul#listDirects li.liTimePre {
+              background-color: #33cc66;
+              border-top: 1px solid;
+
+          }
+          li.liList{
+              padding: 0;
+          }
+          ul.listTimes li ul.ulTime li#liTimePre{
+              margin-left:  0;
+              padding-left: 0;
+              list-style: none;
+              /*font-size: medium;*/
+              background-color: #33cc66;
+              font-weight: bold;
+          }
+          ul.listTimes {
+              margin: 0;
+              padding: 0;
+              display: inline;
+          }
+
+          ul.listTimes li {
+              padding-bottom: 0px ;
+              padding-top: 0px ;
+              padding-left: 0px ;
+              padding-right: 0px ;
+              list-style: none;
+              display: inline;
+          }
+
+          ul.listTimes li.first {
+              margin-left: 0;
+              border-left: none;
+              list-style: none;
+              display: inline;
+          }
+          /*
+          input.radio {
+          display: none ;}*/
+      </style>
   </tiles:put>
   <tiles:put name="body" type="string">
    <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View">
-    <msh:form action="/stac_planning_hospitalizations.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_planning_hospitalizations.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
     <msh:panel>
     	<msh:row>
     		<msh:autoComplete property="department" vocName="vocLpuHospOtdAll" fieldColSpan="3" horizontalFill="true" size="200"/>
@@ -39,6 +211,18 @@
     		<msh:textField property="dateBegin" label="Дата начала"/>
     		<msh:textField property="dateEnd" label="Окончания"/>
     	</msh:row>
+        <msh:row>
+            <td class="label" title="Статус заявки (typeStatus)" colspan="1"><label for="typeStatusName" id="typeStatusLabel">Статус:</label></td>
+            <td><label>
+                <input type="radio" name="typeStatus" value="1">  Все</label>
+            </td>
+            <td colspan="2"><label>
+                <input type="radio" name="typeStatus" value="2">  Не госпитализированные</label>
+            </td>
+            <td colspan="2"><label>
+                <input type="radio" name="typeStatus" value="3">  Только госпитализированные</label>
+            </td>
+        </msh:row>
     	<msh:row>
     		<td colspan="4">
     			<input type="submit" onclick="find()" value="Поиск"/>
@@ -49,48 +233,20 @@
     	</msh:row>
     </msh:panel>
     </msh:form>
+       <div id="dPicker"></div>
+       <div id="dPickerData"></div>
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
-  	
-    <script type="text/javascript">
-    	function find() {
-    		
-    	}
-    	function newP() {
-    		window.location = 'entityPrepareCreate-stac_planHospital.do?department='+$('department').value+"&roomType="+$('roomType').value+"&countBed="+$('countBed').value+"&dateEnd="+$('dateEnd').value+"&dateBegin="+$('dateBegin').value+"&tmp="+Math.random() ;
-      	}
-    	function editPlanning(aWp) {
-    		window.location = 'entityEdit-stac_planHospital.do?id='+aWp+"&tmp="+Math.random() ;
-    	}
-    	function viewSlo(aSlo) {
-    		getDefinition('entityShortView-stac_slo.do?id='+aSlo+"&tmp="+Math.random()) ;
-    	}
-    	
-    	if (+$('department').value<1) {
-    		HospitalMedCaseService.getDefaultDepartmentByUser (
-					 {
-     			callback: function(aResult) {
-     				var res = aResult.split('#') ;
-     				if (+res[0]!=0) {
-     					$('department').value = res[0] ; 
-     					$('departmentName').value = res[1] ; 
-     				}
-     			}
-     		}) ;      		
-    	} 
-    </script>
+
     </msh:ifInRole>
         <%
     
-    String date = (String)request.getParameter("dateBegin") ;
-    String dateEnd = (String)request.getParameter("dateEnd") ;
-    String id = (String)request.getParameter("id") ;
-    String period = (String)request.getParameter("period") ;
-    
+    String date = request.getParameter("dateBegin") ;
+    String dateEnd = request.getParameter("dateEnd") ;
+
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
     
-    String view = (String)request.getAttribute("typeView") ;
     String department = request.getParameter("department") ;
     boolean isgoing = false ;
 	if (department!=null && !department.equals("") && !department.equals("0")) {
@@ -109,97 +265,26 @@
     	if (countBed!=null && !countBed.equals("") && !countBed.equals("0")) {
     		request.setAttribute("countBed", " and wp.countBed_id='"+countBed+"'") ;
     	}
-    %>
-    <msh:section>
-    <msh:sectionTitle>Список пациентов</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_pat" nameFldSql="journal_pat_sql" nativeSql="
-    select wp.id as wpid,wp.name as wpnamw,vcbihr.name as vcbihr
-,list(
-'<br /><'||'span class=\"'||
-case when slo.dateFinish is not null then 'discharge' else 'current' end
-||'\">'||
-case 
-when ${department1} slo.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-or coalesce(slo.datefinish,slo.transferdate,current_date)  between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	}
+    String statusSql ="";
+    if ("2".equals(typeStatus)) {
+        statusSql = " and wchb.medcase_id is null"; //не госпитализированные
+    } else if ("3".equals(typeStatus)) {
+        statusSql = " and wchb.medcase_id is not null";
+    }
+    request.setAttribute("statusSql",statusSql);
 
-then p.lastname ||' '|| coalesce(substring(p.firstname,1,1),'') ||' '||coalesce(substring(p.middlename,1,1),'') 
-||' '|| to_char(slo.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy'),to_char(slo.transferDate,'dd.mm.yyyy')
-,'')||'<'||'/span>'
-||' <a href='||'\"javascript:void(0)\" onclick=\"viewSlo('||slo.id||')\">Перейти</a>'
-
-else null end
-
-) as realPat
-,list('<br />'||case 
-when wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-or wchb.dateTo  between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-
-then pp.lastname ||' '|| coalesce(substring(pp.firstname,1,1),'') ||' '||coalesce(substring(pp.middlename,1,1),'') 
-||' '|| to_char(wchb.dateFrom,'dd.mm.yyyy')||'-'||coalesce(to_char(wchb.dateTo,'dd.mm.yyyy'),'')
-||' <a href='||'\"javascript:void(0)\" onclick=\"editPlanning('||wchb.id||')\">Изменить</a>'
-
-
-else null end
-) as planPat
- from workplace wp
-left join medcase slo on slo.roomNumber_id=wp.id
-left join patient p on p.id=slo.patient_id
-left join VocCountBedInHospitalRoom vcbihr on vcbihr.id=wp.countBed_id
-left join WorkCalendarHospitalBed wchb on wchb.hospitalRoom_id=wp.id
-left join patient pp on pp.id=wchb.patient_id 
-
-where wp.dtype='HospitalRoom' ${department}
-${roomType} ${countBed}
-and (wp.isNoActuality is null or wp.isNoActuality='0')
-and (slo.datefinish is null or coalesce(slo.datefinish,slo.transferdate,current_date) between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy'))
-group by wp.id,wp.name,vcbihr.name
-order by case when length(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(wp.name,'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9',''))=0 then cast(wp.name as int) else 100 end
- " />
-    <msh:table name="journal_pat" 
-     action="javascript:void(0)" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6" escapeSymbols="false">
-      <msh:tableColumn columnName="Палата" property="2" />
-      <msh:tableColumn columnName="Вместимость" property="3" />
-      <msh:tableColumn columnName="Список пациентов, которые лежат" property="4" />
-      <msh:tableColumn columnName="Список пациентов, которые планируются" property="5" />
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-    <msh:section>
-    <msh:sectionTitle>Список пациентов, по которым не определены палаты</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="journal_pat" nativeSql="
-    select 1,list(
- '<br/>'||p.lastname ||' '|| coalesce(substring(p.firstname,1,1),'') ||' '||coalesce(substring(p.middlename,1,1),'') 
-||' '|| to_char(slo.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy'),to_char(slo.transferDate,'dd.mm.yyyy')
-,'')
-||' <a href='||'\"javascript:void(0)\" onclick=\"viewSlo('||slo.id||')\">Перейти</a>'
-
-) as realPat
- from  medcase slo
-left join patient p on p.id=slo.patient_id
-
-where  ${department1} slo.dateStart<=to_date('${dateEnd}','dd.mm.yyyy')
-and 
-(coalesce(slo.datefinish,slo.transferdate) is null
-or coalesce(slo.datefinish,slo.transferdate)>= to_date('${dateBegin}','dd.mm.yyyy')
-)
-and slo.dtype='DepartmentMedCase'
-
-and slo.roomNumber_id is null
- " />
-    <msh:table name="journal_pat" 
-     action="javascript:void(0)" idField="1" noDataMessage="Нет данных" hideTitle="true" escapeSymbols="false">
-      <msh:tableColumn columnName="Список пациентов, которые лежат" property="2" />
-     </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-    <msh:section title="Список направлений на госпитализацию из поликлиники">
+        %>
+      <a href="javascript:void(0)" onclick="window.location.href='fillbedsreport.do'">Распределение пациентов по палатам</a>
+    <msh:section title="Список направлений на госпитализацию">
     <ecom:webQuery name="stac_planHospital"
     nativeSql="select wchb.id,ml.name as mlname,p.id,p.lastname||' '||p.firstname||' '||p.middlename as fio,p.birthday
 as birthday,mkb.code,wchb.diagnosis
  ,wchb.dateFrom,mc.dateStart,mc.dateFinish,list(mkbF.code),wchb.phone
  ,wchb.createDate as wchbcreatedate
+ ,list(vwf.name ||' '||wPat.lastname) as f14_creator
+ ,list(case when wchb.medcase_id is not null then 'background-color:green' when wf.isAdministrator='1' then 'background-color:#add8e6' else '' end) as f15_styleRow
+ ,case when wchb.medcase_id is null then wchb.id||'#'||p.id else null end as f16_createHospIds
 from WorkCalendarHospitalBed wchb
 left join Patient p on p.id=wchb.patient_id
 left join MedCase mc on mc.id=wchb.medcase_id
@@ -207,17 +292,21 @@ left join VocIdc10 mkb on mkb.id=wchb.idc10_id
 left join MisLpu ml on ml.id=wchb.department_id
 left join Diagnosis diag on diag.medcase_id=mc.id
 left join VocIdc10 mkbF on mkbF.id=diag.idc10_id
-where wchb.visit_id is not null
-and wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy')
+left join workfunction wf on wf.id=wchb.workfunction_id
+left join worker w on w.id=wf.worker_id
+left join patient wpat on wpat.id=w.person_id
+left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+where wchb.dateFrom between to_date('${dateBegin}','dd.mm.yyyy')
 	 and to_date('${dateEnd}','dd.mm.yyyy')
- ${departmentPlanSql}
+ ${departmentPlanSql} ${statusSql}
+and wchb.dateFrom is not null
 group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
 ,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone
 order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
     "
     />
-    <msh:table name="stac_planHospital" action="entityParentEdit-stac_planHospital.do"
-    idField="1" >
+    <msh:table printToExcelButton="Сохранить в excel" name="stac_planHospital" action="entityParentView-stac_planHospital.do"
+    idField="1" styleRow="15" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Дата пред.госпитализации" property="8"/>
             <msh:tableColumn columnName="Направлен в отделение" property="2"/>
@@ -226,11 +315,12 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="Дата рождения" property="5"/>
             <msh:tableColumn columnName="Код МКБ" property="6"/>
             <msh:tableColumn columnName="Диагноз" property="7"/>
+            <msh:tableColumn columnName="Кто создал" property="14"/>
             <msh:tableColumn columnName="Дата создания" property="13"/>
-    	
+        <msh:tableButton property="16" buttonShortName="ГОСП" buttonFunction="createHosp" hideIfEmpty="true" />
+
     </msh:table>
     </msh:section>
-    <%} %>
     <div id="divViewBed">
     </div>
     
@@ -241,5 +331,66 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
 
   <tiles:put name="title" type="string">
   </tiles:put>
+    <tiles:put type="string" name="javascript">
 
+    <script type="text/javascript">
+        checkFieldUpdate('typeStatus','${param.typeStatus}','1');
+        departmentAutocomplete.addOnChangeCallback(function(){showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());});
+        departmentAutocomplete
+
+        showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());
+        function showPreHospCalendar(month,year) {
+            HospitalMedCaseService.getPreHospCalendar(year,month,$('department').value,false,{
+                callback: function(html) {
+                    jQuery('#dPicker').html(html);
+                }
+            });
+        }
+
+        function showPreHospByDate(el,date) {
+            jQuery('.selectedVisitDay').each(function(i,el){
+                jQuery(el).attr('class','visitDay');
+            });
+            jQuery(el).attr('class','selectedVisitDay');
+
+            jQuery("#dPickerData").load("js-mis_hospitalBed-listByDate.do?startDate="+date+"&finishDate="+date+"&department="+(+$('department').value)+" .sectionContent");
+        }
+
+        function checkFieldUpdate(aField,aValue,aDefaultValue) {
+            if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
+                jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);
+            } else {
+                jQuery(":radio[name="+aField+"][value='"+aDefaultValue+"']").prop('checked',true);
+            }
+        }
+        function createHosp(id) {
+            id = id.split("#");
+            window.document.location='entityParentPrepareCreate-stac_sslAdmission.do?id='+id[1]+'&preHosp='+id[0];
+        }
+        function find() {
+
+        }
+        function newP() {
+            window.location = 'entityPrepareCreate-stac_planHospital.do?department='+$('department').value+"&roomType="+$('roomType').value+"&countBed="+$('countBed').value+"&dateEnd="+$('dateEnd').value+"&dateBegin="+$('dateBegin').value+"&tmp="+Math.random() ;
+        }
+        function editPlanning(aWp) {
+            window.location = 'entityEdit-stac_planHospital.do?id='+aWp+"&tmp="+Math.random() ;
+        }
+        function viewSlo(aSlo) {
+            getDefinition('entityShortView-stac_slo.do?id='+aSlo+"&tmp="+Math.random()) ;
+        }
+
+        /*if (+$('department').value<1) {
+            HospitalMedCaseService.getDefaultDepartmentByUser ({
+                 callback: function(aResult) {
+                     var res = aResult.split('#') ;
+                     if (+res[0]!==0) {
+                         $('department').value = res[0] ;
+                         $('departmentName').value = res[1] ;
+                     }
+                 }
+             }) ;
+        } */
+    </script>
+    </tiles:put>
 </tiles:insert>

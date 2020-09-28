@@ -94,8 +94,8 @@ function recordSurgicalOperationBySls(aCtx,aSlsId) {
 		+" left join MisLpu dep on dep.id=so.department_id"
 		+" left join VocOperation vo on vo.id=so.operation_id"
 		+" left join MedService ms on ms.id=so.medService_id"
-		+" left join SurgicalOperation_VocComplication sovc on so.id = sovc.surgicaloperation_id"
-		+" left join VocComplication vc on vc.id=sovc.complications_id"
+		+" left join SurgComplication sc on so.id=sc.surgicaloperation_id"
+		+" left join VocComplication vc on vc.id=sc.complication_id"
 		+" left join Anesthesia an on so.id = an.surgicaloperation_id"
 		+" left join VocAnesthesiaMethod vam on vam.id=an.type_id"
 		+" left join VocServiceStream vss on vss.id=so.serviceStream_id"
@@ -231,20 +231,11 @@ function getMedServiceNameByProtocol (aCtx, aProtocolId) {
 function printProtocols(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var ids = ids1.split(",") ;
-	//infoSmo(aCtx,ids[0]) ;
 	infoPrint(aCtx,ids[0]) ;
-	//var ret = new java.lang.StringBuilder () ;
-	//ret.append(ids) ;
-	//var list = new 
-	//throw ids ;
-	
-	
+
 	var ret = new java.util.ArrayList() ;
-//	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
     var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
     var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
-	//var startDate =  FORMAT_2.parse(obj[0])) ;
-	//var finishDate = FORMAT_1.format( FORMAT_2.parse(obj[1])) ;
 	var current = new java.util.Date() ;
 	var curDate = new java.sql.Date(current.getTime()) ;
 	
@@ -253,8 +244,6 @@ function printProtocols(aCtx, aParams) {
 		var id1=ids[i] ;
 		var indlast = id1.lastIndexOf("!") ;
 		var id = id1.substring(indlast+1) ;
-		//throw indlast+"--"+id1 +"----"+id;
-		
 		
 		var protocol = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol
 		, new java.lang.Long(id)) ;
@@ -267,10 +256,13 @@ function printProtocols(aCtx, aParams) {
 		mapS.specialistInfo=protocol.specialistInfo ;
 		mapS.setTicket(null) ;
 		mapS.setTypeInfo("") ;
+		mapS.setTitle(protocol.title!=null ? recordMultiValue(protocol.title) : "");
 		var protType=protocol.type ;
 		if (protType!=null) {
 			mapS.typeInfo=protType.name ;
 			mapS.setTicket(protType.isPrintAdministrator==true ? java.lang.Long.valueOf(0) : null) ;
+		} else {
+			//стоит ли делать : если в визите были услуги - отображать их списком ?
 		}
 		mapS.setInfo(protocol.medCase!=null?protocol.medCase.info:"");
 		mapS.setRecord(recordMultiValue(getMedServiceNameByProtocol(aCtx, id)+protocol.record));
@@ -282,8 +274,7 @@ function printProtocols(aCtx, aParams) {
 	
 	return map ;
 }
-function printBillings(aCtx, aParams)
-{
+function printBillings(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var ids = ids1.split(",") ;
 	infoPrint(aCtx,ids[0]) ;

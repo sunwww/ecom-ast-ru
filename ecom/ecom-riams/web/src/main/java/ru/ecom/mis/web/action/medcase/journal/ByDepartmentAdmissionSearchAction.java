@@ -41,10 +41,10 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
         	Date prev = cal.getTime() ;
         	SimpleDateFormat FORMAT_1 = new SimpleDateFormat("yyyy-MM-dd") ;
         	aRequest.setAttribute("onlyMonth",1) ;
-        	String per = new StringBuilder().append("between to_date('").append(FORMAT_1.format(prev)).append("','yyyy-mm-dd')  and to_date('").append(FORMAT_1.format(cur)).append("','yyyy-mm-dd')").toString() ;
+        	String per = "between to_date('" + FORMAT_1.format(prev) + "','yyyy-mm-dd')  and to_date('" + FORMAT_1.format(cur) + "','yyyy-mm-dd')";
         	aRequest.setAttribute("onlyMonthInfo", " ЗА МЕСЯЦ");
-        	aRequest.setAttribute("onlyMonthH", new StringBuilder().append(" and m.dateStart ").append(per).toString());
-        	aRequest.setAttribute("onlyMonthD", new StringBuilder().append(" and d.transferDate ").append(per).toString());
+        	aRequest.setAttribute("onlyMonthH", " and m.dateStart " + per);
+        	aRequest.setAttribute("onlyMonthD", " and d.transferDate " + per);
     	} else {
     		aRequest.setAttribute("onlyMonth",0) ;
     		aRequest.setAttribute("onlyMonthS", "");
@@ -55,15 +55,15 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
             	DepartmentJournalForm form =(DepartmentJournalForm) aForm ;
             	lpu = form.getDepartment() ;
             	
-            	if (lpu==null || lpu.equals(Long.valueOf(0))) {
+            	if (lpu==null || lpu.equals(0L)) {
             		lpu=Long.valueOf(aRequest.getParameter("id")!=null?aRequest.getParameter("id"):"0") ;
-            		if (lpu==null || lpu.equals(Long.valueOf(0))) {
+            		if (lpu.equals(0L) && !(aForm instanceof DepartmentMicroBioJournalForm)) {
             			form.addMessage(new FormMessage("Укажите отделение поиска")) ;
             		}
             	}
             	
             } else{
-            	 return aMapping.findForward("success") ;
+            	 return aMapping.findForward(SUCCESS) ;
             }
         } else {
             try {
@@ -79,7 +79,7 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
 	        String lpuinfo = service.getWorkingLpuInfo(lpu) ;
 	        aRequest.setAttribute("departmentInfo",lpuinfo) ;
         }
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
 	}
 
 }

@@ -40,7 +40,7 @@ public class ListAction extends AbstractEntityAction {
 		aRequest.setAttribute("list"
 				, isMap ? transormCollection(list, form.getClass()) : list);
 
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 
 	public static Collection transormCollection(Collection aCol, Class aClass) throws Exception {

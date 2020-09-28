@@ -1,30 +1,29 @@
-
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/tiles/header.jsp" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
 <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал прикрепленного населения"/>
+    <msh:title mainMenu="Journals" title="Экспорт карт диспансерного наблюдения"/>
 </tiles:put>
 <tiles:put name="body" type="string">
     <%
-    String typeRead =ActionUtil.updateParameter("PatientAttachment","typeRead","1", request) ;
+    String typeRead =ActionUtil.updateParameter("PatientAttachment","typeRead","file", request) ;
     ActionUtil.updateParameter("PatientAttachment","typeAge","3", request) ;
     ActionUtil.updateParameter("PatientAttachment","typeDispensaryStatus","3", request) ;
     %>
 
-    <msh:form action="/exportDispensary.do" defaultField="startDate" disableFormDataConfirm="true" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f" >
-        <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-            <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-                <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+    <msh:form action="/exportDispensary.do" defaultField="startDate" disableFormDataConfirm="true" >
+        <msh:panel>
+            <msh:row>
+                <msh:separator label="Параметры поиска" colSpan="7" />
             </msh:row>
             
             <msh:row>
-                <msh:textField  property="startDate" label="Период с" />
-                <msh:textField  property="finishDate" label="до" />
+                <msh:textField property="startDate" label="Период с" />
+                <msh:textField property="finishDate" label="до" />
             </msh:row>
 
             <msh:row>
@@ -54,6 +53,16 @@
                 </td>
 
             </msh:row>
+            <msh:row>
+                <td class="label" title="Отобразить" colspan="1"><label for="typeReadName" id="typeReadLabel">Выгрузка:</label></td>
+                <td onclick="this.childNodes[1].checked='checked';">
+                    <input type="radio" name="typeRead" value="file"> В файл
+                </td>
+                <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                    <input type="radio" name="typeRead" value="screen"> На экран
+                </td>
+
+            </msh:row>
             <msh:row><td>
                 <label for="packetNumber">Номер пакета</label>
             </td><td>
@@ -63,16 +72,7 @@
         </msh:panel>
         <msh:panel colsWidth="systemTable">
             <msh:row>
-                <msh:textField  property="changedDateFrom" label="Измененные с" />
-            </msh:row>
-
-            <msh:row>
-                <td colspan="11">  <label>Импорт дефектов: </label>
-                    <input type="file"  name="filenameDefect" id="filenameDefect" size="50" value="Импорт дефектов" onchange="importDefects(event)">
-
-                    <!--  <input type="button" name="run_import" value="Импорт дефектов"  onclick="this.form.submit()" /> -->
-                </td>
-
+                <msh:textField property="changedDateFrom" label="Измененные с" />
             </msh:row>
 
             <msh:row>
@@ -94,6 +94,7 @@
             </table>
             <script type="text/javascript" src="./dwr/interface/DispensaryService.js"></script>
             <script type="text/javascript">
+                checkFieldUpdate('typeRead','${typeRead}','file') ;
                 checkFieldUpdate('typeAge','${typeRead}','all') ;
                 checkFieldUpdate('typeDispensaryStatus','${typeDispensaryStatus}','all') ;
 
@@ -123,7 +124,15 @@
                         alert("Укажите дату начала!");
                         return;
                     }
+                    if ("screen"==jQuery('input[name="typeRead"]:checked').val()) {
+                        document.forms[0].submit();
+                        return 0;
+                    }
                     var formJson=formToJson(jQuery('#mainForm'));
+                    console.log("1= "+ JSON.stringify(formJson));
+                    formJson=getFormDataAsJson(jQuery('#mainForm'));
+                    console.log("2= "+ JSON.stringify(formJson));
+
 
                 DispensaryService.exportDispendaryCards(JSON.stringify(formJson), {
                     callback: function(ret) {
@@ -138,18 +147,6 @@
                 });
 
                 }
-              function flushTable() {
-                    var table = document.getElementById("defectElements");
-                    var aRows = table.childNodes;
-                    if (aRows.length>1) {
-                        var j=aRows.length;
-                        for (var i=1;i<j;i++) {
-                            table.deleteRow(0);
-                        }
-                    }
-
-                }
-
 
                 function checkFieldUpdate(aField,aValue,aDefaultValue) {
                     if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
@@ -160,72 +157,59 @@
                 }
             </script>
         </msh:panel>
-        <%if (request.getAttribute("defectWQR")!=null){ %>
-        <p style="color:red">Внимание! Следующие записи не выгружены!</p>
-        <msh:table   viewUrl="entityParentView-mis_lpuAttachedByDepartment.do" editUrl="entityParentView-mis_lpuAttachedByDepartment.do" deleteUrl="entityParentDeleteGoParentView-mis_lpuAttachedByDepartment.do" name="defectWQR" action="entityView-mis_lpuAttachedByDepartment.do" idField="2" noDataMessage="Не найдено">
-            <msh:tableColumn columnName="Ошибка" property="3"/>
-        </msh:table>
-        <%} %>
     </msh:form>
 
-
-
-
     <%
-    String date = request.getParameter("period") ;
-    String date1 = request.getParameter("periodTo") ;
-    String sqlAdd = (String)request.getAttribute("sqlAdd");
+    String startDate = request.getParameter("startDate") ;
+    String finishDate = request.getParameter("finishDate") ;
 
-    if (sqlAdd!=null &&date!=null && !date.equals("") && typeRead!=null)  {
-    if (date1==null ||date1.equals("")) {
-    request.setAttribute("periodTo", date);
-    } else {
-    request.setAttribute("periodTo", date1) ;
-    }
-
+    if ("screen".equals(typeRead) && startDate!=null && !startDate.equals(""))  {
+       String editDate = request.getParameter("changedDateFrom");
+       StringBuilder sqlWhere = new StringBuilder();
+           sqlWhere.append(" where coalesce(d.finishDate, d.startDate) ");
+           if (finishDate!=null && !finishDate.equals("")) {
+               sqlWhere.append(" between to_date('").append(startDate).append("','dd.MM.yyyy') and to_date('").append(finishDate).append("','dd.MM.yyyy')");
+           } else{
+               sqlWhere.append(">=to_date('").append(startDate).append("','dd.MM.yyyy')");
+           }
+           if (editDate!=null) {
+               sqlWhere.append(" and coalesce(d.editDate, d.createDate)>=to_date('").append(editDate).append("','dd.MM.yyyy')");
+           }
+       request.setAttribute("sqlAdd", sqlWhere.toString());
 
     %>
+        <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="2500" nativeSql="
+            select d.id as f1, pat.lastname as f2 ,pat.firstname AS f3 ,pat.middlename AS f4 ,pat.birthday as f5_dr
+            ,coalesce(mkb.code,'') as f6_ds ,d.startdate AS f7_startDate
+            ,vwf.name ||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as f8_doctor
+            ,dep.name as f9_dep
+            ,to_char(d.finishdate,'dd.MM.yyyy') || ' '||vde.name AS f10_end
+     from dispensarycard d
+     left join vocdispensaryend vde on vde.id=d.endreason_id
+     left join workfunction wf on wf.id=d.workfunction_id
+     left join worker w on w.id=wf.worker_id
+     left join mislpu dep on dep.id=w.lpu_id
+     left join patient wpat on wpat.id=w.person_id
+     left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+     left join patient pat on pat.id=d.patient_id
+     left join vocidc10 mkb on mkb.id=d.diagnosis_id
+     ${sqlAdd} order by pat.id
+              " />
 
-
-    <%    if (typeRead!=null && (typeRead.equals("2"))) {%>
-    <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="250" nativeSql="
-		select lp.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'dd.MM.yyyy') as birthday
-    	 , p.commonNumber
-    	 , case when lp.id is null then '1' else coalesce(vat.code,'2') end as spprik
-    	 , case when lp.id is null then '01.01.2013' else coalesce(to_char(lp.dateFrom,'dd.MM.yyyy'),'01.01.2014') end as tprik
-    	 , to_char(lp.dateTo,'dd.MM.yyyy') as otkprikdate
-         , case when lp.dateTo is null then 'Прикреплен' else 'Откреплен' end as otkorprik
-         , lp.defectperiod
-         , lp.defecttext
-         ,smo.name
-    	 from LpuAttachedByDepartment lp
-    	 left join Patient p on lp.patient_id=p.id
-    	 left join MisLpu ml1 on ml1.id=p.lpu_id
-    	 left join MisLpu ml2 on ml2.id=lp.lpu_id
-         left join VocAttachedType vat on lp.attachedType_id=vat.id
-         left join reg_ic smo on smo.id=lp.company_id
-
-   		where (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ${sqlAdd} group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils,p.commonNumber,lp.id,lp.dateFrom,lp.dateTo,vat.code, lp.defectperiod
-         , lp.defecttext, smo.name
-    	 order by p.lastname,p.firstname,p.middlename,p.birthday  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-
-    <msh:table   viewUrl="entityParentView-mis_lpuAttachedByDepartment.do" editUrl="entityParentView-mis_lpuAttachedByDepartment.do" deleteUrl="entityParentDeleteGoParentView-mis_lpuAttachedByDepartment.do" name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_ticket" action="entityView-mis_dispensaryCard.do" idField="1" noDataMessage="Не найдено">
         <msh:tableColumn columnName="#" property="sn"/>
         <msh:tableColumn columnName="Фамилия" property="2"/>
         <msh:tableColumn columnName="Имя" property="3"/>
         <msh:tableColumn columnName="Отчетство" property="4"/>
         <msh:tableColumn columnName="Дата рождения" property="5"/>
-        <msh:tableColumn columnName="RZ" property="6"/>
-        <msh:tableColumn columnName="Способ прикрепления" property="7"/>
-        <msh:tableColumn columnName="Дата прикрепления" property="8"/>
-        <msh:tableColumn columnName="Дата открепления" property="9"/>
-        <msh:tableColumn columnName="Статус" property="10"/>
-        <msh:tableColumn columnName="Дата импорта" property="11"/>
-        <msh:tableColumn columnName="Дефект" property="12"/>
-        <msh:tableColumn columnName="Страх. компания" property="13"/>
+        <msh:tableColumn columnName="Диагноз" property="6"/>
+        <msh:tableColumn columnName="Дата установки Д наблюдения" property="7"/>
+        <msh:tableColumn columnName="Врач" property="8"/>
+        <msh:tableColumn columnName="Отделение" property="9"/>
+        <msh:tableColumn columnName="Снят?" property="10"/>
     </msh:table>
     <%
-    }} else {%>
+    } else {%>
     <i>Введите данные </i>
     <%}%>
 

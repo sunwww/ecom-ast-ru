@@ -1,11 +1,11 @@
 package ru.nuzmsh.util.query;
 
+import ru.nuzmsh.util.format.DateFormat;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import ru.nuzmsh.util.format.DateFormat;
 
 public class ReportParamUtil {
 	public static String getEmergencySql(String aTypeEmergency, String aFieldSls) {
@@ -66,14 +66,6 @@ public class ReportParamUtil {
 		StringBuilder period = new StringBuilder() ;
 		if (aIsAnd) period.append(" and ") ;
 		if (aTime!=null) {
-			/*
-			  (sls.dateFinish is null  or  (sls.dateFinish >= to_date('09.07.2014','dd.mm.yyyy')))
-  and  sls.dtype='HospitalMedCase'
-  and sls.dateStart <= to_date('09.07.2014','dd.mm.yyyy')
-  and (sls.dateFinish != to_date('09.07.2014','dd.mm.yyyy') or sls.dateFinish = to_date('09.07.2014','dd.mm.yyyy') and sls.dischargeTime>= cast('08:00' as time)) 
-  and  (sls.dateStart != to_date('09.07.2014','dd.mm.yyyy') or sls.dateStart = to_date('09.07.2014','dd.mm.yyyy')  and sls.entranceTime< cast('08:00' as time))  
- 
-			 */
 			period.append("(").append(aFieldDate).append(" is null or ").append(aFieldDate).append(">= to_date('").append(aDate).append("','dd.mm.yyyy') )");
 			if (aDtype!=null) period.append(" and ").append(aDtype) ;
 			if (aFieldDate2!=null) period.append(" and (").append(aFieldDate).append("<= to_date('").append(aDate).append("','dd.mm.yyyy') )");

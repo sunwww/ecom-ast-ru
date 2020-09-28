@@ -1,9 +1,9 @@
 package ru.ecom.mis.web.action.medcase;
 
-import ru.nuzmsh.web.struts.BaseAction;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +22,6 @@ public class PatientSearchRedirectAction extends BaseAction {
         aRequest.setAttribute("list",o);
 
 //        session.removeAttribute("patientSearchResult");
-        return aMapping.findForward("success") ;
+        return aMapping.findForward(SUCCESS) ;
     }
 }

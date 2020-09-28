@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Poly" title="Реестр" property="worker" />
+    <msh:title mainMenu="Poly" title="Реестр" property="worker" />
     
   </tiles:put>
     <tiles:put name='side' type='string'>
@@ -54,10 +54,10 @@ and (v.noActuality is null or v.noActuality='0')
 and p.nationality_id ${nationality} ${emergencySql}
 order by p.lastname,p.firstname,p.middlename"/>
 <msh:table viewUrl="entitySubclassView-smo_visit.do" name="list_yes" action="entitySublassView-mis_medCase.do" idField="1">
-	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
-	      <msh:tableColumn columnName="Пациент" property="3" guid="315cb6eb-3db8-4de5-8b0c-a49e3cacf382" />
-	      <msh:tableColumn columnName="Дата" identificator="false" property="2" guid="b3e2fb6e-53b6-4e69-8427-2534cf1edcca" />
-	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="4" guid="3145e72a-cce5-4994-a507-b1a81efefdfe" />
+	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
+	      <msh:tableColumn columnName="Пациент" property="3" />
+	      <msh:tableColumn columnName="Дата" identificator="false" property="2" />
+	      <msh:tableColumn columnName="Исполнитель" identificator="false" property="4" />
 	    </msh:table>
   	</msh:section>
   	<msh:section title="Стационар">

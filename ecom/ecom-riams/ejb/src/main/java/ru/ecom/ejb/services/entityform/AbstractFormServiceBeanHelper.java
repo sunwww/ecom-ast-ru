@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.persistence.*;
 import java.io.StringWriter;
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -43,20 +42,13 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	private static final Logger LOG = Logger
 			.getLogger(AbstractFormServiceBeanHelper.class);
 
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-
 	void checkDynamicPermission(Class aFormClass, Object aId,
 			String aPolicyAction) {
 		if (aId == null)
 			throw new IllegalArgumentException("Нет параметра aId");
-		Class clazz = aFormClass;
-		ADynamicSecurityInterceptor interceptor = (ADynamicSecurityInterceptor) clazz
+		ADynamicSecurityInterceptor interceptor = (ADynamicSecurityInterceptor) aFormClass
 				.getAnnotation(ADynamicSecurityInterceptor.class);
-		// String policyToExtend = getSecurityRole(clazz, aSuffix) ;
 		if (interceptor != null) {
-			// StringBuilder sb = new StringBuilder();
-			// sb.append(getSecurityRole(clazz, aSuffix)) ;
-			// sb.append('/') ;
 			InterceptorContext ctx = new InterceptorContext(theManager,
 					theContext);
 			for (Class interceptorClass : interceptor.value()) {
@@ -64,39 +56,18 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 					IDynamicSecurityInterceptor dynamicInterceptor = (IDynamicSecurityInterceptor) interceptorClass
 							.newInstance();
 					dynamicInterceptor.check(aPolicyAction, aId, ctx);
-					// sb.append(dynamicInterceptor.getExtend(aForm, ctx)) ;
-					// if(!theContext.isCallerInRole(sb.toString())) {
-					// throw new IllegalStateException("Нет политики
-					// "+sb.toString()) ;
-					// }
-				} catch (InstantiationException e) {
-					throw new IllegalStateException(e);
-				} catch (IllegalAccessException e) {
+				} catch (InstantiationException | IllegalAccessException e) {
 					throw new IllegalStateException(e);
 				}
 			}
 		}
-
 	}
 
-	String getSecurityRole(Class aFormClass, String aSuffix) {
-		// 
-//		if(aFormClass.equals(MapEntityForm.class)) {
-//			try {
-//				aFormClass = new MapClassLoader(Thread.currentThread().getContextClassLoader())
-//					.loadClass("$$asdf") ;
-//			} catch (ClassNotFoundException e) {
-//				System.err.println(e);
-//				e.printStackTrace();
-//			}
-//		}
-		//
-		
+	private String getSecurityRole(Class aFormClass, String aSuffix) {
 		EntityFormSecurityPrefix prefix = (EntityFormSecurityPrefix) aFormClass
 				.getAnnotation(EntityFormSecurityPrefix.class);
 		if (prefix != null) {
-			return new StringBuilder().append(prefix.value()).append("/")
-					.append(aSuffix).toString();
+			return prefix.value() + "/" + aSuffix;
 		} else {
 			throw new IllegalArgumentException("У формы "
 					+ aFormClass.getName()
@@ -137,23 +108,19 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 					+ aFormClass + " c идентификатором " + aId);
 		checkIsObjectDeleted(entity);
 		try {
-			IEntityForm form = aFormClass.newInstance();
+			T form = aFormClass.newInstance();
 			copyEntityToForm(entity, form);
 			checkDynamicPermission(aFormClass, aId, "View");
 			// FIXME может быть и понадобится
 			if(aFormClass.isAnnotationPresent(AViewInterceptors.class)) {
 				AViewInterceptors interceptors = aFormClass.getAnnotation(AViewInterceptors.class) ;
 				invokeFormInterceptors(interceptors.value(), form, entity);
-//				for(AEntityFormInterceptor entityFormInterceptor : interceptors.value()) {
-//					IFormInterceptor interceptor = (IFormInterceptor)entityFormInterceptor.value().newInstance() ;
-//					interceptor.intercept(form, entity, theManager) ;
-//				}
 			}
 			if(theRowPersistDelegate.isRowPersistEnable(aFormClass)) {
 				theRowPersistDelegate.load(form, theManager, entity);
 			}
 			invokeJavaScriptInterceptor("onView", form, entity, null, null);
-			return (T) form;
+			return form;
 		} catch (Exception e) {
 			throw new EntityFormException("Ошибка копирования данных", e);
 		}
@@ -201,34 +168,23 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	}
 
 	private IEntityForm transformMapForm(IEntityForm aOrigForm) {
-		if (CAN_DEBUG)
-			LOG.debug("transformMapForm: aForm = " + aOrigForm); 
-
 		if(aOrigForm instanceof MapForm) {
 			MapForm form = (MapForm) aOrigForm ;
-			if (CAN_DEBUG)
-				LOG.debug("transformMapForm: form.getName() = " + form.getStrutsFormName()); 
-
 			Class cl = loadMapForm("$$map$$"+form.getStrutsFormName()) ;
 			try {
-				
 				MapForm dest = (MapForm) cl.newInstance() ;
 				BeanUtils.copyProperties(dest, aOrigForm);
-				
-				if(aOrigForm instanceof BaseValidatorForm) {
-					BaseValidatorForm baseValidatorForm = (BaseValidatorForm) aOrigForm;
-					if(!baseValidatorForm.isTypeCreate()) {
-						// загружаем недостающие данные, чтобы не перезатереть их
-						MapForm fromBaseForm = (MapForm) load(cl, dest.getValue("id"));
-						for(Entry<String,Object> entry : fromBaseForm.getPrivateValues().entrySet()) {
-							String key = entry.getKey();
-							if(dest.getValue(key)==null) {
-								dest.setValue(key, entry.getValue());
-							}
+				BaseValidatorForm baseValidatorForm = (BaseValidatorForm) aOrigForm;
+				if(!baseValidatorForm.isTypeCreate()) {
+					// загружаем недостающие данные, чтобы не перезатереть их
+					MapForm fromBaseForm = (MapForm) load(cl, dest.getValue("id"));
+					for(Entry<String,Object> entry : fromBaseForm.getPrivateValues().entrySet()) {
+						String key = entry.getKey();
+						if(dest.getValue(key)==null) {
+							dest.setValue(key, entry.getValue());
 						}
 					}
 				}
-
 				return (IEntityForm) dest ;
 			} catch (Exception e) {
 				throw new IllegalStateException(e) ;
@@ -256,7 +212,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 		Class entityClass = findFormPersistanceClass(aForm.getClass());
 		
 		// MapForm
-		
 		try {
 			Object entity = entityClass.newInstance();
 			Method getIdMethod = entityClass.getMethod("getId");
@@ -270,36 +225,21 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	    				manager.refresh(entity) ; // для ManyToManyOneProperty, чтобы коллекции были инициализированы
 	    				createManyToManyOneProperty(aForm,entity,getIdMethod.invoke(entity)) ;
 				}
-				//manager.persist(entity);
-				//manager.refresh(entity) ; // для ManyToManyOneProperty, чтобы коллекции были инициализированы
-				if (CAN_DEBUG)
-					LOG.debug("create() Id before copy = "
-							+ getIdMethod.invoke(entity));
 				copyFormToEntity(aForm, entity, false); // не копируем @Id
-				if (CAN_DEBUG)
-					LOG.debug("create() Id after copy = "
-							+ getIdMethod.invoke(entity));
-				
 				if( !doPersistBefore ) manager.persist(entity);
-				
 				if(theRowPersistDelegate.isRowPersistEnable(aForm.getClass())) {
 					theRowPersistDelegate.create( aForm, theManager, entity);
 				}
-				
+
 				if(aForm.getClass().isAnnotationPresent(ACreateInterceptors.class)) {
 					ACreateInterceptors interceptors = aForm.getClass().getAnnotation(ACreateInterceptors.class) ;
 					invokeFormInterceptors(interceptors.value(),aForm, entity);
 				}
-				
 				invokeJavaScriptInterceptor("onCreate", aForm, entity, null, null);
-				
-				//if(true) throw new IllegalStateException("//fixme") ;
-				
 			} finally {
 				//manager.close();
 			}
-			
-			
+
 			return (Long) getIdMethod.invoke(entity);
 		} catch (Exception e) {
 			LOG.error("Ошибка создания нового " + entityClass, e);
@@ -307,8 +247,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 		}
 
 	}
-	
-	
+
 	private static boolean hasManyToManyOneProperty(Class aClass) {
 	    Method[] methods = aClass.getMethods() ;
 	    for(Method m : methods) {
@@ -327,7 +266,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 				boolean isViewable = isEntityMethodDataAvailable(aEntity,aEntity.getClass(), method, aId);
 				if(isViewable) {
 						String json = (String) method.invoke(aForm);
-						// Method entityGetterMethod =
 
 						PersistManyToManyOneProperty pm = method
 								.getAnnotation(PersistManyToManyOneProperty.class);
@@ -336,33 +274,30 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 						String parentProperty = pm.parentProperty() ;
 						String valueProperty = pm.valueProperty() ;
 						Collection collection =null ;
-						if (tableName!=null && !tableName.equals("")) {	
+						if (!tableName.equals("")) {
 							saveOneToManyOneProperty(json, collection, type,tableName,parentProperty,valueProperty, aId);
 						}
 					} 
-					
 				}
 			}
-	    
 	    }
 
 	
-public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentException{
+	private void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentException {
 		Class entityClass = aEntity.getClass();
 		if (entityClass.isAnnotationPresent(UnDeletable.class)) {
-			UnDeletable unDeletable = (UnDeletable )entityClass.getAnnotation(UnDeletable.class);
+			UnDeletable unDeletable = (UnDeletable) entityClass.getAnnotation(UnDeletable.class);
 			try {
 				Method getterIsDeleted = PropertyUtil.getGetterMethod(entityClass,unDeletable.fieldName());
 				Boolean isDeleted = (Boolean)getterIsDeleted.invoke(aEntity);
-				if (isDeleted!=null&&isDeleted) {
+				if (Boolean.TRUE==isDeleted) {
 					throw new IllegalArgumentException("Этот объект был удален");
 				}
-			} catch (NoSuchMethodException |InvocationTargetException | IllegalAccessException e) {
+			} catch (InvocationTargetException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
-
-}
+	}
 	/**
 	 * Сохранение
 	 * 
@@ -377,10 +312,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 		
 		// MapForm
 		aForm = transformMapForm(aForm) ;
-
 		checkPermission(aForm.getClass(), "Edit");
-		
-		
 		try {
 			Object idValue = getIdValue(aForm, aForm.getClass());
 			Object entity = theManager.find(findFormPersistanceClass(aForm
@@ -392,7 +324,6 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 				ASaveInterceptors interceptors = aForm.getClass().getAnnotation(ASaveInterceptors.class) ;
 				invokeFormInterceptors(interceptors.value(),aForm, entity);
 			}
-			// ROW PERSIST
 			if(theRowPersistDelegate.isRowPersistEnable(aForm.getClass())) {
 				theRowPersistDelegate.save(aForm, theManager, entity);
 			}
@@ -403,9 +334,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 			LOG.error("Ошибка копирование из формы "+aForm+" в объект",e) ;
 			throw new EntityFormException(
 //					"Ошибка копирование из формы "+aForm+" в объект", e)
-					"ОШИБКА", e)
-			
-			;
+					"ОШИБКА", e);
 		}
 	}
 
@@ -530,23 +459,16 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 							formClass, method);
 					Method ejbGetterMethod = entityClass.getMethod(method
 							.getName());
-					//System.out.println("primer-----") ;
 					String json = createJsonOneToManyOneProperty(
 							aEntity,
 							ejbGetterMethod,
 							method
 									.getAnnotation(PersistManyToManyOneProperty.class),id);
-					if (CAN_DEBUG) LOG.debug("json = " + json);
-					
 					formSetterMethod.invoke(aForm, json);
 				} else {
-					
-					
 					copyEntityToForm(aEntity, aForm, method);
 				}
-				
 			}
-			
 		}
 		FormAfterLoadInterceptor afterLoadInterceptor = (FormAfterLoadInterceptor) formClass
 			.getAnnotation(FormAfterLoadInterceptor.class);
@@ -561,19 +483,16 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 					ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor interceptor = (ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor) clazz
 							.newInstance();
 					interceptor.intercept(aForm, aEntity, new InterceptorContext(theManager,theContext));
-					}
+				}
 			}
 		}
 	}
 
 	private String createJsonOneToManyOneProperty(Object aEntity,
-			Method aEntityGetMethod, PersistManyToManyOneProperty aAnnotation, Object aId) {
+		Method aEntityGetMethod, PersistManyToManyOneProperty aAnnotation, Object aId) {
 		String tableName = aAnnotation.tableName() ; 
 		try {
-			if (tableName==null||tableName.equals("")) {
-				// String valueProperty = aAnnotation.valueProperty() ;
-				// String idProperty = "id" ;
-	
+			if (tableName.equals("")) {
 				StringWriter out = new StringWriter();
 				JSONWriter j = new JSONWriter(out);
 				j.object();
@@ -582,13 +501,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 				Collection childs = (Collection) aEntityGetMethod.invoke(aEntity);
 				for (Object child : childs) {
 					// FIXME child.getClass() - получше придумать
-					j.object().key("value").value(getIdValue(child, child.getClass())); // PropertyUtil.getPropertyValue(child,
-																		// idProperty))
-																		// ;
-					// Object voc = PropertyUtil.getPropertyValue(child,
-					// valueProperty) ;
-					// Object value = getIdValue(voc) ;
-					// j.key("value").value(value) ;
+					j.object().key("value").value(getIdValue(child, child.getClass()));
 					j.endObject();
 				}
 				j.endArray();
@@ -596,7 +509,6 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 				j.endObject();
 				return out.toString();
 			} else {
-				//System.out.println("-----primer----------") ;
 				return PersistList.getArrayJson(tableName, aAnnotation.parentProperty(), PersistList.parseLong(aId), aAnnotation.valueProperty(), theManager) ;
 			}
 			
@@ -634,7 +546,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 		Method formSetterMethod = PropertyUtil.getSetterMethod(
 				aForm.getClass(), aFormGetterMethod);
 		if (aValue == null) {
-			formSetterMethod.invoke(aForm, aValue);
+			formSetterMethod.invoke(aForm, null);
 		} else {
 			if (aValueClass.isAnnotationPresent(Entity.class)) {
 				Object manyToOneValueIdValue = getIdValue(aValue, aValueClass);
@@ -647,35 +559,12 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 
 	private static Method getIdMethod(Class aEntityClass) throws SecurityException, NoSuchMethodException {
 		// оптимизация. // FIXME использовать хэш
-		Method idMethod = aEntityClass.getMethod("getId") ;
-		if(idMethod!=null) {
-			if( ! idMethod.isAnnotationPresent(Id.class)) {
-				// FIXME У класса "+aEntityClass+"есть метод getId, но нет аннотации @Id
-				LOG.warn("У класса "+aEntityClass+" есть метод getId, но нет аннотации @Id") ;
-			}
-			return idMethod ;
-		} else {
-			for (Method method : aEntityClass.getMethods()) {
-				if (method.isAnnotationPresent(Id.class)) {
-					return method ;
-				}
-			}
-			// ПРОТОКОЛ ОШИБКИ
-			LOG.error("У класса "+aEntityClass+ " нет описанного идентификатора. Нет аннотации @Id") ;
-			LOG.warn("ОПИСАНИЕ ОШИБКИ: ") ;
-			for (Method method : aEntityClass.getMethods()) {
-				for (Annotation ann: method.getAnnotations()) {
-					LOG.warn("   "+ann) ;
-				}
-				LOG.warn(" ПОИСК @ID: "+method);
-				if (method.isAnnotationPresent(Id.class)) {
-					LOG.warn("   НАЙДЕНО");
-				}
-			}
-			
-			throw new IllegalArgumentException(
-					"У класса "+aEntityClass+ " нет описанного идентификатора. Нет аннотации @Id");
+		Method idMethod = aEntityClass.getMethod("getId") ; //Если нет метода с таким именем, произойдет NoSuchMethodException
+		if( ! idMethod.isAnnotationPresent(Id.class)) {
+			// FIXME У класса "+aEntityClass+"есть метод getId, но нет аннотации @Id
+			LOG.warn("У класса "+aEntityClass+" есть метод getId, но нет аннотации @Id") ;
 		}
+		return idMethod ;
 	}
 	
 	private static Object getIdValue(Object aEntity, Class aEntityClass)
@@ -688,7 +577,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 	 * Тип идентификатора
 	 */
 	private static Class getIdClass(Class aEntityClass)
-			throws IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+			throws SecurityException, NoSuchMethodException {
 		return getIdMethod(aEntityClass).getReturnType() ;
 	}
 
@@ -745,9 +634,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 					String parentProperty = pm.parentProperty() ;
 					String valueProperty = pm.valueProperty() ;
 					Collection collection =null ;
-					if (tableName==null || tableName.equals("")) {	
-						//Class valueClass = entityClass.getMethod(method.getName())
-						//.getReturnType();
+					if (tableName.equals("")) {
 						collection = (Collection) entityClass.getMethod(
 								method.getName()).invoke(aEntity);
 					}
@@ -755,7 +642,6 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 					saveOneToManyOneProperty(json, collection, type,tableName,parentProperty,valueProperty, id);
 				} else if (method.getAnnotation(Persist.class) != null
 						|| (aMustCopyId && (method.getAnnotation(Id.class) != null))) {
-					//LOG.info(" Copy "+method) ;
 					Method ejbGetterMethod = entityClass
 							.getMethod(method.getName());
 					if(!ejbGetterMethod.isAnnotationPresent(Transient.class)) {
@@ -780,9 +666,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 
 	private void saveOneToManyOneProperty(String aJson, Collection aCollection,
 			Class aType,String aTableName, String aParentProperty, String aValueProperty, Object aId) throws JSONException, ParseException,
-			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
-		//System.out.println(aTableName);
-		//System.out.println(aJson);
+			SecurityException, NoSuchMethodException {
 		if (aTableName==null || aTableName.equals("")) {
 			JSONArray ar ;
 			if (aJson!=null && !aJson.equals("")) {
@@ -791,11 +675,6 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 			} else {
 				ar = new JSONArray() ;
 			}
-			
-	
-			//JSONArray ar = obj.getJSONArray("childs");
-			// Class entityClass = aEntity.getClass() ;
-			// ashMap<Object, Object> map = new HashMap<Object, Object>();
 			Set<Object> set = new HashSet<>();
 			for (int i = 0; i < ar.length(); i++) {
 				JSONObject child = (JSONObject) ar.get(i);
@@ -803,17 +682,10 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 				if (!StringUtil.isNullOrEmpty(jsonId) || "0".equals(jsonId)) {
 					Object id = PropertyUtil.convertValue(String.class,
 							getIdClass(aType), jsonId);
-					// Object value = PropertyUtil.convertValue(String.class,
-					// aValueClass, child.get("value")) ;
-					// System.out.println("id="+id) ;
 					Object entity = theManager.find(aType, id);
 					set.add(entity);
-					// aCollection.add(entity) ;
-					// map.put(id, value) ;
 				}
-				// map.put(id, value) ;
 			}
-			// remove
 
 			if(aCollection!=null) {
 				Iterator it = aCollection.iterator();
@@ -838,31 +710,20 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 			Long id = PersistList.parseLong(aId) ;
 			if (id!=null && id>0) PersistList.saveArrayJson(aTableName, id, aJson, aParentProperty , aValueProperty, theManager);
 		}
-
-		// if (CAN_DEBUG) LOG.debug("map = " + map);
 	}
 
 	protected EntityFormPersistance findFormPersistance(
 			Class<IEntityForm> aFormClass) {
-    	if (CAN_DEBUG) LOG.debug("  findFormPersistance: starting..."); 
-		
 		if (aFormClass == null)
 			throw new IllegalArgumentException(
 					"Параметр aFormClass не должен быть равен null");
 
-		if (CAN_DEBUG) LOG.debug("  findFormPersistance: getting annotation..."); 
 		EntityFormPersistance p = aFormClass
 				.getAnnotation(EntityFormPersistance.class);
 		
-    	if (CAN_DEBUG) LOG.debug("findFormPersistance: p = "+p);
 		if (p == null)
 			throw new IllegalArgumentException("У формы " + aFormClass
 					+ " нет аннотации EntityFormPersistance");
-		
-    	if (CAN_DEBUG) LOG.debug("findFormPersistance: p.clazz = "+p.clazz());
-		if (p.clazz() == null)
-			throw new IllegalArgumentException(
-					"У аннотации EntityFormPersistance нет поля clazz");
 		return p;
 	}
 
@@ -910,8 +771,6 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 
 	JavaScriptFormInterceptorManager theJavaScriptFormInterceptorManager = JavaScriptFormInterceptorManager.getInstance();
 	private final EjbInjection theEjbInjection = EjbInjection.getInstance();
-	//private @PersistenceUnit
-	//EntityManagerFactory theFactory;
 	private final RowPersistDelegate theRowPersistDelegate = new RowPersistDelegate() ;
 
 }

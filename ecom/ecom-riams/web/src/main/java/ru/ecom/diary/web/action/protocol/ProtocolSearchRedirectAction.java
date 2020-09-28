@@ -1,13 +1,11 @@
 package ru.ecom.diary.web.action.protocol;
 
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.ecom.diary.ejb.service.protocol.IDiaryService;
-import ru.ecom.web.util.Injection;
-import ru.ecom.web.util.EntityInjection;
-import ru.ecom.ejb.services.entityform.IEntityFormService;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import ru.ecom.diary.ejb.service.protocol.IDiaryService;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +24,6 @@ public class ProtocolSearchRedirectAction extends BaseAction {
 //            aRequest.getSession(true).setAttribute("protocolSearchResult", service.findProtocol(1));
         aRequest.setAttribute("list",service.findProtocol(1));
 //        aRequest.setAttribute("list",new ArrayList());
-        return aMapping.findForward("success");
+        return aMapping.findForward(SUCCESS);
     }
 }

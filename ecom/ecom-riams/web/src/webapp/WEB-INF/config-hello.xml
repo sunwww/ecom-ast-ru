@@ -4,18 +4,12 @@
 <struts-config>
   <form-beans>
   
-    <!-- В обработке -->
-    
-
+    <form-bean name="smo_covid19Form" type="ru.ecom.mis.ejb.form.medcase.Covid19Form" />
+    <form-bean name="smo_covid19ContactForm" type="ru.ecom.mis.ejb.form.medcase.Covid19ContactForm" />
+    <form-bean name="smo_covidMarkForm" type="ru.ecom.mis.ejb.form.medcase.CovidMarkForm" />
     <form-bean name="smo_diagnosisForm" type="ru.ecom.mis.ejb.form.medcase.DiagnosisForm" />
     <form-bean name="mis_diagnosisForm" type="ru.ecom.mis.ejb.form.patient.DiagnosisForm" />
-    <form-bean name="cal_workFunctionForm" type="ru.ecom.ejb.form.hello.HelloForm" />
-    <!--<form-bean name="test_testForm" type="ru.ecom.mis.ejb.form.diet.TestForm" /> -->
-    <form-bean name="des_destinationForm" type="ru.ecom.ejb.form.hello.HelloForm" />
-    
-    
-    <!-- Настоящие -->
-    
+
     <form-bean name="work_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionForm" />
     <form-bean name="work_personalWorkFunctionForm" type="ru.ecom.mis.ejb.form.worker.PersonalWorkFunctionForm" />
     <form-bean name="work_extPersonalWorkFunction" type="ru.ecom.mis.ejb.form.worker.ExtPersonalWorkFunctionForm" />
@@ -41,33 +35,13 @@
 	<form-bean name="dis_caseOtherByPatientForm" type="ru.ecom.mis.ejb.form.disability.DisabilityDocumentByPatientForm" />
 	<form-bean name="dis_recordForm" type="ru.ecom.mis.ejb.form.disability.DisabilityRecordForm" />
     <form-bean name="dis_medSocCommissionForm" type="ru.ecom.mis.ejb.form.disability.MedSocCommissionForm" />
-    <form-bean name="dis_permissionForm" type="ru.ecom.mis.ejb.form.disability.DisabilityPermissionForm" />
     <form-bean name="dis_regimeViolationForm" type="ru.ecom.mis.ejb.form.disability.RegimeViolationRecordForm" />
-    <form-bean name="dis_blanksForm" type="ru.ecom.mis.ejb.form.disability.DisabilityBlanksForm" />
-	
-    
 
-    
-    
-    
     <!-- Сотрудник -->
     
     <form-bean name="mis_workerForm" type="ru.ecom.mis.ejb.form.worker.WorkerForm" />
-    
-    <form-bean name="mis_qualificationForm" type="$$map$$mis_qualificationForm" />
-    <form-bean name="mis_educationForm" type="$$map$$mis_educationForm" />
-    <form-bean name="mis_languageSkillForm" type="$$map$$mis_languageSkillForm" />
-    <form-bean name="mis_workBookForm" type="$$map$$mis_workBookForm" />
     <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
-<!--    <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" />
-    <form-bean name="smo_polyAdmissionForm" type="$$map$$smo_polyAdmissionForm" /> -->
-    
-    <!-- <form-bean name="work_awardForm" type="$$map$$work_awardForm" />  -->
-    <form-bean name="work_staffForm" type="$$map$$work_staffForm" />
-    <form-bean name="work_staffUnitForm" type="$$map$$work_staffUnitForm" />
 
-    <form-bean name="mis_mortalityReportDateForm" type="ru.ecom.mis.ejb.form.mortality.MortalityReportDateForm" />
-    <form-bean name="mis_birthReportDateForm" type="ru.ecom.mis.ejb.form.birth.BirthReportDateForm" />
     <form-bean name="mis_lpuFond" type="$$map$$mis_lpuFondForm" />
     
     <form-bean name="dis_searchForm" type="ru.ecom.mis.web.action.disability.DisabilitySearchForm"/>
@@ -75,6 +49,27 @@
   <global-forwards />
 
   <action-mappings>
+        <action path='/covid19_reg_journal' type='ru.ecom.web.actions.base.ForwardAction'
+                name='poly_journalBySpecForm' validate='true' scope="session" input='/WEB-INF/actions/smo_covid19/journal_by_region.jsp'>
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/journal_by_region.jsp" />
+        </action>
+
+        <action path='/covid19_journal' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/smo_covid19/journal.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/journal.jsp" />
+        </action>
+        <action path='/elmedImport' type='ru.ecom.web.actions.base.ForwardAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/riams/elmed.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/riams/elmed.jsp" />
+        </action>
         <action path='/ws_chat' type='ru.ecom.web.actions.base.ForwardAction'
                 name='mis_searchForm'
                 validate='true'
@@ -98,14 +93,6 @@
                 input='/WEB-INF/actions/dis_document/listOpen.jsp'
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listOpen.jsp" />
-        </action>
-        <action path='/dis_documentExport' type='ru.ecom.mis.web.action.disability.DocumentExportAction'
-                name='dis_searchForm'
-                validate='true'
-                scope="request"
-                input='/WEB-INF/actions/dis_document/listExport.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listExport.jsp" />
         </action>
         <action path='/dis_documentClose' type='ru.ecom.mis.web.action.disability.DocumentCloseAction'
                 name='dis_searchForm'

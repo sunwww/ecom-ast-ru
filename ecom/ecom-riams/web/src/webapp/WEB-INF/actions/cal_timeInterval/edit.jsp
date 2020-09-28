@@ -18,6 +18,9 @@
 					<msh:textField property="timeTo" label="Заканчивая временем"/>
 				</msh:row>
 				<msh:row>
+					<msh:autoComplete property="reserveType" vocName="vocServiceReserveType" />
+				</msh:row>
+				<msh:row>
 					<msh:textField property="visitTime" label="Среднее время на визит"/>
 					<td>мин.</td>
 				</msh:row>

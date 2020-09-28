@@ -37,12 +37,6 @@
 					<li><msh:link roles="/Policy/Exp/Document/Edit" action="entityList-exp_importdocument.do">
                             Импорт
                         </msh:link></li>
-					<li><msh:link roles='/Policy/Exp/FillTime/View' action="entityList-exp_fillTime.do">
-                            Заполнения
-                        </msh:link></li>
-					<li><msh:link roles='/Policy/Exp/FillTime/View' action="entityList-exp_iterate.do">
-                            Переборы
-                        </msh:link></li>
 
 					<li><msh:link roles='/Policy/Exp/Sequence/View' action="entityList-exp_sequenceInfo.do">
                             Последовательности
@@ -63,12 +57,6 @@
                         </msh:link>
                         </li>
                      </msh:ifInRole>
-						<li>
-	                        <mis:linkCsp roles='/Policy/Mis/Worker/WorkCalendar/Edit'
-	                        	 action="/impdoclist.csp">
-                            Экспертиза
-                        </mis:linkCsp>
-                        </li>
 					<li><msh:link action="ecom_hibernateCacheConfig.do">
                             Кэш для persistence.properties
                         </msh:link></li>

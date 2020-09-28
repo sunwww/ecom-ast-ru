@@ -64,25 +64,16 @@
             </msh:ifInRole>
             <% 
             boolean isRoleDoc = RolesHelper.checkRoles("/Policy/Poly/Ticket/IsDoctorEdit", request) ;
-            String workFunc = null;
-            SearchForm form = null ;
-            if (session.getAttribute("mis_searchForm")!=null) {
-            	form = (SearchForm) session.getAttribute("mis_searchForm");
-            }
+            SearchForm form = session.getAttribute("mis_searchForm")!=null ? (SearchForm) session.getAttribute("mis_searchForm") : null ;
             if (form!=null ) {
+				String workFunc ;
             	request.setAttribute("dateFilter", form.getDateFilter()) ;
                 if (isRoleDoc) {
                 	List list= (List)request.getAttribute("infoByLogin");
-        	    	WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
-        	    	workFunc = (wqr!=null?new StringBuilder().append(wqr.get1()).toString():"0") ;
+        	    	WebQueryResult wqr = list.isEmpty() ? null : (WebQueryResult)list.get(0) ;
+        	    	workFunc = wqr!=null ? wqr.get1().toString() : "0" ;
                 } else {
-                	if (form!=null&&form.getDoctor()!=null
-                		) {
-               			if (form.getDoctor().longValue()>Long.valueOf(0).longValue()) {
-               				workFunc = "" +form.getDoctor();
-               			}
-                	}
-                	
+					workFunc = form.getDoctor()!=null && form.getDoctor() > 0L ? "" +form.getDoctor() : null;
                 }
                 if (workFunc!=null) {
                 	request.setAttribute("workFunctionSql", " and smc.workFunctionExecute_id='"+workFunc+"'") ;

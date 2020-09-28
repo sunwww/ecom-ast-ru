@@ -29,17 +29,10 @@ import java.util.*;
 public class ExportServiceBean implements IExportService {
 
     private static final Logger LOG = Logger.getLogger(ExportServiceBean.class) ;
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
-    
     public void export(long aMonitorId, long aFileId, ExportForm aForm) {
         IMonitor monitor = null ;
-        if (CAN_DEBUG) LOG.debug("monitor = " + aMonitorId);
-        if (CAN_DEBUG) LOG.debug("aFilename = " + aFileId);
-        if (CAN_DEBUG) LOG.debug("aForm.getDocument() = " + aForm.getDocument());
-        if (CAN_DEBUG) LOG.debug("aForm.getFormat() = " + aForm.getFormat());
         try {
-        	
             ImportDocument document = theManager.find(ImportDocument.class, aForm.getDocument())  ;
         	File file = theJbossGetFileLocalService.createFile(aFileId, document.getKeyName()+".dbf");
         	String filename = file.getName() ;
@@ -58,15 +51,42 @@ public class ExportServiceBean implements IExportService {
 
         } catch (Exception e) {
             LOG.error("Ошибка экспорта",e);
-            monitor.setText(e.getMessage());
+            if (monitor!=null) monitor.setText(e.getMessage());
             throw new IllegalStateException(e) ;
         }
     }
-    
+
+    public static void export(Format aFormat, List<Object> aObjectList, File aFile, IMonitor aMonitor, Long aCount, IBeforeSaveInterceptor aInterceptor) throws Exception {
+        List<DbfField> dbfField = createDbfField(aFormat) ;
+        Collection<Field> fields = aFormat.getFields() ;
+        LOG.warn("Format ="+aFormat+" ,Iterator ="+aObjectList.size()+", File ="+aFile+", IMonitor ="+aMonitor+", Long "+aCount);
+        int i = 0;
+        DbfWriter writer = new DbfWriter(aCount.intValue(), dbfField);
+        try {
+            writer.open(aFile);
+            for (Object entity: aObjectList) {
+                if(++i % 100 == 0 && aMonitor!=null) {
+                    aMonitor.advice(100);
+                    if (aMonitor.isCancelled()) break;
+                }
+                HashMap<String, Object> map = new HashMap<>();
+                if(aInterceptor!=null) aInterceptor.beforeSave(entity) ;
+                for (Field field : fields) {
+                    Object value = field.getProperty()!=null ? PropertyUtil.getPropertyValue(entity, field.getProperty()) : null ;
+                    map.put(field.getName(), value) ;
+                }
+                writer.write(map);
+            }
+
+        } finally {
+            writer.close() ;
+        }
+    }
+
     public static void export(Format aFormat, Iterator aIterator, File aFile, IMonitor aMonitor, Long aCount, IBeforeSaveInterceptor aInterceptor) throws Exception {
         List<DbfField> dbfField = createDbfField(aFormat) ;
         Collection<Field> fields = aFormat.getFields() ;
-
+        LOG.warn("Format ="+aFormat+" ,Iterator ="+aIterator+", File ="+aFile+", IMonitor ="+aMonitor+", Long "+aCount);
         int i = 0;
         DbfWriter writer = new DbfWriter(aCount.intValue(), dbfField);
         try {
@@ -74,19 +94,18 @@ public class ExportServiceBean implements IExportService {
             boolean notCanceled = true ;
             while (aIterator.hasNext() && notCanceled) {
                 Object entity = aIterator.next();
-                if(++i % 100 == 0) {
-                	if(aMonitor!=null) aMonitor.advice(100);
+                if(++i % 100 == 0 && aMonitor!=null) {
+                    aMonitor.advice(100);
+                    notCanceled = !aMonitor.isCancelled() ;
                 }
                 HashMap<String, Object> map = new HashMap<>();
                 if(aInterceptor!=null) aInterceptor.beforeSave(entity) ;
                 for (Field field : fields) {
-                    Object value = PropertyUtil.getPropertyValue(entity, field.getProperty()) ;
+                    Object value = field.getProperty()!=null ? PropertyUtil.getPropertyValue(entity, field.getProperty()) : null ;
                     map.put(field.getName(), value) ;
                 }
                 writer.write(map);
-                if(aMonitor!=null) {
-                	notCanceled = !aMonitor.isCancelled() ;
-                }
+
             }
         } finally {
             writer.close() ;

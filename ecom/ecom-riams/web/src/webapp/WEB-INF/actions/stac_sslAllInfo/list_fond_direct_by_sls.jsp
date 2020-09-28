@@ -45,7 +45,7 @@ where hdf.hospitalmedcase_id =${param.id}
     	  
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslForm" guid="ad9ca7d1-36d7-41ac-a186-cf6fca58b389" />
+    <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
     	  	<tags:stac_hospitalMenu currentAction="stac_sslAllInfo"/>  

@@ -11,8 +11,8 @@ import java.util.List;
 
 @Entity
 @AIndexes({
-	@AIndex(name="stardate", unique = false, properties = {"startYear", "startMonth", "startDay"})
-	,@AIndex(unique = false, properties = {"username"})
+	@AIndex(name="stardate", properties = {"startYear", "startMonth", "startDay"})
+	,@AIndex( properties = {"username"})
 })
 @Table(schema="SQLUser")
 public class LiveTransaction {

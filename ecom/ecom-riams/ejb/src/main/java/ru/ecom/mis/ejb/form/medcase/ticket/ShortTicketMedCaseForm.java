@@ -28,8 +28,6 @@ public class ShortTicketMedCaseForm extends ChildMedCaseForm {
 	@Persist
 	public String getExternalId() {return theExternalId;}
 	public void setExternalId(String aNewProperty) {theExternalId = aNewProperty;}
-	
-	/** Внешний идентификатор */
 	private String theExternalId;
 
 	/** Дата направления */
@@ -37,7 +35,8 @@ public class ShortTicketMedCaseForm extends ChildMedCaseForm {
 	@DateString @DoDateString
 	@Persist @Required
 	public String getDateFinish() {return theDateFinish;}
-	public void setDateFinish(String aOrderDate) {theDateFinish = aOrderDate;}
+	public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
+	private String theDateFinish;
 
 	/**
 	 * Рабочая функция исполнения
@@ -45,34 +44,27 @@ public class ShortTicketMedCaseForm extends ChildMedCaseForm {
 	@Comment("Рабочая функция исполнения")
 	@Persist @Required
 	public Long getWorkFunctionExecute() {return theWorkFunctionExecute;	}
-	/** Рабочая функция исполнения */
 	public void setWorkFunctionExecute(Long aNewProperty) {	theWorkFunctionExecute = aNewProperty;}
-
-	/** Рабочая функция исполнения */
 	private Long theWorkFunctionExecute;
-	/** Дата направления */
-	private String theDateFinish;
+
 	
     @Comment("Медицинская карта")
     @Persist 
     public Long getMedcard() {return theMedcard;}
     public void setMedcard(Long aMedcard) {theMedcard = aMedcard;}
-    /** Медицинская карта */
     private Long theMedcard;
+
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
 	public Long getServiceStream() {return theServiceStream;}
 	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
-	/** Поток обслуживания */
-	private Long theServiceStream;	
+	private Long theServiceStream;
 
 	/** Категория ребенка */
 	@Comment("Категория ребенка")
 	public Long getCategoryChild() {return theCategoryChild;}
 	public void setCategoryChild(Long aCategoryChild) {theCategoryChild = aCategoryChild;}
-
-	/** Категория ребенка */
 	private Long theCategoryChild;
 	
 	/** Цель визита */
@@ -80,28 +72,23 @@ public class ShortTicketMedCaseForm extends ChildMedCaseForm {
 	@Persist 
 	public Long getVisitReason() {return theVisitReason;	}
 	public void setVisitReason(Long aReason) {theVisitReason = aReason;	}
+	private Long theVisitReason;
 
 	/** Тип рабочего места обслуживания */
 	@Comment("Тип рабочего места обслуживания")
 	@Persist 
 	public Long getWorkPlaceType() {return theWorkPlaceType;}
 	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;	}
-
-    /** Тип рабочего места обслуживания */
 	private Long theWorkPlaceType;
-	/** Цель визита */
-	private Long theVisitReason;
 
 	@Comment("Планируемое время исполнения")
 	@Persist
 	public Long getTimePlan() {
 		return theTimePlan;
 	}
-	/*** Планируемое время исполнения*/
 	public void setTimePlan(Long aNewProperty) {
 		theTimePlan = aNewProperty;
 	}
-	/*** Планируемое время исполнения*/
 	private Long theTimePlan;
 
 	/** Планируемая дата исполнения */
@@ -116,7 +103,5 @@ public class ShortTicketMedCaseForm extends ChildMedCaseForm {
 	@Persist
 	public Long getWorkFunctionPlan() {return theWorkFunctionPlan;}
 	public void setWorkFunctionPlan(Long aNewProperty) {theWorkFunctionPlan = aNewProperty;}
-	/** Планируемая рабочая функция исполнения */
 	private Long theWorkFunctionPlan;
-
 }

@@ -42,13 +42,11 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
 
     @SuppressWarnings("unchecked")
 	private MedPolicyOmc findMedPolicy(String aSeries, String aNumber) {
-        if (CAN_DEBUG) LOG.debug("Finding policy " + aSeries+" "+aNumber+"...");
         List<MedPolicyOmc> list = theManager.createQuery(
                 "from MedPolicyOmc where series = :series and polNumber = :number"
         ).setParameter("series", aSeries)
                 .setParameter("number", aNumber)
                 .getResultList();
-        if (CAN_DEBUG) LOG.debug("DONE");
         return list != null && list.size() == 1 ? list.iterator().next() : null;
     }
 
@@ -66,7 +64,6 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
                 .setParameter("middlename", aMiddlename)
                 .setParameter("birthday", aBirthday)
                 .getResultList();
-        if (CAN_DEBUG) LOG.debug("DONE");
         return list != null && list.size() == 1 ? list.iterator().next() : null;
     }
 

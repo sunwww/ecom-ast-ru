@@ -19,8 +19,7 @@ public class HospitalReportRefreshAction extends BaseAction {
         final AdmissionJournalForm form = (AdmissionJournalForm) aForm;
         final IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
-        System.out.println(form.getRefreshType()) ;
-        if (form!=null && form.getDateBegin()!=null && !form.getDateBegin().equals("")
+        if (form.getDateBegin()!=null && !form.getDateBegin().equals("")
         		&& form.getDateEnd()!=null && !form.getDateEnd().equals("")) {
 
         	final long monitorId = monitorService.createMonitor() ;
@@ -35,9 +34,9 @@ public class HospitalReportRefreshAction extends BaseAction {
 	            	}
 	            }
 	        }.start() ;
-	        return new MonitorActionForward(monitorId, aMapping.findForward("success")) ;
+	        return new MonitorActionForward(monitorId, aMapping.findForward(SUCCESS)) ;
         } else {
-        	return aMapping.findForward("success") ;
+        	return aMapping.findForward(SUCCESS) ;
         }
     }
 }

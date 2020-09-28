@@ -13,10 +13,10 @@ public class SnilsStringValidator implements IValidator{
 
 	public void validate(Object aValue, Annotation aAnnotation, HttpServletRequest aRequest) throws ValidateException {
 		// TODO Auto-generated method stub
-            if(aValue!=null && aValue instanceof String) {
+            if(aValue instanceof String) {
                 String str = (String) aValue ;
 
-                if(str!=null && !str.trim().equals("")) {
+                if( !str.trim().equals("")) {
             		Pattern snilsReg = Pattern.compile("[0-9]{3}[-]{1}[0-9]{3}[-]{1}[0-9]{3}[ ]{1}[0-9]{2}") ;
             		Matcher m = snilsReg.matcher(str);
             		if (!m.find()) {
@@ -29,7 +29,7 @@ public class SnilsStringValidator implements IValidator{
                 }
             }
 	}
-	public boolean isRigthSnils (String aSnils) {
+	private boolean isRigthSnils (String aSnils) {
 		String currentSnils = aSnils.replace("-", "").replace(" ", "");
 		if (currentSnils.length()!=11) {
 			return false;

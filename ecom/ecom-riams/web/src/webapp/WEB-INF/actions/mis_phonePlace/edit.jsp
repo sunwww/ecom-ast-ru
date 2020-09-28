@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <msh:form action="entityParentSaveGoParentView-mis_floorBuilding.do" defaultField="phoneNumber" guid="17f720e4-3690-4ae5-961b-6d69348757b6">
+    <msh:form action="entityParentSaveGoParentView-mis_floorBuilding.do" defaultField="phoneNumber">
       <msh:hidden property="id"/>
       <msh:hidden property="saveType"/>
       <msh:hidden property="parent"/>
@@ -25,7 +25,7 @@
         <msh:row>
           <msh:textArea property="comment" label="Комментарий" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="2" guid="fe0172d0-16e6-490d-9bf2-ab6ac96e7402" />
+        <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="mis_floorBuildingForm">
@@ -94,7 +94,7 @@
       <msh:ifFormTypeIsView formName="mis_floorBuildingForm">
         <msh:sideLink key="ALT+2" roles="/Policy/Mis/WorkPlace/FloorBuilding/Edit" params="id" action="/entityEdit-mis_floorBuilding" name="Изменить" />
       </msh:ifFormTypeIsView>
-      <msh:ifFormTypeAreViewOrEdit formName="mis_floorBuildingForm" guid="de889210-1aba-4447-96ab-a729de7a2c8a">
+      <msh:ifFormTypeAreViewOrEdit formName="mis_floorBuildingForm">
         <msh:sideLink key="ALT+DEL" params="id" roles="/Policy/Mis/WorkPlace/FloorBuilding/Delete" action="/entityParentDeleteGoParentView-mis_floorBuilding" name="Удалить" confirm="Удалить этаж здания?" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>

@@ -1,26 +1,23 @@
 package ru.ecom.web.poly.actions.visit.prerecord;
 
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
-import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 
 public class ListTimesAction  extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
     	StringBuilder sql = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String addParam=PreRecordAction.saveData(aRequest) ;
-		Boolean isRemoteUser = true ;
+		boolean isRemoteUser = true ;
 		String vocWorkFunction= aRequest.getParameter("vocWorkFunction") ;
 		String workCalendarDay = aRequest.getParameter("workCalendarDay") ;
 
@@ -41,8 +38,8 @@ public class ListTimesAction  extends BaseAction {
 			sql.append(", case when wcd.calendarDate!=current_date then case when vsrt.isRemoteRayon='1' then 'РЕЗЕРВ УДАЛ.РАЙОН' when vsrt.isViewOnlyMineDoctor='1' then 'РЕЗЕРВ ВРАЧА'  when vsrt.isViewOnlyDoctor='1' then 'РЕЗЕРВ ВРАЧАМ' else null end else null end as reserve") ;
 		}
 		if (isRemoteUser) {
-			sql.append(", case when sw.lpu_id!='"+(lpuRemoteUser!=null?lpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser1") ;
-			sql.append(", case when w.lpu_id!='"+(lpuRemoteUser!=null?lpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser2") ;
+			sql.append(", case when sw.lpu_id!='").append(lpuRemoteUser).append("' then 1 else null end as notViewRetomeUser1");
+			sql.append(", case when w.lpu_id!='").append(lpuRemoteUser).append("' then 1 else null end as notViewRetomeUser2") ;
 		}
 		sql.append(" from WorkCalendarTime wct") ;
 		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
@@ -81,7 +78,6 @@ public class ListTimesAction  extends BaseAction {
 		
 		for (WebQueryResult wqr:list) {
 			i++ ;
-			if (i==1) res.append("") ;
 			boolean info=true ;
 			boolean reserve = false ;
 			int pre = Integer.valueOf(""+wqr.get3());
@@ -119,20 +115,18 @@ public class ListTimesAction  extends BaseAction {
 						String lastname = ""+wqr.get9() ;
 						res.append("<div id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") ;
 						String add = "" ;
-						if (prelastname!=null && lastname!=null) {
-							if (!prelastname.startsWith(lastname)) {
-								add = " <i> вместо "+prelastname+"</i> " ;
-							}
+						if (!prelastname.startsWith(lastname)) {
+							add = " <i> вместо "+prelastname+"</i> " ;
 						}
 						if (wqr.get7()!=null) {
 							res.append(" <strike><u>")
-							.append(wqr.get2()).append("")
+							.append(wqr.get2())
 							.append(" ") ;
 							res.append(wqr.get5()).append(add).append("</strike></u>")  ;
 						} else {
 							res.append(" <u>");
 							res.append(" <a target='_blank' href=\"print-begunok.do?s=SmoVisitService&m=printDirectionByTime&wct=").append(wqr.get1()).append("\"").append(wqr.get1()).append("'\">ПЕЧАТЬ</a> ")  ;
-							res.append(wqr.get2()).append("")
+							res.append(wqr.get2())
 							.append(" ") ;
 							res.append(wqr.get5()).append(add).append("</u>")  ;
 						}
@@ -151,7 +145,7 @@ public class ListTimesAction  extends BaseAction {
 				if (!info) {
 					res.append("<div id='liTimeBusyForRemoteUser' >") 
 					.append(wqr.get2()) .append(" ") ;
-					res.append("ЗАНЯТО").append("") ;
+					res.append("ЗАНЯТО") ;
 				} else {
 					if (reserve) {
 						res.append("<div id='liReserve'>") ;
@@ -172,15 +166,9 @@ public class ListTimesAction  extends BaseAction {
 			//res.append(" (").append(wqr.get3()).append(" из ").append(wqr.get5()).append(")") ;
 			res.append("</div>") ;
 			if (i>=cntLi) {
-				res.append("") ;
 				i=0 ;
 			}
-			first=false ;
 		}
-		if (i<=cntLi) {
-			res.append("") ;
-		}
-		res.append("") ;
 		aRequest.setAttribute("listTimes", res.toString()) ;
         return aMapping.findForward("success") ;
 

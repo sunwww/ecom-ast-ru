@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
@@ -23,8 +23,8 @@ String dontShowComplexCase=request.getParameter("dontShow");
 StringBuilder sqlAdd = new StringBuilder();
 if (listId!=null) {
     if (errorCode!=null&&!errorCode.equals("")) { //Реестр записей по ошибке
-        sqlAdd.append(" err.errorcode='"+errorCode+"'");
-        if (dontShowComplexCase!=null&&dontShowComplexCase.equals("1")) {
+        sqlAdd.append(" err.errorcode='").append(errorCode).append("'");
+        if ("1".equals(dontShowComplexCase)) {
             if(sqlAdd.length()>0)sqlAdd.append(" and ");
             sqlAdd.append(" e.serviceStream!='COMPLEXCASE'");
         }
@@ -55,10 +55,9 @@ if (listId!=null) {
     <% } else { //Выводим список всех ошибок за заполнению
 %>
 <input type="button" onclick="cleanAllErrors()" value="Удалить все ошибки"/>
-            <ecom:webQuery name="entriesList" nativeSql="select '${param.id}&errorCode='||err.errorcode as fldId, err.errorcode||' '||coalesce(ve.name,'') as error , count( distinct err.entry_id) as cnt
+            <ecom:webQuery name="entriesList" nativeSql="select '${param.id}&errorCode='||err.errorcode as fldId, err.errorcode as error , count( distinct err.entry_id) as cnt
                 from e2entryerror err
-                left join VocE2EntryError ve on ve.code=err.errorcode
-                where err.listentry_id=${param.id} and (err.isdeleted='0' or err.isdeleted='0') group by err.errorcode, ve.name"/>
+                where err.listentry_id=${param.id} and (err.isdeleted='0' or err.isdeleted='0') group by err.errorcode"/>
             <msh:table idField="1" name="entriesList" action="entityParentList-e2_entry.do" noDataMessage="Нет ошибок по заполнению">
                 <msh:tableColumn columnName="Ошибка" property="2" />
                 <msh:tableColumn columnName="Кол-во записей с ощшибкой" property="3"/>

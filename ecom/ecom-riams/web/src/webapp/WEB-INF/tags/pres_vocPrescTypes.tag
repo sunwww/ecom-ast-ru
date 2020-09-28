@@ -29,29 +29,21 @@
 </div>
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}PrescTypesDialogInitialized = false ;
      var the${name}PrescTypesDialog = new msh.widget.Dialog($('${name}PrescTypesDialog')) ;
-     // Показать 
      function show${name}PrescTypes() {
-    	 // устанавливается инициализация для диалогового окна 
          if (!theIs${name}PrescTypesDialogInitialized) {
         	 if ($('labDate')) {$('labDate').disabled=false;}
          	init${name}PrescTypesDialog() ;
          	 the${name}PrescTypesDialog.show() ;
-          } else {
-        	  if (confirm("Вы действительно хотите изменить тип листа назначения? Некоторые назначение могу быть удалены!")){
-        		  the${name}PrescTypesDialog.show() ;
-        	  }
-          }
-         
-         
-
+         } else if (confirm("Вы действительно хотите изменить тип листа назначения? Некоторые назначение могу быть удалены!")){
+              the${name}PrescTypesDialog.show() ;
+         }
      }
      
      // Отмена 
      function cancel${name}PrescTypes() {
-    	
         the${name}PrescTypesDialog.hide() ;
      }
     
@@ -67,25 +59,23 @@
      }
      
 	function setType(typeID, typeName, isOnlyCurrentDate) {
-		if ($('prescriptType').value==typeID) {
-			
-		} else {
+		if ($('prescriptType').value!=typeID) {
 			$('prescriptType').value = typeID;
 			$('prescriptTypeName').value = typeName;
 			$('prescriptTypeName').disabled='true';
 			changePrescriptionType();
 			disableEnableDate(isOnlyCurrentDate);
-			if (isOnlyCurrentDate==1) {
-				
-			} else {
+			if (isOnlyCurrentDate!=1) {
 				canChangeDate = true;
 			}
 		}
+		try {
+            labServiciesAutocomplete.setParentId(typeID+"#"+$('serviceStream').value);
+        } catch (e) {console.log(e);}
 		the${name}PrescTypesDialog.hide() ;
 	}
      // инициализация диалогового окна 
      function init${name}PrescTypesDialog() {
-	//	alert ("In TAG, $medcase = ="+${medcase}); 
 		 PrescriptionService.checkMedCaseEmergency('${parentID}', '${parentType}',{
 			 callback: function(aResult) {
 				 PrescriptionService.getPrescriptionTypes(aResult, {

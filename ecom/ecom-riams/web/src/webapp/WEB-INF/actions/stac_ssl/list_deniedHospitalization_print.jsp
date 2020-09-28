@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/printLayout.jsp" flush="true" >
   <tiles:put name="body" type="string">
     <%
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
     	%>
     
@@ -27,7 +27,7 @@
     	where m.DTYPE='HospitalMedCase' and m.datestart between to_date('${param.dateBegin}','dd.mm.yyyy') 
     	and to_date('${dateEnd}','dd.mm.yyyy') 
     	and cast(m.ambulanceTreatment as int)=1 ${hospT} 
-    	  ${add}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    	  ${add}" />
         <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Стат.карта" property="2"/>
@@ -38,9 +38,7 @@
             <msh:tableColumn columnName="Причина отказа" property="7"/>
         </msh:table>
 
-    <% } else {%>
-
-    	<% }   %>
+    <% } %>
   </tiles:put>
 </tiles:insert>
 

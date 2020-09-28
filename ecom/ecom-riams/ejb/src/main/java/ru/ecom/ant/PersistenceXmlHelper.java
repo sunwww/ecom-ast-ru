@@ -39,9 +39,7 @@ public class PersistenceXmlHelper {
 		
 		try {
 			List<String> classes = listAllEntitiesClassnames(new FileInputStream(aFilenameToAdd)) ;
-			for(String clazz : classes) {
-				theClasses.add(clazz) ;
-			}
+			theClasses.addAll(classes);
 		} catch (Exception e) {
 			throw new IllegalStateException(e) ;
 		}
@@ -88,8 +86,6 @@ public class PersistenceXmlHelper {
 			Class clazz = getClass().forName(aClassName);
 			
 			if(!theEntityHelper.isCacheable(clazz)) return ;
-			
-			if(clazz==null) throw new IllegalStateException("Не найден класс "+aClassName) ;
 			String name = "hibernate.ejb.classcache."+clazz.getName();
 			String value = "transactional" ;
 			Element elm = new Element("property") ;

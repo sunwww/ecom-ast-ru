@@ -1,13 +1,10 @@
 package ru.ecom.expomc.ejb.domain.format;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
 
 /**
  * Поле
@@ -71,6 +68,7 @@ public class Field extends BaseEntity {
     public void setDescription(String aDescription) { theDescription = aDescription ; }
 
     /** Документ */
+    @OneToOne
     public ImportDocument getLinkedDocument() { return theLinkedDocument ; }
     public void setLinkedDocument(ImportDocument aLinkedDocument) { theLinkedDocument = aLinkedDocument ; }
 
@@ -96,6 +94,7 @@ public class Field extends BaseEntity {
             		sb.append(".") ;
             		sb.append(theDbfDecimal) ;
             	}
+            	break;
             case BOOLEAN:
                 sb.append("L") ;
         }

@@ -33,8 +33,8 @@ public class WorkerServiceBean implements IWorkerService{
 
 	/*Все рабочие функции по одному работнику (по одному отделению)*/
 	public String getWorkFunctions(Long aWorkFunction){
-		StringBuilder sql =new StringBuilder().append("select wf.id from WorkFunction wf left join Worker w on w.id=wf.worker_id left join WorkFunction wf1 on wf1.worker_id=wf.worker_id where wf1.id=workFunctionId") ;
-		List<Object> list = theManager.createNativeQuery(sql.toString()).setParameter("workFunctionId",aWorkFunction).getResultList() ;
+		String sql ="select wf.id from WorkFunction wf left join Worker w on w.id=wf.worker_id left join WorkFunction wf1 on wf1.worker_id=wf.worker_id where wf1.id=workFunctionId" ;
+		List<Object> list = theManager.createNativeQuery(sql).setParameter("workFunctionId",aWorkFunction).getResultList() ;
 		StringBuilder res = new StringBuilder() ;
 		for (Object id :list) {
 			res.append(",").append(id) ;
@@ -57,7 +57,7 @@ public class WorkerServiceBean implements IWorkerService{
 		if(list.isEmpty()) throw new IllegalArgumentException("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и пользователем (WorkFunction и SecUser)");
 		*/
 		MisLpu lpu =workFunction.getLpuRegister() ;
-		return lpu!=null ? lpu.getId() : Long.valueOf(0) ;
+		return lpu!=null ? lpu.getId() : 0L ;
 	}
 	
 	public String getWorkFunctionInfo(Long aWorkFunction) {
@@ -218,10 +218,9 @@ public class WorkerServiceBean implements IWorkerService{
 		return ret ;
 	}
 
+	@Deprecated
 	public List<TableSpetialistByDay> getTableSpetialistByDay(Date aDate, Long aWorkCalendarDay) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')") ;
-		List<Object[]> list = theManager.createNativeQuery(sql.toString())
+		List<Object[]> list = theManager.createNativeQuery("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')")
 				.setParameter("WCDid", aWorkCalendarDay)
 				.getResultList() ;
 		LinkedList<TableSpetialistByDay> ret = new LinkedList<>() ;
@@ -233,6 +232,7 @@ public class WorkerServiceBean implements IWorkerService{
 			result.setTime(time) ;
 			result.setTimeString(DateFormat.formatToTime(time)) ;
 			result.setSn(++i) ;
+			ret.add(result);
 		}
 		return ret;
 		
@@ -240,7 +240,7 @@ public class WorkerServiceBean implements IWorkerService{
 	public String getCalendarTimeId(Long aCalendarDay, Time aCalendarTime, Long aMinIs) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null  and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')") ;
-		if (aMinIs!=null && aMinIs.equals(Long.valueOf(1))) {
+		if (aMinIs!=null && aMinIs.equals(1L)) {
 			sql.append(" order by timeFrom asc") ;
 		} else {
 			sql.append(" order by timeFrom desc") ;
@@ -254,7 +254,7 @@ public class WorkerServiceBean implements IWorkerService{
 			Object[] row = list.get(0) ;
 			Long id = ConvertSql.parseLong(row[0]) ;
 			Time time = (Time)row[1] ;
-			return new StringBuilder().append(id).append("#").append(time).toString() ;
+			return id + "#" + time;
 		}
 		return null ;
 	}

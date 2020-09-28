@@ -1,16 +1,15 @@
 package ru.ecom.poly.web.action.ticket;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.login.LoginInfo;
+import ru.ecom.web.util.ActionUtil;
 import ru.nuzmsh.web.struts.BaseAction;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class TicketStatByUserAction  extends BaseAction {
 
@@ -32,15 +31,12 @@ public class TicketStatByUserAction  extends BaseAction {
 			aRequest.setAttribute("add", "") ;
 		} else {
 			if (aRequest.getSession(true)!=null) {
-				aRequest.setAttribute("add", new StringBuilder().append("and  usernameCreate='")
-						.append(LoginInfo.find(aRequest.getSession(true)).getUsername()) 
-						.append("'").toString()) ;
-				
+				aRequest.setAttribute("add", "and  usernameCreate='"+LoginInfo.find(aRequest.getSession(true)).getUsername()+"'") ;
 			} else {
-				aRequest.setAttribute("add", new StringBuilder().append("and  usernameCreate is null").toString()) ;				
+				aRequest.setAttribute("add", "and  usernameCreate is null") ;
 			}
 		}
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 
 }

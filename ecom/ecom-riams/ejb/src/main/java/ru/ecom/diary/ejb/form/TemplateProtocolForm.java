@@ -25,6 +25,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property="medService", parentForm=MedServiceForm.class)
 public class TemplateProtocolForm  extends IdEntityForm {
 
+	/** Создавать браслет по шаблону */
+	@Comment("Создавать браслет по шаблону")
+	@Persist
+	public Boolean getCreateBracelet() {return theCreateBracelet;}
+	public void setCreateBracelet(Boolean aCreateBracelet) {theCreateBracelet = aCreateBracelet;}
+	private Boolean theCreateBracelet ;
+
 	/** Запрет на ручное редактирование */
 	@Comment("Запрет на ручное редактирование")
 	@Persist
@@ -47,11 +54,6 @@ public class TemplateProtocolForm  extends IdEntityForm {
     @Persist @Comment("Ключевые слова")
     public String getKeyWord() {    return theKeyWord ;}
     public void setKeyWord(String aKeyWord ) {  theKeyWord = aKeyWord ; }
-
-    /** Тип шаблона */
-    @Persist @Comment("Тип шаблона")
-    public Long getType() {    return theType ;}    
-    public void setType(Long aType ) {  theType = aType ; }
 
     /** Категории, в которые входит протокол */
 	@Comment("Категории, в которые входит протокол")
@@ -109,8 +111,6 @@ public class TemplateProtocolForm  extends IdEntityForm {
 	private String theUsername;
 	/** Категории, в которые входит протокол */
 	private String theCategories;
-    /** Тип шаблона */
-    private Long theType ;
     /** Ключевые слова */
     private String theKeyWord ;
     /** Текст */

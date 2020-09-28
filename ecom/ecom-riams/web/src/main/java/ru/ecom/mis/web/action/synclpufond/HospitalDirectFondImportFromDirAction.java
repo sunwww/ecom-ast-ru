@@ -1,22 +1,19 @@
 package ru.ecom.mis.web.action.synclpufond;
 
-import java.io.File;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 
 public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 
@@ -41,7 +38,7 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
             	theHospService.finishMonitor(monitorId) ;
             }
         }.start() ;
-		return aMapping.findForward("success");
+		return aMapping.findForward(SUCCESS);
 	}
 	public void getFiles(long aMonitorId) throws Exception {
 		theDirName = getOrder263InDir();
@@ -61,14 +58,13 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 	}
 	public void parseDir(File aDir, Boolean aRootDir, long aMonitorId) throws Exception{
 
-		File targetDir = null;
+		File targetDir;
 
 		File[] files=aDir.listFiles();
 		//System.out.println(aDir) ;
-		if (files == null) {
-		} else {
+		if (files != null) {
 		    for (File file:files) {
-		    	if(file.isDirectory()==false){
+		    	if(!file.isDirectory()){
 		    		//System.out.println(file.getAbsolutePath()) ;
 		    		targetDir = theWorkArcDir;
 		    		//System.out.println(targetDir) ;
@@ -86,13 +82,6 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 		    		}
 			    }
 		}
-	    if (!aRootDir)	
-	    {
-	    	try {
-	    	//aDir.delete();
-	    	}catch (Exception e) 
-	    	{}
-	    }
 	}
 	public static String getOutFolderBy263(HttpServletRequest aRequest) throws NamingException {
 		IKdlDiaryService service = Injection.find(aRequest).getService(IKdlDiaryService.class) ;

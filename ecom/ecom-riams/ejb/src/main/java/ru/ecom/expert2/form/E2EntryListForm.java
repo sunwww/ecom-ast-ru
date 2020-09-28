@@ -127,4 +127,12 @@ public class E2EntryListForm extends IdEntityForm {
     /** Номера ИБ для формирования случаев */
     private String theHistoryNumbers ;
 
+    /** ИД монитора процесса проверки */
+    @Comment("ИД монитора процесса проверки")
+    @Persist
+    public Long getMonitorId() {return theMonitorId;}
+    public void setMonitorId(Long aMonitorId) {theMonitorId = aMonitorId;}
+    /** ИД монитора процесса проверки */
+    private Long theMonitorId ;
+
 }

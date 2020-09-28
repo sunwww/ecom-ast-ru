@@ -21,7 +21,7 @@
     <ecom:titleTrail mainMenu="Patient" beginForm="${form}" title="Список общественно-опасных событий по пациенту"/>
   </tiles:put>
   <tiles:put name="side" type="string">
-      <msh:sideMenu title="Перейти" guid="46a542d6-da04-4268-bb9a-5ebddf3baea2">
+      <msh:sideMenu title="Перейти">
         <msh:sideLink action="/entityParentList${dopCareCard}-psych_careCard${addParam}" name="Карты, обратившегося за психиатрической помощью" params="id" roles="/Policy/Mis/Psychiatry/CareCard/View"/>
         <msh:sideLink action="/entityParentList-psych_compulsoryTreatment${addParam}" name="Список принудительных лечений по пациенту" params="id" roles="/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment/View"/>
         <msh:sideLink action="/entityParentList-psych_examination${addParam}" name="Список судебно-психиатрических экспертиз по пациенту" params="id" roles="/Policy/Mis/Psychiatry/CareCard/PsychiatricExamination/View"/>
@@ -38,7 +38,7 @@
   	from PublicDangerousEffect pde
   		left join VocCriminalCodeArticle vcca on vcca.id = pde.criminalCodeArtical_id
   		left join PsychiatricCareCard pcc on pcc.id=pde.careCard_id   	where ${queryDop}   	"/>
-    <msh:table name="listd" action="entityParentView-psych_publicDangerousEffect.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table name="listd" action="entityParentView-psych_publicDangerousEffect.do" idField="1">
               <msh:tableColumn property="sn" columnName="#"/>
               <msh:tableColumn property="1" columnName="ИД"/>
               <msh:tableColumn property="2" columnName="№карты"/>

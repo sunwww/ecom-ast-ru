@@ -1,9 +1,9 @@
 package ru.ecom.report.rtf;
 
-import java.io.File;
-
 import ru.ecom.report.replace.IValueGetter;
 import ru.ecom.report.replace.ReplaceHelper;
+
+import java.io.File;
 
 public interface IPrintFileDriver {
 
@@ -35,7 +35,7 @@ public interface IPrintFileDriver {
 	 * Подготовка файла
 	 */
 	void prepare();
-	public void buildFile(boolean aRemovedTempFile) ;
+	void buildFile(boolean aRemovedTempFile) ;
 
 	/**
 	 * Входной файл
@@ -61,5 +61,5 @@ public interface IPrintFileDriver {
 	String getResultFilename();
 	void print(ReplaceHelper aReplaceHelper, IValueGetter aValueGetter) throws RtfPrintException;
 	
-	public void setLogin(String aLogin) ;
+	void setLogin(String aLogin) ;
 }

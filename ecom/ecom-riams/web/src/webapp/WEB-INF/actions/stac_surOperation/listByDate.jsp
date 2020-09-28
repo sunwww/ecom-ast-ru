@@ -1,5 +1,5 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал операций" />
+    <msh:title mainMenu="Journals" title="Журнал операций" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="stac_surOperation" />
@@ -35,48 +35,48 @@
   	
     String typeEndoscopyUse = ActionUtil.updateParameter("SurgicalOperation","typeEndoscopyUse","3", request) ;
     String typeAnaesthesUse = ActionUtil.updateParameter("SurgicalOperation","typeAnaesthesUse","3", request) ;
-  	
-    String typeDateSql = "so.operationDate" ;
-	if (typeDate!=null && typeDate.equals("2")) {
+
+    String typeDateSql ;
+	if ("2".equals(typeDate)) {
 		typeDateSql = "sls.dateFinish" ;
-	} else if (typeDate!=null && typeDate.equals("3")) {
+	} else if ("3".equals(typeDate)) {
 		typeDateSql = "slsHosp.dateFinish" ;
-	} 
+	}  else {
+		typeDateSql = "so.operationDate";
+	}
 	request.setAttribute("typeDateSql", typeDateSql);
 	
-	/* <AOI 31.10.2016 Почему-то этого не было*/
-    String typeEndoscopyUseSql=""; 
-    if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("1")) {
+    String typeEndoscopyUseSql;
+    if ("1".equals(typeEndoscopyUse)) {
     	typeEndoscopyUseSql=" and so.endoscopyUse='1'" ;
-    } else if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("2")) {
+    } else if ("2".equals(typeEndoscopyUse)) {
     	typeEndoscopyUseSql= "and (so.endoscopyUse='0' or so.endoscopyUse is null)" ;
-    }
+    } else {
+		typeEndoscopyUseSql ="";
+	}
     request.setAttribute("typeEndoscopyUseSql", typeEndoscopyUseSql) ;
-    /* </ AOI 31.10.2016 */ 
-    
-    /* <AOI 31.10.2016 для  Захарова по анестезиологическим пособиям */
-    String typeAnaesthesUseSql=""; 
-    if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("1")) {
+    String typeAnaesthesUseSql;
+    if ("1".equals(typeAnaesthesUse)) {
     	typeAnaesthesUseSql=" and an.id is not null " ;
-    } else if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("2")) {
+    } else if ("2".equals(typeAnaesthesUse)) {
     	typeAnaesthesUseSql= " and an.id is null " ;
-    }
+    } else {
+		typeAnaesthesUseSql = "";
+	}
     request.setAttribute("typeAnaesthesUseSql", typeAnaesthesUseSql) ;
-    /* </ AOI 31.10.2016 */ 
 
 	if (typeEmergency.equals("1")) {
-		if (typeDate!=null && typeDate.equals("2")) {
+		if ("2".equals(typeDate)) {
 			request.setAttribute("typeEmergencySql", " and sls.emergency='1'") ;
-    	} else if (typeDate!=null && typeDate.equals("3")) {
+    	} else if ("3".equals(typeDate)) {
     		request.setAttribute("typeEmergencySql", " and slsHosp.emergency='1')") ;
     	} else {
     		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and sls.emergency='1' or slo.datestart is null and slsHosp.emergency='1')") ;
     	}
 	} else if (typeEmergency.equals("2")) {
-		
-		if (typeDate!=null && typeDate.equals("2")) {
+		if ("2".equals(typeDate)) {
 			request.setAttribute("typeEmergencySql", " and (sls.emergency='0' or sls.emergency is null)") ;
-    	} else if (typeDate!=null && typeDate.equals("3")) {
+    	} else if ("3".equals(typeDate)) {
     		request.setAttribute("typeEmergencySql", " and (slsHosp.emergency='0' or slsHosp.emergency is null)") ;
     	} else {
     		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and (sls.emergency='0' or sls.emergency is null) or slo.datestart is null and (slsHosp.emergency='0' or slsHosp.emergency is null))") ;
@@ -84,10 +84,11 @@
 	}
 	
 	ActionUtil.setParameterFilterSql("serviceStream", "so.serviceStream_id", request) ;
-    
+	ActionUtil.setParameterFilterSql("additionStatus", "sls.result_id", request) ;
+
   %>
-    <msh:section guid="863b6d75-fded-49ba-8eab-108bec8e092a">
-      <msh:sectionTitle guid="1dcd4d93-235d-4141-a7ee-eca528858925">
+    <msh:section>
+      <msh:sectionTitle>
 		<ecom:webQuery name="journal_surOperation1" nameFldSql="journal_surOperation1_sql" nativeSql="select so.id as id
 	    ,coalesce(to_char(so.operationDate,'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')||' - '||to_char(so.operationDateTo,'DD.MM.YYYY')||' '||to_char(so.operationTimeTo,'HH24:MI'),to_char(so.operationDate,'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')) as operDate
 	    , vo.code||' '||vo.name as voname
@@ -104,7 +105,12 @@
 	    where a.surgicalOperation_id=so.id
 	    )
 	     ,vas.name as vasname
-	     ,svwf.name||' '||swp.lastname||' '||swp.firstname||' '||swp.middlename as surinfo
+	     ,svwf.name||' '||swp.lastname||' '||swp.firstname||' '||swp.middlename as surinfo,
+
+	     cast('Класс раны: ' as varchar(12))||vcw.name||cast(', препарат: ' as varchar(12))
+	    ||vab.name||' '||so.dose||' '||vmd.name||cast(' в 1). ' as varchar(7))||so.firstdosetime||cast(' 2). ' as varchar(5))
+	    ||case when so.seconddosetime is not null then cast(so.seconddosetime as varchar) else '-' end as ant
+	    ,st.code as stcode
 	     from SurgicalOperation so
 
 	    left join anesthesia an on an.surgicaloperation_id=so.id
@@ -120,14 +126,18 @@
      left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
-	      
+
+     left join vocclasswound vcw on vcw.id=so.classwound_id
+     left join vocmethodsdrugadm vmd on vmd.id=so.methodsdrugadm_id
+     left join vocantibioticdrug vab on vab.id=so.antibioticdrug_id
+     left join statisticstub st on st.medcase_id =sls.id
 	       where ${typeDateSql} 
 	        between to_date('${beginDate}','dd.mm.yyyy')
 	          and to_date('${endDate}','dd.mm.yyyy') 
 	          ${department} ${spec} ${medService}
-	           ${addParamSql} ${serviceStreamSql} ${typeEmergencySql} ${typeEndoscopyUseSql} ${typeAnaesthesUseSql}
+	           ${addParamSql} ${serviceStreamSql} ${typeEmergencySql} ${typeEndoscopyUseSql} ${typeAnaesthesUseSql} ${additionStatusSql}
 	          order by p.lastname,p.firstname,p.middlename
-	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	        " />
 	        
 	            	    <form action="print-journal_surOperationByDate_r.do" method="post" target="_blank">
         Результаты поиска за дату с ${beginDate} по ${endDate}.
@@ -142,18 +152,21 @@
 	        
       </msh:sectionTitle>
       <msh:sectionContent>
-	    <msh:table name="journal_surOperation1" 
+	    <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation1"
 	    action="entityView-stac_surOperation.do" idField="1" 
 	    viewUrl="entityShortView-stac_surOperation.do"
+				   openNewWindow="true"
 	    >
-	      <msh:tableColumn columnName="#" property="sn" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="Статус пациента" property="7"/>
+			<msh:tableColumn columnName="Номер истории" property="10"/>
 	      <msh:tableColumn columnName="Пациент" property="5"/>
-	      <msh:tableColumn columnName="Период операции" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
+	      <msh:tableColumn columnName="Период операции" property="2" />
 	      <msh:tableColumn columnName="Хирург" property="8"/>
 	      <msh:tableColumn columnName="Ассистенты" property="4"/>
 	      <msh:tableColumn columnName="Операции" property="3"/>
 	      <msh:tableColumn columnName="Анестезия" property="6"/>
+			<msh:tableColumn columnName="Антибиотикопрофилактика" property="9"/>
 	    </msh:table>
       </msh:sectionContent>
     </msh:section>

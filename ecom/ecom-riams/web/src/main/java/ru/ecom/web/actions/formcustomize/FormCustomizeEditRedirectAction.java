@@ -25,11 +25,9 @@ public class FormCustomizeEditRedirectAction extends BaseAction {
             String formName = st.nextToken() ;
             if(st.hasMoreTokens()) {
                 String elementName = st.nextToken() ;
-                StringBuilder url = new StringBuilder("formCustomizeEdit.do?formName=");
-                url.append(formName) ;
-                url.append("&elementName=") ;
-                url.append(elementName) ;
-                fw = new ActionForward(url.toString(), true);
+                String url = "formCustomizeEdit.do?formName=" + formName +
+                        "&elementName=" +elementName;
+                fw = new ActionForward(url, true);
             } else {
                 new InfoMessage(aRequest, "Нет названия поля") ;
             }

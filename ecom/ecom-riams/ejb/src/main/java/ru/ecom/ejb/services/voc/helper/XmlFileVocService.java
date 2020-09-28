@@ -42,10 +42,8 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 		return list ;
 	}
 	private void loadFile( String aResourceString,List<VocValue> aList,VocContext aContext) {
-        //LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
 
         try (InputStream in = getInputStream(aResourceString)){
-                //LOG.info(new StringBuilder().append("		file=").append(in).toString());
                	Document doc = new SAXBuilder().build(in);
                 Element parConfigElement = doc.getRootElement();
                 for (Object o : parConfigElement.getChildren()) {
@@ -77,7 +75,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	    if (StringUtil.isNullOrEmpty(key)) {
 	    	throw new IllegalArgumentException("Нет атрибута name");
 	    }
-	    String type = aElement.getAttributeValue("type");
+//	    String type = aElement.getAttributeValue("type");
 	    /*LOG.info(new StringBuilder().append(" Parameter ").append(key)
 	        		.append(" (name = ").append(name).append("")
 	        		.append(" type= ").append(type).append(")")

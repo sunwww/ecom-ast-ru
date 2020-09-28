@@ -160,4 +160,18 @@ public class ServiceMedCaseForm extends TicketMedCaseForm {
 	private Long theVisitReason;
 	/** Результат визита */
 	private Long theVisitResult;
+
+
+	/** Комментарий по услуге */
+	@Comment("Комментарий по услуге")
+	@Persist
+	public String getServiceComment() {
+		return theServiceComment;
+	}
+	public void setServiceComment(String aServiceComment) {
+		theServiceComment = aServiceComment;
+	}
+
+	/** Комментарий по услуге */
+	private String theServiceComment;
 }

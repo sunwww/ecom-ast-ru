@@ -21,10 +21,11 @@ public class VocCoefficientLpuLevel extends VocCoefficient {
     private MisLpu theDepartment ;
 
     /** Профиль мед. помощи */
-    @Comment("Профиль мед. помощи")
+/*    @Comment("Профиль мед. помощи")
     @OneToOne
     public VocE2MedHelpProfile getHelpProfile() {return theHelpProfile;}
     public void setHelpProfile(VocE2MedHelpProfile aHelpProfile) {theHelpProfile = aHelpProfile;}
     /** Профиль мед. помощи */
-    private VocE2MedHelpProfile theHelpProfile ;
+//    private VocE2MedHelpProfile theHelpProfile ;
+
 }

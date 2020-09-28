@@ -66,7 +66,7 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 			aRequest.setAttribute("finishDate", form.getFinishDate()) ;
 		}
 		
-		String fldDate = "" ;
+		String fldDate;
 
 		boolean isReestr = false ;
 		if (view.equals("1")) isReestr=true ;
@@ -91,7 +91,7 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 				,form.getWorkPlaceType(),form.getOrderLpu()
 				,form.getOrderWorkFunction())) ;
 		aRequest.setAttribute("groupByTitle", getTitle(groupBy,date,typeUser)) ;
-		return aMapping.findForward("success") ;
+		return aMapping.findForward(SUCCESS) ;
 
     }
     public String getTitle(String aGroupBy,String aTypeDate, String aTypeUser) {
@@ -130,26 +130,26 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType, Long aOrderLpu, Long aOrderWF) {
 		StringBuilder filter = new StringBuilder() ;
 		
-		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
-			filter.append(" and wf.id="+aSpecialist) ;
+		if (aSpecialist!=null&&aSpecialist> 0L){
+			filter.append(" and wf.id=").append(aSpecialist);
 		}
-		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
-			filter.append(" and wf.workFunction_id="+aWorkFunction) ;
+		if (aWorkFunction!=null&&aWorkFunction> 0L){
+			filter.append(" and wf.workFunction_id=").append(aWorkFunction);
 		}
-		if (aLpu!=null&&aLpu>Long.valueOf(0)){
-			filter.append(" and w.lpu_id="+aLpu) ;
+		if (aLpu!=null&&aLpu> 0L){
+			filter.append(" and w.lpu_id=").append(aLpu);
 		}
-		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
-			filter.append(" and t.serviceStream_id="+aServiceStream) ;
+		if (aServiceStream!=null&&aServiceStream> 0L){
+			filter.append(" and t.serviceStream_id=").append(aServiceStream);
 		}
-		if (aWorkPlaceType!=null&&aWorkPlaceType>Long.valueOf(0)){
-			filter.append(" and t.workPlaceType_id="+aWorkPlaceType) ;
+		if (aWorkPlaceType!=null&&aWorkPlaceType> 0L){
+			filter.append(" and t.workPlaceType_id=").append(aWorkPlaceType);
 		}
-		if (aOrderLpu!=null&&aOrderLpu>Long.valueOf(0)){
-			filter.append(" and t.orderLpu_id="+aOrderLpu) ;
+		if (aOrderLpu!=null&&aOrderLpu> 0L){
+			filter.append(" and t.orderLpu_id=").append(aOrderLpu);
 		}
-		if (aOrderWF!=null&&aOrderWF>Long.valueOf(0)){
-			filter.append(" and t.orderWorkFunction_id="+aOrderWF) ;
+		if (aOrderWF!=null&&aOrderWF> 0L){
+			filter.append(" and t.orderWorkFunction_id=").append(aOrderWF);
 		}
 		return filter.toString() ;
 	}
@@ -158,31 +158,31 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 			, Long aOrderLpu, Long aOrderWF) {
 		StringBuilder filter = new StringBuilder() ;
 		filter.append("||':'") ;
-		if (aSpecialist!=null&&aSpecialist>Long.valueOf(0)){
+		if (aSpecialist!=null&&aSpecialist> 0L){
 			filter.append("||").append(aSpecialist) ;
 		}
 		filter.append("||':'") ;
-		if (aWorkFunction!=null&&aWorkFunction>Long.valueOf(0)){
+		if (aWorkFunction!=null&&aWorkFunction> 0L){
 			filter.append("||").append(aWorkFunction) ;
 		}
 		filter.append("||':'") ;
-		if (aLpu!=null&&aLpu>Long.valueOf(0)){
+		if (aLpu!=null&&aLpu> 0L){
 			filter.append("||").append(aLpu) ;
 		}
 		filter.append("||':'") ;
-		if (aServiceStream!=null&&aServiceStream>Long.valueOf(0)){
+		if (aServiceStream!=null&&aServiceStream> 0L){
 			filter.append("||").append(aServiceStream) ;
 		}
 		filter.append("||':'") ;
-		if (aWorkPlaceType!=null&& aWorkPlaceType>Long.valueOf(0)){
+		if (aWorkPlaceType!=null&& aWorkPlaceType> 0L){
 			filter.append("||").append(aWorkPlaceType) ;
 		}
 		filter.append("||':'") ;
-		if (aOrderLpu!=null&& aOrderLpu>Long.valueOf(0)){
+		if (aOrderLpu!=null&& aOrderLpu> 0L){
 			filter.append("||").append(aOrderLpu) ;
 		}
 		filter.append("||':'") ;
-		if (aOrderWF!=null&& aOrderWF>Long.valueOf(0)){
+		if (aOrderWF!=null&& aOrderWF> 0L){
 			filter.append("||").append(aOrderWF) ;
 		}
 		filter.append("||':'") ;
@@ -195,9 +195,9 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType
 			, Long aOrderLpu, Long aOrderWF) {
 		StringBuilder sql = new StringBuilder() ;
-		String id = "" ;
+		String id;
 		String id1 = "" ;
-		String name = "" ;
+		String name;
 		boolean idrep = false ;
 		if (aGroupBy.equals("2")) {
 			//LPU
@@ -244,8 +244,8 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType
 			, Long aOrderLpu, Long aOrderWF,String aTypeUser) {
 		StringBuilder sql = new StringBuilder() ;
-		String group = "" ;
-		String order = "" ;
+		String group;
+		String order;
 		if (aGroupBy.equals("2")) {
 			//LPU
 			group = "lpu.id,lpu.name" ;
@@ -305,7 +305,6 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 		sql.append(" left join Omc_Oksm ok on p.nationality_id=ok.id") ;
 		sql.append(" LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id") ;
 		sql.append(" LEFT JOIN MisLpu olpu on olpu.id=t.orderLpu_id") ;
-		 ;
 		sql.append(" WHERE ") ;
 		sql.append("  ").append(aTypeDate) ;
 		sql.append(" BETWEEN TO_DATE('").append(aStartDate).append("','dd.mm.yyyy') and TO_DATE('").append(aFinishDate).append("','dd.mm.yyyy')");
@@ -319,21 +318,13 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 		if (aReestr) {
 			sql.append(" and wct.medcase_id is not null") ;
 			if (!aWhereDop.equals(""))sql.append(" and ").append(aWhereDop) ;
-			sql.append(" ORDER BY ").append(order).append("");
+			sql.append(" ORDER BY ").append(order);
 		} else {
-			
 			sql.append(" GROUP BY ").append(group)
 				.append(" having count(distinct wct.medcase_id)>0") ;
-			if (aOrderByProcent) {
-				sql.append(" ORDER BY ")
-				//.append("(count(distinct case when t.visitResult_id is not null and (t.noActuality is null or t.noActuality='0') then t.id else null end) )/cast(count(distinct wct.medcase_id) as numeric) desc ")
-				//	.append(",count(distinct wct.medCase_id),")
-				.append(order).append("");
-			} else {
-				sql.append(" ORDER BY ").append(order).append("");
-			}
+			sql.append(" ORDER BY ").append(order);
+
 		}
-			
 		return sql.toString() ;
 	}
 }

@@ -5,7 +5,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 /**
  * Переливания других трансфузионных жидкостей
@@ -15,8 +14,7 @@ import javax.persistence.Table;
 
 @Comment("Переливания других трансфузионных жидкостей")
 @Entity
-@Table(schema="SQLUser")
-public class OtherTransfusion extends Transfusion{
+public class OtherTransfusion extends Transfusion {
 	
 	/** Другая трансфузионная жидкость */
 	@Comment("Другая трансфузионная жидкость")

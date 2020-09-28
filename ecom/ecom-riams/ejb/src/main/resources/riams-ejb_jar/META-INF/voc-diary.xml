@@ -37,6 +37,9 @@
 
     </voc>
 
+    <voc id='durationInMinute' type='XmlFileVocService'>
+        <XmlFileVocService filename="/META-INF/diary/duration-in-minute-config.xml"/>
+    </voc>
     <voc id='parameterType' type='XmlFileVocService'>
         <XmlFileVocService filename="/META-INF/diary/parameter-config.xml"/>
     </voc>
@@ -52,14 +55,7 @@
        queryConvertType = 'FIRST_UPPER'
                 />
     </voc>
-    <voc id='TemplateProtocolType' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocolType'
-                names   = 'name'
-                queried = 'name'
-       queryConvertType = 'FIRST_UPPER'
-                />
-    </voc>
+
     <voc id='KeyWord' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateWord'
@@ -103,26 +99,6 @@
                 queried = 'title'
        queryConvertType = 'FIRST_UPPER'
                 />
-    </voc>
-
-    <!--<voc id='Mkb' type='EntityVocService'>
-        <EntityVocService
-                entity = 'ru.ecom.diary.ejb.domain.Mkb'
-                names = 'code,name'
-                queried = 'code,name'
-                queriedConvertType = 'FIRST_UPPER'
-            />
-
-    </voc>  -->
-    <voc id='TemplateClassif' type='EntityVocService'>
-        <EntityVocService
-                entity = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateClassif'
-                names = 'name'
-                queried = 'name'
-                queriedConvertType = 'FIRST_UPPER'
-
-            />
-
     </voc>
 
     <voc id='vocTemplateCategory' type='AllValueHelper'>

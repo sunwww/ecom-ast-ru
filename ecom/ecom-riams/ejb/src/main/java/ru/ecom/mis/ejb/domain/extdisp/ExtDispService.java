@@ -87,4 +87,12 @@ public class ExtDispService extends BaseEntity{
 
 	/** Диагноз по визиту */
 	private VocIdc10 theIdc10;
+
+	/** Отказ от услуги */
+	@Comment("Отказ от услуги")
+	//@Column(nullable=false, columnDefinition="boolean default false")
+	public Boolean getDeniedService() {return theDeniedService;}
+	public void setDeniedService(Boolean aDeniedService) {theDeniedService = aDeniedService;}
+	/** Отказ от услуги */
+	private Boolean theDeniedService ;
 }

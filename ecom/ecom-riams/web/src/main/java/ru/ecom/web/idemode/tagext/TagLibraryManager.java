@@ -1,6 +1,5 @@
 package ru.ecom.web.idemode.tagext;
 
-import org.apache.log4j.Logger;
 import ru.nuzmsh.util.PropertyUtil;
 
 import javax.servlet.jsp.tagext.TagAttributeInfo;
@@ -16,10 +15,6 @@ import java.util.Map;
 
 public class TagLibraryManager {
 
-	private static final Logger LOG = Logger.getLogger(TagLibraryManager.class);
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
-	
 	public void addTld(Class aClass, String aName) {
 		String filename = "/META-INF/"+aName+".tld" ;
 		InputStream in = aClass.getResourceAsStream(filename);
@@ -49,7 +44,7 @@ public class TagLibraryManager {
 	}
 	
 	public Map<String,String> getDefaultValues(TagInfo aTagInfo) {
-		HashMap<String,String> ret = new HashMap<String, String>() ;
+		HashMap<String,String> ret = new HashMap<>() ;
 		try {
 			Class clazz = Thread.currentThread().getContextClassLoader().loadClass(aTagInfo.getTagClassName()) ;
 			Object tag = clazz.newInstance();
@@ -75,8 +70,7 @@ public class TagLibraryManager {
 		TagLibraryInfo info = theLibraries.get(aPrefix);
 		if("tags".equals(aPrefix)) {
 			// FIXME для tags
-			TagInfo tagInfo = new TagInfo(aName, aName, aName, aName, info, null, null) ;
-			return tagInfo ;
+			return new TagInfo(aName, aName, aName, aName, info, null, null);
 		}
 		if(info==null) {
 			throw new IllegalArgumentException("Нет tld с "+aPrefix+" для "+aName);
@@ -108,13 +102,8 @@ public class TagLibraryManager {
 		TagLibraryManager manager = new TagLibraryManager() ;
 		manager.addTld(ru.nuzmsh.web.tags.AbstractFieldTag.class, "msh");
 		TagInfo tag = manager.getTagInfo("msh", "table");
-		if (CAN_DEBUG)
-			LOG.debug("main: tag = " + tag.getTagName()); 
-
-		//manager.addTld(new File("/home/esinev/workspace/ecom/ecom-ejbweb/web/src/main/resources/META-INF/ecom.tld"));
-		//manager.loadLibs();
 	}
 	
-	private final HashMap<String, TagLibraryInfo> theLibraries = new HashMap<String, TagLibraryInfo>();
+	private final HashMap<String, TagLibraryInfo> theLibraries = new HashMap<>();
 	private final LoadTldHelper theLoadTldHelper = new LoadTldHelper() ;
 }

@@ -13,7 +13,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journal">Разбивка по страховым компаниям СЛС</msh:title>
+    <msh:title mainMenu="Journal">Разбивка по страховым компаниям СЛС</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:stac_journal currentAction="stac_report_insCompany"/>
@@ -26,13 +26,13 @@
 	String typeView =ActionUtil.updateParameter("ReestrByInsCompany","typeView","1", request) ;
 	if (noViewForm==null) {
   	%>
-    <msh:form action="/stac_report_insCompany.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-      <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/stac_report_insCompany.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+      <msh:panel>
       <%--
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
-        <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
       	<msh:autoComplete property="pigeonHole" fieldColSpan="3" 
       		horizontalFill="true" label="Приемник"
       		vocName="vocPigeonHole"
@@ -51,7 +51,7 @@
         </td>
       </msh:row>
       
-      <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+      <msh:row>
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typePatient" value="1">  региональные
@@ -89,7 +89,7 @@
 	        	<input type="radio" name="typeView" value="6"  >  свод по причинам отказов от госпитализаций
 	        </td>
         </msh:row>
-        <msh:row guid="Дата">
+        <msh:row>
         <msh:textField fieldColSpan="1" property="dateBegin" label="Дата c"/>
         <msh:textField fieldColSpan="1" property="dateEnd" label="по"/>
       </msh:row>
@@ -207,7 +207,7 @@ group by mc.id,ss.code
     ,pat.birthday,mc.datestart
     ,mc.datefinish,mc.emergency,ml.name
 order by pat.lastname,pat.middlename,pat.middlename
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
     <msh:table name="swod" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1">
       <msh:tableColumn columnName="№" property="sn" />
       <msh:tableColumn columnName="Полис" property="9" />
@@ -249,7 +249,7 @@ and mc.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
 and mc.deniedhospitalizating_id is null  ${paramSql} 
 group by mp.dtype,ri.name,ri.id
 order by ri.name
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
     <msh:table name="swod" action="stac_report_insCompany.do?typeView=1&department=${param.department}${paramHref}" 
     viewUrl="stac_report_insCompany.do?short=Short&typeView=1&department=${param.department}${paramHref}"
     idField="1">
@@ -293,7 +293,7 @@ and mc.deniedhospitalizating_id is null  ${paramSql}
 group by mp.dtype,ri.name,ri.id,ml.name,ml.id
 order by ri.name,ml.name
 
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
     <msh:table name="swod" action="stac_report_insCompany.do?typeView=1${paramHref}" 
     viewUrl="stac_report_insCompany.do?short=Short&typeView=1${paramHref}"
     idField="1">
@@ -346,7 +346,7 @@ group by mc.id,ss.code
     ,pat.birthday,mc.datestart
     ,mc.datefinish,mc.emergency,ml.name,ml1.name
 order by pat.lastname,pat.middlename,pat.middlename
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
     <msh:table name="swod" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1">
       <msh:tableColumn columnName="№" property="sn" />
       <msh:tableColumn columnName="Полис" property="9" />
@@ -388,7 +388,7 @@ and sloD.dtype='DepartmentMedCase'
 group by mp.dtype,ri.name,ri.id
 order by ri.name
 
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
     <msh:table name="swod" action="stac_report_insCompany.do?typeView=3&department=${param.department}${paramHref}" 
     viewUrl="stac_report_insCompany.do?short=Short&typeView=3&department=${param.department}${paramHref}"
     idField="1">
@@ -433,7 +433,7 @@ and sloD.dtype='DepartmentMedCase'
 group by mp.dtype,ri.name,ri.id,ml.name,ml.id
 order by ri.name
 
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
     <msh:table name="swod" action="stac_report_insCompany.do?typeView=3${paramHref}"
     viewUrl="stac_report_insCompany.do?short=Short&typeView=3${paramHref}"
      idField="1">
@@ -485,7 +485,7 @@ group by mc.id,ss.code
     ,pat.birthday,mc.datestart
     ,mc.datefinish,mc.emergency,ml.name,vdh.name
 order by pat.lastname,pat.middlename,pat.middlename
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
     <msh:table name="swod" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1">
       <msh:tableColumn columnName="№" property="sn" />
       <msh:tableColumn columnName="Полис" property="10" />
@@ -524,7 +524,7 @@ and mc.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
 and mc.deniedhospitalizating_id is not null  ${paramSql} 
 group by mp.dtype,ri.name,ri.id
 order by ri.name
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
     <msh:table name="swod" action="stac_report_insCompany.do?typeView=5&department=${param.department}${paramHref}" 
     viewUrl="stac_report_insCompany.do?short=Short&typeView=5&department=${param.department}${paramHref}"
     idField="1">
@@ -568,7 +568,7 @@ and mc.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
 and mc.deniedhospitalizating_id is not null  ${paramSql} 
 group by mp.dtype,ri.name,ri.id,vdh.id,vdh.name
 order by ri.name,vdh.name
-      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+      " />
     <msh:table name="swod" action="stac_report_insCompany.do?typeView=5&department=${param.department}${paramHref}"
     viewUrl="stac_report_insCompany.do?short=Short&typeView=5&department=${param.department}${paramHref}"
      idField="1">

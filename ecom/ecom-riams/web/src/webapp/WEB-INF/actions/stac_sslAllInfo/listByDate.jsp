@@ -13,119 +13,65 @@
         }</style>
   </tiles:put>
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="StacJournal" guid="f6e72e89-0ba7-4f9e-97f6-0a1ecaf5b162">Список всех ССЛ</msh:title>
+    <msh:title mainMenu="StacJournal">Список всех ССЛ</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="677746d8-d63e-44a3-8e8b-e227dea8decb">
-      <msh:sideLink roles="/Policy/MedCase" key="ALT+N" action="/" name="По отделению" guid="b6f99225-3f13-4e39-91a4-3b371f8dce53" />
+    <msh:sideMenu>
+      <msh:sideLink roles="/Policy/MedCase" key="ALT+N" action="/" name="По отделению" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
      <ecom:webQuery name="sex_woman_sql" nativeSql="select id,name from VocSex where omccode='2'"/>
   
   <%
-  String typeAge=ActionUtil.updateParameter("Report14","typeAge","8", request) ;
-  String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
-	String dateAge="dateStart" ;
-	if (typeDate!=null && typeDate.equals("2")) {
-		dateAge="dateFinish" ;
-	}
-  	ActionUtil.getValueByList("sex_woman_sql", "sex_woman", request) ;
+	String typeAge=ActionUtil.updateParameter("Report14","typeAge","8", request) ;
+	String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
+	String dateAge= "2".equals(typeDate) ? "dateFinish" : "dateStart" ;
+	ActionUtil.getValueByList("sex_woman_sql", "sex_woman", request) ;
 	String sexWoman = (String)request.getAttribute("sex_woman") ;
-  	
-	if (typeAge!=null &&typeAge.equals("3")) {
-		StringBuilder age = new StringBuilder() ;
-		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-				.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-				.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-				.append(" -cast(to_char(p.birthday, 'mm') as int)")
-				.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-				.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-				.append(" <0)")
-				.append(" then -1 else 0 end) < 18 ") ;
-		request.setAttribute("age_sql", age.toString()) ;
-		request.setAttribute("age_info", "В. Дети") ;
-	} else if (typeAge!=null &&typeAge.equals("2")) {
-		StringBuilder age = new StringBuilder() ;
-		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) > case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
-		request.setAttribute("age_sql", age.toString()) ;
-		request.setAttribute("reportInfo", "Б. Взрослые старше трудоспособного возраста") ;
-	} else if (typeAge!=null &&typeAge.equals("1")) {
-		StringBuilder age = new StringBuilder() ;
-		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) >= 18 ") ;
-		//.append(" then -1 else 0 end) between 18 and case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
-		request.setAttribute("age_sql", age.toString()) ;
-		request.setAttribute("reportInfo", "А. Взрослые") ;
-	} else if (typeAge!=null &&typeAge.equals("7")) {
-		StringBuilder age = new StringBuilder() ;
-		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) between 18 and case when p.sex_id='")
-			.append(sexWoman).append("' then 55 else 60 end ") ;
-		request.setAttribute("age_sql", age.toString()) ;
-		request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста") ;
-	} else if (typeAge!=null &&typeAge.equals("4")) {
-		StringBuilder age = new StringBuilder() ;
-		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) < 1 ") ;
-		request.setAttribute("age_sql", age.toString()) ;
+	String ageSql = " and cast(to_char(m." + dateAge + ",'yyyy') as int)" +
+			  " -cast(to_char(p.birthday,'yyyy') as int)" +
+			  " +(case when (cast(to_char(m." + dateAge + ", 'mm') as int)" +
+			  " -cast(to_char(p.birthday, 'mm') as int)" +
+			  " +(case when (cast(to_char(m." + dateAge + ",'dd') as int)" +
+			  " - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)" +
+			  " <0)" +
+			  " then -1 else 0 end)";
+	if ("3".equals(typeAge)) {
+		request.setAttribute("age_sql", ageSql+" < 18 ");
+		request.setAttribute("age_info", "Дети") ;
+	} else if ("2".equals(typeAge)) {
+		request.setAttribute("age_sql", ageSql+" >= case when p.sex_id='" + sexWoman + "' then 55 else 60 end ");
+		request.setAttribute("reportInfo", "Взрослые старше трудоспособного возраста") ;
+	} else if ("1".equals(typeAge)) {
+		request.setAttribute("age_sql", ageSql+" >= 18 ");
+		request.setAttribute("reportInfo", "Взрослые") ;
+	} else if ("7".equals(typeAge)) {
+		request.setAttribute("age_sql", ageSql+ " between 16 and case when p.sex_id='" +
+				sexWoman + "' then 54 else 59 end ");
+		request.setAttribute("reportInfo", "Взрослые трудоспособного возраста c 16 лет") ;
+	} else if ("8".equals(typeAge)) {
+		request.setAttribute("age_sql", ageSql+" between 18 and case when p.sex_id='" +
+				sexWoman + "' then 54 else 59 end ");
+		request.setAttribute("reportInfo", "Взрослые трудоспособного возраста с 18 лет") ;
+	} else if ("9".equals(typeAge)) {
+		request.setAttribute("age_sql", ageSql+" >= 60 ");
+		request.setAttribute("reportInfo", "Взрослые старше 60 лет (вкл)") ;
+	} else if ("4".equals(typeAge)) {
+		request.setAttribute("age_sql", ageSql+ " < 1 ");
 		request.setAttribute("reportInfo", "до года") ;
-	} else if (typeAge!=null &&typeAge.equals("5")) {
-		StringBuilder age = new StringBuilder() ;
-		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) between 0 and 14 ") ;
-		request.setAttribute("age_sql", age.toString()) ;
+	} else if ("5".equals(typeAge)) {
+		request.setAttribute("age_sql", ageSql+" between 0 and 14 ");
 		request.setAttribute("reportInfo", "0-14") ;
-	} else if (typeAge!=null &&typeAge.equals("6")) {
-		StringBuilder age = new StringBuilder() ;
-		age.append(" and cast(to_char(m.").append(dateAge).append(",'yyyy') as int)")
-			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(", 'mm') as int)")
-			.append(" -cast(to_char(p.birthday, 'mm') as int)")
-			.append(" +(case when (cast(to_char(m.").append(dateAge).append(",'dd') as int)") 
-			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
-			.append(" <0)")
-			.append(" then -1 else 0 end) between 15 and 17 ") ;
-		request.setAttribute("age_sql", age.toString()) ;
+	} else if ("6".equals(typeAge)) {
+		request.setAttribute("age_sql", ageSql+" between 15 and 17 ");
 		request.setAttribute("reportInfo", "15-17") ;
 	} %>
     <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
     select m.id,m.dateStart,m.dateFinish,m.username,stat.code
     ,p.lastname ||' ' ||p.firstname|| ' ' || p.middlename
     ,p.birthday,dep.name,case when m.emergency='1' then 'Экстр.' else 'План.' end as memergency,m.noActuality  
-    ,
-    case when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1' then 'С.ж'
+    ,case when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsVillage='1' then 'С.ж'
       when (oo.voc_code='643' or oo.id is null) and substring(a.kladr,1,2)='30' and a.addressIsCity='1' then 'Гор.'
         when (oo.voc_code='643' or oo.id is null) and a.addressid is not null and substring(a.kladr,1,2)!='30' then 'Иногор.'
           when oo.voc_code!='643' then 'Иностр.'
@@ -135,7 +81,10 @@
               end as jitel
      ,vr.name as vrname
      ,list(vdrt.name||' '||vpd.name||' '||mkb.code) as diagnosis
-    from MedCase m 
+    from MedCase m
+    left join medcase slo on slo.parent_id = m.id and slo.dtype='DepartmentMedCase' and slo.prevmedcase_id is null
+left join bedFund bf on bf.id=slo.bedFund_id
+left join vocbedtype vbt on vbt.id= bf.bedType_id
 left join VocPreAdmissionTime vpat on vpat.id=m.preAdmissionTime_id
     left join MisLpu dep on m.department_id = dep.id
     left join Patient p on m.patient_id = p.id  
@@ -151,14 +100,14 @@ left join VocPreAdmissionTime vpat on vpat.id=m.preAdmissionTime_id
 	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 	left join MisLpu as ml on ml.id=m.department_id
 	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
-    where m.DTYPE='HospitalMedCase' ${paramPeriod} ${addParam} ${emergency} ${department} ${pigeonHole}
+    where m.DTYPE='HospitalMedCase' ${paramPeriod} ${addParam} ${emergency} ${department} ${bedtype} ${pigeonHole}
      ${age_sql} ${patientSql} ${hospSql} ${frmSql} ${dostSql}
      group by m.id,m.dateStart,m.dateFinish,m.username,stat.code
     ,p.lastname ,p.firstname,p.middlename
     ,p.birthday,dep.name , m.emergency ,m.noActuality  ,oo.voc_code,oo.id,a.kladr
     ,a.addressIsVillage,a.addressIsCity,a.addressid,a.domen,vr.name
     order by p.lastname ,p.firstname,p.middlename
-    " guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
+    " />
     <msh:section>
     <msh:sectionTitle>
             <form action="print-stac_journalByHospital_r.do" method="post" target="_blank">
@@ -173,21 +122,21 @@ left join VocPreAdmissionTime vpat on vpat.id=m.preAdmissionTime_id
                                 </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table viewUrl="entityShortView-stac_ssl.do" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c"  printToExcelButton="Сохранить в excel">
-      <msh:tableColumn columnName="#" property="sn" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Стат.карта" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Дата рождения" property="7" guid="fc223a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Диагноз" property="13" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Дата поступления" property="2" guid="f6523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Дата выписки" property="3" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Отделение поступления" property="8" guid="e9g8f5-8b9e-4a3e-966f-4d435g76bbc96" />
-      <msh:tableColumn columnName="Порядок поступления" property="9" guid="e9g8f5-8b9e-4a3e-966f-4d435g76bbc96" />
-      <msh:tableColumn columnName="Житель" property="11" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Район" property="12" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Кем открыт" property="4" guid="35347247-b552-4154-a82a-ee484a1714ad" />
+    <msh:table viewUrl="entityShortView-stac_ssl.do" name="datelist" idField="1" action="entityView-stac_ssl.do"  printToExcelButton="Сохранить в excel">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Стат.карта" property="5" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" />
+      <msh:tableColumn columnName="Дата рождения" property="7" />
+      <msh:tableColumn columnName="Диагноз" property="13" />
+      <msh:tableColumn columnName="Дата поступления" property="2" />
+      <msh:tableColumn columnName="Дата выписки" property="3" />
+      <msh:tableColumn columnName="Отделение поступления" property="8" />
+      <msh:tableColumn columnName="Порядок поступления" property="9" />
+      <msh:tableColumn columnName="Житель" property="11" />
+      <msh:tableColumn columnName="Район" property="12" />
+      <msh:tableColumn columnName="Кем открыт" property="4" />
     </msh:table>
-    <msh:tableNotEmpty name="list" guid="189caa95-f200-4b88-ae0f-5669effa19ce">
+    <msh:tableNotEmpty name="list">
       <div class="h3">
         <h3>Легенда</h3>
       </div>
@@ -206,8 +155,8 @@ left join VocPreAdmissionTime vpat on vpat.id=m.preAdmissionTime_id
     </msh:section>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu title="Перейти" guid="b43f7427-60be-4539-8b79-38a6882a8512">
-      <msh:sideLink key="ALT+2" params="id" action="/entityView-mis_patient" name="⇧ Пациент" guid="f07e71b2-bfbe-4137-8bba-b347b8056561" />
+    <msh:sideMenu title="Перейти">
+      <msh:sideLink key="ALT+2" params="id" action="/entityView-mis_patient" name="⇧ Пациент" />
     </msh:sideMenu>
   </tiles:put>
 </tiles:insert>

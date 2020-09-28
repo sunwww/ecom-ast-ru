@@ -159,21 +159,18 @@ public class JspFileHelper {
 	
 	private String getHeaders(String aJspPath) throws IOException {
 		StringBuilder sb = new StringBuilder(8000) ;
-		LineNumberReader in = new LineNumberReader(
+		try (LineNumberReader in = new LineNumberReader(
 				new InputStreamReader(new FileInputStream(findJspFile(aJspPath))
-				, "utf-8")) ;
-		try {
-			String line ;
-			while ( (line=in.readLine())!=null) {
+						, "utf-8"))) {
+			String line;
+			while ((line = in.readLine()) != null) {
 				sb.append(line);
 				sb.append('\n');
-				if(line.trim().startsWith("<tiles:insert")) {
-					break ;
+				if (line.trim().startsWith("<tiles:insert")) {
+					break;
 				}
 			}
 			return sb.toString();
-		} finally {
-			in.close() ;
 		}
 	}
 	private static class BooleanHolder {
@@ -244,9 +241,7 @@ public class JspFileHelper {
         
 		// удаляем равные старым значениям и пустые
 		Set<String> keys = new TreeSet<>();
-		for(String key : values.keySet()) {
-			keys.add(key);
-		}
+		keys.addAll(values.keySet());
 		Map<String,String> defaultValues = aManager.getDefaultValues(tagInfo);
 		System.out.println("defaultValues = "+defaultValues);
 		
@@ -314,25 +309,23 @@ public class JspFileHelper {
 	        
 	        // пишем JSP файл
         	String headers = getHeaders(aJspPath);
-	        PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(jspFile),"utf-8")) ;
-	        try (LineNumberReader in = new LineNumberReader(
+			try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(jspFile), "utf-8"));
+				 LineNumberReader in = new LineNumberReader(
 					new InputStreamReader(new FileInputStream(tmpFile)
-							, "utf-8"))){
-	        	out.println(headers);
-	    			String line ;
-	    			boolean canWrite = false ;
-	    			while ( (line=in.readLine())!=null) {
-	    				if(canWrite) {
-	    					out.println(line);
-	    				}
-	    				if(line.trim().startsWith("<tiles:insert")) {
-	    					canWrite = true ;
-	    				}
-	    			}
+							, "utf-8"))) {
+				out.println(headers);
+				String line;
+				boolean canWrite = false;
+				while ((line = in.readLine()) != null) {
+					if (canWrite) {
+						out.println(line);
+					}
+					if (line.trim().startsWith("<tiles:insert")) {
+						canWrite = true;
+					}
+				}
 
-	        } finally {
-	        	out.close() ;
-	        }
+			}
 		} finally {
 	        tmpFile.delete() ;
 		}
@@ -422,21 +415,19 @@ public class JspFileHelper {
 		
 		String jspEdit = "/WEB-INF/actions/"+aNewFormName+"/edit.jsp" ;
 		String jspList = "/WEB-INF/actions/"+aNewFormName+"/list.jsp" ;
-		
+
 		try {
-			if(findJspFile(jspEdit)!=null) {
-				throw new IllegalArgumentException("Файл "+jspEdit+" уже существует") ;
-			}
+			findJspFile(jspEdit);
+			throw new IllegalArgumentException("Файл "+jspEdit+" уже существует") ;
 		} catch (IllegalStateException e) {
 			try {
-				if(findJspFile(jspList)!=null) {
-					throw new IllegalArgumentException("Файл "+jspList+" уже существует") ;
-				}
+				findJspFile(jspList);
+				throw new IllegalArgumentException("Файл "+jspList+" уже существует") ;
 			} catch (IllegalStateException e2) {
 				// OK
 			}
 		}
-		
+
 		// checks in struts config (FIXME)
 		
 		// add form to config-hello.xml
@@ -502,8 +493,7 @@ public class JspFileHelper {
 	public static void main(String[] args) throws Exception {
 		TagLibraryManager manager = new TagLibraryManager() ;
 		manager.addTld(ru.nuzmsh.web.tags.AbstractFieldTag.class, "msh");
-		manager.addTld(new File("/home/esinev/workspace/ecom/ecom-ejbweb/web/src/main/resources/META-INF/ecom.tld"), "ecom");
-		
+
 		JspFileHelper h = new JspFileHelper() ;
 		
 		System.out.println(h.getAttributeValues("/WEB-INF/actions/mis_lpuArea/edit.jsp"

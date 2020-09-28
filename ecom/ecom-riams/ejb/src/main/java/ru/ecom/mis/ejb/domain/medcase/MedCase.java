@@ -8,6 +8,7 @@ import ru.ecom.mis.ejb.domain.birth.Pregnancy;
 import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.*;
+import ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
@@ -33,7 +34,15 @@ import java.util.List;
 @EntityListeners(DeleteListener.class)
 abstract public class MedCase extends BaseEntity {
 
-
+	/** Цвета браслета пациента в госпитализации */
+	@Comment("Цвета браслета пациента в госпитализации")
+	@ManyToMany
+	public List<ColorIdentityPatient> getColorsIdentity() {return theColorsIdentity;}
+	public void setColorsIdentity(List<ColorIdentityPatient> aColorsIdentity) {theColorsIdentity = aColorsIdentity;}
+	private List<ColorIdentityPatient> theColorsIdentity;
+	public void addColorsIdentity(ColorIdentityPatient colorIdentityPatient) {
+		theColorsIdentity.add(colorIdentityPatient);
+	}
 
 	/** Случаи ВМП */
 	@Comment("Случаи ВМП")
@@ -54,17 +63,18 @@ abstract public class MedCase extends BaseEntity {
 
 	/** Признак консультативно-диагностического обращения */
 	@Comment("Признак консультативно-диагностического обращения")
+	@Deprecated
 	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
 	public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
 	/** Признак консультативно-диагностического обращения */
 	private Boolean theIsDiagnosticSpo ;
 
     /** Только принят */
-    public static final int STATUS_NULL = 0 ;
+	private static final int STATUS_NULL = 0 ;
     /** ОТКАЗ */
-    public static final int STATUS_REFUSAL = 1 ;
+	private static final int STATUS_REFUSAL = 1 ;
     /** СОГЛАСИЛСЯ */
-    public static final int STATUS_AGREED = 2 ;	
+    private static final int STATUS_AGREED = 2 ;
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@OneToOne
@@ -149,66 +159,6 @@ abstract public class MedCase extends BaseEntity {
 	
 	/** Экстренность */
 	private Boolean theEmergency;
-//	/** Тип текущего стационара */
-//	@Comment("Тип текущего стационара")
-//	@OneToOne
-//	public VocHospType getHospType() {
-//		return theHospType;
-//	}
-//
-//	public void setHospType(VocHospType aHospType) {
-//		theHospType = aHospType;
-//	}
-//
-//	/** Тип текущего стационара */
-//	private VocHospType theHospType;
-//	
-//	/** Откуда поступил */
-//	@Comment("Откуда поступил")
-//	@OneToOne
-//	public VocHospType getSourceHospType() {
-//		return theSourceHospType;
-//	}
-//
-//	public void setSourceHospType(VocHospType aSourceHospType) {
-//		theSourceHospType = aSourceHospType;
-//	}
-//
-//	/** Откуда поступил */
-//	private VocHospType theSourceHospType;
-//	
-//	/** Куда переведен */
-//	@Comment("Куда переведен")
-//	@OneToOne
-//	public VocHospType getTargetHospType() {
-//		return theTargetHospType;
-//	}
-//
-//	public void setTargetHospType(VocHospType aTargetHospType) {
-//		theTargetHospType = aTargetHospType;
-//	}
-//
-//	/** Куда переведен */
-//	private VocHospType theTargetHospType;
-
-	//private StatisticStub theStatisticStub;
-//	/**Вакцинации*/
-	/*@Comment("Вакцинации")
-	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	public List<Vaccination> getVaccinations() {return theVaccinations;}
-	public void setVaccinations(List<Vaccination> aNewProperty) {theVaccinations = aNewProperty;}
-	*/
-//	/** Случай смерти */
-	//@Comment("Случай смерти")
-	//@OneToOne
-	//public DeathCase getDeathCase() {return theDeathCase;}
-	//public void setDeathCase(DeathCase aDeathCase) {theDeathCase = aDeathCase;	}
-	
-	/**Выписанные рецептурные бланки  */
-    //@OneToMany(mappedBy = "medCase", cascade = ALL)
-    //public List<PrescriptionBlank> getPrescriptionBlanks() {return thePrescriptionBlanks;}
-    //public void setPrescriptionBlanks(List<PrescriptionBlank> aPrescriptionBlanks) { thePrescriptionBlanks = aPrescriptionBlanks; }
-  
 
 	/** Представитель */
 	@Comment("Представитель")
@@ -344,13 +294,7 @@ abstract public class MedCase extends BaseEntity {
 	private List<SurgicalOperation> theSurgicalOperations;
 	/** Опьянение */
 	private VocIntoxication theIntoxication;
-    /** Вакцинации*/
-	//private List<Vaccination> theVaccinations;	
-    ///** Случай смерти */
-	//private DeathCase theDeathCase;
-    /**Выписанные рецептурные бланки */
-    //private List<PrescriptionBlank> ;
-    
+
 	/** Дата операции */
 	@Comment("Дата операции")
 	public Date getOperationDate() {
@@ -431,13 +375,13 @@ abstract public class MedCase extends BaseEntity {
 	
 	/** Вид ВМП */
 	@Comment("Вид ВМП")
-	@OneToOne
+	@OneToOne @Deprecated
 	public VocKindHighCare getKindHighCare() {return theKindHighCare;}
 	public void setKindHighCare(VocKindHighCare aKindHighCare) {theKindHighCare = aKindHighCare;}
 
 	/** Метод ВМП */
 	@Comment("Метод ВМП")
-	@OneToOne
+	@OneToOne @Deprecated
 	public VocMethodHighCare getMethodHighCare() {return theMethodHighCare;}
 	public void setMethodHighCare(VocMethodHighCare aMethodHighCare) {theMethodHighCare = aMethodHighCare;}
 
@@ -468,5 +412,21 @@ abstract public class MedCase extends BaseEntity {
 	}
 	public void setUpload(Boolean upload) {
 		isUpload = upload;
+	}
+
+	/**Код в промеде**/
+	private String promedCode;
+	@Comment("Код в промеде")
+	public String getPromedCode() {
+		return promedCode;
+	}
+	public void setPromedCode(String promedCode) {
+		this.promedCode = promedCode;
+	}
+
+	@PrePersist
+	void prePersist() {
+		setCreateDate(new Date(System.currentTimeMillis()));
+		setCreateTime(new Time(System.currentTimeMillis()));
 	}
 }

@@ -6,7 +6,6 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.poly.ejb.domain.voc.VocCardIndex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -62,15 +61,8 @@ public class Medcard extends BaseEntity {
 	@OneToOne
 	public MisLpu getLpu() {return theLpu;}
 	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
-	
-	/** Катротека */
-	@Comment("Катротека")
-	@OneToOne
-	public VocCardIndex getCardIndex() {return theCardIndex;}
-	public void setCardIndex(VocCardIndex aCardIndex) {theCardIndex = aCardIndex;}
 
-	/** Катротека */
-	private VocCardIndex theCardIndex;
+
 	/** ЛПУ */
 	private MisLpu theLpu;
     /** Пациент */

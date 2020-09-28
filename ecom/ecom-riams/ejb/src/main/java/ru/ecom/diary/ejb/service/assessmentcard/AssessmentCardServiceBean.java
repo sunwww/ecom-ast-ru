@@ -36,7 +36,7 @@ public class AssessmentCardServiceBean implements IAssessmentCardService{
 			}
 			
 			JSONArray params = obj.getJSONArray("params");
-			StringBuilder sb = new StringBuilder() ;
+		//	StringBuilder sb = new StringBuilder() ;
 			for (int i = 0; i < params.length(); i++) {
 				JSONObject param = (JSONObject) params.get(i);
 				FormInputProtocol fip = new FormInputProtocol() ;
@@ -51,31 +51,31 @@ public class AssessmentCardServiceBean implements IAssessmentCardService{
 				if (type.equals("1")||type.equals("4")) {
 					if (!StringUtil.isNullOrEmpty(value)) {
 						fip.setValueBD(new BigDecimal(value)) ;
-						if (sb.length()>0) sb.append("\n") ;
+			/*			if (sb.length()>0) sb.append("\n") ;
 						sb.append(param.get("name")).append(": ") ;
 						sb.append(value).append(" ") ;
-						sb.append(param.get("unitname")).append(" ") ;
+						sb.append(param.get("unitname")).append(" ") ;*/
 					}
 					//пользовательский справочник
-				} else if (type.equals("2")) {
+				} else if (type.equals("2") && !"".equals(value)) {
 					Long id = ConvertSql.parseLong(value) ;
-					if (id!=null && !id.equals(Long.valueOf(0))) {
+					if (id!=null && !id.equals(0L)) {
 						UserValue uv = aManager.find(UserValue.class, id) ;
 						fip.setValueVoc(uv) ;
-						if (sb.length()>0) sb.append("\n") ;
+				/*		if (sb.length()>0) sb.append("\n") ;
 						sb.append(param.get("name")).append(": ") ;
 						sb.append(param.get("valueVoc")).append(" ") ;
-						sb.append(param.get("unitname")).append(" ") ;
+						sb.append(param.get("unitname")).append(" ") ;*/
 					}
 					//3-текстовый
 					//5-текстовый с ограничением
 				} else if (type.equals("3")||type.equals("5")) {
 					if (!StringUtil.isNullOrEmpty(value)) {
-						fip.setValueText(String.valueOf(value)) ;
-						if (sb.length()>0) sb.append("\n") ;
+						fip.setValueText(value) ;
+				/*		if (sb.length()>0) sb.append("\n") ;
 						sb.append(param.get("name")).append(": ") ;
 						sb.append(value).append(" ") ;
-						sb.append(param.get("unitname")).append(" ") ;
+						sb.append(param.get("unitname")).append(" ") ;*/
 					}
 				}
 				aManager.persist(fip) ;

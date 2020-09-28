@@ -49,7 +49,7 @@ public class AddressServiceJs {
                 IAddressService service = Injection.find(aRequest).getService(IAddressService.class);
                 return service.getAddressString(Long.parseLong(aAddressId), aHouse, aCorpus, aFlat,aZipCode);
             } catch (Exception e) {
-                e.printStackTrace() ;
+                LOG.error(e.getMessage(),e);
                 throw new IllegalStateException(e) ;
             }
         }
@@ -71,7 +71,7 @@ public class AddressServiceJs {
             AddressPointCheckHelper helper = new AddressPointCheckHelper();
             IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
             List<AddressPointCheck> list = helper.parsePoints(aPoints) ;
-            if(list!=null && !list.isEmpty()) {
+            if(!list.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 boolean firstAdded = false ;
                 for (AddressPointCheck point : list) {

@@ -35,4 +35,9 @@ public class E2CancerRefusal extends BaseEntity {
 
     public E2CancerRefusal(){}
     public E2CancerRefusal(E2CancerEntry aCancerEntry) {theCancerEntry=aCancerEntry;}
+    public E2CancerRefusal(E2CancerRefusal aRef, E2CancerEntry aCancerEntry) {
+        theCancerEntry=aCancerEntry;
+        theCode = aRef.theCode;
+        theDate=aRef.theDate;
+    }
 }

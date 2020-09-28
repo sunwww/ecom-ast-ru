@@ -36,7 +36,7 @@
 
 	<tiles:put name='body' type='string'>
 		<msh:form action="entityParentSaveGoSubclassView-smo_visitProtocol.do"
-			defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07"
+			defaultField="dateRegistration"
 			fileTransferSupports="true">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
@@ -49,6 +49,7 @@
 			<msh:hidden property="medCase" />
 			<msh:hidden property="params" />
 			<msh:hidden property="specialist" />
+			<msh:hidden property="serviceStream" />
 
 			<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
 				<msh:hidden property="record" />
@@ -88,12 +89,11 @@
 					<msh:row  styleId="rwCreateDiagnosis2">
 						<msh:autoComplete property="diagnosisRegistrationType" label="Тип регистрации" horizontalFill="true" fieldColSpan="1" 
 
-vocName="vocDiagnosisRegistrationType" guid="1ecf26b7-d071-4abc-93ae-c52af4ae368b" />
-						<msh:autoComplete vocName="vocPriorityDiagnosis" property="diagnosisPriority" label="Приоритет" guid="e28f35fc-fe25-4968-
-bf2f-d1fe4661349e" horizontalFill="true" />
+vocName="vocDiagnosisRegistrationType"/>
+						<msh:autoComplete vocName="vocPriorityDiagnosis" property="diagnosisPriority" label="Приоритет" horizontalFill="true" />
 					</msh:row>
 				<msh:row styleId="rwCreateDiagnosis3">
-					<msh:autoComplete vocName="vocIdc10" property="diagnosisIdc10" label="Код МКБ-10" guid="e36df3bf-fe77-4096-a082-51016fc2baad" 
+					<msh:autoComplete vocName="vocIdc10" property="diagnosisIdc10" label="Код МКБ-10"
 fieldColSpan="3" horizontalFill="true" />
 				</msh:row>
 				<msh:row styleId="rwCreateDiagnosis4">
@@ -101,7 +101,7 @@ fieldColSpan="3" horizontalFill="true" />
 fieldColSpan="3"/>
 				</msh:row>
 				<msh:row  styleId="rwCreateDiagnosis5">
-					<msh:textArea property="diagnosisText" label="Наименование" guid="c0a86a5e-34ff-46f3-984b-5ecbd2749760" fieldColSpan="5" rows="2" 
+					<msh:textArea property="diagnosisText" label="Наименование" fieldColSpan="5" rows="2"
 
 horizontalFill="true" />
 				</msh:row>
@@ -110,7 +110,7 @@ horizontalFill="true" />
 						<td colspan="3" align="right">
 						<input type="button" style="display: none" name="btnEditProt2" id="btnEditProt2"
 							value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" />
-
+							<input type="button" onclick="checkStorage();" value="Восстановить потерянные данные" />
 							<input id="usualCalcs" class="hide" type="button" value="Калькуляторы и шкалы риска" onClick="showallCalc(medCaseId,1)"/>
 
 							<!--input id="SKNF" class="hide" type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId,1)"/-->
@@ -125,7 +125,7 @@ horizontalFill="true" />
 				</msh:ifFormTypeIsNotView>
 				<msh:row>
 					<msh:textArea property="record" label="Текст:" size="100" rows="25"
-						fieldColSpan="8" guid="b6ehb-b971-441e-9a90-519c07"/>
+						fieldColSpan="8"/>
 
 				</msh:row>
 
@@ -223,13 +223,15 @@ horizontalFill="true" />
 
 		<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
 			<msh:sideMenu title="Печать">
-				<%--     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol"
-    	name="Печать дневника"
-    	action='/javascript:printProtocol(".do")' title='Печать дневника' /> --%>
 				<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol"
 							  name="Печать дневника"
 							  action='/javascript:showPrintProtocolTemplate()'
 							  title='Печать дневника' />
+
+				<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol"
+							  name="Печать дневника с проверкой"
+							  action='/javascript:checkPrint()'
+							  title='Печать дневника с проверкой' />
 
 				<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol"
 							  name="Добавить внешний документ"
@@ -245,25 +247,17 @@ horizontalFill="true" />
 	</tiles:put>
 
 	<tiles:put name='javascript' type='string'>
-
-
-
-		<script type="text/javascript">
-            var isDMS=false;
-            function printProtocol() {
-                HospitalMedCaseService.getPrefixByProtocol(${param.id},
-                    {
-                        callback: function(prefix) {
-                            if (prefix==null) prefix="" ;
-                            initSelectPrinter("print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}",1)
-                            //window.location.href="print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}" ;
-
-                        }
-                    }
-                )
-            }
-
-		</script>
+		<script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+<script type="text/javascript">
+	function printProtocol() {
+		HospitalMedCaseService.getPrefixByProtocol(${param.id}, {
+			callback: function(prefix) {
+				if (prefix==null) prefix="" ;
+				initSelectPrinter("print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}",1);
+			}
+		});
+	}
+</script>
 
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 			<script type="text/javascript">
@@ -277,7 +271,12 @@ horizontalFill="true" />
                 }
 
                 function saveToStorage() {
-                    try {localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId+";"+currentUsername, $('record').value);}catch(e) {}
+                    try {
+                        var text=$('record').value;
+                        if ($('record').value.match(/^С начала СЛС: \d+ сутки\nС начала СЛО: \d+ сутки\n$/ig)==null
+						&& $('record').value.match(/^С начала СЛС: \d+ сутки\n$/ig)==null && $('record').value!='')
+                        localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId+";"+currentUsername, $('record').value);
+                    }catch(e) {}
                 }
                 function removeFromStorage() {
                     try {localStorage.removeItem("smo_visitProtocolForm"+";"+medCaseId+";"+currentUsername);}catch (e) {alert("remove ex"+e);}
@@ -344,59 +343,35 @@ horizontalFill="true" />
     			var flag=0;
 
 				function save_form() {
-                    if (typeof isDMS  == 'undefined') {
-                        HospitalMedCaseService.getIfPrivateInsurance(${param.id},true,{
-                                callback: function(res) {
-                                    isDMS=(res=="1");
-                                    checkAndSave();
-                            }}
-                        );
-                    }
-					else checkAndSave();
-                }
-                function checkAndSave() {
-                    var flag=false;
-                    <msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
-                    flag=(!isDMS || (isDMS && document.getElementById("medServiceName").value != ""
-                        && document.getElementById("typeName").value != ""
-                        && document.getElementById("diagnosisPriorityName").value != ""
-                        && document.getElementById("diagnosisIdc10Name").value != ""
-                        && document.getElementById("diagnosisRegistrationTypeName").value != ""
-                        && document.getElementById("diagnosisIllnessPrimaryName").value != ""));
-                    </msh:ifFormTypeIsCreate>
-                    <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
-                    flag=(!isDMS || (isDMS && document.getElementById("medServiceName").value != ""
-                        && document.getElementById("typeName").value != ""));
-                    </msh:ifFormTypeAreViewOrEdit>
-                    if (flag) {
-                        TemplateProtocolService.getUsername({
-                                callback: function (aValue) {
-                                    if (aValue != "") {
-                                        removeFromStorage();
-                                        var frm = document.smo_visitProtocolForm;
-                                        frm.action = oldaction;
-                                        frm.submit();
-                                    } else {
-                                        $('submitButton').disabled = false;
-                                        if (confirm("Возникли проблемы с авторизацией. Вы хотите ввести логин и пароль в новом окне?")) {
-                                            showLoginAutorization();
-                                        }
-                                        ;
+				    $('submitButton').disabled=true;
+					TemplateProtocolService.getUsername({
+						callback: function(aValue) {
+							if (aValue!="") {
+                                HospitalMedCaseService.getMedServiceNecessaryInDiary($('medCase').value,{
+                                    callback: function(res) {
+                                        if (res=="0" || (res=="1"
+											&& document.getElementById("medServiceName").value != "" && document.getElementById("medService").value != "")) {
+                                            removeFromStorage();
+                                            var frm = document.smo_visitProtocolForm;
+                                            frm.action= oldaction;
+                                            frm.submit();
+										}
+										else if (res=="1") {
+                                            $('submitButton').disabled=false;
+                                            showToastMessage("Заполнение услуги обязательно при создании дневника в СЛО (с потоком обслуживания ДМС/Платный) врачом - не сотрудником текущего отделения!",null,true);
+										}
                                     }
-                                }
-                            }
-                        );
-                    }
-                    else {
-                        <msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
-                        alert("Поток обслуживания ДМС - при создании проотокола необходимо указать мед. услугу, тип протокола и данные по диагнозу!");
-                        </msh:ifFormTypeIsCreate>
-                        <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
-                        alert("Поток обслуживания ДМС - при редактировании протокола необходимо указать мед. услугу и тип протокола!");
-                        </msh:ifFormTypeAreViewOrEdit>
-                        $('submitButton').disabled = false;
-                        $('submitButton').value = (location.href.indexOf('entityParentPrepareCreate')==-1)? 'Сохранить изменения':'Создать';
-                    }
+                                });
+
+							} else {
+								$('submitButton').disabled=false;
+								 if (confirm("Возникли проблемы с авторизацией. Вы хотите ввести логин и пароль в новом окне?")) {
+									 showLoginAutorization() ;
+								 };
+							}
+						 }
+					 }
+					) ;
 				}
 
    if ($('templateProtocol').value>0) {
@@ -413,17 +388,19 @@ horizontalFill="true" />
     		document.smo_visitProtocolForm.submit() ;
     	}else {setTimeout(checktime,600000); }
     }
-
-	try {
-		var text = localStorage.getItem("smo_visitProtocolForm" + ";" + medCaseId + ";" + currentUsername);
-		if (text != null) {
-			if (confirm('Обнаружен несохранённый протокол. Восстановить?')) {
-				$('record').value = text;
-			}
-			removeFromStorage();
-		}
-	} catch (e) {}
-
+	function checkStorage() {
+        try {
+            var text = localStorage.getItem("smo_visitProtocolForm" + ";" + medCaseId + ";" + currentUsername);
+            if (text != null) {
+                if (confirm('Обнаружен несохранённый протокол. Восстановить? Он заменит введённый текст.')) {
+                    $('record').value = text;
+                }
+                //removeFromStorage();
+            }
+            else showToastMessage("Данных для восстановления не найдено!",null,true);
+        } catch (e) {
+        }
+    }
 	function saveCookie() {
 		if (($('record').value.replace(/|\s+|\s+$/gm,''))!="") setCookie("protocol", $('record').value) ;
 	}
@@ -471,7 +448,7 @@ horizontalFill="true" />
 	}
 
 	function setMedServiceParent() {
-		medServiceAutocomplete.setParentId($('specialist').value+"#"+$('dateRegistration').value);
+		medServiceAutocomplete.setParentId($('specialist').value+"#"+$('dateRegistration').value+"#"+$('serviceStream').value);
 	}
 	eventutil.addEventListener($('dateRegistration'),"change", function (){setMedServiceParent();});
 	setMedServiceParent();
@@ -498,9 +475,10 @@ horizontalFill="true" />
                 function getDtype(){
                     TemplateProtocolService.getDtypeMedCase($('medCase').value,{
                         callback: function(res) {
-                            var aResult = res.split('#') ;
-                            aDtype=aResult[0];
-                            ifCharged=aResult[1];
+                            var aResult=JSON.parse(res);
+                            aDtype=aResult.msDtype;
+                            ifCharged=aResult.vssCode;
+							medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
                             if (aDtype != null && aDtype == "HospitalMedCase") {
                                 ishosp = 1;
                                 $('stateName').className = "autocomplete horizontalFill required";
@@ -510,33 +488,40 @@ horizontalFill="true" />
                                 $('diagnosisPriorityName').className = "autocomplete horizontalFill required";
                                 $('diagnosisIdc10Name').className = "autocomplete horizontalFill required";
                                 $('diagnosisIllnessPrimaryName').className = "autocomplete horizontalFill required";
-                                if (ifCharged != null && ifCharged == "CHARGED") {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStacCharged');
-                                }
-                                else {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
-                                }
                             } else if (aDtype != null && aDtype == "DepartmentMedCase") {
                                 ishosp = 1;
                                 $('typeName').className = "autocomplete horizontalFill required";
                                 $('stateName').className = "autocomplete horizontalFill required";
-                                if (ifCharged != null && ifCharged == "CHARGED") {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStacCharged');
-                                }
-                                else  {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
-                                }
-                            } else {
-                                if (ifCharged != null && ifCharged == "CHARGED") {
-                                    medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecCharged');
-                                }
-                            }
+                            } else if (ifCharged != null && ifCharged == "CHARGED") {
+                            	medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecCharged');
+                         	}
                         }
                     });
                 }
                 getDtype();
 
-
+                //Обязательна ли услуга
+				function checkMedServiceNecessary() {
+                    HospitalMedCaseService.getMedServiceNecessaryInDiary($('medCase').value,{
+                        callback: function(res) {
+                            if (res=="1")
+                                document.getElementById("medServiceName").className = "autocomplete horizontalFill required";
+                        }
+                    });
+				}
+                checkMedServiceNecessary();
+                //при возвращении с черновика протокола (когда услуга не была заполнена), теряется поток обслуживания => справочник услуг  не работает
+				function setLostSstreamAfterDraft() {
+                    if ($('serviceStream').value=='' && window.location.href.indexOf('entityParentSaveGoSubclassView-smo_visitProtocol')!=-1) {
+                        HospitalMedCaseService.getSstreamId($('medCase').value,{
+                            callback: function(res) {
+                                $('serviceStream').value=res;
+                                setMedServiceParent();
+                            }
+                        });
+                    }
+				}
+                setLostSstreamAfterDraft();
 			</script>
 
 
@@ -552,7 +537,7 @@ horizontalFill="true" />
 						}
 						isEditable($('id').value);
 
-                        TemplateProtocolService.isCanEditProtocol($('id').value,$('username').value,
+                        TemplateProtocolService.isCanEditProtocol($('username').value,
                             {
                                 callback: function(aString) {
                                     //alert(aString);
@@ -563,22 +548,6 @@ horizontalFill="true" />
                                 }
                             });
 				</script>
-            <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
-                <script type="text/javascript">
-                    //Milamesher 18102018 #122
-                    HospitalMedCaseService.getIfPrivateInsurance(${param.id},false,{
-                            callback: function(res) {
-                                if (res=="1") {
-                                    isDMS=true;
-                                    document.getElementById("medServiceName").className = "autocomplete horizontalFill required";
-                                    document.getElementById("typeName").className = "autocomplete horizontalFill required";
-                                    document.getElementById("isCreateDiagnosis").setAttribute("disabled",true);
-                                }
-                            }
-                        }
-                    );
-                </script>
-            </msh:ifFormTypeIsNotView>
 			</msh:ifFormTypeAreViewOrEdit>
 
 			<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
@@ -586,9 +555,31 @@ horizontalFill="true" />
                     setTimeout(checktime,600000) ;
 				</script>
 			</msh:ifNotInRole>
-
-
 		</msh:ifFormTypeIsNotView>
+
+		<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
+			<tags:replaceUnprintSymbols name="replaceUnprintSymbols" />
+			<script type="text/javascript">
+				//ф-я проверки непечатных символов на матричном принтере
+				function checkPrint() {
+					var result=false;
+					var record = $('record').value;
+					for (var i=0; i<record.length; i++) {
+						var code=record.charCodeAt(i);
+						if (!checkCode(code)) {
+							result = true;
+							break;
+						}
+					}
+					if (!result) {
+						if (confirm("В дневнике нет непечатных на матричном принтере символов. Распечатать дневник?"))
+							showPrintProtocolTemplate();
+					}
+					else
+						showreplaceUnprintSymbols();
+				}
+			</script>
+		</msh:ifFormTypeIsView>
 
 		<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
 			<script type="text/javascript">
@@ -603,10 +594,10 @@ horizontalFill="true" />
 				//Milamesher 27122018 #135 - вывод суток
 				<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShowDaysInDiary">
 				if ($('record').value=='') {
-                HospitalMedCaseService.getMedcaseDtypeById(${param.id},{
+                HospitalMedCaseService.getMedcaseDtypeById($('medCase').value,{
                         callback: function(res) {
                             if (res=="0") {
-                                HospitalMedCaseService.getSlsCountDays(${param.id}, {
+                                HospitalMedCaseService.getSlsCountDays($('medCase').value, {
                                     callback: function (res2) {
                                         if (res2!="") {
                                             if (res2==0) res2=1;
@@ -615,60 +606,29 @@ horizontalFill="true" />
                                     }});
 							}
 							else if (res=="1") {
-                                HospitalMedCaseService.getSloCountDays(${param.id}, {
+                                HospitalMedCaseService.getSloCountDays($('medCase').value, {
                                     callback: function (res) {
-                                        if (res!="##") {
-                                            var cnts=res.split('#');
-                                            if (cnts.length==2) {
-                                                var rescnt1=cnts[0];
-                                                var rescnt2=cnts[1];
-                                                if (rescnt1==0) rescnt1=1;
-                                                if (rescnt2==0) rescnt2=1;
-                                                $('record').value += "С начала СЛС: " + rescnt1 + " сутки\n";
-                                                $('record').value += "С начала СЛО: " + rescnt2 + " сутки\n";
-                                            }
+                                        if (res!=null) {
+                                            var cnts=JSON.parse(res);
+                                            var rescnt1 = cnts.hmcCnt;
+                                            var rescnt2 = cnts.dmcCnt;
+                                            if (rescnt1 == 0) rescnt1 = 1;
+                                            if (rescnt2 == 0) rescnt2 = 1;
+                                            $('record').value += "С начала СЛС: " + rescnt1 + " сутки\n";
+                                            $('record').value += "С начала СЛО: " + rescnt2 + " сутки\n";
                                         }
                                     }});
                             }
                         }});
 				}
                 </msh:ifInRole>
-			   //Milamesher 18102018 #122
-                HospitalMedCaseService.getIfPrivateInsurance(${param.id},true,{
-                        callback: function(res) {
-                            if (res=="1") {
-                                isDMS=true;
-                                document.getElementById("medServiceName").className = "autocomplete horizontalFill required";
-                                document.getElementById("typeName").className = "autocomplete horizontalFill required";
-                                document.getElementById("isCreateDiagnosis").click();
-                                document.getElementById("isCreateDiagnosis").setAttribute("disabled",true);
-                                $('diagnosisRegistrationTypeName').className = "autocomplete horizontalFill required";
-                                $('diagnosisPriorityName').className = "autocomplete horizontalFill required";
-                                $('diagnosisIdc10Name').className = "autocomplete horizontalFill required";
-                                $('diagnosisIllnessPrimaryName').className = "autocomplete horizontalFill required";
-                            }
-                        }
-                    }
-                );
             </script>
 			<msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
 				<script type="text/javascript">
-				   /*var btn = document.querySelector('#SKNF');
-				   btn.className = "";*/
 				   var btn = document.querySelector('#usualCalcs');
                    btn.className = "";
 				   flag=1;
-				   //Milamesher 10122018 - больше не нужна при загрузке
-				   /*function CalcService(){
-						CalculateService.getCountDiary(medCaseId, {
-							callback : function(aResult) {
-							if(parseInt(aResult)==0 && parseInt(ishosp)==1) {
-							showMyNewCalculation(medCaseId,0);
-							}
-						}});
-				   }*/
 				   getDtype();
-				   //CalcService();
 			   </script>
 		</msh:ifInRole>
 

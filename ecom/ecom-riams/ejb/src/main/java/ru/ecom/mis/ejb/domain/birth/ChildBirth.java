@@ -6,6 +6,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.birth.voc.*;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -523,4 +524,36 @@ public class ChildBirth extends BaseEntity{
 
 	/** Паритет беременностей */
 	private VocParitet theParitetPregn;
+
+	/** Длительность безводного периода (часы)*/
+	@Comment("Длительность безводного периода (часы)")
+	public Long getWaterlessDurationHour() {return theWaterlessDurationHour;}
+	public void setWaterlessDurationHour(Long aWaterlessDurationHour) {theWaterlessDurationHour = aWaterlessDurationHour;}
+	/** Длительность безводного периода (часы)*/
+	private Long theWaterlessDurationHour;
+
+	/** Длительность безводного периода (минуты)*/
+	@Comment("Длительность безводного периода (минуты)")
+	public Long getWaterlessDurationMin() {return theWaterlessDurationMin;}
+	public void setWaterlessDurationMin(Long aWaterlessDurationMin) {theWaterlessDurationMin = aWaterlessDurationMin;}
+	/** Длительность безводного периода (минуты)*/
+	private Long theWaterlessDurationMin;
+
+
+	/** Диабет (браслет)*/
+	@Comment("Диабет (браслет)")
+	@OneToOne
+	public VocColorIdentityPatient getDiabetIdentity() {return theDiabetIdentity;}
+	public void setDiabetIdentity(VocColorIdentityPatient aDiabetIdentity) {theDiabetIdentity = aDiabetIdentity;}
+	/** Диабет (браслет)*/
+	private VocColorIdentityPatient theDiabetIdentity;
+
+	/** Женская консультация */
+	@Comment("Женская консультация")
+	@OneToOne
+	public VocWomenConsult getWomenConsult() {return theWomenConsult;}
+	public void setWomenConsult(VocWomenConsult aWomenConsult) {theWomenConsult = aWomenConsult;}
+
+	/** Женская консультация */
+	private VocWomenConsult theWomenConsult;
 }

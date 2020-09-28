@@ -24,7 +24,6 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 	, view = "entityParentView-smo_visitProtocol.do"
 		,list = "entityParentList-smo_visitProtocol.do"
 		)
-//@Parent(property = "medCase", parentMapForm = "$$map$$smo_visitForm")
 @Parent(property = "medCase", parentForm = MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Protocol")
 /*
@@ -211,4 +210,16 @@ public class VisitProtocolForm extends ProtocolForm {
 	/** isCreateDiagnosis */
 	private Boolean theIsCreateDiagnosis;
 
+	/** Поток обслуживания случая */
+	@Comment("Поток обслуживания случая")
+	public Long getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	/** Поток обслуживания случая */
+	private Long theServiceStream ;
+
+	/** Заголовок дневника */
+	@Comment("Заголовок дневника")
+	public String getTitle() {return theTitle;}
+	public void setTitle(String aTitle) {theTitle = aTitle;}
+	private String theTitle ="";
 }

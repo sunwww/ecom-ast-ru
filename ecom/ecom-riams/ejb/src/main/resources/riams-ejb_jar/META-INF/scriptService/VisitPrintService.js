@@ -2,19 +2,13 @@ var map = new java.util.HashMap() ;
 // Печать визитов
 function printVisits(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
-	var ids2 = aParams.get("id") ;
+
 	var ids = ids1.split(",") ;
 	var ret = new java.lang.StringBuilder () ;
 	
 	
 	var ret = new java.util.ArrayList() ;
-	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
-    var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
-    var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
 	var current = new java.util.Date() ;
-	var curDate = new java.sql.Date(current.getTime()) ;
-	
-	var curTime = new java.sql.Time(current.getTime()) ;
 	map.put("ids",ids.length) ;
 	
 	
@@ -160,6 +154,7 @@ function printPlanHospital(aCtx,aParams) {
 			, new java.lang.Long(aParams.get("id"))) ;
 	var medCase = doc.visit ;
 	var patient = doc.patient ;
+	map.put("directLpu",doc.directLpu);
 	var list = aCtx.manager.createNativeQuery("select mp.id,mp.patient_id from MedPolicy mp where mp.patient_id='"+doc.patient.id+"' and mp.DTYPE like 'MedPolicyOmc%' AND (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE))")
 	.getResultList();
 	if (list.size()>0) {
@@ -177,14 +172,14 @@ function printPlanHospital(aCtx,aParams) {
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
 	map.put("diagnosis",recordMultiText(doc.diagnosis)) ;
 	var wf = doc.workFunction ;
-	var pers = wf.worker!=null?wf.worker.person:null;
+	var pers = wf!=null && wf.worker!=null ? wf.worker.person : null;
 	var spec = "_____________________" ;
 	if (pers!=null) {
 		spec=pers.lastname+" "+pers.firstname+" "+pers.middlename
 	} 
-	map.put("specCODE",wf.code!=null?wf.code:"_____________") ;
-	map.put("doc.workFunctionInfo",(wf.workFunction!=null?wf.workFunction.name:"_____________")+" " + spec) ;
-	map.put("doc.date",medCase.dateStart!=null?FORMAT_2.format(medCase.dateStart):"") ;
+	map.put("specCODE",wf!=null && wf.code!=null?wf.code:"_____________") ;
+	map.put("doc.workFunctionInfo",(wf!=null && wf.workFunction!=null ? wf.workFunction.name : "_____________")+" " + spec) ;
+	map.put("doc.date",medCase!=null && medCase.dateStart!=null?FORMAT_2.format(medCase.dateStart):"") ;
 	map.put("doc.plandate",doc.dateFrom!=null?FORMAT_2.format(doc.dateFrom):"") ;
 	map.put("doc.mkbCode",doc.idc10!=null?doc.idc10.code:"") ;
 	map.put("department",doc.department!=null?doc.department.name:"") ;
@@ -193,27 +188,21 @@ function printPlanHospital(aCtx,aParams) {
 }
 function parseInt(aNumeric) {
 	if (+aNumeric>0){} else{ return "0 руб 00 коп" ;}
-	var ret = "" ;
 	var value = new java.math.BigDecimal(aNumeric) ;
 	var kop =(+aNumeric % 1).toFixed(2).slice(2) ;
 	var rub = value.intValue();
-	ret = ""+rub+" руб. "+kop+" коп." ;
-	
-	return ret ;
+	return ""+rub+" руб. "+kop+" коп." ;
 }
 function parseSymRub(aNumeric) {
 	if (+aNumeric>0){} else{ return "ноль руб 00 коп" ;}
 	var value = new java.math.BigDecimal(aNumeric) ;
 	var kop =(+aNumeric % 1).toFixed(2).slice(2) ;
-	//if (kop<10) kop="0"+kop ;
-	 
 	return Packages.ru.ecom.ejb.services.util.ConvertSql.toWords(value)+" руб. "+ kop +" коп." ;
 }
 
-
 function refenceSMO(aCtx,aParams) {
 	var map = new java.util.HashMap() ;
-	referenceSMOmap(aCtx,aParams,map)
+	referenceSMOmap(aCtx,aParams,map);
 	return map ;
 }
 function referenceSMOmap(aCtx,aParams,aMap) {
@@ -304,6 +293,7 @@ function printDocument(aCtx,aParams) {
 	map.put("id", medCase.getId()) ;
 	map.put("medCase", medCase) ;
 	map.put("document",doc) ;
+	map.put("healthGroup",doc.healthGroup!=null ? doc.healthGroup.name : "");
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;

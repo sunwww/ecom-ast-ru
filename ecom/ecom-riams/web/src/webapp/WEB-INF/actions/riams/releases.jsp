@@ -16,6 +16,30 @@
 				<div class='menu'>
 				<h2>Что появилось нового в ПО "МедОС"?</h2>
 				<ul>
+					<% if (1==2) { //Добавляем по мер необходимости %>
+					<li><msh:link action="ecom_release-201905.do">ноябрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201905.do">октябрь 2019 года </msh:link></li>
+					<% } %>
+
+					<li><msh:link action="ecom_release-201905.do">май 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201906.do">июнь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201907.do">июль 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201908.do">август 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201909.do">сентябрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201910.do">октябрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201911.do">ноябрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-201912.do">декабрь 2019 года </msh:link></li>
+					<li><msh:link action="ecom_release-202001.do">январь 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202002.do">февраль 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202003.do">март 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202004.do">апрель 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202005.do">май 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202006.do">июнь 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202007.do">июль 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202008.do">август 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202009.do">сентябрь 2020 года </msh:link></li>
+
+					<% if (1==2) { %>
 					<li><msh:link  action="ecom_release-201712.do">
 						декабрь 2017 года
 					</msh:link></li>
@@ -82,7 +106,7 @@
 					<li><msh:link  action="ecom_release-201501mkb.do">
 					Изменения в МКБ январь 2015 г.
                         </msh:link></li>
-					
+					<% } %>
 				</ul>
 				</div>
 			</tr>

@@ -24,7 +24,7 @@
         
                 <msh:row>
                     <msh:textField label="Дата" property="dateRegistration"/>
-                    <msh:textField label="Время" property="timeRegistration" fieldColSpan="1"  guid="b3hb-b971-441e-9a90-8019c07" />
+                    <msh:textField label="Время" property="timeRegistration" fieldColSpan="1"  />
                 </msh:row>
 
                 <msh:row>
@@ -85,7 +85,7 @@
                           action="/entityParentDeleteGoParentView-poly_protocol" name="Удалить"
                           confirm="Вы действительно хотите удалить?"/>
             <msh:sideMenu title="Добавить">
-            	        <msh:sideLink roles="/Policy/Poly/DrugPrescription/Create" key="CTRL+4" params="id" action="/entityParentPrepareCreate-poly_drugPrescription" name="Лекарственное средство" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить назначение лекарственных средств" />
+            	        <msh:sideLink roles="/Policy/Poly/DrugPrescription/Create" key="CTRL+4" params="id" action="/entityParentPrepareCreate-poly_drugPrescription" name="Лекарственное средство" title="Добавить назначение лекарственных средств" />
             </msh:sideMenu>
             <msh:sideMenu title="Печать">
 	            <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" key='ALT+3' params="id"

@@ -1,10 +1,9 @@
 package ru.ecom.poly.ejb.domain.protocol;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 @Entity
-@Table(schema="SQLUser")
+@Deprecated //кажется, нигде не используется
 public class ExtProtocol extends Protocol {
 
 }

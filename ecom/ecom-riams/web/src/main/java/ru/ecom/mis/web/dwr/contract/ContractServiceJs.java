@@ -14,9 +14,9 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collection;
@@ -48,7 +48,7 @@ public class ContractServiceJs {
 		service.executeUpdateNativeSql(sql);
 	}
 
-	private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throws IOException, NamingException {
+	private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throws NamingException {
 		LOG.info("===Send to KKM. Data = "+data);
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		//Milamesher 11012019 #136 отправка на привязанный к wf ККМ
@@ -57,28 +57,31 @@ public class ContractServiceJs {
 				" left join workfunction wf on wf.kkmequipmentdefault_id=eq.id" +
 				" where secuser_id=(select id from secuser where login='" + username + "')");
 		if (!l.isEmpty()) {
-			String address = l.iterator().next().get1().toString();
-			//method by milamesher 15.03.2017
-			//отправка пост-запроса на веб-сервис, управляющий печатью ккм  
-			URL url = new URL(address); 
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-		    connection.setDoInput(true);
-		    connection.setDoOutput(true);
-		    connection.setRequestMethod("POST");
-		    connection.setRequestProperty("Accept", "application/json");
-		    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-		    OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-		    writer.write(data);
-		    writer.close();
-		    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		 //   StringBuffer answerString = new StringBuffer();
-		 //   String line;
-		 //   while ((line = br.readLine()) != null) {
-		 //   	answerString.append(line);
-		 //   }
-		    br.close();
-		    connection.disconnect();
+			try {
+				//method by milamesher 15.03.2017
+				//отправка пост-запроса на веб-сервис, управляющий печатью ккм
+				URL url = new URL(l.iterator().next().get1().toString());
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				StringBuilder answerString = new StringBuilder();
+				connection.setDoInput(true);
+				connection.setDoOutput(true);
+				connection.setRequestMethod("POST");
+				connection.setRequestProperty("Accept", "application/json");
+				connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+				try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8")){
+					writer.write(data);
+				}
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream()== null ? connection.getInputStream() : connection.getErrorStream()));
+				String line;
+				while ((line = br.readLine()) != null) {
+					answerString.append(line);
+				}
+				br.close();
+				connection.disconnect();
+				LOG.info("KKM return: "+answerString);
+			} catch (Exception e) {
+				LOG.error(e.getMessage(),e);
+			}
 		} else {
 			LOG.error("Нет настройки ККМ по умолчанию для рабочей функции пользователя "+username+", работа с ККМ невозможна");
 		}
@@ -86,7 +89,7 @@ public class ContractServiceJs {
 
 	//Печать K, Z отчета
 	private String printKKMReport(String aType, HttpServletRequest aRequest) {
-		if (aType!=null && (aType.equals("Z") || aType.equals("X"))) {
+		if ("Z".equals(aType) || "X".equals(aType)) {
 			try {
 				JSONObject root = new JSONObject();
 				root.put("function", "print"+aType+"Report");
@@ -102,9 +105,13 @@ public class ContractServiceJs {
 		return "Неизвестный тип отчета";
 	}
 
-//method by milamesher 15.03.2017
-//отправляет на принтер команду возврата (пока 3 копейки, чтобы продемонстрировать отказ возврата)
-
+	/**
+	 * Отправить запрос на ККМ.
+	 * @param aFunction  - команда ККМ
+	 * @param aRequest
+	 * @return ответ
+	 * @throws JspException
+	 */
 	public String sendKKMRequest(String aFunction, HttpServletRequest aRequest) throws JspException {
 		if (RolesHelper.checkRoles(" /Policy/Config/KKMWork", aRequest)) {
             if ("makePayment".equals(aFunction) || "makeRefund".equals(aFunction)) {
@@ -122,19 +129,6 @@ public class ContractServiceJs {
 			return "Нет прав для работы с ККМ";
 		}
 	}
-	@Deprecated
-	private String getOperatorInfoByUsername(HttpServletRequest aRequest) throws NamingException {
-		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder sql = new StringBuilder().append("select vwf.name||' '||pat.lastname||' '||substring(pat.firstname,1,1)||'.'||substring(pat.middlename,1,1)||'.'  from secuser su")
-				.append(" left join workfunction wf on wf.secuser_id=su.id")
-				.append(" left join worker w on w.id=wf.worker_id")
-				.append(" left join patient pat on pat.id=w.person_id")
-				.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
-				.append(" where su.login='").append(username).append("'");
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
-		return list.isEmpty() ? null : list.iterator().next().get1().toString();
-	}
 
 	/**
 	 * Печать последнего чека (в случае неудачи его первой печати
@@ -148,12 +142,24 @@ public class ContractServiceJs {
 			makeHttpPostRequest(root.toString(), aRequest);
 			return "Чек отправлен на печать";
 		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.error(e);
+			LOG.error(e.getMessage(),e);
 			return "Произошла ошибка: "+e;
 		}
 	}
 
+	/**
+	 * Получаем информацию об остатке денег по гарантийному письму
+	private JSONObject getGuaranteeMoneyInfo(Long aGuaranteeId, IWebQueryService aService) throws NamingException {
+		String sql = "select cg.id as guaranteeid, cg.limitmoney as limitmoney" +
+				",sum(cost*coalesce(countmedservice,1)) as spent" +
+				", case when  cg.isnolimit ='1' then false else true end as islimit" +
+				" from contractguarantee cg" +
+				" left join contractaccountmedservice cams on cams.guarantee_id = cg.id"+
+				" where cg.id="+aGuaranteeId+" and cams.account_id is null"+
+				" group by cg.id, cg.limitmoney";
+		return new JSONObject(aService.executeSqlGetJson(sql));
+	}
+*/
 	/**
 	 * Проверяем, нужно ли гарантийное письмо для выбранного потока обслуживания. Если нужно - находим. 
 	 * @param aPatient  - id пациента 
@@ -165,68 +171,59 @@ public class ContractServiceJs {
 	 * @return Гарантийное письмо с остатком ден. средств
 	 * @throws NamingException
 	 */
-	public String checkIfDogovorIsNeeded (String aPatient, String aServiceStreamId, String aDate, String aDatePlanId,String aMedhelpType, HttpServletRequest aRequest) throws NamingException {
+	public String checkIfDogovorIsNeeded (Long aPatient, Long aServiceStreamId, String aDate, Long aDatePlanId,String aMedhelpType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l = service.executeNativeSql("select id from vocserviceStream where id="+aServiceStreamId+" and isCalcDogovor='1'");
-		if (!l.isEmpty()) {
-			if (aMedhelpType!=null&& aMedhelpType.equals("POLYCLINIC")) {
+		if (!l.isEmpty()) { //требуется гарантийное письмо
+			if ("POLYCLINIC".equals(aMedhelpType)) {
 				aMedhelpType = "AMB";
-			} else if (aMedhelpType!=null&&aMedhelpType.equals("HOSPITAL")) {
+			} else if ("HOSPITAL".equals(aMedhelpType)) {
 				aMedhelpType = "PLAN_HOSP";
 			} else {
-				return "0Неизвестный тип помощи";
+				return new JSONObject().put("status","error").put("errorName","Неизвестный вид помощи").toString();
 			}
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("select cg.id as id,cg.numberdoc, to_char(cg.issueDate,'dd.MM.yyyy') as guarDate, mc.contractnumber as contractNumber")
-			.append(",cg.limitMoney, mc.pricelist_id as price")
-			.append(" from contractguarantee  cg")
-			.append(" left join contractperson cp on cp.id=cg.contractperson_id")
-			.append(" left join medpolicy mp on mp.patient_id=cp.patient_id")
-			.append(" left join medcontract mc on mc.id=cg.contract_id")
-			.append(" left join contractperson cpCustomer on cpCustomer.id=mc.customer_id")
-			.append(" left join vocguaranteekindhelp vgkh on vgkh.id=cg.kindhelp_id")
-			.append(" where mc.servicestream_id='"+aServiceStreamId+"'") 
-			.append(" and (cg.contractperson_id is null or cp.patient_id='"+aPatient+"') and vgkh.code='"+aMedhelpType+"'");
+			sb.append("select cg.id as id,cg.numberdoc as number, to_char(cg.issueDate,'dd.MM.yyyy') as issueDate, mc.contractnumber as contractNumber")
+					.append(",cg.limitMoney, case when cg.isnolimit ='1' then true else false end as f6_noLimit")
+					.append(",coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f7_spent ")
+					.append(",cg.limitMoney - coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f8_ostatok ")
+					.append(" from contractguarantee cg")
+					.append(" left join contractperson cp on cp.id=cg.contractperson_id")
+					.append(" left join medcontract mc on mc.id=cg.contract_id")
+					.append(" left join contractperson cpCustomer on cpCustomer.id=mc.customer_id")
+					.append(" left join vocguaranteekindhelp vgkh on vgkh.id=cg.kindhelp_id")
+					.append(" left join medpolicy mp on mp.patient_id=cp.patient_id and mp.company_id=cpCustomer.regcompany_id")
+					.append(" left join contractaccountmedservice cams on cams.guarantee_id = cg.id and cams.account_id is null ")
+					.append(" where cp.patient_id=").append(aPatient).append(" and (mc.servicestream_id is null or mc.servicestream_id=").append(aServiceStreamId).append(")")
+					.append(" and vgkh.code='").append(aMedhelpType).append("'");
 			if (aDate!=null&&!aDate.equals("")) {
-				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=to_date('"+aDate+"','dd.MM.yyyy'))");
-			} else if (aDatePlanId!=null&&!aDatePlanId.equals("")){
-				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=(select calendardate from workcalendarday where id='"+aDatePlanId+"'))");
+				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=to_date('").append(aDate).append("','dd.MM.yyyy'))");
+			} else if (aDatePlanId!=null && aDatePlanId>0L){
+				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=(select calendardate from workcalendarday where id=").append(aDatePlanId).append("))");
 			} else {
 				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=current_date)");
 			}
-			sb.append(" and case when cpCustomer.regcompany_id is not null and mp.company_id=cpCustomer.regcompany_id then 1 else 0 end = 1");
-		LOG.info("=== Ищем гар. письмо по пациенту. sql="+sb.toString());
+			sb.append(" and ((cpCustomer.regcompany_id is not null and mp.id is not null) or (cpCustomer.regcompany_id is null ))")
+					.append(" group by cg.id, cg.limitmoney,mc.contractnumber");
 			l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
-				LOG.info("Ищем уже исрасходованную сумму лечения");
 				WebQueryResult r = l.iterator().next();
-				float limit  = Float.parseFloat(r.get5().toString());
-				String priceListId = r.get6().toString();
-				String guaranteeId = r.get1().toString();
-				l = service.executeNativeSql("select list(''||id) from medcase where guarantee_id="+guaranteeId);
-				float spent = 0;
-				for (WebQueryResult wqr: l) {
-					String listId =wqr.get2()!=null?wqr.get2().toString():null;
-					if (listId!=null) {
-						String[] ids = listId.split(",");
-						for (String id: ids) {
-							spent +=calculateMedCaseCost(Long.valueOf(id), Long.valueOf(priceListId), aRequest);
-						}
-					}				
-				}
-				sb.setLength(0);
-				sb.append(guaranteeId) //id письма
-				.append("|гар. письмо № ").append(r.get2()) //номер письма
-				.append(" от ").append(r.get3()) //Дата письма
-				.append(" Остаток средств: "+(limit - spent)+" руб. (Договор №").append(r.get4()).append(")");
-				return "1"+sb.toString();
+
+				JSONObject ret = new JSONObject();
+				ret.put("status","ok");
+				ret.put("noLimit",r.get6());
+				ret.put("limit",r.get5());
+				ret.put("spent",r.get7());
+				ret.put("ostatok",r.get8());
+				ret.put("guaranteeInfo","№"+r.get2()+" от "+r.get3()+", договор №"+r.get4()+(r.get6().toString().equals("true") ? ". Без лимита" :". Остаток: "+r.get8()));
+				return ret.toString();
 			} else {
-				return "0Не найдено гарантийное письмо";
+				return new JSONObject().put("status","error").put("errorName","Не найдено гарантийное письмо").toString();
 			}
 		}
 		
-		return null;
+		return new JSONObject().put("status","ok").toString();
 	}
 	/**
 	 * Функция нахождения стоимости случая лечения ( визита либо случая лечения в стационаре)
@@ -236,12 +233,10 @@ public class ContractServiceJs {
 	 * @return Стоимость случая
 	 * @throws NamingException
 	 */
-public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServletRequest aRequest) throws NamingException {
-		
+	private BigDecimal calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "";
+		String sql;
 		if (aPriceListId==null) {
-			LOG.debug("Ищем прайс лист по СМО, либо по умолчанию");
 			sql = "select pl.id as priceBySLS" +
 				" , (select max(id) from pricelist where isdefault='1') as defaultPrice" +
 				" from medcase mc" +
@@ -257,14 +252,14 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				} else if (r.get2()!=null&&!(""+r.get2()).equals("")) { //Используем прайс-лист по умолчанию 
 					aPriceListId = Long.valueOf(r.get2().toString());
 				} else {
-					LOG.info("Не удалось вычислить прайс-лист для расчета цены случая " +aMedcaseId);
-					return 0.00;
+					LOG.warn("Не удалось вычислить прайс-лист для расчета цены случая " +aMedcaseId);
+					return BigDecimal.ZERO;
 				}
 			}
 		}
 		LOG.debug("Находим информацию по пацинету, СМО="+aMedcaseId);
 		sql = "select m.patient_id,to_char(m.datestart,'dd.mm.yyyy') as dstart ,to_char(coalesce(m.datefinish,current_date),'dd.mm.yyyy') as dfinish,m.serviceStream_id as servstream, m.dtype as dtype from medcase m where m.id="+aMedcaseId;
-		Double sum = 0.00;
+		BigDecimal sum = BigDecimal.ZERO;
 		Collection<WebQueryResult> l = service.executeNativeSql(sql);
 		if (!l.isEmpty()) {
 			WebQueryResult slsInfo = l.iterator().next();
@@ -303,9 +298,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				l= service.executeNativeSql(sql);
 				if (!l.isEmpty()) {
 					Object o = l.iterator().next().get1();
-					Double cost = (o!=null && !o.toString().equals("")) ? Double.valueOf(o.toString()) : 0.00;
+					BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 					LOG.debug("Сумма за койко дни СЛС№"+aMedcaseId+" = "+cost);
-					sum +=cost;
+					sum =sum.add(cost);
 				}
 				sql = "select sum (pp.cost) as ppcost " +
 					" from medcase vis" +
@@ -326,9 +321,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				l = service.executeNativeSql(sql);
 				if (!l.isEmpty()) {
 					Object o = l.iterator().next().get1();
-					Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+					BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 					LOG.debug("Найдена сумма по диагностическим визитам при нахождении в стационаре ("+aMedcaseId+"), сумма = "+cost);
-					sum+=cost;
+					sum=sum.add(cost);
 				}
 				
 				LOG.debug("Поиск лабораторных исследований");
@@ -352,9 +347,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 					l = service.executeNativeSql(sql);
 					if (!l.isEmpty()) {
 						Object o = l.iterator().next().get1();
-						Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+						BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 						LOG.debug("Найдена сумма за лабораторные анализы ("+aMedcaseId+"), сумма = "+cost);
-						sum+=cost;
+						sum=sum.add(cost);
 					}
 					
 					LOG.debug("Поиск цен за операции");
@@ -375,9 +370,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 						l = service.executeNativeSql(sql);
 						if (!l.isEmpty()) {
 							Object o = l.iterator().next().get1();
-							Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+							BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 							LOG.debug("Найдена сумма за операции ("+aMedcaseId+"), сумма = "+cost);
-							sum+=cost;
+							sum=sum.add(cost);
 						}
 						
 						LOG.debug("Поиск цен за анастезию");
@@ -400,9 +395,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 							l = service.executeNativeSql(sql);
 							if (!l.isEmpty()) {
 								Object o = l.iterator().next().get1();
-								Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+								BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 								LOG.debug("Найдена сумма за анастезию ("+aMedcaseId+"), сумма = "+cost);
-								sum+=cost;
+								sum=sum.add(cost);
 							}
 							
 							LOG.debug("Поиск цен за доп. услуги");
@@ -425,9 +420,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 								l = service.executeNativeSql(sql);
 								if (!l.isEmpty()) {
 									Object o = l.iterator().next().get1();
-									Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+									BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 									LOG.debug("Найдена сумма за доп. услуги ("+aMedcaseId+"), сумма = "+cost);
-									sum+=cost;
+									sum=sum.add(cost);
 								}
 			} else if ("VISIT".equalsIgnoreCase(dtype)) {
 				LOG.debug("Поиск стоимости случая по визиту №"+aMedcaseId);
@@ -439,14 +434,14 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				l = service.executeNativeSql(sql);
 				if (!l.isEmpty()) {
 					Object o = l.iterator().next().get1();
-					Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+					BigDecimal cost = (o!=null && !o.toString().equals("")) ? BigDecimal.valueOf(Double.parseDouble(o.toString())) : BigDecimal.ZERO;
 					LOG.debug("Найдена сумма по визиту №"+aMedcaseId+", сумма = "+cost);
-					sum+=cost;
+					sum=sum.add(cost);
 				}
 			}
 			return sum;
 		} else {
-			return 0.00;
+			return BigDecimal.ZERO;
 		}
 		
 	}
@@ -551,7 +546,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		StringBuilder sql  = new StringBuilder() ;
 		sql.append("select ca.id,mc.priceList_id from contractaccount ca left join MedContract mc on mc.id=ca.contract_id where ca.id=").append(aAccount).append(" and (ca.isfinished='0' or ca.isfinished is null)") ;
 		List<Object[]> l = service.executeNativeSqlGetObj(sql.toString()) ; 
-		if (l.isEmpty()) {
+		if (!l.isEmpty()) {
 			Long pms=serviceC.getPriceMedService(ConvertSql.parseLong(l.get(0)[1]), aMS) ;
 			if (pms!=null) {
 				sql = new StringBuilder() ;
@@ -675,7 +670,6 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				if (col.isEmpty()) {
 					sql = new StringBuilder() ;
 					sql.append("select id from pricemedservice where medService_id is null and pricePosition_id='").append(aId1).append("'") ;
-					col.clear() ;
 					col = service.executeNativeSql(sql.toString()) ;
 					sql = new StringBuilder() ;
 					if (col.isEmpty()) {
@@ -781,11 +775,11 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 	public String findServiceByPriceList( Long aPriceList, String aCode, String aName, String aDivName
 			, String aJavascript, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
-		String addWhereSql = "" ;
+		String addWhereSql;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		sql.append("select p.id as pid,p.code as pcode,p.name as pname from PricePosition p ")
-			.append("").append("where ") ;
+			.append("where ") ;
 		addWhereSql=" p.priceList_id='"+aPriceList+"' and " ;
 		sql.append(addWhereSql) ;
 	
@@ -818,7 +812,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		String table=aTable ;
 		String addWhereSql = "" ;
 		String addLeftSql="";
-		if (aTable.toUpperCase().trim().equals("MEDSERVICEOPERATION")) {
+		if (aTable.trim().equalsIgnoreCase("MEDSERVICEOPERATION")) {
 			table="MedService" ;
 			addWhereSql = "p.dtype='MedService' and vmt.code in ('OPERATION','SURVEY') and p.finishDate is null and " ;
 			addLeftSql = "left join VocServiceType vmt on vmt.id=p.serviceType_id ";
@@ -895,7 +889,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 	public String updateExtDispPlanService(Long aPlan, String aAction, Long aServiceId, Long aAgeGroup, Long aSex, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String actionNext="" ;
-		Long sexOther = aSex!=null && aSex.equals(Long.valueOf(1))?Long.valueOf("2"):Long.valueOf("1") ;
+		Long sexOther = aSex!=null && aSex.equals(1L)?Long.valueOf("2"):Long.valueOf("1") ;
 		if (aAction!=null && (aAction.equals("Д") || aAction.equals("-"))) {
 			Collection<WebQueryResult> list = service.executeNativeSql("select edps.id,edps.sex_id "
 				+"from ExtDispPlanService edps left join vocsex vs on vs.id=edps.sex_id where edps.plan_id='"+aPlan+"' and edps.serviceType_id='"+aServiceId
@@ -993,33 +987,33 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String[] appService = aAppropriateService.split(",") ;
-		for (int i=0;i<appService.length;i++) {
-			String[] vr = appService[i].split(":") ;
-			String aMedService = vr[1] ;
-			String aPricePosition = vr[0] ;
-			StringBuilder sql = new StringBuilder() ;
+		for (String s : appService) {
+			String[] vr = s.split(":");
+			String aMedService = vr[1];
+			String aPricePosition = vr[0];
+			StringBuilder sql = new StringBuilder();
 			sql.append("select min(case when pms.medService_id='").append(aMedService)
-				.append("' then pms.id else null end) as pmsser")
-				.append(", min(case when pms.medService_id is null then pms.id else null end) as pmsmin")
-				.append(", min(case when pms.medService_id is not null and pms.medService_id='").append(aMedService)
-				.append("' then pms.id else null end) as pmsother")
-				.append(" from PriceMedService pms where pricePosition_id='").append(aPricePosition).append("'");
-			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
-			if (!list.isEmpty())  {
-				WebQueryResult wqr = list.iterator().next() ;
-				if (wqr.get1()!=null) {
-					
-				} else if (wqr.get2()!=null) {
-					service.executeUpdateNativeSql("update PriceMedService set medService_id='"+aMedService
-							+"' where id='"+wqr.get2()+"'") ;
-				} else if (wqr.get3()!=null) {
-					service.executeUpdateNativeSql("update PriceMedService set medService_id='"+aMedService
-							+"' where id='"+wqr.get3()+"'") ;
+					.append("' then pms.id else null end) as pmsser")
+					.append(", min(case when pms.medService_id is null then pms.id else null end) as pmsmin")
+					.append(", min(case when pms.medService_id is not null and pms.medService_id='").append(aMedService)
+					.append("' then pms.id else null end) as pmsother")
+					.append(" from PriceMedService pms where pricePosition_id='").append(aPricePosition).append("'");
+			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(), 1);
+			if (!list.isEmpty()) {
+				WebQueryResult wqr = list.iterator().next();
+				if (wqr.get1() != null) {
+
+				} else if (wqr.get2() != null) {
+					service.executeUpdateNativeSql("update PriceMedService set medService_id='" + aMedService
+							+ "' where id='" + wqr.get2() + "'");
+				} else if (wqr.get3() != null) {
+					service.executeUpdateNativeSql("update PriceMedService set medService_id='" + aMedService
+							+ "' where id='" + wqr.get3() + "'");
 				} else {
 					service.executeUpdateNativeSql(
 							"insert into PriceMedService (medService_id,pricePosition_id) values ('"
-							+aMedService
-							+"','"+aPricePosition+"')") ;
+									+ aMedService
+									+ "','" + aPricePosition + "')");
 				}
 			}
 		}
@@ -1035,8 +1029,15 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
 		return list.isEmpty() ? "" : ""+list.iterator().next().get1() ;
 	}
-	//Milamesher получение дополнительных шаблонов
-	public String getLabAnalysisExtra(String id, HttpServletRequest aRequest) throws NamingException {
+
+	/**
+	 * Получить дополнительные шаблонов (для печати лаб. анализов в договоре).
+	 *
+	 * @param aMedServiceId MedService.id
+	 * @param aRequest HttpServletRequest
+	 * @return String дополнительные шаблоны
+	 */
+	public String getLabAnalysisExtra(String aMedServiceId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select ms.code||' '||ms.name,ms.id\n" +
@@ -1046,7 +1047,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 				"left join ContractAccountMedService cams on cams.medservice_id=pms.id\n" +
 				"left join ContractAccount ca on cams.account_id=ca.id\n" +
 				"left join medcontract mc on ca.contract_id=mc.id\n" +
-				"where mc.id="+ id;
+				"where mc.id="+ aMedServiceId;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql);
 		if (!list.isEmpty()) {
 			for (WebQueryResult w : list) {
@@ -1055,29 +1056,94 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		} else res.append("##");
 		return res.toString();
 	}
-	//Milamesher получение шаблона по коду услуги
+
+	/**
+	 * Получить шаблон по коду услуги.
+	 *
+	 * @param aMedServiceId MedService.id
+	 * @param aRequest HttpServletRequest
+	 * @return String шаблон
+	 */
 	public String getUserTemplateDocForPrintByService(String aMedServiceId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select filename from userDocument where template="+aMedServiceId;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql);
 		return list.isEmpty() ? "" : list.iterator().next().get1().toString() ;
 	}
-	//Milamesher получение списка шаблонов по списку услуг
+
+	/**
+	 * Получить список шаблонов по списку услуг.
+	 *
+	 * @param aMedServiceSId Список услуг
+	 * @param aRequest HttpServletRequest
+	 * @return String шаблоны
+	 */
 	public String getAllUserTemplateDocForPrintByService(String[] aMedServiceSId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
-		for (int i=0; i<aMedServiceSId.length; i++) {
-			String r=getUserTemplateDocForPrintByService(aMedServiceSId[i],aRequest);
+		for (String s : aMedServiceSId) {
+			String r = getUserTemplateDocForPrintByService(s, aRequest);
 			if (r.equals(""))
-				res.append(aMedServiceSId[i]).append("#").append("*").append("!"); //в имени файла не мб *
-			else if (res.indexOf(r)==-1)
-				res.append(aMedServiceSId[i]).append("#").append(r).append("!");
+				res.append(s).append("#").append("*").append("!"); //в имени файла не мб *
+			else if (res.indexOf(r) == -1)
+				res.append(s).append("#").append(r).append("!");
 		}
 		return res.toString();
 	}
-	//Milamesher #133 копирование шаблонов из одной услуги в другую
+
+	/**
+	 * Копировать шаблоны из одной услуги в другую #133.
+	 *
+	 * @param aMedServiceIdFrom MedService.id копировать из
+	 * @param aMedServiceIdTo MedService.id в
+	 * @param aRequest HttpServletRequest
+	 * @return String сообщение
+	 */
 	public String copyTemplatesToMedService(String aMedServiceIdFrom, String aMedServiceIdTo, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeNativeSql("select copymedservicetemplates ("+aMedServiceIdFrom+","+aMedServiceIdTo+")");
 		return "Шаблоны скопированы!" ;
+	}
+
+	/**
+	 * Копировать прикрепления к раб. функции из одной услуги в другую.
+	 *
+	 * @param aMedServiceIdFrom MedService.id копировать из
+	 * @param aMedServiceIdTo MedService.id в
+	 * @param aRequest HttpServletRequest
+	 * @return String сообщение
+	 */
+	public String copyWFuncsToMedService(String aMedServiceIdFrom, String aMedServiceIdTo, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeNativeSql("select copymedservicewfuncs (" + aMedServiceIdFrom + "," + aMedServiceIdTo + ",'" +
+				LoginInfo.find(aRequest.getSession(true)).getUsername() + "'"+")");
+		return "Прикрепления к рабочим функциям скопированы!" ;
+	}
+
+	/**
+	 * Создать полный дубль услуги.
+	 *
+	 * @param aMedServiceIdFrom MedService.id копировать из
+	 * @param aRequest HttpServletRequest
+	 * @return String сообщение
+	 */
+	public String copyDoubleMedService(String aMedServiceIdFrom, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> res = service.executeNativeSql("select copydoublemedservice (" + aMedServiceIdFrom + ",'" +
+				LoginInfo.find(aRequest.getSession(true)).getUsername() + "'"+")");
+		return res.isEmpty()? "-1" : res.iterator().next().get1().toString();
+	}
+
+	/**
+	 * Изменить родителя услуги.
+	 *
+	 * @param aMedServiceId MedService.id
+	 * @param aMedServiceGroupId MedService.id группа
+	 * @param aRequest HttpServletRequest
+	 * @return String результат
+	 */
+	public String changeParentMedService(String aMedServiceId, String aMedServiceGroupId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update medservice set parent_id='" + aMedServiceGroupId + "' where id='" + aMedServiceId + "'");
+		return "Услуга перенесена в группу!" ;
 	}
 }

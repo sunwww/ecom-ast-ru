@@ -20,8 +20,8 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-    <msh:form action="/direct_operation_list.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-    <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <msh:form action="/direct_operation_list.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+    <msh:panel>
     <input type="hidden" value="printDeathList" name="m">
     <input type="hidden" value="HospitalReportService" name="s">
     <input type="hidden" value="" name="param">
@@ -30,11 +30,13 @@
         	<msh:autoComplete property="department" fieldColSpan="6" horizontalFill="true" size="50" label="Отделение" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
-	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
-	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
+        	<msh:autoComplete property="roomType" fieldColSpan="6" horizontalFill="true" size="50" label="Операционная" vocName="operationRoom"/>
+        </msh:row>
+        <msh:row>
+	        <msh:textField property="dateBegin" label="Период с" />
+	        <msh:textField property="dateEnd" label="по" />
 		<td colspan="3">
             <input type="submit" onclick="find()" value="Найти" />
-<!--            <input type="submit" onclick="print()" value="Печать" />-->
           </td>
          </msh:row>
         
@@ -43,92 +45,110 @@
     
     <%
     
-    String date = (String)request.getParameter("dateBegin") ;
-    //String view = (String)request.getAttribute("typeView") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals("") )  {
-    	
-    	String dateEnd = (String)request.getParameter("dateEnd") ;
+    	request.setAttribute("startDate", date);
+    	String dateEnd = request.getParameter("dateEnd") ;
     	if (dateEnd==null||dateEnd.equals("")) {
     		dateEnd=date ;
     	}
-		request.setAttribute("dateEnd", dateEnd) ;
+		request.setAttribute("finishDate", dateEnd) ;
 		
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
-    	String dep = (String) request.getParameter("department") ; 
+    	String dep = request.getParameter("department") ;
+    	String room = request.getParameter("roomType") ;
+    	String sqlAdd="";
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
-    		request.setAttribute("dep", " and wN.lpu_id='"+dep+"'");
-    		request.setAttribute("depOper", " and wN.lpu_id='"+dep+"'");
-    	} else{
-    		request.setAttribute("dep", "") ;
+    	    sqlAdd +=" and wN.lpu_id="+dep;
     	}
-    	   	 
+    	if (room!=null && !"".equals(room)) {
+            sqlAdd +=" and p.prescriptCabinet_id="+room;
+            request.setAttribute("cabinetId",room);
+            request.setAttribute("cabinetName",request.getParameter("roomTypeName"));
+        }
+        request.setAttribute("dep", sqlAdd);
+
     %>    
-    <msh:section title="Журнал направлений на хир. операции. Период с ${param.dateBegin} по ${dateEnd}.">
+    <msh:section title="Журнал направлений на хир. операции. Период с ${startDate} по ${finishDate}.">
     <msh:sectionContent>
-    <ecom:webQuery name="journal_list_suroper" nameFldSql="journal_list_suroper_sql" nativeSql=" 
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_suroper" nameFldSql="journal_list_suroper_sql" nativeSql="
 select 
-case when wct.prescription is not null then  mc.id else wchb.visit_id end as medcaseid
-,case when wct.prescription is not null then pat.patientinfo else patP.patientInfo end
-,wf.id
+ mc.id as f1_medcaseid
+,pat.lastname||' '|| substring(pat.firstname,1,1)||' '||substring(coalesce(pat.middlename,' '),1,1) ||
+ ', '||to_char(pat.birthday,'yyyy')||'г.р. №' || coalesce(ss.code,'') as f2_patInfo
+,wf.id as f3
 ,ms.code||' '||ms.name as oper_name
-,wf.groupname
-,to_char(wcd.calendardate,'dd.MM.yyyy') as oper_date
-,cast(wct.timefrom as varchar(5)) as oper_time
-,mlN.name||' (' ||wp.lastname||')' as naprInfo
-,ss.code
-,p.comments
-, case when wct.prescription is not null then 'background:#F6D8CE;color:black;' else 'background:#6495ED;color:black;' end
-,p.id as prescritionID
-from workcalendartime wct 
-left join patient patP on patP.id=wct.prepatient_id
-left join prescription p on wct.prescription=p.id
-left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
-left join workcalendar wc on wc.id=wcd.workcalendar_id
+,wf.groupname as f5_groupname
+,to_char(p.planStartDate,'dd.MM.yyyy') as f6_oper_date
+,cast(p.planStartTime as varchar(5))||'-'||cast(p.planEndTime as varchar(5)) as f7_oper_time
+,mlN.name||' (' ||wp.lastname||')' as f8_naprInfo
+,p.comments as f9_comments
+,cast('background:#F6D8CE;color:black;' as varchar) as f10_colorStyle
+, p.id as f11_presId
+, mkb.code||' '||mkb.name as f12_diagnosis
+, va.name as f13_anastesia
+, vbg.name||' '||vrf.name as f14_bloodInfo
+, surgPat.lastname as f15_surgeonInfo
+from prescription p
+left join medservice ms on ms.id=p.medservice_id
+left join vocservicetype vst on vst.id=ms.servicetype_id
+left join workfunction wf on wf.id=p.prescriptCabinet_id
+left join workfunction surgWf on surgWf.id=p.intakeSpecial_id
+left join worker surgW on surgW.id=surgWf.worker_id
+left join patient surgPat on surgPat.id=surgW.person_id
+left join VocRhesusFactor vrf on vrf.id=p.rhesusFactor_id
+left join VocBloodGroup vbg on vbg.id=p.bloodGroup_id
+left join vocanesthesia va on va.id=p.anesthesiaType_id
 left join prescriptionlist pl on pl.id=p.prescriptionlist_id
 left join medcase mc on mc.id=pl.medcase_id
+left join diagnosis d on d.medcase_id=mc.id and d.priority_id=1 and d.registrationType_id=4
+left join vocidc10 mkb on mkb.id=d.idc10_id
 left join medcase mcP on mcP.id=mc.parent_id
 left join patient pat on pat.id=mc.patient_id
-left join medservice ms on ms.id=coalesce(p.medservice_id, wct.service)
-left join vocservicetype vst on vst.id=ms.servicetype_id
-left join workfunction wf on wf.id=wc.workfunction_id
 left join workfunction wfN on wfN.id=p.prescriptspecial_id
 left join worker wN on wN.id=wfN.worker_id
 left join patient wp on wp.id=wN.person_id
 left join mislpu mlN on mlN.id=wN.lpu_id
-left join WorkCalendarHospitalBed wchb on wchb.id=wct.prehospital
 left join statisticstub ss on ss.id=coalesce(mc.statisticstub_id,mcP.statisticstub_id)
-where wcd.calendardate between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+where p.planStartDate between to_date('${startDate}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
+and wf.dtype='OperatingRoom'
 and vst.code='OPERATION'  
 ${dep}
-order by wcd.calendardate, wct.timefrom
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table styleRow='11' name="journal_list_suroper"
+order by p.planStartDate, p.planStartTime" />
+
+        <msh:table printToExcelButton="сохранить в excel" styleRow='10' name="journal_list_suroper"
          action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Пациент" property="2"/>
-            <msh:tableColumn columnName="ИБ" property="9"/>
-            <msh:tableColumn columnName="Направитель" property="8"/>
+            <msh:tableColumn columnName="Диагноз" property="12"/>
             <msh:tableColumn columnName="Операция" property="4"/>
+            <msh:tableColumn columnName="Вид наркоза" property="13"/>
+            <msh:tableColumn columnName="Время проведения" property="7"/>
+            <msh:tableColumn columnName="Хирург" property="15"/>
+            <msh:tableColumn columnName="Группа крови" property="14"/>
+            <msh:tableColumn columnName="Направитель" property="8"/>
             <msh:tableColumn columnName="Операционная" property="5"/>
             <msh:tableColumn columnName="Дата назначения" property="6"/>
-            <msh:tableColumn columnName="Время назначения" property="7"/>
-            <msh:tableColumn columnName="Примечание" property="10"/>
+            <msh:tableColumn columnName="Примечание" property="9"/>
             <msh:tableButton buttonFunction="printCheckList" buttonShortName="Печать чек-листа" buttonName="Печать чек-листа" property="12"/>
-            
-            
         </msh:table>
     </msh:sectionContent>
     </msh:section>
+      <form action="print-reestOperationsByCabinet.do" method="post" target="_blank">
+          <input type="hidden" name="id" id="id" value="${cabinetId}">
+          <input type="hidden" name="date" id="date" value="${startDate}">
+          <input type="hidden" name="sqlInfo" id="sqlInfo" value="${journal_list_suroper_sql}"/>
+          <input type='hidden' name="s" id="s" value="HospitalPrintService">
+          <input type='hidden' name="m" id="m" value="printOperationsByCabinet">
+          <input type="submit" value="Печать реестра">
+      </form>
     
     <% } else {%>
     	<i>Выберите параметры и нажмите найти </i>
     	<% }   %>
     <script type='text/javascript'>
-    
-   /*   checkFieldUpdate('typeEmergency','${typeEmergency}',3) ; */
-     
-   
+
     function checkFieldUpdate(aField,aValue,aDefault) {
-    	
+
     	eval('var chk =  document.forms[0].'+aField) ;
     	var max = chk.length ;
     	if ((+aValue)>max) {
@@ -155,9 +175,7 @@ order by wcd.calendardate, wct.timefrom
     	frm.action='direct_operation_list.do' ;
     }
     function printCheckList(id) {
-    	
-    	var url ='print-checkList.do?s=HospitalPrintService&m=printCheckList&id='+id;
-    	window.location=url;
+    	window.location='print-checkList.do?s=HospitalPrintService&m=printCheckList&id='+id;
     }
 
     </script>

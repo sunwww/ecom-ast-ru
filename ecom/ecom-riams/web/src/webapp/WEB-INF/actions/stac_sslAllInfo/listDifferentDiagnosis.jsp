@@ -8,11 +8,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="StacJournal" guid="f6e72e89-0ba7-4f9e-97f6-0a1ecaf5b162">Список всех ССЛ с расхождением диагнозов</msh:title>
+    <msh:title mainMenu="StacJournal">Список всех ССЛ с расхождением диагнозов</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="677746d8-d63e-44a3-8e8b-e227dea8decb">
-      <msh:sideLink roles="/Policy/MedCase" key="ALT+N" action="/" name="По отделению" guid="b6f99225-3f13-4e39-91a4-3b371f8dce53" />
+    <msh:sideMenu>
+      <msh:sideLink roles="/Policy/MedCase" key="ALT+N" action="/" name="По отделению" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
@@ -60,9 +60,9 @@
   	
  %>
  
- <msh:form action="/stac_diff_diagnosis.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
-     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-      <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
+ <msh:form action="/stac_diff_diagnosis.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+     <msh:panel>
+      <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
                <msh:row>
         <td class="label" title="Период поиска (typeDate)" colspan="1"></td>
@@ -107,15 +107,15 @@ and d1.priority_id=${mainPriorityId}
 and d2.priority_id=${mainPriorityId}
 and mkb1.id!=mkb2.id
 ${addSql}
-" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
+" />
     <msh:section>
     <msh:sectionContent>
-    <msh:table viewUrl="entityShortView-stac_ssl.do" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
-      <msh:tableColumn columnName="#" property="sn" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Стат.карта" property="2" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Клинический диагноз" property="5" guid="35347247-b552-4154-a82a-ee484a1714ad" />
-      <msh:tableColumn columnName="Выписной диагноз" property="4" guid="e98f5-8b9e-4a3e-966f-4d43576bbc96" />
+    <msh:table viewUrl="entityShortView-stac_ssl.do" name="datelist" idField="1" action="entityView-stac_ssl.do">
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="Стат.карта" property="2" />
+      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
+      <msh:tableColumn columnName="Клинический диагноз" property="5" />
+      <msh:tableColumn columnName="Выписной диагноз" property="4" />
     </msh:table>
 
     </msh:sectionContent>

@@ -48,8 +48,8 @@
         <msh:row >
           <msh:autoComplete property="commonMark" label="Общая оценка" viewOnlyField="true" horizontalFill="true" fieldColSpan="3" vocName="vocDownesCommonMark"/>
         </msh:row>
-        <msh:row guid="c727920e-0d60-4118-9d20-da32d07f7dcc">
-          <msh:autoComplete property="workFunction" label="Специалист" horizontalFill="true" fieldColSpan="3" guid="8aae4afd-510c-4036-b4c3-010f1ff69978" vocName="workFunction" />
+        <msh:row>
+          <msh:autoComplete property="workFunction" label="Специалист" horizontalFill="true" fieldColSpan="3" vocName="workFunction" />
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>

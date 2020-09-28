@@ -32,7 +32,7 @@
                 entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV010'
                 names   = 'code, name'
                 queried = 'code, name'
-                queryAppend="finishDate is null"
+                queryAppend="(finishDate is null or finishDate>=current_date)"
         />
     </voc>
     <voc id='vocE2FondV027' type='EntityVocService'>
@@ -84,13 +84,7 @@
                 queried = 'code, name'
         />
     </voc>
-    <voc id='vocE2FondV015' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV015'
-                names   = 'code, name'
-                queried = 'code, name'
-        />
-    </voc>
+
     <voc id='vocE2FondV012' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV012'
@@ -105,12 +99,42 @@
                 queried = 'code, name'
         />
     </voc>
+    <voc id="vocE2FondV021Code" type="NativeVocService">
+        <NativeVocService
+                from="vocE2FondV021 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+                queried="upper(voc.name) like upper(:query) or voc.code like :query"
+        />
+    </voc>
     <voc id="vocPassportTypeCode" type="NativeVocService">
         <NativeVocService
                 from="vocidentitycard voc"
                 nameId="voc.omccode"
                 order="voc.name"
                 names="voc.omccode||' '||voc.name"
+                queried="upper(voc.name) like upper(:query) or voc.omccode like :query"
+        />
+    </voc>
+    <voc id="vocServiceStreamCode" type="NativeVocService">
+        <NativeVocService
+                from="VocServiceStream voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+                queried="upper(voc.name) like upper(:query) or voc.code like :query"
+        />
+    </voc>
+    <voc id="vocOpenListEntry" type="NativeVocService">
+        <NativeVocService
+                from="e2listentry voc"
+                nameId="voc.id"
+                order="voc.finishDate desc, voc.name"
+                names="voc.name"
+                queried="upper(voc.name) like upper(:query) "
+                queryAppend="(voc.isDeleted is null or voc.isDeleted='0') and (voc.isClosed is null or voc.isClosed='0')"
+
         />
     </voc>
     <voc id="vocListEntry" type="NativeVocService">
@@ -128,8 +152,10 @@
                 from="omc_sprsmo voc"
                 nameId="voc.smocode"
                 order="voc.name"
-                names="voc.smocode, voc.name"
+                names="voc.smocode|| ' '||voc.name||' '||coalesce(t.name,'') "
+                join="left join Omc_KodTer t on t.okato=voc.fondokato"
                 queried="voc.smocode like :querId or upper(voc.name) like upper(:query) "
+                queryAppend="(voc.finishDate is null or voc.finishDate>=current_date)"
         />
     </voc>
     <voc id="vocNationalityCode" type="NativeVocService">
@@ -147,7 +173,7 @@
                 nameId="voc.code"
                 order="voc.name"
                 names="voc.name"
-                queried="voc.code like :querId or upper(voc.name) like upper(:query) "
+                queried="upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) "
         />
     </voc>
     <voc id="vocSocialStatusCode" type="NativeVocService">
@@ -164,7 +190,7 @@
                 from="VocSex voc"
                 nameId="voc.omccode"
                 order="voc.name"
-                names="voc.code||' '||voc.name"
+                names="voc.omccode||' '||voc.name"
         />
     </voc>
     <voc id="vocReasonDischargeCode" type="NativeVocService">
@@ -262,7 +288,7 @@
                 names="voc.code ||' '|| voc.name"
                 nameId=" voc.id "
                 queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
-                queryAppend=""
+                queryAppend="(voc.noactuality is null or voc.noactuality='0')"
                 order="voc.name"
         />
     </voc>
@@ -296,6 +322,20 @@
                 order=""
         />
     </voc>
+    <voc id='vocKSGByBedSubTypeAndDate' type='NativeVocService'>
+        <NativeVocService
+                from = ' vocKsg vk '
+                parent='  vbst.code=:par1 and  '
+                names=" vk.code||' '||vk.name ||' '||cast (vk.kz as varchar(5))"
+                nameId=" vk.id "
+                queried=" ( upper(vk.code) like upper(:query) or upper(vk.name) like upper(:query) )"
+                queryAppend=""
+                join= "left join VocBedSubType vbst on vbst.id=vk.bedsubtype_id"
+                order=""
+                parentSplitCount="2"
+
+        />
+    </voc>
 
     <voc id='vocKsgPositionByKsg' type='NativeVocService'>
         <NativeVocService
@@ -306,7 +346,8 @@
                         case when coalesce(gkp.sex,'')!='' then ', Пол:'||gkp.sex else '' end ||
                         case when gkp.age is not null then ', Возраст: '||gkp.age else '' end ||
                         case when gkp.duration is not null then ', Длит:'||gkp.duration else '' end ||
-                        case when coalesce(gkp.anothermkb,'')!='' then ', Доп.МКБ:'||gkp.anothermkb else '' end"
+                        case when coalesce(gkp.anothermkb,'')!='' then ', Доп.МКБ:'||gkp.anothermkb else '' end ||
+                        case when coalesce(gkp.doppriznak,'')!='' then ', доп. крит: '||gkp.doppriznak else '' end "
                 nameId=" gkp.id "
                 queried=" ( upper(gkp.mainmkb) like upper(:query) or upper(gkp.servicecode) like upper(:query) )"
                 queryAppend=""
@@ -361,40 +402,6 @@
         <IAllValue>ru.ecom.expomc.ejb.services.voc.allvalues.CheckTypeAllValues</IAllValue>
     </voc>
 
-    <voc id='omcOrgEntity' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.registry.RegistryEntry'
-                names   = 'lastname,firstname'
-                queried = 'lastname,firstname'
-        />
-    </voc>
-
-    <!-- Предприятие: код -> название предприятия + новый код -->
-    <voc id='timeOmcOrg' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcOrg'
-                    names = 'name,newCode'
-                    code = 'code'
-                    queried = 'name,code,newCode'
-                    queryConvertType = 'UPPER_CASE'  />
-    </voc>
-
-    <!-- Предприятие: код -> новый код -->
-    <voc id='timeOmcOrgCode-Code15' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcOrg'
-                    names = 'newCode'
-                    code = 'code'
-                    queried = 'name,code,newCode'
-                    queryConvertType = 'UPPER_CASE'  />
-    </voc>
-
-    <!-- Предприятие: код -> название предприятия -->
-    <voc id='timeOmcOrgCode-Name' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcOrg'
-                    names = 'name'
-                    code = 'code'
-                    queried = 'name,code,newCode'
-                    queryConvertType = 'UPPER_CASE'  />
-    </voc>
 
     <voc id='timeOmcLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
         <timeVoc    entity = 'OmcLpu'
@@ -402,77 +409,6 @@
         />
     </voc>
 
-    <voc id='timeOmcVidLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcVidLpu' />
-    </voc>
-
-    <voc id='timeOmcSgroup' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcSgroup' />
-    </voc>
-
-    <voc id='timeOmcSex' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcSex' />
-    </voc>
-
-    <voc id='timeOmcRayon' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcRayon' />
-    </voc>
-
-    <voc id='timeOmcStreetType' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcStreetType' />
-    </voc>
-
-    <voc id='timeOmcSk' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcSk' />
-    </voc>
-
-    <voc id='timeOmcTariff' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcTariff' />
-    </voc>
-
-    <voc id='timeOmcMkb10' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcMkb10' />
-    </voc>
-
-    <voc id='timeOmcResG' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcResG' />
-    </voc>
-
-    <voc id='timeOmcPrvd' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcPrvd' />
-    </voc>
-
-    <voc id='timeOmcLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcLpu' />
-    </voc>
-
-    <voc id='timeOmcVidLpu' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcVidLpu' />
-    </voc>
-
-    <voc id='timeOmcAs' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcAs' />
-    </voc>
-
-    <voc id='timeOmcKl' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcKl' />
-    </voc>
-
-    <voc id='timeOmcDepType' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcDepType' />
-    </voc>
-
-    <voc id='timeOmcOsl' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcOsl' />
-    </voc>
-
-    <voc id='timeOmcQz' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcQz' />
-    </voc>
-
-    <voc id='timeOmcExpert' type='IVocService' class='ru.ecom.expomc.ejb.services.voc.allvalues.TimeVocService'>
-        <timeVoc    entity = 'OmcExpert' />
-    </voc>
     <voc id='omcOksm' type='EntityVocService'>
         <EntityVocService
                 names   = 'code,name'
@@ -512,17 +448,19 @@
                 names   = 'code,name'
                 queried = "code,name"
                 queryConvertType="FIRST_LAT_UPPER"
-                queryAppend="(noActuality is null or noActuality=false) and (isBlock='0' or isBlock is null)"
+                queryAppend="(noActuality is null or noActuality=false) and (isBlock='0' or isBlock is null) and (length(code)>3 or ispermitwithoutdot=true)"
         />
     </voc>
-    <voc id='vocDiagnosis' type='EntityVocService'>
+        <voc id='vocIdc10AllPermitted' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.med.VocDiagnosis'
+                entity  = 'ru.ecom.expomc.ejb.domain.med.VocIdc10'
                 names   = 'code,name'
-                queried = 'code,name'
+                queried = "code,name"
                 queryConvertType="FIRST_LAT_UPPER"
+                queryAppend="(noActuality is null or noActuality=false) and (isBlock='0' or isBlock is null) "
         />
     </voc>
+
     <!--  МКБ 10 Травма-->
     <voc id='vocIdc10Travm' type='EntityVocService'>
         <EntityVocService
@@ -533,8 +471,24 @@
                 queryConvertType="FIRST_LAT_UPPER"
         />
     </voc>
+    <!--  МКБ для формы COVID-->
+    <voc id='vocIdc10Covid' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expomc.ejb.domain.med.VocIdc10'
+                names   = 'code,name'
+                queried = 'code,name'
+                queryAppend = "allowCovid='1'"
+                queryConvertType="FIRST_LAT_UPPER"
+        />
+    </voc>
     <voc id='visible' type='AllValueHelper'>
         <IAllValue>ru.ecom.ejb.services.voc.allvalues.YesNoAllValues</IAllValue>
+    </voc>
+    <voc id='positiveNegative' type='AllValueHelper'>
+        <IAllValue>ru.ecom.ejb.services.voc.allvalues.PositiveNegativeAllValues</IAllValue>
+    </voc>
+    <voc id='covidResultAllValues' type='AllValueHelper'>
+        <IAllValue>ru.ecom.ejb.services.voc.allvalues.CovidResultAllValues</IAllValue>
     </voc>
 
     <!-- КСГ -->
@@ -544,16 +498,10 @@
                 names   = 'code,name'
                 queried = 'code,name'
                 queryConvertType = 'UPPER_CASE'
+                queryAppend="year='2020'"
         />
     </voc>
 
-    <voc id='vocHello' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.ejb.domain.hello.Hello'
-                names   = 'hello'
-                queried = 'hello'
-        />
-    </voc>
     <voc id="omcStandart" type="EntityVocService">
         <EntityVocService
                 entity="ru.ecom.expomc.ejb.domain.omcvoc.OmcStandart"
@@ -568,7 +516,19 @@
                 parent='  vqem.criterion_id = :parent '
                 names=" vqem.mark "
                 nameId=" vqem.id "
-                queried=" ( upper(vqem.id) like upper(:query) or upper(vqem.mark) like upper(:query) )"
+                queried=" ( upper(cast (vqem.id as varchar)) like upper(cast(:query as varchar)) or upper(cast (vqem.mark as varchar)) like upper(cast(:query as varchar)) )"
+                queryAppend=""
+                join= ""
+                order=""
+        />
+    </voc>
+    <voc id='vocQualityEstimationMarkKMP' type='NativeVocService'>
+        <NativeVocService
+                from = ' VocQualityEstimationMark vqem '
+                parent='  vqem.criterion_id = :parent '
+                names=" vqem.name "
+                nameId=" vqem.id "
+                queried=" ( upper(cast (vqem.id as varchar)) like upper(cast(:query as varchar)) or upper(cast (vqem.mark as varchar)) like upper(cast(:query as varchar)) )"
                 queryAppend=""
                 join= ""
                 order=""
@@ -580,7 +540,17 @@
                 parent='  vqem.criterion_id = :parent '
                 names=" vqem.name "
                 nameId=" vqem.id "
-                queried=" ( upper(vqem.id) like upper(:query) or upper(vqem.name) like upper(:query) )"
+                queried=" ( upper(cast (vqem.id as varchar)) like upper(cast(:query as varchar)) or upper(vqem.name) like upper(cast(:query as varchar)) )"
+                join= ""
+                order=" vqem.id "
+        />
+    </voc>
+    <voc id='vocQualityEstimationChangeReason' type='NativeVocService'>
+        <NativeVocService
+                from = ' vocQualityEstimationChangeReason v '
+                names=" v.name "
+                nameId=" v.id "
+                queried=" ( cast(v.id as varchar) like cast(:query as varchar) or upper(v.name) like upper(:query) )"
                 join= ""
                 order=""
         />
