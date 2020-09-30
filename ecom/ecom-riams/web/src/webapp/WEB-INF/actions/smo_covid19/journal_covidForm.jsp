@@ -73,7 +73,7 @@
         </msh:section>
         <msh:section>
             <msh:sectionContent>
-                <ecom:webQuery isReportBase="true" name="journal_covidForm" nativeSql="
+                <ecom:webQuery name="journal_covidForm" nativeSql="
                 select distinct t.depname as depname
                 ,sum(t.total) as total
                 ,sum(t.cntCard) as cntCard
@@ -149,7 +149,7 @@
         </msh:section>
         <msh:section>
             <msh:sectionContent>
-                <ecom:webQuery isReportBase="true" name="journal_covidFormPat" nativeSql="
+                <ecom:webQuery name="journal_covidFormPat" nativeSql="
                 select distinct sls.id,dep.name as depname, st.code as stc,pat.patientinfo as info
                 , vs.name as vsname, vhr.name as vhrname
                 ,getChosenCovidFormPars(c.id) as pars

@@ -84,7 +84,7 @@
         </msh:section>
         <msh:section>
             <msh:sectionContent>
-                <ecom:webQuery isReportBase="true" name="journal_emptyCovid" nativeSql="
+                <ecom:webQuery name="journal_emptyCovid" nativeSql="
                 select dep.name, count (distinct sls.id) as total
                 ,(select count(distinct sls.id)  from medCase m
                 left join MedCase as sls on sls.id = m.parent_id
@@ -164,7 +164,7 @@
         </msh:section>
         <msh:section>
             <msh:sectionContent>
-                <ecom:webQuery isReportBase="true" name="journal_emptyCovidPat" nativeSql="
+                <ecom:webQuery name="journal_emptyCovidPat" nativeSql="
                 select distinct sls.id,dep.name, pat.patientinfo,st.code
                 ,case when c.id is null then '-' else '+' end as exC
                 from medCase m
