@@ -46,12 +46,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
-import java.sql.Date;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Stateless
 @Local(IExpert2Service.class)
@@ -2681,7 +2683,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         E2CoefficientPatientDifficultyEntryLink link;
         //calc 10
-        Set<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = new HashSet<>();
+        ArrayList<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = new ArrayList<>();
         long sluchDuration = aEntry.getBedDays() != null ? aEntry.getBedDays() : 1;
         long maxDuration = Boolean.TRUE.equals(aEntry.getKsg().getLongKsg()) ? 45 : 30;
         if (sluchDuration > maxDuration) { //Если случай лечения больше 30 (45) дней, ищем "10" коэффициент
