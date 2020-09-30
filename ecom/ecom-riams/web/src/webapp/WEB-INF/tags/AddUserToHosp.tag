@@ -35,7 +35,7 @@
                     <br><label><input name="${name}isCovid" id="${name}isCovid" type="checkbox" onclick='javascript:setCovidOrNot${name}();'/>Инфекционное?</label><br>
                 </msh:row>
                 <msh:row>
-                    <msh:comboBox size='300' horizontalFill="true" property='${name}vocLpuHospOtdAll' vocName="vocLpuHospOtdAll" label='Отделение:'/>
+                    <msh:comboBox size='300' horizontalFill="true" property='${name}vocLpuOtd' vocName="vocLpuOtd" label='Отделение:' parentId="1"/>
                 </msh:row>
                 <msh:row>
                     <msh:comboBox size='300' horizontalFill="true" property='${name}vocWorkFunction' vocName="vocWorkFunction" label='Рабочая функция:'/>
@@ -97,7 +97,7 @@
     // Выполнить
     function make${name}() {
         $('${name}Add').disabled=true;
-        var lpu=+document.getElementById('${name}vocLpuHospOtdAll').value;
+        var lpu=+document.getElementById('${name}vocLpuOtd').value;
         var vwf=+document.getElementById('${name}vocWorkFunction').value;
         var login = document.getElementById('${name}Username').value;
         var psw = $('${name}Psw').value;
@@ -172,22 +172,22 @@
 
     //Если инфекционное, то проставить parentId
     function setCovidOrNot${name}() {
-        $('${name}vocLpuHospOtdAll').value='';
-        $('${name}vocLpuHospOtdAllName').value='';
+        $('${name}vocLpuOtd').value='';
+        $('${name}vocLpuOtdName').value='';
         $('${name}vocWorkFunction').value='';
         $('${name}vocWorkFunctionName').value='';
         $('${name}userCopy').value='';
         $('${name}userCopyName').value='';
 
         var vocLpu = jQuery("#${name}isCovid").prop("checked") ?
-            'vocCovidLpu' : 'vocLpuHospOtdAll';
+            'vocCovidLpu' : 'vocLpuOtd';
         var vocWf = jQuery("#${name}isCovid").prop("checked") ?
             'vocCovidWf' : 'vocWorkFunction';
         var vocSecUser = jQuery("#${name}isCovid").prop("checked") ?
             'secUserEnabledCopy' : 'secUser';
-        ${name}vocLpuHospOtdAllAutocomplete.setUrl('simpleVocAutocomplete\\'+vocLpu);
+        ${name}vocLpuOtdAutocomplete.setUrl('simpleVocAutocomplete\\'+vocLpu);
         ${name}vocWorkFunctionAutocomplete.setUrl('simpleVocAutocomplete\\'+vocWf);
-        ${name}vocLpuHospOtdAllAutocomplete.setUrl('simpleVocAutocomplete\\'+vocLpu);
+        ${name}vocLpuOtdAutocomplete.setUrl('simpleVocAutocomplete\\'+vocLpu);
         ${name}userCopyAutocomplete.setUrl('simpleVocAutocomplete\\'+vocSecUser);
     }
 </script>
