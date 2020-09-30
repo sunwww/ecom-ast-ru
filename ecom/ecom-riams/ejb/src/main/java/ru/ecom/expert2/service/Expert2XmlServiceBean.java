@@ -5,7 +5,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
@@ -48,8 +47,8 @@ import java.util.List;
 @Local(IExpert2XmlService.class)
 @Remote(IExpert2XmlService.class)
 public class Expert2XmlServiceBean implements IExpert2XmlService {
-    private Boolean isCheckIsRunning = false;
-    private Boolean EXCHANGE_COVID_DS = false;
+    private boolean isCheckIsRunning = false;
+    private boolean EXCHANGE_COVID_DS = false;
     private static final Logger LOG = Logger.getLogger(Expert2XmlServiceBean.class);
     private static final String HOSPITALTYPE = "HOSPITAL";
     private static final String HOSPITALPEREVODTYPE = "HOSPITALPEREVOD";
@@ -526,7 +525,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(ksgKpg, "BZTSZ", currentEntry.getBaseTarif());
                     add(ksgKpg, "KOEF_D", "1"); //TODO
                     add(ksgKpg, "KOEF_U", "1"); //TODO
-                    addIfNotNull(ksgKpg, "CRIT", currentEntry.getDopKritKSG());
+                    if (currentEntry.getKsgPosition()!=null) addIfNotNull(ksgKpg, "CRIT", currentEntry.getKsgPosition().getDopPriznak());
                     //DKK2
                     List<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = currentEntry.getPatientDifficulty();
                     if (!difficultyEntryLinks.isEmpty()) {
@@ -551,14 +550,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl, "IDDOKT", currentEntry.getDoctorSnils()); // СНИЛС лечащего врача
                 }
 
-                if (a3 && aEntry.getDispResult() != null) {
-                    if (",3,4,5,14,15,19,17,18,31,32,".contains("," + aEntry.getDispResult().getCode() + ",")) { //нужная нам группа здоровья
+                if (a3 && aEntry.getDispResult() != null && ",3,4,5,14,15,19,17,18,31,32,".contains("," + aEntry.getDispResult().getCode() + ",")) { //нужная нам группа здоровья
                         Element naz = new Element("NAZ");
                         add(naz, "NAZ_N", "1");
                         add(naz, "NAZ_R", "3");
                         add(naz, "NAZ_V", "1");
                         sl.addContent(naz);
-                    }
                 }
                 add(sl, "ED_COL", edCol);
                 if (isPoliclinicKdp) {
@@ -1004,13 +1001,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
                 Long personId = entry.getExternalPatientId();
                 Element z;
-                switch (aVersion) { //При появлении новых форматов файла - добавляем сюда
-                    case "3.2":
-                        z = createSlElements2020(entry, sls, cnt + 1, isExport263, regNumber, aFileType);
-                        break;
-                    default:
-                        LOG.error("Неизвестный формат пакета: " + aVersion);
-                        throw new IllegalStateException("Неизвестный формат пакета: " + aVersion);
+                //При появлении новых форматов файла - добавляем сюда
+                if ("3.2".equals(aVersion)) {
+                    z = createSlElements2020(entry, sls, cnt + 1, isExport263, regNumber, aFileType);
+                } else {
+                    LOG.error("Неизвестный формат пакета: " + aVersion);
+                    throw new IllegalStateException("Неизвестный формат пакета: " + aVersion);
                 }
 
                 if (z != null) {
@@ -1058,8 +1054,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             return "/rtf/expert2xml/" + archiveName;
         } catch (Exception err) {
             monitor.error("Произошла ошибка: " + err.getMessage(), err);
-            //   monitor.finish("Произошла ошибка: "+err.getMessage());
-            err.printStackTrace();
             LOG.error("ERR = ", err);
             return "ERR";
         }
@@ -1072,7 +1066,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 "and ((isDeleted is null or isDeleted='0') and (doNotSend is null or doNotSend='0')) order by startDate").setParameter("parent", aHospitalMedcaseId)
                 .getResultList();
         if (!slo.isEmpty()) {
-            hospital = cloneEntity(slo.get(0), false);
+            hospital = cloneEntity(slo.get(0));
+            if (hospital == null) {return null;}
             E2Entry lastEntry = slo.get(slo.size() - 1);
             hospital.setFondResult(lastEntry.getFondResult());
             hospital.setFondIshod(lastEntry.getFondIshod());
@@ -1101,18 +1096,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         return hospital;
     }
 
-    private E2Entry cloneEntity(E2Entry aSourceObject, boolean needPersist) {
+    private E2Entry cloneEntity(E2Entry aSourceObject) {
         try {
             Method[] methodList = aSourceObject.getClass().getMethods();
             E2Entry newEntity = new E2Entry();
-            //Object newEntity = aClass.newInstance();
             for (Method setterMethod : methodList) {
                 String methodName = setterMethod.getName();
                 if (methodName.startsWith("set")) {
-                    if (methodName.equals("setId")) {
-                        continue;
-                    }
-                    if (setterMethod.isAnnotationPresent(OneToMany.class)) {
+                    if (methodName.equals("setId") || setterMethod.isAnnotationPresent(OneToMany.class)) {
                         continue;
                     }
                     String propertyName = PropertyUtil.getPropertyName(setterMethod);
@@ -1122,9 +1113,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     } catch (Exception e) {
                     }
                 }
-            }
-            if (needPersist) {
-                theManager.persist(newEntity);
             }
             return newEntity;
         } catch (Exception e) {
@@ -1190,31 +1178,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     /**
-     * Получить сущность по коду (в основном для справочников)
-     */
-    private <T> T getEntityByCode(String aCode, Class aClass, Boolean needCreate) {
-        List<T> list = theManager.createQuery("from " + aClass.getName() + " where code=:code").setParameter("code", aCode).getResultList();
-        T ret = !list.isEmpty() ? list.get(0) : null;
-        if (list.isEmpty() && needCreate) {
-            try {
-                ret = (T) aClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                LOG.error(e);
-            }
-            if (ret instanceof VocBaseEntity) { //Проверить
-                try {
-                    Method setCodeMethod = ret.getClass().getMethod("setCode", String.class);
-                    setCodeMethod.invoke(ret, aCode);
-                } catch (Exception e) {
-                    LOG.error(e);
-                }
-            }
-            theManager.persist(ret);
-        }
-        return ret;
-    }
-
-    /**
      * Получение всех диагнозов из списка по коду регистрации
      */
     private List<String> findDiagnosisCodes(List<EntryDiagnosis> aList, String aRegType, String aPriority) {
@@ -1261,11 +1224,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         }
         return (T) theManager.find(aClass, Long.valueOf(list.get(0).toString()));
 
-    }
-
-    private String getJbossConfigValue(String aConfigName, String aDefaultValue) {
-        EjbEcomConfig config = EjbEcomConfig.getInstance();
-        return config.get(aConfigName, aDefaultValue);
     }
 
     private void setSluchDiagnosis(Element aElement, E2Entry aEntry, String aVersion, boolean a3) {
@@ -1321,12 +1279,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
                 }
                 add(aElement, "DS2", otherDiagnosis.get(0));
-/*                if (otherDiagnosis.size()>1) { //с 2020 года 1 сопутствующий диагноз
-                    for (int i=1;i<otherDiagnosis.size() && i<4;i++) {
-                        addIfNotNull(aElement,"DS2_"+i,otherDiagnosis.get(i));
-                    }
-                }
-  */
+
             }
             if (!heavyDiagnosis.isEmpty()) {
                 if (EXCHANGE_COVID_DS && mainMkb.startsWith("U07")) { //если ковид - он - ослжнение, а осложнение - главный
