@@ -38,6 +38,7 @@
 					<li><msh:link action="ecom_release-202007.do">июль 2020 года </msh:link></li>
 					<li><msh:link action="ecom_release-202008.do">август 2020 года </msh:link></li>
 					<li><msh:link action="ecom_release-202009.do">сентябрь 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202010.do">октябрь 2020 года </msh:link></li>
 
 					<% if (1==2) { %>
 					<li><msh:link  action="ecom_release-201712.do">
