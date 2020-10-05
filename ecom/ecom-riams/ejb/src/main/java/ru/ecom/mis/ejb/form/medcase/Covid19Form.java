@@ -275,6 +275,13 @@ public class Covid19Form extends IdEntityForm {
     public String getBrigadeNumber() {return theBrigadeNumber;}
     public void setBrigadeNumber(String aBrigadeNumber) {theBrigadeNumber = aBrigadeNumber;}
     private String theBrigadeNumber ;
+
+    /** Эпид. номер */
+    @Comment("Эпид. номер")
+    @Persist
+    public String getEpidNumber() {return theEpidNumber;}
+    public void setEpidNumber(String aEpidNumber) {theEpidNumber = aEpidNumber;}
+    private String theEpidNumber ;
     
     /** Форма контакта */
     @Comment("Форма контакта")

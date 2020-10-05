@@ -238,6 +238,11 @@ public class Covid19 extends BaseEntity {
     public void setBrigadeNumber(String aBrigadeNumber) {theBrigadeNumber = aBrigadeNumber;}
     private String theBrigadeNumber ;
 
+    /** Эпид. номер */
+    @Comment("Эпид. номер")
+    public String getEpidNumber() {return theEpidNumber;}
+    public void setEpidNumber(String aEpidNumber) {theEpidNumber = aEpidNumber;}
+    private String theEpidNumber ;
 
     /** Мед. работник */
     @Comment("Мед. работник")
