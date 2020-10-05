@@ -122,6 +122,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 					styleId="stac_directionCovidByUserDepartment"
 					roles="/Policy/Mis/MedCase/Covid19/View"
 					action="/stac_analysisCovid" name="По анализам на Covid19" />
+			<msh:sideLink
+					styleId="stac_journalPeriodByUserDepartment"
+					roles="/Policy/Mis/MedCase/Stac/Journal/PeriodByUserDepartment" key="ALT+5"
+					action="/stac_journalPeriodByUserDepartment" name="Журнал COVID для лаборатории за период" />
 	    </msh:sideMenu>
 	    <msh:sideMenu title="Журналы">
 	    	<msh:sideLink

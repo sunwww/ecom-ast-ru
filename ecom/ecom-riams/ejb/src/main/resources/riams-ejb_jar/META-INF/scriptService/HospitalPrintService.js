@@ -2895,6 +2895,12 @@ function printTransfusionAgreement(aCtx, aParams) {
 
 //Журнал COVID для Иванова сразу по всем инфекционным отделениям
 function printCovidAllDepartments(aCtx, aParams) {
+	var dateBegin = aParams.get("dateBegin"), dateEnd = aParams.get("dateEnd");
+	if (!dateEnd) dateEnd=dateBegin;
+	var dateSql = dateBegin!=null && typeof dateBegin !== 'undefined' && dateBegin!='' ?
+		" and sls.dateStart between to_date('"+dateBegin+"','dd.mm.yyyy')  and to_date('"+dateEnd+"','dd.mm.yyyy')":
+		" and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)";
+
 	var patListSql = " select dep.name" +
 		" ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio" +
 		" ,sex.name as sname" +
@@ -2921,7 +2927,7 @@ function printCovidAllDepartments(aCtx, aParams) {
 		" left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id" +
 		" left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id" +
 		" where m.DTYPE='DepartmentMedCase' and dep.isForCovid=true" +
-		" and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)" +
+		dateSql +
 		" group by dep.name,pat.lastname,pat.firstname" +
 		" ,pat.middlename,pat.birthday,sex.name" +
 		" , pat.address_addressId ,adr.fullname,adr.name" +
