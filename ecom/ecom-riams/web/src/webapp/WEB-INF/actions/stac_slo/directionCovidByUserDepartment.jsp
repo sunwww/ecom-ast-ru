@@ -45,10 +45,10 @@
     <msh:table name="datelist" viewUrl="entityShortView-mis_patient.do" action="javascript:void()" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Выгрузить" property="1"/>
+      <msh:tableColumn columnName="Номер пробирки" property="1" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2" />
       <msh:tableColumn columnName="Дата рождения" property="3" />
       <msh:tableColumn columnName="Дата поступления" property="4" />
-      <msh:tableColumn columnName="Номер пробирки" property="1" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -112,7 +112,7 @@
             if (typeof table !== 'undefined') {
                 for (var ii = 1; ii < table.rows.length; ii++) {
                     createChkBox(table.rows[ii].cells[2],ii);
-                    createTextField(table.rows[ii].cells[6],ii);
+                    createTextField(table.rows[ii].cells[3],ii);
                 }
             }
         }
