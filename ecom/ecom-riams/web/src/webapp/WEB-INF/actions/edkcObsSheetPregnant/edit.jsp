@@ -8,17 +8,17 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
     <tiles:put name="side" type="string">
-        <tags:vocObservRes name="vocObservRes" preg=""/>
-        <msh:sideMenu title="Лист наблюдения новорождённого">
-            <msh:sideLink key="ALT+1" action="/javascript:showvocObservResJs()" name="Закрыть ЛН" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet/Edit" />
+        <tags:vocObservRes name="vocObservRes" preg="Pregnant"/>
+        <msh:sideMenu title="Лист наблюдения беременной">
+            <msh:sideLink key="ALT+1" action="/javascript:showvocObservResJs()" name="Закрыть ЛН" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheetPregnant/Edit" />
         </msh:sideMenu>
         <msh:sideMenu title="Добавить">
-             <msh:sideLink key="ALT+2" action="/entityParentPrepareCreate-edkcProtocol.do?id=${param.id}&type=edkc_1" name="Протокол консультации" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet/Create" />
-            <msh:sideLink key="ALT+3" action="/entityParentPrepareCreate-edkcProtocol.do?id=${param.id}&type=edkc_ev" name="Протокол ежесуточного наблюдения" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet/Create" />
+             <msh:sideLink key="ALT+2" action="/entityParentPrepareCreate-edkcProtocolPregnant.do?id=${param.id}&type=edkc_1Pregnant" name="Протокол консультации" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheetPregnant/Create" />
+            <msh:sideLink key="ALT+3" action="/entityParentPrepareCreate-edkcProtocolPregnant.do?id=${param.id}&type=edkc_evPregnant" name="Протокол ежесуточного наблюдения" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheetPregnant/Create" />
         </msh:sideMenu>
     </tiles:put>
     <tiles:put name='body' type='string'>
-        <msh:form action="entityParentSaveGoView-edkcObsSheet.do" defaultField="startDate"
+        <msh:form action="entityParentSaveGoView-edkcObsSheetPregnant.do" defaultField="startDate"
                   fileTransferSupports="true">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
@@ -41,7 +41,7 @@
                 </msh:row>
             </msh:panel>
         </msh:form>
-        <msh:ifFormTypeIsView formName="edkcObsSheetForm">
+        <msh:ifFormTypeIsView formName="edkcObsSheetPregnantForm">
             <msh:section title="Список протоколов ЕДКЦ">
                 <ecom:webQuery name="protocols"  nativeSql="
           select d.id,  to_char(d.dateRegistration,'dd.mm.yyyy') ||' '|| cast(d.timeRegistration as varchar(5)) as dtimeRegistration, d.record
@@ -56,7 +56,7 @@
                     where d.DTYPE='Protocol' and d.obssheet_id='${param.id}'
                     order by d.dateRegistration,d.timeRegistration"/>
 
-                <msh:table hideTitle="false" selection="multiply" idField="1" name="protocols" action="entityParentView-edkcProtocol.do"
+                <msh:table hideTitle="false" selection="multiply" idField="1" name="protocols" action="entityParentView-edkcProtocolPregnant.do"
                            noDataMessage="Нет протоколов">
                     <msh:tableNotEmpty>
                         <tr>
@@ -79,7 +79,7 @@
         <tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <ecom:titleTrail mainMenu="Expert2" beginForm="edkcObsSheetForm"/>
+        <ecom:titleTrail mainMenu="Expert2Pregnant" beginForm="edkcObsSheetPregnantForm"/>
     </tiles:put>
     <tiles:put name='javascript' type='string'>
         <script type="text/javascript" src="./dwr/interface/PatientService.js">/**/</script>
@@ -105,7 +105,7 @@
 
             //Функция позовляет создать днвеник на основе выбранного =
             function createNew(id) {
-                window.location.href = 'entityParentPrepareCreate-edkcProtocol.do?id='+$('id').value+'&type=edkc_ev&basis='+id;
+                window.location.href = 'entityParentPrepareCreate-edkcProtocolPregnant.do?id='+$('id').value+'&type=edkc_evPregnant&basis='+id;
             }
         </script>
     </tiles:put>

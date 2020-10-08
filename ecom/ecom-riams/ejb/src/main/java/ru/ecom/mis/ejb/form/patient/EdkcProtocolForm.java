@@ -23,21 +23,6 @@ import javax.persistence.Id;
 @Comment("Протокол ЕДКЦ")
 @EntityForm
 @EntityFormPersistance(clazz = ru.ecom.poly.ejb.domain.protocol.Protocol.class)
-@WebTrail(comment = "Протокол ЕДКЦ", nameProperties = "id"
-        , view = "entityParentView-edkcProtocol.do"
-        ,list = "entityParentList-edkcProtocol.do"
-)
-@Parent(property = "obsSheet", parentForm = ObservationSheetForm.class)
-@EntityFormSecurityPrefix("/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet")
-@AParentPrepareCreateInterceptors(
-        @AParentEntityFormInterceptor(EdkcProtocolPreCreateInterceptor.class)
-)
-@ACreateInterceptors(
-        @AEntityFormInterceptor(EdkcProtocolCreateInterceptor.class)
-)
-@ASaveInterceptors(
-        @AEntityFormInterceptor(EdkcProtocolSaveInterceptor.class)
-)
 public class EdkcProtocolForm extends IdEntityForm {
     /** Лист наблюдения */
     @Comment("Лист наблюдения")

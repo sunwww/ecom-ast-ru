@@ -6,10 +6,10 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" title="Листы наблюдения новорождённого" beginForm="mis_patientForm" />
+        <ecom:titleTrail mainMenu="Expert2Pregnant" title="Листы наблюдения беременной" beginForm="mis_patientForm" />
     </tiles:put>
     <tiles:put name="body" type="string">
-        <msh:section title="Список листов наблюдения новорождённого">
+        <msh:section title="Список листов наблюдения беременной">
             <ecom:webQuery name="list" nativeSql="
             select o.id as oId, to_char(o.startdate,'dd.mm.yyyy') as std
             ,vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as  wp
@@ -31,11 +31,11 @@
             left join patient wpat on wpat.id=w.person_id
             left join patient wpat2 on wpat2.id=w2.person_id
             left join vocobservationresult vr on vr.id=o.observresult_id
-            where o.patient_id= '${param.id}' and o.dtype='ObservationSheetNewBorn'
+            where o.patient_id= '${param.id}' and o.dtype='ObservationSheetPregnant'
             group by o.id,vwf.name,vwf2.name,wpat.id,wpat2.id,vr.name
             order by o.id
   	"/>
-            <msh:table name="list" action="entityView-edkcObsSheet.do" idField="1" >
+            <msh:table name="list" action="entityView-edkcObsSheetPregnant.do" idField="1" >
                 <msh:tableColumn columnName="#" property="sn" />
                 <msh:tableColumn columnName="Дата открытия" property="2" />
                 <msh:tableColumn columnName="Открыл" property="3" />

@@ -719,15 +719,16 @@ public class PatientServiceJs {
 	/**
 	 * Получить статус листка наблюдения #171
 	 * @param aPatId Patient.id
+	 * @param dtype String Новрождённые/Беременные
 	 * @return String Статус (0 - нет никаких, можно открыть
 	 *                   	1 - есть открытый: можно просмотреть, закрыть, добавить всё
 	 *                   	2 - есть закрытый: можно просмотреть, открыть)
 	 */
-	public String getObservationSheetStatus(String aPatId, HttpServletRequest aRequest) throws NamingException {
+	public String getObservationSheetStatus(String aPatId, String dtype, HttpServletRequest aRequest) throws NamingException {
             IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
             Collection<WebQueryResult> l= service.executeNativeSql("select min(case when finishdate is null then '1' else '2' end)" +
                     " from observationsheet" +
-                    " where patient_id="+aPatId) ;
+                    " where patient_id="+aPatId + " and dtype='" + dtype +"'") ;
 		return l.isEmpty() || l.iterator().next().get1()==null? "0" :
 				l.iterator().next().get1().toString();
 	}
@@ -735,13 +736,14 @@ public class PatientServiceJs {
 	/**
 	 * Получить id текущего открытого листка наблюдения #171
 	 * @param aPatId Patient.id
+	 * @param dtype String Новрождённые/Беременные
 	 * @return String OnservationSheet.id
 	 */
-	public String getObservationSheetOpenedId(String aPatId, HttpServletRequest aRequest) throws NamingException {
+	public String getObservationSheetOpenedId(String aPatId, String dtype, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("select id" +
 				" from observationsheet" +
-				" where patient_id='"+aPatId + "' and finishdate is null") ;
+				" where patient_id='"+aPatId + "' and finishdate is null and dtype='" + dtype + "'") ;
 		return l.isEmpty() || l.iterator().next().get1()==null? "0" :
 				l.iterator().next().get1().toString();
 	}
@@ -766,14 +768,15 @@ public class PatientServiceJs {
 	/**
 	 * Открыть лист наблюдения #171
 	 * @param aPatId Patient.id
+	 * @param dtype String Новрождённые/Беременные
 	 * @return String 1 - ok, 0 - error
 	 */
-	public String openObservSheet(String aPatId, HttpServletRequest aRequest) throws NamingException {
+	public String openObservSheet(String aPatId, String dtype, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String status=getObservationSheetStatus(aPatId,aRequest);
+		String status=getObservationSheetStatus(aPatId, dtype, aRequest);
 		if (status.equals("0") || status.equals("2")) {
-			service.executeNativeSql("insert into observationsheet(createusername,startdate,specialiststart_id,patient_id) values('"
-					+ LoginInfo.find(aRequest.getSession(true)).getUsername() + "',current_date," + getCurrentWorkFunction(aRequest) +
+			service.executeNativeSql("insert into observationsheet(dtype,createusername,startdate,specialiststart_id,patient_id) values('"
+					+ dtype + "','" + LoginInfo.find(aRequest.getSession(true)).getUsername() + "',current_date," + getCurrentWorkFunction(aRequest) +
 					", " + aPatId + ") returning id");
 			return "1";
 		}
@@ -783,15 +786,17 @@ public class PatientServiceJs {
 	/**
 	 * Закрыть лист наблюдения #171
 	 * @param aPatId Patient.id
+	 * @param observResId Результат наблюдения
+	 * @param dtype String Новрождённые/Беременные
 	 * @return String 1 - ok, 0 - error
 	 */
-	public String closeObservSheet(String aPatId, String observResId, HttpServletRequest aRequest) throws NamingException {
+	public String closeObservSheet(String aPatId, String observResId, String dtype, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String status=getObservationSheetStatus(aPatId,aRequest);
+		String status=getObservationSheetStatus(aPatId,dtype,aRequest);
 		if (status.equals("1")) {
 			service.executeUpdateNativeSql("update observationsheet set editusername='"+LoginInfo.find(aRequest.getSession(true)).getUsername()
 					+ "',finishdate=current_date,specialistfin_id='" + getCurrentWorkFunction(aRequest) + "',observresult_id='" + observResId
-					+ "' where patient_id='" + aPatId + "' and finishdate is null");
+					+ "' where patient_id='" + aPatId + "' and finishdate is null and dtype='" + dtype +"'");
 			return "1";
 		}
 		return "0";
@@ -800,9 +805,10 @@ public class PatientServiceJs {
     /**
      * Получить листки наблюдений персоны #171
      * @param aPatId Sls.id or Patient.id
+	 * @param dtype String Новрождённые/Беременные
      * @return String json Листки наблюдений персоны
      */
-    public String selectObservSheetPatient(Long aPatId, HttpServletRequest aRequest) throws NamingException {
+    public String selectObservSheetPatient(Long aPatId, String dtype, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         StringBuilder sql = new StringBuilder();
         sql.append("select o.id as oId, to_char(o.startdate,'dd.mm.yyyy') as std ")
@@ -825,6 +831,7 @@ public class PatientServiceJs {
                 .append("left join patient wpat2 on wpat2.id=w2.person_id ")
                 .append("left join vocobservationresult vr on vr.id=o.observresult_id ")
                 .append("where o.patient_id= ").append(aPatId)
+				.append( " and o.dtype='").append(dtype).append("' ")
                 .append("group by o.id,vwf.name,vwf2.name,wpat.id,wpat2.id,vr.name ")
                 .append("order by o.id");
         JSONArray res = new JSONArray() ;

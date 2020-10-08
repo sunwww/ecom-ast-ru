@@ -78,8 +78,10 @@
         <form-bean name="mis_helpForm" type="ru.ecom.mis.web.action.util.HelpForm" />
         <form-bean name="smo_draftProtocolForm" type="ru.ecom.mis.ejb.form.medcase.RoughDraftForm" />
         <form-bean name="smo_visitProtocolForm" type="ru.ecom.mis.ejb.form.medcase.VisitProtocolForm" />
-		<form-bean name="edkcProtocolForm" type="ru.ecom.mis.ejb.form.patient.EdkcProtocolForm" />
-		<form-bean name="edkcObsSheetForm" type="ru.ecom.mis.ejb.form.patient.ObservationSheetForm" />
+		<form-bean name="edkcProtocolForm" type="ru.ecom.mis.ejb.form.patient.EdkcProtocolNewBornForm" />
+		<form-bean name="edkcProtocolPregnantForm" type="ru.ecom.mis.ejb.form.patient.EdkcProtocolPregnantForm" />
+		<form-bean name="edkcObsSheetForm" type="ru.ecom.mis.ejb.form.patient.ObservationSheetNewBornForm" />
+		<form-bean name="edkcObsSheetPregnantForm" type="ru.ecom.mis.ejb.form.patient.ObservationSheetPregnantForm" />
 	    <form-bean name="smo_directionForm" type="ru.ecom.mis.ejb.form.medcase.poly.DirectionMedCaseForm" />
 	    <form-bean name="smo_direction_medserviceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCase20ForDirect" />
 

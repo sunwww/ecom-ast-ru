@@ -834,27 +834,6 @@ order by wcd.calendarDate, wct.timeFrom" />
       		name="Изменить цвет" title="Изменить цвет "
       	/>
       </msh:sideMenu>
-<msh:ifInRole roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet">
-        <msh:sideMenu title="Лист наблюдения">
-            <tags:observSheet name="observSheet"/>
-            <tags:vocObservRes name="vocObservRes"/>
-            <msh:sideLink action="/javascript:openObservSheet(${param.id})" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
-                          name="Открыть ЛН" title="Открыть ЛН"
-            />
-            <msh:sideLink action="/javascript:showobservSheet(${param.id})" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
-                          name="Просмотреть ЛН" title="Просмотреть все ЛН"
-            />
-            <msh:sideLink action="/javascript:showvocObservRes(${param.id},'/riams/entityView-mis_patient.do?id=${param.id}')" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
-                          name="Закрыть ЛН" title="Закрыть текущий ЛН"
-            />
-            <msh:sideLink action="/javascript:everydayProtocol(${param.id})" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
-                          name="Протокол ежесуточного наблюдения" title="Протокол ежесуточного наблюдения"
-            />
-            <msh:sideLink action="/javascript:consultProtocol(${param.id})" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet"
-                          name="Протокол консультации" title="Протокол консультации"
-            />
-        </msh:sideMenu>
-</msh:ifInRole>
       <msh:sideMenu title="Добавить">
         <msh:sideLink roles="/Policy/Mis/MedPolicy/Omc/Create" key="CTRL+1" params="id" action="/entityParentPrepareCreate-mis_medPolicyOmc" name="Полис ОМС" />
         <msh:sideLink roles="/Policy/Mis/MedPolicy/OmcForeign/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-mis_medPolicyOmcForeign" name="Полис ОМС иногороднего" />
@@ -1117,59 +1096,6 @@ order by wcd.calendarDate, wct.timeFrom" />
                   });
               }
               checkLogin();
-          </script>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet">
-          <script type="text/javascript">
-              //в завимисости от наличия/отсутствия и статуса листка наблюдения скрывает/показывает кнопки
-              function updateObservButtons(status) {
-                  //0 - нет никаких, можно открыть
-                  //1 - есть открытый: можно просмотреть, закрыть, добавить всё
-                  //2 - есть закрытый: можно просмотреть, открыть
-                  var аMas = document.getElementsByTagName('a');
-                  for (var i=0; i<аMas.length; i++) {
-                      if (аMas[i].innerHTML=='Открыть ЛН') {
-                          if (status==0 || status==2)
-                              аMas[i].parentNode.removeAttribute('hidden');
-                          else
-                              аMas[i].parentNode.setAttribute('hidden',true);
-                      }
-                      else if (аMas[i].innerHTML=='Просмотреть ЛН') {
-                          if (status==1 || status==2)
-                              аMas[i].parentNode.removeAttribute('hidden');
-                          else
-                              аMas[i].parentNode.setAttribute('hidden',true);
-                      }
-                      else if (аMas[i].innerHTML=='Закрыть ЛН' || аMas[i].innerHTML=='Протокол ежесуточного наблюдения' || аMas[i].innerHTML=='Протокол консультации') {
-                          if (status==1)
-                              аMas[i].parentNode.removeAttribute('hidden');
-                          else
-                              аMas[i].parentNode.setAttribute('hidden',true);
-                      }
-                  }
-              }
-              //получает статус листка наблюдения
-              function checkObservStatus() {
-                  PatientService.getObservationSheetStatus($('id').value, {
-                      callback: function(status) {
-                          updateObservButtons(status);
-                      }
-                  });
-              }
-              checkObservStatus();
-              //открыть лист наблюдения
-              function openObservSheet(aPatId) {
-                  PatientService.openObservSheet(aPatId, {
-                      callback: function(res) {
-                          if (res=='1') {
-                              showToastMessage('Лист наблюдения открыт.',null,true);
-                              window.location.reload();
-                          }
-                          else
-                              showToastMessage('Уже есть открытый лист наблюдения, нельзя открыть ещё один!',null,true);
-                      }
-                  });
-              }
           </script>
       </msh:ifInRole>
       </msh:ifFormTypeIsView>
