@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <msh:title mainMenu="Expert2${param.preg}" title="Отчет по листам наблюдений"></msh:title>
+        <msh:title mainMenu="Expert2${param.preg}" title="Отчёт по листам наблюдений"></msh:title>
     </tiles:put>
     <tiles:put name="side" type="string">
         <tags:observSheet name="observSheet" preg="${param.preg}"/>
@@ -23,7 +23,7 @@
                     <msh:textField property="dateBegin" label="Период с" />
                     <msh:textField property="dateEnd" label="по" />
                     <td>
-                        <input type="submit" value="Найти" />
+                        <input type="button" value="Найти" onclick="reload();" />
                     </td>
                 </msh:row>
             </msh:panel>
@@ -39,6 +39,18 @@
                     window.location.href='entityView-edkcObsSheet${param.preg}.do?id='+id;
             }
 
+            function reload() {
+                document.location.href='riams_edkc_patientList.do?preg=${param.preg}&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value;
+            }
+
+            jQuery('#document').ready(function() {
+                if (document.getElementsByTagName('h1')[1] && document.getElementsByTagName('h1')[1].innerHTML.indexOf('наблюдений')!=-1) {
+                    if ('${param.preg}')
+                        document.getElementsByTagName('h1')[1].innerHTML+=' беременных';
+                    else
+                        document.getElementsByTagName('h1')[1].innerHTML+=' новорождённых';
+                }
+            });
         </script>
         <%
             String date = (String)request.getParameter("dateBegin") ;
@@ -93,6 +105,5 @@
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
-
     </tiles:put>
 </tiles:insert>

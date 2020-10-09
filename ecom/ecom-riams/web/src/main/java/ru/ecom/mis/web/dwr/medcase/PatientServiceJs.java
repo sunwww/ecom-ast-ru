@@ -851,7 +851,7 @@ public class PatientServiceJs {
     }
 
 	/**
-	 * Получить статус листка наблюдения #171
+	 * Получить тип протокола
 	 * @param aCode vocTypeProtocol.code
 	 * @return String Статус vocTypeProtocol.name
 	 */

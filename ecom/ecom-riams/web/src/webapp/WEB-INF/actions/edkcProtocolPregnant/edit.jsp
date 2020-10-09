@@ -147,7 +147,7 @@
                     {
                         callback: function(prefix) {
                             if (prefix==null) prefix="" ;
-                            initSelectPrinter("print-protocolEdkc"+prefix+".do?m=printedkcProtocol&s=HospitalPrintService&id=${param.id}",1)
+                            initSelectPrinter("print-protocolEdkc"+prefix+".do?m=printEdkcProtocol&s=HospitalPrintService&id=${param.id}",1)
 
                         }
                     }

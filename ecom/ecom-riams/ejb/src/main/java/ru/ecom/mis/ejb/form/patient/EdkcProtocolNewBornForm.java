@@ -14,10 +14,10 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 /**
  * Created by Milamesher on 07.10.2020.
  */
-@Comment("Протокол ЕДКЦ новорождённых")
+@Comment("Протокол ЕДКЦ новорождённого")
 @EntityForm
 @EntityFormPersistance(clazz = ru.ecom.poly.ejb.domain.protocol.Protocol.class)
-@WebTrail(comment = "Протокол ЕДКЦ новорождённых", nameProperties = "id"
+@WebTrail(comment = "Протокол ЕДКЦ новорождённого", nameProperties = "id"
         , view = "entityParentView-edkcProtocol.do"
         ,list = "entityParentList-edkcProtocol.do"
 )

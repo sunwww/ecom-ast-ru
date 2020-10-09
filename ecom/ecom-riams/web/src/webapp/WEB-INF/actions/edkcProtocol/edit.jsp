@@ -117,6 +117,17 @@
                         TemplateProtocolService.getBasisProtocolRecord( '${basis}',{
                                 callback: function(aRecord) {
                                     $('record').value = aRecord ;
+                                    //и проставляю тип протокола
+                                    PatientService.getNameTypeProtocol('${type}',{
+                                        callback: function (res) {
+                                            if (res != null && res != '[]') {
+                                                var Result = JSON.parse(res);
+                                                if (typeof(Result.id) !=='undefined') $('type').value = Result.id;
+                                                if (typeof(Result.name) !=='undefined') $('typeReadOnly').value = Result.name;
+                                                if (typeof(Result.tmpl) !=='undefined') $('templateProtocol').value = Result.tmpl;
+                                            }
+                                        }
+                                    });
                                 }
                             } ) ;
                     }
@@ -133,6 +144,8 @@
                                     else
                                         showToastMessage('Не найден шаблон для ЕДКЦ!',null,true);
                                 }
+                                else
+                                    showToastMessage('Не найден шаблон для ЕДКЦ!',null,true);
                             }
                         });
                     }
