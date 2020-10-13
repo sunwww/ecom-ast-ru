@@ -69,6 +69,15 @@
                                     $('template').value='${typeCard}';
                                     $('templateName').value=res;
                                     fillDataDiv();
+                                    if ('${typeCard}'=='10' || '${typeCard}'=='11') {
+                                        //переход на уже созданную, если есть
+                                        HospitalMedCaseService.getIdIfAsCard1011AlreadyExists(${param.id},'${slo}','${typeCard}', {
+                                            callback: function (aResult) {
+                                                if (aResult != '')
+                                                    window.location.href = 'entityView-mis_assessmentCard.do?id=' +aResult;
+                                            }
+                                        });
+                                    }
                                 }
                             }});
                     }
@@ -206,13 +215,7 @@
   <script type="text/javascript" src="./dwr/interface/TemplateProtocolService.js"></script>
   <script type = 'text/javascript'>
 
-      if ('${typeCard}'!=null && '${typeCard}'!='' && !$('templateName').disabled)  //чтобы не меняли, если передан параметр
-          $('templateName').disabled=$('template').disabled=true;
-
   templateAutocomplete.addOnChangeCallback(function() {fillDataDiv();$('ballSum').value='';});
-  //eventutil.addEventListener($('template'),'change',function(){fillDataDiv();}) ;
- //var oldaction = document.forms['mis_assessmentCardForm'].action ;
-		//document.forms['mis_assessmentCardForm'].action="javascript:saveIntakeInfo()";
   var lastGroupId=0;
   fillDataDiv ();
   var listIds = new Array();
@@ -222,7 +225,7 @@
       callback: function (sexId) {
           PATIENTSEX = +sexId;
       }
-  })
+  });
   function fillDataDiv () {
 	    	    	 	 if (!$('template').value>0) {return;}
 	  TemplateProtocolService.getParameterByObject($('id').value, $('template').value, 'AssessmentCard', {

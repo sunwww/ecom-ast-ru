@@ -22,7 +22,6 @@ public class AssessmentCardSaveInterceptor implements IFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
         AssessmentCard card=(AssessmentCard)aEntity;
         AssessmentCardForm cardForm=(AssessmentCardForm)aForm;
-        if (card.getTemplate()==null) card.setTemplate(8L);
        if (card.getTemplate()==8) {  //в бд ещё нет, объектов тоже нет
            JSONObject out = new JSONObject();
            out.put("patientId",card.getPatient());

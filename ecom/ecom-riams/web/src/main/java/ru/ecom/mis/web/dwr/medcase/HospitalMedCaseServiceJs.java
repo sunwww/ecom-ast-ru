@@ -2053,4 +2053,18 @@ public class HospitalMedCaseServiceJs {
 			service.executeUpdateNativeSql(sql.toString());
 		}
 	}
+
+	/**
+	 * Получить id существующего в СЛС чек-листа
+	 * @param aPatientId Patient.id
+	 * @param aMedcaseId Medcase.id
+	 * @param aTypeCardId AssessmentCardTemplate.id
+	 * @return CovidMark.id
+	 */
+	public String getIdIfAsCard1011AlreadyExists(Long aPatientId, Long aMedcaseId, Long aTypeCardId, HttpServletRequest request) throws NamingException {
+		IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
+		Collection<WebQueryResult> list = service.executeNativeSql("select id from assessmentcard a where patient=" + aPatientId +
+				" and medcase_id=" + aMedcaseId + " and template=" + aTypeCardId + " limit 1");
+		return list.isEmpty()? "" : list.iterator().next().get1().toString();
+	}
 }
