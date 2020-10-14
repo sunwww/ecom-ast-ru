@@ -8,6 +8,10 @@ function onPreDelete(aEntityId,aCtx) {
 }
 
 function onCreate(aForm, aEntity, aCtx){
+    //проверить на наличие в СЛС
+    var isSingle= aCtx.manager.createNativeQuery("select id from covidmark where medcase_id=" + aForm.getMedCase()).getResultList();
+    if (isSingle.size()>0)
+        throw "Форма оценки тяжести уже создана в этой госпитализации!";
     var date = new java.util.Date() ;
     aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
     aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;

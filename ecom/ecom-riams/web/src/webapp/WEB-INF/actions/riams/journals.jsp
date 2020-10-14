@@ -28,6 +28,9 @@
 					<li><msh:link  isReport="false" action="journal_covidForm.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 						Поиск госпитализаций, в которых не определена степень тяжести COVID
 					</msh:link></li>
+					<li><msh:link  isReport="false" action="journal_checkList.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+						Чек-листы по степеням тяжести
+					</msh:link></li>
 					<li><msh:link  isReport="false" action="journal_deadWithBrCovid.do" roles="/Policy/Mis/MedCase/Covid19/Report">
 						Умершие с ПЦР
 					</msh:link></li>
