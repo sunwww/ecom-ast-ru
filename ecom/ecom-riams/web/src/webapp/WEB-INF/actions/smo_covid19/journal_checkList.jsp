@@ -271,7 +271,7 @@
             </msh:sectionContent>
         </msh:section>
         <%    }
-        else if (request.getParameter("short")==null || "2".equals(typeType)) {
+        else if (request.getParameter("short")!=null) {
             String type = request.getParameter("type");
             String sqlAdd="";
             if (type!=null) {
