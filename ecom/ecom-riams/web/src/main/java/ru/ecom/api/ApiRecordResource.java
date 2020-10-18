@@ -25,29 +25,14 @@ import java.util.Collection;
 @Path("/record")
 public class ApiRecordResource {
     private static final Logger LOG = Logger.getLogger(ApiRecordResource.class);
+    private static final String[][] serviceStreams = {{"OMC","ОМС"},{"CHARGED","Платно"}};
+
     @GET
     @Path("/test/mazafaka/{lastname}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getMessageById(@Context HttpServletRequest aRequest, @PathParam("lastname") String lastname, @WebParam(name="token") String aToken) {
-        String message = "Hello "+lastname;
-        if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
-
-        try {
-            IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-            return service.executeNativeSqlGetJSON(new String[]{"id","name"},"select id, patientinfo from patient where lastname='"+lastname+"'",10);
-        } catch (NamingException e) {
-            LOG.error(e);
-        }
-        return message;
+        return "Hello "+lastname;
     }
-
-    @GET
-    @Path("/getNull")
-    public String returnEmpty(){
-        return "Enter test ID";
-    }
-
-    private static final String[][] serviceStreams = {{"OMC","ОМС"},{"CHARGED","Платно"}};
     /** Получаем список поддерживаемых потоков обслуживания*/
     @GET
     @Path("/getServiceStream")
@@ -153,6 +138,27 @@ public class ApiRecordResource {
         return makeRecordOrAnnul(aRequest,new JSONObject(jsonData)).toString();
     }
 
+    /**
+     * Запись массива пациентов
+     * @param aRequest request
+     * @param jsonData Массив с пациентами
+     * @return Массив с информацией о записях пациентов
+     */
+    @POST
+    @Path("makeManyRecord")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String makeManyRecord(@Context HttpServletRequest aRequest
+            ,  String jsonData) {
+        LOG.info("many got: "+jsonData);
+        JSONArray array = new JSONArray(jsonData);
+        JSONArray recordsInfo = new JSONArray();
+        for (int i=0;i<jsonData.length();i++) {
+            recordsInfo.put(makeRecordOrAnnul(aRequest, array.getJSONObject(i)));
+        }
+        LOG.info("many answer: "+recordsInfo);
+        return recordsInfo.toString();
+    }
+
     /** Аннулирование записи пациента */
     @POST
     @Path("annulRecord")
@@ -233,7 +239,7 @@ public class ApiRecordResource {
                     list = new JSONObject(recordInfo);
                 }
             }
-            if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) обработан, вот ответ: "+list); //debug
+            if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) обработан, вот ответ: "+list);
             list.put("requestId",requestId);
             return list;
         } catch (Exception e) {
