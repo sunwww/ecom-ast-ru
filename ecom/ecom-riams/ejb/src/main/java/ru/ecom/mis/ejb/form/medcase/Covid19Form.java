@@ -195,8 +195,8 @@ public class Covid19Form extends IdEntityForm {
     public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
     private String theCreateDate ;
 
-    /** Дата создания */
-    @Comment("Дата создания")
+    /** Время создания */
+    @Comment("Время создания")
     @Persist
     @TimeString @DoTimeString
     public String getCreateTime() {return theCreateTime;}
@@ -255,8 +255,8 @@ public class Covid19Form extends IdEntityForm {
     public void setIshodResult(String aIshodResult) {theIshodResult = aIshodResult;}
     private String theIshodResult ;
 
-    /** Место работы */
-    @Comment("Место работы")
+    /** Место работы, должность */
+    @Comment("Место работы, должность")
     @Persist
     public String getWorkPlace() {return theWorkPlace;}
     public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
@@ -275,6 +275,13 @@ public class Covid19Form extends IdEntityForm {
     public String getBrigadeNumber() {return theBrigadeNumber;}
     public void setBrigadeNumber(String aBrigadeNumber) {theBrigadeNumber = aBrigadeNumber;}
     private String theBrigadeNumber ;
+
+    /** Эпид. номер */
+    @Comment("Эпид. номер")
+    @Persist
+    public String getEpidNumber() {return theEpidNumber;}
+    public void setEpidNumber(String aEpidNumber) {theEpidNumber = aEpidNumber;}
+    private String theEpidNumber ;
     
     /** Форма контакта */
     @Comment("Форма контакта")

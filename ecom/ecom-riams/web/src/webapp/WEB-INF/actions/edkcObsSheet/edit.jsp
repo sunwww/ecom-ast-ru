@@ -8,8 +8,8 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
     <tiles:put name="side" type="string">
-        <tags:vocObservRes name="vocObservRes"/>
-        <msh:sideMenu title="Лист наблюдения">
+        <tags:vocObservRes name="vocObservRes" preg=""/>
+        <msh:sideMenu title="Лист наблюдения новорождённого">
             <msh:sideLink key="ALT+1" action="/javascript:showvocObservResJs()" name="Закрыть ЛН" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet/Edit" />
         </msh:sideMenu>
         <msh:sideMenu title="Добавить">

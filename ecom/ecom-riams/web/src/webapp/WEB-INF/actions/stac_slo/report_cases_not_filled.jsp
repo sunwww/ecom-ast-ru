@@ -31,8 +31,10 @@
         	String typeIsOtherDocFromLpu =ActionUtil.updateParameter("Report_hospital_groupByBedFund","typeIsOtherDocFromLpu","1", request) ;
         	if ("1".equals(typeIsOtherDocFromLpu)) {
         		request.setAttribute("equalsSql", "p.specialist_id=slo.ownerfunction_id") ;
+                request.setAttribute("equalsLechSql", "p.specialist_id=slo.ownerfunction_id") ;
         	} else {
         		request.setAttribute("equalsSql", "pw.lpu_id=ow.lpu_id") ;
+                request.setAttribute("equalsLechSql", "1=1") ;
         	}
         %>
         <ecom:webQuery name="infoByLogin"
@@ -205,7 +207,7 @@ left join Worker ow on owf.worker_id=ow.id
     left join bedfund as bf on bf.id=slo.bedfund_id
     left join StatisticStub as sc on sc.medCase_id=sls.id
     left join Patient pat on slo.patient_id = pat.id
-    left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol' and p.specialist_id=slo.ownerfunction_id
+    left join Diary p on slo.id=p.medcase_id and p.dtype='Protocol' and ${equalsLechSql}
 
     left join Diagnosis diag on diag.medcase_id=slo.id
     left join SurgicalOperation so on so.medCase_id in (slo.id,sls.id)
@@ -226,6 +228,7 @@ and ${equalsSql}
     order by pat.lastname,pat.firstname,pat.middlename
     " />
     <msh:table name="datelist"
+               openNewWindow="true"
     viewUrl="entityShortView-stac_slo.do"
     action="entityParentView-stac_slo.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>

@@ -437,7 +437,7 @@ and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseS
 group by so.medservice_id, vo.code,vo.name ,vo.complexity
 
 order by vo.name" />
-    <msh:table printToExcelButton="Сохранить в Excel" name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1">
+    <msh:table printToExcelButton="Сохранить в Excel" openNewWindow="true" name="journal_surOperationBySpec" viewUrl="journal_surOperationByDate.do?short=Short&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" action="journal_surOperationByDate.do?dateSearch=${dateSearch}&typeDate=${param.typeDate}&typeEndoscopyUse=${param.typeEndoscopyUse}&typeEmergency=${param.typeEmergency}&serviceStream=${param.serviceStream}" idField="1">
       <msh:tableColumn columnName="Код" property="2" />
       <msh:tableColumn columnName="Операция" property="3" />
       <msh:tableColumn columnName="Уровень сложности" property="4" />
@@ -539,6 +539,7 @@ order by ${order1} dep.name ${order2}" />
 	     cast('Класс раны: ' as varchar(12))||vcw.name||cast(', препарат: ' as varchar(12))
 	    ||vab.name||' '||so.dose||' '||vmd.name||cast(' в 1). ' as varchar(7))||so.firstdosetime||cast(' 2). ' as varchar(5))
 	    ||case when so.seconddosetime is not null then cast(so.seconddosetime as varchar) else '-' end as ant
+	    ,st.code as stcode
 	     from SurgicalOperation so
 
 	    left join WorkFunction swf on swf.id=so.surgeon_id
@@ -556,6 +557,7 @@ order by ${order1} dep.name ${order2}" />
           left join vocclasswound vcw on vcw.id=so.classwound_id
      left join vocmethodsdrugadm vmd on vmd.id=so.methodsdrugadm_id
      left join vocantibioticdrug vab on vab.id=so.antibioticdrug_id
+     left join statisticstub st on st.medcase_id =sls.id
 	       where ${typeDateSql} 
 	        between to_date('${dateBegin}','dd.mm.yyyy')
 	          and to_date('${dateEnd}','dd.mm.yyyy')   ${department} ${spec} 
@@ -581,6 +583,7 @@ order by ${order1} dep.name ${order2}" />
 	    >
 	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="Статус пациента" property="7"/>
+          <msh:tableColumn columnName="Номер истории" property="11"/>
 	      <msh:tableColumn columnName="Пациент" property="5"/>
 	      <msh:tableColumn columnName="Период операции" property="2" />
 	      <msh:tableColumn columnName="Хирург" property="8"/>

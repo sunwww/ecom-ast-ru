@@ -66,6 +66,10 @@
 		<create creator="new" javascript="OncologyService" scope="application">
 			<param name="class" value="ru.ecom.mis.web.dwr.oncology.OncologyServiceJs"/>
 		</create>
+
+		<create creator="new" javascript="CovidService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.covid.CovidServiceJs"/>
+		</create>
     </allow>
 
     <signatures>

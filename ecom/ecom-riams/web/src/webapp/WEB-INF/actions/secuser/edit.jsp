@@ -17,6 +17,7 @@
     <msh:form action="entitySaveGoView-secuser.do" defaultField="login">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
+      <msh:hidden property="enabledForCopy" />
       <msh:ifFormTypeIsCreate formName="secuserForm">
       <msh:hidden property="workFunction"/>
       </msh:ifFormTypeIsCreate>
@@ -105,16 +106,21 @@
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsView formName="secuserForm">
       <msh:ifInRole roles="/Policy/Mis/Worker/WorkFunction/View">
-            <ecom:webQuery name="workFunction" nativeSql ="select wf.id
-            ,COALESCE(vwf.name,'') as vwfname
-            , wp.lastname || ' '|| wp.firstname || ' ' || wp.middlename as fiow
-            , gr.groupName as grgroupName 
-			from WorkFunction wf 
-			left join worker w on w.id=wf.worker_id 
-  			left join Patient wp on wp.id=w.person_id
-			left join WorkFunction gr on gr.id=wf.group_id
-			left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-			where wf.secUser_id=${param.id}" />
+        <ecom:webQuery name="workFunctionAll" nativeSql ="select wf.id as wfid,vwf.name as vwfname,su.login as sulogin,ml.name as mlname,wf.code
+  		,gwf.groupName as groupName
+  		,case when wf.archival='1' then 'color: red'
+  		 else case when su.id=${param.id} then 'background-color:#FFFFA0;'  end end as f7_styleRow
+  		from WorkFunction wf
+  		left join workfunction gwf on gwf.id=wf.group_id
+  		left join Worker w on w.id=wf.worker_id
+  		left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+  		left join MisLpu ml on ml.id=w.lpu_id
+  		left join SecUser su on su.id=wf.secUser_id
+  		left join Patient pat on pat.id=w.person_id
+        where pat.id=(select w.person_id from SecUser su
+				 left join WorkFunction wf on su.id=wf.secUSer_id
+				 left join Worker w on wf.worker_id=w.id
+				 where su.id=${param.id}) " />
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
     <% 
@@ -133,12 +139,15 @@
     
       <msh:ifInRole roles="/Policy/Mis/Worker/WorkFunction/View">
         <msh:section>
-          <msh:sectionTitle>Рабочая функция</msh:sectionTitle>
+          <msh:sectionTitle>Список всех рабочих функций</msh:sectionTitle>
           <msh:sectionContent>
-            <msh:table name="workFunction" action="entitySubclassView-work_workFunction.do" idField="1">
-              <msh:tableColumn columnName="ФИО специалиста" identificator="false" property="3" />
-              <msh:tableColumn property="2" columnName="Рабочая функция" />
-              <msh:tableColumn property="4" columnName="Групповая функция" />
+            <msh:table name="workFunctionAll" action="entityView-work_personalWorkFunction.do" styleRow="7" idField="1">
+              <msh:tableColumn columnName="ИД" identificator="false" property="1" />
+              <msh:tableColumn property="5" columnName="Код специалиста" />
+              <msh:tableColumn property="2" columnName="Функция" />
+              <msh:tableColumn property="4" columnName="Подразделение" />
+              <msh:tableColumn property="6" columnName="Групповая раб. функция" />
+              <msh:tableColumn property="3" columnName="Вход в систему" />
             </msh:table>
           </msh:sectionContent>
         </msh:section>

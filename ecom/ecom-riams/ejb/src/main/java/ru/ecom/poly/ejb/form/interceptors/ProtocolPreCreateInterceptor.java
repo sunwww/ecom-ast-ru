@@ -24,7 +24,10 @@ public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
 		if (!listwf.isEmpty()) {
 			form.setSpecialist(listwf.get(0).getId());
 		}
-		form.setServiceStream(parent.getServiceStream().getId());
+		if (parent.getServiceStream()==null)
+			throw new IllegalStateException("Не указан поток обслуживания в СЛО!");
+		else
+			form.setServiceStream(parent.getServiceStream().getId());
 
 		//Milamesher #137 28012019 - проверка на наличие кардиоскрининга новорождённых в случае если:
 		//это - отделение новорождённых

@@ -155,7 +155,7 @@
                         break;
                     case "5": //для ДД: отделение-врач-услуга
                         selectSql = ",case when e.bedsubtype ='1' then 'КРУГЛОСУТОЧНЫЙ СТАЦ' when e.bedsubtype ='2' then 'ДНЕВНОЙ СТАЦ' else cast('' as varchar) end as f2_stacType" +
-                                ",vms.name as f3_depname, vmhp.name as f4_helpKind, case when coalesce(e.doctorname,'')!='' then e.doctorname else coalesce(e.doctorsnils ,'') end as f5_doctorName ";
+                                ",vms.code||' '||vms.name as f3_depname, vmhp.name as f4_helpKind, case when coalesce(e.doctorname,'')!='' then e.doctorname else coalesce(e.doctorsnils ,'') end as f5_doctorName ";
                         groupBySql = "e.bedsubtype, vmhp.name, e.doctorname, e.doctorsnils,  vms.id, vms.code, vms.name";
                         sumCostSql=" ,count(distinct ems.id) as f6_cnt, sum(e.cost) as f7_cost";
                         orderBySql = "e.bedsubtype, vmhp.name, e.doctorname, e.doctorsnils";
@@ -176,13 +176,15 @@
                         ("NO".equals(typeInog) ? " and (e.isForeign is null or e.isForeign='0')" : ("YES".equals(typeInog) ? " and e.isForeign='1'" : ""));
                 switch (typeGroup) {
                     case "POLYCLINIC": //
-                        sql.append("select cast('' as varchar) as id").append(selectSql).append(sumCostSql).append(
+                        sql.append("select  cast('' as varchar) as id")
+                                .append(selectSql).append(sumCostSql).append(
                                 ", v025.name as f8_vidSl"+
                                 " from e2entry e" +
                                         " left join e2bill  bill on bill.id=e.bill_id " +
                                         " left join voce2medhelpprofile vmhp on vmhp.id=e.medhelpprofile_id" +
-                                        " LEFT JOIN VocE2FondV025 v025 on v025.id=e.visitPurpose_id" +
-                                        " where bill.status_id =3 ").append(addSql).append(" and e.entryType in ('SERVICE','POLYCLINIC') and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
+                                        " LEFT JOIN VocE2FondV025 v025 on v025.id=e.visitPurpose_id").append(
+                                        ("5".equals(typeView) ? " left join entrymedservice ems on ems.entry_id = e.id left join vocmedservice vms on vms.id=ems.medservice_id":""))
+                                .append(" where bill.status_id =3 ").append(addSql).append(" and e.entryType in ('SERVICE','POLYCLINIC') and e.finishDate between to_date('").append(dateBegin).append("','dd.MM.yyyy')" +
                                 " and to_date('").append(dateEnd).append("','dd.MM.yyyy') and (e.isDeleted is null or e.isDeleted='0') and (e.doNotSend is null or e.doNotSend='0')").append(defectSql)
                                 .append(" group by ").append(groupBySql).append(",v025.id, v025.name order by ").append(orderBySql).append(", v025.name ");
                         break;

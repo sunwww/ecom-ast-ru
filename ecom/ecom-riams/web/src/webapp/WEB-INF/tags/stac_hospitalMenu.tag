@@ -45,6 +45,24 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 				  name="Создать онкологический случай"
 				  roles="/Policy/Mis/Oncology/Case/Create"/>
 
+	<msh:sideLink
+			params="id"
+			action="/entityParentPrepareCreate-smo_covidMark.do"
+			name="Форма оценки тяжести COVID-19"
+			roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+
+	<msh:sideLink
+			params="id"
+			action="/javascript:goCreateAssessmentCardFromStac(10)"
+			name="Чек-лист (догоспитальный этап)"
+			roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+
+	<msh:sideLink
+			params="id"
+			action="/javascript:goCreateAssessmentCardFromStac(11)"
+			name="Чек-лист (этап лечения в ОРИТ)"
+			roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+
 	<msh:sideLink key="ALT+6"
 				  params="id"
 				  action="/entityParentPrepareCreate-preg_shortConfCertificate.do"
@@ -247,6 +265,12 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <tags:identityPatient name="identityPatient" title="в госпитализации"/>
   <script type='text/javascript' src='./dwr/interface/PregnancyService.js'></script>
   <script type="text/javascript">
+
+	  //переход на карту чек-листов
+	  function goCreateAssessmentCardFromStac(codeCard) {
+		  window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id=" + $('patient').value + "&slo=" + $('id').value + "&typeCard=" + codeCard;
+	  }
+
   function viewOtherVisitsByPatient(d) {
 	  //alert("js-smo_visit-infoShortByPatient.do?id="+$('patient').value) ;
 	  

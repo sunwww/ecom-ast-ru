@@ -37,6 +37,8 @@
       </msh:row><msh:row>
          <msh:autoComplete property="labOrganization" horizontalFill="true" vocName="vocUserDomainNameById" parentId="269" />
       </msh:row><msh:row>
+          <msh:textField property="epidNumber" horizontalFill="true" />
+      </msh:row><msh:row>
           <msh:textField property="labResultNumber" horizontalFill="true" />
       </msh:row><msh:row>
          <msh:autoComplete vocName="positiveNegative" property="labResult" horizontalFill="true" />
@@ -207,9 +209,14 @@
           alert("Добавлено!");
           document.location.reload();
       }
+      <msh:ifFormTypeIsView formName="smo_covid19Form">
+        document.getElementById('labOrganization').removeAttribute('type');
+      </msh:ifFormTypeIsView>
+      <msh:ifFormTypeIsNotView formName="smo_covid19Form">
+        $('labOrganizationName').value=$('labOrganization').value
+      </msh:ifFormTypeIsNotView>
       </script>
     </msh:ifFormTypeAreViewOrEdit>
-
   </tiles:put>
 </tiles:insert>
 

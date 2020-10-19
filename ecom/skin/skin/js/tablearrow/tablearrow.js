@@ -28,7 +28,7 @@ tablearrow.TableArrow = function(aTableId) {
 
         selectFirst() ;
     }
-    
+
     this.onCheckBoxClickAll = function(aIdParamName) {
     	var check = aIdParamName.checked ;
     	aIdParamName.checked = false ;
@@ -37,7 +37,7 @@ tablearrow.TableArrow = function(aTableId) {
     	var atr ;
         for(var i=0; i<rows.length; i++) {
             var row = rows[i] ;
-            
+
             if(row!=null && Element.hasClassName(row, clazz) ) {
 	             if ((check && Element.hasClassName(row, "inserted"))
 		            || (!check && !Element.hasClassName(row, "inserted"))) {
@@ -56,7 +56,7 @@ tablearrow.TableArrow = function(aTableId) {
     	var atr ;
         for(var i=0; i<rows.length; i++) {
             var row = rows[i] ;
-            
+
             if(row!=null && Element.hasClassName(row, clazz) ) {
 	            	insert(row) ;
             }

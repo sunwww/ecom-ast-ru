@@ -46,9 +46,10 @@
 <msh:ifInRole roles="${roles}">
    
 <script type="text/javascript">
-function init${name}Printer(aPath, needNext) {
+function init${name}Printer(aPath, needNext, FormPost) {
 	the${name}Path = aPath;
 	the${name}NeedNext = needNext;
+    the${name}FormPost = FormPost;
 	show${name}Printer();
 }
 </script>
@@ -57,8 +58,9 @@ function init${name}Printer(aPath, needNext) {
 <msh:ifNotInRole roles="${roles}">
    
 	<script type="text/javascript">
-	function init${name}Printer(aPath) {
+	function init${name}Printer(aPath, needNext, FormPost) {
 		the${name}Path = aPath;
+        the${name}FormPost = FormPost;
 		print${name}Print();
     }
 	</script>
@@ -83,9 +85,24 @@ function init${name}Printer(aPath, needNext) {
     	print${name}Print();
     }
     function print${name}Print() {
-    	//alert (the${name}Path);
-    	//alert ("href="+document.location.href);
-    	window.location =the${name}Path; 
+    	if (the${name}FormPost) {
+    	    //если нужен параметр printTxtFirst
+    	    if ( the${name}Path.indexOf('&printTxtFirst') !=-1) {
+                var par1 = document.createElement("input");
+                par1.value = the${name}Path.indexOf('&printTxtFirst=1') !=-1 ? 1 : 0;
+                par1.name = "printTxtFirst";
+                the${name}FormPost.appendChild(par1);
+            }
+            if (the${name}NeedNext&&+the${name}NeedNext>0){
+                var par2 = document.createElement("input");
+                par2.value = document.location.href.replace("?","__");
+                par2.name = "next";
+                the${name}FormPost.appendChild(par2);
+            }
+            the${name}FormPost.submit();
+        }
+    	else
+            window.location =the${name}Path;
     	cancel${name}Printer();
     }
     function show${name}Printer() {

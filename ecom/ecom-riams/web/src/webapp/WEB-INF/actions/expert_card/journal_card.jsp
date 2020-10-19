@@ -45,7 +45,7 @@ div#header{display:none;}
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
        <msh:row>
-        <msh:autoComplete property="estimationKind" vocName="vocQualityEstimationKind" label="Тип оценки качества" fieldColSpan="30" size="50" />
+        <msh:autoComplete property="estimationKind" vocName="vocQualityEstimationKindReport" label="Тип оценки качества" fieldColSpan="30" size="50" />
       </msh:row> 
        <msh:row>
         <msh:autoComplete property="department" vocName="lpu" label="Отделение" fieldColSpan="30" size="50" />

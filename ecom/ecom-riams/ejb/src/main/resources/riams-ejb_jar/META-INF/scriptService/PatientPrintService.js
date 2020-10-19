@@ -191,6 +191,7 @@ function printCovid(aCtx, aParams) {
 	var covidCard = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Covid19, new java.lang.Long(aParams.get(("id"))));
 	map.put("card", covidCard);
 	map.put("pat", covidCard.patient);
+	map.put("epidNumber", covidCard.epidNumber);
 	var hosp = covidCard.medCase;
 	map.put("hosp", hosp);
 	map.put("isLabConfirmed",(covidCard.labResult=="1" ? "да":"нет")+

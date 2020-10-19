@@ -432,7 +432,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					String id= par.getString("id");
 					switch (id) {
 						case "1284": //результат
-							vocCode = "ОТРИЦАТЕЛЬНЫЙ".equals(par.getString("valueVoc").trim()) ? "LAB_COVID_MINUS" : "LAB_COVID_PLUS";
+							if("ОТРИЦАТЕЛЬНЫЙ".equals(par.getString("valueVoc").trim())) {
+								vocCode =  "LAB_COVID_MINUS";
+							}
+							else if("УСЛОВНО ПОЛОЖИТЕЛЬНЫЙ".equals(par.getString("valueVoc").trim())) {
+								vocCode =  "LAB_COVID_USL";
+							}
+							else
+								vocCode = "LAB_COVID_PLUS";
 							break;
 						case "1286": //дата забора
                             String zbrDate = par.getString("value");

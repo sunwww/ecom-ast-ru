@@ -614,7 +614,7 @@ function setBr(table, tdResNum, tdJsonNum) {
                 var size = 25;
                 for (var j = 0; j < aResult.length; j++) {
                     var brace = aResult[j];
-                    var msg = brace.info ? brace.info.replace(new RegExp('\n','g'),'<br>') : brace.vsipnameJust;
+                    var msg = brace.info ? brace.info.replace(new RegExp('\n','g'),'<br>') : brace.vsipnamejust;
                     var style = 'style="width:' + size + 'px;height: ' + size + 'px;outline: 1px solid gray; border:2px;';
                     style += brace.picture ? '">' : ' background: ' + brace.colorcode + ';">';
                     if (brace.picture)
@@ -642,4 +642,53 @@ function getTableToSetBracelets(sqlListName) {
             return table;
     }
     return null;
+}
+
+
+//увеличение размеров рб
+function transform() {
+    var radios = document.getElementsByTagName('input');
+    for (i = 0; i < radios.length; i++) {
+        if (radios[i].type == 'radio'  || radios[i].type == 'checkbox') {
+            if (radios[i].style.margin=='') radios[i].style.margin='5px'; if (radios[i].style.transform=='') radios[i].style.transform = "scale(1.5)";
+        }
+    }
+}
+
+/**
+ * Получить значения группы чекбоксов
+ * @param voc Название группы элементов
+ * @return список checked
+ */
+function getValueVocChboncoT(voc) {
+    eval('var chk =  document.forms[0].'+voc) ;
+    var res=[];
+    for (var i=0; i<chk.length; i++) {
+        if (chk[i].checked) res.push(chk[i].id.replace(voc,''));
+    }
+    return res;
+}
+
+/**
+ * Получить значения группы радиобаттонов
+ * @param name Название группы элементов
+ * @param voc Удалить из id
+ * @return выбор рб
+ */
+function getValueVocRadiooncoT(name,voc) {
+    eval('var chk =  document.forms[0].'+name) ;
+    var res=-1;
+    for (var i=0; i<chk.length; i++) {
+        if (chk[i].checked) res=chk[i].id.replace(voc,'');
+    }
+    return res;
+}
+
+/**
+ * Скрыть элемент для редактирования
+ * @param div '#oncologyDirection' (пример)
+ */
+function disableAll(divToDisable) {
+    jQuery(divToDisable).fadeTo('slow',.6);
+    jQuery(divToDisable).append('<div style="position: absolute;bottom:0;left:0;width: 100%;height:90%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
 }

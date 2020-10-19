@@ -316,6 +316,8 @@ left join voccolor vcr on vcr.id=vcid.color_id
     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
     <msh:section>
     <msh:sectionTitle>Свод состоящих пациентов в отделении  ${departmentInfo} на текущий момент
+        <a href='print-stac_all_department_covid_lab.do?s=HospitalPrintService&m=printCovidAllDepartments'>
+          Журнал COVID для Иванова (пациенты по всем отделениям)</a>
     </msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="

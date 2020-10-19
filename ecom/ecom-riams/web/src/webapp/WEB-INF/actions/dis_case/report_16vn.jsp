@@ -141,7 +141,7 @@
             <msh:sectionContent>
             <ecom:webQuery isReportBase="${isReportBase}" name="report16vnswod" nativeSql="
             
-        select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name ,vrspt.code as vrsptcode, vrspt.sexCode as vrsptsexCode
+        select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name ,vrspt.code as vrsptcode, sex.name as vrsptsexCode
         ,vrspt.strCode
         ,count(distinct dd.id) as cntAll
         ,sum((select 
@@ -236,6 +236,7 @@
         left join patient p on p.id=dc.patient_id
         left join VocReportSetParameterType vrspt on vrspt.sex_id=p.sex_id
         left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
+        left join vocsex sex on sex.id=p.sex_id
         where 
         dd.issueDate between to_date('${dateBegin}','dd.mm.yyyy') 
             and to_date('${dateEnd}','dd.mm.yyyy') and vddcr.is16AtWork='1'
@@ -251,7 +252,7 @@
          or coalesce(vdr1.codeF,vdr.codeF)!='03'
         and coalesce(vdr1.codeF,vdr.codeF)!='09' and coalesce(vdr1.codeF,vdr.codeF)!='08'
         )
-        group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code, vrspt.sexCode
+        group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code, sex.name
         order by vrspt.strCode
 
         " />

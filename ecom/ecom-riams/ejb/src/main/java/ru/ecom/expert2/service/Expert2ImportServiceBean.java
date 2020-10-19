@@ -45,15 +45,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         return new java.sql.Date(new SimpleDateFormat("yyy-MM-dd").parse(aDate).getTime());
     }
 
-    private Element getPatient(List<Element> patients, String aKey) {
-        for (Element patient: patients) {
-            if (patient.getChildText("ID_PAC").equals(aKey)) {
-                return patient;
-            }
-        }
-        return null;
-    }
-
     private Document getDocumentFromFile (String aPath, String aFilename, boolean deleteAfter) {
         try {
             if (aPath==null) {aPath="";}
@@ -110,7 +101,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             le.setLpuOmcCode(lpuCode);
             theManager.persist(le);
             Element root = doc.getRootElement();
-            SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
             int i = 0;
 
             List<Element> zaps = root.getChildren("ZAP");
@@ -166,8 +156,10 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     e.setDispResult(getVocByCode(VocE2FondV017.class, finishDate, zap.getChildText("RSLT_D")));
                     e.setFondIshod(getVocByCode(VocE2FondV012.class, finishDate, zap.getChildText("ISHOD")));
                     VocE2FondV021 medSpec =getVocByCode(VocE2FondV021.class, finishDate, sl.getChildText("PRVS"));
-                    e.setMedHelpProfile(medSpec.getPolicProfile());
-                    e.setFondDoctorSpecV021(medSpec);
+                    if (medSpec!=null) {
+                        e.setMedHelpProfile(medSpec.getPolicProfile());
+                        e.setFondDoctorSpecV021(medSpec);
+                    }
                     e.setDoctorSnils(sl.getChildText("IDDOKT"));
                     /*new flds*/
                     String doctorCode = sl.getChildText("TABNOM");
@@ -196,9 +188,11 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     String entryTypeCode = "EXTDISP_"+zap.getChildText("VID_SLUCH");
                     //VocE2VidSluch vidSluch = getVocByCode(VocE2VidSluch.class,finishDate,);
                     VocE2EntrySubType subType = getActualVocByCode(VocE2EntrySubType.class,null,"code='"+entryTypeCode+"'");
-                    e.setSubType(subType);
-                    e.setFileType(subType.getFileType());
-                    e.setVidSluch(subType.getVidSluch());
+                    if (subType!=null) {
+                        e.setSubType(subType);
+                        e.setFileType(subType.getFileType());
+                        e.setVidSluch(subType.getVidSluch());
+                    }
                     e.setIDSP(getVocByCode(VocE2FondV010.class, finishDate,zap.getChildText("IDSP")));
                     theManager.persist(e);
                     List<Element> uslList = sl.getChildren("USL");
@@ -277,7 +271,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 }
             } else {
                 String dir = unZip(aMpFilename);
-                String hFilename = "H" + aMpFilename.substring(aMpFilename.indexOf("M")).replace(".MP", ".XML");
+                String hFilename = "H" + aMpFilename.substring(aMpFilename.indexOf('M')).replace(".MP", ".XML");
                 File hFile = new File(dir + "/" + hFilename);
                 Document doc = new SAXBuilder().build(hFile);
                 org.jdom.Element root = doc.getRootElement();
@@ -305,7 +299,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     if (i % 100 == 0 && isMonitorCancel(monitor, "Загружено записей: " + i)) break;
                     Element zsl = zap.getChild("Z_SL");
                     List<Element> slList = zsl.getChildren("SL");
-                    Element pac = zap.getChild("PACIENT");
                     boolean isComplexCase = false;
                     for (Element sl : slList) {
                         if (isComplexCase) break;
@@ -410,16 +403,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
 
     }
-    private String createDir(String aDirShortName) {
-        File dir = new File(XMLDIR+"/"+aDirShortName);
-        if (dir.exists()&&!dir.isDirectory()) {
-            LOG.error("Невозможно создать папку - с таким именем уже существует файл");
-            return null;
-        } else if (!dir.exists()) {
-            dir.mkdir();
-        }
-        return dir.getAbsolutePath();
-    }
+
     /** Проверяем, является ли объект NULL либо пустой строкой */
     private boolean isNotNull(Object aField) {
         if (aField == null) return false;

@@ -22,6 +22,18 @@
 					<li><msh:link roles='/Policy/Mis/MedCase/Covid19/Report' action="covid19_journal.do">
 						отчет по картам COVID
 					</msh:link></li>
+					<li><msh:link  isReport="false" action="journal_searchEmptyCovid.do" roles="/Policy/Mis/MedCase/Covid19/Report">
+						Поиск госпитализаций, в которых не создана карта COVID
+					</msh:link></li>
+					<li><msh:link  isReport="false" action="journal_covidForm.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+						Поиск госпитализаций, в которых не определена степень тяжести COVID
+					</msh:link></li>
+					<li><msh:link  isReport="false" action="journal_checkList.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+						Чек-листы по степеням тяжести
+					</msh:link></li>
+					<li><msh:link  isReport="false" action="journal_deadWithBrCovid.do" roles="/Policy/Mis/MedCase/Covid19/Report">
+						Умершие с ПЦР
+					</msh:link></li>
 					<li><msh:link roles='/Policy/Mis/MedCase/Visit/Report039' action="journal_foreignPatients.do">
 						Отчет об оказанной помощи иногородними и иностранцам
 					</msh:link></li>
@@ -420,6 +432,9 @@
 						</msh:link></li>
 						<li><msh:link  isReport="false" action="journal_bracelets.do" roles="/Policy/Mis/MedCase/Stac/Journal/BraceletsJournal">
 							Журнал браслетов
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_searchTextDiary.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Поиск дневников по тексту
 						</msh:link></li>
 					</ul>
 					</div>

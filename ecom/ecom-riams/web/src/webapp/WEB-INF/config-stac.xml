@@ -602,6 +602,17 @@
                      path='/WEB-INF/actions/stac_slo/directionCovidByUserDepartment.jsp'
             />
         </action>
+
+        <!-- Отчет для Титовой-->
+        <action path='/stac_journalPeriodByUserDepartment'
+                type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm' validate='false' scope='request'
+                input='/WEB-INF/actions/stac_slo/listPeriodByUserDepartment.jsp'
+        >
+            <forward name="success" redirect="false"
+                     path='/WEB-INF/actions/stac_slo/listPeriodByUserDepartment.jsp'
+            />
+        </action>
         <!-- Отчет для Эллы, убрать после эпидемии-->
         <action path='/stac_reportForElla'
                 type='ru.ecom.web.actions.base.ForwardAction'

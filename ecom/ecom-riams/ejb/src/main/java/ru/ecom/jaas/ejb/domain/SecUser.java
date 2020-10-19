@@ -111,6 +111,11 @@ public class SecUser extends BaseEntity {
 	public String getEditUsername() {return theEditUsername;}
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 
+	/** Можно копировать роли в инфекционное отделение */
+	@Comment("Можно копировать роли в инфекционное отделение")
+	public Boolean getEnabledForCopy() {return theEnabledForCopy;}
+	public void setEnabledForCopy(Boolean aEnabledForCopy) {theEnabledForCopy = aEnabledForCopy;}
+
 	/** Пользователь, который последний редактировал запись */
 	private String theEditUsername;
 	/** Пользователь, который создал запись */
@@ -143,4 +148,6 @@ public class SecUser extends BaseEntity {
     private String theLogin ;
     /** Пароль */
     private String thePassword ;
+    /** Можно копировать роли в инфекционное отделение*/
+	private Boolean theEnabledForCopy ;
 }

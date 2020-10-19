@@ -51,11 +51,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/OpenningCaseByHospital" key="CTRL+1" 
 	        styleId="stac_journalOpenByHospital" 
 	        action="/stac_journalOpenByHospital" name="Открытым СЛС" />
-	        
-<%--	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/ProblemOMCpolicy" key="CTRL+1" 
-	        styleId="stac_problemPolicy" 
-	        action="/stac_problemPolicy_list" name="Проблемы с полисами ОМС" />
-	         --%>
+
 	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByDeniedHospitalizating"
 	        styleId="stac_journalHospitalByDeniedHospitalizating"
 	        action="/stac_journalHospitalByDeniedHospitalizating" name="Отказы от госпитализации"
@@ -92,10 +88,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		        styleId="stac_journalDichargeByUserDepartment" 
 		         roles="/Policy/Mis/MedCase/Stac/Journal/DischargeByUserDepartment" 
 		         action="/stac_journalDischargeByUserDepartment" name="По выписанным пациентам" />
-	        <!--msh:sideLink
-		        styleId="stac_departmentJournal" 
-		        roles="/Policy/Mis/MedCase/Stac/Journal/ByDoctorOnDuty" key="ALT+5" 
-		        action="/stac_departmentJournal" name="По дежурному врачу" /-->
+
  	        <msh:sideLink 
 		        styleId="stac_journalByCurator" 
 		        roles="/Policy/Mis/MedCase/Stac/Journal/ByCurator" key="ALT+6" 
@@ -129,6 +122,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 					styleId="stac_directionCovidByUserDepartment"
 					roles="/Policy/Mis/MedCase/Covid19/View"
 					action="/stac_analysisCovid" name="По анализам на Covid19" />
+			<msh:sideLink
+					styleId="stac_journalPeriodByUserDepartment"
+					roles="/Policy/Mis/MedCase/Stac/Journal/PeriodByUserDepartment" key="ALT+5"
+					action="/stac_journalPeriodByUserDepartment" name="Журнал COVID для лаборатории за период" />
 	    </msh:sideMenu>
 	    <msh:sideMenu title="Журналы">
 	    	<msh:sideLink
@@ -172,6 +169,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 			<msh:sideLink styleId="journal_doc_externalMedService"
 						  roles="/Policy/Mis/MedCase/Stac/Ssl/View"
 						  action="/pres_doctor_lab_journal.do" name="Журнал лабораторных назначений"
+			/>
+			<msh:sideLink styleId="journal_doc_externalMedService"
+						  roles="/Policy/Mis/MedCase/Covid19/Report"
+						  action="/journal_searchEmptyCovid.do" name="Поиск госпитализаций, в которых не создана карта COVID"
 			/>
 	    </msh:sideMenu>
 </msh:sideMenu>

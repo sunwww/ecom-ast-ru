@@ -19,13 +19,13 @@
   String sqlAdd;
   switch (typeView) {
     case "noExport":
-    sqlAdd=" where (c.noActual is null or c.noActual='0') and c.exportDate is null ";
+    sqlAdd=" where (c.noActual is null or c.noActual='0') and c.exportDate is null and ";
     break;
     case "actual":
-      sqlAdd=" where (c.noActual is null or c.noActual='0') ";
+      sqlAdd=" where (c.noActual is null or c.noActual='0')  and ";
       break;
     default:
-      sqlAdd="";
+      sqlAdd=" where ";
   }
   request.setAttribute("sqlAdd", sqlAdd);
 %>
@@ -47,6 +47,10 @@
               <input type="radio" name="typeView" value="all">  Все
             </td>
           </msh:row>
+          <msh:row>
+            <msh:textField property="dateBegin" label="Дата поступления с" />
+            <msh:textField property="dateEnd" label="по" />
+          </msh:row>
         <msh:row>
           <td>
             <input type="submit" value="Найти" />
@@ -55,7 +59,16 @@
 
       </msh:panel>
     </msh:form>
+    <%
+      String date = request.getParameter("dateBegin") ;
+      if (date!=null && !date.equals(""))  {
+      String dateEnd = request.getParameter("dateEnd") ;
 
+      if (dateEnd==null||dateEnd.equals("")) {
+        dateEnd = date;
+      }
+      request.setAttribute("periodSql","sls.dateStart between to_date('"+date+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy')") ;
+    %>
     <msh:section>
       <msh:sectionTitle>Результаты поиска COVID 19</msh:sectionTitle>
       <msh:sectionContent>
@@ -70,8 +83,10 @@
     left join medcase sls on sls.id=c.medcase_id
     left join mislpu dep on dep.id=sls.department_id
     ${sqlAdd}
+    ${periodSql}
     order by c.createdate, c.createtime" />
-        <msh:table name="list_covid" action="entityParentView-smo_covid19.do" idField="1" styleRow="4" noDataMessage="Не найдено">
+        <msh:table name="list_covid" action="entityParentView-smo_covid19.do"
+                   printToExcelButton="Сохранить в excel" idField="1" styleRow="4" noDataMessage="Не найдено">
           <msh:tableColumn columnName="#" property="sn"/>
           <msh:tableColumn columnName="Пациент" property="2"/>
           <msh:tableColumn columnName="Отделение поступления" property="5"/>
@@ -80,7 +95,6 @@
         </msh:table>
       </msh:sectionContent>
     </msh:section>
-
     <table>
       <tr style="background-color:#8ee68e; color:black"><td><p>Выгруженные на портал</p></td></tr>
       <tr style="background-color:#f0ba57; color:black"><td><p>С лаб. результатом, невыгруженные</p></td></tr>
@@ -98,6 +112,8 @@
      }
 
     </script>
+    <%}else {%>
+    <i>Выберите параметры поиска и нажмите "Найти" </i>
+    <% }   %>
   </tiles:put>
 </tiles:insert>
-

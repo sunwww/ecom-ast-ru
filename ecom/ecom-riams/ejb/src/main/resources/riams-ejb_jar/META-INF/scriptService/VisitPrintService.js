@@ -2,19 +2,13 @@ var map = new java.util.HashMap() ;
 // Печать визитов
 function printVisits(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
-	var ids2 = aParams.get("id") ;
+
 	var ids = ids1.split(",") ;
 	var ret = new java.lang.StringBuilder () ;
 	
 	
 	var ret = new java.util.ArrayList() ;
-	var FORMAT_1 = new java.text.SimpleDateFormat("yyyy-MM-dd") ;
-    var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
-    var FORMAT_3 = new java.text.SimpleDateFormat("HH:mm") ;
 	var current = new java.util.Date() ;
-	var curDate = new java.sql.Date(current.getTime()) ;
-	
-	var curTime = new java.sql.Time(current.getTime()) ;
 	map.put("ids",ids.length) ;
 	
 	

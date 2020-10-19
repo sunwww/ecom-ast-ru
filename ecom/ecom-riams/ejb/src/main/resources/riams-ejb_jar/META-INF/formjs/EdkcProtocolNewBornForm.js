@@ -5,7 +5,6 @@ function onPreCreate(aForm, aCtx) {
     aForm.setUsername(login) ;
     aForm.setTime(new java.sql.Time (date.getTime())) ;
     if (aForm.editUsername!=null && aForm.editUsername!="" && !aForm.username.equals(aForm.editUsername)) {
-        //aCtx.manager.createNativeQuery("insert into ChangeJournal (classname,changedate,changetime,SerializationBefore,objectid) values ('VISITPROTOCOL',current_date,current_time,'"+aForm.username+"- -"+aForm.editUsername+"','"+aForm.medCase+"')").executeUpdate() ;
         throw "Не удалось сохранить протокол: <br/><pre>"+aForm.record+"</pre><br/> Попробуйте сохранить протокол еще раз. При возникновении данной ошибки повторно, обращайтесь в службу технической поддержки."+
         "<br><br> Текущий пользователь: "+aForm.username+", протокол был создан пользователем: "+aForm.editUsername ;
     }
@@ -18,17 +17,13 @@ function onPreCreate(aForm, aCtx) {
 
     if (wf != null) {
         var protocols;
-        //throw "select d.id,d.record from Diary d where d.dtype='Protocol'"
-        //	+" and  d.medCase_id='"+aForm.medCase+"' and d.specialist_id='"+aForm.specialist+"'"
-        //	+" and d.dateRegistration=$$ei^Zcdat('"+aForm.dateRegistration+"') and d.timeRegistration=cast('"+aForm.timeRegistration+"' as TIME) "
-        //	;
         var dat = Packages.ru.nuzmsh.util.format.DateFormat.formatToJDBC(aForm.dateRegistration);
         protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.dtype='Protocol'"
             + " and  d.obssheet_id='" + aForm.obsSheet + "' and d.specialist_id='" + wf + "'"
             + " and d.dateRegistration=cast('" + dat + "' as date) and d.timeRegistration=cast('" + aForm.timeRegistration + "' as TIME) and d.type_id='" + aForm.type + "'"
         )
             .getResultList();
-        errorThrow(protocols, "В базе уже существует заключение ЕДКЦ, созданное Вами в это время");
+        errorThrow(protocols, "В базе уже существует заключение ЕДКЦ новорождённого, созданное Вами в это время");
     }
 }
 function onPreSave(aForm, aEntity, aCtx) {

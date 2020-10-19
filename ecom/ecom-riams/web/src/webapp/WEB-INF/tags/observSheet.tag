@@ -5,6 +5,7 @@
 <%@ taglib prefix="ecom" uri="http://www.ecom-ast.ru/tags/ecom" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
+<%@ attribute name="preg" required="true" description="Тип" %>
 
 <script type="text/javascript" src="./dwr/interface/PatientService.js">/**/</script>
 <div id='${name}Dialog' class='dialog'>
@@ -30,8 +31,9 @@
         table.innerHTML=" <tr><th align='center' width='85'>Дата установки</th><th align='center' width='350'>Открыл лист наблюдения</th>" +
             "<th align='center' width='85'>Дата снятия</th><th align='center' width='350'>Закрыл лист наблюдения</th>" +
             "<th align='center' width='35'>Длительность</th><th align='center' width='55'>Исход наблюдения</th></tr><tr>";
+        var dtype = '${param.preg}'? "ObservationSheetPregnant" : "ObservationSheetNewBorn";
         PatientService.selectObservSheetPatient(
-            aPatId, {
+            aPatId,dtype, {
                 callback: function(res) {
                     if (res!=null && res!='[]') {
                         var aResult = JSON.parse(res);
@@ -63,7 +65,7 @@
                             tr.appendChild(td6);
                             tr.id=aResult[i].id;
                             tr.onclick=function() {
-                                window.location.href='/riams/entityView-edkcObsSheet.do?id='+this.id;
+                                window.location.href='/riams/entityView-edkcObsSheet${param.preg}.do?id='+this.id;
                             };
                             table.appendChild(tr);
                         }

@@ -439,6 +439,7 @@
         </msh:ifFormTypeIsView>
 
         <script type="text/javascript" src="./dwr/interface/OncologyService.js"></script>
+        <script type="text/javascript" src="./dwr/interface/CovidService.js"></script>
         <script type="text/javascript">
             function trim(aStr) {
                 return aStr.replace(/|\s+|\s+$/gm,'') ;
@@ -460,9 +461,30 @@
             }
 
             function check_diags(aPrefix) {
-                //checkNessessaryDischargeNosologyCard(aPrefix);
-                //update 1501 - пока запускать при открытии страницы, не при сохранении
-                saveNext(aPrefix);
+                if (aPrefix=='') {
+                    CovidService.checkSlsU(${param.id}, {
+                        callback: function (resU) {
+                            var umas = resU.split('#');
+                            //если диагноз U и нет формы оценки или
+                            //если в выписке добавили U, а в СЛС оценки нет
+                            if (umas[0] == '1' || ($('concludingMkbName').value[0] == 'U' && umas[1] == 0)) {
+                                if (confirm("Внимание! Не создана форма оценки тяжести заболевания COVID-19. Продолжить?")) {
+                                    saveNext(aPrefix);
+                                }
+                                else {
+                                    $('submitButton').disabled = false;
+                                    $('submitPreDischrge1').disabled = false;
+                                    $('submitPreDischrge2').disabled = false;
+                                }
+                            }
+                                else {
+                                saveNext(aPrefix);
+                                }
+                            }
+                        });
+                }
+                else
+                    saveNext(aPrefix);
             }
 
             function saveNext(aPrefix) {

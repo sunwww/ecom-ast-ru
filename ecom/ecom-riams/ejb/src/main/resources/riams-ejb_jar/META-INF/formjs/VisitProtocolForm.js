@@ -140,8 +140,13 @@ function onPreSave(aForm, aEntity, aCtx) {
 function onSave(aForm, aEntity, aCtx) {
     var username = aCtx.getSessionContext().getCallerPrincipal().getName();
     if (aForm.username!=null && aForm.username!="" && !aForm.username.equals(username)) {
-        throw "У Вас стоит ограничение на редактрование данного протокола!"+
-        "<br><br> Текущий пользователь: "+username+", протокол был создан пользователем: "+aForm.username ;
+        if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowEditAllProtocols"))
+            throw "У Вас стоит ограничение на редактрование данного протокола!" +
+            "<br><br> Текущий пользователь: " + username + ", протокол был создан пользователем: " + aForm.username;
+        else {
+            //регистрация события
+            aCtx.manager.createNativeQuery("insert into ChangeJournal (classname,changedate,changetime,SerializationBefore,objectid) values ('VISITPROTOCOL',current_date,current_time,'"+aForm.username+"- -"+aForm.editUsername+"','"+aForm.id+"')").executeUpdate() ;
+        }
     }
     var manager = aCtx.manager;
     var protocols = manager.createNativeQuery("select d.id,d.record from Diary d where d.id='" + aEntity.id + "' and d.dtype='Protocol'").getResultList();
@@ -246,33 +251,36 @@ function check(aForm, aCtx,isCreate) {
             if (dtype==='DepartmentMedCase') {
                 slsId = manager.createNativeQuery("select parent_id from medcase where id = "+slsId).getResultList().get(0);
             }
-            var config = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? "count_hour_edit_hosp_protocol" : "count_hour_edit_protocol";
-            var cntHour = +getDefaultParameterByConfig(config, 24, aCtx);
-            maxVisit.add(java.util.Calendar.HOUR, cntHour);
-            if (curDate.after(maxVisit) || t.get(0)[1] != null && !isCreate) {
-                var param1 = new java.util.HashMap();
-                if (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') {
-                    param1.put("obj", "DischargeMedCase");
-                    param1.put("permission", "editAfterDischarge");
-                    param1.put("id", +slsId);
-                    isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
-                }
-                if (+isCheck!==1) {
-                    param1 = new java.util.HashMap();
-                    param1.put("obj", "Protocol");
-                    param1.put("permission", "editAfterCertainHour");
-                    param1.put("id", +aForm.id);
-                    isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
-                    if (+isCheck !== 1 && ldm.isEmpty()) {
-                        var tmpStr = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? " госпитализации" : "";
-                        if (t.get(0)[1] == null) throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
-                        else throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
+            //Отсутствие проверок. Возможно, в будущем убрать
+            if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Edit/EditAllProtocolsWithNoCheck")) {
+                var config = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? "count_hour_edit_hosp_protocol" : "count_hour_edit_protocol";
+                var cntHour = +getDefaultParameterByConfig(config, 24, aCtx);
+                maxVisit.add(java.util.Calendar.HOUR, cntHour);
+                if (curDate.after(maxVisit) || t.get(0)[1] != null && !isCreate) {
+                    var param1 = new java.util.HashMap();
+                    if (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') {
+                        param1.put("obj", "DischargeMedCase");
+                        param1.put("permission", "editAfterDischarge");
+                        param1.put("id", +slsId);
+                        isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
                     }
-                }
+                    if (+isCheck !== 1) {
+                        param1 = new java.util.HashMap();
+                        param1.put("obj", "Protocol");
+                        param1.put("permission", "editAfterCertainHour");
+                        param1.put("id", +aForm.id);
+                        isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
+                        if (+isCheck !== 1 && ldm.isEmpty()) {
+                            var tmpStr = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? " госпитализации" : "";
+                            if (t.get(0)[1] == null) throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
+                            else throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
+                        }
+                    }
 
+                }
+                if (+isCheck !== 1 && t.get(0)[1] != null && isCreate)
+                    throw "У Вас стоит ограничение на создание данных после выписки!!!";
             }
-            if (+isCheck!==1 && t.get(0)[1] != null && isCreate)
-                throw "У Вас стоит ограничение на создание данных после выписки!!!";
         }
     }
 }

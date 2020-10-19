@@ -7,11 +7,11 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <msh:title mainMenu="Expert2" title="Отчет по листам наблюдений"></msh:title>
+        <msh:title mainMenu="Expert2${param.preg}" title="Отчёт по листам наблюдений"></msh:title>
     </tiles:put>
     <tiles:put name="side" type="string">
-        <tags:observSheet name="observSheet"/>
-        <tags:vocObservRes name="vocObservRes"/>
+        <tags:observSheet name="observSheet" preg="${param.preg}"/>
+        <tags:vocObservRes name="vocObservRes" preg="${param.preg}"/>
     </tiles:put>
     <tiles:put name="body" type="string">
         <msh:form action="/riams_edkc_patientList.do" defaultField="dateBegin" method="GET">
@@ -23,7 +23,7 @@
                     <msh:textField property="dateBegin" label="Период с" />
                     <msh:textField property="dateEnd" label="по" />
                     <td>
-                        <input type="submit" value="Найти" />
+                        <input type="button" value="Найти" onclick="reload();" />
                     </td>
                 </msh:row>
             </msh:panel>
@@ -36,9 +36,21 @@
 
             function showObsSheet(id) {
                 if (id)
-                    window.location.href='entityView-edkcObsSheet.do?id='+id;
+                    window.location.href='entityView-edkcObsSheet${param.preg}.do?id='+id;
             }
 
+            function reload() {
+                document.location.href='riams_edkc_patientList.do?preg=${param.preg}&dateBegin='+$('dateBegin').value+'&dateEnd='+$('dateEnd').value;
+            }
+
+            jQuery('#document').ready(function() {
+                if (document.getElementsByTagName('h1')[1] && document.getElementsByTagName('h1')[1].innerHTML.indexOf('наблюдений')!=-1) {
+                    if ('${param.preg}')
+                        document.getElementsByTagName('h1')[1].innerHTML+=' беременных';
+                    else
+                        document.getElementsByTagName('h1')[1].innerHTML+=' новорождённых';
+                }
+            });
         </script>
         <%
             String date = (String)request.getParameter("dateBegin") ;
@@ -49,6 +61,9 @@
                     " and o.startDate between to_date('"+date+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy')" :
                     " and o.finishdate is null";
             request.setAttribute("sqlDate", sqlDate) ;
+            String dtype = request.getParameter("preg")==null || "".equals(request.getParameter("preg"))?
+                    "ObservationSheetNewBorn" : "ObservationSheetPregnant";
+            request.setAttribute("dtypeSql"," and o.dtype='" + dtype + "'");
         %>
 
         <msh:section>
@@ -75,7 +90,7 @@
                 left join patient wpat2 on wpat2.id=w2.person_id
                 left join patient pat on pat.id=o.patient_id
                 left join vocObservationResult vrt on vrt.id=o.observresult_id
-                where o.patient_id is not null ${sqlDate}
+                where o.patient_id is not null ${sqlDate} ${dtypeSql}
                " />
                 <msh:table printToExcelButton="сохранить в excel" name="journal_patientList" action="/javascript:void()" idField="1">
                     <msh:tableColumn property="sn" columnName="#"/>
@@ -90,6 +105,5 @@
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
-
     </tiles:put>
 </tiles:insert>

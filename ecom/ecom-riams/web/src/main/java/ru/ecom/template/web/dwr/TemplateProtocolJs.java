@@ -14,9 +14,11 @@ import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -801,14 +803,16 @@ public class TemplateProtocolJs {
     	return loginInfo!=null ? loginInfo.getUsername() : "" ;
     }
 	/**
-	 * Проверить, может ли пользователь редактировать протокол (может, если он и есть создатель дневника).
+	 * Проверить, может ли пользователь редактировать протокол (может, если он и есть создатель дневника)
+	 * или если он имеет роль на редактирование любых дневников.
 	 *
 	 * @param aUserCreate Создатель дневника
 	 * @param aRequest HttpServletRequest
 	 * @return boolean true - может, false - не может
 	 */
-    public boolean isCanEditProtocol(String aUserCreate, HttpServletRequest aRequest) {
-    	return (getUsername(aRequest).equals(aUserCreate));
+    public boolean isCanEditProtocol(String aUserCreate, HttpServletRequest aRequest) throws JspException {
+    	return (getUsername(aRequest).equals(aUserCreate))
+				|| RolesHelper.checkRoles(" /Policy/Mis/MedCase/Protocol/AllowEditAllProtocols", aRequest) ;
     }
 	/**
 	 * Получает единственное возможное значение разрешения по коду, в случае, если оно - единственное в справочнике

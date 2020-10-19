@@ -264,7 +264,8 @@
 		
        order by m.${dateI},${departmentFldNameSql},pat.lastname,pat.firstname,pat.middlename
       " />
-    <msh:table name="journal_priem" viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1">
+    <msh:table name="journal_priem" printToExcelButton="Сохранить в excel"
+               viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Стат.карта" property="7" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="5" />
@@ -355,7 +356,7 @@
      group by ${departmentFldIdSql},${departmentFldNameSql}
         order by ${departmentFldIdSql},${departmentFldNameSql}
       " />
-    <msh:table name="journal_priem" action="stac_reestrByHospital.do" idField="1">
+    <msh:table name="journal_priem" printToExcelButton="Сохранить в excel" action="stac_reestrByHospital.do" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="3" />
@@ -392,7 +393,7 @@
       and m.deniedHospitalizating_id is not null
       ${emerIs} ${pigeonHole1} group by vdh.name order by vdh.name
       " />
-    <msh:table name="journal_priem" action="stac_reestrByHospital.do" idField="1">
+    <msh:table name="journal_priem" printToExcelButton="Сохранить в excel" action="stac_reestrByHospital.do" idField="1">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Причина отказа" property="1" />
       <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="2" />

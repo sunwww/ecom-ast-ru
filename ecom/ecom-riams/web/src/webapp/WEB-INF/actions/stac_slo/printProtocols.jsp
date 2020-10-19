@@ -167,18 +167,24 @@ order by d.dateRegistration,d.timeRegistration
     <tiles:put name="javascript" type="string">
         <script type="text/javascript">
             function printProtocols(aFile) {
-            	var ids = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
-            	if(ids) {
-            		var p = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
-            		initSelectPrinter(p,0);
-            		
-            		
-            	} else {
-            		alert("Нет выделенных протоколов");
-            	}
-            	
-            }
+            	var ids1 = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
+                if (ids1) {
+                    if (ids1.indexOf('id=')==0) ids1=ids1.substring(3); //замена (нужна в случае post-запроса)
+                    ids1 = ids1.replace(new RegExp('&id=','g'),',');
+                    var myform = document.createElement("form");
+                    myform.action = "print-"+aFile+".do?multy=1&m=printProtocols&s=HospitalPrintService1";
+                    myform.method = "post";
 
+                    var body = document.createElement("input");
+                    body.value = ids1;
+                    body.name = "id";
+                    document.body.appendChild(myform); myform.appendChild(body);
+
+                    initSelectPrinter(myform.action,0, myform);
+                } else {
+                    alert("Нет выделенных протоколов");
+                }
+            }
         </script>
     </tiles:put>
 

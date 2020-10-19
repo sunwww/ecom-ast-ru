@@ -44,6 +44,7 @@
 
 <script type="text/javascript">
      var the${name}Mark ;
+     var the${name}MarkComment;
      var the${name}CritCommentDialog = new msh.widget.Dialog($('${name}CritCommentDialog')) ;
    
      function save${name}CritComment() {
@@ -51,7 +52,7 @@
     	 var cntChecked =0;
     	 var rows = $('defect${name}Tbl').children;
     	 for (var i=0;i<rows.length;i++){
-    		 var chk = rows[i].children[0].children[0].children[0];
+    		 var chk = rows[i].children[0].children[0].children[0].children[0];
     		// alert (chk);
 
     		 if (chk.checked==true) {
@@ -112,7 +113,7 @@
      function createRow(aData,cnt){
     	 var tds = aData.split(":");
     	 var row = "<tr><td>"
-    	 row +="<input type='checkbox' name='chkDefect' id='"+tds[0]+"' value='"+tds[1]+"'";
+    	 row +="<label><input type='checkbox' name='chkDefect' id='"+tds[0]+"' value='"+tds[1]+"'";
     	 
     	 if ($(the${name}Mark+'Comment').value!="") {
     		 var defs = $(the${name}Mark+'Comment').value.split (",");
@@ -122,7 +123,7 @@
     			 }
     		 }
     	 }
-    	 row+=">"+tds[1]+"<br></td></tr>";
+    	 row+=">"+tds[1]+"</label><br></td></tr>";
     	// alert("el"+$("defect${name}Tbl"));
     	 $('defect${name}Tbl').innerHTML +=row;
     		 

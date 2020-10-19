@@ -6,6 +6,7 @@
   
     <form-bean name="smo_covid19Form" type="ru.ecom.mis.ejb.form.medcase.Covid19Form" />
     <form-bean name="smo_covid19ContactForm" type="ru.ecom.mis.ejb.form.medcase.Covid19ContactForm" />
+    <form-bean name="smo_covidMarkForm" type="ru.ecom.mis.ejb.form.medcase.CovidMarkForm" />
     <form-bean name="smo_diagnosisForm" type="ru.ecom.mis.ejb.form.medcase.DiagnosisForm" />
     <form-bean name="mis_diagnosisForm" type="ru.ecom.mis.ejb.form.patient.DiagnosisForm" />
 
@@ -54,7 +55,7 @@
         </action>
 
         <action path='/covid19_journal' type='ru.ecom.web.actions.base.ForwardAction'
-                name='mis_searchForm'
+                name='stac_admissionJournalForm'
                 validate='true'
                 scope="session"
                 input='/WEB-INF/actions/smo_covid19/journal.jsp'

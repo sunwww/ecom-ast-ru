@@ -32,7 +32,7 @@
                 entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV010'
                 names   = 'code, name'
                 queried = 'code, name'
-                queryAppend="finishDate is null"
+                queryAppend="(finishDate is null or finishDate>=current_date)"
         />
     </voc>
     <voc id='vocE2FondV027' type='EntityVocService'>
@@ -155,7 +155,7 @@
                 names="voc.smocode|| ' '||voc.name||' '||coalesce(t.name,'') "
                 join="left join Omc_KodTer t on t.okato=voc.fondokato"
                 queried="voc.smocode like :querId or upper(voc.name) like upper(:query) "
-                queryAppend="voc.finishDate is null"
+                queryAppend="(voc.finishDate is null or voc.finishDate>=current_date)"
         />
     </voc>
     <voc id="vocNationalityCode" type="NativeVocService">
@@ -448,7 +448,16 @@
                 names   = 'code,name'
                 queried = "code,name"
                 queryConvertType="FIRST_LAT_UPPER"
-                queryAppend="(noActuality is null or noActuality=false) and (isBlock='0' or isBlock is null)"
+                queryAppend="(noActuality is null or noActuality=false) and (isBlock='0' or isBlock is null) and (length(code)>3 or ispermitwithoutdot=true)"
+        />
+    </voc>
+        <voc id='vocIdc10AllPermitted' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expomc.ejb.domain.med.VocIdc10'
+                names   = 'code,name'
+                queried = "code,name"
+                queryConvertType="FIRST_LAT_UPPER"
+                queryAppend="(noActuality is null or noActuality=false) and (isBlock='0' or isBlock is null) "
         />
     </voc>
 
@@ -507,7 +516,7 @@
                 parent='  vqem.criterion_id = :parent '
                 names=" vqem.mark "
                 nameId=" vqem.id "
-                queried=" ( upper(vqem.id) like upper(:query) or upper(vqem.mark) like upper(:query) )"
+                queried=" ( upper(cast (vqem.id as varchar)) like upper(cast(:query as varchar)) or upper(cast (vqem.mark as varchar)) like upper(cast(:query as varchar)) )"
                 queryAppend=""
                 join= ""
                 order=""
@@ -519,7 +528,7 @@
                 parent='  vqem.criterion_id = :parent '
                 names=" vqem.name "
                 nameId=" vqem.id "
-                queried=" ( upper(vqem.id) like upper(:query) or upper(vqem.mark) like upper(:query) )"
+                queried=" ( upper(cast (vqem.id as varchar)) like upper(cast(:query as varchar)) or upper(cast (vqem.mark as varchar)) like upper(cast(:query as varchar)) )"
                 queryAppend=""
                 join= ""
                 order=""
@@ -531,7 +540,7 @@
                 parent='  vqem.criterion_id = :parent '
                 names=" vqem.name "
                 nameId=" vqem.id "
-                queried=" ( upper(vqem.id) like upper(:query) or upper(vqem.name) like upper(:query) )"
+                queried=" ( upper(cast (vqem.id as varchar)) like upper(cast(:query as varchar)) or upper(vqem.name) like upper(cast(:query as varchar)) )"
                 join= ""
                 order=" vqem.id "
         />

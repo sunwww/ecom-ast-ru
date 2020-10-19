@@ -135,6 +135,7 @@
                     <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
                     <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/View" name="Кардиоскрининг" action="/javascript:window.open('print-cardiacScreeningForm.do?s=PrintNewBornHistoryService&m=printCardiacScreeningForm&id='+${param.id});" params="id"/>
                     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintAnestResPatient" name="Печать перс. данных А4" action="/javascript:window.open('print-anestResStat.do?m=printAnestResPatient&s=HospitalPrintService&id=${param.id}');" params="id"/>
+                    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" name="Направление на микроб. иссл-е" action="/javascript:window.open('print-microbio.do?m=printMiсrobio&s=HospitalPrintService&id=${param.id}');" params="id"/>
                 </msh:sideMenu>
             </msh:ifNotInRole>
             <msh:sideMenu title="Администрирование">
@@ -1140,11 +1141,14 @@ where m.id ='${param.id}'"/>
                                     var str='<table style="margin-left:45%"><tr>';
                                     for (var i=0; i<aResult.length; i++) {
                                         var brace = aResult[i];
-                                        var msg = brace.info ? brace.info.replace(new RegExp('\n','g'),'<br>') : brace.vsipnameJust;
+                                        var toastMsg = brace.info ? brace.info.replace(new RegExp('\n','g'),'<br>') : brace.vsipnameJust;  //для вывода в toast
+                                        var msg = brace.info ? brace.info.replace(new RegExp('<br>','g'),'\n') : brace.vsipnameJust; //при наведении
+                                        msg = msg.replace('Критическая патология анализа: ','Критическая патология анализа:\n');
+                                        toastMsg = toastMsg.replace('Критическая патология анализа: ','Критическая патология анализа:<br>');
                                         var style = 'width: 40px;height: 40px;outline: 1px solid gray; border:2px; margin-right: 2px; margin-left: 2px;';
                                         style+= brace.picture ? 'background-image: url(\'/skin/images/bracelet/'+brace.picture+'\');background-size: 40px 40px; '
                                             :' background-color: '+brace.colorCode +';';
-                                        str+='<td><div onclick="showToastMessage(\''+msg+'\',null,true,false);" title="'+msg+'" style="'+style+'"></div></td>';
+                                        str+='<td><div onclick="showToastMessage(\''+toastMsg+'\',null,true,false);" title="'+msg+'" style="'+style+'"></div></td>';
                                     }
                                     str+="</tr></table>";
                                     document.getElementById('mainFormLegend').parentNode.innerHTML=document.getElementById('mainFormLegend').parentNode.innerHTML.replace('<h2 id="mainFormLegend">Лечение в отделении</h2>',"<h2 id=\"mainFormLegend\">Лечение в отделении</h2>"+str);

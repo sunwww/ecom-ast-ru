@@ -2771,6 +2771,36 @@ function printAnestResPatient(aCtx, aParams) {
     return map;
 }
 
+//печать направления на микробиологическое исследование
+function printMiсrobio(aCtx, aParams) {
+	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
+		, new java.lang.Long(aParams.get("id"))) ;
+	var sql = "select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio" +
+		" ,to_char(current_date,'dd.mm.yyyy г. ')||to_char(current_timestamp,'HH24 час. MM мин') as dt" +
+		" ,adr.fullname as adr" +
+		" ,(select vwf.name||' '||p.lastname||' '||p.firstname||' '||p.middlename " +
+		" from SecUser su" +
+		" left join WorkFunction wf on wf.secuser_id=su.id" +
+		" left join VocWorkFunction vwf on vwf.id = wf.workFunction_id" +
+		" left join Worker w on w.id=wf.worker_id" +
+		" left join Patient p on p.id=w.person_id" +
+		" where login = 'kmeshkov' and p.id is not null" +
+		" ) as doc" +
+		" from patient pat" +
+		" left join medcase slo on slo.patient_id =pat.id " +
+		" left join address2 adr on adr.addressId = pat.address_addressId" +
+		" where slo.id="+medCase.id;
+	var arr  = aCtx.manager.createNativeQuery(sql).getResultList();
+	if (!arr.isEmpty()) {
+		var data = arr.get(0);
+		map.put("fio",""+data[0]);
+		map.put("dt",""+data[1]);
+		map.put("adr",""+data[2]);
+		map.put("doc",""+data[3]);
+	}
+	return map;
+}
+
 //Получить информацию по пациенту (patId) для печати в направлении
 function getPatientHIVDirectionInfo(aCtx,patId) {
 	return aCtx.manager.createNativeQuery("select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio" +
@@ -2860,5 +2890,75 @@ function printTransfusionAgreement(aCtx, aParams) {
 	var arr  = aCtx.manager.createNativeQuery("select to_char(current_date,'dd.MM.yyyy') as curDate").getResultList();
 	if (!arr.isEmpty())
 		map.put("currentDate",arr.get(0));
+	return map;
+}
+
+//Журнал COVID для Иванова сразу по всем инфекционным отделениям
+function printCovidAllDepartments(aCtx, aParams) {
+	var dateBegin = aParams.get("dateBegin"), dateEnd = aParams.get("dateEnd");
+	if (!dateEnd) dateEnd=dateBegin;
+	var dateSql = dateBegin!=null && typeof dateBegin !== 'undefined' && dateBegin!='' ?
+		" and sls.dateStart between to_date('"+dateBegin+"','dd.mm.yyyy')  and to_date('"+dateEnd+"','dd.mm.yyyy')":
+		" and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)";
+
+	var patListSql = " select dep.name" +
+		" ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio" +
+		" ,sex.name as sname" +
+		" ,to_char(pat.birthday,'dd.mm.yyyy') as birthday" +
+		" , case when pat.address_addressId is not null" +
+		" then coalesce(adr.fullname,adr.name)" +
+		" ||case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end" +
+		" ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end" +
+		" ||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end" +
+		" when pat.territoryRegistrationNonresident_id is not null" +
+		" then okt.name||' '||pat.RegionRegistrationNonresident||' '||oq.name||' '||pat.SettlementNonresident" +
+		" ||' '||ost.name||' '||pat.StreetNonresident" +
+		" ||case when pat.HouseNonresident is not null and pat.HouseNonresident!='' then ' д.'||pat.HouseNonresident else '' end" +
+		" ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end" +
+		" ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end" +
+		" else pat.foreignRegistrationAddress end as address" +
+		" from medCase m" +
+		" left join MedCase as sls on sls.id = m.parent_id" +
+		" left join Mislpu dep on dep.id=m.department_id" +
+		" left join Patient pat on m.patient_id = pat.id" +
+		" left join vocsex sex on pat.sex_id = sex.id" +
+		" left join Address2 adr on adr.addressid = pat.address_addressid" +
+		" left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id" +
+		" left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id" +
+		" left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id" +
+		" where m.DTYPE='DepartmentMedCase' and dep.isForCovid=true" +
+		dateSql +
+		" group by dep.name,pat.lastname,pat.firstname" +
+		" ,pat.middlename,pat.birthday,sex.name" +
+		" , pat.address_addressId ,adr.fullname,adr.name" +
+		" , pat.houseNumber , pat.houseBuilding ,pat.flatNumber" +
+		" , pat.territoryRegistrationNonresident_id , okt.name,pat.RegionRegistrationNonresident,oq.name,pat.SettlementNonresident" +
+		" ,ost.name,pat.StreetNonresident" +
+		" , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident" +
+		" , pat.foreignRegistrationAddress,sls.id" +
+		" order by dep.name,pat.lastname,pat.firstname,pat.middlename";
+	var resultPatList = aCtx.manager.createNativeQuery(patListSql).getResultList();
+	var patients = new java.util.ArrayList();
+	if(!resultPatList.isEmpty()) {
+		for (var i=0; i<resultPatList.size();i++){
+			var p = resultPatList.get(i);
+			var pp = new java.util.ArrayList();
+			var dept = p[0];
+			var fio = p[1];
+			var sex = p[2];
+			var bth = p[3];
+			var adr = p[4];
+
+			pp.add(((i+1)+'').replace('.0',''));//0
+			pp.add(dept);
+			pp.add(fio);
+			pp.add(sex);
+			pp.add(bth);
+			pp.add(adr);
+
+			patients.add(pp);
+		}
+	}
+	map.put("patients", patients);
 	return map;
 }

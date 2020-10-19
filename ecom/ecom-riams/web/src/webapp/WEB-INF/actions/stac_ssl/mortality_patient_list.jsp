@@ -48,18 +48,6 @@
 	        	<input type="radio" name="typeNewborn" value="3"  >  Все
 	        </td>
 	      </msh:row>
-    <%--   <msh:row>
-        <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="1">  иностранцы
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-        	<input type="radio" name="typePatient" value="2">  проживающим в других регионах
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatient" value="3">  все
-        </td>
-        </msh:row> --%>
       <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
@@ -92,6 +80,10 @@
         	<msh:autoComplete property="bedSubType" fieldColSpan="4"
         	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
         </msh:row>
+		<msh:row>
+			<msh:autoComplete property="bedType" fieldColSpan="4"
+							  label="Профиль коек" horizontalFill="true" vocName="vocBedType"/>
+		</msh:row>
         <msh:row>
 	        <msh:textField property="dateBegin" label="Период с" />
 	        <msh:textField property="dateEnd" label="по" />
@@ -178,8 +170,12 @@
     			request.setAttribute("cellAdd", ") and ok.voc_code!='643'"+sex);
     		} else if (cellF.equals("inogor")) {
     			request.setAttribute("cellAdd", ") and adr.kladr not like '30%' and ok.voc_code='643' "+sex);
-    		} 
-    	} else {
+    		} else if (cellF.equals("autopsy")) {
+				request.setAttribute("cellAdd", ") and dc.isAutopsy='1'");
+			} else if (cellF.equals("diff")) {
+				request.setAttribute("cellAdd", ") and (dc.categoryDifference_id is not null or dc.latrogeny_id is not null)");
+			}
+		} else {
     		request.setAttribute("cellAdd",")"+sex);
     	}
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
@@ -195,6 +191,10 @@
     	if (bedSubType!=null&&!bedSubType.equals("")&&!bedSubType.equals("0")) {
     		request.setAttribute("bedSubTypeSql", " and vbst.id='"+bedSubType+"'");
     	}
+		String bedType = request.getParameter("bedType");
+		if (bedType!=null&&!bedType.equals("")&&!bedType.equals("0")) {
+			request.setAttribute("bedTypeSql", "  and bf.bedType_id='"+bedType+"'");
+		}
     	if ("2".equals(view)) {
     %>
     <msh:section title="Свод по отделениям без учета отд., которые не входят в ОМС">
@@ -228,21 +228,22 @@ else cast(((cast((count(distinct case when dc.categoryDifference_id is not null 
 	
 	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and hmc.datefinish is not null and hmc.dischargetime is not null
-    	${depIsNoOmc} ${addNewborn} ${bedSubTypeSql}
+    	${depIsNoOmc} ${addNewborn} ${bedSubTypeSql} ${bedTypeSql}
 	group by case when (d.isnoomc='1') then pd.id else d.id end , case when (d.isnoomc='1') then pd.name else d.name end 
 	
 	order by f5_percentOtdel desc , f2_lpuName
    " />
         <msh:table name="journal_list_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
-         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено" >
+         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&depIsNoOmc=${param.depIsNoOmc}&addNewborn=${param.addNewborn}&bedSubType=${param.bedSubType}&bedType=${param.bedType}"
+				   idField="1" noDataMessage="Не найдено" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="3" />
             <msh:tableColumn isCalcAmount="true" columnName="Число пролеченных" property="5" addParam="&addCell=notDead"/>
             <msh:tableColumn isCalcAmount="true" columnName="Число летальных исходов" property="4" addParam="&addCell=dead"/>
             <msh:tableColumn columnName="% летальных исходов по отделению" property="6"/>
             <msh:tableColumn columnName="%  от летальных исходов всего" property="7"/>
-            <msh:tableColumn columnName="Кол-во вскрытий" property="9"/>
-            <msh:tableColumn columnName="Кол-во расхождений" property="10"/>
+            <msh:tableColumn columnName="Кол-во вскрытий" property="9" addParam="&addCell=autopsy"/>
+            <msh:tableColumn columnName="Кол-во расхождений" property="10"  addParam="&addCell=diff"/>
             <msh:tableColumn columnName="% расхождения" property="11"/>
         </msh:table>
     </msh:sectionContent>
@@ -284,12 +285,13 @@ else cast(((cast((count(distinct case when dc.categoryDifference_id is not null 
 	left join vocidc10 mkb on mkb.id=diag.idc10_id
 	left join bedfund bf on bf.id=dmc.bedfund_id
 	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
+	left join DeathCase dc on dc.medCase_id=hmc.id
 	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and hmc.datefinish is not null and vdrt.code in ('5','3') and vpd.code='1' 
     and (vhr.omccode='11'
     ${cellAdd}
     	${depIsNoOmc}
-     ${addNewborn} ${bedSubTypeSql}
+     ${addNewborn} ${bedSubTypeSql} ${bedTypeSql}
     group by hmc.id,ss.code, pat.lastname,pat.firstname,pat.middlename,pat.birthday
     order by pat.lastname,pat.firstname,pat.middlename "/>
         <msh:table name="journal_surOperation" printToExcelButton="Сохранить в excel"
@@ -331,10 +333,11 @@ left join vochospitalizationresult vhr on vhr.id=hmc.result_id
 where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and hmc.datefinish is not null and hmc.dischargetime is not null 
 
     	${depIsNoOmc} ${addNewborn}
-    
+    ${bedSubTypeSql} ${bedTypeSql}
 "/>
         <msh:table name="journal_hospType" cellFunction="true" printToExcelButton="Сохранить в excel"
-          action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}"  idField="7" >
+          action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&depIsNoOmc=${param.depIsNoOmc}&addNewborn=${param.addNewborn}&bedSubType=${param.bedSubType}&bedType=${param.bedType}"
+				   idField="7" >
           <msh:tableColumn columnName="Всего госпитализаций" property="1" />
           <msh:tableColumn columnName="Умершие" property="2" addParam="&addCell=dead" />
           <msh:tableColumn columnName="Экстренная госп/умершие" property="3" addParam="&addCell=emmergDead"/>
@@ -370,10 +373,11 @@ from medcase hmc
 	and hmc.datefinish is not null and hmc.dischargetime is not null
 	and hmc.deniedhospitalizating_id is null
 	and vhr.omccode='11'	 ${depIsNoOmc} ${addNewborn}
-
+${bedSubTypeSql} ${bedTypeSql}
    " />
         <msh:table name="journal_list_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
-         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="5" noDataMessage="Не найдено" >
+         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&depIsNoOmc=${param.depIsNoOmc}&addNewborn=${param.addNewborn}&bedSubType=${param.bedSubType}&bedType=${param.bedType}"
+				   idField="5" noDataMessage="Не найдено" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Умерло в первые 6 часов" property="1" addParam="&addCell=dead6"/>
             <msh:tableColumn columnName="Умерло с 6 до 24 часов" property="2" addParam="&addCell=dead624"/>
@@ -448,11 +452,12 @@ from medcase hmc
 	where hmc.dtype='HospitalMedCase' and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and hmc.datefinish is not null and hmc.dischargetime is not null
 	and hmc.deniedhospitalizating_id is null
-	and vhr.omccode='11'	 ${depIsNoOmc} ${addNewborn}
+	and vhr.omccode='11'	 ${depIsNoOmc} ${addNewborn} ${bedSubTypeSql} ${bedTypeSql}
 group by vs.name, vs.id
    " />
         <msh:table name="journal_list_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
-         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="12" noDataMessage="Не найдено" >
+         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&depIsNoOmc=${param.depIsNoOmc}&addNewborn=${param.addNewborn}&bedSubType=${param.bedSubType}&bedType=${param.bedType}"
+				   idField="12" noDataMessage="Не найдено" >
             <msh:tableColumn columnName="#" property="sn"/>
                <msh:tableColumn columnName="Пол" property="13" addParam=""/>
             <msh:tableColumn columnName="от 0 до 17 лет" property="1" addParam="&addCell=age1" isCalcAmount="true"/>
@@ -495,18 +500,19 @@ group by vs.name, vs.id
 	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
 	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and vhr.omccode='11' and hmc.datefinish is not null and hmc.dischargetime is not null and (ok.voc_code!='643' or adr.kladr not like '30%')
-    	${depIsNoOmc} ${addNewborn}
+    	${depIsNoOmc} ${addNewborn} ${bedSubTypeSql} ${bedTypeSql}
 	group by case when (d.isnoomc='1') then pd.id else d.id end , case when (d.isnoomc='1') then pd.name else d.name end 
 	
 	order by f3_lpuName
    " />
         <msh:table name="journal_list_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
-         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено" >
+         action="mis_mortality_report.do?short=Short&typeView=1&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&depIsNoOmc=${param.depIsNoOmc}&addNewborn=${param.addNewborn}&bedSubType=${param.bedSubType}&bedType=${param.bedType}"
+				   idField="1" noDataMessage="Не найдено" >
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="3"/>
             <msh:tableColumn isCalcAmount="true" columnName="Иногородние" property="5" addParam="&addCell=inogor"/>
             <msh:tableColumn isCalcAmount="true" columnName="Иностранные" property="4" addParam="&addCell=inostr"/>
-            <msh:tableColumn columnName="Всего" property="6" addParam="&addParam=foreign"/>
+            <msh:tableColumn columnName="Всего" property="6" addParam="&addCell=foreign"/>
          </msh:table>
     </msh:sectionContent>
     </msh:section>	

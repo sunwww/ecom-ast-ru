@@ -5,6 +5,8 @@
 <%@ taglib prefix="ecom" uri="http://www.ecom-ast.ru/tags/ecom" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
+<%@ attribute name="preg" required="true" description="Тип" %>
+
 
 <div id='${name}Dialog' class='dialog'>
     <h2>Лист наблюдения пациента</h2>
@@ -36,6 +38,7 @@
     var loc${name};
     var the${name}Dialog = new msh.widget.Dialog($('${name}Dialog')) ;
 
+    var dtype = window.location.href.indexOf('Pregnant')!=-1? "ObservationSheetPregnant" : "ObservationSheetNewBorn";
     // Показать
     function show${name}(id,loc) {
         aPatId${name}=id;
@@ -45,7 +48,7 @@
     // Закрыть лист наблюдения
     function closeObservSheet${name}() {
         if ($('${name}vocObservationResult').value!='') {
-        PatientService.closeObservSheet(aPatId${name},$('${name}vocObservationResult').value, {
+        PatientService.closeObservSheet(aPatId${name},$('${name}vocObservationResult').value, dtype, {
             callback: function(res) {
                 if (res=='1')
                     //window.location.reload();

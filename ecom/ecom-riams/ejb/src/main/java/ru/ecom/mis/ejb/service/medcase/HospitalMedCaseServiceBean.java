@@ -3595,6 +3595,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				if (obj[0]!=null) { // если КАРДИО -  невр - КАРДИО
 					// Отд next1=current (объединять 2 отделения)
 					theManager.createNativeQuery("update assessmentCard cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' or medcase_id="+obj[2]).executeUpdate() ;
+					theManager.createNativeQuery("update qualityestimationcard set medcase_id='"+aSlo+"' where medCase_id='"+obj[1]+"' or medcase_id="+obj[2]).executeUpdate() ;
 					theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' or medcase_id="+obj[2]).executeUpdate() ;
 					theManager.createNativeQuery("update newBorn cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' or medcase_id="+obj[2]).executeUpdate() ;
 					theManager.createNativeQuery("update medcase  set parent_id='"+aSlo+"' where parent_id='"+obj[1]+"' or parent_id="+obj[2]).executeUpdate() ;
@@ -3631,6 +3632,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				} else {
 					theManager.createNativeQuery("update robsonclass d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update assessmentCard cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
+					theManager.createNativeQuery("update qualityestimationcard set medcase_id='"+aSlo+"' where medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
 					theManager.createNativeQuery("update newBorn nb    set medcase_id='"+aSlo+"' where nb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
 					theManager.createNativeQuery("update medcase  set parent_id='"+aSlo+"' where parent_id='"+obj[1]+"'").executeUpdate() ;
