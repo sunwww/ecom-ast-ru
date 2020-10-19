@@ -45,9 +45,24 @@
                 getData("/listImportById","GET",{"id":entityId},getEntitiesByCaseHandler);
             }
             function getEntitiesByCaseHandler(dta) {
-                var txt = "<table>";
-                for (var i=0;i<dta.length;i++) {
-                    var js = dta[i];
+                var txt = "<table border='1'>";
+                var stat = dta.stat;
+                txt+="<tr><td>Всего записей: </td><td>"+stat.all+"</td></tr>";
+                txt+="<tr><td>Успешно загружено: </td><td>"+stat.good+"</td></tr>";
+                txt+="<tr><td>Не загружено: </td><td>"+stat.error+"</td></tr>";
+                var errs = dta.errors;
+                if (errs.length>0) {
+                    txt+="<tr><td colspan='2'>Информация об ошибках: </td></tr>";
+                    for (var i=0;i<errs.length;i++) {
+                        var e = errs[i];
+                        txt+="<tr><td>"+e.name+"</td><td>"+e.cnt+"</td><tr>";
+                    }
+                }
+                txt += "</table><table>";
+                var data = dta.data;
+
+                for (var i=0;i<data.length;i++) {
+                    var js = data[i];
                     txt+="<tr style='background-color : "+(js.error ? "red" : "green")+"'><td><p>Пациент: "+js.name+(js.error ? " Ошибка: "+js.error+"<input type='button' onclick='importById("+js.id+ ",this)' value='Импортировать еще раз'></p> " : "")+"</td></tr>";
                 }
                 txt+="</table>";
@@ -61,6 +76,7 @@
             function importByIdHandler(dta){
                 if (dta.error) {
                     console.log("Error import="+dta.error);
+                    alert("Ошибка импорта: "+dta.error);
                 } else {
                     console.log("res = "+dta.message);
                 }
@@ -78,8 +94,9 @@
                     ,contentType : false,
                 }).done (function(htm) {
                     console.log(htm);
-                    jQuery('#fileInfo').html("Файл загружен. <input type='button' value='Синхронизировать' onclick='this.disabled=true;makeImport(\""+htm.fileName+"\")'><br>");
+                    jQuery('#fileInfo').html("Файл загружен. <input type='button' value='Синхронизировать' onclick='this.value=\"Идет синхронизация...\";this.disabled=true;makeImport(\""+htm.fileName+"\")'><br>");
                 }).fail( function (err) {
+                    alert("Не получен ответ от службы импорта Элмед. Попробуйте перезагрузите сервис");
                     console.log("ERROR "+JSON.stringify(err));
                 });
             }
@@ -91,9 +108,10 @@
                     ,data: data
                 }).done (function(htm) {
                     console.log(htm);
-                    handler(JSON.parse(htm.result));
+                    handler(JSON.parse(htm));
                 }).fail( function (err) {
                     console.log("ERROR "+JSON.stringify(err));
+                    alert("Не получен ответ от службы импорта Элмед: "+JSON.stringify(err));
                     handler(JSON.parse(err));
                 });
             }
@@ -102,7 +120,7 @@
                 jQuery.ajax({
                     url:elmedUrl+"/importFile?file="+fileName
                 }).done(function(res) {
-                    var dt = JSON.parse(res.result);
+                    var dt = JSON.parse(res);
                         let str = "";
                         jQuery.each(dt.data, function (ind, el) {
                             str+="<br><p style=\"color: "+(el.status=="ok" ?"green\">"+el.recordId +" УСПЕШНО": "red\">"+el.recordId+" "+el.statusName)+"</p>";
@@ -112,6 +130,7 @@
 
               //      }
                 }).fail(function (err) {
+                    alert("Ошибка импорта от службы импорта Элмед: "+JSON.stringify(err));
                     console.log("ERR = "+JSON.stringify(err));
                 });
             }
