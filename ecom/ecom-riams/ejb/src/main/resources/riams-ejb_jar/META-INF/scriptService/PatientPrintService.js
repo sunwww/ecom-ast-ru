@@ -192,6 +192,10 @@ function printCovid(aCtx, aParams) {
 	map.put("card", covidCard);
 	map.put("pat", covidCard.patient);
 	map.put("epidNumber", covidCard.epidNumber);
+	var labName = covidCard.labOrganization;
+	if (!labName) labName='';
+	else labName = ' '+labName;
+	map.put("labName",labName);
 	var hosp = covidCard.medCase;
 	map.put("hosp", hosp);
 	map.put("isLabConfirmed",(covidCard.labResult=="1" ? "да":"нет")+
