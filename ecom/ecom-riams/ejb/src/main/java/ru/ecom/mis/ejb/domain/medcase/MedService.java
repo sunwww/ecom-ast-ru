@@ -309,4 +309,12 @@ public class MedService extends BaseEntity {
 	public void setVocColorIdentity(VocColorIdentityPatient aVocColorIdentity) {theVocColorIdentity = aVocColorIdentity;}
 	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
 	private VocColorIdentityPatient theVocColorIdentity ;
+
+	/** Всегда выполняется для реанимаций */
+	@Comment("Всегда выполняется для реанимаций")
+	public Boolean getIsAvailableReanimAlways() {return theIsAvailableReanimAlways;}
+	public void setIsAvailableReanimAlways(Boolean aIsAvailableReanimAlways) {theIsAvailableReanimAlways = aIsAvailableReanimAlways;}
+
+	/** Всегда выполняется для реанимаций */
+	private Boolean theIsAvailableReanimAlways;
 }

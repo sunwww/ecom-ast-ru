@@ -109,6 +109,9 @@
         		<msh:checkBox property="vocMedServiceIsCreate" label="Генерировать услугу внеш."/>
         	</msh:ifFormTypeIsNotView>
         </msh:row>
+          <msh:row>
+              <msh:checkBox property="isAvailableReanimAlways" label="Всегда выполняется для реанимаций"/>
+          </msh:row>
 
         <msh:row>
          	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>

@@ -210,7 +210,8 @@
                     } else {
                         jQuery('#btnAddCharged').hide();
                         jQuery('#btnAddCharged').hide();
-                        labServiciesAutocomplete.setParentId(prescriptionType);
+                        //fix Milamesher 19102020 учёт разрешения в реанимации любых услуг (передаю id листа назначения)
+                        labServiciesAutocomplete.setParentId(prescriptionType+'#'+'${param.id}');
                         writeServicesToList('lab');
                         $('labServicies').value = "";
                         $('labServiciesName').value = "";
