@@ -860,14 +860,12 @@
 		/>
 	</voc>
 
-	<!--Лабораторные исследования в стационаре по типу назначения и потоку обслуживания тип назначения/поток обслуживания
-	с учётом разрешения для реанимаций
-	-->
+	<!--Лабораторные исследования в стационаре по типу назначения и потоку обслуживания тип назначения/поток обслуживания-->
 	<voc id="labMedServiceByServiceStreamStac" type="NativeVocService">
 		<NativeVocService
 				from="MedService ms"
 				parent="vst.code = 'LABSURVEY' and ms.dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date)
-				and (ms.id not in (select mss.id from medservice mss
+				and ms.id not in (select mss.id from medservice mss
 	left join workfunctionservice wfss on wfss.medservice_id=mss.id
 	left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id
 	left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= :par1
@@ -875,12 +873,7 @@
 	and vsts.code='LABSURVEY'
 	) and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
 					  (vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0'))
-					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null))) or ms.isAvailableReanimAlways and (select dep.isnoomc
-					  from prescriptionlist pllist
-					left join medcase dmc on dmc.id=pllist.medcase_id
-					left join mislpu dep on dep.id=dmc.department_id
-					where pllist.id=:par3)=true
-					)"
+					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))"
 				nameId=" ms.id"
 				join="
 				left join vocservicetype vst on vst.id=ms.servicetype_id
@@ -890,11 +883,11 @@
 				left join priceposition pp on pp.id=pms.priceposition_id and pp.dateTo is null
 				left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
 "
-				parentSplitCount="3"
 				groupBy="ms.id, ms.name, ms.code"
 				order="ms.name"
 				names="ms.code||' '|| ms.name"
 				queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+				parentSplitCount="2"
 		/>
 	</voc>
 
