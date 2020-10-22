@@ -62,9 +62,6 @@
 					<ul>
 						<li> * Вывод отметки "Дубликат" при причине аннулирования, отличной от "Утерянный" </li>
 					</ul>
-					<msh:ifInRole roles="/Policy/Config/HelpAdmin">
-							<br>
-						</msh:ifInRole>
 				</ul>
 					</div>
 			</tr>

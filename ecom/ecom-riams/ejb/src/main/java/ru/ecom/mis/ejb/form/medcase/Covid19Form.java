@@ -265,6 +265,7 @@ public class Covid19Form extends IdEntityForm {
     /** Диагноз */
     @Comment("Диагноз")
     @Persist
+    @Required
     public Long getMkb() {return theMkb;}
     public void setMkb(Long aMkb) {theMkb = aMkb;}
     private Long theMkb ;

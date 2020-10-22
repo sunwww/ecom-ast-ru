@@ -33,12 +33,6 @@
 					<li>Создание браслета в случае условно положительного анализа</li>
 					<li>Форма оценки тяжести ковидного случая, отчёт</li>
 					<li></li>
-
-
-
-					<msh:ifInRole roles="/Policy/Config/HelpAdmin">
-							<br>
-						</msh:ifInRole>
 				</ul>
 					</div>
 			</tr>

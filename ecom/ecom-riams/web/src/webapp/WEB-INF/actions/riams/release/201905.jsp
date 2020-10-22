@@ -33,11 +33,6 @@
 					<ul>
 						<li>1. Кнопки вертикальной навигации перемещены в правую часть экрана </li>
 					</ul>
-
-
-					<msh:ifInRole roles="/Policy/Config/HelpAdmin">
-							<br>
-						</msh:ifInRole>
 				</ul>
 					</div>
 			</tr>

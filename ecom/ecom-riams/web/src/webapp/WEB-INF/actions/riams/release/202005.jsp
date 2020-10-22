@@ -27,12 +27,6 @@
 					<li>Отчёт по анализам на COVID-19</li>
                     <li>Механизм быстрого создания пользователей с должностью и сбросом пароля (по желанию)</li>
 					<li></li>
-
-
-
-					<msh:ifInRole roles="/Policy/Config/HelpAdmin">
-							<br>
-						</msh:ifInRole>
 				</ul>
 					</div>
 			</tr>
