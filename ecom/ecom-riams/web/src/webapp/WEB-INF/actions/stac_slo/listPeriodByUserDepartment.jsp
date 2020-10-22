@@ -36,12 +36,21 @@
                 </msh:row>
                 <msh:row>
                     <td>
-                        <input type="button" value="Найти" onclick="jQuery('#a').show();"/>
-                        <a hidden id="a" href='print-stac_all_department_covid_lab.do?s=HospitalPrintService&m=printCovidAllDepartments&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&'>
+                        <input type="button" value="Найти" onclick="set();"/>
+                        <a hidden id="a">
                             Журнал COVID для Иванова (пациенты по всем инфекционным отделениям)</a>
                     </td>
                 </msh:row>
             </msh:panel>
         </msh:form>
        </tiles:put>
+    <tiles:put name="javascript" type="string">
+        <script>
+            function set() {
+                document.getElementById('a').setAttribute('href', "print-stac_all_department_covid_lab.do?s=HospitalPrintService&m=printCovidAllDepartments&dateBegin="
+                    +$('dateBegin').value+"&dateEnd="+$('dateEnd').value+"&");
+                jQuery('#a').show();
+            }
+        </script>
+    </tiles:put>
 </tiles:insert>
