@@ -321,36 +321,37 @@ function printAssessmentCard (aCtx, aParams) {
 	var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient, assCard.patient);
 	var wf = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, assCard.workFunction);
 	var cardType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCardTemplate, assCard.template);
-	map.put("cardName", cardType.name);
+	var isCheckList = assCard.template == '10' || assCard.template == '11';
+ 	map.put("cardName", cardType.name);
 	map.put("cardDate", assCard.startDate);
 	map.put("doctorFIO", wf.worker.person);
 	map.put("workFunction", wf.workFunction.name);
-	map.put("cardBallSum", assCard.ballSum);
 	map.put("cardComment",assCard.comment);
 	map.put("pat", patient);
-	
+
 	var sql = "select p.id as pid" +
 		" ,pg.id as pgId" +
 		" ,pg.name as f2_groupName" +
 		" ,p.name as f3_parName, p.shortname as f4_parShortName" +
-		" ,case when p.type = '4' then cast (fip.valuebd  as varchar) when p.type='3' then fip.valuetext when p.type='2' then coalesce(uv.name,'---') else 'WFT '||p.type end as f5_value" +
-		" ,cast(uv.cntball as integer) as f6_ball" +
-		" ,(select cast(sum( case when p1.group_id=p.group_id then uv1.cntBall else null end) as integer)" +
-		"	 from forminputprotocol fip1" +
-		"	 left join parameter p1 on p1.id=fip1.parameter_id" +
-		"	 left join uservalue uv1 on uv1.id=fip1.valuevoc_id" +
-		"	 where  fip1.assessmentCard=ac.id 	)" +
-		" from assessmentCard ac" +
+		" ,case when p.type = '4' then cast (fip.valuebd  as varchar) when p.type='3' "
+		+ "then fip.valuetext when p.type='2' then coalesce(uv.name,'---') else 'WFT '||p.type end as f5_value";
+	if (!isCheckList) {
+		sql += " ,cast(uv.cntball as integer) as f6_ball" +
+			" ,(select cast(sum( case when p1.group_id=p.group_id then uv1.cntBall else null end) as integer)" +
+			"	 from forminputprotocol fip1" +
+			"	 left join parameter p1 on p1.id=fip1.parameter_id" +
+			"	 left join uservalue uv1 on uv1.id=fip1.valuevoc_id" +
+			"	 where  fip1.assessmentCard=ac.id 	)";
+		map.put("cardBallSum", assCard.ballSum);
+	}
+	sql +=" from assessmentCard ac" +
 		" left join forminputprotocol fip on fip.assessmentCard=ac.id" +
 		" left join parameter p on p.id=fip.parameter_id" +
 		" left join parametergroup pg on pg.id=p.group_id" +
 		" left join uservalue uv on uv.id=fip.valuevoc_id" +
 		" where ac.id='"+assCard.id+"'";
-//	l = aCtx.manager.createNativeQuery(groupSql).getResultList();
-	
 	aParams.put("sqlText",sql);
 	aParams.put("groupField","2,1");
-	//throw aParams;
 	printGroup3NativeQuery(aCtx, aParams);
 	return map;
 }
