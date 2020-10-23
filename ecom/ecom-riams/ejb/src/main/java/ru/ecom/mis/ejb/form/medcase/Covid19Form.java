@@ -48,6 +48,7 @@ public class Covid19Form extends IdEntityForm {
     @Comment("Дата появления клинических симптомов")
     @Persist
     @DateString @DoDateString
+    @Required
     public String getSymptomsDate() {return theSymptomsDate;}
     public void setSymptomsDate(String aSymptomsDate) {theSymptomsDate = aSymptomsDate;}
     private String theSymptomsDate ;
@@ -258,6 +259,7 @@ public class Covid19Form extends IdEntityForm {
     /** Место работы, должность */
     @Comment("Место работы, должность")
     @Persist
+    @Required
     public String getWorkPlace() {return theWorkPlace;}
     public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
     private String theWorkPlace ;
