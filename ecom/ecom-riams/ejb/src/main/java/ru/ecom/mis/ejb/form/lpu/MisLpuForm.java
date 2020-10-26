@@ -2,10 +2,10 @@ package ru.ecom.mis.ejb.form.lpu;
 
 import ru.ecom.ejb.form.simple.IdNameEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.*;
+import ru.ecom.ejb.services.entityform.interceptors.ADynamicParentSecurityInterceptor;
+import ru.ecom.ejb.services.entityform.interceptors.ADynamicSecurityInterceptor;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
-import ru.ecom.mis.ejb.form.lpu.interceptors.RepMisLpuChildInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -15,6 +15,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
+
 /**
  * ЛПУ
  */
@@ -23,78 +24,297 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormPersistance(clazz = MisLpu.class)
 @WebTrail(comment = "ЛПУ", nameProperties = "name", view = "entityView-mis_lpu.do")
 @Parent(property = "parent", parentForm = MisLpuForm.class)
-// не нужно
-//@AParentPrepareCreateInterceptors(
-//        @AParentEntityFormInterceptor(MisLpuPrepareCreateInterceptor.class)
-//)
 
 @EntityFormSecurityPrefix("/Policy/Mis/MisLpu")
 
 @ADynamicSecurityInterceptor(MisLpuDynamicSecurity.class)
 @ADynamicParentSecurityInterceptor(MisLpuDynamicSecurity.class)
-
-@ACreateInterceptors(
-        @AEntityFormInterceptor(RepMisLpuChildInterceptor.class)
-)
-@ASaveInterceptors(
-        @AEntityFormInterceptor(RepMisLpuChildInterceptor.class)
-)
 public class MisLpuForm extends IdNameEntityForm {
 
-	/** Признак мобильной поликлиники */
-	@Comment("Признак мобильной поликлиники")
-	@Persist
-	public Boolean getIsMobilePolyclinic() {return theIsMobilePolyclinic;}
-	public void setIsMobilePolyclinic(Boolean aIsMobilePolyclinic) {theIsMobilePolyclinic = aIsMobilePolyclinic;}
-	/** Признак мобильной поликлиники */
-	private Boolean theIsMobilePolyclinic ;
+    /**
+     * Признак мобильной поликлиники
+     */
+    private Boolean theIsMobilePolyclinic;
+    /**
+     * Стандарт оказания мед. помощи
+     */
+    private Long theMedicalStandard;
+    /**
+     * Не входит в оплату по ОМС
+     */
+    private Boolean theIsNoOmc;
+    /**
+     * Участки
+     */
+    private String theAreas;
+    /**
+     * Полное имя
+     */
+    private String theFullname;
+    /**
+     * Родитель
+     */
+    private Long theParent;
+    /**
+     * Функция ЛПУ
+     */
+    private Long theLpuFunction;
+    /**
+     * Телефон
+     */
+    private String thePhone;
+    /**
+     * Руководитель
+     */
+    private String theDirector;
+    /**
+     * Срок действия лицензии
+     */
+    private String theLincenseExpired;
+    /**
+     * Номер лицензии
+     */
+    private String theLicenseNumber;
+    /**
+     * Эл. адрес
+     */
+    private String theEmail;
+    /**
+     * ОГРН
+     */
+    private Long theOgrn;
+    /**
+     * ИНН
+     */
+    private Long theInn;
+    /**
+     * Корпус
+     */
+    private String theHouseBuilding;
+    /**
+     * Номер дома
+     */
+    private String theHouseNumber;
+    /**
+     * Адрес
+     */
+    private Long theAddress;
+    /**
+     * Код ОМС
+     */
+    private String theOmcCode;
+    /**
+     * Адрес для печати
+     */
+    private String thePrintAddress;
+    /**
+     * Название для печати
+     */
+    private String thePrintName;
+    /**
+     * Руководитель
+     */
+    private Long theManager;
+    /**
+     * Приемное отделение
+     */
+    private Long thePigeonHole;
+    /**
+     * Принтер по умолчанию
+     */
+    private Long theCopyingEquipmentDefault;
+    /**
+     * Не показывать удаленным пользователям
+     */
+    private Boolean theIsNoViewRemoteUser;
+    /**
+     * Интервал разрешенной регистрации
+     */
+    private Integer theRegistrationInterval;
+    /**
+     * Пользователь, который последний редактировал запись
+     */
+    private String theEditUsername;
+    /**
+     * Пользователь, который создал запись
+     */
+    private String theCreateUsername;
+    /**
+     * Время редактрования
+     */
+    private String theEditTime;
+    /**
+     * Время создания
+     */
+    private String theCreateTime;
+    /**
+     * Дата редактирования
+     */
+    private String theEditDate;
+    /**
+     * Дата создания
+     */
+    private String theCreateDate;
+    /**
+     * Автогенерация расписания
+     */
+    private Boolean theAutoGeneration;
+    /**
+     * Код федеральный
+     */
+    private String theCodef;
+    /**
+     * Номер в ФСС
+     */
+    private String theSocCode;
+    /**
+     * Возможен забор крови
+     */
+    private Boolean theIsIntakeBioMaterial;
+    /**
+     * По умолчанию снилс врача генерации направлений для 263 приказа
+     */
+    private String theSnilsDoctorDirect263;
+    /**
+     * Код подразделения
+     */
+    private String theCodeDepartment;
+    /**
+     * Короткое наименование
+     */
+    private String theShortName;
+    /**
+     * Доступ на создание операций по отделению
+     */
+    private Long theAccessEnterOperation;
+    /**
+     * Префикс для шаблонов ЛН
+     */
+    private String thePrefixForLN;
+    /**
+     * Экстренный кабинет
+     */
+    private Long theEmergencyCabinet;
+    /**
+     * Отделения для новорожденных
+     */
+    private Boolean theIsNewBornDep;
+    /**
+     * Родильное отделение
+     */
+    private Boolean theIsMaternityWard;
+    /**
+     * Отделение патологии беременности
+     */
+    private Boolean theIsPatologyPregnant;
+    /**
+     * Уровень оказания медицинской помощи
+     */
+    private Integer theLpuLevel;
+    /**
+     * Профиль КИЛИ
+     */
+    private Long theKiliProfile;
+    /**
+     * В архиве
+     */
+    private Boolean theIsArchive;
+    /**
+     * Обсервационное?
+     */
+    private Boolean theIsObservable;
+    /**
+     * Палата новорождённых?
+     */
+    private Boolean theIsNewBorn;
+    /**
+     * Создают ли кадриоскрининг новорождённым?
+     */
+    private Boolean theIsCreateCardiacScreening;
+    /**
+     * Офтальмологическое?
+     */
+    private Boolean theIsOphthalmic;
+    /**
+     * Учитывать в отчёте по КР?
+     */
+    private Boolean theIsReportKMP;
+    /**
+     * Инфекционное?
+     */
+    private Boolean theIsForCovid;
 
-	
-	/** Стандарт оказания мед. помощи */
-	@Comment("Стандарт оказания мед. помощи")
-	@Persist
-	public Long getMedicalStandard() {return theMedicalStandard;}
-	public void setMedicalStandard(Long aMedicalStandard) {theMedicalStandard = aMedicalStandard;}
-	/** Стандарт оказания мед. помощи */
-	private Long theMedicalStandard;
-	
-	/** Не входит в оплату по ОМС */
-	@Comment("Не входит в оплату по ОМС")
-	@Persist
-	public Boolean getIsNoOmc() {
-		return theIsNoOmc;
-	}
+    /**
+     * Признак мобильной поликлиники
+     */
+    @Comment("Признак мобильной поликлиники")
+    @Persist
+    public Boolean getIsMobilePolyclinic() {
+        return theIsMobilePolyclinic;
+    }
 
-	public void setIsNoOmc(Boolean aIsNoOmc) {
-		theIsNoOmc = aIsNoOmc;
-	}
+    public void setIsMobilePolyclinic(Boolean aIsMobilePolyclinic) {
+        theIsMobilePolyclinic = aIsMobilePolyclinic;
+    }
 
-	/** Не входит в оплату по ОМС */
-	private Boolean theIsNoOmc;
+    /**
+     * Стандарт оказания мед. помощи
+     */
+    @Comment("Стандарт оказания мед. помощи")
+    @Persist
+    public Long getMedicalStandard() {
+        return theMedicalStandard;
+    }
 
-    /** Участки */
+    public void setMedicalStandard(Long aMedicalStandard) {
+        theMedicalStandard = aMedicalStandard;
+    }
+
+    /**
+     * Не входит в оплату по ОМС
+     */
+    @Comment("Не входит в оплату по ОМС")
+    @Persist
+    public Boolean getIsNoOmc() {
+        return theIsNoOmc;
+    }
+
+    public void setIsNoOmc(Boolean aIsNoOmc) {
+        theIsNoOmc = aIsNoOmc;
+    }
+
+    /**
+     * Участки
+     */
 //    @PersistOneToManyOneProperty(valueProperty="type", parentProperty="lpu")
-    public String getAreas() { return theAreas ; }
-    public void setAreas(String aAreas) { theAreas = aAreas ; }
+    public String getAreas() {
+        return theAreas;
+    }
 
-    /** Участки */
-    private String theAreas ;
+    public void setAreas(String aAreas) {
+        theAreas = aAreas;
+    }
 
     @Comment("Название")
     @Persist
-    @Required @DoUpperCase
+    @Required
+    @DoUpperCase
     public String getName() {
         return super.getName();
     }
 
-    /** Полное имя */
+    /**
+     * Полное имя
+     */
     @Comment("Полное имя")
     @Persist
-    public String getFullname() { return theFullname ; }
-    public void setFullname(String aFullname) { theFullname = aFullname ; }
+    public String getFullname() {
+        return theFullname;
+    }
 
-    /** Полное имя */
-    private String theFullname ;
+    public void setFullname(String aFullname) {
+        theFullname = aFullname;
+    }
 
     /**
      * Родитель
@@ -107,11 +327,6 @@ public class MisLpuForm extends IdNameEntityForm {
     public void setParent(Long aParent) {
         theParent = aParent;
     }
-
-    /**
-     * Родитель
-     */
-    private Long theParent;
 
     /**
      * Код ОМС
@@ -257,381 +472,479 @@ public class MisLpuForm extends IdNameEntityForm {
     public void setPhone(String aPhone) {
         thePhone = aPhone;
     }
-    
-    /** Функция ЛПУ */
-	@Comment("Функция ЛПУ")
-	@Persist @Required
-	public Long getLpuFunction() {
-		return theLpuFunction;
-	}
-
-	public void setLpuFunction(Long aLpuFunction) {
-		theLpuFunction = aLpuFunction;
-	}
-
-	/** Функция ЛПУ */
-	private Long theLpuFunction;
 
     /**
-     * Телефон
+     * Функция ЛПУ
      */
-    private String thePhone;
+    @Comment("Функция ЛПУ")
+    @Persist
+    @Required
+    public Long getLpuFunction() {
+        return theLpuFunction;
+    }
+
+    public void setLpuFunction(Long aLpuFunction) {
+        theLpuFunction = aLpuFunction;
+    }
+
+    /**
+     * Название для печати
+     */
+    @Comment("Название для печати")
+    @Persist
+    public String getPrintName() {
+        return thePrintName;
+    }
+
+    public void setPrintName(String aPrintName) {
+        thePrintName = aPrintName;
+    }
+
+    /**
+     * Адрес для печати
+     */
+    @Comment("Адрес для печати")
+    @Persist
+    public String getPrintAddress() {
+        return thePrintAddress;
+    }
+
+    public void setPrintAddress(String aPrintAddress) {
+        thePrintAddress = aPrintAddress;
+    }
+
     /**
      * Руководитель
      */
-    private String theDirector;
+    @Comment("Руководитель")
+    @Persist
+    public Long getManager() {
+        return theManager;
+    }
+
+    public void setManager(Long aManager) {
+        theManager = aManager;
+    }
+
     /**
-     * Срок действия лицензии
+     * Приемное отделение
      */
-    private String theLincenseExpired;
+    @Comment("Приемное отделение")
+    @Persist
+    public Long getPigeonHole() {
+        return thePigeonHole;
+    }
+
+    public void setPigeonHole(Long aPigeonHole) {
+        thePigeonHole = aPigeonHole;
+    }
+
     /**
-     * Номер лицензии
+     * Интервал разрешенной регистрации
      */
-    private String theLicenseNumber;
+    @Comment("Интервал разрешенной регистрации")
+    @Persist
+    public Integer getRegistrationInterval() {
+        return theRegistrationInterval;
+    }
+
+    public void setRegistrationInterval(Integer aRegistrationInterval) {
+        theRegistrationInterval = aRegistrationInterval;
+    }
+
     /**
-     * Эл. адрес
+     * Не показывать удаленным пользователям
      */
-    private String theEmail;
+    @Comment("Не показывать удаленным пользователям")
+    @Persist
+    public Boolean getIsNoViewRemoteUser() {
+        return theIsNoViewRemoteUser;
+    }
+
+    public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {
+        theIsNoViewRemoteUser = aNoViewRemoteUser;
+    }
+
     /**
-     * ОГРН
+     * Принтер по умолчанию
      */
-    private Long theOgrn;
+    @Comment("Принтер по умолчанию")
+    @Persist
+    public Long getCopyingEquipmentDefault() {
+        return theCopyingEquipmentDefault;
+    }
+
+    public void setCopyingEquipmentDefault(Long aCopyingEquipmentDefault) {
+        theCopyingEquipmentDefault = aCopyingEquipmentDefault;
+    }
+
     /**
-     * ИНН
+     * Дата создания
      */
-    private Long theInn;
+    @Comment("Дата создания")
+    @DateString
+    @DoDateString
+    @Persist
+    public String getCreateDate() {
+        return theCreateDate;
+    }
+
+    public void setCreateDate(String aCreateDate) {
+        theCreateDate = aCreateDate;
+    }
+
     /**
-     * Корпус
+     * Дата редактирования
      */
-    private String theHouseBuilding;
+    @Comment("Дата редактирования")
+    @DateString
+    @DoDateString
+    @Persist
+    public String getEditDate() {
+        return theEditDate;
+    }
+
+    public void setEditDate(String aEditDate) {
+        theEditDate = aEditDate;
+    }
+
     /**
-     * Номер дома
+     * Время создания
      */
-    private String theHouseNumber;
+    @Comment("Время создания")
+    @TimeString
+    @DoTimeString
+    @Persist
+    public String getCreateTime() {
+        return theCreateTime;
+    }
+
+    public void setCreateTime(String aCreateTime) {
+        theCreateTime = aCreateTime;
+    }
+
     /**
-     * Адрес
+     * Время редактрования
      */
-    private Long theAddress;
+    @Comment("Время редактрования")
+    @TimeString
+    @DoTimeString
+    @Persist
+    public String getEditTime() {
+        return theEditTime;
+    }
+
+    public void setEditTime(String aEditTime) {
+        theEditTime = aEditTime;
+    }
+
     /**
-     * Код ОМС
+     * Пользователь, который создал запись
      */
-    private String theOmcCode;
-	/** Название для печати */
-	@Comment("Название для печати")
-	@Persist
-	public String getPrintName() {return thePrintName;}
-	public void setPrintName(String aPrintName) {thePrintName = aPrintName;}
+    @Comment("Пользователь, который создал запись")
+    @Persist
+    public String getCreateUsername() {
+        return theCreateUsername;
+    }
 
-	/** Адрес для печати */
-	@Comment("Адрес для печати")
-	@Persist
-	public String getPrintAddress() {return thePrintAddress;}
-	public void setPrintAddress(String aPrintAddress) {thePrintAddress = aPrintAddress;}
+    public void setCreateUsername(String aCreateUsername) {
+        theCreateUsername = aCreateUsername;
+    }
 
-	/** Адрес для печати */
-	private String thePrintAddress;
-	/** Название для печати */
-	private String thePrintName;
-	
-	/** Руководитель */
-	@Comment("Руководитель")
-	@Persist
-	public Long getManager() {
-		return theManager;
-	}
+    /**
+     * Пользователь, который последний редактировал запись
+     */
+    @Comment("Пользователь, который последний редактировал запись")
+    @Persist
+    public String getEditUsername() {
+        return theEditUsername;
+    }
 
-	public void setManager(Long aManager) {
-		theManager = aManager;
-	}
+    public void setEditUsername(String aEditUsername) {
+        theEditUsername = aEditUsername;
+    }
 
-	/** Руководитель */
-	private Long theManager;
+    /**
+     * Автогенерация расписания
+     */
+    @Comment("Автогенерация расписания")
+    @Persist
+    public Boolean getAutoGeneration() {
+        return theAutoGeneration;
+    }
 
-	/** Приемное отделение */
-	@Comment("Приемное отделение")
-	@Persist
-	public Long getPigeonHole() {
-		return thePigeonHole;
-	}
+    public void setAutoGeneration(Boolean aAutoGeneration) {
+        theAutoGeneration = aAutoGeneration;
+    }
 
-	public void setPigeonHole(Long aPigeonHole) {
-		thePigeonHole = aPigeonHole;
-	}
+    /**
+     * Код федеральный
+     */
+    @Comment("Код федеральный")
+    @Persist
+    public String getCodef() {
+        return theCodef;
+    }
 
-	/** Приемное отделение */
-	private Long thePigeonHole;
-	/** Интервал разрешенной регистрации */
-	@Comment("Интервал разрешенной регистрации")
-	@Persist
-	public Integer getRegistrationInterval() {return theRegistrationInterval;}
-	public void setRegistrationInterval(Integer aRegistrationInterval) {theRegistrationInterval = aRegistrationInterval;}
+    public void setCodef(String aCodef) {
+        theCodef = aCodef;
+    }
 
-	/** Не показывать удаленным пользователям */
-	@Comment("Не показывать удаленным пользователям")
-	@Persist
-	public Boolean getIsNoViewRemoteUser() {return theIsNoViewRemoteUser;}
-	public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {theIsNoViewRemoteUser = aNoViewRemoteUser;}
+    /**
+     * Номер в ФСС
+     */
+    @Persist
+    public String getSocCode() {
+        return theSocCode;
+    }
 
-	/** Принтер по умолчанию */
-	@Comment("Принтер по умолчанию")
-	@Persist
-	public Long getCopyingEquipmentDefault() {return theCopyingEquipmentDefault;}
-	public void setCopyingEquipmentDefault(Long aCopyingEquipmentDefault) {theCopyingEquipmentDefault = aCopyingEquipmentDefault;}
+    public void setSocCode(String aSocCode) {
+        theSocCode = aSocCode;
+    }
 
-	/** Принтер по умолчанию */
-	private Long theCopyingEquipmentDefault;
-	/** Не показывать удаленным пользователям */
-	private Boolean theIsNoViewRemoteUser;
-	/** Интервал разрешенной регистрации */
-	private Integer theRegistrationInterval;
-	/** Дата создания */
-	@Comment("Дата создания")
-	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    /**
+     * Возможен забор крови
+     */
+    @Persist
+    @Comment("Возможен забор крови")
+    public Boolean getIsIntakeBioMaterial() {
+        return theIsIntakeBioMaterial;
+    }
 
-	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
-	/** Пользователь, который создал запись */
-	private String theCreateUsername;
-	/** Время редактрования */
-	private String theEditTime;
-	/** Время создания */
-	private String theCreateTime;
-	/** Дата редактирования */
-	private String theEditDate;
-	/** Дата создания */
-	private String theCreateDate;
-	
-	/** Автогенерация расписания */
-	@Comment("Автогенерация расписания")
-	@Persist
-	public Boolean getAutoGeneration() {return theAutoGeneration;}
-	public void setAutoGeneration(Boolean aAutoGeneration) {theAutoGeneration = aAutoGeneration;}
+    public void setIsIntakeBioMaterial(Boolean aIsIntakeBioMaterial) {
+        theIsIntakeBioMaterial = aIsIntakeBioMaterial;
+    }
 
-	/** Автогенерация расписания */
-	private Boolean theAutoGeneration;
-    /** Код федеральный */
-	@Comment("Код федеральный")
-	@Persist
-	public String getCodef() {return theCodef;}
-	public void setCodef(String aCodef) {theCodef = aCodef;}
+    /**
+     * По умолчанию снилс врача генерации направлений для 263 приказа
+     */
+    @Comment("По умолчанию снилс врача генерации направлений для 263 приказа")
+    public String getSnilsDoctorDirect263() {
+        return theSnilsDoctorDirect263;
+    }
 
-	/** Код федеральный */
-	private String theCodef;
-	/** Номер в ФСС */
-	@Persist
-	public String getSocCode() {return theSocCode;}
-	public void setSocCode(String aSocCode) {theSocCode = aSocCode;}
+    public void setSnilsDoctorDirect263(String aSnilsDoctorDirect263) {
+        theSnilsDoctorDirect263 = aSnilsDoctorDirect263;
+    }
 
-	/** Номер в ФСС */
-	private String theSocCode;
-	
-	/** Возможен забор крови */
-	@Persist
-	@Comment("Возможен забор крови")
-	public Boolean getIsIntakeBioMaterial() {return theIsIntakeBioMaterial;}
-	public void setIsIntakeBioMaterial(Boolean aIsIntakeBioMaterial) {theIsIntakeBioMaterial = aIsIntakeBioMaterial;}
+    /**
+     * Код подразделения
+     */
+    @Comment("Код подразделения")
+    @Persist
+    public String getCodeDepartment() {
+        return theCodeDepartment;
+    }
 
-	/** Возможен забор крови */
-	private Boolean theIsIntakeBioMaterial;
+    public void setCodeDepartment(String aCodeDepartment) {
+        theCodeDepartment = aCodeDepartment;
+    }
 
-	/** По умолчанию снилс врача генерации направлений для 263 приказа */
-	@Comment("По умолчанию снилс врача генерации направлений для 263 приказа")
-	public String getSnilsDoctorDirect263() {return theSnilsDoctorDirect263;}
-	public void setSnilsDoctorDirect263(String aSnilsDoctorDirect263) {theSnilsDoctorDirect263 = aSnilsDoctorDirect263;}
+    /**
+     * Короткое наименование
+     */
+    @Comment("Короткое наименование")
+    @Persist
+    public String getShortName() {
+        return theShortName;
+    }
 
-	/** По умолчанию снилс врача генерации направлений для 263 приказа */
-	private String theSnilsDoctorDirect263;
-	
-	/** Код подразделения */
-	@Comment("Код подразделения")
-	@Persist 
-	public String getCodeDepartment() {return theCodeDepartment;}
-	public void setCodeDepartment(String aCodeDepartment) {theCodeDepartment = aCodeDepartment;}
+    public void setShortName(String aShortName) {
+        theShortName = aShortName;
+    }
 
-	/** Код подразделения */
-	private String theCodeDepartment;
-	/** Короткое наименование */
-	@Comment("Короткое наименование")
-	@Persist
-	public String getShortName() {return theShortName;}
-	public void setShortName(String aShortName) {theShortName = aShortName;}
+    /**
+     * Доступ на создание операций по отделению
+     */
+    @Comment("Доступ на создание операций по отделению")
+    @Persist
+    public Long getAccessEnterOperation() {
+        return theAccessEnterOperation;
+    }
 
-	/** Короткое наименование */
-	private String theShortName;
-	/** Доступ на создание операций по отделению */
-	@Comment("Доступ на создание операций по отделению")
-	@Persist
-	public Long getAccessEnterOperation() {return theAccessEnterOperation;}
-	public void setAccessEnterOperation(Long aAccessEnterOperation) {theAccessEnterOperation = aAccessEnterOperation;}
+    public void setAccessEnterOperation(Long aAccessEnterOperation) {
+        theAccessEnterOperation = aAccessEnterOperation;
+    }
 
-	/** Доступ на создание операций по отделению */
-	private Long theAccessEnterOperation;
-	
-	/** Префикс для шаблонов ЛН */
-	@Comment("Префикс для шаблонов ЛН")
-	@Persist
-	public String getPrefixForLN() {
-		return thePrefixForLN;
-	}
+    /**
+     * Префикс для шаблонов ЛН
+     */
+    @Comment("Префикс для шаблонов ЛН")
+    @Persist
+    public String getPrefixForLN() {
+        return thePrefixForLN;
+    }
 
-	public void setPrefixForLN(String aPrefixForLN) {
-		thePrefixForLN = aPrefixForLN;
-	}
+    public void setPrefixForLN(String aPrefixForLN) {
+        thePrefixForLN = aPrefixForLN;
+    }
 
-	/** Префикс для шаблонов ЛН */
-	private String thePrefixForLN;
-	
-	/** Экстренный кабинет */
-	@Comment("Экстренный кабинет")
-	@Persist
-	public Long getEmergencyCabinet() {return theEmergencyCabinet;}
-	public void setEmergencyCabinet(Long aEmergencyCabinet) {theEmergencyCabinet = aEmergencyCabinet;}
+    /**
+     * Экстренный кабинет
+     */
+    @Comment("Экстренный кабинет")
+    @Persist
+    public Long getEmergencyCabinet() {
+        return theEmergencyCabinet;
+    }
 
-	/** Экстренный кабинет */
-	private Long theEmergencyCabinet;
-	
-	/** Отделения для новорожденных */
-	@Comment("Отделения для новорожденных")
-	@Persist
-	public Boolean getIsNewBornDep() {
-		return theIsNewBornDep;
-	}
+    public void setEmergencyCabinet(Long aEmergencyCabinet) {
+        theEmergencyCabinet = aEmergencyCabinet;
+    }
 
-	public void setIsNewBornDep(Boolean aIsNewBornDep) {
-		theIsNewBornDep = aIsNewBornDep;
-	}
+    /**
+     * Отделения для новорожденных
+     */
+    @Comment("Отделения для новорожденных")
+    @Persist
+    public Boolean getIsNewBornDep() {
+        return theIsNewBornDep;
+    }
 
-	/** Отделения для новорожденных */
-	private Boolean theIsNewBornDep;
-	
-	/** Родильное отделение */
-	@Comment("Родильное отделение")
-	@Persist
-	public Boolean getIsMaternityWard() {
-		return theIsMaternityWard;
-	}
+    public void setIsNewBornDep(Boolean aIsNewBornDep) {
+        theIsNewBornDep = aIsNewBornDep;
+    }
 
-	public void setIsMaternityWard(Boolean aIsMaternityWard) {
-		theIsMaternityWard = aIsMaternityWard;
-	}
+    /**
+     * Родильное отделение
+     */
+    @Comment("Родильное отделение")
+    @Persist
+    public Boolean getIsMaternityWard() {
+        return theIsMaternityWard;
+    }
 
-	/** Родильное отделение */
-	private Boolean theIsMaternityWard;
+    public void setIsMaternityWard(Boolean aIsMaternityWard) {
+        theIsMaternityWard = aIsMaternityWard;
+    }
 
-	/** Отделение патологии беременности */
-	@Comment("Отделение патологии беременности")
-	@Persist
-	public Boolean getIsPatologyPregnant() {
-		return theIsPatologyPregnant;
-	}
+    /**
+     * Отделение патологии беременности
+     */
+    @Comment("Отделение патологии беременности")
+    @Persist
+    public Boolean getIsPatologyPregnant() {
+        return theIsPatologyPregnant;
+    }
 
-	public void setIsPatologyPregnant(Boolean aIsPatologyPregnant) {
-		theIsPatologyPregnant = aIsPatologyPregnant;
-	}
+    public void setIsPatologyPregnant(Boolean aIsPatologyPregnant) {
+        theIsPatologyPregnant = aIsPatologyPregnant;
+    }
 
-	/** Отделение патологии беременности */
-	private Boolean theIsPatologyPregnant;
+    /**
+     * Уровень оказания медицинской помощи
+     */
+    @Comment("Уровень оказания медицинской помощи")
+    @Persist
+    public Integer getLpuLevel() {
+        return theLpuLevel;
+    }
 
-	/** Уровень оказания медицинской помощи */
-	@Comment("Уровень оказания медицинской помощи")
-	@Persist
-	public Integer getLpuLevel() {return theLpuLevel;}
-	public void setLpuLevel(Integer aLpuLevel) {theLpuLevel = aLpuLevel;}
-	/** Уровень оказания медицинской помощи */
-	private Integer theLpuLevel;
-	
+    public void setLpuLevel(Integer aLpuLevel) {
+        theLpuLevel = aLpuLevel;
+    }
 
-	/** Профиль КИЛИ */
-	@Comment("Профиль КИЛИ")
-	@Persist
-	public Long getKiliProfile() {return theKiliProfile;}
-	public void setKiliProfile(Long aKiliProfile) {theKiliProfile = aKiliProfile;}
-	/** Профиль КИЛИ */
-	private Long theKiliProfile;
-	
-	/** В архиве */
-	@Comment("В архиве")
-	@Persist
-	public Boolean getIsArchive() {return theIsArchive;}
-	public void setIsArchive(Boolean aIsArchive) {theIsArchive = aIsArchive;}
-	/** В архиве */
-	private Boolean theIsArchive;
+    /**
+     * Профиль КИЛИ
+     */
+    @Comment("Профиль КИЛИ")
+    @Persist
+    public Long getKiliProfile() {
+        return theKiliProfile;
+    }
 
-	/** Обсервационное? */
-	@Comment("Обсервационное?")
-	@Persist
-	public Boolean getIsObservable() {return theIsObservable;}
-	public void setIsObservable(Boolean aIsObservable) {theIsObservable = aIsObservable;}
-	/** Обсервационное? */
-	private Boolean theIsObservable;
+    public void setKiliProfile(Long aKiliProfile) {
+        theKiliProfile = aKiliProfile;
+    }
 
-	/** Палата новорождённых? */
-	@Comment("Палата новорождённых?")
-	@Persist
-	public Boolean getIsNewBorn() {return theIsNewBorn;}
-	public void setIsNewBorn(Boolean aIsNewBorn) {theIsNewBorn = aIsNewBorn;}
-	/** Палата новорождённых? */
-	private Boolean theIsNewBorn;
+    /**
+     * В архиве
+     */
+    @Comment("В архиве")
+    @Persist
+    public Boolean getIsArchive() {
+        return theIsArchive;
+    }
 
-	/** Создают ли кадриоскрининг новорождённым? */
-	@Comment("Создают ли кадриоскрининг новорождённым?")
-	@Persist
-	public Boolean getIsCreateCardiacScreening() {return theIsCreateCardiacScreening;}
-	public void setIsCreateCardiacScreening(Boolean aIsCreateCardiacScreening) {theIsCreateCardiacScreening = aIsCreateCardiacScreening;}
-	/** Создают ли кадриоскрининг новорождённым? */
-	private Boolean theIsCreateCardiacScreening;
+    public void setIsArchive(Boolean aIsArchive) {
+        theIsArchive = aIsArchive;
+    }
 
-	/** Офтальмологическое? */
-	@Comment("Офтальмологическое?")
-	@Persist
-	public Boolean getIsOphthalmic() {return theIsOphthalmic;}
-	public void setIsOphthalmic(Boolean aIsOphthalmic) {theIsOphthalmic = aIsOphthalmic;}
-	/** Офтальмологическое? */
-	private Boolean theIsOphthalmic;
+    /**
+     * Обсервационное?
+     */
+    @Comment("Обсервационное?")
+    @Persist
+    public Boolean getIsObservable() {
+        return theIsObservable;
+    }
 
+    public void setIsObservable(Boolean aIsObservable) {
+        theIsObservable = aIsObservable;
+    }
 
-	/** Учитывать в отчёте по КР? */
-	@Comment("Учитывать в отчёте по КР?")
-	@Persist
-	public Boolean getIsReportKMP() {return theIsReportKMP;}
-	public void setIsReportKMP(Boolean aIsReportKMP) {theIsReportKMP = aIsReportKMP;}
-	/** Учитывать в отчёте по КР? */
-	private Boolean theIsReportKMP;
+    /**
+     * Палата новорождённых?
+     */
+    @Comment("Палата новорождённых?")
+    @Persist
+    public Boolean getIsNewBorn() {
+        return theIsNewBorn;
+    }
 
-	/** Инфекционное? */
-	@Comment("Инфекционное?")
-	@Persist
-	public Boolean getIsForCovid() {return theIsForCovid;}
-	public void setIsForCovid(Boolean aIsForCovid) {theIsForCovid = aIsForCovid;}
-	/** Инфекционное? */
-	private Boolean theIsForCovid;
+    public void setIsNewBorn(Boolean aIsNewBorn) {
+        theIsNewBorn = aIsNewBorn;
+    }
+
+    /**
+     * Создают ли кадриоскрининг новорождённым?
+     */
+    @Comment("Создают ли кадриоскрининг новорождённым?")
+    @Persist
+    public Boolean getIsCreateCardiacScreening() {
+        return theIsCreateCardiacScreening;
+    }
+
+    public void setIsCreateCardiacScreening(Boolean aIsCreateCardiacScreening) {
+        theIsCreateCardiacScreening = aIsCreateCardiacScreening;
+    }
+
+    /**
+     * Офтальмологическое?
+     */
+    @Comment("Офтальмологическое?")
+    @Persist
+    public Boolean getIsOphthalmic() {
+        return theIsOphthalmic;
+    }
+
+    public void setIsOphthalmic(Boolean aIsOphthalmic) {
+        theIsOphthalmic = aIsOphthalmic;
+    }
+
+    /**
+     * Учитывать в отчёте по КР?
+     */
+    @Comment("Учитывать в отчёте по КР?")
+    @Persist
+    public Boolean getIsReportKMP() {
+        return theIsReportKMP;
+    }
+
+    public void setIsReportKMP(Boolean aIsReportKMP) {
+        theIsReportKMP = aIsReportKMP;
+    }
+
+    /**
+     * Инфекционное?
+     */
+    @Comment("Инфекционное?")
+    @Persist
+    public Boolean getIsForCovid() {
+        return theIsForCovid;
+    }
+
+    public void setIsForCovid(Boolean aIsForCovid) {
+        theIsForCovid = aIsForCovid;
+    }
 }
