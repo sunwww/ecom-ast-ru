@@ -42,11 +42,13 @@
       ,dep.name
       ,d.record
       , sls.datestart as satestart
+      , st.name as stn
       from diary d
       left join medcase slo on slo.id=d.medcase_id
       left join medcase sls on sls.id=slo.parent_id
       left join mislpu  dep on dep.id=slo.department_id
       left join patient pat on pat.id=slo.patient_id
+      left join vocPhoneMessageState st on st.id=d.state_id
       where d.dateregistration =${dateBegin} and dep.isforcovid=true
 order by pat.patientinfo, d.dateregistration desc , d.timeregistration  desc "
     />
@@ -58,6 +60,7 @@ order by pat.patientinfo, d.dateregistration desc , d.timeregistration  desc "
       <msh:tableColumn columnName="Время протокола" property="4" />
       <msh:tableColumn columnName="Отделение" property="6" />
       <msh:tableColumn columnName="Сатурация" property="5" />
+      <msh:tableColumn columnName="Состояние" property="9" />
       <msh:tableColumn columnName="Дневник целиком" property="7" />
     </msh:table>
   </tiles:put>
