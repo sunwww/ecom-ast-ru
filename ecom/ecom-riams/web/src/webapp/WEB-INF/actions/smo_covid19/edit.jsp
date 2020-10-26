@@ -33,16 +33,6 @@
       </msh:row><msh:row>
          <msh:textField property="diagnosisDate" />
       </msh:row><msh:row>
-         <msh:textField property="covidResearchDate" />
-      </msh:row><msh:row>
-         <msh:autoComplete property="labOrganization" horizontalFill="true" vocName="vocUserDomainNameById" parentId="269" />
-      </msh:row><msh:row>
-          <msh:textField property="epidNumber" horizontalFill="true" />
-      </msh:row><msh:row>
-          <msh:textField property="labResultNumber" horizontalFill="true" />
-      </msh:row><msh:row>
-         <msh:autoComplete vocName="positiveNegative" property="labResult" horizontalFill="true" />
-      </msh:row><msh:row>
         <msh:autoComplete property="vacPnKok" vocName="vocYesNoMaybe" horizontalFill="true" />
       </msh:row><msh:row>
         <msh:autoComplete property="vacFlu" vocName="vocYesNoMaybe" horizontalFill="true" />
@@ -66,9 +56,18 @@
           <msh:textField property="soputTuber" horizontalFill="true" />
       </msh:row><msh:row>
           <msh:textField property="soputOther" horizontalFill="true" />
+      </msh:row>
+          <msh:row>
+              <msh:textField property="covidResearchDate" />
+          </msh:row><msh:row>
+          <msh:autoComplete property="labOrganization" horizontalFill="true" vocName="vocUserDomainNameById" parentId="269" />
       </msh:row><msh:row>
-          <msh:textField property="saturationLevel" horizontalFill="true" />
-        </msh:row>
+          <msh:textField property="epidNumber" horizontalFill="true" />
+      </msh:row><msh:row>
+          <msh:textField property="labResultNumber" horizontalFill="true" />
+      </msh:row><msh:row>
+          <msh:autoComplete vocName="positiveNegative" property="labResult" horizontalFill="true" />
+      </msh:row>
         <msh:row>
             <msh:textField property="ishodDate" viewOnlyField="true"/>
         </msh:row><msh:row>

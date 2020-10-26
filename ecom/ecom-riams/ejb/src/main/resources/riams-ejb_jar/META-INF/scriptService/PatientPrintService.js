@@ -198,6 +198,15 @@ function printCovid(aCtx, aParams) {
 	map.put("labName",labName);
 	var hosp = covidCard.medCase;
 	map.put("hosp", hosp);
+
+	var list = aCtx.manager.createNativeQuery("select to_char((mc.datestart+1),'dd.mm.yyyy') as dsn1,st.code as stc from medcase mc" +
+		" left join statisticstub st on st.id=mc.statisticstub_id where mc.id="+hosp.id).getResultList();
+	if (!list.isEmpty()) {
+		var obj = list.get(0);
+		map.put("dateStartNext",""+obj[0]);
+		map.put("hist",""+obj[1]);
+	}
+
 	map.put("isLabConfirmed",(covidCard.labResult=="1" ? "да":"нет")+
 		(covidCard.getCovidResearchDate()!=null
 			? " №" + (covidCard.labResultNumber!=null ? covidCard.labResultNumber : "")+" от "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(covidCard.getCovidResearchDate())

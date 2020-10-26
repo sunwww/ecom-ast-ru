@@ -91,7 +91,7 @@
     ${sqlAdd}
     ${periodSql}
     order by c.createdate, c.createtime" />
-        <msh:table name="list_covid" action="entityParentView-smo_covid19.do"
+        <msh:table name="list_covid" action="entityParentView-smo_covid19.do" openNewWindow="true"
                    printToExcelButton="Сохранить в excel" idField="1" styleRow="4" noDataMessage="Не найдено">
           <msh:tableColumn columnName="#" property="sn"/>
           <msh:tableColumn columnName="Пациент" property="2"/>
