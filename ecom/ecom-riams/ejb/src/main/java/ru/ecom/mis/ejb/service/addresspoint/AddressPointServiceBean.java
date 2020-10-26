@@ -733,7 +733,7 @@ public class AddressPointServiceBean implements IAddressPointService {
                 point.setLpuAreaAddressText(aLpuAreaAddressText);
                 point.setAddress(child);
                 manager.persist(point);
-                updatePatients(aLpuAreaAddressText, child, null, null, null);
+//                updatePatients(aLpuAreaAddressText, child, null, null, null);
                 manager.flush() ;
                 manager.clear() ;
             }
@@ -745,7 +745,7 @@ public class AddressPointServiceBean implements IAddressPointService {
                 point.setLpuAreaAddressText(aLpuAreaAddressText);
                 point.setAddress(address);
                 manager.persist(point);
-                updatePatients(aLpuAreaAddressText, address, null, null, null);
+//                updatePatients(aLpuAreaAddressText, address, null, null, null);
             } else {
             	// по домам , корпусам и квартирам
                 for (AddressPointCheck check : checks) {
@@ -756,7 +756,7 @@ public class AddressPointServiceBean implements IAddressPointService {
                     point.setHouseBuilding(check.getBuilding());
                     point.setFlat(check.getFlat());
                     manager.persist(point);
-                    updatePatients(aLpuAreaAddressText, address, check.getNumber(), check.getBuilding(), check.getFlat());
+//                    updatePatients(aLpuAreaAddressText, address, check.getNumber(), check.getBuilding(), check.getFlat());
                 }
             }
         }
@@ -867,8 +867,8 @@ public class AddressPointServiceBean implements IAddressPointService {
     public void onUpdate(LpuAreaAddressText aLpuAreaAddressText) {
 	//theManager.flush() ;
 	//theManager.clear() ;
-	
-        onRemove(aLpuAreaAddressText);
+
+//        onRemove(aLpuAreaAddressText);
         onPersist(aLpuAreaAddressText);
     }
 

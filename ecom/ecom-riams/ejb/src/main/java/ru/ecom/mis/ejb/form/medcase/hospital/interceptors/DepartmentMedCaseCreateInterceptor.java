@@ -121,7 +121,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		Diagnosis diagnosis = aMedCase.getMainDiagnosis();
 		ArrayList<String> withoutChildBirth = getDiagosisWithoutChldBirth();
 		if (diagnosis == null || withoutChildBirth.contains(diagnosis.getIdc10().getCode())) return true;
-		if (aMedCase.getDepartment()!=null && aMedCase.getDepartment().getIsMaternityWard()!=null && aMedCase.getDepartment().getIsMaternityWard()){
+        if (aMedCase.getDepartment() != null && Boolean.TRUE.equals(aMedCase.getDepartment().getIsMaternityWard())) {
 			String sql = "select count(id) from robsonclass where medcase_id= "+aMedCase.getId();
 			Object list = aManager.createNativeQuery(sql).getSingleResult();
 			return Long.parseLong(list.toString())>0;
@@ -133,7 +133,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 	private static boolean isMisbirthClassExists(EntityManager aManager, Long aMedCaseId) {
 		if (aMedCaseId==null) {return true;}
 		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
-		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
+        if (parentSLO.getDepartment() != null && Boolean.TRUE.equals(parentSLO.getDepartment().getIsMaternityWard())) {
 			String sql = "select count(id) from misbirth where medcase_id=:medcaseId";
 			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCaseId).getSingleResult();
 			return Long.parseLong(list.toString())>0;

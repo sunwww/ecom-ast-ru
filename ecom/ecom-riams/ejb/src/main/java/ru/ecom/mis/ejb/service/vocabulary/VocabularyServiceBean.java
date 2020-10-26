@@ -72,12 +72,7 @@ public class VocabularyServiceBean {
 		}*/
 
 	}
-	
-	private int getCount(Class clazz) {
-		Long totalCount = (Long)theManager.createQuery("select count(*) from " +
-				theEntityHelper.getEntityName(clazz)).getSingleResult() ;
-		return totalCount.intValue() ;
-	}
+
 	public int getCount(String clazz) {
 		Long totalCount = (Long)theManager.createQuery("select count(*) from " +
 				clazz).getSingleResult() ;
@@ -106,7 +101,7 @@ public class VocabularyServiceBean {
     					theManager.createNativeQuery("delete from VocExtDispServiceFunction where name='"+code.trim()+"'").executeUpdate() ;
     					
     				} else {
-    					theManager.createNativeQuery("delete from VocExtDispServiceFunction where name='"+code+"' and code not in ('"+wfCode.replaceAll(",","','")+"')").executeUpdate() ;
+						theManager.createNativeQuery("delete from VocExtDispServiceFunction where name='" + code + "' and code not in ('" + wfCode.replace(",", "','") + "')").executeUpdate();
     					String[] wf = wfCode.split(",") ;
     					for (String w:wf) {
     						List<Object> l=theManager.createNativeQuery("select code from VocExtDispServiceFunction where name='"+code+"' and code='"+w+"'").setMaxResults(1).getResultList();
@@ -284,7 +279,7 @@ public class VocabularyServiceBean {
     		xmlDoc.newAttribute(el, "name", serv.getName());
     		List<Object> wf = theManager.createNativeQuery("select list(code) from VocExtDispServiceFunction where name='"+serv.getCode()+"' and code is not null and code!=''").getResultList() ;
     		if (!wf.isEmpty()) {
-    			String wfc = (""+wf.get(0)).replaceAll(" ", "") ;
+				String wfc = ("" + wf.get(0)).replace(" ", "");
     			xmlDoc.newAttribute(el, "workFunctionCode", wfc);
     		} else {
     			xmlDoc.newAttribute(el, "workFunctionCode", "");
