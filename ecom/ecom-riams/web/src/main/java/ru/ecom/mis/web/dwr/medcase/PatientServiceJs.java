@@ -935,4 +935,32 @@ public class PatientServiceJs {
 		Collection <WebQueryResult> l = service.executeNativeSql(sql);
 		return l.isEmpty()? "" : "<div>Логин в МедОСе: <b>"+l.iterator().next().get1().toString()+"</b></div>";
 	}
+
+	/**
+	 * Проверить выгрузку карты с указанием периода (первично/повторно/при выписке)
+	 * @param aCard Covid19.id
+	 * @param number String Наименование
+	 * @return 0 - ещё не была выгружена, -1 - уже была
+	 */
+	public String markCovidAsSentNumberCheck(Long aCard, String number, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection <WebQueryResult> l = service.executeNativeSql("select id from Covid19 where id=" + aCard + " and "
+				+ "export" + number + "Date is not null");
+		return l.isEmpty()? "" : ""+"-1";
+	}
+
+
+	/**
+	 * Проверить выгрузку карты с указанием периода (первично/повторно/при выписке)
+	 * @param aCard Covid19.id
+	 * @param number String Наименование
+	 * @return Сообщение
+	 */
+	public String markCovidAsSentNumber(Long aCard, String number, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		return "обновлено " +service.executeUpdateNativeSql("update Covid19 set export"
+				+ number + "Date=current_date, export" + number + "Time=current_time" +
+				",export" + number + "Username='"+username+"' where id="+aCard) +" карт";
+	}
 }

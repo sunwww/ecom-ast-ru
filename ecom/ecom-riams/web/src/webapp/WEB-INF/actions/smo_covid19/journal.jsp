@@ -77,11 +77,17 @@
         ,case when c.noActual='1' then 'background-color:#979090; color:black' when c.exportDate is not null then 'background-color:#8ee68e; color:black'
      when (c.labResult is not null and c.labResult!='') then 'background-color: #f0ba57; color:black' else '' end as f4_styleRow
      ,dep.name as f5_dep
-     ,sls.datestart as f5_datestart
+     ,sls.datestart as f6_datestart
+     ,to_char(c.exportfirstdate,'dd.MM.yyyy') as f7_expFirst
+     ,to_char(c.exportdoubledate,'dd.MM.yyyy') as f8_expDouble
+     ,to_char(c.exportdischargedate,'dd.MM.yyyy') as f9_expDisch
+     ,vhr.name as f10_vhrName
+     ,to_char(c.ishoddate,'dd.MM.yyyy') as f11_dateResHosp
     from Covid19 c
     left join Patient pat on pat.id=c.patient_id
     left join medcase sls on sls.id=c.medcase_id
     left join mislpu dep on dep.id=sls.department_id
+    left join vochospitalizationresult vhr on vhr.id=c.hospresult_id
     ${sqlAdd}
     ${periodSql}
     order by c.createdate, c.createtime" />
@@ -92,6 +98,11 @@
           <msh:tableColumn columnName="Отделение поступления" property="5"/>
           <msh:tableColumn columnName="Дата поступления" property="6"/>
           <msh:tableColumn columnName="Дата и время создания карты" property="3"/>
+          <msh:tableColumn columnName="Первичная выгрузка" property="7"/>
+          <msh:tableColumn columnName="Повторная выгрузка" property="8"/>
+          <msh:tableColumn columnName="Выгрузка при выписке" property="9"/>
+          <msh:tableColumn columnName="Результат госп." property="10"/>
+          <msh:tableColumn columnName="Дата выписки" property="11"/>
         </msh:table>
       </msh:sectionContent>
     </msh:section>

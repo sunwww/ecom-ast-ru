@@ -142,7 +142,16 @@ function onPreSave(aForm,aEntity, aCtx) {
 				}
 			}
 	}
+	//Проставить в карте коронавируса Дату и результат госпитализации
+	setCovidDateResultHosp(aForm,aEntity, aCtx);
 }
+
+//Проставить в карте коронавируса Дату и результат госпитализации
+function setCovidDateResultHosp(aForm,aEntity, aCtx) {
+	aCtx.manager.createNativeQuery("update Covid19 set ishoddate=to_date('" + aForm.dateFinish + "','dd,mm.yyyy'), hospResult_id="
+		+ aForm.result + " where medcase_id = " +  aForm.id + " and id = (select max(id) from Covid19 where medcase_id = " + aForm.id + ")").executeUpdate();
+}
+
 function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
 	var l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'").getResultList();
 	return l.isEmpty() ? aValueDefault : l.get(0)[1] ;

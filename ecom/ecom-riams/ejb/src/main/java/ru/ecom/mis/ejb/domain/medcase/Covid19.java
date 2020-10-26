@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.domain.medcase;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNoMaybe;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -221,9 +222,10 @@ public class Covid19 extends BaseEntity {
 
     /** Результат исхода */
     @Comment("Результат исхода")
-    public String getIshodResult() {return theIshodResult;}
-    public void setIshodResult(String aIshodResult) {theIshodResult = aIshodResult;}
-    private String theIshodResult ;
+    @OneToOne
+    public VocHospitalizationResult getHospResult() {return theHospResult;}
+    public void setHospResult(VocHospitalizationResult aHospResult) {theHospResult = aHospResult;}
+    private VocHospitalizationResult theHospResult ;
 
     /** Диагноз */
     @Comment("Диагноз")
@@ -256,4 +258,67 @@ public class Covid19 extends BaseEntity {
         setCreateDate(new Date(createTime));
         setCreateTime(new Time(createTime));
     }
+
+    /** Дата первичной выгрузки */
+    @Comment("Дата первичной выгрузки")
+    public Date getExportFirstDate() {return theExportFirstDate;}
+    public void setExportFirstDate(Date aExportFirstDate) {theExportFirstDate = aExportFirstDate;}
+    /** Дата первичной выгрузки */
+    private Date theExportFirstDate ;
+    
+    /** Время первичной выгрузки */
+    @Comment("Время первичной выгрузки")
+    public Time getExportFirstTime() {return theExportFirstTime;}
+    public void setExportFirstTime(Time aExportFirstTime) {theExportFirstTime = aExportFirstTime;}
+    /** Время первичной выгрузки */
+    private Time theExportFirstTime ;
+
+    /** Кто первичную выгрузил? */
+    @Comment("Кто первичную выгрузил?")
+    public String getExportFirstUsername() {return theExportFirstUsername;}
+    public void setExportFirstUsername(String aExportFirstUsername) {theExportFirstUsername = aExportFirstUsername;}
+    /** Кто первичную выгрузил? */
+    private String theExportFirstUsername ;
+
+    /** Дата повторной выгрузки */
+    @Comment("Дата повторной выгрузки")
+    public Date getExportDoubleDate() {return theExportDoubleDate;}
+    public void setExportDoubleDate(Date aExportDoubleDate) {theExportDoubleDate = aExportDoubleDate;}
+    /** Дата повторной выгрузки */
+    private Date theExportDoubleDate ;
+
+    /** Время повторной выгрузки */
+    @Comment("Время повторной выгрузки")
+    public Time getExportDoubleTime() {return theExportDoubleTime;}
+    public void setExportDoubleTime(Time aExportDoubleTime) {theExportDoubleTime = aExportDoubleTime;}
+    /** Время повторной выгрузки */
+    private Time theExportDoubleTime ;
+
+    /** Кто повторную выгрузил? */
+    @Comment("Кто повторную выгрузил?")
+    public String getExportDoubleUsername() {return theExportDoubleUsername;}
+    public void setExportDoubleUsername(String aExportDoubleUsername) {theExportDoubleUsername = aExportDoubleUsername;}
+    /** Кто повторную выгрузил? */
+    private String theExportDoubleUsername ;
+
+    /** Дата выписной выгрузки */
+    @Comment("Дата выписной выгрузки")
+    public Date getExportDischargeDate() {return theExportDischargeDate;}
+    public void setExportDischargeDate(Date aExportDischargeDate) {theExportDischargeDate = aExportDischargeDate;}
+    /** Дата выписной выгрузки */
+    private Date theExportDischargeDate ;
+
+    /** Время выписной выгрузки */
+    @Comment("Время выписной выгрузки")
+    public Time getExportDischargeTime() {return theExportDischargeTime;}
+    public void setExportDischargeTime(Time aExportDischargeTime) {theExportDischargeTime = aExportDischargeTime;}
+    /** Время выписной выгрузки */
+    private Time theExportDischargeTime ;
+
+    /** Кто при выписке выгрузил? */
+    @Comment("Кто при выписке выгрузил?")
+    public String getExportDischargeUsername() {return theExportDischargeUsername;}
+    public void setExportDischargeUsername(String aExportDischargeUsername) {theExportDischargeUsername = aExportDischargeUsername;}
+    /** Кто при выписке выгрузил? */
+    private String theExportDischargeUsername ;
 }
