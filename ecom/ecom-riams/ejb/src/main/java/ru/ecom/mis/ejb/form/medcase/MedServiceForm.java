@@ -315,4 +315,13 @@ public class MedServiceForm extends IdEntityForm  {
 	public void setVocColorIdentity(Long aVocColorIdentity) {theVocColorIdentity = aVocColorIdentity;}
 	/** Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии */
 	private Long theVocColorIdentity ;
+
+	/** Всегда выполняется для реанимаций */
+	@Comment("Всегда выполняется для реанимаций")
+	@Persist
+	public Boolean getIsAvailableReanimAlways() {return theIsAvailableReanimAlways;}
+	public void setIsAvailableReanimAlways(Boolean aIsAvailableReanimAlways) {theIsAvailableReanimAlways = aIsAvailableReanimAlways;}
+
+	/** Всегда выполняется для реанимаций */
+	private Boolean theIsAvailableReanimAlways;
 }

@@ -45,6 +45,8 @@
             request.setAttribute("dateBegin",date) ;
             request.setAttribute("dateEnd", dateEnd) ;
             request.setAttribute("typeType", typeType) ;
+            String filterAdd = request.getParameter("filterAdd") ;
+            if (filterAdd!=null && !filterAdd.equals("")) request.setAttribute("vhrSql"," and vhr.id="+filterAdd);
             if (request.getParameter("short")==null) {
         %>
         <msh:form action="/journal_checkList.do" defaultField="department" method="GET">
@@ -55,6 +57,9 @@
                 <msh:row>
                     <msh:textField property="dateBegin" label="Период с" />
                     <msh:textField property="dateEnd" label="по" />
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="filterAdd" fieldColSpan="16" horizontalFill="true" label="Результат госп." vocName="vocHospitalizationResult"/>
                 </msh:row>
                 <msh:row>
                     <td class="label" title="Поиск по  (typeType)" colspan="1"><label for="typeTypeName" id="typeTypeLabel">Группировать:</label></td>
@@ -230,17 +235,19 @@
                 left join ReportSetTYpeParameterType rspt1 on mkb.code between rspt1.codefrom and rspt1.codeto
                 left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id
                 left join vocsost vs on vs.id=c.sost_id
+                left join vocHospitalizationResult vhr on vhr.id=sls.result_id
                 where m.DTYPE='DepartmentMedCase'
                 and vrspt.id='523' and vdrt.id='3' and vpd.id='1'
                 and sls.datefinish between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
            		and sloa.datefinish is not null and sloa.DTYPE='DepartmentMedCase'
+           		${vhrSql}
                 group by ${groupSql}
                 sls.id
                 ${orderSql}) as t
                 ${tgroupSql}
                 ${torderSql}" />
                 <msh:table printToExcelButton="Сохранить в Excel" name="journal_checkList"  noDataMessage="Нет данных"
-                           action="journal_checkList.do?&short=Short&typeType=${param.typeType}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"
+                           action="journal_checkList.do?&short=Short&typeType=${param.typeType}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&filterAdd=${param.filterAdd}"
                            idField="25" cellFunction="true">
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="1" columnName="Подразделение" addParam="&type=total"/>
@@ -342,6 +349,7 @@
                 and sls.datefinish between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 ${sqlAdd}
                 ${depSql}
+           		${vhrSql}
                 and sloa.datefinish is not null and sloa.DTYPE='DepartmentMedCase'
                 group by sls.id,dep.name, st.code,pat.patientinfo, vs.name, mkb.code, vhr.name, c.id
                 order by dep.name,pat.patientinfo" />

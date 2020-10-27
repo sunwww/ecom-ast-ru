@@ -13,11 +13,14 @@ import java.util.LinkedList;
  */
 public class ArrayAllValue implements IAllValue {
 
+    private final LinkedList<VocValue> theValues = new LinkedList<>();
+
     public ArrayAllValue() {
 
     }
+
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
-    	String ret = null;
+        String ret = null;
         if (aId != null) {
             for (VocValue value : listAll(aContext)) {
                 if (aId.equals(value.getId())) {
@@ -30,7 +33,7 @@ public class ArrayAllValue implements IAllValue {
 
     public void addValue(String aId, String aName) {
 
-        theValues.add(new VocValue(aId, aName)) ;
+        theValues.add(new VocValue(aId, aName));
     }
 
     public Collection<VocValue> listAll(AllValueContext aContext) {
@@ -41,40 +44,32 @@ public class ArrayAllValue implements IAllValue {
         theValues.clear();
     }
 
-    private final LinkedList<VocValue> theValues = new LinkedList<VocValue>();
-
-	public Collection<VocValue> findVocValueByQuery(String aVocName,
-			String aQuery, int aCount, VocAdditional aAdditional,
-			AllValueContext aContext) throws VocServiceException {
+    public Collection<VocValue> findVocValueByQuery(String aVocName,
+                                                    String aQuery, int aCount, VocAdditional aAdditional,
+                                                    AllValueContext aContext) {
         String query = aQuery.toUpperCase();
         String findedId = null;
-        boolean finded=false;
-        LinkedList<VocValue> ret = new LinkedList<VocValue>();
+        boolean finded = false;
+        LinkedList<VocValue> ret = new LinkedList<>();
         if (!StringUtil.isNullOrEmpty(aQuery)) {
             for (VocValue value : listAll(aContext)) {
                 String name = value.getName();
                 String id = value.getId();
-                if (name != null) {
-                    if (name.toUpperCase().startsWith(query)) {
-                        findedId = id;
-                        finded=true;
-                    }
+                if (name != null && name.toUpperCase().startsWith(query)) {
+                    findedId = id;
+                    finded = true;
                 }
-                if (findedId == null) {
-                    if (id != null) {
-                        if (id.toUpperCase().startsWith(query)) {
-                            findedId = id;
-                            finded=true;
-                        }
-                    }
+                if (findedId == null && id != null && id.toUpperCase().startsWith(query)) {
+                    findedId = id;
+                    finded = true;
                 }
                 if (name != null && name.toUpperCase().indexOf(query) > -1) {
                     findedId = id;
-                    finded=true;
+                    finded = true;
                 }
                 if (id != null && id.toUpperCase().indexOf(query) > -1) {
                     findedId = id;
-                    finded=true;
+                    finded = true;
                 }
                 if (finded) {
                     ret.add(value);
@@ -82,6 +77,6 @@ public class ArrayAllValue implements IAllValue {
                 }
             }
         }
-        return ret ;
-	}
+        return ret;
+    }
 }

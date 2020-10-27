@@ -142,7 +142,31 @@ function onPreSave(aForm,aEntity, aCtx) {
 				}
 			}
 	}
+	//Проставить в карте коронавируса Дату,результат госпитализации и основной выписной диагноз
+	setCovidDateResultHospAndMkb(aForm,aEntity, aCtx);
 }
+
+//Проставить в карте коронавируса Дату,результат госпитализации и основной выписной диагноз
+function setCovidDateResultHospAndMkb(aForm,aEntity, aCtx) {
+	var sqlAdd='';
+	var list = aCtx.manager.createNativeQuery("select distinct ds.idc10_id from medcase sls" +
+		"  left join covid19 c on c.medcase_id = sls.id" +
+		"  left join diagnosis ds on ds.medcase_id = sls.id" +
+		"  left join vocdiagnosisregistrationtype vdrt on vdrt.id=ds.registrationtype_id" +
+		"  left join vocprioritydiagnosis vpd on vpd.id=ds.priority_id" +
+		"  where vdrt.code='3' and vpd.code='1' and sls.id = " + aForm.id).getResultList() ;
+	if (!list.isEmpty()) {
+		var idc10 = list.get(0);
+		if (idc10)
+			sqlAdd = ',mkbDischarge_id = ' + idc10;
+	}
+
+	aCtx.manager.createNativeQuery("update Covid19 set ishoddate=to_date('" + aForm.dateFinish + "','dd,mm.yyyy'), hospResult_id="
+		+ aForm.result + sqlAdd + " where medcase_id = " +  aForm.id + " and id = (select max(id) from Covid19 where medcase_id = " + aForm.id + ")").executeUpdate();
+
+
+}
+
 function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
 	var l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'").getResultList();
 	return l.isEmpty() ? aValueDefault : l.get(0)[1] ;

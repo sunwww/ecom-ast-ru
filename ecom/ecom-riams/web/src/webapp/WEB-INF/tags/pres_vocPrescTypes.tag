@@ -70,7 +70,8 @@
 			}
 		}
 		try {
-            labServiciesAutocomplete.setParentId(typeID+"#"+$('serviceStream').value);
+            //fix Milamesher 19102020 учёт разрешения в реанимации любых услуг (передаю id листа назначения)
+            labServiciesAutocomplete.setParentId(typeID+"#"+$('serviceStream').value+"#"+'${param.id}');
         } catch (e) {console.log(e);}
 		the${name}PrescTypesDialog.hide() ;
 	}

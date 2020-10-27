@@ -90,7 +90,13 @@
 								<msh:link action="/ecom_monitorList.do" >Список фоновых "мониторов"</msh:link>
 							</li>
 							<li>
-								<msh:link action="/javascript:readOldMessages()" >Отметить старые сообщения прочитанными</msh:link>
+								<msh:link roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin" action="/javascript:readOldMessages()" >Отметить старые сообщения прочитанными</msh:link>
+							</li>
+							<li>
+								<msh:link roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal" action="/javascript:updateSCG()" >Обновить данные по консультациям в стационаре</msh:link>
+							</li>
+							<li>
+								<msh:link roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal" action="/javascript:setWfConsDischarged()" >Отмена консультаций выписанных пациентов</msh:link>
 							</li>
 
 						</ul>
@@ -251,14 +257,44 @@
                 if (date!=null && date!='' && date!='dd.mm.yyyy') window.open('api/foncCheck/syncRecordTomorrow?dateStart='+date);
                 else window.open('api/foncCheck/syncRecordTomorrow');
             }
+			<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin">
+				//Отметить сообщения прочитанными #201
+				function readOldMessages() {
+					var date = prompt('Введите дату. Все сообщения, созданные ранее этой даты, будут отмечены прочитанными: ',getDateAfterOrBeforeCurrent(getCurrentDate(),'.',-1));
+					if (date!=null && date!='' && date!='dd.mm.yyyy' && checkDate(date)) {
+						showToastMessage('Выполняется, займёт какое-то время. Если не нужен ответ от БД, можно закрывать окно.',null,true,false,3000);
+						VocService.setMessagesReadBeforeDate(date, {
+							callback: function (num) {
+								showToastMessage("Прочитанными отмечено " + num + " сообщений до даты " + date,null,true,false,3000);
+							}
+						});
+					}
+					else if (date==null)
+						return;
+					else if (!checkDate(date))
+						showToastMessage("Некорректная дата " + date,null,true,true,3000);
+				}
+			</msh:ifInRole>
 
-            //Отметить сообщения прочитанными #201
-            function readOldMessages() {
-				var date = prompt('Введите дату. Все сообщения, созданные ранее этой даты, будут отмечены прочитанными: ',getDateAfterOrBeforeCurrent(getCurrentDate(),'.',-1));
+			<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
+				//Обновить данные по консультациям в стационаре #227
+				function updateSCG() {
+					showToastMessage('Выполняется, займёт какое-то время. Если не нужен ответ от БД, можно закрывать окно.',null,true,false,3000);
+					VocService.updateSCG({
+						callback: function (res) {
+							showToastMessage(res,null,true,false,3000);
+						}
+					});
+				}
+
+			//Проставить до выбранной даты отмену консультаций, если она не выполнена, а пациент уже выписан (с причиной "Выписан") #227
+			function setWfConsDischarged() {
+				var date = prompt('Введите дату. Все невыполненные консультации до выбранной даты выписанных пациентов будут отменены с причиной "Выписан": ',getCurrentDate());
 				if (date!=null && date!='' && date!='dd.mm.yyyy' && checkDate(date)) {
-					VocService.setMessagesReadBeforeDate(date, {
-						callback: function (num) {
-							showToastMessage("Прочитанными отмечено " + num + " сообщений до даты " + date,null,true,false,3000);
+					showToastMessage('Выполняется, займёт какое-то время. Результат можно увидеть в Журнале консультаций',null,true,false,3000);
+					VocService.setWfConsDischarged(date, {
+						callback: function (res) {
+							showToastMessage(res,null,true,false,3000);
 						}
 					});
 				}
@@ -267,6 +303,7 @@
 				else if (!checkDate(date))
 					showToastMessage("Некорректная дата " + date,null,true,true,3000);
 			}
+			</msh:ifInRole>
 		</script>
 	</tiles:put>
 </tiles:insert>

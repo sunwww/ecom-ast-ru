@@ -48,16 +48,10 @@ public class Covid19Form extends IdEntityForm {
     @Comment("Дата появления клинических симптомов")
     @Persist
     @DateString @DoDateString
+    @Required
     public String getSymptomsDate() {return theSymptomsDate;}
     public void setSymptomsDate(String aSymptomsDate) {theSymptomsDate = aSymptomsDate;}
     private String theSymptomsDate ;
-
-    /** Диагноз */
-    @Comment("Диагноз")
-    @Persist
-    public String getDiagnosis() {return theDiagnosis;}
-    public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
-    private String theDiagnosis ;
 
     /** Дата постановки диагноза */
     @Comment("Дата постановки диагноза")
@@ -180,13 +174,6 @@ public class Covid19Form extends IdEntityForm {
     public void setSoputOther(String aSoputOther) {theSoputOther = aSoputOther;}
     private String theSoputOther ;
 
-    /** Уровень SpO2(%)(на момент поступления) */
-    @Comment("Уровень SpO2(%)(на момент поступления)")
-    @Persist
-    public String getSaturationLevel() {return theSaturationLevel;}
-    public void setSaturationLevel(String aSaturationLevel) {theSaturationLevel = aSaturationLevel;}
-    private String theSaturationLevel ;
-
     /** Дата создания */
     @Comment("Дата создания")
     @Persist
@@ -251,13 +238,14 @@ public class Covid19Form extends IdEntityForm {
     /** Результат исхода */
     @Comment("Результат исхода")
     @Persist
-    public String getIshodResult() {return theIshodResult;}
-    public void setIshodResult(String aIshodResult) {theIshodResult = aIshodResult;}
-    private String theIshodResult ;
+    public Long getHospResult() {return theHospResult;}
+    public void setHospResult(Long aHospResult) {theHospResult = aHospResult;}
+    private Long theHospResult ;
 
     /** Место работы, должность */
     @Comment("Место работы, должность")
     @Persist
+    @Required
     public String getWorkPlace() {return theWorkPlace;}
     public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
     private String theWorkPlace ;
@@ -265,6 +253,7 @@ public class Covid19Form extends IdEntityForm {
     /** Диагноз */
     @Comment("Диагноз")
     @Persist
+    @Required
     public Long getMkb() {return theMkb;}
     public void setMkb(Long aMkb) {theMkb = aMkb;}
     private Long theMkb ;
@@ -296,4 +285,88 @@ public class Covid19Form extends IdEntityForm {
     public void setIsDoctor(Boolean aIsDoctor) {theIsDoctor = aIsDoctor;}
     private Boolean theIsDoctor ;
 
+    /** Дата первичной выгрузки */
+    @Comment("Дата первичной выгрузки")
+    @DateString @DoDateString
+    @Persist
+    public String getExportFirstDate() {return theExportFirstDate;}
+    public void setExportFirstDate(String aExportFirstDate) {theExportFirstDate = aExportFirstDate;}
+    /** Дата первичной выгрузки */
+    private String theExportFirstDate ;
+
+    /** Время первичной выгрузки */
+    @Comment("Время первичной выгрузки")
+    @TimeString @DoTimeString
+    @Persist
+    public String getExportFirstTime() {return theExportFirstTime;}
+    public void setExportFirstTime(String aExportFirstTime) {theExportFirstTime = aExportFirstTime;}
+    /** Время первичной выгрузки */
+    private String theExportFirstTime ;
+
+    /** Кто первичную выгрузил? */
+    @Comment("Кто первичную выгрузил?")
+    @Persist
+    public String getExportFirstUsername() {return theExportFirstUsername;}
+    public void setExportFirstUsername(String aExportFirstUsername) {theExportFirstUsername = aExportFirstUsername;}
+    /** Кто первичную выгрузил? */
+    private String theExportFirstUsername ;
+
+    /** Дата повторной выгрузки */
+    @Comment("Дата повторной выгрузки")
+    @DateString @DoDateString
+    @Persist
+    public String getExportDoubleDate() {return theExportDoubleDate;}
+    public void setExportDoubleDate(String aExportDoubleDate) {theExportDoubleDate = aExportDoubleDate;}
+    /** Дата повторной выгрузки */
+    private String theExportDoubleDate ;
+
+    /** Время повторной выгрузки */
+    @Comment("Время повторной выгрузки")
+    @TimeString @DoTimeString
+    @Persist
+    public String getExportDoubleTime() {return theExportDoubleTime;}
+    public void setExportDoubleTime(String aExportDoubleTime) {theExportDoubleTime = aExportDoubleTime;}
+    /** Время повторной выгрузки */
+    private String theExportDoubleTime ;
+
+    /** Кто повторную выгрузил? */
+    @Comment("Кто повторную выгрузил?")
+    @Persist
+    public String getExportDoubleUsername() {return theExportDoubleUsername;}
+    public void setExportDoubleUsername(String aExportDoubleUsername) {theExportDoubleUsername = aExportDoubleUsername;}
+    /** Кто повторную выгрузил? */
+    private String theExportDoubleUsername ;
+
+    /** Дата выписной выгрузки */
+    @Comment("Дата выписной выгрузки")
+    @DateString @DoDateString
+    @Persist
+    public String getExportDischargeDate() {return theExportDischargeDate;}
+    public void setExportDischargeDate(String aExportDischargeDate) {theExportDischargeDate = aExportDischargeDate;}
+    /** Дата выписной выгрузки */
+    private String theExportDischargeDate ;
+
+    /** Время выписной выгрузки */
+    @Comment("Время выписной выгрузки")
+    @TimeString @DoTimeString
+    @Persist
+    public String getExportDischargeTime() {return theExportDischargeTime;}
+    public void setExportDischargeTime(String aExportDischargeTime) {theExportDischargeTime = aExportDischargeTime;}
+    /** Время выписной выгрузки */
+    private String theExportDischargeTime ;
+
+    /** Кто при выписке выгрузил? */
+    @Comment("Кто при выписке выгрузил?")
+    @Persist
+    public String getExportDischargeUsername() {return theExportDischargeUsername;}
+    public void setExportDischargeUsername(String aExportDischargeUsername) {theExportDischargeUsername = aExportDischargeUsername;}
+    /** Кто при выписке выгрузил? */
+    private String theExportDischargeUsername ;
+
+    /** Диагноз основной выписной */
+    @Comment("Диагноз основной выписной")
+    @Persist
+    public Long getMkbDischarge() {return theMkbDischarge;}
+    public void setMkbDischarge(Long aMkbDischarge) {theMkbDischarge = aMkbDischarge;}
+    private Long theMkbDischarge ;
 }

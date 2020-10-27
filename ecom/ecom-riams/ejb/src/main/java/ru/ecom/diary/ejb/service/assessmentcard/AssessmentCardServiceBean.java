@@ -62,21 +62,11 @@ public class AssessmentCardServiceBean implements IAssessmentCardService{
 					if (id!=null && !id.equals(0L)) {
 						UserValue uv = aManager.find(UserValue.class, id) ;
 						fip.setValueVoc(uv) ;
-				/*		if (sb.length()>0) sb.append("\n") ;
-						sb.append(param.get("name")).append(": ") ;
-						sb.append(param.get("valueVoc")).append(" ") ;
-						sb.append(param.get("unitname")).append(" ") ;*/
 					}
 					//3-текстовый
 					//5-текстовый с ограничением
-				} else if (type.equals("3")||type.equals("5")) {
-					if (!StringUtil.isNullOrEmpty(value)) {
+                } else if (type.equals("3") || type.equals("5") && !StringUtil.isNullOrEmpty(value)) {
 						fip.setValueText(value) ;
-				/*		if (sb.length()>0) sb.append("\n") ;
-						sb.append(param.get("name")).append(": ") ;
-						sb.append(value).append(" ") ;
-						sb.append(param.get("unitname")).append(" ") ;*/
-					}
 				}
 				aManager.persist(fip) ;
 			}

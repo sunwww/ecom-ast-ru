@@ -281,7 +281,33 @@ public class VocServiceJs {
 	 */
 	public String setMessagesReadBeforeDate(String date,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> list = service.executeNativeSql("select * from setMessagesReadBeforeDate(to_date('"+date+"','dd.mm.yyyy'))".toString());
+		Collection<WebQueryResult> list = service.executeNativeSql("select * from setMessagesReadBeforeDate(to_date('"+date+"','dd.mm.yyyy'))");
 		return list.iterator().next()!=null? list.iterator().next().get1().toString() : "0";
+	}
+
+	/**
+	 * Обновить данные по консультациям в стационаре (если не проставлена отметка о выполнении) #227
+	 *
+	 * @param aRequest HttpServletRequest
+	 * @return String Сообщение
+	 */
+	public String updateSCG(HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select * from updatescg()");
+		return list.iterator().next()!=null? list.iterator().next().get1().toString() : "error";
+	}
+
+	/**
+	 * Проставить до выбранной даты отмену консультаций, если она не выполнена, а пациент уже выписан (с причиной "Выписан") #227
+	 *
+	 * @param date Дата, до которой надо искать выписанных пациентов
+	 * @param aRequest HttpServletRequest
+	 * @return String Сообщение
+	 */
+	public String setWfConsDischarged(String date,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select * from setWfConsDischarged(to_date('"+date+"','dd.mm.yyyy'),'" + username + "')");
+		return list.iterator().next()!=null? list.iterator().next().get1().toString() : "error";
 	}
 }

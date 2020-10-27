@@ -30,7 +30,6 @@ public interface IWorkerService {
 	String getVocServiceStreamByIdInfo(Long aId) ;
 	String getVocWorkFunctionByIdInfo(Long aId) ;
 	List<TableTimeBySpecialists> getTableByDayAndFunction(Date aDateStart, Date aDateFinish, Long aVocWorkFunctionId) ;
-	List<TableSpetialistByDay> getTableSpetialistByDay(Date aDate, Long aWorkCalendarDay) ;
 	String getCalendarTimeId(Long aCalendarDay, Time aCalendarTime, Long aMinIs) ;
 	String getDayBySpec(Long aWorkFunction) ;
 }

@@ -21,27 +21,15 @@
               <msh:textField property="workPlace" horizontalFill="true" />
           </msh:row><msh:row>
           <msh:row>
-          <<msh:checkBox property="isDoctor"  />
+          <msh:checkBox property="isDoctor"  />
       </msh:row>
          <msh:textField property="symptomsDate" />
       </msh:row><msh:row>
          <msh:textField property="brigadeNumber"  horizontalFill="true"/>
       </msh:row><msh:row>
-         <msh:textField property="diagnosis" horizontalFill="true" />
-      </msh:row><msh:row>
          <msh:autoComplete property="mkb" vocName="vocIdc10Covid" horizontalFill="true" />
       </msh:row><msh:row>
          <msh:textField property="diagnosisDate" />
-      </msh:row><msh:row>
-         <msh:textField property="covidResearchDate" />
-      </msh:row><msh:row>
-         <msh:autoComplete property="labOrganization" horizontalFill="true" vocName="vocUserDomainNameById" parentId="269" />
-      </msh:row><msh:row>
-          <msh:textField property="epidNumber" horizontalFill="true" />
-      </msh:row><msh:row>
-          <msh:textField property="labResultNumber" horizontalFill="true" />
-      </msh:row><msh:row>
-         <msh:autoComplete vocName="positiveNegative" property="labResult" horizontalFill="true" />
       </msh:row><msh:row>
         <msh:autoComplete property="vacPnKok" vocName="vocYesNoMaybe" horizontalFill="true" />
       </msh:row><msh:row>
@@ -66,14 +54,26 @@
           <msh:textField property="soputTuber" horizontalFill="true" />
       </msh:row><msh:row>
           <msh:textField property="soputOther" horizontalFill="true" />
+      </msh:row>
+          <msh:row>
+              <msh:textField property="covidResearchDate" />
+          </msh:row><msh:row>
+          <msh:autoComplete property="labOrganization" horizontalFill="true" vocName="vocUserDomainNameById" parentId="269" />
       </msh:row><msh:row>
-          <msh:textField property="saturationLevel" horizontalFill="true" />
-        </msh:row>
+          <msh:textField property="epidNumber" horizontalFill="true" />
+      </msh:row><msh:row>
+          <msh:textField property="labResultNumber" horizontalFill="true" />
+      </msh:row><msh:row>
+          <msh:autoComplete vocName="positiveNegative" property="labResult" horizontalFill="true" />
+      </msh:row>
         <msh:row>
-            <msh:textField property="ishodDate" />
+            <msh:textField property="ishodDate" viewOnlyField="true"/>
         </msh:row><msh:row>
-            <msh:autoComplete vocName="covidResultAllValues" property="ishodResult" horizontalFill="true" />
+            <msh:autoComplete vocName="vocHospitalizationResult" viewOnlyField="true" property="hospResult" horizontalFill="true" />
         </msh:row>
+          <msh:row>
+          <msh:autoComplete property="mkbDischarge" viewOnlyField="true" vocName="vocIdc10" horizontalFill="true" />
+      </msh:row>
         <msh:ifFormTypeAreViewOrEdit formName="smo_covid19Form">
             <msh:separator label="Дополнительная информация" colSpan="4"/>
           <msh:row>
@@ -90,6 +90,24 @@
         </msh:row><msh:row>
             <msh:label property="exportUsername" label="пользователь выгрузки"/>
           </msh:row>
+            <msh:row>
+                <msh:separator label="Выгрузка карты" colSpan="4"/>
+            </msh:row>
+            <msh:row>
+                <msh:label property="exportFirstDate" label="Дата первичной выгрузки"/>
+                <msh:label property="exportFirstTime" label="время"/>
+                <msh:label property="exportFirstUsername" label="пользователь" />
+            </msh:row>
+            <msh:row>
+                <msh:label property="exportDoubleDate" label="Дата повторной выгрузки"/>
+                <msh:label property="exportDoubleTime" label="время"/>
+                <msh:label property="exportDoubleUsername" label="пользователь" />
+            </msh:row>
+            <msh:row>
+                <msh:label property="exportDischargeDate" label="Дата выгрузки при выписке"/>
+                <msh:label property="exportDischargeTime" label="время"/>
+                <msh:label property="exportDischargeUsername" label="пользователь" />
+            </msh:row>
             <msh:ifFormTypeIsView formName="smo_covid19Form">
           <msh:panel title="Добавление контактного лица"/>
           <table>
@@ -142,6 +160,12 @@
         <msh:sideLink params="id" action="/entityParentEdit-smo_covid19" name="Изменить" roles="/Policy/Mis/MedCase/Covid19/Edit" />
         <msh:sideLink params="id" action="/entityParentDelete-smo_covid19" name="Удалить" roles="/Policy/Mis/MedCase/Covid19/Delete" />
         <msh:sideLink action="/javascript:exportCard()" name="Карта выгружена" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink action="/javascript:exportCardNumber('First')" name="Выгружена первично" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink action="/javascript:exportCardNumber('Double')" name="Выгружена повторно" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink action="/javascript:exportCardNumber('Discharge')" name="Выгружена при выписке" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink action="/javascript:deleteExport('First')" name="Отменить первичную выгрузку" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink action="/javascript:deleteExport('Double')" name="Отменить повторную выгрузку" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink action="/javascript:deleteExport('Discharge')" name="Отменить выгрузку при выписке" roles="/Policy/Mis/MedCase/Covid19/Export" />
           <msh:sideLink params="id" action="/print-covid_058.do?m=printCovid&s=PatientPrintService" name="Форма 058"/>
           <msh:sideLink params="id" action="/print-covid_058_gep.do?m=printCovid&s=PatientPrintService" name="Форма 058 (Гепатит)"/>
           <msh:sideLink params="id" action="/print-covid_direct2.do?m=printCovid&s=PatientPrintService" name="Направление"/>
@@ -185,6 +209,40 @@
             window.document.location.reload();
           }
         });
+      }
+
+      //Отметка о выгрузке карты:
+      //First - первично
+      //Double - повторно
+      //Discharge - при выписке
+      function exportCardNumber(number) {
+          var msg = ' первично.';
+          if (number=='Double')
+              msg = ' повторно.';
+          else if (number=='Discharge')
+              msg = ' при выписке';
+          PatientService.markCovidAsSentNumberCheck($('id').value, number, {
+              callback: function (res) {
+                  if ((res=='-1' && confirm('Карта' + msg + ' уже была выгружена. Вы уверены?') || res!='-1')) {
+                          PatientService.markCovidAsSentNumber($('id').value, number, {
+                              callback: function () {
+                                  window.document.location.reload();
+                              }
+                          });
+                  }
+              }
+          });
+      }
+
+      //Убрать отметку о выгрузке карты
+      function deleteExport(number) {
+          if (confirm('Вы уверены?')) {
+              PatientService.markCovidAsUnSent($('id').value, number, {
+                  callback: function (res) {
+                      window.document.location.reload();
+                  }
+              });
+          }
       }
 
       function createContactPatient() { //создаем информацию о контактном пациенте

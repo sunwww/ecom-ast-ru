@@ -22,8 +22,10 @@ function onPreDelete(aMedCaseId, aContext) {
 		,"родов"
 		,"беременности, прикрепленных к случаю"
 		,"данные обменной карты"
+		,"карты COVID-19"
+		,"оценки степени тяжести"
+		,"чек-листы/карты оценки риска"
 		] ;
-		//throw medCase.getId() + "  getStatisticStub()="+medCase.getStatisticStub() ;
 		var err_list = aContext.manager.createNativeQuery("select"
 		+" (select count(*) from Diagnosis as d where d.medCase_id=ms.id) as v0"
 		+",(select count(*) from MedCase as ms1 where ms1.parent_id=ms.id) as v1"
@@ -39,6 +41,9 @@ function onPreDelete(aMedCaseId, aContext) {
 		+",(select count(*) from ChildBirth as cb where cb.medCase_id=ms.id) as v13"
 		+",(select count(*) from PregnancyHistory as ph where ph.medCase_id=ms.id) as v14"
 		+",(select count(*) from PregnanExchangeCard as pec where pec.medCase_id=ms.id) as v15"
+		+",(select count(*) from Covid19 as c where c.medCase_id=ms.id) as v16"
+		+",(select count(*) from CovidMark as cm where cm.medCase_id=ms.id) as v17"
+		+",(select count(*) from assessmentcard as ac where ac.medCase_id=ms.id) as v18"
 		+" from MedCase as ms where ms.DTYPE='HospitalMedCase' and ms.id=:id")
 		.setParameter("id",aMedCaseId).getSingleResult() ;
 		var err_mes="",isErr=false ;

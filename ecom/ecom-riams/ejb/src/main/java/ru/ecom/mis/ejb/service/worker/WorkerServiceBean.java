@@ -218,25 +218,6 @@ public class WorkerServiceBean implements IWorkerService{
 		return ret ;
 	}
 
-	@Deprecated
-	public List<TableSpetialistByDay> getTableSpetialistByDay(Date aDate, Long aWorkCalendarDay) {
-		List<Object[]> list = theManager.createNativeQuery("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')")
-				.setParameter("WCDid", aWorkCalendarDay)
-				.getResultList() ;
-		LinkedList<TableSpetialistByDay> ret = new LinkedList<>() ;
-		long i =0 ;
-		for (Object[] row: list ) {
-			TableSpetialistByDay result = new TableSpetialistByDay() ;
-			Time time = (Time)row[1] ;
-			result.setId((Long)row[0]) ;
-			result.setTime(time) ;
-			result.setTimeString(DateFormat.formatToTime(time)) ;
-			result.setSn(++i) ;
-			ret.add(result);
-		}
-		return ret;
-		
-	}
 	public String getCalendarTimeId(Long aCalendarDay, Time aCalendarTime, Long aMinIs) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null  and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')") ;

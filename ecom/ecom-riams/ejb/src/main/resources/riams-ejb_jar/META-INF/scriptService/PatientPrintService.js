@@ -192,8 +192,21 @@ function printCovid(aCtx, aParams) {
 	map.put("card", covidCard);
 	map.put("pat", covidCard.patient);
 	map.put("epidNumber", covidCard.epidNumber);
+	var labName = covidCard.labOrganization;
+	if (!labName) labName='';
+	else labName = ' '+labName;
+	map.put("labName",labName);
 	var hosp = covidCard.medCase;
 	map.put("hosp", hosp);
+
+	var list = aCtx.manager.createNativeQuery("select to_char((mc.datestart+1),'dd.mm.yyyy') as dsn1,st.code as stc from medcase mc" +
+		" left join statisticstub st on st.id=mc.statisticstub_id where mc.id="+hosp.id).getResultList();
+	if (!list.isEmpty()) {
+		var obj = list.get(0);
+		map.put("dateStartNext",""+obj[0]);
+		map.put("hist",""+obj[1]);
+	}
+
 	map.put("isLabConfirmed",(covidCard.labResult=="1" ? "да":"нет")+
 		(covidCard.getCovidResearchDate()!=null
 			? " №" + (covidCard.labResultNumber!=null ? covidCard.labResultNumber : "")+" от "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(covidCard.getCovidResearchDate())
@@ -203,6 +216,77 @@ function printCovid(aCtx, aParams) {
 	map.put("contactList",aCtx.manager.createNamedQuery("Covid19Contact.getAllByPatient")
 		.setParameter("patient",covidCard.getPatient()).getResultList());
 	return map;
+}
 
+//Печать реестра
+function printCovidReestr(aCtx,aParams) {
+	var dateBegin = ''+aParams.get("dateBegin");
+	var dateEnd = ''+aParams.get("dateEnd");
+    if (!dateEnd) dateEnd=dateBegin;
+    var type = ''+aParams.get("type");
+    var dateSearch='', sqlAdd='', field2_9='', field6='Повторное';
+    if (type==1) {
+        dateSearch = ' sls.dateStart ';
+        sqlAdd = ' and c.exportFirstDate is not null and c.exportDoubleDate is null ';
+        field2_9 = ' sls.datestart+1 ';
+        field6='Первичное';
+    }
+    else if (type==2) {
+        dateSearch = ' c.exportDoubleDate ';
+        sqlAdd = ' and c.exportDoubleDate is not null and c.exportDischargeDate is null ';
+        field2_9 = ' c.exportDoubleDate ';
+    }
+    else if (type==3) {
+        dateSearch = ' c.exportDischargeDate ';
+        sqlAdd = ' and c.exportDischargeDate is not null ';
+        field2_9 = ' c.exportDischargeDate ';
+    }
+	var reestrSql = " select to_char(" + field2_9 + ",'dd.mm.yyyy') as f0_datestart" +
+		" ,st.code as f1_hist" +
+		" ,pat.lastname||' '||pat.firstname||' '||pat.middlename as f2_patfio" +
+		" ,to_char(pat.birthday,'dd.mm.yyyy') as f3_bday" +
+		" ,idc.code as f4_mkb" +
+		" ,c.epidnumber as f5_epid" +
+		" ,  c.epidnumber as f6_enumb" +
+		"    from Covid19 c" +
+		"    left join Patient pat on pat.id=c.patient_id" +
+		"    left join medcase sls on sls.id=c.medcase_id" +
+		"    left join mislpu dep on dep.id=sls.department_id" +
+		"    left join vochospitalizationresult vhr on vhr.id=c.hospresult_id" +
+		"    left join statisticstub st on st.medcase_id=sls.id" +
+		"    left join vocidc10 idc on idc.id=c.mkb_id" +
+		"    where " + dateSearch + " between to_date('" + dateBegin + "','dd.mm.yyyy')" +
+		" 	 and to_date('" + dateEnd + "','dd.mm.yyyy')" +
+		" 	 and (c.noActual is null or c.noActual='0')" +
+        sqlAdd +
+		"    order by pat.lastname||' '||pat.firstname||' '||pat.middlename";
+	var resultCardList = aCtx.manager.createNativeQuery(reestrSql).getResultList();
+	var cards = new java.util.ArrayList();
+	if(!resultCardList.isEmpty()) {
+		for (var i=0; i<resultCardList.size();i++){
+			var p = resultCardList.get(i);
+			var pp = new java.util.ArrayList();
+			var f0_datestart = p[0];
+			var f1_hist = p[1];
+			var f2_patfio = p[2];
+			var f3_bday = p[3];
+			var f4_mkb = p[4];
+			var f5_epid = p[5];
+			var f6_enumb = p[6];
 
+			pp.add(((i+1)+'').replace('.0',''));//0
+			pp.add(f0_datestart);
+			pp.add(f1_hist);
+			pp.add(f2_patfio);
+			pp.add(f3_bday);
+			pp.add(f4_mkb);
+			pp.add(f5_epid);
+			pp.add(f6_enumb);
+			pp.add(field6);
+
+			cards.add(pp);
+		}
+	}
+	map.put("cards", cards);
+	return map;
 }

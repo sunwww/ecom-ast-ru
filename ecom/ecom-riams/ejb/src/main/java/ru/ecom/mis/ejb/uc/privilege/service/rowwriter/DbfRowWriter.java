@@ -1,16 +1,16 @@
 package ru.ecom.mis.ejb.uc.privilege.service.rowwriter;
 
+import ru.ecom.mis.ejb.uc.privilege.service.ColumnMapping;
+import ru.ecom.mis.ejb.uc.privilege.service.IRowWriter;
+import ru.nuzmsh.dbf.DbfField;
+import ru.nuzmsh.dbf.DbfWriter;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import ru.ecom.mis.ejb.uc.privilege.service.ColumnMapping;
-import ru.ecom.mis.ejb.uc.privilege.service.IRowWriter;
-import ru.nuzmsh.dbf.DbfField;
-import ru.nuzmsh.dbf.DbfWriter;
 
 public class DbfRowWriter implements IRowWriter {
 
@@ -21,7 +21,7 @@ public class DbfRowWriter implements IRowWriter {
 	}
 	
 	public void open() {
-		LinkedList<DbfField> fields = new LinkedList<DbfField>() ;
+        LinkedList<DbfField> fields = new LinkedList<>();
 		for(ColumnMapping map:theMapping) {
 			DbfField f = new DbfField(map.getField(), DbfField.CHAR, map.getLength()) ;
 			fields.add(f);
@@ -37,7 +37,7 @@ public class DbfRowWriter implements IRowWriter {
 	
 	public void write(List<String> aRow) {
 		Iterator<ColumnMapping> it = theMapping.iterator() ;
-		HashMap<String, Object> values = new HashMap<String, Object>() ; 
+        HashMap<String, Object> values = new HashMap<>();
 		for(String value : aRow) {
 			if(it.hasNext()) {
 				ColumnMapping map = it.next() ;

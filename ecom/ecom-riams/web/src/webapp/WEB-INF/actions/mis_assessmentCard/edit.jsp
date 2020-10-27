@@ -141,30 +141,10 @@
 	} %>
     </msh:form>
       <form action="print-assessment_card.do" method="post" target="_blank">
-                <input type="hidden" name="SSsqlText" id="SSsqlText" value="select p.id as pid
-		 ,pg.id as pgId
-		 ,pg.name as f2_groupName
-		 ,p.name as f3_parName, p.shortname as f4_parShortName
-		 ,case when p.type = '4' then cast (fip.valuebd  as varchar) when p.type='3' then fip.valuetext when p.type='2' then uv.name else 'WFT '||p.type end as f5_value
-		 ,uv.cntball as f6_ball
-		 ,(select sum( case when p1.group_id=p.group_id then uv1.cntBall else null end)
-			 from forminputprotocol fip1
-			 left join parameter p1 on p1.id=fip1.parameter_id
-			 left join uservalue uv1 on uv1.id=fip1.valuevoc_id
-			 where  fip1.assessmentCard=ac.id 	)
-		 from assessmentCard ac
-		 left join forminputprotocol fip on fip.assessmentCard=ac.id
-		 left join parameter p on p.id=fip.parameter_id
-		 left join parametergroup pg on pg.id=p.group_id
-		 left join uservalue uv on uv.id=fip.valuevoc_id
-		 where ac.id='${param.id}'"/> 
-                
     	    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Список пациентов за ${beginDate}-${endDate} по отделению '>
 	    <input type='hidden' name="id" id="id" value="${param.id}">
 	    <input type='hidden' name="s" id="s" value="PrintService">
 	    <input type='hidden' name="m" id="m" value="printAssessmentCard">
-	    <input type='hidden' name="SSgroupField" id="SSgroupField" value="2,1">
-                           
     </form>
   </tiles:put>
   <tiles:put name="title" type="string">
@@ -175,7 +155,7 @@
     <msh:sideMenu>
       <msh:sideLink key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/AssessmentCard/Edit" />
       <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
-      <msh:sideLink key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/AssessmentCard/View" />
+      <msh:sideLink key="ALT+E"  action="/javascript:printCard()" name="Печать карты или чек-листа" roles="/Policy/Mis/AssessmentCard/View" />
       <msh:sideLink action="/javascript:goBackSloOrVisit()" name="СЛС/СЛО/Визит/Пациент" roles="/Policy/Mis/AssessmentCard/View" />
     </msh:sideMenu>
     
@@ -188,8 +168,10 @@
   <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
   <script type = 'text/javascript'>
   function printCard() {
-  document.forms[1].submit();
-		//window.document.location="print-ass_card1.do?s=PrintService&m=printAssessmentCard&id=${param.id}&groupFields="+groupFields+"&sqlText"+sql;
+      if ($('template').value!=10 && $('template').value!=11)
+            document.forms[1].submit();
+      else
+          window.document.location="print-assessment_cardCheckList.do?s=PrintService&m=printAssessmentCard&id=${param.id}";
   }
   function goBackSloOrVisit() {
       if ($('medcase').value!=null && $('medcase').value!='' && $('medcase').value!='0'

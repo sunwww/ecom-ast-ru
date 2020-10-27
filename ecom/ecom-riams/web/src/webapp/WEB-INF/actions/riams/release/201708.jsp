@@ -73,9 +73,6 @@
 					</li>
 
 					<li>Исправлена ошибка при удалении случая ServiceMedCase</li>
-						<msh:ifInRole roles="/Policy/Config/HelpAdmin">
-							<br>
-						</msh:ifInRole>
 				</ul>
 					</div>
 			</tr>
