@@ -48,9 +48,17 @@
             </td>
           </msh:row>
           <msh:row>
-            <msh:textField property="dateBegin" label="Дата поступления с" />
+            <msh:textField property="dateBegin" label="Дата с" />
             <msh:textField property="dateEnd" label="по" />
           </msh:row>
+        <div>
+          <h3>Примечание</h3>
+          <p>для отчёта: <b>дата поступления</b></p>
+          <p>для реестра первичных: <b>дата поступления</b></p>
+          <p>для реестра повторных: <b>дата повторной выгрузки</b></p>
+          <p>для реестра выписных: <b>дата выгрузки при выписке</b></p>
+          <p>в реестр попадают только актуальные карты</p>
+        </div>
         <msh:row>
           <td>
             <input type="submit" value="Найти" />
@@ -71,7 +79,10 @@
     %>
     <msh:section>
       <msh:sectionTitle>Результаты поиска COVID 19</msh:sectionTitle>
-      <msh:sectionContent>
+      <a href='javascript:printReestr(1)'>Печать реестра ПЕРВИЧНЫХ</a>
+      <a href='javascript:printReestr(2)'>Печать реестра ПОВТОРНЫХ</a>
+      <a href='javascript:printReestr(3)'>Печать реестра ПРИ ВЫПИСКЕ</a>
+       <msh:sectionContent>
         <ecom:webQuery name="list_covid" nativeSql="select  
         c.id, pat.patientinfo,  c.epidnumber as f3_enumb
         ,case when c.noActual='1' then 'background-color:#979090; color:black' when c.exportDate is not null then 'background-color:#8ee68e; color:black'
@@ -126,6 +137,12 @@
        } else {
          jQuery(":radio[name="+aField+"][value='"+aDefaultValue+"']").prop('checked',true);
        }
+     }
+
+     //печать реестра
+     function printReestr(num) {
+       window.location.href = 'print-stac_print_covid19_reestr.do?s=PatientPrintService&m=printCovidReestr&dateBegin='
+               + $('dateBegin').value + '&dateEnd=' + $('dateEnd').value + '&type=' + num;
      }
 
     </script>
