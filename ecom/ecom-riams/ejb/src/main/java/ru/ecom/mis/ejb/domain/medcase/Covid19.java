@@ -321,4 +321,11 @@ public class Covid19 extends BaseEntity {
     public void setExportDischargeUsername(String aExportDischargeUsername) {theExportDischargeUsername = aExportDischargeUsername;}
     /** Кто при выписке выгрузил? */
     private String theExportDischargeUsername ;
+
+    /** Диагноз основной выписной */
+    @Comment("Диагноз основной выписной")
+    @OneToOne
+    public VocIdc10 getMkbDischarge() {return theMkbDischarge;}
+    public void setMkbDischarge(VocIdc10 aMkbDischarge) {theMkbDischarge = aMkbDischarge;}
+    private VocIdc10 theMkbDischarge ;
 }

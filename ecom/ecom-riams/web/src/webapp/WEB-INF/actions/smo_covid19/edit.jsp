@@ -71,6 +71,9 @@
         </msh:row><msh:row>
             <msh:autoComplete vocName="vocHospitalizationResult" viewOnlyField="true" property="hospResult" horizontalFill="true" />
         </msh:row>
+          <msh:row>
+          <msh:autoComplete property="mkbDischarge" viewOnlyField="true" vocName="vocIdc10" horizontalFill="true" />
+      </msh:row>
         <msh:ifFormTypeAreViewOrEdit formName="smo_covid19Form">
             <msh:separator label="Дополнительная информация" colSpan="4"/>
           <msh:row>

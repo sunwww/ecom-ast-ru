@@ -362,4 +362,11 @@ public class Covid19Form extends IdEntityForm {
     public void setExportDischargeUsername(String aExportDischargeUsername) {theExportDischargeUsername = aExportDischargeUsername;}
     /** Кто при выписке выгрузил? */
     private String theExportDischargeUsername ;
+
+    /** Диагноз основной выписной */
+    @Comment("Диагноз основной выписной")
+    @Persist
+    public Long getMkbDischarge() {return theMkbDischarge;}
+    public void setMkbDischarge(Long aMkbDischarge) {theMkbDischarge = aMkbDischarge;}
+    private Long theMkbDischarge ;
 }
