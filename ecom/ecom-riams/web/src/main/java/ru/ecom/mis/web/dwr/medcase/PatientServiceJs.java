@@ -949,7 +949,6 @@ public class PatientServiceJs {
 		return l.isEmpty()? "" : ""+"-1";
 	}
 
-
 	/**
 	 * Проверить выгрузку карты с указанием периода (первично/повторно/при выписке)
 	 * @param aCard Covid19.id
@@ -962,5 +961,18 @@ public class PatientServiceJs {
 		return "обновлено " +service.executeUpdateNativeSql("update Covid19 set export"
 				+ number + "Date=current_date, export" + number + "Time=current_time" +
 				",export" + number + "Username='"+username+"' where id="+aCard) +" карт";
+	}
+
+	/**
+	 * брать отметку о выгрузке карты
+	 * @param aCard Covid19.id
+	 * @param number String Наименование
+	 */
+	public void markCovidAsUnSent(Long aCard, String number, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		service.executeUpdateNativeSql("update Covid19 set export"
+				+ number + "Date=null, export" + number + "Time=null" +
+				",export" + number + "Username=null where id="+aCard);
 	}
 }

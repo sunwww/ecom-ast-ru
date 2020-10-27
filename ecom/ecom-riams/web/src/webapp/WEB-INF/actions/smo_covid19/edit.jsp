@@ -160,6 +160,9 @@
           <msh:sideLink action="/javascript:exportCardNumber('First')" name="Выгружена первично" roles="/Policy/Mis/MedCase/Covid19/Export" />
           <msh:sideLink action="/javascript:exportCardNumber('Double')" name="Выгружена повторно" roles="/Policy/Mis/MedCase/Covid19/Export" />
           <msh:sideLink action="/javascript:exportCardNumber('Discharge')" name="Выгружена при выписке" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink action="/javascript:deleteExport('First')" name="Отменить первичную выгрузку" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink action="/javascript:deleteExport('Double')" name="Отменить повторную выгрузку" roles="/Policy/Mis/MedCase/Covid19/Export" />
+          <msh:sideLink action="/javascript:deleteExport('Discharge')" name="Отменить выгрузку при выписке" roles="/Policy/Mis/MedCase/Covid19/Export" />
           <msh:sideLink params="id" action="/print-covid_058.do?m=printCovid&s=PatientPrintService" name="Форма 058"/>
           <msh:sideLink params="id" action="/print-covid_058_gep.do?m=printCovid&s=PatientPrintService" name="Форма 058 (Гепатит)"/>
           <msh:sideLink params="id" action="/print-covid_direct2.do?m=printCovid&s=PatientPrintService" name="Направление"/>
@@ -226,6 +229,17 @@
                   }
               }
           });
+      }
+
+      //Убрать отметку о выгрузке карты
+      function deleteExport(number) {
+          if (confirm('Вы уверены?')) {
+              PatientService.markCovidAsUnSent($('id').value, number, {
+                  callback: function (res) {
+                      window.document.location.reload();
+                  }
+              });
+          }
       }
 
       function createContactPatient() { //создаем информацию о контактном пациенте
