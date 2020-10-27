@@ -10,9 +10,10 @@ function onCreate(aForm, aEntity, aContext) {
     aEntity.setNoActual(false);
     var username = aContext.getSessionContext().getCallerPrincipal().getName();
     aEntity.setCreateUsername(username) ;
-    aEntity.setExportUsername(null) ;
+    //Информация о выгрузке на портал (exportDate и тп) должна ставиться и в новой карте
+    /*aEntity.setExportUsername(null) ;
     aEntity.setExportDate(null) ;
-    aEntity.setExportTime(null) ;
+    aEntity.setExportTime(null) ;*/
     if ("1".equals(aEntity.labResult)) { //создаем КВ браслет
         addBracelet(manager,"COVID19", aEntity, username);
     }

@@ -27,8 +27,6 @@
       </msh:row><msh:row>
          <msh:textField property="brigadeNumber"  horizontalFill="true"/>
       </msh:row><msh:row>
-         <msh:textField property="diagnosis" horizontalFill="true" />
-      </msh:row><msh:row>
          <msh:autoComplete property="mkb" vocName="vocIdc10Covid" horizontalFill="true" />
       </msh:row><msh:row>
          <msh:textField property="diagnosisDate" />
@@ -107,7 +105,6 @@
                 <msh:label property="exportDischargeTime" label="время"/>
                 <msh:label property="exportDischargeUsername" label="пользователь" />
             </msh:row>
-                <msh:submitCancelButtonsRow colSpan="3" functionSubmit="check_diags('') ;" />
             <msh:ifFormTypeIsView formName="smo_covid19Form">
           <msh:panel title="Добавление контактного лица"/>
           <table>

@@ -53,13 +53,6 @@ public class Covid19Form extends IdEntityForm {
     public void setSymptomsDate(String aSymptomsDate) {theSymptomsDate = aSymptomsDate;}
     private String theSymptomsDate ;
 
-    /** Диагноз */
-    @Comment("Диагноз")
-    @Persist
-    public String getDiagnosis() {return theDiagnosis;}
-    public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
-    private String theDiagnosis ;
-
     /** Дата постановки диагноза */
     @Comment("Дата постановки диагноза")
     @Persist

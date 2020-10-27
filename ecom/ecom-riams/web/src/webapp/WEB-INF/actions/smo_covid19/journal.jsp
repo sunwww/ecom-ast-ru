@@ -73,7 +73,7 @@
       <msh:sectionTitle>Результаты поиска COVID 19</msh:sectionTitle>
       <msh:sectionContent>
         <ecom:webQuery name="list_covid" nativeSql="select  
-        c.id, pat.patientinfo,  to_char(c.createdate,'dd.MM.yyyy')||' '|| cast(c.createtime as varchar(5))
+        c.id, pat.patientinfo,  c.epidnumber as f3_enumb
         ,case when c.noActual='1' then 'background-color:#979090; color:black' when c.exportDate is not null then 'background-color:#8ee68e; color:black'
      when (c.labResult is not null and c.labResult!='') then 'background-color: #f0ba57; color:black' else '' end as f4_styleRow
      ,dep.name as f5_dep
@@ -83,26 +83,32 @@
      ,to_char(c.exportdischargedate,'dd.MM.yyyy') as f9_expDisch
      ,vhr.name as f10_vhrName
      ,to_char(c.ishoddate,'dd.MM.yyyy') as f11_dateResHosp
+        ,st.code as f12_hist
+        ,(select idc.code from covid19 where medcase_id=sls.id and id=(select max(id) from covid19 where medcase_id=sls.id)) as f13_mkb
     from Covid19 c
     left join Patient pat on pat.id=c.patient_id
     left join medcase sls on sls.id=c.medcase_id
     left join mislpu dep on dep.id=sls.department_id
     left join vochospitalizationresult vhr on vhr.id=c.hospresult_id
+    left join statisticstub st on st.medcase_id=sls.id
+    left join vocidc10 idc on idc.id=c.mkb_id
     ${sqlAdd}
     ${periodSql}
     order by c.createdate, c.createtime" />
         <msh:table name="list_covid" action="entityParentView-smo_covid19.do" openNewWindow="true"
                    printToExcelButton="Сохранить в excel" idField="1" styleRow="4" noDataMessage="Не найдено">
           <msh:tableColumn columnName="#" property="sn"/>
-          <msh:tableColumn columnName="Пациент" property="2"/>
-          <msh:tableColumn columnName="Отделение поступления" property="5"/>
-          <msh:tableColumn columnName="Дата поступления" property="6"/>
-          <msh:tableColumn columnName="Дата и время создания карты" property="3"/>
-          <msh:tableColumn columnName="Первичная выгрузка" property="7"/>
-          <msh:tableColumn columnName="Повторная выгрузка" property="8"/>
-          <msh:tableColumn columnName="Выгрузка при выписке" property="9"/>
-          <msh:tableColumn columnName="Результат госп." property="10"/>
-          <msh:tableColumn columnName="Дата выписки" property="11"/>
+          <msh:tableColumn columnName="Пациент" property="2" width="15"/>
+          <msh:tableColumn columnName="Отделение поступления" property="5" width="15"/>
+          <msh:tableColumn columnName="Дата поступления" property="6" width="8"/>
+          <msh:tableColumn columnName="Номер истории" property="12" width="8"/>
+          <msh:tableColumn columnName="Эпид. номер" property="3" width="8"/>
+          <msh:tableColumn columnName="МКБ" property="13" width="6"/>
+          <msh:tableColumn columnName="Первичная выгрузка" property="7" width="8"/>
+          <msh:tableColumn columnName="Повторная выгрузка" property="8" width="8"/>
+          <msh:tableColumn columnName="Выгрузка при выписке" property="9" width="8"/>
+          <msh:tableColumn columnName="Результат госп." property="10" width="8"/>
+          <msh:tableColumn columnName="Дата выписки" property="11" width="8"/>
         </msh:table>
       </msh:sectionContent>
     </msh:section>
