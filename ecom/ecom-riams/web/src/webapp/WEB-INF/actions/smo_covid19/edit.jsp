@@ -167,6 +167,7 @@
           <msh:sideLink action="/javascript:deleteExport('Double')" name="Отменить повторную выгрузку" roles="/Policy/Mis/MedCase/Covid19/Export" />
           <msh:sideLink action="/javascript:deleteExport('Discharge')" name="Отменить выгрузку при выписке" roles="/Policy/Mis/MedCase/Covid19/Export" />
           <msh:sideLink params="id" action="/print-covid_058.do?m=printCovid&s=PatientPrintService" name="Форма 058"/>
+          <msh:sideLink params="id" action="/print-covid_058_disch.do?m=printCovid&s=PatientPrintService" name="Форма 058 (выписная)"/>
           <msh:sideLink params="id" action="/print-covid_058_gep.do?m=printCovid&s=PatientPrintService" name="Форма 058 (Гепатит)"/>
           <msh:sideLink params="id" action="/print-covid_direct2.do?m=printCovid&s=PatientPrintService" name="Направление"/>
 

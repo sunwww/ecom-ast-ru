@@ -199,12 +199,14 @@ function printCovid(aCtx, aParams) {
 	var hosp = covidCard.medCase;
 	map.put("hosp", hosp);
 
-	var list = aCtx.manager.createNativeQuery("select to_char((mc.datestart+1),'dd.mm.yyyy') as dsn1,st.code as stc from medcase mc" +
+	var list = aCtx.manager.createNativeQuery("select to_char((mc.datestart+1),'dd.mm.yyyy') as dsn1,st.code as stc" +
+        ", case when mc.datefinish is null then '' else to_char((mc.datefinish+1),'dd.mm.yyyy') end from medcase mc" +
 		" left join statisticstub st on st.id=mc.statisticstub_id where mc.id="+hosp.id).getResultList();
 	if (!list.isEmpty()) {
 		var obj = list.get(0);
 		map.put("dateStartNext",""+obj[0]);
 		map.put("hist",""+obj[1]);
+        map.put("dateFinNext",""+obj[2]);
 	}
 
 	map.put("isLabConfirmed",(covidCard.labResult=="1" ? "да":"нет")+
@@ -290,3 +292,4 @@ function printCovidReestr(aCtx,aParams) {
 	map.put("cards", cards);
 	return map;
 }
+
