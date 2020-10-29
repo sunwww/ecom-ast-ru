@@ -195,6 +195,11 @@ function printCovid(aCtx, aParams) {
 	var labName = covidCard.labOrganization;
 	if (!labName) labName='';
 	else labName = ' '+labName;
+
+	var exportDoubleDate = Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(covidCard.getExportDoubleDate());
+	if (!exportDoubleDate) exportDoubleDate='';
+	map.put("exportDoubleDate",exportDoubleDate);
+
 	map.put("labName",labName);
 	var hosp = covidCard.medCase;
 	map.put("hosp", hosp);
@@ -293,3 +298,96 @@ function printCovidReestr(aCtx,aParams) {
 	return map;
 }
 
+//Печать журнала
+function printCovidJournal(aCtx,aParams) {
+	var dateBegin = ''+aParams.get("dateBegin");
+	var jrnlSql = "select st.code as f1_stCode,to_char(c.exportFirstDate,'dd.mm.yyyy')||' '||to_char(c.exportFirstTime,'HH24:mm') as f2_df" +
+		" ,pat.lastname||' '||pat.firstname||' '||pat.middlename as f3_patfio" +
+		" ,to_char(pat.birthday,'dd.mm.yyyy') as f4_bday" +
+		" , case when pat.address_addressId is not null" +
+		"  then coalesce(adr.fullname,adr.name)" +
+		"  ||case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end" +
+		"  ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end" +
+		" ||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end" +
+		" when pat.territoryRegistrationNonresident_id is not null" +
+		" then okt.name||' '||pat.RegionRegistrationNonresident||' '||oq.name||' '||pat.SettlementNonresident" +
+		" ||' '||ost.name||' '||pat.StreetNonresident" +
+		"  ||case when pat.HouseNonresident is not null and pat.HouseNonresident!='' then ' д.'||pat.HouseNonresident else '' end" +
+		" ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end" +
+		" ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end" +
+		" else pat.foreignRegistrationAddress end as f5_address" +
+		" ,c.workplace as f6_job" +
+		" ,to_char(c.SymptomsDate,'dd.mm.yyyy') as f7_startIll" +
+		" ,idc.code||' '||to_char(sls.dateStart,'dd.mm.yyyy') as f8_mkb" +
+		" ,to_char(sls.datestart,'dd.mm.yyyy') as f9_dateStart" +
+		" ,to_char(sls.datestart,'dd.mm.yyyy') as f10_firstAsk" +
+		" ,case when idc3.id is not null then idc3.code||' '||to_char(c3.createdate,'dd.mm.yyyy') else " +
+		" case when idc2.id is not null then idc2.code||' '||to_char(c2.createdate,'dd.mm.yyyy') else '' end end as f11_ds" +
+		" ,case when c3.id is not null then to_char(c3.covidresearchdate,'dd.mm.yyyy')||' '||" +
+		" (case when c3.labResult='1' then cast('Положительно' as varchar) else case when c3.labResult='2' then cast('Отрицательно' as varchar) else '' end end) else " +
+		" case when c2.id is not null then to_char(c2.covidresearchdate,'dd.mm.yyyy')||' '||" +
+		" (case when c2.labResult='1' then cast('Положительно' as varchar) else case when c2.labResult='2' then cast('Отрицательно' as varchar) else '' end end)" +
+		" else '' end end as f12_research" +
+		" ,case when sls.datefinish is not null then cast('Дата выписки: ' as varchar)||to_char(sls.datefinish,'dd.mm.yyyy') else '' end as f13_dateFin" +
+		" ,case when c3.id is not null then cast('Дата выгрузки: ' as varchar)||to_char(c3.exportDischargeDate,'dd.mm.yyyy') else '' end as f14_dateFinExp" +
+		" from Covid19 c" +
+		" left join Patient pat on pat.id=c.patient_id" +
+		" left join medcase sls on sls.id=c.medcase_id" +
+		" left join mislpu dep on dep.id=sls.department_id" +
+		" left join vochospitalizationresult vhr on vhr.id=c.hospresult_id" +
+		" left join statisticstub st on st.medcase_id=sls.id" +
+		" left join vocidc10 idc on idc.id=c.mkb_id" +
+		" left join Address2 adr on adr.addressid = pat.address_addressid" +
+		" left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id" +
+		" left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id" +
+		" left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id" +
+		" left join Covid19 c2 on c2.medcase_id=c.medcase_id and c2.exportDoubleDate is not null" +
+		" left join Covid19 c3 on c3.medcase_id=c.medcase_id and c3.exportDischargeDate is not null" +
+		" left join vocidc10 idc3 on idc3.id=c3.mkb_id" +
+		" left join vocidc10 idc2 on idc2.id=c2.mkb_id" +
+		" where c.exportFirstDate=to_date('" + dateBegin + "','dd.mm.yyyy')" +
+		" and c.exportDoubleDate is null " +
+		" and c.id=(select min(id) from covid19 where medcase_id=sls.id)" +
+		" order by pat.lastname||' '||pat.firstname||' '||pat.middlename";
+	var resultCardList = aCtx.manager.createNativeQuery(jrnlSql).getResultList();
+	var cards = new java.util.ArrayList();
+	if(!resultCardList.isEmpty()) {
+		for (var i=0; i<resultCardList.size();i++){
+			var p = resultCardList.get(i);
+			var pp = new java.util.ArrayList();
+			var f1_stCode = p[0];
+			var f2_df = p[1];
+			var f3_patfio = p[2];
+			var f4_bday = p[3];
+			var f5_address = p[4];
+			var f6_job = p[5];
+			var f7_startIll = p[6];
+			var f8_mkb = p[7];
+			var f9_dateStart = p[8];
+			var f10_firstAsk = p[9];
+			var f11_ds = p[10];
+			var f12_research = p[11];
+			var f13_dateFin = p[12];
+			var f14_dateFinExp = p[13];
+
+			pp.add(((i+1)+'').replace('.0','') + '/' + f1_stCode);
+			pp.add(f2_df);
+			pp.add(f3_patfio);
+			pp.add(f4_bday);
+			pp.add(f5_address);
+			pp.add(f6_job);
+			pp.add(f7_startIll);
+			pp.add(f8_mkb);
+			pp.add(f9_dateStart);
+			pp.add(f10_firstAsk);
+			pp.add(f11_ds);
+			pp.add(f12_research);
+			pp.add(f13_dateFin);
+			pp.add(f14_dateFinExp);
+
+			cards.add(pp);
+		}
+	}
+	map.put("cards", cards);
+	return map;
+}
