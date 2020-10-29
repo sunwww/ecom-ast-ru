@@ -3142,7 +3142,7 @@ left join patient wp on wp.id=w.person_id "
 				join=" left join voccolor vc on vcip.color_id=vc.id " order=""
 				names="vc.name||' ('||vcip.name||')'"
 				queried=" upper(vc.name||' ('||vcip.name||')') like upper(:query) "
-				queryAppend = ' (isforpatology is null or isforpatology=false)'
+				queryAppend = ' (isDeniedManual is null or isDeniedManual=false)'
 		/>
 	</voc>
 	<!-- Браслеты с патологией-->

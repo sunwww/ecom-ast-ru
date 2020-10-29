@@ -43,4 +43,11 @@ public class VocColorIdentityPatient extends VocBaseEntity {
     public void setIsForPatology(Boolean aIsForPatology) {theIsForPatology = aIsForPatology;}
     /** Патология в лаборатории?  */
     private Boolean theIsForPatology ;
+
+    /** Запрещено создавать вручную? */
+    @Comment("Запрещено создавать вручную?")
+    public Boolean getIsDeniedManual() {return theIsDeniedManual;}
+    public void setIsDeniedManual(Boolean aIsDeniedManual) {theIsDeniedManual = aIsDeniedManual;}
+    /** Запрещено создавать вручную?  */
+    private Boolean theIsDeniedManual ;
 }

@@ -28,6 +28,9 @@
                 <msh:row>
                     <msh:checkBox property="isForNewborn" label="Может ли заполняться в родах?"  horizontalFill="true" size="100"/>
                 </msh:row>
+                <msh:row>
+                    <msh:checkBox property="isDeniedManual" label="Запрещено создавать вручную?"  horizontalFill="true" size="100"/>
+                </msh:row>
                 <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
         </msh:form>
