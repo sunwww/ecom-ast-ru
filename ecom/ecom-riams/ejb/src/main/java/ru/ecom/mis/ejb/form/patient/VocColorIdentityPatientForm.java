@@ -51,4 +51,12 @@ public class VocColorIdentityPatientForm  extends IdEntityForm {
     public void setLpu(Long aLpu ) {  theLpu = aLpu ; }
     /** ЛПУ */
     private Long theLpu ;
+
+    /** Запрещено создавать вручную? */
+    @Comment("Запрещено создавать вручную?")
+    @Persist
+    public Boolean getIsDeniedManual() {return theIsDeniedManual;}
+    public void setIsDeniedManual(Boolean aIsDeniedManual) {theIsDeniedManual = aIsDeniedManual;}
+    /** Запрещено создавать вручную?  */
+    private Boolean theIsDeniedManual ;
 }

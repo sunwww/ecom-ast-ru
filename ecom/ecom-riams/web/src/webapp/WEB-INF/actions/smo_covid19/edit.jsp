@@ -8,6 +8,20 @@
   <tiles:put name="title" type="string">
       <ecom:titleTrail title="Covid 2019" mainMenu="Patient" beginForm="smo_covid19Form" />
   </tiles:put>
+    <style type="text/css">
+    #side ul li a#start {
+    background-color: lightgrey;
+    }
+    #side ul li a#firstExport {
+        background-color: lightcyan;
+    }
+    #side ul li a#doubleExport {
+        background-color: palegreen;
+    }
+    #side ul li a#dischExport {
+        background-color: lightcoral;
+    }
+    </style>
   <tiles:put name="body" type="string">
     <msh:form action="entityParentSaveGoView-smo_covid19.do" defaultField="cardNumber">
       <msh:hidden property="id" />
@@ -128,7 +142,7 @@
         </td></tr></table>
             </msh:ifFormTypeIsView>
         </msh:ifFormTypeAreViewOrEdit>
-        <msh:submitCancelButtonsRow colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" functionSubmit="save();"/>
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="smo_covid19Form">
@@ -156,27 +170,52 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="smo_covid19Form">
-      <msh:sideMenu title="COVID">
-        <msh:sideLink params="id" action="/entityParentEdit-smo_covid19" name="Изменить" roles="/Policy/Mis/MedCase/Covid19/Edit" />
-        <msh:sideLink params="id" action="/entityParentDelete-smo_covid19" name="Удалить" roles="/Policy/Mis/MedCase/Covid19/Delete" />
-        <msh:sideLink action="/javascript:exportCard()" name="Карта выгружена" roles="/Policy/Mis/MedCase/Covid19/Export" />
-          <msh:sideLink action="/javascript:exportCardNumber('First')" name="Выгружена первично" roles="/Policy/Mis/MedCase/Covid19/Export" />
-          <msh:sideLink action="/javascript:exportCardNumber('Double')" name="Выгружена повторно" roles="/Policy/Mis/MedCase/Covid19/Export" />
-          <msh:sideLink action="/javascript:exportCardNumber('Discharge')" name="Выгружена при выписке" roles="/Policy/Mis/MedCase/Covid19/Export" />
-          <msh:sideLink action="/javascript:deleteExport('First')" name="Отменить первичную выгрузку" roles="/Policy/Mis/MedCase/Covid19/Export" />
-          <msh:sideLink action="/javascript:deleteExport('Double')" name="Отменить повторную выгрузку" roles="/Policy/Mis/MedCase/Covid19/Export" />
-          <msh:sideLink action="/javascript:deleteExport('Discharge')" name="Отменить выгрузку при выписке" roles="/Policy/Mis/MedCase/Covid19/Export" />
-          <msh:sideLink params="id" action="/print-covid_058.do?m=printCovid&s=PatientPrintService" name="Форма 058"/>
-          <msh:sideLink params="id" action="/print-covid_058_gep.do?m=printCovid&s=PatientPrintService" name="Форма 058 (Гепатит)"/>
-          <msh:sideLink params="id" action="/print-covid_direct2.do?m=printCovid&s=PatientPrintService" name="Направление"/>
 
-      </msh:sideMenu>
+        <msh:sideMenu title="COVID">
+            <msh:sideLink styleId="start" params="id" confirm="Удалить?" action="/entityParentDelete-smo_covid19" name="Удалить" roles="/Policy/Mis/MedCase/Covid19/Delete" />
+            <msh:sideLink styleId="start" action="/javascript:exportCard()" name="Карта выгружена" roles="/Policy/Mis/MedCase/Covid19/Export" />
+        </msh:sideMenu>
+
+        <msh:sideMenu title="">
+          <msh:sideLink params="id" action="/entityParentEdit-smo_covid19" name="Изменить" roles="/Policy/Mis/MedCase/Covid19/Edit" />
+        </msh:sideMenu>
+
+        <msh:sideMenu title="Первично">
+            <msh:sideLink styleId="firstExport" params="id" action="/print-covid_058.do?m=printCovid&s=PatientPrintService" name="Форма 058"/>
+            <msh:sideLink styleId="firstExport" action="/javascript:exportCardNumber('First')" name="Выгружена первично" roles="/Policy/Mis/MedCase/Covid19/Export" />
+            <msh:sideLink styleId="firstExport" action="/javascript:deleteExport('First')" name="Отменить первичную выгрузку" roles="/Policy/Mis/MedCase/Covid19/Export" />
+        </msh:sideMenu>
+
+        <msh:sideMenu title="Повторно">
+            <msh:sideLink styleId="doubleExport" params="id" action="/print-covid_058_double.do?m=printCovid&s=PatientPrintService" name="Форма 058 (повторная)"/>
+            <msh:sideLink styleId="doubleExport" action="/javascript:exportCardNumber('Double')" name="Выгружена повторно" roles="/Policy/Mis/MedCase/Covid19/Export" />
+            <msh:sideLink styleId="doubleExport" action="/javascript:deleteExport('Double')" name="Отменить повторную выгрузку" roles="/Policy/Mis/MedCase/Covid19/Export" />
+        </msh:sideMenu>
+
+        <msh:sideMenu title="При выписке">
+            <msh:sideLink styleId="dischExport" params="id" action="/print-covid_058_disch.do?m=printCovid&s=PatientPrintService" name="Форма 058 (выписная)"/>
+            <msh:sideLink styleId="dischExport" action="/javascript:exportCardNumber('Discharge')" name="Выгружена при выписке" roles="/Policy/Mis/MedCase/Covid19/Export" />
+            <msh:sideLink styleId="dischExport" action="/javascript:deleteExport('Discharge')" name="Отменить выгрузку при выписке" roles="/Policy/Mis/MedCase/Covid19/Export" />
+        </msh:sideMenu>
+          <msh:sideLink params="id" action="/print-covid_058_gep.do?m=printCovid&s=PatientPrintService" name="Форма 058 (Гепатит)"/>
     </msh:ifFormTypeIsView>
 
  </tiles:put>
   <tiles:put name="javascript" type="string">
       <script type='text/javascript' src='./dwr/interface/PatientService.js'></script>
     <script type="text/javascript">
+
+        //проверка на заполнение обязательных полей
+        //из-за редактирования с saveType=1 неправильно считается parent
+        //если не заполнить поле и отправить форму, то id карты превращается в parent - id госпитализации
+        function save() {
+            if (!$('workPlace').value || !$('mkb').value) {
+                showToastMessage('Заполните обязательные поля!', null, true, true, 3000);
+                $('submitButton').removeAttribute('disabled');
+            }
+            else
+                document.forms[0].submit();
+        }
     </script>
       <msh:ifFormTypeIsCreate formName="smo_covid19Form">
           <script type='text/javascript'>
@@ -202,6 +241,8 @@
         $('saveType').value='1';
         if ($('contactBirthDate')) new dateutil.DateField($('contactBirthDate'));
       };
+
+
 
       function exportCard() { // отметка о выгрузке карты на портал
         PatientService.markCovidAsSent($('id').value, {

@@ -2917,6 +2917,8 @@ function printCovidAllDepartments(aCtx, aParams) {
 		" ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end" +
 		" ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end" +
 		" else pat.foreignRegistrationAddress end as address" +
+		" , st.code as stCode" +
+		" ,to_char(sls.dateStart,'dd.mm.yyyy') as dSt" +
 		" from medCase m" +
 		" left join MedCase as sls on sls.id = m.parent_id" +
 		" left join Mislpu dep on dep.id=m.department_id" +
@@ -2926,6 +2928,7 @@ function printCovidAllDepartments(aCtx, aParams) {
 		" left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id" +
 		" left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id" +
 		" left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id" +
+		" left join StatisticStub st on st.medcase_id=sls.id" +
 		" where m.DTYPE='DepartmentMedCase' and dep.isForCovid=true" +
 		dateSql +
 		" group by dep.name,pat.lastname,pat.firstname" +
@@ -2935,7 +2938,7 @@ function printCovidAllDepartments(aCtx, aParams) {
 		" , pat.territoryRegistrationNonresident_id , okt.name,pat.RegionRegistrationNonresident,oq.name,pat.SettlementNonresident" +
 		" ,ost.name,pat.StreetNonresident" +
 		" , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident" +
-		" , pat.foreignRegistrationAddress,sls.id" +
+		" , pat.foreignRegistrationAddress,sls.id,st.code,sls.dateStart" +
 		" order by dep.name,pat.lastname,pat.firstname,pat.middlename";
 	var resultPatList = aCtx.manager.createNativeQuery(patListSql).getResultList();
 	var patients = new java.util.ArrayList();
@@ -2948,6 +2951,8 @@ function printCovidAllDepartments(aCtx, aParams) {
 			var sex = p[2];
 			var bth = p[3];
 			var adr = p[4];
+			var hist = p[5];
+			var datest = p[6];
 
 			pp.add(((i+1)+'').replace('.0',''));//0
 			pp.add(dept);
@@ -2955,6 +2960,8 @@ function printCovidAllDepartments(aCtx, aParams) {
 			pp.add(sex);
 			pp.add(bth);
 			pp.add(adr);
+			pp.add(hist);
+			pp.add(datest);
 
 			patients.add(pp);
 		}
