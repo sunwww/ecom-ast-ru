@@ -196,7 +196,7 @@ function printCovid(aCtx, aParams) {
 	if (!labName) labName='';
 	else labName = ' '+labName;
 
-	var exportDoubleDate = Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(covidCard.getExportDoubleDate());
+	var exportDoubleDate = covidCard.exportDoubleDate;
 	if (!exportDoubleDate) exportDoubleDate='';
 	map.put("exportDoubleDate",exportDoubleDate);
 
@@ -231,7 +231,7 @@ function printCovidReestr(aCtx,aParams) {
 	var dateEnd = ''+aParams.get("dateEnd");
     if (!dateEnd) dateEnd=dateBegin;
     var type = ''+aParams.get("type");
-    var dateSearch='', sqlAdd='', field2_9='', field6='Повторное';
+    var dateSearch='', sqlAdd='', field2_9='', field6='';
     if (type==1) {
         dateSearch = ' sls.dateStart ';
         sqlAdd = ' and c.exportFirstDate is not null and c.exportDoubleDate is null ';
@@ -242,11 +242,13 @@ function printCovidReestr(aCtx,aParams) {
         dateSearch = ' c.exportDoubleDate ';
         sqlAdd = ' and c.exportDoubleDate is not null and c.exportDischargeDate is null ';
         field2_9 = ' c.exportDoubleDate ';
+		field6='Повторное';
     }
     else if (type==3) {
         dateSearch = ' c.exportDischargeDate ';
         sqlAdd = ' and c.exportDischargeDate is not null ';
         field2_9 = ' c.exportDischargeDate ';
+		field6='Выписное';
     }
 	var reestrSql = " select to_char(" + field2_9 + ",'dd.mm.yyyy') as f0_datestart" +
 		" ,st.code as f1_hist" +

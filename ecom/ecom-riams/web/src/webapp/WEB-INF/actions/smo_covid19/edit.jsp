@@ -142,7 +142,7 @@
         </td></tr></table>
             </msh:ifFormTypeIsView>
         </msh:ifFormTypeAreViewOrEdit>
-        <msh:submitCancelButtonsRow colSpan="4" />
+        <msh:submitCancelButtonsRow colSpan="4" functionSubmit="save();"/>
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="smo_covid19Form">
@@ -229,6 +229,18 @@
         $('saveType').value='1';
         if ($('contactBirthDate')) new dateutil.DateField($('contactBirthDate'));
       };
+
+      //проверка на заполнение обязательных полей
+      //из-за редактирования с saveType=1 неправильно считается parent
+      //если не заполнить поле и отправить форму, то id карты превращается в parent - id госпитализации
+      function save() {
+          if (!$('workPlace').value || !$('mkb').value) {
+              showToastMessage('Заполните обязательные поля!', null, true, true, 3000);
+              $('submitButton').removeAttribute('disabled');
+          }
+          else
+              document.forms[0].submit();
+      }
 
       function exportCard() { // отметка о выгрузке карты на портал
         PatientService.markCovidAsSent($('id').value, {
