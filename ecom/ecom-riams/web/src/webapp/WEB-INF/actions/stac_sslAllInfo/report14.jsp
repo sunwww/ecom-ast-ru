@@ -1,5 +1,5 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -29,60 +29,137 @@
   	String typeAge=ActionUtil.updateParameter("Report14","typeAge","1", request) ;
   	String typeView=ActionUtil.updateParameter("Report14","typeView","1", request) ;
   	String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
-      String dateAge = "2".equals(typeDate) ? "dateFinish" : "dateStart";
-
+  	String dateAge="dateStart" ;
+  	if (typeDate!=null && typeDate.equals("2")) {
+  		dateAge="dateFinish" ;
+  	}
   	request.setAttribute("dateAgeFld", dateAge) ;
-      String ageSql = " and cast(to_char(sls." + dateAge + ",'yyyy') as int)" +
-              " -cast(to_char(p.birthday,'yyyy') as int)" +
-              " +(case when (cast(to_char(sls." + dateAge + ", 'mm') as int)" +
-              " -cast(to_char(p.birthday, 'mm') as int)" +
-              " +(case when (cast(to_char(sls." + dateAge + ",'dd') as int)" +
-              " - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)" +
-              " <0)" +
-              " then -1 else 0 end) ";
-      String age;
-      if ("1".equals(typeAge)) {
-          age = ageSql + ">= 18 ";
+  	if (typeAge!=null &&typeAge.equals("1")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)")
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) >= 18 ") ;
+  		//.append(" then -1 else 0 end) between 18 and case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
+		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "А. Взрослые") ;
-      } else if ("2".equals(typeAge)) {
-          age = ageSql + " >= case when p.sex_id='" + sexWoman + "' then 55 else 60 end ";
+  	} else if (typeAge!=null &&typeAge.equals("2")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)")
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) >= case when p.sex_id='").append(sexWoman).append("' then 55 else 60 end ") ;
+		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "Б. Взрослые старше трудоспособного возраста") ;
-      } else if ("3".equals(typeAge)) {
-          age = ageSql + " < 18 ";
-          request.setAttribute("reportInfo", "В. Дети");
-      } else if ("4".equals(typeAge)) {
-          age = " and sls." + dateAge + "-p.birthday < 7 ";
+  	} else if (typeAge!=null &&typeAge.equals("3")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+  				.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+  				.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+  				.append(" -cast(to_char(p.birthday, 'mm') as int)")
+  				.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)")
+  				.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+  				.append(" <0)")
+  				.append(" then -1 else 0 end) < 18 ") ;
+  		request.setAttribute("age_sql", age.toString()) ;
+  		request.setAttribute("age_info", "В. Дети") ;
+  	} else if (typeAge!=null &&typeAge.equals("4")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and sls.").append(dateAge).append("-p.birthday < 7 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "до года") ;
-      } else if ("5".equals(typeAge)) {
-          age = ageSql + " < 1 ";
+  	} else if (typeAge!=null &&typeAge.equals("5")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)")
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) < 1 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "до года") ;
-      } else if ("6".equals(typeAge)) {
-          age = ageSql + " between 0 and 14 ";
+  	} else if (typeAge!=null &&typeAge.equals("6")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)")
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) between 0 and 14 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "0-14") ;
-      } else if ("7".equals(typeAge)) {
-          age = ageSql + " between 15 and 17 ";
+  	} else if (typeAge!=null &&typeAge.equals("7")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)")
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) between 15 and 17 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "15-17") ;
-      } else if ("8".equals(typeAge)) {
-          age = ageSql + " between 0 and 17 ";
+  	} else if (typeAge!=null &&typeAge.equals("8")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)")
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+			.append(" then -1 else 0 end) between 0 and 17 ") ;
+		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "0-17") ;
-      } else if ("9".equals(typeAge)) {
-          age = ageSql + " between 16 and case when p.sex_id='" +
-                  sexWoman + "' then 54 else 59 end ";
+  	} else if (typeAge!=null &&typeAge.equals("9")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)")
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+  			.append(" then -1 else 0 end) between 16 and case when p.sex_id='")
+  			.append(sexWoman).append("' then 54 else 59 end ") ;
+		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста с 16 лет") ;
-      } else if ("10".equals(typeAge)) {
-          age = " between 18 and case when p.sex_id='" +
-                  sexWoman + "' then 54 else 59 end ";
+  	} else if (typeAge!=null &&typeAge.equals("10")) {
+  		StringBuilder age = new StringBuilder() ;
+  		age.append(" and cast(to_char(sls.").append(dateAge).append(",'yyyy') as int)")
+			.append(" -cast(to_char(p.birthday,'yyyy') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(", 'mm') as int)")
+			.append(" -cast(to_char(p.birthday, 'mm') as int)")
+			.append(" +(case when (cast(to_char(sls.").append(dateAge).append(",'dd') as int)")
+			.append(" - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)")
+			.append(" <0)")
+  			.append(" then -1 else 0 end) between 18 and case when p.sex_id='")
+  			.append(sexWoman).append("' then 54 else 59 end ") ;
+		request.setAttribute("age_sql", age.toString()) ;
   		request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста с 18 лет") ;
-      } else {
-          age = "";
-      }
-      request.setAttribute("age_sql", age);
+  	}
+  	//request.setAttribute("result_death", "6") ;
+  	//request.setAttribute("orderType_amb", "3") ;
   	ActionUtil.getValueByList("result_death_sql", "result_death", request) ;
   	ActionUtil.getValueByList("orderType_amb_sql", "orderType_amb", request) ;
   	StringBuilder paramSql= new StringBuilder() ;
   	StringBuilder paramHref= new StringBuilder() ;
   	
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("sex", "p.sex_id", request)) ;
+  	//--old---paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
   	String view = (String)request.getAttribute("typeView") ;
 
   	if (view.equals("5")) {
@@ -95,7 +172,15 @@
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("additionStatus", "p.additionStatus_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("bedType", "bf.bedType_id", request)) ;
   	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("bedSubType", "bf.bedSubType_id", request)) ;
+  	/*
+  	ActionUtil.setParameterFilterSql("sex", "p.sex_id", request) ;
+  	ActionUtil.setParameterFilterSql("department", "sloa.department_id", request) ;
+  	ActionUtil.setParameterFilterSql("hospType", "sls.hospType_id", request) ;
 
+  	paramSql.append(" ").append(request.getAttribute("departmentSql")!=null?request.getAttribute("departmentSql"):"") ;
+  	paramSql.append(" ").append(request.getAttribute("hospTypeSql")!=null?request.getAttribute("hospTypeSql"):"") ;
+  	paramSql.append(" ").append(request.getAttribute("sexSql")!=null?request.getAttribute("sexSql"):"") ;
+  	*/
   	paramHref.append("sex=").append(request.getParameter("sex")!=null?request.getParameter("sex"):"") ;
   	paramHref.append("&hospType=").append(request.getParameter("hospType")!=null?request.getParameter("hospType"):"") ;
   	paramHref.append("&serviceStream=").append(request.getParameter("serviceStream")!=null?request.getParameter("serviceStream"):"") ;
@@ -108,7 +193,10 @@
   	ActionUtil.getValueByList("diag_typeReg_pat_sql", "diag_typeReg_pat", request) ;
   	ActionUtil.getValueByList("diag_priority_m_sql", "diag_priority_m", request) ;
   	ActionUtil.getValueByList("diag_typeReg_direct_sql", "diag_typeReg_direct", request) ;
-      if (!"1".equals(noViewForm)) {
+  	//request.setAttribute("diag_typeReg_cl", "4") ;
+  	//request.setAttribute("diag_typeReg_pat", "5") ;
+  	//request.setAttribute("diag_priority_m", "1") ;
+  	if (noViewForm!=null && noViewForm.equals("1")) {
   	} else {
   		
   %>
@@ -272,7 +360,19 @@
     	$('id').value = $('dateBegin').value+":"
     		+$('dateBegin').value+":"
     		+$('department').value;
+    }/*
+    function printJournal() {
+    	var frm = document.forms[0] ;
+    	frm.m.value="printJournalByDay" ;
+    	frm.target='_blank' ;
+    	frm.action='print-stac_journal001.do' ;
+    	$('id').value =
+    		$('dateBegin').value+":"
+
+    		+$('department').value;
     }
+    */
+    /**/
     if ($('dateBegin').value=="") {
     	$('dateBegin').value=getCurrentDate() ;
     }
@@ -283,12 +383,14 @@
     
     String date = request.getParameter("dateBegin") ;
     String dateEnd = request.getParameter("dateEnd") ;
+    //String id = (String)request.getParameter("id") ;
     String period = request.getParameter("period") ;
     String strcode =request.getParameter("strcode") ;
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
-    
+    //request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));));
+
     if (view.equals("1")) {
         if (date!=null && !date.equals("")) {
            
@@ -658,11 +760,9 @@ order by p.lastname,p.firstname,p.middlename " />
     	} else {%>
     	<i>Нет данных </i>
     	<% }
-        }
+    }
 
-            boolean someBool = period != null && !period.equals("")
-                    && strcode != null && !strcode.equals("");
-            if (view.equals("2") || view.equals("3") || view.equals("4") || view.equals("5")) {
+    if (view.equals("2")||view.equals("3")||view.equals("4")||view.equals("5")) {
     	if (view.equals("2")) {
     		request.setAttribute("outcomeSql", "and vho.code='1'") ;
     		request.setAttribute("outcomeInfo", "выписанные");
@@ -672,7 +772,7 @@ order by p.lastname,p.firstname,p.middlename " />
     	} else if (view.equals("4")) {
     		request.setAttribute("outcomeSql", " ") ;
     		request.setAttribute("outcomeInfo", "выписанные и переведенные");
-        } else { //view=5
+    	} else if (view.equals("5")) {
     		request.setAttribute("outcomeSql", " ") ;
     		request.setAttribute("outcomeInfo", "направленные");
     	} 
@@ -688,7 +788,7 @@ order by p.lastname,p.firstname,p.middlename " />
 		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
     	} else if (view.equals("4")) {
 		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
-    } else { //view=5
+    	} else if (view.equals("5")) {
 		request.setAttribute("periodSql"," and sls.dateStart between to_date('"+request.getAttribute("dateBegin")+"','dd.mm.yyyy') and to_date('"+request.getAttribute("dateEnd")+"','dd.mm.yyyy') and sloa.prevmedcase_id is null and sls.deniedHospitalizating_id is null") ;
     	} 
 
@@ -761,8 +861,8 @@ order by vrspt.strCode
     
     </msh:sectionContent>
     </msh:section>
-      <%
-      } else if (someBool) {
+    <%} else if (period!=null && !period.equals("")
+    && strcode!=null && !strcode.equals("")) {
     	
     	String[] obj = period.split("-") ;
     	String dateBegin=obj[0] ;
@@ -776,7 +876,7 @@ order by vrspt.strCode
 		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
     	} else if (view.equals("4")) {
 		request.setAttribute("periodSql"," and sls.dateFinish between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy') and sloa.datefinish is not null") ;
-    } else { //view=5
+    	} else if (view.equals("5")) {
 		request.setAttribute("periodSql"," and sls.dateStart between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy') and sloa.prevmedcase_id is null") ;
     	} 
 
@@ -970,8 +1070,8 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
         
         </msh:sectionContent>
         </msh:section>
-      <%
-      } else if (someBool) {
+        <%} else if (period!=null && !period.equals("")
+        && strcode!=null && !strcode.equals("")) {
         	
         	String[] obj = period.split("-") ;
         	String dateBegin=obj[0] ;
@@ -1231,8 +1331,8 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
         
         </msh:sectionContent>
         </msh:section>
-      <%
-      } else if (someBool) {
+        <%} else if (period!=null && !period.equals("")
+        && strcode!=null && !strcode.equals("")) {
         	
         	String[] obj = period.split("-") ;
         	String dateBegin=obj[0] ;
@@ -1598,8 +1698,8 @@ order by vrspt.strCode
     
     </msh:sectionContent>
     </msh:section>
-      <%
-      } else if (someBool) {
+    <%} else if (period!=null && !period.equals("")
+    && strcode!=null && !strcode.equals("")) {
     	
     	String[] obj = period.split("-") ;
     	String dateBegin=obj[0] ;
