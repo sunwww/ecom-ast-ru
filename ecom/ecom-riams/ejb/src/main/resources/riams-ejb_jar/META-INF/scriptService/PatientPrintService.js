@@ -325,13 +325,15 @@ function printCovidJournal(aCtx,aParams) {
 		" ,to_char(sls.datestart,'dd.mm.yyyy') as f10_firstAsk" +
 		" ,case when idc3.id is not null then idc3.code||' '||to_char(c3.createdate,'dd.mm.yyyy') else " +
 		" case when idc2.id is not null then idc2.code||' '||to_char(c2.createdate,'dd.mm.yyyy') else '' end end as f11_ds" +
-		" ,case when c3.id is not null then to_char(c3.covidresearchdate,'dd.mm.yyyy')||' '||" +
+		" ,case when c3.covidresearchdate is not null then to_char(c3.covidresearchdate,'dd.mm.yyyy')||' '||" +
+		" (case when c3.labresultnumber is not null then cast('№' as varchar)||c3.labresultnumber else '' end)||' '||" +
 		" (case when c3.labResult='1' then cast('Положительно' as varchar) else case when c3.labResult='2' then cast('Отрицательно' as varchar) else '' end end) else " +
-		" case when c2.id is not null then to_char(c2.covidresearchdate,'dd.mm.yyyy')||' '||" +
+		" case when c2.covidresearchdate is not null then to_char(c2.covidresearchdate,'dd.mm.yyyy')||' '||" +
+		" (case when c2.labresultnumber is not null then cast('№' as varchar)||c2.labresultnumber else '' end)||' '||" +
 		" (case when c2.labResult='1' then cast('Положительно' as varchar) else case when c2.labResult='2' then cast('Отрицательно' as varchar) else '' end end)" +
 		" else '' end end as f12_research" +
 		" ,case when sls.datefinish is not null then cast('Дата выписки: ' as varchar)||to_char(sls.datefinish,'dd.mm.yyyy') else '' end as f13_dateFin" +
-		" ,case when c3.id is not null then cast('Дата выгрузки: ' as varchar)||to_char(c3.exportDischargeDate,'dd.mm.yyyy') else '' end as f14_dateFinExp" +
+		" ,case when c3.id is not null then cast('Дата передачи КЭС: ' as varchar)||to_char(c3.exportDischargeDate,'dd.mm.yyyy') else '' end as f14_dateFinExp" +
 		" from Covid19 c" +
 		" left join Patient pat on pat.id=c.patient_id" +
 		" left join medcase sls on sls.id=c.medcase_id" +
@@ -350,6 +352,8 @@ function printCovidJournal(aCtx,aParams) {
 		" where c.exportFirstDate=to_date('" + dateBegin + "','dd.mm.yyyy')" +
 		" and c.exportDoubleDate is null " +
 		" and c.id=(select min(id) from covid19 where medcase_id=sls.id)" +
+		" and (c2.id is null or c2.id=(select max(id) from covid19 where medcase_id=sls.id))" +
+		" and (c3.id is null or c3.id=(select max(id) from covid19 where medcase_id=sls.id))" +
 		" order by pat.lastname||' '||pat.firstname||' '||pat.middlename";
 	var resultCardList = aCtx.manager.createNativeQuery(jrnlSql).getResultList();
 	var cards = new java.util.ArrayList();
