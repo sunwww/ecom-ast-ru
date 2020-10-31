@@ -1528,7 +1528,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         } else if (entryType.equals(POLYCLINICTYPE) || SERVICETYPE.equals(entryType)) {
             fileType = "H";
             String workPlace = aEntry.getWorkPlace();
-            Boolean isMobilePolyclinic = isNotNull(aEntry.getIsMobilePolyclinic());
+            boolean isMobilePolyclinic = isNotNull(aEntry.getIsMobilePolyclinic());
             if (SERVICETYPE.equals(entryType)) { //КТ-МРТ подаем типом записи УСЛУГА //TODO говнокод
                 if (aEntry.getDepartmentId().equals(416L)) {
                     code = "TELEMED_" + aEntry.getMainService();
@@ -1711,7 +1711,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
             if (ret instanceof VocBaseEntity || ret instanceof VocMedService) { //Проверить
                 try {
-                    Method setCodeMethod = ret.getClass().getMethod("setCode", new Class[]{String.class});
+                    Method setCodeMethod = ret.getClass().getMethod("setCode", String.class);
                     setCodeMethod.invoke(ret, aCode);
                     LOG.info("create new voc(" + aClass.getName() + ").set code = " + aCode);
                 } catch (Exception e) {
@@ -3525,7 +3525,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             //Вид медицинской помощи (для расчета нужен профиль МП)
             String v008Code;
-            if (Boolean.TRUE.equals(aEntry.getIsRehabBed())) {
+            if (Boolean.TRUE.equals(aEntry.getIsRehabBed()) && "7".equals(aEntry.getDepartmentType())) { //реабилитация в стационаре при пол-ке
                 v008Code = "13";
             } else if (aEntry.getSubType() != null && aEntry.getSubType().getCode().equals("POLDAYTIMEHOSP")) {
                 v008Code = aEntry.getMedHelpProfile().getProfileK().equals("97") ? "12" : "13"; // TODO = переделать
