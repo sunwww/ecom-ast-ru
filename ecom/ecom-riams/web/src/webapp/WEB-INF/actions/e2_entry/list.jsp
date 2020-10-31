@@ -146,6 +146,7 @@ String defectColumnName = "Дефект";
             <input type="button" onclick="exportErrorsNewListEntry()" value="Перенести ошибки в новое заполнение">
             <input type="button" onclick="fixSomeError('223')" value="Поправить 223">
             <input type="button" onclick="fixSomeError('CV_DEATH')" value="Поправить смерь от ковида">
+            <input type="button" onclick="fixSomeError('AUTOSMO')" value="Сделать согаз всем безполисным">
                 </td></tr>
             </table>
 

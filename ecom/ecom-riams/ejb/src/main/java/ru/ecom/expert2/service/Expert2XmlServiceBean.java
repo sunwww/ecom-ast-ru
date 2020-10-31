@@ -525,7 +525,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(ksgKpg, "BZTSZ", currentEntry.getBaseTarif());
                     add(ksgKpg, "KOEF_D", "1"); //TODO
                     add(ksgKpg, "KOEF_U", "1"); //TODO
-                    if (currentEntry.getKsgPosition()!=null) addIfNotNull(ksgKpg, "CRIT", currentEntry.getKsgPosition().getDopPriznak());
+                    if (currentEntry.getKsgPosition() != null)
+                        addIfNotNull(ksgKpg, "CRIT", currentEntry.getKsgPosition().getDopPriznak());
                     //DKK2
                     List<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = currentEntry.getPatientDifficulty();
                     if (!difficultyEntryLinks.isEmpty()) {
@@ -551,11 +552,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
 
                 if (a3 && aEntry.getDispResult() != null && ",3,4,5,14,15,19,17,18,31,32,".contains("," + aEntry.getDispResult().getCode() + ",")) { //нужная нам группа здоровья
-                        Element naz = new Element("NAZ");
-                        add(naz, "NAZ_N", "1");
-                        add(naz, "NAZ_R", "3");
-                        add(naz, "NAZ_V", "1");
-                        sl.addContent(naz);
+                    Element naz = new Element("NAZ");
+                    add(naz, "NAZ_N", "1");
+                    add(naz, "NAZ_R", "3");
+                    add(naz, "NAZ_V", "1");
+                    sl.addContent(naz);
                 }
                 add(sl, "ED_COL", edCol);
                 if (isPoliclinicKdp) {
@@ -976,6 +977,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     err.append("НЕ УКАЗАН НОМЕР ПОЛИСА;");
                     isError = true;
                 }
+                if (!isNotNull(entry.getInsuranceCompanyCode())) {
+                    err.append("НЕ УКАЗАН КОД СТРАХ КОМПАНИИ;");
+                    isError = true;
+                }
                 if (isPolic && !isNotNull(entry.getMainMkb())) {
                     err.append("НЕ УКАЗАН ОСНОВНОЙ ДИАГНОЗ");
                     isError = true;
@@ -1067,7 +1072,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 .getResultList();
         if (!slo.isEmpty()) {
             hospital = cloneEntity(slo.get(0));
-            if (hospital == null) {return null;}
+            if (hospital == null) {
+                return null;
+            }
             E2Entry lastEntry = slo.get(slo.size() - 1);
             hospital.setFondResult(lastEntry.getFondResult());
             hospital.setFondIshod(lastEntry.getFondIshod());
