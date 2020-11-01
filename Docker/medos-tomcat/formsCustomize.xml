@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms>
+  <form name="contract_medContract_personForm">
+    <field name="priceList" default="5" />
+  </form>
+  <form name="e2_entryListForm">
+    <field name="entryType" default="2" />
+    <field name="finishDate" default="30.11.2019" />
+    <field name="startDate" default="01.11.2019" />
+  </form>
+  <form name="e2_polFinancePlanForm">
+    <field name="finishDate" default="31.12.2019" />
+    <field name="startDate" default="01.01.2019" />
+  </form>
+  <form name="e2_stacFinancePlanForm">
+    <field name="finishDate" default="31.12.2019" />
+    <field name="startDate" default="01.01.2019" />
+  </form>
+  <form name="e2_vocBaseTariffForm">
+    <field name="finishDate" default="30.06.2018" />
+    <field name="startDate" default="01.01.2018" />
+    <field name="type" default="1" />
+    <field name="value" default="140.6" />
+  </form>
+  <form name="e2_vocMedServiceCostForm">
+    <field name="finishDate" default="31.12.2020" />
+    <field name="startDate" default="01.01.2020" />
+  </form>
+  <form name="exp_formatForm">
+    <field name="actualDateFrom" default="01.01.2019" />
+  </form>
+  <form name="exp_importformatUploadForm">
+    <field name="actualDateFrom" default="${currentDate}" />
+    <field name="actualDateTo" visible="false" />
+  </form>
+  <form name="mis_bedFundForm">
+    <field name="bedSubType" default="1" />
+    <field name="bedType" default="12" />
+    <field name="dateStart" default="01.04.2019" />
+    <field name="reductionType" default="1" />
+    <field name="timeStart" default="00:00" />
+  </form>
+  <form name="mis_dispensaryCardJournalForm">
+    <field name="finishDate" default="31.12.2018" />
+    <field name="startDate" default="01.01.2018" />
+  </form>
+  <form name="mis_patientSearchForm">
+    <field name="lpuArea" visible="false" />
+  </form>
+  <form name="stac_admissionJournalForm">
+    <field name="dateBegin" label="" default="21.03.2020" />
+    <field name="dateEnd" label="" default="31.03.2020" />
+    <field name="lpuDirect" default="1" />
+  </form>
+  <form name="stac_sslAdmissionForm">
+    <field name="lpu" default="1" />
+  </form>
+</forms>
+

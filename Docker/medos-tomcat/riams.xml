@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>RIAMS CONFIG</comment>
+
+<entry key="ejb-app-name">riams-app</entry>
+<entry key="java.naming.provider.url">jnp://${jboss.url}:1099/</entry>
+
+
+</properties>
