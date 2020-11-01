@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<datasources>
+  <local-tx-datasource>
+    <jndi-name>RiamsBaseDS</jndi-name>
+    <connection-url>jdbc:postgresql://192.168.10.2:5432/riams</connection-url>
+    <driver-class>org.postgresql.Driver</driver-class>
+    <user-name>postgres</user-name>
+    <password>1_P0$tgre$!</password>
+
+   <min-pool-size>10</min-pool-size>
+    <max-pool-size>10</max-pool-size>
+
+    <check-valid-connection-sql>SELECT 1+1</check-valid-connection-sql>
+      
+      <metadata>
+         <type-mapping>PostgreSQL</type-mapping>
+      </metadata>
+    
+  </local-tx-datasource>
+</datasources>
