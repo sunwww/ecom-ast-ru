@@ -1,0 +1,14 @@
+version: '3'
+services:
+  medos_jboss:
+    build: ecom/ecom-riams/ejb/
+    container_name: medos_jboss
+    ports:
+      - "1099:1099"
+  medos_tomcat:
+    build: ecom/ecom-riams/web
+    container_name: medos_tomcat
+    depends_on:
+      - medos_jboss
+    ports:
+      - "8080:8080"
