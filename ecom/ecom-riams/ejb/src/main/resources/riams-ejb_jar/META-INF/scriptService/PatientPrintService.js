@@ -323,8 +323,8 @@ function printCovidJournal(aCtx,aParams) {
 		" ,idc.code||' '||to_char(sls.dateStart,'dd.mm.yyyy') as f8_mkb" +
 		" ,to_char(sls.datestart,'dd.mm.yyyy') as f9_dateStart" +
 		" ,to_char(sls.datestart,'dd.mm.yyyy') as f10_firstAsk" +
-		" ,case when idc3.id is not null then idc3.code||' '||to_char(c3.createdate,'dd.mm.yyyy') else " +
-		" case when idc2.id is not null then idc2.code||' '||to_char(c2.createdate,'dd.mm.yyyy') else '' end end as f11_ds" +
+		" ,case when idc3.id is not null and c3.exportdoubledate is not null then idc3.code||' '||to_char(c3.exportdoubledate,'dd.mm.yyyy') else " +
+		" case when idc2.id is not null and c2.exportdoubledate is not null then idc2.code||' '||to_char(c2.exportdoubledate,'dd.mm.yyyy') else '' end end as f11_ds" +
 		" ,case when c3.covidresearchdate is not null then to_char(c3.covidresearchdate,'dd.mm.yyyy')||' '||" +
 		" (case when c3.labresultnumber is not null then cast('№' as varchar)||c3.labresultnumber else '' end)||' '||" +
 		" (case when c3.labResult='1' then cast('Положительно' as varchar) else case when c3.labResult='2' then cast('Отрицательно' as varchar) else '' end end) else " +
