@@ -94,7 +94,8 @@
                 left join Covid19 c on sls.id=c.medcase_id
                 left join MedCase sloa on sloa.parent_id=sls.id
                 left join Medcase prevmc on prevmc.id=sloa.prevmedcase_id
-                left join mislpu depinner on case when sloa.department_id=501 then depinner.id=prevmc.department_id else depinner.id=sloa.department_id end
+                left join MisLpu lpua on lpua.id=sloa.department_id
+                left join mislpu depinner on case when lpua.isnoomc=true then depinner.id=prevmc.department_id else depinner.id=sloa.department_id end
                 where m.DTYPE='DepartmentMedCase'
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 and vbt.code='14'
@@ -110,7 +111,8 @@
                 left join Covid19 c on sls.id=c.medcase_id
                 left join MedCase sloa on sloa.parent_id=sls.id
                 left join Medcase prevmc on prevmc.id=sloa.prevmedcase_id
-                left join mislpu depinner on case when sloa.department_id=501 then depinner.id=prevmc.department_id else depinner.id=sloa.department_id end
+                left join MisLpu lpua on lpua.id=sloa.department_id
+                left join mislpu depinner on case when lpua.isnoomc=true then depinner.id=prevmc.department_id else depinner.id=sloa.department_id end
                 where m.DTYPE='DepartmentMedCase'
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 and vbt.code='14'
@@ -127,7 +129,8 @@
                 left join Covid19 c on sls.id=c.medcase_id
                 left join MedCase sloa on sloa.parent_id=sls.id
                 left join Medcase prevmc on prevmc.id=sloa.prevmedcase_id
-                left join mislpu dep on case when sloa.department_id=501 then dep.id=prevmc.department_id else dep.id=sloa.department_id end
+                left join MisLpu lpua on lpua.id=sloa.department_id
+                left join mislpu dep on case when lpua.isnoomc=true then dep.id=prevmc.department_id else dep.id=sloa.department_id end
                 where m.DTYPE='DepartmentMedCase'
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 and vbt.code='14'
@@ -178,7 +181,8 @@
                 left join Covid19 c on sls.id=c.medcase_id
                 left join MedCase sloa on sloa.parent_id=sls.id
                 left join Medcase prevmc on prevmc.id=sloa.prevmedcase_id
-                left join mislpu dep on case when sloa.department_id=501 then dep.id=prevmc.department_id else dep.id=sloa.department_id end
+                left join MisLpu lpua on lpua.id=sloa.department_id
+                left join mislpu dep on case when lpua.isnoomc=true then dep.id=prevmc.department_id else dep.id=sloa.department_id end
                 left join statisticstub st on st.medcase_id=sls.id
                 where m.DTYPE='DepartmentMedCase'
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')

@@ -224,7 +224,8 @@
                 left join CovidMark c on sls.id=c.medcase_id
                 left join MedCase sloa on sloa.parent_id=sls.id
                 left join Medcase prevmc on prevmc.id=sloa.prevmedcase_id
-                left join mislpu dep on case when sloa.department_id=501 then dep.id=prevmc.department_id else dep.id=sloa.department_id end
+                left join MisLpu lpua on lpua.id=sloa.department_id
+                left join mislpu dep on case when lpua.isnoomc=true then dep.id=prevmc.department_id else dep.id=sloa.department_id end
                 left join MedCase as m on sls.id = m.parent_id
                 left join diagnosis diag on diag.medcase_id=sls.id or diag.medcase_id=m.id
                 left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -331,7 +332,8 @@
                 left join CovidMark c on sls.id=c.medcase_id
                 left join MedCase sloa on sloa.parent_id=sls.id
                 left join Medcase prevmc on prevmc.id=sloa.prevmedcase_id
-                left join mislpu dep on case when sloa.department_id=501 then dep.id=prevmc.department_id else dep.id=sloa.department_id end
+                left join MisLpu lpua on lpua.id=sloa.department_id
+                left join mislpu dep on case when lpua.isnoomc=true then dep.id=prevmc.department_id else dep.id=sloa.department_id end
                 left join diagnosis diag on diag.medcase_id=sls.id or diag.medcase_id=m.id
                 left join vocidc10 mkb on mkb.id=diag.idc10_id
                 left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
