@@ -9,16 +9,16 @@
       <ecom:titleTrail title="Covid 2019" mainMenu="Patient" beginForm="smo_covid19Form" />
   </tiles:put>
     <style type="text/css">
-    #side ul li a#start {
+    #side ul li a#start,tr#start  {
     background-color: lightgrey;
     }
-    #side ul li a#firstExport {
+    #side ul li a#firstExport,tr#first {
         background-color: lightcyan;
     }
-    #side ul li a#doubleExport {
+    #side ul li a#doubleExport,tr#double {
         background-color: palegreen;
     }
-    #side ul li a#dischExport {
+    #side ul li a#dischExport,tr#disch {
         background-color: lightcoral;
     }
     </style>
@@ -97,31 +97,32 @@
         </msh:row><msh:row>
               <msh:label property="createUsername" label="пользователь"/>
           </msh:row>
-          <msh:row>
-            <msh:label property="exportDate" label="Дата выгрузки"/>
-          </msh:row><msh:row>
-            <msh:label property="exportTime" label="время выгрузки"/>
-        </msh:row><msh:row>
-            <msh:label property="exportUsername" label="пользователь выгрузки"/>
-          </msh:row>
-            <msh:row>
-                <msh:separator label="Выгрузка карты" colSpan="4"/>
-            </msh:row>
-            <msh:row>
-                <msh:label property="exportFirstDate" label="Дата первичной выгрузки"/>
-                <msh:label property="exportFirstTime" label="время"/>
-                <msh:label property="exportFirstUsername" label="пользователь" />
-            </msh:row>
-            <msh:row>
-                <msh:label property="exportDoubleDate" label="Дата повторной выгрузки"/>
-                <msh:label property="exportDoubleTime" label="время"/>
-                <msh:label property="exportDoubleUsername" label="пользователь" />
-            </msh:row>
-            <msh:row>
-                <msh:label property="exportDischargeDate" label="Дата выгрузки при выписке"/>
-                <msh:label property="exportDischargeTime" label="время"/>
-                <msh:label property="exportDischargeUsername" label="пользователь" />
-            </msh:row>
+
+            <msh:panel  colsWidth="15%,10%,15%,10%,15%,10%">
+              <msh:row styleId="start">
+                <msh:label property="exportDate" label="Дата выгрузки"/>
+                <msh:label property="exportTime" label="время выгрузки"/>
+                <msh:label property="exportUsername" label="пользователь выгрузки"/>
+              </msh:row>
+                <msh:row>
+                    <msh:separator label="Выгрузка карты" colSpan="4"/>
+                </msh:row>
+                <msh:row styleId="first">
+                    <msh:label property="exportFirstDate" label="Дата ПЕРВИЧНОЙ выгрузки"/>
+                    <msh:label property="exportFirstTime" label="время выгрузки"/>
+                    <msh:label property="exportFirstUsername" label="пользователь выгрузки" />
+                </msh:row>
+                <msh:row styleId="double">
+                    <msh:label property="exportDoubleDate" label="Дата ПОВТОРНОЙ выгрузки"/>
+                    <msh:label property="exportDoubleTime" label="время выгрузки"/>
+                    <msh:label property="exportDoubleUsername" label="пользователь выгрузки" />
+                </msh:row>
+                <msh:row  styleId="disch">
+                    <msh:label property="exportDischargeDate" label="Дата выгрузки ПРИ ВЫПИСКЕ"/>
+                    <msh:label property="exportDischargeTime" label="время выгрузки"/>
+                    <msh:label property="exportDischargeUsername" label="пользователь выгрузки" />
+                </msh:row>
+            </msh:panel>
             <msh:ifFormTypeIsView formName="smo_covid19Form">
           <msh:panel title="Добавление контактного лица"/>
           <table>
