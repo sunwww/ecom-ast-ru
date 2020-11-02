@@ -1295,7 +1295,7 @@ public class HospitalMedCaseServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return String json результат
 	 */
-    public String sqlorder263(int slsId,HttpServletRequest aRequest) throws NamingException {
+    public String sqlorder263(Long slsId,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service.executeNativeSql(
 				"SELECT hf.id as f0, hf.firstname as f1, hf.lastname as f2, hf.middlename as f3, to_char(hf.birthday,'dd.mm.yyyy') as f4," +
@@ -1343,7 +1343,7 @@ public class HospitalMedCaseServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return String json c результатом
 	 */
-    public String prevPlanHospital(int patId,HttpServletRequest aRequest) throws NamingException {
+    public String prevPlanHospital(Long patId,HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	String query="select distinct to_char(wchb.datefrom,'dd.mm.yyyy')" +
 				" ,case when wchb.diagnosis<>'null. null' then coalesce(wchb.diagnosis, mkb.code||' ' ||mkb.name) else" +
@@ -1380,7 +1380,7 @@ public class HospitalMedCaseServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return String c сообщением пользователю
 	 */
-    public String watchThisPatient(int slsId,HttpServletRequest aRequest) throws NamingException {
+    public String watchThisPatient(Long slsId,HttpServletRequest aRequest) throws NamingException {
     	String res="Пациент добавлен в список наблюдения!";
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	String query="select id from listwatch where datewatch=current_date";
@@ -1417,7 +1417,7 @@ public class HospitalMedCaseServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return String c сообщением пользователю
 	 */
-    public String notWatchThisPatient(int slsId,HttpServletRequest aRequest) throws NamingException {
+    public String notWatchThisPatient(Long slsId,HttpServletRequest aRequest) throws NamingException {
     	String res="Пациент убран из списка наблюдения!";
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	String query="select medcase_id from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id=(select parent_id from medcase where id='"+slsId+"')"; //есть ли уже
@@ -1437,7 +1437,7 @@ public class HospitalMedCaseServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return String json c результатом
 	 */
-	public String getHWeightIMT(int slsId,HttpServletRequest aRequest) throws NamingException {
+	public String getHWeightIMT(Long slsId,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service.executeNativeSql("select height,weight,imt from statisticstub where medcase_id ='"+slsId+"'",1);
 		JSONObject res = new JSONObject() ;
@@ -1460,7 +1460,7 @@ public class HospitalMedCaseServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return void
 	 */
-	public void setHWeightIMT(int slsId,int height,int weight,double imt,HttpServletRequest aRequest) throws NamingException {
+	public void setHWeightIMT(Long slsId,int height,int weight,double imt,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("update statisticstub set height='" + height + "',weight='"+weight+"',imt='"+imt+"' where medcase_id ='"+slsId+"'");
 	}
@@ -1472,7 +1472,7 @@ public class HospitalMedCaseServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return void
 	 */
-	public void setDietVisitIsDoneReportIMT(int slsId, HttpServletRequest aRequest) throws NamingException {
+	public void setDietVisitIsDoneReportIMT(Long slsId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String query="update statisticstub set dietdone=true where medcase_id ="+slsId;
 		service.executeUpdateNativeSql(query);
@@ -1483,47 +1483,85 @@ public class HospitalMedCaseServiceJs {
 	 *
 	 * @param hmcId HospitalMedCase.id
 	 * @param aRequest HttpServletRequest
-	 * @return Boolean - true - можно удалять данные выписки, false - нельзя
+	 * @return Boolean - true - юзер - лечащий врач, false - нет
 	 */
-	public Boolean checkUserIsALastSloTreatDoctorAndDishargeLess(int hmcId, HttpServletRequest aRequest) throws NamingException {
+	public Boolean checkUserIsALastSloTreatDoctorAndDischargeLess(Long hmcId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		String query="select case when (select ownerfunction_id from medcase where transferdate is null \n" +
-				"and dtype='DepartmentMedCase' and parent_id="+hmcId+")\n" +
-				"=ANY(select wf.id \n" +
-				"from WorkFunction wf\n" +
-				"left join WorkFunction gwf on gwf.id=wf.group_id\n" +
-				"left join VocWorkFunction vwf on vwf.id=wf.workFunction_id\n" +
-				"left join Worker w on w.id=wf.worker_id\n" +
-				"left join MisLpu ml on ml.id=w.lpu_id\n" +
-				"left join Worker sw on sw.person_id=w.person_id\n" +
-				"left join WorkFunction swf on swf.worker_id=sw.id\n" +
-				"left join SecUser su on su.id=swf.secUser_id\n" +
-				"where su.login='"+login+"' and (wf.archival is null or wf.archival='0'))\n" +
-				"then '1' else '0' end";
+		String query="select case when (select ownerfunction_id from medcase where transferdate is null" +
+				" and dtype='DepartmentMedCase' and parent_id="+hmcId+")" +
+				" =ANY(select wf.id" +
+				" from WorkFunction wf" +
+				" left join WorkFunction gwf on gwf.id=wf.group_id" +
+				" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" +
+				" left join Worker w on w.id=wf.worker_id" +
+				" left join MisLpu ml on ml.id=w.lpu_id" +
+				" left join Worker sw on sw.person_id=w.person_id" +
+				" left join WorkFunction swf on swf.worker_id=sw.id" +
+				" left join SecUser su on su.id=swf.secUser_id" +
+				" where su.login='"+login+"' and (wf.archival is null or wf.archival='0'))" +
+				" then '1' else '0' end";
 		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
-		boolean flag=false;
+		return list.isEmpty()? false
+				: list.iterator().next().get1().toString().equals("1");
+	}
+
+	/**
+	 * Проставить перед удалением выписки, что это в течение одного календарного дня.
+	 *
+	 * @param hmcId HospitalMedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean - true - в течение календарного дня, false - нет
+	 */
+	private Boolean checkDischargeThisDay(Long hmcId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+
+		boolean flag = false;
+		//проверка, что datefinish - текущая дата
+		String query = "select datefinish,dischargetime from medcase where id=" + hmcId;
+		Collection<WebQueryResult> list = service.executeNativeSql(query);
+		String datefinish = "", timedisharge = "";
 		if (!list.isEmpty()) {
-			WebQueryResult wqr = list.iterator().next() ;
-			if (wqr.get1().toString().equals("1")) {
-				//проверка, что datefinish - текущая дата
-				query="select datefinish,dischargetime from medcase where id="+hmcId;
-				list = service.executeNativeSql(query);
-				String datefinish="",timedisharge="";
-				if (!list.isEmpty()) {
-					wqr = list.iterator().next() ;
-					datefinish=wqr.get1()!=null ?  wqr.get1().toString() : "";
-					timedisharge=wqr.get2()!=null ?  wqr.get2().toString() : "";
-				}
-				if (!datefinish.equals("") && timedisharge!=null && !timedisharge.equals("")) {
-					Date d = new java.util.Date();
-					String dstr=(new SimpleDateFormat("yyyy-MM-dd")).format(d);
-					flag = (datefinish.equals(dstr));
-				}
-			}
+			WebQueryResult wqr = list.iterator().next();
+			datefinish = wqr.get1() != null ? wqr.get1().toString() : "";
+			timedisharge = wqr.get2() != null ? wqr.get2().toString() : "";
+		}
+		if (!datefinish.equals("") && timedisharge != null && !timedisharge.equals("")) {
+			Date d = new java.util.Date();
+			String dstr = (new SimpleDateFormat("yyyy-MM-dd")).format(d);
+			flag = (datefinish.equals(dstr));
 		}
 		return flag;
 	}
+
+/**
+ * Проставить перед удалением выписки, что это в течение одного календарного дня.
+ *
+ * @param hmcId HospitalMedCase.id
+ * @param aRequest HttpServletRequest
+ * @return Boolean - true - в течение календарного дня, false - нет
+ */
+    public Boolean checkDischargeEnableForNotAdmin(Long hmcId, HttpServletRequest aRequest) throws NamingException {
+        return checkDischargeThisDay(hmcId,aRequest) && !checkMisLpuCovid(hmcId,aRequest);
+    }
+
+    /**
+     * Проставить перед удалением выписки, что это не ковидное отделение.
+     *
+     * @param hmcId HospitalMedCase.id
+     * @param aRequest HttpServletRequest
+     * @return Boolean - true - это ковидное, false - не ковидное
+     */
+	private boolean checkMisLpuCovid(Long hmcId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        String query = " select vbt.id from medcase sls" +
+                " left join medcase sloAll on sloAll.parent_id=sls.id and sloAll.dtype='DepartmentMedCase'" +
+                " left join Mislpu dep on dep.id=sloAll.department_id" +
+                " left join bedfund as bf on bf.id=sloAll.bedfund_id" +
+                " left join vocbedtype vbt on vbt.id=bf.bedType_id" +
+                " where vbt.code='14' and sls.id=" + hmcId;
+        return !service.executeNativeSql(query).isEmpty();
+    }
 
 	/**
 	 * Вывести список микробиологических исследований пациента с положительным результатом #91.
@@ -1641,17 +1679,6 @@ public class HospitalMedCaseServiceJs {
 					.put("wp2name", w.get4());
 		}
 		return res.toString();
-	}
-
-	/**
-	 * Проверить, админ ли (для удаления выписки в любой момент) #83 05072018.
-	 *
-	 * @param aRequest HttpServletRequest
-	 * @return Boolean true - админ, false - нет
-	 */
-	public Boolean checkUserIsAdminToDeleteDischarge(HttpServletRequest aRequest) throws JspException {
-		return (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/Delete",aRequest)
-				&& RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin",aRequest));
 	}
 
 	/**

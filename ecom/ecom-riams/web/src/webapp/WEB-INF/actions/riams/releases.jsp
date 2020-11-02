@@ -16,7 +16,7 @@
 				<div class='menu'>
 				<h2>Что появилось нового в ПО "МедОС"?</h2>
 				<ul>
-					<% if (1==2) { //Добавляем по мер необходимости %>
+					<% if (1==2) { //Добавляем по мере необходимости %>
 					<li><msh:link action="ecom_release-201905.do">ноябрь 2019 года </msh:link></li>
 					<li><msh:link action="ecom_release-201905.do">октябрь 2019 года </msh:link></li>
 					<% } %>
@@ -39,6 +39,7 @@
 					<li><msh:link action="ecom_release-202008.do">август 2020 года </msh:link></li>
 					<li><msh:link action="ecom_release-202009.do">сентябрь 2020 года </msh:link></li>
 					<li><msh:link action="ecom_release-202010.do">октябрь 2020 года </msh:link></li>
+					<li><msh:link action="ecom_release-202011.do">ноябрь 2020 года </msh:link></li>
 
 					<% if (1==2) { %>
 					<li><msh:link  action="ecom_release-201712.do">
