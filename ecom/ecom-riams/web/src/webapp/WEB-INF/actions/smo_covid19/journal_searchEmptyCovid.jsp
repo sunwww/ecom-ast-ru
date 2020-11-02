@@ -100,7 +100,7 @@
                 and vbt.code='14'
                 and depinner.id=dep.id
                 and c.id is not null
-           		and sloa.datefinish is not null and sloa.DTYPE='DepartmentMedCase'
+           		and (sloa.datefinish is not null or sloa.transferdate is null) and sloa.DTYPE='DepartmentMedCase'
                 ) as cntCard
                 ,(select count(distinct sls.id)  from medCase m
                 left join MedCase as sls on sls.id = m.parent_id
@@ -116,7 +116,7 @@
                 and vbt.code='14'
                 and depinner.id=dep.id
                 and c.id is null
-           		and sloa.datefinish is not null and sloa.DTYPE='DepartmentMedCase'
+           		and (sloa.datefinish is not null or sloa.transferdate is null) and sloa.DTYPE='DepartmentMedCase'
                 ) as cntNotCard
                 ,'&depId='||coalesce(dep.id,0)||'&depname='||coalesce(dep.name,'')
                 from medCase m
@@ -132,7 +132,7 @@
                 and ${dateTo} between to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
                 and vbt.code='14'
            		${department}
-           		and sloa.datefinish is not null and sloa.DTYPE='DepartmentMedCase'
+           		and (sloa.datefinish is not null or sloa.transferdate is null) and sloa.DTYPE='DepartmentMedCase'
                 group by dep.id,dep.name
                 order by dep.name
                 " />
@@ -186,7 +186,7 @@
                 ${sqlAdd}
                 ${depSql}
            		${department}
-           		and sloa.datefinish is not null and sloa.DTYPE='DepartmentMedCase'
+           		and (sloa.datefinish is not null or sloa.transferdate is null) and sloa.DTYPE='DepartmentMedCase'
                 order by case when c.id is null then '-' else '+' end,dep.name, pat.patientinfo" />
                 <msh:table printToExcelButton="Сохранить в Excel" name="journal_emptyCovidPat"  noDataMessage="Нет данных"
                            action="entityParentView-stac_ssl.do" idField="1" openNewWindow="true">
