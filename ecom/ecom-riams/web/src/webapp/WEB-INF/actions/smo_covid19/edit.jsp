@@ -79,6 +79,8 @@
           <msh:textField property="labResultNumber" horizontalFill="true" />
       </msh:row><msh:row>
           <msh:autoComplete vocName="positiveNegative" property="labResult" horizontalFill="true" />
+      </msh:row><msh:row>
+          <msh:textField property="saturationLevel" horizontalFill="true" />
       </msh:row>
         <msh:row>
             <msh:textField property="ishodDate" viewOnlyField="true"/>

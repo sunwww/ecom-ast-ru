@@ -369,4 +369,11 @@ public class Covid19Form extends IdEntityForm {
     public Long getMkbDischarge() {return theMkbDischarge;}
     public void setMkbDischarge(Long aMkbDischarge) {theMkbDischarge = aMkbDischarge;}
     private Long theMkbDischarge ;
+
+    /** Уровень SpO2(%)(на момент поступления) */
+    @Comment("Уровень SpO2(%)(на момент поступления)")
+    @Persist
+    public String getSaturationLevel() {return theSaturationLevel;}
+    public void setSaturationLevel(String aSaturationLevel) {theSaturationLevel = aSaturationLevel;}
+    private String theSaturationLevel ;
 }
