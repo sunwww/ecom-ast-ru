@@ -30,7 +30,9 @@
       <msh:sideMenu title="Роды">
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_childBirth" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-preg_childBirth" name="Удалить" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" />
-          <msh:sideLink key="ALT+3" params="id" action="/javascript:addEmptyChild()" name="Добавить пустого ребёнка" roles="/Policy/Mis/MedCase/Stac/Ssl/Delete" />
+          <msh:sideLink key="ALT+3" params="id" action="/javascript:addEmptyChild()" name="Добавить пустого ребёнка" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" />
+          <tags:chooseSlo name="ChooseSlo" sloId="$('medCase').value" func="moveChildBirth"/>
+          <msh:sideLink key="ALT+3" params="" action="/javascript:showChooseSlo()" name="Перенести в другое СЛО" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
          <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.medcase}"
@@ -309,13 +311,23 @@
   else document.getElementsByName("water")[1].checked=true;
   </msh:ifFormTypeIsNotView>
   <msh:ifFormTypeIsView formName="preg_childBirthForm">
-  function addEmptyChild() {
-      PregnancyService.addEmptyChild(${param.id},{
-          callback: function () {
-              window.location.reload() ;
-          }
-      });
-  }
+  <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Delete">
+      function addEmptyChild() {
+          PregnancyService.addEmptyChild(${param.id},{
+              callback: function () {
+                  window.location.reload() ;
+              }
+          });
+      }
+
+      function moveChildBirth(sloId) {
+          PregnancyService.moveChildBirth($('medCase').value,sloId,{
+              callback: function () {
+                  window.location.reload() ;
+              }
+          });
+      }
+  </msh:ifInRole>
   </msh:ifFormTypeIsView>
   </msh:ifFormTypeAreViewOrEdit>
   //настройка для безводного периода

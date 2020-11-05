@@ -31,7 +31,7 @@
 </div>
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}CreateParameterDialogInitialized = false ;
      var the${name}CreateParameterDialog = new msh.widget.Dialog($('${name}CreateParameterDialog')) ;
 	var the${name}Id = "";

@@ -307,4 +307,40 @@ public class PregnancyServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("insert into newborn(createdate,childbirth_id) values(current_date,"+aChbId+")");
 	}
+
+	/**
+	 * Получить все другие СЛО из СЛС кроме СЛО.
+	 *
+	 * @param sloId Slo.id
+	 * @param aRequest HttpServletRequest
+	 * @return String json c результатом
+	 */
+	public String getAllSLOFromSLSBySLO(Long sloId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query=" select allslo.id,dep.name from medcase slo" +
+				" left join medcase allslo on allslo.parent_id=slo.parent_id and allslo.dtype='DepartmentMedCase' and allslo.id<>slo.id" +
+				" left join mislpu dep on dep.id=allslo.department_id" +
+				" where slo.id=" + sloId + " order by allslo.id";
+		JSONArray res = new JSONArray() ;
+		Collection<WebQueryResult> list = service.executeNativeSql(query);
+		for (WebQueryResult w :list) {
+			JSONObject o = new JSONObject() ;
+			o.put("id",w.get1());
+			o.put("name", w.get2());
+			res.put(o);
+		}
+		return res.toString();
+	}
+
+	/**
+	 * Перенести роды, Робсона и, если есть, карта оценки риска ВТЭО, в другое СЛО (если рано создали случай в родовом отделении)
+	 * @param sloFrom MedCase.id
+	 * @param sloTo MedCase.id
+	 */
+	public void moveChildBirth(Long sloFrom, Long sloTo, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update childbirth set medcase_id="+sloTo+" where medcase_id="+sloFrom); //роды
+		service.executeUpdateNativeSql("update robsonclass set medcase_id="+sloTo+" where medcase_id="+sloFrom); //робсона
+		service.executeUpdateNativeSql("update calculationsresult set departmentmedcase_id="+sloTo+" where calculator_id=15 and departmentmedcase_id="+sloFrom); //риск ВТЭО
+	}
 }
