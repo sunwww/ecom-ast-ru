@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.birth.IPregnancyService;
+import ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
@@ -342,5 +343,6 @@ public class PregnancyServiceJs {
 		service.executeUpdateNativeSql("update childbirth set medcase_id="+sloTo+" where medcase_id="+sloFrom); //роды
 		service.executeUpdateNativeSql("update robsonclass set medcase_id="+sloTo+" where medcase_id="+sloFrom); //робсона
 		service.executeUpdateNativeSql("update calculationsresult set departmentmedcase_id="+sloTo+" where calculator_id=15 and departmentmedcase_id="+sloFrom); //риск ВТЭО
+		HospitalMedCaseServiceJs.createAdminChangeMessageBySmo(sloFrom, "HOSP_MOVE_CHILDBIRTH_FROM", "Перенос родов в другое СЛО", aRequest) ;
 	}
 }
