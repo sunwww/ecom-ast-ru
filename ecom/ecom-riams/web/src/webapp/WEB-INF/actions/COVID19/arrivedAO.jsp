@@ -21,7 +21,7 @@
                 then dep.name||' '||to_char(hmc.dateStart,'dd.mm.yyyy')
                 else case when wct.id is not null and wcd.calendardate between current_date and current_date+3
                 and (wct.isdeleted is null or wct.isdeleted='0') then
-                to_char(wcd.calendardate,'dd.mm.yyyy')||' '||to_char(wct.timefrom,'HH24:MM') ||' '||
+                to_char(wcd.calendardate,'dd.mm.yyyy')||' '||to_char(wct.timefrom,'HH24:MI') ||' '||
                 case when wf.dtype='GroupWorkFunction' then wf.groupname else vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename
                 end end end
                 from patient pat

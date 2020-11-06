@@ -87,7 +87,7 @@
     d.id as pid
     , case when d.id is not null then d.record else
     cast('Брак биоматериала: ' as varchar(19))||creason.name||chr(13)||cast('Дата и время брака: ' as varchar(20))||
-    to_char(p.canceldate,'dd.mm.yyyy')||' '||to_char(p.canceltime,'HH24:MM')||chr(13)||vwfCns.name||' '|| pCns.lastname||' '||pCns.firstname||' '||pCns.middlename
+    to_char(p.canceldate,'dd.mm.yyyy')||' '||to_char(p.canceltime,'HH24:MI')||chr(13)||vwfCns.name||' '|| pCns.lastname||' '||pCns.firstname||' '||pCns.middlename
     end as f2drecord
    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
    , p.materialId||' ('||vsst.code||')' as f4material
@@ -316,7 +316,7 @@
     p.id||''',''${param.beginDate}' as pid
      , case when d.id is not null then d.record else
     cast('Брак биоматериала: ' as varchar(19))||creason.name||chr(13)||cast('Дата и время брака: ' as varchar(20))||
-    to_char(p.canceldate,'dd.mm.yyyy')||' '||to_char(p.canceltime,'HH24:MM')||chr(13)||vwfCns.name||' '|| pCns.lastname||' '||pCns.firstname||' '||pCns.middlename
+    to_char(p.canceldate,'dd.mm.yyyy')||' '||to_char(p.canceltime,'HH24:MI')||chr(13)||vwfCns.name||' '|| pCns.lastname||' '||pCns.firstname||' '||pCns.middlename
     end as f2drecord
    , coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed
    , p.materialId||' ('||vsst.code||')' as f4material

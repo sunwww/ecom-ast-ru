@@ -303,7 +303,7 @@ function printCovidReestr(aCtx,aParams) {
 //Печать журнала
 function printCovidJournal(aCtx,aParams) {
 	var dateBegin = ''+aParams.get("dateBegin");
-	var jrnlSql = "select st.code as f1_stCode,to_char(c.exportFirstDate,'dd.mm.yyyy')||' '||to_char(c.exportFirstTime,'HH24:mm') as f2_df" +
+	var jrnlSql = "select st.code as f1_stCode,to_char(c.exportFirstDate,'dd.mm.yyyy')||' '||to_char(c.exportFirstTime,'HH24:MI') as f2_df" +
 		" ,pat.lastname||' '||pat.firstname||' '||pat.middlename as f3_patfio" +
 		" ,to_char(pat.birthday,'dd.mm.yyyy') as f4_bday" +
 		" , case when pat.address_addressId is not null" +
