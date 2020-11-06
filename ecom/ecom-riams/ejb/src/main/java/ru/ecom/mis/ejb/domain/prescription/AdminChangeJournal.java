@@ -105,4 +105,16 @@ public class AdminChangeJournal extends BaseEntity {
 
 	/** Пациент */
 	private Long thePatient;
+
+	/** Дата выписки (которая была удалена) */
+	@Comment("Дата выписки (которая была удалена)")
+	public Date getDateFinishDisch() {return theDateFinishDisch;}
+	public void setDateFinishDisch(Date aDateFinishDisch) {theDateFinishDisch = aDateFinishDisch;}
+	private Date theDateFinishDisch;
+
+	/** Время выписки (которое было удалено) */
+	@Comment("Время выписки (которое было удалено)")
+	public Time getTimeDisch() {return theTimeDisch;}
+	public void setTimeDisch(Time aTimeDisch) {theTimeDisch = aTimeDisch;}
+	private Time theTimeDisch;
 }

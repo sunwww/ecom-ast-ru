@@ -938,18 +938,38 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		sql.append("insert into AdminChangeJournal ( medcase, createDate, createTime")
-			.append(", createUsername, ctype,  annulRecord) ")
-			.append("values (")	.append(aSmo).append(", current_date, current_time, '")
-			.append(login)
-			.append("', '")
-			.append(aType)
-			.append("','")
-			.append(aTextInfo)
-			.append("')")
-						;	
-		service.executeUpdateNativeSql(sql.toString()) ;
-		
+		String dateFinish="", timeDisch="";
+
+		if (aType.equals("HOSP_DELETE_DATA_DISCHARGE")) {
+			IWebQueryService sqlService = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			Collection<WebQueryResult> list = sqlService.executeNativeSql("select datefinish, dischargetime from medcase where id = " + aSmo) ;
+			if (!list.isEmpty()) {
+				WebQueryResult wqr = list.iterator().next();
+				if (wqr.get1()!=null && wqr.get2()!=null) {
+					dateFinish = wqr.get1().toString();
+					timeDisch = wqr.get2().toString();
+				}
+			}
+		}
+
+		//при удалении данных выписки сохраняется только если дата и время непустые
+		if (!aType.equals("HOSP_DELETE_DATA_DISCHARGE") || aType.equals("HOSP_DELETE_DATA_DISCHARGE")
+				&& !dateFinish.equals("") && !timeDisch.equals("")) {
+
+			sql.append("insert into AdminChangeJournal ( medcase, createDate, createTime")
+					.append(", createUsername, ctype,  annulRecord ")
+					.append(aType.equals("HOSP_DELETE_DATA_DISCHARGE")? ", datefinishDisch, timeDisch" : "")
+					.append(") values (")	.append(aSmo).append(", current_date, current_time, '")
+					.append(login)
+					.append("', '")
+					.append(aType)
+					.append("','")
+					.append(aTextInfo)
+					.append(aType.equals("HOSP_DELETE_DATA_DISCHARGE")? "','" + dateFinish + "' , '" + timeDisch + "'" : "'")
+					.append(")")
+			;
+			service.executeUpdateNativeSql(sql.toString()) ;
+		}
 	}
     public String changeStatCardNumber(String aNewStatCardNumber, Long aMedCase, HttpServletRequest aRequest) throws NamingException, JspException {
     	

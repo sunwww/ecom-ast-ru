@@ -436,6 +436,9 @@
 						<li><msh:link  isReport="false" action="journal_searchTextDiary.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 							Поиск дневников по тексту
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_deletedDisch.do" roles="/Policy/Mis/MedCase/Stac/Ssl/Delete">
+							Выписки, данные о которых были удалены
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>
