@@ -132,7 +132,7 @@ group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,vvr.name,v.visitResult_id,mlo.name
 having (count(d.id)>0 or vwfe.isNoDiagnosis='1')
 order by ${orderBy2}"/>
-<msh:table viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1">
+<msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-smo_visit.do" editUrl="entityParentEdit-smo_visit.do" name="list_yes" action="entityView-smo_visit.do" idField="1">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" />
 	      <msh:tableColumn columnName="Пациент" property="6" />
 	      <msh:tableColumn columnName="Услуги" property="9" />
