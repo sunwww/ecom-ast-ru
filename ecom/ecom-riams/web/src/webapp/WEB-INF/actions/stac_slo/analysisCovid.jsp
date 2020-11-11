@@ -29,7 +29,7 @@ left join voccolor vc on vcip.color_id=vc.id
  left join medcase_coloridentitypatient
  ss on ss.colorsidentity_id=cip.id where
 (medcase_id=sls.id or medcase_id=m.id)   and (cip.startdate<=current_date and cip.finishdate is null
-and (vcip.code='LAB_COVID_PLUS' or vcip.code='LAB_COVID_MINUS')
+and (vcip.code='LAB_COVID_PLUS' or vcip.code='LAB_COVID_MINUS' or vcip.code='LAB_COVID_USL')
  or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp)) order by cip.startdate asc) as t) as varchar) as jsonAr
 from medCase m
 left join MedCase as sls on sls.id = m.parent_id
@@ -44,7 +44,7 @@ and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_dat
 and exists(select mcidi.* from medcase_coloridentitypatient mcidi
 left join ColorIdentityPatient cidi on cidi.id=mcidi.colorsidentity_id
 left join VocColorIdentityPatient vcidi on vcidi.id=cidi.voccoloridentity_id
-where (mcidi.medcase_id=sls.id or mcidi.medcase_id=m.id) and (vcidi.code='LAB_COVID_PLUS' or vcidi.code='LAB_COVID_MINUS'))
+where (mcidi.medcase_id=sls.id or mcidi.medcase_id=m.id) and (vcidi.code='LAB_COVID_PLUS' or vcidi.code='LAB_COVID_MINUS' or vcidi.code='LAB_COVID_USL'))
 group by  m.id,pat.lastname,pat.firstname,pat.middlename,sls.id
 order by pat.lastname,pat.firstname,pat.middlename"
         />
