@@ -81,6 +81,12 @@
           <msh:autoComplete vocName="positiveNegative" property="labResult" horizontalFill="true" />
       </msh:row><msh:row>
           <msh:textField property="saturationLevel" horizontalFill="true" />
+      </msh:row><msh:row>
+          <msh:autoComplete property="CT"  vocName="vocCT" horizontalFill="true"/>
+      </msh:row><msh:row>
+              <msh:textField property="dateCT" horizontalFill="true"/>
+          </msh:row><msh:row>
+            <msh:textField property="lpuCT" horizontalFill="true" size="95" />
       </msh:row>
         <msh:row>
             <msh:textField property="ishodDate" viewOnlyField="true"/>
@@ -90,7 +96,7 @@
           <msh:row>
           <msh:autoComplete property="mkbDischarge" viewOnlyField="true" vocName="vocIdc10" horizontalFill="true" />
       </msh:row>
-        <msh:ifFormTypeAreViewOrEdit formName="smo_covid19Form">
+        <msh:ifFormTypeIsView formName="smo_covid19Form">
             <msh:separator label="Дополнительная информация" colSpan="4"/>
           <msh:row>
               <msh:label property="createDate" label="Дата создания"/>
@@ -144,7 +150,7 @@
             <input type="button" value="Добавить контактное лицо" onclick="createContactPatient()">
         </td></tr></table>
             </msh:ifFormTypeIsView>
-        </msh:ifFormTypeAreViewOrEdit>
+        </msh:ifFormTypeIsView>
         <msh:submitCancelButtonsRow colSpan="4" functionSubmit="save();"/>
       </msh:panel>
     </msh:form>
@@ -211,8 +217,10 @@
         //проверка на заполнение обязательных полей
         //из-за редактирования с saveType=1 неправильно считается parent
         //если не заполнить поле и отправить форму, то id карты превращается в parent - id госпитализации
+        //проверка заполнения КТ: либо не проводилось, либо КТ+дата+место проведения
         function save() {
-            if (!$('workPlace').value || !$('mkb').value) {
+            if (!$('workPlace').value || !$('mkb').value
+                ||  !$('CT').value || (+$('CT').value>1 && (!$('lpuCT').value || !$('dateCT').value))) {
                 showToastMessage('Заполните обязательные поля!', null, true, true, 3000);
                 $('submitButton').removeAttribute('disabled');
             }
@@ -315,10 +323,35 @@
         document.getElementById('labOrganization').removeAttribute('type');
       </msh:ifFormTypeIsView>
       <msh:ifFormTypeIsNotView formName="smo_covid19Form">
-        $('labOrganizationName').value=$('labOrganization').value
+        $('labOrganizationName').value=$('labOrganization').value;
       </msh:ifFormTypeIsNotView>
       </script>
     </msh:ifFormTypeAreViewOrEdit>
+      <msh:ifFormTypeIsNotView formName="smo_covid19Form">
+          <script type="text/javascript">
+          //Справочник КТ обязателен для заполнения, дата и место - если выбраны соотв. значения
+          function setCT() {
+              if (+$('CT').value > 1) {
+                  $('dateCT').removeAttribute('hidden');
+                  $('lpuCT').removeAttribute('hidden');
+                  $('dateCT').className = "required";
+                  $('lpuCT').className = "required";
+              } else {
+                  $('dateCT').setAttribute('hidden', true);
+                  $('lpuCT').setAttribute('hidden', true);
+                  $('dateCT').className = "";
+                  $('lpuCT').className = "";
+                  $('dateCT').value = '';
+                  $('lpuCT').value = '';
+              }
+          }
+
+          CTAutocomplete.addOnChangeCallback(function() {
+              setCT();
+          });
+          setCT();
+          </script>
+      </msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
 

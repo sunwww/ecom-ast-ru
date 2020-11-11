@@ -376,4 +376,28 @@ public class Covid19Form extends IdEntityForm {
     public String getSaturationLevel() {return theSaturationLevel;}
     public void setSaturationLevel(String aSaturationLevel) {theSaturationLevel = aSaturationLevel;}
     private String theSaturationLevel ;
+
+    /** КТ */
+    @Comment("КТ")
+    @Persist
+    @Required
+    public Long getCT() {return theCT;}
+    public void setCT(Long aCT) {theCT = aCT;}
+    private Long theCT ;
+
+    /** Дата проведения КТ */
+    @Comment("Дата проведения КТ")
+    @DateString @DoDateString
+    @Persist
+    public String getDateCT() {return theDateCT;}
+    public void setDateCT(String aDateCT) {theDateCT = aDateCT;}
+    private String theDateCT ;
+
+    /** Место проведения КТ */
+    @Comment("Место проведения КТ")
+    @Persist
+    public String getLpuCT() {return theLpuCT;}
+    public void setLpuCT(String aLpuCT) {theLpuCT = aLpuCT;}
+    /** Место проведения КТ */
+    private String theLpuCT ;
 }

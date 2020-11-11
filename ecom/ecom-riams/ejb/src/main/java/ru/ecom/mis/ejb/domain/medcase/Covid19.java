@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.domain.medcase;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocCT;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNoMaybe;
@@ -39,7 +40,6 @@ public class Covid19 extends BaseEntity {
     public String getWorkPlace() {return theWorkPlace;}
     public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
     private String theWorkPlace ;
-
     
     /** Дата появления клинических симптомов */
     @Comment("Дата появления клинических симптомов")
@@ -328,4 +328,24 @@ public class Covid19 extends BaseEntity {
     public VocIdc10 getMkbDischarge() {return theMkbDischarge;}
     public void setMkbDischarge(VocIdc10 aMkbDischarge) {theMkbDischarge = aMkbDischarge;}
     private VocIdc10 theMkbDischarge ;
+
+    /** КТ */
+    @Comment("КТ")
+    @OneToOne
+    public VocCT getCT() {return theCT;}
+    public void setCT(VocCT aCT) {theCT = aCT;}
+    private VocCT theCT ;
+
+    /** Дата проведения КТ */
+    @Comment("Дата проведения КТ")
+    public Date getDateCT() {return theDateCT;}
+    public void setDateCT(Date aDateCT) {theDateCT = aDateCT;}
+    private Date theDateCT ;
+
+    /** Место проведения КТ */
+    @Comment("Место проведения КТ")
+    public String getLpuCT() {return theLpuCT;}
+    public void setLpuCT(String aLpuCT) {theLpuCT = aLpuCT;}
+    /** Место проведения КТ */
+    private String theLpuCT ;
 }
