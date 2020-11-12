@@ -64,6 +64,9 @@
                     <td onclick="this.childNodes[1].checked='checked';" colspan="5">
                         <input type="radio" name="typeGroup" value="10"> выкидышам
                     </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="5">
+                        <input type="radio" name="typeGroup" value="11"> случаям с обсервацией без родов/выкидышей
+                    </td>
                 </msh:row>
                 <msh:row>
                     <td>
@@ -191,11 +194,12 @@
         %>
         <msh:section>
             <ecom:webQuery isReportBase="${isReportBase}" name="ReportTempPregnancyReestr" nameFldSql="ReportTempPregnancyReestrSql" nativeSql="
-select pat.id as patId
+select distinct sls.id as slsId
 , pat.patientinfo
 ,cast('&type=reestr' as char) as fldId
 from childbirth cb
 left join medcase slo on slo.id=cb.medcase_id
+left join medcase sls on slo.parent_id=sls.id
 left join patient pat on pat.id=slo.patient_id
 left join vocwherebirthoccurred place on place.id=cb.wherebirthoccurred_id
 left join vocchildemergency vocem on vocem.id=cb.emergency_id
@@ -210,7 +214,7 @@ order by pat.patientinfo
             </msh:sectionTitle>
             <msh:sectionContent>
                 <input type="button" value="Печать списка" onclick="print()" >
-                <msh:table printToExcelButton="excel" name="ReportTempPregnancyReestr" action="entityView-mis_patient.do" idField="1">
+                <msh:table printToExcelButton="excel" name="ReportTempPregnancyReestr" action="entityView-stac_ssl.do" idField="1" openNewWindow="true">
                     <msh:tableColumn columnName="##" property="sn"/>
                     <msh:tableColumn columnName="ФИО пациента" property="2" addParam=""  />
                 </msh:table>
@@ -700,18 +704,46 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
         </msh:section>
 
         <msh:section>
-            <ecom:webQuery isReportBase="${isReportBase}" name="ReportMisbirth" nameFldSql="ReportMisbirthSql" nativeSql="
-select  sls.id as patId, pat.patientinfo
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportObservNo" nameFldSql="ReportMisbirthSql" nativeSql="
+select distinct sls.id as patId, pat.patientinfo
+from medcase sls
+left join patient pat on sls.patient_id=pat.id
+left join medcase slo on slo.parent_id=sls.id
+left join misbirth mb on mb.medcase_id=slo.id
+where sls.dtype='HospitalMedCase'
+and mb.id is not null
+and sls.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+" />
+            <msh:sectionContent>
+                <msh:table printToExcelButton="excel" name="ReportObservNo" action="entityView-stac_ssl.do" idField="1" openNewWindow="true">
+                    <msh:tableColumn columnName="##" property="sn"/>
+                    <msh:tableColumn columnName="ФИО" property="2" addParam=""  />
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <%
+        }
+                    //группировка по случаям обсервационного без родов или выкидышей
+                    else if (request.getParameter("typeGroup").equals("11")) {
+        %>
+        <msh:section>
+            <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+        </msh:section>
+
+        <msh:section>
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportObservNo" nameFldSql="ReportMisbirthSql" nativeSql="
+select distinct sls.id as patId, pat.patientinfo
 from medcase sls
 left join patient pat on sls.patient_id=pat.id
 left join medcase sloobserv on sloobserv.parent_id=sls.id
 left join mislpu depobserv on depobserv.id=sloobserv.department_id
 where sls.dtype='HospitalMedCase' and sloobserv.dtype='DepartmentMedCase' and depobserv.isobservable=true
 and (select count(id) from childbirth where medcase_id=ANY(select id from medcase where parent_id=sls.id))=0
+and (select count(id) from misbirth where medcase_id=ANY(select id from medcase where parent_id=sls.id))=0
 and sls.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 " />
             <msh:sectionContent>
-                <msh:table printToExcelButton="excel" name="ReportMisbirth" action="entityView-stac_ssl.do" idField="1" cellFunction="true">
+                <msh:table printToExcelButton="excel" name="ReportObservNo" action="entityView-stac_ssl.do" idField="1"  openNewWindow="true">
                     <msh:tableColumn columnName="##" property="sn"/>
                     <msh:tableColumn columnName="ФИО" property="2" addParam=""  />
                 </msh:table>
