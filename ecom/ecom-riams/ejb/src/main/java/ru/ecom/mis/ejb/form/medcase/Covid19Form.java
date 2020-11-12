@@ -380,7 +380,6 @@ public class Covid19Form extends IdEntityForm {
     /** КТ */
     @Comment("КТ")
     @Persist
-    @Required
     public Long getCT() {return theCT;}
     public void setCT(Long aCT) {theCT = aCT;}
     private Long theCT ;

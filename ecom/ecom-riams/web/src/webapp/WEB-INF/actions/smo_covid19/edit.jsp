@@ -219,8 +219,17 @@
         //если не заполнить поле и отправить форму, то id карты превращается в parent - id госпитализации
         //проверка заполнения КТ: либо не проводилось, либо КТ+дата+место проведения
         function save() {
-            if (!$('workPlace').value || !$('mkb').value
-                ||  !$('CT').value || (+$('CT').value>1 && (!$('lpuCT').value || !$('dateCT').value))) {
+            var check;
+            <msh:ifFormTypeIsCreate formName="smo_covid19Form">
+            check = (!$('workPlace').value || !$('mkb').value
+                ||  !$('CT').value || (+$('CT').value>1 && (!$('lpuCT').value || !$('dateCT').value)));
+            </msh:ifFormTypeIsCreate>
+
+            <msh:ifFormTypeAreViewOrEdit formName="smo_covid19Form">
+            check = !$('workPlace').value || !$('mkb').value;
+            </msh:ifFormTypeAreViewOrEdit>
+
+            if (check) {
                 showToastMessage('Заполните обязательные поля!', null, true, true, 3000);
                 $('submitButton').removeAttribute('disabled');
             }
@@ -230,6 +239,7 @@
     </script>
       <msh:ifFormTypeIsCreate formName="smo_covid19Form">
           <script type='text/javascript'>
+              $('CTName').className += " required";
               PatientService.getOpenHospByPatient($('medCase').value, {
                   callback: function(hosp) {
                       if (hosp!=null) {
