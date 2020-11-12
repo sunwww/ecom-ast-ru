@@ -96,7 +96,7 @@
           <msh:row>
           <msh:autoComplete property="mkbDischarge" viewOnlyField="true" vocName="vocIdc10" horizontalFill="true" />
       </msh:row>
-        <msh:ifFormTypeIsView formName="smo_covid19Form">
+        <msh:ifFormTypeAreViewOrEdit formName="smo_covid19Form">
             <msh:separator label="Дополнительная информация" colSpan="4"/>
           <msh:row>
               <msh:label property="createDate" label="Дата создания"/>
@@ -150,7 +150,7 @@
             <input type="button" value="Добавить контактное лицо" onclick="createContactPatient()">
         </td></tr></table>
             </msh:ifFormTypeIsView>
-        </msh:ifFormTypeIsView>
+        </msh:ifFormTypeAreViewOrEdit>
         <msh:submitCancelButtonsRow colSpan="4" functionSubmit="save();"/>
       </msh:panel>
     </msh:form>
