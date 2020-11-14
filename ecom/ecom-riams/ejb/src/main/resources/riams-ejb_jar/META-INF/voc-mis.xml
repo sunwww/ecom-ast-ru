@@ -12,11 +12,11 @@
 
 	<voc id="vocClassificationCriterionActual" type="NativeVocService">
 		<NativeVocService
-				from="VocClassificationCriterion as voc"
-				names="voc.name"
-				nameId="voc.name"
-				queried ="(voc.name like :query)"
-				queryAppend="isNoActual is null or isNoActual is false"
+                from="VocClassificationCriterion as voc"
+                names="voc.name"
+                nameId="voc.id"
+                queried ="(voc.name like :query)"
+                queryAppend="isNoActual is null or isNoActual is false"
 		/>
 	</voc>
 
