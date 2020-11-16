@@ -2,6 +2,7 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="java.util.Date"%>
+<%@ page import="java.util.Calendar" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -28,10 +29,28 @@
     String typeTransfer =ActionUtil.updateParameter("PrescriptJournal","typeTransfer","2", request) ;
     String typeGroup =ActionUtil.updateParameter("PrescriptJournal","typeGroup","1", request) ;
 
+    String service = "";
+    if (request.getParameter("service")!=null)
+    	service =  request.getParameter("service");
+    String sarsSql = "";
+    if (service!=null && !service.equals("") && !service.equals("0")) {
+		sarsSql = " and ms.id = " + service;
+		request.setAttribute("service", service) ;
+	}
+	request.setAttribute("sarsSql", sarsSql) ;
+
   	if (lpu!=null && !lpu.equals("")) {
   		String beginDate = request.getParameter("beginDate") ;
   		if (beginDate==null || beginDate.equals("")) {
-  			beginDate=DateFormat.formatToDate(new Date()) ;
+  			if (service!=null && !service.equals("")) {
+				Date dt = new Date();
+				Calendar c = Calendar.getInstance();
+				c.setTime(dt);
+				c.add(Calendar.DATE, 1);
+				beginDate = DateFormat.formatToDate(c.getTime());
+			}
+  				else
+  					beginDate=DateFormat.formatToDate(new Date()) ;
   		}
   		String endDate = request.getParameter("endDate") ;
   	  	if (endDate==null|| endDate.equals("")) {endDate=beginDate;}
@@ -39,8 +58,9 @@
   		request.setAttribute("endDate", endDate) ;
   	%>
   	<tags:pres_intakeDate name="Biomat" service="PrescriptionService" method="intakeService"/>
-  	  <msh:form action="/pres_journal_intake.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
+  	  <msh:form action="/pres_journal_intake.do?isSars=${isSars}" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <msh:panel>
+		<msh:hidden property="service" />
       <msh:row>
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
@@ -79,18 +99,6 @@
         </td>
 
        </msh:row>
-     <%--
-      <msh:row>
-        <td class="label" title="Наименование пробирки (typeMaterial)" colspan="2"><label for="typeMaterial" id="typeMaterialLabel">Пробирка:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';checkfrm();">
-        	<input type="radio" name="typeMaterial" value="1"> №стат.карты, Фамилия пациента
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';checkfrm();" >
-        	<input type="radio" name="typeMaterial" value="2"> штрих-код
-        </td>
-
-       </msh:row>
-       --%>
         <msh:row>
         	<msh:autoComplete property="serviceSubType"  parentId="LABSURVEY" fieldColSpan="4" horizontalFill="true" label="Тип биоматериала" vocName="vocServiceSubTypeByCode"/>
         </msh:row>
@@ -122,11 +130,16 @@
    		chk[+aValue-1].checked='checked' ;
    	}
    }
-    if ($('beginDate').value=="") {
-    	$('beginDate').value=getCurrentDate() ;
-    }
+   if ($('beginDate').value=="") {
+	   if ('${isSars}') {
+		   $('beginDate').value = getDateAfterOrBeforeCurrent();
 
-			 
+	   }
+	   else
+		   $('beginDate').value=getCurrentDate() ;
+   }
+
+
     </script>
     <%
     if (typeGroup.equals("2")) {request.setAttribute("addByGroup", "p.id,");}
@@ -199,6 +212,7 @@
     and vst.code='LABSURVEY' 
     and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
     and p.cancelDate is null ${sqlAdd}
+    ${sarsSql}
     group by ${addByGroup} pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime,p.planStartDate
@@ -209,7 +223,7 @@
     <msh:sectionTitle>
     
     
-    <form  id="printForm" name="printForm" action="print-pres_lab_prescript_by_department.do" method="post" target="_blank">
+    <form  id="printForm" name="printForm" action="print-pres_lab_prescript_by_department.do?isSars=${isSars}" method="post" target="_blank">
 	 Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}    
 	    <input type='hidden' name="sqlText" id="sqlText" value="select 
 	    pat.id as f1pat
@@ -258,6 +272,7 @@
     and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
     and vst.code='LABSURVEY' 
     and p.cancelDate is null ${sqlAdd}
+    ${sarsSql}
     group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
@@ -269,9 +284,8 @@
 	    <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
 	    <input type='hidden' name="groupField" id="groupField" value="4">
 	    <input type='hidden' name="cntColumn" id="cntColumn" value="3">
-	    <!-- <input type="submit" value="Печать" onclick="this.form.action='print-pres_lab_prescript_by_department.do'"> --> 
 	    <input type="button" value="Печать" title="Печать всего списка (либо тех, что отмечены галочками)" onclick="printSomePrescriptions()">
-	    <input type="submit" value="Печать этикеток" onclick="this.form.action='print-pres_lab_prescript_by_department_birok.do'"> 
+	    <input type="submit" value="Печать этикеток" onclick="this.form.action='print-pres_lab_prescript_by_department_birok.do?isSars=${isSars}'">
 	     <script type="text/javascript">
 	    function printSomePrescriptions() {
 	    	var l = document.getElementsByName('labCheckbox');
@@ -333,13 +347,14 @@
 			" and to_date('${endDate}','dd.mm.yyyy') "+
 			" and coalesce(p.department_id,w.lpu_id)='${lpu_id}'  "+
 		    " and vst.code='LABSURVEY'  "+
-		    " and p.cancelDate is null ${sqlAdd} "+
+		    " and p.cancelDate is null ${sqlAdd} " +
+			"    ${sarsSql}"+
 		    " group by pat.id,pat.lastname,pat.firstname,pat.middlename "+
 		    " ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id "+
 		    " ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime "+
 		    " ,p.planStartDate , vst.name,vpt.name,ht.id "+
 		    " order by vsst.name,pat.lastname,pat.firstname,pat.middlename";
-	    	document.getElementById('printForm').action='print-pres_lab_prescript_by_department.do';
+	    	document.getElementById('printForm').action='print-pres_lab_prescript_by_department.do?isSars=${isSars}';
     		document.getElementById('printForm').submit();
 	    }	    
 	    </script>
@@ -382,17 +397,6 @@
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
   	<script type="text/javascript">
-  		/*function getMaterialId(aMaterialId) {
-			aMaterialId=prompt('Введите наименование пробирки:', aMaterialId) ;
-			if (aMaterialId==null || aMaterialId=="") {
-				if (confirm('Неопределено наименование пробирки. Хотите ввести еще раз?')) {
-					return getMaterialId(aMaterialId) ;
-				}
-			} else {
-				return aMaterialId ;
-			}
-			return null ;
-  		}*/
   		
   		function removeService(aListPrescript, aMaterialId) {
   				PrescriptionService.intakeServiceRemove(aListPrescript, { 
