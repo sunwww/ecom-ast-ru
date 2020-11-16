@@ -1670,4 +1670,29 @@ public class PrescriptionServiceJs {
 			return "Невозможно отменить назначение! Уже было отменено или находится в работе. Можно отменять невыполненные назначения.";
 		}
 	}
+
+	/**
+	 * Проверка дублей назначений на ковид на следующий день (поиск по всем СЛО из СЛС)
+	 *
+	 * @param aMedCase СЛО
+	 * @param aRequest HttpServletRequest
+	 * @return String 0 если нет дублей, -1 - если есть
+	 */
+	public String checkDoublesNextDayCovid(String aMedCase, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder req = new StringBuilder();
+		req.append("select p.id");
+		req.append(" from medcase mc ");
+		req.append(" left join medcase mc2 on mc2.parent_id = mc.parent_id");
+		req.append(" left join prescriptionList pl on pl.medcase_id = mc2.id");
+		req.append(" left join prescription p on p.prescriptionList_id = pl.id");
+		req.append(" left join medservice ms on ms.id = p.medservice_id");
+		req.append(" where mc.id ='").append(aMedCase).append("' ");
+		req.append(" and ms.id=22347");
+		req.append(" and p.dtype='ServicePrescription'");
+		req.append(" and p.medservice_id is not null");
+		req.append(" and p.canceldate is null  and p.planstartdate=current_date+1");
+		return service.executeNativeSql(req.toString()).isEmpty()?
+				"0" : "-1";
+	}
 }

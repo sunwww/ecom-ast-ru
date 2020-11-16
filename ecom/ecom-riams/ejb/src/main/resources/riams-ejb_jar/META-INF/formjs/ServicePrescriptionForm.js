@@ -43,6 +43,19 @@ function onPreCreate(aForm, aCtx) {
 		throw "Не выбрана услуга!";
 	}
 }
+
+//проверка на дубликаты номеров пробирок при анализе на ковид
+function checkDoublesMaterialId(aForm, aEntity, aCtx) {
+	if (!aCtx.manager.createNativeQuery("select p.id" +
+		" from prescription p " +
+		" left join medservice ms on ms.id = p.medservice_id" +
+		" where p.dtype='ServicePrescription' and ms.id=22347" +
+		" and p.medservice_id is not null and p.canceldate is null and planstartdate=current_date+1" +
+		" and p.materialid='" + aForm.materialId + "'").getResultList().isEmpty())
+		throw "Уже есть такой анализ с таким номером пробирки на завтрашний день! Измените номер." +
+	" <br/><a href='entityParentPrepareCreate-pres_servicePrescription.do?id="+aEntity.prescriptionList.id+"'>"+"Создать назначение заново"+"</a><br/>";
+}
+
 /**
  * После создания
  */
@@ -89,6 +102,10 @@ function onCreate(aForm, aEntity, aCtx) {
 					} else {
 						adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					}
+					if (medService.id==22347) {
+						checkDoublesMaterialId(aForm, aEntity, aCtx);
+						matId = aForm.materialId;
+					}
 
 					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ;
 					adMedService.setPrescriptSpecial(aEntity.getPrescriptSpecial()) ;
@@ -107,7 +124,7 @@ function onCreate(aForm, aEntity, aCtx) {
 					if (par4!=null&&!par4.equals(java.lang.Long(0))) { //А стало так 
 						var department = manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,par4) ;
 						adMedService.setDepartment(department);	
-					}								
+					}
 					manager.persist(adMedService) ;
 					if (par5!=null){
 						var wct = manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime,par5) ;

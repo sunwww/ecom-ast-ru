@@ -646,6 +646,64 @@
                     }
                 }
 
+                //Если анализ на ковид
+                $('materialId').hide();
+                labServiciesAutocomplete.addOnChangeCallback(function() {
+                    if ($('labServicies').value=='22347') {
+                        $('labDate').value=getDateAfterOrBeforeCurrent();
+                        $('labDate').disabled=true;
+                        if (jQuery('input[name ="subm"]')[0]) jQuery('input[name ="subm"]')[0].disabled = true;
+                        if (jQuery('input[name ="subm"]')[1]) jQuery('input[name ="subm"]')[1].disabled = true;
+                        if (jQuery('input[name ="minB"]')[0]) jQuery('input[name ="minB"]')[0].disabled = true;
+                        if (jQuery('input[name ="minB"]')[1]) jQuery('input[name ="minB"]')[1].disabled = true;
+                        if (jQuery('input[name ="btnChangePrescriptionType"]')[0]) jQuery('input[name ="btnChangePrescriptionType"]')[0].disabled = true;
+                        if (jQuery('input[name ="btnChangeDepartment"]')[0]) jQuery('input[name ="btnChangeDepartment"]')[0].disabled = true;
+                        if (jQuery('input[name ="btnMakeAnyPrescription"]')[0]) jQuery('input[name ="btnMakeAnyPrescription"]')[0].disabled = true;
+                        $('materialId').show();
+                        $('materialId').className = 'required';
+                    }
+                    else {
+                        $('labDate').disabled=false;
+                        if (jQuery('input[name ="subm"]')[0]) jQuery('input[name ="subm"]')[0].disabled = false;
+                        if (jQuery('input[name ="subm"]')[1]) jQuery('input[name ="subm"]')[1].disabled = false;
+                        if (jQuery('input[name ="minB"]')[0]) jQuery('input[name ="minB"]')[0].disabled = false;
+                        if (jQuery('input[name ="minB"]')[1]) jQuery('input[name ="minB"]')[1].disabled = false;
+                        if (jQuery('input[name ="btnChangePrescriptionType"]')[0]) jQuery('input[name ="btnChangePrescriptionType"]')[0].disabled = false;
+                        if (jQuery('input[name ="btnChangeDepartment"]')[0]) jQuery('input[name ="btnChangeDepartment"]')[0].disabled = false;
+                        if (jQuery('input[name ="btnMakeAnyPrescription"]')[0]) jQuery('input[name ="btnMakeAnyPrescription"]')[0].disabled = false;
+                        $('materialId').hide();
+                    }
+                });
+
+                //Сохранение
+                function save() {
+                    if ($('labServicies').value=='22347' && !$('materialId').value) {
+                        showToastMessage('Введите номер пробирки!',null,true,true,3000);
+                        $('submitButton').disabled = false;
+                        $('submitButton').value = 'Создать';
+                    }
+                    else if  ($('labServicies').value=='22347')
+                        checkDoublesNextDayCovid();
+                    else
+                        checkDoubles();
+                }
+
+                //проверка ковид анализов: можно только один анализ на след. день
+                function checkDoublesNextDayCovid() {
+                    PrescriptionService.checkDoublesNextDayCovid($('medcaseId').value, {
+                        callback: function (aResult) {
+                            if (+aResult!=0) {
+                                showToastMessage('У пациента уже есть такое назначение на следующий день. Дубли запрещены.',null,true,true,4000);
+                                $('submitButton').disabled = false;
+                                $('submitButton').value = 'Создать';
+                            }
+                            else {
+                                writeServicesToList('lab');
+                                checkLabs();
+                            }
+                        }
+                    });
+                }
             </script>
         </msh:ifFormTypeIsNotView>
 
@@ -745,13 +803,14 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <input type='button' value='-1' title="Уменьшить дату на 1 день"
+                                    <input type='button' value='-1' title="Уменьшить дату на 1 день" name="minB"
                                            onclick='changeDate(-1)'>
-                                    <input type='button' value='+1' title="Увеличить дату на 1 день"
+                                    <input type='button' value='+1' title="Увеличить дату на 1 день"  name="minB"
                                            onclick='changeDate(1)'>
 
                                 </td>
                             </tr>
+                            <tr><msh:textField property="materialId" label="Номер пробирки " size="10"/></tr>
                             <tr>
                                 <msh:autoComplete property="labDepartment" label="Место забора"
                                                   vocName="departmentIntake" size='20' fieldColSpan="3"
@@ -811,7 +870,7 @@
                 <msh:row>
                     <msh:label property="editUsername" label="пользователь"/>
                 </msh:row>
-                <msh:submitCancelButtonsRow colSpan="4"/>
+                <msh:submitCancelButtonsRow colSpan="4" functionSubmit="save();"/>
             </msh:panel>
         </msh:form>
         <tags:dir_medService name="1" table="MEDSERVICE" title="Услуги" functionAdd="prepare1Row" addParam="id"/>
