@@ -58,7 +58,7 @@
   		request.setAttribute("endDate", endDate) ;
   	%>
   	<tags:pres_intakeDate name="Biomat" service="PrescriptionService" method="intakeService"/>
-  	  <msh:form action="/pres_journal_intake.do?isSars=${isSars}" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
+  	  <msh:form action="/pres_journal_intake.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <msh:panel>
 		<msh:hidden property="service" />
       <msh:row>
@@ -123,7 +123,6 @@
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[1].'+aField) ;
    	var aMax=chk.length ;
-   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
    	if ((+aValue)==0 || (+aValue)>(+aMax)) {
    		chk[+aDefaultValue-1].checked='checked' ;
    	} else {
@@ -131,14 +130,13 @@
    	}
    }
    if ($('beginDate').value=="") {
-	   if ('${isSars}') {
+	   if ('${service}') {
 		   $('beginDate').value = getDateAfterOrBeforeCurrent();
 
 	   }
 	   else
 		   $('beginDate').value=getCurrentDate() ;
    }
-
 
     </script>
     <%
@@ -223,7 +221,7 @@
     <msh:sectionTitle>
     
     
-    <form  id="printForm" name="printForm" action="print-pres_lab_prescript_by_department.do?isSars=${isSars}" method="post" target="_blank">
+    <form  id="printForm" name="printForm" action="print-pres_lab_prescript_by_department.do" method="post" target="_blank">
 	 Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}    
 	    <input type='hidden' name="sqlText" id="sqlText" value="select 
 	    pat.id as f1pat
@@ -285,7 +283,7 @@
 	    <input type='hidden' name="groupField" id="groupField" value="4">
 	    <input type='hidden' name="cntColumn" id="cntColumn" value="3">
 	    <input type="button" value="Печать" title="Печать всего списка (либо тех, что отмечены галочками)" onclick="printSomePrescriptions()">
-	    <input type="submit" value="Печать этикеток" onclick="this.form.action='print-pres_lab_prescript_by_department_birok.do?isSars=${isSars}'">
+	    <input type="submit" value="Печать этикеток" onclick="this.form.action='print-pres_lab_prescript_by_department_birok.do'">
 	     <script type="text/javascript">
 	    function printSomePrescriptions() {
 	    	var l = document.getElementsByName('labCheckbox');
@@ -354,7 +352,7 @@
 		    " ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime "+
 		    " ,p.planStartDate , vst.name,vpt.name,ht.id "+
 		    " order by vsst.name,pat.lastname,pat.firstname,pat.middlename";
-	    	document.getElementById('printForm').action='print-pres_lab_prescript_by_department.do?isSars=${isSars}';
+	    	document.getElementById('printForm').action='print-pres_lab_prescript_by_department.do';
     		document.getElementById('printForm').submit();
 	    }	    
 	    </script>
