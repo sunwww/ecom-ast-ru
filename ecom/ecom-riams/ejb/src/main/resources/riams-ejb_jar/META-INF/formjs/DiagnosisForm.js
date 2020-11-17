@@ -19,6 +19,20 @@ function onCreate(aForm, aEntity, aContext) {
     //checkUniqueDiagnosis(aForm,aEntity,aContext);
 }
 
+//Проставить в карте коронавируса основной выписной диагноз
+function setCovidDateResultHospAndMkb(aForm, aCtx) {
+	if (aForm.getPriority() && aForm.getRegistrationType()) {
+		var priority = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis,
+			new java.lang.Long(aForm.getPriority()));
+		var regtype = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType,
+			new java.lang.Long(aForm.getRegistrationType()));
+
+		if (priority && regtype && priority.getCode() == '1' && regtype.getCode() == '3')
+			aCtx.manager.createNativeQuery("update Covid19 set mkbDischarge_id = " + aForm.getIdc10() +
+				" where medcase_id = " + aForm.getMedCase() + " and id = (select max(id) from Covid19 where medcase_id = " + aForm.getMedCase() + ")").executeUpdate();
+	}
+}
+
 /**
  * При сохранении
  */
@@ -34,6 +48,8 @@ function onSave(aForm, aEntity, aContext) {
 	}
 	aContext.manager.persist(aEntity) ;
 	checkPolyclinic(aForm,aEntity,aContext);
+	//обновить в ковидной карте, если есть
+	setCovidDateResultHospAndMkb(aForm,aContext);
 }
 //диагноз должен быть уникальным
 function checkUniqueDiagnosis(aForm,aEntity,aCtx) {
