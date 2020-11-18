@@ -29,7 +29,7 @@
     if (request.getParameter("serviceSubType")!=null)
         serviceSubType =  request.getParameter("serviceSubType");
   	String depSql = " and ms.id<>22347 and coalesce(p.department_id,w.lpu_id)='" + request.getParameter("department") + "' ";
-    if (serviceSubType!=null && serviceSubType.equals("11")) {
+    if (serviceSubType!=null && serviceSubType.equals("24")) {
         depSql = " ";
         request.setAttribute("serviceSubType", serviceSubType) ;
     }
@@ -146,7 +146,7 @@
     <%
     String department = request.getParameter("department") ;
     String beginDate = request.getParameter("beginDate") ;
-  	if (department!=null && !department.equals("") || serviceSubType.equals("11")) {
+  	if (department!=null && !department.equals("") || serviceSubType.equals("24")) {
   		
   		if (beginDate==null || beginDate.equals("")) {
   			beginDate=DateFormat.formatToDate(new java.util.Date()) ;
