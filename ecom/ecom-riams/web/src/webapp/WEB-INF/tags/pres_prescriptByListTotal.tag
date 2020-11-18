@@ -108,7 +108,7 @@ where ${field}
     	<ecom:webQuery name="pres" nativeSql="  select p.id as pid
   ,ms.name as f2_drname ,p.planStartDate as f3,p.materialId as f4,vpt.shortname as f5_vptname
 ,coalesce(vpcr.name,'')||' '||coalesce(p.cancelReasonText,'') as а6_fldCancel
-,case when p.canceldate is not null then 'color:red;' else null end as а7_stylCancel
+,case when vpcr.code='another_lab' then 'color:blue' else case when p.canceldate is not null then 'color:red;' else null end end as а7_stylCancel
 ,to_char(presV.datestart,'dd.MM.yyyy')||' '||cast(presV.timeExecute as varchar(5)) as f8_execute
 ,case when p.canceldate is not null then vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename||' '||to_char(p.canceldate,'dd.MM.yyyy')||' '||cast(p.canceltime as varchar(5)) else null end as f9_cnsl
 from Medcase sls
@@ -134,7 +134,7 @@ where ${field}
     			<msh:tableColumn property="3" columnName="Дата назначения"/>
     			<msh:tableColumn property="8" columnName="Дата выполнения"/>
     			<msh:tableColumn property="4" columnName="ИД биоматериала"/>
-    			<msh:tableColumn property="6" columnName="Причина брака"/>
+    			<msh:tableColumn property="6" columnName="Причина брака/отмены"/>
 				<msh:tableColumn property="9" columnName="Отбраковал"/>
     		</msh:table>
     	</msh:sectionContent>

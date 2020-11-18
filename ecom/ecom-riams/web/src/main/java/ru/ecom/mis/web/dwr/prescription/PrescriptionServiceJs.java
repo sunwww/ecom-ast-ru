@@ -616,28 +616,32 @@ public class PrescriptionServiceJs {
 		sql = new StringBuilder() ;
 		sql.append("update medcase set datestart = current_date, noactuality='1' where id in (select medcase_id from prescription where id in (").append(aPrescripts).append("))");
 		service.executeUpdateNativeSql(sql.toString()) ;
-		String reasonText ="";
+		String reasonText = "", reasonCode = "";
 		if (aReasonId!=null&&aReasonId>0) {
-			Collection<WebQueryResult> list = service.executeNativeSql("select name from VocPrescriptCancelReason where id="+aReasonId);
-			reasonText = list.isEmpty() ? "" : list.iterator().next().get1().toString() ;
+			Collection<WebQueryResult> list = service.executeNativeSql("select name,code from VocPrescriptCancelReason where id="+aReasonId);
+			WebQueryResult obj = list.iterator().next();
+			reasonText = list.isEmpty() ? "" : obj.get1().toString() ;
+			reasonCode = list.isEmpty() ? "" : obj.get2().toString() ;
 		}
-		reasonText += StringUtil.isNullOrEmpty(aReason) ? "" : " "+aReason;
 		IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
-		JSONObject res = getPrescriptionInfo(aPrescripts, service);
-		String lpuString = getLpuForDefectMessage(aPrescripts,aRequest);
-		if (!lpuString.equals("0")) {
-            ArrayList<String> usersToSend = getAllUsersToSendMessageCancel(lpuString,aPrescripts,aRequest);
-			String msgTitle=res.getString("date")+" пациент "+res.getString("patFio")+" услуга "+res.getString("medService");
-            String messageText = "Брак биоматериала: "+reasonText;
-            String sender = res.getString("usernameO"); //спорно, ну да пофиг
-            for (String user : usersToSend) {
-                for (int i=0; i<2; i++){
-                	LOG.info("dbg. send brak "+i+", user="+user+", sender="+sender); //Сообщение уходят по 4 раза вместо двух
-					bean.sendMessageCurrentDate(messageText,msgTitle,user, sender
-							,"entityView-pres_prescriptList.do?id="+res.get("plId"),i<1);
+		if (!reasonCode.equals("another_lab")) {  //сообщения формируются только в случае именно брака, а не отправки в другую лаб.
+			reasonText += StringUtil.isNullOrEmpty(aReason) ? "" : " " + aReason;
+			JSONObject res = getPrescriptionInfo(aPrescripts, service);
+			String lpuString = getLpuForDefectMessage(aPrescripts, aRequest);
+			if (!lpuString.equals("0")) {
+				ArrayList<String> usersToSend = getAllUsersToSendMessageCancel(lpuString, aPrescripts, aRequest);
+				String msgTitle = res.getString("date") + " пациент " + res.getString("patFio") + " услуга " + res.getString("medService");
+				String messageText = "Брак биоматериала: " + reasonText;
+				String sender = res.getString("usernameO"); //спорно, ну да пофиг
+				for (String user : usersToSend) {
+					for (int i = 0; i < 2; i++) {
+						LOG.info("dbg. send brak " + i + ", user=" + user + ", sender=" + sender); //Сообщение уходят по 4 раза вместо двух
+						bean.sendMessageCurrentDate(messageText, msgTitle, user, sender
+								, "entityView-pres_prescriptList.do?id=" + res.get("plId"), i < 1);
+					}
 				}
-            }
-        }
+			}
+		}
 		//Обновление текста дневника в случае отметки о браке после подтверждения врачом КДЛ
 		String wfCnsl = bean.getRealLabTechUsername(Long.valueOf(aPrescripts.split(",")[0]),"");
 		updateDiaryWhileCancelPrescription(null,aPrescripts,"Брак биоматериала: "+reasonText,wfCnsl,service);

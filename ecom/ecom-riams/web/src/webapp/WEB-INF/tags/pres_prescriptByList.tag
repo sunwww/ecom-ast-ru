@@ -111,8 +111,8 @@
 
  ,p.planStartDate,p.planEndDate,p.materialId,vpt.name as vptname
  ,ml.name as mlname,coalesce(vpcr.name,'')||' '||coalesce(p.cancelReasonText,'') as fldCancel
- ,case when p.canceldate is not null then 'color:red;' else null end as stylCancel
- , case when presV.datestart is not null then coalesce(d.record, '') else '' end as lab_rests
+, case when vpcr.code='another_lab' then 'color:blue' else case when p.canceldate is not null then 'color:red;' else null end end as stylCancel
+, case when presV.datestart is not null then coalesce(d.record, '') else '' end as lab_rests
  ,presV.datestart
 ,case when p.canceldate is not null then vwf.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename else null end as f13_cnsl
  from Prescription p
@@ -141,7 +141,7 @@ left join Patient as wp on wp.id=w.person_id
 			<msh:tableColumn property="4" columnName="Дата начала"/>
 			<msh:tableColumn property="12" columnName="Дата выполнения"/>
 			<msh:tableColumn property="6" columnName="ИД биоматериала"/>
-			<msh:tableColumn property="9" columnName="Причина брака"/>
+			<msh:tableColumn property="9" columnName="Причина брака/отмены"/>
 			<msh:tableColumn property="13" columnName="Отбраковал"/>
 			<msh:tableColumn property="11" columnName="Результат"/>
 
