@@ -25,6 +25,15 @@
   	String typeTransfer =ActionUtil.updateParameter("PrescriptJournalTransfer","typeTransfer","2", request) ;
   	String typeDate =ActionUtil.updateParameter("PrescriptJournalTransfer","typeDate","1", request) ;
 
+    String serviceSubType = "";
+    if (request.getParameter("serviceSubType")!=null)
+        serviceSubType =  request.getParameter("serviceSubType");
+  	String depSql = " and ms.id<>22347 and coalesce(p.department_id,w.lpu_id)='" + request.getParameter("department") + "' ";
+    if (serviceSubType!=null && serviceSubType.equals("11")) {
+        depSql = " ";
+        request.setAttribute("serviceSubType", serviceSubType) ;
+    }
+    request.setAttribute("depSql", depSql) ;
   	%>
   	  <msh:form  action="/pres_journal_intake_transfer.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <msh:panel>
@@ -102,7 +111,6 @@
     
     <script type='text/javascript'>
     checkFieldUpdate('typeIntake','${typeIntake}',1) ;
-    //checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',3) ;
     checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
     function checkfrm() {
@@ -121,13 +129,24 @@
     if ($('beginDate').value=="") {
     	$('beginDate').value=getCurrentDate() ;
     }
-
+    if ("${depSql}".length<4) {
+        $('department').value = "";
+        $('departmentName').value = "";
+        $('department').disabled = true;
+        $('departmentName').disabled = true;
+        $('serviceSubType').disabled = true;
+        $('serviceSubTypeName').disabled = true;
+        $('prescriptType').value = "";
+        $('prescriptTypeName').value = "";
+        $('prescriptType').disabled = true;
+        $('prescriptTypeName').disabled = true;
+    }
 			 
     </script>
     <%
     String department = request.getParameter("department") ;
     String beginDate = request.getParameter("beginDate") ;
-  	if (department!=null && !department.equals("")) {
+  	if (department!=null && !department.equals("") || serviceSubType.equals("11")) {
   		
   		if (beginDate==null || beginDate.equals("")) {
   			beginDate=DateFormat.formatToDate(new java.util.Date()) ;
@@ -243,7 +262,7 @@
     where p.dtype='ServicePrescription'
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
-    and coalesce(p.department_id,w.lpu_id)='${param.department}' 
+    ${depSql}
     and vst.code='LABSURVEY' 
     
     ${sqlAdd}
@@ -326,7 +345,7 @@
     where p.dtype='ServicePrescription'
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
-    and coalesce(p.department_id,w.lpu_id)='${param.department}' 
+    ${depSql}
     and vst.code='LABSURVEY' 
     
     ${sqlAdd}
@@ -395,7 +414,7 @@
   	    	if (typeof aPrescript=="undefined") {
   	    		var ids = theTableArrow.getInsertedIdsAsParams("","list") ;
 	  	        if (ids) {
-	  	        	showBioIntakeCabinet(ids) ;
+                    showBioIntakeCabinet(ids) ;
 	  	        } else {
 	  	            alert("Нет выделенных пациентов");
 	  	        }
