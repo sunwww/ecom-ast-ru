@@ -149,7 +149,31 @@
              }
  		}); 
      }
-     
+
+     //вывод окна ввода результата
+     function showTheBioIntakeInfoDialog(aPrescriptId) {
+         theBioIntakeInfoDialog.show() ;
+         //работа с параметрами
+         if ($('param1285')) {
+             $('param1285').value=1026;
+             $('param1285Name').value='ГБУЗ АО АМОКБ';
+         }
+         if ($('param1286')) {
+             new dateutil.DateField($('param1286'));
+             //получить дату забора по aPrescriptId
+             PrescriptionService.getInfoAboutPrescription(aPrescriptId, {
+                 callback : function(aResult) {
+                     var splits = aResult.split('|');
+                     if (splits.length>1 && splits[1].length>9)
+                         $('param1286').value = splits[1].substring(0,10);
+                 }});
+         }
+         if ($('param1287')) {
+             new dateutil.DateField($('param1287'));
+             $('param1287').value = getCurrentDate();
+         }
+     }
+
      function go${name}Service(aSmoId,aPrescriptId,aServiceId,aFunctionSave) {
 			PrescriptionService.getTemplateByService(aSmoId,aPrescriptId,aServiceId,"enter${name}Result","save${name}Result", {
 					callback: function(aResult) {
@@ -159,7 +183,7 @@
 							$('${name}IntakeInfoTitle').innerHTML = "ВЫБОР ШАБЛОНА" ;
 					        $('${name}List').value=aSmoId;
 					       $('${name}IntakeRootPane').innerHTML = aResult.substring(2) +"<br><input type=\"button\" value=\"Отмена\" onclick=\"cancel${name}IntakeInfo(); this.disabled='true';\">";
-			             	theBioIntakeInfoDialog.show() ;
+                            showTheBioIntakeInfoDialog(aPrescriptId);
 						} else if (n==1) {
 							var s =  aResult.substring(2).split("##") ;
 							enter${name}Result(aSmoId,aPrescriptId,aServiceId,s[1],0,s[0],aFunctionSave) ;
@@ -200,7 +224,7 @@
 				       $('BioIntakeRootPane').innerHTML =txt 
 				       	+ "<br><input type=\"button\" id=\"paramOK\" name=\"paramOK\" value=\"Сохранить\" onclick=\" "+aFunctionSave+"(this,"+(+aSmoId)+","+(+aPrescriptId)+","+(+aProtocolId)+","+(+aTempId)+")\">"
 				       	+ "<input type=\"button\" value=\"Отмена\" onclick=\"cancelBioIntakeInfo()\">";
-		             	theBioIntakeInfoDialog.show() ;
+                        showTheBioIntakeInfoDialog(aPrescriptId)
 		             	//alert(aResult) ;
 		             	
 		             if (fldJson.errors.length==0) {

@@ -21,8 +21,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </style>
 <msh:sideMenu>
 	<msh:sideLink name="Забор биомат." styleId="pres_intake" action="/pres_journal_intake" roles="/Policy/Mis/Journal/Prescription/LabSurvey/IntakeByCurrentDepartment" />
-	<msh:sideLink name="Передача биомат. в лаборатории" styleId="pres_transfer" action="/pres_journal_intake_transfer" roles="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratory" />
-	<msh:sideLink name="Рабочее место" styleId="pres_cabinet" action="/pres_journal_prescript_cab_lab" roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" />
+	<msh:sideLink name="Передача биомат. в лаборатории" styleId="pres_transfer" action="/pres_journal_intake_transfer.do?serviceSubType=&serviceSubTypeName=&prescriptType=&prescriptTypeName=" roles="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratory" />
+	<msh:sideLink name="Передача ПЦР" styleId="pres_transfer" action="/pres_journal_intake_transfer.do?typeDate=2&typeIntake=1&typeTransfer=2&serviceSubType=24&department=&departmentName=" roles="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratoryPCR" />
+	<msh:sideLink name="Рабочее место" styleId="pres_cabinet" action="/pres_journal_prescript_cab_lab.do?serviceSubType=&serviceSubTypeName=" roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" />
+	<msh:sideLink name="Рабочее место ПЦР" styleId="pres_cabinet" action="/pres_journal_prescript_cab_lab.do?serviceSubType=24&serviceSubTypeName=" roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR" />
 	<msh:sideLink name="Поиск назначений по ФИО" styleId="pres_cabinetFio" action="/pres_prescription_findFIO" roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" />
 	<msh:sideLink name="Направление на ВИЧ" styleId="stac_journalCurrentByUserDepartmentMicroBio" action="/stac_directionHIVByUserDepartment" roles="/Policy/Mis/MedCase/Stac/Journal/HIVDirection"/>
 	<msh:sideLink name="Печать" styleId="pres_lab_print" action="/pres_lab_print" roles="/Policy/Mis/Journal/Prescription/LabSurvey/PrintPrescripton" />

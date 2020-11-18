@@ -28,6 +28,12 @@
   	String username = LoginInfo.find(request.getSession(true)).getUsername() ;
   	ActionUtil.getValueBySql("select gwf.id,gwf.groupname from workfunction gwf left join workfunction wf on wf.group_id=gwf.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'", "group_id","group_name",request) ;
   	Object groupId = request.getAttribute("group_id") ;
+
+	String serviceSubType = "";
+	if (request.getParameter("serviceSubType")!=null)
+		serviceSubType =  request.getParameter("serviceSubType");
+	request.setAttribute("serviceSubType", serviceSubType) ;
+
   	if (groupId!=null && !groupId.equals("")) {
   	%>
   	  <msh:form action="/pres_journal_prescript_cab_lab.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
@@ -104,8 +110,6 @@
       	<tags:pres_labDoctorPrescription name="LabDoctor" />
     
     <script type='text/javascript'>
-    //checkFieldUpdate('typeIntake','${typeIntake}',1) ;
-    //checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',3) ;
     checkFieldUpdate('typeCabinet','${typeCabinet}',1) ;
     checkFieldUpdate('typeResult','${typeResult}',1) ;
@@ -125,13 +129,19 @@
     if ($('beginDate').value=="") {
     	$('beginDate').value=getCurrentDate() ;
     }
-    
-	    
+
+	if ("${serviceSubType}"=='24') {
+		$('serviceSubType').disabled = true;
+		$('serviceSubTypeName').disabled = true;
+		$('prescriptType').value = "";
+		$('prescriptTypeName').value = "";
+		$('prescriptType').disabled = true;
+		$('prescriptTypeName').disabled = true;
+	}
 			 
     </script>
     <%
     String beginDate = request.getParameter("beginDate") ;
-  	//if (department!=null && !department.equals("")) {
   		
   		if (beginDate==null || beginDate.equals("")) {
   			beginDate=DateFormat.formatToDate(new Date()) ;
@@ -273,6 +283,7 @@
 	     <msh:tableButton property="21" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак" />
 	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); checkLabAnalyzed" buttonName="Анализ" buttonShortName="Анализ" />
 	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Ан.+Рез." />
+         <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR" buttonFunction="hideRow(this); goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Рез. ПЦР" />
 	     <msh:tableButton property="15" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); goBioService" buttonName="Ввести результат" buttonShortName="Рез." />
 	     <msh:tableButton property="16" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); checkLabControl" buttonName="Результат заведен правильно" buttonShortName="Подт." />
 	      <msh:tableColumn columnName="#" property="sn"  />
