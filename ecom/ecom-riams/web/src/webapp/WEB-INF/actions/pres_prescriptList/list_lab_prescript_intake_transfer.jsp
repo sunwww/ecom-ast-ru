@@ -101,7 +101,7 @@
         <msh:textField property="beginDate" label="Период с" />
         <msh:textField property="endDate" label="по" />
            <td>
-            <input type="submit" value="Отобразить данные" />
+            <input type="button" value="Отобразить данные" onclick="submitFunc();"/>
           </td>
       </msh:row>
     </msh:panel>
@@ -116,6 +116,14 @@
     function checkfrm() {
     	document.forms[0].submit() ;
     }
+
+    function submitFunc() {
+        if ("${depSql}".length<4)
+            document.location.reload();
+        else
+            document.forms[0].submit();
+    }
+
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
