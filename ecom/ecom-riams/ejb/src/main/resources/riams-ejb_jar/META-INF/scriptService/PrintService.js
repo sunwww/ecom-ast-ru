@@ -130,7 +130,23 @@ function current_info(aCtx) {
 	map.put("current_date",FORMAT_2.format(curDate)) ;
 	map.put("current_time",FORMAT_3.format(curTime)) ;
 	map.put("current_username",aCtx.sessionContext.callerPrincipal.name ) ;
+	map.put("tomorrow_date",getTomorrow()) ;
 }
+
+//получить завтрашний день
+function getTomorrow() {
+	var tomorrow = new Date();
+	tomorrow.setDate(new Date().getDate()+1);
+	var dd = tomorrow.getDate();
+	var mm = tomorrow.getMonth() + 1;
+	var yyyy = tomorrow.getFullYear();
+	if (dd < 10)
+		dd = '0' + dd;
+	if (mm < 10)
+		mm = '0' + mm;
+	return dd + '.' + mm + '.' + yyyy;
+}
+
 function printGroupColumnNativeQuery(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
     //Milamesher #102 услуги на разных строках без запятой
@@ -245,6 +261,10 @@ function printGroupColumnNativeQuery(aCtx,aParams) {
 	map.put("sqlColumn",sqlColumn) ;
 	map.put("listAll",retAll) ;
 	current_info(aCtx) ;
+
+	var planStartDate = aParams.get("planStartDate");
+	if (planStartDate && planStartDate!=null && typeof planStartDate !=='undefined')
+		map.put("planStartDate",planStartDate) ;
 	return map ;
 }
 function printGroupNativeQuery(aCtx,aParams) {

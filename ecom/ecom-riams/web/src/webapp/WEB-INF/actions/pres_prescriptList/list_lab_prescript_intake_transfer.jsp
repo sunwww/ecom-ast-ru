@@ -1,4 +1,3 @@
-
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -28,7 +27,7 @@
     String serviceSubType = "";
     if (request.getParameter("serviceSubType")!=null)
         serviceSubType =  request.getParameter("serviceSubType");
-  	String depSql = " and ms.id<>22347 and coalesce(p.department_id,w.lpu_id)='" + request.getParameter("department") + "' ";
+  	String depSql = " and vsst.code<>'COVID' and coalesce(p.department_id,w.lpu_id)='" + request.getParameter("department") + "' ";
     if (serviceSubType!=null && serviceSubType.equals("24")) {
         depSql = " ";
         request.setAttribute("serviceSubType", serviceSubType) ;
@@ -101,27 +100,20 @@
         <msh:textField property="beginDate" label="Период с" />
         <msh:textField property="endDate" label="по" />
            <td>
-            <input type="button" value="Отобразить данные" onclick="submitFunc();"/>
+            <input type="submit" value="Отобразить данные"/>
           </td>
       </msh:row>
     </msh:panel>
     </msh:form>
       	<tags:pres_intake_biomaterial name="Bio" role="/Policy/Mis/Journal/Prescription/LabSurvey/IsCheckTransfer"/>
       	<tags:pres_transferByBarcode name="Barcode" />
-    
+
     <script type='text/javascript'>
     checkFieldUpdate('typeIntake','${typeIntake}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',3) ;
     checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
     function checkfrm() {
     	document.forms[0].submit() ;
-    }
-
-    function submitFunc() {
-        if ("${depSql}".length<4)
-            document.location.reload();
-        else
-            document.forms[0].submit();
     }
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -134,28 +126,13 @@
    		chk[+aValue-1].checked='checked' ;
    	}
    }
-    if ($('beginDate').value=="") {
-    	$('beginDate').value=getCurrentDate() ;
-    }
-    if ("${depSql}".length<4) {
-        $('department').value = "";
-        $('departmentName').value = "";
-        $('department').disabled = true;
-        $('departmentName').disabled = true;
-        $('serviceSubType').disabled = true;
-        $('serviceSubTypeName').disabled = true;
-        $('prescriptType').value = "";
-        $('prescriptTypeName').value = "";
-        $('prescriptType').disabled = true;
-        $('prescriptTypeName').disabled = true;
-    }
-			 
+
     </script>
     <%
     String department = request.getParameter("department") ;
     String beginDate = request.getParameter("beginDate") ;
   	if (department!=null && !department.equals("") || serviceSubType.equals("24")) {
-  		
+
   		if (beginDate==null || beginDate.equals("")) {
   			beginDate=DateFormat.formatToDate(new java.util.Date()) ;
   		}
@@ -366,6 +343,52 @@
     
     <msh:sectionTitle>
 
+        <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR/Reestr">
+            <a id='noteH' href="#bottom" onclick="showNote();" >Показать примечание</a><br>
+            <div id="note" style="display:none;">
+                <p>указать только <i>дату</i></p>
+                <p>поиск по <i>дате направления</i> (не период, просто первая дата)</p>
+                <p>передача в лабораторию <i>не была произведена</i></p>
+                <p>передача в лабораторию <i>не была произведена</i></p>
+                <p>вывод только <i>не отбракованных</i></p>
+            </div>
+            <form  id="printForm" name="printForm" action="print-print-pres_lab_pcrCovid_by_department.do" method="post" target="_blank">
+                <input type='hidden' name="sqlText" id="sqlText" value="">
+                <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+                <input type='hidden' name="s" id="s" value="PrintService">
+                <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
+                <input type='hidden' name="groupField" id="groupField" value="5">
+                <input type='hidden' name="cntColumn" id="cntColumn" value="1">
+                <input type='hidden' name="planStartDate" id="planStartDate" value="${beginDate}">
+                <input type="button" value="Реестр приёма-передачи SARS-COV2" onclick="printPresLabCovidReestr()">
+                <script type="text/javascript">
+                    function printPresLabCovidReestr() {
+                        $('sqlText').value=" select p.materialId as f1material" +
+                            " ,pat.lastname as f2last,pat.firstname as f3first,pat.middlename as f4middlenam" +
+                            " ,to_char(p.intakeDate,'dd.mm.yyyy') as f5dtintake" +
+                            " ,dep.name as f6depName" +
+                            " ,p.materialId as f7countTable" +
+                            " from prescription p" +
+                            " left join PrescriptionList pl on pl.id=p.prescriptionList_id" +
+                            " left join MedCase slo on slo.id=pl.medCase_id" +
+                            " left join Patient pat on pat.id=slo.patient_id" +
+                            " left join MedService ms on ms.id=p.medService_id" +
+                            " left join VocServiceType vst on vst.id=ms.serviceType_id" +
+                            " left join MisLpu dep on dep.id=slo.department_id" +
+                            " left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id" +
+                            " where p.dtype='ServicePrescription'  " +
+                            " and p.planStartDate=to_date('"+$('beginDate').value + "','dd.mm.yyyy')  "+
+                            " and vst.code='LABSURVEY'  "+
+                            " and p.cancelDate is null ${sqlAdd} and p.intakeDate is not null" +
+                            " and vsst.code='COVID'"+
+                            " group by dep.name,p.materialId,pat.id,p.intakeDate"+
+                            " order by dep.name,pat.lastname,pat.firstname,pat.middlename";
+                        document.getElementById('printForm').action='print-pres_lab_pcrCovid_by_department.do';
+                        document.getElementById('printForm').submit();
+                    }
+                </script>
+            </form>
+        </msh:ifInRole>
     </msh:sectionTitle>
     <msh:sectionContent>
 	    <msh:table name="list" action="javascript:void(0)" idField="1" selection="multiply" escapeSymbols="false">
@@ -406,7 +429,7 @@
     }
   	} else {
   	  	%>
-<H1>Выберите параметры!!!! </H1>  	  	
+      <H1>Выберите параметры и нажмите <u>Отобразить данные</u> </H1>
   	  	<%	
   	}
   	
@@ -418,6 +441,7 @@
   		function transferByBarcode() {alert("");
   			
   		}
+
   	    function transferInLab(aPrescript) {
   	    	if (typeof aPrescript=="undefined") {
   	    		var ids = theTableArrow.getInsertedIdsAsParams("","list") ;
@@ -505,6 +529,35 @@
   	    		cancelBioIntakeInfo();
   	    	}	
   		}
+
+        //показать/скрыть примечание
+        function showNote() {
+            var note = document.getElementById("note");
+            var href = document.getElementById("noteH");
+            if (note.style.display=="none") {
+                note.style.display="block";
+                jQuery(href).text("Скрыть примечание");
+            }
+            else {
+                note.style.display="none";
+                jQuery(href).text("Показать примечание");
+            }
+        }
+        if ($('beginDate').value=="") {
+            $('beginDate').value=getCurrentDate() ;
+        }
+        if ("${depSql}".length<4) {
+            $('department').value = "";
+            $('departmentName').value = "";
+            /*$('department').disabled = true;
+            $('departmentName').disabled = true;
+            $('serviceSubType').disabled = true;
+            $('serviceSubTypeName').disabled = true;*/
+            $('prescriptType').value = "";
+            $('prescriptTypeName').value = "";
+            /*$('prescriptType').disabled = true;
+            $('prescriptTypeName').disabled = true;*/
+        }
   	  serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	  departmentAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	  prescriptTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
