@@ -177,7 +177,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /**
      * Создаем тэг с информацией о госпитализации (версия 3.2*)
      */
-    private Element createZSl2020(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isExport263, boolean isNedonosh, String lpuRegNumber
+    private Element createZSl2020(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isNedonosh, String lpuRegNumber
             , boolean a1, boolean a2, boolean a3, boolean a4) {
         //boolean isExtDisp = aEntry.getEntryType().equals(EXTDISPTYPE);
         String forPom = isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic ? "2" : "1") : "3";
@@ -232,7 +232,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      * aEntry - случай госпитализации
      * entriesList - строка с ИД СЛО
      */
-    private Element createSlElements2020(E2Entry aEntry, String entriesString, int cnt, boolean isExport263, String lpuRegNumber, String aFileType) {
+    private Element createSlElements2020(E2Entry aEntry, String entriesString, int cnt, String lpuRegNumber, String aFileType) {
 
             /*
             ZSL, SL = информация об обращении. визиты переносятся в USL
@@ -317,7 +317,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String isChild = Boolean.TRUE.equals(aEntry.getIsChild()) ? "1" : "0";
 
             String[] slIds = entriesString.split(",");
-            Element zSl = createZSl2020(aEntry, isPoliclinic, slIds.length, cnt, isExport263, isNedonosh, lpuRegNumber
+            Element zSl = createZSl2020(aEntry, isPoliclinic, slIds.length, cnt, isNedonosh, lpuRegNumber
                     , a1, a2, a3, a4);
             int indSl = zSl.indexOf(zSl.getChild("SL_TEMPLATE"));
             Date startHospitalDate = null, finishHospitalDate = null;
@@ -844,7 +844,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
             java.util.Date startStartDate = new java.util.Date();
             String regNumber = getExpertConfigValue("LPU_REG_NUMBER", "300001");
-            boolean isExport263 = "1".equals(getExpertConfigValue("EXPORT_263", "1"));
             String fileName = "M" + regNumber + "T30_" + packetDateAdd; // M300001T30_171227
             SequenceHelper sequenceHelper = SequenceHelper.getInstance();
             if (cntNumber == null) {
@@ -1008,7 +1007,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 Element z;
                 //При появлении новых форматов файла - добавляем сюда
                 if ("3.2".equals(aVersion)) {
-                    z = createSlElements2020(entry, sls, cnt + 1, isExport263, regNumber, aFileType);
+                    z = createSlElements2020(entry, sls, cnt + 1, regNumber, aFileType);
                 } else {
                     LOG.error("Неизвестный формат пакета: " + aVersion);
                     throw new IllegalStateException("Неизвестный формат пакета: " + aVersion);

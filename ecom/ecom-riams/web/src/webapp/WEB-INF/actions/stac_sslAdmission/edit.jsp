@@ -165,9 +165,6 @@
               <msh:textField property="weight" label="Вес (кг)"  fieldColSpan="1" horizontalFill="false" />
               <msh:textField  property="theIMT" label="ИМТ"  viewOnlyField="true" fieldColSpan="1" horizontalFill="false" />
           </msh:row>
-        <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm">
-        <msh:separator label="Направлен <input type='button' value='Список направлений' onclick='viewTable263narp_byPat()'///>" colSpan="6" />
-        </msh:ifFormTypeIsNotView>
         <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
         <msh:separator label="Направлен" colSpan="6" />
         </msh:ifFormTypeIsView>
@@ -273,7 +270,6 @@
     <tags:stac_infoBySls form="stac_sslAdmissionForm"/>
 
     <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
-    <tags:hosp_263 name="Direct"/>
         	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand">
     		<script type="text/javascript">
     			$('statCardNumber').select() ;
@@ -460,29 +456,7 @@
     <script type="text/javascript">
 
     serviceStreamAutocomplete.addOnChangeCallback(function(){checkIfDogovorNeeded();});
-    function viewTable263narp_byPat() {
-    	if ($('orderDate').value=="") {
-    		alert("Введите дату направления");
-    		$('orderDate').focus() ;
-    		$('orderDate').select() ;
-    	} else {
-    		showDirect263naprByPat($('patient').value,$('orderDate').value) ;
-    	}
-    }
-    function setHospByHDF(aHDF,aPat) {
-    	HospitalMedCaseService.getInfoByHDF(aHDF,{
- 			callback: function(aResult) {
- 				result=aResult.split("###@###") ;
- 				$('orderLpu').value=result[0];
- 				$('orderLpuName').value=result[1];
- 				$('orderNumber').value=result[2];
- 				$('orderDate').value=result[3];
- 				$('orderMkb').value=result[4];
- 				$('orderMkbName').value=result[5];
- 				cancelDirect263() ;
- 			}
-    	}) ;
-    }
+
 		try{	
 		    if (orderMkbAutocomplete) orderMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('orderMkb','orderDiagnos');

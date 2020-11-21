@@ -141,10 +141,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink styleId="stac_protocol" params="id" roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View"
     action="/printProtocolsBySLS.do?stNoPrint=selected" name="Список нераспечатанных протоколов"
     />
-    
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="263 приказ" 
-    	 action='/javascript:showorder263CloseDocument()' title='263 приказ' styleId="stac_slo"
-    	/>
 	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="Изменить рост/вес/ИМТ"
 					 action='/javascript:showIMTCloseDocument()' title='Изменить рост/вес/ИМТ' styleId="stac_slo"
 	   />
@@ -267,7 +263,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		<msh:sideLink action = "/entityParentPrepareCreate-stac_disabilityCase" name = "Нетрудоспособность" params = "id" title = "Нетрудоспособность" roles = "/Policy/Mis/MedCase/Stac/Ssl//Disability/Disability/Create"  />
 </msh:sideMenu>
 <tags:contract_getAccount name="ACCOUNT"  />
-<tags:order263 name="order263" />
 <tags:IMT name="IMT" />
 <tags:identityPatient name="identityPatient" title="в госпитализации"/>
   <script type='text/javascript' src='./dwr/interface/PregnancyService.js'></script>

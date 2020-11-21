@@ -41,19 +41,6 @@ public class E2Entry extends BaseEntity {
     @Transient
     /* Вычисляем основной диагноз по записи */
     public EntryDiagnosis getMainEntryDiagnosis () {
-        /* //Уберем пока наш jboss не станет поддерживать stream
-        EntryDiagnosis diagnosis = getDiagnosis().stream().findFirst().filter((d)->
-                d.getRegistrationType()!=null && d.getRegistrationType().getCode().equals("3")
-                && d.getPriority()!=null &&d.getPriority().getCode().equals("1")).get(); //Ищем выписные основные диагнозы
-        if (diagnosis==null) {
-            diagnosis = getDiagnosis().stream().findFirst().filter((d)->
-                d.getRegistrationType()!=null && d.getRegistrationType().getCode().equals("4")
-                        && d.getPriority()!=null &&d.getPriority().getCode().equals("1")).get(); //Ищем клинические основные диагнозы
-        }
-        if (diagnosis==null) { //Не должно такого быть
-            diagnosis = getDiagnosis().get(0);
-        }
-        */
         List<EntryDiagnosis> list = getDiagnosis();
         for (EntryDiagnosis d: list) {
             if (d.getRegistrationType()!=null && d.getRegistrationType().getCode().equals("3")
@@ -1090,6 +1077,7 @@ public class E2Entry extends BaseEntity {
     public String getTicket263Number() {return theTicket263Number;}
     public void setTicket263Number(String aTicket263Number) {theTicket263Number = aTicket263Number;}
     /** Номер направление ФОМС */
+    @Deprecated
     private String theTicket263Number ;
 
     /** Результат госпитализации */ //vho.code||'#'||vrd.code||'#'||vhr.omcCode

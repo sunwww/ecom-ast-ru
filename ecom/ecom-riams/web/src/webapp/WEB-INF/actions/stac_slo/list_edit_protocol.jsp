@@ -183,11 +183,9 @@ left join diary d on d.id=dm.diary_id
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   <script type="text/javascript">
   function checkEditProtocolControl(aDm,aD) {
-	  //alert(aDm+"---"+aD) ;
-	  HospitalMedCaseService.checkEditProtocolControl(aDm,aD
+	  HospitalMedCaseService.checkEditProtocolControl(aD
 				,{
-		 
-			callback: function(aResult) {
+			callback: function() {
 				window.document.location.reload();
 			}
 		});

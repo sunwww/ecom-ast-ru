@@ -43,9 +43,6 @@
 					<li><msh:link isReport="true" roles="/Policy/Mis/Journal/CriminalMessages" action="journal_militiaMessage.do">
                              Журнал сообщений в полицию
                         </msh:link></li>
-					<li><msh:link isReport="true" roles="/Policy/Mis/Journal/263injunction" action="stac_direct_in_fond.do">
-                             263 приказ
-                        </msh:link></li>
 					<li><msh:link isReport="true" roles="/Policy/Mis/MedCase/Stac/Journal/AddressList" action="stac_address_list.do">
                              Адресные листки
                         </msh:link></li>

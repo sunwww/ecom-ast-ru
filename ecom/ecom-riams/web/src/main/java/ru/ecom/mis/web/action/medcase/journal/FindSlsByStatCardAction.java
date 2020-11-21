@@ -12,23 +12,13 @@ import java.util.Date;
 
 public class FindSlsByStatCardAction  extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-    	//MedcardSearchForm form = (MedcardSearchForm) aForm;
-    	//form.validate(aMapping, aRequest) ;
-    	//IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-    	//aRequest.setAttribute("list", service.findSlsByStatCard(form.getNumber()));
     	String onlyYear = aRequest.getParameter("onlyYear") ;
     	String onlyYearH = aRequest.getParameter("onlyYearH") ;
     	if (onlyYear ==null && onlyYearH==null) onlyYearH = (String)aRequest.getSession(true).getAttribute("findSlsByStatCard.onlyYear") ;
         String exactMatch = aRequest.getParameter("exactMatch") ;
         String exactMatchH = aRequest.getParameter("exactMatchH") ;
         if (exactMatch ==null && exactMatchH==null) exactMatchH = (String)aRequest.getSession(true).getAttribute("findSlsByStatCard.exactMatch") ;
-        
-        /*if (onlyYear==null &&onlyYearH==null 
-        		|| (onlyYear.equals("") )
-        		||  onlyYearH==null&& (onlyYear.equals("true") 
-        				||onlyYear.equals("1") 
-        				|| onlyYear.equals("on"))
-        */
+
     	Date cur = new Date() ;
     	SimpleDateFormat FORMAT_2 = new SimpleDateFormat("yyyy") ;
     	aRequest.setAttribute("year",FORMAT_2.format(cur)) ;

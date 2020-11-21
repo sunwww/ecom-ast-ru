@@ -263,7 +263,7 @@
       		var frm = document.forms["${name}EpicrisisParameterForm"];
       		var reg = getCheckedRadio(frm,"${name}DefaultInfo") ;
  			HospitalMedCaseService.getPatientDefaultInfo($('${patient}').value,$('${dateStart}').value
- 				,$('${dateFinish}').value, {
+ 				, {
  					callback: function(aString) {
  						$('${property}').value = aString +"\n"+$('${property}').value;
  						the${name}EpicrisisDialog.hide() ;

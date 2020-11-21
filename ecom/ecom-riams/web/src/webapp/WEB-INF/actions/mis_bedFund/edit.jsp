@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -6,9 +6,6 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <!-- 
-    	  - Проба
-    	  -->
     <msh:form action="/entityParentSaveGoView-mis_bedFund.do" defaultField="hello">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
@@ -48,9 +45,6 @@
           <msh:textField property="dateFinish" label="Дата окончания актуальности" />
           <msh:textField property="timeFinish" label="Время окончания актуальности" />
         </msh:row>
-        <msh:row>
-        	<msh:textField fieldColSpan="3" property="snilsDoctorDirect263"/>
-        </msh:row>
         <msh:row />
         <msh:submitCancelButtonsRow colSpan="4" />
       </msh:panel>
@@ -68,7 +62,6 @@
     
     <msh:sideMenu title="Перейти">
       <msh:sideLink action="/entityParentListRedirect-mis_bedFund" name="К списку" params="id" />
-      <msh:sideLink roles="/Policy/Mis/Journal/263injunction" action="/stac_direct_in_fond.do" name="263 приказ" params="id" />
     </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

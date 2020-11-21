@@ -152,7 +152,7 @@
         departmentAutocomplete.addOnChangeCallback(function() {
 			HospitalMedCaseService.getDefaultBedTypeByDepartment(
 					 $('department').value, $('serviceStream').value
-      				, $('dateFrom').value,{
+      				,{
       			callback: function(aResult) {
       				var res = aResult.split('#') ;
 

@@ -132,7 +132,6 @@
                 </msh:row>
                 <msh:row>
                     <msh:textField property="historyNumber" size="30"/>
-                    <msh:textField property="ticket263Number" size="30"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="planHospDate" size="30"/>
