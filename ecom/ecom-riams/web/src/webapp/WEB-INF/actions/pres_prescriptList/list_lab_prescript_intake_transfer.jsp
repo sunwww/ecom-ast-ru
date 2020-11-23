@@ -305,6 +305,7 @@
        ,coalesce(wfCab.groupName,'')||' '||to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f14dttransfer
        ,to_char(p.cancelDate,'dd.mm.yyyy')||' '||cast(p.cancelTime as varchar(5)) as f15dtcancel
   , case when p.barcodeNumber is not null then 'ШК №'||p.barcodeNumber end as f16_barcode
+  ,coalesce(mlIntake.name,ml.name) as m17lname
     from prescription p
     
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
@@ -325,6 +326,7 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
+    left join MisLpu mlIntake on mlIntake.id=p.department_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     left join hitechMedicalCase ht on ht.medcase_id=slo.id or ht.medcase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase')
     where p.dtype='ServicePrescription'
@@ -337,7 +339,7 @@
     group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
-    ,p.transferDate,p.transferTime,vsst.biomaterial,p.cancelDAte,p.cancelTime,wfCab.groupName, p.barcodeNumber, ht.id
+    ,p.transferDate,p.transferTime,vsst.biomaterial,p.cancelDAte,p.cancelTime,wfCab.groupName, p.barcodeNumber, ht.id,mlintake.name,ml.name
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     
@@ -346,6 +348,9 @@
         <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR/Reestr">
             <a id='noteH' href="#bottom" onclick="showNote();" >Показать примечание</a><br>
             <div id="note" style="display:none;">
+                <u>Свод</u>
+                <p>Фильтр по отделению недоступен</p>
+                <u>Печать реестра</u>
                 <p>указать только <i>дату</i></p>
                 <p>поиск по <i>дате направления</i> (не период, просто первая дата)</p>
                 <p>передача в лабораторию <i>не была произведена</i></p>
@@ -417,6 +422,7 @@
 	      <msh:tableColumn columnName="Дата и время забора" property="13"/>
 	      <msh:tableColumn columnName="Дата и время приема в лабораторию" property="14"/>
 	      <msh:tableColumn columnName="Дата и время отбраковки" property="15"/>
+          <msh:tableColumn columnName="Отделение" property="17" role="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratoryPCR"/>
 	      <msh:tableColumn columnName="Список услуг" property="10"/>
 	    </msh:table>
 	    <script type="text/javascript">
