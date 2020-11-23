@@ -193,7 +193,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
        		left join medcase smc on smc.parent_id =vis.id
        		left join diary d on d.medcase_id =vis.id
        		left join medservice  ms on ms.id=smc.medservice_id
-       		where vis.parent_id=sls.id and vis.dtype ='Visit' and ms.code='A26.08.027.001' and upper(d.record) like '%ПОЛОЖИТЕЛЬН%'
+       		where vis.parent_id=sls.id and vis.dtype ='Visit' and ms.code='A26.08.027.999' and upper(d.record) like '%ПОЛОЖИТЕЛЬН%'
        		) as f9_rec
        		, vs.name as f10
        		,sc.code as f11_ss

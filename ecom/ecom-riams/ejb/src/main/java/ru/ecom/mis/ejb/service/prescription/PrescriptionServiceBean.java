@@ -417,7 +417,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		try {
 			MedService medService = protocol.getMedService();
 			String medServiceCode = medService!=null ? medService.getCode() : "";
-			if ("A26.08.027.001".equals(medServiceCode)) { //анализ на ковид. Делаем браслет с положительным/отрицательным анализом.
+			if ("A26.08.027.999".equals(medServiceCode)) { //анализ на ковид. Делаем браслет с положительным/отрицательным анализом.
                 String entityName = "Protocol";
                 deleteBraceletByEntity(entityName,protocolId, manager);
 				ColorIdentityPatient cip = new ColorIdentityPatient();

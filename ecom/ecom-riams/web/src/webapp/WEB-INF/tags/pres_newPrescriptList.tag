@@ -369,7 +369,7 @@ function getParameterById(id) {
 	 function createAndExecutePrescription () {
 		the${name}PrescriptListDialog.hide() ;
 		$('${name}NewService').value=22347;
-		$('${name}NewServiceName').value='A26.08.027.001 МОЛЕКУЛЯРНО-БИОЛОГИЧЕСКОЕ ИССЛЕДОВАНИЕ МАЗКОВ СО СЛИЗИСТОЙ ОБОЛОЧКИ НОСОГЛОТКИ НА КОРОНАВИРУС ТОРС (SARS-COV)';
+		$('${name}NewServiceName').value='A26.08.027.999 МОЛЕКУЛЯРНО-БИОЛОГИЧЕСКОЕ ИССЛЕДОВАНИЕ МАЗКОВ СО СЛИЗИСТОЙ ОБОЛОЧКИ НОСОГЛОТКИ НА КОРОНАВИРУС ТОРС (SARS-COV)';
      	jQuery('.rootPane').hide();
      	jQuery('#executeLabSurveyDiv').show();
 		the${name}PrescriptListDialog.show() ;

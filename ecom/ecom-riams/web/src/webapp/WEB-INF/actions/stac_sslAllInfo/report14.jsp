@@ -475,7 +475,7 @@
         		left join medcase smc on smc.parent_id =vis.id
         		left join diary d on d.medcase_id =vis.id
         		left join medservice  ms on ms.id=smc.medservice_id
-        		where vis.parent_id=sls.id and vis.dtype ='Visit' and ms.code='A26.08.027.001' and upper(d.record) like '%ПОЛОЖИТЕЛЬН%'
+        		where vis.parent_id=sls.id and vis.dtype ='Visit' and ms.code='A26.08.027.999' and upper(d.record) like '%ПОЛОЖИТЕЛЬН%'
         		) as f14_rec
      from medcase sls
     left join StatisticStub ss on ss.id=sls.statisticStub_id
