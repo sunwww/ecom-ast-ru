@@ -562,6 +562,10 @@ function printNativeQuery(aCtx,aParams) {
 	map.put("sqlColumn",sqlColumn) ;
 	map.put("listAll",retAll) ;
 	current_info(aCtx) ;
+
+	var date = aParams.get("date");
+	map.put("date",typeof date!=='undefined' && date!=null && date?
+		date: "") ;
 	return map ;
 }
 function printManyNativeQuery(aCtx,aParams) {

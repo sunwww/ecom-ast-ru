@@ -129,6 +129,10 @@
 	                   		<msh:link isReport="true" action="lab_chief_report.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratory">
 	                   		Журнал заведующего лабораторией</msh:link>
 	                   </li>
+						<li>
+							<msh:link isReport="true" action="lab_plus_covidPcr.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR">
+								Положительные ПЦР</msh:link>
+						</li>
 						<li><msh:link isReport="true" action="reportKDL.do" roles="/Policy/MainMenu/LaboratoryJournal/ChiefLabJournal">
 							Сводный отчёт по КДЛ
 						</msh:link></li>

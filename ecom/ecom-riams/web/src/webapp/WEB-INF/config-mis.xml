@@ -1211,6 +1211,14 @@
 			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/journal_searchEmptyCovid.jsp" />
 		</action>
 
+		<action path='/lab_plus_covidPcr' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_covid19/lab_plus_covidPcr.jsp" />
+		</action>
+
 		<action path='/journal_covidForm' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
