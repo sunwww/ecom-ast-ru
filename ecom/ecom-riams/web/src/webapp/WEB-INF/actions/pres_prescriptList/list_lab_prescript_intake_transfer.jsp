@@ -266,16 +266,14 @@
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     ${depSql}
-    and vst.code='LABSURVEY' 
-    
+    and vst.code='LABSURVEY'
     ${sqlAdd}
-   
- 
+     and ml.isIntakeBioMaterial='1'
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
         <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" escapeSymbols="false">
+	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" escapeSymbols="false" printToExcelButton="Сохранить в excel">
         <msh:tableButton property="16" buttonFunction="goBioService" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Результат" buttonShortName="Ввод результата" hideIfEmpty="true"/>
 	      <msh:tableButton property="17" buttonFunction="showBioIntakeCancel" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Брак биоматериала" buttonShortName="Брак" hideIfEmpty="true"/>
           <msh:tableColumn columnName="#" property="sn"  />
@@ -356,6 +354,7 @@
     and vst.code='LABSURVEY' 
     
     ${sqlAdd}
+     and ml.isIntakeBioMaterial='1'
     group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
@@ -376,6 +375,7 @@
                 <p>передача в лабораторию <i>не была произведена</i></p>
                 <p>передача в лабораторию <i>не была произведена</i></p>
                 <p>вывод только <i>не отбракованных</i></p>
+                <p>вывод только тех, где <i>осуществлён забор</i></p>
             </div>
             <form  id="printForm" name="printForm" action="print-print-pres_lab_pcrCovid_by_department.do" method="post" target="_blank">
                 <input type='hidden' name="sqlText" id="sqlText" value="">
@@ -405,7 +405,7 @@
                             " and p.planStartDate=to_date('"+$('beginDate').value + "','dd.mm.yyyy')  "+
                             " and vst.code='LABSURVEY'  "+
                             " and p.cancelDate is null ${sqlAdd} and p.intakeDate is not null" +
-                            " and vsst.code='COVID'"+
+                            " and vsst.code='COVID' "+
                             " group by dep.name,p.materialId,pat.id,p.intakeDate"+
                             " order by dep.name,pat.lastname,pat.firstname,pat.middlename";
                         document.getElementById('printForm').action='print-pres_lab_pcrCovid_by_department.do';
@@ -416,7 +416,7 @@
         </msh:ifInRole>
     </msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void(0)" idField="1" selection="multiply" escapeSymbols="false">
+	    <msh:table name="list" action="javascript:void(0)" idField="1" selection="multiply" escapeSymbols="false" printToExcelButton="Сохранить в excel">
 	     <msh:tableNotEmpty>
 	     <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/IsCheckTransfer">
             <tr>
