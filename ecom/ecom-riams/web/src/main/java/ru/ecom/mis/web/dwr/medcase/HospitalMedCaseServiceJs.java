@@ -1143,13 +1143,13 @@ public class HospitalMedCaseServiceJs {
 	}
 
 	/**
-	 * Проставить перед удалением выписки: что юзер - лечащий врач (одна из его раб. ф-ий) последнего СЛО и всё это - в течение одного календарного дня.
+	 * Проставить перед удалением выписки: что юзер - лечащий врач (одна из его раб. ф-ий) последнего СЛО.
 	 *
 	 * @param hmcId HospitalMedCase.id
 	 * @param aRequest HttpServletRequest
 	 * @return Boolean - true - юзер - лечащий врач, false - нет
 	 */
-	public Boolean checkUserIsALastSloTreatDoctorAndDischargeLess(Long hmcId, HttpServletRequest aRequest) throws NamingException {
+	public Boolean checkUserIsALastSloTreatDoctor(Long hmcId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		String query="select case when (select ownerfunction_id from medcase where transferdate is null" +
@@ -1197,16 +1197,35 @@ public class HospitalMedCaseServiceJs {
 		return flag;
 	}
 
-/**
- * Проставить перед удалением выписки, что это в течение одного календарного дня.
- *
- * @param hmcId HospitalMedCase.id
- * @param aRequest HttpServletRequest
- * @return Boolean - true - в течение календарного дня, false - нет
- */
-    public Boolean checkDischargeEnableForNotAdmin(Long hmcId, HttpServletRequest aRequest) throws NamingException {
-        return checkDischargeThisDay(hmcId,aRequest) && !checkMisLpuCovid(hmcId,aRequest);
-    }
+	/**
+	 * Проверить перед удалением выписки, что это админ.
+	 *
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean - true -админ, false - нет
+	 */
+    private Boolean checkDeleteDischargeAdmin(HttpServletRequest aRequest) throws JspException {
+		return RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin,/Policy/Mis/MedCase/Stac/Ssl/Delete",aRequest);
+	}
+
+	/**
+	 * Проставить перед удалением выписки, можно ли её удалить.
+	 * Админ может удалять админ что угодно
+	 * Неифекционные отделения: в течение календарного дня могут удалить: люди с ролью/лечащий врач
+	 *
+	 * @param hmcId HospitalMedCase.id
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean - true - в течение календарного дня, false - нет
+	 */
+	public Boolean deleteDischargeCheck(Long hmcId, HttpServletRequest aRequest) throws JspException, NamingException {
+		Boolean canDelete = checkDeleteDischargeAdmin(aRequest) ||  //админ
+				(!checkMisLpuCovid(hmcId,aRequest) && checkDischargeThisDay(hmcId,aRequest) //неинфекционное и в течение одного каленарного дня
+						&& (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/DeleteDischargeOneDay",aRequest) //роль для удаления
+						|| checkUserIsALastSloTreatDoctor(hmcId,aRequest))) //лечащий врач
+				;
+		if (canDelete)
+			deleteDischarge(hmcId,aRequest);
+		return canDelete;
+	}
 
     /**
      * Проставить перед удалением выписки, что это не ковидное отделение.

@@ -217,18 +217,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	key='ALT+DEL' title='Удалить' confirm="Удалить?" />
 </msh:sideMenu>
 <msh:sideMenu title="Администрирование"  >
-	<msh:sideLink action=".javascript:deleteDischarge()"
-		name="Удалить данные выписки"
-		title="Удалить данные выписки"
-		confirm="Вы действительно желаете удалить данные выписки?"
-		roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin,/Policy/Mis/MedCase/Stac/Ssl/Delete"
-		styleId="deleteDischarge"
-	/>
 	<msh:sideLink action=".javascript:deleteDischargeCheck('${param.id}','.do')"
-				  name="Удалить данные выписки (возможно в теч. дня)"
-				  title="Удалить данные выписки (возможно в теч. дня)"
+				  name="Удалить данные выписки"
+				  title="Удалить данные выписки"
 				  confirm="Вы действительно желаете удалить данные выписки?"
-				  roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteDischargeOneDay"
 				  styleId="deleteDischarge"
 	/>
 	<msh:sideLink action="/entityPrepareCreate-sec_userPermission.do?type=2&ido=${param.id}"
@@ -288,49 +280,24 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 <script type="text/javascript">
-
-	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin,/Policy/Mis/MedCase/Stac/Ssl/Delete">
-		function deleteDischarge() {
-			HospitalMedCaseService.deleteDischarge(
-				'${param.id}', {
-					callback: function() {
+    function deleteDischargeCheck(aId) {
+        HospitalMedCaseService.deleteDischargeCheck(
+            aId, {
+                callback: function(res) {
+                    if (res==true) {
 						if ($('dateFinish')) $('dateFinish').value="" ;
 						if ($('dateFinishReadOnly')) $('dateFinishReadOnly').value="" ;
 						if ($('dischargeTime')) $('dischargeTime').value="" ;
 						if ($('dischargeTimeReadOnly')) $('dischargeTimeReadOnly').value="" ;
 						showToastMessage("Данные удалены",null,true,false,3000) ;
 					}
-				}
-			);
-		}
-	</msh:ifInRole>
-	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteDischargeOneDay">
-
-	function deleteDischarge() {
-		HospitalMedCaseService.deleteDischarge(
-				'${param.id}', {
-					callback: function() {
-						if ($('dateFinish')) $('dateFinish').value="" ;
-						if ($('dateFinishReadOnly')) $('dateFinishReadOnly').value="" ;
-						if ($('dischargeTime')) $('dischargeTime').value="" ;
-						if ($('dischargeTimeReadOnly')) $('dischargeTimeReadOnly').value="" ;
-						alert("Данные удалены") ;
-					}
-				}
-		);
-	}
-
-    function deleteDischargeCheck(aId) {
-        HospitalMedCaseService.checkDischargeEnableForNotAdmin(
-            aId, {
-                callback: function(res) {
-                    if (res==true)
-                        deleteDischarge();
                     else
-                        showToastMessage("Невозможно удалить данные! Удалить может только пользователь с соответствующей ролью в течение календарного дня (только для неинфекционных отделений) или КЭО!",null,true,true,6000);
+                        showToastMessage("Невозможно удалить данные! " +
+								"Удалить могут только: КЭО или в течение календарного дня пользователь с соответствующей ролью (зав. отделения)" +
+								"/лечащий врач последнего СЛО  (только для неинфекционных отделений)!",null,true,true,8000);
                 }}) ;
     }
-	</msh:ifInRole>
+
 function gotoPregHistory(aMedCase,aUrl) {
  	PregnancyService.getPregHistoryByMedCase(
 			     		'${param.id}' , {
