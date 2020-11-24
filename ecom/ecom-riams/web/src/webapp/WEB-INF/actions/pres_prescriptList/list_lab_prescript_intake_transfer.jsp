@@ -96,6 +96,9 @@
         <msh:row>
         	<msh:autoComplete property="serviceSubType"  parentId="LABSURVEY" fieldColSpan="4" horizontalFill="true" label="Тип биоматериала" vocName="vocServiceSubTypeByCode"/>
         </msh:row>
+        <msh:row>
+            <msh:autoComplete property="cancelReason" fieldColSpan="4" horizontalFill="true" label="Причина брака" vocName="vocPrescriptCancelReason"/>
+        </msh:row>
       <msh:row>
         <msh:textField property="beginDate" label="Период с" />
         <msh:textField property="endDate" label="по" />
@@ -112,14 +115,25 @@
     checkFieldUpdate('typeIntake','${typeIntake}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',3) ;
     checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
-    function checkfrm() {
+    function checkfrm(type) {
+        //если выбрана причина брака и не проставлено отбракованные, проставить отбракованные
+        //если выбирается не отбракованные, то убрать причину брака
+        var brak = document.getElementsByName('typeTransfer')[2];
+        if (($('cancelReason').value) && !brak.checked) {
+            if (type)
+                brak.checked = true;
+            else {
+                $('cancelReason').value='';
+                $('cancelReasonName').value='';
+            }
+        }
+
     	document.forms[0].submit() ;
     }
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
-   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
    	if ((+aValue)==0 || (+aValue)>(+aMax)) {
    		chk[+aDefaultValue-1].checked='checked' ;
    	} else {
@@ -171,11 +185,14 @@
 				, "исследование","service","ms.id", request)) ;
 		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocServiceSubType where id=:id"
 				, "биоматериал","serviceSubType","ms.serviceSubType_id", request)) ;
+        sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptCancelReason where id=:id"
+                , "причина брака","cancelReason","vctr.id", request)) ;
 		 StringBuilder title = new StringBuilder() ;
 		title.append(request.getAttribute("departmentInfo"))
 			.append(" ").append(request.getAttribute("serviceSubTypeInfo")) 
 			.append(" ").append(request.getAttribute("prescriptTypeInfo")) 
-			.append(" ").append(request.getAttribute("serviceInfo")) ;
+			.append(" ").append(request.getAttribute("serviceInfo"))
+            .append(" ").append(request.getAttribute("cancelReasonInfo")) ;
     request.setAttribute("sqlAdd", sqlAdd.toString()) ;
     request.setAttribute("titleInfo", title.toString()) ;
     %>
@@ -244,6 +261,7 @@
     left join MisLpu ml on ml.id=w.lpu_id
     left join MisLpu mlIntake on mlIntake.id=p.department_id
     left join vocprescripttype vpt on vpt.id=p.prescripttype_id
+    left join VocPrescriptCancelReason vctr on vctr.id=p.cancelreason_id
     where p.dtype='ServicePrescription'
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
@@ -260,7 +278,7 @@
 	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" escapeSymbols="false">
         <msh:tableButton property="16" buttonFunction="goBioService" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Результат" buttonShortName="Ввод результата" hideIfEmpty="true"/>
 	      <msh:tableButton property="17" buttonFunction="showBioIntakeCancel" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Брак биоматериала" buttonShortName="Брак" hideIfEmpty="true"/>
-	      <msh:tableColumn columnName="#" property="sn"  />
+          <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Ход работ" property="2"  />
 	      <msh:tableButton property="14" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableColumn columnName="ИБ" property="3"  />
@@ -306,6 +324,7 @@
        ,to_char(p.cancelDate,'dd.mm.yyyy')||' '||cast(p.cancelTime as varchar(5)) as f15dtcancel
   , case when p.barcodeNumber is not null then 'ШК №'||p.barcodeNumber end as f16_barcode
   ,coalesce(mlIntake.name,ml.name) as m17lname
+  ,  case when p.cancelDate is not null then replace(list(''||p.id),' ','') else null end as js18
     from prescription p
     
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
@@ -328,6 +347,7 @@
     left join MisLpu ml on ml.id=w.lpu_id
     left join MisLpu mlIntake on mlIntake.id=p.department_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
+    left join VocPrescriptCancelReason vctr on vctr.id=p.cancelreason_id
     left join hitechMedicalCase ht on ht.medcase_id=slo.id or ht.medcase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase')
     where p.dtype='ServicePrescription'
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
@@ -410,8 +430,8 @@
             </msh:ifInRole>
           </msh:tableNotEmpty>
           <msh:tableButton hideIfEmpty="true" property="2" buttonFunction="showBioIntakeCancel" buttonName="Осуществлен брак" buttonShortName="Брак" role="/Policy/Mis/Journal/Prescription/LabSurvey/IsCheckTransfer"/>
-          
-	      <msh:tableColumn columnName="#" property="sn" />
+          <msh:tableButton property="18" buttonFunction="unCancel" role="/Policy/Mis/Journal/Prescription/LabSurvey/UnCancelBeforeTransfer" buttonName="Отмена брака" buttonShortName="Отмена брака" hideIfEmpty="true"/>
+          <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="Код назн." property="4"/>
 	      <msh:tableColumn columnName="ИБ" property="3"  />
 	      <msh:tableColumn columnName="Метка биоматериала" property="5"/>
@@ -444,6 +464,18 @@
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
   	<script type="text/javascript">
+        <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/UnCancelBeforeTransfer">
+        //отмена брака
+        function unCancel(aPrescriptId) {
+            if (confirm('Вы уверены?')) {
+                PrescriptionService.unCancelPrescript(aPrescriptId, {
+                    callback: function () {
+                        window.document.location.reload();
+                    }
+                });
+            }
+        }
+        </msh:ifInRole>
   		function transferByBarcode() {alert("");
   			
   		}
@@ -567,6 +599,7 @@
   	  serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	  departmentAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	  prescriptTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
+      cancelReasonAutocomplete.addOnChangeCallback(function() {checkfrm(1)}) ;
   	</script>
   </tiles:put>
 </tiles:insert>

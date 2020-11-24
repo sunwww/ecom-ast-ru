@@ -1699,4 +1699,20 @@ public class PrescriptionServiceJs {
 		return service.executeNativeSql(req.toString()).isEmpty()?
 				"0" : "-1";
 	}
+
+	/**
+	 * Отменить брак назначения (для админов)
+	 *
+	 * @param aPrescript Назначение
+	 * @param aRequest HttpServletRequest
+	 */
+	public void unCancelPrescript(Long aPrescript, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder req = new StringBuilder();
+		req.append("update prescription set canceldate=null,canceltime=null")
+			.append(" ,cancelreason_id=null,cancelreasontext=null")
+			.append(" ,transferdate=null,transfertime=null,transferspecial_id=null,transferusername=null")
+			.append(" where id=").append(aPrescript);
+		service.executeUpdateNativeSql(req.toString());
+	}
 }

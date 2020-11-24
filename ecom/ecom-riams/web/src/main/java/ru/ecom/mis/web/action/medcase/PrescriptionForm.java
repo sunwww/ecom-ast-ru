@@ -81,4 +81,11 @@ public class PrescriptionForm extends BaseValidatorForm {
 	public void setDiagnosis(Long aDiagnosis) {theDiagnosis = aDiagnosis;}
 	/** Диагноз */
 	private Long theDiagnosis;
+
+	/** Причина отмены */
+	@Comment("Причина отмены")
+	public Long getCancelReason() {return theCancelReason;}
+	public void setCancelReason(Long aCancelReason) {theCancelReason = aCancelReason;}
+	/** Причина отмены */
+	private Long theCancelReason;
 }
