@@ -392,9 +392,10 @@
                 <input type='hidden' name="groupField" id="groupField" value="5">
                 <input type='hidden' name="cntColumn" id="cntColumn" value="1">
                 <input type='hidden' name="planStartDate" id="planStartDate" value="${beginDate}">
-                <input type="button" value="Реестр приёма-передачи SARS-COV2" onclick="printPresLabCovidReestr()">
+                <input type="button" value="Реестр приёма-передачи SARS-COV2" onclick="printPresLabCovidReestr(1)">
+                <input type="button" value="Реестр направленных SARS-COV2" onclick="printPresLabCovidReestr()">
                 <script type="text/javascript">
-                    function printPresLabCovidReestr() {
+                    function printPresLabCovidReestr(withoutIntake) {
                         $('sqlText').value=" select p.materialPCRId as f1material" +
                             " ,pat.lastname as f2last,pat.firstname as f3first,pat.middlename as f4middlenam" +
                             " ,to_char(p.intakeDate,'dd.mm.yyyy') as f5dtintake" +
@@ -411,9 +412,10 @@
                             " where p.dtype='ServicePrescription'  " +
                             " and p.planStartDate=to_date('"+$('beginDate').value + "','dd.mm.yyyy')  "+
                             " and vst.code='LABSURVEY'  "+
-                            " and p.cancelDate is null ${sqlAdd} and p.intakeDate is not null" +
-                            " and vsst.code='COVID' "+
-                            " group by dep.name,p.materialPCRId,pat.id,p.intakeDate"+
+                            " and p.cancelDate is null ${sqlAdd}";
+                        $('sqlText').value += withoutIntake? " and p.intakeDate is not null" : "";
+                        $('sqlText').value += " and vsst.code='COVID' " +
+                            " group by dep.name,p.materialPCRId,pat.id,p.intakeDate" +
                             " order by dep.name,pat.lastname,pat.firstname,pat.middlename";
                         document.getElementById('printForm').action='print-pres_lab_pcrCovid_by_department.do';
                         document.getElementById('printForm').submit();
