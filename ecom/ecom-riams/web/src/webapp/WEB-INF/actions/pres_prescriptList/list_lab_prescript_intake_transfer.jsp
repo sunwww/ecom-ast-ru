@@ -24,15 +24,18 @@
   	String typeTransfer =ActionUtil.updateParameter("PrescriptJournalTransfer","typeTransfer","2", request) ;
   	String typeDate =ActionUtil.updateParameter("PrescriptJournalTransfer","typeDate","1", request) ;
 
-    String serviceSubType = "";
+    String depSql ="";
+    String department = request.getParameter("department");
+    if (department!=null && !department.equals(""))
+        depSql = " and coalesce(p.department_id,w.lpu_id)='" + department + "' ";
+    request.setAttribute("depSql", depSql) ;
+
+    String serviceSubType = "", subTSql = "";
     if (request.getParameter("serviceSubType")!=null)
         serviceSubType =  request.getParameter("serviceSubType");
-  	String depSql = " and vsst.code<>'COVID' and coalesce(p.department_id,w.lpu_id)='" + request.getParameter("department") + "' ";
-    if (serviceSubType!=null && serviceSubType.equals("24")) {
-        depSql = " ";
-        request.setAttribute("serviceSubType", serviceSubType) ;
-    }
-    request.setAttribute("depSql", depSql) ;
+    if (serviceSubType!=null && !serviceSubType.equals(""))
+        subTSql = " and vsst.id=" + serviceSubType;
+    request.setAttribute("subTSql", subTSql) ;
   	%>
   	  <msh:form  action="/pres_journal_intake_transfer.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <msh:panel>
@@ -143,7 +146,6 @@
 
     </script>
     <%
-    String department = request.getParameter("department") ;
     String beginDate = request.getParameter("beginDate") ;
   	if (department!=null && !department.equals("") || serviceSubType.equals("24")) {
 
@@ -266,9 +268,10 @@
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     ${depSql}
+    ${subTSql}
     and vst.code='LABSURVEY'
     ${sqlAdd}
-     and ml.isIntakeBioMaterial='1'
+     and (ml.isIntakeBioMaterial='1' or ml.isnoomc='1')
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
@@ -351,10 +354,11 @@
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     ${depSql}
+    ${subTSql}
     and vst.code='LABSURVEY' 
     
     ${sqlAdd}
-     and ml.isIntakeBioMaterial='1'
+     and (ml.isIntakeBioMaterial='1' or ml.isnoomc='1')
     group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
@@ -583,18 +587,6 @@
         }
         if ($('beginDate').value=="") {
             $('beginDate').value=getCurrentDate() ;
-        }
-        if ("${depSql}".length<4) {
-            $('department').value = "";
-            $('departmentName').value = "";
-            /*$('department').disabled = true;
-            $('departmentName').disabled = true;
-            $('serviceSubType').disabled = true;
-            $('serviceSubTypeName').disabled = true;*/
-            $('prescriptType').value = "";
-            $('prescriptTypeName').value = "";
-            /*$('prescriptType').disabled = true;
-            $('prescriptTypeName').disabled = true;*/
         }
   	  serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	  departmentAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
