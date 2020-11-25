@@ -45,13 +45,13 @@ function onPreCreate(aForm, aCtx) {
 }
 
 //проверка на дубликаты номеров пробирок при анализе на ковид
-function checkDoublesMaterialId(aForm, aEntity, aCtx) {
+function checkDoublesMaterialPCRId(aForm, aEntity, aCtx) {
 	if (!aCtx.manager.createNativeQuery("select p.id" +
 		" from prescription p " +
 		" left join medservice ms on ms.id = p.medservice_id" +
 		" where p.dtype='ServicePrescription' and ms.id=22347" +
 		" and p.medservice_id is not null and p.canceldate is null and planstartdate=current_date+1" +
-		" and p.materialid='" + aForm.materialId + "'").getResultList().isEmpty())
+		" and p.materialPCRid='" + aForm.materialPCRId + "'").getResultList().isEmpty())
 		throw "Уже есть такой анализ с таким номером пробирки на завтрашний день! Измените номер." +
 	" <br/><a href='entityParentPrepareCreate-pres_servicePrescription.do?id="+aEntity.prescriptionList.id+"'>"+"Создать назначение заново"+"</a><br/>";
 }
@@ -102,9 +102,9 @@ function onCreate(aForm, aEntity, aCtx) {
 					} else {
 						adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					}
-					if (medService.id==22347) {
-						checkDoublesMaterialId(aForm, aEntity, aCtx);
-						matId = aForm.materialId;
+					if (medService.code=='A26.08.027.999') {
+						checkDoublesMaterialPCRId(aForm, aEntity, aCtx);
+						adMedService.setMaterialPCRId(aForm.materialPCRId);
 					}
 
 					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ;

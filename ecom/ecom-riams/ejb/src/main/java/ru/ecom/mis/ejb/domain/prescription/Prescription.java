@@ -323,6 +323,12 @@ public abstract class Prescription extends BaseEntity{
 	public void setMaterialId(String aMaterialId) {theMaterialId = aMaterialId;}
 	private String theMaterialId;
 
+	/** Номер пробирки ПЦР*/
+	@Comment("Номер пробирки ПЦР")
+	public String getMaterialPCRId() {return theMaterialPCRId;}
+	public void setMaterialPCRId(String aMaterialPCRId) {theMaterialPCRId = aMaterialPCRId;}
+	private String theMaterialPCRId;
+	
 	/** Причина отмены текст */
 	@Comment("Причина отмены текст")
 	public String getCancelReasonText() {return theCancelReasonText;}

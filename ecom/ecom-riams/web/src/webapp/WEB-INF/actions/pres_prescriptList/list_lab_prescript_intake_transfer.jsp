@@ -240,6 +240,7 @@
     when mc.workFunctionExecute_id is not null and mc.dateStart is not null  then 'background:green;color:white'
     else ''
     end as f19comment
+  ,p.materialPCRid as f20pcr
     from prescription p
     left join MedCase mc on mc.id=p.medcase_id
     left join Diary d on d.medcase_id=mc.id
@@ -287,6 +288,7 @@
 	      <msh:tableColumn columnName="Отделение" property="15"  />
 	      <msh:tableColumn columnName="Забор" property="10"/>
 	      <msh:tableColumn columnName="Код" property="4"/>
+          <msh:tableColumn columnName="Номер ПЦР" property="20" role="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratoryPCR"/>
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о пациенте" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableColumn columnName="ФИО пациента" property="6"  />
 	      <msh:tableColumn columnName="Услуга" property="7"/>
@@ -326,6 +328,7 @@
   , case when p.barcodeNumber is not null then 'ШК №'||p.barcodeNumber end as f16_barcode
   ,coalesce(mlIntake.name,ml.name) as m17lname
   ,  case when p.cancelDate is not null then replace(list(''||p.id),' ','') else null end as js18
+  ,p.materialPCRid as f19pcr
     from prescription p
     
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
@@ -362,7 +365,7 @@
     group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
-    ,p.transferDate,p.transferTime,vsst.biomaterial,p.cancelDAte,p.cancelTime,wfCab.groupName, p.barcodeNumber, ht.id,mlintake.name,ml.name
+    ,p.transferDate,p.transferTime,vsst.biomaterial,p.cancelDAte,p.cancelTime,wfCab.groupName, p.barcodeNumber, ht.id,mlintake.name,ml.name ,p.materialPCRid
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     
@@ -392,11 +395,11 @@
                 <input type="button" value="Реестр приёма-передачи SARS-COV2" onclick="printPresLabCovidReestr()">
                 <script type="text/javascript">
                     function printPresLabCovidReestr() {
-                        $('sqlText').value=" select p.materialId as f1material" +
+                        $('sqlText').value=" select p.materialPCRId as f1material" +
                             " ,pat.lastname as f2last,pat.firstname as f3first,pat.middlename as f4middlenam" +
                             " ,to_char(p.intakeDate,'dd.mm.yyyy') as f5dtintake" +
                             " ,dep.name as f6depName" +
-                            " ,p.materialId as f7countTable" +
+                            " ,p.materialPCRId as f7countTable" +
                             " from prescription p" +
                             " left join PrescriptionList pl on pl.id=p.prescriptionList_id" +
                             " left join MedCase slo on slo.id=pl.medCase_id" +
@@ -410,7 +413,7 @@
                             " and vst.code='LABSURVEY'  "+
                             " and p.cancelDate is null ${sqlAdd} and p.intakeDate is not null" +
                             " and vsst.code='COVID' "+
-                            " group by dep.name,p.materialId,pat.id,p.intakeDate"+
+                            " group by dep.name,p.materialPCRId,pat.id,p.intakeDate"+
                             " order by dep.name,pat.lastname,pat.firstname,pat.middlename";
                         document.getElementById('printForm').action='print-pres_lab_pcrCovid_by_department.do';
                         document.getElementById('printForm').submit();
@@ -439,6 +442,7 @@
 	      <msh:tableColumn columnName="Код назн." property="4"/>
 	      <msh:tableColumn columnName="ИБ" property="3"  />
 	      <msh:tableColumn columnName="Метка биоматериала" property="5"/>
+          <msh:tableColumn columnName="Номер ПЦР" property="19" role="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratoryPCR"/>
 	      <msh:tableColumn columnName="Фамилия пациента" property="6"  />
 	      <msh:tableColumn columnName="Имя" property="7" />
 	      <msh:tableColumn columnName="Отчетство" property="8"/>

@@ -183,7 +183,8 @@
        ,to_char(p.planStartDate,'dd.mm.yyyy') as f14planStartDate
    ,vst.name as vstname
     ,'<input type=''checkbox'' name=''labCheckbox'' value='''||list(''||p.id)||'''>'
-    ,list(vpt.name)
+    ,list(vpt.name) as f17vpt
+    ,p.materialPCRid as f18matPR
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -214,7 +215,7 @@
     group by ${addByGroup} pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime,p.planStartDate
-    ,vst.name, ht.id
+    ,vst.name, ht.id,p.materialPCRid
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     
@@ -370,6 +371,7 @@
 	      <msh:tableColumn columnName="Дата и время забора" property="13"/>
 	      <msh:tableColumn columnName="Код биоматериала" property="4"/>
 	      <msh:tableColumn columnName="Метка биоматериала" property="5"/>
+		  <msh:tableColumn columnName="Номер ПЦР" property="18"/>
 	      <msh:tableColumn columnName="Фамилия пациента" property="6"  />
 	      <msh:tableColumn columnName="Имя" property="7" />
 	      <msh:tableColumn columnName="Отчетство" property="8"/>

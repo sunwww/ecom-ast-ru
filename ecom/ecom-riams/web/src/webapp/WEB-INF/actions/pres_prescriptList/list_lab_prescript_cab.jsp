@@ -29,11 +29,6 @@
   	ActionUtil.getValueBySql("select gwf.id,gwf.groupname from workfunction gwf left join workfunction wf on wf.group_id=gwf.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'", "group_id","group_name",request) ;
   	Object groupId = request.getAttribute("group_id") ;
 
-	String serviceSubType = "";
-	if (request.getParameter("serviceSubType")!=null)
-		serviceSubType =  request.getParameter("serviceSubType");
-	request.setAttribute("serviceSubType", serviceSubType) ;
-
   	if (groupId!=null && !groupId.equals("")) {
   	%>
   	  <msh:form action="/pres_journal_prescript_cab_lab.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
@@ -129,15 +124,6 @@
     if ($('beginDate').value=="") {
     	$('beginDate').value=getCurrentDate() ;
     }
-
-	if ("${serviceSubType}"=='24') {
-		$('serviceSubType').disabled = true;
-		$('serviceSubTypeName').disabled = true;
-		$('prescriptType').value = "";
-		$('prescriptTypeName').value = "";
-		$('prescriptType').disabled = true;
-		$('prescriptTypeName').disabled = true;
-	}
 			 
     </script>
     <%
@@ -182,7 +168,12 @@
 			, "исследование","service","ms.id", request)) ;
 	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocServiceSubType where id=:id"
 			, "биоматериал","serviceSubType","ms.serviceSubType_id", request)) ;
-
+		String serviceSubType = "";
+		if (request.getParameter("serviceSubType")!=null)
+			serviceSubType =  request.getParameter("serviceSubType");
+		request.setAttribute("serviceSubType", serviceSubType) ;
+		if (!serviceSubType.equals("24"))
+			sqlAdd.append(" and vsst.code<>'COVID'");
 		request.setAttribute("sqlAdd", sqlAdd.toString()) ;
 		String title = request.getAttribute("departmentInfo") +
 				" " + request.getAttribute("serviceSubTypeInfo") +
@@ -233,6 +224,7 @@
     , case when p.medcase_id is not null then 'Выполнил: '||suLab.fullName ||' '|| to_char(mc.createdate,'dd.MM.yyyy')||' '||cast(mc.createTime as varchar(5))
       || case when mc.datestart is not null then ' Подтвердил: '||suLabDoc.fullName||' '||to_char(mc.editdate,'dd.MM.yyyy')||' '||cast(mc.edittime as varchar(5)) else '' end else '' end as f22_executeinfo
       ,'js-stac_slo-list_protocols.do?short=Short&id='||pl.medCase_id||'&patient='||pat.id||'&service='||p.medService_id as f23presHistory
+  ,p.materialPCRid as f24pcr
     from prescription p
     left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelreason_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
@@ -272,7 +264,7 @@
     ,p.medCase_id,mc.workFunctionExecute_id,mc.dateStart,vsst.code
     ,wp.lastname,wp.middlename,wp.firstname,vwf.name,mc.id,ml.name
     ,p.canceldate,p.materialid,p.planstartdate
-    ,vsst.biomaterial,d.record,d.id, ht.id, suLab.fullName, suLabDoc.fullName
+    ,vsst.biomaterial,d.record,d.id, ht.id, suLab.fullName, suLabDoc.fullName,p.materialPCRid
     order by pat.lastname,pat.firstname,pat.middlename
     
     "/>
@@ -288,6 +280,7 @@
 	     <msh:tableButton property="16" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); checkLabControl" buttonName="Результат заведен правильно" buttonShortName="Подт." />
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Код назн." property="4"/>
+			<msh:tableColumn columnName="Номер ПЦР" property="24" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR"/>
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="ИБ" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableButton property="12" buttonFunction="getDefinition" buttonName="Просмотр данных о лабораторных назначениях" buttonShortName="ЛН" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>
 	      <msh:tableButton property="23" buttonFunction="getDefinition" buttonName="Просмотр динамики анализа" buttonShortName="Дин" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>

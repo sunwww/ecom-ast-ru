@@ -647,7 +647,7 @@
                 }
 
                 //Если анализ на ковид
-                $('materialId').hide();
+                $('materialPCRId').hide();
                 labServiciesAutocomplete.addOnChangeCallback(function() {
                     if ($('labServicies').value=='22347') {
                         $('labDate').value=getDateAfterOrBeforeCurrent();
@@ -659,8 +659,8 @@
                         if (jQuery('input[name ="btnChangePrescriptionType"]')[0]) jQuery('input[name ="btnChangePrescriptionType"]')[0].disabled = true;
                         if (jQuery('input[name ="btnChangeDepartment"]')[0]) jQuery('input[name ="btnChangeDepartment"]')[0].disabled = true;
                         if (jQuery('input[name ="btnMakeAnyPrescription"]')[0]) jQuery('input[name ="btnMakeAnyPrescription"]')[0].disabled = true;
-                        $('materialId').show();
-                        $('materialId').className = 'required';
+                        $('materialPCRId').show();
+                        $('materialPCRId').className = 'required';
                     }
                     else {
                         $('labDate').disabled=false;
@@ -671,13 +671,13 @@
                         if (jQuery('input[name ="btnChangePrescriptionType"]')[0]) jQuery('input[name ="btnChangePrescriptionType"]')[0].disabled = false;
                         if (jQuery('input[name ="btnChangeDepartment"]')[0]) jQuery('input[name ="btnChangeDepartment"]')[0].disabled = false;
                         if (jQuery('input[name ="btnMakeAnyPrescription"]')[0]) jQuery('input[name ="btnMakeAnyPrescription"]')[0].disabled = false;
-                        $('materialId').hide();
+                        $('materialPCRId').hide();
                     }
                 });
 
                 //Сохранение
                 function save() {
-                    if ($('labServicies').value=='22347' && !$('materialId').value) {
+                    if ($('labServicies').value=='22347' && !$('materialPCRId').value) {
                         showToastMessage('Введите номер пробирки!',null,true,true,3000);
                         $('submitButton').disabled = false;
                         $('submitButton').value = 'Создать';
@@ -810,7 +810,7 @@
 
                                 </td>
                             </tr>
-                            <tr><msh:textField property="materialId" label="Номер пробирки " size="10"/></tr>
+                            <tr><msh:textField property="materialPCRId" label="Номер пробирки " size="10"/></tr>
                             <tr>
                                 <msh:autoComplete property="labDepartment" label="Место забора"
                                                   vocName="departmentIntake" size='20' fieldColSpan="3"

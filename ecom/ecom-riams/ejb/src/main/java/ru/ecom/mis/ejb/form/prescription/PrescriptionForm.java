@@ -403,6 +403,12 @@ public class PrescriptionForm extends IdEntityForm {
 	public void setMaterialId(String aMaterialId) {theMaterialId = aMaterialId;}
 	private String theMaterialId;
 
+	/** Номер пробирки ПЦР*/
+	@Comment("Номер пробирки ПЦР")
+	public String getMaterialPCRId() {return theMaterialPCRId;}
+	public void setMaterialPCRId(String aMaterialPCRId) {theMaterialPCRId = aMaterialPCRId;}
+	private String theMaterialPCRId;
+
 	/** Причина отмены текст */
 	@Comment("Причина отмены текст")
 	@Persist
