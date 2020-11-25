@@ -271,7 +271,7 @@
     ${subTSql}
     and vst.code='LABSURVEY'
     ${sqlAdd}
-     and (ml.isIntakeBioMaterial='1' or ml.isnoomc='1')
+     and ml.id not in (1,391)
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
     <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
@@ -358,7 +358,7 @@
     and vst.code='LABSURVEY' 
     
     ${sqlAdd}
-     and (ml.isIntakeBioMaterial='1' or ml.isnoomc='1')
+     and ml.id not in (1,391)
     group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
