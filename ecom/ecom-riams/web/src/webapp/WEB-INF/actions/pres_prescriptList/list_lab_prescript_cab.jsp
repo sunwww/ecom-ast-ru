@@ -271,7 +271,7 @@
     
     <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" >
+	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" printToExcelButton="Сохранить в excel">
 	     <msh:tableButton property="21" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак" />
 	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); checkLabAnalyzed" buttonName="Анализ" buttonShortName="Анализ" />
 	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Ан.+Рез." />
