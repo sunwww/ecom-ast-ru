@@ -29,6 +29,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideLink name="Направление на ВИЧ" styleId="stac_journalCurrentByUserDepartmentMicroBio" action="/stac_directionHIVByUserDepartment" roles="/Policy/Mis/MedCase/Stac/Journal/HIVDirection"/>
 	<msh:sideLink name="Печать" styleId="pres_lab_print" action="/pres_lab_print" roles="/Policy/Mis/Journal/Prescription/LabSurvey/PrintPrescripton" />
 	<msh:sideLink name="Журнал аннулированных назначений" styleId="pres_annul_journal" action="/pres_annul_journal" roles="/Policy/Mis/Journal/Prescription/LabSurvey/PresAnnulJournal" />
+	<msh:sideLink name="Положительные ПЦР" action="/lab_plus_covidPcr" roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR" />
 </msh:sideMenu>
 
 <msh:sideMenu title="Статистика">

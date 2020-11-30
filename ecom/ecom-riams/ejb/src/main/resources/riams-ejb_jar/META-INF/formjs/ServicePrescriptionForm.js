@@ -105,6 +105,17 @@ function onCreate(aForm, aEntity, aCtx) {
 					if (medService.code=='A26.08.027.999') {
 						checkDoublesMaterialPCRId(aForm, aEntity, aCtx);
 						adMedService.setMaterialPCRId(aForm.materialPCRId);
+						var nextDate =  new java.sql.Date(date.getTime()+24*60*60*1000);
+						adMedService.setIntakeDate(nextDate);
+
+						var FORMAT = new java.text.SimpleDateFormat("hh:mm") ;
+						adMedService.setIntakeTime(new java.sql.Time(FORMAT.parse('06:00').getTime()));
+
+						adMedService.setIntakeUsername(username);
+						if (par3!=null&&!par3.equals(java.lang.Long(0))) {
+							var intakeSpecial = manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
+							adMedService.setIntakeSpecial(intakeSpecial);
+						}
 					}
 
 					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ;

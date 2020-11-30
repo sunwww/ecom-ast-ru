@@ -472,10 +472,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 						break;
 					}
 				}
+				String entityName = "Protocol";
+				deleteBraceletByEntity(entityName,protocolId, manager);
 				if (isGepatit) {
 					LOG.info("Нашли гепатит");
-					String entityName = "Protocol";
-					deleteBraceletByEntity(entityName,protocolId, manager);
 					ColorIdentityPatient cip = new ColorIdentityPatient();
 					cip.setCreateUsername(username);
 					cip.setEntityName(entityName);
@@ -501,7 +501,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	    String sql = " ColorIdentityPatient where entityName='"+name+"' and entityId='"+code+"'";
 	    manager.createNativeQuery("delete from medcase_coloridentitypatient where colorsidentity_id = (select id from "+sql+")").executeUpdate();
 	    manager.createNativeQuery("delete from "+sql).executeUpdate();
-
     }
 
 	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) {
@@ -543,6 +542,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				d.setTemplateProtocol(aTemplateId);
 				d.setUsername(aUsername);
 				theManager.persist(d) ;
+			}
+
+			if (template==null) {
+				Protocol prot = theManager.find(Protocol.class,aProtocolId);
+
+				if (prot!=null && prot.getTemplateProtocol()!=null && prot.getTemplateProtocol()!=0L)
+					template = theManager.find(TemplateProtocol.class,prot.getTemplateProtocol());
+
 			}
             if (template!=null && Boolean.TRUE.equals(template.getCreateBracelet())) {
                 MedCase medCase = pres.getPrescriptionList().getMedCase().getParent()!=null ? pres.getPrescriptionList().getMedCase().getParent()
