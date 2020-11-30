@@ -225,6 +225,7 @@
       || case when mc.datestart is not null then ' Подтвердил: '||suLabDoc.fullName||' '||to_char(mc.editdate,'dd.MM.yyyy')||' '||cast(mc.edittime as varchar(5)) else '' end else '' end as f22_executeinfo
       ,'js-stac_slo-list_protocols.do?short=Short&id='||pl.medCase_id||'&patient='||pat.id||'&service='||p.medService_id as f23presHistory
   ,p.materialPCRid as f24pcr
+  ,  case when vsst.code='COVID' and p.medCase_id is null and p.cancelDate is null and p.medcase_id is null and p.transferdate is not null then '0'','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j25respcr
     from prescription p
     left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelreason_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
@@ -275,7 +276,7 @@
 	     <msh:tableButton property="21" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак" />
 	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); checkLabAnalyzed" buttonName="Анализ" buttonShortName="Анализ" />
 	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Ан.+Рез." />
-         <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR" buttonFunction="hideRow(this); goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Рез. ПЦР" />
+         <msh:tableButton property="25" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR" buttonFunction="hideRow(this); goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Рез. ПЦР" />
 	     <msh:tableButton property="15" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); goBioService" buttonName="Ввести результат" buttonShortName="Рез." />
 	     <msh:tableButton property="16" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="hideRow(this); checkLabControl" buttonName="Результат заведен правильно" buttonShortName="Подт." />
 	      <msh:tableColumn columnName="#" property="sn"  />
