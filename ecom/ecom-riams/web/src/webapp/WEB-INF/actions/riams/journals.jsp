@@ -34,6 +34,9 @@
 					<li><msh:link  isReport="false" action="journal_deadWithBrCovid.do" roles="/Policy/Mis/MedCase/Covid19/Report">
 						Умершие с ПЦР
 					</msh:link></li>
+					<li><msh:link  isReport="false" action="journal_svodPCR.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR/Reestr">
+						Свод анализов ПЦР SARV-COV2
+					</msh:link></li>
 					<li><msh:link roles='/Policy/Mis/MedCase/Visit/Report039' action="journal_foreignPatients.do">
 						Отчет об оказанной помощи иногородними и иностранцам
 					</msh:link></li>

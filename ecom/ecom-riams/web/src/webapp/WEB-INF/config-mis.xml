@@ -661,6 +661,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/list_lab_prescript.jsp" />
         </action>
+		<action path='/journal_svodPCR' type='ru.ecom.web.actions.base.ForwardAction'
+				name='pres_journalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/journal_svodPCR.jsp" />
+		</action>
         <action path='/pres_journal_by_department' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'

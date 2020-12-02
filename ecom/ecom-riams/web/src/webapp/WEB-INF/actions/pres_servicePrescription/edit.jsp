@@ -711,11 +711,15 @@
             <script type="text/javascript">
                 function cancelService() {
                     var reason = '' + prompt('Введите причину отмены');
-                    PrescriptionService.cancelPrescription($('id').value, reason, {
-                        callback: function (a) {
-                            alert(a);
-                        }
-                    });
+                    if (reason!='null') {
+                        PrescriptionService.cancelPrescription($('id').value, reason, {
+                            callback: function (a) {
+                                alert(a);
+                            }
+                        });
+                    }
+                    else
+                        alert("Необходимо указать причину аннулирования!");
                 }
             </script>
         </msh:ifFormTypeIsView>

@@ -35,6 +35,8 @@
         serviceSubType =  request.getParameter("serviceSubType");
     if (serviceSubType!=null && !serviceSubType.equals(""))
         subTSql = " and vsst.id=" + serviceSubType;
+    if (!serviceSubType.equals("24"))
+        subTSql += " and vsst.code<>'COVID'";
     request.setAttribute("subTSql", subTSql) ;
   	%>
   	  <msh:form  action="/pres_journal_intake_transfer.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
@@ -389,7 +391,7 @@
                 <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
                 <input type='hidden' name="s" id="s" value="PrintService">
                 <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
-                <input type='hidden' name="groupField" id="groupField" value="5">
+                <input type='hidden' name="groupField" id="groupField" value="3">
                 <input type='hidden' name="cntColumn" id="cntColumn" value="1">
                 <input type='hidden' name="planStartDate" id="planStartDate" value="${beginDate}">
                 <input type="button" value="Реестр приёма-передачи SARS-COV2" onclick="printPresLabCovidReestr(1)">
@@ -397,10 +399,10 @@
                 <script type="text/javascript">
                     function printPresLabCovidReestr(withoutIntake) {
                         $('sqlText').value=" select p.materialPCRId as f1material" +
-                            " ,pat.lastname as f2last,pat.firstname as f3first,pat.middlename as f4middlenam" +
-                            " ,to_char(p.intakeDate,'dd.mm.yyyy') as f5dtintake" +
-                            " ,dep.name as f6depName" +
-                            " ,p.materialPCRId as f7countTable" +
+                            " ,pat.patientinfo as f2patInfo" +
+                            " ,to_char(p.intakeDate,'dd.mm.yyyy') as f3dtintake" +
+                            " ,dep.name as f4depName" +
+                            " ,p.materialPCRId as f5countTable" +
                             " from prescription p" +
                             " left join PrescriptionList pl on pl.id=p.prescriptionList_id" +
                             " left join MedCase slo on slo.id=pl.medCase_id" +
@@ -416,7 +418,7 @@
                         $('sqlText').value += withoutIntake? " and p.intakeDate is not null" : "";
                         $('sqlText').value += " and vsst.code='COVID' " +
                             " group by dep.name,p.materialPCRId,pat.id,p.intakeDate" +
-                            " order by dep.name,pat.lastname,pat.firstname,pat.middlename";
+                            " order by dep.name,pat.patientinfo";
                         document.getElementById('printForm').action='print-pres_lab_pcrCovid_by_department.do';
                         document.getElementById('printForm').submit();
                     }

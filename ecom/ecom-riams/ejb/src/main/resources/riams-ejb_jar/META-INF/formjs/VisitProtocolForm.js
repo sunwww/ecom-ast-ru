@@ -272,8 +272,10 @@ function check(aForm, aCtx,isCreate) {
                         isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
                         if (+isCheck !== 1 && ldm.isEmpty()) {
                             var tmpStr = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? " госпитализации" : "";
-                            if (t.get(0)[1] == null) throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
-                            else throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
+                            if (t.get(0)[1] == null && !aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowEditAllProtocols"))
+                                throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
+                            else if (t.get(0)[1] != null)
+                                throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
                         }
                     }
 

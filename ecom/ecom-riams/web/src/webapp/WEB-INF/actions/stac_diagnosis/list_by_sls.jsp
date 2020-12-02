@@ -252,7 +252,7 @@
 	" 
 	/>
 	
-    <msh:table name="datelist" action="entityParentView-stac_sls.do" idField="1" >
+    <msh:table printToExcelButton="Сохранить в Excel" name="datelist" action="entityParentView-stac_sls.do" idField="1" >
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="6"/>
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="4"/>
@@ -374,7 +374,7 @@
    
     <input type="submit" value="Печать"> 
     </form>
-		<msh:table name="diag_list" idField="1" action="stac_diagnosis_by_sls_list.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&bedSubType=${param.bedSubType}&bedType=${param.bedType}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDate=${typeDate}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
+		<msh:table printToExcelButton="Сохранить в Excel" name="diag_list" idField="1" action="stac_diagnosis_by_sls_list.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&bedSubType=${param.bedSubType}&bedType=${param.bedType}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDate=${typeDate}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
 			<msh:tableColumn property="sn" columnName="#"/>
 			<msh:tableColumn property="5" columnName="Тип регистрации"/>
 			<msh:tableColumn property="4" columnName="Приоритет"/>

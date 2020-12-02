@@ -87,13 +87,12 @@ select sls.id as slsId
 	       ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end
 	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
        else  pat.foreignRegistrationAddress end as address
- ,coalesce(c.workplace,pat.works,'') as work
+ ,coalesce((select c.workplace from covid19 c where c.id=(select max(id) from covid19 where medcase_id=sls.id )),pat.works,'') as work
  ,to_char(p.intakedate,'dd.mm.yyyy')||cast('/' as varchar)||' '||to_char(mc.datestart,'dd.mm.yyyy')||cast(', №' as varchar)||fiprNum.valuetext
  from prescription p
  left join PrescriptionList pl on pl.id=p.prescriptionList_id
  left join MedCase slo on slo.id=pl.medCase_id
  left join medcase sls on sls.id=slo.parent_id
- left join Covid19 c on c.medcase_id=sls.id
  left join Patient pat on pat.id=slo.patient_id
   left join Address2 adr on adr.addressid = pat.address_addressid
      left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id
@@ -122,7 +121,7 @@ group by  pat.id,pat.lastname,pat.firstname
                 , pat.territoryRegistrationNonresident_id , okt.name,pat.RegionRegistrationNonresident,oq.name,pat.SettlementNonresident
  	       ,ost.name,pat.StreetNonresident
                , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident
-        , pat.foreignRegistrationAddress,c.workplace,p.intakedate,mc.datestart,fiprNum.valuetext,sls.id
+        , pat.foreignRegistrationAddress,p.intakedate,mc.datestart,fiprNum.valuetext,sls.id
         order by pat.lastname,pat.firstname,pat.middlename
                 " />
                 <msh:section>

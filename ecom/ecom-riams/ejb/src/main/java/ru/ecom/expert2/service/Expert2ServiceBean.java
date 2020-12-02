@@ -234,6 +234,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /**
      * Создаем записи в заполнении из sql запроса
+     *
      * @param resultSet
      * @param paramMap
      * @param entryListCode
@@ -499,9 +500,9 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**
      * Присваеваем отдельный счет для определенных иногородних регионов
      *
-     * @param listEntryId - ИД заполнения
-     * @param billNumber  Номер присваемого счета
-     * @param billDate    - Дата присваемого счета
+     * @param listEntryId     - ИД заполнения
+     * @param billNumber      Номер присваемого счета
+     * @param billDate        - Дата присваемого счета
      * @param territoriesList - список территорий, разделенных , например "05,08"
      */
     public String splitForeignOtherBill(Long listEntryId, String billNumber, Date billDate, String territoriesList) {
@@ -1471,7 +1472,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             entry.setEntryType(entryType);
         }
         if (entryType == null) {
-            return ;
+            return;
         }
         switch (entryType) {
             case HOSPITALTYPE:
@@ -1486,7 +1487,13 @@ public class Expert2ServiceBean implements IExpert2Service {
                     code = (isTrue(entry.getIsRehabBed()) ? "REHAB_" : "") + "ALLTIMEHOSP";
                 } else if (entry.getBedSubType().equals("2")) {
                     //departmentType = 7 - Дневной стационар при АПУ
-                    code = (isTrue(entry.getIsRehabBed()) ? "REHAB_" : "") + ("7".equals(entry.getDepartmentType()) ? "POL" : "") + "DAYTIMEHOSP";
+                    //departmentType = 8 - Дневной стационар на дому
+                    code = (isTrue(entry.getIsRehabBed()) ? "REHAB_" : "") + ("7".equals(entry.getDepartmentType()) ? "POL"
+                            : "8".equals(entry.getDepartmentType()) ? "HOME" : "") + "DAYTIMEHOSP";
+                } else if (entry.getBedSubType().equals("3")) { // первично стац на дому делаем правильным
+                    entry.setDepartmentType("8");
+                    entry.setBedSubType("2");
+                    code = "HOMEDAYTIMEHOSP";
                 } else {
                     code = "UNKNOWNTIMEHOSP";
                 }
@@ -1559,7 +1566,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 break;
             default:
                 LOG.error(entry.getId() + " Неизвестный тип записи для проставление подтипа. CANT_SET_SUBTYPE: " + entryType);
-                return ;
+                return;
         }
         if (!entrySubTypeHashMap.containsKey(code)) {
             entrySubTypeHashMap.put(code, getEntityByCode(code, VocE2EntrySubType.class, true));
@@ -2446,11 +2453,10 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /**
-     *
      * @param bedSubTypeCode тип койки
-     * @param aDepartmentId ИД отделения
-     * @param aProfileId ИД профиля
-     * @param aDate Дата начала случая
+     * @param aDepartmentId  ИД отделения
+     * @param aProfileId     ИД профиля
+     * @param aDate          Дата начала случая
      * @return значение коэффициента КУСмо
      */
     public BigDecimal calculateCusmo(String bedSubTypeCode, Long aDepartmentId, Long aProfileId, Date aDate) {
