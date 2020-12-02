@@ -275,7 +275,7 @@ public class PrescriptionServiceJs {
 		}
 		if (aPrescriptionId != null && aPrescriptionId > 0L) { //Аннулируем по ИД назначения
 			if (aReason == null || aReason.trim().equals("")) {
-				return "Необходимо указать причину аннулирование!";
+				return "Необходимо указать причину аннулирования!";
 			}
 			String canAnnulSql = "select mc.id as id, case when p.canceltime is null and p.transferdate is null" +
 					" and mc.datestart is null then '1' else '0' end as isCan" +
