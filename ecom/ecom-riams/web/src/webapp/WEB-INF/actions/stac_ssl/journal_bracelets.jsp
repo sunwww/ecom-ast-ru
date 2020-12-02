@@ -57,9 +57,6 @@
                         <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
                             <input type="radio" name="typeDate" value="2">  выписки
                         </td>
-                        <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
-                            <input type="radio" name="typeDate" value="3">  регистрации браслета
-                        </td>
                     </msh:row>
 
 
@@ -166,20 +163,12 @@
 
             if (typeDate.equals("1")) {typeDate="sls.dateStart";}
             else if (typeDate.equals("2")) {typeDate="sls.dateFinish";}
-            else if (typeDate.equals("3")) {typeDate="cip.startdate";}
 
             String sqlDate = date!=null && !date.equals("")?
                     " and " + typeDate + " between to_date('"+date+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy')" :
                     " and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)";
             request.setAttribute("sqlDate", sqlDate) ;
 
-            String timeStampSql = date!=null && !date.equals("") && typeDate.equals("3") ?
-                    //если есть даты и учитываем регистрацию браслета
-                    " and (cip.startdate<=to_date('" + date + "','dd.mm.yyyy') and cip.finishdate<=to_date('" + dateEnd + "','dd.mm.yyyy') " :
-                    //если всё по текущий момент (в периоде будут выведены все браслеты)
-                    " and (cip.startdate<=current_date and cip.finishdate is null" +
-                            " or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp)) " ;
-            request.setAttribute("timeStampSql",timeStampSql);
             String brs = request.getParameter("brs");
 
             String brString = "";
@@ -208,12 +197,12 @@
                               " select list(cast(vcid.id as varchar)) as ids from medcase_coloridentitypatient mcid " +
                               " left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id" +
                               " left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id" +
-                              " where mcid.medcase_id=sls.id " + timeStampSql + "group by vcid.id order by vcid.id) as t) = '" + brString + "'";
+                              " where mcid.medcase_id=sls.id " + "group by vcid.id order by vcid.id) as t) = '" + brString + "'";
                   } else if (typeViewBr.equals("3")){ //включая все выбранные
                       brSql = " and (select sqluser.checkBracelet('" + brString + "',list(cast(vcid.id as varchar))) from medcase_coloridentitypatient mcid" +
                               " left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id" +
                               " left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id" +
-                              " where mcid.medcase_id=sls.id "+ timeStampSql + ")=true ";
+                              " where mcid.medcase_id=sls.id " + ")=true ";
                   }
               }
             request.setAttribute("brSql", brSql);
@@ -249,7 +238,7 @@
 				left join voccolor vc on vcip.color_id=vc.id
 				 left join medcase_coloridentitypatient
 				 ss on ss.colorsidentity_id=cip.id where
-				(medcase_id=sls.id or medcase_id=m.id)  ${timeStampSql}) as t) as varchar) as jsonAr
+				(medcase_id=sls.id or medcase_id=m.id)) as t) as varchar) as jsonAr
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -269,7 +258,7 @@ left join Mislpu dep on dep.id=sloAll.department_id
 left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id
 left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id
 left join voccolor vcr on vcr.id=vcid.color_id
-    where m.DTYPE='DepartmentMedCase' ${department} ${timeStampSql}
+    where m.DTYPE='DepartmentMedCase' ${department}
     and m.transferDate is null ${sqlDate}  ${brSql}
     and mcid.colorsidentity_id is not null
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
@@ -315,7 +304,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
     left join ColorIdentityPatient cip on cip.id=mci.colorsidentity_id
     left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id
     where m.DTYPE='DepartmentMedCase'
-    and m.transferDate is null ${sqlDate} ${brSql} ${department} ${timeStampSql}
+    and m.transferDate is null ${sqlDate} ${brSql} ${department}
     and mci.colorsidentity_id is not null
     group by m.department_id,ml.name
     order by ml.name
