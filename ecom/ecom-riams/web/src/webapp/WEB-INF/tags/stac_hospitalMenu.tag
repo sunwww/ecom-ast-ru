@@ -73,6 +73,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
    <msh:sideMenu title="Показать">
     <msh:sideLink roles="/Policy/Mis/MedCase/Covid19/View" name="Карты COVID-19"
 				  action="/entityParentList-smo_covid19" params="id"/>
+
+	<msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('expert_listBySls.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="онкологическая карта выписки"
 				  params="id" action="/entityPrepareCreate-mis_dynamicDocument.do?type=1"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>

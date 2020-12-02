@@ -134,8 +134,16 @@
                 validate='true'
                 scope="session"
                 input='/WEB-INF/actions/expert_ker/openList.jsp'
-                >
+        >
             <forward name="success" redirect="false" path="/WEB-INF/actions/expert_ker/openList.jsp" />
+        </action>
+        <action path='/expert_listBySls' type='ru.ecom.web.actions.base.ForwardAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/expert_ker/listBySls.jsp'
+        >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/expert_ker/listBySls.jsp" />
         </action>
         <action path='/expert_journal_ker' type='ru.ecom.web.actions.base.ForwardAction'
                 name='expert_journalForm'
