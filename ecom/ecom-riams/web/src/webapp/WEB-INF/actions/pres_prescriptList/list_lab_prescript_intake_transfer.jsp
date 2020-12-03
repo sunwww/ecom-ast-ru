@@ -394,10 +394,12 @@
                 <input type='hidden' name="groupField" id="groupField" value="3">
                 <input type='hidden' name="cntColumn" id="cntColumn" value="1">
                 <input type='hidden' name="planStartDate" id="planStartDate" value="${beginDate}">
-                <input type="button" value="Реестр приёма-передачи SARS-COV2" onclick="printPresLabCovidReestr(1)">
-                <input type="button" value="Реестр направленных SARS-COV2" onclick="printPresLabCovidReestr()">
+                <input type="button" value="Реестр приёма-передачи SARS-COV2 (ИНФ.)" onclick="printPresLabCovidReestr(1,0)">
+                <input type="button" value="Реестр направленных SARS-COV2 (ИНФ.)" onclick="printPresLabCovidReestr(0,0)">
+                <input type="button" value="Реестр приёма-передачи SARS-COV2 (НЕИНФ.)" onclick="printPresLabCovidReestr(1,1)">
+                <input type="button" value="Реестр направленных SARS-COV2 (НЕИНФ.)" onclick="printPresLabCovidReestr(0,1)">
                 <script type="text/javascript">
-                    function printPresLabCovidReestr(withoutIntake) {
+                    function printPresLabCovidReestr(withoutIntake,isRoddom) {
                         $('sqlText').value=" select p.materialPCRId as f1material" +
                             " ,pat.patientinfo as f2patInfo" +
                             " ,to_char(p.intakeDate,'dd.mm.yyyy') as f3dtintake" +
@@ -415,7 +417,8 @@
                             " and p.planStartDate=to_date('"+$('beginDate').value + "','dd.mm.yyyy')  "+
                             " and vst.code='LABSURVEY'  "+
                             " and p.cancelDate is null ${sqlAdd}";
-                        $('sqlText').value += withoutIntake? " and p.intakeDate is not null" : "";
+                        $('sqlText').value += +withoutIntake==1? " and p.intakeDate is not null" : "";
+                        $('sqlText').value += +isRoddom==1? " and (dep.isforcovid is null or dep.isforcovid='0')" : " and dep.isforcovid='1'";
                         $('sqlText').value += " and vsst.code='COVID' " +
                             " group by dep.name,p.materialPCRId,pat.id,p.intakeDate" +
                             " order by dep.name,pat.patientinfo";
