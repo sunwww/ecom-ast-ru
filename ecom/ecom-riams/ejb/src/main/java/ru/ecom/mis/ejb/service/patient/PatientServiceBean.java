@@ -1168,6 +1168,7 @@ public class PatientServiceBean implements IPatientService {
 			theManager.createNativeQuery("  update SuicideMessage set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("  update QualityEstimationCard set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("  update Covid19 set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("  update observationsheet set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 	}
 
 	public List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) {
