@@ -98,6 +98,7 @@
      ,to_char(c.ishoddate,'dd.MM.yyyy') as f11_dateResHosp
         ,st.code as f12_hist
         ,(select idc.code from covid19 where medcase_id=sls.id and id=(select max(id) from covid19 where medcase_id=sls.id)) as f13_mkb
+        ,vct.name as f14_ct
     from Covid19 c
     left join Patient pat on pat.id=c.patient_id
     left join medcase sls on sls.id=c.medcase_id
@@ -105,6 +106,7 @@
     left join vochospitalizationresult vhr on vhr.id=c.hospresult_id
     left join statisticstub st on st.medcase_id=sls.id
     left join vocidc10 idc on idc.id=c.mkb_id
+    left join vocct vct on vct.id=c.ct_id
     ${sqlAdd}
     ${periodSql}
     order by c.createdate, c.createtime" />
@@ -117,6 +119,7 @@
           <msh:tableColumn columnName="Номер истории" property="12" width="8"/>
           <msh:tableColumn columnName="Эпид. номер" property="3" width="8"/>
           <msh:tableColumn columnName="МКБ" property="13" width="6"/>
+          <msh:tableColumn columnName="КТ" property="14" width="6"/>
           <msh:tableColumn columnName="Первичная выгрузка" property="7" width="8"/>
           <msh:tableColumn columnName="Повторная выгрузка" property="8" width="8"/>
           <msh:tableColumn columnName="Выгрузка при выписке" property="9" width="8"/>
