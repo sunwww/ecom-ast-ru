@@ -169,6 +169,7 @@
                 select sls.id f1sls,dep.name as f2depname, st.code as f3stc,pat.patientinfo as f4patinfo
                 , getprescPcrInfo(p.id) as f5pinfo
                 ,p.id as f6exactccnt
+                ,p.materialPCRid as f7num
                   from prescription p
                 left join MedService ms on ms.id=p.medService_id
                 left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id
@@ -199,6 +200,7 @@
                     <msh:tableColumn property="2" columnName="Отделение"/>
                     <msh:tableColumn property="3" columnName="ИБ"/>
                     <msh:tableColumn property="4" columnName="Пациент"/>
+                    <msh:tableColumn property="7" columnName="Номер пробирки"/>
                     <msh:tableColumn property="5" columnName="Информация о назначении"/>
                 </msh:table>
             </msh:sectionContent>
