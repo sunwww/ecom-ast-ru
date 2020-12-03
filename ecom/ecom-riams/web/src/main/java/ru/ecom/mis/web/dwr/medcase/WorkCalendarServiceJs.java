@@ -104,16 +104,18 @@ public class WorkCalendarServiceJs {
         }
         //добавлены чекбоксы для выделения и изменения резерва нескольких времён
         String sql = "select " +
-                "getWeekbyDate (wcd.calendardate)," +
-                "prettyDate(wcd.calendardate,wcd.id),  " +
-                "wcd.id," +
-                "getList('select ''<td contextmenu=\"cell\" id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" ><input type=\"checkbox\" id=\"ch''||id||''\">''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime " +
-                "where workcalendarday_id = '||wcd.id||' and (isDeleted is null or isDeleted = false) order by timefrom','')\n" +
-                "from workcalendarday  wcd\n" +
-                "where wcd.workcalendar_id  = " + workcalendarId + " and wcd.calendardate between (date'" + mondey + "'+" + wek + ") and (date'" + mondey + "'+6+" + (wek) +
-                ") and (isdeleted is null or isdeleted = false) \n" +
-                "group by wcd.id,wcd.calendardate \n" +
-                "order by wcd.calendardate \n";
+                " getWeekbyDate (wcd.calendardate)," +
+                " prettyDate(wcd.calendardate,wcd.id),  " +
+                " wcd.id," +
+                " getList('select ''<td contextmenu=\"cell\" id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" ><input type=\"checkbox\" id=\"ch''||id||''\">''|| to_char(timefrom,''HH24:MI'')" +
+                " ||(case when (prepatient_id is not null or prepatientinfo is not null or medcase_id is not null) then '' x'' else ''&nbsp;&nbsp;&nbsp;'' end)" +
+                " ||''</td>'' from workcalendartime " +
+                " where workcalendarday_id = '||wcd.id||' and (isDeleted is null or isDeleted = false) order by timefrom','')" +
+                " from workcalendarday  wcd" +
+                " where wcd.workcalendar_id  = " + workcalendarId + " and wcd.calendardate between (date'" + mondey + "'+" + wek + ") and (date'" + mondey + "'+6+" + (wek) +
+                " ) and (isdeleted is null or isdeleted = false)" +
+                " group by wcd.id,wcd.calendardate" +
+                " order by wcd.calendardate";
 
         list = service.executeNativeSql(sql);
 
