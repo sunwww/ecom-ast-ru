@@ -127,6 +127,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 					roles="/Policy/Mis/MedCase/Stac/Journal/PeriodByUserDepartment" key="ALT+5"
 					action="/stac_journalPeriodByUserDepartment" name="Журнал COVID для лаборатории за период" />
 			<msh:sideLink
+					styleId="stac_journalPeriodByUserDepartment"
+					roles="/Policy/Mis/Journal/Prescription/ReestrPCR"
+					action="/journal_svodPCR" name="Свод анализов ПЦР SARV-COV2" />
+			<msh:sideLink
 					name="Забор биомат." styleId="pres_intake"
 					action="/pres_journal_intake.do?service=22347" roles="/Policy/Mis/Journal/Prescription/LabSurvey/IntakeByCurrentDepartmentDoctor1" />
 	    </msh:sideMenu>
