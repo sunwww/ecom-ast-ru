@@ -1173,12 +1173,32 @@ public class PrescriptionServiceJs {
 		return sb.toString();
 	}
 
-	public String intakeService(String aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException, ParseException {
-		return intakeServiceWithBarcode(aListPrescript, aDate, aTime, null, aRequest);
+	public String intakeService(String aListPrescript,String aDate,String aTime, String materialPcr,HttpServletRequest aRequest) throws NamingException, ParseException {
+		return intakeServiceWithBarcode(aListPrescript, aDate, aTime, null,materialPcr, aRequest);
 				
 	}
-	
-	private String intakeServiceWithBarcode(String aListPrescript,String aDate,String aTime, String aBarcode, HttpServletRequest aRequest) throws NamingException, ParseException {
+
+	/**
+	 * Разрешён ли этот номер пробирки: разрещён, если он уникальный в рамках одной даты забора aDate
+	 *
+	 * @param aDate Дата забора
+	 * @param materialPcr Номер пробирки
+	 * @param aRequest HttpServletRequest
+	 * @return Boolean true - разрешён, false - нет
+	 */
+	private Boolean checkMaterialPcrIntake(String aDate, String materialPcr, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder req = new StringBuilder();
+		req.append("select p.id")
+				.append(" from prescription p ")
+				.append(" left join medservice ms on ms.id=p.medservice_id")
+				.append(" left join vocservicesubtype vsst on vsst.id=ms.servicesubtype_id")
+				.append(" where vsst.code='COVID' and p.materialpcrid='").append(materialPcr).append("'")
+				.append(" and p.intakedate=to_date('").append(aDate).append("','dd.mm.yyyy')");
+		return service.executeNativeSql(req.toString()).isEmpty();
+	}
+
+	private String intakeServiceWithBarcode(String aListPrescript,String aDate,String aTime, String aBarcode, String materialPcr, HttpServletRequest aRequest) throws NamingException, ParseException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		IPrescriptionService service2 = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		StringBuilder sql = new StringBuilder() ;
@@ -1200,12 +1220,17 @@ public class PrescriptionServiceJs {
 		Long spec  =  getWorkFunction(username,service);
 		if (spec==null)
 			return "У пользователя "+username+" нет соответствия с рабочей функцией" ;
+		if (!materialPcr.equals("") && !checkMaterialPcrIntake(aDate,materialPcr,aRequest))
+			return "В эту дату забора уже есть пробирка ПЦР с таким номером. Дубли запрещены!";
 
 		sql.append("update Prescription set intakeDate=to_date('").append(aDate).append("','dd.mm.yyyy'),intakeTime=cast('").append(aTime).append("' as time)")
 			.append(",intakeUsername='").append(username).append("' ")
 			.append(",intakeSpecial_id='").append(spec).append("' ");
 		if (aBarcode!=null&&!aBarcode.equals("")) {
 			sql.append(",barcodeNumber='").append(aBarcode).append("' ");
+		}
+		if (materialPcr!=null && !materialPcr.equals("")) {
+			sql.append(",materialpcrid='").append(materialPcr).append("' ");
 		}
 			sql.append(" where id in (").append(aListPrescript).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
@@ -1701,6 +1726,33 @@ public class PrescriptionServiceJs {
 	}
 
 	/**
+	 * Проверка дублей назначений на ковид (только по поликлинике). Нельзя дублировать, пока не выполнено
+	 *
+	 * @param aMedCase Визит
+	 * @param aRequest HttpServletRequest
+	 * @return String 0 если нет дублей, -1 - если есть
+	 */
+	public String checkDoublesPolyclinicCovid(String aMedCase, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder req = new StringBuilder();
+		req.append("select pall.id");
+		req.append(" from medcase vis ");
+		req.append(" left join patient pat on pat.id=vis.patient_id");
+		req.append(" left join medcase allvis on allvis.patient_id=pat.id and allvis.dtype='Visit'");
+		req.append(" left join prescriptionList plall on plall.medcase_id = allvis.id");
+		req.append(" left join prescription pall on pall.prescriptionList_id = plall.id");
+		req.append(" left join medservice msall on msall.id = pall.medservice_id");
+		req.append(" where vis.id ='").append(aMedCase).append("' ");
+		req.append(" and msall.id=22347");
+		req.append(" and pall.dtype='ServicePrescription'");
+		req.append(" and pall.medservice_id is not null");
+		req.append(" and pall.canceldate is null");
+		req.append(" and pall.medcase_id is null");
+		return service.executeNativeSql(req.toString()).isEmpty()?
+				"0" : "-1";
+	}
+
+	/**
 	 * Отменить брак назначения (для админов)
 	 *
 	 * @param aPrescript Назначение
@@ -1714,5 +1766,25 @@ public class PrescriptionServiceJs {
 			.append(" ,transferdate=null,transfertime=null,transferspecial_id=null,transferusername=null")
 			.append(" where id=").append(aPrescript);
 		service.executeUpdateNativeSql(req.toString());
+	}
+
+	/**
+	 * Нужно ли при заборе биоматериала вводить номер пробирки ПЦР
+	 *
+	 * @param aPrescriptId Номер назначения
+	 * @param aRequest HttpServletRequest
+	 * @return String 0 если нет нужно, 1 - если нужно
+	 */
+	public String intakeServiceShowSetMaterialPCR(Long aPrescriptId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder req = new StringBuilder();
+		req.append("select p.id")
+			.append(" from prescription p ")
+			.append(" left join medservice ms on ms.id=p.medservice_id")
+			.append(" left join vocservicesubtype vsst on vsst.id=ms.servicesubtype_id")
+			.append(" where vsst.code='COVID' and (p.materialpcrid is null or p.materialpcrid='')")
+			.append(" and p.id='").append(aPrescriptId).append("' ");
+		return service.executeNativeSql(req.toString()).isEmpty()?
+				"0" : "1";
 	}
 }

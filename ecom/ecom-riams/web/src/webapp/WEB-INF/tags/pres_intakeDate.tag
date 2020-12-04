@@ -28,6 +28,7 @@
     		<msh:textField property="${name}Date" label="Дата"/>
     		<msh:textField property="${name}Time" label="Время"/>
     		<msh:textField property="${name}Barcode" label="Штрих-код"/>
+            <msh:textField property="${name}matPcr" label="Номер пробирки ПЦР"/>
     	</msh:row>
     </msh:panel>
         <msh:row>
@@ -55,10 +56,21 @@
       //   if (!theIs${name}IntakeInfoDialogInitialized) {
          	init${name}IntakeInfoDialog() ;
        //   }
-         the${name}IntakeInfoDialog.show() ;
          //$("${name}Date").focus() ;
      	$("${name}Barcode").focus();
-
+         ${service}.${method}ShowSetMaterialPCR($('${name}List').value, {
+             callback: function(aResult) {
+                 if (aResult=="1") {
+                     jQuery( "#${name}matPcrLabel").show();
+                     jQuery( ".${name}matPcr").show();
+                 }
+                  else {
+                     jQuery( "#${name}matPcrLabel").hide();
+                     jQuery( ".${name}matPcr").hide();
+                 }
+                 the${name}IntakeInfoDialog.show() ;
+             }
+         });
      }
 
      // Отмена
@@ -74,9 +86,13 @@
      	} else if ($('${name}Time').value=="") {
      		alert("Поле время является обязательным") ;
      		$("${name}Time").focus() ;
-     	}  else {
+     	}
+     	else if (jQuery( ".${name}matPcr").is(":visible") && $('${name}matPcr').value=="") {
+            alert("Поле номер пробирки ПЦР является обязательным") ;
+            $("${name}${name}matPcr").focus() ;
+        }  else {
      		if ($('${name}Barcode') && $('${name}Barcode').value!='' ) {
-     			${service}.${method}WithBarcode($('${name}List').value,$('${name}Date').value, $('${name}Time').value, $('${name}Barcode').value, { 
+     			${service}.${method}WithBarcode($('${name}List').value,$('${name}Date').value, $('${name}Time').value, $('${name}Barcode').value,$('${name}matPcr').value, {
     	            callback: function(aResult) {
     	            	if (aResult=="1") {
     	            		window.document.location.reload();
@@ -86,7 +102,7 @@
     	            }
     			}); 
      		} else {
-     			${service}.${method}($('${name}List').value,$('${name}Date').value, $('${name}Time').value, { 
+     			${service}.${method}($('${name}List').value,$('${name}Date').value, $('${name}Time').value,$('${name}matPcr').value, {
 		            callback: function(aResult) {
 		            	if (aResult=="1") {
 		            		window.document.location.reload();

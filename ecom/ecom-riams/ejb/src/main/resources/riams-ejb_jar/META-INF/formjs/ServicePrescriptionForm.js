@@ -102,18 +102,19 @@ function onCreate(aForm, aEntity, aCtx) {
 					} else {
 						adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					}
-					if (medService.code=='A26.08.027.999') {
+					if (medService.code=='A26.08.027.999' && aEntity.prescriptionList.medCase!=null //если стационар и ковид
+						&& ((''+ aEntity.prescriptionList.medCase).indexOf('DepartmentMedCase')!=-1 || (''+ aEntity.prescriptionList.medCase).indexOf('HospitalMedCase')!=-1)) {
 						checkDoublesMaterialPCRId(aForm, aEntity, aCtx);
 						adMedService.setMaterialPCRId(aForm.materialPCRId);
-						var nextDate =  new java.sql.Date(date.getTime()+24*60*60*1000);
+						var nextDate = new java.sql.Date(date.getTime() + 24 * 60 * 60 * 1000);
 						adMedService.setIntakeDate(nextDate);
 
-						var FORMAT = new java.text.SimpleDateFormat("hh:mm") ;
+						var FORMAT = new java.text.SimpleDateFormat("hh:mm");
 						adMedService.setIntakeTime(new java.sql.Time(FORMAT.parse('06:00').getTime()));
 
 						adMedService.setIntakeUsername(username);
-						if (par3!=null&&!par3.equals(java.lang.Long(0))) {
-							var intakeSpecial = manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,par3) ;
+						if (par3 != null && !par3.equals(java.lang.Long(0))) {
+							var intakeSpecial = manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, par3);
 							adMedService.setIntakeSpecial(intakeSpecial);
 						}
 					}

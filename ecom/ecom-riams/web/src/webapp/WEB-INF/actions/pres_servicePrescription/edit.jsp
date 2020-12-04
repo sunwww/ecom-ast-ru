@@ -650,8 +650,6 @@
                 $('materialPCRId').hide();
                 labServiciesAutocomplete.addOnChangeCallback(function() {
                     if ($('labServicies').value=='22347') {
-                        $('labDate').value=getDateAfterOrBeforeCurrent();
-                        $('labDate').disabled=true;
                         if (jQuery('input[name ="subm"]')[0]) jQuery('input[name ="subm"]')[0].disabled = true;
                         if (jQuery('input[name ="subm"]')[1]) jQuery('input[name ="subm"]')[1].disabled = true;
                         if (jQuery('input[name ="minB"]')[0]) jQuery('input[name ="minB"]')[0].disabled = true;
@@ -659,11 +657,18 @@
                         if (jQuery('input[name ="btnChangePrescriptionType"]')[0]) jQuery('input[name ="btnChangePrescriptionType"]')[0].disabled = true;
                         if (jQuery('input[name ="btnChangeDepartment"]')[0]) jQuery('input[name ="btnChangeDepartment"]')[0].disabled = true;
                         if (jQuery('input[name ="btnMakeAnyPrescription"]')[0]) jQuery('input[name ="btnMakeAnyPrescription"]')[0].disabled = true;
-                        $('materialPCRId').show();
-                        $('materialPCRId').className = 'required';
+                        if ($('medcaseType').value=='HOSPITAL') {
+                            $('labDate').value = getDateAfterOrBeforeCurrent();
+                            $('labDate').disabled = true;
+                            $('materialPCRId').show();
+                            $('materialPCRId').className = 'required';
+                        }
+                        else if ($('medcaseType').value=='POLYCLINIC') {
+                            $('labDepartment').disabled = true;
+                            $('labDepartmentName').disabled = true;
+                        }
                     }
                     else {
-                        $('labDate').disabled=false;
                         if (jQuery('input[name ="subm"]')[0]) jQuery('input[name ="subm"]')[0].disabled = false;
                         if (jQuery('input[name ="subm"]')[1]) jQuery('input[name ="subm"]')[1].disabled = false;
                         if (jQuery('input[name ="minB"]')[0]) jQuery('input[name ="minB"]')[0].disabled = false;
@@ -671,13 +676,21 @@
                         if (jQuery('input[name ="btnChangePrescriptionType"]')[0]) jQuery('input[name ="btnChangePrescriptionType"]')[0].disabled = false;
                         if (jQuery('input[name ="btnChangeDepartment"]')[0]) jQuery('input[name ="btnChangeDepartment"]')[0].disabled = false;
                         if (jQuery('input[name ="btnMakeAnyPrescription"]')[0]) jQuery('input[name ="btnMakeAnyPrescription"]')[0].disabled = false;
-                        $('materialPCRId').hide();
+                        if ($('medcaseType').value=='HOSPITAL') {
+                            $('labDate').disabled = false;
+                            $('materialPCRId').hide();
+                            $('materialPCRId').value = '';
+                        }
+                        else if ($('medcaseType').value=='POLYCLINIC') { //место забора пусть берётся по раб функции врача
+                            $('labDepartment').disabled = false;
+                            $('labDepartmentName').disabled = false;
+                        }
                     }
                 });
 
                 //Сохранение
                 function save() {
-                    if ($('labServicies').value=='22347' && !$('materialPCRId').value) {
+                    if ($('labServicies').value=='22347' && !$('materialPCRId').value && $('medcaseType').value=='HOSPITAL') {
                         showToastMessage('Введите номер пробирки!',null,true,true,3000);
                         $('submitButton').disabled = false;
                         $('submitButton').value = 'Создать';
@@ -688,21 +701,34 @@
                         checkDoubles();
                 }
 
+                //действия после проверки
+                function makeCovidPresc(aResult,msg) {
+                    if (+aResult != 0) {
+                        showToastMessage(msg, null, true, true, 4000);
+                        $('submitButton').disabled = false;
+                        $('submitButton').value = 'Создать';
+                    } else {
+                        writeServicesToList('lab');
+                        checkLabs();
+                    }
+                }
+
                 //проверка ковид анализов: можно только один анализ на след. день
                 function checkDoublesNextDayCovid() {
-                    PrescriptionService.checkDoublesNextDayCovid($('medcaseId').value, {
-                        callback: function (aResult) {
-                            if (+aResult!=0) {
-                                showToastMessage('У пациента уже есть такое назначение на следующий день. Дубли запрещены.',null,true,true,4000);
-                                $('submitButton').disabled = false;
-                                $('submitButton').value = 'Создать';
+                    if ($('medcaseType').value=='HOSPITAL') {
+                        PrescriptionService.checkDoublesNextDayCovid($('medcaseId').value, {
+                            callback: function (aResult) {
+                                makeCovidPresc(aResult,'У пациента уже есть такое назначение на следующий день. Дубли запрещены.');
                             }
-                            else {
-                                writeServicesToList('lab');
-                                checkLabs();
+                        });
+                    }
+                    else if ($('medcaseType').value=='POLYCLINIC') {
+                        PrescriptionService.checkDoublesPolyclinicCovid($('medcaseId').value, {
+                            callback: function (aResult) {
+                                makeCovidPresc(aResult,'У пациента уже есть невыполенное назначение. Дубли запрещены.', null, true, true, 4000);
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             </script>
         </msh:ifFormTypeIsNotView>
