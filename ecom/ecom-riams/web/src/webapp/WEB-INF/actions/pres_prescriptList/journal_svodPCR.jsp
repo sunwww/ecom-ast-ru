@@ -83,94 +83,96 @@
         <%
             }
             if (request.getParameter("beginDate")!=null &&  !request.getParameter("beginDate").equals("")) {
+                    if (request.getParameter("short")==null) {
                 %>
-                <msh:section>
-                <a id='noteH' href="#bottom" onclick="showNote();" >Показать примечание</a><br>
-                    <div id="note" style="display:none;">
-                        <u>Печать реестра</u>
-                        <p>указать только <i>дату</i></p>
-                        <p>поиск по <i>дате направления</i> (не период, просто первая дата)</p>
-                        <p>передача в лабораторию <i>не была произведена</i></p>
-                        <p>передача в лабораторию <i>не была произведена</i></p>
-                        <p>вывод только <i>не отбракованных</i></p>
-                    </div>
-                    <form  id="printForm" name="printForm" action="print-print-pres_lab_pcrCovid_by_department.do" method="post" target="_blank">
-                        <input type='hidden' name="sqlText" id="sqlText" value="">
-                        <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
-                        <input type='hidden' name="s" id="s" value="PrintService">
-                        <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
-                        <input type='hidden' name="groupField" id="groupField" value="3">
-                        <input type='hidden' name="cntColumn" id="cntColumn" value="1">
-                        <input type='hidden' name="planStartDate" id="planStartDate" value="${beginDate}">
-                        <input type="button" value="Реестр приёма-передачи (инф. отд.)" onclick="printPresLabCovidReestr(1,0,1)">
-                        <input type="button" value="Реестр направленных (инф. отд.)" onclick="printPresLabCovidReestr(0,0,1)">
-                        <input type="button" value="Реестр приёма-передачи (неинф. отд.)" onclick="printPresLabCovidReestr(1,1,1)">
-                        <input type="button" value="Реестр направленных (неинф. отд.)" onclick="printPresLabCovidReestr(0,1,1)">
-                        <input type="button" value="Реестр приёма-передачи (поликлиника)" onclick="printPresLabCovidReestr(1,1,0)">
-                        <input type="button" value="Реестр направленных (поликлиника)" onclick="printPresLabCovidReestr(0,1,0)">
-                        <script type="text/javascript">
-                            function printPresLabCovidReestr(withoutIntake,isInf, isStac) {
-                                $('sqlText').value=" select p.materialPCRId as f1material" +
-                                    " ,pat.patientinfo as f2patInfo" +
-                                    " ,to_char(p.intakeDate,'dd.mm.yyyy') as f3dtintake" +
-                                    " ,coalesce(dep.name,'Поликлиника') as f4depName" +
-                                    " ,p.materialPCRId as f5countTable" +
-                                    " from prescription p" +
-                                    " left join PrescriptionList pl on pl.id=p.prescriptionList_id" +
-                                    " left join MedCase mc on mc.id=pl.medCase_id" +
-                                    " left join Patient pat on pat.id=mc.patient_id" +
-                                    " left join MedService ms on ms.id=p.medService_id" +
-                                    " left join VocServiceType vst on vst.id=ms.serviceType_id" +
-                                    " left join MisLpu dep on dep.id=mc.department_id" +
-                                    " left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id" +
-                                    " where p.dtype='ServicePrescription'  " +
-                                    " and p.planStartDate=to_date('"+$('beginDate').value + "','dd.mm.yyyy')  "+
-                                    " and vst.code='LABSURVEY'  "+
-                                    " and p.cancelDate is null ${sqlAdd}";
-                                $('sqlText').value += +withoutIntake==1? " and p.intakeDate is not null" : "";
-                                $('sqlText').value += +isInf==1? " and (dep.isforcovid is null or dep.isforcovid='0')" : " and dep.isforcovid='1'";
-                                $('sqlText').value += +isStac==1? " and mc.dtype='DepartmentMedCase'" : " and mc.dtype='Visit'";
-                                $('sqlText').value += " and vsst.code='COVID' " +
-                                    " group by dep.name,p.materialPCRId,pat.id,p.intakeDate" +
-                                    " order by dep.name,pat.patientinfo";
-                                document.getElementById('printForm').action='print-pres_lab_pcrCovid_by_department.do';
-                                document.getElementById('printForm').submit();
-                            }
-                        </script>
-                    </form>
-                </msh:section>
-            <msh:section>
-                <msh:sectionTitle>ПОЛИКЛИНИКА за период с ${beginDate} по ${endDate}.</msh:sectionTitle>
-                <msh:sectionContent>
-                    <ecom:webQuery name="journal_svodPCRPat_pol" nativeSql="
-                    select vis.id as f1vis,pat.patientinfo as f2patinfo , getprescPcrInfo(p.id) as f3pinfo ,p.id as f4exactccnt ,p.materialPCRid as f5num
-                    from prescription p
-                    left join MedService ms on ms.id=p.medService_id
-                    left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id
-                    left join MedCase mc on mc.id=p.medcase_id
-                    left join Diary d on d.medcase_id=mc.id
-                    left join templateprotocol t2 on t2.id=d.templateprotocol
-                    left join forminputprotocol fiprRes on fiprRes.docprotocol_id=d.id and fiprRes.parameter_id=1284
-                    left join PrescriptionList pl on pl.id=p.prescriptionList_id
-                    left join MedCase vis on vis.id=pl.medCase_id
-                    left join Patient pat on vis.patient_id = pat.id
-                    left join WorkFunction wf on wf.id=p.prescriptSpecial_id
-                    left join Worker w on w.id=wf.worker_id
-                    left join MisLpu ml on ml.id=w.lpu_id
-                    where ${dateTo} between to_date('${beginDate}','dd.mm.yyyy') and to_date('${endDate}','dd.mm.yyyy')
-                    and vsst.code='COVID' and vis.dtype='Visit'
-                    and ml.id not in (1,391)
-                    group by vis.id,pat.patientinfo,p.id order by pat.patientinfo" />
-                    <msh:table printToExcelButton="Сохранить в Excel" name="journal_svodPCRPat_pol"  noDataMessage="Нет данных"
-                               action="entityParentView-smo_visit.do" idField="1" openNewWindow="true">
-                        <msh:tableColumn property="sn" columnName="#" />
-                        <msh:tableColumn property="2" columnName="Пациент"/>
-                        <msh:tableColumn property="5" columnName="Номер пробирки"/>
-                        <msh:tableColumn property="3" columnName="Информация о назначении"/>
-                    </msh:table>
-                </msh:sectionContent>
-            </msh:section>
-        <%
+                        <msh:section>
+                        <a id='noteH' href="#bottom" onclick="showNote();" >Показать примечание</a><br>
+                            <div id="note" style="display:none;">
+                                <u>Печать реестра</u>
+                                <p>указать только <i>дату</i></p>
+                                <p>поиск по <i>дате направления</i> (не период, просто первая дата)</p>
+                                <p>передача в лабораторию <i>не была произведена</i></p>
+                                <p>передача в лабораторию <i>не была произведена</i></p>
+                                <p>вывод только <i>не отбракованных</i></p>
+                            </div>
+                            <form  id="printForm" name="printForm" action="print-print-pres_lab_pcrCovid_by_department.do" method="post" target="_blank">
+                                <input type='hidden' name="sqlText" id="sqlText" value="">
+                                <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+                                <input type='hidden' name="s" id="s" value="PrintService">
+                                <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
+                                <input type='hidden' name="groupField" id="groupField" value="3">
+                                <input type='hidden' name="cntColumn" id="cntColumn" value="1">
+                                <input type='hidden' name="planStartDate" id="planStartDate" value="${beginDate}">
+                                <input type="button" value="Реестр приёма-передачи (инф. отд.)" onclick="printPresLabCovidReestr(1,0,1)">
+                                <input type="button" value="Реестр направленных (инф. отд.)" onclick="printPresLabCovidReestr(0,0,1)">
+                                <input type="button" value="Реестр приёма-передачи (неинф. отд.)" onclick="printPresLabCovidReestr(1,1,1)">
+                                <input type="button" value="Реестр направленных (неинф. отд.)" onclick="printPresLabCovidReestr(0,1,1)">
+                                <input type="button" value="Реестр приёма-передачи (поликлиника)" onclick="printPresLabCovidReestr(1,1,0)">
+                                <input type="button" value="Реестр направленных (поликлиника)" onclick="printPresLabCovidReestr(0,1,0)">
+                                <script type="text/javascript">
+                                    function printPresLabCovidReestr(withoutIntake,isInf, isStac) {
+                                        $('sqlText').value=" select p.materialPCRId as f1material" +
+                                            " ,pat.patientinfo as f2patInfo" +
+                                            " ,to_char(p.intakeDate,'dd.mm.yyyy') as f3dtintake" +
+                                            " ,coalesce(dep.name,'Поликлиника') as f4depName" +
+                                            " ,p.materialPCRId as f5countTable" +
+                                            " from prescription p" +
+                                            " left join PrescriptionList pl on pl.id=p.prescriptionList_id" +
+                                            " left join MedCase mc on mc.id=pl.medCase_id" +
+                                            " left join Patient pat on pat.id=mc.patient_id" +
+                                            " left join MedService ms on ms.id=p.medService_id" +
+                                            " left join VocServiceType vst on vst.id=ms.serviceType_id" +
+                                            " left join MisLpu dep on dep.id=mc.department_id" +
+                                            " left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id" +
+                                            " where p.dtype='ServicePrescription'  " +
+                                            " and p.planStartDate=to_date('"+$('beginDate').value + "','dd.mm.yyyy')  "+
+                                            " and vst.code='LABSURVEY'  "+
+                                            " and p.cancelDate is null ${sqlAdd}";
+                                        $('sqlText').value += +withoutIntake==1? " and p.intakeDate is not null" : "";
+                                        $('sqlText').value += +isInf==1? " and (dep.isforcovid is null or dep.isforcovid='0')" : " and dep.isforcovid='1'";
+                                        $('sqlText').value += +isStac==1? " and mc.dtype='DepartmentMedCase'" : " and mc.dtype='Visit'";
+                                        $('sqlText').value += " and vsst.code='COVID' " +
+                                            " group by dep.name,p.materialPCRId,pat.id,p.intakeDate" +
+                                            " order by dep.name,pat.patientinfo";
+                                        document.getElementById('printForm').action='print-pres_lab_pcrCovid_by_department.do';
+                                        document.getElementById('printForm').submit();
+                                    }
+                                </script>
+                            </form>
+                        </msh:section>
+                    <msh:section>
+                        <msh:sectionTitle>ПОЛИКЛИНИКА за период с ${beginDate} по ${endDate}.</msh:sectionTitle>
+                        <msh:sectionContent>
+                            <ecom:webQuery name="journal_svodPCRPat_pol" nativeSql="
+                            select vis.id as f1vis,pat.patientinfo as f2patinfo , getprescPcrInfo(p.id) as f3pinfo ,p.id as f4exactccnt ,p.materialPCRid as f5num
+                            from prescription p
+                            left join MedService ms on ms.id=p.medService_id
+                            left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id
+                            left join MedCase mc on mc.id=p.medcase_id
+                            left join Diary d on d.medcase_id=mc.id
+                            left join templateprotocol t2 on t2.id=d.templateprotocol
+                            left join forminputprotocol fiprRes on fiprRes.docprotocol_id=d.id and fiprRes.parameter_id=1284
+                            left join PrescriptionList pl on pl.id=p.prescriptionList_id
+                            left join MedCase vis on vis.id=pl.medCase_id
+                            left join Patient pat on vis.patient_id = pat.id
+                            left join WorkFunction wf on wf.id=p.prescriptSpecial_id
+                            left join Worker w on w.id=wf.worker_id
+                            left join MisLpu ml on ml.id=w.lpu_id
+                            where ${dateTo} between to_date('${beginDate}','dd.mm.yyyy') and to_date('${endDate}','dd.mm.yyyy')
+                            and vsst.code='COVID' and vis.dtype='Visit'
+                            and ml.id not in (1,391)
+                            group by vis.id,pat.patientinfo,p.id order by pat.patientinfo" />
+                            <msh:table printToExcelButton="Сохранить в Excel" name="journal_svodPCRPat_pol"  noDataMessage="Нет данных"
+                                       action="entityParentView-smo_visit.do" idField="1" openNewWindow="true">
+                                <msh:tableColumn property="sn" columnName="#" />
+                                <msh:tableColumn property="2" columnName="Пациент"/>
+                                <msh:tableColumn property="5" columnName="Номер пробирки"/>
+                                <msh:tableColumn property="3" columnName="Информация о назначении"/>
+                            </msh:table>
+                        </msh:sectionContent>
+                    </msh:section>
+            <%
+            }
             if (request.getParameter("short")==null && "1".equals(typeType)) {
         %>
         <msh:section>
