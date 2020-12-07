@@ -257,6 +257,7 @@ function printCovidReestr(aCtx,aParams) {
 		" ,idc.code as f4_mkb" +
 		" ,c.epidnumber as f5_epid" +
 		" ,  c.epidnumber as f6_enumb" +
+		" ,vhr.name as f7_vhrName" +
 		"    from Covid19 c" +
 		"    left join Patient pat on pat.id=c.patient_id" +
 		"    left join medcase sls on sls.id=c.medcase_id" +
@@ -282,6 +283,7 @@ function printCovidReestr(aCtx,aParams) {
 			var f4_mkb = p[4];
 			var f5_epid = p[5];
 			var f6_enumb = p[6];
+			var f7_resHosp = p[7];
 
 			pp.add(((i+1)+'').replace('.0',''));//0
 			pp.add(f0_datestart);
@@ -291,6 +293,7 @@ function printCovidReestr(aCtx,aParams) {
 			pp.add(f4_mkb);
 			pp.add(f5_epid);
 			pp.add(f6_enumb);
+			pp.add(f7_resHosp);
 			pp.add(field6);
 
 			cards.add(pp);

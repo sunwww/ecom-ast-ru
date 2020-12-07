@@ -146,7 +146,10 @@
 
      //печать реестра
      function printReestr(num) {
-       window.location.href = 'print-stac_print_covid19_reestr.do?s=PatientPrintService&m=printCovidReestr&dateBegin='
+       var file = 'stac_print_covid19_reestr';
+       if (num == 3)
+         file += "_disch";
+       window.location.href = 'print-' + file + '.do?s=PatientPrintService&m=printCovidReestr&dateBegin='
                + $('dateBegin').value + '&dateEnd=' + $('dateEnd').value + '&type=' + num;
      }
 
