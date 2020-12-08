@@ -25,7 +25,6 @@ import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.ecom.mis.ejb.service.disability.DisabilityServiceBean;
 import ru.ecom.oncological.ejb.domain.*;
 import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -2249,6 +2248,8 @@ public class Expert2ServiceBean implements IExpert2Service {
             int weight;
             GrouperKSGPosition pos = null;
             boolean duration = entry.getCalendarDays() <= 3;
+            //длительность 4-7 дней = 2 , 8-10 дней = 3
+            int ksgDuration = entry.getCalendarDays() > 3 && entry.getCalendarDays() < 8 ? 2 : (entry.getCalendarDays() > 7 && entry.getCalendarDays() < 11 ? 3 : 0);
             GrouperKSGPosition therapicKsgPosition = null;
             GrouperKSGPosition surgicalKsgPosition = null;
             GrouperKSGPosition cancerKsgPosition = null;
@@ -2299,6 +2300,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
                 if (ksg.getDuration() != null && duration) {
                     weight = 6;
+                } else if (ksg.getDuration() != null && ksg.getDuration().equals(ksgDuration)) {
+                    //подходит
                 } else if (ksg.getDuration() != null) {
                     continue;
                 }
