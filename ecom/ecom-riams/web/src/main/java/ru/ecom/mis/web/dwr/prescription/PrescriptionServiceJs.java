@@ -1771,11 +1771,12 @@ public class PrescriptionServiceJs {
 	/**
 	 * Нужно ли при заборе биоматериала вводить номер пробирки ПЦР
 	 *
-	 * @param aPrescriptId Номер назначения
+	 * @param aPrescriptList Номер назначения
 	 * @param aRequest HttpServletRequest
-	 * @return String 0 если нет нужно, 1 - если нужно
+	 * @return String 0 если не нужно, 1 - если нужно
 	 */
-	public String intakeServiceShowSetMaterialPCR(Long aPrescriptId, HttpServletRequest aRequest) throws NamingException {
+	public String intakeServiceShowSetMaterialPCR(String aPrescriptList, HttpServletRequest aRequest) throws NamingException {
+	    if (aPrescriptList.contains(",")) return "0";
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder req = new StringBuilder();
 		req.append("select p.id")
@@ -1783,7 +1784,7 @@ public class PrescriptionServiceJs {
 			.append(" left join medservice ms on ms.id=p.medservice_id")
 			.append(" left join vocservicesubtype vsst on vsst.id=ms.servicesubtype_id")
 			.append(" where vsst.code='COVID' and (p.materialpcrid is null or p.materialpcrid='')")
-			.append(" and p.id='").append(aPrescriptId).append("' ");
+			.append(" and p.id='").append(aPrescriptList).append("' ");
 		return service.executeNativeSql(req.toString()).isEmpty()?
 				"0" : "1";
 	}
