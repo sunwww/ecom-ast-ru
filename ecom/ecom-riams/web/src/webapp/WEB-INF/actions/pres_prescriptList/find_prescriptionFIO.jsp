@@ -27,6 +27,7 @@
         if (typeDate!=null) {
             if (typeDate.equals("2")) typeDate = "sls.dateFinish";
             else if (typeDate.equals("1")) typeDate = "sls.datestart";
+            else if (typeDate.equals("3")) typeDate = "p.intakeDate";
         }
         String dateBegin = request.getParameter("dateBegin") ;
         if (dateBegin!=null && !dateBegin.equals("")) {
@@ -80,6 +81,9 @@
                         </td>
                         <td onclick="this.childNodes[1].checked='checked';" colspan="1">
                             <input type="radio" name="typeDate" value="2">  выписки
+                        </td>
+                        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                            <input type="radio" name="typeDate" value="3">  забора
                         </td>
                     </msh:row>
                 </msh:panel>
