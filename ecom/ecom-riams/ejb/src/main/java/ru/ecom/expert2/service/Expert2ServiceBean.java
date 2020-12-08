@@ -55,6 +55,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
+
 @Stateless
 @Local(IExpert2Service.class)
 @Remote(IExpert2Service.class)
@@ -1955,7 +1957,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
 
                     String code = service.getString("serviceCode");
-                    if (StringUtil.isNullOrEmpty(code)) {
+                    if (isNullOrEmpty(code)) {
                         theManager.persist(new E2EntryError(entry, "BAD_SERVICE_CODE", service.toString()));
                         continue;
                     }
@@ -2047,7 +2049,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 medPolicy = new JSONArray(entry.getPolicyKinsmanString());
             }
 
-            if (medPolicy.isEmpty() && !StringUtil.isNullOrEmpty(entry.getPolicyPatientString())) {
+            if (medPolicy.isEmpty() && isNotNull(entry.getPolicyPatientString())) {
                 medPolicy = new JSONArray(entry.getPolicyPatientString());
             }
             if (medPolicy.isEmpty()) {
@@ -2914,7 +2916,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     cost = BigDecimal.ZERO;
                     for (ExtDispPriceMedService dispPriceMedService : dispPriceMedServices) {
                         String medserviceCode = dispPriceMedService.getMedService();
-                        if (!StringUtil.isNullOrEmpty(medserviceCode) && !goodList.contains(medserviceCode)) {
+                        if (isNotNull(medserviceCode) && !goodList.contains(medserviceCode)) {
                             VocMedService vms;
                             if (!SERVICELIST.containsKey(medserviceCode)) {
                                 vms = getEntityByCode(medserviceCode, VocMedService.class, false);

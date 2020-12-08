@@ -133,7 +133,7 @@
         <msh:ifFormTypeIsView formName="mis_medPolicyOmcForm">
             <script type="text/javascript">
             function setPolisChecked(id) {
-                PatientService.polisIsChecked(id,{
+                PatientService.setPolicyIsChecked(id,{
                     callback: function(){
                         showToastMessage("Сохранено!",null,true);
                         jQuery("#listSLS").load("entityView-mis_medPolicyOmc.do?id=${param.id} #listSLS");

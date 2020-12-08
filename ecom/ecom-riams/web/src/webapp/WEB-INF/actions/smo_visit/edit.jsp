@@ -670,7 +670,7 @@
   					if (confirm(url[2])) {
   						PatientService.setAddParamByMedCase(url[3],'${param.id}',2,
   								{
-  									callback: function(aReturn) {
+  									callback: function() {
   										if (url[0]==0) {
   											window.location = url[1] ;
   										} else {eval(url[1]) ;}
@@ -679,7 +679,7 @@
   							);
   					} else {
   						PatientService.setAddParamByMedCase(url[3],'${param.id}',1,
-  								{callback: function(aReturn) {
+  								{callback: function() {
   									goPriem(index) ;
   								}}
   							);	  						

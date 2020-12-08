@@ -50,7 +50,7 @@
         var numberDoc = document.getElementById('iframe').contentDocument.documentElement.querySelector('#numberDoc');
         var serialDoc = document.getElementById('iframe').contentDocument.documentElement.querySelector('#serialDoc');
         PatientService.savePrivilege(PersonId,numberDoc.value,serialDoc.value,beginDate.value,endDate.value,category.value,{
-            callback: function(aResult) {
+            callback: function() {
             }
         });
 
