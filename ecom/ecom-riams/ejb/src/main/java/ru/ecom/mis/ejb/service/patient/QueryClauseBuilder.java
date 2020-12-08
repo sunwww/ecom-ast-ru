@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.service.patient;
 
-import org.apache.log4j.Logger;
 import ru.nuzmsh.util.StringUtil;
 
 import javax.persistence.EntityManager;
@@ -12,29 +11,22 @@ import java.util.LinkedList;
  */
 public class QueryClauseBuilder {
 
-    private static final Logger LOG = Logger.getLogger(QueryClauseBuilder.class) ;
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
-
-
     public void addLike(String aParameterName, Object aValue) {
-        thePameters.add(new QueryParameter(aParameterName, aValue, false, false, true)) ;
+        parameters.add(new QueryParameter(aParameterName, aValue, false, false, true)) ;
     }
 
     public void add(String aParameterName, Object aValue) {
-    	thePameters.add(new QueryParameter(aParameterName, aValue, false)) ;
+    	parameters.add(new QueryParameter(aParameterName, aValue, false)) ;
     }
     public void addParameter(String aParameterName, Object aValue) {
-        thePameters.add(new QueryParameter(aParameterName, aValue)) ;
+        parameters.add(new QueryParameter(aParameterName, aValue)) ;
     }
 
     public void addIsNull(String aParameterName, Object aValue) {
-        thePameters.add(new QueryParameter(aParameterName, aValue, true)) ;
-    }
-    public void addBetween(String aParameterName, Object aValue,Object aValueTo) {
-        thePameters.add(new QueryParameter(aParameterName, aValue, aValueTo)) ;
+        parameters.add(new QueryParameter(aParameterName, aValue, true)) ;
     }
     public void addNot(String aParameterName, Object aValue) {
-        thePameters.add(new QueryParameter(aParameterName, aValue, false, true)) ;
+        parameters.add(new QueryParameter(aParameterName, aValue, false, true)) ;
     }
 
     public Query build(EntityManager aManager, String aPrefix, String aSuffix) {
@@ -47,7 +39,7 @@ public class QueryClauseBuilder {
     
     private Query build(EntityManager aManager, String aPrefix, String aSuffix, boolean aNative) {
         StringBuilder sb = new StringBuilder(aPrefix.trim());
-        for (QueryParameter parameter : thePameters) {
+        for (QueryParameter parameter : parameters) {
             appendClause(sb, parameter.name, parameter.value, parameter.isNull, parameter.isNot, parameter.isLike, parameter.isBetween,parameter.isParam);
         }
         String q = sb.toString().trim() ;
@@ -61,7 +53,7 @@ public class QueryClauseBuilder {
 
         Query query = aNative ? aManager.createNativeQuery(q2) : aManager.createQuery(q2);
 
-        for (QueryParameter parameter : thePameters) {
+        for (QueryParameter parameter : parameters) {
         	setClause(query, parameter.name, parameter.value);
             if (parameter.valueTo!=null) setClause(query, parameter.name+"To", parameter.valueTo);
         }
@@ -202,6 +194,5 @@ public class QueryClauseBuilder {
         private final boolean isBetween ;
         private final boolean isParam ;
     }
-    LinkedList<QueryParameter> thePameters = new LinkedList<>();
-//    Map<String, Object> theParameters = new TreeMap<String, Object>();
+    LinkedList<QueryParameter> parameters = new LinkedList<>();
 }
