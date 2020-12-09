@@ -421,6 +421,11 @@ function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId
 	}
 	</script>
 	</msh:ifFormTypeIsView>
+    <msh:ifFormTypeIsCreate formName="pres_diagnosticPrescriptionForm">
+        <script type="text/javascript">
+            surgCalDateAutocomplete.setUrl('simpleVocAutocomplete/vocWorkCalendarDayByWorkFunctionFuture');
+        </script>
+    </msh:ifFormTypeIsCreate>
 		</tiles:put>
 
   <tiles:put name="body" type="string">

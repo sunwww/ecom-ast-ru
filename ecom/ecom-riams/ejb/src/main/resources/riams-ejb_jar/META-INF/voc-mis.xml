@@ -2058,6 +2058,19 @@
     			join='left join WorkCalendar as wc on wc.id=wcd.workCalendar_id '
     	/>
     </voc>
+
+	<voc id='vocWorkCalendarDayByWorkFunctionFuture' type='NativeVocService'>
+		<NativeVocService
+				from = 'WorkCalendarDay as wcd '
+				parent = " wc.workFunction_id = :parent "
+				names  = "to_char(wcd.calendarDate,'DD.MM.YYYY')"
+				queried =" (to_char(wcd.calendarDate,'DD.MM.YYYY') like :query ) "
+				queryAppend = "(wcd.isDeleted is null or wcd.isDeleted='0') and wcd.calendarDate >= CURRENT_DATE"
+				order ='wcd.calendarDate'
+				nameId='wcd.id'
+				join='left join WorkCalendar as wc on wc.id=wcd.workCalendar_id '
+		/>
+	</voc>
      <voc id='disabilityDocumentByCase'  type='EntityVocService'>
      	<EntityVocService
      			entity='ru.ecom.mis.ejb.domain.disability.DisabilityDocument'

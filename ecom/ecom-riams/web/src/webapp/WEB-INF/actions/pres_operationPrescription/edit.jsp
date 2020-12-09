@@ -160,6 +160,9 @@
         }
 			$('calendarTime').value="0" ;
 		}
+        <msh:ifFormTypeIsCreate formName="pres_operationPrescriptionForm">
+            surgCalDateAutocomplete.setUrl('simpleVocAutocomplete/vocWorkCalendarDayByWorkFunctionFuture');
+        </msh:ifFormTypeIsCreate>
 
 			</script>
 			</msh:ifFormTypeIsNotView>

@@ -226,6 +226,7 @@
     		if ((+'${param.orderLpu}'>0) && (+$('orderLpu').value==0)) {
     			orderLpuAutocomplete.setVocId('${param.orderLpu}') ;
     		}
+            datePlanAutocomplete.setUrl('simpleVocAutocomplete/vocWorkCalendarDayByWorkFunctionFuture');
     	</script>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="smo_directionForm">

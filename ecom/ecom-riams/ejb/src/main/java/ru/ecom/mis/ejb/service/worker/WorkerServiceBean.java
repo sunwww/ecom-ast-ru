@@ -248,7 +248,7 @@ public class WorkerServiceBean implements IWorkerService{
 	 */
 	public String getDayBySpec(Long aWorkFunction) {
 		StringBuilder ret = new StringBuilder() ;
-		StringBuilder sqlmax = new StringBuilder() ;
+		//StringBuilder sqlmax = new StringBuilder() ;
 		StringBuilder sqlmin = new StringBuilder() ;
 		sqlmin.append("select to_char(wcd.calendarDate,'dd.MM.yyyy'),wcd.id from WorkCalendarDay as wcd")
 			.append(" inner join WorkCalendar as wc on wc.id = wcd.workCalendar_id") 
@@ -256,25 +256,26 @@ public class WorkerServiceBean implements IWorkerService{
 			.append(" group by wc.id,wcd.id,wcd.calendarDate")
 			.append(" order by wcd.calendarDate")
 			; 
-		sqlmax.append(" select to_char(wcd.calendarDate,'dd.MM.yyyy'),wcd.id from WorkCalendarDay as wcd")
+		/*sqlmax.append(" select to_char(wcd.calendarDate,'dd.MM.yyyy'),wcd.id from WorkCalendarDay as wcd")
 			.append(" inner join WorkCalendar as wc on wc.id = wcd.workCalendar_id") 
 			.append(" where  wc.workfunction_id=:workFuncId and wcd.calendarDate <= CURRENT_DATE and (wcd.isDeleted is null or wcd.isDeleted='0')")
 			.append(" group by wc.id,wcd.id,wcd.calendarDate")
 			.append(" order by wcd.calendarDate desc")
-			;
+			;*/
 		List<Object[]> rownext = theManager.createNativeQuery(sqlmin.toString())
 						.setParameter("workFuncId", aWorkFunction) 
 						.setMaxResults(1)
 						.getResultList() ;
-		if (rownext.isEmpty() || rownext.get(0)[1]==null) {
+		/*if (rownext.isEmpty() || rownext.get(0)[1]==null) {
 			rownext = theManager.createNativeQuery(sqlmax.toString())
 				.setParameter("workFuncId", aWorkFunction) 
 				.setMaxResults(1)
 				.getResultList() ;
-			if (rownext.isEmpty() || rownext.get(0)[1]==null) {
-				return null ;
-			}
-		} 
+
+		}*/
+		if (rownext.isEmpty() || rownext.get(0)[1]==null) {
+			return null ;
+		}
 		ret.append(rownext.get(0)[0]).append("#").append(rownext.get(0)[1]) ;
 		return ret.toString() ;
 	}
