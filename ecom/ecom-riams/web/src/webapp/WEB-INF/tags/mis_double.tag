@@ -79,22 +79,14 @@
     		 theIs${name}DoubleDialogInitialized = true ;
     	 } else {
     		 if ($('saveType').value=='1') {
-    		 PatientService.checkPolicy(rolesBan,
-    				 {
-    			 		callback: function(aResult) {
-    			 			
-    			 			if (+aResult==0) {
-    			 	    		 $('${name}DoubleSave').style.display = 'block' ;
-    			 	    		 theIs${name}DoubleDialogInitialized = true ;
-    			 			} 
-    			 		}
-    				 }) ;
+                 <msh:ifNotInRole roles="${rolesBan}">
+                 $('${name}DoubleSave').style.display = 'block' ;
+                 theIs${name}DoubleDialogInitialized = true ;
+                 </msh:ifNotInRole>
     	 	} else {
     	 		 $('${name}DoubleSave').style.display = 'block' ;
  	    		 theIs${name}DoubleDialogInitialized = true ;
     	 	}
     	 }
-    	 
-     	
      }
 </script>
