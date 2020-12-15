@@ -986,4 +986,27 @@ public class DisabilityServiceJs {
             }
         }
     }
+
+    /**
+     * Получить госпитализацию по ЛН через номер ИБ и год
+     *
+     * @param aDisDocId DisabilityDocument.id
+     * @param aRequest HttpServletRequest
+     * @return String with result
+     * @throws NamingException
+     */
+    public String toHospFromDisDoc(Long aDisDocId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest, null).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list = service.executeNativeSql("select mc.id" +
+                " from disabilitydocument d" +
+                " left join statisticstub st on st.code=d.hospitalizedNumber" +
+                " left join medcase mc on mc.id=st.medcase_id" +
+                " left join patient pat on pat.id=mc.patient_id" +
+                " left join disabilitycase dc on dc.id=d.disabilityCase_id" +
+                " where d.id=" + aDisDocId + " and (pat.id=dc.patient_id or st.year=extract(year from  d.issuedate))");
+        if (!list.isEmpty()) {
+            WebQueryResult wqr = list.iterator().next();
+            return wqr.get1().toString();
+        } else return "";
+    }
 }
