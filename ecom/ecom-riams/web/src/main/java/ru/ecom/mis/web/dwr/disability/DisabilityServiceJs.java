@@ -889,6 +889,24 @@ public class DisabilityServiceJs {
     }
 
     /**
+     * Проверить, если амбулаторный режим у DisabiltyRecord, то нужен обязательно председатель ВК. Другой режим - не нужен
+     *
+     *@param documentId DisabilityDocument.id
+     * @param aRequest HttpServletRequest
+     * @return Boolean true если всё ок
+     * @throws NamingException
+     */
+    public Boolean getIfDisRecordsOkWithVK(Long documentId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest, null).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list = service.executeNativeSql("select dr.id" +
+                " from disabilityrecord dr" +
+                " left join disabilitydocument d on d.id=dr.disabilitydocument_id" +
+                " left join VocDisabilityRegime reg on reg.id=dr.regime_id" +
+                " where dr.workfunctionadd_id is null and reg.code='1' and d.id=" + documentId);
+        return !list.isEmpty();
+    }
+
+    /**
      * Обновить лист нетрудоспособности: ФИО+ДР, место работы, выгружен период/нет, хэш.
      *
      *@param documentId DisabilityDocument.id
