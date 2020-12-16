@@ -331,6 +331,7 @@
         and (dd1.noActuality='0' or dd1.noActuality is null) 
         and dd1.anotherLpu_id is null)) as sumdays
         , list(ml.name) as deps
+        ,dd.hospitalizedNumber as numHist
         from DisabilityCase dc
         left join DisabilityDocument dd on dd.disabilityCase_id=dc.id
         left join DisabilityRecord dr on dr.disabilityDocument_id=dd.id
@@ -378,6 +379,7 @@
               <msh:tableColumn columnName="Возраст" property="4"/>
               <msh:tableColumn columnName="Длительность" property="5" />
               <msh:tableColumn columnName="Отделение" property="6" />
+              <msh:tableColumn columnName="Номер истории" property="7" />
               <msh:tableButton property="1" buttonFunction="toHosp" buttonName="Госп." buttonShortName="Госп."/>
             </msh:table>
             </msh:sectionContent>
@@ -831,6 +833,7 @@ left join VocDisabilityDocumentCloseReason vddcr1 on vddcr1.id=dd1.closeReason_i
 where dd.id=dd1.id 
 and (dd1.noActuality='0' or dd1.noActuality is null) 
 and dd1.anotherLpu_id is null)) as sumdays1
+,dd.hospitalizedNumber as numHist
 from DisabilityCase dc
 left join DisabilityDocument dd on dd.disabilityCase_id=dc.id
 left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
@@ -868,6 +871,7 @@ order by p.lastname,p.firstname,p.middlename
       <msh:tableColumn columnName="Возраст" property="4"/>
       <msh:tableColumn columnName="Длительность случая" property="5" />
       <msh:tableColumn columnName="Длительность документа" property="6" />
+      <msh:tableColumn columnName="Номер истории" property="7" />
       <msh:tableButton property="1" buttonFunction="toHosp" buttonName="Госп." buttonShortName="Госп."/>
     </msh:table>
     </msh:sectionContent>
