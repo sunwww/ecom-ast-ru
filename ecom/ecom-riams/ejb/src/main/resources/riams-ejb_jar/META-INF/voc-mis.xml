@@ -2705,6 +2705,7 @@ left join patient wp on wp.id=w.person_id "
 			queried="codeF like :querId or UPPER(name) like UPPER(:query)"
 			queryAppend="(disable is null or cast(disable as int)=0)"
 			join=""
+			order="cast(codeF as int)"
 			/>
     </voc>
 	<!-- Доп. причина нетрудоспособности-->
@@ -2716,6 +2717,7 @@ left join patient wp on wp.id=w.person_id "
 				queried="code like :querId or UPPER(name) like UPPER(:query)"
 				queryAppend=""
 				join=""
+				order="cast(code as int)"
 		/>
 	</voc>
     <!-- Режим нетрудоспособности-->
@@ -2735,6 +2737,7 @@ left join patient wp on wp.id=w.person_id "
                 queried = 'codeF,name'
                 queryConvertType = 'UPPER_CASE'
                 queryAppend="(disable is null or disable=false)"
+				order="cast(codeF as int)"
                 />
     </voc>
     <!-- Степень ограничения трудоспособности -->

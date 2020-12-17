@@ -715,7 +715,7 @@ public class DisabilityServiceJs {
      */
     public String getReasonsfOfAnnulSheets(HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String query = "SELECT code,name from vocannulreason";
+        String query = "SELECT code,name from vocannulreason where (disable is null or disable=false)";
         Collection<WebQueryResult> list = service.executeNativeSql(query);
         StringBuilder res = new StringBuilder();
         if (!list.isEmpty()) {
