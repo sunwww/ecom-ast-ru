@@ -1365,7 +1365,7 @@
     			parent=""
     			names = "code||' '||name"
     			nameId="id"
-    			queryAppend="dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date)"
+    			queryAppend="dtype='MedService' and (finishDate is null or finishDate>=current_date)"
     			join=''
     			order=''
     			queried = "(cast(id as varchar(10)) like :query or upper(name) like UPPER(:query) or code like UPPER(:query) or replace(code,'.','') like UPPER(:query))"
@@ -1380,7 +1380,7 @@
     			parent=""
     			names = "code||' '||name"
     			nameId="id"
-    			queryAppend="dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date)"
+    			queryAppend="dtype='MedService' and (finishDate is null or finishDate>=current_date)"
     			join=''
     			order=''
     			queried = "((cast(id as varchar(10)) like :query or name like UPPER(:query)) or (replace(upper(code),'.','') like (upper(:query))) or upper(name) like upper(:query) or upper(code) like upper(:query))"
