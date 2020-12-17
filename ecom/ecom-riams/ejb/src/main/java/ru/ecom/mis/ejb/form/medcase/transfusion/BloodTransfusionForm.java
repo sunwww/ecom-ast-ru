@@ -23,8 +23,8 @@ import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz= BloodTransfusion.class)
-@Comment("Переливание донорской крови и её компонентов")
-@WebTrail(comment = "Переливание донорской крови и её компонентов", nameProperties= "id", view="entityParentView-trans_blood.do",list = "entityParentList-trans_transfusion.do")
+@Comment("Протокол трансфузий")
+@WebTrail(comment = "Протокол трансфузий", nameProperties= "id", view="entityParentView-trans_blood.do",list = "entityParentList-trans_transfusion.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Transfusion/Blood")
 @AViewInterceptors(
