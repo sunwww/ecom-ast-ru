@@ -47,7 +47,7 @@
     function show${name}fssExport() {
         DisabilityService.getIfDisRecordsOkWithVK('${documentId}', {
             callback: function(resultDisRecordsOkWithVK) {
-                if (resultDisRecordsOkWithVK) {
+                if (resultDisRecordsOkWithVK || $('anotherLpu').value!='') {
                     DisabilityService.getIfDisDocHasVK('${documentId}', {
                             callback: function(resultVK) {
                     if ($('anotherLpu').value!='' || resultVK || $('issueDate').value!='' && $('hospitalizedTo').value!=''
