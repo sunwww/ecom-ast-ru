@@ -903,7 +903,7 @@ public class DisabilityServiceJs {
                 " left join disabilitydocument d on d.id=dr.disabilitydocument_id" +
                 " left join VocDisabilityRegime reg on reg.id=dr.regime_id" +
                 " where dr.workfunctionadd_id is null and reg.code='1' and d.id=" + documentId);
-        return !list.isEmpty();
+        return list.isEmpty();
     }
 
     /**
