@@ -45,51 +45,45 @@
     var the${name}fssExport= new msh.widget.Dialog($('${name}fssExport')) ;
 
     function show${name}fssExport() {
-        DisabilityService.getIfDisRecordsOkWithVK('${documentId}', {
-            callback: function(resultDisRecordsOkWithVK) {
-                if (resultDisRecordsOkWithVK || $('anotherLpu').value!='') {
-                    DisabilityService.getIfDisDocHasVK('${documentId}', {
-                            callback: function(resultVK) {
-                    if ($('anotherLpu').value!='' || resultVK || $('issueDate').value!='' && $('hospitalizedTo').value!=''
-                        && $('issueDate').value==$('hospitalizedTo').value!=''
-                        || $('issueDate').value=='' || $('hospitalizedTo').value=='') {
-                        $('${name}fssExportResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
-                        the${name}fssExport.show();
-                        DisabilityService.exportDisabilityDoc('${documentId}', {
+        DisabilityService.getIfDisDocHasVK('${documentId}', {
+                callback: function(resultVK) {
+        if ($('anotherLpu').value!='' || resultVK || $('issueDate').value!='' && $('hospitalizedTo').value!=''
+            && $('issueDate').value==$('hospitalizedTo').value!=''
+            || $('issueDate').value=='' || $('hospitalizedTo').value=='') {
+            $('${name}fssExportResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
+            the${name}fssExport.show();
+            DisabilityService.exportDisabilityDoc('${documentId}', {
 
-                            callback: function(json) {
-                                json  = JSON.parse(json);
-                                if(json.error!=null && json.code!=null){
-                                    $('${name}fssExportResultDiv').innerHTML=json.error+"<br> Обновите страницу и попробуйте еще раз";
-                                }else {
-                                var resultHTML="<p class='#res'>" +
-                                    "<span style='font-size: medium; color: #2d2d2b; '>" +
-                                    "#TEXT" +
-                                    "#ЭЛН:"+json.lncode +"<br>"+
-                                    "Ответ:"+json.message +"<br>"+
-                                    "Номер запроса:"+json.requestId +"<br><br>";
+                callback: function(json) {
+                    json  = JSON.parse(json);
+                    if(json.error!=null && json.code!=null){
+                        $('${name}fssExportResultDiv').innerHTML=json.error+"<br> Обновите страницу и попробуйте еще раз";
+                    }else {
+                    var resultHTML="<p class='#res'>" +
+                        "<span style='font-size: medium; color: #2d2d2b; '>" +
+                        "#TEXT" +
+                        "#ЭЛН:"+json.lncode +"<br>"+
+                        "Ответ:"+json.message +"<br>"+
+                        "Номер запроса:"+json.requestId +"<br><br>";
 
-                                if(json.status==0){
-                                    resultHTML = resultHTML.replace("#res","error");
-                                    resultHTML = resultHTML.replace("#TEXT","Были найдены ошибки:");
-                                    json.errors.forEach(
-                                        function(entry) {
-                                            resultHTML+="Ошибка: "+entry.errmess+"<br>";
-                                        });
-                                }else {
-                                    resultHTML = resultHTML.replace("#TEXT","ЭЛН успешно выгружен");
-                                    resultHTML = resultHTML.replace("#res","ok");
-                                }
-                                $('${name}fssExportResultDiv').innerHTML=resultHTML;
-                                }
-                            }
-                        });
+                    if(json.status==0){
+                        resultHTML = resultHTML.replace("#res","error");
+                        resultHTML = resultHTML.replace("#TEXT","Были найдены ошибки:");
+                        json.errors.forEach(
+                            function(entry) {
+                                resultHTML+="Ошибка: "+entry.errmess+"<br>";
+                            });
+                    }else {
+                        resultHTML = resultHTML.replace("#TEXT","ЭЛН успешно выгружен");
+                        resultHTML = resultHTML.replace("#res","ok");
                     }
-                    else showToastMessage('Проверьте дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!',null,true);
-                            }});
+                    $('${name}fssExportResultDiv').innerHTML=resultHTML;
+                    }
                 }
-                else showToastMessage('Проверьте подпись ВК в периоде с амбулаторным режимом! Она обязательно должна быть.',null,true);
-            }});
+            });
+        }
+        else showToastMessage('Проверьте дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!',null,true);
+                }});
     }
         function cancel${name}fssExport() {
             the${name}fssExport.hide() ;

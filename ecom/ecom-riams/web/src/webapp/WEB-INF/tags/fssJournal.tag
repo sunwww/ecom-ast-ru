@@ -53,27 +53,22 @@
     var the${name}FSSProgress= new msh.widget.Dialog($('${name}FSSProgress')) ;
 
     function show${name}FSSProgress() {
-        DisabilityService.getIfDisRecordsOkWithVK('${documentId}', {
-            callback: function(resultDisRecordsOkWithVK) {
-                if (resultDisRecordsOkWithVK || $('anotherLpu').value!='') {
-                    DisabilityService.getIfDisDocHasVK('${documentId}', {
-                        callback: function(resultVK) {
-                            if ($('anotherLpu').value!='' || resultVK || $('issueDate').value!='' && $('hospitalizedTo').value!=''
-                    && $('issueDate').value==$('hospitalizedTo').value!=''
-                    || $('issueDate').value=='' || $('hospitalizedTo').value=='') {
-                        $('${name}FSSProgressResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
-                        the${name}FSSProgress.show();
-                        DisabilityService.exportDisabilityDocument('${documentId}', {
-                            callback: function(a) {
-                                $('${name}FSSProgressResultDiv').innerHTML=a;
 
-                            }
-                        });
-                    }
-                    else showToastMessage('Проверьте дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!',null,true);
-                        }});
+        DisabilityService.getIfDisDocHasVK('${documentId}', {
+            callback: function(resultVK) {
+                if ($('anotherLpu').value!='' || resultVK || $('issueDate').value!='' && $('hospitalizedTo').value!=''
+        && $('issueDate').value==$('hospitalizedTo').value!=''
+        || $('issueDate').value=='' || $('hospitalizedTo').value=='') {
+            $('${name}FSSProgressResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
+            the${name}FSSProgress.show();
+            DisabilityService.exportDisabilityDocument('${documentId}', {
+                callback: function(a) {
+                    $('${name}FSSProgressResultDiv').innerHTML=a;
+
                 }
-                else showToastMessage('Проверьте подпись ВК в периоде с амбулаторным режимом! Она обязательно должна быть.',null,true);
+            });
+        }
+        else showToastMessage('Проверьте дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!',null,true);
             }});
     }
     // Показать
