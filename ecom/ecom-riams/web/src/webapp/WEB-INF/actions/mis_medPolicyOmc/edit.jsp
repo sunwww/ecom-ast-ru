@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -95,7 +95,7 @@
                             <msh:tableColumn property="5" columnName="Дата начала"/>
                             <msh:tableColumn property="6" columnName="Дата окончания"/>
                             <msh:tableColumn property="7" columnName="Проверено"/>
-                            <msh:tableButton property="1" buttonFunction="setPolisChecked"
+                            <msh:tableButton property="1" buttonFunction="setPolicyChecked"
                                              buttonShortName="Уст. 'проверено'" buttonName="проверено"/>
                         </msh:table>
                     </msh:section>
@@ -138,7 +138,7 @@
         <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
         <msh:ifFormTypeIsView formName="mis_medPolicyOmcForm">
             <script type="text/javascript">
-                function setPolisChecked(id) {
+                function setPolicyChecked(id) {
                     PatientService.setPolicyIsChecked(id, {
                         callback: function () {
                             showToastMessage("Сохранено!", null, true);
@@ -152,7 +152,7 @@
             <script type="text/javascript">
 
                 function changePolicyTypef() {
-                    if ($('changePolicyType').value != null && $('changePolicyType').value != '') {
+                    if ($('changePolicyType').value) {
                         PatientService.changeMedPolicyType($('id').value, $('changePolicyType').value, {
                             callback: function () {
                                 alert('Тип полиса изменен!');
@@ -169,6 +169,7 @@
                         callback: function (aResult) {
                             if (+aResult == 3) {
                                 $('commonNumber').className = " horizontalFill required";
+                                $('series').className = " upperCase";
                                 setNumberIsCommonNumber();
                             } else {
                                 $('commonNumber').className = " horizontalFill ";
