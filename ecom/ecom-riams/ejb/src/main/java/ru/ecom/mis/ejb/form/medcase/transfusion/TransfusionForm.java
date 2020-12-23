@@ -82,7 +82,7 @@ public class TransfusionForm extends IdEntityForm {
 
 	/** Способ переливания */
 	@Comment("Способ переливания")
-	@Persist @Required
+	@Persist
 	public Long getTransfusionMethod() {return theTransfusionMethod;}
 	public void setTransfusionMethod(Long aTransfusionMethod) {theTransfusionMethod = aTransfusionMethod;}
 

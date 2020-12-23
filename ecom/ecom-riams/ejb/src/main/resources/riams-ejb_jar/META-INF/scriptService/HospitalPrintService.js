@@ -454,7 +454,7 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 	var comp = "";
 	if (list.size()>0)
 		 comp = new java.lang.StringBuilder().append(list.get(0)).toString();
-	if (trans.mainSymptoms)
+	if (trans.mainSymptoms && trans.mainSymptoms!='')
 		comp = comp + ", " + trans.mainSymptoms;
 	if (!comp)
 		comp='-';
