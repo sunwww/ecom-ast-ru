@@ -339,6 +339,14 @@ public class BloodTransfusion extends Transfusion {
 	/** Заключение совместимо/нет */
 	private VocYesNo thePlaneCompatibility;
 
+	/** Основные симптомы */
+	@Comment("Основные симптомы")
+	public String getMainSymptoms() {return theMainSymptoms;}
+	public void setMainSymptoms(String aMainSymptoms) {theMainSymptoms = aMainSymptoms;}
+
+	/** Основные симптомы */
+	private String theMainSymptoms;
+
 	/** Фенотип донора */
 	@Comment("Фенотип донора")
 	public String getPhenotypeDon() {return thePhenotypeDon;}

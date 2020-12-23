@@ -31,6 +31,7 @@
         <msh:hidden property="pregnancyHang"/>
         <msh:hidden property="patBloodGroupCheck"/>
         <msh:hidden property="prepBloodGroupCheck"/>
+        <msh:hidden property="transfusionMethod"/>
       <msh:panel colsWidth="1%,1%,15%,81%">
         <msh:row>
           <msh:textField property="journalNumber" label="Номер в журнале" />
@@ -112,9 +113,6 @@
                 <msh:separator label="Показания к трансфузии" colSpan="10" />
             </msh:row>
             <msh:row>
-                <msh:autoComplete property="transfusionMethod" label="Способ переливания" vocName="vocTransfusionMethod" size="55" fieldColSpan="9" />
-            </msh:row>
-            <msh:row>
                 <msh:autoComplete property="reason" label="Показания к трансфузии" parentAutocomplete="bloodPreparation" vocName="vocTransfusionReason" fieldColSpan="9" size="55" />
             </msh:row>
             <msh:row>
@@ -166,6 +164,9 @@
 			<ecom:checkGroup fieldColSpan="9" label="Осложнения" tableName="VocTransfusionReaction" tableField="'<b>'||name||'</b> - '||description" 
 					tableId="id" property="complications"  />
 		</msh:row>
+        <msh:row>
+            <msh:textField property="mainSymptoms" label="Основные симптомы" horizontalFill="true" fieldColSpan="9" />
+        </msh:row>
         <msh:row>
           <msh:separator label="Наблюдение за состоянием реципиента. До начала трансфузии" colSpan="10"/>
         </msh:row>

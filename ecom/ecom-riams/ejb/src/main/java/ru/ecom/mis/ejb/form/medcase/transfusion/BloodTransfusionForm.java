@@ -448,6 +448,13 @@ public class BloodTransfusionForm extends TransfusionForm{
 	@Persist @Required
 	public Long getPlaneCompatibility() {return thePlaneCompatibility;}
 	public void setPlaneCompatibility(Long aPlaneCompatibility) {thePlaneCompatibility = aPlaneCompatibility;}
+
+	/** Основные симптомы */
+	@Comment("Основные симптомы")
+	@Persist
+	public String getMainSymptoms() {return theMainSymptoms;}
+	public void setMainSymptoms(String aMainSymptoms) {theMainSymptoms = aMainSymptoms;}
+
 	/** Заключение совместимо/нет */
 	private Long theConclusion;
 	/** Заключение совместимо/нет */
@@ -466,4 +473,6 @@ public class BloodTransfusionForm extends TransfusionForm{
 	private Boolean thePhenotypeDonNone;
 	/** Фенотип донора */
 	private String thePhenotypeDon;
+	/** Основные симптомы */
+	private String theMainSymptoms;
 }

@@ -451,11 +451,14 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 	map.put("antibodies",trans.getResearchAntibodies().name) ;
 	//Осложнения
 	var list = aCtx.manager.createNativeQuery(new java.lang.StringBuilder().append(" select list(vtr.name) from TransfusionComplication tc left join VocTransfusionReaction vtr on vtr.id=tc.reaction_id where tc.transfusion_id='").append(id).append("' group by tc.transfusion_id").toString()).getResultList();
-	if (list.size()>0) {
-		map.put("complication",new java.lang.StringBuilder().append(list.get(0)).toString()) ;
-	} else {
-		map.put("complication","-") ;
-	}
+	var comp = "";
+	if (list.size()>0)
+		 comp = new java.lang.StringBuilder().append(list.get(0)).toString();
+	if (trans.mainSymptoms)
+		comp = comp + ", " + trans.mainSymptoms;
+	if (!comp)
+		comp='-';
+	map.put("complication",comp);
 	//Были ли реакции на переливание ранее
 	if (trans.getTransfusionReactionLast()!=null&&trans.getTransfusionReactionLast().getCode()!=null&&trans.getTransfusionReactionLast().getCode().equals("1")) {
 		map.put("reactionLast"," были") ;
