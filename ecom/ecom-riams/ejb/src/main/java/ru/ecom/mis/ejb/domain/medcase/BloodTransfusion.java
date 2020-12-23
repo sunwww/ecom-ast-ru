@@ -204,6 +204,28 @@ public class BloodTransfusion extends Transfusion {
 	private String theReagentPT1;
 	/** Метод 1 по инд. совместимости */
 	private VocTransfusionMethodPT theMethodPT1;
+
+	/** 3. Срок годности */
+	private Date theReagentExpDatePT3;
+	/** 3. Серия реактива по инд. совместимости */
+	private String theReagentSeriesPT3;
+	/** 3. Реактив по инд. совместимости */
+	private String theReagentPT3;
+
+	/** 3. Реактив по инд. совместимости */
+	@Comment("3. Реактив по инд. совместимости")
+	public String getReagentPT3() {return theReagentPT3;}
+	public void setReagentPT3(String aReagentPT3) {theReagentPT3 = aReagentPT3;}
+
+	/** 3. Серия реактива по инд. совместимости */
+	@Comment("3. Серия реактива по инд. совместимости")
+	public String getReagentSeriesPT3() {return theReagentSeriesPT3;}
+	public void setReagentSeriesPT3(String aReagentSeriesPT3) {theReagentSeriesPT3 = aReagentSeriesPT3;}
+
+	/** 3. Срок годности */
+	@Comment("3. Срок годности")
+	public Date getReagentExpDatePT3() {return theReagentExpDatePT3;}
+	public void setReagentExpDatePT3(Date aReagentExpDatePT3) {theReagentExpDatePT3 = aReagentExpDatePT3;}
 	
 	/** Метод 2 по инд. совместимости */
 	@Comment("Метод 2 по инд. совместимости")
@@ -257,6 +279,39 @@ public class BloodTransfusion extends Transfusion {
 	@Comment("Пульс участился или нет без видимой причины")
 	public Boolean getWasUrineColorChanged() {return theWasUrineColorChanged;}
 	public void setWasUrineColorChanged(Boolean aWasUrineColorChanged) {theWasUrineColorChanged=aWasUrineColorChanged;}
+
+	/** Совместимость биопробы */
+	@Comment("Совместимость биопробы")
+	@OneToOne
+	public VocYesNo getBioProbeCompatibility() {return theBioProbeCompatibility;}
+	public void setBioProbeCompatibility(VocYesNo aBioProbeCompatibility) {theBioProbeCompatibility = aBioProbeCompatibility;}
+
+	/** Заключение совместимо/нет */
+	@Comment("Заключение совместимо/нет")
+	@OneToOne
+	public VocYesNo getConclusion() {return theConclusion;}
+	public void setConclusion(VocYesNo aConclusion) {theConclusion = aConclusion;}
+
+	/** Совместимость на плоскости */
+	@Comment("Совместимость на плоскости")
+	@OneToOne
+	public VocYesNo getPlaneCompatibility() {return thePlaneCompatibility;}
+	public void setPlaneCompatibility(VocYesNo aPlaneCompatibility) {thePlaneCompatibility = aPlaneCompatibility;}
+
+	/** Организация, осуществившая инд. подбор */
+	@Comment("Организация, осуществившая инд. подбор")
+	@OneToOne
+	public VocPreparatorBlood getIndOrg() {return theIndOrg;}
+	public void setIndOrg(VocPreparatorBlood aIndOrg) {theIndOrg = aIndOrg;}
+	/** Организация, осуществившая инд. подбор */
+	private VocPreparatorBlood theIndOrg;
+
+	/** Дата исследования */
+	private Date theDateResearch;
+	@Comment("Дата исследования")
+	public Date getDateResearch() {return theDateResearch;}
+	public void setDateResearch(Date aDateResearch) {theDateResearch = aDateResearch;}
+
 	/** Результат. Совместима */
 	private VocYesNo theResultGoodPT2;
 	/** 1. Срок годности */
@@ -277,6 +332,60 @@ public class BloodTransfusion extends Transfusion {
 	private Boolean theWasPulseIncreased;
 	/** Цвет мочи изменился или нет без видимой причины (при переливании под наркозом или в коме)*/
 	private Boolean theWasUrineColorChanged;
+	/** Совместимость биопробы */
+	private VocYesNo theBioProbeCompatibility;
+	/** Заключение совместимо/нет */
+	private VocYesNo theConclusion;
+	/** Заключение совместимо/нет */
+	private VocYesNo thePlaneCompatibility;
+
+	/** Фенотип донора */
+	@Comment("Фенотип донора")
+	public String getPhenotypeDon() {return thePhenotypeDon;}
+	public void setPhenotypeDon(String aPhenotypeDon) {thePhenotypeDon = aPhenotypeDon;}
+
+	/** Фенотип донора C */
+	@Comment("Фенотип донора C")
+	public Boolean getPhenotypeDonC() {return thePhenotypeDonC;}
+	public void setPhenotypeDonC(Boolean aPhenotypeDonC) {thePhenotypeDonC = aPhenotypeDonC;}
+
+	/** Фенотип донора с */
+	@Comment("Фенотип донора с")
+	public Boolean getPhenotypeDonc1() {return thePhenotypeDonc1;}
+	public void setPhenotypeDonc1(Boolean aPhenotypeDonc1) {thePhenotypeDonc1 = aPhenotypeDonc1;}
+
+	/** Фенотип донора Е */
+	@Comment("Фенотип донора Е")
+	public Boolean getPhenotypeDonD() {return thePhenotypeDonD;}
+	public void setPhenotypeDonD(Boolean aPhenotypeDonD) {thePhenotypeDonD = aPhenotypeDonD;}
+
+	/** Фенотип донора e */
+	@Comment("Фенотип донора e")
+	public Boolean getPhenotypeDonE() {return thePhenotypeDonE;}
+	public void setPhenotypeDonE(Boolean aPhenotypeDonE) {thePhenotypeDonE = aPhenotypeDonE;}
+
+	/** Фенотип донора E */
+	@Comment("Фенотип донора E")
+	public Boolean getPhenotypeDone1() {return thePhenotypeDone1;}
+	public void setPhenotypeDone1(Boolean aPhenotypeDone1) {thePhenotypeDone1 = aPhenotypeDone1;}
+
+	/** Фенотип донора не определялся */
+	@Comment("Фенотип донора не определялся")
+	public Boolean getPhenotypeDonNone() {return thePhenotypeDonNone;}
+	public void setPhenotypeDonNone(Boolean aPhenotypeDonNone) {thePhenotypeDonNone = aPhenotypeDonNone;}
+
+	/** Фенотип донора E */
+	private Boolean thePhenotypeDone1;
+	/** Фенотип донора e */
+	private Boolean thePhenotypeDonE;
+	/** Фенотип донора Е */
+	private Boolean thePhenotypeDonD;
+	/** Фенотип донора с */
+	private Boolean thePhenotypeDonc1;
+	/** Фенотип донора C */
+	private Boolean thePhenotypeDonC;
+	/** Фенотип донора не определялся*/
+	private Boolean thePhenotypeDonNone;
+	/** Фенотип донора */
+	private String thePhenotypeDon;
 }
-//lastrelease milamesher 30.03.2018 #95
-//added fields

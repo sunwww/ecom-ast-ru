@@ -2909,14 +2909,50 @@ left join patient wp on wp.id=w.person_id "
 	</voc>
     <!--  ПЕРЕЛИВАНИЕ КРОВИ -->
     
-    <voc id='vocBloodGroup' type='EntityVocService'>
+    <voc id='vocPreparatorBlood' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBloodGroup'
+                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPreparatorBlood'
                     names   = 'name'
                     queried = 'name'
+					queryAppend = " (disable is null or disable=false) and code='1'"
                     />
     </voc>
-    
+
+	<voc id='vocPreparatorBloodIndOrg' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPreparatorBlood'
+				names   = 'name'
+				queried = 'name'
+				queryAppend = " (disable is null or disable=false) and code='2'"
+		/>
+	</voc>
+
+	<voc id='vocTransfusionMethodPT' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionMethodPT'
+				names   = 'name'
+				queried = 'name'
+				queryAppend = ' (disable is null or disable=false)'
+		/>
+	</voc>
+
+	<voc id='vocTransfusionResearchAntibodies' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionResearchAntibodies'
+				names   = 'name'
+				queried = 'name'
+				queryAppend = ' (disable is null or disable=false)'
+		/>
+	</voc>
+
+	<voc id='vocBloodGroup' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBloodGroup'
+				names   = 'name'
+				queried = 'name'
+		/>
+	</voc>
+
     <voc id='vocBloodPreparation' type='EntityVocService'>
             <EntityVocService
                     entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBloodPreparation'

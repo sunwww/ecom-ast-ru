@@ -23,9 +23,7 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 		BloodTransfusion entity = (BloodTransfusion)aEntity ;
 		EntityManager manager = aContext.getEntityManager() ;
 		long id = form.getId() ;
-		
-		//try {
-			//Мониторинг
+
 			saveForm(manager,"from TransfusionMonitoring where transfusion_id='"+id+"' and hourAfterTransfusion='"+0+"'"
 					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor,getDiuresis".split(",")
 					,form.getMonitorForm0(),TransfusionMonitoring.class,TransfusionMonitoringForm.class);
@@ -43,10 +41,9 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 			saveForm(manager,"from TransfusionReagent where transfusion_id='"+id+"' and numberReagent='"+2+"'"
 					,"getReagent,getSeries,getExpirationDate".split(",")
 					,form.getReagentForm2(),TransfusionReagent.class,TransfusionReagentForm.class);
-		//}catch(Exception e) {
-		//	e.printStackTrace();
-		//	//throw new IllegalStateException(e.toString());
-		//}
+			saveForm(manager,"from TransfusionReagent where transfusion_id='"+id+"' and numberReagent='"+3+"'"
+					,"getReagent,getSeries,getExpirationDate".split(",")
+					,form.getReagentForm3(),TransfusionReagent.class,TransfusionReagentForm.class);
 		
 		StringBuilder biolTest = new StringBuilder() ;
 		if (form.getIsIllPatientsBT()!=null && form.getIsIllPatientsBT()) {
