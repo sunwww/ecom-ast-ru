@@ -486,10 +486,15 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 	//Реагенты
 	var listR = aCtx.manager.createNativeQuery("select vtr.name as vtrn,tr.series as ser,to_char(tr.expirationDate,'dd.mm.yyyy') as exp from TransfusionReagent tr left join VocTransfusionReagent vtr on vtr.id=tr.reagent_id where tr.transfusion_id='"+id+"' order by tr.numberReagent").getResultList();
 	for (var i=0; i<3; i++) {
-		if (listR.size()>=i) {
+		if (listR.size()>i) {
 			map.put("r"+i,listR.get(i)[0]);
 			map.put("r"+i+"Ser",listR.get(i)[1]);
 			map.put("r"+i+"Exp",listR.get(i)[2]);
+		}
+		else {
+			map.put("r"+i,"");
+			map.put("r"+i+"Ser","");
+			map.put("r"+i+"Exp","");
 		}
 	}
 	//Наблюдения после переливания
