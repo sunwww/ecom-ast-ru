@@ -123,6 +123,7 @@
                 select distinct slo.id
                 ,dep.name as depName
                 ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename|| ' ' || to_char(pat.birthday,'dd.mm.yyyy') as patInfo
+                ,to_char(di.dateregistration,'dd.mm.yyy') as dD
                 from medCase slo
                 left join medcase sls on slo.parent_id=sls.id and sls.dtype='HospitalMedCase'
                 left join StatisticStub as sc on sc.medCase_id=sls.id
@@ -145,11 +146,12 @@
                 ${diaryLike}
                 ${diaryNotLike}
                 order by dep.name" />
-                <msh:table name="journal_DiaryText"  noDataMessage="Нет данных"
+                <msh:table name="journal_DiaryText"  noDataMessage="Нет данных" printToExcelButton="Сохранить в excel"
                            action="entityParentView-stac_slo.do" idField="1">
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="2" columnName="Отделение"/>
                     <msh:tableColumn property="3" columnName="Пациент"/>
+                    <msh:tableColumn property="4" columnName="Дата"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
