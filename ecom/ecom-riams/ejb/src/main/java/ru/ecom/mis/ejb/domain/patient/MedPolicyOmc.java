@@ -55,9 +55,10 @@ public class MedPolicyOmc extends MedPolicy {
 
     /** Предприятие */
     @OneToOne
-    @Deprecated
     public VocOrg getOrg() { return theOrg ; }
     public void setOrg(VocOrg aOrg) { theOrg = aOrg ; }
+    @Deprecated
+    private VocOrg theOrg ;
 
     /** Прикрепленное ЛПУ */
 	@Comment("Прикрепленное ЛПУ")
@@ -69,6 +70,8 @@ public class MedPolicyOmc extends MedPolicy {
 	public void setAttachedLpu(MisLpu aAttachedLpu) {
 		theAttachedLpu = aAttachedLpu;
 	}
+    @Deprecated
+    private MisLpu theAttachedLpu;
 
 	/** Тип полиса */
 	@Comment("Тип полиса")
@@ -78,8 +81,5 @@ public class MedPolicyOmc extends MedPolicy {
 
 	/** Тип полиса */
 	private VocMedPolicyOmc theType;
-	/** Прикрепленное ЛПУ */
-	private MisLpu theAttachedLpu;
-    /** Предприятие */
-    private VocOrg theOrg ;
+
 }
