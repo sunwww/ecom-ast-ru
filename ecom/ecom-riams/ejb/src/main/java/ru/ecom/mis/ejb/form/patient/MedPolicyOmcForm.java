@@ -28,7 +28,7 @@ public class MedPolicyOmcForm extends MedPolicyForm {
     /** Серия */
     @Comment("Серия")
     @Persist
-    @Required @DoUpperCase @DoInputNonLat
+    @DoUpperCase @DoInputNonLat
     public String getSeries() { return super.getSeries() ; }
 
     /** Организация */
@@ -42,7 +42,6 @@ public class MedPolicyOmcForm extends MedPolicyForm {
 	public Long getAttachedLpu() {
 		return theAttachedLpu;
 	}
-
 	public void setAttachedLpu(Long aAttachedLpu) {
 		theAttachedLpu = aAttachedLpu;
 	}
@@ -63,8 +62,10 @@ public class MedPolicyOmcForm extends MedPolicyForm {
     /** Страховая компания */
     private Long theCompany ;
 	/** Прикрепленное ЛПУ */
+	@Deprecated
 	private Long theAttachedLpu;
     /** Организация */
+    @Deprecated
     private Long theOrg ;
     
 

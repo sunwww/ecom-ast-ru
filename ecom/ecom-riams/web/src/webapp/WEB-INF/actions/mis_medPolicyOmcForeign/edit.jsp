@@ -89,7 +89,7 @@
 		        			<msh:tableColumn property="5" columnName="Дата начала" />
 		        			<msh:tableColumn property="6" columnName="Дата окончания" />
                             <msh:tableColumn property="7" columnName="Проверено" />
-                            <msh:tableButton property="1" buttonFunction="setPolisChecked" buttonShortName="Уст. 'проверено'" buttonName="проверено"/>
+                            <msh:tableButton property="1" buttonFunction="setPolicyChecked" buttonShortName="Уст. 'проверено'" buttonName="проверено"/>
 		        		</msh:table>
 	        		</msh:section>
         		</msh:tableNotEmpty>
@@ -122,7 +122,7 @@
         <msh:ifFormTypeIsView formName="mis_medPolicyOmcForeignForm">
             <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
             <script type="text/javascript">
-                function setPolisChecked(id) {
+                function setPolicyChecked(id) {
                     PatientService.setPolicyIsChecked(id,{
                         callback: function(){
                             showToastMessage("Сохранено!",null,true);
