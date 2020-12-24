@@ -146,7 +146,7 @@
                 ${diaryLike}
                 ${diaryNotLike}
                 order by dep.name" />
-                <msh:table name="journal_DiaryText"  noDataMessage="Нет данных" printToExcelButton="Сохранить в excel"
+                <msh:table name="journal_DiaryText"  noDataMessage="Нет данных" printToExcelButton="Сохранить в excel" openNewWindow="true"
                            action="entityParentView-stac_slo.do" idField="1">
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="2" columnName="Отделение"/>
