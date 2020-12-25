@@ -229,6 +229,7 @@ public class DisabilityServiceJs {
                 " ,dd3.number as NEXT_LN_CODE" +
                 " ,Case when dd.isClose = '1' then '1' else '0' end as IS_CLOSE" +
                 " ,dd.lnhash as LN_HASH " +
+                " ,dd.previouslyIssuedCode as previouslyIssuedCode " +
                 " from disabilitydocument dd" +
                 " left join vocdisabilitydocumentclosereason vddcr on vddcr.id = dd.closereason_id" +
                 " left join disabilitydocument dd3 on dd3.prevdocument_id=dd.id" +

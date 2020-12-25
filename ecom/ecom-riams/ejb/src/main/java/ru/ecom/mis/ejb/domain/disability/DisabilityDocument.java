@@ -140,6 +140,7 @@ public class DisabilityDocument extends BaseEntity{
 	private DisabilityDocument theDuplicate;
 	private Date theOtherCloseDate;
 	private Date theExportDate;
+	private String previouslyIssuedCode;
 
 	@Comment("Экспортировано закрытие (ЭЛН)")
 	public Boolean getCloseExport() {
@@ -498,5 +499,13 @@ public class DisabilityDocument extends BaseEntity{
 	}
 	public void setELN(Boolean ELN) {
 		isELN = ELN;
+	}
+
+	@Comment("Код ранее выданного")
+	public String getPreviouslyIssuedCode() {
+		return previouslyIssuedCode;
+	}
+	public void setPreviouslyIssuedCode(String aPreviouslyIssuedCode) {
+		previouslyIssuedCode = aPreviouslyIssuedCode;
 	}
 }
