@@ -1534,11 +1534,20 @@ public class HospitalMedCaseServiceJs {
 	 * @param aColorIdentityId ColorIdentityPatient.id
 	 * @return void
 	 */
-	public void deleteIdentityPatient(Long aColorIdentityId, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		//закрывается вчерашним днём, чтобы сразу снимался браслет
-		service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date, finishtime=current_time,editusername='"+login+"' where id="+aColorIdentityId);
+	public String deleteIdentityPatient(Long aColorIdentityId, HttpServletRequest aRequest) throws NamingException, JspException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
+		Collection<WebQueryResult> l = service.executeNativeSql("select case when voc.isdeniedmanual='1' then 0 else 1 end" +
+				" from coloridentitypatient c" +
+				" left join voccoloridentitypatient voc on voc.id=c.voccoloridentity_id" +
+				" where c.id = " + aColorIdentityId);
+		if (!l.isEmpty() && l.iterator().next().get1() != null && l.iterator().next().get1().toString().equals("0")
+		&& !RolesHelper.checkRoles("/Policy/Mis/ColorIdentityEdit/AdminCancel",aRequest))
+			return "Только администратор системы может снять этот браслет!";
+		else {
+			service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date, finishtime=current_time,editusername='" + login + "' where id=" + aColorIdentityId);
+			return "";
+		}
 	}
 
 	/**
