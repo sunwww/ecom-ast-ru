@@ -4,36 +4,38 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true">
 
-  <tiles:put name="title" type="string">
-    <msh:title  mainMenu="StacJournal">Журнал обращений по отделению</msh:title>
-  </tiles:put>
-  <tiles:put name="side" type="string">
-  	<tags:stac_journal currentAction="stac_journalCurrentByUserDepartment"/>
-  </tiles:put>
-  <tiles:put name="body" type="string">
-      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments,/Policy/Mis/MedCase/Stac/Journal/ShowInfoByDate">
-		    <msh:form action="/stac_journalCurrentByUserDepartment.do" defaultField="dateStart" disableFormDataConfirm="true" method="POST" >
-		    <msh:panel   colsWidth="10%,89%">
-		      <msh:row  >
-		        <msh:separator label="Параметры поиска" colSpan="6"  />
-		      </msh:row>
-			      	<msh:row>
-			      		<msh:textField property="dateStart" label="Дата"/>
-				           <td>
-				            <input type="submit" value="Найти" />
-				          </td>
-			      	</msh:row>
-		    </msh:panel>
-		    </msh:form>
-      </msh:ifInRole>
+    <tiles:put name="title" type="string">
+        <msh:title mainMenu="StacJournal">Журнал обращений по отделению</msh:title>
+    </tiles:put>
+    <tiles:put name="side" type="string">
+        <tags:stac_journal currentAction="stac_journalCurrentByUserDepartment"/>
+    </tiles:put>
+    <tiles:put name="body" type="string">
+        <msh:ifInRole
+                roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments,/Policy/Mis/MedCase/Stac/Journal/ShowInfoByDate">
+            <msh:form action="/stac_journalCurrentByUserDepartment.do" defaultField="dateStart"
+                      disableFormDataConfirm="true" method="POST">
+                <msh:panel colsWidth="10%,89%">
+                    <msh:row>
+                        <msh:separator label="Параметры поиска" colSpan="6"/>
+                    </msh:row>
+                    <msh:row>
+                        <msh:textField property="dateStart" label="Дата"/>
+                        <td>
+                            <input type="submit" value="Найти"/>
+                        </td>
+                    </msh:row>
+                </msh:panel>
+            </msh:form>
+        </msh:ifInRole>
         <%
-		    Long department = (Long)request.getAttribute("department") ;
-		    if (department!=null && department.intValue()>0 )  {
-    	%>
-    <msh:section>
-    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
+            Long department = (Long) request.getAttribute("department");
+            if (department != null && department.intValue() > 0) {
+        %>
+        <msh:section>
+            <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
 
     select m.id
     ,sc.code as sccode
@@ -103,8 +105,8 @@ left join voccolor vcr on vcr.id=vcid.color_id
        , pat.foreignRegistrationAddress,sls.id
     order by pat.lastname,pat.firstname,pat.middlename
     "
-      />
-         <ecom:webQuery name="datelist_r" nameFldSql="datelist_r_sql" nativeSql="
+            />
+            <ecom:webQuery name="datelist_r" nameFldSql="datelist_r_sql" nativeSql="
     select m.id,to_char(m.dateStart,'dd.mm.yyyy')||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
     	,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode
@@ -148,10 +150,10 @@ left join voccolor vcr on vcr.id=vcid.color_id
     ,bf.addCaseDuration,m.dateFinish,m.dischargeTime,sls.id
     order by pat.lastname,pat.firstname,pat.middlename
     "
-      />
-     <msh:sectionTitle>
+            />
+            <msh:sectionTitle>
 
-       <ecom:webQuery name="covid_journal" nameFldSql="covid_journal_sql" nativeSql="
+                <ecom:webQuery name="covid_journal" nameFldSql="covid_journal_sql" nativeSql="
      select m.id
      ,dep.name
      ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
@@ -214,79 +216,84 @@ left join voccolor vcr on vcr.id=vcid.color_id
         , pat.foreignRegistrationAddress,sls.id, dep.name, dep.id, vs.id, vs.name
      order by pat.lastname,pat.firstname,pat.middlename
 "/>
-    <form action="print-stac_current_department.do" method="post" target="_blank">
-    Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент
-    <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент'>
-    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
-    <input type='hidden' name="s" id="s" value="PrintService">
-    <input type='hidden' name="m" id="m" value="printNativeQuery">
-    <input type="submit" value="Печать">
-    </form>
-    <form action="print-stac_current_department_adr.do" method="post" target="_blank">
+                <form action="print-stac_current_department.do" method="post" target="_blank">
+                    Журнал состоящих пациентов в отделении ${departmentInfo} на текущий момент
+                    <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
+                    <input type='hidden' name="sqlInfo" id="sqlInfo"
+                           value='Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент'>
+                    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                    <input type='hidden' name="s" id="s" value="PrintService">
+                    <input type='hidden' name="m" id="m" value="printNativeQuery">
+                    <input type="submit" value="Печать">
+                </form>
+                <form action="print-stac_current_department_adr.do" method="post" target="_blank">
 
-    <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент'>
-    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
-    <input type='hidden' name="s" id="s" value="PrintService">
-    <input type='hidden' name="m" id="m" value="printNativeQuery">
-    <input type="submit" value="Печать реестра с адресами">
-    </form>
-     <a href='stac_print_protocol.do?department=${department}&stNoPrint=selected'>Печать дневников</a>
-     <a href='stac_print_surOperation.do?department=${department}&stNoPrint=selected'>Печать хир. операций</a>
-     <a href='stac_print_discharge.do?department=${department}&stNoPrint=selected'>Печать выписок</a>
+                    <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
+                    <input type='hidden' name="sqlInfo" id="sqlInfo"
+                           value='Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент'>
+                    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                    <input type='hidden' name="s" id="s" value="PrintService">
+                    <input type='hidden' name="m" id="m" value="printNativeQuery">
+                    <input type="submit" value="Печать реестра с адресами">
+                </form>
+                <a href='stac_print_protocol.do?department=${department}&stNoPrint=selected'>Печать дневников</a>
+                <a href='stac_print_surOperation.do?department=${department}&stNoPrint=selected'>Печать хир.
+                    операций</a>
+                <a href='stac_print_discharge.do?department=${department}&stNoPrint=selected'>Печать выписок</a>
 
-    </msh:sectionTitle>
-    <msh:sectionContent>
+            </msh:sectionTitle>
+            <msh:sectionContent>
 
-    <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1"  styleRow="14">
-      <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="2"  />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"  />
-      <msh:tableColumn columnName="Год рождения" property="4"  />
-      <msh:tableColumn columnName="Дата поступления" property="5"  />
-      <msh:tableColumn columnName="Леч.врач" property="6"/>
-      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="7"/>
-      <msh:tableColumn columnName="Операции" property="8"/>
-      <msh:tableColumn columnName="Кол-во к.дней СЛО" property="9"/>
-      <msh:tableColumn columnName="Диагноз" property="10"/>
-      <msh:tableColumn columnName="Паспортные данные" property="11"/>
-      <msh:tableColumn columnName="Профиль койки" property="12"/>
-      <msh:tableColumn columnName="Браслеты пациента" property="15"/>
-        <msh:tableColumn columnName="Браслеты пациента hidden" property="16" hidden="true"/>
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-    <msh:section>
-        <msh:sectionTitle>Список пациентов, находящихся в реанимации
-    </msh:sectionTitle>
-    <msh:sectionContent>
+                <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do"
+                           idField="1" styleRow="14">
+                    <msh:tableColumn property="sn" columnName="#"/>
+                    <msh:tableColumn columnName="Стат.карта" property="2"/>
+                    <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
+                    <msh:tableColumn columnName="Год рождения" property="4"/>
+                    <msh:tableColumn columnName="Дата поступления" property="5"/>
+                    <msh:tableColumn columnName="Леч.врач" property="6"/>
+                    <msh:tableColumn columnName="Кол-во к.дней СЛС" property="7"/>
+                    <msh:tableColumn columnName="Операции" property="8"/>
+                    <msh:tableColumn columnName="Кол-во к.дней СЛО" property="9"/>
+                    <msh:tableColumn columnName="Диагноз" property="10"/>
+                    <msh:tableColumn columnName="Паспортные данные" property="11"/>
+                    <msh:tableColumn columnName="Профиль койки" property="12"/>
+                    <msh:tableColumn columnName="Браслеты пациента" property="15"/>
+                    <msh:tableColumn columnName="Браслеты пациента hidden" property="16" hidden="true"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <msh:section>
+            <msh:sectionTitle>Список пациентов, находящихся в реанимации
+            </msh:sectionTitle>
+            <msh:sectionContent>
 
-    <msh:table name="datelist_r" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" >
-      <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Стат.карта" property="5"  />
-      <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"  />
-      <msh:tableColumn columnName="Год рождения" property="4"  />
-      <msh:tableColumn columnName="Дата поступления" property="2"  />
-      <msh:tableColumn columnName="Леч.врач" property="7"/>
-      <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
-      <msh:tableColumn columnName="Операции" property="6"/>
-      <msh:tableColumn columnName="Браслеты пациента" property="9"/>
-        <msh:tableColumn columnName="Браслеты пациента hidden" property="10" hidden="true"/>
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-    <% } else {%>
-    <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
-    <msh:section>
-    <msh:sectionTitle>Свод состоящих пациентов в отделении  ${departmentInfo} на текущий момент
-        <a href='print-stac_all_department_covid_lab.do?s=HospitalPrintService&m=printCovidAllDepartments'>
-          Журнал COVID для Иванова (пациенты по всем отделениям)</a>
-      <a href='print-stac_all_department_covid.do?s=HospitalPrintService&m=printCovidAllDepartments'>
-        Журнал состоящих по инфекционным отделениям</a>
-    </msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
+                <msh:table name="datelist_r" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do"
+                           idField="1">
+                    <msh:tableColumn property="sn" columnName="#"/>
+                    <msh:tableColumn columnName="Стат.карта" property="5"/>
+                    <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
+                    <msh:tableColumn columnName="Год рождения" property="4"/>
+                    <msh:tableColumn columnName="Дата поступления" property="2"/>
+                    <msh:tableColumn columnName="Леч.врач" property="7"/>
+                    <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
+                    <msh:tableColumn columnName="Операции" property="6"/>
+                    <msh:tableColumn columnName="Браслеты пациента" property="9"/>
+                    <msh:tableColumn columnName="Браслеты пациента hidden" property="10" hidden="true"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <% } else {%>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
+            <msh:section>
+                <msh:sectionTitle>Свод состоящих пациентов в отделении  ${departmentInfo} на текущий момент
+                    <a href='print-stac_all_department_covid_lab.do?s=HospitalPrintService&m=printCovidAllDepartments'>
+                        Журнал COVID для Иванова (пациенты по всем отделениям)</a>
+                    <a href='print-stac_all_department_covid.do?s=HospitalPrintService&m=printCovidAllDepartments'>
+                        Журнал состоящих по инфекционным отделениям</a>
+                </msh:sectionTitle>
+                <msh:sectionContent>
+                    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
     select m.department_id,ml.name, count(distinct sls.id) as cntSls
     ,count(distinct case when m.emergency='1' then sls.id else null end) as cntEmergency
     ,count(distinct case when so.id is not null or so1.id is not null then sls.id else null end) as cntOper
@@ -301,34 +308,35 @@ left join voccolor vcr on vcr.id=vcid.color_id
     group by m.department_id,ml.name
     order by ml.name
     "
-      />
-    <msh:table name="datelist" viewUrl="stac_journalCurrentByUserDepartment.do?s=Short&" action="stac_journalCurrentByUserDepartment.do" idField="1" >
-      <msh:tableColumn property="sn" columnName="#"/>
-      <msh:tableColumn columnName="Отделение" property="2"  />
-      <msh:tableColumn columnName="Кол-во состоящих" property="3"  />
-      <msh:tableColumn columnName="кол-во экстренных" property="4"  />
-      <msh:tableColumn columnName="кол-во опер. пациентов" property="5"  />
-    </msh:table>
-     </msh:sectionContent>
-     </msh:section>
-     </msh:ifInRole>
-    <% } %>
-  </tiles:put>
-  <%
-    Long department = (Long)request.getAttribute("department") ;
-    if (department!=null && department.intValue()>0 )  {
-  %>
-    <tiles:put name="javascript" type="string">
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
-    <script type="text/javascript">
-        var table = getTableToSetBracelets('datelist');
-        if (table!=null)
-          setBr(table,13,14);
-        var table_r = getTableToSetBracelets('datelist_r');
-        if (table_r!=null)
-          setBr(table_r,9,10);
-    </script>
+                    />
+                    <msh:table name="datelist" viewUrl="stac_journalCurrentByUserDepartment.do?s=Short&"
+                               action="stac_journalCurrentByUserDepartment.do" idField="1">
+                        <msh:tableColumn property="sn" columnName="#"/>
+                        <msh:tableColumn columnName="Отделение" property="2"/>
+                        <msh:tableColumn columnName="Кол-во состоящих" property="3"/>
+                        <msh:tableColumn columnName="кол-во экстренных" property="4"/>
+                        <msh:tableColumn columnName="кол-во опер. пациентов" property="5"/>
+                    </msh:table>
+                </msh:sectionContent>
+            </msh:section>
+        </msh:ifInRole>
+        <% } %>
     </tiles:put>
-  <%}%>
+    <%
+        Long department = (Long) request.getAttribute("department");
+        if (department != null && department.intValue() > 0) {
+    %>
+    <tiles:put name="javascript" type="string">
+        <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+        <script type="text/javascript">
+            var table = getTableToSetBracelets('datelist');
+            if (table != null)
+                setBr(table, 13, 14);
+            var table_r = getTableToSetBracelets('datelist_r');
+            if (table_r != null)
+                setBr(table_r, 9, 10);
+        </script>
+    </tiles:put>
+    <%}%>
 </tiles:insert>
 
