@@ -256,6 +256,7 @@ then -1 else 0 end)
  as age
 ,va.code as vacode,va.name as vaname
 ,vsp.name as f10_vspName
+,dep.name as f11_depName
 from SurgicalOperation so
 left join vocsurgicalprofile vsp on vsp.id=so.profile_id
 left join VocAbortion va on so.abortion_id=va.id
@@ -267,13 +268,14 @@ left join MedCase slo on slo.id=so.medCase_id
 left join patient p on p.id=slo.patient_id
 left join MedCase sls on sls.id=slo.parent_id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
+left join MisLpu dep on dep.id=slo.department_id
 where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
 and vrspt.id='${param.strcode}'
 and vrspt1.classname='${report}'
 group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-,va.code ,va.name,vsp.name
+,va.code ,va.name,vsp.name,dep.name
 order by p.lastname,p.firstname,p.middlename " />
     <msh:table printToExcelButton="Сохранить в excel" name="journal_surOperation"
     viewUrl="entityShortView-stac_surOperation.do" 
@@ -286,6 +288,7 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="Код аборта" property="8"/>
       <msh:tableColumn columnName="Тип аборта" property="9"/>
       <msh:tableColumn columnName="Профиль" property="10"/>
+      <msh:tableColumn columnName="Отделение" property="11"/>
       <msh:tableColumn columnName="ФИО пациента" property="4" />
       <msh:tableColumn columnName="Возраст" property="7" />
     </msh:table>

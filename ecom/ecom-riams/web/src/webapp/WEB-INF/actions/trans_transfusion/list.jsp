@@ -18,7 +18,7 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить">
-            <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Переливание крови и её компонентов" title="Добавить донорской крови и её компонентов" />
+            <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Протокол трансфузий" title="Добавить протокол трансфузий" />
       	<msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Other/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-trans_other" name="Переливание кровезамещающих растворов" title="Добавить переливание кровезамещающих растворов" />
 	</msh:sideMenu>
   </tiles:put>

@@ -318,21 +318,14 @@ public class PatientServiceBean implements IPatientService {
         manager.persist(doc);
     }
 
-    public String getCodeByMedPolicyOmc(Long aType) {
-        VocMedPolicyOmc type = null;
-        if (aType != null) {
-            type = manager.find(VocMedPolicyOmc.class, aType);
-        }
+    public String getCodeByMedPolicyOmc(Long medpolicyTypeId) {
+        VocMedPolicyOmc type = medpolicyTypeId == null ? null : manager.find(VocMedPolicyOmc.class, medpolicyTypeId);
         return type == null ? "0" : type.getCode();
     }
 
-    public boolean isNaturalPerson(Long aPatient) {
-        String sql = "select count(*) from ContractPerson where dtype='NaturalPerson' and patient_id='" +
-                aPatient + "'";
-        Object ret = manager.createNativeQuery(sql).getSingleResult();
-        return ConvertSql.parseLong(ret) > 0L;
-
-
+    public boolean isNaturalPerson(Long patientId) {
+        return !manager.createNativeQuery("select id from ContractPerson where dtype='NaturalPerson' and patient_id=" +patientId)
+                .getResultList().isEmpty();
     }
 
     public void createNaturalPerson(Long aPatient) {

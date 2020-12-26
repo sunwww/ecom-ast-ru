@@ -331,6 +331,7 @@
         and (dd1.noActuality='0' or dd1.noActuality is null) 
         and dd1.anotherLpu_id is null)) as sumdays
         , list(ml.name) as deps
+        ,dd.hospitalizedNumber as numHist
         from DisabilityCase dc
         left join DisabilityDocument dd on dd.disabilityCase_id=dc.id
         left join DisabilityRecord dr on dr.disabilityDocument_id=dd.id
@@ -369,7 +370,7 @@
             
             
         " />
-            <msh:table name="journal_surOperation" printToExcelButton="Сохранить в excel"
+            <msh:table name="journal_surOperation" printToExcelButton="Сохранить в excel" openNewWindow="true"
             viewUrl="entityShortView-dis_document.do" 
              action="entityView-dis_document.do" idField="1">
               <msh:tableColumn columnName="##" property="sn" />
@@ -377,7 +378,9 @@
               <msh:tableColumn columnName="Код МКБ" property="3" />
               <msh:tableColumn columnName="Возраст" property="4"/>
               <msh:tableColumn columnName="Длительность" property="5" />
-              <msh:tableColumn columnName="Длительность" property="6" />
+              <msh:tableColumn columnName="Отделение" property="6" />
+              <msh:tableColumn columnName="Номер истории" property="7" />
+              <msh:tableButton property="1" buttonFunction="toHosp" buttonName="Госп." buttonShortName="Госп."/>
             </msh:table>
             </msh:sectionContent>
             </msh:section>  
@@ -393,8 +396,12 @@
     		request.setAttribute("sqlCntDays1",",(select max(dr.dateto)-min(dr.datefrom)+1 from disabilityrecord dr left join disabilitydocument dd1 on dd1.id=dr.disabilityDocument_id where dd.id=dd1.id and (dd1.noActuality='0' or dd1.noActuality is null) and dd1.anotherLpu_id is null and dd1.mainWorkDocumentNumber='') ") ;
     		request.setAttribute("sqlCntDaysUrl","||'&durat='||(select max(dr.dateto)-min(dr.datefrom)+1 from disabilityrecord dr left join disabilitydocument dd1 on dd1.id=dr.disabilityDocument_id where dd.disabilityCase_id=dd1.disabilityCase_id and (dd1.noActuality='0' or dd1.noActuality is null) and dd1.anotherLpu_id is null and dd1.mainWorkDocumentNumber='') ") ;
     		request.setAttribute("sqlCntDaysUrl1","||'&durat='||(select max(dr.dateto)-min(dr.datefrom)+1 from disabilityrecord dr left join disabilitydocument dd1 on dd1.id=dr.disabilityDocument_id where dd.id=dd1.id and (dd1.noActuality='0' or dd1.noActuality is null) and dd1.anotherLpu_id is null and dd1.mainWorkDocumentNumber='') ") ;
+    		request.setAttribute("addGroupBy"," ,case when coalesce(vdr1.codeF,vdr.codeF)<>'09' then dr.dateto-dr.datefrom+1 else 1 end");
+            request.setAttribute("dlitSql",",case when coalesce(vdr1.codeF,vdr.codeF)<>'09' then cast((max(dr.dateto)-max(dr.datefrom)+1) as varchar) else '-' end as v");
     	} else {
     		request.setAttribute("sqlCntDays","") ;
+            request.setAttribute("sqlCntDays1","") ;
+            request.setAttribute("dlitSql",",cast('-' as varchar) as v") ;
     	}
         
     	%>
@@ -513,12 +520,11 @@ ${sqlCntDays1}
       <msh:tableColumn columnName="больше 60 лет" property="17"/>
     </msh:table>
     
-    <ecom:webQuery isReportBase="${isReportBase}" name="report16vnswod" nativeSql="
-
-
-select 
-'&strcode='||coalesce(vdr1.codeF,vdr.codeF) ${sqlCntDaysUrl} as codeF,coalesce(vdr1.name,vdr.name) as namevdr,case when count(distinct dd.id)<10 then list(distinct ''||dc.id) else '' end as listDC
-,count(distinct dc.id) as cntAll
+    <ecom:webQuery isReportBase="${isReportBase}" name="report16vnswod_3new" nativeSql="
+select '&strcode='||coalesce(vdr1.codeF,vdr.codeF) ||'&durat='||(max(dr.dateto)-max(dr.datefrom)+1) as codeF
+,coalesce(vdr1.name,vdr.name) as namevdr
+,case when count(distinct dr.id)<10 then list(distinct ''||dc.id) else '' end as listDC
+,count(distinct dr.id) as cntAll
 ,sum((select max(dr.dateto)-min(dr.datefrom)+1 from disabilityrecord dr left join disabilitydocument dd1 on dd1.id=dr.disabilityDocument_id where dd.disabilityCase_id=dd1.disabilityCase_id and (dd1.noActuality='0' or dd1.noActuality is null) and dd1.anotherLpu_id is null and dd1.mainWorkDocumentNumber='')) as sumDays
 ,count(distinct case when (
 cast(to_char(dd.issuedate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
@@ -527,89 +533,91 @@ cast(to_char(dd.issuedate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int
 <0) then -1 else 0 end))<=14 then dc.id else null end ) as age14
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)+(case when (cast(to_char(dd.issuedate, 'mm') as int)
--cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int) 
+-cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int)
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)) between 15 and 19
 then dc.id else null end) as age19
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)+(case when (cast(to_char(dd.issuedate, 'mm') as int)
--cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int) 
+-cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int)
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
 <0) then -1 else 0 end)) between 15 and 17 then dc.id else null end) as age17
-,count(distinct 
+,count(distinct
 case when (
 cast(to_char(dd.issuedate,'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(dd.issuedate, 'mm') as int)
 -cast(to_char(p.birthday, 'mm') as int)
-+(case when (cast(to_char(dd.issuedate,'dd') as int) 
++(case when (cast(to_char(dd.issuedate,'dd') as int)
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
 <0) then -1 else 0 end)) between 20 and 24 then dc.id else null end) as age24
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)+(case when (cast(to_char(dd.issuedate, 'mm') as int)
--cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int) 
+-cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int)
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)) between 25 and 29 then dc.id else null end) as age29
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)+(case when (cast(to_char(dd.issuedate, 'mm') as int)
--cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int) 
+-cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int)
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)) between 30 and 34 then dc.id else null end) as age34
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)+(case when (cast(to_char(dd.issuedate, 'mm') as int)
--cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int) 
+-cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int)
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)) between 35 and 39 then dc.id else null end) as age39
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)
 -cast(to_char(p.birthday,'yyyy') as int)+(case when (cast(to_char(dd.issuedate, 'mm') as int)
--cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int) 
+-cast(to_char(p.birthday, 'mm') as int)+(case when (cast(to_char(dd.issuedate,'dd') as int)
 - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)
 <0) then -1 else 0 end)) between 40 and 44 then dc.id else null end) as age44
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-+case when (cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)) <0 then -1 
-when (cast(to_char(dd.issuedate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) and 
++case when (cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)) <0 then -1
+when (cast(to_char(dd.issuedate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) and
 ((cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
 ) between 45 and 49 then dc.id else null end) as age49
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-+case when (cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)) <0 then -1 
-when (cast(to_char(dd.issuedate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) and 
++case when (cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)) <0 then -1
+when (cast(to_char(dd.issuedate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) and
 ((cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
 ) between 50 and 54 then dc.id else null end) as age54
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-+case when (cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)) <0 then -1 
-when (cast(to_char(dd.issuedate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) and 
++case when (cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)) <0 then -1
+when (cast(to_char(dd.issuedate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) and
 ((cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
 ) between 55 and 59 then dc.id else null end) as age59
 ,count(distinct case when (cast(to_char(dd.issuedate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-+case when (cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)) <0 then -1 
-when (cast(to_char(dd.issuedate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) and 
++case when (cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)) <0 then -1
+when (cast(to_char(dd.issuedate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) and
 ((cast(to_char(dd.issuedate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
 ) >=60 then dc.id else null end) as age60
-${sqlCntDays}
+${dlitSql}
 from DisabilityCase dc
 left join DisabilityDocument dd on dd.disabilityCase_id=dc.id
+left join disabilityrecord dr on dr.disabilityDocument_id=dd.id
 left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
 left join VocDisabilityReason vdr1 on vdr.id=dd.disabilityReasonChange_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 left join VocIdc10 mkb on mkb.id=dd.idc10Final_id
 left join patient p on p.id=dc.patient_id
-where 
-dd.issueDate between to_date('${dateBegin}','dd.mm.yyyy') 
+where
+dd.issueDate between to_date('${dateBegin}','dd.mm.yyyy')
     and to_date('${dateEnd}','dd.mm.yyyy') and vddcr.is16AtWork='1'
 
-    and (dd.noActuality='0' or dd.noActuality is null) 
+    and (dd.noActuality='0' or dd.noActuality is null)
     and (dd.mainWorkDocumentNumber='')
     and dd.anotherLpu_id is null
-    and (coalesce(vdr1.codeF,vdr.codeF)='05' and 
+    and (coalesce(vdr1.codeF,vdr.codeF)='05' and
 
 (select case when (max(dr.dateto)-min(dr.datefrom)+1)>139 then '1' else '0' end from disabilityrecord dr left join disabilitydocument dd1 on dd1.id=dr.disabilityDocument_id  where dd.disabilityCase_id=dd1.disabilityCase_id and (dd1.noActuality='0' or dd1.noActuality is null) and dd1.anotherLpu_id is null and dd1.mainWorkDocumentNumber='')='1'
 
 or coalesce(vdr1.codeF,vdr.codeF)='09' or coalesce(vdr1.codeF,vdr.codeF)='03'
-    ) 
+    )
+
 group by coalesce(vdr1.codeF,vdr.codeF),coalesce(vdr1.name,vdr.name)
-${sqlCntDays}
+${addGroupBy}
 " />
-    <msh:table name="report16vnswod" printToExcelButton="Сохранить в excel"
+    <msh:table name="report16vnswod_3new" printToExcelButton="Сохранить в excel"
     viewUrl="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1">
       <msh:tableColumn columnName="Наименование" property="2" />
@@ -629,7 +637,11 @@ ${sqlCntDays}
       <msh:tableColumn columnName="55-59" property="16"/>
       <msh:tableColumn columnName="больше 60 лет" property="17"/>
     </msh:table>
-
+    </msh:sectionContent>
+    </msh:section>
+      <msh:section>
+          <msh:sectionTitle>Есть доп. причина нетрудоспособности: 020 при дополнительном отпуске по беременности и родам - общая длительность - 16 дней, т.е. первичный создан в другом ЛПУ, в нашем - только продолжение на 16 дней</msh:sectionTitle>
+          <msh:sectionContent>
         <ecom:webQuery isReportBase="${isReportBase}" name="report16_just16" nativeSql="
 select codef,cast('ОТПУСК ПО БЕРЕМЕННОСТИ И РОДАМ' as varchar(30)),max(listdc),sum(cntall) as cntall,sum(sumdays) as sumdays,sum(age14) as age14,sum(age19) as age19,sum(age17) as age17
 ,sum(age24) as age24,sum(age29) as age29,sum(age34) as age34,sum(age39) as age39,sum(age44) as age44,sum(age49) as age49
@@ -821,6 +833,7 @@ left join VocDisabilityDocumentCloseReason vddcr1 on vddcr1.id=dd1.closeReason_i
 where dd.id=dd1.id 
 and (dd1.noActuality='0' or dd1.noActuality is null) 
 and dd1.anotherLpu_id is null)) as sumdays1
+,dd.hospitalizedNumber as numHist
 from DisabilityCase dc
 left join DisabilityDocument dd on dd.disabilityCase_id=dc.id
 left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
@@ -840,7 +853,7 @@ and mkb.code between rspt.codefrom and rspt.codeto
     and (dd.noActuality='0' or dd.noActuality is null) 
     and (dd.mainWorkDocumentNumber='')
     and anotherLpu_id is null
-and coalesce(vdr1.codeF,vdr.codeF)='${param.strcode}' and ('${param.strcode}'='08'
+and coalesce(vdr.codeF,vdr1.codeF)='${param.strcode}' and ('${param.strcode}'='08'
  ${sqlCntDays1} or '${param.strcode}'!='08' ${sqlCntDays})
 group by dd.id
 ,p.lastname,p.firstname,p.middlename,p.birthday,dd.issuedate,dd.disabilityCase_id
@@ -858,6 +871,8 @@ order by p.lastname,p.firstname,p.middlename
       <msh:tableColumn columnName="Возраст" property="4"/>
       <msh:tableColumn columnName="Длительность случая" property="5" />
       <msh:tableColumn columnName="Длительность документа" property="6" />
+      <msh:tableColumn columnName="Номер истории" property="7" />
+      <msh:tableButton property="1" buttonFunction="toHosp" buttonName="Госп." buttonShortName="Госп."/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>  
@@ -869,4 +884,20 @@ order by p.lastname,p.firstname,p.middlename
     	<% } %>
     
   </tiles:put>
+    <tiles:put name="javascript" type="string">
+        <script type="text/javascript" src="./dwr/interface/DisabilityService.js"></script>
+        <script type="text/javascript">
+            function toHosp(dId) {
+                DisabilityService.toHospFromDisDoc(dId, {
+                    callback: function(aMedCaseId) {
+                        if (aMedCaseId)
+                            window.open("entityParentView-stac_ssl.do?id="+aMedCaseId);
+                        else
+                            showToastMessage("Госпитализация не найдена!",null,true,false,3000);
+                    }
+                });
+            }
+            serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
+        </script>
+    </tiles:put>
 </tiles:insert>

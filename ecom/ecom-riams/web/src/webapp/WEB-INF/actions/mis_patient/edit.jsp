@@ -488,7 +488,7 @@ where pcc.patient_id='${param.id}'
           <ecom:webQuery name="privileges" nativeSql="
       select p.id,p.begindate,p.enddate, vpc.name,p.serialdoc,p.numberdoc from privilege p
     left join vocprivilegecategory vpc on vpc.id = p.category_id
-    where p.person_id = ${param.id} and isdelete is null"/>
+    where p.person_id = ${param.id} and (isdelete is null or isdelete=false)"/>
         <msh:tableNotEmpty name="privileges" >
             <msh:table  name="privileges" action="entityParentView-mis_privilege.do" idField="1" >
               <msh:tableColumn columnName="#" property="sn" />

@@ -1,6 +1,7 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page import="java.util.regex.Matcher" %>
-<%@ page import="java.util.regex.Pattern" %>
+<%@ page import="com.google.gson.JsonParser" %>
+<%@ page import="com.google.gson.JsonObject" %>
+<%@ page import="com.google.gson.JsonArray" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -20,45 +21,28 @@
     <tiles:put name="body" type="string">
         <%
             String deps=ActionUtil.updateParameter("ReportKDL","departments","", request) ;
+
+            StringBuilder depRqst=new StringBuilder();
             if (deps!=null && !deps.equals("")) {
-                Matcher m = Pattern.compile("\"value\":[0-9]*,").matcher(deps);
-                StringBuilder depRqst=new StringBuilder();
-                StringBuilder depRqstHosp=new StringBuilder();
+                JsonParser parser = new JsonParser();
+                JsonObject obj = parser.parse(deps).getAsJsonObject();
+                JsonArray depArray = obj.getAsJsonArray("childs");
                 depRqst.append(" and (dep.id= ");
-                int cnt=0;
-                while (m.find()) {
-                    if (cnt!=0) depRqst.append(" or dep.id= ");
-                    String res=m.group().replace("\"value\":","").replace(",","");
-                    depRqst.append(res);
-                    depRqstHosp.append(res).append(" ");
-                    cnt++;
-                }
-                if (cnt==0) {
-                    m = Pattern.compile("\"value\":\"[0-9]*\"").matcher(deps);
-                    depRqst=new StringBuilder();
-                    depRqst.append(" and (dep.id= ");
-                    cnt=0;
-                    while (m.find()) {
-                        if (cnt!=0) depRqst.append(" or dep.id= ");
-                        String res=m.group().replace("\"value\":","").replace("\"","");
-                        depRqst.append(res);
-                        depRqstHosp.append(res).append(" ");
-                        cnt++;
+
+                for (int i=0; i<depArray.size(); i++) {
+                    String depId = depArray.get(i).getAsJsonObject().get("value").toString().replace("\"","");
+                    if (!depId.equals("")) {
+                        if (i>0)
+                            depRqst.append(" or dep.id= ");
+                        depRqst.append(depId);
                     }
                 }
-                if (!depRqst.toString().equals(" and (dep.id= ")) {
-                    request.setAttribute("deps",depRqst.append(") ").toString());
-                    request.setAttribute("depsHosp",depRqstHosp.toString());
-                }
-                else {
-                    request.setAttribute("deps","");
-                    request.setAttribute("depsHosp","");
-                }
+                depRqst.append(")");
+                if (depRqst.toString().equals(" and (dep.id= )"))
+                    depRqst=new StringBuilder();
             }
-            else {
-                request.setAttribute("deps","");
-                request.setAttribute("depsHosp",""); //для отчёта с данными по госпитализируемым
-            }
+            request.setAttribute("deps",depRqst.toString());
+            request.setAttribute("depsHosp",depRqst.toString());
             String dateBegin = request.getParameter("dateBegin") ;
             if (dateBegin!=null && !dateBegin.equals("")) {
                 request.setAttribute("dateBegin",dateBegin);

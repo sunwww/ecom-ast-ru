@@ -229,6 +229,7 @@ public class DisabilityServiceJs {
                 " ,dd3.number as NEXT_LN_CODE" +
                 " ,Case when dd.isClose = '1' then '1' else '0' end as IS_CLOSE" +
                 " ,dd.lnhash as LN_HASH " +
+                " ,dd.previouslyIssuedCode as previouslyIssuedCode " +
                 " from disabilitydocument dd" +
                 " left join vocdisabilitydocumentclosereason vddcr on vddcr.id = dd.closereason_id" +
                 " left join disabilitydocument dd3 on dd3.prevdocument_id=dd.id" +
@@ -715,7 +716,7 @@ public class DisabilityServiceJs {
      */
     public String getReasonsfOfAnnulSheets(HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String query = "SELECT code,name from vocannulreason";
+        String query = "SELECT code,name from vocannulreason where (disable is null or disable=false)";
         Collection<WebQueryResult> list = service.executeNativeSql(query);
         StringBuilder res = new StringBuilder();
         if (!list.isEmpty()) {
@@ -985,5 +986,28 @@ public class DisabilityServiceJs {
                 serviceSql.executeUpdateNativeSql(sql.toString());
             }
         }
+    }
+
+    /**
+     * Получить госпитализацию по ЛН через номер ИБ и год
+     *
+     * @param aDisDocId DisabilityDocument.id
+     * @param aRequest HttpServletRequest
+     * @return String with result
+     * @throws NamingException
+     */
+    public String toHospFromDisDoc(Long aDisDocId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest, null).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list = service.executeNativeSql("select mc.id" +
+                " from disabilitydocument d" +
+                " left join statisticstub st on st.code=d.hospitalizedNumber" +
+                " left join medcase mc on mc.id=st.medcase_id" +
+                " left join patient pat on pat.id=mc.patient_id" +
+                " left join disabilitycase dc on dc.id=d.disabilityCase_id" +
+                " where d.id=" + aDisDocId + " and (pat.id=dc.patient_id or st.year=extract(year from  d.issuedate))");
+        if (!list.isEmpty()) {
+            WebQueryResult wqr = list.iterator().next();
+            return wqr.get1().toString();
+        } else return "";
     }
 }

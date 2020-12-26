@@ -70,7 +70,7 @@
                 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист"  action="/javascript:showNewCurve()" title="Добавить температурный лист" />
 
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/javascript:initSelectPrinter('print-transfusionAgreement.do?s=HospitalPrintService&m=printTransfusionAgreement&patId='+$('patient').value);" name="Печать согласия на переливание" title="Печать согласия на переливание" />
-                <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Переливание донорской крови и её компонентов" title="Добавить донорской крови и её компонентов" />
+                <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Протокол трансфузий" title="Добавить донорской крови и её компонентов" />
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Other/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-trans_other" name="Переливание кровезамещающих растворов" title="Добавить переливание кровезамещающих растворов" />
 
                 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create" name="Операцию"
@@ -547,7 +547,7 @@ left join Patient pat on pat.id=wan.person_id
       	from transfusion tr 
       	left join VocBloodPreparation vbp on vbp.id=tr.bloodPreparation_id
       	left join VocOtherTransfusPreparation votr on votr.id=tr.otherPreparation_id
-      	left join WorkFunction wf on wf.id=tr.executor_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf.id=wf.workfunction_id
+      	left join WorkFunction wf on wf.id=tr.executor_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id
       	where tr.medcase_id=${param.id}"/>
                     <msh:section title="Переливание">
                         <msh:table name="transfusions" action="entitySubclassView-trans_transfusion.do" idField="1">

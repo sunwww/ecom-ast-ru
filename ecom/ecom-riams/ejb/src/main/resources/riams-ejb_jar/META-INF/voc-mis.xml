@@ -1365,7 +1365,7 @@
     			parent=""
     			names = "code||' '||name"
     			nameId="id"
-    			queryAppend="dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date)"
+    			queryAppend="dtype='MedService' and (finishDate is null or finishDate>=current_date)"
     			join=''
     			order=''
     			queried = "(cast(id as varchar(10)) like :query or upper(name) like UPPER(:query) or code like UPPER(:query) or replace(code,'.','') like UPPER(:query))"
@@ -1380,7 +1380,7 @@
     			parent=""
     			names = "code||' '||name"
     			nameId="id"
-    			queryAppend="dtype='MedService' and (ms.finishDate is null or ms.finishDate>=current_date)"
+    			queryAppend="dtype='MedService' and (finishDate is null or finishDate>=current_date)"
     			join=''
     			order=''
     			queried = "((cast(id as varchar(10)) like :query or name like UPPER(:query)) or (replace(upper(code),'.','') like (upper(:query))) or upper(name) like upper(:query) or upper(code) like upper(:query))"
@@ -2705,6 +2705,7 @@ left join patient wp on wp.id=w.person_id "
 			queried="codeF like :querId or UPPER(name) like UPPER(:query)"
 			queryAppend="(disable is null or cast(disable as int)=0)"
 			join=""
+			order="cast(codeF as int)"
 			/>
     </voc>
 	<!-- Доп. причина нетрудоспособности-->
@@ -2716,6 +2717,7 @@ left join patient wp on wp.id=w.person_id "
 				queried="code like :querId or UPPER(name) like UPPER(:query)"
 				queryAppend=""
 				join=""
+				order="cast(code as int)"
 		/>
 	</voc>
     <!-- Режим нетрудоспособности-->
@@ -2735,6 +2737,7 @@ left join patient wp on wp.id=w.person_id "
                 queried = 'codeF,name'
                 queryConvertType = 'UPPER_CASE'
                 queryAppend="(disable is null or disable=false)"
+				order="cast(codeF as int)"
                 />
     </voc>
     <!-- Степень ограничения трудоспособности -->
