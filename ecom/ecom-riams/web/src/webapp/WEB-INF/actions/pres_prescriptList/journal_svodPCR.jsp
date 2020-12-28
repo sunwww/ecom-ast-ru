@@ -258,6 +258,7 @@
                 , getprescPcrInfo(p.id) as f5pinfo
                 ,p.id as f6exactccnt
                 ,p.materialPCRid as f7num
+                 ,max(cov.epidnumber) as f8cepid
                   from prescription p
                 left join MedService ms on ms.id=p.medService_id
                 left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id
@@ -270,6 +271,7 @@
                 left join MisLpu dep on dep.id=slo.department_id
                 left join Patient pat on slo.patient_id = pat.id
                 left join MedCase sls on sls.id = slo.parent_id
+			    left join covid19 cov on cov.medcase_id=sls.id and cov.epidnumber is not null
                 left join statisticstub st on st.medcase_id=sls.id
                 left join WorkFunction wf on wf.id=p.prescriptSpecial_id
 			    left join Worker w on w.id=wf.worker_id
@@ -290,6 +292,7 @@
                     <msh:tableColumn property="4" columnName="Пациент"/>
                     <msh:tableColumn property="7" columnName="Номер пробирки"/>
                     <msh:tableColumn property="5" columnName="Информация о назначении"/>
+                    <msh:tableColumn property="8" columnName="Эпид. номер"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
