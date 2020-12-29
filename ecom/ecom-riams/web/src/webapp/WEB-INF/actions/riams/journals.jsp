@@ -252,7 +252,7 @@
 						<li><msh:link isReport="true" action="sheduleToday.do" roles="/Policy/Mis/MedCase/Visit/Report039">
 							Расписание специалистов консультативной поликлиники
 						</msh:link></li>
-						<li><msh:link isReport="true" action="recordReport.do?serviceStream=1" roles="/Policy/Mis/MedCase/Visit/Report039">
+						<li><msh:link isReport="true" action="recordReport.do?serviceStream=1" roles="/Policy/Mis/MedCase/Visit/RecordReport">
 							Отчет по записанным на дату
 						</msh:link></li>
 					</ul>
