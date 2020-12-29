@@ -89,6 +89,7 @@ select sls.id as slsId
        else  pat.foreignRegistrationAddress end as address
  ,coalesce((select c.workplace from covid19 c where c.id=(select max(id) from covid19 where medcase_id=sls.id )),pat.works,'') as work
  ,to_char(p.intakedate,'dd.mm.yyyy')||cast('/' as varchar)||' '||to_char(mc.datestart,'dd.mm.yyyy')||cast(', №' as varchar)||fiprNum.valuetext
+ ,max(cov.epidnumber) as cepid
  from prescription p
  left join PrescriptionList pl on pl.id=p.prescriptionList_id
  left join MedCase slo on slo.id=pl.medCase_id
@@ -107,6 +108,7 @@ select sls.id as slsId
     left join templateprotocol t2 on t2.id=d.templateprotocol
    left join forminputprotocol fiprNum on fiprNum.docprotocol_id=d.id and fiprNum.parameter_id=1283
    left join forminputprotocol fiprRes on fiprRes.docprotocol_id=d.id and fiprRes.parameter_id=1284
+left join covid19 cov on cov.medcase_id=sls.id and cov.epidnumber is not null
 where p.dtype='ServicePrescription'   and ${dateTo}=to_date('${dateBegin}','dd.mm.yyyy')
 and vst.code='LABSURVEY'   and p.cancelDate is null
 and ms.serviceSubType_id='24'
@@ -142,6 +144,7 @@ group by  pat.id,pat.lastname,pat.firstname
                     <msh:tableColumn property="4" columnName="Адрес"/>
                     <msh:tableColumn property="5" columnName="Место работы, учёбы"/>
                     <msh:tableColumn property="6" columnName="Результат (дата забора/дата результата, №)"/>
+                    <msh:tableColumn property="7" columnName="Эпид. номер"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
