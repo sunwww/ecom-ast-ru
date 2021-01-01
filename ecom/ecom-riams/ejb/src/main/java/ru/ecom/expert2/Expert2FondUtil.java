@@ -1,15 +1,15 @@
 package ru.ecom.expert2;
 
-import org.apache.commons.collections.CollectionUtils;
 import ru.ecom.expert2.domain.E2CoefficientPatientDifficultyEntryLink;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.voc.E2Enumerator;
 
 import java.util.List;
 
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static ru.nuzmsh.util.StringUtil.isNotEmpty;
 import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
+import static ru.nuzmsh.util.BooleanUtils.isTrue;
+import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
 
 public class Expert2FondUtil {
 
@@ -57,7 +57,7 @@ public class Expert2FondUtil {
         }
         if (aEntry.getEntryType().equals(E2Enumerator.HOSPITALTYPE)||aEntry.getEntryType().equals(E2Enumerator.VMPTYPE)) { //Только для стац
             List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
-            if (CollectionUtils.isNotEmpty(list)) {
+            if (isNotEmpty(list)) {
                 for (E2CoefficientPatientDifficultyEntryLink diff: list) {
                     if (diff.getDifficulty().getCode().equals("11")) {
                         ret.append("21;22;");

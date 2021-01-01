@@ -1,6 +1,5 @@
 package ru.ecom.expert2.service;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -21,6 +20,7 @@ import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.services.exportservice.ExportServiceBean;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
+import ru.nuzmsh.util.CollectionUtil;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
@@ -44,8 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
+import static ru.nuzmsh.util.CollectionUtil.isEmpty;
 
 @Stateless
 @Local(IExpert2XmlService.class)
@@ -501,7 +500,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                         Element lekPr = new Element("LEK_PR");
                                         add(lekPr, "REGNUM", drug.getDrug() != null ? drug.getDrug().getCode() : "_____" + currentEntry.getId());
                                         add(lekPr, "CODE_SH", "нЕт"); //TODO переделать, если будет схема
-                                        if (isEmpty(drug.getDates())) {
+                                        if (CollectionUtil.isEmpty(drug.getDates())) {
                                             manager.persist(new E2EntryError(entry, "NO_DATE_IN_DRUG"));
                                             return null;
                                         }

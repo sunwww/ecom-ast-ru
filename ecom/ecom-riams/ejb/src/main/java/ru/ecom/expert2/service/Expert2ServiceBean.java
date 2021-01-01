@@ -55,8 +55,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
 import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
+import static ru.nuzmsh.util.CollectionUtil.isEmpty;
+import static ru.nuzmsh.util.BooleanUtils.isTrue;
 
 @Stateless
 @Local(IExpert2Service.class)
@@ -700,7 +702,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private void cloneOncologyCases(E2Entry oldEntry, E2Entry newEntry) {
-        if (isNotEmpty(oldEntry.getCancerEntries())) {
+        if (isEmpty(oldEntry.getCancerEntries())) {
             List<E2CancerEntry> cancerEntryList = new ArrayList<>();
             for (E2CancerEntry oldCancerEntry : oldEntry.getCancerEntries()) {
                 E2CancerEntry ccc = new E2CancerEntry(oldCancerEntry, newEntry);
@@ -1274,10 +1276,6 @@ public class Expert2ServiceBean implements IExpert2Service {
     public void checkListEntry(Long listEntryId, boolean updateKsgIfExist, String paramMap, long monitorId) {
         setIsConsultativePolyclinic();
         checkListEntry(theManager.find(E2ListEntry.class, listEntryId), updateKsgIfExist, paramMap, monitorId);
-    }
-
-    private boolean isTrue(Boolean val) {
-        return Boolean.TRUE.equals(val);
     }
 
     private void checkListEntry(E2ListEntry listEntry, final boolean updateKsgIfExist, String paramMap, long monitorId) {
