@@ -1,5 +1,6 @@
 package ru.ecom.expert2.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -42,6 +43,9 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
 
 @Stateless
 @Local(IExpert2XmlService.class)
@@ -273,7 +277,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     break;
                 case VMPTYPE:
                     isVmp = true;
-                    isNedonosh = entry.getIsChild();
+                    isNedonosh = isTrue(entry.getIsChild());
                     break;
                 case POLYCLINICTYPE:
                 case SERVICETYPE:
@@ -315,7 +319,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
 
             zap.addContent(pat); //Добавили данные по пациенту
-            List<E2Entry> children = new ArrayList<>();
+            List<E2Entry> children;
             String isChild = isTrue(entry.getIsChild()) ? "1" : "0";
 
             String[] slIds = entriesString.split(",");
@@ -332,21 +336,23 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 Element sl = new Element("SL");
                 E2Entry currentEntry = manager.find(E2Entry.class, Long.valueOf(slId.trim()));
                 String edCol = "1";
-                if (isPoliclinicKdp) {
-                    children = new ArrayList<>();
-                } else if (isPoliclinic) {
+
+                if (isPoliclinic) {
                     children = manager.createQuery("from E2Entry where parentEntry_id=:id and (isDeleted is null or isDeleted='0') and (doNotSend is null or DoNotSend='0') order by startDate").setParameter("id", currentEntry.getId()).getResultList();
-                } else { //стационар
-                    kdz += currentEntry.getBedDays().intValue();
+                } else {
+                    if (!isPoliclinicKdp) {
+                        kdz += currentEntry.getBedDays().intValue();
+                    }
+                    children = new ArrayList<>();
                 }
 
-                boolean isCancer = isNotNull(currentEntry.getIsCancer());
-                if (isCancer && currentEntry.getVisitPurpose() != null && "1.3".equals(currentEntry.getVisitPurpose().getCode())) {
-                    isCancer = false;
-                }
-                E2CancerEntry cancerEntry = null;
+                boolean isCancer = isNotNull(currentEntry.getIsCancer()) && (currentEntry.getVisitPurpose() == null || !"1.3".equals(currentEntry.getVisitPurpose().getCode()));
+
+                E2CancerEntry cancerEntry ;
                 if (isCancer && !currentEntry.getCancerEntries().isEmpty()) {
                     cancerEntry = currentEntry.getCancerEntries().get(0); //Считаем что не может быть больше 1 онкослучая
+                } else {
+                    cancerEntry = null;
                 }
 
                 VocE2MedHelpProfile profile = currentEntry.getMedHelpProfile();
@@ -407,7 +413,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     manager.persist(new E2EntryError(currentEntry, "NO_MAIN_DIAGNOSIS"));
                     return null;
                 }
-                if (!a1) add(sl, "DS_ONK", (cancerEntry != null && cancerEntry.getMaybeCancer()) ? "1" : "0");
+                if (!a1) add(sl, "DS_ONK", (cancerEntry != null && isTrue(cancerEntry.getMaybeCancer())) ? "1" : "0");
                 //*DN дисп. наблюдение !! только для терр.
                 if (a3) add(sl, "PR_D_N", "1"); // взят-состоит
                 //if (a3) *DS2_N
@@ -495,7 +501,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                         Element lekPr = new Element("LEK_PR");
                                         add(lekPr, "REGNUM", drug.getDrug() != null ? drug.getDrug().getCode() : "_____" + currentEntry.getId());
                                         add(lekPr, "CODE_SH", "нЕт"); //TODO переделать, если будет схема
-                                        if (drug.getDates() == null || drug.getDates().isEmpty()) {
+                                        if (isEmpty(drug.getDates())) {
                                             manager.persist(new E2EntryError(entry, "NO_DATE_IN_DRUG"));
                                             return null;
                                         }
@@ -582,11 +588,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 //USL start
                 int uslCnt = 0;
                 if (currentEntry.getReanimationEntry() != null && !isVmp) { //Реанимационная услуга
-                    //    uslCnt++;
                     sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, profileK, "B03.003.005", isChild, startDate, startDate, sl.getChildText("DS1"), "1", prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO));
                 }
                 //Информация об услугах
-                //      BigDecimal uslSum = BigDecimal.ZERO;
                 if (isPoliclinic) { //Для поликлиники - кол-во визитов
                     if (!isPoliclinicKdp && children.isEmpty()) {
                         children.add(currentEntry);
@@ -604,8 +608,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             continue;
                         }
                         VocE2FondV021 spec = child.getFondDoctorSpecV021();
-                        //                       prvs = child.getFondDoctorSpecV021()!=null ? child.getFondDoctorSpecV021().getCode() : childProfile.getMedSpecV021().getCode();
-
                         try {
                             VocMedService vms = isFirst ? spec.getDefaultMedService() : spec.getRepeatMedService();
                             visitService = vms.getCode();
@@ -656,7 +658,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
                     if (!list.isEmpty()) {
                         for (Object[] ms : list) {
-                            //uslCnt++;
                             sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, profileK, ms[0].toString(), isChild, ms[2].toString()
                                     , ms[2].toString(), sl.getChildText("DS1"), ms[1].toString()
                                     , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO)); //в стационаре КТ-МРТ не оплачивается
@@ -933,6 +934,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     if (cntSlo == 0) {
                         sls = sluchId;
                     }
+                }
+                if (entry == null) {
+                    throw new IllegalStateException("Не найден случай с ИД: " + sluchId);
                 }
                 if (i == 0) { //вычисляем тип ДД по первой записи
                     if (isDisp) dispType = entry.getSubType().getExtDispType().getCode();
@@ -1252,7 +1256,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 mainDiagnosisSqlAdd = " registrationType.code='4' and priority.code='1'";
             }
         }
-        if (mainDiagnosis == null || mainDiagnosis.isEmpty()) {
+        if (isEmpty(mainDiagnosis)) {
             mainDiagnosis = manager.createQuery(" from EntryDiagnosis where entry_id=:id and " + mainDiagnosisSqlAdd).setParameter("id", entry.getId()).getResultList(); //клинические основные диагнозы
         }
 
