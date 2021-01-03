@@ -297,14 +297,14 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 if (bill == null) {
                     throw new IllegalStateException("Невозможно определить счет с №"+billNumber+" от "+billDateString);
                 }
-                bill = manager.find(E2Bill.class, bill.getId());
-                bill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
+                E2Bill savedBill = manager.find(E2Bill.class, bill.getId());
+                savedBill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
 
                 int i = 0;
+                List<Element> zaps = root.getChildren("ZAP");
                 if (isMonitorCancel(monitor, "Найдено записей для импорта: " + zaps.size())) return;
 
                 BigDecimal totalSum = BigDecimal.ZERO;
-                List<Element> zaps = root.getChildren("ZAP");
                 for (Element zap : zaps) {
                     i++;
                     if (i % 100 == 0 && isMonitorCancel(monitor, "Загружено записей: " + i)) break;
@@ -327,7 +327,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         manager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId", entryId).executeUpdate();
                         entry.setBillNumber(billNumber);
                         entry.setBillDate(billDate);
-                        entry.setBill(bill);
+                        entry.setBill(savedBill);
 
                         //Расчет цены случая ФОМС
                         Element commentCalc = sl.getChild("D_COMMENT_CALC");
@@ -377,10 +377,10 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         manager.persist(entry);
                     }
                 }
-                LOG.info("По счету №" + bill.getBillNumber() + " сумма = " + totalSum);
-                monitor.setText("По счету №" + bill.getBillNumber() + " сумма = " + totalSum);
-                bill.setSum(totalSum);
-                manager.persist(bill);
+                LOG.info("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
+                monitor.setText("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
+                savedBill.setSum(totalSum);
+                manager.persist(savedBill);
                 LOG.info("Обновление MP закончено!");
             }
         } catch (Exception e) {

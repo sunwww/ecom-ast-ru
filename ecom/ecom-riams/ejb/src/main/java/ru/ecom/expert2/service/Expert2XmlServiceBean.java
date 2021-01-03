@@ -1036,11 +1036,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             makeHTitle(hRoot, periodDate, "H" + fileName, cnt, billNumber, billDate, totalSum, regNumber, dispType);
             E2Bill bill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null);
             if (bill != null) {
-                bill = manager.find(E2Bill.class, bill.getId());
-                bill.setStatus(getActualVocBySqlString(VocE2BillStatus.class, "select id from VocE2BillStatus where code='SENT'"));
-                bill.setSum(totalSum);
-                bill.setBillProperty(billProperty);
-                manager.persist(bill);
+                E2Bill savedBill = manager.find(E2Bill.class, bill.getId());
+                savedBill.setStatus(getActualVocBySqlString(VocE2BillStatus.class, "select id from VocE2BillStatus where code='SENT'"));
+                savedBill.setSum(totalSum);
+                savedBill.setBillProperty(billProperty);
+                manager.persist(savedBill);
             }
             makeLTitle(lRoot, periodDate, "L" + fileName, "3.2"); //2020
             lRoot.addContent(perss);
