@@ -345,7 +345,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         }
 
                         //Добавляем сведения о санкциях
-                        if (zsl.getChild("SANK_IT") != null && !zsl.getChildText("SANK_IT").equals("0.00")) { //
+                        if (zsl.getChild("SANK_IT") != null && !zsl.getChildText("SANK_IT").equals("0.00")) {
                             List<Element> sanks = zsl.getChildren("SANK");
                             ArrayList<String> sanks1 = new ArrayList<>();
                             for (Element sank : sanks) {
@@ -372,7 +372,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             entry.setAddGroupFld("МУР");
                         } else {
                             entry.setAttachedLpu("");
-                            entry.setAddGroupFld("");
+//                            entry.setAddGroupFld("");
                         }
                         manager.persist(entry);
                     }
