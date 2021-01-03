@@ -1,6 +1,5 @@
 package ru.ecom.expert2.service;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -56,12 +55,12 @@ import java.util.List;
 import java.util.Map;
 
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
+import static ru.nuzmsh.util.BooleanUtils.isTrue;
+import static ru.nuzmsh.util.CollectionUtil.isEmpty;
 import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
 import static ru.nuzmsh.util.EqualsUtil.isAnyIsNull;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
 import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
-import static ru.nuzmsh.util.CollectionUtil.isEmpty;
-import static ru.nuzmsh.util.BooleanUtils.isTrue;
 
 @Stateless
 @Local(IExpert2Service.class)
@@ -2782,29 +2781,25 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         VocE2PolyclinicCoefficient coefficient;
         // boolean isKdo =isTrue(aEntry.getIsDiagnosticSpo()) || aEntry.getEntryType().equals(KDPTYPE);
-        boolean isEmergency = isTrue(aEntry.getIsEmergency());
-        boolean isMobilePolyclinic = isTrue(aEntry.getIsMobilePolyclinic());
         //находим Кз
 
-        key = isEmergency ? "KZ#EMERGENCY##" : "KZ#" + profileId + "#" + tariffCode;
+        key = isTrue(aEntry.getIsEmergency()) ? "KZ#EMERGENCY##" : "KZ#" + profileId + "#" + tariffCode;
 
         String sql = "profile_id=" + profileId + " and entryType.tariffCode='" + tariffCode + "'";
-        key += sql;
         if (!polyclinicCasePrice.containsKey(key)) {
-            //LOG.info("FIND_KZ. key = "+key);
             coefficient = getActualVocByClassName(VocE2PolyclinicCoefficient.class, aEntry.getFinishDate(), sql);
             if (coefficient == null) {
                 LOG.warn("НЕ смоег найти коэффициента: " + sql);
             }
             polyclinicCasePrice.put(key, coefficient);
+        } else {
+            coefficient = polyclinicCasePrice.get(key);
         }
-
-        coefficient = polyclinicCasePrice.get(key);
         BigDecimal kz = coefficient != null ? coefficient.getValue() : one;
 
         //Находим Кп/Кпд
         sql = "profile_id=" + profileId;
-        if (isMobilePolyclinic) {
+        if (isTrue(aEntry.getIsMobilePolyclinic())) {
             sql += " and entryType is null and isMobilePolyclinic='1'";
             key = "KP#" + sql;
             if (!polyclinicCasePrice.containsKey(key)) {
@@ -3587,7 +3582,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             String directionSurveyMethod = getString(aJson, "directionSurveyMethod");
             for (BigInteger entryId : entryList) {
                 E2Entry entry = theManager.find(E2Entry.class, entryId.longValue());
-                if (CollectionUtils.isEmpty(entry.getCancerEntries())) {
+                if (isEmpty(entry.getCancerEntries())) {
                     E2CancerEntry cancerEntry = new E2CancerEntry();
                     cancerEntry.setEntry(entry);
                     cancerEntry.setOccasion(occasion);

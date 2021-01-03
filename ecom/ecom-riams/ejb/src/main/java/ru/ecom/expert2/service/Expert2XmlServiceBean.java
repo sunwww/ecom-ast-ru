@@ -1283,7 +1283,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
 
                 //Удалим диагнозы, совпадающие с основным
-                otherDiagnosis.removeIf(mainMkb::equals);
+//                otherDiagnosis.removeIf(mainMkb::equals);
                 add(element, "DS2", otherDiagnosis.get(0));
 
             }

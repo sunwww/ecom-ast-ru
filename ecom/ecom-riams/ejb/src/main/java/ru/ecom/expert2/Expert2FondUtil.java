@@ -6,10 +6,10 @@ import ru.ecom.expert2.domain.voc.E2Enumerator;
 
 import java.util.List;
 
-import static ru.nuzmsh.util.StringUtil.isNotEmpty;
-import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 import static ru.nuzmsh.util.BooleanUtils.isTrue;
 import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
+import static ru.nuzmsh.util.StringUtil.isNotEmpty;
+import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 
 public class Expert2FondUtil {
 
