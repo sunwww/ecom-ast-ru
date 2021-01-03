@@ -119,6 +119,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private boolean isCheckIsRunning = false;
     private boolean isConsultativePolyclinic = true;
     private boolean isNeedSplitDayTimeHosp = false;
+    private static boolean isBillCreating = false;
     /**
      * Найдем подтип случая (посещение, обращение, НМП
      */
@@ -144,9 +145,6 @@ public class Expert2ServiceBean implements IExpert2Service {
     private @EJB
     IRemoteMonitorService theRemoteMonitorService;
 
-    public E2Entry getEntryJson(Long entryId) {
-        return theManager.find(E2Entry.class, entryId);
-    }
 
     private JSONObject getOKJson() {
         return new JSONObject().put("status", "ok");
@@ -531,7 +529,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
         }
         LOG.info("Разделяем иногородних по территории " + billNumber + " " + billDate + " " + territories);
-        E2Bill bill = getBillEntryByDateAndNumber(billNumber, billDate);
+        E2Bill bill = getBillEntryByDateAndNumber(billNumber, billDate, null);
         List<BigInteger> list = theManager.createNativeQuery("select id from e2entry where listentry_id=:listId and substring(insurancecompanycode ,0,3) in (" + territories.toString() + ") and (isdeleted is null or isdeleted='0') and (donotsend is null or donotsend='0') ")
                 .setParameter("listId", listEntryId).getResultList();
         for (BigInteger id : list) {
@@ -547,38 +545,32 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**
      * Находим или создаем счет
      */
-    public E2Bill getBillEntryByDateAndNumber(String billNumber, java.util.Date billDate) {
-        return getBillEntryByDateAndNumber(billNumber, new SimpleDateFormat("dd.MM.yyy").format(billDate), null);
-    }
-
-    public Long getBillIdByDateAndNumber(String billNumber, String billDate) {
-        return getBillEntryByDateAndNumber(billNumber, billDate, null).getId();
-    }
-
-    public E2Bill getBillEntryByDateAndNumber(String billNumber, String billDate, String comment) {
+    public E2Bill getBillEntryByDateAndNumber(String billNumber, Date billDate, String comment) {
+        if (isBillCreating) {
+            return null;
+        }
+        isBillCreating = true;
         E2Bill bill;
-        String sql = "select id from e2bill where billNumber=:number and billDate=to_date(:date,'dd.MM.yyyy') ";
+        String sql = "select id from e2bill where billNumber=:number and billDate=:date) ";
         List<BigInteger> list = theManager.createNativeQuery(sql).setParameter("number", billNumber).setParameter("date", billDate).getResultList();
         if (list.isEmpty()) { //Создаем новый счет. статус - черновик
-            try {
-                bill = new E2Bill();
-                bill.setBillNumber(billNumber);
-                bill.setBillDate(DateFormat.parseSqlDate(billDate, "dd.MM.yyyy"));
-                bill.setStatus(getActualVocByClassName(VocE2BillStatus.class, null, "code='DRAFT'"));
-            } catch (ParseException e) {
-                bill = null;
-                LOG.error(e.getMessage(), e);
-            }
+            bill = new E2Bill();
+            bill.setBillNumber(billNumber);
+            bill.setBillDate(billDate);
+            bill.setStatus(getActualVocByClassName(VocE2BillStatus.class, null, "code='DRAFT'"));
         } else if (list.size() > 1) {
-            LOG.error("Найдено более 1 счета с указанным номером и датой!!");
+            LOG.error("Найдено более 1 счета с номером "+billNumber+" и датой "+billDate);
             bill = null;
         } else {
             bill = theManager.find(E2Bill.class, list.get(0).longValue());
         }
         if (bill != null) {
-            bill.setComment(comment);
+            if (comment!=null) {
+                bill.setComment(comment);
+            }
             theManager.persist(bill);
         }
+        isBillCreating = false;
         return bill;
     }
 

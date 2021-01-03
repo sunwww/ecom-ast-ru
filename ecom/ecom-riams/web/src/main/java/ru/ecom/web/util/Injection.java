@@ -1,7 +1,6 @@
 package ru.ecom.web.util;
 
 import ru.ecom.web.login.LoginInfo;
-import ru.nuzmsh.util.StringUtil;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -17,22 +16,27 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 
+import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
+
 /**
  *
  */
 public class Injection {
 
     private static final ThreadLocal<HashMap<String, Object>> THREAD_SERVICES = new ThreadLocal<>();
+    private final String theWebName;
+    private final String theAppName;
+    private final Properties theEnv;
     private static String KEY;
 
     private Injection(String aWebName, String aAppName, String aProviderUrl, LoginInfo aLoginInfo, String aInitialContextFactory, String aSecurityProtocol) {
         theAppName = aAppName;
         theWebName = aWebName;
-        KEY = Injection.class.getName()+aWebName ;
+        KEY = Injection.class.getName() + aWebName;
         Properties env = new Properties();
         // java.naming.factory.initial
         env.put(Context.INITIAL_CONTEXT_FACTORY,
-                !StringUtil.isNullOrEmpty(aInitialContextFactory)
+                !isNullOrEmpty(aInitialContextFactory)
                         ? aInitialContextFactory
                         : "org.jboss.security.jndi.LoginInitialContextFactory");
 //                        : "org.jboss.security.jndi.JndiLoginInitialContextFactory");
@@ -43,23 +47,25 @@ public class Injection {
         env.put(Context.PROVIDER_URL, aProviderUrl);
 
         env.put(Context.SECURITY_PROTOCOL, aSecurityProtocol);
-        if(aLoginInfo==null){
+        if (aLoginInfo == null) {
             env.put(Context.SECURITY_PRINCIPAL, "");
             env.put(Context.SECURITY_CREDENTIALS, "");
-        }else {
+        } else {
             env.put(Context.SECURITY_PRINCIPAL, aLoginInfo.getUsername());
             env.put(Context.SECURITY_CREDENTIALS, aLoginInfo.getPassword());
         }
-//        theInitialContext = new InitialContext(env);
         theEnv = env;
     }
 
     public static String getWebName(HttpServletRequest aRequest, String aWebName) {
         String path = aRequest.getContextPath();
-        if (path ==null||path.equals("")) {aWebName="riams";}
-        if (aWebName==null || aWebName.equals("")) {aWebName=path;}
+        if (isNullOrEmpty(path)) {
+            aWebName = "riams";
+        } else if (isNullOrEmpty(aWebName)) {
+            aWebName = path;
+        }
 
-        return aWebName ;
+        return aWebName;
     }
 
     public static Properties loadAppProperties(String aWebName) throws IOException {
@@ -91,28 +97,31 @@ public class Injection {
     }
 
     public static Injection find(HttpServletRequest aRequest) {
-        return find(aRequest,null);
+        return find(aRequest, null);
     }
-    public static String getKeyDefault(HttpServletRequest aRequest, String aWebName) {
-        aWebName = getWebName(aRequest, aWebName) ;
-        return Injection.class.getName()+aWebName ;
-    }
-public static Injection find (ServletContextEvent contextEvent, String aWebName ) {
-    return find(contextEvent.getServletContext(),aWebName);
-}
-    public static Injection find (ServletRequestEvent contextEvent, String aWebName ) {
-        return find(contextEvent.getServletContext(),aWebName);
-    }
-    public static Injection find(ServletContext servletContext, String aWebName ) {
 
-        Injection injection = (Injection) servletContext.getAttribute(Injection.class.getName()+aWebName);
+    public static String getKeyDefault(HttpServletRequest aRequest, String aWebName) {
+        return Injection.class.getName() + getWebName(aRequest, aWebName);
+    }
+
+    public static Injection find(ServletContextEvent contextEvent, String aWebName) {
+        return find(contextEvent.getServletContext(), aWebName);
+    }
+
+    public static Injection find(ServletRequestEvent contextEvent, String aWebName) {
+        return find(contextEvent.getServletContext(), aWebName);
+    }
+
+    public static Injection find(ServletContext servletContext, String aWebName) {
+
+        Injection injection = (Injection) servletContext.getAttribute(Injection.class.getName() + aWebName);
         try {
             Properties prop = loadAppProperties(aWebName);
             if (injection == null) {
                 try {
                     injection = new Injection(aWebName, prop.getProperty("ejb-app-name")
                             , prop.getProperty("java.naming.provider.url")
-                            ,null
+                            , null
                             , prop.getProperty("java.naming.factory.initial")
                             , prop.getProperty("java.naming.security.protocol", "other")
                     );
@@ -127,8 +136,8 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
     }
 
     public static Injection find(HttpServletRequest aRequest, String aWebName) {
-        aWebName = getWebName(aRequest, aWebName) ;
-        Injection injection = (Injection) aRequest.getSession().getAttribute(getKeyDefault(aRequest,aWebName));
+        aWebName = getWebName(aRequest, aWebName);
+        Injection injection = (Injection) aRequest.getSession().getAttribute(getKeyDefault(aRequest, aWebName));
         try {
             Properties prop = loadAppProperties(aWebName);
             if (injection == null) {
@@ -136,13 +145,13 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                 if (session == null) throw new IllegalStateException("Нет сессии");
                 LoginInfo loginInfo = LoginInfo.find(session);
                 if (loginInfo == null) throw new IllegalStateException("Нет информации о пользователе");
-                    injection = new Injection(aWebName, prop.getProperty("ejb-app-name")
-                            , prop.getProperty("java.naming.provider.url")
-                            , loginInfo
-                            , prop.getProperty("java.naming.factory.initial")
-                            , prop.getProperty("java.naming.security.protocol", "other")
-                    );
-                    aRequest.getSession().setAttribute(KEY, injection);
+                injection = new Injection(aWebName, prop.getProperty("ejb-app-name")
+                        , prop.getProperty("java.naming.provider.url")
+                        , loginInfo
+                        , prop.getProperty("java.naming.factory.initial")
+                        , prop.getProperty("java.naming.security.protocol", "other")
+                );
+                aRequest.getSession().setAttribute(KEY, injection);
             }
         } catch (IOException e) {
             throw new IllegalStateException("Ошибка настройки приложения: " + e.getMessage(), e);
@@ -154,39 +163,42 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
      * Убираем из сессии и очищаем
      */
     public static void removeFromSession(HttpSession aSession) {
-        if(aSession!=null) {
+        if (aSession != null) {
             Injection injection = (Injection) aSession.getAttribute(KEY);
-            if(injection!=null) {
-                if(injection.theEnv!=null) {
-                    injection.theEnv.clear() ;
+            if (injection != null) {
+                if (injection.theEnv != null) {
+                    injection.theEnv.clear();
                 }
                 aSession.removeAttribute(KEY);
             }
         }
     }
 
+    public static void clearThreadLocalServices() {
+        THREAD_SERVICES.remove();
+    }
 
     public Object getService(String aServiceName) throws NamingException {
-        Object service ;
-        HashMap<String,Object> services = THREAD_SERVICES.get();
-        if(services==null) {
-            services = new HashMap<>() ;
+        Object service;
+        HashMap<String, Object> services = THREAD_SERVICES.get();
+        if (services == null) {
+            services = new HashMap<>();
             THREAD_SERVICES.set(services);
-            service = null ;
+            service = null;
         } else {
-            service = services.get(aServiceName+theWebName);
+            service = services.get(aServiceName + theWebName);
         }
-        if(service==null) {
+        if (service == null) {
             InitialContext initialContext = new InitialContext(theEnv);
             try {
-                String serviceUrl = theAppName+"/"+aServiceName+"Bean/remote";
+                String serviceUrl = theAppName + "/" + aServiceName + "Bean/remote";
                 service = initialContext.lookup(serviceUrl);
-                services.put(aServiceName+theWebName, service);
+                services.put(aServiceName + theWebName, service);
             } finally {
-                initialContext.close() ;
+                initialContext.close();
             }
         }
-        return service ;
+        return service;
     }
 
     public <T> T getService(Class<T> aServiceClass) throws NamingException {
@@ -194,11 +206,7 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
         return (T) getService(className.substring(1));
     }
 
-    public static void clearThreadLocalServices() {
-        THREAD_SERVICES.remove();
+    public String getWebName() {
+        return theWebName;
     }
-    public String getWebName() {return theWebName ;}
-    private final String theWebName;
-    private final String theAppName;
-    private final Properties theEnv;
 }

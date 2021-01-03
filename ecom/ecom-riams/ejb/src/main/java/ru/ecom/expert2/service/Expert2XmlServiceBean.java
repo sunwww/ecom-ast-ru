@@ -1034,7 +1034,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             LOG.info("ok, we made all, let's make files");
             monitor.setText("Формирование файла завершено, сохраняем архив");
             makeHTitle(hRoot, periodDate, "H" + fileName, cnt, billNumber, billDate, totalSum, regNumber, dispType);
-            E2Bill bill = manager.find(E2Bill.class, expertService.getBillIdByDateAndNumber(billNumber, dateToString(billDate, "dd.MM.yyyy")));
+            E2Bill bill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null);
             if (bill != null) {
                 bill.setStatus(getActualVocBySqlString(VocE2BillStatus.class, "select id from VocE2BillStatus where code='SENT'"));
                 bill.setSum(totalSum);

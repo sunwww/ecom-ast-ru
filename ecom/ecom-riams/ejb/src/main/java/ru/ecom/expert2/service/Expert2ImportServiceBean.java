@@ -289,12 +289,14 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 }
                 List<Element> zaps = root.getChildren("ZAP");
                 Element schet = root.getChild("SCHET");
-                String nSchet = schet.getChildText("NSCHET");
-                String dSchet = schet.getChildText("DSCHET");
+                String billNumber = schet.getChildText("NSCHET");
+                String billDateString = schet.getChildText("DSCHET");
                 SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
-                SimpleDateFormat toFormat = new SimpleDateFormat("dd.MM.yyyy");
-                java.sql.Date billDate = new java.sql.Date(fromFormat.parse(dSchet).getTime());
-                E2Bill bill = manager.find(E2Bill.class, expertService.getBillIdByDateAndNumber(nSchet, toFormat.format(billDate)));
+                java.sql.Date billDate = new java.sql.Date(fromFormat.parse(billDateString).getTime());
+                E2Bill bill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null);
+                if (bill == null) {
+                    throw new IllegalStateException("Невозможно определить счет с №"+billNumber+" от "+billDateString);
+                }
                 bill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
 
                 int i = 0;
@@ -322,7 +324,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             isComplexCase = true;
                         }
                         manager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId", entryId).executeUpdate();
-                        entry.setBillNumber(nSchet);
+                        entry.setBillNumber(billNumber);
                         entry.setBillDate(billDate);
                         entry.setBill(bill);
 
