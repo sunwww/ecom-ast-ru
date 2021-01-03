@@ -550,7 +550,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
         isBillCreating = true;
         E2Bill bill;
-        String sql = "select id from e2bill where billNumber=:number and billDate=:date) ";
+        String sql = "select id from e2bill where billNumber=:number and billDate=:date ";
         List<BigInteger> list = theManager.createNativeQuery(sql).setParameter("number", billNumber).setParameter("date", billDate).getResultList();
         if (list.isEmpty()) { //Создаем новый счет. статус - черновик
             bill = new E2Bill();
@@ -558,7 +558,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             bill.setBillDate(billDate);
             bill.setStatus(getActualVocByClassName(VocE2BillStatus.class, null, "code='DRAFT'"));
         } else if (list.size() > 1) {
-            LOG.error("Найдено более 1 счета с номером "+billNumber+" и датой "+billDate);
+            LOG.error(list.get(0) + "<>" + list.get(1) + " Найдено более 1 счета с номером " + billNumber + " и датой " + billDate + "(" + list.size() + ")");
             bill = null;
         } else {
             bill = theManager.find(E2Bill.class, list.get(0).longValue());

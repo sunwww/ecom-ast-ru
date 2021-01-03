@@ -287,7 +287,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 if ("3.0".equals(ver)) {
                     throw new IllegalStateException("Импорт в старом формате более не поддерживается!");
                 }
-                List<Element> zaps = root.getChildren("ZAP");
+
                 Element schet = root.getChild("SCHET");
                 String billNumber = schet.getChildText("NSCHET");
                 String billDateString = schet.getChildText("DSCHET");
@@ -297,13 +297,14 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 if (bill == null) {
                     throw new IllegalStateException("Невозможно определить счет с №"+billNumber+" от "+billDateString);
                 }
+                bill = manager.find(E2Bill.class, bill.getId());
                 bill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
 
                 int i = 0;
                 if (isMonitorCancel(monitor, "Найдено записей для импорта: " + zaps.size())) return;
 
                 BigDecimal totalSum = BigDecimal.ZERO;
-
+                List<Element> zaps = root.getChildren("ZAP");
                 for (Element zap : zaps) {
                     i++;
                     if (i % 100 == 0 && isMonitorCancel(monitor, "Загружено записей: " + i)) break;

@@ -26,27 +26,27 @@ public class Expert2FileImportAction extends BaseAction {
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm,
 			HttpServletRequest aRequest, HttpServletResponse aResponse) {
     	try {
-			IExpert2ImportService expert2service = Injection.find(aRequest).getService(IExpert2ImportService.class);
-			ImportFileForm form = (ImportFileForm)aForm;
-    		FormFile ffile = form.getFile();
-    		if (ffile==null) {
-				return aMapping.findForward(SUCCESS) ;
+			IExpert2ImportService expert2importService = Injection.find(aRequest).getService(IExpert2ImportService.class);
+			ImportFileForm form = (ImportFileForm) aForm;
+			FormFile ffile = form.getFile();
+			if (ffile == null) {
+				return aMapping.findForward(SUCCESS);
 			}
-			String fileName=ffile.getFileName();
+			String fileName = ffile.getFileName();
 			String action = form.getDirName();
-			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi/server/default/data");
+			String xmlUploadDir = expert2importService.getConfigValue("expert2.input.folder", "/opt/jboss-4.0.4.GAi/server/default/data");
 			Long entryListId = form.getObjectId();
-			IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
+			IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService");
 			final long monitorId = monitorService.createMonitor();
 
 			switch (action) {
 				case "createEntry":
 					if (fileName.startsWith("ELMED")) { //импорт файлов с элмеда
-						saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
+						saveFile(ffile.getInputStream(), xmlUploadDir + "/" + fileName);
 						new Thread() {
 							public void run() {
 								try {
-									expert2service.importElmed(monitorId,fileName);
+									expert2importService.importElmed(monitorId, fileName);
 								} catch (Exception e) {
 									monitorService.cancel(monitorId);
 									throw new IllegalStateException(e) ;
@@ -62,7 +62,7 @@ public class Expert2FileImportAction extends BaseAction {
 					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
 					new Thread() {
 						public void run() {
-							expert2service.importFlkAnswer(monitorId, fileName, entryListId);
+							expert2importService.importFlkAnswer(monitorId, fileName, entryListId);
 						}}.start();
 					break;
 				case "importDefect":
@@ -70,7 +70,7 @@ public class Expert2FileImportAction extends BaseAction {
 					new Thread() {
 						public void run() {
 							try {
-								expert2service.importFondMPAnswer(monitorId, fileName) ;
+								expert2importService.importFondMPAnswer(monitorId, fileName);
 							} catch (Exception e) {
 								monitorService.cancel(monitorId);
 								throw new IllegalStateException(e) ;
