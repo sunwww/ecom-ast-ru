@@ -75,14 +75,10 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final String EXTDISPTYPE = "EXTDISP";
     private static final String SERVICETYPE = "SERVICE";
     private static final String COMPLEXSERVICESTREAM = "COMPLEXCASE";
-    private final SimpleDateFormat SQLDATE = new SimpleDateFormat("yyyy-MM-dd");
-    private final SimpleDateFormat MONTHYEARDATE = new SimpleDateFormat("yyyy-MM");
     private static final ArrayList<String> CHILD_BIRTH_MKB = new ArrayList<>();
     private static final BigDecimal MAX_KSLP_COEFF = BigDecimal.valueOf(1.8); //максимально возможный коэффициент КСЛП
-
     private static final String[] politravmaMainList = {"S02.7", "S12.7", "S22.1", "S27.7", "S29.7", "S31.7", "S32.7", "S36.7", "S38.1", "S39.6", "S39.7", "S37.7", "S42.7", "S49.7", "T01.1", "T01.8", "T01.9", "T02.0", "T02.1", "T02.2", "T02.3", "T02.4", "T02.5", "T02.6", "T02.7", "T02.8", "T02.9", "T04.0", "T04.1", "T04.2", "T04.3", "T04.4", "T04.7", "T04.8", "T04.9", "T05.0", "T05.1", "T05.2", "T05.3", "T05.4", "T05.5", "T05.6", "T05.8", "T05.9", "T06.0", "T06.1", "T06.2", "T06.3", "T06.4", "T06.5", "T06.8", "T07"};
     private static final String[] politravmaSeconaryList = {"J94.2", "J94.8", "J94.9", "J93", "J93.0", "J93.1", "J93.8", "J93.9", "J96.0", "N17", "T79.4", "R57.1", "R57.8"};
-
     private static final String[] ksgExceptions = {"st02.008#st02.010", "st02.008#st02.011", "st02.009#st02.010", "st04.002#st14.001", "st04.002#st14.002", "st21.007#st21.001"
             , "st34.001#st34.002", "st26.001#st34.002", "st30.003#st34.006", "st30.005#st09.001", "st31.017#st31.002"}; //терапевтическая#Хирургическая
     /**
@@ -99,7 +95,9 @@ public class Expert2ServiceBean implements IExpert2Service {
      * Нахождение КСГ с бОльшим коэффициентом трудозатрат для случая
      */
     private static HashMap<String, List<BigInteger>> ksgMap = new HashMap<>();
-
+    private static boolean isBillCreating = false;
+    private final SimpleDateFormat SQLDATE = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat MONTHYEARDATE = new SimpleDateFormat("yyyy-MM");
     private final HashMap<String, Method> methodMap = new HashMap<>();
     private final HashMap<String, Object> diagnosisMap = new HashMap<>();
     private final Map<String, VocMedService> SERVICELIST = new HashMap<>();
@@ -118,7 +116,6 @@ public class Expert2ServiceBean implements IExpert2Service {
     private boolean isCheckIsRunning = false;
     private boolean isConsultativePolyclinic = true;
     private boolean isNeedSplitDayTimeHosp = false;
-    private static boolean isBillCreating = false;
     /**
      * Найдем подтип случая (посещение, обращение, НМП
      */
@@ -564,7 +561,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             bill = theManager.find(E2Bill.class, list.get(0).longValue());
         }
         if (bill != null) {
-            if (comment!=null) {
+            if (comment != null) {
                 bill.setComment(comment);
             }
             theManager.persist(bill);
@@ -3313,7 +3310,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             return ret;
         }
         String result = aEntry.getFondResult().getCode();
-        if (aEntry.getDepartmentId() == 182 && !isOneOf(result,"107","108","102")) { //Если патология, если НЕ выписан по желанию ЛПУ или желанию пациента, Кпр=1 * 03.10.2018 Результат - Не перевод в другое ЛПУ
+        if (aEntry.getDepartmentId() == 182 && !isOneOf(result, "107", "108", "102")) { //Если патология, если НЕ выписан по желанию ЛПУ или желанию пациента, Кпр=1 * 03.10.2018 Результат - Не перевод в другое ЛПУ
             return ret;
         }
         String deadResult = "105,106,205,206"; //смерть
@@ -3358,9 +3355,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         String bedSubType = aEntry.getBedSubType();
         List<BigInteger> list;
         Date actualDate = aEntry.getFinishDate();
-        boolean stacCase = isOneOf(entryType, HOSPITALTYPE,VMPTYPE);
+        boolean stacCase = isOneOf(entryType, HOSPITALTYPE, VMPTYPE);
         boolean vmpCase = entryType.equals(VMPTYPE);
-        boolean polyclinicCase = isOneOf(entryType,POLYCLINICTYPE,SERVICETYPE);
+        boolean polyclinicCase = isOneOf(entryType, POLYCLINICTYPE, SERVICETYPE);
         boolean extDispCase = entryType.equals(EXTDISPTYPE);
         //  boolean kdpCase = entryType.equals(KDPTYPE); //del после сдачи
 
@@ -3401,7 +3398,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 aEntry.setFondDoctorSpecV021(doctor);
 
             }
-            if (aEntry.getFondDoctorSpecV021()==null && aEntry.getMedHelpProfile()!=null) { //TODO check
+            if (aEntry.getFondDoctorSpecV021() == null && aEntry.getMedHelpProfile() != null) { //TODO check
                 aEntry.setFondDoctorSpecV021(aEntry.getMedHelpProfile().getMedSpecV021());
             }
         }
@@ -3507,7 +3504,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             //Вид медицинской помощи
             if (aEntry.getMedHelpKind() == null || forceUpdate) {
-                String v008Code = "206".equals(aEntry.getDoctorWorkfunction()) ? "11" : "13"; //первичная специализированная медико-санитарная помощь *фельдшер - доврачебная МП
+                String v008Code = calculateHelpKindPol(aEntry);
                 key = "V008#" + v008Code;
                 if (!resultMap.containsKey(key)) {
                     resultMap.put(key, getActualVocByClassName(VocE2FondV008.class, actualDate, "code='" + v008Code + "'"));
@@ -3544,6 +3541,28 @@ public class Expert2ServiceBean implements IExpert2Service {
             LOG.info("calc fond field, type = " + entryType);
         }
         theManager.persist(aEntry);
+    }
+
+    /**
+     * Расчет вида мед помощи (с декабря 2020) для поликлинических случаев
+     * @param entry запись
+     * @return код V008
+     */
+    private String calculateHelpKindPol(E2Entry entry) {
+        String code;
+        switch (entry.getDoctorWorkfunction()) {
+            case "49": //педиатр
+            case "97": //терапевт
+                code = "12"; //первичная МСП
+                break;
+            case "206": //фельдшер
+                code = "11"; //первичная доврачебная МСП
+                break;
+            default:
+                code = "13"; //первичная специализированная МСП
+        }
+
+        return code;
     }
 
     private String addSql(String aField, String aValue) {
